@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="66px" height="56px" viewBox="0 0 66 56" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Acala-logo</title>
+    <defs>
+        <linearGradient x1="27.5324675%" y1="23.4232461%" x2="55.5380334%" y2="101.776865%" id="linearGradient-1">
+            <stop stop-color="#FF9373" offset="39%"></stop>
+            <stop stop-color="#FE8F73" offset="51%"></stop>
+            <stop stop-color="#FB8373" offset="62%"></stop>
+            <stop stop-color="#F77073" offset="73%"></stop>
+            <stop stop-color="#F15472" offset="83%"></stop>
+            <stop stop-color="#E93172" offset="94%"></stop>
+            <stop stop-color="#E41A72" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="100.02885%" y1="49.9879295%" x2="8.647674%" y2="49.9879295%" id="linearGradient-2">
+            <stop stop-color="#FF9373" offset="9%"></stop>
+            <stop stop-color="#FD8A73" offset="15%"></stop>
+            <stop stop-color="#F04E72" offset="55%"></stop>
+            <stop stop-color="#E72872" offset="85%"></stop>
+            <stop stop-color="#E41A72" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="89.1975677%" y1="49.9959778%" x2="28.4010969%" y2="49.9959778%" id="linearGradient-3">
+            <stop stop-color="#FF9373" offset="0%"></stop>
+            <stop stop-color="#E41A72" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="acala-logo" fill-rule="nonzero">
+            <g id="logo.98c8c4e9">
+                <path d="M44.1296789,41.2671242 C41.1082808,40.3818132 37.9751897,39.9409011 34.8279874,39.9581204 C29.6635395,39.945818 24.5749528,41.2067937 20.0084187,43.630479 L22.9652183,38.5999733 L25.5885443,34.1323837 L32.6715245,21.9984107 L39.3409974,33.1673844 L28.3585987,14.7430454 L16.5358464,34.9946285 L4.71309417,55.5455402 L13.2633584,55.5455402 C18.6109049,50.7811151 25.4893372,48.1146087 32.635954,48.0355222 C40.4703615,48.0042491 47.5533417,50.8635064 52.6443727,55.536605 L44.1296789,41.2671242 Z" id="Path" fill="url(#linearGradient-1)"></path>
+                <path d="M28.5675755,0.0312731265 L14.2815646,24.3572979 L0,48.6967255 L2.35654709,51.9759362 L4.71309417,55.5500078 L16.5358464,34.9990961 L28.3585987,14.7430454 L39.3187659,33.1763196 C37.7548654,32.9683225 36.1787564,32.8668256 34.6012253,32.8725235 C31.5552934,32.8804641 28.5241334,33.2981722 25.5885443,34.1145134 L22.9652183,38.5821029 L20.0084187,43.630479 C24.5696352,41.2096307 29.6517688,39.9487409 34.8102022,39.9581204 C37.9574045,39.9409011 41.0904955,40.3818132 44.1118937,41.2671242 L52.6088022,55.536605 L61.6481611,55.536605 L28.5675755,0.0312731265 Z" id="Path" fill="url(#linearGradient-2)"></path>
+                <polygon id="Path" fill="url(#linearGradient-3)" points="28.5675755 0.0312731265 61.6659463 55.536605 65.8588216 48.4331377 36.8777388 0"></polygon>
+            </g>
+        </g>
+    </g>
+</svg>

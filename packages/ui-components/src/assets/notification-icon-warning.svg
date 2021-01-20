@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="40px" height="40px" viewBox="0 0 40 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Notification-icon-warning</title>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Artboard-Copy" transform="translate(-1394.000000, -206.000000)" fill="#F0AF41" fill-rule="nonzero">
+            <g id="感叹号" transform="translate(1394.000000, 206.000000)">
+                <path d="M20,40 C8.954375,40 0,31.045625 0,20 C0,8.954375 8.954375,0 20,0 C31.045625,0 40,8.954375 40,20 C40,31.045625 31.045625,40 20,40 Z M21.75,12.3928571 C21.75,11.6235357 20.910625,11 19.875,11 C18.839375,11 18,11.6235357 18,12.3928571 L18,22.6071429 C18,23.3764643 18.839375,24 19.875,24 C20.910625,24 21.75,23.3764643 21.75,22.6071429 L21.75,12.3928571 Z M19.875,26 C18.839375,26 18,26.839375 18,27.875 C18,28.910625 18.839375,29.75 19.875,29.75 C20.910625,29.75 21.75,28.910625 21.75,27.875 C21.75,26.839375 20.910625,26 19.875,26 Z" id="Shape"></path>
+            </g>
+        </g>
+    </g>
+</svg>

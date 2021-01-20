@@ -1,0 +1,11 @@
+{
+  "name": "@webb-dapp/page-governance",
+  "version": "0.2.1-beta.1",
+  "description": "governance page",
+  "main": "index.js",
+  "author": "Acala Developers <hello@acala.network>, Webb Developers <drew@webb.tools>",
+  "homepage": "https://github.com/webb-tools/webb-dapp#readme",
+  "dependencies": {
+    "@polkadot/react-identicon": "^0.52.1"
+  }
+}

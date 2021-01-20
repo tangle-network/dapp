@@ -1,0 +1,31 @@
+.endpoint {
+  margin-bottom: 24px;
+
+  .endpointType {
+    margin-bottom: 16px;
+    font-size: 16px;
+    line-height: 19px;
+    color: var(--text-color-primary);
+  }
+
+  .endpointList {
+    list-style: none;
+  }
+
+  .endpointItem {
+    width: 100%;
+    height: 48px;
+
+    padding: 0 16px;
+    margin-bottom: 16px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    border: 1px solid var(--border-color);
+    border-radius: 2px;
+
+    cursor: pointer;
+  }
+}

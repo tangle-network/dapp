@@ -1,0 +1,16 @@
+.aca-alert {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 15px 40px;
+  min-height: 58px;
+  background-image: linear-gradient(270deg, #DF008E 0%, #FF4E4E 98%);
+  border-radius: 12px;
+  font-size: 20px;
+  line-height: 24px;
+  color: #ffffff;
+}
+
+.aca-alert__icon {
+  margin-right: 16px;
+}

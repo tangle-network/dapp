@@ -1,0 +1,69 @@
+.network {
+  margin-bottom: 16px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .networkItem {
+    display: flex;
+    align-items: center;
+    height: 60px;
+    padding: 0 16px;
+
+    flex: 0 0 45%;
+    border: 1px solid var(--border-color);
+
+    font-size: 16px;
+    line-height: 19px;
+
+    > svg {
+      margin-right: 12px;
+    }
+  }
+}
+
+.root {
+
+  .container {
+    margin: 0 auto;
+    width: 520px;
+  }
+
+  .title {
+    margin-bottom: 16px;
+  }
+
+  .amountExtra {
+    margin-top: 16px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 16px;
+    line-height: 19px;
+
+    color: var(--text-color-second)
+  }
+
+
+  .txBtn {
+    margin: 0 auto;
+    width: 320px;
+    height: 58px;
+
+    font-weight: bold;
+    font-size: 20px;
+    line-height: 30px;
+  }
+
+  .loadingTips {
+    margin-bottom: 8px;
+    color: var(--color-primary);
+  }
+
+  :global(.ant-form-item-label) {
+    font-size: 16px;
+    line-height: 19px;
+  }
+}

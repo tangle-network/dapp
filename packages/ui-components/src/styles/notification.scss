@@ -1,0 +1,72 @@
+.ant-notification-notice {
+  padding: 20px 24px 16px 24px;
+  border-radius: 4px;
+  box-shadow: 0 2px 14px rgba(0, 0, 0, 0.17);
+
+  &::after {
+    content: '';
+    position: absolute;
+    width: 6px;
+    height: 100%;
+    left: 0;
+    top: 0;
+
+    background: var(--notification-success-color);
+  }
+
+  &.info::after {
+    background: var(--notification-info-color);
+  }
+
+  &.success::after {
+    background: var(--notification-success-color)
+  }
+
+  &.warning::after {
+    background: var(--notification-warning-color)
+  }
+
+  &.error::after {
+    background: var(--notification-error-color)
+  }
+
+  .ant-notification-notice-with-icon {
+    min-height: 40px;
+
+    .ant-notification-notice-icon {
+      width: 40px;
+    }
+
+    .ant-notification-notice-message {
+      margin-left: 64px;
+    }
+
+    .ant-notification-notice-description {
+      margin-left: 64px;
+    }
+  }
+
+  .ant-notification-notice-message {
+    font-size: 18px;;
+    line-height: 1.333333;
+    font-weight: bold;
+    color: var(--notification-message-color);
+  }
+
+  .ant-notification-notice-description {
+    font-size: 12px;;
+    line-height: 1.5;
+    color: var(--notification-description-color);
+  }
+
+  .ant-notification-notice-close {
+    opacity: 0;
+    transition: opacity .2s;
+  }
+
+  &:hover {
+    .ant-notification-notice-close {
+      opacity: 1;
+    }
+  }
+}

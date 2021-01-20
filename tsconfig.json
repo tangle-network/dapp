@@ -1,0 +1,46 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react",
+    "baseUrl": "./packages",
+    "paths": {
+      "@webb-dapp/apps/*": ["apps/src/*"],
+      "@webb-dapp/apps": ["apps/src"],
+      "@webb-dapp/page-wallet": ["page-wallet/src"],
+      "@webb-dapp/page-wallet/*": ["page-wallet/src/*"],
+      "@webb-dapp/page-mixer": ["page-mixer/src"],
+      "@webb-dapp/page-mixer/*": ["page-mixer/src/*"],
+      "@webb-dapp/page-governance": ["page-governance/src"],
+      "@webb-dapp/page-governance/*": ["page-governance/src/*"],
+      "@webb-dapp/page-dashboard-home": ["page-dashboard-home/src"],
+      "@webb-dapp/page-mixer-charts": ["page-mixer-charts/src"],
+      "@webb-dapp/page-mixer-charts/*": ["page-mixer-charts/src/*"],
+      "@webb-dapp/react-hooks/*": ["react-hooks/src/*"],
+      "@webb-dapp/react-hooks": ["react-hooks/src"],
+      "@webb-dapp/react-environment/*": ["react-environment/src/*"],
+      "@webb-dapp/react-environment": ["react-environment/src"],
+      "@webb-dapp/react-components/*": ["react-components/src/*"],
+      "@webb-dapp/react-components": ["react-components/src"],
+      "@webb-dapp/ui-components/*": ["ui-components/src/*"],
+      "@webb-dapp/ui-components": ["ui-components/src"]
+    },
+    "skipDefaultLibCheck": true
+  },
+  "exclude": [
+    "build/**/*",
+    "**/build/**/*",
+    "scripts/*"
+  ]
+}

@@ -1,0 +1,10 @@
+.aca-tooltip {
+  max-width: none;
+
+  .ant-tooltip-inner {
+    min-height: 0;
+    padding: 0 4px !important;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+}

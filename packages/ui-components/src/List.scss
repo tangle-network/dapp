@@ -1,0 +1,31 @@
+.aca-list {
+  padding: 6px 0;
+  list-style: none;
+
+}
+
+.aca-list__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 0;
+
+  font-size: 16px;
+  line-height: 19px;
+  color: var(--text-color-second);
+}
+
+.aca-list--style-list {
+  padding: 0 24px;
+
+  & > .aca-list__item {
+    padding: 14.5px 0 13.5px 0;
+    line-height: 24px;
+    color: var(--text-color-primary);
+    border-bottom: 1px solid #ebeef5;
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+}

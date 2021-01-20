@@ -1,0 +1,18 @@
+.ant-form-item-label > label {
+  font-size: 16px;
+  line-height: 19px;
+  color: var(--text-color-primary);
+}
+
+.ant-form-item-has-error .ant-select:not(.ant-select-borderless) .ant-select-selector {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.ant-form-item-has-error .ant-form-item-explain, .ant-form-item-has-error .ant-form-item-split {
+  color: var(--color-error) !important;
+}
+
+.ant-form-item {
+  color: var(--text-color-primary);
+}

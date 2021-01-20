@@ -1,0 +1,65 @@
+.root {
+  border: 1px solid var(--border-color);
+  border-radius: 2px;
+  padding-left: 45px;
+  overflow: hidden;
+  color: var(--text-color-primary);
+
+  .item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    border-bottom: 1px solid var(--border-color);
+
+    font-size: 16px;
+    line-height: 19px;
+
+    .fixedAddress {
+      padding-right: 32px;
+    }
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &::before {
+      content: '';
+
+      z-index: 2;
+      position: absolute;
+      left: -30.5px;
+      top: 26px;
+      width: 8px;
+      height: 8px;
+      border-radius: 100%;
+    }
+
+    &:first-child::before {
+      background: var(--color-origin);
+    }
+
+    &:last-child::before {
+      background: var(--color-primary);
+    }
+
+    &:first-child::after {
+      content: '';
+
+      z-index: 1;
+      position: absolute;
+      left: -28px;
+      top: 30px;
+      height: 60px;
+      width: 2px;
+      background: #ecf0f2;
+    }
+  }
+
+  .addressInput {
+    text-align: right;
+    font-size: 16px;
+    line-height: 19px;
+  }
+}

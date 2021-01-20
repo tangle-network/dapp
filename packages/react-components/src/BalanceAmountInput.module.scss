@@ -1,0 +1,72 @@
+.root {
+  box-sizing: border-box;
+  width: 100%;
+  height: 96px;
+  border: 1px solid #E9E9E9;
+  border-radius: 2px;
+  display: grid;
+  grid-template-columns: 64px calc(100% - 64px);
+  transition: all 200ms 0 cubic-bezier(0.23, 1, 0.320, 1);
+
+  &.noSwitch {
+    grid-template-columns: 100%;
+  }
+
+  &:hover, &.focused {
+    border-color: var(--color-primary);
+  }
+
+  &.error {
+    border-color: var(--color-error) !important;
+  }
+
+  .switch {
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+  }
+
+  .balanceInput {
+    height: 48px;
+    border-bottom: 1px solid #E9E9E9 !important;
+    padding-left: 16px;
+  }
+
+  .amountDisplay {
+    height: 48px;
+    display: flex;
+    padding: 0 16px;
+    justify-content: space-between;
+    align-items: center;
+
+    font-size: 16px;
+    line-height: 19px;
+    color: var(--text-color-second);
+  }
+
+  .amountInput {
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-bottom: 1px solid #E9E9E9
+  }
+
+  .balanceDisplay {
+    padding: 0 16px;
+    height: 46px !important;
+    color: var(--text-color-second);
+    border: none;
+
+    & > input:disabled {
+      background: #ffffff;
+      font-size: 16px;
+    }
+  }
+
+  .lpSize {
+    display: block;
+    padding-left: 16px;
+    height: 48px;
+    line-height: 48px;
+  }
+}

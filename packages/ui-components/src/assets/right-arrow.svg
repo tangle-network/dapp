@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="26px" height="15px" viewBox="0 0 26 15" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 63.1 (92452) - https://sketch.com -->
+    <title>Right-arrow</title>
+    
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+        <g id="Withdraw-Liquidity" transform="translate(-726.000000, -392.000000)" stroke="#000A39">
+            <g id="Group-4" transform="translate(727.000000, 393.000000)">
+                <line x1="0" y1="6.5" x2="24" y2="6.5" id="Path-4"></line>
+                <polyline id="Path-4" transform="translate(20.401455, 6.612541) rotate(-270.000000) translate(-20.401455, -6.612541) " points="13.7889147 10.2110853 20.2889147 3.01399574 27.0139957 10.2110853"></polyline>
+            </g>
+        </g>
+    </g>
+</svg>

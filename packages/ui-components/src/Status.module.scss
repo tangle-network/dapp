@@ -1,0 +1,21 @@
+.root {
+  display: inline-block;
+  min-width: 48px;
+  padding: 4px 8px;
+  border: 1px solid #ffffff;
+  background: #ffffff;
+  border-radius: 4px;
+  font-size: 12px;
+  text-align: center;
+  font-weight: 500;
+
+  &.success {
+    border-color: #8FCE65;
+    color: #8FCE65;
+  }
+
+  &.error {
+    border-color: #F35600;
+    color: #F35600;
+  }
+}

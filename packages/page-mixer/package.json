@@ -1,0 +1,13 @@
+{
+  "name": "@webb-dapp/page-mixer",
+  "version": "0.2.1-beta.1",
+  "description": "mixer page",
+  "main": "index.js",
+  "author": "Acala Developers <hello@acala.network>, Webb Developers <drew@webb.tools>",
+  "homepage": "https://github.com/webb-tools/webb-dapp#readme",
+  "dependencies": {
+    "@acala-network/sdk-core": "^0.4.0-beta.21",
+    "@acala-network/sdk-swap": "^0.4.0-beta.21",
+    "antd": "^4.7.2"
+  }
+}

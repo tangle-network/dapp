@@ -1,0 +1,38 @@
+.root {
+  :global(.ant-drawer-body) {
+    overflow: hidden;
+  }
+
+  :global(.ant-drawer-content-wrapper) {
+    border-top-right-radius: 16px;
+    border-bottom-right-radius: 16px;
+    overflow: hidden;
+  }
+
+  .settingItem {
+    margin-top: 24px;
+
+    .title {
+      margin-bottom: 12px;
+      font-size: 22px;
+      font-weight: bold;
+    }
+
+    .list {
+      list-style: none;
+    }
+
+    .listItem {
+      display: flex;
+      justify-content: space-between;
+      padding: 4px 16px;
+      margin: 0 -16px;
+      font-size: 18px;
+      cursor: pointer;
+
+      &:hover {
+        background-image: linear-gradient(90deg, #E5EAFF 0%, #F5F6FA 100%);
+      }
+    }
+  }
+}

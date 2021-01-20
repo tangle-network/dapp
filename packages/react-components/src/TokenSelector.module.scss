@@ -1,0 +1,51 @@
+.item {
+  width: 280px;
+  display: grid;
+  height: 52px;
+  grid-template-columns: 36px 1fr;
+  place-items: center stretch;
+
+  .tokenDetail {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-align: right;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .tokenImage {
+    width: 36px;
+    height: 36px;
+  }
+
+  .tokenName {
+    font-weight: bold;
+  }
+
+  &.active {
+    background: #f2f5f7;
+  }
+
+  &.disabled {
+    background: #999999;
+    pointer-events: none;
+    filter: grayscale(1);
+  }
+}
+
+.selected {
+  display: grid;
+  grid-template-columns: 1fr 30px;
+  align-items: center;
+  cursor: pointer;
+
+  .token {
+    font-size: 16px;
+  }
+
+  & > svg {
+    margin-left: 8px;
+  }
+}

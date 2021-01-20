@@ -1,0 +1,27 @@
+.ant-table-thead {
+  .ant-table-cell {
+    background: #ffffff;
+  }
+}
+
+.ant-table-row.striped {
+  .ant-table-cell {
+    border-bottom: none;
+  }
+
+  &:nth-child(2n + 1) {
+    .ant-table-cell {
+      background: var(--table-striped-background);
+    }
+  }
+}
+
+.ant-table-thead > tr > th {
+  padding: 24px 16px 16px 16px;
+}
+
+.ant-table-tbody > tr > td,
+.ant-table tfoot > tr > th,
+.ant-table tfoot > tr > td  {
+  padding: 12px 16px;
+}

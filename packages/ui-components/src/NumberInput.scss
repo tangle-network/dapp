@@ -1,0 +1,16 @@
+.aca-number-input {
+  // disable all input default apperence
+  border: none;
+  box-shadow: none;
+  outline: none;
+  appearance: none;
+
+  font-size: 24px;
+  line-height: 29px;
+  color: var(--text-color-primary);
+  text-overflow: ellipsis;
+
+  &::placeholder-shown {
+    color: var(--text-color-second);
+  }
+}

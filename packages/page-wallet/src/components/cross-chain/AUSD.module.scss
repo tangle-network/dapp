@@ -1,0 +1,33 @@
+.root {
+  .container {
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 512px;
+    padding: 16px 0 32px 0;
+  }
+
+  .txBtn {
+    margin: 0 auto;
+    width: 320px;
+    height: 58px;
+
+    font-weight: bold;
+    font-size: 20px;
+    line-height: 30px;
+  }
+
+  .amountExtra {
+    margin-top: 16px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    font-size: 16px;
+    line-height: 19px;
+    color: var(--text-color-second)
+  }
+}

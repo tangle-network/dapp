@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="12px" height="9px" viewBox="0 0 12 9" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Aca-network</title>
+    <defs>
+        <linearGradient x1="27.5324675%" y1="23.8128046%" x2="55.5380334%" y2="101.017926%" id="linearGradient-1">
+            <stop stop-color="#FF9373" offset="39%"></stop>
+            <stop stop-color="#FE8F73" offset="51%"></stop>
+            <stop stop-color="#FB8373" offset="62%"></stop>
+            <stop stop-color="#F77073" offset="73%"></stop>
+            <stop stop-color="#F15472" offset="83%"></stop>
+            <stop stop-color="#E93172" offset="94%"></stop>
+            <stop stop-color="#E41A72" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="100.02885%" y1="49.9879295%" x2="8.647674%" y2="49.9879295%" id="linearGradient-2">
+            <stop stop-color="#FF9373" offset="9%"></stop>
+            <stop stop-color="#FD8A73" offset="15%"></stop>
+            <stop stop-color="#F04E72" offset="55%"></stop>
+            <stop stop-color="#E72872" offset="85%"></stop>
+            <stop stop-color="#E41A72" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="89.1975677%" y1="49.9959778%" x2="28.4010969%" y2="49.9959778%" id="linearGradient-3">
+            <stop stop-color="#FF9373" offset="0%"></stop>
+            <stop stop-color="#E41A72" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Testnet" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="aUSD" transform="translate(-108.000000, -139.000000)" fill-rule="nonzero">
+            <g id="Group-3" transform="translate(107.000000, 137.000000)">
+                <g id="Group-Copy-2" transform="translate(1.800000, 2.000000)">
+                    <g id="logo.98c8c4e9">
+                        <path d="M7.14638092,6.63365873 C6.65709428,6.49134566 6.14972005,6.42046939 5.64006063,6.42323738 C4.80372751,6.42125978 3.97967939,6.62396065 3.24017271,7.01356622 L3.71899823,6.20491625 L4.14382088,5.48675465 L5.29084202,3.53622773 L6.37089959,5.33163174 L4.59240479,2.36993329 L2.67782274,5.62535984 L0.763240683,8.92890321 L2.14787449,8.92890321 C3.01385868,8.16302551 4.12775524,7.73438664 5.28508171,7.72167356 C6.55378934,7.71664643 7.70081048,8.17626985 8.52525442,8.92746689 L7.14638092,6.63365873 Z" id="Path" fill="url(#linearGradient-1)"></path>
+                        <path d="M4.62624659,0.00502713122 L2.31276328,3.91541706 L0,7.82796148 L0.381620342,8.35509209 L0.763240683,8.92962137 L2.67782274,5.626078 L4.59240479,2.36993329 L6.3672994,5.33306807 C6.11404062,5.29963269 5.85880479,5.28331714 5.60333868,5.28423308 C5.11007902,5.28550952 4.61921154,5.35265578 4.14382088,5.483882 L3.71899823,6.20204361 L3.24017271,7.01356622 C3.97881826,6.6244167 4.80182137,6.42172963 5.63718048,6.42323738 C6.14683989,6.42046939 6.65421413,6.49134566 7.14350077,6.63365873 L8.51949412,8.92746689 L9.98333214,8.92746689 L4.62624659,0.00502713122 Z" id="Path" fill="url(#linearGradient-2)"></path>
+                        <polygon id="Path" fill="url(#linearGradient-3)" points="4.62624659 0.00502713122 9.9862123 8.92746689 10.6652085 7.78558994 5.97199833 0"></polygon>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

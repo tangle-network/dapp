@@ -1,0 +1,32 @@
+.root {}
+
+.claimedBtn {
+  margin-left: 0 !important;
+  margin-top: 16px;
+  width: 100%;
+}
+
+.title {
+  margin-bottom: 16px;
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--color-primary);
+}
+
+.candyList {
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  font-size: 16px;
+  font-weight: bold;
+  color: var(--text-color-second);
+}
+
+.claimed {
+  margin-top: 32px;
+  text-align: right;
+  font-size: 14px;
+  color: var(--color-red-light);
+}

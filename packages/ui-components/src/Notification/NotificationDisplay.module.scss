@@ -1,0 +1,60 @@
+@import '../styles/index.scss';
+
+:global(.notification--root) {
+  z-index: 1400;
+  position: fixed;
+  width: 400px;
+  top: 0;
+  right: 24px;
+}
+
+.root {
+  display: flex;
+  padding: 16px 20px;
+  margin-top: 26px;
+  border: 1px solid #87d068;
+  border-radius: 4px;
+  box-shadow: $shadow;
+
+  .icon {
+    flex-grow: 0;
+    flex-shrink: 0;
+    margin-right: 16px;
+  }
+
+  .title {
+    font-size: 16px;
+    line-height: 21px;
+    word-break: break-all;
+  }
+
+  .info {
+    margin-top: 6px;
+    font-size: 12px;
+    line-height: 18px;
+  }
+
+  &.noContent .info {
+    display: none;
+  }
+
+  &.noContent .content {
+    display: flex;
+    align-items: center;
+  }
+
+  &.success {
+    background: lighten(#87d068, 50%);
+    border-color: #87d068;
+  }
+
+  &.error {
+    background: lighten(var(--color-error), 50%);
+    border-color: var(--color-error);
+  }
+
+  &.info {
+    background: lighten(#108ee9, 50%);
+    border-color: #108ee9;
+  }
+}

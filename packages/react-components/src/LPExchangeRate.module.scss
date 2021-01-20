@@ -1,0 +1,13 @@
+.root {
+  display: flex;
+  align-items: center;
+}
+
+.swap {
+  height: 19px;
+
+  &:hover {
+    background: var(--color-primary);
+    color: var(--color-white);
+  }
+}
