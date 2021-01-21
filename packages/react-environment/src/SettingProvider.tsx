@@ -1,6 +1,6 @@
 import React, { createContext, FC, PropsWithChildren, useState, useEffect, useCallback, useMemo } from 'react';
 import { noop } from 'lodash';
-import { useModal, useTranslation } from '@acala-dapp/react-hooks';
+import { useModal, useTranslation } from '@webb-dapp/react-hooks';
 
 import { DEFAULT_ENDPOINTS, EndpointConfig } from './configs/endpoints';
 

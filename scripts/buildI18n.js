@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const findPackages = require('./findPackages.js');
 
-function readLanguages (module) {
+function readLanguages(module) {
   const i18nPath = path.join(__dirname, '../', 'packages', module, 'src/i18n');
 
   // ensure that i18n folder exists
@@ -21,35 +21,39 @@ function readLanguages (module) {
   return result;
 }
 
-function mergeLanguages (languages) {
+function mergeLanguages(languages) {
   const result = {};
 
-  languages.filter(m => !!m).forEach(m => {
-    const temp = { ...m };
-    console.log(m);
-    const module = m['module'];
+  languages
+    .filter((m) => !!m)
+    .forEach((m) => {
+      const temp = { ...m };
 
-    delete temp.module;
+      const module = m['module'];
 
-    Object.keys(temp).forEach((l) => {
-      if (l === 'index') return;
+      delete temp.module;
 
-      if (!result[l]) result[l] = {};
+      Object.keys(temp).forEach((l) => {
+        if (l === 'index') return;
 
-      result[l][module] = temp[l];
+        if (!result[l]) result[l] = {};
+
+        result[l][module] = temp[l];
+      });
     });
-  });
 
   return result;
 }
 
-function buildI18n (modules, to) {
+function buildI18n(modules, to) {
   const languages = mergeLanguages(modules.map(readLanguages));
-  
-  fs.writeFileSync(path.resolve(__dirname, '../packages', to), JSON.stringify(languages, undefined, 2), { encoding: 'utf-8' });
+
+  fs.writeFileSync(path.resolve(__dirname, '../packages', to), JSON.stringify(languages, undefined, 2), {
+    encoding: 'utf-8'
+  });
 }
 
-function writeInitI18n (modules, to) {
+function writeInitI18n(modules, to) {
   const temp = `
 // @ts-nocheck
 // auto generate by buildI18n.js
@@ -66,7 +70,7 @@ if (process.env.NODE_ENV === 'development') {
 i18n.use(initReactI18next).init({
   defaultNS: 'translations',
   fallbackLng: 'en',
-  ns: [${modules.map(i => `'${i}'`).join(', ')}],
+  ns: [${modules.map((i) => `'${i}'`).join(', ')}],
   resources
 });
 `;
