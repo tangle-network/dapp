@@ -22,7 +22,7 @@
     "build:dapp": "cd packages/apps && react-app-rewired build",
     "start:dashboard": "cd packages/dashboard && react-app-rewired start",
     "build:dashboard": "cd packages/dashboard && react-app-rewired build",
-    "build:i18n": "APP_NAME='dapp' node scripts/buildI18n.js",
+    "build:i18n": "cross-env APP_NAME='dapp' node scripts/buildI18n.js",
     "release:ghpages": "gh-pages -d packages/apps/build",
     "analyze": "source-map-explorer 'packages/apps/build/static/js/*.js'",
     "test": "polkadot-dev-run-test",
@@ -36,6 +36,7 @@
     "react-dom": "^16.13.1"
   },
   "devDependencies": {
+    "cross-env": "^7.0.3",
     "@polkadot/dev": "^0.52.4",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
