@@ -1,6 +1,6 @@
 import React, { FC, useCallback, useMemo, useState } from 'react';
 
-import { TokenInfoOf, ClassInfoOf } from '@acala-network/types/interfaces';
+import { TokenInfoOf, ClassInfoOf } from '@webb-tools/types/interfaces';
 import { Card, GridBox, Empty, CardLoading, Modal, styled } from '@webb-dapp/ui-components';
 import { NFTCard, NFTImage } from '@webb-dapp/react-components';
 import { useAllNFTTokens, useModal } from '@webb-dapp/react-hooks';

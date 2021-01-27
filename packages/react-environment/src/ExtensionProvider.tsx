@@ -3,7 +3,7 @@ import { isNumber } from 'lodash';
 import { InjectedAccount, InjectedExtension, MetadataDef } from '@polkadot/extension-inject/types';
 import { ApiRx } from '@polkadot/api';
 import { web3Enable, web3FromAddress } from '@polkadot/extension-dapp';
-import { options } from '@acala-network/api';
+import { options } from '@webb-tools/api';
 
 import { NoAccounts, NoExtensions, SelectAccount, UploadMetadata } from '@webb-dapp/react-components';
 import { useModal, useApi, useStorage } from '@webb-dapp/react-hooks';
@@ -27,7 +27,7 @@ export interface ExtensionData {
 
 export const ExtensionContext = createContext<ExtensionData>({} as any);
 
-async function getExtensions(api: ApiRx, appName: string): Promise<InjectedExtension> {
+async function getExtensions (api: ApiRx, appName: string): Promise<InjectedExtension> {
   const extensions = await web3Enable(appName);
 
   if (extensions.length === 0) throw new Error('no_extensions');
@@ -267,7 +267,9 @@ export const ExtensionProvider: FC<AccountProviderProps> = ({ appName, authRequi
         onSelect={setActiveAccount}
         visable={selectAccountStatus}
       />
-      <UploadMetadata close={closeUploadMatedata} uploadMetadata={uploadMetadata} visiable={uploadMatedataStatus} />
+      <UploadMetadata close={closeUploadMatedata}
+        uploadMetadata={uploadMetadata}
+        visiable={uploadMatedataStatus} />
       {children}
       {renderError()}
     </ExtensionContext.Provider>

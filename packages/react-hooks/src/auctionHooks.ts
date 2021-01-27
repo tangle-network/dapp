@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
-import { Fixed18, convertToFixed18 } from '@acala-network/app-util';
-import { Balance, CollateralAuctionItem, DebitAuctionItem, SurplusAuctionItem } from '@acala-network/types/interfaces';
+import { Fixed18, convertToFixed18 } from '@webb-tools/app-util';
+import { Balance, CollateralAuctionItem, DebitAuctionItem, SurplusAuctionItem } from '@webb-tools/types/interfaces';
 import { StorageKey, Option } from '@polkadot/types';
 import { sortBy } from 'lodash';
 

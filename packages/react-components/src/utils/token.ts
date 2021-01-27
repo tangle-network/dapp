@@ -5,8 +5,8 @@ import DotIcon from '../assets/coins-icon/DOT.svg';
 import LDotIcon from '../assets/coins-icon/LDOT.svg';
 import RenIcon from '../assets/coins-icon/REN.svg';
 import { ApiRx } from '@polkadot/api';
-import { CurrencyId } from '@acala-network/types/interfaces';
-import { Token, TokenPair, currencyId2Token } from '@acala-network/sdk-core';
+import { CurrencyId } from '@webb-tools/types/interfaces';
+import { Token, TokenPair, currencyId2Token } from '@webb-tools/sdk-core';
 
 export const TOKEN_IMAGES: Map<string, string> = new Map([
   ['ACA', AcaIcon],

@@ -2,9 +2,9 @@ import React, { FC, ReactNode, useCallback, useMemo } from 'react';
 import clsx from 'clsx';
 
 import { Balance as BalanceType } from '@polkadot/types/interfaces';
-import { Fixed18 } from '@acala-network/app-util';
-import { FixedPointNumber } from '@acala-network/sdk-core';
-import { CurrencyId } from '@acala-network/types/interfaces';
+import { Fixed18 } from '@webb-tools/app-util';
+import { FixedPointNumber } from '@webb-tools/sdk-core';
+import { CurrencyId } from '@webb-tools/types/interfaces';
 import { BareProps } from '@webb-dapp/ui-components/types';
 import { styled } from '@webb-dapp/ui-components';
 

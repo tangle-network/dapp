@@ -1,8 +1,8 @@
 import { useState, useEffect, useMemo } from 'react';
 
 import { stringToU8a } from '@polkadot/util';
-import { FixedPointNumber } from '@acala-network/sdk-core';
-import { Balance, CurrencyId } from '@acala-network/types/interfaces';
+import { FixedPointNumber } from '@webb-tools/sdk-core';
+import { Balance, CurrencyId } from '@webb-tools/types/interfaces';
 import { AccountData } from '@polkadot/types/interfaces';
 
 import { useCall } from './useCall';

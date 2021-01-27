@@ -3,7 +3,7 @@ import { combineLatest } from 'rxjs';
 import { Option } from '@polkadot/types';
 
 import { Price } from '@open-web3/orml-types/interfaces';
-import { FixedPointNumber } from '@acala-network/sdk-core';
+import { FixedPointNumber } from '@webb-tools/sdk-core';
 
 import { tokenEq } from '@webb-dapp/react-components';
 

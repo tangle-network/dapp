@@ -1,12 +1,12 @@
 import React, { FC, useMemo } from 'react';
 
-import { CurrencyId } from '@acala-network/types/interfaces';
+import { CurrencyId } from '@webb-tools/types/interfaces';
 import { FormatBalance } from '@webb-dapp/react-components';
 import { useLPSize, useApi, useIssuance, usePrice } from '@webb-dapp/react-hooks';
 
 import { getCurrenciesFromDexShare, getCurrencyIdFromName } from './utils';
 import { BareProps } from '@webb-dapp/ui-components/types';
-import { FixedPointNumber } from '@acala-network/sdk-core';
+import { FixedPointNumber } from '@webb-tools/sdk-core';
 import { Token } from './Token';
 import { FlexBox } from '@webb-dapp/ui-components';
 import { FormatValue } from './format';

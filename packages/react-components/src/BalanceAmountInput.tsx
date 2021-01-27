@@ -8,9 +8,9 @@ import classes from './BalanceAmountInput.module.scss';
 import { BalanceInput, BalanceInputValue } from './BalanceInput';
 import { TokenName } from './Token';
 import { FormatValue } from './format';
-import { CurrencyId } from '@acala-network/types/interfaces';
+import { CurrencyId } from '@webb-tools/types/interfaces';
 import { useInputValue } from '@webb-dapp/react-hooks/useInputValue';
-import { FixedPointNumber } from '@acala-network/sdk-core';
+import { FixedPointNumber } from '@webb-tools/sdk-core';
 import { LPAmountWithShare } from './LPSize';
 
 type InputType = 'balance' | 'amount';

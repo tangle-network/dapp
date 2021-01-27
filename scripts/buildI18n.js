@@ -49,7 +49,7 @@ function buildI18n(modules, to) {
   const languages = mergeLanguages(modules.map(readLanguages));
 
   fs.writeFileSync(path.resolve(__dirname, '../packages', to), JSON.stringify(languages, undefined, 2), {
-    encoding: 'utf-8'
+    encoding: 'utf-8',
   });
 }
 
@@ -80,13 +80,13 @@ i18n.use(initReactI18next).init({
 
 const dappModules = [
   'apps',
-  'page-wallet',
-  'page-loan',
+  // 'page-wallet',
+  // 'page-loan',
   'page-mixer',
-  'page-homa',
-  'page-oracle-price',
-  'page-governance',
-  'react-components'
+  // 'page-homa',
+  // 'page-oracle-price',
+  // 'page-governance',
+  'react-components',
 ];
 
 const APP_NAME = process.env.APP_NAME;

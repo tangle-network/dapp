@@ -1,8 +1,8 @@
 import { useMemo, useEffect, useState } from 'react';
 
-import { DerivedUserLoan, DerivedLoanType, DerivedLoanOverView } from '@acala-network/api-derive';
-import { LoanHelper, Fixed18, debitToStableCoin, convertToFixed18 } from '@acala-network/app-util';
-import { Rate, CurrencyId, Position } from '@acala-network/types/interfaces';
+import { DerivedUserLoan, DerivedLoanType, DerivedLoanOverView } from '@webb-tools/api-derive';
+import { LoanHelper, Fixed18, debitToStableCoin, convertToFixed18 } from '@webb-tools/app-util';
+import { Rate, CurrencyId, Position } from '@webb-tools/types/interfaces';
 
 import { CurrencyLike, AccountLike } from './types';
 import { useAccounts } from './useAccounts';

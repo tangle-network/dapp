@@ -3,7 +3,7 @@ import { useFormik } from 'formik';
 import { noop } from 'lodash';
 import clsx from 'clsx';
 
-import { Fixed18 } from '@acala-network/app-util';
+import { Fixed18 } from '@webb-tools/app-util';
 import { List, Button, Row, Col, Condition } from '@webb-dapp/ui-components';
 import {
   BalanceInput,

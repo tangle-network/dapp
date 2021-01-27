@@ -3,7 +3,7 @@ import { switchMap, map } from 'rxjs/operators';
 import { combineLatest, Observable, of } from 'rxjs';
 
 import { Vec, Option } from '@polkadot/types';
-import { AccountId } from '@acala-network/types/interfaces/types';
+import { AccountId } from '@webb-tools/types/interfaces/types';
 import { Proposal, Hash, Votes } from '@polkadot/types/interfaces';
 import { ApiRx } from '@polkadot/api';
 

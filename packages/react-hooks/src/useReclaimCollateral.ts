@@ -1,4 +1,4 @@
-import { FixedPointNumber } from '@acala-network/sdk-core';
+import { FixedPointNumber } from '@webb-tools/sdk-core';
 import { Balance } from '@open-web3/orml-types/interfaces';
 
 import { useConstants } from './useConstants';

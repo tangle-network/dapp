@@ -3,8 +3,8 @@ import React, { FC, useCallback, useMemo } from 'react';
 import { FlexBox, Row, Col, SpaceBox } from '@webb-dapp/ui-components';
 import { BalanceInput, BalanceInputValue, getCurrenciesFromDexShare, eliminateGap } from '@webb-dapp/react-components';
 import { useLPCurrencies, useApi, useBalance, useBalanceValidator } from '@webb-dapp/react-hooks';
-import { FixedPointNumber } from '@acala-network/sdk-core';
-import { CurrencyId } from '@acala-network/types/interfaces';
+import { FixedPointNumber } from '@webb-tools/sdk-core';
+import { CurrencyId } from '@webb-tools/types/interfaces';
 import { TokenInput } from '@webb-dapp/react-components/TokenInput';
 import { useInputValue } from '@webb-dapp/react-hooks/useInputValue';
 

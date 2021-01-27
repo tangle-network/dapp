@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 import { StorageKey } from '@polkadot/types';
-import { Share, Balance, CurrencyId } from '@acala-network/types/interfaces';
+import { Share, Balance, CurrencyId } from '@webb-tools/types/interfaces';
 import { PoolInfo } from '@open-web3/orml-types/interfaces';
-import { FixedPointNumber } from '@acala-network/sdk-core';
+import { FixedPointNumber } from '@webb-tools/sdk-core';
 
 import { useCall } from './useCall';
 import { useApi } from './useApi';

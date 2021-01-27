@@ -2,8 +2,8 @@ import { useState, useMemo } from 'react';
 import { combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { FixedPointNumber } from '@acala-network/sdk-core';
-import { BlockNumber, SubAccountStatus, Amount, Balance } from '@acala-network/types/interfaces';
+import { FixedPointNumber } from '@webb-tools/sdk-core';
+import { BlockNumber, SubAccountStatus, Amount, Balance } from '@webb-tools/types/interfaces';
 import { useStore, StakingPoolData } from '@webb-dapp/react-environment';
 
 import { useApi } from './useApi';

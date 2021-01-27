@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 
-import { CurrencyId } from '@acala-network/types/interfaces';
-import { FixedPointNumber } from '@acala-network/sdk-core';
+import { CurrencyId } from '@webb-tools/types/interfaces';
+import { FixedPointNumber } from '@webb-tools/sdk-core';
 
 import { useStore } from '@webb-dapp/react-environment';
 

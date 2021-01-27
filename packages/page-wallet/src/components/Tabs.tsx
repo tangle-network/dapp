@@ -13,14 +13,18 @@ export const Tabs: FC = () => {
   const { activeTab, changeActiveTab } = useContext(WalletContext);
 
   return (
-    <UITabs<WalletTabType> active={activeTab} onChange={changeActiveTab}>
-      <UITabs.Panel $key='acala' header='Acala'>
+    <UITabs<WalletTabType> active={activeTab}
+      onChange={changeActiveTab}>
+      <UITabs.Panel $key='acala'
+        header='Acala'>
         <AcalaConsole />
       </UITabs.Panel>
-      <UITabs.Panel $key='collectibles' header={t('Collectibles')}>
+      <UITabs.Panel $key='collectibles'
+        header={t('Collectibles')}>
         <NFT />
       </UITabs.Panel>
-      <UITabs.Panel $key='cross-chain' header={t('Cross-Chain')}>
+      <UITabs.Panel $key='cross-chain'
+        header={t('Cross-Chain')}>
         <CrossChainConsole />
       </UITabs.Panel>
     </UITabs>

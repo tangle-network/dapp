@@ -1,8 +1,8 @@
 import { get } from 'lodash';
 
 import { Codec } from '@polkadot/types/types';
-import { Fixed18 } from '@acala-network/app-util';
-import { FixedPointNumber } from '@acala-network/sdk-core';
+import { Fixed18 } from '@webb-tools/app-util';
+import { FixedPointNumber } from '@webb-tools/sdk-core';
 
 import { LAMINAR_SENDER_ADDRESS, LAMINAR_WATCHER_ADDRESS, FAUCET_ADDRESS, systemAccounts } from './account-consts';
 

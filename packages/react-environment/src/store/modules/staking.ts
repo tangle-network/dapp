@@ -2,12 +2,12 @@ import { useEffect, useReducer } from 'react';
 import { ApiRx } from '@polkadot/api';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { FixedPointNumber } from '@acala-network/sdk-core';
+import { FixedPointNumber } from '@webb-tools/sdk-core';
 
 import { useApi } from '@webb-dapp/react-hooks';
 
-import { DerivedStakingPool } from '@acala-network/api-derive';
-import { StakingPool } from '@acala-network/sdk-homa';
+import { DerivedStakingPool } from '@webb-tools/api-derive';
+import { StakingPool } from '@webb-tools/sdk-homa';
 
 export type StakingPoolData = {
   stakingPool: StakingPool;

@@ -1,11 +1,11 @@
 import { useEffect, useReducer } from 'react';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { FixedPointNumber } from '@acala-network/sdk-core';
-import { CurrencyId } from '@acala-network/types/interfaces';
+import { FixedPointNumber } from '@webb-tools/sdk-core';
+import { CurrencyId } from '@webb-tools/types/interfaces';
 import { ApiRx } from '@polkadot/api';
 
-import { DerivedDexPool } from '@acala-network/api-derive';
+import { DerivedDexPool } from '@webb-tools/api-derive';
 import { useApi } from '@webb-dapp/react-hooks';
 import { getCurrencyIdFromName } from '@webb-dapp/react-components';
 

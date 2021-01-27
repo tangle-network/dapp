@@ -1,9 +1,9 @@
 import React, { FC, useMemo } from 'react';
-import { FixedPointNumber } from '@acala-network/sdk-core';
+import { FixedPointNumber } from '@webb-tools/sdk-core';
 import { FormatNumberProps, FormatRatio, FormatBalanceProps, FormatBalance } from './format';
 import { useLoanHelper, useConstants, useLoanType, useLoanOverview, usePrice } from '@webb-dapp/react-hooks';
-import { convertToFixed18, Fixed18 } from '@acala-network/app-util';
-import { CurrencyId } from '@acala-network/types/interfaces';
+import { convertToFixed18, Fixed18 } from '@webb-tools/app-util';
+import { CurrencyId } from '@webb-tools/types/interfaces';
 
 type LoanPropertyProps<T> = T & {
   currency: CurrencyId;
@@ -16,7 +16,8 @@ export const CollateralRate: FC<LoanPropertyProps<Omit<FormatNumberProps, 'data'
     return null;
   }
 
-  return <FormatRatio {...other} data={helper.collateralRatio} />;
+  return <FormatRatio {...other}
+    data={helper.collateralRatio} />;
 };
 
 export const StableFeeAPR: FC<LoanPropertyProps<Omit<FormatNumberProps, 'data'>>> = ({ currency, ...other }) => {
@@ -26,7 +27,8 @@ export const StableFeeAPR: FC<LoanPropertyProps<Omit<FormatNumberProps, 'data'>>
     return null;
   }
 
-  return <FormatRatio {...other} data={helper.stableFeeAPR} />;
+  return <FormatRatio {...other}
+    data={helper.stableFeeAPR} />;
 };
 
 export const RequiredCollateralRatio: FC<LoanPropertyProps<Omit<FormatNumberProps, 'data'>>> = ({
@@ -39,7 +41,8 @@ export const RequiredCollateralRatio: FC<LoanPropertyProps<Omit<FormatNumberProp
     return null;
   }
 
-  return <FormatRatio {...other} data={convertToFixed18(type.requiredCollateralRatio)} />;
+  return <FormatRatio {...other}
+    data={convertToFixed18(type.requiredCollateralRatio)} />;
 };
 
 export const LiquidationRatio: FC<LoanPropertyProps<Omit<FormatNumberProps, 'data'>>> = ({ currency, ...other }) => {
@@ -49,7 +52,8 @@ export const LiquidationRatio: FC<LoanPropertyProps<Omit<FormatNumberProps, 'dat
     return null;
   }
 
-  return <FormatRatio {...other} data={convertToFixed18(type.liquidationRatio)} />;
+  return <FormatRatio {...other}
+    data={convertToFixed18(type.liquidationRatio)} />;
 };
 
 export const LiquidationPenalty: FC<LoanPropertyProps<Omit<FormatNumberProps, 'data'>>> = ({ currency, ...other }) => {
@@ -59,7 +63,8 @@ export const LiquidationPenalty: FC<LoanPropertyProps<Omit<FormatNumberProps, 'd
     return null;
   }
 
-  return <FormatRatio {...other} data={convertToFixed18(type.liquidationPenalty)} />;
+  return <FormatRatio {...other}
+    data={convertToFixed18(type.liquidationPenalty)} />;
 };
 
 export const Collateral: FC<LoanPropertyProps<FormatBalanceProps>> = ({ currency, ...other }) => {
@@ -69,7 +74,9 @@ export const Collateral: FC<LoanPropertyProps<FormatBalanceProps>> = ({ currency
     return null;
   }
 
-  return <FormatBalance {...other} balance={convertToFixed18(helper.collaterals)} currency={currency} />;
+  return <FormatBalance {...other}
+    balance={convertToFixed18(helper.collaterals)}
+    currency={currency} />;
 };
 
 export const DebitAmount: FC<LoanPropertyProps<FormatBalanceProps>> = ({ currency, ...other }) => {
@@ -80,7 +87,9 @@ export const DebitAmount: FC<LoanPropertyProps<FormatBalanceProps>> = ({ currenc
     return null;
   }
 
-  return <FormatBalance {...other} balance={helper.debitAmount} currency={stableCurrency} />;
+  return <FormatBalance {...other}
+    balance={helper.debitAmount}
+    currency={stableCurrency} />;
 };
 
 export const TotalCollateral: FC<LoanPropertyProps<FormatBalanceProps>> = ({ currency, ...other }) => {
@@ -88,7 +97,9 @@ export const TotalCollateral: FC<LoanPropertyProps<FormatBalanceProps>> = ({ cur
 
   if (!overview) return null;
 
-  return <FormatBalance {...other} balance={convertToFixed18(overview.totalCollateral)} currency={currency} />;
+  return <FormatBalance {...other}
+    balance={convertToFixed18(overview.totalCollateral)}
+    currency={currency} />;
 };
 
 export const TotalDebit: FC<LoanPropertyProps<FormatBalanceProps>> = ({ currency, ...other }) => {
@@ -104,7 +115,9 @@ export const TotalDebit: FC<LoanPropertyProps<FormatBalanceProps>> = ({ currency
 
   if (!overview) return null;
 
-  return <FormatBalance {...other} balance={result} currency={stableCurrency} />;
+  return <FormatBalance {...other}
+    balance={result}
+    currency={stableCurrency} />;
 };
 
 export const TotalCollateralRatio: FC<LoanPropertyProps<Omit<FormatNumberProps, 'data'>>> = ({
@@ -128,5 +141,6 @@ export const TotalCollateralRatio: FC<LoanPropertyProps<Omit<FormatNumberProps, 
 
   if (!overview) return null;
 
-  return <FormatRatio {...other} data={result} />;
+  return <FormatRatio {...other}
+    data={result} />;
 };

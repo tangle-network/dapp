@@ -7,7 +7,7 @@ import { EventRecord } from '@polkadot/types/interfaces';
 import { useApi, useAccounts } from '@webb-dapp/react-hooks';
 import { notification } from '@webb-dapp/ui-components';
 import { getTokenName, formatHash, formatNumber } from './utils';
-import { FixedPointNumber } from '@acala-network/sdk-core';
+import { FixedPointNumber } from '@webb-tools/sdk-core';
 
 interface HandlerConfig {
   section: string;

@@ -1,6 +1,6 @@
 import React, { FC, useState, useCallback } from 'react';
 
-import { CurrencyId } from '@acala-network/types/interfaces';
+import { CurrencyId } from '@webb-tools/types/interfaces';
 
 import { FormatBalance } from '@webb-dapp/react-components';
 import { SwapOutlined, Tag } from '@webb-dapp/ui-components';

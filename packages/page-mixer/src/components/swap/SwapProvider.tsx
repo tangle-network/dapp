@@ -1,5 +1,4 @@
-import React, {
-  memo,
+import React, { memo,
   createContext,
   FC,
   PropsWithChildren,
@@ -8,19 +7,19 @@ import React, {
   useMemo,
   Dispatch,
   SetStateAction,
-  useRef
-} from 'react';
+  useRef } from 'react';
 import { u32 } from '@polkadot/types';
 import { Observable } from 'rxjs';
 import { ITuple } from '@polkadot/types/types';
 import { map } from 'rxjs/operators';
-import { CurrencyId, Balance } from '@acala-network/types/interfaces';
-import { Token, TokenPair, FixedPointNumber, currencyId2Token } from '@acala-network/sdk-core';
-import { SwapTrade } from '@acala-network/sdk-swap';
-import { Fee, SwapTradeMode } from '@acala-network/sdk-swap/help';
+import { CurrencyId, Balance } from '@webb-tools/types/interfaces';
+import { Token, TokenPair, FixedPointNumber, currencyId2Token } from '@webb-tools/sdk-core';
 
 import { useApi } from '@webb-dapp/react-hooks';
-import { TradeParameters } from '@acala-network/sdk-swap/trade-parameters';
+
+export type Fee = unknown;
+export type SwapTradeMode = unknown;
+export type TradeParameters = unknown;
 
 export interface PoolData {
   supplyCurrency: CurrencyId;
@@ -51,19 +50,19 @@ interface ContextData {
 class ChangeFlag {
   private _value: boolean;
 
-  constructor(defaultValue: boolean) {
+  constructor (defaultValue: boolean) {
     this._value = defaultValue;
   }
 
-  static create(value: boolean): ChangeFlag {
+  static create (value: boolean): ChangeFlag {
     return new ChangeFlag(value);
   }
 
-  public update(value: boolean): void {
+  public update (value: boolean): void {
     this._value = value;
   }
 
-  get value(): boolean {
+  get value (): boolean {
     const _value = this._value;
 
     if (_value) {
@@ -154,8 +153,8 @@ export const SwapProvider: FC<PropsWithChildren<{}>> = memo(({ children }) => {
 
       return api
         .queryMulti<ITuple<[Balance, Balance]>[]>(
-          usedTokenPairs.map((item) => [api.query.dex.liquidityPool, item.toChainData()])
-        )
+        usedTokenPairs.map((item) => [api.query.dex.liquidityPool, item.toChainData()])
+      )
         .pipe(
           map((result) => {
             const pools = SwapTrade.convertLiquidityPoolsToTokenPairs(usedTokenPairs, result);

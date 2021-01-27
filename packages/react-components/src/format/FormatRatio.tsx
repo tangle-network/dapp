@@ -1,7 +1,7 @@
 import React, { FC, useMemo } from 'react';
 import { FormatNumber, FormatNumberProps } from './FormatNumber';
-import { Fixed18 } from '@acala-network/app-util';
-import { FixedPointNumber } from '@acala-network/sdk-core';
+import { Fixed18 } from '@webb-tools/app-util';
+import { FixedPointNumber } from '@webb-tools/sdk-core';
 
 const FormatRatioConfig: FormatNumberProps['formatNumberConfig'] = {
   decimalLength: 6,

@@ -1,11 +1,11 @@
 import React, { FC, useState, ReactNode, useCallback, useMemo, useEffect } from 'react';
 import clsx from 'clsx';
 
-import { CurrencyId } from '@acala-network/types/interfaces';
+import { CurrencyId } from '@webb-tools/types/interfaces';
 import { Dialog, ArrowIcon, CheckedCircleIcon, FormItem, Button, InlineBlockBox } from '@webb-dapp/ui-components';
 import { useModal, useAccounts, useConstants, useLPCurrencies, useBalance } from '@webb-dapp/react-hooks';
 import { useInputValue } from '@webb-dapp/react-hooks/useInputValue';
-import { FixedPointNumber } from '@acala-network/sdk-core';
+import { FixedPointNumber } from '@webb-tools/sdk-core';
 
 import { tokenEq, eliminateGap } from './utils';
 import { TokenName, TokenImage, TokenFullName } from './Token';

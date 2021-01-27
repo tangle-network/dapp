@@ -1,6 +1,6 @@
-import { FixedPointNumber } from '@acala-network/sdk-core';
+import { FixedPointNumber } from '@webb-tools/sdk-core';
 import { getTokenName, isValidateAddress, BalanceInputValue } from '@webb-dapp/react-components';
-import { CurrencyId } from '@acala-network/types/interfaces';
+import { CurrencyId } from '@webb-tools/types/interfaces';
 
 import { useBalance } from './balanceHooks';
 import { useCallback, useLayoutEffect } from 'react';

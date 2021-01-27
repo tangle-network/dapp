@@ -2,8 +2,8 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { interval, Observable } from 'rxjs';
 import { switchMap, map, startWith, take } from 'rxjs/operators';
 
-import { FixedPointNumber } from '@acala-network/sdk-core';
-import { Balance } from '@acala-network/types/interfaces/runtime';
+import { FixedPointNumber } from '@webb-tools/sdk-core';
+import { Balance } from '@webb-tools/types/interfaces/runtime';
 import { Codec } from '@polkadot/types/types';
 
 import { useAccounts } from './useAccounts';

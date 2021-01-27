@@ -2,10 +2,10 @@ import { useEffect, useReducer } from 'react';
 import { ApiRx } from '@polkadot/api';
 import { Observable, from } from 'rxjs';
 import { map, filter, mergeMap, startWith } from 'rxjs/operators';
-import { FixedPointNumber } from '@acala-network/sdk-core';
+import { FixedPointNumber } from '@webb-tools/sdk-core';
 
 import { TimestampedValue } from '@open-web3/orml-types/interfaces';
-import { OracleKey } from '@acala-network/types/interfaces';
+import { OracleKey } from '@webb-tools/types/interfaces';
 import { useApi } from '@webb-dapp/react-hooks';
 
 export type OracleProvider = 'Aggregated' | 'Acala' | 'Band';

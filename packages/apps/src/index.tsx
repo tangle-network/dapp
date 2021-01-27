@@ -14,9 +14,3 @@ ReactDOM.render(
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: https://bit.ly/CRA-PWA
 serviceWorker.unregister();
-
-if (process.env.NODE_ENV === 'production') {
-  /* eslint-disable */
-  // @ts-ignore
-  Sentry.init({ dsn: 'https://384c487455c847bc9b556170aa2cfa7e@o369467.ingest.sentry.io/5177277' });
-}

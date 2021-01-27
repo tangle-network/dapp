@@ -1,5 +1,5 @@
 import { thousand, getTokenName, formatHash, formatBalance, formatNumber } from './index';
-import { Fixed18 } from '@acala-network/app-util';
+import { Fixed18 } from '@webb-tools/app-util';
 
 describe('test utils', () => {
   test('formatNumbebr should work', () => {

@@ -7,7 +7,7 @@ import {
   LPSize
 } from '@webb-dapp/react-components';
 import styled from 'styled-components';
-import { FixedPointNumber } from '@acala-network/sdk-core';
+import { FixedPointNumber } from '@webb-tools/sdk-core';
 import { useApi } from '@webb-dapp/react-hooks';
 import { InfoItem, InfoItemLabel, InfoItemValue, InfoRoot } from '../common';
 

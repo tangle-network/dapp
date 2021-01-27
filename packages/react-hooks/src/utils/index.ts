@@ -1,4 +1,4 @@
-import { DerivedUserLoan } from '@acala-network/api-derive';
+import { DerivedUserLoan } from '@webb-tools/api-derive';
 
 /**
  * @name filterEmptyLoan

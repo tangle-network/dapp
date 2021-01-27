@@ -4,7 +4,7 @@ import { useStakingPool, useConstants } from '@webb-dapp/react-hooks';
 
 import { FormatBalance, BalancePair, FormatBalanceProps } from './format';
 import { tokenEq } from './utils';
-import { FixedPointNumber } from '@acala-network/sdk-core';
+import { FixedPointNumber } from '@webb-tools/sdk-core';
 
 export interface StakingPoolExchangeRateProps extends FormatBalanceProps {
   stakingAmount?: FixedPointNumber;

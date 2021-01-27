@@ -1,7 +1,7 @@
 import React, { FC, ReactElement } from 'react';
 import { noop } from 'lodash';
 
-import { CurrencyId } from '@acala-network/types/interfaces';
+import { CurrencyId } from '@webb-tools/types/interfaces';
 import { TokenImage, TokenName, TokenFullName } from '@webb-dapp/react-components';
 import { useConstants } from '@webb-dapp/react-hooks';
 import { styled, Tabs, useTabs } from '@webb-dapp/ui-components';

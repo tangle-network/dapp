@@ -6,7 +6,7 @@ import { Menu, Dropdown } from 'antd';
 
 import { BareProps } from '@webb-dapp/ui-components/types';
 import { ArrowIcon } from '@webb-dapp/ui-components';
-import { CurrencyId } from '@acala-network/types/interfaces';
+import { CurrencyId } from '@webb-tools/types/interfaces';
 import { useBalance } from '@webb-dapp/react-hooks';
 
 import { Token, TokenImage, TokenName } from './Token';

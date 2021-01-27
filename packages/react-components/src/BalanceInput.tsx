@@ -1,7 +1,7 @@
 import React, { FC, FocusEventHandler, useState, ReactNode, useCallback, useMemo } from 'react';
 import { FormikErrors } from 'formik';
 
-import { CurrencyId } from '@acala-network/types/interfaces';
+import { CurrencyId } from '@webb-tools/types/interfaces';
 import { BareProps } from '@webb-dapp/ui-components/types';
 import {
   Button,

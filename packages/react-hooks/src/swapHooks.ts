@@ -1,7 +1,7 @@
-import { FixedPointNumber } from '@acala-network/sdk-core';
+import { FixedPointNumber } from '@webb-tools/sdk-core';
 import { useState, useEffect } from 'react';
 import { combineLatest } from 'rxjs';
-import { Balance, CurrencyId } from '@acala-network/types/interfaces';
+import { Balance, CurrencyId } from '@webb-tools/types/interfaces';
 import { getDexShareFromCurrencyId, tokenEq } from '@webb-dapp/react-components';
 
 import { useConstants } from './useConstants';

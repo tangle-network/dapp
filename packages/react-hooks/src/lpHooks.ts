@@ -2,9 +2,9 @@ import { useMemo, useCallback } from 'react';
 
 import { Vec } from '@polkadot/types';
 import { AccountData } from '@polkadot/types/interfaces';
-import { CurrencyId, TradingPair, Balance, AccountId } from '@acala-network/types/interfaces';
-import { DerivedDexPool } from '@acala-network/api-derive';
-import { FixedPointNumber, TokenPair, currencyId2Token } from '@acala-network/sdk-core';
+import { CurrencyId, TradingPair, Balance, AccountId } from '@webb-tools/types/interfaces';
+import { DerivedDexPool } from '@webb-tools/api-derive';
+import { FixedPointNumber, TokenPair, currencyId2Token } from '@webb-tools/sdk-core';
 
 import { useApi } from './useApi';
 import { useCall } from './useCall';

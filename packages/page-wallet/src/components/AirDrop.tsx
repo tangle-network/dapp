@@ -2,7 +2,7 @@ import React, { FC, useMemo } from 'react';
 import { Card, ColumnsType, Table, FlexBox } from '@webb-dapp/ui-components';
 import { useApi } from '@webb-dapp/react-hooks';
 import { tokenEq, AirDropAmount } from '@webb-dapp/react-components';
-import { AirDropCurrencyId } from '@acala-network/types/interfaces';
+import { AirDropCurrencyId } from '@webb-tools/types/interfaces';
 
 export const AirDrop: FC = () => {
   const { api } = useApi();
@@ -40,7 +40,10 @@ export const AirDrop: FC = () => {
       }
       padding={false}
     >
-      <Table columns={tableConfig} dataSource={airdropTypes} pagination={false} rowKey='token' />
+      <Table columns={tableConfig}
+        dataSource={airdropTypes}
+        pagination={false}
+        rowKey='token' />
     </Card>
   );
 };

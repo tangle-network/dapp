@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 
-import { FixedPointNumber } from '@acala-network/sdk-core';
-import { Balance, CurrencyId } from '@acala-network/types/interfaces';
+import { FixedPointNumber } from '@webb-tools/sdk-core';
+import { Balance, CurrencyId } from '@webb-tools/types/interfaces';
 import { AccountId } from '@polkadot/types/interfaces';
 
 import { useCall, useAccounts, usePrice } from '@webb-dapp/react-hooks';

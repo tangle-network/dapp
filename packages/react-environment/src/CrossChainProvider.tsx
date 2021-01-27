@@ -4,7 +4,7 @@ import { map } from 'rxjs/operators';
 
 import { web3FromAddress } from '@polkadot/extension-dapp';
 import { ApiRx, WsProvider } from '@polkadot/api';
-import { Fixed18 } from '@acala-network/app-util';
+import { Fixed18 } from '@webb-tools/app-util';
 
 import { BareProps } from '@webb-dapp/ui-components/types';
 

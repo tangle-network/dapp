@@ -1,6 +1,6 @@
 import React, { FC, useCallback, useMemo, useEffect } from 'react';
-import { FixedPointNumber } from '@acala-network/sdk-core';
-import { CurrencyId } from '@acala-network/types/interfaces';
+import { FixedPointNumber } from '@webb-tools/sdk-core';
+import { CurrencyId } from '@webb-tools/types/interfaces';
 
 import { Row, Col, FlexBox, SpaceBox } from '@webb-dapp/ui-components';
 import { useLP, useBalance, useBalanceValidator, useLPEnabledCurrencies } from '@webb-dapp/react-hooks';

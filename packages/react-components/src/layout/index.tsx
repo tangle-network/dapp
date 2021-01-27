@@ -71,7 +71,9 @@ const Main: FC<MainLayoutProps> = memo(({ children, enableCollapse = true, sideb
           extra={<AccountBar />}
           title={
             ui.subMenu ? (
-              <SubMenu active={ui.subMenu.active} content={ui.subMenu.content} onClick={ui.subMenu.onClick} />
+              <SubMenu active={ui.subMenu.active}
+                content={ui.subMenu.content}
+                onClick={ui.subMenu.onClick} />
             ) : (
               ui.pageTitle
             )
@@ -84,7 +86,9 @@ const Main: FC<MainLayoutProps> = memo(({ children, enableCollapse = true, sideb
 
   return (
     <MainContainer>
-      <Sidebar collapse={collapse} config={sidebar} showAccount={true} />
+      <Sidebar collapse={collapse}
+        config={sidebar}
+        showAccount={true} />
       {content}
     </MainContainer>
   );

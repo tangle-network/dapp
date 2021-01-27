@@ -1,7 +1,7 @@
 import React, { FC, useCallback, useContext, useState, useEffect } from 'react';
 import { Form, Skeleton } from 'antd';
 
-import { Fixed18 } from '@acala-network/app-util';
+import { Fixed18 } from '@webb-tools/app-util';
 
 import {
   Network,

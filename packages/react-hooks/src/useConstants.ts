@@ -1,12 +1,12 @@
 
 import { useMemo } from 'react';
 
-import { CurrencyId, TradingPair } from '@acala-network/types/interfaces';
+import { CurrencyId, TradingPair } from '@webb-tools/types/interfaces';
 import { Vec } from '@polkadot/types';
 import { Codec } from '@polkadot/types/types';
 
 import { useApi } from './useApi';
-import { Fixed18, convertToFixed18 } from '@acala-network/app-util';
+import { Fixed18, convertToFixed18 } from '@webb-tools/app-util';
 
 const LOAN_CURRENCIES_WEIGHT = new Map<string, number>([
   ['DOT', 9],

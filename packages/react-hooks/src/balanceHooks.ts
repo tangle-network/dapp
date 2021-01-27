@@ -1,8 +1,8 @@
 import { useState, useEffect, useMemo } from 'react';
 import { combineLatest, Observable } from 'rxjs';
 
-import { CurrencyId, Balance } from '@acala-network/types/interfaces';
-import { FixedPointNumber } from '@acala-network/sdk-core';
+import { CurrencyId, Balance } from '@webb-tools/types/interfaces';
+import { FixedPointNumber } from '@webb-tools/sdk-core';
 
 import { tokenEq } from '@webb-dapp/react-components';
 

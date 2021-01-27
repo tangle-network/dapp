@@ -3,7 +3,7 @@ import { AccountId } from '@polkadot/types/interfaces';
 import { BareProps } from '@webb-dapp/ui-components/types';
 import { useLPShares, useAccounts } from '@webb-dapp/react-hooks';
 import { FormatRatio, FormatBalance } from './format';
-import { CurrencyId } from '@acala-network/types/interfaces';
+import { CurrencyId } from '@webb-tools/types/interfaces';
 
 interface LPShareProps extends BareProps {
   account?: AccountId | string;

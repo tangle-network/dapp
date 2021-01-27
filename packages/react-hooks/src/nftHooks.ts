@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Option } from '@polkadot/types';
-import { TokenInfoOf, ClassInfoOf } from '@acala-network/types/interfaces';
+import { TokenInfoOf, ClassInfoOf } from '@webb-tools/types/interfaces';
 import { mergeMap, map } from 'rxjs/operators';
 import { combineLatest, of } from 'rxjs';
 

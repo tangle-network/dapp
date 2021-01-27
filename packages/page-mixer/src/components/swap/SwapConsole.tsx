@@ -12,8 +12,8 @@ import {
   useConstants,
   useModal
 } from '@webb-dapp/react-hooks';
-import { token2CurrencyId, currencyId2Token, FixedPointNumber } from '@acala-network/sdk-core';
-import { TradeParameters } from '@acala-network/sdk-swap/trade-parameters';
+import { token2CurrencyId, currencyId2Token, FixedPointNumber } from '@webb-tools/sdk-core';
+import { TradeParameters } from '@webb-tools/sdk-swap/trade-parameters';
 
 import { SwapInfo } from './SwapInfo';
 import { SlippageInput } from './SlippageInput';

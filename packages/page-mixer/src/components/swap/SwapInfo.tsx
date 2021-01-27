@@ -3,7 +3,7 @@ import React, { FC, ReactNode } from 'react';
 import { ArrowRightOutlined, styled } from '@webb-dapp/ui-components';
 import { BalanceInputValue, FormatBalance, getCurrencyIdFromName, TokenImage } from '@webb-dapp/react-components';
 import { useApi } from '@webb-dapp/react-hooks';
-import { TradeParameters } from '@acala-network/sdk-swap/trade-parameters';
+import { TradeParameters } from '@webb-tools/sdk-swap/trade-parameters';
 import { InfoItem, InfoItemLabel, InfoItemValue, InfoRoot } from '../common';
 
 interface SwapRouteProps {
