@@ -53,16 +53,16 @@ export const GovernanceStage: FC = () => {
     return [
       {
         index: 'poa',
-        text: 'PoA'
+        text: 'PoA',
       },
       {
         index: 'council-governance',
-        text: 'Council Governance'
+        text: 'Council Governance',
       },
       {
         index: 'democracy',
-        text: 'Democracy'
-      }
+        text: 'Democracy',
+      },
     ];
   }, []);
 

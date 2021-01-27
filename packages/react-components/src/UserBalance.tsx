@@ -20,7 +20,7 @@ export const UserBalance: FC<Props> = ({
   className,
   currency,
   showCurrencyName = true,
-  showValue = false
+  showValue = false,
 }) => {
   const { active } = useAccounts();
   const _account = account !== undefined ? account : active ? active.address : '';

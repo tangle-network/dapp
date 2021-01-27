@@ -17,7 +17,7 @@ export const WalletProvider: FC<BareProps> = ({ children }) => {
     <WalletContext.Provider
       value={{
         activeTab,
-        changeActiveTab
+        changeActiveTab,
       }}
     >
       {children}

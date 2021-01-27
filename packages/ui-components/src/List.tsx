@@ -10,11 +10,7 @@ interface ItemProps extends BareProps {
   value: string | ReactNode;
 }
 
-const Item: FC<ItemProps> = ({
-  className,
-  label,
-  value
-}) => {
+const Item: FC<ItemProps> = ({ className, label, value }) => {
   return (
     <li className={clsx('aca-list__item', className)}>
       <div>{label}</div>
@@ -23,22 +19,14 @@ const Item: FC<ItemProps> = ({
   );
 };
 
-interface ListProps extends BareProps{
+interface ListProps extends BareProps {
   style?: ListStyle;
 }
 
 type ListComponent = FC<ListProps> & { Item: FC<ItemProps> };
 
-const _List: FC<ListProps> = ({
-  children,
-  className,
-  style
-}) => {
-  return (
-    <ul className={clsx(className, 'aca-list', `aca-list--style-${style}`)}>
-      {children}
-    </ul>
-  );
+const _List: FC<ListProps> = ({ children, className, style }) => {
+  return <ul className={clsx(className, 'aca-list', `aca-list--style-${style}`)}>{children}</ul>;
 };
 
 (_List as any).Item = Item;

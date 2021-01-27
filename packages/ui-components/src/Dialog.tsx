@@ -30,7 +30,7 @@ export const Dialog: FC<Props> = ({
   showCancel = false,
   title,
   visiable = true,
-  withClose = false
+  withClose = false,
 }) => {
   const _action = useMemo(() => {
     if (action === null) {
@@ -38,28 +38,18 @@ export const Dialog: FC<Props> = ({
     }
 
     if (action) {
-      return (
-        <div className='aca-dialog__actions'>{action}</div>
-      );
+      return <div className='aca-dialog__actions'>{action}</div>;
     }
 
     return (
       <div className='aca-dialog__actions'>
         {showCancel ? (
-          <Button
-            onClick={onCancel}
-            size='small'
-            style='normal'
-            type='border'
-          >
+          <Button onClick={onCancel} size='small' style='normal' type='border'>
             {cancelText}
           </Button>
         ) : null}
         {onConfirm ? (
-          <Button
-            onClick={onConfirm}
-            size='small'
-          >
+          <Button onClick={onConfirm} size='small'>
             {confirmText}
           </Button>
         ) : null}

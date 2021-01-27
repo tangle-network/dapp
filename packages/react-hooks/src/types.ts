@@ -8,7 +8,7 @@ export type CallParam = any;
 
 export type CallParams = [] | [CallParam] | [CallParam, CallParam] | [CallParam, CallParam, CallParam] | any[];
 
-export interface CallOptions <T> {
+export interface CallOptions<T> {
   defaultValue?: T;
   isSingle?: boolean;
   paramMap?: (params: any) => CallParams;

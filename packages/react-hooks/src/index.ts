@@ -4,11 +4,7 @@ import { useTranslation } from 'react-i18next';
 
 const { useBreakpoint } = Grid;
 
-export {
-  useRequest,
-  useBreakpoint,
-  useTranslation
-};
+export { useRequest, useBreakpoint, useTranslation };
 
 // system
 export * from './useAccounts';

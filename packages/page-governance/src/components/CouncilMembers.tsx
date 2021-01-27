@@ -25,7 +25,7 @@ export const CouncilMembers: FC<Props> = ({ council }) => {
 
     return members.map((item) => ({
       member: item,
-      weight: new FixedPointNumber(1 / members.length)
+      weight: new FixedPointNumber(1 / members.length),
     }));
   }, [members]);
 
@@ -37,14 +37,14 @@ export const CouncilMembers: FC<Props> = ({ council }) => {
         render: ({ member }): ReactNode => {
           return <FormatAddress address={member.toString()} withCopy withFullAddress withIcon />;
         },
-        title: `${upperFirst(council)} Council Seats`
+        title: `${upperFirst(council)} Council Seats`,
       },
       {
         align: 'left',
         /* eslint-disable-next-line react/display-name */
         render: ({ weight }): JSX.Element => <FormatRatio data={weight} />,
-        title: 'Vote Weight'
-      }
+        title: 'Vote Weight',
+      },
     ],
     [council]
   );

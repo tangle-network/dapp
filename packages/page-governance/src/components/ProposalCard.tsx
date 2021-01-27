@@ -121,7 +121,7 @@ export const ProposalCard: FC<ProposalData & { showAction?: boolean }> = ({
   hash,
   proposal,
   showAction = true,
-  vote
+  vote,
 }) => {
   return (
     <ProposalCardRoot>

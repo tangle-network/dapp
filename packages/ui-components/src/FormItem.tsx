@@ -8,11 +8,7 @@ interface Props extends BareProps {
   label: string;
 }
 
-export const FormItem: FC<Props> = memo(({
-  children,
-  className,
-  label
-}) => {
+export const FormItem: FC<Props> = memo(({ children, className, label }) => {
   return (
     <div className={clsx(classes.root, className)}>
       <p className={classes.label}>{label}</p>

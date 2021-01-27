@@ -13,11 +13,7 @@ interface Options<T> {
   validator: (value: Partial<T>) => Promise<void> | void;
 }
 
-type UseInputValueReturnType<T> = [
-  Partial<T>,
-  (value: Partial<T>) => void,
-  Instance<Partial<T>>
-];
+type UseInputValueReturnType<T> = [Partial<T>, (value: Partial<T>) => void, Instance<Partial<T>>];
 
 export const useInputValue = <T>(defaultValue: Partial<T>, options?: Options<T>): UseInputValueReturnType<T> => {
   const _value = useMemorized(defaultValue);
@@ -36,44 +32,46 @@ export const useInputValue = <T>(defaultValue: Partial<T>, options?: Options<T>)
     _setValue(defaultValue as T);
   }, [_setValue, defaultValue]);
 
-  const setValidator = useCallback((newValidator: Options<T>['validator']) => {
-    validator.current = newValidator;
+  const setValidator = useCallback(
+    (newValidator: Options<T>['validator']) => {
+      validator.current = newValidator;
 
-    const promise = newValidator(value);
+      const promise = newValidator(value);
 
-    promise
-      ? promise
-        .then(() => setError(''))
-        .catch((e) => setError(e.message))
-      : setError('');
-  }, [validator, value]);
+      promise ? promise.then(() => setError('')).catch((e) => setError(e.message)) : setError('');
+    },
+    [validator, value]
+  );
 
-  const setValue = useCallback((value: Partial<T>) => {
-    // if the type of value is codec, number, string, update directly
-    if (isCodec(value) || typeof value !== 'object') {
-      ref.current = value as T;
-      _setValue(value as T);
+  const setValue = useCallback(
+    (value: Partial<T>) => {
+      // if the type of value is codec, number, string, update directly
+      if (isCodec(value) || typeof value !== 'object') {
+        ref.current = value as T;
+        _setValue(value as T);
 
-      return;
-    }
+        return;
+      }
 
-    const _value = {
-      ...ref.current,
-      ...value
-    };
+      const _value = {
+        ...ref.current,
+        ...value,
+      };
 
-    // update ref
-    ref.current = _value;
-    // update value
-    _setValue(_value);
-  }, [_setValue]);
+      // update ref
+      ref.current = _value;
+      // update value
+      _setValue(_value);
+    },
+    [_setValue]
+  );
 
   const instance = useMemo(() => {
     return {
       error,
       ref,
       reset,
-      setValidator
+      setValidator,
     };
   }, [ref, reset, error, setValidator]);
 
@@ -82,11 +80,7 @@ export const useInputValue = <T>(defaultValue: Partial<T>, options?: Options<T>)
 
     const _validator = validator.current(value);
 
-    _validator
-      ? _validator
-        .then(() => setError(''))
-        .catch((e) => setError(e.message))
-      : setError('');
+    _validator ? _validator.then(() => setError('')).catch((e) => setError(e.message)) : setError('');
   }, [value, validator]);
 
   useEffect(() => {

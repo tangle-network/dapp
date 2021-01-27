@@ -64,14 +64,14 @@ export const CouncilProposalDetail: FC = () => {
     breadcrumb: [
       {
         content: 'Governance Overview',
-        path: '/governance'
+        path: '/governance',
       },
       {
         content: 'Council Proposals',
-        path: '/governance/proposals'
-      }
+        path: '/governance/proposals',
+      },
     ],
-    content: data ? upperFirst(data.proposal.methodName) : ''
+    content: data ? upperFirst(data.proposal.methodName) : '',
   });
 
   if (!data) return null;

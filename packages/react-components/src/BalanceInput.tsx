@@ -9,7 +9,7 @@ import {
   NumberInputProps,
   styled,
   getInputShadow,
-  getInputBorder
+  getInputBorder,
 } from '@webb-dapp/ui-components';
 
 import { TokenName } from './Token';
@@ -141,7 +141,7 @@ export const BalanceInput: FC<BalanceInputProps> = ({
   selectableTokens = [],
   showIcon = true,
   tokenPosition = 'right',
-  value
+  value,
 }) => {
   const [focused, setFocused] = useState<boolean>(false);
   const showMaxBtn = useMemo(() => !!onMax, [onMax]);

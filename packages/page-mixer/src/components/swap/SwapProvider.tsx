@@ -1,4 +1,5 @@
-import React, { memo,
+import React, {
+  memo,
   createContext,
   FC,
   PropsWithChildren,
@@ -7,7 +8,8 @@ import React, { memo,
   useMemo,
   Dispatch,
   SetStateAction,
-  useRef } from 'react';
+  useRef,
+} from 'react';
 import { u32 } from '@polkadot/types';
 import { Observable } from 'rxjs';
 import { ITuple } from '@polkadot/types/types';
@@ -50,19 +52,19 @@ interface ContextData {
 class ChangeFlag {
   private _value: boolean;
 
-  constructor (defaultValue: boolean) {
+  constructor(defaultValue: boolean) {
     this._value = defaultValue;
   }
 
-  static create (value: boolean): ChangeFlag {
+  static create(value: boolean): ChangeFlag {
     return new ChangeFlag(value);
   }
 
-  public update (value: boolean): void {
+  public update(value: boolean): void {
     this._value = value;
   }
 
-  get value (): boolean {
+  get value(): boolean {
     const _value = this._value;
 
     if (_value) {
@@ -96,7 +98,7 @@ export const SwapProvider: FC<PropsWithChildren<{}>> = memo(({ children }) => {
 
     return {
       denominator: new FixedPointNumber(exchangeFee[1].toString()),
-      numerator: new FixedPointNumber(exchangeFee[0].toString())
+      numerator: new FixedPointNumber(exchangeFee[0].toString()),
     };
   }, [api]);
 
@@ -132,11 +134,11 @@ export const SwapProvider: FC<PropsWithChildren<{}>> = memo(({ children }) => {
       tradeMode: SwapTradeMode
     ): Observable<TradeParameters> => {
       const input = currencyId2Token(inputCurrencyId).clone({
-        amount: new FixedPointNumber(inputAmount)
+        amount: new FixedPointNumber(inputAmount),
       });
 
       const output = currencyId2Token(outputCurrency).clone({
-        amount: new FixedPointNumber(outputAmount)
+        amount: new FixedPointNumber(outputAmount),
       });
 
       const swap = new SwapTrade({
@@ -146,15 +148,15 @@ export const SwapProvider: FC<PropsWithChildren<{}>> = memo(({ children }) => {
         input,
         maxTradePathLength,
         mode: tradeMode,
-        output
+        output,
       });
 
       const usedTokenPairs = swap.getTradeTokenPairsByPaths();
 
       return api
         .queryMulti<ITuple<[Balance, Balance]>[]>(
-        usedTokenPairs.map((item) => [api.query.dex.liquidityPool, item.toChainData()])
-      )
+          usedTokenPairs.map((item) => [api.query.dex.liquidityPool, item.toChainData()])
+        )
         .pipe(
           map((result) => {
             const pools = SwapTrade.convertLiquidityPoolsToTokenPairs(usedTokenPairs, result);
@@ -193,7 +195,7 @@ export const SwapProvider: FC<PropsWithChildren<{}>> = memo(({ children }) => {
         getTradeParameters,
         setAcceptSlippage,
         setTradeMode,
-        tradeMode
+        tradeMode,
       }}
     >
       {children}

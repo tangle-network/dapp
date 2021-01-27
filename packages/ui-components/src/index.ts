@@ -2,10 +2,7 @@ import { Skeleton } from 'antd';
 import styled from 'styled-components';
 
 // export common thirdpart packages
-export {
-  Skeleton,
-  styled
-};
+export { Skeleton, styled };
 
 export * from './Alert';
 export * from './AutoComplete';

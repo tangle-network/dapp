@@ -9,11 +9,10 @@ const Root = styled.div`
   display: grid;
   grid-template-columns: 1fr 58px 1fr;
   grid-template-rows: auto 58px auto;
-  grid-template-areas: 
+  grid-template-areas:
     'left-title . right-title'
     'left-content separation right-content'
-    'left-addition . right-addition'
-  ;
+    'left-addition . right-addition';
 `;
 
 const Title = styled.div`
@@ -32,11 +31,11 @@ const RightTitle = styled(Title)`
 `;
 
 const LeftContent = styled.div`
-  grid-area: left-content
+  grid-area: left-content;
 `;
 
 const RightContent = styled.div`
-  grid-area: right-content
+  grid-area: right-content;
 `;
 
 const Separation = styled.div`
@@ -76,7 +75,7 @@ export const InputField: FC<InputFieldProps> = ({
   rightAddition,
   rightRender,
   rightTitle,
-  separation
+  separation,
 }) => {
   const _separation = useMemo(() => {
     if (separation === 'right-arrow') {
@@ -92,35 +91,13 @@ export const InputField: FC<InputFieldProps> = ({
 
   return (
     <Root>
-      <LeftTitle>
-        {leftTitle()}
-      </LeftTitle>
-      <LeftContent>
-        {leftRender()}
-      </LeftContent>
-      <Separation>
-        {_separation}
-      </Separation>
-      <RightTitle>
-        {rightTitle()}
-      </RightTitle>
-      <RightContent>
-        {rightRender()}
-      </RightContent>
-      {
-        leftAddition ? (
-          <LeftAddition>
-            {leftAddition()}
-          </LeftAddition>
-        ) : null
-      }
-      {
-        rightAddition ? (
-          <RightAddition>
-            {rightAddition()}
-          </RightAddition>
-        ) : null
-      }
+      <LeftTitle>{leftTitle()}</LeftTitle>
+      <LeftContent>{leftRender()}</LeftContent>
+      <Separation>{_separation}</Separation>
+      <RightTitle>{rightTitle()}</RightTitle>
+      <RightContent>{rightRender()}</RightContent>
+      {leftAddition ? <LeftAddition>{leftAddition()}</LeftAddition> : null}
+      {rightAddition ? <RightAddition>{rightAddition()}</RightAddition> : null}
     </Root>
   );
 };

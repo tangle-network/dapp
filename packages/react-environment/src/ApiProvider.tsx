@@ -60,7 +60,7 @@ export const ApiProvider: FC<Props> = ({ children }) => {
           setConnected(true);
           setError(false);
           setLoading(false);
-        }
+        },
       });
   }, []);
 
@@ -94,12 +94,12 @@ export const ApiProvider: FC<Props> = ({ children }) => {
       value={{
         api,
         chainInfo: {
-          chainName
+          chainName,
         },
         connected,
         error,
         init,
-        loading
+        loading,
       }}
     >
       {children}

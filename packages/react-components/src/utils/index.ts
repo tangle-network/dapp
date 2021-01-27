@@ -39,7 +39,11 @@ export const tokenEq = (base?: CurrencyId | string, target?: CurrencyId | string
   return false;
 };
 
-export const eliminateGap = (target: FixedPointNumber, max: FixedPointNumber, gap: FixedPointNumber = new FixedPointNumber('0.000001')): FixedPointNumber => {
+export const eliminateGap = (
+  target: FixedPointNumber,
+  max: FixedPointNumber,
+  gap: FixedPointNumber = new FixedPointNumber('0.000001')
+): FixedPointNumber => {
   const _gap = target.minus(max);
 
   // target is larger than max, but not large enough

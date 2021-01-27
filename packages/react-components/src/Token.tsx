@@ -120,14 +120,14 @@ export const Token: FC<TokenProps> = ({
   imageClassName,
   name = true,
   nameClassName,
-  padding = false
+  padding = false,
 }) => {
   if (!currency) return null;
 
   return (
     <div
       className={clsx(classes.root, className, {
-        [classes.padding]: padding
+        [classes.padding]: padding,
       })}
     >
       <Condition

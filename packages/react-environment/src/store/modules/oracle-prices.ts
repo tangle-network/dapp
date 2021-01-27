@@ -28,7 +28,7 @@ type OraclePriceState = Record<OracleProvider, OraclePriceData>;
 const initState: OraclePriceState = {
   Acala: [],
   Aggregated: [],
-  Band: []
+  Band: [],
 };
 
 const reducer = (state: OraclePriceState, action: OraclePriceAction): OraclePriceState => {
@@ -36,7 +36,7 @@ const reducer = (state: OraclePriceState, action: OraclePriceAction): OraclePric
     case 'update': {
       return {
         ...state,
-        [action.value.provider]: action.value.data
+        [action.value.provider]: action.value.data,
       };
     }
   }
@@ -50,14 +50,17 @@ export const getOraclePrices = (api: ApiRx, type: OracleProvider = 'Aggregated')
       return result.map((item) => {
         return {
           currency: item[0].asToken.toString(),
-          price: FixedPointNumber.fromInner((item[1]?.value as any)?.value?.toString() || '0')
+          price: FixedPointNumber.fromInner((item[1]?.value as any)?.value?.toString() || '0'),
         };
       });
     })
   );
 };
 
-export const subscribeOraclePrices = (api: ApiRx, type: OracleProvider = 'Aggregated'): ReturnType<typeof getOraclePrices> => {
+export const subscribeOraclePrices = (
+  api: ApiRx,
+  type: OracleProvider = 'Aggregated'
+): ReturnType<typeof getOraclePrices> => {
   return api.query.system.events().pipe(
     startWith([{ event: { method: 'NewFeedData' } }]),
     mergeMap((events) => {
@@ -84,21 +87,21 @@ export const useOraclePricesStore = (): OraclePriceState => {
     const subscription1 = subscribeOraclePrices(api, 'Acala').subscribe((result) => {
       dispatch({
         type: 'update',
-        value: { data: result, provider: 'Acala' }
+        value: { data: result, provider: 'Acala' },
       });
     });
 
     const subscription2 = subscribeOraclePrices(api, 'Aggregated').subscribe((result) => {
       dispatch({
         type: 'update',
-        value: { data: result, provider: 'Aggregated' }
+        value: { data: result, provider: 'Aggregated' },
       });
     });
 
     const subscription3 = subscribeOraclePrices(api, 'Band').subscribe((result) => {
       dispatch({
         type: 'update',
-        value: { data: result, provider: 'Band' }
+        value: { data: result, provider: 'Band' },
       });
     });
 

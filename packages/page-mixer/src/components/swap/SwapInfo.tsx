@@ -49,7 +49,7 @@ const SwapRoute: FC<SwapRouteProps> = ({ parameters }) => {
             />,
             index < parameters.path.length - 1 ? (
               <ArrowRightOutlined className='swap-route__arrow' key={`${item.toString()}-arrow`} />
-            ) : null
+            ) : null,
           ];
         })}
       </div>

@@ -11,16 +11,7 @@ import { ReactComponent as ArrowPixelIcon } from './assets/arrow-pixel.svg';
 
 export * from '@ant-design/icons';
 
-export {
-  ArrowIcon,
-  CopyIcon,
-  CloseIcon,
-  CheckedCircleIcon,
-  EditIcon,
-  SwapIcon,
-  SwitchIcon,
-  ArrowPixelIcon
-};
+export { ArrowIcon, CopyIcon, CloseIcon, CheckedCircleIcon, EditIcon, SwapIcon, SwitchIcon, ArrowPixelIcon };
 
 export type IconType = 'copy' | 'swap' | 'edit' | 'close';
 

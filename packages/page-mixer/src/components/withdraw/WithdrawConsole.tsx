@@ -16,13 +16,13 @@ export const WithdrawConsole: FC = () => {
   const lpCurrencies = useLPCurrencies();
   const [selectedLP, setSelectedLP, { error, setValidator }] = useInputValue<BalanceInputValue>({
     amount: 0,
-    token: lpCurrencies[0]
+    token: lpCurrencies[0],
   });
   const balance = useBalance(selectedLP.token);
 
   useBalanceValidator({
     currency: selectedLP.token,
-    updateValidator: setValidator
+    updateValidator: setValidator,
   });
 
   const handleSelectLPCurrencyChange = useCallback(
@@ -35,14 +35,14 @@ export const WithdrawConsole: FC = () => {
   const clearAmount = useCallback(() => {
     setSelectedLP({
       amount: 0,
-      token: selectedLP.token
+      token: selectedLP.token,
     });
   }, [setSelectedLP, selectedLP]);
 
   const handleMax = useCallback(() => {
     setSelectedLP({
       amount: balance.toNumber(),
-      token: selectedLP.token
+      token: selectedLP.token,
     });
   }, [balance, setSelectedLP, selectedLP]);
 
@@ -56,7 +56,7 @@ export const WithdrawConsole: FC = () => {
     return [
       token1,
       token2,
-      eliminateGap(new FixedPointNumber(selectedLP.amount), balance, new FixedPointNumber('0.000001')).toChainData()
+      eliminateGap(new FixedPointNumber(selectedLP.amount), balance, new FixedPointNumber('0.000001')).toChainData(),
     ];
   }, [selectedLP, api, balance]);
 

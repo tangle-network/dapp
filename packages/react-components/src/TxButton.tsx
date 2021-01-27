@@ -146,7 +146,7 @@ export const TxButton: FC<PropsWithChildren<Props>> = ({
         duration: null,
         icon: <Loading spin />,
         key: notificationKey,
-        message: `${section}: ${method}`
+        message: `${section}: ${method}`,
       });
 
       return [signedTx, notificationKey];
@@ -160,7 +160,7 @@ export const TxButton: FC<PropsWithChildren<Props>> = ({
       const events = result.events.filter((event): boolean => !!event.event);
 
       for (const {
-        event: { data, method, section }
+        event: { data, method, section },
       } of events) {
         // extrinsic success
         if (section === 'system' && method === 'ExtrinsicSuccess') {
@@ -251,14 +251,14 @@ export const TxButton: FC<PropsWithChildren<Props>> = ({
             notification.error({
               duration: 4,
               key: notificationKey,
-              message: 'Extrinsic timed out, Please check manually'
+              message: 'Extrinsic timed out, Please check manually',
             });
           }
 
           notification.error({
             duration: 4,
             key: notificationKey,
-            message: error && error.message ? error.message : 'Error Occurred!'
+            message: error && error.message ? error.message : 'Error Occurred!',
           });
 
           if (onFailed) {
@@ -276,12 +276,12 @@ export const TxButton: FC<PropsWithChildren<Props>> = ({
             notification.success({
               duration: 4,
               key: notificationKey,
-              message: 'Submit Transaction Success'
+              message: 'Submit Transaction Success',
             });
 
             subscriber.unsubscribe();
           }
-        }
+        },
       });
   }, [
     preCheck,
@@ -296,7 +296,7 @@ export const TxButton: FC<PropsWithChildren<Props>> = ({
     onInblock,
     onFinalize,
     onFailed,
-    refresh
+    refresh,
   ]);
 
   return (

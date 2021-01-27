@@ -26,7 +26,7 @@ export const Button: FC<ButtonProps> = ({
   onClick,
   size = 'middle',
   style = 'primary',
-  type = 'normal'
+  type = 'normal',
 }) => {
   const _onClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void => {
     // handle disabled/loading status
@@ -39,19 +39,10 @@ export const Button: FC<ButtonProps> = ({
 
   return (
     <button
-      className={
-        clsx(
-          className,
-          'aca-btn',
-          `aca-btn--${size}`,
-          `aca-btn--${type}`,
-          `aca-btn-style--${style}`,
-          {
-            'aca-btn--loading': loading,
-            disabled: disabled
-          }
-        )
-      }
+      className={clsx(className, 'aca-btn', `aca-btn--${size}`, `aca-btn--${type}`, `aca-btn-style--${style}`, {
+        'aca-btn--loading': loading,
+        disabled: disabled,
+      })}
       onClick={_onClick}
     >
       {children}
@@ -63,22 +54,10 @@ interface IconButtonProps extends ButtonProps {
   icon: IconType;
 }
 
-export const IconButton: FC<IconButtonProps> = ({
-  className,
-  icon,
-  ...other
-}) => {
+export const IconButton: FC<IconButtonProps> = ({ className, icon, ...other }) => {
   return (
-    <Button
-      className={
-        clsx(
-          className,
-          'aca-icon-btn'
-        )
-      }
-      {...other}
-    >
-      { getIcon(icon) }
+    <Button className={clsx(className, 'aca-icon-btn')} {...other}>
+      {getIcon(icon)}
     </Button>
   );
 };

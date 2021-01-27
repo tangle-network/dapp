@@ -4,15 +4,9 @@ import { FormatNumber, FormatNumberProps } from './FormatNumber';
 const formatValueConfig: FormatNumberProps['formatNumberConfig'] = {
   decimalLength: 2,
   removeEmptyDecimalParts: true,
-  removeTailZero: false
+  removeTailZero: false,
 };
 
 export const FormatValue: FC<Omit<FormatNumberProps, 'formartNumberConfig'>> = (props) => {
-  return (
-    <FormatNumber
-      formatNumberConfig={formatValueConfig}
-      prefix={'≈US $'}
-      {...props}
-    />
-  );
+  return <FormatNumber formatNumberConfig={formatValueConfig} prefix={'≈US $'} {...props} />;
 };

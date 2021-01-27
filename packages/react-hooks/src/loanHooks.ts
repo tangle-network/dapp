@@ -47,17 +47,23 @@ export const useAllLoansType = (): Record<string, DerivedLoanType> | undefined =
   const [data, setData] = useState<Record<string, DerivedLoanType> | undefined>();
 
   useEffect(() => {
-    const subscriber = combineLatest(loanCurrencies.map((currency) => {
-      return (api.derive as any).loan.loanType(currency) as Observable<DerivedLoanType>;
-    })).pipe(throttleTime(1000)).subscribe((result) => {
-      setData(result.reduce((acc, cur, index) => {
-        const currency = loanCurrencies[index];
+    const subscriber = combineLatest(
+      loanCurrencies.map((currency) => {
+        return (api.derive as any).loan.loanType(currency) as Observable<DerivedLoanType>;
+      })
+    )
+      .pipe(throttleTime(1000))
+      .subscribe((result) => {
+        setData(
+          result.reduce((acc, cur, index) => {
+            const currency = loanCurrencies[index];
 
-        acc[getTokenName(currency)] = cur;
+            acc[getTokenName(currency)] = cur;
 
-        return acc;
-      }, {} as Record<string, DerivedLoanType>));
-    });
+            return acc;
+          }, {} as Record<string, DerivedLoanType>)
+        );
+      });
 
     return (): void => subscriber.unsubscribe();
   }, [api, loanCurrencies, setData]);
@@ -90,7 +96,7 @@ export const useLoanHelper = (currency: CurrencyId, account?: AccountLike): Loan
       liquidationRatio: type.liquidationRatio,
       requiredCollateralRatio: type.requiredCollateralRatio,
       stableCoinPrice: focusToFixed18(stableCurrencyPrice),
-      stableFee: type.stabilityFee
+      stableFee: type.stabilityFee,
     });
   }, [loan, loanCurrencyPrice, stableCurrencyPrice, type]);
 
@@ -161,21 +167,35 @@ export const useTotalDebit = (): TotalDebitOrCollateralData | null => {
     if (!api || !loanCurrencies || !prices) return;
 
     const subscriber = combineLatest(
-      loanCurrencies.map((currency: CurrencyLike): Observable<[Fixed18, Fixed18, CurrencyLike]> => api.queryMulti<[Position, Rate]>([
-        [api.query.loans.totalPositions, currency],
-        [api.query.cdpEngine.debitExchangeRate, currency]
-      ]).pipe(
-        throttleTime(1000),
-        map((result): [Fixed18, Fixed18, CurrencyLike] => [convertToFixed18(result[0].debit), convertToFixed18(result[1]), currency])))
+      loanCurrencies.map(
+        (currency: CurrencyLike): Observable<[Fixed18, Fixed18, CurrencyLike]> =>
+          api
+            .queryMulti<[Position, Rate]>([
+              [api.query.loans.totalPositions, currency],
+              [api.query.cdpEngine.debitExchangeRate, currency],
+            ])
+            .pipe(
+              throttleTime(1000),
+              map((result): [Fixed18, Fixed18, CurrencyLike] => [
+                convertToFixed18(result[0].debit),
+                convertToFixed18(result[1]),
+                currency,
+              ])
+            )
+      )
     ).subscribe((_result) => {
       /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
-      const balanceDetail = new Map(_result.map(([debit, rate, currency]): [CurrencyLike, Fixed18] => {
-        return [currency, debit];
-      }));
+      const balanceDetail = new Map(
+        _result.map(([debit, rate, currency]): [CurrencyLike, Fixed18] => {
+          return [currency, debit];
+        })
+      );
 
-      const amountDetail = new Map(_result.map(([debit, rate, currency]) => {
-        return [currency, rate ? debit.mul(rate) : Fixed18.ZERO];
-      }));
+      const amountDetail = new Map(
+        _result.map(([debit, rate, currency]) => {
+          return [currency, rate ? debit.mul(rate) : Fixed18.ZERO];
+        })
+      );
 
       const amount = _result.reduce((acc, cur) => {
         const [_debit, _rate] = cur;
@@ -202,33 +222,39 @@ export const useTotalCollateral = (): TotalDebitOrCollateralData | null => {
     if (!api || !loanCurrencies || !prices) return;
 
     const subscriber = combineLatest(
-      loanCurrencies.map((currency: CurrencyLike): Observable<[CurrencyLike, Fixed18]> => {
-        return api.query.loans.totalPositions<Position>(currency).pipe(
-          map((result): [CurrencyLike, Fixed18] => [currency, convertToFixed18(result.collateral)])
+      loanCurrencies.map(
+        (currency: CurrencyLike): Observable<[CurrencyLike, Fixed18]> => {
+          return api.query.loans
+            .totalPositions<Position>(currency)
+            .pipe(map((result): [CurrencyLike, Fixed18] => [currency, convertToFixed18(result.collateral)]));
+        }
+      )
+    )
+      .pipe(throttleTime(1000))
+      .subscribe((_result) => {
+        const balanceDetail = new Map(_result);
+
+        const amountDetail = new Map(
+          _result.map(([currency, collateral]) => {
+            const price = prices.find((item): boolean => tokenEq(item.currency, currency));
+
+            return [currency, price ? collateral.mul(focusToFixed18(price.price)) : Fixed18.ZERO];
+          })
         );
-      })
-    ).pipe(throttleTime(1000)).subscribe((_result) => {
-      const balanceDetail = new Map(_result);
 
-      const amountDetail = new Map(_result.map(([currency, collateral]) => {
-        const price = prices.find((item): boolean => tokenEq(item.currency, currency));
+        const amount = _result.reduce((acc, cur) => {
+          const [currency, collateral] = cur;
+          const price = prices.find((item): boolean => tokenEq(item.currency, currency));
 
-        return [currency, price ? collateral.mul(focusToFixed18(price.price)) : Fixed18.ZERO];
-      }));
+          return price ? acc.add(collateral.mul(focusToFixed18(price.price))) : acc;
+        }, Fixed18.ZERO);
 
-      const amount = _result.reduce((acc, cur) => {
-        const [currency, collateral] = cur;
-        const price = prices.find((item): boolean => tokenEq(item.currency, currency));
-
-        return price ? acc.add(collateral.mul(focusToFixed18(price.price))) : acc;
-      }, Fixed18.ZERO);
-
-      setResult({
-        amount,
-        amountDetail,
-        balanceDetail
+        setResult({
+          amount,
+          amountDetail,
+          balanceDetail,
+        });
       });
-    });
 
     return (): void => subscriber.unsubscribe();
   }, [api, prices, loanCurrencies]);

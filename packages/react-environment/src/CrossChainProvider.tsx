@@ -37,7 +37,7 @@ export const CrossChainProvider: FC<BareProps> = ({ children }) => {
         setApi(api);
         setConnected(true);
         setError(false);
-      }
+      },
     });
 
     return (): void => {
@@ -89,7 +89,7 @@ export const CrossChainProvider: FC<BareProps> = ({ children }) => {
         error,
         getApi,
         getNativeBalance,
-        setSigner
+        setSigner,
       }}
     >
       {children}

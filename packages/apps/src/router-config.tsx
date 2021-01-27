@@ -22,15 +22,15 @@ export const config: RouterConfigData[] = [
           </CSuspense>
         ),
         path: 'mixer',
-        title: 'Mixer'
+        title: 'Mixer',
       },
 
       {
         path: '*',
-        redirectTo: 'mixer'
-      }
+        redirectTo: 'mixer',
+      },
     ],
     element: <Layout.Main sidebar={sideBarConfig} />,
-    path: '*'
-  }
+    path: '*',
+  },
 ];

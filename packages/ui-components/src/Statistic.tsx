@@ -11,8 +11,7 @@ interface Props extends BareProps {
 
 export const Statistic: FC<Props> = memo(({ className, title, value, ...rest }) => {
   return (
-    <div className={clsx(classes.root, className)}
-      {...rest}>
+    <div className={clsx(classes.root, className)} {...rest}>
       <div className={classes.head}>
         <div className={classes.title}>{title}</div>
       </div>

@@ -65,9 +65,7 @@ export const Notification: FC<PropsWithChildren<{}>> = memo(({ children }) => {
   }, [notifications]);
 
   return (
-    <NotificationContext.Provider
-      value={{ createNotification }}
-    >
+    <NotificationContext.Provider value={{ createNotification }}>
       <NotificationDisplay data={notifications} />
       {children}
     </NotificationContext.Provider>

@@ -25,7 +25,7 @@ export const Alert = styled(({ className, icon = true, message, type }) => {
   align-items: center;
   padding: 15px 40px;
   min-height: 58px;
-  background-image: linear-gradient(270deg, #DF008E 0%, #FF4E4E 98%);
+  background-image: linear-gradient(270deg, #df008e 0%, #ff4e4e 98%);
   border-radius: 12px;
   font-size: 20px;
   line-height: 24px;

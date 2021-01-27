@@ -86,13 +86,13 @@ type CrossChainType = 'RENBTC' | 'AUSD' | 'DOT';
 const crossChainConsoleList: Map<CrossChainType, ReactElement> = new Map([
   ['RENBTC', <RenBtc key='renbtc' />],
   ['AUSD', <AUSD key='ausd' />],
-  ['DOT', <DOT key='dot' />]
+  ['DOT', <DOT key='dot' />],
 ]);
 
 const crossChainEnable: Map<CrossChainType, boolean> = new Map([
   ['RENBTC', true],
   ['AUSD', false],
-  ['DOT', false]
+  ['DOT', false],
 ]);
 
 export const CrossChainConsole: FC = () => {

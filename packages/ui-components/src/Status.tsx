@@ -9,17 +9,12 @@ interface Props {
 export const Status: FC<Props> = ({ success }) => {
   return (
     <span
-      className={
-        clsx(
-          classes.root,
-          {
-            [classes.error]: !success,
-            [classes.success]: success
-          }
-        )
-      }
+      className={clsx(classes.root, {
+        [classes.error]: !success,
+        [classes.success]: success,
+      })}
     >
-      { success ? 'success' : 'failed' }
+      {success ? 'success' : 'failed'}
     </span>
   );
 };

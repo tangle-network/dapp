@@ -53,10 +53,7 @@ const LoadingRoot = styled.div<{ width: number }>`
 
 export const Loading: FC<Props> = ({ className, width }) => {
   return (
-    <LoadingRoot
-      className={className}
-      width={width ?? 4 }
-    >
+    <LoadingRoot className={className} width={width ?? 4}>
       <div />
       <div />
       <div />
@@ -68,7 +65,7 @@ export const Loading: FC<Props> = ({ className, width }) => {
 export const PageLoading: FC = styled(({ className }) => {
   return (
     <div className={className}>
-      <Loading/>
+      <Loading />
     </div>
   );
 })`
@@ -81,11 +78,8 @@ export const PageLoading: FC = styled(({ className }) => {
 
 export const CardLoading = styled(({ className, height }) => {
   return (
-    <div
-      className={className}
-      style={{ height }}
-    >
-      <Loading/>
+    <div className={className} style={{ height }}>
+      <Loading />
     </div>
   );
 })`
@@ -109,11 +103,5 @@ const PageContentSkeleton = styled(Skeleton)`
 `;
 
 export const PageContentLoading: FC = () => {
-  return (
-    <PageContentSkeleton
-      active
-      paragraph={{ rows: 1 }}
-      title={false}
-    />
-  );
+  return <PageContentSkeleton active paragraph={{ rows: 1 }} title={false} />;
 };

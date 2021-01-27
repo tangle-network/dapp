@@ -7,7 +7,7 @@ import {
   TokenImage,
   TokenName,
   TransferButton,
-  LPAmountWithShare
+  LPAmountWithShare,
 } from '@webb-dapp/react-components';
 import { BareProps } from '@webb-dapp/ui-components/types';
 import { useBalance, useLPCurrencies } from '@webb-dapp/react-hooks';

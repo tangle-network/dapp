@@ -75,7 +75,7 @@ export const TokenSelector: FC<Props> = ({
   onChange = noop,
   value,
   showIcon,
-  valueRender
+  valueRender,
 }) => {
   const [visible, setVisible] = useState<boolean>(false);
 

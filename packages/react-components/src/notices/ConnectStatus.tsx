@@ -12,7 +12,7 @@ export const ConnectStatus: FC = () => {
       closeIcon: <p />, // hack for hide close icon
       key: messageKey.current,
       message: 'Connect Error',
-      placement: 'topRight' as any
+      placement: 'topRight' as any,
     }),
     []
   );
@@ -28,7 +28,7 @@ export const ConnectStatus: FC = () => {
       notification.success({
         ...baseConfig,
         duration: 2,
-        message: 'Connect Success'
+        message: 'Connect Success',
       });
     }
   }, [connected, baseConfig]);

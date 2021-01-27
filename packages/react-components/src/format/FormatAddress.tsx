@@ -24,7 +24,7 @@ export const FormatAddress: FC<Props> = memo(
     withCopy = false,
     withFullAddress = false,
     withIcon = false,
-    withMiniAddress = false
+    withMiniAddress = false,
   }) => {
     const _address = useMemo<string>((): string => {
       if (withFullAddress) {

@@ -11,7 +11,7 @@ import {
   TxButton,
   numToFixed18Inner,
   UserAssetBalance,
-  getCurrencyIdFromName
+  getCurrencyIdFromName,
 } from '@webb-dapp/react-components';
 import { useAccounts, useApi } from '@webb-dapp/react-hooks';
 import { CrossChainProvider, CrossChainContextData, CrossChainContext } from '@webb-dapp/react-environment';
@@ -24,7 +24,7 @@ const FormItem = Form.Item;
 
 const formLayout = {
   labelCol: { span: 24 },
-  wrapperCol: { span: 24 }
+  wrapperCol: { span: 24 },
 };
 
 type TransferDirection = 'in' | 'out';
@@ -123,14 +123,14 @@ export const TransferIn: FC = () => {
         rules={[
           {
             message: 'Please Input Amount',
-            required: true
+            required: true,
           },
           {
             max: nativeBalance.toNumber(),
             message: 'Insufficient Balance',
             min: 0,
-            type: 'number'
-          }
+            type: 'number',
+          },
         ]}
       ></FormItem>
       <FormItem>

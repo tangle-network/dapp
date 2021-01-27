@@ -30,7 +30,7 @@ export const FormatNumber: FC<FormatNumberProps> = ({
   prefix = '',
   suffix = '',
   toolTipsProps,
-  withTooltips = false
+  withTooltips = false,
 }) => {
   const [i, d] = useMemo(() => {
     return formatNumber(data, formatNumberConfig).split('.');

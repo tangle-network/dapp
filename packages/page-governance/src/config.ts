@@ -14,8 +14,8 @@ export const CouncilsColor = new Map<CouncilType, CouncilColorConfig>([
       background: 'rgba(247, 181, 0, 0.1)',
       backgroundActive: '#f7b500',
       shadow: 'rgba(247, 181, 0, 0.4)',
-      text: '#f7b500'
-    }
+      text: '#f7b500',
+    },
   ],
   [
     'honzon',
@@ -23,8 +23,8 @@ export const CouncilsColor = new Map<CouncilType, CouncilColorConfig>([
       background: 'rgba(250, 0, 0, 0.1)',
       backgroundActive: '#fa0000',
       shadow: 'rgba(250, 0, 0, 0.4)',
-      text: '#fa0000'
-    }
+      text: '#fa0000',
+    },
   ],
   [
     'homa',
@@ -32,8 +32,8 @@ export const CouncilsColor = new Map<CouncilType, CouncilColorConfig>([
       background: 'rgba(98, 54, 2550, 0.1)',
       backgroundActive: '#6236FF',
       shadow: 'rgba(98, 54, 255, 0.4)',
-      text: '#6236FF'
-    }
+      text: '#6236FF',
+    },
   ],
   [
     'tech',
@@ -41,7 +41,7 @@ export const CouncilsColor = new Map<CouncilType, CouncilColorConfig>([
       background: 'rgba(143, 206, 101, 0.1)',
       backgroundActive: '#8FCE65',
       shadow: 'rgba(143, 206, 101, 0.4)',
-      text: '#8FCE65'
-    }
-  ]
+      text: '#8FCE65',
+    },
+  ],
 ]);

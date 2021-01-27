@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 
-export function useInterval<T> (callback: () => Promise<T> | T, interval: number, immediately?: boolean): T | null {
+export function useInterval<T>(callback: () => Promise<T> | T, interval: number, immediately?: boolean): T | null {
   const [data, setData] = useState<T | null>(null);
 
   const _exec = useCallback((): void => {

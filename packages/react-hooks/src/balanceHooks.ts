@@ -13,7 +13,7 @@ import { useConstants } from './useConstants';
 import { AccountLike } from './types';
 import { usePrice, useAllPrices, PriceData } from './priceHooks';
 
-export type BalanceData = { currency: CurrencyId ; balance: FixedPointNumber };
+export type BalanceData = { currency: CurrencyId; balance: FixedPointNumber };
 
 /**
  * @name useBalance
@@ -53,17 +53,21 @@ export const useBalances = (currencies: CurrencyId[], account?: AccountLike): Ba
       return;
     }
 
-    const subscribe = combineLatest(currencies.map((currency: CurrencyId) => {
-      return (api.derive as any).currencies.balance(_account, currency) as Observable<Balance>;
-    })).subscribe({
+    const subscribe = combineLatest(
+      currencies.map((currency: CurrencyId) => {
+        return (api.derive as any).currencies.balance(_account, currency) as Observable<Balance>;
+      })
+    ).subscribe({
       next: (result) => {
         setBalances(
-          currencies.map((currency: CurrencyId, index): BalanceData => ({
-            balance: result ? FixedPointNumber.fromInner(result[index].toString()) : FixedPointNumber.ZERO,
-            currency
-          }))
+          currencies.map(
+            (currency: CurrencyId, index): BalanceData => ({
+              balance: result ? FixedPointNumber.fromInner(result[index].toString()) : FixedPointNumber.ZERO,
+              currency,
+            })
+          )
         );
-      }
+      },
     });
 
     return (): void => subscribe.unsubscribe();

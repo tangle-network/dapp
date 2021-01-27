@@ -28,7 +28,7 @@ export const LPSize: FC<Props> = ({ lp }) => {
       pair={Object.keys(lpSize).map((item) => {
         return {
           balance: lpSize[item],
-          currency: getCurrencyIdFromName(api, item)
+          currency: getCurrencyIdFromName(api, item),
         };
       })}
       pairSymbol='/'
@@ -56,7 +56,7 @@ export const LPSizeWithShare: FC<LPSizeWithShareProps> = ({ className, lp, share
       getCurrencyIdFromName(api, keys[0]),
       size[keys[0]].times(_share.div(issuance)),
       getCurrencyIdFromName(api, keys[1]),
-      size[keys[1]].times(_share.div(issuance))
+      size[keys[1]].times(_share.div(issuance)),
     ] as [CurrencyId, FixedPointNumber, CurrencyId, FixedPointNumber];
   }, [api, size, issuance, share]);
 

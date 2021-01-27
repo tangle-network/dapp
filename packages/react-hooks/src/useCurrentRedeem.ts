@@ -9,7 +9,7 @@ import { Codec } from '@polkadot/types/types';
 import { useAccounts } from './useAccounts';
 import { useApi } from './useApi';
 
-export function useCurrentRedeem (): { currentRedeem: FixedPointNumber; query: () => void } {
+export function useCurrentRedeem(): { currentRedeem: FixedPointNumber; query: () => void } {
   const { api } = useApi();
   const { active } = useAccounts();
   const [currentRedeem, setCurrentRedeem] = useState<FixedPointNumber>(FixedPointNumber.ZERO);
@@ -17,34 +17,38 @@ export function useCurrentRedeem (): { currentRedeem: FixedPointNumber; query: (
   const query = useCallback(() => {
     if (!api || !active) return;
 
-    ((api.rpc as any).stakingPool.getAvailableUnbonded(active.address) as Observable<Codec>).pipe(
-      map((result) => {
-        if (result.isEmpty) return null;
+    ((api.rpc as any).stakingPool.getAvailableUnbonded(active.address) as Observable<Codec>)
+      .pipe(
+        map((result) => {
+          if (result.isEmpty) return null;
 
-        return result as unknown as { amount: Balance };
-      }),
-      map((result) => {
-        return FixedPointNumber.fromInner(result?.amount.toString() || 0);
-      }),
-      take(1)
-    ).subscribe(setCurrentRedeem);
+          return (result as unknown) as { amount: Balance };
+        }),
+        map((result) => {
+          return FixedPointNumber.fromInner(result?.amount.toString() || 0);
+        }),
+        take(1)
+      )
+      .subscribe(setCurrentRedeem);
   }, [api, active]);
 
   useEffect(() => {
     if (!api || !active) return;
 
-    const subscriber = interval(1000 * 60).pipe(
-      startWith(0),
-      switchMap(() => (api.rpc as any).stakingPool.getAvailableUnbonded(active.address) as Observable<Codec>),
-      map((result) => {
-        if (result.isEmpty) return null;
+    const subscriber = interval(1000 * 60)
+      .pipe(
+        startWith(0),
+        switchMap(() => (api.rpc as any).stakingPool.getAvailableUnbonded(active.address) as Observable<Codec>),
+        map((result) => {
+          if (result.isEmpty) return null;
 
-        return result as unknown as { amount: Balance };
-      }),
-      map((result) => {
-        return FixedPointNumber.fromInner(result?.amount.toString() || 0);
-      })
-    ).subscribe(setCurrentRedeem);
+          return (result as unknown) as { amount: Balance };
+        }),
+        map((result) => {
+          return FixedPointNumber.fromInner(result?.amount.toString() || 0);
+        })
+      )
+      .subscribe(setCurrentRedeem);
 
     return (): void => subscriber.unsubscribe();
   }, [api, active]);
@@ -52,7 +56,7 @@ export function useCurrentRedeem (): { currentRedeem: FixedPointNumber; query: (
   const result = useMemo(() => {
     return {
       currentRedeem,
-      query
+      query,
     };
   }, [query, currentRedeem]);
 

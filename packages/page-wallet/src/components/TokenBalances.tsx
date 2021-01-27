@@ -11,7 +11,7 @@ import {
   TokenFullName,
   TransferButton,
   tokenEq,
-  StakingPoolExchangeRate
+  StakingPoolExchangeRate,
 } from '@webb-dapp/react-components';
 import { Condition } from '@webb-dapp/ui-components';
 import { BareProps } from '@webb-dapp/ui-components/types';

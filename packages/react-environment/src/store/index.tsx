@@ -19,7 +19,7 @@ export const StoreProvier: FC<BareProps> = ({ children }) => {
   const data = useMemo(
     () => ({
       apiQuery,
-      ui
+      ui,
     }),
     [apiQuery, ui]
   );
@@ -29,13 +29,13 @@ export const StoreProvier: FC<BareProps> = ({ children }) => {
   return <StoreContext.Provider value={data}>{children}</StoreContext.Provider>;
 };
 
-export function useStore<T extends StoreData, K extends keyof T> (namespace: K): T[K] {
+export function useStore<T extends StoreData, K extends keyof T>(namespace: K): T[K] {
   const context = useContext(StoreContext) as T;
 
   return context[namespace];
 }
 
-export function usePageTitle (config: { content: ReactNode; breadcrumb?: UIData['breadcrumb'] }): void {
+export function usePageTitle(config: { content: ReactNode; breadcrumb?: UIData['breadcrumb'] }): void {
   const _config = useMemorized(config);
   const ui = useStore('ui');
 
@@ -47,7 +47,7 @@ export function usePageTitle (config: { content: ReactNode; breadcrumb?: UIData[
   }, [_config]);
 }
 
-export function useSubMenu (config: SubMenu | null): void {
+export function useSubMenu(config: SubMenu | null): void {
   const _config = useMemorized(config);
   const ui = useStore('ui');
 

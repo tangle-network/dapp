@@ -61,7 +61,7 @@ export const SettingContext = createContext<SettingDate>({
   setLanguage: noop as any,
   setTheme: noop as any,
   settingVisible: false,
-  theme: 'normal'
+  theme: 'normal',
 });
 
 export const SettingProvider: FC<PropsWithChildren<any>> = ({ children }) => {
@@ -164,7 +164,7 @@ export const SettingProvider: FC<PropsWithChildren<any>> = ({ children }) => {
         setLanguage,
         setTheme,
         settingVisible,
-        theme
+        theme,
       }}
     >
       {children}

@@ -11,7 +11,7 @@ import {
   UserAssetBalance,
   UserAssetValue,
   tokenEq,
-  StakingPoolExchangeRate
+  StakingPoolExchangeRate,
 } from '@webb-dapp/react-components';
 
 import classes from './WalletBalance.module.scss';

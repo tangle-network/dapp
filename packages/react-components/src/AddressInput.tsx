@@ -48,7 +48,7 @@ export const AddressInput: FC<AddressInputProps> = ({
               </div>
             </div>
           ),
-          value: item.address
+          value: item.address,
         };
       });
   }, [addressBook, blockAddressList]);
@@ -100,9 +100,7 @@ export const AddressInput: FC<AddressInputProps> = ({
         prefix={
           showIdentIcon && !error ? (
             <Identicon className={classes.icon} size={32} theme='polkadot' value={value} />
-          ) : (
-            undefined
-          )
+          ) : undefined
         }
         suffix={<ArrowIcon />}
         {...other}

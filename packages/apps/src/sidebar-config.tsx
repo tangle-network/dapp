@@ -13,38 +13,38 @@ export const sideBarConfig: SidebarConfig = {
     {
       icon: <ExchangeIcon />,
       name: 'Mixer',
-      path: 'mixer'
+      path: 'mixer',
     },
     {
       icon: <GovernanceIcon />,
       name: 'Governance',
-      path: 'governance'
-    }
+      path: 'governance',
+    },
   ],
   socialPlatforms: [
     {
       href: 'https://discord.gg/CmqXvMP',
       icon: <FaucetIcon />,
       name: 'Faucet',
-      rel: 'faucet'
+      rel: 'faucet',
     },
     {
       href: 'https://github.com/AcalaNetwork/Acala/wiki',
       icon: <GuideIcon />,
       name: 'Wiki',
-      rel: 'wiki'
+      rel: 'wiki',
     },
     {
       href: 'mailto:hello@acala.network',
       icon: <EmailIcon />,
       name: 'Email',
-      rel: 'email'
+      rel: 'email',
     },
     {
       href: 'https://twitter.com/AcalaNetwork',
       icon: <TwitterIcon />,
       name: 'Twitter',
-      rel: 'twitter'
-    }
-  ]
+      rel: 'twitter',
+    },
+  ],
 };

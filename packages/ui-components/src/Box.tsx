@@ -33,8 +33,8 @@ interface PaddingBoxProps extends BareProps {
 }
 
 export const PaddingBox: FC<PaddingBoxProps> = styled.div`
-  display: ${({ inline }: PaddingBoxProps): string => inline ? 'inline-block' : 'block'};
-  padding: ${({ padding }: PaddingBoxProps): string => typeof padding === 'number' ? padding + 'px' : padding};
+  display: ${({ inline }: PaddingBoxProps): string => (inline ? 'inline-block' : 'block')};
+  padding: ${({ padding }: PaddingBoxProps): string => (typeof padding === 'number' ? padding + 'px' : padding)};
 `;
 
 interface GridBoxProps extends BareProps {
@@ -47,10 +47,10 @@ export const GridBox = styled.div<GridBoxProps>`
   display: grid;
   grid-gap: ${({ padding }): string => padding + 'px'};
   grid-template-columns: ${({ column }): string => `repeat(${column}, 1fr)`};
-  grid-template-rows: ${({ row }): string => row === 'auto' ? 'auto' : `repeat(${row}) 1fr`};
+  grid-template-rows: ${({ row }): string => (row === 'auto' ? 'auto' : `repeat(${row}) 1fr`)};
 `;
 
-export const SpaceBox = styled.div<{ height: number}>`
+export const SpaceBox = styled.div<{ height: number }>`
   width: 100%;
   height: ${({ height }): number => height}px;
 `;

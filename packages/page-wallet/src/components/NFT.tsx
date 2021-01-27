@@ -46,11 +46,11 @@ export const NFT: FC = () => {
           artist: metadata?.artist,
           classes: {
             metadata: classes.metadata.toUtf8(),
-            totalIssuance: classes.totalIssuance.toBn().toNumber()
+            totalIssuance: classes.totalIssuance.toBn().toNumber(),
           },
           externalUrl: metadata?.external_url,
           name: metadata?.name,
-          publisher: metadata?.publisher
+          publisher: metadata?.publisher,
         };
       });
   }, [data, loading]);

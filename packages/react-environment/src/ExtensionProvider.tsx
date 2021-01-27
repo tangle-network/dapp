@@ -27,7 +27,7 @@ export interface ExtensionData {
 
 export const ExtensionContext = createContext<ExtensionData>({} as any);
 
-async function getExtensions (api: ApiRx, appName: string): Promise<InjectedExtension> {
+async function getExtensions(api: ApiRx, appName: string): Promise<InjectedExtension> {
   const extensions = await web3Enable(appName);
 
   if (extensions.length === 0) throw new Error('no_extensions');
@@ -77,7 +77,7 @@ export const ExtensionProvider: FC<AccountProviderProps> = ({ appName, authRequi
       ss58Format: isNumber(api.registry.chainSS58) ? api.registry.chainSS58 : 42,
       tokenDecimals: isNumber(api.registry.chainDecimals) ? api.registry.chainDecimals : 12,
       tokenSymbol: api.registry.chainToken || 'Unit',
-      types: options({}).types as any
+      types: options({}).types as any,
     };
 
     setMetadataDef(metadataDef);
@@ -243,7 +243,7 @@ export const ExtensionProvider: FC<AccountProviderProps> = ({ appName, authRequi
       closeSelectAccount,
       isReady,
       openSelectAccount,
-      selectAccountStatus
+      selectAccountStatus,
     }),
     [
       accounts,
@@ -254,7 +254,7 @@ export const ExtensionProvider: FC<AccountProviderProps> = ({ appName, authRequi
       closeSelectAccount,
       addressBook,
       addToAddressBook,
-      selectAccountStatus
+      selectAccountStatus,
     ]
   );
 
@@ -267,9 +267,7 @@ export const ExtensionProvider: FC<AccountProviderProps> = ({ appName, authRequi
         onSelect={setActiveAccount}
         visable={selectAccountStatus}
       />
-      <UploadMetadata close={closeUploadMatedata}
-        uploadMetadata={uploadMetadata}
-        visiable={uploadMatedataStatus} />
+      <UploadMetadata close={closeUploadMatedata} uploadMetadata={uploadMetadata} visiable={uploadMatedataStatus} />
       {children}
       {renderError()}
     </ExtensionContext.Provider>

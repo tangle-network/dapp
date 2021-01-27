@@ -2,7 +2,7 @@ import * as d3 from 'd3';
 
 type AnySelection = d3.Selection<any, any, any, any>;
 
-type AttrParams = { [x: string]: any }
+type AttrParams = { [x: string]: any };
 
 export const mapAttr = (section: AnySelection, attr: AttrParams): AnySelection => {
   Object.keys(attr).forEach((key: string): void => {
@@ -35,14 +35,14 @@ export const drawBulletBar = ($container: HTMLElement, config: BulletBarConfigIt
   const canvas = mapAttr(_c.append('svg'), {
     fill: 'transparent',
     height: canvasHeight,
-    width: '100%'
+    width: '100%',
   });
 
   // draw background
   const background = mapAttr(canvas.append('rect'), {
     fill: 'transparent',
     height: '100%',
-    width: '100%'
+    width: '100%',
   });
 
   // measure canvas size
@@ -50,13 +50,24 @@ export const drawBulletBar = ($container: HTMLElement, config: BulletBarConfigIt
 
   // initiazlie d3 scale
   const MAX_NUM = 10 ** 9;
-  const _maxInputNum = Math.min(Math.max.apply(undefined, config.map((item: BulletBarConfigItem): number => item.data)) || 0, MAX_NUM);
+  const _maxInputNum = Math.min(
+    Math.max.apply(
+      undefined,
+      config.map((item: BulletBarConfigItem): number => item.data)
+    ) || 0,
+    MAX_NUM
+  );
 
-  const scale = d3.scaleLinear().domain([0, _maxInputNum * 1.5]).range([0, canvasBox.width]);
+  const scale = d3
+    .scaleLinear()
+    .domain([0, _maxInputNum * 1.5])
+    .range([0, canvasBox.width]);
   const minBarWidth = 6;
 
   // draw bar
-  const _sortedConfig = config.slice().sort((a: BulletBarConfigItem, b: BulletBarConfigItem): number => b.data - a.data);
+  const _sortedConfig = config
+    .slice()
+    .sort((a: BulletBarConfigItem, b: BulletBarConfigItem): number => b.data - a.data);
   const barMaxWidth = canvasBox.width;
   const barHeight = 6;
   const barX = 0;
@@ -81,7 +92,7 @@ export const drawBulletBar = ($container: HTMLElement, config: BulletBarConfigIt
     ry: barHeight / 2,
     width: barMaxWidth,
     x: barX,
-    y: barY
+    y: barY,
   });
 
   _sortedConfig.forEach((item: BulletBarConfigItem): void => {
@@ -92,29 +103,31 @@ export const drawBulletBar = ($container: HTMLElement, config: BulletBarConfigIt
       ry: barHeight / 2,
       width: getBarWidth(item.data),
       x: barX,
-      y: barY
+      y: barY,
     });
     mapAttr(canvas.append('rect'), {
       fill: item.color,
       height: barHeight,
       width: barHeight,
       x: Math.max(getBarWidth(item.data) - barHeight + barX, 0),
-      y: barY
+      y: barY,
     });
   });
 
   // draw text
-  _sortedConfig.map((item: BulletBarConfigItem, index: number): AnySelection => {
-    return mapAttr(canvas.append('text'), {
-      fill: item.color,
-      'font-size': 20,
-      'font-weight': 'bold',
-      id: `text-${index}`,
-      'text-anchor': 'middle',
-      x: getBarWidth(item.data) + barX,
-      y: 20
-    }).text(item.dataTransfer ? item.dataTransfer(item.data) : item.data);
-  });
+  _sortedConfig.map(
+    (item: BulletBarConfigItem, index: number): AnySelection => {
+      return mapAttr(canvas.append('text'), {
+        fill: item.color,
+        'font-size': 20,
+        'font-weight': 'bold',
+        id: `text-${index}`,
+        'text-anchor': 'middle',
+        x: getBarWidth(item.data) + barX,
+        y: 20,
+      }).text(item.dataTransfer ? item.dataTransfer(item.data) : item.data);
+    }
+  );
 
   // adjust text position
   _sortedConfig.forEach((item: BulletBarConfigItem, index: number): void => {
@@ -145,7 +158,7 @@ export const drawBulletBar = ($container: HTMLElement, config: BulletBarConfigIt
     const nextBox = nextNode.getBBox();
 
     // adjust overlap
-    if (currentBox.x < (nextBox.x + nextBox.width)) {
+    if (currentBox.x < nextBox.x + nextBox.width) {
       next.attr('x', currentBox.x - nextBox.width / 2 - 10);
     }
   });
@@ -164,15 +177,21 @@ export const drawBulletBar = ($container: HTMLElement, config: BulletBarConfigIt
 
     if (index === 0 || textBox.x + textBox.width - barX2 > 0) {
       points = [
-        pointAtBarEndX, barY - barHeight, // point 3
-        pointAtBarEndX, barY // point 4
+        pointAtBarEndX,
+        barY - barHeight, // point 3
+        pointAtBarEndX,
+        barY, // point 4
       ];
     } else {
       points = [
-        textBox.x, textBox.y + textBox.height, // point 1
-        textBox.x + textBox.width, textBox.y + textBox.height, // point 2
-        pointAtBarEndX, barY - barHeight, // point 3
-        pointAtBarEndX, barY // point 4
+        textBox.x,
+        textBox.y + textBox.height, // point 1
+        textBox.x + textBox.width,
+        textBox.y + textBox.height, // point 2
+        pointAtBarEndX,
+        barY - barHeight, // point 3
+        pointAtBarEndX,
+        barY, // point 4
       ];
     }
 
@@ -180,7 +199,7 @@ export const drawBulletBar = ($container: HTMLElement, config: BulletBarConfigIt
       fill: 'none',
       points: points,
       'stoke-width': 1,
-      stroke: item.color
+      stroke: item.color,
     });
   });
 };

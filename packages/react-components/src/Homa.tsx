@@ -18,7 +18,7 @@ export const StakingPoolExchangeRate: FC<StakingPoolExchangeRateProps> = ({
   liquidAmount,
   showLiquidAmount = true,
   showStakingAmount = true,
-  stakingAmount
+  stakingAmount,
 }) => {
   const stakingPool = useStakingPool();
   const { liquidCurrency, stakingCurrency } = useConstants();
@@ -31,17 +31,17 @@ export const StakingPoolExchangeRate: FC<StakingPoolExchangeRateProps> = ({
     if (stakingAmount) {
       result = [
         { balance: stakingAmount, currency: stakingCurrency },
-        { balance: stakingAmount.div(stakingPool.stakingPool.liquidExchangeRate()), currency: stakingCurrency }
+        { balance: stakingAmount.div(stakingPool.stakingPool.liquidExchangeRate()), currency: stakingCurrency },
       ];
     } else if (liquidAmount) {
       result = [
         { balance: liquidAmount, currency: liquidCurrency },
-        { balance: liquidAmount.times(stakingPool.stakingPool.liquidExchangeRate()), currency: stakingCurrency }
+        { balance: liquidAmount.times(stakingPool.stakingPool.liquidExchangeRate()), currency: stakingCurrency },
       ];
     } else {
       result = [
         { balance: FixedPointNumber.ONE, currency: stakingCurrency },
-        { balance: stakingPool.stakingPool.liquidExchangeRate(), currency: liquidCurrency }
+        { balance: stakingPool.stakingPool.liquidExchangeRate(), currency: liquidCurrency },
       ];
     }
 

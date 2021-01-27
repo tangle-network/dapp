@@ -9,15 +9,10 @@ interface ConditionProps extends BareProps {
   or?: RenderParam;
 }
 
-const render = (m: RenderParam): ReactNode => typeof m === 'function' ? m() : m;
+const render = (m: RenderParam): ReactNode => (typeof m === 'function' ? m() : m);
 
-export const Condition: FC<ConditionProps> = ({
-  condition,
-  match,
-  or = (): ReactNode => null,
-  children
-}) => {
+export const Condition: FC<ConditionProps> = ({ condition, match, or = (): ReactNode => null, children }) => {
   const result = typeof condition === 'function' ? condition() : condition;
 
-  return <>{(result ? render(match || children) : render(or))}</>;
+  return <>{result ? render(match || children) : render(or)}</>;
 };

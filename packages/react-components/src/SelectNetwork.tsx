@@ -14,7 +14,7 @@ export interface SelectNetworkProps {
 const TypeNameMap: Record<EndpointType, string> = {
   development: 'Development',
   production: 'Production',
-  testnet: 'Test Networks'
+  testnet: 'Test Networks',
 };
 
 export const SelectNetwork: FC<SelectNetworkProps> = ({ onClose, visiable }) => {

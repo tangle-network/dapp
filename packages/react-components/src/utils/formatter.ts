@@ -19,7 +19,10 @@ export interface FormatNumberConfig {
   removeEmptyDecimalParts: boolean;
 }
 
-export const formatNumber = (num: string | number | Fixed18 | FixedPointNumber | undefined, config: FormatNumberConfig = { decimalLength: 6, removeEmptyDecimalParts: true, removeTailZero: true }): string => {
+export const formatNumber = (
+  num: string | number | Fixed18 | FixedPointNumber | undefined,
+  config: FormatNumberConfig = { decimalLength: 6, removeEmptyDecimalParts: true, removeTailZero: true }
+): string => {
   let _num = '0';
 
   if (num instanceof Fixed18) {
@@ -27,7 +30,7 @@ export const formatNumber = (num: string | number | Fixed18 | FixedPointNumber |
   } else if (num instanceof FixedPointNumber) {
     _num = num.toString(18, 2);
   } else {
-    _num = (new FixedPointNumber(num || 0)).toString(18, 2);
+    _num = new FixedPointNumber(num || 0).toString(18, 2);
   }
 
   let [i, d] = _num.split('.');
@@ -87,9 +90,7 @@ export const formatAddress = (address: string, isMini?: boolean): string => {
     return get(systemAccounts, [address, 'name']);
   }
 
-  return !isMini
-    ? address.replace(/(\w{6})\w*?(\w{6}$)/, '$1......$2')
-    : address.replace(/(\w{6})\w*$/, '$1...');
+  return !isMini ? address.replace(/(\w{6})\w*?(\w{6}$)/, '$1......$2') : address.replace(/(\w{6})\w*$/, '$1...');
 };
 
 export const formatBalance = (balance: FixedPointNumber | Fixed18 | Codec | number | string | undefined): number => {

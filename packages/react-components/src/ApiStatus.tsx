@@ -14,7 +14,7 @@ export const ApiStatus: FC<BareProps> = memo(({ className }) => {
       className={clsx(className, classes.root, {
         [classes.connected]: connected,
         [classes.error]: error,
-        [classes.loading]: loading
+        [classes.loading]: loading,
       })}
     >
       <p>{loading ? 'Connecting' : 'Connected'}</p>

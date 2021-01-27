@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 
 type HooksReturnType<T> = [T, (data: T, callback?: (value?: T) => void) => void];
 
-export function useStateWithCallback<T> (init: T): HooksReturnType<T> {
+export function useStateWithCallback<T>(init: T): HooksReturnType<T> {
   const [value, _setValue] = useState<T>(init);
   const _history = useRef<T>(init);
   const _callback = useRef<(value?: T) => void>();

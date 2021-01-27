@@ -17,12 +17,12 @@ export const FAUCET_ADDRESS = '5DZbNKzPgAnpb5LYfafPx4P3JMeyn1kxyeSJNuoCKddxEbXc'
 
 export const systemAccounts = {
   '5EYCAe5fiQJso5shMc1vDwj12vXpXhuYHDwVES1rKRJwcWVj': {
-    name: 'Loan'
+    name: 'Loan',
   },
   '5EYCAe5fiQJsnqbdsqzNnWhEAGZkyK8uqahrmhwVvcuNRhpd': {
-    name: 'Dex'
+    name: 'Dex',
   },
   '5EYCAe5fiQJsoJLndSYvwUd5RXSJPBQtdnEdoG33uUw8ejtu': {
-    name: 'Staking Pool'
-  }
+    name: 'Staking Pool',
+  },
 };

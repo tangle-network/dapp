@@ -35,7 +35,7 @@ const CTokenName = styled(TokenName)`
 const formatBalanceConfig: FormatNumberProps['formatNumberConfig'] = {
   decimalLength: 6,
   removeEmptyDecimalParts: true,
-  removeTailZero: true
+  removeTailZero: true,
 };
 
 export const FormatBalance: FC<FormatBalanceProps> = ({
@@ -46,7 +46,7 @@ export const FormatBalance: FC<FormatBalanceProps> = ({
   decimalLength = 6,
   negativeToZero = true,
   pair,
-  pairSymbol
+  pairSymbol,
 }) => {
   const pairLength = useMemo(() => (pair ? pair.length : 0), [pair]);
 
@@ -67,7 +67,7 @@ export const FormatBalance: FC<FormatBalanceProps> = ({
         </span>,
         pairSymbol && index !== pairLength - 1 ? (
           <span key={'format-balance-symbol-' + index}> {pairSymbol} </span>
-        ) : null
+        ) : null,
       ];
     },
     [decimalLength, pairSymbol, pairLength, negativeToZero]

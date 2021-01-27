@@ -16,10 +16,12 @@ const NotificationPortal: FC<PropsWithChildren<{}>> = ({ children }) => {
 
   $div.classList.add('notification--root');
 
-  useEffect((): () => void => {
+  useEffect((): (() => void) => {
     $body.append($div);
 
-    return (): void => { $body.removeChild($div); };
+    return (): void => {
+      $body.removeChild($div);
+    };
   }, [$body, $div]);
 
   return createPortal(children, $div);
@@ -49,15 +51,9 @@ const NotificationCard: FC<NotificationConfig> = (config) => {
   return (
     <>
       <div
-        className={
-          clsx(
-            classes.root,
-            classes[config.type || 'info'],
-            {
-              [classes.noContent]: !config.content
-            }
-          )
-        }
+        className={clsx(classes.root, classes[config.type || 'info'], {
+          [classes.noContent]: !config.content,
+        })}
       >
         <div className={classes.icon}>{renderIcon()}</div>
         <div className={classes.content}>
@@ -72,14 +68,9 @@ const NotificationCard: FC<NotificationConfig> = (config) => {
 export const NotificationDisplay: FC<{ data: NotificationConfig[] }> = ({ data }) => {
   return (
     <NotificationPortal>
-      {
-        data.map((item) => (
-          <NotificationCard
-            key={`notification-${item.id}`}
-            {...item}
-          />
-        ))
-      }
+      {data.map((item) => (
+        <NotificationCard key={`notification-${item.id}`} {...item} />
+      ))}
     </NotificationPortal>
   );
 };

@@ -34,22 +34,22 @@ export const LPExchangeRate: FC<Props> = ({ lp }) => {
             ? [
                 {
                   balance: 1,
-                  currency: supply
+                  currency: supply,
                 },
                 {
                   balance: supply2Target,
-                  currency: target
-                }
+                  currency: target,
+                },
               ]
             : [
                 {
                   balance: 1,
-                  currency: target
+                  currency: target,
                 },
                 {
                   balance: target2Supply,
-                  currency: supply
-                }
+                  currency: supply,
+                },
               ]
         }
         pairSymbol='≈'

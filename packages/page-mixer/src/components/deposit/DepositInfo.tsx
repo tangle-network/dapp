@@ -4,7 +4,7 @@ import {
   FormatBalance,
   getDexShareFromCurrencyId,
   LPExchangeRate,
-  LPSize
+  LPSize,
 } from '@webb-dapp/react-components';
 import styled from 'styled-components';
 import { FixedPointNumber } from '@webb-tools/sdk-core';
@@ -30,12 +30,12 @@ export const DepositInfo: FC<DepositInfoProps> = ({ token1, token2 }) => {
     return [
       {
         balance: new FixedPointNumber(token1.amount || 0),
-        currency: token1.token
+        currency: token1.token,
       },
       {
         balance: new FixedPointNumber(token2.amount || 0),
-        currency: token2.token
-      }
+        currency: token2.token,
+      },
     ];
   }, [token1, token2]);
   const lpCurrencyId = useMemo(() => {

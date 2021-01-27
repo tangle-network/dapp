@@ -1,16 +1,32 @@
-import React, { FC, ReactNode, useState, useMemo, Children, ReactElement, useRef, Dispatch, SetStateAction, createRef, isValidElement, useLayoutEffect } from 'react';
+import React, {
+  FC,
+  ReactNode,
+  useState,
+  useMemo,
+  Children,
+  ReactElement,
+  useRef,
+  Dispatch,
+  SetStateAction,
+  createRef,
+  isValidElement,
+  useLayoutEffect,
+} from 'react';
 
 import { BareProps } from './types';
 import styled from 'styled-components';
 import { Motion, spring } from 'react-motion';
 
-function useTabs<T = string | number> (defaultTab: T): { currentTab: T; changeTabs: Dispatch<SetStateAction<T>>} {
+function useTabs<T = string | number>(defaultTab: T): { currentTab: T; changeTabs: Dispatch<SetStateAction<T>> } {
   const [currentTab, changeTabs] = useState<T>(defaultTab);
 
-  return useMemo(() => ({
-    changeTabs,
-    currentTab
-  }), [currentTab, changeTabs]);
+  return useMemo(
+    () => ({
+      changeTabs,
+      currentTab,
+    }),
+    [currentTab, changeTabs]
+  );
 }
 
 interface PanelProps extends BareProps {
@@ -30,7 +46,7 @@ export const TabHeaderContainer = styled.ul<{ divider: boolean }>`
   display: flex;
   width: 100%;
   list-style: none;
-  border-bottom: ${({ divider }): string => divider ? '1px solid var(--tab-border)' : 'none'};
+  border-bottom: ${({ divider }): string => (divider ? '1px solid var(--tab-border)' : 'none')};
 `;
 
 export const TabHeader = styled.li<{
@@ -45,7 +61,7 @@ export const TabHeader = styled.li<{
   font-size: var(--text-size-md);
   font-weight: var(--text-weight-md);
   line-height: 1.3125;
-  color: ${({ active }): string => active ? 'var(--color-primary)' : 'var(--text-color-normal)'};
+  color: ${({ active }): string => (active ? 'var(--color-primary)' : 'var(--text-color-normal)')};
   user-select: none;
 
   &::after {
@@ -58,7 +74,7 @@ export const TabHeader = styled.li<{
     transition: opacity 0.2s;
     background: var(--color-primary);
     opacity: 0;
-    cursor: ${({ disabled }): string => disabled ? 'not-allowed' : 'pointer'};
+    cursor: ${({ disabled }): string => (disabled ? 'not-allowed' : 'pointer')};
   }
 
   &:hover::after {
@@ -76,8 +92,8 @@ export const CardTabHeader = styled.div<{
   line-height: 1.1875;
   padding: 20px 0;
   font-weight: 500;
-  background: ${({ active }): string => active ? '#ffffff' : '#ECF0F2'};
-  cursor: ${({ disabled }): string => disabled ? 'not-allowed' : 'pointer'};
+  background: ${({ active }): string => (active ? '#ffffff' : '#ECF0F2')};
+  cursor: ${({ disabled }): string => (disabled ? 'not-allowed' : 'pointer')};
 `;
 
 const Slider = styled.div`
@@ -117,12 +133,7 @@ const ActiveSlider: FC<{ index: number }> = ({ index }) => {
 
   // doesn't show animation when first render
   if (prevWidth === 0 && prevLeft === 0) {
-    return (
-      <Slider
-        ref={ref}
-        style={{ left: currentLeft + 'px', width: currentWidth + 'px' }}
-      />
-    );
+    return <Slider ref={ref} style={{ left: currentLeft + 'px', width: currentWidth + 'px' }} />;
   }
 
   return (
@@ -130,16 +141,9 @@ const ActiveSlider: FC<{ index: number }> = ({ index }) => {
       defaultStyle={{ left: prevLeft, width: prevWidth }}
       style={{ left: spring(currentLeft), width: spring(currentWidth) }}
     >
-      {
-        (style): JSX.Element => {
-          return (
-            <Slider
-              ref={ref}
-              style={{ left: style.left + 'px', width: style.width + 'px' }}
-            />
-          );
-        }
-      }
+      {(style): JSX.Element => {
+        return <Slider ref={ref} style={{ left: style.left + 'px', width: style.width + 'px' }} />;
+      }}
     </Motion>
   );
 };
@@ -157,13 +161,7 @@ interface TabsProps<T> extends BareProps {
   slider?: boolean;
 }
 
-function Tabs<T> ({
-  active,
-  children,
-  divider = true,
-  onChange,
-  slider = true
-}: TabsProps<T>): JSX.Element {
+function Tabs<T>({ active, children, divider = true, onChange, slider = true }: TabsProps<T>): JSX.Element {
   const [headerList, panelList, keyList, disabledList] = useMemo(() => {
     if (!children) return [[], [], [], []];
 
@@ -176,12 +174,12 @@ function Tabs<T> ({
       if (child && typeof child === 'object' && Reflect.has(child, 'key')) {
         headerList.push((child as ReactElement<PanelProps>).props.header);
         panelList.push((child as ReactElement<PanelProps>).props.children);
-        keyList.push((child as ReactElement<PanelProps>).props.$key as unknown as T);
+        keyList.push(((child as ReactElement<PanelProps>).props.$key as unknown) as T);
         disabledList.push(!!(child as ReactElement<PanelProps>).props.disabled);
       }
     });
 
-    return [headerList, panelList, keyList, disabledList] as unknown as [ReactNode[], ReactNode[], T[], boolean[]];
+    return ([headerList, panelList, keyList, disabledList] as unknown) as [ReactNode[], ReactNode[], T[], boolean[]];
   }, [children]);
 
   const activeTabIndex = useMemo(() => {
@@ -192,32 +190,30 @@ function Tabs<T> ({
 
   return (
     <TabContainer>
-      <TabHeaderContainer
-        className='tab__header__root'
-        divider={divider}
-      >
-        {
-          headerList?.map((header, index) => (
-            isValidElement(header) ? header
-              : typeof header === 'function' ? header(
-                activeTabIndex === index,
-                disabledList[activeTabIndex],
-                (): unknown => !disabledList[index] && onChange && onChange(keyList ? keyList[index] : firstKey)
-              ) : <TabHeader
-                active={activeTabIndex === index}
-                disabled={disabledList[index]}
-                key={`tab-${header}-${index}`}
-                onClick={(): unknown => !disabledList[index] && onChange && onChange(keyList ? keyList[index] : firstKey) }
-              >
-                {header}
-              </TabHeader>
-          ))
-        }
+      <TabHeaderContainer className='tab__header__root' divider={divider}>
+        {headerList?.map((header, index) =>
+          isValidElement(header) ? (
+            header
+          ) : typeof header === 'function' ? (
+            header(
+              activeTabIndex === index,
+              disabledList[activeTabIndex],
+              (): unknown => !disabledList[index] && onChange && onChange(keyList ? keyList[index] : firstKey)
+            )
+          ) : (
+            <TabHeader
+              active={activeTabIndex === index}
+              disabled={disabledList[index]}
+              key={`tab-${header}-${index}`}
+              onClick={(): unknown => !disabledList[index] && onChange && onChange(keyList ? keyList[index] : firstKey)}
+            >
+              {header}
+            </TabHeader>
+          )
+        )}
         {slider ? <ActiveSlider index={activeTabIndex} /> : null}
       </TabHeaderContainer>
-      <TabContent>
-        {panelList[activeTabIndex]}
-      </TabContent>
+      <TabContent>{panelList[activeTabIndex]}</TabContent>
     </TabContainer>
   );
 }

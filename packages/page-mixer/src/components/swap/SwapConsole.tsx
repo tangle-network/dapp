@@ -10,7 +10,7 @@ import {
   useBalanceValidator,
   useInputValue,
   useConstants,
-  useModal
+  useModal,
 } from '@webb-dapp/react-hooks';
 import { token2CurrencyId, currencyId2Token, FixedPointNumber } from '@webb-tools/sdk-core';
 import { TradeParameters } from '@webb-tools/sdk-swap/trade-parameters';
@@ -90,26 +90,26 @@ export const Inner: FC = () => {
   const [input, updateInput, { error: inputError, setValidator: setInputValidator }] = useInputValue<BalanceInputValue>(
     {
       amount: 0,
-      token: nativeCurrency
+      token: nativeCurrency,
     }
   );
 
   useBalanceValidator({
     currency: input.token,
-    updateValidator: setInputValidator
+    updateValidator: setInputValidator,
   });
 
   const maxInputBalance = useBalance(input.token);
 
   const handleInputMax = useCallback(() => {
     updateInput({
-      amount: maxInputBalance.toNumber()
+      amount: maxInputBalance.toNumber(),
     });
   }, [updateInput, maxInputBalance]);
 
   const [output, updateOutput, { error: outputError }] = useInputValue<BalanceInputValue>({
     amount: 0,
-    token: stableCurrency
+    token: stableCurrency,
   });
 
   const selectableInputCurrencies = useMemo(() => {
@@ -222,7 +222,7 @@ export const Inner: FC = () => {
         } else {
           updateInput({ amount: result.input.amount.toNumber() });
         }
-      }
+      },
     });
   }, [acceptSlippage, input, output, tradeMode, updateOutput, updateInput, getTradeParameters]);
 

@@ -27,21 +27,19 @@ export const BulletBar: FC<BulletBarProps> = ({ config }) => {
     <div className={classes.root}>
       <div ref={ref} />
       <ul className={classes.labelArea}>
-        {
-          sortedConfig.map((item: BulletBarConfigItem): JSX.Element => {
+        {sortedConfig.map(
+          (item: BulletBarConfigItem): JSX.Element => {
             return (
-              <li className={classes.label}
-                data-color={item.color}
-                key={`label-${item.label}`}>
-                <div className={classes.decoration}
-                  style={{ background: item.color }} />
+              <li className={classes.label} data-color={item.color} key={`label-${item.label}`}>
+                <div className={classes.decoration} style={{ background: item.color }} />
                 {item.label}
-                <span className={classes.status}
-                  style={{ color: item.color }}>{item.labelStatus}</span>
+                <span className={classes.status} style={{ color: item.color }}>
+                  {item.labelStatus}
+                </span>
               </li>
             );
-          })
-        }
+          }
+        )}
       </ul>
     </div>
   );

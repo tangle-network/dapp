@@ -20,15 +20,15 @@ export const AirDrop: FC = () => {
       dataIndex: 'token',
       key: 'token',
       render: (token: string): string => (tokenEq(token, 'ACA') ? `${token} (Mainnet)` : token),
-      title: 'Token'
+      title: 'Token',
     },
     {
       align: 'right',
       key: 'balance',
       /* eslint-disable-next-line react/display-name */
       render: ({ token }): JSX.Element => <AirDropAmount currency={token} />,
-      title: 'Balance'
-    }
+      title: 'Balance',
+    },
   ];
 
   return (
@@ -40,10 +40,7 @@ export const AirDrop: FC = () => {
       }
       padding={false}
     >
-      <Table columns={tableConfig}
-        dataSource={airdropTypes}
-        pagination={false}
-        rowKey='token' />
+      <Table columns={tableConfig} dataSource={airdropTypes} pagination={false} rowKey='token' />
     </Card>
   );
 };

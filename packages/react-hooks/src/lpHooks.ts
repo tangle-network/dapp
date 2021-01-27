@@ -20,29 +20,26 @@ export const useEnableLPs = (): TokenPair[] => {
 type LPSize = { [i: string]: FixedPointNumber };
 
 export const useLPSize = (token1?: CurrencyId, token2?: CurrencyId): LPSize => {
-  const pool = useCall<DerivedDexPool>(
-    token1 && token2 ? 'derive.dex.pool' : '__mock',
-    [token1, token2]
-  );
+  const pool = useCall<DerivedDexPool>(token1 && token2 ? 'derive.dex.pool' : '__mock', [token1, token2]);
 
   const result = useMemo<LPSize>((): LPSize => {
     if (!token1 || !token2) {
       return {
         [token1?.asToken?.toString() || '']: FixedPointNumber.ZERO,
-        [token2?.asToken?.toString() || '']: FixedPointNumber.ZERO
+        [token2?.asToken?.toString() || '']: FixedPointNumber.ZERO,
       };
     }
 
     if (!pool) {
       return {
         [token1.asToken.toString()]: FixedPointNumber.ZERO,
-        [token2.asToken.toString()]: FixedPointNumber.ZERO
+        [token2.asToken.toString()]: FixedPointNumber.ZERO,
       };
     }
 
     const temp: LPSize = {
       [token1.asToken.toString()]: FixedPointNumber.fromInner(pool[0].toString()),
-      [token2.asToken.toString()]: FixedPointNumber.fromInner(pool[1].toString())
+      [token2.asToken.toString()]: FixedPointNumber.fromInner(pool[1].toString()),
     };
 
     return temp;
@@ -71,7 +68,10 @@ export const useLPCurrencies = (): CurrencyId[] => {
 
   const allTradingPirs = api.consts.dex.enabledTradingPairs as Vec<TradingPair>;
 
-  return allTradingPirs.map((item): CurrencyId => api.createType('CurrencyId' as any, { DEXShare: [item[0].asToken.toString(), item[1].asToken.toString()] }));
+  return allTradingPirs.map(
+    (item): CurrencyId =>
+      api.createType('CurrencyId' as any, { DEXShare: [item[0].asToken.toString(), item[1].asToken.toString()] })
+  );
 };
 
 export const useLPTokenAmount = (account: AccountId | string, lp: CurrencyId): FixedPointNumber => {
@@ -80,12 +80,22 @@ export const useLPTokenAmount = (account: AccountId | string, lp: CurrencyId): F
   return amount ? FixedPointNumber.fromInner(amount.free.toString()) : FixedPointNumber.ZERO;
 };
 
-export const useLPShares = (account: AccountId | string, lp: CurrencyId): [FixedPointNumber, FixedPointNumber, FixedPointNumber] => {
+export const useLPShares = (
+  account: AccountId | string,
+  lp: CurrencyId
+): [FixedPointNumber, FixedPointNumber, FixedPointNumber] => {
   const issuance = useCall<Balance>('query.tokens.totalIssuance', [lp]);
   const owned = useLPTokenAmount(account, lp);
-  const _issuance = useMemo(() => issuance ? FixedPointNumber.fromInner(issuance.toString()) : FixedPointNumber.ZERO, [issuance]);
+  const _issuance = useMemo(
+    () => (issuance ? FixedPointNumber.fromInner(issuance.toString()) : FixedPointNumber.ZERO),
+    [issuance]
+  );
   const ratio = useMemo(() => owned.div(_issuance), [_issuance, owned]);
-  const result = useMemo(() => [owned, _issuance, ratio] as [FixedPointNumber, FixedPointNumber, FixedPointNumber], [owned, _issuance, ratio]);
+  const result = useMemo(() => [owned, _issuance, ratio] as [FixedPointNumber, FixedPointNumber, FixedPointNumber], [
+    owned,
+    _issuance,
+    ratio,
+  ]);
 
   return result;
 };
@@ -131,21 +141,24 @@ export const useLP = (token1?: CurrencyId, token2?: CurrencyId): UseLPReturnType
     return api.createType('CurrencyId' as any, { DEXShare: [pair[0].toString(), pair[1].toString()] });
   }, [api, token1, token2]);
 
-  const getAddLPSuggestAmount = useCallback((exact: CurrencyId, input: number) => {
-    const _input = new FixedPointNumber(input);
+  const getAddLPSuggestAmount = useCallback(
+    (exact: CurrencyId, input: number) => {
+      const _input = new FixedPointNumber(input);
 
-    if (exact.eq(token1)) return _input.div(exchangeRate);
+      if (exact.eq(token1)) return _input.div(exchangeRate);
 
-    if (exact.eq(token2)) return _input.times(exchangeRate);
+      if (exact.eq(token2)) return _input.times(exchangeRate);
 
-    return FixedPointNumber.ZERO;
-  }, [token1, token2, exchangeRate]);
+      return FixedPointNumber.ZERO;
+    },
+    [token1, token2, exchangeRate]
+  );
 
   return {
     availableLP,
     exchangeRate,
     getAddLPSuggestAmount,
     lpCurrencyId,
-    size
+    size,
   };
 };

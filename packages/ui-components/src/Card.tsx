@@ -25,8 +25,8 @@ export const CardRoot = styled.section<CardRootProps>`
   height: 100%;
   background: #ffffff;
   border: 1px solid var(--color-border);
-  box-shadow: ${({ showShadow }): string => showShadow ? '0 1px 20px 0 rgba(23, 65, 212, 0.02);' : 'none'};
-  overflow: ${({ overflowHidden }): string => overflowHidden ? 'hidden' : 'visible'};
+  box-shadow: ${({ showShadow }): string => (showShadow ? '0 1px 20px 0 rgba(23, 65, 212, 0.02);' : 'none')};
+  overflow: ${({ overflowHidden }): string => (overflowHidden ? 'hidden' : 'visible')};
   border-radius: 12px;
 
   .ant-row {
@@ -38,7 +38,7 @@ const CardHeader = styled.div<{ divider: boolean }>`
   display: flex;
   justify-content: space-between;
   padding: 22px 24px 24px 24px;
-  border-bottom: ${({ divider }): string => divider ? '1px solid #ecf0f2' : 'none'};
+  border-bottom: ${({ divider }): string => (divider ? '1px solid #ecf0f2' : 'none')};
   color: var(--text-color-primary);
   font-size: 16px;
   line-height: 1.1875;
@@ -55,48 +55,43 @@ const CardContent = styled.div<{ padding: number; paddingTop: number }>`
   box-sizing: border-box;
   width: 100%;
   padding: ${({ padding }): number => padding}px;
-  padding-top: ${({ padding, paddingTop }): number => padding ? paddingTop : 0}px;
+  padding-top: ${({ padding, paddingTop }): number => (padding ? paddingTop : 0)}px;
 `;
 
-export const Card = forwardRef<HTMLDivElement, CardProps>(({
-  children,
-  className,
-  contentClassName,
-  divider = true,
-  extra,
-  header,
-  headerClassName,
-  overflowHidden = false,
-  padding = true,
-  showShadow = true
-}, ref) => {
-  return (
-    <CardRoot
-      className={className}
-      overflowHidden={overflowHidden}
-      ref={ref}
-      showShadow={showShadow}
-    >
-      {
-        header ? (
-          <CardHeader
-            className={clsx(headerClassName, 'card__header')}
-            divider={divider}
-          >
+export const Card = forwardRef<HTMLDivElement, CardProps>(
+  (
+    {
+      children,
+      className,
+      contentClassName,
+      divider = true,
+      extra,
+      header,
+      headerClassName,
+      overflowHidden = false,
+      padding = true,
+      showShadow = true,
+    },
+    ref
+  ) => {
+    return (
+      <CardRoot className={className} overflowHidden={overflowHidden} ref={ref} showShadow={showShadow}>
+        {header ? (
+          <CardHeader className={clsx(headerClassName, 'card__header')} divider={divider}>
             {header}
             {extra ? <div className='card__header__extra'>{extra}</div> : null}
           </CardHeader>
-        ) : null
-      }
-      <CardContent
-        className={clsx('card__content', contentClassName)}
-        padding={padding ? 24 : 0 }
-        paddingTop={header ? 0 : 24}
-      >
-        {children}
-      </CardContent>
-    </CardRoot>
-  );
-});
+        ) : null}
+        <CardContent
+          className={clsx('card__content', contentClassName)}
+          padding={padding ? 24 : 0}
+          paddingTop={header ? 0 : 24}
+        >
+          {children}
+        </CardContent>
+      </CardRoot>
+    );
+  }
+);
 
 Card.displayName = 'Card';
