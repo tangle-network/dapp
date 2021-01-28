@@ -11,10 +11,10 @@
   },
   "resolutions": {
     "@polkadot/api": "^3.4",
-    "@webb-tools/api": "^0.1.2-19",
-    "@webb-tools/types": "^0.1.2-19",
-    "@webb-tools/app-util": "^0.1.2-19",
-    "@webb-tools/sdk-core": "^0.1.2-19"
+    "@webb-tools/api": "^0.1.2-20",
+    "@webb-tools/types": "^0.1.2-20",
+    "@webb-tools/app-util": "^0.1.2-20",
+    "@webb-tools/sdk-core": "^0.1.2-20"
   },
   "scripts": {
     "bump-version": "node scripts/bump-version.js",
