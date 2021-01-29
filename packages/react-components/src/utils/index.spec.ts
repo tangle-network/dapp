@@ -1,19 +1,40 @@
 import { thousand, getTokenName, formatHash, formatBalance, formatNumber } from './index';
-import { Fixed18 } from '@acala-network/app-util';
+import { Fixed18 } from '@webb-tools/app-util';
 
 describe('test utils', () => {
   test('formatNumbebr should work', () => {
-    expect(formatNumber(1000.00, { decimalLength: 6, removeEmptyDecimalParts: false, removeTailZero: false })).toEqual('1,000.000000')
-    expect(formatNumber(1000.00, { decimalLength: 2, removeEmptyDecimalParts: false, removeTailZero: true})).toEqual('1,000')
-    expect(formatNumber(1000.00, { decimalLength: 2, removeEmptyDecimalParts: true, removeTailZero: false})).toEqual('1,000')
-    expect(formatNumber(1000.00, { decimalLength: 2, removeEmptyDecimalParts: true, removeTailZero: true })).toEqual('1,000')
-    expect(formatNumber('1000.00', { decimalLength: 6, removeEmptyDecimalParts: false, removeTailZero: false })).toEqual('1,000.000000')
-    expect(formatNumber(Fixed18.fromNatural(1000), { decimalLength: 6, removeEmptyDecimalParts: false, removeTailZero: false })).toEqual('1,000.000000')
-    expect(formatNumber(1000.123456789, { decimalLength: 6, removeEmptyDecimalParts: true, removeTailZero: true })).toEqual('1,000.123456')
-    expect(formatNumber(1000.123000000, { decimalLength: 6, removeEmptyDecimalParts: true, removeTailZero: true })).toEqual('1,000.123')
-    expect(formatNumber(1e10, { decimalLength: 6, removeEmptyDecimalParts: true, removeTailZero: true })).toEqual('10,000,000,000')
+    expect(formatNumber(1000.0, { decimalLength: 6, removeEmptyDecimalParts: false, removeTailZero: false })).toEqual(
+      '1,000.000000'
+    );
+    expect(formatNumber(1000.0, { decimalLength: 2, removeEmptyDecimalParts: false, removeTailZero: true })).toEqual(
+      '1,000'
+    );
+    expect(formatNumber(1000.0, { decimalLength: 2, removeEmptyDecimalParts: true, removeTailZero: false })).toEqual(
+      '1,000'
+    );
+    expect(formatNumber(1000.0, { decimalLength: 2, removeEmptyDecimalParts: true, removeTailZero: true })).toEqual(
+      '1,000'
+    );
+    expect(
+      formatNumber('1000.00', { decimalLength: 6, removeEmptyDecimalParts: false, removeTailZero: false })
+    ).toEqual('1,000.000000');
+    expect(
+      formatNumber(Fixed18.fromNatural(1000), {
+        decimalLength: 6,
+        removeEmptyDecimalParts: false,
+        removeTailZero: false,
+      })
+    ).toEqual('1,000.000000');
+    expect(
+      formatNumber(1000.123456789, { decimalLength: 6, removeEmptyDecimalParts: true, removeTailZero: true })
+    ).toEqual('1,000.123456');
+    expect(formatNumber(1000.123, { decimalLength: 6, removeEmptyDecimalParts: true, removeTailZero: true })).toEqual(
+      '1,000.123'
+    );
+    expect(formatNumber(1e10, { decimalLength: 6, removeEmptyDecimalParts: true, removeTailZero: true })).toEqual(
+      '10,000,000,000'
+    );
   });
-
 
   test('thousand notation should work', () => {
     expect(thousand('100')).toEqual('100');

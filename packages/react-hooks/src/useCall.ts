@@ -58,15 +58,21 @@ class Tracker {
 
 const tracker = new Tracker();
 
-export function useCall <T> (path: string, params: CallParams = [], options?: {
-  cacheKey: string;
-}): T | undefined {
+export function useCall<T> (
+  path: string,
+  params: CallParams = [],
+  options?: {
+    cacheKey: string;
+  }
+): T | undefined {
   const { api } = useApi();
   const isAppReady = useIsAppReady();
   const { get, set } = useStore('apiQuery');
   const key = useMemo(
     () =>
-      `${path}${params.toString() ? '-' + JSON.stringify(params) : ''}${options?.cacheKey ? '-' + options.cacheKey : ''}`,
+      `${path}${params.toString() ? '-' + JSON.stringify(params) : ''}${
+        options?.cacheKey ? '-' + options.cacheKey : ''
+      }`,
     [path, params, options]
   );
 

@@ -15,12 +15,12 @@ type SwapPageType = 'swap' | 'liquidity';
 const subMenu = [
   {
     content: 'Swap',
-    key: 'swap'
+    key: 'swap',
   },
   {
     content: 'Liquidity',
-    key: 'liquidity'
-  }
+    key: 'liquidity',
+  },
 ];
 
 const PageSwap: FC = () => {
@@ -32,7 +32,7 @@ const PageSwap: FC = () => {
   useSubMenu({
     active: currentSubMenu,
     content: subMenu,
-    onClick: changeSubMenu as (key: string) => void
+    onClick: changeSubMenu as (key: string) => void,
   });
 
   useLayoutEffect(() => {

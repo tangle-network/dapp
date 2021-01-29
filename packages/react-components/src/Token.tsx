@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import clsx from 'clsx';
 
-import { CurrencyId } from '@acala-network/types/interfaces/primitives';
+import { CurrencyId } from '@webb-tools/types/interfaces/primitives';
 
 import { BareProps } from '@webb-dapp/ui-components/types';
 import { Condition } from '@webb-dapp/ui-components';
@@ -120,14 +120,14 @@ export const Token: FC<TokenProps> = ({
   imageClassName,
   name = true,
   nameClassName,
-  padding = false
+  padding = false,
 }) => {
   if (!currency) return null;
 
   return (
     <div
       className={clsx(classes.root, className, {
-        [classes.padding]: padding
+        [classes.padding]: padding,
       })}
     >
       <Condition

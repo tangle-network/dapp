@@ -50,10 +50,10 @@ const BtcAddressContent: FC<Omit<RenBtcDialogProps, 'show'>> = ({ amount, btcAdd
         {
           account: active.address,
           address: active.address,
-          strategy: 'ren'
+          strategy: 'ren',
         },
         {
-          headers: { 'Content-Type': 'application/json' }
+          headers: { 'Content-Type': 'application/json' },
         }
       )
       .then((result) => {

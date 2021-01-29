@@ -3,10 +3,10 @@ import React, { FC, useMemo } from 'react';
 import { usePrice } from '@webb-dapp/react-hooks';
 import { BareProps } from '@webb-dapp/ui-components/types';
 
-import { CurrencyId } from '@acala-network/types/interfaces';
+import { CurrencyId } from '@webb-tools/types/interfaces';
 
 import { FormatPrice } from './format';
-import { FixedPointNumber } from '@acala-network/sdk-core';
+import { FixedPointNumber } from '@webb-tools/sdk-core';
 
 interface Props extends BareProps {
   currency: CurrencyId;

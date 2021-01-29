@@ -1,4 +1,4 @@
-import { Share } from '@acala-network/types/interfaces';
+import { Share } from '@webb-tools/types/interfaces';
 import { AccountId } from '@polkadot/types/interfaces';
 
 import { useCall } from './useCall';

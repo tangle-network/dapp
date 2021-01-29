@@ -84,7 +84,7 @@ export const TwoWayBalanceInput: FC<TwoWayBalanceInputProps> = ({
   onChange,
   onMax = noop,
   onSwap = noop,
-  showSwap = false
+  showSwap = false,
 }) => {
   const [focused, setFocused] = useState<boolean>(false);
 

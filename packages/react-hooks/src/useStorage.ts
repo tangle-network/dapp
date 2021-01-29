@@ -30,35 +30,41 @@ export const useStorage = (
   const isReady = useIsAppReady();
   const { active: activeAccount } = useAccounts();
 
-  const getStorage: Get = useCallback((key) => {
-    if (options.useAccountPrefix) {
-      if (isReady && activeAccount) {
-        const _key = getPrefixKey(key, { ...options, address: activeAccount.address });
+  const getStorage: Get = useCallback(
+    (key) => {
+      if (options.useAccountPrefix) {
+        if (isReady && activeAccount) {
+          const _key = getPrefixKey(key, { ...options, address: activeAccount.address });
+
+          return window.localStorage.getItem(_key);
+        }
+      } else {
+        const _key = getPrefixKey(key, { ...options, address: '' });
 
         return window.localStorage.getItem(_key);
       }
-    } else {
-      const _key = getPrefixKey(key, { ...options, address: '' });
 
-      return window.localStorage.getItem(_key);
-    }
+      return null;
+    },
+    [activeAccount, isReady, options]
+  );
 
-    return null;
-  }, [activeAccount, isReady, options]);
+  const setStorage: Set = useCallback(
+    (key, value) => {
+      if (options.useAccountPrefix) {
+        if (isReady && activeAccount) {
+          const _key = getPrefixKey(key, { ...options, address: activeAccount.address });
 
-  const setStorage: Set = useCallback((key, value) => {
-    if (options.useAccountPrefix) {
-      if (isReady && activeAccount) {
-        const _key = getPrefixKey(key, { ...options, address: activeAccount.address });
+          window.localStorage.setItem(_key, value);
+        }
+      } else {
+        const _key = getPrefixKey(key, { ...options, address: '' });
 
         window.localStorage.setItem(_key, value);
       }
-    } else {
-      const _key = getPrefixKey(key, { ...options, address: '' });
-
-      window.localStorage.setItem(_key, value);
-    }
-  }, [activeAccount, isReady, options]);
+    },
+    [activeAccount, isReady, options]
+  );
 
   return { getStorage, setStorage };
 };

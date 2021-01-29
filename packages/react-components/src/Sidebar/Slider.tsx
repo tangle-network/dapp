@@ -3,7 +3,7 @@ import { Motion, spring } from 'react-motion';
 import { styled } from '@webb-dapp/ui-components';
 
 const SliderRoot = styled.div.attrs<{ top: number }>(({ top }) => ({
-  style: { top: top + 'px' }
+  style: { top: top + 'px' },
 }))<{ top: number }>`
   position: absolute;
   left: 0;

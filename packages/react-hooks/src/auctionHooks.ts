@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
-import { Fixed18, convertToFixed18 } from '@acala-network/app-util';
-import { Balance, CollateralAuctionItem, DebitAuctionItem, SurplusAuctionItem } from '@acala-network/types/interfaces';
+import { Fixed18, convertToFixed18 } from '@webb-tools/app-util';
+import { Balance, CollateralAuctionItem, DebitAuctionItem, SurplusAuctionItem } from '@webb-tools/types/interfaces';
 import { StorageKey, Option } from '@polkadot/types';
 import { sortBy } from 'lodash';
 
@@ -17,7 +17,9 @@ export interface AuctionOverview {
 }
 
 export const useAuctionOverview = (): WithNull<AuctionOverview> => {
-  const totalCollateralInAuction = useCall<[StorageKey, Balance][]>('query.auctionManager.totalCollateralInAuction.entries');
+  const totalCollateralInAuction = useCall<[StorageKey, Balance][]>(
+    'query.auctionManager.totalCollateralInAuction.entries'
+  );
   const totalDebitInAuction = useCall<Balance>('query.auctionManager.totalDebitInAuction');
   const totalSurplusInAuction = useCall<Balance>('query.auctionManager.totalSurplusInAuction');
   const totalTargetInAuction = useCall<Balance>('query.auctionManager.totalTargetInAuction');
@@ -25,15 +27,17 @@ export const useAuctionOverview = (): WithNull<AuctionOverview> => {
 
   useEffect(() => {
     setResult({
-      totalCollateral: totalCollateralInAuction ? totalCollateralInAuction.map((item) => {
-        return {
-          balance: convertToFixed18(item[1] || 0),
-          currency: (item[0].toHuman() as string[])[0]
-        };
-      }) : [],
+      totalCollateral: totalCollateralInAuction
+        ? totalCollateralInAuction.map((item) => {
+            return {
+              balance: convertToFixed18(item[1] || 0),
+              currency: (item[0].toHuman() as string[])[0],
+            };
+          })
+        : [],
       totalDebit: convertToFixed18(totalDebitInAuction || 0),
       totalSurplus: convertToFixed18(totalSurplusInAuction || 0),
-      totalTarget: convertToFixed18(totalTargetInAuction || 0)
+      totalTarget: convertToFixed18(totalTargetInAuction || 0),
     });
   }, [totalCollateralInAuction, totalDebitInAuction, totalSurplusInAuction, totalTargetInAuction]);
 
@@ -56,7 +60,7 @@ export const useCollateralAuctions = (): CollateralAuction[] => {
     'query.auctionManager.collateralAuctions.entries',
     [],
     {
-      cacheKey
+      cacheKey,
     }
   );
   const [result, setResult] = useState<CollateralAuction[]>([]);
@@ -76,7 +80,7 @@ export const useCollateralAuctions = (): CollateralAuction[] => {
         id: (item[0].toHuman() as string[])[0].replace(/[^\d]/, ''),
         owner: (item[1].unwrap() as any).refundRecipient.toString(),
         startTime: item[1].unwrap().startTime.toNumber(),
-        target: convertToFixed18(item[1].unwrap().target || 0)
+        target: convertToFixed18(item[1].unwrap().target || 0),
       };
     });
     const sorted = sortBy(newResult, 'id');
@@ -101,14 +105,16 @@ export const useDebitAuctions = (): DebitAuction[] => {
   useEffect(() => {
     if (!debitAuction) return;
 
-    setResult(debitAuction.map((item) => {
-      return {
-        amount: convertToFixed18(item[1].unwrap().amount || 0),
-        fix: convertToFixed18(item[1].unwrap().fix || 0),
-        id: (item[0].toHuman() as string[])[0],
-        startTime: item[1].unwrap().startTime.toNumber()
-      };
-    }));
+    setResult(
+      debitAuction.map((item) => {
+        return {
+          amount: convertToFixed18(item[1].unwrap().amount || 0),
+          fix: convertToFixed18(item[1].unwrap().fix || 0),
+          id: (item[0].toHuman() as string[])[0],
+          startTime: item[1].unwrap().startTime.toNumber(),
+        };
+      })
+    );
   }, [debitAuction]);
 
   return result;
@@ -121,19 +127,23 @@ export interface SurplusAuction {
 }
 
 export const useSurplusAuction = (): SurplusAuction[] => {
-  const surplusAuction = useCall<[StorageKey, Option<SurplusAuctionItem>][]>('query.auctionManager.surplusAuctions.entries');
+  const surplusAuction = useCall<[StorageKey, Option<SurplusAuctionItem>][]>(
+    'query.auctionManager.surplusAuctions.entries'
+  );
   const [result, setResult] = useState<SurplusAuction[]>([]);
 
   useEffect(() => {
     if (!surplusAuction) return;
 
-    setResult(surplusAuction.map((item) => {
-      return {
-        amount: convertToFixed18(item[1].unwrap().amount || 0),
-        id: (item[0].toHuman() as string[])[0],
-        startTime: item[1].unwrap().startTime.toNumber()
-      };
-    }));
+    setResult(
+      surplusAuction.map((item) => {
+        return {
+          amount: convertToFixed18(item[1].unwrap().amount || 0),
+          id: (item[0].toHuman() as string[])[0],
+          startTime: item[1].unwrap().startTime.toNumber(),
+        };
+      })
+    );
   }, [surplusAuction]);
 
   return result;

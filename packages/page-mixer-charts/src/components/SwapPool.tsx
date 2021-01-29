@@ -21,7 +21,7 @@ export const SwapPool: FC = () => {
       return {
         currency: getTokenName(item.currency),
         percent: item.value.div(overview.total).toNumber() || 0,
-        value: item.value.toNumber()
+        value: item.value.toNumber(),
       };
     });
   }, [overview]);
@@ -29,8 +29,8 @@ export const SwapPool: FC = () => {
   const cols = useMemo(() => {
     return {
       precent: {
-        formatter: (val: number): string => (val * 100).toFixed(2) + '%'
-      }
+        formatter: (val: number): string => (val * 100).toFixed(2) + '%',
+      },
     };
   }, []);
 
@@ -50,13 +50,13 @@ export const SwapPool: FC = () => {
             {
               content: (data: any): string => {
                 return `${data.currency}: ${(data.percent * 100).toFixed(2)}%, $${data.value}`;
-              }
-            }
+              },
+            },
           ]}
           position='percent'
           style={{
             lineWidth: 1,
-            stroke: '#fff'
+            stroke: '#fff',
           }}
         />
         <Interaction type='element-single-selected' />

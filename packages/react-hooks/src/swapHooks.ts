@@ -1,7 +1,7 @@
-import { FixedPointNumber } from '@acala-network/sdk-core';
+import { FixedPointNumber } from '@webb-tools/sdk-core';
 import { useState, useEffect } from 'react';
 import { combineLatest } from 'rxjs';
-import { Balance, CurrencyId } from '@acala-network/types/interfaces';
+import { Balance, CurrencyId } from '@webb-tools/types/interfaces';
 import { getDexShareFromCurrencyId, tokenEq } from '@webb-dapp/react-components';
 
 import { useConstants } from './useConstants';
@@ -34,31 +34,33 @@ export const useSwapOverview = (): WithNull<SwapOverview> => {
   useEffect(() => {
     if (!api) return;
 
-    combineLatest(dexTradingPair.map((item) => api.query.dex.liquidityPool<[Balance, Balance]>(item))).subscribe((result: [Balance, Balance][]): void => {
-      const details = result.map((item, index) => {
-        const currency = getDexShareFromCurrencyId(api, dexTradingPair[index][0], dexTradingPair[index][1]);
-        const [token1, token2] = dexTradingPair[index];
+    combineLatest(dexTradingPair.map((item) => api.query.dex.liquidityPool<[Balance, Balance]>(item))).subscribe(
+      (result: [Balance, Balance][]): void => {
+        const details = result.map((item, index) => {
+          const currency = getDexShareFromCurrencyId(api, dexTradingPair[index][0], dexTradingPair[index][1]);
+          const [token1, token2] = dexTradingPair[index];
 
-        const token1Price = prices.find((item) => tokenEq(token1, item.currency))?.price || FixedPointNumber.ZERO;
-        const token2Price = prices.find((item) => tokenEq(token2, item.currency))?.price || FixedPointNumber.ZERO;
-        const token1Amount = FixedPointNumber.fromInner(item[0] ? item[0].toString() : 0);
-        const token2Amount = FixedPointNumber.fromInner(item[1] ? item[1].toString() : 0);
-        const value = token1Amount.times(token1Price).plus(token2Amount.times(token2Price));
+          const token1Price = prices.find((item) => tokenEq(token1, item.currency))?.price || FixedPointNumber.ZERO;
+          const token2Price = prices.find((item) => tokenEq(token2, item.currency))?.price || FixedPointNumber.ZERO;
+          const token1Amount = FixedPointNumber.fromInner(item[0] ? item[0].toString() : 0);
+          const token2Amount = FixedPointNumber.fromInner(item[1] ? item[1].toString() : 0);
+          const value = token1Amount.times(token1Price).plus(token2Amount.times(token2Price));
 
-        return {
-          currency,
-          token1,
-          token1Amount,
-          token2,
-          token2Amount,
-          value
-        };
-      });
+          return {
+            currency,
+            token1,
+            token1Amount,
+            token2,
+            token2Amount,
+            value,
+          };
+        });
 
-      const total = details.reduce((pre, cur) => pre.plus(cur.value), FixedPointNumber.ZERO);
+        const total = details.reduce((pre, cur) => pre.plus(cur.value), FixedPointNumber.ZERO);
 
-      setResult({ details, total });
-    });
+        setResult({ details, total });
+      }
+    );
   }, [api, dexTradingPair, prices]);
 
   return result;

@@ -15,5 +15,5 @@ const Body = styled.p`
 
 export const Typology = {
   Body,
-  Title
+  Title,
 };

@@ -1,4 +1,15 @@
-import React, { FC, ChangeEventHandler, useState, useEffect, forwardRef, useCallback, useMemo, useRef, FocusEvent, FocusEventHandler } from 'react';
+import React, {
+  FC,
+  ChangeEventHandler,
+  useState,
+  useEffect,
+  forwardRef,
+  useCallback,
+  useMemo,
+  useRef,
+  FocusEvent,
+  FocusEventHandler,
+} from 'react';
 import clsx from 'clsx';
 import { noop } from 'lodash';
 import './NumberInput.scss';
@@ -42,75 +53,89 @@ export interface NumberInputProps {
   min?: number;
 }
 
-export const NumberInput: FC<NumberInputProps> = forwardRef<HTMLInputElement, NumberInputProps>(({
-  className,
-  disabled,
-  id,
-  name,
-  max = Number.MAX_VALUE,
-  min = 0,
-  onBlur,
-  onChange,
-  onFocus,
-  placeholder = '0.0',
-  value
-}, ref) => {
-  const [_value, _setValue] = useState<string>('');
-  const valueRef = useRef<string>('');
-  const isInEditMode = useRef<boolean>(false);
+export const NumberInput: FC<NumberInputProps> = forwardRef<HTMLInputElement, NumberInputProps>(
+  (
+    {
+      className,
+      disabled,
+      id,
+      name,
+      max = Number.MAX_VALUE,
+      min = 0,
+      onBlur,
+      onChange,
+      onFocus,
+      placeholder = '0.0',
+      value,
+    },
+    ref
+  ) => {
+    const [_value, _setValue] = useState<string>('');
+    const valueRef = useRef<string>('');
+    const isInEditMode = useRef<boolean>(false);
 
-  const _onChange = useMemo(() => onChange || noop, [onChange]);
+    const _onChange = useMemo(() => onChange || noop, [onChange]);
 
-  const handleChange: ChangeEventHandler<HTMLInputElement> = useCallback((originEvent) => {
-    const originInput = originEvent.currentTarget.value;
-    const [isValidNumber, validNumber] = getValidNumber(originInput, min, max);
+    const handleChange: ChangeEventHandler<HTMLInputElement> = useCallback(
+      (originEvent) => {
+        const originInput = originEvent.currentTarget.value;
+        const [isValidNumber, validNumber] = getValidNumber(originInput, min, max);
 
-    // trigger value change event when is a valid number and is changed, otherwise do nothing
-    if (isValidNumber) {
-      _setValue(validNumber);
-      valueRef.current = validNumber;
-      _onChange(Number(validNumber));
-    }
-  }, [_setValue, _onChange, min, max]);
+        // trigger value change event when is a valid number and is changed, otherwise do nothing
+        if (isValidNumber) {
+          _setValue(validNumber);
+          valueRef.current = validNumber;
+          _onChange(Number(validNumber));
+        }
+      },
+      [_setValue, _onChange, min, max]
+    );
 
-  const _onBlur = useCallback((e: FocusEvent<HTMLInputElement>) => {
-    if (onBlur) onBlur(e);
+    const _onBlur = useCallback(
+      (e: FocusEvent<HTMLInputElement>) => {
+        if (onBlur) onBlur(e);
 
-    isInEditMode.current = false;
-  }, [onBlur, isInEditMode]);
+        isInEditMode.current = false;
+      },
+      [onBlur, isInEditMode]
+    );
 
-  const _onFocus = useCallback((e: FocusEvent<HTMLInputElement>) => {
-    if (onFocus) onFocus(e);
+    const _onFocus = useCallback(
+      (e: FocusEvent<HTMLInputElement>) => {
+        if (onFocus) onFocus(e);
 
-    isInEditMode.current = true;
-  }, [onFocus, isInEditMode]);
+        isInEditMode.current = true;
+      },
+      [onFocus, isInEditMode]
+    );
 
-  useEffect(() => {
-    // dont update value if user is input
-    if (isInEditMode.current) return;
+    useEffect(() => {
+      // dont update value if user is input
+      if (isInEditMode.current) return;
 
-    _setValue(value ? value.toString() : '');
-  }, [value, _setValue, isInEditMode, _value]);
+      _setValue(value ? value.toString() : '');
+    }, [value, _setValue, isInEditMode, _value]);
 
-  return (
-    <input
-      autoComplete='off'
-      className={clsx('aca-number-input', className)}
-      disabled={disabled}
-      id={id}
-      inputMode='decimal'
-      max={max}
-      min={min}
-      name={name}
-      onBlur={_onBlur}
-      onChange={handleChange}
-      onFocus={_onFocus}
-      pattern={NUMBER_PATTERN}
-      placeholder={placeholder}
-      ref={ref as any}
-      value={_value}
-    />
-  );
-});
+    return (
+      <input
+        autoComplete='off'
+        className={clsx('aca-number-input', className)}
+        disabled={disabled}
+        id={id}
+        inputMode='decimal'
+        max={max}
+        min={min}
+        name={name}
+        onBlur={_onBlur}
+        onChange={handleChange}
+        onFocus={_onFocus}
+        pattern={NUMBER_PATTERN}
+        placeholder={placeholder}
+        ref={ref as any}
+        value={_value}
+      />
+    );
+  }
+);
 
 NumberInput.displayName = 'NumberInput';

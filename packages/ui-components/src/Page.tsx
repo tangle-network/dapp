@@ -17,7 +17,7 @@ const TitleContent = styled.div`
   width: 100%;
   display: flex;
   align-items: center;
-  justify-content: space-between; 
+  justify-content: space-between;
 `;
 
 interface BreadcrumbItemData {
@@ -25,32 +25,31 @@ interface BreadcrumbItemData {
   onClick: () => void;
 }
 
-const BreadcrumbItem = styled<FC<{ config: BreadcrumbItemData; isCurrent: boolean } & BareProps>>(({ className, config }) => {
-  return (
-    <span
-      className={className}
-      onClick={config.onClick}
-    >
-      {config.content}
-    </span>
-  );
-})`
+const BreadcrumbItem = styled<FC<{ config: BreadcrumbItemData; isCurrent: boolean } & BareProps>>(
+  ({ className, config }) => {
+    return (
+      <span className={className} onClick={config.onClick}>
+        {config.content}
+      </span>
+    );
+  }
+)`
   position: relative;
   display: inline-block;
   font-size: 14px;
   line-height: 1.571429;
-  color: ${({ isCurrent }): string => isCurrent ? 'rgba(0, 0, 0, 0.65)' : 'rgba(0, 0, 0, 0.45)'};
+  color: ${({ isCurrent }): string => (isCurrent ? 'rgba(0, 0, 0, 0.65)' : 'rgba(0, 0, 0, 0.45)')};
   user-select: none;
-  cursor: ${({ isCurrent }): string => isCurrent ? 'normal' : 'pointer'};
+  cursor: ${({ isCurrent }): string => (isCurrent ? 'normal' : 'pointer')};
 
   &::after {
-    content: '${({ isCurrent }): string => isCurrent ? '' : '/'}';
+    content: '${({ isCurrent }): string => (isCurrent ? '' : '/')}';
     margin: 0 8px;
   }
 
   &::before {
     content: '';
-    display: ${({ isCurrent }): string => isCurrent ? 'none' : 'inherit'};
+    display: ${({ isCurrent }): string => (isCurrent ? 'none' : 'inherit')};
     position: absolute;
     left: 0;
     bottom: -2px;
@@ -58,7 +57,7 @@ const BreadcrumbItem = styled<FC<{ config: BreadcrumbItemData; isCurrent: boolea
     height: 2px;
     border-radius: 2px;
     background: transparent;
-    transition: all .2s;
+    transition: all 0.2s;
   }
 
   &:hover::before {
@@ -66,18 +65,12 @@ const BreadcrumbItem = styled<FC<{ config: BreadcrumbItemData; isCurrent: boolea
   }
 `;
 
-const Breadcrumb = memo(styled<FC<{ breadcrumb: BreadcrumbItemData[]} & BareProps>>(({ breadcrumb, className }) => {
+const Breadcrumb = memo(styled<FC<{ breadcrumb: BreadcrumbItemData[] } & BareProps>>(({ breadcrumb, className }) => {
   return (
     <div className={className}>
-      {
-        breadcrumb.map((item, index) => (
-          <BreadcrumbItem
-            config={item}
-            isCurrent={index === breadcrumb.length - 1}
-            key={'breadcrumb' + item.content}
-          />
-        ))
-      }
+      {breadcrumb.map((item, index) => (
+        <BreadcrumbItem config={item} isCurrent={index === breadcrumb.length - 1} key={'breadcrumb' + item.content} />
+      ))}
     </div>
   );
 })`
@@ -94,7 +87,7 @@ const Title: FC<TitleProps> = memo(({ breadcrumb, className, extra, title }) => 
   return (
     <TitleRoot className={className}>
       <TitleContent>
-        <TextAnimation value={title === '__empty' ? '  ' : title}/>
+        <TextAnimation value={title === '__empty' ? '  ' : title} />
         {extra ?? null}
       </TitleContent>
       {breadcrumb ? <Breadcrumb breadcrumb={breadcrumb} /> : null}
@@ -106,7 +99,7 @@ Title.displayName = 'Title';
 
 const PageContainer = memo(styled.div<{ fullscreen?: boolean }>`
   margin: 0 auto;
-  max-width: ${({ fullscreen }): string => fullscreen ? '100%' : '1120px'};
+  max-width: ${({ fullscreen }): string => (fullscreen ? '100%' : '1120px')};
 `);
 
 /**
@@ -158,10 +151,7 @@ interface SubTitleProps extends BareProps {
 
 export const SubTitle = memo(styled<FC<SubTitleProps>>(({ children, className, extra, onClick }) => {
   return (
-    <div
-      className={className}
-      onClick={onClick}
-    >
+    <div className={className} onClick={onClick}>
       {children}
       {extra}
     </div>
@@ -170,7 +160,7 @@ export const SubTitle = memo(styled<FC<SubTitleProps>>(({ children, className, e
   margin-bottom: 24px;
   display: flex;
   align-items: center;
-  justify-content: ${({ extra }): string => extra ? 'space-between' : 'flex-start'};
+  justify-content: ${({ extra }): string => (extra ? 'space-between' : 'flex-start')};
   font-size: 16px;
   line-height: 21px;
   font-weight: 500;
@@ -189,17 +179,15 @@ export interface SubMenuProps extends BareProps {
 export const SubMenu = styled(({ active, className, content, onClick }: SubMenuProps) => {
   return (
     <ul className={className}>
-      {
-        content.map(({ content, key }) => (
-          <li
-            className={clsx('sub-menu__item', { active: active === key })}
-            key={`submenu-${key}`}
-            onClick={(): void => onClick(key)}
-          >
-            {content}
-          </li>
-        ))
-      }
+      {content.map(({ content, key }) => (
+        <li
+          className={clsx('sub-menu__item', { active: active === key })}
+          key={`submenu-${key}`}
+          onClick={(): void => onClick(key)}
+        >
+          {content}
+        </li>
+      ))}
     </ul>
   );
 })`
@@ -210,12 +198,12 @@ export const SubMenu = styled(({ active, className, content, onClick }: SubMenuP
 
   .sub-menu__item {
     padding-left: 40px;
-    transition: color .2s;
+    transition: color 0.2s;
     color: var(--text-color-second);
     cursor: pointer;
 
     &:hover {
-      color: var(--color-primary)
+      color: var(--color-primary);
     }
 
     &.active {

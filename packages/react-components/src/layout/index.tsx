@@ -51,12 +51,12 @@ const Main: FC<MainLayoutProps> = memo(({ children, enableCollapse = true, sideb
         ...item,
         onClick: (): void => {
           navigate(item.path);
-        }
+        },
       })),
       {
         content: ui.pageTitle,
-        onClick: noop
-      }
+        onClick: noop,
+      },
     ];
   }, [ui.breadcrumb, navigate, ui.pageTitle]);
 

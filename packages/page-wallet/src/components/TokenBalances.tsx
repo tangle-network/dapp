@@ -1,7 +1,7 @@
 import React, { FC, ReactElement } from 'react';
 import clsx from 'clsx';
 
-import { CurrencyId } from '@acala-network/types/interfaces';
+import { CurrencyId } from '@webb-tools/types/interfaces';
 import {
   UserAssetBalance,
   UserAssetValue,
@@ -11,7 +11,7 @@ import {
   TokenFullName,
   TransferButton,
   tokenEq,
-  StakingPoolExchangeRate
+  StakingPoolExchangeRate,
 } from '@webb-dapp/react-components';
 import { Condition } from '@webb-dapp/ui-components';
 import { BareProps } from '@webb-dapp/ui-components/types';

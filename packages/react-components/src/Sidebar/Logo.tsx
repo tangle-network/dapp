@@ -2,8 +2,7 @@ import React, { FC } from 'react';
 
 import { styled } from '@webb-dapp/ui-components';
 
-import { ReactComponent as MandalaIogo } from '../assets/mandala-logo.svg';
-import { ReactComponent as MandalaIogoSmall } from '../assets/mandala-logo-small.svg';
+import { ReactComponent as WebbIogoSmall } from '../assets/mandala-logo-small.svg';
 
 export const TestNet = styled.div`
   display: inline-block;
@@ -46,14 +45,14 @@ const LogoRoot = styled.div<LogoProps>`
   width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: center;
 `;
 
 export const Logo: FC<LogoProps> = ({ collapse }) => {
   return (
     <LogoRoot collapse={collapse}>
       <CTestNet>TestNet</CTestNet>
-      {collapse ? <MandalaIogoSmall /> : <MandalaIogo />}
+      {collapse ? <WebbIogoSmall /> : <WebbIogoSmall />}
     </LogoRoot>
   );
 };

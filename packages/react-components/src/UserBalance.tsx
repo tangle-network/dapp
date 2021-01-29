@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 
-import { FixedPointNumber } from '@acala-network/sdk-core';
-import { Balance, CurrencyId } from '@acala-network/types/interfaces';
+import { FixedPointNumber } from '@webb-tools/sdk-core';
+import { Balance, CurrencyId } from '@webb-tools/types/interfaces';
 import { AccountId } from '@polkadot/types/interfaces';
 
 import { useCall, useAccounts, usePrice } from '@webb-dapp/react-hooks';
@@ -25,7 +25,8 @@ export const UserBalance: FC<Props> = ({
   const { active } = useAccounts();
   const _account = account !== undefined ? account : active ? active.address : '';
   // FIXME: need fix api-derive type
-  const result = useCall<Balance>('derive.currencies.balance', [_account, currency]);
+  // const result = useCall<Balance>('derive.currencies.balance', [_account, currency]);
+  const result = null;
   const price = usePrice(currency);
 
   if (!result) return null;
@@ -33,7 +34,8 @@ export const UserBalance: FC<Props> = ({
   if (showValue && price) {
     const _value = price.times(new FixedPointNumber(result.toString()));
 
-    return <FormatValue className={className} data={_value} />;
+    return <FormatValue className={className}
+      data={_value} />;
   }
 
   return (

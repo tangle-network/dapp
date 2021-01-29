@@ -1,7 +1,7 @@
 import React, { FC, ReactElement } from 'react';
 import { noop } from 'lodash';
 
-import { CurrencyId } from '@acala-network/types/interfaces';
+import { CurrencyId } from '@webb-tools/types/interfaces';
 import { TokenImage, TokenName, TokenFullName } from '@webb-dapp/react-components';
 import { useConstants } from '@webb-dapp/react-hooks';
 import { styled, Tabs, useTabs } from '@webb-dapp/ui-components';
@@ -86,13 +86,13 @@ type CrossChainType = 'RENBTC' | 'AUSD' | 'DOT';
 const crossChainConsoleList: Map<CrossChainType, ReactElement> = new Map([
   ['RENBTC', <RenBtc key='renbtc' />],
   ['AUSD', <AUSD key='ausd' />],
-  ['DOT', <DOT key='dot' />]
+  ['DOT', <DOT key='dot' />],
 ]);
 
 const crossChainEnable: Map<CrossChainType, boolean> = new Map([
   ['RENBTC', true],
   ['AUSD', false],
-  ['DOT', false]
+  ['DOT', false],
 ]);
 
 export const CrossChainConsole: FC = () => {

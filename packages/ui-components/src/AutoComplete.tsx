@@ -14,18 +14,8 @@ export const AutoComplete: FC<AutoCompleteProps> = (props: AutoCompleteProps) =>
   const { children, inputClassName, ...other } = props;
 
   return (
-    <AntAutoComplete
-      className='aca-autocomplete'
-      {...other}
-    >
-      {
-        children || (
-          <Input
-            className={inputClassName}
-            suffix={<ArrowIcon />}
-          />
-        )
-      }
+    <AntAutoComplete className='aca-autocomplete' {...other}>
+      {children || <Input className={inputClassName} suffix={<ArrowIcon />} />}
     </AntAutoComplete>
   );
 };

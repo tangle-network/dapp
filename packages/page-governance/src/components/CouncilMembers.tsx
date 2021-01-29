@@ -1,7 +1,7 @@
 import React, { FC, ReactNode, useMemo } from 'react';
 import { upperFirst } from 'lodash';
 import { AccountId } from '@polkadot/types/interfaces';
-import { FixedPointNumber } from '@acala-network/sdk-core';
+import { FixedPointNumber } from '@webb-tools/sdk-core';
 import { Card, Table, ColumnsType, styled } from '@webb-dapp/ui-components';
 import { useCouncilMembers } from '@webb-dapp/react-hooks';
 import { FormatAddress, FormatRatio } from '@webb-dapp/react-components';
@@ -25,7 +25,7 @@ export const CouncilMembers: FC<Props> = ({ council }) => {
 
     return members.map((item) => ({
       member: item,
-      weight: new FixedPointNumber(1 / members.length)
+      weight: new FixedPointNumber(1 / members.length),
     }));
   }, [members]);
 
@@ -37,14 +37,14 @@ export const CouncilMembers: FC<Props> = ({ council }) => {
         render: ({ member }): ReactNode => {
           return <FormatAddress address={member.toString()} withCopy withFullAddress withIcon />;
         },
-        title: `${upperFirst(council)} Council Seats`
+        title: `${upperFirst(council)} Council Seats`,
       },
       {
         align: 'left',
         /* eslint-disable-next-line react/display-name */
         render: ({ weight }): JSX.Element => <FormatRatio data={weight} />,
-        title: 'Vote Weight'
-      }
+        title: 'Vote Weight',
+      },
     ],
     [council]
   );

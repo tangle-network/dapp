@@ -14,7 +14,7 @@ export const SwapPoolDetail: FC = () => {
         key: 'currency',
         /* eslint-disable-next-line react/display-name */
         render: (item: any): JSX.Element => <Token currency={item.currency} />,
-        title: 'Currency'
+        title: 'Currency',
       },
       {
         key: 'pool_detail',
@@ -24,24 +24,24 @@ export const SwapPoolDetail: FC = () => {
             pair={[
               {
                 balance: item.token1Amount,
-                currency: item.token1
+                currency: item.token1,
               },
               {
                 balance: item.token2Amount,
-                currency: item.token2
-              }
+                currency: item.token2,
+              },
             ]}
             pairSymbol='+'
           />
         ),
-        title: 'Token Pair'
+        title: 'Token Pair',
       },
       {
         key: 'value',
         /* eslint-disable-next-line react/display-name */
         render: (item: any): JSX.Element => <FormatValue data={item.value} />,
-        title: 'Value'
-      }
+        title: 'Value',
+      },
     ];
   }, []);
 

@@ -47,7 +47,8 @@ const StepItem = styled.li`
   background: inherit;
   min-width: 120px;
 
-  &::before, &::after {
+  &::before,
+  &::after {
     content: '';
     position: absolute;
     width: 20%;
@@ -115,12 +116,7 @@ const Text = styled.span`
   color: var(--text-color-second);
 `;
 
-export const Step: FC<Props> = memo(({
-  className,
-  config,
-  current,
-  showIndex = true
-}) => {
+export const Step: FC<Props> = memo(({ className, config, current, showIndex = true }) => {
   const isDone = (index: number): boolean => {
     const currentArrayIndex = config.findIndex((item): boolean => item.index === current);
 
@@ -129,31 +125,22 @@ export const Step: FC<Props> = memo(({
 
   return (
     <StepRoot className={className}>
-      {
-        config.map((item, index) => {
-          return (
-            <StepItem
-              className={clsx(
-                'step__item',
-                {
-                  active: item.index === current,
-                  done: isDone(index)
-                }
-              )}
-              key={`step-${item.index}-${item.text}`}
-            >
-              <Point className='step__item__point'>
-                {
-                  showIndex ? isDone(index) ? (
-                    <CheckedIcon />
-                  ) : index + 1 : null
-                }
-              </Point>
-              <Text className='step__item__text'>{item.text}</Text>
-            </StepItem>
-          );
-        })
-      }
+      {config.map((item, index) => {
+        return (
+          <StepItem
+            className={clsx('step__item', {
+              active: item.index === current,
+              done: isDone(index),
+            })}
+            key={`step-${item.index}-${item.text}`}
+          >
+            <Point className='step__item__point'>
+              {showIndex ? isDone(index) ? <CheckedIcon /> : index + 1 : null}
+            </Point>
+            <Text className='step__item__text'>{item.text}</Text>
+          </StepItem>
+        );
+      })}
     </StepRoot>
   );
 });

@@ -1,8 +1,8 @@
 import { useState, useEffect, useMemo } from 'react';
 import { combineLatest, Observable } from 'rxjs';
 
-import { CurrencyId, Balance } from '@acala-network/types/interfaces';
-import { FixedPointNumber } from '@acala-network/sdk-core';
+import { CurrencyId, Balance } from '@webb-tools/types/interfaces';
+import { FixedPointNumber } from '@webb-tools/sdk-core';
 
 import { tokenEq } from '@webb-dapp/react-components';
 
@@ -13,7 +13,7 @@ import { useConstants } from './useConstants';
 import { AccountLike } from './types';
 import { usePrice, useAllPrices, PriceData } from './priceHooks';
 
-export type BalanceData = { currency: CurrencyId ; balance: FixedPointNumber };
+export type BalanceData = { currency: CurrencyId; balance: FixedPointNumber };
 
 /**
  * @name useBalance
@@ -24,7 +24,9 @@ export type BalanceData = { currency: CurrencyId ; balance: FixedPointNumber };
 export const useBalance = (currency?: CurrencyId, account?: AccountLike): FixedPointNumber => {
   const { active } = useAccounts();
   const _account = useMemo(() => account || (active ? active.address : '_'), [account, active]);
-  const balance = useCall<Balance>('derive.currencies.balance', [_account, currency]);
+  // FIXME: neads api-derive package.
+  // const balance = useCall<Balance>('derive.currencies.balance', [_account, currency]);
+  const balance = null;
   const result = useMemo<FixedPointNumber>((): FixedPointNumber => {
     if (!currency || !balance) {
       return FixedPointNumber.ZERO;
@@ -53,15 +55,19 @@ export const useBalances = (currencies: CurrencyId[], account?: AccountLike): Ba
       return;
     }
 
-    const subscribe = combineLatest(currencies.map((currency: CurrencyId) => {
-      return (api.derive as any).currencies.balance(_account, currency) as Observable<Balance>;
-    })).subscribe({
+    const subscribe = combineLatest(
+      currencies.map((currency: CurrencyId) => {
+        return (api.derive as any).currencies.balance(_account, currency) as Observable<Balance>;
+      })
+    ).subscribe({
       next: (result) => {
         setBalances(
-          currencies.map((currency: CurrencyId, index): BalanceData => ({
-            balance: result ? FixedPointNumber.fromInner(result[index].toString()) : FixedPointNumber.ZERO,
-            currency
-          }))
+          currencies.map(
+            (currency: CurrencyId, index): BalanceData => ({
+              balance: result ? FixedPointNumber.fromInner(result[index].toString()) : FixedPointNumber.ZERO,
+              currency
+            })
+          )
         );
       }
     });

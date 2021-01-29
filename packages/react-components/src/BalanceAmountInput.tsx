@@ -8,9 +8,9 @@ import classes from './BalanceAmountInput.module.scss';
 import { BalanceInput, BalanceInputValue } from './BalanceInput';
 import { TokenName } from './Token';
 import { FormatValue } from './format';
-import { CurrencyId } from '@acala-network/types/interfaces';
+import { CurrencyId } from '@webb-tools/types/interfaces';
 import { useInputValue } from '@webb-dapp/react-hooks/useInputValue';
-import { FixedPointNumber } from '@acala-network/sdk-core';
+import { FixedPointNumber } from '@webb-tools/sdk-core';
 import { LPAmountWithShare } from './LPSize';
 
 type InputType = 'balance' | 'amount';
@@ -49,30 +49,34 @@ export const BalanceAmountInput: FC<BalanceAmountInputProps> = ({ currency, erro
     return balance.times(price);
   }, [balance, price]);
 
-  const [balanceValue, setBalanceValue, { error: balanceError, setValidator: setBalanceValidator }] = useInputValue<
-    BalanceInputValue
-  >({
+  const [
+    balanceValue,
+    setBalanceValue,
+    { error: balanceError, setValidator: setBalanceValidator },
+  ] = useInputValue<BalanceInputValue>({
     amount: 0,
-    token: currency
+    token: currency,
   });
 
-  const [amountValue, setAmountValue, { error: amountError, setValidator: setAmountValidator }] = useInputValue<
-    BalanceInputValue
-  >({
+  const [
+    amountValue,
+    setAmountValue,
+    { error: amountError, setValidator: setAmountValidator },
+  ] = useInputValue<BalanceInputValue>({
     amount: 0,
-    token: currency
+    token: currency,
   });
 
   useBalanceValidator({
     currency: currency,
-    updateValidator: setBalanceValidator
+    updateValidator: setBalanceValidator,
   });
 
   useBalanceValidator({
     checkBalance: false,
     currency: currency,
     max: [maxAmount, ''],
-    updateValidator: setAmountValidator
+    updateValidator: setAmountValidator,
   });
 
   const amountForBalance = useMemo(() => {
@@ -94,11 +98,11 @@ export const BalanceAmountInput: FC<BalanceAmountInputProps> = ({ currency, erro
     setInputType(inputType === 'amount' ? 'balance' : 'amount');
     setBalanceValue({
       amount: 0,
-      token: currency
+      token: currency,
     });
     setAmountValue({
       amount: 0,
-      token: stableCurrency
+      token: stableCurrency,
     });
   }, [setInputType, inputType, setBalanceValue, setAmountValue, currency, stableCurrency, mode]);
 
@@ -115,22 +119,22 @@ export const BalanceAmountInput: FC<BalanceAmountInputProps> = ({ currency, erro
 
     setBalanceValue({
       amount: balance.toNumber(),
-      token: currency
+      token: currency,
     });
     onChange({
       amount: balance.times(price).toNumber(),
-      balance: balance.toNumber()
+      balance: balance.toNumber(),
     });
   }, [setBalanceValue, balance, currency, onChange, price]);
 
   const handleAmountMax = useCallback(() => {
     setAmountValue({
       amount: maxAmount.toNumber() || 0,
-      token: stableCurrency
+      token: stableCurrency,
     });
     onChange({
       amount: maxAmount.toNumber(),
-      balance: maxAmount.div(price).toNumber()
+      balance: maxAmount.div(price).toNumber(),
     });
   }, [maxAmount, setAmountValue, price, onChange, stableCurrency]);
 
@@ -138,7 +142,7 @@ export const BalanceAmountInput: FC<BalanceAmountInputProps> = ({ currency, erro
     return clsx(classes.root, {
       [classes.focused]: focused,
       [classes.error]: !!error,
-      [classes.noSwitch]: mode === 'lp-token'
+      [classes.noSwitch]: mode === 'lp-token',
     });
   }, [focused, error, mode]);
 
@@ -146,7 +150,7 @@ export const BalanceAmountInput: FC<BalanceAmountInputProps> = ({ currency, erro
     onChange({
       amount: amountValue.amount,
       balance: balanceValue.amount,
-      error: balanceError || amountError
+      error: balanceError || amountError,
     });
     /* eslint-disable-next-line */
   }, [balanceError, amountError, amountValue, balanceValue]);

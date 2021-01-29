@@ -10,6 +10,6 @@ export const useSubscription = (run: () => Subscription | undefined, tracker: an
     }
 
     subscription.current = run();
-  /* eslint-disable-next-line react-hooks/exhaustive-deps */
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
   }, [...tracker]);
 };

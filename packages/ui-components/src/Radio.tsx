@@ -9,14 +9,7 @@ interface Props extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> {
   onClick?: () => void;
 }
 
-export const Radio: FC<Props> = memo(({
-  checked = false,
-  className,
-  disabled,
-  label,
-  onClick,
-  ...other
-}) => {
+export const Radio: FC<Props> = memo(({ checked = false, className, disabled, label, onClick, ...other }) => {
   const _onClick = (): void => {
     if (disabled) {
       return;
@@ -27,23 +20,14 @@ export const Radio: FC<Props> = memo(({
 
   return (
     <div
-      className={
-        clsx(
-          classes.root,
-          className,
-          {
-            [classes.checked]: checked,
-            [classes.disabled]: disabled
-          }
-        )
-      }
+      className={clsx(classes.root, className, {
+        [classes.checked]: checked,
+        [classes.disabled]: disabled,
+      })}
       onClick={_onClick}
     >
       <span className={classes.radio}>
-        <input
-          className={classes.input}
-          {...other}
-        />
+        <input className={classes.input} {...other} />
       </span>
       {label ? <div className={classes.label}>{label}</div> : null}
     </div>

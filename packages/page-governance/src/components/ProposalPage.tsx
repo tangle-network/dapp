@@ -27,10 +27,10 @@ export const ProposalPage: FC = () => {
     breadcrumb: [
       {
         content: 'Governance Overview',
-        path: '/governance'
-      }
+        path: '/governance',
+      },
     ],
-    content: 'Council Proposals'
+    content: 'Council Proposals',
   });
   const councilRender = useCallback((council: CouncilType) => <ProposalList council={council} />, []);
 

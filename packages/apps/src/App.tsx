@@ -10,7 +10,7 @@ import './initI18n';
 const App: FC = () => {
   return (
     <UIProvider>
-      <WebbProvider applicationName={'Acala Dapp'}>
+      <WebbProvider applicationName={'Webb Dapp'}>
         <RouterProvider config={routerConfig} />
         <EventsWatcher />
       </WebbProvider>

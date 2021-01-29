@@ -3,7 +3,7 @@ import { switchMap, map } from 'rxjs/operators';
 import { combineLatest, Observable, of } from 'rxjs';
 
 import { Vec, Option } from '@polkadot/types';
-import { AccountId } from '@acala-network/types/interfaces/types';
+import { AccountId } from '@webb-tools/types/interfaces/types';
 import { Proposal, Hash, Votes } from '@polkadot/types/interfaces';
 import { ApiRx } from '@polkadot/api';
 
@@ -17,11 +17,11 @@ export interface ProposalData {
   council: string;
 }
 
-function getAllCouncil (api: ApiRx): string[] {
+function getAllCouncil(api: ApiRx): string[] {
   return Object.keys(api.query).filter((key: string): boolean => key.endsWith('Council'));
 }
 
-function fetchProposalAndVote (api: ApiRx, council: string, hash: string): Observable<ProposalData> {
+function fetchProposalAndVote(api: ApiRx, council: string, hash: string): Observable<ProposalData> {
   return combineLatest(
     api.query[council].proposalOf<Option<Proposal>>(hash),
     api.query[council].voting<Option<Votes>>(hash)
@@ -31,20 +31,18 @@ function fetchProposalAndVote (api: ApiRx, council: string, hash: string): Obser
         council,
         hash: hash,
         proposal: proposal.unwrap(),
-        vote: vote.unwrap()
+        vote: vote.unwrap(),
       };
     })
   );
 }
 
-function fetchAllProposalAndVote (api: ApiRx, council: string): Observable<ProposalData[]> {
+function fetchAllProposalAndVote(api: ApiRx, council: string): Observable<ProposalData[]> {
   return api.query[council].proposals<Vec<Hash>>().pipe(
     switchMap((result) => {
       if (result.isEmpty) return of([]);
 
-      return combineLatest(
-        result.map((hash) => fetchProposalAndVote(api, council, hash.toString()))
-      );
+      return combineLatest(result.map((hash) => fetchProposalAndVote(api, council, hash.toString())));
     })
   );
 }
@@ -76,8 +74,7 @@ export const useProposal = (council: string, hash: string): ProposalData | null 
 
     console.log(_council, hash);
 
-    const subscriber = fetchProposalAndVote(api, _council, hash)
-      .subscribe((data) => setData(data));
+    const subscriber = fetchProposalAndVote(api, _council, hash).subscribe((data) => setData(data));
 
     return (): void => subscriber.unsubscribe();
   }, [api, _council, hash]);
@@ -93,8 +90,7 @@ export const useProposals = (council: string): ProposalData[] => {
   useEffect(() => {
     if (!api || !api.query[_council]) return;
 
-    const subscriber = fetchAllProposalAndVote(api, _council)
-      .subscribe((data) => setData(data));
+    const subscriber = fetchAllProposalAndVote(api, _council).subscribe((data) => setData(data));
 
     return (): void => subscriber.unsubscribe();
   }, [api, _council]);
@@ -111,9 +107,7 @@ export const useRecentProposals = (): ProposalData[] => {
 
     const councils = getAllCouncil(api);
 
-    const subscriber = combineLatest(
-      councils.map((item) => fetchAllProposalAndVote(api, item))
-    ).subscribe((result) => {
+    const subscriber = combineLatest(councils.map((item) => fetchAllProposalAndVote(api, item))).subscribe((result) => {
       const _data = result
         .reduce((acc, cur): ProposalData[] => [...acc, ...cur], [])
         .sort((a, b) => a.vote.end.toNumber() - b.vote.end.toNumber())

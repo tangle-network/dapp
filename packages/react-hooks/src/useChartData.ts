@@ -50,18 +50,22 @@ export const useLoanOverviewChart = (): LoanOverviewHistory => {
           |> group(columns: ["asset"])
           |> aggregateWindow(every: 1d, fn: mean)
           |> drop(columns: ["_start", "_end"])
-      `)
+      `),
     ]).then(([data1, data2]) => {
-      setCollaterals(data1.map((item: any) => ({
-        asset: item.asset,
-        time: item._time,
-        value: item._value
-      })));
-      setDebits(data2.map((item: any) => ({
-        asset: item.asset,
-        time: item._time,
-        value: item._value
-      })));
+      setCollaterals(
+        data1.map((item: any) => ({
+          asset: item.asset,
+          time: item._time,
+          value: item._value,
+        }))
+      );
+      setDebits(
+        data2.map((item: any) => ({
+          asset: item.asset,
+          time: item._time,
+          value: item._value,
+        }))
+      );
       setLoading(true);
     });
   }, [influxDB]);
@@ -86,7 +90,9 @@ export const useOracleHistoryChart = (currency: string): OracleHistory => {
 
     setLoading(true);
 
-    query.collectRows(`
+    query
+      .collectRows(
+        `
       from(bucket: "acala-data")
         |> range(start: -7d, stop: now())
         |> filter(fn: (r) => 
@@ -96,28 +102,33 @@ export const useOracleHistoryChart = (currency: string): OracleHistory => {
         |> group(columns: ["provider"])
         |> aggregateWindow(every: 5m, fn: mean)
         |> drop(columns: ["_start", "_stop"])
-    `).then((data) => {
-      const result: Record<string, BasicChartData[]> = {};
+    `
+      )
+      .then((data) => {
+        const result: Record<string, BasicChartData[]> = {};
 
-      data.forEach((item: any) => {
-        if (Reflect.has(result, item.provider)) {
-          result[item.provider].push({
-            time: item._time,
-            value: item._value
-          });
-        } else {
-          result[item.provider] = [{
-            time: item._time,
-            value: item._value
-          }];
-        }
+        data.forEach((item: any) => {
+          if (Reflect.has(result, item.provider)) {
+            result[item.provider].push({
+              time: item._time,
+              value: item._value,
+            });
+          } else {
+            result[item.provider] = [
+              {
+                time: item._time,
+                value: item._value,
+              },
+            ];
+          }
+        });
+
+        setData(result);
+        setLoading(false);
+      })
+      .catch(() => {
+        setLoading(false);
       });
-
-      setData(result);
-      setLoading(false);
-    }).catch(() => {
-      setLoading(false);
-    });
   }, [influxDB, currency]);
 
   return useMemo(() => ({ data, loading }), [data, loading]);

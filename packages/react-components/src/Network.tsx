@@ -10,14 +10,14 @@ const logoMap = new Map([
   ['acala', <AcalaLogo key='acala-logo' />],
   ['laminar', <LaminarLogo key='laminar-logo' />],
   ['polkadot', <PolkadotLogo key='polkadot-logo' />],
-  ['rococo', <PolkadotLogo key='rococo-logo' />]
+  ['rococo', <PolkadotLogo key='rococo-logo' />],
 ]);
 
 const nameMap = new Map([
   ['acala', 'Acala'],
   ['laminar', 'Laminar'],
   ['polkadot', 'Polkadot'],
-  ['rococo', 'Rococo']
+  ['rococo', 'Rococo'],
 ]);
 
 export const getNetworkName = (network: NetworkType): string => {

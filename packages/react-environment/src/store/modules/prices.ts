@@ -1,11 +1,11 @@
 import { useEffect, useReducer } from 'react';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { FixedPointNumber } from '@acala-network/sdk-core';
-import { CurrencyId } from '@acala-network/types/interfaces';
+import { FixedPointNumber } from '@webb-tools/sdk-core';
+import { CurrencyId } from '@webb-tools/types/interfaces';
 import { ApiRx } from '@polkadot/api';
 
-import { DerivedDexPool } from '@acala-network/api-derive';
+import { DerivedDexPool } from '@webb-tools/api-derive';
 import { useApi } from '@webb-dapp/react-hooks';
 import { getCurrencyIdFromName } from '@webb-dapp/react-components';
 
@@ -24,7 +24,7 @@ type PriceState = {
 };
 
 const initState: PriceState = {
-  prices: new Map<string, FixedPointNumber>()
+  prices: new Map<string, FixedPointNumber>(),
 };
 
 const reducer = (state: PriceState, action: PriceAction): PriceState => {
@@ -48,7 +48,7 @@ const subscribeDexPrices = (api: ApiRx): Observable<{ currency: CurrencyId; pric
     map((result) => {
       return {
         currency: nativeCurrency,
-        price: FixedPointNumber.fromInner(result[1].toString()).div(FixedPointNumber.fromInner(result[0].toString()))
+        price: FixedPointNumber.fromInner(result[1].toString()).div(FixedPointNumber.fromInner(result[0].toString())),
       };
     })
   );
@@ -64,7 +64,7 @@ export const usePricesStore = (): PriceState => {
     // set aUSD price to 1
     dispatch({
       type: 'update',
-      value: new Map([[getCurrencyIdFromName(api, 'AUSD'), FixedPointNumber.ONE]])
+      value: new Map([[getCurrencyIdFromName(api, 'AUSD'), FixedPointNumber.ONE]]),
     });
 
     const subscription1 = subscribeOraclePrices(api, 'Aggregated').subscribe((result) => {
@@ -99,8 +99,8 @@ export const usePricesStore = (): PriceState => {
       subscription2.unsubscribe();
       subscription3.unsubscribe();
     };
-  // state.price change should not trigger effect
-  /* eslint-disable-next-line */
+    // state.price change should not trigger effect
+    /* eslint-disable-next-line */
   }, [api]);
 
   return state;

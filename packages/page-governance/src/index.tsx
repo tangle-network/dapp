@@ -9,22 +9,10 @@ import { CouncilProposalDetail } from './components/CouncilProposalDetail';
 const PageGovernance: FC = () => {
   return (
     <Routes>
-      <Route
-        element={<Overview />}
-        path='/'
-      />
-      <Route
-        element={<ProposalPage />}
-        path='/proposals'
-      />
-      <Route
-        element={<CouncilProposalDetail />}
-        path='/proposals/:id'
-      />
-      <Route
-        element={<CouncilPage />}
-        path='/councils'
-      />
+      <Route element={<Overview />} path='/' />
+      <Route element={<ProposalPage />} path='/proposals' />
+      <Route element={<CouncilProposalDetail />} path='/proposals/:id' />
+      <Route element={<CouncilPage />} path='/councils' />
     </Routes>
   );
 };

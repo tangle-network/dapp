@@ -12,26 +12,12 @@ export interface TagProps extends BareProps {
   onClick?: () => void;
 }
 
-export const Tag: FC<TagProps> = ({
-  children,
-  className,
-  onClick,
-  style = 'normal',
-  type = 'normal'
-}) => {
+export const Tag: FC<TagProps> = ({ children, className, onClick, style = 'normal', type = 'normal' }) => {
   return (
     <span
-      className={
-        clsx(
-          'aca-tag',
-          `aca-tag--style-${style}`,
-          `aca-tag--type-${type}`,
-          className,
-          {
-            'aca-tag--clickable': onClick
-          }
-        )
-      }
+      className={clsx('aca-tag', `aca-tag--style-${style}`, `aca-tag--type-${type}`, className, {
+        'aca-tag--clickable': onClick,
+      })}
       onClick={onClick}
     >
       {children}
@@ -39,13 +25,6 @@ export const Tag: FC<TagProps> = ({
   );
 };
 
-export const TagGroup: FC<BareProps> = ({
-  children,
-  className
-}) => {
-  return (
-    <div className={clsx('aca-tag__group', className)}>
-      {children}
-    </div>
-  );
+export const TagGroup: FC<BareProps> = ({ children, className }) => {
+  return <div className={clsx('aca-tag__group', className)}>{children}</div>;
 };

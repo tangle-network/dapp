@@ -2,8 +2,8 @@ import { useState, useMemo } from 'react';
 import { combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { FixedPointNumber } from '@acala-network/sdk-core';
-import { BlockNumber, SubAccountStatus, Amount, Balance } from '@acala-network/types/interfaces';
+import { FixedPointNumber } from '@webb-tools/sdk-core';
+import { BlockNumber, SubAccountStatus, Amount, Balance } from '@webb-tools/types/interfaces';
 import { useStore, StakingPoolData } from '@webb-dapp/react-environment';
 
 import { useApi } from './useApi';
@@ -42,19 +42,23 @@ export const useStakingPoolFreeList = (): FreeListItem[] => {
 
     return combineLatest(
       eraArray.map((duration: number) => api.query.stakingPool.unbonding<[Amount, Amount, Amount]>(duration))
-    ).pipe(
-      map((result) => eraArray.map((era, index) => {
-        const unbonding = FixedPointNumber.fromInner(result[index][0].toString());
-        const claimedUnbonding = FixedPointNumber.fromInner(result[index][1].toString());
-        const initialClaimedUnbonding = FixedPointNumber.fromInner(result[index][2].toString());
-        const amount = unbonding.minus(claimedUnbonding);
+    )
+      .pipe(
+        map((result) =>
+          eraArray.map((era, index) => {
+            const unbonding = FixedPointNumber.fromInner(result[index][0].toString());
+            const claimedUnbonding = FixedPointNumber.fromInner(result[index][1].toString());
+            const initialClaimedUnbonding = FixedPointNumber.fromInner(result[index][2].toString());
+            const amount = unbonding.minus(claimedUnbonding);
 
-        return { amount, claimedUnbonding, era, initialClaimedUnbonding, unbonding };
-      })),
-      map((result) => result.filter((item): boolean => !item.amount.isZero()))
-    ).subscribe((result) => {
-      setFreeList(result);
-    });
+            return { amount, claimedUnbonding, era, initialClaimedUnbonding, unbonding };
+          })
+        ),
+        map((result) => result.filter((item): boolean => !item.amount.isZero()))
+      )
+      .subscribe((result) => {
+        setFreeList(result);
+      });
   }, [api, stakingPool]);
 
   return freeList;
@@ -80,15 +84,21 @@ export const useRedeemList = (): RedeemItem[] => {
 
     return combineLatest(
       eraArray.map((era: number) => api.query.stakingPool.claimedUnbond<Balance>(active.address, era))
-    ).pipe(
-      map((result) => eraArray.map((era, index) => ({
-        balance: result[index].isEmpty ? FixedPointNumber.ZERO : FixedPointNumber.fromInner(result[index].toString()),
-        era
-      }))),
-      map((result) => result.filter((item): boolean => !item.balance.isZero()))
-    ).subscribe((result) => {
-      setRedeemList(result);
-    });
+    )
+      .pipe(
+        map((result) =>
+          eraArray.map((era, index) => ({
+            balance: result[index].isEmpty
+              ? FixedPointNumber.ZERO
+              : FixedPointNumber.fromInner(result[index].toString()),
+            era,
+          }))
+        ),
+        map((result) => result.filter((item): boolean => !item.balance.isZero()))
+      )
+      .subscribe((result) => {
+        setRedeemList(result);
+      });
   }, [stakingPool, active, api.query.stakingPool]);
 
   return redeemList;
@@ -146,11 +156,13 @@ export const useStakingRewardAPR = (): FixedPointNumber => {
   const arp = useMemo<FixedPointNumber>(() => {
     if (!subAccountStatus) return FixedPointNumber.ZERO;
 
-    const eraLength = (api.consts.polkadotBridge.eraLength as unknown as BlockNumber).toNumber();
+    const eraLength = ((api.consts.polkadotBridge.eraLength as unknown) as BlockNumber).toNumber();
     const expectedBlockTime = api.consts.babe.expectedBlockTime.toNumber();
     const eraNumOfYear = YEAR / expectedBlockTime / eraLength;
 
-    return FixedPointNumber.fromInner(subAccountStatus.mockRewardRate.toString()).times(new FixedPointNumber(eraNumOfYear));
+    return FixedPointNumber.fromInner(subAccountStatus.mockRewardRate.toString()).times(
+      new FixedPointNumber(eraNumOfYear)
+    );
   }, [api, subAccountStatus]);
 
   return arp;

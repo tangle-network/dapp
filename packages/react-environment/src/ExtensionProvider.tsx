@@ -3,7 +3,7 @@ import { isNumber } from 'lodash';
 import { InjectedAccount, InjectedExtension, MetadataDef } from '@polkadot/extension-inject/types';
 import { ApiRx } from '@polkadot/api';
 import { web3Enable, web3FromAddress } from '@polkadot/extension-dapp';
-import { options } from '@acala-network/api';
+import { options } from '@webb-tools/api';
 
 import { NoAccounts, NoExtensions, SelectAccount, UploadMetadata } from '@webb-dapp/react-components';
 import { useModal, useApi, useStorage } from '@webb-dapp/react-hooks';
@@ -77,7 +77,7 @@ export const ExtensionProvider: FC<AccountProviderProps> = ({ appName, authRequi
       ss58Format: isNumber(api.registry.chainSS58) ? api.registry.chainSS58 : 42,
       tokenDecimals: isNumber(api.registry.chainDecimals) ? api.registry.chainDecimals : 12,
       tokenSymbol: api.registry.chainToken || 'Unit',
-      types: options({}).types as any
+      types: options({}).types as any,
     };
 
     setMetadataDef(metadataDef);
@@ -243,7 +243,7 @@ export const ExtensionProvider: FC<AccountProviderProps> = ({ appName, authRequi
       closeSelectAccount,
       isReady,
       openSelectAccount,
-      selectAccountStatus
+      selectAccountStatus,
     }),
     [
       accounts,
@@ -254,7 +254,7 @@ export const ExtensionProvider: FC<AccountProviderProps> = ({ appName, authRequi
       closeSelectAccount,
       addressBook,
       addToAddressBook,
-      selectAccountStatus
+      selectAccountStatus,
     ]
   );
 

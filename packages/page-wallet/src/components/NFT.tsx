@@ -1,6 +1,6 @@
 import React, { FC, useCallback, useMemo, useState } from 'react';
 
-import { TokenInfoOf, ClassInfoOf } from '@acala-network/types/interfaces';
+import { TokenInfoOf, ClassInfoOf } from '@webb-tools/types/interfaces';
 import { Card, GridBox, Empty, CardLoading, Modal, styled } from '@webb-dapp/ui-components';
 import { NFTCard, NFTImage } from '@webb-dapp/react-components';
 import { useAllNFTTokens, useModal } from '@webb-dapp/react-hooks';
@@ -46,11 +46,11 @@ export const NFT: FC = () => {
           artist: metadata?.artist,
           classes: {
             metadata: classes.metadata.toUtf8(),
-            totalIssuance: classes.totalIssuance.toBn().toNumber()
+            totalIssuance: classes.totalIssuance.toBn().toNumber(),
           },
           externalUrl: metadata?.external_url,
           name: metadata?.name,
-          publisher: metadata?.publisher
+          publisher: metadata?.publisher,
         };
       });
   }, [data, loading]);

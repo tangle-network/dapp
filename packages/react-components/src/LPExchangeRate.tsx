@@ -1,6 +1,6 @@
 import React, { FC, useState, useCallback } from 'react';
 
-import { CurrencyId } from '@acala-network/types/interfaces';
+import { CurrencyId } from '@webb-tools/types/interfaces';
 
 import { FormatBalance } from '@webb-dapp/react-components';
 import { SwapOutlined, Tag } from '@webb-dapp/ui-components';
@@ -34,22 +34,22 @@ export const LPExchangeRate: FC<Props> = ({ lp }) => {
             ? [
                 {
                   balance: 1,
-                  currency: supply
+                  currency: supply,
                 },
                 {
                   balance: supply2Target,
-                  currency: target
-                }
+                  currency: target,
+                },
               ]
             : [
                 {
                   balance: 1,
-                  currency: target
+                  currency: target,
                 },
                 {
                   balance: target2Supply,
-                  currency: supply
-                }
+                  currency: supply,
+                },
               ]
         }
         pairSymbol='≈'

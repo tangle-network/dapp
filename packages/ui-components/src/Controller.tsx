@@ -14,28 +14,16 @@ export interface ControllerProps {
   onClick?: () => void;
 }
 
-export const _Controller: FC<ControllerProps> = ({
-  direction,
-  disabled,
-  onClick
-}) => {
+export const _Controller: FC<ControllerProps> = ({ direction, disabled, onClick }) => {
   return (
-    <Button
-      className={clsx('aca-controller__root', direction, { disabled })}
-      disabled={disabled}
-      onClick={onClick}
-    >
+    <Button className={clsx('aca-controller__root', direction, { disabled })} disabled={disabled} onClick={onClick}>
       <ArrowIcon />
     </Button>
   );
 };
 
 const Group: FC<BareProps> = ({ children, className }) => {
-  return (
-    <div className={clsx('aca-controller__group', className)}>
-      { children }
-    </div>
-  );
+  return <div className={clsx('aca-controller__group', className)}>{children}</div>;
 };
 
 type ControllerType = FC<ControllerProps> & { Group: typeof Group };

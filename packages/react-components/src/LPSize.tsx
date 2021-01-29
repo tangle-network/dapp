@@ -1,12 +1,12 @@
 import React, { FC, useMemo } from 'react';
 
-import { CurrencyId } from '@acala-network/types/interfaces';
+import { CurrencyId } from '@webb-tools/types/interfaces';
 import { FormatBalance } from '@webb-dapp/react-components';
 import { useLPSize, useApi, useIssuance, usePrice } from '@webb-dapp/react-hooks';
 
 import { getCurrenciesFromDexShare, getCurrencyIdFromName } from './utils';
 import { BareProps } from '@webb-dapp/ui-components/types';
-import { FixedPointNumber } from '@acala-network/sdk-core';
+import { FixedPointNumber } from '@webb-tools/sdk-core';
 import { Token } from './Token';
 import { FlexBox } from '@webb-dapp/ui-components';
 import { FormatValue } from './format';
@@ -28,7 +28,7 @@ export const LPSize: FC<Props> = ({ lp }) => {
       pair={Object.keys(lpSize).map((item) => {
         return {
           balance: lpSize[item],
-          currency: getCurrencyIdFromName(api, item)
+          currency: getCurrencyIdFromName(api, item),
         };
       })}
       pairSymbol='/'
@@ -56,7 +56,7 @@ export const LPSizeWithShare: FC<LPSizeWithShareProps> = ({ className, lp, share
       getCurrencyIdFromName(api, keys[0]),
       size[keys[0]].times(_share.div(issuance)),
       getCurrencyIdFromName(api, keys[1]),
-      size[keys[1]].times(_share.div(issuance))
+      size[keys[1]].times(_share.div(issuance)),
     ] as [CurrencyId, FixedPointNumber, CurrencyId, FixedPointNumber];
   }, [api, size, issuance, share]);
 

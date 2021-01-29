@@ -23,7 +23,7 @@ export interface RouterConfigData {
   title?: string;
 }
 
-export const Redirect: FC<{ to: string}> = ({ to }) => {
+export const Redirect: FC<{ to: string }> = ({ to }) => {
   const navigate = useNavigate();
 
   useEffect(() => navigate(to), [navigate, to]);
@@ -66,10 +66,7 @@ export const RouterProvider: FC<Props> = ({ config }) => {
     inner.forEach((item) => {
       // process second level route
       if (item.children) {
-        item.element = cloneElement(
-          item.element as ReactElement,
-          { children: <Routes config={item.children} /> }
-        );
+        item.element = cloneElement(item.element as ReactElement, { children: <Routes config={item.children} /> });
       }
 
       // process redirect
@@ -79,12 +76,15 @@ export const RouterProvider: FC<Props> = ({ config }) => {
     });
 
     return inner;
-  /* eslint-disable-next-line  react-hooks/exhaustive-deps */
+    /* eslint-disable-next-line  react-hooks/exhaustive-deps */
   }, [config]);
 
-  return useMemo((): JSX.Element => (
-    <Router>
-      <Routes config={_config} />
-    </Router>
-  ), [_config]);
+  return useMemo(
+    (): JSX.Element => (
+      <Router>
+        <Routes config={_config} />
+      </Router>
+    ),
+    [_config]
+  );
 };

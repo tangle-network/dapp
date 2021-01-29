@@ -3,14 +3,14 @@ import { useFormik } from 'formik';
 import { noop } from 'lodash';
 import clsx from 'clsx';
 
-import { Fixed18 } from '@acala-network/app-util';
+import { Fixed18 } from '@webb-tools/app-util';
 import { List, Button, Row, Col, Condition } from '@webb-dapp/ui-components';
 import {
   BalanceInput,
   FormatAddress,
   FormatBalance,
   getCurrencyIdFromName,
-  BalanceInputValue
+  BalanceInputValue,
 } from '@webb-dapp/react-components';
 
 import classes from './RenBtc.module.scss';
@@ -35,9 +35,9 @@ const InputStep: FC = () => {
   const { setAmount, setStep } = useContext(RenBtcMintContext);
   const form = useFormik({
     initialValues: {
-      amount: ('' as unknown) as number
+      amount: ('' as unknown) as number,
     },
-    onSubmit: noop
+    onSubmit: noop,
   });
 
   const isDisabled = useMemo<boolean>((): boolean => {
@@ -67,7 +67,7 @@ const InputStep: FC = () => {
             error={form.errors.amount}
             numberInputProps={{
               max: MAX_BTC_AMOUNT,
-              min: 0
+              min: 0,
             }}
             onChange={handleInput}
             value={{ amount: form.values.amount, token: getCurrencyIdFromName(api, 'RENBTC') }}
@@ -199,7 +199,7 @@ export const RenBtcMint: FC = () => {
         amount,
         setAmount,
         setStep,
-        step
+        step,
       }}
     >
       <div className={classes.root}>

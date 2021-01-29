@@ -1,11 +1,11 @@
 import React, { FC, useMemo } from 'react';
 import clsx from 'clsx';
-import { Fixed18 } from '@acala-network/app-util';
+import { Fixed18 } from '@webb-tools/app-util';
 
 import { BareProps } from '@webb-dapp/ui-components/types';
 import { formatNumber, FormatNumberConfig } from '../utils';
 import { Tooltip, TooltipProps } from '@webb-dapp/ui-components';
-import { FixedPointNumber } from '@acala-network/sdk-core';
+import { FixedPointNumber } from '@webb-tools/sdk-core';
 
 import classes from './format.module.scss';
 
@@ -30,7 +30,7 @@ export const FormatNumber: FC<FormatNumberProps> = ({
   prefix = '',
   suffix = '',
   toolTipsProps,
-  withTooltips = false
+  withTooltips = false,
 }) => {
   const [i, d] = useMemo(() => {
     return formatNumber(data, formatNumberConfig).split('.');

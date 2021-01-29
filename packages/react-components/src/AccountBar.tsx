@@ -5,7 +5,7 @@ import { useAccounts, useConstants } from '@webb-dapp/react-hooks';
 import Identicon from '@polkadot/react-identicon';
 import { FormatAddress } from './format';
 import { TokenSelector } from './TokenSelector';
-import { CurrencyId } from '@acala-network/types/interfaces';
+import { CurrencyId } from '@webb-tools/types/interfaces';
 import { UserAssetBalance } from './Assets';
 
 const AccountBarRoot = styled.div`

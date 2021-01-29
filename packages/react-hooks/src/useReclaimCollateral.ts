@@ -1,4 +1,4 @@
-import { FixedPointNumber } from '@acala-network/sdk-core';
+import { FixedPointNumber } from '@webb-tools/sdk-core';
 import { Balance } from '@open-web3/orml-types/interfaces';
 
 import { useConstants } from './useConstants';
@@ -29,22 +29,25 @@ export const useReclaimCollateral = (): ReclaimCollateralData => {
     }, {} as ReclaimCollateralAmount);
   }, [treasury]);
 
-  const calcCanReceive = useCallback((amount: FixedPointNumber): ReclaimCollateralAmount => {
-    if (!totalIssuance || !collaterals) {
-      return {};
-    }
+  const calcCanReceive = useCallback(
+    (amount: FixedPointNumber): ReclaimCollateralAmount => {
+      if (!totalIssuance || !collaterals) {
+        return {};
+      }
 
-    const ratio = amount.div(FixedPointNumber.fromInner(totalIssuance.toString()));
+      const ratio = amount.div(FixedPointNumber.fromInner(totalIssuance.toString()));
 
-    return Object.keys(collaterals).reduce((acc, currency) => {
-      acc[currency] = (collaterals[currency] || FixedPointNumber.ZERO).times(ratio);
+      return Object.keys(collaterals).reduce((acc, currency) => {
+        acc[currency] = (collaterals[currency] || FixedPointNumber.ZERO).times(ratio);
 
-      return acc;
-    }, {} as ReclaimCollateralAmount);
-  }, [totalIssuance, collaterals]);
+        return acc;
+      }, {} as ReclaimCollateralAmount);
+    },
+    [totalIssuance, collaterals]
+  );
 
   return {
     calcCanReceive,
-    collaterals
+    collaterals,
   };
 };

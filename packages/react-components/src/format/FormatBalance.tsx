@@ -2,9 +2,9 @@ import React, { FC, ReactNode, useCallback, useMemo } from 'react';
 import clsx from 'clsx';
 
 import { Balance as BalanceType } from '@polkadot/types/interfaces';
-import { Fixed18 } from '@acala-network/app-util';
-import { FixedPointNumber } from '@acala-network/sdk-core';
-import { CurrencyId } from '@acala-network/types/interfaces';
+import { Fixed18 } from '@webb-tools/app-util';
+import { FixedPointNumber } from '@webb-tools/sdk-core';
+import { CurrencyId } from '@webb-tools/types/interfaces';
 import { BareProps } from '@webb-dapp/ui-components/types';
 import { styled } from '@webb-dapp/ui-components';
 
@@ -35,7 +35,7 @@ const CTokenName = styled(TokenName)`
 const formatBalanceConfig: FormatNumberProps['formatNumberConfig'] = {
   decimalLength: 6,
   removeEmptyDecimalParts: true,
-  removeTailZero: true
+  removeTailZero: true,
 };
 
 export const FormatBalance: FC<FormatBalanceProps> = ({
@@ -46,7 +46,7 @@ export const FormatBalance: FC<FormatBalanceProps> = ({
   decimalLength = 6,
   negativeToZero = true,
   pair,
-  pairSymbol
+  pairSymbol,
 }) => {
   const pairLength = useMemo(() => (pair ? pair.length : 0), [pair]);
 
@@ -67,7 +67,7 @@ export const FormatBalance: FC<FormatBalanceProps> = ({
         </span>,
         pairSymbol && index !== pairLength - 1 ? (
           <span key={'format-balance-symbol-' + index}> {pairSymbol} </span>
-        ) : null
+        ) : null,
       ];
     },
     [decimalLength, pairSymbol, pairLength, negativeToZero]

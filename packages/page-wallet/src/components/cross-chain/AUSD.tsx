@@ -13,7 +13,7 @@ const FormItem = Form.Item;
 
 const parachainIdsMap = new Map<string, number>([
   ['laminar', 5001],
-  ['acala', 500]
+  ['acala', 500],
 ]);
 
 export const AUSD: FC = () => {
@@ -24,7 +24,7 @@ export const AUSD: FC = () => {
   const formLayout = useMemo(() => {
     return {
       labelCol: { span: 24 },
-      wrapperCol: { span: 24 }
+      wrapperCol: { span: 24 },
     };
   }, []);
 
@@ -75,8 +75,8 @@ export const AUSD: FC = () => {
               rules={[
                 {
                   message: 'Please Input Amount',
-                  required: true
-                }
+                  required: true,
+                },
               ]}
             >
               <BalanceInput value={{ amount: 0, token: stableCurrency }} />

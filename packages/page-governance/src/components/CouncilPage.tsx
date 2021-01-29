@@ -11,10 +11,10 @@ export const CouncilPage: FC = () => {
     breadcrumb: [
       {
         content: 'Governance Overview',
-        path: '/governance'
-      }
+        path: '/governance',
+      },
     ],
-    content: 'Council'
+    content: 'Council',
   });
 
   const memberRender = useCallback((council: CouncilType) => <CouncilMembers council={council} />, []);

@@ -4,19 +4,21 @@ import { useMemo } from 'react';
 
 import { useConstants, useIssuance, useStakingPool } from './index';
 
-type HooksReturnType = Record<string,
-{
-  value?: string;
-  history?: {
-    date: number;
-    value: number;
-  }[];
-}>;
+type HooksReturnType = Record<
+  string,
+  {
+    value?: string;
+    history?: {
+      date: number;
+      value: number;
+    }[];
+  }
+>;
 
 const useHistory = (sql: string): any => {
   const data = useRequest(() => ({
     method: 'GET',
-    url: `https://pulse.acala.network/api/query?q=${sql}`
+    url: `https://pulse.acala.network/api/query?q=${sql}`,
   }));
 
   const history = useMemo(() => {
@@ -52,25 +54,25 @@ export const useDashboard = (): HooksReturnType => {
     return {
       DOTStaked: {
         history: DOTStakedHistory,
-        value: stakingPool?.stakingPool.getCommunalBonded()?.toString(0)
+        value: stakingPool?.stakingPool.getCommunalBonded()?.toString(0),
       },
       aUSDIssued: {
         history: aUSDIssuedHistory,
-        value: audIssue?.toString(0)
+        value: audIssue?.toString(0),
       },
       dailyTrascation: {
-        history: []
+        history: [],
       },
       dexDailyVolume: {
-        history: []
+        history: [],
       },
       newAccounts: {
         history: newAccountHistory,
-        value: newAccountHistory?.[newAccountHistory.length - 1]?.value
+        value: newAccountHistory?.[newAccountHistory.length - 1]?.value,
       },
       totalAssetLocked: {
-        history: []
-      }
+        history: [],
+      },
     };
   }, [audIssue, stakingPool, DOTStakedHistory, aUSDIssuedHistory, newAccountHistory]);
 };

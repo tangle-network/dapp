@@ -10,12 +10,12 @@ import classes from './AppSettings.module.scss';
 const LanguageConfig = [
   {
     key: 'English',
-    value: 'en'
+    value: 'en',
   },
   {
     key: 'Chinese',
-    value: 'zh'
-  }
+    value: 'zh',
+  },
 ];
 
 export const AppSettings: FC = () => {

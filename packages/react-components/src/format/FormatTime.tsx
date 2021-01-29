@@ -7,11 +7,7 @@ interface Props {
   unix?: boolean;
 }
 
-export const FormatTime: FC<Props> = ({
-  formatter = 'YYYY/MM/DD HH:mm',
-  time,
-  unix = true
-}) => {
+export const FormatTime: FC<Props> = ({ formatter = 'YYYY/MM/DD HH:mm', time, unix = true }) => {
   if (unix) {
     return <span>{Dayjs.unix(Number(time)).format(formatter)}</span>;
   }

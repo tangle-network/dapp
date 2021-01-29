@@ -37,7 +37,7 @@ export const Sidebar: FC<SidebarProps> = ({ collapse, config, showAccount = true
   const data = useMemo(
     () => ({
       active,
-      setActive
+      setActive,
     }),
     [active, setActive]
   );

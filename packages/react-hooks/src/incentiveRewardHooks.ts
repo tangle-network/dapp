@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 import { StorageKey } from '@polkadot/types';
-import { Share, Balance, CurrencyId } from '@acala-network/types/interfaces';
+import { Share, Balance, CurrencyId } from '@webb-tools/types/interfaces';
 import { PoolInfo } from '@open-web3/orml-types/interfaces';
-import { FixedPointNumber } from '@acala-network/sdk-core';
+import { FixedPointNumber } from '@webb-tools/sdk-core';
 
 import { useCall } from './useCall';
 import { useApi } from './useApi';
@@ -16,22 +16,22 @@ interface CPoolInfo {
 
 export type PoolId = 'Loans' | 'DexIncentive' | 'DexSaving' | 'Homa';
 
-export function getPoolId (poolId: PoolId, currency: CurrencyId): Partial<Record<PoolId, CurrencyId>> | 'Homa' {
+export function getPoolId(poolId: PoolId, currency: CurrencyId): Partial<Record<PoolId, CurrencyId>> | 'Homa' {
   if (poolId === 'Loans') {
     return {
-      Loans: currency
+      Loans: currency,
     };
   }
 
   if (poolId === 'DexIncentive') {
     return {
-      DexIncentive: currency
+      DexIncentive: currency,
     };
   }
 
   if (poolId === 'DexSaving') {
     return {
-      DexSaving: currency
+      DexSaving: currency,
     };
   }
 
@@ -45,14 +45,14 @@ export const useIncentivePool = (poolId: PoolId, currency: CurrencyId): CPoolInf
       return {
         totalRewards: FixedPointNumber.ZERO,
         totalShares: FixedPointNumber.ZERO,
-        totalWithdrawnRewards: FixedPointNumber.ZERO
+        totalWithdrawnRewards: FixedPointNumber.ZERO,
       };
     }
 
     return {
       totalRewards: FixedPointNumber.fromInner(poolInfo.totalRewards.toString()),
       totalShares: FixedPointNumber.fromInner(poolInfo.totalShares.toString()),
-      totalWithdrawnRewards: FixedPointNumber.fromInner(poolInfo.totalWithdrawnRewards.toString())
+      totalWithdrawnRewards: FixedPointNumber.fromInner(poolInfo.totalWithdrawnRewards.toString()),
     };
   }, [poolInfo]);
 
@@ -64,19 +64,26 @@ interface ShareAndWithdrawn {
   withdrawn: FixedPointNumber;
 }
 
-export const useShareAndWithdrawnReward = (poolId: PoolId, currency: CurrencyId, account?: string): ShareAndWithdrawn => {
-  const info = useCall<[Share, Balance]>('query.rewards.shareAndWithdrawnReward', [getPoolId(poolId, currency), account]);
+export const useShareAndWithdrawnReward = (
+  poolId: PoolId,
+  currency: CurrencyId,
+  account?: string
+): ShareAndWithdrawn => {
+  const info = useCall<[Share, Balance]>('query.rewards.shareAndWithdrawnReward', [
+    getPoolId(poolId, currency),
+    account,
+  ]);
   const result = useMemo<ShareAndWithdrawn>(() => {
     if (!info) {
       return {
         share: FixedPointNumber.ZERO,
-        withdrawn: FixedPointNumber.ZERO
+        withdrawn: FixedPointNumber.ZERO,
       };
     }
 
     return {
       share: FixedPointNumber.fromInner(info[0].toString()),
-      withdrawn: FixedPointNumber.fromInner(info[1].toString())
+      withdrawn: FixedPointNumber.fromInner(info[1].toString()),
     };
   }, [info]);
 
@@ -95,12 +102,14 @@ export const useDexActiveIncentiveRewardPool = (): RewardPool[] => {
   const result = useMemo(() => {
     if (!dexIncentiveRewards) return [];
 
-    return dexIncentiveRewards.map((item) => {
-      return {
-        currency: api.createType('CurrencyId' as any, (item[0].toHuman() as unknown as any[])[0]) as CurrencyId,
-        reward: FixedPointNumber.fromInner(item[1].toString())
-      };
-    }).filter((item) => !item.reward.isZero());
+    return dexIncentiveRewards
+      .map((item) => {
+        return {
+          currency: api.createType('CurrencyId' as any, ((item[0].toHuman() as unknown) as any[])[0]) as CurrencyId,
+          reward: FixedPointNumber.fromInner(item[1].toString()),
+        };
+      })
+      .filter((item) => !item.reward.isZero());
   }, [api, dexIncentiveRewards]);
 
   return result;
@@ -114,12 +123,12 @@ interface IncentiveParams {
 export const useIncentiveRewardParams = (): IncentiveParams => {
   const { api } = useApi();
   const accumulatePeriod = api.consts.incentives.accumulatePeriod;
-  const currency = api.consts.incentives.incentiveCurrencyId as unknown as CurrencyId;
+  const currency = (api.consts.incentives.incentiveCurrencyId as unknown) as CurrencyId;
 
   const result = useMemo(() => {
     return {
       accumulatePeriod: Number(accumulatePeriod.toString()),
-      currency
+      currency,
     };
   }, [currency, accumulatePeriod]);
 
@@ -133,7 +142,7 @@ export const useDexIncentiveReward = (): { params: IncentiveParams; rewardPool: 
 
   return {
     params,
-    rewardPool
+    rewardPool,
   };
 };
 
@@ -144,12 +153,14 @@ export const useLoanActiveIncentiveRewardPool = (): RewardPool[] => {
   const result = useMemo(() => {
     if (!loansIncentiveRewards) return [];
 
-    return loansIncentiveRewards.map((item) => {
-      return {
-        currency: api.createType('CurrencyId' as any, (item[0].toHuman() as unknown as any[])[0]) as CurrencyId,
-        reward: FixedPointNumber.fromInner(item[1].toString())
-      };
-    }).filter((item) => !item.reward.isZero());
+    return loansIncentiveRewards
+      .map((item) => {
+        return {
+          currency: api.createType('CurrencyId' as any, ((item[0].toHuman() as unknown) as any[])[0]) as CurrencyId,
+          reward: FixedPointNumber.fromInner(item[1].toString()),
+        };
+      })
+      .filter((item) => !item.reward.isZero());
   }, [api, loansIncentiveRewards]);
 
   return result;
@@ -162,7 +173,7 @@ export const useLoansIncentiveReward = (): { params: IncentiveParams; rewardPool
 
   return {
     params,
-    rewardPool
+    rewardPool,
   };
 };
 
@@ -189,7 +200,7 @@ export const useIncentiveShare = (poolId: PoolId, currency: CurrencyId, account?
       reward: reward.isLessThan(FixedPointNumber.ZERO) ? FixedPointNumber.ZERO : reward,
       share: shares.share,
       totalReward: poolInfo.totalRewards.minus(poolInfo.totalWithdrawnRewards),
-      totalShare: poolInfo.totalShares
+      totalShare: poolInfo.totalShares,
     };
   }, [poolInfo, shares]);
 

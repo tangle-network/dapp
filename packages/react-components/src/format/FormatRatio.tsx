@@ -1,12 +1,12 @@
 import React, { FC, useMemo } from 'react';
 import { FormatNumber, FormatNumberProps } from './FormatNumber';
-import { Fixed18 } from '@acala-network/app-util';
-import { FixedPointNumber } from '@acala-network/sdk-core';
+import { Fixed18 } from '@webb-tools/app-util';
+import { FixedPointNumber } from '@webb-tools/sdk-core';
 
 const FormatRatioConfig: FormatNumberProps['formatNumberConfig'] = {
   decimalLength: 6,
   removeEmptyDecimalParts: true,
-  removeTailZero: true
+  removeTailZero: true,
 };
 
 export const FormatRatio: FC<FormatNumberProps> = ({ data, ...props }) => {
@@ -19,15 +19,8 @@ export const FormatRatio: FC<FormatNumberProps> = ({ data, ...props }) => {
       return data.times(new FixedPointNumber(100));
     }
 
-    return (new FixedPointNumber(100)).times(new FixedPointNumber(100));
+    return new FixedPointNumber(100).times(new FixedPointNumber(100));
   }, [data]);
 
-  return (
-    <FormatNumber
-      data={_data}
-      formatNumberConfig={FormatRatioConfig}
-      suffix='%'
-      {...props}
-    />
-  );
+  return <FormatNumber data={_data} formatNumberConfig={FormatRatioConfig} suffix='%' {...props} />;
 };

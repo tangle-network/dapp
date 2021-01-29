@@ -1,6 +1,6 @@
 import React, { FC, useCallback, useMemo, useEffect } from 'react';
-import { FixedPointNumber } from '@acala-network/sdk-core';
-import { CurrencyId } from '@acala-network/types/interfaces';
+import { FixedPointNumber } from '@webb-tools/sdk-core';
+import { CurrencyId } from '@webb-tools/types/interfaces';
 
 import { Row, Col, FlexBox, SpaceBox } from '@webb-dapp/ui-components';
 import { useLP, useBalance, useBalanceValidator, useLPEnabledCurrencies } from '@webb-dapp/react-hooks';
@@ -14,9 +14,11 @@ import { DepositInfo } from './DepositInfo';
 export const DepositConsole: FC = () => {
   const lpEnableCurrencies = useLPEnabledCurrencies();
 
-  const [token1, setToken1, { error: token1Error, setValidator: setToken1Validator }] = useInputValue<
-    BalanceInputValue
-  >({ amount: 0 });
+  const [
+    token1,
+    setToken1,
+    { error: token1Error, setValidator: setToken1Validator },
+  ] = useInputValue<BalanceInputValue>({ amount: 0 });
 
   const [token2, setToken2, { error: token2Error, setValidator: setToken2Validator }] = useInputValue<
     Partial<BalanceInputValue>
@@ -38,12 +40,12 @@ export const DepositConsole: FC = () => {
 
   useBalanceValidator({
     currency: token1.token,
-    updateValidator: setToken1Validator
+    updateValidator: setToken1Validator,
   });
 
   useBalanceValidator({
     currency: token2.token,
-    updateValidator: setToken2Validator
+    updateValidator: setToken2Validator,
   });
 
   const clearAmount = useCallback(() => {
@@ -79,7 +81,7 @@ export const DepositConsole: FC = () => {
       token1.token,
       token2.token,
       eliminateGap(new FixedPointNumber(token1.amount), token1Balance).toChainData(),
-      eliminateGap(new FixedPointNumber(token2.amount), token2Balance).toChainData()
+      eliminateGap(new FixedPointNumber(token2.amount), token2Balance).toChainData(),
     ];
   }, [token1, token2, token1Balance, token2Balance]);
 
@@ -126,7 +128,7 @@ export const DepositConsole: FC = () => {
       }
 
       setToken2({
-        amount: getAddLPSuggestAmount(token, amount).toNumber()
+        amount: getAddLPSuggestAmount(token, amount).toNumber(),
       });
     },
     [setToken1, setToken2, getAddLPSuggestAmount]
@@ -143,7 +145,7 @@ export const DepositConsole: FC = () => {
       }
 
       setToken1({
-        amount: getAddLPSuggestAmount(token, amount).toNumber()
+        amount: getAddLPSuggestAmount(token, amount).toNumber(),
       });
     },
     [setToken1, setToken2, getAddLPSuggestAmount]

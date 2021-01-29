@@ -11,22 +11,26 @@ const notificationIconMap = new Map([
   ['error', ErrorIcon],
   ['info', InfoIcon],
   ['success', SuccessIcon],
-  ['warning', WarningIcon]
+  ['warning', WarningIcon],
 ]);
 
 const handler = (type: string): ProxyHandler<any> => ({
-  apply (target, ctx, args): any {
+  apply(target, ctx, args): any {
     args[0] = {
       // set className and icon for different type of notification
       className: type,
-      icon: args[0].icon === undefined ? notificationIconMap.has(type)
-        ? createElement(notificationIconMap.get(type) as any) : undefined : undefined,
+      icon:
+        args[0].icon === undefined
+          ? notificationIconMap.has(type)
+            ? createElement(notificationIconMap.get(type) as any)
+            : undefined
+          : undefined,
       top: 100,
-      ...args[0]
+      ...args[0],
     };
 
     return Reflect.apply(target, ctx, args);
-  }
+  },
 });
 
 Object.keys(notification).forEach((key) => {

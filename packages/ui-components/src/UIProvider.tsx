@@ -16,9 +16,5 @@ export const UIContext = React.createContext<UIData>({ phantomdata: '' });
 export const UIProvider: FC<BareProps> = ({ children }) => {
   const [state] = useState<UIData>({ phantomdata: '' });
 
-  return (
-    <UIContext.Provider value={state}>
-      {children}
-    </UIContext.Provider>
-  );
+  return <UIContext.Provider value={state}>{children}</UIContext.Provider>;
 };

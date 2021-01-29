@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs';
 import { timeout } from 'rxjs/operators';
 
 import { ApiRx, WsProvider } from '@polkadot/api';
-import { options } from '@acala-network/api';
+import { options } from '@webb-tools/api';
 
 const MAX_CONNECT_TIME = 1000 * 60; // one minute
 
@@ -60,7 +60,7 @@ export const ApiProvider: FC<Props> = ({ children }) => {
           setConnected(true);
           setError(false);
           setLoading(false);
-        }
+        },
       });
   }, []);
 
@@ -94,12 +94,12 @@ export const ApiProvider: FC<Props> = ({ children }) => {
       value={{
         api,
         chainInfo: {
-          chainName
+          chainName,
         },
         connected,
         error,
         init,
-        loading
+        loading,
       }}
     >
       {children}

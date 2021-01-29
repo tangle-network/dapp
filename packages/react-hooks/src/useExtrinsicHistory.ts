@@ -22,7 +22,7 @@ export interface ExtrinsicHistoryData {
   [k: string]: any;
 }
 
-function formatHistory (origin: any[]): ExtrinsicHistoryData[] {
+function formatHistory(origin: any[]): ExtrinsicHistoryData[] {
   if (!origin) {
     return [];
   }
@@ -44,7 +44,7 @@ function formatHistory (origin: any[]): ExtrinsicHistoryData[] {
       section: item.call_module,
       signer: item.account_id,
       success: item.success,
-      time: item.block_timestamp
+      time: item.block_timestamp,
     };
   });
 }
@@ -80,46 +80,53 @@ export const useHistory = (query?: QueryParams): HooksReturnType => {
   const paginationRef = useRef<Pagination>({
     currentPage: 0,
     pageSize: 5,
-    total: 0
+    total: 0,
   });
   const [pagination, setPagination] = useState<Pagination>({
     currentPage: 0,
     pageSize: 5,
-    total: 0
+    total: 0,
   });
   const [data, setData] = useState<ExtrinsicHistoryData[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<Error | undefined>();
 
-  const fetch = useCallback((pagination: Pagination) => {
-    setLoading(true);
+  const fetch = useCallback(
+    (pagination: Pagination) => {
+      setLoading(true);
 
-    const url = SUBSCAN_TX;
+      const url = SUBSCAN_TX;
 
-    if (!query || !query.section) {
-      return;
-    }
-
-    axios.post(url, {
-      address: query.signer,
-      call: query.method,
-      module: query.section,
-      page: pagination.currentPage,
-      row: pagination.pageSize
-    }).then((result) => {
-      if (result.status === 200 && result.data.code === 0) {
-        setData(formatHistory(result?.data?.data?.extrinsics));
-        paginationRef.current.total = result?.data?.data?.count;
-        setPagination({ ...paginationRef.current });
+      if (!query || !query.section) {
+        return;
       }
-    }).catch((error) => {
-      // reset ref
-      paginationRef.current = { ...pagination };
-      setError(error);
-    }).finally(() => {
-      setLoading(false);
-    });
-  }, [query]);
+
+      axios
+        .post(url, {
+          address: query.signer,
+          call: query.method,
+          module: query.section,
+          page: pagination.currentPage,
+          row: pagination.pageSize,
+        })
+        .then((result) => {
+          if (result.status === 200 && result.data.code === 0) {
+            setData(formatHistory(result?.data?.data?.extrinsics));
+            paginationRef.current.total = result?.data?.data?.count;
+            setPagination({ ...paginationRef.current });
+          }
+        })
+        .catch((error) => {
+          // reset ref
+          paginationRef.current = { ...pagination };
+          setError(error);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    },
+    [query]
+  );
 
   useEffect(() => {
     const subscribe = refresh$.subscribe(() => {
@@ -140,14 +147,17 @@ export const useHistory = (query?: QueryParams): HooksReturnType => {
     }
   }, [fetch, query]);
 
-  const onPaginationChagne = useCallback((data: Partial<Pagination>) => {
-    paginationRef.current = {
-      ...paginationRef.current,
-      ...data
-    };
+  const onPaginationChagne = useCallback(
+    (data: Partial<Pagination>) => {
+      paginationRef.current = {
+        ...paginationRef.current,
+        ...data,
+      };
 
-    fetch(paginationRef.current);
-  }, [fetch]);
+      fetch(paginationRef.current);
+    },
+    [fetch]
+  );
 
   const refresh = useCallback((delay = 0) => {
     setTimeout(() => {
@@ -161,6 +171,6 @@ export const useHistory = (query?: QueryParams): HooksReturnType => {
     loading,
     onPaginationChagne,
     pagination,
-    refresh
+    refresh,
   };
 };

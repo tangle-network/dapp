@@ -1,4 +1,7 @@
 import { CurrencyLike } from '@webb-dapp/react-hooks/types';
-import { CurrencyId } from '@acala-network/types/interfaces';
+import { CurrencyId } from '@webb-tools/types/interfaces';
 
-export type CurrencyChangeFN = ((token: string) => void) | ((token: CurrencyId) => void) | ((token: CurrencyLike) => void);
+export type CurrencyChangeFN =
+  | ((token: string) => void)
+  | ((token: CurrencyId) => void)
+  | ((token: CurrencyLike) => void);

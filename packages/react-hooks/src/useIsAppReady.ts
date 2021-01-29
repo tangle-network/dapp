@@ -28,7 +28,7 @@ export const useIsAppReady = (options?: Options): boolean => {
     if (status !== appReadyStatus) {
       setAppReadyStatus(status);
     }
-  /* eslint-disable-next-line */
+    /* eslint-disable-next-line */
   }, [authRequired, activeAccount, api, options]);
 
   return appReadyStatus;

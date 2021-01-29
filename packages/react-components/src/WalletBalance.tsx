@@ -1,6 +1,6 @@
 import React, { FC, ReactNode } from 'react';
 
-import { CurrencyId } from '@acala-network/types/interfaces';
+import { CurrencyId } from '@webb-tools/types/interfaces';
 
 import { ScrollCard, Condition, Tag } from '@webb-dapp/ui-components';
 import { BareProps } from '@webb-dapp/ui-components/types';
@@ -11,7 +11,7 @@ import {
   UserAssetBalance,
   UserAssetValue,
   tokenEq,
-  StakingPoolExchangeRate
+  StakingPoolExchangeRate,
 } from '@webb-dapp/react-components';
 
 import classes from './WalletBalance.module.scss';

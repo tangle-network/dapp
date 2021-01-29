@@ -1,9 +1,9 @@
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 
-import { CurrencyId } from '@acala-network/types/interfaces';
-import { Fixed18 } from '@acala-network/app-util';
-import { FixedPointNumber } from '@acala-network/sdk-core';
+import { CurrencyId } from '@webb-tools/types/interfaces';
+import { Fixed18 } from '@webb-tools/app-util';
+import { FixedPointNumber } from '@webb-tools/sdk-core';
 
 export * from './token';
 export * from './account';
@@ -39,7 +39,11 @@ export const tokenEq = (base?: CurrencyId | string, target?: CurrencyId | string
   return false;
 };
 
-export const eliminateGap = (target: FixedPointNumber, max: FixedPointNumber, gap: FixedPointNumber = new FixedPointNumber('0.000001')): FixedPointNumber => {
+export const eliminateGap = (
+  target: FixedPointNumber,
+  max: FixedPointNumber,
+  gap: FixedPointNumber = new FixedPointNumber('0.000001')
+): FixedPointNumber => {
   const _gap = target.minus(max);
 
   // target is larger than max, but not large enough

@@ -4,7 +4,7 @@ import { map } from 'rxjs/operators';
 
 import { web3FromAddress } from '@polkadot/extension-dapp';
 import { ApiRx, WsProvider } from '@polkadot/api';
-import { Fixed18 } from '@acala-network/app-util';
+import { Fixed18 } from '@webb-tools/app-util';
 
 import { BareProps } from '@webb-dapp/ui-components/types';
 
@@ -37,7 +37,7 @@ export const CrossChainProvider: FC<BareProps> = ({ children }) => {
         setApi(api);
         setConnected(true);
         setError(false);
-      }
+      },
     });
 
     return (): void => {
@@ -89,7 +89,7 @@ export const CrossChainProvider: FC<BareProps> = ({ children }) => {
         error,
         getApi,
         getNativeBalance,
-        setSigner
+        setSigner,
       }}
     >
       {children}

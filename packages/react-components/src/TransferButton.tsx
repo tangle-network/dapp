@@ -1,6 +1,6 @@
 import React, { FC, memo } from 'react';
 
-import { CurrencyId } from '@acala-network/types/interfaces/types';
+import { CurrencyId } from '@webb-tools/types/interfaces/types';
 import { Button } from '@webb-dapp/ui-components';
 import { useModal } from '@webb-dapp/react-hooks';
 import { BareProps } from '@webb-dapp/ui-components/types';

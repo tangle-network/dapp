@@ -14,17 +14,18 @@ export type UIData = {
   subMenu: SubMenu | null;
   pageTitle: ReactNode;
   breadcrumb: { content: string; path: string }[];
-}
+};
 
-export type UIAction = { type: 'set_theme'; value: string }
-| { type: 'set_page_title'; value: { content: ReactNode; breadcrumb?: UIData['breadcrumb'] } }
-| { type: 'set_sub_menu'; value: SubMenu | null };
+export type UIAction =
+  | { type: 'set_theme'; value: string }
+  | { type: 'set_page_title'; value: { content: ReactNode; breadcrumb?: UIData['breadcrumb'] } }
+  | { type: 'set_sub_menu'; value: SubMenu | null };
 
 const initState: UIData = {
   breadcrumb: [],
   pageTitle: '__empty',
   subMenu: null,
-  theme: 'primary'
+  theme: 'primary',
 };
 
 const reducer = (state: UIData, action: UIAction): UIData => {
@@ -33,21 +34,21 @@ const reducer = (state: UIData, action: UIAction): UIData => {
       return {
         ...state,
         breadcrumb: action.value.breadcrumb ?? [],
-        pageTitle: action.value.content
+        pageTitle: action.value.content,
       };
     }
 
     case 'set_theme': {
       return {
         ...state,
-        theme: action.value
+        theme: action.value,
       };
     }
 
     case 'set_sub_menu': {
       return {
         ...state,
-        subMenu: action.value
+        subMenu: action.value,
       };
     }
   }
@@ -62,31 +63,43 @@ export interface UseUIConfigReturnType extends UIData {
 export const useUIConfig = (): UseUIConfigReturnType => {
   const [state, dispatch] = useReducer(reducer, initState);
 
-  const setTitle = useCallback((config: { content: ReactNode; breadcrumb?: UIData['breadcrumb'] }) => {
-    dispatch({
-      type: 'set_page_title',
-      value: config
-    });
-  }, [dispatch]);
+  const setTitle = useCallback(
+    (config: { content: ReactNode; breadcrumb?: UIData['breadcrumb'] }) => {
+      dispatch({
+        type: 'set_page_title',
+        value: config,
+      });
+    },
+    [dispatch]
+  );
 
-  const setTheme = useCallback((theme: string) => {
-    dispatch({
-      type: 'set_theme',
-      value: theme
-    });
-  }, [dispatch]);
+  const setTheme = useCallback(
+    (theme: string) => {
+      dispatch({
+        type: 'set_theme',
+        value: theme,
+      });
+    },
+    [dispatch]
+  );
 
-  const setSubMenu = useCallback((value: SubMenu | null) => {
-    dispatch({
-      type: 'set_sub_menu',
-      value: value
-    });
-  }, [dispatch]);
+  const setSubMenu = useCallback(
+    (value: SubMenu | null) => {
+      dispatch({
+        type: 'set_sub_menu',
+        value: value,
+      });
+    },
+    [dispatch]
+  );
 
-  return useMemo(() => ({
-    ...state,
-    setSubMenu,
-    setTheme,
-    setTitle
-  }), [state, setTitle, setTheme, setSubMenu]);
+  return useMemo(
+    () => ({
+      ...state,
+      setSubMenu,
+      setTheme,
+      setTitle,
+    }),
+    [state, setTitle, setTheme, setSubMenu]
+  );
 };

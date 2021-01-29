@@ -5,7 +5,7 @@ import AntSelect, { SelectProps, SelectValue } from 'antd/lib/select';
 import './Select.scss';
 import { ArrowIcon } from './Icon';
 
-function Select<VT extends SelectValue> ({ className, ...props }: SelectProps<VT>): ReactElement {
+function Select<VT extends SelectValue>({ className, ...props }: SelectProps<VT>): ReactElement {
   // set default props
   return (
     <AntSelect

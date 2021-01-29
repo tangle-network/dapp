@@ -8,19 +8,20 @@ import React, {
   useMemo,
   Dispatch,
   SetStateAction,
-  useRef
+  useRef,
 } from 'react';
 import { u32 } from '@polkadot/types';
 import { Observable } from 'rxjs';
 import { ITuple } from '@polkadot/types/types';
 import { map } from 'rxjs/operators';
-import { CurrencyId, Balance } from '@acala-network/types/interfaces';
-import { Token, TokenPair, FixedPointNumber, currencyId2Token } from '@acala-network/sdk-core';
-import { SwapTrade } from '@acala-network/sdk-swap';
-import { Fee, SwapTradeMode } from '@acala-network/sdk-swap/help';
+import { CurrencyId, Balance } from '@webb-tools/types/interfaces';
+import { Token, TokenPair, FixedPointNumber, currencyId2Token } from '@webb-tools/sdk-core';
 
 import { useApi } from '@webb-dapp/react-hooks';
-import { TradeParameters } from '@acala-network/sdk-swap/trade-parameters';
+
+export type Fee = unknown;
+export type SwapTradeMode = unknown;
+export type TradeParameters = unknown;
 
 export interface PoolData {
   supplyCurrency: CurrencyId;
@@ -93,24 +94,27 @@ export const SwapProvider: FC<PropsWithChildren<{}>> = memo(({ children }) => {
   const exchangeFee = useMemo<Fee>((): Fee => {
     if (!api) return {} as Fee;
 
-    const exchangeFee = (api.consts.dex.getExchangeFee as unknown) as [u32, u32];
+    // const exchangeFee = (api.consts.dex.getExchangeFee as unknown) as [u32, u32];
+    const exchangeFee = [0, 0];
 
     return {
       denominator: new FixedPointNumber(exchangeFee[1].toString()),
-      numerator: new FixedPointNumber(exchangeFee[0].toString())
+      numerator: new FixedPointNumber(exchangeFee[0].toString()),
     };
   }, [api]);
 
   const enableTokenPairs = useMemo((): TokenPair[] => {
     if (!api) return [];
 
-    return SwapTrade.getAvailableTokenPairs(api);
+    return [];
+    // return SwapTrade.getAvailableTokenPairs(api);
   }, [api]);
 
   const maxTradePathLength = useMemo((): number => {
     if (!api) return 0;
 
-    return parseInt(((api.consts.dex.tradingPathLimit as unknown) as u32).toString());
+    return 0;
+    // return parseInt(((api.consts.dex.tradingPathLimit as unknown) as u32).toString());
   }, [api]);
 
   const availableTokens = useMemo<Set<Token>>((): Set<Token> => {
@@ -133,11 +137,11 @@ export const SwapProvider: FC<PropsWithChildren<{}>> = memo(({ children }) => {
       tradeMode: SwapTradeMode
     ): Observable<TradeParameters> => {
       const input = currencyId2Token(inputCurrencyId).clone({
-        amount: new FixedPointNumber(inputAmount)
+        amount: new FixedPointNumber(inputAmount),
       });
 
       const output = currencyId2Token(outputCurrency).clone({
-        amount: new FixedPointNumber(outputAmount)
+        amount: new FixedPointNumber(outputAmount),
       });
 
       const swap = new SwapTrade({
@@ -147,7 +151,7 @@ export const SwapProvider: FC<PropsWithChildren<{}>> = memo(({ children }) => {
         input,
         maxTradePathLength,
         mode: tradeMode,
-        output
+        output,
       });
 
       const usedTokenPairs = swap.getTradeTokenPairsByPaths();
@@ -194,7 +198,7 @@ export const SwapProvider: FC<PropsWithChildren<{}>> = memo(({ children }) => {
         getTradeParameters,
         setAcceptSlippage,
         setTradeMode,
-        tradeMode
+        tradeMode,
       }}
     >
       {children}

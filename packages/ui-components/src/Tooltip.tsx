@@ -7,14 +7,11 @@ import './Tooltip.scss';
 
 export type TooltipProps = AntTooltipProps & {
   show?: boolean;
-}
+};
 
 export const Tooltip: FC<TooltipProps> = ({ children, show = true, ...other }) => {
   return (
-    <Condition
-      condition={show}
-      or={children}
-    >
+    <Condition condition={show} or={children}>
       <AntTooltip
         autoAdjustOverflow
         destroyTooltipOnHide={{ keepParent: false }}

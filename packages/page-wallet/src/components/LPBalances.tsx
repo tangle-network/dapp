@@ -1,13 +1,13 @@
 import React, { FC } from 'react';
 import clsx from 'clsx';
 
-import { CurrencyId } from '@acala-network/types/interfaces';
+import { CurrencyId } from '@webb-tools/types/interfaces';
 import {
   UserAssetBalance,
   TokenImage,
   TokenName,
   TransferButton,
-  LPAmountWithShare
+  LPAmountWithShare,
 } from '@webb-dapp/react-components';
 import { BareProps } from '@webb-dapp/ui-components/types';
 import { useBalance, useLPCurrencies } from '@webb-dapp/react-hooks';

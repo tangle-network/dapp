@@ -1,4 +1,15 @@
-import React, { FC, useMemo, Children, useRef, cloneElement, ReactElement, useState, ReactNode, useEffect, useCallback } from 'react';
+import React, {
+  FC,
+  useMemo,
+  Children,
+  useRef,
+  cloneElement,
+  ReactElement,
+  useState,
+  ReactNode,
+  useEffect,
+  useCallback,
+} from 'react';
 import { uniqueId, debounce } from 'lodash';
 
 import { Card, CardProps } from './Card';
@@ -12,10 +23,7 @@ export interface ScrollCardItemProps extends BareProps {
   instance: ReactElement;
 }
 
-const Item: FC<ScrollCardItemProps> = ({
-  className,
-  instance
-}) => {
+const Item: FC<ScrollCardItemProps> = ({ className, instance }) => {
   return cloneElement(instance, { className: clsx('aca-scroll-card__item', className) });
 };
 
@@ -53,7 +61,7 @@ const CCard = styled(Card)`
 const Content = styled.div`
   width: 0;
   display: flex;
-  flex-wrap: nowrap
+  flex-wrap: nowrap;
 `;
 
 interface ScrollCardProps extends CardProps {
@@ -73,21 +81,24 @@ export const _ScrollCard: FC<ScrollCardProps> = ({ children, itemClassName, page
     return Children.map(children as ReactElement[], (item: ReactElement, index: number) => {
       return cloneElement(item, {
         className: itemClassName,
-        key: `scroller-carda-${idRef.current}-${index}`
+        key: `scroller-carda-${idRef.current}-${index}`,
       });
     });
   }, [children, itemClassName]);
 
-  const move = useCallback((page: number): void => {
-    if (!$rootRef.current) return;
+  const move = useCallback(
+    (page: number): void => {
+      if (!$rootRef.current) return;
 
-    const $root = $rootRef.current;
-    /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
-    const $container = $rootRef.current.querySelector('.card__content')!;
+      const $root = $rootRef.current;
+      /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
+      const $container = $rootRef.current.querySelector('.card__content')!;
 
-    setPage(page);
-    $container.scrollTo({ left: $root.clientWidth * page });
-  }, [$rootRef]);
+      setPage(page);
+      $container.scrollTo({ left: $root.clientWidth * page });
+    },
+    [$rootRef]
+  );
 
   const handlePrev = useCallback(() => {
     if (currentPageRef.current <= 0) {
@@ -156,29 +167,17 @@ export const _ScrollCard: FC<ScrollCardProps> = ({ children, itemClassName, page
     <CCard
       {...other}
       header={
-        (
-          <>
-            {other.header}
-            <Controller.Group>
-              <Controller
-                direction='left'
-                disabled={page === 0}
-                onClick={handlePrev}
-              />
-              <Controller
-                direction='right'
-                disabled={page === maxPage}
-                onClick={handleNext}
-              />
-            </Controller.Group>
-          </>
-        )
+        <>
+          {other.header}
+          <Controller.Group>
+            <Controller direction='left' disabled={page === 0} onClick={handlePrev} />
+            <Controller direction='right' disabled={page === maxPage} onClick={handleNext} />
+          </Controller.Group>
+        </>
       }
       ref={$rootRef}
     >
-      <Content>
-        {content}
-      </Content>
+      <Content>{content}</Content>
     </CCard>
   );
 };

@@ -1,14 +1,14 @@
 import React, { FC, useMemo } from 'react';
 
 import { AccountId } from '@polkadot/types/interfaces';
-import { CurrencyId } from '@acala-network/types/interfaces';
+import { CurrencyId } from '@webb-tools/types/interfaces';
 
 import { useBalance, useValue, useTotalValue, usePrice } from '@webb-dapp/react-hooks';
 
 import { FormatBalance, FormatBalanceProps, FormatValue, FormatNumberProps } from './format';
 import { AccountLike } from '@webb-dapp/react-hooks/types';
 import { BareProps } from '@webb-dapp/ui-components/types';
-import { FixedPointNumber } from '@acala-network/sdk-core';
+import { FixedPointNumber } from '@webb-tools/sdk-core';
 
 interface UserAssetBalanceProps extends FormatBalanceProps {
   account?: AccountLike;

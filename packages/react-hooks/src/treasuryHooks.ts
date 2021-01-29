@@ -1,8 +1,8 @@
 import { useState, useEffect, useMemo } from 'react';
 
 import { stringToU8a } from '@polkadot/util';
-import { FixedPointNumber } from '@acala-network/sdk-core';
-import { Balance, CurrencyId } from '@acala-network/types/interfaces';
+import { FixedPointNumber } from '@webb-tools/sdk-core';
+import { Balance, CurrencyId } from '@webb-tools/types/interfaces';
 import { AccountData } from '@polkadot/types/interfaces';
 
 import { useCall } from './useCall';
@@ -24,10 +24,14 @@ interface TreasuryOverview {
 export const useTreasuryOverview = (): WithNull<TreasuryOverview> => {
   const { api } = useApi();
 
-  const moduleAccount = useMemo(() => api.createType(
-    'AccountId',
-    stringToU8a('modl' + ((api.consts.cdpTreasury.moduleId as any).toUtf8() as string).padEnd(32, '\0'))
-  ), [api]);
+  const moduleAccount = useMemo(
+    () =>
+      api.createType(
+        'AccountId',
+        stringToU8a('modl' + ((api.consts.cdpTreasury.moduleId as any).toUtf8() as string).padEnd(32, '\0'))
+      ),
+    [api]
+  );
 
   const { loanCurrencies, stableCurrency } = useConstants();
   const surplusPool = useCall<Balance>('query.cdpTreasury.debitPool');
@@ -41,12 +45,14 @@ export const useTreasuryOverview = (): WithNull<TreasuryOverview> => {
       setResult({
         debitPool: debitPool,
         surplusPool: FixedPointNumber.fromInner(surplusPool?.toString() || 0),
-        totalCollaterals: result ? result.map((item, index) => {
-          return {
-            balance: FixedPointNumber.fromInner(item?.toString() || 0),
-            currency: loanCurrencies[index]
-          };
-        }) : []
+        totalCollaterals: result
+          ? result.map((item, index) => {
+              return {
+                balance: FixedPointNumber.fromInner(item?.toString() || 0),
+                currency: loanCurrencies[index],
+              };
+            })
+          : [],
       });
     });
 

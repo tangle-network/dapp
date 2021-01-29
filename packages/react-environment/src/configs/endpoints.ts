@@ -9,10 +9,12 @@ export interface EndpointConfigItem {
 export type EndpointConfig = Record<EndpointType, EndpointConfigItem[]>;
 
 export const DEFAULT_ENDPOINTS: EndpointConfig = {
-  production: [{
-    name: 'Edgeware',
-    url: 'wss://mainnet1.edgewa.re'
-  }],
+  production: [
+    {
+      name: 'Edgeware',
+      url: 'wss://mainnet1.edgewa.re',
+    },
+  ],
   testnet: [
     // {
     //   name: 'Rococo Mandala',
@@ -32,13 +34,13 @@ export const DEFAULT_ENDPOINTS: EndpointConfig = {
     // },
     {
       name: 'Beresheet (Edgeware Testnet)',
-      url: 'wss://beresheet1.edgewa.re'
-    }
+      url: 'wss://beresheet1.edgewa.re',
+    },
   ],
   development: [
     {
       name: 'Local',
-      url: 'ws://127.0.0.1:9944'
-    }
-  ]
+      url: 'ws://127.0.0.1:9944',
+    },
+  ],
 };

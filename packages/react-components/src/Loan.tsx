@@ -1,9 +1,9 @@
 import React, { FC, useMemo } from 'react';
-import { FixedPointNumber } from '@acala-network/sdk-core';
+import { FixedPointNumber } from '@webb-tools/sdk-core';
 import { FormatNumberProps, FormatRatio, FormatBalanceProps, FormatBalance } from './format';
 import { useLoanHelper, useConstants, useLoanType, useLoanOverview, usePrice } from '@webb-dapp/react-hooks';
-import { convertToFixed18, Fixed18 } from '@acala-network/app-util';
-import { CurrencyId } from '@acala-network/types/interfaces';
+import { convertToFixed18, Fixed18 } from '@webb-tools/app-util';
+import { CurrencyId } from '@webb-tools/types/interfaces';
 
 type LoanPropertyProps<T> = T & {
   currency: CurrencyId;

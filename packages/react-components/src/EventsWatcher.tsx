@@ -7,7 +7,7 @@ import { EventRecord } from '@polkadot/types/interfaces';
 import { useApi, useAccounts } from '@webb-dapp/react-hooks';
 import { notification } from '@webb-dapp/ui-components';
 import { getTokenName, formatHash, formatNumber } from './utils';
-import { FixedPointNumber } from '@acala-network/sdk-core';
+import { FixedPointNumber } from '@webb-tools/sdk-core';
 
 interface HandlerConfig {
   section: string;
@@ -71,15 +71,15 @@ export const EventsWatcher: FC = () => {
                     <p>{`Received ${formatNumber(num, {
                       decimalLength: 6,
                       removeEmptyDecimalParts: true,
-                      removeTailZero: true
+                      removeTailZero: true,
                     })} ${getTokenName(data[0].Token || data[0].DEXShare)}`}</p>
                     <p>{`From ${formatHash(data[1])}`}</p>
                   </div>
-                )
+                ),
               });
             },
             method: 'Transferred',
-            section: 'currencies'
+            section: 'currencies',
           },
           // handle currency deposit event
           {
@@ -103,14 +103,14 @@ export const EventsWatcher: FC = () => {
                     <p>{`Received ${formatNumber(num, {
                       decimalLength: 6,
                       removeEmptyDecimalParts: true,
-                      removeTailZero: true
+                      removeTailZero: true,
                     })} ${getTokenName(data[0].Token || data[0].DEXShare)}`}</p>
                   </div>
-                )
+                ),
               });
             },
             method: 'Deposited',
-            section: 'currencies'
+            section: 'currencies',
           },
           // handle cdp liquidate
           {
@@ -125,14 +125,14 @@ export const EventsWatcher: FC = () => {
                   <div>
                     <p>{`The ${getTokenName(data[0])} Loan had been liquidated.`}</p>
                   </div>
-                )
+                ),
               });
             },
             method: 'LiquidateUnsafeCDP',
-            section: 'cdpEngine'
-          }
+            section: 'cdpEngine',
+          },
         ])(events);
-      }
+      },
     });
 
     return (): void => subscriber.unsubscribe();

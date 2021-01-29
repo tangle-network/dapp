@@ -2,7 +2,7 @@ import React, { FC, useMemo } from 'react';
 import { Card, ColumnsType, Table, FlexBox } from '@webb-dapp/ui-components';
 import { useApi } from '@webb-dapp/react-hooks';
 import { tokenEq, AirDropAmount } from '@webb-dapp/react-components';
-import { AirDropCurrencyId } from '@acala-network/types/interfaces';
+import { AirDropCurrencyId } from '@webb-tools/types/interfaces';
 
 export const AirDrop: FC = () => {
   const { api } = useApi();
@@ -20,15 +20,15 @@ export const AirDrop: FC = () => {
       dataIndex: 'token',
       key: 'token',
       render: (token: string): string => (tokenEq(token, 'ACA') ? `${token} (Mainnet)` : token),
-      title: 'Token'
+      title: 'Token',
     },
     {
       align: 'right',
       key: 'balance',
       /* eslint-disable-next-line react/display-name */
       render: ({ token }): JSX.Element => <AirDropAmount currency={token} />,
-      title: 'Balance'
-    }
+      title: 'Balance',
+    },
   ];
 
   return (
