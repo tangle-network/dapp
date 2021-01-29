@@ -2,9 +2,7 @@ html,
 body {
   margin: 0;
   padding: 0;
-  /* font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans',
-    'Droid Sans', 'Helvetica Neue', 'Pacifico', 'RobotoSlab-SemiBlack', 'RobotoSlab-Light', 'RobotoSlab-Regular'; */
-  font-family: RobotoSlab-Black;
+	font-family: 'Roboto Slab', serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-variant-numeric: tabular-nums;
