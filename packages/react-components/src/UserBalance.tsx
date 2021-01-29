@@ -20,12 +20,13 @@ export const UserBalance: FC<Props> = ({
   className,
   currency,
   showCurrencyName = true,
-  showValue = false,
+  showValue = false
 }) => {
   const { active } = useAccounts();
   const _account = account !== undefined ? account : active ? active.address : '';
   // FIXME: need fix api-derive type
-  const result = useCall<Balance>('derive.currencies.balance', [_account, currency]);
+  // const result = useCall<Balance>('derive.currencies.balance', [_account, currency]);
+  const result = null;
   const price = usePrice(currency);
 
   if (!result) return null;
@@ -33,7 +34,8 @@ export const UserBalance: FC<Props> = ({
   if (showValue && price) {
     const _value = price.times(new FixedPointNumber(result.toString()));
 
-    return <FormatValue className={className} data={_value} />;
+    return <FormatValue className={className}
+      data={_value} />;
   }
 
   return (

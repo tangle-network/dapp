@@ -24,7 +24,9 @@ export type BalanceData = { currency: CurrencyId; balance: FixedPointNumber };
 export const useBalance = (currency?: CurrencyId, account?: AccountLike): FixedPointNumber => {
   const { active } = useAccounts();
   const _account = useMemo(() => account || (active ? active.address : '_'), [account, active]);
-  const balance = useCall<Balance>('derive.currencies.balance', [_account, currency]);
+  // FIXME: neads api-derive package.
+  // const balance = useCall<Balance>('derive.currencies.balance', [_account, currency]);
+  const balance = null;
   const result = useMemo<FixedPointNumber>((): FixedPointNumber => {
     if (!currency || !balance) {
       return FixedPointNumber.ZERO;
@@ -63,11 +65,11 @@ export const useBalances = (currencies: CurrencyId[], account?: AccountLike): Ba
           currencies.map(
             (currency: CurrencyId, index): BalanceData => ({
               balance: result ? FixedPointNumber.fromInner(result[index].toString()) : FixedPointNumber.ZERO,
-              currency,
+              currency
             })
           )
         );
-      },
+      }
     });
 
     return (): void => subscribe.unsubscribe();

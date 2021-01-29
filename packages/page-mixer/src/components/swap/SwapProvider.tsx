@@ -94,7 +94,8 @@ export const SwapProvider: FC<PropsWithChildren<{}>> = memo(({ children }) => {
   const exchangeFee = useMemo<Fee>((): Fee => {
     if (!api) return {} as Fee;
 
-    const exchangeFee = (api.consts.dex.getExchangeFee as unknown) as [u32, u32];
+    // const exchangeFee = (api.consts.dex.getExchangeFee as unknown) as [u32, u32];
+    const exchangeFee = [0, 0];
 
     return {
       denominator: new FixedPointNumber(exchangeFee[1].toString()),
@@ -105,13 +106,15 @@ export const SwapProvider: FC<PropsWithChildren<{}>> = memo(({ children }) => {
   const enableTokenPairs = useMemo((): TokenPair[] => {
     if (!api) return [];
 
-    return SwapTrade.getAvailableTokenPairs(api);
+    return [];
+    // return SwapTrade.getAvailableTokenPairs(api);
   }, [api]);
 
   const maxTradePathLength = useMemo((): number => {
     if (!api) return 0;
 
-    return parseInt(((api.consts.dex.tradingPathLimit as unknown) as u32).toString());
+    return 0;
+    // return parseInt(((api.consts.dex.tradingPathLimit as unknown) as u32).toString());
   }, [api]);
 
   const availableTokens = useMemo<Set<Token>>((): Set<Token> => {

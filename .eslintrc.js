@@ -5,14 +5,13 @@ module.exports = {
   ...base,
   parserOptions: {
     ...base.parserOptions,
-    project: [
-      './tsconfig.json'
-    ]
+    project: ['./tsconfig.json']
   },
   rules: {
     ...base.rules,
     '@typescript-eslint/no-explicit-any': 'off',
     'react/prop-types': 'off',
-    'header/header': 'off'
+    'header/header': 'off',
+    'comma-dangle': 'off'
   }
 };
