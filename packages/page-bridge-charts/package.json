@@ -1,5 +1,5 @@
 {
-  "name": "@webb-dapp/page-mixer-charts",
+  "name": "@webb-dapp/page-bridge-charts",
   "version": "0.2.1-beta.1",
   "description": "page swap charts",
   "main": "index.js",

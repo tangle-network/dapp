@@ -8,7 +8,7 @@
       "Governance": "Governanace",
       "Setting": "Setting"
     },
-    "page-mixer": {},
+    "page-bridge": {},
     "react-components": {
       "My Address": "MyAddress",
       "Transfer": "Transfer",
@@ -24,7 +24,7 @@
       "Governance": "治理",
       "Setting": "设置"
     },
-    "page-mixer": {},
+    "page-bridge": {},
     "react-components": {
       "My Address": "MyAddress",
       "Transfer": "Transfer",
