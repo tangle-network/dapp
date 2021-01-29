@@ -10,11 +10,13 @@ import { useApi } from './useApi';
 import { useCall } from './useCall';
 
 export const useEnableLPs = (): TokenPair[] => {
-  const { api } = useApi();
+  // const { api } = useApi();
 
-  return (api.consts.dex.enabledTradingPairs as Vec<TradingPair>).map((item) => {
-    return new TokenPair(currencyId2Token(item[0]), currencyId2Token(item[1]));
-  });
+  // return (api.consts.dex.enabledTradingPairs as Vec<TradingPair>).map((item) => {
+  //  return new TokenPair(currencyId2Token(item[0]), currencyId2Token(item[1]));
+  // });
+
+  return [];
 };
 
 type LPSize = { [i: string]: FixedPointNumber };
@@ -26,20 +28,20 @@ export const useLPSize = (token1?: CurrencyId, token2?: CurrencyId): LPSize => {
     if (!token1 || !token2) {
       return {
         [token1?.asToken?.toString() || '']: FixedPointNumber.ZERO,
-        [token2?.asToken?.toString() || '']: FixedPointNumber.ZERO,
+        [token2?.asToken?.toString() || '']: FixedPointNumber.ZERO
       };
     }
 
     if (!pool) {
       return {
         [token1.asToken.toString()]: FixedPointNumber.ZERO,
-        [token2.asToken.toString()]: FixedPointNumber.ZERO,
+        [token2.asToken.toString()]: FixedPointNumber.ZERO
       };
     }
 
     const temp: LPSize = {
       [token1.asToken.toString()]: FixedPointNumber.fromInner(pool[0].toString()),
-      [token2.asToken.toString()]: FixedPointNumber.fromInner(pool[1].toString()),
+      [token2.asToken.toString()]: FixedPointNumber.fromInner(pool[1].toString())
     };
 
     return temp;
@@ -49,29 +51,32 @@ export const useLPSize = (token1?: CurrencyId, token2?: CurrencyId): LPSize => {
 };
 
 export const useLPEnabledCurrencies = (): CurrencyId[] => {
-  const { api } = useApi();
+  // const { api } = useApi();
 
-  const allTradingPirs = api.consts.dex.enabledTradingPairs as Vec<TradingPair>;
+  // const allTradingPirs = api.consts.dex.enabledTradingPairs as Vec<TradingPair>;
 
-  const temp = allTradingPirs.reduce((acc, cur): Record<string, CurrencyId> => {
-    acc[cur[0].asToken.toString()] = cur[0];
-    acc[cur[1].asToken.toString()] = cur[1];
+  // const temp = allTradingPirs.reduce((acc, cur): Record<string, CurrencyId> => {
+  //  acc[cur[0].asToken.toString()] = cur[0];
+  //  acc[cur[1].asToken.toString()] = cur[1];
 
-    return acc;
-  }, {} as Record<string, CurrencyId>);
-
-  return Object.values(temp);
+  // return acc;
+  // }, {} as Record<string, CurrencyId>);
+  //
+  return [];
+  // return Object.values(temp);
 };
 
 export const useLPCurrencies = (): CurrencyId[] => {
-  const { api } = useApi();
+  // const { api } = useApi();
 
-  const allTradingPirs = api.consts.dex.enabledTradingPairs as Vec<TradingPair>;
+  // const allTradingPirs = api.consts.dex.enabledTradingPairs as Vec<TradingPair>;
 
-  return allTradingPirs.map(
-    (item): CurrencyId =>
-      api.createType('CurrencyId' as any, { DEXShare: [item[0].asToken.toString(), item[1].asToken.toString()] })
-  );
+  // return allTradingPirs.map(
+  //  (item): CurrencyId =>
+  //    api.createType('CurrencyId' as any, { DEXShare: [item[0].asToken.toString(), item[1].asToken.toString()] })
+  // );
+
+  return [];
 };
 
 export const useLPTokenAmount = (account: AccountId | string, lp: CurrencyId): FixedPointNumber => {
@@ -94,7 +99,7 @@ export const useLPShares = (
   const result = useMemo(() => [owned, _issuance, ratio] as [FixedPointNumber, FixedPointNumber, FixedPointNumber], [
     owned,
     _issuance,
-    ratio,
+    ratio
   ]);
 
   return result;
@@ -159,6 +164,6 @@ export const useLP = (token1?: CurrencyId, token2?: CurrencyId): UseLPReturnType
     exchangeRate,
     getAddLPSuggestAmount,
     lpCurrencyId,
-    size,
+    size
   };
 };
