@@ -11,7 +11,7 @@ acala web app with honzon, homa, dex features.
 - [page-governance](https://github.com/AcalaNetwork/acala-dapp/tree/master/packages/page-governance): the page for governance
 - [page-homa](https://github.com/AcalaNetwork/acala-dapp/tree/master/packages/page-homa): the page for homa protocol
 - [page-loan](https://github.com/AcalaNetwork/acala-dapp/tree/master/packages/page-loan): the page for honzon protocol
-- [page-bridge](https://github.com/AcalaNetwork/acala-dapp/tree/master/packages/page-bridge): the page for swap currencies
+- [page-mixer](https://github.com/AcalaNetwork/acala-dapp/tree/master/packages/page-mixer): the page for swap currencies
 - [page-wallet](https://github.com/AcalaNetwork/acala-dapp/tree/master/packages/page-wallet): the page for an basic wallet
 
 # Development

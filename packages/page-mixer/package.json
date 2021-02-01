@@ -1,7 +1,7 @@
 {
-  "name": "@webb-dapp/page-bridge",
+  "name": "@webb-dapp/page-mixer",
   "version": "0.2.1-beta.1",
-  "description": "bridge page",
+  "description": "mixer page",
   "main": "index.js",
   "author": "Acala Developers <hello@acala.network>, Webb Developers <drew@webb.tools>",
   "homepage": "https://github.com/webb-tools/webb-dapp#readme",
