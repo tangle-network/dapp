@@ -11,7 +11,8 @@ import { UserAssetBalance } from './Assets';
 const AccountBarRoot = styled.div`
   display: flex;
   height: 36px;
-  background: #ebeef5;
+  background: var(--card-background);
+
   border-radius: 10px;
 `;
 
@@ -21,7 +22,6 @@ const Account = styled.div<{ active: boolean }>`
   display: flex;
   align-items: center;
   height: calc(100% - 2px);
-  background: #ffffff;
   border-radius: 10px;
   box-shadow: ${({ active }): string => (active ? '0 0 2px 2px rgba(23, 61, 201, 0.1)' : 'none')};
   transition: box-shadow 0.2s ease-in-out;

@@ -6,6 +6,8 @@ const findPackages = require('../../scripts/findPackages');
 
 const packages = findPackages();
 
+const rewireReactHotLoader = require('react-app-rewire-hot-loader');
+
 module.exports = override(function (config, env) {
   // include lib
   config.module.rules.forEach((rule) => {
@@ -31,6 +33,13 @@ module.exports = override(function (config, env) {
 
     return pre;
   }, {});
+  if (config.mode !== 'production') {
+    config.resolve.alias = {
+      ...(config.resolve.alias || {}),
+      'react-dom': '@hot-loader/react-dom',
+    };
+  }
 
+  config = rewireReactHotLoader(config, env);
   return config;
 });
