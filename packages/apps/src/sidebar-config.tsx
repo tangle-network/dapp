@@ -12,8 +12,8 @@ export const sideBarConfig: SidebarConfig = {
   products: [
     {
       icon: <ExchangeIcon />,
-      name: 'Bridge',
-      path: 'bridge',
+      name: 'Mixer',
+      path: 'mixer',
     },
     {
       icon: <GovernanceIcon />,

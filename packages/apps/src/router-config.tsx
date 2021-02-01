@@ -6,7 +6,7 @@ import { sideBarConfig } from './sidebar-config';
 import { Layout } from '@webb-dapp/react-components';
 import { RouterConfigData } from '@webb-dapp/react-environment';
 
-const PageBridge = lazy(() => import('@webb-dapp/page-bridge'));
+const PageMixer = lazy(() => import('@webb-dapp/page-mixer'));
 
 const CSuspense: FC = ({ children }) => {
   return <Suspense fallback={<PageContentLoading />}>{children}</Suspense>;
@@ -18,16 +18,16 @@ export const config: RouterConfigData[] = [
       {
         element: (
           <CSuspense>
-            <PageBridge />
+            <PageMixer />
           </CSuspense>
         ),
-        path: 'bridge',
-        title: 'Bridge',
+        path: 'mixer',
+        title: 'Mixer',
       },
 
       {
         path: '*',
-        redirectTo: 'bridge',
+        redirectTo: 'mixer',
       },
     ],
     element: <Layout.Main sidebar={sideBarConfig} />,
