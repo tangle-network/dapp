@@ -95,7 +95,11 @@ export const TokenSelector: FC<Props> = ({
       className={className}
       onVisibleChange={setVisible}
       overlay={
-        <Menu>
+        <Menu
+          style={{
+            background: `var(--card-background)`,
+          }}
+        >
           {currencies.map((currency) => {
             return (
               <MenuItem

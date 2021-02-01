@@ -15,7 +15,7 @@ const TitleRoot = styled.div`
   border-radius: 29px;
   border: 1px solid rgba(23, 61, 201, 0.21);
   padding: 6px 12px 6px 6px;
-  background: #edf3ff;
+  background: var(--platform-background);
 
   font-size: 20px;
   color: var(--information-title-color);

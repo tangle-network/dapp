@@ -5,23 +5,28 @@
   max-height: 80%;
   width: 480px;
   border-radius: 2px;
-  background: #ffffff;
+  background: var(--platform-background);
   outline: none;
-
   &.ant-modal {
     padding-bottom: 0;
+    background: transparent;
   }
+  .ant-modal-content {
+	background: var(--platform-background);
 
+  }
   & .ant-modal-header {
     border: none;
     font-size: 24px;
     line-height: 28px;
     color: var(--text-color-primary);
+    background: transparent;
     padding-bottom: 0;
   }
 }
 
 .aca-dialog__actions {
+  background: transparent;
   margin-top: 24px;
   display: flex;
   justify-content: flex-end;

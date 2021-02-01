@@ -12,9 +12,8 @@ const SUGGESTED_INDEX = 1; // suggest slippage positions
 
 const Root = styled.div`
   padding: 16px 24px;
-  background: #eff1f7;
+  background: var(--light-3);
   border-radius: 12px;
-  border: 1px solid #ecf0f2;
 `;
 
 const Title = styled.div`

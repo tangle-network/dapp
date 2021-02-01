@@ -37,7 +37,7 @@ const ChainNameContent = styled.div`
   align-items: center;
   padding: 4px 8px;
 
-  background: #ffffff;
+  background: var(--card-background);
   border: 1px solid rgba(23, 61, 201, 0.2);
   box-shadow: 0 0 4px 0 rgba(6, 35, 96, 0.06);
   border-radius: 11.5px;

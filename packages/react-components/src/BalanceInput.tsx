@@ -45,7 +45,8 @@ export const BalanceInputRoot = styled.div<{
 
 const CNumberInput = styled(NumberInput)`
   flex: 1 1 auto;
-  padding: none;
+  padding: initial;
+  background: transparent;
 `;
 
 const MaxBtn = styled(Button)`

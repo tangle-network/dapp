@@ -2,7 +2,7 @@ html,
 body {
   margin: 0;
   padding: 0;
-	font-family: 'Roboto Slab', serif;
+  font-family: 'Roboto Slab', serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-variant-numeric: tabular-nums;
@@ -40,9 +40,9 @@ span {
 }
 
 :root {
-  --color-primary: #173dc9;
-  --color-primary-light: #2938ce;
-  --color-primary-hover: #1b4af3;
+  --color-primary: #3e5bf8;
+  --color-primary-light: #2f3db5;
+  --color-primary-hover: #2f53c8;
   --color-primary-active: #0c30ae;
 
   --color-blue: #108ee9;
@@ -51,7 +51,7 @@ span {
   --color-red-light: #ff5a5a;
   --color-yellow: #f0fa41;
   --color-origin: #f7b500;
-  --color-white: #ffffff;
+  --color-white: #000;
   --color-gray: #cccccc;
   --color-red-light: #ff5a5a;
 
@@ -72,28 +72,35 @@ span {
   --text-weight-light: 400;
   --text-weight-md: 500;
 
-  --text-color-black: #000000;
+  --text-color-black: #fff;
   --text-color-white: #ffffff;
-  --text-color-primary: #333333;
-  --text-color-normal: #666666;
+  --text-color-primary: #eee;
+  --text-color-normal: #eaeaea;
   --text-color-second: #999999;
+
+  --blend-3: rgba(0, 0, 0, 0.03);
+  --blend-10: rgba(0, 0, 0, 0.1);
+
+  --light-3: rgba(255, 255, 255, 0.03);
+  --light-10: rgba(255, 255, 255, 0.1);
 
   --screen-small: 960px;
   --screen-middle: 1440px;
   --screen-large: 1920px;
 
-  --tab-border: #ebeef5;
+  --tab-border: #eee;
 
   --card-shadow: 0 1px 20px 0 rgba(23, 65, 212, 0.02);
 
   --sidebar-item-height: 58px;
 
-  --platform-background: #f8f9fd;
+  --platform-background: #333;
+  --card-background: #222;
 
-  --information-background: #edf3ff;
+  --information-background: rgba(0, 0, 0, 0.4);
   --information-title-color: #0155ff;
   --information-content-color: #95addc;
-
+  --color-border: var(--platform-background);
   --notification-success-color: #8fce65;
   --notification-info-color: #108ee9;
   --notification-warning-color: #f0af41;
@@ -102,7 +109,7 @@ span {
   --notification-message-color: #404040;
   --notification-description-color: #666666;
 
-  --table-striped-background: #f7faff;
+  --table-striped-background: #222121;
 
   --input-border-color: rgba(1, 85, 255, 1);
   --input-shadow: rgba(1, 85, 255, 0.2);

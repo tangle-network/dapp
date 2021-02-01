@@ -30,6 +30,7 @@ const SidebarRoot = styled.div<{ collapse: boolean }>`
   width: ${({ collapse }): string => (collapse ? '68px' : '240px')};
   box-shadow: 0 20px 20px 0 rgba(12, 28, 90, 0.09);
   transition: width 500ms ease;
+  background: var(--card-background);
 `;
 
 export const Sidebar: FC<SidebarProps> = ({ collapse, config, showAccount = true }) => {
