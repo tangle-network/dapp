@@ -12,7 +12,7 @@ interface Props {
 }
 
 function getPScanUrl(hash: string): string {
-  return `https://acala-testnet.subscan.io/extrinsic/${hash}`;
+  return `https://edgeware.subscan.io/extrinsic/${hash}`;
 }
 
 export const FormatHash: FC<Props> = ({ hash, withCopy = true, withPScan = true, withTooltip = true }) => {

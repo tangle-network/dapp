@@ -63,7 +63,7 @@ export const TxButton: FC<PropsWithChildren<Props>> = ({
   size,
   ...other
 }) => {
-  const { api: acalaApi } = useApi();
+  const { api: webbApi } = useApi();
   const { active } = useAccounts();
   const [isSending, setIsSending] = useState<boolean>(false);
   const { refresh } = useHistory();
@@ -77,8 +77,8 @@ export const TxButton: FC<PropsWithChildren<Props>> = ({
   const _api = useMemo(() => {
     if (api) return api;
 
-    return acalaApi;
-  }, [api, acalaApi]);
+    return webbApi;
+  }, [api, webbApi]);
 
   const onClick = useCallback(async (): Promise<void> => {
     // precheck params etc.

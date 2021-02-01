@@ -25,14 +25,12 @@ const Img = styled.img`
   object-fit: cover;
 `;
 
+// TODO: This should be chain configurable
 export const GovernanceIntro: FC = () => {
   return (
     <Card>
-      <Title>Acala Governance</Title>
-      <Content>
-        Acala takes a phased approach to employ various governance mechanisms that will allow it to progressively
-        decentralize and ultimately be commanded by the majority network stakeholders.
-      </Content>
+      <Title>Edgeware Governance</Title>
+      <Content>TBD</Content>
       <Img draggable={false} src={introSrc} />
     </Card>
   );
