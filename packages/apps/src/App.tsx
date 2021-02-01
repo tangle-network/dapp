@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-
+import { hot } from 'react-hot-loader/root';
 import { UIProvider } from '@webb-dapp/ui-components';
 import { WebbProvider, RouterProvider } from '@webb-dapp/react-environment';
 import { EventsWatcher } from '@webb-dapp/react-components';
@@ -18,4 +18,4 @@ const App: FC = () => {
   );
 };
 
-export default App;
+export default process.env.NODE_ENV === 'development' ? hot(App) : App;
