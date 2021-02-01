@@ -5,14 +5,7 @@ import { CurrencyId } from '@webb-tools/types/interfaces';
 import { ScrollCard, Condition, Tag } from '@webb-dapp/ui-components';
 import { BareProps } from '@webb-dapp/ui-components/types';
 import { useConstants, useBalance } from '@webb-dapp/react-hooks';
-import {
-  TokenImage,
-  TokenName,
-  UserAssetBalance,
-  UserAssetValue,
-  tokenEq,
-  StakingPoolExchangeRate,
-} from '@webb-dapp/react-components';
+import { TokenImage, TokenName, UserAssetBalance, UserAssetValue, tokenEq } from '@webb-dapp/react-components';
 
 import classes from './WalletBalance.module.scss';
 
@@ -33,9 +26,7 @@ export const Balance: FC<BalanceProps> = ({ className, currency }) => {
         <Condition
           condition={tokenEq(currency, liquidCurrency)}
           or={<UserAssetValue className={classes.amount} currency={currency} />}
-        >
-          <StakingPoolExchangeRate className={classes.amount} liquidAmount={liquidBalance} showLiquidAmount={false} />
-        </Condition>
+        ></Condition>
       </div>
     </div>
   );

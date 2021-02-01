@@ -6,7 +6,6 @@ import Identicon from '@polkadot/react-identicon';
 import { FormatAddress } from './format';
 import { TokenSelector } from './TokenSelector';
 import { CurrencyId } from '@webb-tools/types/interfaces';
-import { UserAssetBalance } from './Assets';
 
 const AccountBarRoot = styled.div`
   display: flex;
@@ -52,17 +51,12 @@ const CTokenSelector = styled(TokenSelector)`
   padding: 0 0 0 12px;
 `;
 
-const CUserAssetBalance = styled(UserAssetBalance)`
-  font-size: 16px;
-  line-height: 1.1875;
-`;
-
 const Asserts: FC = () => {
   const { allCurrencies } = useConstants();
   const [active, setActive] = useState<CurrencyId>(allCurrencies[0]);
-  const valueRender = useCallback((value: CurrencyId) => {
-    return <CUserAssetBalance currency={value} showCurrency />;
-  }, []);
+  // const valueRender = useCallback((value: CurrencyId) => {
+  //   return <CUserAssetBalance currency={value} showCurrency />;
+  // }, []);
 
   return (
     <CTokenSelector
@@ -70,7 +64,7 @@ const Asserts: FC = () => {
       currencies={allCurrencies}
       onChange={setActive}
       value={active}
-      valueRender={valueRender}
+      // valueRender={valueRender}
     />
   );
 };

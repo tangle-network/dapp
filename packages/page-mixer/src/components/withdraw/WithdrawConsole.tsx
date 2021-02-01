@@ -2,7 +2,7 @@ import React, { FC, useCallback, useMemo } from 'react';
 
 import { FlexBox, Row, Col, SpaceBox } from '@webb-dapp/ui-components';
 import { BalanceInput, BalanceInputValue, getCurrenciesFromDexShare, eliminateGap } from '@webb-dapp/react-components';
-import { useLPCurrencies, useApi, useBalance, useBalanceValidator } from '@webb-dapp/react-hooks';
+import { useApi, useBalance, useBalanceValidator } from '@webb-dapp/react-hooks';
 import { FixedPointNumber } from '@webb-tools/sdk-core';
 import { CurrencyId } from '@webb-tools/types/interfaces';
 import { TokenInput } from '@webb-dapp/react-components/TokenInput';
@@ -13,60 +13,60 @@ import { AmountTitle, CardRoot, CardSubTitle, CardTitle, CTxButton, WithdrawnTit
 
 export const WithdrawConsole: FC = () => {
   const { api } = useApi();
-  const lpCurrencies = useLPCurrencies();
-  const [selectedLP, setSelectedLP, { error, setValidator }] = useInputValue<BalanceInputValue>({
+  const [token, setToken, { error: tokenError, setValidator: setTokenValidator }] = useInputValue<BalanceInputValue>({
     amount: 0,
-    token: lpCurrencies[0],
   });
-  const balance = useBalance(selectedLP.token);
+  const currencies: CurrencyId[] = [];
+
+  // TODO: Grab token balance properly
+  const balance = useBalance(token);
 
   useBalanceValidator({
-    currency: selectedLP.token,
-    updateValidator: setValidator,
+    currency: token.token,
+    updateValidator: setTokenValidator,
   });
 
-  const handleSelectLPCurrencyChange = useCallback(
+  const handleSelectCurrencyChange = useCallback(
     (currency: CurrencyId) => {
-      setSelectedLP({ token: currency });
+      setToken({ token: currency });
     },
-    [setSelectedLP]
+    [setToken]
   );
 
   const clearAmount = useCallback(() => {
-    setSelectedLP({
+    setToken({
       amount: 0,
-      token: selectedLP.token,
+      token: token.token,
     });
-  }, [setSelectedLP, selectedLP]);
+  }, [token, setToken]);
 
   const handleMax = useCallback(() => {
-    setSelectedLP({
+    setToken({
       amount: balance.toNumber(),
-      token: selectedLP.token,
+      token: token.token,
     });
-  }, [balance, setSelectedLP, selectedLP]);
+  }, [balance, token, setToken]);
 
   const handleSuccess = useCallback((): void => clearAmount(), [clearAmount]);
 
-  const params = useCallback(() => {
-    if (!selectedLP.amount || !selectedLP.token) return [];
-
-    const [token1, token2] = getCurrenciesFromDexShare(api, selectedLP.token);
-
-    return [
-      token1,
-      token2,
-      eliminateGap(new FixedPointNumber(selectedLP.amount), balance, new FixedPointNumber('0.000001')).toChainData(),
-    ];
-  }, [selectedLP, api, balance]);
-
   const isDisabled = useMemo(() => {
-    if (!selectedLP.amount) return true;
+    if (!token.amount) return true;
 
-    if (error) return true;
+    if (tokenError) return true;
 
     return false;
-  }, [selectedLP, error]);
+  }, [token, tokenError]);
+
+  const params = useCallback(() => {
+    if (!token.amount || !token.token) return [];
+
+    // TODO: Properly handle params
+    return [
+      token,
+      token,
+      eliminateGap(new FixedPointNumber(token.amount), balance, new FixedPointNumber('0.000001')).toChainData(),
+    ];
+  }, [token, api, balance]);
 
   return (
     <CardRoot>
@@ -78,7 +78,7 @@ export const WithdrawConsole: FC = () => {
         <Col>
           <WithdrawnTitle>Withdraw Token</WithdrawnTitle>
         </Col>
-        <Col span={24}>
+        {/* <Col span={24}>
           <TokenInput currencies={lpCurrencies} onChange={handleSelectLPCurrencyChange} value={selectedLP.token} />
         </Col>
         <Col span={24}>
@@ -102,14 +102,14 @@ export const WithdrawConsole: FC = () => {
           <Col span={24}>
             <WithdrawInfo token={(selectedLP as any) as BalanceInputValue} />
           </Col>
-        ) : null}
+        ) : null} */}
         <Col span={24}>
           <CTxButton
             disabled={isDisabled}
-            method='removeLiquidity'
+            method='withdraw'
             onInblock={handleSuccess}
             params={params}
-            section='dex'
+            section='mixer'
             size='large'
           >
             Withdraw Liquidity

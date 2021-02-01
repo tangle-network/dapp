@@ -13,7 +13,6 @@ import { Token, TokenImage, TokenName } from './Token';
 import { tokenEq } from './utils';
 import { CurrencyChangeFN } from './types';
 import classes from './TokenSelector.module.scss';
-import { UserAssetBalance } from './Assets';
 
 interface MenuItemProps {
   value?: CurrencyId;
@@ -50,7 +49,6 @@ const MenuItem: FC<MenuItemProps> = ({ checkBalance, currency, disabledCurrencie
       <TokenImage className={classes.tokenImage} currency={currency} />
       <div className={classes.tokenDetail}>
         <TokenName className={classes.tokenName} currency={currency} />
-        <UserAssetBalance className={classes.assetBalance} currency={currency} />
       </div>
     </Menu.Item>
   );

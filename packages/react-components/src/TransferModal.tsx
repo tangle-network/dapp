@@ -3,16 +3,14 @@ import clsx from 'clsx';
 
 import { CurrencyId } from '@webb-tools/types/interfaces';
 import { Dialog, ArrowIcon, CheckedCircleIcon, FormItem, Button, InlineBlockBox } from '@webb-dapp/ui-components';
-import { useModal, useAccounts, useConstants, useLPCurrencies, useBalance } from '@webb-dapp/react-hooks';
+import { useModal, useAccounts, useConstants, useBalance } from '@webb-dapp/react-hooks';
 import { useInputValue } from '@webb-dapp/react-hooks/useInputValue';
 import { FixedPointNumber } from '@webb-tools/sdk-core';
 
 import { tokenEq, eliminateGap } from './utils';
 import { TokenName, TokenImage, TokenFullName } from './Token';
-import { UserAssetBalance, UserAssetValue } from './Assets';
 import classes from './TransferModal.module.scss';
 import { AddressInput } from './AddressInput';
-import { BalanceAmountInput, BalanceAmountValue } from './BalanceAmountInput';
 import { TxButton } from './TxButton';
 
 interface AssetBoardProps {
@@ -29,11 +27,9 @@ const AssetBoard: FC<AssetBoardProps> = ({ currency, openSelect }) => {
       <div className={classes.content} onClick={openSelect}>
         <div>
           <div className={classes.balance}>
-            <UserAssetBalance currency={currency} />
             <TokenName className={classes.token} currency={currency} />
             <ArrowIcon className={classes.icon} />
           </div>
-          {currency.isToken ? <UserAssetValue className={classes.amount} currency={currency} /> : null}
         </div>
       </div>
     </div>
@@ -89,7 +85,7 @@ interface TransferFormProps {
 const TransferForm: FC<TransferFormProps> = ({ currency, mode, onChange }) => {
   const { active } = useAccounts();
   const [accountValue, setAccountValue] = useState<{ address: string; error?: string }>();
-  const [balanceValue, setBalanceValue] = useState<Partial<BalanceAmountValue>>();
+  const [balanceValue, setBalanceValue] = useState<Partial<any>>();
 
   useEffect(() => {
     onChange({
@@ -105,9 +101,9 @@ const TransferForm: FC<TransferFormProps> = ({ currency, mode, onChange }) => {
       <FormItem className={classes.formItem} label='Account'>
         <AddressInput blockAddressList={[active ? active.address : '']} onChange={setAccountValue} />
       </FormItem>
-      <FormItem label='Amount'>
+      {/* <FormItem label='Amount'>
         <BalanceAmountInput currency={currency} mode={mode} onChange={setBalanceValue} />
-      </FormItem>
+      </FormItem> */}
     </>
   );
 };
@@ -125,7 +121,6 @@ interface TransferModalProps {
  */
 export const TransferModal: FC<TransferModalProps> = ({ defaultCurrency, mode, onClose, visiable }) => {
   const { allCurrencies } = useConstants();
-  const lpCurrencies = useLPCurrencies();
   const [selectedCurrency, setSelectedCurrency] = useState<CurrencyId>(defaultCurrency);
   const { close, open, status: isOpenSelect } = useModal();
   const [value, setValue, { reset }] = useInputValue<AccountBalanceValue>({ account: '', balance: 0 });
@@ -154,15 +149,16 @@ export const TransferModal: FC<TransferModalProps> = ({ defaultCurrency, mode, o
     [setSelectedCurrency, close]
   );
 
-  const renderSelect = useCallback((): ReactNode => {
-    return (
-      <SelectCurrency
-        onChange={handleTokenSelect}
-        selectableCurrencies={mode === 'token' ? allCurrencies : lpCurrencies}
-        value={selectedCurrency}
-      />
-    );
-  }, [mode, handleTokenSelect, selectedCurrency, allCurrencies, lpCurrencies]);
+  // TODO: Fix this
+  // const renderSelect = useCallback((): ReactNode => {
+  //   return (
+  //     <SelectCurrency
+  //       onChange={handleTokenSelect}
+  //       selectableCurrencies={mode === 'token' ? allCurrencies : null}
+  //       value={selectedCurrency}
+  //     />
+  //   );
+  // }, [mode, handleTokenSelect, selectedCurrency, allCurrencies, null]);
 
   const params = useCallback(() => {
     if (!value.balance) return [];
@@ -216,7 +212,7 @@ export const TransferModal: FC<TransferModalProps> = ({ defaultCurrency, mode, o
       withClose
     >
       <AssetBoard currency={selectedCurrency} openSelect={open} />
-      {isOpenSelect ? renderSelect() : renderTransfer()}
+      {/* {isOpenSelect ? renderSelect() : renderTransfer()} */}
     </Dialog>
   );
 };
