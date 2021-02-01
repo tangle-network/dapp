@@ -14,6 +14,6 @@ if (process.env.NODE_ENV === 'development') {
 i18n.use(initReactI18next).init({
   defaultNS: 'translations',
   fallbackLng: 'en',
-  ns: ['apps', 'page-mixer', 'react-components'],
+  ns: ['apps', 'page-bridge', 'react-components'],
   resources
 });

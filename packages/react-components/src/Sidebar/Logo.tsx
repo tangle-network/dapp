@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 
 import { styled } from '@webb-dapp/ui-components';
 
-import { ReactComponent as WebbIogoSmall } from '../assets/mandala-logo-small.svg';
+import { ReactComponent as WebbIogoSmall } from '../assets/webb-logo-small.svg';
 
 export const TestNet = styled.div`
   display: inline-block;
