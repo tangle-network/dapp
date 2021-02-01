@@ -23,25 +23,13 @@ export const sideBarConfig: SidebarConfig = {
   ],
   socialPlatforms: [
     {
-      href: 'https://discord.gg/CmqXvMP',
-      icon: <FaucetIcon />,
-      name: 'Faucet',
-      rel: 'faucet',
-    },
-    {
-      href: 'https://github.com/AcalaNetwork/Acala/wiki',
-      icon: <GuideIcon />,
-      name: 'Wiki',
-      rel: 'wiki',
-    },
-    {
-      href: 'mailto:hello@acala.network',
+      href: 'mailto:drew@webb.tools',
       icon: <EmailIcon />,
       name: 'Email',
       rel: 'email',
     },
     {
-      href: 'https://twitter.com/AcalaNetwork',
+      href: 'https://twitter.com/thewebbnet',
       icon: <TwitterIcon />,
       name: 'Twitter',
       rel: 'twitter',

@@ -2,7 +2,6 @@ import React, { FC, FocusEventHandler, useCallback, useState } from 'react';
 import { BalanceInputRoot } from './BalanceInput';
 import { Menu, Dropdown } from 'antd';
 import { CurrencyId } from '@webb-tools/types/interfaces';
-import { UserBalance } from './UserBalance';
 import { Token } from './Token';
 import { BareProps } from '@webb-dapp/ui-components/types';
 import { ArrowPixelIcon, styled } from '@webb-dapp/ui-components';
@@ -69,7 +68,7 @@ const CurrencyItem: FC<CurrencyItemProps> = ({ currency, disableZeroCurrency, on
       onClick={_onClick}
     >
       <Token className='token-input__menu__item__currency' currency={currency} icon />
-      <UserBalance className='token-input__menu__item__balance' currency={currency} showCurrencyName />
+      {/* <UserBalance className='token-input__menu__item__balance' currency={currency} showCurrencyName /> */}
     </MenuItem>
   );
 };
@@ -130,7 +129,7 @@ export const TokenInput: FC<TokenInputProps> = styled<FC<TokenInputProps>>(
             {value ? (
               <Current>
                 <Token className='token-input__menu__item__currency' currency={value} icon />
-                <UserBalance className='token-input__menu__item__balance' currency={value} showCurrencyName />
+                {/* <UserBalance className='token-input__menu__item__balance' currency={value} showCurrencyName /> */}
               </Current>
             ) : (
               <div className='token-input__content__content'>{placeholder || 'Please Select Token'}</div>

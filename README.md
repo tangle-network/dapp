@@ -1,25 +1,22 @@
-![license](https://img.shields.io/github/license/AcalaNetwork/acala-dapp)
+![license](https://img.shields.io/github/license/webb-tools/webb-dapp)
 
-# Acala-Dapp
+# Webb Dapp
 
-acala web app with honzon, homa, dex features.
+Webb web app with mixer features.
 
 # Overview
 
-- [apps](https://github.com/AcalaNetwork/acala-dapp/tree/master/packages/apps): the endpoint of the dapp
-- [page-deposit](https://github.com/AcalaNetwork/acala-dapp/tree/master/packages/page-deposit): the page for depositing and withdrawing currencies in swap pool
-- [page-governance](https://github.com/AcalaNetwork/acala-dapp/tree/master/packages/page-governance): the page for governance
-- [page-homa](https://github.com/AcalaNetwork/acala-dapp/tree/master/packages/page-homa): the page for homa protocol
-- [page-loan](https://github.com/AcalaNetwork/acala-dapp/tree/master/packages/page-loan): the page for honzon protocol
-- [page-mixer](https://github.com/AcalaNetwork/acala-dapp/tree/master/packages/page-mixer): the page for swap currencies
-- [page-wallet](https://github.com/AcalaNetwork/acala-dapp/tree/master/packages/page-wallet): the page for an basic wallet
+- [apps](https://github.com/webb-tools/webb-dapp/tree/master/packages/apps): the endpoint of the dapp
+- [page-governance](https://github.com/webb-tools/webb-dapp/tree/master/packages/page-governance): the page for governance
+- [page-mixer](https://github.com/webb-tools/webb-dapp/tree/master/packages/page-mixer): the page for mixer deposit/withdrawals
+- [page-wallet](https://github.com/webb-tools/webb-dapp/tree/master/packages/page-wallet): the page for an basic wallet
 
 # Development
 
 1. Clone this repo
 
    ```base
-   git clone git@github.com:AcalaNetwork/acala-dapp.git && cd acala-dapp
+   git clone git@github.com:webb-tools/webb-dapp.git && cd webb-dapp
    ```
 
 2. Install dependencies by `yarn`

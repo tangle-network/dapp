@@ -5,7 +5,7 @@ import { BareProps } from '@webb-dapp/ui-components/types';
 import { styled } from '@webb-dapp/ui-components';
 
 import { ReactComponent as NetworkIcon } from './assets/network.svg';
-import { ReactComponent as AcalaIcon } from './assets/aca-network.svg';
+import { ReactComponent as WebbIcon } from './assets/webb-logo-small.svg';
 import { SelectNetwork } from './SelectNetwork';
 
 interface ChainNameProps extends BareProps {
@@ -23,7 +23,7 @@ const CNetworkIcon = styled(NetworkIcon)`
   margin-right: 8px;
 `;
 
-const ChainIcon = styled(AcalaIcon)`
+const ChainIcon = styled(WebbIcon)`
   display: block;
   margin-right: 4.5px;
   width: 14px;

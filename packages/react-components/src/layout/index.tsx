@@ -66,7 +66,7 @@ const Main: FC<MainLayoutProps> = memo(({ children, enableCollapse = true, sideb
 
     return (
       <Page>
-        <CAlert message={t('TESTNET_SCAMES')} />
+        {/* <CAlert message={t('TESTNET_SCAMES')} /> */}
         <Page.Title
           breadcrumb={breadcrumb}
           extra={<AccountBar />}

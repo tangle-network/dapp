@@ -47,6 +47,17 @@ export const WithdrawnTitle: FC<BareProps> = ({ children }) => {
   );
 };
 
+export const DepositTitle: FC<BareProps> = ({ children }) => {
+  return (
+    <TitleRoot>
+      <div className='title__icon'>
+        <WithdrawnIcon />
+      </div>
+      {children}
+    </TitleRoot>
+  );
+};
+
 export const ReceiveTitle: FC<BareProps> = ({ children }) => {
   return (
     <TitleRoot>

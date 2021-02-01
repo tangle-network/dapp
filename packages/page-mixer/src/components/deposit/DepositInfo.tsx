@@ -1,11 +1,5 @@
 import React, { FC, useMemo } from 'react';
-import {
-  BalanceInputValue,
-  FormatBalance,
-  getDexShareFromCurrencyId,
-  LPExchangeRate,
-  LPSize,
-} from '@webb-dapp/react-components';
+import { BalanceInputValue, FormatBalance } from '@webb-dapp/react-components';
 import styled from 'styled-components';
 import { FixedPointNumber } from '@webb-tools/sdk-core';
 import { useApi } from '@webb-dapp/react-hooks';
@@ -38,24 +32,17 @@ export const DepositInfo: FC<DepositInfoProps> = ({ token1, token2 }) => {
       },
     ];
   }, [token1, token2]);
-  const lpCurrencyId = useMemo(() => {
-    return getDexShareFromCurrencyId(api, token1.token, token2.token);
-  }, [api, token1, token2]);
 
   return (
     <InfoRoot>
       <DepositBalance pair={balancePairs} pairSymbol='+' />
       <InfoItem>
         <InfoItemLabel>Exchange Rate</InfoItemLabel>
-        <InfoItemValue>
-          <LPExchangeRate lp={lpCurrencyId} />
-        </InfoItemValue>
+        <InfoItemValue></InfoItemValue>
       </InfoItem>
       <InfoItem>
         <InfoItemLabel>Current Pool Size</InfoItemLabel>
-        <InfoItemValue>
-          <LPSize lp={lpCurrencyId} />
-        </InfoItemValue>
+        <InfoItemValue></InfoItemValue>
       </InfoItem>
     </InfoRoot>
   );

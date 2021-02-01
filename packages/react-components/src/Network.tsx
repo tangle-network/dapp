@@ -1,23 +1,17 @@
 import React, { FC, ReactElement } from 'react';
-import { ReactComponent as AcalaLogo } from './assets/aca-network.svg';
-import { ReactComponent as LaminarLogo } from './assets/laminar-network.svg';
-import { ReactComponent as PolkadotLogo } from './assets/polkadot-network.svg';
+import { ReactComponent as EdgewareLogo } from './assets/edgeware-network.svg';
 import classes from './Network.module.scss';
 
-export type NetworkType = 'acala' | 'laminar' | 'rococo' | 'polkadot';
+export type NetworkType = 'edgeware' | 'beresheet';
 
 const logoMap = new Map([
-  ['acala', <AcalaLogo key='acala-logo' />],
-  ['laminar', <LaminarLogo key='laminar-logo' />],
-  ['polkadot', <PolkadotLogo key='polkadot-logo' />],
-  ['rococo', <PolkadotLogo key='rococo-logo' />],
+  ['edgeware', <EdgewareLogo key='edgeware-logo' />],
+  ['beresheet', <EdgewareLogo key='edgeware-logo' />],
 ]);
 
 const nameMap = new Map([
-  ['acala', 'Acala'],
-  ['laminar', 'Laminar'],
-  ['polkadot', 'Polkadot'],
-  ['rococo', 'Rococo'],
+  ['edgeware', 'Edgeware'],
+  ['beresheet', 'Beresheet'],
 ]);
 
 export const getNetworkName = (network: NetworkType): string => {

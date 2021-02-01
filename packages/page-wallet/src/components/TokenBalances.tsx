@@ -2,17 +2,7 @@ import React, { FC, ReactElement } from 'react';
 import clsx from 'clsx';
 
 import { CurrencyId } from '@webb-tools/types/interfaces';
-import {
-  UserAssetBalance,
-  UserAssetValue,
-  TotalUserAssetValue,
-  TokenImage,
-  TokenName,
-  TokenFullName,
-  TransferButton,
-  tokenEq,
-  StakingPoolExchangeRate,
-} from '@webb-dapp/react-components';
+import { TokenImage, TokenName, TokenFullName, TransferButton, tokenEq } from '@webb-dapp/react-components';
 import { Condition } from '@webb-dapp/ui-components';
 import { BareProps } from '@webb-dapp/ui-components/types';
 import { useConstants, useBalance, useTranslation } from '@webb-dapp/react-hooks';
@@ -25,7 +15,7 @@ const TotalAsset: FC<BareProps> = ({ className }) => {
   return (
     <div className={clsx(className, classes.totalAsset)}>
       <p>{t('My Address')}</p>
-      <TotalUserAssetValue className={classes.num} />
+      {/* <TotalUserAssetValue className={classes.num} /> */}
     </div>
   );
 };
@@ -48,13 +38,13 @@ const AssetCard: FC<AssetCardProps> = ({ className, currency }) => {
           <TokenFullName className={classes.fullname} currency={currency} />
         </div>
         <div className={classes.balanceArea}>
-          <UserAssetBalance className={classes.currency} currency={currency} />
+          {/* <UserAssetBalance className={classes.currency} currency={currency} />
           <Condition
             condition={tokenEq(currency, liquidCurrency)}
             or={<UserAssetValue className={classes.amount} currency={currency} />}
           >
             <StakingPoolExchangeRate className={classes.amount} liquidAmount={liquidBalance} showLiquidAmount={false} />
-          </Condition>
+          </Condition> */}
         </div>
       </div>
       <TransferButton className={classes.transferBtn} currency={currency} mode='token' />

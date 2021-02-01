@@ -11,7 +11,6 @@ import { useAccounts } from './useAccounts';
 import { useCall } from './useCall';
 import { useConstants } from './useConstants';
 import { AccountLike } from './types';
-import { usePrice, useAllPrices, PriceData } from './priceHooks';
 
 export type BalanceData = { currency: CurrencyId; balance: FixedPointNumber };
 
@@ -32,7 +31,7 @@ export const useBalance = (currency?: CurrencyId, account?: AccountLike): FixedP
       return FixedPointNumber.ZERO;
     }
 
-    return FixedPointNumber.fromInner(balance.toString());
+    return FixedPointNumber.fromInner('0');
   }, [balance, currency]);
 
   return result;
@@ -87,56 +86,4 @@ export const useAllBalances = (account?: AccountLike): BalanceData[] => {
   const balances = useBalances(allCurrencies, account);
 
   return balances;
-};
-
-/**
- * @name useValue
- * @description get currency value in USD
- * @param currency
- * @param account
- */
-export const useValue = (currency: CurrencyId, account?: AccountLike): FixedPointNumber => {
-  const balance = useBalance(currency, account);
-  const price = usePrice(currency);
-
-  if (!balance || !price) {
-    return FixedPointNumber.ZERO;
-  }
-
-  return balance.times(price);
-};
-
-const calcTotalAmount = (prices: PriceData[], amount: BalanceData[]): FixedPointNumber => {
-  return amount.reduce((acc: FixedPointNumber, current: BalanceData): FixedPointNumber => {
-    const price = prices.find((value: PriceData): boolean => tokenEq(value.currency, current.currency));
-    const amount = ((price && price.price) || FixedPointNumber.ZERO).times(current.balance);
-
-    return acc.plus(amount);
-  }, FixedPointNumber.ZERO);
-};
-
-/**
- * @name useTotalValue
- * @description get total value in USD of all currencies
- * @param account
- */
-export const useTotalValue = (account?: AccountLike): FixedPointNumber => {
-  const { allCurrencies } = useConstants();
-  const balances = useBalances(allCurrencies, account);
-  const prices = useAllPrices();
-  const [result, setResult] = useState<FixedPointNumber>(FixedPointNumber.ZERO);
-
-  useEffect(() => {
-    if (balances && prices) {
-      setResult(calcTotalAmount(prices, balances));
-    }
-  }, [balances, prices]);
-
-  return result;
-};
-
-export const useIssuance = (currency: CurrencyId): FixedPointNumber => {
-  const issuance = useCall<Balance>('query.tokens.totalIssuance', [currency]);
-
-  return issuance ? FixedPointNumber.fromInner(issuance.toString()) : FixedPointNumber.ZERO;
 };
