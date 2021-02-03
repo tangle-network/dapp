@@ -80,7 +80,6 @@ export const DepositConsole: FC = () => {
         <Col span={24}>
           <TokenInput currencies={tokenCurrencies} onChange={handleTokenCurrencyChange} value={token.token} />
         </Col>
-        (
         <>
           <Col span={24}>
             <FlexBox justifyContent='space-between'>

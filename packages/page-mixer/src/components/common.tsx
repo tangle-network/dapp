@@ -121,7 +121,7 @@ export const CardRoot = styled(Card)`
   width: 550px;
   height: auto;
   border-radius: 22px;
-  box-shadow: 0 0 21px rgba(1, 85, 255, 0.15);
+  box-shadow: 0 0 21px var(--card-shadow);
 
   .card__content {
     padding: 24px;

@@ -24,7 +24,7 @@ export const CNavLink = styled(NavLink)<NavLinkProps & { $hasIcon?: boolean }>`
 
   &:hover,
   &.active {
-    background: linear-gradient(90deg, #151414 0%, #0c0c0c 100%) #000;
+    background: var(--list-item-background);
   }
 
   &:after {

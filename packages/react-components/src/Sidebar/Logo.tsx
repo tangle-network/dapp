@@ -3,6 +3,7 @@ import React, { FC } from 'react';
 import { styled } from '@webb-dapp/ui-components';
 
 import { ReactComponent as WebbIogoSmall } from '../assets/webb-logo-small.svg';
+import { useStore } from '@webb-dapp/react-environment';
 
 export const TestNet = styled.div`
   display: inline-block;
@@ -49,8 +50,15 @@ const LogoRoot = styled.div<LogoProps>`
 `;
 
 export const Logo: FC<LogoProps> = ({ collapse }) => {
+  const ui = useStore('ui');
   return (
-    <LogoRoot collapse={collapse}>
+    <LogoRoot
+      collapse={collapse}
+      onClick={() => {
+        console.log('setting theme', ui?.theme);
+        ui.setTheme(ui?.theme === 'primary' ? 'dark' : 'primary');
+      }}
+    >
       <CTestNet>TestNet</CTestNet>
       {collapse ? <WebbIogoSmall /> : <WebbIogoSmall />}
     </LogoRoot>

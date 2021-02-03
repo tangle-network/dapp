@@ -36,7 +36,7 @@ export const SelectNetwork: FC<SelectNetworkProps> = ({ onClose, visiable }) => 
                 key={`select-endpoint-${config.url}`}
                 onClick={(): void => setSelected(config.url)}
               >
-                <p>{config.name}</p>
+                <p className={classes.endpointName}>{config.name}</p>
                 <Radio checked={config.url === selected} />
               </li>
             ))}
