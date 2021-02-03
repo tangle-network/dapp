@@ -8,7 +8,7 @@ import { BalanceInput, BalanceInputValue, tokenEq, eliminateGap, Token } from '@
 import { useInputValue } from '@webb-dapp/react-hooks/useInputValue';
 import { TokenInput } from '@webb-dapp/react-components/TokenInput';
 
-import { CardRoot, CardTitle, CardSubTitle, CTxButton, WithdrawnTitle, AmountTitle, CAlert, CMaxBtn } from '../common';
+import { CardRoot, CardTitle, CardSubTitle, CTxButton, DepositTitle, AmountTitle, CAlert, CMaxBtn } from '../common';
 import { DepositInfo } from './DepositInfo';
 
 export const DepositConsole: FC = () => {
@@ -75,7 +75,7 @@ export const DepositConsole: FC = () => {
       <SpaceBox height={24} />
       <Row gutter={[0, 24]}>
         <Col>
-          <WithdrawnTitle>Withdraw Chain</WithdrawnTitle>
+          <DepositTitle>Deposit Token</DepositTitle>
         </Col>
         <Col span={24}>
           <TokenInput currencies={tokenCurrencies} onChange={handleTokenCurrencyChange} value={token.token} />
@@ -101,7 +101,7 @@ export const DepositConsole: FC = () => {
         </>
         <Col span={24}>
           <CTxButton method='deposit' onExtrinsicSuccsss={handleSuccess} params={params} section='mixer' size='large'>
-            Withdraw
+            Deposit
           </CTxButton>
         </Col>
       </Row>

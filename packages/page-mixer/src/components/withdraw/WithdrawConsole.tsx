@@ -19,7 +19,7 @@ export const WithdrawConsole: FC = () => {
   const currencies: CurrencyId[] = [];
 
   // TODO: Grab token balance properly
-  const balance = useBalance(token);
+  const balance = useBalance(token.token);
 
   useBalanceValidator({
     currency: token.token,
