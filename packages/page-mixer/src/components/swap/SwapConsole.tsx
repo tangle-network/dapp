@@ -231,7 +231,7 @@ export const Inner: FC = () => {
       <Row gutter={[0, 24]} justify='center'>
         <Col span={24}>
           <Title>
-            Pay With
+            Deposit on Edgeware with
             <Addon>
               {tradeMode === 'EXACT_OUTPUT' && !!maxInputBalance
                 ? 'Estimated'
@@ -250,6 +250,7 @@ export const Inner: FC = () => {
             value={input}
           />
         </Col>
+        {/*
         <CIconButton icon='swap' onClick={handleReverse} type='ghost' />
         <Col span={24}>
           <Title>
@@ -267,7 +268,7 @@ export const Inner: FC = () => {
             selectableTokens={selectableOutputCurrencies}
             value={output}
           />
-        </Col>
+        </Col>*/}
         <Col span={24}>
           <Advanced />
         </Col>
@@ -284,7 +285,7 @@ export const Inner: FC = () => {
           section='dex'
           size='large'
         >
-          Swap
+          Deposit
         </CTxButton>
       </Row>
     </CardRoot>

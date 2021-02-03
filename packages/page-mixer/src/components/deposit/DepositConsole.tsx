@@ -69,13 +69,13 @@ export const DepositConsole: FC = () => {
 
   return (
     <CardRoot>
-      <CardTitle>Deposit</CardTitle>
+      <CardTitle>Withdraw</CardTitle>
       <SpaceBox height={16} />
-      <CardSubTitle>Add liquidity to the mixer by depositing tokens.</CardSubTitle>
+      <CardSubTitle>Select chain and the amount to withdraw</CardSubTitle>
       <SpaceBox height={24} />
       <Row gutter={[0, 24]}>
         <Col>
-          <WithdrawnTitle>Withdraw Token 1</WithdrawnTitle>
+          <WithdrawnTitle>Withdraw Chain</WithdrawnTitle>
         </Col>
         <Col span={24}>
           <TokenInput currencies={tokenCurrencies} onChange={handleTokenCurrencyChange} value={token.token} />
@@ -84,7 +84,7 @@ export const DepositConsole: FC = () => {
         <>
           <Col span={24}>
             <FlexBox justifyContent='space-between'>
-              <AmountTitle>Amount</AmountTitle>
+              <AmountTitle>Deposit Note</AmountTitle>
               <CMaxBtn onClick={handleMax} type='ghost'>
                 MAX
               </CMaxBtn>
@@ -102,7 +102,7 @@ export const DepositConsole: FC = () => {
         </>
         <Col span={24}>
           <CTxButton method='deposit' onExtrinsicSuccsss={handleSuccess} params={params} section='mixer' size='large'>
-            Add Liquidty
+            Withdraw
           </CTxButton>
         </Col>
       </Row>

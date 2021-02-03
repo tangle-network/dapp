@@ -9,23 +9,22 @@ import { DepositConsole } from './components/deposit';
 import { WithdrawConsole } from './components/withdraw';
 import { LiquidityInformation } from './components/common';
 
-type SwapTabType = 'add-liquidity' | 'withdraw-liquidity';
-type SwapPageType = 'swap' | 'liquidity';
+type SwapTabType = 'deposit' | 'withdraw';
 
 const subMenu = [
   {
-    content: 'Swap',
-    key: 'swap',
+    content: 'Deposit',
+    key: 'deposit',
   },
   {
-    content: 'Liquidity',
-    key: 'liquidity',
+    content: 'Withdraw',
+    key: 'withdraw',
   },
 ];
 
 const PageSwap: FC = () => {
-  const { changeTabs, currentTab } = useTabs<SwapTabType>('add-liquidity');
-  const { changeTabs: changeSubMenu, currentTab: currentSubMenu } = useTabs<SwapPageType>('swap');
+  const { changeTabs, currentTab } = useTabs<SwapTabType>('deposit');
+  const { changeTabs: changeSubMenu, currentTab: currentSubMenu } = useTabs<SwapTabType>('deposit');
 
   const params = useParams();
 
@@ -42,7 +41,7 @@ const PageSwap: FC = () => {
     /* eslint-disable-next-line */
   }, [changeTabs]);
 
-  if (currentSubMenu === 'swap') {
+  if (currentSubMenu === 'deposit') {
     return <SwapConsole />;
   }
 
@@ -52,14 +51,7 @@ const PageSwap: FC = () => {
         <LiquidityInformation />
       </Col>
       <Col span={24}>
-        <Tabs active={currentTab} onChange={changeTabs}>
-          <Tabs.Panel $key='add-liquidity' header='Add Liquidity'>
-            <DepositConsole />
-          </Tabs.Panel>
-          <Tabs.Panel $key='widthdraw-liquidity' header='Withdraw Liquidity'>
-            <WithdrawConsole />
-          </Tabs.Panel>
-        </Tabs>
+        <DepositConsole />
       </Col>
     </Row>
   );

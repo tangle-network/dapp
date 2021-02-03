@@ -133,6 +133,7 @@ export const CardTitle = styled.div`
   font-size: 24px;
   line-height: 1.2083;
   font-weight: 500;
+  color: var(--text-color-second);
 `;
 
 export const CardSubTitle = styled.div`
