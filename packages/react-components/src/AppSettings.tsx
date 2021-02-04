@@ -59,7 +59,7 @@ export const AppSettings: FC = () => {
                     onClick={(): void => handleEndpoint(config.url)}
                   >
                     <div>{config.name}</div>
-                    <Radio checked={endpoint === config.url} />
+                    <Radio disabled={!config.features.mixer} checked={endpoint === config.url} />
                   </li>
                 );
               })}

@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { AppFeatures } from '@webb-dapp/ui-components/types';
 
 export interface SideBarItem {
   icon?: ReactNode;
@@ -7,6 +8,7 @@ export interface SideBarItem {
 
 export interface ProductItem extends SideBarItem {
   path?: string;
+  requiredFeatures?: Array<AppFeatures>;
   items?: ProductItem[];
 }
 

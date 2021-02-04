@@ -18,6 +18,7 @@ export * from './useExtrinsicHistory';
 export * from './useInterval';
 export * from './useInitialize';
 export * from './useMemorized';
+export * from './useFeatures';
 
 // common
 export * from './useStateWithCallback';
