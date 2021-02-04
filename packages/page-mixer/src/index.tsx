@@ -2,7 +2,7 @@ import React, { FC, useLayoutEffect } from 'react';
 import { useParams } from 'react-router';
 
 import { Col, Row, Tabs, useTabs } from '@webb-dapp/ui-components';
-import { useSubMenu } from '@webb-dapp/react-environment';
+import { useSubMenu, MixerProvider } from '@webb-dapp/react-environment';
 
 import { DepositConsole } from './components/deposit';
 import { WithdrawConsole } from './components/withdraw';
@@ -37,14 +37,16 @@ const PageMixer: FC = () => {
   }
 
   return (
-    <Row gutter={[0, 24]}>
-      {/* <Col span={24}>
-        <LiquidityInformation />
-      </Col> */}
-      <Col span={24}>
-        <WithdrawConsole />
-      </Col>
-    </Row>
+    <MixerProvider>
+      <Row gutter={[0, 24]}>
+        {/* <Col span={24}>
+          <LiquidityInformation />
+        </Col> */}
+        <Col span={24}>
+          <WithdrawConsole />
+        </Col>
+      </Row>
+    </MixerProvider>
   );
 };
 
