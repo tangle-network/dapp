@@ -7,6 +7,7 @@ import { ApiProvider } from './ApiProvider';
 import { SettingProvider } from './SettingProvider';
 import { StoreProvier } from './store';
 import { ExtensionProvider } from './ExtensionProvider';
+import { MixerProvider } from '@webb-dapp/react-environment/MixerProvider';
 
 interface WebbProviderProps extends BareProps {
   applicationName: string;
@@ -19,11 +20,11 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
       <ApiProvider>
         <ExtensionProvider appName={applicationName}>
           <StoreProvier>
-            <>
+            <MixerProvider>
               {children}
               <ConnectStatus />
               <AppSettings />
-            </>
+            </MixerProvider>
           </StoreProvier>
         </ExtensionProvider>
       </ApiProvider>

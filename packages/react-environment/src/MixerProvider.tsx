@@ -2,10 +2,9 @@ import React, { ReactNode, FC, useState, useEffect, useCallback } from 'react';
 import { Mixer, MixerAssetGroup } from '@webb-tools/sdk-mixer';
 import { useApi } from '@webb-dapp/react-hooks';
 
-
 export interface MixerContextData {
   init: () => Promise<Mixer>;
-  mixerGroups: MixerAssetGroup[],
+  mixerGroups: MixerAssetGroup[];
 }
 
 // ensure that mixer always exist
@@ -28,7 +27,7 @@ export const MixerProvider: FC<Props> = ({ children }) => {
 
     api.query.mixer.mixerGroups.entries().subscribe((result) => {
       result.map(([key, value]) => {
-        console.log({key, value});
+        console.log({ key, value });
       });
     });
 
@@ -41,7 +40,7 @@ export const MixerProvider: FC<Props> = ({ children }) => {
     <MixerContext.Provider
       value={{
         mixerGroups,
-        init
+        init,
       }}
     >
       {children}
