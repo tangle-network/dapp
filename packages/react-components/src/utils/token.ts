@@ -3,26 +3,18 @@ import { ApiRx } from '@polkadot/api';
 import { CurrencyId } from '@webb-tools/types/interfaces';
 import { Token, TokenPair, currencyId2Token } from '@webb-tools/sdk-core';
 
-export const TOKEN_IMAGES: Map<string, string> = new Map([
-  ['EDG', EdgewareIcon],
-]);
+export const TOKEN_IMAGES: Map<string, string> = new Map([['EDG', EdgewareIcon]]);
 
-export const TOKEN_FULLNAMES: Map<string, string> = new Map([
-  ['EDG', 'Edgeware'],
-]);
+export const TOKEN_FULLNAMES: Map<string, string> = new Map([['EDG', 'Edgeware']]);
 
 export const TOKEN_COLOR: Map<string, string> = new Map([
   ['SYSTEM', '#173DC9'],
   ['EDG', '#173dc9'],
 ]);
 
-export const TOKEN_NAME: Map<string, string> = new Map([
-  ['EDG', 'EDG'],
-]);
+export const TOKEN_NAME: Map<string, string> = new Map([['EDG', 'EDG']]);
 
-export const TOKEN_WEIGHT: Map<string, number> = new Map([
-  ['EDG', 0],
-]);
+export const TOKEN_WEIGHT: Map<string, number> = new Map([['EDG', 0]]);
 
 export function getTokenColor(token: string): string {
   return TOKEN_COLOR.get(token) || '#000000';

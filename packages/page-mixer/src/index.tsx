@@ -6,9 +6,8 @@ import { useSubMenu } from '@webb-dapp/react-environment';
 import { DepositConsole } from './components/deposit';
 import { WithdrawConsole } from './components/withdraw';
 import { useMixer } from '@webb-dapp/react-hooks/useMixer';
-import { useApi } from '@webb-dapp/react-hooks';
 import { useFeatures } from '@webb-dapp/react-hooks';
-import { CardRoot } from '@webb-dapp/page-mixer/components/common';
+import { Asset } from '@webb-tools/sdk-mixer';
 
 type MixerPageType = 'deposit' | 'withdraw';
 
@@ -24,31 +23,6 @@ const subMenu = [
 ];
 
 const PageMixer: FC = () => {
-  const { changeTabs: changeSubMenu, currentTab: currentSubMenu } = useTabs<MixerPageType>('deposit');
-  const mixer = useMixer();
-  const { chainInfo } = useApi();
-  useEffect(() => {
-    mixer
-      .init()
-      .then(() => {
-        /*
-         * todo handle mixer creation
-         *
-         * */
-      })
-      .catch(() => {
-        /*
-         * todo handle mixer Error
-         *
-         * */
-      });
-  }, []);
-
-  useSubMenu({
-    active: currentSubMenu,
-    content: subMenu,
-    onClick: changeSubMenu as (key: string) => void,
-  });
   const isSupported = useFeatures(['mixer']);
   if (!isSupported) {
     return (
@@ -59,6 +33,32 @@ const PageMixer: FC = () => {
       />
     );
   }
+  const { changeTabs: changeSubMenu, currentTab: currentSubMenu } = useTabs<MixerPageType>('deposit');
+  const { init } = useMixer();
+  useEffect(() => {
+    console.log('Trying to start the mixer..');
+      init().then(mixer => {
+        /*
+         * todo handle mixer creation
+         *
+         * */
+        const note = mixer.generateNote(new Asset(0, 'EDG'));
+        console.log('Note: ', note);
+      })
+      .catch((e) => {
+        /*
+         * todo handle mixer Error
+         *
+         * */
+        console.log('Error: ', e);
+      });
+  }, []);
+
+  useSubMenu({
+    active: currentSubMenu,
+    content: subMenu,
+    onClick: changeSubMenu as (key: string) => void,
+  });
   if (currentSubMenu === 'deposit') {
     return <DepositConsole />;
   }

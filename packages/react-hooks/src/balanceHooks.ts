@@ -64,11 +64,11 @@ export const useBalances = (currencies: CurrencyId[], account?: AccountLike): Ba
           currencies.map(
             (currency: CurrencyId, index): BalanceData => ({
               balance: result ? FixedPointNumber.fromInner(result[index].toString()) : FixedPointNumber.ZERO,
-              currency
+              currency,
             })
           )
         );
-      }
+      },
     });
 
     return (): void => subscribe.unsubscribe();

@@ -27,17 +27,20 @@ export const MixerProvider: FC<Props> = ({ children }) => {
   useEffect(() => {
     if (!connected) return;
     try {
-      api.query.mixer.mixerGroups.entries().subscribe((result) => {
+      api.query.mixer.mixerGroups.entries().toPromise()
+      .then(result => {
         result.map(([key, value]) => {
           console.log({ key, value });
         });
-      });
+      })
+      .catch(console.error);
+      console.log('query sent!');
     } catch (e) {
       notification.open({
         className: 'error',
         message: (
           <div>
-            <p>{`Please connect to Anon local node , to initialize the Mixer`}</p>
+            <p>{`Please connect to local node, to initialize the Mixer`}</p>
           </div>
         ),
       });
@@ -46,7 +49,10 @@ export const MixerProvider: FC<Props> = ({ children }) => {
     setMixerGroups([]);
   }, [api, connected]);
 
-  const init = useCallback(() => Mixer.init(mixerGroups), [mixerGroups]);
+  const init = useCallback(() => {
+    console.log(`Mixer initialized with ${mixerGroups}`);
+    return Mixer.init([new MixerAssetGroup(0, 'EDG', 32)]);
+  }, [mixerGroups]);
 
   return (
     <MixerContext.Provider

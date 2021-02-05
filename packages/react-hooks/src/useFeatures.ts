@@ -10,7 +10,7 @@ export const useFeatures = (features: AppFeatures[]): boolean => {
       Object.values(selectableEndpoints)
         .flat()
         .find(
-          (endpoint) => String(endpoint.name).toLocaleLowerCase() == String(chainInfo.chainName).toLocaleLowerCase()
+          (endpoint) => String(endpoint.name).toLocaleLowerCase() === String(chainInfo.chainName).toLocaleLowerCase()
         ),
     [selectableEndpoints]
   );

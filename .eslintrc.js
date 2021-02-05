@@ -5,13 +5,22 @@ module.exports = {
   ...base,
   parserOptions: {
     ...base.parserOptions,
-    project: ['./tsconfig.json']
+    project: ['./tsconfig.json'],
   },
   rules: {
     ...base.rules,
     '@typescript-eslint/no-explicit-any': 'off',
     'react/prop-types': 'off',
     'header/header': 'off',
-    'comma-dangle': 'off'
-  }
+    'comma-dangle': 'off',
+  },
+  extends: [
+    ...base.extends,
+    'eslint:recommended',
+    'airbnb-typescript',
+    'plugin:@typescript-eslint/recommended',
+    'prettier/react',
+    'prettier/@typescript-eslint',
+    'plugin:prettier/recommended',
+  ],
 };
