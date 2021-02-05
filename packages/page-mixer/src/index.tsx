@@ -37,7 +37,8 @@ const PageMixer: FC = () => {
   const { init } = useMixer();
   useEffect(() => {
     console.log('Trying to start the mixer..');
-      init().then(mixer => {
+    init()
+      .then((mixer) => {
         /*
          * todo handle mixer creation
          *

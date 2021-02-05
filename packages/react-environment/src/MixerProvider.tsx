@@ -27,13 +27,15 @@ export const MixerProvider: FC<Props> = ({ children }) => {
   useEffect(() => {
     if (!connected) return;
     try {
-      api.query.mixer.mixerGroups.entries().toPromise()
-      .then(result => {
-        result.map(([key, value]) => {
-          console.log({ key, value });
-        });
-      })
-      .catch(console.error);
+      api.query.mixer.mixerGroups
+        .entries()
+        .toPromise()
+        .then((result) => {
+          result.map(([key, value]) => {
+            console.log({ key, value });
+          });
+        })
+        .catch(console.error);
       console.log('query sent!');
     } catch (e) {
       notification.open({
