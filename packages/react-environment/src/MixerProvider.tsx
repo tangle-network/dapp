@@ -1,4 +1,4 @@
-import { useApi, useCall } from '@webb-dapp/react-hooks';
+import { useAccounts, useApi, useCall } from '@webb-dapp/react-hooks';
 import { Mixer, MixerAssetGroup } from '@webb-tools/sdk-mixer';
 import React, { FC, ReactNode, useCallback, useEffect } from 'react';
 
@@ -22,12 +22,13 @@ interface Props {
 export const MixerProvider: FC<Props> = ({ children }) => {
   const initialized = useCall<Bool>('query.mixer.initialised', []);
   const { api, connected } = useApi();
+  const { active } = useAccounts();
 
   console.log('Mixer Initialised? ', initialized);
   useEffect(() => {
-    if (initialized?.isTrue || !connected) return;
-    api.tx.mixer.initialize().send().toPromise().then(console.log).catch(console.error);
-  }, [initialized, api, connected]);
+    if (initialized?.isTrue || !connected || !active) return;
+    api.tx.mixer.initialize().signAndSend(active.address).toPromise().then(console.log).catch(console.error);
+  }, [initialized, api, connected, active]);
 
   const groupsIds = useCall<number[]>('query.mixer.mixerGroupIds', []);
 
