@@ -1,4 +1,4 @@
-const base = require('@polkadot/dev/config/eslint');
+const base = require('@polkadot/dev/config/eslint.cjs');
 
 // add override for any (a metric ton of them, initial conversion)
 module.exports = {
@@ -13,14 +13,9 @@ module.exports = {
     'react/prop-types': 'off',
     'header/header': 'off',
     'comma-dangle': 'off',
+    'react/jsx-fragments': 'off',
+    'react/jsx-max-props-per-line': 'off',
+    'react/jsx-sort-props': 'off',
   },
-  extends: [
-    ...base.extends,
-    'eslint:recommended',
-    'airbnb-typescript',
-    'plugin:@typescript-eslint/recommended',
-    'prettier/react',
-    'prettier/@typescript-eslint',
-    'plugin:prettier/recommended',
-  ],
+  extends: ['eslint:recommended', 'prettier/react', 'prettier/@typescript-eslint', 'plugin:prettier/recommended'],
 };
