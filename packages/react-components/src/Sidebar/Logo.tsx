@@ -1,6 +1,5 @@
-import React, { FC } from 'react';
-
 import { styled } from '@webb-dapp/ui-components';
+import React, { FC } from 'react';
 
 import { ReactComponent as WebbIogoSmall } from '../assets/webb-logo-small.svg';
 

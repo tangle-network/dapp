@@ -1,6 +1,5 @@
-import { useContext } from 'react';
-
 import { ApiContext, ApiContextData } from '@webb-dapp/react-environment';
+import { useContext } from 'react';
 
 /**
  * @name useApi

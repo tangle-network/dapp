@@ -1,5 +1,6 @@
 import { isCodec } from '@webb-dapp/react-components';
-import { useState, useRef, MutableRefObject, useCallback, useMemo, useEffect, useLayoutEffect } from 'react';
+import { MutableRefObject, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+
 import { useMemorized } from './useMemorized';
 
 interface Instance<T> {
@@ -30,7 +31,7 @@ export const useInputValue = <T>(defaultValue: Partial<T>, options?: Options<T>)
 
   const reset = useCallback(() => {
     _setValue(defaultValue as T);
-  }, [_setValue, defaultValue]);
+  }, [T, defaultValue]);
 
   const setValidator = useCallback(
     (newValidator: Options<T>['validator']) => {
@@ -40,7 +41,7 @@ export const useInputValue = <T>(defaultValue: Partial<T>, options?: Options<T>)
 
       promise ? promise.then(() => setError('')).catch((e) => setError(e.message)) : setError('');
     },
-    [validator, value]
+    [T, value]
   );
 
   const setValue = useCallback(
@@ -63,7 +64,7 @@ export const useInputValue = <T>(defaultValue: Partial<T>, options?: Options<T>)
       // update value
       _setValue(_value);
     },
-    [_setValue]
+    [T]
   );
 
   const instance = useMemo(() => {

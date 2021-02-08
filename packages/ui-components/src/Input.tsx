@@ -1,9 +1,9 @@
-import React, { InputHTMLAttributes, FC, ReactNode, useState, FocusEventHandler, useCallback, forwardRef } from 'react';
 import clsx from 'clsx';
+import React, { FC, FocusEventHandler, forwardRef, InputHTMLAttributes, ReactNode, useCallback, useState } from 'react';
 
-import classes from './Input.module.scss';
-import { Condition } from './Condition';
 import { Button } from './Button';
+import { Condition } from './Condition';
+import classes from './Input.module.scss';
 
 export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'size' | 'prefix'> {
   border?: boolean;

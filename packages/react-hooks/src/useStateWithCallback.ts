@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 type HooksReturnType<T> = [T, (data: T, callback?: (value?: T) => void) => void];
 

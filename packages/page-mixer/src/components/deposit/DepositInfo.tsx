@@ -1,8 +1,9 @@
-import React, { FC, useMemo } from 'react';
 import { BalanceInputValue, FormatBalance } from '@webb-dapp/react-components';
-import styled from 'styled-components';
-import { FixedPointNumber } from '@webb-tools/sdk-core';
 import { useApi } from '@webb-dapp/react-hooks';
+import { FixedPointNumber } from '@webb-tools/sdk-core';
+import React, { FC, useMemo } from 'react';
+import styled from 'styled-components';
+
 import { InfoItem, InfoItemLabel, InfoItemValue, InfoRoot } from '../common';
 
 const DepositBalance = styled(FormatBalance)`

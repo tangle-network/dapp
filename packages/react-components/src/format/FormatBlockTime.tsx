@@ -1,5 +1,5 @@
-import React, { FC } from 'react';
 import { useApi } from '@webb-dapp/react-hooks';
+import React, { FC } from 'react';
 
 const HOUR = 1000 * 60 * 60;
 const DAY = HOUR * 24;

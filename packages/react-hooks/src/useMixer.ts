@@ -1,6 +1,5 @@
-import { useContext } from 'react';
-
 import { MixerContext, MixerContextData } from '@webb-dapp/react-environment';
+import { useContext } from 'react';
 
 /**
  * @name useMixer

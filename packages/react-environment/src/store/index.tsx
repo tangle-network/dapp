@@ -1,9 +1,9 @@
-import React, { createContext, FC, useContext, useMemo, ReactNode, useLayoutEffect, useEffect } from 'react';
-
 import { useApi, useMemorized } from '@webb-dapp/react-hooks';
 import { BareProps } from '@webb-dapp/ui-components/types';
+import React, { createContext, FC, ReactNode, useContext, useEffect, useLayoutEffect, useMemo } from 'react';
+
 import { useApiQueryStore } from './modules/api-query';
-import { useUIConfig, UseUIConfigReturnType, UIData, SubMenu } from './modules/ui';
+import { SubMenu, UIData, useUIConfig, UseUIConfigReturnType } from './modules/ui';
 
 export type StoreData = {
   apiQuery: ReturnType<typeof useApiQueryStore>;

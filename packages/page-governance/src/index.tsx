@@ -1,10 +1,10 @@
 import React, { FC } from 'react';
 import { Route, Routes } from 'react-router';
-import { CouncilPage } from './components/CouncilPage';
 
+import { CouncilPage } from './components/CouncilPage';
+import { CouncilProposalDetail } from './components/CouncilProposalDetail';
 import { Overview } from './components/Overview';
 import { ProposalPage } from './components/ProposalPage';
-import { CouncilProposalDetail } from './components/CouncilProposalDetail';
 
 const PageGovernance: FC = () => {
   return (

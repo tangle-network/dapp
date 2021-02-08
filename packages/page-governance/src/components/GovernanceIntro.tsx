@@ -1,6 +1,6 @@
+import { Card, styled } from '@webb-dapp/ui-components';
 import React, { FC } from 'react';
 
-import { Card, styled } from '@webb-dapp/ui-components';
 import introSrc from '../assets/governance-intro-bg.svg';
 
 const Title = styled.p`

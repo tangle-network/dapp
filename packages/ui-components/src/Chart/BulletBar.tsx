@@ -1,4 +1,4 @@
-import React, { FC, createRef, useMemo, useLayoutEffect } from 'react';
+import React, { createRef, FC, useLayoutEffect, useMemo } from 'react';
 
 import { BulletBarConfigItem, drawBulletBar } from './bullet-bar-helper';
 import classes from './BulletBar.module.scss';

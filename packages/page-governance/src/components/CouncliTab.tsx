@@ -1,8 +1,7 @@
-import React, { FC, ReactElement, useMemo } from 'react';
-import { upperFirst } from 'lodash';
-
-import { styled, Tabs, TabHeader, useTabs } from '@webb-dapp/ui-components';
 import { useCouncilList } from '@webb-dapp/react-hooks';
+import { styled, TabHeader, Tabs, useTabs } from '@webb-dapp/ui-components';
+import { upperFirst } from 'lodash';
+import React, { FC, ReactElement, useMemo } from 'react';
 
 import { CouncilsColor, CouncilType } from '../config';
 

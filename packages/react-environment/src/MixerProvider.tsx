@@ -1,18 +1,16 @@
-import React, { ReactNode, FC, useState, useEffect, useCallback } from 'react';
+import { useAccounts, useApi, useCall } from '@webb-dapp/react-hooks';
 import { Mixer, MixerAssetGroup } from '@webb-tools/sdk-mixer';
-import { useApi } from '@webb-dapp/react-hooks';
-import { notification } from '@webb-dapp/ui-components';
-import { getTokenName } from '@webb-dapp/react-components';
+import React, { FC, ReactNode, useCallback, useEffect, useState } from 'react';
 
 export interface MixerContextData {
   init: () => Promise<Mixer>;
-  mixerGroups: MixerAssetGroup[];
 }
 
 // ensure that mixer always exist
 export const MixerContext = React.createContext<MixerContextData>({} as MixerContextData);
 
 interface Props {
+  groupId?: number;
   children: ReactNode;
 }
 
@@ -20,46 +18,25 @@ interface Props {
  * @name MixerProvider
  * @description context provider to support mixer.
  */
-export const MixerProvider: FC<Props> = ({ children }) => {
-  const { api, connected } = useApi();
-  const [mixerGroups, setMixerGroups] = useState<MixerAssetGroup[]>([]);
+export const MixerProvider: FC<Props> = ({ children, groupId = 0 }) => {
+  const initialized = useCall<boolean>('query.mixer.initialised', []);
+  const { api } = useApi();
 
+  console.log('Mixer Initialised? ', initialized);
   useEffect(() => {
-    if (!connected) return;
-    try {
-      api.query.mixer.mixerGroups
-        .entries()
-        .toPromise()
-        .then((result) => {
-          result.map(([key, value]) => {
-            console.log({ key, value });
-          });
-        })
-        .catch(console.error);
-      console.log('query sent!');
-    } catch (e) {
-      notification.open({
-        className: 'error',
-        message: (
-          <div>
-            <p>{`Please connect to local node, to initialize the Mixer`}</p>
-          </div>
-        ),
-      });
-    }
+    if (initialized) return;
+    api.tx.mixer.initialize().send().toPromise().then(console.log).catch(console.error);
+  }, [initialized, api.tx.mixer]);
+  const groupsIds = useCall<number[]>('query.mixer.mixerGroupIds', []);
 
-    setMixerGroups([]);
-  }, [api, connected]);
-
+  console.log({ groupsIds });
   const init = useCallback(() => {
-    console.log(`Mixer initialized with ${mixerGroups}`);
     return Mixer.init([new MixerAssetGroup(0, 'EDG', 32)]);
-  }, [mixerGroups]);
+  }, []);
 
   return (
     <MixerContext.Provider
       value={{
-        mixerGroups,
         init,
       }}
     >

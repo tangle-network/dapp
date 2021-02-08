@@ -1,6 +1,5 @@
+import { Condition, Copy, Tooltip } from '@webb-dapp/ui-components';
 import React, { FC, ReactNode } from 'react';
-
-import { Copy, Tooltip, Condition } from '@webb-dapp/ui-components';
 
 import { formatHash } from '../utils';
 

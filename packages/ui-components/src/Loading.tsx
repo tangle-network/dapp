@@ -1,6 +1,6 @@
+import { Skeleton } from 'antd';
 import React, { FC } from 'react';
 import styled, { keyframes } from 'styled-components';
-import { Skeleton } from 'antd';
 
 import { BareProps } from './types';
 

@@ -1,16 +1,13 @@
-import React, { FC, FocusEventHandler, useState, ReactNode, useCallback, useMemo } from 'react';
-import { FormikErrors } from 'formik';
-
-import { CurrencyId } from '@webb-tools/types/interfaces';
-import { BareProps } from '@webb-dapp/ui-components/types';
-import {
-  Button,
+import {Button,
+  getInputBorder,
+  getInputShadow,
   NumberInput,
   NumberInputProps,
-  styled,
-  getInputShadow,
-  getInputBorder,
-} from '@webb-dapp/ui-components';
+  styled,} from '@webb-dapp/ui-components';
+import { BareProps } from '@webb-dapp/ui-components/types';
+import { CurrencyId } from '@webb-tools/types/interfaces';
+import { FormikErrors } from 'formik';
+import React, { FC, FocusEventHandler, ReactNode, useCallback, useMemo, useState } from 'react';
 
 import { TokenName } from './Token';
 import { TokenSelector } from './TokenSelector';

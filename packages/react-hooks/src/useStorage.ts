@@ -1,6 +1,7 @@
+import { useCallback } from 'react';
+
 import { useAccounts } from './useAccounts';
 import { useIsAppReady } from './useIsAppReady';
-import { useCallback } from 'react';
 import { useMemorized } from './useMemorized';
 
 interface Options {

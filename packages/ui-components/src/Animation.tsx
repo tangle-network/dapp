@@ -1,15 +1,14 @@
-import React, {
-  createRef,
+import React, {createRef,
   FC,
   PropsWithChildren,
   ReactNode,
   useEffect,
   useLayoutEffect,
   useRef,
-  useState,
-} from 'react';
-import { Motion, spring, presets } from 'react-motion';
+  useState,} from 'react';
+import { Motion, presets, spring } from 'react-motion';
 import styled from 'styled-components';
+
 import { BareProps } from './types';
 
 export const Fadein: FC<PropsWithChildren<any>> = ({ children }) => {

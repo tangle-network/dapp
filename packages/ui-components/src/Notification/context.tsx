@@ -1,4 +1,5 @@
 import { createContext } from 'react';
+
 import { NotificationConfig, PartialNotificationConfig } from './types';
 
 export type CreateNotification = (config: PartialNotificationConfig) => NotificationConfig;

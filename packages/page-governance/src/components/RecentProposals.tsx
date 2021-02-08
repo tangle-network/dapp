@@ -1,6 +1,7 @@
-import React, { FC } from 'react';
 import { useRecentProposals } from '@webb-dapp/react-hooks';
-import { Row, Col } from '@webb-dapp/ui-components';
+import { Col, Row } from '@webb-dapp/ui-components';
+import React, { FC } from 'react';
+
 import { ProposalCard } from './ProposalCard';
 
 export const RecentProposals: FC = () => {

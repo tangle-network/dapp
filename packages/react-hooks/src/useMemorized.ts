@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export const useMemorized = <T extends unknown>(value: T): T => {
   const [_value, setValue] = useState<T>(value);

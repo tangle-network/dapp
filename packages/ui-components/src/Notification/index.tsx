@@ -1,8 +1,8 @@
-import React, { FC, PropsWithChildren, useState, useRef, useEffect, memo } from 'react';
+import React, { FC, memo, PropsWithChildren, useEffect, useRef, useState } from 'react';
 
 import { NotificationContext } from './context';
-import { NotificationConfig, PartialNotificationConfig } from './types';
 import { NotificationDisplay } from './NotificationDisplay';
+import { NotificationConfig, PartialNotificationConfig } from './types';
 
 export { NotificationContext };
 

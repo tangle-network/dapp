@@ -1,6 +1,6 @@
-import React, { createContext, FC, PropsWithChildren, useState, useEffect, useCallback, useMemo } from 'react';
-import { noop } from 'lodash';
 import { useModal, useTranslation } from '@webb-dapp/react-hooks';
+import { noop } from 'lodash';
+import React, { createContext, FC, PropsWithChildren, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { DEFAULT_ENDPOINTS, EndpointConfig } from './configs/endpoints';
 
@@ -16,7 +16,7 @@ function useSetting<T>(key: string, defaultValue?: T): { value: T; setValue: (va
       window.localStorage.setItem(key, (value as any) as string);
       _setValue(value);
     },
-    [_setValue, key]
+    [T, key]
   );
 
   useEffect(() => {

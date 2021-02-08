@@ -1,9 +1,10 @@
-import React, { FC } from 'react';
-import clsx from 'clsx';
-
-import { Button } from './Button';
-import { ReactComponent as ArrowIcon } from './assets/arrow.svg';
 import './Controller.scss';
+
+import clsx from 'clsx';
+import React, { FC } from 'react';
+
+import { ReactComponent as ArrowIcon } from './assets/arrow.svg';
+import { Button } from './Button';
 import { BareProps } from './types';
 
 type Direction = 'left' | 'right';

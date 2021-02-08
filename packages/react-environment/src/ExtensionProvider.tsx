@@ -1,12 +1,12 @@
-import React, { ReactNode, createContext, FC, useCallback, useEffect, useState, useReducer, useMemo } from 'react';
+import { NoAccounts, NoExtensions, SelectAccount, UploadMetadata } from '@webb-dapp/react-components';
+import { useApi, useModal, useStorage } from '@webb-dapp/react-hooks';
+import { options } from '@webb-tools/api';
 import { isNumber } from 'lodash';
-import { InjectedAccount, InjectedExtension, MetadataDef } from '@polkadot/extension-inject/types';
+import React, { createContext, FC, ReactNode, useCallback, useEffect, useMemo, useReducer, useState } from 'react';
+
 import { ApiRx } from '@polkadot/api';
 import { web3Enable, web3FromAddress } from '@polkadot/extension-dapp';
-import { options } from '@webb-tools/api';
-
-import { NoAccounts, NoExtensions, SelectAccount, UploadMetadata } from '@webb-dapp/react-components';
-import { useModal, useApi, useStorage } from '@webb-dapp/react-hooks';
+import { InjectedAccount, InjectedExtension, MetadataDef } from '@polkadot/extension-inject/types';
 
 type AddressBook = {
   address: string;

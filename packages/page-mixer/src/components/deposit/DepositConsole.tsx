@@ -1,14 +1,13 @@
-import React, { FC, useCallback, useMemo, useEffect } from 'react';
+import { BalanceInput, BalanceInputValue, eliminateGap, Token, tokenEq } from '@webb-dapp/react-components';
+import { TokenInput } from '@webb-dapp/react-components/TokenInput';
+import { useBalance, useBalanceValidator } from '@webb-dapp/react-hooks';
+import { useInputValue } from '@webb-dapp/react-hooks/useInputValue';
+import { Col, FlexBox, Row, SpaceBox } from '@webb-dapp/ui-components';
 import { FixedPointNumber } from '@webb-tools/sdk-core';
 import { CurrencyId } from '@webb-tools/types/interfaces';
+import React, { FC, useCallback, useEffect, useMemo } from 'react';
 
-import { Row, Col, FlexBox, SpaceBox } from '@webb-dapp/ui-components';
-import { useBalance, useBalanceValidator } from '@webb-dapp/react-hooks';
-import { BalanceInput, BalanceInputValue, tokenEq, eliminateGap, Token } from '@webb-dapp/react-components';
-import { useInputValue } from '@webb-dapp/react-hooks/useInputValue';
-import { TokenInput } from '@webb-dapp/react-components/TokenInput';
-
-import { CardRoot, CardTitle, CardSubTitle, CTxButton, DepositTitle, AmountTitle, CAlert, CMaxBtn } from '../common';
+import { AmountTitle, CAlert, CardRoot, CardSubTitle, CardTitle, CMaxBtn, CTxButton, DepositTitle } from '../common';
 import { DepositInfo } from './DepositInfo';
 
 export const DepositConsole: FC = () => {
@@ -65,7 +64,7 @@ export const DepositConsole: FC = () => {
     const tokenAmount = tokenBalance.toNumber();
 
     // TODO: Get max balance for the token type
-  }, [setToken, tokenBalance, token]);
+  }, [tokenBalance, token]);
 
   return (
     <CardRoot>

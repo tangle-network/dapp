@@ -1,8 +1,8 @@
 import clsx from 'clsx';
 import React, { FC, memo, ReactNode } from 'react';
 import styled from 'styled-components';
-import { TextAnimation } from './Animation';
 
+import { TextAnimation } from './Animation';
 import { BareProps } from './types';
 
 const TitleRoot = styled.div`

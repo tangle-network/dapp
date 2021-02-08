@@ -18,6 +18,7 @@ const endpointDefaults: Omit<EndpointConfigItem, 'name' | 'url'> = {
     governance: true,
   },
 };
+
 export const DEFAULT_ENDPOINTS: EndpointConfig = {
   production: [
     {

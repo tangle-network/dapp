@@ -1,8 +1,8 @@
-import React, { ReactNode, forwardRef } from 'react';
 import clsx from 'clsx';
+import React, { forwardRef, ReactNode } from 'react';
+import styled from 'styled-components';
 
 import { BareProps } from './types';
-import styled from 'styled-components';
 
 export interface CardRootProps {
   showShadow?: boolean;

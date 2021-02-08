@@ -1,7 +1,9 @@
-import EdgewareIcon from '../assets/coins-icon/EDG.svg';
-import { ApiRx } from '@polkadot/api';
+import { currencyId2Token, Token, TokenPair } from '@webb-tools/sdk-core';
 import { CurrencyId } from '@webb-tools/types/interfaces';
-import { Token, TokenPair, currencyId2Token } from '@webb-tools/sdk-core';
+
+import { ApiRx } from '@polkadot/api';
+
+import EdgewareIcon from '../assets/coins-icon/EDG.svg';
 
 export const TOKEN_IMAGES: Map<string, string> = new Map([['EDG', EdgewareIcon]]);
 

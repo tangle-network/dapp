@@ -1,21 +1,19 @@
-import React, {
-  FC,
-  ReactNode,
-  useState,
-  useMemo,
-  Children,
-  ReactElement,
-  useRef,
-  Dispatch,
-  SetStateAction,
+import React, {Children,
   createRef,
+  Dispatch,
+  FC,
   isValidElement,
+  ReactElement,
+  ReactNode,
+  SetStateAction,
   useLayoutEffect,
-} from 'react';
+  useMemo,
+  useRef,
+  useState,} from 'react';
+import { Motion, spring } from 'react-motion';
+import styled from 'styled-components';
 
 import { BareProps } from './types';
-import styled from 'styled-components';
-import { Motion, spring } from 'react-motion';
 
 function useTabs<T = string | number>(defaultTab: T): { currentTab: T; changeTabs: Dispatch<SetStateAction<T>> } {
   const [currentTab, changeTabs] = useState<T>(defaultTab);
@@ -180,7 +178,7 @@ function Tabs<T>({ active, children, divider = true, onChange, slider = true }: 
     });
 
     return ([headerList, panelList, keyList, disabledList] as unknown) as [ReactNode[], ReactNode[], T[], boolean[]];
-  }, [children]);
+  }, [T, children]);
 
   const activeTabIndex = useMemo(() => {
     return keyList?.findIndex((item) => item === active) ?? 0;

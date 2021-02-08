@@ -1,8 +1,8 @@
 import React, { FC, ReactNode, useMemo } from 'react';
 import styled from 'styled-components';
 
-import { ReactComponent as RightArrowIcon } from './assets/right-arrow.svg';
 import { ReactComponent as AddIcon } from './assets/add.svg';
+import { ReactComponent as RightArrowIcon } from './assets/right-arrow.svg';
 
 const Root = styled.div`
   width: 100%;

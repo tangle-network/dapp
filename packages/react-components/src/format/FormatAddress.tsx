@@ -1,11 +1,11 @@
-import React, { FC, memo, useMemo, useCallback } from 'react';
-
-import { BareProps } from '@webb-dapp/ui-components/types';
 import { Copy } from '@webb-dapp/ui-components';
+import { BareProps } from '@webb-dapp/ui-components/types';
+import React, { FC, memo, useCallback, useMemo } from 'react';
+
 import Identicon from '@polkadot/react-identicon';
 
-import classes from './format.module.scss';
 import { formatAddress } from '../utils';
+import classes from './format.module.scss';
 
 interface Props extends BareProps {
   address: string;

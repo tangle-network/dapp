@@ -1,9 +1,8 @@
-import React, { FC, useCallback } from 'react';
-import { Drawer } from 'antd';
-
-import { useSetting } from '@webb-dapp/react-hooks';
 import { DEFAULT_ENDPOINTS } from '@webb-dapp/react-environment/configs/endpoints';
-import { Radio, CloseIcon } from '@webb-dapp/ui-components';
+import { useSetting } from '@webb-dapp/react-hooks';
+import { CloseIcon, Radio } from '@webb-dapp/ui-components';
+import { Drawer } from 'antd';
+import React, { FC, useCallback } from 'react';
 
 import classes from './AppSettings.module.scss';
 

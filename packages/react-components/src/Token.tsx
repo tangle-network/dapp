@@ -1,13 +1,11 @@
-import React, { FC } from 'react';
-import clsx from 'clsx';
-
-import { CurrencyId } from '@webb-tools/types/interfaces/primitives';
-
-import { BareProps } from '@webb-dapp/ui-components/types';
 import { Condition } from '@webb-dapp/ui-components';
+import { BareProps } from '@webb-dapp/ui-components/types';
+import { CurrencyId } from '@webb-tools/types/interfaces/primitives';
+import clsx from 'clsx';
+import React, { FC } from 'react';
 
 import classes from './Token.module.scss';
-import { getTokenImage, getTokenName, getTokenFullName } from './utils';
+import { getTokenFullName, getTokenImage, getTokenName } from './utils';
 
 interface TokenComponentProps extends BareProps {
   currency?: CurrencyId;

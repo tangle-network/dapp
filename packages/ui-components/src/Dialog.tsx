@@ -1,11 +1,12 @@
-import React, { FC, ReactNode, useMemo } from 'react';
-import clsx from 'clsx';
-import { Modal } from 'antd';
+import './Dialog.scss';
 
-import { BareProps } from './types';
+import { Modal } from 'antd';
+import clsx from 'clsx';
+import React, { FC, ReactNode, useMemo } from 'react';
+
 import { Button } from './Button';
 import { CloseIcon } from './Icon';
-import './Dialog.scss';
+import { BareProps } from './types';
 
 interface Props extends BareProps {
   visiable: boolean;

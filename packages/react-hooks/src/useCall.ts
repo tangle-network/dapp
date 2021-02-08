@@ -1,13 +1,13 @@
-import { useEffect, useMemo } from 'react';
+import { useStore } from '@webb-dapp/react-environment';
 import { get, isEmpty } from 'lodash';
+import { useEffect, useMemo } from 'react';
 import { Observable, Subscription } from 'rxjs';
+
 import { ApiRx } from '@polkadot/api';
 
-import { useStore } from '@webb-dapp/react-environment';
-
-import { useIsAppReady } from './useIsAppReady';
-import { useApi } from './useApi';
 import { CallParams } from './types';
+import { useApi } from './useApi';
+import { useIsAppReady } from './useIsAppReady';
 
 class Tracker {
   private trackerList: Record<string, { refCount: number; subscriber: Subscription }>;

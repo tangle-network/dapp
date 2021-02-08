@@ -1,11 +1,10 @@
-import React, { FC, useState, useCallback } from 'react';
+import { getInputBorder, getInputShadow, styled, SwitchIcon } from '@webb-dapp/ui-components';
 import { noop } from 'lodash';
+import React, { FC, useCallback, useState } from 'react';
 
-import { getInputBorder, styled, SwitchIcon, getInputShadow } from '@webb-dapp/ui-components';
-
+import { BalanceInput, BalanceInputValue } from './BalanceInput';
 import { FormatNumber } from './format';
 import { TokenImage, TokenName } from './Token';
-import { BalanceInput, BalanceInputValue } from './BalanceInput';
 
 interface TwoWayBalanceInputProps {
   className?: string;

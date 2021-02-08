@@ -1,5 +1,5 @@
-import React, { memo, useCallback } from 'react';
 import { Dialog } from '@webb-dapp/ui-components';
+import React, { memo, useCallback } from 'react';
 
 const POLKADOT_EXTENSION_PAGE = 'https://polkadot.js.org/extension';
 

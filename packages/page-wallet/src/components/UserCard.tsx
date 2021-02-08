@@ -1,11 +1,11 @@
+import { FormatAddress } from '@webb-dapp/react-components';
+import { useAccounts } from '@webb-dapp/react-hooks';
+import { Card, Copy, CopyIcon, EditIcon } from '@webb-dapp/ui-components';
 import React, { FC } from 'react';
+
 import Identicon from '@polkadot/react-identicon';
 
-import { Card, CopyIcon, EditIcon, Copy } from '@webb-dapp/ui-components';
-
-import { useAccounts } from '@webb-dapp/react-hooks';
 import classes from './UserCard.module.scss';
-import { FormatAddress } from '@webb-dapp/react-components';
 
 export const UserCard: FC = () => {
   const { active, openSelectAccount } = useAccounts();

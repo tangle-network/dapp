@@ -1,5 +1,6 @@
-import React, { FC, memo, InputHTMLAttributes, ReactNode } from 'react';
 import clsx from 'clsx';
+import React, { FC, InputHTMLAttributes, memo, ReactNode } from 'react';
+
 import classes from './Radio.module.scss';
 
 interface Props extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> {

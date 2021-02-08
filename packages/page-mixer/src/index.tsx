@@ -1,13 +1,12 @@
-import React, { FC, useEffect } from 'react';
-
-import { Col, Information, Row, useTabs } from '@webb-dapp/ui-components';
 import { useSubMenu } from '@webb-dapp/react-environment';
+import { useFeatures } from '@webb-dapp/react-hooks';
+import { useMixer } from '@webb-dapp/react-hooks/useMixer';
+import { Col, Information, Row, useTabs } from '@webb-dapp/ui-components';
+import { Asset } from '@webb-tools/sdk-mixer';
+import React, { FC, useEffect } from 'react';
 
 import { DepositConsole } from './components/deposit';
 import { WithdrawConsole } from './components/withdraw';
-import { useMixer } from '@webb-dapp/react-hooks/useMixer';
-import { useFeatures } from '@webb-dapp/react-hooks';
-import { Asset } from '@webb-tools/sdk-mixer';
 
 type MixerPageType = 'deposit' | 'withdraw';
 
@@ -24,6 +23,7 @@ const subMenu = [
 
 const PageMixer: FC = () => {
   const isSupported = useFeatures(['mixer']);
+
   if (!isSupported) {
     return (
       <Information
@@ -33,8 +33,10 @@ const PageMixer: FC = () => {
       />
     );
   }
+
   const { changeTabs: changeSubMenu, currentTab: currentSubMenu } = useTabs<MixerPageType>('deposit');
   const { init } = useMixer();
+
   useEffect(() => {
     console.log('Trying to start the mixer..');
     init()
@@ -43,8 +45,8 @@ const PageMixer: FC = () => {
          * todo handle mixer creation
          *
          * */
-        const note = mixer.generateNote(new Asset(0, 'EDG'));
-        console.log('Note: ', note);
+        // const note = mixer.generateNote(new Asset(0, 'EDG'));
+        // console.log('Note: ', note);
       })
       .catch((e) => {
         /*
@@ -53,13 +55,14 @@ const PageMixer: FC = () => {
          * */
         console.log('Error: ', e);
       });
-  }, []);
+  }, [init]);
 
   useSubMenu({
     active: currentSubMenu,
     content: subMenu,
     onClick: changeSubMenu as (key: string) => void,
   });
+
   if (currentSubMenu === 'deposit') {
     return <DepositConsole />;
   }
