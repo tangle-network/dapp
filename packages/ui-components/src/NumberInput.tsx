@@ -2,7 +2,8 @@ import './NumberInput.scss';
 
 import clsx from 'clsx';
 import { noop } from 'lodash';
-import React, {ChangeEventHandler,
+import React, {
+  ChangeEventHandler,
   FC,
   FocusEvent,
   FocusEventHandler,
@@ -11,7 +12,8 @@ import React, {ChangeEventHandler,
   useEffect,
   useMemo,
   useRef,
-  useState,} from 'react';
+  useState,
+} from 'react';
 
 const NUMBER_PATTERN = '^[0-9]*(\\.)?[0-9]*$';
 const numberReg = new RegExp(NUMBER_PATTERN);

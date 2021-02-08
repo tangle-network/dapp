@@ -1,4 +1,5 @@
-import React, {Children,
+import React, {
+  Children,
   createRef,
   Dispatch,
   FC,
@@ -9,7 +10,8 @@ import React, {Children,
   useLayoutEffect,
   useMemo,
   useRef,
-  useState,} from 'react';
+  useState,
+} from 'react';
 import { Motion, spring } from 'react-motion';
 import styled from 'styled-components';
 

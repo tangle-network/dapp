@@ -1,11 +1,13 @@
-import React, {createRef,
+import React, {
+  createRef,
   FC,
   PropsWithChildren,
   ReactNode,
   useEffect,
   useLayoutEffect,
   useRef,
-  useState,} from 'react';
+  useState,
+} from 'react';
 import { Motion, presets, spring } from 'react-motion';
 import styled from 'styled-components';
 

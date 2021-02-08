@@ -1,9 +1,11 @@
-import {Button,
+import {
+  Button,
   getInputBorder,
   getInputShadow,
   NumberInput,
   NumberInputProps,
-  styled,} from '@webb-dapp/ui-components';
+  styled,
+} from '@webb-dapp/ui-components';
 import { BareProps } from '@webb-dapp/ui-components/types';
 import { CurrencyId } from '@webb-tools/types/interfaces';
 import { FormikErrors } from 'formik';

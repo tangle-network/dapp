@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import { debounce, uniqueId } from 'lodash';
-import React, {Children,
+import React, {
+  Children,
   cloneElement,
   FC,
   ReactElement,
@@ -9,7 +10,8 @@ import React, {Children,
   useEffect,
   useMemo,
   useRef,
-  useState,} from 'react';
+  useState,
+} from 'react';
 import styled from 'styled-components';
 
 import { Card, CardProps } from './Card';
