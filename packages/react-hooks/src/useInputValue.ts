@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { isCodec } from '@webb-dapp/react-components';
 import { MutableRefObject, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
@@ -31,7 +32,7 @@ export const useInputValue = <T>(defaultValue: Partial<T>, options?: Options<T>)
 
   const reset = useCallback(() => {
     _setValue(defaultValue as T);
-  }, [T, defaultValue]);
+  }, [_setValue, defaultValue]);
 
   const setValidator = useCallback(
     (newValidator: Options<T>['validator']) => {
@@ -41,7 +42,7 @@ export const useInputValue = <T>(defaultValue: Partial<T>, options?: Options<T>)
 
       promise ? promise.then(() => setError('')).catch((e) => setError(e.message)) : setError('');
     },
-    [T, value]
+    [validator, value]
   );
 
   const setValue = useCallback(
@@ -64,7 +65,7 @@ export const useInputValue = <T>(defaultValue: Partial<T>, options?: Options<T>)
       // update value
       _setValue(_value);
     },
-    [T]
+    [_setValue]
   );
 
   const instance = useMemo(() => {

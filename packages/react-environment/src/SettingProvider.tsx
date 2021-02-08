@@ -16,7 +16,8 @@ function useSetting<T>(key: string, defaultValue?: T): { value: T; setValue: (va
       window.localStorage.setItem(key, (value as any) as string);
       _setValue(value);
     },
-    [T, key]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [_setValue, key]
   );
 
   useEffect(() => {
