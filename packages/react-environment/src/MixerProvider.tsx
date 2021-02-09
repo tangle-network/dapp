@@ -1,9 +1,9 @@
-import React, { ReactNode, FC, useState, useEffect, useCallback } from 'react';
+import React, { FC, ReactNode, useCallback, useEffect, useState } from 'react';
 import { Mixer, MixerAssetGroup } from '@webb-tools/sdk-mixer';
 import { useApi } from '@webb-dapp/react-hooks';
 import { notification } from '@webb-dapp/ui-components';
-import { getTokenName } from '@webb-dapp/react-components';
-
+// @ts-ignore
+import Worker from './mixer/mixer.worker';
 export interface MixerContextData {
   init: () => Promise<Mixer>;
   mixerGroups: MixerAssetGroup[];
@@ -46,7 +46,7 @@ export const MixerProvider: FC<Props> = ({ children }) => {
     setMixerGroups([]);
   }, [api, connected]);
 
-  const init = useCallback(() => Mixer.init(mixerGroups), [mixerGroups]);
+  const init = useCallback(() => Mixer.init(new Worker(), mixerGroups), [mixerGroups]);
 
   return (
     <MixerContext.Provider

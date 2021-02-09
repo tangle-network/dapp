@@ -6,9 +6,7 @@ import { useSubMenu } from '@webb-dapp/react-environment';
 import { DepositConsole } from './components/deposit';
 import { WithdrawConsole } from './components/withdraw';
 import { useMixer } from '@webb-dapp/react-hooks/useMixer';
-import { useApi } from '@webb-dapp/react-hooks';
-import { useFeatures } from '@webb-dapp/react-hooks';
-import { CardRoot } from '@webb-dapp/page-mixer/components/common';
+import { useApi, useFeatures } from '@webb-dapp/react-hooks';
 
 type MixerPageType = 'deposit' | 'withdraw';
 
@@ -31,6 +29,7 @@ const PageMixer: FC = () => {
     mixer
       .init()
       .then(() => {
+        console.log('Mixer initialized');
         /*
          * todo handle mixer creation
          *

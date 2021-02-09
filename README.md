@@ -29,3 +29,13 @@ Webb web app with mixer features.
    ```base
    yarn run start:dapp
    ```
+   
+## Running local webb-tools
+```json
+{
+  "resolutions": {
+    "@webb-tools/sdk-mixer": "../webb.js/packages/sdk-mixer/build"
+
+  }
+}
+```

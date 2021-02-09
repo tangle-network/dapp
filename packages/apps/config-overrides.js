@@ -39,7 +39,6 @@ module.exports = override(function (config, env) {
       }
     });
   });
-
   //wasam
   config.module.rules.push({
     test: wasmExtensionRegExp,
@@ -47,6 +46,12 @@ module.exports = override(function (config, env) {
     type: 'javascript/auto',
     // include: path.resolve(__dirname, 'src'),
     use: [{ loader: require.resolve('wasm-loader'), options: {} }],
+  });
+
+  config.module.rules.push({
+    test: /.worker.(ts|js)?$/,
+    loader: 'worker-loader',
+    // include: path.resolve(__dirname, 'src'),
   });
 
   // remove ModuleScoplePlugin
