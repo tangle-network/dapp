@@ -1,17 +1,17 @@
-import React, { FC, ReactNode, useCallback, useMemo } from 'react';
-import clsx from 'clsx';
-
-import { Balance as BalanceType } from '@polkadot/types/interfaces';
+import { styled } from '@webb-dapp/ui-components';
+import { BareProps } from '@webb-dapp/ui-components/types';
 import { Fixed18 } from '@webb-tools/app-util';
 import { FixedPointNumber } from '@webb-tools/sdk-core';
 import { CurrencyId } from '@webb-tools/types/interfaces';
-import { BareProps } from '@webb-dapp/ui-components/types';
-import { styled } from '@webb-dapp/ui-components';
+import clsx from 'clsx';
+import React, { FC, ReactNode, useCallback, useMemo } from 'react';
 
-import { formatBalance } from '../utils';
-import { FormatNumber, FormatNumberProps, FormatterColor } from './FormatNumber';
-import classes from './format.module.scss';
+import { Balance as BalanceType } from '@polkadot/types/interfaces';
+
 import { TokenName } from '../Token';
+import { formatBalance } from '../utils';
+import classes from './format.module.scss';
+import { FormatNumber, FormatNumberProps, FormatterColor } from './FormatNumber';
 
 export interface BalancePair {
   balance?: BalanceType | Fixed18 | FixedPointNumber | number;

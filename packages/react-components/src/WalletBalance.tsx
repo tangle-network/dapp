@@ -1,11 +1,9 @@
-import React, { FC, ReactNode } from 'react';
-
-import { CurrencyId } from '@webb-tools/types/interfaces';
-
-import { ScrollCard, Condition, Tag } from '@webb-dapp/ui-components';
+import { tokenEq, TokenImage, TokenName, UserAssetBalance, UserAssetValue } from '@webb-dapp/react-components';
+import { useBalance, useConstants } from '@webb-dapp/react-hooks';
+import { Condition, ScrollCard, Tag } from '@webb-dapp/ui-components';
 import { BareProps } from '@webb-dapp/ui-components/types';
-import { useConstants, useBalance } from '@webb-dapp/react-hooks';
-import { TokenImage, TokenName, UserAssetBalance, UserAssetValue, tokenEq } from '@webb-dapp/react-components';
+import { CurrencyId } from '@webb-tools/types/interfaces';
+import React, { FC, ReactNode } from 'react';
 
 import classes from './WalletBalance.module.scss';
 

@@ -5,3 +5,4 @@ export * from './ChartDataProvider';
 export * from './RouterProvider';
 export * from './ExtensionProvider';
 export * from './store';
+export * from './MixerProvider';

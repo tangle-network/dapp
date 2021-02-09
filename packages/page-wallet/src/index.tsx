@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 
-import { WalletProvider } from './components/WalletProvider';
 import { Tabs } from './components/Tabs';
+import { WalletProvider } from './components/WalletProvider';
 
 const PageWallet: FC = () => {
   return (

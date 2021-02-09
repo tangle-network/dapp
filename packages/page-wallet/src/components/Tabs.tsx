@@ -1,7 +1,6 @@
-import React, { FC, useContext } from 'react';
-
 import { useTranslation } from '@webb-dapp/react-hooks';
 import { Tabs as UITabs } from '@webb-dapp/ui-components';
+import React, { FC, useContext } from 'react';
 
 import { WalletContext, WalletTabType } from './WalletProvider';
 import { WebbConsole } from './WebbConsole';

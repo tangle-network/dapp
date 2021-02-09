@@ -1,4 +1,4 @@
-import { encodeAddress, decodeAddress } from '@polkadot/keyring';
+import { decodeAddress, encodeAddress } from '@polkadot/keyring';
 
 export const isValidateAddress = (target: string): boolean => {
   try {

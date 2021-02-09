@@ -1,5 +1,5 @@
-import { useState, useCallback, useEffect, useRef } from 'react';
 import { noop } from 'lodash';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 interface ReturnData {
   close: () => void;

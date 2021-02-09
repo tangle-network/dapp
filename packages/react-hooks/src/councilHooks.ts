@@ -1,11 +1,11 @@
-import { useMemo, useState, useEffect } from 'react';
-import { switchMap, map } from 'rxjs/operators';
-import { combineLatest, Observable, of } from 'rxjs';
-
-import { Vec, Option } from '@polkadot/types';
 import { AccountId } from '@webb-tools/types/interfaces/types';
-import { Proposal, Hash, Votes } from '@polkadot/types/interfaces';
+import { useEffect, useMemo, useState } from 'react';
+import { combineLatest, Observable, of } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
+
 import { ApiRx } from '@polkadot/api';
+import { Option, Vec } from '@polkadot/types';
+import { Hash, Proposal, Votes } from '@polkadot/types/interfaces';
 
 import { useApi } from './useApi';
 import { useCall } from './useCall';

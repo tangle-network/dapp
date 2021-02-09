@@ -1,6 +1,6 @@
-import React, { FC, cloneElement, ReactElement, useMemo, useEffect, createElement } from 'react';
-import { BrowserRouter as Router, useRoutes } from 'react-router-dom';
+import React, { cloneElement, createElement, FC, ReactElement, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router';
+import { BrowserRouter as Router, useRoutes } from 'react-router-dom';
 
 import { StoreData, usePageTitle } from './store';
 

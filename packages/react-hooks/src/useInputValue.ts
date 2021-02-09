@@ -1,5 +1,7 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { isCodec } from '@webb-dapp/react-components';
-import { useState, useRef, MutableRefObject, useCallback, useMemo, useEffect, useLayoutEffect } from 'react';
+import { MutableRefObject, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+
 import { useMemorized } from './useMemorized';
 
 interface Instance<T> {

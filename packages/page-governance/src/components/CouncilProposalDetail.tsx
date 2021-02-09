@@ -1,9 +1,10 @@
-import React, { FC } from 'react';
-import { upperFirst } from 'lodash';
-import { useParams } from 'react-router';
 import { usePageTitle } from '@webb-dapp/react-environment';
 import { ProposalData, useProposal } from '@webb-dapp/react-hooks';
 import { Card, Col, FlexBox, Row, styled } from '@webb-dapp/ui-components';
+import { upperFirst } from 'lodash';
+import React, { FC } from 'react';
+import { useParams } from 'react-router';
+
 import { ProposalCard } from './ProposalCard';
 
 const ArgumentsContent = styled.div`

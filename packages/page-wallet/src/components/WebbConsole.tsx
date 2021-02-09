@@ -1,9 +1,8 @@
+import { Col, Row, SubTitle } from '@webb-dapp/ui-components';
 import React, { FC } from 'react';
 
-import { Row, Col, SubTitle } from '@webb-dapp/ui-components';
-
-import { UserCard } from './UserCard';
 import { TokenBalances } from './TokenBalances';
+import { UserCard } from './UserCard';
 
 export const WebbConsole: FC = () => {
   return (

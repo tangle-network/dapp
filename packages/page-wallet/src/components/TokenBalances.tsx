@@ -1,11 +1,10 @@
-import React, { FC, ReactElement } from 'react';
-import clsx from 'clsx';
-
-import { CurrencyId } from '@webb-tools/types/interfaces';
-import { TokenImage, TokenName, TokenFullName, TransferButton, tokenEq } from '@webb-dapp/react-components';
+import { tokenEq, TokenFullName, TokenImage, TokenName, TransferButton } from '@webb-dapp/react-components';
+import { useBalance, useConstants, useTranslation } from '@webb-dapp/react-hooks';
 import { Condition } from '@webb-dapp/ui-components';
 import { BareProps } from '@webb-dapp/ui-components/types';
-import { useConstants, useBalance, useTranslation } from '@webb-dapp/react-hooks';
+import { CurrencyId } from '@webb-tools/types/interfaces';
+import clsx from 'clsx';
+import React, { FC, ReactElement } from 'react';
 
 import classes from './TokenBalances.module.scss';
 

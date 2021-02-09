@@ -1,12 +1,11 @@
-import React, { useState, useEffect, useCallback, FC } from 'react';
-import { Observable, of, combineLatest } from 'rxjs';
+import { BareProps } from '@webb-dapp/ui-components/types';
+import { Fixed18 } from '@webb-tools/app-util';
+import React, { FC, useCallback, useEffect, useState } from 'react';
+import { combineLatest, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { web3FromAddress } from '@polkadot/extension-dapp';
 import { ApiRx, WsProvider } from '@polkadot/api';
-import { Fixed18 } from '@webb-tools/app-util';
-
-import { BareProps } from '@webb-dapp/ui-components/types';
+import { web3FromAddress } from '@polkadot/extension-dapp';
 
 export interface CrossChainContextData {
   connected: boolean;

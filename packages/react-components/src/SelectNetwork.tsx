@@ -1,8 +1,7 @@
-import React, { FC, useCallback, useState, useEffect } from 'react';
-
-import { useSetting } from '@webb-dapp/react-hooks';
-import { Dialog, Button, Radio } from '@webb-dapp/ui-components';
 import { EndpointConfigItem, EndpointType } from '@webb-dapp/react-environment/configs/endpoints';
+import { useSetting } from '@webb-dapp/react-hooks';
+import { Button, Dialog, Radio } from '@webb-dapp/ui-components';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 
 import classes from './SelectNetwork.module.scss';
 

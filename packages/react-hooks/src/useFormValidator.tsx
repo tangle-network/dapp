@@ -1,9 +1,9 @@
+import { BalanceInputValue, getTokenName, isValidateAddress } from '@webb-dapp/react-components';
 import { FixedPointNumber } from '@webb-tools/sdk-core';
-import { getTokenName, isValidateAddress, BalanceInputValue } from '@webb-dapp/react-components';
 import { CurrencyId } from '@webb-tools/types/interfaces';
+import { useCallback, useLayoutEffect } from 'react';
 
 import { useBalance } from './balanceHooks';
-import { useCallback, useLayoutEffect } from 'react';
 import { useMemorized } from './useMemorized';
 
 interface UseNumberValidatorConfig {

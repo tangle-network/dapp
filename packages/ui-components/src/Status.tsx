@@ -1,6 +1,7 @@
-import React, { FC } from 'react';
-import classes from './Status.module.scss';
 import clsx from 'clsx';
+import React, { FC } from 'react';
+
+import classes from './Status.module.scss';
 
 interface Props {
   success?: boolean;

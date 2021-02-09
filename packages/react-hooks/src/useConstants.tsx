@@ -1,6 +1,5 @@
-import { useMemo } from 'react';
-
 import { CurrencyId } from '@webb-tools/types/interfaces';
+import { useMemo } from 'react';
 
 import { useApi } from './useApi';
 

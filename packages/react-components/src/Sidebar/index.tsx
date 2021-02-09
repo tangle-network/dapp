@@ -1,15 +1,15 @@
+import { useApi, useSetting } from '@webb-dapp/react-hooks';
+import { styled } from '@webb-dapp/ui-components';
 import React, { FC, useMemo, useState } from 'react';
 
-import { styled } from '@webb-dapp/ui-components';
-
-import { SidebarConfig } from './types';
+import { ChainName } from '../ChainName';
+import { Account } from './Account';
+import { SidebarActiveContext } from './context';
 import { Logo } from './Logo';
 import { Products } from './Products';
-import { SocialPlatform } from './SocialPlatform';
-import { Account } from './Account';
-import { ChainName } from '../ChainName';
-import { SidebarActiveContext } from './context';
 import { Slider } from './Slider';
+import { SocialPlatform } from './SocialPlatform';
+import { SidebarConfig } from './types';
 
 export * from './types';
 
@@ -42,6 +42,29 @@ export const Sidebar: FC<SidebarProps> = ({ collapse, config, showAccount = true
     }),
     [active, setActive]
   );
+  const { chainInfo } = useApi();
+  const { selectableEndpoints } = useSetting();
+
+  const products = useMemo(() => {
+    const connected = chainInfo;
+
+    return config.products?.filter((product) => {
+      const itemFeatures = product.requiredFeatures;
+      const selectedEndpoint = Object.values(selectableEndpoints)
+        .flat()
+        .filter(
+          (endpoint) => String(endpoint.name).toLocaleLowerCase() == String(connected.chainName).toLocaleLowerCase()
+        );
+
+      if (!selectedEndpoint[0] || !itemFeatures) {
+        return false;
+      }
+
+      return itemFeatures.reduce((acc: boolean, reqFeat) => {
+        return acc && selectedEndpoint[0].features[reqFeat];
+      }, true);
+    });
+  }, [chainInfo, config.products, selectableEndpoints]);
 
   return useMemo(
     () => (
@@ -50,12 +73,12 @@ export const Sidebar: FC<SidebarProps> = ({ collapse, config, showAccount = true
           <Logo collapse={collapse} />
           <CChainName collapse={collapse} />
           {showAccount ? <Account collapse={collapse} /> : null}
-          {config.products ? <Products collapse={collapse} data={config.products} /> : null}
+          {products ? <Products collapse={collapse} data={products} /> : null}
           {config.socialPlatforms ? <SocialPlatform collapse={collapse} data={config.socialPlatforms} /> : null}
           <Slider target={active} />
         </SidebarRoot>
       </SidebarActiveContext.Provider>
     ),
-    [active, collapse, data, config, showAccount]
+    [data, collapse, showAccount, products, config.socialPlatforms, active]
   );
 };

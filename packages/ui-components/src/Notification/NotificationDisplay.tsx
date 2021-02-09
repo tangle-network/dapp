@@ -1,12 +1,13 @@
-import React, { FC, PropsWithChildren, useEffect, useRef, ReactNode } from 'react';
-import { createPortal } from 'react-dom';
 import clsx from 'clsx';
-import classes from './NotificationDisplay.module.scss';
-import { NotificationConfig } from './types';
-import { Loading } from '../Loading';
-import { ReactComponent as SuccessIcon } from '../assets/success.svg';
+import React, { FC, PropsWithChildren, ReactNode, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
+
 import { ReactComponent as ErrorIcon } from '../assets/error.svg';
 import { ReactComponent as InformationIcon } from '../assets/information.svg';
+import { ReactComponent as SuccessIcon } from '../assets/success.svg';
+import { Loading } from '../Loading';
+import classes from './NotificationDisplay.module.scss';
+import { NotificationConfig } from './types';
 
 const NotificationPortal: FC<PropsWithChildren<{}>> = ({ children }) => {
   /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */

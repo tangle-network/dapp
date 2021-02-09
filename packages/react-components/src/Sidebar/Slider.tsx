@@ -1,6 +1,6 @@
+import { styled } from '@webb-dapp/ui-components';
 import React, { FC, memo, useLayoutEffect, useState } from 'react';
 import { Motion, spring } from 'react-motion';
-import { styled } from '@webb-dapp/ui-components';
 
 const SliderRoot = styled.div.attrs<{ top: number }>(({ top }) => ({
   style: { top: top + 'px' },

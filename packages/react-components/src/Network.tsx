@@ -1,4 +1,5 @@
 import React, { FC, ReactElement } from 'react';
+
 import { ReactComponent as EdgewareLogo } from './assets/edgeware-network.svg';
 import classes from './Network.module.scss';
 

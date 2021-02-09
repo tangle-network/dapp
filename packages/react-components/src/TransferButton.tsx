@@ -1,9 +1,9 @@
+import { useModal } from '@webb-dapp/react-hooks';
+import { Button } from '@webb-dapp/ui-components';
+import { BareProps } from '@webb-dapp/ui-components/types';
+import { CurrencyId } from '@webb-tools/types/interfaces/types';
 import React, { FC, memo } from 'react';
 
-import { CurrencyId } from '@webb-tools/types/interfaces/types';
-import { Button } from '@webb-dapp/ui-components';
-import { useModal } from '@webb-dapp/react-hooks';
-import { BareProps } from '@webb-dapp/ui-components/types';
 import { TransferModal } from './TransferModal';
 
 interface Props extends BareProps {

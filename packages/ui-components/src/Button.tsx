@@ -1,9 +1,10 @@
-import React, { FC } from 'react';
-import clsx from 'clsx';
-
-import { BareProps } from './types';
-import { IconType, getIcon } from './Icon';
 import './Button.scss';
+
+import clsx from 'clsx';
+import React, { FC } from 'react';
+
+import { getIcon, IconType } from './Icon';
+import { BareProps } from './types';
 
 type ButtonType = 'normal' | 'ghost' | 'border';
 type ButtonStyle = 'normal' | 'primary' | 'danger';

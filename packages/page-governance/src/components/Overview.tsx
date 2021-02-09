@@ -1,17 +1,15 @@
+import { usePageTitle } from '@webb-dapp/react-environment';
+import { ArrowPixelIcon, Col, Row, styled, SubTitle } from '@webb-dapp/ui-components';
+import { BareProps, ClickAbleProps } from '@webb-dapp/ui-components/types';
 import React, { FC, useCallback } from 'react';
 import { useNavigate } from 'react-router';
 
-import { ArrowPixelIcon, Row, Col, styled, SubTitle } from '@webb-dapp/ui-components';
-
-import { BareProps, ClickAbleProps } from '@webb-dapp/ui-components/types';
-import { usePageTitle } from '@webb-dapp/react-environment';
-
-import { CouncilesTab } from './CouncliTab';
-import { GovernanceStage } from './GovernanceStage';
-import { GovernanceIntro } from './GovernanceIntro';
-import { RecentProposals } from './RecentProposals';
-import { CouncilMembers } from './CouncilMembers';
 import { CouncilType } from '../config';
+import { CouncilMembers } from './CouncilMembers';
+import { CouncilesTab } from './CouncliTab';
+import { GovernanceIntro } from './GovernanceIntro';
+import { GovernanceStage } from './GovernanceStage';
+import { RecentProposals } from './RecentProposals';
 
 const OverviewSubTitleExtra = styled<FC<{ content: string } & BareProps & ClickAbleProps>>(
   ({ className, content, onClick }) => {

@@ -1,10 +1,11 @@
+import './Alert.scss';
+
+import clsx from 'clsx';
 import React, { FC, ReactNode } from 'react';
 import styled from 'styled-components';
-import clsx from 'clsx';
 
-import { MessageType, BareProps } from './types';
 import { ReactComponent as AlertIcon } from './assets/alert.svg';
-import './Alert.scss';
+import { BareProps, MessageType } from './types';
 
 interface AlertProps extends BareProps {
   message: ReactNode;

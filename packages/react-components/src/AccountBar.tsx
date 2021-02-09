@@ -1,11 +1,12 @@
+import { useAccounts, useConstants } from '@webb-dapp/react-hooks';
+import { styled } from '@webb-dapp/ui-components';
+import { CurrencyId } from '@webb-tools/types/interfaces';
 import React, { FC, useCallback, useState } from 'react';
 
-import { styled } from '@webb-dapp/ui-components';
-import { useAccounts, useConstants } from '@webb-dapp/react-hooks';
 import Identicon from '@polkadot/react-identicon';
+
 import { FormatAddress } from './format';
 import { TokenSelector } from './TokenSelector';
-import { CurrencyId } from '@webb-tools/types/interfaces';
 
 const AccountBarRoot = styled.div`
   display: flex;

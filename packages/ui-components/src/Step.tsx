@@ -1,9 +1,9 @@
+import clsx from 'clsx';
 import React, { FC, memo, ReactNode } from 'react';
 import styled from 'styled-components';
-import clsx from 'clsx';
 
-import { BareProps } from './types';
 import { ReactComponent as CheckedIcon } from './assets/checked.svg';
+import { BareProps } from './types';
 
 export interface StepConfig {
   index: number | string;

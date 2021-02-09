@@ -1,18 +1,16 @@
-import React, { FC, useState, useCallback, useMemo, ReactNode } from 'react';
+import { useBalance } from '@webb-dapp/react-hooks';
+import { ArrowIcon } from '@webb-dapp/ui-components';
+import { BareProps } from '@webb-dapp/ui-components/types';
+import { CurrencyId } from '@webb-tools/types/interfaces';
+import { Dropdown, Menu } from 'antd';
 import clsx from 'clsx';
 import { noop } from 'lodash';
-
-import { Menu, Dropdown } from 'antd';
-
-import { BareProps } from '@webb-dapp/ui-components/types';
-import { ArrowIcon } from '@webb-dapp/ui-components';
-import { CurrencyId } from '@webb-tools/types/interfaces';
-import { useBalance } from '@webb-dapp/react-hooks';
+import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react';
 
 import { Token, TokenImage, TokenName } from './Token';
-import { tokenEq } from './utils';
-import { CurrencyChangeFN } from './types';
 import classes from './TokenSelector.module.scss';
+import { CurrencyChangeFN } from './types';
+import { tokenEq } from './utils';
 
 interface MenuItemProps {
   value?: CurrencyId;

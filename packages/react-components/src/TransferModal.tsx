@@ -1,17 +1,16 @@
-import React, { FC, useState, ReactNode, useCallback, useMemo, useEffect } from 'react';
-import clsx from 'clsx';
-
-import { CurrencyId } from '@webb-tools/types/interfaces';
-import { Dialog, ArrowIcon, CheckedCircleIcon, FormItem, Button, InlineBlockBox } from '@webb-dapp/ui-components';
-import { useModal, useAccounts, useConstants, useBalance } from '@webb-dapp/react-hooks';
+import { useAccounts, useBalance, useConstants, useModal } from '@webb-dapp/react-hooks';
 import { useInputValue } from '@webb-dapp/react-hooks/useInputValue';
+import { ArrowIcon, Button, CheckedCircleIcon, Dialog, FormItem, InlineBlockBox } from '@webb-dapp/ui-components';
 import { FixedPointNumber } from '@webb-tools/sdk-core';
+import { CurrencyId } from '@webb-tools/types/interfaces';
+import clsx from 'clsx';
+import React, { FC, ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 
-import { tokenEq, eliminateGap } from './utils';
-import { TokenName, TokenImage, TokenFullName } from './Token';
-import classes from './TransferModal.module.scss';
 import { AddressInput } from './AddressInput';
+import { TokenFullName, TokenImage, TokenName } from './Token';
+import classes from './TransferModal.module.scss';
 import { TxButton } from './TxButton';
+import { eliminateGap, tokenEq } from './utils';
 
 interface AssetBoardProps {
   currency: CurrencyId;

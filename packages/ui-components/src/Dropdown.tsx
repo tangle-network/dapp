@@ -1,8 +1,7 @@
-import React, { memo, FC, ReactNode, useState, createRef, useEffect } from 'react';
 import clsx from 'clsx';
+import React, { createRef, FC, memo, ReactNode, useEffect, useState } from 'react';
 
 // import { Dropdown as AntDropdown } from 'antd';
-
 import { ReactComponent as ArrowIcon } from './assets/arrow-down.svg';
 import classes from './Dropdown.module.scss';
 import { BareProps } from './types';

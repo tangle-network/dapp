@@ -29,3 +29,18 @@ Webb web app with mixer features.
    ```base
    yarn run start:dapp
    ```
+   
+## Running local webb-tools
+```json
+{
+  "resolutions": {
+    "@webb-tools/sdk-mixer": "file:../webb.js/packages/sdk-mixer/build",
+
+
+  }
+}
+```
+```bash
+# run this to update the packages
+yarn install --check-files
+```

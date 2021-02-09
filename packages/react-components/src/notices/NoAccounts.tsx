@@ -1,5 +1,5 @@
-import React, { FC, memo } from 'react';
 import { Dialog } from '@webb-dapp/ui-components';
+import React, { FC, memo } from 'react';
 
 export const NoAccounts: FC = memo(() => {
   const handleRetry = (): void => window.location.reload();

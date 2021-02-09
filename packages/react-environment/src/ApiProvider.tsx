@@ -1,9 +1,9 @@
-import React, { ReactNode, FC, useState, useEffect, useCallback, useRef } from 'react';
+import { options } from '@webb-tools/api';
+import React, { FC, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { Subscription } from 'rxjs';
 import { timeout } from 'rxjs/operators';
 
 import { ApiRx, WsProvider } from '@polkadot/api';
-import { options } from '@webb-tools/api';
 
 const MAX_CONNECT_TIME = 1000 * 60; // one minute
 

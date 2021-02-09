@@ -1,8 +1,8 @@
-import React, { FC, memo } from 'react';
 import clsx from 'clsx';
+import React, { FC, memo } from 'react';
 
-import { BareProps } from './types';
 import classes from './FormItem.module.scss';
+import { BareProps } from './types';
 
 interface Props extends BareProps {
   label: string;

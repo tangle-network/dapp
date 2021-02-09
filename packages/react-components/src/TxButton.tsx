@@ -1,16 +1,15 @@
-import React, { FC, PropsWithChildren, useState, useCallback, useMemo } from 'react';
-import { isFunction, uniqueId } from 'lodash';
-import { Observable, of } from 'rxjs';
-import { switchMap, map, timeout, finalize, take, catchError } from 'rxjs/operators';
-
-import { SubmittableResult, ApiRx } from '@polkadot/api';
-import { ITuple, ISubmittableResult } from '@polkadot/types/types';
-import { DispatchError, AccountInfo } from '@polkadot/types/interfaces';
-import { SubmittableExtrinsic } from '@polkadot/api/types';
-
 import { useAccounts, useApi, useHistory } from '@webb-dapp/react-hooks';
-import { Button, ButtonProps, notification, LoadingOutlined, styled } from '@webb-dapp/ui-components';
 import { CurrencyLike } from '@webb-dapp/react-hooks/types';
+import { Button, ButtonProps, LoadingOutlined, notification, styled } from '@webb-dapp/ui-components';
+import { isFunction, uniqueId } from 'lodash';
+import React, { FC, PropsWithChildren, useCallback, useMemo, useState } from 'react';
+import { Observable, of } from 'rxjs';
+import { catchError, finalize, map, switchMap, take, timeout } from 'rxjs/operators';
+
+import { ApiRx, SubmittableResult } from '@polkadot/api';
+import { SubmittableExtrinsic } from '@polkadot/api/types';
+import { AccountInfo, DispatchError } from '@polkadot/types/interfaces';
+import { ISubmittableResult, ITuple } from '@polkadot/types/types';
 
 import { FormatAddress } from './format';
 

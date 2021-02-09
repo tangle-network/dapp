@@ -1,10 +1,10 @@
-import React, { useState, useCallback, useEffect } from 'react';
-
-import Identicon from '@polkadot/react-identicon';
 import { Dialog, styled } from '@webb-dapp/ui-components';
+import React, { useCallback, useEffect, useState } from 'react';
+
+import { InjectedAccount } from '@polkadot/extension-inject/types';
+import Identicon from '@polkadot/react-identicon';
 
 import { ReactComponent as CheckedIcon } from './assets/checked.svg';
-import { InjectedAccount } from '@polkadot/extension-inject/types';
 
 const AccountList = styled.ul`
   max-height: 500px;

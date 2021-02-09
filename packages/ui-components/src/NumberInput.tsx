@@ -1,18 +1,19 @@
-import React, {
-  FC,
-  ChangeEventHandler,
-  useState,
-  useEffect,
-  forwardRef,
-  useCallback,
-  useMemo,
-  useRef,
-  FocusEvent,
-  FocusEventHandler,
-} from 'react';
+import './NumberInput.scss';
+
 import clsx from 'clsx';
 import { noop } from 'lodash';
-import './NumberInput.scss';
+import React, {
+  ChangeEventHandler,
+  FC,
+  FocusEvent,
+  FocusEventHandler,
+  forwardRef,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
 const NUMBER_PATTERN = '^[0-9]*(\\.)?[0-9]*$';
 const numberReg = new RegExp(NUMBER_PATTERN);

@@ -1,11 +1,11 @@
-import React, { FC, ReactNode, useCallback } from 'react';
-import clsx from 'clsx';
 import { CopyOutlined } from '@ant-design/icons';
+import clsx from 'clsx';
+import React, { FC, ReactNode, useCallback } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 
+import classes from './Copy.module.scss';
 import { notification } from './notification';
 import { BareProps } from './types';
-import classes from './Copy.module.scss';
 
 interface Props extends BareProps {
   text: string;
