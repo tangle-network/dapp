@@ -1,7 +1,6 @@
-import React, { FC, useEffect, useRef, useMemo } from 'react';
-
-import { notification } from '@webb-dapp/ui-components';
 import { useApi } from '@webb-dapp/react-hooks';
+import { notification } from '@webb-dapp/ui-components';
+import React, { FC, useEffect, useMemo, useRef } from 'react';
 
 export const ConnectStatus: FC = () => {
   const { connected, error } = useApi();

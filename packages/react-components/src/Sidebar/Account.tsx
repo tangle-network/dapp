@@ -1,13 +1,12 @@
+import { useAccounts } from '@webb-dapp/react-hooks';
+import { Skeleton, styled } from '@webb-dapp/ui-components';
 import React, { createRef, FC, useContext, useEffect } from 'react';
 import { useMatch } from 'react-router-dom';
 
-import { styled, Skeleton } from '@webb-dapp/ui-components';
-import { useAccounts } from '@webb-dapp/react-hooks';
-
-import { CNavLink } from './Products';
-import { FormatAddress } from '../format';
 import { ReactComponent as WalletIcon } from '../assets/wallet.svg';
+import { FormatAddress } from '../format';
 import { SidebarActiveContext } from './context';
+import { CNavLink } from './Products';
 
 const Name = styled.p`
   width: 160px;

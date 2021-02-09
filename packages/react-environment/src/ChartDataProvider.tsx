@@ -1,5 +1,5 @@
-import React, { createContext, FC, PropsWithChildren, useMemo } from 'react';
 import { InfluxDB } from '@influxdata/influxdb-client';
+import React, { createContext, FC, PropsWithChildren, useMemo } from 'react';
 
 // ensure it won't be null
 export const ChartDataContext = createContext<InfluxDB>(null as any);

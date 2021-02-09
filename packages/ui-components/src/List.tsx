@@ -1,7 +1,9 @@
-import React, { ReactNode, FC } from 'react';
-import { BareProps } from './types';
-import clsx from 'clsx';
 import './List.scss';
+
+import clsx from 'clsx';
+import React, { FC, ReactNode } from 'react';
+
+import { BareProps } from './types';
 
 type ListStyle = 'list';
 

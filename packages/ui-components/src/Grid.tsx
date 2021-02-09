@@ -1,3 +1,3 @@
-import { Row, Col } from 'antd';
+import { Col, Row } from 'antd';
 
 export { Row, Col };

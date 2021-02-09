@@ -1,10 +1,10 @@
+import { ProposalData, useAccounts, useCouncilMembers } from '@webb-dapp/react-hooks';
+import { Button, Card, Col, FlexBox, Row, styled } from '@webb-dapp/ui-components';
+import { BareProps } from '@webb-dapp/ui-components/types';
+import { upperFirst } from 'lodash';
 import React, { FC, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router';
-import { upperFirst } from 'lodash';
 
-import { Card, Row, Col, styled, FlexBox, Button } from '@webb-dapp/ui-components';
-import { BareProps } from '@webb-dapp/ui-components/types';
-import { ProposalData, useAccounts, useCouncilMembers } from '@webb-dapp/react-hooks';
 import { CouncilsColor, CouncilType } from '../config';
 
 const Title = styled(({ className, council, title }: { title: string; council: string } & BareProps) => {

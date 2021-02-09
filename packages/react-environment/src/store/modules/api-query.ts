@@ -1,4 +1,4 @@
-import { createStore, ManipulationsConfig, ManipulationParams } from '../createStore';
+import { createStore, ManipulationParams, ManipulationsConfig } from '../createStore';
 
 type ApiQueryStoreState = Record<string, any>;
 

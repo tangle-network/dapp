@@ -1,22 +1,22 @@
-import { useEffect, useMemo } from 'react';
+import { useStore } from '@webb-dapp/react-environment';
 import { get, isEmpty } from 'lodash';
+import { useEffect, useMemo } from 'react';
 import { Observable, Subscription } from 'rxjs';
+
 import { ApiRx } from '@polkadot/api';
 
-import { useStore } from '@webb-dapp/react-environment';
-
-import { useIsAppReady } from './useIsAppReady';
-import { useApi } from './useApi';
 import { CallParams } from './types';
+import { useApi } from './useApi';
+import { useIsAppReady } from './useIsAppReady';
 
 class Tracker {
   private trackerList: Record<string, { refCount: number; subscriber: Subscription }>;
 
-  constructor () {
+  constructor() {
     this.trackerList = {};
   }
 
-  subscribe (
+  subscribe(
     api: ApiRx,
     path: string,
     params: CallParams,
@@ -39,17 +39,17 @@ class Tracker {
     if (!fn) throw new Error(`can't find method:${path} in api`);
 
     const subscriber = (fn(...params) as Observable<unknown>).subscribe({
-      next: (result: any) => callback(key, result)
+      next: (result: any) => callback(key, result),
     });
 
     // update tracker list
     this.trackerList[key] = {
       refCount: 1,
-      subscriber
+      subscriber,
     };
   }
 
-  unsubscribe (key: string): void {
+  unsubscribe(key: string): void {
     if (this.trackerList[key]) {
       this.trackerList[key].refCount -= 1;
     }
@@ -58,7 +58,7 @@ class Tracker {
 
 const tracker = new Tracker();
 
-export function useCall<T> (
+export function useCall<T>(
   path: string,
   params: CallParams = [],
   options?: {

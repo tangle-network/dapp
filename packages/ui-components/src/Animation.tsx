@@ -8,8 +8,9 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { Motion, spring, presets } from 'react-motion';
+import { Motion, presets, spring } from 'react-motion';
 import styled from 'styled-components';
+
 import { BareProps } from './types';
 
 export const Fadein: FC<PropsWithChildren<any>> = ({ children }) => {

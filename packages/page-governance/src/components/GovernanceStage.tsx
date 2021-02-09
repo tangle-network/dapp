@@ -1,5 +1,5 @@
+import { Step, styled } from '@webb-dapp/ui-components';
 import React, { FC, useMemo } from 'react';
-import { styled, Step } from '@webb-dapp/ui-components';
 
 const CStep = styled(Step)`
   width: 382px;

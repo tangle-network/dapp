@@ -1,9 +1,9 @@
-import React, { FC } from 'react';
+import './Tooltip.scss';
 
 import AntTooltip, { TooltipProps as AntTooltipProps } from 'antd/lib/tooltip';
+import React, { FC } from 'react';
 
 import { Condition } from './Condition';
-import './Tooltip.scss';
 
 export type TooltipProps = AntTooltipProps & {
   show?: boolean;

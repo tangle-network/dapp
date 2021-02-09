@@ -1,6 +1,7 @@
-import React, { FC, useMemo } from 'react';
 import { BalanceInputValue } from '@webb-dapp/react-components';
 import { styled } from '@webb-dapp/ui-components';
+import React, { FC, useMemo } from 'react';
+
 import { InfoItem, InfoItemLabel, InfoItemValue, InfoRoot } from '../common';
 
 interface WithdrawInfoProps {

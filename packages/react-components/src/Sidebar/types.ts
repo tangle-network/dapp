@@ -1,5 +1,5 @@
-import { ReactNode } from 'react';
 import { AppFeatures } from '@webb-dapp/ui-components/types';
+import { ReactNode } from 'react';
 
 export interface SideBarItem {
   icon?: ReactNode;

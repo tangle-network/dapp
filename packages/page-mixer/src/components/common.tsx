@@ -1,11 +1,11 @@
-import React, { FC } from 'react';
-import { Alert, Card, styled, Button, Information } from '@webb-dapp/ui-components';
-import { BareProps } from '@webb-dapp/ui-components/types';
 import { TxButton } from '@webb-dapp/react-components';
+import { Alert, Button, Card, Information, styled } from '@webb-dapp/ui-components';
+import { BareProps } from '@webb-dapp/ui-components/types';
+import React, { FC } from 'react';
 
-import { ReactComponent as WithdrawnIcon } from '../assets/withdrawn-icon.svg';
-import { ReactComponent as ReceiveIcon } from '../assets/receive-icon.svg';
 import { ReactComponent as AmountIcon } from '../assets/amount-icon.svg';
+import { ReactComponent as ReceiveIcon } from '../assets/receive-icon.svg';
+import { ReactComponent as WithdrawnIcon } from '../assets/withdrawn-icon.svg';
 
 const TitleRoot = styled.div`
   display: flex;

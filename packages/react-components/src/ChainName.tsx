@@ -1,8 +1,7 @@
-import React, { FC } from 'react';
-
 import { useApi, useModal } from '@webb-dapp/react-hooks';
-import { BareProps } from '@webb-dapp/ui-components/types';
 import { styled } from '@webb-dapp/ui-components';
+import { BareProps } from '@webb-dapp/ui-components/types';
+import React, { FC } from 'react';
 
 import { ReactComponent as NetworkIcon } from './assets/network.svg';
 import { ReactComponent as WebbIcon } from './assets/webb-logo-small.svg';

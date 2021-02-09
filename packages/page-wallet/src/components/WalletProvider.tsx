@@ -1,5 +1,5 @@
-import React, { createContext, FC, useState, Dispatch, SetStateAction } from 'react';
 import { BareProps } from '@webb-dapp/ui-components/types';
+import React, { createContext, Dispatch, FC, SetStateAction, useState } from 'react';
 
 export type WalletTabType = 'webb';
 

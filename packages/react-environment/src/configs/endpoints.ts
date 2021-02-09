@@ -18,6 +18,7 @@ const endpointDefaults: Omit<EndpointConfigItem, 'name' | 'url'> = {
     governance: true,
   },
 };
+
 export const DEFAULT_ENDPOINTS: EndpointConfig = {
   production: [
     {
@@ -35,7 +36,7 @@ export const DEFAULT_ENDPOINTS: EndpointConfig = {
   ],
   development: [
     {
-      name: 'Local',
+      name: 'Development',
       url: 'ws://127.0.0.1:9944',
       ...endpointDefaults,
       features: {

@@ -1,10 +1,9 @@
-import React, { FC, useState, useCallback, useMemo } from 'react';
+import { useAccounts, useAddressValidator } from '@webb-dapp/react-hooks';
+import { ArrowIcon, AutoComplete, Input, InputProps } from '@webb-dapp/ui-components';
 import clsx from 'clsx';
+import React, { FC, useCallback, useMemo, useState } from 'react';
 
 import Identicon from '@polkadot/react-identicon';
-
-import { AutoComplete, Input, InputProps, ArrowIcon } from '@webb-dapp/ui-components';
-import { useAccounts, useAddressValidator } from '@webb-dapp/react-hooks';
 
 import classes from './AddressInput.module.scss';
 import { FormatAddress } from './format';

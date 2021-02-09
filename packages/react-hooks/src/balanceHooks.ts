@@ -1,16 +1,14 @@
-import { useState, useEffect, useMemo } from 'react';
+import { tokenEq } from '@webb-dapp/react-components';
+import { FixedPointNumber } from '@webb-tools/sdk-core';
+import { Balance, CurrencyId } from '@webb-tools/types/interfaces';
+import { useEffect, useMemo, useState } from 'react';
 import { combineLatest, Observable } from 'rxjs';
 
-import { CurrencyId, Balance } from '@webb-tools/types/interfaces';
-import { FixedPointNumber } from '@webb-tools/sdk-core';
-
-import { tokenEq } from '@webb-dapp/react-components';
-
-import { useApi } from './useApi';
+import { AccountLike } from './types';
 import { useAccounts } from './useAccounts';
+import { useApi } from './useApi';
 import { useCall } from './useCall';
 import { useConstants } from './useConstants';
-import { AccountLike } from './types';
 
 export type BalanceData = { currency: CurrencyId; balance: FixedPointNumber };
 
@@ -64,11 +62,11 @@ export const useBalances = (currencies: CurrencyId[], account?: AccountLike): Ba
           currencies.map(
             (currency: CurrencyId, index): BalanceData => ({
               balance: result ? FixedPointNumber.fromInner(result[index].toString()) : FixedPointNumber.ZERO,
-              currency
+              currency,
             })
           )
         );
-      }
+      },
     });
 
     return (): void => subscribe.unsubscribe();

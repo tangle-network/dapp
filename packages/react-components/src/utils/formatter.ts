@@ -1,10 +1,10 @@
+import { Fixed18 } from '@webb-tools/app-util';
+import { FixedPointNumber } from '@webb-tools/sdk-core';
 import { get } from 'lodash';
 
 import { Codec } from '@polkadot/types/types';
-import { Fixed18 } from '@webb-tools/app-util';
-import { FixedPointNumber } from '@webb-tools/sdk-core';
 
-import { LAMINAR_SENDER_ADDRESS, LAMINAR_WATCHER_ADDRESS, FAUCET_ADDRESS, systemAccounts } from './account-consts';
+import { FAUCET_ADDRESS, LAMINAR_SENDER_ADDRESS, LAMINAR_WATCHER_ADDRESS, systemAccounts } from './account-consts';
 
 export const thousand = (num: string | string): string => {
   const _num = num.toString();

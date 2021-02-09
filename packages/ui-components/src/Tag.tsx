@@ -1,8 +1,9 @@
-import React, { FC } from 'react';
+import './Tag.scss';
+
 import clsx from 'clsx';
+import React, { FC } from 'react';
 
 import { BareProps, Style } from './types';
-import './Tag.scss';
 
 type Type = 'normal' | 'flag';
 

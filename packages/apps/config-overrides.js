@@ -40,13 +40,13 @@ module.exports = override(function (config, env) {
     });
   });
   //wasam
-  config.module.rules.push({
-    test: wasmExtensionRegExp,
-    include: /node_modules/,
-    type: 'javascript/auto',
-    // include: path.resolve(__dirname, 'src'),
-    use: [{ loader: require.resolve('wasm-loader'), options: {} }],
-  });
+  // config.module.rules.push({
+  //  test: wasmExtensionRegExp,
+  //  include: /node_modules/,
+  //  type: 'javascript/dynamic',
+  //  include: path.resolve(__dirname, 'src'),
+  //  use: [{ loader: require.resolve('wasm-loader'), options: {} }],
+  // });
 
   config.module.rules.push({
     test: /.worker.(ts|js)?$/,

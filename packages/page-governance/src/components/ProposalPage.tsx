@@ -1,9 +1,10 @@
-import React, { FC, useCallback } from 'react';
 import { usePageTitle } from '@webb-dapp/react-environment';
-import { CouncilesTab } from './CouncliTab';
 import { useProposals } from '@webb-dapp/react-hooks';
 import { Col, Row } from '@webb-dapp/ui-components';
+import React, { FC, useCallback } from 'react';
+
 import { CouncilType } from '../config';
+import { CouncilesTab } from './CouncliTab';
 import { ProposalCard } from './ProposalCard';
 
 const ProposalList: FC<{ council: string }> = ({ council }) => {

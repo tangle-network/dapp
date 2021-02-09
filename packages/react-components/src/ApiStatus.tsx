@@ -1,10 +1,9 @@
-import React, { FC, memo } from 'react';
-
 import { useApi } from '@webb-dapp/react-hooks';
 import { BareProps } from '@webb-dapp/ui-components/types';
+import clsx from 'clsx';
+import React, { FC, memo } from 'react';
 
 import classes from './ApiStatus.module.scss';
-import clsx from 'clsx';
 
 export const ApiStatus: FC<BareProps> = memo(({ className }) => {
   const { connected, error, loading } = useApi();

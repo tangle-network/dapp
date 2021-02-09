@@ -1,11 +1,12 @@
-import React, { FC, FocusEventHandler, useCallback, useState } from 'react';
-import { BalanceInputRoot } from './BalanceInput';
-import { Menu, Dropdown } from 'antd';
-import { CurrencyId } from '@webb-tools/types/interfaces';
-import { Token } from './Token';
-import { BareProps } from '@webb-dapp/ui-components/types';
-import { ArrowPixelIcon, styled } from '@webb-dapp/ui-components';
 import { useBalance } from '@webb-dapp/react-hooks';
+import { ArrowPixelIcon, styled } from '@webb-dapp/ui-components';
+import { BareProps } from '@webb-dapp/ui-components/types';
+import { CurrencyId } from '@webb-tools/types/interfaces';
+import { Dropdown, Menu } from 'antd';
+import React, { FC, FocusEventHandler, useCallback, useState } from 'react';
+
+import { BalanceInputRoot } from './BalanceInput';
+import { Token } from './Token';
 
 interface TokenInputProps extends BareProps {
   error?: string;

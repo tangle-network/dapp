@@ -1,8 +1,9 @@
+import { FormatFixed18 } from '@webb-dapp/react-components';
 import { useDashboard } from '@webb-dapp/react-hooks';
 import { Statistic } from '@webb-dapp/ui-components';
-import { FormatFixed18 } from '@webb-dapp/react-components';
 import { TinyAreaChart } from 'bizcharts';
 import React, { FC } from 'react';
+
 import classes from './DashboardDetail.module.scss';
 
 interface StatisticContentProps {

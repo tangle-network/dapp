@@ -1,22 +1,22 @@
+import clsx from 'clsx';
+import { debounce, uniqueId } from 'lodash';
 import React, {
-  FC,
-  useMemo,
   Children,
-  useRef,
   cloneElement,
+  FC,
   ReactElement,
-  useState,
   ReactNode,
-  useEffect,
   useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
 } from 'react';
-import { uniqueId, debounce } from 'lodash';
+import styled from 'styled-components';
 
 import { Card, CardProps } from './Card';
-import { BareProps } from './types';
 import { Controller } from './Controller';
-import styled from 'styled-components';
-import clsx from 'clsx';
+import { BareProps } from './types';
 
 export interface ScrollCardItemProps extends BareProps {
   key: string | number;

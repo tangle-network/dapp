@@ -1,8 +1,8 @@
+import { useAccounts, useCall } from '@webb-dapp/react-hooks';
+import { Balance } from '@webb-tools/types/interfaces';
 import React, { FC } from 'react';
 
 import { AccountId } from '@polkadot/types/interfaces';
-import { useAccounts, useCall } from '@webb-dapp/react-hooks';
-import { Balance } from '@webb-tools/types/interfaces';
 
 import { FormatBalance } from './format';
 

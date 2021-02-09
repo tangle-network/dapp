@@ -1,6 +1,6 @@
-import { useEffect, useRef, useCallback, useState } from 'react';
-import { Subject, interval } from 'rxjs';
 import axios from 'axios';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { interval, Subject } from 'rxjs';
 
 interface QueryParams {
   method: string | string[];

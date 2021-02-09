@@ -1,5 +1,5 @@
-import React, { FC } from 'react';
 import Dayjs from 'dayjs';
+import React, { FC } from 'react';
 
 interface Props {
   time: Date | string;

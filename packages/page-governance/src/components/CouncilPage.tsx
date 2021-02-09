@@ -1,10 +1,9 @@
+import { usePageTitle } from '@webb-dapp/react-environment';
 import React, { FC, useCallback } from 'react';
 
-import { usePageTitle } from '@webb-dapp/react-environment';
-
-import { CouncilesTab } from './CouncliTab';
 import { CouncilType } from '../config';
 import { CouncilMembers } from './CouncilMembers';
+import { CouncilesTab } from './CouncliTab';
 
 export const CouncilPage: FC = () => {
   usePageTitle({

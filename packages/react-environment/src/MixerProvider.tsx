@@ -1,12 +1,11 @@
-import React, { FC, ReactNode, useCallback, useEffect, useState } from 'react';
+import { useCall } from '@webb-dapp/react-hooks';
+import React, { FC, ReactNode, useCallback } from 'react';
 import { Mixer, MixerAssetGroup } from '@webb-tools/sdk-mixer';
-import { useApi } from '@webb-dapp/react-hooks';
-import { notification } from '@webb-dapp/ui-components';
 // @ts-ignore
 import Worker from './mixer/mixer.worker';
+
 export interface MixerContextData {
   init: () => Promise<Mixer>;
-  mixerGroups: MixerAssetGroup[];
 }
 
 // ensure that mixer always exist
@@ -21,37 +20,16 @@ interface Props {
  * @description context provider to support mixer.
  */
 export const MixerProvider: FC<Props> = ({ children }) => {
-  const { api, connected } = useApi();
-  const [mixerGroups, setMixerGroups] = useState<MixerAssetGroup[]>([]);
+  const groupsIds = useCall<number[]>('query.mixer.mixerGroupIds', []);
 
-  useEffect(() => {
-    if (!connected) return;
-    try {
-      api.query.mixer.mixerGroups.entries().subscribe((result) => {
-        result.map(([key, value]) => {
-          console.log({ key, value });
-        });
-      });
-    } catch (e) {
-      notification.open({
-        className: 'error',
-        message: (
-          <div>
-            <p>{`Please connect to Anon local node , to initialize the Mixer`}</p>
-          </div>
-        ),
-      });
-    }
-
-    setMixerGroups([]);
-  }, [api, connected]);
-
-  const init = useCallback(() => Mixer.init(new Worker(), mixerGroups), [mixerGroups]);
+  console.log({ groupsIds });
+  const init = useCallback(() => {
+    return Mixer.init(new Worker(), [new MixerAssetGroup(0, 'EDG', 32)]);
+  }, []);
 
   return (
     <MixerContext.Provider
       value={{
-        mixerGroups,
         init,
       }}
     >

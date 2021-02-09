@@ -31,6 +31,7 @@ export const InformationContent = styled.p<Partial<Pick<InformationProps, 'varia
 
   color: ${(props) => {
     return `var(--text-color-normal)`;
+
     switch (props.variant) {
       case 'warning':
         return `var(--notification-warning-color)`;
@@ -49,7 +50,7 @@ export const InformationRoot = styled.div`
   background: var(--information-background);
 `;
 
-export const Information: FC<InformationProps> = ({ variant, content, title }) => {
+export const Information: FC<InformationProps> = ({ content, title, variant }) => {
   return (
     <InformationRoot>
       <InformationTitle variant={variant}>{title}</InformationTitle>

@@ -1,11 +1,11 @@
+import { useStore } from '@webb-dapp/react-environment';
+import { useModal } from '@webb-dapp/react-hooks';
+import { ArrowIcon, styled } from '@webb-dapp/ui-components';
 import React, { createRef, FC, memo, useCallback, useContext, useEffect } from 'react';
 import { NavLink, NavLinkProps, useMatch } from 'react-router-dom';
 
-import { ProductItem as IProductItem } from './types';
-import { useModal } from '@webb-dapp/react-hooks';
-import { styled, ArrowIcon } from '@webb-dapp/ui-components';
 import { SidebarActiveContext } from './context';
-import { useStore } from '@webb-dapp/react-environment';
+import { ProductItem as IProductItem } from './types';
 
 interface ProductItemProps {
   collapse: boolean;

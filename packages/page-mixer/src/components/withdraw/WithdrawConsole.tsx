@@ -1,15 +1,14 @@
-import React, { FC, useCallback, useMemo } from 'react';
-
-import { FlexBox, Row, Col, SpaceBox } from '@webb-dapp/ui-components';
-import { BalanceInput, BalanceInputValue, getCurrenciesFromDexShare, eliminateGap } from '@webb-dapp/react-components';
+import { BalanceInput, BalanceInputValue, eliminateGap, getCurrenciesFromDexShare } from '@webb-dapp/react-components';
+import { TokenInput } from '@webb-dapp/react-components/TokenInput';
 import { useApi, useBalance, useBalanceValidator } from '@webb-dapp/react-hooks';
+import { useInputValue } from '@webb-dapp/react-hooks/useInputValue';
+import { Col, FlexBox, Row, SpaceBox } from '@webb-dapp/ui-components';
 import { FixedPointNumber } from '@webb-tools/sdk-core';
 import { CurrencyId } from '@webb-tools/types/interfaces';
-import { TokenInput } from '@webb-dapp/react-components/TokenInput';
-import { useInputValue } from '@webb-dapp/react-hooks/useInputValue';
+import React, { FC, useCallback, useMemo } from 'react';
 
+import { AmountTitle, CardRoot, CardSubTitle, CardTitle, CMaxBtn, CTxButton, WithdrawnTitle } from '../common';
 import { WithdrawInfo } from './WithdrawInfo';
-import { AmountTitle, CardRoot, CardSubTitle, CardTitle, CTxButton, WithdrawnTitle, CMaxBtn } from '../common';
 
 export const WithdrawConsole: FC = () => {
   const { api } = useApi();
@@ -66,7 +65,7 @@ export const WithdrawConsole: FC = () => {
       token,
       eliminateGap(new FixedPointNumber(token.amount), balance, new FixedPointNumber('0.000001')).toChainData(),
     ];
-  }, [token, api, balance]);
+  }, [token, balance]);
 
   return (
     <CardRoot>

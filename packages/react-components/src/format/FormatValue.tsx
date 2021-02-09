@@ -1,4 +1,5 @@
 import React, { FC } from 'react';
+
 import { FormatNumber, FormatNumberProps } from './FormatNumber';
 
 const formatValueConfig: FormatNumberProps['formatNumberConfig'] = {

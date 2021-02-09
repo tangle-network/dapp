@@ -1,10 +1,9 @@
-import React, { FC, lazy, Suspense } from 'react';
-
-import { PageContentLoading } from '@webb-dapp/ui-components';
-
-import { sideBarConfig } from './sidebar-config';
 import { Layout } from '@webb-dapp/react-components';
 import { RouterConfigData } from '@webb-dapp/react-environment';
+import { PageContentLoading } from '@webb-dapp/ui-components';
+import React, { FC, lazy, Suspense } from 'react';
+
+import { sideBarConfig } from './sidebar-config';
 
 const PageMixer = lazy(() => import('@webb-dapp/page-mixer'));
 const PageGovernance = lazy(() => import('@webb-dapp/page-governance'));

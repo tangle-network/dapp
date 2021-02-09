@@ -34,8 +34,13 @@ Webb web app with mixer features.
 ```json
 {
   "resolutions": {
-    "@webb-tools/sdk-mixer": "../webb.js/packages/sdk-mixer/build"
+    "@webb-tools/sdk-mixer": "file:../webb.js/packages/sdk-mixer/build",
+
 
   }
 }
+```
+```bash
+# run this to update the packages
+yarn install --check-files
 ```

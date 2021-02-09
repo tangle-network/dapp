@@ -1,8 +1,9 @@
-import React, { FC } from 'react';
+import './AutoComplete.scss';
+
 import { AutoComplete as AntAutoComplete } from 'antd';
 import { AutoCompleteProps as AntAutoCompleteProps } from 'antd/lib/auto-complete';
+import React, { FC } from 'react';
 
-import './AutoComplete.scss';
 import { ArrowIcon } from './Icon';
 import { Input } from './Input';
 

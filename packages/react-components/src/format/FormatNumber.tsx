@@ -1,12 +1,11 @@
-import React, { FC, useMemo } from 'react';
-import clsx from 'clsx';
-import { Fixed18 } from '@webb-tools/app-util';
-
-import { BareProps } from '@webb-dapp/ui-components/types';
-import { formatNumber, FormatNumberConfig } from '../utils';
 import { Tooltip, TooltipProps } from '@webb-dapp/ui-components';
+import { BareProps } from '@webb-dapp/ui-components/types';
+import { Fixed18 } from '@webb-tools/app-util';
 import { FixedPointNumber } from '@webb-tools/sdk-core';
+import clsx from 'clsx';
+import React, { FC, useMemo } from 'react';
 
+import { formatNumber, FormatNumberConfig } from '../utils';
 import classes from './format.module.scss';
 
 export type FormatterColor = 'primary' | 'error' | 'success';

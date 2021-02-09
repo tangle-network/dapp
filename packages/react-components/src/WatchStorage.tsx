@@ -1,5 +1,5 @@
-import { FC, ReactElement } from 'react';
 import { useCall } from '@webb-dapp/react-hooks';
+import { FC, ReactElement } from 'react';
 
 interface Props {
   path: string;

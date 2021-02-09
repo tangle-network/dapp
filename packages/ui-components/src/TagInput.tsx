@@ -1,7 +1,8 @@
-import React, { FC } from 'react';
 import clsx from 'clsx';
+import React, { FC } from 'react';
 import styled from 'styled-components';
-import { NumberInputProps, NumberInput } from './NumberInput';
+
+import { NumberInput, NumberInputProps } from './NumberInput';
 import classes from './TagInput.module.scss';
 
 interface Props extends NumberInputProps {
@@ -14,6 +15,7 @@ const TagInputRoot = styled.div<any>`
     color: var(--card-background) !important;
   }
 `;
+
 export const TagInput: FC<Props> = ({ className, error, label, ...inputProps }) => {
   return (
     <TagInputRoot

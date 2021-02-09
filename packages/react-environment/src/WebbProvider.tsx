@@ -1,13 +1,12 @@
+import { AppSettings, ConnectStatus } from '@webb-dapp/react-components';
+import { MixerProvider } from '@webb-dapp/react-environment/MixerProvider';
+import { BareProps } from '@webb-dapp/ui-components/types';
 import React, { FC } from 'react';
 
-import { ConnectStatus, AppSettings } from '@webb-dapp/react-components';
-import { BareProps } from '@webb-dapp/ui-components/types';
-
 import { ApiProvider } from './ApiProvider';
+import { ExtensionProvider } from './ExtensionProvider';
 import { SettingProvider } from './SettingProvider';
 import { StoreProvier } from './store';
-import { ExtensionProvider } from './ExtensionProvider';
-import { MixerProvider } from '@webb-dapp/react-environment/MixerProvider';
 
 interface WebbProviderProps extends BareProps {
   applicationName: string;

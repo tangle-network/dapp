@@ -1,12 +1,12 @@
+import { useStore } from '@webb-dapp/react-environment';
+import { useApi, useBreakpoint, useIsAppReady, useSetting, useTranslation } from '@webb-dapp/react-hooks';
+import { Alert, Page, PageLoading, styled, SubMenu } from '@webb-dapp/ui-components';
+import { noop } from 'lodash';
 import React, { FC, memo, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router';
-import { useApi, useBreakpoint, useIsAppReady, useSetting, useTranslation } from '@webb-dapp/react-hooks';
-import { styled, PageLoading, Page, SubMenu, Alert } from '@webb-dapp/ui-components';
 
-import { Sidebar, SidebarConfig } from '../Sidebar';
-import { useStore } from '@webb-dapp/react-environment';
 import { AccountBar } from '../AccountBar';
-import { noop } from 'lodash';
+import { Sidebar, SidebarConfig } from '../Sidebar';
 
 const CAlert = styled(Alert)`
   margin-top: 32px;
@@ -81,7 +81,7 @@ const Main: FC<MainLayoutProps> = memo(({ children, enableCollapse = true, sideb
         <Page.Content>{children}</Page.Content>
       </Page>
     );
-  }, [isAppReady, ui.pageTitle, ui.subMenu, breadcrumb, children, t]);
+  }, [isAppReady, ui.pageTitle, ui.subMenu, breadcrumb, children]);
 
   return (
     <MainContainer>
