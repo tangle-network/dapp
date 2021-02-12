@@ -1,12 +1,10 @@
 import React, { FC, useLayoutEffect } from 'react';
 import { useParams } from 'react-router';
 
-import { Col, Row, Tabs, useTabs } from '@webb-dapp/ui-components';
+import { Col, Row, useTabs } from '@webb-dapp/ui-components';
 import { useSubMenu } from '@webb-dapp/react-environment';
 
-import { SwapConsole } from './components/swap';
 import { DepositConsole } from './components/deposit';
-import { WithdrawConsole } from './components/withdraw';
 import { LiquidityInformation } from './components/common';
 
 type SwapTabType = 'deposit' | 'withdraw';
@@ -42,7 +40,7 @@ const PageSwap: FC = () => {
   }, [changeTabs]);
 
   if (currentSubMenu === 'deposit') {
-    return <SwapConsole />;
+    return <DepositConsole />;
   }
 
   return (
