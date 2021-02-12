@@ -7,6 +7,10 @@
   border-radius: 2px;
   background: var(--platform-background);
   outline: none;
+  .ant-modal-title{
+    color: var(--text-color-normal);
+
+  }
   &.ant-modal {
     padding-bottom: 0;
     background: transparent;

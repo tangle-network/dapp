@@ -1,13 +1,14 @@
-import { BalanceInput, BalanceInputValue, eliminateGap, Token, tokenEq } from '@webb-dapp/react-components';
-import { TokenInput } from '@webb-dapp/react-components/TokenInput';
-import { useBalance, useBalanceValidator } from '@webb-dapp/react-hooks';
-import { useInputValue } from '@webb-dapp/react-hooks/useInputValue';
-import { Col, FlexBox, Row, SpaceBox } from '@webb-dapp/ui-components';
+import React, { FC, useCallback, useMemo, useEffect } from 'react';
 import { FixedPointNumber } from '@webb-tools/sdk-core';
 import { CurrencyId } from '@webb-tools/types/interfaces';
-import React, { FC, useCallback, useEffect, useMemo } from 'react';
 
-import { AmountTitle, CAlert, CardRoot, CardSubTitle, CardTitle, CMaxBtn, CTxButton, DepositTitle } from '../common';
+import { Row, Col, FlexBox, SpaceBox } from '@webb-dapp/ui-components';
+import { useBalance, useBalanceValidator } from '@webb-dapp/react-hooks';
+import { BalanceInput, BalanceInputValue, tokenEq, eliminateGap, Token } from '@webb-dapp/react-components';
+import { useInputValue } from '@webb-dapp/react-hooks/useInputValue';
+import { TokenInput } from '@webb-dapp/react-components/TokenInput';
+
+import { CardRoot, CardTitle, CardSubTitle, CTxButton, WithdrawnTitle, AmountTitle, CAlert, CMaxBtn } from '../common';
 import { DepositInfo } from './DepositInfo';
 
 export const DepositConsole: FC = () => {
@@ -64,26 +65,25 @@ export const DepositConsole: FC = () => {
     const tokenAmount = tokenBalance.toNumber();
 
     // TODO: Get max balance for the token type
-  }, [tokenBalance, token]);
+  }, [setToken, tokenBalance, token]);
 
   return (
     <CardRoot>
-      <CardTitle>Deposit</CardTitle>
+      <CardTitle>Withdraw</CardTitle>
       <SpaceBox height={16} />
-      <CardSubTitle>Add liquidity to the mixer by depositing tokens.</CardSubTitle>
+      <CardSubTitle>Select chain and the amount to withdraw</CardSubTitle>
       <SpaceBox height={24} />
       <Row gutter={[0, 24]}>
         <Col>
-          <DepositTitle>Deposit Token</DepositTitle>
+          <WithdrawnTitle>Withdraw Chain</WithdrawnTitle>
         </Col>
         <Col span={24}>
           <TokenInput currencies={tokenCurrencies} onChange={handleTokenCurrencyChange} value={token.token} />
         </Col>
-        (
         <>
           <Col span={24}>
             <FlexBox justifyContent='space-between'>
-              <AmountTitle>Amount</AmountTitle>
+              <AmountTitle>Deposit Note</AmountTitle>
               <CMaxBtn onClick={handleMax} type='ghost'>
                 MAX
               </CMaxBtn>
@@ -101,7 +101,7 @@ export const DepositConsole: FC = () => {
         </>
         <Col span={24}>
           <CTxButton method='deposit' onExtrinsicSuccsss={handleSuccess} params={params} section='mixer' size='large'>
-            Deposit
+            Withdraw
           </CTxButton>
         </Col>
       </Row>
