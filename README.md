@@ -40,7 +40,7 @@ Webb web app with mixer features.
     "@webb-tools/app-util": "file:../webb.js/packages/app-util/build",
     "@webb-tools/sdk-core": "file:../webb.js/packages/sdk-core/build",
     "@webb-tools/sdk-mixer": "file:../webb.js/packages/sdk-mixer/build",
-    "@webb-tools/mixer-client": "^0.0.6"
+    "@webb-tools/mixer-client": "^0.0.7"
   }
 }
 ```
