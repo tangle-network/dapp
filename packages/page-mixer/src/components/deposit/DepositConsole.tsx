@@ -101,7 +101,7 @@ export const DepositConsole: FC = () => {
         </>
         <Col span={24}>
           <CTxButton method='deposit' onExtrinsicSuccsss={handleSuccess} params={params} section='mixer' size='large'>
-            Withdraw
+            Deposit
           </CTxButton>
         </Col>
       </Row>

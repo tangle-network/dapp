@@ -6,6 +6,7 @@ import { useSubMenu } from '@webb-dapp/react-environment';
 
 import { DepositConsole } from './components/deposit';
 import { LiquidityInformation } from './components/common';
+import { pageWithFeatures } from '@webb-dapp/react-components/utils/FeaturesGuard/pageWithFeatures';
 
 type SwapTabType = 'deposit' | 'withdraw';
 
@@ -20,7 +21,7 @@ const subMenu = [
   },
 ];
 
-const PageSwap: FC = () => {
+const PageMixer: FC = () => {
   const { changeTabs, currentTab } = useTabs<SwapTabType>('deposit');
   const { changeTabs: changeSubMenu, currentTab: currentSubMenu } = useTabs<SwapTabType>('deposit');
 
@@ -55,4 +56,7 @@ const PageSwap: FC = () => {
   );
 };
 
-export default PageSwap;
+export default pageWithFeatures({
+  features: ['mixer'],
+  message: "Mixer isn't supported on the current cain ,please consider change the current network",
+})(PageMixer);

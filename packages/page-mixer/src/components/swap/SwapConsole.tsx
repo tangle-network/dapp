@@ -1,25 +1,24 @@
-import React, { FC, useContext, useCallback, useMemo, useState, useRef } from 'react';
-import clsx from 'clsx';
-
-import { Alert, Row, Col, IconButton, styled } from '@webb-dapp/ui-components';
-import { BalanceInputValue, BalanceInput, formatBalance, tokenEq } from '@webb-dapp/react-components';
+import { BalanceInput, BalanceInputValue, formatBalance, tokenEq } from '@webb-dapp/react-components';
 import {
   useApi,
-  useSubscription,
   useBalance,
   useBalanceValidator,
-  useInputValue,
   useConstants,
+  useInputValue,
   useModal,
+  useSubscription,
 } from '@webb-dapp/react-hooks';
-import { token2CurrencyId, currencyId2Token, FixedPointNumber } from '@webb-tools/sdk-core';
+import { Alert, Col, IconButton, Row, styled } from '@webb-dapp/ui-components';
+import { currencyId2Token, FixedPointNumber, token2CurrencyId } from '@webb-tools/sdk-core';
 import { TradeParameters } from '@webb-tools/sdk-swap/trade-parameters';
+import clsx from 'clsx';
+import React, { FC, useCallback, useContext, useMemo, useRef, useState } from 'react';
 
-import { SwapInfo } from './SwapInfo';
-import { SlippageInput } from './SlippageInput';
-import { SwapProvider, SwapContext } from './SwapProvider';
 import { ReactComponent as SettingIcon } from '../../assets/setting.svg';
-import { CardRoot, Addon, CTxButton } from '../common';
+import { Addon, CardRoot, CTxButton } from '../common';
+import { SlippageInput } from './SlippageInput';
+import { SwapInfo } from './SwapInfo';
+import { SwapContext, SwapProvider } from './SwapProvider';
 
 const Advanced: FC = styled(({ className }) => {
   const { status, toggle } = useModal();
