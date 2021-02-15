@@ -1,12 +1,13 @@
-import { Mixer, MixerAssetGroup } from '@webb-tools/sdk-mixer';
-import React, { FC, ReactNode, useCallback } from 'react';
-
-// @ts-ignore
-import Worker from './mixer/mixer.worker';
+import React, { FC, ReactNode } from 'react';
+import { Mixer } from '@webb-tools/sdk-mixer';
+import { useMixer } from '@webb-dapp/react-hooks';
 
 export interface MixerContextData {
-  // eslint-disable-next-line no-unused-vars
-  init(mixerGroups: MixerAssetGroup[]): Promise<Mixer>;
+  initialized: boolean;
+  loading: boolean;
+  mixer: Mixer | null;
+  shouldDestroy: false;
+  init(): Promise<void>;
 }
 
 // ensure that mixer always exist
@@ -21,17 +22,7 @@ interface Props {
  * @description context provider to support mixer.
  */
 export const MixerProvider: FC<Props> = ({ children }) => {
-  const init = (mixerGroups: MixerAssetGroup[]) => {
-    return Mixer.init(new Worker(), mixerGroups);
-  };
+  const mixerResults = useMixer();
 
-  return (
-    <MixerContext.Provider
-      value={{
-        init,
-      }}
-    >
-      {children}
-    </MixerContext.Provider>
-  );
+  return <MixerContext.Provider value={mixerResults}>{children}</MixerContext.Provider>;
 };

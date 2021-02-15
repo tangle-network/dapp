@@ -1,6 +1,6 @@
 import { pageWithFeatures } from '@webb-dapp/react-components/utils/FeaturesGuard/pageWithFeatures';
 import { useSubMenu } from '@webb-dapp/react-environment';
-import { useMixer, useMixerGroups, useMixerProvider } from '@webb-dapp/react-hooks/useMixer';
+import { useMixerProvider } from '@webb-dapp/react-hooks/mixer';
 import { Col, Loading, Row, useTabs } from '@webb-dapp/ui-components';
 import React, { FC, useEffect, useLayoutEffect } from 'react';
 import { useParams } from 'react-router';
@@ -25,9 +25,13 @@ const PageMixer: FC = () => {
   const { changeTabs, currentTab } = useTabs<SwapTabType>('deposit');
   const { changeTabs: changeSubMenu, currentTab: currentSubMenu } = useTabs<SwapTabType>('deposit');
 
-  const mixer = useMixer();
+  const mixer = useMixerProvider();
 
   const params = useParams();
+
+  useEffect(() => {
+    mixer.init();
+  }, []);
 
   useSubMenu({
     active: currentSubMenu,
