@@ -21,9 +21,9 @@ interface Props {
  * @description context provider to support mixer.
  */
 export const MixerProvider: FC<Props> = ({ children }) => {
-  const init = useCallback((mixerGroups: MixerAssetGroup[]) => {
+  const init = (mixerGroups: MixerAssetGroup[]) => {
     return Mixer.init(new Worker(), mixerGroups);
-  }, []);
+  };
 
   return (
     <MixerContext.Provider

@@ -1,12 +1,12 @@
-import React, { FC, useLayoutEffect } from 'react';
+import { pageWithFeatures } from '@webb-dapp/react-components/utils/FeaturesGuard/pageWithFeatures';
+import { useSubMenu } from '@webb-dapp/react-environment';
+import { useMixer, useMixerGroups, useMixerProvider } from '@webb-dapp/react-hooks/useMixer';
+import { Col, Loading, Row, useTabs } from '@webb-dapp/ui-components';
+import React, { FC, useEffect, useLayoutEffect } from 'react';
 import { useParams } from 'react-router';
 
-import { Col, Row, useTabs } from '@webb-dapp/ui-components';
-import { useSubMenu } from '@webb-dapp/react-environment';
-
-import { DepositConsole } from './components/deposit';
 import { LiquidityInformation } from './components/common';
-import { pageWithFeatures } from '@webb-dapp/react-components/utils/FeaturesGuard/pageWithFeatures';
+import { DepositConsole } from './components/deposit';
 
 type SwapTabType = 'deposit' | 'withdraw';
 
@@ -25,6 +25,8 @@ const PageMixer: FC = () => {
   const { changeTabs, currentTab } = useTabs<SwapTabType>('deposit');
   const { changeTabs: changeSubMenu, currentTab: currentSubMenu } = useTabs<SwapTabType>('deposit');
 
+  const mixer = useMixer();
+
   const params = useParams();
 
   useSubMenu({
@@ -39,6 +41,10 @@ const PageMixer: FC = () => {
     }
     /* eslint-disable-next-line */
   }, [changeTabs]);
+
+  if (mixer.loading) {
+    return <Loading />;
+  }
 
   if (currentSubMenu === 'deposit') {
     return <DepositConsole />;
