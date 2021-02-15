@@ -7,11 +7,13 @@ import React, { FC } from 'react';
 import { hot } from 'react-hot-loader/root';
 
 import { config as routerConfig } from './router-config';
+import Theme from '@webb-dapp/ui-components/styles/Theme';
 
 const App: FC = () => {
   return (
     <UIProvider>
       <WebbProvider applicationName={'Webb Dapp'}>
+        <Theme />
         <RouterProvider config={routerConfig} />
         <EventsWatcher />
       </WebbProvider>
