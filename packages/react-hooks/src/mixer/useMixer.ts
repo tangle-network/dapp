@@ -34,7 +34,7 @@ export const useMixer = () => {
 
   const [mixerResult, setMixerResult] = useState<Omit<MixerContextData, 'init'>>({
     initialized: false,
-    loading: true,
+    loading: false,
     mixer: null,
     shouldDestroy: false,
   });
@@ -66,6 +66,7 @@ export const useMixer = () => {
       setMixerResult((p) => ({
         ...p,
         loading: false,
+        initialized: true,
         mixer,
       }));
     } catch (e) {

@@ -30,7 +30,9 @@ const PageMixer: FC = () => {
   const params = useParams();
 
   useEffect(() => {
-    mixer.init();
+    if (!mixer.initialized && !mixer.loading) {
+      mixer.init();
+    }
   }, []);
 
   useSubMenu({
@@ -46,7 +48,7 @@ const PageMixer: FC = () => {
     /* eslint-disable-next-line */
   }, [changeTabs]);
 
-  if (mixer.loading) {
+  if (mixer.loading || !mixer.initialized) {
     return <Loading />;
   }
 
