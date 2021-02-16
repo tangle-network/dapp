@@ -16,7 +16,7 @@ export const useMixerProvider = (): MixerContextData => {
 };
 
 export const useMixerGroups = (): MixerAssetGroup[] => {
-  const mixerGroupIds = useCall<Array<GroupId>>('query.mixer.mixerGroupIds', []);
+  const mixerGroupIds = useCall<Array<GroupId>>('query.mixer.mixerGroupIds', [], undefined, []);
 
   return useMemo(() => {
     return (
