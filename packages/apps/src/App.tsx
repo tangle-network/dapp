@@ -11,7 +11,7 @@ import { hot } from 'react-hot-loader/root';
 
 import { config as routerConfig } from './router-config';
 
-const appLogger = LoggerService.new('app');
+const appLogger = LoggerService.new('App');
 
 const App: FC = () => {
   return (

@@ -6,7 +6,8 @@ import React, { FC, useEffect, useLayoutEffect } from 'react';
 import { useParams } from 'react-router';
 
 import { LiquidityInformation } from './components/common';
-import { DepositConsole } from './components/deposit';
+import { WithdrawConsole } from '@webb-dapp/page-mixer/components/withdraw/withdrawConsole';
+import { DepositConsole } from '@webb-dapp/page-mixer/components/deposit/DepositConsole';
 
 type SwapTabType = 'deposit' | 'withdraw';
 
@@ -62,7 +63,7 @@ const PageMixer: FC = () => {
         <LiquidityInformation />
       </Col>
       <Col span={24}>
-        <DepositConsole />
+        <WithdrawConsole />
       </Col>
     </Row>
   );

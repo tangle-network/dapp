@@ -1,1 +1,1 @@
-export * from './DepositConsole';
+export * from './WithdrawConsole';

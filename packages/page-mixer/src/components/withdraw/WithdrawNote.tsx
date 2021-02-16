@@ -19,7 +19,7 @@ interface DepositInfoProps {
   token2: BalanceInputValue;
 }
 
-export const DepositInfo: FC<DepositInfoProps> = ({ token1, token2 }) => {
+export const WithdrawNote: FC<DepositInfoProps> = ({ token1, token2 }) => {
   const { api } = useApi();
   const balancePairs = useMemo(() => {
     return [
