@@ -4,13 +4,13 @@ import { AppFeatures } from '@webb-dapp/ui-components/types';
 import React from 'react';
 
 type PageConfig = {
-  features: AppFeatures;
+  features: AppFeatures[];
   message?: string;
   title?: string;
 };
 
-export const pageWithFeatures = <T, E extends React.ComponentType<T>>({ features, message, title }: PageConfig) => (
-  Component: E
+export const pageWithFeatures = <T extends object>({ features, message, title }: PageConfig) => (
+  Component: React.ComponentType<T>
 ): React.ComponentType<T> => (props) => {
   const isSupported = useFeatures(features);
 
