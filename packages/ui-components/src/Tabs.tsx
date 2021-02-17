@@ -180,7 +180,7 @@ function Tabs<T>({ active, children, divider = true, onChange, slider = true }: 
     });
 
     return ([headerList, panelList, keyList, disabledList] as unknown) as [ReactNode[], ReactNode[], T[], boolean[]];
-  }, [T, children]);
+  }, [children]);
 
   const activeTabIndex = useMemo(() => {
     return keyList?.findIndex((item) => item === active) ?? 0;

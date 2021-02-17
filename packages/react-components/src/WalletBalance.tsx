@@ -1,4 +1,4 @@
-import { tokenEq, TokenImage, TokenName, UserAssetBalance, UserAssetValue } from '@webb-dapp/react-components';
+import { tokenEq, TokenImage, TokenName } from '@webb-dapp/react-components';
 import { useBalance, useConstants } from '@webb-dapp/react-hooks';
 import { Condition, ScrollCard, Tag } from '@webb-dapp/ui-components';
 import { BareProps } from '@webb-dapp/ui-components/types';
@@ -20,11 +20,6 @@ export const Balance: FC<BalanceProps> = ({ className, currency }) => {
       <TokenImage className={classes.image} currency={currency} />
       <div className={classes.content}>
         <TokenName className={classes.name} currency={currency} />
-        <UserAssetBalance className={classes.balance} currency={currency} />
-        <Condition
-          condition={tokenEq(currency, liquidCurrency)}
-          or={<UserAssetValue className={classes.amount} currency={currency} />}
-        ></Condition>
       </div>
     </div>
   );

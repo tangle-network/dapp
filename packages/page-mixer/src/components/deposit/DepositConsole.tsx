@@ -1,29 +1,72 @@
-import React, { FC, useCallback, useMemo, useEffect } from 'react';
+import { BalanceInputValue, eliminateGap } from '@webb-dapp/react-components';
+import AmountInput from '@webb-dapp/react-components/AmountInput/AmountInput';
+import { TokenInput } from '@webb-dapp/react-components/TokenInput';
+import { useApi, useBalance, useBalanceValidator, useConstants } from '@webb-dapp/react-hooks';
+import { useInputValue } from '@webb-dapp/react-hooks/useInputValue';
+import { Col, Row, SpaceBox } from '@webb-dapp/ui-components';
 import { FixedPointNumber } from '@webb-tools/sdk-core';
 import { CurrencyId } from '@webb-tools/types/interfaces';
+import React, { FC, useCallback, useMemo, useState } from 'react';
 
-import { Row, Col, FlexBox, SpaceBox } from '@webb-dapp/ui-components';
-import { useBalance, useBalanceValidator } from '@webb-dapp/react-hooks';
-import { BalanceInput, BalanceInputValue, tokenEq, eliminateGap, Token } from '@webb-dapp/react-components';
-import { useInputValue } from '@webb-dapp/react-hooks/useInputValue';
-import { TokenInput } from '@webb-dapp/react-components/TokenInput';
-
-import { CardRoot, CardTitle, CardSubTitle, CTxButton, WithdrawnTitle, AmountTitle, CAlert, CMaxBtn } from '../common';
-import { DepositInfo } from './DepositInfo';
+import { CardRoot, CardSubTitle, CardTitle, CTxButton, WithdrawnTitle } from '../common';
 
 export const DepositConsole: FC = () => {
+  const { api } = useApi();
   const [token, setToken, { error: tokenError, setValidator: setTokenValidator }] = useInputValue<BalanceInputValue>({
     amount: 0,
   });
+  const currencies: CurrencyId[] = [];
+
+  // TODO: Grab token balance properly
+  const balance = useBalance(token.token);
 
   useBalanceValidator({
     currency: token.token,
     updateValidator: setTokenValidator,
   });
 
+  const handleSelectCurrencyChange = useCallback(
+    (currency: CurrencyId) => {
+      setToken({ token: currency });
+    },
+    [setToken]
+  );
+
   const clearAmount = useCallback(() => {
-    setToken({ amount: 0 });
-  }, [setToken]);
+    setToken({
+      amount: 0,
+      token: token.token,
+    });
+  }, [token, setToken]);
+
+  const handleMax = useCallback(() => {
+    setToken({
+      amount: balance.toNumber(),
+      token: token.token,
+    });
+  }, [balance, token, setToken]);
+
+  const handleSuccess = useCallback((): void => clearAmount(), [clearAmount]);
+
+  const isDisabled = useMemo(() => {
+    if (!token.amount) return true;
+
+    if (tokenError) return true;
+
+    return false;
+  }, [token, tokenError]);
+
+  const params = useCallback(() => {
+    if (!token.amount || !token.token) return [];
+
+    // TODO: Properly handle params
+    return [
+      token,
+      token,
+      eliminateGap(new FixedPointNumber(token.amount), balance, new FixedPointNumber('0.000001')).toChainData(),
+    ];
+  }, [token, balance]);
+  const { allCurrencies } = useConstants();
 
   const handleTokenCurrencyChange = useCallback(
     (currency: CurrencyId) => {
@@ -32,76 +75,47 @@ export const DepositConsole: FC = () => {
     },
     [setToken, clearAmount]
   );
-
-  const tokenBalance = useBalance(token.token);
-
-  const params = useCallback(() => {
-    // ensure that this must be checked by isDisabled
-    if (!token.token || !token.amount) return [];
-
-    return [token.token, eliminateGap(new FixedPointNumber(token.amount), tokenBalance).toChainData()];
-  }, [token, tokenBalance]);
-
-  const handleSuccess = useCallback(() => {
-    clearAmount();
-  }, [clearAmount]);
-
-  const handleTokenAmountChange = useCallback(
-    ({ amount, token }: Partial<BalanceInputValue>) => {
-      setToken({ amount });
-    },
-    [setToken]
+  const items = useMemo(
+    () => [
+      { amount: 1, id: 1 },
+      { amount: 10, id: 2 },
+      { amount: 100, id: 3 },
+      { amount: 1000, id: 4 },
+    ],
+    []
   );
-
-  const tokenCurrencies = useMemo(() => {
-    // TODO: Add currencyId type for native EDG token and other assets
-    return [];
-  }, []);
-
-  // calculate current max assets amount according to current user balance
-  const handleMax = useCallback(() => {
-    if (!token.token) return;
-
-    const tokenAmount = tokenBalance.toNumber();
-
-    // TODO: Get max balance for the token type
-  }, [setToken, tokenBalance, token]);
+  const [item, setItem] = useState<any>(undefined);
 
   return (
     <CardRoot>
-      <CardTitle>Withdraw</CardTitle>
+      <CardTitle>Deposit</CardTitle>
       <SpaceBox height={16} />
-      <CardSubTitle>Select chain and the amount to withdraw</CardSubTitle>
+      <CardSubTitle>Deposit tokens into the anonymity pool.</CardSubTitle>
       <SpaceBox height={24} />
       <Row gutter={[0, 24]}>
         <Col>
-          <WithdrawnTitle>Withdraw Chain</WithdrawnTitle>
+          <WithdrawnTitle>Deposit Token</WithdrawnTitle>
         </Col>
         <Col span={24}>
-          <TokenInput currencies={tokenCurrencies} onChange={handleTokenCurrencyChange} value={token.token} />
+          <TokenInput currencies={allCurrencies} onChange={handleTokenCurrencyChange} value={token.token} />
         </Col>
-        <>
-          <Col span={24}>
-            <FlexBox justifyContent='space-between'>
-              <AmountTitle>Deposit Note</AmountTitle>
-              <CMaxBtn onClick={handleMax} type='ghost'>
-                MAX
-              </CMaxBtn>
-            </FlexBox>
-          </Col>
-          <Col span={24}>
-            <BalanceInput
-              disabled={!token.token}
-              error={tokenError}
-              onChange={handleTokenAmountChange}
-              showIcon={false}
-              value={token}
-            />
-          </Col>
-        </>
+
+        <Col>
+          <WithdrawnTitle>Amount</WithdrawnTitle>
+        </Col>
         <Col span={24}>
-          <CTxButton method='deposit' onExtrinsicSuccsss={handleSuccess} params={params} section='mixer' size='large'>
-            Withdraw
+          <AmountInput items={items} value={item} onChange={setItem} />
+        </Col>
+        <Col span={24}>
+          <CTxButton
+            disabled={isDisabled}
+            method='withdraw'
+            onInblock={handleSuccess}
+            params={params}
+            section='mixer'
+            size='large'
+          >
+            Deposit
           </CTxButton>
         </Col>
       </Row>

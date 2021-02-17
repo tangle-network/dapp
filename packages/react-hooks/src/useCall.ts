@@ -2,12 +2,15 @@ import { useStore } from '@webb-dapp/react-environment';
 import { get, isEmpty } from 'lodash';
 import { useEffect, useMemo } from 'react';
 import { Observable, Subscription } from 'rxjs';
+import { LoggerService } from '@webb-tools/app-util';
 
 import { ApiRx } from '@polkadot/api';
 
 import { CallParams } from './types';
 import { useApi } from './useApi';
 import { useIsAppReady } from './useIsAppReady';
+
+const logger = LoggerService.get('App');
 
 class Tracker {
   private trackerList: Record<string, { refCount: number; subscriber: Subscription }>;
@@ -63,11 +66,19 @@ export function useCall<T>(
   params: CallParams = [],
   options?: {
     cacheKey: string;
-  }
+  },
+  fallback?: T
 ): T | undefined {
   const { api } = useApi();
   const isAppReady = useIsAppReady();
-  const { get, set } = useStore('apiQuery');
+  const { get: _get, set } = useStore('apiQuery');
+  const get: typeof _get = (...args) => {
+    try {
+      return _get(...args);
+    } catch (e) {
+      return fallback;
+    }
+  };
   const key = useMemo(
     () =>
       `${path}${params.toString() ? '-' + JSON.stringify(params) : ''}${
@@ -78,13 +89,18 @@ export function useCall<T>(
 
   // on changes, re-subscribe
   useEffect(() => {
+    let isSubscribed = true;
     // check if we have a function & that we are mounted
     if (!isAppReady) return;
 
     // if path equal __mock, doesn't du anything
     if (path === '__mock') return;
-
-    tracker.subscribe(api, path, params, key, set);
+    try {
+      tracker.subscribe(api, path, params, key, set);
+    } catch (e) {
+      logger.error(' useCall ', e);
+      return undefined;
+    }
 
     return (): void => tracker.unsubscribe(key);
   }, [isAppReady, api, path, params, key, set]);

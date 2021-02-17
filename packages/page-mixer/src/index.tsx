@@ -1,13 +1,15 @@
-import React, { FC, useLayoutEffect } from 'react';
+import { DepositConsole } from '@webb-dapp/page-mixer/components/deposit/DepositConsole';
+import { WithdrawConsole } from '@webb-dapp/page-mixer/components/withdraw/WithdrawConsole';
+import { pageWithFeatures } from '@webb-dapp/react-components/utils/FeaturesGuard/pageWithFeatures';
+import { useSubMenu } from '@webb-dapp/react-environment';
+import { useMixerProvider } from '@webb-dapp/react-hooks/mixer';
+import { Col, Loading, Row, useTabs } from '@webb-dapp/ui-components';
+import React, { FC, useEffect, useLayoutEffect } from 'react';
 import { useParams } from 'react-router';
 
-import { Col, Row, useTabs } from '@webb-dapp/ui-components';
-import { useSubMenu } from '@webb-dapp/react-environment';
-
-import { DepositConsole } from './components/deposit';
 import { LiquidityInformation } from './components/common';
 
-type SwapTabType = 'deposit' | 'withdraw';
+type MixerTabType = 'deposit' | 'withdraw';
 
 const subMenu = [
   {
@@ -20,11 +22,19 @@ const subMenu = [
   },
 ];
 
-const PageSwap: FC = () => {
-  const { changeTabs, currentTab } = useTabs<SwapTabType>('deposit');
-  const { changeTabs: changeSubMenu, currentTab: currentSubMenu } = useTabs<SwapTabType>('deposit');
+const PageMixer: FC = () => {
+  const { changeTabs, currentTab } = useTabs<MixerTabType>('deposit');
+  const { changeTabs: changeSubMenu, currentTab: currentSubMenu } = useTabs<MixerTabType>('deposit');
+
+  const mixer = useMixerProvider();
 
   const params = useParams();
+
+  useEffect(() => {
+    if (!mixer.initialized && !mixer.loading) {
+      mixer.init();
+    }
+  }, []);
 
   useSubMenu({
     active: currentSubMenu,
@@ -34,10 +44,14 @@ const PageSwap: FC = () => {
 
   useLayoutEffect(() => {
     if (params.tab) {
-      changeTabs(params.tab as SwapTabType);
+      changeTabs(params.tab as MixerTabType);
     }
     /* eslint-disable-next-line */
   }, [changeTabs]);
+
+  if (mixer.loading || !mixer.initialized) {
+    return <Loading />;
+  }
 
   if (currentSubMenu === 'deposit') {
     return <DepositConsole />;
@@ -49,10 +63,13 @@ const PageSwap: FC = () => {
         <LiquidityInformation />
       </Col>
       <Col span={24}>
-        <DepositConsole />
+        <WithdrawConsole />
       </Col>
     </Row>
   );
 };
 
-export default PageSwap;
+export default pageWithFeatures({
+  features: ['mixer'],
+  message: 'The mixer module is not supported on the current chain, please change the current network.',
+})(PageMixer);

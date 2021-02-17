@@ -8,7 +8,7 @@ interface WithdrawInfoProps {
   token: BalanceInputValue;
 }
 
-export const WithdrawInfo: FC<WithdrawInfoProps> = ({ token }) => {
+export const DepositNote: FC<WithdrawInfoProps> = ({ token }) => {
   const lpCurrencyId = useMemo(() => {
     return token.token;
   }, [token]);
