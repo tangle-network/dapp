@@ -105,7 +105,7 @@ export const DepositConsole: FC = () => {
       <SpaceBox height={24} />
       <Row gutter={[0, 24]}>
         <Col>
-          <WithdrawnTitle>Withdraw Token</WithdrawnTitle>
+          <WithdrawnTitle>Deposit Token</WithdrawnTitle>
         </Col>
         <Col span={24}>
           <TokenInput currencies={allCurrencies} onChange={handleTokenCurrencyChange} value={token.token} />
