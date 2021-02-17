@@ -9,7 +9,7 @@ import { LiquidityInformation } from './components/common';
 import { WithdrawConsole } from '@webb-dapp/page-mixer/components/withdraw/withdrawConsole';
 import { DepositConsole } from '@webb-dapp/page-mixer/components/deposit/DepositConsole';
 
-type SwapTabType = 'deposit' | 'withdraw';
+type MixerTabType = 'deposit' | 'withdraw';
 
 const subMenu = [
   {
@@ -23,8 +23,8 @@ const subMenu = [
 ];
 
 const PageMixer: FC = () => {
-  const { changeTabs, currentTab } = useTabs<SwapTabType>('deposit');
-  const { changeTabs: changeSubMenu, currentTab: currentSubMenu } = useTabs<SwapTabType>('deposit');
+  const { changeTabs, currentTab } = useTabs<MixerTabType>('deposit');
+  const { changeTabs: changeSubMenu, currentTab: currentSubMenu } = useTabs<MixerTabType>('deposit');
 
   const mixer = useMixerProvider();
 
@@ -44,7 +44,7 @@ const PageMixer: FC = () => {
 
   useLayoutEffect(() => {
     if (params.tab) {
-      changeTabs(params.tab as SwapTabType);
+      changeTabs(params.tab as MixerTabType);
     }
     /* eslint-disable-next-line */
   }, [changeTabs]);
@@ -71,5 +71,5 @@ const PageMixer: FC = () => {
 
 export default pageWithFeatures({
   features: ['mixer'],
-  message: "Mixer isn't supported on the current cain ,please consider change the current network",
+  message: 'The mixer module is not supported on the current chain, please change the current network.',
 })(PageMixer);

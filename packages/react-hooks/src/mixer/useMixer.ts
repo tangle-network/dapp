@@ -4,6 +4,7 @@ import { LoggerService } from '@webb-tools/app-util';
 import { Mixer, MixerAssetGroup } from '@webb-tools/sdk-mixer';
 import { GroupId } from '@webb-tools/types/interfaces';
 import { useCallback, useContext, useMemo, useState } from 'react';
+
 // @ts-ignore
 import Worker from './mixer.worker';
 
@@ -45,8 +46,7 @@ export const useMixer = () => {
     setCalled(true);
 
     if (called || mixerResult.initialized) {
-      logger.info(`Generating new mixer`);
-      logger.error(`Mixer already initialize`);
+      logger.error(`Mixer already initialized`);
 
       return undefined;
     }

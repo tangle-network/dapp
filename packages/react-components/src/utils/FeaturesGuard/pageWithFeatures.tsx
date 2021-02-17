@@ -24,7 +24,7 @@ export const pageWithFeatures = <T extends object>({ features, message, title }:
         <Information
           variant={'warning'}
           content={
-            message || "This feature isn't supported on the current chain, please consider change the current network"
+            message || "This feature isn't supported on the current chain, please consider changing the current network"
           }
           title={title || "Page isn't supported on the current chain"}
         />
