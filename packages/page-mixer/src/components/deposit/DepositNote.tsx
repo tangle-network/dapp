@@ -4,11 +4,11 @@ import React, { FC, useMemo } from 'react';
 
 import { InfoItem, InfoItemLabel, InfoItemValue, InfoRoot } from '../common';
 
-interface WithdrawInfoProps {
+interface DepositInfoProps {
   token: BalanceInputValue;
 }
 
-export const DepositNote: FC<WithdrawInfoProps> = ({ token }) => {
+export const DepositNote: FC<DepositInfoProps> = ({ token }) => {
   const lpCurrencyId = useMemo(() => {
     return token.token;
   }, [token]);

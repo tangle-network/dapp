@@ -8,7 +8,7 @@ import { FixedPointNumber } from '@webb-tools/sdk-core';
 import { CurrencyId } from '@webb-tools/types/interfaces';
 import React, { FC, useCallback, useMemo, useState } from 'react';
 
-import { CardRoot, CardSubTitle, CardTitle, CTxButton, WithdrawnTitle } from '../common';
+import { CardRoot, CardSubTitle, CardTitle, CTxButton, DepositTitle } from '../common';
 
 export const DepositConsole: FC = () => {
   const { api } = useApi();
@@ -94,14 +94,14 @@ export const DepositConsole: FC = () => {
       <SpaceBox height={24} />
       <Row gutter={[0, 24]}>
         <Col>
-          <WithdrawnTitle>Deposit Token</WithdrawnTitle>
+          <DepositTitle>Deposit Token</DepositTitle>
         </Col>
         <Col span={24}>
           <TokenInput currencies={allCurrencies} onChange={handleTokenCurrencyChange} value={token.token} />
         </Col>
 
         <Col>
-          <WithdrawnTitle>Amount</WithdrawnTitle>
+          <DepositTitle>Amount</DepositTitle>
         </Col>
         <Col span={24}>
           <AmountInput items={items} value={item} onChange={setItem} />
