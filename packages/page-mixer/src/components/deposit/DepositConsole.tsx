@@ -1,4 +1,6 @@
 import { BalanceInputValue, eliminateGap } from '@webb-dapp/react-components';
+import AmountInput from '@webb-dapp/react-components/AmountInput/AmountInput';
+import { TokenInput } from '@webb-dapp/react-components/TokenInput';
 import { useApi, useBalance, useBalanceValidator, useConstants } from '@webb-dapp/react-hooks';
 import { useInputValue } from '@webb-dapp/react-hooks/useInputValue';
 import { Col, Row, SpaceBox } from '@webb-dapp/ui-components';
@@ -7,8 +9,6 @@ import { CurrencyId } from '@webb-tools/types/interfaces';
 import React, { FC, useCallback, useMemo, useState } from 'react';
 
 import { CardRoot, CardSubTitle, CardTitle, CTxButton, WithdrawnTitle } from '../common';
-import { TokenInput } from '@webb-dapp/react-components/TokenInput';
-import AmountInput from '@webb-dapp/react-components/AmountInput/AmountInput';
 
 export const DepositConsole: FC = () => {
   const { api } = useApi();
@@ -77,31 +77,20 @@ export const DepositConsole: FC = () => {
   );
   const items = useMemo(
     () => [
-      {
-        id: 1,
-        amount: 1,
-      },
-      {
-        id: 2,
-        amount: 10,
-      },
-      {
-        id: 3,
-        amount: 100,
-      },
-      {
-        id: 4,
-        amount: 1000,
-      },
+      { amount: 1, id: 1 },
+      { amount: 10, id: 2 },
+      { amount: 100, id: 3 },
+      { amount: 1000, id: 4 },
     ],
     []
   );
   const [item, setItem] = useState<any>(undefined);
+
   return (
     <CardRoot>
       <CardTitle>Deposit</CardTitle>
       <SpaceBox height={16} />
-      <CardSubTitle>Remove liquidity from a pool.</CardSubTitle>
+      <CardSubTitle>Deposit tokens into the anonymity pool.</CardSubTitle>
       <SpaceBox height={24} />
       <Row gutter={[0, 24]}>
         <Col>

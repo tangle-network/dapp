@@ -1,12 +1,11 @@
-import React, { FC, useCallback, useMemo } from 'react';
+import { BalanceInput, BalanceInputValue, eliminateGap } from '@webb-dapp/react-components';
+import { TokenInput } from '@webb-dapp/react-components/TokenInput';
+import { useBalance, useBalanceValidator, useConstants } from '@webb-dapp/react-hooks';
+import { useInputValue } from '@webb-dapp/react-hooks/useInputValue';
+import { Col, FlexBox, Row, SpaceBox } from '@webb-dapp/ui-components';
 import { FixedPointNumber } from '@webb-tools/sdk-core';
 import { CurrencyId } from '@webb-tools/types/interfaces';
-
-import { Col, FlexBox, Row, SpaceBox } from '@webb-dapp/ui-components';
-import { useBalance, useBalanceValidator, useConstants } from '@webb-dapp/react-hooks';
-import { BalanceInput, BalanceInputValue, eliminateGap } from '@webb-dapp/react-components';
-import { useInputValue } from '@webb-dapp/react-hooks/useInputValue';
-import { TokenInput } from '@webb-dapp/react-components/TokenInput';
+import React, { FC, useCallback } from 'react';
 
 import { AmountTitle, CardRoot, CardSubTitle, CardTitle, CMaxBtn, CTxButton, WithdrawnTitle } from '../common';
 

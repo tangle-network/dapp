@@ -1,3 +1,5 @@
+import { DepositConsole } from '@webb-dapp/page-mixer/components/deposit/DepositConsole';
+import { WithdrawConsole } from '@webb-dapp/page-mixer/components/withdraw/WithdrawConsole';
 import { pageWithFeatures } from '@webb-dapp/react-components/utils/FeaturesGuard/pageWithFeatures';
 import { useSubMenu } from '@webb-dapp/react-environment';
 import { useMixerProvider } from '@webb-dapp/react-hooks/mixer';
@@ -6,8 +8,6 @@ import React, { FC, useEffect, useLayoutEffect } from 'react';
 import { useParams } from 'react-router';
 
 import { LiquidityInformation } from './components/common';
-import { WithdrawConsole } from '@webb-dapp/page-mixer/components/withdraw/withdrawConsole';
-import { DepositConsole } from '@webb-dapp/page-mixer/components/deposit/DepositConsole';
 
 type MixerTabType = 'deposit' | 'withdraw';
 
