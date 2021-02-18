@@ -68,7 +68,7 @@ const Main: FC<MainLayoutProps> = memo(({ children, enableCollapse = true, sideb
     return (
       <Page>
         {result && (
-          <CAlert message={`${t('IP_ADDRESS')} ${result['city']}, ${result['region']} with IP: ${result['ip']}`} />
+          <CAlert message={`${t('IP_ADDRESS')} ${result['country']}, with IP: ${result['ip']}`} />
         )}
         <Page.Title
           breadcrumb={breadcrumb}
