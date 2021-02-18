@@ -28,7 +28,7 @@ interface MainLayoutProps {
 const Main: FC<MainLayoutProps> = memo(({ children, enableCollapse = true, sidebar }) => {
   const { t } = useTranslation('react-components');
   const { init } = useApi();
-  const result = useFetch('https://ipapi.co/json/');
+  const result = useFetch('https://api.myip.com');
   const { allEndpoints, endpoint } = useSetting();
   const screen = useBreakpoint();
   const isAppReady = useIsAppReady();
