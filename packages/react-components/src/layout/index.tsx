@@ -1,5 +1,5 @@
 import { useStore } from '@webb-dapp/react-environment';
-import { useApi, useBreakpoint, useIsAppReady, useSetting, useTranslation } from '@webb-dapp/react-hooks';
+import { useApi, useBreakpoint, useFetch, useIsAppReady, useSetting, useTranslation } from '@webb-dapp/react-hooks';
 import { Alert, Page, PageLoading, styled, SubMenu } from '@webb-dapp/ui-components';
 import { noop } from 'lodash';
 import React, { FC, memo, useEffect, useMemo } from 'react';
@@ -28,6 +28,7 @@ interface MainLayoutProps {
 const Main: FC<MainLayoutProps> = memo(({ children, enableCollapse = true, sidebar }) => {
   const { t } = useTranslation('react-components');
   const { init } = useApi();
+  const result = useFetch('https://api.myip.com');
   const { allEndpoints, endpoint } = useSetting();
   const screen = useBreakpoint();
   const isAppReady = useIsAppReady();
@@ -66,7 +67,9 @@ const Main: FC<MainLayoutProps> = memo(({ children, enableCollapse = true, sideb
 
     return (
       <Page>
-        {/* <CAlert message={t('TESTNET_SCAMES')} /> */}
+        {result && (
+          <CAlert message={`${t('IP_ADDRESS')} ${result['country']}, with IP: ${result['ip']}`} />
+        )}
         <Page.Title
           breadcrumb={breadcrumb}
           extra={<AccountBar />}
@@ -81,7 +84,7 @@ const Main: FC<MainLayoutProps> = memo(({ children, enableCollapse = true, sideb
         <Page.Content>{children}</Page.Content>
       </Page>
     );
-  }, [isAppReady, ui.pageTitle, ui.subMenu, breadcrumb, children]);
+  }, [isAppReady, t, breadcrumb, ui.subMenu, ui.pageTitle, children]);
 
   return (
     <MainContainer>

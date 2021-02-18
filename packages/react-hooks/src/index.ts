@@ -6,6 +6,7 @@ const { useBreakpoint } = Grid;
 
 export { useRequest, useBreakpoint, useTranslation };
 
+export * from './useFetch';
 // system
 export * from './useAccounts';
 export * from './useApi';
