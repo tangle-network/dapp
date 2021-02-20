@@ -16,6 +16,7 @@ module.exports = {
     'react/jsx-fragments': 'off',
     'react/jsx-max-props-per-line': 'off',
     'react/jsx-sort-props': 'off',
+    'padding-line-between-statements': 'off',
   },
   extends: ['eslint:recommended', 'prettier/react', 'prettier/@typescript-eslint', 'plugin:prettier/recommended'],
 };

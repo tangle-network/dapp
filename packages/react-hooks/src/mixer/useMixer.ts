@@ -28,11 +28,27 @@ export const useMixerGroups = (): MixerAssetGroup[] => {
   }, [mixerGroupIds]);
 };
 
+export const useMixerInfos = (): any[] => {
+  const mixerGroups = useCall<Array<any>>('query.mixer.mixerGroups.entries', [], undefined, []);
+
+  return useMemo(() => {
+    return (
+      mixerGroups?.map((mixerInfo) => {
+        return {
+          key: mixerInfo[0],
+          tree: mixerInfo[1],
+        };
+      }) ?? []
+    );
+  }, [mixerGroups]);
+};
+
 const logger = LoggerService.new('MixerUsage');
 
 export const useMixer = () => {
   const mixerAssetGroup = useMixerGroups();
-
+  const mixerInfo = useMixerInfos();
+  console.log(mixerInfo);
   const [mixerResult, setMixerResult] = useState<Omit<MixerContextData, 'init'>>({
     initialized: false,
     loading: false,

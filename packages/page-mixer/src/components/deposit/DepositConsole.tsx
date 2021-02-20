@@ -70,6 +70,7 @@ export const DepositConsole: FC = () => {
 
   const handleTokenCurrencyChange = useCallback(
     (currency: CurrencyId) => {
+      console.log(currency);
       setToken({ token: currency });
       clearAmount();
     },

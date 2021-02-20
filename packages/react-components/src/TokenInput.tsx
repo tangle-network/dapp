@@ -55,6 +55,7 @@ const Current = styled.div`
 const CurrencyItem: FC<CurrencyItemProps> = ({ currency, disableZeroCurrency, onClick, ...props }) => {
   const balance = useBalance(currency);
   const _onClick = useCallback(() => {
+    console.log(onClick);
     if (onClick) {
       onClick(currency);
     }
@@ -64,7 +65,7 @@ const CurrencyItem: FC<CurrencyItemProps> = ({ currency, disableZeroCurrency, on
     <MenuItem
       {...props}
       className='token-input__menu__item'
-      disabled={disableZeroCurrency ? balance.isZero() : false}
+      // disabled={disableZeroCurrency ? balance.isZero() : false}
       key={`token-input-${currency.toString()}`}
       onClick={_onClick}
     >
@@ -78,7 +79,7 @@ export const TokenInput: FC<TokenInputProps> = styled<FC<TokenInputProps>>(
   ({ className, currencies, disableZeroCurrency = true, error, onChange, placeholder, value }) => {
     const [focused, setFocused] = useState<boolean>(false);
     const [visible, setVisible] = useState<boolean>(false);
-
+    console.log('token', value);
     const onFocus: FocusEventHandler<HTMLElement> = useCallback(() => {
       setFocused(true);
     }, [setFocused]);
