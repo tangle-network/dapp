@@ -48,7 +48,7 @@ const logger = LoggerService.new('MixerUsage');
 export const useMixer = () => {
   const mixerAssetGroup = useMixerGroups();
   const mixerInfo = useMixerInfos();
-  console.log(mixerInfo);
+
   const [mixerResult, setMixerResult] = useState<Omit<MixerContextData, 'init'>>({
     initialized: false,
     loading: false,

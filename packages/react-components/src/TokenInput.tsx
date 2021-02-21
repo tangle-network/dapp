@@ -7,6 +7,7 @@ import React, { FC, FocusEventHandler, useCallback, useState } from 'react';
 
 import { BalanceInputRoot } from './BalanceInput';
 import { Token } from './Token';
+import { UserBalance } from './UserBalance';
 
 interface TokenInputProps extends BareProps {
   error?: string;
@@ -55,7 +56,6 @@ const Current = styled.div`
 const CurrencyItem: FC<CurrencyItemProps> = ({ currency, disableZeroCurrency, onClick, ...props }) => {
   const balance = useBalance(currency);
   const _onClick = useCallback(() => {
-    console.log(onClick);
     if (onClick) {
       onClick(currency);
     }
@@ -70,7 +70,7 @@ const CurrencyItem: FC<CurrencyItemProps> = ({ currency, disableZeroCurrency, on
       onClick={_onClick}
     >
       <Token className='token-input__menu__item__currency' currency={currency} icon />
-      {/* <UserBalance className='token-input__menu__item__balance' currency={currency} showCurrencyName /> */}
+      <UserBalance className='token-input__menu__item__balance' currency={currency} showCurrencyName />
     </MenuItem>
   );
 };
@@ -79,7 +79,7 @@ export const TokenInput: FC<TokenInputProps> = styled<FC<TokenInputProps>>(
   ({ className, currencies, disableZeroCurrency = true, error, onChange, placeholder, value }) => {
     const [focused, setFocused] = useState<boolean>(false);
     const [visible, setVisible] = useState<boolean>(false);
-    console.log('token', value);
+
     const onFocus: FocusEventHandler<HTMLElement> = useCallback(() => {
       setFocused(true);
     }, [setFocused]);
@@ -99,6 +99,7 @@ export const TokenInput: FC<TokenInputProps> = styled<FC<TokenInputProps>>(
       [onChange]
     );
 
+    console.log('Value', value);
     return (
       <BalanceInputRoot
         className={className}
@@ -131,7 +132,7 @@ export const TokenInput: FC<TokenInputProps> = styled<FC<TokenInputProps>>(
             {value ? (
               <Current>
                 <Token className='token-input__menu__item__currency' currency={value} icon />
-                {/* <UserBalance className='token-input__menu__item__balance' currency={value} showCurrencyName /> */}
+                <UserBalance className='token-input__menu__item__balance' currency={value} showCurrencyName />
               </Current>
             ) : (
               <div className='token-input__content__content'>{placeholder || 'Please Select Token'}</div>

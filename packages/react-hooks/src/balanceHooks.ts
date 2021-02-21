@@ -4,6 +4,8 @@ import { Balance, CurrencyId } from '@webb-tools/types/interfaces';
 import { useEffect, useMemo, useState } from 'react';
 import { combineLatest, Observable } from 'rxjs';
 
+import { Account } from '@polkadot/types/interfaces';
+
 import { AccountLike } from './types';
 import { useAccounts } from './useAccounts';
 import { useApi } from './useApi';
@@ -21,9 +23,16 @@ export type BalanceData = { currency: CurrencyId; balance: FixedPointNumber };
 export const useBalance = (currency?: CurrencyId, account?: AccountLike): FixedPointNumber => {
   const { active } = useAccounts();
   const _account = useMemo(() => account || (active ? active.address : '_'), [account, active]);
-  // FIXME: neads api-derive package.
-  // const balance = useCall<Balance>('derive.currencies.balance', [_account, currency]);
-  const balance = null;
+  console.log(_account);
+  const acc = useCall<Account>('derive.balances.all', [_account]);
+  let balance: FixedPointNumber;
+  console.log('Account');
+  if (acc) {
+    balance = new FixedPointNumber(acc.freeBalance.toString());
+  } else {
+    balance = FixedPointNumber.ZERO;
+  }
+  // const balance = null;
   const result = useMemo<FixedPointNumber>((): FixedPointNumber => {
     if (!currency || !balance) {
       return FixedPointNumber.ZERO;

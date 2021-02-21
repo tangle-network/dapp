@@ -4,47 +4,34 @@ import { TokenInput } from '@webb-dapp/react-components/TokenInput';
 import { useApi, useBalance, useBalanceValidator, useConstants } from '@webb-dapp/react-hooks';
 import { useInputValue } from '@webb-dapp/react-hooks/useInputValue';
 import { Col, Row, SpaceBox } from '@webb-dapp/ui-components';
-import { FixedPointNumber } from '@webb-tools/sdk-core';
+import { FixedPointNumber, Token, token2CurrencyId } from '@webb-tools/sdk-core';
 import { CurrencyId } from '@webb-tools/types/interfaces';
 import React, { FC, useCallback, useMemo, useState } from 'react';
 
 import { CardRoot, CardSubTitle, CardTitle, CTxButton, DepositTitle } from '../common';
 
+class EDGToken implements CurrencyId {}
+
 export const DepositConsole: FC = () => {
   const { api } = useApi();
   const [token, setToken, { error: tokenError, setValidator: setTokenValidator }] = useInputValue<BalanceInputValue>({
     amount: 0,
+    token: token2CurrencyId(
+      api,
+      new Token({ name: 'EDG', symbol: 'EDG', chain: 'edgeware', amount: 0, precision: 18 })
+    ),
   });
-  const currencies: CurrencyId[] = [];
 
   // TODO: Grab token balance properly
   const balance = useBalance(token.token);
 
-  useBalanceValidator({
-    currency: token.token,
-    updateValidator: setTokenValidator,
-  });
-
-  const handleSelectCurrencyChange = useCallback(
-    (currency: CurrencyId) => {
-      setToken({ token: currency });
-    },
-    [setToken]
-  );
-
+  console.log(token);
   const clearAmount = useCallback(() => {
     setToken({
       amount: 0,
       token: token.token,
     });
   }, [token, setToken]);
-
-  const handleMax = useCallback(() => {
-    setToken({
-      amount: balance.toNumber(),
-      token: token.token,
-    });
-  }, [balance, token, setToken]);
 
   const handleSuccess = useCallback((): void => clearAmount(), [clearAmount]);
 
@@ -56,21 +43,10 @@ export const DepositConsole: FC = () => {
     return false;
   }, [token, tokenError]);
 
-  const params = useCallback(() => {
-    if (!token.amount || !token.token) return [];
-
-    // TODO: Properly handle params
-    return [
-      token,
-      token,
-      eliminateGap(new FixedPointNumber(token.amount), balance, new FixedPointNumber('0.000001')).toChainData(),
-    ];
-  }, [token, balance]);
   const { allCurrencies } = useConstants();
 
   const handleTokenCurrencyChange = useCallback(
     (currency: CurrencyId) => {
-      console.log(currency);
       setToken({ token: currency });
       clearAmount();
     },
@@ -98,7 +74,13 @@ export const DepositConsole: FC = () => {
           <DepositTitle>Deposit Token</DepositTitle>
         </Col>
         <Col span={24}>
-          <TokenInput currencies={allCurrencies} onChange={handleTokenCurrencyChange} value={token.token} />
+          <TokenInput
+            currencies={allCurrencies.filter((c) => {
+              return c.toHuman().Token == 'EDG';
+            })}
+            onChange={handleTokenCurrencyChange}
+            value={token2CurrencyId(api, token)}
+          />
         </Col>
 
         <Col>
@@ -110,9 +92,9 @@ export const DepositConsole: FC = () => {
         <Col span={24}>
           <CTxButton
             disabled={isDisabled}
-            method='withdraw'
+            method='deposit'
             onInblock={handleSuccess}
-            params={params}
+            params={[]}
             section='mixer'
             size='large'
           >
