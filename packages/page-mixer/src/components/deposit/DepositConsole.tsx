@@ -10,8 +10,6 @@ import React, { FC, useCallback, useMemo, useState } from 'react';
 
 import { CardRoot, CardSubTitle, CardTitle, CTxButton, DepositTitle } from '../common';
 
-class EDGToken implements CurrencyId {}
-
 export const DepositConsole: FC = () => {
   const { api } = useApi();
   const [token, setToken, { error: tokenError, setValidator: setTokenValidator }] = useInputValue<BalanceInputValue>({
@@ -21,7 +19,6 @@ export const DepositConsole: FC = () => {
       new Token({ name: 'EDG', symbol: 'EDG', chain: 'edgeware', amount: 0, precision: 18 })
     ),
   });
-
   // TODO: Grab token balance properly
   const balance = useBalance(token.token);
 
@@ -62,7 +59,7 @@ export const DepositConsole: FC = () => {
     []
   );
   const [item, setItem] = useState<any>(undefined);
-
+  console.log(token);
   return (
     <CardRoot>
       <CardTitle>Deposit</CardTitle>
@@ -79,7 +76,7 @@ export const DepositConsole: FC = () => {
               return c.toHuman().Token == 'EDG';
             })}
             onChange={handleTokenCurrencyChange}
-            value={token2CurrencyId(api, token)}
+            value={token.token}
           />
         </Col>
 
