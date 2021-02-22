@@ -23,10 +23,10 @@ export type BalanceData = { currency: CurrencyId; balance: FixedPointNumber };
 export const useBalance = (currency?: CurrencyId, account?: AccountLike): FixedPointNumber => {
   const { active } = useAccounts();
   const _account = useMemo(() => account || (active ? active.address : '_'), [account, active]);
-  console.log(_account);
+
   const acc = useCall<Account>('derive.balances.all', [_account]);
   let balance: FixedPointNumber;
-  console.log('Account');
+
   if (acc) {
     balance = new FixedPointNumber(acc.freeBalance.toString());
   } else {

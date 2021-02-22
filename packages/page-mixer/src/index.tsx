@@ -30,11 +30,11 @@ const PageMixer: FC = () => {
 
   const params = useParams();
 
-  useEffect(() => {
-    if (!mixer.initialized && !mixer.loading) {
-      mixer.init();
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (!mixer.initialized && !mixer.loading) {
+  //     mixer.init();
+  //   }
+  // }, []);
 
   useSubMenu({
     active: currentSubMenu,
@@ -49,9 +49,9 @@ const PageMixer: FC = () => {
     /* eslint-disable-next-line */
   }, [changeTabs]);
 
-  if (mixer.loading || !mixer.initialized) {
-    return <Loading />;
-  }
+  // if (mixer.loading || !mixer.initialized) {
+  //   return <Loading />;
+  // }
 
   if (currentSubMenu === 'deposit') {
     return <DepositConsole />;

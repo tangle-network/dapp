@@ -24,8 +24,6 @@ export const UserBalance: FC<Props> = ({
 }) => {
   const { active } = useAccounts();
   const _account = account !== undefined ? account : active ? active.address : '';
-  // FIXME: need fix api-derive type
-  console.log('Account', _account);
   const result = useCall<Balance>('derive.balances.all', [_account]);
 
   if (!result) return null;
