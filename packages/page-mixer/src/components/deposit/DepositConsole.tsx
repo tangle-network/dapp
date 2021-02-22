@@ -1,7 +1,7 @@
 import { BalanceInputValue } from '@webb-dapp/react-components';
 import AmountInput from '@webb-dapp/react-components/AmountInput/AmountInput';
 import { TokenInput } from '@webb-dapp/react-components/TokenInput';
-import { useApi, useConstants, useMixer } from '@webb-dapp/react-hooks';
+import { useApi, useConstants, useMixerProvider , useMixerInfos} from '@webb-dapp/react-hooks';
 import { useInputValue } from '@webb-dapp/react-hooks/useInputValue';
 import { Col, Row, SpaceBox } from '@webb-dapp/ui-components';
 import { Token, token2CurrencyId } from '@webb-tools/sdk-core';
