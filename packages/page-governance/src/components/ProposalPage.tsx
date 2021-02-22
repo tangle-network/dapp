@@ -8,8 +8,6 @@ import { CouncilesTab } from './CouncliTab';
 import { ProposalCard } from './ProposalCard';
 
 const ProposalList: FC<{ council: string }> = ({ council }) => {
-  console.log(council);
-
   const proposals = useProposals(council);
 
   return (

@@ -7,6 +7,7 @@ import React, { FC, FocusEventHandler, useCallback, useState } from 'react';
 
 import { BalanceInputRoot } from './BalanceInput';
 import { Token } from './Token';
+import { UserBalance } from './UserBalance';
 
 interface TokenInputProps extends BareProps {
   error?: string;
@@ -64,12 +65,12 @@ const CurrencyItem: FC<CurrencyItemProps> = ({ currency, disableZeroCurrency, on
     <MenuItem
       {...props}
       className='token-input__menu__item'
-      disabled={disableZeroCurrency ? balance.isZero() : false}
+      // disabled={disableZeroCurrency ? balance.isZero() : false}
       key={`token-input-${currency.toString()}`}
       onClick={_onClick}
     >
       <Token className='token-input__menu__item__currency' currency={currency} icon />
-      {/* <UserBalance className='token-input__menu__item__balance' currency={currency} showCurrencyName /> */}
+      <UserBalance className='token-input__menu__item__balance' currency={currency} showCurrencyName />
     </MenuItem>
   );
 };
@@ -98,6 +99,7 @@ export const TokenInput: FC<TokenInputProps> = styled<FC<TokenInputProps>>(
       [onChange]
     );
 
+    console.log('Value', value);
     return (
       <BalanceInputRoot
         className={className}
@@ -130,7 +132,7 @@ export const TokenInput: FC<TokenInputProps> = styled<FC<TokenInputProps>>(
             {value ? (
               <Current>
                 <Token className='token-input__menu__item__currency' currency={value} icon />
-                {/* <UserBalance className='token-input__menu__item__balance' currency={value} showCurrencyName /> */}
+                <UserBalance className='token-input__menu__item__balance' currency={value} showCurrencyName />
               </Current>
             ) : (
               <div className='token-input__content__content'>{placeholder || 'Please Select Token'}</div>

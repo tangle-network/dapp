@@ -2,8 +2,10 @@ import { MixerContext, MixerContextData } from '@webb-dapp/react-environment';
 import { useCall } from '@webb-dapp/react-hooks/useCall';
 import { LoggerService } from '@webb-tools/app-util';
 import { Mixer, MixerAssetGroup } from '@webb-tools/sdk-mixer';
-import { GroupId } from '@webb-tools/types/interfaces';
+import { GroupId, MixerInfo } from '@webb-tools/types/interfaces';
 import { useCallback, useContext, useMemo, useState } from 'react';
+
+import { StorageKey } from '@polkadot/types';
 
 // @ts-ignore
 import Worker from './mixer.worker';
@@ -28,10 +30,19 @@ export const useMixerGroups = (): MixerAssetGroup[] => {
   }, [mixerGroupIds]);
 };
 
+export const useMixerInfos = (): [StorageKey, MixerInfo][] => {
+  const mixerGroups = useCall<Array<[StorageKey, MixerInfo]>>('query.mixer.mixerGroups.entries', [], undefined, []);
+
+  return useMemo(() => {
+    return mixerGroups || [];
+  }, [mixerGroups]);
+};
+
 const logger = LoggerService.new('MixerUsage');
 
 export const useMixer = () => {
-  const mixerAssetGroup = useMixerGroups();
+  const mixerIds = useMixerGroups();
+  const mixerInfos = useMixerInfos();
 
   const [mixerResult, setMixerResult] = useState<Omit<MixerContextData, 'init'>>({
     initialized: false,
@@ -58,15 +69,15 @@ export const useMixer = () => {
     }));
 
     try {
-      const mixer = await Mixer.init(new Worker(), mixerAssetGroup);
+      const mixer = await Mixer.init(new Worker(), mixerIds);
 
       logger.info(`Generated new mixer`);
       logger.debug(`Generated Mixer `, mixer);
 
       setMixerResult((p) => ({
         ...p,
-        loading: false,
         initialized: true,
+        loading: false,
         mixer,
       }));
     } catch (e) {
@@ -75,13 +86,14 @@ export const useMixer = () => {
       setCalled(false);
       setMixerResult((p) => ({
         ...p,
-
         loading: false,
       }));
     }
-  }, [mixerAssetGroup, mixerResult]);
+  }, [mixerIds, mixerResult, called, setCalled]);
   return {
-    ...mixerResult,
     init,
+    mixerIds,
+    mixerInfos,
+    ...mixerResult,
   };
 };

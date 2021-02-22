@@ -1,8 +1,8 @@
 import { useStore } from '@webb-dapp/react-environment';
+import { LoggerService } from '@webb-tools/app-util';
 import { get, isEmpty } from 'lodash';
 import { useEffect, useMemo } from 'react';
 import { Observable, Subscription } from 'rxjs';
-import { LoggerService } from '@webb-tools/app-util';
 
 import { ApiRx } from '@polkadot/api';
 

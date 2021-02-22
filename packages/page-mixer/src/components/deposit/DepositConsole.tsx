@@ -1,10 +1,10 @@
-import { BalanceInputValue, eliminateGap } from '@webb-dapp/react-components';
+import { BalanceInputValue } from '@webb-dapp/react-components';
 import AmountInput from '@webb-dapp/react-components/AmountInput/AmountInput';
 import { TokenInput } from '@webb-dapp/react-components/TokenInput';
-import { useApi, useBalance, useBalanceValidator, useConstants } from '@webb-dapp/react-hooks';
+import { useApi, useConstants, useMixerProvider , useMixerInfos} from '@webb-dapp/react-hooks';
 import { useInputValue } from '@webb-dapp/react-hooks/useInputValue';
 import { Col, Row, SpaceBox } from '@webb-dapp/ui-components';
-import { FixedPointNumber } from '@webb-tools/sdk-core';
+import { Token, token2CurrencyId } from '@webb-tools/sdk-core';
 import { CurrencyId } from '@webb-tools/types/interfaces';
 import React, { FC, useCallback, useMemo, useState } from 'react';
 
@@ -12,25 +12,14 @@ import { CardRoot, CardSubTitle, CardTitle, CTxButton, DepositTitle } from '../c
 
 export const DepositConsole: FC = () => {
   const { api } = useApi();
-  const [token, setToken, { error: tokenError, setValidator: setTokenValidator }] = useInputValue<BalanceInputValue>({
+  const  mixerInfos  = useMixerInfos();
+  const [token, setToken, { error: tokenError }] = useInputValue<BalanceInputValue>({
     amount: 0,
+    token: token2CurrencyId(
+      api,
+      new Token({ amount: 0, chain: 'edgeware', name: 'EDG', precision: 18, symbol: 'EDG' })
+    ),
   });
-  const currencies: CurrencyId[] = [];
-
-  // TODO: Grab token balance properly
-  const balance = useBalance(token.token);
-
-  useBalanceValidator({
-    currency: token.token,
-    updateValidator: setTokenValidator,
-  });
-
-  const handleSelectCurrencyChange = useCallback(
-    (currency: CurrencyId) => {
-      setToken({ token: currency });
-    },
-    [setToken]
-  );
 
   const clearAmount = useCallback(() => {
     setToken({
@@ -39,33 +28,15 @@ export const DepositConsole: FC = () => {
     });
   }, [token, setToken]);
 
-  const handleMax = useCallback(() => {
-    setToken({
-      amount: balance.toNumber(),
-      token: token.token,
-    });
-  }, [balance, token, setToken]);
-
   const handleSuccess = useCallback((): void => clearAmount(), [clearAmount]);
 
   const isDisabled = useMemo(() => {
-    if (!token.amount) return true;
-
+    if (typeof token.amount === 'undefined') return true;
     if (tokenError) return true;
 
     return false;
   }, [token, tokenError]);
 
-  const params = useCallback(() => {
-    if (!token.amount || !token.token) return [];
-
-    // TODO: Properly handle params
-    return [
-      token,
-      token,
-      eliminateGap(new FixedPointNumber(token.amount), balance, new FixedPointNumber('0.000001')).toChainData(),
-    ];
-  }, [token, balance]);
   const { allCurrencies } = useConstants();
 
   const handleTokenCurrencyChange = useCallback(
@@ -75,16 +46,26 @@ export const DepositConsole: FC = () => {
     },
     [setToken, clearAmount]
   );
-  const items = useMemo(
-    () => [
-      { amount: 1, id: 1 },
-      { amount: 10, id: 2 },
-      { amount: 100, id: 3 },
-      { amount: 1000, id: 4 },
-    ],
-    []
-  );
+  const items = useMemo(() => {
+    return mixerInfos.map((info) => {
+      return {
+        amount: Number(info[1]['fixed_deposit_size']),
+        // TODO: Make this more clearer, this is a number for the GroupId
+        // but we should ensure that we have classes implementing these types
+        // so that we can marshall properly
+        id: Number(info[0].toHuman()[0]),
+      };
+    });
+  }, [mixerInfos]);
   const [item, setItem] = useState<any>(undefined);
+
+  const params = useCallback(() => {
+    // ensure that this must be checked by isDisabled
+    if (!token.token || typeof token.amount === 'undefined') return [];
+    let groupId = mixerInfos.find((g) => g[1]['fixed_deposit_size'].toNumber() === item);
+    let noteCommitment = null;
+    return [groupId, noteCommitment];
+  }, [token, item, mixerInfos]);
 
   return (
     <CardRoot>
@@ -97,7 +78,13 @@ export const DepositConsole: FC = () => {
           <DepositTitle>Deposit Token</DepositTitle>
         </Col>
         <Col span={24}>
-          <TokenInput currencies={allCurrencies} onChange={handleTokenCurrencyChange} value={token.token} />
+          <TokenInput
+            currencies={allCurrencies.filter((c) => {
+              return c.toHuman().Token == 'EDG';
+            })}
+            onChange={handleTokenCurrencyChange}
+            value={token.token}
+          />
         </Col>
 
         <Col>
@@ -109,7 +96,7 @@ export const DepositConsole: FC = () => {
         <Col span={24}>
           <CTxButton
             disabled={isDisabled}
-            method='withdraw'
+            method='deposit'
             onInblock={handleSuccess}
             params={params}
             section='mixer'

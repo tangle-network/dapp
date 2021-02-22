@@ -1,6 +1,6 @@
-import React, { FC, ReactNode } from 'react';
-import { Mixer } from '@webb-tools/sdk-mixer';
 import { useMixer } from '@webb-dapp/react-hooks';
+import { Mixer } from '@webb-tools/sdk-mixer';
+import React, { FC, ReactNode } from 'react';
 
 export interface MixerContextData {
   initialized: boolean;

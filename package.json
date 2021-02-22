@@ -6,16 +6,16 @@
     "packages/*"
   ],
   "engines": {
-    "node": ">=12.x",
+    "node": ">=12.7.x",
     "yarn": "1.x"
   },
   "resolutions": {
     "@polkadot/api": "^3.4",
-    "@webb-tools/api": "^0.1.2-33",
-    "@webb-tools/types": "^0.1.2-33",
-    "@webb-tools/app-util": "^0.1.2-33",
-    "@webb-tools/sdk-core": "^0.1.2-33",
-    "@webb-tools/sdk-mixer": "^0.1.2-33",
+    "@webb-tools/api": "^0.1.2-34",
+    "@webb-tools/types": "^0.1.2-34",
+    "@webb-tools/app-util": "^0.1.2-34",
+    "@webb-tools/sdk-core": "^0.1.2-34",
+    "@webb-tools/sdk-mixer": "^0.1.2-34",
     "@webb-tools/mixer-client": "^0.0.7"
   },
   "scripts": {
