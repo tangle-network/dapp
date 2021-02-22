@@ -59,6 +59,14 @@ export const DepositConsole: FC = () => {
   }, [mixerInfos]);
   const [item, setItem] = useState<any>(undefined);
 
+  const params = useCallback(() => {
+    // ensure that this must be checked by isDisabled
+    if (!token.token || typeof token.amount === 'undefined') return [];
+    let groupId = mixerInfos.find((g) => g[1]['fixed_deposit_size'].toNumber() === item);
+    let noteCommitment = null;
+    return [groupId, noteCommitment];
+  }, [token, item, mixerInfos]);
+
   return (
     <CardRoot>
       <CardTitle>Deposit</CardTitle>
@@ -90,7 +98,7 @@ export const DepositConsole: FC = () => {
             disabled={isDisabled}
             method='deposit'
             onInblock={handleSuccess}
-            params={[]}
+            params={params}
             section='mixer'
             size='large'
           >
