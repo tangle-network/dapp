@@ -12,7 +12,7 @@ import { CardRoot, CardSubTitle, CardTitle, CTxButton, DepositTitle } from '../c
 
 export const DepositConsole: FC = () => {
   const { api } = useApi();
-  const { mixerInfos } = useMixer();
+  const  mixerInfos  = useMixerInfos();
   const [token, setToken, { error: tokenError }] = useInputValue<BalanceInputValue>({
     amount: 0,
     token: token2CurrencyId(
