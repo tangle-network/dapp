@@ -10,7 +10,9 @@ import React, { FC, useCallback, useMemo, useState } from 'react';
 
 import { CardRoot, CardSubTitle, CardTitle, CTxButton, DepositTitle } from '../common';
 import { isSupportedCurrency } from '@webb-dapp/react-hooks/utils/isSupportedCurrency';
+import { LoggerService } from '@webb-tools/app-util';
 
+const depositLogger = LoggerService.get('Deposit');
 export const DepositConsole: FC = () => {
   const { api } = useApi();
   const mixerInfos = useMixerInfos();
@@ -48,7 +50,7 @@ export const DepositConsole: FC = () => {
     [setToken, clearAmount]
   );
   const items = useMemo(() => {
-    return mixerInfos.map((info) => {
+    const items = mixerInfos.map((info) => {
       return {
         amount: Number(info[1]['fixed_deposit_size']),
         // TODO: Make this more clearer, this is a number for the GroupId
@@ -57,14 +59,29 @@ export const DepositConsole: FC = () => {
         id: Number(info[0].toHuman()[0]),
       };
     });
+    depositLogger.info(`items`, items);
+    return items;
   }, [mixerInfos]);
   const [item, setItem] = useState<any>(undefined);
 
   const params = useCallback(() => {
     // ensure that this must be checked by isDisabled
     if (!token.token || typeof token.amount === 'undefined') return [];
-    let groupId = mixerInfos.find((g) => g[1]['fixed_deposit_size'].toNumber() === item);
+    let groupId = mixerInfos.find((g) => {
+      const number = g[1]['fixed_deposit_size'].toNumber();
+      return number === item.amount;
+    });
     let noteCommitment = null;
+
+    depositLogger.info(`Getting params GroupID `, groupId);
+    depositLogger.info(
+      `Full params are groupId, noteCommitment]`,
+      [groupId, noteCommitment],
+      `for item`,
+      item,
+      `mixer info`,
+      mixerInfos
+    );
     return [groupId, noteCommitment];
   }, [token, item, mixerInfos]);
 

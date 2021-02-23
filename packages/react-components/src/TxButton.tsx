@@ -12,6 +12,9 @@ import { AccountInfo, DispatchError } from '@polkadot/types/interfaces';
 import { ISubmittableResult, ITuple } from '@polkadot/types/types';
 
 import { FormatAddress } from './format';
+import { LoggerService } from '@webb-tools/app-util';
+
+const txLogger = LoggerService.get('TX');
 
 const Loading = styled(LoadingOutlined)`
   svg {
@@ -97,14 +100,14 @@ export const TxButton: FC<PropsWithChildren<Props>> = ({
 
     // ensure that the section and method are exist
     if (!_api.tx[section] || !_api.tx[section][method]) {
-      console.error(`can not find api.tx.${section}.${method}`);
+      txLogger.error(`can not find api.tx.${section}.${method}`);
 
       return;
     }
 
     // ensuer that account is exist
     if (!_signAddress) {
-      console.error('can not find available address');
+      txLogger.error('can not find available address');
 
       return;
     }
@@ -120,11 +123,11 @@ export const TxButton: FC<PropsWithChildren<Props>> = ({
 
           return signedExtrinsic.paymentInfo(_signAddress).pipe(
             map((result) => {
-              console.log(result.toString());
+              txLogger.info(result.toString());
             }),
             map(() => [account, params] as [AccountInfo, any[]]),
             catchError((error) => {
-              console.log(error);
+              txLogger.error(error);
 
               return of([account, params] as [AccountInfo, any[]]);
             })
