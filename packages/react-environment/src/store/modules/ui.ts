@@ -25,7 +25,7 @@ const initState: UIData = {
   breadcrumb: [],
   pageTitle: '__empty',
   subMenu: null,
-  theme: 'primary',
+  theme: localStorage.getItem('_theme') || 'primary',
 };
 
 const reducer = (state: UIData, action: UIAction): UIData => {
