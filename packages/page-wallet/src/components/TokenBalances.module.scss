@@ -3,6 +3,7 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   flex-wrap: wrap;
+
 }
 
 .item {
@@ -12,15 +13,14 @@
   padding: 24px;
   border-radius: 12px;
   border: 1px solid #ebeef5;
-  background: #ffffff;
+  background: var(--card-background);
   box-shadow: 0 1px 20px rgba(23, 65, 212, 0.02);
   overflow: hidden;
   transition: all 0.2s;
 }
 
 .item:hover {
-  box-shadow: 0 1px 20px rgba(23, 65, 212, 0.2);
-  // border: 2px solid var(--color-primary);
+  box-shadow: var(--card-shadow);
 }
 
 .totalAsset {
