@@ -3,6 +3,7 @@ import React, { FC } from 'react';
 
 import { ReactComponent as WebbIogoSmall } from '../assets/webb-logo-small.svg';
 import { useStore } from '@webb-dapp/react-environment';
+import { LoggerService } from '@webb-tools/app-util';
 
 export const TestNet = styled.div`
   display: inline-block;
@@ -54,8 +55,10 @@ export const Logo: FC<LogoProps> = ({ collapse }) => {
     <LogoRoot
       collapse={collapse}
       onClick={() => {
-        console.log('setting theme', ui?.theme);
-        ui.setTheme(ui?.theme === 'primary' ? 'dark' : 'primary');
+        const nextTheme = ui?.theme === 'primary' ? 'dark' : 'primary';
+        LoggerService.get('App').trace(`Setting theme => ${nextTheme}`);
+
+        ui.setTheme(nextTheme);
       }}
     >
       <CTestNet>TestNet</CTestNet>

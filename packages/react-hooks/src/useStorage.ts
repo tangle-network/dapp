@@ -9,6 +9,7 @@ interface Options {
   useAccountPrefix?: boolean;
   useCustomPrefix?: boolean;
 }
+
 type Get = (key: string) => string | null;
 type Set = (key: string, value: string) => void;
 

@@ -1,7 +1,7 @@
 import { BalanceInputValue } from '@webb-dapp/react-components';
 import AmountInput from '@webb-dapp/react-components/AmountInput/AmountInput';
 import { TokenInput } from '@webb-dapp/react-components/TokenInput';
-import { useApi, useConstants, useMixerProvider , useMixerInfos} from '@webb-dapp/react-hooks';
+import { useApi, useConstants, useMixerInfos } from '@webb-dapp/react-hooks';
 import { useInputValue } from '@webb-dapp/react-hooks/useInputValue';
 import { Col, Row, SpaceBox } from '@webb-dapp/ui-components';
 import { Token, token2CurrencyId } from '@webb-tools/sdk-core';
@@ -9,10 +9,11 @@ import { CurrencyId } from '@webb-tools/types/interfaces';
 import React, { FC, useCallback, useMemo, useState } from 'react';
 
 import { CardRoot, CardSubTitle, CardTitle, CTxButton, DepositTitle } from '../common';
+import { isSupportedCurrency } from '@webb-dapp/react-hooks/utils/isSupportedCurrency';
 
 export const DepositConsole: FC = () => {
   const { api } = useApi();
-  const  mixerInfos  = useMixerInfos();
+  const mixerInfos = useMixerInfos();
   const [token, setToken, { error: tokenError }] = useInputValue<BalanceInputValue>({
     amount: 0,
     token: token2CurrencyId(
@@ -38,7 +39,7 @@ export const DepositConsole: FC = () => {
   }, [token, tokenError]);
 
   const { allCurrencies } = useConstants();
-
+  const supportedCurrencies = useMemo(() => allCurrencies.filter(isSupportedCurrency), [allCurrencies]);
   const handleTokenCurrencyChange = useCallback(
     (currency: CurrencyId) => {
       setToken({ token: currency });
@@ -78,13 +79,7 @@ export const DepositConsole: FC = () => {
           <DepositTitle>Deposit Token</DepositTitle>
         </Col>
         <Col span={24}>
-          <TokenInput
-            currencies={allCurrencies.filter((c) => {
-              return c.toHuman().Token == 'EDG';
-            })}
-            onChange={handleTokenCurrencyChange}
-            value={token.token}
-          />
+          <TokenInput currencies={supportedCurrencies} onChange={handleTokenCurrencyChange} value={token.token} />
         </Col>
 
         <Col>
