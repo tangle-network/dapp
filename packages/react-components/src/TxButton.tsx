@@ -33,7 +33,7 @@ interface Props extends ButtonProps {
   affectAssets?: CurrencyLike[]; // assets which be affected in this extrinsc
   section: string; // extrinsic section
   method: string; // extrinsic method
-  params: any[] | (() => any[] | null | undefined); // extrinsic params
+  params: any[] | (() => any[] | null | undefined) | Promise<any[]>; // extrinsic params
 
   preCheck?: () => Promise<boolean>;
   beforeSend?: () => void; // the callback will be executed before send
@@ -92,7 +92,8 @@ export const TxButton: FC<PropsWithChildren<Props>> = ({
       }
     }
 
-    const _params = isFunction(params) ? params() : params;
+    const _params = isFunction(params) ? await params() : params;
+    LoggerService.get('App').info(`TXButton params`, _params);
 
     if (!_params) {
       return;
@@ -134,6 +135,7 @@ export const TxButton: FC<PropsWithChildren<Props>> = ({
           );
         }),
         switchMap(([account, params]) => {
+          LoggerService.get('App').info(`TXButton switchMap parameters `, params);
           return _api.tx[section][method](...params).signAsync(_signAddress, { nonce: account.nonce.toNumber() });
         })
       );
