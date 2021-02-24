@@ -1,16 +1,19 @@
 import { BalanceInputValue } from '@webb-dapp/react-components';
 import AmountInput from '@webb-dapp/react-components/AmountInput/AmountInput';
 import { TokenInput } from '@webb-dapp/react-components/TokenInput';
-import { useApi, useConstants, useMixerInfos } from '@webb-dapp/react-hooks';
+import { useApi, useConstants, useMixerInfos, useMixerProvider } from '@webb-dapp/react-hooks';
 import { useInputValue } from '@webb-dapp/react-hooks/useInputValue';
+import { isSupportedCurrency } from '@webb-dapp/react-hooks/utils/isSupportedCurrency';
 import { Col, Row, SpaceBox } from '@webb-dapp/ui-components';
+import { LoggerService } from '@webb-tools/app-util';
 import { Token, token2CurrencyId } from '@webb-tools/sdk-core';
+import { Asset } from '@webb-tools/sdk-mixer';
 import { CurrencyId } from '@webb-tools/types/interfaces';
-import React, { FC, useCallback, useMemo, useState } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { CardRoot, CardSubTitle, CardTitle, CTxButton, DepositTitle } from '../common';
-import { isSupportedCurrency } from '@webb-dapp/react-hooks/utils/isSupportedCurrency';
 
+const depositLogger = LoggerService.get('Deposit');
 export const DepositConsole: FC = () => {
   const { api } = useApi();
   const mixerInfos = useMixerInfos();
@@ -18,7 +21,7 @@ export const DepositConsole: FC = () => {
     amount: 0,
     token: token2CurrencyId(
       api,
-      new Token({ amount: 0, chain: 'edgeware', name: 'EDG', precision: 18, symbol: 'EDG' })
+      new Token({ amount: 0, chain: 'edgeware', name: 'EDG', precision: 12, symbol: 'EDG' })
     ),
   });
 
@@ -48,25 +51,56 @@ export const DepositConsole: FC = () => {
     [setToken, clearAmount]
   );
   const items = useMemo(() => {
-    return mixerInfos.map((info) => {
-      return {
-        amount: Number(info[1]['fixed_deposit_size']),
-        // TODO: Make this more clearer, this is a number for the GroupId
-        // but we should ensure that we have classes implementing these types
-        // so that we can marshall properly
-        id: Number(info[0].toHuman()[0]),
-      };
-    });
+    const items = mixerInfos
+      .map((info) => {
+        console.log(Number(info[1]['fixed_deposit_size']));
+        return {
+          amount: info[1]['fixed_deposit_size'],
+          // TODO: Make this more clearer, this is a number for the GroupId
+          // but we should ensure that we have classes implementing these types
+          // so that we can marshall properly
+          id: Number(info[0].toHuman()[0]),
+        };
+      })
+      .sort((a, b) => a.amount - b.amount);
+    depositLogger.info(`items`, items);
+    return items;
   }, [mixerInfos]);
   const [item, setItem] = useState<any>(undefined);
-
-  const params = useCallback(() => {
+  const { init, initialized, loading, mixer } = useMixerProvider();
+  useEffect(() => {
+    init();
+  }, [init]);
+  const params = useCallback(async () => {
     // ensure that this must be checked by isDisabled
     if (!token.token || typeof token.amount === 'undefined') return [];
-    let groupId = mixerInfos.find((g) => g[1]['fixed_deposit_size'].toNumber() === item);
+    let groupId = mixerInfos.find((g) => {
+      const number = g[1]['fixed_deposit_size'];
+      return number.toString() === item.amount.toString();
+    });
+
     let noteCommitment = null;
-    return [groupId, noteCommitment];
-  }, [token, item, mixerInfos]);
+    if (!mixer) {
+      depositLogger.warn(`Mixer isn't instilled yet`);
+      return [groupId, noteCommitment];
+    }
+    // todo make toke symbol configurable
+    const note = await mixer.generateNote(new Asset(0, 'EDG'));
+    return new Promise<any[]>((resolve, reject) => {
+      mixer
+        .deposit(note, (leaf) => {
+          depositLogger.trace('generated note ', note.serialize());
+          depositLogger.info(`Getting params GroupID `, 0);
+          depositLogger.info(`Full params are groupId, noteCommitment]`, [0, [leaf]]);
+          resolve([0, [leaf]]);
+          return Promise.resolve(0);
+        })
+        .catch((e) => {
+          depositLogger.error(e);
+          reject(e);
+        });
+    });
+  }, [token, item, mixerInfos, mixer]);
 
   return (
     <CardRoot>
@@ -91,6 +125,7 @@ export const DepositConsole: FC = () => {
         <Col span={24}>
           <CTxButton
             disabled={isDisabled}
+            loading={loading}
             method='deposit'
             onInblock={handleSuccess}
             params={params}

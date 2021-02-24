@@ -98,8 +98,6 @@ export const TokenInput: FC<TokenInputProps> = styled<FC<TokenInputProps>>(
       },
       [onChange]
     );
-
-    console.log('Value', value);
     return (
       <BalanceInputRoot
         className={className}

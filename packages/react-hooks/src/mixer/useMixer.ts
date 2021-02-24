@@ -17,7 +17,7 @@ import Worker from './mixer.worker';
 export const useMixerProvider = (): MixerContextData => {
   return useContext<MixerContextData>(MixerContext);
 };
-
+export const mixerLogger = LoggerService.get('MixerContext');
 export const useMixerGroups = (): MixerAssetGroup[] => {
   const mixerGroupIds = useCall<Array<GroupId>>('query.mixer.mixerGroupIds', [], undefined, []);
 
@@ -34,6 +34,7 @@ export const useMixerInfos = (): [StorageKey, MixerInfo][] => {
   const mixerGroups = useCall<Array<[StorageKey, MixerInfo]>>('query.mixer.mixerGroups.entries', [], undefined, []);
 
   return useMemo(() => {
+    mixerLogger.debug(`MixerInfo `, mixerGroups);
     return mixerGroups || [];
   }, [mixerGroups]);
 };
