@@ -12,6 +12,7 @@ import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { CardRoot, CardSubTitle, CardTitle, CTxButton, DepositTitle } from '../common';
 import { Asset } from '@webb-tools/sdk-mixer';
+import { isSupportedCurrency } from '@webb-dapp/react-hooks/utils/isSupportedCurrency';
 
 const depositLogger = LoggerService.get('Deposit');
 export const DepositConsole: FC = () => {
