@@ -1,10 +1,12 @@
+import { Token } from '@webb-tools/sdk-core';
+import { Balance } from '@webb-tools/types/interfaces';
+import clsx from 'clsx';
 import React, { useEffect, useMemo } from 'react';
 import styled from 'styled-components';
-import clsx from 'clsx';
 
 type AmountItem = {
   id: string | number;
-  amount: number;
+  amount: Balance;
 };
 const AmountInputWrapper = styled.div`
   display: flex;
@@ -123,6 +125,14 @@ const AmountInput: React.FC<AmountInputProps> = ({ onChange, items, value }) => 
         const isLast = index === checkedIndex;
         const isSelected = index <= checkedIndex;
         const id = `amount-${item.id}`;
+        const amount = new Token({
+          amount: item.amount.toString(),
+          // TODO: Pull from active chain
+          chain: 'edgeware',
+          name: 'DEV',
+          precision: 12,
+          symbol: 'DEV',
+        }).amount;
         return (
           <AmountItem
             htmlFor={id}
@@ -135,7 +145,6 @@ const AmountInput: React.FC<AmountInputProps> = ({ onChange, items, value }) => 
           >
             <Radio
               onChange={() => {
-                console.log('checkedIndex');
                 if (onChange) {
                   onChange(item);
                 }
@@ -146,7 +155,7 @@ const AmountInput: React.FC<AmountInputProps> = ({ onChange, items, value }) => 
               type={'radio'}
               checked={value?.id === item.id}
             />
-            <span className={`label__amount-wrapper`}>{item.amount}</span>
+            <span className={`label__amount-wrapper`}>{amount.toString() / 10 ** amount.getPrecision()}</span>
           </AmountItem>
         );
       })}
