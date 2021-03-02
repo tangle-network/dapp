@@ -1,5 +1,6 @@
 import { MixerContext, MixerContextData } from '@webb-dapp/react-environment';
 import { useCall } from '@webb-dapp/react-hooks/useCall';
+import { useLocalStorage } from '@webb-dapp/react-hooks/useLocalStorage';
 import { LoggerService } from '@webb-tools/app-util';
 import { Mixer, MixerAssetGroup } from '@webb-tools/sdk-mixer';
 import { GroupId, MixerInfo } from '@webb-tools/types/interfaces';
@@ -46,14 +47,46 @@ export const useMixer = () => {
   const mixerInfos = useMixerInfos();
 
   const [mixerResult, setMixerResult] = useState<Omit<MixerContextData, 'init'>>({
+    generatingBP: false,
     initialized: false,
     loading: false,
     mixer: null,
     shouldDestroy: false,
   });
-
+  const [bulletproofGens, setBulletproofGens] = useLocalStorage('bulletproof_gens');
+  const generateBP = useCallback(async () => {
+    if (bulletproofGens) {
+      logger.info(`Initializing mixer with bulletproofs`);
+      logger.info(`Encoding Bulletproof from localstorage string`);
+      const encoder = new TextEncoder();
+      const gens = encoder.encode(bulletproofGens);
+      logger.info(`Encoded Bulletproof from localstorage string`);
+      return gens;
+    } else {
+      logger.info(`Generating Bulletproof`);
+    }
+    const worker = new Worker();
+    setMixerResult((p) => ({
+      ...p,
+      generatingBP: true,
+    }));
+    logger.trace(`Generating Bulletproof`);
+    const pBG = await Mixer.preGenerateBulletproofGens(worker).finally(() => {
+      setMixerResult((p) => ({
+        ...p,
+        generatingBP: true,
+      }));
+    });
+    logger.trace(`Generated Bulletproof`);
+    worker.terminate();
+    logger.trace(`Decoding Bulletproof`);
+    const decoder = new TextDecoder();
+    const pBGString = decoder.decode(pBG); // from Uint8Array to String
+    logger.trace(`Storing Bulletproof to localstorage`);
+    setBulletproofGens(pBGString);
+    return pBG;
+  }, [bulletproofGens]);
   const [called, setCalled] = useState(false);
-
   const init = useCallback(async () => {
     setCalled(true);
 
@@ -70,8 +103,9 @@ export const useMixer = () => {
     }));
 
     try {
-      const mixer = await Mixer.init(new Worker(), mixerIds);
-
+      let gens = await generateBP();
+      logger.trace(`Bulletproof `, gens.length);
+      const mixer = await Mixer.init(new Worker(), mixerIds, gens);
       logger.info(`Generated new mixer`);
       logger.debug(`Generated Mixer `, mixer);
 
@@ -90,7 +124,7 @@ export const useMixer = () => {
         loading: false,
       }));
     }
-  }, [mixerIds, mixerResult, called, setCalled]);
+  }, [mixerIds, mixerResult, called, setCalled, generateBP]);
   return {
     init,
     mixerIds,

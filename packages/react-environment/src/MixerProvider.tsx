@@ -8,6 +8,7 @@ export interface MixerContextData {
   mixer: Mixer | null;
   shouldDestroy: false;
   init(): Promise<void>;
+  generatingBP: boolean;
 }
 
 // ensure that mixer always exist

@@ -70,7 +70,7 @@ export const DepositConsole: FC = () => {
   const { init, initialized, loading, mixer } = useMixerProvider();
   useEffect(() => {
     init();
-  }, [init]);
+  }, []);
   const params = useCallback(async () => {
     // ensure that this must be checked by isDisabled
     if (!token.token || typeof token.amount === 'undefined') return [];
