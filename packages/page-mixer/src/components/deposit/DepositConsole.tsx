@@ -7,11 +7,11 @@ import { isSupportedCurrency } from '@webb-dapp/react-hooks/utils/isSupportedCur
 import { Col, Row, SpaceBox } from '@webb-dapp/ui-components';
 import { LoggerService } from '@webb-tools/app-util';
 import { Token, token2CurrencyId } from '@webb-tools/sdk-core';
+import { Asset } from '@webb-tools/sdk-mixer';
 import { CurrencyId } from '@webb-tools/types/interfaces';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { CardRoot, CardSubTitle, CardTitle, CTxButton, DepositTitle } from '../common';
-import { Asset } from '@webb-tools/sdk-mixer';
 
 const depositLogger = LoggerService.get('Deposit');
 export const DepositConsole: FC = () => {
@@ -21,7 +21,7 @@ export const DepositConsole: FC = () => {
     amount: 0,
     token: token2CurrencyId(
       api,
-      new Token({ amount: 0, chain: 'edgeware', name: 'EDG', precision: 18, symbol: 'EDG' })
+      new Token({ amount: 0, chain: 'edgeware', name: 'EDG', precision: 12, symbol: 'EDG' })
     ),
   });
 
@@ -51,29 +51,32 @@ export const DepositConsole: FC = () => {
     [setToken, clearAmount]
   );
   const items = useMemo(() => {
-    const items = mixerInfos.map((info) => {
-      return {
-        amount: Number(info[1]['fixed_deposit_size']),
-        // TODO: Make this more clearer, this is a number for the GroupId
-        // but we should ensure that we have classes implementing these types
-        // so that we can marshall properly
-        id: Number(info[0].toHuman()[0]),
-      };
-    });
+    const items = mixerInfos
+      .map((info) => {
+        console.log(Number(info[1]['fixed_deposit_size']));
+        return {
+          amount: info[1]['fixed_deposit_size'],
+          // TODO: Make this more clearer, this is a number for the GroupId
+          // but we should ensure that we have classes implementing these types
+          // so that we can marshall properly
+          id: Number(info[0].toHuman()[0]),
+        };
+      })
+      .sort((a, b) => a.amount - b.amount);
     depositLogger.info(`items`, items);
     return items;
   }, [mixerInfos]);
   const [item, setItem] = useState<any>(undefined);
-  const { init, initialized, mixer, loading } = useMixerProvider();
+  const { init, initialized, loading, mixer } = useMixerProvider();
   useEffect(() => {
     init();
-  }, []);
+  }, [init]);
   const params = useCallback(async () => {
     // ensure that this must be checked by isDisabled
     if (!token.token || typeof token.amount === 'undefined') return [];
     let groupId = mixerInfos.find((g) => {
-      const number = g[1]['fixed_deposit_size'].toNumber();
-      return number === item.amount;
+      const number = g[1]['fixed_deposit_size'];
+      return number.toString() === item.amount.toString();
     });
 
     let noteCommitment = null;
