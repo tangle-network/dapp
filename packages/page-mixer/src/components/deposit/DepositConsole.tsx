@@ -67,7 +67,7 @@ export const DepositConsole: FC = () => {
     return items;
   }, [mixerInfos]);
   const [item, setItem] = useState<any>(undefined);
-  const { init, initialized, loading, mixer } = useMixerProvider();
+  const { init, loading, mixer } = useMixerProvider();
   useEffect(() => {
     init();
   }, []);
