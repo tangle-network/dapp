@@ -54,7 +54,7 @@ export const useMixer = () => {
     shouldDestroy: false,
   });
   const [bulletproofGens, setBulletproofGens] = useLocalStorage('bulletproof_gens');
-  const generateBP = useCallback(async () => {
+  const generateBulletproof = useCallback(async () => {
     if (bulletproofGens) {
       logger.info(`Initializing mixer with bulletproofs`);
       logger.info(`Encoding Bulletproof from localstorage string`);
@@ -85,6 +85,7 @@ export const useMixer = () => {
     logger.trace(`Storing Bulletproof to localstorage`);
     setBulletproofGens(pBGString);
     return pBG;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bulletproofGens]);
   const [called, setCalled] = useState(false);
   const init = useCallback(async () => {
@@ -103,7 +104,7 @@ export const useMixer = () => {
     }));
 
     try {
-      let gens = await generateBP();
+      let gens = await generateBulletproof();
       logger.trace(`Bulletproof `, gens.length);
       const mixer = await Mixer.init(new Worker(), mixerIds, gens);
       logger.info(`Generated new mixer`);
@@ -124,7 +125,7 @@ export const useMixer = () => {
         loading: false,
       }));
     }
-  }, [mixerIds, mixerResult, called, setCalled, generateBP]);
+  }, [mixerIds, mixerResult, called, setCalled, generateBulletproof]);
   return {
     init,
     mixerIds,
