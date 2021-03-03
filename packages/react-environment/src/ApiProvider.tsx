@@ -4,8 +4,10 @@ import { Subscription } from 'rxjs';
 import { timeout } from 'rxjs/operators';
 
 import { ApiRx, WsProvider } from '@polkadot/api';
+import { LoggerService } from '@webb-tools/app-util';
 
 const MAX_CONNECT_TIME = 1000 * 60; // one minute
+const apiLogger = LoggerService.get('Api');
 
 export interface ApiContextData {
   api: ApiRx;
@@ -46,8 +48,9 @@ export const ApiProvider: FC<Props> = ({ children }) => {
     if (apiSubscriber.current) return;
 
     const provider = new WsProvider([endpoint, ...allEndpoints]);
-
-    apiSubscriber.current = ApiRx.create(options({ provider }))
+    const opts = options({ provider });
+    apiLogger.info(`Api options`, opts);
+    apiSubscriber.current = ApiRx.create(opts)
       .pipe(timeout(MAX_CONNECT_TIME))
       .subscribe({
         error: (): void => {
