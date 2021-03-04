@@ -54,6 +54,12 @@ const NoteContent = styled.span`
     bottom: 0;
     right: 0;
   }
+
+  .download-button {
+    position: absolute;
+    bottom: 0;
+    right: 45px;
+  }
 `;
 const SubmitDeposit: React.FC<SubmitDepositProps> = ({ open, onClose, params: getParams }) => {
   const [{ loading, note, params }, setParams] = useState<{
@@ -95,15 +101,16 @@ const SubmitDeposit: React.FC<SubmitDepositProps> = ({ open, onClose, params: ge
     }
     () => (canceled = true);
   }, [open, getParams]);
-  const { loading: depositing, executeTX } = useTX({
+  const downloadNote = useCallback(() => {
+    if (!note) {
+      return;
+    }
+    downloadString(note, 'plan/text', note.slice(-note.length - 10) + '.txt');
+  }, [note]);
+  const { executeTX, loading: depositing } = useTX({
     method: 'deposit',
+    onExtrinsicSuccess: downloadNote,
     onFinalize: onClose,
-    onExtrinsicSuccess: () => {
-      if (!note) {
-        return;
-      }
-      downloadString(note, 'plan/text', note.slice(-note.length - 10) + '.txt');
-    },
     params,
     section: 'mixer',
   });
@@ -126,6 +133,11 @@ const SubmitDeposit: React.FC<SubmitDepositProps> = ({ open, onClose, params: ge
             Generating note
             <NoteContent>
               {note}
+              <Tooltip title={'Download Note'}>
+                <IconButton className={'download-button'} onClick={downloadNote}>
+                  <Icon>download</Icon>
+                </IconButton>
+              </Tooltip>
               <Tooltip title={`Copy note the cliboard`}>
                 <CopyToClipboard onCopy={handleCopy} text={note} className={'copy-button'}>
                   <IconButton>

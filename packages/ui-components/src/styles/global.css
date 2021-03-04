@@ -134,3 +134,6 @@ span {
 .ant-dropdown-menu {
   border-radius: 12px;
 }
+.ant-notification{
+	z-index: 4000;
+}
