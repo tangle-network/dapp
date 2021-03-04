@@ -1,6 +1,8 @@
+import SubmitDeposit from '@webb-dapp/page-mixer/components/deposit/SubmitDeposit';
 import { BalanceInputValue } from '@webb-dapp/react-components';
 import AmountInput from '@webb-dapp/react-components/AmountInput/AmountInput';
 import { TokenInput } from '@webb-dapp/react-components/TokenInput';
+import { EndpointType } from '@webb-dapp/react-environment/configs/endpoints';
 import { useApi, useConstants, useMixerInfos, useMixerProvider } from '@webb-dapp/react-hooks';
 import { useInputValue } from '@webb-dapp/react-hooks/useInputValue';
 import { isSupportedCurrency } from '@webb-dapp/react-hooks/utils/isSupportedCurrency';
@@ -8,13 +10,15 @@ import { Button, Col, Dialog, Modal, Row, SpaceBox } from '@webb-dapp/ui-compone
 import { LoggerService } from '@webb-tools/app-util';
 import { Token, token2CurrencyId } from '@webb-tools/sdk-core';
 import { Asset } from '@webb-tools/sdk-mixer';
-import { CurrencyId } from '@webb-tools/types/interfaces';
+import { Balance, CurrencyId } from '@webb-tools/types/interfaces';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { CardRoot, CardSubTitle, CardTitle, CTxButton, DepositTitle, TriggerDeposit } from '../common';
-import { EndpointType } from '@webb-dapp/react-environment/configs/endpoints';
-import SubmitDeposit from '@webb-dapp/page-mixer/components/deposit/SubmitDeposit';
 
+type Item = {
+  id: number;
+  amount: Balance;
+};
 const depositLogger = LoggerService.get('Deposit');
 export const DepositConsole: FC = () => {
   const { api } = useApi();
@@ -68,14 +72,17 @@ export const DepositConsole: FC = () => {
     depositLogger.info(`items`, items);
     return items;
   }, [mixerInfos]);
-  const [item, setItem] = useState<any>(undefined);
+  const [item, setItem] = useState<Item | undefined>(undefined);
   const { init, loading, mixer } = useMixerProvider();
   useEffect(() => {
     init();
-  }, []);
+  }, [init]);
   const params = useCallback(async () => {
     // ensure that this must be checked by isDisabled
     if (!token.token || typeof token.amount === 'undefined') return [];
+    if (!item) {
+      return [];
+    }
     let groupId = mixerInfos.find((g) => {
       const number = g[1]['fixed_deposit_size'];
       return number.toString() === item.amount.toString();
@@ -91,10 +98,11 @@ export const DepositConsole: FC = () => {
     return new Promise<any[]>((resolve, reject) => {
       mixer
         .deposit(note, (leaf) => {
-          depositLogger.trace('generated note ', note.serialize());
+          const noteString = note.serialize();
+          depositLogger.trace('generated note ', noteString);
           depositLogger.info(`Getting params GroupID `, 0);
           depositLogger.info(`Full params are groupId, noteCommitment]`, [0, [leaf]]);
-          resolve([0, [leaf]]);
+          resolve([0, [leaf], noteString]);
           return Promise.resolve(0);
         })
         .catch((e) => {
@@ -150,6 +158,7 @@ export const DepositConsole: FC = () => {
             onClose={() => {
               setShowDepositModal(false);
             }}
+            params={params as any}
           />
         </Col>
       </Row>
