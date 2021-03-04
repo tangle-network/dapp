@@ -159,6 +159,12 @@ export const CTxButton = styled(TxButton)`
   border-radius: 10px;
 `;
 
+export const TriggerDeposit = styled(Button)`
+  margin: 12px auto 0 auto;
+  padding: 0 40px;
+  border-radius: 10px;
+`;
+
 export const CAlert = styled(Alert)`
   padding: 16px;
 
