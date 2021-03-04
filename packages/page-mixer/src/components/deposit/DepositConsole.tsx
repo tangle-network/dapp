@@ -4,14 +4,16 @@ import { TokenInput } from '@webb-dapp/react-components/TokenInput';
 import { useApi, useConstants, useMixerInfos, useMixerProvider } from '@webb-dapp/react-hooks';
 import { useInputValue } from '@webb-dapp/react-hooks/useInputValue';
 import { isSupportedCurrency } from '@webb-dapp/react-hooks/utils/isSupportedCurrency';
-import { Col, Row, SpaceBox } from '@webb-dapp/ui-components';
+import { Button, Col, Dialog, Modal, Row, SpaceBox } from '@webb-dapp/ui-components';
 import { LoggerService } from '@webb-tools/app-util';
 import { Token, token2CurrencyId } from '@webb-tools/sdk-core';
 import { Asset } from '@webb-tools/sdk-mixer';
 import { CurrencyId } from '@webb-tools/types/interfaces';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 
-import { CardRoot, CardSubTitle, CardTitle, CTxButton, DepositTitle } from '../common';
+import { CardRoot, CardSubTitle, CardTitle, CTxButton, DepositTitle, TriggerDeposit } from '../common';
+import { EndpointType } from '@webb-dapp/react-environment/configs/endpoints';
+import SubmitDeposit from '@webb-dapp/page-mixer/components/deposit/SubmitDeposit';
 
 const depositLogger = LoggerService.get('Deposit');
 export const DepositConsole: FC = () => {
@@ -24,7 +26,7 @@ export const DepositConsole: FC = () => {
       new Token({ amount: 0, chain: 'edgeware', name: 'EDG', precision: 12, symbol: 'EDG' })
     ),
   });
-
+  const [showDepositModal, setShowDepositModal] = useState(false);
   const clearAmount = useCallback(() => {
     setToken({
       amount: 0,
@@ -123,7 +125,16 @@ export const DepositConsole: FC = () => {
           <AmountInput items={items} value={item} onChange={setItem} />
         </Col>
         <Col span={24}>
-          <CTxButton
+          <TriggerDeposit
+            onClick={() => {
+              setShowDepositModal(true);
+            }}
+            size='large'
+          >
+            Deposit
+          </TriggerDeposit>
+
+          {/*          <CTxButton
             disabled={isDisabled}
             loading={loading}
             method='deposit'
@@ -133,7 +144,13 @@ export const DepositConsole: FC = () => {
             size='large'
           >
             Deposit
-          </CTxButton>
+          </CTxButton>*/}
+          <SubmitDeposit
+            open={showDepositModal}
+            onClose={() => {
+              setShowDepositModal(false);
+            }}
+          />
         </Col>
       </Row>
     </CardRoot>
