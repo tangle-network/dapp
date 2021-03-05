@@ -1,13 +1,14 @@
-import { BalanceInput, BalanceInputValue, eliminateGap } from '@webb-dapp/react-components';
-import { TokenInput } from '@webb-dapp/react-components/TokenInput';
-import { useBalance, useBalanceValidator, useConstants } from '@webb-dapp/react-hooks';
+import { BalanceInputValue, eliminateGap } from '@webb-dapp/react-components';
+import { useBalance, useBalanceValidator, useConstants, useMixerProvider } from '@webb-dapp/react-hooks';
 import { useInputValue } from '@webb-dapp/react-hooks/useInputValue';
-import { Col, FlexBox, Row, SpaceBox } from '@webb-dapp/ui-components';
 import { FixedPointNumber } from '@webb-tools/sdk-core';
 import { CurrencyId } from '@webb-tools/types/interfaces';
-import React, { FC, useCallback } from 'react';
+import React, { FC, useCallback, useState } from 'react';
 
-import { AmountTitle, CardRoot, CardSubTitle, CardTitle, CMaxBtn, CTxButton, WithdrawnTitle } from '../common';
+import { CardRoot, CardTitle } from '../common';
+import { useWithdraw } from '@webb-dapp/react-hooks/withdraw/useWithdraw';
+import { Fab, TextField } from '@material-ui/core';
+import { SpaceBox } from '@webb-dapp/ui-components/';
 
 export const WithdrawConsole: FC = () => {
   const [token, setToken, { error: tokenError, setValidator: setTokenValidator }] = useInputValue<BalanceInputValue>({
@@ -58,48 +59,26 @@ export const WithdrawConsole: FC = () => {
     if (!token.token) return;
 
     const tokenAmount = tokenBalance.toNumber();
-
     // TODO: Get max balance for the token type
   }, [setToken, tokenBalance, token]);
 
+  const [note, setNote] = useState('');
+
+  const { withdraw } = useWithdraw(note);
   return (
     <CardRoot>
       <CardTitle>Withdraw</CardTitle>
-      <SpaceBox height={16} />
-      <CardSubTitle>Select chain and the amount to withdraw</CardSubTitle>
+      <TextField fullWidth label={'note'} value={note} onChange={({ target: { value } }) => setNote(value)} />
       <SpaceBox height={24} />
-      <Row gutter={[0, 24]}>
-        <Col>
-          <WithdrawnTitle>Withdraw Chain</WithdrawnTitle>
-        </Col>
-        <Col span={24}>
-          <TokenInput currencies={allCurrencies} onChange={handleTokenCurrencyChange} value={token.token} />
-        </Col>
-        <>
-          <Col span={24}>
-            <FlexBox justifyContent='space-between'>
-              <AmountTitle>Withdraw Note</AmountTitle>
-              <CMaxBtn onClick={handleMax} type='ghost'>
-                MAX
-              </CMaxBtn>
-            </FlexBox>
-          </Col>
-          <Col span={24}>
-            <BalanceInput
-              disabled={!token.token}
-              error={tokenError}
-              onChange={handleTokenAmountChange}
-              showIcon={false}
-              value={token}
-            />
-          </Col>
-        </>
-        <Col span={24}>
-          <CTxButton method='deposit' onExtrinsicSuccsss={handleSuccess} params={params} section='mixer' size='large'>
-            Withdraw
-          </CTxButton>
-        </Col>
-      </Row>
+      <Fab
+        onClick={() => {
+          withdraw();
+        }}
+        variant={'extended'}
+        color='primary'
+      >
+        Withdraw
+      </Fab>
     </CardRoot>
   );
 };
