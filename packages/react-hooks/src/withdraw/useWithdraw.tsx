@@ -43,7 +43,7 @@ export function useWithdraw(noteStr: string) {
       });
       return;
     }
-    const leaf = await mixer.saveNote(note);
+    // const leaf = await mixer.saveNote(note);
     const root = hexToU8a(rootHash);
 
     const leaves = group.leaves.map((type) => type.toU8a());

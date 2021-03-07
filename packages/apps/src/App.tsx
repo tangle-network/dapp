@@ -11,6 +11,7 @@ import { hot } from 'react-hot-loader/root';
 
 import { config as routerConfig } from './router-config';
 import { createMuiTheme, MuiThemeProvider } from '@material-ui/core';
+import DAppLogger from '@webb-dapp/react-components/utils/Logger/dAppLogger';
 
 const appLogger = LoggerService.new('App');
 const muiTheme = createMuiTheme({
@@ -18,6 +19,11 @@ const muiTheme = createMuiTheme({
     // type: 'dark',
   },
 });
+
+LoggerService.eventBus.on('log', (log) => {
+  console.log(log);
+});
+console.log(LoggerService.eventBus);
 const App: FC = () => {
   return (
     <DAppError logger={appLogger}>
@@ -30,6 +36,7 @@ const App: FC = () => {
           <EventsWatcher />
         </WebbProvider>
       </UIProvider>
+      <DAppLogger />
     </DAppError>
   );
 };

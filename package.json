@@ -11,11 +11,12 @@
   },
   "resolutions": {
     "@polkadot/api": "^3.4",
-    "@webb-tools/api": "^0.1.2-46",
-    "@webb-tools/types": "^0.1.2-46",
-    "@webb-tools/app-util": "^0.1.2-46",
-    "@webb-tools/sdk-core": "^0.1.2-46",
-    "@webb-tools/sdk-mixer": "^0.1.2-46",
+    "@webb-tools/type-definitions": "file:../webb.js/packages/type-definitions/build",
+    "@webb-tools/api": "file:../webb.js/packages/api/build",
+    "@webb-tools/types": "file:../webb.js/packages/types/build",
+    "@webb-tools/app-util": "file:../webb.js/packages/app-util/build",
+    "@webb-tools/sdk-core": "file:../webb.js/packages/sdk-core/build",
+    "@webb-tools/sdk-mixer": "file:../webb.js/packages/sdk-mixer/build",
     "@webb-tools/mixer-client": "^0.0.9"
   },
   "scripts": {
