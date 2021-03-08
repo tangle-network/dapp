@@ -43,12 +43,10 @@ export function useWithdraw(noteStr: string) {
       });
       return;
     }
-    const leaf = await mixer.saveNote(note);
     const root = hexToU8a(rootHash);
-
     const leaves = group.leaves.map((type) => type.toU8a());
     await mixer.withdraw(note, root, leaves, async (zkProof) => {
-      logger.debug(`zkProof `, zkProof);
+      logger.debug(`got zkProof `, zkProof);
       const { commitments, leafIndexCommitments, nullifierHash, proof, proofCommitments } = zkProof;
       const callParamters = [
         0,
@@ -61,6 +59,7 @@ export function useWithdraw(noteStr: string) {
         proofCommitments,
       ];
       await executeTX(callParamters);
+      logger.info(`Withdraw done`);
     });
   };
   return {
