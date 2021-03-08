@@ -78,7 +78,6 @@ export const useTX = (input: UseTXInput) => {
 
   const executeTX = (parameters?: any[]) => {
     const params = parameters || p;
-    console.log(params);
     if (!params) {
       return;
     }

@@ -1,4 +1,4 @@
-import { useApi, useCall, useMixerProvider } from '@webb-dapp/react-hooks';
+import { useCall, useMixerProvider } from '@webb-dapp/react-hooks';
 import { useEffect, useMemo } from 'react';
 import { Note } from '@webb-tools/sdk-mixer';
 import { LoggerService } from '@webb-tools/app-util';
@@ -32,9 +32,9 @@ export function useWithdraw(noteStr: string) {
   useEffect(() => {
     init();
   }, []);
-  const { api } = useApi();
   const withdraw = async () => {
-    if (!mixer || !group || !rootHash) {
+    // todo (@ahmed) fix that
+    if (!mixer || !group || !rootHash || !note) {
       logger.warn(`Attempt to withdraw without mixer been initialized`, {
         mixer,
         group,
@@ -48,7 +48,7 @@ export function useWithdraw(noteStr: string) {
     await mixer.withdraw(note, root, leaves, async (zkProof) => {
       logger.debug(`got zkProof `, zkProof);
       const { commitments, leafIndexCommitments, nullifierHash, proof, proofCommitments } = zkProof;
-      const callParamters = [
+      const callParams = [
         0,
         blockNumber,
         root,
@@ -58,7 +58,8 @@ export function useWithdraw(noteStr: string) {
         leafIndexCommitments,
         proofCommitments,
       ];
-      await executeTX(callParamters);
+      logger.debug(`Call parameters for withdraw`, callParams);
+      await executeTX(callParams);
       logger.info(`Withdraw done`);
     });
   };
