@@ -1,8 +1,8 @@
-import { useCall, useMixerProvider } from '@webb-dapp/react-hooks';
+import { useApi, useCall, useMixerProvider } from '@webb-dapp/react-hooks';
 import { useEffect, useMemo } from 'react';
 import { Note } from '@webb-tools/sdk-mixer';
 import { LoggerService } from '@webb-tools/app-util';
-import { BlockNumber, GroupTree, MixerInfo } from '@webb-tools/types/interfaces';
+import { Block, GroupTree, MixerInfo } from '@webb-tools/types/interfaces';
 import { hexToU8a } from '@polkadot/util';
 import { useTX } from '@webb-dapp/react-hooks/tx/useTX';
 
@@ -20,7 +20,7 @@ export function useWithdraw(noteStr: string) {
   }, [noteStr]);
   // const mixerGroup = useCall<Array<any>>('query.mixer.mixerGroups', [0]);
   const groupTree = useCall<GroupTree>('query.merkle.groups', [0]);
-  const blockNumber = useCall<BlockNumber>('derive.chain.getBlock', []);
+  const blockNumber = useCall<Block>('query.system.number', []);
   const rootHash = useMemo<string | undefined>(() => groupTree?.toHuman().root_hash as any, [groupTree]);
   const group = useCall<MixerInfo>('query.mixer.mixerGroups', [note?.id], undefined, undefined, () => Boolean(note));
   const { executeTX, loading } = useTX({
@@ -32,7 +32,7 @@ export function useWithdraw(noteStr: string) {
   useEffect(() => {
     init();
   }, []);
-
+  const { api } = useApi();
   const withdraw = async () => {
     if (!mixer || !group || !rootHash) {
       logger.warn(`Attempt to withdraw without mixer been initialized`, {
