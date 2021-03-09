@@ -55,7 +55,7 @@ export const useTX = (input: UseTXInput) => {
     onFinalize,
     onInBlock,
 
-    params,
+    params: p,
     section,
     signAddress,
   } = input;
@@ -76,7 +76,8 @@ export const useTX = (input: UseTXInput) => {
     return webbApi;
   }, [api, webbApi]);
 
-  const executeTX = () => {
+  const executeTX = (parameters?: any[]) => {
+    const params = parameters || p;
     if (!params) {
       return;
     }

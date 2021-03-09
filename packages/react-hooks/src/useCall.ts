@@ -67,13 +67,18 @@ export function useCall<T>(
   options?: {
     cacheKey: string;
   },
-  fallback?: T
+  fallback?: T,
+  canCall?: () => boolean
 ): T | undefined {
+  const callable = !canCall ? true : canCall();
   const { api } = useApi();
   const isAppReady = useIsAppReady();
   const { get: _get, set } = useStore('apiQuery');
   const get: typeof _get = (...args) => {
     try {
+      if (!callable) {
+        return fallback;
+      }
       return _get(...args);
     } catch (e) {
       return fallback;
@@ -90,6 +95,9 @@ export function useCall<T>(
   // on changes, re-subscribe
   useEffect(() => {
     let isSubscribed = true;
+    if (!callable) {
+      return;
+    }
     // check if we have a function & that we are mounted
     if (!isAppReady) return;
 
@@ -102,8 +110,14 @@ export function useCall<T>(
       return undefined;
     }
 
-    return (): void => tracker.unsubscribe(key);
-  }, [isAppReady, api, path, params, key, set]);
+    return (): void => {
+      try {
+        tracker.unsubscribe(key);
+      } catch (e) {
+        logger.error(' useCall ', e);
+      }
+    };
+  }, [isAppReady, api, path, params, key, set, callable]);
 
   return get(key);
 }

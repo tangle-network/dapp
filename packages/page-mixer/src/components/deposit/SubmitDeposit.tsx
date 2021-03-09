@@ -153,7 +153,7 @@ const SubmitDeposit: React.FC<SubmitDepositProps> = ({ open, onClose, params: ge
         )}
       </DialogContent>
       <DialogActions>
-        <Button onClick={executeTX} color='primary' disabled={loading || depositing}>
+        <Button onClick={() => executeTX()} color='primary' disabled={loading || depositing}>
           Deposit
         </Button>
         <Button onClick={onClose}>Cancel</Button>
