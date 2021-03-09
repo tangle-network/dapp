@@ -19,10 +19,23 @@ export function useWithdraw(noteStr: string) {
     }
   }, [noteStr]);
   // const mixerGroup = useCall<Array<any>>('query.mixer.mixerGroups', [0]);
-  const groupTree = useCall<GroupTree>('query.merkle.groups', [0]);
+  const noteMixerGroupId = useMemo(() => note?.id, [note]);
+  const groupTree = useCall<GroupTree>(
+    'query.merkle.groups',
+    [note?.id],
+    undefined,
+    undefined,
+    () => noteMixerGroupId !== undefined
+  );
   const blockNumber = useCall<Block>('query.system.number', []);
   const rootHash = useMemo<string | undefined>(() => groupTree?.toHuman().root_hash as any, [groupTree]);
-  const group = useCall<MixerInfo>('query.mixer.mixerGroups', [note?.id], undefined, undefined, () => Boolean(note));
+  const group = useCall<MixerInfo>(
+    'query.mixer.mixerGroups',
+    [noteMixerGroupId],
+    undefined,
+    undefined,
+    () => noteMixerGroupId !== undefined
+  );
   const { executeTX, loading } = useTX({
     method: 'withdraw',
     onExtrinsicSuccess: () => {},
