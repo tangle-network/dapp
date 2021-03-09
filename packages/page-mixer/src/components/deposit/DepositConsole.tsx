@@ -60,6 +60,7 @@ export const DepositConsole: FC = () => {
     const items = mixerInfos
       .map((info) => {
         console.log(Number(info[1]['fixed_deposit_size']));
+        console.log(info[0].toHuman()[0], 'mixer id');
         return {
           amount: info[1]['fixed_deposit_size'],
           // TODO: Make this more clearer, this is a number for the GroupId
@@ -77,32 +78,33 @@ export const DepositConsole: FC = () => {
   useEffect(() => {
     init();
   }, [init]);
+
   const params = useCallback(async () => {
     // ensure that this must be checked by isDisabled
     if (!token.token || typeof token.amount === 'undefined') return [];
     if (!item) {
       return [];
     }
-    let groupId = mixerInfos.find((g) => {
+    const selectedGroup = mixerInfos.find((g) => {
       const number = g[1]['fixed_deposit_size'];
       return number.toString() === item.amount.toString();
     });
-
-    let noteCommitment = null;
+    // @ts-ignore
+    const groupId = Number(selectedGroup?.[0].toHuman()?.[0]);
     if (!mixer) {
       depositLogger.warn(`Mixer isn't instilled yet`);
-      return [groupId, noteCommitment];
+      return [];
     }
     // todo make toke symbol configurable
-    const note = await mixer.generateNote(new Asset(0, 'EDG'));
+    const note = await mixer.generateNote(new Asset(groupId, 'EDG'));
     return new Promise<any[]>((resolve, reject) => {
       mixer
         .deposit(note, (leaf) => {
           const noteString = note.serialize();
           depositLogger.trace('generated note ', noteString);
-          depositLogger.info(`Getting params GroupID `, 0);
-          depositLogger.info(`Full params are groupId, noteCommitment]`, [0, [leaf]]);
-          resolve([0, [leaf], noteString]);
+          depositLogger.info(`Getting params GroupID `, groupId);
+          depositLogger.info(`Full params are groupId, noteCommitment]`, [groupId, [leaf]]);
+          resolve([groupId, [leaf], noteString]);
           return Promise.resolve(0);
         })
         .catch((e) => {
@@ -141,18 +143,6 @@ export const DepositConsole: FC = () => {
           >
             Deposit
           </TriggerDeposit>
-
-          {/*          <CTxButton
-            disabled={isDisabled}
-            loading={loading}
-            method='deposit'
-            onInblock={handleSuccess}
-            params={params}
-            section='mixer'
-            size='large'
-          >
-            Deposit
-          </CTxButton>*/}
           <SubmitDeposit
             open={showDepositModal}
             onClose={() => {
