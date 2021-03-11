@@ -1,53 +1,32 @@
 import SubmitDeposit from '@webb-dapp/page-mixer/components/deposit/SubmitDeposit';
-import { BalanceInputValue } from '@webb-dapp/react-components';
 import AmountInput from '@webb-dapp/react-components/AmountInput/AmountInput';
 import { TokenInput } from '@webb-dapp/react-components/TokenInput';
-import { useApi, useConstants, useMixerInfos, useMixerProvider } from '@webb-dapp/react-hooks';
-import { useInputValue } from '@webb-dapp/react-hooks/useInputValue';
-import { isSupportedCurrency } from '@webb-dapp/react-hooks/utils/isSupportedCurrency';
+import { MixerGroupItem, useConstants, useMixerInfos, useMixerProvider } from '@webb-dapp/react-hooks';
+import { useBalanceSelect } from '@webb-dapp/react-hooks/useBalanceSelect';
 import { Col, Row, SpaceBox } from '@webb-dapp/ui-components';
 import { LoggerService } from '@webb-tools/app-util';
-import { Token, token2CurrencyId } from '@webb-tools/sdk-core';
 import { Asset } from '@webb-tools/sdk-mixer';
-import { Balance, CurrencyId } from '@webb-tools/types/interfaces';
+import { CurrencyId } from '@webb-tools/types/interfaces';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { CardRoot, CardSubTitle, CardTitle, DepositTitle, TriggerDeposit } from '../common';
 
-type Item = {
-  id: number;
-  amount: Balance;
-};
 const depositLogger = LoggerService.get('Deposit');
+// todo get this by selecting assets
 export const DepositConsole: FC = () => {
-  const { api } = useApi();
   const mixerInfos = useMixerInfos();
-  const [token, setToken, { error: tokenError }] = useInputValue<BalanceInputValue>({
-    amount: 0,
-    token: token2CurrencyId(
-      api,
-      new Token({ amount: 0, chain: 'edgeware', name: 'EDG', precision: 12, symbol: 'EDG' })
-    ),
-  });
+  const { clearAmount, setToken, token, tokenError } = useBalanceSelect();
   const [showDepositModal, setShowDepositModal] = useState(false);
-  const clearAmount = useCallback(() => {
-    setToken({
-      amount: 0,
-      token: token.token,
-    });
-  }, [token, setToken]);
 
   const handleSuccess = useCallback((): void => clearAmount(), [clearAmount]);
 
   const isDisabled = useMemo(() => {
     if (typeof token.amount === 'undefined') return true;
-    if (tokenError) return true;
-
-    return false;
+    return !!tokenError;
   }, [token, tokenError]);
 
   const { allCurrencies } = useConstants();
-  const supportedCurrencies = useMemo(() => allCurrencies.filter(isSupportedCurrency), [allCurrencies]);
+
   const handleTokenCurrencyChange = useCallback(
     (currency: CurrencyId) => {
       setToken({ token: currency });
@@ -58,10 +37,13 @@ export const DepositConsole: FC = () => {
   const items = useMemo(() => {
     return mixerInfos.items;
   }, [mixerInfos]);
-  const [item, setItem] = useState<Item | undefined>(undefined);
+
+  const [item, setItem] = useState<MixerGroupItem | undefined>(undefined);
+
   const { init, mixer } = useMixerProvider();
+
   useEffect(() => {
-    init();
+    init().catch();
   }, [init]);
 
   const params = useCallback(async () => {
@@ -92,7 +74,7 @@ export const DepositConsole: FC = () => {
           reject(e);
         });
     });
-  }, [token, item, mixerInfos, mixer]);
+  }, [token, item, mixer]);
 
   return (
     <CardRoot>
@@ -105,7 +87,7 @@ export const DepositConsole: FC = () => {
           <DepositTitle>Deposit Token</DepositTitle>
         </Col>
         <Col span={24}>
-          <TokenInput currencies={supportedCurrencies} onChange={handleTokenCurrencyChange} value={token.token} />
+          <TokenInput currencies={allCurrencies} onChange={handleTokenCurrencyChange} value={token.token} />
         </Col>
 
         <Col>
