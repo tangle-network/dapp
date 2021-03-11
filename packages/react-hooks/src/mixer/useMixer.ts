@@ -3,10 +3,9 @@ import { useCall } from '@webb-dapp/react-hooks/useCall';
 import { useLocalStorage } from '@webb-dapp/react-hooks/useLocalStorage';
 import { LoggerService } from '@webb-tools/app-util';
 import { Mixer, MixerAssetGroup } from '@webb-tools/sdk-mixer';
-import { GroupId, MixerInfo } from '@webb-tools/types/interfaces';
+import { GroupId } from '@webb-tools/types/interfaces';
 import { useCallback, useContext, useMemo, useState } from 'react';
-
-import { StorageKey } from '@polkadot/types';
+import { useMixerInfos } from '@webb-dapp/react-hooks/mixer/useMixerInfos';
 
 // @ts-ignore
 import Worker from './mixer.worker';
@@ -29,15 +28,6 @@ export const useMixerGroups = (): MixerAssetGroup[] => {
       }) ?? []
     );
   }, [mixerGroupIds]);
-};
-
-export const useMixerInfos = (): [StorageKey, MixerInfo][] => {
-  const mixerGroups = useCall<Array<[StorageKey, MixerInfo]>>('query.mixer.mixerGroups.entries', [], undefined, []);
-
-  return useMemo(() => {
-    mixerLogger.debug(`MixerInfo `, mixerGroups);
-    return mixerGroups || [];
-  }, [mixerGroups]);
 };
 
 const logger = LoggerService.new('MixerUsage');
