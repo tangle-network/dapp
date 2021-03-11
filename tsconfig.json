@@ -34,13 +34,11 @@
       "@webb-dapp/react-components/*": ["react-components/src/*"],
       "@webb-dapp/react-components": ["react-components/src"],
       "@webb-dapp/ui-components/*": ["ui-components/src/*"],
-      "@webb-dapp/ui-components": ["ui-components/src"]
+      "@webb-dapp/ui-components": ["ui-components/src"],
+      "@webb-dapp/utils/*": ["utils/src/*"],
+      "@webb-dapp/utils": ["utils/src"]
     },
     "skipDefaultLibCheck": true
   },
-  "exclude": [
-    "build/**/*",
-    "**/build/**/*",
-    "scripts/*"
-  ]
+  "exclude": ["build/**/*", "**/build/**/*", "scripts/*"]
 }
