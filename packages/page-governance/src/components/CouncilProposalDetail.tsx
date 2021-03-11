@@ -37,25 +37,6 @@ const VoteDetail = styled(({ vote }: ProposalData) => {
   );
 })``;
 
-// const Action = (): JSX.Element => {
-//   return (
-//     <Row
-//       gutter={[24, 24]}
-//       justify='end'
-//     >
-//       <Col>
-//         <Button>Yes</Button>
-//       </Col>
-//       <Col>
-//         <Button>No</Button>
-//       </Col>
-//       <Col>
-//         <Button>Close</Button>
-//       </Col>
-//     </Row>
-//   );
-// };
-
 export const CouncilProposalDetail: FC = () => {
   const params = useParams();
   const [council, hash] = params.id ? params.id.split('-') : [];
@@ -72,7 +53,7 @@ export const CouncilProposalDetail: FC = () => {
         path: '/governance/proposals',
       },
     ],
-    content: data ? upperFirst(data.proposal.methodName) : '',
+    content: '',
   });
 
   if (!data) return null;

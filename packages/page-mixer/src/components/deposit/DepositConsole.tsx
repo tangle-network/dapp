@@ -2,18 +2,17 @@ import SubmitDeposit from '@webb-dapp/page-mixer/components/deposit/SubmitDeposi
 import { BalanceInputValue } from '@webb-dapp/react-components';
 import AmountInput from '@webb-dapp/react-components/AmountInput/AmountInput';
 import { TokenInput } from '@webb-dapp/react-components/TokenInput';
-import { EndpointType } from '@webb-dapp/react-environment/configs/endpoints';
 import { useApi, useConstants, useMixerInfos, useMixerProvider } from '@webb-dapp/react-hooks';
 import { useInputValue } from '@webb-dapp/react-hooks/useInputValue';
 import { isSupportedCurrency } from '@webb-dapp/react-hooks/utils/isSupportedCurrency';
-import { Button, Col, Dialog, Modal, Row, SpaceBox } from '@webb-dapp/ui-components';
+import { Col, Row, SpaceBox } from '@webb-dapp/ui-components';
 import { LoggerService } from '@webb-tools/app-util';
 import { Token, token2CurrencyId } from '@webb-tools/sdk-core';
 import { Asset } from '@webb-tools/sdk-mixer';
 import { Balance, CurrencyId } from '@webb-tools/types/interfaces';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 
-import { CardRoot, CardSubTitle, CardTitle, CTxButton, DepositTitle, TriggerDeposit } from '../common';
+import { CardRoot, CardSubTitle, CardTitle, DepositTitle, TriggerDeposit } from '../common';
 
 type Item = {
   id: number;
