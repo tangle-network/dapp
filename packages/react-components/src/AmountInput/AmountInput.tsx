@@ -3,19 +3,16 @@ import { Balance } from '@webb-tools/types/interfaces';
 import clsx from 'clsx';
 import React, { useEffect, useMemo } from 'react';
 import styled from 'styled-components';
+import { MixerGroupItem } from '@webb-dapp/react-hooks';
 
-type TAmountItem = {
-  id: string | number;
-  amount: Balance;
-};
 const AmountInputWrapper = styled.div`
   display: flex;
   align-items: center;
 `;
 type AmountInputProps = {
-  items: TAmountItem[];
-  value?: TAmountItem;
-  onChange?(item: TAmountItem): void;
+  items: MixerGroupItem[];
+  value?: MixerGroupItem;
+  onChange?(item: MixerGroupItem): void;
 };
 
 const AmountItem = styled.label`

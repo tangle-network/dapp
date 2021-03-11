@@ -22,7 +22,8 @@ class MixerInfoWrapper {
   public entryIntoItem(entry: MixerGroupEntry): MixerGroupItem {
     return {
       amount: entry[1]['fixed_deposit_size'],
-      id: Number(entry[0].toHuman()[0]),
+
+      id: Number((entry[0].toHuman() as any[])[0]),
     };
   }
 
