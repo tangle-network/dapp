@@ -135,6 +135,7 @@ export const DepositConsole: FC = () => {
         </Col>
         <Col span={24}>
           <TriggerDeposit
+            disabled={isDisabled}
             onClick={() => {
               setShowDepositModal(true);
             }}
@@ -144,6 +145,7 @@ export const DepositConsole: FC = () => {
           </TriggerDeposit>
           <SubmitDeposit
             onSuccess={() => {
+              handleSuccess();
               setShowDepositModal(false);
             }}
             open={showDepositModal}
