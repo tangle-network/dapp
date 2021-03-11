@@ -56,24 +56,10 @@ export const DepositConsole: FC = () => {
     [setToken, clearAmount]
   );
   const items = useMemo(() => {
-    const items = mixerInfos
-      .map((info) => {
-        console.log(Number(info[1]['fixed_deposit_size']));
-        console.log(info[0].toHuman()[0], 'mixer id');
-        return {
-          amount: info[1]['fixed_deposit_size'],
-          // TODO: Make this more clearer, this is a number for the GroupId
-          // but we should ensure that we have classes implementing these types
-          // so that we can marshall properly
-          id: Number(info[0].toHuman()[0]),
-        };
-      })
-      .sort((a, b) => a.amount - b.amount);
-    depositLogger.info(`items`, items);
-    return items;
+    return mixerInfos.items;
   }, [mixerInfos]);
   const [item, setItem] = useState<Item | undefined>(undefined);
-  const { init, loading, mixer } = useMixerProvider();
+  const { init, mixer } = useMixerProvider();
   useEffect(() => {
     init();
   }, [init]);
@@ -84,12 +70,7 @@ export const DepositConsole: FC = () => {
     if (!item) {
       return [];
     }
-    const selectedGroup = mixerInfos.find((g) => {
-      const number = g[1]['fixed_deposit_size'];
-      return number.toString() === item.amount.toString();
-    });
-    // @ts-ignore
-    const groupId = Number(selectedGroup?.[0].toHuman()?.[0]);
+    const groupId = item.id;
     if (!mixer) {
       depositLogger.warn(`Mixer isn't instilled yet`);
       return [];
