@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import React, { useEffect, useMemo } from 'react';
 import styled from 'styled-components';
 
-type AmountItem = {
+type TAmountItem = {
   id: string | number;
   amount: Balance;
 };
@@ -13,9 +13,9 @@ const AmountInputWrapper = styled.div`
   align-items: center;
 `;
 type AmountInputProps = {
-  items: AmountItem[];
-  value?: AmountItem;
-  onChange?(item: AmountItem): void;
+  items: TAmountItem[];
+  value?: TAmountItem;
+  onChange?(item: TAmountItem): void;
 };
 
 const AmountItem = styled.label`
@@ -24,12 +24,14 @@ const AmountItem = styled.label`
   display: flex;
   flex-direction: column;
   align-items: center;
+
   .label__amount-wrapper {
     display: block;
     cursor: pointer;
   }
 
   position: relative;
+
   :after,
   :before {
     content: '';
@@ -40,9 +42,11 @@ const AmountItem = styled.label`
     height: 5px;
     width: 0;
   }
+
   :before {
     left: 0;
   }
+
   &.is-first {
     :before {
       display: none;
@@ -52,12 +56,14 @@ const AmountItem = styled.label`
   :after {
     right: 0;
   }
+
   &.is-selected {
     :after,
     :before {
       width: calc(50% - 11px);
     }
   }
+
   &.is-last {
     :after {
       display: none;
@@ -71,9 +77,11 @@ const Radio = styled.input`
   cursor: pointer;
   background: transparent;
   box-sizing: border-box;
+
   * {
     box-sizing: border-box;
   }
+
   padding: 0;
   margin: 0;
   outline: none;
@@ -86,6 +94,7 @@ const Radio = styled.input`
     display: block;
     position: absolute;
   }
+
   :after {
     top: 8px;
     left: 8px;
@@ -95,6 +104,7 @@ const Radio = styled.input`
     border: 2px solid var(--color-primary);
     z-index: 44;
   }
+
   :before {
     top: 13px;
     left: 13px;
@@ -103,21 +113,24 @@ const Radio = styled.input`
     background: var(--color-primary);
     border-radius: 50%;
   }
+
   :not(:checked) {
     :before {
       background: transparent;
     }
   }
 `;
-const AmountInput: React.FC<AmountInputProps> = ({ onChange, items, value }) => {
+const AmountInput: React.FC<AmountInputProps> = ({ items, onChange, value }) => {
   const checkedIndex = useMemo(() => {
     return items.findIndex((item) => item.id === value?.id);
   }, [value, items]);
+
   useEffect(() => {
     if (!value && onChange) {
       onChange(items[1]);
     }
-  }, [value]);
+  }, [onChange, value, items]);
+
   return (
     <AmountInputWrapper>
       {items.map((item, index) => {
@@ -155,7 +168,7 @@ const AmountInput: React.FC<AmountInputProps> = ({ onChange, items, value }) => 
               type={'radio'}
               checked={value?.id === item.id}
             />
-            <span className={`label__amount-wrapper`}>{amount.toString() / 10 ** amount.getPrecision()}</span>
+            <span className={`label__amount-wrapper`}>{amount.toNumber() / 10 ** amount.getPrecision()}</span>
           </AmountItem>
         );
       })}

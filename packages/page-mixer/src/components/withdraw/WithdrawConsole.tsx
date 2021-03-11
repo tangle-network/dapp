@@ -1,14 +1,14 @@
+import { Fab, TextField } from '@material-ui/core';
 import { BalanceInputValue, eliminateGap } from '@webb-dapp/react-components';
-import { useBalance, useBalanceValidator, useConstants, useMixerProvider } from '@webb-dapp/react-hooks';
+import { useBalance, useBalanceValidator, useConstants } from '@webb-dapp/react-hooks';
 import { useInputValue } from '@webb-dapp/react-hooks/useInputValue';
+import { useWithdraw } from '@webb-dapp/react-hooks/withdraw/useWithdraw';
+import { SpaceBox } from '@webb-dapp/ui-components';
 import { FixedPointNumber } from '@webb-tools/sdk-core';
 import { CurrencyId } from '@webb-tools/types/interfaces';
 import React, { FC, useCallback, useState } from 'react';
 
 import { CardRoot, CardTitle } from '../common';
-import { useWithdraw } from '@webb-dapp/react-hooks/withdraw/useWithdraw';
-import { Fab, TextField } from '@material-ui/core';
-import { SpaceBox } from '@webb-dapp/ui-components/';
 
 export const WithdrawConsole: FC = () => {
   const [token, setToken, { error: tokenError, setValidator: setTokenValidator }] = useInputValue<BalanceInputValue>({
@@ -70,13 +70,7 @@ export const WithdrawConsole: FC = () => {
       <CardTitle>Withdraw</CardTitle>
       <TextField fullWidth label={'note'} value={note} onChange={({ target: { value } }) => setNote(value)} />
       <SpaceBox height={24} />
-      <Fab
-        onClick={() => {
-          withdraw();
-        }}
-        variant={'extended'}
-        color='primary'
-      >
+      <Fab onClick={withdraw} variant={'extended'} color='primary'>
         Withdraw
       </Fab>
     </CardRoot>

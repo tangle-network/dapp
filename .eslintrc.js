@@ -17,6 +17,8 @@ module.exports = {
     'react/jsx-max-props-per-line': 'off',
     'react/jsx-sort-props': 'off',
     'padding-line-between-statements': 'off',
+    'object-curly-newline': 'off',
+    'no-unused-vars': 'off',
   },
   extends: ['eslint:recommended', 'prettier/react', 'prettier/@typescript-eslint', 'plugin:prettier/recommended'],
 };

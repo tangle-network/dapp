@@ -76,6 +76,7 @@ export const ExtensionProvider: FC<AccountProviderProps> = ({ appName, authRequi
       specVersion: api.runtimeVersion.specVersion.toNumber(),
       ss58Format: isNumber(api.registry.chainSS58) ? api.registry.chainSS58 : 42,
       tokenDecimals: isNumber(api.registry.chainDecimals) ? api.registry.chainDecimals : 12,
+      // @ts-ignore
       tokenSymbol: api.registry.chainToken || 'Unit',
       types: options({}).types as any,
     };

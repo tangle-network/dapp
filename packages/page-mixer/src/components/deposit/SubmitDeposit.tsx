@@ -1,5 +1,3 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import styled from 'styled-components';
 import {
   Button,
   Dialog,
@@ -14,8 +12,10 @@ import {
   Typography,
 } from '@material-ui/core';
 import { useTX } from '@webb-dapp/react-hooks/tx/useTX';
-import CopyToClipboard from 'react-copy-to-clipboard';
 import { notification } from '@webb-dapp/ui-components/notification';
+import React, { useCallback, useEffect, useState } from 'react';
+import CopyToClipboard from 'react-copy-to-clipboard';
+import styled from 'styled-components';
 
 function downloadString(text: string, fileType: string, fileName: string) {
   const blob = new Blob([text], { type: fileType });
@@ -61,7 +61,7 @@ const NoteContent = styled.span`
     right: 45px;
   }
 `;
-const SubmitDeposit: React.FC<SubmitDepositProps> = ({ open, onClose, params: getParams }) => {
+const SubmitDeposit: React.FC<SubmitDepositProps> = ({ onClose, open, params: getParams }) => {
   const [{ loading, note, params }, setParams] = useState<{
     loading: boolean;
     params: any[];
@@ -138,8 +138,8 @@ const SubmitDeposit: React.FC<SubmitDepositProps> = ({ open, onClose, params: ge
                   <Icon>download</Icon>
                 </IconButton>
               </Tooltip>
-              <Tooltip title={`Copy note the cliboard`}>
-                <CopyToClipboard onCopy={handleCopy} text={note} className={'copy-button'}>
+              <Tooltip title={`Copy note the clipboard`}>
+                <CopyToClipboard onCopy={handleCopy} text={note} {...({ className: 'copy-button' } as any)}>
                   <IconButton>
                     <Icon>content_copy</Icon>
                   </IconButton>
