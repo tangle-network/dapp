@@ -143,6 +143,9 @@ export const DepositConsole: FC = () => {
             Deposit
           </TriggerDeposit>
           <SubmitDeposit
+            onSuccess={() => {
+              setShowDepositModal(false);
+            }}
             open={showDepositModal}
             onClose={() => {
               setShowDepositModal(false);

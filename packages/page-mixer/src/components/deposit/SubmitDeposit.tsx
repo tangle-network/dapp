@@ -13,30 +13,16 @@ import {
 } from '@material-ui/core';
 import { useTX } from '@webb-dapp/react-hooks/tx/useTX';
 import { notification } from '@webb-dapp/ui-components/notification';
+import { downloadString } from '@webb-dapp/utils';
 import React, { useCallback, useEffect, useState } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import styled from 'styled-components';
-
-function downloadString(text: string, fileType: string, fileName: string) {
-  const blob = new Blob([text], { type: fileType });
-
-  let a = document.createElement('a');
-  a.download = fileName;
-  a.href = URL.createObjectURL(blob);
-  a.dataset.downloadurl = [fileType, a.download, a.href].join(':');
-  a.style.display = 'none';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  setTimeout(function () {
-    URL.revokeObjectURL(a.href);
-  }, 1500);
-}
 
 type SubmitDepositProps = {
   open: boolean;
   onClose(): void;
   params: () => Promise<[number, Uint8Array, string]>;
+  onSuccess(): void;
 };
 const NoteContent = styled.span`
   font-family: monospace;
@@ -61,7 +47,7 @@ const NoteContent = styled.span`
     right: 45px;
   }
 `;
-const SubmitDeposit: React.FC<SubmitDepositProps> = ({ onClose, open, params: getParams }) => {
+const SubmitDeposit: React.FC<SubmitDepositProps> = ({ onClose, onSuccess, open, params: getParams }) => {
   const [{ loading, note, params }, setParams] = useState<{
     loading: boolean;
     params: any[];
@@ -105,11 +91,11 @@ const SubmitDeposit: React.FC<SubmitDepositProps> = ({ onClose, open, params: ge
     if (!note) {
       return;
     }
-    downloadString(note, 'plan/text', note.slice(-note.length - 10) + '.txt');
+    downloadString(note, note.slice(-note.length - 10) + '.txt');
   }, [note]);
   const { executeTX, loading: depositing } = useTX({
     method: 'deposit',
-    onExtrinsicSuccess: downloadNote,
+    onExtrinsicSuccess: onSuccess,
     onFinalize: onClose,
     params,
     section: 'mixer',
@@ -153,7 +139,14 @@ const SubmitDeposit: React.FC<SubmitDepositProps> = ({ onClose, open, params: ge
         )}
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => executeTX()} color='primary' disabled={loading || depositing}>
+        <Button
+          onClick={() => {
+            downloadNote();
+            executeTX();
+          }}
+          color='primary'
+          disabled={loading || depositing}
+        >
           Deposit
         </Button>
         <Button onClick={onClose}>Cancel</Button>
