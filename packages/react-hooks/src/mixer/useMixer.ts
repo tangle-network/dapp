@@ -1,14 +1,13 @@
 import { MixerContext, MixerContextData } from '@webb-dapp/react-environment';
-import { useCall } from '@webb-dapp/react-hooks/useCall';
+import { useMixerGroupIds } from '@webb-dapp/react-hooks/mixer/useMixerGroupIds';
 import { useLocalStorage } from '@webb-dapp/react-hooks/useLocalStorage';
 import { LoggerService } from '@webb-tools/app-util';
-import { Mixer, MixerAssetGroup } from '@webb-tools/sdk-mixer';
-import { GroupId } from '@webb-tools/types/interfaces';
-import { useCallback, useContext, useMemo, useState } from 'react';
-import { useMixerInfos } from '@webb-dapp/react-hooks/mixer/useMixerInfos';
+import { Mixer } from '@webb-tools/sdk-mixer';
+import { useCallback, useContext, useState } from 'react';
 
 // @ts-ignore
 import Worker from './mixer.worker';
+import { useMixerInfos } from '.';
 
 /**
  * @name useMixer
@@ -17,23 +16,11 @@ import Worker from './mixer.worker';
 export const useMixerProvider = (): MixerContextData => {
   return useContext<MixerContextData>(MixerContext);
 };
-export const mixerLogger = LoggerService.get('MixerContext');
-export const useMixerGroups = (): MixerAssetGroup[] => {
-  const mixerGroupIds = useCall<Array<GroupId>>('query.mixer.mixerGroupIds', [], undefined, []);
-
-  return useMemo(() => {
-    return (
-      mixerGroupIds?.map((id) => {
-        return new MixerAssetGroup(Number(id.toString()), 'EDG', 32);
-      }) ?? []
-    );
-  }, [mixerGroupIds]);
-};
 
 const logger = LoggerService.new('MixerUsage');
 
 export const useMixer = () => {
-  const mixerIds = useMixerGroups();
+  const mixerIds = useMixerGroupIds();
   const mixerInfos = useMixerInfos();
 
   const [mixerResult, setMixerResult] = useState<Omit<MixerContextData, 'init'>>({
@@ -96,7 +83,7 @@ export const useMixer = () => {
     try {
       let gens = await generateBulletproof();
       logger.trace(`Bulletproof `, gens.length);
-      const mixer = await Mixer.init(new Worker(), mixerIds, gens);
+      const mixer = await Mixer.init(new Worker(), mixerIds.assetGroups(), gens);
       logger.info(`Generated new mixer`);
       logger.debug(`Generated Mixer `, mixer);
 

@@ -13,12 +13,15 @@ export type MixerGroupItem = {
 export type MixerGroupEntry = [StorageKey, MixerInfo];
 
 class MixerInfoWrapper {
-  constructor(private _inner: MixerGroupEntry[]) {}
+  constructor(private _inner?: MixerGroupEntry[]) {}
 
   get inner() {
-    return this._inner;
+    return this._inner || [];
   }
 
+  get ready() {
+    return Boolean(this._inner);
+  }
   public entryIntoItem(entry: MixerGroupEntry): MixerGroupItem {
     return {
       amount: entry[1]['fixed_deposit_size'],
@@ -44,6 +47,6 @@ export const useMixerInfos = (): MixerInfoWrapper => {
 
   return useMemo(() => {
     mixerLogger.debug(`MixerInfo `, mixerGroups);
-    return new MixerInfoWrapper(mixerGroups || []);
+    return new MixerInfoWrapper(mixerGroups);
   }, [mixerGroups]);
 };
