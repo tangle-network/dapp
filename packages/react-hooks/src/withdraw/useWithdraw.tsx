@@ -1,5 +1,5 @@
-import { useCall, useMixerGroups, useMixerProvider } from '@webb-dapp/react-hooks';
-import { useMerkleGroups } from '@webb-dapp/react-hooks/merkle';
+import { useCall, useMixerInfo, useMixerProvider } from '@webb-dapp/react-hooks';
+import { useGroupTree } from '@webb-dapp/react-hooks/merkle';
 import { useTX } from '@webb-dapp/react-hooks/tx/useTX';
 import { LoggerService } from '@webb-tools/app-util';
 import { Note } from '@webb-tools/sdk-mixer';
@@ -26,8 +26,8 @@ export function useWithdraw(noteStr: string) {
   }, [noteStr]);
 
   const noteMixerGroupId = useMemo(() => note?.id, [note]);
-  const merkleGroups = useMerkleGroups(noteMixerGroupId?.toString());
-  const mixerGroups = useMixerGroups(noteMixerGroupId?.toString());
+  const merkleGroups = useGroupTree(noteMixerGroupId?.toString());
+  const mixerGroups = useMixerInfo(noteMixerGroupId?.toString());
 
   const { executeTX, loading } = useTX({
     method: 'withdraw',

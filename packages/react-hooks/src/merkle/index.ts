@@ -1,1 +1,1 @@
-export * from './useMerkleGroups';
+export * from './useGroupTree';

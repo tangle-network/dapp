@@ -7,7 +7,8 @@ import { useCallback, useContext, useState } from 'react';
 
 // @ts-ignore
 import Worker from './mixer.worker';
-import { useMixerInfos } from '.';
+
+import { useMixerInfo } from '.';
 
 /**
  * @name useMixer
@@ -21,7 +22,7 @@ const logger = LoggerService.new('MixerUsage');
 
 export const useMixer = () => {
   const mixerIds = useMixerGroupIds();
-  const mixerInfos = useMixerInfos();
+  const mixerInfos = useMixerInfo();
 
   const [mixerResult, setMixerResult] = useState<Omit<MixerContextData, 'init'>>({
     generatingBP: false,

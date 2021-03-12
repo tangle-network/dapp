@@ -1,7 +1,7 @@
 import SubmitDeposit from '@webb-dapp/page-mixer/components/deposit/SubmitDeposit';
 import AmountInput from '@webb-dapp/react-components/AmountInput/AmountInput';
 import { TokenInput } from '@webb-dapp/react-components/TokenInput';
-import { MixerGroupItem, useConstants, useMixerInfos, useMixerProvider } from '@webb-dapp/react-hooks';
+import { MixerGroupItem, useConstants, useMixerInfo, useMixerProvider } from '@webb-dapp/react-hooks';
 import { useBalanceSelect } from '@webb-dapp/react-hooks/useBalanceSelect';
 import { Col, Row, SpaceBox } from '@webb-dapp/ui-components';
 import { LoggerService } from '@webb-tools/app-util';
@@ -14,7 +14,7 @@ import { CardRoot, CardSubTitle, CardTitle, DepositTitle, TriggerDeposit } from 
 const depositLogger = LoggerService.get('Deposit');
 // todo get this by selecting assets
 export const DepositConsole: FC = () => {
-  const mixerInfos = useMixerInfos();
+  const mixerInfos = useMixerInfo();
   const { clearAmount, setToken, token, tokenError } = useBalanceSelect();
   const [showDepositModal, setShowDepositModal] = useState(false);
 
