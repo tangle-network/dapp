@@ -3,7 +3,7 @@ import { GroupTree } from '@webb-tools/types/interfaces';
 import { useMemo } from 'react';
 import { hexToU8a } from '@polkadot/util';
 
-class MerkleGroupWrapper {
+class MerkleGroupsWrapper {
   constructor(private _inner?: GroupTree) {}
 
   get inner() {
@@ -27,6 +27,6 @@ class MerkleGroupWrapper {
 export const useMerkleGroups = (id?: string | undefined) => {
   const groupTree = useCall<GroupTree>('query.merkle.groups', [id], undefined, undefined, () => Boolean(id));
   return useMemo(() => {
-    return new MerkleGroupWrapper(groupTree);
+    return new MerkleGroupsWrapper(groupTree);
   }, [groupTree]);
 };
