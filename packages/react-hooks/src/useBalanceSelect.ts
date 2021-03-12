@@ -21,8 +21,8 @@ export const useBalanceSelect = () => {
   }, [token, setToken]);
   return {
     clearAmount,
+    setToken,
     token,
     tokenError,
-    setToken,
   };
 };

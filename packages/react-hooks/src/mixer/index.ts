@@ -1,4 +1,5 @@
 export * from './useMixer';
 export * from './mixer-logger';
-export * from './useMixerGroups';
-export * from './useMixerInfos';
+export * from './useMixerGroupIds';
+export * from './useMixerGroupsEntries';
+export * from './useMixerInfo';

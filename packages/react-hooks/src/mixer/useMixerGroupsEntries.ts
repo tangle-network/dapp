@@ -12,13 +12,27 @@ export type MixerGroupItem = {
 };
 export type MixerGroupEntry = [StorageKey, MixerInfo];
 
-class MixerInfoWrapper {
-  constructor(private _inner: MixerGroupEntry[]) {}
+/**
+ * Class representing {[StorageKey, MixerInfo][]} with a native js types
+ * */
+class MixerGroupEntriesWrapper {
+  constructor(private _inner?: MixerGroupEntry[]) {}
 
   get inner() {
-    return this._inner;
+    return this._inner || [];
   }
 
+  /**
+   * Tell wither  inner type exists or not
+   * */
+  get ready() {
+    return Boolean(this._inner);
+  }
+
+  /**
+   * @param {MixerGroupEntry} entry - which equal to  [StorageKey, MixerInfo]
+   * @return {MixerGroupItem}
+   * */
   public entryIntoItem(entry: MixerGroupEntry): MixerGroupItem {
     return {
       amount: entry[1]['fixed_deposit_size'],
@@ -39,11 +53,16 @@ class MixerInfoWrapper {
   }
 }
 
-export const useMixerInfos = (): MixerInfoWrapper => {
+/**
+ * UseMixerGroupsEntries
+ *  @description   This will issue an RPC call to query.mixer.mixerGroups.entries return wrapper type around [StorageKey, MixerInfo]
+ *  @return {MixerGroupEntriesWrapper}
+ * */
+export const useMixerGroupsEntries = (): MixerGroupEntriesWrapper => {
   const mixerGroups = useCall<Array<MixerGroupEntry>>('query.mixer.mixerGroups.entries', [], undefined, []);
 
   return useMemo(() => {
-    mixerLogger.debug(`MixerInfo `, mixerGroups);
-    return new MixerInfoWrapper(mixerGroups || []);
+    mixerLogger.debug(`MixerGroupEntry `, mixerGroups);
+    return new MixerGroupEntriesWrapper(mixerGroups);
   }, [mixerGroups]);
 };
