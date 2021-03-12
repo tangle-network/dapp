@@ -22,7 +22,7 @@ const logger = LoggerService.new('MixerUsage');
 
 export const useMixer = () => {
   const mixerIds = useMixerGroupIds();
-  const mixerInfos = useMixerInfo();
+  const mixerInfo = useMixerInfo();
 
   const [mixerResult, setMixerResult] = useState<Omit<MixerContextData, 'init'>>({
     generatingBP: false,
@@ -107,7 +107,7 @@ export const useMixer = () => {
   return {
     init,
     mixerIds,
-    mixerInfos,
+    mixerInfo,
     ...mixerResult,
   };
 };

@@ -37,8 +37,8 @@ class MixerInfoWrapper {
  *  @return {MixerInfoWrapper}
  * */
 export const useMixerInfo = (id?: string | undefined) => {
-  const groupTree = useCall<MixerInfo>('query.mixer.mixerGroups', [id], undefined, undefined, () => Boolean(id));
+  const mixerInfo = useCall<MixerInfo>('query.mixer.mixerGroups', [id], undefined, undefined, () => Boolean(id));
   return useMemo(() => {
-    return new MixerInfoWrapper(groupTree);
-  }, [groupTree]);
+    return new MixerInfoWrapper(mixerInfo);
+  }, [mixerInfo]);
 };

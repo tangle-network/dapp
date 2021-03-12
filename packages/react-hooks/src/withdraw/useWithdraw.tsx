@@ -26,8 +26,8 @@ export function useWithdraw(noteStr: string) {
   }, [noteStr]);
 
   const noteMixerGroupId = useMemo(() => note?.id, [note]);
-  const merkleGroups = useGroupTree(noteMixerGroupId?.toString());
-  const mixerGroups = useMixerInfo(noteMixerGroupId?.toString());
+  const groupTreeWrapper = useGroupTree(noteMixerGroupId?.toString());
+  const mixerInfoWrapper = useMixerInfo(noteMixerGroupId?.toString());
 
   const { executeTX, loading } = useTX({
     method: 'withdraw',
@@ -37,7 +37,7 @@ export function useWithdraw(noteStr: string) {
   });
 
   const withdraw = async () => {
-    const root = merkleGroups.rootHashU8a;
+    const root = groupTreeWrapper.rootHashU8a;
     if (!root || !note) {
       logger.error(`Root has Error`);
       return;
@@ -46,10 +46,16 @@ export function useWithdraw(noteStr: string) {
       logger.error(`Mixer isn't initialized`);
       return;
     }
-    if (!merkleGroups.ready || !mixerGroups.ready) {
+    if (!groupTreeWrapper.ready || !mixerInfoWrapper.ready) {
       logger.error(`Groups aren't ready`);
+      return;
     }
-    const leaves = mixerGroups.leaveU8a;
+    const leaves = mixerInfoWrapper.leaveU8a;
+    console.log({
+      note,
+      root,
+      leaves,
+    });
     await mixer.withdraw(note, root, leaves, async (zkProof) => {
       logger.debug(`got zkProof `, zkProof);
       const { commitments, leafIndexCommitments, nullifierHash, proof, proofCommitments } = zkProof;
