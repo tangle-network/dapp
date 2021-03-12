@@ -14,7 +14,7 @@ import { CardRoot, CardSubTitle, CardTitle, DepositTitle, TriggerDeposit } from 
 const depositLogger = LoggerService.get('Deposit');
 // todo get this by selecting assets
 export const DepositConsole: FC = () => {
-  const mixerInfos = useMixerGroupsEntries();
+  const mixerGroupsEntries = useMixerGroupsEntries();
   const { clearAmount, setToken, token, tokenError } = useBalanceSelect();
   const [showDepositModal, setShowDepositModal] = useState(false);
 
@@ -35,8 +35,8 @@ export const DepositConsole: FC = () => {
     [setToken, clearAmount]
   );
   const items = useMemo(() => {
-    return mixerInfos.items;
-  }, [mixerInfos]);
+    return mixerGroupsEntries.items;
+  }, [mixerGroupsEntries]);
 
   const [item, setItem] = useState<MixerGroupItem | undefined>(undefined);
 

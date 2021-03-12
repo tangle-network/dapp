@@ -15,7 +15,7 @@ export type MixerGroupEntry = [StorageKey, MixerInfo];
 /**
  * Class representing {[StorageKey, MixerInfo][]} with a native js types
  * */
-class MixerGroupEntryWrapper {
+class MixerGroupEntriesWrapper {
   constructor(private _inner?: MixerGroupEntry[]) {}
 
   get inner() {
@@ -56,13 +56,13 @@ class MixerGroupEntryWrapper {
 /**
  * UseMixerGroupsEntries
  *  @description   This will issue an RPC call to query.mixer.mixerGroups.entries return wrapper type around [StorageKey, MixerInfo]
- *  @return {MixerGroupEntryWrapper}
+ *  @return {MixerGroupEntriesWrapper}
  * */
-export const useMixerGroupsEntries = (): MixerGroupEntryWrapper => {
+export const useMixerGroupsEntries = (): MixerGroupEntriesWrapper => {
   const mixerGroups = useCall<Array<MixerGroupEntry>>('query.mixer.mixerGroups.entries', [], undefined, []);
 
   return useMemo(() => {
     mixerLogger.debug(`MixerGroupEntry `, mixerGroups);
-    return new MixerGroupEntryWrapper(mixerGroups);
+    return new MixerGroupEntriesWrapper(mixerGroups);
   }, [mixerGroups]);
 };

@@ -21,7 +21,7 @@ class MixerGroupIdsWrapper {
   }
 }
 
-export const useMixerGroupIds = () => {
+export const useMixerGroupIds = (): MixerGroupIdsWrapper => {
   const groupIds = useCall<GroupId[]>('query.mixer.mixerGroupIds', []);
   return useMemo(() => {
     return new MixerGroupIdsWrapper(groupIds);

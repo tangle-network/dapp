@@ -44,7 +44,7 @@ class GroupTreeWrapper {
  *  @param {string} id which is the GroupId is optional if the is undefined the underlying rpc call won't take place
  *  @return {GroupTreeWrapper}
  * */
-export const useGroupTree = (id?: string | undefined) => {
+export const useGroupTree = (id?: string | undefined): GroupTreeWrapper => {
   const groupTree = useCall<GroupTree>('query.merkle.groups', [id], undefined, undefined, () => Boolean(id));
   return useMemo(() => {
     return new GroupTreeWrapper(groupTree);
