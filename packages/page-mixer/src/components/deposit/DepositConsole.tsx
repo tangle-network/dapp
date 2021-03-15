@@ -58,22 +58,8 @@ export const DepositConsole: FC = () => {
       return [];
     }
     // todo make toke symbol configurable
-    const note = await mixer.generateNote(new Asset(groupId, 'EDG'));
-    return new Promise<any[]>((resolve, reject) => {
-      mixer
-        .deposit(note, (leaf) => {
-          const noteString = note.serialize();
-          depositLogger.trace('generated note ', noteString);
-          depositLogger.info(`Getting params GroupID `, groupId);
-          depositLogger.info(`Full params are groupId, noteCommitment]`, [groupId, [leaf]]);
-          resolve([groupId, [leaf], noteString]);
-          return Promise.resolve(0);
-        })
-        .catch((e) => {
-          depositLogger.error(e);
-          reject(e);
-        });
-    });
+    const [note, leaf] = await mixer.generateNoteAndLeaf(new Asset(groupId, 'EDG'));
+    return [groupId, [leaf], note.serialize()];
   }, [token, item, mixer]);
 
   return (

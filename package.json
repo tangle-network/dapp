@@ -11,12 +11,12 @@
   },
   "resolutions": {
     "@polkadot/api": "^3.4",
-	"@webb-tools/api": "^0.1.2-51",
-	"@webb-tools/types": "^0.1.2-51",
-	"@webb-tools/app-util": "^0.1.2-51",
-	"@webb-tools/sdk-core": "^0.1.2-51",
-	"@webb-tools/sdk-mixer": "^0.1.2-51",
-    "@webb-tools/mixer-client": "^0.0.12"
+    "@webb-tools/api": "file:../webb.js/packages/api/build",
+    "@webb-tools/types": "file:../webb.js/packages/types/build",
+    "@webb-tools/app-util": "file:../webb.js/packages/app-util/build",
+    "@webb-tools/sdk-core": "file:../webb.js/packages/sdk-core/build",
+    "@webb-tools/sdk-mixer": "file:../webb.js/packages/sdk-mixer/build",
+    "@webb-tools/wasm-utils": "file:../webb.js/packages/wasm-utils/build"
   },
   "scripts": {
     "bump-version": "node scripts/bump-version.js",
@@ -29,8 +29,8 @@
     "analyze": "source-map-explorer 'packages/apps/build/static/js/*.js'",
     "test": "polkadot-dev-run-test",
     "lint": "polkadot-dev-run-lint",
-	"ts-check": "tsc --noEmit -p ./tsconfig.json",
-	"format": "prettier --write \"packages/**/*.{ts,js,jsx,tsx}\""
+    "ts-check": "tsc --noEmit -p ./tsconfig.json",
+    "format": "prettier --write \"packages/**/*.{ts,js,jsx,tsx}\""
   },
   "dependencies": {
     "@material-ui/core": "^4.11.3",

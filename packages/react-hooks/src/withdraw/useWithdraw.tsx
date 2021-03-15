@@ -51,28 +51,18 @@ export function useWithdraw(noteStr: string) {
       return;
     }
     const leaves = mixerInfoWrapper.leaveU8a;
-    console.log({
-      note,
-      root,
-      leaves,
-    });
-    await mixer.withdraw(note, root, leaves, async (zkProof) => {
-      logger.debug(`got zkProof `, zkProof);
-      const { commitments, leafIndexCommitments, nullifierHash, proof, proofCommitments } = zkProof;
-      const callParams = [
-        0,
-        blockNumber,
-        root,
-        commitments,
-        nullifierHash,
-        proof,
-        leafIndexCommitments,
-        proofCommitments,
-      ];
-      logger.debug(`Call parameters for withdraw`, callParams);
-      await executeTX(callParams);
-      logger.info(`Withdraw done`);
-    });
+    const zk = await mixer.generateZK(note, root, leaves);
+    const withdrawProof = {
+      cached_block: blockNumber,
+      cached_root: root,
+      comms: zk.commitments,
+      leaf_index_commitments: zk.leafIndexCommitments,
+      mixer_id: noteMixerGroupId,
+      nullifier_hash: zk.nullifierHash,
+      proof_bytes: zk.proof,
+      proof_commitments: zk.proofCommitments,
+    };
+    await executeTX([withdrawProof]);
   };
   return {
     loading,
