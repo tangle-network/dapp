@@ -1,6 +1,7 @@
 import { useCall } from '@webb-dapp/react-hooks';
 import { GroupTree } from '@webb-tools/types/interfaces';
 import { useMemo } from 'react';
+
 import { hexToU8a } from '@polkadot/util';
 
 /**
