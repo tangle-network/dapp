@@ -36,7 +36,7 @@ class MixerInfoWrapper {
  *
  *  @return {MixerInfoWrapper}
  * */
-export const useMixerInfo = (id?: string | undefined):MixerInfoWrapper => {
+export const useMixerInfo = (id?: string | undefined): MixerInfoWrapper => {
   const mixerInfo = useCall<MixerInfo>('query.mixer.mixerGroups', [id], undefined, undefined, () => Boolean(id));
   return useMemo(() => {
     return new MixerInfoWrapper(mixerInfo);

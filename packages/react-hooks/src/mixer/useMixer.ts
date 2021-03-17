@@ -1,5 +1,4 @@
 import { MixerContext, MixerContextData } from '@webb-dapp/react-environment';
-import { useMixerGroupIds } from '@webb-dapp/react-hooks/mixer/useMixerGroupIds';
 import { useLocalStorage } from '@webb-dapp/react-hooks/useLocalStorage';
 import { LoggerService } from '@webb-tools/app-util';
 import { Mixer } from '@webb-tools/sdk-mixer';
@@ -7,8 +6,7 @@ import { useCallback, useContext, useState } from 'react';
 
 // @ts-ignore
 import Worker from './mixer.worker';
-
-import { useMixerInfo } from '.';
+import { useMixerGroupIds, useMixerInfo } from '.';
 
 /**
  * @name useMixer
@@ -84,7 +82,7 @@ export const useMixer = () => {
     try {
       let gens = await generateBulletproof();
       logger.trace(`Bulletproof `, gens.length);
-      const mixer = await Mixer.init(new Worker(), mixerIds.assetGroups(), gens);
+      const mixer = await Mixer.init(new Worker(), gens);
       logger.info(`Generated new mixer`);
       logger.debug(`Generated Mixer `, mixer);
 
@@ -103,7 +101,7 @@ export const useMixer = () => {
         loading: false,
       }));
     }
-  }, [mixerIds, mixerResult, called, setCalled, generateBulletproof]);
+  }, [mixerResult, called, setCalled, generateBulletproof]);
   return {
     init,
     mixerIds,

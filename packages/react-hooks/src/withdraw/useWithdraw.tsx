@@ -1,10 +1,13 @@
-import { useCall, useMixerInfo, useMixerProvider } from '@webb-dapp/react-hooks';
+import { useAccounts, useApi, useCall, useMixerInfo, useMixerProvider } from '@webb-dapp/react-hooks';
 import { useGroupTree } from '@webb-dapp/react-hooks/merkle';
 import { useTX } from '@webb-dapp/react-hooks/tx/useTX';
 import { LoggerService } from '@webb-tools/app-util';
 import { Note } from '@webb-tools/sdk-mixer';
 import { Block } from '@webb-tools/types/interfaces';
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+
+import { InjectedAccount } from '@polkadot/extension-inject/types';
+import { decodeAddress } from '@polkadot/keyring';
 
 const logger = LoggerService.get('Withdraw');
 
@@ -25,17 +28,29 @@ export function useWithdraw(noteStr: string) {
     }
   }, [noteStr]);
 
+  const [withdrawTo, _setWithdrawTo] = useState<InjectedAccount | null>(null);
+
   const noteMixerGroupId = useMemo(() => note?.id, [note]);
   const groupTreeWrapper = useGroupTree(noteMixerGroupId?.toString());
   const mixerInfoWrapper = useMixerInfo(noteMixerGroupId?.toString());
 
+  const accounts = useAccounts();
+  const { api } = useApi();
+  useEffect(() => {
+    setWithdrawTo(accounts.active || null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [accounts.active?.address]);
+
+  const setWithdrawTo = useCallback((next: InjectedAccount | null) => {
+    console.log(next, 'next');
+    _setWithdrawTo(next);
+  }, []);
   const { executeTX, loading } = useTX({
     method: 'withdraw',
     onExtrinsicSuccess: () => {},
     params: [],
     section: 'mixer',
   });
-
   const withdraw = async () => {
     const root = groupTreeWrapper.rootHashU8a;
     if (!root || !note) {
@@ -50,32 +65,37 @@ export function useWithdraw(noteStr: string) {
       logger.error(`Groups aren't ready`);
       return;
     }
+    if (!withdrawTo) {
+      logger.error(`withdrawTo isn't ready`);
+      return;
+    }
     const leaves = mixerInfoWrapper.leaveU8a;
-    console.log({
-      note,
-      root,
+    const zk = await mixer.generateZK({
       leaves,
+      note: noteStr,
+      recipient: decodeAddress(withdrawTo.address),
+      relayer: decodeAddress(withdrawTo.address),
+      root,
     });
-    await mixer.withdraw(note, root, leaves, async (zkProof) => {
-      logger.debug(`got zkProof `, zkProof);
-      const { commitments, leafIndexCommitments, nullifierHash, proof, proofCommitments } = zkProof;
-      const callParams = [
-        0,
-        blockNumber,
-        root,
-        commitments,
-        nullifierHash,
-        proof,
-        leafIndexCommitments,
-        proofCommitments,
-      ];
-      logger.debug(`Call parameters for withdraw`, callParams);
-      await executeTX(callParams);
-      logger.info(`Withdraw done`);
-    });
+    const withdrawProof = {
+      cached_block: blockNumber,
+      cached_root: root,
+      comms: zk.commitments,
+      leaf_index_commitments: zk.leafIndexCommitments,
+      mixer_id: noteMixerGroupId,
+      nullifier_hash: zk.nullifierHash,
+      proof_bytes: zk.proof,
+      proof_commitments: zk.proofCommitments,
+      recipient: withdrawTo?.address,
+      relayer: withdrawTo?.address,
+    };
+    await executeTX([withdrawProof]);
   };
   return {
+    accounts: accounts.accounts || [],
     loading,
+    setWithdrawTo,
     withdraw,
+    withdrawTo,
   };
 }
