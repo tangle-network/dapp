@@ -65,12 +65,16 @@ export function useWithdraw(noteStr: string) {
       logger.error(`Groups aren't ready`);
       return;
     }
+    if (!withdrawTo) {
+      logger.error(`withdrawTo isn't ready`);
+      return;
+    }
     const leaves = mixerInfoWrapper.leaveU8a;
     const zk = await mixer.generateZK({
       leaves,
       note: noteStr,
-      recipient: decodeAddress(withdrawTo?.address),
-      relayer: decodeAddress(withdrawTo?.address),
+      recipient: decodeAddress(withdrawTo.address),
+      relayer: decodeAddress(withdrawTo.address),
       root,
     });
     const withdrawProof = {
@@ -82,8 +86,8 @@ export function useWithdraw(noteStr: string) {
       nullifier_hash: zk.nullifierHash,
       proof_bytes: zk.proof,
       proof_commitments: zk.proofCommitments,
-      recipient: api.createType('Option<AccountId>', withdrawTo?.address),
-      relayer: api.createType('Option<AccountId>', withdrawTo?.address),
+      recipient: withdrawTo?.address,
+      relayer: withdrawTo?.address,
     };
     await executeTX([withdrawProof]);
   };
