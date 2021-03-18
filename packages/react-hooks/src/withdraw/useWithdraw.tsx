@@ -8,6 +8,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { InjectedAccount } from '@polkadot/extension-inject/types';
 import { decodeAddress } from '@polkadot/keyring';
+import { u8aToHex } from '@polkadot/util';
 
 const logger = LoggerService.get('Withdraw');
 
@@ -84,7 +85,7 @@ export function useWithdraw(noteStr: string) {
       leaf_index_commitments: zk.leafIndexCommitments,
       mixer_id: noteMixerGroupId,
       nullifier_hash: zk.nullifierHash,
-      proof_bytes: zk.proof,
+      proof_bytes: u8aToHex(zk.proof),
       proof_commitments: zk.proofCommitments,
       recipient: withdrawTo?.address,
       relayer: withdrawTo?.address,
