@@ -94,6 +94,7 @@ const SubmitDeposit: React.FC<SubmitDepositProps> = ({ onClose, onSuccess, open,
     downloadString(note, note.slice(-note.length - 10) + '.txt');
   }, [note]);
   const { executeTX, loading: depositing } = useTX({
+    beforeSend: onClose,
     method: 'deposit',
     onExtrinsicSuccess: onSuccess,
     onFinalize: onClose,
