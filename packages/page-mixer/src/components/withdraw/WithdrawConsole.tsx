@@ -1,9 +1,10 @@
-import { Button, Fab, MenuItem, TextField, Typography } from '@material-ui/core';
+import { Button, MenuItem, TextField, Typography } from '@material-ui/core';
 import { useWithdraw } from '@webb-dapp/react-hooks/withdraw/useWithdraw';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import React, { FC, useState } from 'react';
 import styled from 'styled-components';
 import { CardRoot, CardTitle } from '../common';
+import WithdrawingModal from '@webb-dapp/page-mixer/components/withdraw/WithdrawingModal';
 
 const CallToActionWrapper = styled.div`
   max-width: 300px;
@@ -12,7 +13,18 @@ const CallToActionWrapper = styled.div`
 export const WithdrawConsole: FC = () => {
   const [note, setNote] = useState('');
 
-  const { accounts, setWithdrawTo, withdraw, withdrawTo } = useWithdraw(note);
+  const {
+    accounts,
+    canCancel,
+    canWithdraw,
+    cancelWithdraw,
+    setWithdrawTo,
+    stage,
+    validationErrors,
+    withdraw,
+    withdrawTo,
+    withdrawTxInfo,
+  } = useWithdraw(note);
 
   return (
     <CardRoot>
@@ -24,6 +36,8 @@ export const WithdrawConsole: FC = () => {
         fullWidth
         label={'Note'}
         value={note}
+        error={Boolean(note) && Boolean(validationErrors.note)}
+        helperText={note ? validationErrors.note : ''}
         onChange={({ target: { value } }) => setNote(value)}
       />
       <SpaceBox height={24} />
@@ -50,10 +64,11 @@ export const WithdrawConsole: FC = () => {
       </TextField>
       <SpaceBox height={24} />
       <CallToActionWrapper>
-        <Button disabled={!withdrawTo || !note} fullWidth variant='contained' onClick={withdraw} color='primary'>
+        <Button disabled={!withdrawTo || !canWithdraw} fullWidth variant='contained' onClick={withdraw} color='primary'>
           Withdrawn
         </Button>
       </CallToActionWrapper>
+      <WithdrawingModal withdrawTxInfo={withdrawTxInfo} cancel={cancelWithdraw} stage={stage} canCancel={canCancel} />
     </CardRoot>
   );
 };
