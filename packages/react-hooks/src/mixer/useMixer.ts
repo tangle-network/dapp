@@ -28,6 +28,7 @@ export const useMixer = () => {
     loading: false,
     mixer: null,
     shouldDestroy: false,
+    restarting: false,
   });
   const [bulletproofGens, setBulletproofGens] = useLocalStorage('bulletproof_gens');
   const generateBulletproof = useCallback(async () => {
@@ -102,10 +103,36 @@ export const useMixer = () => {
       }));
     }
   }, [mixerResult, called, setCalled, generateBulletproof]);
+
+  const restart = useCallback(async () => {
+    if (!mixerResult.mixer) {
+      logger.error(`Attempt to restart the mixer before initializing`);
+      return;
+    }
+    if (mixerResult.restarting) {
+      logger.error(`Attempt to restart the mixer while it's already restating`);
+      return;
+    }
+    logger.info(`Restarting Wasm Mixer`);
+    setMixerResult((p) => ({
+      ...p,
+      initialized: false,
+      restarting: true,
+    }));
+    await mixerResult.mixer.restart(new Worker());
+    setMixerResult((p) => ({
+      ...p,
+      initialized: true,
+      restarting: false,
+    }));
+    logger.info(`Restarted Wasm Mixer`);
+  }, [mixerResult.mixer, mixerResult.restarting]);
+
   return {
     init,
     mixerIds,
     mixerInfo,
+    restart,
     ...mixerResult,
   };
 };
