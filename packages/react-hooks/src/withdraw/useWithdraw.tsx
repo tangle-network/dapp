@@ -30,7 +30,7 @@ export type WithdrawTXInfo = {
 };
 
 export function useWithdraw(noteStr: string) {
-  const { init, initialized, mixer } = useMixerProvider();
+  const { init, initialized, mixer, restart, restarting } = useMixerProvider();
 
   useEffect(() => {
     init();
@@ -78,13 +78,14 @@ export function useWithdraw(noteStr: string) {
 
   const accounts = useAccounts();
 
-  const cancelWithdraw = useCallback(() => {
+  const cancelWithdraw = useCallback(async () => {
     if (stage < WithdrawState.SendingTransaction) {
       logger.info(`Canceling the withdraw ZK`);
       cancel.current = true;
+      await restart();
       _setStage(WithdrawState.Canceled);
     }
-  }, [stage]);
+  }, [stage, restart]);
 
   useEffect(() => {
     setWithdrawTo(accounts.active || null);
@@ -111,8 +112,8 @@ export function useWithdraw(noteStr: string) {
   });
 
   const canCancel = useMemo(() => {
-    return stage < WithdrawState.SendingTransaction && stage > WithdrawState.Ideal;
-  }, [stage]);
+    return stage < WithdrawState.SendingTransaction && stage > WithdrawState.Ideal && !restarting;
+  }, [stage, restarting]);
 
   const canWithdraw = useMemo(() => {
     const validState = stage < WithdrawState.GeneratingZk;
