@@ -4,9 +4,11 @@ import { Alert, Page, PageLoading, styled, SubMenu } from '@webb-dapp/ui-compone
 import { noop } from 'lodash';
 import React, { FC, memo, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router';
+import { ReactComponent as WebbLogo } from '@webb-dapp/react-components/assets/webb-icon.svg';
 
 import { AccountBar } from '../AccountBar';
-import { Sidebar, SidebarConfig } from '../Sidebar';
+import { SidebarConfig } from '../Sidebar';
+import AppBar from '@webb-dapp/react-components/AppBar/AppBar';
 
 const CAlert = styled(Alert)`
   margin-top: 32px;
@@ -18,6 +20,21 @@ const MainContainer = styled.div`
   height: 100vh;
   overflow: hidden;
   background: var(--platform-background);
+  flex-direction: column;
+`;
+const ContentWrapper = styled.main`
+  display: flex;
+  flex: 1;
+`;
+
+const AppNav = styled.nav`
+  min-height: 65px;
+  width: 100%;
+  max-width: 1440px;
+  margin: auto;
+  display: flex;
+  flex: 1;
+  align-items: center;
 `;
 
 interface MainLayoutProps {
@@ -67,9 +84,7 @@ const Main: FC<MainLayoutProps> = memo(({ children, enableCollapse = true, sideb
 
     return (
       <Page>
-        {result && (
-          <CAlert message={`${t('IP_ADDRESS')} ${result['country']}, with IP: ${result['ip']}`} />
-        )}
+        {result && <CAlert message={`${t('IP_ADDRESS')} ${result['country']}, with IP: ${result['ip']}`} />}
         <Page.Title
           breadcrumb={breadcrumb}
           extra={<AccountBar />}
@@ -85,11 +100,10 @@ const Main: FC<MainLayoutProps> = memo(({ children, enableCollapse = true, sideb
       </Page>
     );
   }, [isAppReady, t, breadcrumb, ui.subMenu, ui.pageTitle, children]);
-
   return (
     <MainContainer>
-      <Sidebar collapse={collapse} config={sidebar} showAccount={true} />
-      {content}
+      <AppBar />
+      <ContentWrapper>{content}</ContentWrapper>
     </MainContainer>
   );
 });

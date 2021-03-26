@@ -10,19 +10,16 @@ import React, { FC } from 'react';
 import { hot } from 'react-hot-loader/root';
 
 import { config as routerConfig } from './router-config';
-import { createMuiTheme, MuiThemeProvider } from '@material-ui/core';
+import { MuiThemeProvider } from '@material-ui/core';
+import makeTheme from '@webb-dapp/ui-components/styling/themes/makeTheme';
 
 const appLogger = LoggerService.new('App');
-const muiTheme = createMuiTheme({
-  palette: {
-    // type: 'dark',
-  },
-});
+const muiTheme = makeTheme({}, 'light');
 const App: FC = () => {
   return (
     <DAppError logger={appLogger}>
       <UIProvider>
-        <WebbProvider applicationName={'Webb Dapp'}>
+        <WebbProvider applicationName={'Webb DApp'}>
           <Theme />
           <MuiThemeProvider theme={muiTheme}>
             <RouterProvider config={routerConfig} />

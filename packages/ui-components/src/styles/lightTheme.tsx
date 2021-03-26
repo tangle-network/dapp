@@ -1,6 +1,9 @@
 import { createGlobalStyle } from 'styled-components';
+import { lightPallet } from '@webb-dapp/ui-components/styling/colors';
 
 export const LightTheme = createGlobalStyle`
+
+
 	:root {
 		--color-primary: #173dc9;
 		--color-primary-light: #2938ce;
@@ -94,4 +97,7 @@ export const LightTheme = createGlobalStyle`
 		border-radius: 12px;
 	}
 
+	body {
+		background: ${lightPallet.mainBackground} !important;
+	}
 `;

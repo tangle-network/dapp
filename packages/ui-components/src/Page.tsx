@@ -127,7 +127,10 @@ _Page = memo(styled(_Page)`
   overflow-y: overlay;
   padding: 0 40px;
   padding-bottom: 64px;
-  background: var(--platform-background);
+  //background: var(--platform-background);
+  border-radius: 40px;
+  overflow: hidden;
+  background: #fff;
 `);
 
 const Content: FC<BareProps> = memo(styled.div`
