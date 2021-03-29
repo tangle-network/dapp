@@ -1,5 +1,4 @@
 import { AppSettings, ConnectStatus } from '@webb-dapp/react-components';
-import { MixerProvider } from '@webb-dapp/react-environment/MixerProvider';
 import { BareProps } from '@webb-dapp/ui-components/types';
 import React, { FC } from 'react';
 
@@ -19,11 +18,9 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
       <ApiProvider>
         <ExtensionProvider appName={applicationName}>
           <StoreProvier>
-            <MixerProvider>
-              {children}
-              <ConnectStatus />
-              <AppSettings />
-            </MixerProvider>
+            {children}
+            <ConnectStatus />
+            <AppSettings />
           </StoreProvier>
         </ExtensionProvider>
       </ApiProvider>

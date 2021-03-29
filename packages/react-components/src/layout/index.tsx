@@ -84,18 +84,6 @@ const Main: FC<MainLayoutProps> = memo(({ children, enableCollapse = true, sideb
 
     return (
       <Page>
-        {result && <CAlert message={`${t('IP_ADDRESS')} ${result['country']}, with IP: ${result['ip']}`} />}
-        <Page.Title
-          breadcrumb={breadcrumb}
-          extra={<AccountBar />}
-          title={
-            ui.subMenu ? (
-              <SubMenu active={ui.subMenu.active} content={ui.subMenu.content} onClick={ui.subMenu.onClick} />
-            ) : (
-              ui.pageTitle
-            )
-          }
-        />
         <Page.Content>{children}</Page.Content>
       </Page>
     );

@@ -1,19 +1,6 @@
+import MixerTabs from '@webb-dapp/mixer';
 import { pageWithFeatures } from '@webb-dapp/react-components/utils/FeaturesGuard/pageWithFeatures';
 import React, { FC } from 'react';
-import MixerTabs from '@webb-dapp/mixer';
-
-type MixerTabType = 'deposit' | 'withdraw';
-
-const subMenu = [
-  {
-    content: 'Deposit',
-    key: 'deposit',
-  },
-  {
-    content: 'Withdraw',
-    key: 'withdraw',
-  },
-];
 
 const PageMixer: FC = () => {
   return <MixerTabs />;
