@@ -21,7 +21,6 @@ const LoadingRoot = styled.div<{ width: number }>`
   position: relative;
   width: 40px;
   height: 40px;
-
   > div {
     position: absolute;
     width: 100%;
@@ -69,6 +68,8 @@ export const PageLoading: FC = styled(({ className }) => {
     </div>
   );
 })`
+  background: #ffffff;
+  border-radius: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -89,7 +90,6 @@ export const CardLoading = styled(({ className, height }) => {
   box-sizing: border-box;
   width: 100%;
   height: 480px;
-  background: #ffffff;
   border: 1px solid #ebeef5;
   border-radius: 12px;
 `;
