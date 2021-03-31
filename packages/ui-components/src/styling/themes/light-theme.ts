@@ -3,6 +3,7 @@ import { ThemeOptions } from '@material-ui/core';
 import tinycolor from 'tinycolor2';
 
 import { lightPallet } from '../colors';
+import { FontFamilies } from '../fonts/font-families.enum';
 
 const lightenRate = 5;
 const darkenRate = 15;
@@ -53,7 +54,7 @@ export const lightMainTheme: ThemeOptions = {
   typography: {
     htmlFontSize: 17,
     fontSize: 12,
-    fontFamily: ['Roboto Slab', 'serif'].join(','),
+    fontFamily: [FontFamilies.Bitum, 'serif'].join(','),
   },
   overrides: {
     MuiBackdrop: {

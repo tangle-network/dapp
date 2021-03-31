@@ -7,6 +7,7 @@ import { lightPallet } from '@webb-dapp/ui-components/styling/colors';
 import { IconButton, Icon } from '@material-ui/core';
 import { AccountBar, ChainName } from '@webb-dapp/react-components';
 import { useApi } from '@webb-dapp/react-hooks';
+import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 
 const AppBarWrapper = styled.nav`
   min-height: 65px;
@@ -39,7 +40,7 @@ const AppBarWrapper = styled.nav`
         position: relative;
         padding: 0 5px;
         color: ${lightPallet.primaryText};
-
+        font-family: ${FontFamilies.AvenirNext};
         :after {
           content: '';
           display: block;
@@ -55,6 +56,7 @@ const AppBarWrapper = styled.nav`
 
         &.active {
           color: ${lightPallet.primary};
+          font-weight: bold;
 
           :after {
             content: '';
@@ -88,7 +90,7 @@ const AppBar: React.FC<AppBarProps> = () => {
       <ul>
         <li className={'active'}>
           <NavLink to={'/mixer'} activeClassName={'active'}>
-            zkProff
+            ZkProff
           </NavLink>
         </li>
         <li>
@@ -98,7 +100,7 @@ const AppBar: React.FC<AppBarProps> = () => {
           <NavLink to={'/governance'}>Governance</NavLink>
         </li>
         <li>
-          <NavLink to={'/how-it-works'}>how it works</NavLink>
+          <NavLink to={'/how-it-works'}>How it works</NavLink>
         </li>
       </ul>
       <AccountWrapper>

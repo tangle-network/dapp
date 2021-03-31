@@ -1,6 +1,8 @@
 /* eslint-disable sort-keys */
 import { ThemeOptions } from '@material-ui/core';
 
+import { FontFamilies } from '../../fonts/font-families.enum';
+
 export const lightMainThemeOverrides: ThemeOptions['overrides'] = {
   MuiButton: {
     root: {},
@@ -8,7 +10,7 @@ export const lightMainThemeOverrides: ThemeOptions['overrides'] = {
 
   MuiTypography: {
     root: {
-      fontFamily: ['Roboto Slab', 'sans-serif'].join(','),
+      fontFamily: [FontFamilies.Bitum, 'sans-serif'].join(','),
     },
     h1: {
       fontSize: '3rem',

@@ -2,7 +2,7 @@ html,
 body {
   margin: 0;
   padding: 0;
-  font-family: 'Roboto Slab', serif;
+  font-family: Bitum, serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-variant-numeric: tabular-nums;
@@ -138,3 +138,4 @@ span {
 .ant-notification {
   z-index: 4000;
 }
+
