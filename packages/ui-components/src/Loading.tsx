@@ -3,6 +3,7 @@ import React, { FC } from 'react';
 import styled, { keyframes } from 'styled-components';
 
 import { BareProps } from './types';
+import { Spinner } from '@webb-dapp/ui-components/Spinner/Spinner';
 
 interface Props extends BareProps {
   width?: number;
@@ -64,7 +65,7 @@ export const Loading: FC<Props> = ({ className, width }) => {
 export const PageLoading: FC = styled(({ className }) => {
   return (
     <div className={className}>
-      <Loading />
+      <Spinner backup={<Loading />} />
     </div>
   );
 })`

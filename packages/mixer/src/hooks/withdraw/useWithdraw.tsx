@@ -1,4 +1,4 @@
-import { useAccounts, useCall, useMixerInfo, useMixerProvider } from '@webb-dapp/react-hooks';
+import { useAccounts, useCall, useMixerInfo } from '@webb-dapp/react-hooks';
 import { useGroupTree } from '@webb-dapp/react-hooks/merkle';
 import { useTX } from '@webb-dapp/react-hooks/tx/useTX';
 import { LoggerService } from '@webb-tools/app-util';
@@ -9,6 +9,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { InjectedAccount } from '@polkadot/extension-inject/types';
 import { decodeAddress } from '@polkadot/keyring';
 import { u8aToHex } from '@polkadot/util';
+import { useMixerProvider } from '@webb-dapp/mixer';
 
 const logger = LoggerService.get('Withdraw');
 
@@ -25,7 +26,7 @@ export enum WithdrawState {
 }
 
 export type WithdrawTXInfo = {
-  account: InjectedAccount;
+  account: string;
   note: Note;
 };
 
@@ -46,7 +47,7 @@ export function useWithdraw(noteStr: string) {
     }
   }, [noteStr]);
 
-  const [withdrawTo, _setWithdrawTo] = useState<InjectedAccount | null>(null);
+  const [withdrawTo, _setWithdrawTo] = useState<string>('');
   const [stage, _setStage] = useState(WithdrawState.Ideal);
 
   const noteMixerGroupId = useMemo(() => note?.id, [note]);
@@ -88,11 +89,11 @@ export function useWithdraw(noteStr: string) {
   }, [stage, restart]);
 
   useEffect(() => {
-    setWithdrawTo(accounts.active || null);
+    setWithdrawTo(accounts.active?.address.toString() || '');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accounts.active?.address]);
 
-  const setWithdrawTo = useCallback((next: InjectedAccount | null) => {
+  const setWithdrawTo = useCallback((next: string) => {
     _setWithdrawTo(next);
   }, []);
 
@@ -143,8 +144,8 @@ export function useWithdraw(noteStr: string) {
     const zk = await mixer.generateZK({
       leaves,
       note: noteStr,
-      recipient: decodeAddress(withdrawTo.address),
-      relayer: decodeAddress(withdrawTo.address),
+      recipient: decodeAddress(withdrawTo),
+      relayer: decodeAddress(withdrawTo),
       root,
     });
 
@@ -159,8 +160,8 @@ export function useWithdraw(noteStr: string) {
       nullifier_hash: zk.nullifierHash,
       proof_bytes: u8aToHex(zk.proof),
       proof_commitments: zk.proofCommitments,
-      recipient: withdrawTo?.address,
-      relayer: withdrawTo?.address,
+      recipient: withdrawTo,
+      relayer: withdrawTo,
     };
     if (!cancel.current) {
       _setStage(WithdrawState.SendingTransaction);

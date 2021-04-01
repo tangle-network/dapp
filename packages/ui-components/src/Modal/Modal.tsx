@@ -30,6 +30,7 @@ const useStyles = makeStyles((theme: Theme) => {
       top: 40,
       marginBottom: 40,
       borderRadius: '20px',
+      overflow: 'hidden',
     },
     wrapper: {
       overflow: 'auto',

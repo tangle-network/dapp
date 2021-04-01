@@ -20,5 +20,13 @@ module.exports = {
     'object-curly-newline': 'off',
     'no-unused-vars': 'off',
   },
+  overrides: [
+    {
+      files: ['*.ts'],
+      rules: {
+        'no-undef': 'off',
+      },
+    },
+  ],
   extends: ['eslint:recommended', 'prettier/react', 'prettier/@typescript-eslint', 'plugin:prettier/recommended'],
 };

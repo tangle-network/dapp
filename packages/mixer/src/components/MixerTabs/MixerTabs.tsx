@@ -30,7 +30,7 @@ const TabButton = styled.button<{ active?: boolean }>`
   align-items: center;
   justify-content: center;
   transition: all 0.4s ease-in-out;
-
+  margin: 0 2px;
   .mixer-tab-icon {
     display: flex;
     align-items: center;

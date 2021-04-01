@@ -8,6 +8,7 @@ import { IconButton, Icon } from '@material-ui/core';
 import { AccountBar, ChainName } from '@webb-dapp/react-components';
 import { useApi } from '@webb-dapp/react-hooks';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
+import { SettingsManager } from '@webb-dapp/ui-components/SettingsManager/SettingsManager';
 
 const AppBarWrapper = styled.nav`
   min-height: 65px;
@@ -104,9 +105,7 @@ const AppBar: React.FC<AppBarProps> = () => {
         </li>
       </ul>
       <AccountWrapper>
-        <IconButton>
-          <Icon>settings</Icon>
-        </IconButton>
+        <SettingsManager />
         {connected && <AccountBar />}
         <ChainName collapse={false} />
       </AccountWrapper>

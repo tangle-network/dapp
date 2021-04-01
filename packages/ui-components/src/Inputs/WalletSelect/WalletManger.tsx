@@ -1,6 +1,3 @@
-import React from 'react';
-import styled from 'styled-components';
-
 import {
   Avatar,
   Button,
@@ -16,15 +13,22 @@ import {
   Typography,
 } from '@material-ui/core';
 import Tooltip from '@material-ui/core/Tooltip';
-import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
+import { SupportedWallet, supportedWallets } from '@webb-dapp/apps/configs/wallets/supported-wallets.config';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
+import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
 import { lightPallet } from '@webb-dapp/ui-components/styling/colors';
+import React, { useEffect, useState } from 'react';
+import styled from 'styled-components';
+import { SpaceBox } from '@webb-dapp/ui-components';
 
 const WalletMangerWrapper = styled.div`
   min-width: 540px;
 `;
 type WalletMangerProps = {
   close(): void;
+  setSelectedWallet(wallet: Wallet): void;
+  selectedWallet: Wallet | null;
+  wallets: Wallet[];
 };
 
 const CloseManagerButton = styled.button``;
@@ -48,6 +52,7 @@ const Badge = styled.span`
 const StyledListItem = styled.li`
   && {
     border-radius: 12px;
+
     :hover,
     &.selected {
       background: #f3f5fe;
@@ -55,7 +60,11 @@ const StyledListItem = styled.li`
   }
 `;
 
-export const WalletManger: React.FC<WalletMangerProps> = ({ close }) => {
+type Wallet = {
+  connected: boolean;
+} & Omit<SupportedWallet, 'detect'>;
+
+export const WalletManger: React.FC<WalletMangerProps> = ({ close, selectedWallet, wallets, setSelectedWallet }) => {
   return (
     <WalletMangerWrapper>
       <WalletManagerContentWrapper>
@@ -64,7 +73,7 @@ export const WalletManger: React.FC<WalletMangerProps> = ({ close }) => {
             <Typography variant={'h5'} color={'textPrimary'}>
               Select your wallet
             </Typography>
-            <Badge color={'primary'}>4</Badge>
+            <Badge color={'primary'}>{wallets.length}</Badge>
           </Flex>
           <Flex>
             <Tooltip title={'close'}>
@@ -79,33 +88,60 @@ export const WalletManger: React.FC<WalletMangerProps> = ({ close }) => {
             </Tooltip>
           </Flex>
         </Flex>
+        <SpaceBox height={16} />
         <List>
-          <StyledListItem
-            classes={{
-              selected: 'selected',
-            }}
-            as={ListItem}
-            button
-          >
-            <ListItemAvatar>
-              <Avatar color={'primary'}>Xy</Avatar>
-            </ListItemAvatar>
-            <ListItemText>
-              <Typography>XYZ`s wallet</Typography>
-              <Typography>ETH</Typography>
-            </ListItemText>
-            <ListItemSecondaryAction>
-              <IconButton>
-                <SvgIcon fontSize={'small'}>
-                  <svg viewBox='0 0 4 13' fill='none' xmlns='http://www.w3.org/2000/svg'>
-                    <circle cx='2' cy='2' r='2' fill='#C8CEDD' />
-                    <ellipse cx='2' cy='6.25' rx='2' ry='1.75' fill='#C8CEDD' />
-                    <circle cx='2' cy='10.5' r='2' fill='#C8CEDD' />
-                  </svg>
-                </SvgIcon>
-              </IconButton>
-            </ListItemSecondaryAction>
-          </StyledListItem>
+          {wallets.map((wallet) => {
+            const connected = wallet.enabled;
+            return (
+              <StyledListItem
+                key={wallet.name}
+                classes={{
+                  selected: 'selected',
+                }}
+                disabled={!wallet.enabled}
+                selected={connected}
+                as={ListItem}
+                button
+              >
+                <ListItemAvatar>
+                  <Avatar style={{ background: 'transparent' }}>
+                    <wallet.logo />
+                  </Avatar>
+                </ListItemAvatar>
+                <ListItemText>
+                  <Flex row>
+                    <Flex flex={1}>
+                      <Typography>{wallet.title}</Typography>
+                      <Typography>ETH</Typography>
+                    </Flex>
+                    {connected && (
+                      <Flex row ai='center' as={Padding} jc={'space-between'}>
+                        <svg width='15' height='15' viewBox='0 0 15 15' fill='none' xmlns='http://www.w3.org/2000/svg'>
+                          <path
+                            d='M7.5 0C3.35785 0 0 3.35785 0 7.5C0 11.6421 3.35785 15 7.5 15C11.6422 15 15 11.6421 15 7.5C15 3.35785 11.6422 0 7.5 0ZM10.8734 6.22375L7.43652 9.66003C7.31445 9.7821 7.15454 9.84314 6.99463 9.84314C6.83472 9.84314 6.6748 9.7821 6.55273 9.66003L4.98962 8.09692C4.74548 7.85278 4.74548 7.45728 4.98962 7.21313C5.23376 6.96899 5.62927 6.96899 5.87341 7.21313L6.99463 8.33435L9.98962 5.33997C10.2338 5.09583 10.6293 5.09583 10.8734 5.33997C11.1176 5.58411 11.1176 5.97961 10.8734 6.22375Z'
+                            fill='#52B684'
+                          />
+                        </svg>
+                        <Padding as='span' x={0.2} />
+                        <Typography>Connected</Typography>
+                      </Flex>
+                    )}
+                  </Flex>
+                </ListItemText>
+                <ListItemSecondaryAction>
+                  <IconButton>
+                    <SvgIcon fontSize={'small'}>
+                      <svg viewBox='0 0 4 13' fill='none' xmlns='http://www.w3.org/2000/svg'>
+                        <circle cx='2' cy='2' r='2' fill='#C8CEDD' />
+                        <ellipse cx='2' cy='6.25' rx='2' ry='1.75' fill='#C8CEDD' />
+                        <circle cx='2' cy='10.5' r='2' fill='#C8CEDD' />
+                      </svg>
+                    </SvgIcon>
+                  </IconButton>
+                </ListItemSecondaryAction>
+              </StyledListItem>
+            );
+          })}
         </List>
       </WalletManagerContentWrapper>
       <Divider />

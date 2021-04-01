@@ -29,7 +29,6 @@ export const ExtensionContext = createContext<ExtensionData>({} as any);
 
 async function getExtensions(api: ApiRx, appName: string): Promise<InjectedExtension> {
   const extensions = await web3Enable(appName);
-
   if (extensions.length === 0) throw new Error('no_extensions');
 
   const currentExtensions = extensions[0];

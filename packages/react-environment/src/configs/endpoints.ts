@@ -36,7 +36,7 @@ export const DEFAULT_ENDPOINTS: EndpointConfig = {
   ],
   development: [
     {
-      name: 'Local Testnet',
+      name: 'Development',
       url: 'ws://127.0.0.1:9944',
       ...endpointDefaults,
       features: {

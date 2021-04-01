@@ -42,7 +42,7 @@ export const lightMainTheme: ThemeOptions = {
     },
     text: {
       primary: lightPallet.primaryText,
-      secondary: '#2b2b2b',
+      secondary: lightPallet.secondaryText,
       hint: '#B9B9B9',
       disabled: tinycolor(lightPallet.primaryText).lighten(lightenRate).toHexString(),
     },

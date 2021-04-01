@@ -17,7 +17,7 @@ export const basePallet = {
   info: '#108ee9',
   /*Greys and text*/
   primaryText: '#474553',
-  secondaryText: 'rgba(200, 206, 221, 0.37)',
+  secondaryText: 'rgba(71 ,69 ,83,  .57)',
   gray1: '#F2F4F9',
   gray2: '#ebeefd',
   gray3: '#EBEEFD',
