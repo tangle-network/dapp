@@ -23,6 +23,7 @@ export interface ExtensionData {
   selectAccountStatus: boolean;
   addressBook: AddressBook;
   addToAddressBook: (data: { address: string; name?: string }) => void;
+  setActiveAccount(address: string | InjectedAccount): Promise<void>;
 }
 
 export const ExtensionContext = createContext<ExtensionData>({} as any);
@@ -244,6 +245,7 @@ export const ExtensionProvider: FC<AccountProviderProps> = ({ appName, authRequi
       isReady,
       openSelectAccount,
       selectAccountStatus,
+      setActiveAccount,
     }),
     [
       accounts,
@@ -255,6 +257,7 @@ export const ExtensionProvider: FC<AccountProviderProps> = ({ appName, authRequi
       addressBook,
       addToAddressBook,
       selectAccountStatus,
+      setActiveAccount,
     ]
   );
 

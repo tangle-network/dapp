@@ -9,6 +9,7 @@ import { AccountBar, ChainName } from '@webb-dapp/react-components';
 import { useApi } from '@webb-dapp/react-hooks';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 import { SettingsManager } from '@webb-dapp/ui-components/SettingsManager/SettingsManager';
+import { AccountManager } from '../AccountManager/AccountManager';
 
 const AppBarWrapper = styled.nav`
   min-height: 65px;
@@ -106,8 +107,7 @@ const AppBar: React.FC<AppBarProps> = () => {
       </ul>
       <AccountWrapper>
         <SettingsManager />
-        {connected && <AccountBar />}
-        <ChainName collapse={false} />
+        {connected && <AccountManager />}
       </AccountWrapper>
     </AppBarWrapper>
   );

@@ -24,4 +24,6 @@ export const basePallet = {
   gray4: 'rgba(200, 206, 221, 0.37)',
   gray5: '#F3F5FE',
   gray6: '#C8CEDD',
+
+  gray13: 'rgba(200, 206, 221, 0.3)',
 };
