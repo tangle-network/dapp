@@ -21,6 +21,7 @@ export * from './useInitialize';
 export * from './useMemorized';
 export * from './useFeatures';
 export * from './mixer';
+export * from './merkle';
 // common
 export * from './useStateWithCallback';
 export * from './useFormValidator';

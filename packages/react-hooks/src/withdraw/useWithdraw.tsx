@@ -1,4 +1,4 @@
-import { useAccounts, useCall, useMixerInfo, useMixerProvider } from '@webb-dapp/react-hooks';
+import { useAccounts, useCall, useMerkleProvider, useMixerInfo } from '@webb-dapp/react-hooks';
 import { useGroupTree } from '@webb-dapp/react-hooks/merkle';
 import { useTX } from '@webb-dapp/react-hooks/tx/useTX';
 import { LoggerService } from '@webb-tools/app-util';
@@ -15,11 +15,8 @@ const logger = LoggerService.get('Withdraw');
 export enum WithdrawState {
   Canceled,
   Ideal,
-
   GeneratingZk,
-
   SendingTransaction,
-
   Done,
   Faild,
 }
@@ -30,7 +27,7 @@ export type WithdrawTXInfo = {
 };
 
 export function useWithdraw(noteStr: string) {
-  const { init, initialized, mixer, restart, restarting } = useMixerProvider();
+  const { init, initialized, merkle, restart, restarting } = useMerkleProvider();
 
   useEffect(() => {
     init();
@@ -125,8 +122,8 @@ export function useWithdraw(noteStr: string) {
       logger.error(`Root has Error`);
       return;
     }
-    if (!mixer) {
-      logger.error(`Mixer isn't initialized`);
+    if (!merkle) {
+      logger.error(`MerkleTree isn't initialized`);
       return;
     }
     if (!groupTreeWrapper.ready || !mixerInfoWrapper.ready) {
@@ -138,10 +135,10 @@ export function useWithdraw(noteStr: string) {
       return;
     }
     const leaves = mixerInfoWrapper.leaveU8a;
+    await merkle.addLeaves(leaves);
     /* Generating Withdraw proof*/
     _setStage(WithdrawState.GeneratingZk);
-    const zk = await mixer.generateZK({
-      leaves,
+    const zk = await merkle.generateZKProof({
       note: noteStr,
       recipient: decodeAddress(withdrawTo.address),
       relayer: decodeAddress(withdrawTo.address),

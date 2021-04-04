@@ -28,7 +28,7 @@ function handler(config: HandlerConfig[]): (list: EventRecord[]) => void {
 
   return (list: EventRecord[]): void => {
     list.forEach((item) => {
-      const key = `${item.event.section.toString()}_${item.event.method.toString()}`;
+      const key = `${item.event.section?.toString()}_${item.event.method?.toString()}`;
       const handler = dispatcherHashMap[key];
 
       if (handler) {
@@ -48,7 +48,7 @@ export const EventsWatcher: FC = () => {
     const subscriber = api.query.system.events<Vec<EventRecord>>().subscribe({
       next: (events: Vec<EventRecord>): void => {
         handler([
-          // ACALA EXAMPLE
+          // ACALA EXAMPLE (we can use these examples for our events too!)
           // handle currency transfer event
           // {
           //   handler: (event): void => {
