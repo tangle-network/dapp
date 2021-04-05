@@ -5,6 +5,7 @@ import React, { FC } from 'react';
 
 import { ApiProvider } from './ApiProvider';
 import { ExtensionProvider } from './ExtensionProvider';
+import { MerkleProvider } from './MerkleProvider';
 import { SettingProvider } from './SettingProvider';
 import { StoreProvier } from './store';
 
@@ -20,9 +21,11 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
         <ExtensionProvider appName={applicationName}>
           <StoreProvier>
             <MixerProvider>
-              {children}
-              <ConnectStatus />
-              <AppSettings />
+              <MerkleProvider>
+                {children}
+                <ConnectStatus />
+                <AppSettings />
+              </MerkleProvider>
             </MixerProvider>
           </StoreProvier>
         </ExtensionProvider>
