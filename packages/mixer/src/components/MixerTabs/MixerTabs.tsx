@@ -1,7 +1,7 @@
+import { Fade } from '@material-ui/core';
+import { lightPallet } from '@webb-dapp/ui-components/styling/colors';
 import React, { useCallback, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
-import { lightPallet } from '@webb-dapp/ui-components/styling/colors';
-import { Fade, Slide } from '@material-ui/core';
 
 const MixerTabsWrapper = styled.div`
   padding: 2rem;

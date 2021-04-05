@@ -19,9 +19,13 @@
 	"react-copy-to-clipboard": "^5.0.2",
 	"react-i18next": "^11.7.1",
 	"styled": "^1.0.0",
-	"styled-components": "^5.2.1"
+	"styled-components": "^5.2.1",
+	"react": "^16.13.1",
+	"react-dom": "^16.13.1"
   },
   "devDependencies": {
+	"@types/react": "^16.9.0",
+	"@types/react-dom": "^16.9.0",
 	"@types/react-copy-to-clipboard": "^4.3.0"
   }
 }

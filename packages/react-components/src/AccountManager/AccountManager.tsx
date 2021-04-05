@@ -1,23 +1,21 @@
-import React, { useMemo, useRef, useState } from 'react';
-import styled, { css } from 'styled-components';
-import { useAccounts, useConstants } from '@webb-dapp/react-hooks';
-import Identicon from '@polkadot/react-identicon';
+import {
+  ClickAwayListener,
+  Icon,
+  IconButton,
+  List,
+  ListItemSecondaryAction,
+  ListItemText,
+  Typography,
+} from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
 import Popper from '@material-ui/core/Popper';
+import { useAccounts, useConstants } from '@webb-dapp/react-hooks';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
-import {
-  Typography,
-  IconButton,
-  ListItemAvatar,
-  ListItemText,
-  List,
-  ListItem,
-  ListItemSecondaryAction,
-  Button,
-  Icon,
-} from '@material-ui/core';
 import { lightPallet } from '@webb-dapp/ui-components/styling/colors';
-import { ClickAwayListener } from '@material-ui/core';
+import React, { useMemo, useRef, useState } from 'react';
+import styled, { css } from 'styled-components';
+
+import IDIcon from '@polkadot/react-identicon';
 
 const AccountManagerContent = styled.div<{ open: boolean }>`
   border-radius: 25px;
@@ -72,7 +70,7 @@ const StyledList = styled.ul`
   }
 `;
 
-const AccountManagerWrapper = styled.div`
+const AccountManagerWrapper = styled.div<any>`
   width: 200px;
   height: 0px;
   background: #ffffff;
@@ -82,7 +80,7 @@ const AccountManagerWrapper = styled.div`
 type AccountManagerProps = {};
 
 export const AccountManager: React.FC<AccountManagerProps> = () => {
-  const { active, setActiveAccount, accounts } = useAccounts();
+  const { accounts, active, setActiveAccount } = useAccounts();
   const address = useMemo(() => active?.name || active?.address || '', [active]);
   const { allCurrencies } = useConstants();
   const ActiveCurrency = useMemo(() => {
@@ -120,7 +118,7 @@ export const AccountManager: React.FC<AccountManagerProps> = () => {
           >
             <div className='account-header'>
               <Avatar className={'account-avatar'}>
-                <Identicon size={16} theme='polkadot' value={active?.address || ''} />
+                <IDIcon size={16} theme='polkadot' value={active?.address || ''} />
               </Avatar>
 
               <Flex as={'p'} flex={1}>
@@ -146,6 +144,7 @@ export const AccountManager: React.FC<AccountManagerProps> = () => {
                 </IconButton>
               </div>
             </div>
+
             <StyledList as={List} dense disablePadding>
               {accountAddresses.map(({ address, name }) => {
                 const isActive = address === active?.address;
@@ -154,12 +153,13 @@ export const AccountManager: React.FC<AccountManagerProps> = () => {
                     role={'button'}
                     onClick={() => {
                       setActiveAccount(address);
+                      setIsOpen(false);
                     }}
                     className={isActive ? 'selected' : ''}
                     key={address + 'accountlist'}
                   >
                     <Avatar className={'account-avatar'}>
-                      <Identicon size={16} theme='polkadot' value={address} />
+                      <IDIcon size={16} theme='polkadot' value={address} />
                     </Avatar>
 
                     <ListItemText>
