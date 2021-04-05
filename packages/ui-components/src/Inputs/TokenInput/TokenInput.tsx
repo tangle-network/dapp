@@ -1,29 +1,78 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import styled from 'styled-components';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import styled, { css } from 'styled-components';
 import { CurrencyId } from '@webb-tools/types/interfaces';
-import HeadlessDropdown from '../HeadlessDropDown/HeadlessDropDown';
 import { getTokenImage } from '@webb-dapp/react-components';
 import Avatar from '@material-ui/core/Avatar';
-import { ListItem, ListItemAvatar, ListItemText, Typography } from '@material-ui/core';
+import { ClickAwayListener, Icon, IconButton, List, ListItemAvatar, ListItemText, Typography } from '@material-ui/core';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
+import { lightPallet } from '@webb-dapp/ui-components/styling/colors';
+import Popper from '@material-ui/core/Popper';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
 
-const TokenInputWrapper = styled.div`
-  height: 38px;
-  width: 122px;
-  padding: 5px;
-  background: #c8cedd 37%;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  border-radius: 31px;
+const TokenInputWrapper = styled.div<{ open: boolean }>`
+  border-radius: 25px;
+  border: 1px solid ${lightPallet.gray13};
+  background: #fff;
+  overflow: hidden;
+  transition: all 0.3s ease-in-out;
 
-  .token-avatar {
-    width: 33.6px;
-    height: 33.6px;
-    border: 2px solid #fff;
+  ${({ open }) => {
+    return open
+      ? css`
+          box-shadow: 1px 1px 14px rgba(54, 86, 233, 0.2);
+          max-height: 350px;
+        `
+      : css`
+          max-height: 50px;
+        `;
+  }}
+  .account-header {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid ${lightPallet.gray13};
+    padding: 5px;
+  }
+
+  .account-avatar {
+    background: transparent;
+  }
+
+  .account-button-wrapper {
+    margin: -20px 0;
   }
 `;
+
+const StyledList = styled.ul`
+  &&& {
+    padding: 10px 0 !important;
+    list-style: none;
+  }
+
+  li {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 5px;
+
+    &.selected,
+    :hover {
+      background: ${lightPallet.gray1};
+    }
+
+    position: relative;
+  }
+`;
+
+const AccountManagerWrapper = styled.div<any>`
+  min-width: 160px;
+  height: 0px;
+  background: #ffffff;
+  position: relative;
+  top: -32.5px;
+`;
+
+type AccountManagerProps = {};
+
 type TokenInputProps = {
   currencies: CurrencyId[];
   value?: CurrencyId;
@@ -57,47 +106,91 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, value, onCha
       value: value.value.toString(),
     };
   }, [value]);
+  const $wrapper = useRef<HTMLDivElement>();
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <>
-      <HeadlessDropdown
-        items={selectItems}
-        Anchor={({ ...props }) => {
-          // @ts-ignore
-          return (
-            <TokenInputWrapper {...props}>
-              {selected ? (
-                <Flex row ai='center' jc='flex-start' flex={1}>
-                  <Avatar style={{ background: 'transparent' }} src={selected.tokenImage} className={'token-avatar'} />
-                  <Padding x={0.5} />
-                  <Flex jc={'center'}>
-                    <Typography variant={'body2'}>{selected.label}</Typography>
-                    <Typography variant={'caption'} color={'textSecondary'}>
-                      Edgeware
-                    </Typography>
+      <AccountManagerWrapper ref={$wrapper}>
+        <ClickAwayListener
+          onClickAway={() => {
+            setIsOpen(false);
+          }}
+        >
+          <Popper placement={'bottom-end'} open={Boolean($wrapper?.current)} anchorEl={$wrapper?.current}>
+            <TokenInputWrapper
+              open={isOpen}
+              style={{
+                width: $wrapper.current?.offsetWidth,
+              }}
+            >
+              <div className='account-header'>
+                {selected ? (
+                  <Flex row ai='center' jc='flex-start' flex={1}>
+                    <Avatar
+                      style={{ background: 'transparent' }}
+                      src={selected.tokenImage}
+                      className={'token-avatar'}
+                    />
+                    <Padding x={0.5} />
+                    <Flex jc={'center'}>
+                      <Typography variant={'body2'}>{selected.label}</Typography>
+                      <Typography variant={'caption'} color={'textSecondary'}>
+                        Edgeware
+                      </Typography>
+                    </Flex>
                   </Flex>
-                </Flex>
-              ) : (
-                'Select Token'
-              )}
+                ) : (
+                  'Select Token'
+                )}
+
+                <div className={'account-button-wrapper'}>
+                  <IconButton
+                    style={{
+                      transform: isOpen ? 'rotate(180deg)' : 'rotate(0)',
+                      transition: 'all ease .3s',
+                    }}
+                    onClick={() => {
+                      setIsOpen((p) => !p);
+                    }}
+                  >
+                    <Icon>expand_more</Icon>
+                  </IconButton>
+                </div>
+              </div>
+
+              <StyledList as={List} dense disablePadding>
+                {selectItems.map(({ self: currency, label }) => {
+                  const isSelected = selected?.label === label;
+                  return (
+                    <li
+                      role={'button'}
+                      onClick={() => {
+                        setIsOpen(false);
+                        onChange(currency);
+                      }}
+                      className={isSelected ? 'selected' : ''}
+                      key={label + 'currency'}
+                    >
+                      <Flex ai='center' row>
+                        <ListItemAvatar>
+                          <Avatar
+                            style={{ background: 'transparent' }}
+                            src={getTokenImage(currency.asToken.toString())}
+                          />
+                        </ListItemAvatar>
+                        <ListItemText>
+                          <Typography>{currency.asToken.toString()}</Typography>
+                        </ListItemText>
+                      </Flex>
+                    </li>
+                  );
+                })}
+              </StyledList>
             </TokenInputWrapper>
-          );
-        }}
-        selected={selected}
-        renderItem={(item) => {
-          const currency = item.self;
-          return (
-            <Flex ai='center' row>
-              <ListItemAvatar>
-                <Avatar style={{ background: 'transparent' }} src={getTokenImage(currency.asToken.toString())} />
-              </ListItemAvatar>
-              <ListItemText>
-                <Typography>{currency.asToken.toString()}</Typography>
-              </ListItemText>
-            </Flex>
-          );
-        }}
-      />
+          </Popper>
+        </ClickAwayListener>
+      </AccountManagerWrapper>
     </>
   );
 };

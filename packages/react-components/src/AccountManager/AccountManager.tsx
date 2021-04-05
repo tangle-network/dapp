@@ -22,12 +22,13 @@ const AccountManagerContent = styled.div<{ open: boolean }>`
   border: 1px solid ${lightPallet.gray13};
   background: #fff;
   overflow: hidden;
-  transition: all 3s ease-in-out;
+  transition: all 0.3s ease-in-out;
 
   ${({ open }) => {
     return open
       ? css`
-          box-shadow: 1px 1px 14px rgba(54, 86, 233, 0.1);
+          box-shadow: 1px 1px 14px rgba(54, 86, 233, 0.2);
+          max-height: 350px;
         `
       : css`
           max-height: 50px;
