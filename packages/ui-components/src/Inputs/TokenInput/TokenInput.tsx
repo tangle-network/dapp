@@ -12,10 +12,10 @@ import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
 const TokenInputWrapper = styled.div<{ open: boolean }>`
   border-radius: 25px;
   border: 1px solid ${lightPallet.gray13};
-  background: #fff;
+
   overflow: hidden;
   transition: all 0.3s ease-in-out;
-
+  background: #c8cedd 37%;
   ${({ open }) => {
     return open
       ? css`
@@ -70,8 +70,6 @@ const AccountManagerWrapper = styled.div<any>`
   position: relative;
   top: -32.5px;
 `;
-
-type AccountManagerProps = {};
 
 type TokenInputProps = {
   currencies: CurrencyId[];
