@@ -10,7 +10,9 @@ body {
   font-weight: 400;
   background: red;
 }
-
+*:focus {
+	outline: none;
+}
 button {
   border: none;
   box-shadow: none;

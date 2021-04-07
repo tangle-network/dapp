@@ -1,4 +1,4 @@
-import { Condition, Copy, Tooltip } from '@webb-dapp/ui-components';
+import { Condition, Tooltip } from '@webb-dapp/ui-components';
 import React, { FC, ReactNode } from 'react';
 
 import { formatHash } from '../utils';
@@ -14,6 +14,7 @@ function getPScanUrl(hash: string): string {
   return `https://edgeware.subscan.io/extrinsic/${hash}`;
 }
 
+// @ts-ignore
 export const FormatHash: FC<Props> = ({ hash, withCopy = true, withPScan = true, withTooltip = true }) => {
   const renderInner = (): ReactNode => {
     return (
@@ -29,5 +30,5 @@ export const FormatHash: FC<Props> = ({ hash, withCopy = true, withPScan = true,
     );
   };
 
-  return <Copy display={`Copy ${formatHash(hash)} Success`} render={renderInner} text={hash} withCopy={withCopy} />;
+  return renderInner();
 };

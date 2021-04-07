@@ -1,4 +1,3 @@
-import { Copy } from '@webb-dapp/ui-components';
 import { BareProps } from '@webb-dapp/ui-components/types';
 import React, { FC, memo, useCallback, useMemo } from 'react';
 
@@ -46,15 +45,7 @@ export const FormatAddress: FC<Props> = memo(
     }, [withIcon, _address, address, iconWidth]);
 
     if (withCopy) {
-      return (
-        <Copy
-          className={className}
-          display='Copy Address Success'
-          render={renderInner}
-          text={address}
-          withCopy={withCopy}
-        />
-      );
+      return null;
     }
 
     return renderInner();

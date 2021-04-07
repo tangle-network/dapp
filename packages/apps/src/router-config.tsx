@@ -6,8 +6,8 @@ import React, { FC, lazy, Suspense } from 'react';
 import { sideBarConfig } from './sidebar-config';
 
 const PageMixer = lazy(() => import('@webb-dapp/page-mixer'));
-const PageGovernance = lazy(() => import('@webb-dapp/page-governance'));
-const PageWallet = lazy(() => import('@webb-dapp/page-wallet'));
+// const PageGovernance = lazy(() => import('@webb-dapp/page-governance'));
+// const PageWallet = lazy(() => import('@webb-dapp/page-wallet'));
 
 const CSuspense: FC = ({ children }) => {
   return <Suspense fallback={<PageContentLoading />}>{children}</Suspense>;
@@ -17,11 +17,7 @@ export const config: RouterConfigData[] = [
   {
     children: [
       {
-        element: (
-          <CSuspense>
-            <PageWallet />
-          </CSuspense>
-        ),
+        element: <CSuspense>{/*<PageWallet />*/}</CSuspense>,
         path: 'wallet',
         title: 'Wallet',
       },
@@ -35,11 +31,7 @@ export const config: RouterConfigData[] = [
         title: 'Mixer',
       },
       {
-        element: (
-          <CSuspense>
-            <PageGovernance />
-          </CSuspense>
-        ),
+        element: <CSuspense>{/*  <PageGovernance />*/}</CSuspense>,
         path: 'governance/*',
         title: 'Governance Overview',
       },

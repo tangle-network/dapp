@@ -1,4 +1,3 @@
-import { NoAccounts, NoExtensions, SelectAccount, UploadMetadata } from '@webb-dapp/react-components';
 import { useApi, useModal, useStorage } from '@webb-dapp/react-hooks';
 import { options } from '@webb-tools/api';
 import { isNumber } from 'lodash';
@@ -23,6 +22,7 @@ export interface ExtensionData {
   selectAccountStatus: boolean;
   addressBook: AddressBook;
   addToAddressBook: (data: { address: string; name?: string }) => void;
+
   setActiveAccount(address: string | InjectedAccount): Promise<void>;
 }
 
@@ -148,11 +148,11 @@ export const ExtensionProvider: FC<AccountProviderProps> = ({ appName, authRequi
     if (!authRequired) return null;
 
     if (errorStatus.noAccount) {
-      return <NoAccounts />;
+      return null;
     }
 
     if (errorStatus.noExtension) {
-      return <NoExtensions />;
+      return null;
     }
 
     return null;
@@ -263,14 +263,6 @@ export const ExtensionProvider: FC<AccountProviderProps> = ({ appName, authRequi
 
   return (
     <ExtensionContext.Provider value={data}>
-      <SelectAccount
-        accounts={accounts}
-        defaultAccount={active ? active.address : undefined}
-        onCancel={closeSelectAccount}
-        onSelect={setActiveAccount}
-        visable={selectAccountStatus}
-      />
-      <UploadMetadata close={closeUploadMatedata} uploadMetadata={uploadMetadata} visiable={uploadMatedataStatus} />
       {children}
       {renderError()}
     </ExtensionContext.Provider>

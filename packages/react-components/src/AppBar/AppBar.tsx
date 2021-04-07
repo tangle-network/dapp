@@ -95,7 +95,7 @@ const AppBar: React.FC<AppBarProps> = () => {
             ZkProff
           </NavLink>
         </li>
-        <li>
+        {/*        <li>
           <NavLink to={'/statistics'}>Statistics</NavLink>
         </li>
         <li>
@@ -103,7 +103,7 @@ const AppBar: React.FC<AppBarProps> = () => {
         </li>
         <li>
           <NavLink to={'/how-it-works'}>How it works</NavLink>
-        </li>
+        </li>*/}
       </ul>
       <AccountWrapper>
         <SettingsManager />
