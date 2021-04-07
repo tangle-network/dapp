@@ -23,11 +23,11 @@ const useStyles = makeStyles((theme: Theme) => {
       maxWidth: '100vw',
       [theme.breakpoints.up('sm')]: {
         minWidth: 450,
+        top: 40,
         maxWidth: (props: any) => (props.unlimitedWidth ? 1200 : 750),
       },
       backgroundColor: theme.palette.background.paper,
       padding: 0,
-      top: 40,
       marginBottom: 40,
       borderRadius: '20px',
       overflow: 'hidden',

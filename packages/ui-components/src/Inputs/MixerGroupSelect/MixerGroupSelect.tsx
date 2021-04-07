@@ -9,10 +9,13 @@ import { MixerGroupItem } from '@webb-dapp/react-hooks';
 import { Token } from '@webb-tools/sdk-core';
 
 const MixerGroupSelectWrapper = styled.div`
-  height: 38px;
+  min-height: 38px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  max-width: 100%;
+  flex-wrap: wrap;
+  overflow: auto;
 `;
 type MixerGroupSelectProps = {
   items: MixerGroupItem[];
@@ -37,7 +40,7 @@ const AmountChipWrapper = styled.span<{ selected?: boolean }>`
     height: 31px;
     padding: 0 5px;
     flex: 1;
-    margin: 0 5px;
+    margin: 5px;
     white-space: nowrap;
     display: flex;
     align-items: center;

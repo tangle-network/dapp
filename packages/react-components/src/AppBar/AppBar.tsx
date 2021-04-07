@@ -1,25 +1,30 @@
 import { ReactComponent as WebbLogo } from '@webb-dapp/react-components/assets/webb-icon.svg';
+import { useDimensions } from '@webb-dapp/react-environment/layout';
+import { useApi } from '@webb-dapp/react-hooks';
+import { SettingsManager } from '@webb-dapp/ui-components/SettingsManager/SettingsManager';
+import { lightPallet } from '@webb-dapp/ui-components/styling/colors';
 import { basePallet } from '@webb-dapp/ui-components/styling/colors/base-pallet';
-import React from 'react';
+import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
+import { below } from '@webb-dapp/ui-components/utils/responsive-utils';
+import React, { useMemo } from 'react';
 import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
-import { lightPallet } from '@webb-dapp/ui-components/styling/colors';
-import { IconButton, Icon } from '@material-ui/core';
-import { AccountBar, ChainName } from '@webb-dapp/react-components';
-import { useApi } from '@webb-dapp/react-hooks';
-import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
-import { SettingsManager } from '@webb-dapp/ui-components/SettingsManager/SettingsManager';
+
 import { AccountManager } from '../AccountManager/AccountManager';
 
 const AppBarWrapper = styled.nav`
-  min-height: 65px;
+  height: 65px;
+  max-height: 65px;
   width: 100%;
   max-width: 1440px;
   margin: auto;
   display: flex;
   flex: 1;
   align-items: center;
-
+  padding: 0 10px;
+  ${below.sm`
+	 background:#fff;
+	`}
   .webb-logo {
     max-width: 100px;
   }
@@ -43,6 +48,7 @@ const AppBarWrapper = styled.nav`
         padding: 0 5px;
         color: ${lightPallet.primaryText};
         font-family: ${FontFamilies.AvenirNext};
+
         :after {
           content: '';
           display: block;
@@ -80,22 +86,32 @@ const AppBarWrapper = styled.nav`
 const AccountWrapper = styled.div`
   display: flex;
   align-items: center;
-`;
+  ${below.sm`
+	  margin-left: auto;
 
+	`}
+`;
+const NavigationWrapper = styled.ul``;
 type AppBarProps = {};
 
 const AppBar: React.FC<AppBarProps> = () => {
   const { connected } = useApi();
+  const { size, width } = useDimensions();
+  const isMobile = useMemo(() => {
+    return width <= size.sm;
+  }, [width, size]);
+
   return (
     <AppBarWrapper>
       <WebbLogo className={'webb-logo'} />
-      <ul>
-        <li className={'active'}>
-          <NavLink to={'/mixer'} activeClassName={'active'}>
-            ZkProff
-          </NavLink>
-        </li>
-        {/*        <li>
+      {!isMobile && (
+        <NavigationWrapper>
+          <li className={'active'}>
+            <NavLink to={'/mixer'} activeClassName={'active'}>
+              ZkProff
+            </NavLink>
+          </li>
+          {/*        <li>
           <NavLink to={'/statistics'}>Statistics</NavLink>
         </li>
         <li>
@@ -104,9 +120,10 @@ const AppBar: React.FC<AppBarProps> = () => {
         <li>
           <NavLink to={'/how-it-works'}>How it works</NavLink>
         </li>*/}
-      </ul>
+        </NavigationWrapper>
+      )}
       <AccountWrapper>
-        <SettingsManager />
+        {!isMobile && <SettingsManager />}
         {connected && <AccountManager />}
       </AccountWrapper>
     </AppBarWrapper>

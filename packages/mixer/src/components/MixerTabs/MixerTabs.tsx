@@ -2,9 +2,12 @@ import { Fade } from '@material-ui/core';
 import { lightPallet } from '@webb-dapp/ui-components/styling/colors';
 import React, { useCallback, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
+import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
 
 const MixerTabsWrapper = styled.div`
-  padding: 2rem;
+  padding: 1rem;
+
+  ${above.sm`  padding: 2rem;`}
   max-width: 500px;
   margin: auto;
   border-radius: 20px;
@@ -31,6 +34,7 @@ const TabButton = styled.button<{ active?: boolean }>`
   justify-content: center;
   transition: all 0.4s ease-in-out;
   margin: 0 2px;
+
   .mixer-tab-icon {
     display: flex;
     align-items: center;

@@ -13,16 +13,20 @@ import {
   Typography,
 } from '@material-ui/core';
 import Tooltip from '@material-ui/core/Tooltip';
-import { SupportedWallet, supportedWallets } from '@webb-dapp/apps/configs/wallets/supported-wallets.config';
+import { SupportedWallet } from '@webb-dapp/apps/configs/wallets/supported-wallets.config';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
 import { lightPallet } from '@webb-dapp/ui-components/styling/colors';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { SpaceBox } from '@webb-dapp/ui-components';
+import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
 
 const WalletMangerWrapper = styled.div`
-  min-width: 540px;
+  ${above.sm`
+min-width:540px;
+
+`}
 `;
 type WalletMangerProps = {
   close(): void;
@@ -34,7 +38,10 @@ type WalletMangerProps = {
 const CloseManagerButton = styled.button``;
 
 const WalletManagerContentWrapper = styled.div`
-  padding: 1.5rem;
+  padding: 1rem;
+  .modal-heading {
+    padding: 0 0.9rem;
+  }
 `;
 const Badge = styled.span`
   background: red;
@@ -70,7 +77,7 @@ export const WalletManger: React.FC<WalletMangerProps> = ({ close, selectedWalle
       <WalletManagerContentWrapper>
         <Flex row ai={'center'} as={'header'}>
           <Flex flex={1} row ai='center'>
-            <Typography variant={'h5'} color={'textPrimary'}>
+            <Typography variant={'h5'} color={'textPrimary'} className={'modal-heading'}>
               Select your wallet
             </Typography>
             <Badge color={'primary'}>{wallets.length}</Badge>
