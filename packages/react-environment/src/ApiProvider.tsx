@@ -1,10 +1,10 @@
 import { options } from '@webb-tools/api';
+import { LoggerService } from '@webb-tools/app-util';
 import React, { FC, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { Subscription } from 'rxjs';
 import { timeout } from 'rxjs/operators';
 
 import { ApiRx, WsProvider } from '@polkadot/api';
-import { LoggerService } from '@webb-tools/app-util';
 
 const MAX_CONNECT_TIME = 1000 * 60; // one minute
 const apiLogger = LoggerService.get('Api');

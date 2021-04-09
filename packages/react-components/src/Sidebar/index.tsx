@@ -2,7 +2,6 @@ import { useApi, useSetting } from '@webb-dapp/react-hooks';
 import { styled } from '@webb-dapp/ui-components';
 import React, { FC, useMemo, useState } from 'react';
 
-import { ChainName } from '../ChainName';
 import { Account } from './Account';
 import { SidebarActiveContext } from './context';
 import { Logo } from './Logo';
@@ -12,10 +11,6 @@ import { SocialPlatform } from './SocialPlatform';
 import { SidebarConfig } from './types';
 
 export * from './types';
-
-const CChainName = styled(ChainName)`
-  margin: 16px 0;
-`;
 
 interface SidebarProps {
   showAccount: boolean;
@@ -71,7 +66,7 @@ export const Sidebar: FC<SidebarProps> = ({ collapse, config, showAccount = true
       <SidebarActiveContext.Provider value={data}>
         <SidebarRoot collapse={collapse}>
           <Logo collapse={collapse} />
-          <CChainName collapse={collapse} />
+
           {showAccount ? <Account collapse={collapse} /> : null}
           {products ? <Products collapse={collapse} data={products} /> : null}
           {config.socialPlatforms ? <SocialPlatform collapse={collapse} data={config.socialPlatforms} /> : null}

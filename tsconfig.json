@@ -36,7 +36,9 @@
       "@webb-dapp/ui-components/*": ["ui-components/src/*"],
       "@webb-dapp/ui-components": ["ui-components/src"],
       "@webb-dapp/utils/*": ["utils/src/*"],
-      "@webb-dapp/utils": ["utils/src"]
+      "@webb-dapp/utils": ["utils/src"],
+      "@webb-dapp/mixer/*": ["mixer/src/*"],
+      "@webb-dapp/mixer": ["mixer/src"]
     },
     "skipDefaultLibCheck": true
   },

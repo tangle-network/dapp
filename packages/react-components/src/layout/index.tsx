@@ -1,16 +1,13 @@
 import { useStore } from '@webb-dapp/react-environment';
-import { useApi, useBreakpoint, useFetch, useIsAppReady, useSetting, useTranslation } from '@webb-dapp/react-hooks';
-import { Alert, Page, PageLoading, styled, SubMenu } from '@webb-dapp/ui-components';
+import { useApi, useIsAppReady, useSetting, useTranslation } from '@webb-dapp/react-hooks';
+import { Alert, Page, PageLoading, styled } from '@webb-dapp/ui-components';
 import { noop } from 'lodash';
 import React, { FC, memo, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router';
-
-import { AccountBar } from '../AccountBar';
-import { Sidebar, SidebarConfig } from '../Sidebar';
-
-const CAlert = styled(Alert)`
-  margin-top: 32px;
-`;
+import { SidebarConfig } from '../Sidebar';
+import AppBar from '@webb-dapp/react-components/AppBar/AppBar';
+import { BottomNavigation } from '@webb-dapp/react-components/BottomNavigation/BottomNavigation';
+import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
 
 const MainContainer = styled.div`
   display: flex;
@@ -18,6 +15,16 @@ const MainContainer = styled.div`
   height: 100vh;
   overflow: hidden;
   background: var(--platform-background);
+  flex-direction: column;
+`;
+const ContentWrapper = styled.main`
+  display: flex;
+  flex: 1;
+  max-height: calc(100vh - 110px);
+  overflow: hidden;
+  ${above.sm`
+    max-height: calc(100vh - 65px);
+	`}
 `;
 
 interface MainLayoutProps {
@@ -28,12 +35,9 @@ interface MainLayoutProps {
 const Main: FC<MainLayoutProps> = memo(({ children, enableCollapse = true, sidebar }) => {
   const { t } = useTranslation('react-components');
   const { init } = useApi();
-  const result = useFetch('https://api.myip.com');
   const { allEndpoints, endpoint } = useSetting();
-  const screen = useBreakpoint();
   const isAppReady = useIsAppReady();
   const ui = useStore('ui');
-  const collapse = useMemo(() => (enableCollapse ? !(screen.xl ?? true) : false), [enableCollapse, screen]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -67,29 +71,15 @@ const Main: FC<MainLayoutProps> = memo(({ children, enableCollapse = true, sideb
 
     return (
       <Page>
-        {result && (
-          <CAlert message={`${t('IP_ADDRESS')} ${result['country']}, with IP: ${result['ip']}`} />
-        )}
-        <Page.Title
-          breadcrumb={breadcrumb}
-          extra={<AccountBar />}
-          title={
-            ui.subMenu ? (
-              <SubMenu active={ui.subMenu.active} content={ui.subMenu.content} onClick={ui.subMenu.onClick} />
-            ) : (
-              ui.pageTitle
-            )
-          }
-        />
         <Page.Content>{children}</Page.Content>
       </Page>
     );
   }, [isAppReady, t, breadcrumb, ui.subMenu, ui.pageTitle, children]);
-
   return (
     <MainContainer>
-      <Sidebar collapse={collapse} config={sidebar} showAccount={true} />
-      {content}
+      <AppBar />
+      <ContentWrapper>{content}</ContentWrapper>
+      <BottomNavigation />
     </MainContainer>
   );
 });

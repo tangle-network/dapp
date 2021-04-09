@@ -1,0 +1,18 @@
+export type AppColor =
+  | 'backdrop'
+  | 'background'
+  | 'mainBackground'
+  | 'primary'
+  | 'secondary'
+  | 'success'
+  | 'danger'
+  | 'warning'
+  | 'info'
+  | 'primaryText'
+  | 'secondaryText'
+  | 'gray1'
+  | 'gray2'
+  | 'gray3'
+  | 'gray4'
+  | 'gray5'
+  | 'gray6';

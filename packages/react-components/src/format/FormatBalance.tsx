@@ -8,7 +8,6 @@ import React, { FC, ReactNode, useCallback, useMemo } from 'react';
 
 import { Balance as BalanceType } from '@polkadot/types/interfaces';
 
-import { TokenName } from '../Token';
 import { formatBalance } from '../utils';
 import classes from './format.module.scss';
 import { FormatNumber, FormatNumberProps, FormatterColor } from './FormatNumber';
@@ -28,7 +27,7 @@ export interface FormatBalanceProps extends BareProps {
   negativeToZero?: boolean;
 }
 
-const CTokenName = styled(TokenName)`
+const CTokenName = styled.span`
   margin-left: 4px;
 `;
 
@@ -63,7 +62,9 @@ export const FormatBalance: FC<FormatBalanceProps> = ({
       return [
         <span key={'format-balance-' + index}>
           <FormatNumber data={displayNumber} formatNumberConfig={{ ...formatBalanceConfig, decimalLength }} />
-          {data.currency ? <CTokenName currency={data.currency} /> : null}
+          {data.currency ? ( // @ts-ignore
+            <CTokenName currency={data.currency} />
+          ) : null}
         </span>,
         pairSymbol && index !== pairLength - 1 ? (
           <span key={'format-balance-symbol-' + index}> {pairSymbol} </span>

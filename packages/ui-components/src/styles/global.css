@@ -2,14 +2,17 @@ html,
 body {
   margin: 0;
   padding: 0;
-  font-family: 'Roboto Slab', serif;
+  font-family: Bitum, serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-variant-numeric: tabular-nums;
   color: #333333;
   font-weight: 400;
+  background: red;
 }
-
+*:focus {
+	outline: none;
+}
 button {
   border: none;
   box-shadow: none;
@@ -90,7 +93,7 @@ span {
 
   --tab-border: #eee;
 
-  --card-shadow:0 0 21px rgba(23, 65, 212, 0.02);
+  --card-shadow: 0 0 21px rgba(23, 65, 212, 0.02);
 
   --sidebar-item-height: 58px;
 
@@ -134,6 +137,7 @@ span {
 .ant-dropdown-menu {
   border-radius: 12px;
 }
-.ant-notification{
-	z-index: 4000;
+.ant-notification {
+  z-index: 4000;
 }
+

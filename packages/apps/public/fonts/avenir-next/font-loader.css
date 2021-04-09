@@ -1,0 +1,27 @@
+@font-face {
+    font-family: "avenir next";
+    src: url('AvenirNextLTPro-It.woff2') format('woff2'),
+        url('AvenirNextLTPro-It.woff') format('woff');
+    font-weight: normal;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "avenir next";
+    src: url('AvenirNextLTPro-Regular.woff2') format('woff2'),
+        url('AvenirNextLTPro-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "avenir next";
+    src: url('AvenirNextLTPro-Bold.woff2') format('woff2'),
+        url('AvenirNextLTPro-Bold.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+

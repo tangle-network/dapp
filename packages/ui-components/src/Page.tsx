@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 import { TextAnimation } from './Animation';
 import { BareProps } from './types';
+import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
 
 const TitleRoot = styled.div`
   margin-top: 32px;
@@ -118,16 +119,26 @@ _Page.displayName = 'Page';
 
 _Page = memo(styled(_Page)`
   flex: 1;
+  height: unset;
+  min-height: unset;
   box-sizing: border-box;
-  height: 100vh;
   max-height: 100vh;
-  min-height: 100vh;
   /* for firfox doesn't support overlay */
   overflow-y: auto;
   overflow-y: overlay;
-  padding: 0 40px;
-  padding-bottom: 64px;
-  background: var(--platform-background);
+
+  background: red;
+  overflow: auto;
+
+  border-radius: 0 0 40px 40px;
+  padding: 0 10px;
+
+  ${above.sm`
+  border-radius: 40px 40px 0 0;
+
+	`};
+
+  background: #fff;
 `);
 
 const Content: FC<BareProps> = memo(styled.div`
