@@ -1,6 +1,5 @@
 import { useCall } from '@webb-dapp/react-hooks';
 import { MixerAssetGroup } from '@webb-tools/sdk-mixer';
-
 import { useMemo } from 'react';
 
 class MixerGroupIdsWrapper {

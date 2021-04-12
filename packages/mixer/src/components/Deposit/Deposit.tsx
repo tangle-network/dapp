@@ -1,46 +1,28 @@
+import { MixerGroupItem, useMixerGroupsEntries, useMixerProvider } from '@webb-dapp/mixer';
+import { DepositConfirm } from '@webb-dapp/mixer/components/DepositConfirm/DepositConfirm';
+import { useBalanceSelect } from '@webb-dapp/react-hooks/useBalanceSelect';
 import { SpaceBox } from '@webb-dapp/ui-components/Box';
 import { MixerGroupSelect } from '@webb-dapp/ui-components/Inputs/MixerGroupSelect/MixerGroupSelect';
 import { WalletTokenInput } from '@webb-dapp/ui-components/Inputs/WalletTokenInput/WalletTokenInput';
-
+import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
+import { LoggerService } from '@webb-tools/app-util';
+import { Asset } from '@webb-tools/sdk-mixer';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import { MixerButton } from '../MixerButton/MixerButton';
-import { DepositConfirm } from '@webb-dapp/mixer/components/DepositConfirm/DepositConfirm';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
-import { MixerGroupItem, useMixerGroupsEntries, useMixerProvider } from '@webb-dapp/mixer';
-
-import { useBalanceSelect } from '@webb-dapp/react-hooks/useBalanceSelect';
-import { CurrencyId } from '@webb-tools/types/interfaces';
-import { Asset } from '@webb-tools/sdk-mixer';
-import { LoggerService } from '@webb-tools/app-util';
-import { useConstants } from '@webb-dapp/react-hooks';
 
 const DepositWrapper = styled.div``;
 type DepositProps = {};
 const depositLogger = LoggerService.get('Deposit');
 
-export const Deposit: React.FC<DepositProps> = ({ children }) => {
+export const Deposit: React.FC<DepositProps> = () => {
   const mixerGroupsEntries = useMixerGroupsEntries();
-  const { clearAmount, setToken, token, tokenError } = useBalanceSelect();
+  const { clearAmount, token } = useBalanceSelect();
   const [showDepositModal, setShowDepositModal] = useState(false);
 
   const handleSuccess = useCallback((): void => clearAmount(), [clearAmount]);
 
-  const isDisabled = useMemo(() => {
-    if (typeof token.amount === 'undefined') return true;
-    return !!tokenError;
-  }, [token, tokenError]);
-
-  const { allCurrencies } = useConstants();
-
-  const handleTokenCurrencyChange = useCallback(
-    (currency: CurrencyId) => {
-      setToken({ token: currency });
-      clearAmount();
-    },
-    [setToken, clearAmount]
-  );
   const items = useMemo(() => {
     return mixerGroupsEntries.items;
   }, [mixerGroupsEntries]);

@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 
 import { StorageKey } from '@polkadot/types';
 
-import { mixerLogger } from './mixer-logger';
+import { mixerLogger } from '../utils';
 
 export type MixerGroupItem = {
   id: number;

@@ -1,10 +1,11 @@
-import { useAccounts, useCall, useMixerInfo } from '@webb-dapp/react-hooks';
-import { useGroupTree, useMerkleProvider } from '@webb-dapp/react-hooks/merkle';
+import { useGroupTree, useMerkleProvider, useMixerInfo } from '@webb-dapp/mixer/hooks';
+import { useAccounts, useCall } from '@webb-dapp/react-hooks';
 import { useTX } from '@webb-dapp/react-hooks/tx/useTX';
 import { LoggerService } from '@webb-tools/app-util';
 import { Note } from '@webb-tools/sdk-mixer';
 import { Block } from '@webb-tools/types/interfaces';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+
 import { decodeAddress } from '@polkadot/keyring';
 import { u8aToHex } from '@polkadot/util';
 

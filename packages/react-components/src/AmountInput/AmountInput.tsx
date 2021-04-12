@@ -1,9 +1,8 @@
+import { MixerGroupItem } from '@webb-dapp/mixer';
 import { Token } from '@webb-tools/sdk-core';
-import { Balance } from '@webb-tools/types/interfaces';
 import clsx from 'clsx';
 import React, { useEffect, useMemo } from 'react';
 import styled from 'styled-components';
-import { MixerGroupItem } from '@webb-dapp/react-hooks';
 
 const AmountInputWrapper = styled.div`
   display: flex;

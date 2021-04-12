@@ -1,5 +1,6 @@
 import { useCall } from '@webb-dapp/react-hooks';
-import { GroupTree } from '@webb-tools/types/interfaces';
+import { MerkleTree } from '@webb-tools/types/interfaces';
+import { ScalarData } from '@webb-tools/types/interfaces/mixer';
 import { useMemo } from 'react';
 
 import { hexToU8a } from '@polkadot/util';
@@ -8,7 +9,7 @@ import { hexToU8a } from '@polkadot/util';
  * Class representing {GroupTree} with a native js types
  * */
 class GroupTreeWrapper {
-  constructor(private _inner?: GroupTree) {}
+  constructor(private _inner?: MerkleTree) {}
 
   get inner() {
     return this._inner;
@@ -25,8 +26,8 @@ class GroupTreeWrapper {
    * Get the root hash for the GroupTree
    * This should be called if the inner type dose exists other wise it will return null
    * */
-  get rootHash() {
-    return this.inner?.toHuman().root_hash ?? null;
+  get rootHash(): ScalarData | null {
+    return (this.inner?.toHuman().root_hash as ScalarData | null) ?? null;
   }
 
   /**
@@ -46,7 +47,7 @@ class GroupTreeWrapper {
  *  @return {GroupTreeWrapper}
  * */
 export const useGroupTree = (id?: string | undefined): GroupTreeWrapper => {
-  const groupTree = useCall<GroupTree>('query.merkle.trees', [id], undefined, undefined, () => Boolean(id));
+  const groupTree = useCall<MerkleTree>('query.merkle.trees', [id], undefined, undefined, () => Boolean(id));
   return useMemo(() => {
     return new GroupTreeWrapper(groupTree);
   }, [groupTree]);

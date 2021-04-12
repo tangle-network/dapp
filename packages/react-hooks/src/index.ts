@@ -20,7 +20,7 @@ export * from './useInterval';
 export * from './useInitialize';
 export * from './useMemorized';
 export * from './useFeatures';
-export * from './mixer';
+
 // common
 export * from './useStateWithCallback';
 export * from './useFormValidator';

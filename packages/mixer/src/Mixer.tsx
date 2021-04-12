@@ -1,7 +1,6 @@
 import { Typography } from '@material-ui/core';
 import { Deposit, MixerTabs, Withdraw } from '@webb-dapp/mixer/components';
-import { MixerProvider } from '@webb-dapp/mixer/containers';
-import { MerkleProvider } from '@webb-dapp/react-hooks/merkle/MekrleProvider';
+import { MerkleProvider, MixerProvider } from '@webb-dapp/mixer/containers';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 import React from 'react';
 import styled from 'styled-components';
