@@ -15,15 +15,7 @@ export const useConstants = (): HooksReturnType => {
 
   // all currencies id
   const allCurrencies = useMemo((): CurrencyId[] => {
-    const tokenList = (api.registry.createType('TokenSymbol' as any).defKeys as string[]).sort(
-      (a, b): number => (CURRENCIES_WEIGHT.get(b.toString()) || 0) - (CURRENCIES_WEIGHT.get(a.toString()) || 0)
-    );
-
-    return tokenList.map(
-      (name: string): CurrencyId => {
-        return api.registry.createType('CurrencyId' as any, { Token: name }) as CurrencyId;
-      }
-    );
+    return [];
   }, [api]);
 
   return {

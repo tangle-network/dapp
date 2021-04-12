@@ -1,9 +1,10 @@
+import { Typography } from '@material-ui/core';
 import { Deposit, MixerTabs, Withdraw } from '@webb-dapp/mixer/components';
 import { MixerProvider } from '@webb-dapp/mixer/containers';
+import { MerkleProvider } from '@webb-dapp/react-hooks/merkle/MekrleProvider';
+import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 import React from 'react';
 import styled from 'styled-components';
-import { Typography } from '@material-ui/core';
-import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 
 const MixerWrapper = styled.div`
   .zk-bridge-message {
@@ -25,17 +26,19 @@ type MixerProps = {};
 export const Mixer: React.FC<MixerProps> = ({}) => {
   return (
     <MixerWrapper>
-      <MixerProvider>
-        <div className='zk-bridge-message'>
-          <Typography variant={'h3'} className={'zk-bridge-welcome-message'}>
-            Morning,<b>Wallet Name</b>
-          </Typography>
-          <Typography variant={'overline'} color={'primary'} className={'zk-bridge-welcome-message-info'}>
-            You’re browsing zkBridge
-          </Typography>
-        </div>
-        <MixerTabs Withdraw={<Withdraw />} Deposit={<Deposit />} />
-      </MixerProvider>
+      <MerkleProvider>
+        <MixerProvider>
+          <div className='zk-bridge-message'>
+            <Typography variant={'h3'} className={'zk-bridge-welcome-message'}>
+              Morning,<b>Wallet Name</b>
+            </Typography>
+            <Typography variant={'overline'} color={'primary'} className={'zk-bridge-welcome-message-info'}>
+              You’re browsing zkBridge
+            </Typography>
+          </div>
+          <MixerTabs Withdraw={<Withdraw />} Deposit={<Deposit />} />
+        </MixerProvider>
+      </MerkleProvider>
     </MixerWrapper>
   );
 };

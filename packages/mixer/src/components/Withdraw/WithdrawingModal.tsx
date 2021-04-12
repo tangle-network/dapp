@@ -65,6 +65,7 @@ const WithdrawingModal: React.FC<WithdrawingModalProps> = ({ canCancel, cancel, 
     if (!withdrawTxInfo) {
       return '';
     }
+
     const address = withdrawTxInfo.account;
     return `${address.slice(0, 20)}...${address.slice(address.length - 10, address.length)}`;
   }, [withdrawTxInfo]);

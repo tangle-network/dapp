@@ -55,11 +55,6 @@
     ts-invariant "^0.4.4"
     tslib "^1.10.0"
 
-"@assemblyscript/loader@0.8.x":
-  version "0.8.1"
-  resolved "https://registry.yarnpkg.com/@assemblyscript/loader/-/loader-0.8.1.tgz#54825cf889e86db0accdeb498eaa91123630278c"
-  integrity sha512-8U8JpGiTCe6jzsBZKwcJ9o7S0tDTcOJmISfM95P1vqD5caZi2NWs3KJJUPAmqFTdop8/tpa3zSEkixoepNq1cA==
-
 "@babel/cli@^7.12.16":
   version "7.12.17"
   resolved "https://registry.yarnpkg.com/@babel/cli/-/cli-7.12.17.tgz#2db13a0f2ba9c05bed78b8aad9669b473dd7f267"
@@ -1304,12 +1299,6 @@
     lodash "^4.17.20"
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
-
-"@guildofweaver/merkle@git+https://github.com/webb-tools/merkle.git":
-  version "0.3.12"
-  resolved "git+https://github.com/webb-tools/merkle.git#0235f48f6603153c0d6f05fdbc5f0def8a31c3d0"
-  dependencies:
-    "@assemblyscript/loader" "0.8.x"
 
 "@hapi/address@2.x.x":
   version "2.1.4"
@@ -3596,20 +3585,20 @@
     "@webassemblyjs/wast-parser" "1.8.5"
     "@xtuc/long" "4.2.2"
 
-"@webb-tools/api@0.1.2-18", "@webb-tools/api@^0.1.2-22", "@webb-tools/api@^0.1.2-58":
-  version "0.1.2-58"
-  resolved "https://registry.yarnpkg.com/@webb-tools/api/-/api-0.1.2-58.tgz#7696186e9a9a0349d280f5039a045866316f10d6"
-  integrity sha512-ekEuAVr/nC/aI9SZ9DNOxaLZeFx0W1/EK4VCUdseUdJ904PsV+cauW0ZeaNSh/+cykoL8IStoaqQ2BdUX7l2pw==
+"@webb-tools/api@0.1.2-18", "@webb-tools/api@^0.1.2-22", "@webb-tools/api@^0.1.2-61":
+  version "0.1.2-61"
+  resolved "https://registry.yarnpkg.com/@webb-tools/api/-/api-0.1.2-61.tgz#a506541821c7f51391a46cfb2b08f1f46866a63a"
+  integrity sha512-CsoAVcJ4bTIxs4TMLV7zxMBfP0YyLdwO9+8jotg6lXXtx2B5wGcbVFTP15ED+UyDrrFdEi6qQPb47TH8b9Fquw==
   dependencies:
     "@babel/runtime" "^7.10.2"
     "@polkadot/api" "^3.4.1"
     "@polkadot/rpc-core" "^3.4.1"
-    "@webb-tools/types" "0.1.2-58"
+    "@webb-tools/types" "0.1.2-61"
 
-"@webb-tools/app-util@0.1.2-18", "@webb-tools/app-util@^0.1.2-58":
-  version "0.1.2-58"
-  resolved "https://registry.yarnpkg.com/@webb-tools/app-util/-/app-util-0.1.2-58.tgz#271f59e48d56d3fcf2531755480f15df9fecd22b"
-  integrity sha512-KCIA6KmkrG7NEdBobjL4JqM+Z8U+XihQfzMv4sz/VqXsIZOTrMeN3rf5pyDe3VJ1dWdYf5lslEgV8CJhYWC/Cw==
+"@webb-tools/app-util@0.1.2-18", "@webb-tools/app-util@^0.1.2-61":
+  version "0.1.2-61"
+  resolved "https://registry.yarnpkg.com/@webb-tools/app-util/-/app-util-0.1.2-61.tgz#a8d8ebceaf74e6ba7aed0e652852d3cdce4ddedd"
+  integrity sha512-boBqzam0iVNHuB5rjPzwB68dWXnfHnzsOXLDimrN5deSdxjjMWNSbpA26E8Er4rPxGKEOz8hLPpj6r3MW0Q3og==
   dependencies:
     "@babel/runtime" "^7.10.2"
     bignumber.js "^9.0.0"
@@ -3619,53 +3608,52 @@
   resolved "https://registry.yarnpkg.com/@webb-tools/mixer-client/-/mixer-client-0.0.8.tgz#3df174da4f0e8419ea87267e5639ec4984ead752"
   integrity sha512-wwweyQEFO+duqxOVitX96iFyUVmkzHmGfSHxbz9nMrg7rIcly5kdS0Iv8zxYNfaTJD8aJB83aIR3Xiw75zSEXw==
 
-"@webb-tools/sdk-core@0.1.2-18", "@webb-tools/sdk-core@^0.1.2-22", "@webb-tools/sdk-core@^0.1.2-58":
-  version "0.1.2-58"
-  resolved "https://registry.yarnpkg.com/@webb-tools/sdk-core/-/sdk-core-0.1.2-58.tgz#56e93b5fbc88c4038d39772dfc53ca76d1af45df"
-  integrity sha512-B7FxnFDfrsaHc6ZNyIDux3gTlgLtPJmjLwj/Xbdj1VYDeg0k5uk27MVtrGzZVtXhqffzbObTuvmzubatxylCDQ==
+"@webb-tools/sdk-core@0.1.2-18", "@webb-tools/sdk-core@^0.1.2-22", "@webb-tools/sdk-core@^0.1.2-61":
+  version "0.1.2-61"
+  resolved "https://registry.yarnpkg.com/@webb-tools/sdk-core/-/sdk-core-0.1.2-61.tgz#3c4d6a64038446338873ba075235fe6240a85952"
+  integrity sha512-u8Nh1cAmf8ioRrDXg72wIStLP29VajkK/FpWmO2AlfXYfAc/oM5oMfpzoItv7Vu/NYEswHWKzCDZOGmCfC6zDg==
   dependencies:
     "@polkadot/api" "^3.4.1"
     "@types/events" "^3.0.0"
-    "@webb-tools/api" "^0.1.2-58"
+    "@webb-tools/api" "^0.1.2-61"
     bignumber.js "^9.0.0"
     events "^3.2.0"
     lodash "^4.17.20"
 
-"@webb-tools/sdk-merkle@^0.1.2-58":
-  version "0.1.2-58"
-  resolved "https://registry.yarnpkg.com/@webb-tools/sdk-merkle/-/sdk-merkle-0.1.2-58.tgz#c822a54024e5c37f90a9c0c0442780f09974d5c3"
-  integrity sha512-IJP4mWVPLwBgP9jZl/t4BiTRXZcKRbMqhhokAB0QShTXalfDFO6RqTjDr5S+s9dFL4b41x6Njq8emBQF/sB2VA==
+"@webb-tools/sdk-merkle@^0.1.2-61":
+  version "0.1.2-61"
+  resolved "https://registry.yarnpkg.com/@webb-tools/sdk-merkle/-/sdk-merkle-0.1.2-61.tgz#1dc4dde804ea7f6d26dac195bb786957336483f5"
+  integrity sha512-nX8ZoyF/XKhs5pazxAMOF4iqpn7Vru4DOQF/GCaYJOSvBiM3rc4Q9Q2KvFNtRNbW2/wyTrCXbFDzrsN/TYXK9w==
   dependencies:
-    "@guildofweaver/merkle" "git+https://github.com/webb-tools/merkle.git"
     "@polkadot/util" "^3.4.1"
-    "@webb-tools/sdk-core" "^0.1.2-58"
+    "@webb-tools/sdk-core" "^0.1.2-61"
     lodash "^4.17.20"
 
-"@webb-tools/sdk-mixer@^0.1.2-22", "@webb-tools/sdk-mixer@^0.1.2-58":
-  version "0.1.2-58"
-  resolved "https://registry.yarnpkg.com/@webb-tools/sdk-mixer/-/sdk-mixer-0.1.2-58.tgz#9ef9f9140eb41506bde3750999696e7c5f37d269"
-  integrity sha512-fyefcWFhTcb7nGEWh3Ej9TgP3Zr8G2Vr/hiA5SUkRhXOyzSH7nOkfTWC/if78oQlNy5jHYJKnq9Z1DmSxIz3Ew==
+"@webb-tools/sdk-mixer@^0.1.2-22", "@webb-tools/sdk-mixer@^0.1.2-61":
+  version "0.1.2-61"
+  resolved "https://registry.yarnpkg.com/@webb-tools/sdk-mixer/-/sdk-mixer-0.1.2-61.tgz#0bcdc60fb25d12ace46f00c033997393e99a71ea"
+  integrity sha512-G9wxDeUlGt4mQ0Ttn5wvv9g8dCKOeB/9LSBAtI4OFEm4dbHC7mrZer/MwoeaIRjOUyw3Pw4ofVuyw3Nds1RwlA==
   dependencies:
     "@polkadot/api" "^3.4.1"
     "@polkadot/util" "^3.4.1"
-    "@webb-tools/app-util" "^0.1.2-58"
+    "@webb-tools/app-util" "^0.1.2-61"
     "@webb-tools/mixer-client" "^0.0.8"
-    "@webb-tools/sdk-core" "^0.1.2-58"
-    "@webb-tools/sdk-merkle" "^0.1.2-58"
-    "@webb-tools/wasm-utils" "^0.1.2-58"
+    "@webb-tools/sdk-core" "^0.1.2-61"
+    "@webb-tools/sdk-merkle" "^0.1.2-61"
+    "@webb-tools/wasm-utils" "^0.1.2-61"
     lodash "^4.17.20"
 
-"@webb-tools/type-definitions@0.1.2-58":
-  version "0.1.2-58"
-  resolved "https://registry.yarnpkg.com/@webb-tools/type-definitions/-/type-definitions-0.1.2-58.tgz#4e7b88d0319f6aa485af877a8cf54f7b672601ca"
-  integrity sha512-RIGDP3bexn/HxVmQtPoVbAS2gvPDiVe6+NXmRdNRwKpjSE7ZoJHPkfUtMKPXO7XcnDfMW76gEhB3RaSV+8zQYQ==
+"@webb-tools/type-definitions@0.1.2-61":
+  version "0.1.2-61"
+  resolved "https://registry.yarnpkg.com/@webb-tools/type-definitions/-/type-definitions-0.1.2-61.tgz#e6de0a8e4fcef0cd2c4561ef0dcde338c7d1b477"
+  integrity sha512-CqG6sUuwUVVtRQ0FsTSuoehJTRrj0xaLm0iwdylVHh+I/FKb5T+mDiQQa2sYPCVp6r9vOWDKHhoK5K1SKvPIgQ==
   dependencies:
     "@open-web3/orml-type-definitions" "^0.8.2-6"
 
-"@webb-tools/types@0.1.2-18", "@webb-tools/types@0.1.2-58", "@webb-tools/types@^0.1.2-58":
-  version "0.1.2-58"
-  resolved "https://registry.yarnpkg.com/@webb-tools/types/-/types-0.1.2-58.tgz#9a76e45ec0a52022829b0a024b65a9135fc6caac"
-  integrity sha512-CCMPbbAIPMEzE7Wylnbw1iYq4M3kc77b84mdx4G6JmmkqlhI+IrH660lBbMpGCEd4QKiLfBsAf+hjAVpI3xasA==
+"@webb-tools/types@0.1.2-18", "@webb-tools/types@0.1.2-61", "@webb-tools/types@^0.1.2-61":
+  version "0.1.2-61"
+  resolved "https://registry.yarnpkg.com/@webb-tools/types/-/types-0.1.2-61.tgz#4f6ca02045b838c50192f2a89b77ec71b7b50823"
+  integrity sha512-0ulw7XxA+ilLy9DRgYkHYvG1I8llhj/cw1xzi10XtVChKoq+GXlRb6N3QmFz/+gyakmRyZgY99Wx0pbUTjylxg==
   dependencies:
     "@babel/runtime" "^7.10.2"
     "@open-web3/api-mobx" "^0.8.2-6"
@@ -3673,12 +3661,12 @@
     "@polkadot/api" "^3.4.1"
     "@polkadot/typegen" "^3.4.1"
     "@polkadot/types" "^3.4.1"
-    "@webb-tools/type-definitions" "0.1.2-58"
+    "@webb-tools/type-definitions" "0.1.2-61"
 
-"@webb-tools/wasm-utils@^0.1.2-58":
-  version "0.1.2-58"
-  resolved "https://registry.yarnpkg.com/@webb-tools/wasm-utils/-/wasm-utils-0.1.2-58.tgz#a6eddfc9f495fc87364fb06e6173ceeb6ffee315"
-  integrity sha512-g4kHvEizUcD5eEBNKeK3tEhznFZzeDtmjKLhkRF5ggpaIII9asm5z1Bytdy165jHkCFbxM96oXUfzhbjNkEzMA==
+"@webb-tools/wasm-utils@^0.1.2-61":
+  version "0.1.2-61"
+  resolved "https://registry.yarnpkg.com/@webb-tools/wasm-utils/-/wasm-utils-0.1.2-61.tgz#b7cf480275f49818c7c6f49a4333890acc2fe9b4"
+  integrity sha512-Pgn638m9OZSjACTbcYarkMxzGPf0MKzJ22903HFR2b+UB1NCpAoP7LRVbW46ij/7qVT8DuR6n8Ze3eV74e6wJg==
 
 "@wry/context@^0.4.0":
   version "0.4.4"

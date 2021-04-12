@@ -20,7 +20,7 @@ class MixerInfoWrapper {
   }
 
   get leaves(): ScalarData[] {
-    return this.inner?.leaves.toArray() ?? [];
+    return this.inner?.leav ?? [];
   }
 
   get leaveU8a(): Uint8Array[] {
@@ -37,7 +37,7 @@ class MixerInfoWrapper {
  *  @return {MixerInfoWrapper}
  * */
 export const useMixerInfo = (id?: string | undefined): MixerInfoWrapper => {
-  const mixerInfo = useCall<MixerInfo>('query.mixer.mixerGroups', [id], undefined, undefined, () => Boolean(id));
+  const mixerInfo = useCall<MixerInfo>('query.mixer.mixerTrees', [id], undefined, undefined, () => Boolean(id));
   return useMemo(() => {
     return new MixerInfoWrapper(mixerInfo);
   }, [mixerInfo]);

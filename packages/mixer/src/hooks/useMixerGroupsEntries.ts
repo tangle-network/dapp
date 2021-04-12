@@ -59,7 +59,7 @@ class MixerGroupEntriesWrapper {
  *  @return {MixerGroupEntriesWrapper}
  * */
 export const useMixerGroupsEntries = (): MixerGroupEntriesWrapper => {
-  const mixerGroups = useCall<Array<MixerGroupEntry>>('query.mixer.mixerGroups.entries', [], undefined, []);
+  const mixerGroups = useCall<Array<MixerGroupEntry>>('query.mixer.mixerTrees.entries', [], undefined, []);
   return useMemo(() => {
     mixerLogger.debug(`MixerGroupEntry `, mixerGroups);
     return new MixerGroupEntriesWrapper(mixerGroups);

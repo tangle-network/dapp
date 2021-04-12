@@ -22,7 +22,7 @@ class MixerGroupIdsWrapper {
 }
 
 export const useMixerGroupIds = (): MixerGroupIdsWrapper => {
-  const groupIds = useCall<GroupId[]>('query.mixer.mixerGroupIds', []);
+  const groupIds = useCall<GroupId[]>('query.mixer.mixerTreeIds', []);
   return useMemo(() => {
     return new MixerGroupIdsWrapper(groupIds);
   }, [groupIds]);

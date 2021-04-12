@@ -1,17 +1,13 @@
-import { BalanceInputValue } from '@webb-dapp/react-components';
 import { useApi } from '@webb-dapp/react-hooks/useApi';
 import { useInputValue } from '@webb-dapp/react-hooks/useInputValue';
-import { Token, token2CurrencyId } from '@webb-tools/sdk-core';
+import { currencyId2Token, Token } from '@webb-tools/sdk-core';
 import { useCallback } from 'react';
 
 export const useBalanceSelect = () => {
   const { api } = useApi();
-  const [token, setToken, { error: tokenError }] = useInputValue<BalanceInputValue>({
+  const [token, setToken, { error: tokenError }] = useInputValue({
     amount: 0,
-    token: token2CurrencyId(
-      api,
-      new Token({ amount: 0, chain: 'edgeware', name: 'EDG', precision: 12, symbol: 'EDG' })
-    ),
+    token: currencyId2Token(api.createType('CurrencyId', 0)),
   });
   const clearAmount = useCallback(() => {
     setToken({

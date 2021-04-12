@@ -46,7 +46,7 @@ class GroupTreeWrapper {
  *  @return {GroupTreeWrapper}
  * */
 export const useGroupTree = (id?: string | undefined): GroupTreeWrapper => {
-  const groupTree = useCall<GroupTree>('query.merkle.groups', [id], undefined, undefined, () => Boolean(id));
+  const groupTree = useCall<GroupTree>('query.merkle.trees', [id], undefined, undefined, () => Boolean(id));
   return useMemo(() => {
     return new GroupTreeWrapper(groupTree);
   }, [groupTree]);

@@ -51,6 +51,9 @@ module.exports = override(function (config, env) {
   config.module.rules.push({
     test: /.worker.(ts|js)?$/,
     loader: 'worker-loader',
+    options: {
+      filename: '[name].[contenthash].js',
+    },
     // include: path.resolve(__dirname, 'src'),
   });
 

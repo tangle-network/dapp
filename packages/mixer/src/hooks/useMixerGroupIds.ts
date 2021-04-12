@@ -1,10 +1,10 @@
 import { useCall } from '@webb-dapp/react-hooks';
 import { MixerAssetGroup } from '@webb-tools/sdk-mixer';
-import { GroupId } from '@webb-tools/types/interfaces';
+
 import { useMemo } from 'react';
 
 class MixerGroupIdsWrapper {
-  constructor(private _inner?: GroupId[]) {}
+  constructor(private _inner?: any[]) {}
 
   get inner() {
     return this._inner || [];
@@ -22,7 +22,7 @@ class MixerGroupIdsWrapper {
 }
 
 export const useMixerGroupIds = (): MixerGroupIdsWrapper => {
-  const groupIds = useCall<GroupId[]>('query.mixer.mixerGroupIds', []);
+  const groupIds = useCall<any[]>('query.mixer.mixerTreeIds', []);
   return useMemo(() => {
     return new MixerGroupIdsWrapper(groupIds);
   }, [groupIds]);

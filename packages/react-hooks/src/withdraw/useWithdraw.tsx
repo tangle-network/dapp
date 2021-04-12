@@ -1,5 +1,5 @@
-import { useAccounts, useCall, useMixerInfo, useMixerProvider } from '@webb-dapp/react-hooks';
-import { useGroupTree } from '@webb-dapp/react-hooks/merkle';
+import { useAccounts, useCall, useMixerInfo } from '@webb-dapp/react-hooks';
+import { useGroupTree, useMerkleProvider } from '@webb-dapp/react-hooks/merkle';
 import { useTX } from '@webb-dapp/react-hooks/tx/useTX';
 import { LoggerService } from '@webb-tools/app-util';
 import { Note } from '@webb-tools/sdk-mixer';
@@ -30,7 +30,7 @@ export type WithdrawTXInfo = {
 };
 
 export function useWithdraw(noteStr: string) {
-  const { init, initialized, mixer, restart, restarting } = useMixerProvider();
+  const { init, initialized, merkle: mixer, restart, restarting } = useMerkleProvider();
 
   useEffect(() => {
     init();
