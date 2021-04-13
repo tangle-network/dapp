@@ -8,6 +8,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { decodeAddress } from '@polkadot/keyring';
 import { u8aToHex } from '@polkadot/util';
+import { useTreeLeaves } from '@webb-dapp/mixer/hooks/merkle/useTreeLeaves';
 
 const logger = LoggerService.get('Withdraw');
 
@@ -51,6 +52,7 @@ export function useWithdraw(noteStr: string) {
   const noteMixerGroupId = useMemo(() => note?.id, [note]);
   const groupTreeWrapper = useGroupTree(noteMixerGroupId?.toString());
   const mixerInfoWrapper = useMixerInfo(noteMixerGroupId?.toString());
+  const treeLeaves = useTreeLeaves(noteMixerGroupId);
 
   const withdrawTxInfo = useMemo<WithdrawTXInfo | null>(() => {
     if (!note || !withdrawTo) {
@@ -66,6 +68,12 @@ export function useWithdraw(noteStr: string) {
     note: ``,
     withdrawTo: ``,
   });
+  // restart the merkle tree on note change to undo mutations
+  useEffect(() => {
+    if (note) {
+      restart();
+    }
+  }, [note]);
 
   useEffect(() => {
     setValidationError((prev) => ({
@@ -116,8 +124,11 @@ export function useWithdraw(noteStr: string) {
 
   const canWithdraw = useMemo(() => {
     const validState = stage < WithdrawState.GeneratingZk;
-    return groupTreeWrapper.ready && mixerInfoWrapper.ready && Boolean(note) && initialized && validState;
-  }, [groupTreeWrapper, mixerInfoWrapper, note, initialized, stage]);
+    return (
+      groupTreeWrapper.ready && mixerInfoWrapper.ready && Boolean(note) && initialized && validState && treeLeaves.done
+    );
+  }, [groupTreeWrapper, mixerInfoWrapper, note, initialized, stage, treeLeaves]);
+
   const withdraw = async () => {
     const root = groupTreeWrapper.rootHashU8a;
     if (!root || !note) {
@@ -136,9 +147,13 @@ export function useWithdraw(noteStr: string) {
       logger.error(`withdrawTo isn't ready`);
       return;
     }
-
+    if (!treeLeaves.done) {
+      logger.error(`Still fetching leaves`);
+      return;
+    }
     /* Generating Withdraw proof*/
     _setStage(WithdrawState.GeneratingZk);
+    await merkle.addLeaves(treeLeaves.data, root);
     const zk = await merkle.generateZKProof({
       note: noteStr,
       recipient: decodeAddress(withdrawTo),
