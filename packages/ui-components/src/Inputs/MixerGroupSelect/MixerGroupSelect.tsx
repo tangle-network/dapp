@@ -1,11 +1,10 @@
 /* eslint-disable @typescript-eslint/indent */
-import { ButtonBase } from '@material-ui/core';
 import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabel';
 import { lightPallet } from '@webb-dapp/ui-components/styling/colors';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import styled, { css } from 'styled-components';
-import { MixerGroupItem } from '@webb-dapp/react-hooks';
+import { MixerGroupItem } from '@webb-dapp/mixer';
 import { Token } from '@webb-tools/sdk-core';
 
 const MixerGroupSelectWrapper = styled.div`
@@ -25,6 +24,7 @@ type MixerGroupSelectProps = {
 const AmountChipWrapper = styled.span<{ selected?: boolean }>`
   cursor: pointer;
   transition: all ease 0.3s;
+
   && {
     border: 1px solid #ebeefd;
     border-radius: 20px;
@@ -71,7 +71,7 @@ export const MixerGroupSelect: React.FC<MixerGroupSelectProps> = ({ items, onCha
       });
 
       return {
-        amount: `${amount.toNumber() / 10 ** amount.getPrecision()} ${symbol}`,
+        amount: `${amount.toNumber() / 10 ** amount.getPrecision()} ${item.token.symbol}`,
         id: `amount-${item.id}`,
         item,
         selected: index === checkedIndex,

@@ -1,13 +1,14 @@
+import { ClickAwayListener, Icon, IconButton, List, ListItemAvatar, ListItemText, Typography } from '@material-ui/core';
+import Avatar from '@material-ui/core/Avatar';
+import Popper from '@material-ui/core/Popper';
+import { getTokenImage } from '@webb-dapp/react-components';
+import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
+import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
+import { lightPallet } from '@webb-dapp/ui-components/styling/colors';
+import { currencyId2Token } from '@webb-tools/sdk-core';
+import { CurrencyId } from '@webb-tools/types/interfaces';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import styled, { css } from 'styled-components';
-import { CurrencyId } from '@webb-tools/types/interfaces';
-import { getTokenImage } from '@webb-dapp/react-components';
-import Avatar from '@material-ui/core/Avatar';
-import { ClickAwayListener, Icon, IconButton, List, ListItemAvatar, ListItemText, Typography } from '@material-ui/core';
-import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
-import { lightPallet } from '@webb-dapp/ui-components/styling/colors';
-import Popper from '@material-ui/core/Popper';
-import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
 
 const TokenInputWrapper = styled.div<{ open: boolean }>`
   border-radius: 25px;
@@ -77,13 +78,13 @@ type TokenInputProps = {
   onChange(next: CurrencyId | undefined): void;
 };
 
-export const TokenInput: React.FC<TokenInputProps> = ({ currencies, value, onChange }) => {
+export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, value }) => {
   const selectItems = useMemo(() => {
     return currencies.map((currency) => {
       return {
-        label: currency.value.toString(),
+        label: currency.toString(),
         self: currency,
-        value: currency.value.toString(),
+        value: currency.toString(),
       };
     });
   }, [currencies]);
@@ -92,16 +93,16 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, value, onCha
     if (!value) {
       onChange(currencies[0]);
     }
-  }, [value, currencies]);
+  }, [value, currencies, onChange]);
 
   const selected = useMemo(() => {
     if (!value) {
       return undefined;
     }
     return {
-      label: value.asToken.toString(),
-      tokenImage: getTokenImage(value.asToken.toString()),
-      value: value.value.toString(),
+      label: value.toString(),
+      tokenImage: value ? getTokenImage(currencyId2Token(value)?.toString() ?? 'WEBB') : undefined,
+      value: value.toString(),
     };
   }, [value]);
   const $wrapper = useRef<HTMLDivElement>();
@@ -158,7 +159,7 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, value, onCha
               </div>
 
               <StyledList as={List} dense disablePadding>
-                {selectItems.map(({ self: currency, label }) => {
+                {selectItems.map(({ label, self: currency }) => {
                   const isSelected = selected?.label === label;
                   return (
                     <li
@@ -174,11 +175,11 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, value, onCha
                         <ListItemAvatar>
                           <Avatar
                             style={{ background: 'transparent' }}
-                            src={getTokenImage(currency.asToken.toString())}
+                            src={getTokenImage(currencyId2Token(currency)?.toString() ?? 'WEBB')}
                           />
                         </ListItemAvatar>
                         <ListItemText>
-                          <Typography>{currency.asToken.toString()}</Typography>
+                          <Typography>{currency.toString()}</Typography>
                         </ListItemText>
                       </Flex>
                     </li>

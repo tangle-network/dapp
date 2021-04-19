@@ -38,7 +38,9 @@
       "@webb-dapp/utils/*": ["utils/src/*"],
       "@webb-dapp/utils": ["utils/src"],
       "@webb-dapp/mixer/*": ["mixer/src/*"],
-      "@webb-dapp/mixer": ["mixer/src"]
+      "@webb-dapp/mixer": ["mixer/src"],
+	  "@webb-dapp/wallet/*": ["wallet/src/*"],
+	  "@webb-dapp/wallet": ["wallet/src"],
     },
     "skipDefaultLibCheck": true
   },

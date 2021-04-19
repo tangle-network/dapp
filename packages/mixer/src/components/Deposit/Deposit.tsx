@@ -11,6 +11,8 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import { MixerButton } from '../MixerButton/MixerButton';
+import { Token } from '@webb-tools/sdk-core';
+import { CurrencyId } from '@webb-tools/types/interfaces/types';
 
 const DepositWrapper = styled.div``;
 type DepositProps = {};
@@ -22,10 +24,10 @@ export const Deposit: React.FC<DepositProps> = () => {
   const [showDepositModal, setShowDepositModal] = useState(false);
 
   const handleSuccess = useCallback((): void => clearAmount(), [clearAmount]);
-
+  const [selectedToken, setSelectedToken] = useState<CurrencyId | undefined>(undefined);
   const items = useMemo(() => {
-    return mixerGroupsEntries.items;
-  }, [mixerGroupsEntries]);
+    return mixerGroupsEntries.getItemsOf(selectedToken);
+  }, [mixerGroupsEntries, selectedToken]);
 
   const [item, setItem] = useState<MixerGroupItem | undefined>(undefined);
 
@@ -53,7 +55,11 @@ export const Deposit: React.FC<DepositProps> = () => {
 
   return (
     <DepositWrapper>
-      <WalletTokenInput />
+      <WalletTokenInput
+        setSelectedToken={setSelectedToken}
+        selectedToken={selectedToken}
+        mixerGroupEntriesWrapper={mixerGroupsEntries}
+      />
       <SpaceBox height={16} />
       <MixerGroupSelect items={items} value={item} onChange={setItem} />
       <SpaceBox height={16} />

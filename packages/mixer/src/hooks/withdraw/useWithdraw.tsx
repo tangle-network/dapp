@@ -9,6 +9,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { decodeAddress } from '@polkadot/keyring';
 import { u8aToHex } from '@polkadot/util';
 import { useTreeLeaves } from '@webb-dapp/mixer/hooks/merkle/useTreeLeaves';
+import { useLeavesEvents } from '@webb-dapp/mixer/hooks/merkle/useLeavesEvents';
 
 const logger = LoggerService.get('Withdraw');
 
@@ -53,7 +54,8 @@ export function useWithdraw(noteStr: string) {
   const groupTreeWrapper = useGroupTree(noteMixerGroupId?.toString());
   const mixerInfoWrapper = useMixerInfo(noteMixerGroupId?.toString());
   const treeLeaves = useTreeLeaves(noteMixerGroupId);
-
+  const treeLeavesEvents = useLeavesEvents();
+  console.log({ treeLeavesEvents });
   const withdrawTxInfo = useMemo<WithdrawTXInfo | null>(() => {
     if (!note || !withdrawTo) {
       return null;
