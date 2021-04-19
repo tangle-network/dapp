@@ -10,11 +10,11 @@ interface Data {
   token: Token;
 }
 
-export class CurrencyWrapper {
+export class Currency {
   private constructor(private _inner: Data, private _apiRx: ApiRx) {}
 
   static tokenFrom(currencyId: CurrencyId, amount: number) {
-    const id = currencyId.toNumber();
+    const id = currencyId?.toNumber() ?? currencyId;
     switch (id) {
       case 0:
         return new Token({
@@ -35,7 +35,7 @@ export class CurrencyWrapper {
     }
   }
 
-  static fromCurrencyId(currencyId: CurrencyId | number, api: ApiRx, amount: number = 0): CurrencyWrapper {
+  static fromCurrencyId(currencyId: CurrencyId | number, api: ApiRx, amount: number = 0): Currency {
     let cid: CurrencyId;
     if (typeof currencyId === 'number') {
       // @ts-ignore
@@ -43,8 +43,9 @@ export class CurrencyWrapper {
     } else {
       cid = currencyId;
     }
-    const token = CurrencyWrapper.tokenFrom(cid, amount);
-    const cw = new CurrencyWrapper(
+    console.log(cid, 'currencyId');
+    const token = Currency.tokenFrom(cid, amount);
+    const cw = new Currency(
       {
         currencyId: cid,
         token,
@@ -55,7 +56,7 @@ export class CurrencyWrapper {
     return cw;
   }
 
-  static fromToken(token: Token, apiRx: ApiRx): CurrencyWrapper {
+  static fromToken(token: Token, apiRx: ApiRx): Currency {
     const symol = token.symbol;
     let cid: number;
     switch (symol) {
@@ -71,7 +72,7 @@ export class CurrencyWrapper {
     // @ts-ignore
     const currencyId: CurrencyId = apiRx.createType('CurrencyId', cid);
 
-    return new CurrencyWrapper(
+    return new Currency(
       {
         currencyId,
         token,
@@ -83,8 +84,10 @@ export class CurrencyWrapper {
   public get token() {
     return this._inner.token;
   }
-
-  public currencyId() {
+  public get symbol() {
+    return this.token.symbol;
+  }
+  public get currencyId() {
     return this._inner.currencyId;
   }
 

@@ -9,6 +9,7 @@ import { currencyId2Token } from '@webb-tools/sdk-core';
 import { CurrencyId } from '@webb-tools/types/interfaces';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import styled, { css } from 'styled-components';
+import { Currency } from '@webb-dapp/mixer/utils/currency';
 
 const TokenInputWrapper = styled.div<{ open: boolean }>`
   border-radius: 25px;
@@ -73,16 +74,16 @@ const AccountManagerWrapper = styled.div<any>`
 `;
 
 type TokenInputProps = {
-  currencies: CurrencyId[];
-  value?: CurrencyId;
-  onChange(next: CurrencyId | undefined): void;
+  currencies: Currency[];
+  value?: Currency;
+  onChange(next: Currency | undefined): void;
 };
 
 export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, value }) => {
   const selectItems = useMemo(() => {
     return currencies.map((currency) => {
       return {
-        label: currency.toString(),
+        label: currency.currencyId.toString(),
         self: currency,
         value: currency.toString(),
       };
@@ -100,9 +101,11 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
       return undefined;
     }
     return {
-      label: value.toString(),
-      tokenImage: value ? getTokenImage(currencyId2Token(value)?.toString() ?? 'WEBB') : undefined,
-      value: value.toString(),
+      label: value.currencyId.toString(),
+      name: value.fullName,
+      symbol: value.symbol,
+      tokenImage: value.image,
+      value: value.currencyId.toString(),
     };
   }, [value]);
   const $wrapper = useRef<HTMLDivElement>();
@@ -133,9 +136,9 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
                     />
                     <Padding x={0.5} />
                     <Flex jc={'center'}>
-                      <Typography variant={'body2'}>{selected.label}</Typography>
+                      <Typography variant={'body2'}>{selected.symbol}</Typography>
                       <Typography variant={'caption'} color={'textSecondary'}>
-                        Edgeware
+                        {selected.name}
                       </Typography>
                     </Flex>
                   </Flex>
@@ -173,13 +176,13 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
                     >
                       <Flex ai='center' row>
                         <ListItemAvatar>
-                          <Avatar
-                            style={{ background: 'transparent' }}
-                            src={getTokenImage(currencyId2Token(currency)?.toString() ?? 'WEBB')}
-                          />
+                          <Avatar style={{ background: 'transparent' }} src={currency.image} />
                         </ListItemAvatar>
                         <ListItemText>
-                          <Typography>{currency.toString()}</Typography>
+                          <Typography>{currency.symbol}</Typography>
+                          <Typography variant={'caption'} color={'textSecondary'}>
+                            {currency.fullName}
+                          </Typography>
                         </ListItemText>
                       </Flex>
                     </li>

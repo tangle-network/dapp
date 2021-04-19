@@ -1,5 +1,5 @@
 import EdgewareIcon from './coins-icon/EDG.svg';
-import WebbIcon from './coins-icon/Webb-icon.svg';
+import WebbIcon from './coins-icon/webb-icon.svg';
 
 export const TOKEN_COLOR: Map<string, string> = new Map([
   ['SYSTEM', '#173DC9'],

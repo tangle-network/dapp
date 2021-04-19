@@ -71,7 +71,7 @@ export const MixerGroupSelect: React.FC<MixerGroupSelectProps> = ({ items, onCha
       });
 
       return {
-        amount: `${amount.toNumber() / 10 ** amount.getPrecision()} ${item.token.symbol}`,
+        amount: `${amount.toNumber() / 10 ** amount.getPrecision()} ${item.currency.symbol}`,
         id: `amount-${item.id}`,
         item,
         selected: index === checkedIndex,

@@ -1,2 +1,2 @@
 export * from './constants';
-export * from './currency-wrapper';
+export * from './currency';

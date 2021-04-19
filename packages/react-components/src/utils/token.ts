@@ -9,7 +9,10 @@ export const TOKEN_IMAGES: Map<string, string> = new Map([
   ['WEBB', EdgewareIcon],
 ]);
 
-export const TOKEN_FULLNAMES: Map<string, string> = new Map([['EDG', 'Edgeware']]);
+export const TOKEN_FULLNAMES: Map<string, string> = new Map([
+  ['EDG', 'Edgeware'],
+  ['WEBB', 'WebbToken'],
+]);
 
 export const TOKEN_COLOR: Map<string, string> = new Map([
   ['SYSTEM', '#173DC9'],

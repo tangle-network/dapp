@@ -13,6 +13,7 @@ import styled from 'styled-components';
 import { MixerButton } from '../MixerButton/MixerButton';
 import { Token } from '@webb-tools/sdk-core';
 import { CurrencyId } from '@webb-tools/types/interfaces/types';
+import { Currency } from '@webb-dapp/mixer/utils/currency';
 
 const DepositWrapper = styled.div``;
 type DepositProps = {};
@@ -24,9 +25,9 @@ export const Deposit: React.FC<DepositProps> = () => {
   const [showDepositModal, setShowDepositModal] = useState(false);
 
   const handleSuccess = useCallback((): void => clearAmount(), [clearAmount]);
-  const [selectedToken, setSelectedToken] = useState<CurrencyId | undefined>(undefined);
+  const [selectedToken, setSelectedToken] = useState<Currency | undefined>(undefined);
   const items = useMemo(() => {
-    return mixerGroupsEntries.getItemsOf(selectedToken);
+    return mixerGroupsEntries.getItemsOf(selectedToken?.currencyId ?? 0);
   }, [mixerGroupsEntries, selectedToken]);
 
   const [item, setItem] = useState<MixerGroupItem | undefined>(undefined);
