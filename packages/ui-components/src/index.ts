@@ -10,7 +10,7 @@ export * from './Loading';
 
 export * from './Icon';
 export * from './Page';
-export * from './Radio';
+
 export * from './Step';
 export * from './Table';
 export * from './Tabs';
