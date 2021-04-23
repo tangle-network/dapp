@@ -1,4 +1,5 @@
-import { Condition, Tooltip } from '@webb-dapp/ui-components';
+import { Tooltip } from '@material-ui/core';
+import { Condition } from '@webb-dapp/ui-components';
 import React, { FC, ReactNode } from 'react';
 
 import { formatHash } from '../utils';
@@ -18,7 +19,7 @@ function getPScanUrl(hash: string): string {
 export const FormatHash: FC<Props> = ({ hash, withCopy = true, withPScan = true, withTooltip = true }) => {
   const renderInner = (): ReactNode => {
     return (
-      <Tooltip placement='top' show={withTooltip} title={hash}>
+      <Tooltip placement='top' disableHoverListener={!withTooltip} title={hash}>
         <span>
           <Condition condition={withPScan} or={formatHash(hash)}>
             <a href={getPScanUrl(hash)} rel='noopener noreferrer' target='_blank'>

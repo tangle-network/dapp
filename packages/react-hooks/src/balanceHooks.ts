@@ -1,10 +1,7 @@
-import { tokenEq } from '@webb-dapp/react-components';
 import { FixedPointNumber } from '@webb-tools/sdk-core';
 import { Balance, CurrencyId } from '@webb-tools/types/interfaces';
 import { useEffect, useMemo, useState } from 'react';
 import { combineLatest, Observable } from 'rxjs';
-
-import { Account } from '@polkadot/types/interfaces';
 
 import { AccountLike } from './types';
 import { useAccounts } from './useAccounts';
@@ -24,11 +21,11 @@ export const useBalance = (currency?: CurrencyId, account?: AccountLike): FixedP
   const { active } = useAccounts();
   const _account = useMemo(() => account || (active ? active.address : '_'), [account, active]);
 
-  const acc = useCall<Account>('derive.balances.all', [_account]);
+  const acc = useCall<any>('derive.balances.all', [_account]);
   let balance: FixedPointNumber;
 
   if (acc) {
-    balance = new FixedPointNumber(acc.freeBalance.toString());
+    balance = new FixedPointNumber(acc?.freeBalance.toString());
   } else {
     balance = FixedPointNumber.ZERO;
   }

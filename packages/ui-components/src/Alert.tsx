@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import React, { FC, ReactNode } from 'react';
 import styled from 'styled-components';
 
+// @ts-ignore
 import { ReactComponent as AlertIcon } from './assets/alert.svg';
 import { BareProps, MessageType } from './types';
 

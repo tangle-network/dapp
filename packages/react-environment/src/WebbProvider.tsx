@@ -1,4 +1,3 @@
-import { AppSettings } from '@webb-dapp/react-components';
 import { DimensionsProvider } from '@webb-dapp/react-environment/layout';
 import { BareProps } from '@webb-dapp/ui-components/types';
 import React, { FC } from 'react';
@@ -20,7 +19,6 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
         <ExtensionProvider appName={applicationName}>
           <StoreProvier>
             <DimensionsProvider>{children}</DimensionsProvider>
-            <AppSettings />
           </StoreProvier>
         </ExtensionProvider>
       </ApiProvider>

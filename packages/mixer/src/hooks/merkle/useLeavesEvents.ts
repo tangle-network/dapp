@@ -1,6 +1,6 @@
 import { useApi, useCall } from '@webb-dapp/react-hooks';
 import { LoggerService } from '@webb-tools/app-util';
-import { Block } from '@webb-tools/types/interfaces';
+import { Block, BlockNumber } from '@webb-tools/types/interfaces';
 import { useEffect, useState } from 'react';
 
 import { Vec } from '@polkadot/types';
@@ -25,8 +25,8 @@ export const useLeavesEvents = () => {
       let startingBlock = 0;
       logger.error('latestBlockNumber', { latestBlockNumber });
       for (;;) {
-        const block = (await api.query.system.nubmer(startingBlock).toPromise()) as Block;
-        if (block === latestBlockNumber) {
+        const block = await api.query.system.number(startingBlock).toPromise();
+        if (block.hash === latestBlockNumber.hash) {
           break;
         }
         const events = await api.query.system.events.at<Vec<EventRecord>>(block.hash).toPromise();

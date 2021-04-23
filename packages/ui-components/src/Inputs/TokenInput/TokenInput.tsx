@@ -1,15 +1,12 @@
 import { ClickAwayListener, Icon, IconButton, List, ListItemAvatar, ListItemText, Typography } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
 import Popper from '@material-ui/core/Popper';
-import { getTokenImage } from '@webb-dapp/react-components';
+import { Currency } from '@webb-dapp/mixer/utils/currency';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
 import { lightPallet } from '@webb-dapp/ui-components/styling/colors';
-import { currencyId2Token } from '@webb-tools/sdk-core';
-import { CurrencyId } from '@webb-tools/types/interfaces';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import styled, { css } from 'styled-components';
-import { Currency } from '@webb-dapp/mixer/utils/currency';
 
 const TokenInputWrapper = styled.div<{ open: boolean }>`
   border-radius: 25px;
@@ -18,6 +15,7 @@ const TokenInputWrapper = styled.div<{ open: boolean }>`
   overflow: hidden;
   transition: all 0.3s ease-in-out;
   background: #c8cedd 37%;
+
   ${({ open }) => {
     return open
       ? css`

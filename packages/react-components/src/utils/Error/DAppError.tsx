@@ -14,14 +14,14 @@ export class DAppError extends React.Component<DAppErrorProps, DAppErrorState> {
     hasError: false,
   };
 
-  static getDerivedStateFromError(error) {
+  static getDerivedStateFromError(error: unknown) {
     console.log(error);
 
     // Update state so the next render will show the fallback UI.
     return { hasError: true };
   }
 
-  componentDidCatch(error, errorInfo) {
+  componentDidCatch(error: unknown, errorInfo: unknown) {
     // You can also log the error to an error reporting service
     this.props.logger.error(errorInfo);
     this.props.logger.debug({

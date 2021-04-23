@@ -1,13 +1,9 @@
 import { useAccounts, useApi } from '@webb-dapp/react-hooks';
-import { notification } from '@webb-dapp/ui-components';
-import { FixedPointNumber } from '@webb-tools/sdk-core';
 import { isEmpty } from 'lodash';
 import React, { FC, useEffect } from 'react';
 
 import { Vec } from '@polkadot/types';
 import { EventRecord } from '@polkadot/types/interfaces';
-
-import { formatHash, formatNumber, getTokenName } from './utils';
 
 interface HandlerConfig {
   section: string;

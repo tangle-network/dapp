@@ -1,5 +1,4 @@
-import { TOKEN_COLOR, TOKEN_IMAGES } from '@webb-dapp/mixer/utils/currency/constants';
-import { TOKEN_FULLNAMES } from '@webb-dapp/react-components';
+import { TOKEN_COLOR, TOKEN_FULLNAMES, TOKEN_IMAGES } from '@webb-dapp/mixer/utils/currency/constants';
 import { Token } from '@webb-tools/sdk-core';
 import { CurrencyId } from '@webb-tools/types/interfaces/types';
 
@@ -84,9 +83,11 @@ export class Currency {
   public get token() {
     return this._inner.token;
   }
+
   public get symbol() {
     return this.token.symbol;
   }
+
   public get currencyId() {
     return this._inner.currencyId;
   }

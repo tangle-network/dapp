@@ -10,3 +10,8 @@ export const TOKEN_IMAGES: Map<string, string> = new Map([
   ['EDG', EdgewareIcon],
   ['WEBB', WebbIcon],
 ]);
+
+export const TOKEN_FULLNAMES: Map<string, string> = new Map([
+  ['EDG', 'Edgeware'],
+  ['WEBB', 'WebbToken'],
+]);

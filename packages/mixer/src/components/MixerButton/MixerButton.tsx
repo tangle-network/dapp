@@ -4,7 +4,7 @@ import { lightPallet } from '@webb-dapp/ui-components/styling/colors';
 import React from 'react';
 import styled, { css } from 'styled-components';
 
-const MixerButtonWrapper = styled.button<{ disabled: boolean }>`
+const MixerButtonWrapper = styled.button`
 	&&& {
 		width: 100%;
 		background: ${lightPallet.primary};

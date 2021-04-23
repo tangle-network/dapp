@@ -1,4 +1,4 @@
-import { Tooltip, TooltipProps } from '@webb-dapp/ui-components';
+import { Tooltip, TooltipProps } from '@material-ui/core';
 import { BareProps } from '@webb-dapp/ui-components/types';
 import { Fixed18 } from '@webb-tools/app-util';
 import { FixedPointNumber } from '@webb-tools/sdk-core';
@@ -36,7 +36,11 @@ export const FormatNumber: FC<FormatNumberProps> = ({
   }, [data, formatNumberConfig]);
 
   return (
-    <Tooltip show={withTooltips} title={data instanceof Fixed18 ? data.toString(18, 2) : data} {...toolTipsProps}>
+    <Tooltip
+      disableHoverListener={!withTooltips}
+      title={data instanceof Fixed18 ? data.toString(18, 2) : String(data)}
+      {...toolTipsProps}
+    >
       <span className={clsx(classes.number, className, color)}>
         {prefix ? <span>{prefix}</span> : null}
         {i ? <span>{i}</span> : null}
