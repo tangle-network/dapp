@@ -11,6 +11,11 @@ import React, { useCallback, useEffect, useState } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import styled from 'styled-components';
 
+const DismissWrapper = styled.button``;
+const Dismiss = () => {
+  return <DismissWrapper>dismiss</DismissWrapper>;
+};
+
 const DepositInfoWrapper = styled.div`
   padding: 1rem 2rem;
   width: 500px;
@@ -143,7 +148,8 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({ onClose, onSuccess,
   });
   const handleCopy = useCallback((): void => {
     notification.success({
-      message: `Copied the note to clipboard`,
+      description: 'Deposit note is copied to clipboard',
+      message: 'Copied  to clipboard',
     });
   }, []);
   const [backupConfirmation, setBackupConfirmation] = useState(false);

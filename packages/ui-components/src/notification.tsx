@@ -1,6 +1,5 @@
 import { message, Modal, notification } from 'antd';
-import { createElement } from 'react';
-
+import React, { createElement } from 'react';
 import { ReactComponent as ErrorIcon } from './assets/notification-icon-error.svg';
 import { ReactComponent as InfoIcon } from './assets/notification-icon-info.svg';
 import { ReactComponent as SuccessIcon } from './assets/notification-icon-success.svg';

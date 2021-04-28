@@ -14,11 +14,12 @@ const TokenInputWrapper = styled.div<{ open: boolean }>`
 
   overflow: hidden;
   transition: all 0.3s ease-in-out;
-  background: #c8cedd 37%;
+  background: #ffff 37%;
 
   ${({ open }) => {
     return open
       ? css`
+          background: #e8e8ef 9%;
           box-shadow: 1px 1px 14px rgba(54, 86, 233, 0.2);
           max-height: 350px;
         `
@@ -124,7 +125,12 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
                 width: $wrapper.current?.offsetWidth,
               }}
             >
-              <div className='account-header'>
+              <div
+                onClick={() => {
+                  setIsOpen((p) => !p);
+                }}
+                className='account-header'
+              >
                 {selected ? (
                   <Flex row ai='center' jc='flex-start' flex={1}>
                     <Avatar
@@ -150,7 +156,8 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
                       transform: isOpen ? 'rotate(180deg)' : 'rotate(0)',
                       transition: 'all ease .3s',
                     }}
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.stopPropagation();
                       setIsOpen((p) => !p);
                     }}
                   >

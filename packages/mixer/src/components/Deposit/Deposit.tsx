@@ -11,8 +11,6 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import { MixerButton } from '../MixerButton/MixerButton';
-import { Token } from '@webb-tools/sdk-core';
-import { CurrencyId } from '@webb-tools/types/interfaces/types';
 import { Currency } from '@webb-dapp/mixer/utils/currency';
 
 const DepositWrapper = styled.div``;
