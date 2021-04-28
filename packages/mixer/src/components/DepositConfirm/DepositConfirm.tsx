@@ -1,27 +1,15 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import styled from 'styled-components';
+import { ButtonBase, Checkbox, FormControlLabel, Icon, IconButton, Tooltip, Typography } from '@material-ui/core';
 import { MixerButton } from '@webb-dapp/mixer/components/MixerButton/MixerButton';
-import {
-  Button,
-  ButtonBase,
-  Checkbox,
-  DialogContent,
-  DialogContentText,
-  FormControlLabel,
-  Icon,
-  IconButton,
-  LinearProgress,
-  Tooltip,
-  Typography,
-} from '@material-ui/core';
-import { downloadString } from '@webb-dapp/utils';
 import { useTX } from '@webb-dapp/react-hooks/tx/useTX';
-import { notification } from '@webb-dapp/ui-components/notification';
-import CopyToClipboard from 'react-copy-to-clipboard';
-import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
-import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 import { SpaceBox } from '@webb-dapp/ui-components';
+import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
+import { notification } from '@webb-dapp/ui-components/notification';
 import { Spinner } from '@webb-dapp/ui-components/Spinner/Spinner';
+import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
+import { downloadString } from '@webb-dapp/utils';
+import React, { useCallback, useEffect, useState } from 'react';
+import CopyToClipboard from 'react-copy-to-clipboard';
+import styled from 'styled-components';
 
 const DepositInfoWrapper = styled.div`
   padding: 1rem 2rem;
@@ -46,7 +34,12 @@ const DepositInfoWrapper = styled.div`
     text-align: center;
   }
 `;
-type DepositInfoProps = {};
+type DepositInfoProps = {
+  open: boolean;
+  onClose(): void;
+  params: () => Promise<[number, Uint8Array, string]>;
+  onSuccess(): void;
+};
 
 const GeneratedNote = styled.p`
   border-radius: 10px;
@@ -161,7 +154,7 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({ onClose, onSuccess,
           <div>
             <Spinner />
           </div>
-          <Typography variant={'h4'} color={'primaryText'} align={'center'}>
+          <Typography variant={'h4'} color={'textPrimary'} align={'center'}>
             Generating your deposit note...
           </Typography>
           <Tooltip title={'close'}>

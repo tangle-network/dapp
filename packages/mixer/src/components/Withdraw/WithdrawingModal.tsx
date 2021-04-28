@@ -5,12 +5,12 @@ import {
   DialogContent,
   DialogTitle,
   LinearProgress,
+  Tooltip,
   Typography,
 } from '@material-ui/core';
+import { WithdrawState, WithdrawTXInfo } from '@webb-dapp/mixer';
 import React, { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { WithdrawState, WithdrawTXInfo } from '@webb-dapp/mixer';
-import { Tooltip } from '@webb-dapp/ui-components/Tooltip';
 
 type WithdrawingModalProps = {
   canCancel: boolean;
@@ -36,7 +36,7 @@ const randomMessages = [
   'You may withdraw to another account',
   'Anyone can having your note withdraw , You should keep it secret',
 ];
-const WithdrawingModal: React.FC<WithdrawingModalProps> = ({ canCancel, cancel, withdrawTxInfo, stage }) => {
+const WithdrawingModal: React.FC<WithdrawingModalProps> = ({ canCancel, cancel, stage, withdrawTxInfo }) => {
   const [rm, setRandomMessage] = useState(Math.floor(Math.random() * randomMessages.length));
   useEffect(() => {
     const handle = setInterval(() => {
@@ -65,6 +65,7 @@ const WithdrawingModal: React.FC<WithdrawingModalProps> = ({ canCancel, cancel, 
     if (!withdrawTxInfo) {
       return '';
     }
+
     const address = withdrawTxInfo.account;
     return `${address.slice(0, 20)}...${address.slice(address.length - 10, address.length)}`;
   }, [withdrawTxInfo]);

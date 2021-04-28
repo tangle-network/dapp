@@ -1,15 +1,15 @@
-import { useAccounts, useCall, useMixerInfo } from '@webb-dapp/react-hooks';
-import { useGroupTree } from '@webb-dapp/react-hooks/merkle';
+import { useGroupTree, useMerkleProvider, useMixerInfo } from '@webb-dapp/mixer/hooks';
+import { useAccounts, useCall } from '@webb-dapp/react-hooks';
 import { useTX } from '@webb-dapp/react-hooks/tx/useTX';
 import { LoggerService } from '@webb-tools/app-util';
 import { Note } from '@webb-tools/sdk-mixer';
 import { Block } from '@webb-tools/types/interfaces';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { InjectedAccount } from '@polkadot/extension-inject/types';
 import { decodeAddress } from '@polkadot/keyring';
 import { u8aToHex } from '@polkadot/util';
-import { useMixerProvider } from '@webb-dapp/mixer';
+import { useTreeLeaves } from '@webb-dapp/mixer/hooks/merkle/useTreeLeaves';
+import { useLeavesEvents } from '@webb-dapp/mixer/hooks/merkle/useLeavesEvents';
 
 const logger = LoggerService.get('Withdraw');
 
@@ -31,7 +31,7 @@ export type WithdrawTXInfo = {
 };
 
 export function useWithdraw(noteStr: string) {
-  const { init, initialized, mixer, restart, restarting } = useMixerProvider();
+  const { init, initialized, merkle, restart, restarting } = useMerkleProvider();
 
   useEffect(() => {
     init();
@@ -53,7 +53,9 @@ export function useWithdraw(noteStr: string) {
   const noteMixerGroupId = useMemo(() => note?.id, [note]);
   const groupTreeWrapper = useGroupTree(noteMixerGroupId?.toString());
   const mixerInfoWrapper = useMixerInfo(noteMixerGroupId?.toString());
-
+  const treeLeaves = useTreeLeaves(noteMixerGroupId);
+  const treeLeavesEvents = useLeavesEvents();
+  console.log({ treeLeavesEvents });
   const withdrawTxInfo = useMemo<WithdrawTXInfo | null>(() => {
     if (!note || !withdrawTo) {
       return null;
@@ -68,6 +70,12 @@ export function useWithdraw(noteStr: string) {
     note: ``,
     withdrawTo: ``,
   });
+  // restart the merkle tree on note change to undo mutations
+  useEffect(() => {
+    if (note) {
+      restart();
+    }
+  }, [note]);
 
   useEffect(() => {
     setValidationError((prev) => ({
@@ -118,15 +126,18 @@ export function useWithdraw(noteStr: string) {
 
   const canWithdraw = useMemo(() => {
     const validState = stage < WithdrawState.GeneratingZk;
-    return groupTreeWrapper.ready && mixerInfoWrapper.ready && Boolean(note) && initialized && validState;
-  }, [groupTreeWrapper, mixerInfoWrapper, note, initialized, stage]);
+    return (
+      groupTreeWrapper.ready && mixerInfoWrapper.ready && Boolean(note) && initialized && validState && treeLeaves.done
+    );
+  }, [groupTreeWrapper, mixerInfoWrapper, note, initialized, stage, treeLeaves]);
+
   const withdraw = async () => {
     const root = groupTreeWrapper.rootHashU8a;
     if (!root || !note) {
       logger.error(`Root has Error`);
       return;
     }
-    if (!mixer) {
+    if (!merkle) {
       logger.error(`Mixer isn't initialized`);
       return;
     }
@@ -138,11 +149,14 @@ export function useWithdraw(noteStr: string) {
       logger.error(`withdrawTo isn't ready`);
       return;
     }
-    const leaves = mixerInfoWrapper.leaveU8a;
+    if (!treeLeaves.done) {
+      logger.error(`Still fetching leaves`);
+      return;
+    }
     /* Generating Withdraw proof*/
     _setStage(WithdrawState.GeneratingZk);
-    const zk = await mixer.generateZK({
-      leaves,
+    await merkle.addLeaves(treeLeaves.data, root);
+    const zk = await merkle.generateZKProof({
       note: noteStr,
       recipient: decodeAddress(withdrawTo),
       relayer: decodeAddress(withdrawTo),

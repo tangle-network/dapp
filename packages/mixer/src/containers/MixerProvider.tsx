@@ -1,4 +1,4 @@
-import { useMixer } from '@webb-dapp/react-hooks';
+import { useMixer } from '@webb-dapp/mixer/hooks';
 import React, { FC, ReactNode } from 'react';
 
 import { MixerContext } from './mixer.context';

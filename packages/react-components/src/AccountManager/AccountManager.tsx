@@ -87,7 +87,7 @@ export const AccountManager: React.FC<AccountManagerProps> = () => {
   const ActiveCurrency = useMemo(() => {
     const ac = allCurrencies[0];
     if (ac) {
-      return ac.asToken.toString();
+      return ac.toString();
     }
     return '';
   }, [allCurrencies]);

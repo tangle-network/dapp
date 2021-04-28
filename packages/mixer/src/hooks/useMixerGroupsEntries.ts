@@ -1,22 +1,26 @@
-import { useCall } from '@webb-dapp/react-hooks';
+import { Currency } from '@webb-dapp/mixer/utils/currency';
+import { useApi, useCall } from '@webb-dapp/react-hooks';
 import { Balance, MixerInfo } from '@webb-tools/types/interfaces';
+import { CurrencyId } from '@webb-tools/types/interfaces/types';
 import { useMemo } from 'react';
 
+import { ApiRx } from '@polkadot/api';
 import { StorageKey } from '@polkadot/types';
 
-import { mixerLogger } from './mixer-logger';
+import { mixerLogger } from '../utils';
 
 export type MixerGroupItem = {
   id: number;
   amount: Balance;
+  currency: Currency;
 };
 export type MixerGroupEntry = [StorageKey, MixerInfo];
 
 /**
  * Class representing {[StorageKey, MixerInfo][]} with a native js types
  * */
-class MixerGroupEntriesWrapper {
-  constructor(private _inner?: MixerGroupEntry[]) {}
+export class MixerGroupEntriesWrapper {
+  constructor(private _inner: MixerGroupEntry[] | undefined, private _api: ApiRx) {}
 
   get inner() {
     return this._inner || [];
@@ -34,15 +38,37 @@ class MixerGroupEntriesWrapper {
    * @return {MixerGroupItem}
    * */
   public entryIntoItem(entry: MixerGroupEntry): MixerGroupItem {
-    return {
-      amount: entry[1]['fixed_deposit_size'],
+    const cId: number = entry[1]['currency_id'].toNumber();
+    const amount = entry[1]['fixed_deposit_size'];
 
+    return {
+      amount: amount,
+      currency: Currency.fromCurrencyId(cId, this._api, 0),
       id: Number((entry[0].toHuman() as any[])[0]),
     };
   }
 
   get items(): MixerGroupItem[] {
-    return this.inner.map(this.entryIntoItem);
+    return this.inner.map(this.entryIntoItem, this);
+  }
+
+  getItemsOf(currencyId: CurrencyId | number = 0): MixerGroupItem[] {
+    const selectedSymbol = Currency.fromCurrencyId(currencyId, this._api).token.symbol;
+    return this.inner.map(this.entryIntoItem, this).filter((item) => {
+      return item.currency.token.symbol === selectedSymbol;
+    });
+  }
+
+  get currencies(): Currency[] {
+    const currencies: Currency[] = [];
+    this.items.forEach((item) => {
+      const symbol = item.currency.symbol;
+      const alreadyIn = currencies.findIndex((c) => c.symbol === symbol) > -1;
+      if (!alreadyIn) {
+        currencies.push(item.currency);
+      }
+    });
+    return currencies;
   }
 
   getSelect(item: MixerGroupItem) {
@@ -59,9 +85,11 @@ class MixerGroupEntriesWrapper {
  *  @return {MixerGroupEntriesWrapper}
  * */
 export const useMixerGroupsEntries = (): MixerGroupEntriesWrapper => {
-  const mixerGroups = useCall<Array<MixerGroupEntry>>('query.mixer.mixerGroups.entries', [], undefined, []);
+  const mixerGroups = useCall<Array<MixerGroupEntry>>('query.mixer.mixerTrees.entries', [], undefined, []);
+  const { api } = useApi();
+
   return useMemo(() => {
     mixerLogger.debug(`MixerGroupEntry `, mixerGroups);
-    return new MixerGroupEntriesWrapper(mixerGroups);
-  }, [mixerGroups]);
+    return new MixerGroupEntriesWrapper(mixerGroups, api);
+  }, [api, mixerGroups]);
 };

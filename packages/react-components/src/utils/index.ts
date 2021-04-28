@@ -1,10 +1,8 @@
 import { Fixed18 } from '@webb-tools/app-util';
 import { FixedPointNumber } from '@webb-tools/sdk-core';
-import { CurrencyId } from '@webb-tools/types/interfaces';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 
-export * from './token';
 export * from './account';
 export * from './formatter';
 
@@ -12,30 +10,6 @@ dayjs.extend(duration);
 
 export const numToFixed18Inner = (num: number | string): string => {
   return Fixed18.fromNatural(num).innerToString();
-};
-
-export const tokenEq = (base?: CurrencyId | string, target?: CurrencyId | string): boolean => {
-  if (!target || !base) {
-    return false;
-  }
-
-  try {
-    // convert tokenSymbo to stirng
-    if (typeof base !== 'string') {
-      base = base.isToken ? base.asToken.toString() : base.asDexShare.toString();
-    }
-
-    // convert tokenSymbo to stirng
-    if (typeof target !== 'string') {
-      target = target.isToken ? target.asToken.toString() : target.asDexShare.toString();
-    }
-
-    return base === target;
-  } catch (e) {
-    // swallow error
-  }
-
-  return false;
 };
 
 export const eliminateGap = (

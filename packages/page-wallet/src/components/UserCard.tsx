@@ -1,17 +1,18 @@
 import { FormatAddress } from '@webb-dapp/react-components';
 import { useAccounts } from '@webb-dapp/react-hooks';
-import { Card, Copy, CopyIcon, EditIcon } from '@webb-dapp/ui-components';
 import React, { FC } from 'react';
 
 import Identicon from '@polkadot/react-identicon';
 
 import classes from './UserCard.module.scss';
+import { Card } from '@material-ui/core';
+import { EditIcon } from '@webb-dapp/ui-components';
 
 export const UserCard: FC = () => {
   const { active, openSelectAccount } = useAccounts();
 
   return (
-    <Card className={classes.root} contentClassName={classes.content} padding={false}>
+    <Card className={classes.root}>
       {active ? (
         <>
           <Identicon className={classes.icon} size={64} theme='polkadot' value={active.address} />
@@ -23,7 +24,7 @@ export const UserCard: FC = () => {
             <EditIcon />
             <p className={classes.action}>Change</p>
           </div>
-          <Copy
+          {/* <span
             display='Copy Address Success'
             render={(): JSX.Element => (
               <div className={classes.copy}>
@@ -33,7 +34,7 @@ export const UserCard: FC = () => {
             )}
             text={active.address}
             withCopy={false}
-          />
+          />*/}
         </>
       ) : null}
     </Card>

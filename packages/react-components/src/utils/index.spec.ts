@@ -1,4 +1,4 @@
-import { thousand, getTokenName, formatHash, formatBalance, formatNumber } from './index';
+import { thousand, formatHash, formatBalance, formatNumber } from './index';
 import { Fixed18 } from '@webb-tools/app-util';
 
 describe('test utils', () => {
@@ -40,10 +40,6 @@ describe('test utils', () => {
     expect(thousand('100')).toEqual('100');
     expect(thousand('1000')).toEqual('1,000');
     expect(thousand('1000000')).toEqual('1,000,000');
-  });
-
-  test('getTokenName should work', () => {
-    expect(getTokenName('AUSD')).toEqual('aUSD');
   });
 
   test('formatHash should work', () => {

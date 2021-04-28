@@ -1,13 +1,12 @@
+import { ClickAwayListener, Icon, IconButton, List, ListItemAvatar, ListItemText, Typography } from '@material-ui/core';
+import Avatar from '@material-ui/core/Avatar';
+import Popper from '@material-ui/core/Popper';
+import { Currency } from '@webb-dapp/mixer/utils/currency';
+import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
+import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
+import { lightPallet } from '@webb-dapp/ui-components/styling/colors';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import styled, { css } from 'styled-components';
-import { CurrencyId } from '@webb-tools/types/interfaces';
-import { getTokenImage } from '@webb-dapp/react-components';
-import Avatar from '@material-ui/core/Avatar';
-import { ClickAwayListener, Icon, IconButton, List, ListItemAvatar, ListItemText, Typography } from '@material-ui/core';
-import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
-import { lightPallet } from '@webb-dapp/ui-components/styling/colors';
-import Popper from '@material-ui/core/Popper';
-import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
 
 const TokenInputWrapper = styled.div<{ open: boolean }>`
   border-radius: 25px;
@@ -16,6 +15,7 @@ const TokenInputWrapper = styled.div<{ open: boolean }>`
   overflow: hidden;
   transition: all 0.3s ease-in-out;
   background: #c8cedd 37%;
+
   ${({ open }) => {
     return open
       ? css`
@@ -72,18 +72,18 @@ const AccountManagerWrapper = styled.div<any>`
 `;
 
 type TokenInputProps = {
-  currencies: CurrencyId[];
-  value?: CurrencyId;
-  onChange(next: CurrencyId | undefined): void;
+  currencies: Currency[];
+  value?: Currency;
+  onChange(next: Currency | undefined): void;
 };
 
-export const TokenInput: React.FC<TokenInputProps> = ({ currencies, value, onChange }) => {
+export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, value }) => {
   const selectItems = useMemo(() => {
     return currencies.map((currency) => {
       return {
-        label: currency.value.toString(),
+        label: currency.currencyId.toString(),
         self: currency,
-        value: currency.value.toString(),
+        value: currency.toString(),
       };
     });
   }, [currencies]);
@@ -92,16 +92,18 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, value, onCha
     if (!value) {
       onChange(currencies[0]);
     }
-  }, [value, currencies]);
+  }, [value, currencies, onChange]);
 
   const selected = useMemo(() => {
     if (!value) {
       return undefined;
     }
     return {
-      label: value.asToken.toString(),
-      tokenImage: getTokenImage(value.asToken.toString()),
-      value: value.value.toString(),
+      label: value.currencyId.toString(),
+      name: value.fullName,
+      symbol: value.symbol,
+      tokenImage: value.image,
+      value: value.currencyId.toString(),
     };
   }, [value]);
   const $wrapper = useRef<HTMLDivElement>();
@@ -132,9 +134,9 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, value, onCha
                     />
                     <Padding x={0.5} />
                     <Flex jc={'center'}>
-                      <Typography variant={'body2'}>{selected.label}</Typography>
+                      <Typography variant={'body2'}>{selected.symbol}</Typography>
                       <Typography variant={'caption'} color={'textSecondary'}>
-                        Edgeware
+                        {selected.name}
                       </Typography>
                     </Flex>
                   </Flex>
@@ -158,7 +160,7 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, value, onCha
               </div>
 
               <StyledList as={List} dense disablePadding>
-                {selectItems.map(({ self: currency, label }) => {
+                {selectItems.map(({ label, self: currency }) => {
                   const isSelected = selected?.label === label;
                   return (
                     <li
@@ -172,13 +174,13 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, value, onCha
                     >
                       <Flex ai='center' row>
                         <ListItemAvatar>
-                          <Avatar
-                            style={{ background: 'transparent' }}
-                            src={getTokenImage(currency.asToken.toString())}
-                          />
+                          <Avatar style={{ background: 'transparent' }} src={currency.image} />
                         </ListItemAvatar>
                         <ListItemText>
-                          <Typography>{currency.asToken.toString()}</Typography>
+                          <Typography>{currency.symbol}</Typography>
+                          <Typography variant={'caption'} color={'textSecondary'}>
+                            {currency.fullName}
+                          </Typography>
                         </ListItemText>
                       </Flex>
                     </li>

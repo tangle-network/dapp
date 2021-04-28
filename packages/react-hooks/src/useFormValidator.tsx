@@ -1,4 +1,4 @@
-import { BalanceInputValue, getTokenName, isValidateAddress } from '@webb-dapp/react-components';
+import { isValidateAddress } from '@webb-dapp/react-components';
 import { FixedPointNumber } from '@webb-tools/sdk-core';
 import { CurrencyId } from '@webb-tools/types/interfaces';
 import { useCallback, useLayoutEffect } from 'react';
@@ -59,17 +59,15 @@ interface UseBalanceValidatorConfig {
   max?: [FixedPointNumber, string];
   min?: [FixedPointNumber, string];
   checkBalance?: boolean;
-  updateValidator?: (value: (value: Partial<BalanceInputValue>) => Promise<any>) => void;
+  updateValidator?: (value: (value: Partial<any>) => Promise<any>) => void;
 }
 
-export const useBalanceValidator = (
-  config: UseBalanceValidatorConfig
-): ((value: BalanceInputValue) => Promise<any>) => {
+export const useBalanceValidator = (config: UseBalanceValidatorConfig): ((value: any) => Promise<any>) => {
   const _config = useMemorized(config);
   const balance = useBalance(_config.currency);
 
   const fn = useCallback(
-    ({ amount }: Partial<BalanceInputValue>): Promise<any> => {
+    ({ amount }: Partial<any>): Promise<any> => {
       if (!_config.currency || !amount) return Promise.resolve();
 
       const _amount = new FixedPointNumber(amount);
@@ -95,7 +93,7 @@ export const useBalanceValidator = (
       }
 
       if (checkBalance && _amount.isGreaterThan(balance)) {
-        return Promise.reject(new Error(`Insufficient ${getTokenName(_config.currency)} balance`));
+        return Promise.reject(new Error(`Insufficient ${_config.currency} balance`));
       }
 
       return Promise.resolve();

@@ -10,18 +10,14 @@ export * from './Loading';
 
 export * from './Icon';
 export * from './Page';
-export * from './Radio';
+
 export * from './Step';
-export * from './Table';
-export * from './Tabs';
-export * from './Tag';
 export * from './UIProvider';
 export * from './utils';
 
 export * from './Status';
 export * from './Condition';
 export * from './List';
-export * from './Tooltip';
 export * from './Form';
 export * from './Animation';
 export * from './notification';

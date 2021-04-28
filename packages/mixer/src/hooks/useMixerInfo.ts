@@ -18,14 +18,6 @@ class MixerInfoWrapper {
   get ready() {
     return Boolean(this.inner);
   }
-
-  get leaves(): ScalarData[] {
-    return this.inner?.leaves.toArray() ?? [];
-  }
-
-  get leaveU8a(): Uint8Array[] {
-    return this.leaves.map((leaf) => leaf.toU8a());
-  }
 }
 
 /**
@@ -37,7 +29,7 @@ class MixerInfoWrapper {
  *  @return {MixerInfoWrapper}
  * */
 export const useMixerInfo = (id?: string | undefined): MixerInfoWrapper => {
-  const mixerInfo = useCall<MixerInfo>('query.mixer.mixerGroups', [id], undefined, undefined, () => Boolean(id));
+  const mixerInfo = useCall<MixerInfo>('query.mixer.mixerTrees', [id], undefined, undefined, () => Boolean(id));
   return useMemo(() => {
     return new MixerInfoWrapper(mixerInfo);
   }, [mixerInfo]);
