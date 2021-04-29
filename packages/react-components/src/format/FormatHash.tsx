@@ -1,5 +1,4 @@
 import { Tooltip } from '@material-ui/core';
-import { Condition } from '@webb-dapp/ui-components';
 import React, { FC, ReactNode } from 'react';
 
 import { formatHash } from '../utils';
@@ -21,11 +20,13 @@ export const FormatHash: FC<Props> = ({ hash, withCopy = true, withPScan = true,
     return (
       <Tooltip placement='top' disableHoverListener={!withTooltip} title={hash}>
         <span>
-          <Condition condition={withPScan} or={formatHash(hash)}>
+          {withPScan ? (
             <a href={getPScanUrl(hash)} rel='noopener noreferrer' target='_blank'>
               {formatHash(hash)}
             </a>
-          </Condition>
+          ) : (
+            formatHash(hash)
+          )}
         </span>
       </Tooltip>
     );

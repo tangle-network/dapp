@@ -11,21 +11,12 @@ export * from './Loading';
 export * from './Icon';
 export * from './Page';
 
-export * from './Step';
 export * from './UIProvider';
 export * from './utils';
 
-export * from './Status';
-export * from './Condition';
-export * from './List';
-export * from './Form';
 export * from './Animation';
 export * from './notification';
-export * from './Select';
 
 export * from './NumberInput';
-export * from './Statistic';
-export * from './InputField';
 export * from './Box';
-export * from './Typology';
 export * from './Information';

@@ -12,6 +12,7 @@ import React, { FC } from 'react';
 import { hot } from 'react-hot-loader/root';
 
 import { config as routerConfig } from './router-config';
+import { NotificationStacked } from '@webb-dapp/ui-components/Notification/StackedSnackBar';
 
 const appLogger = LoggerService.new('App');
 const muiTheme = makeTheme({}, 'light');
@@ -22,7 +23,10 @@ const App: FC = () => {
         <WebbProvider applicationName={'Webb DApp'}>
           <Theme />
           <MuiThemeProvider theme={muiTheme}>
-            <RouterProvider config={routerConfig} />
+            <>
+              <NotificationStacked />
+              <RouterProvider config={routerConfig} />
+            </>
           </MuiThemeProvider>
           <EventsWatcher />
         </WebbProvider>
