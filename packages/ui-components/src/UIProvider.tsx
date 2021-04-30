@@ -24,13 +24,7 @@ export const UIContext = React.createContext<UIData>({ phantomdata: '' });
 
 export const UIProvider: FC<BareProps> = ({ children }) => {
   const ui = useStore('ui');
-  const [theme, setTheme] = useLocalStorage('_theme');
-  const isDarkTheme = theme ? theme === 'primary' : true;
-  useEffect(() => {
-    if (theme !== ui.theme) {
-      setTheme(ui.theme);
-    }
-  }, [setTheme, theme, ui.theme]);
+  const isDarkTheme = ui.theme ? ui.theme === 'primary' : true;
 
   const [state] = useState<UIData>({ phantomdata: '' });
   const muiTheme = useMemo(() => makeTheme({}, isDarkTheme ? 'dark' : 'light'), [isDarkTheme]);

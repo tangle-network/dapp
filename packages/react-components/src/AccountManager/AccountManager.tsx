@@ -19,14 +19,15 @@ import IDIcon from '@polkadot/react-identicon';
 const AccountManagerContent = styled.div<{ open: boolean }>`
   border-radius: 25px;
   border: 1px solid ${({ theme }) => theme.gray13};
-  background: #fff;
+  background: ${({ theme }) => theme.background};
+
   overflow: hidden;
   transition: all 0.3s ease-in-out;
 
   ${({ open }) => {
     return open
       ? css`
-          box-shadow: 1px 1px 14px rgba(54, 86, 233, 0.2);
+          box-shadow: 1px 1px 14px rgba(54, 86, 233, 0.4);
           max-height: 350px;
         `
       : css`
@@ -50,6 +51,8 @@ const AccountManagerContent = styled.div<{ open: boolean }>`
 `;
 
 const StyledList = styled.ul`
+  background: ${({ theme }) => theme.background};
+
   &&& {
     padding: 10px 0 !important;
     list-style: none;
@@ -63,7 +66,7 @@ const StyledList = styled.ul`
 
     &.selected,
     :hover {
-      background: ${({ theme }) => theme.gray1};
+      background: ${({ theme }) => theme.mainBackground};
     }
 
     position: relative;
@@ -73,7 +76,6 @@ const StyledList = styled.ul`
 const AccountManagerWrapper = styled.div<any>`
   width: 200px;
   height: 0px;
-  background: #ffffff;
   position: relative;
   top: -32.5px;
 `;

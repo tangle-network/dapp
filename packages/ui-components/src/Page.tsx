@@ -136,7 +136,7 @@ _Page = memo(styled(_Page)`
   border-radius: 40px 40px 0 0;
 
 	`};
-
+  transition: all ease-in-out 0.5s;
   background: ${({ theme }) => theme.background};
 `);
 
