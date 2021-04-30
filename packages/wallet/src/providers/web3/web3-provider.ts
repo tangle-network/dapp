@@ -5,7 +5,9 @@ export class Web3Provider {
   private constructor(private _inner: Web3) {}
 
   static fromWindowProvider() {
+    //@ts-ignore
     if (typeof window !== 'undefined' && typeof window.web3 !== 'undefined') {
+      //@ts-ignore
       return new Web3Provider(new Web3(window.web3.currentProvider));
     }
     throw Error('Not provider in window');
@@ -19,7 +21,7 @@ export class Web3Provider {
 
   static async fromQRCode(WCProvider: WalletConnectProvider) {
     await WCProvider.enable();
-    const web3 = new Web3(WCProvider);
+    const web3 = new Web3((WCProvider as unknown) as any);
     return new Web3Provider(web3);
   }
 
