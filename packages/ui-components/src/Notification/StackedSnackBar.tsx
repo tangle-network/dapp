@@ -1,19 +1,23 @@
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 import Button from '@material-ui/core/Button';
-import { SnackbarProvider, useSnackbar, VariantType } from 'notistack';
+import { SnackbarContent, SnackbarKey, SnackbarProvider, useSnackbar, VariantType } from 'notistack';
 import { Alert } from '@webb-dapp/ui-components/Notification/Notification';
 import Slide from '@material-ui/core/Slide';
+import { Icon } from '@material-ui/core';
 
-function Not() {
+function Not({ setOptions }: any) {
   const { enqueueSnackbar } = useSnackbar();
 
   const handleClick = () => {
     enqueueSnackbar('I love snacks.');
   };
 
-  const handleClickVariant = (variant: VariantType) => () => {
+  const handleClickVariant = (variant: VariantType, opt: SnackBarOpts) => () => {
     // variant could be success, error, warning, info, or default
+    const snackKey: SnackbarKey = new Date().getTime() + Math.random();
+    setOptions(snackKey, opt);
     enqueueSnackbar('This is a success message!', {
+      key: snackKey,
       variant,
     });
   };
@@ -23,34 +27,60 @@ function Not() {
       style={{
         position: 'fixed',
         width: '500',
-        top: 0,
       }}
     >
       <Button onClick={handleClick}>Show snackbar</Button>
-      <Button onClick={handleClickVariant('success')}>Show success snackbar</Button>
+      <Button
+        onClick={handleClickVariant('success', {
+          message: 'hello',
+          secondaryMessage: 'you',
+          variant: 'success',
+        })}
+      >
+        Show success snackbar
+      </Button>
     </div>
   );
 }
 
+export type SnackBarOpts = {
+  variant: VariantType;
+  Icon?: JSX.Element;
+  message: string;
+  secondaryMessage?: string;
+};
+
 export function NotificationStacked() {
+  const [options, _] = useState<Record<SnackbarKey, SnackBarOpts>>({});
+  const cleanOpt = useCallback((key: SnackbarKey) => {
+    delete options[key];
+  }, []);
+  const appendOpt = useCallback((key: SnackbarKey, opt: SnackBarOpts) => {
+    options[key] = opt;
+  }, []);
   return (
     <SnackbarProvider
       anchorOrigin={{
         vertical: 'top',
         horizontal: 'right',
       }}
+      autoHideDuration={800000}
       TransitionComponent={(p) => <Slide {...p} direction={'left'} />}
       maxSnack={10}
       domRoot={document.getElementById('notification-root')}
-      content={(...p) => {
+      content={(key, message) => {
+        const opts = options[key];
+        if (!opts) {
+          return <div />;
+        }
         return (
-          <div {...p}>
-            <Alert>asdfjkaklsdjf {p}</Alert>
-          </div>
+          <SnackbarContent>
+            <Alert onUnmount={cleanOpt} $key={key} message={message} opts={opts} />
+          </SnackbarContent>
         );
       }}
     >
-      <Not />
+      <Not setOptions={appendOpt} />
     </SnackbarProvider>
   );
 }
