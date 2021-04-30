@@ -16,13 +16,13 @@ const muiTheme = makeTheme({}, 'light');
 const App: FC = () => {
   return (
     <DAppError logger={appLogger}>
-      <UIProvider>
-        <WebbProvider applicationName={'Webb DApp'}>
+      <WebbProvider applicationName={'Webb DApp'}>
+        <UIProvider>
           <Theme />
           <RouterProvider config={routerConfig} />
           <EventsWatcher />
-        </WebbProvider>
-      </UIProvider>
+        </UIProvider>
+      </WebbProvider>
     </DAppError>
   );
 };

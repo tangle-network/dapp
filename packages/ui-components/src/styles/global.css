@@ -8,7 +8,6 @@ body {
   font-variant-numeric: tabular-nums;
   color: #333333;
   font-weight: 400;
-  background: red;
 }
 *:focus {
 	outline: none;

@@ -4,13 +4,12 @@ import Popper from '@material-ui/core/Popper';
 import { Currency } from '@webb-dapp/mixer/utils/currency';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
-import { lightPallet } from '@webb-dapp/ui-components/styling/colors';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import styled, { css } from 'styled-components';
 
 const TokenInputWrapper = styled.div<{ open: boolean }>`
   border-radius: 25px;
-  border: 1px solid ${lightPallet.gray13};
+  border: 1px solid ${({ theme }) => theme.gray13};
 
   overflow: hidden;
   transition: all 0.3s ease-in-out;
@@ -30,7 +29,7 @@ const TokenInputWrapper = styled.div<{ open: boolean }>`
   .account-header {
     display: flex;
     align-items: center;
-    border-bottom: 1px solid ${lightPallet.gray13};
+    border-bottom: 1px solid ${({ theme }) => theme.gray13};
     padding: 5px;
   }
 
@@ -57,7 +56,7 @@ const StyledList = styled.ul`
 
     &.selected,
     :hover {
-      background: ${lightPallet.gray1};
+      background: ${({ theme }) => theme.gray1};
     }
 
     position: relative;

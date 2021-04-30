@@ -16,7 +16,6 @@ import Tooltip from '@material-ui/core/Tooltip';
 import { SupportedWallet } from '@webb-dapp/apps/configs/wallets/supported-wallets.config';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
-import { lightPallet } from '@webb-dapp/ui-components/styling/colors';
 import React from 'react';
 import styled from 'styled-components';
 import { SpaceBox } from '@webb-dapp/ui-components';
@@ -52,7 +51,7 @@ const Badge = styled.span`
   align-items: center;
   justify-content: center;
   background: rgba(51, 81, 242, 0.09);
-  color: ${lightPallet.primary};
+  color: ${({ theme }) => theme.primary};
   margin: 0 9px;
 `;
 

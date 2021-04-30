@@ -2,8 +2,6 @@ import { ReactComponent as WebbLogo } from '@webb-dapp/react-components/assets/w
 import { useDimensions } from '@webb-dapp/react-environment/layout';
 import { useApi } from '@webb-dapp/react-hooks';
 import { SettingsManager } from '@webb-dapp/ui-components/SettingsManager/SettingsManager';
-import { lightPallet } from '@webb-dapp/ui-components/styling/colors';
-import { basePallet } from '@webb-dapp/ui-components/styling/colors/base-pallet';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 import { below } from '@webb-dapp/ui-components/utils/responsive-utils';
 import React, { useMemo } from 'react';
@@ -11,6 +9,9 @@ import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { AccountManager } from '../AccountManager/AccountManager';
+import { useStore } from '@webb-dapp/react-environment';
+import { useLocalStorage } from '@webb-dapp/react-hooks/useLocalStorage';
+import { Switch } from '@material-ui/core';
 
 const AppBarWrapper = styled.nav`
   height: 65px;
@@ -22,6 +23,7 @@ const AppBarWrapper = styled.nav`
   flex: 1;
   align-items: center;
   padding: 0 10px;
+
   ${below.sm`
 	 background:#fff;
 	`}
@@ -46,7 +48,7 @@ const AppBarWrapper = styled.nav`
         justify-content: center;
         position: relative;
         padding: 0 5px;
-        color: ${lightPallet.primaryText};
+        color: ${({ theme }) => theme.primaryText};
         font-family: ${FontFamilies.AvenirNext};
 
         :after {
@@ -54,7 +56,7 @@ const AppBarWrapper = styled.nav`
           display: block;
           height: 5px;
           width: 0%;
-          background: ${basePallet.primary};
+          background: ${({ theme }) => theme.primary};
           border-radius: 16px;
           position: absolute;
           bottom: 0;
@@ -63,7 +65,7 @@ const AppBarWrapper = styled.nav`
         }
 
         &.active {
-          color: ${lightPallet.primary};
+          color: ${({ theme }) => theme.primary};
           font-weight: bold;
 
           :after {
@@ -71,7 +73,7 @@ const AppBarWrapper = styled.nav`
             display: block;
             height: 5px;
             width: 90%;
-            background: ${basePallet.primary};
+            background: ${({ theme }) => theme.primary};
             border-radius: 16px;
             position: absolute;
             bottom: 0;
@@ -100,7 +102,8 @@ const AppBar: React.FC<AppBarProps> = () => {
   const isMobile = useMemo(() => {
     return width <= size.sm;
   }, [width, size]);
-
+  const ui = useStore('ui');
+  const isDarkTheme = ui.theme === 'primary';
   return (
     <AppBarWrapper>
       <WebbLogo className={'webb-logo'} />
@@ -123,6 +126,12 @@ const AppBar: React.FC<AppBarProps> = () => {
         </NavigationWrapper>
       )}
       <AccountWrapper>
+        <Switch
+          checked={isDarkTheme}
+          onClick={() => {
+            ui.setTheme(isDarkTheme ? 'secondary' : 'primary');
+          }}
+        />
         {!isMobile && <SettingsManager />}
         {connected && <AccountManager />}
       </AccountWrapper>

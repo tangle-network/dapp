@@ -1,12 +1,10 @@
 import { Fade } from '@material-ui/core';
-import { lightPallet } from '@webb-dapp/ui-components/styling/colors';
 import React, { useCallback, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
 
 const MixerTabsWrapper = styled.div`
   padding: 1rem;
-
   ${above.sm`  padding: 2rem;`}
   max-width: 500px;
   margin: auto;
@@ -20,7 +18,7 @@ type MixerTabsProps = {
 const TabHeader = styled.header`
   display: flex;
   align-items: center;
-  background: ${lightPallet.mainBackground};
+  background: ${({ theme }) => theme.mainBackground};
   justify-content: space-between;
   padding: 7px;
   border-radius: 32px;

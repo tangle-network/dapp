@@ -127,7 +127,6 @@ _Page = memo(styled(_Page)`
   overflow-y: auto;
   overflow-y: overlay;
 
-  background: red;
   overflow: auto;
 
   border-radius: 0 0 40px 40px;
@@ -138,7 +137,7 @@ _Page = memo(styled(_Page)`
 
 	`};
 
-  background: #fff;
+  background: ${({ theme }) => theme.background};
 `);
 
 const Content: FC<BareProps> = memo(styled.div`

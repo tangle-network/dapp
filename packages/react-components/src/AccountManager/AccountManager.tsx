@@ -11,7 +11,6 @@ import Avatar from '@material-ui/core/Avatar';
 import Popper from '@material-ui/core/Popper';
 import { useAccounts, useConstants } from '@webb-dapp/react-hooks';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
-import { lightPallet } from '@webb-dapp/ui-components/styling/colors';
 import React, { useMemo, useRef, useState } from 'react';
 import styled, { css } from 'styled-components';
 
@@ -19,7 +18,7 @@ import IDIcon from '@polkadot/react-identicon';
 
 const AccountManagerContent = styled.div<{ open: boolean }>`
   border-radius: 25px;
-  border: 1px solid ${lightPallet.gray13};
+  border: 1px solid ${({ theme }) => theme.gray13};
   background: #fff;
   overflow: hidden;
   transition: all 0.3s ease-in-out;
@@ -37,7 +36,7 @@ const AccountManagerContent = styled.div<{ open: boolean }>`
   .account-header {
     display: flex;
     align-items: center;
-    border-bottom: 1px solid ${lightPallet.gray13};
+    border-bottom: 1px solid ${({ theme }) => theme.gray13};
     padding: 5px;
   }
 
@@ -64,7 +63,7 @@ const StyledList = styled.ul`
 
     &.selected,
     :hover {
-      background: ${lightPallet.gray1};
+      background: ${({ theme }) => theme.gray1};
     }
 
     position: relative;

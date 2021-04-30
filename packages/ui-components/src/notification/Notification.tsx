@@ -5,7 +5,7 @@ import { SnackbarKey, SnackbarMessage } from 'notistack';
 import Typography from '@material-ui/core/Typography';
 import { lightPallet } from '@webb-dapp/ui-components/styling/colors';
 import tinycolor from 'tinycolor2';
-import { SnackBarOpts } from '@webb-dapp/ui-components/Notification/NotificationContext';
+import { SnackBarOpts } from './NotificationContext';
 
 const AlertIconWrapper = styled.div<{ color: string }>`
   padding: 0 0.5rem;

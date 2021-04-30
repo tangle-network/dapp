@@ -1,23 +1,22 @@
 /* eslint-disable @typescript-eslint/indent */
 import { ButtonBase, ButtonBaseProps } from '@material-ui/core';
-import { lightPallet } from '@webb-dapp/ui-components/styling/colors';
 import React from 'react';
 import styled, { css } from 'styled-components';
 
 const MixerButtonWrapper = styled.button`
 	&&& {
 		width: 100%;
-		background: ${lightPallet.primary};
+		background: ${({ theme }) => theme.primary};
 		border-radius: 31px;
 		color: #fff;
 		height: 60px;
 		font-weight: bold;
 		transition: all ease-in-out .3s;
 
-		${({ disabled }) => {
+		${({ disabled, theme }) => {
       return disabled
         ? css`
-            background: ${lightPallet.gray4};
+            background: ${theme.gray4};
           `
         : '';
     }}

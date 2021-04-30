@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/indent */
 import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabel';
-import { lightPallet } from '@webb-dapp/ui-components/styling/colors';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 import React, { useEffect, useMemo } from 'react';
 import styled, { css } from 'styled-components';
@@ -36,7 +35,7 @@ const AmountChipWrapper = styled.span<{ selected?: boolean }>`
         : '';
     }};
     font-family: ${FontFamilies.AvenirNext};
-    color: ${lightPallet.primaryText};
+    color: ${({ theme }) => theme.primaryText};
     height: 31px;
     padding: 0 5px;
     flex: 1;

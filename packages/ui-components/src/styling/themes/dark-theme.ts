@@ -50,6 +50,7 @@ export const darkMainTheme: ThemeOptions = {
       default: darkPallet.mainBackground,
       paper: darkPallet.background,
     },
+    type: 'dark',
   },
   typography: {
     htmlFontSize: 17,
