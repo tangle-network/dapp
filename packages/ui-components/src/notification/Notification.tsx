@@ -1,33 +1,12 @@
-import { Button, ButtonBase, Icon, Paper, PaperProps } from '@material-ui/core';
-import React, { useEffect, useMemo } from 'react';
+import { ButtonBase, Icon, Paper } from '@material-ui/core';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import styled from 'styled-components';
-import { SnackBarOpts } from '@webb-dapp/ui-components/Notification/StackedSnackBar';
 import { SnackbarKey, SnackbarMessage } from 'notistack';
 import Typography from '@material-ui/core/Typography';
 import { lightPallet } from '@webb-dapp/ui-components/styling/colors';
 import tinycolor from 'tinycolor2';
-const lightenRate = 5;
-const darkenRate = 15;
-type NotificationProps = {};
+import { SnackBarOpts } from '@webb-dapp/ui-components/Notification/NotificationContext';
 
-const intoJson = <T extends Record<string, unknown>>(str: string): T | null => {
-  try {
-    return JSON.parse(str);
-  } catch (_) {
-    return null;
-  }
-};
-
-type AlertOptions = {
-  message: string;
-  variant: string;
-  icon: string;
-  secondaryAction: string;
-};
-
-const messageAdapter = (message: string) => {
-  const conf = intoJson(message);
-};
 const AlertIconWrapper = styled.div<{ color: string }>`
   padding: 0 0.5rem;
   color: white;
@@ -47,8 +26,6 @@ const AlertCopyWrapper = styled.div`
 `;
 
 const AlertActionsWrapper = styled.div`
-  padding: 0 0.5rem;
-
   .close-btn {
     background: #ffffff;
     box-shadow: 0px 0px 13px rgba(54, 86, 233, 0.1);
@@ -60,15 +37,29 @@ const AlertActionsWrapper = styled.div`
   }
 `;
 const AlertWrapper = styled.div<{ color: string }>`
-  padding: 0.25rem 1rem;
-  width: 400px;
-  max-width: 80vw;
-  display: flex;
-  align-items: center;
-  min-height: 80px;
-  //background: rgba(239, 241, 244, 1);
-  background: ${({ color }) => color && tinycolor(color).setAlpha(0.1).toRgbString()};
-  border-radius: 15px;
+  &&& {
+    padding: 0.25rem 1rem;
+    width: 400px;
+    max-width: 80vw;
+    display: flex;
+    align-items: center;
+    min-height: 80px;
+    //background: rgba(239, 241, 244, 1);
+    background: ${({ color }) => color && tinycolor(color).setAlpha(0.1).toRgbString()};
+    border-radius: 15px;
+    position: relative;
+    overflow: hidden;
+    ::after {
+      content: '';
+      display: block;
+      position: absolute;
+      z-index: -1;
+      background: #fff;
+      width: 100%;
+      height: 100%;
+      left: 0;
+    }
+  }
 `;
 
 export const Alert: React.FC<{
@@ -84,10 +75,10 @@ export const Alert: React.FC<{
     [$key]
   );
   const AlertIcon = useMemo(() => {
+    let iconName: string = '';
     if (opts.Icon) {
       return opts.Icon;
     }
-    let iconName: string;
     switch (opts.variant) {
       case 'default':
         iconName = 'notifications';
@@ -122,25 +113,19 @@ export const Alert: React.FC<{
         return lightPallet.mainBackground;
     }
   }, [opts]);
+  const close = useCallback(() => opts.close($key), [$key]);
   return (
     <AlertWrapper color={color} as={Paper} elevation={4}>
-      <AlertIconWrapper color={color}>{AlertIcon}</AlertIconWrapper>
+      <AlertIconWrapper color={opts.transparent ? 'rgba(0,0,0,0)' : color}>{AlertIcon}</AlertIconWrapper>
       <AlertCopyWrapper>
         <Typography>{opts.message}</Typography>
         <Typography>{opts.secondaryMessage}</Typography>
       </AlertCopyWrapper>
       <AlertActionsWrapper>
-        <ButtonBase className='close-btn'>Dismiss</ButtonBase>
+        <ButtonBase className='close-btn' onClick={close}>
+          Dismiss
+        </ButtonBase>
       </AlertActionsWrapper>
     </AlertWrapper>
-  );
-};
-export const Notification: React.FC<NotificationProps> = ({}) => {
-  useEffect(() => () => {}, []);
-  return (
-    <Alert>
-      This is a success message!
-      <Button>close</Button>
-    </Alert>
   );
 };

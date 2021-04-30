@@ -1,7 +1,6 @@
-import { FormatAddress } from '@webb-dapp/react-components';
 import { useAccounts, useApi, useHistory } from '@webb-dapp/react-hooks';
 import { CurrencyLike } from '@webb-dapp/react-hooks/types';
-import { LoadingOutlined, notification, styled } from '@webb-dapp/ui-components';
+import { LoadingOutlined, styled } from '@webb-dapp/ui-components';
 import { LoggerService } from '@webb-tools/app-util';
 import { uniqueId } from 'lodash';
 import React, { useMemo, useState } from 'react';
@@ -12,6 +11,9 @@ import { ApiRx, SubmittableResult } from '@polkadot/api';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { AccountInfo, DispatchError } from '@polkadot/types/interfaces';
 import { ISubmittableResult, ITuple } from '@polkadot/types/types';
+import { notificationApi } from '@webb-dapp/ui-components/notification';
+import { FormatAddress } from '@webb-dapp/react-components/';
+import { Spinner } from '@webb-dapp/ui-components/Spinner/Spinner';
 
 export interface UseTXInput {
   api?: ApiRx;
@@ -127,14 +129,24 @@ export const useTX = (input: UseTXInput) => {
 
       const notificationKey = uniqueId(`${section}-${method}`);
 
-      notification.info({
-        description: <FormatAddress address={hash} />,
-        duration: null,
-        icon: <Loading spin />,
+      /*   .addToQue({
+				description: <FormatAddress address={} />,
+				duration: null,
+				icon: <Loading spin />,
+				message: `${section}: ${method}`,
+			});*/
+      notificationApi({
+        extras: {
+          persist: true,
+        },
         key: notificationKey,
-        message: `${section}: ${method}`,
+        message: <FormatAddress address={hash} />,
+        secondaryMessage: `${section}: ${method}`,
+        variant: 'info',
+        // eslint-disable-next-line sort-keys
+        Icon: <Spinner />,
+        transparent: true,
       });
-
       return [signedTx, notificationKey];
     };
 
@@ -233,17 +245,21 @@ export const useTX = (input: UseTXInput) => {
       .subscribe({
         error: (error: Error) => {
           if (error.name === 'TimeoutError') {
-            notification.error({
-              duration: 4,
+            notificationApi({
               key: notificationKey,
               message: 'Extrinsic timed out, Please check manually',
+              variant: 'error',
             });
           }
 
-          notification.error({
-            duration: 4,
+          notificationApi({
+            extras: {
+              persist: false,
+            },
             key: notificationKey,
             message: error && error.message ? error.message : 'Error Occurred!',
+
+            variant: 'error',
           });
 
           if (onFailed) {
@@ -258,12 +274,15 @@ export const useTX = (input: UseTXInput) => {
               onExtrinsicSuccess();
             }
 
-            notification.success({
-              duration: 4,
-              key: notificationKey,
+            notificationApi({
+              extras: {
+                persist: false,
+              },
               message: 'Submit Transaction Success',
+              key: notificationKey,
+              variant: 'success',
             });
-
+            setTimeout(() => notificationApi.remove(notificationKey), 6000);
             subscriber.unsubscribe();
           }
         },

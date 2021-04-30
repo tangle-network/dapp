@@ -6,6 +6,7 @@ import { ApiProvider } from './ApiProvider';
 import { ExtensionProvider } from './ExtensionProvider';
 import { SettingProvider } from './SettingProvider';
 import { StoreProvier } from './store';
+import { NotificationStacked } from '@webb-dapp/ui-components/notification';
 
 interface WebbProviderProps extends BareProps {
   applicationName: string;
@@ -22,6 +23,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
           </StoreProvier>
         </ExtensionProvider>
       </ApiProvider>
+      <NotificationStacked />
     </SettingProvider>
   );
 };

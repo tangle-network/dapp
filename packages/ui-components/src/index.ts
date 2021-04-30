@@ -15,7 +15,6 @@ export * from './UIProvider';
 export * from './utils';
 
 export * from './Animation';
-export * from './notification';
 
 export * from './NumberInput';
 export * from './Box';
