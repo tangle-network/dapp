@@ -265,6 +265,7 @@ export const useTX = (input: UseTXInput) => {
           if (onFailed) {
             onFailed();
           }
+          setTimeout(() => notificationApi.remove(notificationKey), 6000);
 
           subscriber.unsubscribe();
         },
