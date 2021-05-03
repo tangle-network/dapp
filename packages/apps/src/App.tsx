@@ -12,7 +12,6 @@ import { hot } from 'react-hot-loader/root';
 import { config as routerConfig } from './router-config';
 
 const appLogger = LoggerService.new('App');
-const muiTheme = makeTheme({}, 'light');
 const App: FC = () => {
   return (
     <DAppError logger={appLogger}>
