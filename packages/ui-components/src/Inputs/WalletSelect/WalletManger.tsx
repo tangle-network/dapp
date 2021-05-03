@@ -13,15 +13,15 @@ import {
   Typography,
 } from '@material-ui/core';
 import Tooltip from '@material-ui/core/Tooltip';
+import WalletConnectProvider from '@walletconnect/web3-provider';
 import { SupportedWallet } from '@webb-dapp/apps/configs/wallets/supported-wallets.config';
+import { SpaceBox } from '@webb-dapp/ui-components';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
+import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
+import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
 import React from 'react';
 import styled from 'styled-components';
-import { SpaceBox } from '@webb-dapp/ui-components';
-import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
-import WalletConnectProvider from '@walletconnect/web3-provider';
-import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
 const WalletMangerWrapper = styled.div`
   ${above.sm`
 min-width:540px;
@@ -71,7 +71,7 @@ type Wallet = {
   connected: boolean;
 } & Omit<SupportedWallet, 'detect'>;
 
-export const WalletManger: React.FC<WalletMangerProps> = ({ close, selectedWallet, wallets, setSelectedWallet }) => {
+export const WalletManger: React.FC<WalletMangerProps> = ({ close, selectedWallet, setSelectedWallet, wallets }) => {
   return (
     <WalletMangerWrapper>
       <WalletManagerContentWrapper>

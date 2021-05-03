@@ -1,6 +1,9 @@
+import { Switch } from '@material-ui/core';
 import { ReactComponent as WebbLogo } from '@webb-dapp/react-components/assets/webb-icon.svg';
+import { useStore } from '@webb-dapp/react-environment';
 import { useDimensions } from '@webb-dapp/react-environment/layout';
 import { useApi } from '@webb-dapp/react-hooks';
+import { useLocalStorage } from '@webb-dapp/react-hooks/useLocalStorage';
 import { SettingsManager } from '@webb-dapp/ui-components/SettingsManager/SettingsManager';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 import { below } from '@webb-dapp/ui-components/utils/responsive-utils';
@@ -9,9 +12,6 @@ import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { AccountManager } from '../AccountManager/AccountManager';
-import { useStore } from '@webb-dapp/react-environment';
-import { useLocalStorage } from '@webb-dapp/react-hooks/useLocalStorage';
-import { Switch } from '@material-ui/core';
 
 const AppBarWrapper = styled.nav`
   height: 65px;

@@ -1,11 +1,11 @@
 import { MixerGroupEntriesWrapper } from '@webb-dapp/mixer';
+import { Currency } from '@webb-dapp/mixer/utils/currency';
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
 
 import { InputLabel } from '../InputLabel/InputLabel';
 import { TokenInput } from '../TokenInput/TokenInput';
 import { WalletSelect } from '../WalletSelect/WalletSelect';
-import { Currency } from '@webb-dapp/mixer/utils/currency';
 
 const WalletTokenInputWrapper = styled.div`
   display: flex;
@@ -20,13 +20,13 @@ type WalletTokenInputProps = {
 
 export const WalletTokenInput: React.FC<WalletTokenInputProps> = ({
   mixerGroupEntriesWrapper,
-  setSelectedToken,
   selectedToken,
+  setSelectedToken,
 }) => {
   const allCurrencies = useMemo(() => {
     return mixerGroupEntriesWrapper.currencies;
   }, [mixerGroupEntriesWrapper]);
-  const active = useMemo(() => selectedToken ?? allCurrencies[0], [selectedToken]);
+  const active = useMemo(() => selectedToken ?? allCurrencies[0], [allCurrencies, selectedToken]);
   return (
     <InputLabel label={'Select wallet < token for deposit'}>
       <WalletTokenInputWrapper>

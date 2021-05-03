@@ -1,9 +1,9 @@
 import Slide from '@material-ui/core/Slide';
+import { Alert } from '@webb-dapp/ui-components/notification/Notification';
 import { SnackBarOpts } from '@webb-dapp/ui-components/notification/NotificationContext';
+import { NotificationProvider } from '@webb-dapp/ui-components/notification/NotificationProvider';
 import { SnackbarContent, SnackbarKey, SnackbarProvider } from 'notistack';
 import React, { useCallback, useState } from 'react';
-import { Alert } from '@webb-dapp/ui-components/notification/Notification';
-import { NotificationProvider } from '@webb-dapp/ui-components/notification/NotificationProvider';
 
 export function NotificationStacked() {
   const [options, _] = useState<Record<SnackbarKey, SnackBarOpts>>({});

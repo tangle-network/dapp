@@ -1,5 +1,5 @@
-import { createGlobalStyle } from 'styled-components';
 import { darkPallet } from '@webb-dapp/ui-components/styling/colors';
+import { createGlobalStyle } from 'styled-components';
 
 export const DarkTheme = createGlobalStyle`
 

@@ -1,10 +1,11 @@
 import { ButtonBase, Icon, Paper } from '@material-ui/core';
-import React, { useCallback, useEffect, useMemo } from 'react';
-import styled from 'styled-components';
-import { SnackbarKey, SnackbarMessage } from 'notistack';
 import Typography from '@material-ui/core/Typography';
 import { lightPallet } from '@webb-dapp/ui-components/styling/colors';
+import { SnackbarKey, SnackbarMessage } from 'notistack';
+import React, { useCallback, useEffect, useMemo } from 'react';
+import styled from 'styled-components';
 import tinycolor from 'tinycolor2';
+
 import { SnackBarOpts } from './NotificationContext';
 
 const AlertIconWrapper = styled.div<{ color: string }>`
@@ -67,12 +68,12 @@ export const Alert: React.FC<{
   opts: SnackBarOpts;
   $key: SnackbarKey;
   onUnmount?(key: SnackbarKey): void;
-}> = ({ onUnmount, $key, opts }) => {
+}> = ({ $key, onUnmount, opts }) => {
   useEffect(
     () => () => {
       onUnmount?.($key);
     },
-    [$key]
+    [$key, onUnmount]
   );
   const AlertIcon = useMemo(() => {
     let iconName: string = '';
@@ -113,7 +114,7 @@ export const Alert: React.FC<{
         return lightPallet.mainBackground;
     }
   }, [opts]);
-  const close = useCallback(() => opts.close($key), [$key]);
+  const close = useCallback(() => opts.close($key), [$key, opts]);
   return (
     <AlertWrapper color={color} as={Paper} elevation={4}>
       <AlertIconWrapper color={opts.transparent ? 'rgba(0,0,0,0)' : color}>{AlertIcon}</AlertIconWrapper>

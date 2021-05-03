@@ -20,18 +20,18 @@ export interface IFlexProps extends React.HTMLAttributes<any> {
 }
 
 export const Flex: React.FC<IFlexProps> = ({
-  children,
   ai,
-  jc,
-  col = false,
-  colRev = false,
-  row = false,
-  rowRev = false,
-  flex = 0,
-  ma,
-  style,
   as: Component,
   asProps,
+  children,
+  col = false,
+  colRev = false,
+  flex = 0,
+  jc,
+  ma,
+  row = false,
+  rowRev = false,
+  style,
   wrap = 'no-wrap',
   ...rest
 }) => {

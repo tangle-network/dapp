@@ -1,9 +1,9 @@
+import { useStore } from '@webb-dapp/react-environment';
 import { styled } from '@webb-dapp/ui-components';
+import { LoggerService } from '@webb-tools/app-util';
 import React, { FC } from 'react';
 
 import { ReactComponent as WebbIogoSmall } from '../assets/webb-logo-small.svg';
-import { useStore } from '@webb-dapp/react-environment';
-import { LoggerService } from '@webb-tools/app-util';
 
 export const TestNet = styled.div`
   display: inline-block;

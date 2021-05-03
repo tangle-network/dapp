@@ -1,7 +1,7 @@
 import { Fade } from '@material-ui/core';
+import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
 import React, { useCallback, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
-import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
 
 const MixerTabsWrapper = styled.div`
   padding: 1rem;

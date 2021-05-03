@@ -19,6 +19,8 @@ module.exports = {
     'padding-line-between-statements': 'off',
     'object-curly-newline': 'off',
     'no-unused-vars': 'off',
+    'sort-keys': 'off',
+    'no-empty-pattern': 'off',
   },
   overrides: [
     {

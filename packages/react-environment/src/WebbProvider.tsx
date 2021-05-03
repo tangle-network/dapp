@@ -1,4 +1,5 @@
 import { DimensionsProvider } from '@webb-dapp/react-environment/layout';
+import { NotificationStacked } from '@webb-dapp/ui-components/notification';
 import { BareProps } from '@webb-dapp/ui-components/types';
 import React, { FC } from 'react';
 
@@ -6,7 +7,6 @@ import { ApiProvider } from './ApiProvider';
 import { ExtensionProvider } from './ExtensionProvider';
 import { SettingProvider } from './SettingProvider';
 import { StoreProvier } from './store';
-import { NotificationStacked } from '@webb-dapp/ui-components/notification';
 
 interface WebbProviderProps extends BareProps {
   applicationName: string;

@@ -1,4 +1,6 @@
 import { useGroupTree, useMerkleProvider, useMixerInfo } from '@webb-dapp/mixer/hooks';
+import { useLeavesEvents } from '@webb-dapp/mixer/hooks/merkle/useLeavesEvents';
+import { useTreeLeaves } from '@webb-dapp/mixer/hooks/merkle/useTreeLeaves';
 import { useAccounts, useCall } from '@webb-dapp/react-hooks';
 import { useTX } from '@webb-dapp/react-hooks/tx/useTX';
 import { LoggerService } from '@webb-tools/app-util';
@@ -8,8 +10,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { decodeAddress } from '@polkadot/keyring';
 import { u8aToHex } from '@polkadot/util';
-import { useTreeLeaves } from '@webb-dapp/mixer/hooks/merkle/useTreeLeaves';
-import { useLeavesEvents } from '@webb-dapp/mixer/hooks/merkle/useLeavesEvents';
 
 const logger = LoggerService.get('Withdraw');
 
@@ -75,7 +75,7 @@ export function useWithdraw(noteStr: string) {
     if (note) {
       restart();
     }
-  }, [note]);
+  }, [note, restart]);
 
   useEffect(() => {
     setValidationError((prev) => ({

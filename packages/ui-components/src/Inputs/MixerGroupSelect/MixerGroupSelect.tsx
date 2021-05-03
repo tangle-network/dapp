@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/indent */
+import { MixerGroupItem } from '@webb-dapp/mixer';
 import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabel';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
+import { Token } from '@webb-tools/sdk-core';
 import React, { useEffect, useMemo } from 'react';
 import styled, { css } from 'styled-components';
-import { MixerGroupItem } from '@webb-dapp/mixer';
-import { Token } from '@webb-tools/sdk-core';
 
 const MixerGroupSelectWrapper = styled.div`
   min-height: 38px;
@@ -76,7 +76,7 @@ export const MixerGroupSelect: React.FC<MixerGroupSelectProps> = ({ items, onCha
         selected: index === checkedIndex,
       };
     });
-  }, [checkedIndex]);
+  }, [checkedIndex, items]);
 
   return (
     <InputLabel label={'Select Amount'}>

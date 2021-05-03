@@ -65,7 +65,7 @@ const useStyles = makeStyles((theme: Theme) => {
   });
 });
 
-export const Modal: React.FC<ModalProps> = ({ children, unlimitedWidth, closeButton, ...props }) => {
+export const Modal: React.FC<ModalProps> = ({ children, closeButton, unlimitedWidth, ...props }) => {
   const classes = useStyles({
     unlimitedWidth,
   });

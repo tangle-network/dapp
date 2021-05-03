@@ -1,7 +1,7 @@
+import { FormHelperText, InputBase } from '@material-ui/core';
 import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabel';
 import React from 'react';
 import styled from 'styled-components';
-import { FormHelperText, InputBase } from '@material-ui/core';
 
 const NoteInputWrapper = styled.div``;
 type NoteInputProps = {
@@ -10,7 +10,7 @@ type NoteInputProps = {
   error?: string;
 };
 
-export const NoteInput: React.FC<NoteInputProps> = ({ value, onChange, error }) => {
+export const NoteInput: React.FC<NoteInputProps> = ({ error, onChange, value }) => {
   return (
     <InputLabel label={'Note'}>
       <InputBase

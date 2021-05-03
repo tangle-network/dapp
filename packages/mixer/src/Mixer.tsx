@@ -22,7 +22,7 @@ const MixerWrapper = styled.div`
 `;
 type MixerProps = {};
 
-export const Mixer: React.FC<MixerProps> = ({}) => {
+export const Mixer: React.FC<MixerProps> = () => {
   return (
     <MixerWrapper>
       <MerkleProvider>

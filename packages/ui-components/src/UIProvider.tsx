@@ -2,15 +2,16 @@ import 'antd/dist/antd.css';
 import './styles/global.css';
 import './styles/notification.scss';
 import './styles/table.scss';
-import React, { FC, useEffect, useMemo, useState } from 'react';
 
-import { BareProps } from './types';
 import { MuiThemeProvider, PaperProps } from '@material-ui/core';
-import styled, { ThemeProvider } from 'styled-components';
-import makeTheme from '@webb-dapp/ui-components/styling/themes/makeTheme';
-import { darkPallet, lightPallet } from '@webb-dapp/ui-components/styling/colors';
 import { useStore } from '@webb-dapp/react-environment';
 import { useLocalStorage } from '@webb-dapp/react-hooks/useLocalStorage';
+import { darkPallet, lightPallet } from '@webb-dapp/ui-components/styling/colors';
+import makeTheme from '@webb-dapp/ui-components/styling/themes/makeTheme';
+import React, { FC, useEffect, useMemo, useState } from 'react';
+import styled, { ThemeProvider } from 'styled-components';
+
+import { BareProps } from './types';
 
 export interface UIData {
   phantomdata: any;

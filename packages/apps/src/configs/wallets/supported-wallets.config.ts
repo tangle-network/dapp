@@ -1,11 +1,11 @@
 /* eslint-disable sort-keys */
+import { WalletConnectLogo } from '@webb-dapp/apps/configs/wallets/logos/WalletConnectLogo';
 import React from 'react';
 
 import { web3Enable } from '@polkadot/extension-dapp';
 
 import { MetaMaskLogo } from './logos/MetaMaskLogo';
 import { PolkaLogo } from './logos/PolkaLogo';
-import { WalletConnectLogo } from '@webb-dapp/apps/configs/wallets/logos/WalletConnectLogo';
 
 export interface SupportedWallet {
   logo: React.ComponentType;

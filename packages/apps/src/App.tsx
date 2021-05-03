@@ -1,4 +1,5 @@
 import './initI18n';
+
 import { EventsWatcher } from '@webb-dapp/react-components';
 import { DAppError } from '@webb-dapp/react-components/utils/Error/DAppError';
 import { RouterProvider, WebbProvider } from '@webb-dapp/react-environment';

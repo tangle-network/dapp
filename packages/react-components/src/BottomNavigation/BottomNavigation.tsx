@@ -1,9 +1,9 @@
+import { useDimensions } from '@webb-dapp/react-environment/layout';
 import { basePallet } from '@webb-dapp/ui-components/styling/colors/base-pallet';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 import React, { useMemo } from 'react';
 import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
-import { useDimensions } from '@webb-dapp/react-environment/layout';
 
 const BottomNavigationWrapper = styled.nav`
   max-height: 55px;
@@ -69,7 +69,7 @@ const NavigationWrapper = styled.ul`
   }
 `;
 
-export const BottomNavigation: React.FC<BottomNavigationProps> = ({}) => {
+export const BottomNavigation: React.FC<BottomNavigationProps> = () => {
   const { size, width } = useDimensions();
   const isMobile = useMemo(() => {
     return width <= size.sm;

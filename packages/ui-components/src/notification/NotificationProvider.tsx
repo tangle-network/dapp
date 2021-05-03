@@ -1,14 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { SnackbarKey, useSnackbar } from 'notistack';
-import { useCallback, useEffect } from 'react';
-import React from 'react';
+import React, { useCallback, useEffect } from 'react';
 
-import {
-  NotificationContext,
-  NotificationContextProps,
-  NotificationCTXDefaultValue,
-  SnackBarOpts,
-} from './NotificationContext';
+import { NotificationContext, NotificationCTXDefaultValue, SnackBarOpts } from './NotificationContext';
 
 let _notificationApi = {
   ...NotificationCTXDefaultValue,

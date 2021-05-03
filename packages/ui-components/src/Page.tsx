@@ -1,10 +1,10 @@
+import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
 import clsx from 'clsx';
 import React, { FC, memo, ReactNode } from 'react';
 import styled from 'styled-components';
 
 import { TextAnimation } from './Animation';
 import { BareProps } from './types';
-import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
 
 const TitleRoot = styled.div`
   margin-top: 32px;
