@@ -20,7 +20,8 @@ import React from 'react';
 import styled from 'styled-components';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
-
+import WalletConnectProvider from '@walletconnect/web3-provider';
+import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
 const WalletMangerWrapper = styled.div`
   ${above.sm`
 min-width:540px;
@@ -108,6 +109,18 @@ export const WalletManger: React.FC<WalletMangerProps> = ({ close, selectedWalle
                 selected={connected}
                 as={ListItem}
                 button
+                onClick={async () => {
+                  const provider = new WalletConnectProvider({
+                    rpc: {
+                      1: 'https://mainnet.mycustomnode.com',
+                      3: 'https://ropsten.mycustomnode.com',
+                      // ...
+                    },
+                  });
+                  const web3 = await Web3Provider.fromWalletConnectProvider(provider);
+                  const isConnected = await web3.eth.net.isListening();
+                  console.log(isConnected);
+                }}
               >
                 <ListItemAvatar>
                   <Avatar style={{ background: 'transparent' }}>

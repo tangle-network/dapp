@@ -19,7 +19,7 @@ export class Web3Provider {
     return new Web3Provider(web3);
   }
 
-  static async fromQRCode(WCProvider: WalletConnectProvider) {
+  static async fromWalletConnectProvider(WCProvider: WalletConnectProvider) {
     await WCProvider.enable();
     const web3 = new Web3((WCProvider as unknown) as any);
     return new Web3Provider(web3);
