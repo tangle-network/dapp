@@ -4,7 +4,7 @@ import Web3 from 'web3';
 export class Web3Provider {
   private constructor(private _inner: Web3) {}
 
-  static fromWindowProvider() {
+  static fromExtension() {
     //@ts-ignore
     if (typeof window !== 'undefined' && typeof window.web3 !== 'undefined') {
       //@ts-ignore
