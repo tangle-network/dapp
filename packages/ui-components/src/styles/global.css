@@ -8,10 +8,13 @@ body {
   font-variant-numeric: tabular-nums;
   color: #333333;
   font-weight: 400;
-  background: red;
+	transition: all ease-in-out .2s;
+}
+* {
+	transition: color ,background-color .5s ease-in-out;
 }
 *:focus {
-	outline: none;
+  outline: none;
 }
 button {
   border: none;
@@ -140,4 +143,3 @@ span {
 .ant-notification {
   z-index: 4000;
 }
-

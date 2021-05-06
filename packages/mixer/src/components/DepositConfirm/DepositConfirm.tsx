@@ -3,13 +3,18 @@ import { MixerButton } from '@webb-dapp/mixer/components/MixerButton/MixerButton
 import { useTX } from '@webb-dapp/react-hooks/tx/useTX';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
-import { notification } from '@webb-dapp/ui-components/notification';
+import { notificationApi } from '@webb-dapp/ui-components/notification';
 import { Spinner } from '@webb-dapp/ui-components/Spinner/Spinner';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 import { downloadString } from '@webb-dapp/utils';
 import React, { useCallback, useEffect, useState } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import styled from 'styled-components';
+
+const DismissWrapper = styled.button``;
+const Dismiss = () => {
+  return <DismissWrapper>dismiss</DismissWrapper>;
+};
 
 const DepositInfoWrapper = styled.div`
   padding: 1rem 2rem;
@@ -142,8 +147,11 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({ onClose, onSuccess,
     section: 'mixer',
   });
   const handleCopy = useCallback((): void => {
-    notification.success({
-      message: `Copied the note to clipboard`,
+    notificationApi.addToQue({
+      secondaryMessage: 'Deposit note is copied to clipboard',
+      message: 'Copied  to clipboard',
+      variant: 'success',
+      Icon: <Icon>content_copy</Icon>,
     });
   }, []);
   const [backupConfirmation, setBackupConfirmation] = useState(false);

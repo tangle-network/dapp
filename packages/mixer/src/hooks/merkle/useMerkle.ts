@@ -1,3 +1,4 @@
+import { MerkleContext, MerkleContextData } from '@webb-dapp/mixer/containers';
 import { useLocalStorage } from '@webb-dapp/react-hooks/useLocalStorage';
 import { LoggerService } from '@webb-tools/app-util';
 import MerkleTree from '@webb-tools/sdk-merkle/tree';
@@ -5,7 +6,6 @@ import { useCallback, useContext, useState } from 'react';
 
 // @ts-ignore
 import Worker from '../../utils/merkle.worker';
-import { MerkleContext, MerkleContextData } from '@webb-dapp/mixer/containers';
 
 /**
  * @name useMerkleProvider

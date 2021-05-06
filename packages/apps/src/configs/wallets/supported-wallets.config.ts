@@ -1,4 +1,5 @@
 /* eslint-disable sort-keys */
+import { WalletConnectLogo } from '@webb-dapp/apps/configs/wallets/logos/WalletConnectLogo';
 import React from 'react';
 
 import { web3Enable } from '@polkadot/extension-dapp';
@@ -32,13 +33,22 @@ export const supportedWallets: SupportedWallet[] = [
     logo: MetaMaskLogo,
     name: 'metamask',
     title: `MetaMask`,
-    enabled: false,
+    enabled: true,
     detect() {
       const hasWeb3 = typeof (window as any).web3 !== 'undefined';
       if (hasWeb3) {
         return (window as any).web3.__isMetaMaskShim__ as boolean;
       }
       return false;
+    },
+  },
+  {
+    logo: WalletConnectLogo,
+    name: 'wallet connect',
+    title: `Wallet Connect`,
+    enabled: true,
+    detect() {
+      return true;
     },
   },
 ];

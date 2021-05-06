@@ -1,12 +1,12 @@
+import { Card } from '@material-ui/core';
 import { FormatAddress } from '@webb-dapp/react-components';
 import { useAccounts } from '@webb-dapp/react-hooks';
+import { EditIcon } from '@webb-dapp/ui-components';
 import React, { FC } from 'react';
 
 import Identicon from '@polkadot/react-identicon';
 
 import classes from './UserCard.module.scss';
-import { Card } from '@material-ui/core';
-import { EditIcon } from '@webb-dapp/ui-components';
 
 export const UserCard: FC = () => {
   const { active, openSelectAccount } = useAccounts();

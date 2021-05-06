@@ -29,9 +29,9 @@ export const InformationContent = styled.p<Partial<Pick<InformationProps, 'varia
   font-size: var(--text-size-md);
   line-height: 1.375;
 
-  color: ${(props) => {
+  color: ${() => {
     return `var(--text-color-normal)`;
-
+    /*
     switch (props.variant) {
       case 'warning':
         return `var(--notification-warning-color)`;
@@ -40,7 +40,7 @@ export const InformationContent = styled.p<Partial<Pick<InformationProps, 'varia
       case 'default':
       default:
         return 'var(--information-content-color)';
-    }
+    }*/
   }};
 `;
 

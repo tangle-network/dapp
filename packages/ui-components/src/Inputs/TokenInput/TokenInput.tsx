@@ -4,21 +4,21 @@ import Popper from '@material-ui/core/Popper';
 import { Currency } from '@webb-dapp/mixer/utils/currency';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
-import { lightPallet } from '@webb-dapp/ui-components/styling/colors';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import styled, { css } from 'styled-components';
 
 const TokenInputWrapper = styled.div<{ open: boolean }>`
   border-radius: 25px;
-  border: 1px solid ${lightPallet.gray13};
+  border: 1px solid ${({ theme }) => theme.gray13};
 
   overflow: hidden;
   transition: all 0.3s ease-in-out;
-  background: #c8cedd 37%;
+  background: #ffff 37%;
 
   ${({ open }) => {
     return open
       ? css`
+          background: #e8e8ef 9%;
           box-shadow: 1px 1px 14px rgba(54, 86, 233, 0.2);
           max-height: 350px;
         `
@@ -29,7 +29,7 @@ const TokenInputWrapper = styled.div<{ open: boolean }>`
   .account-header {
     display: flex;
     align-items: center;
-    border-bottom: 1px solid ${lightPallet.gray13};
+    border-bottom: 1px solid ${({ theme }) => theme.gray13};
     padding: 5px;
   }
 
@@ -56,7 +56,7 @@ const StyledList = styled.ul`
 
     &.selected,
     :hover {
-      background: ${lightPallet.gray1};
+      background: ${({ theme }) => theme.gray1};
     }
 
     position: relative;
@@ -124,7 +124,12 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
                 width: $wrapper.current?.offsetWidth,
               }}
             >
-              <div className='account-header'>
+              <div
+                onClick={() => {
+                  setIsOpen((p) => !p);
+                }}
+                className='account-header'
+              >
                 {selected ? (
                   <Flex row ai='center' jc='flex-start' flex={1}>
                     <Avatar
@@ -150,7 +155,8 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
                       transform: isOpen ? 'rotate(180deg)' : 'rotate(0)',
                       transition: 'all ease .3s',
                     }}
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.stopPropagation();
                       setIsOpen((p) => !p);
                     }}
                   >

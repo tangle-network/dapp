@@ -16,7 +16,7 @@ export const useConstants = (): HooksReturnType => {
   // all currencies id
   const allCurrencies = useMemo((): CurrencyId[] => {
     return [];
-  }, [api]);
+  }, []);
 
   return {
     allCurrencies,

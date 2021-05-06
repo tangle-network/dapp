@@ -1,12 +1,12 @@
-import { ButtonBase, Avatar } from '@material-ui/core';
-import React, { useCallback, useEffect, useState } from 'react';
-import styled from 'styled-components';
-import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
-import { WalletManger } from './WalletManger';
+import { Avatar, ButtonBase } from '@material-ui/core';
 import { SupportedWallet, supportedWallets } from '@webb-dapp/apps/configs/wallets/supported-wallets.config';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
+import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
-import { lightPallet } from '@webb-dapp/ui-components/styling/colors';
+import React, { useCallback, useEffect, useState } from 'react';
+import styled from 'styled-components';
+
+import { WalletManger } from './WalletManger';
 
 const WalletSelectWrapper = styled.div`
   .wallet-logo-wrapper {
@@ -21,8 +21,9 @@ const WalletSelectWrapper = styled.div`
   min-width: 120px;
 
   :hover {
-    background: ${lightPallet.mainBackground};
+    background: ${({ theme }) => theme.mainBackground};
   }
+
   .select-button-content {
     display: inline-block;
     margin-right: 0.2rem;

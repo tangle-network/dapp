@@ -1,6 +1,6 @@
-import { useContext } from 'react';
 import { dimensionContext } from '@webb-dapp/react-environment/layout/DimensionsProvider';
 import { size } from '@webb-dapp/ui-components/utils/responsive-utils';
+import { useContext } from 'react';
 
 export const useDimensions = () => {
   const {

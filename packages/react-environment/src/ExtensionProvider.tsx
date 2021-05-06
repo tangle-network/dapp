@@ -6,6 +6,10 @@ import React, { createContext, FC, ReactNode, useCallback, useEffect, useMemo, u
 import { ApiRx } from '@polkadot/api';
 import { web3Enable, web3FromAddress } from '@polkadot/extension-dapp';
 import { InjectedAccount, InjectedExtension, MetadataDef } from '@polkadot/extension-inject/types';
+import { Typography } from '@material-ui/core';
+import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
+import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
+import UploadMetaData from '@webb-dapp/react-components/UploadMetaData/UploadMetaData';
 
 type AddressBook = {
   address: string;
@@ -265,6 +269,7 @@ export const ExtensionProvider: FC<AccountProviderProps> = ({ appName, authRequi
     <ExtensionContext.Provider value={data}>
       {children}
       {renderError()}
+      <UploadMetaData close={closeUploadMatedata} uploadMetadata={uploadMetadata} visiable={uploadMatedataStatus} />
     </ExtensionContext.Provider>
   );
 };

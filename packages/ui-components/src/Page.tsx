@@ -1,10 +1,10 @@
+import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
 import clsx from 'clsx';
 import React, { FC, memo, ReactNode } from 'react';
 import styled from 'styled-components';
 
 import { TextAnimation } from './Animation';
 import { BareProps } from './types';
-import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
 
 const TitleRoot = styled.div`
   margin-top: 32px;
@@ -127,7 +127,6 @@ _Page = memo(styled(_Page)`
   overflow-y: auto;
   overflow-y: overlay;
 
-  background: red;
   overflow: auto;
 
   border-radius: 0 0 40px 40px;
@@ -137,8 +136,8 @@ _Page = memo(styled(_Page)`
   border-radius: 40px 40px 0 0;
 
 	`};
-
-  background: #fff;
+  transition: all ease-in-out 0.5s;
+  background: ${({ theme }) => theme.background};
 `);
 
 const Content: FC<BareProps> = memo(styled.div`

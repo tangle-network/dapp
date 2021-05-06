@@ -1,6 +1,6 @@
 import { lightPallet } from '@webb-dapp/ui-components/styling/colors';
-import styled from 'styled-components';
 import React from 'react';
+import styled from 'styled-components';
 
 type LabelStatus = 'initial' | 'highlighted' | 'error';
 

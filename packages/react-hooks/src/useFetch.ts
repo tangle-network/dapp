@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
 import { LoggerService } from '@webb-tools/app-util';
+import { useEffect, useState } from 'react';
 
 export const useFetch = (url: RequestInfo) => {
   const [data, setData] = useState(null);
 
   // empty array as second argument equivalent to componentDidMount
-useEffect(() => {
+  useEffect(() => {
     const controller = new AbortController();
     const logger = LoggerService.get('App');
 

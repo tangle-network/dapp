@@ -9,15 +9,14 @@ import {
   Tooltip,
   Typography,
 } from '@material-ui/core';
+import { EndpointType } from '@webb-dapp/react-environment/configs/endpoints';
+import { useSetting } from '@webb-dapp/react-hooks';
+import { SpaceBox } from '@webb-dapp/ui-components';
+import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
-
+import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
-import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
-import { SpaceBox } from '@webb-dapp/ui-components';
-import { useSetting } from '@webb-dapp/react-hooks';
-import { EndpointType } from '@webb-dapp/react-environment/configs/endpoints';
 
 const SettingsManagerWrapper = styled.div`
   padding: 1rem;
@@ -46,7 +45,7 @@ export const SettingsManager: React.FC<SettingsManagerProps> = () => {
   const handleCancel = useCallback(() => {
     setSelected(endpoint || '');
     setOpen(false);
-  }, [changeEndpoint, selected]);
+  }, [endpoint]);
 
   useEffect(() => {
     if (endpoint) setSelected(endpoint);

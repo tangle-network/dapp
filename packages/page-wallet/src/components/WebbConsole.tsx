@@ -1,5 +1,6 @@
 import { Col, Row } from '@webb-dapp/ui-components';
 import React, { FC } from 'react';
+
 import { UserCard } from './UserCard';
 
 export const WebbConsole: FC = () => {

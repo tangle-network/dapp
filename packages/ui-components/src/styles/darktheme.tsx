@@ -1,5 +1,5 @@
-import { createGlobalStyle } from 'styled-components';
 import { darkPallet } from '@webb-dapp/ui-components/styling/colors';
+import { createGlobalStyle } from 'styled-components';
 
 export const DarkTheme = createGlobalStyle`
 
@@ -59,7 +59,7 @@ export const DarkTheme = createGlobalStyle`
 
 		--sidebar-item-height: 58px;
 
-		--platform-background: #333;
+		--platform-background: ${darkPallet.mainBackground};
 		--card-background: #222;
 
 		--information-background: rgba(0, 0, 0, 0.4);
@@ -102,6 +102,7 @@ export const DarkTheme = createGlobalStyle`
 	}
 
 	body {
+
 		background: ${darkPallet.mainBackground} !important;
 	}
 `;

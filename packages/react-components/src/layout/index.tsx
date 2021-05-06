@@ -1,13 +1,14 @@
+import AppBar from '@webb-dapp/react-components/AppBar/AppBar';
+import { BottomNavigation } from '@webb-dapp/react-components/BottomNavigation/BottomNavigation';
 import { useStore } from '@webb-dapp/react-environment';
 import { useApi, useIsAppReady, useSetting, useTranslation } from '@webb-dapp/react-hooks';
 import { Alert, Page, PageLoading, styled } from '@webb-dapp/ui-components';
+import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
 import { noop } from 'lodash';
 import React, { FC, memo, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router';
+
 import { SidebarConfig } from '../Sidebar';
-import AppBar from '@webb-dapp/react-components/AppBar/AppBar';
-import { BottomNavigation } from '@webb-dapp/react-components/BottomNavigation/BottomNavigation';
-import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
 
 const MainContainer = styled.div`
   display: flex;
@@ -74,7 +75,7 @@ const Main: FC<MainLayoutProps> = memo(({ children, enableCollapse = true, sideb
         <Page.Content>{children}</Page.Content>
       </Page>
     );
-  }, [isAppReady, t, breadcrumb, ui.subMenu, ui.pageTitle, children]);
+  }, [isAppReady, children]);
   return (
     <MainContainer>
       <AppBar />

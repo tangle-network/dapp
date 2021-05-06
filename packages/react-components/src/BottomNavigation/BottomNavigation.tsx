@@ -1,10 +1,9 @@
-import { lightPallet } from '@webb-dapp/ui-components/styling/colors';
+import { useDimensions } from '@webb-dapp/react-environment/layout';
 import { basePallet } from '@webb-dapp/ui-components/styling/colors/base-pallet';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 import React, { useMemo } from 'react';
 import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
-import { useDimensions } from '@webb-dapp/react-environment/layout';
 
 const BottomNavigationWrapper = styled.nav`
   max-height: 55px;
@@ -34,7 +33,7 @@ const NavigationWrapper = styled.ul`
       justify-content: center;
       position: relative;
       padding: 0 5px;
-      color: ${lightPallet.primaryText};
+      color: ${({ theme }) => theme.primaryText};
       font-family: ${FontFamilies.AvenirNext};
 
       :after {
@@ -51,7 +50,7 @@ const NavigationWrapper = styled.ul`
       }
 
       &.active {
-        color: ${lightPallet.primary};
+        color: ${({ theme }) => theme.primary};
         font-weight: bold;
 
         :after {
@@ -70,7 +69,7 @@ const NavigationWrapper = styled.ul`
   }
 `;
 
-export const BottomNavigation: React.FC<BottomNavigationProps> = ({}) => {
+export const BottomNavigation: React.FC<BottomNavigationProps> = () => {
   const { size, width } = useDimensions();
   const isMobile = useMemo(() => {
     return width <= size.sm;

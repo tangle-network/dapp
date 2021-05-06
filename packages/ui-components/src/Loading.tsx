@@ -1,9 +1,9 @@
+import { Spinner } from '@webb-dapp/ui-components/Spinner/Spinner';
 import { Skeleton } from 'antd';
 import React, { FC } from 'react';
 import styled, { keyframes } from 'styled-components';
 
 import { BareProps } from './types';
-import { Spinner } from '@webb-dapp/ui-components/Spinner/Spinner';
 
 interface Props extends BareProps {
   width?: number;
