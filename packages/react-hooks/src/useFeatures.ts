@@ -14,7 +14,6 @@ export const useFeatures = (features: AppFeatures[]): boolean => {
         ),
     [chainInfo.chainName, selectableEndpoints]
   );
-  console.log(chainInfo.chainName);
   if (!selectedEndpoint) {
     return false;
   }
