@@ -1,5 +1,5 @@
 {
-  "name": "@webb-dapp/wallet",
+  "name": "@webb-dapp/contracts",
   "version": "0.2.1-beta.1",
   "description": "contracts",
   "main": "index.js",
