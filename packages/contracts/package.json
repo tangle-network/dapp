@@ -1,0 +1,10 @@
+{
+  "name": "@webb-dapp/wallet",
+  "version": "0.2.1-beta.1",
+  "description": "contracts",
+  "main": "index.js",
+  "author": "Acala Developers <hello@acala.network>, Webb Developers <drew@webb.tools>",
+  "homepage": "https://github.com/webb-tools/webb-dapp#readme",
+  "dependencies": {},
+  "devDependencies": {}
+}
