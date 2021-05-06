@@ -1,0 +1,372 @@
+{
+  "contractName": "BadRecipient",
+  "abi": [
+    {
+      "stateMutability": "nonpayable",
+      "type": "fallback"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.7.6+commit.7338295f\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"stateMutability\":\"nonpayable\",\"type\":\"fallback\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"/Users/ahmed/projects/edgeware/anon/contracts/evm/anchor/contracts/Mocks/BadRecipient.sol\":\"BadRecipient\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"/Users/ahmed/projects/edgeware/anon/contracts/evm/anchor/contracts/Mocks/BadRecipient.sol\":{\"keccak256\":\"0x9647197dc9a2d5eab6592b2542ff72f674e9c713e71f4728c56c155252ab2d5b\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://523d65eb0ca84881871808d98037be2d35668321e6cc5bf518516235be3cb1b9\",\"dweb:/ipfs/QmQ2g6oq1ss69axbewU6ySEcWGUSDv7nK1i663Sq25UPe3\"]}},\"version\":1}",
+  "bytecode": "0x6080604052348015600f57600080fd5b50609d80601d6000396000f3fe6080604052348015600f57600080fd5b5060405162461bcd60e51b815260040180806020018281038252602181526020018060476021913960400191505060405180910390fdfe7468697320636f6e747261637420646f6573206e6f742061636365707420455448a26469706673582212204b84f2f4f6501478f1d8a02ae69d376306caefe17b736cdc932b031b4a3d237c64736f6c63430007060033",
+  "deployedBytecode": "0x6080604052348015600f57600080fd5b5060405162461bcd60e51b815260040180806020018281038252602181526020018060476021913960400191505060405180910390fdfe7468697320636f6e747261637420646f6573206e6f742061636365707420455448a26469706673582212204b84f2f4f6501478f1d8a02ae69d376306caefe17b736cdc932b031b4a3d237c64736f6c63430007060033",
+  "immutableReferences": {},
+  "generatedSources": [],
+  "deployedGeneratedSources": [],
+  "sourceMap": "57:110:25:-:0;;;;;;;;;;;;;;;;;;;",
+  "deployedSourceMap": "57:110:25:-:0;;;;;;;;;;;;-1:-1:-1;109:51:25;;-1:-1:-1;;;109:51:25;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;",
+  "source": "// SPDX-License-Identifier: MIT\npragma solidity ^0.7.0;\n\ncontract BadRecipient {\n  fallback() external {\n    require(false, \"this contract does not accept ETH\");\n  }\n}\n",
+  "sourcePath": "/Users/ahmed/projects/edgeware/anon/contracts/evm/anchor/contracts/Mocks/BadRecipient.sol",
+  "ast": {
+    "absolutePath": "/Users/ahmed/projects/edgeware/anon/contracts/evm/anchor/contracts/Mocks/BadRecipient.sol",
+    "exportedSymbols": {
+      "BadRecipient": [
+        1139
+      ]
+    },
+    "id": 1140,
+    "license": "MIT",
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 1129,
+        "literals": [
+          "solidity",
+          "^",
+          "0.7",
+          ".0"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "32:23:25"
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "fullyImplemented": true,
+        "id": 1139,
+        "linearizedBaseContracts": [
+          1139
+        ],
+        "name": "BadRecipient",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "body": {
+              "id": 1137,
+              "nodeType": "Block",
+              "src": "103:62:25",
+              "statements": [
+                {
+                  "expression": {
+                    "arguments": [
+                      {
+                        "hexValue": "66616c7365",
+                        "id": 1133,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "kind": "bool",
+                        "lValueRequested": false,
+                        "nodeType": "Literal",
+                        "src": "117:5:25",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        },
+                        "value": "false"
+                      },
+                      {
+                        "hexValue": "7468697320636f6e747261637420646f6573206e6f742061636365707420455448",
+                        "id": 1134,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "kind": "string",
+                        "lValueRequested": false,
+                        "nodeType": "Literal",
+                        "src": "124:35:25",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_stringliteral_a3dfa67cd4d104a688bb8ad9f6858d9a8fecb15cbae3a5d0cd6923d5d60a93c8",
+                          "typeString": "literal_string \"this contract does not accept ETH\""
+                        },
+                        "value": "this contract does not accept ETH"
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        },
+                        {
+                          "typeIdentifier": "t_stringliteral_a3dfa67cd4d104a688bb8ad9f6858d9a8fecb15cbae3a5d0cd6923d5d60a93c8",
+                          "typeString": "literal_string \"this contract does not accept ETH\""
+                        }
+                      ],
+                      "id": 1132,
+                      "name": "require",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [
+                        4294967278,
+                        4294967278
+                      ],
+                      "referencedDeclaration": 4294967278,
+                      "src": "109:7:25",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
+                        "typeString": "function (bool,string memory) pure"
+                      }
+                    },
+                    "id": 1135,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "109:51:25",
+                    "tryCall": false,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 1136,
+                  "nodeType": "ExpressionStatement",
+                  "src": "109:51:25"
+                }
+              ]
+            },
+            "id": 1138,
+            "implemented": true,
+            "kind": "fallback",
+            "modifiers": [],
+            "name": "",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 1130,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "91:2:25"
+            },
+            "returnParameters": {
+              "id": 1131,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "103:0:25"
+            },
+            "scope": 1139,
+            "src": "83:82:25",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "scope": 1140,
+        "src": "57:110:25"
+      }
+    ],
+    "src": "32:136:25"
+  },
+  "legacyAST": {
+    "attributes": {
+      "absolutePath": "/Users/ahmed/projects/edgeware/anon/contracts/evm/anchor/contracts/Mocks/BadRecipient.sol",
+      "exportedSymbols": {
+        "BadRecipient": [
+          1139
+        ]
+      },
+      "license": "MIT"
+    },
+    "children": [
+      {
+        "attributes": {
+          "literals": [
+            "solidity",
+            "^",
+            "0.7",
+            ".0"
+          ]
+        },
+        "id": 1129,
+        "name": "PragmaDirective",
+        "src": "32:23:25"
+      },
+      {
+        "attributes": {
+          "abstract": false,
+          "baseContracts": [
+            null
+          ],
+          "contractDependencies": [
+            null
+          ],
+          "contractKind": "contract",
+          "fullyImplemented": true,
+          "linearizedBaseContracts": [
+            1139
+          ],
+          "name": "BadRecipient",
+          "scope": 1140
+        },
+        "children": [
+          {
+            "attributes": {
+              "implemented": true,
+              "isConstructor": false,
+              "kind": "fallback",
+              "modifiers": [
+                null
+              ],
+              "name": "",
+              "scope": 1139,
+              "stateMutability": "nonpayable",
+              "virtual": false,
+              "visibility": "external"
+            },
+            "children": [
+              {
+                "attributes": {
+                  "parameters": [
+                    null
+                  ]
+                },
+                "children": [],
+                "id": 1130,
+                "name": "ParameterList",
+                "src": "91:2:25"
+              },
+              {
+                "attributes": {
+                  "parameters": [
+                    null
+                  ]
+                },
+                "children": [],
+                "id": 1131,
+                "name": "ParameterList",
+                "src": "103:0:25"
+              },
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "attributes": {
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "isStructConstructorCall": false,
+                          "lValueRequested": false,
+                          "names": [
+                            null
+                          ],
+                          "tryCall": false,
+                          "type": "tuple()",
+                          "type_conversion": false
+                        },
+                        "children": [
+                          {
+                            "attributes": {
+                              "argumentTypes": [
+                                {
+                                  "typeIdentifier": "t_bool",
+                                  "typeString": "bool"
+                                },
+                                {
+                                  "typeIdentifier": "t_stringliteral_a3dfa67cd4d104a688bb8ad9f6858d9a8fecb15cbae3a5d0cd6923d5d60a93c8",
+                                  "typeString": "literal_string \"this contract does not accept ETH\""
+                                }
+                              ],
+                              "overloadedDeclarations": [
+                                4294967278,
+                                4294967278
+                              ],
+                              "referencedDeclaration": 4294967278,
+                              "type": "function (bool,string memory) pure",
+                              "value": "require"
+                            },
+                            "id": 1132,
+                            "name": "Identifier",
+                            "src": "109:7:25"
+                          },
+                          {
+                            "attributes": {
+                              "hexvalue": "66616c7365",
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": true,
+                              "lValueRequested": false,
+                              "token": "bool",
+                              "type": "bool",
+                              "value": "false"
+                            },
+                            "id": 1133,
+                            "name": "Literal",
+                            "src": "117:5:25"
+                          },
+                          {
+                            "attributes": {
+                              "hexvalue": "7468697320636f6e747261637420646f6573206e6f742061636365707420455448",
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": true,
+                              "lValueRequested": false,
+                              "token": "string",
+                              "type": "literal_string \"this contract does not accept ETH\"",
+                              "value": "this contract does not accept ETH"
+                            },
+                            "id": 1134,
+                            "name": "Literal",
+                            "src": "124:35:25"
+                          }
+                        ],
+                        "id": 1135,
+                        "name": "FunctionCall",
+                        "src": "109:51:25"
+                      }
+                    ],
+                    "id": 1136,
+                    "name": "ExpressionStatement",
+                    "src": "109:51:25"
+                  }
+                ],
+                "id": 1137,
+                "name": "Block",
+                "src": "103:62:25"
+              }
+            ],
+            "id": 1138,
+            "name": "FunctionDefinition",
+            "src": "83:82:25"
+          }
+        ],
+        "id": 1139,
+        "name": "ContractDefinition",
+        "src": "57:110:25"
+      }
+    ],
+    "id": 1140,
+    "name": "SourceUnit",
+    "src": "32:136:25"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.7.6+commit.7338295f.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.3.4",
+  "updatedAt": "2021-05-06T09:15:15.393Z",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {},
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  }
+}
