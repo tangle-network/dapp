@@ -2,7 +2,7 @@
 /* tslint:disable */
 
 import { Contract, Signer } from "ethers";
-import { Provider } from "ethers/providers";
+import { Provider } from "@ethersproject/providers";
 
 import { Erc20Basic } from "./Erc20Basic";
 
