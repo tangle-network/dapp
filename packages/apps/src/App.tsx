@@ -11,12 +11,12 @@ import { hot } from 'react-hot-loader/root';
 import {   providers ,Wallet } from 'ethers';
 import { config as routerConfig } from './router-config';
 import { Web3Provider } from '../../wallet/src/providers/web3/web3-provider';
+import { AnchorContract } from '@webb-dapp/contracts/contracts/anchor';
 
 const appLogger = LoggerService.new('App');
 const App: FC = () => {
   useEffect(() => {
     const run = async () => {
-      const address = '0x2ab21881E3774BcEE22F3B11dee7BffAa2EcB5F5';
       if (!window) {
         return;
       }
@@ -29,11 +29,14 @@ const App: FC = () => {
   }, []);
   return <button onClick={async() => {
     const ethMetaMask = Web3Provider.fromExtension();
-    const provider = new providers.Web3Provider(ethMetaMask.provider);
+    const provider = ethMetaMask.intoEthersProvider();
     const accounts = await ethMetaMask.eth.getAccounts()
     const wallet = new Wallet(accounts[0] , provider);
-    const balance = await wallet.getBalance()
-    console.log(balance);
+    const address = '0x2ab21881E3774BcEE22F3B11dee7BffAa2EcB5F5';
+    const anchorContract = new AnchorContract(wallet , address);
+    const lastRoot = await anchorContract.getLastRoot;
+    console.log(lastRootk);
+
   }
   }>connect</button>;
   return (

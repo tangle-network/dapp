@@ -1,5 +1,6 @@
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import Web3 from 'web3';
+import { ethers } from 'ethers';
 
 export class Web3Provider {
   private constructor(private _inner: Web3) {}
@@ -47,5 +48,8 @@ export class Web3Provider {
 
   get provider(){
     return this._inner.eth.currentProvider as any
+  }
+  intoEthersProvider(){
+    return new ethers.providers.Web3Provider(this.provider)
   }
 }
