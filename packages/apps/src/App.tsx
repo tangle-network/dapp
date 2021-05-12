@@ -27,7 +27,7 @@ const App: FC = () => {
 
     run();
   }, []);
-  return <button onClick={async() => {
+  /*return <button onClick={async() => {
     const ethMetaMask = Web3Provider.fromExtension();
     const provider = ethMetaMask.intoEthersProvider();
     const accounts = await ethMetaMask.eth.getAccounts()
@@ -39,6 +39,8 @@ const App: FC = () => {
 
   }
   }>connect</button>;
+
+   */
   return (
     <DAppError logger={appLogger}>
       <WebbProvider applicationName={'Webb DApp'}>
