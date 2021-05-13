@@ -16,7 +16,7 @@ interface InputLabelProps {
 const InputLabelRoot = styled.label<InputLabelRootProps>`
   font-size: 13px;
   border: 1px solid ${lightPallet.gray1};
-  color: ${lightPallet.primaryText};
+  color: ${({ theme }) => theme.primaryText};
   display: block;
   padding: 10px;
   border-radius: 10px;
