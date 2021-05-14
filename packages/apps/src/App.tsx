@@ -1,6 +1,7 @@
 import './initI18n';
 
 import { EventsWatcher } from '@webb-dapp/react-components';
+import { NotificationStacked } from '@webb-dapp/ui-components/notification';
 import { DAppError } from '@webb-dapp/react-components/utils/Error/DAppError';
 import { RouterProvider, WebbProvider } from '@webb-dapp/react-environment';
 import { UIProvider } from '@webb-dapp/ui-components';
@@ -48,6 +49,7 @@ const App: FC = () => {
           <Theme />
           <RouterProvider config={routerConfig} />
           <EventsWatcher />
+          <NotificationStacked />
         </UIProvider>
       </WebbProvider>
     </DAppError>
