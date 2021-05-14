@@ -32,7 +32,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
 
       <SpaceBox height={16} />
 
-      <InputLabel label={'Note'}>
+      <InputLabel label={'Recipient'}>
         <InputBase
           value={withdrawTo}
           onChange={(event) => {
