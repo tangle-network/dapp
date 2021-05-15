@@ -83,7 +83,7 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = () => {
         <NavigationWrapper>
           <li className={'active'}>
             <NavLink to={'/mixer'} activeClassName={'active'}>
-              ZkProff
+              zkBridge
             </NavLink>
           </li>
           <li>

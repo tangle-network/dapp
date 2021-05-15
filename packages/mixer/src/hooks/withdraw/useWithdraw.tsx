@@ -75,7 +75,7 @@ export function useWithdraw(noteStr: string) {
     if (note) {
       restart();
     }
-  }, [note, restart]);
+  }, [note]);
 
   useEffect(() => {
     setValidationError((prev) => ({

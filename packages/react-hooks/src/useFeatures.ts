@@ -5,6 +5,7 @@ import { useMemo } from 'react';
 export const useFeatures = (features: AppFeatures[]): boolean => {
   const { selectableEndpoints } = useSetting();
   const { chainInfo } = useApi();
+
   const selectedEndpoint = useMemo(
     () =>
       Object.values(selectableEndpoints)
@@ -14,7 +15,6 @@ export const useFeatures = (features: AppFeatures[]): boolean => {
         ),
     [chainInfo.chainName, selectableEndpoints]
   );
-  console.log(chainInfo.chainName);
   if (!selectedEndpoint) {
     return false;
   }

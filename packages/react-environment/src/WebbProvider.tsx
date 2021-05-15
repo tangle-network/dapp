@@ -1,5 +1,4 @@
 import { DimensionsProvider } from '@webb-dapp/react-environment/layout';
-import { NotificationStacked } from '@webb-dapp/ui-components/notification';
 import { BareProps } from '@webb-dapp/ui-components/types';
 import React, { FC } from 'react';
 
@@ -23,7 +22,6 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
           </StoreProvier>
         </ExtensionProvider>
       </ApiProvider>
-      <NotificationStacked />
     </SettingProvider>
   );
 };

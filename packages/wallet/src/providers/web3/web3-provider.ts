@@ -1,8 +1,21 @@
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import Web3 from 'web3';
+import { ethers } from 'ethers';
 
 export class Web3Provider {
   private constructor(private _inner: Web3) {}
+
+  static get currentProvider(){
+    //@ts-ignore
+    if (typeof window !== 'undefined' && typeof window.web3 !== 'undefined') {
+      //@ts-ignore
+      const provider = window.ethereum || window.web3.currentProvider;
+      if(provider){
+        return provider;
+      }
+    }
+    throw Error('Not provider in window');
+  }
 
   static fromExtension() {
     //@ts-ignore
@@ -31,5 +44,12 @@ export class Web3Provider {
 
   get account() {
     return this._inner.defaultAccount;
+  }
+
+  get provider(){
+    return this._inner.eth.currentProvider as any
+  }
+  intoEthersProvider(){
+    return new ethers.providers.Web3Provider(this.provider)
   }
 }

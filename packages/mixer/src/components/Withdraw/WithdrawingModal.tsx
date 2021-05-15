@@ -25,16 +25,15 @@ const CurrentRunningTaskWrapper = styled.span`
 
 const TransactionSummaryWrapper = styled.div`
   padding: 1rem 0;
-
   td:nth-child(2) {
     padding: 0 2rem;
   }
 `;
 const randomMessages = [
   `We have 1239 withdraws/deposit running right now`,
-  `Generating Zero Knowledge proofs takes around  1 minute`,
+  `Generating Zero Knowledge proofs takes around 1 minute`,
   'You may withdraw to another account',
-  'Anyone can having your note withdraw , You should keep it secret',
+  'Anyone with your note can withdraw, You should keep it secret',
 ];
 const WithdrawingModal: React.FC<WithdrawingModalProps> = ({ canCancel, cancel, stage, withdrawTxInfo }) => {
   const [rm, setRandomMessage] = useState(Math.floor(Math.random() * randomMessages.length));
@@ -71,7 +70,7 @@ const WithdrawingModal: React.FC<WithdrawingModalProps> = ({ canCancel, cancel, 
   }, [withdrawTxInfo]);
   return (
     <Dialog open={stage > WithdrawState.Ideal} fullWidth maxWidth={'sm'}>
-      <DialogTitle>Transaction is being process</DialogTitle>
+      <DialogTitle>Transaction is being processed</DialogTitle>
       <DialogContent>
         {isResolved ? (
           <Typography>{message}</Typography>
@@ -82,7 +81,7 @@ const WithdrawingModal: React.FC<WithdrawingModalProps> = ({ canCancel, cancel, 
             </CurrentRunningTaskWrapper>
             <Typography variant={'caption'}>{randomMessages[rm]}</Typography>
             <LinearProgress value={10} variant={'indeterminate'} />
-            <Typography gutterBottom color={'textSecondary'} variant={'caption'}>
+            <Typography gutterBottom variant={'caption'}>
               <i>This usually takes 1 min</i>
             </Typography>
           </>
@@ -90,7 +89,7 @@ const WithdrawingModal: React.FC<WithdrawingModalProps> = ({ canCancel, cancel, 
 
         {withdrawTxInfo && (
           <TransactionSummaryWrapper>
-            <Typography variant={'subtitle1'}>Transaction summery</Typography>
+            <Typography variant={'subtitle1'} color={'textPrimary'}>Transaction summary</Typography>
             <table>
               <tr>
                 <td>Mixer info:</td>
@@ -112,7 +111,7 @@ const WithdrawingModal: React.FC<WithdrawingModalProps> = ({ canCancel, cancel, 
                 </td>
               </tr>*/}
               <tr>
-                <td>Recipient Address</td>
+                <td>Recipient Address:</td>
                 <td>
                   <Tooltip title={withdrawTxInfo.account}>
                     <Typography variant={'caption'}>{transactionString}</Typography>

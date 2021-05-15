@@ -111,7 +111,7 @@ const AppBar: React.FC<AppBarProps> = () => {
         <NavigationWrapper>
           <li className={'active'}>
             <NavLink to={'/mixer'} activeClassName={'active'}>
-              ZkProff
+              zkBridge
             </NavLink>
           </li>
           {/*        <li>
