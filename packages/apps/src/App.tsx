@@ -28,20 +28,23 @@ const App: FC = () => {
 
     run();
   }, []);
-  /*return <button onClick={async() => {
+  return <button onClick={async() => {
     const ethMetaMask = Web3Provider.fromExtension();
     const provider = ethMetaMask.intoEthersProvider();
-    const accounts = await ethMetaMask.eth.getAccounts()
+    const accounts = await ethMetaMask.eth.getAccounts();
+    console.log(accounts);
     const wallet = new Wallet(accounts[0] , provider);
-    const address = '0x2ab21881E3774BcEE22F3B11dee7BffAa2EcB5F5';
+    const address ='0x08d9E5634c16F3Db01c559FD5dBaEF1fD441eEAD';
     const anchorContract = new AnchorContract(wallet , address);
     const lastRoot = await anchorContract.getLastRoot;
-    console.log(lastRootk);
+    console.log(lastRoot);
+    let d = await anchorContract.deposit()
+    console.log(d);
 
   }
   }>connect</button>;
 
-   */
+
   return (
     <DAppError logger={appLogger}>
       <WebbProvider applicationName={'Webb DApp'}>
