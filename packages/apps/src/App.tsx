@@ -9,7 +9,6 @@ import Theme from '@webb-dapp/ui-components/styles/Theme';
 import { LoggerService } from '@webb-tools/app-util';
 import React, { FC, useEffect } from 'react';
 import { hot } from 'react-hot-loader/root';
-import {   providers ,Wallet } from 'ethers';
 import { config as routerConfig } from './router-config';
 import { Web3Provider } from '../../wallet/src/providers/web3/web3-provider';
 import { AnchorContract } from '@webb-dapp/contracts/contracts/anchor';
@@ -28,20 +27,29 @@ const App: FC = () => {
 
     run();
   }, []);
-  /*return <button onClick={async() => {
-    const ethMetaMask = Web3Provider.fromExtension();
-    const provider = ethMetaMask.intoEthersProvider();
-    const accounts = await ethMetaMask.eth.getAccounts()
-    const wallet = new Wallet(accounts[0] , provider);
-    const address = '0x2ab21881E3774BcEE22F3B11dee7BffAa2EcB5F5';
-    const anchorContract = new AnchorContract(wallet , address);
-    const lastRoot = await anchorContract.getLastRoot;
-    console.log(lastRootk);
+  // return <button onClick={async () => {
+  //   const ethMetaMask = Web3Provider.fromExtension();
+  //   const provider = ethMetaMask.intoEthersProvider();
+  //   const address = '0x876eCe69618e8E8dd743250B036785813824D2D7';
+  //   const accounts = await ethMetaMask.eth.getAccounts();
+  //   if (accounts.length) {
+  //
+  //     const balance = await ethMetaMask.eth.getBalance(accounts[0]);
+  //     console.log(balance);
+  //
+  //     const anchorContract = new AnchorContract(provider.getSigner(), address);
+  //     const deposit = anchorContract.createDeposit();
+  //     const tx = await anchorContract.deposit(deposit.commitment, event => {
+  //       console.log({ event });
+  //     });
+  //     console.log(tx);
+  //   }
+  //
+  //
+  // }
+  // }>connect</button>;
+  //
 
-  }
-  }>connect</button>;
-
-   */
   return (
     <DAppError logger={appLogger}>
       <WebbProvider applicationName={'Webb DApp'}>
