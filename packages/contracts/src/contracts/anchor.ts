@@ -1,10 +1,11 @@
 import { BigNumber, Contract } from 'ethers';
 import { abi } from '../abis/NativeAnchor.json';
 import { Anchor } from '@webb-dapp/contracts/types/Anchor';
-import { createDeposit } from '@webb-dapp/contracts/utils/make-deposit';
+import { createDeposit, Deposit } from '@webb-dapp/contracts/utils/make-deposit';
 
 import utils from 'web3-utils';
 import { Signer } from '@ethersproject/abstract-signer';
+import { EvmNote } from '@webb-dapp/contracts/utils/evm-note';
 
 type DepositEvent = [string, number, BigNumber]
 
@@ -28,8 +29,14 @@ export class AnchorContract {
   }
 
 
-  createDeposit() {
-    return createDeposit();
+  async createDeposit(): Promise<{ note: EvmNote, deposit: Deposit }> {
+    const deposit = createDeposit();
+    const chainId = await this.signer.getChainId();
+    const note = new EvmNote('eth', .1, chainId, deposit.preimage);
+    return {
+      note,
+      deposit
+    };k
 
   }
 
@@ -46,5 +53,9 @@ export class AnchorContract {
     return this._contract.deposit(commitment, overrides);
   }
 
+
+  async withdraw() {
+    this._contract.withdraw();
+  }
 
 }

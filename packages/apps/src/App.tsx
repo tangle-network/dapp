@@ -27,28 +27,29 @@ const App: FC = () => {
 
     run();
   }, []);
-  // return <button onClick={async () => {
-  //   const ethMetaMask = Web3Provider.fromExtension();
-  //   const provider = ethMetaMask.intoEthersProvider();
-  //   const address = '0x876eCe69618e8E8dd743250B036785813824D2D7';
-  //   const accounts = await ethMetaMask.eth.getAccounts();
-  //   if (accounts.length) {
-  //
-  //     const balance = await ethMetaMask.eth.getBalance(accounts[0]);
-  //     console.log(balance);
-  //
-  //     const anchorContract = new AnchorContract(provider.getSigner(), address);
-  //     const deposit = anchorContract.createDeposit();
-  //     const tx = await anchorContract.deposit(deposit.commitment, event => {
-  //       console.log({ event });
-  //     });
-  //     console.log(tx);
-  //   }
-  //
-  //
-  // }
-  // }>connect</button>;
-  //
+  return <button onClick={async () => {
+    const ethMetaMask = Web3Provider.fromExtension();
+    const provider = ethMetaMask.intoEthersProvider();
+    const address = '0x876eCe69618e8E8dd743250B036785813824D2D7';
+    const accounts = await ethMetaMask.eth.getAccounts();
+    if (accounts.length) {
+
+      const balance = await ethMetaMask.eth.getBalance(accounts[0]);
+      console.log(balance);
+
+      const anchorContract = new AnchorContract(provider.getSigner(), address);
+      const deposit = anchorContract.createDeposit();
+      const tx = await anchorContract.deposit(deposit.commitment, event => {
+        console.log({ event });
+      });
+      const res = await tx.wait();
+      console.log(res);
+    }
+
+
+  }
+  }>connect</button>;
+
 
   return (
     <DAppError logger={appLogger}>
