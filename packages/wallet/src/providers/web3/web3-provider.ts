@@ -21,7 +21,9 @@ export class Web3Provider {
     //@ts-ignore
     if (typeof window !== 'undefined' && typeof window.web3 !== 'undefined') {
       //@ts-ignore
-      return new Web3Provider(new Web3(window.web3.currentProvider));
+      const provider = Web3Provider.currentProvider;
+      provider.enable();
+      return new Web3Provider(new Web3(provider));
     }
     throw Error('Not provider in window');
   }
@@ -47,9 +49,15 @@ export class Web3Provider {
   }
 
   get provider(){
-    return this._inner.eth.currentProvider as any
+    return this._inner.eth.currentProvider
+  }
+
+  enable(){
+
+    // @ts-ignore
+
   }
   intoEthersProvider(){
-    return new ethers.providers.Web3Provider(this.provider)
+    return new ethers.providers.Web3Provider(this.provider as any)
   }
 }
