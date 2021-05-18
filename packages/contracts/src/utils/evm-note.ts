@@ -1,5 +1,6 @@
 import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
 import { Deposit } from '@webb-dapp/contracts/utils/make-deposit';
+import { pedersenHash } from '@webb-dapp/contracts/utils/pedersen-hash';
 
 export class EvmNote {
 
@@ -21,7 +22,7 @@ export class EvmNote {
         note,
         chainId
       } = noteRegex.exec(noteString)?.groups as Record<string, any>;
-      return new EvmNote(currency, amount, chainId, note);
+      return new EvmNote(currency, amount, chainId, Buffer.from(note, 'hex'));
     } catch (e) {
       throw Error('failed to parse :INVALID NOTE');
     }
@@ -32,11 +33,11 @@ export class EvmNote {
   }
 
 
-  currency() {
+  get currency() {
     return this._currency;
   }
 
-  amount() {
+  get amount() {
     return this._amount;
   }
 
@@ -48,9 +49,23 @@ export class EvmNote {
     return this._preImage;
   }
 
-  toString() {
-    return `anchor-${this.currency()}-${this.amount}-${this.chainId}-${bufferToFixed(this.preImage, 62)}`;
+  get preImageHex() {
+    return bufferToFixed(this.preImage, 62);
   }
 
+  toString() {
+    return `anchor-${this.currency}-${this.amount}-${this.chainId}-${this.preImageHex}`;
+  }
+
+  intoDeposit(): Deposit {
+    const commitment = bufferToFixed(pedersenHash(this.preImage));
+    const nullifierHash = bufferToFixed(pedersenHash(this.preImage.slice(0, 31)));
+    return {
+      nullifierHash,
+      commitment,
+      preimage: this.preImage
+    };
+
+  }
 
 }

@@ -81,7 +81,7 @@ export class MerkleTree {
   constructor(
     private prefix: string,
     private nLevel: number,
-    defaultElements = [],
+    defaultElements:any[] = [],
     private hasher: MimcSpongeHasher = new MimcSpongeHasher(),
     private storage: Storage = new Storage()
   ) {

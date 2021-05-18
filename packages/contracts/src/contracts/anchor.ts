@@ -1,19 +1,23 @@
-import { BigNumber, Contract } from 'ethers';
+import { BigNumber, Contract, providers, Signer } from 'ethers';
 import { abi } from '../abis/NativeAnchor.json';
 import { Anchor } from '@webb-dapp/contracts/types/Anchor';
 import { createDeposit, Deposit } from '@webb-dapp/contracts/utils/make-deposit';
-
+// const webSnarkUtils = require('websnark/src/utils')
+// const buildGroth16 = require('websnark/src/groth16')
 import utils from 'web3-utils';
-import { Signer } from '@ethersproject/abstract-signer';
 import { EvmNote } from '@webb-dapp/contracts/utils/evm-note';
+import { MerkleTree } from '@webb-dapp/utils/merkle';
+import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
 
 type DepositEvent = [string, number, BigNumber]
 
 export class AnchorContract {
   private _contract: Anchor;
+  private readonly signer: Signer;
 
-  constructor(private signer: Signer, address: string) {
-    this._contract = new Contract(address, abi, signer) as any;
+  constructor(private web3Provider: providers.Web3Provider, address: string) {
+    this.signer = this.web3Provider.getSigner();
+    this._contract = new Contract(address, abi, this.signer) as any;
   }
 
   get getLastRoot() {
@@ -36,7 +40,7 @@ export class AnchorContract {
     return {
       note,
       deposit
-    };k
+    };
 
   }
 
@@ -54,8 +58,37 @@ export class AnchorContract {
   }
 
 
-  async withdraw() {
-    this._contract.withdraw();
+  private async getDepositEvents() {
+    const filter = this._contract.filters.Deposit(null, null, null);
+    const logs = await this.web3Provider.getLogs({
+      fromBlock: 0,
+      toBlock: 'latest',
+      ...filter
+    });
+    return logs.map(log => this._contract.interface.parseLog(log));
+  }
+
+ private async  generateSnarkProof(deposit: Deposit){
+    const { root, path_elements, path_index } = await this.generateMerkleProof(deposit);
+  }
+
+  async generateMerkleProof(deposit: Deposit) {
+    const events = await this.getDepositEvents();
+    const leaves = events
+      .sort((a, b) => a.args.leafIndex - b.args.leafIndex) // Sort events in chronological order
+      .map(e => e.args.commitment);
+    const tree = new MerkleTree('eth', 32, leaves);
+    let depositEvent = events.find(e => e.args.commitment === bufferToFixed(deposit.commitment));
+    let leafIndex = depositEvent ? depositEvent.args.leafIndex : -1;
+    return  tree.path(leafIndex);
+  }
+
+  async withdraw(noteString: string, recipient: string) {
+    const note = EvmNote.deserialize(noteString);
+    const deposit = note.intoDeposit();
+    const merkleProof = await this.generateMerkleProof(deposit)
+    console.log(merkleProof);
+
   }
 
 }
