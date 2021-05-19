@@ -3,25 +3,17 @@ import { Deposit } from '@webb-dapp/contracts/utils/make-deposit';
 import { pedersenHash } from '@webb-dapp/contracts/utils/pedersen-hash';
 
 export class EvmNote {
-
   constructor(
     private _currency: string,
     private _amount: number,
     private _chainId: number,
     private _preImage: Uint8Array
-  ) {
-  }
-
+  ) {}
 
   static deserialize(noteString: string) {
     const noteRegex = /anchor-(?<currency>\w+)-(?<amount>[\d.]+)-(?<chainId>\d+)-0x(?<note>[0-9a-fA-F]{124})/g;
     try {
-      const {
-        currency,
-        amount,
-        note,
-        chainId
-      } = noteRegex.exec(noteString)?.groups as Record<string, any>;
+      const { currency, amount, note, chainId } = noteRegex.exec(noteString)?.groups as Record<string, any>;
       return new EvmNote(currency, amount, chainId, Buffer.from(note, 'hex'));
     } catch (e) {
       throw Error('failed to parse :INVALID NOTE');
@@ -31,7 +23,6 @@ export class EvmNote {
   serialize() {
     return this.toString();
   }
-
 
   get currency() {
     return this._currency;
@@ -60,12 +51,14 @@ export class EvmNote {
   intoDeposit(): Deposit {
     const commitment = bufferToFixed(pedersenHash(this.preImage));
     const nullifierHash = bufferToFixed(pedersenHash(this.preImage.slice(0, 31)));
+    const nullifier = bufferToFixed(this.preImage.slice(0, 31));
+    const secret = bufferToFixed(this.preImage.slice(31, 62));
     return {
       nullifierHash,
       commitment,
-      preimage: this.preImage
+      preimage: this.preImage,
+      nullifier,
+      secret,
     };
-
   }
-
 }

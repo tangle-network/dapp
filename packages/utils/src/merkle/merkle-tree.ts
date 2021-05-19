@@ -1,7 +1,6 @@
 import { Storage } from '@webb-dapp/utils/merkle/storage';
 import { MimcSpongeHasher } from '@webb-dapp/utils/merkle/sponge-hasher';
 
-
 interface TraverserHandler {
   handle_index(level: number, element_index: number, sibling_index: number): void;
 }
@@ -15,8 +14,8 @@ class UpdateTraverser implements TraverserHandler {
     private storage: Storage,
     private hasher: MimcSpongeHasher,
     public currentElement,
-    private zeroValues) {
-  }
+    private zeroValues
+  ) {}
 
   async handle_index(level, element_index, sibling_index) {
     if (level == 0) {
@@ -40,7 +39,7 @@ class UpdateTraverser implements TraverserHandler {
 
     this.keyValuesToPut.push({
       key: MerkleTree.keyFormat(this.prefix, level, element_index),
-      value: this.currentElement
+      value: this.currentElement,
     });
     this.currentElement = this.hasher.hash(level, left, right);
   }
@@ -50,11 +49,7 @@ class PathTraverser implements TraverserHandler {
   public pathElements = [];
   public pathIndex = [];
 
-  constructor(
-    private prefix: string,
-    private storage: Storage,
-    private zeroValues) {
-  }
+  constructor(private prefix: string, private storage: Storage, private zeroValues) {}
 
   handle_index(level, element_index, sibling_index) {
     const sibling = this.storage.getOrDefault(
@@ -67,21 +62,18 @@ class PathTraverser implements TraverserHandler {
 }
 
 export class MerkleTree {
-
   private zeroValues = [];
   private totalElements = 0;
-
 
   static keyFormat(prefix, level, index) {
     const key = `${prefix}_tree_${level}_${index}`;
     return key;
   }
 
-
   constructor(
     private prefix: string,
     private nLevel: number,
-    defaultElements:any[] = [],
+    defaultElements: any[] = [],
     private hasher: MimcSpongeHasher = new MimcSpongeHasher(),
     private storage: Storage = new Storage()
   ) {
@@ -113,7 +105,6 @@ export class MerkleTree {
         numberOfElementsInLevel = Math.ceil(numberOfElementsInLevel / 2);
       }
     }
-
   }
 
   traverse(index: number, handler: TraverserHandler) {
@@ -142,7 +133,7 @@ export class MerkleTree {
       this.traverse(index, traverser);
       traverser.keyValuesToPut.push({
         key: MerkleTree.keyFormat(this.prefix, this.nLevel, 0),
-        value: traverser.currentElement
+        value: traverser.currentElement,
       });
 
       this.storage.put_batch(traverser.keyValuesToPut);
@@ -158,24 +149,19 @@ export class MerkleTree {
       this.zeroValues[this.nLevel]
     );
 
-    const element = this.storage.getOrDefault(
-      MerkleTree.keyFormat(this.prefix, 0, index),
-      this.zeroValues[0]
-    );
+    const element = this.storage.getOrDefault(MerkleTree.keyFormat(this.prefix, 0, index), this.zeroValues[0]);
 
     this.traverse(index, traverser);
     return {
       root,
       pathElements: traverser.pathElements,
       pathIndex: traverser.pathIndex,
-      element
+      element,
     };
-
   }
 
   static keyFormat(prefix, level, index) {
     const key = `${prefix}_tree_${level}_${index}`;
     return key;
   }
-
 }
