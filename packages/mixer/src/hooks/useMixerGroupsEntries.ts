@@ -12,9 +12,9 @@ import { string } from 'prop-types';
 import { Token } from '@webb-tools/sdk-core';
 
 type NativeTokenProperties = {
-  ss58Format: number,
-  tokenDecimals: Array<number>,
-  tokenSymbol: Array<string>,
+  ss58Format: number | null,
+  tokenDecimals: Array<number> | null,
+  tokenSymbol: Array<string> | null,
 }
 
 export type MixerGroupItem = {
@@ -59,7 +59,7 @@ export class MixerGroupEntriesWrapper {
         // TODO: Pull from active chain
         chain: 'edgeware',
         name: 'DEV',
-        precision: Number(this.tokenProperty?.toHuman().tokenDecimals[0] ?? 12),
+        precision: Number(this.tokenProperty?.toHuman().tokenDecimals?.[0] ?? 12),
         symbol: 'EDG',
       }),
     };
@@ -104,7 +104,6 @@ export class MixerGroupEntriesWrapper {
 export const useMixerGroupsEntries = (): MixerGroupEntriesWrapper => {
   const mixerGroups = useCall<Array<MixerGroupEntry>>('query.mixer.mixerTrees.entries', [], undefined, []);
   const tokenDecimals = useCall<NativeTokenProperties>('rpc.system.properties');
-  console.log(tokenDecimals?.toHuman());
 
   const { api } = useApi();
 

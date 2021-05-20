@@ -2,8 +2,7 @@
 import { MixerGroupItem } from '@webb-dapp/mixer';
 import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabel';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
-import { Token } from '@webb-tools/sdk-core';
-import React, { useEffect, useMemo, useCall } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import styled, { css } from 'styled-components';
 
 const MixerGroupSelectWrapper = styled.div`
@@ -61,9 +60,8 @@ export const MixerGroupSelect: React.FC<MixerGroupSelectProps> = ({ items, onCha
   const mixerSizes = useMemo(() => {
     return items.map((item, index) => {
       const { amount, symbol } = item.token;
-
       return {
-        amount: `${amount.toNumber() / 10 ** amount.getPrecision()} ${item.currency.symbol}`,
+        amount: `${(amount.toNumber() / 10 ** amount.getPrecision()) }`,
         id: `amount-${item.id}`,
         item,
         selected: index === checkedIndex,
@@ -86,7 +84,7 @@ export const MixerGroupSelect: React.FC<MixerGroupSelectProps> = ({ items, onCha
                 onChange?.(item);
               }}
             >
-              {amount}
+              {Math.round(parseFloat(amount)) + ` ${item.currency.symbol}`}
             </AmountChipWrapper>
           );
         })}
