@@ -8,7 +8,7 @@ import {
   Tooltip,
   Typography,
 } from '@material-ui/core';
-import { WithdrawState, WithdrawTXInfo } from '@webb-dapp/mixer';
+import { WithdrawState, WithdrawTXInfo, useMixerInfo } from '@webb-dapp/mixer';
 import React, { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
@@ -30,7 +30,6 @@ const TransactionSummaryWrapper = styled.div`
   }
 `;
 const randomMessages = [
-  `We have 1239 withdraws/deposit running right now`,
   `Generating Zero Knowledge proofs takes around 1 minute`,
   'You may withdraw to another account',
   'Anyone with your note can withdraw, You should keep it secret',
@@ -68,6 +67,9 @@ const WithdrawingModal: React.FC<WithdrawingModalProps> = ({ canCancel, cancel, 
     const address = withdrawTxInfo.account;
     return `${address.slice(0, 20)}...${address.slice(address.length - 10, address.length)}`;
   }, [withdrawTxInfo]);
+
+  const mixerInfo = useMixerInfo( (withdrawTxInfo?.note.id)?.toString() );
+
   return (
     <Dialog open={stage > WithdrawState.Ideal} fullWidth maxWidth={'sm'}>
       <DialogTitle>Transaction is being processed</DialogTitle>
@@ -98,7 +100,7 @@ const WithdrawingModal: React.FC<WithdrawingModalProps> = ({ canCancel, cancel, 
                     <b>
                       <i>Mixer id {withdrawTxInfo.note.id}</i>
                     </b>{' '}
-                    this worth 1000 EDG
+                    this worth {(mixerInfo.inner?.fixed_deposit_size)?.toString()} EDG
                   </Typography>
                 </td>
               </tr>
