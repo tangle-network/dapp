@@ -13,18 +13,20 @@ import { config as routerConfig } from './router-config';
 import { Web3Provider } from '../../wallet/src/providers/web3/web3-provider';
 import { AnchorContract } from '@webb-dapp/contracts/contracts/anchor';
 import { downloadString } from '@webb-dapp/utils';
+import { EvmNote } from '@webb-dapp/contracts/utils/evm-note';
+import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
+import { pedersenHash } from '@webb-dapp/contracts/utils/pedersen-hash';
 
 const appLogger = LoggerService.new('App');
 const App: FC = () => {
-  const [note, setNote] = useState('');
+  const [note, setNote] = useState(
+    'anchor-eth-0.1-1337-0xbbfe575c21f8f09116fa471bb7207d068fcf956bb21a45822e2ef0fa969bb37a24e7c6871b046611e05e3bef80b723e3be70d384a1b42fdecd9fed839d2b'
+  );
   useEffect(() => {
     const run = async () => {
       if (!window) {
         return;
       }
-      ;
-
-
     };
 
     run();
@@ -56,10 +58,56 @@ const App: FC = () => {
     }>depoist
     </button>
     <div>
-    <textarea value={note} onChange={(e) => {
-      setNote(e.target.value);
-    }} />
+      <button
+        onClick={async () => {
+          const ethMetaMask = Web3Provider.fromExtension();
+          const provider = ethMetaMask.intoEthersProvider();
+          const address = '0xFBD61C9961e0bf872B5Ec041b718C0B2a106Ce9D';
+          const accounts = await ethMetaMask.eth.getAccounts();
+          if (accounts.length) {
+            const balance = await ethMetaMask.eth.getBalance(accounts[0]);
+            console.log(balance);
+
+            const anchorContract = new AnchorContract(provider, address);
+            const depositAction = await anchorContract.createDeposit();
+            // @ts-ignore
+            downloadString(depositAction.note.serialize(), depositAction.note.preImageHex.slice(0, 21) + '.text');
+            const tx = await anchorContract.deposit(depositAction.deposit.commitment, (event) => {
+              console.log({ event });
+            });
+            const res = await tx.wait();
+          }
+        }}
+      >
+        depoist
+      </button>
+      <div>
+        <textarea
+          value={note}
+          onChange={(e) => {
+            setNote(e.target.value);
+          }}
+        />
+      </div>
+      <button
+        onClick={async () => {
+          const ethMetaMask = Web3Provider.fromExtension();
+          const provider = ethMetaMask.intoEthersProvider();
+          const address = '0xFBD61C9961e0bf872B5Ec041b718C0B2a106Ce9D';
+          const accounts = await ethMetaMask.eth.getAccounts();
+          if (accounts.length) {
+            const balance = await ethMetaMask.eth.getBalance(accounts[0]);
+            console.log(balance);
+
+            const anchorContract = new AnchorContract(provider, address);
+            await anchorContract.withdraw(note, accounts[0]);
+          }
+        }}
+      >
+        withdraw
+      </button>
     </div>
+<<<<<<< HEAD
     <button onClick={async () => {
       const ethMetaMask = Web3Provider.fromExtension();
       const provider = ethMetaMask.intoEthersProvider();
@@ -77,6 +125,9 @@ const App: FC = () => {
       withdraw
     </button>
   </div>;*/
+=======
+  );
+>>>>>>> 6bfa66bb8aa7ee86fee48e199d6813cf08c445a7
 
   return (
     <DAppError logger={appLogger}>
@@ -85,7 +136,6 @@ const App: FC = () => {
           <Theme />
           <RouterProvider config={routerConfig} />
           <EventsWatcher />
-
 
           <NotificationStacked />
         </UIProvider>
