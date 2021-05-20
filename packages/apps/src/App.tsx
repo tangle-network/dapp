@@ -29,6 +29,7 @@ const App: FC = () => {
 
     run();
   }, []);
+  /*
   return <div>
 
     <button onClick={async () => {
@@ -77,6 +78,7 @@ const App: FC = () => {
       withdraw
     </button>
   </div>;
+  */
 
   return (
     <DAppError logger={appLogger}>

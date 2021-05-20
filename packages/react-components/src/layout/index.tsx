@@ -1,10 +1,10 @@
 import AppBar from '@webb-dapp/react-components/AppBar/AppBar';
 import { BottomNavigation } from '@webb-dapp/react-components/BottomNavigation/BottomNavigation';
 import { useStore } from '@webb-dapp/react-environment';
-import { useApi, useIsAppReady, useSetting, useTranslation } from '@webb-dapp/react-hooks';
+import { useApi, useIsAppReady, useSetting, useTranslation, useAccounts } from '@webb-dapp/react-hooks';
 import { Alert, Page, PageLoading, styled } from '@webb-dapp/ui-components';
 import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
-import { noop } from 'lodash';
+import { isEmpty, noop } from 'lodash';
 import React, { FC, memo, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router';
 
@@ -38,6 +38,8 @@ const Main: FC<MainLayoutProps> = memo(({ children, enableCollapse = true, sideb
   const { init } = useApi();
   const { allEndpoints, endpoint } = useSetting();
   const isAppReady = useIsAppReady();
+  const extension = useAccounts();
+  const api = useApi();
   const ui = useStore('ui');
   const navigate = useNavigate();
 
@@ -68,6 +70,7 @@ const Main: FC<MainLayoutProps> = memo(({ children, enableCollapse = true, sideb
   }, [ui.breadcrumb, navigate, ui.pageTitle]);
 
   const content = useMemo(() => {
+    if (!isEmpty(api) && extension.extensionErrorStatus) return (<Alert message={'Please install polkadot.js'}/>);
     if (!isAppReady) return <PageLoading />;
 
     return (
@@ -75,7 +78,7 @@ const Main: FC<MainLayoutProps> = memo(({ children, enableCollapse = true, sideb
         <Page.Content>{children}</Page.Content>
       </Page>
     );
-  }, [isAppReady, children]);
+  }, [isAppReady, children, extension.extensionErrorStatus]);
   return (
     <MainContainer>
       <AppBar />
