@@ -124,10 +124,15 @@ const App: FC = () => {
     }}>
       withdraw
     </button>
+<<<<<<< HEAD
   </div>;*/
 =======
   );
 >>>>>>> 6bfa66bb8aa7ee86fee48e199d6813cf08c445a7
+=======
+  </div>;
+  */
+>>>>>>> extension-error
 
   return (
     <DAppError logger={appLogger}>

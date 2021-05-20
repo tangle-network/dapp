@@ -1,7 +1,7 @@
 import { useApi, useModal, useStorage } from '@webb-dapp/react-hooks';
 import { options } from '@webb-tools/api';
 import { isNumber } from 'lodash';
-import React, { createContext, FC, ReactNode, useCallback, useEffect, useMemo, useReducer, useState } from 'react';
+import React, { createContext, FC, ReactNode, useCallback, useEffect, useMemo, useReducer, useState, useContext } from 'react';
 
 import { ApiRx } from '@polkadot/api';
 import { web3Enable, web3FromAddress } from '@polkadot/extension-dapp';
@@ -25,8 +25,8 @@ export interface ExtensionData {
   closeSelectAccount: () => void;
   selectAccountStatus: boolean;
   addressBook: AddressBook;
+  extensionErrorStatus: boolean;
   addToAddressBook: (data: { address: string; name?: string }) => void;
-
   setActiveAccount(address: string | InjectedAccount): Promise<void>;
 }
 
@@ -34,6 +34,7 @@ export const ExtensionContext = createContext<ExtensionData>({} as any);
 
 async function getExtensions(api: ApiRx, appName: string): Promise<InjectedExtension> {
   const extensions = await web3Enable(appName);
+  console.log('did complete web3Enable in getExtensions');
   if (extensions.length === 0) throw new Error('no_extensions');
 
   const currentExtensions = extensions[0];
@@ -62,10 +63,8 @@ export const ExtensionProvider: FC<AccountProviderProps> = ({ appName, authRequi
   // upload metadata modal
   const { close: closeUploadMatedata, open: openUploadMatedata, status: uploadMatedataStatus } = useModal(false);
   const [metadataDef, setMetadataDef] = useState<MetadataDef | undefined>();
-  const [errorStatus, setErrorStatus] = useState<{
-    noExtension?: boolean;
-    noAccount?: boolean;
-  }>({ noAccount: false, noExtension: false });
+  const [extensionErrorStatus, setExtensionErrorStatus] = useState<boolean>(false);
+  const [accountErrorStatus, setAccountErrorStatus] = useState<boolean>(false);
 
   const checkIfNeedUploadMetadata = useCallback(async () => {
     if (!extension) return;
@@ -151,16 +150,16 @@ export const ExtensionProvider: FC<AccountProviderProps> = ({ appName, authRequi
   const renderError = useCallback((): ReactNode => {
     if (!authRequired) return null;
 
-    if (errorStatus.noAccount) {
+    if (accountErrorStatus) {
       return null;
     }
 
-    if (errorStatus.noExtension) {
+    if (extensionErrorStatus) {
       return null;
     }
 
     return null;
-  }, [authRequired, errorStatus]);
+  }, [authRequired, accountErrorStatus, extensionErrorStatus]);
 
   // get web3 extension
   useEffect(() => {
@@ -171,9 +170,9 @@ export const ExtensionProvider: FC<AccountProviderProps> = ({ appName, authRequi
         setExtension(extension);
       })
       .catch(() => {
-        setErrorStatus({ noExtension: true });
+        setExtensionErrorStatus(true);
       });
-  }, [api, triggerSignal, setExtension, setErrorStatus, appName]);
+  }, [api, triggerSignal, setExtension, setExtensionErrorStatus, appName]);
 
   // check if need upload metadata and subscribe accounts
   useEffect(() => {
@@ -181,7 +180,7 @@ export const ExtensionProvider: FC<AccountProviderProps> = ({ appName, authRequi
 
     const unsubscribe = extension?.accounts.subscribe((accounts) => {
       // check if no account
-      setErrorStatus({ noAccount: accounts.length === 0 });
+      setAccountErrorStatus( accounts.length === 0 );
 
       setAccounts(accounts);
     });
@@ -191,7 +190,7 @@ export const ExtensionProvider: FC<AccountProviderProps> = ({ appName, authRequi
     return (): void => {
       unsubscribe && unsubscribe();
     };
-  }, [extension, setAccounts, checkIfNeedUploadMetadata, setErrorStatus]);
+  }, [extension, setAccounts, checkIfNeedUploadMetadata, setAccountErrorStatus, setExtensionErrorStatus]);
 
   // load active account
   useEffect(() => {
@@ -250,6 +249,7 @@ export const ExtensionProvider: FC<AccountProviderProps> = ({ appName, authRequi
       openSelectAccount,
       selectAccountStatus,
       setActiveAccount,
+      extensionErrorStatus,
     }),
     [
       accounts,
@@ -262,6 +262,7 @@ export const ExtensionProvider: FC<AccountProviderProps> = ({ appName, authRequi
       addToAddressBook,
       selectAccountStatus,
       setActiveAccount,
+      extensionErrorStatus,
     ]
   );
 
