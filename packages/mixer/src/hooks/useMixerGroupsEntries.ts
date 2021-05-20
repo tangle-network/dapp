@@ -8,11 +8,20 @@ import { ApiRx } from '@polkadot/api';
 import { StorageKey } from '@polkadot/types';
 
 import { mixerLogger } from '../utils';
+import { string } from 'prop-types';
+import { Token } from '@webb-tools/sdk-core';
+
+type NativeTokenProperties = {
+  ss58Format: number,
+  tokenDecimals: Array<number>,
+  tokenSymbol: Array<string>,
+}
 
 export type MixerGroupItem = {
   id: number;
   amount: Balance;
   currency: Currency;
+  token: Token;
 };
 export type MixerGroupEntry = [StorageKey, MixerInfo];
 
@@ -20,7 +29,7 @@ export type MixerGroupEntry = [StorageKey, MixerInfo];
  * Class representing {[StorageKey, MixerInfo][]} with a native js types
  * */
 export class MixerGroupEntriesWrapper {
-  constructor(private _inner: MixerGroupEntry[] | undefined, private _api: ApiRx) {}
+  constructor(private _inner: MixerGroupEntry[] | undefined, private tokenProperty: NativeTokenProperties | undefined, private _api: ApiRx) {}
 
   get inner() {
     return this._inner || [];
@@ -45,6 +54,14 @@ export class MixerGroupEntriesWrapper {
       amount: amount,
       currency: Currency.fromCurrencyId(cId, this._api, 0),
       id: Number((entry[0].toHuman() as any[])[0]),
+      token: new Token({
+        amount: amount.toString(),
+        // TODO: Pull from active chain
+        chain: 'edgeware',
+        name: 'DEV',
+        precision: Number(this.tokenProperty?.toHuman().tokenDecimals[0] ?? 12),
+        symbol: 'EDG',
+      }),
     };
   }
 
@@ -86,10 +103,13 @@ export class MixerGroupEntriesWrapper {
  * */
 export const useMixerGroupsEntries = (): MixerGroupEntriesWrapper => {
   const mixerGroups = useCall<Array<MixerGroupEntry>>('query.mixer.mixerTrees.entries', [], undefined, []);
+  const tokenDecimals = useCall<NativeTokenProperties>('rpc.system.properties');
+  console.log(tokenDecimals?.toHuman());
+
   const { api } = useApi();
 
   return useMemo(() => {
     mixerLogger.debug(`MixerGroupEntry `, mixerGroups);
-    return new MixerGroupEntriesWrapper(mixerGroups, api);
-  }, [api, mixerGroups]);
+    return new MixerGroupEntriesWrapper(mixerGroups, tokenDecimals, api);
+  }, [api, tokenDecimals, mixerGroups]);
 };
