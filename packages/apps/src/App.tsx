@@ -20,7 +20,7 @@ import { pedersenHash } from '@webb-dapp/contracts/utils/pedersen-hash';
 const appLogger = LoggerService.new('App');
 const App: FC = () => {
   const [note, setNote] = useState(
-    'anchor-eth-0.1-4-0x6809a54f1bd376ffcf7710efba67954dfda75cd1f2d419a1a1cfcbac04901e146e6d4442280c4b00e5cf1e61c6745631a2a693973e09347761443bae6a35'
+    'anchor-eth-0.1-1337-0xbbfe575c21f8f09116fa471bb7207d068fcf956bb21a45822e2ef0fa969bb37a24e7c6871b046611e05e3bef80b723e3be70d384a1b42fdecd9fed839d2b'
   );
   useEffect(() => {
     const run = async () => {
@@ -31,14 +31,13 @@ const App: FC = () => {
 
     run();
   }, []);
-  const evmNote = EvmNote.deserialize(note);
   return (
     <div>
       <button
         onClick={async () => {
           const ethMetaMask = Web3Provider.fromExtension();
           const provider = ethMetaMask.intoEthersProvider();
-          const address = '0x876eCe69618e8E8dd743250B036785813824D2D7';
+          const address = '0xFBD61C9961e0bf872B5Ec041b718C0B2a106Ce9D';
           const accounts = await ethMetaMask.eth.getAccounts();
           if (accounts.length) {
             const balance = await ethMetaMask.eth.getBalance(accounts[0]);
@@ -69,7 +68,7 @@ const App: FC = () => {
         onClick={async () => {
           const ethMetaMask = Web3Provider.fromExtension();
           const provider = ethMetaMask.intoEthersProvider();
-          const address = '0x876eCe69618e8E8dd743250B036785813824D2D7';
+          const address = '0xFBD61C9961e0bf872B5Ec041b718C0B2a106Ce9D';
           const accounts = await ethMetaMask.eth.getAccounts();
           if (accounts.length) {
             const balance = await ethMetaMask.eth.getBalance(accounts[0]);

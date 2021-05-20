@@ -62,7 +62,7 @@ class PathTraverser implements TraverserHandler {
 }
 
 export class MerkleTree {
-  private zeroValues = [];
+  private zeroValues: string[] = [];
   private totalElements = 0;
 
   static keyFormat(prefix, level, index) {

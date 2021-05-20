@@ -1,7 +1,7 @@
 import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
 import { Deposit } from '@webb-dapp/contracts/utils/make-deposit';
 import { pedersenHash } from '@webb-dapp/contracts/utils/pedersen-hash';
-
+const snarkjs = require('snarkjs');
 export class EvmNote {
   constructor(
     private _currency: string,
@@ -49,10 +49,12 @@ export class EvmNote {
   }
 
   intoDeposit(): Deposit {
-    const commitment = bufferToFixed(pedersenHash(this.preImage));
-    const nullifierHash = bufferToFixed(pedersenHash(this.preImage.slice(0, 31)));
-    const nullifier = bufferToFixed(this.preImage.slice(0, 31));
-    const secret = bufferToFixed(this.preImage.slice(31, 62));
+    const commitment = pedersenHash(this.preImage);
+    const nullifier = snarkjs.bigInt.leBuff2int(this.preImage.slice(0, 31));
+    const secret = snarkjs.bigInt.leBuff2int(this.preImage.slice(31, 62));
+
+    const nullifierHash = pedersenHash(nullifier.leInt2Buff(31));
+
     return {
       nullifierHash,
       commitment,
