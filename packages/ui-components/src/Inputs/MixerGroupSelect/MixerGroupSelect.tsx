@@ -81,7 +81,9 @@ export const MixerGroupSelect: React.FC<MixerGroupSelectProps> = ({ items, onCha
   return (
     <InputLabel label={'Select Amount'}>
       <MixerGroupSelectWrapper>
-        {mixerSizes.map(({ amount, id, item, selected }) => {
+        {mixerSizes
+          .sort((a, b) => parseFloat(a.amount) - parseFloat(b.amount))
+          .map(({ amount, id, item, selected }) => {
           return (
             <AmountChipWrapper
               key={id}
