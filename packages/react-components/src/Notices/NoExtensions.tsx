@@ -1,6 +1,7 @@
-import { Dialog, Typography } from '@material-ui/core';
+import { ButtonBase, Typography } from '@material-ui/core';
 import React, { memo } from 'react';
 import styled, { css } from 'styled-components';
+import { SpaceBox } from '@webb-dapp/ui-components';
 
 const POLKADOT_EXTENSION_PAGE = 'https://polkadot.js.org/extension';
 const METAMASK_EXTENSION_PAGE = 'https://metamask.io/download'
@@ -15,8 +16,8 @@ const NoExtensionWrapper = styled.div`
 
 const GetPolkadotButton = styled.button`
 	&&& {
-		width: 50%;
-		background: ${({ theme }) => theme.primary};
+		width: 100%;
+		background: ${({ theme }) => theme.warning};
 		border-radius: 31px;
 		color: #fff;
 		height: 60px;
@@ -35,7 +36,7 @@ const GetPolkadotButton = styled.button`
 const GetMetamaskButton = styled.button`
   &&& {
     width: 50%;
-    background: ${({ theme }) => theme.primary};
+    background: ${({ theme }) => theme.warning};
     border-radius: 31px;
     color: #fff;
     height: 60px;
@@ -51,13 +52,24 @@ const GetMetamaskButton = styled.button`
   }}
 `;
 
+const handleOpenLink = (link: string): void => {
+  window.open(link, "_blank");
+}
+
 export const NoExtensions: React.FC = memo(() => {
 
   return (
     <NoExtensionWrapper>
-      <Typography>{'No web3 extensions found, please install one first!'}</Typography>
-      <GetPolkadotButton>{'Get Polkadot{.js}'}</GetPolkadotButton>
-      <GetMetamaskButton>{'Get Metamask'}</GetMetamaskButton>
+      <Typography color={'textPrimary'}>{'No web3 extensions found, please install one first!'}</Typography>
+      <SpaceBox height={30}/>
+      <GetPolkadotButton as={ButtonBase} 
+        onClick={() => handleOpenLink(POLKADOT_EXTENSION_PAGE)}>
+          {'Get Polkadot{.js}'}
+      </GetPolkadotButton>
+      {/* <GetMetamaskButton as={ButtonBase} 
+        onClick={() => handleOpenLink(METAMASK_EXTENSION_PAGE)}>
+          {'Get Metamask'}
+      </GetMetamaskButton> */}
     </NoExtensionWrapper>
   );
 });

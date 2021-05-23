@@ -3,7 +3,6 @@ import { ReactComponent as WebbLogo } from '@webb-dapp/react-components/assets/w
 import { useStore } from '@webb-dapp/react-environment';
 import { useDimensions } from '@webb-dapp/react-environment/layout';
 import { useApi } from '@webb-dapp/react-hooks';
-import { useLocalStorage } from '@webb-dapp/react-hooks/useLocalStorage';
 import { SettingsManager } from '@webb-dapp/ui-components/SettingsManager/SettingsManager';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 import { below } from '@webb-dapp/ui-components/utils/responsive-utils';
