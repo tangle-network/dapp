@@ -15,7 +15,7 @@ export const DarkTheme = createGlobalStyle`
 		--color-red: #e02020;
 		--color-red-light: #ff5a5a;
 		--color-yellow: #f0fa41;
-		--color-origin: #f7b500;
+		--color-orange: #f7b500;
 		--color-white: #000;
 		--color-gray: #cccccc;
 		--color-red-light: #ff5a5a;
@@ -24,7 +24,7 @@ export const DarkTheme = createGlobalStyle`
 		--color-error: var(--color-red);
 		--color-alert: var(--color-yellow);
 		--color-info: var(--color-blue);
-		--color-warning: var(--color-origin);
+		--color-warning: var(--color-orange);
 
 		--border-color: #e9e9e9;
 		--dividing-color: #ecf0f2;
