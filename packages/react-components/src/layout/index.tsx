@@ -1,4 +1,5 @@
 import AppBar from '@webb-dapp/react-components/AppBar/AppBar';
+import { NoExtensions } from '@webb-dapp/react-components/Notices/NoExtensions';
 import { BottomNavigation } from '@webb-dapp/react-components/BottomNavigation/BottomNavigation';
 import { useStore } from '@webb-dapp/react-environment';
 import { useApi, useIsAppReady, useSetting, useTranslation, useAccounts } from '@webb-dapp/react-hooks';
@@ -70,7 +71,7 @@ const Main: FC<MainLayoutProps> = memo(({ children, enableCollapse = true, sideb
   }, [ui.breadcrumb, navigate, ui.pageTitle]);
 
   const content = useMemo(() => {
-    if (!isEmpty(api) && extension.extensionErrorStatus) return (<Alert message={'Please install polkadot.js'}/>);
+    if (!isEmpty(api) && extension.extensionErrorStatus) return (<NoExtensions />);
     if (!isAppReady) return <PageLoading />;
 
     return (

@@ -13,7 +13,7 @@ export const basePallet = {
   /*Content color*/
   success: '#48b87e',
   danger: '#e02020',
-  warning: '#f7b500',
+  warning: 'rgb(227, 126, 6)',
   info: '#108ee9',
   /*Greys and text*/
   primaryText: '#474553',
