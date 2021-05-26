@@ -2,7 +2,6 @@
 import { MixerGroupItem } from '@webb-dapp/mixer';
 import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabel';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
-import { Token } from '@webb-tools/sdk-core';
 import React, { useEffect, useMemo } from 'react';
 import styled, { css } from 'styled-components';
 
@@ -60,17 +59,9 @@ export const MixerGroupSelect: React.FC<MixerGroupSelectProps> = ({ items, onCha
 
   const mixerSizes = useMemo(() => {
     return items.map((item, index) => {
-      const { amount, symbol } = new Token({
-        amount: item.amount.toString(),
-        // TODO: Pull from active chain
-        chain: 'edgeware',
-        name: 'DEV',
-        precision: 12,
-        symbol: 'EDG',
-      });
-
+      const { amount, symbol } = item.token;
       return {
-        amount: `${amount.toNumber() / 10 ** amount.getPrecision()} ${item.currency.symbol}`,
+        amount: `${(amount.toNumber() / 10 ** amount.getPrecision()) }`,
         id: `amount-${item.id}`,
         item,
         selected: index === checkedIndex,
@@ -81,7 +72,9 @@ export const MixerGroupSelect: React.FC<MixerGroupSelectProps> = ({ items, onCha
   return (
     <InputLabel label={'Select Amount'}>
       <MixerGroupSelectWrapper>
-        {mixerSizes.map(({ amount, id, item, selected }) => {
+        {mixerSizes
+          .sort((a, b) => parseFloat(a.amount) - parseFloat(b.amount))
+          .map(({ amount, id, item, selected }) => {
           return (
             <AmountChipWrapper
               key={id}
@@ -91,7 +84,7 @@ export const MixerGroupSelect: React.FC<MixerGroupSelectProps> = ({ items, onCha
                 onChange?.(item);
               }}
             >
-              {amount}
+              {Math.round(parseFloat(amount)) + ` ${item.currency.symbol}`}
             </AmountChipWrapper>
           );
         })}

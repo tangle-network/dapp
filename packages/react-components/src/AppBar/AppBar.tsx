@@ -85,6 +85,10 @@ const AppBarWrapper = styled.nav`
   }
 `;
 
+const SpacerDiv = styled.div`
+  width: 201px;
+`;
+
 const AccountWrapper = styled.div`
   display: flex;
   align-items: center;
@@ -107,6 +111,7 @@ const AppBar: React.FC<AppBarProps> = () => {
   return (
     <AppBarWrapper>
       <WebbLogo className={'webb-logo'} />
+      <SpacerDiv />
       {!isMobile && (
         <NavigationWrapper>
           <li className={'active'}>
