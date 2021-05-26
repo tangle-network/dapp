@@ -8,6 +8,7 @@ import {
   Tooltip,
   Typography,
 } from '@material-ui/core';
+
 import { WithdrawState, WithdrawTXInfo, useMixerGroupsEntries } from '@webb-dapp/mixer';
 import React, { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
@@ -104,6 +105,7 @@ const WithdrawingModal: React.FC<WithdrawingModalProps> = ({ canCancel, cancel, 
                     has a denomination of 
                     {' '}{ selectedMixerItem && (selectedMixerItem?.token.amount.toNumber() / 10 ** selectedMixerItem?.token.precision) }
                     {' '}{ selectedMixerItem && selectedMixerItem?.token.symbol }
+
                   </Typography>
                 </td>
               </tr>
