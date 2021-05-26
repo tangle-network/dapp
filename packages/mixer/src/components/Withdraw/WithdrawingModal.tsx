@@ -8,7 +8,7 @@ import {
   Tooltip,
   Typography,
 } from '@material-ui/core';
-import { WithdrawState, WithdrawTXInfo, useMixerInfo } from '@webb-dapp/mixer';
+import { WithdrawState, WithdrawTXInfo, useMixerGroupsEntries } from '@webb-dapp/mixer';
 import React, { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
@@ -68,7 +68,8 @@ const WithdrawingModal: React.FC<WithdrawingModalProps> = ({ canCancel, cancel, 
     return `${address.slice(0, 20)}...${address.slice(address.length - 10, address.length)}`;
   }, [withdrawTxInfo]);
 
-  const mixerInfo = useMixerInfo( (withdrawTxInfo?.note.id)?.toString() );
+  const mixerEntries = useMixerGroupsEntries();
+  const selectedMixerItem = mixerEntries.getItemsOf().find(matchedMixer => matchedMixer.id === withdrawTxInfo?.note.id);
 
   return (
     <Dialog open={stage > WithdrawState.Ideal} fullWidth maxWidth={'sm'}>
@@ -100,7 +101,9 @@ const WithdrawingModal: React.FC<WithdrawingModalProps> = ({ canCancel, cancel, 
                     <b>
                       <i>Mixer id {withdrawTxInfo.note.id}</i>
                     </b>{' '}
-                    this worth {(mixerInfo.inner?.fixed_deposit_size)?.toString()} EDG
+                    has a denomination of 
+                    {' '}{ selectedMixerItem && (selectedMixerItem?.token.amount.toNumber() / 10 ** selectedMixerItem?.token.precision) }
+                    {' '}{ selectedMixerItem && selectedMixerItem?.token.symbol }
                   </Typography>
                 </td>
               </tr>

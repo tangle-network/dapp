@@ -1,9 +1,8 @@
-import { Switch } from '@material-ui/core';
+import { Switch, IconButton, Icon, Tooltip } from '@material-ui/core';
 import { ReactComponent as WebbLogo } from '@webb-dapp/react-components/assets/webb-icon.svg';
 import { useStore } from '@webb-dapp/react-environment';
 import { useDimensions } from '@webb-dapp/react-environment/layout';
 import { useApi } from '@webb-dapp/react-hooks';
-import { useLocalStorage } from '@webb-dapp/react-hooks/useLocalStorage';
 import { SettingsManager } from '@webb-dapp/ui-components/SettingsManager/SettingsManager';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 import { below } from '@webb-dapp/ui-components/utils/responsive-utils';
@@ -86,7 +85,7 @@ const AppBarWrapper = styled.nav`
 `;
 
 const SpacerDiv = styled.div`
-  width: 201px;
+  width: 244px;
 `;
 
 const AccountWrapper = styled.div`
@@ -137,6 +136,15 @@ const AppBar: React.FC<AppBarProps> = () => {
             ui.setTheme(isDarkTheme ? 'secondary' : 'primary');
           }}
         />
+        <Tooltip title="Need help?">
+          <IconButton
+            onClick={() => {
+              window.open("https://medium.com/", "_blank")
+            }}
+          >
+            <Icon>help</Icon>
+          </IconButton>
+        </Tooltip>
         {!isMobile && <SettingsManager />}
         {connected && <AccountManager />}
       </AccountWrapper>
