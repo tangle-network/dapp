@@ -10,7 +10,7 @@
     "yarn": "1.x"
   },
   "resolutions": {
-    "@polkadot/api": "^4.7.2",
+    "@polkadot/api": "^4.11.2",
     "@webb-tools/type-definitions": "^0.1.2-71",
     "@webb-tools/api": "^0.1.2-71",
     "@webb-tools/types": "^0.1.2-71",
