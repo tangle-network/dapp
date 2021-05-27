@@ -1,4 +1,4 @@
-import { options } from '@webb-tools/api';
+import { optionsWithEdgeware as options } from '@webb-tools/api';
 import { LoggerService } from '@webb-tools/app-util';
 import React, { FC, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { Subscription } from 'rxjs';
@@ -48,7 +48,9 @@ export const ApiProvider: FC<Props> = ({ children }) => {
     if (apiSubscriber.current) return;
 
     const provider = new WsProvider([endpoint, ...allEndpoints]);
-    const opts = options({ provider });
+    const opts = options({
+      provider,
+    });
     apiLogger.info(`Api options`, opts);
     apiSubscriber.current = ApiRx.create(opts)
       .pipe(timeout(MAX_CONNECT_TIME))
@@ -109,3 +111,17 @@ export const ApiProvider: FC<Props> = ({ children }) => {
     </ApiContext.Provider>
   );
 };
+
+
+/*
+*     ÷÷÷÷÷
+*     ÷÷÷÷÷
+*     ÷÷÷÷÷
+* ÷÷÷÷÷÷÷÷÷÷÷÷÷
+* ÷÷÷÷÷÷÷÷÷÷÷÷÷
+* ÷÷÷÷÷÷÷÷÷÷÷÷÷
+*     ÷÷÷÷÷
+*     ÷÷÷÷÷
+*     ÷÷÷÷÷
+*     ÷÷÷÷÷
+* */
