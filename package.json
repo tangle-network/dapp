@@ -10,16 +10,16 @@
     "yarn": "1.x"
   },
   "resolutions": {
-    "@polkadot/api": "^4.7.2",
-    "@webb-tools/type-definitions": "^0.1.2-66",
-    "@webb-tools/api": "^0.1.2-66",
-    "@webb-tools/types": "^0.1.2-66",
-    "@webb-tools/app-util": "^0.1.2-66",
-    "@webb-tools/sdk-core": "^0.1.2-66",
-    "@webb-tools/sdk-mixer": "^0.1.2-66"
+    "@polkadot/api": "^4.11.2",
+    "@webb-tools/type-definitions": "^0.1.2-71",
+    "@webb-tools/api": "^0.1.2-71",
+    "@webb-tools/types": "^0.1.2-71",
+    "@webb-tools/app-util": "^0.1.2-71",
+    "@webb-tools/sdk-core": "^0.1.2-71",
+    "@webb-tools/sdk-mixer": "^0.1.2-71"
   },
   "scripts": {
-    "bump-version": "node scripts/bump-version.js",
+    "bump-version": "node scripts/bumkp-version.js",
     "start:dapp": "yarn run build:i18n && cd packages/apps && react-app-rewired start",
     "build:dapp": "cd packages/apps && react-app-rewired build",
     "start:dashboard": "cd packages/dashboard && react-app-rewired start",
