@@ -19,7 +19,7 @@
     "@webb-tools/sdk-mixer": "^0.1.2-71"
   },
   "scripts": {
-    "bump-version": "node scripts/bumkp-version.js",
+    "bump-version": "node scripts/bump-version.js",
     "start:dapp": "yarn run build:i18n && cd packages/apps && react-app-rewired start",
     "build:dapp": "cd packages/apps && react-app-rewired build",
     "start:dashboard": "cd packages/dashboard && react-app-rewired start",
