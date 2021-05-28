@@ -42,7 +42,6 @@ export class Currency {
     } else {
       cid = currencyId;
     }
-    console.log(cid, 'currencyId');
     const token = Currency.tokenFrom(cid, amount);
     const cw = new Currency(
       {

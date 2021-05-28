@@ -36,6 +36,12 @@ const WithdrawInfoWrapper = styled.div`
     text-align: center;
     font-weight: medium;
   }
+
+  .withdraw-modal-header-complete {
+    font-family: ${FontFamilies.AvenirNext};
+    text-align: center;
+    font-weight: medium;
+  }
   
   .progress-content {
     padding: 0 2rem 1rem;
@@ -53,6 +59,13 @@ const WithdrawInfoWrapper = styled.div`
     bottom: 20px;
     right: 20px;
   }
+`;
+
+const TxCompleteContainer = styled.div`
+  display: flex;
+  height: 126px;
+  justify-content: center;
+  align-items: center;
 `;
 
 const TransactionSummaryWrapper = styled.div`
@@ -98,15 +111,15 @@ const WithdrawingModal: React.FC<WithdrawingModalProps> = ({ canCancel, cancel, 
       case WithdrawState.Ideal:
         break;
       case WithdrawState.Done:
-        return 'Translation Done';
+        return 'Transaction Done';
       case WithdrawState.Faild:
-        return 'Translation Failed';
+        return 'Transaction Failed';
       case WithdrawState.Canceled:
-        return 'Translation canceled';
+        return 'Transaction canceled';
       case WithdrawState.GeneratingZk:
         return 'Generating Zero Knowledge proof...';
       case WithdrawState.SendingTransaction:
-        return 'Translation is being sent';
+        return 'Transaction is being sent';
     }
   }, [stage]);
   const isResolved = useMemo(() => stage > WithdrawState.SendingTransaction, [stage]);
@@ -125,19 +138,27 @@ const WithdrawingModal: React.FC<WithdrawingModalProps> = ({ canCancel, cancel, 
   return (
     <WithdrawInfoWrapper>
       <header className={'modal-header'}>
-        <Typography variant={'h4'} className={'withdraw-modal-header'} color={'textPrimary'}>
-          Transaction is being processed
-        </Typography>
         {isResolved ? (
-          <Typography>{message}</Typography>
+          <>
+            <TxCompleteContainer>
+              <Typography variant={'h4'} className={'withdraw-modal-header-complete'} color={'textPrimary'}>
+                {message}
+              </Typography>
+            </TxCompleteContainer>
+          </>
         ) : (
-          <div className={'progress-content'}>
-            <Typography variant={'h6'} className={'withdraw-modal-header-caption'}>{message}</Typography>
-            <LinearProgress value={10} variant={'indeterminate'} />
-            <Typography gutterBottom variant={'caption'}>
-              {alternatingMessages[rm]}
+          <>
+            <Typography variant={'h4'} className={'withdraw-modal-header'} color={'textPrimary'}>
+              Transaction is being processed
             </Typography>
-          </div>
+            <div className={'progress-content'}>
+              <Typography variant={'h6'} className={'withdraw-modal-header-caption'}>{message}</Typography>
+              <LinearProgress value={10} variant={'indeterminate'} />
+              <Typography gutterBottom variant={'caption'}>
+                {alternatingMessages[rm]}
+              </Typography>
+            </div>
+          </>
         )}
       </header>
       <div>
@@ -152,7 +173,7 @@ const WithdrawingModal: React.FC<WithdrawingModalProps> = ({ canCancel, cancel, 
                     <b>
                       This note controls
                       {' '}
-                      {' '}{ selectedMixerItem && (selectedMixerItem?.token.amount.toNumber() / 10 ** selectedMixerItem?.token.precision) }
+                      {' '}{ selectedMixerItem && Math.round(selectedMixerItem?.token.amount.toNumber() / 10 ** selectedMixerItem?.token.precision) }
                       {' '}{ selectedMixerItem && selectedMixerItem?.token.symbol }
                     </b>
                   </Typography>

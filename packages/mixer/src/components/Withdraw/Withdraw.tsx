@@ -8,14 +8,14 @@ import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabe
 import { NoteInput } from '@webb-dapp/ui-components/Inputs/NoteInput/NoteInput';
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import { WithdrawState } from '@webb-dapp/mixer/hooks';
 
 const WithdrawWrapper = styled.div``;
 type WithdrawProps = {};
 
 export const Withdraw: React.FC<WithdrawProps> = () => {
   const [note, setNote] = useState('');
-  const [showWithdrawModal, setShowWithdrawModal] = useState(false);
-
+  
   const {
     canCancel,
     canWithdraw,
@@ -27,16 +27,6 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
     withdrawTo,
     withdrawTxInfo,
   } = useWithdraw(note);
-
-  const openWithdrawModal = async () => {
-    setShowWithdrawModal(true);
-    withdraw();
-  }
-
-  const closeWithdrawModal = async () => {
-    setShowWithdrawModal(false);
-    cancelWithdraw();
-  }
 
   return (
     <WithdrawWrapper>
@@ -60,10 +50,10 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
 
       <SpaceBox height={16} />
 
-      <MixerButton disabled={!withdrawTo || !canWithdraw} onClick={openWithdrawModal} label={'Withdraw'} />
+      <MixerButton disabled={!withdrawTo || !canWithdraw} onClick={withdraw} label={'Withdraw'} />
 
-      <Modal open={showWithdrawModal}>
-        <WithdrawingModal withdrawTxInfo={withdrawTxInfo} cancel={closeWithdrawModal} stage={stage} canCancel={canCancel} />
+      <Modal open={stage > WithdrawState.Ideal}>
+        <WithdrawingModal withdrawTxInfo={withdrawTxInfo} cancel={cancelWithdraw} stage={stage} canCancel={canCancel} />
       </Modal>
     </WithdrawWrapper>
   );
