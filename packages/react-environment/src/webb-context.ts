@@ -2,6 +2,7 @@ import React from 'react';
 import { WalletConfig } from '@webb-dapp/react-environment/types/wallet-config.interface';
 import { ChainConfig } from '@webb-dapp/react-environment/types/chian-config.interface';
 import { Account } from '@webb-dapp/wallet/account/Accounts.adapter';
+import { EventBus } from '@webb-tools/app-util';
 
 type AppConfig = {
   wallet: Record<number, WalletConfig>;
@@ -9,20 +10,23 @@ type AppConfig = {
 }
 
 
-export type WebbMethod<T = unknown> = {
-  data: T;
+export type WebbMethod<T extends EventBus<K>, K extends Record<string, unknown>> = {
+  inner: T;
   enabled: boolean;
 }
 
 
 type Note = unknown;
 
-export interface MixerDeposit {
-  generateNote(mixerId: number): Note;
 
-  deposit(): Promise<void>;
+export type MixerDepositEvents = {};
 
-  loading: boolean;
+export abstract class MixerDeposit extends EventBus<MixerDepositEvents> {
+  abstract generateNote(mixerId: number): Note;
+
+  abstract deposit(note: Note): Promise<void>;
+
+  abstract loading: boolean;
 }
 
 export enum WithdrawState {
@@ -37,33 +41,30 @@ export enum WithdrawState {
   Failed,
 }
 
-export interface MixerWithdraw {
-  state: WithdrawState
 
-  withdraw(note: string, recipient: string): Promise<void>
-
-  canCancel: boolean;
-
-  cancelWithdraw(): Promise<void> | void;
-
-  canWithdraw: boolean;
-
-  validationErrors: {
+export  type MixerWithdrawEvents = {
+  error: string;
+  validationError: {
     note: string;
     recipient: string;
   };
+  stateChange: WithdrawState
+}
 
-  error?: string;
+export abstract class MixerWithdraw extends EventBus<MixerWithdrawEvents> {
+  state: WithdrawState = WithdrawState.Ideal;
 
+  abstract withdraw(note: string, recipient: string): Promise<void>
 
+  abstract cancelWithdraw(): Promise<void>
 }
 
 
 export interface WebbMixer {
   // deposit
-  deposit: WebbMethod<MixerDeposit>
+  deposit: WebbMethod<MixerDeposit, MixerDepositEvents>
   // withdraw
-  withdraw: WebbMethod<MixerWithdraw>
+  withdraw: WebbMethod<MixerWithdraw, MixerWithdrawEvents>
 }
 
 export interface WebbMethods {
@@ -79,7 +80,7 @@ export interface WebbApiProvider {
 export interface WebbContentState {
   appConfig: AppConfig;
   activeApi?: WebbApiProvider;
-  
+
   setActiveApi(nextActiveApi: WebbMethods): void;
 };
 
