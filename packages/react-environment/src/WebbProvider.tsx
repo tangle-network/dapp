@@ -6,6 +6,7 @@ import { ApiProvider } from './ApiProvider';
 import { ExtensionProvider } from './ExtensionProvider';
 import { SettingProvider } from './SettingProvider';
 import { StoreProvier } from './store';
+import { WebbContext, WebbMethods } from '@webb-dapp/react-environment/webb-context';
 
 interface WebbProviderProps extends BareProps {
   applicationName: string;
@@ -13,17 +14,28 @@ interface WebbProviderProps extends BareProps {
 }
 
 
-
 export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Dapp', children }) => {
+
+
   return (
-    <SettingProvider>
-      <ApiProvider>
-        <ExtensionProvider appName={applicationName}>
-          <StoreProvier>
-            <DimensionsProvider>{children}</DimensionsProvider>
-          </StoreProvier>
-        </ExtensionProvider>
-      </ApiProvider>
-    </SettingProvider>
+    <WebbContext.Provider value={{
+      appConfig: {
+        wallet: {},
+        chains: {}
+      },
+      setActiveApi(nextActiveApi: WebbMethods) {
+      }
+    }
+    }>
+      <SettingProvider>
+        <ApiProvider>
+          <ExtensionProvider appName={applicationName}>
+            <StoreProvier>
+              <DimensionsProvider>{children}</DimensionsProvider>
+            </StoreProvier>
+          </ExtensionProvider>
+        </ApiProvider>
+      </SettingProvider>
+    </WebbContext.Provider>
   );
 };
