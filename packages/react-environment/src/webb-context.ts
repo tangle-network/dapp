@@ -19,14 +19,16 @@ export type WebbMethod<T extends EventBus<K>, K extends Record<string, unknown>>
 type Note = unknown;
 
 
-export type MixerDepositEvents = {};
+export type MixerDepositEvents = {
+  error: string;
+};
 
 export abstract class MixerDeposit extends EventBus<MixerDepositEvents> {
   abstract generateNote(mixerId: number): Note;
 
   abstract deposit(note: Note): Promise<void>;
 
-  abstract loading: boolean;
+  abstract loading: 'ideal' | 'generating-note' | 'depositing';
 }
 
 export enum WithdrawState {
