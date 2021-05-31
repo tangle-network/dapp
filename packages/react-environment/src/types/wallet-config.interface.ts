@@ -10,4 +10,4 @@ export interface WalletConfig {
   detect?(): boolean | Promise<boolean>;
 
   supportedChainIds: number[];
-}
+};
