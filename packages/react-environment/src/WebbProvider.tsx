@@ -12,6 +12,8 @@ interface WebbProviderProps extends BareProps {
   applicationVersion?: string;
 }
 
+
+
 export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Dapp', children }) => {
   return (
     <SettingProvider>
