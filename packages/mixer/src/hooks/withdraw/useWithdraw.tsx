@@ -54,8 +54,6 @@ export function useWithdraw(noteStr: string) {
   const groupTreeWrapper = useGroupTree(noteMixerGroupId?.toString());
   const mixerInfoWrapper = useMixerInfo(noteMixerGroupId?.toString());
   const treeLeaves = useTreeLeaves(noteMixerGroupId);
-  const treeLeavesEvents = useLeavesEvents();
-  console.log({ treeLeavesEvents });
   const withdrawTxInfo = useMemo<WithdrawTXInfo | null>(() => {
     if (!note || !withdrawTo) {
       return null;

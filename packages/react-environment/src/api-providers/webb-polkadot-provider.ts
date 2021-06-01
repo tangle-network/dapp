@@ -3,6 +3,7 @@ import { PolkadotProvider } from '@webb-dapp/wallet/providers/polkadot/polkadot-
 import { ApiPromise } from '@polkadot/api';
 import { InjectedExtension } from '@polkadot/extension-inject/types';
 import { PolkadotMixerDeposit } from '@webb-dapp/react-environment/api-providers/polkadot-mixer-deposit';
+import { PolkadotMixerWithdraw } from '@webb-dapp/react-environment/api-providers/polkadot-mixer-withdraw';
 
 export class WebbPolkadot extends PolkadotProvider implements WebbApiProvider<WebbPolkadot> {
   readonly methods: WebbMethods<WebbPolkadot>;
@@ -16,7 +17,7 @@ export class WebbPolkadot extends PolkadotProvider implements WebbApiProvider<We
           enabled: true,
         },
         withdraw: {
-          inner: {} as any,
+          inner: new PolkadotMixerWithdraw(this),
           enabled: true,
         },
       },

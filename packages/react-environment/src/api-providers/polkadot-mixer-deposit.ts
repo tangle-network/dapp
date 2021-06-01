@@ -46,9 +46,3 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot> {
     return undefined as any;
   }
 }
-
-export const mixerDeposit = async () => {
-  const webbPolkadot = await WebbPolkadot.fromExtension('Webb DApp', ['ws://127.0.0.1:9944']);
-  const mixerDeposit = new PolkadotMixerDeposit(webbPolkadot);
-  return mixerDeposit;
-};

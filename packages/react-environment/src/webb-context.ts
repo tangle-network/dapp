@@ -1,7 +1,7 @@
 import React from 'react';
 import { WalletConfig } from '@webb-dapp/react-environment/types/wallet-config.interface';
 import { ChainConfig } from '@webb-dapp/react-environment/types/chian-config.interface';
-import { Account, AccountsAdapter } from '@webb-dapp/wallet/account/Accounts.adapter';
+import { AccountsAdapter } from '@webb-dapp/wallet/account/Accounts.adapter';
 import { EventBus } from '@webb-tools/app-util';
 
 export type AppConfig = {
@@ -56,6 +56,9 @@ export type MixerWithdrawEvents = {
     recipient: string;
   };
   stateChange: WithdrawState;
+
+  ready: void;
+  loading: boolean;
 };
 
 export abstract class MixerWithdraw<T> extends EventBus<MixerWithdrawEvents> {
