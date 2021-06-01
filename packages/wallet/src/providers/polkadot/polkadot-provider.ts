@@ -18,12 +18,33 @@ type ExtensionProviderEvents = {
 };
 
 export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
-  private _account: PolkadotAccounts;
+  private _accounts: PolkadotAccounts;
 
-  private constructor(private apiPromise: ApiPromise, private injectedExtension: InjectedExtension) {
+  constructor(protected apiPromise: ApiPromise, protected injectedExtension: InjectedExtension) {
     super();
     this.hookListeners();
-    this._account = new PolkadotAccounts(this.injectedExtension);
+    this._accounts = new PolkadotAccounts(this.injectedExtension);
+  }
+
+  static async fromExtension(appName: string, [endPoint, ...allEndPoints]: string[]): Promise<PolkadotProvider> {
+    const [apiPromise, currentExtensions] = await PolkadotProvider.getParams(appName, [endPoint, ...allEndPoints]);
+    const polkadotProvider = new PolkadotProvider(apiPromise, currentExtensions);
+    return polkadotProvider;
+  }
+
+  static async getParams(
+    appName: string,
+    [endPoint, ...allEndPoints]: string[]
+  ): Promise<[ApiPromise, InjectedExtension]> {
+    const extensions = await web3Enable(appName);
+    if (extensions.length === 0) throw new Error('no_extensions');
+    const currentExtensions = extensions[0];
+    const wsProvider = new WsProvider([endPoint, ...allEndPoints]);
+    const opts = options({
+      provider: wsProvider,
+    });
+    const apiPromise = await ApiPromise.create(opts);
+    return [apiPromise, currentExtensions];
   }
 
   hookListeners() {
@@ -58,19 +79,6 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
     this.apiPromise.disconnect();
   }
 
-  static async fromExtension(appName: string, [endPoint, ...allEndPoints]: string[]): Promise<PolkadotProvider> {
-    const extensions = await web3Enable(appName);
-    if (extensions.length === 0) throw new Error('no_extensions');
-    const currentExtensions = extensions[0];
-    const wsProvider = new WsProvider([endPoint, ...allEndPoints]);
-    const opts = options({
-      provider: wsProvider,
-    });
-    const apiPromise = await ApiPromise.create(opts);
-    const polkadotProvider = new PolkadotProvider(apiPromise, currentExtensions);
-    return polkadotProvider;
-  }
-
   getMetaData() {
     if (!this.apiPromise.isConnected) return;
     const metadataDef = {
@@ -97,5 +105,13 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
     });
 
     if (result) this.emit('updateMetaData', metadataDef);
+  }
+
+  get accounts() {
+    return this._accounts;
+  }
+
+  get api() {
+    return this.apiPromise;
   }
 }

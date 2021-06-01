@@ -2,7 +2,7 @@ import { TOKEN_COLOR, TOKEN_FULLNAMES, TOKEN_IMAGES } from '@webb-dapp/mixer/uti
 import { Token } from '@webb-tools/sdk-core';
 import { CurrencyId } from '@webb-tools/types/interfaces/types';
 
-import { ApiRx } from '@polkadot/api';
+import { ApiPromise, ApiRx } from '@polkadot/api';
 
 interface Data {
   currencyId: CurrencyId;
@@ -10,7 +10,7 @@ interface Data {
 }
 
 export class Currency {
-  private constructor(private _inner: Data, private _apiRx: ApiRx) {}
+  private constructor(private _inner: Data, private _apiRx: ApiRx | ApiPromise) {}
 
   static tokenFrom(currencyId: CurrencyId, amount: number) {
     const id = currencyId?.toNumber() ?? currencyId;
@@ -34,7 +34,7 @@ export class Currency {
     }
   }
 
-  static fromCurrencyId(currencyId: CurrencyId | number, api: ApiRx, amount: number = 0): Currency {
+  static fromCurrencyId(currencyId: CurrencyId | number, api: ApiRx | ApiPromise, amount: number = 0): Currency {
     let cid: CurrencyId;
     if (typeof currencyId === 'number') {
       // @ts-ignore

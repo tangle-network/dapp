@@ -16,6 +16,7 @@ import { downloadString } from '@webb-dapp/utils';
 import { EvmNote } from '@webb-dapp/contracts/utils/evm-note';
 import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
 import { pedersenHash } from '@webb-dapp/contracts/utils/pedersen-hash';
+import { mixerDeposit } from '@webb-dapp/react-environment/api-providers/polkadot-mixer-deposit';
 
 const appLogger = LoggerService.new('App');
 const App: FC = () => {
@@ -30,7 +31,7 @@ const App: FC = () => {
     };
 
     run();
-  }, []);/*
+  }, []); /*
   return <div>
 
     <button onClick={async () => {
@@ -124,7 +125,15 @@ const App: FC = () => {
       withdraw
     </button>
   </div>;*/
-
+  useEffect(() => {
+    const ha = async () => {
+      const deposit = await mixerDeposit();
+      console.log(deposit, 'mixer despot');
+      const sizes = await deposit.getSizes();
+      console.log(sizes);
+    };
+    ha();
+  }, []);
   return (
     <DAppError logger={appLogger}>
       <WebbProvider applicationName={'Webb DApp'}>

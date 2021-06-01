@@ -11,11 +11,11 @@ import { mixerLogger } from '../utils';
 import { string } from 'prop-types';
 import { Token } from '@webb-tools/sdk-core';
 
-type NativeTokenProperties = {
-  ss58Format: number | null,
-  tokenDecimals: Array<number> | null,
-  tokenSymbol: Array<string> | null,
-}
+export type NativeTokenProperties = {
+  ss58Format: number | null;
+  tokenDecimals: Array<number> | null;
+  tokenSymbol: Array<string> | null;
+};
 
 export type MixerGroupItem = {
   id: number;
@@ -29,7 +29,11 @@ export type MixerGroupEntry = [StorageKey, MixerInfo];
  * Class representing {[StorageKey, MixerInfo][]} with a native js types
  * */
 export class MixerGroupEntriesWrapper {
-  constructor(private _inner: MixerGroupEntry[] | undefined, private tokenProperty: NativeTokenProperties | undefined, private _api: ApiRx) {}
+  constructor(
+    private _inner: MixerGroupEntry[] | undefined,
+    private tokenProperty: NativeTokenProperties | undefined,
+    private _api: ApiRx
+  ) {}
 
   get inner() {
     return this._inner || [];

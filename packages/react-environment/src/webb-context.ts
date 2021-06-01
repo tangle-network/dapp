@@ -1,7 +1,7 @@
 import React from 'react';
 import { WalletConfig } from '@webb-dapp/react-environment/types/wallet-config.interface';
 import { ChainConfig } from '@webb-dapp/react-environment/types/chian-config.interface';
-import { Account } from '@webb-dapp/wallet/account/Accounts.adapter';
+import { Account, AccountsAdapter } from '@webb-dapp/wallet/account/Accounts.adapter';
 import { EventBus } from '@webb-tools/app-util';
 
 export type AppConfig = {
@@ -18,14 +18,23 @@ type Note = unknown;
 
 export type MixerDepositEvents = {
   error: string;
+  ready: undefined;
 };
 
-export abstract class MixerDeposit extends EventBus<MixerDepositEvents> {
+type DespotStates = 'ideal' | 'generating-note' | 'depositing';
+
+export abstract class MixerDeposit<T> extends EventBus<MixerDepositEvents> {
+  constructor(protected inner: T) {
+    super();
+  }
+
   abstract generateNote(mixerId: number): Note;
 
   abstract deposit(note: Note): Promise<void>;
 
-  abstract loading: 'ideal' | 'generating-note' | 'depositing';
+  loading: DespotStates = 'ideal';
+
+  abstract getSizes(): Promise<string[]>;
 }
 
 export enum WithdrawState {
@@ -49,28 +58,32 @@ export type MixerWithdrawEvents = {
   stateChange: WithdrawState;
 };
 
-export abstract class MixerWithdraw extends EventBus<MixerWithdrawEvents> {
+export abstract class MixerWithdraw<T> extends EventBus<MixerWithdrawEvents> {
   state: WithdrawState = WithdrawState.Ideal;
+
+  constructor(protected inner: T) {
+    super();
+  }
 
   abstract withdraw(note: string, recipient: string): Promise<void>;
 
   abstract cancelWithdraw(): Promise<void>;
 }
 
-export interface WebbMixer {
+export interface WebbMixer<T> {
   // deposit
-  deposit: WebbMethod<MixerDeposit, MixerDepositEvents>;
+  deposit: WebbMethod<MixerDeposit<T>, MixerDepositEvents>;
   // withdraw
-  withdraw: WebbMethod<MixerWithdraw, MixerWithdrawEvents>;
+  withdraw: WebbMethod<MixerWithdraw<T>, MixerWithdrawEvents>;
 }
 
-export interface WebbMethods {
-  mixer: WebbMixer;
+export interface WebbMethods<T> {
+  mixer: WebbMixer<T>;
 }
 
-export interface WebbApiProvider {
-  account: Account;
-  methods: WebbMethods;
+export interface WebbApiProvider<T> {
+  accounts: AccountsAdapter<any>;
+  methods: WebbMethods<T>;
 }
 
 export type Chain = ChainConfig & {
