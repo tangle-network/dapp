@@ -8,6 +8,7 @@ import { MerkleTree as NodeMerkleTree } from '@webb-tools/types/interfaces';
 import { ScalarData } from '@webb-tools/types/interfaces/mixer';
 import { hexToU8a, u8aToHex } from '@polkadot/util';
 import { decodeAddress } from '@polkadot/keyring';
+import { ApiRx } from '@polkadot/api';
 
 const tryParse = (maybeJson: string | null): Record<string, unknown> | string | null => {
   try {
@@ -56,6 +57,7 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
   private initialised = false;
 
   private async getMerkleTree(): Promise<MerkleTree> {
+    this.inner.api;
     // already ready
     if (this.merkleTree) {
       await this.merkleTree.restart(new Worker());
@@ -121,7 +123,7 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
     const leaves: Uint8Array[] = [];
 
     while (done === false) {
-      const treeLeaves: Uint8Array[] = await (this.inner.api.rpc as any).merkle.treeLeaves([treeId, from, to]);
+      const treeLeaves: Uint8Array[] = await (this.inner.api.rpc as any).merkle.treeLeaves(treeId, from, to);
       if (treeLeaves.length === 0) {
         done = true;
         break;

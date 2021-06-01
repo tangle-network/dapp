@@ -97,7 +97,7 @@ export type Wallet = WalletConfig & {};
 export interface WebbContentState {
   wallets: Record<number, Wallet>;
   chains: Record<number, Chain>;
-  activeApi?: WebbApiProvider;
+  activeApi?: WebbApiProvider<unknown>;
   activeWallet?: Wallet;
   activeChain?: Chain;
 

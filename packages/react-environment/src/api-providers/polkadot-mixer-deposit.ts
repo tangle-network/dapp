@@ -1,11 +1,16 @@
 import { MixerDeposit } from '@webb-dapp/react-environment/webb-context';
 import { WebbPolkadot } from '@webb-dapp/react-environment/api-providers/webb-polkadot-provider';
-import { Note } from '@webb-tools/sdk-mixer';
+import { Asset, Mixer, Note } from '@webb-tools/sdk-mixer';
 import { MixerGroupEntry, NativeTokenProperties } from '@webb-dapp/mixer';
 import { Currency } from '@webb-dapp/mixer/utils/currency';
 import { Token } from '@webb-tools/sdk-core';
+// @ts-ignore
+import Worker from '@webb-dapp/mixer/utils/mixer.worker';
 
 export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot> {
+  private cachedBulletProofsGens: Uint8Array | null = null;
+  private mixer: Mixer | null = null;
+
   async getSizes(): Promise<string[]> {
     // @ts-ignore
     const data: Array<MixerGroupEntry> = await this.inner.api.query.mixer.mixerTrees.entries();
@@ -36,13 +41,56 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot> {
     return groupItem;
   }
 
-  async deposit(note: Note): Promise<void> {
-    const query = await this.inner.api.query.mixer.mixerTrees.entries;
-
-    return Promise.resolve(undefined);
+  private async getBulletProofGens(): Promise<Uint8Array> {
+    if (this.cachedBulletProofsGens) {
+      return this.cachedBulletProofsGens;
+    }
+    const cachedBulletProof = localStorage.getItem('bulletproof_gens');
+    if (!cachedBulletProof) {
+      this.cachedBulletProofsGens = await this.generateBulletProofs();
+      return this.cachedBulletProofsGens;
+    }
+    const encoder = new TextEncoder();
+    const gens = encoder.encode(cachedBulletProof);
+    this.cachedBulletProofsGens = gens;
+    return gens;
   }
 
-  generateNote(mixerId: number): Note {
-    return undefined as any;
+  private async getMixer(): Promise<Mixer> {
+    if (this.mixer) {
+      return this.mixer;
+    }
+    const bulletProofGens = await this.getBulletProofGens();
+    this.mixer = await Mixer.init(new Worker(), bulletProofGens);
+    return this.mixer;
+  }
+
+  private async generateBulletProofs() {
+    const worker = new Worker();
+    const bulletProofGens = await Mixer.preGenerateBulletproofGens(worker);
+    worker.terminate();
+    const decoder = new TextDecoder();
+    const bulletProofGensString = decoder.decode(bulletProofGens); // from Uint8Array to String
+    localStorage.setItem('bulletproof_gens', bulletProofGensString);
+    return bulletProofGens;
+  }
+
+  async deposit([note, leaf]: [Note, Uint8Array]): Promise<void> {
+    const id = note.id;
+    const tx = this.inner.txBuiler.build(
+      {
+        section: 'mixer',
+        method: 'deposit',
+      },
+      [id, [leaf]]
+    );
+    const account = await this.inner.accounts.accounts();
+    return tx.call(account[0].address);
+  }
+
+  async generateNote(mixerId: number): Promise<[Note, Uint8Array]> {
+    const mixer = await this.getMixer();
+    const [note, leaf] = await mixer.generateNoteAndLeaf(new Asset(mixerId, 'EDG'));
+    return [note, leaf];
   }
 }

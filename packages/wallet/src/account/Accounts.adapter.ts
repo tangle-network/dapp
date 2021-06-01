@@ -1,6 +1,6 @@
 import React from 'react';
 export abstract class Account<T extends unknown = unknown> {
-  constructor(protected readonly _inner: T, protected readonly address: string) {}
+  constructor(protected readonly _inner: T, public readonly address: string) {}
   abstract get avatar(): React.ReactNode;
   abstract get name(): string;
 

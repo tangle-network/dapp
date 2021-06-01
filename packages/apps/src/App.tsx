@@ -10,15 +10,10 @@ import { LoggerService } from '@webb-tools/app-util';
 import React, { FC, useEffect, useState } from 'react';
 import { hot } from 'react-hot-loader/root';
 import { config as routerConfig } from './router-config';
-import { Web3Provider } from '../../wallet/src/providers/web3/web3-provider';
-import { AnchorContract } from '@webb-dapp/contracts/contracts/anchor';
-import { downloadString } from '@webb-dapp/utils';
-import { EvmNote } from '@webb-dapp/contracts/utils/evm-note';
-import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
-import { pedersenHash } from '@webb-dapp/contracts/utils/pedersen-hash';
-import { mixerDeposit } from '@webb-dapp/react-environment/api-providers/polkadot-mixer-deposit';
+import { WebbPolkadot } from '@webb-dapp/react-environment/api-providers/webb-polkadot-provider';
 
 const appLogger = LoggerService.new('App');
+const TestLogger = LoggerService.new('TestLogger');
 const App: FC = () => {
   const [note, setNote] = useState(
     'anchor-eth-0.1-1337-0xbbfe575c21f8f09116fa471bb7207d068fcf956bb21a45822e2ef0fa969bb37a24e7c6871b046611e05e3bef80b723e3be70d384a1b42fdecd9fed839d2b'
@@ -127,10 +122,14 @@ const App: FC = () => {
   </div>;*/
   useEffect(() => {
     const ha = async () => {
-      const deposit = await mixerDeposit();
-      console.log(deposit, 'mixer despot');
-      const sizes = await deposit.getSizes();
-      console.log(sizes);
+      const webbPolkadot = await WebbPolkadot.init('Webb DApp', ['ws://127.0.0.1:9944']);
+      TestLogger.log(webbPolkadot);
+      const accounts = await webbPolkadot.accounts.accounts();
+      TestLogger.log(accounts);
+      const note = await webbPolkadot.methods.mixer.deposit.inner.generateNote(0);
+      console.log(note);
+      const data = await webbPolkadot.methods.mixer.deposit.inner.deposit(note);
+      console.log(data);
     };
     ha();
   }, []);
