@@ -1,15 +1,16 @@
 import { ButtonBase, Checkbox, FormControlLabel, Icon, IconButton, Tooltip, Typography } from '@material-ui/core';
 import { MixerButton } from '@webb-dapp/mixer/components/MixerButton/MixerButton';
-import { useTX } from '@webb-dapp/react-hooks/tx/useTX';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { notificationApi } from '@webb-dapp/ui-components/notification';
 import { Spinner } from '@webb-dapp/ui-components/Spinner/Spinner';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 import { downloadString } from '@webb-dapp/utils';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import styled from 'styled-components';
+import { DepositApi } from '@webb-dapp/mixer/hooks/deposit/useDeposit';
+import { DepositPayload } from '@webb-dapp/react-environment/webb-context';
 
 const DismissWrapper = styled.button``;
 const Dismiss = () => {
@@ -42,8 +43,9 @@ const DepositInfoWrapper = styled.div`
 type DepositInfoProps = {
   open: boolean;
   onClose(): void;
-  params: () => Promise<[number, Uint8Array, string]>;
+  provider: DepositApi;
   onSuccess(): void;
+  mixerId: number | string;
 };
 
 const GeneratedNote = styled.p`
@@ -69,7 +71,7 @@ const GeneratedNote = styled.p`
 const CloseDepositModal = styled.button`
   &&& {
     position: absolute;
-    right: 0;
+    right: 20px;
   }
 `;
 
@@ -92,60 +94,20 @@ const Loading = styled.div`
   }
 `;
 
-export const DepositConfirm: React.FC<DepositInfoProps> = ({ onClose, onSuccess, open, params: getParams }) => {
-  const [{ loading, note, params }, setParams] = useState<{
-    loading: boolean;
-    params: any[];
-    note: string | undefined;
-  }>({
-    loading: true,
-    note: undefined,
-    params: [],
-  });
-  useEffect(() => {
-    let canceled = false;
-    if (open) {
-      if (canceled) {
-        return;
-      }
-      setParams({
-        loading: true,
-        note: undefined,
-        params: [],
-      });
-      getParams().then(([id, leaf, note]) => {
-        if (canceled) {
-          return;
-        }
-        setParams({
-          loading: false,
-          note,
-          params: [id, leaf],
-        });
-      });
-    } else {
-      setParams({
-        loading: true,
-        note: undefined,
-        params: [],
-      });
-    }
-    () => (canceled = true);
-  }, [open, getParams]);
+export const DepositConfirm: React.FC<DepositInfoProps> = ({ mixerId, onClose, onSuccess, open, provider }) => {
+  const [depositPayload, setNote] = useState<DepositPayload | undefined>(undefined);
+  const [loading, setLoading] = useState(false);
+  const note = useMemo(() => {
+    return depositPayload?.note.serialize();
+  }, [depositPayload]);
+
   const downloadNote = useCallback(() => {
     if (!note) {
       return;
     }
     downloadString(note, note.slice(-note.length - 10) + '.txt');
   }, [note]);
-  const { executeTX, loading: depositing } = useTX({
-    beforeSend: onClose,
-    method: 'deposit',
-    onExtrinsicSuccess: onSuccess,
-    onFinalize: onClose,
-    params,
-    section: 'mixer',
-  });
+
   const handleCopy = useCallback((): void => {
     notificationApi.addToQue({
       secondaryMessage: 'Deposit note is copied to clipboard',
@@ -154,10 +116,16 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({ onClose, onSuccess,
       Icon: <Icon>content_copy</Icon>,
     });
   }, []);
+  useEffect(() => {
+    provider.generateNote(Number(mixerId)).then((note) => {
+      setNote(note);
+    });
+  }, [provider, mixerId]);
   const [backupConfirmation, setBackupConfirmation] = useState(false);
+  const generatingNote = !depositPayload;
   return (
     <DepositInfoWrapper>
-      {loading && (
+      {generatingNote && (
         <Loading>
           <div>
             <Spinner />
@@ -257,11 +225,17 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({ onClose, onSuccess,
         <SpaceBox height={8} />
 
         <MixerButton
-          onClick={() => {
+          onClick={async () => {
+            if (!depositPayload) {
+              return;
+            }
+            setLoading(true);
             downloadNote();
-            executeTX();
+            onClose();
+            await provider.deposit(depositPayload);
+            setLoading(false);
           }}
-          disabled={!backupConfirmation}
+          disabled={!backupConfirmation || !depositPayload || loading}
           label={'Deposit'}
         />
       </>

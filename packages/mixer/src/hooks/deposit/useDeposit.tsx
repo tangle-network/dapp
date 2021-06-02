@@ -1,7 +1,18 @@
 import { DepositPayload, MixerDeposit, MixerSize, useWebContext } from '@webb-dapp/react-environment/webb-context';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-export const useDeposit = () => {
+export interface DepositApi {
+  mixerSizes: MixerSize[];
+
+  deposit(payload: DepositPayload): Promise<void>;
+
+  generateNote(mixer: number): Promise<DepositPayload>;
+
+  loadingState: MixerDeposit['loading'];
+  error: string;
+}
+
+export const useDeposit = (): DepositApi => {
   const { activeApi } = useWebContext();
   const [loadingState, setLoadingState] = useState<MixerDeposit['loading']>('ideal');
   const [error, setError] = useState('');
@@ -28,6 +39,9 @@ export const useDeposit = () => {
 
   const generateNote = useCallback(
     async (mixerId: number) => {
+      if (!depositApi) {
+        throw new Error('Not ready');
+      }
       return depositApi?.generateNote(mixerId);
     },
     [depositApi]

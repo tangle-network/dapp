@@ -1,33 +1,33 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { WebbContentState, WithdrawState } from '@webb-dapp/react-environment/webb-context';
+import { useWebContext, WebbContentState, WithdrawState } from '@webb-dapp/react-environment/webb-context';
 
 export type UseWithdrawV2Props = {
   note: string;
   recipient: string;
-}
-export  type WithdrawErrors = {
+};
+export type WithdrawErrors = {
   error: string;
 
   validationError: {
     note: string;
-    recipient: string
-  }
-}
+    recipient: string;
+  };
+};
 export const useWithdrawV2 = (params: UseWithdrawV2Props) => {
   const [stage, setStage] = useState<WithdrawState>(WithdrawState.Ideal);
-  const { activeApi } = {} as WebbContentState;
+  const { activeApi } = useWebContext();
+
   const [error, setError] = useState<WithdrawErrors>({
     error: '',
     validationError: {
       note: '',
-      recipient: ''
-    }
+      recipient: '',
+    },
   });
   const withdrawApi = useMemo(() => {
     const withdraw = activeApi?.methods.mixer.withdraw;
     if (!withdraw?.enabled) return null;
     return withdraw.inner;
-
   }, [activeApi]);
 
   // hook events
@@ -39,21 +39,20 @@ export const useWithdrawV2 = (params: UseWithdrawV2Props) => {
     });
 
     unsubscribe['validationError'] = withdrawApi.on('validationError', (validationError) => {
-      setError(p => ({
+      setError((p) => ({
         ...p,
-        validationError
+        validationError,
       }));
     });
     unsubscribe['error'] = withdrawApi.on('error', (withdrawError) => {
-      setError(p => ({
+      setError((p) => ({
         ...p,
-        error: withdrawError
+        error: withdrawError,
       }));
     });
 
-    return () => Object.values(unsubscribe).forEach(v => v && v());
+    return () => Object.values(unsubscribe).forEach((v) => v && v());
   }, [withdrawApi]);
-
 
   const withdraw = useCallback(async () => {
     if (!withdrawApi) return;
@@ -62,13 +61,11 @@ export const useWithdrawV2 = (params: UseWithdrawV2Props) => {
       const { note, recipient } = params;
       await withdrawApi.withdraw(note, recipient);
     }
-
   }, [withdrawApi]);
 
   const canCancel = useMemo(() => {
     return stage < WithdrawState.SendingTransaction && stage > WithdrawState.Ideal;
   }, [stage, withdrawApi]);
-
 
   const cancelWithdraw = useCallback(async () => {
     if (canCancel) {
@@ -82,7 +79,6 @@ export const useWithdrawV2 = (params: UseWithdrawV2Props) => {
     canCancel,
     cancelWithdraw,
     error: error.error,
-    validationError: error.validationError
+    validationError: error.validationError,
   };
-
 };

@@ -52,6 +52,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
         chains: chains,
         activeWallet,
         activeChain,
+        activeApi,
         setActiveChain(id: number) {
           setActiveChain(chains[id]);
         },
