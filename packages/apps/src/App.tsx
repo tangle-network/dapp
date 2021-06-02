@@ -126,10 +126,16 @@ const App: FC = () => {
       TestLogger.log(webbPolkadot);
       const accounts = await webbPolkadot.accounts.accounts();
       TestLogger.log(accounts);
-      const note = await webbPolkadot.methods.mixer.deposit.inner.generateNote(0);
+      /*const note = await webbPolkadot.methods.mixer.deposit.inner.generateNote(0);
       console.log(note);
       const data = await webbPolkadot.methods.mixer.deposit.inner.deposit(note);
-      console.log(data);
+      console.log(data);*/
+      const note = await webbPolkadot.methods.mixer.deposit.inner.generateNote(0);
+      const data = await webbPolkadot.methods.mixer.deposit.inner.deposit(note);
+      const withdraw = await webbPolkadot.methods.mixer.withdraw.inner.withdraw(
+        note.note.serialize(),
+        accounts[0].address
+      );
     };
     ha();
   }, []);

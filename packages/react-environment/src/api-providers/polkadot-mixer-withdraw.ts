@@ -8,7 +8,6 @@ import { MerkleTree as NodeMerkleTree } from '@webb-tools/types/interfaces';
 import { ScalarData } from '@webb-tools/types/interfaces/mixer';
 import { hexToU8a, u8aToHex } from '@polkadot/util';
 import { decodeAddress } from '@polkadot/keyring';
-import { ApiRx } from '@polkadot/api';
 
 const tryParse = (maybeJson: string | null): Record<string, unknown> | string | null => {
   try {
@@ -151,7 +150,7 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
       relayer: decodeAddress(recipient),
       root: groupTreeWrapper.rootHashU8a,
     });
-    const blockNumber = await this.inner.api.query.system.number;
+    const blockNumber = await this.inner.api.query.system.number();
     const withdrawProof = {
       cached_block: blockNumber,
       cached_root: groupTreeWrapper.rootHashU8a,
@@ -164,7 +163,25 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
       recipient: recipient,
       relayer: recipient,
     };
-    console.log(withdrawProof);
+    const tx = this.inner.txBuilder.build(
+      {
+        section: 'mixer',
+        method: 'withdraw',
+      },
+      [withdrawProof]
+    );
+    tx.on('onFinalize', () => {
+      console.log('withdraw done');
+    });
+    tx.on('onFailed', () => {
+      console.log('withdraw failed');
+    });
+    tx.on('onExtrinsicSuccess', () => {
+      console.log('withdraw done');
+    });
+    const account = await this.inner.accounts.accounts();
+
+    await tx.call(account[0].address);
     // get mixer
     // get tree leaves
     // get mixer info
@@ -172,6 +189,5 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
     // add leaves to the merkle tree
     // generate zk proof
     //  submit the transaction
-    return Promise.resolve(undefined);
   }
 }

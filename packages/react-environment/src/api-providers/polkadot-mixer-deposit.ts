@@ -88,7 +88,7 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
   }
 
   async deposit(depositPayload: DepositPayload): Promise<void> {
-    const tx = this.inner.txBuiler.build(
+    const tx = this.inner.txBuilder.build(
       {
         section: 'mixer',
         method: 'deposit',
@@ -96,6 +96,16 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
       depositPayload.params
     );
     const account = await this.inner.accounts.accounts();
-    return tx.call(account[0].address);
+    tx.on('onFinalize', () => {
+      console.log('deposit done');
+    });
+    tx.on('onFailed', () => {
+      console.log('deposit failed');
+    });
+    tx.on('onExtrinsicSuccess', () => {
+      console.log('deposit done');
+    });
+    await tx.call(account[0].address);
+    return;
   }
 }

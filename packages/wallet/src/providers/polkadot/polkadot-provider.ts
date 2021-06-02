@@ -5,7 +5,8 @@ import { EventBus } from '@webb-tools/app-util';
 import { InjectedExtension } from '@polkadot/extension-inject/types';
 import { isNumber } from 'lodash';
 import { PolkadotAccount, PolkadotAccounts } from '@webb-dapp/wallet/providers/polkadot/polkadot-accounts';
-import { PolkadotTXBuiler } from '@webb-dapp/react-environment/api-providers/polkadot-transaction';
+import { PolkaTXBuilder } from '@webb-dapp/react-environment/api-providers/polkadot-transaction';
+import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polkadot/transaction-notification-config';
 
 type ExtensionProviderEvents = {
   connected: undefined;
@@ -20,11 +21,11 @@ type ExtensionProviderEvents = {
 
 export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
   private _accounts: PolkadotAccounts;
-  public readonly txBuiler: PolkadotTXBuiler;
+  public readonly txBuilder: PolkaTXBuilder;
 
   constructor(protected apiPromise: ApiPromise, protected injectedExtension: InjectedExtension) {
     super();
-    this.txBuiler = new PolkadotTXBuiler(this.apiPromise);
+    this.txBuilder = new PolkaTXBuilder(this.apiPromise, transactionNotificationConfig);
     this.hookListeners();
     this._accounts = new PolkadotAccounts(this.injectedExtension);
   }
