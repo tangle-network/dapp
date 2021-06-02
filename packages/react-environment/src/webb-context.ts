@@ -32,7 +32,15 @@ export type DepositPayload<T extends Note = Note, DepositParams = unknown> = {
   params: DepositParams;
 };
 
-export abstract class MixerDeposit<T, K extends DepositPayload> extends EventBus<MixerDepositEvents> {
+export type MixerSize = {
+  id: number | string;
+  title: string;
+};
+
+export abstract class MixerDeposit<
+  T = any,
+  K extends DepositPayload = DepositPayload<any>
+> extends EventBus<MixerDepositEvents> {
   constructor(protected inner: T) {
     super();
   }
@@ -43,7 +51,7 @@ export abstract class MixerDeposit<T, K extends DepositPayload> extends EventBus
 
   loading: DespotStates = 'ideal';
 
-  abstract getSizes(): Promise<string[]>;
+  abstract getSizes(): Promise<MixerSize[]>;
 }
 
 export enum WithdrawState {
@@ -103,10 +111,10 @@ export type Chain = ChainConfig & {
 };
 export type Wallet = WalletConfig & {};
 
-export interface WebbContentState {
+export interface WebbContentState<T = unknown> {
   wallets: Record<number, Wallet>;
   chains: Record<number, Chain>;
-  activeApi?: WebbApiProvider<unknown>;
+  activeApi?: WebbApiProvider<T>;
   activeWallet?: Wallet;
   activeChain?: Chain;
 
@@ -121,3 +129,7 @@ export const WebbContext = React.createContext<WebbContentState>({
   setActiveWallet(id: number): void {},
   wallets: {},
 });
+
+export const useWebContext = <T = unknown>() => {
+  return React.useContext(WebbContext) as WebbContentState<T>;
+};

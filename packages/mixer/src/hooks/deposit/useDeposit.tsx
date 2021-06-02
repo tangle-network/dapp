@@ -1,42 +1,46 @@
-import { MixerDeposit, WebbContentState } from '@webb-dapp/react-environment/webb-context';
+import { DepositPayload, MixerDeposit, MixerSize, useWebContext } from '@webb-dapp/react-environment/webb-context';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 export const useDeposit = () => {
-  const { activeApi } = {} as WebbContentState;
-  const [loadingState, setLoadingState] = useState<MixerDeposit<any>['loading']>('ideal');
+  const { activeApi } = useWebContext();
+  const [loadingState, setLoadingState] = useState<MixerDeposit['loading']>('ideal');
   const [error, setError] = useState('');
+  const [mixerSizes, setMixerSizes] = useState<MixerSize[]>([]);
 
   /// api
-  const despotApi = useMemo(() => {
-    const despotApi = activeApi?.methods.mixer.deposit;
-    if (!despotApi?.enabled) return null;
-    return despotApi.inner;
+  const depositApi = useMemo(() => {
+    const depositApi = activeApi?.methods.mixer.deposit;
+    if (!depositApi?.enabled) return null;
+    return depositApi.inner;
   }, [activeApi]);
 
   // hook events
   useEffect(() => {
-    const unsubscribe: Record<string, (() => void) | void> = {};
-    if (!despotApi) return;
-    const unSub = despotApi.on('error', (error) => {
+    if (!depositApi) return;
+    const unSub = depositApi.on('error', (error) => {
       setError(error);
     });
+    depositApi.getSizes().then((mixerSizes) => {
+      setMixerSizes(mixerSizes);
+    });
     return () => unSub && unSub();
-  }, [despotApi]);
+  }, [depositApi]);
 
   const generateNote = useCallback(
-    async (mixerid: number) => {
-      return despotApi?.generateNote(mixerid);
+    async (mixerId: number) => {
+      return depositApi?.generateNote(mixerId);
     },
-    [despotApi]
+    [depositApi]
   );
 
   const deposit = useCallback(
-    async (note: any) => {
-      return despotApi?.deposit('');
+    async (depositPayload: DepositPayload) => {
+      return depositApi?.deposit(depositPayload);
     },
-    [despotApi]
+    [depositApi]
   );
   return {
+    mixerSizes,
     deposit,
     generateNote,
     loadingState,

@@ -12,12 +12,14 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import { MixerButton } from '../MixerButton/MixerButton';
+import { useDeposit } from '@webb-dapp/mixer/hooks/deposit/useDeposit';
 
 const DepositWrapper = styled.div``;
 type DepositProps = {};
 const depositLogger = LoggerService.get('Deposit');
 
 export const Deposit: React.FC<DepositProps> = () => {
+  const depositApi = useDeposit();
   const mixerGroupsEntries = useMixerGroupsEntries();
   const { clearAmount, token } = useBalanceSelect();
   const [showDepositModal, setShowDepositModal] = useState(false);

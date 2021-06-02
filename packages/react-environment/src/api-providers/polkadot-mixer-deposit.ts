@@ -13,7 +13,7 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
   private cachedBulletProofsGens: Uint8Array | null = null;
   private mixer: Mixer | null = null;
 
-  async getSizes(): Promise<string[]> {
+  async getSizes() {
     // @ts-ignore
     const data: Array<MixerGroupEntry> = await this.inner.api.query.mixer.mixerTrees.entries();
     console.log('polkadot-mixer-deposit', data);
@@ -39,7 +39,10 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
           }),
         };
       })
-      .map(({ amount, currency, token }) => Math.round(parseFloat(token.amount.toString())) + ` ${currency.symbol}`);
+      .map(({ amount, currency, token }, index) => ({
+        id: index,
+        title: Math.round(parseFloat(token.amount.toString())) + ` ${currency.symbol}`,
+      }));
     return groupItem;
   }
 
@@ -96,13 +99,13 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
       depositPayload.params
     );
     const account = await this.inner.accounts.accounts();
-    tx.on('onFinalize', () => {
+    tx.on('finalize', () => {
       console.log('deposit done');
     });
-    tx.on('onFailed', () => {
+    tx.on('finalize', () => {
       console.log('deposit failed');
     });
-    tx.on('onExtrinsicSuccess', () => {
+    tx.on('extrinsicSuccess', () => {
       console.log('deposit done');
     });
     await tx.call(account[0].address);
