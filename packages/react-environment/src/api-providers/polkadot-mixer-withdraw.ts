@@ -154,7 +154,6 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
       });
 
       const blockNumber = await this.inner.api.query.system.number();
-      k;
       const withdrawProof = {
         cached_block: blockNumber,
         cached_root: groupTreeWrapper.rootHashU8a,
