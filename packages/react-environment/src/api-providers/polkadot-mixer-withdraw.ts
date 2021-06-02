@@ -1,4 +1,4 @@
-import { MixerWithdraw } from '@webb-dapp/react-environment/webb-context';
+import { MixerWithdraw, WithdrawState } from '@webb-dapp/react-environment/webb-context';
 import { WebbPolkadot } from '@webb-dapp/react-environment/api-providers/webb-polkadot-provider';
 // @ts-ignore
 import Worker from '@webb-dapp/mixer/utils/merkle.worker';
@@ -135,6 +135,7 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
   }
 
   async withdraw(note: string, recipient: string): Promise<void> {
+    this.emit('stateChange', WithdrawState.GeneratingZk);
     const merkleTree = await this.getMerkleTree();
     // parse the note
     const noteParsed = Note.deserialize(note);
@@ -144,44 +145,54 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
     const groupTreeWrapper = new GroupTreeWrapper(nodeMerkleTree);
     const leaves = await this.fetchTreeLeaves(treeId);
     await merkleTree.addLeaves(leaves);
-    const zk = await merkleTree.generateZKProof({
-      note,
-      recipient: decodeAddress(recipient),
-      relayer: decodeAddress(recipient),
-      root: groupTreeWrapper.rootHashU8a,
-    });
-    const blockNumber = await this.inner.api.query.system.number();
-    const withdrawProof = {
-      cached_block: blockNumber,
-      cached_root: groupTreeWrapper.rootHashU8a,
-      comms: zk.commitments,
-      leaf_index_commitments: zk.leafIndexCommitments,
-      mixer_id: treeId,
-      nullifier_hash: zk.nullifierHash,
-      proof_bytes: u8aToHex(zk.proof),
-      proof_commitments: zk.proofCommitments,
-      recipient: recipient,
-      relayer: recipient,
-    };
-    const tx = this.inner.txBuilder.build(
-      {
-        section: 'mixer',
-        method: 'withdraw',
-      },
-      [withdrawProof]
-    );
-    tx.on('onFinalize', () => {
-      console.log('withdraw done');
-    });
-    tx.on('onFailed', () => {
-      console.log('withdraw failed');
-    });
-    tx.on('onExtrinsicSuccess', () => {
-      console.log('withdraw done');
-    });
-    const account = await this.inner.accounts.accounts();
+    try {
+      const zk = await merkleTree.generateZKProof({
+        note,
+        recipient: decodeAddress(recipient),
+        relayer: decodeAddress(recipient),
+        root: groupTreeWrapper.rootHashU8a,
+      });
 
-    await tx.call(account[0].address);
+      const blockNumber = await this.inner.api.query.system.number();
+      k;
+      const withdrawProof = {
+        cached_block: blockNumber,
+        cached_root: groupTreeWrapper.rootHashU8a,
+        comms: zk.commitments,
+        leaf_index_commitments: zk.leafIndexCommitments,
+        mixer_id: treeId,
+        nullifier_hash: zk.nullifierHash,
+        proof_bytes: u8aToHex(zk.proof),
+        proof_commitments: zk.proofCommitments,
+        recipient: recipient,
+        relayer: recipient,
+      };
+      this.emit('stateChange', WithdrawState.SendingTransaction);
+      const tx = this.inner.txBuilder.build(
+        {
+          section: 'mixer',
+          method: 'withdraw',
+        },
+        [withdrawProof]
+      );
+      tx.on('finalize', () => {
+        console.log('withdraw done');
+      });
+      tx.on('failed', () => {
+        console.log('withdraw failed');
+      });
+      tx.on('extrinsicSuccess', () => {
+        console.log('withdraw done');
+      });
+      const account = await this.inner.accounts.accounts();
+
+      await tx.call(account[0].address);
+      this.emit('stateChange', WithdrawState.Done);
+    } catch (e) {
+      this.emit('error', 'Failed to generate zero knowlage proof');
+      this.emit('stateChange', WithdrawState.Failed);
+      throw e;
+    }
     // get mixer
     // get tree leaves
     // get mixer info

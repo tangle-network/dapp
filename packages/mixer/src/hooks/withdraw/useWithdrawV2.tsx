@@ -59,9 +59,10 @@ export const useWithdrawV2 = (params: UseWithdrawV2Props) => {
 
     if (stage === WithdrawState.Ideal) {
       const { note, recipient } = params;
+      console.log(params);
       await withdrawApi.withdraw(note, recipient);
     }
-  }, [withdrawApi]);
+  }, [withdrawApi, params]);
 
   const canCancel = useMemo(() => {
     return stage < WithdrawState.SendingTransaction && stage > WithdrawState.Ideal;
@@ -79,6 +80,6 @@ export const useWithdrawV2 = (params: UseWithdrawV2Props) => {
     canCancel,
     cancelWithdraw,
     error: error.error,
-    validationError: error.validationError,
+    validationErrors: error.validationError,
   };
 };

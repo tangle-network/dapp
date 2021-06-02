@@ -120,6 +120,26 @@ const App: FC = () => {
       withdraw
     </button>
   </div>;*/
+
+  useEffect(() => {
+    const ha = async () => {
+      const webbPolkadot = await WebbPolkadot.init('Webb DApp', ['ws://127.0.0.1:9944']);
+      TestLogger.log(webbPolkadot);
+      const accounts = await webbPolkadot.accounts.accounts();
+      TestLogger.log(accounts);
+      /*const note = await webbPolkadot.methods.mixer.deposit.inner.generateNote(0);
+      console.log(note);
+      const data = await webbPolkadot.methods.mixer.deposit.inner.deposit(note);
+      console.log(data);*/
+      const note = await webbPolkadot.methods.mixer.deposit.inner.generateNote(0);
+      const data = await webbPolkadot.methods.mixer.deposit.inner.deposit(note);
+      const withdraw = await webbPolkadot.methods.mixer.withdraw.inner.withdraw(
+        note.note.serialize(),
+        accounts[0].address
+      );
+    };
+    ha();
+  }, []);
   return (
     <DAppError logger={appLogger}>
       <WebbProvider applicationName={'Webb DApp'}>
