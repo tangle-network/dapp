@@ -3,18 +3,15 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 export const useDeposit = () => {
   const { activeApi } = {} as WebbContentState;
-  const [loadingState, setLoadingState] = useState<MixerDeposit['loading']>('ideal');
+  const [loadingState, setLoadingState] = useState<MixerDeposit<any>['loading']>('ideal');
   const [error, setError] = useState('');
-
 
   /// api
   const despotApi = useMemo(() => {
     const despotApi = activeApi?.methods.mixer.deposit;
     if (!despotApi?.enabled) return null;
     return despotApi.inner;
-
   }, [activeApi]);
-
 
   // hook events
   useEffect(() => {
@@ -26,18 +23,23 @@ export const useDeposit = () => {
     return () => unSub && unSub();
   }, [despotApi]);
 
-  const generateNote = useCallback(async (mixerid: number) => {
-    return despotApi?.generateNote(mixerid);
-  }, [despotApi]);
+  const generateNote = useCallback(
+    async (mixerid: number) => {
+      return despotApi?.generateNote(mixerid);
+    },
+    [despotApi]
+  );
 
-  const deposit = useCallback(async (note: any) => {
-    return despotApi?.deposit('');
-  }, [despotApi]);
+  const deposit = useCallback(
+    async (note: any) => {
+      return despotApi?.deposit('');
+    },
+    [despotApi]
+  );
   return {
     deposit,
     generateNote,
     loadingState,
-    error
+    error,
   };
-
 };

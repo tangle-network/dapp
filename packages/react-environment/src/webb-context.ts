@@ -14,7 +14,11 @@ export type WebbMethod<T extends EventBus<K>, K extends Record<string, unknown>>
   enabled: boolean;
 };
 
-type Note = unknown;
+interface Note {
+  serialize(): string;
+
+  // deserialize(noteStr: string): Note;
+}
 
 export type MixerDepositEvents = {
   error: string;
@@ -23,14 +27,19 @@ export type MixerDepositEvents = {
 
 type DespotStates = 'ideal' | 'generating-note' | 'depositing';
 
-export abstract class MixerDeposit<T> extends EventBus<MixerDepositEvents> {
+export type DepositPayload<T extends Note = Note, DepositParams = unknown> = {
+  note: T;
+  params: DepositParams;
+};
+
+export abstract class MixerDeposit<T, K extends DepositPayload> extends EventBus<MixerDepositEvents> {
   constructor(protected inner: T) {
     super();
   }
 
-  abstract generateNote(mixerId: number): Note;
+  abstract generateNote(mixerId: number): Promise<K>;
 
-  abstract deposit(note: Note): Promise<void>;
+  abstract deposit(depositPayload: K): Promise<void>;
 
   loading: DespotStates = 'ideal';
 
@@ -75,7 +84,7 @@ export abstract class MixerWithdraw<T> extends EventBus<MixerWithdrawEvents> {
 
 export interface WebbMixer<T> {
   // deposit
-  deposit: WebbMethod<MixerDeposit<T>, MixerDepositEvents>;
+  deposit: WebbMethod<MixerDeposit<T, DepositPayload>, MixerDepositEvents>;
   // withdraw
   withdraw: WebbMethod<MixerWithdraw<T>, MixerWithdrawEvents>;
 }

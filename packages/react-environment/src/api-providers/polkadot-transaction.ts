@@ -1,6 +1,7 @@
 import { ApiPromise } from '@polkadot/api';
 import { EventBus, LoggerService } from '@webb-tools/app-util';
 import { web3FromAddress } from '@polkadot/extension-dapp';
+import { uniqueId } from 'lodash';
 
 type PolkadotTXEvents = {
   beforeSend: void;
@@ -25,21 +26,23 @@ export class PolkadotTx<P extends Array<any>> extends EventBus<PolkadotTXEvents>
   }
 
   async call(signAddress: string) {
-    if (!this.apiPromise.tx[this.path.section] || !this.apiPromise.tx[this.path.section][this.path.method]) {
+    const api = this.apiPromise;
+    if (!api.tx[this.path.section] || !api.tx[this.path.section][this.path.method]) {
       txLogger.error(`can not find api.tx.${this.path.section}.${this.path.method}`);
       return;
     }
-    const accountInfo = await this.apiPromise.query.system.account(signAddress);
+    const accountInfo = await api.query.system.account(signAddress);
     const injector = await web3FromAddress(signAddress);
-    await this.apiPromise.setSigner(injector.signer);
-    const txResults = await this.apiPromise.tx[this.path.section]
-      [this.path.method](...this.parms)
-      .signAsync(signAddress, {
-        nonce: accountInfo.nonce.toNumber(),
-      });
-
+    await api.setSigner(injector.signer);
+    const txResults = await api.tx[this.path.section][this.path.method](...this.parms).signAsync(signAddress, {
+      nonce: accountInfo.nonce.toNumber(),
+    });
+    this.emit('beforeSend', undefined);
     const recipet = await txResults.send();
-    const hash = recipet.hash;
+    this.emit('afterSend', undefined);
+    this.emit('onExtrinsicSuccess', undefined);
+    const hash = recipet.hash.toString();
+    const transactionkey = uniqueId(`${this.path.section}-${this.path.method}`);
     console.log(recipet);
   }
 }
@@ -48,6 +51,6 @@ export class PolkadotTXBuiler {
   constructor(private apiPromise: ApiPromise) {}
 
   build<P extends Array<any>>({ section, method }: { section: string; method: string }, params: P): PolkadotTx<P> {
-    return new PolkadotTx<P>(this.apiPromise, { method, section }, params);
+    return new PolkadotTx<P>(this.apiPromise.clone(), { method, section }, params);
   }
 }

@@ -1,7 +1,9 @@
 import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
 import { Deposit } from '@webb-dapp/contracts/utils/make-deposit';
 import { pedersenHash } from '@webb-dapp/contracts/utils/pedersen-hash';
+
 const snarkjs = require('snarkjs');
+
 export class EvmNote {
   constructor(
     private _currency: string,

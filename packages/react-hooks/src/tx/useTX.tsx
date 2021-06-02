@@ -106,7 +106,6 @@ export const useTX = (input: UseTXInput) => {
         }),
         switchMap(([account, params]) => {
           LoggerService.get('App').info(`TXButton switchMap parameters `, params, account, params);
-          txLogger.error(_signAddress, { nonce: account.nonce.toNumber() });
           return _api.tx[section][method](...params).signAsync(_signAddress, { nonce: account.nonce.toNumber() });
         })
       );

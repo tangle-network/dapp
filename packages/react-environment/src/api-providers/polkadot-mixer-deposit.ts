@@ -1,4 +1,4 @@
-import { MixerDeposit } from '@webb-dapp/react-environment/webb-context';
+import { DepositPayload as IDepositPayload, MixerDeposit } from '@webb-dapp/react-environment/webb-context';
 import { WebbPolkadot } from '@webb-dapp/react-environment/api-providers/webb-polkadot-provider';
 import { Asset, Mixer, Note } from '@webb-tools/sdk-mixer';
 import { MixerGroupEntry, NativeTokenProperties } from '@webb-dapp/mixer';
@@ -7,7 +7,9 @@ import { Token } from '@webb-tools/sdk-core';
 // @ts-ignore
 import Worker from '@webb-dapp/mixer/utils/mixer.worker';
 
-export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot> {
+type DepositPayload = IDepositPayload<Note, [number, Uint8Array[]]>;
+
+export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayload> {
   private cachedBulletProofsGens: Uint8Array | null = null;
   private mixer: Mixer | null = null;
 
@@ -75,22 +77,25 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot> {
     return bulletProofGens;
   }
 
-  async deposit([note, leaf]: [Note, Uint8Array]): Promise<void> {
-    const id = note.id;
+  async generateNote(mixerId: number): Promise<DepositPayload> {
+    const mixer = await this.getMixer();
+
+    const [note, leaf] = await mixer.generateNoteAndLeaf(new Asset(mixerId, 'EDG'));
+    return {
+      note,
+      params: [note.id, [leaf]],
+    };
+  }
+
+  async deposit(depositPayload: DepositPayload): Promise<void> {
     const tx = this.inner.txBuiler.build(
       {
         section: 'mixer',
         method: 'deposit',
       },
-      [id, [leaf]]
+      depositPayload.params
     );
     const account = await this.inner.accounts.accounts();
     return tx.call(account[0].address);
-  }
-
-  async generateNote(mixerId: number): Promise<[Note, Uint8Array]> {
-    const mixer = await this.getMixer();
-    const [note, leaf] = await mixer.generateNoteAndLeaf(new Asset(mixerId, 'EDG'));
-    return [note, leaf];
   }
 }
