@@ -1,4 +1,4 @@
-import { ApiPromise } from '@polkadot/api';
+import { ApiPromise, SubmittableResult } from '@polkadot/api';
 import { EventBus, LoggerService } from '@webb-tools/app-util';
 import { web3FromAddress } from '@polkadot/extension-dapp';
 import { uniqueId } from 'lodash';
@@ -56,7 +56,9 @@ export class PolkadotTx<P extends Array<any>> extends EventBus<PolkadotTXEvents>
     });
     this.emitWithPayload('beforeSend', undefined);
     this.emitWithPayload('loading', undefined);
+
     await this.send(txResults);
+
     this.emitWithPayload('afterSend', undefined);
     this.transactionAddress = null;
   }
@@ -73,21 +75,51 @@ export class PolkadotTx<P extends Array<any>> extends EventBus<PolkadotTXEvents>
     } as any);
   }
 
+  private errorHandler(r: SubmittableResult) {
+    let message = r.dispatchError?.type || r.type || r.message;
+    if (r.dispatchError?.isModule) {
+      try {
+        const mod = dispatchError.asModule;
+        const error = this.apiPromise.registry.findMetaError(
+          new Uint8Array([mod.index.toNumber(), mod.error.toNumber()])
+        );
+
+        message = `${error.section}.${error.name}`;
+      } catch (error) {
+        message = Reflect.has(error, 'toString') ? error.toString() : error;
+      }
+    }
+    this.emitWithPayload('failed', message);
+    return message;
+  }
+
   private send(tx: SubmittableExtrinsic<any>) {
-    return new Promise((resolve, reject) => {
-      tx.send((status) => {
-        if (status.isError) {
-          this.emitWithPayload('failed', 'Failed to send message');
-          reject(status.dispatchError);
-        } else if (status.isFinalized) {
-          this.emitWithPayload('finalize', undefined);
-          resolve(status.dispatchInfo);
-        } else if (status.isCompleted) {
-          this.emitWithPayload('extrinsicSuccess', undefined);
-        } else if (status.isWarning) {
-          reject(status.dispatchInfo);
-        }
-      });
+    // eslint-disable-next-line no-async-promise-executor
+    return new Promise(async (resolve, reject) => {
+      try {
+        await tx.send((status) => {
+          if (status.isCompleted) {
+            if (status.isError) {
+              let message = this.errorHandler(status);
+              this.emitWithPayload('failed', message);
+              return reject(message);
+            }
+            if (status.isFinalized) {
+              resolve(status.dispatchInfo?.toString());
+              return this.emitWithPayload('finalize');
+            }
+          } else if (status.isError) {
+            const errorMessage = this.errorHandler(status);
+            console.log(errorMessage);
+            this.emitWithPayload('failed', errorMessage);
+            reject(errorMessage);
+          }
+        });
+      } catch (e) {
+        const errorMessage = this.errorHandler(e);
+        this.emitWithPayload('failed', errorMessage);
+        reject(errorMessage);
+      }
     });
   }
 }

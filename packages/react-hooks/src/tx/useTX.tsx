@@ -14,7 +14,6 @@ import { ApiRx, SubmittableResult } from '@polkadot/api';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { AccountInfo, DispatchError } from '@polkadot/types/interfaces';
 import { ISubmittableResult, ITuple } from '@polkadot/types/types';
-import { logger } from 'ethers';
 
 export interface UseTXInput {
   api?: ApiRx;
@@ -104,8 +103,9 @@ export const useTX = (input: UseTXInput) => {
         map((account) => {
           return [account, params] as [AccountInfo, any[]];
         }),
+
         switchMap(([account, params]) => {
-          LoggerService.get('App').info(`TXButton switchMap parameters `, params, account, params);
+          LoggerService.get('App').info(`TXButton switchMap parameters `, params);
           return _api.tx[section][method](...params).signAsync(_signAddress, { nonce: account.nonce.toNumber() });
         })
       );
@@ -237,7 +237,7 @@ export const useTX = (input: UseTXInput) => {
               variant: 'error',
             });
           }
-
+          txLogger.error(`failed with error `, error?.message);
           notificationApi({
             extras: {
               persist: false,

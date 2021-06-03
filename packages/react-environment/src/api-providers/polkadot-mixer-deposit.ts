@@ -6,6 +6,7 @@ import { Currency } from '@webb-dapp/mixer/utils/currency';
 import { Token } from '@webb-tools/sdk-core';
 // @ts-ignore
 import Worker from '@webb-dapp/mixer/utils/mixer.worker';
+import { u8aToHex } from '@polkadot/util';
 
 type DepositPayload = IDepositPayload<Note, [number, Uint8Array[]]>;
 
@@ -102,8 +103,8 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
     tx.on('finalize', () => {
       console.log('deposit done');
     });
-    tx.on('finalize', () => {
-      console.log('deposit failed');
+    tx.on('finalize', (e) => {
+      console.log('deposit failed', e);
     });
     tx.on('extrinsicSuccess', () => {
       console.log('deposit done');

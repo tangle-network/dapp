@@ -131,10 +131,10 @@ const App: FC = () => {
       console.log(note);
       const data = await webbPolkadot.methods.mixer.deposit.inner.deposit(note);
       console.log(data);*/
-      const note = await webbPolkadot.methods.mixer.deposit.inner.generateNote(0);
-      const data = await webbPolkadot.methods.mixer.deposit.inner.deposit(note);
+      const depositPayload = await webbPolkadot.methods.mixer.deposit.inner.generateNote(0);
+      const data = await webbPolkadot.methods.mixer.deposit.inner.deposit(depositPayload);
       const withdraw = await webbPolkadot.methods.mixer.withdraw.inner.withdraw(
-        note.note.serialize(),
+        depositPayload.note.serialize(),
         accounts[0].address
       );
     };
