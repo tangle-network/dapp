@@ -1,3 +1,4 @@
+/*
 import { get, isEmpty, noop } from 'lodash';
 import { useEffect, useState } from 'react';
 
@@ -9,10 +10,10 @@ interface Options {
   onError?: () => void;
 }
 
-/**
+/!**
  * @name useIsAppReady
  * @description check app status, return true when chain connected and has active account, in ohter case return false.
- */
+ *!/
 export const useIsAppReady = (options?: Options): boolean => {
   const [appReadyStatus, setAppReadyStatus] = useState<boolean>(false);
   const { api } = useApi();
@@ -29,8 +30,10 @@ export const useIsAppReady = (options?: Options): boolean => {
     if (status !== appReadyStatus) {
       setAppReadyStatus(status);
     }
-    /* eslint-disable-next-line */
+    /!* eslint-disable-next-line *!/
   }, [authRequired, activeAccount, api, options]);
 
   return appReadyStatus;
 };
+*/
+export {};

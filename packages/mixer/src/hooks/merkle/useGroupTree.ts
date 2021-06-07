@@ -1,7 +1,5 @@
-import { useCall } from '@webb-dapp/react-hooks';
 import { MerkleTree } from '@webb-tools/types/interfaces';
 import { ScalarData } from '@webb-tools/types/interfaces/mixer';
-import { useMemo } from 'react';
 
 import { hexToU8a } from '@polkadot/util';
 
@@ -39,16 +37,3 @@ export class GroupTreeWrapper {
     return rootHash ? hexToU8a(rootHash as any) : null;
   }
 }
-
-/**
- * UseGroupTrees
- *  @description   This will issue an RPC call to query.merkle.groups
- *  @param {string} id which is the GroupId is optional if the is undefined the underlying rpc call won't take place
- *  @return {GroupTreeWrapper}
- * */
-export const useGroupTree = (id?: string | undefined): GroupTreeWrapper => {
-  const groupTree = useCall<MerkleTree>('query.merkle.trees', [id], undefined, undefined, () => Boolean(id));
-  return useMemo(() => {
-    return new GroupTreeWrapper(groupTree);
-  }, [groupTree]);
-};

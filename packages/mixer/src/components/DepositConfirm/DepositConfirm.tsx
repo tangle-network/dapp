@@ -11,7 +11,6 @@ import CopyToClipboard from 'react-copy-to-clipboard';
 import styled from 'styled-components';
 import { DepositApi } from '@webb-dapp/mixer/hooks/deposit/useDeposit';
 import { DepositPayload } from '@webb-dapp/react-environment/webb-context';
-import { useTX } from '@webb-dapp/react-hooks/tx/useTX';
 
 const DismissWrapper = styled.button``;
 const Dismiss = () => {

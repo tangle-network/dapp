@@ -59,20 +59,19 @@ export const useWithdraw = (params: UseWithdrawProps) => {
 
     if (stage === WithdrawState.Ideal) {
       const { note, recipient } = params;
-      console.log(params);
       await withdrawApi.withdraw(note, recipient);
     }
-  }, [withdrawApi, params]);
+  }, [withdrawApi, params, stage]);
 
   const canCancel = useMemo(() => {
     return stage < WithdrawState.SendingTransaction && stage > WithdrawState.Ideal;
-  }, [stage, withdrawApi]);
+  }, [stage]);
 
   const cancelWithdraw = useCallback(async () => {
     if (canCancel) {
       await withdrawApi?.cancelWithdraw();
     }
-  }, [canCancel]);
+  }, [canCancel, withdrawApi]);
 
   return {
     stage,

@@ -1,6 +1,6 @@
-import { NotificationConfig } from '@webb-dapp/react-environment/api-providers/polkadot-transaction';
-import { notificationApi } from '@webb-dapp/ui-components/notification';
 import { FormatAddress } from '@webb-dapp/react-components';
+import { NotificationConfig } from '@webb-dapp/react-environment/api-providers/polkadot';
+import { notificationApi } from '@webb-dapp/ui-components/notification';
 import { Spinner } from '@webb-dapp/ui-components/Spinner/Spinner';
 import React from 'react';
 
