@@ -6,7 +6,6 @@ import { Currency } from '@webb-dapp/mixer/utils/currency';
 import { Token } from '@webb-tools/sdk-core';
 // @ts-ignore
 import Worker from '@webb-dapp/mixer/utils/mixer.worker';
-import { u8aToHex } from '@polkadot/util';
 
 type DepositPayload = IDepositPayload<Note, [number, Uint8Array[]]>;
 
@@ -42,8 +41,10 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
       })
       .map(({ amount, currency, token }, index) => ({
         id: index,
-        title: Math.round(parseFloat(token.amount.toString())) + ` ${currency.symbol}`,
-      }));
+        value: Math.round(Number(amount.toString()) / Math.pow(10, token.precision)),
+        title: Math.round(Number(amount.toString()) / Math.pow(10, token.precision)) + ` ${currency.symbol}`,
+      }))
+      .sort((a, b) => (a.value > b.value ? 1 : a.value < b.value ? -1 : 0));
     return groupItem;
   }
 
