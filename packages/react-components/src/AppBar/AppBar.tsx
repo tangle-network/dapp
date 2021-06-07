@@ -1,8 +1,6 @@
-import { Switch, IconButton, Icon, Tooltip } from '@material-ui/core';
+import { Icon, IconButton, Switch, Tooltip } from '@material-ui/core';
 import { ReactComponent as WebbLogo } from '@webb-dapp/react-components/assets/webb-icon.svg';
-import { useStore } from '@webb-dapp/react-environment';
 import { useDimensions } from '@webb-dapp/react-environment/layout';
-import { useApi } from '@webb-dapp/react-hooks';
 import { SettingsManager } from '@webb-dapp/ui-components/SettingsManager/SettingsManager';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 import { below } from '@webb-dapp/ui-components/utils/responsive-utils';
@@ -128,12 +126,7 @@ const AppBar: React.FC<AppBarProps> = () => {
         </NavigationWrapper>
       )}
       <AccountWrapper>
-        <Switch
-          checked={isDarkTheme}
-          onClick={() => {
-            ui.setTheme(isDarkTheme ? 'secondary' : 'primary');
-          }}
-        />
+        <Switch checked={isDarkTheme} onClick={() => {}} />
         <Tooltip title='Need help?'>
           <IconButton
             onClick={() => {

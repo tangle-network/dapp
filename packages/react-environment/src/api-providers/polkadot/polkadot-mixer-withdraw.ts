@@ -1,55 +1,15 @@
-// @ts-ignore
+import { GroupTreeWrapper } from '@webb-dapp/mixer';
+// @ts-ignore1
 import Worker from '@webb-dapp/mixer/utils/merkle.worker';
 import MerkleTree from '@webb-tools/sdk-merkle/tree';
 import { Note } from '@webb-tools/sdk-mixer';
 import { MerkleTree as NodeMerkleTree } from '@webb-tools/types/interfaces';
-import { ScalarData } from '@webb-tools/types/interfaces/mixer';
 
 import { decodeAddress } from '@polkadot/keyring';
-import { hexToU8a, u8aToHex } from '@polkadot/util';
+import { u8aToHex } from '@polkadot/util';
 
 import { MixerWithdraw, WithdrawState } from '../../webb-context';
 import { WebbPolkadot } from './webb-polkadot-provider';
-
-const tryParse = (maybeJson: string | null): Record<string, unknown> | string | null => {
-  try {
-    return JSON.parse(maybeJson as any);
-  } catch (e) {
-    return maybeJson;
-  }
-};
-
-class GroupTreeWrapper {
-  constructor(private _inner: NodeMerkleTree) {}
-
-  get inner() {
-    return this._inner;
-  }
-
-  /**
-   * Tell wither  inner type exists or not
-   * */
-  get ready() {
-    return Boolean(this.inner);
-  }
-
-  /**
-   * Get the root hash for the GroupTree
-   * This should be called if the inner type dose exists other wise it will return null
-   * */
-  get rootHash(): ScalarData {
-    return (this.inner.toHuman().root_hash as unknown) as ScalarData;
-  }
-
-  /**
-   * Get the root hash for the GroupTree
-   * This should be called if the inner type dose exists other wise it will return null
-   * */
-  get rootHashU8a(): Uint8Array {
-    const rootHash = this.rootHash;
-    return hexToU8a(rootHash as any);
-  }
-}
 
 export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
   private cachedBulletProofsGens: Uint8Array | null = null;
@@ -152,7 +112,7 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
         note,
         recipient: decodeAddress(recipient),
         relayer: decodeAddress(recipient),
-        root: groupTreeWrapper.rootHashU8a,
+        root: groupTreeWrapper.rootHashU8a as any,
       });
 
       const blockNumber = await this.inner.api.query.system.number();

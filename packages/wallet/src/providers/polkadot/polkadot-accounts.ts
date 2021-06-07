@@ -1,5 +1,6 @@
 import { Account, AccountsAdapter, PromiseOrT } from '@webb-dapp/wallet/account/Accounts.adapter';
 import React from 'react';
+
 import { InjectedAccount, InjectedExtension } from '@polkadot/extension-inject/types';
 
 export class PolkadotAccount extends Account<InjectedAccount> {
@@ -21,6 +22,7 @@ export class PolkadotAccounts extends AccountsAdapter<InjectedExtension, Injecte
   }
 
   get activeOrDefault() {
+    // eslint-disable-next-line no-async-promise-executor
     return new Promise<PolkadotAccount | null>(async (resolve, reject) => {
       try {
         const accounts = await this._inner.accounts.get();

@@ -1,7 +1,7 @@
+import { useWebContext, WithdrawState } from '@webb-dapp/react-environment/webb-context';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useWebContext, WebbContextState, WithdrawState } from '@webb-dapp/react-environment/webb-context';
 
-export type UseWithdrawV2Props = {
+export type UseWithdrawProps = {
   note: string;
   recipient: string;
 };
@@ -13,7 +13,7 @@ export type WithdrawErrors = {
     recipient: string;
   };
 };
-export const useWithdraw = (params: UseWithdrawV2Props) => {
+export const useWithdraw = (params: UseWithdrawProps) => {
   const [stage, setStage] = useState<WithdrawState>(WithdrawState.Ideal);
   const { activeApi } = useWebContext();
 

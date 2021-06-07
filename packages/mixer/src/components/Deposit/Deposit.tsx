@@ -1,20 +1,16 @@
-import { useMixerGroupsEntries } from '@webb-dapp/mixer';
 import { DepositConfirm } from '@webb-dapp/mixer/components/DepositConfirm/DepositConfirm';
-import { useBalanceSelect } from '@webb-dapp/react-hooks/useBalanceSelect';
+import { useDeposit } from '@webb-dapp/mixer/hooks/deposit/useDeposit';
+import { MixerSize } from '@webb-dapp/react-environment/webb-context';
 import { SpaceBox } from '@webb-dapp/ui-components/Box';
 import { MixerGroupSelect } from '@webb-dapp/ui-components/Inputs/MixerGroupSelect/MixerGroupSelect';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
-import { LoggerService } from '@webb-tools/app-util';
 import React, { useCallback, useState } from 'react';
 import styled from 'styled-components';
 
 import { MixerButton } from '../MixerButton/MixerButton';
-import { useDeposit } from '@webb-dapp/mixer/hooks/deposit/useDeposit';
-import { MixerSize } from '@webb-dapp/react-environment/webb-context';
 
 const DepositWrapper = styled.div``;
 type DepositProps = {};
-const depositLogger = LoggerService.get('Deposit');
 
 export const Deposit: React.FC<DepositProps> = () => {
   const depositApi = useDeposit();

@@ -8,10 +8,9 @@ import {
   Tooltip,
   Typography,
 } from '@material-ui/core';
-
+import { WithdrawState } from '@webb-dapp/react-environment';
 import React, { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { WithdrawState } from '@webb-dapp/react-environment';
 
 type WithdrawingModalProps = {
   canCancel: boolean;
@@ -50,7 +49,7 @@ const WithdrawingModal: React.FC<WithdrawingModalProps> = ({ canCancel, cancel, 
         break;
       case WithdrawState.Done:
         return 'Translation Done';
-      case WithdrawState.Faild:
+      case WithdrawState.Failed:
         return 'Translation Failed';
       case WithdrawState.Canceled:
         return 'Translation canceled';

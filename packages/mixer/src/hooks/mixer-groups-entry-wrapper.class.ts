@@ -1,14 +1,10 @@
 import { Currency } from '@webb-dapp/mixer/utils/currency';
-import { useApi, useCall } from '@webb-dapp/react-hooks';
+import { Token } from '@webb-tools/sdk-core';
 import { Balance, MixerInfo } from '@webb-tools/types/interfaces';
 import { CurrencyId } from '@webb-tools/types/interfaces/types';
-import { useMemo } from 'react';
 
-import { ApiRx } from '@polkadot/api';
+import { ApiPromise, ApiRx } from '@polkadot/api';
 import { StorageKey } from '@polkadot/types';
-
-import { mixerLogger } from '../utils';
-import { Token } from '@webb-tools/sdk-core';
 
 export type NativeTokenProperties = {
   ss58Format: number | null;
@@ -31,7 +27,7 @@ export class MixerGroupEntriesWrapper {
   constructor(
     private _inner: MixerGroupEntry[] | undefined,
     private tokenProperty: NativeTokenProperties | undefined,
-    private _api: ApiRx
+    private _api: ApiRx | ApiPromise
   ) {}
 
   get inner() {
@@ -62,6 +58,7 @@ export class MixerGroupEntriesWrapper {
         // TODO: Pull from active chain
         chain: 'edgeware',
         name: 'DEV',
+        // @ts-ignore
         precision: Number(this.tokenProperty?.toHuman().tokenDecimals?.[0] ?? 12),
         symbol: 'EDG',
       }),
@@ -98,20 +95,3 @@ export class MixerGroupEntriesWrapper {
     });
   }
 }
-
-/**
- * UseMixerGroupsEntries
- *  @description   This will issue an RPC call to query.mixer.mixerGroups.entries return wrapper type around [StorageKey, MixerInfo]
- *  @return {MixerGroupEntriesWrapper}
- * */
-export const useMixerGroupsEntries = (): MixerGroupEntriesWrapper => {
-  const mixerGroups = useCall<Array<MixerGroupEntry>>('query.mixer.mixerTrees.entries', [], undefined, []);
-  const tokenDecimals = useCall<NativeTokenProperties>('rpc.system.properties');
-
-  const { api } = useApi();
-
-  return useMemo(() => {
-    mixerLogger.debug(`MixerGroupEntry `, mixerGroups);
-    return new MixerGroupEntriesWrapper(mixerGroups, tokenDecimals, api);
-  }, [api, tokenDecimals, mixerGroups]);
-};

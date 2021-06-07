@@ -1,14 +1,14 @@
 import { chainsConfig } from '@webb-dapp/apps/configs/wallets/chain-config';
 import { walletsConfig } from '@webb-dapp/apps/configs/wallets/wallets-config';
 import { DimensionsProvider } from '@webb-dapp/react-environment/layout';
+import { StoreProvier } from '@webb-dapp/react-environment/store';
 import { BareProps } from '@webb-dapp/ui-components/types';
+import { Account } from '@webb-dapp/wallet/account/Accounts.adapter';
 import React, { FC, useCallback, useEffect, useState } from 'react';
 
 import { WebbPolkadot } from './api-providers/polkadot';
 import { SettingProvider } from './SettingProvider';
 import { Chain, Wallet, WebbApiProvider, WebbContext } from './webb-context';
-import { Account } from '@webb-dapp/wallet/account/Accounts.adapter';
-import { StoreProvier } from '@webb-dapp/react-environment/store';
 
 interface WebbProviderProps extends BareProps {
   applicationName: string;
