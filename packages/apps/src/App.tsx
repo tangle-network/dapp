@@ -19,8 +19,6 @@ const App: FC = () => {
         <UIProvider>
           <Theme />
           <RouterProvider config={routerConfig} />
-          <EventsWatcher />
-
           <NotificationStacked />
         </UIProvider>
       </WebbProvider>

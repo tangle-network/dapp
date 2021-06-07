@@ -1,11 +1,13 @@
-import { ExtensionContext, ExtensionData } from '@webb-dapp/react-environment';
-import { useContext } from 'react';
+import { useWebContext } from '@webb-dapp/react-environment';
 
 /**
  * @name useAccounts
  */
-export const useAccounts = (): ExtensionData => {
-  const data = useContext(ExtensionContext);
-
-  return data;
+export const useAccounts = () => {
+  const data = useWebContext();
+  return {
+    accounts: data.accounts,
+    active: data.activeAccount,
+    setActiveAccount: data.setActiveAccount,
+  };
 };

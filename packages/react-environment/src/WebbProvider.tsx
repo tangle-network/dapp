@@ -1,15 +1,14 @@
-import { DimensionsProvider } from '@webb-dapp/react-environment/layout';
-import { BareProps } from '@webb-dapp/ui-components/types';
-import React, { FC, useEffect, useState } from 'react';
-
-import { ApiProvider } from './ApiProvider';
-import { ExtensionProvider } from './ExtensionProvider';
-import { SettingProvider } from './SettingProvider';
-import { StoreProvier } from './store';
 import { chainsConfig } from '@webb-dapp/apps/configs/wallets/chain-config';
 import { walletsConfig } from '@webb-dapp/apps/configs/wallets/wallets-config';
-import { WebbApiProvider } from './webb-context';
+import { DimensionsProvider } from '@webb-dapp/react-environment/layout';
+import { BareProps } from '@webb-dapp/ui-components/types';
+import React, { FC, useCallback, useEffect, useState } from 'react';
+
 import { WebbPolkadot } from './api-providers/polkadot';
+import { SettingProvider } from './SettingProvider';
+import { Chain, Wallet, WebbApiProvider, WebbContext } from './webb-context';
+import { Account } from '@webb-dapp/wallet/account/Accounts.adapter';
+import { StoreProvier } from '@webb-dapp/react-environment/store';
 
 interface WebbProviderProps extends BareProps {
   applicationName: string;
@@ -40,19 +39,40 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
   const [activeWallet, setActiveWallet] = useState<Wallet | undefined>(undefined);
   const [activeChain, setActiveChain] = useState<Chain | undefined>(undefined);
   const [activeApi, setActiveApi] = useState<WebbApiProvider<any> | undefined>(undefined);
+  const [loading, setLoading] = useState(true);
+
+  const [accounts, setAccounts] = useState<Array<Account>>([]);
+  const [activeAccount, _setActiveAccount] = useState<Account | null>(null);
+  const setActiveAccount = useCallback(
+    async (account: Account<any>) => {
+      if (!activeApi) return;
+      _setActiveAccount(account);
+      await activeApi.accounts.setActiveAccount(account);
+    },
+    [activeApi]
+  );
   useEffect(() => {
-    WebbPolkadot.init('Webb DApp', ['ws://127.0.0.1:9944']).then((provider) => {
+    WebbPolkadot.init('Webb DApp', ['ws://127.0.0.1:9944']).then(async (provider) => {
       setActiveApi(provider);
+      setLoading(false);
+      const accounts = await provider.accounts.accounts();
+      setAccounts(accounts);
+      _setActiveAccount(accounts[0]);
+      await provider.accounts.setActiveAccount(accounts[0]);
     });
   }, []);
   return (
     <WebbContext.Provider
       value={{
+        loading,
         wallets: walletsConfig,
         chains: chains,
         activeWallet,
         activeChain,
         activeApi,
+        accounts,
+        activeAccount,
+        setActiveAccount,
         setActiveChain(id: number) {
           setActiveChain(chains[id]);
         },
@@ -61,15 +81,11 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
         },
       }}
     >
-      <SettingProvider>
-        <ApiProvider>
-          <ExtensionProvider appName={applicationName}>
-            <StoreProvier>
-              <DimensionsProvider>{children}</DimensionsProvider>
-            </StoreProvier>
-          </ExtensionProvider>
-        </ApiProvider>
-      </SettingProvider>
+      <StoreProvier>
+        <SettingProvider>
+          <DimensionsProvider>{children}</DimensionsProvider>
+        </SettingProvider>
+      </StoreProvier>
     </WebbContext.Provider>
   );
 };

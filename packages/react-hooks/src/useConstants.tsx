@@ -11,8 +11,6 @@ export type HooksReturnType = {
 };
 
 export const useConstants = (): HooksReturnType => {
-  const { api } = useApi();
-
   // all currencies id
   const allCurrencies = useMemo((): CurrencyId[] => {
     return [];
@@ -20,6 +18,5 @@ export const useConstants = (): HooksReturnType => {
 
   return {
     allCurrencies,
-    ...api.consts,
   };
 };

@@ -8,7 +8,7 @@ export class PolkadotAccount extends Account<InjectedAccount> {
   }
 
   get name(): string {
-    return this.address;
+    return this.inner.name || this.address;
   }
 }
 

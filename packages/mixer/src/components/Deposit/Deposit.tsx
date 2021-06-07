@@ -1,10 +1,8 @@
 import { useMixerGroupsEntries } from '@webb-dapp/mixer';
 import { DepositConfirm } from '@webb-dapp/mixer/components/DepositConfirm/DepositConfirm';
-import { Currency } from '@webb-dapp/mixer/utils/currency';
 import { useBalanceSelect } from '@webb-dapp/react-hooks/useBalanceSelect';
 import { SpaceBox } from '@webb-dapp/ui-components/Box';
 import { MixerGroupSelect } from '@webb-dapp/ui-components/Inputs/MixerGroupSelect/MixerGroupSelect';
-import { WalletTokenInput } from '@webb-dapp/ui-components/Inputs/WalletTokenInput/WalletTokenInput';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { LoggerService } from '@webb-tools/app-util';
 import React, { useCallback, useState } from 'react';
@@ -20,22 +18,21 @@ const depositLogger = LoggerService.get('Deposit');
 
 export const Deposit: React.FC<DepositProps> = () => {
   const depositApi = useDeposit();
-  const mixerGroupsEntries = useMixerGroupsEntries();
-  const { clearAmount, token } = useBalanceSelect();
+  // const { clearAmount, token } = useBalanceSelect();
   const [showDepositModal, setShowDepositModal] = useState(false);
 
-  const handleSuccess = useCallback((): void => clearAmount(), [clearAmount]);
-  const [selectedToken, setSelectedToken] = useState<Currency | undefined>(undefined);
+  const handleSuccess = useCallback((): void => {}, []);
+  // const [selectedToken, setSelectedToken] = useState<Currency | undefined>(undefined);
 
   const [item, setItem] = useState<MixerSize | undefined>(undefined);
 
   return (
     <DepositWrapper>
-      <WalletTokenInput
+      {/*      <WalletTokenInput
         setSelectedToken={setSelectedToken}
         selectedToken={selectedToken}
         mixerGroupEntriesWrapper={mixerGroupsEntries}
-      />
+      />*/}
       <SpaceBox height={16} />
 
       <MixerGroupSelect items={depositApi.mixerSizes} value={item} onChange={setItem} />

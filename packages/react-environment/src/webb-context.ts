@@ -1,8 +1,8 @@
-import React from 'react';
-import { WalletConfig } from '@webb-dapp/react-environment/types/wallet-config.interface';
 import { ChainConfig } from '@webb-dapp/react-environment/types/chian-config.interface';
-import { AccountsAdapter } from '@webb-dapp/wallet/account/Accounts.adapter';
+import { WalletConfig } from '@webb-dapp/react-environment/types/wallet-config.interface';
+import { Account, AccountsAdapter } from '@webb-dapp/wallet/account/Accounts.adapter';
 import { EventBus } from '@webb-tools/app-util';
+import React from 'react';
 
 export type AppConfig = {
   wallet: Record<number, WalletConfig>;
@@ -112,12 +112,17 @@ export type Chain = ChainConfig & {
 export type Wallet = WalletConfig & {};
 
 export interface WebbContentState<T = unknown> {
+  loading: boolean;
   wallets: Record<number, Wallet>;
   chains: Record<number, Chain>;
   activeApi?: WebbApiProvider<T>;
   activeWallet?: Wallet;
   activeChain?: Chain;
 
+  accounts: Account[];
+  activeAccount: Account | null;
+
+  setActiveAccount<T extends Account>(account: T): Promise<void>;
   setActiveChain(id: number): void;
 
   setActiveWallet(id: number): void;
@@ -125,6 +130,13 @@ export interface WebbContentState<T = unknown> {
 
 export const WebbContext = React.createContext<WebbContentState>({
   chains: {},
+  accounts: [],
+  loading: true,
+  activeAccount: null,
+
+  setActiveAccount<T extends Account>(account: T): Promise<void> {
+    return Promise.resolve();
+  },
   setActiveChain(id: number): void {},
   setActiveWallet(id: number): void {},
   wallets: {},

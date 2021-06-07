@@ -1,4 +1,4 @@
-import { useApi, useMemorized } from '@webb-dapp/react-hooks';
+import { useMemorized } from '@webb-dapp/react-hooks';
 import { BareProps } from '@webb-dapp/ui-components/types';
 import React, { createContext, FC, ReactNode, useContext, useEffect, useLayoutEffect, useMemo } from 'react';
 
@@ -13,7 +13,6 @@ export type StoreData = {
 const StoreContext = createContext<StoreData>({} as any);
 
 export const StoreProvier: FC<BareProps> = ({ children }) => {
-  const { api } = useApi();
   const apiQuery = useApiQueryStore();
   const ui = useUIConfig();
   const data = useMemo(
@@ -23,8 +22,6 @@ export const StoreProvier: FC<BareProps> = ({ children }) => {
     }),
     [apiQuery, ui]
   );
-
-  if (!api) return null;
 
   return <StoreContext.Provider value={data}>{children}</StoreContext.Provider>;
 };

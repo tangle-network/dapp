@@ -9,15 +9,15 @@ import {
   Typography,
 } from '@material-ui/core';
 
-import { WithdrawState, WithdrawTXInfo } from '@webb-dapp/mixer';
 import React, { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
+import { WithdrawState } from '@webb-dapp/react-environment';
 
 type WithdrawingModalProps = {
   canCancel: boolean;
   stage: WithdrawState;
   cancel(): void;
-  withdrawTxInfo: WithdrawTXInfo | null;
+  withdrawTxInfo: any | null;
 };
 const CurrentRunningTaskWrapper = styled.span`
   display: flex;

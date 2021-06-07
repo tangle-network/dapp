@@ -100,13 +100,11 @@ const NavigationWrapper = styled.ul``;
 type AppBarProps = {};
 
 const AppBar: React.FC<AppBarProps> = () => {
-  const { connected } = useApi();
   const { size, width } = useDimensions();
   const isMobile = useMemo(() => {
     return width <= size.sm;
   }, [width, size]);
-  const ui = useStore('ui');
-  const isDarkTheme = ui.theme === 'primary';
+  const isDarkTheme = false;
   return (
     <AppBarWrapper>
       <WebbLogo className={'webb-logo'} />
@@ -146,7 +144,7 @@ const AppBar: React.FC<AppBarProps> = () => {
           </IconButton>
         </Tooltip>
         {!isMobile && <SettingsManager />}
-        {connected && <AccountManager />}
+        <AccountManager />
       </AccountWrapper>
     </AppBarWrapper>
   );
