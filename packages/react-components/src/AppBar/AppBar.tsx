@@ -136,10 +136,10 @@ const AppBar: React.FC<AppBarProps> = () => {
             ui.setTheme(isDarkTheme ? 'secondary' : 'primary');
           }}
         />
-        <Tooltip title="Need help?">
+        <Tooltip title='Need help?'>
           <IconButton
             onClick={() => {
-              window.open("https://medium.com/", "_blank")
+              window.open('https://medium.com/', '_blank');
             }}
           >
             <Icon>help</Icon>

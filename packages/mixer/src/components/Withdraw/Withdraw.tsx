@@ -6,7 +6,7 @@ import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabe
 import { NoteInput } from '@webb-dapp/ui-components/Inputs/NoteInput/NoteInput';
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { useWithdrawV2 } from '@webb-dapp/mixer/hooks/withdraw/useWithdrawV2';
+import { useWithdraw } from '@webb-dapp/mixer/hooks';
 
 const WithdrawWrapper = styled.div``;
 type WithdrawProps = {};
@@ -15,7 +15,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
   const [note, setNote] = useState('');
   const [recipient, setRecipient] = useState('');
 
-  const { canCancel, validationErrors, cancelWithdraw, stage, withdraw } = useWithdrawV2({
+  const { canCancel, validationErrors, cancelWithdraw, stage, withdraw } = useWithdraw({
     recipient,
     note,
   });
