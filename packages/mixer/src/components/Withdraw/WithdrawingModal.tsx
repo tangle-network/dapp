@@ -1,13 +1,6 @@
-import {
-  Button,
-  Divider,
-  Icon,
-  LinearProgress,
-  Tooltip,
-  Typography,
-} from '@material-ui/core';
+import { Button, Divider, Icon, LinearProgress, Tooltip, Typography } from '@material-ui/core';
+import { WithdrawState } from '@webb-dapp/react-environment';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
-import { WithdrawState, WithdrawTXInfo, useMixerGroupsEntries } from '@webb-dapp/mixer';
 import React, { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
@@ -15,7 +8,7 @@ type WithdrawingModalProps = {
   canCancel: boolean;
   stage: WithdrawState;
   cancel(): void;
-  withdrawTxInfo: WithdrawTXInfo | null;
+  withdrawTxInfo: any | null;
 };
 
 const WithdrawInfoWrapper = styled.div`
@@ -42,7 +35,7 @@ const WithdrawInfoWrapper = styled.div`
     text-align: center;
     font-weight: medium;
   }
-  
+
   .progress-content {
     padding: 0 2rem 1rem;
   }
@@ -51,7 +44,7 @@ const WithdrawInfoWrapper = styled.div`
     font-family: ${FontFamilies.AvenirNext};
     color: #7c7b86;
     text-align: center;
-    padding-bottom: 1rem
+    padding-bottom: 1rem;
   }
 
   .cancel-button {
@@ -75,15 +68,19 @@ const TransactionSummaryWrapper = styled.div`
 const WithdrawInfoRow = styled.div`
   display: flex;
   width: 100%;
-  padding: .2rem .2rem;
+  padding: 0.2rem 0.2rem;
 `;
 
 const InfoItemLabel = styled.div`
   flex: 1 0 20%;
   justify-content: center;
-  
+
   .label-icon {
     vertical-align: middle;
+  padding: 1rem 0;
+
+  td:nth-child(2) {
+    padding: 0 2rem;
   }
 `;
 
@@ -132,9 +129,6 @@ const WithdrawingModal: React.FC<WithdrawingModalProps> = ({ canCancel, cancel, 
     return `${address.slice(0, 6)}...${address.slice(address.length - 6, address.length)}`;
   }, [withdrawTxInfo]);
 
-  const mixerEntries = useMixerGroupsEntries();
-  const selectedMixerItem = mixerEntries.getItemsOf().find(matchedMixer => matchedMixer.id === withdrawTxInfo?.note.id);
-
   return (
     <WithdrawInfoWrapper>
       <header className={'modal-header'}>
@@ -152,7 +146,9 @@ const WithdrawingModal: React.FC<WithdrawingModalProps> = ({ canCancel, cancel, 
               Transaction is being processed
             </Typography>
             <div className={'progress-content'}>
-              <Typography variant={'h6'} className={'withdraw-modal-header-caption'}>{message}</Typography>
+              <Typography variant={'h6'} className={'withdraw-modal-header-caption'}>
+                {message}
+              </Typography>
               <LinearProgress value={10} variant={'indeterminate'} />
               <Typography gutterBottom variant={'caption'}>
                 {alternatingMessages[rm]}
@@ -164,29 +160,37 @@ const WithdrawingModal: React.FC<WithdrawingModalProps> = ({ canCancel, cancel, 
       <div>
         {withdrawTxInfo && (
           <TransactionSummaryWrapper>
-            <Typography variant={'subtitle1'} color={'textPrimary'}>Transaction summary</Typography>
+            <Typography variant={'subtitle1'} color={'textPrimary'}>
+              Transaction summary
+            </Typography>
             <Divider />
-              <WithdrawInfoRow>
-                <InfoItemLabel><Icon className={'label-icon'}>info</Icon>{' '}Mixer info:</InfoItemLabel>
-                <InfoItem>
-                  <Typography variant={'caption'}>
-                    <b>
+            <WithdrawInfoRow>
+              <InfoItemLabel>
+                <Icon className={'label-icon'}>info</Icon> Mixer info:
+              </InfoItemLabel>
+              <InfoItem>
+                <Typography variant={'caption'}>
+                  {/*         <b>
                       This note controls
                       {' '}
                       {' '}{ selectedMixerItem && Math.round(selectedMixerItem?.token.amount.toNumber() / 10 ** selectedMixerItem?.token.precision) }
                       {' '}{ selectedMixerItem && selectedMixerItem?.token.symbol }
-                    </b>
+                    </b>*/}
+                </Typography>
+              </InfoItem>
+            </WithdrawInfoRow>
+            <WithdrawInfoRow>
+              <InfoItemLabel>
+                <Icon className={'label-icon'}>arrow_upward</Icon> Recipient Address:
+              </InfoItemLabel>
+              <InfoItem>
+                <Tooltip title={withdrawTxInfo.account}>
+                  <Typography variant={'caption'}>
+                    <b>{transactionString}</b>
                   </Typography>
-                </InfoItem>
-              </WithdrawInfoRow>
-              <WithdrawInfoRow>
-                <InfoItemLabel><Icon className={'label-icon'}>arrow_upward</Icon>{' '}Recipient Address:</InfoItemLabel>
-                <InfoItem>
-                  <Tooltip title={withdrawTxInfo.account}>
-                    <Typography variant={'caption'}><b>{transactionString}</b></Typography>
-                  </Tooltip>
-                </InfoItem>
-              </WithdrawInfoRow>
+                </Tooltip>
+              </InfoItem>
+            </WithdrawInfoRow>
           </TransactionSummaryWrapper>
         )}
       </div>

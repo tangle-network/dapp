@@ -1,17 +1,17 @@
-import { BigNumber, Contract, providers, Signer } from 'ethers';
-import { abi } from '../abis/NativeAnchor.json';
 import { Anchor } from '@webb-dapp/contracts/types/Anchor';
+import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
+import { EvmNote } from '@webb-dapp/contracts/utils/evm-note';
 import { createDeposit, Deposit } from '@webb-dapp/contracts/utils/make-deposit';
+import { MerkleTree } from '@webb-dapp/utils/merkle';
+import { BigNumber, Contract, providers, Signer } from 'ethers';
+import utils from 'web3-utils';
+
+import { abi } from '../abis/NativeAnchor.json';
 
 const webSnarkUtils = require('websnark/src/utils');
-import utils from 'web3-utils';
-import { EvmNote } from '@webb-dapp/contracts/utils/evm-note';
-import { MerkleTree } from '@webb-dapp/utils/merkle';
-import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
 
 type DepositEvent = [string, number, BigNumber];
 const snarkjs = require('snarkjs');
-// const buildGroth16 = require('../utils/groth16');
 
 export class AnchorContract {
   private _contract: Anchor;
@@ -69,7 +69,7 @@ export class AnchorContract {
   }
 
   private async generateSnarkProof(deposit: Deposit) {
-    const { root, path_elements, path_index } = await this.generateMerkleProof(deposit);
+    // const { path_elements, path_index, root } = await this.generateMerkleProof(deposit);
   }
 
   async generateMerkleProof(deposit: Deposit) {
@@ -99,7 +99,7 @@ export class AnchorContract {
       preimage: bufferToFixed(deposit.preimage),
     });
     const merkleProof = await this.generateMerkleProof(deposit);
-    const { root, pathElements, pathIndex } = merkleProof;
+    const { pathElements, pathIndex, root } = merkleProof;
     let circuitData = require('../circuits/withdraw.json');
     let proving_key = require('../circuits/withdraw_proving_key.bin');
     proving_key = await fetch(proving_key);
@@ -123,7 +123,8 @@ export class AnchorContract {
     };
     const proofsData = await webSnarkUtils.genWitnessAndProve(
       {
-        proof: (witness, pk) => {
+        proof: (witness: any, pk: any) => {
+          // @ts-ignore
           return window.groth16GenProof(witness, pk);
         },
       },

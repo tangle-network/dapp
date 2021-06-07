@@ -1,3 +1,4 @@
+/*
 import { AccountId } from '@webb-tools/types/interfaces/types';
 import { useEffect, useMemo, useState } from 'react';
 import { combineLatest, Observable, of } from 'rxjs';
@@ -121,3 +122,5 @@ export const useRecentProposals = (): ProposalData[] => {
 
   return data;
 };
+*/
+export {};

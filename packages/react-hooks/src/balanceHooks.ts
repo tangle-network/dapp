@@ -1,3 +1,4 @@
+/*
 import { FixedPointNumber } from '@webb-tools/sdk-core';
 import { Balance, CurrencyId } from '@webb-tools/types/interfaces';
 import { useEffect, useMemo, useState } from 'react';
@@ -11,12 +12,12 @@ import { useConstants } from './useConstants';
 
 export type BalanceData = { currency: CurrencyId; balance: FixedPointNumber };
 
-/**
+/!**
  * @name useBalance
- * @description get input account or active account  balances of currencie
+ * @description get input account or active account  balances of currencies
  * @param currency
  * @param account
- */
+ *!/
 export const useBalance = (currency?: CurrencyId, account?: AccountLike): FixedPointNumber => {
   const { active } = useAccounts();
   const _account = useMemo(() => account || (active ? active.address : '_'), [account, active]);
@@ -41,12 +42,12 @@ export const useBalance = (currency?: CurrencyId, account?: AccountLike): FixedP
   return result;
 };
 
-/**
+/!**
  * @name useBalances
  * @description get input account or active account  balances of currencies
  * @param currencies
  * @param account
- */
+ *!/
 export const useBalances = (currencies: CurrencyId[], account?: AccountLike): BalanceData[] => {
   const { api } = useApi();
   const { active } = useAccounts();
@@ -81,13 +82,15 @@ export const useBalances = (currencies: CurrencyId[], account?: AccountLike): Ba
   return balances;
 };
 
-/**
+/!**
  * @name useAllBalances
  * @name get current account or input account all currencies balances
- */
+ *!/
 export const useAllBalances = (account?: AccountLike): BalanceData[] => {
   const { allCurrencies } = useConstants();
   const balances = useBalances(allCurrencies, account);
 
   return balances;
 };
+*/
+export {};

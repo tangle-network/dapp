@@ -1,6 +1,6 @@
 import React from 'react';
 export abstract class Account<T extends unknown = unknown> {
-  constructor(protected readonly _inner: T, protected readonly address: string) {}
+  constructor(protected readonly _inner: T, public readonly address: string) {}
   abstract get avatar(): React.ReactNode;
   abstract get name(): string;
 
@@ -16,13 +16,13 @@ export abstract class Account<T extends unknown = unknown> {
 
 export type PromiseOrT<T> = Promise<T> | T;
 
-export abstract class AccountsAdapter<T extends unknown = unknown> {
+export abstract class AccountsAdapter<T extends unknown = unknown, K = unknown> {
   abstract providerName: string;
   constructor(protected readonly _inner: T) {}
 
-  abstract get activeOrDefault(): Account<T> | null;
+  abstract get activeOrDefault(): Promise<Account<K> | null> | Account<K> | null;
 
-  abstract accounts(): PromiseOrT<Account<T>[]>;
+  abstract accounts(): PromiseOrT<Account<T | K>[]>;
 
   abstract setActiveAccount(account: Account): PromiseOrT<void>;
 

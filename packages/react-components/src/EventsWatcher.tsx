@@ -1,3 +1,6 @@
+export {};
+
+/*
 import { useAccounts, useApi } from '@webb-dapp/react-hooks';
 import { isEmpty } from 'lodash';
 import React, { FC, useEffect } from 'react';
@@ -83,3 +86,4 @@ export const EventsWatcher: FC = () => {
 
   return <></>;
 };
+*/

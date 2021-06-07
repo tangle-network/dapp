@@ -1,3 +1,4 @@
+/*
 import { isValidateAddress } from '@webb-dapp/react-components';
 import { FixedPointNumber } from '@webb-tools/sdk-core';
 import { CurrencyId } from '@webb-tools/types/interfaces';
@@ -40,7 +41,7 @@ export const useNumberValidator = (config: UseNumberValidatorConfig): ((value: n
       }
 
       return Promise.resolve();
-      /* eslint-disable-next-line */
+      /!* eslint-disable-next-line *!/
     },
     [_config]
   );
@@ -97,7 +98,7 @@ export const useBalanceValidator = (config: UseBalanceValidatorConfig): ((value:
       }
 
       return Promise.resolve();
-      /* eslint-disable-next-line */
+      /!* eslint-disable-next-line *!/
     },
     [_config, balance]
   );
@@ -137,3 +138,6 @@ export const useAddressValidator = (config: UseAddressValidatorConfig): ((value:
 
   return fn;
 };
+*/
+
+export {};
