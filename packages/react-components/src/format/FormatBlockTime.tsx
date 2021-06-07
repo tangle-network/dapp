@@ -1,3 +1,4 @@
+/*
 import { useApi } from '@webb-dapp/react-hooks';
 import React, { FC } from 'react';
 
@@ -29,3 +30,5 @@ export const FormatBlockTime: FC<BlockTime> = ({ block, to }) => {
 
   return null;
 };
+*/
+export {};

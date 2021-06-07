@@ -1,7 +1,6 @@
 export class Storage<T = Record<string, unknown>> {
   private db: T = {} as T;
 
-
   get<K extends keyof T>(key: K): T[K] | undefined {
     return this.db[key];
   }
@@ -18,11 +17,10 @@ export class Storage<T = Record<string, unknown>> {
     delete this.db[key];
   }
 
-  put_batch(key_values: Partial<T>) {
-    key_values.forEach((element) => {
+  put_batch(key_values: Partial<T>[]) {
+    key_values.forEach((element: any) => {
+      // @ts-ignore
       this.db[element.key] = element.value;
     });
   }
-
-
 }

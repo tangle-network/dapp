@@ -1,5 +1,5 @@
-import { Storage } from '@webb-dapp/utils/merkle/storage';
 import { MimcSpongeHasher } from '@webb-dapp/utils/merkle/sponge-hasher';
+import { Storage } from '@webb-dapp/utils/merkle/storage';
 
 interface TraverserHandler {
   handle_index(level: number, element_index: number, sibling_index: number): void;
@@ -13,11 +13,11 @@ class UpdateTraverser implements TraverserHandler {
     private prefix: string,
     private storage: Storage,
     private hasher: MimcSpongeHasher,
-    public currentElement,
-    private zeroValues
+    public currentElement: any,
+    private zeroValues: any
   ) {}
 
-  async handle_index(level, element_index, sibling_index) {
+  async handle_index(level: number, element_index: number, sibling_index: number) {
     if (level == 0) {
       this.original_element = this.storage.getOrDefault(
         MerkleTree.keyFormat(this.prefix, level, element_index),
@@ -46,16 +46,16 @@ class UpdateTraverser implements TraverserHandler {
 }
 
 class PathTraverser implements TraverserHandler {
-  public pathElements = [];
-  public pathIndex = [];
+  public pathElements: any[] = [];
+  public pathIndex: number[] = [];
 
-  constructor(private prefix: string, private storage: Storage, private zeroValues) {}
+  constructor(private prefix: string, private storage: Storage, private zeroValues: any) {}
 
-  handle_index(level, element_index, sibling_index) {
+  handle_index(level: number, element_index: number, sibling_index: number) {
     const sibling = this.storage.getOrDefault(
       MerkleTree.keyFormat(this.prefix, level, sibling_index),
       this.zeroValues[level]
-    );
+    ) as any;
     this.pathElements.push(sibling);
     this.pathIndex.push(element_index % 2);
   }
@@ -65,9 +65,8 @@ export class MerkleTree {
   private zeroValues: string[] = [];
   private totalElements = 0;
 
-  static keyFormat(prefix, level, index) {
-    const key = `${prefix}_tree_${level}_${index}`;
-    return key;
+  static keyFormat(prefix: string, level: number, index: number) {
+    return `${prefix}_tree_${level}_${index}`;
   }
 
   constructor(
@@ -158,10 +157,5 @@ export class MerkleTree {
       pathIndex: traverser.pathIndex,
       element,
     };
-  }
-
-  static keyFormat(prefix, level, index) {
-    const key = `${prefix}_tree_${level}_${index}`;
-    return key;
   }
 }

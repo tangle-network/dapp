@@ -1,3 +1,4 @@
+/*
 import { useStore } from '@webb-dapp/react-environment';
 import { LoggerService } from '@webb-tools/app-util';
 import { get, isEmpty } from 'lodash';
@@ -121,3 +122,5 @@ export function useCall<T>(
 
   return get(key);
 }
+*/
+export {};

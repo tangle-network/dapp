@@ -4,7 +4,7 @@ import { Page, styled } from '@webb-dapp/ui-components';
 import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
 import React, { FC, memo, useMemo } from 'react';
 
-import { SidebarConfig } from '../Sidebar';
+import { SidebarConfig } from '../Sidebar/types';
 
 const MainContainer = styled.div`
   display: flex;
@@ -29,7 +29,7 @@ interface MainLayoutProps {
   enableCollapse?: boolean;
 }
 
-const Main: FC<MainLayoutProps> = memo(({ children, enableCollapse = true, sidebar }) => {
+const Main: FC<MainLayoutProps> = memo(({ children }) => {
   const content = useMemo(() => {
     return (
       <Page>

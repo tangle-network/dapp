@@ -1,3 +1,4 @@
+/*
 import { useCallback } from 'react';
 
 import { useAccounts } from './useAccounts';
@@ -70,3 +71,5 @@ export const useStorage = (
 
   return { getStorage, setStorage };
 };
+*/
+export {};

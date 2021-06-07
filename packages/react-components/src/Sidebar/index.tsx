@@ -1,3 +1,4 @@
+/*
 import { useApi, useSetting } from '@webb-dapp/react-hooks';
 import { styled } from '@webb-dapp/ui-components';
 import React, { FC, useMemo, useState } from 'react';
@@ -77,3 +78,5 @@ export const Sidebar: FC<SidebarProps> = ({ collapse, config, showAccount = true
     [data, collapse, showAccount, products, config.socialPlatforms, active]
   );
 };
+*/
+export {};
