@@ -1,18 +1,21 @@
 import { TOKEN_COLOR, TOKEN_FULLNAMES, TOKEN_IMAGES } from '@webb-dapp/mixer/utils/currency/constants';
 import { Token } from '@webb-tools/sdk-core';
-import { CurrencyId } from '@webb-tools/types/interfaces/types';
+import { ApiRx } from '@polkadot/api';
+import { CurrencyId } from '@webb-tools/types/interfaces';
 
-import { ApiPromise, ApiRx } from '@polkadot/api';
+export type WebbCurrencyId = number;
 
 interface Data {
-  currencyId: CurrencyId;
+  currencyId: WebbCurrencyId;
   token: Token;
 }
 
 export class Currency {
-  private constructor(private _inner: Data, private _apiRx: ApiRx | ApiPromise) {}
+  private constructor(private _inner: Data, private _apiRx: ApiRx) {
+  }
 
-  static tokenFrom(currencyId: CurrencyId, amount: number) {
+  static tokenFrom(currencyId: WebbCurrencyId | CurrencyId, amount: number) {
+    // @ts-ignore
     const id = currencyId?.toNumber() ?? currencyId;
     switch (id) {
       case 0:
@@ -21,7 +24,7 @@ export class Currency {
           chain: 'edgeware',
           name: 'EDG',
           precision: 18,
-          symbol: 'EDG',
+          symbol: 'EDG'
         });
       default:
         return new Token({
@@ -29,13 +32,13 @@ export class Currency {
           chain: 'dev',
           name: 'WEBB',
           precision: 18,
-          symbol: 'WEBB',
+          symbol: 'WEBB'
         });
     }
   }
 
-  static fromCurrencyId(currencyId: CurrencyId | number, api: ApiRx | ApiPromise, amount: number = 0): Currency {
-    let cid: CurrencyId;
+  static fromCurrencyId(currencyId: WebbCurrencyId | number, api: ApiRx, amount: number = 0): Currency {
+    let cid: WebbCurrencyId;
     if (typeof currencyId === 'number') {
       // @ts-ignore
       cid = api.createType('CurrencyId', currencyId);
@@ -47,7 +50,7 @@ export class Currency {
     const cw = new Currency(
       {
         currencyId: cid,
-        token,
+        token
       },
       api
     );
@@ -73,8 +76,8 @@ export class Currency {
 
     return new Currency(
       {
-        currencyId,
-        token,
+        currencyId: currencyId?.toNumber(),
+        token
       },
       apiRx
     );

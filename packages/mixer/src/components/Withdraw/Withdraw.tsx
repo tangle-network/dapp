@@ -1,5 +1,4 @@
 import { FormHelperText, InputBase } from '@material-ui/core';
-import { useWithdraw } from '@webb-dapp/mixer';
 import { MixerButton } from '@webb-dapp/mixer/components/MixerButton/MixerButton';
 import WithdrawingModal from '@webb-dapp/mixer/components/Withdraw/WithdrawingModal';
 import { SpaceBox } from '@webb-dapp/ui-components';
@@ -7,24 +6,19 @@ import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabe
 import { NoteInput } from '@webb-dapp/ui-components/Inputs/NoteInput/NoteInput';
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import { useWithdraw } from '@webb-dapp/mixer/hooks';
 
 const WithdrawWrapper = styled.div``;
 type WithdrawProps = {};
 
 export const Withdraw: React.FC<WithdrawProps> = () => {
   const [note, setNote] = useState('');
+  const [recipient, setRecipient] = useState('');
 
-  const {
-    canCancel,
-    canWithdraw,
-    cancelWithdraw,
-    setWithdrawTo,
-    stage,
-    validationErrors,
-    withdraw,
-    withdrawTo,
-    withdrawTxInfo,
-  } = useWithdraw(note);
+  const { canCancel, validationErrors, cancelWithdraw, stage, withdraw } = useWithdraw({
+    recipient,
+    note,
+  });
 
   return (
     <WithdrawWrapper>
@@ -34,23 +28,30 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
 
       <InputLabel label={'Recipient'}>
         <InputBase
-          value={withdrawTo}
+          value={recipient}
           onChange={(event) => {
-            setWithdrawTo(event.target.value as string);
+            setRecipient(event.target.value as string);
           }}
           fullWidth
           placeholder={`Enter account address`}
         />
-        <FormHelperText error={Boolean(validationErrors.withdrawTo && withdrawTo)}>
-          {validationErrors.withdrawTo}
+        <FormHelperText error={Boolean(validationErrors.recipient && recipient)}>
+          {validationErrors.recipient}
         </FormHelperText>
       </InputLabel>
 
       <SpaceBox height={16} />
 
-      <MixerButton disabled={!withdrawTo || !canWithdraw} onClick={withdraw} label={'Withdraw'} />
+      <MixerButton disabled={!recipient} onClick={withdraw} label={'Withdraw'} />
 
-      <WithdrawingModal withdrawTxInfo={withdrawTxInfo} cancel={cancelWithdraw} stage={stage} canCancel={canCancel} />
+      <WithdrawingModal
+        withdrawTxInfo={{
+          account: recipient,
+        }}
+        cancel={cancelWithdraw}
+        stage={stage}
+        canCancel={canCancel}
+      />
     </WithdrawWrapper>
   );
 };

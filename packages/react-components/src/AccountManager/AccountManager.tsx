@@ -110,6 +110,7 @@ export const AccountManager: React.FC<AccountManagerProps> = () => {
       accounts?.map((acc) => ({
         address: acc.address || '',
         name: acc.name,
+        self: acc,
       })) ?? []
     );
   }, [accounts]);
@@ -160,13 +161,14 @@ export const AccountManager: React.FC<AccountManagerProps> = () => {
             </div>
 
             <StyledList as={List} dense disablePadding>
-              {accountAddresses.map(({ address, name }) => {
+              {accountAddresses.map((account) => {
+                const { address, name } = account;
                 const isActive = address === active?.address;
                 return (
                   <li
                     role={'button'}
-                    onClick={() => {
-                      setActiveAccount(address);
+                    onClick={async () => {
+                      await setActiveAccount(account.self);
                       setIsOpen(false);
                     }}
                     className={isActive ? 'selected' : ''}

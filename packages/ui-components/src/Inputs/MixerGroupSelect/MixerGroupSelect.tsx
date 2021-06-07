@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/indent */
-import { MixerGroupItem } from '@webb-dapp/mixer';
 import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabel';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 import React, { useEffect, useMemo } from 'react';
 import styled, { css } from 'styled-components';
+import { MixerSize } from '@webb-dapp/react-environment/webb-context';
 
 const MixerGroupSelectWrapper = styled.div`
   min-height: 38px;
@@ -15,9 +15,9 @@ const MixerGroupSelectWrapper = styled.div`
   overflow: auto;
 `;
 type MixerGroupSelectProps = {
-  items: MixerGroupItem[];
-  value?: MixerGroupItem;
-  onChange?(item: MixerGroupItem): void;
+  items: MixerSize[];
+  value?: MixerSize;
+  onChange?(item: MixerSize): void;
 };
 const AmountChipWrapper = styled.span<{ selected?: boolean }>`
   cursor: pointer;
@@ -59,11 +59,8 @@ export const MixerGroupSelect: React.FC<MixerGroupSelectProps> = ({ items, onCha
 
   const mixerSizes = useMemo(() => {
     return items.map((item, index) => {
-      const { amount, symbol } = item.token;
       return {
-        amount: `${(amount.toNumber() / 10 ** amount.getPrecision()) }`,
-        id: `amount-${item.id}`,
-        item,
+        ...item,
         selected: index === checkedIndex,
       };
     });
@@ -72,19 +69,19 @@ export const MixerGroupSelect: React.FC<MixerGroupSelectProps> = ({ items, onCha
   return (
     <InputLabel label={'Select Amount'}>
       <MixerGroupSelectWrapper>
-        {mixerSizes
-          .sort((a, b) => parseFloat(a.amount) - parseFloat(b.amount))
-          .map(({ amount, id, item, selected }) => {
+        {mixerSizes.map(({ selected, id, title }) => {
           return (
             <AmountChipWrapper
-              key={id}
+              key={id + title}
               selected={selected}
               onClick={() => {
-                console.log('clicked');
-                onChange?.(item);
+                onChange?.({
+                  title,
+                  id,
+                });
               }}
             >
-              {Math.round(parseFloat(amount)) + ` ${item.currency.symbol}`}
+              {title}
             </AmountChipWrapper>
           );
         })}

@@ -8,7 +8,7 @@ import { hexToU8a } from '@polkadot/util';
 /**
  * Class representing {GroupTree} with a native js types
  * */
-class GroupTreeWrapper {
+export class GroupTreeWrapper {
   constructor(private _inner?: MerkleTree) {}
 
   get inner() {

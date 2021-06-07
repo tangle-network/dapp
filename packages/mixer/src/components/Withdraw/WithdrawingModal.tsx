@@ -8,8 +8,7 @@ import {
   Tooltip,
   Typography,
 } from '@material-ui/core';
-
-import { WithdrawState, WithdrawTXInfo, useMixerGroupsEntries } from '@webb-dapp/mixer';
+import { WithdrawState } from '@webb-dapp/react-environment';
 import React, { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
@@ -17,7 +16,7 @@ type WithdrawingModalProps = {
   canCancel: boolean;
   stage: WithdrawState;
   cancel(): void;
-  withdrawTxInfo: WithdrawTXInfo | null;
+  withdrawTxInfo: any | null;
 };
 const CurrentRunningTaskWrapper = styled.span`
   display: flex;
@@ -26,6 +25,7 @@ const CurrentRunningTaskWrapper = styled.span`
 
 const TransactionSummaryWrapper = styled.div`
   padding: 1rem 0;
+
   td:nth-child(2) {
     padding: 0 2rem;
   }
@@ -49,7 +49,7 @@ const WithdrawingModal: React.FC<WithdrawingModalProps> = ({ canCancel, cancel, 
         break;
       case WithdrawState.Done:
         return 'Translation Done';
-      case WithdrawState.Faild:
+      case WithdrawState.Failed:
         return 'Translation Failed';
       case WithdrawState.Canceled:
         return 'Translation canceled';
@@ -68,10 +68,6 @@ const WithdrawingModal: React.FC<WithdrawingModalProps> = ({ canCancel, cancel, 
     const address = withdrawTxInfo.account;
     return `${address.slice(0, 20)}...${address.slice(address.length - 10, address.length)}`;
   }, [withdrawTxInfo]);
-
-  const mixerEntries = useMixerGroupsEntries();
-  const selectedMixerItem = mixerEntries.getItemsOf().find(matchedMixer => matchedMixer.id === withdrawTxInfo?.note.id);
-
   return (
     <Dialog open={stage > WithdrawState.Ideal} fullWidth maxWidth={'sm'}>
       <DialogTitle>Transaction is being processed</DialogTitle>
@@ -93,30 +89,24 @@ const WithdrawingModal: React.FC<WithdrawingModalProps> = ({ canCancel, cancel, 
 
         {withdrawTxInfo && (
           <TransactionSummaryWrapper>
-            <Typography variant={'subtitle1'} color={'textPrimary'}>Transaction summary</Typography>
+            <Typography variant={'subtitle1'} color={'textPrimary'}>
+              Transaction summary
+            </Typography>
             <table>
               <tr>
                 <td>Mixer info:</td>
-                <td>
+                {/*<td>
                   <Typography variant={'caption'}>
                     <b>
                       <i>Mixer id {withdrawTxInfo.note.id}</i>
                     </b>{' '}
-                    has a denomination of 
-                    {' '}{ selectedMixerItem && (selectedMixerItem?.token.amount.toNumber() / 10 ** selectedMixerItem?.token.precision) }
-                    {' '}{ selectedMixerItem && selectedMixerItem?.token.symbol }
-
+                    has a denomination of{' '}
+                    {selectedMixerItem &&
+                      selectedMixerItem?.token.amount.toNumber() / 10 ** selectedMixerItem?.token.precision}{' '}
+                    {selectedMixerItem && selectedMixerItem?.token.symbol}
                   </Typography>
-                </td>
+                </td>*/}
               </tr>
-              {/*              <tr>
-                <td>Recipient Account:</td>
-                <td>
-                  <span>
-                    <Typography variant={'caption'}>{withdrawTxInfo.account}</Typography>
-                  </span>
-                </td>
-              </tr>*/}
               <tr>
                 <td>Recipient Address:</td>
                 <td>

@@ -1,8 +1,6 @@
-import { Switch, IconButton, Icon, Tooltip } from '@material-ui/core';
+import { Icon, IconButton, Switch, Tooltip } from '@material-ui/core';
 import { ReactComponent as WebbLogo } from '@webb-dapp/react-components/assets/webb-icon.svg';
-import { useStore } from '@webb-dapp/react-environment';
 import { useDimensions } from '@webb-dapp/react-environment/layout';
-import { useApi } from '@webb-dapp/react-hooks';
 import { SettingsManager } from '@webb-dapp/ui-components/SettingsManager/SettingsManager';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 import { below } from '@webb-dapp/ui-components/utils/responsive-utils';
@@ -100,13 +98,11 @@ const NavigationWrapper = styled.ul``;
 type AppBarProps = {};
 
 const AppBar: React.FC<AppBarProps> = () => {
-  const { connected } = useApi();
   const { size, width } = useDimensions();
   const isMobile = useMemo(() => {
     return width <= size.sm;
   }, [width, size]);
-  const ui = useStore('ui');
-  const isDarkTheme = ui.theme === 'primary';
+  const isDarkTheme = false;
   return (
     <AppBarWrapper>
       <WebbLogo className={'webb-logo'} />
@@ -130,23 +126,18 @@ const AppBar: React.FC<AppBarProps> = () => {
         </NavigationWrapper>
       )}
       <AccountWrapper>
-        <Switch
-          checked={isDarkTheme}
-          onClick={() => {
-            ui.setTheme(isDarkTheme ? 'secondary' : 'primary');
-          }}
-        />
-        <Tooltip title="Need help?">
+        <Switch checked={isDarkTheme} onClick={() => {}} />
+        <Tooltip title='Need help?'>
           <IconButton
             onClick={() => {
-              window.open("https://medium.com/", "_blank")
+              window.open('https://medium.com/', '_blank');
             }}
           >
             <Icon>help</Icon>
           </IconButton>
         </Tooltip>
         {!isMobile && <SettingsManager />}
-        {connected && <AccountManager />}
+        <AccountManager />
       </AccountWrapper>
     </AppBarWrapper>
   );
