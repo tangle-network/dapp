@@ -3,14 +3,14 @@ import Web3 from 'web3';
 import { ethers } from 'ethers';
 
 export class Web3Provider {
-  private constructor(private _inner: Web3) {}
+  constructor(private _inner: Web3) {}
 
-  static get currentProvider(){
+  static get currentProvider() {
     //@ts-ignore
     if (typeof window !== 'undefined' && typeof window.web3 !== 'undefined') {
       //@ts-ignore
       const provider = window.ethereum || window.web3.currentProvider;
-      if(provider){
+      if (provider) {
         return provider;
       }
     }
@@ -48,16 +48,15 @@ export class Web3Provider {
     return this._inner.defaultAccount;
   }
 
-  get provider(){
-    return this._inner.eth.currentProvider
+  get provider() {
+    return this._inner.eth.currentProvider;
   }
 
-  enable(){
-
+  enable() {
     // @ts-ignore
-
   }
-  intoEthersProvider(){
-    return new ethers.providers.Web3Provider(this.provider as any)
+
+  intoEthersProvider() {
+    return new ethers.providers.Web3Provider(this.provider as any);
   }
 }

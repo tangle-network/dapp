@@ -21,7 +21,7 @@ export const transactionNotificationConfig: NotificationConfig = {
         persist: true,
       },
       key: data.key,
-      message: <FormatAddress address={data.address} />,
+      message: data.address ? <FormatAddress address={data.address} /> : '',
       secondaryMessage: `${data.path.section}: ${data.path.method}`,
       variant: 'info',
       // eslint-disable-next-line sort-keys
