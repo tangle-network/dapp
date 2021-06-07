@@ -1,13 +1,15 @@
-import { MixerWithdraw, WithdrawState } from '@webb-dapp/react-environment/webb-context';
-import { WebbPolkadot } from '@webb-dapp/react-environment/api-providers/webb-polkadot-provider';
 // @ts-ignore
 import Worker from '@webb-dapp/mixer/utils/merkle.worker';
 import MerkleTree from '@webb-tools/sdk-merkle/tree';
 import { Note } from '@webb-tools/sdk-mixer';
 import { MerkleTree as NodeMerkleTree } from '@webb-tools/types/interfaces';
 import { ScalarData } from '@webb-tools/types/interfaces/mixer';
-import { hexToU8a, u8aToHex } from '@polkadot/util';
+
 import { decodeAddress } from '@polkadot/keyring';
+import { hexToU8a, u8aToHex } from '@polkadot/util';
+
+import { MixerWithdraw, WithdrawState } from '../../webb-context';
+import { WebbPolkadot } from './webb-polkadot-provider';
 
 const tryParse = (maybeJson: string | null): Record<string, unknown> | string | null => {
   try {

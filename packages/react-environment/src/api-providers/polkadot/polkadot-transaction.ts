@@ -1,8 +1,9 @@
-import { ApiPromise, SubmittableResult } from '@polkadot/api';
 import { EventBus, LoggerService } from '@webb-tools/app-util';
-import { web3FromAddress } from '@polkadot/extension-dapp';
 import { uniqueId } from 'lodash';
+
+import { ApiPromise, SubmittableResult } from '@polkadot/api';
 import { SubmittableExtrinsic } from '@polkadot/api/submittable/types';
+import { web3FromAddress } from '@polkadot/extension-dapp';
 
 type MethodPath = {
   section: string;
@@ -76,10 +77,11 @@ export class PolkadotTx<P extends Array<any>> extends EventBus<PolkadotTXEvents>
   }
 
   private errorHandler(r: SubmittableResult) {
+    //@ts-ignore
     let message = r.dispatchError?.type || r.type || r.message;
     if (r.dispatchError?.isModule) {
       try {
-        const mod = dispatchError.asModule;
+        const mod = r.dispatchError.asModule;
         const error = this.apiPromise.registry.findMetaError(
           new Uint8Array([mod.index.toNumber(), mod.error.toNumber()])
         );
@@ -106,7 +108,7 @@ export class PolkadotTx<P extends Array<any>> extends EventBus<PolkadotTXEvents>
             }
             if (status.isFinalized) {
               resolve(status.dispatchInfo?.toString());
-              return this.emitWithPayload('finalize');
+              return this.emitWithPayload('finalize', undefined);
             }
           } else if (status.isError) {
             const errorMessage = this.errorHandler(status);
@@ -127,7 +129,7 @@ export class PolkadotTx<P extends Array<any>> extends EventBus<PolkadotTXEvents>
 export class PolkaTXBuilder {
   constructor(private apiPromise: ApiPromise, private notificationConfig: NotificationConfig) {}
 
-  buildWithoutNotification<P extends Array<any>>({ section, method }: MethodPath, params: P): PolkadotTx<P> {
+  buildWithoutNotification<P extends Array<any>>({ method, section }: MethodPath, params: P): PolkadotTx<P> {
     return new PolkadotTx<P>(this.apiPromise.clone(), { method, section }, params);
   }
 

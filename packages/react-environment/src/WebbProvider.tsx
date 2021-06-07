@@ -6,10 +6,10 @@ import { ApiProvider } from './ApiProvider';
 import { ExtensionProvider } from './ExtensionProvider';
 import { SettingProvider } from './SettingProvider';
 import { StoreProvier } from './store';
-import { Chain, Wallet, WebbApiProvider, WebbContext } from '@webb-dapp/react-environment/webb-context';
 import { chainsConfig } from '@webb-dapp/apps/configs/wallets/chain-config';
 import { walletsConfig } from '@webb-dapp/apps/configs/wallets/wallets-config';
-import { WebbPolkadot } from '@webb-dapp/react-environment/api-providers/webb-polkadot-provider';
+import { WebbApiProvider } from './webb-context';
+import { WebbPolkadot } from './api-providers/polkadot';
 
 interface WebbProviderProps extends BareProps {
   applicationName: string;

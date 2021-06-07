@@ -8,7 +8,6 @@ import { ApiRx } from '@polkadot/api';
 import { StorageKey } from '@polkadot/types';
 
 import { mixerLogger } from '../utils';
-import { string } from 'prop-types';
 import { Token } from '@webb-tools/sdk-core';
 
 export type NativeTokenProperties = {

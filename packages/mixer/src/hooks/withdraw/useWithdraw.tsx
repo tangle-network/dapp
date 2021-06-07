@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useWebContext, WebbContentState, WithdrawState } from '@webb-dapp/react-environment/webb-context';
+import { useWebContext, WebbContextState, WithdrawState } from '@webb-dapp/react-environment/webb-context';
 
 export type UseWithdrawV2Props = {
   note: string;

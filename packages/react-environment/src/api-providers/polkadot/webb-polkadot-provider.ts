@@ -1,5 +1,4 @@
-import { PolkadotMixerDeposit } from '@webb-dapp/react-environment/api-providers/polkadot-mixer-deposit';
-import { PolkadotMixerWithdraw } from '@webb-dapp/react-environment/api-providers/polkadot-mixer-withdraw';
+import { PolkadotMixerDeposit, PolkadotMixerWithdraw } from '@webb-dapp/react-environment/api-providers/polkadot';
 import { WebbApiProvider, WebbMethods } from '@webb-dapp/react-environment/webb-context';
 import { PolkadotProvider } from '@webb-dapp/wallet/providers/polkadot/polkadot-provider';
 

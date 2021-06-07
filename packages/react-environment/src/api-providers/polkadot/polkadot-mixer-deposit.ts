@@ -1,11 +1,12 @@
-import { DepositPayload as IDepositPayload, MixerDeposit } from '@webb-dapp/react-environment/webb-context';
-import { WebbPolkadot } from '@webb-dapp/react-environment/api-providers/webb-polkadot-provider';
-import { Asset, Mixer, Note } from '@webb-tools/sdk-mixer';
 import { MixerGroupEntry, NativeTokenProperties } from '@webb-dapp/mixer';
 import { Currency } from '@webb-dapp/mixer/utils/currency';
-import { Token } from '@webb-tools/sdk-core';
 // @ts-ignore
 import Worker from '@webb-dapp/mixer/utils/mixer.worker';
+import { DepositPayload as IDepositPayload, MixerDeposit } from '@webb-dapp/react-environment/webb-context';
+import { Token } from '@webb-tools/sdk-core';
+import { Asset, Mixer, Note } from '@webb-tools/sdk-mixer';
+
+import { WebbPolkadot } from './webb-polkadot-provider';
 
 type DepositPayload = IDepositPayload<Note, [number, Uint8Array[]]>;
 
@@ -104,7 +105,7 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
     tx.on('finalize', () => {
       console.log('deposit done');
     });
-    tx.on('finalize', (e) => {
+    tx.on('finalize', (e: any) => {
       console.log('deposit failed', e);
     });
     tx.on('extrinsicSuccess', () => {
