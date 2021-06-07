@@ -9,7 +9,7 @@ import Identicon from '@polkadot/react-identicon';
 import classes from './UserCard.module.scss';
 
 export const UserCard: FC = () => {
-  const { active, openSelectAccount } = useAccounts();
+  const { active } = useAccounts();
 
   return (
     <Card className={classes.root}>
@@ -20,7 +20,7 @@ export const UserCard: FC = () => {
             <div className={classes.name}>{active.name || 'User'}</div>
             <FormatAddress address={active.address} className={classes.address} />
           </div>
-          <div className={classes.edit} onClick={openSelectAccount}>
+          <div className={classes.edit} onClick={() => {}}>
             <EditIcon />
             <p className={classes.action}>Change</p>
           </div>
