@@ -1,6 +1,6 @@
 import { EvmNote } from '@webb-dapp/contracts/utils/evm-note';
 import { Deposit } from '@webb-dapp/contracts/utils/make-deposit';
-import { DepositPayload as IDepositPayload, MixerDeposit, MixerSize } from '@webb-dapp/react-environment';
+import { DepositPayload as IDepositPayload, MixerDeposit, MixerSize } from '@webb-dapp/react-environment/webb-context';
 
 import { WebbWeb3Provider } from './webb-web3-provider';
 import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polkadot/transaction-notification-config';

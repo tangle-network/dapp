@@ -1,4 +1,4 @@
-import { MixerWithdraw, WithdrawState } from '@webb-dapp/react-environment';
+import { MixerWithdraw, WithdrawState } from '@webb-dapp/react-environment/webb-context';
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3/webb-web3-provider';
 import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polkadot/transaction-notification-config';
 

@@ -14,8 +14,6 @@ import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import React, { useMemo, useRef, useState } from 'react';
 import styled, { css } from 'styled-components';
 
-import IDIcon from '@polkadot/react-identicon';
-
 const StyledList = styled.ul`
   background: ${({ theme }) => theme.background};
 
@@ -96,6 +94,7 @@ type AccountManagerProps = {};
 export const AccountManager: React.FC<AccountManagerProps> = () => {
   const { accounts, active, setActiveAccount } = useAccounts();
   const address = useMemo(() => active?.name || active?.address || '', [active]);
+  const accountvatar = useMemo(() => active?.avatar || <span />, [active]);
   const { allCurrencies } = useConstants();
   const ActiveCurrency = useMemo(() => {
     const ac = allCurrencies[0];
@@ -111,10 +110,10 @@ export const AccountManager: React.FC<AccountManagerProps> = () => {
         address: acc.address || '',
         name: acc.name,
         self: acc,
+        avatar: acc.avatar,
       })) ?? []
     );
   }, [accounts]);
-
   const $wrapper = useRef<HTMLDivElement>();
   const [isOpen, setIsOpen] = useState(false);
   return (
@@ -132,9 +131,7 @@ export const AccountManager: React.FC<AccountManagerProps> = () => {
             }}
           >
             <div className='account-header'>
-              <Avatar className={'account-avatar'}>
-                <IDIcon size={16} theme='polkadot' value={active?.address || ''} />
-              </Avatar>
+              <Avatar className={'account-avatar'}>{accountvatar}</Avatar>
 
               <Flex as={'p'} flex={1}>
                 <Typography color={'textPrimary'}>{address}</Typography>
@@ -174,9 +171,7 @@ export const AccountManager: React.FC<AccountManagerProps> = () => {
                     className={isActive ? 'selected' : ''}
                     key={address + 'accountlist'}
                   >
-                    <Avatar className={'account-avatar'}>
-                      <IDIcon size={16} theme='polkadot' value={address} />
-                    </Avatar>
+                    <Avatar className={'account-avatar'}>{account.avatar}</Avatar>
 
                     <ListItemText>
                       <Flex as={'p'} flex={1}>

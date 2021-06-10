@@ -9,6 +9,8 @@ import React, { FC, useCallback, useEffect, useState } from 'react';
 import { WebbPolkadot } from './api-providers/polkadot';
 import { SettingProvider } from './SettingProvider';
 import { Chain, Wallet, WebbApiProvider, WebbContext } from './webb-context';
+import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3';
+import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
 
 interface WebbProviderProps extends BareProps {
   applicationName: string;
@@ -52,14 +54,27 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
     [activeApi]
   );
   useEffect(() => {
-    WebbPolkadot.init('Webb DApp', ['ws://127.0.0.1:9944']).then(async (provider) => {
-      setActiveApi(provider);
-      setLoading(false);
-      const accounts = await provider.accounts.accounts();
-      setAccounts(accounts);
-      _setActiveAccount(accounts[0]);
-      await provider.accounts.setActiveAccount(accounts[0]);
-    });
+    const activeEVM = true;
+    if (activeEVM) {
+      Web3Provider.fromExtension().then((web3Provider) => {
+        WebbWeb3Provider.init(web3Provider).then(async (webbWeb3Provider) => {
+          const accounts = await webbWeb3Provider.accounts.accounts();
+          setAccounts(accounts);
+          _setActiveAccount(accounts[0]);
+          await webbWeb3Provider.accounts.setActiveAccount(accounts[0]);
+          setActiveApi(webbWeb3Provider);
+        });
+      });
+    } else {
+      WebbPolkadot.init('Webb DApp', ['ws://127.0.0.1:9944']).then(async (provider) => {
+        setActiveApi(provider);
+        setLoading(false);
+        const accounts = await provider.accounts.accounts();
+        setAccounts(accounts);
+        _setActiveAccount(accounts[0]);
+        await provider.accounts.setActiveAccount(accounts[0]);
+      });
+    }
   }, []);
   return (
     <WebbContext.Provider

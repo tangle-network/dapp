@@ -17,12 +17,12 @@ export class Web3Provider {
     throw Error('Not provider in window');
   }
 
-  static fromExtension() {
+  static async fromExtension() {
     //@ts-ignore
     if (typeof window !== 'undefined' && typeof window.web3 !== 'undefined') {
       //@ts-ignore
       const provider = Web3Provider.currentProvider;
-      provider.enable();
+      await provider.enable();
       return new Web3Provider(new Web3(provider));
     }
     throw Error('Not provider in window');
