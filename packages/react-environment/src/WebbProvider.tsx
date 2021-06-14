@@ -63,8 +63,6 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
         const chainType = WebbWeb3Provider.chainType(net); //  use this to pick the storage
         const rainkybeS = await Storage.newFresh(WebbEVMChain.Rinkybe, rankebyStorage);
         const mainS = await Storage.newFresh(WebbEVMChain.Main, mainStorage);
-        // @ts-ignore
-        window.st = Storage;
         let storage: Storage<EVMStorage>;
         switch (chainType) {
           case WebbEVMChain.Main:
@@ -83,7 +81,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
         });
       });
     } else {
-      WebbPolkadot.init('Webb DApp', ['wss://beresheet1.edgewa.re']).then(async (provider) => {
+      WebbPolkadot.init('Webb DApp', ['wss://beresheet2.edgewa.re']).then(async (provider) => {
         setActiveApi(provider);
         setLoading(false);
         const accounts = await provider.accounts.accounts();
