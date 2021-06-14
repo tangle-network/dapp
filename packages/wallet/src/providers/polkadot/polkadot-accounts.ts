@@ -2,10 +2,16 @@ import { Account, AccountsAdapter, PromiseOrT } from '@webb-dapp/wallet/account/
 import React from 'react';
 
 import { InjectedAccount, InjectedExtension } from '@polkadot/extension-inject/types';
+import IDIcon from '@polkadot/react-identicon';
 
 export class PolkadotAccount extends Account<InjectedAccount> {
-  get avatar(): React.ReactNode {
-    return React.createElement('div');
+  get avatar() {
+    return React.createElement('div', null, [
+      React.createElement(IDIcon, {
+        size: 16,
+        value: this.address,
+      }),
+    ]);
   }
 
   get name(): string {

@@ -1,7 +1,10 @@
-import React from 'react';
+import { createElement } from 'react';
+
 export abstract class Account<T extends unknown = unknown> {
   constructor(protected readonly _inner: T, public readonly address: string) {}
-  abstract get avatar(): React.ReactNode;
+
+  abstract get avatar(): ReturnType<typeof createElement>;
+
   abstract get name(): string;
 
   protected get inner() {
@@ -18,6 +21,7 @@ export type PromiseOrT<T> = Promise<T> | T;
 
 export abstract class AccountsAdapter<T extends unknown = unknown, K = unknown> {
   abstract providerName: string;
+
   constructor(protected readonly _inner: T) {}
 
   abstract get activeOrDefault(): Promise<Account<K> | null> | Account<K> | null;

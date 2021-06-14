@@ -25,7 +25,7 @@ export abstract class MixerDeposit<
     super();
   }
 
-  abstract generateNote(mixerId: number): Promise<K>;
+  abstract generateNote(mixerId: number | string): Promise<K>;
 
   abstract deposit(depositPayload: K): Promise<void>;
 

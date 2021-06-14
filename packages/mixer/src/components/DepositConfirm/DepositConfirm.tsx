@@ -117,7 +117,7 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({ mixerId, onClose, o
     });
   }, []);
   useEffect(() => {
-    provider.generateNote(Number(mixerId)).then((note) => {
+    provider.generateNote(mixerId).then((note) => {
       setNote(note);
     });
   }, [provider, mixerId]);

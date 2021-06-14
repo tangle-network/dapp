@@ -30,7 +30,6 @@ export const Deposit: React.FC<DepositProps> = () => {
         mixerGroupEntriesWrapper={mixerGroupsEntries}
       />*/}
       <SpaceBox height={16} />
-
       <MixerGroupSelect items={depositApi.mixerSizes} value={item} onChange={setItem} />
       <SpaceBox height={16} />
       <MixerButton

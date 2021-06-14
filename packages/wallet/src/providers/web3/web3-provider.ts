@@ -3,26 +3,26 @@ import Web3 from 'web3';
 import { ethers } from 'ethers';
 
 export class Web3Provider {
-  private constructor(private _inner: Web3) {}
+  constructor(private _inner: Web3) {}
 
-  static get currentProvider(){
+  static get currentProvider() {
     //@ts-ignore
     if (typeof window !== 'undefined' && typeof window.web3 !== 'undefined') {
       //@ts-ignore
       const provider = window.ethereum || window.web3.currentProvider;
-      if(provider){
+      if (provider) {
         return provider;
       }
     }
     throw Error('Not provider in window');
   }
 
-  static fromExtension() {
+  static async fromExtension() {
     //@ts-ignore
     if (typeof window !== 'undefined' && typeof window.web3 !== 'undefined') {
       //@ts-ignore
       const provider = Web3Provider.currentProvider;
-      provider.enable();
+      await provider.enable();
       return new Web3Provider(new Web3(provider));
     }
     throw Error('Not provider in window');
@@ -40,6 +40,10 @@ export class Web3Provider {
     return new Web3Provider(web3);
   }
 
+  get netowrk() {
+    return this._inner.eth.net.getNetworkType();
+  }
+
   get eth() {
     return this._inner.eth;
   }
@@ -48,16 +52,15 @@ export class Web3Provider {
     return this._inner.defaultAccount;
   }
 
-  get provider(){
-    return this._inner.eth.currentProvider
+  get provider() {
+    return this._inner.eth.currentProvider;
   }
 
-  enable(){
-
+  enable() {
     // @ts-ignore
-
   }
-  intoEthersProvider(){
-    return new ethers.providers.Web3Provider(this.provider as any)
+
+  intoEthersProvider() {
+    return new ethers.providers.Web3Provider(this.provider as any);
   }
 }

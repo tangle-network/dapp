@@ -54,7 +54,8 @@ export class AnchorContract {
     this._contract.once(filters, (commitment, insertedIndex, timestamp) => {
       onComplete?.([commitment, insertedIndex, timestamp]);
     });
-    return this._contract.deposit(commitment, overrides);
+    const recipient = await this._contract.deposit(commitment, overrides);
+    await recipient.wait();
   }
 
   private async getDepositEvents(commitment: string | null = null) {
@@ -133,16 +134,6 @@ export class AnchorContract {
       proving_key
     );
     const { proof } = await webSnarkUtils.toSolidityInput(proofsData);
-    console.log({
-      proof,
-      root: bufferToFixed(input.root),
-      nullifierHash: bufferToFixed(input.nullifierHash),
-      recipient: input.recipient,
-      relayer: bufferToFixed(input.relayer, 20),
-      fee: bufferToFixed(input.fee),
-      refund: bufferToFixed(input.refund),
-      overrides,
-    });
     const tx = await this._contract.withdraw(
       proof,
       bufferToFixed(input.root),
