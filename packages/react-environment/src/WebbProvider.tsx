@@ -11,6 +11,8 @@ import { SettingProvider } from './SettingProvider';
 import { Chain, Wallet, WebbApiProvider, WebbContext } from './webb-context';
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3';
 import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
+import { rankebyStorage } from '@webb-dapp/apps/configs/storages/rinkeby-storage';
+import { Storage } from '@webb-dapp/utils';
 
 interface WebbProviderProps extends BareProps {
   applicationName: string;
@@ -56,8 +58,11 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
   useEffect(() => {
     const activeEVM = true;
     if (activeEVM) {
-      Web3Provider.fromExtension().then((web3Provider) => {
-        WebbWeb3Provider.init(web3Provider).then(async (webbWeb3Provider) => {
+      Web3Provider.fromExtension().then(async (web3Provider) => {
+        const net = await web3Provider.netowrk;
+        const chainType = WebbWeb3Provider.chainType(net); //  use this to pick the storage
+        const storage = await Storage.newFresh('rainkybe', rankebyStorage);
+        WebbWeb3Provider.init(web3Provider, storage).then(async (webbWeb3Provider) => {
           const accounts = await webbWeb3Provider.accounts.accounts();
           setAccounts(accounts);
           _setActiveAccount(accounts[0]);

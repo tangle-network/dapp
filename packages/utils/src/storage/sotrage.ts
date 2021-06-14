@@ -8,7 +8,7 @@ export interface StorageHandler<T> {
   commit(key: string, data: T): Promise<void>;
 }
 
-export class Storage<Store extends Record<string, unknown>> extends EventBus<{
+export class Storage<Store> extends EventBus<{
   update: Store;
 }> {
   static instances = new Map<string, Storage<any>>();
@@ -17,20 +17,14 @@ export class Storage<Store extends Record<string, unknown>> extends EventBus<{
     return Storage.instances.get(key) as Storage<Store>;
   }
 
-  static async newFresh<Store extends Record<string, unknown>>(
-    name: string,
-    handler: StorageHandler<Store>
-  ): Promise<Storage<Store>> {
+  static async newFresh<Store>(name: string, handler: StorageHandler<Store>): Promise<Storage<Store>> {
     const instance = new Storage<Store>(name, handler);
     Storage.instances.set(name, instance);
     await instance.commit(name, handler.inner);
     return instance;
   }
 
-  static async newFromCache<Store extends Record<string, unknown>>(
-    name: string,
-    data: Omit<StorageHandler<Store>, 'inner'>
-  ): Promise<Storage<Store>> {
+  static async newFromCache<Store>(name: string, data: Omit<StorageHandler<Store>, 'inner'>): Promise<Storage<Store>> {
     const storage = await data.fetch(name);
     const instance = new Storage<Store>(name, {
       ...data,
@@ -55,6 +49,10 @@ export class Storage<Store extends Record<string, unknown>> extends EventBus<{
   async get<Key extends keyof Store>(key: Key): Promise<Store[Key]> {
     const data = this.data[key];
     return data;
+  }
+
+  async dump() {
+    return this.data;
   }
 
   async set<Key extends keyof Store>(key: Key, data: Store[Key]) {

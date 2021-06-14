@@ -10,10 +10,10 @@ export const chainsConfig: AppConfig['chains'] = {
     currencies: [
       {
         currencyId: 1,
-        enabled: true
-      }
+        enabled: true,
+      },
     ],
-    nativeCurrencyId: 1
+    nativeCurrencyId: 1,
   },
   2: {
     id: 2,
@@ -23,10 +23,10 @@ export const chainsConfig: AppConfig['chains'] = {
     currencies: [
       {
         currencyId: 1,
-        enabled: true
-      }
+        enabled: true,
+      },
     ],
-    nativeCurrencyId: 1
+    nativeCurrencyId: 1,
   },
   3: {
     id: 2,
@@ -36,10 +36,10 @@ export const chainsConfig: AppConfig['chains'] = {
     currencies: [
       {
         currencyId: 1,
-        enabled: true
-      }
+        enabled: true,
+      },
     ],
-    nativeCurrencyId: 1
+    nativeCurrencyId: 1,
   },
   // evm
 };
