@@ -145,9 +145,11 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
       tx.on('extrinsicSuccess', () => {
         console.log('withdraw done');
       });
-      const account = await this.inner.accounts.accounts();
-
-      await tx.call(account[0].address);
+      const account = await this.inner.accounts.activeOrDefault;
+      if (!account) {
+        throw new Error('no account available');
+      }
+      await tx.call(account.address);
       this.emit('stateChange', WithdrawState.Done);
     } catch (e) {
       this.emit('error', 'Failed to generate zero knowlage proof');
