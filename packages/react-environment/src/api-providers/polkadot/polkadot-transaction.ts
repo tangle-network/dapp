@@ -44,6 +44,7 @@ export class PolkadotTx<P extends Array<any>> extends EventBus<PolkadotTXEvents>
   async call(signAddress: string) {
     this.transactionAddress = signAddress;
     const api = this.apiPromise;
+    await api.isReady;
     if (!api.tx[this.path.section] || !api.tx[this.path.section][this.path.method]) {
       txLogger.error(`can not find api.tx.${this.path.section}.${this.path.method}`);
       return;

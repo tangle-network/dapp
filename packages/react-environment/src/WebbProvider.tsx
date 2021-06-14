@@ -56,7 +56,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
     [activeApi]
   );
   useEffect(() => {
-    const activeEVM = true;
+    const activeEVM = false;
     if (activeEVM) {
       Web3Provider.fromExtension().then(async (web3Provider) => {
         const net = await web3Provider.netowrk;
@@ -83,7 +83,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
         });
       });
     } else {
-      WebbPolkadot.init('Webb DApp', ['ws://127.0.0.1:9944']).then(async (provider) => {
+      WebbPolkadot.init('Webb DApp', ['wss://beresheet1.edgewa.re']).then(async (provider) => {
         setActiveApi(provider);
         setLoading(false);
         const accounts = await provider.accounts.accounts();
