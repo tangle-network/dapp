@@ -42,6 +42,7 @@ export class Web3MixerDeposit extends MixerDeposit<WebbWeb3Provider, DepositPayl
     }
 
     const depositPayload = await contract.createDeposit();
+    console.log(depositPayload);
     return {
       note: depositPayload.note,
       params: [depositPayload.deposit, mixerSize.size],

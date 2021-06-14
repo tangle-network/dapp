@@ -56,7 +56,8 @@ export class WebbWeb3Provider implements WebbApiProvider<WebbWeb3Provider> {
 
   async getContract(mixerSize: number, name: string): Promise<AnchorContract> {
     const mixerSizes = await this.storage.get(name);
-    const mixer = mixerSizes.contractsAddresses.find((config) => config.size === mixerSize);
+    console.log(mixerSize, mixerSizes);
+    const mixer = mixerSizes.contractsAddresses.find((config) => config.size === Number(mixerSize));
     if (!mixer) {
       throw new Error(`mixer size  not found on this contract`);
     }
