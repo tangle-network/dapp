@@ -13,22 +13,24 @@ export enum WebbEVMChain {
   Rinkybe = 'rinkeby',
 }
 
+export type EVMStorage = Record<string, EvmChainStorage>;
+
 export class WebbWeb3Provider implements WebbApiProvider<WebbWeb3Provider> {
   readonly accounts: Web3Accounts;
   readonly methods: WebbMethods<WebbWeb3Provider>;
   private readonly ethersProvider: providers.Web3Provider;
 
-  private constructor(private web3Provider: Web3Provider, private storage: Storage<EvmChainStorage>) {
+  private constructor(private web3Provider: Web3Provider, private storage: Storage<EVMStorage>) {
     this.accounts = new Web3Accounts(web3Provider.eth);
     this.ethersProvider = web3Provider.intoEthersProvider();
     this.methods = {
       mixer: {
         deposit: {
-          enabled: false,
+          enabled: true,
           inner: new Web3MixerDeposit(this),
         },
         withdraw: {
-          enabled: false,
+          enabled: true,
           inner: new Web3MixerWithdraw(this),
         },
       },
@@ -44,15 +46,25 @@ export class WebbWeb3Provider implements WebbApiProvider<WebbWeb3Provider> {
     }
   }
 
-  get chainStorage(): Promise<EvmChainStorage> {
+  get chainStorage(): Promise<EVMStorage> {
     return this.storage.dump();
   }
 
-  getContract(contractAddress: string): AnchorContract {
-    return new AnchorContract(this.ethersProvider, contractAddress);
+  async getContractWithAddress(mixerId: string): Promise<AnchorContract> {
+    return new AnchorContract(this.ethersProvider, mixerId);
   }
 
-  static async init(web3Provider: Web3Provider, storage: Storage<EvmChainStorage>) {
+  async getContract(mixerSize: number, name: string): Promise<AnchorContract> {
+    const mixerSizes = await this.storage.get(name);
+    const mixer = mixerSizes.contractsAddresses.find((config) => config.size === mixerSize);
+    if (!mixer) {
+      throw new Error(`mixer size  not found on this contract`);
+    }
+
+    return new AnchorContract(this.ethersProvider, mixer.address);
+  }
+
+  static async init(web3Provider: Web3Provider, storage: Storage<EVMStorage>) {
     return new WebbWeb3Provider(web3Provider, storage);
   }
 }

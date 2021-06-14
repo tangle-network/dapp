@@ -1,10 +1,11 @@
 import { EvmChainStorage } from '@webb-dapp/apps/configs/storages/evm-chain-storage.inerface';
 import { StorageHandler } from '@webb-dapp/utils';
+import { EVMStorage } from '@webb-dapp/react-environment/api-providers/web3';
 
 const rainkebyStore = new EvmChainStorage([
   {
     size: 0.1,
-    address: 'adsfadsfdsf',
+    address: '0x876eCe69618e8E8dd743250B036785813824D2D7',
   },
 ]);
 
@@ -15,26 +16,34 @@ const ethMainNet = new EvmChainStorage([
   },
 ]);
 
-const defaultHandler = {
-  async fetch(key: string): Promise<EvmChainStorage> {
+const defaultHandler: Omit<StorageHandler<EVMStorage>, 'inner'> = {
+  async fetch(key: string) {
     const data = localStorage.getItem(key);
     if (!data) {
-      return new EvmChainStorage([]);
+      return {
+        nativeAnchor: new EvmChainStorage([]),
+      };
     }
     const address = JSON.parse(data).contractsAddresses;
-    return new EvmChainStorage(address);
+    return {
+      nativeAnchor: new EvmChainStorage(address),
+    };
   },
-  async commit(key: string, data: EvmChainStorage): Promise<void> {
+  async commit(key: string, data) {
     localStorage.setItem(key, JSON.stringify(data.contractsAddresses));
   },
 };
 
-export const rankebyStorage: StorageHandler<EvmChainStorage> = {
+export const rankebyStorage: StorageHandler<EVMStorage> = {
   ...defaultHandler,
-  inner: rainkebyStore,
+  inner: {
+    nativeAnchor: rainkebyStore,
+  },
 };
 
-export const ethMainNetHandler: StorageHandler<EvmChainStorage> = {
+export const ethMainNetHandler: StorageHandler<EVMStorage> = {
   ...defaultHandler,
-  inner: ethMainNet,
+  inner: {
+    nativeAnchor: ethMainNet,
+  },
 };

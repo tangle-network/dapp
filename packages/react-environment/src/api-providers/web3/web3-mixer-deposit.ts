@@ -5,14 +5,10 @@ import { DepositPayload as IDepositPayload, MixerDeposit, MixerSize } from '@web
 import { WebbWeb3Provider } from './webb-web3-provider';
 import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polkadot/transaction-notification-config';
 
-type DepositPayload = IDepositPayload<EvmNote, Deposit>;
+type DepositPayload = IDepositPayload<EvmNote, [Deposit, number]>;
 
 export class Web3MixerDeposit extends MixerDeposit<WebbWeb3Provider, DepositPayload> {
-  private get contract() {
-    return this.inner.currentContract();
-  }
-
-  async deposit(depositPayload: DepositPayload): Promise<void> {
+  async deposit(depositPayload: DepositPayload, contractName: string = 'nativeAnchor'): Promise<void> {
     transactionNotificationConfig.loading?.({
       address: '',
       data: undefined,
@@ -22,8 +18,9 @@ export class Web3MixerDeposit extends MixerDeposit<WebbWeb3Provider, DepositPayl
         section: 'evm-mixer',
       },
     });
-    const deposit = depositPayload.params;
-    await this.contract.deposit(deposit.commitment);
+    const [deposit, amount] = depositPayload.params;
+    const contract = await this.inner.getContract(amount, contractName);
+    await contract.deposit(deposit.commitment);
     transactionNotificationConfig.finalize?.({
       address: '',
       data: undefined,
@@ -35,15 +32,24 @@ export class Web3MixerDeposit extends MixerDeposit<WebbWeb3Provider, DepositPayl
     });
   }
 
-  async generateNote(mixerId: number): Promise<DepositPayload> {
-    const depositPayload = await this.contract.createDeposit();
+  // this id is the contract id
+  async generateNote(mixerId: string, contractName: string = 'nativeAnchor'): Promise<DepositPayload> {
+    const contract = await this.inner.getContractWithAddress(mixerId);
+    const storages = await this.inner.chainStorage;
+    const mixerSize = storages[contractName].contractsAddresses.find((config) => config.address === mixerId);
+    if (!mixerSize) {
+      throw new Error(`mixer size  not found on this contract`);
+    }
+
+    const depositPayload = await contract.createDeposit();
     return {
       note: depositPayload.note,
-      params: depositPayload.deposit,
+      params: [depositPayload.deposit, mixerSize.size],
     };
   }
 
-  getSizes(): Promise<MixerSize[]> {
-    return Promise.resolve([]);
+  async getSizes(contract: string = 'nativeAnchor'): Promise<MixerSize[]> {
+    const storage = await this.inner.chainStorage;
+    return storage[contract].mixerSize;
   }
 }
