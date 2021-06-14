@@ -7,6 +7,7 @@ import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
 import { providers } from 'ethers';
 import { EvmChainStorage } from '@webb-dapp/apps/configs/storages/evm-chain-storage.inerface';
 import { Storage } from '@webb-dapp/utils';
+import { notificationApi } from '@webb-dapp/ui-components/notification';
 
 export enum WebbEVMChain {
   Production,
@@ -18,11 +19,22 @@ export type EVMStorage = Record<string, EvmChainStorage>;
 export class WebbWeb3Provider implements WebbApiProvider<WebbWeb3Provider> {
   readonly accounts: Web3Accounts;
   readonly methods: WebbMethods<WebbWeb3Provider>;
-  private readonly ethersProvider: providers.Web3Provider;
+  private ethersProvider: providers.Web3Provider;
 
   private constructor(private web3Provider: Web3Provider, private storage: Storage<EVMStorage>) {
     this.accounts = new Web3Accounts(web3Provider.eth);
     this.ethersProvider = web3Provider.intoEthersProvider();
+    // @ts-ignore
+    // todo fix me @(AhmedKorim)
+    this.ethersProvider.provider?.on?.('chainChanged', async () => {
+      const chaninName = await this.web3Provider.netowrk;
+      notificationApi({
+        message: 'Web3: changed the connect network',
+        variant: 'info',
+        secondaryMessage: `Connection is switched to ${chaninName} chain`,
+      });
+      this.ethersProvider = web3Provider.intoEthersProvider();
+    });
     this.methods = {
       mixer: {
         deposit: {
@@ -56,7 +68,6 @@ export class WebbWeb3Provider implements WebbApiProvider<WebbWeb3Provider> {
 
   async getContract(mixerSize: number, name: string): Promise<AnchorContract> {
     const mixerSizes = await this.storage.get(name);
-    console.log(mixerSize, mixerSizes);
     const mixer = mixerSizes.contractsAddresses.find((config) => config.size === Number(mixerSize));
     if (!mixer) {
       throw new Error(`mixer size  not found on this contract`);
