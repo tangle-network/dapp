@@ -8,9 +8,11 @@ import { providers } from 'ethers';
 import { EvmChainStorage } from '@webb-dapp/apps/configs/storages/evm-chain-storage.inerface';
 import { Storage } from '@webb-dapp/utils';
 import { notificationApi } from '@webb-dapp/ui-components/notification';
+import React from 'react';
+import Icon from '@material-ui/core/Icon';
 
 export enum WebbEVMChain {
-  Production,
+  Main = 'main',
   Rinkybe = 'rinkeby',
 }
 
@@ -28,12 +30,17 @@ export class WebbWeb3Provider implements WebbApiProvider<WebbWeb3Provider> {
     // todo fix me @(AhmedKorim)
     this.ethersProvider.provider?.on?.('chainChanged', async () => {
       const chaninName = await this.web3Provider.netowrk;
+      const localName = await WebbWeb3Provider.chainType(chaninName);
       notificationApi({
-        message: 'Web3: changed the connect network',
+        message: 'Web3: changed the connected network',
         variant: 'info',
+        Icon: React.createElement(Icon, null, ['leak_add']),
         secondaryMessage: `Connection is switched to ${chaninName} chain`,
       });
       this.ethersProvider = web3Provider.intoEthersProvider();
+      const storage = Storage.get(localName);
+      console.log(storage, localName);
+      this.storage = await Storage.get(localName);
     });
     this.methods = {
       mixer: {
@@ -53,6 +60,8 @@ export class WebbWeb3Provider implements WebbApiProvider<WebbWeb3Provider> {
     switch (name) {
       case WebbEVMChain.Rinkybe:
         return WebbEVMChain.Rinkybe;
+      case WebbEVMChain.Main:
+        return WebbEVMChain.Main;
       default:
         throw new Error('unsupported chain');
     }

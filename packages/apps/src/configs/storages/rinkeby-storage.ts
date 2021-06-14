@@ -12,7 +12,7 @@ const rainkebyStore = new EvmChainStorage([
 const ethMainNet = new EvmChainStorage([
   {
     size: 0.1,
-    address: 'adsfadsfdsf',
+    address: '0x876eCe69618e8E8dd743250B036785813824D2D7',
   },
 ]);
 
@@ -41,7 +41,7 @@ export const rankebyStorage: StorageHandler<EVMStorage> = {
   },
 };
 
-export const ethMainNetHandler: StorageHandler<EVMStorage> = {
+export const mainStorage: StorageHandler<EVMStorage> = {
   ...defaultHandler,
   inner: {
     nativeAnchor: ethMainNet,
