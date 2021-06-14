@@ -21,6 +21,7 @@ export class PolkadotAccount extends Account<InjectedAccount> {
 
 export class PolkadotAccounts extends AccountsAdapter<InjectedExtension, InjectedAccount> {
   providerName = 'Polka';
+  private activeAccount: null | PolkadotAccount = null;
 
   async accounts() {
     const accounts = await this._inner.accounts.get();
@@ -31,6 +32,9 @@ export class PolkadotAccounts extends AccountsAdapter<InjectedExtension, Injecte
     // eslint-disable-next-line no-async-promise-executor
     return new Promise<PolkadotAccount | null>(async (resolve, reject) => {
       try {
+        if (this.activeAccount) {
+          return resolve(this.activeAccount);
+        }
         const accounts = await this._inner.accounts.get();
         const defaultAccount = accounts[0] ? new PolkadotAccount(accounts[0], accounts[0].address) : null;
         resolve(defaultAccount);
@@ -40,7 +44,9 @@ export class PolkadotAccounts extends AccountsAdapter<InjectedExtension, Injecte
     });
   }
 
-  setActiveAccount(account: Account): PromiseOrT<void> {
+  setActiveAccount(account: PolkadotAccount): PromiseOrT<void> {
+    console.log(account);
+    this.activeAccount = account;
     return undefined;
   }
 }

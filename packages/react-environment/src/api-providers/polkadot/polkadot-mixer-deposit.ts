@@ -101,7 +101,12 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
       },
       depositPayload.params
     );
-    const account = await this.inner.accounts.accounts();
+
+    const account = await this.inner.accounts.activeOrDefault;
+    console.log('account', account);
+    if (!account) {
+      throw new Error('no account available');
+    }
     tx.on('finalize', () => {
       console.log('deposit done');
     });
@@ -111,7 +116,7 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
     tx.on('extrinsicSuccess', () => {
       console.log('deposit done');
     });
-    await tx.call(account[0].address);
+    await tx.call(account.address);
     return;
   }
 }
