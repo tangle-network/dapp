@@ -23,9 +23,7 @@ export interface WebbContentState<T = unknown> {
 
   setActiveAccount<T extends Account>(account: T): Promise<void>;
 
-  setActiveChain(id: number): void;
-
-  setActiveWallet(id: number): void;
+  switchChain(chain: Chain, wallet: Wallet): Promise<void>;
 }
 
 export const WebbContext = React.createContext<WebbContentState>({
@@ -37,8 +35,9 @@ export const WebbContext = React.createContext<WebbContentState>({
   setActiveAccount<T extends Account>(account: T): Promise<void> {
     return Promise.resolve();
   },
-  setActiveChain(id: number): void {},
-  setActiveWallet(id: number): void {},
+  switchChain(chain, wallet) {
+    return Promise.resolve();
+  },
   wallets: {},
 });
 

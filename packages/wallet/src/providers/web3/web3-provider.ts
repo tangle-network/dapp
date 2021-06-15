@@ -41,6 +41,7 @@ export class Web3Provider {
   }
 
   get netowrk() {
+    console.log(this.eth);
     return this._inner.eth.net.getNetworkType();
   }
 

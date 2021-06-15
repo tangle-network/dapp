@@ -1,7 +1,6 @@
 import {
   Badge,
   Button,
-  ButtonBase,
   Divider,
   Icon,
   IconButton,
@@ -60,7 +59,7 @@ export const SettingsManager: React.FC<SettingsManagerProps> = () => {
   useEffect(() => {
     if (endpoint) setSelected(endpoint);
   }, [endpoint, setSelected]);
-  const { chains, activeChain, setActiveChain } = useWebContext();
+  const { chains, activeChain, switchChain } = useWebContext();
 
   const networks = useMemo(() => Object.values(chains), []);
   const endpoints = useMemo(() => {
@@ -85,7 +84,6 @@ export const SettingsManager: React.FC<SettingsManagerProps> = () => {
 
   const [userSelectedChain, setUserSelectedChain] = useState<Chain | null>(null);
   const handleChange = (chain: Chain) => {
-    console.log(chain);
     setUserSelectedChain(chain);
     setConnectionStatus(ConnectionStatus.SelectWallet);
   };
@@ -266,8 +264,10 @@ export const SettingsManager: React.FC<SettingsManagerProps> = () => {
                 return (
                   <ListItem
                     button
-                    onClick={() => {
-                      //
+                    onClick={async () => {
+                      setConnectionStatus(ConnectionStatus.Connecting);
+                      await switchChain(userSelectedChain, wallet);
+                      handleCancel();
                     }}
                     style={{
                       display: 'flex',

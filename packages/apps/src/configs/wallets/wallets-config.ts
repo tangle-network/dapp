@@ -3,6 +3,12 @@ import { PolkaLogo } from '@webb-dapp/apps/configs/wallets/logos/PolkaLogo';
 import { MetaMaskLogo } from '@webb-dapp/apps/configs/wallets/logos/MetaMaskLogo';
 import { WalletConnectLogo } from '@webb-dapp/apps/configs/wallets/logos/WalletConnectLogo';
 
+export enum WalletsIds {
+  Polkadot = 1,
+  MetaMask,
+  WalletConnect,
+}
+
 export const walletsConfig: AppConfig['wallet'] = {
   1: {
     id: 1,
