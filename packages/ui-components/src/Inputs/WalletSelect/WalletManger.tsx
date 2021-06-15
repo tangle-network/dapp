@@ -20,6 +20,7 @@ import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
 import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
 import React from 'react';
 import styled from 'styled-components';
+
 const WalletMangerWrapper = styled.div`
   ${above.sm`
 min-width:540px;
@@ -37,6 +38,7 @@ const CloseManagerButton = styled.button``;
 
 const WalletManagerContentWrapper = styled.div`
   padding: 1rem;
+
   .modal-heading {
     padding: 0 0.9rem;
   }
@@ -70,7 +72,6 @@ type Wallet = {
 } & Omit<SupportedWallet, 'detect'>;
 
 export const WalletManger: React.FC<WalletMangerProps> = ({ close, selectedWallet, setSelectedWallet, wallets }) => {
-  
   async function handleWalletSelection(walletSelection: Wallet) {
     if (walletSelection.name === 'wallet connect') {
       const provider = new WalletConnectProvider({
@@ -83,17 +84,15 @@ export const WalletManger: React.FC<WalletMangerProps> = ({ close, selectedWalle
       });
       const web3 = await Web3Provider.fromWalletConnectProvider(provider);
       const isConnected = await web3.eth.net.isListening();
-      if (isConnected)
-      {
+      if (isConnected) {
         setSelectedWallet(walletSelection);
       }
-    }
-    else {
+    } else {
       setSelectedWallet(walletSelection);
       close();
     }
   }
-  
+
   return (
     <WalletMangerWrapper>
       <WalletManagerContentWrapper>
@@ -131,7 +130,9 @@ export const WalletManger: React.FC<WalletMangerProps> = ({ close, selectedWalle
                 selected={connected}
                 as={ListItem}
                 button
-                onClick={async () => {handleWalletSelection(wallet)}}
+                onClick={async () => {
+                  handleWalletSelection(wallet);
+                }}
               >
                 <ListItemAvatar>
                   <Avatar style={{ background: 'transparent' }}>
