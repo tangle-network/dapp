@@ -15,13 +15,11 @@ import {
 import Avatar from '@material-ui/core/Avatar';
 import ListItem from '@material-ui/core/ListItem';
 import { Chain, useWebContext } from '@webb-dapp/react-environment';
-import { EndpointType } from '@webb-dapp/react-environment/configs/endpoints';
-import { useSetting } from '@webb-dapp/react-hooks';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 const SettingsManagerWrapper = styled.div`
@@ -37,8 +35,6 @@ enum ConnectionStatus {
 
 export const SettingsManager: React.FC<SettingsManagerProps> = () => {
   const [open, setOpen] = useState(false);
-
-  const [selected, setSelected] = useState<string>('');
 
   const { activeChain, activeWallet, chains, switchChain } = useWebContext();
 
@@ -164,12 +160,7 @@ export const SettingsManager: React.FC<SettingsManagerProps> = () => {
         const ChainIcon = logo;
         return (
           <div>
-            <ListItem
-              key={`${id}${url}-group`}
-              aria-label='gender'
-              selected={selected === String(id)}
-              component={'div'}
-            >
+            <ListItem key={`${id}${url}-group`} aria-label='gender' selected={activeChain?.id === id} component={'div'}>
               <ListItemAvatar>
                 <Badge
                   title={'dev'}
@@ -278,7 +269,7 @@ export const SettingsManager: React.FC<SettingsManagerProps> = () => {
       case ConnectionStatus.Connecting:
         return <LinearProgress />;
     }
-  }, [connectionStatus, networks, selected, userSelectedChain, switchChain, handleCancel]);
+  }, [networks, activeWallet, activeChain, connectionStatus, userSelectedChain, switchChain, handleCancel]);
   return (
     <>
       <Tooltip title={'Settings'}>
