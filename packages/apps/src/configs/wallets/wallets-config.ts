@@ -36,15 +36,15 @@ export const walletsConfig: AppConfig['wallet'] = {
     },
     supportedChainIds: [1, 2, 3, 4],
   },
-  3: {
-    id: 3,
-    logo: WalletConnectLogo,
-    name: 'wallet connect',
-    title: `Wallet Connect`,
-    enabled: true,
-    detect() {
-      return true;
-    },
-    supportedChainIds: [1, 2, 3, 4],
-  },
+  // 3: {
+  //   id: 3,
+  //   logo: WalletConnectLogo,
+  //   name: 'wallet connect',
+  //   title: `Wallet Connect`,
+  //   enabled: true,
+  //   detect() {
+  //     return true;
+  //   },
+  //   supportedChainIds: [1, 2, 3, 4],
+  // },
 };

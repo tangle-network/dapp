@@ -1,5 +1,4 @@
 import { WebbCurrencyId } from './currency';
-import { Storage } from '@webb-dapp/utils';
 
 export interface ChainConfig {
   id: number;
