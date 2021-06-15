@@ -91,12 +91,12 @@ export const SettingsManager: React.FC<SettingsManagerProps> = () => {
         }}
       >
         <SettingsManagerWrapper>
-          <Typography variant={'h5'}>Settings </Typography>
+          <Typography variant={'h5'}>Mange Connection </Typography>
 
           <SpaceBox height={16} />
 
           <Flex row ai='center'>
-            <Typography variant={'h6'}>Chains</Typography>
+            <Typography variant={'h6'}>Selected A chain</Typography>
             <Flex flex={1} as={Padding}>
               <Divider />
             </Flex>
@@ -124,6 +124,7 @@ export const SettingsManager: React.FC<SettingsManagerProps> = () => {
                         horizontal: 'left',
                         vertical: 'top',
                       }}
+                      invisible={!tag}
                       color={'secondary'}
                     >
                       <Avatar

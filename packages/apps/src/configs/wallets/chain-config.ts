@@ -52,7 +52,6 @@ export const chainsConfig: AppConfig['chains'] = {
   // evm
   4: {
     group: 'eth',
-    tag: 'live',
     id: 4,
     name: 'Ethereum',
     url: 'n/a',
