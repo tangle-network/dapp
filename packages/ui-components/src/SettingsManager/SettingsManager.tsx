@@ -1,11 +1,12 @@
 import {
+  Badge,
   Button,
   Divider,
-  FormControlLabel,
   Icon,
   IconButton,
-  Radio,
-  RadioGroup,
+  List,
+  ListItemAvatar,
+  ListItemText,
   Tooltip,
   Typography,
 } from '@material-ui/core';
@@ -17,6 +18,9 @@ import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
+import { useWebContext } from '@webb-dapp/react-environment';
+import ListItem from '@material-ui/core/ListItem';
+import Avatar from '@material-ui/core/Avatar';
 
 const SettingsManagerWrapper = styled.div`
   padding: 1rem;
@@ -28,6 +32,10 @@ const TypeNameMap: Record<EndpointType, string> = {
   production: 'Production',
   testnet: 'Test Networks',
 };
+
+const ChangelistItem = styled.li`
+  display: flex;
+`;
 
 export const SettingsManager: React.FC<SettingsManagerProps> = () => {
   const [open, setOpen] = useState(false);
@@ -54,6 +62,8 @@ export const SettingsManager: React.FC<SettingsManagerProps> = () => {
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelected((event.target as HTMLInputElement).value);
   };
+  const { chains, activeChain } = useWebContext();
+  const networks = useMemo(() => Object.values(chains), []);
   const endpoints = useMemo(() => {
     return Object.keys(selectableEndpoints).map((key) => {
       return {
@@ -86,7 +96,7 @@ export const SettingsManager: React.FC<SettingsManagerProps> = () => {
           <SpaceBox height={16} />
 
           <Flex row ai='center'>
-            <Typography variant={'h6'}>Default chain</Typography>
+            <Typography variant={'h6'}>Chains</Typography>
             <Flex flex={1} as={Padding}>
               <Divider />
             </Flex>
@@ -94,33 +104,82 @@ export const SettingsManager: React.FC<SettingsManagerProps> = () => {
 
           <SpaceBox height={8} />
 
-          <Padding>
-            {endpoints.map(({ endpoints, endpointsGroup }) => {
+          <List>
+            {networks.map(({ url, tag, name, id, wallets, logo }) => {
+              const viaWallets = Object.values(wallets);
+              const ChainIcon = logo;
               return (
-                <RadioGroup
-                  key={`${endpointsGroup}-group`}
+                <ListItem
+                  key={`${id}${url}-group`}
                   aria-label='gender'
-                  name={endpointsGroup}
-                  value={selected}
+                  selected={selected === String(id)}
+                  button
                   onChange={handleChange}
                 >
-                  <Typography variant={'button'}>{TypeNameMap[endpointsGroup]}</Typography>
-                  <Padding>
-                    {endpoints.map((config) => {
-                      return (
-                        <FormControlLabel
-                          key={`select-endpoint-${config.url}`}
-                          value={config.url}
-                          control={<Radio />}
-                          label={config.name}
-                        />
-                      );
-                    })}
-                  </Padding>
-                </RadioGroup>
+                  <ListItemAvatar>
+                    <Badge
+                      title={'dev'}
+                      badgeContent={tag}
+                      anchorOrigin={{
+                        horizontal: 'left',
+                        vertical: 'top',
+                      }}
+                      color={'secondary'}
+                    >
+                      <Avatar
+                        style={{
+                          background: '#fff',
+                        }}
+                        children={<ChainIcon />}
+                      />
+                    </Badge>
+                  </ListItemAvatar>
+                  <ListItemText>
+                    <Typography variant={'button'}>{name}</Typography>
+                    <Padding>
+                      <div>URL: {url}</div>
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                        }}
+                      >
+                        Connectable with:
+                        {viaWallets.map((wallet) => {
+                          const Logo = wallet.logo;
+                          return (
+                            <div
+                              style={{
+                                opacity: 0.8,
+                                display: 'flex',
+                                alignItems: 'center',
+                                margin: '0 10px',
+                              }}
+                              id={url + wallet.name}
+                            >
+                              <span
+                                style={{
+                                  padding: '0 2px',
+                                  width: 20,
+                                  height: 20,
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                }}
+                              >
+                                <Logo />
+                              </span>
+                              <span>{wallet.name}</span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </Padding>
+                  </ListItemText>
+                </ListItem>
               );
             })}
-          </Padding>
+          </List>
         </SettingsManagerWrapper>
 
         <Divider variant={'fullWidth'} />
