@@ -2,7 +2,7 @@ import React from 'react';
 
 export const WalletConnectLogo: React.FC = () => {
   return (
-    <svg width='300px' height='185px' viewBox='0 0 300 185' version='1.1'>
+    <svg viewBox='0 0 300 185' version='1.1'>
       <g id='Page-1' stroke='none' stroke-width='1' fill='none' fill-rule='evenodd'>
         <g id='walletconnect-logo-alt' fill='#3B99FC' fill-rule='nonzero'>
           <path

@@ -1,21 +1,25 @@
 import {
+  Badge,
   Button,
   Divider,
-  FormControlLabel,
   Icon,
   IconButton,
-  Radio,
-  RadioGroup,
+  LinearProgress,
+  List,
+  ListItemAvatar,
+  ListItemSecondaryAction,
+  ListItemText,
   Tooltip,
   Typography,
 } from '@material-ui/core';
-import { EndpointType } from '@webb-dapp/react-environment/configs/endpoints';
-import { useSetting } from '@webb-dapp/react-hooks';
+import Avatar from '@material-ui/core/Avatar';
+import ListItem from '@material-ui/core/ListItem';
+import { Chain, useWebContext } from '@webb-dapp/react-environment';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 const SettingsManagerWrapper = styled.div`
@@ -23,45 +27,249 @@ const SettingsManagerWrapper = styled.div`
 `;
 type SettingsManagerProps = {};
 
-const TypeNameMap: Record<EndpointType, string> = {
-  development: 'Development',
-  production: 'Production',
-  testnet: 'Test Networks',
-};
+enum ConnectionStatus {
+  SelectChain = 'Select a chain',
+  SelectWallet = 'Select wallet',
+  Connecting = 'Connecting',
+}
 
 export const SettingsManager: React.FC<SettingsManagerProps> = () => {
   const [open, setOpen] = useState(false);
 
-  const [selected, setSelected] = useState<string>('');
+  const { activeChain, activeWallet, chains, switchChain } = useWebContext();
 
-  const { changeEndpoint, endpoint, selectableEndpoints } = useSetting();
+  const networks = useMemo(() => Object.values(chains), [chains]);
+  const [connectionStatus, setConnectionStatus] = useState(ConnectionStatus.SelectChain);
+  const stepNumber = useMemo(() => {
+    switch (connectionStatus) {
+      case ConnectionStatus.SelectChain:
+        return 1;
+      case ConnectionStatus.SelectWallet:
+        return 2;
+      case ConnectionStatus.Connecting:
+        return 3;
+    }
+  }, [connectionStatus]);
 
-  const handleSelect = useCallback(() => {
-    changeEndpoint(selected);
-    // reload page to ensure that network change success
-    window.location.reload();
-  }, [changeEndpoint, selected]);
-
-  const handleCancel = useCallback(() => {
-    setSelected(endpoint || '');
-    setOpen(false);
-  }, [endpoint]);
-
-  useEffect(() => {
-    if (endpoint) setSelected(endpoint);
-  }, [endpoint, setSelected]);
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSelected((event.target as HTMLInputElement).value);
+  const [userSelectedChain, setUserSelectedChain] = useState<Chain | null>(null);
+  const handleChange = (chain: Chain) => {
+    setUserSelectedChain(chain);
+    setConnectionStatus(ConnectionStatus.SelectWallet);
   };
-  const endpoints = useMemo(() => {
-    return Object.keys(selectableEndpoints).map((key) => {
-      return {
-        endpoints: selectableEndpoints[key as EndpointType],
-        endpointsGroup: key as EndpointType,
-      };
-    });
-  }, [selectableEndpoints]);
+  const handleCancel = useCallback(() => {
+    setOpen(false);
+    if (connectionStatus !== ConnectionStatus.Connecting) {
+      setUserSelectedChain(null);
+      setConnectionStatus(ConnectionStatus.SelectChain);
+    }
+  }, [connectionStatus]);
+  const content = useMemo(() => {
+    switch (connectionStatus) {
+      case ConnectionStatus.SelectChain:
+        return (
+          <List>
+            {networks.map((chain) => {
+              const { id, logo, name, tag, url, wallets } = chain;
+              const viaWallets = Object.values(wallets);
+              const ChainIcon = logo;
+              return (
+                <ListItem
+                  key={`${id}${url}-group`}
+                  aria-label='gender'
+                  selected={userSelectedChain?.id === id}
+                  button
+                  onClick={() => {
+                    handleChange(chain);
+                  }}
+                >
+                  <ListItemAvatar>
+                    <Badge
+                      title={'dev'}
+                      badgeContent={tag}
+                      anchorOrigin={{
+                        horizontal: 'left',
+                        vertical: 'top',
+                      }}
+                      invisible={!tag}
+                      color={'secondary'}
+                    >
+                      <Avatar
+                        style={{
+                          background: '#fff',
+                        }}
+                        children={<ChainIcon />}
+                      />
+                    </Badge>
+                  </ListItemAvatar>
+                  <ListItemText>
+                    <Typography variant={'button'}>{name}</Typography>
+                    <Padding>
+                      <div>URL: {url}</div>
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                        }}
+                      >
+                        Connectable via:
+                        {viaWallets.map((wallet) => {
+                          const Logo = wallet.logo;
+                          return (
+                            <div
+                              style={{
+                                opacity: 0.8,
+                                display: 'flex',
+                                alignItems: 'center',
+                                margin: '0 10px',
+                              }}
+                              id={url + wallet.name}
+                            >
+                              <span
+                                style={{
+                                  padding: '0 2px',
+                                  width: 20,
+                                  height: 20,
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                }}
+                              >
+                                <Logo />
+                              </span>
+                              <span>{wallet.name}</span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </Padding>
+                  </ListItemText>
+                  <ListItemSecondaryAction>
+                    {activeChain?.id === id && <Typography color='secondary'>connected</Typography>}
+                  </ListItemSecondaryAction>
+                </ListItem>
+              );
+            })}
+          </List>
+        );
+      case ConnectionStatus.SelectWallet: {
+        if (!userSelectedChain) {
+          return null;
+        }
+        const { id, logo, name, tag, url, wallets } = userSelectedChain;
+        const viaWallets = Object.values(wallets);
+        const ChainIcon = logo;
+        return (
+          <div>
+            <ListItem key={`${id}${url}-group`} aria-label='gender' selected={activeChain?.id === id} component={'div'}>
+              <ListItemAvatar>
+                <Badge
+                  title={'dev'}
+                  badgeContent={tag}
+                  anchorOrigin={{
+                    horizontal: 'left',
+                    vertical: 'top',
+                  }}
+                  invisible={!tag}
+                  color={'secondary'}
+                >
+                  <Avatar
+                    style={{
+                      background: '#fff',
+                    }}
+                    children={<ChainIcon />}
+                  />
+                </Badge>
+              </ListItemAvatar>
+              <ListItemText>
+                <Typography variant={'button'}>{name}</Typography>
+                <Padding>
+                  <div>URL: {url}</div>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                    }}
+                  >
+                    Connectable via:
+                    {viaWallets.map((wallet) => {
+                      const Logo = wallet.logo;
+                      return (
+                        <div
+                          style={{
+                            opacity: 0.5,
+                            display: 'flex',
+                            alignItems: 'center',
+                            margin: '0 10px',
+                          }}
+                          id={url + wallet.name}
+                        >
+                          <span
+                            style={{
+                              padding: '0 2px',
+                              width: 20,
+                              height: 20,
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                            }}
+                          >
+                            <Logo />
+                          </span>
+                          <span>{wallet.name}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </Padding>
+                <ListItemSecondaryAction>
+                  {activeChain?.id === id && <Typography color='secondary'>connected</Typography>}
+                </ListItemSecondaryAction>
+              </ListItemText>
+            </ListItem>
+            <List>
+              {viaWallets.map((wallet) => {
+                return (
+                  <ListItem
+                    button
+                    disabled={activeWallet?.id === wallet.id}
+                    onClick={async () => {
+                      setConnectionStatus(ConnectionStatus.Connecting);
+                      await switchChain(userSelectedChain, wallet);
+                      handleCancel();
+                    }}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                    }}
+                    id={url + wallet.name}
+                  >
+                    <ListItemAvatar>
+                      <Avatar
+                        style={{
+                          background: '#fff',
+                        }}
+                      >
+                        <wallet.logo />
+                      </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText>
+                      <span>{wallet.name}</span>
+                    </ListItemText>
+                    <ListItemSecondaryAction>
+                      {activeWallet?.id === wallet.id && <Typography color='secondary'>Active</Typography>}
+                    </ListItemSecondaryAction>
+                  </ListItem>
+                );
+              })}
+            </List>
+          </div>
+        );
+      }
+
+      case ConnectionStatus.Connecting:
+        return <LinearProgress />;
+    }
+  }, [networks, activeWallet, activeChain, connectionStatus, userSelectedChain, switchChain, handleCancel]);
   return (
     <>
       <Tooltip title={'Settings'}>
@@ -77,16 +285,29 @@ export const SettingsManager: React.FC<SettingsManagerProps> = () => {
       <Modal
         open={open}
         onClose={() => {
-          setOpen(false);
+          if (connectionStatus !== ConnectionStatus.Connecting) {
+            setOpen(false);
+          }
         }}
       >
         <SettingsManagerWrapper>
-          <Typography variant={'h5'}>Settings </Typography>
+          <Typography variant={'h5'}>Mange Connection </Typography>
 
           <SpaceBox height={16} />
 
           <Flex row ai='center'>
-            <Typography variant={'h6'}>Default chain</Typography>
+            {connectionStatus === ConnectionStatus.SelectWallet && (
+              <IconButton
+                onClick={() => {
+                  setConnectionStatus(ConnectionStatus.SelectChain);
+                }}
+              >
+                <Icon>chevron_left</Icon>
+              </IconButton>
+            )}
+            <Typography variant={'h6'}>
+              <b>Step {stepNumber}:</b> {connectionStatus}
+            </Typography>
             <Flex flex={1} as={Padding}>
               <Divider />
             </Flex>
@@ -94,33 +315,7 @@ export const SettingsManager: React.FC<SettingsManagerProps> = () => {
 
           <SpaceBox height={8} />
 
-          <Padding>
-            {endpoints.map(({ endpoints, endpointsGroup }) => {
-              return (
-                <RadioGroup
-                  key={`${endpointsGroup}-group`}
-                  aria-label='gender'
-                  name={endpointsGroup}
-                  value={selected}
-                  onChange={handleChange}
-                >
-                  <Typography variant={'button'}>{TypeNameMap[endpointsGroup]}</Typography>
-                  <Padding>
-                    {endpoints.map((config) => {
-                      return (
-                        <FormControlLabel
-                          key={`select-endpoint-${config.url}`}
-                          value={config.url}
-                          control={<Radio />}
-                          label={config.name}
-                        />
-                      );
-                    })}
-                  </Padding>
-                </RadioGroup>
-              );
-            })}
-          </Padding>
+          {content}
         </SettingsManagerWrapper>
 
         <Divider variant={'fullWidth'} />
@@ -130,11 +325,6 @@ export const SettingsManager: React.FC<SettingsManagerProps> = () => {
             <Flex>
               <Button onClick={handleCancel}>
                 <Padding>Cancel</Padding>
-              </Button>
-            </Flex>
-            <Flex>
-              <Button color='primary' onClick={handleSelect}>
-                <Padding>Save</Padding>
               </Button>
             </Flex>
           </Flex>

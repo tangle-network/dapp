@@ -1,9 +1,5 @@
 /* eslint-disable sort-keys */
-import { WalletConnectLogo } from '@webb-dapp/apps/configs/wallets/logos/WalletConnectLogo';
 import React from 'react';
-
-import { web3Enable } from '@polkadot/extension-dapp';
-import { MetaMaskLogo } from './logos/MetaMaskLogo';
 import { PolkaLogo } from './logos/PolkaLogo';
 
 export interface SupportedWallet {
@@ -11,6 +7,7 @@ export interface SupportedWallet {
   name: string;
   title: string;
   enabled: boolean;
+
   detect?(): boolean | Promise<boolean>;
 }
 
@@ -23,7 +20,7 @@ export const supportedWallets: SupportedWallet[] = [
     async detect() {
       return true;
     },
-  },/*
+  } /*
   {
     logo: MetaMaskLogo,
     name: 'metamask',
@@ -45,5 +42,5 @@ export const supportedWallets: SupportedWallet[] = [
     detect() {
       return true;
     },
-  },*/
+  },*/,
 ];

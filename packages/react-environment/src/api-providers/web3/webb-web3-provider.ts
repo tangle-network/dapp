@@ -1,19 +1,19 @@
+import Icon from '@material-ui/core/Icon';
+import { EvmChainStorage } from '@webb-dapp/apps/configs/storages/evm-chain-storage.inerface';
 import { AnchorContract } from '@webb-dapp/contracts/contracts/anchor';
 import { WebbApiProvider, WebbMethods } from '@webb-dapp/react-environment';
 import { Web3MixerDeposit } from '@webb-dapp/react-environment/api-providers/web3/web3-mixer-deposit';
 import { Web3MixerWithdraw } from '@webb-dapp/react-environment/api-providers/web3/web3-mixer-withdraw';
+import { notificationApi } from '@webb-dapp/ui-components/notification';
+import { Storage } from '@webb-dapp/utils';
 import { Web3Accounts } from '@webb-dapp/wallet/providers/web3/web3-accounts';
 import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
 import { providers } from 'ethers';
-import { EvmChainStorage } from '@webb-dapp/apps/configs/storages/evm-chain-storage.inerface';
-import { Storage } from '@webb-dapp/utils';
-import { notificationApi } from '@webb-dapp/ui-components/notification';
 import React from 'react';
-import Icon from '@material-ui/core/Icon';
 
 export enum WebbEVMChain {
   Main = 'main',
-  Rinkybe = 'rinkeby',
+  Rinkeby = 'rinkeby',
 }
 
 export type EVMStorage = Record<string, EvmChainStorage>;
@@ -38,8 +38,6 @@ export class WebbWeb3Provider implements WebbApiProvider<WebbWeb3Provider> {
         secondaryMessage: `Connection is switched to ${chaninName} chain`,
       });
       this.ethersProvider = web3Provider.intoEthersProvider();
-      const storage = Storage.get(localName);
-      console.log(storage, localName);
       this.storage = await Storage.get(localName);
     });
     this.methods = {
@@ -58,8 +56,8 @@ export class WebbWeb3Provider implements WebbApiProvider<WebbWeb3Provider> {
 
   static chainType(name: string): WebbEVMChain {
     switch (name) {
-      case WebbEVMChain.Rinkybe:
-        return WebbEVMChain.Rinkybe;
+      case WebbEVMChain.Rinkeby:
+        return WebbEVMChain.Rinkeby;
       case WebbEVMChain.Main:
         return WebbEVMChain.Main;
       default:

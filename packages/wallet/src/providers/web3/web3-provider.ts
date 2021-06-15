@@ -1,6 +1,6 @@
 import WalletConnectProvider from '@walletconnect/web3-provider';
-import Web3 from 'web3';
 import { ethers } from 'ethers';
+import Web3 from 'web3';
 
 export class Web3Provider {
   constructor(private _inner: Web3) {}

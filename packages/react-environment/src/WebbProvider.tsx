@@ -1,18 +1,19 @@
+import WalletConnectProvider from '@walletconnect/web3-provider';
+import { mainStorage, rankebyStorage } from '@webb-dapp/apps/configs/storages/rinkeby-storage';
 import { chainsConfig } from '@webb-dapp/apps/configs/wallets/chain-config';
-import { walletsConfig } from '@webb-dapp/apps/configs/wallets/wallets-config';
+import { walletsConfig, WalletsIds } from '@webb-dapp/apps/configs/wallets/wallets-config';
+import { EVMStorage, WebbEVMChain, WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3';
 import { DimensionsProvider } from '@webb-dapp/react-environment/layout';
 import { StoreProvier } from '@webb-dapp/react-environment/store';
 import { BareProps } from '@webb-dapp/ui-components/types';
+import { Storage } from '@webb-dapp/utils';
 import { Account } from '@webb-dapp/wallet/account/Accounts.adapter';
-import React, { FC, useCallback, useEffect, useState } from 'react';
+import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
+import React, { FC, useCallback, useState } from 'react';
 
 import { WebbPolkadot } from './api-providers/polkadot';
 import { SettingProvider } from './SettingProvider';
 import { Chain, Wallet, WebbApiProvider, WebbContext } from './webb-context';
-import { EVMStorage, WebbEVMChain, WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3';
-import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
-import { mainStorage, rankebyStorage } from '@webb-dapp/apps/configs/storages/rinkeby-storage';
-import { Storage } from '@webb-dapp/utils';
 
 interface WebbProviderProps extends BareProps {
   applicationName: string;
@@ -55,42 +56,82 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
     },
     [activeApi]
   );
-  useEffect(() => {
-    const activeEVM = false;
-    if (activeEVM) {
-      Web3Provider.fromExtension().then(async (web3Provider) => {
+
+  const switchChain = async (chain: Chain, wallet: Wallet) => {
+    switch (wallet.id) {
+      case WalletsIds.Polkadot:
+        {
+          const url = chain.url;
+          const webbPolkadot = await WebbPolkadot.init('Webb DApp', [url]);
+          setActiveApi(webbPolkadot);
+          setLoading(false);
+          const accounts = await webbPolkadot.accounts.accounts();
+          setAccounts(accounts);
+          _setActiveAccount(accounts[0]);
+          await webbPolkadot.accounts.setActiveAccount(accounts[0]);
+        }
+        break;
+      case WalletsIds.MetaMask:
+        {
+          const web3Provider = await Web3Provider.fromExtension();
+          const net = await web3Provider.netowrk;
+          const chainType = WebbWeb3Provider.chainType(net); //  use this to pick the storage
+          const rainkybeS = await Storage.newFresh(WebbEVMChain.Rinkeby, rankebyStorage);
+          const mainS = await Storage.newFresh(WebbEVMChain.Main, mainStorage);
+          let storage: Storage<EVMStorage>;
+          switch (chainType) {
+            case WebbEVMChain.Main:
+              storage = mainS;
+              break;
+            case WebbEVMChain.Rinkeby:
+              storage = rainkybeS;
+              break;
+          }
+          const webbWeb3Provider = await WebbWeb3Provider.init(web3Provider, rainkybeS);
+          const accounts = await webbWeb3Provider.accounts.accounts();
+          setAccounts(accounts);
+          _setActiveAccount(accounts[0]);
+          await webbWeb3Provider.accounts.setActiveAccount(accounts[0]);
+          setActiveApi(webbWeb3Provider);
+        }
+        break;
+      case WalletsIds.WalletConnect: {
+        const provider = new WalletConnectProvider({
+          rpc: {
+            1: 'https://mainnet.mycustomnode.com',
+            3: 'https://ropsten.mycustomnode.com',
+            42: 'http://localhost:9933',
+            // ...
+          },
+        });
+        const web3Provider = await Web3Provider.fromWalletConnectProvider(provider);
+        await web3Provider.eth.net.isListening();
         const net = await web3Provider.netowrk;
         const chainType = WebbWeb3Provider.chainType(net); //  use this to pick the storage
-        const rainkybeS = await Storage.newFresh(WebbEVMChain.Rinkybe, rankebyStorage);
+        const rainkybeS = await Storage.newFresh(WebbEVMChain.Rinkeby, rankebyStorage);
         const mainS = await Storage.newFresh(WebbEVMChain.Main, mainStorage);
         let storage: Storage<EVMStorage>;
         switch (chainType) {
           case WebbEVMChain.Main:
             storage = mainS;
             break;
-          case WebbEVMChain.Rinkybe:
+          case WebbEVMChain.Rinkeby:
             storage = rainkybeS;
             break;
         }
-        WebbWeb3Provider.init(web3Provider, rainkybeS).then(async (webbWeb3Provider) => {
-          const accounts = await webbWeb3Provider.accounts.accounts();
-          setAccounts(accounts);
-          _setActiveAccount(accounts[0]);
-          await webbWeb3Provider.accounts.setActiveAccount(accounts[0]);
-          setActiveApi(webbWeb3Provider);
-        });
-      });
-    } else {
-      WebbPolkadot.init('Webb DApp', ['wss://beresheet2.edgewa.re']).then(async (provider) => {
-        setActiveApi(provider);
-        setLoading(false);
-        const accounts = await provider.accounts.accounts();
+        const webbWeb3Provider = await WebbWeb3Provider.init(web3Provider, rainkybeS);
+
+        const accounts = await webbWeb3Provider.accounts.accounts();
         setAccounts(accounts);
         _setActiveAccount(accounts[0]);
-        await provider.accounts.setActiveAccount(accounts[0]);
-      });
+        await webbWeb3Provider.accounts.setActiveAccount(accounts[0]);
+        setActiveApi(webbWeb3Provider);
+      }
     }
-  }, []);
+    setActiveWallet(wallet);
+    setActiveChain(chain);
+  };
+
   return (
     <WebbContext.Provider
       value={{
@@ -103,12 +144,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
         accounts,
         activeAccount,
         setActiveAccount,
-        setActiveChain(id: number) {
-          setActiveChain(chains[id]);
-        },
-        setActiveWallet(id: number) {
-          setActiveWallet(walletsConfig[id]);
-        },
+        switchChain,
       }}
     >
       <StoreProvier>
