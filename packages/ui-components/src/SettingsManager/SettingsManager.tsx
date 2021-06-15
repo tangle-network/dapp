@@ -4,6 +4,7 @@ import {
   Divider,
   Icon,
   IconButton,
+  LinearProgress,
   List,
   ListItemAvatar,
   ListItemText,
@@ -193,8 +194,6 @@ export const SettingsManager: React.FC<SettingsManagerProps> = () => {
               key={`${id}${url}-group`}
               aria-label='gender'
               selected={selected === String(id)}
-              button
-              onClick={() => {}}
               component={'div'}
             >
               <ListItemAvatar>
@@ -296,7 +295,7 @@ export const SettingsManager: React.FC<SettingsManagerProps> = () => {
       }
 
       case ConnectionStatus.Connecting:
-        break;
+        return <LinearProgress />;
     }
   }, [networks, handleChange, userSelectedChain, connectionStatus]);
   return (
@@ -314,7 +313,9 @@ export const SettingsManager: React.FC<SettingsManagerProps> = () => {
       <Modal
         open={open}
         onClose={() => {
-          setOpen(false);
+          if (connectionStatus !== ConnectionStatus.Connecting) {
+            setOpen(false);
+          }
         }}
       >
         <SettingsManagerWrapper>
