@@ -19,7 +19,7 @@ export const walletsConfig: AppConfig['wallet'] = {
     async detect() {
       return true;
     },
-    supportedChainIds: [1],
+    supportedChainIds: [1, 2, 3],
   },
   2: {
     id: 2,

@@ -128,6 +128,8 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
         setActiveApi(webbWeb3Provider);
       }
     }
+    setActiveWallet(wallet);
+    setActiveChain(chain);
   };
 
   return (

@@ -7,10 +7,14 @@ import {
   LinearProgress,
   List,
   ListItemAvatar,
+  ListItemSecondaryAction,
   ListItemText,
   Tooltip,
   Typography,
 } from '@material-ui/core';
+import Avatar from '@material-ui/core/Avatar';
+import ListItem from '@material-ui/core/ListItem';
+import { Chain, useWebContext } from '@webb-dapp/react-environment';
 import { EndpointType } from '@webb-dapp/react-environment/configs/endpoints';
 import { useSetting } from '@webb-dapp/react-hooks';
 import { SpaceBox } from '@webb-dapp/ui-components';
@@ -19,24 +23,11 @@ import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { Chain, useWebContext } from '@webb-dapp/react-environment';
-import ListItem from '@material-ui/core/ListItem';
-import Avatar from '@material-ui/core/Avatar';
 
 const SettingsManagerWrapper = styled.div`
   padding: 1rem;
 `;
 type SettingsManagerProps = {};
-
-const TypeNameMap: Record<EndpointType, string> = {
-  development: 'Development',
-  production: 'Production',
-  testnet: 'Test Networks',
-};
-
-const ChangelistItem = styled.li`
-  display: flex;
-`;
 
 enum ConnectionStatus {
   SelectChain = 'Select a chain',
@@ -49,28 +40,9 @@ export const SettingsManager: React.FC<SettingsManagerProps> = () => {
 
   const [selected, setSelected] = useState<string>('');
 
-  const { changeEndpoint, endpoint, selectableEndpoints } = useSetting();
+  const { activeChain, activeWallet, chains, switchChain } = useWebContext();
 
-  const handleSelect = useCallback(() => {
-    changeEndpoint(selected);
-    // reload page to ensure that network change success
-    window.location.reload();
-  }, [changeEndpoint, selected]);
-
-  useEffect(() => {
-    if (endpoint) setSelected(endpoint);
-  }, [endpoint, setSelected]);
-  const { chains, activeChain, switchChain } = useWebContext();
-
-  const networks = useMemo(() => Object.values(chains), []);
-  const endpoints = useMemo(() => {
-    return Object.keys(selectableEndpoints).map((key) => {
-      return {
-        endpoints: selectableEndpoints[key as EndpointType],
-        endpointsGroup: key as EndpointType,
-      };
-    });
-  }, [selectableEndpoints]);
+  const networks = useMemo(() => Object.values(chains), [chains]);
   const [connectionStatus, setConnectionStatus] = useState(ConnectionStatus.SelectChain);
   const stepNumber = useMemo(() => {
     switch (connectionStatus) {
@@ -91,11 +63,10 @@ export const SettingsManager: React.FC<SettingsManagerProps> = () => {
   const handleCancel = useCallback(() => {
     setOpen(false);
     if (connectionStatus !== ConnectionStatus.Connecting) {
-      setSelected(endpoint || '');
       setUserSelectedChain(null);
       setConnectionStatus(ConnectionStatus.SelectChain);
     }
-  }, [endpoint, connectionStatus]);
+  }, [connectionStatus]);
   const content = useMemo(() => {
     switch (connectionStatus) {
       case ConnectionStatus.SelectChain:
@@ -109,7 +80,7 @@ export const SettingsManager: React.FC<SettingsManagerProps> = () => {
                 <ListItem
                   key={`${id}${url}-group`}
                   aria-label='gender'
-                  selected={selected === String(id)}
+                  selected={userSelectedChain?.id === id}
                   button
                   onClick={() => {
                     handleChange(chain);
@@ -176,6 +147,9 @@ export const SettingsManager: React.FC<SettingsManagerProps> = () => {
                       </div>
                     </Padding>
                   </ListItemText>
+                  <ListItemSecondaryAction>
+                    {activeChain?.id === id && <Typography color='secondary'>connected</Typography>}
+                  </ListItemSecondaryAction>
                 </ListItem>
               );
             })}
@@ -256,6 +230,9 @@ export const SettingsManager: React.FC<SettingsManagerProps> = () => {
                     })}
                   </div>
                 </Padding>
+                <ListItemSecondaryAction>
+                  {activeChain?.id === id && <Typography color='secondary'>connected</Typography>}
+                </ListItemSecondaryAction>
               </ListItemText>
             </ListItem>
             <List>
@@ -263,6 +240,7 @@ export const SettingsManager: React.FC<SettingsManagerProps> = () => {
                 return (
                   <ListItem
                     button
+                    disabled={activeWallet?.id === wallet.id}
                     onClick={async () => {
                       setConnectionStatus(ConnectionStatus.Connecting);
                       await switchChain(userSelectedChain, wallet);
@@ -286,6 +264,9 @@ export const SettingsManager: React.FC<SettingsManagerProps> = () => {
                     <ListItemText>
                       <span>{wallet.name}</span>
                     </ListItemText>
+                    <ListItemSecondaryAction>
+                      {activeWallet?.id === wallet.id && <Typography color='secondary'>Active</Typography>}
+                    </ListItemSecondaryAction>
                   </ListItem>
                 );
               })}
@@ -297,7 +278,7 @@ export const SettingsManager: React.FC<SettingsManagerProps> = () => {
       case ConnectionStatus.Connecting:
         return <LinearProgress />;
     }
-  }, [networks, handleChange, userSelectedChain, connectionStatus]);
+  }, [connectionStatus, networks, selected, userSelectedChain, switchChain, handleCancel]);
   return (
     <>
       <Tooltip title={'Settings'}>
@@ -353,11 +334,6 @@ export const SettingsManager: React.FC<SettingsManagerProps> = () => {
             <Flex>
               <Button onClick={handleCancel}>
                 <Padding>Cancel</Padding>
-              </Button>
-            </Flex>
-            <Flex>
-              <Button color='primary' onClick={handleSelect}>
-                <Padding>Save</Padding>
               </Button>
             </Flex>
           </Flex>
