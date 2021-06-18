@@ -10,6 +10,7 @@ import React, { FC, useMemo, useState } from 'react';
 import styled, { ThemeProvider } from 'styled-components';
 
 import { BareProps } from './types';
+import { useStore } from '@webb-dapp/react-environment';
 
 export interface UIData {
   phantomdata: any;
@@ -22,7 +23,8 @@ const AlertWrapper = styled.div<PaperProps>`
 export const UIContext = React.createContext<UIData>({ phantomdata: '' });
 
 export const UIProvider: FC<BareProps> = ({ children }) => {
-  const isDarkTheme = false;
+  const store = useStore('ui');
+  const isDarkTheme = store.theme === 'dark';
 
   const [state] = useState<UIData>({ phantomdata: '' });
   const muiTheme = useMemo(() => makeTheme({}, isDarkTheme ? 'dark' : 'light'), [isDarkTheme]);

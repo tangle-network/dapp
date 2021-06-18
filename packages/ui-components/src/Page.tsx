@@ -137,7 +137,9 @@ _Page = memo(styled(_Page)`
 
 	`};
   transition: all ease-in-out 0.5s;
-  background: ${({ theme }) => theme.background};
+  background: ${({ theme }) => {
+    return theme.background;
+  }};
 `);
 
 const Content: FC<BareProps> = memo(styled.div`

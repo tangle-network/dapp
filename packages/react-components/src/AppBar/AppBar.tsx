@@ -9,6 +9,7 @@ import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { AccountManager } from '../AccountManager/AccountManager';
+import { useStore } from '@webb-dapp/react-environment';
 
 const AppBarWrapper = styled.nav`
   height: 65px;
@@ -102,7 +103,9 @@ const AppBar: React.FC<AppBarProps> = () => {
   const isMobile = useMemo(() => {
     return width <= size.sm;
   }, [width, size]);
-  const isDarkTheme = false;
+  const { theme, setTheme } = useStore('ui');
+
+  const isDarkTheme = theme === 'dark';
   return (
     <AppBarWrapper>
       <WebbLogo className={'webb-logo'} />
@@ -126,7 +129,12 @@ const AppBar: React.FC<AppBarProps> = () => {
         </NavigationWrapper>
       )}
       <AccountWrapper>
-        <Switch checked={isDarkTheme} onClick={() => {}} />
+        <Switch
+          checked={isDarkTheme}
+          onClick={() => {
+            setTheme(isDarkTheme ? 'default' : 'dark');
+          }}
+        />
         <Tooltip title='Need help?'>
           <IconButton
             onClick={() => {
