@@ -157,6 +157,7 @@ export const SettingsManager: React.FC<SettingsManagerProps> = () => {
         }
         const { id, logo, name, tag, url, wallets } = userSelectedChain;
         const viaWallets = Object.values(wallets);
+        console.log(wallets);
         const ChainIcon = logo;
         return (
           <div>
@@ -291,7 +292,7 @@ export const SettingsManager: React.FC<SettingsManagerProps> = () => {
         }}
       >
         <SettingsManagerWrapper>
-          <Typography variant={'h5'}>Mange Connection </Typography>
+          <Typography variant={'h5'}>Manage Connection </Typography>
 
           <SpaceBox height={16} />
 

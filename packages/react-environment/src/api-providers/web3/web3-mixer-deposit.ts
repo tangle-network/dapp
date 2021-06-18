@@ -36,16 +36,15 @@ export class Web3MixerDeposit extends MixerDeposit<WebbWeb3Provider, DepositPayl
   async generateNote(mixerId: string, contractName: string = 'nativeAnchor'): Promise<DepositPayload> {
     const contract = await this.inner.getContractWithAddress(mixerId);
     const storages = await this.inner.chainStorage;
-    const mixerSize = storages[contractName].contractsAddresses.find((config) => config.address === mixerId);
-    if (!mixerSize) {
-      throw new Error(`mixer size  not found on this contract`);
+    const mixerInfo = storages[contractName].contractsInfo.find((config) => config.address === mixerId);
+    if (!mixerInfo) {
+      throw new Error(`mixer not found from storage`);
     }
 
-    const depositPayload = await contract.createDeposit();
-    console.log(depositPayload);
+    const depositPayload = await contract.createDeposit(mixerInfo.symbol);
     return {
       note: depositPayload.note,
-      params: [depositPayload.deposit, mixerSize.size],
+      params: [depositPayload.deposit, mixerInfo.size],
     };
   }
 

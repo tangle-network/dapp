@@ -1,5 +1,5 @@
 import Icon from '@material-ui/core/Icon';
-import { EvmChainStorage } from '@webb-dapp/apps/configs/storages/evm-chain-storage.inerface';
+import { EvmChainStorage } from '@webb-dapp/apps/configs/storages/evm-chain-storage.interface';
 import { AnchorContract } from '@webb-dapp/contracts/contracts/anchor';
 import { WebbApiProvider, WebbMethods } from '@webb-dapp/react-environment';
 import { Web3MixerDeposit } from '@webb-dapp/react-environment/api-providers/web3/web3-mixer-deposit';
@@ -12,8 +12,9 @@ import { providers } from 'ethers';
 import React from 'react';
 
 export enum WebbEVMChain {
-  Main = 'main',
-  Rinkeby = 'rinkeby',
+  Main = 1,
+  Rinkeby = 4,
+  Beresheet = 2022,
 }
 
 export type EVMStorage = Record<string, EvmChainStorage>;
@@ -29,13 +30,14 @@ export class WebbWeb3Provider implements WebbApiProvider<WebbWeb3Provider> {
     // @ts-ignore
     // todo fix me @(AhmedKorim)
     this.ethersProvider.provider?.on?.('chainChanged', async () => {
-      const chaninName = await this.web3Provider.netowrk;
-      const localName = await WebbWeb3Provider.chainType(chaninName);
+      const chainId = await this.web3Provider.network;
+      console.log(chainId);
+      const localName = await WebbWeb3Provider.storageName(chainId);
       notificationApi({
         message: 'Web3: changed the connected network',
         variant: 'info',
         Icon: React.createElement(Icon, null, ['leak_add']),
-        secondaryMessage: `Connection is switched to ${chaninName} chain`,
+        secondaryMessage: `Connection is switched to ${chainId} chain`,
       });
       this.ethersProvider = web3Provider.intoEthersProvider();
       this.storage = await Storage.get(localName);
@@ -54,12 +56,14 @@ export class WebbWeb3Provider implements WebbApiProvider<WebbWeb3Provider> {
     };
   }
 
-  static chainType(name: string): WebbEVMChain {
-    switch (name) {
+  static storageName(id: number): string {
+    switch (id) {
       case WebbEVMChain.Rinkeby:
-        return WebbEVMChain.Rinkeby;
+        return 'rinkeby';
       case WebbEVMChain.Main:
-        return WebbEVMChain.Main;
+        return 'main';
+      case WebbEVMChain.Beresheet:
+        return 'beresheet';
       default:
         throw new Error('unsupported chain');
     }
@@ -75,7 +79,8 @@ export class WebbWeb3Provider implements WebbApiProvider<WebbWeb3Provider> {
 
   async getContract(mixerSize: number, name: string): Promise<AnchorContract> {
     const mixerSizes = await this.storage.get(name);
-    const mixer = mixerSizes.contractsAddresses.find((config) => config.size === Number(mixerSize));
+    const mixer = mixerSizes.contractsInfo.find((config) => config.size === Number(mixerSize));
+    console.log(mixer);
     if (!mixer) {
       throw new Error(`mixer size  not found on this contract`);
     }

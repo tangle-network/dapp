@@ -30,14 +30,20 @@ export class AnchorContract {
     return this._contract.nextIndex();
   }
 
+  get denomination() {
+    return this._contract.denomination();
+  }
+
   get inner() {
     return this._contract;
   }
 
-  async createDeposit(): Promise<{ note: EvmNote; deposit: Deposit }> {
+  async createDeposit(assetSymbol: string): Promise<{ note: EvmNote; deposit: Deposit }> {
     const deposit = createDeposit();
     const chainId = await this.signer.getChainId();
-    const note = new EvmNote('eth', 0.1, chainId, deposit.preimage);
+    const depositSizeBN = await this.denomination;
+    const depositSize = Number.parseFloat(utils.fromWei(depositSizeBN.toString(), "ether"));
+    const note = new EvmNote(assetSymbol, depositSize, chainId, deposit.preimage);
     return {
       note,
       deposit,
@@ -48,8 +54,9 @@ export class AnchorContract {
     const overrides = {
       gasLimit: 6000000,
       gasPrice: utils.toWei('1', 'gwei'),
-      value: '0x16345785D8A0000',
+      value: await this.denomination,
     };
+    console.log(commitment);
     const filters = await this._contract.filters.Deposit(commitment, null, null);
     this._contract.once(filters, (commitment, insertedIndex, timestamp) => {
       onComplete?.([commitment, insertedIndex, timestamp]);
