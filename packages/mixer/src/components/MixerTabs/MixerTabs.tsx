@@ -2,6 +2,7 @@ import { Fade } from '@material-ui/core';
 import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
 import React, { useCallback, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
+import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 
 const MixerTabsWrapper = styled.div`
   padding: 1rem;
@@ -10,6 +11,7 @@ const MixerTabsWrapper = styled.div`
   margin: auto;
   border-radius: 20px;
   box-shadow: 0px 0px 14px rgba(51, 81, 242, 0.11);
+  background: ${({ theme }: { theme: Pallet }) => theme.cardBackground};
 `;
 type MixerTabsProps = {
   Deposit: JSX.Element;
@@ -18,7 +20,8 @@ type MixerTabsProps = {
 const TabHeader = styled.header`
   display: flex;
   align-items: center;
-  background: ${({ theme }) => theme.mainBackground};
+  background: ${({ theme }: { theme: Pallet }) => theme.tabHeader};
+
   justify-content: space-between;
   padding: 7px;
   border-radius: 32px;
