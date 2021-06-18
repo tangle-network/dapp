@@ -10,7 +10,7 @@ const MixerTabsWrapper = styled.div`
   max-width: 500px;
   margin: auto;
   border-radius: 20px;
-  box-shadow: 0px 0px 14px rgba(51, 81, 242, 0.11);
+  box-shadow: 0px 0px 14px rgba(0, 0, 0, 0.2);
   background: ${({ theme }: { theme: Pallet }) => theme.cardBackground};
 `;
 type MixerTabsProps = {
@@ -41,6 +41,10 @@ const TabButton = styled.button<{ active?: boolean }>`
     align-items: center;
     margin-right: 10px;
   }
+
+  color: ${({ active, theme }) => {
+    return !active ? (theme as Pallet).primaryText : (theme as Pallet).darkGray;
+  }};
 
   ${({ active }) => {
     return active
