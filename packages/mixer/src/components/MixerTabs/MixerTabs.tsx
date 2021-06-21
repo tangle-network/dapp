@@ -10,8 +10,9 @@ const MixerTabsWrapper = styled.div`
   max-width: 500px;
   margin: auto;
   border-radius: 20px;
-  box-shadow: 0px 0px 14px rgba(0, 0, 0, 0.2);
-  background: ${({ theme }: { theme: Pallet }) => theme.cardBackground};
+
+  background: ${({ theme }: { theme: Pallet }) => theme.layer1Background};
+  border: ${({ theme }: { theme: Pallet }) => `1px solid ${theme.borderColor}`};
 `;
 type MixerTabsProps = {
   Deposit: JSX.Element;

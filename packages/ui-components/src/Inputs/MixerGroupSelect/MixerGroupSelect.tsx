@@ -4,6 +4,7 @@ import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-famili
 import React, { useEffect, useMemo } from 'react';
 import styled, { css } from 'styled-components';
 import { MixerSize } from '@webb-dapp/react-environment/webb-context';
+import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 
 const MixerGroupSelectWrapper = styled.div`
   min-height: 38px;
@@ -23,27 +24,25 @@ const AmountChipWrapper = styled.span<{ selected?: boolean }>`
   cursor: pointer;
   transition: all ease 0.3s;
 
-  && {
-    border: 1px solid #ebeefd;
-    border-radius: 20px;
-    ${({ selected }) => {
-      return selected
-        ? css`
-            background: #ebedf2;
-          `
-        : '';
-    }};
-    font-family: ${FontFamilies.AvenirNext};
-    color: ${({ theme }) => theme.primaryText};
-    height: 31px;
-    padding: 0 5px;
-    flex: 1;
-    margin: 5px;
-    white-space: nowrap;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+  ${({ selected, theme }: { theme: Pallet; selected?: boolean }) => css`
+		&& {
+			border: 1px solid ${theme.borderColor2};
+			border-radius: 20px;
+			background: ${selected ? `#ebedf2` : theme.layer3Background}
+			font-family: ${FontFamilies.AvenirNext};
+			color: rgba(255, 255, 255, 0.5);
+			height: 40px;
+			padding: 0 5px;
+			flex: 1;
+			margin: 5px;
+			white-space: nowrap;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 14px;
+			font-weight: bold;
+		}
+	`}
 `;
 
 export const MixerGroupSelect: React.FC<MixerGroupSelectProps> = ({ items, onChange, value }) => {
