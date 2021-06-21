@@ -1,11 +1,9 @@
-import { Skeleton } from 'antd';
 import styled from 'styled-components';
 
 // export common thirdpart packages
-export { Skeleton, styled };
+export { styled };
 
 export * from './Alert';
-export * from './Grid';
 export * from './Loading';
 
 export * from './Icon';
