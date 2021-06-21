@@ -9,7 +9,6 @@ const ThemeSwitcherWrapper = styled.label`
 	overflow: hidden;
 	position: relative;
 	border-radius: 32px;
-
 	&:before, &:after {
 		transition: all .4s;
 	}
@@ -25,20 +24,6 @@ const ThemeSwitcherWrapper = styled.label`
 		background: ${({ theme }: { theme: Pallet }) => (theme.type === 'light' ? 'white' : 'rgba(51, 81, 242, 0.28)')};
 		border-radius: 32px;
 	}
-
-	&:after {
-		z-index: 2;
-		position: absolute;
-		content: "";
-		top: 5px;
-		left: 5px;
-		height: calc(100% - 10px);
-		width: calc(100% - 10px);
-		background: ${({ theme }: { theme: Pallet }) => (theme.type === 'light' ? 'rgba(71, 69, 83, 0.1)' : '#3351F2')};
-		border-radius: 32px;
-
-	}
-
 
 }
 
@@ -60,6 +45,23 @@ input {
 	align-items: center;
 	justify-content: center;
 	z-index: 4;
+
+	&:before, &:after {
+		transition: all .4s;
+	}
+
+	&:after {
+		z-index: -1;
+		position: absolute;
+		content: "";
+		top: 5px;
+		left: 5px;
+		height: calc(100% - 10px);
+		width: calc(100% - 10px);
+		background: ${({ theme }: { theme: Pallet }) => (theme.type === 'light' ? 'rgba(71, 69, 83, 0.1)' : '#3351F2')};
+		border-radius: 32px;
+
+	}
 }
 `;
 export const ThemeSwitcher: React.FC<{
@@ -83,7 +85,7 @@ export const ThemeSwitcher: React.FC<{
         value='dark'
       />
       <Slide direction={'left'} in={active === 'dark'}>
-        <div className={'theme-entry'} onClick={trigger}>
+        <div className={'theme-entry dark-theme-entry'} onClick={trigger}>
           <svg width='24' height='25' viewBox='0 0 24 25' fill='none' xmlns='http://www.w3.org/2000/svg'>
             <path
               fill-rule='evenodd'
@@ -95,7 +97,7 @@ export const ThemeSwitcher: React.FC<{
         </div>
       </Slide>
       <Slide direction={'right'} in={active === 'light'}>
-        <div className={'theme-entry'} onClick={trigger}>
+        <div className={'theme-entry light-theme-entry'} onClick={trigger}>
           <svg width='22' height='21' viewBox='0 0 22 21' fill='none' xmlns='http://www.w3.org/2000/svg'>
             <path
               d='M17.3456 10.9201C17.3456 7.43412 14.511 4.62012 10.9995 4.62012C7.48794 4.62012 4.65332 7.43412 4.65332 10.9201C4.65332 14.4061 7.48794 17.2201 10.9995 17.2201C14.511 17.2201 17.3456 14.4061 17.3456 10.9201Z'
