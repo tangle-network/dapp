@@ -44,7 +44,9 @@ const TabButton = styled.button<{ active?: boolean }>`
     align-items: center;
     margin-right: 10px;
   }
-
+  .mixer-tab-label {
+    font-size: 16px;
+  }
   color: ${({ active, theme }) => {
     return !active ? (theme as Pallet).primaryText : (theme as Pallet).darkGray;
   }};
@@ -96,7 +98,7 @@ export const MixerTabs: React.FC<MixerTabsProps> = ({ Deposit, Withdraw }) => {
               />
             </svg>
           </span>
-          <span>Deposit</span>
+          <span className='mixer-tab-label'>Deposit</span>
         </TabButton>
         <TabButton onClick={switchToWithdraw} active={activeTab === 'withdraw'}>
           <span className='mixer-tab-icon'>
@@ -108,7 +110,7 @@ export const MixerTabs: React.FC<MixerTabsProps> = ({ Deposit, Withdraw }) => {
               />
             </svg>
           </span>
-          <span>Withdraw</span>
+          <span className='mixer-tab-label'>Withdraw</span>
         </TabButton>
       </TabHeader>
       <Fade timeout={300} in unmountOnExit mountOnEnter key={activeTab + 'fade'}>

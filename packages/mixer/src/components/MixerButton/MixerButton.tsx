@@ -10,8 +10,8 @@ const MixerButtonWrapper = styled.button`
 		border-radius: 31px;
 		color: #fff;
 		height: 60px;
-		font-weight: bold;
 		transition: all ease-in-out .3s;
+		font-weight: bold;
 
 		${({ disabled, theme }) => {
       return disabled
@@ -23,6 +23,7 @@ const MixerButtonWrapper = styled.button`
 		.mixer-button {
 			text-transform: uppercase !important;
 			font-size: 18px;
+			font-weight: bold;
 		}
 `;
 type MixerButtonProps = {

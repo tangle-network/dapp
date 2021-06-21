@@ -25,24 +25,29 @@ const AmountChipWrapper = styled.span<{ selected?: boolean }>`
   transition: all ease 0.3s;
 
   ${({ selected, theme }: { theme: Pallet; selected?: boolean }) => css`
-		&& {
-			border: 1px solid ${theme.borderColor2};
-			border-radius: 20px;
-			background: ${selected ? `#ebedf2` : theme.layer3Background}
-			font-family: ${FontFamilies.AvenirNext};
-			color: rgba(255, 255, 255, 0.5);
-			height: 40px;
-			padding: 0 5px;
-			flex: 1;
-			margin: 5px;
-			white-space: nowrap;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			font-size: 14px;
-			font-weight: bold;
-		}
-	`}
+    && {
+      border: 1px solid ${theme.borderColor2};
+      border-radius: 20px;
+      background: ${selected ? (theme.type === 'light' ? `#ebedf2` : theme.primary) : theme.layer3Background};
+      font-family: ${FontFamilies.AvnirNext};
+      color: ${theme.primaryText};
+      height: 40px;
+      padding: 0 5px;
+      flex: 1;
+      margin: 5px;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+
+      font-style: normal;
+      font-weight: 500;
+      line-height: 19px;
+      text-align: center;
+      letter-spacing: -0.065em;
+    }
+  `}
 `;
 
 export const MixerGroupSelect: React.FC<MixerGroupSelectProps> = ({ items, onChange, value }) => {
