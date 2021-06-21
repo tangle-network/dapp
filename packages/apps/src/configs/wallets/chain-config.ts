@@ -54,7 +54,7 @@ export const chainsConfig: AppConfig['chains'] = {
     group: 'eth',
     id: 4,
     name: 'Ethereum',
-    url: 'n/a',
+    url: '',
     logo: EtherLogo,
     currencies: [
       {

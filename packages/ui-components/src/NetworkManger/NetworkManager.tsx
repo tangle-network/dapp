@@ -1,6 +1,8 @@
 import {
   Badge,
   Button,
+  ButtonBase,
+  CircularProgress,
   Divider,
   Icon,
   IconButton,
@@ -14,58 +16,89 @@ import {
 } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
 import ListItem from '@material-ui/core/ListItem';
-import { Chain, useWebContext } from '@webb-dapp/react-environment';
+import { Chain, useWebContext, Wallet } from '@webb-dapp/react-environment';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
+import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 
-const SettingsManagerWrapper = styled.div`
+const NetworkManagerWrapper = styled.div`
   padding: 1rem;
 `;
-type SettingsManagerProps = {};
+type NetworkManagerProps = {};
 
-enum ConnectionStatus {
+enum ConnectionStep {
   SelectChain = 'Select a chain',
   SelectWallet = 'Select wallet',
   Connecting = 'Connecting',
 }
 
-export const SettingsManager: React.FC<SettingsManagerProps> = () => {
+type ConnectingState = 'connecting' | 'connected' | 'no-connection' | 'error';
+type NetworkManagerIndicatorProps = {
+  connectionStatus: ConnectingState;
+  connectionMetaData?: {
+    hoverMessage?: string;
+    chainName: string;
+    details?: string;
+    chainIcon: string | JSX.Element;
+    tag?: string;
+  };
+  onClick?: (e: any) => void;
+};
+
+export const NetworkManager: React.FC<NetworkManagerProps> = () => {
   const [open, setOpen] = useState(false);
 
-  const { activeChain, activeWallet, chains, switchChain } = useWebContext();
+  const { activeChain, activeWallet, chains, switchChain: _switchChain } = useWebContext();
+  const [connectionStatus, setConnectionStatus] = useState<ConnectingState>(
+    activeChain ? 'connected' : 'no-connection'
+  );
+  const switchChain = useCallback(
+    async (chain: Chain, wallet: Wallet) => {
+      try {
+        setConnectionStatus('connecting');
+        const res = await _switchChain(chain, wallet);
+        setConnectionStatus('connected');
+        return res;
+      } catch (e) {
+        setConnectionStatus('error');
+        throw e;
+      }
+    },
+    [_switchChain]
+  );
 
   const networks = useMemo(() => Object.values(chains), [chains]);
-  const [connectionStatus, setConnectionStatus] = useState(ConnectionStatus.SelectChain);
+  const [connectionStep, setConnectionStep] = useState(ConnectionStep.SelectChain);
   const stepNumber = useMemo(() => {
-    switch (connectionStatus) {
-      case ConnectionStatus.SelectChain:
+    switch (connectionStep) {
+      case ConnectionStep.SelectChain:
         return 1;
-      case ConnectionStatus.SelectWallet:
+      case ConnectionStep.SelectWallet:
         return 2;
-      case ConnectionStatus.Connecting:
+      case ConnectionStep.Connecting:
         return 3;
     }
-  }, [connectionStatus]);
+  }, [connectionStep]);
 
   const [userSelectedChain, setUserSelectedChain] = useState<Chain | null>(null);
   const handleChange = (chain: Chain) => {
     setUserSelectedChain(chain);
-    setConnectionStatus(ConnectionStatus.SelectWallet);
+    setConnectionStep(ConnectionStep.SelectWallet);
   };
   const handleCancel = useCallback(() => {
     setOpen(false);
-    if (connectionStatus !== ConnectionStatus.Connecting) {
+    if (connectionStep !== ConnectionStep.Connecting) {
       setUserSelectedChain(null);
-      setConnectionStatus(ConnectionStatus.SelectChain);
+      setConnectionStep(ConnectionStep.SelectChain);
     }
-  }, [connectionStatus]);
+  }, [connectionStep]);
   const content = useMemo(() => {
-    switch (connectionStatus) {
-      case ConnectionStatus.SelectChain:
+    switch (connectionStep) {
+      case ConnectionStep.SelectChain:
         return (
           <List>
             {networks.map((chain) => {
@@ -104,7 +137,7 @@ export const SettingsManager: React.FC<SettingsManagerProps> = () => {
                   <ListItemText>
                     <Typography variant={'button'}>{name}</Typography>
                     <Padding>
-                      <div>URL: {url}</div>
+                      <div>URL: {url || 'n/a'}</div>
                       <div
                         style={{
                           display: 'flex',
@@ -151,7 +184,7 @@ export const SettingsManager: React.FC<SettingsManagerProps> = () => {
             })}
           </List>
         );
-      case ConnectionStatus.SelectWallet: {
+      case ConnectionStep.SelectWallet: {
         if (!userSelectedChain) {
           return null;
         }
@@ -234,7 +267,7 @@ export const SettingsManager: React.FC<SettingsManagerProps> = () => {
                     button
                     disabled={connectedWallet}
                     onClick={async () => {
-                      setConnectionStatus(ConnectionStatus.Connecting);
+                      setConnectionStep(ConnectionStep.Connecting);
                       await switchChain(userSelectedChain, wallet);
                       handleCancel();
                     }}
@@ -267,47 +300,74 @@ export const SettingsManager: React.FC<SettingsManagerProps> = () => {
         );
       }
 
-      case ConnectionStatus.Connecting:
+      case ConnectionStep.Connecting:
         return <LinearProgress />;
     }
-  }, [networks, activeWallet, activeChain, connectionStatus, userSelectedChain, switchChain, handleCancel]);
+  }, [networks, activeWallet, activeChain, connectionStep, userSelectedChain, switchChain, handleCancel]);
+  useEffect(() => {
+    if (activeChain) {
+      setConnectionStatus('connected');
+    } else {
+      setConnectionStatus('no-connection');
+    }
+  }, [activeChain]);
+  const chainInfo = useMemo<NetworkManagerIndicatorProps['connectionMetaData'] | undefined>(() => {
+    if (!activeChain) {
+      return undefined;
+    }
+    return {
+      hoverMessage: activeChain.url,
+      chainIcon: (
+        <Avatar
+          style={{
+            height: 35,
+            width: 35,
+          }}
+        >
+          <activeChain.logo />
+        </Avatar>
+      ),
+      details: activeChain.url,
+      chainName: activeChain.name,
+    };
+  }, [activeChain]);
   return (
     <>
-      <Tooltip title={'Settings'}>
-        <IconButton
+      <Tooltip title={'Network'}>
+        <NetworkManagerIndicator
+          connectionMetaData={chainInfo}
+          connectionStatus={connectionStatus}
           onClick={() => {
             setOpen(true);
           }}
-        >
-          <Icon>settings</Icon>
-        </IconButton>
+        />
       </Tooltip>
 
       <Modal
         open={open}
         onClose={() => {
-          if (connectionStatus !== ConnectionStatus.Connecting) {
+          if (connectionStep !== ConnectionStep.Connecting) {
             setOpen(false);
           }
         }}
       >
-        <SettingsManagerWrapper>
+        <NetworkManagerWrapper>
           <Typography variant={'h5'}>Mange Connection </Typography>
 
           <SpaceBox height={16} />
 
           <Flex row ai='center'>
-            {connectionStatus === ConnectionStatus.SelectWallet && (
+            {connectionStep === ConnectionStep.SelectWallet && (
               <IconButton
                 onClick={() => {
-                  setConnectionStatus(ConnectionStatus.SelectChain);
+                  setConnectionStep(ConnectionStep.SelectChain);
                 }}
               >
                 <Icon>chevron_left</Icon>
               </IconButton>
             )}
             <Typography variant={'h6'}>
-              <b>Step {stepNumber}:</b> {connectionStatus}
+              <b>Step {stepNumber}:</b> {connectionStep}
             </Typography>
             <Flex flex={1} as={Padding}>
               <Divider />
@@ -317,7 +377,7 @@ export const SettingsManager: React.FC<SettingsManagerProps> = () => {
           <SpaceBox height={8} />
 
           {content}
-        </SettingsManagerWrapper>
+        </NetworkManagerWrapper>
 
         <Divider variant={'fullWidth'} />
 
@@ -332,5 +392,105 @@ export const SettingsManager: React.FC<SettingsManagerProps> = () => {
         </Padding>
       </Modal>
     </>
+  );
+};
+
+const NetworkIndecatorWrapper = styled.button`
+  && {
+    min-height: 53px;
+    border-radius: 32px;
+    margin: 0 1rem;
+    padding: 0 0.3rem;
+    //background: ${({ theme }: { theme: Pallet }) => theme.background};
+    position: relative;
+    &:before {
+      position: absolute;
+      content: '';
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      z-index: 1;
+      background: ${({ theme }: { theme: Pallet }) => (theme.type === 'light' ? 'white' : 'rgba(51, 81, 242, 0.28)')};
+      border-radius: 32px;
+    }
+    &:after {
+      z-index: 2;
+      position: absolute;
+      content: '';
+      top: 2px;
+      left: 2px;
+      height: calc(100% - 4px);
+      width: calc(100% - 4px);
+      background: ${({ theme }: { theme: Pallet }) => (theme.type === 'light' ? 'rgba(71, 69, 83, 0.1)' : 'black')};
+      border-radius: 32px;
+    }
+    *:first-child {
+      position: relative;
+      z-index: 3;
+    }
+  }
+
+  cursor: pointer;
+`;
+
+export const NetworkManagerIndicator: React.FC<NetworkManagerIndicatorProps> = ({
+  onClick,
+  connectionMetaData,
+  connectionStatus,
+}) => {
+  const icon = useMemo(() => {
+    switch (connectionStatus) {
+      case 'connecting':
+        return (
+          <Flex
+            ai={'center'}
+            jc={'center'}
+            style={{
+              width: 35,
+              height: 35,
+            }}
+          >
+            <Icon style={{ position: 'absolute' }} fontSize={'small'}>
+              podcasts
+            </Icon>
+            <CircularProgress style={{ position: 'absolute' }} size={32} />
+          </Flex>
+        );
+
+      case 'no-connection':
+        return <Icon fontSize={'large'}>podcasts</Icon>;
+
+      case 'error':
+        return <Icon fontSize={'large'}>podcasts</Icon>;
+
+      case 'connected':
+      default:
+        return connectionMetaData?.chainIcon ? connectionMetaData?.chainIcon : <Icon fontSize={'large'}>podcasts</Icon>;
+    }
+  }, [connectionMetaData, connectionStatus]);
+  return (
+    <NetworkIndecatorWrapper as={ButtonBase} onClick={onClick}>
+      <Flex row ai={'center'} jc='space-between' as={Padding}>
+        <Flex>{icon}</Flex>
+        {connectionMetaData ? (
+          <>
+            <Padding />
+
+            <Flex col>
+              <Typography variant='caption'>
+                <b style={{ whiteSpace: 'nowrap' }}>{connectionMetaData.chainName}</b>
+              </Typography>
+
+              <Typography color='textSecondary' variant='caption'>
+                <b style={{ whiteSpace: 'nowrap' }}>{connectionMetaData.details}</b>
+              </Typography>
+            </Flex>
+          </>
+        ) : (
+          ''
+        )}
+      </Flex>
+    </NetworkIndecatorWrapper>
   );
 };

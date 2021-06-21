@@ -1,5 +1,7 @@
 import {
   ClickAwayListener,
+  Fade,
+  Grow,
   Icon,
   IconButton,
   List,
@@ -50,7 +52,6 @@ const AccountManagerContent = styled.div<{ open: boolean }>`
   border-radius: 25px;
   border: 1px solid ${({ theme }) => (theme.type === 'dark' ? 'black' : theme.gray13)};
   background: ${({ theme }) => theme.background};
-
   overflow: hidden;
   transition: all 0.3s ease-in-out;
 

@@ -1,8 +1,6 @@
-import { Icon, IconButton, Tooltip } from '@material-ui/core';
 import { ReactComponent as WebbLogo } from '@webb-dapp/react-components/assets/webb-icon.svg';
 import { useStore } from '@webb-dapp/react-environment';
 import { useDimensions } from '@webb-dapp/react-environment/layout';
-import { SettingsManager } from '@webb-dapp/ui-components/SettingsManager/SettingsManager';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 import { below } from '@webb-dapp/ui-components/utils/responsive-utils';
 import React, { useMemo } from 'react';
@@ -11,6 +9,7 @@ import styled from 'styled-components';
 
 import { AccountManager } from '../AccountManager/AccountManager';
 import { ThemeSwitcher } from './ThemeSwticher';
+import { NetworkManager } from '@webb-dapp/ui-components/NetworkManger/NetworkManager';
 
 const AppBarWrapper = styled.nav`
   height: 65px;
@@ -88,7 +87,7 @@ const SpacerDiv = styled.div`
   width: 244px;
 `;
 
-const AccountWrapper = styled.div`
+const RightNavigation = styled.div`
   display: flex;
   align-items: center;
   ${below.sm`
@@ -129,14 +128,14 @@ const AppBar: React.FC<AppBarProps> = () => {
         </li>*/}
         </NavigationWrapper>
       )}
-      <AccountWrapper>
+      <RightNavigation>
         <ThemeSwitcher
           active={isDarkTheme ? 'dark' : 'light'}
           onChange={(next) => {
             setTheme(next === 'light' ? 'default' : 'dark');
           }}
         />
-        <Tooltip title='Need help?'>
+        {/*        <Tooltip title='Need help?'>
           <IconButton
             onClick={() => {
               window.open('https://medium.com/', '_blank');
@@ -144,10 +143,10 @@ const AppBar: React.FC<AppBarProps> = () => {
           >
             <Icon>help</Icon>
           </IconButton>
-        </Tooltip>
-        {!isMobile && <SettingsManager />}
+        </Tooltip>*/}
+        {!isMobile && <NetworkManager />}
         <AccountManager />
-      </AccountWrapper>
+      </RightNavigation>
     </AppBarWrapper>
   );
 };
