@@ -6,12 +6,15 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-variant-numeric: tabular-nums;
-  color: #333333;
+  color: var(--text-color-normal);
   font-weight: 400;
-	transition: all ease-in-out .2s;
+  transition: all ease-in-out 0.2s;
+  font-size: 14px;
+
 }
 * {
-	transition: color ,background-color .5s ease-in-out;
+	font-family: Bitum, serif;
+	transition: color, background-color 0.5s ease-in-out;
 }
 *:focus {
   outline: none;

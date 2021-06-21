@@ -7,7 +7,6 @@
   "homepage": "https://github.com/webb-tools/webb-dapp#readme",
   "dependencies": {
     "@webb-tools/sdk-mixer": "^0.1.2-22",
-    "@webb-tools/sdk-core": "^0.1.2-22",
-    "antd": "^4.7.2"
+    "@webb-tools/sdk-core": "^0.1.2-22"
   }
 }

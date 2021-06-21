@@ -9,8 +9,6 @@ import { ReactComponent as EditIcon } from './assets/edit.svg';
 import { ReactComponent as SwapIcon } from './assets/swap.svg';
 import { ReactComponent as SwitchIcon } from './assets/switch.svg';
 
-export * from '@ant-design/icons';
-
 export { ArrowIcon, CopyIcon, CloseIcon, CheckedCircleIcon, EditIcon, SwapIcon, SwitchIcon, ArrowPixelIcon };
 
 export type IconType = 'copy' | 'swap' | 'edit' | 'close';

@@ -39,16 +39,16 @@ const StyledList = styled.ul`
 
 const AccountManagerContent = styled.div<{ open: boolean }>`
   border-radius: 25px;
-  border: 1px solid ${({ theme }) => theme.gray13};
+  border: 1px solid ${({ theme }) => (theme.type === 'dark' ? 'black' : theme.gray13)};
   background: ${({ theme }) => theme.background};
 
   overflow: hidden;
   transition: all 0.3s ease-in-out;
 
-  ${({ open }) => {
+  ${({ open, theme }) => {
     return open
       ? css`
-          box-shadow: 1px 1px 14px rgba(54, 86, 233, 0.4);
+          box-shadow: 1px 1px 14px ${theme.type === 'dark' ? 'black' : 'rgba(54, 86, 233, 0.1)'};
         `
       : css``;
   }}
@@ -70,7 +70,7 @@ const AccountManagerContent = styled.div<{ open: boolean }>`
   .account-header {
     display: flex;
     align-items: center;
-    border-bottom: 1px solid ${({ theme }) => theme.gray13};
+    border-bottom: 1px solid ${({ open, theme }) => (open ? theme.gray13 : 'transparent')};
     padding: 5px;
   }
 
