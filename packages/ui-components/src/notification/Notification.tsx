@@ -46,7 +46,11 @@ const AlertWrapper = styled.div<{ color: string }>`
     align-items: center;
     min-height: 80px;
     //background: rgba(239, 241, 244, 1);
-    background: ${({ color }) => color && tinycolor(color).setAlpha(0.1).toRgbString()};
+    background: ${({ color, theme }) =>
+      color &&
+      tinycolor(color)
+        .setAlpha(theme.type === 'dark' ? 0.5 : 0.1)
+        .toRgbString()};
     border-radius: 15px;
     position: relative;
     overflow: hidden;
