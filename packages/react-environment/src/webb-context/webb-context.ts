@@ -23,7 +23,7 @@ export interface WebbContentState<T = unknown> {
 
   setActiveAccount<T extends Account>(account: T): Promise<void>;
 
-  switchChain(chain: Chain, wallet: Wallet): Promise<void>;
+  switchChain(chain: Chain, wallet: Wallet): Promise<WebbApiProvider<T> | null>;
 }
 
 export const WebbContext = React.createContext<WebbContentState>({
@@ -36,7 +36,7 @@ export const WebbContext = React.createContext<WebbContentState>({
     return Promise.resolve();
   },
   switchChain(chain, wallet) {
-    return Promise.resolve();
+    return Promise.resolve(null);
   },
   wallets: {},
 });
