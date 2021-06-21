@@ -1,5 +1,6 @@
-import { Icon, IconButton, Switch, Tooltip } from '@material-ui/core';
+import { Icon, IconButton, Tooltip } from '@material-ui/core';
 import { ReactComponent as WebbLogo } from '@webb-dapp/react-components/assets/webb-icon.svg';
+import { useStore } from '@webb-dapp/react-environment';
 import { useDimensions } from '@webb-dapp/react-environment/layout';
 import { SettingsManager } from '@webb-dapp/ui-components/SettingsManager/SettingsManager';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
@@ -9,7 +10,7 @@ import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { AccountManager } from '../AccountManager/AccountManager';
-import { useStore } from '@webb-dapp/react-environment';
+import { ThemeSwitcher } from './ThemeSwticher';
 
 const AppBarWrapper = styled.nav`
   height: 65px;
@@ -103,7 +104,7 @@ const AppBar: React.FC<AppBarProps> = () => {
   const isMobile = useMemo(() => {
     return width <= size.sm;
   }, [width, size]);
-  const { theme, setTheme } = useStore('ui');
+  const { setTheme, theme } = useStore('ui');
 
   const isDarkTheme = theme === 'dark';
   return (
@@ -129,10 +130,10 @@ const AppBar: React.FC<AppBarProps> = () => {
         </NavigationWrapper>
       )}
       <AccountWrapper>
-        <Switch
-          checked={isDarkTheme}
-          onClick={() => {
-            setTheme(isDarkTheme ? 'default' : 'dark');
+        <ThemeSwitcher
+          active={isDarkTheme ? 'dark' : 'light'}
+          onChange={(next) => {
+            setTheme(next === 'light' ? 'default' : 'dark');
           }}
         />
         <Tooltip title='Need help?'>

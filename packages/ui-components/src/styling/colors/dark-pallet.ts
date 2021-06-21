@@ -2,6 +2,8 @@ import { basePallet } from './base-pallet';
 
 export const darkPallet = {
   ...basePallet,
+  type: 'dark',
+
   backdrop: 'rgba(20,20,20,0.12)',
   background: '#121212',
   mainBackground: `#000`,

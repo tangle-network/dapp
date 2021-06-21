@@ -36,4 +36,5 @@ export const basePallet = {
   layer1Background: 'rgba(21, 26, 30, 1)',
   layer2Background: 'rgba(34, 38, 43, 1)',
   layer3Background: 'rgba(56, 60, 64, 1)',
+  type: 'base',
 };
