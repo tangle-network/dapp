@@ -5,6 +5,7 @@ import {
   List,
   ListItemSecondaryAction,
   ListItemText,
+  Tooltip,
   Typography,
 } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
@@ -13,6 +14,13 @@ import { useAccounts, useConstants } from '@webb-dapp/react-hooks';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import React, { useMemo, useRef, useState } from 'react';
 import styled, { css } from 'styled-components';
+
+const AccountName = styled.p`
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 150px;
+  overflow: hidden;
+`;
 
 const StyledList = styled.ul`
   background: ${({ theme }) => theme.background};
@@ -84,7 +92,7 @@ const AccountManagerContent = styled.div<{ open: boolean }>`
 `;
 
 const AccountManagerWrapper = styled.div<any>`
-  width: 200px;
+  width: 250px;
   height: 0px;
   position: relative;
   top: -32.5px;
@@ -93,7 +101,7 @@ type AccountManagerProps = {};
 
 export const AccountManager: React.FC<AccountManagerProps> = () => {
   const { accounts, active, setActiveAccount } = useAccounts();
-  const address = useMemo(() => active?.name || active?.address || '', [active]);
+  const name = useMemo(() => active?.name || active?.address || '', [active]);
   const accountvatar = useMemo(() => active?.avatar || <span />, [active]);
   const { allCurrencies } = useConstants();
   const ActiveCurrency = useMemo(() => {
@@ -134,7 +142,11 @@ export const AccountManager: React.FC<AccountManagerProps> = () => {
               <Avatar className={'account-avatar'}>{accountvatar}</Avatar>
 
               <Flex as={'p'} flex={1}>
-                <Typography color={'textPrimary'}>{address}</Typography>
+                <Tooltip title={name} placement={'left'}>
+                  <AccountName as={Typography} color={'textPrimary'}>
+                    {name}
+                  </AccountName>
+                </Tooltip>
                 {ActiveCurrency && (
                   <Typography variant={'body2'} color={'textSecondary'}>
                     {ActiveCurrency}
@@ -175,7 +187,14 @@ export const AccountManager: React.FC<AccountManagerProps> = () => {
 
                     <ListItemText>
                       <Flex as={'p'} flex={1}>
-                        <Typography color={'textPrimary'}>{name}</Typography>
+                        <Tooltip title={account.name} placement={'left'}>
+                          <AccountName as={Typography} color={'textPrimary'}>
+                            {name}
+                            {name}
+                            {name}
+                            {name}
+                          </AccountName>
+                        </Tooltip>
                         {ActiveCurrency && (
                           <Typography variant={'body2'} color={'textSecondary'}>
                             {ActiveCurrency}
