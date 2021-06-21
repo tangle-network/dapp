@@ -5,6 +5,7 @@ import {
   List,
   ListItemSecondaryAction,
   ListItemText,
+  Slide,
   Tooltip,
   Typography,
 } from '@material-ui/core';
@@ -141,18 +142,25 @@ export const AccountManager: React.FC<AccountManagerProps> = () => {
             <div className='account-header'>
               <Avatar className={'account-avatar'}>{accountvatar}</Avatar>
 
-              <Flex as={'p'} flex={1}>
-                <Tooltip title={name} placement={'left'}>
-                  <AccountName as={Typography} color={'textPrimary'}>
-                    {name}
-                  </AccountName>
-                </Tooltip>
-                {ActiveCurrency && (
-                  <Typography variant={'body2'} color={'textSecondary'}>
-                    {ActiveCurrency}
-                  </Typography>
-                )}
-              </Flex>
+              <Slide in={true} key={active?.address}>
+                <div
+                  style={{
+                    display: 'flex',
+                    flex: '1',
+                  }}
+                >
+                  <Tooltip title={name} placement={'left'}>
+                    <AccountName as={Typography} color={'textPrimary'}>
+                      {name}
+                    </AccountName>
+                  </Tooltip>
+                  {ActiveCurrency && (
+                    <Typography variant={'body2'} color={'textSecondary'}>
+                      {ActiveCurrency}
+                    </Typography>
+                  )}
+                </div>
+              </Slide>
 
               <div className={'account-button-wrapper'}>
                 <IconButton
@@ -189,9 +197,6 @@ export const AccountManager: React.FC<AccountManagerProps> = () => {
                       <Flex as={'p'} flex={1}>
                         <Tooltip title={account.name} placement={'left'}>
                           <AccountName as={Typography} color={'textPrimary'}>
-                            {name}
-                            {name}
-                            {name}
                             {name}
                           </AccountName>
                         </Tooltip>
