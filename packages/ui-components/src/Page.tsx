@@ -126,7 +126,6 @@ _Page = memo(styled(_Page)`
   /* for firfox doesn't support overlay */
   overflow-y: auto;
   overflow-y: overlay;
-
   overflow: auto;
 
   border-radius: 0 0 40px 40px;
@@ -137,7 +136,10 @@ _Page = memo(styled(_Page)`
 
 	`};
   transition: all ease-in-out 0.5s;
-  background: ${({ theme }) => theme.background};
+  background: ${({ theme }) => {
+    return theme.background;
+  }};
+  box-shadow: 0px 0px 14px rgba(51, 81, 242, 0.11);
 `);
 
 const Content: FC<BareProps> = memo(styled.div`

@@ -25,7 +25,7 @@ const initState: UIData = {
   breadcrumb: [],
   pageTitle: '__empty',
   subMenu: null,
-  theme: localStorage.getItem('_theme') || 'primary',
+  theme: localStorage.getItem('_theme') || 'dark',
 };
 
 const reducer = (state: UIData, action: UIAction): UIData => {
@@ -39,6 +39,7 @@ const reducer = (state: UIData, action: UIAction): UIData => {
     }
 
     case 'set_theme': {
+      localStorage.setItem('_theme', action.value);
       return {
         ...state,
         theme: action.value,
@@ -59,6 +60,8 @@ export interface UseUIConfigReturnType extends UIData {
   setTheme: (theme: string) => void;
   setSubMenu: (menu: SubMenu | null) => void;
 }
+
+const storage = Storage;
 
 export const useUIConfig = (): UseUIConfigReturnType => {
   const [state, dispatch] = useReducer(reducer, initState);
