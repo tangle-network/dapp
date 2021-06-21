@@ -1,7 +1,7 @@
-import styled from 'styled-components';
+import { Slide } from '@material-ui/core';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import React, { useCallback, useRef } from 'react';
-import { Slide } from '@material-ui/core';
+import styled from 'styled-components';
 
 const ThemeSwitcherWrapper = styled.label`
 	width: 64px;
