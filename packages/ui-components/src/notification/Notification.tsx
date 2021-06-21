@@ -1,5 +1,6 @@
 import { ButtonBase, Icon, Paper } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
+import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { lightPallet } from '@webb-dapp/ui-components/styling/colors';
 import { SnackbarKey, SnackbarMessage } from 'notistack';
 import React, { useCallback, useEffect, useMemo } from 'react';
@@ -9,7 +10,6 @@ import tinycolor from 'tinycolor2';
 import { SnackBarOpts } from './NotificationContext';
 
 const AlertIconWrapper = styled.div<{ color: string }>`
-  padding: 0 0.5rem;
   color: white;
   font-size: 2rem;
   display: flex;
@@ -50,12 +50,13 @@ const AlertWrapper = styled.div<{ color: string }>`
     border-radius: 15px;
     position: relative;
     overflow: hidden;
+
     ::after {
       content: '';
       display: block;
       position: absolute;
       z-index: -1;
-      background: #fff;
+      background: ${({ theme }) => (theme.type === 'dark' ? '#000' : '#fff')};
       width: 100%;
       height: 100%;
       left: 0;
@@ -69,6 +70,7 @@ export const Alert: React.FC<{
   $key: SnackbarKey;
   onUnmount?(key: SnackbarKey): void;
 }> = ({ $key, onUnmount, opts }) => {
+  const pallet = useColorPallet();
   useEffect(
     () => () => {
       onUnmount?.($key);
@@ -102,18 +104,18 @@ export const Alert: React.FC<{
   const color = useMemo(() => {
     switch (opts.variant) {
       case 'error':
-        return lightPallet.danger;
+        return pallet.danger;
       case 'success':
-        return lightPallet.success;
+        return pallet.success;
       case 'warning':
-        return lightPallet.warning;
+        return pallet.warning;
       case 'info':
-        return lightPallet.info;
+        return pallet.info;
       default:
       case 'default':
         return lightPallet.mainBackground;
     }
-  }, [opts]);
+  }, [opts, pallet]);
   const close = useCallback(() => opts.close($key), [$key, opts]);
   return (
     <AlertWrapper color={color} as={Paper} elevation={4}>

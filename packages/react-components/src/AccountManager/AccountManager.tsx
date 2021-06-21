@@ -70,7 +70,7 @@ const AccountManagerContent = styled.div<{ open: boolean }>`
   .account-header {
     display: flex;
     align-items: center;
-    border-bottom: 1px solid ${({ theme, open }) => (open ? theme.gray13 : 'transparent')};
+    border-bottom: 1px solid ${({ open, theme }) => (open ? theme.gray13 : 'transparent')};
     padding: 5px;
   }
 

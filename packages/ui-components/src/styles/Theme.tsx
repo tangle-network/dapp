@@ -1,7 +1,7 @@
+import { useStore } from '@webb-dapp/react-environment';
 import { DarkTheme } from '@webb-dapp/ui-components/styles/darktheme';
 import { LightTheme } from '@webb-dapp/ui-components/styles/lightTheme';
 import React from 'react';
-import { useStore } from '@webb-dapp/react-environment';
 
 type ThemeProps = {};
 
