@@ -28,11 +28,7 @@ export const Deposit: React.FC<DepositProps> = () => {
   const api = useApi();
   return (
     <DepositWrapper>
-      <WalletTokenInput
-        setSelectedToken={(token) => {}}
-        selectedToken={undefined}
-        mixerGroupEntriesWrapper={new MixerGroupEntriesWrapper(undefined, undefined, {})}
-      />
+      <WalletTokenInput setSelectedToken={(token) => {}} selectedToken={undefined} />
       <SpaceBox height={16} />
       <MixerGroupSelect items={depositApi.mixerSizes} value={item} onChange={setItem} />
       <SpaceBox height={16} />

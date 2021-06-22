@@ -1,13 +1,13 @@
 import { ClickAwayListener, Icon, IconButton, List, ListItemAvatar, ListItemText, Typography } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
 import Popper from '@material-ui/core/Popper';
-import { Currency } from '@webb-dapp/mixer/utils/currency';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import styled, { css } from 'styled-components';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
+import { Currency } from '@webb-dapp/react-environment/types/currency';
 
 const TokenInputWrapper = styled.div<{ open: boolean }>`
   border-radius: 25px;
@@ -59,7 +59,7 @@ const StyledList = styled.ul`
 
     &.selected,
     :hover {
-      background: ${({ theme }) => theme.gray1};
+      background: ${({ theme }: { theme: Pallet }) => (theme.type === 'dark' ? theme.layer3Background : theme.gray1)};
     }
 
     position: relative;
@@ -71,7 +71,7 @@ const AccountManagerWrapper = styled.div<any>`
   height: 0px;
   background: #ffffff;
   position: relative;
-  top: -32.5px;
+  top: -26.5px;
 `;
 
 type TokenInputProps = {
@@ -83,10 +83,10 @@ type TokenInputProps = {
 export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, value }) => {
   const selectItems = useMemo(() => {
     return currencies.map((currency) => {
+      const view = currency.view;
       return {
-        label: currency.currencyId.toString(),
+        ...view,
         self: currency,
-        value: currency.toString(),
       };
     });
   }, [currencies]);
@@ -101,12 +101,10 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
     if (!value) {
       return undefined;
     }
+    const view = value.view;
     return {
-      label: value.currencyId.toString(),
-      name: value.fullName,
-      symbol: value.symbol,
-      tokenImage: value.image,
-      value: value.currencyId.toString(),
+      ...view,
+      self: value,
     };
   }, [value]);
   const $wrapper = useRef<HTMLDivElement>();
@@ -137,14 +135,14 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
                   <Flex row ai='center' jc='flex-start' flex={1}>
                     <Avatar
                       style={{ background: 'transparent' }}
-                      src={selected.tokenImage}
+                      children={selected?.icon}
                       className={'token-avatar'}
                     />
                     <Padding x={0.5} />
                     <Flex jc={'center'}>
                       <Typography variant={'body2'}>{selected.symbol}</Typography>
                       <Typography variant={'caption'} color={'textSecondary'}>
-                        {selected.name}
+                        {selected.chainName}
                       </Typography>
                     </Flex>
                   </Flex>
@@ -190,8 +188,8 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
               </div>
 
               <StyledList as={List} dense disablePadding>
-                {selectItems.map(({ label, self: currency }) => {
-                  const isSelected = selected?.label === label;
+                {selectItems.map(({ chainName, icon: Icon, id, self: currency, symbol }) => {
+                  const isSelected = selected?.id === id;
                   return (
                     <li
                       role={'button'}
@@ -200,16 +198,16 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
                         onChange(currency);
                       }}
                       className={isSelected ? 'selected' : ''}
-                      key={label + 'currency'}
+                      key={id + symbol + 'currency'}
                     >
                       <Flex ai='center' row>
                         <ListItemAvatar>
-                          <Avatar style={{ background: 'transparent' }} src={currency.image} />
+                          <Avatar style={{ background: 'transparent' }} children={Icon} />
                         </ListItemAvatar>
                         <ListItemText>
-                          <Typography>{currency.symbol}</Typography>
+                          <Typography>{symbol}</Typography>
                           <Typography variant={'caption'} color={'textSecondary'}>
-                            {currency.fullName}
+                            {chainName}
                           </Typography>
                         </ListItemText>
                       </Flex>

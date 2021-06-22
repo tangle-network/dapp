@@ -58,10 +58,10 @@ export const chainsConfig: AppConfig['chains'] = {
     logo: EtherLogo,
     currencies: [
       {
-        currencyId: 1,
+        currencyId: 3,
         enabled: true,
       },
     ],
-    nativeCurrencyId: 1,
+    nativeCurrencyId: 3,
   },
 };

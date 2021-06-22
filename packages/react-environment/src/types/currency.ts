@@ -36,7 +36,7 @@ const chains = Object.values(chainsConfig).reduce(
 
 export interface CurrencyView {
   id: number | string;
-  icon: ReturnType<typeof createElement> | JSX.Element;
+  icon: ReturnType<typeof createElement>;
   name: string;
   color?: string;
   symbol: string;
@@ -50,7 +50,7 @@ export interface CurrencyConfig extends Omit<CurrencyView, 'chainName'> {
 export class Currency {
   constructor(private data: CurrencyConfig) {}
 
-  static FromCurrencyId(currencyId: WebbCurrencyId) {
+  static fromCurrencyId(currencyId: WebbCurrencyId) {
     const currencyConfig = currenciesConfig[currencyId];
     return new Currency(currencyConfig);
   }
@@ -66,9 +66,10 @@ export class Currency {
     return supportedChains;
   }
 
-  getView(activeChain: Chain): CurrencyView {
+  get view(): CurrencyView {
+    const nativeCurrencyForChain = Object.values(chains).find((chain) => chain.nativeCurrencyId == this.data.id);
     return {
-      chainName: activeChain.name,
+      chainName: nativeCurrencyForChain?.name ?? '',
       icon: this.data.icon,
       id: this.data.id,
       name: this.data.name,
