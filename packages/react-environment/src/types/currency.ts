@@ -11,6 +11,7 @@ interface Data {
   currencyId: WebbCurrencyId;
   token: Token;
 }
+
 //TODO handle state from the provider
 // TODO: move this once beresheet branch is merged to more usable way
 const chains = Object.values(chainsConfig).reduce(
@@ -43,9 +44,7 @@ export interface CurrencyView {
   chainName: string;
 }
 
-export interface CurrencyConfig extends Omit<CurrencyView, 'chainName'> {
-  supportingChainsIds: number[];
-}
+export interface CurrencyConfig extends Omit<CurrencyView, 'chainName'> {}
 
 export class Currency {
   constructor(private data: CurrencyConfig) {}
@@ -56,14 +55,12 @@ export class Currency {
   }
 
   get supportedChains(): Chain[] {
-    const supportedChains: Chain[] = [];
-    this.data.supportingChainsIds.forEach((id) => {
-      const chain = chains[id];
-      if (chain) {
-        supportedChains.push(chain);
-      }
+    return Object.values(chains).filter((chain) => {
+      const currencyIndex = chain.currencies.findIndex((currency) => {
+        return this.data.id == currency.currencyId;
+      });
+      return currencyIndex > -1;
     });
-    return supportedChains;
   }
 
   get view(): CurrencyView {

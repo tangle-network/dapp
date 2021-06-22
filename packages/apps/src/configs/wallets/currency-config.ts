@@ -9,7 +9,6 @@ export const currenciesConfig: AppConfig['currencies'] = {
     symbol: 'EDG',
     color: '',
     id: 1,
-    supportingChainsIds: [3, 1],
     icon: React.createElement(EdgwareLogo),
   },
   2: {
@@ -17,7 +16,6 @@ export const currenciesConfig: AppConfig['currencies'] = {
     symbol: 'tEDG',
     color: '',
     id: 2,
-    supportingChainsIds: [3],
     icon: React.createElement(EdgwareLogo),
   },
   3: {
@@ -25,7 +23,6 @@ export const currenciesConfig: AppConfig['currencies'] = {
     symbol: 'ETH',
     color: '',
     id: 3,
-    supportingChainsIds: [4],
     icon: React.createElement(EtherLogo),
   },
 };
