@@ -1,7 +1,6 @@
-import { AppConfig } from '@webb-dapp/react-environment/webb-context';
-import { PolkaLogo } from '@webb-dapp/apps/configs/wallets/logos/PolkaLogo';
 import { MetaMaskLogo } from '@webb-dapp/apps/configs/wallets/logos/MetaMaskLogo';
-import { WalletConnectLogo } from '@webb-dapp/apps/configs/wallets/logos/WalletConnectLogo';
+import { PolkaLogo } from '@webb-dapp/apps/configs/wallets/logos/PolkaLogo';
+import { AppConfig } from '@webb-dapp/react-environment/webb-context';
 
 export enum WalletsIds {
   Polkadot = 1,

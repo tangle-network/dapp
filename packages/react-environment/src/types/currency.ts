@@ -1,7 +1,9 @@
-import { TOKEN_COLOR, TOKEN_FULLNAMES, TOKEN_IMAGES } from '@webb-dapp/mixer/utils/currency/constants';
+import { chainsConfig } from '@webb-dapp/apps/configs/wallets/chain-config';
+import { currenciesConfig } from '@webb-dapp/apps/configs/wallets/currency-config';
+import { walletsConfig } from '@webb-dapp/apps/configs/wallets/wallets-config';
+import { Chain, Wallet } from '@webb-dapp/react-environment';
 import { Token } from '@webb-tools/sdk-core';
-import { ApiRx } from '@polkadot/api';
-import { CurrencyId } from '@webb-tools/types/interfaces';
+import { createElement } from 'react';
 
 export type WebbCurrencyId = number;
 
@@ -9,10 +11,75 @@ interface Data {
   currencyId: WebbCurrencyId;
   token: Token;
 }
+//TODO handle state from the provider
+// TODO: move this once beresheet branch is merged to more usable way
+const chains = Object.values(chainsConfig).reduce(
+  (acc, chainsConfig) => ({
+    ...acc,
+    [chainsConfig.id]: {
+      ...chainsConfig,
+      wallets: Object.values(walletsConfig)
+        .filter(({ supportedChainIds }) => supportedChainIds.includes(chainsConfig.id))
+        .reduce(
+          (acc, walletsConfig) => ({
+            ...acc,
+            [walletsConfig.id]: {
+              ...walletsConfig,
+            },
+          }),
+          {} as Record<number, Wallet>
+        ),
+    },
+  }),
+  {} as Record<number, Chain>
+);
+
+export interface CurrencyView {
+  id: number | string;
+  icon: ReturnType<typeof createElement> | JSX.Element;
+  name: string;
+  color?: string;
+  symbol: string;
+  chainName: string;
+}
+
+export interface CurrencyConfig extends Omit<CurrencyView, 'chainName'> {
+  supportingChainsIds: number[];
+}
 
 export class Currency {
-  private constructor(private _inner: Data, private _apiRx: ApiRx) {
+  constructor(private data: CurrencyConfig) {}
+
+  static FromCurrencyId(currencyId: WebbCurrencyId) {
+    const currencyConfig = currenciesConfig[currencyId];
+    return new Currency(currencyConfig);
   }
+
+  get supportedChains(): Chain[] {
+    const supportedChains: Chain[] = [];
+    this.data.supportingChainsIds.forEach((id) => {
+      const chain = chains[id];
+      if (chain) {
+        supportedChains.push(chain);
+      }
+    });
+    return supportedChains;
+  }
+
+  getView(activeChain: Chain): CurrencyView {
+    return {
+      chainName: activeChain.name,
+      icon: this.data.icon,
+      id: this.data.id,
+      name: this.data.name,
+      color: this.data.color,
+      symbol: this.data.symbol,
+    };
+  }
+}
+
+/*export class Currency {
+  private constructor(private _inner: Data, private _apiRx: ApiRx) {}
 
   static tokenFrom(currencyId: WebbCurrencyId | CurrencyId, amount: number) {
     // @ts-ignore
@@ -24,7 +91,7 @@ export class Currency {
           chain: 'edgeware',
           name: 'EDG',
           precision: 18,
-          symbol: 'EDG'
+          symbol: 'EDG',
         });
       default:
         return new Token({
@@ -32,7 +99,7 @@ export class Currency {
           chain: 'dev',
           name: 'WEBB',
           precision: 18,
-          symbol: 'WEBB'
+          symbol: 'WEBB',
         });
     }
   }
@@ -45,12 +112,11 @@ export class Currency {
     } else {
       cid = currencyId;
     }
-    console.log(cid, 'currencyId');
     const token = Currency.tokenFrom(cid, amount);
     const cw = new Currency(
       {
         currencyId: cid,
-        token
+        token,
       },
       api
     );
@@ -77,7 +143,7 @@ export class Currency {
     return new Currency(
       {
         currencyId: currencyId?.toNumber(),
-        token
+        token,
       },
       apiRx
     );
@@ -109,4 +175,4 @@ export class Currency {
     const token = this.token.toString();
     return TOKEN_IMAGES.get(token);
   }
-}
+}*/
