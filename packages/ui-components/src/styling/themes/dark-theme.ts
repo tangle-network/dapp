@@ -42,7 +42,7 @@ export const darkMainTheme: ThemeOptions = {
     },
     text: {
       primary: darkPallet.primaryText,
-      secondary: '#2b2b2b',
+      secondary: darkPallet.secondaryText,
       hint: '#B9B9B9',
       disabled: tinycolor(darkPallet.primaryText).lighten(lightenRate).toHexString(),
     },

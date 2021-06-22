@@ -228,10 +228,11 @@ export const SettingsManager: React.FC<SettingsManagerProps> = () => {
             </ListItem>
             <List>
               {viaWallets.map((wallet) => {
+                const connectedWallet = activeWallet?.id === wallet.id && activeChain?.id === id;
                 return (
                   <ListItem
                     button
-                    disabled={activeWallet?.id === wallet.id}
+                    disabled={connectedWallet}
                     onClick={async () => {
                       setConnectionStatus(ConnectionStatus.Connecting);
                       await switchChain(userSelectedChain, wallet);
@@ -256,7 +257,7 @@ export const SettingsManager: React.FC<SettingsManagerProps> = () => {
                       <span>{wallet.name}</span>
                     </ListItemText>
                     <ListItemSecondaryAction>
-                      {activeWallet?.id === wallet.id && <Typography color='secondary'>Active</Typography>}
+                      {connectedWallet && <Typography color='secondary'>Active</Typography>}
                     </ListItemSecondaryAction>
                   </ListItem>
                 );

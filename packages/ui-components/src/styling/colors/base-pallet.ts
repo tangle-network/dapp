@@ -26,4 +26,15 @@ export const basePallet = {
   gray6: '#C8CEDD',
 
   gray13: 'rgba(200, 206, 221, 0.3)',
+
+  cardBackground: '#fff',
+  darkGray: '#22262b',
+  tabHeader: 'rgba(34, 38, 43, 1)',
+
+  borderColor: 'rgb(34,38,43)',
+  borderColor2: 'rgba(56, 60, 64, 1)',
+  layer1Background: 'rgba(21, 26, 30, 1)',
+  layer2Background: 'rgba(34, 38, 43, 1)',
+  layer3Background: 'rgba(56, 60, 64, 1)',
+  type: 'base',
 };

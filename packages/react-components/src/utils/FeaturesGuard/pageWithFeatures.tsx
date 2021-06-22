@@ -1,5 +1,6 @@
 import { useFeatures } from '@webb-dapp/react-hooks';
-import { Col, Information, Row } from '@webb-dapp/ui-components';
+import { Information } from '@webb-dapp/ui-components';
+import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { AppFeatures } from '@webb-dapp/ui-components/types';
 import React from 'react';
 
@@ -19,8 +20,8 @@ export const pageWithFeatures = <T extends object>({ features, message, title }:
   }
 
   return (
-    <Row gutter={[0, 24]}>
-      <Col span={24}>
+    <Flex row>
+      <Flex flex={1}>
         <Information
           variant={'warning'}
           content={
@@ -28,7 +29,7 @@ export const pageWithFeatures = <T extends object>({ features, message, title }:
           }
           title={title || "Page isn't supported on the current chain"}
         />
-      </Col>
-    </Row>
+      </Flex>
+    </Flex>
   );
 };

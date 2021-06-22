@@ -1,10 +1,7 @@
 import useRequest from '@umijs/use-request';
-import { Grid } from 'antd';
 import { useTranslation } from 'react-i18next';
 
-const { useBreakpoint } = Grid;
-
-export { useRequest, useBreakpoint, useTranslation };
+export { useRequest, useTranslation };
 
 export * from './useFetch';
 // system

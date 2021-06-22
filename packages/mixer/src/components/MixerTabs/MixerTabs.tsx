@@ -2,6 +2,7 @@ import { Fade } from '@material-ui/core';
 import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
 import React, { useCallback, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
+import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 
 const MixerTabsWrapper = styled.div`
   padding: 1rem;
@@ -9,7 +10,11 @@ const MixerTabsWrapper = styled.div`
   max-width: 500px;
   margin: auto;
   border-radius: 20px;
-  box-shadow: 0px 0px 14px rgba(51, 81, 242, 0.11);
+  ${({ theme }: { theme: Pallet }) => css`
+    background: ${theme.layer1Background};
+    border: 1px solid ${theme.borderColor};
+    ${theme.type === 'light' ? `box-shadow: 0px 0px 14px rgba(51, 81, 242, 0.11);` : ''}
+  `}
 `;
 type MixerTabsProps = {
   Deposit: JSX.Element;
@@ -18,7 +23,8 @@ type MixerTabsProps = {
 const TabHeader = styled.header`
   display: flex;
   align-items: center;
-  background: ${({ theme }) => theme.mainBackground};
+  background: ${({ theme }: { theme: Pallet }) => theme.tabHeader};
+
   justify-content: space-between;
   padding: 7px;
   border-radius: 32px;
@@ -38,6 +44,12 @@ const TabButton = styled.button<{ active?: boolean }>`
     align-items: center;
     margin-right: 10px;
   }
+  .mixer-tab-label {
+    font-size: 16px;
+  }
+  color: ${({ active, theme }) => {
+    return !active ? (theme as Pallet).primaryText : (theme as Pallet).darkGray;
+  }};
 
   ${({ active }) => {
     return active
@@ -86,7 +98,7 @@ export const MixerTabs: React.FC<MixerTabsProps> = ({ Deposit, Withdraw }) => {
               />
             </svg>
           </span>
-          <span>Deposit</span>
+          <span className='mixer-tab-label'>Deposit</span>
         </TabButton>
         <TabButton onClick={switchToWithdraw} active={activeTab === 'withdraw'}>
           <span className='mixer-tab-icon'>
@@ -98,7 +110,7 @@ export const MixerTabs: React.FC<MixerTabsProps> = ({ Deposit, Withdraw }) => {
               />
             </svg>
           </span>
-          <span>Withdraw</span>
+          <span className='mixer-tab-label'>Withdraw</span>
         </TabButton>
       </TabHeader>
       <Fade timeout={300} in unmountOnExit mountOnEnter key={activeTab + 'fade'}>

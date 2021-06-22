@@ -1,6 +1,7 @@
-import { lightPallet } from '@webb-dapp/ui-components/styling/colors';
+import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import React from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
+import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 
 type LabelStatus = 'initial' | 'highlighted' | 'error';
 
@@ -14,15 +15,19 @@ interface InputLabelProps {
 }
 
 const InputLabelRoot = styled.label<InputLabelRootProps>`
+  ${({ theme }: { theme: Pallet }) => css`
+    border: 2px solid ${theme.borderColor2};
+    color: ${theme.primaryText};
+    background: ${theme.layer2Background};
+  `}
   font-size: 13px;
-  border: 1px solid ${lightPallet.gray1};
-  color: ${({ theme }) => theme.primaryText};
+
   display: block;
   padding: 10px;
   border-radius: 10px;
   min-height: 80px;
-
   .label-content {
+    font-family: ${FontFamilies.AvenirNext};
     font-weight: 300;
     display: block;
     margin-bottom: 5px;
