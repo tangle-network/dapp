@@ -11,7 +11,6 @@ import {
   Typography,
 } from '@material-ui/core';
 import Tooltip from '@material-ui/core/Tooltip';
-import { SupportedWallet } from '@webb-dapp/apps/configs/wallets/supported-wallets.config';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';

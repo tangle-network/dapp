@@ -1,12 +1,11 @@
-import { MixerGroupEntriesWrapper } from '@webb-dapp/mixer';
+import { useWebContext } from '@webb-dapp/react-environment';
+import { Currency } from '@webb-dapp/react-environment/types/currency';
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
 
 import { InputLabel } from '../InputLabel/InputLabel';
 import { TokenInput } from '../TokenInput/TokenInput';
 import { WalletSelect } from '../WalletSelect/WalletSelect';
-import { useWebContext } from '@webb-dapp/react-environment';
-import { Currency } from '@webb-dapp/react-environment/types/currency';
 
 const WalletTokenInputWrapper = styled.div`
   display: flex;

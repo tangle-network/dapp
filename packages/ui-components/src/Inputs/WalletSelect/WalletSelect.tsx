@@ -1,6 +1,6 @@
 import { Avatar } from '@material-ui/core';
-import { SupportedWallet } from '@webb-dapp/apps/configs/wallets/supported-wallets.config';
 import { useWebContext } from '@webb-dapp/react-environment';
+import { WalletConfig } from '@webb-dapp/react-environment/types/wallet-config.interface';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
@@ -8,7 +8,6 @@ import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { WalletManger } from './WalletManger';
-import { WalletConfig } from '@webb-dapp/react-environment/types/wallet-config.interface';
 
 const WalletSelectWrapper = styled.div`
   box-sizing: border-box;

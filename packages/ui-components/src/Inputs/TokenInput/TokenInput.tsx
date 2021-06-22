@@ -1,13 +1,13 @@
 import { ClickAwayListener, Icon, IconButton, List, ListItemAvatar, ListItemText, Typography } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
 import Popper from '@material-ui/core/Popper';
+import { Currency } from '@webb-dapp/react-environment/types/currency';
+import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import styled, { css } from 'styled-components';
-import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
-import { Currency } from '@webb-dapp/react-environment/types/currency';
 
 const TokenInputWrapper = styled.div<{ open: boolean }>`
   border-radius: 25px;
@@ -68,7 +68,7 @@ const StyledList = styled.ul`
 
 const AccountManagerWrapper = styled.div<any>`
   min-width: 160px;
-  height: 0px;
+  height: 0;
   background: #ffffff;
   position: relative;
   top: -26.5px;
