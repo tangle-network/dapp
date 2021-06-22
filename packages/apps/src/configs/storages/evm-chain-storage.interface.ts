@@ -1,8 +1,16 @@
 import { MixerSize } from '@webb-dapp/react-environment';
 
 export class EvmChainStorage {
-  constructor(public contractsInfo: { address: string; size: number; symbol: string; }[]) {}
-
+  constructor(
+    public contractsInfo: { 
+      address: string;
+      size: number;
+      symbol: string;
+      syncedBlock: number;
+      leaves: string[];
+    }[]
+  ) {}
+  
   get mixerSize(): MixerSize[] {
     return this.contractsInfo.map((contract, index) => {
       return {

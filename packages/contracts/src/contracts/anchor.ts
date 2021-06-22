@@ -67,10 +67,14 @@ export class AnchorContract {
 
   private async getDepositEvents(commitment: string | null = null) {
     const filter = this._contract.filters.Deposit(commitment, null, null);
-
     const currentBlock = await this.web3Provider.getBlockNumber();
-    const startingBlock = 1; // Read starting block from cached storage
-    var logs = []; // Read the stored logs into this variable
+    
+    // Look in the localStorage for this mixer (should be indexed under address)
+    // and get the syncedBlock / leaves that are present in the storage.
+    // Then query the blocks after the syncedBlock to update the leaves.
+
+    const startingBlock = 1; // Read starting block from cached storage, syncedBlock
+    var logs = []; // variable that holds newly fetched logs
 
     try {
       logs = await this.web3Provider.getLogs({
@@ -97,9 +101,11 @@ export class AnchorContract {
     }
     console.log(logs);
 
-    // TODO: store the currentBlock as the new syncedBlock in storage
-
-    // TODO: append the newly retrieved logs to the storage for this mixer
+    // After getting the events, we should parse out and sort the commitments (leaves) and
+    // append to the leaves localStorage for this mixer.
+    // Dynamically update the storage at _this.contract.address, querying the appropriate
+    // EVMChainStorage key of 'main', 'rinkeby', etc. using this.signer.getChainId() and
+    // WebbWeb3Provider.storageName(chainId);
     
     return logs.map((log) => this._contract.interface.parseLog(log));
   }
