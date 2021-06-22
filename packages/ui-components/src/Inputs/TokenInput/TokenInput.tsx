@@ -7,6 +7,7 @@ import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import styled, { css } from 'styled-components';
+import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 
 const TokenInputWrapper = styled.div<{ open: boolean }>`
   border-radius: 25px;
@@ -14,7 +15,7 @@ const TokenInputWrapper = styled.div<{ open: boolean }>`
 
   overflow: hidden;
   transition: all 0.3s ease-in-out;
-  background: ${({ theme }) => theme.background} 37%;
+  background: ${({ theme }) => theme.layer3Background} 37%;
 
   ${({ open, theme }: { open: boolean; theme: Pallet }) => {
     return open
@@ -110,7 +111,7 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
   }, [value]);
   const $wrapper = useRef<HTMLDivElement>();
   const [isOpen, setIsOpen] = useState(false);
-
+  const theme = useColorPallet();
   return (
     <>
       <AccountManagerWrapper ref={$wrapper}>
@@ -149,8 +150,19 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
                   </Flex>
                 ) : (
                   <Flex row ai='center' jc='flex-start' flex={1}>
-                    <Avatar>
-                      <Icon fontSize={'large'}>generating_tokens</Icon>
+                    <Avatar
+                      style={{
+                        background: theme.warning,
+                      }}
+                    >
+                      <Icon
+                        style={{
+                          color: '#fff',
+                        }}
+                        fontSize={'large'}
+                      >
+                        generating_tokens
+                      </Icon>
                     </Avatar>
                     <Padding x={0.5} />
                     <Flex jc={'center'}>

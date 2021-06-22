@@ -11,7 +11,7 @@ const WalletTokenInputWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-height: 50px;
+  min-height: 60px;
 `;
 type WalletTokenInputProps = {
   mixerGroupEntriesWrapper: MixerGroupEntriesWrapper;

@@ -19,7 +19,8 @@ import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
 import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
 import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
 import React from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
+import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 
 const WalletMangerWrapper = styled.div`
   ${above.sm`
@@ -30,7 +31,6 @@ min-width:540px;
 type WalletMangerProps = {
   close(): void;
   setSelectedWallet(wallet: Wallet): void;
-  selectedWallet: Wallet | null;
   wallets: Wallet[];
 };
 
@@ -51,8 +51,10 @@ const Badge = styled.span`
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: rgba(51, 81, 242, 0.09);
-  color: ${({ theme }) => theme.primary};
+  ${({ theme }) => css`
+    color: ${theme.primary};
+    background: ${theme.background};
+  `};
   margin: 0 9px;
 `;
 
@@ -62,7 +64,9 @@ const StyledListItem = styled.li`
 
     :hover,
     &.selected {
-      background: #f3f5fe;
+      ${({ theme }: { theme: Pallet }) => css`
+        background: ${theme.tabHeader};
+      `};
     }
   }
 `;
@@ -71,28 +75,7 @@ type Wallet = {
   connected: boolean;
 } & Omit<SupportedWallet, 'detect'>;
 
-export const WalletManger: React.FC<WalletMangerProps> = ({ close, selectedWallet, setSelectedWallet, wallets }) => {
-  async function handleWalletSelection(walletSelection: Wallet) {
-    if (walletSelection.name === 'wallet connect') {
-      const provider = new WalletConnectProvider({
-        rpc: {
-          1: 'https://mainnet.mycustomnode.com',
-          3: 'https://ropsten.mycustomnode.com',
-          42: 'http://localhost:9933',
-          // ...
-        },
-      });
-      const web3 = await Web3Provider.fromWalletConnectProvider(provider);
-      const isConnected = await web3.eth.net.isListening();
-      if (isConnected) {
-        setSelectedWallet(walletSelection);
-      }
-    } else {
-      setSelectedWallet(walletSelection);
-      close();
-    }
-  }
-
+export const WalletManger: React.FC<WalletMangerProps> = ({ close, setSelectedWallet, wallets }) => {
   return (
     <WalletMangerWrapper>
       <WalletManagerContentWrapper>
@@ -119,7 +102,7 @@ export const WalletManger: React.FC<WalletMangerProps> = ({ close, selectedWalle
         <SpaceBox height={16} />
         <List>
           {wallets.map((wallet) => {
-            const connected = wallet.enabled;
+            const connected = wallet.connected;
             return (
               <StyledListItem
                 key={wallet.name}
@@ -131,7 +114,9 @@ export const WalletManger: React.FC<WalletMangerProps> = ({ close, selectedWalle
                 as={ListItem}
                 button
                 onClick={async () => {
-                  handleWalletSelection(wallet);
+                  if (!wallet.connected) {
+                    return setSelectedWallet(wallet);
+                  }
                 }}
               >
                 <ListItemAvatar>
