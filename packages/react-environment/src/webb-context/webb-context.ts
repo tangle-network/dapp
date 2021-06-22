@@ -20,7 +20,7 @@ export interface WebbContentState<T = unknown> {
 
   accounts: Account[];
   activeAccount: Account | null;
-
+  isInit: boolean;
   setActiveAccount<T extends Account>(account: T): Promise<void>;
 
   switchChain(chain: Chain, wallet: Wallet): Promise<WebbApiProvider<T> | null>;
@@ -31,7 +31,7 @@ export const WebbContext = React.createContext<WebbContentState>({
   accounts: [],
   loading: true,
   activeAccount: null,
-
+  isInit: false,
   setActiveAccount<T extends Account>(account: T): Promise<void> {
     return Promise.resolve();
   },

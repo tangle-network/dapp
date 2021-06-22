@@ -49,6 +49,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
   const [networkStorage, setNetworkStorage] = useState<NetworkStorage | null>(null);
   const [accounts, setAccounts] = useState<Array<Account>>([]);
   const [activeAccount, _setActiveAccount] = useState<Account | null>(null);
+  const [isInit, setIsInit] = useState(true);
   const setActiveAccount = useCallback(
     async (account: Account<any>) => {
       if (networkStorage && activeChain) {
@@ -181,7 +182,9 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
         }
       }
     };
-    init();
+    init().finally(() => {
+      setIsInit(false);
+    });
   }, []);
   return (
     <WebbContext.Provider
@@ -196,6 +199,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
         activeAccount,
         setActiveAccount,
         switchChain: switchChainAndStore,
+        isInit,
       }}
     >
       <StoreProvier>

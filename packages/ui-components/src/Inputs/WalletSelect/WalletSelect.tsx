@@ -7,8 +7,10 @@ import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { WalletManger } from './WalletManger';
+import { useWebContext } from '@webb-dapp/react-environment';
 
 const WalletSelectWrapper = styled.div`
+  box-sizing: border-box;
   .wallet-logo-wrapper {
     width: 20px;
     height: 20px;
@@ -19,9 +21,14 @@ const WalletSelectWrapper = styled.div`
   align-items: center;
   cursor: pointer;
   min-width: 120px;
+  padding: 1rem;
+  height: 52px;
+  max-height: 52px;
+  border-radius: 32px;
+  background: ${({ theme }) => theme.layer3Background} 37%;
 
   :hover {
-    background: ${({ theme }) => theme.mainBackground};
+    background: ${({ theme }) => theme.layer1Background} 9%;
   }
 
   .select-button-content {
@@ -46,23 +53,24 @@ export const WalletSelect: React.FC<WalletSelectProps> = ({}) => {
   const [wallets, setWallets] = useState<Wallet[]>([]);
 
   const [selectedWallet, setSelectedWallet] = useState<Wallet | null>(null);
-
+  const { activeChain, activeWallet, switchChain } = useWebContext();
   useEffect(() => {
     const configureSelectedWallets = async () => {
+      const walletsFromActiveChain = Object.values(activeChain?.wallets ?? {});
       const wallets = await Promise.all(
-        supportedWallets.map(async ({ detect, ...walletConfig }) => {
+        walletsFromActiveChain.map(async ({ detect, ...walletConfig }) => {
           const isDetected = (await detect?.()) ?? false;
           return {
             ...walletConfig,
-
-            connected: isDetected,
+            enabled: isDetected,
+            connected: activeWallet?.id === walletConfig.id,
           };
         })
       );
       setWallets(wallets);
     };
     configureSelectedWallets();
-  }, []);
+  }, [activeChain, activeWallet]);
 
   useEffect(() => {
     const nextWallet = wallets.find(({ connected }) => connected);
@@ -72,7 +80,17 @@ export const WalletSelect: React.FC<WalletSelectProps> = ({}) => {
   }, [wallets, setSelectedWallet]);
   return (
     <>
-      <WalletSelectWrapper role='button' onClick={openModal} className='select-button'>
+      <WalletSelectWrapper
+        role='button'
+        aria-disabled={!activeChain}
+        onClick={() => {
+          if (!activeChain) {
+            return;
+          }
+          openModal();
+        }}
+        className='select-button'
+      >
         {!selectedWallet && <span className='select-button-content'>Select a wallet</span>}
         {selectedWallet && (
           <Flex row ai={'center'}>
@@ -94,8 +112,9 @@ export const WalletSelect: React.FC<WalletSelectProps> = ({}) => {
       <Modal open={open} onClose={closeModal}>
         <WalletManger
           wallets={wallets}
-          setSelectedWallet={setSelectedWallet}
-          selectedWallet={selectedWallet}
+          setSelectedWallet={async (wallet) => {
+            await switchChain(activeChain, wallet);
+          }}
           close={closeModal}
         />
       </Modal>
