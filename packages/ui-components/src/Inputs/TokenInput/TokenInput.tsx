@@ -4,22 +4,24 @@ import Popper from '@material-ui/core/Popper';
 import { Currency } from '@webb-dapp/mixer/utils/currency';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
+import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import styled, { css } from 'styled-components';
 
 const TokenInputWrapper = styled.div<{ open: boolean }>`
   border-radius: 25px;
-  border: 1px solid ${({ theme }) => theme.gray13};
+  border: 1px solid ${({ theme }: { theme: Pallet }) => theme.borderColor};
 
   overflow: hidden;
   transition: all 0.3s ease-in-out;
-  background: #ffff 37%;
+  background: ${({ theme }) => theme.background} 37%;
 
-  ${({ open }) => {
+  ${({ open, theme }: { open: boolean; theme: Pallet }) => {
     return open
       ? css`
-          background: #e8e8ef 9%;
-          box-shadow: 1px 1px 14px rgba(54, 86, 233, 0.2);
+          background: ${theme.layer1Background} 9%;
+          box-shadow: 1px 1px 14px ${theme.type === 'dark' ? 'black' : 'rgba(54, 86, 233, 0.1)'};
+
           max-height: 350px;
         `
       : css`
@@ -146,7 +148,17 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
                     </Flex>
                   </Flex>
                 ) : (
-                  'Select Token'
+                  <Flex row ai='center' jc='flex-start' flex={1}>
+                    <Avatar>
+                      <Icon fontSize={'large'}>generating_tokens</Icon>
+                    </Avatar>
+                    <Padding x={0.5} />
+                    <Flex jc={'center'}>
+                      <Typography variant={'caption'} color={'textSecondary'} style={{ whiteSpace: 'nowrap' }}>
+                        Select Token
+                      </Typography>
+                    </Flex>
+                  </Flex>
                 )}
 
                 <div className={'account-button-wrapper'}>

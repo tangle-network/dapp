@@ -8,6 +8,10 @@ import React, { useCallback, useState } from 'react';
 import styled from 'styled-components';
 
 import { MixerButton } from '../MixerButton/MixerButton';
+import { WalletTokenInput } from '@webb-dapp/ui-components/Inputs/WalletTokenInput/WalletTokenInput';
+import { MixerGroupEntriesWrapper } from '@webb-dapp/mixer/hooks';
+import { useApi } from '@webb-dapp/react-hooks';
+import { ApiPromise } from '@polkadot/api';
 
 const DepositWrapper = styled.div``;
 type DepositProps = {};
@@ -21,14 +25,14 @@ export const Deposit: React.FC<DepositProps> = () => {
   // const [selectedToken, setSelectedToken] = useState<Currency | undefined>(undefined);
 
   const [item, setItem] = useState<MixerSize | undefined>(undefined);
-
+  const api = useApi();
   return (
     <DepositWrapper>
-      {/*      <WalletTokenInput
-        setSelectedToken={setSelectedToken}
-        selectedToken={selectedToken}
-        mixerGroupEntriesWrapper={mixerGroupsEntries}
-      />*/}
+      <WalletTokenInput
+        setSelectedToken={(token) => {}}
+        selectedToken={undefined}
+        mixerGroupEntriesWrapper={new MixerGroupEntriesWrapper(undefined, undefined, {})}
+      />
       <SpaceBox height={16} />
       <MixerGroupSelect items={depositApi.mixerSizes} value={item} onChange={setItem} />
       <SpaceBox height={16} />
