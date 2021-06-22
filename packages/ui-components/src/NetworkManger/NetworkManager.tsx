@@ -355,7 +355,7 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
         }}
       >
         <NetworkManagerWrapper>
-          <Typography variant={'h5'}>Mange Connection </Typography>
+          <Typography variant={'h5'}>Manage Connection </Typography>
 
           <SpaceBox height={16} />
 

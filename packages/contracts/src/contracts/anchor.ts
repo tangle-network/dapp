@@ -30,14 +30,20 @@ export class AnchorContract {
     return this._contract.nextIndex();
   }
 
+  get denomination() {
+    return this._contract.denomination();
+  }
+
   get inner() {
     return this._contract;
   }
 
-  async createDeposit(): Promise<{ note: EvmNote; deposit: Deposit }> {
+  async createDeposit(assetSymbol: string): Promise<{ note: EvmNote; deposit: Deposit }> {
     const deposit = createDeposit();
     const chainId = await this.signer.getChainId();
-    const note = new EvmNote('eth', 0.1, chainId, deposit.preimage);
+    const depositSizeBN = await this.denomination;
+    const depositSize = Number.parseFloat(utils.fromWei(depositSizeBN.toString(), "ether"));
+    const note = new EvmNote(assetSymbol, depositSize, chainId, deposit.preimage);
     return {
       note,
       deposit,
@@ -48,8 +54,9 @@ export class AnchorContract {
     const overrides = {
       gasLimit: 6000000,
       gasPrice: utils.toWei('1', 'gwei'),
-      value: '0x16345785D8A0000',
+      value: await this.denomination,
     };
+    console.log(commitment);
     const filters = await this._contract.filters.Deposit(commitment, null, null);
     this._contract.once(filters, (commitment, insertedIndex, timestamp) => {
       onComplete?.([commitment, insertedIndex, timestamp]);
@@ -60,17 +67,41 @@ export class AnchorContract {
 
   private async getDepositEvents(commitment: string | null = null) {
     const filter = this._contract.filters.Deposit(commitment, null, null);
-    const logs = await this.web3Provider.getLogs({
-      fromBlock: 0,
-      toBlock: 'latest',
-      ...filter,
-    });
-    console.log(logs);
-    return logs.map((log) => this._contract.interface.parseLog(log));
-  }
 
-  private async generateSnarkProof(deposit: Deposit) {
-    // const { path_elements, path_index, root } = await this.generateMerkleProof(deposit);
+    const currentBlock = await this.web3Provider.getBlockNumber();
+    const startingBlock = 1; // Read starting block from cached storage
+    var logs = []; // Read the stored logs into this variable
+
+    try {
+      logs = await this.web3Provider.getLogs({
+        fromBlock: startingBlock,
+        toBlock: 'latest',
+        ...filter,
+      });
+    } catch (e) {
+      console.log(e);
+
+      // If there is a timeout, query the logs in block increments.
+      if (e.code == -32603) {
+        for (var i=startingBlock; i < currentBlock; i+= 1000)
+        {
+          logs = [...logs, ...(await this.web3Provider.getLogs({
+            fromBlock: i,
+            toBlock: (currentBlock - i > 1000) ? i + 1000 : currentBlock,
+            ...filter,
+          }))];
+        }
+      } else {
+        throw e;
+      }
+    }
+    console.log(logs);
+
+    // TODO: store the currentBlock as the new syncedBlock in storage
+
+    // TODO: append the newly retrieved logs to the storage for this mixer
+    
+    return logs.map((log) => this._contract.interface.parseLog(log));
   }
 
   async generateMerkleProof(deposit: Deposit) {
@@ -105,7 +136,6 @@ export class AnchorContract {
     let proving_key = require('../circuits/withdraw_proving_key.bin');
     proving_key = await fetch(proving_key);
     proving_key = await proving_key.arrayBuffer();
-    const bigInt = snarkjs.bigInt;
 
     const input = {
       // public
