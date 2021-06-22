@@ -21,9 +21,9 @@ const WalletSelectWrapper = styled.div`
   display: inline-flex !important;
   align-items: center;
   cursor: pointer;
-  min-width: 120px;
+  min-width: 140px;
   padding: 1rem;
-  height: 52px;
+  height: 49px;
   max-height: 52px;
   border-radius: 32px;
   background: ${({ theme }) => theme.layer3Background} 37%;
@@ -100,6 +100,7 @@ export const WalletSelect: React.FC<WalletSelectProps> = ({}) => {
             </Avatar>
             <Padding x={0.3} as='span' />
             <span className='select-button-content'>{selectedWallet.title}</span>
+            <Padding x={0.6} as='span' />
           </Flex>
         )}
         <svg width='11' height='6' viewBox='0 0 11 6' fill='none' xmlns='http://www.w3.org/2000/svg'>

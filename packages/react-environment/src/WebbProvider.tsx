@@ -185,6 +185,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
     init().finally(() => {
       setIsInit(false);
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
     <WebbContext.Provider

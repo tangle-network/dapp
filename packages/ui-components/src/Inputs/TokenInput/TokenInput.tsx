@@ -67,7 +67,7 @@ const StyledList = styled.ul`
 `;
 
 const AccountManagerWrapper = styled.div<any>`
-  min-width: 160px;
+  min-width: 200px;
   height: 0;
   background: #ffffff;
   position: relative;
@@ -79,7 +79,13 @@ type TokenInputProps = {
   value?: Currency;
   onChange(next: Currency | undefined): void;
 };
-
+const ChainName = styled.span`
+  max-width: 100px;
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
 export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, value }) => {
   const selectItems = useMemo(() => {
     return currencies.map((currency) => {
@@ -142,7 +148,7 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
                     <Flex jc={'center'}>
                       <Typography variant={'body2'}>{selected.symbol}</Typography>
                       <Typography variant={'caption'} color={'textSecondary'}>
-                        {selected.chainName}
+                        <ChainName>{selected.name}</ChainName>
                       </Typography>
                     </Flex>
                   </Flex>
@@ -207,7 +213,7 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
                         <ListItemText>
                           <Typography>{symbol}</Typography>
                           <Typography variant={'caption'} color={'textSecondary'}>
-                            {chainName}
+                            <ChainName>{chainName}</ChainName>
                           </Typography>
                         </ListItemText>
                       </Flex>
