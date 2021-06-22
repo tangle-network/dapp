@@ -40,8 +40,8 @@ export class Web3Provider {
     return new Web3Provider(web3);
   }
 
-  get netowrk() {
-    return this._inner.eth.net.getNetworkType();
+  get network() {
+    return this._inner.eth.net.getId();
   }
 
   get eth() {
