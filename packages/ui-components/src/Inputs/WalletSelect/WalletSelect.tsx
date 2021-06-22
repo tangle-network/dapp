@@ -1,5 +1,6 @@
-import { Avatar, ButtonBase } from '@material-ui/core';
-import { SupportedWallet, supportedWallets } from '@webb-dapp/apps/configs/wallets/supported-wallets.config';
+import { Avatar } from '@material-ui/core';
+import { useWebContext } from '@webb-dapp/react-environment';
+import { WalletConfig } from '@webb-dapp/react-environment/types/wallet-config.interface';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
@@ -7,10 +8,10 @@ import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { WalletManger } from './WalletManger';
-import { useWebContext } from '@webb-dapp/react-environment';
 
 const WalletSelectWrapper = styled.div`
   box-sizing: border-box;
+
   .wallet-logo-wrapper {
     width: 20px;
     height: 20px;
@@ -20,9 +21,9 @@ const WalletSelectWrapper = styled.div`
   display: inline-flex !important;
   align-items: center;
   cursor: pointer;
-  min-width: 120px;
+  min-width: 140px;
   padding: 1rem;
-  height: 52px;
+  height: 49px;
   max-height: 52px;
   border-radius: 32px;
   background: ${({ theme }) => theme.layer3Background} 37%;
@@ -40,7 +41,7 @@ type WalletSelectProps = {};
 
 type Wallet = {
   connected: boolean;
-} & Omit<SupportedWallet, 'detect'>;
+} & WalletConfig;
 
 export const WalletSelect: React.FC<WalletSelectProps> = ({}) => {
   const [open, setOpen] = useState(false);
@@ -99,6 +100,7 @@ export const WalletSelect: React.FC<WalletSelectProps> = ({}) => {
             </Avatar>
             <Padding x={0.3} as='span' />
             <span className='select-button-content'>{selectedWallet.title}</span>
+            <Padding x={0.6} as='span' />
           </Flex>
         )}
         <svg width='11' height='6' viewBox='0 0 11 6' fill='none' xmlns='http://www.w3.org/2000/svg'>
@@ -113,7 +115,9 @@ export const WalletSelect: React.FC<WalletSelectProps> = ({}) => {
         <WalletManger
           wallets={wallets}
           setSelectedWallet={async (wallet) => {
-            await switchChain(activeChain, wallet);
+            if (activeChain) {
+              await switchChain(activeChain, wallet);
+            }
           }}
           close={closeModal}
         />

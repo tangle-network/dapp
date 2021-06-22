@@ -109,7 +109,7 @@ const WithdrawingModal: React.FC<WithdrawingModalProps> = ({ canCancel, cancel, 
         break;
       case WithdrawState.Done:
         return 'Transaction Done';
-      case WithdrawState.Faild:
+      case WithdrawState.Failed:
         return 'Transaction Failed';
       case WithdrawState.Canceled:
         return 'Transaction canceled';

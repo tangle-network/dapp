@@ -11,16 +11,14 @@ import {
   Typography,
 } from '@material-ui/core';
 import Tooltip from '@material-ui/core/Tooltip';
-import WalletConnectProvider from '@walletconnect/web3-provider';
-import { SupportedWallet } from '@webb-dapp/apps/configs/wallets/supported-wallets.config';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
 import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
-import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
 import React from 'react';
 import styled, { css } from 'styled-components';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
+import { WalletConfig } from '@webb-dapp/react-environment/types/wallet-config.interface';
 
 const WalletMangerWrapper = styled.div`
   ${above.sm`
@@ -73,7 +71,7 @@ const StyledListItem = styled.li`
 
 type Wallet = {
   connected: boolean;
-} & Omit<SupportedWallet, 'detect'>;
+} & WalletConfig;
 
 export const WalletManger: React.FC<WalletMangerProps> = ({ close, setSelectedWallet, wallets }) => {
   return (
