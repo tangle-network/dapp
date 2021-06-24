@@ -14,32 +14,14 @@ import React, { FC, useCallback, useEffect, useState } from 'react';
 import { WebbPolkadot } from './api-providers/polkadot';
 import { SettingProvider } from './SettingProvider';
 import { Chain, netStorageFactory, NetworkStorage, Wallet, WebbApiProvider, WebbContext } from './webb-context';
+import { chainsPopulated } from '@webb-dapp/apps/configs/wallets/chains-populated';
 
 interface WebbProviderProps extends BareProps {
   applicationName: string;
   applicationVersion?: string;
 }
 
-const chains = Object.values(chainsConfig).reduce(
-  (acc, chainsConfig) => ({
-    ...acc,
-    [chainsConfig.id]: {
-      ...chainsConfig,
-      wallets: Object.values(walletsConfig)
-        .filter(({ supportedChainIds }) => supportedChainIds.includes(chainsConfig.id))
-        .reduce(
-          (acc, walletsConfig) => ({
-            ...acc,
-            [walletsConfig.id]: {
-              ...walletsConfig,
-            },
-          }),
-          {} as Record<number, Wallet>
-        ),
-    },
-  }),
-  {} as Record<number, Chain>
-);
+const chains = chainsPopulated;
 
 export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Dapp', children }) => {
   const [activeWallet, setActiveWallet] = useState<Wallet | undefined>(undefined);
@@ -132,20 +114,20 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
         const net = await web3Provider.network; // storage based on network id
         const chainType = WebbWeb3Provider.storageName(net);
         let storage: Storage<EVMStorage>;
-          switch (net) {
-            case WebbEVMChain.Main:
-              storage = await Storage.newFresh(chainType, mainStorage);
-              break;
-            case WebbEVMChain.Rinkeby:
-              storage = await Storage.newFresh(chainType, rinkebyStorage);
-              break;
-            case WebbEVMChain.Beresheet:
-              storage = await Storage.newFresh(chainType, beresheetStorage);
-              break;
-            default:
-              storage = await Storage.newFresh(chainType, beresheetStorage);
-              break;
-          }
+        switch (net) {
+          case WebbEVMChain.Main:
+            storage = await Storage.newFresh(chainType, mainStorage);
+            break;
+          case WebbEVMChain.Rinkeby:
+            storage = await Storage.newFresh(chainType, rinkebyStorage);
+            break;
+          case WebbEVMChain.Beresheet:
+            storage = await Storage.newFresh(chainType, beresheetStorage);
+            break;
+          default:
+            storage = await Storage.newFresh(chainType, beresheetStorage);
+            break;
+        }
         const webbWeb3Provider = await WebbWeb3Provider.init(web3Provider, storage);
 
         const accounts = await webbWeb3Provider.accounts.accounts();
