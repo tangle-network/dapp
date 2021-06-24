@@ -6,8 +6,7 @@ import { Note } from '@webb-tools/sdk-mixer';
 import { MerkleTree as NodeMerkleTree } from '@webb-tools/types/interfaces';
 
 import { decodeAddress } from '@polkadot/keyring';
-import { u8aToHex } from '@polkadot/util';
-
+import { u8aToHex, hexToU8a } from '@polkadot/util';
 import { MixerWithdraw, WithdrawState } from '../../webb-context';
 import { WebbPolkadot } from './webb-polkadot-provider';
 
@@ -81,9 +80,19 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
     let done = false;
     let from = 0;
     let to = 511;
-    const leaves: Uint8Array[] = [];
-
+    const storage = this.inner.storage;
+    const mixerGroup = (await storage.get(String(treeId))) || {
+      0: { leaves: [] },
+    };
+    const mixerGroupForChain = mixerGroup[0];
+    const leaves: Uint8Array[] = mixerGroupForChain.leaves.map((leafStr) => {
+      return hexToU8a(leafStr);
+    });
+    // todo check this if the index starts from 1, or zero
+    from = Math.max(leaves.length - 1, 0);
+    to = from + 511;
     while (done === false) {
+      console.log(`Fetching leaves for treeId${treeId} from :${from} to ${to}`);
       const treeLeaves: Uint8Array[] = await (this.inner.api.rpc as any).merkle.treeLeaves(treeId, from, to);
       if (treeLeaves.length === 0) {
         done = true;
@@ -93,6 +102,15 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
       from = to;
       to = to + 511;
     }
+    const leavesDecoded = leaves.map((leaf) => {
+      return u8aToHex(leaf);
+    });
+    await storage.set(String(treeId), {
+      ...mixerGroup,
+      [0]: {
+        leaves: leavesDecoded,
+      },
+    });
     return leaves;
   }
 

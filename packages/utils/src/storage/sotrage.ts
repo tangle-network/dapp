@@ -46,7 +46,7 @@ export class Storage<Store> extends EventBus<{
     this.commit = data.commit;
   }
 
-  async get<Key extends keyof Store>(key: Key): Promise<Store[Key]> {
+  async get<Key extends keyof Store>(key: Key): Promise<Store[Key] | undefined> {
     const data = this.data[key];
     return data;
   }

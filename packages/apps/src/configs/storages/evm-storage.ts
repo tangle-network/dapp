@@ -42,4 +42,3 @@ export const beresheetMixers = [
     createdAtBlock: 1,
   },
 ];
-
