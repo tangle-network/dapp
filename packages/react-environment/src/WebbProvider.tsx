@@ -1,6 +1,5 @@
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import { beresheetStorage, mainStorage, rinkebyStorage } from '@webb-dapp/apps/configs/storages/evm-storage';
-import { chainsConfig } from '@webb-dapp/apps/configs/wallets/chain-config';
 import { walletsConfig, WalletsIds } from '@webb-dapp/apps/configs/wallets/wallets-config';
 import { EVMStorage, WebbEVMChain, WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3';
 import { DimensionsProvider } from '@webb-dapp/react-environment/layout';
