@@ -12,6 +12,8 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
     this.emit('stateChange', WithdrawState.GeneratingZk);
     const evmNote = EvmNote.deserialize(note);
     const contract = await this.inner.getContractBySize(evmNote.amount, evmNote.currency);
+    if (!contract)
+      throw new Error('Invalid note!');
     const txReset = await contract.withdraw(note, recipient);
     transactionNotificationConfig.loading?.({
       address: '',

@@ -3,7 +3,7 @@ export const rinkebyMixers = [
     size: 0.1,
     address: '0x876eCe69618e8E8dd743250B036785813824D2D7',
     symbol: 'ETH',
-    createdAtBlock: 120000, // should be hardcoded to deployed block number
+    createdAtBlock: 120000,
   },
 ];
 

@@ -5,10 +5,12 @@ import { createDeposit, Deposit } from '@webb-dapp/contracts/utils/make-deposit'
 import { MerkleTree } from '@webb-dapp/utils/merkle';
 import { BigNumber, Contract, providers, Signer } from 'ethers';
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3/webb-web3-provider';
+import { mixerStorageFactory, EvmChainMixersInfo } from '@webb-dapp/react-environment/api-providers/web3/EvmChainMixersInfo';
 import { Storage } from '@webb-dapp/utils';
 import utils from 'web3-utils';
 
 import { abi } from '../abis/NativeAnchor.json';
+import { isEmpty } from 'lodash';
 
 const webSnarkUtils = require('websnark/src/utils');
 
@@ -67,17 +69,20 @@ export class AnchorContract {
     await recipient.wait();
   }
 
-  private async getDepositEvents(commitment: string | null = null) {
-    const filter = this._contract.filters.Deposit(commitment, null, null);
+  private async getDepositLeaves(): Promise<string[]> {
+    const filter = this._contract.filters.Deposit(null, null, null);
 
     const currentBlock = await this.web3Provider.getBlockNumber();
-    const startingBlock = 1; // Read starting block from cached storage
+    const cachedStorage = await mixerStorageFactory(await this.signer.getChainId());
+    const storedContractInfo = await cachedStorage.get(this._contract.address);
+
+    const startingBlock = isEmpty(storedContractInfo) ? 1 : storedContractInfo.lastQueriedBlock; // Read starting block from cached storage
     var logs = []; // Read the stored logs into this variable
 
     try {
       logs = await this.web3Provider.getLogs({
         fromBlock: startingBlock,
-        toBlock: 'latest',
+        toBlock: currentBlock,
         ...filter,
       });
     } catch (e) {
@@ -85,11 +90,11 @@ export class AnchorContract {
 
       // If there is a timeout, query the logs in block increments.
       if (e.code == -32603) {
-        for (var i=startingBlock; i < currentBlock; i+= 1000)
+        for (var i=startingBlock; i < currentBlock; i+= 512)
         {
           logs = [...logs, ...(await this.web3Provider.getLogs({
             fromBlock: i,
-            toBlock: (currentBlock - i > 1000) ? i + 1000 : currentBlock,
+            toBlock: (currentBlock - i > 512) ? i + 512 : currentBlock,
             ...filter,
           }))];
         }
@@ -98,21 +103,26 @@ export class AnchorContract {
       }
     }
     const events = logs.map((log) => this._contract.interface.parseLog(log));
+
+    const newCommitments = events
+      .sort((a, b) => a.args.leafIndex - b.args.leafIndex) // Sort events in chronological order
+      .map((e) => e.args.commitment);
+
+    const commitments = [...storedContractInfo.leaves, ...newCommitments];
+
+    // extract the commitments from the events, and update the storage
+    await cachedStorage.set(this._contract.address, {
+      lastQueriedBlock: currentBlock,
+      leaves: commitments
+    });
     
-    return events;
+    return commitments;
   }
 
   async generateMerkleProof(deposit: Deposit) {
-    const events = await this.getDepositEvents(null);
-    const leaves = events
-      .sort((a, b) => a.args.leafIndex - b.args.leafIndex) // Sort events in chronological order
-      .map((e) => e.args.commitment);
+    const leaves = await this.getDepositLeaves();
     const tree = new MerkleTree('eth', 20, leaves);
-    let depositEvent = events.find((e) => e.args.commitment === bufferToFixed(deposit.commitment));
-    console.log('bufferToFixed', bufferToFixed(deposit.commitment));
-    console.log(deposit.commitment);
-
-    let leafIndex = depositEvent ? depositEvent.args.leafIndex : -1;
+    let leafIndex = leaves.findIndex(commitment => commitment == bufferToFixed(deposit.commitment));
     return tree.path(leafIndex);
   }
 

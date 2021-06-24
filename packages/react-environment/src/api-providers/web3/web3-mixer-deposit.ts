@@ -19,7 +19,7 @@ export class Web3MixerDeposit extends MixerDeposit<WebbWeb3Provider, DepositPayl
       },
     });
     const [deposit, amount] = depositPayload.params;
-    const contract = await this.inner.getContractBySize(amount);
+    const contract = await this.inner.getContractBySize(amount, WebbWeb3Provider.getNativeCurrencySymbol(await this.inner.getChainId()));
     await contract.deposit(deposit.commitment);
     transactionNotificationConfig.finalize?.({
       address: '',
@@ -34,8 +34,7 @@ export class Web3MixerDeposit extends MixerDeposit<WebbWeb3Provider, DepositPayl
 
   async generateNote(mixerAddress: string): Promise<DepositPayload> {
     const contract = await this.inner.getContractByAddress(mixerAddress);
-    const storages = await this.inner.chainStorage;
-    const mixerInfo = this.inner.find((config) => config.address === mixerId);
+    const mixerInfo = this.inner.connectedMixers.getMixerInfoByAddress(mixerAddress);
     if (!mixerInfo) {
       throw new Error(`mixer not found from storage`);
     }
@@ -48,6 +47,6 @@ export class Web3MixerDeposit extends MixerDeposit<WebbWeb3Provider, DepositPayl
   }
 
   async getSizes(): Promise<MixerSize[]> {
-    return this.inner.getMixersSizes();
+    return this.inner.getMixersSizes(WebbWeb3Provider.getNativeCurrencySymbol(await this.inner.getChainId()));
   }
 }

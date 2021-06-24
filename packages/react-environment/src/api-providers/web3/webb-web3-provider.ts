@@ -10,6 +10,7 @@ import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
 import { providers } from 'ethers';
 import React from 'react';
 import { MixerSize } from '@webb-dapp/react-environment/webb-context';
+import { Storage } from '@webb-dapp/utils';
 
 export enum WebbEVMChain {
   Main = 1,
@@ -21,9 +22,9 @@ export class WebbWeb3Provider implements WebbApiProvider<WebbWeb3Provider> {
   readonly accounts: Web3Accounts;
   readonly methods: WebbMethods<WebbWeb3Provider>;
   private ethersProvider: providers.Web3Provider;
-  private connectedMixers: EvmChainMixersInfo;
+  public connectedMixers: EvmChainMixersInfo;
 
-  private constructor(private web3Provider: Web3Provider, chainId: number) {
+  private constructor(private web3Provider: Web3Provider, public chainId: number) {
     this.accounts = new Web3Accounts(web3Provider.eth);
     this.ethersProvider = web3Provider.intoEthersProvider();
     this.connectedMixers = new EvmChainMixersInfo(chainId);
@@ -55,8 +56,8 @@ export class WebbWeb3Provider implements WebbApiProvider<WebbWeb3Provider> {
     };
   }
 
-  static storageName(id: number): string {
-    switch (id) {
+  static storageName(chainID: number): string {
+    switch (chainID) {
       case WebbEVMChain.Rinkeby:
         return 'rinkeby';
       case WebbEVMChain.Main:
@@ -68,8 +69,26 @@ export class WebbWeb3Provider implements WebbApiProvider<WebbWeb3Provider> {
     }
   }
 
-  async getContractWithAddress(mixerId: string): Promise<AnchorContract> {
-    return new AnchorContract(this.ethersProvider, mixerId);
+  async getChainId(): Promise<number> {
+    const chainId = (await this.ethersProvider.getNetwork()).chainId;
+    return chainId;
+  }
+
+  static getNativeCurrencySymbol(chainID: number): string {
+    switch (chainID) {
+      case WebbEVMChain.Rinkeby:
+        return 'ETH';
+      case WebbEVMChain.Main:
+        return 'ETH';
+      case WebbEVMChain.Beresheet:
+        return 'tEDG';
+      default:
+        throw new Error('unsupported chain');
+    }
+  }
+
+  async getContractByAddress(mixerAddress: string): Promise<AnchorContract> {
+    return new AnchorContract(this.ethersProvider, mixerAddress);
   }
 
   // This function limits the mixer implementation to one type for the token/size pair.
@@ -81,11 +100,19 @@ export class WebbWeb3Provider implements WebbApiProvider<WebbWeb3Provider> {
       throw new Error(`mixer with size ${mixerSize} not found for chain ${this.connectedMixers.chainId}`);
     }
 
+    this.connectedMixers.getMixerInfoStorage(mixer.address)
+
     return new AnchorContract(this.ethersProvider, mixer.address);
   }
 
   static async init(web3Provider: Web3Provider) {
     const chainId = await web3Provider.network;
+    
+    // If the chain has never been used before, initialize a fresh storage
+    if (!Storage.get(this.storageName(chainId))){
+      
+    }
+
     return new WebbWeb3Provider(web3Provider, chainId);
   }
 
