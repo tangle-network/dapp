@@ -81,7 +81,11 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
       cbs.forEach((cb) => this.off(entry, cb));
     }, this);
     // disconnect this api
-    this.apiPromise.disconnect();
+    return this.apiPromise.disconnect();
+  }
+  /// metaData:MetadataDef
+  updateMetaData(metaData: any) {
+    this.injectedExtension.metadata?.provide(metaData);
   }
 
   getMetaData() {
@@ -103,13 +107,14 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
   async checkMetaDataUpdate() {
     const metadataDef = this.getMetaData();
     const known = await this.injectedExtension?.metadata?.get();
-    if (!known || !metadataDef) return false;
+    if (!known || !metadataDef) return null;
 
     const result = !known.find(({ genesisHash, specVersion }) => {
       return metadataDef.genesisHash === genesisHash && metadataDef.specVersion === specVersion;
     });
 
     if (result) this.emit('updateMetaData', metadataDef);
+    return metadataDef;
   }
 
   get accounts() {

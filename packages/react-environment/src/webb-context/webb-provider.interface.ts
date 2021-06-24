@@ -24,7 +24,7 @@ type Action = {
   /// indication for the Action level to show action controller in a meaning way
   level: FeedbackLevel;
   /// trigger the callback for the action
-  onTrigger: () => {};
+  onTrigger(): any;
 };
 
 /// the will be iterated over and generate content for the feedback
@@ -35,24 +35,51 @@ type FeedbackEntry = {
   list?: string[];
 };
 /// an object will be used to build the feedback UI
-type FeedbackBody = FeedbackEntry[];
+export type FeedbackBody = FeedbackEntry[];
 
-class InterActiveFeedback extends EventBus<any> {
+export class ActionsBuilder {
+  private _actions: Record<string, Action> = {};
+
+  constructor() {}
+
+  static init() {
+    return new ActionsBuilder();
+  }
+
+  action(name: string, handler: () => any, level: FeedbackLevel): ActionsBuilder {
+    this._actions[name] = {
+      level,
+      onTrigger: handler,
+    };
+    return this;
+  }
+
+  actions() {
+    return this._actions;
+  }
+}
+
+export class InterActiveFeedback extends EventBus<any> {
+  static feedbackEntries(feedbackBody: FeedbackBody): FeedbackBody {
+    return feedbackBody;
+  }
+
   constructor(
     public readonly level: FeedbackLevel,
     public readonly action: Record<string, Action>,
-    public readonly onCancel: () => {},
+    public readonly onCancel: () => any,
     public readonly feedbackBody: FeedbackBody
   ) {
     super();
   }
 }
 
-type ProviderEvents = {
+export type WebbProviderEvents<T = any> = {
   interactiveFeedback: InterActiveFeedback;
+  providerUpdate: WebbApiProvider<T>;
 };
 
-export interface WebbApiProvider<T> extends EventBus<ProviderEvents> {
+export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents<T>> {
   /// Accounts Adapter will have all methods related to the provider accounts
   accounts: AccountsAdapter<any>;
   /// All of the available methods and api of the provider
