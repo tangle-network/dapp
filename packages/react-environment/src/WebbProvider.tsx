@@ -22,8 +22,6 @@ import {
   WebbContext,
 } from './webb-context';
 import { chainsPopulated } from '@webb-dapp/apps/configs/wallets/chains-populated';
-import InteractiveErrorView from '@webb-dapp/react-components/InteractiveFeedbackView/InteractiveErrorView';
-import { notificationApi } from '@webb-dapp/ui-components/notification';
 
 interface WebbProviderProps extends BareProps {
   applicationName: string;
@@ -45,7 +43,14 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
   const [interactiveFeedbacks, setInteractiveFeedbacks] = useState<InterActiveFeedback[]>([]);
   useEffect(() => {
     setInteractiveFeedbacks([]);
-    const off = activeApi?.on('interactiveFeedback', (feedback) => {});
+    const off = activeApi?.on('interactiveFeedback', (feedback) => {
+      setInteractiveFeedbacks((p) => [...p, feedback]);
+      let off: any;
+      off = feedback.on('canceled', () => {
+        setInteractiveFeedbacks((p) => p.filter((entry) => entry !== feedback));
+        off && off?.();
+      });
+    });
     return () => {
       off && off();
       setInteractiveFeedbacks([]);
@@ -86,8 +91,13 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
         {
           const url = chain.url;
           const webbPolkadot = await WebbPolkadot.init('Webb DApp', [url], {
-            onError: (error) => {
-              setInteractiveFeedbacks((p) => [...p, error]);
+            onError: (feedback) => {
+              setInteractiveFeedbacks((p) => [...p, feedback]);
+              let off: any;
+              off = feedback.on('canceled', () => {
+                setInteractiveFeedbacks((p) => p.filter((entry) => entry !== feedback));
+                off && off?.();
+              });
             },
           });
           setActiveApi(webbPolkadot);
@@ -225,12 +235,12 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
         setActiveAccount,
         switchChain: switchChainAndStore,
         isInit,
+        activeFeedback,
       }}
     >
       <StoreProvier>
         <SettingProvider>
           <DimensionsProvider>{children}</DimensionsProvider>
-          <InteractiveErrorView activeFeedback={activeFeedback} />
         </SettingProvider>
       </StoreProvier>
     </WebbContext.Provider>

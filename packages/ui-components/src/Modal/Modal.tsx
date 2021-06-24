@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme: Theme) => {
         top: 40,
         maxWidth: (props: any) => (props.unlimitedWidth ? 1200 : 750),
       },
-      backgroundColor: theme.palette.background.paper,
+      backgroundColor: theme.palette.background.default,
       padding: 0,
       marginBottom: 40,
       borderRadius: '20px',

@@ -28,7 +28,7 @@ type Action = {
 };
 
 /// the will be iterated over and generate content for the feedback
-type FeedbackEntry = {
+export type FeedbackEntry = {
   content?: string;
   json?: Record<string, unknown>;
   header?: string;
