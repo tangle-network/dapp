@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
-import { FeedbackEntry, InterActiveFeedback } from '@webb-dapp/react-environment';
+import { FeedbackEntry, InteractiveFeedback } from '@webb-dapp/react-environment';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import Typography from '@material-ui/core/Typography';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
@@ -12,7 +12,7 @@ const InteractiveErrorViewWrapper = styled.div`
   padding: 0.5rem 2rem;
 `;
 type InteractiveErrorViewProps = {
-  activeFeedback: InterActiveFeedback | null;
+  activeFeedback: InteractiveFeedback | null;
 };
 
 const InteractiveErrorView: React.FC<InteractiveErrorViewProps> = ({ activeFeedback }) => {

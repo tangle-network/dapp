@@ -1,5 +1,5 @@
 import {
-  InterActiveFeedback,
+  InteractiveFeedback,
   WebbApiProvider,
 } from '@webb-dapp/react-environment/webb-context/webb-provider.interface';
 import { Chain, Wallet } from '@webb-dapp/react-environment/webb-context/common';
@@ -27,7 +27,7 @@ export interface WebbContentState<T = unknown> {
   setActiveAccount<T extends Account>(account: T): Promise<void>;
 
   switchChain(chain: Chain, wallet: Wallet): Promise<WebbApiProvider<T> | null>;
-  activeFeedback: InterActiveFeedback | null;
+  activeFeedback: InteractiveFeedback | null;
 }
 
 export const WebbContext = React.createContext<WebbContentState>({

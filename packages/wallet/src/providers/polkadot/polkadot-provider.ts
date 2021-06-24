@@ -8,7 +8,7 @@ import { isNumber } from 'lodash';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { web3Enable } from '@polkadot/extension-dapp';
 import { InjectedExtension } from '@polkadot/extension-inject/types';
-import { ApiInitHandler, InterActiveFeedback } from '@webb-dapp/react-environment';
+import { ApiInitHandler, InteractiveFeedback } from '@webb-dapp/react-environment';
 
 type ExtensionProviderEvents = {
   connected: undefined;
@@ -68,8 +68,8 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
         if (reported) {
           return;
         }
-        let interActiveFeedback: InterActiveFeedback;
-        const body = InterActiveFeedback.feedbackEntries([
+        let interActiveFeedback: InteractiveFeedback;
+        const body = InteractiveFeedback.feedbackEntries([
           {
             header: 'Failed to establish WS connection',
           },
@@ -78,12 +78,12 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
           },
         ]);
 
-        const actions = InterActiveFeedback.actionsBuilder()
+        const actions = InteractiveFeedback.actionsBuilder()
           .action('Wait for connection', () => {
             interActiveFeedback?.cancel();
           })
           .actions();
-        interActiveFeedback = new InterActiveFeedback(
+        interActiveFeedback = new InteractiveFeedback(
           'error',
           actions,
           () => {

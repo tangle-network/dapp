@@ -2,7 +2,7 @@ import { PolkadotMixerDeposit, PolkadotMixerWithdraw } from '@webb-dapp/react-en
 import {
   ActionsBuilder,
   ApiInitHandler,
-  InterActiveFeedback,
+  InteractiveFeedback,
   WebbApiProvider,
   WebbMethods,
   WebbProviderEvents,
@@ -43,7 +43,7 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
     const metaData = await this.provider.checkMetaDataUpdate();
     if (metaData) {
       /// feedback body
-      const feedbackEntries = InterActiveFeedback.feedbackEntries([
+      const feedbackEntries = InteractiveFeedback.feedbackEntries([
         {
           header: 'Update Polkadot MetaData',
         },
@@ -53,7 +53,7 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
         /// update extension metadata
         .action('Update MetaData', () => this.provider.updateMetaData(metaData), 'success')
         .actions();
-      const feedback = new InterActiveFeedback('info', actions, () => {}, feedbackEntries);
+      const feedback = new InteractiveFeedback('info', actions, () => {}, feedbackEntries);
       /// emit the feedback object
       this.emit('interactiveFeedback', feedback);
     }

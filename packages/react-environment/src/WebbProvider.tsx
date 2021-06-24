@@ -1,3 +1,4 @@
+import Icon from '@material-ui/core/Icon';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import { beresheetStorage, mainStorage, rinkebyStorage } from '@webb-dapp/apps/configs/storages/evm-storage';
 import { chainsPopulated } from '@webb-dapp/apps/configs/wallets/chains-populated';
@@ -5,6 +6,7 @@ import { walletsConfig, WalletsIds } from '@webb-dapp/apps/configs/wallets/walle
 import { EVMStorage, WebbEVMChain, WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3';
 import { DimensionsProvider } from '@webb-dapp/react-environment/layout';
 import { StoreProvier } from '@webb-dapp/react-environment/store';
+import { notificationApi } from '@webb-dapp/ui-components/notification';
 import { BareProps } from '@webb-dapp/ui-components/types';
 import { Storage } from '@webb-dapp/utils';
 import { Account } from '@webb-dapp/wallet/account/Accounts.adapter';
@@ -15,15 +17,13 @@ import { WebbPolkadot } from './api-providers/polkadot';
 import { SettingProvider } from './SettingProvider';
 import {
   Chain,
-  InterActiveFeedback,
+  InteractiveFeedback,
   netStorageFactory,
   NetworkStorage,
   Wallet,
   WebbApiProvider,
   WebbContext,
 } from './webb-context';
-import { notificationApi } from '@webb-dapp/ui-components/notification';
-import Icon from '@material-ui/core/Icon';
 
 interface WebbProviderProps extends BareProps {
   applicationName: string;
@@ -42,7 +42,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
   const [activeAccount, _setActiveAccount] = useState<Account | null>(null);
   const [isInit, setIsInit] = useState(true);
 
-  const [interactiveFeedbacks, setInteractiveFeedbacks] = useState<InterActiveFeedback[]>([]);
+  const [interactiveFeedbacks, setInteractiveFeedbacks] = useState<InteractiveFeedback[]>([]);
   useEffect(() => {
     setInteractiveFeedbacks([]);
     const off = activeApi?.on('interactiveFeedback', (feedback) => {

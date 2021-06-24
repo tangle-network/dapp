@@ -59,10 +59,10 @@ export class ActionsBuilder {
 }
 
 export type ApiInitHandler = {
-  onError(error: InterActiveFeedback): any;
+  onError(error: InteractiveFeedback): any;
 };
 
-export class InterActiveFeedback extends EventBus<{ canceled: InterActiveFeedback }> {
+export class InteractiveFeedback extends EventBus<{ canceled: InteractiveFeedback }> {
   private _canceled: boolean = false;
 
   static actionsBuilder() {
@@ -95,7 +95,7 @@ export class InterActiveFeedback extends EventBus<{ canceled: InterActiveFeedbac
 }
 
 export type WebbProviderEvents<T = any> = {
-  interactiveFeedback: InterActiveFeedback;
+  interactiveFeedback: InteractiveFeedback;
   providerUpdate: T;
 };
 
