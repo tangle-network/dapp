@@ -62,7 +62,7 @@ export type ApiInitHandler = {
   onError(error: InterActiveFeedback): any;
 };
 
-export class InterActiveFeedback extends EventBus<{ canceled: undefined }> {
+export class InterActiveFeedback extends EventBus<{ canceled: InterActiveFeedback }> {
   private _canceled: boolean = false;
 
   static actionsBuilder() {
@@ -74,8 +74,8 @@ export class InterActiveFeedback extends EventBus<{ canceled: undefined }> {
 
   constructor(
     public readonly level: FeedbackLevel,
-    public readonly action: Record<string, Action>,
-    public readonly onCancel: () => any,
+    public readonly actions: Record<string, Action>,
+    private readonly _onCancel: () => any,
     public readonly feedbackBody: FeedbackBody
   ) {
     super();
@@ -84,9 +84,13 @@ export class InterActiveFeedback extends EventBus<{ canceled: undefined }> {
   get canceled() {
     return this._canceled;
   }
+
+  triggerActionAndCancel(name: string) {
+    this.actions[name]?.onTrigger();
+  }
   cancel() {
     this._canceled = true;
-    this.emit('canceled', undefined);
+    this.emit('canceled', this);
   }
 }
 

@@ -8,12 +8,22 @@ import { BareProps } from '@webb-dapp/ui-components/types';
 import { Storage } from '@webb-dapp/utils';
 import { Account } from '@webb-dapp/wallet/account/Accounts.adapter';
 import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
-import React, { FC, useCallback, useEffect, useState } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { WebbPolkadot } from './api-providers/polkadot';
 import { SettingProvider } from './SettingProvider';
-import { Chain, netStorageFactory, NetworkStorage, Wallet, WebbApiProvider, WebbContext } from './webb-context';
+import {
+  Chain,
+  InterActiveFeedback,
+  netStorageFactory,
+  NetworkStorage,
+  Wallet,
+  WebbApiProvider,
+  WebbContext,
+} from './webb-context';
 import { chainsPopulated } from '@webb-dapp/apps/configs/wallets/chains-populated';
+import InteractiveErrorView from '@webb-dapp/react-components/InteractiveFeedbackView/InteractiveErrorView';
+import { notificationApi } from '@webb-dapp/ui-components/notification';
 
 interface WebbProviderProps extends BareProps {
   applicationName: string;
@@ -31,6 +41,24 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
   const [accounts, setAccounts] = useState<Array<Account>>([]);
   const [activeAccount, _setActiveAccount] = useState<Account | null>(null);
   const [isInit, setIsInit] = useState(true);
+
+  const [interactiveFeedbacks, setInteractiveFeedbacks] = useState<InterActiveFeedback[]>([]);
+  useEffect(() => {
+    setInteractiveFeedbacks([]);
+    const off = activeApi?.on('interactiveFeedback', (feedback) => {});
+    return () => {
+      off && off();
+      setInteractiveFeedbacks([]);
+    };
+  }, [activeApi]);
+
+  const activeFeedback = useMemo(() => {
+    if (interactiveFeedbacks.length === 0) {
+      return null;
+    }
+    return interactiveFeedbacks[interactiveFeedbacks.length - 1];
+  }, [interactiveFeedbacks]);
+
   const setActiveAccount = useCallback(
     async (account: Account<any>) => {
       if (networkStorage && activeChain) {
@@ -57,7 +85,11 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
       case WalletsIds.Polkadot:
         {
           const url = chain.url;
-          const webbPolkadot = await WebbPolkadot.init('Webb DApp', [url]);
+          const webbPolkadot = await WebbPolkadot.init('Webb DApp', [url], {
+            onError: (error) => {
+              setInteractiveFeedbacks((p) => [...p, error]);
+            },
+          });
           setActiveApi(webbPolkadot);
           activeApi = webbPolkadot;
           setLoading(false);
@@ -198,6 +230,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
       <StoreProvier>
         <SettingProvider>
           <DimensionsProvider>{children}</DimensionsProvider>
+          <InteractiveErrorView activeFeedback={activeFeedback} />
         </SettingProvider>
       </StoreProvier>
     </WebbContext.Provider>

@@ -60,9 +60,7 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
   }
 
   static async init(appName: string, endpoints: string[], errorHandler: ApiInitHandler): Promise<WebbPolkadot> {
-    const [apiPromise, injectedExtension] = await PolkadotProvider.getParams(appName, endpoints, (e) => {
-      console.log(e);
-    });
+    const [apiPromise, injectedExtension] = await PolkadotProvider.getParams(appName, endpoints, errorHandler.onError);
     const instance = new WebbPolkadot(apiPromise, injectedExtension);
     /// check metadata update
     await instance.awaitMetaDataCheck();
