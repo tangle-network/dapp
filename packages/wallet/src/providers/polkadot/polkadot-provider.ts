@@ -8,6 +8,7 @@ import { isNumber } from 'lodash';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { web3Enable } from '@polkadot/extension-dapp';
 import { InjectedExtension } from '@polkadot/extension-inject/types';
+import { ApiInitHandler, InterActiveFeedback } from '@webb-dapp/react-environment';
 
 type ExtensionProviderEvents = {
   connected: undefined;
@@ -31,15 +32,24 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
     this._accounts = new PolkadotAccounts(this.injectedExtension);
   }
 
-  static async fromExtension(appName: string, [endPoint, ...allEndPoints]: string[]): Promise<PolkadotProvider> {
-    const [apiPromise, currentExtensions] = await PolkadotProvider.getParams(appName, [endPoint, ...allEndPoints]);
+  static async fromExtension(
+    appName: string,
+    [endPoint, ...allEndPoints]: string[],
+    apiInitHandler: ApiInitHandler
+  ): Promise<PolkadotProvider> {
+    const [apiPromise, currentExtensions] = await PolkadotProvider.getParams(
+      appName,
+      [endPoint, ...allEndPoints],
+      apiInitHandler.onError
+    );
     const polkadotProvider = new PolkadotProvider(apiPromise, currentExtensions);
     return polkadotProvider;
   }
 
   static async getParams(
     appName: string,
-    [endPoint, ...allEndPoints]: string[]
+    [endPoint, ...allEndPoints]: string[],
+    onError: ApiInitHandler['onError']
   ): Promise<[ApiPromise, InjectedExtension]> {
     const extensions = await web3Enable(appName);
     if (extensions.length === 0) throw new Error('no_extensions');
@@ -48,12 +58,52 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
     const opts = options({
       provider: wsProvider,
     });
+    // eslint-disable-next-line no-async-promise-executor
+    await new Promise(async (resolve, reject) => {
+      wsProvider.on('connected', () => {
+        resolve();
+      });
+      let reported = false;
+      wsProvider.on('error', (e) => {
+        if (reported) {
+          return;
+        }
+        let interActiveFeedback: InterActiveFeedback;
+        const body = InterActiveFeedback.feedbackEntries([
+          {
+            header: 'Failed to establish WS connection',
+          },
+          {
+            content: 'Attempt to retry',
+          },
+        ]);
+
+        const actions = InterActiveFeedback.actionsBuilder()
+          .action('Wait for connection', () => {
+            interActiveFeedback?.cancel();
+          })
+          .actions();
+        interActiveFeedback = new InterActiveFeedback(
+          'error',
+          actions,
+          () => {
+            wsProvider.disconnect();
+            reject('Disconnected');
+          },
+          body
+        );
+
+        onError(interActiveFeedback);
+
+        reported = true;
+      });
+    });
     const apiPromise = await ApiPromise.create(opts);
     return [apiPromise, currentExtensions];
   }
 
   hookListeners() {
-    this.apiPromise.on('error', () => {
+    this.apiPromise.on('error', (e) => {
       this.emit('error', undefined);
     });
 
@@ -83,6 +133,7 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
     // disconnect this api
     return this.apiPromise.disconnect();
   }
+
   /// metaData:MetadataDef
   updateMetaData(metaData: any) {
     this.injectedExtension.metadata?.provide(metaData);

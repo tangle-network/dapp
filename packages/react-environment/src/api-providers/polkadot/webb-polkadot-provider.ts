@@ -1,6 +1,7 @@
 import { PolkadotMixerDeposit, PolkadotMixerWithdraw } from '@webb-dapp/react-environment/api-providers/polkadot';
 import {
   ActionsBuilder,
+  ApiInitHandler,
   InterActiveFeedback,
   WebbApiProvider,
   WebbMethods,
@@ -58,8 +59,10 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
     }
   }
 
-  static async init(appName: string, endpoints: string[]): Promise<WebbPolkadot> {
-    const [apiPromise, injectedExtension] = await PolkadotProvider.getParams(appName, endpoints);
+  static async init(appName: string, endpoints: string[], errorHandler: ApiInitHandler): Promise<WebbPolkadot> {
+    const [apiPromise, injectedExtension] = await PolkadotProvider.getParams(appName, endpoints, (e) => {
+      console.log(e);
+    });
     const instance = new WebbPolkadot(apiPromise, injectedExtension);
     /// check metadata update
     await instance.awaitMetaDataCheck();

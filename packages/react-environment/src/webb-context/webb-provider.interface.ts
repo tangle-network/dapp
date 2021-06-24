@@ -39,14 +39,13 @@ export type FeedbackBody = FeedbackEntry[];
 
 export class ActionsBuilder {
   private _actions: Record<string, Action> = {};
-
   constructor() {}
 
   static init() {
     return new ActionsBuilder();
   }
 
-  action(name: string, handler: () => any, level: FeedbackLevel): ActionsBuilder {
+  action(name: string, handler: () => any, level: FeedbackLevel = 'info'): ActionsBuilder {
     this._actions[name] = {
       level,
       onTrigger: handler,
@@ -59,7 +58,16 @@ export class ActionsBuilder {
   }
 }
 
-export class InterActiveFeedback extends EventBus<any> {
+export type ApiInitHandler = {
+  onError(error: InterActiveFeedback): any;
+};
+
+export class InterActiveFeedback extends EventBus<{ canceled: undefined }> {
+  private _canceled: boolean = false;
+
+  static actionsBuilder() {
+    return ActionsBuilder.init();
+  }
   static feedbackEntries(feedbackBody: FeedbackBody): FeedbackBody {
     return feedbackBody;
   }
@@ -71,6 +79,14 @@ export class InterActiveFeedback extends EventBus<any> {
     public readonly feedbackBody: FeedbackBody
   ) {
     super();
+  }
+
+  get canceled() {
+    return this._canceled;
+  }
+  cancel() {
+    this._canceled = true;
+    this.emit('canceled', undefined);
   }
 }
 
