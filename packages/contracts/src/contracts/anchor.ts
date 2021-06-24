@@ -4,6 +4,8 @@ import { EvmNote } from '@webb-dapp/contracts/utils/evm-note';
 import { createDeposit, Deposit } from '@webb-dapp/contracts/utils/make-deposit';
 import { MerkleTree } from '@webb-dapp/utils/merkle';
 import { BigNumber, Contract, providers, Signer } from 'ethers';
+import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3/webb-web3-provider';
+import { Storage } from '@webb-dapp/utils';
 import utils from 'web3-utils';
 
 import { abi } from '../abis/NativeAnchor.json';
@@ -95,13 +97,9 @@ export class AnchorContract {
         throw e;
       }
     }
-    console.log(logs);
-
-    // TODO: store the currentBlock as the new syncedBlock in storage
-
-    // TODO: append the newly retrieved logs to the storage for this mixer
+    const events = logs.map((log) => this._contract.interface.parseLog(log));
     
-    return logs.map((log) => this._contract.interface.parseLog(log));
+    return events;
   }
 
   async generateMerkleProof(deposit: Deposit) {

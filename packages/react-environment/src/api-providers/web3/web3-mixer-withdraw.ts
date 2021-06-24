@@ -8,10 +8,10 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
     return Promise.resolve(undefined);
   }
 
-  async withdraw(note: string, recipient: string, contractName: string = 'nativeAnchor'): Promise<void> {
+  async withdraw(note: string, recipient: string): Promise<void> {
     this.emit('stateChange', WithdrawState.GeneratingZk);
     const evmNote = EvmNote.deserialize(note);
-    const contract = await this.inner.getContract(evmNote.amount, contractName);
+    const contract = await this.inner.getContractBySize(evmNote.amount, evmNote.currency);
     const txReset = await contract.withdraw(note, recipient);
     transactionNotificationConfig.loading?.({
       address: '',

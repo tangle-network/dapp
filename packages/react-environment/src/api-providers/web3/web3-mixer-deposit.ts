@@ -8,7 +8,7 @@ import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polka
 type DepositPayload = IDepositPayload<EvmNote, [Deposit, number]>;
 
 export class Web3MixerDeposit extends MixerDeposit<WebbWeb3Provider, DepositPayload> {
-  async deposit(depositPayload: DepositPayload, contractName: string = 'nativeAnchor'): Promise<void> {
+  async deposit(depositPayload: DepositPayload): Promise<void> {
     transactionNotificationConfig.loading?.({
       address: '',
       data: undefined,
@@ -19,7 +19,7 @@ export class Web3MixerDeposit extends MixerDeposit<WebbWeb3Provider, DepositPayl
       },
     });
     const [deposit, amount] = depositPayload.params;
-    const contract = await this.inner.getContract(amount, contractName);
+    const contract = await this.inner.getContractBySize(amount);
     await contract.deposit(deposit.commitment);
     transactionNotificationConfig.finalize?.({
       address: '',
@@ -32,11 +32,10 @@ export class Web3MixerDeposit extends MixerDeposit<WebbWeb3Provider, DepositPayl
     });
   }
 
-  // this id is the contract id
-  async generateNote(mixerId: string, contractName: string = 'nativeAnchor'): Promise<DepositPayload> {
-    const contract = await this.inner.getContractWithAddress(mixerId);
+  async generateNote(mixerAddress: string): Promise<DepositPayload> {
+    const contract = await this.inner.getContractByAddress(mixerAddress);
     const storages = await this.inner.chainStorage;
-    const mixerInfo = storages[contractName].contractsInfo.find((config) => config.address === mixerId);
+    const mixerInfo = this.inner.find((config) => config.address === mixerId);
     if (!mixerInfo) {
       throw new Error(`mixer not found from storage`);
     }
@@ -48,8 +47,7 @@ export class Web3MixerDeposit extends MixerDeposit<WebbWeb3Provider, DepositPayl
     };
   }
 
-  async getSizes(contract: string = 'nativeAnchor'): Promise<MixerSize[]> {
-    const storage = await this.inner.chainStorage;
-    return storage[contract].mixerSize;
+  async getSizes(): Promise<MixerSize[]> {
+    return this.inner.getMixersSizes();
   }
 }
