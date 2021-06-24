@@ -88,7 +88,7 @@ export class WebbWeb3Provider implements WebbApiProvider<WebbWeb3Provider> {
   }
 
   async getContractByAddress(mixerAddress: string): Promise<AnchorContract> {
-    return new AnchorContract(this.ethersProvider, mixerAddress);
+    return new AnchorContract(this, this.ethersProvider, mixerAddress);
   }
 
   // This function limits the mixer implementation to one type for the token/size pair.
@@ -100,9 +100,9 @@ export class WebbWeb3Provider implements WebbApiProvider<WebbWeb3Provider> {
       throw new Error(`mixer with size ${mixerSize} not found for chain ${this.connectedMixers.chainId}`);
     }
 
-    this.connectedMixers.getMixerInfoStorage(mixer.address)
+    this.connectedMixers.getMixerInfoStorage(mixer.address);
 
-    return new AnchorContract(this.ethersProvider, mixer.address);
+    return new AnchorContract(this.connectedMixers, this.ethersProvider, mixer.address);
   }
 
   static async init(web3Provider: Web3Provider) {

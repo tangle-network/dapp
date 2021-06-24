@@ -7,6 +7,7 @@ import { InjectedExtension } from '@polkadot/extension-inject/types';
 
 export class WebbPolkadot extends PolkadotProvider implements WebbApiProvider<WebbPolkadot> {
   readonly methods: WebbMethods<WebbPolkadot>;
+  readonly storage: Storage<PolkadotStorage>;
 
   private constructor(apiPromise: ApiPromise, injectedExtension: InjectedExtension) {
     super(apiPromise, injectedExtension);
@@ -22,6 +23,14 @@ export class WebbPolkadot extends PolkadotProvider implements WebbApiProvider<We
         },
       },
     };
+    this.storage = 
+  }
+
+  get storage() {
+    return {
+      get(){},
+      set(){} 
+    }
   }
 
   static async init(appName: string, endpoints: string[]): Promise<WebbPolkadot> {

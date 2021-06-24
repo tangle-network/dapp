@@ -5,7 +5,7 @@ import { createDeposit, Deposit } from '@webb-dapp/contracts/utils/make-deposit'
 import { MerkleTree } from '@webb-dapp/utils/merkle';
 import { BigNumber, Contract, providers, Signer } from 'ethers';
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3/webb-web3-provider';
-import { mixerStorageFactory, EvmChainMixersInfo } from '@webb-dapp/react-environment/api-providers/web3/EvmChainMixersInfo';
+import { EvmChainMixersInfo } from '@webb-dapp/react-environment/api-providers/web3/EvmChainMixersInfo';
 import { Storage } from '@webb-dapp/utils';
 import utils from 'web3-utils';
 
@@ -21,7 +21,7 @@ export class AnchorContract {
   private _contract: Anchor;
   private readonly signer: Signer;
 
-  constructor(private web3Provider: providers.Web3Provider, address: string) {
+  constructor(private mixersInfo: EvmChainMixersInfo, private web3Provider: providers.Web3Provider, address: string) {
     this.signer = this.web3Provider.getSigner();
     this._contract = new Contract(address, abi, this.signer) as any;
   }
@@ -73,10 +73,10 @@ export class AnchorContract {
     const filter = this._contract.filters.Deposit(null, null, null);
 
     const currentBlock = await this.web3Provider.getBlockNumber();
-    const cachedStorage = await mixerStorageFactory(await this.signer.getChainId());
-    const storedContractInfo = await cachedStorage.get(this._contract.address);
+    const contractInfo = this.mixersInfo.getMixerInfoByAddress(this._contract.address);
+    const storedContractInfo = await this.mixersInfo.getMixerInfoStorage(this._contract.address);
 
-    const startingBlock = isEmpty(storedContractInfo) ? 1 : storedContractInfo.lastQueriedBlock; // Read starting block from cached storage
+    const startingBlock = isEmpty(storedContractInfo) ? contractInfo?.createdAtBlock : storedContractInfo.lastQueriedBlock; // Read starting block from cached storage
     var logs = []; // Read the stored logs into this variable
 
     try {
@@ -90,11 +90,11 @@ export class AnchorContract {
 
       // If there is a timeout, query the logs in block increments.
       if (e.code == -32603) {
-        for (var i=startingBlock; i < currentBlock; i+= 512)
+        for (var i=startingBlock; i < currentBlock; i+= 300)
         {
           logs = [...logs, ...(await this.web3Provider.getLogs({
             fromBlock: i,
-            toBlock: (currentBlock - i > 512) ? i + 512 : currentBlock,
+            toBlock: (currentBlock - i > 300) ? i + 300 : currentBlock,
             ...filter,
           }))];
         }
@@ -111,10 +111,7 @@ export class AnchorContract {
     const commitments = [...storedContractInfo.leaves, ...newCommitments];
 
     // extract the commitments from the events, and update the storage
-    await cachedStorage.set(this._contract.address, {
-      lastQueriedBlock: currentBlock,
-      leaves: commitments
-    });
+    await this.mixersInfo.setMixerInfoStorage(this._contract.address, currentBlock, commitments);
     
     return commitments;
   }

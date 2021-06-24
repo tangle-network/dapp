@@ -28,11 +28,11 @@ export const chainsConfig: AppConfig['chains'] = {
     logo: EdgwareLogo,
     currencies: [
       {
-        currencyId: 1,
+        currencyId: 2,
         enabled: true,
       },
     ],
-    nativeCurrencyId: 1,
+    nativeCurrencyId: 2,
   },
   3: {
     group: 'edgware',
