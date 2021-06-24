@@ -1,15 +1,13 @@
-import Icon from '@material-ui/core/Icon';
 import { EvmChainStorage } from '@webb-dapp/apps/configs/storages/evm-chain-storage.interface';
 import { AnchorContract } from '@webb-dapp/contracts/contracts/anchor';
-import { WebbApiProvider, WebbMethods } from '@webb-dapp/react-environment';
+import { WebbApiProvider, WebbMethods, WebbProviderEvents } from '@webb-dapp/react-environment';
 import { Web3MixerDeposit } from '@webb-dapp/react-environment/api-providers/web3/web3-mixer-deposit';
 import { Web3MixerWithdraw } from '@webb-dapp/react-environment/api-providers/web3/web3-mixer-withdraw';
-import { notificationApi } from '@webb-dapp/ui-components/notification';
 import { Storage } from '@webb-dapp/utils';
 import { Web3Accounts } from '@webb-dapp/wallet/providers/web3/web3-accounts';
 import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
 import { providers } from 'ethers';
-import React from 'react';
+import { EventBus } from '@webb-tools/app-util';
 
 export enum WebbEVMChain {
   Main = 1,
@@ -19,29 +17,23 @@ export enum WebbEVMChain {
 
 export type EVMStorage = Record<string, EvmChainStorage>;
 
-export class WebbWeb3Provider implements WebbApiProvider<WebbWeb3Provider> {
+export class WebbWeb3Provider
+  extends EventBus<WebbProviderEvents<[number]>>
+  implements WebbApiProvider<WebbWeb3Provider> {
   readonly accounts: Web3Accounts;
   readonly methods: WebbMethods<WebbWeb3Provider>;
   private ethersProvider: providers.Web3Provider;
 
   private constructor(private web3Provider: Web3Provider, private storage: Storage<EVMStorage>) {
+    super();
     this.accounts = new Web3Accounts(web3Provider.eth);
     this.ethersProvider = web3Provider.intoEthersProvider();
-    // @ts-ignore
-    // todo fix me @(AhmedKorim)
-    this.ethersProvider.provider?.on?.('chainChanged', async () => {
+    const handler = async () => {
       const chainId = await this.web3Provider.network;
-      console.log(chainId);
-      const localName = await WebbWeb3Provider.storageName(chainId);
-      notificationApi({
-        message: 'Web3: changed the connected network',
-        variant: 'info',
-        Icon: React.createElement(Icon, null, ['leak_add']),
-        secondaryMessage: `Connection is switched to ${chainId} chain`,
-      });
-      this.ethersProvider = web3Provider.intoEthersProvider();
-      this.storage = await Storage.get(localName);
-    });
+      this.emit('providerUpdate', [chainId]);
+      this.ethersProvider.provider?.off?.('chainChanged', handler);
+    };
+    this.ethersProvider.provider?.on?.('chainChanged', handler);
     this.methods = {
       mixer: {
         deposit: {
@@ -55,6 +47,8 @@ export class WebbWeb3Provider implements WebbApiProvider<WebbWeb3Provider> {
       },
     };
   }
+
+  async destroy(): Promise<void> {}
 
   static storageName(id: number): string {
     switch (id) {

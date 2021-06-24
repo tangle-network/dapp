@@ -96,10 +96,10 @@ export class InterActiveFeedback extends EventBus<{ canceled: InterActiveFeedbac
 
 export type WebbProviderEvents<T = any> = {
   interactiveFeedback: InterActiveFeedback;
-  providerUpdate: WebbApiProvider<T>;
+  providerUpdate: T;
 };
 
-export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents<T>> {
+export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
   /// Accounts Adapter will have all methods related to the provider accounts
   accounts: AccountsAdapter<any>;
   /// All of the available methods and api of the provider

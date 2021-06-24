@@ -1,5 +1,6 @@
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import { beresheetStorage, mainStorage, rinkebyStorage } from '@webb-dapp/apps/configs/storages/evm-storage';
+import { chainsPopulated } from '@webb-dapp/apps/configs/wallets/chains-populated';
 import { walletsConfig, WalletsIds } from '@webb-dapp/apps/configs/wallets/wallets-config';
 import { EVMStorage, WebbEVMChain, WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3';
 import { DimensionsProvider } from '@webb-dapp/react-environment/layout';
@@ -21,7 +22,8 @@ import {
   WebbApiProvider,
   WebbContext,
 } from './webb-context';
-import { chainsPopulated } from '@webb-dapp/apps/configs/wallets/chains-populated';
+import { notificationApi } from '@webb-dapp/ui-components/notification';
+import Icon from '@material-ui/core/Icon';
 
 interface WebbProviderProps extends BareProps {
   applicationName: string;
@@ -85,6 +87,8 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
   );
 
   const switchChain = async (chain: Chain, wallet: Wallet) => {
+    setActiveChain(chain);
+    setActiveWallet(wallet);
     let activeApi: WebbApiProvider<any> | null = null;
     switch (wallet.id) {
       case WalletsIds.Polkadot:
@@ -112,13 +116,13 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
       case WalletsIds.MetaMask:
         {
           const web3Provider = await Web3Provider.fromExtension();
-          const net = await web3Provider.network; // storage based on network id
-          const chainType = WebbWeb3Provider.storageName(net);
+          const chainId = await web3Provider.network; // storage based on network id
+          const chainType = WebbWeb3Provider.storageName(chainId);
           // const rinkebyS = await Storage.newFresh(WebbEVMChain.Rinkeby, rinkebyStorage);
           // const mainS = await Storage.newFresh(WebbEVMChain.Main, mainStorage);
           // const beresheetS = await Storage.newFresh(WebbEVMChain.Beresheet, beresheetStorage);
           let storage: Storage<EVMStorage>;
-          switch (net) {
+          switch (chainId) {
             case WebbEVMChain.Main:
               storage = await Storage.newFresh(chainType, mainStorage);
               break;
@@ -138,6 +142,32 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
           await setActiveAccount(accounts[0]);
           await webbWeb3Provider.accounts.setActiveAccount(accounts[0]);
           setActiveApi(webbWeb3Provider);
+          webbWeb3Provider.on('providerUpdate', async ([chainId]) => {
+            const nextChain = Object.values(chains).find((chain) => chain.evmId === chainId);
+            if (!nextChain) {
+              try {
+                const name = WebbWeb3Provider.storageName(chainId);
+                notificationApi({
+                  message: 'Web3: changed the connected network',
+                  variant: 'info',
+                  Icon: React.createElement(Icon, null, ['leak_add']),
+                  secondaryMessage: `Connection is switched to ${name} chain`,
+                });
+                await switchChain(chain, wallet);
+              } catch (e) {
+                notificationApi({
+                  message: 'Web3: Switched to unsported chain',
+                  variant: 'error',
+                  Icon: React.createElement(Icon, null, ['error']),
+                  secondaryMessage: `Connection is switched to ${name} chain`,
+                });
+                setActiveApi(undefined);
+                setActiveChain(undefined);
+              }
+            } else {
+              await switchChain(nextChain, wallet);
+            }
+          });
           activeApi = webbWeb3Provider;
         }
         break;
