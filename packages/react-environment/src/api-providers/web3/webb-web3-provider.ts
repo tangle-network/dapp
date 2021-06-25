@@ -9,22 +9,16 @@ import { Web3Accounts } from '@webb-dapp/wallet/providers/web3/web3-accounts';
 import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
 import { providers } from 'ethers';
 import React from 'react';
-import { MixerSize } from '@webb-dapp/react-environment/webb-context';
-import { Storage } from '@webb-dapp/utils';
-
-export enum WebbEVMChain {
-  Main = 1,
-  Rinkeby = 4,
-  Beresheet = 2022,
-}
+import { MixerTitle } from '@webb-dapp/react-environment/webb-context';
+import { getStorageName } from 'apps/src/configs/storages/EvmChainStorage';
 
 export class WebbWeb3Provider implements WebbApiProvider<WebbWeb3Provider> {
   readonly accounts: Web3Accounts;
   readonly methods: WebbMethods<WebbWeb3Provider>;
   private ethersProvider: providers.Web3Provider;
-  public connectedMixers: EvmChainMixersInfo;
+  private connectedMixers: EvmChainMixersInfo;
 
-  private constructor(private web3Provider: Web3Provider, public chainId: number) {
+  private constructor(private web3Provider: Web3Provider, private chainId: number) {
     this.accounts = new Web3Accounts(web3Provider.eth);
     this.ethersProvider = web3Provider.intoEthersProvider();
     this.connectedMixers = new EvmChainMixersInfo(chainId);
@@ -32,7 +26,7 @@ export class WebbWeb3Provider implements WebbApiProvider<WebbWeb3Provider> {
     // todo fix me @(AhmedKorim)
     this.ethersProvider.provider?.on?.('chainChanged', async () => {
       const newChainId = await this.web3Provider.network;
-      const localName = WebbWeb3Provider.storageName(newChainId);
+      const localName = getStorageName(newChainId);
       notificationApi({
         message: 'Web3: changed the connected network',
         variant: 'info',
@@ -56,39 +50,17 @@ export class WebbWeb3Provider implements WebbApiProvider<WebbWeb3Provider> {
     };
   }
 
-  static storageName(chainID: number): string {
-    switch (chainID) {
-      case WebbEVMChain.Rinkeby:
-        return 'rinkeby';
-      case WebbEVMChain.Main:
-        return 'main';
-      case WebbEVMChain.Beresheet:
-        return 'beresheet';
-      default:
-        throw new Error('unsupported chain');
-    }
-  }
-
   async getChainId(): Promise<number> {
     const chainId = (await this.ethersProvider.getNetwork()).chainId;
     return chainId;
   }
 
-  static getNativeCurrencySymbol(chainID: number): string {
-    switch (chainID) {
-      case WebbEVMChain.Rinkeby:
-        return 'ETH';
-      case WebbEVMChain.Main:
-        return 'ETH';
-      case WebbEVMChain.Beresheet:
-        return 'tEDG';
-      default:
-        throw new Error('unsupported chain');
-    }
+  getMixers() {
+    return this.connectedMixers;
   }
 
   async getContractByAddress(mixerAddress: string): Promise<AnchorContract> {
-    return new AnchorContract(this, this.ethersProvider, mixerAddress);
+    return new AnchorContract(this.connectedMixers, this.ethersProvider, mixerAddress);
   }
 
   // This function limits the mixer implementation to one type for the token/size pair.
@@ -100,23 +72,19 @@ export class WebbWeb3Provider implements WebbApiProvider<WebbWeb3Provider> {
       throw new Error(`mixer with size ${mixerSize} not found for chain ${this.connectedMixers.chainId}`);
     }
 
-    this.connectedMixers.getMixerInfoStorage(mixer.address);
-
     return new AnchorContract(this.connectedMixers, this.ethersProvider, mixer.address);
+  }
+
+  getEthersProvider(): providers.Web3Provider {
+    return this.ethersProvider;
+  }
+
+  getMixersTitles(tokenSymbol: string): Promise<MixerTitle[]> {
+    return Promise.resolve(this.connectedMixers.getMixersTitles(tokenSymbol));
   }
 
   static async init(web3Provider: Web3Provider) {
     const chainId = await web3Provider.network;
-    
-    // If the chain has never been used before, initialize a fresh storage
-    if (!Storage.get(this.storageName(chainId))){
-      
-    }
-
     return new WebbWeb3Provider(web3Provider, chainId);
-  }
-
-  getMixersSizes(tokenSymbol: string): Promise<MixerSize[]> {
-    return Promise.resolve(this.connectedMixers.getMixersSizes(tokenSymbol));
   }
 }

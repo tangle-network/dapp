@@ -1,7 +1,7 @@
 import { EvmNote } from '@webb-dapp/contracts/utils/evm-note';
 import { Deposit } from '@webb-dapp/contracts/utils/make-deposit';
-import { DepositPayload as IDepositPayload, MixerDeposit, MixerSize } from '@webb-dapp/react-environment/webb-context';
-
+import { DepositPayload as IDepositPayload, MixerDeposit, MixerTitle } from '@webb-dapp/react-environment/webb-context';
+import { getNativeCurrencySymbol } from '@webb-dapp/apps/configs/evm/Mixers';
 import { WebbWeb3Provider } from './webb-web3-provider';
 import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polkadot/transaction-notification-config';
 
@@ -19,7 +19,7 @@ export class Web3MixerDeposit extends MixerDeposit<WebbWeb3Provider, DepositPayl
       },
     });
     const [deposit, amount] = depositPayload.params;
-    const contract = await this.inner.getContractBySize(amount, WebbWeb3Provider.getNativeCurrencySymbol(await this.inner.getChainId()));
+    const contract = await this.inner.getContractBySize(amount, getNativeCurrencySymbol(await this.inner.getChainId()));
     await contract.deposit(deposit.commitment);
     transactionNotificationConfig.finalize?.({
       address: '',
@@ -34,7 +34,7 @@ export class Web3MixerDeposit extends MixerDeposit<WebbWeb3Provider, DepositPayl
 
   async generateNote(mixerAddress: string): Promise<DepositPayload> {
     const contract = await this.inner.getContractByAddress(mixerAddress);
-    const mixerInfo = this.inner.connectedMixers.getMixerInfoByAddress(mixerAddress);
+    const mixerInfo = this.inner.getMixers().getMixerInfoByAddress(mixerAddress);
     if (!mixerInfo) {
       throw new Error(`mixer not found from storage`);
     }
@@ -46,7 +46,7 @@ export class Web3MixerDeposit extends MixerDeposit<WebbWeb3Provider, DepositPayl
     };
   }
 
-  async getSizes(): Promise<MixerSize[]> {
-    return this.inner.getMixersSizes(WebbWeb3Provider.getNativeCurrencySymbol(await this.inner.getChainId()));
+  async getTitles(): Promise<MixerTitle[]> {
+    return this.inner.getMixersTitles(getNativeCurrencySymbol( await this.inner.getChainId()));
   }
 }

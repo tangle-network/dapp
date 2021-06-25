@@ -1,6 +1,6 @@
 import { Storage } from '@webb-dapp/utils';
 
-export type NetworkStore = {
+export type NetworkSelectionStore = {
   networksConfig: Record<
     number,
     | {
@@ -11,15 +11,16 @@ export type NetworkStore = {
   defaultNetwork: number;
   defaultWallet: number;
 };
-export type NetworkStorage = Storage<NetworkStore>;
+
+export type NetworkSelectionStorage = Storage<NetworkSelectionStore>;
 
 export const netStorageFactory = () => {
-  return Storage.newFromCache<NetworkStore>('app', {
-    async commit(key: string, data: NetworkStore): Promise<void> {
+  return Storage.newFromCache<NetworkSelectionStore>('app', {
+    async commit(key: string, data: NetworkSelectionStore): Promise<void> {
       localStorage.setItem(key, JSON.stringify(data));
     },
-    async fetch(key: string): Promise<NetworkStore> {
-      const store: NetworkStore = {
+    async fetch(key: string): Promise<NetworkSelectionStore> {
+      const store: NetworkSelectionStore = {
         networksConfig: {},
         defaultNetwork: 1,
         defaultWallet: 1,

@@ -11,7 +11,8 @@ import React, { FC, useCallback, useEffect, useState } from 'react';
 
 import { WebbPolkadot } from './api-providers/polkadot';
 import { SettingProvider } from './SettingProvider';
-import { Chain, netStorageFactory, NetworkStorage, Wallet, WebbApiProvider, WebbContext } from './webb-context';
+import { Chain, Wallet, WebbApiProvider, WebbContext } from './webb-context';
+import { netStorageFactory, NetworkSelectionStorage } from '@webb-dapp/apps/configs/storages/NetworkSelectionStorage';
 
 interface WebbProviderProps extends BareProps {
   applicationName: string;
@@ -44,7 +45,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
   const [activeChain, setActiveChain] = useState<Chain | undefined>(undefined);
   const [activeApi, setActiveApi] = useState<WebbApiProvider<any> | undefined>(undefined);
   const [loading, setLoading] = useState(true);
-  const [networkStorage, setNetworkStorage] = useState<NetworkStorage | null>(null);
+  const [networkStorage, setNetworkStorage] = useState<NetworkSelectionStorage | null>(null);
   const [accounts, setAccounts] = useState<Array<Account>>([]);
   const [activeAccount, _setActiveAccount] = useState<Account | null>(null);
   const [isInit, setIsInit] = useState(true);

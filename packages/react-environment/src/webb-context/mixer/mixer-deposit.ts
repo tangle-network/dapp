@@ -12,7 +12,7 @@ export type MixerDepositEvents = {
 };
 export type DespotStates = 'ideal' | 'generating-note' | 'depositing';
 
-export type MixerSize = {
+export type MixerTitle = {
   id: number | string;
   title: string;
 };
@@ -31,5 +31,5 @@ export abstract class MixerDeposit<
 
   loading: DespotStates = 'ideal';
 
-  abstract getSizes(): Promise<MixerSize[]>;
+  abstract getTitles(): Promise<MixerTitle[]>;
 }

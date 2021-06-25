@@ -14,7 +14,7 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
   private cachedBulletProofsGens: Uint8Array | null = null;
   private mixer: Mixer | null = null;
 
-  async getSizes() {
+  async getTitles() {
     // @ts-ignore
     const data: Array<MixerGroupEntry> = await this.inner.api.query.mixer.mixerTrees.entries();
     console.log('polkadot-mixer-deposit', data);

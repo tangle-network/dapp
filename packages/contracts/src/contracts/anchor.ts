@@ -4,13 +4,9 @@ import { EvmNote } from '@webb-dapp/contracts/utils/evm-note';
 import { createDeposit, Deposit } from '@webb-dapp/contracts/utils/make-deposit';
 import { MerkleTree } from '@webb-dapp/utils/merkle';
 import { BigNumber, Contract, providers, Signer } from 'ethers';
-import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3/webb-web3-provider';
 import { EvmChainMixersInfo } from '@webb-dapp/react-environment/api-providers/web3/EvmChainMixersInfo';
-import { Storage } from '@webb-dapp/utils';
 import utils from 'web3-utils';
-
 import { abi } from '../abis/NativeAnchor.json';
-import { isEmpty } from 'lodash';
 
 const webSnarkUtils = require('websnark/src/utils');
 
@@ -73,10 +69,9 @@ export class AnchorContract {
     const filter = this._contract.filters.Deposit(null, null, null);
 
     const currentBlock = await this.web3Provider.getBlockNumber();
-    const contractInfo = this.mixersInfo.getMixerInfoByAddress(this._contract.address);
-    const storedContractInfo = await this.mixersInfo.getMixerInfoStorage(this._contract.address);
+    const storedContractInfo = await this.mixersInfo.getMixerStorage(this._contract.address);
 
-    const startingBlock = isEmpty(storedContractInfo) ? contractInfo?.createdAtBlock : storedContractInfo.lastQueriedBlock; // Read starting block from cached storage
+    const startingBlock = storedContractInfo.lastQueriedBlock; // Read starting block from cached storage
     var logs = []; // Read the stored logs into this variable
 
     try {
@@ -111,7 +106,7 @@ export class AnchorContract {
     const commitments = [...storedContractInfo.leaves, ...newCommitments];
 
     // extract the commitments from the events, and update the storage
-    await this.mixersInfo.setMixerInfoStorage(this._contract.address, currentBlock, commitments);
+    await this.mixersInfo.setMixerStorage(this._contract.address, currentBlock, commitments);
     
     return commitments;
   }
