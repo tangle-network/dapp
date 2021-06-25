@@ -89,8 +89,12 @@ export class InteractiveFeedback extends EventBus<{ canceled: InteractiveFeedbac
     this.actions[name]?.onTrigger();
   }
   cancel() {
+    if (this._canceled) {
+      return;
+    }
     this._canceled = true;
     this.emit('canceled', this);
+    this._onCancel();
   }
 }
 

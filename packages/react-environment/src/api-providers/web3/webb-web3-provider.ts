@@ -8,6 +8,7 @@ import { Web3Accounts } from '@webb-dapp/wallet/providers/web3/web3-accounts';
 import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
 import { providers } from 'ethers';
 import { EventBus } from '@webb-tools/app-util';
+import { WebbError, WebbErrorCodes } from '@webb-dapp/react-components/InteractiveFeedbackView/InteractiveErrorView';
 
 export enum WebbEVMChain {
   Main = 1,
@@ -59,7 +60,7 @@ export class WebbWeb3Provider
       case WebbEVMChain.Beresheet:
         return 'beresheet';
       default:
-        throw new Error('unsupported chain');
+        throw WebbError.from(WebbErrorCodes.UnsupportedChain);
     }
   }
 
@@ -76,7 +77,7 @@ export class WebbWeb3Provider
     const mixer = mixerSizes.contractsInfo.find((config) => config.size === Number(mixerSize));
     console.log(mixer);
     if (!mixer) {
-      throw new Error(`mixer size  not found on this contract`);
+      throw WebbError.from(WebbErrorCodes.MixerSizeNotFound);
     }
 
     return new AnchorContract(this.ethersProvider, mixer.address);

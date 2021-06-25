@@ -15,6 +15,58 @@ type InteractiveErrorViewProps = {
   activeFeedback: InteractiveFeedback | null;
 };
 
+export enum WebbErrorCodes {
+  UnsupportedChain,
+  MixerSizeNotFound,
+}
+
+type WebbErrorMessage = {
+  message: string;
+  code: WebbErrorCodes;
+};
+
+export class WebbError extends Error {
+  static errorMessageMap: Map<WebbErrorCodes, WebbErrorMessage> = new Map();
+  readonly errorMessag: WebbErrorMessage;
+
+  constructor(readonly code: WebbErrorCodes) {
+    super(WebbError.getErrorMessage(code).message);
+    this.errorMessag = WebbError.getErrorMessage(code);
+  }
+
+  static from(code: WebbErrorCodes) {
+    return new WebbError(code);
+  }
+
+  static getErrorMessage(code: WebbErrorCodes): WebbErrorMessage {
+    const errorMessage = WebbError.errorMessageMap.get(code);
+    if (errorMessage) {
+      return errorMessage;
+    }
+    switch (code) {
+      case WebbErrorCodes.UnsupportedChain:
+        return {
+          code,
+          message: 'you have switched to unsupported chain',
+        };
+      case WebbErrorCodes.MixerSizeNotFound:
+        return {
+          code,
+          message: 'Mixer size not found in contract',
+        };
+      default:
+        return {
+          code,
+          message: 'Unknown error',
+        };
+    }
+  }
+
+  toString() {
+    return this.message;
+  }
+}
+
 const InteractiveErrorView: React.FC<InteractiveErrorViewProps> = ({ activeFeedback }) => {
   const pallet = useColorPallet();
   const actions = useMemo(() => {
