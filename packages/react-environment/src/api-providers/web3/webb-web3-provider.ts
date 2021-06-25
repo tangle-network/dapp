@@ -48,8 +48,15 @@ export class WebbWeb3Provider
       },
     };
   }
-
-  async destroy(): Promise<void> {}
+  setStorage(nextStorage: Storage<EVMStorage>) {
+    this.storage = nextStorage;
+  }
+  async destroy(): Promise<void> {
+    this.subscriptions = {
+      providerUpdate: [],
+      interactiveFeedback: [],
+    };
+  }
 
   static storageName(id: number): string {
     switch (id) {

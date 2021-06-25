@@ -76,7 +76,9 @@ export class InteractiveFeedback extends EventBus<{ canceled: InteractiveFeedbac
     public readonly level: FeedbackLevel,
     public readonly actions: Record<string, Action>,
     private readonly _onCancel: () => any,
-    public readonly feedbackBody: FeedbackBody
+    public readonly feedbackBody: FeedbackBody,
+    /// this can be used to identify the feedback by reason and hide it
+    public reason?: number | string
   ) {
     super();
   }

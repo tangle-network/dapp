@@ -94,8 +94,21 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
     },
     [activeApi, networkStorage, activeChain]
   );
-
-  const switchChain = async (chain: Chain, wallet: Wallet) => {
+  const forceActiveApiUpdate = (activeApi: WebbApiProvider<any>) => {
+    setActiveApi(undefined);
+    setActiveApi(activeApi);
+    interactiveFeedbacks.forEach((interactiveFeedback) => {
+      if (interactiveFeedback.reason === WebbErrorCodes.UnsupportedChain) {
+        interactiveFeedback.cancel();
+      }
+    });
+  };
+  const switchChain = async (chain: Chain, _wallet: Wallet) => {
+    const wallet = _wallet || activeWallet;
+    // wallet cleanup
+    if (_wallet.id !== activeWallet?.id && activeApi) {
+      await activeApi.destroy();
+    }
     try {
       setActiveChain(chain);
       setActiveWallet(wallet);
@@ -158,19 +171,118 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
                     Icon: React.createElement(Icon, null, ['leak_add']),
                     secondaryMessage: `Connection is switched to ${name} chain`,
                   });
-                  await switchChain(chain, wallet);
+                  let storage: Storage<EVMStorage>;
+                  switch (chainId) {
+                    case WebbEVMChain.Main:
+                      storage = await Storage.newFresh(chainType, mainStorage);
+                      break;
+                    case WebbEVMChain.Rinkeby:
+                      storage = await Storage.newFresh(chainType, rinkebyStorage);
+                      break;
+                    case WebbEVMChain.Beresheet:
+                      storage = await Storage.newFresh(chainType, beresheetStorage);
+                      break;
+                    default:
+                      storage = await Storage.newFresh(chainType, beresheetStorage);
+                      break;
+                  }
+                  webbWeb3Provider.setStorage(storage);
+                  setActiveChain(chain);
+                  setActiveWallet(wallet);
+                  forceActiveApiUpdate(webbWeb3Provider);
                 } catch (e) {
-                  notificationApi({
-                    message: 'Web3: Switched to unsported chain',
-                    variant: 'error',
-                    Icon: React.createElement(Icon, null, ['error']),
-                    secondaryMessage: `Connection is switched to ${name} chain`,
-                  });
-                  setActiveApi(undefined);
                   setActiveChain(undefined);
+                  setActiveWallet(wallet);
+                  if (e instanceof WebbError) {
+                    const errorMessage = e.errorMessag;
+                    const code = errorMessage.code;
+                    let feedbackBody: FeedbackBody = [];
+                    let actions = InteractiveFeedback.actionsBuilder().actions();
+                    let interactiveFeedback: InteractiveFeedback;
+                    switch (code) {
+                      case WebbErrorCodes.UnsupportedChain:
+                        {
+                          setActiveChain(undefined);
+                          feedbackBody = InteractiveFeedback.feedbackEntries([
+                            {
+                              header: 'Switched to unsupported chain',
+                            },
+                            {
+                              content: 'Please consider switching back to a supported chain',
+                            },
+                            {
+                              list: [
+                                WebbWeb3Provider.storageName(WebbEVMChain.Rinkeby),
+                                WebbWeb3Provider.storageName(WebbEVMChain.Beresheet),
+                                WebbWeb3Provider.storageName(WebbEVMChain.Main),
+                              ],
+                            },
+                            {
+                              content: 'Switch back via MetaMask',
+                            },
+                          ]);
+                          actions = InteractiveFeedback.actionsBuilder()
+                            .action(
+                              'Ok',
+                              () => {
+                                interactiveFeedback?.cancel();
+                              },
+                              'success'
+                            )
+                            .actions();
+                          interactiveFeedback = new InteractiveFeedback(
+                            'error',
+                            actions,
+                            () => {
+                              interactiveFeedback?.cancel();
+                            },
+                            feedbackBody,
+                            WebbErrorCodes.UnsupportedChain
+                          );
+                          if (interactiveFeedback) {
+                            registerInteractiveFeedback(setInteractiveFeedbacks, interactiveFeedback);
+                          }
+                        }
+                        break;
+                      case WebbErrorCodes.MixerSizeNotFound:
+                        break;
+                    }
+                  }
+
+                  // notificationApi({
+                  //   message: 'Web3: Switched to unsupported chain',
+                  //   variant: 'error',
+                  //   Icon: React.createElement(Icon, null, ['error']),
+                  //   secondaryMessage: `Connection is switched to ${name} chain`,
+                  // });
                 }
               } else {
-                await switchChain(nextChain, wallet);
+                const name = WebbWeb3Provider.storageName(chainId);
+                notificationApi({
+                  message: 'Web3: changed the connected network',
+                  variant: 'info',
+                  Icon: React.createElement(Icon, null, ['leak_add']),
+                  secondaryMessage: `Connection is switched to ${name} chain`,
+                });
+                let storage: Storage<EVMStorage>;
+                switch (chainId) {
+                  case WebbEVMChain.Main:
+                    storage = await Storage.newFresh(chainType, mainStorage);
+                    break;
+                  case WebbEVMChain.Rinkeby:
+                    storage = await Storage.newFresh(chainType, rinkebyStorage);
+                    break;
+                  case WebbEVMChain.Beresheet:
+                    storage = await Storage.newFresh(chainType, beresheetStorage);
+                    break;
+                  default:
+                    storage = await Storage.newFresh(chainType, beresheetStorage);
+                    break;
+                }
+                webbWeb3Provider.setStorage(storage);
+                setActiveChain(nextChain);
+                setActiveWallet(wallet);
+                forceActiveApiUpdate(webbWeb3Provider);
               }
             });
             activeApi = webbWeb3Provider;
@@ -242,6 +354,9 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
                     WebbWeb3Provider.storageName(WebbEVMChain.Main),
                   ],
                 },
+                {
+                  content: 'Switch back via MetaMask',
+                },
               ]);
               actions = InteractiveFeedback.actionsBuilder()
                 .action(
@@ -258,7 +373,8 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
                 () => {
                   interactiveFeedback?.cancel();
                 },
-                feedbackBody
+                feedbackBody,
+                WebbErrorCodes.UnsupportedChain
               );
               if (interactiveFeedback) {
                 registerInteractiveFeedback(setInteractiveFeedbacks, interactiveFeedback);

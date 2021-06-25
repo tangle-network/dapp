@@ -1,4 +1,8 @@
-import { PolkadotMixerDeposit, PolkadotMixerWithdraw } from '@webb-dapp/react-environment/api-providers/polkadot';
+import {
+  PolkadotMixerDeposit,
+  PolkadotMixerWithdraw,
+  PolkaTXBuilder,
+} from '@webb-dapp/react-environment/api-providers/polkadot';
 import {
   ActionsBuilder,
   ApiInitHandler,
@@ -18,11 +22,15 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
   readonly methods: WebbMethods<WebbPolkadot>;
   private readonly provider: PolkadotProvider;
   accounts: PolkadotAccounts;
+  readonly api: ApiPromise;
+  readonly txBuilder: PolkaTXBuilder;
 
   private constructor(apiPromise: ApiPromise, injectedExtension: InjectedExtension) {
     super();
     this.provider = new PolkadotProvider(apiPromise, injectedExtension);
     this.accounts = this.provider.accounts;
+    this.api = this.provider.api;
+    this.txBuilder = this.provider.txBuilder;
     this.methods = {
       mixer: {
         deposit: {

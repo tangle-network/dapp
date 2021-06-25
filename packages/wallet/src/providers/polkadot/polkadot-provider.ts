@@ -23,7 +23,7 @@ type ExtensionProviderEvents = {
 
 export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
   private _accounts: PolkadotAccounts;
-  public readonly txBuilder: PolkaTXBuilder;
+  public txBuilder: PolkaTXBuilder;
 
   constructor(protected apiPromise: ApiPromise, protected injectedExtension: InjectedExtension) {
     super();

@@ -107,11 +107,17 @@ const InteractiveErrorView: React.FC<InteractiveErrorViewProps> = ({ activeFeedb
             );
           case 'list':
             return (
-              <ul>
-                {entry[key]?.map((entry) => {
-                  return <li>{entry}</li>;
-                })}
-              </ul>
+              <Padding x={2} v={1}>
+                <ul>
+                  {entry[key]?.map((entry) => {
+                    return (
+                      <li>
+                        <Typography>{entry}</Typography>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </Padding>
             );
         }
       });
