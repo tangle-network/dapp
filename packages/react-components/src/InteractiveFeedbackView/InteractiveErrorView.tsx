@@ -1,12 +1,12 @@
+import { Button } from '@material-ui/core';
+import Typography from '@material-ui/core/Typography';
+import { FeedbackEntry, InteractiveFeedback } from '@webb-dapp/react-environment';
+import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
+import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
+import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
+import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
-import { FeedbackEntry, InteractiveFeedback } from '@webb-dapp/react-environment';
-import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
-import Typography from '@material-ui/core/Typography';
-import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
-import { Button } from '@material-ui/core';
-import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
-import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
 
 const InteractiveErrorViewWrapper = styled.div`
   padding: 0.5rem 2rem;
@@ -15,29 +15,36 @@ type InteractiveErrorViewProps = {
   activeFeedback: InteractiveFeedback | null;
 };
 
+/// list of know error codes of the dApp
 export enum WebbErrorCodes {
   UnsupportedChain,
   MixerSizeNotFound,
 }
 
+/// An Error message with error metadata
 type WebbErrorMessage = {
   message: string;
   code: WebbErrorCodes;
 };
 
+/// WebbError an Error class to throw errors and catch them with type
 export class WebbError extends Error {
+  /// Static `Map` for error messages that will be instilled lazily
   static errorMessageMap: Map<WebbErrorCodes, WebbErrorMessage> = new Map();
-  readonly errorMessag: WebbErrorMessage;
+  /// error message for this error
+  readonly errorMessage: WebbErrorMessage;
 
   constructor(readonly code: WebbErrorCodes) {
     super(WebbError.getErrorMessage(code).message);
-    this.errorMessag = WebbError.getErrorMessage(code);
+    this.errorMessage = WebbError.getErrorMessage(code);
   }
 
+  /// create a `WebbError` from the error code
   static from(code: WebbErrorCodes) {
     return new WebbError(code);
   }
 
+  /// Static method to ge the error of the map if it's there , or create it and append the map
   static getErrorMessage(code: WebbErrorCodes): WebbErrorMessage {
     const errorMessage = WebbError.errorMessageMap.get(code);
     if (errorMessage) {
@@ -62,6 +69,7 @@ export class WebbError extends Error {
     }
   }
 
+  /// Coercion to sting
   toString() {
     return this.message;
   }
