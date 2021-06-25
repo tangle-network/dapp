@@ -17,7 +17,9 @@ type InteractiveErrorViewProps = {
 
 /// list of know error codes of the dApp
 export enum WebbErrorCodes {
+  /// unsupported chain is switch via the extension
   UnsupportedChain,
+  /// Attempt to find a mixer size on a contract
   MixerSizeNotFound,
 }
 
