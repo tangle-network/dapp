@@ -363,142 +363,146 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
         let actions = InteractiveFeedback.actionsBuilder().actions();
         let interactiveFeedback: InteractiveFeedback;
         switch (code) {
-          case WebbErrorCodes.UnsupportedChain: {
-            setActiveChain(undefined);
-            feedbackBody = InteractiveFeedback.feedbackEntries([
-              {
-                header: 'Switched to unsupported chain',
-              },
-              {
-                content: 'Please consider switching back to a supported chain',
-              },
-              {
-                list: [
-                  WebbWeb3Provider.storageName(WebbEVMChain.Rinkeby),
-                  WebbWeb3Provider.storageName(WebbEVMChain.Beresheet),
-                  WebbWeb3Provider.storageName(WebbEVMChain.Main),
-                ],
-              },
-              {
-                content: 'Switch back via MetaMask',
-              },
-            ]);
-            actions = InteractiveFeedback.actionsBuilder()
-              .action(
-                'Ok',
+          case WebbErrorCodes.UnsupportedChain:
+            {
+              setActiveChain(undefined);
+              feedbackBody = InteractiveFeedback.feedbackEntries([
+                {
+                  header: 'Switched to unsupported chain',
+                },
+                {
+                  content: 'Please consider switching back to a supported chain',
+                },
+                {
+                  list: [
+                    WebbWeb3Provider.storageName(WebbEVMChain.Rinkeby),
+                    WebbWeb3Provider.storageName(WebbEVMChain.Beresheet),
+                    WebbWeb3Provider.storageName(WebbEVMChain.Main),
+                  ],
+                },
+                {
+                  content: 'Switch back via MetaMask',
+                },
+              ]);
+              actions = InteractiveFeedback.actionsBuilder()
+                .action(
+                  'Ok',
+                  () => {
+                    interactiveFeedback?.cancel();
+                  },
+                  'success'
+                )
+                .actions();
+              interactiveFeedback = new InteractiveFeedback(
+                'error',
+                actions,
                 () => {
                   interactiveFeedback?.cancel();
                 },
-                'success'
-              )
-              .actions();
-            interactiveFeedback = new InteractiveFeedback(
-              'error',
-              actions,
-              () => {
-                interactiveFeedback?.cancel();
-              },
-              feedbackBody,
-              WebbErrorCodes.UnsupportedChain
-            );
-            if (interactiveFeedback) {
-              registerInteractiveFeedback(setInteractiveFeedbacks, interactiveFeedback);
+                feedbackBody,
+                WebbErrorCodes.UnsupportedChain
+              );
+              if (interactiveFeedback) {
+                registerInteractiveFeedback(setInteractiveFeedbacks, interactiveFeedback);
+              }
             }
-          }
-          case WebbErrorCodes.MetaMaskExtensionNotInstalled: {
-            const platform = getPlatformMetaData();
-            setActiveChain(undefined);
-            feedbackBody = InteractiveFeedback.feedbackEntries([
-              {
-                header: `MetaMask extensions isn't installed`,
-              },
-              {
-                content: 'Please consider installing the browser extension for your browser',
-              },
-              {
-                any: () => {
-                  return (
-                    <Padding v={2} x={0}>
-                      <div>
-                        <Button
-                          color='primary'
-                          variant={'text'}
-                          fullWidth
-                          onClick={() => {
-                            switch (platform.name) {
-                              case 'firefox': {
-                                window.open(`https://addons.mozilla.org/firefox/addon/ether-metamask/`, '_blank');
-                              }
-                              case 'chrome': {
-                                window.open(
-                                  `https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=en`,
-                                  '_blank'
-                                );
-                              }
-                            }
-                          }}
-                        >
-                          <div
-                            style={{
-                              width: 30,
-                              height: 30,
-                            }}
-                          >
-                            <MetaMaskLogo />
-                          </div>
-                          <Padding v x={0.5} />
-                          <Typography>MetaMask official website</Typography>
-                          <Padding v x={0.5} />
-                          <Icon>open_in_new</Icon>
-                        </Button>
-                      </div>
-                      <Padding v />
-                      <div>
-                        <Button color='primary' variant='contained' fullWidth>
-                          <div
-                            style={{
-                              width: 30,
-                              height: 30,
-                            }}
-                          >
-                            <platform.logo />
-                          </div>
-                          <Padding x={0.5} />
-                          <Typography>Get it from {platform.storeName} </Typography>
-                          <Padding v={2} x={0.5} />
-                          <Icon>get_app</Icon>
-                        </Button>
-                      </div>
-                    </Padding>
-                  );
+            break;
+          case WebbErrorCodes.MetaMaskExtensionNotInstalled:
+            {
+              const platform = getPlatformMetaData();
+              setActiveChain(undefined);
+              feedbackBody = InteractiveFeedback.feedbackEntries([
+                {
+                  header: `MetaMask extensions isn't installed`,
                 },
-              },
-              {
-                content: 'Switch back via MetaMask',
-              },
-            ]);
-            actions = InteractiveFeedback.actionsBuilder()
-              .action(
-                'Ok',
+                {
+                  content: 'Please consider installing the browser extension for your browser',
+                },
+                {
+                  any: () => {
+                    return (
+                      <Padding v={2} x={0}>
+                        <div>
+                          <Button
+                            color='primary'
+                            variant={'text'}
+                            fullWidth
+                            onClick={() => {
+                              switch (platform.name) {
+                                case 'firefox': {
+                                  window.open(`https://addons.mozilla.org/firefox/addon/ether-metamask/`, '_blank');
+                                }
+                                case 'chrome': {
+                                  window.open(
+                                    `https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=en`,
+                                    '_blank'
+                                  );
+                                }
+                              }
+                            }}
+                          >
+                            <div
+                              style={{
+                                width: 30,
+                                height: 30,
+                              }}
+                            >
+                              <MetaMaskLogo />
+                            </div>
+                            <Padding v x={0.5} />
+                            <Typography>MetaMask official website</Typography>
+                            <Padding v x={0.5} />
+                            <Icon>open_in_new</Icon>
+                          </Button>
+                        </div>
+                        <Padding v />
+                        <div>
+                          <Button color='primary' variant='contained' fullWidth>
+                            <div
+                              style={{
+                                width: 30,
+                                height: 30,
+                              }}
+                            >
+                              <platform.logo />
+                            </div>
+                            <Padding x={0.5} />
+                            <Typography>Get it from {platform.storeName} </Typography>
+                            <Padding v={2} x={0.5} />
+                            <Icon>get_app</Icon>
+                          </Button>
+                        </div>
+                      </Padding>
+                    );
+                  },
+                },
+                {
+                  content: 'Switch back via MetaMask',
+                },
+              ]);
+              actions = InteractiveFeedback.actionsBuilder()
+                .action(
+                  'Ok',
+                  () => {
+                    interactiveFeedback?.cancel();
+                  },
+                  'success'
+                )
+                .actions();
+              interactiveFeedback = new InteractiveFeedback(
+                'error',
+                actions,
                 () => {
                   interactiveFeedback?.cancel();
                 },
-                'success'
-              )
-              .actions();
-            interactiveFeedback = new InteractiveFeedback(
-              'error',
-              actions,
-              () => {
-                interactiveFeedback?.cancel();
-              },
-              feedbackBody,
-              WebbErrorCodes.UnsupportedChain
-            );
-            if (interactiveFeedback) {
-              registerInteractiveFeedback(setInteractiveFeedbacks, interactiveFeedback);
+                feedbackBody,
+                WebbErrorCodes.UnsupportedChain
+              );
+              if (interactiveFeedback) {
+                registerInteractiveFeedback(setInteractiveFeedbacks, interactiveFeedback);
+              }
             }
-          }
+            break;
           case WebbErrorCodes.PolkaDotExtensionNotInstalled: {
             const platform = getPlatformMetaData();
             setActiveChain(undefined);
@@ -629,6 +633,9 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
         networkStorage.get('defaultNetwork'),
         networkStorage.get('defaultWallet'),
       ]);
+      if (!net || !wallet) {
+        return;
+      }
       const chainConfig = chains[net];
       const walletConfig = chainConfig.wallets[wallet] || Object.values(chainConfig)[0];
       const activeApi = await switchChain(chainConfig, walletConfig);
