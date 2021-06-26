@@ -29,9 +29,10 @@ import {
 import { MetaMaskLogo } from '@webb-dapp/apps/configs/wallets/logos/MetaMaskLogo';
 import { Button, Typography } from '@material-ui/core';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
-import ChromeLogo from '@webb-dapp/apps/configs/wallets/logos/ChromeLogo';
 import FireFoxLogo from '@webb-dapp/apps/configs/wallets/logos/FireFoxLogo';
 import { PolkaLogo } from '@webb-dapp/apps/configs/wallets/logos/PolkaLogo';
+import { detect } from 'detect-browser';
+import ChromeLogo from '@webb-dapp/apps/configs/wallets/logos/ChromeLogo';
 
 interface WebbProviderProps extends BareProps {
   applicationName: string;
@@ -51,7 +52,26 @@ const registerInteractiveFeedback = (
     off && off?.();
   });
 };
-
+const getPlatformMetaData = () => {
+  const browser = detect();
+  const name = browser?.name;
+  switch (name) {
+    case 'firefox':
+      return {
+        name: 'firefox',
+        logo: FireFoxLogo,
+        storeName: 'FireFox Addons',
+      };
+    case 'chrome':
+      return {
+        name: 'chrome',
+        logo: ChromeLogo,
+        storeName: 'Chrome web store',
+      };
+    default:
+      throw new Error('unsupported platform');
+  }
+};
 export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Dapp', children }) => {
   const [activeWallet, setActiveWallet] = useState<Wallet | undefined>(undefined);
   const [activeChain, setActiveChain] = useState<Chain | undefined>(undefined);
@@ -386,10 +406,11 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
             }
           }
           case WebbErrorCodes.MetaMaskExtensionNotInstalled: {
+            const platform = getPlatformMetaData();
             setActiveChain(undefined);
             feedbackBody = InteractiveFeedback.feedbackEntries([
               {
-                header: `PolkaDot extensions isn't installed`,
+                header: `MetaMask extensions isn't installed`,
               },
               {
                 content: 'Please consider installing the browser extension for your browser',
@@ -404,7 +425,17 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
                           variant={'text'}
                           fullWidth
                           onClick={() => {
-                            window.open('https://metamask.io/', '_blank');
+                            switch (platform.name) {
+                              case 'firefox': {
+                                window.open(`https://addons.mozilla.org/firefox/addon/ether-metamask/`, '_blank');
+                              }
+                              case 'chrome': {
+                                window.open(
+                                  `https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=en`,
+                                  '_blank'
+                                );
+                              }
+                            }
                           }}
                         >
                           <div
@@ -430,10 +461,10 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
                               height: 30,
                             }}
                           >
-                            <FireFoxLogo />
+                            <platform.logo />
                           </div>
                           <Padding x={0.5} />
-                          <Typography>Get it from chrome store</Typography>
+                          <Typography>Get it from {platform.storeName} </Typography>
                           <Padding v={2} x={0.5} />
                           <Icon>get_app</Icon>
                         </Button>
@@ -469,6 +500,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
             }
           }
           case WebbErrorCodes.PolkaDotExtensionNotInstalled: {
+            const platform = getPlatformMetaData();
             setActiveChain(undefined);
             feedbackBody = InteractiveFeedback.feedbackEntries([
               {
@@ -499,7 +531,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
                             <PolkaLogo />
                           </div>
                           <Padding v x={0.5} />
-                          <Typography>MetaMask official website</Typography>
+                          <Typography>Polkadot official website</Typography>
                           <Padding v x={0.5} />
                           <Icon>open_in_new</Icon>
                         </Button>
@@ -508,7 +540,20 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
                       <div>
                         <Button
                           onClick={() => {
-                            window.open(`https://addons.mozilla.org/firefox/addon/polkadot-js-extension/`, '_blank');
+                            switch (platform.name) {
+                              case 'firefox': {
+                                window.open(
+                                  `https://addons.mozilla.org/firefox/addon/polkadot-js-extension/`,
+                                  '_blank'
+                                );
+                              }
+                              case 'chrome': {
+                                window.open(
+                                  `https://chrome.google.com/webstore/detail/polkadot%7Bjs%7D-extension/mopnmbcafieddcagagdcbnhejhlodfdd`,
+                                  '_blank'
+                                );
+                              }
+                            }
                           }}
                           color='primary'
                           variant='contained'
@@ -520,10 +565,10 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
                               height: 30,
                             }}
                           >
-                            <FireFoxLogo />
+                            <platform.logo />
                           </div>
                           <Padding x={0.5} />
-                          <Typography>Get it from chrome store</Typography>
+                          <Typography>Get it from {platform.storeName} </Typography>
                           <Padding v={2} x={0.5} />
                           <Icon>get_app</Icon>
                         </Button>
