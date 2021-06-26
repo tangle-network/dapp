@@ -17,10 +17,14 @@ type InteractiveErrorViewProps = {
 
 /// list of know error codes of the dApp
 export enum WebbErrorCodes {
-  /// unsupported chain is switch via the extension
+  /// Unsupported chain is switch via the extension
   UnsupportedChain,
   /// Attempt to find a mixer size on a contract
   MixerSizeNotFound,
+  /// No accounts are available
+  NoAccountAvailable,
+  /// Failed to parse deposit note
+  NoteParsingFailure,
 }
 
 /// An Error message with error metadata
@@ -62,6 +66,16 @@ export class WebbError extends Error {
         return {
           code,
           message: 'Mixer size not found in contract',
+        };
+      case WebbErrorCodes.NoAccountAvailable:
+        return {
+          code,
+          message: 'No account available',
+        };
+      case WebbErrorCodes.NoteParsingFailure:
+        return {
+          code,
+          message: 'Failed to parse deposit note',
         };
       default:
         return {
