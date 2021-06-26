@@ -54,50 +54,80 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
     const extensions = await web3Enable(appName);
     if (extensions.length === 0) throw new Error('no_extensions');
     const currentExtensions = extensions[0];
-    const wsProvider = new WsProvider([endPoint, ...allEndPoints]);
+    // eslint-disable-next-line no-async-promise-executor
+    const wsProvider = await new Promise<WsProvider>(async (resolve, reject) => {
+      let wsProvider: WsProvider;
+      let tryNumber = 0;
+      let keepRetrying = true;
+      const connectWs = (wsProvider: WsProvider) => {
+        return new Promise((res, rej) => {
+          wsProvider.on('connected', () => {
+            res(wsProvider);
+          });
+          wsProvider.on('error', () => {
+            rej();
+          });
+        });
+      };
+      while (keepRetrying) {
+        let interActiveFeedback: InteractiveFeedback;
+        wsProvider = new WsProvider([endPoint, ...allEndPoints], false);
+        // @ts-ignore
+        if (typeof interActiveFeedback !== 'undefined') {
+          interActiveFeedback.cancel();
+        }
+        if (tryNumber !== 0) {
+          await new Promise((r) => setTimeout(r, 6000));
+        }
+
+        await wsProvider.connect();
+
+        try {
+          await connectWs(wsProvider);
+          await wsProvider.disconnect();
+          wsProvider = new WsProvider([endPoint, ...allEndPoints]);
+          resolve(wsProvider);
+          // @ts-ignore
+          if (typeof interActiveFeedback !== 'undefined') {
+            interActiveFeedback.cancel();
+          }
+          break;
+        } catch (_) {
+          tryNumber++;
+
+          const body = InteractiveFeedback.feedbackEntries([
+            {
+              header: 'Failed to establish WS connection',
+            },
+            {
+              content: `Attempt to retry (${tryNumber}) after 6s..`,
+            },
+          ]);
+
+          const actions = InteractiveFeedback.actionsBuilder()
+            .action('Wait for connection', () => {
+              interActiveFeedback?.cancel();
+            })
+            .actions();
+          interActiveFeedback = new InteractiveFeedback(
+            'error',
+            actions,
+            () => {
+              keepRetrying = false;
+              reject('Disconnected');
+            },
+            body
+          );
+
+          onError(interActiveFeedback);
+        }
+      }
+    });
+
     const opts = options({
       provider: wsProvider,
     });
-    // eslint-disable-next-line no-async-promise-executor
-    await new Promise(async (resolve, reject) => {
-      wsProvider.on('connected', () => {
-        resolve();
-      });
-      let reported = false;
-      wsProvider.on('error', (e) => {
-        if (reported) {
-          return;
-        }
-        let interActiveFeedback: InteractiveFeedback;
-        const body = InteractiveFeedback.feedbackEntries([
-          {
-            header: 'Failed to establish WS connection',
-          },
-          {
-            content: 'Attempt to retry',
-          },
-        ]);
 
-        const actions = InteractiveFeedback.actionsBuilder()
-          .action('Wait for connection', () => {
-            interActiveFeedback?.cancel();
-          })
-          .actions();
-        interActiveFeedback = new InteractiveFeedback(
-          'error',
-          actions,
-          () => {
-            wsProvider.disconnect();
-            reject('Disconnected');
-          },
-          body
-        );
-
-        onError(interActiveFeedback);
-
-        reported = true;
-      });
-    });
     const apiPromise = await ApiPromise.create(opts);
     return [apiPromise, currentExtensions];
   }
