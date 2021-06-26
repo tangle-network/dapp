@@ -59,6 +59,7 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
       let wsProvider: WsProvider;
       let tryNumber = 0;
       let keepRetrying = true;
+      /// Listen for events from the websocket provider to the connect and disconnect and return a promise for blocking
       const connectWs = (wsProvider: WsProvider) => {
         return new Promise((res, rej) => {
           wsProvider.on('connected', () => {
@@ -69,26 +70,42 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
           });
         });
       };
+      /**
+       *  Infinite Looping till
+       *  1- The ws connection is established
+       *  2- The user killed the connection , no other retires
+       * */
       while (keepRetrying) {
+        /// global interActiveFeedback for access on multiple scopes
         let interActiveFeedback: InteractiveFeedback;
         wsProvider = new WsProvider([endPoint, ...allEndPoints], false);
         // @ts-ignore
+        /// if the connection is established from the first time then there's no interActiveFeedback instance
         if (typeof interActiveFeedback !== 'undefined') {
+          /// After failure there user is prompted that there is a connection failure the feedback from the previous attempt is canceled (dismissed)
           interActiveFeedback.cancel();
         }
+
+        /// don't wait for sleep time on the first attempt
         if (tryNumber !== 0) {
+          /// sleep for 6s
           await new Promise((r) => setTimeout(r, 6000));
         }
-
+        /// perform a connection that won't reconnect if the connection failed to establish or due to broken-pipe (Ping connection)
         await wsProvider.connect();
 
         try {
+          /// wait for ping connection
           await connectWs(wsProvider);
+          /// disconnect the pin connection
           await wsProvider.disconnect();
+          /// create a new WS Provider that is failure friendly and will retry to connect
+          /// no need to call `.connect` the Promise api will handle this
           wsProvider = new WsProvider([endPoint, ...allEndPoints]);
           resolve(wsProvider);
           // @ts-ignore
           if (typeof interActiveFeedback !== 'undefined') {
+            /// cancel the feedback sicne we the connection is established
             interActiveFeedback.cancel();
           }
           break;
