@@ -42,8 +42,7 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
       [endPoint, ...allEndPoints],
       apiInitHandler.onError
     );
-    const polkadotProvider = new PolkadotProvider(apiPromise, currentExtensions);
-    return polkadotProvider;
+    return new PolkadotProvider(apiPromise, currentExtensions);
   }
 
   static async getParams(
@@ -105,7 +104,7 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
           resolve(wsProvider);
           // @ts-ignore
           if (typeof interActiveFeedback !== 'undefined') {
-            /// cancel the feedback sicne we the connection is established
+            /// cancel the feedback as  the connection is established
             interActiveFeedback.cancel();
           }
           break;
