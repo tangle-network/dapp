@@ -25,6 +25,10 @@ export enum WebbErrorCodes {
   NoAccountAvailable,
   /// Failed to parse deposit note
   NoteParsingFailure,
+  /// PolkaDot extension not installed
+  PolkaDotExtensionNotInstalled,
+  /// MetaMas extension not installed
+  MetaMaskExtensionNotInstalled,
 }
 
 /// An Error message with error metadata
@@ -76,6 +80,16 @@ export class WebbError extends Error {
         return {
           code,
           message: 'Failed to parse deposit note',
+        };
+      case WebbErrorCodes.PolkaDotExtensionNotInstalled:
+        return {
+          code,
+          message: 'PolkaDot extension no installed',
+        };
+      case WebbErrorCodes.MetaMaskExtensionNotInstalled:
+        return {
+          code,
+          message: 'MetaMask extension no installed',
         };
       default:
         return {
@@ -129,6 +143,8 @@ const InteractiveErrorView: React.FC<InteractiveErrorViewProps> = ({ activeFeedb
                 <pre>{entry[key]}</pre>
               </Typography>
             );
+          case 'any':
+            return entry[key]?.() ?? null;
           case 'list':
             return (
               <Padding x={2} v={1}>

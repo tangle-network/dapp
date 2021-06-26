@@ -39,6 +39,8 @@ export type FeedbackEntry = {
   header?: string;
   /// list of strings
   list?: string[];
+  /// A function that will return a dynamic value
+  any?(): any;
 };
 /// an object will be used to build the feedback UI
 export type FeedbackBody = FeedbackEntry[];

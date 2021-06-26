@@ -9,6 +9,7 @@ import { ApiPromise, WsProvider } from '@polkadot/api';
 import { web3Enable } from '@polkadot/extension-dapp';
 import { InjectedExtension } from '@polkadot/extension-inject/types';
 import { ApiInitHandler, InteractiveFeedback } from '@webb-dapp/react-environment';
+import { WebbError, WebbErrorCodes } from '@webb-dapp/react-components/InteractiveFeedbackView/InteractiveErrorView';
 
 type ExtensionProviderEvents = {
   connected: undefined;
@@ -51,7 +52,8 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
     onError: ApiInitHandler['onError']
   ): Promise<[ApiPromise, InjectedExtension]> {
     const extensions = await web3Enable(appName);
-    if (extensions.length === 0) throw new Error('no_extensions');
+    console.log(extensions);
+    if (extensions.length === 0) throw WebbError.from(WebbErrorCodes.PolkaDotExtensionNotInstalled);
     const currentExtensions = extensions[0];
     // eslint-disable-next-line no-async-promise-executor
     const wsProvider = await new Promise<WsProvider>(async (resolve, reject) => {

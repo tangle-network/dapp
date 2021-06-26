@@ -26,6 +26,12 @@ import {
   WebbApiProvider,
   WebbContext,
 } from './webb-context';
+import { MetaMaskLogo } from '@webb-dapp/apps/configs/wallets/logos/MetaMaskLogo';
+import { Button, Typography } from '@material-ui/core';
+import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
+import ChromeLogo from '@webb-dapp/apps/configs/wallets/logos/ChromeLogo';
+import FireFoxLogo from '@webb-dapp/apps/configs/wallets/logos/FireFoxLogo';
+import { PolkaLogo } from '@webb-dapp/apps/configs/wallets/logos/PolkaLogo';
 
 interface WebbProviderProps extends BareProps {
   applicationName: string;
@@ -194,7 +200,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
                   setActiveChain(undefined);
                   setActiveWallet(wallet);
                   if (e instanceof WebbError) {
-                    const errorMessage = e.errorMessag;
+                    const errorMessage = e.errorMessage;
                     const code = errorMessage.code;
                     let feedbackBody: FeedbackBody = [];
                     let actions = InteractiveFeedback.actionsBuilder().actions();
@@ -331,56 +337,228 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
       return activeApi;
     } catch (e) {
       if (e instanceof WebbError) {
-        const errorMessage = e.errorMessag;
+        const errorMessage = e.errorMessage;
         const code = errorMessage.code;
         let feedbackBody: FeedbackBody = [];
         let actions = InteractiveFeedback.actionsBuilder().actions();
         let interactiveFeedback: InteractiveFeedback;
         switch (code) {
-          case WebbErrorCodes.UnsupportedChain:
-            {
-              setActiveChain(undefined);
-              feedbackBody = InteractiveFeedback.feedbackEntries([
-                {
-                  header: 'Switched to unsupported chain',
-                },
-                {
-                  content: 'Please consider switching back to a supported chain',
-                },
-                {
-                  list: [
-                    WebbWeb3Provider.storageName(WebbEVMChain.Rinkeby),
-                    WebbWeb3Provider.storageName(WebbEVMChain.Beresheet),
-                    WebbWeb3Provider.storageName(WebbEVMChain.Main),
-                  ],
-                },
-                {
-                  content: 'Switch back via MetaMask',
-                },
-              ]);
-              actions = InteractiveFeedback.actionsBuilder()
-                .action(
-                  'Ok',
-                  () => {
-                    interactiveFeedback?.cancel();
-                  },
-                  'success'
-                )
-                .actions();
-              interactiveFeedback = new InteractiveFeedback(
-                'error',
-                actions,
+          case WebbErrorCodes.UnsupportedChain: {
+            setActiveChain(undefined);
+            feedbackBody = InteractiveFeedback.feedbackEntries([
+              {
+                header: 'Switched to unsupported chain',
+              },
+              {
+                content: 'Please consider switching back to a supported chain',
+              },
+              {
+                list: [
+                  WebbWeb3Provider.storageName(WebbEVMChain.Rinkeby),
+                  WebbWeb3Provider.storageName(WebbEVMChain.Beresheet),
+                  WebbWeb3Provider.storageName(WebbEVMChain.Main),
+                ],
+              },
+              {
+                content: 'Switch back via MetaMask',
+              },
+            ]);
+            actions = InteractiveFeedback.actionsBuilder()
+              .action(
+                'Ok',
                 () => {
                   interactiveFeedback?.cancel();
                 },
-                feedbackBody,
-                WebbErrorCodes.UnsupportedChain
-              );
-              if (interactiveFeedback) {
-                registerInteractiveFeedback(setInteractiveFeedbacks, interactiveFeedback);
-              }
+                'success'
+              )
+              .actions();
+            interactiveFeedback = new InteractiveFeedback(
+              'error',
+              actions,
+              () => {
+                interactiveFeedback?.cancel();
+              },
+              feedbackBody,
+              WebbErrorCodes.UnsupportedChain
+            );
+            if (interactiveFeedback) {
+              registerInteractiveFeedback(setInteractiveFeedbacks, interactiveFeedback);
             }
-            break;
+          }
+          case WebbErrorCodes.MetaMaskExtensionNotInstalled: {
+            setActiveChain(undefined);
+            feedbackBody = InteractiveFeedback.feedbackEntries([
+              {
+                header: `PolkaDot extensions isn't installed`,
+              },
+              {
+                content: 'Please consider installing the browser extension for your browser',
+              },
+              {
+                any: () => {
+                  return (
+                    <Padding v={2} x={0}>
+                      <div>
+                        <Button
+                          color='primary'
+                          variant={'text'}
+                          fullWidth
+                          onClick={() => {
+                            window.open('https://metamask.io/', '_blank');
+                          }}
+                        >
+                          <div
+                            style={{
+                              width: 30,
+                              height: 30,
+                            }}
+                          >
+                            <MetaMaskLogo />
+                          </div>
+                          <Padding v x={0.5} />
+                          <Typography>MetaMask official website</Typography>
+                          <Padding v x={0.5} />
+                          <Icon>open_in_new</Icon>
+                        </Button>
+                      </div>
+                      <Padding v />
+                      <div>
+                        <Button color='primary' variant='contained' fullWidth>
+                          <div
+                            style={{
+                              width: 30,
+                              height: 30,
+                            }}
+                          >
+                            <FireFoxLogo />
+                          </div>
+                          <Padding x={0.5} />
+                          <Typography>Get it from chrome store</Typography>
+                          <Padding v={2} x={0.5} />
+                          <Icon>get_app</Icon>
+                        </Button>
+                      </div>
+                    </Padding>
+                  );
+                },
+              },
+              {
+                content: 'Switch back via MetaMask',
+              },
+            ]);
+            actions = InteractiveFeedback.actionsBuilder()
+              .action(
+                'Ok',
+                () => {
+                  interactiveFeedback?.cancel();
+                },
+                'success'
+              )
+              .actions();
+            interactiveFeedback = new InteractiveFeedback(
+              'error',
+              actions,
+              () => {
+                interactiveFeedback?.cancel();
+              },
+              feedbackBody,
+              WebbErrorCodes.UnsupportedChain
+            );
+            if (interactiveFeedback) {
+              registerInteractiveFeedback(setInteractiveFeedbacks, interactiveFeedback);
+            }
+          }
+          case WebbErrorCodes.PolkaDotExtensionNotInstalled: {
+            setActiveChain(undefined);
+            feedbackBody = InteractiveFeedback.feedbackEntries([
+              {
+                header: `PolkaDot extensions isn't installed`,
+              },
+              {
+                content: 'Please consider installing the browser extension for your browser',
+              },
+              {
+                any: () => {
+                  return (
+                    <Padding v={2} x={0}>
+                      <div>
+                        <Button
+                          color='primary'
+                          variant={'text'}
+                          fullWidth
+                          onClick={() => {
+                            window.open('https://polkadot.js.org/extension', '_blank');
+                          }}
+                        >
+                          <div
+                            style={{
+                              width: 30,
+                              height: 30,
+                            }}
+                          >
+                            <PolkaLogo />
+                          </div>
+                          <Padding v x={0.5} />
+                          <Typography>MetaMask official website</Typography>
+                          <Padding v x={0.5} />
+                          <Icon>open_in_new</Icon>
+                        </Button>
+                      </div>
+                      <Padding v />
+                      <div>
+                        <Button
+                          onClick={() => {
+                            window.open(`https://addons.mozilla.org/firefox/addon/polkadot-js-extension/`, '_blank');
+                          }}
+                          color='primary'
+                          variant='contained'
+                          fullWidth
+                        >
+                          <div
+                            style={{
+                              width: 30,
+                              height: 30,
+                            }}
+                          >
+                            <FireFoxLogo />
+                          </div>
+                          <Padding x={0.5} />
+                          <Typography>Get it from chrome store</Typography>
+                          <Padding v={2} x={0.5} />
+                          <Icon>get_app</Icon>
+                        </Button>
+                      </div>
+                    </Padding>
+                  );
+                },
+              },
+              {
+                content: 'Switch back via MetaMask',
+              },
+            ]);
+            actions = InteractiveFeedback.actionsBuilder()
+              .action(
+                'Ok',
+                () => {
+                  interactiveFeedback?.cancel();
+                },
+                'success'
+              )
+              .actions();
+            interactiveFeedback = new InteractiveFeedback(
+              'error',
+              actions,
+              () => {
+                interactiveFeedback?.cancel();
+              },
+              feedbackBody,
+              WebbErrorCodes.UnsupportedChain
+            );
+            if (interactiveFeedback) {
+              registerInteractiveFeedback(setInteractiveFeedbacks, interactiveFeedback);
+            }
+          }
+
           case WebbErrorCodes.MixerSizeNotFound:
             break;
         }
