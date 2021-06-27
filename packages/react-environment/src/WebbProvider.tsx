@@ -26,13 +26,10 @@ import {
   WebbApiProvider,
   WebbContext,
 } from './webb-context';
-import { MetaMaskLogo } from '@webb-dapp/apps/configs/wallets/logos/MetaMaskLogo';
-import { Button, Typography } from '@material-ui/core';
-import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
 import FireFoxLogo from '@webb-dapp/apps/configs/wallets/logos/FireFoxLogo';
-import { PolkaLogo } from '@webb-dapp/apps/configs/wallets/logos/PolkaLogo';
 import { detect } from 'detect-browser';
 import ChromeLogo from '@webb-dapp/apps/configs/wallets/logos/ChromeLogo';
+import { extensionNotInstalled } from './error';
 
 interface WebbProviderProps extends BareProps {
   applicationName: string;
@@ -408,206 +405,15 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
             }
             break;
           case WebbErrorCodes.MetaMaskExtensionNotInstalled:
+          case WebbErrorCodes.PolkaDotExtensionNotInstalled:
             {
-              const platform = getPlatformMetaData();
-              setActiveChain(undefined);
-              feedbackBody = InteractiveFeedback.feedbackEntries([
-                {
-                  header: `MetaMask extensions isn't installed`,
-                },
-                {
-                  content: 'Please consider installing the browser extension for your browser',
-                },
-                {
-                  any: () => {
-                    return (
-                      <Padding v={2} x={0}>
-                        <div>
-                          <Button
-                            color='primary'
-                            variant={'text'}
-                            fullWidth
-                            onClick={() => {
-                              switch (platform.name) {
-                                case 'firefox': {
-                                  window.open(`https://addons.mozilla.org/firefox/addon/ether-metamask/`, '_blank');
-                                }
-                                case 'chrome': {
-                                  window.open(
-                                    `https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=en`,
-                                    '_blank'
-                                  );
-                                }
-                              }
-                            }}
-                          >
-                            <div
-                              style={{
-                                width: 30,
-                                height: 30,
-                              }}
-                            >
-                              <MetaMaskLogo />
-                            </div>
-                            <Padding v x={0.5} />
-                            <Typography>MetaMask official website</Typography>
-                            <Padding v x={0.5} />
-                            <Icon>open_in_new</Icon>
-                          </Button>
-                        </div>
-                        <Padding v />
-                        <div>
-                          <Button color='primary' variant='contained' fullWidth>
-                            <div
-                              style={{
-                                width: 30,
-                                height: 30,
-                              }}
-                            >
-                              <platform.logo />
-                            </div>
-                            <Padding x={0.5} />
-                            <Typography>Get it from {platform.storeName} </Typography>
-                            <Padding v={2} x={0.5} />
-                            <Icon>get_app</Icon>
-                          </Button>
-                        </div>
-                      </Padding>
-                    );
-                  },
-                },
-                {
-                  content: 'Switch back via MetaMask',
-                },
-              ]);
-              actions = InteractiveFeedback.actionsBuilder()
-                .action(
-                  'Ok',
-                  () => {
-                    interactiveFeedback?.cancel();
-                  },
-                  'success'
-                )
-                .actions();
-              interactiveFeedback = new InteractiveFeedback(
-                'error',
-                actions,
-                () => {
-                  interactiveFeedback?.cancel();
-                },
-                feedbackBody,
-                WebbErrorCodes.UnsupportedChain
+              const interactiveFeedback = extensionNotInstalled(
+                code === WebbErrorCodes.PolkaDotExtensionNotInstalled ? 'polkadot' : 'metamask'
               );
-              if (interactiveFeedback) {
-                registerInteractiveFeedback(setInteractiveFeedbacks, interactiveFeedback);
-              }
-            }
-            break;
-          case WebbErrorCodes.PolkaDotExtensionNotInstalled: {
-            const platform = getPlatformMetaData();
-            setActiveChain(undefined);
-            feedbackBody = InteractiveFeedback.feedbackEntries([
-              {
-                header: `PolkaDot extensions isn't installed`,
-              },
-              {
-                content: 'Please consider installing the browser extension for your browser',
-              },
-              {
-                any: () => {
-                  return (
-                    <Padding v={2} x={0}>
-                      <div>
-                        <Button
-                          color='primary'
-                          variant={'text'}
-                          fullWidth
-                          onClick={() => {
-                            window.open('https://polkadot.js.org/extension', '_blank');
-                          }}
-                        >
-                          <div
-                            style={{
-                              width: 30,
-                              height: 30,
-                            }}
-                          >
-                            <PolkaLogo />
-                          </div>
-                          <Padding v x={0.5} />
-                          <Typography>Polkadot official website</Typography>
-                          <Padding v x={0.5} />
-                          <Icon>open_in_new</Icon>
-                        </Button>
-                      </div>
-                      <Padding v />
-                      <div>
-                        <Button
-                          onClick={() => {
-                            switch (platform.name) {
-                              case 'firefox': {
-                                window.open(
-                                  `https://addons.mozilla.org/firefox/addon/polkadot-js-extension/`,
-                                  '_blank'
-                                );
-                              }
-                              case 'chrome': {
-                                window.open(
-                                  `https://chrome.google.com/webstore/detail/polkadot%7Bjs%7D-extension/mopnmbcafieddcagagdcbnhejhlodfdd`,
-                                  '_blank'
-                                );
-                              }
-                            }
-                          }}
-                          color='primary'
-                          variant='contained'
-                          fullWidth
-                        >
-                          <div
-                            style={{
-                              width: 30,
-                              height: 30,
-                            }}
-                          >
-                            <platform.logo />
-                          </div>
-                          <Padding x={0.5} />
-                          <Typography>Get it from {platform.storeName} </Typography>
-                          <Padding v={2} x={0.5} />
-                          <Icon>get_app</Icon>
-                        </Button>
-                      </div>
-                    </Padding>
-                  );
-                },
-              },
-              {
-                content: 'Switch back via MetaMask',
-              },
-            ]);
-            actions = InteractiveFeedback.actionsBuilder()
-              .action(
-                'Ok',
-                () => {
-                  interactiveFeedback?.cancel();
-                },
-                'success'
-              )
-              .actions();
-            interactiveFeedback = new InteractiveFeedback(
-              'error',
-              actions,
-              () => {
-                interactiveFeedback?.cancel();
-              },
-              feedbackBody,
-              WebbErrorCodes.UnsupportedChain
-            );
-            if (interactiveFeedback) {
+              setActiveChain(undefined);
               registerInteractiveFeedback(setInteractiveFeedbacks, interactiveFeedback);
             }
-          }
-
+            break;
           case WebbErrorCodes.MixerSizeNotFound:
             break;
         }
