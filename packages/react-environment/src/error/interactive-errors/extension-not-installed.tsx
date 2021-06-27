@@ -40,10 +40,10 @@ export function extensionNotInstalled(extension: 'metamask' | 'polkadot'): Inter
       break;
   }
   let interactiveFeedback: InteractiveFeedback;
-  const extensionName = extension === 'metamask' ? 'MetaMask' : 'Polkadot';
+  const extensionName = extension === 'metamask' ? 'MetaMask' : 'Polkadot{.js}';
   const feedbackBody = InteractiveFeedback.feedbackEntries([
     {
-      header: `${extensionName} extensions isn't installed`,
+      header: `${extensionName} extension isn't installed`,
     },
     {
       content: 'Please consider installing the browser extension for your browser',
@@ -70,7 +70,7 @@ export function extensionNotInstalled(extension: 'metamask' | 'polkadot'): Inter
                   {extension === 'metamask' ? <MetaMaskLogo /> : <PolkaLogo />}
                 </div>
                 <Padding v x={0.5} />
-                <Typography>k{extensionName} official website</Typography>
+                <Typography>{extensionName} official website</Typography>
                 <Padding v x={0.5} />
                 <Icon>open_in_new</Icon>
               </Button>
