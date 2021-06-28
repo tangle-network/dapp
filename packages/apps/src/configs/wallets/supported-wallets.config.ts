@@ -25,7 +25,7 @@ export const supportedWallets: SupportedWallet[] = [
     logo: MetaMaskLogo,
     name: 'metamask',
     title: `MetaMask`,
-    enabled: true,
+    enabled: true,z
     detect() {
       const hasWeb3 = typeof (window as any).web3 !== 'undefined';
       if (hasWeb3) {

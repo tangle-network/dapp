@@ -61,7 +61,9 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
       let tryNumber = 0;
       let keepRetrying = true;
       /// Listen for events from the websocket provider to the connect and disconnect and return a promise for blocking
-      const connectWs = (wsProvider: WsProvider) => {
+      const connectWs = async (wsProvider: WsProvider) => {
+        /// perform a connection that won't reconnect if the connection failed to establish or due to broken-pipe (Ping connection)
+        await wsProvider.connect();
         return new Promise((res, rej) => {
           wsProvider.on('connected', () => {
             res(wsProvider);
@@ -76,24 +78,16 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
        *  1- The ws connection is established
        *  2- The user killed the connection , no other retires
        * */
+      /// global interActiveFeedback for access on multiple scopes
+      let interActiveFeedback: InteractiveFeedback;
       while (keepRetrying) {
-        /// global interActiveFeedback for access on multiple scopes
-        let interActiveFeedback: InteractiveFeedback;
         wsProvider = new WsProvider([endPoint, ...allEndPoints], false);
-        // @ts-ignore
-        /// if the connection is established from the first time then there's no interActiveFeedback instance
-        if (typeof interActiveFeedback !== 'undefined') {
-          /// After failure there user is prompted that there is a connection failure the feedback from the previous attempt is canceled (dismissed)
-          interActiveFeedback.cancel();
-        }
 
         /// don't wait for sleep time on the first attempt
         if (tryNumber !== 0) {
           /// sleep for 6s
           await new Promise((r) => setTimeout(r, 6000));
         }
-        /// perform a connection that won't reconnect if the connection failed to establish or due to broken-pipe (Ping connection)
-        await wsProvider.connect();
 
         try {
           /// wait for ping connection
@@ -107,12 +101,11 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
           // @ts-ignore
           if (typeof interActiveFeedback !== 'undefined') {
             /// cancel the feedback as  the connection is established
-            interActiveFeedback.cancel();
+            interActiveFeedback.cancelWithoutHandler();
           }
           break;
         } catch (_) {
           tryNumber++;
-
           const body = InteractiveFeedback.feedbackEntries([
             {
               header: 'Failed to establish WS connection',
@@ -124,9 +117,15 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
 
           const actions = InteractiveFeedback.actionsBuilder()
             .action('Wait for connection', () => {
-              interActiveFeedback?.cancel();
+              interActiveFeedback?.cancelWithoutHandler();
             })
             .actions();
+          // @ts-ignore
+          /// if the connection is established from the first time then there's no interActiveFeedback instance
+          if (typeof interActiveFeedback !== 'undefined') {
+            /// After failure there user is prompted that there is a connection failure the feedback from the previous attempt is canceled (dismissed)
+            interActiveFeedback.cancelWithoutHandler();
+          }
           interActiveFeedback = new InteractiveFeedback(
             'error',
             actions,

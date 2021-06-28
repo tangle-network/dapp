@@ -118,6 +118,17 @@ export class InteractiveFeedback extends EventBus<{ canceled: InteractiveFeedbac
     return this._canceled;
   }
 
+  /// cancel without calling the onCancel handler
+  cancelWithoutHandler() {
+    if (this._canceled) {
+      return;
+    }
+    /// change the state of the interactive feedback to be canceled to prevent from a  re-trigger
+    this._canceled = true;
+    /// emit `canceled` event
+    this.emit('canceled', this);
+  }
+
   /// cancel this will trigger the `canceled` event and set the interactiveFeedback as canceled
   cancel() {
     if (this._canceled) {
