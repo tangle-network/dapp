@@ -60,6 +60,7 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
       let wsProvider: WsProvider;
       let tryNumber = 0;
       let keepRetrying = true;
+      let reportNewInteractiveError = true;
       /// Listen for events from the websocket provider to the connect and disconnect and return a promise for blocking
       const connectWs = async (wsProvider: WsProvider) => {
         /// perform a connection that won't reconnect if the connection failed to establish or due to broken-pipe (Ping connection)
@@ -106,6 +107,9 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
           break;
         } catch (_) {
           tryNumber++;
+          if (!reportNewInteractiveError) {
+            continue;
+          }
           const body = InteractiveFeedback.feedbackEntries([
             {
               header: 'Failed to establish WS connection',
@@ -118,6 +122,7 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
           const actions = InteractiveFeedback.actionsBuilder()
             .action('Wait for connection', () => {
               interActiveFeedback?.cancelWithoutHandler();
+              reportNewInteractiveError = false;
             })
             .actions();
           // @ts-ignore
