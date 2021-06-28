@@ -10,7 +10,7 @@ import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
 import { providers } from 'ethers';
 import React from 'react';
 import { MixerTitle } from '@webb-dapp/react-environment/webb-context';
-import { getStorageName } from '../../../../apps/src/configs/storages/EvmChainStorage';
+import { getStorageName } from '@webb-dapp/apps/configs/storages/EvmChainStorage';
 
 export class WebbWeb3Provider implements WebbApiProvider<WebbWeb3Provider> {
   readonly accounts: Web3Accounts;

@@ -1,7 +1,14 @@
 import { MixerTitle } from '@webb-dapp/react-environment';
 import { Storage } from '@webb-dapp/utils';
-import { MixerStorage, evmChainStorageFactory } from '../../../../apps/src/configs/storages/EvmChainStorage';
-import { WebbEVMChain, rinkebyMixers, ethMainNetMixers, beresheetMixers, edgewareMixers, MixerInfo } from '../../../../apps/src/configs/evm/SupportedMixers';
+import { MixerStorage, evmChainStorageFactory } from '@webb-dapp/apps/configs/storages/EvmChainStorage';
+import {
+  beresheetMixers,
+  edgewareMixers,
+  ethMainNetMixers,
+  MixerInfo,
+  rinkebyMixers,
+  WebbEVMChain,
+} from '@webb-dapp/apps/configs/evm/SupportedMixers';
 
 export class EvmChainMixersInfo {
   private mixerStorage: Storage<MixerStorage> | null = null;
