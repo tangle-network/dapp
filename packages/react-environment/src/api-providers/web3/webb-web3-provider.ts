@@ -1,46 +1,40 @@
 import Icon from '@material-ui/core/Icon';
-import { EvmChainStorage } from '@webb-dapp/apps/configs/storages/evm-chain-storage.interface';
+import { EvmChainMixersInfo } from '@webb-dapp/react-environment/api-providers/web3/EvmChainMixersInfo';
 import { AnchorContract } from '@webb-dapp/contracts/contracts/anchor';
 import { WebbApiProvider, WebbMethods } from '@webb-dapp/react-environment';
 import { Web3MixerDeposit } from '@webb-dapp/react-environment/api-providers/web3/web3-mixer-deposit';
 import { Web3MixerWithdraw } from '@webb-dapp/react-environment/api-providers/web3/web3-mixer-withdraw';
 import { notificationApi } from '@webb-dapp/ui-components/notification';
-import { Storage } from '@webb-dapp/utils';
 import { Web3Accounts } from '@webb-dapp/wallet/providers/web3/web3-accounts';
 import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
 import { providers } from 'ethers';
 import React from 'react';
-
-export enum WebbEVMChain {
-  Main = 1,
-  Rinkeby = 4,
-  Beresheet = 2022,
-}
-
-export type EVMStorage = Record<string, EvmChainStorage>;
+import { MixerSize } from '@webb-dapp/react-environment/webb-context';
+import { getStorageName } from '@webb-dapp/apps/configs/storages/EvmChainStorage';
 
 export class WebbWeb3Provider implements WebbApiProvider<WebbWeb3Provider> {
   readonly accounts: Web3Accounts;
   readonly methods: WebbMethods<WebbWeb3Provider>;
   private ethersProvider: providers.Web3Provider;
+  private connectedMixers: EvmChainMixersInfo;
 
-  private constructor(private web3Provider: Web3Provider, private storage: Storage<EVMStorage>) {
+  private constructor(private web3Provider: Web3Provider, private chainId: number) {
     this.accounts = new Web3Accounts(web3Provider.eth);
     this.ethersProvider = web3Provider.intoEthersProvider();
+    this.connectedMixers = new EvmChainMixersInfo(chainId);
     // @ts-ignore
     // todo fix me @(AhmedKorim)
     this.ethersProvider.provider?.on?.('chainChanged', async () => {
-      const chainId = await this.web3Provider.network;
-      console.log(chainId);
-      const localName = await WebbWeb3Provider.storageName(chainId);
+      const newChainId = await this.web3Provider.network;
+      const localName = getStorageName(newChainId);
       notificationApi({
         message: 'Web3: changed the connected network',
         variant: 'info',
         Icon: React.createElement(Icon, null, ['leak_add']),
-        secondaryMessage: `Connection is switched to ${chainId} chain`,
+        secondaryMessage: `Connection is switched to ${localName} chain`,
       });
       this.ethersProvider = web3Provider.intoEthersProvider();
-      this.storage = await Storage.get(localName);
+      this.connectedMixers = new EvmChainMixersInfo(newChainId);
     });
     this.methods = {
       mixer: {
@@ -56,39 +50,41 @@ export class WebbWeb3Provider implements WebbApiProvider<WebbWeb3Provider> {
     };
   }
 
-  static storageName(id: number): string {
-    switch (id) {
-      case WebbEVMChain.Rinkeby:
-        return 'rinkeby';
-      case WebbEVMChain.Main:
-        return 'main';
-      case WebbEVMChain.Beresheet:
-        return 'beresheet';
-      default:
-        throw new Error('unsupported chain');
-    }
+  async getChainId(): Promise<number> {
+    const chainId = (await this.ethersProvider.getNetwork()).chainId;
+    return chainId;
   }
 
-  get chainStorage(): Promise<EVMStorage> {
-    return this.storage.dump();
+  getMixers() {
+    return this.connectedMixers;
   }
 
-  async getContractWithAddress(mixerId: string): Promise<AnchorContract> {
-    return new AnchorContract(this.ethersProvider, mixerId);
+  async getContractByAddress(mixerAddress: string): Promise<AnchorContract> {
+    return new AnchorContract(this.connectedMixers, this.ethersProvider, mixerAddress);
   }
 
-  async getContract(mixerSize: number, name: string): Promise<AnchorContract> {
-    const mixerSizes = await this.storage.get(name);
-    const mixer = mixerSizes.contractsInfo.find((config) => config.size === Number(mixerSize));
-    console.log(mixer);
+  // This function limits the mixer implementation to one type for the token/size pair.
+  // Something like a poseidon hasher implementation instead of mimc hasher cannot
+  // exist alongside each other.
+  async getContractBySize(mixerSize: number, tokenSymbol: string): Promise<AnchorContract> {
+    const mixer = this.connectedMixers.getMixerInfoBySize(mixerSize, tokenSymbol);
     if (!mixer) {
-      throw new Error(`mixer size  not found on this contract`);
+      throw new Error(`mixer with size ${mixerSize} not found for chain ${this.connectedMixers.chainId}`);
     }
 
-    return new AnchorContract(this.ethersProvider, mixer.address);
+    return new AnchorContract(this.connectedMixers, this.ethersProvider, mixer.address);
   }
 
-  static async init(web3Provider: Web3Provider, storage: Storage<EVMStorage>) {
-    return new WebbWeb3Provider(web3Provider, storage);
+  getEthersProvider(): providers.Web3Provider {
+    return this.ethersProvider;
+  }
+
+  getMixerSizes(tokenSymbol: string): Promise<MixerSize[]> {
+    return Promise.resolve(this.connectedMixers.getMixerSizes(tokenSymbol));
+  }
+
+  static async init(web3Provider: Web3Provider) {
+    const chainId = await web3Provider.network;
+    return new WebbWeb3Provider(web3Provider, chainId);
   }
 }
