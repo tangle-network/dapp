@@ -4,9 +4,11 @@ import { EvmNote } from '@webb-dapp/contracts/utils/evm-note';
 import { createDeposit, Deposit } from '@webb-dapp/contracts/utils/make-deposit';
 import { MerkleTree } from '@webb-dapp/utils/merkle';
 import { BigNumber, Contract, providers, Signer } from 'ethers';
+import { Log } from '@ethersproject/abstract-provider';
 import { EvmChainMixersInfo } from '@webb-dapp/react-environment/api-providers/web3/EvmChainMixersInfo';
 import utils from 'web3-utils';
 import { abi } from '../abis/NativeAnchor.json';
+import { mixerLogger } from '@webb-dapp/mixer/utils';
 
 const webSnarkUtils = require('websnark/src/utils');
 type DepositEvent = [string, number, BigNumber];
@@ -70,7 +72,7 @@ export class AnchorContract {
     const storedContractInfo = await this.mixersInfo.getMixerStorage(this._contract.address);
 
     const startingBlock = storedContractInfo.lastQueriedBlock; // Read starting block from cached storage
-    var logs = []; // Read the stored logs into this variable
+    let logs: Array<Log> = []; // Read the stored logs into this variable
 
     try {
       logs = await this.web3Provider.getLogs({
@@ -79,11 +81,11 @@ export class AnchorContract {
         ...filter,
       });
     } catch (e) {
-      console.log(e);
+      mixerLogger.log(e);
 
       // If there is a timeout, query the logs in block increments.
       if (e.code == -32603) {
-        for (var i=startingBlock; i < currentBlock; i+= 50)
+        for (let i=startingBlock; i < currentBlock; i+= 50)
         {
           logs = [...logs, ...(await this.web3Provider.getLogs({
             fromBlock: i,
@@ -91,7 +93,7 @@ export class AnchorContract {
             ...filter,
           }))];
 
-          console.log(`Getting logs for block range: ${i} through ${i+50}`)
+          mixerLogger.log(`Getting logs for block range: ${i} through ${i+50}`)
         }
       } else {
         throw e;
