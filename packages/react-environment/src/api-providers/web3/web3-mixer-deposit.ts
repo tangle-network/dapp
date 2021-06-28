@@ -1,6 +1,6 @@
 import { EvmNote } from '@webb-dapp/contracts/utils/evm-note';
 import { Deposit } from '@webb-dapp/contracts/utils/make-deposit';
-import { DepositPayload as IDepositPayload, MixerDeposit, MixerTitle } from '@webb-dapp/react-environment/webb-context';
+import { DepositPayload as IDepositPayload, MixerDeposit, MixerSize } from '@webb-dapp/react-environment/webb-context';
 import { getNativeCurrencySymbol } from '@webb-dapp/apps/configs/evm/SupportedMixers';
 import { WebbWeb3Provider } from './webb-web3-provider';
 import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polkadot/transaction-notification-config';
@@ -46,7 +46,7 @@ export class Web3MixerDeposit extends MixerDeposit<WebbWeb3Provider, DepositPayl
     };
   }
 
-  async getTitles(): Promise<MixerTitle[]> {
-    return this.inner.getMixerTitles(getNativeCurrencySymbol( await this.inner.getChainId()));
+  async getSizes(): Promise<MixerSize[]> {
+    return this.inner.getMixerSizes(getNativeCurrencySymbol( await this.inner.getChainId()));
   }
 }

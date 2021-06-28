@@ -1,8 +1,8 @@
-import { DepositPayload, MixerDeposit, MixerTitle, useWebContext } from '@webb-dapp/react-environment/webb-context';
+import { DepositPayload, MixerDeposit, MixerSize, useWebContext } from '@webb-dapp/react-environment/webb-context';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 export interface DepositApi {
-  mixerTitles: MixerTitle[];
+  mixerSizes: MixerSize[];
 
   deposit(payload: DepositPayload): Promise<void>;
 
@@ -16,7 +16,7 @@ export const useDeposit = (): DepositApi => {
   const { activeApi } = useWebContext();
   const [loadingState, setLoadingState] = useState<MixerDeposit['loading']>('ideal');
   const [error, setError] = useState('');
-  const [mixerTitles, setMixerTitles] = useState<MixerTitle[]>([]);
+  const [mixerSizes, setMixerSizes] = useState<MixerSize[]>([]);
 
   /// api
   const depositApi = useMemo(() => {
@@ -31,9 +31,9 @@ export const useDeposit = (): DepositApi => {
     const unSub = depositApi.on('error', (error) => {
       setError(error);
     });
-    depositApi.getTitles().then((mixerTitles) => {
-      console.log(mixerTitles);
-      setMixerTitles(mixerTitles);
+    depositApi.getSizes().then((mixerSizes) => {
+      console.log(mixerSizes);
+      setMixerSizes(mixerSizes);
     });
     return () => unSub && unSub();
   }, [depositApi]);
@@ -55,7 +55,7 @@ export const useDeposit = (): DepositApi => {
     [depositApi]
   );
   return {
-    mixerTitles,
+    mixerSizes,
     deposit,
     generateNote,
     loadingState,

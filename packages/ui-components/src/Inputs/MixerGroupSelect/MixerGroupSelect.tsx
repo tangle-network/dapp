@@ -3,7 +3,7 @@ import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabe
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 import React, { useEffect, useMemo } from 'react';
 import styled, { css } from 'styled-components';
-import { MixerTitle } from '@webb-dapp/react-environment/webb-context';
+import { MixerSize } from '@webb-dapp/react-environment/webb-context';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 
 const MixerGroupSelectWrapper = styled.div`
@@ -16,9 +16,9 @@ const MixerGroupSelectWrapper = styled.div`
   overflow: auto;
 `;
 type MixerGroupSelectProps = {
-  items: MixerTitle[];
-  value?: MixerTitle;
-  onChange?(item: MixerTitle): void;
+  items: MixerSize[];
+  value?: MixerSize;
+  onChange?(item: MixerSize): void;
 };
 const AmountChipWrapper = styled.span<{ selected?: boolean }>`
   cursor: pointer;
@@ -61,7 +61,7 @@ export const MixerGroupSelect: React.FC<MixerGroupSelectProps> = ({ items, onCha
     }
   }, [onChange, value, items]);
 
-  const mixerTitles = useMemo(() => {
+  const mixerSizes = useMemo(() => {
     return items.map((item, index) => {
       return {
         ...item,
@@ -73,7 +73,7 @@ export const MixerGroupSelect: React.FC<MixerGroupSelectProps> = ({ items, onCha
   return (
     <InputLabel label={'Select Amount'}>
       <MixerGroupSelectWrapper>
-        {mixerTitles.map(({ selected, id, title }) => {
+        {mixerSizes.map(({ selected, id, title }) => {
           return (
             <AmountChipWrapper
               key={id + title}

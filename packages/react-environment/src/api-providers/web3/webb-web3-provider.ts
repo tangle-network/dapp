@@ -9,7 +9,7 @@ import { Web3Accounts } from '@webb-dapp/wallet/providers/web3/web3-accounts';
 import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
 import { providers } from 'ethers';
 import React from 'react';
-import { MixerTitle } from '@webb-dapp/react-environment/webb-context';
+import { MixerSize } from '@webb-dapp/react-environment/webb-context';
 import { getStorageName } from '@webb-dapp/apps/configs/storages/EvmChainStorage';
 
 export class WebbWeb3Provider implements WebbApiProvider<WebbWeb3Provider> {
@@ -79,8 +79,8 @@ export class WebbWeb3Provider implements WebbApiProvider<WebbWeb3Provider> {
     return this.ethersProvider;
   }
 
-  getMixerTitles(tokenSymbol: string): Promise<MixerTitle[]> {
-    return Promise.resolve(this.connectedMixers.getMixerTitles(tokenSymbol));
+  getMixerSizes(tokenSymbol: string): Promise<MixerSize[]> {
+    return Promise.resolve(this.connectedMixers.getMixerSizes(tokenSymbol));
   }
 
   static async init(web3Provider: Web3Provider) {

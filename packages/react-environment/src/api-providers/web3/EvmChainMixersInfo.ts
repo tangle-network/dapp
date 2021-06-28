@@ -1,4 +1,4 @@
-import { MixerTitle } from '@webb-dapp/react-environment';
+import { MixerSize } from '@webb-dapp/react-environment';
 import { Storage } from '@webb-dapp/utils';
 import { MixerStorage, evmChainStorageFactory } from '@webb-dapp/apps/configs/storages/EvmChainStorage';
 import {
@@ -36,7 +36,7 @@ export class EvmChainMixersInfo {
     }
   }
 
-  getMixerTitles(tokenSymbol: string): MixerTitle[] {
+  getMixerSizes(tokenSymbol: string): MixerSize[] {
     const tokenMixers = this.mixerInfo.filter((entry) => entry.symbol == tokenSymbol);
     return tokenMixers.map((contract) => {
       return {
