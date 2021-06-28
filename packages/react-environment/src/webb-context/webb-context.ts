@@ -1,4 +1,7 @@
-import { WebbApiProvider } from '@webb-dapp/react-environment/webb-context/webb-provider.interface';
+import {
+  InteractiveFeedback,
+  WebbApiProvider,
+} from '@webb-dapp/react-environment/webb-context/webb-provider.interface';
 import { Chain, Wallet } from '@webb-dapp/react-environment/webb-context/common';
 import { Account } from '@webb-dapp/wallet/account/Accounts.adapter';
 import React from 'react';
@@ -24,6 +27,7 @@ export interface WebbContentState<T = unknown> {
   setActiveAccount<T extends Account>(account: T): Promise<void>;
 
   switchChain(chain: Chain, wallet: Wallet): Promise<WebbApiProvider<T> | null>;
+  activeFeedback: InteractiveFeedback | null;
 }
 
 export const WebbContext = React.createContext<WebbContentState>({
@@ -39,6 +43,7 @@ export const WebbContext = React.createContext<WebbContentState>({
     return Promise.resolve(null);
   },
   wallets: {},
+  activeFeedback: null,
 });
 
 export const useWebContext = <T = unknown>() => {

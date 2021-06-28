@@ -1,6 +1,7 @@
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import { ethers } from 'ethers';
 import Web3 from 'web3';
+import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 
 export class Web3Provider {
   constructor(private _inner: Web3) {}
@@ -14,7 +15,7 @@ export class Web3Provider {
         return provider;
       }
     }
-    throw Error('Not provider in window');
+    throw WebbError.from(WebbErrorCodes.MetaMaskExtensionNotInstalled);
   }
 
   static async fromExtension() {
@@ -25,7 +26,7 @@ export class Web3Provider {
       await provider.enable();
       return new Web3Provider(new Web3(provider));
     }
-    throw Error('Not provider in window');
+    throw WebbError.from(WebbErrorCodes.MetaMaskExtensionNotInstalled);
   }
 
   static fromUri(url: string) {
@@ -61,6 +62,6 @@ export class Web3Provider {
   }
 
   intoEthersProvider() {
-    return new ethers.providers.Web3Provider(this.provider as any);
+    return new ethers.providers.Web3Provider(this.provider as any, 'any');
   }
 }

@@ -261,11 +261,11 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
             </ListItem>
             <List>
               {viaWallets.map((wallet) => {
-                const connectedWallet = activeWallet?.id === wallet.id && activeChain?.id === id;
+                const connectedWallet = activeWallet?.id === wallet.id; /*&& activeChain?.id === id*/
                 return (
                   <ListItem
                     button
-                    disabled={connectedWallet}
+                    disabled={connectedWallet && activeChain?.id === id}
                     onClick={async () => {
                       setConnectionStep(ConnectionStep.Connecting);
                       await switchChain(userSelectedChain, wallet);

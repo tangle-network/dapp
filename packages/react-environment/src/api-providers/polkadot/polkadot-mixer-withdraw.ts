@@ -10,6 +10,7 @@ import { u8aToHex } from '@polkadot/util';
 
 import { MixerWithdraw, WithdrawState } from '../../webb-context';
 import { WebbPolkadot } from './webb-polkadot-provider';
+import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 
 export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
   private cachedBulletProofsGens: Uint8Array | null = null;
@@ -147,12 +148,12 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
       });
       const account = await this.inner.accounts.activeOrDefault;
       if (!account) {
-        throw new Error('no account available');
+        throw WebbError.from(WebbErrorCodes.NoAccountAvailable);
       }
       await tx.call(account.address);
       this.emit('stateChange', WithdrawState.Done);
     } catch (e) {
-      this.emit('error', 'Failed to generate zero knowlage proof');
+      this.emit('error', 'Failed to generate zero knowledge proof');
       this.emit('stateChange', WithdrawState.Failed);
       throw e;
     }

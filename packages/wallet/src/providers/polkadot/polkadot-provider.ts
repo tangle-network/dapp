@@ -8,6 +8,8 @@ import { isNumber } from 'lodash';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { web3Enable } from '@polkadot/extension-dapp';
 import { InjectedExtension } from '@polkadot/extension-inject/types';
+import { ApiInitHandler } from '@webb-dapp/react-environment';
+import { InteractiveFeedback, WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 
 type ExtensionProviderEvents = {
   connected: undefined;
@@ -22,7 +24,7 @@ type ExtensionProviderEvents = {
 
 export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
   private _accounts: PolkadotAccounts;
-  public readonly txBuilder: PolkaTXBuilder;
+  public txBuilder: PolkaTXBuilder;
 
   constructor(protected apiPromise: ApiPromise, protected injectedExtension: InjectedExtension) {
     super();
@@ -31,29 +33,129 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
     this._accounts = new PolkadotAccounts(this.injectedExtension);
   }
 
-  static async fromExtension(appName: string, [endPoint, ...allEndPoints]: string[]): Promise<PolkadotProvider> {
-    const [apiPromise, currentExtensions] = await PolkadotProvider.getParams(appName, [endPoint, ...allEndPoints]);
-    const polkadotProvider = new PolkadotProvider(apiPromise, currentExtensions);
-    return polkadotProvider;
+  static async fromExtension(
+    appName: string,
+    [endPoint, ...allEndPoints]: string[],
+    apiInitHandler: ApiInitHandler
+  ): Promise<PolkadotProvider> {
+    const [apiPromise, currentExtensions] = await PolkadotProvider.getParams(
+      appName,
+      [endPoint, ...allEndPoints],
+      apiInitHandler.onError
+    );
+    return new PolkadotProvider(apiPromise, currentExtensions);
   }
 
   static async getParams(
     appName: string,
-    [endPoint, ...allEndPoints]: string[]
+    [endPoint, ...allEndPoints]: string[],
+    onError: ApiInitHandler['onError']
   ): Promise<[ApiPromise, InjectedExtension]> {
     const extensions = await web3Enable(appName);
-    if (extensions.length === 0) throw new Error('no_extensions');
+    console.log(extensions);
+    if (extensions.length === 0) throw WebbError.from(WebbErrorCodes.PolkaDotExtensionNotInstalled);
     const currentExtensions = extensions[0];
-    const wsProvider = new WsProvider([endPoint, ...allEndPoints]);
+    // eslint-disable-next-line no-async-promise-executor
+    const wsProvider = await new Promise<WsProvider>(async (resolve, reject) => {
+      let wsProvider: WsProvider;
+      let tryNumber = 0;
+      let keepRetrying = true;
+      let reportNewInteractiveError = true;
+      /// Listen for events from the websocket provider to the connect and disconnect and return a promise for blocking
+      const connectWs = async (wsProvider: WsProvider) => {
+        /// perform a connection that won't reconnect if the connection failed to establish or due to broken-pipe (Ping connection)
+        await wsProvider.connect();
+        return new Promise((res, rej) => {
+          wsProvider.on('connected', () => {
+            res(wsProvider);
+          });
+          wsProvider.on('error', () => {
+            rej();
+          });
+        });
+      };
+      /**
+       *  Infinite Looping till
+       *  1- The ws connection is established
+       *  2- The user killed the connection , no other retires
+       * */
+      /// global interActiveFeedback for access on multiple scopes
+      let interActiveFeedback: InteractiveFeedback;
+      while (keepRetrying) {
+        wsProvider = new WsProvider([endPoint, ...allEndPoints], false);
+
+        /// don't wait for sleep time on the first attempt
+        if (tryNumber !== 0) {
+          /// sleep for 6s
+          await new Promise((r) => setTimeout(r, 6000));
+        }
+
+        try {
+          /// wait for ping connection
+          await connectWs(wsProvider);
+          /// disconnect the pin connection
+          await wsProvider.disconnect();
+          /// create a new WS Provider that is failure friendly and will retry to connect
+          /// no need to call `.connect` the Promise api will handle this
+          wsProvider = new WsProvider([endPoint, ...allEndPoints]);
+          resolve(wsProvider);
+          // @ts-ignore
+          if (typeof interActiveFeedback !== 'undefined') {
+            /// cancel the feedback as  the connection is established
+            interActiveFeedback.cancelWithoutHandler();
+          }
+          break;
+        } catch (_) {
+          tryNumber++;
+          if (!reportNewInteractiveError) {
+            continue;
+          }
+          const body = InteractiveFeedback.feedbackEntries([
+            {
+              header: 'Failed to establish WS connection',
+            },
+            {
+              content: `Attempt to retry (${tryNumber}) after 6s..`,
+            },
+          ]);
+
+          const actions = InteractiveFeedback.actionsBuilder()
+            .action('Wait for connection', () => {
+              interActiveFeedback?.cancelWithoutHandler();
+              reportNewInteractiveError = false;
+            })
+            .actions();
+          // @ts-ignore
+          /// if the connection is established from the first time then there's no interActiveFeedback instance
+          if (typeof interActiveFeedback !== 'undefined') {
+            /// After failure there user is prompted that there is a connection failure the feedback from the previous attempt is canceled (dismissed)
+            interActiveFeedback.cancelWithoutHandler();
+          }
+          interActiveFeedback = new InteractiveFeedback(
+            'error',
+            actions,
+            () => {
+              keepRetrying = false;
+              reject('Disconnected');
+            },
+            body
+          );
+
+          onError(interActiveFeedback);
+        }
+      }
+    });
+
     const opts = options({
       provider: wsProvider,
     });
+
     const apiPromise = await ApiPromise.create(opts);
     return [apiPromise, currentExtensions];
   }
 
   hookListeners() {
-    this.apiPromise.on('error', () => {
+    this.apiPromise.on('error', (e) => {
       this.emit('error', undefined);
     });
 
@@ -81,7 +183,12 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
       cbs.forEach((cb) => this.off(entry, cb));
     }, this);
     // disconnect this api
-    this.apiPromise.disconnect();
+    return this.apiPromise.disconnect();
+  }
+
+  /// metaData:MetadataDef
+  updateMetaData(metaData: any) {
+    this.injectedExtension.metadata?.provide(metaData);
   }
 
   getMetaData() {
@@ -103,13 +210,14 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
   async checkMetaDataUpdate() {
     const metadataDef = this.getMetaData();
     const known = await this.injectedExtension?.metadata?.get();
-    if (!known || !metadataDef) return false;
+    if (!known || !metadataDef) return null;
 
     const result = !known.find(({ genesisHash, specVersion }) => {
       return metadataDef.genesisHash === genesisHash && metadataDef.specVersion === specVersion;
     });
 
     if (result) this.emit('updateMetaData', metadataDef);
+    return metadataDef;
   }
 
   get accounts() {
