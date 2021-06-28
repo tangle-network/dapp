@@ -1,22 +1,15 @@
-import { EvmChainStorage } from '@webb-dapp/apps/configs/storages/evm-chain-storage.interface';
+import { EvmChainMixersInfo } from '@webb-dapp/react-environment/api-providers/web3/EvmChainMixersInfo';
 import { AnchorContract } from '@webb-dapp/contracts/contracts/anchor';
 import { WebbApiProvider, WebbMethods, WebbProviderEvents } from '@webb-dapp/react-environment';
 import { Web3MixerDeposit } from '@webb-dapp/react-environment/api-providers/web3/web3-mixer-deposit';
 import { Web3MixerWithdraw } from '@webb-dapp/react-environment/api-providers/web3/web3-mixer-withdraw';
-import { Storage } from '@webb-dapp/utils';
 import { Web3Accounts } from '@webb-dapp/wallet/providers/web3/web3-accounts';
 import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
 import { providers } from 'ethers';
 import { EventBus } from '@webb-tools/app-util';
 import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
-
-export enum WebbEVMChain {
-  Main = 1,
-  Rinkeby = 4,
-  Beresheet = 2022,
-}
-
-export type EVMStorage = Record<string, EvmChainStorage>;
+import { MixerSize } from '@webb-dapp/react-environment/webb-context';
+import { WebbEVMChain } from '@webb-dapp/apps/configs/evm/SupportedMixers';
 
 export class WebbWeb3Provider
   extends EventBus<WebbProviderEvents<[number]>>
@@ -24,8 +17,9 @@ export class WebbWeb3Provider
   readonly accounts: Web3Accounts;
   readonly methods: WebbMethods<WebbWeb3Provider>;
   private ethersProvider: providers.Web3Provider;
+  private connectedMixers: EvmChainMixersInfo;
 
-  private constructor(private web3Provider: Web3Provider, private storage: Storage<EVMStorage>) {
+  private constructor(private web3Provider: Web3Provider, private chainId: number) {
     super();
     this.accounts = new Web3Accounts(web3Provider.eth);
     this.ethersProvider = web3Provider.intoEthersProvider();
@@ -38,6 +32,7 @@ export class WebbWeb3Provider
     };
     // @ts-ignore
     this.ethersProvider.provider?.on?.('chainChanged', handler);
+    this.connectedMixers = new EvmChainMixersInfo(chainId);
     this.methods = {
       mixer: {
         deposit: {
@@ -51,9 +46,11 @@ export class WebbWeb3Provider
       },
     };
   }
-  setStorage(nextStorage: Storage<EVMStorage>) {
-    this.storage = nextStorage;
+
+  setStorage(chainId: number) {
+    this.connectedMixers = new EvmChainMixersInfo(chainId);
   }
+
   async destroy(): Promise<void> {
     this.subscriptions = {
       providerUpdate: [],
@@ -74,26 +71,40 @@ export class WebbWeb3Provider
     }
   }
 
-  get chainStorage(): Promise<EVMStorage> {
-    return this.storage.dump();
+  async getChainId(): Promise<number> {
+    const chainId = (await this.ethersProvider.getNetwork()).chainId;
+    return chainId;
   }
 
-  async getContractWithAddress(mixerId: string): Promise<AnchorContract> {
-    return new AnchorContract(this.ethersProvider, mixerId);
+  getMixers() {
+    return this.connectedMixers;
   }
 
-  async getContract(mixerSize: number, name: string): Promise<AnchorContract> {
-    const mixerSizes = await this.storage.get(name);
-    const mixer = mixerSizes.contractsInfo.find((config) => config.size === Number(mixerSize));
-    console.log(mixer);
+  async getContractByAddress(mixerAddress: string): Promise<AnchorContract> {
+    return new AnchorContract(this.connectedMixers, this.ethersProvider, mixerAddress);
+  }
+
+  // This function limits the mixer implementation to one type for the token/size pair.
+  // Something like a poseidon hasher implementation instead of mimc hasher cannot
+  // exist alongside each other.
+  async getContractBySize(mixerSize: number, tokenSymbol: string): Promise<AnchorContract> {
+    const mixer = this.connectedMixers.getMixerInfoBySize(mixerSize, tokenSymbol);
     if (!mixer) {
       throw WebbError.from(WebbErrorCodes.MixerSizeNotFound);
     }
 
-    return new AnchorContract(this.ethersProvider, mixer.address);
+    return new AnchorContract(this.connectedMixers, this.ethersProvider, mixer.address);
   }
 
-  static async init(web3Provider: Web3Provider, storage: Storage<EVMStorage>) {
-    return new WebbWeb3Provider(web3Provider, storage);
+  getEthersProvider(): providers.Web3Provider {
+    return this.ethersProvider;
+  }
+
+  getMixerSizes(tokenSymbol: string): Promise<MixerSize[]> {
+    return Promise.resolve(this.connectedMixers.getMixerSizes(tokenSymbol));
+  }
+
+  static async init(web3Provider: Web3Provider, chainId: number) {
+    return new WebbWeb3Provider(web3Provider, chainId);
   }
 }

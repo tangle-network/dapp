@@ -1,7 +1,7 @@
 import { AppConfig } from '@webb-dapp/react-environment/webb-context';
 import EdgwareLogo from '@webb-dapp/apps/configs/wallets/logos/EdgwareLogo';
 import EtherLogo from '@webb-dapp/apps/configs/wallets/logos/Eth';
-import { WebbEVMChain } from '@webb-dapp/react-environment/api-providers/web3';
+import { WebbEVMChain } from '@webb-dapp/apps/configs/evm/SupportedMixers';
 
 export const chainsConfig: AppConfig['chains'] = {
   // edgware
