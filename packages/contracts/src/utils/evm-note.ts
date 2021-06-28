@@ -1,7 +1,7 @@
 import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
 import { Deposit } from '@webb-dapp/contracts/utils/make-deposit';
 import { pedersenHash } from '@webb-dapp/contracts/utils/pedersen-hash';
-import { WebbError, WebbErrorCodes } from '@webb-dapp/react-components/InteractiveFeedbackView/InteractiveErrorView';
+import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 
 const snarkjs = require('snarkjs');
 

@@ -10,7 +10,7 @@ import { u8aToHex } from '@polkadot/util';
 
 import { MixerWithdraw, WithdrawState } from '../../webb-context';
 import { WebbPolkadot } from './webb-polkadot-provider';
-import { WebbError, WebbErrorCodes } from '@webb-dapp/react-components/InteractiveFeedbackView/InteractiveErrorView';
+import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 
 export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
   private cachedBulletProofsGens: Uint8Array | null = null;

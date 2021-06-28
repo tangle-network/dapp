@@ -8,8 +8,8 @@ import { isNumber } from 'lodash';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { web3Enable } from '@polkadot/extension-dapp';
 import { InjectedExtension } from '@polkadot/extension-inject/types';
-import { ApiInitHandler, InteractiveFeedback } from '@webb-dapp/react-environment';
-import { WebbError, WebbErrorCodes } from '@webb-dapp/react-components/InteractiveFeedbackView/InteractiveErrorView';
+import { ApiInitHandler } from '@webb-dapp/react-environment';
+import { InteractiveFeedback, WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 
 type ExtensionProviderEvents = {
   connected: undefined;

@@ -7,7 +7,7 @@ import { Token } from '@webb-tools/sdk-core';
 import { Asset, Mixer, Note } from '@webb-tools/sdk-mixer';
 
 import { WebbPolkadot } from './webb-polkadot-provider';
-import { WebbError, WebbErrorCodes } from '@webb-dapp/react-components/InteractiveFeedbackView/InteractiveErrorView';
+import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 
 type DepositPayload = IDepositPayload<Note, [number, Uint8Array[]]>;
 

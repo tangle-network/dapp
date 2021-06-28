@@ -8,7 +8,7 @@ import { Web3Accounts } from '@webb-dapp/wallet/providers/web3/web3-accounts';
 import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
 import { providers } from 'ethers';
 import { EventBus } from '@webb-tools/app-util';
-import { WebbError, WebbErrorCodes } from '@webb-dapp/react-components/InteractiveFeedbackView/InteractiveErrorView';
+import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 
 export enum WebbEVMChain {
   Main = 1,
@@ -32,8 +32,11 @@ export class WebbWeb3Provider
     const handler = async () => {
       const chainId = await this.web3Provider.network;
       this.emit('providerUpdate', [chainId]);
+      //TODO investigate the off and on methods on ethers
+      // @ts-ignore
       this.ethersProvider.provider?.off?.('chainChanged', handler);
     };
+    // @ts-ignore
     this.ethersProvider.provider?.on?.('chainChanged', handler);
     this.methods = {
       mixer: {

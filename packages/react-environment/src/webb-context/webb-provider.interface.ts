@@ -2,6 +2,7 @@ import { AccountsAdapter } from '@webb-dapp/wallet/account/Accounts.adapter';
 import { EventBus } from '@webb-tools/app-util';
 
 import { DepositPayload, MixerDeposit, MixerDepositEvents, MixerWithdraw, MixerWithdrawEvents } from './mixer';
+import { InteractiveFeedback } from '@webb-dapp/utils/webb-error';
 
 /// list of the apis that are available for  the provider
 export interface WebbMethods<T> {
@@ -21,57 +22,6 @@ export interface WebbMixer<T> {
   withdraw: WebbMethod<MixerWithdraw<T>, MixerWithdrawEvents>;
 }
 
-type FeedbackLevel = 'error' | 'info' | 'warning' | 'success';
-type Action = {
-  /// indication for the Action level to show action controller in a meaning way
-  level: FeedbackLevel;
-  /// trigger the callback for the action
-  onTrigger(): any;
-};
-
-/// This will be iterated over and generate content for the feedback
-export type FeedbackEntry = {
-  /// Text element could be a <p/> for instance
-  content?: string;
-  /// JS object
-  json?: Record<string, unknown>;
-  /// Header text element
-  header?: string;
-  /// list of strings
-  list?: string[];
-  /// A function that will return a dynamic value
-  any?(): any;
-};
-/// an object will be used to build the feedback UI
-export type FeedbackBody = FeedbackEntry[];
-
-/// A builder class to build the `Action` for the `InteractiveFeedback`
-export class ActionsBuilder {
-  /// list of actions of the `ActionsBuilder`
-  private _actions: Record<string, Action> = {};
-
-  constructor() {}
-
-  /// Static method for `init`
-  static init() {
-    return new ActionsBuilder();
-  }
-
-  /// Adds an action for the builder actions
-  action(name: string, handler: () => any, level: FeedbackLevel = 'info'): ActionsBuilder {
-    this._actions[name] = {
-      level,
-      onTrigger: handler,
-    };
-    return this;
-  }
-
-  /// Access the actions to pass them to the constructor of the interactive feedback
-  actions() {
-    return this._actions;
-  }
-}
-
 /// TODO improve this and add a spec
 /// An interface for Apis pre-initialization
 export type ApiInitHandler = {
@@ -82,66 +32,6 @@ export type ApiInitHandler = {
    * */
   onError(error: InteractiveFeedback): any;
 };
-
-/// InteractiveFeedback a class that wrappers and error metadata and provide handlers for it
-/// A `canceled` event is trigger only once, when the state changes to be`_canceled=true`
-export class InteractiveFeedback extends EventBus<{ canceled: InteractiveFeedback }> {
-  private _canceled: boolean = false;
-
-  /// Create a new action builder for the InteractiveFeedback
-  static actionsBuilder() {
-    return ActionsBuilder.init();
-  }
-
-  /// Create the body for the InteractiveFeedback
-  static feedbackEntries(feedbackBody: FeedbackBody): FeedbackBody {
-    return feedbackBody;
-  }
-
-  constructor(
-    /// Level of the InteractiveFeedback for customised view
-    public readonly level: FeedbackLevel,
-    /// Actions available for the InteractiveFeedback instance without the cancel action
-    public readonly actions: Record<string, Action>,
-    /// handler for the cancel action this is trigger when `interactiveFeedback.cancel` is called
-    private readonly _onCancel: () => any,
-    /// The body of the interactive feedback showing the message
-    public readonly feedbackBody: FeedbackBody,
-    /// this can be used to identify the feedback by reason and hide it
-    public reason?: number | string
-  ) {
-    super();
-  }
-
-  /// getter for the user to know if this is canceled
-  get canceled() {
-    return this._canceled;
-  }
-
-  /// cancel without calling the onCancel handler
-  cancelWithoutHandler() {
-    if (this._canceled) {
-      return;
-    }
-    /// change the state of the interactive feedback to be canceled to prevent from a  re-trigger
-    this._canceled = true;
-    /// emit `canceled` event
-    this.emit('canceled', this);
-  }
-
-  /// cancel this will trigger the `canceled` event and set the interactiveFeedback as canceled
-  cancel() {
-    if (this._canceled) {
-      return;
-    }
-    /// change the state of the interactive feedback to be canceled to prevent from a  re-trigger
-    this._canceled = true;
-    /// emit `canceled` event
-    this.emit('canceled', this);
-    /// call  the cancel handler
-    this._onCancel();
-  }
-}
 
 export type WebbProviderEvents<T = any> = {
   /// event is trigger to show an interactiveFeedback related to the provider

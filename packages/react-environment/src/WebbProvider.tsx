@@ -3,7 +3,6 @@ import WalletConnectProvider from '@walletconnect/web3-provider';
 import { beresheetStorage, mainStorage, rinkebyStorage } from '@webb-dapp/apps/configs/storages/evm-storage';
 import { chainsPopulated } from '@webb-dapp/apps/configs/wallets/chains-populated';
 import { walletsConfig, WalletsIds } from '@webb-dapp/apps/configs/wallets/wallets-config';
-import { WebbError, WebbErrorCodes } from '@webb-dapp/react-components/InteractiveFeedbackView/InteractiveErrorView';
 import { EVMStorage, WebbEVMChain, WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3';
 import { DimensionsProvider } from '@webb-dapp/react-environment/layout';
 import { StoreProvier } from '@webb-dapp/react-environment/store';
@@ -16,20 +15,13 @@ import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { WebbPolkadot } from './api-providers/polkadot';
 import { SettingProvider } from './SettingProvider';
-import {
-  Chain,
-  FeedbackBody,
-  InteractiveFeedback,
-  netStorageFactory,
-  NetworkStorage,
-  Wallet,
-  WebbApiProvider,
-  WebbContext,
-} from './webb-context';
+import { Chain, netStorageFactory, NetworkStorage, Wallet, WebbApiProvider, WebbContext } from './webb-context';
 import FireFoxLogo from '@webb-dapp/apps/configs/wallets/logos/FireFoxLogo';
 import { detect } from 'detect-browser';
 import ChromeLogo from '@webb-dapp/apps/configs/wallets/logos/ChromeLogo';
 import { extensionNotInstalled } from './error';
+import { FeedbackBody, InteractiveFeedback, WebbError } from '@webb-dapp/utils/webb-error';
+import { WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 
 interface WebbProviderProps extends BareProps {
   applicationName: string;
