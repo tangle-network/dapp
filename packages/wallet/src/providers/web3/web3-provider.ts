@@ -62,6 +62,6 @@ export class Web3Provider {
   }
 
   intoEthersProvider() {
-    return new ethers.providers.Web3Provider(this.provider as any);
+    return new ethers.providers.Web3Provider(this.provider as any, 'any');
   }
 }

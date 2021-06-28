@@ -28,7 +28,7 @@ export class WebbWeb3Provider
       this.emit('providerUpdate', [chainId]);
       //TODO investigate the off and on methods on ethers
       // @ts-ignore
-      this.ethersProvider.provider?.off?.('chainChanged', handler);
+      // this.ethersProvider.provider?.off?.('chainChanged', handler);
     };
     // @ts-ignore
     this.ethersProvider.provider?.on?.('chainChanged', handler);
