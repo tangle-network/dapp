@@ -7,16 +7,14 @@ import {
   ethMainNetMixers,
   MixerInfo,
   rinkebyMixers,
-  WebbEVMChain,
 } from '@webb-dapp/apps/configs/evm/SupportedMixers';
+import { WebbEVMChain } from '@webb-dapp/apps/configs';
 
 export class EvmChainMixersInfo {
   private mixerStorage: Storage<MixerStorage> | null = null;
   private mixerInfo: MixerInfo[];
 
-  constructor( 
-    public chainId: number,
-  ) {
+  constructor(public chainId: number) {
     switch (chainId) {
       case WebbEVMChain.Rinkeby:
         this.mixerInfo = rinkebyMixers;
@@ -43,13 +41,12 @@ export class EvmChainMixersInfo {
         id: contract.address,
         title: `${contract.size} ${contract.symbol}`,
       };
-    })
+    });
   }
 
   async getMixerStorage(contractAddress: string) {
     // create the mixerStorage if it didn't exist
-    if (!this.mixerStorage)
-    {
+    if (!this.mixerStorage) {
       this.mixerStorage = await evmChainStorageFactory(this.chainId);
     }
 
@@ -59,25 +56,24 @@ export class EvmChainMixersInfo {
     if (!storedInfo) {
       return {
         lastQueriedBlock: this.getMixerInfoByAddress(contractAddress).createdAtBlock,
-        leaves: []
+        leaves: [],
       };
     }
 
     return {
       lastQueriedBlock: storedInfo.lastQueriedBlock,
-      leaves: storedInfo.leaves
+      leaves: storedInfo.leaves,
     };
   }
 
   async setMixerStorage(contractAddress: string, lastQueriedBlock: number, leaves: string[]) {
-    if (!this.mixerStorage)
-    {
+    if (!this.mixerStorage) {
       this.mixerStorage = await evmChainStorageFactory(this.chainId);
     }
 
     this.mixerStorage.set(contractAddress, {
       lastQueriedBlock,
-      leaves
+      leaves,
     });
   }
 

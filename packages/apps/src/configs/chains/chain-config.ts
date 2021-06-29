@@ -1,9 +1,8 @@
 import { AppConfig } from '@webb-dapp/react-environment/webb-context';
-import EdgwareLogo from '@webb-dapp/apps/configs/wallets/logos/EdgwareLogo';
-import EtherLogo from '@webb-dapp/apps/configs/wallets/logos/Eth';
-import { WebbEVMChain } from '@webb-dapp/apps/configs/evm/SupportedMixers';
-import { ChainId } from './chain-id.enum';
-import { WebbCurrencyId } from './webb-currency-id.enum';
+import { ChainId, WebbEVMChain } from './chain-id.enum';
+import EdgwareLogo from '@webb-dapp/apps/configs/logos/EdgwareLogo';
+import EtherLogo from '@webb-dapp/apps/configs/logos/Eth';
+import { WebbCurrencyId } from '../currencies/webb-currency-id.enum';
 
 export const chainsConfig: AppConfig['chains'] = {
   // edgware

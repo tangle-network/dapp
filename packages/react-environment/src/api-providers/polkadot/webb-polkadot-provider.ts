@@ -4,9 +4,7 @@ import {
   PolkaTXBuilder,
 } from '@webb-dapp/react-environment/api-providers/polkadot';
 import {
-  ActionsBuilder,
   ApiInitHandler,
-  InteractiveFeedback,
   WebbApiProvider,
   WebbMethods,
   WebbProviderEvents,
@@ -17,6 +15,7 @@ import { EventBus } from '@webb-tools/app-util';
 
 import { ApiPromise } from '@polkadot/api';
 import { InjectedExtension } from '@polkadot/extension-inject/types';
+import { ActionsBuilder, InteractiveFeedback } from '@webb-dapp/utils/webb-error';
 
 export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbApiProvider<WebbPolkadot> {
   readonly methods: WebbMethods<WebbPolkadot>;

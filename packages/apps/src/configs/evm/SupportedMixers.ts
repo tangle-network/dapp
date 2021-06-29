@@ -1,12 +1,4 @@
-import { chainsConfig } from '@webb-dapp/apps/configs/wallets/chain-config';
-import { currenciesConfig } from '@webb-dapp/apps/configs/wallets/currency-config';
-
-export enum WebbEVMChain {
-  Main = 1,
-  Rinkeby = 4,
-  Edgeware = 2021,
-  Beresheet = 2022,
-}
+import { chainsConfig, currenciesConfig } from '@webb-dapp/apps/configs';
 
 export const getNativeCurrencySymbol = (chainID: number): string => {
   const chain = Object.values(chainsConfig).find((chainsConfig) => chainsConfig.evmId === chainID);

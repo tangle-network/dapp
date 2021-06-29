@@ -1,8 +1,6 @@
-import { chainsPopulated } from '@webb-dapp/apps/configs/wallets/chains-populated';
-import { currenciesConfig } from '@webb-dapp/apps/configs/wallets/currency-config';
 import { Chain } from '@webb-dapp/react-environment';
 import { createElement } from 'react';
-import { WebbCurrencyId } from '@webb-dapp/apps/configs/wallets/webb-currency-id.enum';
+import { chainsPopulated, currenciesConfig, WebbCurrencyId } from '@webb-dapp/apps/configs';
 
 //TODO handle state from the provider
 const chains = chainsPopulated;

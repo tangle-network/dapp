@@ -1,8 +1,8 @@
-import EdgwareLogo from '@webb-dapp/apps/configs/wallets/logos/EdgwareLogo';
-import EtherLogo from '@webb-dapp/apps/configs/wallets/logos/Eth';
 import { AppConfig } from '@webb-dapp/react-environment';
 import React from 'react';
-import { WebbCurrencyId } from '@webb-dapp/apps/configs/wallets/webb-currency-id.enum';
+import { WebbCurrencyId } from './webb-currency-id.enum';
+import EdgwareLogo from '@webb-dapp/apps/configs/logos/EdgwareLogo';
+import EtherLogo from '@webb-dapp/apps/configs/logos/Eth';
 
 export const currenciesConfig: AppConfig['currencies'] = {
   [WebbCurrencyId.EDG]: {
@@ -16,7 +16,7 @@ export const currenciesConfig: AppConfig['currencies'] = {
     name: 'Edgware test token',
     symbol: 'tEDG',
     color: '',
-    id: 2,
+    id: WebbCurrencyId.TEDG,
     icon: React.createElement(EdgwareLogo),
   },
   [WebbCurrencyId.ETH]: {
