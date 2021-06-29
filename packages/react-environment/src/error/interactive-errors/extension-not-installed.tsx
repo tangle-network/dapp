@@ -1,13 +1,13 @@
 import { getPlatformMetaData, SupportedBrowsers } from '@webb-dapp/utils/platform';
-import ChromeLogo from '@webb-dapp/apps/configs/wallets/logos/ChromeLogo';
-import FireFoxLogo from '@webb-dapp/apps/configs/wallets/logos/FireFoxLogo';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
 import { Button, Typography } from '@material-ui/core';
-import { MetaMaskLogo } from '@webb-dapp/apps/configs/wallets/logos/MetaMaskLogo';
 import Icon from '@material-ui/core/Icon';
 import React from 'react';
-import { PolkaLogo } from '@webb-dapp/apps/configs/wallets/logos/PolkaLogo';
 import { InteractiveFeedback, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
+import FireFoxLogo from '@webb-dapp/apps/configs/logos/FireFoxLogo';
+import ChromeLogo from '@webb-dapp/apps/configs/logos/ChromeLogo';
+import { MetaMaskLogo } from '@webb-dapp/apps/configs/logos/MetaMaskLogo';
+import { PolkaLogo } from '@webb-dapp/apps/configs/logos/PolkaLogo';
 //TODO : move to wallet config
 const metaMaskConfig = {
   homeLink: 'https://https://metamask.io/',

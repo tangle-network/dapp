@@ -1,5 +1,5 @@
 import { Storage } from '@webb-dapp/utils';
-import { WebbEVMChain } from '../evm/SupportedMixers';
+import { WebbEVMChain } from '@webb-dapp/apps/configs';
 
 export const getStorageName = (chainID: number): string => {
   switch (chainID) {
@@ -14,9 +14,9 @@ export const getStorageName = (chainID: number): string => {
     default:
       throw new Error('unsupported chain');
   }
-}
+};
 
-export type MixerStorage = Record<string, { lastQueriedBlock: number, leaves: string[] }>;
+export type MixerStorage = Record<string, { lastQueriedBlock: number; leaves: string[] }>;
 
 export const evmChainStorageFactory = (chainId: number) => {
   // localStorage will have key: <name of chain>, value: { Record<contractAddress: string, info: DynamicMixerInfoStore> }
@@ -31,9 +31,7 @@ export const evmChainStorageFactory = (chainId: number) => {
           ...JSON.parse(storageCached),
         };
       }
-      return {
-
-      };
+      return {};
     },
   });
 };
