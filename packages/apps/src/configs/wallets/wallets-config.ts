@@ -1,16 +1,12 @@
 import { MetaMaskLogo } from '@webb-dapp/apps/configs/wallets/logos/MetaMaskLogo';
 import { PolkaLogo } from '@webb-dapp/apps/configs/wallets/logos/PolkaLogo';
 import { AppConfig } from '@webb-dapp/react-environment/webb-context';
-
-export enum WalletsIds {
-  Polkadot = 1,
-  MetaMask,
-  WalletConnect,
-}
+import { WalletId } from '@webb-dapp/apps/configs/wallets/wallet-id.enum';
+import { ChainId } from '@webb-dapp/apps/configs/wallets/chain-id.enum';
 
 export const walletsConfig: AppConfig['wallet'] = {
-  1: {
-    id: 1,
+  [WalletId.Polkadot]: {
+    id: WalletId.Polkadot,
     logo: PolkaLogo,
     name: 'polkadot-js',
     title: `Polkadot`,
@@ -18,10 +14,10 @@ export const walletsConfig: AppConfig['wallet'] = {
     async detect() {
       return true;
     },
-    supportedChainIds: [1, 2, 3],
+    supportedChainIds: [ChainId.Edgware, ChainId.EdgwareTestNet, ChainId.EdgwareLocalNet],
   },
-  2: {
-    id: 2,
+  [WalletId.MetaMask]: {
+    id: WalletId.MetaMask,
     logo: MetaMaskLogo,
     name: 'metamask',
     title: `MetaMask`,
@@ -33,7 +29,7 @@ export const walletsConfig: AppConfig['wallet'] = {
       }
       return false;
     },
-    supportedChainIds: [1, 2, 3, 4],
+    supportedChainIds: [ChainId.Edgware, ChainId.EdgwareTestNet, ChainId.EdgwareLocalNet, ChainId.AnyEvm],
   },
   // 3: {
   //   id: 3,

@@ -1,4 +1,4 @@
-import { WebbCurrencyId } from './currency';
+import { WebbCurrencyId } from '@webb-dapp/apps/configs/wallets/webb-currency-id.enum';
 
 export interface ChainConfig {
   id: number;

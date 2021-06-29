@@ -1,3 +1,6 @@
+import { chainsConfig } from '@webb-dapp/apps/configs/wallets/chain-config';
+import { currenciesConfig } from '@webb-dapp/apps/configs/wallets/currency-config';
+
 export enum WebbEVMChain {
   Main = 1,
   Rinkeby = 4,
@@ -6,26 +9,20 @@ export enum WebbEVMChain {
 }
 
 export const getNativeCurrencySymbol = (chainID: number): string => {
-  switch (chainID) {
-    case WebbEVMChain.Rinkeby:
-      return 'ETH';
-    case WebbEVMChain.Main:
-      return 'ETH';
-    case WebbEVMChain.Beresheet:
-      return 'tEDG';
-    case WebbEVMChain.Edgeware:
-      return 'EDG';
-    default:
-      throw new Error('unsupported chain');
+  const chain = Object.values(chainsConfig).find((chainsConfig) => chainsConfig.evmId === chainID);
+  if (chain) {
+    const nativeCurrency = chain.nativeCurrencyId;
+    return currenciesConfig[nativeCurrency].symbol;
   }
-}
+  return 'Unknown';
+};
 
 export type MixerInfo = {
   address: string;
   size: number;
   symbol: string;
   createdAtBlock: number;
-}
+};
 
 export const rinkebyMixers: MixerInfo[] = [
   {
@@ -73,6 +70,4 @@ export const beresheetMixers: MixerInfo[] = [
 ];
 
 // TODO: Deploy anchor contracts on Mainnet EVM.
-export const edgewareMixers: MixerInfo[] = [
-
-];
+export const edgewareMixers: MixerInfo[] = [];

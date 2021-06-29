@@ -1,7 +1,7 @@
 import Icon from '@material-ui/core/Icon';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import { chainsPopulated } from '@webb-dapp/apps/configs/wallets/chains-populated';
-import { walletsConfig, WalletsIds } from '@webb-dapp/apps/configs/wallets/wallets-config';
+import { walletsConfig } from '@webb-dapp/apps/configs/wallets/wallets-config';
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3';
 import { DimensionsProvider } from '@webb-dapp/react-environment/layout';
 import { StoreProvier } from '@webb-dapp/react-environment/store';
@@ -20,6 +20,7 @@ import ChromeLogo from '@webb-dapp/apps/configs/wallets/logos/ChromeLogo';
 import { extensionNotInstalled } from './error';
 import { FeedbackBody, InteractiveFeedback, WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import { WebbEVMChain } from '@webb-dapp/apps/configs/evm/SupportedMixers';
+import { WalletId } from '@webb-dapp/apps/configs/wallets/wallet-id.enum';
 
 interface WebbProviderProps extends BareProps {
   applicationName: string;
@@ -127,7 +128,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
       setActiveWallet(wallet);
       let activeApi: WebbApiProvider<any> | null = null;
       switch (wallet.id) {
-        case WalletsIds.Polkadot:
+        case WalletId.Polkadot:
           {
             const url = chain.url;
             const webbPolkadot = await WebbPolkadot.init('Webb DApp', [url], {
@@ -144,7 +145,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
             await webbPolkadot.accounts.setActiveAccount(accounts[0]);
           }
           break;
-        case WalletsIds.MetaMask:
+        case WalletId.MetaMask:
           {
             const web3Provider = await Web3Provider.fromExtension();
             const chainId = await web3Provider.network; // storage based on network id
@@ -253,7 +254,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
             activeApi = webbWeb3Provider;
           }
           break;
-        case WalletsIds.WalletConnect: {
+        case WalletId.WalletConnect: {
           const provider = new WalletConnectProvider({
             rpc: {
               1: 'https://mainnet.mycustomnode.com',

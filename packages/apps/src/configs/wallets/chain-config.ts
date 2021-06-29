@@ -2,11 +2,13 @@ import { AppConfig } from '@webb-dapp/react-environment/webb-context';
 import EdgwareLogo from '@webb-dapp/apps/configs/wallets/logos/EdgwareLogo';
 import EtherLogo from '@webb-dapp/apps/configs/wallets/logos/Eth';
 import { WebbEVMChain } from '@webb-dapp/apps/configs/evm/SupportedMixers';
+import { ChainId } from './chain-id.enum';
+import { WebbCurrencyId } from './webb-currency-id.enum';
 
 export const chainsConfig: AppConfig['chains'] = {
   // edgware
-  1: {
-    id: 1,
+  [ChainId.EdgwareLocalNet]: {
+    id: ChainId.EdgwareLocalNet,
     group: 'edgware',
     tag: 'dev',
     evmId: undefined,
@@ -15,58 +17,58 @@ export const chainsConfig: AppConfig['chains'] = {
     name: 'Edgware Development',
     currencies: [
       {
-        currencyId: 1,
+        currencyId: WebbCurrencyId.EDG,
         enabled: true,
       },
     ],
-    nativeCurrencyId: 1,
+    nativeCurrencyId: WebbCurrencyId.EDG,
   },
-  2: {
+  [ChainId.EdgwareTestNet]: {
     group: 'edgware',
     tag: 'test',
-    id: 2,
+    id: ChainId.EdgwareTestNet,
     evmId: WebbEVMChain.Beresheet,
     name: 'Beresheet (Edgeware Testnet)',
     url: 'wss://beresheet1.edgewa.re',
     logo: EdgwareLogo,
     currencies: [
       {
-        currencyId: 1,
+        currencyId: WebbCurrencyId.TEDG,
         enabled: true,
       },
     ],
-    nativeCurrencyId: 1,
+    nativeCurrencyId: WebbCurrencyId.TEDG,
   },
-  3: {
+  [ChainId.Edgware]: {
     group: 'edgware',
     tag: 'live',
-    id: 3,
+    id: ChainId.Edgware,
     evmId: undefined,
     name: 'Edgeware',
     url: 'wss://mainnet1.edgewa.re',
     logo: EdgwareLogo,
     currencies: [
       {
-        currencyId: 1,
+        currencyId: WebbCurrencyId.EDG,
         enabled: true,
       },
     ],
-    nativeCurrencyId: 1,
+    nativeCurrencyId: WebbCurrencyId.EDG,
   },
   // evm
-  4: {
+  [ChainId.AnyEvm]: {
     group: 'eth',
-    id: 4,
+    id: ChainId.AnyEvm,
     evmId: undefined,
     name: 'Ethereum',
     url: '',
     logo: EtherLogo,
     currencies: [
       {
-        currencyId: 3,
+        currencyId: WebbCurrencyId.ETH,
         enabled: true,
       },
     ],
-    nativeCurrencyId: 3,
+    nativeCurrencyId: WebbCurrencyId.ETH,
   },
 };
