@@ -103,15 +103,32 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
   };
 
   /// this will set the active api and the accounts
-  const setActiveApiWithAccounts = async (nextActiveApi: WebbApiProvider<any> | undefined): Promise<void> => {
+  const setActiveApiWithAccounts = async (
+    nextActiveApi: WebbApiProvider<any> | undefined,
+    chainId: number
+  ): Promise<void> => {
     if (nextActiveApi) {
       const accounts = await nextActiveApi.accounts.accounts();
       setAccounts(accounts);
-      await setActiveAccount(accounts[0]);
+
+      if (networkStorage) {
+        const networkDefaultConfig = await networkStorage.get('networksConfig');
+        let defaultAccount = networkDefaultConfig?.[chainId]?.defaultAccount;
+        defaultAccount = defaultAccount ?? accounts[0]?.address;
+        const defaultFromSettings = accounts.find((account) => account.address === defaultAccount);
+        if (defaultFromSettings) {
+          _setActiveAccount(defaultFromSettings);
+          await activeApi.accounts.setActiveAccount(defaultFromSettings);
+        }
+      } else {
+        await setActiveAccount(accounts[0]);
+      }
+      setActiveApi(nextActiveApi);
+    } else {
+      setActiveApi(nextActiveApi);
+      setAccounts([]);
+      _setActiveAccount(null);
     }
-    setActiveApi(nextActiveApi);
-    setAccounts([]);
-    _setActiveAccount(null);
   };
   /// Error handler for the `WebbError`
   const catchWebbError = (e: WebbError) => {
@@ -164,7 +181,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
                 registerInteractiveFeedback(setInteractiveFeedbacks, feedback);
               },
             });
-            await setActiveApiWithAccounts(webbPolkadot);
+            await setActiveApiWithAccounts(webbPolkadot, chain.id);
             setLoading(false);
           }
           break;
@@ -176,7 +193,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
             //TODO show feedback if the `chain.evmId` isn't the same
             const chainId = await web3Provider.network; // storage based on network id
             const webbWeb3Provider = await WebbWeb3Provider.init(web3Provider, chainId);
-            await setActiveApiWithAccounts(webbWeb3Provider);
+            await setActiveApiWithAccounts(webbWeb3Provider, chain.id);
             /// listen to `providerUpdate` by MetaMask
             webbWeb3Provider.on('providerUpdate', async ([chainId]) => {
               /// get the nextChain from MetaMask change
@@ -280,6 +297,13 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
         if (defaultFromSettings) {
           _setActiveAccount(defaultFromSettings);
           await activeApi.accounts.setActiveAccount(defaultFromSettings);
+          networkStorage?.set('networksConfig', {
+            ...networkDefaultConfig,
+            [chainConfig.id]: {
+              ...chainConfig[chainConfig.id],
+              defaultAccount: defaultFromSettings.address,
+            },
+          });
         }
       }
     };
