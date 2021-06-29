@@ -19,7 +19,6 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
   private initialised = false;
 
   private async getMerkleTree(): Promise<MerkleTree> {
-    this.inner.api;
     // already ready
     if (this.merkleTree) {
       await this.merkleTree.restart(new Worker());
