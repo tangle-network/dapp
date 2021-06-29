@@ -1,25 +1,22 @@
 import Icon from '@material-ui/core/Icon';
 import WalletConnectProvider from '@walletconnect/web3-provider';
+import { chainsPopulated } from '@webb-dapp/apps/configs';
+import { WalletId } from '@webb-dapp/apps/configs/wallets/wallet-id.enum';
 import { walletsConfig } from '@webb-dapp/apps/configs/wallets/wallets-config';
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3';
 import { DimensionsProvider } from '@webb-dapp/react-environment/layout';
 import { StoreProvier } from '@webb-dapp/react-environment/store';
 import { notificationApi } from '@webb-dapp/ui-components/notification';
 import { BareProps } from '@webb-dapp/ui-components/types';
+import { InteractiveFeedback, WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import { Account } from '@webb-dapp/wallet/account/Accounts.adapter';
 import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
-import { WebbEVMChain } from '@webb-dapp/apps/configs';
+
 import { WebbPolkadot } from './api-providers/polkadot';
+import { extensionNotInstalled, unsupportedChain } from './error';
 import { SettingProvider } from './SettingProvider';
 import { Chain, netStorageFactory, NetworkStorage, Wallet, WebbApiProvider, WebbContext } from './webb-context';
-import { detect } from 'detect-browser';
-import { extensionNotInstalled } from './error';
-import { FeedbackBody, InteractiveFeedback, WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
-import { WalletId } from '@webb-dapp/apps/configs/wallets/wallet-id.enum';
-import { chainsPopulated } from '@webb-dapp/apps/configs';
-import FireFoxLogo from '@webb-dapp/apps/configs/logos/FireFoxLogo';
-import ChromeLogo from '@webb-dapp/apps/configs/logos/ChromeLogo';
 
 interface WebbProviderProps extends BareProps {
   applicationName: string;
@@ -39,26 +36,7 @@ const registerInteractiveFeedback = (
     off && off?.();
   });
 };
-const getPlatformMetaData = () => {
-  const browser = detect();
-  const name = browser?.name;
-  switch (name) {
-    case 'firefox':
-      return {
-        name: 'firefox',
-        logo: FireFoxLogo,
-        storeName: 'FireFox Addons',
-      };
-    case 'chrome':
-      return {
-        name: 'chrome',
-        logo: ChromeLogo,
-        storeName: 'Chrome web store',
-      };
-    default:
-      throw new Error('unsupported platform');
-  }
-};
+
 export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Dapp', children }) => {
   const [activeWallet, setActiveWallet] = useState<Wallet | undefined>(undefined);
   const [activeChain, setActiveChain] = useState<Chain | undefined>(undefined);
@@ -69,7 +47,9 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
   const [activeAccount, _setActiveAccount] = useState<Account | null>(null);
   const [isInit, setIsInit] = useState(true);
 
+  /// storing all interactive feedbacks to show the modals
   const [interactiveFeedbacks, setInteractiveFeedbacks] = useState<InteractiveFeedback[]>([]);
+  /// An effect/hook will be called every time the active api is switched, it will cancel all the interactive feedbacks
   useEffect(() => {
     setInteractiveFeedbacks([]);
     const off = activeApi?.on('interactiveFeedback', (feedback) => {
@@ -81,6 +61,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
     };
   }, [activeApi]);
 
+  /// the active feedback is the last one
   const activeFeedback = useMemo(() => {
     if (interactiveFeedbacks.length === 0) {
       return null;
@@ -88,6 +69,8 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
     return interactiveFeedbacks[interactiveFeedbacks.length - 1];
   }, [interactiveFeedbacks]);
 
+  /// callback for setting active account
+  /// it will store on the provider and the storage of the network
   const setActiveAccount = useCallback(
     async (account: Account<any>) => {
       if (networkStorage && activeChain) {
@@ -107,6 +90,8 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
     },
     [activeApi, networkStorage, activeChain]
   );
+
+  /// Forcefully tell react to rerender the application with api change
   const forceActiveApiUpdate = (activeApi: WebbApiProvider<any>) => {
     setActiveApi(undefined);
     setActiveApi(activeApi);
@@ -116,15 +101,76 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
       }
     });
   };
+
+  /// this will set the active api and the accounts
+  const setActiveApiWithAccounts = async (
+    nextActiveApi: WebbApiProvider<any> | undefined,
+    chainId: number
+  ): Promise<void> => {
+    if (nextActiveApi) {
+      const accounts = await nextActiveApi.accounts.accounts();
+      setAccounts(accounts);
+
+      if (networkStorage) {
+        const networkDefaultConfig = await networkStorage.get('networksConfig');
+        let defaultAccount = networkDefaultConfig?.[chainId]?.defaultAccount;
+        defaultAccount = defaultAccount ?? accounts[0]?.address;
+        const defaultFromSettings = accounts.find((account) => account.address === defaultAccount);
+        if (defaultFromSettings) {
+          _setActiveAccount(defaultFromSettings);
+          await activeApi.accounts.setActiveAccount(defaultFromSettings);
+        }
+      } else {
+        await setActiveAccount(accounts[0]);
+      }
+      setActiveApi(nextActiveApi);
+    } else {
+      setActiveApi(nextActiveApi);
+      setAccounts([]);
+      _setActiveAccount(null);
+    }
+  };
+  /// Error handler for the `WebbError`
+  const catchWebbError = (e: WebbError) => {
+    const errorMessage = e.errorMessage;
+    const code = errorMessage.code;
+    switch (code) {
+      case WebbErrorCodes.UnsupportedChain:
+        {
+          setActiveChain(undefined);
+          const interactiveFeedback = unsupportedChain();
+          if (interactiveFeedback) {
+            registerInteractiveFeedback(setInteractiveFeedbacks, interactiveFeedback);
+          }
+        }
+        break;
+      case WebbErrorCodes.MixerSizeNotFound:
+        break;
+      case WebbErrorCodes.MetaMaskExtensionNotInstalled:
+      case WebbErrorCodes.PolkaDotExtensionNotInstalled:
+        {
+          const interactiveFeedback = extensionNotInstalled(
+            code === WebbErrorCodes.PolkaDotExtensionNotInstalled ? 'polkadot' : 'metamask'
+          );
+          setActiveChain(undefined);
+          registerInteractiveFeedback(setInteractiveFeedbacks, interactiveFeedback);
+        }
+        break;
+    }
+  };
+  /// Network switcher
   const switchChain = async (chain: Chain, _wallet: Wallet) => {
     const wallet = _wallet || activeWallet;
     // wallet cleanup
+    /// if new wallet id isn't the same of the current then the dApp is dealing with api change
     if (_wallet.id !== activeWallet?.id && activeApi) {
       await activeApi.destroy();
     }
     try {
+      /// settings the user selection
       setActiveChain(chain);
       setActiveWallet(wallet);
+      /// init the active api value
       let activeApi: WebbApiProvider<any> | null = null;
       switch (wallet.id) {
         case WalletId.Polkadot:
@@ -135,109 +181,27 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
                 registerInteractiveFeedback(setInteractiveFeedbacks, feedback);
               },
             });
-            setActiveApi(webbPolkadot);
-            activeApi = webbPolkadot;
+            await setActiveApiWithAccounts(webbPolkadot, chain.id);
             setLoading(false);
-            const accounts = await webbPolkadot.accounts.accounts();
-            setAccounts(accounts);
-            await setActiveAccount(accounts[0]);
-            await webbPolkadot.accounts.setActiveAccount(accounts[0]);
           }
           break;
         case WalletId.MetaMask:
           {
+            /// init provider from the extension
             const web3Provider = await Web3Provider.fromExtension();
+            /// get the current active chain from metamask
+            //TODO show feedback if the `chain.evmId` isn't the same
             const chainId = await web3Provider.network; // storage based on network id
             const webbWeb3Provider = await WebbWeb3Provider.init(web3Provider, chainId);
-            const accounts = await webbWeb3Provider.accounts.accounts();
-            setAccounts(accounts);
-            await setActiveAccount(accounts[0]);
-            await webbWeb3Provider.accounts.setActiveAccount(accounts[0]);
-            setActiveApi(webbWeb3Provider);
+            await setActiveApiWithAccounts(webbWeb3Provider, chain.id);
+            /// listen to `providerUpdate` by MetaMask
             webbWeb3Provider.on('providerUpdate', async ([chainId]) => {
+              /// get the nextChain from MetaMask change
               const nextChain = Object.values(chains).find((chain) => chain.evmId === chainId);
-              if (!nextChain) {
-                try {
-                  const name = WebbWeb3Provider.storageName(chainId);
-                  notificationApi({
-                    message: 'Web3: changed the connected network',
-                    variant: 'info',
-                    Icon: React.createElement(Icon, null, ['leak_add']),
-                    secondaryMessage: `Connection is switched to ${name} chain`,
-                  });
-
-                  webbWeb3Provider.setStorage(chainId);
-                  setActiveChain(chain);
-                  setActiveWallet(wallet);
-                  forceActiveApiUpdate(webbWeb3Provider);
-                } catch (e) {
-                  setActiveChain(undefined);
-                  setActiveWallet(wallet);
-                  if (e instanceof WebbError) {
-                    const errorMessage = e.errorMessage;
-                    const code = errorMessage.code;
-                    let feedbackBody: FeedbackBody = [];
-                    let actions = InteractiveFeedback.actionsBuilder().actions();
-                    let interactiveFeedback: InteractiveFeedback;
-                    switch (code) {
-                      case WebbErrorCodes.UnsupportedChain:
-                        {
-                          setActiveChain(undefined);
-                          feedbackBody = InteractiveFeedback.feedbackEntries([
-                            {
-                              header: 'Switched to unsupported chain',
-                            },
-                            {
-                              content: 'Please consider switching back to a supported chain',
-                            },
-                            {
-                              list: [
-                                WebbWeb3Provider.storageName(WebbEVMChain.Rinkeby),
-                                WebbWeb3Provider.storageName(WebbEVMChain.Beresheet),
-                                WebbWeb3Provider.storageName(WebbEVMChain.Main),
-                              ],
-                            },
-                            {
-                              content: 'Switch back via MetaMask',
-                            },
-                          ]);
-                          actions = InteractiveFeedback.actionsBuilder()
-                            .action(
-                              'Ok',
-                              () => {
-                                interactiveFeedback?.cancel();
-                              },
-                              'success'
-                            )
-                            .actions();
-                          interactiveFeedback = new InteractiveFeedback(
-                            'error',
-                            actions,
-                            () => {
-                              interactiveFeedback?.cancel();
-                            },
-                            feedbackBody,
-                            WebbErrorCodes.UnsupportedChain
-                          );
-                          if (interactiveFeedback) {
-                            registerInteractiveFeedback(setInteractiveFeedbacks, interactiveFeedback);
-                          }
-                        }
-                        break;
-                      case WebbErrorCodes.MixerSizeNotFound:
-                        break;
-                    }
-                  }
-
-                  // notificationApi({
-                  //   message: 'Web3: Switched to unsupported chain',
-                  //   variant: 'error',
-                  //   Icon: React.createElement(Icon, null, ['error']),
-                  //   secondaryMessage: `Connection is switched to ${name} chain`,
-                  // });
-                }
-              } else {
+              try {
+                /// this will throw if the user switched to unsupported chain
                 const name = WebbWeb3Provider.storageName(chainId);
+                /// Alerting that the provider has changed via the extension
                 notificationApi({
                   message: 'Web3: changed the connected network',
                   variant: 'info',
@@ -245,9 +209,18 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
                   secondaryMessage: `Connection is switched to ${name} chain`,
                 });
                 webbWeb3Provider.setStorage(chainId);
-                setActiveChain(nextChain);
                 setActiveWallet(wallet);
                 forceActiveApiUpdate(webbWeb3Provider);
+                setActiveChain(nextChain ? nextChain : chain);
+              } catch (e) {
+                /// set the chain to be undefined as this won't be usable
+                // TODO mark the api as not ready
+                setActiveChain(undefined);
+                setActiveWallet(wallet);
+                if (e instanceof WebbError) {
+                  /// Catching the errors for the switcher from the event
+                  catchWebbError(e);
+                }
               }
             });
             activeApi = webbWeb3Provider;
@@ -280,74 +253,13 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
       return activeApi;
     } catch (e) {
       if (e instanceof WebbError) {
-        const errorMessage = e.errorMessage;
-        const code = errorMessage.code;
-        let feedbackBody: FeedbackBody = [];
-        let actions = InteractiveFeedback.actionsBuilder().actions();
-        let interactiveFeedback: InteractiveFeedback;
-        switch (code) {
-          case WebbErrorCodes.UnsupportedChain:
-            {
-              setActiveChain(undefined);
-              feedbackBody = InteractiveFeedback.feedbackEntries([
-                {
-                  header: 'Switched to unsupported chain',
-                },
-                {
-                  content: 'Please consider switching back to a supported chain',
-                },
-                {
-                  list: [
-                    WebbWeb3Provider.storageName(WebbEVMChain.Rinkeby),
-                    WebbWeb3Provider.storageName(WebbEVMChain.Beresheet),
-                    WebbWeb3Provider.storageName(WebbEVMChain.Main),
-                  ],
-                },
-                {
-                  content: 'Switch back via MetaMask',
-                },
-              ]);
-              actions = InteractiveFeedback.actionsBuilder()
-                .action(
-                  'Ok',
-                  () => {
-                    interactiveFeedback?.cancel();
-                  },
-                  'success'
-                )
-                .actions();
-              interactiveFeedback = new InteractiveFeedback(
-                'error',
-                actions,
-                () => {
-                  interactiveFeedback?.cancel();
-                },
-                feedbackBody,
-                WebbErrorCodes.UnsupportedChain
-              );
-              if (interactiveFeedback) {
-                registerInteractiveFeedback(setInteractiveFeedbacks, interactiveFeedback);
-              }
-            }
-            break;
-          case WebbErrorCodes.MetaMaskExtensionNotInstalled:
-          case WebbErrorCodes.PolkaDotExtensionNotInstalled:
-            {
-              const interactiveFeedback = extensionNotInstalled(
-                code === WebbErrorCodes.PolkaDotExtensionNotInstalled ? 'polkadot' : 'metamask'
-              );
-              setActiveChain(undefined);
-              registerInteractiveFeedback(setInteractiveFeedbacks, interactiveFeedback);
-            }
-            break;
-          case WebbErrorCodes.MixerSizeNotFound:
-            break;
-        }
+        /// Catch the errors for the switcher while switching
+        catchWebbError(e);
       }
       return null;
     }
   };
-
+  /// a util will store the network/wallet config before switching
   const switchChainAndStore = async (chain: Chain, wallet: Wallet) => {
     if (networkStorage) {
       await Promise.all([
@@ -358,17 +270,22 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
     return switchChain(chain, wallet);
   };
   useEffect(() => {
+    /// init the dApp
     const init = async () => {
       const networkStorage = await netStorageFactory();
       setNetworkStorage(networkStorage);
+      /// get the default wallet and network from storage
       const [net, wallet] = await Promise.all([
         networkStorage.get('defaultNetwork'),
         networkStorage.get('defaultWallet'),
       ]);
+      /// if there's no wallet nor chain abort
       if (!net || !wallet) {
         return;
       }
+      /// chain config by net id
       const chainConfig = chains[net];
+      // wallet config by chain
       const walletConfig = chainConfig.wallets[wallet] || Object.values(chainConfig)[0];
       const activeApi = await switchChain(chainConfig, walletConfig);
       const networkDefaultConfig = await networkStorage.get('networksConfig');
@@ -380,6 +297,13 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
         if (defaultFromSettings) {
           _setActiveAccount(defaultFromSettings);
           await activeApi.accounts.setActiveAccount(defaultFromSettings);
+          networkStorage?.set('networksConfig', {
+            ...networkDefaultConfig,
+            [chainConfig.id]: {
+              ...chainConfig[chainConfig.id],
+              defaultAccount: defaultFromSettings.address,
+            },
+          });
         }
       }
     };
