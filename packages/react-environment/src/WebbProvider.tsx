@@ -47,7 +47,9 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
   const [activeAccount, _setActiveAccount] = useState<Account | null>(null);
   const [isInit, setIsInit] = useState(true);
 
+  /// storing all interactive feedbacks to show the modals
   const [interactiveFeedbacks, setInteractiveFeedbacks] = useState<InteractiveFeedback[]>([]);
+  /// An effect/hook will be called every time the active api is switched, it will cancel all the interactive feedbacks
   useEffect(() => {
     setInteractiveFeedbacks([]);
     const off = activeApi?.on('interactiveFeedback', (feedback) => {
@@ -59,6 +61,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
     };
   }, [activeApi]);
 
+  /// the active feedback is the last one
   const activeFeedback = useMemo(() => {
     if (interactiveFeedbacks.length === 0) {
       return null;
@@ -66,6 +69,8 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
     return interactiveFeedbacks[interactiveFeedbacks.length - 1];
   }, [interactiveFeedbacks]);
 
+  /// callback for setting active account
+  /// it will store on the provider and the storage of the network
   const setActiveAccount = useCallback(
     async (account: Account<any>) => {
       if (networkStorage && activeChain) {
@@ -85,6 +90,8 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
     },
     [activeApi, networkStorage, activeChain]
   );
+
+  /// Forcefully tell react to rerender the application with api change
   const forceActiveApiUpdate = (activeApi: WebbApiProvider<any>) => {
     setActiveApi(undefined);
     setActiveApi(activeApi);
@@ -95,6 +102,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
     });
   };
 
+  /// this will set the active api and the accounts
   const setActiveApiWithAccounts = async (nextActiveApi: WebbApiProvider<any> | undefined): Promise<void> => {
     if (nextActiveApi) {
       const accounts = await nextActiveApi.accounts.accounts();
@@ -105,6 +113,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
     setAccounts([]);
     _setActiveAccount(null);
   };
+  /// Error handler for the `WebbError`
   const catchWebbError = (e: WebbError) => {
     const errorMessage = e.errorMessage;
     const code = errorMessage.code;
@@ -132,9 +141,11 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
         break;
     }
   };
+  /// Network switcher
   const switchChain = async (chain: Chain, _wallet: Wallet) => {
     const wallet = _wallet || activeWallet;
     // wallet cleanup
+    /// if new wallet id isn't the same of the current then the dApp is dealing with api change
     if (_wallet.id !== activeWallet?.id && activeApi) {
       await activeApi.destroy();
     }
@@ -159,15 +170,21 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
           break;
         case WalletId.MetaMask:
           {
+            /// init provider from the extension
             const web3Provider = await Web3Provider.fromExtension();
+            /// get the current active chain from metamask
+            //TODO show feedback if the `chain.evmId` isn't the same
             const chainId = await web3Provider.network; // storage based on network id
             const webbWeb3Provider = await WebbWeb3Provider.init(web3Provider, chainId);
             await setActiveApiWithAccounts(webbWeb3Provider);
-
+            /// listen to `providerUpdate` by MetaMask
             webbWeb3Provider.on('providerUpdate', async ([chainId]) => {
+              /// get the nextChain from MetaMask change
               const nextChain = Object.values(chains).find((chain) => chain.evmId === chainId);
               try {
+                /// this will throw if the user switched to unsupported chain
                 const name = WebbWeb3Provider.storageName(chainId);
+                /// Alerting that the provider has changed via the extension
                 notificationApi({
                   message: 'Web3: changed the connected network',
                   variant: 'info',
@@ -179,9 +196,12 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
                 forceActiveApiUpdate(webbWeb3Provider);
                 setActiveChain(nextChain ? nextChain : chain);
               } catch (e) {
+                /// set the chain to be undefined as this won't be usable
+                // TODO mark the api as not ready
                 setActiveChain(undefined);
                 setActiveWallet(wallet);
                 if (e instanceof WebbError) {
+                  /// Catching the errors for the switcher from the event
                   catchWebbError(e);
                 }
               }
@@ -216,12 +236,13 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
       return activeApi;
     } catch (e) {
       if (e instanceof WebbError) {
+        /// Catch the errors for the switcher while switching
         catchWebbError(e);
       }
       return null;
     }
   };
-
+  /// a util will store the network/wallet config before switching
   const switchChainAndStore = async (chain: Chain, wallet: Wallet) => {
     if (networkStorage) {
       await Promise.all([
@@ -232,17 +253,22 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
     return switchChain(chain, wallet);
   };
   useEffect(() => {
+    /// init the dApp
     const init = async () => {
       const networkStorage = await netStorageFactory();
       setNetworkStorage(networkStorage);
+      /// get the default wallet and network from storage
       const [net, wallet] = await Promise.all([
         networkStorage.get('defaultNetwork'),
         networkStorage.get('defaultWallet'),
       ]);
+      /// if there's no wallet nor chain abort
       if (!net || !wallet) {
         return;
       }
+      /// chain config by net id
       const chainConfig = chains[net];
+      // wallet config by chain
       const walletConfig = chainConfig.wallets[wallet] || Object.values(chainConfig)[0];
       const activeApi = await switchChain(chainConfig, walletConfig);
       const networkDefaultConfig = await networkStorage.get('networksConfig');
