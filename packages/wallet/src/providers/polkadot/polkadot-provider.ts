@@ -95,6 +95,7 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
           await connectWs(wsProvider);
           /// disconnect the pin connection
           await wsProvider.disconnect();
+          wsProvider.connectWithRetry();
           /// create a new WS Provider that is failure friendly and will retry to connect
           /// no need to call `.connect` the Promise api will handle this
           wsProvider = new WsProvider([endPoint, ...allEndPoints]);
