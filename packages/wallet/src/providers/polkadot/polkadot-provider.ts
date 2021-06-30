@@ -1,4 +1,6 @@
+import { ApiInitHandler } from '@webb-dapp/react-environment';
 import { PolkaTXBuilder } from '@webb-dapp/react-environment/api-providers/polkadot';
+import { InteractiveFeedback, WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import { PolkadotAccount, PolkadotAccounts } from '@webb-dapp/wallet/providers/polkadot/polkadot-accounts';
 import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polkadot/transaction-notification-config';
 import { optionsWithEdgeware as options } from '@webb-tools/api';
@@ -8,8 +10,6 @@ import { isNumber } from 'lodash';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { web3Enable } from '@polkadot/extension-dapp';
 import { InjectedExtension } from '@polkadot/extension-inject/types';
-import { ApiInitHandler } from '@webb-dapp/react-environment';
-import { InteractiveFeedback, WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 
 type ExtensionProviderEvents = {
   connected: undefined;

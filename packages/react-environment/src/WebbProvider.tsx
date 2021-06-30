@@ -192,6 +192,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
               },
             });
             await setActiveApiWithAccounts(webbPolkadot, chain.id);
+            activeApi = webbPolkadot;
             setLoading(false);
           }
           break;
@@ -304,6 +305,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
         let defaultAccount = networkDefaultConfig[chainConfig.id]?.defaultAccount;
         defaultAccount = defaultAccount ?? accounts[0]?.address;
         const defaultFromSettings = accounts.find((account) => account.address === defaultAccount);
+        console.log(defaultFromSettings, 'defaultFromSettings');
         if (defaultFromSettings) {
           _setActiveAccount(defaultFromSettings);
           await activeApi.accounts.setActiveAccount(defaultFromSettings);
