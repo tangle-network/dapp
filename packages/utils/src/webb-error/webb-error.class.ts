@@ -10,8 +10,10 @@ export enum WebbErrorCodes {
   NoteParsingFailure,
   /// PolkaDot extension not installed
   PolkaDotExtensionNotInstalled,
-  /// MetaMas extension not installed
+  /// MetaMasK extension not installed
   MetaMaskExtensionNotInstalled,
+  /// Runtime Error on the provider
+  InsufficientProviderInterface,
 }
 
 /// An Error message with error metadata
@@ -73,6 +75,11 @@ export class WebbError extends Error {
         return {
           code,
           message: 'MetaMask extension no installed',
+        };
+      case WebbErrorCodes.InsufficientProviderInterface:
+        return {
+          code,
+          message: 'switched to insufficient api interface',
         };
       default:
         return {

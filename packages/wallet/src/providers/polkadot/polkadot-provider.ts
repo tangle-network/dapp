@@ -1,15 +1,15 @@
+import { ApiInitHandler } from '@webb-dapp/react-environment';
 import { PolkaTXBuilder } from '@webb-dapp/react-environment/api-providers/polkadot';
+import { InteractiveFeedback, WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import { PolkadotAccount, PolkadotAccounts } from '@webb-dapp/wallet/providers/polkadot/polkadot-accounts';
 import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polkadot/transaction-notification-config';
 import { optionsWithEdgeware as options } from '@webb-tools/api';
-import { EventBus } from '@webb-tools/app-util';
+import { EventBus, LoggerService } from '@webb-tools/app-util';
 import { isNumber } from 'lodash';
 
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { web3Enable } from '@polkadot/extension-dapp';
 import { InjectedExtension } from '@polkadot/extension-inject/types';
-import { ApiInitHandler } from '@webb-dapp/react-environment';
-import { InteractiveFeedback, WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 
 type ExtensionProviderEvents = {
   connected: undefined;
@@ -21,6 +21,7 @@ type ExtensionProviderEvents = {
 
   accountsChange: PolkadotAccount[];
 };
+const logger = LoggerService.get('Polkadot-Provider');
 
 export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
   private _accounts: PolkadotAccounts;
@@ -52,8 +53,11 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
     onError: ApiInitHandler['onError']
   ): Promise<[ApiPromise, InjectedExtension]> {
     const extensions = await web3Enable(appName);
-    console.log(extensions);
-    if (extensions.length === 0) throw WebbError.from(WebbErrorCodes.PolkaDotExtensionNotInstalled);
+    logger.info('Extensions', extensions);
+    if (extensions.length === 0) {
+      logger.warn(`Polkadot extension isn't installed`);
+      throw WebbError.from(WebbErrorCodes.PolkaDotExtensionNotInstalled);
+    }
     const currentExtensions = extensions[0];
     // eslint-disable-next-line no-async-promise-executor
     const wsProvider = await new Promise<WsProvider>(async (resolve, reject) => {
@@ -81,6 +85,7 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
        * */
       /// global interActiveFeedback for access on multiple scopes
       let interActiveFeedback: InteractiveFeedback;
+      logger.trace(`Trying to connect to `, [endPoint, ...allEndPoints], `Try: ${tryNumber}`);
       while (keepRetrying) {
         wsProvider = new WsProvider([endPoint, ...allEndPoints], false);
 
@@ -92,13 +97,16 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
 
         try {
           /// wait for ping connection
+          logger.trace(`Performing the ping connection`);
           await connectWs(wsProvider);
           /// disconnect the pin connection
-          await wsProvider.disconnect();
+          logger.info(`Ping connection Ok try: ${tryNumber}  for `, [endPoint, ...allEndPoints]);
+          wsProvider.disconnect().then(() => {
+            logger.trace(`Killed the ping connection`);
+          });
           /// create a new WS Provider that is failure friendly and will retry to connect
           /// no need to call `.connect` the Promise api will handle this
-          wsProvider = new WsProvider([endPoint, ...allEndPoints]);
-          resolve(wsProvider);
+          resolve(new WsProvider([endPoint, ...allEndPoints]));
           // @ts-ignore
           if (typeof interActiveFeedback !== 'undefined') {
             /// cancel the feedback as  the connection is established

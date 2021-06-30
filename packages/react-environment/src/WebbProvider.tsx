@@ -4,6 +4,7 @@ import { chainsPopulated } from '@webb-dapp/apps/configs';
 import { WalletId } from '@webb-dapp/apps/configs/wallets/wallet-id.enum';
 import { walletsConfig } from '@webb-dapp/apps/configs/wallets/wallets-config';
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3';
+import { insufficientApiInterface } from '@webb-dapp/react-environment/error/interactive-errors/insufficient-api-interface';
 import { DimensionsProvider } from '@webb-dapp/react-environment/layout';
 import { StoreProvier } from '@webb-dapp/react-environment/store';
 import { notificationApi } from '@webb-dapp/ui-components/notification';
@@ -118,7 +119,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
         const defaultFromSettings = accounts.find((account) => account.address === defaultAccount);
         if (defaultFromSettings) {
           _setActiveAccount(defaultFromSettings);
-          await activeApi.accounts.setActiveAccount(defaultFromSettings);
+          await activeApi?.accounts.setActiveAccount(defaultFromSettings);
         }
       } else {
         await setActiveAccount(accounts[0]);
@@ -156,6 +157,15 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
           registerInteractiveFeedback(setInteractiveFeedbacks, interactiveFeedback);
         }
         break;
+      case WebbErrorCodes.InsufficientProviderInterface:
+        {
+          setActiveChain(undefined);
+          const interactiveFeedback = insufficientApiInterface();
+          registerInteractiveFeedback(setInteractiveFeedbacks, interactiveFeedback);
+        }
+        break;
+      default:
+        alert(code);
     }
   };
   /// Network switcher
@@ -182,6 +192,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
               },
             });
             await setActiveApiWithAccounts(webbPolkadot, chain.id);
+            activeApi = webbPolkadot;
             setLoading(false);
           }
           break;
@@ -294,13 +305,14 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
         let defaultAccount = networkDefaultConfig[chainConfig.id]?.defaultAccount;
         defaultAccount = defaultAccount ?? accounts[0]?.address;
         const defaultFromSettings = accounts.find((account) => account.address === defaultAccount);
+        console.log(defaultFromSettings, 'defaultFromSettings');
         if (defaultFromSettings) {
           _setActiveAccount(defaultFromSettings);
           await activeApi.accounts.setActiveAccount(defaultFromSettings);
           networkStorage?.set('networksConfig', {
             ...networkDefaultConfig,
             [chainConfig.id]: {
-              ...chainConfig[chainConfig.id],
+              ...chainConfig,
               defaultAccount: defaultFromSettings.address,
             },
           });

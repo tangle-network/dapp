@@ -9,7 +9,7 @@ import {
   WebbMethods,
   WebbProviderEvents,
 } from '@webb-dapp/react-environment/webb-context';
-import { ActionsBuilder, InteractiveFeedback } from '@webb-dapp/utils/webb-error';
+import { ActionsBuilder, InteractiveFeedback, WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import { PolkadotAccounts } from '@webb-dapp/wallet/providers/polkadot/polkadot-accounts';
 import { PolkadotProvider } from '@webb-dapp/wallet/providers/polkadot/polkadot-provider';
 import { EventBus } from '@webb-tools/app-util';
@@ -66,9 +66,22 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
     }
   }
 
+  private insureApiInterface() {
+    // check for RPC
+    // @ts-ignore
+    const merkleRPC = this.api.rpc.merkle;
+    // merkle rpc
+    const merklePallet = this.api.query.merkle;
+    const mixerPallet = this.api.query.mixer;
+    if (!merklePallet || !merkleRPC || !mixerPallet) {
+      throw WebbError.from(WebbErrorCodes.InsufficientProviderInterface);
+    }
+  }
+
   static async init(appName: string, endpoints: string[], errorHandler: ApiInitHandler): Promise<WebbPolkadot> {
     const [apiPromise, injectedExtension] = await PolkadotProvider.getParams(appName, endpoints, errorHandler.onError);
     const instance = new WebbPolkadot(apiPromise, injectedExtension);
+    instance.insureApiInterface();
     /// check metadata update
     await instance.awaitMetaDataCheck();
     await apiPromise.isReady;
