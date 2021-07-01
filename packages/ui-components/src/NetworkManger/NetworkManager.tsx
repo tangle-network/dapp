@@ -24,6 +24,7 @@ import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
+import { appEvent } from '@webb-dapp/react-environment/app-event';
 
 const NetworkManagerWrapper = styled.div`
   padding: 1rem;
@@ -96,6 +97,13 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
       setConnectionStep(ConnectionStep.SelectChain);
     }
   }, [connectionStep]);
+
+  useEffect(() => {
+    const off = appEvent.on('changeNetworkSwitcherVisibility', (next) => {
+      setOpen(next);
+    });
+    return () => off && off();
+  }, []);
   const content = useMemo(() => {
     switch (connectionStep) {
       case ConnectionStep.SelectChain:
@@ -406,6 +414,7 @@ const NetworkIndecatorWrapper = styled.button`
     padding: 0 0.3rem;
     //background: ${({ theme }: { theme: Pallet }) => theme.background};
     position: relative;
+
     &:before {
       position: absolute;
       content: '';
@@ -417,6 +426,7 @@ const NetworkIndecatorWrapper = styled.button`
       background: ${({ theme }: { theme: Pallet }) => (theme.type === 'light' ? 'white' : 'rgba(51, 81, 242, 0.28)')};
       border-radius: 32px;
     }
+
     &:after {
       z-index: 2;
       position: absolute;
@@ -428,6 +438,7 @@ const NetworkIndecatorWrapper = styled.button`
       background: ${({ theme }: { theme: Pallet }) => (theme.type === 'light' ? 'rgba(71, 69, 83, 0.1)' : 'black')};
       border-radius: 32px;
     }
+
     *:first-child {
       position: relative;
       z-index: 3;
