@@ -126,13 +126,13 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
                   <ListItemAvatar>
                     <Badge
                       title={'dev'}
-                      badgeContent={tag}
+                      badgeContent={tag?.toUpperCase()}
                       anchorOrigin={{
                         horizontal: 'left',
                         vertical: 'top',
                       }}
                       invisible={!tag}
-                      color={'secondary'}
+                      color={'primary'}
                     >
                       <Avatar
                         style={{
@@ -143,16 +143,24 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
                     </Badge>
                   </ListItemAvatar>
                   <ListItemText>
-                    <Typography variant={'button'}>{name}</Typography>
+                    <Typography variant={'h6'} component={'p'}>
+                      <b>{name}</b>
+                    </Typography>
                     <Padding>
-                      <div>URL: {url || 'n/a'}</div>
+                      <div>
+                        <Typography color={'textSecondary'} display={'inline'}>
+                          <b>URL:</b> {url || 'n/a'}
+                        </Typography>
+                      </div>
                       <div
                         style={{
                           display: 'flex',
                           alignItems: 'center',
                         }}
                       >
-                        Connectable via:
+                        <Typography color={'textSecondary'} display={'inline'}>
+                          <b>Connectable via:</b>
+                        </Typography>
                         {viaWallets.map((wallet) => {
                           const Logo = wallet.logo;
                           return (
@@ -177,7 +185,7 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
                               >
                                 <Logo />
                               </span>
-                              <span>{wallet.name}</span>
+                              <Typography color={'textSecondary'}>{wallet.name}</Typography>
                             </div>
                           );
                         })}
@@ -205,13 +213,13 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
               <ListItemAvatar>
                 <Badge
                   title={'dev'}
-                  badgeContent={tag}
+                  badgeContent={tag?.toUpperCase()}
                   anchorOrigin={{
                     horizontal: 'left',
                     vertical: 'top',
                   }}
                   invisible={!tag}
-                  color={'secondary'}
+                  color={'primary'}
                 >
                   <Avatar
                     style={{
@@ -222,9 +230,13 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
                 </Badge>
               </ListItemAvatar>
               <ListItemText>
-                <Typography variant={'button'}>{name}</Typography>
+                <Typography variant={'h6'} component={'p'}>
+                  <b>{name}</b>
+                </Typography>
                 <Padding>
-                  <div>URL: {url}</div>
+                  <Typography color={'textSecondary'} display={'inline'}>
+                    <b>URL:</b> {url || 'n/a'}
+                  </Typography>
                   <div
                     style={{
                       display: 'flex',
@@ -256,7 +268,7 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
                           >
                             <Logo />
                           </span>
-                          <span>{wallet.name}</span>
+                          <Typography color={'textSecondary'}>{wallet.name}</Typography>
                         </div>
                       );
                     })}
