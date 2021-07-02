@@ -1,4 +1,5 @@
 import { InteractiveFeedback, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
+import { appEvent } from '@webb-dapp/react-environment/app-event';
 
 export function insufficientApiInterface(): InteractiveFeedback {
   let interactiveFeedback: InteractiveFeedback;
@@ -15,6 +16,7 @@ export function insufficientApiInterface(): InteractiveFeedback {
       'Switch',
       () => {
         interactiveFeedback?.cancel();
+        appEvent.send('changeNetworkSwitcherVisibility', true);
       },
       'success'
     )

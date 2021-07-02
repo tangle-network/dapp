@@ -18,6 +18,7 @@ import { WebbPolkadot } from './api-providers/polkadot';
 import { extensionNotInstalled, unsupportedChain } from './error';
 import { SettingProvider } from './SettingProvider';
 import { Chain, netStorageFactory, NetworkStorage, Wallet, WebbApiProvider, WebbContext } from './webb-context';
+import { appEvent } from '@webb-dapp/react-environment/app-event';
 
 interface WebbProviderProps extends BareProps {
   applicationName: string;
@@ -321,6 +322,12 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
     };
     init().finally(() => {
       setIsInit(false);
+    });
+    appEvent.on('switchNetwork', ([chain, wallet]) => {
+      switchChainAndStore(chain, wallet);
+    });
+    appEvent.on('setActiveAccount', (nextAccount) => {
+      setActiveAccount(nextAccount);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
