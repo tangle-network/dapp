@@ -19,7 +19,7 @@ export class EvmChainMixersInfo {
       case WebbEVMChain.Rinkeby:
         this.mixerInfo = rinkebyMixers;
         break;
-      case WebbEVMChain.Main:
+      case WebbEVMChain.EthereumMainNet:
         this.mixerInfo = ethMainNetMixers;
         break;
       case WebbEVMChain.Beresheet:

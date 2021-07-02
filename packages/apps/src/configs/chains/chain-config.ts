@@ -55,11 +55,76 @@ export const chainsConfig: AppConfig['chains'] = {
     nativeCurrencyId: WebbCurrencyId.EDG,
   },
   // evm
-  [ChainId.AnyEvm]: {
+  [ChainId.EthereumMainNet]: {
     group: 'eth',
-    id: ChainId.AnyEvm,
-    evmId: undefined,
-    name: 'Ethereum',
+    id: ChainId.EthereumMainNet,
+    evmId: WebbEVMChain.EthereumMainNet,
+    name: 'Ethereum ',
+    tag: 'live',
+    url: '',
+    logo: EtherLogo,
+    currencies: [
+      {
+        currencyId: WebbCurrencyId.ETH,
+        enabled: true,
+      },
+    ],
+    nativeCurrencyId: WebbCurrencyId.ETH,
+  },
+  [ChainId.Rinkeby]: {
+    group: 'eth',
+    id: ChainId.Rinkeby,
+    evmId: WebbEVMChain.Rinkeby,
+    name: 'Rinkeby',
+    url: '',
+    logo: EtherLogo,
+    tag: 'test',
+    currencies: [
+      {
+        currencyId: WebbCurrencyId.ETH,
+        enabled: true,
+      },
+    ],
+    nativeCurrencyId: WebbCurrencyId.ETH,
+  },
+  [ChainId.Ropsten]: {
+    group: 'eth',
+    id: ChainId.Ropsten,
+    evmId: WebbEVMChain.Ropsten,
+    name: 'Ropsten',
+    tag: 'test',
+    url: '',
+    logo: EtherLogo,
+    currencies: [
+      {
+        currencyId: WebbCurrencyId.ETH,
+        enabled: true,
+      },
+    ],
+    nativeCurrencyId: WebbCurrencyId.ETH,
+  },
+  [ChainId.Goerli]: {
+    group: 'eth',
+    id: ChainId.Goerli,
+    evmId: WebbEVMChain.Goerli,
+    name: 'Goerli',
+    tag: 'test',
+    url: '',
+    logo: EtherLogo,
+    currencies: [
+      {
+        currencyId: WebbCurrencyId.ETH,
+        enabled: true,
+      },
+    ],
+    nativeCurrencyId: WebbCurrencyId.ETH,
+  },
+  [ChainId.Kavan]: {
+    group: 'eth',
+    id: ChainId.Kavan,
+    evmId: WebbEVMChain.Kavan,
+    name: 'Kavan',
+    tag: 'test',
     url: '',
     logo: EtherLogo,
     currencies: [

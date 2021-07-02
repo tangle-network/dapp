@@ -15,7 +15,7 @@ export function unsupportedChain(): InteractiveFeedback {
       list: [
         WebbWeb3Provider.storageName(WebbEVMChain.Rinkeby),
         WebbWeb3Provider.storageName(WebbEVMChain.Beresheet),
-        WebbWeb3Provider.storageName(WebbEVMChain.Main),
+        WebbWeb3Provider.storageName(WebbEVMChain.EthereumMainNet),
       ],
     },
     {

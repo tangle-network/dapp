@@ -29,7 +29,16 @@ export const walletsConfig: AppConfig['wallet'] = {
       }
       return false;
     },
-    supportedChainIds: [ChainId.Edgware, ChainId.EdgwareTestNet, ChainId.EdgwareLocalNet, ChainId.AnyEvm],
+    supportedChainIds: [
+      ChainId.Edgware,
+      ChainId.EdgwareTestNet,
+      ChainId.EdgwareLocalNet,
+      ChainId.EthereumMainNet,
+      ChainId.Rinkeby,
+      ChainId.Kavan,
+      ChainId.Ropsten,
+      ChainId.Goerli,
+    ],
   },
   // 3: {
   //   id: 3,

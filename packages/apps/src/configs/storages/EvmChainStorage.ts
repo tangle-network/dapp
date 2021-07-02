@@ -5,7 +5,7 @@ export const getStorageName = (chainID: number): string => {
   switch (chainID) {
     case WebbEVMChain.Rinkeby:
       return 'rinkeby';
-    case WebbEVMChain.Main:
+    case WebbEVMChain.EthereumMainNet:
       return 'main';
     case WebbEVMChain.Beresheet:
       return 'beresheet';

@@ -62,7 +62,7 @@ export class WebbWeb3Provider
     switch (id) {
       case WebbEVMChain.Rinkeby:
         return 'rinkeby';
-      case WebbEVMChain.Main:
+      case WebbEVMChain.EthereumMainNet:
         return 'main';
       case WebbEVMChain.Beresheet:
         return 'beresheet';
