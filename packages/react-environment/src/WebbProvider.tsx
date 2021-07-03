@@ -209,6 +209,36 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
             /// get the current active chain from metamask
             //TODO show feedback if the `chain.evmId` isn't the same
             const chainId = await web3Provider.network; // storage based on network id
+            const webbWeb3Provider = await WebbWeb3Provider.init(web3Provider, chainId);
+            webbWeb3Provider.on('providerUpdate', async ([chainId]) => {
+              /// get the nextChain from MetaMask change
+              const nextChain = Object.values(chains).find((chain) => chain.evmId === chainId);
+              try {
+                /// this will throw if the user switched to unsupported chain
+                const name = WebbWeb3Provider.storageName(chainId);
+                /// Alerting that the provider has changed via the extension
+                notificationApi({
+                  message: 'Web3: changed the connected network',
+                  variant: 'info',
+                  Icon: React.createElement(Icon, null, ['leak_add']),
+                  secondaryMessage: `Connection is switched to ${name} chain`,
+                });
+                webbWeb3Provider.setStorage(chainId);
+                setActiveWallet(wallet);
+                forceActiveApiUpdate(webbWeb3Provider);
+                setActiveChain(nextChain ? nextChain : chain);
+              } catch (e) {
+                /// set the chain to be undefined as this won't be usable
+                // TODO mark the api as not ready
+                setActiveChain(undefined);
+                setActiveWallet(wallet);
+                if (e instanceof WebbError) {
+                  /// Catching the errors for the switcher from the event
+                  catchWebbError(e);
+                }
+              }
+            });
+
             const activeChain = Object.values(chainsConfig).find((chain) => chain.evmId === chainId);
             if (chainId !== chain.evmId && activeChain) {
               const feedback = evmChainConflict(
@@ -240,37 +270,8 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
                 }
               }
             }
-            const webbWeb3Provider = await WebbWeb3Provider.init(web3Provider, chainId);
             await setActiveApiWithAccounts(webbWeb3Provider, chain.id);
             /// listen to `providerUpdate` by MetaMask
-            webbWeb3Provider.on('providerUpdate', async ([chainId]) => {
-              /// get the nextChain from MetaMask change
-              const nextChain = Object.values(chains).find((chain) => chain.evmId === chainId);
-              try {
-                /// this will throw if the user switched to unsupported chain
-                const name = WebbWeb3Provider.storageName(chainId);
-                /// Alerting that the provider has changed via the extension
-                notificationApi({
-                  message: 'Web3: changed the connected network',
-                  variant: 'info',
-                  Icon: React.createElement(Icon, null, ['leak_add']),
-                  secondaryMessage: `Connection is switched to ${name} chain`,
-                });
-                webbWeb3Provider.setStorage(chainId);
-                setActiveWallet(wallet);
-                forceActiveApiUpdate(webbWeb3Provider);
-                setActiveChain(nextChain ? nextChain : chain);
-              } catch (e) {
-                /// set the chain to be undefined as this won't be usable
-                // TODO mark the api as not ready
-                setActiveChain(undefined);
-                setActiveWallet(wallet);
-                if (e instanceof WebbError) {
-                  /// Catching the errors for the switcher from the event
-                  catchWebbError(e);
-                }
-              }
-            });
             activeApi = webbWeb3Provider;
           }
           break;

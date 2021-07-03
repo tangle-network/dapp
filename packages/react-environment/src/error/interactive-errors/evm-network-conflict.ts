@@ -38,12 +38,12 @@ export function evmChainConflict(params: EvmNetworkConflictParams, appEvent: TAp
       USER_SWITCHED_TO_EXPECT_CHAIN
     )
     .action(
-      'Switch to another',
+      'Reselect chain',
       () => {
         interactiveFeedback?.cancelWithoutHandler();
         appEvent.send('changeNetworkSwitcherVisibility', true);
       },
-      'success'
+      'info'
     )
     .actions();
   interactiveFeedback = new InteractiveFeedback(
