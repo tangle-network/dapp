@@ -10,6 +10,10 @@ import utils from 'web3-utils';
 import { abi } from '../abis/NativeAnchor.json';
 import { mixerLogger } from '@webb-dapp/mixer/utils';
 
+type EvmLeavesResponse = {
+  leaves: [{commitment: string}]
+};
+
 const webSnarkUtils = require('websnark/src/utils');
 type DepositEvent = [string, number, BigNumber];
 
@@ -65,13 +69,21 @@ export class AnchorContract {
     await recipient.wait();
   }
 
-  private async getDepositLeaves(): Promise<string[]> {
+  private async getDepositLeavesFromServer(): Promise<string[]> {    
+    const serverResponse = await fetch(`http://nepoche.com:5050/evm-leaves/${this._contract.address}`);
+    const jsonResponse: EvmLeavesResponse = await serverResponse.json();
+    let leaves = jsonResponse.leaves.map((val) => val.commitment);
+    console.log(`leaves: ${leaves}`);
+
+    return leaves;
+  }
+
+  private async getDepositLeavesFromChain(): Promise<string[]> {
     const filter = this._contract.filters.Deposit(null, null, null);
 
     const currentBlock = await this.web3Provider.getBlockNumber();
-    const storedContractInfo = await this.mixersInfo.getMixerStorage(this._contract.address);
 
-    const startingBlock = storedContractInfo.lastQueriedBlock; // Read starting block from cached storage
+    const startingBlock = this.mixersInfo.getMixerInfoByAddress(this._contract.address).createdAtBlock; // Read starting block from created block
     let logs: Array<Log> = []; // Read the stored logs into this variable
 
     try {
@@ -101,20 +113,15 @@ export class AnchorContract {
     }
     const events = logs.map((log) => this._contract.interface.parseLog(log));
 
-    const newCommitments = events
+    const commitments = events
       .sort((a, b) => a.args.leafIndex - b.args.leafIndex) // Sort events in chronological order
       .map((e) => e.args.commitment);
-
-    const commitments = [...storedContractInfo.leaves, ...newCommitments];
-
-    // extract the commitments from the events, and update the storage
-    await this.mixersInfo.setMixerStorage(this._contract.address, currentBlock, commitments);
     
     return commitments;
   }
 
   async generateMerkleProof(deposit: Deposit) {
-    const leaves = await this.getDepositLeaves();
+    const leaves = await this.getDepositLeavesFromServer();
     const tree = new MerkleTree('eth', 20, leaves);
     let leafIndex = leaves.findIndex(commitment => commitment == bufferToFixed(deposit.commitment));
     return tree.path(leafIndex);
