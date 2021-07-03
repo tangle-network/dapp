@@ -29,6 +29,7 @@ export const chainsConfig: AppConfig['chains'] = {
     evmId: WebbEVMChain.Beresheet,
     name: 'Beresheet (Edgeware Testnet)',
     url: 'wss://beresheet1.edgewa.re',
+    evmRpcUrls: ['https://beresheet1.edgewa.re:9933/'],
     logo: EdgwareLogo,
     currencies: [
       {

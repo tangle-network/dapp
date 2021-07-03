@@ -1,6 +1,6 @@
 import Icon from '@material-ui/core/Icon';
 import WalletConnectProvider from '@walletconnect/web3-provider';
-import { chainsPopulated } from '@webb-dapp/apps/configs';
+import { chainsPopulated, currenciesConfig } from '@webb-dapp/apps/configs';
 import { WalletId } from '@webb-dapp/apps/configs/wallets/wallet-id.enum';
 import { walletsConfig } from '@webb-dapp/apps/configs/wallets/wallets-config';
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3';
@@ -204,7 +204,25 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
             /// get the current active chain from metamask
             //TODO show feedback if the `chain.evmId` isn't the same
             const chainId = await web3Provider.network; // storage based on network id
+            const evmId = chain.evmId;
+            console.log(chain);
+            if (evmId && chain.evmRpcUrls) {
+              const nativeCurrency = currenciesConfig[chain.nativeCurrencyId];
+              await web3Provider.addChain({
+                chainName: chain.name,
+                chainId: `0x${Number(evmId).toString(16)}`,
+                rpcUrls: chain.evmRpcUrls ?? [],
+                nativeCurrency: {
+                  decimals: 18,
+                  symbol: nativeCurrency.symbol,
+                  name: nativeCurrency.name,
+                },
+              });
+            }
+
             const webbWeb3Provider = await WebbWeb3Provider.init(web3Provider, chainId);
+            //@ts-ignore
+            window.webb3 = webbWeb3Provider;
             await setActiveApiWithAccounts(webbWeb3Provider, chain.id);
             /// listen to `providerUpdate` by MetaMask
             webbWeb3Provider.on('providerUpdate', async ([chainId]) => {
