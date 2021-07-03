@@ -26,7 +26,7 @@ const InteractiveErrorView: React.FC<InteractiveErrorViewProps> = ({ activeFeedb
             color: pallet[activeFeedback?.actions[name].level as any] || pallet.primaryText,
           }}
           onClick={() => {
-            activeFeedback?.actions[name].onTrigger();
+            activeFeedback?.trigger(name);
           }}
         >
           {name}

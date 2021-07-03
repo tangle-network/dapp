@@ -26,7 +26,7 @@ export function unsupportedChain(): InteractiveFeedback {
     .action(
       'Ok',
       () => {
-        interactiveFeedback?.cancel();
+        interactiveFeedback?.cancelWithoutHandler();
       },
       'success'
     )
