@@ -1,4 +1,5 @@
 import { Storage } from '@webb-dapp/utils';
+import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import { WebbEVMChain } from '@webb-dapp/apps/configs';
 
 export const getStorageName = (chainID: number): string => {
@@ -11,8 +12,10 @@ export const getStorageName = (chainID: number): string => {
       return 'beresheet';
     case WebbEVMChain.Edgeware:
       return 'edgeware';
+    case WebbEVMChain.HarmonyTest1:
+      return 'harmony-test1';
     default:
-      throw new Error('unsupported chain');
+      throw WebbError.from(WebbErrorCodes.UnsupportedChain);
   }
 };
 

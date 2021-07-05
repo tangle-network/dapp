@@ -1,7 +1,7 @@
 import { WebbEVMChain } from '@webb-dapp/apps/configs';
 import {
   beresheetMixers,
-  edgewareMixers,
+  harmonyTest1Mixers,
   ethMainNetMixers,
   MixerInfo,
   rinkebyMixers,
@@ -25,8 +25,8 @@ export class EvmChainMixersInfo {
       case WebbEVMChain.Beresheet:
         this.mixerInfo = beresheetMixers;
         break;
-      case WebbEVMChain.Edgeware:
-        this.mixerInfo = edgewareMixers;
+      case WebbEVMChain.HarmonyTest1:
+        this.mixerInfo = harmonyTest1Mixers;
         break;
       default:
         this.mixerInfo = rinkebyMixers;

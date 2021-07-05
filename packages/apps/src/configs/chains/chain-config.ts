@@ -1,19 +1,20 @@
 import { AppConfig } from '@webb-dapp/react-environment/webb-context';
 import { ChainId, WebbEVMChain } from './chain-id.enum';
-import EdgwareLogo from '@webb-dapp/apps/configs/logos/EdgwareLogo';
+import EdgewareLogo from '@webb-dapp/apps/configs/logos/EdgewareLogo';
 import EtherLogo from '@webb-dapp/apps/configs/logos/Eth';
 import { WebbCurrencyId } from '../currencies/webb-currency-id.enum';
+import { HarmonyLogo } from '@webb-dapp/apps/configs/logos/HarmonyLogo';
 
 export const chainsConfig: AppConfig['chains'] = {
-  // edgware
-  [ChainId.EdgwareLocalNet]: {
-    id: ChainId.EdgwareLocalNet,
-    group: 'edgware',
+  // edgeware
+  [ChainId.EdgewareLocalNet]: {
+    id: ChainId.EdgewareLocalNet,
+    group: 'edgeware',
     tag: 'dev',
     evmId: undefined,
-    logo: EdgwareLogo,
+    logo: EdgewareLogo,
     url: 'ws://127.0.0.1:9944',
-    name: 'Edgware Development',
+    name: 'Edgeware Development',
     currencies: [
       {
         currencyId: WebbCurrencyId.EDG,
@@ -22,14 +23,14 @@ export const chainsConfig: AppConfig['chains'] = {
     ],
     nativeCurrencyId: WebbCurrencyId.EDG,
   },
-  [ChainId.EdgwareTestNet]: {
-    group: 'edgware',
+  [ChainId.EdgewareTestNet]: {
+    group: 'edgeware',
     tag: 'test',
-    id: ChainId.EdgwareTestNet,
+    id: ChainId.EdgewareTestNet,
     evmId: WebbEVMChain.Beresheet,
     name: 'Beresheet (Edgeware Testnet)',
     url: 'wss://beresheet1.edgewa.re',
-    logo: EdgwareLogo,
+    logo: EdgewareLogo,
     currencies: [
       {
         currencyId: WebbCurrencyId.TEDG,
@@ -38,14 +39,14 @@ export const chainsConfig: AppConfig['chains'] = {
     ],
     nativeCurrencyId: WebbCurrencyId.TEDG,
   },
-  [ChainId.Edgware]: {
-    group: 'edgware',
+  [ChainId.Edgeware]: {
+    group: 'edgeware',
     tag: 'live',
-    id: ChainId.Edgware,
+    id: ChainId.Edgeware,
     evmId: undefined,
     name: 'Edgeware',
     url: 'wss://mainnet1.edgewa.re',
-    logo: EdgwareLogo,
+    logo: EdgewareLogo,
     currencies: [
       {
         currencyId: WebbCurrencyId.EDG,
@@ -135,4 +136,20 @@ export const chainsConfig: AppConfig['chains'] = {
     ],
     nativeCurrencyId: WebbCurrencyId.ETH,
   },
+  [ChainId.HarmonyTestnet1]: {
+    group: 'one',
+    id: ChainId.HarmonyTestnet1,
+    evmId: WebbEVMChain.HarmonyTest1,
+    name: 'Harmony Testnet Shard 1',
+    tag: 'test',
+    url: 'https://api.s1.b.hmny.io',
+    logo: HarmonyLogo,
+    currencies: [
+      {
+        currencyId: WebbCurrencyId.ONE,
+        enabled: true,
+      },
+    ],
+    nativeCurrencyId: WebbCurrencyId.ONE,
+  }
 };

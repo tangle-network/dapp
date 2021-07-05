@@ -1,5 +1,5 @@
 import { WebbEVMChain } from '@webb-dapp/apps/configs';
-import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3';
+import { getStorageName } from '@webb-dapp/apps/configs/storages/EvmChainStorage';
 import { InteractiveFeedback, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 
 export function unsupportedChain(): InteractiveFeedback {
@@ -13,9 +13,10 @@ export function unsupportedChain(): InteractiveFeedback {
     },
     {
       list: [
-        WebbWeb3Provider.storageName(WebbEVMChain.Rinkeby),
-        WebbWeb3Provider.storageName(WebbEVMChain.Beresheet),
-        WebbWeb3Provider.storageName(WebbEVMChain.EthereumMainNet),
+        getStorageName(WebbEVMChain.Rinkeby),
+        getStorageName(WebbEVMChain.Beresheet),
+        getStorageName(WebbEVMChain.EthereumMainNet),
+        getStorageName(WebbEVMChain.HarmonyTest1),
       ],
     },
     {

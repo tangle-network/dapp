@@ -1,12 +1,13 @@
 export enum ChainId {
-  Edgware,
-  EdgwareTestNet,
-  EdgwareLocalNet,
+  Edgeware,
+  EdgewareTestNet,
+  EdgewareLocalNet,
   EthereumMainNet,
   Rinkeby,
   Ropsten,
   Kavan,
   Goerli,
+  HarmonyTestnet1,
 }
 
 export enum WebbEVMChain {
@@ -20,4 +21,6 @@ export enum WebbEVMChain {
 
   Edgeware = 2021,
   Beresheet = 2022,
+  HarmonyTest0 = 1666700000,
+  HarmonyTest1 = 1666700001,
 }
