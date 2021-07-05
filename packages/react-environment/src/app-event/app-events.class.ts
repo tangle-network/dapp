@@ -15,5 +15,5 @@ class AppEvent extends EventBus<AppEvents> {
     this.send = this.emit;
   }
 }
-
+export type TAppEvent = InstanceType<typeof AppEvent>;
 export const appEvent = new AppEvent();

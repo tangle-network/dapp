@@ -112,11 +112,11 @@ const AppBar: React.FC<AppBarProps> = () => {
       <SpacerDiv />
       {!isMobile && (
         <NavigationWrapper>
-          <li className={'active'}>
+          {/*          <li className={'active'}>
             <NavLink to={'/mixer'} activeClassName={'active'}>
               zkBridge
             </NavLink>
-          </li>
+          </li>*/}
           {/*        <li>
           <NavLink to={'/statistics'}>Statistics</NavLink>
         </li>

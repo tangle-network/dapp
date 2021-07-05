@@ -10,6 +10,11 @@ import { FeedbackEntry, InteractiveFeedback } from '@webb-dapp/utils/webb-error'
 
 const InteractiveErrorViewWrapper = styled.div`
   padding: 0.5rem 2rem;
+  font-size: 1rem !important;
+
+  .text {
+    font-size: 1rem !important;
+  }
 `;
 type InteractiveErrorViewProps = {
   activeFeedback: InteractiveFeedback | null;
@@ -22,11 +27,12 @@ const InteractiveErrorView: React.FC<InteractiveErrorViewProps> = ({ activeFeedb
       return Object.keys(activeFeedback.actions).map((name) => (
         <Button
           style={{
+            fontSize: '.9rem',
             // @ts-ignore
             color: pallet[activeFeedback?.actions[name].level as any] || pallet.primaryText,
           }}
           onClick={() => {
-            activeFeedback?.actions[name].onTrigger();
+            activeFeedback?.trigger(name);
           }}
         >
           {name}
@@ -40,16 +46,20 @@ const InteractiveErrorView: React.FC<InteractiveErrorViewProps> = ({ activeFeedb
         const key = Object.keys(entry)[0] as keyof FeedbackEntry;
         switch (key) {
           case 'content':
-            return <Typography>{entry[key]}</Typography>;
+            return (
+              <Padding x={0} v={0.5}>
+                <Typography className={'text'}>{entry[key]}</Typography>
+              </Padding>
+            );
           case 'json':
             return (
-              <Typography>
+              <Typography className={'text'}>
                 <pre>{entry[key]}</pre>
               </Typography>
             );
           case 'header':
             return (
-              <Typography variant={'h4'}>
+              <Typography variant={'h3'}>
                 <pre>{entry[key]}</pre>
               </Typography>
             );
@@ -57,12 +67,12 @@ const InteractiveErrorView: React.FC<InteractiveErrorViewProps> = ({ activeFeedb
             return entry[key]?.() ?? null;
           case 'list':
             return (
-              <Padding x={2} v={1}>
+              <Padding x={2.5} v={0.25}>
                 <ul>
                   {entry[key]?.map((entry) => {
                     return (
                       <li>
-                        <Typography>{entry}</Typography>
+                        <Typography className={'text'}>{entry}</Typography>
                       </li>
                     );
                   })}

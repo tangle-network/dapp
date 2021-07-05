@@ -1,9 +1,10 @@
 import Icon from '@material-ui/core/Icon';
 import WalletConnectProvider from '@walletconnect/web3-provider';
-import { chainsPopulated } from '@webb-dapp/apps/configs';
+import { chainsConfig, chainsPopulated } from '@webb-dapp/apps/configs';
 import { WalletId } from '@webb-dapp/apps/configs/wallets/wallet-id.enum';
 import { walletsConfig } from '@webb-dapp/apps/configs/wallets/wallets-config';
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3';
+import { appEvent } from '@webb-dapp/react-environment/app-event';
 import { insufficientApiInterface } from '@webb-dapp/react-environment/error/interactive-errors/insufficient-api-interface';
 import { DimensionsProvider } from '@webb-dapp/react-environment/layout';
 import { StoreProvier } from '@webb-dapp/react-environment/store';
@@ -18,7 +19,10 @@ import { WebbPolkadot } from './api-providers/polkadot';
 import { extensionNotInstalled, unsupportedChain } from './error';
 import { SettingProvider } from './SettingProvider';
 import { Chain, netStorageFactory, NetworkStorage, Wallet, WebbApiProvider, WebbContext } from './webb-context';
-import { appEvent } from '@webb-dapp/react-environment/app-event';
+import {
+  evmChainConflict,
+  USER_SWITCHED_TO_EXPECT_CHAIN,
+} from '@webb-dapp/react-environment/error/interactive-errors/evm-network-conflict';
 
 interface WebbProviderProps extends BareProps {
   applicationName: string;
@@ -59,7 +63,11 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
     });
     return () => {
       off && off();
-      setInteractiveFeedbacks([]);
+      setInteractiveFeedbacks((p) => {
+        p.forEach((p) => p.cancel());
+        return [];
+      });
+      appEvent.send('changeNetworkSwitcherVisibility', false);
     };
   }, [activeApi]);
 
@@ -161,7 +169,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
       case WebbErrorCodes.InsufficientProviderInterface:
         {
           setActiveChain(undefined);
-          const interactiveFeedback = insufficientApiInterface();
+          const interactiveFeedback = insufficientApiInterface(appEvent);
           registerInteractiveFeedback(setInteractiveFeedbacks, interactiveFeedback);
         }
         break;
@@ -178,9 +186,6 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
       await activeApi.destroy();
     }
     try {
-      /// settings the user selection
-      setActiveChain(chain);
-      setActiveWallet(wallet);
       /// init the active api value
       let activeApi: WebbApiProvider<any> | null = null;
       switch (wallet.id) {
@@ -205,8 +210,6 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
             //TODO show feedback if the `chain.evmId` isn't the same
             const chainId = await web3Provider.network; // storage based on network id
             const webbWeb3Provider = await WebbWeb3Provider.init(web3Provider, chainId);
-            await setActiveApiWithAccounts(webbWeb3Provider, chain.id);
-            /// listen to `providerUpdate` by MetaMask
             webbWeb3Provider.on('providerUpdate', async ([chainId]) => {
               /// get the nextChain from MetaMask change
               const nextChain = Object.values(chains).find((chain) => chain.evmId === chainId);
@@ -235,6 +238,40 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
                 }
               }
             });
+
+            const activeChain = Object.values(chainsConfig).find((chain) => chain.evmId === chainId);
+            if (chainId !== chain.evmId && activeChain) {
+              const feedback = evmChainConflict(
+                {
+                  activeOnExtension: {
+                    id: chainId,
+                    name: activeChain.name,
+                  },
+                  selected: {
+                    id: chain?.evmId ?? 0,
+                    name: chain.name,
+                  },
+                },
+                appEvent
+              );
+              registerInteractiveFeedback(setInteractiveFeedbacks, feedback);
+              const action = await feedback.wait();
+              if (action?.id !== USER_SWITCHED_TO_EXPECT_CHAIN) {
+                return null;
+              } else {
+                const chainId = await web3Provider.network; // storage based on network id
+                if (chainId !== chain.evmId && activeChain) {
+                  notificationApi({
+                    secondaryMessage: `Please make sure you have switched to ${chain.name} chain`,
+                    variant: 'warning',
+                    message: 'Network not switched',
+                  });
+                  return null;
+                }
+              }
+            }
+            await setActiveApiWithAccounts(webbWeb3Provider, chain.id);
+            /// listen to `providerUpdate` by MetaMask
             activeApi = webbWeb3Provider;
           }
           break;
@@ -260,8 +297,9 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
           activeApi = webbWeb3Provider;
         }
       }
-      setActiveWallet(wallet);
+      /// settings the user selection
       setActiveChain(chain);
+      setActiveWallet(wallet);
       return activeApi;
     } catch (e) {
       if (e instanceof WebbError) {
@@ -306,7 +344,6 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
         let defaultAccount = networkDefaultConfig[chainConfig.id]?.defaultAccount;
         defaultAccount = defaultAccount ?? accounts[0]?.address;
         const defaultFromSettings = accounts.find((account) => account.address === defaultAccount);
-        console.log(defaultFromSettings, 'defaultFromSettings');
         if (defaultFromSettings) {
           _setActiveAccount(defaultFromSettings);
           await activeApi.accounts.setActiveAccount(defaultFromSettings);

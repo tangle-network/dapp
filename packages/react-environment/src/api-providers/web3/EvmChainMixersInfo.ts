@@ -1,6 +1,4 @@
-import { MixerSize } from '@webb-dapp/react-environment';
-import { Storage } from '@webb-dapp/utils';
-import { MixerStorage, evmChainStorageFactory } from '@webb-dapp/apps/configs/storages/EvmChainStorage';
+import { WebbEVMChain } from '@webb-dapp/apps/configs';
 import {
   beresheetMixers,
   edgewareMixers,
@@ -8,7 +6,9 @@ import {
   MixerInfo,
   rinkebyMixers,
 } from '@webb-dapp/apps/configs/evm/SupportedMixers';
-import { WebbEVMChain } from '@webb-dapp/apps/configs';
+import { evmChainStorageFactory, MixerStorage } from '@webb-dapp/apps/configs/storages/EvmChainStorage';
+import { MixerSize } from '@webb-dapp/react-environment';
+import { Storage } from '@webb-dapp/utils';
 
 export class EvmChainMixersInfo {
   private mixerStorage: Storage<MixerStorage> | null = null;
@@ -19,7 +19,7 @@ export class EvmChainMixersInfo {
       case WebbEVMChain.Rinkeby:
         this.mixerInfo = rinkebyMixers;
         break;
-      case WebbEVMChain.Main:
+      case WebbEVMChain.EthereumMainNet:
         this.mixerInfo = ethMainNetMixers;
         break;
       case WebbEVMChain.Beresheet:
