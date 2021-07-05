@@ -1,5 +1,5 @@
-import { InteractiveFeedback, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import { TAppEvent } from '@webb-dapp/react-environment/app-event';
+import { InteractiveFeedback, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 
 type EvmNetworkConflictParams = {
   activeOnExtension: {
@@ -13,6 +13,7 @@ type EvmNetworkConflictParams = {
 };
 
 export const USER_SWITCHED_TO_EXPECT_CHAIN = 'OK';
+
 export function evmChainConflict(params: EvmNetworkConflictParams, appEvent: TAppEvent): InteractiveFeedback {
   let interactiveFeedback: InteractiveFeedback;
   const feedbackBody = InteractiveFeedback.feedbackEntries([
@@ -21,26 +22,30 @@ export function evmChainConflict(params: EvmNetworkConflictParams, appEvent: TAp
     },
 
     {
-      content: `The selected chain of ${params.selected.name} with id (${params.selected.id})
+      content: `The selected chain is ${params.selected.name} with id (${params.selected.id})
       ;However the active on metamask is ${params.activeOnExtension.name} with id ${params.activeOnExtension.id}`,
     },
     {
-      content: 'Switch back via MetaMask',
+      content: `To continue using ${params.selected.name}`,
+    },
+    {
+      list: ['Open MetaMask', `select chain ${params.selected.name}`, 'click on "Ok,I switched"'],
     },
   ]);
   const actions = InteractiveFeedback.actionsBuilder()
-    .action(
-      'Ok,I switched',
-      () => {
-        interactiveFeedback?.cancelWithoutHandler();
-      },
-      'success',
-      USER_SWITCHED_TO_EXPECT_CHAIN
-    )
+    // .action(
+    //   'Ok,I switched',
+    //   () => {
+    //     console.log('Ok,I switched');
+    //     interactiveFeedback?.cancelWithoutHandler();
+    //   },
+    //   'success',
+    //   USER_SWITCHED_TO_EXPECT_CHAIN
+    // )
     .action(
       'Reselect chain',
       () => {
-        interactiveFeedback?.cancelWithoutHandler();
+        interactiveFeedback?.cancel();
         appEvent.send('changeNetworkSwitcherVisibility', true);
       },
       'info'
@@ -50,7 +55,7 @@ export function evmChainConflict(params: EvmNetworkConflictParams, appEvent: TAp
     'error',
     actions,
     () => {
-      interactiveFeedback?.cancel();
+      interactiveFeedback?.cancelWithoutHandler();
     },
     feedbackBody,
     WebbErrorCodes.UnsupportedChain

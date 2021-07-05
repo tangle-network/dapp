@@ -504,11 +504,11 @@ export const NetworkManagerIndicator: React.FC<NetworkManagerIndicatorProps> = (
             <Padding />
 
             <Flex col>
-              <Typography variant='caption'>
+              <Typography variant='body1'>
                 <b style={{ whiteSpace: 'nowrap' }}>{connectionMetaData.chainName}</b>
               </Typography>
 
-              <Typography color='textSecondary' variant='caption'>
+              <Typography color='textSecondary' variant='body2'>
                 <b style={{ whiteSpace: 'nowrap' }}>{connectionMetaData.details}</b>
               </Typography>
             </Flex>
