@@ -1,5 +1,5 @@
 import { WebbEVMChain } from '@webb-dapp/apps/configs';
-import { getStorageName } from '@webb-dapp/apps/configs/storages/EvmChainStorage';
+import { getEVMChainName } from '@webb-dapp/apps/configs/evm/SupportedMixers';
 import { InteractiveFeedback, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 
 export function unsupportedChain(): InteractiveFeedback {
@@ -13,10 +13,9 @@ export function unsupportedChain(): InteractiveFeedback {
     },
     {
       list: [
-        getStorageName(WebbEVMChain.Rinkeby),
-        getStorageName(WebbEVMChain.Beresheet),
-        getStorageName(WebbEVMChain.EthereumMainNet),
-        getStorageName(WebbEVMChain.HarmonyTest1),
+        getEVMChainName(WebbEVMChain.Rinkeby),
+        getEVMChainName(WebbEVMChain.Beresheet),
+        getEVMChainName(WebbEVMChain.HarmonyTest1),
       ],
     },
     {

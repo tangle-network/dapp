@@ -35,7 +35,7 @@ export const walletsConfig: AppConfig['wallet'] = {
       ChainId.EdgewareLocalNet,
       ChainId.EthereumMainNet,
       ChainId.Rinkeby,
-      ChainId.Kavan,
+      ChainId.Kovan,
       ChainId.Ropsten,
       ChainId.Goerli,
       ChainId.HarmonyTestnet1,

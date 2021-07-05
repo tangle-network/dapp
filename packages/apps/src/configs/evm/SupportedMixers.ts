@@ -1,4 +1,5 @@
 import { chainsConfig, currenciesConfig } from '@webb-dapp/apps/configs';
+import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 
 export const getNativeCurrencySymbol = (chainID: number): string => {
   const chain = Object.values(chainsConfig).find((chainsConfig) => chainsConfig.evmId === chainID);
@@ -7,6 +8,15 @@ export const getNativeCurrencySymbol = (chainID: number): string => {
     return currenciesConfig[nativeCurrency].symbol;
   }
   return 'Unknown';
+};
+
+export const getEVMChainName = (chainID: number): string => {
+  const chain = Object.values(chainsConfig).find((chainsConfig) => chainsConfig.evmId === chainID);
+  if (chain) {
+    return chain.name;
+  } else {
+    throw WebbError.from(WebbErrorCodes.UnsupportedChain);
+  }
 };
 
 export type MixerInfo = {
