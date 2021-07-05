@@ -1,8 +1,10 @@
 export enum WebbCurrencyId {
-  /// Production edgware token
+  /// Production edgeware token
   EDG,
-  /// Test edgware token
+  /// Test edgeware token
   TEDG,
   /// Ether token
   ETH,
+  /// Harmony token
+  ONE,
 }
