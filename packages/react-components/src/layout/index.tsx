@@ -41,7 +41,7 @@ const Main: FC<MainLayoutProps> = memo(({ children }) => {
     <MainContainer>
       <AppBar />
       <ContentWrapper>{content}</ContentWrapper>
-      <BottomNavigation />
+      {/*<BottomNavigation />*/}
     </MainContainer>
   );
 });
