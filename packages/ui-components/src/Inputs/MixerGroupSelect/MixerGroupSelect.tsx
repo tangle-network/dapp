@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/indent */
+import { MixerSize } from '@webb-dapp/react-environment/webb-context';
 import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabel';
+import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 import React, { useEffect, useMemo } from 'react';
 import styled, { css } from 'styled-components';
-import { MixerSize } from '@webb-dapp/react-environment/webb-context';
-import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 
 const MixerGroupSelectWrapper = styled.div`
   min-height: 38px;
@@ -29,7 +29,7 @@ const AmountChipWrapper = styled.span<{ selected?: boolean }>`
       border: 1px solid ${theme.borderColor2};
       border-radius: 20px;
       background: ${selected ? (theme.type === 'light' ? `#ebedf2` : theme.primary) : theme.layer3Background};
-      font-family: ${FontFamilies.AvnirNext};
+      font-family: ${FontFamilies.AvenirNext};
       color: ${theme.primaryText};
       height: 40px;
       padding: 0 5px;
@@ -57,7 +57,7 @@ export const MixerGroupSelect: React.FC<MixerGroupSelectProps> = ({ items, onCha
 
   useEffect(() => {
     if (!value && onChange) {
-      onChange(items[1]);
+      onChange(items[0]);
     }
   }, [onChange, value, items]);
 
@@ -73,7 +73,7 @@ export const MixerGroupSelect: React.FC<MixerGroupSelectProps> = ({ items, onCha
   return (
     <InputLabel label={'Select Amount'}>
       <MixerGroupSelectWrapper>
-        {mixerSizes.map(({ selected, id, title }) => {
+        {mixerSizes.map(({ id, selected, title }) => {
           return (
             <AmountChipWrapper
               key={id + title}

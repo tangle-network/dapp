@@ -10,6 +10,7 @@ export interface DepositApi {
 
   loadingState: MixerDeposit['loading'];
   error: string;
+  ready: boolean;
 }
 
 export const useDeposit = (): DepositApi => {
@@ -32,7 +33,6 @@ export const useDeposit = (): DepositApi => {
       setError(error);
     });
     depositApi.getSizes().then((mixerSizes) => {
-      console.log(mixerSizes);
       setMixerSizes(mixerSizes);
     });
     return () => unSub && unSub();
@@ -63,5 +63,6 @@ export const useDeposit = (): DepositApi => {
     generateNote,
     loadingState,
     error,
+    ready: Boolean(activeApi),
   };
 };
