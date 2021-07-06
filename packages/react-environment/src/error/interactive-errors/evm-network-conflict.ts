@@ -29,7 +29,7 @@ export function evmChainConflict(params: EvmNetworkConflictParams, appEvent: TAp
       content: `To continue using ${params.selected.name}`,
     },
     {
-      list: ['Open MetaMask', `select chain ${params.selected.name}`, 'click on "Ok,I switched"'],
+      list: ['Open MetaMask', `select chain ${params.selected.name}`],
     },
   ]);
   const actions = InteractiveFeedback.actionsBuilder()
