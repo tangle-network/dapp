@@ -45,7 +45,7 @@ export function evmChainConflict(params: EvmNetworkConflictParams, appEvent: TAp
     .action(
       'Reselect chain',
       () => {
-        interactiveFeedback?.cancel();
+        interactiveFeedback?.cancelWithoutHandler();
         appEvent.send('changeNetworkSwitcherVisibility', true);
       },
       'info'

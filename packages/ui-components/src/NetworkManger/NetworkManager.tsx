@@ -91,7 +91,8 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
     setConnectionStep(ConnectionStep.SelectWallet);
   };
   const handleCancel = useCallback(() => {
-    setOpen(false);
+    console.log('cancel net manager');
+    // setOpen(false);
     if (connectionStep !== ConnectionStep.Connecting) {
       setUserSelectedChain(null);
       setConnectionStep(ConnectionStep.SelectChain);
@@ -100,6 +101,9 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
 
   useEffect(() => {
     const off = appEvent.on('changeNetworkSwitcherVisibility', (next) => {
+      console.log({
+        changeNetworkSwitcherVisibility: next,
+      });
       setOpen(next);
     });
     return () => off && off();
@@ -296,6 +300,7 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
                       alignItems: 'center',
                     }}
                     id={url + wallet.name}
+                    key={url + wallet.name}
                   >
                     <ListItemAvatar>
                       <Avatar
@@ -369,9 +374,9 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
       <Modal
         open={open}
         onClose={() => {
-          if (connectionStep !== ConnectionStep.Connecting) {
-            setOpen(false);
-          }
+          // if (connectionStep !== ConnectionStep.Connecting) {
+          //   setOpen(false);
+          // }
         }}
       >
         <NetworkManagerWrapper>
@@ -407,7 +412,12 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
         <Padding v as={'footer'}>
           <Flex row ai={'center'} jc={'flex-end'}>
             <Flex>
-              <Button onClick={handleCancel}>
+              <Button
+                onClick={() => {
+                  handleCancel();
+                  setOpen(false);
+                }}
+              >
                 <Padding>Cancel</Padding>
               </Button>
             </Flex>
