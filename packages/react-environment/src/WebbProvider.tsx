@@ -24,7 +24,6 @@ import {
   USER_SWITCHED_TO_EXPECT_CHAIN,
 } from '@webb-dapp/react-environment/error/interactive-errors/evm-network-conflict';
 import { LoggerService } from '@webb-tools/app-util';
-import { Spinner } from '@webb-dapp/ui-components/Spinner/Spinner';
 
 interface WebbProviderProps extends BareProps {
   applicationName: string;
@@ -136,6 +135,23 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
         await setActiveAccount(accounts[0]);
       }
       setActiveApi(nextActiveApi);
+      nextActiveApi?.on('newAccounts', async (accounts) => {
+        const acs = await accounts.accounts();
+        const active = acs[0] || null;
+        notificationApi({
+          variant: 'info',
+          Icon: (
+            <div>
+              <Icon>people-alt</Icon>
+            </div>
+          ),
+          key: 'account-change',
+          message: 'Account changed from provider',
+          secondaryMessage: `active account is ${active?.address ?? 'UNKNOWN'}`,
+        });
+        setAccounts(acs);
+        _setActiveAccount(acs[0] || null);
+      });
     } else {
       setActiveApi(nextActiveApi);
       setAccounts([]);

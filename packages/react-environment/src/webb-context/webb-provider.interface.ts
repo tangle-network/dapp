@@ -39,7 +39,7 @@ export type WebbProviderEvents<T = any> = {
   /// The provider is updated and an action is required to handle this update
   providerUpdate: T;
   // /// accountsChange
-  // newAccounts: AccountsAdapter<any>;
+  newAccounts: AccountsAdapter<any>;
 };
 
 export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
