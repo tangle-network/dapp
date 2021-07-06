@@ -24,6 +24,7 @@ import {
   USER_SWITCHED_TO_EXPECT_CHAIN,
 } from '@webb-dapp/react-environment/error/interactive-errors/evm-network-conflict';
 import { LoggerService } from '@webb-tools/app-util';
+import { Spinner } from '@webb-dapp/ui-components/Spinner/Spinner';
 
 interface WebbProviderProps extends BareProps {
   applicationName: string;
