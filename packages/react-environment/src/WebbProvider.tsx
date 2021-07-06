@@ -23,6 +23,7 @@ import {
   evmChainConflict,
   USER_SWITCHED_TO_EXPECT_CHAIN,
 } from '@webb-dapp/react-environment/error/interactive-errors/evm-network-conflict';
+import { LoggerService } from '@webb-tools/app-util';
 
 interface WebbProviderProps extends BareProps {
   applicationName: string;
@@ -128,12 +129,29 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
         const defaultFromSettings = accounts.find((account) => account.address === defaultAccount);
         if (defaultFromSettings) {
           _setActiveAccount(defaultFromSettings);
-          await activeApi?.accounts.setActiveAccount(defaultFromSettings);
+          await nextActiveApi?.accounts.setActiveAccount(defaultFromSettings);
         }
       } else {
         await setActiveAccount(accounts[0]);
       }
       setActiveApi(nextActiveApi);
+      nextActiveApi?.on('newAccounts', async (accounts) => {
+        const acs = await accounts.accounts();
+        const active = acs[0] || null;
+        notificationApi({
+          variant: 'info',
+          Icon: (
+            <div>
+              <Icon>people-alt</Icon>
+            </div>
+          ),
+          key: 'account-change',
+          message: 'Account changed from provider',
+          secondaryMessage: `active account is ${active?.address ?? 'UNKNOWN'}`,
+        });
+        setAccounts(acs);
+        _setActiveAccount(acs[0] || null);
+      });
     } else {
       setActiveApi(nextActiveApi);
       setAccounts([]);
@@ -182,7 +200,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
     const wallet = _wallet || activeWallet;
     // wallet cleanup
     /// if new wallet id isn't the same of the current then the dApp is dealing with api change
-    if (_wallet.id !== activeWallet?.id && activeApi) {
+    if (activeApi) {
       await activeApi.destroy();
     }
     try {
@@ -207,7 +225,6 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
             /// init provider from the extension
             const web3Provider = await Web3Provider.fromExtension();
             /// get the current active chain from metamask
-            //TODO show feedback if the `chain.evmId` isn't the same
             const chainId = await web3Provider.network; // storage based on network id
             const webbWeb3Provider = await WebbWeb3Provider.init(web3Provider, chainId);
             webbWeb3Provider.on('providerUpdate', async ([chainId]) => {
@@ -306,6 +323,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
         /// Catch the errors for the switcher while switching
         catchWebbError(e);
       }
+      LoggerService.get('App').error(e);
       return null;
     }
   };

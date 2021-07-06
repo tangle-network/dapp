@@ -42,7 +42,7 @@ export class AnchorContract {
     const deposit = createDeposit();
     const chainId = await this.signer.getChainId();
     const depositSizeBN = await this.denomination;
-    const depositSize = Number.parseFloat(utils.fromWei(depositSizeBN.toString(), "ether"));
+    const depositSize = Number.parseFloat(utils.fromWei(depositSizeBN.toString(), 'ether'));
     const note = new EvmNote(assetSymbol, depositSize, chainId, deposit.preimage);
     return {
       note,
@@ -56,7 +56,6 @@ export class AnchorContract {
       gasPrice: utils.toWei('1', 'gwei'),
       value: await this.denomination,
     };
-    console.log(commitment);
     const filters = await this._contract.filters.Deposit(commitment, null, null);
     this._contract.once(filters, (commitment, insertedIndex, timestamp) => {
       onComplete?.([commitment, insertedIndex, timestamp]);
@@ -85,15 +84,17 @@ export class AnchorContract {
 
       // If there is a timeout, query the logs in block increments.
       if (e.code == -32603) {
-        for (let i=startingBlock; i < currentBlock; i+= 50)
-        {
-          logs = [...logs, ...(await this.web3Provider.getLogs({
-            fromBlock: i,
-            toBlock: (currentBlock - i > 50) ? i + 50 : currentBlock,
-            ...filter,
-          }))];
+        for (let i = startingBlock; i < currentBlock; i += 50) {
+          logs = [
+            ...logs,
+            ...(await this.web3Provider.getLogs({
+              fromBlock: i,
+              toBlock: currentBlock - i > 50 ? i + 50 : currentBlock,
+              ...filter,
+            })),
+          ];
 
-          mixerLogger.log(`Getting logs for block range: ${i} through ${i+50}`)
+          mixerLogger.log(`Getting logs for block range: ${i} through ${i + 50}`);
         }
       } else {
         throw e;
@@ -109,14 +110,14 @@ export class AnchorContract {
 
     // extract the commitments from the events, and update the storage
     await this.mixersInfo.setMixerStorage(this._contract.address, currentBlock, commitments);
-    
+
     return commitments;
   }
 
   async generateMerkleProof(deposit: Deposit) {
     const leaves = await this.getDepositLeaves();
     const tree = new MerkleTree('eth', 20, leaves);
-    let leafIndex = leaves.findIndex(commitment => commitment == bufferToFixed(deposit.commitment));
+    let leafIndex = leaves.findIndex((commitment) => commitment == bufferToFixed(deposit.commitment));
     return tree.path(leafIndex);
   }
 

@@ -288,14 +288,20 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
                     disabled={connectedWallet && activeChain?.id === id}
                     onClick={async () => {
                       setConnectionStep(ConnectionStep.Connecting);
-                      await switchChain(userSelectedChain, wallet);
-                      handleCancel();
+                      const next = await switchChain(userSelectedChain, wallet);
+                      if (next) {
+                        handleCancel();
+                      } else {
+                        setUserSelectedChain(null);
+                        setConnectionStep(ConnectionStep.SelectChain);
+                      }
                     }}
                     style={{
                       display: 'flex',
                       alignItems: 'center',
                     }}
                     id={url + wallet.name}
+                    key={url + wallet.name}
                   >
                     <ListItemAvatar>
                       <Avatar
@@ -369,9 +375,9 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
       <Modal
         open={open}
         onClose={() => {
-          if (connectionStep !== ConnectionStep.Connecting) {
-            setOpen(false);
-          }
+          // if (connectionStep !== ConnectionStep.Connecting) {
+          //   setOpen(false);
+          // }
         }}
       >
         <NetworkManagerWrapper>

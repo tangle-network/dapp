@@ -1,7 +1,7 @@
 import WalletConnectProvider from '@walletconnect/web3-provider';
+import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import { ethers } from 'ethers';
 import Web3 from 'web3';
-import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 
 export class Web3Provider {
   constructor(private _inner: Web3) {}
