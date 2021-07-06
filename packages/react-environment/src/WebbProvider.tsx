@@ -1,6 +1,6 @@
 import Icon from '@material-ui/core/Icon';
 import WalletConnectProvider from '@walletconnect/web3-provider';
-import { chainsConfig, chainsPopulated } from '@webb-dapp/apps/configs';
+import { chainsConfig, chainsPopulated, currenciesConfig } from '@webb-dapp/apps/configs';
 import { WalletId } from '@webb-dapp/apps/configs/wallets/wallet-id.enum';
 import { walletsConfig } from '@webb-dapp/apps/configs/wallets/wallets-config';
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3';
@@ -257,6 +257,23 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
             });
 
             const activeChain = Object.values(chainsConfig).find((chain) => chain.evmId === chainId);
+            const cantAddChain = !chain.evmId || !chain.evmRpcUrls;
+            const addEvmChain = () => {
+              if (!chain.evmId || !chain.evmRpcUrls) {
+                return;
+              }
+              const currency = currenciesConfig[chain.nativeCurrencyId];
+              return web3Provider.addChain({
+                chainId: `0x${chain.evmId.toString(16)}`,
+                chainName: chain.name,
+                rpcUrls: chain.evmRpcUrls,
+                nativeCurrency: {
+                  decimals: 18,
+                  name: currency.name,
+                  symbol: currency.symbol,
+                },
+              });
+            };
             if (chainId !== chain.evmId && activeChain) {
               const feedback = evmChainConflict(
                 {
@@ -268,6 +285,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
                     id: chain?.evmId ?? 0,
                     name: chain.name,
                   },
+                  addEvmChainToMetaMask: cantAddChain ? undefined : addEvmChain,
                 },
                 appEvent
               );

@@ -7,6 +7,7 @@ export interface ChainConfig {
   evmId: number | undefined;
   tag?: 'dev' | 'test' | 'live';
   url: string;
+  evmRpcUrls?: string[];
   logo: React.ComponentType;
   nativeCurrencyId: WebbCurrencyId;
   currencies: Array<{ currencyId: WebbCurrencyId; enabled: boolean }>;

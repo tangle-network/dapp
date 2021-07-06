@@ -1,5 +1,8 @@
 import { TAppEvent } from '@webb-dapp/react-environment/app-event';
 import { InteractiveFeedback, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
+import { Button } from '@material-ui/core';
+import React from 'react';
+import { notificationApi } from '@webb-dapp/ui-components/notification';
 
 type EvmNetworkConflictParams = {
   activeOnExtension: {
@@ -10,12 +13,41 @@ type EvmNetworkConflictParams = {
     name: string;
     id: string | number;
   };
+  addEvmChainToMetaMask?(): void;
 };
 
 export const USER_SWITCHED_TO_EXPECT_CHAIN = 'OK';
 
 export function evmChainConflict(params: EvmNetworkConflictParams, appEvent: TAppEvent): InteractiveFeedback {
   let interactiveFeedback: InteractiveFeedback;
+  const addChainContent = [
+    {
+      content: `If you don't have ${params.selected.name} in your MetaMask extension`,
+    },
+    {
+      any: () => {
+        let clicked = false;
+        return React.createElement(Button, {
+          onClick: () => {
+            if (clicked) {
+              notificationApi({
+                message: 'Please approve on the extension',
+                secondaryMessage: 'The network adding request sent to extension please approve it',
+                variant: 'warning',
+                key: 'add-new-network',
+              });
+              return;
+            }
+            params.addEvmChainToMetaMask?.();
+            clicked = true;
+          },
+          children: `Add ${params.selected.name}`,
+          variant: 'contained',
+          color: 'primary',
+        });
+      },
+    },
+  ];
   const feedbackBody = InteractiveFeedback.feedbackEntries([
     {
       header: `The select chain isn't active on MetaMask`,
@@ -31,6 +63,7 @@ export function evmChainConflict(params: EvmNetworkConflictParams, appEvent: TAp
     {
       list: ['Open MetaMask', `select chain ${params.selected.name}`],
     },
+    ...(params.addEvmChainToMetaMask ? addChainContent : []),
   ]);
   const actions = InteractiveFeedback.actionsBuilder()
     // .action(

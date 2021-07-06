@@ -1,4 +1,3 @@
-import { WebbEVMChain } from '@webb-dapp/apps/configs';
 import { AnchorContract } from '@webb-dapp/contracts/contracts/anchor';
 import { WebbApiProvider, WebbMethods, WebbProviderEvents } from '@webb-dapp/react-environment';
 import { EvmChainMixersInfo } from '@webb-dapp/react-environment/api-providers/web3/EvmChainMixersInfo';
@@ -10,8 +9,6 @@ import { Web3Accounts } from '@webb-dapp/wallet/providers/web3/web3-accounts';
 import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
 import { EventBus } from '@webb-tools/app-util';
 import { providers } from 'ethers';
-import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
-import { MixerSize } from '@webb-dapp/react-environment/webb-context';
 
 export class WebbWeb3Provider
   extends EventBus<WebbProviderEvents<[number]>>
