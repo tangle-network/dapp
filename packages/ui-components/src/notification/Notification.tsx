@@ -18,12 +18,15 @@ const AlertIconWrapper = styled.div<{ color: string }>`
   border-radius: 50%;
   width: 32px;
   height: 32px;
+  min-width: 32px;
+  min-height: 32px;
   background: ${({ color }) => color};
 `;
 
 const AlertCopyWrapper = styled.div`
   padding: 0 0.5rem;
   flex: 1;
+  word-break: break-all;
 `;
 
 const AlertActionsWrapper = styled.div`
@@ -125,7 +128,9 @@ export const Alert: React.FC<{
     <AlertWrapper color={color} as={Paper} elevation={4}>
       <AlertIconWrapper color={opts.transparent ? 'rgba(0,0,0,0)' : color}>{AlertIcon}</AlertIconWrapper>
       <AlertCopyWrapper>
-        <Typography>{opts.message}</Typography>
+        <Typography variant={'h6'} component={'p'}>
+          {opts.message}
+        </Typography>
         <Typography>{opts.secondaryMessage}</Typography>
       </AlertCopyWrapper>
       <AlertActionsWrapper>

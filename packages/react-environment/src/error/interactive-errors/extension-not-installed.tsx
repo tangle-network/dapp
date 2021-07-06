@@ -108,7 +108,7 @@ export function extensionNotInstalled(extension: 'metamask' | 'polkadot'): Inter
     .action(
       'Ok',
       () => {
-        interactiveFeedback?.cancel();
+        interactiveFeedback?.cancelWithoutHandler();
       },
       'success'
     )

@@ -14,7 +14,7 @@ export const walletsConfig: AppConfig['wallet'] = {
     async detect() {
       return true;
     },
-    supportedChainIds: [ChainId.Edgware, ChainId.EdgwareTestNet, ChainId.EdgwareLocalNet],
+    supportedChainIds: [ChainId.Edgeware, ChainId.EdgewareTestNet, ChainId.EdgewareLocalNet],
   },
   [WalletId.MetaMask]: {
     id: WalletId.MetaMask,
@@ -29,7 +29,17 @@ export const walletsConfig: AppConfig['wallet'] = {
       }
       return false;
     },
-    supportedChainIds: [ChainId.Edgware, ChainId.EdgwareTestNet, ChainId.EdgwareLocalNet, ChainId.AnyEvm],
+    supportedChainIds: [
+      ChainId.Edgeware,
+      ChainId.EdgewareTestNet,
+      ChainId.EdgewareLocalNet,
+      ChainId.EthereumMainNet,
+      ChainId.Rinkeby,
+      ChainId.Kovan,
+      ChainId.Ropsten,
+      ChainId.Goerli,
+      ChainId.HarmonyTestnet1,
+    ],
   },
   // 3: {
   //   id: 3,
@@ -41,5 +51,20 @@ export const walletsConfig: AppConfig['wallet'] = {
   //     return true;
   //   },
   //   supportedChainIds: [1, 2, 3, 4],
+  // },
+  // [WalletId.OneWallet]: {
+  //   id: WalletId.OneWallet,
+  //   logo: HarmonyLogo,
+  //   name: 'one wallet',
+  //   title: 'One',
+  //   enabled: true,
+  //   detect() {
+  //     const hasOneWallet = typeof (window as any).onewallet !== 'undefined';
+  //     if (hasOneWallet) {
+  //       return (window as any).onewallet.isOneWallet as boolean;
+  //     }
+  //     return false;
+  //   },
+  //   supportedChainIds: [ChainId.HarmonyTestnet1],
   // },
 };

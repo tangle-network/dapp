@@ -1,21 +1,7 @@
 import WalletConnectProvider from '@walletconnect/web3-provider';
+import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import { ethers } from 'ethers';
 import Web3 from 'web3';
-import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
-import { AbstractProvider } from 'web3-core';
-
-export interface AddEthereumChainParameter {
-  chainId: string; // A 0x-prefixed hexadecimal string
-  chainName: string;
-  nativeCurrency: {
-    name: string;
-    symbol: string; // 2-6 characters long
-    decimals: 18;
-  };
-  rpcUrls: string[];
-  blockExplorerUrls?: string[];
-  iconUrls?: string[]; // Currently ignored.
-}
 
 export class Web3Provider {
   constructor(private _inner: Web3) {}
@@ -77,13 +63,5 @@ export class Web3Provider {
 
   intoEthersProvider() {
     return new ethers.providers.Web3Provider(this.provider as any, 'any');
-  }
-
-  addChain(chainInput: AddEthereumChainParameter) {
-    const provider = this._inner.currentProvider as AbstractProvider;
-    return provider.request?.({
-      method: 'wallet_addEthereumChain',
-      params: [chainInput],
-    });
   }
 }

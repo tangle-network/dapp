@@ -1,16 +1,17 @@
 import { ButtonBase, Checkbox, FormControlLabel, Icon, IconButton, Tooltip, Typography } from '@material-ui/core';
 import { MixerButton } from '@webb-dapp/mixer/components/MixerButton/MixerButton';
+import { DepositApi } from '@webb-dapp/mixer/hooks/deposit/useDeposit';
+import { DepositPayload } from '@webb-dapp/react-environment/webb-context';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { notificationApi } from '@webb-dapp/ui-components/notification';
 import { Spinner } from '@webb-dapp/ui-components/Spinner/Spinner';
+import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 import { downloadString } from '@webb-dapp/utils';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import styled from 'styled-components';
-import { DepositApi } from '@webb-dapp/mixer/hooks/deposit/useDeposit';
-import { DepositPayload } from '@webb-dapp/react-environment/webb-context';
 
 const DismissWrapper = styled.button``;
 const Dismiss = () => {
@@ -23,6 +24,7 @@ const DepositInfoWrapper = styled.div`
   min-height: 300px;
   position: relative;
   overflow: hidden;
+  background: ${({ theme }: { theme: Pallet }) => (theme.type === 'dark' ? theme.spinnerBackground : '#fff')};
 
   .modal-header {
     position: relative;
@@ -82,7 +84,7 @@ const Loading = styled.div`
   width: 100%;
   z-index: 44;
   height: 100%;
-  background: #fff;
+  background: ${({ theme }: { theme: Pallet }) => (theme.type === 'dark' ? theme.spinnerBackground : '#fff')};
 
   ${CloseDepositModal} {
     top: 20px;

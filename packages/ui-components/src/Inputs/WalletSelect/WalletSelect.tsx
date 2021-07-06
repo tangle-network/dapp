@@ -35,6 +35,8 @@ const WalletSelectWrapper = styled.div`
   .select-button-content {
     display: inline-block;
     margin-right: 0.2rem;
+    min-width: 75px;
+    text-align: center;
   }
 `;
 type WalletSelectProps = {};
