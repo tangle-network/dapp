@@ -91,8 +91,7 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
     setConnectionStep(ConnectionStep.SelectWallet);
   };
   const handleCancel = useCallback(() => {
-    console.log('cancel net manager');
-    // setOpen(false);
+    setOpen(false);
     if (connectionStep !== ConnectionStep.Connecting) {
       setUserSelectedChain(null);
       setConnectionStep(ConnectionStep.SelectChain);
@@ -101,9 +100,6 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
 
   useEffect(() => {
     const off = appEvent.on('changeNetworkSwitcherVisibility', (next) => {
-      console.log({
-        changeNetworkSwitcherVisibility: next,
-      });
       setOpen(next);
     });
     return () => off && off();
@@ -292,8 +288,13 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
                     disabled={connectedWallet && activeChain?.id === id}
                     onClick={async () => {
                       setConnectionStep(ConnectionStep.Connecting);
-                      await switchChain(userSelectedChain, wallet);
-                      handleCancel();
+                      const next = await switchChain(userSelectedChain, wallet);
+                      if (next) {
+                        handleCancel();
+                      } else {
+                        setUserSelectedChain(null);
+                        setConnectionStep(ConnectionStep.SelectChain);
+                      }
                     }}
                     style={{
                       display: 'flex',
@@ -412,12 +413,7 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
         <Padding v as={'footer'}>
           <Flex row ai={'center'} jc={'flex-end'}>
             <Flex>
-              <Button
-                onClick={() => {
-                  handleCancel();
-                  setOpen(false);
-                }}
-              >
+              <Button onClick={handleCancel}>
                 <Padding>Cancel</Padding>
               </Button>
             </Flex>
