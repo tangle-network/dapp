@@ -10,6 +10,8 @@ import { Web3Accounts } from '@webb-dapp/wallet/providers/web3/web3-accounts';
 import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
 import { EventBus } from '@webb-tools/app-util';
 import { providers } from 'ethers';
+import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
+import { MixerSize } from '@webb-dapp/react-environment/webb-context';
 
 export class WebbWeb3Provider
   extends EventBus<WebbProviderEvents<[number]>>
@@ -60,19 +62,6 @@ export class WebbWeb3Provider
       providerUpdate: [],
       interactiveFeedback: [],
     };
-  }
-
-  static storageName(id: number): string {
-    switch (id) {
-      case WebbEVMChain.Rinkeby:
-        return 'rinkeby';
-      case WebbEVMChain.EthereumMainNet:
-        return 'main';
-      case WebbEVMChain.Beresheet:
-        return 'beresheet';
-      default:
-        throw WebbError.from(WebbErrorCodes.UnsupportedChain);
-    }
   }
 
   async getChainId(): Promise<number> {

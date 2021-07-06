@@ -1,4 +1,5 @@
 import { chainsConfig, currenciesConfig } from '@webb-dapp/apps/configs';
+import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 
 export const getNativeCurrencySymbol = (chainID: number): string => {
   const chain = Object.values(chainsConfig).find((chainsConfig) => chainsConfig.evmId === chainID);
@@ -7,6 +8,15 @@ export const getNativeCurrencySymbol = (chainID: number): string => {
     return currenciesConfig[nativeCurrency].symbol;
   }
   return 'Unknown';
+};
+
+export const getEVMChainName = (chainID: number): string => {
+  const chain = Object.values(chainsConfig).find((chainsConfig) => chainsConfig.evmId === chainID);
+  if (chain) {
+    return chain.name;
+  } else {
+    throw WebbError.from(WebbErrorCodes.UnsupportedChain);
+  }
 };
 
 export type MixerInfo = {
@@ -62,4 +72,36 @@ export const beresheetMixers: MixerInfo[] = [
 ];
 
 // TODO: Deploy anchor contracts on Mainnet EVM.
-export const edgewareMixers: MixerInfo[] = [];
+export const edgewareMixers: MixerInfo[] = [
+
+];
+
+export const harmonyTest0Mixers: MixerInfo[] = [
+  {
+    size: 1,
+    address: '0xF06fA633f6E801d9fF3D450Af8806489D4fa70a1',
+    symbol: 'ONE',
+    createdAtBlock: 11538800,
+  },
+  {
+    size: 100,
+    address: '0x5f771fc87F87DB48C9fB11aA228D833226580689',
+    symbol: 'ONE',
+    createdAtBlock: 11561900,
+  },
+];
+
+export const harmonyTest1Mixers: MixerInfo[] = [
+  {
+    size: 1,
+    address: '0x59DCE3dcA8f47Da895aaC4Df997d8A2E29815B1B',
+    symbol: 'ONE',
+    createdAtBlock: 11733680,
+  },
+  {
+    size: 100,
+    address: '0xF06fA633f6E801d9fF3D450Af8806489D4fa70a1',
+    symbol: 'ONE',
+    createdAtBlock: 11733680,
+  },
+];

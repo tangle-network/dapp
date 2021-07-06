@@ -14,7 +14,7 @@ import { InteractiveFeedback, WebbError, WebbErrorCodes } from '@webb-dapp/utils
 import { Account } from '@webb-dapp/wallet/account/Accounts.adapter';
 import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
-
+import { getEVMChainName } from '@webb-dapp/apps/configs/evm/SupportedMixers';
 import { WebbPolkadot } from './api-providers/polkadot';
 import { extensionNotInstalled, unsupportedChain } from './error';
 import { SettingProvider } from './SettingProvider';
@@ -232,7 +232,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
               const nextChain = Object.values(chains).find((chain) => chain.evmId === chainId);
               try {
                 /// this will throw if the user switched to unsupported chain
-                const name = WebbWeb3Provider.storageName(chainId);
+                const name = getEVMChainName(chainId);
                 /// Alerting that the provider has changed via the extension
                 notificationApi({
                   message: 'Web3: changed the connected network',
