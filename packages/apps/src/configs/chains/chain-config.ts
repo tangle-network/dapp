@@ -1,9 +1,10 @@
-import { AppConfig } from '@webb-dapp/react-environment/webb-context';
-import { ChainId, WebbEVMChain } from './chain-id.enum';
 import EdgewareLogo from '@webb-dapp/apps/configs/logos/EdgewareLogo';
 import EtherLogo from '@webb-dapp/apps/configs/logos/Eth';
-import { WebbCurrencyId } from '../currencies/webb-currency-id.enum';
 import { HarmonyLogo } from '@webb-dapp/apps/configs/logos/HarmonyLogo';
+import { AppConfig } from '@webb-dapp/react-environment/webb-context';
+
+import { WebbCurrencyId } from '../currencies/webb-currency-id.enum';
+import { ChainId, WebbEVMChain } from './chain-id.enum';
 
 export const chainsConfig: AppConfig['chains'] = {
   // edgeware
@@ -143,6 +144,7 @@ export const chainsConfig: AppConfig['chains'] = {
     name: 'Harmony Testnet Shard 1',
     tag: 'test',
     url: 'https://api.s1.b.hmny.io',
+    evmRpcUrls: ['https://api.s1.b.hmny.io'],
     logo: HarmonyLogo,
     currencies: [
       {
@@ -151,5 +153,5 @@ export const chainsConfig: AppConfig['chains'] = {
       },
     ],
     nativeCurrencyId: WebbCurrencyId.ONE,
-  }
+  },
 };
