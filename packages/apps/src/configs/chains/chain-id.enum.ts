@@ -1,8 +1,9 @@
 export enum ChainId {
-  Edgware,
-  EdgwareTestNet,
-  EdgwareLocalNet,
+  Edgeware,
+  EdgewareTestNet,
+  EdgewareLocalNet,
   AnyEvm,
+  WebbPrivate,
 }
 export enum WebbEVMChain {
   Main = 1,

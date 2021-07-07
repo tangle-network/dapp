@@ -84,7 +84,9 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
     const leaves: Uint8Array[] = [];
 
     while (done === false) {
+      console.log()
       const treeLeaves: Uint8Array[] = await (this.inner.api.rpc as any).merkle.treeLeaves(treeId, from, to);
+      console.log(`fetching tree leaves: ${treeLeaves}`);
       if (treeLeaves.length === 0) {
         done = true;
         break;

@@ -14,7 +14,7 @@ export const walletsConfig: AppConfig['wallet'] = {
     async detect() {
       return true;
     },
-    supportedChainIds: [ChainId.Edgware, ChainId.EdgwareTestNet, ChainId.EdgwareLocalNet],
+    supportedChainIds: [ChainId.Edgeware, ChainId.EdgewareTestNet, ChainId.EdgewareLocalNet, ChainId.WebbPrivate],
   },
   [WalletId.MetaMask]: {
     id: WalletId.MetaMask,
@@ -29,7 +29,7 @@ export const walletsConfig: AppConfig['wallet'] = {
       }
       return false;
     },
-    supportedChainIds: [ChainId.Edgware, ChainId.EdgwareTestNet, ChainId.EdgwareLocalNet, ChainId.AnyEvm],
+    supportedChainIds: [ChainId.Edgeware, ChainId.EdgewareTestNet, ChainId.EdgewareLocalNet, ChainId.AnyEvm],
   },
   // 3: {
   //   id: 3,
