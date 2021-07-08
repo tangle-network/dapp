@@ -451,6 +451,12 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
         setActiveAccount,
         switchChain: switchChainAndStore,
         isInit,
+        async inactivateApi(): Promise<void> {
+          setActiveApi(undefined);
+          if (activeApi) {
+            await activeApi.destroy();
+          }
+        },
         activeFeedback,
       }}
     >

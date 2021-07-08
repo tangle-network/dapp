@@ -42,6 +42,13 @@ export type WebbProviderEvents<T = any> = {
   newAccounts: AccountsAdapter<any>;
 };
 
+export type ProvideCapabilities = {
+  addNetworkRpc: boolean;
+  listenForAccountChange: boolean;
+  listenForChainChane: boolean;
+  hasSessions: boolean;
+};
+
 export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
   /// Accounts Adapter will have all methods related to the provider accounts
   accounts: AccountsAdapter<any>;
@@ -50,4 +57,6 @@ export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
 
   /// A hook will be called to drop the provider and do cleanup listeners etc..
   destroy(): Promise<void> | void;
+  capabilities?: ProvideCapabilities;
+  endSession?(): Promise<void>;
 }

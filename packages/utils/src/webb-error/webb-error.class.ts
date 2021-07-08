@@ -14,6 +14,8 @@ export enum WebbErrorCodes {
   MetaMaskExtensionNotInstalled,
   /// Runtime Error on the provider
   InsufficientProviderInterface,
+  /// EVM session already ended
+  EVMSessionAlreadyEnded,
 }
 
 /// An Error message with error metadata
@@ -81,6 +83,12 @@ export class WebbError extends Error {
           code,
           message: 'switched to insufficient api interface',
         };
+      case WebbErrorCodes.EVMSessionAlreadyEnded:
+        return {
+          code,
+          message: `Attempt to end session and it' already ended or unknown error`,
+        };
+
       default:
         return {
           code,
