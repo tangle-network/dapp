@@ -246,6 +246,38 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
               web3Provider = await Web3Provider.fromExtension();
             }
 
+            const clientInfo = web3Provider.clientMeta;
+            if (clientInfo) {
+              let message = '';
+              if (wallet?.id === WalletId.WalletConnect) {
+                message = `Connected to WalletConnect ${clientInfo.name}`;
+              } else {
+                message = `Connected to ${clientInfo.name}`;
+              }
+              notificationApi({
+                message: 'Connected to EVM wallet',
+                secondaryMessage: `Connected to ${clientInfo.name}`,
+                variant: 'success',
+                key: 'network-connect',
+                Icon: React.createElement(
+                  'div',
+                  {
+                    style: {
+                      background: 'white',
+                      minWidth: 30,
+                      minHeight: 30,
+                      padding: 4,
+                      borderRadius: '50%',
+                      overflow: 'hidden',
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    },
+                  },
+                  [React.createElement(wallet.logo)]
+                ),
+              });
+            }
             /// get the current active chain from metamask
             const chainId = await web3Provider.network; // storage based on network id
             const webbWeb3Provider = await WebbWeb3Provider.init(web3Provider, chainId);

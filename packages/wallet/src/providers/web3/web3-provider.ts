@@ -16,8 +16,30 @@ export interface AddEthereumChainParameter {
   blockExplorerUrls?: string[];
   iconUrls?: string[]; // Currently ignored.
 }
+
+export interface ClientMetaData {
+  description: string;
+  url: string;
+  icons: string[];
+  name: string;
+}
+
+export type ProvideCapabilities = {
+  addNetworkRpc: boolean;
+  listenForAccountChange: boolean;
+  listenForChainChane: boolean;
+  hasSessions: boolean;
+};
+
 export class Web3Provider {
-  constructor(private _inner: Web3) {}
+  private _capabilities: ProvideCapabilities = {
+    addNetworkRpc: false,
+    hasSessions: false,
+    listenForAccountChange: false,
+    listenForChainChane: false,
+  };
+
+  private constructor(private _inner: Web3, readonly clientMeta: ClientMetaData | null = null) {}
 
   static get currentProvider() {
     //@ts-ignore
@@ -28,6 +50,7 @@ export class Web3Provider {
         return provider;
       }
     }
+
     throw WebbError.from(WebbErrorCodes.MetaMaskExtensionNotInstalled);
   }
 
@@ -37,7 +60,19 @@ export class Web3Provider {
       //@ts-ignore
       const provider = Web3Provider.currentProvider;
       await provider.enable();
-      return new Web3Provider(new Web3(provider));
+      const web3Provider = new Web3Provider(new Web3(provider), {
+        description: 'MetaMask',
+        name: 'MetaMask',
+        icons: [],
+        url: 'https://https://metamask.io',
+      });
+      web3Provider._capabilities = {
+        addNetworkRpc: true,
+        listenForAccountChange: true,
+        listenForChainChane: true,
+        hasSessions: false,
+      };
+      return web3Provider;
     }
     throw WebbError.from(WebbErrorCodes.MetaMaskExtensionNotInstalled);
   }
@@ -51,7 +86,14 @@ export class Web3Provider {
   static async fromWalletConnectProvider(WCProvider: WalletConnectProvider) {
     await WCProvider.enable();
     const web3 = new Web3((WCProvider as unknown) as any);
-    return new Web3Provider(web3);
+    const web3Provider = new Web3Provider(web3, WCProvider.walletMeta);
+    web3Provider._capabilities = {
+      addNetworkRpc: false,
+      listenForAccountChange: false,
+      listenForChainChane: false,
+      hasSessions: true,
+    };
+    return web3Provider;
   }
 
   get network() {
@@ -70,6 +112,12 @@ export class Web3Provider {
     return this._inner.eth.currentProvider;
   }
 
+  public get capabilities() {
+    return this._capabilities;
+  }
+
+
+
   enable() {
     // @ts-ignore
   }
@@ -77,6 +125,7 @@ export class Web3Provider {
   intoEthersProvider() {
     return new ethers.providers.Web3Provider(this.provider as any, 'any');
   }
+
   addChain(chainInput: AddEthereumChainParameter) {
     const provider = this._inner.currentProvider as AbstractProvider;
     return provider.request?.({
