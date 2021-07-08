@@ -156,12 +156,8 @@ export class AnchorContract {
       pathIndices: pathIndex,
     };
     const proofsData = await webSnarkUtils.genWitnessAndProve(
-      {
-        proof: (witness: any, pk: any) => {
-          // @ts-ignore
-          return window.groth16GenProof(witness, pk);
-        },
-      },
+      // @ts-ignore
+      window.groth16,
       input,
       circuitData,
       proving_key
