@@ -18,7 +18,7 @@ import { getEVMChainName } from '@webb-dapp/apps/configs/evm/SupportedMixers';
 import { WebbPolkadot } from './api-providers/polkadot';
 import { extensionNotInstalled, unsupportedChain } from './error';
 import { SettingProvider } from './SettingProvider';
-import { Chain, netStorageFactory, NetworkStorage, Wallet, WebbApiProvider, WebbContext } from './webb-context';
+import { Chain, netStorageFactory, NetworkStorage, Wallet, Relayer, WebbApiProvider, WebbContext } from './webb-context';
 import {
   evmChainConflict,
   USER_SWITCHED_TO_EXPECT_CHAIN,
@@ -53,6 +53,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
   const [accounts, setAccounts] = useState<Array<Account>>([]);
   const [activeAccount, _setActiveAccount] = useState<Account | null>(null);
   const [isInit, setIsInit] = useState(true);
+  const [activeRelayer, setActiveRelayer] = useState<Relayer | null>(null);
 
   /// storing all interactive feedbacks to show the modals
   const [interactiveFeedbacks, setInteractiveFeedbacks] = useState<InteractiveFeedback[]>([]);
@@ -416,6 +417,8 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
         accounts,
         activeAccount,
         setActiveAccount,
+        activeRelayer,
+        setActiveRelayer,
         switchChain: switchChainAndStore,
         isInit,
         activeFeedback,

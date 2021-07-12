@@ -1,9 +1,11 @@
 import { useWebContext, WithdrawState } from '@webb-dapp/react-environment/webb-context';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Relayer } from '@webb-dapp/react-environment';
 
 export type UseWithdrawProps = {
   note: string;
   recipient: string;
+  relayer: Relayer;
 };
 export type WithdrawErrors = {
   error: string;
@@ -58,7 +60,7 @@ export const useWithdraw = (params: UseWithdrawProps) => {
     if (!withdrawApi) return;
 
     if (stage === WithdrawState.Ideal) {
-      const { note, recipient } = params;
+      const { note, recipient, relayer } = params;
       await withdrawApi.withdraw(note, recipient);
     }
   }, [withdrawApi, params, stage]);

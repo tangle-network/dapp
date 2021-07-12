@@ -16,10 +16,12 @@ type WithdrawProps = {};
 export const Withdraw: React.FC<WithdrawProps> = () => {
   const [note, setNote] = useState('');
   const [recipient, setRecipient] = useState('');
+  const { activeRelayer, setActiveRelayer } = useWebContext();
 
   const { canCancel, cancelWithdraw, stage, validationErrors, withdraw } = useWithdraw({
     recipient,
     note,
+    activeRelayer,
   });
 
   return (

@@ -121,12 +121,7 @@ export class AnchorContract {
     return tree.path(leafIndex);
   }
 
-  async withdraw(noteString: string, recipient: string) {
-    const overrides = {
-      gasLimit: 6000000,
-      gasPrice: utils.toWei('1', 'gwei'),
-    };
-
+  async generateWithdrawProof(noteString: string, recipient: string, relayer: string, fee: number) {
     const note = EvmNote.deserialize(noteString);
     const deposit = note.intoDeposit();
     console.log({
@@ -144,9 +139,9 @@ export class AnchorContract {
       // public
       root: root,
       nullifierHash: deposit.nullifierHash,
-      relayer: 0,
+      relayer: relayer || 0,
       recipient: recipient,
-      fee: 0,
+      fee: fee,
       refund: 0,
 
       // private
@@ -163,6 +158,17 @@ export class AnchorContract {
       proving_key
     );
     const { proof } = await webSnarkUtils.toSolidityInput(proofsData);
+
+    return { proof, input};
+  }
+
+  async withdraw(noteString: string, recipient: string, relayer: string, fee: number) {
+    const overrides = {
+      gasLimit: 6000000,
+      gasPrice: utils.toWei('1', 'gwei'),
+    };
+
+    const {proof, input} = generateWithdrawProof(noteString, recipient, relayer, number);
     const tx = await this._contract.withdraw(
       proof,
       bufferToFixed(input.root),
@@ -176,3 +182,5 @@ export class AnchorContract {
     return tx;
   }
 }
+
+
