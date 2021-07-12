@@ -22,6 +22,10 @@ const IPDisplayWrapper = styled.div`
       font-size: 40px;
       color: ${theme.primary}
     }
+
+    .tor {
+      color: ${theme.primary}
+    }
   `}
 
   .ip-text {
@@ -48,6 +52,7 @@ const IPDisplay: React.FC<IPDisplayProps> = () => {
       <div style={{paddingLeft: 5}}>
         <Typography className={'ip-text'} variant={'h5'}>Your IP Address is: <b>{query} {city}, {countryCode}</b></Typography>
         <Typography className={'ip-info'}>Please mask your IP address while using our service!</Typography>
+        <Typography className={'ip-info'}>We recommend <span className={'tor'}>TOR</span> </Typography>
       </div>
     </IPDisplayWrapper>
   );
