@@ -29,45 +29,46 @@ export type MixerInfo = {
 export const rinkebyMixers: MixerInfo[] = [
   {
     size: 0.1,
-    address: '0x876eCe69618e8E8dd743250B036785813824D2D7',
+    address: '0x626FEc5Ffa7Bf1EE8CEd7daBdE545630473E3ABb',
     symbol: 'ETH',
-    createdAtBlock: 1, // should be hardcoded to deployed block number
+    createdAtBlock: 8896800, // should be hardcoded to deployed block number
+  },
+  {
+    size: 1,
+    address: '0x979cBd4917e81447983ef87591B9E1ab21727a61',
+    symbol: 'ETH',
+    createdAtBlock: 8896800,
   },
 ];
 
 export const ethMainNetMixers: MixerInfo[] = [
-  {
-    size: 0.1,
-    address: '0x876eCe69618e8E8dd743250B036785813824D2D7',
-    symbol: 'ETH',
-    createdAtBlock: 1,
-  },
+
 ];
 
 export const beresheetMixers: MixerInfo[] = [
   {
     size: 10,
-    address: '0x5f771fc87F87DB48C9fB11aA228D833226580689',
+    address: '0xf0EA8Fa17daCF79434d10C51941D8Fc24515AbE3',
     symbol: 'tEDG',
-    createdAtBlock: 3000,
+    createdAtBlock: 299740,
   },
   {
     size: 100,
-    address: '0x2ee2e51cab1561E4482cacc8Be8b46CE61E46991',
+    address: '0xc0d863EE313636F067dCF89e6ea904AD5f8DEC65',
     symbol: 'tEDG',
-    createdAtBlock: 3000,
+    createdAtBlock: 299740,
   },
   {
     size: 1000,
-    address: '0x5696b4AfBc169454d7FA26e0a41828d445CFae20',
+    address: '0xc7c6152214d0Db4e161Fa67fB62811Be7326834A',
     symbol: 'tEDG',
-    createdAtBlock: 3000,
+    createdAtBlock: 299740,
   },
   {
     size: 10000,
-    address: '0x626FEc5Ffa7Bf1EE8CEd7daBdE545630473E3ABb',
+    address: '0xf0290d80880E3c59512e454E303FcD48f431acA3',
     symbol: 'tEDG',
-    createdAtBlock: 3000,
+    createdAtBlock: 299740,
   },
 ];
 
@@ -77,31 +78,20 @@ export const edgewareMixers: MixerInfo[] = [
 ];
 
 export const harmonyTest0Mixers: MixerInfo[] = [
-  {
-    size: 1,
-    address: '0xF06fA633f6E801d9fF3D450Af8806489D4fa70a1',
-    symbol: 'ONE',
-    createdAtBlock: 11538800,
-  },
-  {
-    size: 100,
-    address: '0x5f771fc87F87DB48C9fB11aA228D833226580689',
-    symbol: 'ONE',
-    createdAtBlock: 11561900,
-  },
+
 ];
 
 export const harmonyTest1Mixers: MixerInfo[] = [
   {
     size: 1,
-    address: '0x59DCE3dcA8f47Da895aaC4Df997d8A2E29815B1B',
+    address: '0x8a4D675dcC71A7387a3C4f27d7D78834369b9542',
     symbol: 'ONE',
-    createdAtBlock: 11733680,
+    createdAtBlock: 12040000,
   },
   {
     size: 100,
-    address: '0xF06fA633f6E801d9fF3D450Af8806489D4fa70a1',
+    address: '0x7cd1F52e5EEdf753e99D945276a725CE533AaD1a',
     symbol: 'ONE',
-    createdAtBlock: 11733680,
+    createdAtBlock: 12040000,
   },
 ];
