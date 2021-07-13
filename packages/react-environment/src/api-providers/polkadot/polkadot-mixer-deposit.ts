@@ -7,6 +7,7 @@ import { Token } from '@webb-tools/sdk-core';
 import { Asset, Mixer, Note } from '@webb-tools/sdk-mixer';
 
 import { WebbPolkadot } from './webb-polkadot-provider';
+import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 
 type DepositPayload = IDepositPayload<Note, [number, Uint8Array[]]>;
 
@@ -105,7 +106,7 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
     const account = await this.inner.accounts.activeOrDefault;
     console.log('account', account);
     if (!account) {
-      throw new Error('no account available');
+      throw WebbError.from(WebbErrorCodes.NoAccountAvailable);
     }
     tx.on('finalize', () => {
       console.log('deposit done');

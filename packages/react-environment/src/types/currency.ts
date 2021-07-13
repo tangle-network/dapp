@@ -1,15 +1,6 @@
-import { chainsPopulated } from '@webb-dapp/apps/configs/wallets/chains-populated';
-import { currenciesConfig } from '@webb-dapp/apps/configs/wallets/currency-config';
 import { Chain } from '@webb-dapp/react-environment';
-import { Token } from '@webb-tools/sdk-core';
 import { createElement } from 'react';
-
-export type WebbCurrencyId = number;
-
-interface Data {
-  currencyId: WebbCurrencyId;
-  token: Token;
-}
+import { chainsPopulated, currenciesConfig, WebbCurrencyId } from '@webb-dapp/apps/configs';
 
 //TODO handle state from the provider
 const chains = chainsPopulated;

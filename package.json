@@ -11,12 +11,12 @@
   },
   "resolutions": {
     "@polkadot/api": "^4.11.2",
-    "@webb-tools/type-definitions": "^0.1.2-71",
-    "@webb-tools/api": "^0.1.2-71",
-    "@webb-tools/types": "^0.1.2-71",
-    "@webb-tools/app-util": "^0.1.2-71",
-    "@webb-tools/sdk-core": "^0.1.2-71",
-    "@webb-tools/sdk-mixer": "^0.1.2-71"
+    "@webb-tools/type-definitions": "^0.1.2-75",
+    "@webb-tools/api": "^0.1.2-75",
+    "@webb-tools/types": "^0.1.2-75",
+    "@webb-tools/app-util": "^0.1.2-75",
+    "@webb-tools/sdk-core": "^0.1.2-75",
+    "@webb-tools/sdk-mixer": "^0.1.2-75"
   },
   "scripts": {
     "bump-version": "node scripts/bump-version.js",
@@ -39,6 +39,7 @@
     "@walletconnect/web3-provider": "^1.4.1",
     "circom": "^0.5.45",
     "circomlib": "git+https://github.com/tornadocash/circomlib.git#c372f14d324d57339c88451834bf2824e73bbdbc",
+    "detect-browser": "^5.2.0",
     "ethers": "^5.1.4",
     "gh-pages": "^3.1.0",
     "history": "^5.0.0",

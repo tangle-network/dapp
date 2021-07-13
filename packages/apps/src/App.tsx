@@ -18,6 +18,7 @@ const App: FC = () => {
       <WebbProvider applicationName={'Webb DApp'}>
         <UIProvider>
           <Theme />
+
           <RouterProvider config={routerConfig} />
           <NotificationStacked />
         </UIProvider>

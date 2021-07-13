@@ -1,9 +1,40 @@
 import WalletConnectProvider from '@walletconnect/web3-provider';
+import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import { ethers } from 'ethers';
 import Web3 from 'web3';
+import { AbstractProvider } from 'web3-core';
+import { ProvideCapabilities } from '@webb-dapp/react-environment';
 
-export class Web3Provider {
-  constructor(private _inner: Web3) {}
+export interface AddEthereumChainParameter {
+  chainId: string; // A 0x-prefixed hexadecimal string
+  chainName: string;
+  nativeCurrency: {
+    name: string;
+    symbol: string; // 2-6 characters long
+    decimals: 18;
+  };
+  rpcUrls: string[];
+  blockExplorerUrls?: string[];
+  iconUrls?: string[]; // Currently ignored.
+}
+
+export interface ClientMetaData {
+  description: string;
+  url: string;
+  icons: string[];
+  name: string;
+}
+
+export class Web3Provider<T = unknown> {
+  private helperApi: T | null = null;
+  private _capabilities: ProvideCapabilities = {
+    addNetworkRpc: false,
+    hasSessions: false,
+    listenForAccountChange: false,
+    listenForChainChane: false,
+  };
+
+  private constructor(private _inner: Web3, readonly clientMeta: ClientMetaData | null = null) {}
 
   static get currentProvider() {
     //@ts-ignore
@@ -14,7 +45,8 @@ export class Web3Provider {
         return provider;
       }
     }
-    throw Error('Not provider in window');
+
+    throw WebbError.from(WebbErrorCodes.MetaMaskExtensionNotInstalled);
   }
 
   static async fromExtension() {
@@ -23,9 +55,21 @@ export class Web3Provider {
       //@ts-ignore
       const provider = Web3Provider.currentProvider;
       await provider.enable();
-      return new Web3Provider(new Web3(provider));
+      const web3Provider = new Web3Provider(new Web3(provider), {
+        description: 'MetaMask',
+        name: 'MetaMask',
+        icons: [],
+        url: 'https://https://metamask.io',
+      });
+      web3Provider._capabilities = {
+        addNetworkRpc: true,
+        listenForAccountChange: true,
+        listenForChainChane: true,
+        hasSessions: false,
+      };
+      return web3Provider;
     }
-    throw Error('Not provider in window');
+    throw WebbError.from(WebbErrorCodes.MetaMaskExtensionNotInstalled);
   }
 
   static fromUri(url: string) {
@@ -37,7 +81,15 @@ export class Web3Provider {
   static async fromWalletConnectProvider(WCProvider: WalletConnectProvider) {
     await WCProvider.enable();
     const web3 = new Web3((WCProvider as unknown) as any);
-    return new Web3Provider(web3);
+    const web3Provider = new Web3Provider<WalletConnectProvider>(web3, WCProvider.walletMeta);
+    web3Provider._capabilities = {
+      addNetworkRpc: false,
+      listenForAccountChange: false,
+      listenForChainChane: false,
+      hasSessions: true,
+    };
+    web3Provider.helperApi = WCProvider;
+    return web3Provider;
   }
 
   get network() {
@@ -56,11 +108,37 @@ export class Web3Provider {
     return this._inner.eth.currentProvider;
   }
 
+  public get capabilities() {
+    return this._capabilities;
+  }
+
   enable() {
     // @ts-ignore
   }
 
   intoEthersProvider() {
-    return new ethers.providers.Web3Provider(this.provider as any);
+    return new ethers.providers.Web3Provider(this.provider as any, 'any');
+  }
+
+  async endSession() {
+    try {
+      if (this.capabilities.hasSessions) {
+        if (this.helperApi instanceof WalletConnectProvider) {
+          await this.helperApi.connector.killSession({
+            message: 'Session end error',
+          });
+        }
+      }
+    } catch (e) {
+      throw WebbError.from(WebbErrorCodes.EVMSessionAlreadyEnded);
+    }
+  }
+
+  addChain(chainInput: AddEthereumChainParameter) {
+    const provider = this._inner.currentProvider as AbstractProvider;
+    return provider.request?.({
+      method: 'wallet_addEthereumChain',
+      params: [chainInput],
+    });
   }
 }

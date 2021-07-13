@@ -1,47 +1,41 @@
-import Icon from '@material-ui/core/Icon';
-import { EvmChainStorage } from '@webb-dapp/apps/configs/storages/evm-chain-storage.interface';
 import { AnchorContract } from '@webb-dapp/contracts/contracts/anchor';
-import { WebbApiProvider, WebbMethods } from '@webb-dapp/react-environment';
+import { WebbApiProvider, WebbMethods, WebbProviderEvents } from '@webb-dapp/react-environment';
+import { EvmChainMixersInfo } from '@webb-dapp/react-environment/api-providers/web3/EvmChainMixersInfo';
 import { Web3MixerDeposit } from '@webb-dapp/react-environment/api-providers/web3/web3-mixer-deposit';
 import { Web3MixerWithdraw } from '@webb-dapp/react-environment/api-providers/web3/web3-mixer-withdraw';
-import { notificationApi } from '@webb-dapp/ui-components/notification';
-import { Storage } from '@webb-dapp/utils';
+import { MixerSize } from '@webb-dapp/react-environment/webb-context';
+import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import { Web3Accounts } from '@webb-dapp/wallet/providers/web3/web3-accounts';
 import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
+import { EventBus } from '@webb-tools/app-util';
 import { providers } from 'ethers';
-import React from 'react';
 
-export enum WebbEVMChain {
-  Main = 1,
-  Rinkeby = 4,
-  Beresheet = 2022,
-}
-
-export type EVMStorage = Record<string, EvmChainStorage>;
-
-export class WebbWeb3Provider implements WebbApiProvider<WebbWeb3Provider> {
+export class WebbWeb3Provider
+  extends EventBus<WebbProviderEvents<[number]>>
+  implements WebbApiProvider<WebbWeb3Provider> {
   readonly accounts: Web3Accounts;
   readonly methods: WebbMethods<WebbWeb3Provider>;
   private ethersProvider: providers.Web3Provider;
+  private connectedMixers: EvmChainMixersInfo;
 
-  private constructor(private web3Provider: Web3Provider, private storage: Storage<EVMStorage>) {
+  private constructor(private web3Provider: Web3Provider, private chainId: number) {
+    super();
     this.accounts = new Web3Accounts(web3Provider.eth);
     this.ethersProvider = web3Provider.intoEthersProvider();
-    // @ts-ignore
-    // todo fix me @(AhmedKorim)
-    this.ethersProvider.provider?.on?.('chainChanged', async () => {
+    const handler = async () => {
       const chainId = await this.web3Provider.network;
-      console.log(chainId);
-      const localName = await WebbWeb3Provider.storageName(chainId);
-      notificationApi({
-        message: 'Web3: changed the connected network',
-        variant: 'info',
-        Icon: React.createElement(Icon, null, ['leak_add']),
-        secondaryMessage: `Connection is switched to ${chainId} chain`,
-      });
-      this.ethersProvider = web3Provider.intoEthersProvider();
-      this.storage = await Storage.get(localName);
+      this.emit('providerUpdate', [chainId]);
+      //TODO investigate the off and on methods on ethers
+      // @ts-ignore
+      // this.ethersProvider.provider?.off?.('chainChanged', handler);
+    };
+    // @ts-ignore
+    this.ethersProvider.provider?.on?.('chainChanged', handler);
+    // @ts-ignore
+    this.ethersProvider.provider?.on?.('accountsChanged', () => {
+      this.emit('newAccounts', this.accounts);
     });
+    this.connectedMixers = new EvmChainMixersInfo(chainId);
     this.methods = {
       mixer: {
         deposit: {
@@ -56,39 +50,57 @@ export class WebbWeb3Provider implements WebbApiProvider<WebbWeb3Provider> {
     };
   }
 
-  static storageName(id: number): string {
-    switch (id) {
-      case WebbEVMChain.Rinkeby:
-        return 'rinkeby';
-      case WebbEVMChain.Main:
-        return 'main';
-      case WebbEVMChain.Beresheet:
-        return 'beresheet';
-      default:
-        throw new Error('unsupported chain');
-    }
+  setStorage(chainId: number) {
+    this.connectedMixers = new EvmChainMixersInfo(chainId);
   }
 
-  get chainStorage(): Promise<EVMStorage> {
-    return this.storage.dump();
+  async destroy(): Promise<void> {
+    this.subscriptions = {
+      providerUpdate: [],
+      interactiveFeedback: [],
+    };
   }
 
-  async getContractWithAddress(mixerId: string): Promise<AnchorContract> {
-    return new AnchorContract(this.ethersProvider, mixerId);
+  async getChainId(): Promise<number> {
+    const chainId = (await this.ethersProvider.getNetwork()).chainId;
+    return chainId;
   }
 
-  async getContract(mixerSize: number, name: string): Promise<AnchorContract> {
-    const mixerSizes = await this.storage.get(name);
-    const mixer = mixerSizes.contractsInfo.find((config) => config.size === Number(mixerSize));
-    console.log(mixer);
+  getMixers() {
+    return this.connectedMixers;
+  }
+
+  async getContractByAddress(mixerAddress: string): Promise<AnchorContract> {
+    return new AnchorContract(this.connectedMixers, this.ethersProvider, mixerAddress);
+  }
+
+  // This function limits the mixer implementation to one type for the token/size pair.
+  // Something like a poseidon hasher implementation instead of mimc hasher cannot
+  // exist alongside each other.
+  async getContractBySize(mixerSize: number, tokenSymbol: string): Promise<AnchorContract> {
+    const mixer = this.connectedMixers.getMixerInfoBySize(mixerSize, tokenSymbol);
     if (!mixer) {
-      throw new Error(`mixer size  not found on this contract`);
+      throw WebbError.from(WebbErrorCodes.MixerSizeNotFound);
     }
 
-    return new AnchorContract(this.ethersProvider, mixer.address);
+    return new AnchorContract(this.connectedMixers, this.ethersProvider, mixer.address);
   }
 
-  static async init(web3Provider: Web3Provider, storage: Storage<EVMStorage>) {
-    return new WebbWeb3Provider(web3Provider, storage);
+  getEthersProvider(): providers.Web3Provider {
+    return this.ethersProvider;
+  }
+
+  getMixerSizes(tokenSymbol: string): Promise<MixerSize[]> {
+    return Promise.resolve(this.connectedMixers.getMixerSizes(tokenSymbol));
+  }
+
+  static async init(web3Provider: Web3Provider, chainId: number) {
+    return new WebbWeb3Provider(web3Provider, chainId);
+  }
+  get capabilities() {
+    return this.web3Provider.capabilities;
+  }
+  endSession(): Promise<void> {
+    return this.web3Provider.endSession();
   }
 }

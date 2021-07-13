@@ -4,20 +4,20 @@ import { EvmNote } from '@webb-dapp/contracts/utils/evm-note';
 import { createDeposit, Deposit } from '@webb-dapp/contracts/utils/make-deposit';
 import { MerkleTree } from '@webb-dapp/utils/merkle';
 import { BigNumber, Contract, providers, Signer } from 'ethers';
+import { Log } from '@ethersproject/abstract-provider';
+import { EvmChainMixersInfo } from '@webb-dapp/react-environment/api-providers/web3/EvmChainMixersInfo';
 import utils from 'web3-utils';
-
 import { abi } from '../abis/NativeAnchor.json';
+import { mixerLogger } from '@webb-dapp/mixer/utils';
 
 const webSnarkUtils = require('websnark/src/utils');
-
 type DepositEvent = [string, number, BigNumber];
-const snarkjs = require('snarkjs');
 
 export class AnchorContract {
   private _contract: Anchor;
   private readonly signer: Signer;
 
-  constructor(private web3Provider: providers.Web3Provider, address: string) {
+  constructor(private mixersInfo: EvmChainMixersInfo, private web3Provider: providers.Web3Provider, address: string) {
     this.signer = this.web3Provider.getSigner();
     this._contract = new Contract(address, abi, this.signer) as any;
   }
@@ -42,7 +42,7 @@ export class AnchorContract {
     const deposit = createDeposit();
     const chainId = await this.signer.getChainId();
     const depositSizeBN = await this.denomination;
-    const depositSize = Number.parseFloat(utils.fromWei(depositSizeBN.toString(), "ether"));
+    const depositSize = Number.parseFloat(utils.fromWei(depositSizeBN.toString(), 'ether'));
     const note = new EvmNote(assetSymbol, depositSize, chainId, deposit.preimage);
     return {
       note,
@@ -56,7 +56,6 @@ export class AnchorContract {
       gasPrice: utils.toWei('1', 'gwei'),
       value: await this.denomination,
     };
-    console.log(commitment);
     const filters = await this._contract.filters.Deposit(commitment, null, null);
     this._contract.once(filters, (commitment, insertedIndex, timestamp) => {
       onComplete?.([commitment, insertedIndex, timestamp]);
@@ -65,56 +64,60 @@ export class AnchorContract {
     await recipient.wait();
   }
 
-  private async getDepositEvents(commitment: string | null = null) {
-    const filter = this._contract.filters.Deposit(commitment, null, null);
+  private async getDepositLeaves(): Promise<string[]> {
+    const filter = this._contract.filters.Deposit(null, null, null);
 
     const currentBlock = await this.web3Provider.getBlockNumber();
-    const startingBlock = 1; // Read starting block from cached storage
-    var logs = []; // Read the stored logs into this variable
+    const storedContractInfo = await this.mixersInfo.getMixerStorage(this._contract.address);
+
+    const startingBlock = storedContractInfo.lastQueriedBlock; // Read starting block from cached storage
+    let logs: Array<Log> = []; // Read the stored logs into this variable
 
     try {
       logs = await this.web3Provider.getLogs({
         fromBlock: startingBlock,
-        toBlock: 'latest',
+        toBlock: currentBlock,
         ...filter,
       });
     } catch (e) {
-      console.log(e);
+      mixerLogger.log(e);
 
       // If there is a timeout, query the logs in block increments.
       if (e.code == -32603) {
-        for (var i=startingBlock; i < currentBlock; i+= 1000)
-        {
-          logs = [...logs, ...(await this.web3Provider.getLogs({
-            fromBlock: i,
-            toBlock: (currentBlock - i > 1000) ? i + 1000 : currentBlock,
-            ...filter,
-          }))];
+        for (let i = startingBlock; i < currentBlock; i += 50) {
+          logs = [
+            ...logs,
+            ...(await this.web3Provider.getLogs({
+              fromBlock: i,
+              toBlock: currentBlock - i > 50 ? i + 50 : currentBlock,
+              ...filter,
+            })),
+          ];
+
+          mixerLogger.log(`Getting logs for block range: ${i} through ${i + 50}`);
         }
       } else {
         throw e;
       }
     }
-    console.log(logs);
+    const events = logs.map((log) => this._contract.interface.parseLog(log));
 
-    // TODO: store the currentBlock as the new syncedBlock in storage
+    const newCommitments = events
+      .sort((a, b) => a.args.leafIndex - b.args.leafIndex) // Sort events in chronological order
+      .map((e) => e.args.commitment);
 
-    // TODO: append the newly retrieved logs to the storage for this mixer
-    
-    return logs.map((log) => this._contract.interface.parseLog(log));
+    const commitments = [...storedContractInfo.leaves, ...newCommitments];
+
+    // extract the commitments from the events, and update the storage
+    await this.mixersInfo.setMixerStorage(this._contract.address, currentBlock, commitments);
+
+    return commitments;
   }
 
   async generateMerkleProof(deposit: Deposit) {
-    const events = await this.getDepositEvents(null);
-    const leaves = events
-      .sort((a, b) => a.args.leafIndex - b.args.leafIndex) // Sort events in chronological order
-      .map((e) => e.args.commitment);
+    const leaves = await this.getDepositLeaves();
     const tree = new MerkleTree('eth', 20, leaves);
-    let depositEvent = events.find((e) => e.args.commitment === bufferToFixed(deposit.commitment));
-    console.log('bufferToFixed', bufferToFixed(deposit.commitment));
-    console.log(deposit.commitment);
-
-    let leafIndex = depositEvent ? depositEvent.args.leafIndex : -1;
+    let leafIndex = leaves.findIndex((commitment) => commitment == bufferToFixed(deposit.commitment));
     return tree.path(leafIndex);
   }
 
@@ -153,12 +156,8 @@ export class AnchorContract {
       pathIndices: pathIndex,
     };
     const proofsData = await webSnarkUtils.genWitnessAndProve(
-      {
-        proof: (witness: any, pk: any) => {
-          // @ts-ignore
-          return window.groth16GenProof(witness, pk);
-        },
-      },
+      // @ts-ignore
+      window.groth16,
       input,
       circuitData,
       proving_key
