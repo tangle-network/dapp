@@ -97,4 +97,10 @@ export class WebbWeb3Provider
   static async init(web3Provider: Web3Provider, chainId: number) {
     return new WebbWeb3Provider(web3Provider, chainId);
   }
+  get capabilities() {
+    return this.web3Provider.capabilities;
+  }
+  endSession(): Promise<void> {
+    return this.web3Provider.endSession();
+  }
 }

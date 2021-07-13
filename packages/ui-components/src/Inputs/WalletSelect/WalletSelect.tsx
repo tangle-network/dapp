@@ -1,13 +1,12 @@
 import { Avatar } from '@material-ui/core';
 import { useWebContext } from '@webb-dapp/react-environment';
-import { WalletConfig } from '@webb-dapp/react-environment/types/wallet-config.interface';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
 import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { WalletManger } from './WalletManger';
+import { WalletManger, WalletOfWalletManager } from './WalletManger';
 
 const WalletSelectWrapper = styled.div`
   box-sizing: border-box;
@@ -41,10 +40,6 @@ const WalletSelectWrapper = styled.div`
 `;
 type WalletSelectProps = {};
 
-type Wallet = {
-  connected: boolean;
-} & WalletConfig;
-
 export const WalletSelect: React.FC<WalletSelectProps> = ({}) => {
   const [open, setOpen] = useState(false);
   const closeModal = useCallback(() => {
@@ -53,27 +48,44 @@ export const WalletSelect: React.FC<WalletSelectProps> = ({}) => {
   const openModal = useCallback(() => {
     setOpen(true);
   }, []);
-  const [wallets, setWallets] = useState<Wallet[]>([]);
+  const [wallets, setWallets] = useState<WalletOfWalletManager[]>([]);
 
-  const [selectedWallet, setSelectedWallet] = useState<Wallet | null>(null);
-  const { activeChain, activeWallet, switchChain } = useWebContext();
+  const [selectedWallet, setSelectedWallet] = useState<WalletOfWalletManager | null>(null);
+  const { activeApi, inactivateApi, activeChain, activeWallet, switchChain } = useWebContext();
   useEffect(() => {
     const configureSelectedWallets = async () => {
       const walletsFromActiveChain = Object.values(activeChain?.wallets ?? {});
       const wallets = await Promise.all(
         walletsFromActiveChain.map(async ({ detect, ...walletConfig }) => {
           const isDetected = (await detect?.()) ?? false;
+          const connected = activeWallet?.id === walletConfig.id && activeApi;
+          if (connected) {
+            return {
+              ...walletConfig,
+              enabled: isDetected,
+              connected,
+              endSession: async () => {
+                if (activeApi && activeApi.endSession) {
+                  await Promise.all([activeApi.endSession(), await inactivateApi()]);
+                }
+              },
+              canEndSession: Boolean(activeApi?.capabilities?.hasSessions),
+            };
+          }
           return {
             ...walletConfig,
             enabled: isDetected,
-            connected: activeWallet?.id === walletConfig.id,
+            connected,
+            async endSession() {},
+            canEndSession: false,
           };
         })
       );
+      // @ts-ignore
       setWallets(wallets);
     };
     configureSelectedWallets();
-  }, [activeChain, activeWallet]);
+  }, [activeChain, activeWallet, activeApi]);
 
   useEffect(() => {
     const nextWallet = wallets.find(({ connected }) => connected);

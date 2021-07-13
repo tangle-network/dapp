@@ -1,6 +1,6 @@
 import Icon from '@material-ui/core/Icon';
 import WalletConnectProvider from '@walletconnect/web3-provider';
-import { chainsConfig, chainsPopulated, currenciesConfig } from '@webb-dapp/apps/configs';
+import { chainsConfig, chainsPopulated, currenciesConfig, WebbEVMChain } from '@webb-dapp/apps/configs';
 import { WalletId } from '@webb-dapp/apps/configs/wallets/wallet-id.enum';
 import { walletsConfig } from '@webb-dapp/apps/configs/wallets/wallets-config';
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3';
@@ -221,9 +221,63 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
           }
           break;
         case WalletId.MetaMask:
+        case WalletId.WalletConnect:
           {
-            /// init provider from the extension
-            const web3Provider = await Web3Provider.fromExtension();
+            let web3Provider: Web3Provider;
+            if (wallet?.id === WalletId.WalletConnect) {
+              const provider = new WalletConnectProvider({
+                rpc: {
+                  //default on metamask
+                  [WebbEVMChain.EthereumMainNet]: 'https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
+                  [WebbEVMChain.Ropsten]: 'https://ropsten.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
+                  [WebbEVMChain.Goerli]: 'https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
+                  [WebbEVMChain.Kovan]: 'https://kovan.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
+                  [WebbEVMChain.Rinkeby]: 'https://rinkeby.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4',
+                  //default on metamask
+                  [WebbEVMChain.Beresheet]: 'http://beresheet1.edgewa.re:9933',
+                  [WebbEVMChain.HarmonyTest1]: 'https://api.s1.b.hmny.io',
+                },
+                chainId: chain.evmId,
+              });
+
+              web3Provider = await Web3Provider.fromWalletConnectProvider(provider);
+            } else {
+              /// init provider from the extension
+              web3Provider = await Web3Provider.fromExtension();
+            }
+
+            const clientInfo = web3Provider.clientMeta;
+            if (clientInfo) {
+              let message = '';
+              if (wallet?.id === WalletId.WalletConnect) {
+                message = `Connected to WalletConnect ${clientInfo.name}`;
+              } else {
+                message = `Connected to ${clientInfo.name}`;
+              }
+              notificationApi({
+                message: 'Connected to EVM wallet',
+                secondaryMessage: `Connected to ${clientInfo.name}`,
+                variant: 'success',
+                key: 'network-connect',
+                Icon: React.createElement(
+                  'div',
+                  {
+                    style: {
+                      background: 'white',
+                      minWidth: 30,
+                      minHeight: 30,
+                      padding: 4,
+                      borderRadius: '50%',
+                      overflow: 'hidden',
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    },
+                  },
+                  [React.createElement(wallet.logo)]
+                ),
+              });
+            }
             /// get the current active chain from metamask
             const chainId = await web3Provider.network; // storage based on network id
             const webbWeb3Provider = await WebbWeb3Provider.init(web3Provider, chainId);
@@ -310,27 +364,6 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
             activeApi = webbWeb3Provider;
           }
           break;
-        case WalletId.WalletConnect: {
-          const provider = new WalletConnectProvider({
-            rpc: {
-              1: 'https://mainnet.mycustomnode.com',
-              3: 'https://ropsten.mycustomnode.com',
-              42: 'http://localhost:9933',
-              // ...
-            },
-          });
-          const web3Provider = await Web3Provider.fromWalletConnectProvider(provider);
-          await web3Provider.eth.net.isListening();
-          const net = await web3Provider.network; // storage based on network id
-          const webbWeb3Provider = await WebbWeb3Provider.init(web3Provider, net);
-
-          const accounts = await webbWeb3Provider.accounts.accounts();
-          setAccounts(accounts);
-          _setActiveAccount(accounts[0]);
-          await webbWeb3Provider.accounts.setActiveAccount(accounts[0]);
-          setActiveApi(webbWeb3Provider);
-          activeApi = webbWeb3Provider;
-        }
       }
       /// settings the user selection
       setActiveChain(chain);
@@ -418,6 +451,12 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
         setActiveAccount,
         switchChain: switchChainAndStore,
         isInit,
+        async inactivateApi(): Promise<void> {
+          setActiveApi(undefined);
+          if (activeApi) {
+            await activeApi.destroy();
+          }
+        },
         activeFeedback,
       }}
     >

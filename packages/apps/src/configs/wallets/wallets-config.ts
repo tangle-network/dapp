@@ -3,7 +3,19 @@ import { WalletId } from '../wallets/wallet-id.enum';
 import { PolkaLogo } from '@webb-dapp/apps/configs/logos/PolkaLogo';
 import { MetaMaskLogo } from '@webb-dapp/apps/configs/logos/MetaMaskLogo';
 import { ChainId } from '../chains/chain-id.enum';
+import { WalletConnectLogo } from '@webb-dapp/apps/configs/logos/WalletConnectLogo';
 
+const ANY_EVM = [
+  ChainId.Edgeware,
+  ChainId.EdgewareTestNet,
+  ChainId.EdgewareLocalNet,
+  ChainId.EthereumMainNet,
+  ChainId.Rinkeby,
+  ChainId.Kovan,
+  ChainId.Ropsten,
+  ChainId.Goerli,
+  ChainId.HarmonyTestnet1,
+];
 export const walletsConfig: AppConfig['wallet'] = {
   [WalletId.Polkadot]: {
     id: WalletId.Polkadot,
@@ -29,29 +41,19 @@ export const walletsConfig: AppConfig['wallet'] = {
       }
       return false;
     },
-    supportedChainIds: [
-      ChainId.Edgeware,
-      ChainId.EdgewareTestNet,
-      ChainId.EdgewareLocalNet,
-      ChainId.EthereumMainNet,
-      ChainId.Rinkeby,
-      ChainId.Kovan,
-      ChainId.Ropsten,
-      ChainId.Goerli,
-      ChainId.HarmonyTestnet1,
-    ],
+    supportedChainIds: [...ANY_EVM],
   },
-  // 3: {
-  //   id: 3,
-  //   logo: WalletConnectLogo,
-  //   name: 'wallet connect',
-  //   title: `Wallet Connect`,
-  //   enabled: true,
-  //   detect() {
-  //     return true;
-  //   },
-  //   supportedChainIds: [1, 2, 3, 4],
-  // },
+  3: {
+    id: 3,
+    logo: WalletConnectLogo,
+    name: 'wallet connect',
+    title: `Wallet Connect`,
+    enabled: true,
+    detect() {
+      return true;
+    },
+    supportedChainIds: [...ANY_EVM],
+  },
   // [WalletId.OneWallet]: {
   //   id: WalletId.OneWallet,
   //   logo: HarmonyLogo,
