@@ -13,6 +13,7 @@ const WalletTokenInputWrapper = styled.div`
   justify-content: space-between;
   min-height: 60px;
 `;
+
 type WalletTokenInputProps = {
   setSelectedToken(token: Currency): void;
   selectedToken: Currency | undefined;

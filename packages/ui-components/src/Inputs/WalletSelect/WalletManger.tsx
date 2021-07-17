@@ -128,7 +128,7 @@ export const WalletManger: React.FC<WalletMangerProps> = ({ close, setSelectedWa
                   <Flex row>
                     <Flex flex={1}>
                       <Typography>{wallet.title}</Typography>
-                      <Typography>ETH</Typography>
+                      <Typography>EVM</Typography>
                     </Flex>
                     {wallet.connected && (
                       <Flex row ai='center' as={Padding} jc={'space-between'}>

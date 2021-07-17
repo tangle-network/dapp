@@ -53,9 +53,9 @@ type NetworkManagerIndicatorProps = {
 export const NetworkManager: React.FC<NetworkManagerProps> = () => {
   const [open, setOpen] = useState(false);
 
-  const { activeChain, activeWallet, chains, isInit, switchChain: _switchChain } = useWebContext();
+  const { activeChain, activeWallet, chains, isConnecting, switchChain: _switchChain } = useWebContext();
   const [connectionStatus, setConnectionStatus] = useState<ConnectingState>(
-    activeChain ? 'connected' : isInit ? 'connecting' : 'no-connection'
+    activeChain ? 'connected' : isConnecting ? 'connecting' : 'no-connection'
   );
   const switchChain = useCallback(
     async (chain: Chain, wallet: Wallet) => {
@@ -331,7 +331,7 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
     }
   }, [networks, activeWallet, activeChain, connectionStep, userSelectedChain, switchChain, handleCancel]);
   useEffect(() => {
-    if (isInit) {
+    if (isConnecting) {
       return setConnectionStatus('connecting');
     }
     if (activeChain) {
@@ -339,7 +339,7 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
     } else {
       setConnectionStatus('no-connection');
     }
-  }, [activeChain, isInit]);
+  }, [activeChain, isConnecting]);
   const chainInfo = useMemo<NetworkManagerIndicatorProps['connectionMetaData'] | undefined>(() => {
     if (!activeChain) {
       return undefined;
