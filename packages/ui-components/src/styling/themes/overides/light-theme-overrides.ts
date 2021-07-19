@@ -30,5 +30,11 @@ export const lightMainThemeOverrides: ThemeOptions['overrides'] = {
     h6: {
       fontSize: '.9rem',
     },
+    caption: {
+      fontSize: '.8rem',
+    },
+    body1: {
+      fontSize: '1rem',
+    },
   },
 };
