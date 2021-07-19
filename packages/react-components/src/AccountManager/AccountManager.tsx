@@ -87,14 +87,10 @@ const AccountManagerContent = styled.div<{ open: boolean }>`
   .account-avatar {
     background: transparent;
   }
-
-  .account-button-wrapper {
-    margin: -20px 0;
-  }
 `;
 
 const AccountManagerWrapper = styled.div<any>`
-  width: 250px;
+  width: 230px;
   height: 0px;
   position: relative;
   top: -32.5px;
