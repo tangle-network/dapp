@@ -1,8 +1,8 @@
 import { LoggerService } from '@webb-tools/app-util';
 import { useEffect, useState } from 'react';
 
-export const useFetch = (url: RequestInfo) => {
-  const [data, setData] = useState(null);
+export const useFetch = (url: RequestInfo, initialValue: any) => {
+  const [data, setData] = useState(initialValue);
 
   // empty array as second argument equivalent to componentDidMount
   useEffect(() => {
