@@ -7,14 +7,14 @@ import { HarmonyLogo } from '@webb-dapp/apps/configs/logos/HarmonyLogo';
 
 export const currenciesConfig: AppConfig['currencies'] = {
   [WebbCurrencyId.EDG]: {
-    name: 'Edgware token',
+    name: 'Edgeware token',
     symbol: 'EDG',
     color: '',
     id: WebbCurrencyId.EDG,
     icon: React.createElement(EdgewareLogo),
   },
   [WebbCurrencyId.TEDG]: {
-    name: 'Edgware test token',
+    name: 'Edgeware test token',
     symbol: 'tEDG',
     color: '',
     id: WebbCurrencyId.TEDG,
