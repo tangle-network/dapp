@@ -71,7 +71,7 @@ const AccountManagerWrapper = styled.div<any>`
   height: 0;
   background: #ffffff;
   position: relative;
-  top: -26.5px;
+  top: -52px;
 `;
 
 type TokenInputProps = {

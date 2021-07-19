@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/indent */
 import { MixerSize } from '@webb-dapp/react-environment/webb-context';
 import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabel';
+import { InputSection } from '../InputSection/InputSection';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 import React, { useEffect, useMemo } from 'react';
@@ -71,25 +72,27 @@ export const MixerGroupSelect: React.FC<MixerGroupSelectProps> = ({ items, onCha
   }, [checkedIndex, items]);
 
   return (
-    <InputLabel label={'Select Amount'}>
-      <MixerGroupSelectWrapper>
-        {mixerSizes.map(({ id, selected, title }) => {
-          return (
-            <AmountChipWrapper
-              key={id + title}
-              selected={selected}
-              onClick={() => {
-                onChange?.({
-                  title,
-                  id,
-                });
-              }}
-            >
-              {title}
-            </AmountChipWrapper>
-          );
-        })}
-      </MixerGroupSelectWrapper>
-    </InputLabel>
+    <InputSection>
+      <InputLabel label={'Select Amount'}>
+        <MixerGroupSelectWrapper>
+          {mixerSizes.map(({ id, selected, title }) => {
+            return (
+              <AmountChipWrapper
+                key={id + title}
+                selected={selected}
+                onClick={() => {
+                  onChange?.({
+                    title,
+                    id,
+                  });
+                }}
+              >
+                {title}
+              </AmountChipWrapper>
+            );
+          })}
+        </MixerGroupSelectWrapper>
+      </InputLabel>
+    </InputSection>
   );
 };
