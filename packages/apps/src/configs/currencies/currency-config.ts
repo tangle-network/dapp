@@ -14,7 +14,7 @@ export const currenciesConfig: AppConfig['currencies'] = {
     icon: React.createElement(EdgewareLogo),
   },
   [WebbCurrencyId.TEDG]: {
-    name: 'Edgeware test token',
+    name: 'Edgeware testnet token',
     symbol: 'tEDG',
     color: '',
     id: WebbCurrencyId.TEDG,
