@@ -1,6 +1,6 @@
 import Icon from '@material-ui/core/Icon';
 import WalletConnectProvider from '@walletconnect/web3-provider';
-import { chainsConfig, chainsPopulated, currenciesConfig, WebbEVMChain } from '@webb-dapp/apps/configs';
+import { ChainId, chainsConfig, chainsPopulated, currenciesConfig, WebbEVMChain } from '@webb-dapp/apps/configs';
 import { WalletId } from '@webb-dapp/apps/configs/wallets/wallet-id.enum';
 import { walletsConfig } from '@webb-dapp/apps/configs/wallets/wallets-config';
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3';
@@ -52,7 +52,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
   const [networkStorage, setNetworkStorage] = useState<NetworkStorage | null>(null);
   const [accounts, setAccounts] = useState<Array<Account>>([]);
   const [activeAccount, _setActiveAccount] = useState<Account | null>(null);
-  const [isInit, setIsInit] = useState(true);
+  const [isConnecting, setIsConnecting] = useState(false);
 
   /// storing all interactive feedbacks to show the modals
   const [interactiveFeedbacks, setInteractiveFeedbacks] = useState<InteractiveFeedback[]>([]);
@@ -391,6 +391,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
   useEffect(() => {
     /// init the dApp
     const init = async () => {
+      setIsConnecting(true);
       const networkStorage = await netStorageFactory();
       setNetworkStorage(networkStorage);
       /// get the default wallet and network from storage
@@ -398,8 +399,9 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
         networkStorage.get('defaultNetwork'),
         networkStorage.get('defaultWallet'),
       ]);
-      /// if there's no wallet nor chain abort
+      /// if there's chain, set the default to Rinkeby and return
       if (!net || !wallet) {
+        setActiveChain(chains[ChainId.Rinkeby]);
         return;
       }
       /// chain config by net id
@@ -427,7 +429,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
       }
     };
     init().finally(() => {
-      setIsInit(false);
+      setIsConnecting(false);
     });
     appEvent.on('switchNetwork', ([chain, wallet]) => {
       switchChainAndStore(chain, wallet);
@@ -450,7 +452,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
         activeAccount,
         setActiveAccount,
         switchChain: switchChainAndStore,
-        isInit,
+        isConnecting,
         async inactivateApi(): Promise<void> {
           setActiveApi(undefined);
           if (activeApi) {

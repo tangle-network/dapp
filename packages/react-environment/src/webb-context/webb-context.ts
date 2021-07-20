@@ -22,7 +22,7 @@ export interface WebbContentState<T = unknown> {
 
   accounts: Account[];
   activeAccount: Account | null;
-  isInit: boolean;
+  isConnecting: boolean;
 
   setActiveAccount<T extends Account>(account: T): Promise<void>;
 
@@ -38,7 +38,7 @@ export const WebbContext = React.createContext<WebbContentState>({
   accounts: [],
   loading: true,
   activeAccount: null,
-  isInit: false,
+  isConnecting: false,
   setActiveAccount<T extends Account>(account: T): Promise<void> {
     return Promise.resolve();
   },
