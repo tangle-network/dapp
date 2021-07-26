@@ -1,10 +1,17 @@
 import { Capabilities, Relayerconfig } from '@webb-dapp/react-environment/webb-context/relayer/types';
 import { ChainId } from '@webb-dapp/apps/configs';
+import { Observable, Subject } from 'rxjs';
 
 type RelayerQuery = {
   baseOn?: 'evm' | 'substrate';
   ipService?: true;
   chainId?: ChainId;
+};
+type RelayedChainInput = {
+  endpoint: string;
+  name: string;
+  contractAddress: string;
+  baseOn: 'evm' | 'substrate';
 };
 
 export class WebbRelayerBuilder {
@@ -54,9 +61,78 @@ export class WebbRelayerBuilder {
   }
 }
 
+export enum RelayedWithdrawResult {
+  PreFlight = -2,
+  OnFlight = -2,
+  Continue,
+  CleanExit,
+  Errored,
+}
+
+class RelayedWithdraw {
+  private status: RelayedWithdrawResult = RelayedWithdrawResult.PreFlight;
+  readonly watcher: Observable<RelayedWithdrawResult>;
+  private emitter: Subject<RelayedWithdrawResult> = new Subject();
+
+  constructor(private ws: WebSocket) {
+    this.watcher = this.emitter.asObservable();
+    ws.onmessage = ({ data }) => {
+      const nextStatus = this.handleMessage(data);
+      this.emitter.next(nextStatus);
+      if (nextStatus === RelayedWithdrawResult.CleanExit) {
+        this.emitter.complete();
+        this.ws.close();
+      }
+    };
+    ws.onerror = (e) => {
+      console.log(e);
+    };
+  }
+
+  private handleMessage(data: any): RelayedWithdrawResult {
+    if (data.error || data.withdraw?.errored) {
+      return RelayedWithdrawResult.Errored;
+    } else if (data.withdraw?.finlized) {
+      return RelayedWithdrawResult.CleanExit;
+    } else {
+      return RelayedWithdrawResult.Continue;
+    }
+  }
+
+  generateWithdrawRequest(chain: RelayedChainInput, proof: string, args: string[]) {
+    return {
+      [chain.baseOn]: {
+        [chain.name]: {
+          relayWithdrew: {
+            contract: chain.contractAddress,
+            proof,
+            root: args[0],
+            nullifierHash: args[1],
+            recipient: args[2],
+            relayer: args[3],
+            fee: args[4],
+            refund: args[5],
+          },
+        },
+      },
+    };
+  }
+
+  send(withdrawRequest: any) {
+    if (this.status !== RelayedWithdrawResult.PreFlight) {
+      throw Error('there is a withdraw process running');
+    }
+    this.status = RelayedWithdrawResult.OnFlight;
+    this.ws.send(JSON.stringify(withdrawRequest));
+  }
+
+  get currentStatus() {
+    return this.status;
+  }
+}
+
 export class WebbRelayer {
   private _ready = false;
-  private _ws: WebSocket | null = null;
 
   constructor(readonly address: string, readonly capabilities: Capabilities) {}
 
@@ -69,17 +145,17 @@ export class WebbRelayer {
       ws.onopen = r;
       ws.onerror = r;
     });
-    this._ws = ws;
-    this._ready = true;
-  }
-
-  private get ws() {
-    if (!this._ws) {
-      throw new Error('Relater Not ready yet');
+    /// insure the socket is open
+    /// maybe removed soon
+    while (true) {
+      if (ws.readyState === 1) {
+        this._ready = true;
+        break;
+      }
+      await new Promise((r) => {
+        setTimeout(r, 300);
+      });
     }
-  }
-
-  get isReady() {
-    return this._ready;
+    return new RelayedWithdraw(ws);
   }
 }
