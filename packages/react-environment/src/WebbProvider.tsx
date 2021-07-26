@@ -24,6 +24,7 @@ import {
   USER_SWITCHED_TO_EXPECT_CHAIN,
 } from '@webb-dapp/react-environment/error/interactive-errors/evm-network-conflict';
 import { LoggerService } from '@webb-tools/app-util';
+import { getWebbRelayer } from '@webb-dapp/apps/configs/relayer-config';
 
 interface WebbProviderProps extends BareProps {
   applicationName: string;
@@ -68,6 +69,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
         p.forEach((p) => p.cancel());
         return [];
       });
+
       appEvent.send('changeNetworkSwitcherVisibility', false);
     };
   }, [activeApi]);
@@ -197,6 +199,8 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
   };
   /// Network switcher
   const switchChain = async (chain: Chain, _wallet: Wallet) => {
+    const relayer = await getWebbRelayer();
+
     const wallet = _wallet || activeWallet;
     // wallet cleanup
     /// if new wallet id isn't the same of the current then the dApp is dealing with api change
@@ -210,11 +214,16 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
         case WalletId.Polkadot:
           {
             const url = chain.url;
-            const webbPolkadot = await WebbPolkadot.init('Webb DApp', [url], {
-              onError: (feedback) => {
-                registerInteractiveFeedback(setInteractiveFeedbacks, feedback);
+            const webbPolkadot = await WebbPolkadot.init(
+              'Webb DApp',
+              [url],
+              {
+                onError: (feedback) => {
+                  registerInteractiveFeedback(setInteractiveFeedbacks, feedback);
+                },
               },
-            });
+              relayer
+            );
             await setActiveApiWithAccounts(webbPolkadot, chain.id);
             activeApi = webbPolkadot;
             setLoading(false);
@@ -280,7 +289,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
             }
             /// get the current active chain from metamask
             const chainId = await web3Provider.network; // storage based on network id
-            const webbWeb3Provider = await WebbWeb3Provider.init(web3Provider, chainId);
+            const webbWeb3Provider = await WebbWeb3Provider.init(web3Provider, chainId, relayer);
             webbWeb3Provider.on('providerUpdate', async ([chainId]) => {
               /// get the nextChain from MetaMask change
               const nextChain = Object.values(chains).find((chain) => chain.evmId === chainId);

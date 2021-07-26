@@ -1,4 +1,8 @@
-import { Capabilities, Relayerconfig } from '@webb-dapp/react-environment/webb-context/relayer/types';
+import {
+  Capabilities,
+  RealyedChainConfig,
+  Relayerconfig,
+} from '@webb-dapp/react-environment/webb-context/relayer/types';
 import { ChainId } from '@webb-dapp/apps/configs';
 import { Observable, Subject } from 'rxjs';
 
@@ -14,26 +18,49 @@ type RelayedChainInput = {
   baseOn: 'evm' | 'substrate';
 };
 
+export interface RelayerInfo {
+  substrate: Record<string, RealyedChainConfig | null>;
+  evm: Record<string, RealyedChainConfig | null>;
+}
+
 export class WebbRelayerBuilder {
   private capabilities: Record<Relayerconfig['address'], Capabilities> = {};
 
   private constructor(private config: Relayerconfig[]) {}
 
-  private static infoIntoCapabilities(info: any): Capabilities {
-    return {} as any;
+  private static infoIntoCapabilities(config: Relayerconfig, info: RelayerInfo): Capabilities {
+    return {
+      hasIpService: true,
+      supportedChains: {
+        evm: Object.keys(info.evm)
+          .filter((key) => info.evm[key]?.account)
+          .reduce((m, key) => {
+            m.set(key, info.evm[key]);
+            return m;
+          }, new Map()),
+        substrate: Object.keys(info.evm)
+          .filter((key) => info.evm[key]?.account)
+          .reduce((m, key) => {
+            m.set(key, info.evm[key]);
+            return m;
+          }, new Map()),
+      },
+    };
   }
 
   private async fetchInfo(config: Relayerconfig) {
     const res = await fetch(`${config.address}/api/v1/info`);
-    const info = await res.json();
-    const capabilities = WebbRelayerBuilder.infoIntoCapabilities(info);
+    const info: RelayerInfo = await res.json();
+    const capabilities = WebbRelayerBuilder.infoIntoCapabilities(config, info);
+    console.log(this.capabilities);
     this.capabilities[config.address] = capabilities;
     return capabilities;
   }
 
-  async initBuilder(config: Relayerconfig[]): Promise<WebbRelayerBuilder> {
+  static async initBuilder(config: Relayerconfig[]): Promise<WebbRelayerBuilder> {
     const relayerBuilder = new WebbRelayerBuilder(config);
-    await Promise.all(config.map(this.fetchInfo, this));
+    await Promise.all(config.map(relayerBuilder.fetchInfo, relayerBuilder));
+    console.log(relayerBuilder.capabilities);
     return relayerBuilder;
   }
 
@@ -136,7 +163,7 @@ export class WebbRelayer {
 
   constructor(readonly address: string, readonly capabilities: Capabilities) {}
 
-  async init() {
+  async initWithdraw() {
     if (this._ready) {
       throw new Error('Already initialized');
     }
