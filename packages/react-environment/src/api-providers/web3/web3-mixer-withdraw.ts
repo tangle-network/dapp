@@ -2,6 +2,7 @@ import { MixerWithdraw, WithdrawState } from '@webb-dapp/react-environment/webb-
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3/webb-web3-provider';
 import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polkadot/transaction-notification-config';
 import { EvmNote } from '@webb-dapp/contracts/utils/evm-note';
+import React from 'react';
 
 export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
   cancelWithdraw(): Promise<void> {
@@ -15,7 +16,7 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
     const txReset = await contract.withdraw(note, recipient);
     transactionNotificationConfig.loading?.({
       address: '',
-      data: undefined,
+      data: React.createElement('p', {}, 'Withdraw In Progress'),
       key: 'mixer-withdraw-evm',
       path: {
         method: 'withdraw',

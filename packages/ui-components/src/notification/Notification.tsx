@@ -128,9 +128,9 @@ export const Alert: React.FC<{
     <AlertWrapper color={color} as={Paper} elevation={4}>
       <AlertIconWrapper color={opts.transparent ? 'rgba(0,0,0,0)' : color}>{AlertIcon}</AlertIconWrapper>
       <AlertCopyWrapper>
-        <Typography variant={'h6'} component={'p'}>
+        {typeof(opts.message) === "string" ? <Typography variant={'h6'} component={'p'}>
           {opts.message}
-        </Typography>
+        </Typography> : opts.message }
         <Typography>{opts.secondaryMessage}</Typography>
       </AlertCopyWrapper>
       <AlertActionsWrapper>

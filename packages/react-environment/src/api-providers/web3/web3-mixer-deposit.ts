@@ -5,13 +5,23 @@ import { getNativeCurrencySymbol } from '@webb-dapp/apps/configs/evm/SupportedMi
 import { WebbWeb3Provider } from './webb-web3-provider';
 import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polkadot/transaction-notification-config';
 
+import React from 'react';
+import { DepositNotification } from '@webb-dapp/ui-components/notification/DepositNotification';
+import { getEVMChainName } from '@webb-dapp/apps/configs/evm/SupportedMixers';
+
 type DepositPayload = IDepositPayload<EvmNote, [Deposit, number]>;
 
 export class Web3MixerDeposit extends MixerDeposit<WebbWeb3Provider, DepositPayload> {
   async deposit(depositPayload: DepositPayload): Promise<void> {
     transactionNotificationConfig.loading?.({
       address: '',
-      data: undefined,
+      data: React.createElement(DepositNotification,
+        {
+          chain: getEVMChainName(depositPayload.note.chainId),
+          amount: depositPayload.note.amount,
+          currency: depositPayload.note.currency,
+        }
+      ),
       key: 'mixer-deposit-evm',
       path: {
         method: 'deposit',
@@ -24,7 +34,7 @@ export class Web3MixerDeposit extends MixerDeposit<WebbWeb3Provider, DepositPayl
     transactionNotificationConfig.finalize?.({
       address: '',
       data: undefined,
-      key: `deposit success`,
+      key: `mixer-deposit-evm`,
       path: {
         method: 'deposit',
         section: 'evm-mixer',
