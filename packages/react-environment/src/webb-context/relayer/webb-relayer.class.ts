@@ -123,9 +123,9 @@ class RelayedWithdraw {
     this.watcher = this.emitter.asObservable();
 
     ws.onmessage = ({ data }) => {
-      const nextStatus = this.handleMessage(data);
-      this.emitter.next(nextStatus);
-      if (nextStatus === RelayedWithdrawResult.CleanExit) {
+      this.status = this.handleMessage(data);
+      this.emitter.next(this.status);
+      if (this.status === RelayedWithdrawResult.CleanExit) {
         this.emitter.complete();
         this.ws.close();
       }
