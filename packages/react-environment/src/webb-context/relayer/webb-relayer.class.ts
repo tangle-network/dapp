@@ -23,11 +23,18 @@ export interface RelayerInfo {
   evm: Record<string, RealyedChainConfig | null>;
 }
 
+/**
+ *  Webb relayers manger
+ *  this will fetch/mange/provide this relayers and there capabilities
+ *
+ * */
 export class WebbRelayerBuilder {
+  /// storage for relayers capabilities
   private capabilities: Record<Relayerconfig['address'], Capabilities> = {};
 
   private constructor(private config: Relayerconfig[]) {}
 
+  /// Mapping the fetched relayers info to the Capabilities store
   private static infoIntoCapabilities(config: Relayerconfig, info: RelayerInfo): Capabilities {
     return {
       hasIpService: true,
@@ -47,23 +54,27 @@ export class WebbRelayerBuilder {
       },
     };
   }
-
+  /// fetch relayers
   private async fetchInfo(config: Relayerconfig) {
     const res = await fetch(`${config.address}/api/v1/info`);
     const info: RelayerInfo = await res.json();
     const capabilities = WebbRelayerBuilder.infoIntoCapabilities(config, info);
-    console.log(this.capabilities);
     this.capabilities[config.address] = capabilities;
     return capabilities;
   }
 
+  /**
+   * init the builder
+   *  create new instance and fetch the relayres
+   * */
   static async initBuilder(config: Relayerconfig[]): Promise<WebbRelayerBuilder> {
     const relayerBuilder = new WebbRelayerBuilder(config);
     await Promise.all(config.map(relayerBuilder.fetchInfo, relayerBuilder));
-    console.log(relayerBuilder.capabilities);
     return relayerBuilder;
   }
-
+  /*
+   *  get a list of the suitable relaryes for a given query
+   * */
   getRelayer(query: RelayerQuery): WebbRelayer[] {
     const { baseOn, ipService, chainId } = query;
     return Object.keys(this.capabilities)
@@ -89,20 +100,28 @@ export class WebbRelayerBuilder {
 }
 
 export enum RelayedWithdrawResult {
-  PreFlight = -2,
-  OnFlight = -2,
+  /// the withdraw hasnt yet started
+  PreFlight,
+  /// the withdraw has been submitted to the relayers and no response yet
+  OnFlight,
+  // the withdraw is being processed
   Continue,
+  /// the withdraw is done with success
   CleanExit,
+  /// failed to create the withdraw
   Errored,
 }
 
 class RelayedWithdraw {
+  /// status of the withdraw
   private status: RelayedWithdrawResult = RelayedWithdrawResult.PreFlight;
+  /// watch for the current withdraw status
   readonly watcher: Observable<RelayedWithdrawResult>;
   private emitter: Subject<RelayedWithdrawResult> = new Subject();
 
   constructor(private ws: WebSocket) {
     this.watcher = this.emitter.asObservable();
+
     ws.onmessage = ({ data }) => {
       const nextStatus = this.handleMessage(data);
       this.emitter.next(nextStatus);
@@ -159,14 +178,9 @@ class RelayedWithdraw {
 }
 
 export class WebbRelayer {
-  private _ready = false;
-
   constructor(readonly address: string, readonly capabilities: Capabilities) {}
 
   async initWithdraw() {
-    if (this._ready) {
-      throw new Error('Already initialized');
-    }
     const ws = new WebSocket(this.address);
     await new Promise((r, c) => {
       ws.onopen = r;
@@ -176,7 +190,6 @@ export class WebbRelayer {
     /// maybe removed soon
     while (true) {
       if (ws.readyState === 1) {
-        this._ready = true;
         break;
       }
       await new Promise((r) => {
