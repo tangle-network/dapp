@@ -1,9 +1,9 @@
+import { ChainId } from '@webb-dapp/apps/configs';
 import {
   Capabilities,
   RealyedChainConfig,
   Relayerconfig,
 } from '@webb-dapp/react-environment/webb-context/relayer/types';
-import { ChainId } from '@webb-dapp/apps/configs';
 import { Observable, Subject } from 'rxjs';
 
 type RelayerQuery = {
@@ -33,7 +33,7 @@ export interface RelayerInfo {
   evm: Record<string, RealyedChainConfig | null>;
 }
 
-export type ChainNameIntoChainId = (name: string, basedOn: 'evm' | 'substrate') => ChainId;
+export type ChainNameIntoChainId = (name: string, basedOn: 'evm' | 'substrate') => ChainId | null;
 
 /**
  *  Webb relayers manger
@@ -44,23 +44,27 @@ export class WebbRelayerBuilder {
   /// storage for relayers capabilities
   private capabilities: Record<Relayerconfig['address'], Capabilities> = {};
 
-  private constructor(private config: Relayerconfig[]) {}
+  private constructor(private config: Relayerconfig[], private readonly chainNameAdapter: ChainNameIntoChainId) {}
 
   /// Mapping the fetched relayers info to the Capabilities store
-  private static infoIntoCapabilities(_nfig: Relayerconfig, info: RelayerInfo): Capabilities {
+  private static infoIntoCapabilities(
+    _nfig: Relayerconfig,
+    info: RelayerInfo,
+    nameAdapter: ChainNameIntoChainId
+  ): Capabilities {
     return {
       hasIpService: true,
       supportedChains: {
         evm: Object.keys(info.evm)
-          .filter((key) => info.evm[key]?.account)
+          .filter((key) => info.evm[key]?.account && Boolean(nameAdapter(key, 'evm')))
           .reduce((m, key) => {
-            m.set(key, info.evm[key]);
+            m.set(nameAdapter(key, 'evm'), info.evm[key]);
             return m;
           }, new Map()),
-        substrate: Object.keys(info.evm)
-          .filter((key) => info.evm[key]?.account)
+        substrate: Object.keys(info.substrate)
+          .filter((key) => info.substrate[key]?.account && Boolean(nameAdapter(key, 'substrate')))
           .reduce((m, key) => {
-            m.set(key, info.evm[key]);
+            m.set(nameAdapter(key, 'substrate'), info.evm[key]);
             return m;
           }, new Map()),
       },
@@ -71,7 +75,7 @@ export class WebbRelayerBuilder {
   private async fetchInfo(config: Relayerconfig) {
     const res = await fetch(`${config.address}/api/v1/info`);
     const info: RelayerInfo = await res.json();
-    const capabilities = WebbRelayerBuilder.infoIntoCapabilities(config, info);
+    const capabilities = WebbRelayerBuilder.infoIntoCapabilities(config, info, this.chainNameAdapter);
     this.capabilities[config.address] = capabilities;
     return capabilities;
   }
@@ -84,7 +88,7 @@ export class WebbRelayerBuilder {
     config: Relayerconfig[],
     chainNameAdapter: ChainNameIntoChainId
   ): Promise<WebbRelayerBuilder> {
-    const relayerBuilder = new WebbRelayerBuilder(config);
+    const relayerBuilder = new WebbRelayerBuilder(config, chainNameAdapter);
     await Promise.all(config.map(relayerBuilder.fetchInfo, relayerBuilder));
     return relayerBuilder;
   }
@@ -93,7 +97,7 @@ export class WebbRelayerBuilder {
    *  get a list of the suitable relaryes for a given query
    * */
   getRelayer(query: RelayerQuery): WebbRelayer[] {
-    const { baseOn, ipService, chainId } = query;
+    const { baseOn, chainId, ipService } = query;
     return Object.keys(this.capabilities)
       .filter((key) => {
         const capabilities = this.capabilities[key];
@@ -200,7 +204,7 @@ export class WebbRelayer {
     });
     /// insure the socket is open
     /// maybe removed soon
-    while (true) {
+    for (;;) {
       if (ws.readyState === 1) {
         break;
       }
