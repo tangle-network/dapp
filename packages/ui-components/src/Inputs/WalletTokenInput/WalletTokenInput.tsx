@@ -33,7 +33,7 @@ export const WalletTokenInput: React.FC<WalletTokenInputProps> = ({ selectedToke
           <WalletSelect />
         </InputLabel>
 
-        <InputLabel label={'Token for Deposit'}>
+        <InputLabel label={'Select Token'}>
           {/* used for positioning the token input label */}
           <div style={{height: '52px'}}></div>
           <TokenInput currencies={allCurrencies} value={active} onChange={setSelectedToken} />
