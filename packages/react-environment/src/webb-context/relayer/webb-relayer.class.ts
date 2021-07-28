@@ -23,6 +23,8 @@ export interface RelayerInfo {
   evm: Record<string, RealyedChainConfig | null>;
 }
 
+export type ChainNameIntoChainId = (name: string, basedOn: 'evm' | 'substrate') => ChainId;
+
 /**
  *  Webb relayers manger
  *  this will fetch/mange/provide this relayers and there capabilities
@@ -54,6 +56,7 @@ export class WebbRelayerBuilder {
       },
     };
   }
+
   /// fetch relayers
   private async fetchInfo(config: Relayerconfig) {
     const res = await fetch(`${config.address}/api/v1/info`);
@@ -67,11 +70,15 @@ export class WebbRelayerBuilder {
    * init the builder
    *  create new instance and fetch the relayres
    * */
-  static async initBuilder(config: Relayerconfig[]): Promise<WebbRelayerBuilder> {
+  static async initBuilder(
+    config: Relayerconfig[],
+    chainNameAdapter: ChainNameIntoChainId
+  ): Promise<WebbRelayerBuilder> {
     const relayerBuilder = new WebbRelayerBuilder(config);
     await Promise.all(config.map(relayerBuilder.fetchInfo, relayerBuilder));
     return relayerBuilder;
   }
+
   /*
    *  get a list of the suitable relaryes for a given query
    * */
