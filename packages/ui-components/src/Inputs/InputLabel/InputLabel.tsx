@@ -2,6 +2,7 @@ import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import React from 'react';
 import styled, { css } from 'styled-components';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
+import { Typography } from '@material-ui/core';
 
 type LabelStatus = 'initial' | 'highlighted' | 'error';
 
@@ -15,18 +16,10 @@ interface InputLabelProps {
 }
 
 const InputLabelRoot = styled.label<InputLabelRootProps>`
-  ${({ theme }: { theme: Pallet }) => css`
-    border: 2px solid ${theme.borderColor2};
-    color: ${theme.primaryText};
-    background: ${theme.layer2Background};
-  `}
-  font-size: 13px;
-
   display: block;
-  padding: 10px;
-  border-radius: 10px;
-  min-height: 80px;
+
   .label-content {
+    font-size: 16px;
     font-family: ${FontFamilies.AvenirNext};
     font-weight: 300;
     display: block;
@@ -36,7 +29,7 @@ const InputLabelRoot = styled.label<InputLabelRootProps>`
 export const InputLabel: React.FC<InputLabelProps> = ({ children, label, state = 'initial' }) => {
   return (
     <InputLabelRoot state={state}>
-      <span className='label-content'>{label}</span>
+      <Typography className='label-content'>{label}</Typography>
       {children}
     </InputLabelRoot>
   );

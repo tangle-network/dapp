@@ -9,6 +9,7 @@ import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { WithdrawState } from '@webb-dapp/react-environment';
+import { InputSection } from '@webb-dapp/ui-components/Inputs/InputSection/InputSection';
 
 const WithdrawWrapper = styled.div``;
 type WithdrawProps = {};
@@ -24,23 +25,28 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
 
   return (
     <WithdrawWrapper>
-      <NoteInput error={note ? validationErrors.note : ''} value={note} onChange={setNote} />
+      <InputSection>
+        <NoteInput error={note ? validationErrors.note : ''} value={note} onChange={setNote} />
+      </InputSection>
 
       <SpaceBox height={16} />
 
-      <InputLabel label={'Recipient'}>
-        <InputBase
-          value={recipient}
-          onChange={(event) => {
-            setRecipient(event.target.value as string);
-          }}
-          fullWidth
-          placeholder={`Enter account address`}
-        />
-        <FormHelperText error={Boolean(validationErrors.recipient && recipient)}>
-          {validationErrors.recipient}
-        </FormHelperText>
-      </InputLabel>
+      <InputSection>
+        <InputLabel label={'Recipient'}>
+          <InputBase
+            value={recipient}
+            onChange={(event) => {
+              setRecipient(event.target.value as string);
+            }}
+            inputProps={{style: {fontSize: 14}}}
+            fullWidth
+            placeholder={`Enter account address`}
+          />
+          <FormHelperText error={Boolean(validationErrors.recipient && recipient)}>
+            {validationErrors.recipient}
+          </FormHelperText>
+        </InputLabel>
+      </InputSection>
 
       <SpaceBox height={16} />
 

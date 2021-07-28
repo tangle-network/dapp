@@ -96,6 +96,11 @@ const RightNavigation = styled.div`
 
 	`}
 `;
+
+const AccountManagerContainer = styled.div`
+  width: 250px;
+`;
+
 const NavigationWrapper = styled.ul``;
 type AppBarProps = {};
 
@@ -147,7 +152,9 @@ const AppBar: React.FC<AppBarProps> = () => {
           </IconButton>
         </Tooltip>*/}
         {!isMobile && <NetworkManager />}
-        {!isMobile && (activeWallet ? <AccountManager /> : <ConnectWalletButton/>)}
+        <AccountManagerContainer>
+          {!isMobile && (activeWallet ? <AccountManager /> : <ConnectWalletButton/>)}
+        </AccountManagerContainer>
       </RightNavigation>
     </AppBarWrapper>
   );
