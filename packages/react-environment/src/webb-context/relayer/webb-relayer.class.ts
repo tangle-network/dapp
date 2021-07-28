@@ -13,9 +13,19 @@ type RelayerQuery = {
 };
 type RelayedChainInput = {
   endpoint: string;
+  k;
   name: string;
   contractAddress: string;
   baseOn: 'evm' | 'substrate';
+};
+
+export type WitdrawRealyerArgs = {
+  root: string;
+  nullifierHash: string;
+  recipient: string;
+  relayer: string;
+  fee: string;
+  refund: string;
 };
 
 export interface RelayerInfo {
@@ -37,7 +47,7 @@ export class WebbRelayerBuilder {
   private constructor(private config: Relayerconfig[]) {}
 
   /// Mapping the fetched relayers info to the Capabilities store
-  private static infoIntoCapabilities(config: Relayerconfig, info: RelayerInfo): Capabilities {
+  private static infoIntoCapabilities(_nfig: Relayerconfig, info: RelayerInfo): Capabilities {
     return {
       hasIpService: true,
       supportedChains: {
@@ -152,19 +162,14 @@ class RelayedWithdraw {
     }
   }
 
-  generateWithdrawRequest(chain: RelayedChainInput, proof: string, args: string[]) {
+  generateWithdrawRequest(chain: RelayedChainInput, proof: string, args: WitdrawRealyerArgs) {
     return {
       [chain.baseOn]: {
         [chain.name]: {
           relayWithdrew: {
             contract: chain.contractAddress,
             proof,
-            root: args[0],
-            nullifierHash: args[1],
-            recipient: args[2],
-            relayer: args[3],
-            fee: args[4],
-            refund: args[5],
+            ...args,
           },
         },
       },
