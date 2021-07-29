@@ -3,6 +3,8 @@ export interface WalletConfig {
   logo: React.ComponentType;
   name: string;
   title: string;
+  platform: string;
+  
   // the wallet isn't live yet
   enabled: boolean;
 
