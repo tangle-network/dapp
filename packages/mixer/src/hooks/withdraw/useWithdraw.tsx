@@ -1,6 +1,6 @@
 import { useWebContext, WithdrawState } from '@webb-dapp/react-environment/webb-context';
-import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ActiveWebbRelayer, WebbRelayer } from '@webb-dapp/react-environment/webb-context/relayer';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 export type UseWithdrawProps = {
   note: string;

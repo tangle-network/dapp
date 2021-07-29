@@ -2,14 +2,14 @@ import { Fade, FormHelperText, InputBase, MenuItem, Select } from '@material-ui/
 import { MixerButton } from '@webb-dapp/mixer/components/MixerButton/MixerButton';
 import WithdrawingModal from '@webb-dapp/mixer/components/Withdraw/WithdrawingModal';
 import { useWithdraw } from '@webb-dapp/mixer/hooks';
+import { WithdrawState } from '@webb-dapp/react-environment';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabel';
+import { InputSection } from '@webb-dapp/ui-components/Inputs/InputSection/InputSection';
 import { NoteInput } from '@webb-dapp/ui-components/Inputs/NoteInput/NoteInput';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { WithdrawState } from '@webb-dapp/react-environment';
-import { InputSection } from '@webb-dapp/ui-components/Inputs/InputSection/InputSection';
 
 const WithdrawWrapper = styled.div``;
 type WithdrawProps = {};
@@ -18,7 +18,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
   const [note, setNote] = useState('');
   const [recipient, setRecipient] = useState('');
 
-  const { canCancel, cancelWithdraw, stage, validationErrors, withdraw, setRelayer, relayersState } = useWithdraw({
+  const { canCancel, cancelWithdraw, relayersState, setRelayer, stage, validationErrors, withdraw } = useWithdraw({
     recipient,
     note,
   });
@@ -65,7 +65,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
               );
             })}
           </Select>
-          <Fade in={relayersState.activeRelayer} unmountOnExit mountOnEnter timeout={300}>
+          <Fade in={Boolean(relayersState.activeRelayer)} unmountOnExit mountOnEnter timeout={300}>
             <div
               style={{
                 padding: 10,
