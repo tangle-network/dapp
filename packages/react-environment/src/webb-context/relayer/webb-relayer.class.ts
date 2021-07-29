@@ -1,8 +1,8 @@
 import { ChainId } from '@webb-dapp/apps/configs';
 import {
   Capabilities,
-  RealyedChainConfig,
-  Relayerconfig,
+  RelayedChainConfig,
+  RelayerConfig,
 } from '@webb-dapp/react-environment/webb-context/relayer/types';
 import { Observable, Subject } from 'rxjs';
 
@@ -18,7 +18,7 @@ type RelayedChainInput = {
   baseOn: 'evm' | 'substrate';
 };
 
-export type WitdrawRealyerArgs = {
+export type WithdrawRelayerArgs = {
   root: string;
   nullifierHash: string;
   recipient: string;
@@ -28,8 +28,8 @@ export type WitdrawRealyerArgs = {
 };
 
 export interface RelayerInfo {
-  substrate: Record<string, RealyedChainConfig | null>;
-  evm: Record<string, RealyedChainConfig | null>;
+  substrate: Record<string, RelayedChainConfig | null>;
+  evm: Record<string, RelayedChainConfig | null>;
 }
 
 export type ChainNameIntoChainId = (name: string, basedOn: 'evm' | 'substrate') => ChainId | null;
@@ -41,13 +41,13 @@ export type ChainNameIntoChainId = (name: string, basedOn: 'evm' | 'substrate') 
  * */
 export class WebbRelayerBuilder {
   /// storage for relayers capabilities
-  private capabilities: Record<Relayerconfig['address'], Capabilities> = {};
+  private capabilities: Record<RelayerConfig['address'], Capabilities> = {};
 
-  private constructor(private config: Relayerconfig[], private readonly chainNameAdapter: ChainNameIntoChainId) {}
+  private constructor(private config: RelayerConfig[], private readonly chainNameAdapter: ChainNameIntoChainId) {}
 
   /// Mapping the fetched relayers info to the Capabilities store
   private static infoIntoCapabilities(
-    _nfig: Relayerconfig,
+    _nfig: RelayerConfig,
     info: RelayerInfo,
     nameAdapter: ChainNameIntoChainId
   ): Capabilities {
@@ -71,7 +71,7 @@ export class WebbRelayerBuilder {
   }
 
   /// fetch relayers
-  private async fetchInfo(config: Relayerconfig) {
+  private async fetchInfo(config: RelayerConfig) {
     const res = await fetch(`${config.address}/api/v1/info`);
     const info: RelayerInfo = await res.json();
     const capabilities = WebbRelayerBuilder.infoIntoCapabilities(config, info, this.chainNameAdapter);
@@ -84,11 +84,11 @@ export class WebbRelayerBuilder {
    *  create new instance and fetch the relayres
    * */
   static async initBuilder(
-    config: Relayerconfig[],
+    config: RelayerConfig[],
     chainNameAdapter: ChainNameIntoChainId
   ): Promise<WebbRelayerBuilder> {
     const relayerBuilder = new WebbRelayerBuilder(config, chainNameAdapter);
-    await Promise.all(config.map(relayerBuilder.fetchInfo, relayerBuilder));
+    await Promise.allSettled(config.map(relayerBuilder.fetchInfo, relayerBuilder));
     return relayerBuilder;
   }
 
@@ -165,7 +165,7 @@ class RelayedWithdraw {
     }
   }
 
-  generateWithdrawRequest(chain: RelayedChainInput, proof: string, args: WitdrawRealyerArgs) {
+  generateWithdrawRequest(chain: RelayedChainInput, proof: string, args: WithdrawRelayerArgs) {
     return {
       [chain.baseOn]: {
         [chain.name]: {

@@ -1,6 +1,6 @@
-import { ChainId, WebbEVMChain } from '@webb-dapp/apps/configs';
+import { ChainId } from '@webb-dapp/apps/configs';
 
-export type RealyedChainConfig = {
+export type RelayedChainConfig = {
   withdrewFee: number;
   withdrewGaslimit: number;
   account: string;
@@ -8,11 +8,11 @@ export type RealyedChainConfig = {
 export type Capabilities = {
   hasIpService: boolean;
   supportedChains: {
-    substrate: Map<ChainId, RealyedChainConfig>;
-    evm: Map<ChainId, RealyedChainConfig>;
+    substrate: Map<ChainId, RelayedChainConfig>;
+    evm: Map<ChainId, RelayedChainConfig>;
   };
 };
 
-export type Relayerconfig = {
+export type RelayerConfig = {
   address: string;
 };
