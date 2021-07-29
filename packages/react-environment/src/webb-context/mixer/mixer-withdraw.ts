@@ -1,5 +1,5 @@
 import { EventBus } from '@webb-tools/app-util';
-import { WebbRelayer } from '@webb-dapp/react-environment/webb-context/relayer';
+import { ActiveWebbRelayer, WebbRelayer } from '@webb-dapp/react-environment/webb-context/relayer';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 export enum WithdrawState {
@@ -25,25 +25,30 @@ export type MixerWithdrawEvents = {
   ready: void;
   loading: boolean;
 };
-type OptionalRelayer = null | WebbRelayer;
+export type OptionalRelayer = null | WebbRelayer;
+export type OptionalActiveRelayer = null | ActiveWebbRelayer;
 
 export abstract class MixerWithdraw<T> extends EventBus<MixerWithdrawEvents> {
   state: WithdrawState = WithdrawState.Ideal;
-  protected emitter = new BehaviorSubject<OptionalRelayer>(null);
-  readonly watcher: Observable<OptionalRelayer>;
-  private _activeRelayer: OptionalRelayer = null;
+  protected emitter = new BehaviorSubject<OptionalActiveRelayer>(null);
+  readonly watcher: Observable<OptionalActiveRelayer>;
+  private _activeRelayer: OptionalActiveRelayer = null;
 
   get hasRelayer(): Promise<boolean> {
     return Promise.resolve(false);
   }
 
-  get activeRelayer(): [OptionalRelayer, Observable<OptionalRelayer>] {
+  get activeRelayer(): [OptionalActiveRelayer, Observable<OptionalActiveRelayer>] {
     return [this._activeRelayer, this.watcher];
   }
 
-  public setActiveRelayer(relayer: OptionalRelayer) {
-    // this._activeRelayer = relayer;
-    this.emitter.next(relayer);
+  mapRelayerIntoActive(relayer: OptionalRelayer): Promise<OptionalActiveRelayer> {
+    return Promise.resolve(null);
+  }
+
+  public async setActiveRelayer(relayer: OptionalRelayer) {
+    const nextValue = await this.mapRelayerIntoActive(relayer);
+    this.emitter.next(nextValue);
   }
 
   // todo switch to the reactive api

@@ -1,6 +1,6 @@
 import { useWebContext, WithdrawState } from '@webb-dapp/react-environment/webb-context';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { WebbRelayer } from '@webb-dapp/react-environment/webb-context/relayer';
+import { ActiveWebbRelayer, WebbRelayer } from '@webb-dapp/react-environment/webb-context/relayer';
 
 export type UseWithdrawProps = {
   note: string;
@@ -17,7 +17,7 @@ export type WithdrawErrors = {
 type RelayersState = {
   relayers: WebbRelayer[];
   loading: boolean;
-  activeRelayer: null | WebbRelayer;
+  activeRelayer: null | ActiveWebbRelayer;
 };
 const relayersInitState: RelayersState = {
   relayers: [],
@@ -40,7 +40,7 @@ export const useWithdraw = (params: UseWithdrawProps) => {
     if (!withdraw?.enabled) return null;
     return withdraw.inner;
   }, [activeApi]);
-
+  console.log(relayersState.relayers);
   // hook events
   useEffect(() => {
     withdrawApi?.relayers.then((r) => {

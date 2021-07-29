@@ -1,4 +1,4 @@
-import { FormHelperText, InputBase, MenuItem, Select } from '@material-ui/core';
+import { Fade, FormHelperText, InputBase, MenuItem, Select } from '@material-ui/core';
 import { MixerButton } from '@webb-dapp/mixer/components/MixerButton/MixerButton';
 import WithdrawingModal from '@webb-dapp/mixer/components/Withdraw/WithdrawingModal';
 import { useWithdraw } from '@webb-dapp/mixer/hooks';
@@ -65,6 +65,38 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
               );
             })}
           </Select>
+          <Fade in={relayersState.activeRelayer} unmountOnExit mountOnEnter timeout={300}>
+            <div
+              style={{
+                padding: 10,
+              }}
+            >
+              <table
+                style={{
+                  width: '100%',
+                }}
+              >
+                <tbody>
+                  <tr>
+                    <td>
+                      <span style={{ whiteSpace: 'nowrap' }}>withdraw fee</span>
+                    </td>
+                    <td>{relayersState.activeRelayer?.fee}</td>
+                  </tr>
+                  <tr>
+                    <td>gas limit</td>
+                    <td>{relayersState.activeRelayer?.gasLimit}</td>
+                  </tr>
+                  <tr>
+                    <td>Account</td>
+                    <td>
+                      <small>{relayersState.activeRelayer?.account}</small>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </Fade>
         </InputLabel>
       </InputSection>
       <SpaceBox height={16} />

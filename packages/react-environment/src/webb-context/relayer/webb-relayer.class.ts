@@ -222,4 +222,38 @@ export class WebbRelayer {
       throw new Error('network error');
     }
   }
+
+  static intoActiveWebRelayer(
+    instance: WebbRelayer,
+    query: { chain: ChainId; basedOn: 'evm' | 'substrate' }
+  ): ActiveWebbRelayer {
+    return new ActiveWebbRelayer(instance.address, instance.capabilities, query);
+  }
+}
+
+export class ActiveWebbRelayer extends WebbRelayer {
+  constructor(
+    address: string,
+    capabilities: Capabilities,
+    private query: { chain: ChainId; basedOn: 'evm' | 'substrate' }
+  ) {
+    super(address, capabilities);
+  }
+
+  private get config() {
+    const list = this.capabilities.supportedChains[this.query.basedOn];
+    return list.get(this.query.chain);
+  }
+
+  get fee(): number | undefined {
+    return this.config?.withdrewFee;
+  }
+
+  get gasLimit(): number | undefined {
+    return this.config?.withdrewGaslimit;
+  }
+
+  get account(): string | undefined {
+    return this.config?.account;
+  }
 }
