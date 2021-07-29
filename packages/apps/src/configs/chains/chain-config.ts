@@ -90,54 +90,6 @@ export const chainsConfig: AppConfig['chains'] = {
     ],
     nativeCurrencyId: WebbCurrencyId.ETH,
   },
-  [ChainId.Ropsten]: {
-    group: 'eth',
-    id: ChainId.Ropsten,
-    evmId: WebbEVMChain.Ropsten,
-    name: 'Ropsten',
-    tag: 'test',
-    url: '',
-    logo: EtherLogo,
-    currencies: [
-      {
-        currencyId: WebbCurrencyId.ETH,
-        enabled: true,
-      },
-    ],
-    nativeCurrencyId: WebbCurrencyId.ETH,
-  },
-  [ChainId.Goerli]: {
-    group: 'eth',
-    id: ChainId.Goerli,
-    evmId: WebbEVMChain.Goerli,
-    name: 'Goerli',
-    tag: 'test',
-    url: '',
-    logo: EtherLogo,
-    currencies: [
-      {
-        currencyId: WebbCurrencyId.ETH,
-        enabled: true,
-      },
-    ],
-    nativeCurrencyId: WebbCurrencyId.ETH,
-  },
-  [ChainId.Kovan]: {
-    group: 'eth',
-    id: ChainId.Kovan,
-    evmId: WebbEVMChain.Kovan,
-    name: 'Kovan',
-    tag: 'test',
-    url: '',
-    logo: EtherLogo,
-    currencies: [
-      {
-        currencyId: WebbCurrencyId.ETH,
-        enabled: true,
-      },
-    ],
-    nativeCurrencyId: WebbCurrencyId.ETH,
-  },
   [ChainId.HarmonyTestnet1]: {
     group: 'one',
     id: ChainId.HarmonyTestnet1,
