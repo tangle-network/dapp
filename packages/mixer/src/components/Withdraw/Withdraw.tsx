@@ -53,8 +53,8 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
           <Select
             fullWidth
             value={relayersState.activeRelayer?.address}
-            onChange={(ad) => {
-              setRelayer(relayersState?.relayers.find((i) => i.address === ad) ?? null);
+            onChange={({ target: { value } }) => {
+              setRelayer(relayersState?.relayers.find((i) => i.address === value) ?? null);
             }}
           >
             {relayersState.relayers.map((relayer) => {
