@@ -40,7 +40,6 @@ export const useWithdraw = (params: UseWithdrawProps) => {
     if (!withdraw?.enabled) return null;
     return withdraw.inner;
   }, [activeApi]);
-  console.log(relayersState.relayers);
   // hook events
   useEffect(() => {
     withdrawApi?.relayers.then((r) => {
