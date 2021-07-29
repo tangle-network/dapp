@@ -196,7 +196,7 @@ export class WebbRelayer {
   constructor(readonly address: string, readonly capabilities: Capabilities) {}
 
   async initWithdraw() {
-    const ws = new WebSocket(this.address);
+    const ws = new WebSocket(this.address.replace('http', 'ws'));
     await new Promise((r, c) => {
       ws.onopen = r;
       ws.onerror = r;
@@ -212,5 +212,14 @@ export class WebbRelayer {
       });
     }
     return new RelayedWithdraw(ws);
+  }
+
+  async getIp(): Promise<string> {
+    const req = await fetch(`${this.address}/api/v1/ip`);
+    if (req.ok) {
+      return req.json();
+    } else {
+      throw new Error('network error');
+    }
   }
 }
