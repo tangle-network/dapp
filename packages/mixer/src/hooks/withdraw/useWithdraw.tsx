@@ -1,7 +1,6 @@
 import { useWebContext, WithdrawState } from '@webb-dapp/react-environment/webb-context';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { WebbRelayer } from '@webb-dapp/react-environment/webb-context/relayer';
-import { BehaviorSubject } from 'rxjs';
 
 export type UseWithdrawProps = {
   note: string;
@@ -15,18 +14,20 @@ export type WithdrawErrors = {
     recipient: string;
   };
 };
+type RelayersState = {
+  relayers: WebbRelayer[];
+  loading: boolean;
+  activeRelayer: null | WebbRelayer;
+};
+const relayersInitState: RelayersState = {
+  relayers: [],
+  activeRelayer: null,
+  loading: true,
+};
 export const useWithdraw = (params: UseWithdrawProps) => {
   const [stage, setStage] = useState<WithdrawState>(WithdrawState.Ideal);
   const { activeApi } = useWebContext();
-  const [relayersState, setRelayersState] = useState<{
-    relayers: WebbRelayer[];
-    loading: boolean;
-    activeRelayer: null | WebbRelayer;
-  }>({
-    relayers: [],
-    activeRelayer: null,
-    loading: true,
-  });
+  const [relayersState, setRelayersState] = useState<RelayersState>(relayersInitState);
   const [error, setError] = useState<WithdrawErrors>({
     error: '',
     validationError: {
@@ -99,6 +100,12 @@ export const useWithdraw = (params: UseWithdrawProps) => {
     }
   }, [canCancel, withdrawApi]);
 
+  const setRelayer = useCallback(
+    (nextRelayer: WebbRelayer | null) => {
+      withdrawApi?.setActiveRelayer(nextRelayer);
+    },
+    [withdrawApi]
+  );
   return {
     stage,
     withdraw,
@@ -107,5 +114,6 @@ export const useWithdraw = (params: UseWithdrawProps) => {
     error: error.error,
     validationErrors: error.validationError,
     relayersState,
+    setRelayer,
   };
 };

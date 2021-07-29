@@ -1,4 +1,4 @@
-import { FormHelperText, InputBase } from '@material-ui/core';
+import { FormHelperText, InputBase, MenuItem, Select } from '@material-ui/core';
 import { MixerButton } from '@webb-dapp/mixer/components/MixerButton/MixerButton';
 import WithdrawingModal from '@webb-dapp/mixer/components/Withdraw/WithdrawingModal';
 import { useWithdraw } from '@webb-dapp/mixer/hooks';
@@ -18,11 +18,10 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
   const [note, setNote] = useState('');
   const [recipient, setRecipient] = useState('');
 
-  const { canCancel, cancelWithdraw, stage, validationErrors, withdraw, relayersState } = useWithdraw({
+  const { canCancel, cancelWithdraw, stage, validationErrors, withdraw, setRelayer, relayersState } = useWithdraw({
     recipient,
     note,
   });
-  console.log(relayersState);
   return (
     <WithdrawWrapper>
       <InputSection>
@@ -48,6 +47,26 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
         </InputLabel>
       </InputSection>
 
+      <SpaceBox height={16} />
+      <InputSection>
+        <InputLabel label={'Relayer'}>
+          <Select
+            fullWidth
+            value={relayersState.activeRelayer?.address}
+            onChange={(ad) => {
+              setRelayer(relayersState?.relayers.find((i) => i.address === ad) ?? null);
+            }}
+          >
+            {relayersState.relayers.map((relayer) => {
+              return (
+                <MenuItem value={relayer.address} key={relayer.address}>
+                  {relayer.address}
+                </MenuItem>
+              );
+            })}
+          </Select>
+        </InputLabel>
+      </InputSection>
       <SpaceBox height={16} />
 
       <MixerButton disabled={!recipient} onClick={withdraw} label={'Withdraw'} />
