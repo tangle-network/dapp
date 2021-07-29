@@ -18,11 +18,11 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
   const [note, setNote] = useState('');
   const [recipient, setRecipient] = useState('');
 
-  const { canCancel, cancelWithdraw, stage, validationErrors, withdraw } = useWithdraw({
+  const { canCancel, cancelWithdraw, stage, validationErrors, withdraw, relayersState } = useWithdraw({
     recipient,
     note,
   });
-
+  console.log(relayersState);
   return (
     <WithdrawWrapper>
       <InputSection>
@@ -38,7 +38,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
             onChange={(event) => {
               setRecipient(event.target.value as string);
             }}
-            inputProps={{style: {fontSize: 14}}}
+            inputProps={{ style: { fontSize: 14 } }}
             fullWidth
             placeholder={`Enter account address`}
           />

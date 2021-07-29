@@ -13,7 +13,6 @@ type RelayerQuery = {
 };
 type RelayedChainInput = {
   endpoint: string;
-  k;
   name: string;
   contractAddress: string;
   baseOn: 'evm' | 'substrate';

@@ -9,15 +9,18 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
     return Promise.resolve(undefined);
   }
 
-  get hasRelayer() {
+  get relayers() {
     return this.inner.getChainId().then((evmId) => {
       const chainId = evmIdIntoChainId(evmId);
-      const relayers = this.inner.relayingManager.getRelayer({
+      return this.inner.relayingManager.getRelayer({
         baseOn: 'evm',
         chainId,
       });
-      return relayers.length > 0;
     });
+  }
+
+  get hasRelayer() {
+    return this.relayers.then((r) => r.length > 0);
   }
 
   async withdraw(note: string, recipient: string): Promise<void> {

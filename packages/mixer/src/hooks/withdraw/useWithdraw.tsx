@@ -1,5 +1,7 @@
 import { useWebContext, WithdrawState } from '@webb-dapp/react-environment/webb-context';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { WebbRelayer } from '@webb-dapp/react-environment/webb-context/relayer';
+import { BehaviorSubject } from 'rxjs';
 
 export type UseWithdrawProps = {
   note: string;
@@ -16,7 +18,15 @@ export type WithdrawErrors = {
 export const useWithdraw = (params: UseWithdrawProps) => {
   const [stage, setStage] = useState<WithdrawState>(WithdrawState.Ideal);
   const { activeApi } = useWebContext();
-
+  const [relayersState, setRelayersState] = useState<{
+    relayers: WebbRelayer[];
+    loading: boolean;
+    activeRelayer: null | WebbRelayer;
+  }>({
+    relayers: [],
+    activeRelayer: null,
+    loading: true,
+  });
   const [error, setError] = useState<WithdrawErrors>({
     error: '',
     validationError: {
@@ -32,6 +42,19 @@ export const useWithdraw = (params: UseWithdrawProps) => {
 
   // hook events
   useEffect(() => {
+    withdrawApi?.relayers.then((r) => {
+      setRelayersState((p) => ({
+        ...p,
+        loading: false,
+        relayers: r,
+      }));
+    });
+    const sub = withdrawApi?.watcher.subscribe((next) => {
+      setRelayersState((p) => ({
+        ...p,
+        activeRelayer: next,
+      }));
+    });
     const unsubscribe: Record<string, (() => void) | void> = {};
     if (!withdrawApi) return;
     unsubscribe['stateChange'] = withdrawApi.on('stateChange', (stage: WithdrawState) => {
@@ -51,7 +74,10 @@ export const useWithdraw = (params: UseWithdrawProps) => {
       }));
     });
 
-    return () => Object.values(unsubscribe).forEach((v) => v && v());
+    return () => {
+      sub?.unsubscribe();
+      Object.values(unsubscribe).forEach((v) => v && v());
+    };
   }, [withdrawApi]);
 
   const withdraw = useCallback(async () => {
@@ -80,5 +106,6 @@ export const useWithdraw = (params: UseWithdrawProps) => {
     cancelWithdraw,
     error: error.error,
     validationErrors: error.validationError,
+    relayersState,
   };
 };
