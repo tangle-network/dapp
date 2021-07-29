@@ -9,6 +9,7 @@ import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polka
 import { EvmNote } from '@webb-dapp/contracts/utils/evm-note';
 import { evmIdIntoChainId } from '@webb-dapp/apps/configs';
 import { WebbRelayer } from '@webb-dapp/react-environment/webb-context/relayer';
+import React from 'react';
 
 export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
   cancelWithdraw(): Promise<void> {
@@ -48,7 +49,7 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
     const txReset = await contract.withdraw(note, recipient);
     transactionNotificationConfig.loading?.({
       address: '',
-      data: undefined,
+      data: React.createElement('p', {}, 'Withdraw In Progress'),
       key: 'mixer-withdraw-evm',
       path: {
         method: 'withdraw',

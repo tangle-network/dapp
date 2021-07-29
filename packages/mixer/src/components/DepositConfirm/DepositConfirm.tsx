@@ -38,7 +38,6 @@ const DepositInfoWrapper = styled.div`
 
   .deposit-modal-alert-caption {
     font-family: ${FontFamilies.AvenirNext};
-    color: #7c7b86;
     text-align: center;
   }
 `;
@@ -181,12 +180,12 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({ mixerId, onClose, o
 
           <SpaceBox height={16} />
 
-          <Typography variant={'h4'} className={'deposit-modal-alert-header'} color={'textPrimary'}>
+          <Typography variant={'h3'} className={'deposit-modal-alert-header'} color={'textPrimary'}>
             Not so fast! <b>Back up your note.</b>
           </Typography>
           <SpaceBox height={8} />
-          <Typography variant={'body2'} className={'deposit-modal-alert-caption'}>
-            Please backup your note. If you lose this. <br /> you won't get your deposit back.
+          <Typography variant={'body1'} className={'deposit-modal-alert-caption'} color={'textPrimary'}>
+            Please backup your note. If you lose this,<br /> you won't get your deposit back.
           </Typography>
         </header>
 
@@ -221,7 +220,7 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({ mixerId, onClose, o
             setBackupConfirmation((v) => !v);
           }}
           control={<Checkbox color={'primary'} />}
-          label={<Typography color={'primary'}>I confirm,I backed up the note</Typography>}
+          label={<Typography color={'textPrimary'}>I confirm,I backed up the note</Typography>}
         />
 
         <SpaceBox height={8} />

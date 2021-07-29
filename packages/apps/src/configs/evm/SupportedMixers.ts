@@ -83,15 +83,27 @@ export const harmonyTest0Mixers: MixerInfo[] = [
 
 export const harmonyTest1Mixers: MixerInfo[] = [
   {
-    size: 1,
-    address: '0x8a4D675dcC71A7387a3C4f27d7D78834369b9542',
-    symbol: 'ONE',
-    createdAtBlock: 12040000,
-  },
-  {
     size: 100,
     address: '0x7cd1F52e5EEdf753e99D945276a725CE533AaD1a',
     symbol: 'ONE',
     createdAtBlock: 12040000,
   },
+  {
+    size: 1000,
+    address: '0xD7f9BB9957100310aD397D2bA31771D939BD4731',
+    symbol: 'ONE',
+    createdAtBlock: 12892487,
+  },
+  {
+    size: 10000,
+    address: '0xeE2eB8F142e48e5D1bDD34e0924Ed3B4aa0d4222',
+    symbol: 'ONE',
+    createdAtBlock: 12892648,
+  },
+  {
+    size: 100000,
+    address: '0x7cd173094eF78FFAeDee4e14576A73a79aA716ac',
+    symbol: 'ONE',
+    createdAtBlock: 12892840,
+  }
 ];
