@@ -115,7 +115,8 @@ export const WalletManger: React.FC<WalletMangerProps> = ({ close, setSelectedWa
                 button
                 onClick={async () => {
                   if (!wallet.connected) {
-                    return setSelectedWallet(wallet);
+                    setSelectedWallet(wallet);
+                    close();
                   }
                 }}
               >

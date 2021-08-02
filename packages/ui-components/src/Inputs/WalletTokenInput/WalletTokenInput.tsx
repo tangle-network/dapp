@@ -22,7 +22,7 @@ type WalletTokenInputProps = {
 };
 
 export const WalletTokenInput: React.FC<WalletTokenInputProps> = ({ selectedToken, setSelectedToken }) => {
-  const { activeChain } = useWebContext();
+  const { activeChain, activeWallet } = useWebContext();
   const allCurrencies = useMemo(() => {
     return activeChain?.currencies.map(({ currencyId }) => Currency.fromCurrencyId(currencyId)) ?? [];
   }, [activeChain]);
@@ -34,11 +34,11 @@ export const WalletTokenInput: React.FC<WalletTokenInputProps> = ({ selectedToke
           <WalletSelect />
         </InputLabel>
 
-        <InputLabel label={'Select Token'}>
+        {activeWallet && (<InputLabel label={'Select Token'}>
           {/* used for positioning the token input label */}
           <div style={{height: '52px'}}></div>
           <TokenInput currencies={allCurrencies} value={active} onChange={setSelectedToken} />
-        </InputLabel> 
+        </InputLabel>)}
       </WalletTokenInputWrapper>
     </InputSection>
   );
