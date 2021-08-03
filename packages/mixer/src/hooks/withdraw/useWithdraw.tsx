@@ -8,7 +8,6 @@ export type UseWithdrawProps = {
 };
 export type WithdrawErrors = {
   error: string;
-
   validationError: {
     note: string;
     recipient: string;

@@ -121,18 +121,8 @@ export class AnchorContract {
     return tree.path(leafIndex);
   }
 
-  async withdraw(noteString: string, recipient: string) {
-    const overrides = {
-      gasLimit: 6000000,
-      gasPrice: utils.toWei('1', 'gwei'),
-    };
-
-    const note = EvmNote.deserialize(noteString);
+  async generateZKP(note: EvmNote, recipient: string) {
     const deposit = note.intoDeposit();
-    console.log({
-      deposit,
-      preimage: bufferToFixed(deposit.preimage),
-    });
     const merkleProof = await this.generateMerkleProof(deposit);
     const { pathElements, pathIndex, root } = merkleProof;
     let circuitData = require('../circuits/withdraw.json');
@@ -163,6 +153,16 @@ export class AnchorContract {
       proving_key
     );
     const { proof } = await webSnarkUtils.toSolidityInput(proofsData);
+    return { proof, input };
+  }
+
+  async withdraw(noteString: string, recipient: string) {
+    // tx config
+    const overrides = {
+      gasLimit: 6000000,
+      gasPrice: utils.toWei('1', 'gwei'),
+    };
+    const { input, proof } = await this.generateZKP(EvmNote.deserialize(noteString), recipient);
     const tx = await this._contract.withdraw(
       proof,
       bufferToFixed(input.root),

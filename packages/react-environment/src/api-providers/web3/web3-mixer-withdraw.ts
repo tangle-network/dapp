@@ -11,6 +11,7 @@ import { evmIdIntoChainId } from '@webb-dapp/apps/configs';
 import { RelayedWithdrawResult, WebbRelayer } from '@webb-dapp/react-environment/webb-context/relayer';
 import React from 'react';
 import { chainIdToRelayerName } from '@webb-dapp/apps/configs/relayer-config';
+import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
 
 export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
   cancelWithdraw(): Promise<void> {
@@ -51,7 +52,8 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
       const deposit = evmNote.intoDeposit();
       const realyedWithdraw = await activeRelayer.initWithdraw();
       const mixerInfo = this.inner.getMixerInfoBySize(evmNote.amount, evmNote.currency);
-
+      const anchorContract = await this.inner.getContractByAddress(mixerInfo.address);
+      const zkp = await anchorContract.generateZKP(evmNote, recipient);
       const tx = realyedWithdraw.generateWithdrawRequest(
         {
           baseOn: 'evm',
@@ -59,17 +61,18 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
           contractAddress: mixerInfo.address,
           endpoint: '',
         },
-        '',
+        zkp.proof,
         {
-          fee: String(activeRelayer.fee || 0),
-          nullifierHash: deposit.nullifier,
+          fee: bufferToFixed(activeRelayer.fee || 0),
+          nullifierHash: bufferToFixed(deposit.nullifierHash),
           recipient,
           refund: '',
           relayer: activeRelayer.address,
-          root: '',
+          root: bufferToFixed(zkp.input.root),
         }
       );
       realyedWithdraw.watcher.subscribe((nextValue) => {
+        console.log(nextValue);
         switch (nextValue) {
           case RelayedWithdrawResult.PreFlight:
             break;
