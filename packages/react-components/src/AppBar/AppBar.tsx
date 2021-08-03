@@ -95,6 +95,11 @@ const RightNavigation = styled.div`
 
 	`}
 `;
+
+const AccountManagerContainer = styled.div`
+  width: 250px;
+`;
+
 const NavigationWrapper = styled.ul``;
 type AppBarProps = {};
 
@@ -112,11 +117,11 @@ const AppBar: React.FC<AppBarProps> = () => {
       <SpacerDiv />
       {!isMobile && (
         <NavigationWrapper>
-          <li className={'active'}>
+          {/*          <li className={'active'}>
             <NavLink to={'/mixer'} activeClassName={'active'}>
               zkBridge
             </NavLink>
-          </li>
+          </li>*/}
           {/*        <li>
           <NavLink to={'/statistics'}>Statistics</NavLink>
         </li>
@@ -145,7 +150,9 @@ const AppBar: React.FC<AppBarProps> = () => {
           </IconButton>
         </Tooltip>*/}
         {!isMobile && <NetworkManager />}
-        <AccountManager />
+        <AccountManagerContainer>
+          <AccountManager />
+        </AccountManagerContainer>
       </RightNavigation>
     </AppBarWrapper>
   );

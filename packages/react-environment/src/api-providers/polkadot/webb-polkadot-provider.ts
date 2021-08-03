@@ -16,6 +16,7 @@ import { EventBus } from '@webb-tools/app-util';
 
 import { ApiPromise } from '@polkadot/api';
 import { InjectedExtension } from '@polkadot/extension-inject/types';
+import { WebbRelayerBuilder } from '@webb-dapp/react-environment/webb-context/relayer';
 
 export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbApiProvider<WebbPolkadot> {
   readonly methods: WebbMethods<WebbPolkadot>;
@@ -24,7 +25,11 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
   readonly api: ApiPromise;
   readonly txBuilder: PolkaTXBuilder;
 
-  private constructor(apiPromise: ApiPromise, injectedExtension: InjectedExtension) {
+  private constructor(
+    apiPromise: ApiPromise,
+    injectedExtension: InjectedExtension,
+    readonly relayingManager: WebbRelayerBuilder
+  ) {
     super();
     this.provider = new PolkadotProvider(apiPromise, injectedExtension);
     this.accounts = this.provider.accounts;
@@ -78,9 +83,14 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
     }
   }
 
-  static async init(appName: string, endpoints: string[], errorHandler: ApiInitHandler): Promise<WebbPolkadot> {
+  static async init(
+    appName: string,
+    endpoints: string[],
+    errorHandler: ApiInitHandler,
+    relayerBuilder: WebbRelayerBuilder
+  ): Promise<WebbPolkadot> {
     const [apiPromise, injectedExtension] = await PolkadotProvider.getParams(appName, endpoints, errorHandler.onError);
-    const instance = new WebbPolkadot(apiPromise, injectedExtension);
+    const instance = new WebbPolkadot(apiPromise, injectedExtension, relayerBuilder);
     instance.insureApiInterface();
     /// check metadata update
     await instance.awaitMetaDataCheck();

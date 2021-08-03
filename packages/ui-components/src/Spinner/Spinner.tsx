@@ -1,3 +1,4 @@
+import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import React, { useState } from 'react';
 import styled from 'styled-components';
 
@@ -7,10 +8,11 @@ const SpinnerWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #fff;
+
   img {
     max-width: 100%;
     max-height: 100%;
+    ${({ theme }: { theme: Pallet }) => (theme.type === 'dark' ? '    filter: invert(0.85);' : '')};
   }
 `;
 type SpinnerProps = {

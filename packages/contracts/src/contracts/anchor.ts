@@ -46,7 +46,7 @@ export class AnchorContract {
     const deposit = createDeposit();
     const chainId = await this.signer.getChainId();
     const depositSizeBN = await this.denomination;
-    const depositSize = Number.parseFloat(utils.fromWei(depositSizeBN.toString(), "ether"));
+    const depositSize = Number.parseFloat(utils.fromWei(depositSizeBN.toString(), 'ether'));
     const note = new EvmNote(assetSymbol, depositSize, chainId, deposit.preimage);
     return {
       note,
@@ -60,7 +60,6 @@ export class AnchorContract {
       gasPrice: utils.toWei('1', 'gwei'),
       value: await this.denomination,
     };
-    console.log(commitment);
     const filters = await this._contract.filters.Deposit(commitment, null, null);
     this._contract.once(filters, (commitment, insertedIndex, timestamp) => {
       onComplete?.([commitment, insertedIndex, timestamp]);
@@ -82,8 +81,9 @@ export class AnchorContract {
     const filter = this._contract.filters.Deposit(null, null, null);
 
     const currentBlock = await this.web3Provider.getBlockNumber();
-
-    const startingBlock = this.mixersInfo.getMixerInfoByAddress(this._contract.address).createdAtBlock; // Read starting block from created block
+    const storedContractInfo = await this.mixersInfo.getMixerStorage(this._contract.address);
+    
+    const startingBlock = storedContractInfo.lastQueriedBlock; // Read starting block from created block
     let logs: Array<Log> = []; // Read the stored logs into this variable
 
     try {
@@ -97,15 +97,17 @@ export class AnchorContract {
 
       // If there is a timeout, query the logs in block increments.
       if (e.code == -32603) {
-        for (let i=startingBlock; i < currentBlock; i+= 50)
-        {
-          logs = [...logs, ...(await this.web3Provider.getLogs({
-            fromBlock: i,
-            toBlock: (currentBlock - i > 50) ? i + 50 : currentBlock,
-            ...filter,
-          }))];
+        for (let i = startingBlock; i < currentBlock; i += 50) {
+          logs = [
+            ...logs,
+            ...(await this.web3Provider.getLogs({
+              fromBlock: i,
+              toBlock: currentBlock - i > 50 ? i + 50 : currentBlock,
+              ...filter,
+            })),
+          ];
 
-          mixerLogger.log(`Getting logs for block range: ${i} through ${i+50}`)
+          mixerLogger.log(`Getting logs for block range: ${i} through ${i + 50}`);
         }
       } else {
         throw e;
@@ -113,17 +115,22 @@ export class AnchorContract {
     }
     const events = logs.map((log) => this._contract.interface.parseLog(log));
 
-    const commitments = events
+    const newCommitments = events
       .sort((a, b) => a.args.leafIndex - b.args.leafIndex) // Sort events in chronological order
       .map((e) => e.args.commitment);
-    
+
+    const commitments = [...storedContractInfo.leaves, ...newCommitments];
+
+    // extract the commitments from the events, and update the storage
+    await this.mixersInfo.setMixerStorage(this._contract.address, currentBlock, commitments);
+
     return commitments;
   }
 
   async generateMerkleProof(deposit: Deposit) {
     const leaves = await this.getDepositLeavesFromServer();
     const tree = new MerkleTree('eth', 20, leaves);
-    let leafIndex = leaves.findIndex(commitment => commitment == bufferToFixed(deposit.commitment));
+    let leafIndex = leaves.findIndex((commitment) => commitment == bufferToFixed(deposit.commitment));
     return tree.path(leafIndex);
   }
 
@@ -162,12 +169,8 @@ export class AnchorContract {
       pathIndices: pathIndex,
     };
     const proofsData = await webSnarkUtils.genWitnessAndProve(
-      {
-        proof: (witness: any, pk: any) => {
-          // @ts-ignore
-          return window.groth16GenProof(witness, pk);
-        },
-      },
+      // @ts-ignore
+      window.groth16,
       input,
       circuitData,
       proving_key

@@ -1,5 +1,5 @@
 import { WebbEVMChain } from '@webb-dapp/apps/configs';
-import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3';
+import { getEVMChainName } from '@webb-dapp/apps/configs/evm/SupportedMixers';
 import { InteractiveFeedback, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 
 export function unsupportedChain(): InteractiveFeedback {
@@ -13,9 +13,9 @@ export function unsupportedChain(): InteractiveFeedback {
     },
     {
       list: [
-        WebbWeb3Provider.storageName(WebbEVMChain.Rinkeby),
-        WebbWeb3Provider.storageName(WebbEVMChain.Beresheet),
-        WebbWeb3Provider.storageName(WebbEVMChain.Main),
+        getEVMChainName(WebbEVMChain.Rinkeby),
+        getEVMChainName(WebbEVMChain.Beresheet),
+        getEVMChainName(WebbEVMChain.HarmonyTest1),
       ],
     },
     {
@@ -26,7 +26,7 @@ export function unsupportedChain(): InteractiveFeedback {
     .action(
       'Ok',
       () => {
-        interactiveFeedback?.cancel();
+        interactiveFeedback?.cancelWithoutHandler();
       },
       'success'
     )

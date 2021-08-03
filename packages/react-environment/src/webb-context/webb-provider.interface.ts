@@ -1,8 +1,9 @@
+import { InteractiveFeedback } from '@webb-dapp/utils/webb-error';
 import { AccountsAdapter } from '@webb-dapp/wallet/account/Accounts.adapter';
 import { EventBus } from '@webb-tools/app-util';
 
 import { DepositPayload, MixerDeposit, MixerDepositEvents, MixerWithdraw, MixerWithdrawEvents } from './mixer';
-import { InteractiveFeedback } from '@webb-dapp/utils/webb-error';
+import { WebbRelayerBuilder } from '@webb-dapp/react-environment/webb-context/relayer';
 
 /// list of the apis that are available for  the provider
 export interface WebbMethods<T> {
@@ -38,6 +39,15 @@ export type WebbProviderEvents<T = any> = {
   interactiveFeedback: InteractiveFeedback;
   /// The provider is updated and an action is required to handle this update
   providerUpdate: T;
+  // /// accountsChange
+  newAccounts: AccountsAdapter<any>;
+};
+
+export type ProvideCapabilities = {
+  addNetworkRpc: boolean;
+  listenForAccountChange: boolean;
+  listenForChainChane: boolean;
+  hasSessions: boolean;
 };
 
 export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
@@ -48,4 +58,11 @@ export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
 
   /// A hook will be called to drop the provider and do cleanup listeners etc..
   destroy(): Promise<void> | void;
+
+  capabilities?: ProvideCapabilities;
+
+  endSession?(): Promise<void>;
+
+  /// relayer
+  relayingManager: WebbRelayerBuilder;
 }

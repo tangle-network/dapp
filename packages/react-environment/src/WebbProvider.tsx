@@ -1,9 +1,10 @@
 import Icon from '@material-ui/core/Icon';
 import WalletConnectProvider from '@walletconnect/web3-provider';
-import { chainsPopulated } from '@webb-dapp/apps/configs';
+import { ChainId, chainsConfig, chainsPopulated, currenciesConfig, WebbEVMChain } from '@webb-dapp/apps/configs';
 import { WalletId } from '@webb-dapp/apps/configs/wallets/wallet-id.enum';
 import { walletsConfig } from '@webb-dapp/apps/configs/wallets/wallets-config';
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3';
+import { appEvent } from '@webb-dapp/react-environment/app-event';
 import { insufficientApiInterface } from '@webb-dapp/react-environment/error/interactive-errors/insufficient-api-interface';
 import { DimensionsProvider } from '@webb-dapp/react-environment/layout';
 import { StoreProvier } from '@webb-dapp/react-environment/store';
@@ -13,11 +14,17 @@ import { InteractiveFeedback, WebbError, WebbErrorCodes } from '@webb-dapp/utils
 import { Account } from '@webb-dapp/wallet/account/Accounts.adapter';
 import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
-
+import { getEVMChainName } from '@webb-dapp/apps/configs/evm/SupportedMixers';
 import { WebbPolkadot } from './api-providers/polkadot';
 import { extensionNotInstalled, unsupportedChain } from './error';
 import { SettingProvider } from './SettingProvider';
 import { Chain, netStorageFactory, NetworkStorage, Wallet, WebbApiProvider, WebbContext } from './webb-context';
+import {
+  evmChainConflict,
+  USER_SWITCHED_TO_EXPECT_CHAIN,
+} from '@webb-dapp/react-environment/error/interactive-errors/evm-network-conflict';
+import { LoggerService } from '@webb-tools/app-util';
+import { getWebbRelayer } from '@webb-dapp/apps/configs/relayer-config';
 
 interface WebbProviderProps extends BareProps {
   applicationName: string;
@@ -46,7 +53,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
   const [networkStorage, setNetworkStorage] = useState<NetworkStorage | null>(null);
   const [accounts, setAccounts] = useState<Array<Account>>([]);
   const [activeAccount, _setActiveAccount] = useState<Account | null>(null);
-  const [isInit, setIsInit] = useState(true);
+  const [isConnecting, setIsConnecting] = useState(false);
 
   /// storing all interactive feedbacks to show the modals
   const [interactiveFeedbacks, setInteractiveFeedbacks] = useState<InteractiveFeedback[]>([]);
@@ -58,7 +65,12 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
     });
     return () => {
       off && off();
-      setInteractiveFeedbacks([]);
+      setInteractiveFeedbacks((p) => {
+        p.forEach((p) => p.cancel());
+        return [];
+      });
+
+      appEvent.send('changeNetworkSwitcherVisibility', false);
     };
   }, [activeApi]);
 
@@ -119,12 +131,29 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
         const defaultFromSettings = accounts.find((account) => account.address === defaultAccount);
         if (defaultFromSettings) {
           _setActiveAccount(defaultFromSettings);
-          await activeApi?.accounts.setActiveAccount(defaultFromSettings);
+          await nextActiveApi?.accounts.setActiveAccount(defaultFromSettings);
         }
       } else {
         await setActiveAccount(accounts[0]);
       }
       setActiveApi(nextActiveApi);
+      nextActiveApi?.on('newAccounts', async (accounts) => {
+        const acs = await accounts.accounts();
+        const active = acs[0] || null;
+        notificationApi({
+          variant: 'info',
+          Icon: (
+            <div>
+              <Icon>people-alt</Icon>
+            </div>
+          ),
+          key: 'account-change',
+          message: 'Account changed from provider',
+          secondaryMessage: `active account is ${active?.address ?? 'UNKNOWN'}`,
+        });
+        setAccounts(acs);
+        _setActiveAccount(acs[0] || null);
+      });
     } else {
       setActiveApi(nextActiveApi);
       setAccounts([]);
@@ -160,7 +189,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
       case WebbErrorCodes.InsufficientProviderInterface:
         {
           setActiveChain(undefined);
-          const interactiveFeedback = insufficientApiInterface();
+          const interactiveFeedback = insufficientApiInterface(appEvent);
           registerInteractiveFeedback(setInteractiveFeedbacks, interactiveFeedback);
         }
         break;
@@ -170,48 +199,103 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
   };
   /// Network switcher
   const switchChain = async (chain: Chain, _wallet: Wallet) => {
+    const relayer = await getWebbRelayer();
+
     const wallet = _wallet || activeWallet;
     // wallet cleanup
     /// if new wallet id isn't the same of the current then the dApp is dealing with api change
-    if (_wallet.id !== activeWallet?.id && activeApi) {
+    if (activeApi) {
       await activeApi.destroy();
     }
     try {
-      /// settings the user selection
-      setActiveChain(chain);
-      setActiveWallet(wallet);
       /// init the active api value
       let activeApi: WebbApiProvider<any> | null = null;
       switch (wallet.id) {
         case WalletId.Polkadot:
           {
             const url = chain.url;
-            const webbPolkadot = await WebbPolkadot.init('Webb DApp', [url], {
-              onError: (feedback) => {
-                registerInteractiveFeedback(setInteractiveFeedbacks, feedback);
+            const webbPolkadot = await WebbPolkadot.init(
+              'Webb DApp',
+              [url],
+              {
+                onError: (feedback) => {
+                  registerInteractiveFeedback(setInteractiveFeedbacks, feedback);
+                },
               },
-            });
+              relayer
+            );
             await setActiveApiWithAccounts(webbPolkadot, chain.id);
             activeApi = webbPolkadot;
             setLoading(false);
           }
           break;
         case WalletId.MetaMask:
+        case WalletId.WalletConnect:
           {
-            /// init provider from the extension
-            const web3Provider = await Web3Provider.fromExtension();
+            let web3Provider: Web3Provider;
+            if (wallet?.id === WalletId.WalletConnect) {
+              const provider = new WalletConnectProvider({
+                rpc: {
+                  //default on metamask
+                  [WebbEVMChain.EthereumMainNet]: 'https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
+                  [WebbEVMChain.Ropsten]: 'https://ropsten.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
+                  [WebbEVMChain.Goerli]: 'https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
+                  [WebbEVMChain.Kovan]: 'https://kovan.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
+                  [WebbEVMChain.Rinkeby]: 'https://rinkeby.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4',
+                  //default on metamask
+                  [WebbEVMChain.Beresheet]: 'http://beresheet1.edgewa.re:9933',
+                  [WebbEVMChain.HarmonyTest1]: 'https://api.s1.b.hmny.io',
+                },
+                chainId: chain.evmId,
+              });
+
+              web3Provider = await Web3Provider.fromWalletConnectProvider(provider);
+            } else {
+              /// init provider from the extension
+              web3Provider = await Web3Provider.fromExtension();
+            }
+
+            const clientInfo = web3Provider.clientMeta;
+            if (clientInfo) {
+              let message = '';
+              if (wallet?.id === WalletId.WalletConnect) {
+                message = `Connected to WalletConnect ${clientInfo.name}`;
+              } else {
+                message = `Connected to ${clientInfo.name}`;
+              }
+              notificationApi({
+                message: 'Connected to EVM wallet',
+                secondaryMessage: `Connected to ${clientInfo.name}`,
+                variant: 'success',
+                key: 'network-connect',
+                Icon: React.createElement(
+                  'div',
+                  {
+                    style: {
+                      background: 'white',
+                      minWidth: 30,
+                      minHeight: 30,
+                      padding: 4,
+                      borderRadius: '50%',
+                      overflow: 'hidden',
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    },
+                  },
+                  [React.createElement(wallet.logo)]
+                ),
+              });
+            }
             /// get the current active chain from metamask
-            //TODO show feedback if the `chain.evmId` isn't the same
             const chainId = await web3Provider.network; // storage based on network id
-            const webbWeb3Provider = await WebbWeb3Provider.init(web3Provider, chainId);
-            await setActiveApiWithAccounts(webbWeb3Provider, chain.id);
-            /// listen to `providerUpdate` by MetaMask
+            const webbWeb3Provider = await WebbWeb3Provider.init(web3Provider, chainId, relayer);
             webbWeb3Provider.on('providerUpdate', async ([chainId]) => {
               /// get the nextChain from MetaMask change
               const nextChain = Object.values(chains).find((chain) => chain.evmId === chainId);
               try {
                 /// this will throw if the user switched to unsupported chain
-                const name = WebbWeb3Provider.storageName(chainId);
+                const name = getEVMChainName(chainId);
                 /// Alerting that the provider has changed via the extension
                 notificationApi({
                   message: 'Web3: changed the connected network',
@@ -234,39 +318,72 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
                 }
               }
             });
+
+            const activeChain = Object.values(chainsConfig).find((chain) => chain.evmId === chainId);
+            const cantAddChain = !chain.evmId || !chain.evmRpcUrls;
+            const addEvmChain = () => {
+              if (!chain.evmId || !chain.evmRpcUrls) {
+                return;
+              }
+              const currency = currenciesConfig[chain.nativeCurrencyId];
+              return web3Provider.addChain({
+                chainId: `0x${chain.evmId.toString(16)}`,
+                chainName: chain.name,
+                rpcUrls: chain.evmRpcUrls,
+                nativeCurrency: {
+                  decimals: 18,
+                  name: currency.name,
+                  symbol: currency.symbol,
+                },
+              });
+            };
+            if (chainId !== chain.evmId && activeChain) {
+              const feedback = evmChainConflict(
+                {
+                  activeOnExtension: {
+                    id: chainId,
+                    name: activeChain.name,
+                  },
+                  selected: {
+                    id: chain?.evmId ?? 0,
+                    name: chain.name,
+                  },
+                  addEvmChainToMetaMask: cantAddChain ? undefined : addEvmChain,
+                },
+                appEvent
+              );
+              registerInteractiveFeedback(setInteractiveFeedbacks, feedback);
+              const action = await feedback.wait();
+              if (action?.id !== USER_SWITCHED_TO_EXPECT_CHAIN) {
+                return null;
+              } else {
+                const chainId = await web3Provider.network; // storage based on network id
+                if (chainId !== chain.evmId && activeChain) {
+                  notificationApi({
+                    secondaryMessage: `Please make sure you have switched to ${chain.name} chain`,
+                    variant: 'warning',
+                    message: 'Network not switched',
+                  });
+                  return null;
+                }
+              }
+            }
+            await setActiveApiWithAccounts(webbWeb3Provider, chain.id);
+            /// listen to `providerUpdate` by MetaMask
             activeApi = webbWeb3Provider;
           }
           break;
-        case WalletId.WalletConnect: {
-          const provider = new WalletConnectProvider({
-            rpc: {
-              1: 'https://mainnet.mycustomnode.com',
-              3: 'https://ropsten.mycustomnode.com',
-              42: 'http://localhost:9933',
-              // ...
-            },
-          });
-          const web3Provider = await Web3Provider.fromWalletConnectProvider(provider);
-          await web3Provider.eth.net.isListening();
-          const net = await web3Provider.network; // storage based on network id
-          const webbWeb3Provider = await WebbWeb3Provider.init(web3Provider, net);
-
-          const accounts = await webbWeb3Provider.accounts.accounts();
-          setAccounts(accounts);
-          _setActiveAccount(accounts[0]);
-          await webbWeb3Provider.accounts.setActiveAccount(accounts[0]);
-          setActiveApi(webbWeb3Provider);
-          activeApi = webbWeb3Provider;
-        }
       }
-      setActiveWallet(wallet);
+      /// settings the user selection
       setActiveChain(chain);
+      setActiveWallet(wallet);
       return activeApi;
     } catch (e) {
       if (e instanceof WebbError) {
         /// Catch the errors for the switcher while switching
         catchWebbError(e);
       }
+      LoggerService.get('App').error(e);
       return null;
     }
   };
@@ -283,6 +400,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
   useEffect(() => {
     /// init the dApp
     const init = async () => {
+      setIsConnecting(true);
       const networkStorage = await netStorageFactory();
       setNetworkStorage(networkStorage);
       /// get the default wallet and network from storage
@@ -290,8 +408,9 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
         networkStorage.get('defaultNetwork'),
         networkStorage.get('defaultWallet'),
       ]);
-      /// if there's no wallet nor chain abort
+      /// if there's chain, set the default to Rinkeby and return
       if (!net || !wallet) {
+        setActiveChain(chains[ChainId.Rinkeby]);
         return;
       }
       /// chain config by net id
@@ -305,7 +424,6 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
         let defaultAccount = networkDefaultConfig[chainConfig.id]?.defaultAccount;
         defaultAccount = defaultAccount ?? accounts[0]?.address;
         const defaultFromSettings = accounts.find((account) => account.address === defaultAccount);
-        console.log(defaultFromSettings, 'defaultFromSettings');
         if (defaultFromSettings) {
           _setActiveAccount(defaultFromSettings);
           await activeApi.accounts.setActiveAccount(defaultFromSettings);
@@ -320,7 +438,13 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
       }
     };
     init().finally(() => {
-      setIsInit(false);
+      setIsConnecting(false);
+    });
+    appEvent.on('switchNetwork', ([chain, wallet]) => {
+      switchChainAndStore(chain, wallet);
+    });
+    appEvent.on('setActiveAccount', (nextAccount) => {
+      setActiveAccount(nextAccount);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -337,7 +461,13 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
         activeAccount,
         setActiveAccount,
         switchChain: switchChainAndStore,
-        isInit,
+        isConnecting,
+        async inactivateApi(): Promise<void> {
+          setActiveApi(undefined);
+          if (activeApi) {
+            await activeApi.destroy();
+          }
+        },
         activeFeedback,
       }}
     >

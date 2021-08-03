@@ -71,7 +71,7 @@ const AccountManagerWrapper = styled.div<any>`
   height: 0;
   background: #ffffff;
   position: relative;
-  top: -26.5px;
+  top: -52px;
 `;
 
 type TokenInputProps = {
@@ -146,9 +146,13 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
                     />
                     <Padding x={0.5} />
                     <Flex jc={'center'}>
-                      <Typography variant={'body2'}>{selected.symbol}</Typography>
-                      <Typography variant={'caption'} color={'textSecondary'}>
-                        <ChainName>{selected.name}</ChainName>
+                      <Typography variant={'h6'} component={'span'}>
+                        <b>{selected.symbol}</b>
+                      </Typography>
+                      <Typography variant={'body2'} color={'textSecondary'}>
+                        <ChainName>
+                          <b>{selected.name}</b>
+                        </ChainName>
                       </Typography>
                     </Flex>
                   </Flex>
@@ -194,7 +198,7 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
               </div>
 
               <StyledList as={List} dense disablePadding>
-                {selectItems.map(({ chainName, icon: Icon, id, self: currency, symbol }) => {
+                {selectItems.map(({ name, icon: Icon, id, self: currency, symbol }) => {
                   const isSelected = selected?.id === id;
                   return (
                     <li
@@ -211,9 +215,11 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
                           <Avatar style={{ background: 'transparent' }} children={Icon} />
                         </ListItemAvatar>
                         <ListItemText>
-                          <Typography>{symbol}</Typography>
-                          <Typography variant={'caption'} color={'textSecondary'}>
-                            <ChainName>{chainName}</ChainName>
+                          <Typography variant={'h6'} component={'span'}>
+                            <b>{symbol}</b>
+                          </Typography>
+                          <Typography variant={'body2'} color={'textSecondary'}>
+                            <ChainName>{name}</ChainName>
                           </Typography>
                         </ListItemText>
                       </Flex>

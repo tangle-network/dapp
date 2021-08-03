@@ -6,6 +6,10 @@ export type Action = {
   level: FeedbackLevel;
   /// trigger the callback for the action
   onTrigger(): any;
+  /// action name unique for each action of the actions record
+  name: string;
+  /// Used to know which action is registered
+  id: string | null;
 };
 
 /// This will be iterated over and generate content for the feedback
@@ -37,10 +41,12 @@ export class ActionsBuilder {
   }
 
   /// Adds an action for the builder actions
-  action(name: string, handler: () => any, level: FeedbackLevel = 'info'): ActionsBuilder {
+  action(name: string, handler: () => any, level: FeedbackLevel = 'info', id: string | null = null): ActionsBuilder {
     this._actions[name] = {
       level,
       onTrigger: handler,
+      name,
+      id,
     };
     return this;
   }
@@ -50,10 +56,12 @@ export class ActionsBuilder {
     return this._actions;
   }
 }
+
 /// InteractiveFeedback a class that wrappers and error metadata and provide handlers for it
 /// A `canceled` event is trigger only once, when the state changes to be`_canceled=true`
 export class InteractiveFeedback extends EventBus<{ canceled: InteractiveFeedback }> {
   private _canceled: boolean = false;
+  private selectedAction: Action | null = null;
 
   /// Create a new action builder for the InteractiveFeedback
   static actionsBuilder() {
@@ -107,5 +115,28 @@ export class InteractiveFeedback extends EventBus<{ canceled: InteractiveFeedbac
     this.emit('canceled', this);
     /// call  the cancel handler
     this._onCancel();
+  }
+
+  trigger<ActionKey extends keyof this['actions']>(key: ActionKey) {
+    if (this._canceled) {
+      return;
+    }
+    // @ts-ignore
+    const action = this.actions[key] as Action;
+    if (action) {
+      this.selectedAction = action;
+      return action.onTrigger?.();
+    }
+  }
+
+  wait(): Promise<Action | null> {
+    if (this._canceled) {
+      return Promise.resolve(null);
+    }
+    return new Promise((resolve) => {
+      this.on('canceled', () => {
+        resolve(this.selectedAction);
+      });
+    });
   }
 }

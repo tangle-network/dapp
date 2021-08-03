@@ -37,4 +37,5 @@ export const basePallet = {
   layer2Background: 'rgba(34, 38, 43, 1)',
   layer3Background: 'rgba(56, 60, 64, 1)',
   type: 'base',
+  spinnerBackground: 'rgb(42,42,42)',
 };

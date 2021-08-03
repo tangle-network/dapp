@@ -29,6 +29,7 @@ export const Deposit: React.FC<DepositProps> = () => {
       <MixerGroupSelect items={depositApi.mixerSizes} value={item} onChange={setItem} />
       <SpaceBox height={16} />
       <MixerButton
+        disabled={!depositApi.ready || !item}
         onClick={() => {
           setShowDepositModal(true);
         }}

@@ -1,15 +1,15 @@
-import { EvmChainMixersInfo } from '@webb-dapp/react-environment/api-providers/web3/EvmChainMixersInfo';
 import { AnchorContract } from '@webb-dapp/contracts/contracts/anchor';
 import { WebbApiProvider, WebbMethods, WebbProviderEvents } from '@webb-dapp/react-environment';
+import { EvmChainMixersInfo } from '@webb-dapp/react-environment/api-providers/web3/EvmChainMixersInfo';
 import { Web3MixerDeposit } from '@webb-dapp/react-environment/api-providers/web3/web3-mixer-deposit';
 import { Web3MixerWithdraw } from '@webb-dapp/react-environment/api-providers/web3/web3-mixer-withdraw';
+import { MixerSize } from '@webb-dapp/react-environment/webb-context';
+import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import { Web3Accounts } from '@webb-dapp/wallet/providers/web3/web3-accounts';
 import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
-import { providers } from 'ethers';
 import { EventBus } from '@webb-tools/app-util';
-import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
-import { MixerSize } from '@webb-dapp/react-environment/webb-context';
-import { WebbEVMChain } from '@webb-dapp/apps/configs';
+import { providers } from 'ethers';
+import { WebbRelayerBuilder } from '@webb-dapp/react-environment/webb-context/relayer';
 
 export class WebbWeb3Provider
   extends EventBus<WebbProviderEvents<[number]>>
@@ -19,7 +19,11 @@ export class WebbWeb3Provider
   private ethersProvider: providers.Web3Provider;
   private connectedMixers: EvmChainMixersInfo;
 
-  private constructor(private web3Provider: Web3Provider, private chainId: number) {
+  private constructor(
+    private web3Provider: Web3Provider,
+    private chainId: number,
+    readonly relayingManager: WebbRelayerBuilder
+  ) {
     super();
     this.accounts = new Web3Accounts(web3Provider.eth);
     this.ethersProvider = web3Provider.intoEthersProvider();
@@ -32,6 +36,10 @@ export class WebbWeb3Provider
     };
     // @ts-ignore
     this.ethersProvider.provider?.on?.('chainChanged', handler);
+    // @ts-ignore
+    this.ethersProvider.provider?.on?.('accountsChanged', () => {
+      this.emit('newAccounts', this.accounts);
+    });
     this.connectedMixers = new EvmChainMixersInfo(chainId);
     this.methods = {
       mixer: {
@@ -56,19 +64,6 @@ export class WebbWeb3Provider
       providerUpdate: [],
       interactiveFeedback: [],
     };
-  }
-
-  static storageName(id: number): string {
-    switch (id) {
-      case WebbEVMChain.Rinkeby:
-        return 'rinkeby';
-      case WebbEVMChain.Main:
-        return 'main';
-      case WebbEVMChain.Beresheet:
-        return 'beresheet';
-      default:
-        throw WebbError.from(WebbErrorCodes.UnsupportedChain);
-    }
   }
 
   async getChainId(): Promise<number> {
@@ -104,7 +99,15 @@ export class WebbWeb3Provider
     return Promise.resolve(this.connectedMixers.getMixerSizes(tokenSymbol));
   }
 
-  static async init(web3Provider: Web3Provider, chainId: number) {
-    return new WebbWeb3Provider(web3Provider, chainId);
+  static async init(web3Provider: Web3Provider, chainId: number, relayerBuilder: WebbRelayerBuilder) {
+    return new WebbWeb3Provider(web3Provider, chainId, relayerBuilder);
+  }
+
+  get capabilities() {
+    return this.web3Provider.capabilities;
+  }
+
+  endSession(): Promise<void> {
+    return this.web3Provider.endSession();
   }
 }

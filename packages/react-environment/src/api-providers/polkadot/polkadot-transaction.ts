@@ -4,6 +4,7 @@ import { uniqueId } from 'lodash';
 import { ApiPromise, SubmittableResult } from '@polkadot/api';
 import { SubmittableExtrinsic } from '@polkadot/api/submittable/types';
 import { web3FromAddress } from '@polkadot/extension-dapp';
+import React from 'react';
 
 type MethodPath = {
   section: string;
@@ -23,11 +24,11 @@ type PolkadotTXEvents = {
   finalize: PolkadotTXEventsPayload;
   inBlock: PolkadotTXEventsPayload;
   extrinsicSuccess: PolkadotTXEventsPayload;
-  loading: PolkadotTXEventsPayload;
+  loading: PolkadotTXEventsPayload<JSX.Element>;
 };
 
 export type NotificationConfig = {
-  loading?: (data: PolkadotTXEventsPayload) => void;
+  loading?: (data: PolkadotTXEventsPayload<JSX.Element>) => void;
   finalize?: (data: PolkadotTXEventsPayload) => void;
   failed?: (data: PolkadotTXEventsPayload<string>) => void;
 };
@@ -57,7 +58,7 @@ export class PolkadotTx<P extends Array<any>> extends EventBus<PolkadotTXEvents>
       nonce: accountInfo.nonce.toNumber(),
     });
     this.emitWithPayload('beforeSend', undefined);
-    this.emitWithPayload('loading', undefined);
+    this.emitWithPayload('loading', React.createElement('div'));
 
     await this.send(txResults);
 

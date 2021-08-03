@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-function EdgwareLogo() {
+function EdgewareLogo() {
   return (
     <svg viewBox='0 0 248 248' xmlns='http://www.w3.org/2000/svg' xmlnsXlink='http://www.w3.org/1999/xlink'>
       <title>{'Bitmap'}</title>
@@ -28,4 +28,4 @@ function EdgwareLogo() {
   );
 }
 
-export default EdgwareLogo;
+export default EdgewareLogo;
