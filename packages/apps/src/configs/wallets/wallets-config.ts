@@ -8,7 +8,6 @@ import { WalletConnectLogo } from '@webb-dapp/apps/configs/logos/WalletConnectLo
 const ANY_EVM = [
   ChainId.Edgeware,
   ChainId.EdgewareTestNet,
-  ChainId.EdgewareLocalNet,
   ChainId.EthereumMainNet,
   ChainId.Rinkeby,
   ChainId.Kovan,

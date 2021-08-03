@@ -41,39 +41,39 @@ export const chainsConfig: AppConfig['chains'] = {
     ],
     nativeCurrencyId: WebbCurrencyId.TEDG,
   },
-  [ChainId.Edgeware]: {
-    group: 'edgeware',
-    tag: 'live',
-    id: ChainId.Edgeware,
-    evmId: undefined,
-    name: 'Edgeware',
-    url: 'wss://mainnet1.edgewa.re',
-    logo: EdgewareLogo,
-    currencies: [
-      {
-        currencyId: WebbCurrencyId.EDG,
-        enabled: true,
-      },
-    ],
-    nativeCurrencyId: WebbCurrencyId.EDG,
-  },
+  // [ChainId.Edgeware]: {
+  //   group: 'edgeware',
+  //   tag: 'live',
+  //   id: ChainId.Edgeware,
+  //   evmId: undefined,
+  //   name: 'Edgeware',
+  //   url: 'wss://mainnet1.edgewa.re',
+  //   logo: EdgewareLogo,
+  //   currencies: [
+  //     {
+  //       currencyId: WebbCurrencyId.EDG,
+  //       enabled: true,
+  //     },
+  //   ],
+  //   nativeCurrencyId: WebbCurrencyId.EDG,
+  // },
   // evm
-  [ChainId.EthereumMainNet]: {
-    group: 'eth',
-    id: ChainId.EthereumMainNet,
-    evmId: WebbEVMChain.EthereumMainNet,
-    name: 'Ethereum Mainnet',
-    tag: 'live',
-    url: '',
-    logo: EtherLogo,
-    currencies: [
-      {
-        currencyId: WebbCurrencyId.ETH,
-        enabled: true,
-      },
-    ],
-    nativeCurrencyId: WebbCurrencyId.ETH,
-  },
+  // [ChainId.EthereumMainNet]: {
+  //   group: 'eth',
+  //   id: ChainId.EthereumMainNet,
+  //   evmId: WebbEVMChain.EthereumMainNet,
+  //   name: 'Ethereum Mainnet',
+  //   tag: 'live',
+  //   url: '',
+  //   logo: EtherLogo,
+  //   currencies: [
+  //     {
+  //       currencyId: WebbCurrencyId.ETH,
+  //       enabled: true,
+  //     },
+  //   ],
+  //   nativeCurrencyId: WebbCurrencyId.ETH,
+  // },
   [ChainId.Rinkeby]: {
     group: 'eth',
     id: ChainId.Rinkeby,
