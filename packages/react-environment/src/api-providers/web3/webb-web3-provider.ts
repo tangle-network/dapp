@@ -79,6 +79,13 @@ export class WebbWeb3Provider
     return new AnchorContract(this.connectedMixers, this.ethersProvider, mixerAddress);
   }
 
+  getMixerInfoBySize(mixerSize: number, tokenSymbol: string) {
+    const mixer = this.connectedMixers.getMixerInfoBySize(mixerSize, tokenSymbol);
+    if (!mixer) {
+      throw WebbError.from(WebbErrorCodes.MixerSizeNotFound);
+    }
+    return mixer;
+  }
   // This function limits the mixer implementation to one type for the token/size pair.
   // Something like a poseidon hasher implementation instead of mimc hasher cannot
   // exist alongside each other.

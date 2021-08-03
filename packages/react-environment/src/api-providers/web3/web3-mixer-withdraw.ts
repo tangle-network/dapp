@@ -8,8 +8,9 @@ import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web
 import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polkadot/transaction-notification-config';
 import { EvmNote } from '@webb-dapp/contracts/utils/evm-note';
 import { evmIdIntoChainId } from '@webb-dapp/apps/configs';
-import { WebbRelayer } from '@webb-dapp/react-environment/webb-context/relayer';
+import { RelayedWithdrawResult, WebbRelayer } from '@webb-dapp/react-environment/webb-context/relayer';
 import React from 'react';
+import { chainIdToRelayerName } from '@webb-dapp/apps/configs/relayer-config';
 
 export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
   cancelWithdraw(): Promise<void> {
@@ -43,30 +44,72 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
   }
 
   async withdraw(note: string, recipient: string): Promise<void> {
-    this.emit('stateChange', WithdrawState.GeneratingZk);
-    const evmNote = EvmNote.deserialize(note);
-    const contract = await this.inner.getContractBySize(evmNote.amount, evmNote.currency);
-    const txReset = await contract.withdraw(note, recipient);
-    transactionNotificationConfig.loading?.({
-      address: '',
-      data: React.createElement('p', {}, 'Withdraw In Progress'),
-      key: 'mixer-withdraw-evm',
-      path: {
-        method: 'withdraw',
-        section: 'evm-mixer',
-      },
-    });
-    this.emit('stateChange', WithdrawState.SendingTransaction);
-    await txReset.wait();
-    transactionNotificationConfig.finalize?.({
-      address: '',
-      data: undefined,
-      key: 'mixer-withdraw-evm',
-      path: {
-        method: 'withdraw',
-        section: 'evm-mixer',
-      },
-    });
-    this.emit('stateChange', WithdrawState.Ideal);
+    const activeRelayer = this.activeRelayer[0];
+    if (activeRelayer) {
+      // relayer flow
+      const evmNote = EvmNote.deserialize(note);
+      const deposit = evmNote.intoDeposit();
+      const realyedWithdraw = await activeRelayer.initWithdraw();
+      const mixerInfo = this.inner.getMixerInfoBySize(evmNote.amount, evmNote.currency);
+
+      const tx = realyedWithdraw.generateWithdrawRequest(
+        {
+          baseOn: 'evm',
+          name: chainIdToRelayerName(evmNote.chainId),
+          contractAddress: mixerInfo.address,
+          endpoint: '',
+        },
+        '',
+        {
+          fee: String(activeRelayer.fee || 0),
+          nullifierHash: deposit.nullifier,
+          recipient,
+          refund: '',
+          relayer: activeRelayer.address,
+          root: '',
+        }
+      );
+      realyedWithdraw.watcher.subscribe((nextValue) => {
+        switch (nextValue) {
+          case RelayedWithdrawResult.PreFlight:
+            break;
+          case RelayedWithdrawResult.OnFlight:
+            break;
+          case RelayedWithdrawResult.Continue:
+            break;
+          case RelayedWithdrawResult.CleanExit:
+            break;
+          case RelayedWithdrawResult.Errored:
+            break;
+        }
+      });
+      realyedWithdraw.send(tx);
+    } else {
+      this.emit('stateChange', WithdrawState.GeneratingZk);
+      const evmNote = EvmNote.deserialize(note);
+      const contract = await this.inner.getContractBySize(evmNote.amount, evmNote.currency);
+      const txReset = await contract.withdraw(note, recipient);
+      transactionNotificationConfig.loading?.({
+        address: '',
+        data: React.createElement('p', {}, 'Withdraw In Progress'),
+        key: 'mixer-withdraw-evm',
+        path: {
+          method: 'withdraw',
+          section: 'evm-mixer',
+        },
+      });
+      this.emit('stateChange', WithdrawState.SendingTransaction);
+      await txReset.wait();
+      transactionNotificationConfig.finalize?.({
+        address: '',
+        data: undefined,
+        key: 'mixer-withdraw-evm',
+        path: {
+          method: 'withdraw',
+          section: 'evm-mixer',
+        },
+      });
+      this.emit('stateChange', WithdrawState.Ideal);
+    }
   }
 }
