@@ -9,6 +9,7 @@ import { EvmChainMixersInfo } from '@webb-dapp/react-environment/api-providers/w
 import utils from 'web3-utils';
 import { abi } from '../abis/NativeAnchor.json';
 import { mixerLogger } from '@webb-dapp/mixer/utils';
+import { retryPromise } from '@webb-dapp/utils/retry-promise';
 
 const webSnarkUtils = require('websnark/src/utils');
 type DepositEvent = [string, number, BigNumber];
@@ -85,14 +86,14 @@ export class AnchorContract {
       // If there is a timeout, query the logs in block increments.
       if (e.code == -32603) {
         for (let i = startingBlock; i < currentBlock; i += step) {
-          logs = [
-            ...logs,
-            ...(await this.web3Provider.getLogs({
+          const nextLogs = await retryPromise(() => {
+            return this.web3Provider.getLogs({
               fromBlock: i,
               toBlock: currentBlock - i > step ? i + step : currentBlock,
               ...filter,
-            })),
-          ];
+            });
+          });
+          logs = [...logs, ...nextLogs];
 
           mixerLogger.log(`Getting logs for block range: ${i} through ${i + step}`);
         }
