@@ -196,7 +196,7 @@ export class WebbRelayer {
   constructor(readonly address: string, readonly capabilities: Capabilities) {}
 
   async initWithdraw() {
-    const ws = new WebSocket(this.address.replace('http', 'ws'));
+    const ws = new WebSocket(this.address.replace('http', 'ws') + '/ws');
     await new Promise((r, c) => {
       ws.onopen = r;
       ws.onerror = r;

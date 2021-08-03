@@ -72,7 +72,7 @@ export class AnchorContract {
 
     const startingBlock = storedContractInfo.lastQueriedBlock; // Read starting block from cached storage
     let logs: Array<Log> = []; // Read the stored logs into this variable
-
+    const step = 20;
     try {
       logs = await this.web3Provider.getLogs({
         fromBlock: startingBlock,
@@ -84,17 +84,17 @@ export class AnchorContract {
 
       // If there is a timeout, query the logs in block increments.
       if (e.code == -32603) {
-        for (let i = startingBlock; i < currentBlock; i += 50) {
+        for (let i = startingBlock; i < currentBlock; i += step) {
           logs = [
             ...logs,
             ...(await this.web3Provider.getLogs({
               fromBlock: i,
-              toBlock: currentBlock - i > 50 ? i + 50 : currentBlock,
+              toBlock: currentBlock - i > step ? i + step : currentBlock,
               ...filter,
             })),
           ];
 
-          mixerLogger.log(`Getting logs for block range: ${i} through ${i + 50}`);
+          mixerLogger.log(`Getting logs for block range: ${i} through ${i + step}`);
         }
       } else {
         throw e;

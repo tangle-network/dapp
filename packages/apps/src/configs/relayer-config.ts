@@ -17,8 +17,12 @@ export function relayerNameToChainId(name: string): ChainId {
       return ChainId.EdgewareTestNet;
     case 'harmony':
       return ChainId.HarmonyTest1;
+    case 'ganache':
+      return ChainId.Geneche;
   }
-  throw new Error('unhandled relayed chain name');
+
+  console.log('unhandled relayed chain name  ' + name);
+  throw new Error('unhandled relayed chain name  ' + name);
 }
 
 export function chainIdToRelayerName(id: ChainId): string {
