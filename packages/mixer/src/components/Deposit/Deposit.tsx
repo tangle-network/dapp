@@ -5,7 +5,7 @@ import { SpaceBox } from '@webb-dapp/ui-components/Box';
 import { MixerGroupSelect } from '@webb-dapp/ui-components/Inputs/MixerGroupSelect/MixerGroupSelect';
 import { WalletTokenInput } from '@webb-dapp/ui-components/Inputs/WalletTokenInput/WalletTokenInput';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { MixerButton } from '../MixerButton/MixerButton';
@@ -22,12 +22,18 @@ export const Deposit: React.FC<DepositProps> = () => {
   // const [selectedToken, setSelectedToken] = useState<Currency | undefined>(undefined);
 
   const [item, setItem] = useState<MixerSize | undefined>(undefined);
+
+  // Whenever mixerSizes change (like chain switch), set selected mixer to undefined
+  useEffect(() => {
+    setItem(undefined);
+  }, [depositApi.mixerSizes]);
+
   return (
     <DepositWrapper>
       <WalletTokenInput setSelectedToken={(token) => {}} selectedToken={undefined} />
       <SpaceBox height={16} />
       {
-        (depositApi && depositApi.mixerSizes.length > 0) && 
+        depositApi && depositApi.mixerSizes.length > 0 && 
         <MixerGroupSelect items={depositApi.mixerSizes} value={item} onChange={setItem} />
       }
       <SpaceBox height={16} />
