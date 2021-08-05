@@ -10,7 +10,7 @@ export const relayerConfig: RelayerConfig[] = [
     address: 'http://nepoche.com:9955',
   },
 ];
-
+['webb', 'edgeware', 'ganache', 'hedgeware', 'beresheet', 'harmony', 'rinkeby'];
 export function relayerNameToChainId(name: string): ChainId {
   switch (name) {
     case 'beresheet':
@@ -19,6 +19,11 @@ export function relayerNameToChainId(name: string): ChainId {
       return ChainId.HarmonyTest1;
     case 'ganache':
       return ChainId.Geneche;
+    case 'webb':
+    case 'edgeware':
+    case 'hedgeware':
+    case 'rinkeby':
+      return ChainId.Rinkeby;
   }
 
   console.log('unhandled relayed chain name  ' + name);
@@ -36,7 +41,7 @@ export function chainIdToRelayerName(id: ChainId): string {
     case ChainId.EthereumMainNet:
       break;
     case ChainId.Rinkeby:
-      break;
+      return 'rinkeby';
     case ChainId.Ropsten:
       break;
     case ChainId.Kovan:
@@ -50,14 +55,18 @@ export function chainIdToRelayerName(id: ChainId): string {
     case ChainId.HarmonyTest1:
       return 'harmony';
   }
-  throw new Error('unhandled relayed chain name');
+  throw new Error(`unhandled Chain id ${id}`);
 }
 
 export async function getWebbRelayer() {
   if (!builder) {
     builder = await WebbRelayerBuilder.initBuilder(relayerConfig, (name, basedOn) => {
       if (basedOn === 'evm') {
-        return relayerNameToChainId(name);
+        try {
+          return relayerNameToChainId(name);
+        } catch (e) {
+          return null;
+        }
       }
       if (basedOn === 'substrate') {
         return null;

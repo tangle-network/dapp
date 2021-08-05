@@ -10,10 +10,11 @@ import utils from 'web3-utils';
 import { abi } from '../abis/NativeAnchor.json';
 import { mixerLogger } from '@webb-dapp/mixer/utils';
 import { retryPromise } from '@webb-dapp/utils/retry-promise';
+import { LoggerService } from '@webb-tools/app-util';
 
 const webSnarkUtils = require('websnark/src/utils');
 type DepositEvent = [string, number, BigNumber];
-
+const logger = LoggerService.get('anchor');
 export class AnchorContract {
   private _contract: Anchor;
   private readonly signer: Signer;
@@ -117,12 +118,14 @@ export class AnchorContract {
 
   async generateMerkleProof(deposit: Deposit) {
     const leaves = await this.getDepositLeaves();
+    logger.trace(`Leaves ${leaves.length}`, leaves);
     const tree = new MerkleTree('eth', 20, leaves);
     let leafIndex = leaves.findIndex((commitment) => commitment == bufferToFixed(deposit.commitment));
+    logger.info(`Leaf index ${leafIndex}`);
     return tree.path(leafIndex);
   }
 
-  async generateZKP(note: EvmNote, recipient: string) {
+  async generateZKP(note: EvmNote, recipient: string, relayer: string | undefined = undefined) {
     const deposit = note.intoDeposit();
     const merkleProof = await this.generateMerkleProof(deposit);
     const { pathElements, pathIndex, root } = merkleProof;
@@ -131,13 +134,14 @@ export class AnchorContract {
     proving_key = await fetch(proving_key);
     proving_key = await proving_key.arrayBuffer();
 
+    // @ts-ignore
     const input = {
-      // public
       root: root,
       nullifierHash: deposit.nullifierHash,
-      relayer: 0,
+      // public
+      relayer: !relayer ? bufferToFixed(0) : relayer,
       recipient: recipient,
-      fee: 0,
+      fee: 5000000000000000,
       refund: 0,
 
       // private

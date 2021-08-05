@@ -51,6 +51,7 @@ export class WebbRelayerBuilder {
     info: RelayerInfo,
     nameAdapter: ChainNameIntoChainId
   ): Capabilities {
+    console.log({ info });
     return {
       hasIpService: true,
       supportedChains: {
