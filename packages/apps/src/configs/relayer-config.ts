@@ -11,6 +11,7 @@ export const relayerConfig: RelayerConfig[] = [
   },
 ];
 ['webb', 'edgeware', 'ganache', 'hedgeware', 'beresheet', 'harmony', 'rinkeby'];
+
 export function relayerNameToChainId(name: string): ChainId {
   switch (name) {
     case 'beresheet':
@@ -18,7 +19,7 @@ export function relayerNameToChainId(name: string): ChainId {
     case 'harmony':
       return ChainId.HarmonyTest1;
     case 'ganache':
-      return ChainId.Geneche;
+      return ChainId.Ganeche;
     case 'webb':
     case 'edgeware':
     case 'hedgeware':
@@ -30,18 +31,27 @@ export function relayerNameToChainId(name: string): ChainId {
   throw new Error('unhandled relayed chain name  ' + name);
 }
 
+enum RelayerChainName {
+  Edgeware = 'edgeware',
+  Webb = 'webb',
+  Ganache = 'ganache',
+  Beresheet = 'beresheet',
+  Harmony = 'harmony',
+  Rinkeby = 'rinkeby',
+}
+
 export function chainIdToRelayerName(id: ChainId): string {
   switch (id) {
     case ChainId.Edgeware:
-      return 'edgware';
+      return RelayerChainName.Edgeware;
     case ChainId.EdgewareTestNet:
-      return 'beresheet';
+      return RelayerChainName.Beresheet;
     case ChainId.EdgewareLocalNet:
       break;
     case ChainId.EthereumMainNet:
       break;
     case ChainId.Rinkeby:
-      return 'rinkeby';
+      return RelayerChainName.Rinkeby;
     case ChainId.Ropsten:
       break;
     case ChainId.Kovan:
@@ -53,7 +63,7 @@ export function chainIdToRelayerName(id: ChainId): string {
     case ChainId.HarmonyTest0:
       break;
     case ChainId.HarmonyTest1:
-      return 'harmony';
+      return RelayerChainName.Harmony;
   }
   throw new Error(`unhandled Chain id ${id}`);
 }

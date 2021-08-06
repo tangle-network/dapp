@@ -10,7 +10,7 @@ export enum ChainId {
   HarmonyTestnet1,
   HarmonyTest0,
   HarmonyTest1,
-  Geneche,
+  Ganeche,
 }
 
 export enum WebbEVMChain {

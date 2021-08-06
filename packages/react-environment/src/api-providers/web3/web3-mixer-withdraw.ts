@@ -93,7 +93,7 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
       });
       logger.info(`Withdrawing throw relayer with address ${activeRelayer.address}`);
       logger.trace('Note deserialized', evmNote);
-      const realyedWithdraw = await activeRelayer.initWithdraw();
+      const relayedWithdraw = await activeRelayer.initWithdraw();
       logger.trace('initialized the withdraw WebSocket');
       const mixerInfo = this.inner.getMixerInfoBySize(evmNote.amount, evmNote.currency);
       logger.info(`Withdrawing to mixer info`, mixerInfo);
@@ -109,7 +109,7 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
       this.emit('stateChange', WithdrawState.GeneratingZk);
 
       logger.trace('Generated the zkp', zkp);
-      const tx = realyedWithdraw.generateWithdrawRequest(
+      const tx = relayedWithdraw.generateWithdrawRequest(
         {
           baseOn: 'evm',
           name: chainIdToRelayerName(evmNote.chainId),
@@ -126,7 +126,7 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
           root: bufferToFixed(zkp.input.root),
         }
       );
-      realyedWithdraw.watcher.subscribe(([nextValue, message]) => {
+      relayedWithdraw.watcher.subscribe(([nextValue, message]) => {
         switch (nextValue) {
           case RelayedWithdrawResult.PreFlight:
           case RelayedWithdrawResult.OnFlight:
@@ -152,7 +152,7 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
             this.emit('stateChange', WithdrawState.Ideal);
             transactionNotificationConfig.failed?.({
               address: recipient,
-              data: message,
+              data: message || 'Withdraw failed',
               key: 'mixer-withdraw-evm',
               path: {
                 method: 'withdraw',
@@ -163,8 +163,8 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
         }
       });
       logger.trace('Sending transaction');
-      realyedWithdraw.send(tx);
-      await realyedWithdraw.await();
+      relayedWithdraw.send(tx);
+      await relayedWithdraw.await();
     } else {
       logger.trace('Withdrawing without relayer');
       this.emit('stateChange', WithdrawState.GeneratingZk);
@@ -198,18 +198,18 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
         });
         this.emit('stateChange', WithdrawState.Ideal);
       } catch (e) {
-        const reason = await this.inner.reason(e.transactionHash);
+        // todo fix this and fetch the error from chain
+        // const reason = await this.inner.reason(e.transactionHash);
 
         transactionNotificationConfig.failed?.({
           address: recipient,
-          data: reason,
+          data: 'Withdraw failed',
           key: 'mixer-withdraw-evm',
           path: {
             method: 'withdraw',
             section: 'evm-mixer',
           },
         });
-        await 0;
         throw e;
       }
     }
