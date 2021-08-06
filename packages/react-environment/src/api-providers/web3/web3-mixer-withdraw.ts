@@ -14,6 +14,7 @@ import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polka
 import React from 'react';
 import { LoggerService } from '@webb-tools/app-util';
 import { fromDepositIntoZKPInput } from '@webb-dapp/contracts/utils/zkp-adapters';
+import { BigNumber } from 'ethers';
 
 const logger = LoggerService.get('Web3MixerWithdraw');
 
@@ -28,10 +29,34 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
     }
     const evmId = await this.inner.getChainId();
     const chainId = evmIdIntoChainId(evmId);
-    return WebbRelayer.intoActiveWebRelayer(relayer, {
-      basedOn: 'evm',
-      chain: chainId,
-    });
+    return WebbRelayer.intoActiveWebRelayer(
+      relayer,
+      {
+        basedOn: 'evm',
+        chain: chainId,
+      },
+      async (note: string, withdrawFeePercentage: number) => {
+        try {
+          const evmNote = EvmNote.deserialize(note);
+          const contract = await this.inner.getContractBySize(evmNote.amount, evmNote.currency);
+          const principleBig = await contract.denomination;
+          console.log({ principleBig, withdrawFeePercentage });
+          const withdrawFeeMill = withdrawFeePercentage * 1000000;
+          console.log({ withdrawFeeMill });
+
+          const withdrawFeeMillBig = BigNumber.from(withdrawFeeMill);
+          console.log({ withdrawFeeMillBig });
+
+          const feeBigMill = principleBig.mul(withdrawFeeMillBig);
+          console.log({ feeBigMill });
+
+          const feeBig = feeBigMill.div(BigNumber.from(1000000));
+          return feeBig.toString();
+        } catch (e) {
+          return '?';
+        }
+      }
+    );
   }
 
   get relayers() {

@@ -139,16 +139,17 @@ class RelayedWithdraw {
   /// status of the withdraw
   private status: RelayedWithdrawResult = RelayedWithdrawResult.PreFlight;
   /// watch for the current withdraw status
-  readonly watcher: Observable<[RelayedWithdrawResult, string]>;
-  private emitter: Subject<[RelayedWithdrawResult, string]> = new Subject();
+  readonly watcher: Observable<[RelayedWithdrawResult, string | undefined]>;
+  private emitter: Subject<[RelayedWithdrawResult, string | undefined]> = new Subject();
 
   constructor(private ws: WebSocket) {
     this.watcher = this.emitter.asObservable();
 
     ws.onmessage = ({ data }) => {
       console.log(data);
-      this.status = this.handleMessage(JSON.parse(data));
-      this.emitter.next(this.status, '');
+      const handledMessage = this.handleMessage(JSON.parse(data));
+      this.status = handledMessage[0];
+      this.emitter.next(handledMessage);
       if (this.status === RelayedWithdrawResult.CleanExit) {
         this.emitter.complete();
         this.ws.close();
@@ -196,7 +197,7 @@ class RelayedWithdraw {
   await() {
     return this.watcher
       .pipe(
-        filter((next) => {
+        filter(([next]) => {
           return next === RelayedWithdrawResult.CleanExit || next === RelayedWithdrawResult.Errored;
         })
       )
@@ -241,9 +242,10 @@ export class WebbRelayer {
 
   static intoActiveWebRelayer(
     instance: WebbRelayer,
-    query: { chain: ChainId; basedOn: 'evm' | 'substrate' }
+    query: { chain: ChainId; basedOn: 'evm' | 'substrate' },
+    getFees: (note: string, withdrawFeePercentage: number) => Promise<string>
   ): ActiveWebbRelayer {
-    return new ActiveWebbRelayer(instance.address, instance.capabilities, query);
+    return new ActiveWebbRelayer(instance.address, instance.capabilities, query, getFees);
   }
 }
 
@@ -251,7 +253,8 @@ export class ActiveWebbRelayer extends WebbRelayer {
   constructor(
     address: string,
     capabilities: Capabilities,
-    private query: { chain: ChainId; basedOn: 'evm' | 'substrate' }
+    private query: { chain: ChainId; basedOn: 'evm' | 'substrate' },
+    private getFees: (note: string, withdrawFeePercentage: number) => Promise<string>
   ) {
     super(address, capabilities);
   }
@@ -262,14 +265,18 @@ export class ActiveWebbRelayer extends WebbRelayer {
   }
 
   get fee(): number | undefined {
-    return this.config?.withdrewFee;
+    return this.config?.withdrawFeePercentage;
   }
 
   get gasLimit(): number | undefined {
-    return this.config?.withdrewGaslimit;
+    return '';
   }
 
   get account(): string | undefined {
     return this.config?.account;
   }
+  fees = async (note: string) => {
+    console.log(this.config?.withdrawFeePercentage, this.config);
+    return this.getFees(note, this.config?.withdrawFeePercentage ?? 0);
+  };
 }

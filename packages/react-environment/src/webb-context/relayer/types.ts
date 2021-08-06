@@ -1,8 +1,7 @@
 import { ChainId } from '@webb-dapp/apps/configs';
 
 export type RelayedChainConfig = {
-  withdrewFee: number;
-  withdrewGaslimit: number;
+  withdrawFeePercentage: number;
   account: string;
 };
 export type Capabilities = {
