@@ -15,6 +15,7 @@ import React from 'react';
 import { LoggerService } from '@webb-tools/app-util';
 import { fromDepositIntoZKPInput } from '@webb-dapp/contracts/utils/zkp-adapters';
 import { BigNumber } from 'ethers';
+import { WebbError } from '@webb-dapp/utils/webb-error';
 
 const logger = LoggerService.get('Web3MixerWithdraw');
 
@@ -40,20 +41,19 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
           const evmNote = EvmNote.deserialize(note);
           const contract = await this.inner.getContractBySize(evmNote.amount, evmNote.currency);
           const principleBig = await contract.denomination;
-          console.log({ principleBig, withdrawFeePercentage });
+
           const withdrawFeeMill = withdrawFeePercentage * 1000000;
-          console.log({ withdrawFeeMill });
 
           const withdrawFeeMillBig = BigNumber.from(withdrawFeeMill);
-          console.log({ withdrawFeeMillBig });
-
           const feeBigMill = principleBig.mul(withdrawFeeMillBig);
-          console.log({ feeBigMill });
 
           const feeBig = feeBigMill.div(BigNumber.from(1000000));
           return feeBig.toString();
         } catch (e) {
-          return '?';
+          if (e instanceof WebbError) {
+            return '';
+          }
+          throw e;
         }
       }
     );
@@ -99,9 +99,11 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
       logger.info(`Withdrawing to mixer info`, mixerInfo);
       const anchorContract = await this.inner.getContractByAddress(mixerInfo.address);
       logger.trace('Generating the zkp');
+      const fees = await activeRelayer.fees(note);
       const zkpInputWithoutMerkleProof = fromDepositIntoZKPInput(deposit, {
         recipient,
         relayer: activeRelayer.account,
+        fee: Number(fees),
       });
       const zkp = await anchorContract.generateZKP(deposit, zkpInputWithoutMerkleProof);
       this.emit('stateChange', WithdrawState.GeneratingZk);
@@ -116,11 +118,11 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
         },
         zkp.proof,
         {
-          fee: bufferToFixed(5000000000000000),
+          fee: bufferToFixed(zkpInputWithoutMerkleProof.fee),
           nullifierHash: bufferToFixed(deposit.nullifierHash),
-          recipient,
-          refund: bufferToFixed(0),
-          relayer: activeRelayer.account,
+          recipient: zkpInputWithoutMerkleProof.recipient,
+          refund: bufferToFixed(zkpInputWithoutMerkleProof.refund),
+          relayer: zkpInputWithoutMerkleProof.relayer,
           root: bufferToFixed(zkp.input.root),
         }
       );

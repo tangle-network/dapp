@@ -94,23 +94,27 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
               >
                 <tbody>
                   <tr>
-                    <td>
-                      <span style={{ whiteSpace: 'nowrap' }}>withdraw fee percentage</span>
-                    </td>
-                    <td>{relayersState.activeRelayer?.fee}%</td>
-                  </tr>
-                  <tr>
                     <td>Account</td>
                     <td>
                       <small>{relayersState.activeRelayer?.account}</small>
                     </td>
                   </tr>
+
                   <tr>
-                    <td>Full fees</td>
                     <td>
-                      <small>{fees}</small>
+                      <span style={{ whiteSpace: 'nowrap' }}>withdraw fee percentage</span>
                     </td>
+                    <td>{relayersState.activeRelayer?.fee}%</td>
                   </tr>
+
+                  {fees && (
+                    <tr>
+                      <td>Full fees</td>
+                      <td>
+                        <small>{fees}</small>
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
