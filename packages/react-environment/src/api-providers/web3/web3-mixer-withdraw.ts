@@ -55,6 +55,17 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
     const evmNote = EvmNote.deserialize(note);
     const deposit = evmNote.intoDeposit();
     if (activeRelayer && activeRelayer.account) {
+      this.emit('stateChange', WithdrawState.GeneratingZk);
+
+      transactionNotificationConfig.loading?.({
+        address: recipient,
+        data: React.createElement('p', {}, `Relaying withdraw throw ${activeRelayer.address}`),
+        key: 'mixer-withdraw-evm',
+        path: {
+          method: 'withdraw',
+          section: 'evm-mixer',
+        },
+      });
       logger.info(`Withdrawing throw relayer with address ${activeRelayer.address}`);
       logger.trace('Note deserialized', evmNote);
       const realyedWithdraw = await activeRelayer.initWithdraw();
@@ -68,6 +79,8 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
         relayer: activeRelayer.account,
       });
       const zkp = await anchorContract.generateZKP(deposit, zkpInputWithoutMerkleProof);
+      this.emit('stateChange', WithdrawState.GeneratingZk);
+
       logger.trace('Generated the zkp', zkp);
       const tx = realyedWithdraw.generateWithdrawRequest(
         {
@@ -86,23 +99,45 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
           root: bufferToFixed(zkp.input.root),
         }
       );
-      realyedWithdraw.watcher.subscribe((nextValue) => {
-        console.log(nextValue);
+      realyedWithdraw.watcher.subscribe(([nextValue, message]) => {
         switch (nextValue) {
           case RelayedWithdrawResult.PreFlight:
-            break;
           case RelayedWithdrawResult.OnFlight:
+            this.emit('stateChange', WithdrawState.SendingTransaction);
             break;
           case RelayedWithdrawResult.Continue:
             break;
           case RelayedWithdrawResult.CleanExit:
+            this.emit('stateChange', WithdrawState.Done);
+            this.emit('stateChange', WithdrawState.Ideal);
+            transactionNotificationConfig.finalize?.({
+              address: recipient,
+              data: undefined,
+              key: 'mixer-withdraw-evm',
+              path: {
+                method: 'withdraw',
+                section: 'evm-mixer',
+              },
+            });
             break;
           case RelayedWithdrawResult.Errored:
+            this.emit('stateChange', WithdrawState.Failed);
+            this.emit('stateChange', WithdrawState.Ideal);
+            transactionNotificationConfig.failed?.({
+              address: recipient,
+              data: message,
+              key: 'mixer-withdraw-evm',
+              path: {
+                method: 'withdraw',
+                section: 'evm-mixer',
+              },
+            });
             break;
         }
       });
       logger.trace('Sending transaction');
       realyedWithdraw.send(tx);
+      await realyedWithdraw.await();
     } else {
       logger.trace('Withdrawing without relayer');
       this.emit('stateChange', WithdrawState.GeneratingZk);
@@ -115,7 +150,7 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
         });
         const txReset = await contract.withdraw(deposit, zkpInputWithoutMerkleProof);
         transactionNotificationConfig.loading?.({
-          address: '',
+          address: recipient,
           data: React.createElement('p', {}, 'Withdraw In Progress'),
           key: 'mixer-withdraw-evm',
           path: {
@@ -126,7 +161,7 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
         this.emit('stateChange', WithdrawState.SendingTransaction);
         await txReset.wait();
         transactionNotificationConfig.finalize?.({
-          address: '',
+          address: recipient,
           data: undefined,
           key: 'mixer-withdraw-evm',
           path: {
@@ -139,7 +174,7 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
         const reason = await this.inner.reason(e.transactionHash);
 
         transactionNotificationConfig.failed?.({
-          address: '',
+          address: recipient,
           data: reason,
           key: 'mixer-withdraw-evm',
           path: {

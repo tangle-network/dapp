@@ -3,8 +3,10 @@ import {
   Capabilities,
   RelayedChainConfig,
   RelayerConfig,
+  RelayerMessage,
 } from '@webb-dapp/react-environment/webb-context/relayer/types';
 import { Observable, Subject } from 'rxjs';
+import { filter } from 'rxjs/operators';
 
 type RelayerQuery = {
   baseOn?: 'evm' | 'substrate';
@@ -137,15 +139,16 @@ class RelayedWithdraw {
   /// status of the withdraw
   private status: RelayedWithdrawResult = RelayedWithdrawResult.PreFlight;
   /// watch for the current withdraw status
-  readonly watcher: Observable<RelayedWithdrawResult>;
-  private emitter: Subject<RelayedWithdrawResult> = new Subject();
+  readonly watcher: Observable<[RelayedWithdrawResult, string]>;
+  private emitter: Subject<[RelayedWithdrawResult, string]> = new Subject();
 
   constructor(private ws: WebSocket) {
     this.watcher = this.emitter.asObservable();
 
     ws.onmessage = ({ data }) => {
-      this.status = this.handleMessage(data);
-      this.emitter.next(this.status);
+      console.log(data);
+      this.status = this.handleMessage(JSON.parse(data));
+      this.emitter.next(this.status, '');
       if (this.status === RelayedWithdrawResult.CleanExit) {
         this.emitter.complete();
         this.ws.close();
@@ -156,21 +159,23 @@ class RelayedWithdraw {
     };
   }
 
-  private handleMessage(data: any): RelayedWithdrawResult {
+  private handleMessage = (data: RelayerMessage): [RelayedWithdrawResult, string | undefined] => {
     if (data.error || data.withdraw?.errored) {
-      return RelayedWithdrawResult.Errored;
-    } else if (data.withdraw?.finlized) {
-      return RelayedWithdrawResult.CleanExit;
+      return [RelayedWithdrawResult.Errored, data.error || data.withdraw?.errored?.reason];
+    } else if (data.network === 'invalidRelayerAddress') {
+      return [RelayedWithdrawResult.Errored, 'Invalided relayer address'];
+    } else if (data.withdraw?.finalized) {
+      return [RelayedWithdrawResult.CleanExit, data.withdraw.finalized.txHash];
     } else {
-      return RelayedWithdrawResult.Continue;
+      return [RelayedWithdrawResult.Continue, undefined];
     }
-  }
+  };
 
   generateWithdrawRequest(chain: RelayedChainInput, proof: string, args: WithdrawRelayerArgs) {
     return {
       [chain.baseOn]: {
         [chain.name]: {
-          relayWithdrew: {
+          relayWithdraw: {
             contract: chain.contractAddress,
             proof,
             ...args,
@@ -186,6 +191,16 @@ class RelayedWithdraw {
     }
     this.status = RelayedWithdrawResult.OnFlight;
     this.ws.send(JSON.stringify(withdrawRequest));
+  }
+
+  await() {
+    return this.watcher
+      .pipe(
+        filter((next) => {
+          return next === RelayedWithdrawResult.CleanExit || next === RelayedWithdrawResult.Errored;
+        })
+      )
+      .toPromise();
   }
 
   get currentStatus() {
