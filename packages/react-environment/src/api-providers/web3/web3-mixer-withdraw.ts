@@ -13,6 +13,7 @@ import { RelayedWithdrawResult, WebbRelayer } from '@webb-dapp/react-environment
 import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polkadot/transaction-notification-config';
 import React from 'react';
 import { LoggerService } from '@webb-tools/app-util';
+import { fromDepositIntoZKPInput } from '@webb-dapp/contracts/utils/zkp-adapters';
 
 const logger = LoggerService.get('Web3MixerWithdraw');
 
@@ -51,10 +52,10 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
 
   async withdraw(note: string, recipient: string): Promise<void> {
     const activeRelayer = this.activeRelayer[0];
-    if (activeRelayer) {
+    const evmNote = EvmNote.deserialize(note);
+    const deposit = evmNote.intoDeposit();
+    if (activeRelayer && activeRelayer.account) {
       logger.info(`Withdrawing throw relayer with address ${activeRelayer.address}`);
-      const evmNote = EvmNote.deserialize(note);
-      const deposit = evmNote.intoDeposit();
       logger.trace('Note deserialized', evmNote);
       const realyedWithdraw = await activeRelayer.initWithdraw();
       logger.trace('initialized the withdraw WebSocket');
@@ -62,7 +63,11 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
       logger.info(`Withdrawing to mixer info`, mixerInfo);
       const anchorContract = await this.inner.getContractByAddress(mixerInfo.address);
       logger.trace('Generating the zkp');
-      const zkp = await anchorContract.generateZKP(evmNote, recipient, activeRelayer.account);
+      const zkpInputWithoutMerkleProof = fromDepositIntoZKPInput(deposit, {
+        recipient,
+        relayer: activeRelayer.account,
+      });
+      const zkp = await anchorContract.generateZKP(deposit, zkpInputWithoutMerkleProof);
       logger.trace('Generated the zkp', zkp);
       const tx = realyedWithdraw.generateWithdrawRequest(
         {
@@ -104,7 +109,11 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
       const evmNote = EvmNote.deserialize(note);
       const contract = await this.inner.getContractBySize(evmNote.amount, evmNote.currency);
       try {
-        const txReset = await contract.withdraw(note, recipient);
+        const zkpInputWithoutMerkleProof = fromDepositIntoZKPInput(deposit, {
+          recipient,
+          relayer: recipient,
+        });
+        const txReset = await contract.withdraw(deposit, zkpInputWithoutMerkleProof);
         transactionNotificationConfig.loading?.({
           address: '',
           data: React.createElement('p', {}, 'Withdraw In Progress'),
@@ -138,8 +147,6 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
             section: 'evm-mixer',
           },
         });
-        console.log({ reason });
-        console.log(e, e.__proto__);
         await 0;
         throw e;
       }

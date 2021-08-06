@@ -11,10 +11,12 @@ import { abi } from '../abis/NativeAnchor.json';
 import { mixerLogger } from '@webb-dapp/mixer/utils';
 import { retryPromise } from '@webb-dapp/utils/retry-promise';
 import { LoggerService } from '@webb-tools/app-util';
+import { ZKPInput, ZKPInputWithoutMerkleProof } from '@webb-dapp/contracts/contracts/types';
 
 const webSnarkUtils = require('websnark/src/utils');
 type DepositEvent = [string, number, BigNumber];
 const logger = LoggerService.get('anchor');
+
 export class AnchorContract {
   private _contract: Anchor;
   private readonly signer: Signer;
@@ -116,6 +118,13 @@ export class AnchorContract {
     return commitments;
   }
 
+  /*
+   * Generate Merkle Proof
+   *  This will
+   *  1- Fetch leaves
+   *  2- build the merkle tree & get the commitment leaf index
+   * 	3- Get the Merkle Path
+   * */
   async generateMerkleProof(deposit: Deposit) {
     const leaves = await this.getDepositLeaves();
     logger.trace(`Leaves ${leaves.length}`, leaves);
@@ -125,55 +134,44 @@ export class AnchorContract {
     return tree.path(leafIndex);
   }
 
-  async generateZKP(note: EvmNote, recipient: string, relayer: string | undefined = undefined) {
-    const deposit = note.intoDeposit();
+  async generateZKP(deposit: Deposit, zkpInputWithoutMerkleProof: ZKPInputWithoutMerkleProof) {
     const merkleProof = await this.generateMerkleProof(deposit);
-    const { pathElements, pathIndex, root } = merkleProof;
+    const { pathElements, pathIndex: pathIndices, root } = merkleProof;
     let circuitData = require('../circuits/withdraw.json');
     let proving_key = require('../circuits/withdraw_proving_key.bin');
     proving_key = await fetch(proving_key);
     proving_key = await proving_key.arrayBuffer();
-
-    // @ts-ignore
-    const input = {
-      root: root,
-      nullifierHash: deposit.nullifierHash,
-      // public
-      relayer: !relayer ? bufferToFixed(0) : relayer,
-      recipient: recipient,
-      fee: 5000000000000000,
-      refund: 0,
-
-      // private
-      nullifier: deposit.nullifier,
-      secret: deposit.secret,
-      pathElements: pathElements,
-      pathIndices: pathIndex,
+    const zkpInput: ZKPInput = {
+      ...zkpInputWithoutMerkleProof,
+      pathElements,
+      pathIndices,
+      root: root as string,
     };
+
     const proofsData = await webSnarkUtils.genWitnessAndProve(
       // @ts-ignore
       window.groth16,
-      input,
+      zkpInput,
       circuitData,
       proving_key
     );
     const { proof } = await webSnarkUtils.toSolidityInput(proofsData);
-    return { proof, input };
+    return { proof, input: zkpInput };
   }
 
-  async withdraw(noteString: string, recipient: string) {
+  async withdraw(deposit: Deposit, zkpInputWithoutMerkleProof: ZKPInputWithoutMerkleProof) {
     // tx config
     const overrides = {
       gasLimit: 6000000,
       gasPrice: utils.toWei('1', 'gwei'),
     };
-    const { input, proof } = await this.generateZKP(EvmNote.deserialize(noteString), recipient);
+    const { input, proof } = await this.generateZKP(deposit, zkpInputWithoutMerkleProof);
     const tx = await this._contract.withdraw(
       proof,
       bufferToFixed(input.root),
       bufferToFixed(input.nullifierHash),
       input.recipient,
-      bufferToFixed(input.relayer, 20),
+      input.relayer,
       bufferToFixed(input.fee),
       bufferToFixed(input.refund),
       overrides
