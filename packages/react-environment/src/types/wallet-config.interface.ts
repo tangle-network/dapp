@@ -4,7 +4,7 @@ export interface WalletConfig {
   name: string;
   title: string;
   platform: string;
-  
+
   // the wallet isn't live yet
   enabled: boolean;
 
@@ -13,3 +13,9 @@ export interface WalletConfig {
 
   supportedChainIds: number[];
 };
+
+export type ManagedWallet = {
+  connected: boolean;
+  endSession(): Promise<void>;
+  canEndSession: boolean;
+} & WalletConfig;

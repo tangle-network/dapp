@@ -1,12 +1,12 @@
-
+import { Typography } from '@material-ui/core';
 import { useWebContext } from '@webb-dapp/react-environment';
-import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
+import { ManagedWallet } from '@webb-dapp/react-environment/types/wallet-config.interface';
+import { useWallets } from '@webb-dapp/react-hooks/useWallets';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
-import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
 import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Button, Typography } from '@material-ui/core';
-import { WalletManger, WalletOfWalletManager } from './WalletManger';
+
+import { WalletManger } from './WalletManger';
 
 const ConnectWalletButtonWrapper = styled.div`
   box-sizing: border-box;
@@ -33,44 +33,10 @@ export const ConnectWalletButton: React.FC<{}> = () => {
   const openModal = useCallback(() => {
     setOpen(true);
   }, []);
-  const [wallets, setWallets] = useState<WalletOfWalletManager[]>([]);
 
-  const [selectedWallet, setSelectedWallet] = useState<WalletOfWalletManager | null>(null);
-  const { activeApi, inactivateApi, activeChain, activeWallet, switchChain } = useWebContext();
-  useEffect(() => {
-    const configureSelectedWallets = async () => {
-      const walletsFromActiveChain = Object.values(activeChain?.wallets ?? {});
-      const wallets = await Promise.all(
-        walletsFromActiveChain.map(async ({ detect, ...walletConfig }) => {
-          const isDetected = (await detect?.()) ?? false;
-          const connected = activeWallet?.id === walletConfig.id && activeApi;
-          if (connected) {
-            return {
-              ...walletConfig,
-              enabled: isDetected,
-              connected,
-              endSession: async () => {
-                if (activeApi && activeApi.endSession) {
-                  await Promise.all([activeApi.endSession(), await inactivateApi()]);
-                }
-              },
-              canEndSession: Boolean(activeApi?.capabilities?.hasSessions),
-            };
-          }
-          return {
-            ...walletConfig,
-            enabled: isDetected,
-            connected,
-            async endSession() {},
-            canEndSession: false,
-          };
-        })
-      );
-      // @ts-ignore
-      setWallets(wallets);
-    };
-    configureSelectedWallets();
-  }, [activeChain, activeWallet, activeApi]);
+  const { wallets } = useWallets();
+  const [selectedWallet, setSelectedWallet] = useState<ManagedWallet | null>(null);
+  const { activeChain, activeWallet, switchChain } = useWebContext();
 
   useEffect(() => {
     const nextWallet = wallets.find(({ connected }) => connected);
@@ -82,18 +48,17 @@ export const ConnectWalletButton: React.FC<{}> = () => {
   return (
     <>
       <ConnectWalletButtonWrapper
-          role='button'
-          aria-disabled={!activeChain}
-          onClick={() => {
-            if (!activeChain) {
-              return;
-            }
-            openModal();
-          }}
-          className='select-button'
+        role='button'
+        aria-disabled={!activeChain}
+        onClick={() => {
+          if (!activeChain) {
+            return;
+          }
+          openModal();
+        }}
+        className='select-button'
       >
         <Typography>Connect Wallet</Typography>
-
       </ConnectWalletButtonWrapper>
 
       <Modal open={open} onClose={closeModal}>
@@ -108,7 +73,5 @@ export const ConnectWalletButton: React.FC<{}> = () => {
         />
       </Modal>
     </>
-  )
-
+  );
 };
-
