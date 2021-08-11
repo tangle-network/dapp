@@ -47,8 +47,8 @@ export abstract class MixerWithdraw<T> extends EventBus<MixerWithdrawEvents> {
   }
 
   public async setActiveRelayer(relayer: OptionalRelayer) {
-    const nextValue = await this.mapRelayerIntoActive(relayer);
-    this.emitter.next(nextValue);
+    this._activeRelayer = await this.mapRelayerIntoActive(relayer);
+    this.emitter.next(this._activeRelayer);
   }
 
   // todo switch to the reactive api

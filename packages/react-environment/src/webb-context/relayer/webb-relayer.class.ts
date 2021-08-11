@@ -3,8 +3,10 @@ import {
   Capabilities,
   RelayedChainConfig,
   RelayerConfig,
+  RelayerMessage,
 } from '@webb-dapp/react-environment/webb-context/relayer/types';
 import { Observable, Subject } from 'rxjs';
+import { filter } from 'rxjs/operators';
 
 type RelayerQuery = {
   baseOn?: 'evm' | 'substrate';
@@ -51,6 +53,7 @@ export class WebbRelayerBuilder {
     info: RelayerInfo,
     nameAdapter: ChainNameIntoChainId
   ): Capabilities {
+    console.log({ info });
     return {
       hasIpService: true,
       supportedChains: {
@@ -136,15 +139,17 @@ class RelayedWithdraw {
   /// status of the withdraw
   private status: RelayedWithdrawResult = RelayedWithdrawResult.PreFlight;
   /// watch for the current withdraw status
-  readonly watcher: Observable<RelayedWithdrawResult>;
-  private emitter: Subject<RelayedWithdrawResult> = new Subject();
+  readonly watcher: Observable<[RelayedWithdrawResult, string | undefined]>;
+  private emitter: Subject<[RelayedWithdrawResult, string | undefined]> = new Subject();
 
   constructor(private ws: WebSocket) {
     this.watcher = this.emitter.asObservable();
 
     ws.onmessage = ({ data }) => {
-      this.status = this.handleMessage(data);
-      this.emitter.next(this.status);
+      console.log(data);
+      const handledMessage = this.handleMessage(JSON.parse(data));
+      this.status = handledMessage[0];
+      this.emitter.next(handledMessage);
       if (this.status === RelayedWithdrawResult.CleanExit) {
         this.emitter.complete();
         this.ws.close();
@@ -155,21 +160,23 @@ class RelayedWithdraw {
     };
   }
 
-  private handleMessage(data: any): RelayedWithdrawResult {
+  private handleMessage = (data: RelayerMessage): [RelayedWithdrawResult, string | undefined] => {
     if (data.error || data.withdraw?.errored) {
-      return RelayedWithdrawResult.Errored;
-    } else if (data.withdraw?.finlized) {
-      return RelayedWithdrawResult.CleanExit;
+      return [RelayedWithdrawResult.Errored, data.error || data.withdraw?.errored?.reason];
+    } else if (data.network === 'invalidRelayerAddress') {
+      return [RelayedWithdrawResult.Errored, 'Invalided relayer address'];
+    } else if (data.withdraw?.finalized) {
+      return [RelayedWithdrawResult.CleanExit, data.withdraw.finalized.txHash];
     } else {
-      return RelayedWithdrawResult.Continue;
+      return [RelayedWithdrawResult.Continue, undefined];
     }
-  }
+  };
 
   generateWithdrawRequest(chain: RelayedChainInput, proof: string, args: WithdrawRelayerArgs) {
     return {
       [chain.baseOn]: {
         [chain.name]: {
-          relayWithdrew: {
+          relayWithdraw: {
             contract: chain.contractAddress,
             proof,
             ...args,
@@ -187,6 +194,16 @@ class RelayedWithdraw {
     this.ws.send(JSON.stringify(withdrawRequest));
   }
 
+  await() {
+    return this.watcher
+      .pipe(
+        filter(([next]) => {
+          return next === RelayedWithdrawResult.CleanExit || next === RelayedWithdrawResult.Errored;
+        })
+      )
+      .toPromise();
+  }
+
   get currentStatus() {
     return this.status;
   }
@@ -196,7 +213,7 @@ export class WebbRelayer {
   constructor(readonly address: string, readonly capabilities: Capabilities) {}
 
   async initWithdraw() {
-    const ws = new WebSocket(this.address.replace('http', 'ws'));
+    const ws = new WebSocket(this.address.replace('http', 'ws') + '/ws');
     await new Promise((r, c) => {
       ws.onopen = r;
       ws.onerror = r;
@@ -225,9 +242,10 @@ export class WebbRelayer {
 
   static intoActiveWebRelayer(
     instance: WebbRelayer,
-    query: { chain: ChainId; basedOn: 'evm' | 'substrate' }
+    query: { chain: ChainId; basedOn: 'evm' | 'substrate' },
+    getFees: (note: string, withdrawFeePercentage: number) => Promise<string>
   ): ActiveWebbRelayer {
-    return new ActiveWebbRelayer(instance.address, instance.capabilities, query);
+    return new ActiveWebbRelayer(instance.address, instance.capabilities, query, getFees);
   }
 }
 
@@ -235,7 +253,8 @@ export class ActiveWebbRelayer extends WebbRelayer {
   constructor(
     address: string,
     capabilities: Capabilities,
-    private query: { chain: ChainId; basedOn: 'evm' | 'substrate' }
+    private query: { chain: ChainId; basedOn: 'evm' | 'substrate' },
+    private getFees: (note: string, withdrawFeePercentage: number) => Promise<string>
   ) {
     super(address, capabilities);
   }
@@ -246,14 +265,18 @@ export class ActiveWebbRelayer extends WebbRelayer {
   }
 
   get fee(): number | undefined {
-    return this.config?.withdrewFee;
+    return this.config?.withdrawFeePercentage;
   }
 
   get gasLimit(): number | undefined {
-    return this.config?.withdrewGaslimit;
+    return '';
   }
 
   get account(): string | undefined {
     return this.config?.account;
   }
+  fees = async (note: string) => {
+    console.log(this.config?.withdrawFeePercentage, this.config);
+    return this.getFees(note, this.config?.withdrawFeePercentage ?? 0);
+  };
 }

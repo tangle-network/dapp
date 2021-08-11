@@ -8,7 +8,6 @@ export type UseWithdrawProps = {
 };
 export type WithdrawErrors = {
   error: string;
-
   validationError: {
     note: string;
     recipient: string;
@@ -82,7 +81,6 @@ export const useWithdraw = (params: UseWithdrawProps) => {
 
   const withdraw = useCallback(async () => {
     if (!withdrawApi) return;
-
     if (stage === WithdrawState.Ideal) {
       const { note, recipient } = params;
       await withdrawApi.withdraw(note, recipient);

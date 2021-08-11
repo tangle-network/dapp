@@ -8,8 +8,9 @@ import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabe
 import { InputSection } from '@webb-dapp/ui-components/Inputs/InputSection/InputSection';
 import { NoteInput } from '@webb-dapp/ui-components/Inputs/NoteInput/NoteInput';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { EvmNote } from '@webb-dapp/contracts/utils/evm-note';
 
 const WithdrawWrapper = styled.div``;
 type WithdrawProps = {};
@@ -17,11 +18,26 @@ type WithdrawProps = {};
 export const Withdraw: React.FC<WithdrawProps> = () => {
   const [note, setNote] = useState('');
   const [recipient, setRecipient] = useState('');
-
+  const [fees, setFees] = useState('');
   const { canCancel, cancelWithdraw, relayersState, setRelayer, stage, validationErrors, withdraw } = useWithdraw({
     recipient,
     note,
   });
+  useEffect(() => {
+    async function getFees() {
+      try {
+        if (!relayersState.activeRelayer) {
+          return;
+        }
+        relayersState.activeRelayer.fees(note).then((fees) => {
+          setFees(fees);
+        });
+      } catch (e) {
+        return;
+      }
+    }
+    getFees();
+  }, [note, relayersState.activeRelayer]);
   return (
     <WithdrawWrapper>
       <InputSection>
@@ -78,21 +94,27 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
               >
                 <tbody>
                   <tr>
-                    <td>
-                      <span style={{ whiteSpace: 'nowrap' }}>withdraw fee</span>
-                    </td>
-                    <td>{relayersState.activeRelayer?.fee}</td>
-                  </tr>
-                  <tr>
-                    <td>gas limit</td>
-                    <td>{relayersState.activeRelayer?.gasLimit}</td>
-                  </tr>
-                  <tr>
                     <td>Account</td>
                     <td>
                       <small>{relayersState.activeRelayer?.account}</small>
                     </td>
                   </tr>
+
+                  <tr>
+                    <td>
+                      <span style={{ whiteSpace: 'nowrap' }}>withdraw fee percentage</span>
+                    </td>
+                    <td>{relayersState.activeRelayer?.fee}%</td>
+                  </tr>
+
+                  {fees && (
+                    <tr>
+                      <td>Full fees</td>
+                      <td>
+                        <small>{fees}</small>
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
