@@ -10,7 +10,6 @@ export const relayerConfig: RelayerConfig[] = [
     address: 'http://nepoche.com:9955',
   },
 ];
-['webb', 'edgeware', 'ganache', 'hedgeware', 'beresheet', 'harmony', 'rinkeby'];
 
 export function relayerNameToChainId(name: string): ChainId {
   switch (name) {
