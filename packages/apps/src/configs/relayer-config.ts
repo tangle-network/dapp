@@ -7,7 +7,7 @@ export const relayerConfig: RelayerConfig[] = [
     address: 'http://localhost:9955',
   },
   {
-    address: 'http://nepoche.com:9955',
+    address: 'https://relayer.nepoche.com',
   },
 ];
 
