@@ -1,5 +1,5 @@
 import { ReactComponent as WebbLogo } from '@webb-dapp/react-components/assets/webb-icon.svg';
-import { useStore } from '@webb-dapp/react-environment';
+import { useStore, useWebContext } from '@webb-dapp/react-environment';
 import { useDimensions } from '@webb-dapp/react-environment/layout';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 import { below } from '@webb-dapp/ui-components/utils/responsive-utils';
@@ -10,6 +10,7 @@ import styled from 'styled-components';
 import { AccountManager } from '../AccountManager/AccountManager';
 import { ThemeSwitcher } from './ThemeSwticher';
 import { NetworkManager } from '@webb-dapp/ui-components/NetworkManger/NetworkManager';
+import { ConnectWalletButton } from '@webb-dapp/ui-components/Inputs/WalletSelect/ConnectWalletButton';
 
 const AppBarWrapper = styled.nav`
   height: 65px;
@@ -104,6 +105,7 @@ const NavigationWrapper = styled.ul``;
 type AppBarProps = {};
 
 const AppBar: React.FC<AppBarProps> = () => {
+  const { activeWallet } = useWebContext();
   const { size, width } = useDimensions();
   const isMobile = useMemo(() => {
     return width <= size.sm;
@@ -151,7 +153,7 @@ const AppBar: React.FC<AppBarProps> = () => {
         </Tooltip>*/}
         {!isMobile && <NetworkManager />}
         <AccountManagerContainer>
-          <AccountManager />
+          {!isMobile && (activeWallet ? <AccountManager /> : <ConnectWalletButton/>)}
         </AccountManagerContainer>
       </RightNavigation>
     </AppBarWrapper>
