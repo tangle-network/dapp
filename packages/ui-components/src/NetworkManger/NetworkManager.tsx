@@ -4,6 +4,8 @@ import {
   ButtonBase,
   CircularProgress,
   Divider,
+  FormControl,
+  FormControlLabel,
   Icon,
   IconButton,
   LinearProgress,
@@ -11,6 +13,8 @@ import {
   ListItemAvatar,
   ListItemSecondaryAction,
   ListItemText,
+  Radio,
+  RadioGroup,
   Tooltip,
   Typography,
 } from '@material-ui/core';
@@ -22,13 +26,18 @@ import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { appEvent } from '@webb-dapp/react-environment/app-event';
 
 const NetworkManagerWrapper = styled.div`
   padding: 1rem;
+  ${({ theme }: { theme: Pallet }) => css`
+    color: ${theme.primaryText};
+    background: ${theme.layer2Background};
+  `}
 `;
+
 type NetworkManagerProps = {};
 
 enum ConnectionStep {
@@ -50,12 +59,20 @@ type NetworkManagerIndicatorProps = {
   onClick?: (e: any) => void;
 };
 
+const FilterSection = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
 export const NetworkManager: React.FC<NetworkManagerProps> = () => {
   const [open, setOpen] = useState(false);
 
-  const { activeChain, activeWallet, chains, isInit, switchChain: _switchChain } = useWebContext();
+  const [radioButtonFilter, setRadioButtonFilter] = useState('test');
+
+  const { activeChain, activeWallet, chains, isConnecting, switchChain: _switchChain } = useWebContext();
   const [connectionStatus, setConnectionStatus] = useState<ConnectingState>(
-    activeChain ? 'connected' : isInit ? 'connecting' : 'no-connection'
+    activeChain ? 'connected' : isConnecting ? 'connecting' : 'no-connection'
   );
   const switchChain = useCallback(
     async (chain: Chain, wallet: Wallet) => {
@@ -72,7 +89,34 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
     [_switchChain]
   );
 
-  const networks = useMemo(() => Object.values(chains), [chains]);
+  const filteredNetworks = useMemo(() => {
+    if (radioButtonFilter == null){
+      return Object.values(chains);
+    }
+    
+    return Object.values(chains).filter((item) => {
+      return item.tag == radioButtonFilter;
+    })
+  }, [chains, radioButtonFilter]);
+
+  const handleRadioFilter = (event) => {
+    setRadioButtonFilter(event.target.value);
+  }
+
+  const filterSection = useMemo(() => {
+    return (
+      <FilterSection>
+        <FormControl>
+          <RadioGroup value={radioButtonFilter} onChange={handleRadioFilter} row>
+            {/* <FormControlLabel value="live" control={<Radio />} label="live"/> */}
+            <FormControlLabel value="test" control={<Radio />} label="test"/>
+            <FormControlLabel value="dev" control={<Radio />} label="dev"/>
+          </RadioGroup>
+        </FormControl>
+      </FilterSection>
+    )
+  }, [radioButtonFilter]);
+
   const [connectionStep, setConnectionStep] = useState(ConnectionStep.SelectChain);
   const stepNumber = useMemo(() => {
     switch (connectionStep) {
@@ -109,93 +153,88 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
       case ConnectionStep.SelectChain:
         return (
           <List>
-            {networks.map((chain) => {
+            {filteredNetworks.map((chain) => {
               const { id, logo, name, tag, url, wallets } = chain;
               const viaWallets = Object.values(wallets);
               const ChainIcon = logo;
               return (
-                <ListItem
-                  key={`${id}${url}-group`}
-                  aria-label='gender'
-                  selected={userSelectedChain?.id === id}
-                  button
-                  onClick={() => {
-                    handleChange(chain);
-                  }}
-                >
-                  <ListItemAvatar>
-                    <Badge
-                      title={'dev'}
-                      badgeContent={tag?.toUpperCase()}
-                      anchorOrigin={{
-                        horizontal: 'left',
-                        vertical: 'top',
-                      }}
-                      invisible={!tag}
-                      color={'primary'}
-                    >
-                      <Avatar
-                        style={{
-                          background: '#fff',
+                <>
+                  <ListItem
+                    key={`${id}${url}-group`}
+                    aria-label='gender'
+                    selected={userSelectedChain?.id === id}
+                    button
+                    onClick={() => {
+                      handleChange(chain);
+                    }}
+                  >
+                    <ListItemAvatar>
+                      <Badge
+                        title={'dev'}
+                        badgeContent={tag?.toUpperCase()}
+                        anchorOrigin={{
+                          horizontal: 'left',
+                          vertical: 'top',
                         }}
-                        children={<ChainIcon />}
-                      />
-                    </Badge>
-                  </ListItemAvatar>
-                  <ListItemText>
-                    <Typography variant={'h6'} component={'p'}>
-                      <b>{name}</b>
-                    </Typography>
-                    <Padding>
-                      <div>
-                        <Typography color={'textSecondary'} display={'inline'}>
-                          <b>URL:</b> {url || 'n/a'}
-                        </Typography>
-                      </div>
-                      <div
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                        }}
+                        invisible={!tag}
+                        color={'primary'}
                       >
-                        <Typography color={'textSecondary'} display={'inline'}>
-                          <b>Connectable via:</b>
-                        </Typography>
-                        {viaWallets.map((wallet) => {
-                          const Logo = wallet.logo;
-                          return (
-                            <div
-                              style={{
-                                opacity: 0.8,
-                                display: 'flex',
-                                alignItems: 'center',
-                                margin: '0 10px',
-                              }}
-                              id={url + wallet.name}
-                            >
-                              <span
+                        <Avatar
+                          style={{
+                            background: '#fff',
+                          }}
+                          children={<ChainIcon />}
+                        />
+                      </Badge>
+                    </ListItemAvatar>
+                    <ListItemText>
+                      <Typography variant={'h6'} component={'p'}>
+                        <b>{name}</b>
+                      </Typography>
+                      <Padding>
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                          }}
+                        >
+                          {viaWallets.map((wallet) => {
+                            const Logo = wallet.logo;
+                            return (
+                              <div
                                 style={{
-                                  padding: '0 2px',
-                                  width: 20,
-                                  height: 20,
-                                  display: 'inline-flex',
+                                  opacity: 0.8,
+                                  display: 'flex',
                                   alignItems: 'center',
-                                  justifyContent: 'center',
+                                  margin: '0 10px 0 0',
                                 }}
+                                id={url + wallet.name}
                               >
-                                <Logo />
-                              </span>
-                              <Typography color={'textSecondary'}>{wallet.name}</Typography>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </Padding>
-                  </ListItemText>
-                  <ListItemSecondaryAction>
-                    {activeChain?.id === id && <Typography color='secondary'>connected</Typography>}
-                  </ListItemSecondaryAction>
-                </ListItem>
+                                <span
+                                  style={{
+                                    padding: '0 2px 0 0',
+                                    width: 20,
+                                    height: 20,
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                  }}
+                                >
+                                  <Logo />
+                                </span>
+                                <Typography color={'textSecondary'} variant={'caption'}>{wallet.name}</Typography>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </Padding>
+                    </ListItemText>
+                    <ListItemSecondaryAction>
+                      {activeChain?.id === id && <Typography color='secondary'>connected</Typography>}
+                    </ListItemSecondaryAction>
+                  </ListItem>
+                  <Divider variant={'fullWidth'} />
+                </>
               );
             })}
           </List>
@@ -237,42 +276,6 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
                   <Typography color={'textSecondary'} display={'inline'}>
                     <b>URL:</b> {url || 'n/a'}
                   </Typography>
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                    }}
-                  >
-                    Connectable via:
-                    {viaWallets.map((wallet) => {
-                      const Logo = wallet.logo;
-                      return (
-                        <div
-                          style={{
-                            opacity: 0.5,
-                            display: 'flex',
-                            alignItems: 'center',
-                            margin: '0 10px',
-                          }}
-                          id={url + wallet.name}
-                        >
-                          <span
-                            style={{
-                              padding: '0 2px',
-                              width: 20,
-                              height: 20,
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                            }}
-                          >
-                            <Logo />
-                          </span>
-                          <Typography color={'textSecondary'}>{wallet.name}</Typography>
-                        </div>
-                      );
-                    })}
-                  </div>
                 </Padding>
                 <ListItemSecondaryAction>
                   {activeChain?.id === id && <Typography color='secondary'>connected</Typography>}
@@ -329,9 +332,9 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
       case ConnectionStep.Connecting:
         return <LinearProgress />;
     }
-  }, [networks, activeWallet, activeChain, connectionStep, userSelectedChain, switchChain, handleCancel]);
+  }, [filteredNetworks, activeWallet, activeChain, connectionStep, userSelectedChain, switchChain, handleCancel]);
   useEffect(() => {
-    if (isInit) {
+    if (isConnecting) {
       return setConnectionStatus('connecting');
     }
     if (activeChain) {
@@ -339,7 +342,7 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
     } else {
       setConnectionStatus('no-connection');
     }
-  }, [activeChain, isInit]);
+  }, [activeChain, isConnecting]);
   const chainInfo = useMemo<NetworkManagerIndicatorProps['connectionMetaData'] | undefined>(() => {
     if (!activeChain) {
       return undefined;
@@ -375,13 +378,15 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
       <Modal
         open={open}
         onClose={() => {
-          // if (connectionStep !== ConnectionStep.Connecting) {
-          //   setOpen(false);
-          // }
+          handleCancel();
         }}
       >
         <NetworkManagerWrapper>
-          <Typography variant={'h5'}>Manage Connection </Typography>
+          <Typography variant={'h3'}>Manage Connection </Typography>
+
+          <SpaceBox height={16} />
+
+          {filterSection}
 
           <SpaceBox height={16} />
 
@@ -394,8 +399,8 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
               >
                 <Icon>chevron_left</Icon>
               </IconButton>
-            )}
-            <Typography variant={'h6'}>
+            )}            
+            <Typography variant={'h5'}>
               <b>Step {stepNumber}:</b> {connectionStep}
             </Typography>
             <Flex flex={1} as={Padding}>
@@ -406,19 +411,17 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
           <SpaceBox height={8} />
 
           {content}
-        </NetworkManagerWrapper>
 
-        <Divider variant={'fullWidth'} />
-
-        <Padding v as={'footer'}>
-          <Flex row ai={'center'} jc={'flex-end'}>
-            <Flex>
-              <Button onClick={handleCancel}>
-                <Padding>Cancel</Padding>
-              </Button>
+          <Padding v as={'footer'}>
+            <Flex row ai={'center'} jc={'flex-end'}>
+              <Flex>
+                <Button onClick={handleCancel}>
+                  <Padding>Cancel</Padding>
+                </Button>
+              </Flex>
             </Flex>
-          </Flex>
-        </Padding>
+          </Padding>
+        </NetworkManagerWrapper>
       </Modal>
     </>
   );
@@ -512,10 +515,6 @@ export const NetworkManagerIndicator: React.FC<NetworkManagerIndicatorProps> = (
             <Flex col>
               <Typography variant='body1'>
                 <b style={{ whiteSpace: 'nowrap' }}>{connectionMetaData.chainName}</b>
-              </Typography>
-
-              <Typography color='textSecondary' variant='body2'>
-                <b style={{ whiteSpace: 'nowrap' }}>{connectionMetaData.details}</b>
               </Typography>
             </Flex>
           </>

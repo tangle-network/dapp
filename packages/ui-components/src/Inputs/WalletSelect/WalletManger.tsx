@@ -9,16 +9,16 @@ import {
   ListItemText,
   Typography,
 } from '@material-ui/core';
+import Icon from '@material-ui/core/Icon';
 import Tooltip from '@material-ui/core/Tooltip';
+import { ManagedWallet } from '@webb-dapp/react-environment/types/wallet-config.interface';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
+import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
 import React from 'react';
 import styled, { css } from 'styled-components';
-import { Pallet } from '@webb-dapp/ui-components/styling/colors';
-import { WalletConfig } from '@webb-dapp/react-environment/types/wallet-config.interface';
-import Icon from '@material-ui/core/Icon';
 
 const WalletMangerWrapper = styled.div`
   ${above.sm`
@@ -28,8 +28,8 @@ min-width:540px;
 `;
 type WalletMangerProps = {
   close(): void;
-  setSelectedWallet(wallet: WalletOfWalletManager): void;
-  wallets: WalletOfWalletManager[];
+  setSelectedWallet(wallet: ManagedWallet): void;
+  wallets: ManagedWallet[];
 };
 
 const CloseManagerButton = styled.button``;
@@ -68,12 +68,6 @@ const StyledListItem = styled.li`
     }
   }
 `;
-
-export type WalletOfWalletManager = {
-  connected: boolean;
-  endSession(): Promise<void>;
-  canEndSession: boolean;
-} & WalletConfig;
 
 export const WalletManger: React.FC<WalletMangerProps> = ({ close, setSelectedWallet, wallets }) => {
   return (
@@ -115,7 +109,8 @@ export const WalletManger: React.FC<WalletMangerProps> = ({ close, setSelectedWa
                 button
                 onClick={async () => {
                   if (!wallet.connected) {
-                    return setSelectedWallet(wallet);
+                    setSelectedWallet(wallet);
+                    close();
                   }
                 }}
               >
@@ -128,7 +123,7 @@ export const WalletManger: React.FC<WalletMangerProps> = ({ close, setSelectedWa
                   <Flex row>
                     <Flex flex={1}>
                       <Typography>{wallet.title}</Typography>
-                      <Typography>ETH</Typography>
+                      <Typography>{wallet.platform}</Typography>
                     </Flex>
                     {wallet.connected && (
                       <Flex row ai='center' as={Padding} jc={'space-between'}>

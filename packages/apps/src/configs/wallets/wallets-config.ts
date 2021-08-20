@@ -8,7 +8,6 @@ import { WalletConnectLogo } from '@webb-dapp/apps/configs/logos/WalletConnectLo
 const ANY_EVM = [
   ChainId.Edgeware,
   ChainId.EdgewareTestNet,
-  ChainId.EdgewareLocalNet,
   ChainId.EthereumMainNet,
   ChainId.Rinkeby,
   ChainId.Kovan,
@@ -22,6 +21,7 @@ export const walletsConfig: AppConfig['wallet'] = {
     logo: PolkaLogo,
     name: 'polkadot-js',
     title: `Polkadot`,
+    platform: 'Substrate',
     enabled: true,
     async detect() {
       return true;
@@ -33,6 +33,7 @@ export const walletsConfig: AppConfig['wallet'] = {
     logo: MetaMaskLogo,
     name: 'metamask',
     title: `MetaMask`,
+    platform: 'EVM',
     enabled: true,
     detect() {
       const hasWeb3 = typeof (window as any).web3 !== 'undefined';
@@ -48,6 +49,7 @@ export const walletsConfig: AppConfig['wallet'] = {
     logo: WalletConnectLogo,
     name: 'wallet connect',
     title: `Wallet Connect`,
+    platform: 'EVM',
     enabled: true,
     detect() {
       return true;

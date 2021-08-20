@@ -8,7 +8,8 @@ import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import { Web3Accounts } from '@webb-dapp/wallet/providers/web3/web3-accounts';
 import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
 import { EventBus } from '@webb-tools/app-util';
-import { providers } from 'ethers';
+import { ethers, providers } from 'ethers';
+import { WebbRelayerBuilder } from '@webb-dapp/react-environment/webb-context/relayer';
 
 export class WebbWeb3Provider
   extends EventBus<WebbProviderEvents<[number]>>
@@ -18,7 +19,11 @@ export class WebbWeb3Provider
   private ethersProvider: providers.Web3Provider;
   private connectedMixers: EvmChainMixersInfo;
 
-  private constructor(private web3Provider: Web3Provider, private chainId: number) {
+  private constructor(
+    private web3Provider: Web3Provider,
+    private chainId: number,
+    readonly relayingManager: WebbRelayerBuilder
+  ) {
     super();
     this.accounts = new Web3Accounts(web3Provider.eth);
     this.ethersProvider = web3Provider.intoEthersProvider();
@@ -74,6 +79,14 @@ export class WebbWeb3Provider
     return new AnchorContract(this.connectedMixers, this.ethersProvider, mixerAddress);
   }
 
+  getMixerInfoBySize(mixerSize: number, tokenSymbol: string) {
+    const mixer = this.connectedMixers.getMixerInfoBySize(mixerSize, tokenSymbol);
+    if (!mixer) {
+      throw WebbError.from(WebbErrorCodes.MixerSizeNotFound);
+    }
+    return mixer;
+  }
+
   // This function limits the mixer implementation to one type for the token/size pair.
   // Something like a poseidon hasher implementation instead of mimc hasher cannot
   // exist alongside each other.
@@ -94,13 +107,32 @@ export class WebbWeb3Provider
     return Promise.resolve(this.connectedMixers.getMixerSizes(tokenSymbol));
   }
 
-  static async init(web3Provider: Web3Provider, chainId: number) {
-    return new WebbWeb3Provider(web3Provider, chainId);
+  static async init(web3Provider: Web3Provider, chainId: number, relayerBuilder: WebbRelayerBuilder) {
+    return new WebbWeb3Provider(web3Provider, chainId, relayerBuilder);
   }
+
   get capabilities() {
     return this.web3Provider.capabilities;
   }
+
   endSession(): Promise<void> {
     return this.web3Provider.endSession();
+  }
+
+  async reason(hash: string) {
+    const a = await this.ethersProvider.getTransaction(hash);
+    if (!a) {
+      throw new Error('TX not found');
+    }
+    try {
+      // @ts-ignore
+      let code = await this.ethersProvider.call(a, a.blockNumber);
+      console.log({ ERRORCODE: code });
+    } catch (err) {
+      console.log({ e: err });
+      const code = err.message.replace('Reverted ', '');
+      let reason = ethers.utils.toUtf8String('0x' + code.substr(138));
+      return reason;
+    }
   }
 }

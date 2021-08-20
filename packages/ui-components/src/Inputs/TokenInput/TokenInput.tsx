@@ -71,7 +71,7 @@ const AccountManagerWrapper = styled.div<any>`
   height: 0;
   background: #ffffff;
   position: relative;
-  top: -26.5px;
+  top: -52px;
 `;
 
 type TokenInputProps = {
@@ -198,7 +198,7 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
               </div>
 
               <StyledList as={List} dense disablePadding>
-                {selectItems.map(({ chainName, icon: Icon, id, self: currency, symbol }) => {
+                {selectItems.map(({ name, icon: Icon, id, self: currency, symbol }) => {
                   const isSelected = selected?.id === id;
                   return (
                     <li
@@ -219,7 +219,7 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
                             <b>{symbol}</b>
                           </Typography>
                           <Typography variant={'body2'} color={'textSecondary'}>
-                            <ChainName>{chainName}</ChainName>
+                            <ChainName>{name}</ChainName>
                           </Typography>
                         </ListItemText>
                       </Flex>
