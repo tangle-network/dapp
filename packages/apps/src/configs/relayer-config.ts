@@ -18,7 +18,7 @@ export function relayerNameToChainId(name: string): ChainId {
     case 'harmony':
       return ChainId.HarmonyTest1;
     case 'ganache':
-      return ChainId.Ganeche;
+      return ChainId.Ganache;
     case 'webb':
     case 'edgeware':
     case 'hedgeware':
