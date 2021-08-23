@@ -337,12 +337,13 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
                 },
               });
             };
-            if (chainId !== chain.evmId && activeChain) {
+            if (chainId !== chain.evmId) {
+              const activeChainName = activeChain ? activeChain.name : 'unknown';
               const feedback = evmChainConflict(
                 {
                   activeOnExtension: {
                     id: chainId,
-                    name: activeChain.name,
+                    name: activeChainName,
                   },
                   selected: {
                     id: chain?.evmId ?? 0,

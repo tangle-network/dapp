@@ -54,8 +54,8 @@ export function evmChainConflict(params: EvmNetworkConflictParams, appEvent: TAp
     },
 
     {
-      content: `The selected chain is ${params.selected.name} with id (${params.selected.id})
-      ;However the active on metamask is ${params.activeOnExtension.name} with id ${params.activeOnExtension.id}`,
+      content: `The selected chain is ${params.selected.name} with id (${params.selected.id});
+       however the active on metamask is ${params.activeOnExtension.name} with id ${params.activeOnExtension.id}`,
     },
     {
       content: `To continue using ${params.selected.name}`,
