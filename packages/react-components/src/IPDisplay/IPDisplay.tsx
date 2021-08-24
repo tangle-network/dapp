@@ -42,11 +42,6 @@ const IPDisplayWrapper = styled.div`
   }
 `;
 
-type GeolocationInfo = {
-  city: String;
-  country: String;
-};
-
 type IPDisplayProps = {
   ip: String;
 };
