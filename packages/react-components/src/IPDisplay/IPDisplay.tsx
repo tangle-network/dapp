@@ -3,11 +3,8 @@ import { useFetch } from '@webb-dapp/react-hooks/';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import styled, { css } from 'styled-components';
-import { getWebbRelayer } from '@webb-dapp/apps/configs/relayer-config';
-import { WebbRelayer } from '@webb-dapp/react-environment/webb-context/relayer';
-import { useWebContext } from '@webb-dapp/react-environment/webb-context';
 
 const IPDisplayWrapper = styled.div`
   padding: 1rem;
@@ -45,31 +42,17 @@ const IPDisplayWrapper = styled.div`
   }
 `;
 
-type RelayerIpInfo = {
-  ip: String;
+type GeolocationInfo = {
   city: String;
   country: String;
 };
 
-type IPDisplayProps = {};
+type IPDisplayProps = {
+  ip: String;
+};
 
-const IPDisplay: React.FC<IPDisplayProps> = () => {
-  // const { city, countryCode, query } = useFetch(`http://ip-api.com/json/?fields=countryCode,city,query`, {});
-  const { activeApi } = useWebContext();
-
-  const [geoLocation, setGeoLocation] = useState<RelayerIpInfo>({ ip: '', city: '', country: '' });
-
-  useEffect(() => {
-    async function getIpInfo() {
-      const relayer = await activeApi?.relayingManager.getRelayer({})[0];
-      if (relayer) {
-        const response = await relayer.getIp();
-        console.log(response);
-        setGeoLocation(response);
-      }
-    }
-    getIpInfo();
-  }, [activeApi]);
+const IPDisplay: React.FC<IPDisplayProps> = ({ ip }) => {
+  const { city, country_code_iso3 } = useFetch(`https://ipapi.co/${ip}/json`, {});
 
   return (
     <IPDisplayWrapper>
@@ -80,7 +63,7 @@ const IPDisplay: React.FC<IPDisplayProps> = () => {
         <Typography className={'ip-text'} variant={'h5'}>
           Your IP Address is:{' '}
           <b>
-            {geoLocation.ip} {geoLocation.city}, {geoLocation.country}
+            {ip} {city}, {country_code_iso3}
           </b>
         </Typography>
         <Typography className={'ip-info'}>Please mask your IP address while using our service!</Typography>
