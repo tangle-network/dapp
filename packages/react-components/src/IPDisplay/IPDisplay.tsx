@@ -1,10 +1,10 @@
+import { Icon, Typography } from '@material-ui/core';
+import { useFetch } from '@webb-dapp/react-hooks';
+import { Pallet } from '@webb-dapp/ui-components/styling/colors';
+import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
+import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
 import React from 'react';
 import styled, { css } from 'styled-components';
-import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
-import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
-import { Pallet } from '@webb-dapp/ui-components/styling/colors';
-import { Icon, Typography } from '@material-ui/core';
-import { useFetch } from '@webb-dapp/react-hooks/';
 
 const IPDisplayWrapper = styled.div`
   padding: 1rem;

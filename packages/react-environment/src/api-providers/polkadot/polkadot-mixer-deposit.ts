@@ -3,11 +3,11 @@ import { Currency } from '@webb-dapp/mixer/utils/currency';
 // @ts-ignore
 import Worker from '@webb-dapp/mixer/utils/mixer.worker';
 import { DepositPayload as IDepositPayload, MixerDeposit } from '@webb-dapp/react-environment/webb-context';
+import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import { Token } from '@webb-tools/sdk-core';
 import { Asset, Mixer, Note } from '@webb-tools/sdk-mixer';
 
 import { WebbPolkadot } from './webb-polkadot-provider';
-import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 
 type DepositPayload = IDepositPayload<Note, [number, Uint8Array[]]>;
 

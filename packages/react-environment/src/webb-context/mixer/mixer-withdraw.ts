@@ -1,5 +1,5 @@
-import { EventBus } from '@webb-tools/app-util';
 import { ActiveWebbRelayer, WebbRelayer } from '@webb-dapp/react-environment/webb-context/relayer';
+import { EventBus } from '@webb-tools/app-util';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 export enum WithdrawState {

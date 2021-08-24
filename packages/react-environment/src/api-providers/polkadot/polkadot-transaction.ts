@@ -1,10 +1,10 @@
 import { EventBus, LoggerService } from '@webb-tools/app-util';
 import { uniqueId } from 'lodash';
+import React from 'react';
 
 import { ApiPromise, SubmittableResult } from '@polkadot/api';
 import { SubmittableExtrinsic } from '@polkadot/api/submittable/types';
 import { web3FromAddress } from '@polkadot/extension-dapp';
-import React from 'react';
 
 type MethodPath = {
   section: string;

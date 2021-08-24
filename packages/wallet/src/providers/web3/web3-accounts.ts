@@ -1,7 +1,7 @@
 import { Account, AccountsAdapter, PromiseOrT } from '@webb-dapp/wallet/account/Accounts.adapter';
 import React from 'react';
-import { Eth } from 'web3-eth';
 import tinycolor from 'tinycolor2';
+import { Eth } from 'web3-eth';
 
 function fallbackCopyTextToClipboard(text: string) {
   const textArea = document.createElement('textarea');

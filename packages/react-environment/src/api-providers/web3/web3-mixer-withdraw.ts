@@ -2,6 +2,7 @@ import { evmIdIntoChainId } from '@webb-dapp/apps/configs';
 import { chainIdToRelayerName } from '@webb-dapp/apps/configs/relayer-config';
 import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
 import { EvmNote } from '@webb-dapp/contracts/utils/evm-note';
+import { fromDepositIntoZKPInput } from '@webb-dapp/contracts/utils/zkp-adapters';
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3/webb-web3-provider';
 import {
   MixerWithdraw,
@@ -10,12 +11,11 @@ import {
   WithdrawState,
 } from '@webb-dapp/react-environment/webb-context';
 import { RelayedWithdrawResult, WebbRelayer } from '@webb-dapp/react-environment/webb-context/relayer';
-import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polkadot/transaction-notification-config';
-import React from 'react';
-import { LoggerService } from '@webb-tools/app-util';
-import { fromDepositIntoZKPInput } from '@webb-dapp/contracts/utils/zkp-adapters';
-import { BigNumber } from 'ethers';
 import { WebbError } from '@webb-dapp/utils/webb-error';
+import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polkadot/transaction-notification-config';
+import { LoggerService } from '@webb-tools/app-util';
+import { BigNumber } from 'ethers';
+import React from 'react';
 
 const logger = LoggerService.get('Web3MixerWithdraw');
 

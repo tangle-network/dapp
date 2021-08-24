@@ -1,6 +1,5 @@
 /* eslint-disable sort-keys */
 import { createStyles, Theme } from '@material-ui/core';
-import Icon from '@material-ui/core/Icon';
 import MuiModel, { ModalProps as MuiModalProps } from '@material-ui/core/Modal';
 import Slide from '@material-ui/core/Slide';
 import { makeStyles } from '@material-ui/core/styles';

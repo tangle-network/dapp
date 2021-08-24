@@ -9,6 +9,7 @@ import {
   WebbMethods,
   WebbProviderEvents,
 } from '@webb-dapp/react-environment/webb-context';
+import { WebbRelayerBuilder } from '@webb-dapp/react-environment/webb-context/relayer';
 import { ActionsBuilder, InteractiveFeedback, WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import { PolkadotAccounts } from '@webb-dapp/wallet/providers/polkadot/polkadot-accounts';
 import { PolkadotProvider } from '@webb-dapp/wallet/providers/polkadot/polkadot-provider';
@@ -16,7 +17,6 @@ import { EventBus } from '@webb-tools/app-util';
 
 import { ApiPromise } from '@polkadot/api';
 import { InjectedExtension } from '@polkadot/extension-inject/types';
-import { WebbRelayerBuilder } from '@webb-dapp/react-environment/webb-context/relayer';
 
 export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbApiProvider<WebbPolkadot> {
   readonly methods: WebbMethods<WebbPolkadot>;

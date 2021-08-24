@@ -1,9 +1,9 @@
 import WalletConnectProvider from '@walletconnect/web3-provider';
+import { ProvideCapabilities } from '@webb-dapp/react-environment';
 import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import { ethers } from 'ethers';
 import Web3 from 'web3';
 import { AbstractProvider } from 'web3-core';
-import { ProvideCapabilities } from '@webb-dapp/react-environment';
 
 export interface AddEthereumChainParameter {
   chainId: string; // A 0x-prefixed hexadecimal string

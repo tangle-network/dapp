@@ -1,9 +1,10 @@
-import { AppConfig } from '@webb-dapp/react-environment';
-import React from 'react';
-import { WebbCurrencyId } from './webb-currency-id.enum';
 import EdgewareLogo from '@webb-dapp/apps/configs/logos/EdgewareLogo';
 import EtherLogo from '@webb-dapp/apps/configs/logos/Eth';
 import { HarmonyLogo } from '@webb-dapp/apps/configs/logos/HarmonyLogo';
+import { AppConfig } from '@webb-dapp/react-environment';
+import React from 'react';
+
+import { WebbCurrencyId } from './webb-currency-id.enum';
 
 export const currenciesConfig: AppConfig['currencies'] = {
   [WebbCurrencyId.EDG]: {

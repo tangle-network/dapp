@@ -1,6 +1,7 @@
 import { GroupTreeWrapper } from '@webb-dapp/mixer';
 // @ts-ignore1
 import Worker from '@webb-dapp/mixer/utils/merkle.worker';
+import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import MerkleTree from '@webb-tools/sdk-merkle/tree';
 import { Note } from '@webb-tools/sdk-mixer';
 import { MerkleTree as NodeMerkleTree } from '@webb-tools/types/interfaces';
@@ -10,7 +11,6 @@ import { u8aToHex } from '@polkadot/util';
 
 import { MixerWithdraw, WithdrawState } from '../../webb-context';
 import { WebbPolkadot } from './webb-polkadot-provider';
-import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 
 export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
   private cachedBulletProofsGens: Uint8Array | null = null;

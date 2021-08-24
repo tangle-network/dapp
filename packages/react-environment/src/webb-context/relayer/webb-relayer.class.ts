@@ -268,10 +268,6 @@ export class ActiveWebbRelayer extends WebbRelayer {
     return this.config?.withdrawFeePercentage;
   }
 
-  get gasLimit(): number | undefined {
-    return '';
-  }
-
   get account(): string | undefined {
     return this.config?.account;
   }

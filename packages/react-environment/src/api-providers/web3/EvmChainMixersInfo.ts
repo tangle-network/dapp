@@ -1,8 +1,8 @@
 import { WebbEVMChain } from '@webb-dapp/apps/configs';
 import {
   beresheetMixers,
-  harmonyTest1Mixers,
   ethMainNetMixers,
+  harmonyTest1Mixers,
   MixerInfo,
   rinkebyMixers,
 } from '@webb-dapp/apps/configs/evm/SupportedMixers';

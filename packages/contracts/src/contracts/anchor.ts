@@ -1,17 +1,18 @@
+import { Log } from '@ethersproject/abstract-provider';
+import { ZKPInput, ZKPInputWithoutMerkleProof } from '@webb-dapp/contracts/contracts/types';
 import { Anchor } from '@webb-dapp/contracts/types/Anchor';
 import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
 import { EvmNote } from '@webb-dapp/contracts/utils/evm-note';
 import { createDeposit, Deposit } from '@webb-dapp/contracts/utils/make-deposit';
-import { MerkleTree } from '@webb-dapp/utils/merkle';
-import { BigNumber, Contract, providers, Signer } from 'ethers';
-import { Log } from '@ethersproject/abstract-provider';
-import { EvmChainMixersInfo } from '@webb-dapp/react-environment/api-providers/web3/EvmChainMixersInfo';
-import utils from 'web3-utils';
-import { abi } from '../abis/NativeAnchor.json';
 import { mixerLogger } from '@webb-dapp/mixer/utils';
+import { EvmChainMixersInfo } from '@webb-dapp/react-environment/api-providers/web3/EvmChainMixersInfo';
+import { MerkleTree } from '@webb-dapp/utils/merkle';
 import { retryPromise } from '@webb-dapp/utils/retry-promise';
 import { LoggerService } from '@webb-tools/app-util';
-import { ZKPInput, ZKPInputWithoutMerkleProof } from '@webb-dapp/contracts/contracts/types';
+import { BigNumber, Contract, providers, Signer } from 'ethers';
+import utils from 'web3-utils';
+
+import { abi } from '../abis/NativeAnchor.json';
 
 const webSnarkUtils = require('websnark/src/utils');
 type DepositEvent = [string, number, BigNumber];

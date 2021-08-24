@@ -1,4 +1,5 @@
 import { Fade, FormHelperText, InputBase, MenuItem, Select } from '@material-ui/core';
+import { EvmNote } from '@webb-dapp/contracts/utils/evm-note';
 import { MixerButton } from '@webb-dapp/mixer/components/MixerButton/MixerButton';
 import WithdrawingModal from '@webb-dapp/mixer/components/Withdraw/WithdrawingModal';
 import { useWithdraw } from '@webb-dapp/mixer/hooks';
@@ -10,7 +11,6 @@ import { NoteInput } from '@webb-dapp/ui-components/Inputs/NoteInput/NoteInput';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { EvmNote } from '@webb-dapp/contracts/utils/evm-note';
 
 const WithdrawWrapper = styled.div``;
 type WithdrawProps = {};

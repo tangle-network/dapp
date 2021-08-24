@@ -1,13 +1,13 @@
+import { getNativeCurrencySymbol } from '@webb-dapp/apps/configs/evm/SupportedMixers';
+import { getEVMChainName } from '@webb-dapp/apps/configs/evm/SupportedMixers';
 import { EvmNote } from '@webb-dapp/contracts/utils/evm-note';
 import { Deposit } from '@webb-dapp/contracts/utils/make-deposit';
 import { DepositPayload as IDepositPayload, MixerDeposit, MixerSize } from '@webb-dapp/react-environment/webb-context';
-import { getNativeCurrencySymbol } from '@webb-dapp/apps/configs/evm/SupportedMixers';
-import { WebbWeb3Provider } from './webb-web3-provider';
-import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polkadot/transaction-notification-config';
-
-import React from 'react';
 import { DepositNotification } from '@webb-dapp/ui-components/notification/DepositNotification';
-import { getEVMChainName } from '@webb-dapp/apps/configs/evm/SupportedMixers';
+import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polkadot/transaction-notification-config';
+import React from 'react';
+
+import { WebbWeb3Provider } from './webb-web3-provider';
 
 type DepositPayload = IDepositPayload<EvmNote, [Deposit, number]>;
 

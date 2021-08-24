@@ -4,12 +4,12 @@ import { EvmChainMixersInfo } from '@webb-dapp/react-environment/api-providers/w
 import { Web3MixerDeposit } from '@webb-dapp/react-environment/api-providers/web3/web3-mixer-deposit';
 import { Web3MixerWithdraw } from '@webb-dapp/react-environment/api-providers/web3/web3-mixer-withdraw';
 import { MixerSize } from '@webb-dapp/react-environment/webb-context';
+import { WebbRelayerBuilder } from '@webb-dapp/react-environment/webb-context/relayer';
 import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import { Web3Accounts } from '@webb-dapp/wallet/providers/web3/web3-accounts';
 import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
 import { EventBus } from '@webb-tools/app-util';
 import { ethers, providers } from 'ethers';
-import { WebbRelayerBuilder } from '@webb-dapp/react-environment/webb-context/relayer';
 
 export class WebbWeb3Provider
   extends EventBus<WebbProviderEvents<[number]>>

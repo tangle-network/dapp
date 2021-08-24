@@ -1,8 +1,8 @@
-import { WebbApiProvider } from '@webb-dapp/react-environment/webb-context/webb-provider.interface';
 import { Chain, Wallet } from '@webb-dapp/react-environment/webb-context/common';
+import { WebbApiProvider } from '@webb-dapp/react-environment/webb-context/webb-provider.interface';
+import { InteractiveFeedback } from '@webb-dapp/utils/webb-error';
 import { Account } from '@webb-dapp/wallet/account/Accounts.adapter';
 import React from 'react';
-import { InteractiveFeedback } from '@webb-dapp/utils/webb-error';
 
 interface Note {
   serialize(): string;

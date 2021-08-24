@@ -1,6 +1,8 @@
 import { ReactComponent as WebbLogo } from '@webb-dapp/react-components/assets/webb-icon.svg';
 import { useStore, useWebContext } from '@webb-dapp/react-environment';
 import { useDimensions } from '@webb-dapp/react-environment/layout';
+import { ConnectWalletButton } from '@webb-dapp/ui-components/Inputs/WalletSelect/ConnectWalletButton';
+import { NetworkManager } from '@webb-dapp/ui-components/NetworkManger/NetworkManager';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 import { below } from '@webb-dapp/ui-components/utils/responsive-utils';
 import React, { useMemo } from 'react';
@@ -9,8 +11,6 @@ import styled from 'styled-components';
 
 import { AccountManager } from '../AccountManager/AccountManager';
 import { ThemeSwitcher } from './ThemeSwticher';
-import { NetworkManager } from '@webb-dapp/ui-components/NetworkManger/NetworkManager';
-import { ConnectWalletButton } from '@webb-dapp/ui-components/Inputs/WalletSelect/ConnectWalletButton';
 
 const AppBarWrapper = styled.nav`
   height: 65px;

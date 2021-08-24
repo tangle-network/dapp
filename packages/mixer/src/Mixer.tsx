@@ -1,8 +1,8 @@
 import { Deposit, MixerTabs, Withdraw } from '@webb-dapp/mixer/components';
-import React from 'react';
-import styled from 'styled-components';
 import IPDisplay from '@webb-dapp/react-components/IPDisplay/IPDisplay';
 import { SpaceBox } from '@webb-dapp/ui-components';
+import React from 'react';
+import styled from 'styled-components';
 
 const MixerWrapper = styled.div``;
 type MixerProps = {};

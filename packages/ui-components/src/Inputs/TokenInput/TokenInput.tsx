@@ -198,7 +198,7 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
               </div>
 
               <StyledList as={List} dense disablePadding>
-                {selectItems.map(({ name, icon: Icon, id, self: currency, symbol }) => {
+                {selectItems.map(({ icon: Icon, id, name, self: currency, symbol }) => {
                   const isSelected = selected?.id === id;
                   return (
                     <li
