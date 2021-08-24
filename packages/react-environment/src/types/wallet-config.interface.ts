@@ -12,7 +12,7 @@ export interface WalletConfig {
   detect?(): boolean | Promise<boolean>;
 
   supportedChainIds: number[];
-};
+}
 
 export type ManagedWallet = {
   connected: boolean;

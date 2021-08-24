@@ -8,11 +8,10 @@ const argv = require('yargs')
   .options({
     'skip-beta': {
       description: 'Do not increment as beta',
-      type: 'boolean'
-    }
+      type: 'boolean',
+    },
   })
-  .strict()
-  .argv;
+  .strict().argv;
 
 const execSync = require('@polkadot/dev/scripts/execSync');
 
@@ -20,7 +19,7 @@ const repo = `https://${process.env.GH_PAT}@github.com/${process.env.GITHUB_REPO
 
 console.log('$ acala bump version', process.argv.slice(2).join(' '));
 
-function gitSetup () {
+function gitSetup() {
   execSync('git config push.default simple');
   execSync('git config merge.ours.driver true');
   execSync('git config user.name "Github Actions"');
@@ -28,16 +27,14 @@ function gitSetup () {
   execSync('git checkout master');
 }
 
-function npmGetVersion () {
-  return JSON.parse(
-    fs.readFileSync(path.resolve(process.cwd(), 'package.json'), 'utf8')
-  ).version;
+function npmGetVersion() {
+  return JSON.parse(fs.readFileSync(path.resolve(process.cwd(), 'package.json'), 'utf8')).version;
 }
 
-function gitBump () {
+function gitBump() {
   const currentVersion = npmGetVersion();
   const [version, tag] = currentVersion.split('-');
-  const [,, patch] = version.split('.');
+  const [, , patch] = version.split('.');
 
   console.log(currentVersion, version, tag);
   if (tag) {
@@ -60,7 +57,7 @@ function gitBump () {
   execSync('git add --all .');
 }
 
-function gitPush () {
+function gitPush() {
   const version = npmGetVersion();
   let doGHRelease = false;
 
@@ -87,9 +84,7 @@ skip-checks: true"`);
   execSync(`git push ${repo} HEAD:${process.env.GITHUB_REF}`, true);
 
   if (doGHRelease) {
-    const files = process.env.GH_RELEASE_FILES
-      ? `--assets ${process.env.GH_RELEASE_FILES}`
-      : '';
+    const files = process.env.GH_RELEASE_FILES ? `--assets ${process.env.GH_RELEASE_FILES}` : '';
 
     execSync(`yarn polkadot-exec-ghrelease --draft ${files} --yes`);
   }

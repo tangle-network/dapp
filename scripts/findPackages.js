@@ -5,7 +5,7 @@
 const fs = require('fs');
 const path = require('path');
 
-module.exports = function findPackages () {
+module.exports = function findPackages() {
   const pkgRoot = path.join(__dirname, '..', 'packages');
 
   return fs
@@ -13,15 +13,15 @@ module.exports = function findPackages () {
     .filter((entry) => {
       const pkgPath = path.join(pkgRoot, entry);
 
-      return !['.', '..'].includes(entry) &&
+      return (
+        !['.', '..'].includes(entry) &&
         fs.lstatSync(pkgPath).isDirectory() &&
-        fs.existsSync(path.join(pkgPath, 'package.json'));
+        fs.existsSync(path.join(pkgPath, 'package.json'))
+      );
     })
     .map((dir) => {
       const jsonPath = path.join(pkgRoot, dir, 'package.json');
-      const { name } = JSON.parse(
-        fs.readFileSync(jsonPath).toString('utf-8')
-      );
+      const { name } = JSON.parse(fs.readFileSync(jsonPath).toString('utf-8'));
 
       return { dir, name };
     });

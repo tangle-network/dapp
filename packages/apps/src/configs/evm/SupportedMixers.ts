@@ -41,9 +41,7 @@ export const rinkebyMixers: MixerInfo[] = [
   },
 ];
 
-export const ethMainNetMixers: MixerInfo[] = [
-
-];
+export const ethMainNetMixers: MixerInfo[] = [];
 
 export const beresheetMixers: MixerInfo[] = [
   {
@@ -73,13 +71,9 @@ export const beresheetMixers: MixerInfo[] = [
 ];
 
 // TODO: Deploy anchor contracts on Mainnet EVM.
-export const edgewareMixers: MixerInfo[] = [
+export const edgewareMixers: MixerInfo[] = [];
 
-];
-
-export const harmonyTest0Mixers: MixerInfo[] = [
-
-];
+export const harmonyTest0Mixers: MixerInfo[] = [];
 
 export const harmonyTest1Mixers: MixerInfo[] = [
   {
@@ -105,5 +99,5 @@ export const harmonyTest1Mixers: MixerInfo[] = [
     address: '0x7cd173094eF78FFAeDee4e14576A73a79aA716ac',
     symbol: 'ONE',
     createdAtBlock: 12892840,
-  }
+  },
 ];

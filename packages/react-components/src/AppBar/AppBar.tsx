@@ -153,7 +153,7 @@ const AppBar: React.FC<AppBarProps> = () => {
         </Tooltip>*/}
         {!isMobile && <NetworkManager />}
         <AccountManagerContainer>
-          {!isMobile && (activeWallet ? <AccountManager /> : <ConnectWalletButton/>)}
+          {!isMobile && (activeWallet ? <AccountManager /> : <ConnectWalletButton />)}
         </AccountManagerContainer>
       </RightNavigation>
     </AppBarWrapper>

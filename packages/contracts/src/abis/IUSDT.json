@@ -193,12 +193,8 @@
   "ast": {
     "absolutePath": "/Users/ahmed/projects/edgeware/anon/contracts/evm/anchor/contracts/Mocks/IUSDT.sol",
     "exportedSymbols": {
-      "ERC20Basic": [
-        1207
-      ],
-      "IUSDT": [
-        1244
-      ]
+      "ERC20Basic": [1207],
+      "IUSDT": [1244]
     },
     "id": 1245,
     "license": "MIT",
@@ -206,12 +202,7 @@
     "nodes": [
       {
         "id": 1174,
-        "literals": [
-          "solidity",
-          "^",
-          "0.7",
-          ".0"
-        ],
+        "literals": ["solidity", "^", "0.7", ".0"],
         "nodeType": "PragmaDirective",
         "src": "33:23:28"
       },
@@ -222,9 +213,7 @@
         "contractKind": "interface",
         "fullyImplemented": false,
         "id": 1207,
-        "linearizedBaseContracts": [
-          1207
-        ],
+        "linearizedBaseContracts": [1207],
         "name": "ERC20Basic",
         "nodeType": "ContractDefinition",
         "nodes": [
@@ -616,9 +605,7 @@
             "src": "507:10:28"
           }
         ],
-        "contractDependencies": [
-          1207
-        ],
+        "contractDependencies": [1207],
         "contractKind": "interface",
         "documentation": {
           "id": 1208,
@@ -628,10 +615,7 @@
         },
         "fullyImplemented": false,
         "id": 1244,
-        "linearizedBaseContracts": [
-          1244,
-          1207
-        ],
+        "linearizedBaseContracts": [1244, 1207],
         "name": "IUSDT",
         "nodeType": "ContractDefinition",
         "nodes": [
@@ -1038,24 +1022,15 @@
     "attributes": {
       "absolutePath": "/Users/ahmed/projects/edgeware/anon/contracts/evm/anchor/contracts/Mocks/IUSDT.sol",
       "exportedSymbols": {
-        "ERC20Basic": [
-          1207
-        ],
-        "IUSDT": [
-          1244
-        ]
+        "ERC20Basic": [1207],
+        "IUSDT": [1244]
       },
       "license": "MIT"
     },
     "children": [
       {
         "attributes": {
-          "literals": [
-            "solidity",
-            "^",
-            "0.7",
-            ".0"
-          ]
+          "literals": ["solidity", "^", "0.7", ".0"]
         },
         "id": 1174,
         "name": "PragmaDirective",
@@ -1064,17 +1039,11 @@
       {
         "attributes": {
           "abstract": false,
-          "baseContracts": [
-            null
-          ],
-          "contractDependencies": [
-            null
-          ],
+          "baseContracts": [null],
+          "contractDependencies": [null],
           "contractKind": "interface",
           "fullyImplemented": false,
-          "linearizedBaseContracts": [
-            1207
-          ],
+          "linearizedBaseContracts": [1207],
           "name": "ERC20Basic",
           "scope": 1245
         },
@@ -1085,9 +1054,7 @@
               "implemented": false,
               "isConstructor": false,
               "kind": "function",
-              "modifiers": [
-                null
-              ],
+              "modifiers": [null],
               "name": "_totalSupply",
               "scope": 1207,
               "stateMutability": "nonpayable",
@@ -1097,9 +1064,7 @@
             "children": [
               {
                 "attributes": {
-                  "parameters": [
-                    null
-                  ]
+                  "parameters": [null]
                 },
                 "children": [],
                 "id": 1175,
@@ -1150,9 +1115,7 @@
               "implemented": false,
               "isConstructor": false,
               "kind": "function",
-              "modifiers": [
-                null
-              ],
+              "modifiers": [null],
               "name": "totalSupply",
               "scope": 1207,
               "stateMutability": "view",
@@ -1162,9 +1125,7 @@
             "children": [
               {
                 "attributes": {
-                  "parameters": [
-                    null
-                  ]
+                  "parameters": [null]
                 },
                 "children": [],
                 "id": 1180,
@@ -1215,9 +1176,7 @@
               "implemented": false,
               "isConstructor": false,
               "kind": "function",
-              "modifiers": [
-                null
-              ],
+              "modifiers": [null],
               "name": "balanceOf",
               "scope": 1207,
               "stateMutability": "view",
@@ -1303,9 +1262,7 @@
               "implemented": false,
               "isConstructor": false,
               "kind": "function",
-              "modifiers": [
-                null
-              ],
+              "modifiers": [null],
               "name": "transfer",
               "scope": 1207,
               "stateMutability": "nonpayable",
@@ -1375,9 +1332,7 @@
               },
               {
                 "attributes": {
-                  "parameters": [
-                    null
-                  ]
+                  "parameters": [null]
                 },
                 "children": [],
                 "id": 1197,
@@ -1498,15 +1453,10 @@
       {
         "attributes": {
           "abstract": false,
-          "contractDependencies": [
-            1207
-          ],
+          "contractDependencies": [1207],
           "contractKind": "interface",
           "fullyImplemented": false,
-          "linearizedBaseContracts": [
-            1244,
-            1207
-          ],
+          "linearizedBaseContracts": [1244, 1207],
           "name": "IUSDT",
           "scope": 1245
         },
@@ -1543,9 +1493,7 @@
               "implemented": false,
               "isConstructor": false,
               "kind": "function",
-              "modifiers": [
-                null
-              ],
+              "modifiers": [null],
               "name": "allowance",
               "scope": 1244,
               "stateMutability": "view",
@@ -1658,9 +1606,7 @@
               "implemented": false,
               "isConstructor": false,
               "kind": "function",
-              "modifiers": [
-                null
-              ],
+              "modifiers": [null],
               "name": "transferFrom",
               "scope": 1244,
               "stateMutability": "nonpayable",
@@ -1757,9 +1703,7 @@
               },
               {
                 "attributes": {
-                  "parameters": [
-                    null
-                  ]
+                  "parameters": [null]
                 },
                 "children": [],
                 "id": 1227,
@@ -1777,9 +1721,7 @@
               "implemented": false,
               "isConstructor": false,
               "kind": "function",
-              "modifiers": [
-                null
-              ],
+              "modifiers": [null],
               "name": "approve",
               "scope": 1244,
               "stateMutability": "nonpayable",
@@ -1849,9 +1791,7 @@
               },
               {
                 "attributes": {
-                  "parameters": [
-                    null
-                  ]
+                  "parameters": [null]
                 },
                 "children": [],
                 "id": 1234,

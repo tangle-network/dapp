@@ -90,18 +90,18 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
   );
 
   const filteredNetworks = useMemo(() => {
-    if (radioButtonFilter == null){
+    if (radioButtonFilter == null) {
       return Object.values(chains);
     }
-    
+
     return Object.values(chains).filter((item) => {
       return item.tag == radioButtonFilter;
-    })
+    });
   }, [chains, radioButtonFilter]);
 
   const handleRadioFilter = (event) => {
     setRadioButtonFilter(event.target.value);
-  }
+  };
 
   const filterSection = useMemo(() => {
     return (
@@ -109,12 +109,12 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
         <FormControl>
           <RadioGroup value={radioButtonFilter} onChange={handleRadioFilter} row>
             {/* <FormControlLabel value="live" control={<Radio />} label="live"/> */}
-            <FormControlLabel value="test" control={<Radio />} label="test"/>
-            <FormControlLabel value="dev" control={<Radio />} label="dev"/>
+            <FormControlLabel value='test' control={<Radio />} label='test' />
+            <FormControlLabel value='dev' control={<Radio />} label='dev' />
           </RadioGroup>
         </FormControl>
       </FilterSection>
-    )
+    );
   }, [radioButtonFilter]);
 
   const [connectionStep, setConnectionStep] = useState(ConnectionStep.SelectChain);
@@ -222,7 +222,9 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
                                 >
                                   <Logo />
                                 </span>
-                                <Typography color={'textSecondary'} variant={'caption'}>{wallet.name}</Typography>
+                                <Typography color={'textSecondary'} variant={'caption'}>
+                                  {wallet.name}
+                                </Typography>
                               </div>
                             );
                           })}
@@ -399,7 +401,7 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
               >
                 <Icon>chevron_left</Icon>
               </IconButton>
-            )}            
+            )}
             <Typography variant={'h5'}>
               <b>Step {stepNumber}:</b> {connectionStep}
             </Typography>

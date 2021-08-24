@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const findPackages = require('./findPackages');
 
-function createI18nFiles (package, languages) {
+function createI18nFiles(package, languages) {
   const folderPath = path.join(package, 'src/i18n');
 
   // create i18n folder

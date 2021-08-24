@@ -278,15 +278,9 @@
   "ast": {
     "absolutePath": "/Users/ahmed/projects/edgeware/anon/contracts/evm/anchor/contracts/Mocks/MerkleTreeWithHistoryMock.sol",
     "exportedSymbols": {
-      "IHasher": [
-        472
-      ],
-      "MerkleTreeWithHistory": [
-        1127
-      ],
-      "MerkleTreeWithHistoryMock": [
-        1272
-      ]
+      "IHasher": [472],
+      "MerkleTreeWithHistory": [1127],
+      "MerkleTreeWithHistoryMock": [1272]
     },
     "id": 1273,
     "license": "MIT",
@@ -294,12 +288,7 @@
     "nodes": [
       {
         "id": 1246,
-        "literals": [
-          "solidity",
-          "^",
-          "0.7",
-          ".0"
-        ],
+        "literals": ["solidity", "^", "0.7", ".0"],
         "nodeType": "PragmaDirective",
         "src": "32:23:29"
       },
@@ -334,16 +323,11 @@
             "src": "135:21:29"
           }
         ],
-        "contractDependencies": [
-          1127
-        ],
+        "contractDependencies": [1127],
         "contractKind": "contract",
         "fullyImplemented": true,
         "id": 1272,
-        "linearizedBaseContracts": [
-          1272,
-          1127
-        ],
+        "linearizedBaseContracts": [1272, 1127],
         "name": "MerkleTreeWithHistoryMock",
         "nodeType": "ContractDefinition",
         "nodes": [
@@ -600,27 +584,16 @@
     "attributes": {
       "absolutePath": "/Users/ahmed/projects/edgeware/anon/contracts/evm/anchor/contracts/Mocks/MerkleTreeWithHistoryMock.sol",
       "exportedSymbols": {
-        "IHasher": [
-          472
-        ],
-        "MerkleTreeWithHistory": [
-          1127
-        ],
-        "MerkleTreeWithHistoryMock": [
-          1272
-        ]
+        "IHasher": [472],
+        "MerkleTreeWithHistory": [1127],
+        "MerkleTreeWithHistoryMock": [1272]
       },
       "license": "MIT"
     },
     "children": [
       {
         "attributes": {
-          "literals": [
-            "solidity",
-            "^",
-            "0.7",
-            ".0"
-          ]
+          "literals": ["solidity", "^", "0.7", ".0"]
         },
         "id": 1246,
         "name": "PragmaDirective",
@@ -632,9 +605,7 @@
           "absolutePath": "/Users/ahmed/projects/edgeware/anon/contracts/evm/anchor/contracts/MerkleTreeWithHistory.sol",
           "file": "../MerkleTreeWithHistory.sol",
           "scope": 1273,
-          "symbolAliases": [
-            null
-          ],
+          "symbolAliases": [null],
           "unitAlias": ""
         },
         "id": 1247,
@@ -644,15 +615,10 @@
       {
         "attributes": {
           "abstract": false,
-          "contractDependencies": [
-            1127
-          ],
+          "contractDependencies": [1127],
           "contractKind": "contract",
           "fullyImplemented": true,
-          "linearizedBaseContracts": [
-            1272,
-            1127
-          ],
+          "linearizedBaseContracts": [1272, 1127],
           "name": "MerkleTreeWithHistoryMock",
           "scope": 1273
         },
@@ -749,9 +715,7 @@
               },
               {
                 "attributes": {
-                  "parameters": [
-                    null
-                  ]
+                  "parameters": [null]
                 },
                 "children": [],
                 "id": 1259,
@@ -762,9 +726,7 @@
                 "children": [
                   {
                     "attributes": {
-                      "overloadedDeclarations": [
-                        null
-                      ],
+                      "overloadedDeclarations": [null],
                       "referencedDeclaration": 1127,
                       "type": "type(contract MerkleTreeWithHistory)",
                       "value": "MerkleTreeWithHistory"
@@ -775,9 +737,7 @@
                   },
                   {
                     "attributes": {
-                      "overloadedDeclarations": [
-                        null
-                      ],
+                      "overloadedDeclarations": [null],
                       "referencedDeclaration": 1251,
                       "type": "uint32",
                       "value": "_treeLevels"
@@ -788,9 +748,7 @@
                   },
                   {
                     "attributes": {
-                      "overloadedDeclarations": [
-                        null
-                      ],
+                      "overloadedDeclarations": [null],
                       "referencedDeclaration": 1253,
                       "type": "contract IHasher",
                       "value": "_hasher"
@@ -806,9 +764,7 @@
               },
               {
                 "attributes": {
-                  "statements": [
-                    null
-                  ]
+                  "statements": [null]
                 },
                 "children": [],
                 "id": 1260,
@@ -826,9 +782,7 @@
               "implemented": true,
               "isConstructor": false,
               "kind": "function",
-              "modifiers": [
-                null
-              ],
+              "modifiers": [null],
               "name": "insert",
               "scope": 1272,
               "stateMutability": "nonpayable",
@@ -871,9 +825,7 @@
               },
               {
                 "attributes": {
-                  "parameters": [
-                    null
-                  ]
+                  "parameters": [null]
                 },
                 "children": [],
                 "id": 1265,
@@ -891,9 +843,7 @@
                           "isPure": false,
                           "isStructConstructorCall": false,
                           "lValueRequested": false,
-                          "names": [
-                            null
-                          ],
+                          "names": [null],
                           "tryCall": false,
                           "type": "uint32",
                           "type_conversion": false
@@ -907,9 +857,7 @@
                                   "typeString": "bytes32"
                                 }
                               ],
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 762,
                               "type": "function (bytes32) returns (uint32)",
                               "value": "_insert"
@@ -920,9 +868,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 1263,
                               "type": "bytes32",
                               "value": "_leaf"

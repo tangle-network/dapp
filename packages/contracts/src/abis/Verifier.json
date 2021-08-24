@@ -73,23 +73,15 @@
   "ast": {
     "absolutePath": "/Users/ahmed/projects/edgeware/anon/contracts/evm/anchor/contracts/Verifier.sol",
     "exportedSymbols": {
-      "Pairing": [
-        1964
-      ],
-      "Verifier": [
-        2451
-      ]
+      "Pairing": [1964],
+      "Verifier": [2451]
     },
     "id": 2452,
     "nodeType": "SourceUnit",
     "nodes": [
       {
         "id": 1375,
-        "literals": [
-          "solidity",
-          "0.7",
-          ".6"
-        ],
+        "literals": ["solidity", "0.7", ".6"],
         "nodeType": "PragmaDirective",
         "src": "1193:22:31"
       },
@@ -100,9 +92,7 @@
         "contractKind": "library",
         "fullyImplemented": true,
         "id": 1964,
-        "linearizedBaseContracts": [
-          1964
-        ],
+        "linearizedBaseContracts": [1964],
         "name": "Pairing",
         "nodeType": "ContractDefinition",
         "nodes": [
@@ -641,9 +631,7 @@
               "src": "2673:267:31",
               "statements": [
                 {
-                  "assignments": [
-                    1426
-                  ],
+                  "assignments": [1426],
                   "declarations": [
                     {
                       "constant": false,
@@ -1186,9 +1174,7 @@
               "src": "3085:481:31",
               "statements": [
                 {
-                  "assignments": [
-                    1472
-                  ],
+                  "assignments": [1472],
                   "declarations": [
                     {
                       "constant": false,
@@ -1595,9 +1581,7 @@
                   "src": "3200:15:31"
                 },
                 {
-                  "assignments": [
-                    1503
-                  ],
+                  "assignments": [1503],
                   "declarations": [
                     {
                       "constant": false,
@@ -1841,10 +1825,7 @@
                       "id": 1506,
                       "name": "require",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        4294967278,
-                        4294967278
-                      ],
+                      "overloadedDeclarations": [4294967278, 4294967278],
                       "referencedDeclaration": 4294967278,
                       "src": "3522:7:31",
                       "typeDescriptions": {
@@ -1993,9 +1974,7 @@
               "src": "3805:452:31",
               "statements": [
                 {
-                  "assignments": [
-                    1527
-                  ],
+                  "assignments": [1527],
                   "declarations": [
                     {
                       "constant": false,
@@ -2300,9 +2279,7 @@
                   "src": "3893:12:31"
                 },
                 {
-                  "assignments": [
-                    1550
-                  ],
+                  "assignments": [1550],
                   "declarations": [
                     {
                       "constant": false,
@@ -2546,10 +2523,7 @@
                       "id": 1553,
                       "name": "require",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        4294967278,
-                        4294967278
-                      ],
+                      "overloadedDeclarations": [4294967278, 4294967278],
                       "referencedDeclaration": 4294967278,
                       "src": "4212:7:31",
                       "typeDescriptions": {
@@ -2800,10 +2774,7 @@
                       "id": 1571,
                       "name": "require",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        4294967278,
-                        4294967278
-                      ],
+                      "overloadedDeclarations": [4294967278, 4294967278],
                       "referencedDeclaration": 4294967278,
                       "src": "4565:7:31",
                       "typeDescriptions": {
@@ -2831,9 +2802,7 @@
                   "src": "4565:56:31"
                 },
                 {
-                  "assignments": [
-                    1581
-                  ],
+                  "assignments": [1581],
                   "declarations": [
                     {
                       "constant": false,
@@ -2893,9 +2862,7 @@
                   "src": "4631:25:31"
                 },
                 {
-                  "assignments": [
-                    1586
-                  ],
+                  "assignments": [1586],
                   "declarations": [
                     {
                       "constant": false,
@@ -2975,9 +2942,7 @@
                   "src": "4666:29:31"
                 },
                 {
-                  "assignments": [
-                    1595
-                  ],
+                  "assignments": [1595],
                   "declarations": [
                     {
                       "constant": false,
@@ -4311,9 +4276,7 @@
                   },
                   "id": 1699,
                   "initializationExpression": {
-                    "assignments": [
-                      1603
-                    ],
+                    "assignments": [1603],
                     "declarations": [
                       {
                         "constant": false,
@@ -4398,9 +4361,7 @@
                   "src": "4758:307:31"
                 },
                 {
-                  "assignments": [
-                    1705
-                  ],
+                  "assignments": [1705],
                   "declarations": [
                     {
                       "constant": false,
@@ -4459,9 +4420,7 @@
                   "src": "5074:18:31"
                 },
                 {
-                  "assignments": [
-                    1708
-                  ],
+                  "assignments": [1708],
                   "declarations": [
                     {
                       "constant": false,
@@ -4746,10 +4705,7 @@
                       "id": 1711,
                       "name": "require",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        4294967278,
-                        4294967278
-                      ],
+                      "overloadedDeclarations": [4294967278, 4294967278],
                       "referencedDeclaration": 4294967278,
                       "src": "5428:7:31",
                       "typeDescriptions": {
@@ -4996,9 +4952,7 @@
               "src": "5697:215:31",
               "statements": [
                 {
-                  "assignments": [
-                    1740
-                  ],
+                  "assignments": [1740],
                   "declarations": [
                     {
                       "constant": false,
@@ -5115,9 +5069,7 @@
                   "src": "5707:38:31"
                 },
                 {
-                  "assignments": [
-                    1750
-                  ],
+                  "assignments": [1750],
                   "declarations": [
                     {
                       "constant": false,
@@ -5766,9 +5718,7 @@
               "src": "6188:255:31",
               "statements": [
                 {
-                  "assignments": [
-                    1808
-                  ],
+                  "assignments": [1808],
                   "declarations": [
                     {
                       "constant": false,
@@ -5885,9 +5835,7 @@
                   "src": "6198:38:31"
                 },
                 {
-                  "assignments": [
-                    1818
-                  ],
+                  "assignments": [1818],
                   "declarations": [
                     {
                       "constant": false,
@@ -6734,9 +6682,7 @@
               "src": "6768:295:31",
               "statements": [
                 {
-                  "assignments": [
-                    1892
-                  ],
+                  "assignments": [1892],
                   "declarations": [
                     {
                       "constant": false,
@@ -6853,9 +6799,7 @@
                   "src": "6778:38:31"
                 },
                 {
-                  "assignments": [
-                    1902
-                  ],
+                  "assignments": [1902],
                   "declarations": [
                     {
                       "constant": false,
@@ -7904,9 +7848,7 @@
         "contractKind": "contract",
         "fullyImplemented": true,
         "id": 2451,
-        "linearizedBaseContracts": [
-          2451
-        ],
+        "linearizedBaseContracts": [2451],
         "name": "Verifier",
         "nodeType": "ContractDefinition",
         "nodes": [
@@ -10217,9 +10159,7 @@
               "src": "10215:846:31",
               "statements": [
                 {
-                  "assignments": [
-                    2148
-                  ],
+                  "assignments": [2148],
                   "declarations": [
                     {
                       "constant": false,
@@ -10269,9 +10209,7 @@
                   "src": "10225:106:31"
                 },
                 {
-                  "assignments": [
-                    2152
-                  ],
+                  "assignments": [2152],
                   "declarations": [
                     {
                       "constant": false,
@@ -10488,10 +10426,7 @@
                       "id": 2156,
                       "name": "require",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        4294967278,
-                        4294967278
-                      ],
+                      "overloadedDeclarations": [4294967278, 4294967278],
                       "referencedDeclaration": 4294967278,
                       "src": "10390:7:31",
                       "typeDescriptions": {
@@ -10519,9 +10454,7 @@
                   "src": "10390:62:31"
                 },
                 {
-                  "assignments": [
-                    2171
-                  ],
+                  "assignments": [2171],
                   "declarations": [
                     {
                       "constant": false,
@@ -10749,10 +10682,7 @@
                             "id": 2189,
                             "name": "require",
                             "nodeType": "Identifier",
-                            "overloadedDeclarations": [
-                              4294967278,
-                              4294967278
-                            ],
+                            "overloadedDeclarations": [4294967278, 4294967278],
                             "referencedDeclaration": 4294967278,
                             "src": "10624:7:31",
                             "typeDescriptions": {
@@ -11115,9 +11045,7 @@
                   },
                   "id": 2218,
                   "initializationExpression": {
-                    "assignments": [
-                      2179
-                    ],
+                    "assignments": [2179],
                     "declarations": [
                       {
                         "constant": false,
@@ -11873,9 +11801,7 @@
               "src": "11253:488:31",
               "statements": [
                 {
-                  "assignments": [
-                    2282
-                  ],
+                  "assignments": [2282],
                   "declarations": [
                     {
                       "constant": false,
@@ -12689,9 +12615,7 @@
                   "src": "11413:37:31"
                 },
                 {
-                  "assignments": [
-                    2346
-                  ],
+                  "assignments": [2346],
                   "declarations": [
                     {
                       "constant": false,
@@ -12974,9 +12898,7 @@
                   },
                   "id": 2374,
                   "initializationExpression": {
-                    "assignments": [
-                      2355
-                    ],
+                    "assignments": [2355],
                     "declarations": [
                       {
                         "constant": false,
@@ -13512,12 +13434,7 @@
               "src": "11845:262:31",
               "statements": [
                 {
-                  "assignments": [
-                    2405,
-                    2409,
-                    2413,
-                    2417
-                  ],
+                  "assignments": [2405, 2409, 2413, 2417],
                   "declarations": [
                     {
                       "constant": false,
@@ -14279,22 +14196,14 @@
     "attributes": {
       "absolutePath": "/Users/ahmed/projects/edgeware/anon/contracts/evm/anchor/contracts/Verifier.sol",
       "exportedSymbols": {
-        "Pairing": [
-          1964
-        ],
-        "Verifier": [
-          2451
-        ]
+        "Pairing": [1964],
+        "Verifier": [2451]
       }
     },
     "children": [
       {
         "attributes": {
-          "literals": [
-            "solidity",
-            "0.7",
-            ".6"
-          ]
+          "literals": ["solidity", "0.7", ".6"]
         },
         "id": 1375,
         "name": "PragmaDirective",
@@ -14303,17 +14212,11 @@
       {
         "attributes": {
           "abstract": false,
-          "baseContracts": [
-            null
-          ],
-          "contractDependencies": [
-            null
-          ],
+          "baseContracts": [null],
+          "contractDependencies": [null],
           "contractKind": "library",
           "fullyImplemented": true,
-          "linearizedBaseContracts": [
-            1964
-          ],
+          "linearizedBaseContracts": [1964],
           "name": "Pairing",
           "scope": 2452
         },
@@ -14503,9 +14406,7 @@
               "implemented": true,
               "isConstructor": false,
               "kind": "function",
-              "modifiers": [
-                null
-              ],
+              "modifiers": [null],
               "name": "P1",
               "scope": 1964,
               "stateMutability": "pure",
@@ -14523,9 +14424,7 @@
               },
               {
                 "attributes": {
-                  "parameters": [
-                    null
-                  ]
+                  "parameters": [null]
                 },
                 "children": [],
                 "id": 1391,
@@ -14580,9 +14479,7 @@
                           "isPure": true,
                           "isStructConstructorCall": true,
                           "lValueRequested": false,
-                          "names": [
-                            null
-                          ],
+                          "names": [null],
                           "tryCall": false,
                           "type": "struct Pairing.G1Point memory",
                           "type_conversion": false
@@ -14600,9 +14497,7 @@
                                   "typeString": "int_const 2"
                                 }
                               ],
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 1380,
                               "type": "type(struct Pairing.G1Point storage pointer)",
                               "value": "G1Point"
@@ -14666,9 +14561,7 @@
               "implemented": true,
               "isConstructor": false,
               "kind": "function",
-              "modifiers": [
-                null
-              ],
+              "modifiers": [null],
               "name": "P2",
               "scope": 1964,
               "stateMutability": "pure",
@@ -14686,9 +14579,7 @@
               },
               {
                 "attributes": {
-                  "parameters": [
-                    null
-                  ]
+                  "parameters": [null]
                 },
                 "children": [],
                 "id": 1403,
@@ -14743,9 +14634,7 @@
                           "isPure": true,
                           "isStructConstructorCall": true,
                           "lValueRequested": false,
-                          "names": [
-                            null
-                          ],
+                          "names": [null],
                           "tryCall": false,
                           "type": "struct Pairing.G2Point memory",
                           "type_conversion": false
@@ -14763,9 +14652,7 @@
                                   "typeString": "uint256[2] memory"
                                 }
                               ],
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 1389,
                               "type": "type(struct Pairing.G2Point storage pointer)",
                               "value": "G2Point"
@@ -14889,9 +14776,7 @@
               "implemented": true,
               "isConstructor": false,
               "kind": "function",
-              "modifiers": [
-                null
-              ],
+              "modifiers": [null],
               "name": "negate",
               "scope": 1964,
               "stateMutability": "pure",
@@ -14979,9 +14864,7 @@
                 "children": [
                   {
                     "attributes": {
-                      "assignments": [
-                        1426
-                      ]
+                      "assignments": [1426]
                     },
                     "children": [
                       {
@@ -15074,9 +14957,7 @@
                                 "children": [
                                   {
                                     "attributes": {
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 1420,
                                       "type": "struct Pairing.G1Point memory",
                                       "value": "p"
@@ -15137,9 +15018,7 @@
                                 "children": [
                                   {
                                     "attributes": {
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 1420,
                                       "type": "struct Pairing.G1Point memory",
                                       "value": "p"
@@ -15190,9 +15069,7 @@
                               "isPure": true,
                               "isStructConstructorCall": true,
                               "lValueRequested": false,
-                              "names": [
-                                null
-                              ],
+                              "names": [null],
                               "tryCall": false,
                               "type": "struct Pairing.G1Point memory",
                               "type_conversion": false
@@ -15210,9 +15087,7 @@
                                       "typeString": "int_const 0"
                                     }
                                   ],
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 1380,
                                   "type": "type(struct Pairing.G1Point storage pointer)",
                                   "value": "G1Point"
@@ -15278,9 +15153,7 @@
                           "isPure": false,
                           "isStructConstructorCall": true,
                           "lValueRequested": false,
-                          "names": [
-                            null
-                          ],
+                          "names": [null],
                           "tryCall": false,
                           "type": "struct Pairing.G1Point memory",
                           "type_conversion": false
@@ -15298,9 +15171,7 @@
                                   "typeString": "uint256"
                                 }
                               ],
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 1380,
                               "type": "type(struct Pairing.G1Point storage pointer)",
                               "value": "G1Point"
@@ -15322,9 +15193,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 1420,
                                   "type": "struct Pairing.G1Point memory",
                                   "value": "p"
@@ -15354,9 +15223,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 1426,
                                   "type": "uint256",
                                   "value": "q"
@@ -15402,9 +15269,7 @@
                                         "children": [
                                           {
                                             "attributes": {
-                                              "overloadedDeclarations": [
-                                                null
-                                              ],
+                                              "overloadedDeclarations": [null],
                                               "referencedDeclaration": 1420,
                                               "type": "struct Pairing.G1Point memory",
                                               "value": "p"
@@ -15420,9 +15285,7 @@
                                       },
                                       {
                                         "attributes": {
-                                          "overloadedDeclarations": [
-                                            null
-                                          ],
+                                          "overloadedDeclarations": [null],
                                           "referencedDeclaration": 1426,
                                           "type": "uint256",
                                           "value": "q"
@@ -15471,9 +15334,7 @@
               "implemented": true,
               "isConstructor": false,
               "kind": "function",
-              "modifiers": [
-                null
-              ],
+              "modifiers": [null],
               "name": "addition",
               "scope": 1964,
               "stateMutability": "view",
@@ -15588,9 +15449,7 @@
                 "children": [
                   {
                     "attributes": {
-                      "assignments": [
-                        1472
-                      ]
+                      "assignments": [1472]
                     },
                     "children": [
                       {
@@ -15672,9 +15531,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 1472,
                                   "type": "uint256[4] memory",
                                   "value": "input"
@@ -15716,9 +15573,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 1460,
                                   "type": "struct Pairing.G1Point memory",
                                   "value": "p1"
@@ -15765,9 +15620,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 1472,
                                   "type": "uint256[4] memory",
                                   "value": "input"
@@ -15809,9 +15662,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 1460,
                                   "type": "struct Pairing.G1Point memory",
                                   "value": "p1"
@@ -15858,9 +15709,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 1472,
                                   "type": "uint256[4] memory",
                                   "value": "input"
@@ -15902,9 +15751,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 1462,
                                   "type": "struct Pairing.G1Point memory",
                                   "value": "p2"
@@ -15951,9 +15798,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 1472,
                                   "type": "uint256[4] memory",
                                   "value": "input"
@@ -15995,9 +15840,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 1462,
                                   "type": "struct Pairing.G1Point memory",
                                   "value": "p2"
@@ -16023,9 +15866,7 @@
                   },
                   {
                     "attributes": {
-                      "assignments": [
-                        1503
-                      ]
+                      "assignments": [1503]
                     },
                     "children": [
                       {
@@ -16108,9 +15949,7 @@
                           "isPure": false,
                           "isStructConstructorCall": false,
                           "lValueRequested": false,
-                          "names": [
-                            null
-                          ],
+                          "names": [null],
                           "tryCall": false,
                           "type": "tuple()",
                           "type_conversion": false
@@ -16128,10 +15967,7 @@
                                   "typeString": "literal_string \"pairing-add-failed\""
                                 }
                               ],
-                              "overloadedDeclarations": [
-                                4294967278,
-                                4294967278
-                              ],
+                              "overloadedDeclarations": [4294967278, 4294967278],
                               "referencedDeclaration": 4294967278,
                               "type": "function (bool,string memory) pure",
                               "value": "require"
@@ -16142,9 +15978,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 1503,
                               "type": "bool",
                               "value": "success"
@@ -16193,9 +16027,7 @@
               "implemented": true,
               "isConstructor": false,
               "kind": "function",
-              "modifiers": [
-                null
-              ],
+              "modifiers": [null],
               "name": "scalar_mul",
               "scope": 1964,
               "stateMutability": "view",
@@ -16309,9 +16141,7 @@
                 "children": [
                   {
                     "attributes": {
-                      "assignments": [
-                        1527
-                      ]
+                      "assignments": [1527]
                     },
                     "children": [
                       {
@@ -16393,9 +16223,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 1527,
                                   "type": "uint256[3] memory",
                                   "value": "input"
@@ -16437,9 +16265,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 1515,
                                   "type": "struct Pairing.G1Point memory",
                                   "value": "p"
@@ -16486,9 +16312,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 1527,
                                   "type": "uint256[3] memory",
                                   "value": "input"
@@ -16530,9 +16354,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 1515,
                                   "type": "struct Pairing.G1Point memory",
                                   "value": "p"
@@ -16579,9 +16401,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 1527,
                                   "type": "uint256[3] memory",
                                   "value": "input"
@@ -16612,9 +16432,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 1517,
                               "type": "uint256",
                               "value": "s"
@@ -16635,9 +16453,7 @@
                   },
                   {
                     "attributes": {
-                      "assignments": [
-                        1550
-                      ]
+                      "assignments": [1550]
                     },
                     "children": [
                       {
@@ -16720,9 +16536,7 @@
                           "isPure": false,
                           "isStructConstructorCall": false,
                           "lValueRequested": false,
-                          "names": [
-                            null
-                          ],
+                          "names": [null],
                           "tryCall": false,
                           "type": "tuple()",
                           "type_conversion": false
@@ -16740,10 +16554,7 @@
                                   "typeString": "literal_string \"pairing-mul-failed\""
                                 }
                               ],
-                              "overloadedDeclarations": [
-                                4294967278,
-                                4294967278
-                              ],
+                              "overloadedDeclarations": [4294967278, 4294967278],
                               "referencedDeclaration": 4294967278,
                               "type": "function (bool,string memory) pure",
                               "value": "require"
@@ -16754,9 +16565,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 1550,
                               "type": "bool",
                               "value": "success"
@@ -16805,9 +16614,7 @@
               "implemented": true,
               "isConstructor": false,
               "kind": "function",
-              "modifiers": [
-                null
-              ],
+              "modifiers": [null],
               "name": "pairing",
               "scope": 1964,
               "stateMutability": "view",
@@ -16948,9 +16755,7 @@
                           "isPure": false,
                           "isStructConstructorCall": false,
                           "lValueRequested": false,
-                          "names": [
-                            null
-                          ],
+                          "names": [null],
                           "tryCall": false,
                           "type": "tuple()",
                           "type_conversion": false
@@ -16968,10 +16773,7 @@
                                   "typeString": "literal_string \"pairing-lengths-failed\""
                                 }
                               ],
-                              "overloadedDeclarations": [
-                                4294967278,
-                                4294967278
-                              ],
+                              "overloadedDeclarations": [4294967278, 4294967278],
                               "referencedDeclaration": 4294967278,
                               "type": "function (bool,string memory) pure",
                               "value": "require"
@@ -17006,9 +16808,7 @@
                                 "children": [
                                   {
                                     "attributes": {
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 1563,
                                       "type": "struct Pairing.G1Point memory[] memory",
                                       "value": "p1"
@@ -17034,9 +16834,7 @@
                                 "children": [
                                   {
                                     "attributes": {
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 1566,
                                       "type": "struct Pairing.G2Point memory[] memory",
                                       "value": "p2"
@@ -17082,9 +16880,7 @@
                   },
                   {
                     "attributes": {
-                      "assignments": [
-                        1581
-                      ]
+                      "assignments": [1581]
                     },
                     "children": [
                       {
@@ -17125,9 +16921,7 @@
                         "children": [
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 1563,
                               "type": "struct Pairing.G1Point memory[] memory",
                               "value": "p1"
@@ -17148,9 +16942,7 @@
                   },
                   {
                     "attributes": {
-                      "assignments": [
-                        1586
-                      ]
+                      "assignments": [1586]
                     },
                     "children": [
                       {
@@ -17195,9 +16987,7 @@
                         "children": [
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 1581,
                               "type": "uint256",
                               "value": "elements"
@@ -17233,9 +17023,7 @@
                   },
                   {
                     "attributes": {
-                      "assignments": [
-                        1595
-                      ]
+                      "assignments": [1595]
                     },
                     "children": [
                       {
@@ -17281,9 +17069,7 @@
                           "isPure": false,
                           "isStructConstructorCall": false,
                           "lValueRequested": false,
-                          "names": [
-                            null
-                          ],
+                          "names": [null],
                           "tryCall": false,
                           "type": "uint256[] memory",
                           "type_conversion": false
@@ -17330,9 +17116,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 1586,
                               "type": "uint256",
                               "value": "inputSize"
@@ -17355,9 +17139,7 @@
                     "children": [
                       {
                         "attributes": {
-                          "assignments": [
-                            1603
-                          ]
+                          "assignments": [1603]
                         },
                         "children": [
                           {
@@ -17422,9 +17204,7 @@
                         "children": [
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 1603,
                               "type": "uint256",
                               "value": "i"
@@ -17435,9 +17215,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 1581,
                               "type": "uint256",
                               "value": "elements"
@@ -17466,9 +17244,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 1603,
                                   "type": "uint256",
                                   "value": "i"
@@ -17512,9 +17288,7 @@
                                     "children": [
                                       {
                                         "attributes": {
-                                          "overloadedDeclarations": [
-                                            null
-                                          ],
+                                          "overloadedDeclarations": [null],
                                           "referencedDeclaration": 1595,
                                           "type": "uint256[] memory",
                                           "value": "input"
@@ -17553,9 +17327,7 @@
                                             "children": [
                                               {
                                                 "attributes": {
-                                                  "overloadedDeclarations": [
-                                                    null
-                                                  ],
+                                                  "overloadedDeclarations": [null],
                                                   "referencedDeclaration": 1603,
                                                   "type": "uint256",
                                                   "value": "i"
@@ -17631,9 +17403,7 @@
                                         "children": [
                                           {
                                             "attributes": {
-                                              "overloadedDeclarations": [
-                                                null
-                                              ],
+                                              "overloadedDeclarations": [null],
                                               "referencedDeclaration": 1563,
                                               "type": "struct Pairing.G1Point memory[] memory",
                                               "value": "p1"
@@ -17644,9 +17414,7 @@
                                           },
                                           {
                                             "attributes": {
-                                              "overloadedDeclarations": [
-                                                null
-                                              ],
+                                              "overloadedDeclarations": [null],
                                               "referencedDeclaration": 1603,
                                               "type": "uint256",
                                               "value": "i"
@@ -17698,9 +17466,7 @@
                                     "children": [
                                       {
                                         "attributes": {
-                                          "overloadedDeclarations": [
-                                            null
-                                          ],
+                                          "overloadedDeclarations": [null],
                                           "referencedDeclaration": 1595,
                                           "type": "uint256[] memory",
                                           "value": "input"
@@ -17739,9 +17505,7 @@
                                             "children": [
                                               {
                                                 "attributes": {
-                                                  "overloadedDeclarations": [
-                                                    null
-                                                  ],
+                                                  "overloadedDeclarations": [null],
                                                   "referencedDeclaration": 1603,
                                                   "type": "uint256",
                                                   "value": "i"
@@ -17817,9 +17581,7 @@
                                         "children": [
                                           {
                                             "attributes": {
-                                              "overloadedDeclarations": [
-                                                null
-                                              ],
+                                              "overloadedDeclarations": [null],
                                               "referencedDeclaration": 1563,
                                               "type": "struct Pairing.G1Point memory[] memory",
                                               "value": "p1"
@@ -17830,9 +17592,7 @@
                                           },
                                           {
                                             "attributes": {
-                                              "overloadedDeclarations": [
-                                                null
-                                              ],
+                                              "overloadedDeclarations": [null],
                                               "referencedDeclaration": 1603,
                                               "type": "uint256",
                                               "value": "i"
@@ -17884,9 +17644,7 @@
                                     "children": [
                                       {
                                         "attributes": {
-                                          "overloadedDeclarations": [
-                                            null
-                                          ],
+                                          "overloadedDeclarations": [null],
                                           "referencedDeclaration": 1595,
                                           "type": "uint256[] memory",
                                           "value": "input"
@@ -17925,9 +17683,7 @@
                                             "children": [
                                               {
                                                 "attributes": {
-                                                  "overloadedDeclarations": [
-                                                    null
-                                                  ],
+                                                  "overloadedDeclarations": [null],
                                                   "referencedDeclaration": 1603,
                                                   "type": "uint256",
                                                   "value": "i"
@@ -18012,9 +17768,7 @@
                                             "children": [
                                               {
                                                 "attributes": {
-                                                  "overloadedDeclarations": [
-                                                    null
-                                                  ],
+                                                  "overloadedDeclarations": [null],
                                                   "referencedDeclaration": 1566,
                                                   "type": "struct Pairing.G2Point memory[] memory",
                                                   "value": "p2"
@@ -18025,9 +17779,7 @@
                                               },
                                               {
                                                 "attributes": {
-                                                  "overloadedDeclarations": [
-                                                    null
-                                                  ],
+                                                  "overloadedDeclarations": [null],
                                                   "referencedDeclaration": 1603,
                                                   "type": "uint256",
                                                   "value": "i"
@@ -18099,9 +17851,7 @@
                                     "children": [
                                       {
                                         "attributes": {
-                                          "overloadedDeclarations": [
-                                            null
-                                          ],
+                                          "overloadedDeclarations": [null],
                                           "referencedDeclaration": 1595,
                                           "type": "uint256[] memory",
                                           "value": "input"
@@ -18140,9 +17890,7 @@
                                             "children": [
                                               {
                                                 "attributes": {
-                                                  "overloadedDeclarations": [
-                                                    null
-                                                  ],
+                                                  "overloadedDeclarations": [null],
                                                   "referencedDeclaration": 1603,
                                                   "type": "uint256",
                                                   "value": "i"
@@ -18227,9 +17975,7 @@
                                             "children": [
                                               {
                                                 "attributes": {
-                                                  "overloadedDeclarations": [
-                                                    null
-                                                  ],
+                                                  "overloadedDeclarations": [null],
                                                   "referencedDeclaration": 1566,
                                                   "type": "struct Pairing.G2Point memory[] memory",
                                                   "value": "p2"
@@ -18240,9 +17986,7 @@
                                               },
                                               {
                                                 "attributes": {
-                                                  "overloadedDeclarations": [
-                                                    null
-                                                  ],
+                                                  "overloadedDeclarations": [null],
                                                   "referencedDeclaration": 1603,
                                                   "type": "uint256",
                                                   "value": "i"
@@ -18314,9 +18058,7 @@
                                     "children": [
                                       {
                                         "attributes": {
-                                          "overloadedDeclarations": [
-                                            null
-                                          ],
+                                          "overloadedDeclarations": [null],
                                           "referencedDeclaration": 1595,
                                           "type": "uint256[] memory",
                                           "value": "input"
@@ -18355,9 +18097,7 @@
                                             "children": [
                                               {
                                                 "attributes": {
-                                                  "overloadedDeclarations": [
-                                                    null
-                                                  ],
+                                                  "overloadedDeclarations": [null],
                                                   "referencedDeclaration": 1603,
                                                   "type": "uint256",
                                                   "value": "i"
@@ -18442,9 +18182,7 @@
                                             "children": [
                                               {
                                                 "attributes": {
-                                                  "overloadedDeclarations": [
-                                                    null
-                                                  ],
+                                                  "overloadedDeclarations": [null],
                                                   "referencedDeclaration": 1566,
                                                   "type": "struct Pairing.G2Point memory[] memory",
                                                   "value": "p2"
@@ -18455,9 +18193,7 @@
                                               },
                                               {
                                                 "attributes": {
-                                                  "overloadedDeclarations": [
-                                                    null
-                                                  ],
+                                                  "overloadedDeclarations": [null],
                                                   "referencedDeclaration": 1603,
                                                   "type": "uint256",
                                                   "value": "i"
@@ -18529,9 +18265,7 @@
                                     "children": [
                                       {
                                         "attributes": {
-                                          "overloadedDeclarations": [
-                                            null
-                                          ],
+                                          "overloadedDeclarations": [null],
                                           "referencedDeclaration": 1595,
                                           "type": "uint256[] memory",
                                           "value": "input"
@@ -18570,9 +18304,7 @@
                                             "children": [
                                               {
                                                 "attributes": {
-                                                  "overloadedDeclarations": [
-                                                    null
-                                                  ],
+                                                  "overloadedDeclarations": [null],
                                                   "referencedDeclaration": 1603,
                                                   "type": "uint256",
                                                   "value": "i"
@@ -18657,9 +18389,7 @@
                                             "children": [
                                               {
                                                 "attributes": {
-                                                  "overloadedDeclarations": [
-                                                    null
-                                                  ],
+                                                  "overloadedDeclarations": [null],
                                                   "referencedDeclaration": 1566,
                                                   "type": "struct Pairing.G2Point memory[] memory",
                                                   "value": "p2"
@@ -18670,9 +18400,7 @@
                                               },
                                               {
                                                 "attributes": {
-                                                  "overloadedDeclarations": [
-                                                    null
-                                                  ],
+                                                  "overloadedDeclarations": [null],
                                                   "referencedDeclaration": 1603,
                                                   "type": "uint256",
                                                   "value": "i"
@@ -18733,9 +18461,7 @@
                   },
                   {
                     "attributes": {
-                      "assignments": [
-                        1705
-                      ]
+                      "assignments": [1705]
                     },
                     "children": [
                       {
@@ -18796,9 +18522,7 @@
                   },
                   {
                     "attributes": {
-                      "assignments": [
-                        1708
-                      ]
+                      "assignments": [1708]
                     },
                     "children": [
                       {
@@ -18888,9 +18612,7 @@
                           "isPure": false,
                           "isStructConstructorCall": false,
                           "lValueRequested": false,
-                          "names": [
-                            null
-                          ],
+                          "names": [null],
                           "tryCall": false,
                           "type": "tuple()",
                           "type_conversion": false
@@ -18908,10 +18630,7 @@
                                   "typeString": "literal_string \"pairing-opcode-failed\""
                                 }
                               ],
-                              "overloadedDeclarations": [
-                                4294967278,
-                                4294967278
-                              ],
+                              "overloadedDeclarations": [4294967278, 4294967278],
                               "referencedDeclaration": 4294967278,
                               "type": "function (bool,string memory) pure",
                               "value": "require"
@@ -18922,9 +18641,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 1708,
                               "type": "bool",
                               "value": "success"
@@ -18988,9 +18705,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 1705,
                                   "type": "uint256[1] memory",
                                   "value": "out"
@@ -19059,9 +18774,7 @@
               "implemented": true,
               "isConstructor": false,
               "kind": "function",
-              "modifiers": [
-                null
-              ],
+              "modifiers": [null],
               "name": "pairingProd2",
               "scope": 1964,
               "stateMutability": "view",
@@ -19229,9 +18942,7 @@
                 "children": [
                   {
                     "attributes": {
-                      "assignments": [
-                        1740
-                      ]
+                      "assignments": [1740]
                     },
                     "children": [
                       {
@@ -19278,9 +18989,7 @@
                           "isPure": true,
                           "isStructConstructorCall": false,
                           "lValueRequested": false,
-                          "names": [
-                            null
-                          ],
+                          "names": [null],
                           "tryCall": false,
                           "type": "struct Pairing.G1Point memory[] memory",
                           "type_conversion": false
@@ -19353,9 +19062,7 @@
                   },
                   {
                     "attributes": {
-                      "assignments": [
-                        1750
-                      ]
+                      "assignments": [1750]
                     },
                     "children": [
                       {
@@ -19402,9 +19109,7 @@
                           "isPure": true,
                           "isStructConstructorCall": false,
                           "lValueRequested": false,
-                          "names": [
-                            null
-                          ],
+                          "names": [null],
                           "tryCall": false,
                           "type": "struct Pairing.G2Point memory[] memory",
                           "type_conversion": false
@@ -19498,9 +19203,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 1740,
                                   "type": "struct Pairing.G1Point memory[] memory",
                                   "value": "p1"
@@ -19531,9 +19234,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 1726,
                               "type": "struct Pairing.G1Point memory",
                               "value": "a1"
@@ -19575,9 +19276,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 1740,
                                   "type": "struct Pairing.G1Point memory[] memory",
                                   "value": "p1"
@@ -19608,9 +19307,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 1730,
                               "type": "struct Pairing.G1Point memory",
                               "value": "b1"
@@ -19652,9 +19349,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 1750,
                                   "type": "struct Pairing.G2Point memory[] memory",
                                   "value": "p2"
@@ -19685,9 +19380,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 1728,
                               "type": "struct Pairing.G2Point memory",
                               "value": "a2"
@@ -19729,9 +19422,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 1750,
                                   "type": "struct Pairing.G2Point memory[] memory",
                                   "value": "p2"
@@ -19762,9 +19453,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 1732,
                               "type": "struct Pairing.G2Point memory",
                               "value": "b2"
@@ -19795,9 +19484,7 @@
                           "isPure": false,
                           "isStructConstructorCall": false,
                           "lValueRequested": false,
-                          "names": [
-                            null
-                          ],
+                          "names": [null],
                           "tryCall": false,
                           "type": "bool",
                           "type_conversion": false
@@ -19815,9 +19502,7 @@
                                   "typeString": "struct Pairing.G2Point memory[] memory"
                                 }
                               ],
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 1723,
                               "type": "function (struct Pairing.G1Point memory[] memory,struct Pairing.G2Point memory[] memory) view returns (bool)",
                               "value": "pairing"
@@ -19828,9 +19513,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 1740,
                               "type": "struct Pairing.G1Point memory[] memory",
                               "value": "p1"
@@ -19841,9 +19524,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 1750,
                               "type": "struct Pairing.G2Point memory[] memory",
                               "value": "p2"
@@ -19877,9 +19558,7 @@
               "implemented": true,
               "isConstructor": false,
               "kind": "function",
-              "modifiers": [
-                null
-              ],
+              "modifiers": [null],
               "name": "pairingProd3",
               "scope": 1964,
               "stateMutability": "view",
@@ -20101,9 +19780,7 @@
                 "children": [
                   {
                     "attributes": {
-                      "assignments": [
-                        1808
-                      ]
+                      "assignments": [1808]
                     },
                     "children": [
                       {
@@ -20150,9 +19827,7 @@
                           "isPure": true,
                           "isStructConstructorCall": false,
                           "lValueRequested": false,
-                          "names": [
-                            null
-                          ],
+                          "names": [null],
                           "tryCall": false,
                           "type": "struct Pairing.G1Point memory[] memory",
                           "type_conversion": false
@@ -20225,9 +19900,7 @@
                   },
                   {
                     "attributes": {
-                      "assignments": [
-                        1818
-                      ]
+                      "assignments": [1818]
                     },
                     "children": [
                       {
@@ -20274,9 +19947,7 @@
                           "isPure": true,
                           "isStructConstructorCall": false,
                           "lValueRequested": false,
-                          "names": [
-                            null
-                          ],
+                          "names": [null],
                           "tryCall": false,
                           "type": "struct Pairing.G2Point memory[] memory",
                           "type_conversion": false
@@ -20370,9 +20041,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 1808,
                                   "type": "struct Pairing.G1Point memory[] memory",
                                   "value": "p1"
@@ -20403,9 +20072,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 1790,
                               "type": "struct Pairing.G1Point memory",
                               "value": "a1"
@@ -20447,9 +20114,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 1808,
                                   "type": "struct Pairing.G1Point memory[] memory",
                                   "value": "p1"
@@ -20480,9 +20145,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 1794,
                               "type": "struct Pairing.G1Point memory",
                               "value": "b1"
@@ -20524,9 +20187,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 1808,
                                   "type": "struct Pairing.G1Point memory[] memory",
                                   "value": "p1"
@@ -20557,9 +20218,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 1798,
                               "type": "struct Pairing.G1Point memory",
                               "value": "c1"
@@ -20601,9 +20260,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 1818,
                                   "type": "struct Pairing.G2Point memory[] memory",
                                   "value": "p2"
@@ -20634,9 +20291,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 1792,
                               "type": "struct Pairing.G2Point memory",
                               "value": "a2"
@@ -20678,9 +20333,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 1818,
                                   "type": "struct Pairing.G2Point memory[] memory",
                                   "value": "p2"
@@ -20711,9 +20364,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 1796,
                               "type": "struct Pairing.G2Point memory",
                               "value": "b2"
@@ -20755,9 +20406,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 1818,
                                   "type": "struct Pairing.G2Point memory[] memory",
                                   "value": "p2"
@@ -20788,9 +20437,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 1800,
                               "type": "struct Pairing.G2Point memory",
                               "value": "c2"
@@ -20821,9 +20468,7 @@
                           "isPure": false,
                           "isStructConstructorCall": false,
                           "lValueRequested": false,
-                          "names": [
-                            null
-                          ],
+                          "names": [null],
                           "tryCall": false,
                           "type": "bool",
                           "type_conversion": false
@@ -20841,9 +20486,7 @@
                                   "typeString": "struct Pairing.G2Point memory[] memory"
                                 }
                               ],
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 1723,
                               "type": "function (struct Pairing.G1Point memory[] memory,struct Pairing.G2Point memory[] memory) view returns (bool)",
                               "value": "pairing"
@@ -20854,9 +20497,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 1808,
                               "type": "struct Pairing.G1Point memory[] memory",
                               "value": "p1"
@@ -20867,9 +20508,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 1818,
                               "type": "struct Pairing.G2Point memory[] memory",
                               "value": "p2"
@@ -20903,9 +20542,7 @@
               "implemented": true,
               "isConstructor": false,
               "kind": "function",
-              "modifiers": [
-                null
-              ],
+              "modifiers": [null],
               "name": "pairingProd4",
               "scope": 1964,
               "stateMutability": "view",
@@ -21181,9 +20818,7 @@
                 "children": [
                   {
                     "attributes": {
-                      "assignments": [
-                        1892
-                      ]
+                      "assignments": [1892]
                     },
                     "children": [
                       {
@@ -21230,9 +20865,7 @@
                           "isPure": true,
                           "isStructConstructorCall": false,
                           "lValueRequested": false,
-                          "names": [
-                            null
-                          ],
+                          "names": [null],
                           "tryCall": false,
                           "type": "struct Pairing.G1Point memory[] memory",
                           "type_conversion": false
@@ -21305,9 +20938,7 @@
                   },
                   {
                     "attributes": {
-                      "assignments": [
-                        1902
-                      ]
+                      "assignments": [1902]
                     },
                     "children": [
                       {
@@ -21354,9 +20985,7 @@
                           "isPure": true,
                           "isStructConstructorCall": false,
                           "lValueRequested": false,
-                          "names": [
-                            null
-                          ],
+                          "names": [null],
                           "tryCall": false,
                           "type": "struct Pairing.G2Point memory[] memory",
                           "type_conversion": false
@@ -21450,9 +21079,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 1892,
                                   "type": "struct Pairing.G1Point memory[] memory",
                                   "value": "p1"
@@ -21483,9 +21110,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 1870,
                               "type": "struct Pairing.G1Point memory",
                               "value": "a1"
@@ -21527,9 +21152,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 1892,
                                   "type": "struct Pairing.G1Point memory[] memory",
                                   "value": "p1"
@@ -21560,9 +21183,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 1874,
                               "type": "struct Pairing.G1Point memory",
                               "value": "b1"
@@ -21604,9 +21225,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 1892,
                                   "type": "struct Pairing.G1Point memory[] memory",
                                   "value": "p1"
@@ -21637,9 +21256,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 1878,
                               "type": "struct Pairing.G1Point memory",
                               "value": "c1"
@@ -21681,9 +21298,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 1892,
                                   "type": "struct Pairing.G1Point memory[] memory",
                                   "value": "p1"
@@ -21714,9 +21329,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 1882,
                               "type": "struct Pairing.G1Point memory",
                               "value": "d1"
@@ -21758,9 +21371,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 1902,
                                   "type": "struct Pairing.G2Point memory[] memory",
                                   "value": "p2"
@@ -21791,9 +21402,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 1872,
                               "type": "struct Pairing.G2Point memory",
                               "value": "a2"
@@ -21835,9 +21444,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 1902,
                                   "type": "struct Pairing.G2Point memory[] memory",
                                   "value": "p2"
@@ -21868,9 +21475,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 1876,
                               "type": "struct Pairing.G2Point memory",
                               "value": "b2"
@@ -21912,9 +21517,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 1902,
                                   "type": "struct Pairing.G2Point memory[] memory",
                                   "value": "p2"
@@ -21945,9 +21548,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 1880,
                               "type": "struct Pairing.G2Point memory",
                               "value": "c2"
@@ -21989,9 +21590,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 1902,
                                   "type": "struct Pairing.G2Point memory[] memory",
                                   "value": "p2"
@@ -22022,9 +21621,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 1884,
                               "type": "struct Pairing.G2Point memory",
                               "value": "d2"
@@ -22055,9 +21652,7 @@
                           "isPure": false,
                           "isStructConstructorCall": false,
                           "lValueRequested": false,
-                          "names": [
-                            null
-                          ],
+                          "names": [null],
                           "tryCall": false,
                           "type": "bool",
                           "type_conversion": false
@@ -22075,9 +21670,7 @@
                                   "typeString": "struct Pairing.G2Point memory[] memory"
                                 }
                               ],
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 1723,
                               "type": "function (struct Pairing.G1Point memory[] memory,struct Pairing.G2Point memory[] memory) view returns (bool)",
                               "value": "pairing"
@@ -22088,9 +21681,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 1892,
                               "type": "struct Pairing.G1Point memory[] memory",
                               "value": "p1"
@@ -22101,9 +21692,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 1902,
                               "type": "struct Pairing.G2Point memory[] memory",
                               "value": "p2"
@@ -22140,17 +21729,11 @@
       {
         "attributes": {
           "abstract": false,
-          "baseContracts": [
-            null
-          ],
-          "contractDependencies": [
-            null
-          ],
+          "baseContracts": [null],
+          "contractDependencies": [null],
           "contractKind": "contract",
           "fullyImplemented": true,
-          "linearizedBaseContracts": [
-            2451
-          ],
+          "linearizedBaseContracts": [2451],
           "name": "Verifier",
           "scope": 2452
         },
@@ -22430,9 +22013,7 @@
               "implemented": true,
               "isConstructor": false,
               "kind": "function",
-              "modifiers": [
-                null
-              ],
+              "modifiers": [null],
               "name": "verifyingKey",
               "scope": 2451,
               "stateMutability": "pure",
@@ -22442,9 +22023,7 @@
             "children": [
               {
                 "attributes": {
-                  "parameters": [
-                    null
-                  ]
+                  "parameters": [null]
                 },
                 "children": [],
                 "id": 1986,
@@ -22512,9 +22091,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 1988,
                                   "type": "struct Verifier.VerifyingKey memory",
                                   "value": "vk"
@@ -22535,9 +22112,7 @@
                               "isPure": true,
                               "isStructConstructorCall": true,
                               "lValueRequested": false,
-                              "names": [
-                                null
-                              ],
+                              "names": [null],
                               "tryCall": false,
                               "type": "struct Pairing.G1Point memory",
                               "type_conversion": false
@@ -22566,9 +22141,7 @@
                                 "children": [
                                   {
                                     "attributes": {
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 1964,
                                       "type": "type(library Pairing)",
                                       "value": "Pairing"
@@ -22652,9 +22225,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 1988,
                                   "type": "struct Verifier.VerifyingKey memory",
                                   "value": "vk"
@@ -22675,9 +22246,7 @@
                               "isPure": true,
                               "isStructConstructorCall": true,
                               "lValueRequested": false,
-                              "names": [
-                                null
-                              ],
+                              "names": [null],
                               "tryCall": false,
                               "type": "struct Pairing.G2Point memory",
                               "type_conversion": false
@@ -22706,9 +22275,7 @@
                                 "children": [
                                   {
                                     "attributes": {
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 1964,
                                       "type": "type(library Pairing)",
                                       "value": "Pairing"
@@ -22852,9 +22419,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 1988,
                                   "type": "struct Verifier.VerifyingKey memory",
                                   "value": "vk"
@@ -22875,9 +22440,7 @@
                               "isPure": true,
                               "isStructConstructorCall": true,
                               "lValueRequested": false,
-                              "names": [
-                                null
-                              ],
+                              "names": [null],
                               "tryCall": false,
                               "type": "struct Pairing.G2Point memory",
                               "type_conversion": false
@@ -22906,9 +22469,7 @@
                                 "children": [
                                   {
                                     "attributes": {
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 1964,
                                       "type": "type(library Pairing)",
                                       "value": "Pairing"
@@ -23052,9 +22613,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 1988,
                                   "type": "struct Verifier.VerifyingKey memory",
                                   "value": "vk"
@@ -23075,9 +22634,7 @@
                               "isPure": true,
                               "isStructConstructorCall": true,
                               "lValueRequested": false,
-                              "names": [
-                                null
-                              ],
+                              "names": [null],
                               "tryCall": false,
                               "type": "struct Pairing.G2Point memory",
                               "type_conversion": false
@@ -23106,9 +22663,7 @@
                                 "children": [
                                   {
                                     "attributes": {
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 1964,
                                       "type": "type(library Pairing)",
                                       "value": "Pairing"
@@ -23252,9 +22807,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 1988,
                                   "type": "struct Verifier.VerifyingKey memory",
                                   "value": "vk"
@@ -23275,9 +22828,7 @@
                               "isPure": true,
                               "isStructConstructorCall": false,
                               "lValueRequested": false,
-                              "names": [
-                                null
-                              ],
+                              "names": [null],
                               "tryCall": false,
                               "type": "struct Pairing.G1Point memory[] memory",
                               "type_conversion": false
@@ -23387,9 +22938,7 @@
                                 "children": [
                                   {
                                     "attributes": {
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 1988,
                                       "type": "struct Verifier.VerifyingKey memory",
                                       "value": "vk"
@@ -23430,9 +22979,7 @@
                               "isPure": true,
                               "isStructConstructorCall": true,
                               "lValueRequested": false,
-                              "names": [
-                                null
-                              ],
+                              "names": [null],
                               "tryCall": false,
                               "type": "struct Pairing.G1Point memory",
                               "type_conversion": false
@@ -23461,9 +23008,7 @@
                                 "children": [
                                   {
                                     "attributes": {
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 1964,
                                       "type": "type(library Pairing)",
                                       "value": "Pairing"
@@ -23556,9 +23101,7 @@
                                 "children": [
                                   {
                                     "attributes": {
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 1988,
                                       "type": "struct Verifier.VerifyingKey memory",
                                       "value": "vk"
@@ -23599,9 +23142,7 @@
                               "isPure": true,
                               "isStructConstructorCall": true,
                               "lValueRequested": false,
-                              "names": [
-                                null
-                              ],
+                              "names": [null],
                               "tryCall": false,
                               "type": "struct Pairing.G1Point memory",
                               "type_conversion": false
@@ -23630,9 +23171,7 @@
                                 "children": [
                                   {
                                     "attributes": {
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 1964,
                                       "type": "type(library Pairing)",
                                       "value": "Pairing"
@@ -23725,9 +23264,7 @@
                                 "children": [
                                   {
                                     "attributes": {
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 1988,
                                       "type": "struct Verifier.VerifyingKey memory",
                                       "value": "vk"
@@ -23768,9 +23305,7 @@
                               "isPure": true,
                               "isStructConstructorCall": true,
                               "lValueRequested": false,
-                              "names": [
-                                null
-                              ],
+                              "names": [null],
                               "tryCall": false,
                               "type": "struct Pairing.G1Point memory",
                               "type_conversion": false
@@ -23799,9 +23334,7 @@
                                 "children": [
                                   {
                                     "attributes": {
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 1964,
                                       "type": "type(library Pairing)",
                                       "value": "Pairing"
@@ -23894,9 +23427,7 @@
                                 "children": [
                                   {
                                     "attributes": {
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 1988,
                                       "type": "struct Verifier.VerifyingKey memory",
                                       "value": "vk"
@@ -23937,9 +23468,7 @@
                               "isPure": true,
                               "isStructConstructorCall": true,
                               "lValueRequested": false,
-                              "names": [
-                                null
-                              ],
+                              "names": [null],
                               "tryCall": false,
                               "type": "struct Pairing.G1Point memory",
                               "type_conversion": false
@@ -23968,9 +23497,7 @@
                                 "children": [
                                   {
                                     "attributes": {
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 1964,
                                       "type": "type(library Pairing)",
                                       "value": "Pairing"
@@ -24063,9 +23590,7 @@
                                 "children": [
                                   {
                                     "attributes": {
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 1988,
                                       "type": "struct Verifier.VerifyingKey memory",
                                       "value": "vk"
@@ -24106,9 +23631,7 @@
                               "isPure": true,
                               "isStructConstructorCall": true,
                               "lValueRequested": false,
-                              "names": [
-                                null
-                              ],
+                              "names": [null],
                               "tryCall": false,
                               "type": "struct Pairing.G1Point memory",
                               "type_conversion": false
@@ -24137,9 +23660,7 @@
                                 "children": [
                                   {
                                     "attributes": {
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 1964,
                                       "type": "type(library Pairing)",
                                       "value": "Pairing"
@@ -24232,9 +23753,7 @@
                                 "children": [
                                   {
                                     "attributes": {
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 1988,
                                       "type": "struct Verifier.VerifyingKey memory",
                                       "value": "vk"
@@ -24275,9 +23794,7 @@
                               "isPure": true,
                               "isStructConstructorCall": true,
                               "lValueRequested": false,
-                              "names": [
-                                null
-                              ],
+                              "names": [null],
                               "tryCall": false,
                               "type": "struct Pairing.G1Point memory",
                               "type_conversion": false
@@ -24306,9 +23823,7 @@
                                 "children": [
                                   {
                                     "attributes": {
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 1964,
                                       "type": "type(library Pairing)",
                                       "value": "Pairing"
@@ -24401,9 +23916,7 @@
                                 "children": [
                                   {
                                     "attributes": {
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 1988,
                                       "type": "struct Verifier.VerifyingKey memory",
                                       "value": "vk"
@@ -24444,9 +23957,7 @@
                               "isPure": true,
                               "isStructConstructorCall": true,
                               "lValueRequested": false,
-                              "names": [
-                                null
-                              ],
+                              "names": [null],
                               "tryCall": false,
                               "type": "struct Pairing.G1Point memory",
                               "type_conversion": false
@@ -24475,9 +23986,7 @@
                                 "children": [
                                   {
                                     "attributes": {
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 1964,
                                       "type": "type(library Pairing)",
                                       "value": "Pairing"
@@ -24551,9 +24060,7 @@
               "implemented": true,
               "isConstructor": false,
               "kind": "function",
-              "modifiers": [
-                null
-              ],
+              "modifiers": [null],
               "name": "verify",
               "scope": 2451,
               "stateMutability": "view",
@@ -24668,9 +24175,7 @@
                 "children": [
                   {
                     "attributes": {
-                      "assignments": [
-                        2148
-                      ]
+                      "assignments": [2148]
                     },
                     "children": [
                       {
@@ -24721,9 +24226,7 @@
                   },
                   {
                     "attributes": {
-                      "assignments": [
-                        2152
-                      ]
+                      "assignments": [2152]
                     },
                     "children": [
                       {
@@ -24755,17 +24258,13 @@
                       },
                       {
                         "attributes": {
-                          "arguments": [
-                            null
-                          ],
+                          "arguments": [null],
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": false,
                           "isStructConstructorCall": false,
                           "lValueRequested": false,
-                          "names": [
-                            null
-                          ],
+                          "names": [null],
                           "tryCall": false,
                           "type": "struct Verifier.VerifyingKey memory",
                           "type_conversion": false
@@ -24773,12 +24272,8 @@
                         "children": [
                           {
                             "attributes": {
-                              "argumentTypes": [
-                                null
-                              ],
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "argumentTypes": [null],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 2137,
                               "type": "function () pure returns (struct Verifier.VerifyingKey memory)",
                               "value": "verifyingKey"
@@ -24806,9 +24301,7 @@
                           "isPure": false,
                           "isStructConstructorCall": false,
                           "lValueRequested": false,
-                          "names": [
-                            null
-                          ],
+                          "names": [null],
                           "tryCall": false,
                           "type": "tuple()",
                           "type_conversion": false
@@ -24826,10 +24319,7 @@
                                   "typeString": "literal_string \"verifier-bad-input\""
                                 }
                               ],
-                              "overloadedDeclarations": [
-                                4294967278,
-                                4294967278
-                              ],
+                              "overloadedDeclarations": [4294967278, 4294967278],
                               "referencedDeclaration": 4294967278,
                               "type": "function (bool,string memory) pure",
                               "value": "require"
@@ -24878,9 +24368,7 @@
                                     "children": [
                                       {
                                         "attributes": {
-                                          "overloadedDeclarations": [
-                                            null
-                                          ],
+                                          "overloadedDeclarations": [null],
                                           "referencedDeclaration": 2140,
                                           "type": "uint256[] memory",
                                           "value": "input"
@@ -24937,9 +24425,7 @@
                                     "children": [
                                       {
                                         "attributes": {
-                                          "overloadedDeclarations": [
-                                            null
-                                          ],
+                                          "overloadedDeclarations": [null],
                                           "referencedDeclaration": 2152,
                                           "type": "struct Verifier.VerifyingKey memory",
                                           "value": "vk"
@@ -24990,9 +24476,7 @@
                   },
                   {
                     "attributes": {
-                      "assignments": [
-                        2171
-                      ]
+                      "assignments": [2171]
                     },
                     "children": [
                       {
@@ -25029,9 +24513,7 @@
                           "isPure": true,
                           "isStructConstructorCall": true,
                           "lValueRequested": false,
-                          "names": [
-                            null
-                          ],
+                          "names": [null],
                           "tryCall": false,
                           "type": "struct Pairing.G1Point memory",
                           "type_conversion": false
@@ -25060,9 +24542,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 1964,
                                   "type": "type(library Pairing)",
                                   "value": "Pairing"
@@ -25120,9 +24600,7 @@
                     "children": [
                       {
                         "attributes": {
-                          "assignments": [
-                            2179
-                          ]
+                          "assignments": [2179]
                         },
                         "children": [
                           {
@@ -25187,9 +24665,7 @@
                         "children": [
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 2179,
                               "type": "uint256",
                               "value": "i"
@@ -25210,9 +24686,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 2140,
                                   "type": "uint256[] memory",
                                   "value": "input"
@@ -25246,9 +24720,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 2179,
                                   "type": "uint256",
                                   "value": "i"
@@ -25278,9 +24750,7 @@
                                   "isPure": false,
                                   "isStructConstructorCall": false,
                                   "lValueRequested": false,
-                                  "names": [
-                                    null
-                                  ],
+                                  "names": [null],
                                   "tryCall": false,
                                   "type": "tuple()",
                                   "type_conversion": false
@@ -25298,10 +24768,7 @@
                                           "typeString": "literal_string \"verifier-gte-snark-scalar-field\""
                                         }
                                       ],
-                                      "overloadedDeclarations": [
-                                        4294967278,
-                                        4294967278
-                                      ],
+                                      "overloadedDeclarations": [4294967278, 4294967278],
                                       "referencedDeclaration": 4294967278,
                                       "type": "function (bool,string memory) pure",
                                       "value": "require"
@@ -25335,9 +24802,7 @@
                                         "children": [
                                           {
                                             "attributes": {
-                                              "overloadedDeclarations": [
-                                                null
-                                              ],
+                                              "overloadedDeclarations": [null],
                                               "referencedDeclaration": 2140,
                                               "type": "uint256[] memory",
                                               "value": "input"
@@ -25348,9 +24813,7 @@
                                           },
                                           {
                                             "attributes": {
-                                              "overloadedDeclarations": [
-                                                null
-                                              ],
+                                              "overloadedDeclarations": [null],
                                               "referencedDeclaration": 2179,
                                               "type": "uint256",
                                               "value": "i"
@@ -25366,9 +24829,7 @@
                                       },
                                       {
                                         "attributes": {
-                                          "overloadedDeclarations": [
-                                            null
-                                          ],
+                                          "overloadedDeclarations": [null],
                                           "referencedDeclaration": 2148,
                                           "type": "uint256",
                                           "value": "snark_scalar_field"
@@ -25421,9 +24882,7 @@
                                 "children": [
                                   {
                                     "attributes": {
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 2171,
                                       "type": "struct Pairing.G1Point memory",
                                       "value": "vk_x"
@@ -25439,9 +24898,7 @@
                                       "isPure": false,
                                       "isStructConstructorCall": false,
                                       "lValueRequested": false,
-                                      "names": [
-                                        null
-                                      ],
+                                      "names": [null],
                                       "tryCall": false,
                                       "type": "struct Pairing.G1Point memory",
                                       "type_conversion": false
@@ -25470,9 +24927,7 @@
                                         "children": [
                                           {
                                             "attributes": {
-                                              "overloadedDeclarations": [
-                                                null
-                                              ],
+                                              "overloadedDeclarations": [null],
                                               "referencedDeclaration": 1964,
                                               "type": "type(library Pairing)",
                                               "value": "Pairing"
@@ -25488,9 +24943,7 @@
                                       },
                                       {
                                         "attributes": {
-                                          "overloadedDeclarations": [
-                                            null
-                                          ],
+                                          "overloadedDeclarations": [null],
                                           "referencedDeclaration": 2171,
                                           "type": "struct Pairing.G1Point memory",
                                           "value": "vk_x"
@@ -25506,9 +24959,7 @@
                                           "isPure": false,
                                           "isStructConstructorCall": false,
                                           "lValueRequested": false,
-                                          "names": [
-                                            null
-                                          ],
+                                          "names": [null],
                                           "tryCall": false,
                                           "type": "struct Pairing.G1Point memory",
                                           "type_conversion": false
@@ -25537,9 +24988,7 @@
                                             "children": [
                                               {
                                                 "attributes": {
-                                                  "overloadedDeclarations": [
-                                                    null
-                                                  ],
+                                                  "overloadedDeclarations": [null],
                                                   "referencedDeclaration": 1964,
                                                   "type": "type(library Pairing)",
                                                   "value": "Pairing"
@@ -25575,9 +25024,7 @@
                                                 "children": [
                                                   {
                                                     "attributes": {
-                                                      "overloadedDeclarations": [
-                                                        null
-                                                      ],
+                                                      "overloadedDeclarations": [null],
                                                       "referencedDeclaration": 2152,
                                                       "type": "struct Verifier.VerifyingKey memory",
                                                       "value": "vk"
@@ -25607,9 +25054,7 @@
                                                 "children": [
                                                   {
                                                     "attributes": {
-                                                      "overloadedDeclarations": [
-                                                        null
-                                                      ],
+                                                      "overloadedDeclarations": [null],
                                                       "referencedDeclaration": 2179,
                                                       "type": "uint256",
                                                       "value": "i"
@@ -25654,9 +25099,7 @@
                                             "children": [
                                               {
                                                 "attributes": {
-                                                  "overloadedDeclarations": [
-                                                    null
-                                                  ],
+                                                  "overloadedDeclarations": [null],
                                                   "referencedDeclaration": 2140,
                                                   "type": "uint256[] memory",
                                                   "value": "input"
@@ -25667,9 +25110,7 @@
                                               },
                                               {
                                                 "attributes": {
-                                                  "overloadedDeclarations": [
-                                                    null
-                                                  ],
+                                                  "overloadedDeclarations": [null],
                                                   "referencedDeclaration": 2179,
                                                   "type": "uint256",
                                                   "value": "i"
@@ -25727,9 +25168,7 @@
                         "children": [
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 2171,
                               "type": "struct Pairing.G1Point memory",
                               "value": "vk_x"
@@ -25745,9 +25184,7 @@
                               "isPure": false,
                               "isStructConstructorCall": false,
                               "lValueRequested": false,
-                              "names": [
-                                null
-                              ],
+                              "names": [null],
                               "tryCall": false,
                               "type": "struct Pairing.G1Point memory",
                               "type_conversion": false
@@ -25776,9 +25213,7 @@
                                 "children": [
                                   {
                                     "attributes": {
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 1964,
                                       "type": "type(library Pairing)",
                                       "value": "Pairing"
@@ -25794,9 +25229,7 @@
                               },
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 2171,
                                   "type": "struct Pairing.G1Point memory",
                                   "value": "vk_x"
@@ -25827,9 +25260,7 @@
                                     "children": [
                                       {
                                         "attributes": {
-                                          "overloadedDeclarations": [
-                                            null
-                                          ],
+                                          "overloadedDeclarations": [null],
                                           "referencedDeclaration": 2152,
                                           "type": "struct Verifier.VerifyingKey memory",
                                           "value": "vk"
@@ -25899,9 +25330,7 @@
                               "isPure": false,
                               "isStructConstructorCall": false,
                               "lValueRequested": false,
-                              "names": [
-                                null
-                              ],
+                              "names": [null],
                               "tryCall": false,
                               "type": "bool",
                               "type_conversion": false
@@ -25954,9 +25383,7 @@
                                 "children": [
                                   {
                                     "attributes": {
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 1964,
                                       "type": "type(library Pairing)",
                                       "value": "Pairing"
@@ -25977,9 +25404,7 @@
                                   "isPure": false,
                                   "isStructConstructorCall": false,
                                   "lValueRequested": false,
-                                  "names": [
-                                    null
-                                  ],
+                                  "names": [null],
                                   "tryCall": false,
                                   "type": "struct Pairing.G1Point memory",
                                   "type_conversion": false
@@ -26004,9 +25429,7 @@
                                     "children": [
                                       {
                                         "attributes": {
-                                          "overloadedDeclarations": [
-                                            null
-                                          ],
+                                          "overloadedDeclarations": [null],
                                           "referencedDeclaration": 1964,
                                           "type": "type(library Pairing)",
                                           "value": "Pairing"
@@ -26033,9 +25456,7 @@
                                     "children": [
                                       {
                                         "attributes": {
-                                          "overloadedDeclarations": [
-                                            null
-                                          ],
+                                          "overloadedDeclarations": [null],
                                           "referencedDeclaration": 2142,
                                           "type": "struct Verifier.Proof memory",
                                           "value": "proof"
@@ -26067,9 +25488,7 @@
                                 "children": [
                                   {
                                     "attributes": {
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 2142,
                                       "type": "struct Verifier.Proof memory",
                                       "value": "proof"
@@ -26096,9 +25515,7 @@
                                 "children": [
                                   {
                                     "attributes": {
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 2152,
                                       "type": "struct Verifier.VerifyingKey memory",
                                       "value": "vk"
@@ -26125,9 +25542,7 @@
                                 "children": [
                                   {
                                     "attributes": {
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 2152,
                                       "type": "struct Verifier.VerifyingKey memory",
                                       "value": "vk"
@@ -26143,9 +25558,7 @@
                               },
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 2171,
                                   "type": "struct Pairing.G1Point memory",
                                   "value": "vk_x"
@@ -26167,9 +25580,7 @@
                                 "children": [
                                   {
                                     "attributes": {
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 2152,
                                       "type": "struct Verifier.VerifyingKey memory",
                                       "value": "vk"
@@ -26196,9 +25607,7 @@
                                 "children": [
                                   {
                                     "attributes": {
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 2142,
                                       "type": "struct Verifier.Proof memory",
                                       "value": "proof"
@@ -26225,9 +25634,7 @@
                                 "children": [
                                   {
                                     "attributes": {
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 2152,
                                       "type": "struct Verifier.VerifyingKey memory",
                                       "value": "vk"
@@ -26322,9 +25729,7 @@
               "implemented": true,
               "isConstructor": false,
               "kind": "function",
-              "modifiers": [
-                null
-              ],
+              "modifiers": [null],
               "name": "verifyProof",
               "scope": 2451,
               "stateMutability": "view",
@@ -26605,9 +26010,7 @@
                 "children": [
                   {
                     "attributes": {
-                      "assignments": [
-                        2282
-                      ]
+                      "assignments": [2282]
                     },
                     "children": [
                       {
@@ -26667,9 +26070,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 2282,
                                   "type": "struct Verifier.Proof memory",
                                   "value": "proof"
@@ -26690,9 +26091,7 @@
                               "isPure": false,
                               "isStructConstructorCall": true,
                               "lValueRequested": false,
-                              "names": [
-                                null
-                              ],
+                              "names": [null],
                               "tryCall": false,
                               "type": "struct Pairing.G1Point memory",
                               "type_conversion": false
@@ -26721,9 +26120,7 @@
                                 "children": [
                                   {
                                     "attributes": {
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 1964,
                                       "type": "type(library Pairing)",
                                       "value": "Pairing"
@@ -26748,9 +26145,7 @@
                                 "children": [
                                   {
                                     "attributes": {
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 2262,
                                       "type": "uint256[2] memory",
                                       "value": "a"
@@ -26790,9 +26185,7 @@
                                 "children": [
                                   {
                                     "attributes": {
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 2262,
                                       "type": "uint256[2] memory",
                                       "value": "a"
@@ -26861,9 +26254,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 2282,
                                   "type": "struct Verifier.Proof memory",
                                   "value": "proof"
@@ -26884,9 +26275,7 @@
                               "isPure": false,
                               "isStructConstructorCall": true,
                               "lValueRequested": false,
-                              "names": [
-                                null
-                              ],
+                              "names": [null],
                               "tryCall": false,
                               "type": "struct Pairing.G2Point memory",
                               "type_conversion": false
@@ -26915,9 +26304,7 @@
                                 "children": [
                                   {
                                     "attributes": {
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 1964,
                                       "type": "type(library Pairing)",
                                       "value": "Pairing"
@@ -26961,9 +26348,7 @@
                                         "children": [
                                           {
                                             "attributes": {
-                                              "overloadedDeclarations": [
-                                                null
-                                              ],
+                                              "overloadedDeclarations": [null],
                                               "referencedDeclaration": 2268,
                                               "type": "uint256[2] memory[2] memory",
                                               "value": "b"
@@ -27032,9 +26417,7 @@
                                         "children": [
                                           {
                                             "attributes": {
-                                              "overloadedDeclarations": [
-                                                null
-                                              ],
+                                              "overloadedDeclarations": [null],
                                               "referencedDeclaration": 2268,
                                               "type": "uint256[2] memory[2] memory",
                                               "value": "b"
@@ -27118,9 +26501,7 @@
                                         "children": [
                                           {
                                             "attributes": {
-                                              "overloadedDeclarations": [
-                                                null
-                                              ],
+                                              "overloadedDeclarations": [null],
                                               "referencedDeclaration": 2268,
                                               "type": "uint256[2] memory[2] memory",
                                               "value": "b"
@@ -27189,9 +26570,7 @@
                                         "children": [
                                           {
                                             "attributes": {
-                                              "overloadedDeclarations": [
-                                                null
-                                              ],
+                                              "overloadedDeclarations": [null],
                                               "referencedDeclaration": 2268,
                                               "type": "uint256[2] memory[2] memory",
                                               "value": "b"
@@ -27285,9 +26664,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 2282,
                                   "type": "struct Verifier.Proof memory",
                                   "value": "proof"
@@ -27308,9 +26685,7 @@
                               "isPure": false,
                               "isStructConstructorCall": true,
                               "lValueRequested": false,
-                              "names": [
-                                null
-                              ],
+                              "names": [null],
                               "tryCall": false,
                               "type": "struct Pairing.G1Point memory",
                               "type_conversion": false
@@ -27339,9 +26714,7 @@
                                 "children": [
                                   {
                                     "attributes": {
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 1964,
                                       "type": "type(library Pairing)",
                                       "value": "Pairing"
@@ -27366,9 +26739,7 @@
                                 "children": [
                                   {
                                     "attributes": {
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 2272,
                                       "type": "uint256[2] memory",
                                       "value": "c"
@@ -27408,9 +26779,7 @@
                                 "children": [
                                   {
                                     "attributes": {
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 2272,
                                       "type": "uint256[2] memory",
                                       "value": "c"
@@ -27456,9 +26825,7 @@
                   },
                   {
                     "attributes": {
-                      "assignments": [
-                        2346
-                      ]
+                      "assignments": [2346]
                     },
                     "children": [
                       {
@@ -27504,9 +26871,7 @@
                           "isPure": false,
                           "isStructConstructorCall": false,
                           "lValueRequested": false,
-                          "names": [
-                            null
-                          ],
+                          "names": [null],
                           "tryCall": false,
                           "type": "uint256[] memory",
                           "type_conversion": false
@@ -27563,9 +26928,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 2276,
                                   "type": "uint256[6] memory",
                                   "value": "input"
@@ -27593,9 +26956,7 @@
                     "children": [
                       {
                         "attributes": {
-                          "assignments": [
-                            2355
-                          ]
+                          "assignments": [2355]
                         },
                         "children": [
                           {
@@ -27660,9 +27021,7 @@
                         "children": [
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 2355,
                               "type": "uint256",
                               "value": "i"
@@ -27683,9 +27042,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 2276,
                                   "type": "uint256[6] memory",
                                   "value": "input"
@@ -27719,9 +27076,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 2355,
                                   "type": "uint256",
                                   "value": "i"
@@ -27765,9 +27120,7 @@
                                     "children": [
                                       {
                                         "attributes": {
-                                          "overloadedDeclarations": [
-                                            null
-                                          ],
+                                          "overloadedDeclarations": [null],
                                           "referencedDeclaration": 2346,
                                           "type": "uint256[] memory",
                                           "value": "inputValues"
@@ -27778,9 +27131,7 @@
                                       },
                                       {
                                         "attributes": {
-                                          "overloadedDeclarations": [
-                                            null
-                                          ],
+                                          "overloadedDeclarations": [null],
                                           "referencedDeclaration": 2355,
                                           "type": "uint256",
                                           "value": "i"
@@ -27805,9 +27156,7 @@
                                     "children": [
                                       {
                                         "attributes": {
-                                          "overloadedDeclarations": [
-                                            null
-                                          ],
+                                          "overloadedDeclarations": [null],
                                           "referencedDeclaration": 2276,
                                           "type": "uint256[6] memory",
                                           "value": "input"
@@ -27818,9 +27167,7 @@
                                       },
                                       {
                                         "attributes": {
-                                          "overloadedDeclarations": [
-                                            null
-                                          ],
+                                          "overloadedDeclarations": [null],
                                           "referencedDeclaration": 2355,
                                           "type": "uint256",
                                           "value": "i"
@@ -27877,9 +27224,7 @@
                               "isPure": false,
                               "isStructConstructorCall": false,
                               "lValueRequested": false,
-                              "names": [
-                                null
-                              ],
+                              "names": [null],
                               "tryCall": false,
                               "type": "uint256",
                               "type_conversion": false
@@ -27897,9 +27242,7 @@
                                       "typeString": "struct Verifier.Proof memory"
                                     }
                                   ],
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 2258,
                                   "type": "function (uint256[] memory,struct Verifier.Proof memory) view returns (uint256)",
                                   "value": "verify"
@@ -27910,9 +27253,7 @@
                               },
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 2346,
                                   "type": "uint256[] memory",
                                   "value": "inputValues"
@@ -27923,9 +27264,7 @@
                               },
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 2282,
                                   "type": "struct Verifier.Proof memory",
                                   "value": "proof"
@@ -28044,9 +27383,7 @@
               "implemented": true,
               "isConstructor": false,
               "kind": "function",
-              "modifiers": [
-                null
-              ],
+              "modifiers": [null],
               "name": "verifyProof",
               "scope": 2451,
               "stateMutability": "view",
@@ -28175,12 +27512,7 @@
                 "children": [
                   {
                     "attributes": {
-                      "assignments": [
-                        2405,
-                        2409,
-                        2413,
-                        2417
-                      ]
+                      "assignments": [2405, 2409, 2413, 2417]
                     },
                     "children": [
                       {
@@ -28394,9 +27726,7 @@
                           "isPure": false,
                           "isStructConstructorCall": false,
                           "lValueRequested": false,
-                          "names": [
-                            null
-                          ],
+                          "names": [null],
                           "tryCall": false,
                           "type": "tuple(uint256[2] memory,uint256[2] memory,uint256[2] memory,uint256[2] memory)",
                           "type_conversion": false
@@ -28424,9 +27754,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 4294967295,
                                   "type": "abi",
                                   "value": "abi"
@@ -28442,9 +27770,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 2391,
                               "type": "bytes calldata",
                               "value": "proof"
@@ -28694,9 +28020,7 @@
                           "isPure": false,
                           "isStructConstructorCall": false,
                           "lValueRequested": false,
-                          "names": [
-                            null
-                          ],
+                          "names": [null],
                           "tryCall": false,
                           "type": "bool",
                           "type_conversion": false
@@ -28722,9 +28046,7 @@
                                   "typeString": "uint256[6] calldata"
                                 }
                               ],
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 2389,
                               "type": "function (uint256[2] memory,uint256[2] memory[2] memory,uint256[2] memory,uint256[6] memory) view returns (bool)",
                               "value": "verifyProof"
@@ -28735,9 +28057,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 2405,
                               "type": "uint256[2] memory",
                               "value": "a"
@@ -28758,9 +28078,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 2409,
                                   "type": "uint256[2] memory",
                                   "value": "b1"
@@ -28771,9 +28089,7 @@
                               },
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 2413,
                                   "type": "uint256[2] memory",
                                   "value": "b2"
@@ -28789,9 +28105,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 2417,
                               "type": "uint256[2] memory",
                               "value": "c"
@@ -28802,9 +28116,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 2395,
                               "type": "uint256[6] calldata",
                               "value": "inputs"

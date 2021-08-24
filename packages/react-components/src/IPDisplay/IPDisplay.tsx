@@ -20,11 +20,11 @@ const IPDisplayWrapper = styled.div`
     ${theme.type === 'light' ? `box-shadow: 0px 0px 14px rgba(51, 81, 242, 0.11);` : ''}
     .label-icon {
       font-size: 40px;
-      color: ${theme.primary}
+      color: ${theme.primary};
     }
 
     .tor {
-      color: ${theme.primary}
+      color: ${theme.primary};
     }
   `}
 
@@ -43,19 +43,27 @@ const IPDisplayWrapper = styled.div`
 `;
 
 const IPDisplay: React.FC<IPDisplayProps> = () => {
-
   const { query, city, countryCode } = useFetch(`http://ip-api.com/json/?fields=countryCode,city,query`, {});
 
   return (
     <IPDisplayWrapper>
-      <Icon className={'label-icon'} style={{fontSize: 40}}>room</Icon>
-      <div style={{paddingLeft: 5}}>
-        <Typography className={'ip-text'} variant={'h5'}>Your IP Address is: <b>{query} {city}, {countryCode}</b></Typography>
+      <Icon className={'label-icon'} style={{ fontSize: 40 }}>
+        room
+      </Icon>
+      <div style={{ paddingLeft: 5 }}>
+        <Typography className={'ip-text'} variant={'h5'}>
+          Your IP Address is:{' '}
+          <b>
+            {query} {city}, {countryCode}
+          </b>
+        </Typography>
         <Typography className={'ip-info'}>Please mask your IP address while using our service!</Typography>
-        <Typography className={'ip-info'}>We recommend <span className={'tor'}>TOR</span> </Typography>
+        <Typography className={'ip-info'}>
+          We recommend <span className={'tor'}>TOR</span>{' '}
+        </Typography>
       </div>
     </IPDisplayWrapper>
   );
-}
+};
 
 export default IPDisplay;

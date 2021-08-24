@@ -2,7 +2,8 @@
   margin-right: 8px;
 }
 
-.number, .balance {
+.number,
+.balance {
   white-space: nowrap;
 
   &:global(.primary) {

@@ -8,11 +8,10 @@ const MixerWrapper = styled.div``;
 type MixerProps = {};
 
 export const Mixer: React.FC<MixerProps> = () => {
-
   return (
     <MixerWrapper>
       <MixerTabs Withdraw={<Withdraw />} Deposit={<Deposit />} />
-      <SpaceBox height={8}/>
+      <SpaceBox height={8} />
       <IPDisplay />
     </MixerWrapper>
   );

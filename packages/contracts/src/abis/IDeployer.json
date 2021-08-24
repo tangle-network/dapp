@@ -39,9 +39,7 @@
   "ast": {
     "absolutePath": "/Users/ahmed/projects/edgeware/anon/contracts/evm/anchor/contracts/Mocks/IDeployer.sol",
     "exportedSymbols": {
-      "IDeployer": [
-        1172
-      ]
+      "IDeployer": [1172]
     },
     "id": 1173,
     "license": "MIT",
@@ -49,12 +47,7 @@
     "nodes": [
       {
         "id": 1162,
-        "literals": [
-          "solidity",
-          "^",
-          "0.7",
-          ".0"
-        ],
+        "literals": ["solidity", "^", "0.7", ".0"],
         "nodeType": "PragmaDirective",
         "src": "32:23:27"
       },
@@ -65,9 +58,7 @@
         "contractKind": "interface",
         "fullyImplemented": false,
         "id": 1172,
-        "linearizedBaseContracts": [
-          1172
-        ],
+        "linearizedBaseContracts": [1172],
         "name": "IDeployer",
         "nodeType": "ContractDefinition",
         "nodes": [
@@ -189,21 +180,14 @@
     "attributes": {
       "absolutePath": "/Users/ahmed/projects/edgeware/anon/contracts/evm/anchor/contracts/Mocks/IDeployer.sol",
       "exportedSymbols": {
-        "IDeployer": [
-          1172
-        ]
+        "IDeployer": [1172]
       },
       "license": "MIT"
     },
     "children": [
       {
         "attributes": {
-          "literals": [
-            "solidity",
-            "^",
-            "0.7",
-            ".0"
-          ]
+          "literals": ["solidity", "^", "0.7", ".0"]
         },
         "id": 1162,
         "name": "PragmaDirective",
@@ -212,17 +196,11 @@
       {
         "attributes": {
           "abstract": false,
-          "baseContracts": [
-            null
-          ],
-          "contractDependencies": [
-            null
-          ],
+          "baseContracts": [null],
+          "contractDependencies": [null],
           "contractKind": "interface",
           "fullyImplemented": false,
-          "linearizedBaseContracts": [
-            1172
-          ],
+          "linearizedBaseContracts": [1172],
           "name": "IDeployer",
           "scope": 1173
         },
@@ -233,9 +211,7 @@
               "implemented": false,
               "isConstructor": false,
               "kind": "function",
-              "modifiers": [
-                null
-              ],
+              "modifiers": [null],
               "name": "deploy",
               "scope": 1172,
               "stateMutability": "nonpayable",

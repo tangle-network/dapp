@@ -19,9 +19,7 @@
   "ast": {
     "absolutePath": "/Users/ahmed/projects/edgeware/anon/contracts/evm/anchor/contracts/Mocks/BadRecipient.sol",
     "exportedSymbols": {
-      "BadRecipient": [
-        1139
-      ]
+      "BadRecipient": [1139]
     },
     "id": 1140,
     "license": "MIT",
@@ -29,12 +27,7 @@
     "nodes": [
       {
         "id": 1129,
-        "literals": [
-          "solidity",
-          "^",
-          "0.7",
-          ".0"
-        ],
+        "literals": ["solidity", "^", "0.7", ".0"],
         "nodeType": "PragmaDirective",
         "src": "32:23:25"
       },
@@ -45,9 +38,7 @@
         "contractKind": "contract",
         "fullyImplemented": true,
         "id": 1139,
-        "linearizedBaseContracts": [
-          1139
-        ],
+        "linearizedBaseContracts": [1139],
         "name": "BadRecipient",
         "nodeType": "ContractDefinition",
         "nodes": [
@@ -107,10 +98,7 @@
                       "id": 1132,
                       "name": "require",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        4294967278,
-                        4294967278
-                      ],
+                      "overloadedDeclarations": [4294967278, 4294967278],
                       "referencedDeclaration": 4294967278,
                       "src": "109:7:25",
                       "typeDescriptions": {
@@ -174,21 +162,14 @@
     "attributes": {
       "absolutePath": "/Users/ahmed/projects/edgeware/anon/contracts/evm/anchor/contracts/Mocks/BadRecipient.sol",
       "exportedSymbols": {
-        "BadRecipient": [
-          1139
-        ]
+        "BadRecipient": [1139]
       },
       "license": "MIT"
     },
     "children": [
       {
         "attributes": {
-          "literals": [
-            "solidity",
-            "^",
-            "0.7",
-            ".0"
-          ]
+          "literals": ["solidity", "^", "0.7", ".0"]
         },
         "id": 1129,
         "name": "PragmaDirective",
@@ -197,17 +178,11 @@
       {
         "attributes": {
           "abstract": false,
-          "baseContracts": [
-            null
-          ],
-          "contractDependencies": [
-            null
-          ],
+          "baseContracts": [null],
+          "contractDependencies": [null],
           "contractKind": "contract",
           "fullyImplemented": true,
-          "linearizedBaseContracts": [
-            1139
-          ],
+          "linearizedBaseContracts": [1139],
           "name": "BadRecipient",
           "scope": 1140
         },
@@ -217,9 +192,7 @@
               "implemented": true,
               "isConstructor": false,
               "kind": "fallback",
-              "modifiers": [
-                null
-              ],
+              "modifiers": [null],
               "name": "",
               "scope": 1139,
               "stateMutability": "nonpayable",
@@ -229,9 +202,7 @@
             "children": [
               {
                 "attributes": {
-                  "parameters": [
-                    null
-                  ]
+                  "parameters": [null]
                 },
                 "children": [],
                 "id": 1130,
@@ -240,9 +211,7 @@
               },
               {
                 "attributes": {
-                  "parameters": [
-                    null
-                  ]
+                  "parameters": [null]
                 },
                 "children": [],
                 "id": 1131,
@@ -260,9 +229,7 @@
                           "isPure": false,
                           "isStructConstructorCall": false,
                           "lValueRequested": false,
-                          "names": [
-                            null
-                          ],
+                          "names": [null],
                           "tryCall": false,
                           "type": "tuple()",
                           "type_conversion": false
@@ -280,10 +247,7 @@
                                   "typeString": "literal_string \"this contract does not accept ETH\""
                                 }
                               ],
-                              "overloadedDeclarations": [
-                                4294967278,
-                                4294967278
-                              ],
+                              "overloadedDeclarations": [4294967278, 4294967278],
                               "referencedDeclaration": 4294967278,
                               "type": "function (bool,string memory) pure",
                               "value": "require"

@@ -303,21 +303,11 @@
   "ast": {
     "absolutePath": "/Users/ahmed/projects/edgeware/anon/contracts/evm/anchor/contracts/Mocks/ERC20Mock.sol",
     "exportedSymbols": {
-      "Context": [
-        3919
-      ],
-      "ERC20": [
-        3309
-      ],
-      "ERC20Mock": [
-        1160
-      ],
-      "IERC20": [
-        3387
-      ],
-      "SafeMath": [
-        2806
-      ]
+      "Context": [3919],
+      "ERC20": [3309],
+      "ERC20Mock": [1160],
+      "IERC20": [3387],
+      "SafeMath": [2806]
     },
     "id": 1161,
     "license": "MIT",
@@ -325,12 +315,7 @@
     "nodes": [
       {
         "id": 1141,
-        "literals": [
-          "solidity",
-          "^",
-          "0.7",
-          ".0"
-        ],
+        "literals": ["solidity", "^", "0.7", ".0"],
         "nodeType": "PragmaDirective",
         "src": "32:23:26"
       },
@@ -399,20 +384,11 @@
             "src": "136:24:26"
           }
         ],
-        "contractDependencies": [
-          3309,
-          3387,
-          3919
-        ],
+        "contractDependencies": [3309, 3387, 3919],
         "contractKind": "contract",
         "fullyImplemented": true,
         "id": 1160,
-        "linearizedBaseContracts": [
-          1160,
-          3309,
-          3387,
-          3919
-        ],
+        "linearizedBaseContracts": [1160, 3309, 3387, 3919],
         "name": "ERC20Mock",
         "nodeType": "ContractDefinition",
         "nodes": [
@@ -583,33 +559,18 @@
     "attributes": {
       "absolutePath": "/Users/ahmed/projects/edgeware/anon/contracts/evm/anchor/contracts/Mocks/ERC20Mock.sol",
       "exportedSymbols": {
-        "Context": [
-          3919
-        ],
-        "ERC20": [
-          3309
-        ],
-        "ERC20Mock": [
-          1160
-        ],
-        "IERC20": [
-          3387
-        ],
-        "SafeMath": [
-          2806
-        ]
+        "Context": [3919],
+        "ERC20": [3309],
+        "ERC20Mock": [1160],
+        "IERC20": [3387],
+        "SafeMath": [2806]
       },
       "license": "MIT"
     },
     "children": [
       {
         "attributes": {
-          "literals": [
-            "solidity",
-            "^",
-            "0.7",
-            ".0"
-          ]
+          "literals": ["solidity", "^", "0.7", ".0"]
         },
         "id": 1141,
         "name": "PragmaDirective",
@@ -621,9 +582,7 @@
           "absolutePath": "@openzeppelin/contracts/token/ERC20/ERC20.sol",
           "file": "@openzeppelin/contracts/token/ERC20/ERC20.sol",
           "scope": 1161,
-          "symbolAliases": [
-            null
-          ],
+          "symbolAliases": [null],
           "unitAlias": ""
         },
         "id": 1142,
@@ -633,19 +592,10 @@
       {
         "attributes": {
           "abstract": false,
-          "contractDependencies": [
-            3309,
-            3387,
-            3919
-          ],
+          "contractDependencies": [3309, 3387, 3919],
           "contractKind": "contract",
           "fullyImplemented": true,
-          "linearizedBaseContracts": [
-            1160,
-            3309,
-            3387,
-            3919
-          ],
+          "linearizedBaseContracts": [1160, 3309, 3387, 3919],
           "name": "ERC20Mock",
           "scope": 1161
         },
@@ -703,9 +653,7 @@
               "implemented": true,
               "isConstructor": false,
               "kind": "function",
-              "modifiers": [
-                null
-              ],
+              "modifiers": [null],
               "name": "mint",
               "scope": 1160,
               "stateMutability": "nonpayable",
@@ -775,9 +723,7 @@
               },
               {
                 "attributes": {
-                  "parameters": [
-                    null
-                  ]
+                  "parameters": [null]
                 },
                 "children": [],
                 "id": 1152,
@@ -795,9 +741,7 @@
                           "isPure": false,
                           "isStructConstructorCall": false,
                           "lValueRequested": false,
-                          "names": [
-                            null
-                          ],
+                          "names": [null],
                           "tryCall": false,
                           "type": "tuple()",
                           "type_conversion": false
@@ -815,9 +759,7 @@
                                   "typeString": "uint256"
                                 }
                               ],
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 3185,
                               "type": "function (address,uint256)",
                               "value": "_mint"
@@ -828,9 +770,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 1148,
                               "type": "address",
                               "value": "account"
@@ -841,9 +781,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 1150,
                               "type": "uint256",
                               "value": "amount"

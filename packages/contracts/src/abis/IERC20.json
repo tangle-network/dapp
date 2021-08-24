@@ -198,9 +198,7 @@
   "ast": {
     "absolutePath": "@openzeppelin/contracts/token/ERC20/IERC20.sol",
     "exportedSymbols": {
-      "IERC20": [
-        3387
-      ]
+      "IERC20": [3387]
     },
     "id": 3388,
     "license": "MIT",
@@ -208,15 +206,7 @@
     "nodes": [
       {
         "id": 3311,
-        "literals": [
-          "solidity",
-          ">=",
-          "0.6",
-          ".0",
-          "<",
-          "0.8",
-          ".0"
-        ],
+        "literals": ["solidity", ">=", "0.6", ".0", "<", "0.8", ".0"],
         "nodeType": "PragmaDirective",
         "src": "33:31:34"
       },
@@ -233,9 +223,7 @@
         },
         "fullyImplemented": false,
         "id": 3387,
-        "linearizedBaseContracts": [
-          3387
-        ],
+        "linearizedBaseContracts": [3387],
         "name": "IERC20",
         "nodeType": "ContractDefinition",
         "nodes": [
@@ -1082,24 +1070,14 @@
     "attributes": {
       "absolutePath": "@openzeppelin/contracts/token/ERC20/IERC20.sol",
       "exportedSymbols": {
-        "IERC20": [
-          3387
-        ]
+        "IERC20": [3387]
       },
       "license": "MIT"
     },
     "children": [
       {
         "attributes": {
-          "literals": [
-            "solidity",
-            ">=",
-            "0.6",
-            ".0",
-            "<",
-            "0.8",
-            ".0"
-          ]
+          "literals": ["solidity", ">=", "0.6", ".0", "<", "0.8", ".0"]
         },
         "id": 3311,
         "name": "PragmaDirective",
@@ -1108,17 +1086,11 @@
       {
         "attributes": {
           "abstract": false,
-          "baseContracts": [
-            null
-          ],
-          "contractDependencies": [
-            null
-          ],
+          "baseContracts": [null],
+          "contractDependencies": [null],
           "contractKind": "interface",
           "fullyImplemented": false,
-          "linearizedBaseContracts": [
-            3387
-          ],
+          "linearizedBaseContracts": [3387],
           "name": "IERC20",
           "scope": 3388
         },
@@ -1137,9 +1109,7 @@
               "implemented": false,
               "isConstructor": false,
               "kind": "function",
-              "modifiers": [
-                null
-              ],
+              "modifiers": [null],
               "name": "totalSupply",
               "scope": 3387,
               "stateMutability": "view",
@@ -1157,9 +1127,7 @@
               },
               {
                 "attributes": {
-                  "parameters": [
-                    null
-                  ]
+                  "parameters": [null]
                 },
                 "children": [],
                 "id": 3314,
@@ -1210,9 +1178,7 @@
               "implemented": false,
               "isConstructor": false,
               "kind": "function",
-              "modifiers": [
-                null
-              ],
+              "modifiers": [null],
               "name": "balanceOf",
               "scope": 3387,
               "stateMutability": "view",
@@ -1306,9 +1272,7 @@
               "implemented": false,
               "isConstructor": false,
               "kind": "function",
-              "modifiers": [
-                null
-              ],
+              "modifiers": [null],
               "name": "transfer",
               "scope": 3387,
               "stateMutability": "nonpayable",
@@ -1428,9 +1392,7 @@
               "implemented": false,
               "isConstructor": false,
               "kind": "function",
-              "modifiers": [
-                null
-              ],
+              "modifiers": [null],
               "name": "allowance",
               "scope": 3387,
               "stateMutability": "view",
@@ -1551,9 +1513,7 @@
               "implemented": false,
               "isConstructor": false,
               "kind": "function",
-              "modifiers": [
-                null
-              ],
+              "modifiers": [null],
               "name": "approve",
               "scope": 3387,
               "stateMutability": "nonpayable",
@@ -1673,9 +1633,7 @@
               "implemented": false,
               "isConstructor": false,
               "kind": "function",
-              "modifiers": [
-                null
-              ],
+              "modifiers": [null],
               "name": "transferFrom",
               "scope": 3387,
               "stateMutability": "nonpayable",

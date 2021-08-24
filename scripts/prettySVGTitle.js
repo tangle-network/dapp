@@ -10,16 +10,16 @@ const walkDir = (p, matcher, callback) => {
       walkDir(path.join(p, dir[i]), matcher, callback);
     }
   } else {
-    if  (matcher(p)) {
+    if (matcher(p)) {
       callback(p);
     }
   }
-}
+};
 
 const prettySVGTitle = (p) => {
   const content = fs.readFileSync(p, { encoding: 'utf-8' });
 
-  const name  = path.parse(p).name
+  const name = path.parse(p).name;
 
   const newContent = content
     .replace(/<title>.*?<\/title>/, `<title>${loadsh.upperFirst(name)}</title>`)
@@ -27,16 +27,12 @@ const prettySVGTitle = (p) => {
     .replace(/<desc>.*?<\/desc>/, '');
 
   fs.writeFileSync(p, newContent, { encoding: 'utf-8' });
-}
+};
 
 const run = () => {
   const packagesPath = path.resolve(__dirname, '../packages');
 
-  walkDir(
-    packagesPath,
-    (path) => /svg$/.test(path) && !/build/.test(path),
-    prettySVGTitle
-  );
-}
+  walkDir(packagesPath, (path) => /svg$/.test(path) && !/build/.test(path), prettySVGTitle);
+};
 
 run();

@@ -44,12 +44,8 @@
   "ast": {
     "absolutePath": "/Users/ahmed/projects/edgeware/anon/contracts/evm/anchor/contracts/MerkleTreeWithHistory.sol",
     "exportedSymbols": {
-      "IHasher": [
-        472
-      ],
-      "MerkleTreeWithHistory": [
-        1127
-      ]
+      "IHasher": [472],
+      "MerkleTreeWithHistory": [1127]
     },
     "id": 1128,
     "license": "MIT",
@@ -57,12 +53,7 @@
     "nodes": [
       {
         "id": 460,
-        "literals": [
-          "solidity",
-          "^",
-          "0.7",
-          ".0"
-        ],
+        "literals": ["solidity", "^", "0.7", ".0"],
         "nodeType": "PragmaDirective",
         "src": "32:23:24"
       },
@@ -73,9 +64,7 @@
         "contractKind": "interface",
         "fullyImplemented": false,
         "id": 472,
-        "linearizedBaseContracts": [
-          472
-        ],
+        "linearizedBaseContracts": [472],
         "name": "IHasher",
         "nodeType": "ContractDefinition",
         "nodes": [
@@ -222,9 +211,7 @@
         "contractKind": "contract",
         "fullyImplemented": true,
         "id": 1127,
-        "linearizedBaseContracts": [
-          1127
-        ],
+        "linearizedBaseContracts": [1127],
         "name": "MerkleTreeWithHistory",
         "nodeType": "ContractDefinition",
         "nodes": [
@@ -676,10 +663,7 @@
                       "id": 506,
                       "name": "require",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        4294967278,
-                        4294967278
-                      ],
+                      "overloadedDeclarations": [4294967278, 4294967278],
                       "referencedDeclaration": 4294967278,
                       "src": "1117:7:24",
                       "typeDescriptions": {
@@ -786,10 +770,7 @@
                       "id": 513,
                       "name": "require",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        4294967278,
-                        4294967278
-                      ],
+                      "overloadedDeclarations": [4294967278, 4294967278],
                       "referencedDeclaration": 4294967278,
                       "src": "1182:7:24",
                       "typeDescriptions": {
@@ -1058,9 +1039,7 @@
                   },
                   "id": 547,
                   "initializationExpression": {
-                    "assignments": [
-                      529
-                    ],
+                    "assignments": [529],
                     "declarations": [
                       {
                         "constant": false,
@@ -1492,10 +1471,7 @@
                       "id": 571,
                       "name": "require",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        4294967278,
-                        4294967278
-                      ],
+                      "overloadedDeclarations": [4294967278, 4294967278],
                       "referencedDeclaration": 4294967278,
                       "src": "1603:7:24",
                       "typeDescriptions": {
@@ -1642,10 +1618,7 @@
                       "id": 581,
                       "name": "require",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        4294967278,
-                        4294967278
-                      ],
+                      "overloadedDeclarations": [4294967278, 4294967278],
                       "referencedDeclaration": 4294967278,
                       "src": "1681:7:24",
                       "typeDescriptions": {
@@ -1673,9 +1646,7 @@
                   "src": "1681:74:24"
                 },
                 {
-                  "assignments": [
-                    592
-                  ],
+                  "assignments": [592],
                   "declarations": [
                     {
                       "constant": false,
@@ -1765,9 +1736,7 @@
                   "src": "1761:26:24"
                 },
                 {
-                  "assignments": [
-                    599
-                  ],
+                  "assignments": [599],
                   "declarations": [
                     {
                       "constant": false,
@@ -2456,9 +2425,7 @@
               "src": "2028:824:24",
               "statements": [
                 {
-                  "assignments": [
-                    647
-                  ],
+                  "assignments": [647],
                   "declarations": [
                     {
                       "constant": false,
@@ -2657,10 +2624,7 @@
                       "id": 650,
                       "name": "require",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        4294967278,
-                        4294967278
-                      ],
+                      "overloadedDeclarations": [4294967278, 4294967278],
                       "referencedDeclaration": 4294967278,
                       "src": "2069:7:24",
                       "typeDescriptions": {
@@ -2688,9 +2652,7 @@
                   "src": "2069:92:24"
                 },
                 {
-                  "assignments": [
-                    663
-                  ],
+                  "assignments": [663],
                   "declarations": [
                     {
                       "constant": false,
@@ -2736,9 +2698,7 @@
                   "src": "2167:32:24"
                 },
                 {
-                  "assignments": [
-                    667
-                  ],
+                  "assignments": [667],
                   "declarations": [
                     {
                       "constant": false,
@@ -2784,9 +2744,7 @@
                   "src": "2205:32:24"
                 },
                 {
-                  "assignments": [
-                    671
-                  ],
+                  "assignments": [671],
                   "declarations": [
                     {
                       "constant": false,
@@ -2820,9 +2778,7 @@
                   "src": "2243:12:24"
                 },
                 {
-                  "assignments": [
-                    674
-                  ],
+                  "assignments": [674],
                   "declarations": [
                     {
                       "constant": false,
@@ -3465,9 +3421,7 @@
                   },
                   "id": 733,
                   "initializationExpression": {
-                    "assignments": [
-                      677
-                    ],
+                    "assignments": [677],
                     "declarations": [
                       {
                         "constant": false,
@@ -3552,9 +3506,7 @@
                   "src": "2281:360:24"
                 },
                 {
-                  "assignments": [
-                    735
-                  ],
+                  "assignments": [735],
                   "declarations": [
                     {
                       "constant": false,
@@ -4052,9 +4004,7 @@
                   }
                 },
                 {
-                  "assignments": [
-                    778
-                  ],
+                  "assignments": [778],
                   "declarations": [
                     {
                       "constant": false,
@@ -4100,9 +4050,7 @@
                   "src": "3041:43:24"
                 },
                 {
-                  "assignments": [
-                    782
-                  ],
+                  "assignments": [782],
                   "declarations": [
                     {
                       "constant": false,
@@ -8561,24 +8509,15 @@
     "attributes": {
       "absolutePath": "/Users/ahmed/projects/edgeware/anon/contracts/evm/anchor/contracts/MerkleTreeWithHistory.sol",
       "exportedSymbols": {
-        "IHasher": [
-          472
-        ],
-        "MerkleTreeWithHistory": [
-          1127
-        ]
+        "IHasher": [472],
+        "MerkleTreeWithHistory": [1127]
       },
       "license": "MIT"
     },
     "children": [
       {
         "attributes": {
-          "literals": [
-            "solidity",
-            "^",
-            "0.7",
-            ".0"
-          ]
+          "literals": ["solidity", "^", "0.7", ".0"]
         },
         "id": 460,
         "name": "PragmaDirective",
@@ -8587,17 +8526,11 @@
       {
         "attributes": {
           "abstract": false,
-          "baseContracts": [
-            null
-          ],
-          "contractDependencies": [
-            null
-          ],
+          "baseContracts": [null],
+          "contractDependencies": [null],
           "contractKind": "interface",
           "fullyImplemented": false,
-          "linearizedBaseContracts": [
-            472
-          ],
+          "linearizedBaseContracts": [472],
           "name": "IHasher",
           "scope": 1128
         },
@@ -8608,9 +8541,7 @@
               "implemented": false,
               "isConstructor": false,
               "kind": "function",
-              "modifiers": [
-                null
-              ],
+              "modifiers": [null],
               "name": "MiMCSponge",
               "scope": 472,
               "stateMutability": "pure",
@@ -8749,17 +8680,11 @@
       {
         "attributes": {
           "abstract": false,
-          "baseContracts": [
-            null
-          ],
-          "contractDependencies": [
-            null
-          ],
+          "baseContracts": [null],
+          "contractDependencies": [null],
           "contractKind": "contract",
           "fullyImplemented": true,
-          "linearizedBaseContracts": [
-            1127
-          ],
+          "linearizedBaseContracts": [1127],
           "name": "MerkleTreeWithHistory",
           "scope": 1128
         },
@@ -9126,9 +9051,7 @@
               "implemented": true,
               "isConstructor": true,
               "kind": "constructor",
-              "modifiers": [
-                null
-              ],
+              "modifiers": [null],
               "name": "",
               "scope": 1127,
               "stateMutability": "nonpayable",
@@ -9198,9 +9121,7 @@
               },
               {
                 "attributes": {
-                  "parameters": [
-                    null
-                  ]
+                  "parameters": [null]
                 },
                 "children": [],
                 "id": 505,
@@ -9218,9 +9139,7 @@
                           "isPure": false,
                           "isStructConstructorCall": false,
                           "lValueRequested": false,
-                          "names": [
-                            null
-                          ],
+                          "names": [null],
                           "tryCall": false,
                           "type": "tuple()",
                           "type_conversion": false
@@ -9238,10 +9157,7 @@
                                   "typeString": "literal_string \"_levels should be greater than zero\""
                                 }
                               ],
-                              "overloadedDeclarations": [
-                                4294967278,
-                                4294967278
-                              ],
+                              "overloadedDeclarations": [4294967278, 4294967278],
                               "referencedDeclaration": 4294967278,
                               "type": "function (bool,string memory) pure",
                               "value": "require"
@@ -9266,9 +9182,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 501,
                                   "type": "uint32",
                                   "value": "_levels"
@@ -9331,9 +9245,7 @@
                           "isPure": false,
                           "isStructConstructorCall": false,
                           "lValueRequested": false,
-                          "names": [
-                            null
-                          ],
+                          "names": [null],
                           "tryCall": false,
                           "type": "tuple()",
                           "type_conversion": false
@@ -9351,10 +9263,7 @@
                                   "typeString": "literal_string \"_levels should be less than 32\""
                                 }
                               ],
-                              "overloadedDeclarations": [
-                                4294967278,
-                                4294967278
-                              ],
+                              "overloadedDeclarations": [4294967278, 4294967278],
                               "referencedDeclaration": 4294967278,
                               "type": "function (bool,string memory) pure",
                               "value": "require"
@@ -9379,9 +9288,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 501,
                                   "type": "uint32",
                                   "value": "_levels"
@@ -9449,9 +9356,7 @@
                         "children": [
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 482,
                               "type": "uint32",
                               "value": "levels"
@@ -9462,9 +9367,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 501,
                               "type": "uint32",
                               "value": "_levels"
@@ -9497,9 +9400,7 @@
                         "children": [
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 480,
                               "type": "contract IHasher",
                               "value": "hasher"
@@ -9510,9 +9411,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 503,
                               "type": "contract IHasher",
                               "value": "_hasher"
@@ -9535,9 +9434,7 @@
                     "children": [
                       {
                         "attributes": {
-                          "assignments": [
-                            529
-                          ]
+                          "assignments": [529]
                         },
                         "children": [
                           {
@@ -9602,9 +9499,7 @@
                         "children": [
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 529,
                               "type": "uint32",
                               "value": "i"
@@ -9615,9 +9510,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 501,
                               "type": "uint32",
                               "value": "_levels"
@@ -9646,9 +9539,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 529,
                                   "type": "uint32",
                                   "value": "i"
@@ -9692,9 +9583,7 @@
                                     "children": [
                                       {
                                         "attributes": {
-                                          "overloadedDeclarations": [
-                                            null
-                                          ],
+                                          "overloadedDeclarations": [null],
                                           "referencedDeclaration": 486,
                                           "type": "mapping(uint256 => bytes32)",
                                           "value": "filledSubtrees"
@@ -9705,9 +9594,7 @@
                                       },
                                       {
                                         "attributes": {
-                                          "overloadedDeclarations": [
-                                            null
-                                          ],
+                                          "overloadedDeclarations": [null],
                                           "referencedDeclaration": 529,
                                           "type": "uint32",
                                           "value": "i"
@@ -9728,9 +9615,7 @@
                                       "isPure": false,
                                       "isStructConstructorCall": false,
                                       "lValueRequested": false,
-                                      "names": [
-                                        null
-                                      ],
+                                      "names": [null],
                                       "tryCall": false,
                                       "type": "bytes32",
                                       "type_conversion": false
@@ -9744,9 +9629,7 @@
                                               "typeString": "uint32"
                                             }
                                           ],
-                                          "overloadedDeclarations": [
-                                            null
-                                          ],
+                                          "overloadedDeclarations": [null],
                                           "referencedDeclaration": 1126,
                                           "type": "function (uint256) pure returns (bytes32)",
                                           "value": "zeros"
@@ -9757,9 +9640,7 @@
                                       },
                                       {
                                         "attributes": {
-                                          "overloadedDeclarations": [
-                                            null
-                                          ],
+                                          "overloadedDeclarations": [null],
                                           "referencedDeclaration": 529,
                                           "type": "uint32",
                                           "value": "i"
@@ -9816,9 +9697,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 490,
                                   "type": "mapping(uint256 => bytes32)",
                                   "value": "roots"
@@ -9854,9 +9733,7 @@
                               "isPure": false,
                               "isStructConstructorCall": false,
                               "lValueRequested": false,
-                              "names": [
-                                null
-                              ],
+                              "names": [null],
                               "tryCall": false,
                               "type": "bytes32",
                               "type_conversion": false
@@ -9870,9 +9747,7 @@
                                       "typeString": "uint32"
                                     }
                                   ],
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 1126,
                                   "type": "function (uint256) pure returns (bytes32)",
                                   "value": "zeros"
@@ -9897,9 +9772,7 @@
                                 "children": [
                                   {
                                     "attributes": {
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 501,
                                       "type": "uint32",
                                       "value": "_levels"
@@ -9959,9 +9832,7 @@
               "implemented": true,
               "isConstructor": false,
               "kind": "function",
-              "modifiers": [
-                null
-              ],
+              "modifiers": [null],
               "name": "hashLeftRight",
               "scope": 1127,
               "stateMutability": "pure",
@@ -10107,9 +9978,7 @@
                           "isPure": false,
                           "isStructConstructorCall": false,
                           "lValueRequested": false,
-                          "names": [
-                            null
-                          ],
+                          "names": [null],
                           "tryCall": false,
                           "type": "tuple()",
                           "type_conversion": false
@@ -10127,10 +9996,7 @@
                                   "typeString": "literal_string \"_left should be inside the field\""
                                 }
                               ],
-                              "overloadedDeclarations": [
-                                4294967278,
-                                4294967278
-                              ],
+                              "overloadedDeclarations": [4294967278, 4294967278],
                               "referencedDeclaration": 4294967278,
                               "type": "function (bool,string memory) pure",
                               "value": "require"
@@ -10160,9 +10026,7 @@
                                   "isPure": false,
                                   "isStructConstructorCall": false,
                                   "lValueRequested": false,
-                                  "names": [
-                                    null
-                                  ],
+                                  "names": [null],
                                   "tryCall": false,
                                   "type": "uint256",
                                   "type_conversion": true
@@ -10198,9 +10062,7 @@
                                   },
                                   {
                                     "attributes": {
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 564,
                                       "type": "bytes32",
                                       "value": "_left"
@@ -10216,9 +10078,7 @@
                               },
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 475,
                                   "type": "uint256",
                                   "value": "FIELD_SIZE"
@@ -10266,9 +10126,7 @@
                           "isPure": false,
                           "isStructConstructorCall": false,
                           "lValueRequested": false,
-                          "names": [
-                            null
-                          ],
+                          "names": [null],
                           "tryCall": false,
                           "type": "tuple()",
                           "type_conversion": false
@@ -10286,10 +10144,7 @@
                                   "typeString": "literal_string \"_right should be inside the field\""
                                 }
                               ],
-                              "overloadedDeclarations": [
-                                4294967278,
-                                4294967278
-                              ],
+                              "overloadedDeclarations": [4294967278, 4294967278],
                               "referencedDeclaration": 4294967278,
                               "type": "function (bool,string memory) pure",
                               "value": "require"
@@ -10319,9 +10174,7 @@
                                   "isPure": false,
                                   "isStructConstructorCall": false,
                                   "lValueRequested": false,
-                                  "names": [
-                                    null
-                                  ],
+                                  "names": [null],
                                   "tryCall": false,
                                   "type": "uint256",
                                   "type_conversion": true
@@ -10357,9 +10210,7 @@
                                   },
                                   {
                                     "attributes": {
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 566,
                                       "type": "bytes32",
                                       "value": "_right"
@@ -10375,9 +10226,7 @@
                               },
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 475,
                                   "type": "uint256",
                                   "value": "FIELD_SIZE"
@@ -10418,9 +10267,7 @@
                   },
                   {
                     "attributes": {
-                      "assignments": [
-                        592
-                      ]
+                      "assignments": [592]
                     },
                     "children": [
                       {
@@ -10456,9 +10303,7 @@
                           "isPure": false,
                           "isStructConstructorCall": false,
                           "lValueRequested": false,
-                          "names": [
-                            null
-                          ],
+                          "names": [null],
                           "tryCall": false,
                           "type": "uint256",
                           "type_conversion": true
@@ -10494,9 +10339,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 564,
                               "type": "bytes32",
                               "value": "_left"
@@ -10517,9 +10360,7 @@
                   },
                   {
                     "attributes": {
-                      "assignments": [
-                        599
-                      ]
+                      "assignments": [599]
                     },
                     "children": [
                       {
@@ -10592,9 +10433,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 592,
                                   "type": "uint256",
                                   "value": "R"
@@ -10605,9 +10444,7 @@
                               },
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 599,
                                   "type": "uint256",
                                   "value": "C"
@@ -10628,9 +10465,7 @@
                               "isPure": false,
                               "isStructConstructorCall": false,
                               "lValueRequested": false,
-                              "names": [
-                                null
-                              ],
+                              "names": [null],
                               "tryCall": false,
                               "type": "tuple(uint256,uint256)",
                               "type_conversion": false
@@ -10659,9 +10494,7 @@
                                 "children": [
                                   {
                                     "attributes": {
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 562,
                                       "type": "contract IHasher",
                                       "value": "_hasher"
@@ -10677,9 +10510,7 @@
                               },
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 592,
                                   "type": "uint256",
                                   "value": "R"
@@ -10690,9 +10521,7 @@
                               },
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 599,
                                   "type": "uint256",
                                   "value": "C"
@@ -10730,9 +10559,7 @@
                         "children": [
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 592,
                               "type": "uint256",
                               "value": "R"
@@ -10748,9 +10575,7 @@
                               "isPure": false,
                               "isStructConstructorCall": false,
                               "lValueRequested": false,
-                              "names": [
-                                null
-                              ],
+                              "names": [null],
                               "tryCall": false,
                               "type": "uint256",
                               "type_conversion": false
@@ -10772,9 +10597,7 @@
                                       "typeString": "uint256"
                                     }
                                   ],
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 4294967294,
                                   "type": "function (uint256,uint256,uint256) pure returns (uint256)",
                                   "value": "addmod"
@@ -10785,9 +10608,7 @@
                               },
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 592,
                                   "type": "uint256",
                                   "value": "R"
@@ -10803,9 +10624,7 @@
                                   "isPure": false,
                                   "isStructConstructorCall": false,
                                   "lValueRequested": false,
-                                  "names": [
-                                    null
-                                  ],
+                                  "names": [null],
                                   "tryCall": false,
                                   "type": "uint256",
                                   "type_conversion": true
@@ -10841,9 +10660,7 @@
                                   },
                                   {
                                     "attributes": {
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 566,
                                       "type": "bytes32",
                                       "value": "_right"
@@ -10859,9 +10676,7 @@
                               },
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 475,
                                   "type": "uint256",
                                   "value": "FIELD_SIZE"
@@ -10909,9 +10724,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 592,
                                   "type": "uint256",
                                   "value": "R"
@@ -10922,9 +10735,7 @@
                               },
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 599,
                                   "type": "uint256",
                                   "value": "C"
@@ -10945,9 +10756,7 @@
                               "isPure": false,
                               "isStructConstructorCall": false,
                               "lValueRequested": false,
-                              "names": [
-                                null
-                              ],
+                              "names": [null],
                               "tryCall": false,
                               "type": "tuple(uint256,uint256)",
                               "type_conversion": false
@@ -10976,9 +10785,7 @@
                                 "children": [
                                   {
                                     "attributes": {
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 562,
                                       "type": "contract IHasher",
                                       "value": "_hasher"
@@ -10994,9 +10801,7 @@
                               },
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 592,
                                   "type": "uint256",
                                   "value": "R"
@@ -11007,9 +10812,7 @@
                               },
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 599,
                                   "type": "uint256",
                                   "value": "C"
@@ -11045,9 +10848,7 @@
                           "isPure": false,
                           "isStructConstructorCall": false,
                           "lValueRequested": false,
-                          "names": [
-                            null
-                          ],
+                          "names": [null],
                           "tryCall": false,
                           "type": "bytes32",
                           "type_conversion": true
@@ -11083,9 +10884,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 592,
                               "type": "uint256",
                               "value": "R"
@@ -11119,9 +10918,7 @@
               "implemented": true,
               "isConstructor": false,
               "kind": "function",
-              "modifiers": [
-                null
-              ],
+              "modifiers": [null],
               "name": "_insert",
               "scope": 1127,
               "stateMutability": "nonpayable",
@@ -11199,9 +10996,7 @@
                 "children": [
                   {
                     "attributes": {
-                      "assignments": [
-                        647
-                      ]
+                      "assignments": [647]
                     },
                     "children": [
                       {
@@ -11232,9 +11027,7 @@
                       },
                       {
                         "attributes": {
-                          "overloadedDeclarations": [
-                            null
-                          ],
+                          "overloadedDeclarations": [null],
                           "referencedDeclaration": 499,
                           "type": "uint32",
                           "value": "nextIndex"
@@ -11257,9 +11050,7 @@
                           "isPure": false,
                           "isStructConstructorCall": false,
                           "lValueRequested": false,
-                          "names": [
-                            null
-                          ],
+                          "names": [null],
                           "tryCall": false,
                           "type": "tuple()",
                           "type_conversion": false
@@ -11277,10 +11068,7 @@
                                   "typeString": "literal_string \"Merkle tree is full. No more leaves can be added\""
                                 }
                               ],
-                              "overloadedDeclarations": [
-                                4294967278,
-                                4294967278
-                              ],
+                              "overloadedDeclarations": [4294967278, 4294967278],
                               "referencedDeclaration": 4294967278,
                               "type": "function (bool,string memory) pure",
                               "value": "require"
@@ -11305,9 +11093,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 647,
                                   "type": "uint32",
                                   "value": "_nextIndex"
@@ -11337,9 +11123,7 @@
                                       "isPure": true,
                                       "isStructConstructorCall": false,
                                       "lValueRequested": false,
-                                      "names": [
-                                        null
-                                      ],
+                                      "names": [null],
                                       "tryCall": false,
                                       "type": "uint32",
                                       "type_conversion": true
@@ -11395,9 +11179,7 @@
                                   },
                                   {
                                     "attributes": {
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 482,
                                       "type": "uint32",
                                       "value": "levels"
@@ -11443,9 +11225,7 @@
                   },
                   {
                     "attributes": {
-                      "assignments": [
-                        663
-                      ]
+                      "assignments": [663]
                     },
                     "children": [
                       {
@@ -11476,9 +11256,7 @@
                       },
                       {
                         "attributes": {
-                          "overloadedDeclarations": [
-                            null
-                          ],
+                          "overloadedDeclarations": [null],
                           "referencedDeclaration": 647,
                           "type": "uint32",
                           "value": "_nextIndex"
@@ -11494,9 +11272,7 @@
                   },
                   {
                     "attributes": {
-                      "assignments": [
-                        667
-                      ]
+                      "assignments": [667]
                     },
                     "children": [
                       {
@@ -11527,9 +11303,7 @@
                       },
                       {
                         "attributes": {
-                          "overloadedDeclarations": [
-                            null
-                          ],
+                          "overloadedDeclarations": [null],
                           "referencedDeclaration": 641,
                           "type": "bytes32",
                           "value": "_leaf"
@@ -11545,9 +11319,7 @@
                   },
                   {
                     "attributes": {
-                      "assignments": [
-                        671
-                      ]
+                      "assignments": [671]
                     },
                     "children": [
                       {
@@ -11583,9 +11355,7 @@
                   },
                   {
                     "attributes": {
-                      "assignments": [
-                        674
-                      ]
+                      "assignments": [674]
                     },
                     "children": [
                       {
@@ -11623,9 +11393,7 @@
                     "children": [
                       {
                         "attributes": {
-                          "assignments": [
-                            677
-                          ]
+                          "assignments": [677]
                         },
                         "children": [
                           {
@@ -11690,9 +11458,7 @@
                         "children": [
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 677,
                               "type": "uint32",
                               "value": "i"
@@ -11703,9 +11469,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 482,
                               "type": "uint32",
                               "value": "levels"
@@ -11734,9 +11498,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 677,
                                   "type": "uint32",
                                   "value": "i"
@@ -11789,9 +11551,7 @@
                                     "children": [
                                       {
                                         "attributes": {
-                                          "overloadedDeclarations": [
-                                            null
-                                          ],
+                                          "overloadedDeclarations": [null],
                                           "referencedDeclaration": 663,
                                           "type": "uint32",
                                           "value": "currentIndex"
@@ -11856,9 +11616,7 @@
                                         "children": [
                                           {
                                             "attributes": {
-                                              "overloadedDeclarations": [
-                                                null
-                                              ],
+                                              "overloadedDeclarations": [null],
                                               "referencedDeclaration": 671,
                                               "type": "bytes32",
                                               "value": "left"
@@ -11869,9 +11627,7 @@
                                           },
                                           {
                                             "attributes": {
-                                              "overloadedDeclarations": [
-                                                null
-                                              ],
+                                              "overloadedDeclarations": [null],
                                               "referencedDeclaration": 667,
                                               "type": "bytes32",
                                               "value": "currentLevelHash"
@@ -11904,9 +11660,7 @@
                                         "children": [
                                           {
                                             "attributes": {
-                                              "overloadedDeclarations": [
-                                                null
-                                              ],
+                                              "overloadedDeclarations": [null],
                                               "referencedDeclaration": 674,
                                               "type": "bytes32",
                                               "value": "right"
@@ -11922,9 +11676,7 @@
                                               "isPure": false,
                                               "isStructConstructorCall": false,
                                               "lValueRequested": false,
-                                              "names": [
-                                                null
-                                              ],
+                                              "names": [null],
                                               "tryCall": false,
                                               "type": "bytes32",
                                               "type_conversion": false
@@ -11938,9 +11690,7 @@
                                                       "typeString": "uint32"
                                                     }
                                                   ],
-                                                  "overloadedDeclarations": [
-                                                    null
-                                                  ],
+                                                  "overloadedDeclarations": [null],
                                                   "referencedDeclaration": 1126,
                                                   "type": "function (uint256) pure returns (bytes32)",
                                                   "value": "zeros"
@@ -11951,9 +11701,7 @@
                                               },
                                               {
                                                 "attributes": {
-                                                  "overloadedDeclarations": [
-                                                    null
-                                                  ],
+                                                  "overloadedDeclarations": [null],
                                                   "referencedDeclaration": 677,
                                                   "type": "uint32",
                                                   "value": "i"
@@ -12000,9 +11748,7 @@
                                             "children": [
                                               {
                                                 "attributes": {
-                                                  "overloadedDeclarations": [
-                                                    null
-                                                  ],
+                                                  "overloadedDeclarations": [null],
                                                   "referencedDeclaration": 486,
                                                   "type": "mapping(uint256 => bytes32)",
                                                   "value": "filledSubtrees"
@@ -12013,9 +11759,7 @@
                                               },
                                               {
                                                 "attributes": {
-                                                  "overloadedDeclarations": [
-                                                    null
-                                                  ],
+                                                  "overloadedDeclarations": [null],
                                                   "referencedDeclaration": 677,
                                                   "type": "uint32",
                                                   "value": "i"
@@ -12031,9 +11775,7 @@
                                           },
                                           {
                                             "attributes": {
-                                              "overloadedDeclarations": [
-                                                null
-                                              ],
+                                              "overloadedDeclarations": [null],
                                               "referencedDeclaration": 667,
                                               "type": "bytes32",
                                               "value": "currentLevelHash"
@@ -12073,9 +11815,7 @@
                                         "children": [
                                           {
                                             "attributes": {
-                                              "overloadedDeclarations": [
-                                                null
-                                              ],
+                                              "overloadedDeclarations": [null],
                                               "referencedDeclaration": 671,
                                               "type": "bytes32",
                                               "value": "left"
@@ -12095,9 +11835,7 @@
                                             "children": [
                                               {
                                                 "attributes": {
-                                                  "overloadedDeclarations": [
-                                                    null
-                                                  ],
+                                                  "overloadedDeclarations": [null],
                                                   "referencedDeclaration": 486,
                                                   "type": "mapping(uint256 => bytes32)",
                                                   "value": "filledSubtrees"
@@ -12108,9 +11846,7 @@
                                               },
                                               {
                                                 "attributes": {
-                                                  "overloadedDeclarations": [
-                                                    null
-                                                  ],
+                                                  "overloadedDeclarations": [null],
                                                   "referencedDeclaration": 677,
                                                   "type": "uint32",
                                                   "value": "i"
@@ -12148,9 +11884,7 @@
                                         "children": [
                                           {
                                             "attributes": {
-                                              "overloadedDeclarations": [
-                                                null
-                                              ],
+                                              "overloadedDeclarations": [null],
                                               "referencedDeclaration": 674,
                                               "type": "bytes32",
                                               "value": "right"
@@ -12161,9 +11895,7 @@
                                           },
                                           {
                                             "attributes": {
-                                              "overloadedDeclarations": [
-                                                null
-                                              ],
+                                              "overloadedDeclarations": [null],
                                               "referencedDeclaration": 667,
                                               "type": "bytes32",
                                               "value": "currentLevelHash"
@@ -12206,9 +11938,7 @@
                                 "children": [
                                   {
                                     "attributes": {
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 667,
                                       "type": "bytes32",
                                       "value": "currentLevelHash"
@@ -12224,9 +11954,7 @@
                                       "isPure": false,
                                       "isStructConstructorCall": false,
                                       "lValueRequested": false,
-                                      "names": [
-                                        null
-                                      ],
+                                      "names": [null],
                                       "tryCall": false,
                                       "type": "bytes32",
                                       "type_conversion": false
@@ -12248,9 +11976,7 @@
                                               "typeString": "bytes32"
                                             }
                                           ],
-                                          "overloadedDeclarations": [
-                                            null
-                                          ],
+                                          "overloadedDeclarations": [null],
                                           "referencedDeclaration": 639,
                                           "type": "function (contract IHasher,bytes32,bytes32) pure returns (bytes32)",
                                           "value": "hashLeftRight"
@@ -12261,9 +11987,7 @@
                                       },
                                       {
                                         "attributes": {
-                                          "overloadedDeclarations": [
-                                            null
-                                          ],
+                                          "overloadedDeclarations": [null],
                                           "referencedDeclaration": 480,
                                           "type": "contract IHasher",
                                           "value": "hasher"
@@ -12274,9 +11998,7 @@
                                       },
                                       {
                                         "attributes": {
-                                          "overloadedDeclarations": [
-                                            null
-                                          ],
+                                          "overloadedDeclarations": [null],
                                           "referencedDeclaration": 671,
                                           "type": "bytes32",
                                           "value": "left"
@@ -12287,9 +12009,7 @@
                                       },
                                       {
                                         "attributes": {
-                                          "overloadedDeclarations": [
-                                            null
-                                          ],
+                                          "overloadedDeclarations": [null],
                                           "referencedDeclaration": 674,
                                           "type": "bytes32",
                                           "value": "right"
@@ -12327,9 +12047,7 @@
                                 "children": [
                                   {
                                     "attributes": {
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 663,
                                       "type": "uint32",
                                       "value": "currentIndex"
@@ -12375,9 +12093,7 @@
                   },
                   {
                     "attributes": {
-                      "assignments": [
-                        735
-                      ]
+                      "assignments": [735]
                     },
                     "children": [
                       {
@@ -12446,9 +12162,7 @@
                                 "children": [
                                   {
                                     "attributes": {
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 496,
                                       "type": "uint32",
                                       "value": "currentRootIndex"
@@ -12484,9 +12198,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 493,
                               "type": "uint32",
                               "value": "ROOT_HISTORY_SIZE"
@@ -12519,9 +12231,7 @@
                         "children": [
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 496,
                               "type": "uint32",
                               "value": "currentRootIndex"
@@ -12532,9 +12242,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 735,
                               "type": "uint32",
                               "value": "newRootIndex"
@@ -12576,9 +12284,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 490,
                                   "type": "mapping(uint256 => bytes32)",
                                   "value": "roots"
@@ -12589,9 +12295,7 @@
                               },
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 735,
                                   "type": "uint32",
                                   "value": "newRootIndex"
@@ -12607,9 +12311,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 667,
                               "type": "bytes32",
                               "value": "currentLevelHash"
@@ -12642,9 +12344,7 @@
                         "children": [
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 499,
                               "type": "uint32",
                               "value": "nextIndex"
@@ -12669,9 +12369,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 647,
                                   "type": "uint32",
                                   "value": "_nextIndex"
@@ -12717,9 +12415,7 @@
                     "children": [
                       {
                         "attributes": {
-                          "overloadedDeclarations": [
-                            null
-                          ],
+                          "overloadedDeclarations": [null],
                           "referencedDeclaration": 647,
                           "type": "uint32",
                           "value": "_nextIndex"
@@ -12749,9 +12445,7 @@
               "implemented": true,
               "isConstructor": false,
               "kind": "function",
-              "modifiers": [
-                null
-              ],
+              "modifiers": [null],
               "name": "isKnownRoot",
               "scope": 1127,
               "stateMutability": "view",
@@ -12854,9 +12548,7 @@
                         "children": [
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 765,
                               "type": "bytes32",
                               "value": "_root"
@@ -12924,9 +12616,7 @@
                   },
                   {
                     "attributes": {
-                      "assignments": [
-                        778
-                      ]
+                      "assignments": [778]
                     },
                     "children": [
                       {
@@ -12957,9 +12647,7 @@
                       },
                       {
                         "attributes": {
-                          "overloadedDeclarations": [
-                            null
-                          ],
+                          "overloadedDeclarations": [null],
                           "referencedDeclaration": 496,
                           "type": "uint32",
                           "value": "currentRootIndex"
@@ -12975,9 +12663,7 @@
                   },
                   {
                     "attributes": {
-                      "assignments": [
-                        782
-                      ]
+                      "assignments": [782]
                     },
                     "children": [
                       {
@@ -13008,9 +12694,7 @@
                       },
                       {
                         "attributes": {
-                          "overloadedDeclarations": [
-                            null
-                          ],
+                          "overloadedDeclarations": [null],
                           "referencedDeclaration": 778,
                           "type": "uint32",
                           "value": "_currentRootIndex"
@@ -13042,9 +12726,7 @@
                         "children": [
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 782,
                               "type": "uint32",
                               "value": "i"
@@ -13055,9 +12737,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 778,
                               "type": "uint32",
                               "value": "_currentRootIndex"
@@ -13092,9 +12772,7 @@
                                 "children": [
                                   {
                                     "attributes": {
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 765,
                                       "type": "bytes32",
                                       "value": "_root"
@@ -13114,9 +12792,7 @@
                                     "children": [
                                       {
                                         "attributes": {
-                                          "overloadedDeclarations": [
-                                            null
-                                          ],
+                                          "overloadedDeclarations": [null],
                                           "referencedDeclaration": 490,
                                           "type": "mapping(uint256 => bytes32)",
                                           "value": "roots"
@@ -13127,9 +12803,7 @@
                                       },
                                       {
                                         "attributes": {
-                                          "overloadedDeclarations": [
-                                            null
-                                          ],
+                                          "overloadedDeclarations": [null],
                                           "referencedDeclaration": 782,
                                           "type": "uint32",
                                           "value": "i"
@@ -13204,9 +12878,7 @@
                                 "children": [
                                   {
                                     "attributes": {
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 782,
                                       "type": "uint32",
                                       "value": "i"
@@ -13251,9 +12923,7 @@
                                         "children": [
                                           {
                                             "attributes": {
-                                              "overloadedDeclarations": [
-                                                null
-                                              ],
+                                              "overloadedDeclarations": [null],
                                               "referencedDeclaration": 782,
                                               "type": "uint32",
                                               "value": "i"
@@ -13264,9 +12934,7 @@
                                           },
                                           {
                                             "attributes": {
-                                              "overloadedDeclarations": [
-                                                null
-                                              ],
+                                              "overloadedDeclarations": [null],
                                               "referencedDeclaration": 493,
                                               "type": "uint32",
                                               "value": "ROOT_HISTORY_SIZE"
@@ -13310,9 +12978,7 @@
                                 "children": [
                                   {
                                     "attributes": {
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 782,
                                       "type": "uint32",
                                       "value": "i"
@@ -13382,9 +13048,7 @@
               "implemented": true,
               "isConstructor": false,
               "kind": "function",
-              "modifiers": [
-                null
-              ],
+              "modifiers": [null],
               "name": "getLastRoot",
               "scope": 1127,
               "stateMutability": "view",
@@ -13402,9 +13066,7 @@
               },
               {
                 "attributes": {
-                  "parameters": [
-                    null
-                  ]
+                  "parameters": [null]
                 },
                 "children": [],
                 "id": 816,
@@ -13462,9 +13124,7 @@
                         "children": [
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 490,
                               "type": "mapping(uint256 => bytes32)",
                               "value": "roots"
@@ -13475,9 +13135,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 496,
                               "type": "uint32",
                               "value": "currentRootIndex"
@@ -13512,9 +13170,7 @@
               "implemented": true,
               "isConstructor": false,
               "kind": "function",
-              "modifiers": [
-                null
-              ],
+              "modifiers": [null],
               "name": "zeros",
               "scope": 1127,
               "stateMutability": "pure",
@@ -13616,9 +13272,7 @@
                         "children": [
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 828,
                               "type": "uint256",
                               "value": "i"
@@ -13659,9 +13313,7 @@
                               "isPure": true,
                               "isStructConstructorCall": false,
                               "lValueRequested": false,
-                              "names": [
-                                null
-                              ],
+                              "names": [null],
                               "tryCall": false,
                               "type": "bytes32",
                               "type_conversion": true
@@ -13738,9 +13390,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 828,
                                   "type": "uint256",
                                   "value": "i"
@@ -13781,9 +13431,7 @@
                                   "isPure": true,
                                   "isStructConstructorCall": false,
                                   "lValueRequested": false,
-                                  "names": [
-                                    null
-                                  ],
+                                  "names": [null],
                                   "tryCall": false,
                                   "type": "bytes32",
                                   "type_conversion": true
@@ -13860,9 +13508,7 @@
                                 "children": [
                                   {
                                     "attributes": {
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 828,
                                       "type": "uint256",
                                       "value": "i"
@@ -13903,9 +13549,7 @@
                                       "isPure": true,
                                       "isStructConstructorCall": false,
                                       "lValueRequested": false,
-                                      "names": [
-                                        null
-                                      ],
+                                      "names": [null],
                                       "tryCall": false,
                                       "type": "bytes32",
                                       "type_conversion": true
@@ -13982,9 +13626,7 @@
                                     "children": [
                                       {
                                         "attributes": {
-                                          "overloadedDeclarations": [
-                                            null
-                                          ],
+                                          "overloadedDeclarations": [null],
                                           "referencedDeclaration": 828,
                                           "type": "uint256",
                                           "value": "i"
@@ -14025,9 +13667,7 @@
                                           "isPure": true,
                                           "isStructConstructorCall": false,
                                           "lValueRequested": false,
-                                          "names": [
-                                            null
-                                          ],
+                                          "names": [null],
                                           "tryCall": false,
                                           "type": "bytes32",
                                           "type_conversion": true
@@ -14104,9 +13744,7 @@
                                         "children": [
                                           {
                                             "attributes": {
-                                              "overloadedDeclarations": [
-                                                null
-                                              ],
+                                              "overloadedDeclarations": [null],
                                               "referencedDeclaration": 828,
                                               "type": "uint256",
                                               "value": "i"
@@ -14147,9 +13785,7 @@
                                               "isPure": true,
                                               "isStructConstructorCall": false,
                                               "lValueRequested": false,
-                                              "names": [
-                                                null
-                                              ],
+                                              "names": [null],
                                               "tryCall": false,
                                               "type": "bytes32",
                                               "type_conversion": true
@@ -14226,9 +13862,7 @@
                                             "children": [
                                               {
                                                 "attributes": {
-                                                  "overloadedDeclarations": [
-                                                    null
-                                                  ],
+                                                  "overloadedDeclarations": [null],
                                                   "referencedDeclaration": 828,
                                                   "type": "uint256",
                                                   "value": "i"
@@ -14269,9 +13903,7 @@
                                                   "isPure": true,
                                                   "isStructConstructorCall": false,
                                                   "lValueRequested": false,
-                                                  "names": [
-                                                    null
-                                                  ],
+                                                  "names": [null],
                                                   "tryCall": false,
                                                   "type": "bytes32",
                                                   "type_conversion": true
@@ -14348,9 +13980,7 @@
                                                 "children": [
                                                   {
                                                     "attributes": {
-                                                      "overloadedDeclarations": [
-                                                        null
-                                                      ],
+                                                      "overloadedDeclarations": [null],
                                                       "referencedDeclaration": 828,
                                                       "type": "uint256",
                                                       "value": "i"
@@ -14391,9 +14021,7 @@
                                                       "isPure": true,
                                                       "isStructConstructorCall": false,
                                                       "lValueRequested": false,
-                                                      "names": [
-                                                        null
-                                                      ],
+                                                      "names": [null],
                                                       "tryCall": false,
                                                       "type": "bytes32",
                                                       "type_conversion": true
@@ -14470,9 +14098,7 @@
                                                     "children": [
                                                       {
                                                         "attributes": {
-                                                          "overloadedDeclarations": [
-                                                            null
-                                                          ],
+                                                          "overloadedDeclarations": [null],
                                                           "referencedDeclaration": 828,
                                                           "type": "uint256",
                                                           "value": "i"
@@ -14513,9 +14139,7 @@
                                                           "isPure": true,
                                                           "isStructConstructorCall": false,
                                                           "lValueRequested": false,
-                                                          "names": [
-                                                            null
-                                                          ],
+                                                          "names": [null],
                                                           "tryCall": false,
                                                           "type": "bytes32",
                                                           "type_conversion": true
@@ -14592,9 +14216,7 @@
                                                         "children": [
                                                           {
                                                             "attributes": {
-                                                              "overloadedDeclarations": [
-                                                                null
-                                                              ],
+                                                              "overloadedDeclarations": [null],
                                                               "referencedDeclaration": 828,
                                                               "type": "uint256",
                                                               "value": "i"
@@ -14635,9 +14257,7 @@
                                                               "isPure": true,
                                                               "isStructConstructorCall": false,
                                                               "lValueRequested": false,
-                                                              "names": [
-                                                                null
-                                                              ],
+                                                              "names": [null],
                                                               "tryCall": false,
                                                               "type": "bytes32",
                                                               "type_conversion": true
@@ -14714,9 +14334,7 @@
                                                             "children": [
                                                               {
                                                                 "attributes": {
-                                                                  "overloadedDeclarations": [
-                                                                    null
-                                                                  ],
+                                                                  "overloadedDeclarations": [null],
                                                                   "referencedDeclaration": 828,
                                                                   "type": "uint256",
                                                                   "value": "i"
@@ -14757,9 +14375,7 @@
                                                                   "isPure": true,
                                                                   "isStructConstructorCall": false,
                                                                   "lValueRequested": false,
-                                                                  "names": [
-                                                                    null
-                                                                  ],
+                                                                  "names": [null],
                                                                   "tryCall": false,
                                                                   "type": "bytes32",
                                                                   "type_conversion": true
@@ -14836,9 +14452,7 @@
                                                                 "children": [
                                                                   {
                                                                     "attributes": {
-                                                                      "overloadedDeclarations": [
-                                                                        null
-                                                                      ],
+                                                                      "overloadedDeclarations": [null],
                                                                       "referencedDeclaration": 828,
                                                                       "type": "uint256",
                                                                       "value": "i"
@@ -14879,9 +14493,7 @@
                                                                       "isPure": true,
                                                                       "isStructConstructorCall": false,
                                                                       "lValueRequested": false,
-                                                                      "names": [
-                                                                        null
-                                                                      ],
+                                                                      "names": [null],
                                                                       "tryCall": false,
                                                                       "type": "bytes32",
                                                                       "type_conversion": true
@@ -14958,9 +14570,7 @@
                                                                     "children": [
                                                                       {
                                                                         "attributes": {
-                                                                          "overloadedDeclarations": [
-                                                                            null
-                                                                          ],
+                                                                          "overloadedDeclarations": [null],
                                                                           "referencedDeclaration": 828,
                                                                           "type": "uint256",
                                                                           "value": "i"
@@ -15001,9 +14611,7 @@
                                                                           "isPure": true,
                                                                           "isStructConstructorCall": false,
                                                                           "lValueRequested": false,
-                                                                          "names": [
-                                                                            null
-                                                                          ],
+                                                                          "names": [null],
                                                                           "tryCall": false,
                                                                           "type": "bytes32",
                                                                           "type_conversion": true
@@ -15080,9 +14688,7 @@
                                                                         "children": [
                                                                           {
                                                                             "attributes": {
-                                                                              "overloadedDeclarations": [
-                                                                                null
-                                                                              ],
+                                                                              "overloadedDeclarations": [null],
                                                                               "referencedDeclaration": 828,
                                                                               "type": "uint256",
                                                                               "value": "i"
@@ -15123,9 +14729,7 @@
                                                                               "isPure": true,
                                                                               "isStructConstructorCall": false,
                                                                               "lValueRequested": false,
-                                                                              "names": [
-                                                                                null
-                                                                              ],
+                                                                              "names": [null],
                                                                               "tryCall": false,
                                                                               "type": "bytes32",
                                                                               "type_conversion": true
@@ -15202,9 +14806,7 @@
                                                                             "children": [
                                                                               {
                                                                                 "attributes": {
-                                                                                  "overloadedDeclarations": [
-                                                                                    null
-                                                                                  ],
+                                                                                  "overloadedDeclarations": [null],
                                                                                   "referencedDeclaration": 828,
                                                                                   "type": "uint256",
                                                                                   "value": "i"
@@ -15245,9 +14847,7 @@
                                                                                   "isPure": true,
                                                                                   "isStructConstructorCall": false,
                                                                                   "lValueRequested": false,
-                                                                                  "names": [
-                                                                                    null
-                                                                                  ],
+                                                                                  "names": [null],
                                                                                   "tryCall": false,
                                                                                   "type": "bytes32",
                                                                                   "type_conversion": true
@@ -15324,9 +14924,7 @@
                                                                                 "children": [
                                                                                   {
                                                                                     "attributes": {
-                                                                                      "overloadedDeclarations": [
-                                                                                        null
-                                                                                      ],
+                                                                                      "overloadedDeclarations": [null],
                                                                                       "referencedDeclaration": 828,
                                                                                       "type": "uint256",
                                                                                       "value": "i"
@@ -15367,9 +14965,7 @@
                                                                                       "isPure": true,
                                                                                       "isStructConstructorCall": false,
                                                                                       "lValueRequested": false,
-                                                                                      "names": [
-                                                                                        null
-                                                                                      ],
+                                                                                      "names": [null],
                                                                                       "tryCall": false,
                                                                                       "type": "bytes32",
                                                                                       "type_conversion": true
@@ -15489,9 +15085,7 @@
                                                                                           "isPure": true,
                                                                                           "isStructConstructorCall": false,
                                                                                           "lValueRequested": false,
-                                                                                          "names": [
-                                                                                            null
-                                                                                          ],
+                                                                                          "names": [null],
                                                                                           "tryCall": false,
                                                                                           "type": "bytes32",
                                                                                           "type_conversion": true
@@ -15611,9 +15205,7 @@
                                                                                               "isPure": true,
                                                                                               "isStructConstructorCall": false,
                                                                                               "lValueRequested": false,
-                                                                                              "names": [
-                                                                                                null
-                                                                                              ],
+                                                                                              "names": [null],
                                                                                               "tryCall": false,
                                                                                               "type": "bytes32",
                                                                                               "type_conversion": true
@@ -15733,9 +15325,7 @@
                                                                                                   "isPure": true,
                                                                                                   "isStructConstructorCall": false,
                                                                                                   "lValueRequested": false,
-                                                                                                  "names": [
-                                                                                                    null
-                                                                                                  ],
+                                                                                                  "names": [null],
                                                                                                   "tryCall": false,
                                                                                                   "type": "bytes32",
                                                                                                   "type_conversion": true
@@ -15855,9 +15445,7 @@
                                                                                                       "isPure": true,
                                                                                                       "isStructConstructorCall": false,
                                                                                                       "lValueRequested": false,
-                                                                                                      "names": [
-                                                                                                        null
-                                                                                                      ],
+                                                                                                      "names": [null],
                                                                                                       "tryCall": false,
                                                                                                       "type": "bytes32",
                                                                                                       "type_conversion": true

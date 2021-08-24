@@ -2,10 +2,10 @@ import React from 'react';
 import { Typography } from '@material-ui/core';
 
 type DepositNotificationProps = {
-  chain: string,
-  amount: number,
-  currency: string,
-}
+  chain: string;
+  amount: number;
+  currency: string;
+};
 
 export class DepositNotification extends React.Component<DepositNotificationProps> {
   render() {
@@ -15,6 +15,6 @@ export class DepositNotification extends React.Component<DepositNotificationProp
         <Typography variant={'h6'}>Size: {this.props.amount}</Typography>
         <Typography variant={'h6'}>Token: {this.props.currency}</Typography>
       </div>
-    )
+    );
   }
 }

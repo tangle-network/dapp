@@ -14,9 +14,7 @@
   "ast": {
     "absolutePath": "@openzeppelin/contracts/utils/Address.sol",
     "exportedSymbols": {
-      "Address": [
-        3896
-      ]
+      "Address": [3896]
     },
     "id": 3897,
     "license": "MIT",
@@ -24,15 +22,7 @@
     "nodes": [
       {
         "id": 3602,
-        "literals": [
-          "solidity",
-          ">=",
-          "0.6",
-          ".2",
-          "<",
-          "0.8",
-          ".0"
-        ],
+        "literals": ["solidity", ">=", "0.6", ".2", "<", "0.8", ".0"],
         "nodeType": "PragmaDirective",
         "src": "33:31:36"
       },
@@ -49,9 +39,7 @@
         },
         "fullyImplemented": true,
         "id": 3896,
-        "linearizedBaseContracts": [
-          3896
-        ],
+        "linearizedBaseContracts": [3896],
         "name": "Address",
         "nodeType": "ContractDefinition",
         "nodes": [
@@ -62,9 +50,7 @@
               "src": "792:347:36",
               "statements": [
                 {
-                  "assignments": [
-                    3612
-                  ],
+                  "assignments": [3612],
                   "declarations": [
                     {
                       "constant": false,
@@ -431,10 +417,7 @@
                       "id": 3628,
                       "name": "require",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        4294967278,
-                        4294967278
-                      ],
+                      "overloadedDeclarations": [4294967278, 4294967278],
                       "referencedDeclaration": 4294967278,
                       "src": "2137:7:36",
                       "typeDescriptions": {
@@ -462,10 +445,7 @@
                   "src": "2137:73:36"
                 },
                 {
-                  "assignments": [
-                    3640,
-                    null
-                  ],
+                  "assignments": [3640, null],
                   "declarations": [
                     {
                       "constant": false,
@@ -559,9 +539,7 @@
                       "isLValue": false,
                       "isPure": false,
                       "lValueRequested": false,
-                      "names": [
-                        "value"
-                      ],
+                      "names": ["value"],
                       "nodeType": "FunctionCallOptions",
                       "options": [
                         {
@@ -647,10 +625,7 @@
                       "id": 3648,
                       "name": "require",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        4294967278,
-                        4294967278
-                      ],
+                      "overloadedDeclarations": [4294967278, 4294967278],
                       "referencedDeclaration": 4294967278,
                       "src": "2362:7:36",
                       "typeDescriptions": {
@@ -831,10 +806,7 @@
                       "id": 3664,
                       "name": "functionCall",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        3671,
-                        3691
-                      ],
+                      "overloadedDeclarations": [3671, 3691],
                       "referencedDeclaration": 3691,
                       "src": "3292:12:36",
                       "typeDescriptions": {
@@ -1059,10 +1031,7 @@
                       "id": 3683,
                       "name": "functionCallWithValue",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        3711,
-                        3761
-                      ],
+                      "overloadedDeclarations": [3711, 3761],
                       "referencedDeclaration": 3761,
                       "src": "3715:21:36",
                       "typeDescriptions": {
@@ -1313,10 +1282,7 @@
                       "id": 3703,
                       "name": "functionCallWithValue",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        3711,
-                        3761
-                      ],
+                      "overloadedDeclarations": [3711, 3761],
                       "referencedDeclaration": 3761,
                       "src": "4266:21:36",
                       "typeDescriptions": {
@@ -1623,10 +1589,7 @@
                       "id": 3725,
                       "name": "require",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        4294967278,
-                        4294967278
-                      ],
+                      "overloadedDeclarations": [4294967278, 4294967278],
                       "referencedDeclaration": 4294967278,
                       "src": "4759:7:36",
                       "typeDescriptions": {
@@ -1735,10 +1698,7 @@
                       "id": 3736,
                       "name": "require",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        4294967278,
-                        4294967278
-                      ],
+                      "overloadedDeclarations": [4294967278, 4294967278],
                       "referencedDeclaration": 4294967278,
                       "src": "4850:7:36",
                       "typeDescriptions": {
@@ -1766,10 +1726,7 @@
                   "src": "4850:60:36"
                 },
                 {
-                  "assignments": [
-                    3744,
-                    3746
-                  ],
+                  "assignments": [3744, 3746],
                   "declarations": [
                     {
                       "constant": false,
@@ -1884,9 +1841,7 @@
                       "isLValue": false,
                       "isPure": false,
                       "lValueRequested": false,
-                      "names": [
-                        "value"
-                      ],
+                      "names": ["value"],
                       "nodeType": "FunctionCallOptions",
                       "options": [
                         {
@@ -2245,10 +2200,7 @@
                       "id": 3771,
                       "name": "functionStaticCall",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        3778,
-                        3813
-                      ],
+                      "overloadedDeclarations": [3778, 3813],
                       "referencedDeclaration": 3813,
                       "src": "5425:18:36",
                       "typeDescriptions": {
@@ -2477,10 +2429,7 @@
                       "id": 3790,
                       "name": "require",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        4294967278,
-                        4294967278
-                      ],
+                      "overloadedDeclarations": [4294967278, 4294967278],
                       "referencedDeclaration": 4294967278,
                       "src": "5827:7:36",
                       "typeDescriptions": {
@@ -2508,10 +2457,7 @@
                   "src": "5827:67:36"
                 },
                 {
-                  "assignments": [
-                    3798,
-                    3800
-                  ],
+                  "assignments": [3798, 3800],
                   "declarations": [
                     {
                       "constant": false,
@@ -2925,10 +2871,7 @@
                       "id": 3823,
                       "name": "functionDelegateCall",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        3830,
-                        3865
-                      ],
+                      "overloadedDeclarations": [3830, 3865],
                       "referencedDeclaration": 3865,
                       "src": "6398:20:36",
                       "typeDescriptions": {
@@ -3157,10 +3100,7 @@
                       "id": 3842,
                       "name": "require",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        4294967278,
-                        4294967278
-                      ],
+                      "overloadedDeclarations": [4294967278, 4294967278],
                       "referencedDeclaration": 4294967278,
                       "src": "6803:7:36",
                       "typeDescriptions": {
@@ -3188,10 +3128,7 @@
                   "src": "6803:69:36"
                 },
                 {
-                  "assignments": [
-                    3850,
-                    3852
-                  ],
+                  "assignments": [3850, 3852],
                   "declarations": [
                     {
                       "constant": false,
@@ -3653,10 +3590,7 @@
                                   "id": 3886,
                                   "name": "revert",
                                   "nodeType": "Identifier",
-                                  "overloadedDeclarations": [
-                                    4294967277,
-                                    4294967277
-                                  ],
+                                  "overloadedDeclarations": [4294967277, 4294967277],
                                   "referencedDeclaration": 4294967277,
                                   "src": "7765:6:36",
                                   "typeDescriptions": {
@@ -3969,24 +3903,14 @@
     "attributes": {
       "absolutePath": "@openzeppelin/contracts/utils/Address.sol",
       "exportedSymbols": {
-        "Address": [
-          3896
-        ]
+        "Address": [3896]
       },
       "license": "MIT"
     },
     "children": [
       {
         "attributes": {
-          "literals": [
-            "solidity",
-            ">=",
-            "0.6",
-            ".2",
-            "<",
-            "0.8",
-            ".0"
-          ]
+          "literals": ["solidity", ">=", "0.6", ".2", "<", "0.8", ".0"]
         },
         "id": 3602,
         "name": "PragmaDirective",
@@ -3995,17 +3919,11 @@
       {
         "attributes": {
           "abstract": false,
-          "baseContracts": [
-            null
-          ],
-          "contractDependencies": [
-            null
-          ],
+          "baseContracts": [null],
+          "contractDependencies": [null],
           "contractKind": "library",
           "fullyImplemented": true,
-          "linearizedBaseContracts": [
-            3896
-          ],
+          "linearizedBaseContracts": [3896],
           "name": "Address",
           "scope": 3897
         },
@@ -4023,9 +3941,7 @@
               "implemented": true,
               "isConstructor": false,
               "kind": "function",
-              "modifiers": [
-                null
-              ],
+              "modifiers": [null],
               "name": "isContract",
               "scope": 3896,
               "stateMutability": "view",
@@ -4112,9 +4028,7 @@
                 "children": [
                   {
                     "attributes": {
-                      "assignments": [
-                        3612
-                      ]
+                      "assignments": [3612]
                     },
                     "children": [
                       {
@@ -4195,9 +4109,7 @@
                         "children": [
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 3612,
                               "type": "uint256",
                               "value": "size"
@@ -4246,9 +4158,7 @@
               "implemented": true,
               "isConstructor": false,
               "kind": "function",
-              "modifiers": [
-                null
-              ],
+              "modifiers": [null],
               "name": "sendValue",
               "scope": 3896,
               "stateMutability": "nonpayable",
@@ -4326,9 +4236,7 @@
               },
               {
                 "attributes": {
-                  "parameters": [
-                    null
-                  ]
+                  "parameters": [null]
                 },
                 "children": [],
                 "id": 3627,
@@ -4346,9 +4254,7 @@
                           "isPure": false,
                           "isStructConstructorCall": false,
                           "lValueRequested": false,
-                          "names": [
-                            null
-                          ],
+                          "names": [null],
                           "tryCall": false,
                           "type": "tuple()",
                           "type_conversion": false
@@ -4366,10 +4272,7 @@
                                   "typeString": "literal_string \"Address: insufficient balance\""
                                 }
                               ],
-                              "overloadedDeclarations": [
-                                4294967278,
-                                4294967278
-                              ],
+                              "overloadedDeclarations": [4294967278, 4294967278],
                               "referencedDeclaration": 4294967278,
                               "type": "function (bool,string memory) pure",
                               "value": "require"
@@ -4409,9 +4312,7 @@
                                       "isPure": false,
                                       "isStructConstructorCall": false,
                                       "lValueRequested": false,
-                                      "names": [
-                                        null
-                                      ],
+                                      "names": [null],
                                       "tryCall": false,
                                       "type": "address",
                                       "type_conversion": true
@@ -4447,9 +4348,7 @@
                                       },
                                       {
                                         "attributes": {
-                                          "overloadedDeclarations": [
-                                            null
-                                          ],
+                                          "overloadedDeclarations": [null],
                                           "referencedDeclaration": 4294967268,
                                           "type": "library Address",
                                           "value": "this"
@@ -4470,9 +4369,7 @@
                               },
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 3625,
                                   "type": "uint256",
                                   "value": "amount"
@@ -4513,10 +4410,7 @@
                   },
                   {
                     "attributes": {
-                      "assignments": [
-                        3640,
-                        null
-                      ]
+                      "assignments": [3640, null]
                     },
                     "children": [
                       {
@@ -4552,9 +4446,7 @@
                           "isPure": false,
                           "isStructConstructorCall": false,
                           "lValueRequested": false,
-                          "names": [
-                            null
-                          ],
+                          "names": [null],
                           "tryCall": false,
                           "type": "tuple(bool,bytes memory)",
                           "type_conversion": false
@@ -4572,9 +4464,7 @@
                               "isLValue": false,
                               "isPure": false,
                               "lValueRequested": false,
-                              "names": [
-                                "value"
-                              ],
+                              "names": ["value"],
                               "type": "function (bytes memory) payable returns (bool,bytes memory)"
                             },
                             "children": [
@@ -4596,9 +4486,7 @@
                                 "children": [
                                   {
                                     "attributes": {
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 3623,
                                       "type": "address payable",
                                       "value": "recipient"
@@ -4614,9 +4502,7 @@
                               },
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 3625,
                                   "type": "uint256",
                                   "value": "amount"
@@ -4664,9 +4550,7 @@
                           "isPure": false,
                           "isStructConstructorCall": false,
                           "lValueRequested": false,
-                          "names": [
-                            null
-                          ],
+                          "names": [null],
                           "tryCall": false,
                           "type": "tuple()",
                           "type_conversion": false
@@ -4684,10 +4568,7 @@
                                   "typeString": "literal_string \"Address: unable to send value, recipient may have reverted\""
                                 }
                               ],
-                              "overloadedDeclarations": [
-                                4294967278,
-                                4294967278
-                              ],
+                              "overloadedDeclarations": [4294967278, 4294967278],
                               "referencedDeclaration": 4294967278,
                               "type": "function (bool,string memory) pure",
                               "value": "require"
@@ -4698,9 +4579,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 3640,
                               "type": "bool",
                               "value": "success"
@@ -4749,9 +4628,7 @@
               "implemented": true,
               "isConstructor": false,
               "kind": "function",
-              "modifiers": [
-                null
-              ],
+              "modifiers": [null],
               "name": "functionCall",
               "scope": 3896,
               "stateMutability": "nonpayable",
@@ -4874,9 +4751,7 @@
                           "isPure": false,
                           "isStructConstructorCall": false,
                           "lValueRequested": false,
-                          "names": [
-                            null
-                          ],
+                          "names": [null],
                           "tryCall": false,
                           "type": "bytes memory",
                           "type_conversion": false
@@ -4898,10 +4773,7 @@
                                   "typeString": "literal_string \"Address: low-level call failed\""
                                 }
                               ],
-                              "overloadedDeclarations": [
-                                3671,
-                                3691
-                              ],
+                              "overloadedDeclarations": [3671, 3691],
                               "referencedDeclaration": 3691,
                               "type": "function (address,bytes memory,string memory) returns (bytes memory)",
                               "value": "functionCall"
@@ -4912,9 +4784,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 3657,
                               "type": "address",
                               "value": "target"
@@ -4925,9 +4795,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 3659,
                               "type": "bytes memory",
                               "value": "data"
@@ -4976,9 +4844,7 @@
               "implemented": true,
               "isConstructor": false,
               "kind": "function",
-              "modifiers": [
-                null
-              ],
+              "modifiers": [null],
               "name": "functionCall",
               "scope": 3896,
               "stateMutability": "nonpayable",
@@ -5127,9 +4993,7 @@
                           "isPure": false,
                           "isStructConstructorCall": false,
                           "lValueRequested": false,
-                          "names": [
-                            null
-                          ],
+                          "names": [null],
                           "tryCall": false,
                           "type": "bytes memory",
                           "type_conversion": false
@@ -5155,10 +5019,7 @@
                                   "typeString": "string memory"
                                 }
                               ],
-                              "overloadedDeclarations": [
-                                3711,
-                                3761
-                              ],
+                              "overloadedDeclarations": [3711, 3761],
                               "referencedDeclaration": 3761,
                               "type": "function (address,bytes memory,uint256,string memory) returns (bytes memory)",
                               "value": "functionCallWithValue"
@@ -5169,9 +5030,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 3674,
                               "type": "address",
                               "value": "target"
@@ -5182,9 +5041,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 3676,
                               "type": "bytes memory",
                               "value": "data"
@@ -5210,9 +5067,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 3678,
                               "type": "string memory",
                               "value": "errorMessage"
@@ -5246,9 +5101,7 @@
               "implemented": true,
               "isConstructor": false,
               "kind": "function",
-              "modifiers": [
-                null
-              ],
+              "modifiers": [null],
               "name": "functionCallWithValue",
               "scope": 3896,
               "stateMutability": "nonpayable",
@@ -5397,9 +5250,7 @@
                           "isPure": false,
                           "isStructConstructorCall": false,
                           "lValueRequested": false,
-                          "names": [
-                            null
-                          ],
+                          "names": [null],
                           "tryCall": false,
                           "type": "bytes memory",
                           "type_conversion": false
@@ -5425,10 +5276,7 @@
                                   "typeString": "literal_string \"Address: low-level call with value failed\""
                                 }
                               ],
-                              "overloadedDeclarations": [
-                                3711,
-                                3761
-                              ],
+                              "overloadedDeclarations": [3711, 3761],
                               "referencedDeclaration": 3761,
                               "type": "function (address,bytes memory,uint256,string memory) returns (bytes memory)",
                               "value": "functionCallWithValue"
@@ -5439,9 +5287,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 3694,
                               "type": "address",
                               "value": "target"
@@ -5452,9 +5298,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 3696,
                               "type": "bytes memory",
                               "value": "data"
@@ -5465,9 +5309,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 3698,
                               "type": "uint256",
                               "value": "value"
@@ -5516,9 +5358,7 @@
               "implemented": true,
               "isConstructor": false,
               "kind": "function",
-              "modifiers": [
-                null
-              ],
+              "modifiers": [null],
               "name": "functionCallWithValue",
               "scope": 3896,
               "stateMutability": "nonpayable",
@@ -5690,9 +5530,7 @@
                           "isPure": false,
                           "isStructConstructorCall": false,
                           "lValueRequested": false,
-                          "names": [
-                            null
-                          ],
+                          "names": [null],
                           "tryCall": false,
                           "type": "tuple()",
                           "type_conversion": false
@@ -5710,10 +5548,7 @@
                                   "typeString": "literal_string \"Address: insufficient balance for call\""
                                 }
                               ],
-                              "overloadedDeclarations": [
-                                4294967278,
-                                4294967278
-                              ],
+                              "overloadedDeclarations": [4294967278, 4294967278],
                               "referencedDeclaration": 4294967278,
                               "type": "function (bool,string memory) pure",
                               "value": "require"
@@ -5753,9 +5588,7 @@
                                       "isPure": false,
                                       "isStructConstructorCall": false,
                                       "lValueRequested": false,
-                                      "names": [
-                                        null
-                                      ],
+                                      "names": [null],
                                       "tryCall": false,
                                       "type": "address",
                                       "type_conversion": true
@@ -5791,9 +5624,7 @@
                                       },
                                       {
                                         "attributes": {
-                                          "overloadedDeclarations": [
-                                            null
-                                          ],
+                                          "overloadedDeclarations": [null],
                                           "referencedDeclaration": 4294967268,
                                           "type": "library Address",
                                           "value": "this"
@@ -5814,9 +5645,7 @@
                               },
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 3718,
                                   "type": "uint256",
                                   "value": "value"
@@ -5864,9 +5693,7 @@
                           "isPure": false,
                           "isStructConstructorCall": false,
                           "lValueRequested": false,
-                          "names": [
-                            null
-                          ],
+                          "names": [null],
                           "tryCall": false,
                           "type": "tuple()",
                           "type_conversion": false
@@ -5884,10 +5711,7 @@
                                   "typeString": "literal_string \"Address: call to non-contract\""
                                 }
                               ],
-                              "overloadedDeclarations": [
-                                4294967278,
-                                4294967278
-                              ],
+                              "overloadedDeclarations": [4294967278, 4294967278],
                               "referencedDeclaration": 4294967278,
                               "type": "function (bool,string memory) pure",
                               "value": "require"
@@ -5903,9 +5727,7 @@
                               "isPure": false,
                               "isStructConstructorCall": false,
                               "lValueRequested": false,
-                              "names": [
-                                null
-                              ],
+                              "names": [null],
                               "tryCall": false,
                               "type": "bool",
                               "type_conversion": false
@@ -5919,9 +5741,7 @@
                                       "typeString": "address"
                                     }
                                   ],
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 3620,
                                   "type": "function (address) view returns (bool)",
                                   "value": "isContract"
@@ -5932,9 +5752,7 @@
                               },
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 3714,
                                   "type": "address",
                                   "value": "target"
@@ -5975,10 +5793,7 @@
                   },
                   {
                     "attributes": {
-                      "assignments": [
-                        3744,
-                        3746
-                      ]
+                      "assignments": [3744, 3746]
                     },
                     "children": [
                       {
@@ -6040,9 +5855,7 @@
                           "isPure": false,
                           "isStructConstructorCall": false,
                           "lValueRequested": false,
-                          "names": [
-                            null
-                          ],
+                          "names": [null],
                           "tryCall": false,
                           "type": "tuple(bool,bytes memory)",
                           "type_conversion": false
@@ -6060,9 +5873,7 @@
                               "isLValue": false,
                               "isPure": false,
                               "lValueRequested": false,
-                              "names": [
-                                "value"
-                              ],
+                              "names": ["value"],
                               "type": "function (bytes memory) payable returns (bool,bytes memory)"
                             },
                             "children": [
@@ -6084,9 +5895,7 @@
                                 "children": [
                                   {
                                     "attributes": {
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 3714,
                                       "type": "address",
                                       "value": "target"
@@ -6102,9 +5911,7 @@
                               },
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 3718,
                                   "type": "uint256",
                                   "value": "value"
@@ -6120,9 +5927,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 3716,
                               "type": "bytes memory",
                               "value": "data"
@@ -6153,9 +5958,7 @@
                           "isPure": false,
                           "isStructConstructorCall": false,
                           "lValueRequested": false,
-                          "names": [
-                            null
-                          ],
+                          "names": [null],
                           "tryCall": false,
                           "type": "bytes memory",
                           "type_conversion": false
@@ -6177,9 +5980,7 @@
                                   "typeString": "string memory"
                                 }
                               ],
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 3895,
                               "type": "function (bool,bytes memory,string memory) pure returns (bytes memory)",
                               "value": "_verifyCallResult"
@@ -6190,9 +5991,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 3744,
                               "type": "bool",
                               "value": "success"
@@ -6203,9 +6002,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 3746,
                               "type": "bytes memory",
                               "value": "returndata"
@@ -6216,9 +6013,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 3720,
                               "type": "string memory",
                               "value": "errorMessage"
@@ -6252,9 +6047,7 @@
               "implemented": true,
               "isConstructor": false,
               "kind": "function",
-              "modifiers": [
-                null
-              ],
+              "modifiers": [null],
               "name": "functionStaticCall",
               "scope": 3896,
               "stateMutability": "view",
@@ -6377,9 +6170,7 @@
                           "isPure": false,
                           "isStructConstructorCall": false,
                           "lValueRequested": false,
-                          "names": [
-                            null
-                          ],
+                          "names": [null],
                           "tryCall": false,
                           "type": "bytes memory",
                           "type_conversion": false
@@ -6401,10 +6192,7 @@
                                   "typeString": "literal_string \"Address: low-level static call failed\""
                                 }
                               ],
-                              "overloadedDeclarations": [
-                                3778,
-                                3813
-                              ],
+                              "overloadedDeclarations": [3778, 3813],
                               "referencedDeclaration": 3813,
                               "type": "function (address,bytes memory,string memory) view returns (bytes memory)",
                               "value": "functionStaticCall"
@@ -6415,9 +6203,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 3764,
                               "type": "address",
                               "value": "target"
@@ -6428,9 +6214,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 3766,
                               "type": "bytes memory",
                               "value": "data"
@@ -6479,9 +6263,7 @@
               "implemented": true,
               "isConstructor": false,
               "kind": "function",
-              "modifiers": [
-                null
-              ],
+              "modifiers": [null],
               "name": "functionStaticCall",
               "scope": 3896,
               "stateMutability": "view",
@@ -6627,9 +6409,7 @@
                           "isPure": false,
                           "isStructConstructorCall": false,
                           "lValueRequested": false,
-                          "names": [
-                            null
-                          ],
+                          "names": [null],
                           "tryCall": false,
                           "type": "tuple()",
                           "type_conversion": false
@@ -6647,10 +6427,7 @@
                                   "typeString": "literal_string \"Address: static call to non-contract\""
                                 }
                               ],
-                              "overloadedDeclarations": [
-                                4294967278,
-                                4294967278
-                              ],
+                              "overloadedDeclarations": [4294967278, 4294967278],
                               "referencedDeclaration": 4294967278,
                               "type": "function (bool,string memory) pure",
                               "value": "require"
@@ -6666,9 +6443,7 @@
                               "isPure": false,
                               "isStructConstructorCall": false,
                               "lValueRequested": false,
-                              "names": [
-                                null
-                              ],
+                              "names": [null],
                               "tryCall": false,
                               "type": "bool",
                               "type_conversion": false
@@ -6682,9 +6457,7 @@
                                       "typeString": "address"
                                     }
                                   ],
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 3620,
                                   "type": "function (address) view returns (bool)",
                                   "value": "isContract"
@@ -6695,9 +6468,7 @@
                               },
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 3781,
                                   "type": "address",
                                   "value": "target"
@@ -6738,10 +6509,7 @@
                   },
                   {
                     "attributes": {
-                      "assignments": [
-                        3798,
-                        3800
-                      ]
+                      "assignments": [3798, 3800]
                     },
                     "children": [
                       {
@@ -6803,9 +6571,7 @@
                           "isPure": false,
                           "isStructConstructorCall": false,
                           "lValueRequested": false,
-                          "names": [
-                            null
-                          ],
+                          "names": [null],
                           "tryCall": false,
                           "type": "tuple(bool,bytes memory)",
                           "type_conversion": false
@@ -6829,9 +6595,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 3781,
                                   "type": "address",
                                   "value": "target"
@@ -6847,9 +6611,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 3783,
                               "type": "bytes memory",
                               "value": "data"
@@ -6880,9 +6642,7 @@
                           "isPure": false,
                           "isStructConstructorCall": false,
                           "lValueRequested": false,
-                          "names": [
-                            null
-                          ],
+                          "names": [null],
                           "tryCall": false,
                           "type": "bytes memory",
                           "type_conversion": false
@@ -6904,9 +6664,7 @@
                                   "typeString": "string memory"
                                 }
                               ],
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 3895,
                               "type": "function (bool,bytes memory,string memory) pure returns (bytes memory)",
                               "value": "_verifyCallResult"
@@ -6917,9 +6675,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 3798,
                               "type": "bool",
                               "value": "success"
@@ -6930,9 +6686,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 3800,
                               "type": "bytes memory",
                               "value": "returndata"
@@ -6943,9 +6697,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 3785,
                               "type": "string memory",
                               "value": "errorMessage"
@@ -6979,9 +6731,7 @@
               "implemented": true,
               "isConstructor": false,
               "kind": "function",
-              "modifiers": [
-                null
-              ],
+              "modifiers": [null],
               "name": "functionDelegateCall",
               "scope": 3896,
               "stateMutability": "nonpayable",
@@ -7104,9 +6854,7 @@
                           "isPure": false,
                           "isStructConstructorCall": false,
                           "lValueRequested": false,
-                          "names": [
-                            null
-                          ],
+                          "names": [null],
                           "tryCall": false,
                           "type": "bytes memory",
                           "type_conversion": false
@@ -7128,10 +6876,7 @@
                                   "typeString": "literal_string \"Address: low-level delegate call failed\""
                                 }
                               ],
-                              "overloadedDeclarations": [
-                                3830,
-                                3865
-                              ],
+                              "overloadedDeclarations": [3830, 3865],
                               "referencedDeclaration": 3865,
                               "type": "function (address,bytes memory,string memory) returns (bytes memory)",
                               "value": "functionDelegateCall"
@@ -7142,9 +6887,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 3816,
                               "type": "address",
                               "value": "target"
@@ -7155,9 +6898,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 3818,
                               "type": "bytes memory",
                               "value": "data"
@@ -7206,9 +6947,7 @@
               "implemented": true,
               "isConstructor": false,
               "kind": "function",
-              "modifiers": [
-                null
-              ],
+              "modifiers": [null],
               "name": "functionDelegateCall",
               "scope": 3896,
               "stateMutability": "nonpayable",
@@ -7354,9 +7093,7 @@
                           "isPure": false,
                           "isStructConstructorCall": false,
                           "lValueRequested": false,
-                          "names": [
-                            null
-                          ],
+                          "names": [null],
                           "tryCall": false,
                           "type": "tuple()",
                           "type_conversion": false
@@ -7374,10 +7111,7 @@
                                   "typeString": "literal_string \"Address: delegate call to non-contract\""
                                 }
                               ],
-                              "overloadedDeclarations": [
-                                4294967278,
-                                4294967278
-                              ],
+                              "overloadedDeclarations": [4294967278, 4294967278],
                               "referencedDeclaration": 4294967278,
                               "type": "function (bool,string memory) pure",
                               "value": "require"
@@ -7393,9 +7127,7 @@
                               "isPure": false,
                               "isStructConstructorCall": false,
                               "lValueRequested": false,
-                              "names": [
-                                null
-                              ],
+                              "names": [null],
                               "tryCall": false,
                               "type": "bool",
                               "type_conversion": false
@@ -7409,9 +7141,7 @@
                                       "typeString": "address"
                                     }
                                   ],
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 3620,
                                   "type": "function (address) view returns (bool)",
                                   "value": "isContract"
@@ -7422,9 +7152,7 @@
                               },
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 3833,
                                   "type": "address",
                                   "value": "target"
@@ -7465,10 +7193,7 @@
                   },
                   {
                     "attributes": {
-                      "assignments": [
-                        3850,
-                        3852
-                      ]
+                      "assignments": [3850, 3852]
                     },
                     "children": [
                       {
@@ -7530,9 +7255,7 @@
                           "isPure": false,
                           "isStructConstructorCall": false,
                           "lValueRequested": false,
-                          "names": [
-                            null
-                          ],
+                          "names": [null],
                           "tryCall": false,
                           "type": "tuple(bool,bytes memory)",
                           "type_conversion": false
@@ -7556,9 +7279,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 3833,
                                   "type": "address",
                                   "value": "target"
@@ -7574,9 +7295,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 3835,
                               "type": "bytes memory",
                               "value": "data"
@@ -7607,9 +7326,7 @@
                           "isPure": false,
                           "isStructConstructorCall": false,
                           "lValueRequested": false,
-                          "names": [
-                            null
-                          ],
+                          "names": [null],
                           "tryCall": false,
                           "type": "bytes memory",
                           "type_conversion": false
@@ -7631,9 +7348,7 @@
                                   "typeString": "string memory"
                                 }
                               ],
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 3895,
                               "type": "function (bool,bytes memory,string memory) pure returns (bytes memory)",
                               "value": "_verifyCallResult"
@@ -7644,9 +7359,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 3850,
                               "type": "bool",
                               "value": "success"
@@ -7657,9 +7370,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 3852,
                               "type": "bytes memory",
                               "value": "returndata"
@@ -7670,9 +7381,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 3837,
                               "type": "string memory",
                               "value": "errorMessage"
@@ -7706,9 +7415,7 @@
               "implemented": true,
               "isConstructor": false,
               "kind": "function",
-              "modifiers": [
-                null
-              ],
+              "modifiers": [null],
               "name": "_verifyCallResult",
               "scope": 3896,
               "stateMutability": "pure",
@@ -7840,9 +7547,7 @@
                     "children": [
                       {
                         "attributes": {
-                          "overloadedDeclarations": [
-                            null
-                          ],
+                          "overloadedDeclarations": [null],
                           "referencedDeclaration": 3867,
                           "type": "bool",
                           "value": "success"
@@ -7860,9 +7565,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 3869,
                                   "type": "bytes memory",
                                   "value": "returndata"
@@ -7911,9 +7614,7 @@
                                     "children": [
                                       {
                                         "attributes": {
-                                          "overloadedDeclarations": [
-                                            null
-                                          ],
+                                          "overloadedDeclarations": [null],
                                           "referencedDeclaration": 3869,
                                           "type": "bytes memory",
                                           "value": "returndata"
@@ -7991,9 +7692,7 @@
                                           "isPure": false,
                                           "isStructConstructorCall": false,
                                           "lValueRequested": false,
-                                          "names": [
-                                            null
-                                          ],
+                                          "names": [null],
                                           "tryCall": false,
                                           "type": "tuple()",
                                           "type_conversion": false
@@ -8007,10 +7706,7 @@
                                                   "typeString": "string memory"
                                                 }
                                               ],
-                                              "overloadedDeclarations": [
-                                                4294967277,
-                                                4294967277
-                                              ],
+                                              "overloadedDeclarations": [4294967277, 4294967277],
                                               "referencedDeclaration": 4294967277,
                                               "type": "function (string memory) pure",
                                               "value": "revert"
@@ -8021,9 +7717,7 @@
                                           },
                                           {
                                             "attributes": {
-                                              "overloadedDeclarations": [
-                                                null
-                                              ],
+                                              "overloadedDeclarations": [null],
                                               "referencedDeclaration": 3871,
                                               "type": "string memory",
                                               "value": "errorMessage"

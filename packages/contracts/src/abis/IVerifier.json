@@ -39,21 +39,11 @@
   "ast": {
     "absolutePath": "/Users/ahmed/projects/edgeware/anon/contracts/evm/anchor/contracts/Anchor.sol",
     "exportedSymbols": {
-      "Anchor": [
-        330
-      ],
-      "IHasher": [
-        472
-      ],
-      "IVerifier": [
-        59
-      ],
-      "MerkleTreeWithHistory": [
-        1127
-      ],
-      "ReentrancyGuard": [
-        3959
-      ]
+      "Anchor": [330],
+      "IHasher": [472],
+      "IVerifier": [59],
+      "MerkleTreeWithHistory": [1127],
+      "ReentrancyGuard": [3959]
     },
     "id": 331,
     "license": "MIT",
@@ -61,12 +51,7 @@
     "nodes": [
       {
         "id": 45,
-        "literals": [
-          "solidity",
-          "^",
-          "0.7",
-          ".0"
-        ],
+        "literals": ["solidity", "^", "0.7", ".0"],
         "nodeType": "PragmaDirective",
         "src": "32:23:22"
       },
@@ -99,9 +84,7 @@
         "contractKind": "interface",
         "fullyImplemented": false,
         "id": 59,
-        "linearizedBaseContracts": [
-          59
-        ],
+        "linearizedBaseContracts": [59],
         "name": "IVerifier",
         "nodeType": "ContractDefinition",
         "nodes": [
@@ -276,18 +259,11 @@
             "src": "327:15:22"
           }
         ],
-        "contractDependencies": [
-          1127,
-          3959
-        ],
+        "contractDependencies": [1127, 3959],
         "contractKind": "contract",
         "fullyImplemented": false,
         "id": 330,
-        "linearizedBaseContracts": [
-          330,
-          3959,
-          1127
-        ],
+        "linearizedBaseContracts": [330, 3959, 1127],
         "name": "Anchor",
         "nodeType": "ContractDefinition",
         "nodes": [
@@ -743,10 +719,7 @@
                       "id": 109,
                       "name": "require",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        4294967278,
-                        4294967278
-                      ],
+                      "overloadedDeclarations": [4294967278, 4294967278],
                       "referencedDeclaration": 4294967278,
                       "src": "1250:7:22",
                       "typeDescriptions": {
@@ -1134,10 +1107,7 @@
                       "id": 133,
                       "name": "require",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        4294967278,
-                        4294967278
-                      ],
+                      "overloadedDeclarations": [4294967278, 4294967278],
                       "referencedDeclaration": 4294967278,
                       "src": "1704:7:22",
                       "typeDescriptions": {
@@ -1165,9 +1135,7 @@
                   "src": "1704:71:22"
                 },
                 {
-                  "assignments": [
-                    142
-                  ],
+                  "assignments": [142],
                   "declarations": [
                     {
                       "constant": false,
@@ -1645,10 +1613,7 @@
                       "id": 188,
                       "name": "require",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        4294967278,
-                        4294967278
-                      ],
+                      "overloadedDeclarations": [4294967278, 4294967278],
                       "referencedDeclaration": 4294967278,
                       "src": "2691:7:22",
                       "typeDescriptions": {
@@ -1761,10 +1726,7 @@
                       "id": 195,
                       "name": "require",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        4294967278,
-                        4294967278
-                      ],
+                      "overloadedDeclarations": [4294967278, 4294967278],
                       "referencedDeclaration": 4294967278,
                       "src": "2756:7:22",
                       "typeDescriptions": {
@@ -1873,10 +1835,7 @@
                       "id": 203,
                       "name": "require",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        4294967278,
-                        4294967278
-                      ],
+                      "overloadedDeclarations": [4294967278, 4294967278],
                       "referencedDeclaration": 4294967278,
                       "src": "2838:7:22",
                       "typeDescriptions": {
@@ -2268,10 +2227,7 @@
                       "id": 210,
                       "name": "require",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        4294967278,
-                        4294967278
-                      ],
+                      "overloadedDeclarations": [4294967278, 4294967278],
                       "referencedDeclaration": 4294967278,
                       "src": "2936:7:22",
                       "typeDescriptions": {
@@ -3424,9 +3380,7 @@
                   },
                   "id": 327,
                   "initializationExpression": {
-                    "assignments": [
-                      303
-                    ],
+                    "assignments": [303],
                     "declarations": [
                       {
                         "constant": false,
@@ -3626,33 +3580,18 @@
     "attributes": {
       "absolutePath": "/Users/ahmed/projects/edgeware/anon/contracts/evm/anchor/contracts/Anchor.sol",
       "exportedSymbols": {
-        "Anchor": [
-          330
-        ],
-        "IHasher": [
-          472
-        ],
-        "IVerifier": [
-          59
-        ],
-        "MerkleTreeWithHistory": [
-          1127
-        ],
-        "ReentrancyGuard": [
-          3959
-        ]
+        "Anchor": [330],
+        "IHasher": [472],
+        "IVerifier": [59],
+        "MerkleTreeWithHistory": [1127],
+        "ReentrancyGuard": [3959]
       },
       "license": "MIT"
     },
     "children": [
       {
         "attributes": {
-          "literals": [
-            "solidity",
-            "^",
-            "0.7",
-            ".0"
-          ]
+          "literals": ["solidity", "^", "0.7", ".0"]
         },
         "id": 45,
         "name": "PragmaDirective",
@@ -3664,9 +3603,7 @@
           "absolutePath": "/Users/ahmed/projects/edgeware/anon/contracts/evm/anchor/contracts/MerkleTreeWithHistory.sol",
           "file": "./MerkleTreeWithHistory.sol",
           "scope": 331,
-          "symbolAliases": [
-            null
-          ],
+          "symbolAliases": [null],
           "unitAlias": ""
         },
         "id": 46,
@@ -3679,9 +3616,7 @@
           "absolutePath": "@openzeppelin/contracts/utils/ReentrancyGuard.sol",
           "file": "@openzeppelin/contracts/utils/ReentrancyGuard.sol",
           "scope": 331,
-          "symbolAliases": [
-            null
-          ],
+          "symbolAliases": [null],
           "unitAlias": ""
         },
         "id": 47,
@@ -3691,17 +3626,11 @@
       {
         "attributes": {
           "abstract": false,
-          "baseContracts": [
-            null
-          ],
-          "contractDependencies": [
-            null
-          ],
+          "baseContracts": [null],
+          "contractDependencies": [null],
           "contractKind": "interface",
           "fullyImplemented": false,
-          "linearizedBaseContracts": [
-            59
-          ],
+          "linearizedBaseContracts": [59],
           "name": "IVerifier",
           "scope": 331
         },
@@ -3712,9 +3641,7 @@
               "implemented": false,
               "isConstructor": false,
               "kind": "function",
-              "modifiers": [
-                null
-              ],
+              "modifiers": [null],
               "name": "verifyProof",
               "scope": 59,
               "stateMutability": "nonpayable",
@@ -3852,17 +3779,10 @@
       {
         "attributes": {
           "abstract": true,
-          "contractDependencies": [
-            1127,
-            3959
-          ],
+          "contractDependencies": [1127, 3959],
           "contractKind": "contract",
           "fullyImplemented": false,
-          "linearizedBaseContracts": [
-            330,
-            3959,
-            1127
-          ],
+          "linearizedBaseContracts": [330, 3959, 1127],
           "name": "Anchor",
           "scope": 331
         },
@@ -4412,9 +4332,7 @@
               },
               {
                 "attributes": {
-                  "parameters": [
-                    null
-                  ]
+                  "parameters": [null]
                 },
                 "children": [],
                 "id": 108,
@@ -4425,9 +4343,7 @@
                 "children": [
                   {
                     "attributes": {
-                      "overloadedDeclarations": [
-                        null
-                      ],
+                      "overloadedDeclarations": [null],
                       "referencedDeclaration": 1127,
                       "type": "type(contract MerkleTreeWithHistory)",
                       "value": "MerkleTreeWithHistory"
@@ -4438,9 +4354,7 @@
                   },
                   {
                     "attributes": {
-                      "overloadedDeclarations": [
-                        null
-                      ],
+                      "overloadedDeclarations": [null],
                       "referencedDeclaration": 102,
                       "type": "uint32",
                       "value": "_merkleTreeHeight"
@@ -4451,9 +4365,7 @@
                   },
                   {
                     "attributes": {
-                      "overloadedDeclarations": [
-                        null
-                      ],
+                      "overloadedDeclarations": [null],
                       "referencedDeclaration": 98,
                       "type": "contract IHasher",
                       "value": "_hasher"
@@ -4478,9 +4390,7 @@
                           "isPure": false,
                           "isStructConstructorCall": false,
                           "lValueRequested": false,
-                          "names": [
-                            null
-                          ],
+                          "names": [null],
                           "tryCall": false,
                           "type": "tuple()",
                           "type_conversion": false
@@ -4498,10 +4408,7 @@
                                   "typeString": "literal_string \"denomination should be greater than 0\""
                                 }
                               ],
-                              "overloadedDeclarations": [
-                                4294967278,
-                                4294967278
-                              ],
+                              "overloadedDeclarations": [4294967278, 4294967278],
                               "referencedDeclaration": 4294967278,
                               "type": "function (bool,string memory) pure",
                               "value": "require"
@@ -4526,9 +4433,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 100,
                                   "type": "uint256",
                                   "value": "_denomination"
@@ -4596,9 +4501,7 @@
                         "children": [
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 65,
                               "type": "contract IVerifier",
                               "value": "verifier"
@@ -4609,9 +4512,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 96,
                               "type": "contract IVerifier",
                               "value": "_verifier"
@@ -4644,9 +4545,7 @@
                         "children": [
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 67,
                               "type": "uint256",
                               "value": "denomination"
@@ -4657,9 +4556,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 100,
                               "type": "uint256",
                               "value": "_denomination"
@@ -4744,9 +4641,7 @@
               },
               {
                 "attributes": {
-                  "parameters": [
-                    null
-                  ]
+                  "parameters": [null]
                 },
                 "children": [],
                 "id": 132,
@@ -4758,9 +4653,7 @@
                 "children": [
                   {
                     "attributes": {
-                      "overloadedDeclarations": [
-                        null
-                      ],
+                      "overloadedDeclarations": [null],
                       "referencedDeclaration": 3958,
                       "type": "modifier ()",
                       "value": "nonReentrant"
@@ -4785,9 +4678,7 @@
                           "isPure": false,
                           "isStructConstructorCall": false,
                           "lValueRequested": false,
-                          "names": [
-                            null
-                          ],
+                          "names": [null],
                           "tryCall": false,
                           "type": "tuple()",
                           "type_conversion": false
@@ -4805,10 +4696,7 @@
                                   "typeString": "literal_string \"The commitment has been submitted\""
                                 }
                               ],
-                              "overloadedDeclarations": [
-                                4294967278,
-                                4294967278
-                              ],
+                              "overloadedDeclarations": [4294967278, 4294967278],
                               "referencedDeclaration": 4294967278,
                               "type": "function (bool,string memory) pure",
                               "value": "require"
@@ -4839,9 +4727,7 @@
                                 "children": [
                                   {
                                     "attributes": {
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 75,
                                       "type": "mapping(bytes32 => bool)",
                                       "value": "commitments"
@@ -4852,9 +4738,7 @@
                                   },
                                   {
                                     "attributes": {
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 128,
                                       "type": "bytes32",
                                       "value": "_commitment"
@@ -4900,9 +4784,7 @@
                   },
                   {
                     "attributes": {
-                      "assignments": [
-                        142
-                      ]
+                      "assignments": [142]
                     },
                     "children": [
                       {
@@ -4938,9 +4820,7 @@
                           "isPure": false,
                           "isStructConstructorCall": false,
                           "lValueRequested": false,
-                          "names": [
-                            null
-                          ],
+                          "names": [null],
                           "tryCall": false,
                           "type": "uint32",
                           "type_conversion": false
@@ -4954,9 +4834,7 @@
                                   "typeString": "bytes32"
                                 }
                               ],
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 762,
                               "type": "function (bytes32) returns (uint32)",
                               "value": "_insert"
@@ -4967,9 +4845,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 128,
                               "type": "bytes32",
                               "value": "_commitment"
@@ -5011,9 +4887,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 75,
                                   "type": "mapping(bytes32 => bool)",
                                   "value": "commitments"
@@ -5024,9 +4898,7 @@
                               },
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 128,
                                   "type": "bytes32",
                                   "value": "_commitment"
@@ -5069,17 +4941,13 @@
                     "children": [
                       {
                         "attributes": {
-                          "arguments": [
-                            null
-                          ],
+                          "arguments": [null],
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": false,
                           "isStructConstructorCall": false,
                           "lValueRequested": false,
-                          "names": [
-                            null
-                          ],
+                          "names": [null],
                           "tryCall": false,
                           "type": "tuple()",
                           "type_conversion": false
@@ -5087,12 +4955,8 @@
                         "children": [
                           {
                             "attributes": {
-                              "argumentTypes": [
-                                null
-                              ],
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "argumentTypes": [null],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 168,
                               "type": "function ()",
                               "value": "_processDeposit"
@@ -5120,9 +4984,7 @@
                           "isPure": false,
                           "isStructConstructorCall": false,
                           "lValueRequested": false,
-                          "names": [
-                            null
-                          ],
+                          "names": [null],
                           "tryCall": false,
                           "type": "tuple()",
                           "type_conversion": false
@@ -5144,9 +5006,7 @@
                                   "typeString": "uint256"
                                 }
                               ],
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 83,
                               "type": "function (bytes32,uint32,uint256)",
                               "value": "Deposit"
@@ -5157,9 +5017,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 128,
                               "type": "bytes32",
                               "value": "_commitment"
@@ -5170,9 +5028,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 142,
                               "type": "uint32",
                               "value": "insertedIndex"
@@ -5193,9 +5049,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 4294967292,
                                   "type": "block",
                                   "value": "block"
@@ -5234,9 +5088,7 @@
               "implemented": false,
               "isConstructor": false,
               "kind": "function",
-              "modifiers": [
-                null
-              ],
+              "modifiers": [null],
               "name": "_processDeposit",
               "scope": 330,
               "stateMutability": "nonpayable",
@@ -5254,9 +5106,7 @@
               },
               {
                 "attributes": {
-                  "parameters": [
-                    null
-                  ]
+                  "parameters": [null]
                 },
                 "children": [],
                 "id": 166,
@@ -5265,9 +5115,7 @@
               },
               {
                 "attributes": {
-                  "parameters": [
-                    null
-                  ]
+                  "parameters": [null]
                 },
                 "children": [],
                 "id": 167,
@@ -5493,9 +5341,7 @@
               },
               {
                 "attributes": {
-                  "parameters": [
-                    null
-                  ]
+                  "parameters": [null]
                 },
                 "children": [],
                 "id": 187,
@@ -5507,9 +5353,7 @@
                 "children": [
                   {
                     "attributes": {
-                      "overloadedDeclarations": [
-                        null
-                      ],
+                      "overloadedDeclarations": [null],
                       "referencedDeclaration": 3958,
                       "type": "modifier ()",
                       "value": "nonReentrant"
@@ -5534,9 +5378,7 @@
                           "isPure": false,
                           "isStructConstructorCall": false,
                           "lValueRequested": false,
-                          "names": [
-                            null
-                          ],
+                          "names": [null],
                           "tryCall": false,
                           "type": "tuple()",
                           "type_conversion": false
@@ -5554,10 +5396,7 @@
                                   "typeString": "literal_string \"Fee exceeds transfer value\""
                                 }
                               ],
-                              "overloadedDeclarations": [
-                                4294967278,
-                                4294967278
-                              ],
+                              "overloadedDeclarations": [4294967278, 4294967278],
                               "referencedDeclaration": 4294967278,
                               "type": "function (bool,string memory) pure",
                               "value": "require"
@@ -5582,9 +5421,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 181,
                                   "type": "uint256",
                                   "value": "_fee"
@@ -5595,9 +5432,7 @@
                               },
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 67,
                                   "type": "uint256",
                                   "value": "denomination"
@@ -5645,9 +5480,7 @@
                           "isPure": false,
                           "isStructConstructorCall": false,
                           "lValueRequested": false,
-                          "names": [
-                            null
-                          ],
+                          "names": [null],
                           "tryCall": false,
                           "type": "tuple()",
                           "type_conversion": false
@@ -5665,10 +5498,7 @@
                                   "typeString": "literal_string \"The note has been already spent\""
                                 }
                               ],
-                              "overloadedDeclarations": [
-                                4294967278,
-                                4294967278
-                              ],
+                              "overloadedDeclarations": [4294967278, 4294967278],
                               "referencedDeclaration": 4294967278,
                               "type": "function (bool,string memory) pure",
                               "value": "require"
@@ -5699,9 +5529,7 @@
                                 "children": [
                                   {
                                     "attributes": {
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 71,
                                       "type": "mapping(bytes32 => bool)",
                                       "value": "nullifierHashes"
@@ -5712,9 +5540,7 @@
                                   },
                                   {
                                     "attributes": {
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 175,
                                       "type": "bytes32",
                                       "value": "_nullifierHash"
@@ -5767,9 +5593,7 @@
                           "isPure": false,
                           "isStructConstructorCall": false,
                           "lValueRequested": false,
-                          "names": [
-                            null
-                          ],
+                          "names": [null],
                           "tryCall": false,
                           "type": "tuple()",
                           "type_conversion": false
@@ -5787,10 +5611,7 @@
                                   "typeString": "literal_string \"Cannot find your merkle root\""
                                 }
                               ],
-                              "overloadedDeclarations": [
-                                4294967278,
-                                4294967278
-                              ],
+                              "overloadedDeclarations": [4294967278, 4294967278],
                               "referencedDeclaration": 4294967278,
                               "type": "function (bool,string memory) pure",
                               "value": "require"
@@ -5806,9 +5627,7 @@
                               "isPure": false,
                               "isStructConstructorCall": false,
                               "lValueRequested": false,
-                              "names": [
-                                null
-                              ],
+                              "names": [null],
                               "tryCall": false,
                               "type": "bool",
                               "type_conversion": false
@@ -5822,9 +5641,7 @@
                                       "typeString": "bytes32"
                                     }
                                   ],
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 814,
                                   "type": "function (bytes32) view returns (bool)",
                                   "value": "isKnownRoot"
@@ -5835,9 +5652,7 @@
                               },
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 173,
                                   "type": "bytes32",
                                   "value": "_root"
@@ -5885,9 +5700,7 @@
                           "isPure": false,
                           "isStructConstructorCall": false,
                           "lValueRequested": false,
-                          "names": [
-                            null
-                          ],
+                          "names": [null],
                           "tryCall": false,
                           "type": "tuple()",
                           "type_conversion": false
@@ -5905,10 +5718,7 @@
                                   "typeString": "literal_string \"Invalid withdraw proof\""
                                 }
                               ],
-                              "overloadedDeclarations": [
-                                4294967278,
-                                4294967278
-                              ],
+                              "overloadedDeclarations": [4294967278, 4294967278],
                               "referencedDeclaration": 4294967278,
                               "type": "function (bool,string memory) pure",
                               "value": "require"
@@ -5924,9 +5734,7 @@
                               "isPure": false,
                               "isStructConstructorCall": false,
                               "lValueRequested": false,
-                              "names": [
-                                null
-                              ],
+                              "names": [null],
                               "tryCall": false,
                               "type": "bool",
                               "type_conversion": false
@@ -5955,9 +5763,7 @@
                                 "children": [
                                   {
                                     "attributes": {
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 65,
                                       "type": "contract IVerifier",
                                       "value": "verifier"
@@ -5973,9 +5779,7 @@
                               },
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 171,
                                   "type": "bytes calldata",
                                   "value": "_proof"
@@ -6001,9 +5805,7 @@
                                       "isPure": false,
                                       "isStructConstructorCall": false,
                                       "lValueRequested": false,
-                                      "names": [
-                                        null
-                                      ],
+                                      "names": [null],
                                       "tryCall": false,
                                       "type": "uint256",
                                       "type_conversion": true
@@ -6039,9 +5841,7 @@
                                       },
                                       {
                                         "attributes": {
-                                          "overloadedDeclarations": [
-                                            null
-                                          ],
+                                          "overloadedDeclarations": [null],
                                           "referencedDeclaration": 173,
                                           "type": "bytes32",
                                           "value": "_root"
@@ -6062,9 +5862,7 @@
                                       "isPure": false,
                                       "isStructConstructorCall": false,
                                       "lValueRequested": false,
-                                      "names": [
-                                        null
-                                      ],
+                                      "names": [null],
                                       "tryCall": false,
                                       "type": "uint256",
                                       "type_conversion": true
@@ -6100,9 +5898,7 @@
                                       },
                                       {
                                         "attributes": {
-                                          "overloadedDeclarations": [
-                                            null
-                                          ],
+                                          "overloadedDeclarations": [null],
                                           "referencedDeclaration": 175,
                                           "type": "bytes32",
                                           "value": "_nullifierHash"
@@ -6123,9 +5919,7 @@
                                       "isPure": false,
                                       "isStructConstructorCall": false,
                                       "lValueRequested": false,
-                                      "names": [
-                                        null
-                                      ],
+                                      "names": [null],
                                       "tryCall": false,
                                       "type": "uint256",
                                       "type_conversion": true
@@ -6161,9 +5955,7 @@
                                       },
                                       {
                                         "attributes": {
-                                          "overloadedDeclarations": [
-                                            null
-                                          ],
+                                          "overloadedDeclarations": [null],
                                           "referencedDeclaration": 177,
                                           "type": "address payable",
                                           "value": "_recipient"
@@ -6184,9 +5976,7 @@
                                       "isPure": false,
                                       "isStructConstructorCall": false,
                                       "lValueRequested": false,
-                                      "names": [
-                                        null
-                                      ],
+                                      "names": [null],
                                       "tryCall": false,
                                       "type": "uint256",
                                       "type_conversion": true
@@ -6222,9 +6012,7 @@
                                       },
                                       {
                                         "attributes": {
-                                          "overloadedDeclarations": [
-                                            null
-                                          ],
+                                          "overloadedDeclarations": [null],
                                           "referencedDeclaration": 179,
                                           "type": "address payable",
                                           "value": "_relayer"
@@ -6240,9 +6028,7 @@
                                   },
                                   {
                                     "attributes": {
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 181,
                                       "type": "uint256",
                                       "value": "_fee"
@@ -6253,9 +6039,7 @@
                                   },
                                   {
                                     "attributes": {
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 183,
                                       "type": "uint256",
                                       "value": "_refund"
@@ -6322,9 +6106,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 71,
                                   "type": "mapping(bytes32 => bool)",
                                   "value": "nullifierHashes"
@@ -6335,9 +6117,7 @@
                               },
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 175,
                                   "type": "bytes32",
                                   "value": "_nullifierHash"
@@ -6385,9 +6165,7 @@
                           "isPure": false,
                           "isStructConstructorCall": false,
                           "lValueRequested": false,
-                          "names": [
-                            null
-                          ],
+                          "names": [null],
                           "tryCall": false,
                           "type": "tuple()",
                           "type_conversion": false
@@ -6413,9 +6191,7 @@
                                   "typeString": "uint256"
                                 }
                               ],
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 270,
                               "type": "function (address payable,address payable,uint256,uint256)",
                               "value": "_processWithdraw"
@@ -6426,9 +6202,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 177,
                               "type": "address payable",
                               "value": "_recipient"
@@ -6439,9 +6213,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 179,
                               "type": "address payable",
                               "value": "_relayer"
@@ -6452,9 +6224,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 181,
                               "type": "uint256",
                               "value": "_fee"
@@ -6465,9 +6235,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 183,
                               "type": "uint256",
                               "value": "_refund"
@@ -6495,9 +6263,7 @@
                           "isPure": false,
                           "isStructConstructorCall": false,
                           "lValueRequested": false,
-                          "names": [
-                            null
-                          ],
+                          "names": [null],
                           "tryCall": false,
                           "type": "tuple()",
                           "type_conversion": false
@@ -6523,9 +6289,7 @@
                                   "typeString": "uint256"
                                 }
                               ],
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 93,
                               "type": "function (address,bytes32,address,uint256)",
                               "value": "Withdrawal"
@@ -6536,9 +6300,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 177,
                               "type": "address payable",
                               "value": "_recipient"
@@ -6549,9 +6311,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 175,
                               "type": "bytes32",
                               "value": "_nullifierHash"
@@ -6562,9 +6322,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 179,
                               "type": "address payable",
                               "value": "_relayer"
@@ -6575,9 +6333,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 181,
                               "type": "uint256",
                               "value": "_fee"
@@ -6611,9 +6367,7 @@
               "implemented": false,
               "isConstructor": false,
               "kind": "function",
-              "modifiers": [
-                null
-              ],
+              "modifiers": [null],
               "name": "_processWithdraw",
               "scope": 330,
               "stateMutability": "nonpayable",
@@ -6744,9 +6498,7 @@
               },
               {
                 "attributes": {
-                  "parameters": [
-                    null
-                  ]
+                  "parameters": [null]
                 },
                 "children": [],
                 "id": 269,
@@ -6764,9 +6516,7 @@
               "implemented": true,
               "isConstructor": false,
               "kind": "function",
-              "modifiers": [
-                null
-              ],
+              "modifiers": [null],
               "name": "isSpent",
               "scope": 330,
               "stateMutability": "view",
@@ -6866,9 +6616,7 @@
                         "children": [
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 71,
                               "type": "mapping(bytes32 => bool)",
                               "value": "nullifierHashes"
@@ -6879,9 +6627,7 @@
                           },
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 273,
                               "type": "bytes32",
                               "value": "_nullifierHash"
@@ -6916,9 +6662,7 @@
               "implemented": true,
               "isConstructor": false,
               "kind": "function",
-              "modifiers": [
-                null
-              ],
+              "modifiers": [null],
               "name": "isSpentArray",
               "scope": 330,
               "stateMutability": "view",
@@ -7036,9 +6780,7 @@
                         "children": [
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 291,
                               "type": "bool[] memory",
                               "value": "spent"
@@ -7054,9 +6796,7 @@
                               "isPure": false,
                               "isStructConstructorCall": false,
                               "lValueRequested": false,
-                              "names": [
-                                null
-                              ],
+                              "names": [null],
                               "tryCall": false,
                               "type": "bool[] memory",
                               "type_conversion": false
@@ -7113,9 +6853,7 @@
                                 "children": [
                                   {
                                     "attributes": {
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 287,
                                       "type": "bytes32[] calldata",
                                       "value": "_nullifierHashes"
@@ -7148,9 +6886,7 @@
                     "children": [
                       {
                         "attributes": {
-                          "assignments": [
-                            303
-                          ]
+                          "assignments": [303]
                         },
                         "children": [
                           {
@@ -7215,9 +6951,7 @@
                         "children": [
                           {
                             "attributes": {
-                              "overloadedDeclarations": [
-                                null
-                              ],
+                              "overloadedDeclarations": [null],
                               "referencedDeclaration": 303,
                               "type": "uint256",
                               "value": "i"
@@ -7238,9 +6972,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 287,
                                   "type": "bytes32[] calldata",
                                   "value": "_nullifierHashes"
@@ -7274,9 +7006,7 @@
                             "children": [
                               {
                                 "attributes": {
-                                  "overloadedDeclarations": [
-                                    null
-                                  ],
+                                  "overloadedDeclarations": [null],
                                   "referencedDeclaration": 303,
                                   "type": "uint256",
                                   "value": "i"
@@ -7307,9 +7037,7 @@
                                   "isPure": false,
                                   "isStructConstructorCall": false,
                                   "lValueRequested": false,
-                                  "names": [
-                                    null
-                                  ],
+                                  "names": [null],
                                   "tryCall": false,
                                   "type": "bool",
                                   "type_conversion": false
@@ -7323,9 +7051,7 @@
                                           "typeString": "bytes32"
                                         }
                                       ],
-                                      "overloadedDeclarations": [
-                                        null
-                                      ],
+                                      "overloadedDeclarations": [null],
                                       "referencedDeclaration": 283,
                                       "type": "function (bytes32) view returns (bool)",
                                       "value": "isSpent"
@@ -7345,9 +7071,7 @@
                                     "children": [
                                       {
                                         "attributes": {
-                                          "overloadedDeclarations": [
-                                            null
-                                          ],
+                                          "overloadedDeclarations": [null],
                                           "referencedDeclaration": 287,
                                           "type": "bytes32[] calldata",
                                           "value": "_nullifierHashes"
@@ -7358,9 +7082,7 @@
                                       },
                                       {
                                         "attributes": {
-                                          "overloadedDeclarations": [
-                                            null
-                                          ],
+                                          "overloadedDeclarations": [null],
                                           "referencedDeclaration": 303,
                                           "type": "uint256",
                                           "value": "i"
@@ -7404,9 +7126,7 @@
                                             "children": [
                                               {
                                                 "attributes": {
-                                                  "overloadedDeclarations": [
-                                                    null
-                                                  ],
+                                                  "overloadedDeclarations": [null],
                                                   "referencedDeclaration": 291,
                                                   "type": "bool[] memory",
                                                   "value": "spent"
@@ -7417,9 +7137,7 @@
                                               },
                                               {
                                                 "attributes": {
-                                                  "overloadedDeclarations": [
-                                                    null
-                                                  ],
+                                                  "overloadedDeclarations": [null],
                                                   "referencedDeclaration": 303,
                                                   "type": "uint256",
                                                   "value": "i"

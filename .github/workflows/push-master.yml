@@ -14,18 +14,18 @@ jobs:
         step: ['bump-version']
         node-version: [14.x]
     steps:
-    - uses: actions/checkout@v1
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
-    - name: ${{ matrix.step }}
-      env:
-        GH_PAGES_SRC: packages/apps/build
-        GH_PAT: ${{ secrets.GH_PAT }}
-        GH_RELEASE_GITHUB_API_TOKEN: ${{ secrets.GH_PAT }}
-      run: |
-        yarn ${{ matrix.step }}
+      - uses: actions/checkout@v1
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: ${{ matrix.step }}
+        env:
+          GH_PAGES_SRC: packages/apps/build
+          GH_PAT: ${{ secrets.GH_PAT }}
+          GH_RELEASE_GITHUB_API_TOKEN: ${{ secrets.GH_PAT }}
+        run: |
+          yarn ${{ matrix.step }}
 
   dummy:
     name: Dummy
@@ -35,6 +35,6 @@ jobs:
       matrix:
         node-version: [14.x]
     steps:
-    - name: dummy
-      run: |
-        echo "Dummy skip step"
+      - name: dummy
+        run: |
+          echo "Dummy skip step"
