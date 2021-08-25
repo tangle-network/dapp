@@ -1,10 +1,10 @@
-import React from 'react';
-import styled, { css } from 'styled-components';
-import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
-import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
-import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { Icon, Typography } from '@material-ui/core';
 import { useFetch } from '@webb-dapp/react-hooks/';
+import { Pallet } from '@webb-dapp/ui-components/styling/colors';
+import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
+import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
+import React, { useState } from 'react';
+import styled, { css } from 'styled-components';
 
 const IPDisplayWrapper = styled.div`
   padding: 1rem;
@@ -20,11 +20,11 @@ const IPDisplayWrapper = styled.div`
     ${theme.type === 'light' ? `box-shadow: 0px 0px 14px rgba(51, 81, 242, 0.11);` : ''}
     .label-icon {
       font-size: 40px;
-      color: ${theme.primary}
+      color: ${theme.primary};
     }
 
     .tor {
-      color: ${theme.primary}
+      color: ${theme.primary};
     }
   `}
 
@@ -42,20 +42,32 @@ const IPDisplayWrapper = styled.div`
   }
 `;
 
-const IPDisplay: React.FC<IPDisplayProps> = () => {
+type IPDisplayProps = {
+  ip: String;
+};
 
-  const { query, city, countryCode } = useFetch(`http://ip-api.com/json/?fields=countryCode,city,query`, {});
+const IPDisplay: React.FC<IPDisplayProps> = ({ ip }) => {
+  const { city, country_code_iso3 } = useFetch(`https://ipapi.co/${ip}/json`, {});
 
   return (
     <IPDisplayWrapper>
-      <Icon className={'label-icon'} style={{fontSize: 40}}>room</Icon>
-      <div style={{paddingLeft: 5}}>
-        <Typography className={'ip-text'} variant={'h5'}>Your IP Address is: <b>{query} {city}, {countryCode}</b></Typography>
+      <Icon className={'label-icon'} style={{ fontSize: 40 }}>
+        room
+      </Icon>
+      <div style={{ paddingLeft: 5 }}>
+        <Typography className={'ip-text'} variant={'h5'}>
+          Your IP Address is:{' '}
+          <b>
+            {ip} {city}, {country_code_iso3}
+          </b>
+        </Typography>
         <Typography className={'ip-info'}>Please mask your IP address while using our service!</Typography>
-        <Typography className={'ip-info'}>We recommend <span className={'tor'}>TOR</span> </Typography>
+        <Typography className={'ip-info'}>
+          We recommend <span className={'tor'}>TOR</span>{' '}
+        </Typography>
       </div>
     </IPDisplayWrapper>
   );
-}
+};
 
 export default IPDisplay;
