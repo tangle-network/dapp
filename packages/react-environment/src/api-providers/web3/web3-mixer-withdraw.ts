@@ -84,14 +84,14 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
 
       transactionNotificationConfig.loading?.({
         address: recipient,
-        data: React.createElement('p', {}, `Relaying withdraw throw ${activeRelayer.address}`),
+        data: React.createElement('p', { wordWrap: 'normal' }, `Relaying withdraw through ${activeRelayer.address}`),
         key: 'mixer-withdraw-evm',
         path: {
           method: 'withdraw',
           section: 'evm-mixer',
         },
       });
-      logger.info(`Withdrawing throw relayer with address ${activeRelayer.address}`);
+      logger.info(`Withdrawing through relayer with address ${activeRelayer.address}`);
       logger.trace('Note deserialized', evmNote);
       const relayedWithdraw = await activeRelayer.initWithdraw();
       logger.trace('initialized the withdraw WebSocket');
