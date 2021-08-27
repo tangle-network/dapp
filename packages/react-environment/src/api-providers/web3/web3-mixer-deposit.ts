@@ -15,13 +15,11 @@ export class Web3MixerDeposit extends MixerDeposit<WebbWeb3Provider, DepositPayl
   async deposit(depositPayload: DepositPayload): Promise<void> {
     transactionNotificationConfig.loading?.({
       address: '',
-      data: React.createElement(DepositNotification,
-        {
-          chain: getEVMChainName(depositPayload.note.chainId),
-          amount: depositPayload.note.amount,
-          currency: depositPayload.note.currency,
-        }
-      ),
+      data: React.createElement(DepositNotification, {
+        chain: getEVMChainName(depositPayload.note.chainId),
+        amount: depositPayload.note.amount,
+        currency: depositPayload.note.currency,
+      }),
       key: 'mixer-deposit-evm',
       path: {
         method: 'deposit',

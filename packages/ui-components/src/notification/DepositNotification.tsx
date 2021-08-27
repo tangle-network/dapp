@@ -1,10 +1,5 @@
 import React from 'react';
 import { Typography } from '@material-ui/core';
-import styled from 'styled-components';
-
-const NotificationText = styled.p`
-  font-size: 14px;
-`;
 
 type DepositNotificationProps = {
   chain: string;
@@ -16,9 +11,9 @@ export class DepositNotification extends React.Component<DepositNotificationProp
   render() {
     return (
       <div>
-        <NotificationText>Depositing on: {this.props.chain}</NotificationText>
-        <NotificationText>Size: {this.props.amount}</NotificationText>
-        <NotificationText>Token: {this.props.currency}</NotificationText>
+        <Typography variant={'h6'}>Depositing on: {this.props.chain}</Typography>
+        <Typography variant={'h6'}>Size: {this.props.amount}</Typography>
+        <Typography variant={'h6'}>Token: {this.props.currency}</Typography>
       </div>
     );
   }

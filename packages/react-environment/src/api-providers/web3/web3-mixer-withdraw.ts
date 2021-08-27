@@ -84,7 +84,11 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
 
       transactionNotificationConfig.loading?.({
         address: recipient,
-        data: React.createElement('p', { wordWrap: 'normal' }, `Relaying withdraw through ${activeRelayer.address}`),
+        data: React.createElement(
+          'p',
+          { style: { fontSize: '.9rem' } }, // Matches Typography variant=h6
+          `Relaying withdraw through ${activeRelayer.address}`
+        ),
         key: 'mixer-withdraw-evm',
         path: {
           method: 'withdraw',

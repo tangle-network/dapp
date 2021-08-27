@@ -135,7 +135,7 @@ export const Alert: React.FC<{
         ) : (
           opts.message
         )}
-        <Typography>{opts.secondaryMessage}</Typography>
+        <Typography variant={'h6'}>{opts.secondaryMessage}</Typography>
       </AlertCopyWrapper>
       <AlertActionsWrapper>
         <ButtonBase className='close-btn' onClick={close}>
