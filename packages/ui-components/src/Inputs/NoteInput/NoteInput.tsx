@@ -19,6 +19,7 @@ export const NoteInput: React.FC<NoteInputProps> = ({ error, onChange, value }) 
         multiline={true}
         rows={5}
         value={value}
+        inputProps={{ style: { fontSize: 14 } }}
         onChange={(event) => {
           onChange?.(event.target.value as string);
         }}

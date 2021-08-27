@@ -76,7 +76,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
             {relayersState.relayers.map((relayer) => {
               return (
                 <MenuItem value={relayer.address} key={relayer.address}>
-                  {relayer.address}
+                  <p style={{ fontSize: 14 }}>{relayer.address}</p>
                 </MenuItem>
               );
             })}
