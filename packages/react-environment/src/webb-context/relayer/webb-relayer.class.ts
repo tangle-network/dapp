@@ -84,14 +84,27 @@ export class WebbRelayerBuilder {
 
   /**
    * init the builder
-   *  create new instance and fetch the relayres
+   *  create new instance and fetch the relayers
    * */
   static async initBuilder(
     config: RelayerConfig[],
     chainNameAdapter: ChainNameIntoChainId
   ): Promise<WebbRelayerBuilder> {
     const relayerBuilder = new WebbRelayerBuilder(config, chainNameAdapter);
-    await Promise.allSettled(config.map(relayerBuilder.fetchInfo, relayerBuilder));
+
+    // For all relayers in the config, fetch the info - but timeout after 5 seconds
+    // This is done to prevent issues with relayers which are not operating properly
+    await Promise.allSettled(
+      config.map((p) => {
+        return Promise.race([
+          relayerBuilder.fetchInfo(p),
+          new Promise((res) => {
+            setTimeout(res.bind(null, null), 5000);
+          }),
+        ]);
+      })
+    );
+
     return relayerBuilder;
   }
 
