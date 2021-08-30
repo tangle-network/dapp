@@ -11,6 +11,7 @@ import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { EvmNote } from '@webb-dapp/contracts/utils/evm-note';
+import { ethers } from 'ethers';
 
 const WithdrawWrapper = styled.div``;
 type WithdrawProps = {};
@@ -68,15 +69,18 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
         <InputLabel label={'Relayer'}>
           <Select
             fullWidth
-            value={relayersState.activeRelayer?.address}
+            value={relayersState.activeRelayer?.endpoint}
             onChange={({ target: { value } }) => {
-              setRelayer(relayersState?.relayers.find((i) => i.address === value) ?? null);
+              setRelayer(relayersState?.relayers.find((i) => i.endpoint === value) ?? null);
             }}
           >
+            <MenuItem value={'none'} key={'none'}>
+              <p style={{ fontSize: 14 }}>None</p>
+            </MenuItem>
             {relayersState.relayers.map((relayer) => {
               return (
-                <MenuItem value={relayer.address} key={relayer.address}>
-                  <p style={{ fontSize: 14 }}>{relayer.address}</p>
+                <MenuItem value={relayer.endpoint} key={relayer.endpoint}>
+                  <p style={{ fontSize: 14 }}>{relayer.endpoint}</p>
                 </MenuItem>
               );
             })}
@@ -94,25 +98,16 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
               >
                 <tbody>
                   <tr>
-                    <td>Account</td>
-                    <td>
-                      <small>{relayersState.activeRelayer?.account}</small>
-                    </td>
-                  </tr>
-
-                  <tr>
                     <td>
                       <span style={{ whiteSpace: 'nowrap' }}>withdraw fee percentage</span>
                     </td>
-                    <td>{relayersState.activeRelayer?.fee}%</td>
+                    <td style={{ textAlign: 'right' }}>{relayersState.activeRelayer?.fee}%</td>
                   </tr>
 
                   {fees && (
                     <tr>
                       <td>Full fees</td>
-                      <td>
-                        <small>{fees}</small>
-                      </td>
+                      <td style={{ textAlign: 'right' }}>{ethers.utils.formatUnits(fees)}</td>
                     </tr>
                   )}
                 </tbody>

@@ -43,7 +43,7 @@ export type ChainNameIntoChainId = (name: string, basedOn: 'evm' | 'substrate') 
  * */
 export class WebbRelayerBuilder {
   /// storage for relayers capabilities
-  private capabilities: Record<RelayerConfig['address'], Capabilities> = {};
+  private capabilities: Record<RelayerConfig['endpoint'], Capabilities> = {};
 
   private constructor(private config: RelayerConfig[], private readonly chainNameAdapter: ChainNameIntoChainId) {}
 
@@ -75,10 +75,10 @@ export class WebbRelayerBuilder {
 
   /// fetch relayers
   private async fetchInfo(config: RelayerConfig) {
-    const res = await fetch(`${config.address}/api/v1/info`);
+    const res = await fetch(`${config.endpoint}/api/v1/info`);
     const info: RelayerInfo = await res.json();
     const capabilities = WebbRelayerBuilder.infoIntoCapabilities(config, info, this.chainNameAdapter);
-    this.capabilities[config.address] = capabilities;
+    this.capabilities[config.endpoint] = capabilities;
     return capabilities;
   }
 
@@ -210,10 +210,10 @@ class RelayedWithdraw {
 }
 
 export class WebbRelayer {
-  constructor(readonly address: string, readonly capabilities: Capabilities) {}
+  constructor(readonly endpoint: string, readonly capabilities: Capabilities) {}
 
   async initWithdraw() {
-    const ws = new WebSocket(this.address.replace('http', 'ws') + '/ws');
+    const ws = new WebSocket(this.endpoint.replace('http', 'ws') + '/ws');
     await new Promise((r, c) => {
       ws.onopen = r;
       ws.onerror = r;
@@ -232,7 +232,7 @@ export class WebbRelayer {
   }
 
   async getIp(): Promise<string> {
-    const req = await fetch(`${this.address}/api/v1/ip`);
+    const req = await fetch(`${this.endpoint}/api/v1/ip`);
     if (req.ok) {
       return req.json();
     } else {
@@ -245,18 +245,18 @@ export class WebbRelayer {
     query: { chain: ChainId; basedOn: 'evm' | 'substrate' },
     getFees: (note: string, withdrawFeePercentage: number) => Promise<string>
   ): ActiveWebbRelayer {
-    return new ActiveWebbRelayer(instance.address, instance.capabilities, query, getFees);
+    return new ActiveWebbRelayer(instance.endpoint, instance.capabilities, query, getFees);
   }
 }
 
 export class ActiveWebbRelayer extends WebbRelayer {
   constructor(
-    address: string,
+    endpoint: string,
     capabilities: Capabilities,
     private query: { chain: ChainId; basedOn: 'evm' | 'substrate' },
     private getFees: (note: string, withdrawFeePercentage: number) => Promise<string>
   ) {
-    super(address, capabilities);
+    super(endpoint, capabilities);
   }
 
   private get config() {

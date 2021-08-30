@@ -4,10 +4,10 @@ import { ChainId } from '@webb-dapp/apps/configs/chains';
 let builder: WebbRelayerBuilder | null = null;
 export const relayerConfig: RelayerConfig[] = [
   {
-    address: 'http://localhost:9955',
+    endpoint: 'http://localhost:9955',
   },
   {
-    address: 'https://relayer.nepoche.com',
+    endpoint: 'https://relayer.nepoche.com',
   },
 ];
 

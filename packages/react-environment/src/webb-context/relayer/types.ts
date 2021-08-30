@@ -13,7 +13,7 @@ export type Capabilities = {
 };
 
 export type RelayerConfig = {
-  address: string;
+  endpoint: string;
 };
 
 export interface Withdraw {
