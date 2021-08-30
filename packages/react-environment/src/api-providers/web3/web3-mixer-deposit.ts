@@ -15,13 +15,11 @@ export class Web3MixerDeposit extends MixerDeposit<WebbWeb3Provider, DepositPayl
   async deposit(depositPayload: DepositPayload): Promise<void> {
     transactionNotificationConfig.loading?.({
       address: '',
-      data: React.createElement(DepositNotification,
-        {
-          chain: getEVMChainName(depositPayload.note.chainId),
-          amount: depositPayload.note.amount,
-          currency: depositPayload.note.currency,
-        }
-      ),
+      data: React.createElement(DepositNotification, {
+        chain: getEVMChainName(depositPayload.note.chainId),
+        amount: depositPayload.note.amount,
+        currency: depositPayload.note.currency,
+      }),
       key: 'mixer-deposit-evm',
       path: {
         method: 'deposit',
@@ -30,16 +28,41 @@ export class Web3MixerDeposit extends MixerDeposit<WebbWeb3Provider, DepositPayl
     });
     const [deposit, amount] = depositPayload.params;
     const contract = await this.inner.getContractBySize(amount, getNativeCurrencySymbol(await this.inner.getChainId()));
-    await contract.deposit(deposit.commitment);
-    transactionNotificationConfig.finalize?.({
-      address: '',
-      data: undefined,
-      key: `mixer-deposit-evm`,
-      path: {
-        method: 'deposit',
-        section: 'evm-mixer',
-      },
-    });
+    try {
+      await contract.deposit(deposit.commitment);
+      transactionNotificationConfig.finalize?.({
+        address: '',
+        data: undefined,
+        key: `mixer-deposit-evm`,
+        path: {
+          method: 'deposit',
+          section: 'evm-mixer',
+        },
+      });
+    } catch (e) {
+      console.log(e);
+      if (e.code == 4001) {
+        transactionNotificationConfig.failed?.({
+          address: '',
+          data: 'User Rejected Deposit',
+          key: `mixer-deposit-evm`,
+          path: {
+            method: 'deposit',
+            section: 'evm-mixer',
+          },
+        });
+      } else {
+        transactionNotificationConfig.failed?.({
+          address: '',
+          data: 'Deposit Transaction Failed',
+          key: `mixer-deposit-evm`,
+          path: {
+            method: 'deposit',
+            section: 'evm-mixer',
+          },
+        });
+      }
+    }
   }
 
   async generateNote(mixerAddress: string): Promise<DepositPayload> {
