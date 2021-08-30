@@ -28,3 +28,19 @@ export function createDeposit() {
 
   return deposit;
 }
+
+export function depositFromPreimage(hexString: string): Deposit {
+  const preimage = Buffer.from(hexString, 'hex');
+  const nullifier = preimage.slice(0, 31);
+  const secret = preimage.slice(31, 62);
+  const commitment = bufferToFixed(pedersenHash(preimage));
+  const nullifierHash = bufferToFixed(pedersenHash(nullifier));
+  const deposit: Deposit = {
+    preimage,
+    commitment,
+    nullifierHash,
+    nullifier: bufferToFixed(nullifier),
+    secret: bufferToFixed(secret),
+  };
+  return deposit;
+}
