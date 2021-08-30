@@ -1,7 +1,6 @@
 import { evmIdIntoChainId } from '@webb-dapp/apps/configs';
 import { chainIdToRelayerName } from '@webb-dapp/apps/configs/relayer-config';
 import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
-import { EvmNote } from '@webb-dapp/contracts/utils/evm-note';
 import { depositFromPreimage } from '@webb-dapp/contracts/utils/make-deposit';
 import { fromDepositIntoZKPInput } from '@webb-dapp/contracts/utils/zkp-adapters';
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3/webb-web3-provider';
@@ -40,8 +39,10 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
       },
       async (note: string, withdrawFeePercentage: number) => {
         try {
-          const evmNote = EvmNote.deserialize(note);
-          const contract = await this.inner.getContractBySize(evmNote.amount, evmNote.currency);
+          const note = await Note.deserialize(note);
+          const evmNote = note.note;
+
+          const contract = await this.inner.getContractBySize(evmNote.amount, evmNote.tokenSymbol);
           const principleBig = await contract.denomination;
 
           const withdrawFeeMill = withdrawFeePercentage * 1000000;
@@ -65,7 +66,6 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
     return this.inner.getChainId().then((evmId) => {
       const chainId = evmIdIntoChainId(evmId);
       const relayers = this.inner.relayingManager.getRelayer({});
-      console.log({ relayers });
       return this.inner.relayingManager.getRelayer({
         baseOn: 'evm',
         chainId,
@@ -176,7 +176,6 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
           recipient,
           relayer: recipient,
         });
-        console.log({ zkpInputWithoutMerkleProof });
         const txReset = await contract.withdraw(deposit, zkpInputWithoutMerkleProof);
         transactionNotificationConfig.loading?.({
           address: recipient,
