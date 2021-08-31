@@ -49,6 +49,13 @@ type IPDisplayProps = {
 const IPDisplay: React.FC<IPDisplayProps> = ({ ip }) => {
   const { city, country_code_iso3 } = useFetch(`https://ipapi.co/${ip}/json`, {});
 
+  function createLocationText() {
+    if (city && country_code_iso3) {
+      return `${city}, ${country_code_iso3}`;
+    }
+    return '';
+  }
+
   return (
     <IPDisplayWrapper>
       <Icon className={'label-icon'} style={{ fontSize: 40 }}>
@@ -58,7 +65,7 @@ const IPDisplay: React.FC<IPDisplayProps> = ({ ip }) => {
         <Typography className={'ip-text'} variant={'h5'}>
           Your IP Address is:{' '}
           <b>
-            {ip} {city}, {country_code_iso3}
+            {ip} {createLocationText()}
           </b>
         </Typography>
         <Typography className={'ip-info'}>Please mask your IP address while using our service!</Typography>

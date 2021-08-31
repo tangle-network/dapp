@@ -25,6 +25,7 @@ import {
 } from '@webb-dapp/react-environment/error/interactive-errors/evm-network-conflict';
 import { LoggerService } from '@webb-tools/app-util';
 import { getWebbRelayer } from '@webb-dapp/apps/configs/relayer-config';
+import { AccountSwitchNotification } from '@webb-dapp/ui-components/notification/AccountSwitchNotification';
 
 interface WebbProviderProps extends BareProps {
   applicationName: string;
@@ -149,7 +150,9 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
           ),
           key: 'account-change',
           message: 'Account changed from provider',
-          secondaryMessage: `active account is ${active?.address ?? 'UNKNOWN'}`,
+          secondaryMessage: React.createElement(AccountSwitchNotification, {
+            account: active?.address ?? 'UNKNOWN',
+          }),
         });
         setAccounts(acs);
         _setActiveAccount(acs[0] || null);

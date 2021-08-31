@@ -26,7 +26,7 @@ const AlertIconWrapper = styled.div<{ color: string }>`
 const AlertCopyWrapper = styled.div`
   padding: 0 0.5rem;
   flex: 1;
-  word-break: break-all;
+  word-break: normal;
 `;
 
 const AlertActionsWrapper = styled.div`
@@ -128,10 +128,14 @@ export const Alert: React.FC<{
     <AlertWrapper color={color} as={Paper} elevation={4}>
       <AlertIconWrapper color={opts.transparent ? 'rgba(0,0,0,0)' : color}>{AlertIcon}</AlertIconWrapper>
       <AlertCopyWrapper>
-        {typeof(opts.message) === "string" ? <Typography variant={'h6'} component={'p'}>
-          {opts.message}
-        </Typography> : opts.message }
-        <Typography>{opts.secondaryMessage}</Typography>
+        {typeof opts.message === 'string' ? (
+          <Typography variant={'h6'} component={'p'}>
+            {opts.message}
+          </Typography>
+        ) : (
+          opts.message
+        )}
+        <Typography variant={'h6'}>{opts.secondaryMessage}</Typography>
       </AlertCopyWrapper>
       <AlertActionsWrapper>
         <ButtonBase className='close-btn' onClick={close}>
