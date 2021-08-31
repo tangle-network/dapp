@@ -3,7 +3,6 @@ import { ActiveWebbRelayer, WebbRelayer } from '@webb-dapp/react-environment/web
 import { BehaviorSubject, Observable } from 'rxjs';
 
 export enum WithdrawState {
-  Canceled,
   Ideal,
 
   GeneratingZk,
@@ -12,6 +11,7 @@ export enum WithdrawState {
 
   Done,
   Failed,
+  Canceled,
 }
 
 export type MixerWithdrawEvents = {
@@ -27,12 +27,16 @@ export type MixerWithdrawEvents = {
 };
 export type OptionalRelayer = null | WebbRelayer;
 export type OptionalActiveRelayer = null | ActiveWebbRelayer;
+export type CancelToken = {
+  cancelled: boolean;
+};
 
 export abstract class MixerWithdraw<T> extends EventBus<MixerWithdrawEvents> {
   state: WithdrawState = WithdrawState.Ideal;
   protected emitter = new BehaviorSubject<OptionalActiveRelayer>(null);
   readonly watcher: Observable<OptionalActiveRelayer>;
   private _activeRelayer: OptionalActiveRelayer = null;
+  cancelToken: CancelToken = { cancelled: false };
 
   get hasRelayer(): Promise<boolean> {
     return Promise.resolve(false);

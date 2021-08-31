@@ -12,6 +12,7 @@ import { mixerLogger } from '@webb-dapp/mixer/utils';
 import { retryPromise } from '@webb-dapp/utils/retry-promise';
 import { LoggerService } from '@webb-tools/app-util';
 import { ZKPInput, ZKPInputWithoutMerkleProof } from '@webb-dapp/contracts/contracts/types';
+import { CancelToken } from '@webb-dapp/react-environment/webb-context';
 
 const webSnarkUtils = require('websnark/src/utils');
 type DepositEvent = [string, number, BigNumber];
@@ -159,21 +160,20 @@ export class AnchorContract {
     return { proof, input: zkpInput };
   }
 
-  async withdraw(deposit: Deposit, zkpInputWithoutMerkleProof: ZKPInputWithoutMerkleProof) {
+  async withdraw(proof: any, zkp: ZKPInput) {
     // tx config
     const overrides = {
       gasLimit: 6000000,
       gasPrice: utils.toWei('1', 'gwei'),
     };
-    const { input, proof } = await this.generateZKP(deposit, zkpInputWithoutMerkleProof);
     const tx = await this._contract.withdraw(
       proof,
-      bufferToFixed(input.root),
-      bufferToFixed(input.nullifierHash),
-      input.recipient,
-      input.relayer,
-      bufferToFixed(input.fee),
-      bufferToFixed(input.refund),
+      bufferToFixed(zkp.root),
+      bufferToFixed(zkp.nullifierHash),
+      zkp.recipient,
+      zkp.relayer,
+      bufferToFixed(zkp.fee),
+      bufferToFixed(zkp.refund),
       overrides
     );
     return tx;

@@ -21,6 +21,8 @@ const logger = LoggerService.get('Web3MixerWithdraw');
 
 export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
   cancelWithdraw(): Promise<void> {
+    this.cancelToken.cancelled = true;
+    this.emit('stateChange', WithdrawState.Canceled);
     return Promise.resolve(undefined);
   }
 
@@ -76,6 +78,7 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
   }
 
   async withdraw(note: string, recipient: string): Promise<void> {
+    this.cancelToken.cancelled = false;
     const activeRelayer = this.activeRelayer[0];
     const evmNote = EvmNote.deserialize(note);
     const deposit = evmNote.intoDeposit();
@@ -109,8 +112,26 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
         relayer: activeRelayer.account,
         fee: Number(fees),
       });
+
+      // This is the part of withdraw that takes a long time
       const zkp = await anchorContract.generateZKP(deposit, zkpInputWithoutMerkleProof);
-      this.emit('stateChange', WithdrawState.GeneratingZk);
+
+      // Check for cancelled here, abort if it was set.
+      // Mark the withdraw mixer as able to withdraw again.
+      if (this.cancelToken.cancelled) {
+        transactionNotificationConfig.failed?.({
+          address: recipient,
+          data: 'Withdraw cancelled',
+          key: 'mixer-withdraw-evm',
+          path: {
+            method: 'withdraw',
+            section: 'evm-mixer',
+          },
+        });
+        return;
+      }
+
+      this.emit('stateChange', WithdrawState.SendingTransaction);
 
       logger.trace('Generated the zkp', zkp);
       const tx = relayedWithdraw.generateWithdrawRequest(
@@ -179,7 +200,14 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
           recipient,
           relayer: recipient,
         });
-        const txReset = await contract.withdraw(deposit, zkpInputWithoutMerkleProof);
+        // This is the part of withdraw that takes a while, so pass the cancel token
+        const zkp = await contract.generateZKP(deposit, zkpInputWithoutMerkleProof);
+
+        if (this.cancelToken.cancelled) {
+          throw new Error('cancelled');
+        }
+
+        const txReset = await contract.withdraw(zkp.proof, zkp.input);
         transactionNotificationConfig.loading?.({
           address: recipient,
           data: React.createElement('p', {}, 'Withdraw In Progress'),
@@ -204,6 +232,18 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
       } catch (e) {
         // todo fix this and fetch the error from chain
         // const reason = await this.inner.reason(e.transactionHash);
+        if (e.message == 'cancelled') {
+          transactionNotificationConfig.failed?.({
+            address: recipient,
+            data: 'Withdraw cancelled',
+            key: 'mixer-withdraw-evm',
+            path: {
+              method: 'withdraw',
+              section: 'evm-mixer',
+            },
+          });
+          return;
+        }
 
         transactionNotificationConfig.failed?.({
           address: recipient,

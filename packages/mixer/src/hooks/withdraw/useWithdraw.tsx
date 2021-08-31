@@ -92,6 +92,8 @@ export const useWithdraw = (params: UseWithdrawProps) => {
   }, [stage]);
 
   const cancelWithdraw = useCallback(async () => {
+    console.log(`canCancel: ${canCancel}`);
+    console.log(withdrawApi);
     if (canCancel) {
       await withdrawApi?.cancelWithdraw();
     }
