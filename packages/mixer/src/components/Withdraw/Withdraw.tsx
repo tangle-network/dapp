@@ -24,6 +24,12 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
     recipient,
     note,
   });
+
+  const relayerRenderValue = (value) => {
+    console.log(value);
+    return value && <p style={{ fontSize: 14 }}>{value}</p>;
+  };
+
   useEffect(() => {
     async function getFees() {
       try {
@@ -69,7 +75,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
         <InputLabel label={'Relayer'}>
           <Select
             fullWidth
-            value={relayersState.activeRelayer?.endpoint}
+            value={relayersState.activeRelayer?.endpoint || 'none'}
             onChange={({ target: { value } }) => {
               setRelayer(relayersState?.relayers.find((i) => i.endpoint === value) ?? null);
             }}
@@ -99,7 +105,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
                 <tbody>
                   <tr>
                     <td>
-                      <span style={{ whiteSpace: 'nowrap' }}>withdraw fee percentage</span>
+                      <span style={{ whiteSpace: 'nowrap' }}>Withdraw fee percentage</span>
                     </td>
                     <td style={{ textAlign: 'right' }}>{relayersState.activeRelayer?.fee}%</td>
                   </tr>
