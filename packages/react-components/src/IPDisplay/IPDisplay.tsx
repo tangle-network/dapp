@@ -3,7 +3,7 @@ import { useFetch } from '@webb-dapp/react-hooks';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
-import React from 'react';
+import React, { useState } from 'react';
 import styled, { css } from 'styled-components';
 
 const IPDisplayWrapper = styled.div`
@@ -42,8 +42,19 @@ const IPDisplayWrapper = styled.div`
   }
 `;
 
-const IPDisplay: React.FC<IPDisplayProps> = () => {
-  const { query, city, countryCode } = useFetch(`http://ip-api.com/json/?fields=countryCode,city,query`, {});
+type IPDisplayProps = {
+  ip: String;
+};
+
+const IPDisplay: React.FC<IPDisplayProps> = ({ ip }) => {
+  const { city, country_code_iso3 } = useFetch(`https://ipapi.co/${ip}/json`, {});
+
+  function createLocationText() {
+    if (city && country_code_iso3) {
+      return `${city}, ${country_code_iso3}`;
+    }
+    return '';
+  }
 
   return (
     <IPDisplayWrapper>
@@ -54,7 +65,7 @@ const IPDisplay: React.FC<IPDisplayProps> = () => {
         <Typography className={'ip-text'} variant={'h5'}>
           Your IP Address is:{' '}
           <b>
-            {query} {city}, {countryCode}
+            {ip} {createLocationText()}
           </b>
         </Typography>
         <Typography className={'ip-info'}>Please mask your IP address while using our service!</Typography>

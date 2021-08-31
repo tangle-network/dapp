@@ -15,6 +15,7 @@ import { insufficientApiInterface } from '@webb-dapp/react-environment/error/int
 import { DimensionsProvider } from '@webb-dapp/react-environment/layout';
 import { StoreProvier } from '@webb-dapp/react-environment/store';
 import { notificationApi } from '@webb-dapp/ui-components/notification';
+import { AccountSwitchNotification } from '@webb-dapp/ui-components/notification/AccountSwitchNotification';
 import { BareProps } from '@webb-dapp/ui-components/types';
 import { InteractiveFeedback, WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import { Account } from '@webb-dapp/wallet/account/Accounts.adapter';
@@ -150,7 +151,9 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
           ),
           key: 'account-change',
           message: 'Account changed from provider',
-          secondaryMessage: `active account is ${active?.address ?? 'UNKNOWN'}`,
+          secondaryMessage: React.createElement(AccountSwitchNotification, {
+            account: active?.address ?? 'UNKNOWN',
+          }),
         });
         setAccounts(acs);
         _setActiveAccount(acs[0] || null);
@@ -338,12 +341,13 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
                 },
               });
             };
-            if (chainId !== chain.evmId && activeChain) {
+            if (chainId !== chain.evmId) {
+              const activeChainName = activeChain ? activeChain.name : 'unknown';
               const feedback = evmChainConflict(
                 {
                   activeOnExtension: {
                     id: chainId,
-                    name: activeChain.name,
+                    name: activeChainName,
                   },
                   selected: {
                     id: chain?.evmId ?? 0,

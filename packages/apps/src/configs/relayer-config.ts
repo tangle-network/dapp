@@ -9,6 +9,9 @@ export const relayerConfig: RelayerConfig[] = [
   {
     address: 'https://relayer.nepoche.com',
   },
+  {
+    address: 'https://relayer.webb.tools',
+  },
 ];
 
 export function relayerNameToChainId(name: string): ChainId {
