@@ -4,14 +4,11 @@ import { BehaviorSubject, Observable } from 'rxjs';
 
 export enum WithdrawState {
   Ideal,
-
   GeneratingZk,
-
   SendingTransaction,
-
+  Cancelling,
   Done,
   Failed,
-  Canceled,
 }
 
 export type MixerWithdrawEvents = {

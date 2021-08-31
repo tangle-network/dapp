@@ -22,7 +22,7 @@ const logger = LoggerService.get('Web3MixerWithdraw');
 export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
   cancelWithdraw(): Promise<void> {
     this.cancelToken.cancelled = true;
-    this.emit('stateChange', WithdrawState.Canceled);
+    this.emit('stateChange', WithdrawState.Cancelling);
     return Promise.resolve(undefined);
   }
 
@@ -128,6 +128,7 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
             section: 'evm-mixer',
           },
         });
+        this.emit('stateChange', WithdrawState.Ideal);
         return;
       }
 
@@ -242,6 +243,7 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
               section: 'evm-mixer',
             },
           });
+          this.emit('stateChange', WithdrawState.Ideal);
           return;
         }
 

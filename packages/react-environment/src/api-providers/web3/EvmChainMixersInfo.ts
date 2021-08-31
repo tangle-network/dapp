@@ -71,6 +71,7 @@ export class EvmChainMixersInfo {
       this.mixerStorage = await evmChainStorageFactory(this.chainId);
     }
 
+    // TODO: validation on the leaves before setting in local storage
     this.mixerStorage.set(contractAddress, {
       lastQueriedBlock,
       leaves,

@@ -6,6 +6,7 @@ import { MerkleTree } from '@webb-dapp/utils/merkle';
 import { BigNumber, Contract, providers, Signer } from 'ethers';
 import { Log } from '@ethersproject/abstract-provider';
 import { EvmChainMixersInfo } from '@webb-dapp/react-environment/api-providers/web3/EvmChainMixersInfo';
+import { WebbEVMChain } from '@webb-dapp/apps/configs';
 import utils from 'web3-utils';
 import { abi } from '../abis/NativeAnchor.json';
 import { mixerLogger } from '@webb-dapp/mixer/utils';
@@ -77,7 +78,21 @@ export class AnchorContract {
 
     const startingBlock = storedContractInfo.lastQueriedBlock; // Read starting block from cached storage
     let logs: Array<Log> = []; // Read the stored logs into this variable
-    const step = 20;
+    let step: number = 20;
+    const chainId = await this.signer.getChainId();
+
+    switch (chainId) {
+      case WebbEVMChain.Beresheet:
+        step = 20;
+        break;
+      case WebbEVMChain.HarmonyTest1:
+        step = 1000;
+        break;
+      case WebbEVMChain.Rinkeby:
+        step = 5000;
+        break;
+    }
+
     try {
       logs = await this.web3Provider.getLogs({
         fromBlock: startingBlock,
