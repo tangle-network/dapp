@@ -10,6 +10,12 @@ import { evmChainStorageFactory, MixerStorage } from '@webb-dapp/apps/configs/st
 import { MixerSize } from '@webb-dapp/react-environment';
 import { Storage } from '@webb-dapp/utils';
 
+export type LeafIntervalInfo = {
+  startingBlock: number;
+  endingBlock: number;
+  leaves: string[];
+};
+
 export class EvmChainMixersInfo {
   private mixerStorage: Storage<MixerStorage> | null = null;
   private mixerInfo: MixerInfo[];
@@ -44,36 +50,39 @@ export class EvmChainMixersInfo {
     });
   }
 
-  async getMixerStorage(contractAddress: string) {
+  async getMixerStorage(contractAddress: string): Promise<LeafIntervalInfo> {
     // create the mixerStorage if it didn't exist
     if (!this.mixerStorage) {
       this.mixerStorage = await evmChainStorageFactory(this.chainId);
     }
 
     // get the info from localStorage
+    const mixerInfo = this.getMixerInfoByAddress(contractAddress);
     const storedInfo = await this.mixerStorage.get(contractAddress);
 
     if (!storedInfo) {
       return {
-        lastQueriedBlock: this.getMixerInfoByAddress(contractAddress).createdAtBlock,
+        startingBlock: mixerInfo.createdAtBlock,
+        endingBlock: mixerInfo.createdAtBlock,
         leaves: [],
       };
     }
 
     return {
-      lastQueriedBlock: storedInfo.lastQueriedBlock,
+      startingBlock: mixerInfo.createdAtBlock,
+      endingBlock: storedInfo.lastQueriedBlock,
       leaves: storedInfo.leaves,
     };
   }
 
-  async setMixerStorage(contractAddress: string, lastQueriedBlock: number, leaves: string[]) {
+  async setMixerStorage(contractAddress: string, leafInfo: LeafIntervalInfo) {
     if (!this.mixerStorage) {
       this.mixerStorage = await evmChainStorageFactory(this.chainId);
     }
 
     this.mixerStorage.set(contractAddress, {
-      lastQueriedBlock,
-      leaves,
+      lastQueriedBlock: leafInfo.endingBlock,
+      leaves: leafInfo.leaves,
     });
   }
 

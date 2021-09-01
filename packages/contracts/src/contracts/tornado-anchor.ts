@@ -1,11 +1,11 @@
-import { Anchor } from '@webb-dapp/contracts/types/Anchor';
+import { Anchor as TornadoAnchor } from '@webb-dapp/contracts/types/Anchor';
 import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
 import { EvmNote } from '@webb-dapp/contracts/utils/evm-note';
 import { createDeposit, Deposit } from '@webb-dapp/contracts/utils/make-deposit';
 import { MerkleTree } from '@webb-dapp/utils/merkle';
 import { BigNumber, Contract, providers, Signer } from 'ethers';
 import { Log } from '@ethersproject/abstract-provider';
-import { EvmChainMixersInfo } from '@webb-dapp/react-environment/api-providers/web3/EvmChainMixersInfo';
+import { LeafIntervalInfo, EvmChainMixersInfo } from '@webb-dapp/react-environment/api-providers/web3/EvmChainMixersInfo';
 import utils from 'web3-utils';
 import { abi } from '../abis/NativeAnchor.json';
 import { mixerLogger } from '@webb-dapp/mixer/utils';
@@ -17,8 +17,8 @@ const webSnarkUtils = require('websnark/src/utils');
 type DepositEvent = [string, number, BigNumber];
 const logger = LoggerService.get('anchor');
 
-export class AnchorContract {
-  private _contract: Anchor;
+export class TornadoAnchorContract {
+  private _contract: TornadoAnchor;
   private readonly signer: Signer;
 
   constructor(private mixersInfo: EvmChainMixersInfo, private web3Provider: providers.Web3Provider, address: string) {
@@ -68,13 +68,10 @@ export class AnchorContract {
     await recipient.wait();
   }
 
-  private async getDepositLeaves(): Promise<string[]> {
+  private async getDepositLeaves(startingBlock: number): Promise<LeafIntervalInfo> {
     const filter = this._contract.filters.Deposit(null, null, null);
-
     const currentBlock = await this.web3Provider.getBlockNumber();
-    const storedContractInfo = await this.mixersInfo.getMixerStorage(this._contract.address);
 
-    const startingBlock = storedContractInfo.lastQueriedBlock; // Read starting block from cached storage
     let logs: Array<Log> = []; // Read the stored logs into this variable
     const step = 20;
     try {
@@ -88,7 +85,7 @@ export class AnchorContract {
 
       // If there is a timeout, query the logs in block increments.
       if (e.code == -32603) {
-        for (let i = startingBlock; i < currentBlock; i += step) {
+        for (let i = startingBlock + 1; i < currentBlock; i += step) {
           const nextLogs = await retryPromise(() => {
             return this.web3Provider.getLogs({
               fromBlock: i,
@@ -110,26 +107,48 @@ export class AnchorContract {
       .sort((a, b) => a.args.leafIndex - b.args.leafIndex) // Sort events in chronological order
       .map((e) => e.args.commitment);
 
-    const commitments = [...storedContractInfo.leaves, ...newCommitments];
-
-    // extract the commitments from the events, and update the storage
-    await this.mixersInfo.setMixerStorage(this._contract.address, currentBlock, commitments);
-
-    return commitments;
+    return {
+      startingBlock,
+      endingBlock: currentBlock,
+      leaves: newCommitments,
+    };
   }
 
   /*
    * Generate Merkle Proof
    *  This will
-   *  1- Fetch leaves
-   *  2- build the merkle tree & get the commitment leaf index
-   * 	3- Get the Merkle Path
+   *  1- Create the merkle tree with the leaves in local storage
+   *  2- Fetch the missing leaves
+   *  3- Insert the missing leaves
+   *  4- Compare against historical roots before adding to local storage
+   *  5- return the path to the leaf.
    * */
   async generateMerkleProof(deposit: Deposit) {
-    const leaves = await this.getDepositLeaves();
-    logger.trace(`Leaves ${leaves.length}`, leaves);
-    const tree = new MerkleTree('eth', 20, leaves);
-    let leafIndex = leaves.findIndex((commitment) => commitment == bufferToFixed(deposit.commitment));
+    const storedContractInfo = await this.mixersInfo.getMixerStorage(this._contract.address);
+    const tree = new MerkleTree('eth', 20, storedContractInfo.leaves);
+
+    // Query for missing blocks starting from the stored endingBlock
+    const lastQueriedBlock = storedContractInfo.endingBlock;
+
+    const fetchedLeaves = await this.getDepositLeaves(lastQueriedBlock + 1);
+    logger.trace(`New Leaves ${fetchedLeaves.leaves.length}`, fetchedLeaves);
+
+    tree.batch_insert(fetchedLeaves.leaves);
+    const newRoot = tree.get_root();
+    const formattedRoot = bufferToFixed(newRoot);
+
+    // compare root against contract, and store if there is a match
+    if (this._contract.isKnownRoot(formattedRoot)) {
+      this.mixersInfo.setMixerStorage(this._contract.address, {
+        startingBlock: storedContractInfo.startingBlock,
+        endingBlock: fetchedLeaves.endingBlock,
+        leaves: [...storedContractInfo.leaves, ...fetchedLeaves.leaves],
+      });
+    }
+
+    let leafIndex = [...storedContractInfo.leaves, ...fetchedLeaves.leaves].findIndex(
+      (commitment) => commitment == bufferToFixed(deposit.commitment)
+    );
     logger.info(`Leaf index ${leafIndex}`);
     return tree.path(leafIndex);
   }
