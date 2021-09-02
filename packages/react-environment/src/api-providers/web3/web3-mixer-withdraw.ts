@@ -39,8 +39,8 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
       },
       async (note: string, withdrawFeePercentage: number) => {
         try {
-          const note = await Note.deserialize(note);
-          const evmNote = note.note;
+          const depositNote = await Note.deserialize(note);
+          const evmNote = depositNote.note;
 
           const contract = await this.inner.getContractBySize(evmNote.amount, evmNote.tokenSymbol);
           const principleBig = await contract.denomination;

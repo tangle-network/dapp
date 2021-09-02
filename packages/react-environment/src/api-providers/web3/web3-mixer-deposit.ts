@@ -59,7 +59,7 @@ export class Web3MixerDeposit extends MixerDeposit<WebbWeb3Provider, DepositPayl
       chain: String(chainId),
       amount: String(depositSize),
       denomination: '18',
-      hashFunction: 'Poseidon5',
+      hashFunction: 'Poseidon',
       curve: 'Bn254',
       backend: 'Circom',
       version: 'v1',
