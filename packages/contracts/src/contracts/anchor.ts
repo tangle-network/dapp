@@ -124,7 +124,9 @@ export class AnchorContract {
    * */
   async generateMerkleProof(deposit: Deposit) {
     const storedContractInfo = await this.mixersInfo.getMixerStorage(this._contract.address);
-    const tree = new MerkleTree('eth', 20, storedContractInfo.leaves);
+    const treeHeight = await this._contract.levels();
+    console.log(treeHeight);
+    const tree = new MerkleTree('eth', treeHeight, storedContractInfo.leaves);
 
     // Query for missing blocks starting from the stored endingBlock
     const lastQueriedBlock = storedContractInfo.lastQueriedBlock;
