@@ -68,7 +68,7 @@ export class AnchorContract {
     await recipient.wait();
   }
 
-  private async getDepositLeaves(startingBlock: number): Promise<{ lastQueriedBlock: number; newLeaves: string[] }> {
+  private async getDepositLeaves(startingBlock: number): Promise<{ lastQueriedBlock: number, newLeaves: string[] }> {
     const filter = this._contract.filters.Deposit(null, null, null);
     const currentBlock = await this.web3Provider.getBlockNumber();
 
@@ -130,7 +130,7 @@ export class AnchorContract {
     const lastQueriedBlock = storedContractInfo.lastQueriedBlock;
 
     const fetchedLeaves = await this.getDepositLeaves(lastQueriedBlock + 1);
-    logger.trace(`New Leaves ${fetchedLeaves.newLeaves.length}`, fetchedLeaves).newLeaves;
+    logger.trace(`New Leaves ${fetchedLeaves.newLeaves.length}`, fetchedLeaves.newLeaves);
 
     tree.batch_insert(fetchedLeaves.newLeaves);
     const newRoot = tree.get_root();
@@ -139,8 +139,9 @@ export class AnchorContract {
     // compare root against contract, and store if there is a match
     if (this._contract.isKnownRoot(formattedRoot)) {
       this.mixersInfo.setMixerStorage(this._contract.address, lastQueriedBlock, [
-        [...storedContractInfo.leaves, ...fetchedLeaves.newLeaves],
-      );
+        ...storedContractInfo.leaves,
+        ...fetchedLeaves.newLeaves,
+      ]);
     }
 
     let leafIndex = [...storedContractInfo.leaves, ...fetchedLeaves.newLeaves].findIndex(
