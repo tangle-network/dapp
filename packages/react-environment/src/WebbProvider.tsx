@@ -293,13 +293,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
             /// get the current active chain from metamask
             const chainId = await web3Provider.network; // storage based on network id
 
-            let webbWeb3Provider: WebbWeb3Provider;
-
-            if (activeApi instanceof WebbWeb3Provider) {
-              webbWeb3Provider = activeApi as WebbWeb3Provider;
-            } else {
-              webbWeb3Provider = await WebbWeb3Provider.init(web3Provider, chainId, relayer);
-            }
+            const webbWeb3Provider = await WebbWeb3Provider.init(web3Provider, chainId, relayer);
 
             const providerUpdateHandler = async ([chainId]: number[]) => {
               const nextChain = Object.values(chains).find((chain) => chain.evmId === chainId);
@@ -330,6 +324,8 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
             };
 
             webbWeb3Provider.on('providerUpdate', providerUpdateHandler);
+
+            webbWeb3Provider.setChainListener();
 
             const activeChain = Object.values(chainsConfig).find((chain) => chain.evmId === chainId);
             const cantAddChain = !chain.evmId || !chain.evmRpcUrls;

@@ -27,15 +27,11 @@ export class WebbWeb3Provider
     super();
     this.accounts = new Web3Accounts(web3Provider.eth);
     this.ethersProvider = web3Provider.intoEthersProvider();
-    const handler = async () => {
-      const chainId = await this.web3Provider.network;
-      this.emit('providerUpdate', [chainId]);
-      //TODO investigate the off and on methods on ethers
-      // @ts-ignore
-      // this.ethersProvider.provider?.off?.('chainChanged', handler);
-    };
+
+    // Remove listeners for chainChanged on the previous object
     // @ts-ignore
-    this.ethersProvider.provider?.on?.('chainChanged', handler);
+    this.ethersProvider.provider?.removeAllListeners('chainChanged');
+
     // @ts-ignore
     this.ethersProvider.provider?.on?.('accountsChanged', () => {
       this.emit('newAccounts', this.accounts);
@@ -53,6 +49,16 @@ export class WebbWeb3Provider
         },
       },
     };
+  }
+
+  async setChainListener() {
+    this.ethersProvider = this.web3Provider.intoEthersProvider();
+    const handler = async () => {
+      const chainId = await this.web3Provider.network;
+      this.emit('providerUpdate', [chainId]);
+    };
+    // @ts-ignore
+    this.ethersProvider.provider?.on?.('chainChanged', handler);
   }
 
   setStorage(chainId: number) {
