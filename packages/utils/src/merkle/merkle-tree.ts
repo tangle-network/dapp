@@ -146,7 +146,6 @@ export class MerkleTree {
       MerkleTree.keyFormat(this.prefix, this.nLevel, 0),
       this.zeroValues[this.nLevel]
     ) as string;
-    console.log(root);
     return root;
   }
 
