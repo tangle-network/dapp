@@ -75,14 +75,14 @@ export class EvmChainMixersInfo {
     };
   }
 
-  async setMixerStorage(contractAddress: string, leafInfo: LeafIntervalInfo) {
+  async setMixerStorage(contractAddress: string, lastQueriedBlock: number, leaves: string[]) {
     if (!this.mixerStorage) {
       this.mixerStorage = await evmChainStorageFactory(this.chainId);
     }
 
     this.mixerStorage.set(contractAddress, {
-      lastQueriedBlock: leafInfo.endingBlock,
-      leaves: leafInfo.leaves,
+      lastQueriedBlock,
+      leaves,
     });
   }
 

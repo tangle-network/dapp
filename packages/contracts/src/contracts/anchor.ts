@@ -1,11 +1,11 @@
-import { Anchor as TornadoAnchor } from '@webb-dapp/contracts/types/Anchor';
+import { Anchor } from '@webb-dapp/contracts/types/Anchor';
 import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
 import { EvmNote } from '@webb-dapp/contracts/utils/evm-note';
 import { createDeposit, Deposit } from '@webb-dapp/contracts/utils/make-deposit';
 import { MerkleTree } from '@webb-dapp/utils/merkle';
 import { BigNumber, Contract, providers, Signer } from 'ethers';
 import { Log } from '@ethersproject/abstract-provider';
-import { LeafIntervalInfo, EvmChainMixersInfo } from '@webb-dapp/react-environment/api-providers/web3/EvmChainMixersInfo';
+import { EvmChainMixersInfo } from '@webb-dapp/react-environment/api-providers/web3/EvmChainMixersInfo';
 import utils from 'web3-utils';
 import { abi } from '../abis/NativeAnchor.json';
 import { mixerLogger } from '@webb-dapp/mixer/utils';
@@ -17,8 +17,8 @@ const webSnarkUtils = require('websnark/src/utils');
 type DepositEvent = [string, number, BigNumber];
 const logger = LoggerService.get('anchor');
 
-export class TornadoAnchorContract {
-  private _contract: TornadoAnchor;
+export class AnchorContract {
+  private _contract: Anchor;
   private readonly signer: Signer;
 
   constructor(private mixersInfo: EvmChainMixersInfo, private web3Provider: providers.Web3Provider, address: string) {
@@ -68,7 +68,7 @@ export class TornadoAnchorContract {
     await recipient.wait();
   }
 
-  private async getDepositLeaves(startingBlock: number): Promise<LeafIntervalInfo> {
+  private async getDepositLeaves(startingBlock: number): Promise<{ lastQueriedBlock: number; newLeaves: string[] }> {
     const filter = this._contract.filters.Deposit(null, null, null);
     const currentBlock = await this.web3Provider.getBlockNumber();
 
@@ -85,7 +85,7 @@ export class TornadoAnchorContract {
 
       // If there is a timeout, query the logs in block increments.
       if (e.code == -32603) {
-        for (let i = startingBlock + 1; i < currentBlock; i += step) {
+        for (let i = startingBlock; i < currentBlock; i += step) {
           const nextLogs = await retryPromise(() => {
             return this.web3Provider.getLogs({
               fromBlock: i,
@@ -108,9 +108,8 @@ export class TornadoAnchorContract {
       .map((e) => e.args.commitment);
 
     return {
-      startingBlock,
-      endingBlock: currentBlock,
-      leaves: newCommitments,
+      lastQueriedBlock: currentBlock,
+      newLeaves: newCommitments,
     };
   }
 
@@ -140,7 +139,6 @@ export class TornadoAnchorContract {
     // compare root against contract, and store if there is a match
     if (this._contract.isKnownRoot(formattedRoot)) {
       this.mixersInfo.setMixerStorage(this._contract.address, {
-        startingBlock: storedContractInfo.startingBlock,
         endingBlock: fetchedLeaves.endingBlock,
         leaves: [...storedContractInfo.leaves, ...fetchedLeaves.leaves],
       });
