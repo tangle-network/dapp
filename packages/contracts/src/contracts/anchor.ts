@@ -133,12 +133,15 @@ export class AnchorContract {
     logger.trace(`New Leaves ${fetchedLeaves.newLeaves.length}`, fetchedLeaves.newLeaves);
 
     tree.batch_insert(fetchedLeaves.newLeaves);
+
     const newRoot = tree.get_root();
     const formattedRoot = bufferToFixed(newRoot);
+    const knownRoot = await this._contract.isKnownRoot(formattedRoot);
+    logger.info(`knownRoot: ${knownRoot}`);
 
     // compare root against contract, and store if there is a match
-    if (this._contract.isKnownRoot(formattedRoot)) {
-      this.mixersInfo.setMixerStorage(this._contract.address, lastQueriedBlock, [
+    if (knownRoot) {
+      this.mixersInfo.setMixerStorage(this._contract.address, fetchedLeaves.lastQueriedBlock, [
         ...storedContractInfo.leaves,
         ...fetchedLeaves.newLeaves,
       ]);
