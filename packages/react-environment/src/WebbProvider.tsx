@@ -212,7 +212,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
     }
     try {
       /// init the active api value
-      let activeApi: WebbApiProvider<any> | null = null;
+      let localActiveApi: WebbApiProvider<any> | null = null;
       switch (wallet.id) {
         case WalletId.Polkadot:
           {
@@ -228,7 +228,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
               relayer
             );
             await setActiveApiWithAccounts(webbPolkadot, chain.id);
-            activeApi = webbPolkadot;
+            localActiveApi = webbPolkadot;
             setLoading(false);
           }
           break;
@@ -292,9 +292,10 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
             }
             /// get the current active chain from metamask
             const chainId = await web3Provider.network; // storage based on network id
+
             const webbWeb3Provider = await WebbWeb3Provider.init(web3Provider, chainId, relayer);
-            webbWeb3Provider.on('providerUpdate', async ([chainId]) => {
-              /// get the nextChain from MetaMask change
+
+            const providerUpdateHandler = async ([chainId]: number[]) => {
               const nextChain = Object.values(chains).find((chain) => chain.evmId === chainId);
               try {
                 /// this will throw if the user switched to unsupported chain
@@ -320,7 +321,11 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
                   catchWebbError(e);
                 }
               }
-            });
+            };
+
+            webbWeb3Provider.on('providerUpdate', providerUpdateHandler);
+
+            webbWeb3Provider.setChainListener();
 
             const activeChain = Object.values(chainsConfig).find((chain) => chain.evmId === chainId);
             const cantAddChain = !chain.evmId || !chain.evmRpcUrls;
@@ -374,14 +379,14 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
             }
             await setActiveApiWithAccounts(webbWeb3Provider, chain.id);
             /// listen to `providerUpdate` by MetaMask
-            activeApi = webbWeb3Provider;
+            localActiveApi = webbWeb3Provider;
           }
           break;
       }
       /// settings the user selection
       setActiveChain(chain);
       setActiveWallet(wallet);
-      return activeApi;
+      return localActiveApi;
     } catch (e) {
       if (e instanceof WebbError) {
         /// Catch the errors for the switcher while switching
