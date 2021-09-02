@@ -1,5 +1,6 @@
 import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
 import { pedersenHash } from '@webb-dapp/contracts/utils/pedersen-hash';
+const snarkjs = require('snarkjs');
 
 const crypto = require('crypto');
 
@@ -26,5 +27,22 @@ export function createDeposit() {
     secret: bufferToFixed(secret),
   };
 
+  return deposit;
+}
+
+export function depositFromPreimage(hexString: string): Deposit {
+  const preImage = Buffer.from(hexString, 'hex');
+  const commitment = pedersenHash(preImage);
+  const nullifier = snarkjs.bigInt.leBuff2int(preImage.slice(0, 31));
+  const secret = snarkjs.bigInt.leBuff2int(preImage.slice(31, 62));
+
+  const nullifierHash = pedersenHash(nullifier.leInt2Buff(31));
+  const deposit: Deposit = {
+    preimage: preImage,
+    commitment,
+    nullifierHash,
+    nullifier: nullifier,
+    secret: secret,
+  };
   return deposit;
 }
