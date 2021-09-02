@@ -15,7 +15,7 @@ export const NoteInput: React.FC<NoteInputProps> = ({ error, onChange, value }) 
     <InputLabel label={'Note'}>
       <InputBase
         fullWidth
-        placeholder={`webb.mix-v1-EDG-0-13b564fcfacc0d2c0b8e2e2d5e36dd9065f2f7ff8ed01c83d9a62d4eb3c9490afdc603031110955d31289757926ee1c1e5d2f0d3377a6d085779c75367e89800`}
+        placeholder={`webb.mix:v1:4:Circom:Bn254:Poseidon5:ETH:18:0.1:5:5:dc92b0096b02746362c56dbee8e28a036f29b600b59cad3e4a114af2e2eb094f9878beaf5699f43d789937130e7ee7ca12e0703ce9cc62297bbb0abc864e`}
         multiline={true}
         rows={5}
         value={value}
