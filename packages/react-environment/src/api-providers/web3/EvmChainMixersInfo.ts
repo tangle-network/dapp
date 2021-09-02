@@ -50,7 +50,7 @@ export class EvmChainMixersInfo {
     });
   }
 
-  async getMixerStorage(contractAddress: string): Promise<LeafIntervalInfo> {
+  async getMixerStorage(contractAddress: string) {
     // create the mixerStorage if it didn't exist
     if (!this.mixerStorage) {
       this.mixerStorage = await evmChainStorageFactory(this.chainId);
@@ -62,15 +62,14 @@ export class EvmChainMixersInfo {
 
     if (!storedInfo) {
       return {
-        startingBlock: mixerInfo.createdAtBlock,
-        endingBlock: mixerInfo.createdAtBlock,
+        lastQueriedBlock: mixerInfo.createdAtBlock,
         leaves: [],
       };
     }
 
     return {
-      startingBlock: mixerInfo.createdAtBlock,
-      endingBlock: storedInfo.lastQueriedBlock,
+      createdAtBlock: mixerInfo.createdAtBlock,
+      lastQueriedBlock: storedInfo.lastQueriedBlock,
       leaves: storedInfo.leaves,
     };
   }

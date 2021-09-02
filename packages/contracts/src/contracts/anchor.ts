@@ -127,24 +127,23 @@ export class AnchorContract {
     const tree = new MerkleTree('eth', 20, storedContractInfo.leaves);
 
     // Query for missing blocks starting from the stored endingBlock
-    const lastQueriedBlock = storedContractInfo.endingBlock;
+    const lastQueriedBlock = storedContractInfo.lastQueriedBlock;
 
     const fetchedLeaves = await this.getDepositLeaves(lastQueriedBlock + 1);
-    logger.trace(`New Leaves ${fetchedLeaves.leaves.length}`, fetchedLeaves);
+    logger.trace(`New Leaves ${fetchedLeaves.newLeaves.length}`, fetchedLeaves).newLeaves;
 
-    tree.batch_insert(fetchedLeaves.leaves);
+    tree.batch_insert(fetchedLeaves.newLeaves);
     const newRoot = tree.get_root();
     const formattedRoot = bufferToFixed(newRoot);
 
     // compare root against contract, and store if there is a match
     if (this._contract.isKnownRoot(formattedRoot)) {
-      this.mixersInfo.setMixerStorage(this._contract.address, {
-        endingBlock: fetchedLeaves.endingBlock,
-        leaves: [...storedContractInfo.leaves, ...fetchedLeaves.leaves],
-      });
+      this.mixersInfo.setMixerStorage(this._contract.address, lastQueriedBlock, [
+        [...storedContractInfo.leaves, ...fetchedLeaves.newLeaves],
+      );
     }
 
-    let leafIndex = [...storedContractInfo.leaves, ...fetchedLeaves.leaves].findIndex(
+    let leafIndex = [...storedContractInfo.leaves, ...fetchedLeaves.newLeaves].findIndex(
       (commitment) => commitment == bufferToFixed(deposit.commitment)
     );
     logger.info(`Leaf index ${leafIndex}`);
