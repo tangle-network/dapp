@@ -8,21 +8,24 @@ import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabe
 import { InputSection } from '@webb-dapp/ui-components/Inputs/InputSection/InputSection';
 import { NoteInput } from '@webb-dapp/ui-components/Inputs/NoteInput/NoteInput';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
+import { ethers } from 'ethers';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { EvmNote } from '@webb-dapp/contracts/utils/evm-note';
+import { useDepositNote } from '@webb-dapp/mixer/hooks/note';
 
 const WithdrawWrapper = styled.div``;
 type WithdrawProps = {};
 
 export const Withdraw: React.FC<WithdrawProps> = () => {
   const [note, setNote] = useState('');
+
   const [recipient, setRecipient] = useState('');
   const [fees, setFees] = useState('');
   const { canCancel, cancelWithdraw, relayersState, setRelayer, stage, validationErrors, withdraw } = useWithdraw({
     recipient,
     note,
   });
+
   useEffect(() => {
     async function getFees() {
       try {
@@ -36,8 +39,11 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
         return;
       }
     }
+
     getFees();
   }, [note, relayersState.activeRelayer]);
+
+  const depositNote = useDepositNote(note);
   return (
     <WithdrawWrapper>
       <InputSection>
@@ -68,15 +74,18 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
         <InputLabel label={'Relayer'}>
           <Select
             fullWidth
-            value={relayersState.activeRelayer?.address}
+            value={relayersState.activeRelayer?.endpoint || 'none'}
             onChange={({ target: { value } }) => {
-              setRelayer(relayersState?.relayers.find((i) => i.address === value) ?? null);
+              setRelayer(relayersState?.relayers.find((i) => i.endpoint === value) ?? null);
             }}
           >
+            <MenuItem value={'none'} key={'none'}>
+              <p style={{ fontSize: 14 }}>None</p>
+            </MenuItem>
             {relayersState.relayers.map((relayer) => {
               return (
-                <MenuItem value={relayer.address} key={relayer.address}>
-                  {relayer.address}
+                <MenuItem value={relayer.endpoint} key={relayer.endpoint}>
+                  <p style={{ fontSize: 14 }}>{relayer.endpoint}</p>
                 </MenuItem>
               );
             })}
@@ -94,24 +103,17 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
               >
                 <tbody>
                   <tr>
-                    <td>Account</td>
                     <td>
-                      <small>{relayersState.activeRelayer?.account}</small>
+                      <span style={{ whiteSpace: 'nowrap' }}>Withdraw fee percentage</span>
                     </td>
-                  </tr>
-
-                  <tr>
-                    <td>
-                      <span style={{ whiteSpace: 'nowrap' }}>withdraw fee percentage</span>
-                    </td>
-                    <td>{relayersState.activeRelayer?.fee}%</td>
+                    <td style={{ textAlign: 'right' }}>{relayersState.activeRelayer?.fee}%</td>
                   </tr>
 
                   {fees && (
                     <tr>
                       <td>Full fees</td>
-                      <td>
-                        <small>{fees}</small>
+                      <td style={{ textAlign: 'right' }}>
+                        {ethers.utils.formatUnits(fees)} {depositNote && depositNote.note.tokenSymbol}
                       </td>
                     </tr>
                   )}

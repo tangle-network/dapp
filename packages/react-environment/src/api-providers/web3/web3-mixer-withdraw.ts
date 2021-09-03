@@ -1,4 +1,4 @@
-import { evmIdIntoChainId } from '@webb-dapp/apps/configs';
+import { ChainId, evmIdIntoChainId } from '@webb-dapp/apps/configs';
 import { chainIdToRelayerName } from '@webb-dapp/apps/configs/relayer-config';
 import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
 import { depositFromPreimage } from '@webb-dapp/contracts/utils/make-deposit';
@@ -16,6 +16,7 @@ import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polka
 import { LoggerService } from '@webb-tools/app-util';
 import { Note } from '@webb-tools/sdk-mixer';
 import { BigNumber } from 'ethers';
+import { number } from 'prop-types';
 import React from 'react';
 
 const logger = LoggerService.get('Web3MixerWithdraw');
@@ -42,7 +43,7 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
           const depositNote = await Note.deserialize(note);
           const evmNote = depositNote.note;
 
-          const contract = await this.inner.getContractBySize(evmNote.amount, evmNote.tokenSymbol);
+          const contract = await this.inner.getContractBySize(Number(evmNote.amount), evmNote.tokenSymbol);
           const principleBig = await contract.denomination;
 
           const withdrawFeeMill = withdrawFeePercentage * 1000000;
@@ -89,7 +90,7 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
         data: React.createElement(
           'p',
           { style: { fontSize: '.9rem' } }, // Matches Typography variant=h6
-          `Relaying withdraw through ${activeRelayer.address}`
+          `Relaying withdraw through ${activeRelayer.endpoint}`
         ),
         key: 'mixer-withdraw-evm',
         path: {
@@ -97,11 +98,11 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
           section: 'evm-mixer',
         },
       });
-      logger.info(`Withdrawing through relayer with address ${activeRelayer.address}`);
+      logger.info(`Withdrawing through relayer with address ${activeRelayer.endpoint}`);
       logger.trace('Note deserialized', evmNote);
       const relayedWithdraw = await activeRelayer.initWithdraw();
       logger.trace('initialized the withdraw WebSocket');
-      const mixerInfo = this.inner.getMixerInfoBySize(evmNote.amount, evmNote.currency);
+      const mixerInfo = this.inner.getMixerInfoBySize(Number(evmNote.note.amount), evmNote.note.tokenSymbol);
       logger.info(`Withdrawing to mixer info`, mixerInfo);
       const anchorContract = await this.inner.getContractByAddress(mixerInfo.address);
       logger.trace('Generating the zkp');
@@ -118,7 +119,7 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
       const tx = relayedWithdraw.generateWithdrawRequest(
         {
           baseOn: 'evm',
-          name: chainIdToRelayerName(evmNote.chainId),
+          name: chainIdToRelayerName(evmIdIntoChainId(evmNote.note.chain)),
           contractAddress: mixerInfo.address,
           endpoint: '',
         },
@@ -174,7 +175,7 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
     } else {
       logger.trace('Withdrawing without relayer');
       this.emit('stateChange', WithdrawState.GeneratingZk);
-      const contract = await this.inner.getContractBySize(evmNote.note.amount, evmNote.note.tokenSymbol);
+      const contract = await this.inner.getContractBySize(Number(evmNote.note.amount), evmNote.note.tokenSymbol);
       try {
         const zkpInputWithoutMerkleProof = fromDepositIntoZKPInput(deposit, {
           recipient,
