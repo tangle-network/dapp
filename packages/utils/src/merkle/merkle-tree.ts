@@ -141,6 +141,27 @@ export class MerkleTree {
     }
   }
 
+  get_root(): string {
+    let root = this.storage.getOrDefault(
+      MerkleTree.keyFormat(this.prefix, this.nLevel, 0),
+      this.zeroValues[this.nLevel]
+    ) as string;
+    return root;
+  }
+
+  // Elements must be ordered
+  batch_insert(elements: any[]) {
+    elements.forEach((elem) => {
+      this.insert(elem);
+    });
+  }
+
+  insert(element: any) {
+    const index = this.totalElements;
+    this.update(index, element, true);
+    this.totalElements++;
+  }
+
   path(index: number) {
     const traverser = new PathTraverser(this.prefix, this.storage, this.zeroValues);
     const root = this.storage.getOrDefault(

@@ -10,6 +10,12 @@ import { evmChainStorageFactory, MixerStorage } from '@webb-dapp/apps/configs/st
 import { MixerSize } from '@webb-dapp/react-environment';
 import { Storage } from '@webb-dapp/utils';
 
+export type LeafIntervalInfo = {
+  startingBlock: number;
+  endingBlock: number;
+  leaves: string[];
+};
+
 export class EvmChainMixersInfo {
   private mixerStorage: Storage<MixerStorage> | null = null;
   private mixerInfo: MixerInfo[];
@@ -51,16 +57,18 @@ export class EvmChainMixersInfo {
     }
 
     // get the info from localStorage
+    const mixerInfo = this.getMixerInfoByAddress(contractAddress);
     const storedInfo = await this.mixerStorage.get(contractAddress);
 
     if (!storedInfo) {
       return {
-        lastQueriedBlock: this.getMixerInfoByAddress(contractAddress).createdAtBlock,
+        lastQueriedBlock: mixerInfo.createdAtBlock,
         leaves: [],
       };
     }
 
     return {
+      createdAtBlock: mixerInfo.createdAtBlock,
       lastQueriedBlock: storedInfo.lastQueriedBlock,
       leaves: storedInfo.leaves,
     };

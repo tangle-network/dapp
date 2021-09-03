@@ -68,13 +68,10 @@ export class AnchorContract {
     await recipient.wait();
   }
 
-  private async getDepositLeaves(): Promise<string[]> {
+  private async getDepositLeaves(startingBlock: number): Promise<{ lastQueriedBlock: number, newLeaves: string[] }> {
     const filter = this._contract.filters.Deposit(null, null, null);
-
     const currentBlock = await this.web3Provider.getBlockNumber();
-    const storedContractInfo = await this.mixersInfo.getMixerStorage(this._contract.address);
 
-    const startingBlock = storedContractInfo.lastQueriedBlock; // Read starting block from cached storage
     let logs: Array<Log> = []; // Read the stored logs into this variable
     const step = 20;
     try {
@@ -110,26 +107,50 @@ export class AnchorContract {
       .sort((a, b) => a.args.leafIndex - b.args.leafIndex) // Sort events in chronological order
       .map((e) => e.args.commitment);
 
-    const commitments = [...storedContractInfo.leaves, ...newCommitments];
-
-    // extract the commitments from the events, and update the storage
-    await this.mixersInfo.setMixerStorage(this._contract.address, currentBlock, commitments);
-
-    return commitments;
+    return {
+      lastQueriedBlock: currentBlock,
+      newLeaves: newCommitments,
+    };
   }
 
   /*
    * Generate Merkle Proof
    *  This will
-   *  1- Fetch leaves
-   *  2- build the merkle tree & get the commitment leaf index
-   * 	3- Get the Merkle Path
+   *  1- Create the merkle tree with the leaves in local storage
+   *  2- Fetch the missing leaves
+   *  3- Insert the missing leaves
+   *  4- Compare against historical roots before adding to local storage
+   *  5- return the path to the leaf.
    * */
   async generateMerkleProof(deposit: Deposit) {
-    const leaves = await this.getDepositLeaves();
-    logger.trace(`Leaves ${leaves.length}`, leaves);
-    const tree = new MerkleTree('eth', 20, leaves);
-    let leafIndex = leaves.findIndex((commitment) => commitment == bufferToFixed(deposit.commitment));
+    const storedContractInfo = await this.mixersInfo.getMixerStorage(this._contract.address);
+    const treeHeight = await this._contract.levels();
+    const tree = new MerkleTree('eth', treeHeight, storedContractInfo.leaves);
+
+    // Query for missing blocks starting from the stored endingBlock
+    const lastQueriedBlock = storedContractInfo.lastQueriedBlock;
+
+    const fetchedLeaves = await this.getDepositLeaves(lastQueriedBlock + 1);
+    logger.trace(`New Leaves ${fetchedLeaves.newLeaves.length}`, fetchedLeaves.newLeaves);
+
+    tree.batch_insert(fetchedLeaves.newLeaves);
+
+    const newRoot = tree.get_root();
+    const formattedRoot = bufferToFixed(newRoot);
+    const knownRoot = await this._contract.isKnownRoot(formattedRoot);
+    logger.info(`knownRoot: ${knownRoot}`);
+
+    // compare root against contract, and store if there is a match
+    if (knownRoot) {
+      this.mixersInfo.setMixerStorage(this._contract.address, fetchedLeaves.lastQueriedBlock, [
+        ...storedContractInfo.leaves,
+        ...fetchedLeaves.newLeaves,
+      ]);
+    }
+
+    let leafIndex = [...storedContractInfo.leaves, ...fetchedLeaves.newLeaves].findIndex(
+      (commitment) => commitment == bufferToFixed(deposit.commitment)
+    );
     logger.info(`Leaf index ${leafIndex}`);
     return tree.path(leafIndex);
   }
