@@ -8,27 +8,23 @@ import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabe
 import { InputSection } from '@webb-dapp/ui-components/Inputs/InputSection/InputSection';
 import { NoteInput } from '@webb-dapp/ui-components/Inputs/NoteInput/NoteInput';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
+import { ethers } from 'ethers';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { EvmNote } from '@webb-dapp/contracts/utils/evm-note';
-import { ethers } from 'ethers';
+import { useDepositNote } from '@webb-dapp/mixer/hooks/note';
 
 const WithdrawWrapper = styled.div``;
 type WithdrawProps = {};
 
 export const Withdraw: React.FC<WithdrawProps> = () => {
   const [note, setNote] = useState('');
+
   const [recipient, setRecipient] = useState('');
   const [fees, setFees] = useState('');
   const { canCancel, cancelWithdraw, relayersState, setRelayer, stage, validationErrors, withdraw } = useWithdraw({
     recipient,
     note,
   });
-
-  const relayerRenderValue = (value) => {
-    console.log(value);
-    return value && <p style={{ fontSize: 14 }}>{value}</p>;
-  };
 
   useEffect(() => {
     async function getFees() {
@@ -43,8 +39,11 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
         return;
       }
     }
+
     getFees();
   }, [note, relayersState.activeRelayer]);
+
+  const depositNote = useDepositNote(note);
   return (
     <WithdrawWrapper>
       <InputSection>
@@ -113,7 +112,9 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
                   {fees && (
                     <tr>
                       <td>Full fees</td>
-                      <td style={{ textAlign: 'right' }}>{ethers.utils.formatUnits(fees)}</td>
+                      <td style={{ textAlign: 'right' }}>
+                        {ethers.utils.formatUnits(fees)} {depositNote && depositNote.note.tokenSymbol}
+                      </td>
                     </tr>
                   )}
                 </tbody>

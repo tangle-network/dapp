@@ -282,7 +282,7 @@ export class ActiveWebbRelayer extends WebbRelayer {
   }
 
   get gasLimit(): number | undefined {
-    return '';
+    return undefined;
   }
 
   get account(): string | undefined {

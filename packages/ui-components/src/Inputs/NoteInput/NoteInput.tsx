@@ -1,7 +1,9 @@
 import { FormHelperText, InputBase } from '@material-ui/core';
 import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabel';
-import React from 'react';
-import styled from 'styled-components';
+import React, { useEffect, useState } from 'react';
+import styled, { css } from 'styled-components';
+import { Note } from '@webb-tools/sdk-mixer';
+import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 
 const NoteInputWrapper = styled.div``;
 type NoteInputProps = {
@@ -9,8 +11,27 @@ type NoteInputProps = {
   onChange(next: string): void;
   error?: string;
 };
-
+const NoteDetails = styled.div`
+  ${({ theme }: { theme: Pallet }) => css`
+    border-top: 2px solid ${theme.borderColor2};
+  `};
+  padding: 11px;
+  margin: 0 -11px;
+`;
 export const NoteInput: React.FC<NoteInputProps> = ({ error, onChange, value }) => {
+  const [depositNote, setDepositNote] = useState<Note | null>(null);
+
+  useEffect(() => {
+    const handler = async () => {
+      try {
+        let d = await Note.deserialize(value);
+        setDepositNote(d);
+      } catch (_) {
+        setDepositNote(null);
+      }
+    };
+    handler();
+  }, [value]);
   return (
     <InputLabel label={'Note'}>
       <InputBase
@@ -24,6 +45,17 @@ export const NoteInput: React.FC<NoteInputProps> = ({ error, onChange, value }) 
           onChange?.(event.target.value as string);
         }}
       />
+      {depositNote && (
+        <NoteDetails>
+          <div>
+            Context: {depositNote.note.prefix.replace('webb.', '')}
+            <br />
+            Amount : {depositNote.note.amount} {depositNote.note.tokenSymbol}
+            <br />
+            Chain : {depositNote.note.chain}
+          </div>
+        </NoteDetails>
+      )}
       <FormHelperText error={Boolean(error)}>{error}</FormHelperText>
     </InputLabel>
   );
