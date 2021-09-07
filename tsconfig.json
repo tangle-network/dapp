@@ -1,7 +1,11 @@
 {
   "compilerOptions": {
 	"target": "es5",
-	"lib": ["dom", "dom.iterable", "esnext"],
+	"lib": [
+	  "dom",
+	  "dom.iterable",
+	  "esnext"
+	],
 	"allowJs": true,
 	"skipLibCheck": true,
 	"esModuleInterop": true,
@@ -20,34 +24,102 @@
 	"jsx": "react",
 	"baseUrl": "./packages",
 	"paths": {
-	  "@webb-dapp/apps/*": ["apps/src/*"],
-	  "@webb-dapp/apps": ["apps/src"],
-	  "@webb-dapp/page-wallet": ["page-wallet/src"],
-	  "@webb-dapp/page-wallet/*": ["page-wallet/src/*"],
-	  "@webb-dapp/page-mixer": ["page-mixer/src"],
-	  "@webb-dapp/page-mixer/*": ["page-mixer/src/*"],
-	  "@webb-dapp/page-governance": ["page-governance/src"],
-	  "@webb-dapp/page-governance/*": ["page-governance/src/*"],
-	  "@webb-dapp/page-mixer-charts": ["page-mixer-charts/src"],
-	  "@webb-dapp/page-mixer-charts/*": ["page-mixer-charts/src/*"],
-	  "@webb-dapp/react-hooks/*": ["react-hooks/src/*"],
-	  "@webb-dapp/react-hooks": ["react-hooks/src"],
-	  "@webb-dapp/react-environment/*": ["react-environment/src/*"],
-	  "@webb-dapp/react-environment": ["react-environment/src"],
-	  "@webb-dapp/react-components/*": ["react-components/src/*"],
-	  "@webb-dapp/react-components": ["react-components/src"],
-	  "@webb-dapp/ui-components/*": ["ui-components/src/*"],
-	  "@webb-dapp/ui-components": ["ui-components/src"],
-	  "@webb-dapp/utils/*": ["utils/src/*"],
-	  "@webb-dapp/utils": ["utils/src"],
-	  "@webb-dapp/mixer/*": ["mixer/src/*"],
-	  "@webb-dapp/mixer": ["mixer/src"],
-	  "@webb-dapp/wallet/*": ["wallet/src/*"],
-	  "@webb-dapp/wallet": ["wallet/src"],
-	  "@webb-dapp/contracts/*": ["contracts/src/*"],
-	  "@webb-dapp/contracts": ["contracts/src"]
+	  "@webb-dapp/apps/*": [
+		"apps/src/*"
+	  ],
+	  "@webb-dapp/apps": [
+		"apps/src"
+	  ],
+	  "@webb-dapp/page-wallet": [
+		"page-wallet/src"
+	  ],
+	  "@webb-dapp/page-wallet/*": [
+		"page-wallet/src/*"
+	  ],
+	  "@webb-dapp/page-mixer": [
+		"page-mixer/src"
+	  ],
+	  "@webb-dapp/page-mixer/*": [
+		"page-mixer/src/*"
+	  ],
+	  "@webb-dapp/page-governance": [
+		"page-governance/src"
+	  ],
+	  "@webb-dapp/page-governance/*": [
+		"page-governance/src/*"
+	  ],
+	  "@webb-dapp/page-mixer-charts": [
+		"page-mixer-charts/src"
+	  ],
+	  "@webb-dapp/page-mixer-charts/*": [
+		"page-mixer-charts/src/*"
+	  ],
+	  "@webb-dapp/react-hooks/*": [
+		"react-hooks/src/*"
+	  ],
+	  "@webb-dapp/react-hooks": [
+		"react-hooks/src"
+	  ],
+	  "@webb-dapp/react-environment/*": [
+		"react-environment/src/*"
+	  ],
+	  "@webb-dapp/react-environment": [
+		"react-environment/src"
+	  ],
+	  "@webb-dapp/react-components/*": [
+		"react-components/src/*"
+	  ],
+	  "@webb-dapp/react-components": [
+		"react-components/src"
+	  ],
+	  "@webb-dapp/ui-components/*": [
+		"ui-components/src/*"
+	  ],
+	  "@webb-dapp/ui-components": [
+		"ui-components/src"
+	  ],
+	  "@webb-dapp/utils/*": [
+		"utils/src/*"
+	  ],
+	  "@webb-dapp/utils": [
+		"utils/src"
+	  ],
+	  "@webb-dapp/mixer/*": [
+		"mixer/src/*"
+	  ],
+	  "@webb-dapp/mixer": [
+		"mixer/src"
+	  ],
+	  "@webb-dapp/wallet/*": [
+		"wallet/src/*"
+	  ],
+	  "@webb-dapp/wallet": [
+		"wallet/src"
+	  ],
+	  "@webb-dapp/bridge/*": [
+		"bridge/src/*"
+	  ],
+	  "@webb-dapp/bridge": [
+		"bridge/src"
+	  ],
+	  "@webb-dapp/page-bridge/*": [
+		"page-bridge/src/*"
+	  ],
+	  "@webb-dapp/page-bridge": [
+		"page-bridge/src"
+	  ],
+	  "@webb-dapp/contracts/*": [
+		"contracts/src/*"
+	  ],
+	  "@webb-dapp/contracts": [
+		"contracts/src"
+	  ]
 	},
 	"skipDefaultLibCheck": true
   },
-  "exclude": ["build/**/*", "**/build/**/*", "scripts/*"]
+  "exclude": [
+	"build/**/*",
+	"**/build/**/*",
+	"scripts/*"
+  ]
 }

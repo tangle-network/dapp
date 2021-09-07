@@ -1,6 +1,7 @@
 import { ReactComponent as WebbLogo } from '@webb-dapp/react-components/assets/webb-icon.svg';
-import { useStore, useWebContext } from '@webb-dapp/react-environment';
+import { useStore } from '@webb-dapp/react-environment';
 import { useDimensions } from '@webb-dapp/react-environment/layout';
+import { NetworkManager } from '@webb-dapp/ui-components/NetworkManger/NetworkManager';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 import { below } from '@webb-dapp/ui-components/utils/responsive-utils';
 import React, { useMemo } from 'react';
@@ -9,8 +10,6 @@ import styled from 'styled-components';
 
 import { AccountManager } from '../AccountManager/AccountManager';
 import { ThemeSwitcher } from './ThemeSwticher';
-import { NetworkManager } from '@webb-dapp/ui-components/NetworkManger/NetworkManager';
-import { ConnectWalletButton } from '@webb-dapp/ui-components/Inputs/WalletSelect/ConnectWalletButton';
 
 const AppBarWrapper = styled.nav`
   height: 65px;
@@ -22,7 +21,6 @@ const AppBarWrapper = styled.nav`
   flex: 1;
   align-items: center;
   padding: 0 10px;
-
   ${below.sm`
 	 background:#fff;
 	`}
@@ -85,7 +83,7 @@ const AppBarWrapper = styled.nav`
 `;
 
 const SpacerDiv = styled.div`
-  width: 244px;
+  //width: 244px;
 `;
 
 const RightNavigation = styled.div`
@@ -96,16 +94,13 @@ const RightNavigation = styled.div`
 
 	`}
 `;
-
-const AccountManagerContainer = styled.div`
-  width: 250px;
+const NavigationWrapper = styled.ul`
+  flex: 1;
+  margin: 0 6rem !important;
 `;
-
-const NavigationWrapper = styled.ul``;
 type AppBarProps = {};
 
 const AppBar: React.FC<AppBarProps> = () => {
-  const { activeWallet } = useWebContext();
   const { size, width } = useDimensions();
   const isMobile = useMemo(() => {
     return width <= size.sm;
@@ -119,11 +114,16 @@ const AppBar: React.FC<AppBarProps> = () => {
       <SpacerDiv />
       {!isMobile && (
         <NavigationWrapper>
-          {/*          <li className={'active'}>
+          <li className={'active'}>
             <NavLink to={'/mixer'} activeClassName={'active'}>
-              zkBridge
+              Mixers
             </NavLink>
-          </li>*/}
+          </li>
+          <li className={'active'}>
+            <NavLink to={'/bridge'} activeClassName={'active'}>
+              Bridge
+            </NavLink>
+          </li>
           {/*        <li>
           <NavLink to={'/statistics'}>Statistics</NavLink>
         </li>
@@ -152,9 +152,7 @@ const AppBar: React.FC<AppBarProps> = () => {
           </IconButton>
         </Tooltip>*/}
         {!isMobile && <NetworkManager />}
-        <AccountManagerContainer>
-          {!isMobile && (activeWallet ? <AccountManager /> : <ConnectWalletButton/>)}
-        </AccountManagerContainer>
+        <AccountManager />
       </RightNavigation>
     </AppBarWrapper>
   );
