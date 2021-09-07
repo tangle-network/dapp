@@ -12,11 +12,14 @@ import { ChainId, WebbCurrencyId, webbCurrencyIdFromString, webbCurrencyIdToStri
  *  the token name will be webbEth-0-1  (the wrapped Eth token the is bridged between Ethereum and Edgware)
  * */
 export class BridgeCurrency {
+  public readonly name: string;
+
   constructor(private paraChains: ChainId[], private wrappedCurrency: WebbCurrencyId) {
     this.paraChains = this.paraChains.sort((a, b) => (a > b ? 1 : a < b ? -1 : 0));
+    this.name = this.toString();
   }
 
-  toString(): string {
+  private toString(): string {
     const paraChains = this.paraChains.join('-');
     const baseCurrency = webbCurrencyIdToString(this.wrappedCurrency);
     return `webb${baseCurrency}-${paraChains}`;
@@ -28,5 +31,8 @@ export class BridgeCurrency {
     let chainIds = parts.slice(1, parts.length).map((c) => Number(c) as ChainId);
     let wrappedCurrency = webbCurrencyIdFromString(prefix);
     return new BridgeCurrency(chainIds, wrappedCurrency);
+  }
+  hasChain(chainId: ChainId): boolean {
+    return this.paraChains.includes(chainId);
   }
 }
