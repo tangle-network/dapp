@@ -1,5 +1,5 @@
-import { EventBus } from '@webb-tools/app-util';
 import { ActiveWebbRelayer, WebbRelayer } from '@webb-dapp/react-environment/webb-context/relayer';
+import { EventBus } from '@webb-tools/app-util';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 export enum WithdrawState {
@@ -34,6 +34,10 @@ export abstract class MixerWithdraw<T> extends EventBus<MixerWithdrawEvents> {
   readonly watcher: Observable<OptionalActiveRelayer>;
   private _activeRelayer: OptionalActiveRelayer = null;
 
+  constructor(protected inner: T) {
+    super();
+    this.watcher = this.emitter.asObservable();
+  }
   get hasRelayer(): Promise<boolean> {
     return Promise.resolve(false);
   }
@@ -54,11 +58,6 @@ export abstract class MixerWithdraw<T> extends EventBus<MixerWithdrawEvents> {
   // todo switch to the reactive api
   get relayers(): Promise<WebbRelayer[]> {
     return Promise.resolve([]);
-  }
-
-  constructor(protected inner: T) {
-    super();
-    this.watcher = this.emitter.asObservable();
   }
 
   abstract withdraw(note: string, recipient: string): Promise<void>;

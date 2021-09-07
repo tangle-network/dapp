@@ -1,10 +1,6 @@
 import { ChainId } from '@webb-dapp/apps/configs';
-import {
-  BridgeAnchor,
-  BridgeConfig,
-  BridgeConfigEntry,
-} from '@webb-dapp/react-environment/webb-context/bridge/bridge-config';
-import { BridgeCurrency } from '@webb-dapp/react-environment/webb-context/bridge/bridge-currency';
+import { BridgeAnchor, BridgeConfig, BridgeConfigEntry } from './bridge-config';
+import { BridgeCurrency } from './bridge-currency';
 
 export class Bridge {
   private constructor(private readonly configEntry: BridgeConfigEntry) {}
