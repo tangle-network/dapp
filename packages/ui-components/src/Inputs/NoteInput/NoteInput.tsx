@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
 import { Note } from '@webb-tools/sdk-mixer';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
+import { getEVMChainName } from '@webb-dapp/apps/configs';
 
 const NoteInputWrapper = styled.div``;
 type NoteInputProps = {
@@ -52,7 +53,7 @@ export const NoteInput: React.FC<NoteInputProps> = ({ error, onChange, value }) 
             <br />
             Amount : {depositNote.note.amount} {depositNote.note.tokenSymbol}
             <br />
-            Chain : {depositNote.note.chain}
+            Chain : {getEVMChainName(parseInt(depositNote.note.chain))}
           </div>
         </NoteDetails>
       )}

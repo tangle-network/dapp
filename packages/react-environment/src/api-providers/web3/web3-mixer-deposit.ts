@@ -9,18 +9,20 @@ import utils from 'web3-utils';
 import { u8aToHex } from '@polkadot/util';
 
 import { WebbWeb3Provider } from './webb-web3-provider';
-import { createDeposit, depositFromPreimage } from '@webb-dapp/contracts/utils/make-deposit';
+import { createDeposit, Deposit, depositFromPreimage } from '@webb-dapp/contracts/utils/make-deposit';
 
 type DepositPayload = IDepositPayload<Note, [Deposit, number]>;
 
 export class Web3MixerDeposit extends MixerDeposit<WebbWeb3Provider, DepositPayload> {
   async deposit(depositPayload: DepositPayload): Promise<void> {
+    const depositNote = await depositPayload.note.toDepositNote();
+
     transactionNotificationConfig.loading?.({
       address: '',
       data: React.createElement(DepositNotification, {
-        chain: getEVMChainName(depositPayload.note.chainId),
-        amount: depositPayload.note.amount,
-        currency: depositPayload.note.currency,
+        chain: getEVMChainName(parseInt(depositNote.chain)),
+        amount: Number(depositNote.amount),
+        currency: depositNote.tokenSymbol,
       }),
       key: 'mixer-deposit-evm',
       path: {
