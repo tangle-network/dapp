@@ -1,7 +1,8 @@
 import { ChainId } from '@webb-dapp/apps/configs';
-import { MixerWithdraw } from '@webb-dapp/react-environment';
 import { Bridge } from '@webb-dapp/react-environment/webb-context/bridge/bridge';
 import { BridgeConfig } from '@webb-dapp/react-environment/webb-context/bridge/bridge-config';
+
+import { MixerWithdraw } from '../mixer/mixer-withdraw';
 
 export abstract class BridgeWithdraw<T> extends MixerWithdraw<T> {
   abstract bridgeConfig: BridgeConfig;

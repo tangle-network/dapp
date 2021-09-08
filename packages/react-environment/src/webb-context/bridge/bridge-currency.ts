@@ -32,7 +32,16 @@ export class BridgeCurrency {
     let wrappedCurrency = webbCurrencyIdFromString(prefix);
     return new BridgeCurrency(chainIds, wrappedCurrency);
   }
+
   hasChain(chainId: ChainId): boolean {
     return this.paraChains.includes(chainId);
+  }
+
+  get currencyId(): WebbCurrencyId {
+    return this.wrappedCurrency;
+  }
+
+  get chainIds(): ChainId[] {
+    return this.paraChains;
   }
 }

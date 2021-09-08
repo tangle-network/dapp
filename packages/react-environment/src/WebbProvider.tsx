@@ -1,31 +1,32 @@
 import Icon from '@material-ui/core/Icon';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import { ChainId, chainsConfig, chainsPopulated, currenciesConfig, WebbEVMChain } from '@webb-dapp/apps/configs';
+import { getEVMChainName } from '@webb-dapp/apps/configs/evm/SupportedMixers';
+import { getWebbRelayer } from '@webb-dapp/apps/configs/relayer-config';
 import { WalletId } from '@webb-dapp/apps/configs/wallets/wallet-id.enum';
 import { walletsConfig } from '@webb-dapp/apps/configs/wallets/wallets-config';
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3';
 import { appEvent } from '@webb-dapp/react-environment/app-event';
-import { insufficientApiInterface } from '@webb-dapp/react-environment/error/interactive-errors/insufficient-api-interface';
-import { DimensionsProvider } from '@webb-dapp/react-environment/layout';
-import { StoreProvier } from '@webb-dapp/react-environment/store';
-import { notificationApi } from '@webb-dapp/ui-components/notification';
-import { BareProps } from '@webb-dapp/ui-components/types';
-import { InteractiveFeedback, WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
-import { Account } from '@webb-dapp/wallet/account/Accounts.adapter';
-import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
-import { getEVMChainName } from '@webb-dapp/apps/configs/evm/SupportedMixers';
-import { WebbPolkadot } from './api-providers/polkadot';
-import { extensionNotInstalled, unsupportedChain } from './error';
-import { SettingProvider } from './SettingProvider';
-import { Chain, netStorageFactory, NetworkStorage, Wallet, WebbApiProvider, WebbContext } from './webb-context';
 import {
   evmChainConflict,
   USER_SWITCHED_TO_EXPECT_CHAIN,
 } from '@webb-dapp/react-environment/error/interactive-errors/evm-network-conflict';
-import { LoggerService } from '@webb-tools/app-util';
-import { getWebbRelayer } from '@webb-dapp/apps/configs/relayer-config';
+import { insufficientApiInterface } from '@webb-dapp/react-environment/error/interactive-errors/insufficient-api-interface';
+import { DimensionsProvider } from '@webb-dapp/react-environment/layout';
+import { StoreProvier } from '@webb-dapp/react-environment/store';
+import { notificationApi } from '@webb-dapp/ui-components/notification';
 import { AccountSwitchNotification } from '@webb-dapp/ui-components/notification/AccountSwitchNotification';
+import { BareProps } from '@webb-dapp/ui-components/types';
+import { InteractiveFeedback, WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
+import { Account } from '@webb-dapp/wallet/account/Accounts.adapter';
+import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
+import { LoggerService } from '@webb-tools/app-util';
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
+
+import { WebbPolkadot } from './api-providers/polkadot';
+import { extensionNotInstalled, unsupportedChain } from './error';
+import { SettingProvider } from './SettingProvider';
+import { Chain, netStorageFactory, NetworkStorage, Wallet, WebbApiProvider, WebbContext } from './webb-context';
 
 interface WebbProviderProps extends BareProps {
   applicationName: string;

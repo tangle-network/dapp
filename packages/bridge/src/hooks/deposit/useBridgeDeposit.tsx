@@ -1,7 +1,13 @@
-import { DepositPayload, MixerDeposit, MixerSize, useWebContext } from '@webb-dapp/react-environment/webb-context';
+import {
+  BridgeDeposit,
+  DepositPayload,
+  MixerDeposit,
+  MixerSize,
+  useWebContext,
+} from '@webb-dapp/react-environment/webb-context';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-export interface DepositApi {
+export interface BridgeDepositApi {
   mixerSizes: MixerSize[];
 
   deposit(payload: DepositPayload): Promise<void>;
@@ -12,15 +18,15 @@ export interface DepositApi {
   error: string;
 }
 
-export const useDeposit = (): DepositApi => {
+export const useBridgeDeposit = (): BridgeDepositApi => {
   const { activeApi } = useWebContext();
-  const [loadingState, setLoadingState] = useState<MixerDeposit['loading']>('ideal');
+  const [loadingState, setLoadingState] = useState<BridgeDeposit<any>['loading']>('ideal');
   const [error, setError] = useState('');
   const [mixerSizes, setMixerSizes] = useState<MixerSize[]>([]);
 
   /// api
   const depositApi = useMemo(() => {
-    const depositApi = activeApi?.methods.mixer.deposit;
+    const depositApi = activeApi?.methods.bridge.deposit;
     if (!depositApi?.enabled) return null;
     return depositApi.inner;
   }, [activeApi]);

@@ -38,6 +38,16 @@ export class WebbWeb3Provider
     });
     this.connectedMixers = new EvmChainMixersInfo(chainId);
     this.methods = {
+      bridge: {
+        deposit: {
+          inner: {} as any,
+          enabled: false,
+        },
+        withdraw: {
+          inner: {} as any,
+          enabled: false,
+        },
+      },
       mixer: {
         deposit: {
           enabled: true,

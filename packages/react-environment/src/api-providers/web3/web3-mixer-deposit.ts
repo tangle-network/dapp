@@ -10,6 +10,7 @@ import utils from 'web3-utils';
 import { u8aToHex } from '@polkadot/util';
 
 import { WebbWeb3Provider } from './webb-web3-provider';
+import { evmIdIntoChainId } from '@webb-dapp/apps/configs';
 
 type DepositPayload = IDepositPayload<Note, [Deposit, number]>;
 
@@ -81,7 +82,7 @@ export class Web3MixerDeposit extends MixerDeposit<WebbWeb3Provider, DepositPayl
     const secrets = deposit.preimage;
     const noteInput: NoteGenInput = {
       prefix: 'webb.mix',
-      chain: String(chainId),
+      chain: String(evmIdIntoChainId(chainId)),
       amount: String(depositSize),
       denomination: '18',
       hashFunction: 'Poseidon',
