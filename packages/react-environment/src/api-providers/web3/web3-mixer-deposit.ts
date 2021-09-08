@@ -9,7 +9,7 @@ import utils from 'web3-utils';
 import { u8aToHex } from '@polkadot/util';
 
 import { WebbWeb3Provider } from './webb-web3-provider';
-import { createDeposit, depositFromPreimage } from '@webb-dapp/contracts/utils/make-deposit';
+import { createTornDeposit, depositFromPreimage } from '@webb-dapp/contracts/utils/make-deposit';
 
 type DepositPayload = IDepositPayload<Note, [Deposit, number]>;
 
@@ -77,7 +77,7 @@ export class Web3MixerDeposit extends MixerDeposit<WebbWeb3Provider, DepositPayl
     const depositSizeBN = await contract.denomination;
     const depositSize = Number.parseFloat(utils.fromWei(depositSizeBN.toString(), 'ether'));
     const chainId = await this.inner.getChainId();
-    const deposit = createDeposit();
+    const deposit = createTornDeposit();
     const secrets = deposit.preimage;
     const noteInput: NoteGenInput = {
       prefix: 'webb.mix',
