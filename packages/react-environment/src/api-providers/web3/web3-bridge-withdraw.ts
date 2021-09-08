@@ -1,7 +1,9 @@
 import { depositFromPreimage } from '@webb-dapp/contracts/utils/make-deposit';
-import { BridgeConfig, BridgeWithdraw } from '@webb-dapp/react-environment';
+import { BridgeConfig } from '@webb-dapp/react-environment';
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3/webb-web3-provider';
 import { Note } from '@webb-tools/sdk-mixer';
+
+import { BridgeWithdraw } from '../../webb-context';
 
 export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
   bridgeConfig: BridgeConfig = {};

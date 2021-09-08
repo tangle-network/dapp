@@ -1,4 +1,5 @@
 import { ChainId } from '@webb-dapp/apps/configs';
+
 import { BridgeAnchor, BridgeConfig, BridgeConfigEntry } from './bridge-config';
 import { BridgeCurrency } from './bridge-currency';
 
