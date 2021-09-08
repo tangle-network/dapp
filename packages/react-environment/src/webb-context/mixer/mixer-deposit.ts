@@ -21,7 +21,7 @@ export abstract class MixerDeposit<
   T = any,
   K extends DepositPayload = DepositPayload<any>
 > extends EventBus<MixerDepositEvents> {
-  protected constructor(protected inner: T) {
+  constructor(protected inner: T) {
     super();
   }
 
