@@ -3,7 +3,7 @@ import { Deposit } from '@webb-dapp/contracts/utils/make-deposit';
 import { pedersenHash } from '@webb-dapp/contracts/utils/pedersen-hash';
 import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 
-const snarkjs = require('snarkjs');
+const snarkjs = require('tornado-snarkjs');
 
 export class EvmNote {
   constructor(
