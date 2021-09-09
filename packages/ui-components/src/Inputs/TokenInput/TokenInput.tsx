@@ -1,7 +1,7 @@
 import { ClickAwayListener, Icon, IconButton, List, ListItemAvatar, ListItemText, Typography } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
 import Popper from '@material-ui/core/Popper';
-import { Currency } from '@webb-dapp/react-environment/types/currency';
+import { Currency, CurrencyContent } from '@webb-dapp/react-environment/types/currency';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
@@ -75,9 +75,9 @@ const AccountManagerWrapper = styled.div<any>`
 `;
 
 type TokenInputProps = {
-  currencies: Currency[];
-  value?: Currency;
-  onChange(next: Currency | undefined): void;
+  currencies: CurrencyContent[];
+  value?: CurrencyContent;
+  onChange(next: CurrencyContent | undefined): void;
 };
 const ChainName = styled.span`
   max-width: 100px;

@@ -35,7 +35,7 @@ export class Bridge {
   /*
    *  Get tokens for a given chain
    * */
-  static GetTokensOfChain(configEntry: BridgeConfig, chainId: ChainId): BridgeCurrency[] {
+  static getTokensOfChain(configEntry: BridgeConfig, chainId: ChainId): BridgeCurrency[] {
     const tokens = Bridge.getTokens(configEntry);
     return tokens.filter((token) => token.hasChain(chainId));
   }

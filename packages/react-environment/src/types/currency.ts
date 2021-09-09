@@ -16,8 +16,18 @@ export interface CurrencyView {
 
 export interface CurrencyConfig extends Omit<CurrencyView, 'chainName'> {}
 
-export class Currency {
-  constructor(private data: CurrencyConfig) {}
+export abstract class CurrencyContent {
+  static getChainOfCurrency(currency: WebbCurrencyId) {
+    return Object.values(chains).find((chain) => chain.nativeCurrencyId == currency);
+  }
+
+  abstract get view(): CurrencyView;
+}
+
+export class Currency extends CurrencyContent {
+  constructor(private data: CurrencyConfig) {
+    super();
+  }
 
   static fromCurrencyId(currencyId: WebbCurrencyId) {
     const currencyConfig = currenciesConfig[currencyId];
