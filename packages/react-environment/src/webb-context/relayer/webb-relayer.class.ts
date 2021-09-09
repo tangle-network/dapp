@@ -76,6 +76,7 @@ export class WebbRelayerBuilder {
   /// fetch relayers
   private async fetchInfo(config: RelayerConfig) {
     const res = await fetch(`${config.endpoint}/api/v1/info`);
+    console.log("fetchedInfo", config.endpoint);
     const info: RelayerInfo = await res.json();
     const capabilities = WebbRelayerBuilder.infoIntoCapabilities(config, info, this.chainNameAdapter);
     this.capabilities[config.endpoint] = capabilities;
@@ -113,6 +114,7 @@ export class WebbRelayerBuilder {
    * */
   getRelayer(query: RelayerQuery): WebbRelayer[] {
     const { baseOn, chainId, ipService } = query;
+    console.log("here", Object.keys(this.capabilities));
     return Object.keys(this.capabilities)
       .filter((key) => {
         const capabilities = this.capabilities[key];
