@@ -1,9 +1,9 @@
 import { ChainId } from '@webb-dapp/apps/configs';
-import { Bridge, BridgeConfig } from '@webb-dapp/react-environment';
+import { Bridge, BridgeConfig, bridgeConfig, BridgeCurrency } from '@webb-dapp/react-environment';
 import { useCallback, useMemo } from 'react';
 
 export const useBridge = () => {
-  const config = useMemo<BridgeConfig>(() => ({}), []);
+  const config = useMemo<BridgeConfig>(() => bridgeConfig, []);
 
   const getTokens = useCallback(() => {
     return Bridge.getTokens(config);
@@ -15,7 +15,11 @@ export const useBridge = () => {
     },
     [config]
   );
+  const getBridge = (bridgeCurrency: BridgeCurrency) => {
+    return Bridge.from(config, bridgeCurrency);
+  };
   return {
+    getBridge,
     config,
     getTokensOfChain,
     getTokens,

@@ -8,6 +8,26 @@ import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import styled, { css } from 'styled-components';
+const StyledList = styled.ul`
+  &&& {
+    padding: 10px 0 !important;
+    list-style: none;
+  }
+
+  li {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 5px;
+
+    &.selected,
+    :hover {
+      background: ${({ theme }: { theme: Pallet }) => (theme.type === 'dark' ? theme.layer3Background : theme.gray1)};
+    }
+
+    position: relative;
+  }
+`;
 
 const TokenInputWrapper = styled.div<{ open: boolean }>`
   border-radius: 25px;
@@ -29,6 +49,21 @@ const TokenInputWrapper = styled.div<{ open: boolean }>`
           max-height: 50px;
         `;
   }}
+  ${StyledList} {
+    ${({ open }) => {
+      return open
+        ? css`
+            max-height: 200px;
+            overflow-y: auto;
+          `
+        : css`
+            padding: 0 !important;
+            margin: 0 !important;
+            max-height: 0px !important;
+          `;
+    }}
+  }
+
   .account-header {
     display: flex;
     align-items: center;
@@ -42,27 +77,6 @@ const TokenInputWrapper = styled.div<{ open: boolean }>`
 
   .account-button-wrapper {
     margin: -20px 0;
-  }
-`;
-
-const StyledList = styled.ul`
-  &&& {
-    padding: 10px 0 !important;
-    list-style: none;
-  }
-
-  li {
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    padding: 5px;
-
-    &.selected,
-    :hover {
-      background: ${({ theme }: { theme: Pallet }) => (theme.type === 'dark' ? theme.layer3Background : theme.gray1)};
-    }
-
-    position: relative;
   }
 `;
 

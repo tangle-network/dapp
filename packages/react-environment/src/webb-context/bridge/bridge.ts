@@ -6,7 +6,7 @@ import { BridgeCurrency } from './bridge-currency';
 export class Bridge {
   private constructor(private readonly configEntry: BridgeConfigEntry) {}
 
-  static from(bridgeCurrency: BridgeCurrency, config: BridgeConfig): Bridge {
+  static from(config: BridgeConfig, bridgeCurrency: BridgeCurrency): Bridge {
     const bridgeConfigEntries = config[bridgeCurrency.name];
     return new Bridge(bridgeConfigEntries);
   }

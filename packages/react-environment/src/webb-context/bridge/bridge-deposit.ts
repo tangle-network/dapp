@@ -32,7 +32,7 @@ export abstract class BridgeDeposit<T, K extends DepositPayload = DepositPayload
   }
 
   getTokensOfChain(chainId: ChainId) {
-    return Bridge.GetTokensOfChain(this.bridgeConfig, chainId);
+    return Bridge.getTokensOfChain(this.bridgeConfig, chainId);
   }
 
   getTokensOfChains(chainIds: ChainId[]) {

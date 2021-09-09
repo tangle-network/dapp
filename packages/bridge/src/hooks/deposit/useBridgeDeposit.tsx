@@ -16,6 +16,7 @@ export interface BridgeDepositApi {
 
   loadingState: MixerDeposit['loading'];
   error: string;
+  depositApi: BridgeDeposit<any> | null;
 }
 
 export const useBridgeDeposit = (): BridgeDepositApi => {
@@ -61,6 +62,7 @@ export const useBridgeDeposit = (): BridgeDepositApi => {
     [depositApi]
   );
   return {
+    depositApi,
     mixerSizes,
     deposit,
     generateNote,

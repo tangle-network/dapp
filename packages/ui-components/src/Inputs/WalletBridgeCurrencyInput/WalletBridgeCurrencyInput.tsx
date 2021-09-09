@@ -7,6 +7,7 @@ import { InputSection } from '../InputSection/InputSection';
 import { InputLabel } from '../InputLabel/InputLabel';
 import { TokenInput } from '../TokenInput/TokenInput';
 import { WalletSelect } from '../WalletSelect/WalletSelect';
+import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
 
 const WalletTokenInputWrapper = styled.div`
   display: flex;
@@ -17,10 +18,29 @@ const WalletTokenInputWrapper = styled.div`
 `;
 
 type WalletTokenInputProps = {
-  setSelectedToken(token: Currency): void;
-  selectedToken: Currency | undefined;
+  setSelectedToken(token: BridgeCurrency): void;
+  selectedToken: BridgeCurrency | undefined;
 };
-
+const WrappedIcon = () => {
+  return (
+    <div
+      style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 4,
+        color: 'blue',
+      }}
+    >
+      🕸
+    </div>
+  );
+};
 const fromBridgeCurrencyToCurrencyView = (bridgeCurrency: BridgeCurrency): CurrencyContent => {
   const wrappedCurrency = Currency.fromCurrencyId(bridgeCurrency.currencyId);
   const view = wrappedCurrency.view;
@@ -28,18 +48,41 @@ const fromBridgeCurrencyToCurrencyView = (bridgeCurrency: BridgeCurrency): Curre
     get view(): CurrencyView {
       return {
         ...view,
+        icon: (
+          <div
+            style={{
+              width: '100%',
+              height: '100%',
+              position: 'relative',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <WrappedIcon />
+            {view.icon}
+          </div>
+        ),
+        id: bridgeCurrency.name,
         name: bridgeCurrency.name,
-        symbol: bridgeCurrency.name,
+        symbol: bridgeCurrency.prefix,
       };
     },
   };
 };
-export const WalletTokenInput: React.FC<WalletTokenInputProps> = ({ selectedToken, setSelectedToken }) => {
+export const WalletBridgeCurrencyInput: React.FC<WalletTokenInputProps> = ({ selectedToken, setSelectedToken }) => {
   const { activeChain, activeWallet } = useWebContext();
+  const { getTokens } = useBridge();
   const allCurrencies = useMemo(() => {
-    return activeChain?.currencies.map(({ currencyId }) => Currency.fromCurrencyId(currencyId)) ?? [];
-  }, [activeChain]);
+    return getTokens().map((token) => fromBridgeCurrencyToCurrencyView(token));
+  }, [activeChain, getTokens]);
   const active = useMemo(() => selectedToken ?? allCurrencies[0], [allCurrencies, selectedToken]);
+  const selectedCurrency = useMemo(() => {
+    if (!selectedToken) {
+      return undefined;
+    }
+    return fromBridgeCurrencyToCurrencyView(selectedToken);
+  }, [selectedToken]);
   return (
     <InputSection>
       <WalletTokenInputWrapper>
@@ -51,7 +94,15 @@ export const WalletTokenInput: React.FC<WalletTokenInputProps> = ({ selectedToke
           <InputLabel label={'Select Token'}>
             {/* used for positioning the token input label */}
             <div style={{ height: '52px' }}></div>
-            <TokenInput currencies={allCurrencies} value={active} onChange={setSelectedToken} />
+            <TokenInput
+              currencies={allCurrencies}
+              value={selectedCurrency}
+              onChange={(currencyContent) => {
+                if (currencyContent) {
+                  setSelectedToken(BridgeCurrency.fromString(currencyContent.view.id));
+                }
+              }}
+            />
           </InputLabel>
         )}
       </WalletTokenInputWrapper>
