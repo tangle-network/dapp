@@ -9,14 +9,14 @@ import styled from 'styled-components';
 import { MixerButton } from '../MixerButton/MixerButton';
 import { WalletBridgeCurrencyInput } from '@webb-dapp/ui-components/Inputs/WalletBridgeCurrencyInput/WalletBridgeCurrencyInput';
 import { useBridgeDeposit } from '@webb-dapp/bridge/hooks/deposit/useBridgeDeposit';
-import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
+import { ChainId } from '@webb-dapp/apps/configs';
+import { ChainInput } from '@webb-dapp/ui-components/Inputs/ChainInput/ChainInput';
 
 const DepositWrapper = styled.div``;
 type DepositProps = {};
 
 export const Deposit: React.FC<DepositProps> = () => {
   const bridgeDepositApi = useBridgeDeposit();
-  const bridgeApi = useBridge();
   // const { clearAmount, token } = useBalanceSelect();
   const { depositApi } = bridgeDepositApi;
   const activeBridge = depositApi?.activeBridge;
@@ -33,16 +33,20 @@ export const Deposit: React.FC<DepositProps> = () => {
   // const [selectedToken, setSelectedToken] = useState<Currency | undefined>(undefined);
 
   const [item, setItem] = useState<MixerSize | undefined>(undefined);
+
+  const [destChain, setDestChain] = useState<ChainId | undefined>(undefined);
+  const tokenChains = useMemo(() => {
+    return selectedBrideCurrency?.chainIds ?? [];
+  }, [selectedBrideCurrency]);
+
   return (
     <DepositWrapper>
       <WalletBridgeCurrencyInput
-        setSelectedToken={(bridgeCurrency) => {
-          console.log(bridgeCurrency);
-          const bridge = bridgeApi.getBridge(bridgeCurrency);
-          depositApi?.setBridge(bridge);
-        }}
-        selectedToken={selectedBrideCurrency}
+        setSelectedToken={bridgeDepositApi.setSelectedCurrency}
+        selectedToken={bridgeDepositApi.selectedBrideCurrency ?? undefined}
       />
+      <SpaceBox height={16} />
+      <ChainInput chains={tokenChains} selectedChain={destChain} setSelectedChain={setDestChain} />
       <SpaceBox height={16} />
       <MixerGroupSelect items={bridgeDepositApi.mixerSizes} value={item} onChange={setItem} />
       <SpaceBox height={16} />

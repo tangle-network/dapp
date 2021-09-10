@@ -24,7 +24,7 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
     if (bridge) {
       return bridge.anchors.map((anchor) => ({
         id: `Bridge:${anchor.amount}@${bridge.currency.name}`,
-        title: anchor.amount,
+        title: `${anchor.amount} ${bridge.currency.prefix}`,
       }));
     }
     return [];

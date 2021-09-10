@@ -53,7 +53,6 @@ export class WebbRelayerBuilder {
     info: RelayerInfo,
     nameAdapter: ChainNameIntoChainId
   ): Capabilities {
-    console.log({ info });
     return {
       hasIpService: true,
       supportedChains: {
@@ -63,23 +62,34 @@ export class WebbRelayerBuilder {
             m.set(nameAdapter(key, 'evm'), info.evm[key]);
             return m;
           }, new Map()),
-        substrate: Object.keys(info.substrate)
-          .filter((key) => info.substrate[key]?.account && Boolean(nameAdapter(key, 'substrate')))
-          .reduce((m, key) => {
-            m.set(nameAdapter(key, 'substrate'), info.evm[key]);
-            return m;
-          }, new Map()),
+        substrate: info.substrate
+          ? Object.keys(info.substrate)
+              .filter((key) => info.substrate[key]?.account && Boolean(nameAdapter(key, 'substrate')))
+              .reduce((m, key) => {
+                m.set(nameAdapter(key, 'substrate'), info.evm[key]);
+                return m;
+              }, new Map())
+          : new Map(),
       },
     };
   }
 
   /// fetch relayers
   private async fetchInfo(config: RelayerConfig) {
-    const res = await fetch(`${config.endpoint}/api/v1/info`);
-    const info: RelayerInfo = await res.json();
-    const capabilities = WebbRelayerBuilder.infoIntoCapabilities(config, info, this.chainNameAdapter);
-    this.capabilities[config.endpoint] = capabilities;
-    return capabilities;
+    console.log(config.endpoint);
+    try {
+      const res = await fetch(`${config.endpoint}/api/v1/info`);
+      console.log('request is done');
+      const info: RelayerInfo = await res.json();
+      const capabilities = WebbRelayerBuilder.infoIntoCapabilities(config, info, this.chainNameAdapter);
+
+      console.log(capabilities, config.endpoint);
+      this.capabilities[config.endpoint] = capabilities;
+      return capabilities;
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
   }
 
   /**
@@ -288,6 +298,7 @@ export class ActiveWebbRelayer extends WebbRelayer {
   get account(): string | undefined {
     return this.config?.account;
   }
+
   fees = async (note: string) => {
     console.log(this.config?.withdrawFeePercentage, this.config);
     return this.getFees(note, this.config?.withdrawFeePercentage ?? 0);

@@ -24,7 +24,7 @@ type MixerGroupSelectProps = {
 const AmountChipWrapper = styled.span<{ selected?: boolean }>`
   cursor: pointer;
   transition: all ease 0.3s;
-
+  text-transform: capitalize;
   ${({ selected, theme }: { theme: Pallet; selected?: boolean }) => css`
     && {
       border: 1px solid ${theme.borderColor2};

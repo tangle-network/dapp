@@ -21,7 +21,7 @@ const webEthEthereumEdgwareHarmony = new BridgeCurrency(
   WebbCurrencyId.ETH
 );
 const webbEdgEthereumEdgware = new BridgeCurrency([ChainId.EthereumMainNet, ChainId.Edgeware], WebbCurrencyId.EDG);
-const webbOneEdgwareHarmony = new BridgeCurrency([ChainId.HarmonyTest1, ChainId.Edgeware], WebbCurrencyId.ETH);
+const webbOneEdgwareHarmony = new BridgeCurrency([ChainId.HarmonyTest1, ChainId.Edgeware], WebbCurrencyId.EDG);
 const webbOneEthereumHarmony = new BridgeCurrency([ChainId.HarmonyTest1, ChainId.Edgeware], WebbCurrencyId.ONE);
 
 export const bridgeConfig: BridgeConfig = {
