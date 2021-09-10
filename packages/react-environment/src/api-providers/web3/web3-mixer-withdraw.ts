@@ -74,12 +74,15 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
   }
 
   async getRelayersByNote(evmNote: Note) {
-    const contract = await this.inner.getContractBySize(Number(evmNote.note.amount), evmNote.note.tokenSymbol);
     const evmId = await this.inner.getChainId();
+    console.log('note:', evmNote);
     return this.inner.relayingManager.getRelayer({
       baseOn: 'evm',
       chainId: evmIdIntoChainId(evmId),
-      contractAddress: contract.inner.address,
+      mixerSupport: {
+        amount: Number(evmNote.note.amount),
+        tokenSymbol: evmNote.note.tokenSymbol,
+      },
     });
   }
 

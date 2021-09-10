@@ -1,4 +1,6 @@
 import { ChainId } from '@webb-dapp/apps/configs';
+import { chainsConfig } from '@webb-dapp/apps/configs/chains';
+import { EvmChainMixersInfo } from '@webb-dapp/react-environment/api-providers/web3/EvmChainMixersInfo';
 import {
   Capabilities,
   RelayedChainConfig,
@@ -8,17 +10,23 @@ import {
 import { Observable, Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
+type MixerQuery = {
+  amount: number;
+  tokenSymbol: string;
+};
+
 type RelayerQuery = {
   baseOn?: 'evm' | 'substrate';
   ipService?: true;
   chainId?: ChainId;
-  contractAddress?: string;
+  mixerSupport?: MixerQuery;
 };
+
 type RelayedChainInput = {
   endpoint: string;
   name: string;
-  contractAddress: string;
   baseOn: 'evm' | 'substrate';
+  contractAddress: string;
 };
 
 export type WithdrawRelayerArgs = {
@@ -118,7 +126,7 @@ export class WebbRelayerBuilder {
    *  get a list of the suitable relaryes for a given query
    * */
   getRelayer(query: RelayerQuery): WebbRelayer[] {
-    const { baseOn, chainId, contractAddress, ipService } = query;
+    const { baseOn, chainId, ipService, mixerSupport } = query;
     return Object.keys(this.capabilities)
       .filter((key) => {
         const capabilities = this.capabilities[key];
@@ -127,12 +135,20 @@ export class WebbRelayerBuilder {
             return false;
           }
         }
-        if (contractAddress && baseOn && chainId) {
-          return Boolean(
-            capabilities.supportedChains[baseOn]
-              .get(chainId)
-              ?.contracts.find((contract) => contract.address == contractAddress)
-          );
+        if (mixerSupport && baseOn && chainId) {
+          if (baseOn == 'evm') {
+            const evmId = chainsConfig[chainId].evmId!;
+            const mixerInfo = new EvmChainMixersInfo(evmId);
+            return Boolean(
+              capabilities.supportedChains[baseOn]
+                .get(chainId)
+                ?.contracts?.find(
+                  (contract) =>
+                    contract.address ==
+                    mixerInfo.getMixerInfoBySize(mixerSupport.amount, mixerSupport.tokenSymbol).address.toLowerCase()
+                )
+            );
+          }
         }
         if (baseOn && chainId) {
           return Boolean(capabilities.supportedChains[baseOn].get(chainId));
