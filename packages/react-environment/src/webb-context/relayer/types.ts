@@ -14,16 +14,16 @@ export type Capabilities = {
 };
 
 export interface Contract {
-  contract: string
-  address: string
-  deployedAt: number
-  leavesWatcher: LeavesWatcher
-  size: number
+  contract: string;
+  address: string;
+  deployedAt: number;
+  leavesWatcher: LeavesWatcher;
+  size: number;
 }
 
 export interface LeavesWatcher {
-  enabled: boolean
-  pollingInterval: number
+  enabled: boolean;
+  pollingInterval: number;
 }
 
 export type RelayerConfig = {

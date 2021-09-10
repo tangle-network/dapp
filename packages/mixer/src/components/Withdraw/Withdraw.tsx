@@ -70,60 +70,64 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
       </InputSection>
 
       <SpaceBox height={16} />
-      <InputSection>
-        <InputLabel label={'Relayer'}>
-          <Select
-            fullWidth
-            value={relayersState.activeRelayer?.endpoint || 'none'}
-            onChange={({ target: { value } }) => {
-              setRelayer(relayersState?.relayers.find((i) => i.endpoint === value) ?? null);
-            }}
-          >
-            <MenuItem value={'none'} key={'none'}>
-              <p style={{ fontSize: 14 }}>None</p>
-            </MenuItem>
-            {relayersState.relayers.map((relayer) => {
-              return (
-                <MenuItem value={relayer.endpoint} key={relayer.endpoint}>
-                  <p style={{ fontSize: 14 }}>{relayer.endpoint}</p>
-                </MenuItem>
-              );
-            })}
-          </Select>
-          <Fade in={Boolean(relayersState.activeRelayer)} unmountOnExit mountOnEnter timeout={300}>
-            <div
-              style={{
-                padding: 10,
-              }}
-            >
-              <table
-                style={{
-                  width: '100%',
+      {depositNote && (
+        <>
+          <InputSection>
+            <InputLabel label={'Relayer'}>
+              <Select
+                fullWidth
+                value={relayersState.activeRelayer?.endpoint || 'none'}
+                onChange={({ target: { value } }) => {
+                  setRelayer(relayersState?.relayers.find((i) => i.endpoint === value) ?? null);
                 }}
               >
-                <tbody>
-                  <tr>
-                    <td>
-                      <span style={{ whiteSpace: 'nowrap' }}>Withdraw fee percentage</span>
-                    </td>
-                    <td style={{ textAlign: 'right' }}>{relayersState.activeRelayer?.fee}%</td>
-                  </tr>
+                <MenuItem value={'none'} key={'none'}>
+                  <p style={{ fontSize: 14 }}>None</p>
+                </MenuItem>
+                {relayersState.relayers.map((relayer) => {
+                  return (
+                    <MenuItem value={relayer.endpoint} key={relayer.endpoint}>
+                      <p style={{ fontSize: 14 }}>{relayer.endpoint}</p>
+                    </MenuItem>
+                  );
+                })}
+              </Select>
+              <Fade in={Boolean(relayersState.activeRelayer)} unmountOnExit mountOnEnter timeout={300}>
+                <div
+                  style={{
+                    padding: 10,
+                  }}
+                >
+                  <table
+                    style={{
+                      width: '100%',
+                    }}
+                  >
+                    <tbody>
+                      <tr>
+                        <td>
+                          <span style={{ whiteSpace: 'nowrap' }}>Withdraw fee percentage</span>
+                        </td>
+                        <td style={{ textAlign: 'right' }}>{relayersState.activeRelayer?.fee}%</td>
+                      </tr>
 
-                  {fees && (
-                    <tr>
-                      <td>Full fees</td>
-                      <td style={{ textAlign: 'right' }}>
-                        {ethers.utils.formatUnits(fees)} {depositNote && depositNote.note.tokenSymbol}
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </Fade>
-        </InputLabel>
-      </InputSection>
-      <SpaceBox height={16} />
+                      {fees && (
+                        <tr>
+                          <td>Full fees</td>
+                          <td style={{ textAlign: 'right' }}>
+                            {ethers.utils.formatUnits(fees)} {depositNote && depositNote.note.tokenSymbol}
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </Fade>
+            </InputLabel>
+          </InputSection>
+          <SpaceBox height={16} />
+        </>
+      )}
 
       <MixerButton disabled={!recipient} onClick={withdraw} label={'Withdraw'} />
       <Modal open={stage !== WithdrawState.Ideal}>

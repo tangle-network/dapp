@@ -12,6 +12,7 @@ type RelayerQuery = {
   baseOn?: 'evm' | 'substrate';
   ipService?: true;
   chainId?: ChainId;
+  contractAddress?: string;
 };
 type RelayedChainInput = {
   endpoint: string;
@@ -57,18 +58,22 @@ export class WebbRelayerBuilder {
     return {
       hasIpService: true,
       supportedChains: {
-        evm: Object.keys(info.evm)
-          .filter((key) => info.evm[key]?.account && Boolean(nameAdapter(key, 'evm')))
-          .reduce((m, key) => {
-            m.set(nameAdapter(key, 'evm'), info.evm[key]);
-            return m;
-          }, new Map()),
-        substrate: Object.keys(info.substrate)
-          .filter((key) => info.substrate[key]?.account && Boolean(nameAdapter(key, 'substrate')))
-          .reduce((m, key) => {
-            m.set(nameAdapter(key, 'substrate'), info.evm[key]);
-            return m;
-          }, new Map()),
+        evm: info.evm ?
+          Object.keys(info.evm)
+            .filter((key) => info.evm[key]?.account && Boolean(nameAdapter(key, 'evm')))
+            .reduce((m, key) => {
+              m.set(nameAdapter(key, 'evm'), info.evm[key]);
+              return m;
+            }, new Map())
+          : new Map(),
+        substrate: info.substrate ?
+          Object.keys(info.substrate)
+            .filter((key) => info.substrate[key]?.account && Boolean(nameAdapter(key, 'substrate')))
+            .reduce((m, key) => {
+              m.set(nameAdapter(key, 'substrate'), info.evm[key]);
+              return m;
+            }, new Map())
+          : new Map(),
       },
     };
   }
@@ -76,9 +81,9 @@ export class WebbRelayerBuilder {
   /// fetch relayers
   private async fetchInfo(config: RelayerConfig) {
     const res = await fetch(`${config.endpoint}/api/v1/info`);
-    console.log("fetchedInfo", config.endpoint);
     const info: RelayerInfo = await res.json();
     const capabilities = WebbRelayerBuilder.infoIntoCapabilities(config, info, this.chainNameAdapter);
+    console.log('Relayer capabilities', capabilities);
     this.capabilities[config.endpoint] = capabilities;
     return capabilities;
   }
@@ -113,8 +118,7 @@ export class WebbRelayerBuilder {
    *  get a list of the suitable relaryes for a given query
    * */
   getRelayer(query: RelayerQuery): WebbRelayer[] {
-    const { baseOn, chainId, ipService } = query;
-    console.log("here", Object.keys(this.capabilities));
+    const { baseOn, chainId, contractAddress, ipService } = query;
     return Object.keys(this.capabilities)
       .filter((key) => {
         const capabilities = this.capabilities[key];
@@ -122,6 +126,13 @@ export class WebbRelayerBuilder {
           if (!capabilities.hasIpService) {
             return false;
           }
+        }
+        if (contractAddress && baseOn && chainId) {
+          return Boolean(
+            capabilities.supportedChains[baseOn]
+              .get(chainId)
+              ?.contracts.find((contract) => contract.address == contractAddress)
+          );
         }
         if (baseOn && chainId) {
           return Boolean(capabilities.supportedChains[baseOn].get(chainId));

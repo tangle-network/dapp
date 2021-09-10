@@ -1,6 +1,7 @@
 import { useWebContext, WithdrawState } from '@webb-dapp/react-environment/webb-context';
 import { ActiveWebbRelayer, WebbRelayer } from '@webb-dapp/react-environment/webb-context/relayer';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Note } from '@webb-tools/sdk-mixer';
 
 export type UseWithdrawProps = {
   note: string;
@@ -41,13 +42,24 @@ export const useWithdraw = (params: UseWithdrawProps) => {
   }, [activeApi]);
   // hook events
   useEffect(() => {
-    withdrawApi?.relayers.then((r) => {
-      setRelayersState((p) => ({
-        ...p,
-        loading: false,
-        relayers: r,
-      }));
-    });
+    Note.deserialize(params.note)
+      .then((n) => {
+        if (n) {
+          withdrawApi?.getRelayersByNote(n).then((r) => {
+            console.log(r);
+
+            setRelayersState((p) => ({
+              ...p,
+              loading: false,
+              relayers: r,
+            }));
+          });
+        }
+      })
+      .catch((err) => {
+        console.log('catch note deserialize useWithdraw', err);
+      });
+
     const sub = withdrawApi?.watcher.subscribe((next) => {
       setRelayersState((p) => ({
         ...p,
@@ -77,7 +89,7 @@ export const useWithdraw = (params: UseWithdrawProps) => {
       sub?.unsubscribe();
       Object.values(unsubscribe).forEach((v) => v && v());
     };
-  }, [withdrawApi]);
+  }, [withdrawApi, params.note]);
 
   const withdraw = useCallback(async () => {
     if (!withdrawApi) return;
