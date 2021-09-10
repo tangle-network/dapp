@@ -1,4 +1,4 @@
-import { DepositConfirm } from '@webb-dapp/mixer/components/DepositConfirm/DepositConfirm';
+import { DepositConfirm } from '@webb-dapp/bridge/components/DepositConfirm/DepositConfirm';
 import { MixerSize } from '@webb-dapp/react-environment/webb-context';
 import { SpaceBox } from '@webb-dapp/ui-components/Box';
 import { MixerGroupSelect } from '@webb-dapp/ui-components/Inputs/MixerGroupSelect/MixerGroupSelect';
@@ -38,7 +38,7 @@ export const Deposit: React.FC<DepositProps> = () => {
   const tokenChains = useMemo(() => {
     return selectedBrideCurrency?.chainIds ?? [];
   }, [selectedBrideCurrency]);
-
+  const disabledDepositButton = typeof item?.id === 'undefined' || typeof destChain === 'undefined';
   return (
     <DepositWrapper>
       <WalletBridgeCurrencyInput
@@ -51,6 +51,7 @@ export const Deposit: React.FC<DepositProps> = () => {
       <MixerGroupSelect items={bridgeDepositApi.mixerSizes} value={item} onChange={setItem} />
       <SpaceBox height={16} />
       <MixerButton
+        disabled={disabledDepositButton}
         onClick={() => {
           setShowDepositModal(true);
         }}
@@ -67,7 +68,8 @@ export const Deposit: React.FC<DepositProps> = () => {
             setShowDepositModal(false);
           }}
           provider={bridgeDepositApi}
-          mixerId={item?.id ?? 0}
+          mixerId={item?.id ? (item.id as any) : undefined}
+          destChain={destChain}
         />
       </Modal>
     </DepositWrapper>

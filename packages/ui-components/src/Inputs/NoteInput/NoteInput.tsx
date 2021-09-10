@@ -24,9 +24,12 @@ export const NoteInput: React.FC<NoteInputProps> = ({ error, onChange, value }) 
   useEffect(() => {
     const handler = async () => {
       try {
+        console.log({ value });
         let d = await Note.deserialize(value);
+        console.log(d);
         setDepositNote(d);
-      } catch (_) {
+      } catch (e) {
+        console.log(e);
         setDepositNote(null);
       }
     };

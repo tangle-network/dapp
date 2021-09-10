@@ -138,7 +138,11 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
             setIsOpen(false);
           }}
         >
-          <Popper placement={'bottom-end'} open={Boolean($wrapper?.current)} anchorEl={$wrapper?.current}>
+          <Popper
+						style={{
+							zIndex: isOpen ? 10 : null,
+						}}
+						placement={'bottom-end'} open={Boolean($wrapper?.current)} anchorEl={$wrapper?.current}>
             <TokenInputWrapper
               open={isOpen}
               style={{

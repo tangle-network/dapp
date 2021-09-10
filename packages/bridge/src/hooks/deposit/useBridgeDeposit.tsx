@@ -9,13 +9,14 @@ import {
   useWebContext,
 } from '@webb-dapp/react-environment/webb-context';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { ChainId } from '@webb-dapp/apps/configs';
 
 export interface BridgeDepositApi {
   mixerSizes: MixerSize[];
 
   deposit(payload: DepositPayload): Promise<void>;
 
-  generateNote(mixer: number): Promise<DepositPayload>;
+  generateNote(mixerId: number, destChain: ChainId): Promise<DepositPayload>;
 
   loadingState: MixerDeposit['loading'];
   error: string;
@@ -62,11 +63,11 @@ export const useBridgeDeposit = (): BridgeDepositApi => {
   }, [depositApi]);
   const [activeBridge, setActiveBridge] = useState<Bridge | null>(depositApi?.activeBridge ?? null);
   const generateNote = useCallback(
-    async (mixerId: number) => {
+    async (mixerId: number, destChain: ChainId) => {
       if (!depositApi) {
         throw new Error('Not ready');
       }
-      return depositApi?.generateNote(mixerId);
+      return depositApi?.generateBridgeNote(mixerId, destChain);
     },
     [depositApi]
   );

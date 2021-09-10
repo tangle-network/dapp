@@ -15,15 +15,11 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
     return Promise.resolve(undefined);
   }
 
-  async generateNote(mixerId: number | string): Promise<DepositPayload> {
-    throw new Error('api not ready');
-  }
-
   async getSizes(): Promise<MixerSize[]> {
     const bridge = this.activeBridge;
     if (bridge) {
       return bridge.anchors.map((anchor) => ({
-        id: `Bridge:${anchor.amount}@${bridge.currency.name}`,
+        id: `Bridge=${anchor.amount}@${bridge.currency.name}`,
         title: `${anchor.amount} ${bridge.currency.prefix}`,
       }));
     }
@@ -47,7 +43,7 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
     const deposit = createDeposit();
     const secrets = deposit.preimage;
     const noteInput: NoteGenInput = {
-      prefix: 'webb.bridge',
+      prefix: 'webb.mix',
       chain: String(destChainId),
       amount: String(mixerId),
       denomination: '18',

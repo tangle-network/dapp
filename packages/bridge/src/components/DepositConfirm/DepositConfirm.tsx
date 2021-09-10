@@ -1,5 +1,8 @@
 import { ButtonBase, Checkbox, FormControlLabel, Icon, IconButton, Tooltip, Typography } from '@material-ui/core';
+import { ChainId } from '@webb-dapp/apps/configs';
+import { BridgeDepositApi as DepositApi } from '@webb-dapp/bridge/hooks/deposit/useBridgeDeposit';
 import { MixerButton } from '@webb-dapp/mixer/components/MixerButton/MixerButton';
+import { DepositPayload } from '@webb-dapp/react-environment/webb-context';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { notificationApi } from '@webb-dapp/ui-components/notification';
@@ -9,8 +12,6 @@ import { downloadString } from '@webb-dapp/utils';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import styled from 'styled-components';
-import { DepositApi } from '@webb-dapp/mixer/hooks/deposit/useDeposit';
-import { DepositPayload } from '@webb-dapp/react-environment/webb-context';
 
 const DismissWrapper = styled.button``;
 const Dismiss = () => {
@@ -45,7 +46,8 @@ type DepositInfoProps = {
   onClose(): void;
   provider: DepositApi;
   onSuccess(): void;
-  mixerId: number | string;
+  mixerId: number | undefined;
+  destChain: ChainId | undefined;
 };
 
 const GeneratedNote = styled.p`
@@ -94,7 +96,14 @@ const Loading = styled.div`
   }
 `;
 
-export const DepositConfirm: React.FC<DepositInfoProps> = ({ mixerId, onClose, onSuccess, open, provider }) => {
+export const DepositConfirm: React.FC<DepositInfoProps> = ({
+  destChain,
+  mixerId,
+  onClose,
+  onSuccess,
+  open,
+  provider,
+}) => {
   const [depositPayload, setNote] = useState<DepositPayload | undefined>(undefined);
   const [loading, setLoading] = useState(false);
   const note = useMemo(() => {
@@ -117,10 +126,13 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({ mixerId, onClose, o
     });
   }, []);
   useEffect(() => {
-    provider.generateNote(mixerId).then((note) => {
+    if (typeof destChain === 'undefined' || !mixerId) {
+      return setNote(undefined);
+    }
+    provider.generateNote(mixerId, destChain).then((note) => {
       setNote(note);
     });
-  }, [provider, mixerId]);
+  }, [provider, mixerId, destChain]);
   const [backupConfirmation, setBackupConfirmation] = useState(false);
   const generatingNote = !depositPayload;
   return (
