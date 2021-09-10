@@ -268,14 +268,14 @@ const ChainInputWrapper = styled.div``;
 type ChainInputProps = {
   chains: ChainId[];
   selectedChain: ChainId | undefined;
-  setSelectedChain(chain: ChainId): void;
+  setSelectedChain(chain: ChainId | undefined): void;
 };
 
 export const ChainInput: React.FC<ChainInputProps> = ({ chains, selectedChain, setSelectedChain }) => {
   return (
     <InputSection>
       <ChainInputWrapper>
-        <InputLabel label={'Select Bridge Chain'}>
+        <InputLabel label={'Select Destination Chain'}>
           <TokenInput
             chains={chains}
             value={selectedChain}
