@@ -1,5 +1,6 @@
+import { evmIdIntoChainId } from '@webb-dapp/apps/configs';
 import { getEVMChainName, getNativeCurrencySymbol } from '@webb-dapp/apps/configs/evm/SupportedMixers';
-import { createDeposit, Deposit, depositFromPreimage } from '@webb-dapp/contracts/utils/make-deposit';
+import { createTornDeposit, Deposit, depositFromPreimage } from '@webb-dapp/contracts/utils/make-deposit';
 import { DepositPayload as IDepositPayload, MixerDeposit, MixerSize } from '@webb-dapp/react-environment/webb-context';
 import { DepositNotification } from '@webb-dapp/ui-components/notification/DepositNotification';
 import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polkadot/transaction-notification-config';
@@ -10,7 +11,6 @@ import utils from 'web3-utils';
 import { u8aToHex } from '@polkadot/util';
 
 import { WebbWeb3Provider } from './webb-web3-provider';
-import { evmIdIntoChainId } from '@webb-dapp/apps/configs';
 
 type DepositPayload = IDepositPayload<Note, [Deposit, number]>;
 
@@ -78,7 +78,7 @@ export class Web3MixerDeposit extends MixerDeposit<WebbWeb3Provider, DepositPayl
     const depositSizeBN = await contract.denomination;
     const depositSize = Number.parseFloat(utils.fromWei(depositSizeBN.toString(), 'ether'));
     const chainId = await this.inner.getChainId();
-    const deposit = createDeposit();
+    const deposit = createTornDeposit();
     const secrets = deposit.preimage;
     const noteInput: NoteGenInput = {
       prefix: 'webb.mix',

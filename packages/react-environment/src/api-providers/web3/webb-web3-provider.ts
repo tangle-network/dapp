@@ -1,4 +1,4 @@
-import { AnchorContract } from '@webb-dapp/contracts/contracts/anchor';
+import { TornadoAnchorContract } from '@webb-dapp/contracts/contracts/tornado-anchor';
 import { WebbApiProvider, WebbMethods, WebbProviderEvents } from '@webb-dapp/react-environment';
 import { EvmChainMixersInfo } from '@webb-dapp/react-environment/api-providers/web3/EvmChainMixersInfo';
 import { Web3BridgeDeposit } from '@webb-dapp/react-environment/api-providers/web3/web3-bridge-deposit';
@@ -94,12 +94,12 @@ export class WebbWeb3Provider
     return this.connectedMixers;
   }
 
-  async getContractByAddress(mixerAddress: string): Promise<AnchorContract> {
-    return new AnchorContract(this.connectedMixers, this.ethersProvider, mixerAddress);
+  async getContractByAddress(mixerAddress: string): Promise<TornadoAnchorContract> {
+    return new TornadoAnchorContract(this.connectedMixers, this.ethersProvider, mixerAddress);
   }
 
   getMixerInfoBySize(mixerSize: number, tokenSymbol: string) {
-    const mixer = this.connectedMixers.getMixerInfoBySize(mixerSize, tokenSymbol);
+    const mixer = this.connectedMixers.getTornMixerInfoBySize(mixerSize, tokenSymbol);
     if (!mixer) {
       throw WebbError.from(WebbErrorCodes.MixerSizeNotFound);
     }
@@ -109,13 +109,13 @@ export class WebbWeb3Provider
   // This function limits the mixer implementation to one type for the token/size pair.
   // Something like a poseidon hasher implementation instead of mimc hasher cannot
   // exist alongside each other.
-  async getContractBySize(mixerSize: number, tokenSymbol: string): Promise<AnchorContract> {
-    const mixer = this.connectedMixers.getMixerInfoBySize(mixerSize, tokenSymbol);
+  async getContractBySize(mixerSize: number, tokenSymbol: string): Promise<TornadoAnchorContract> {
+    const mixer = this.connectedMixers.getTornMixerInfoBySize(mixerSize, tokenSymbol);
     if (!mixer) {
       throw WebbError.from(WebbErrorCodes.MixerSizeNotFound);
     }
 
-    return new AnchorContract(this.connectedMixers, this.ethersProvider, mixer.address);
+    return new TornadoAnchorContract(this.connectedMixers, this.ethersProvider, mixer.address);
   }
 
   getEthersProvider(): providers.Web3Provider {
@@ -123,7 +123,7 @@ export class WebbWeb3Provider
   }
 
   getMixerSizes(tokenSymbol: string): Promise<MixerSize[]> {
-    return Promise.resolve(this.connectedMixers.getMixerSizes(tokenSymbol));
+    return Promise.resolve(this.connectedMixers.getTornMixerSizes(tokenSymbol));
   }
 
   static async init(web3Provider: Web3Provider, chainId: number, relayerBuilder: WebbRelayerBuilder) {

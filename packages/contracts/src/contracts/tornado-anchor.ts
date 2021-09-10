@@ -1,24 +1,24 @@
-import { Anchor } from '@webb-dapp/contracts/types/Anchor';
+import { Anchor as TornadoAnchor } from '@webb-dapp/contracts/types/Anchor';
 import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
 import { EvmNote } from '@webb-dapp/contracts/utils/evm-note';
-import { createDeposit, Deposit } from '@webb-dapp/contracts/utils/make-deposit';
-import { MerkleTree } from '@webb-dapp/utils/merkle';
+import { createTornDeposit, Deposit } from '@webb-dapp/contracts/utils/make-deposit';
+import { MerkleTree, MimcSpongeHasher } from '@webb-dapp/utils/merkle';
 import { BigNumber, Contract, providers, Signer } from 'ethers';
 import { Log } from '@ethersproject/abstract-provider';
-import { EvmChainMixersInfo } from '@webb-dapp/react-environment/api-providers/web3/EvmChainMixersInfo';
+import { LeafIntervalInfo, EvmChainMixersInfo } from '@webb-dapp/react-environment/api-providers/web3/EvmChainMixersInfo';
 import utils from 'web3-utils';
 import { abi } from '../abis/NativeAnchor.json';
 import { mixerLogger } from '@webb-dapp/mixer/utils';
 import { retryPromise } from '@webb-dapp/utils/retry-promise';
 import { LoggerService } from '@webb-tools/app-util';
-import { ZKPInput, ZKPInputWithoutMerkleProof } from '@webb-dapp/contracts/contracts/types';
+import { ZKPTornPublicInputs, ZKPTornInputWithMerkle, ZKPTornInputsWithoutMerkle } from '@webb-dapp/contracts/contracts/types';
 
-const webSnarkUtils = require('websnark/src/utils');
+const webSnarkUtils = require('tornado-websnark/src/utils');
 type DepositEvent = [string, number, BigNumber];
 const logger = LoggerService.get('anchor');
 
-export class AnchorContract {
-  private _contract: Anchor;
+export class TornadoAnchorContract {
+  private _contract: TornadoAnchor;
   private readonly signer: Signer;
 
   constructor(private mixersInfo: EvmChainMixersInfo, private web3Provider: providers.Web3Provider, address: string) {
@@ -43,7 +43,7 @@ export class AnchorContract {
   }
 
   async createDeposit(assetSymbol: string): Promise<{ note: EvmNote; deposit: Deposit }> {
-    const deposit = createDeposit();
+    const deposit = createTornDeposit();
     const chainId = await this.signer.getChainId();
     const depositSizeBN = await this.denomination;
     const depositSize = Number.parseFloat(utils.fromWei(depositSizeBN.toString(), 'ether'));
@@ -125,7 +125,7 @@ export class AnchorContract {
   async generateMerkleProof(deposit: Deposit) {
     const storedContractInfo = await this.mixersInfo.getMixerStorage(this._contract.address);
     const treeHeight = await this._contract.levels();
-    const tree = new MerkleTree('eth', treeHeight, storedContractInfo.leaves);
+    const tree = new MerkleTree('eth', treeHeight, storedContractInfo.leaves, new MimcSpongeHasher());
 
     // Query for missing blocks starting from the stored endingBlock
     const lastQueriedBlock = storedContractInfo.lastQueriedBlock;
@@ -155,19 +155,23 @@ export class AnchorContract {
     return tree.path(leafIndex);
   }
 
-  async generateZKP(deposit: Deposit, zkpInputWithoutMerkleProof: ZKPInputWithoutMerkleProof) {
+  async generateZKP(deposit: Deposit, zkpPublicInputs: ZKPTornPublicInputs) {
     const merkleProof = await this.generateMerkleProof(deposit);
     const { pathElements, pathIndex: pathIndices, root } = merkleProof;
     let circuitData = require('../circuits/withdraw.json');
     let proving_key = require('../circuits/withdraw_proving_key.bin');
     proving_key = await fetch(proving_key);
     proving_key = await proving_key.arrayBuffer();
-    const zkpInput: ZKPInput = {
-      ...zkpInputWithoutMerkleProof,
+    const zkpInput: ZKPTornInputWithMerkle = {
+      ...zkpPublicInputs,
+      nullifier: deposit.nullifier,
+      secret: deposit.secret,
       pathElements,
       pathIndices,
       root: root as string,
     };
+
+    console.log(zkpInput);
 
     const proofsData = await webSnarkUtils.genWitnessAndProve(
       // @ts-ignore
@@ -180,21 +184,20 @@ export class AnchorContract {
     return { proof, input: zkpInput };
   }
 
-  async withdraw(deposit: Deposit, zkpInputWithoutMerkleProof: ZKPInputWithoutMerkleProof) {
+  async withdraw(proof: any, zkp: ZKPTornInputWithMerkle) {
     // tx config
     const overrides = {
       gasLimit: 6000000,
-      gasPrice: utils.toWei('1', 'gwei'),
+      gasPrice: utils.toWei('2', 'gwei'),
     };
-    const { input, proof } = await this.generateZKP(deposit, zkpInputWithoutMerkleProof);
     const tx = await this._contract.withdraw(
       proof,
-      bufferToFixed(input.root),
-      bufferToFixed(input.nullifierHash),
-      input.recipient,
-      input.relayer,
-      bufferToFixed(input.fee),
-      bufferToFixed(input.refund),
+      bufferToFixed(zkp.root),
+      bufferToFixed(zkp.nullifierHash),
+      zkp.recipient,
+      zkp.relayer,
+      bufferToFixed(zkp.fee),
+      bufferToFixed(zkp.refund),
       overrides
     );
     return tx;
