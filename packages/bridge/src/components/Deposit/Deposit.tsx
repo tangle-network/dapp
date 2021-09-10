@@ -46,6 +46,8 @@ export const Deposit: React.FC<DepositProps> = () => {
         selectedToken={bridgeDepositApi.selectedBrideCurrency ?? undefined}
       />
       <SpaceBox height={16} />
+      <ChainInput chains={tokenChains} selectedChain={3} setSelectedChain={setDestChain} />
+      <SpaceBox height={16} />
       <ChainInput chains={tokenChains} selectedChain={destChain} setSelectedChain={setDestChain} />
       <SpaceBox height={16} />
       <MixerGroupSelect items={bridgeDepositApi.mixerSizes} value={item} onChange={setItem} />

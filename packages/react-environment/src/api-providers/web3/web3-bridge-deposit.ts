@@ -43,7 +43,7 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
     const deposit = createDeposit();
     const secrets = deposit.preimage;
     const noteInput: NoteGenInput = {
-      prefix: 'webb.mix',
+      prefix: 'webb.bridge',
       chain: String(destChainId),
       amount: String(mixerId),
       denomination: '18',
