@@ -72,10 +72,13 @@ const fromBridgeCurrencyToCurrencyView = (bridgeCurrency: BridgeCurrency): Curre
 };
 export const WalletBridgeCurrencyInput: React.FC<WalletTokenInputProps> = ({ selectedToken, setSelectedToken }) => {
   const { activeChain, activeWallet } = useWebContext();
-  const { getTokens } = useBridge();
+  const { getTokens, getTokensOfChain } = useBridge();
   const allCurrencies = useMemo(() => {
+    if (activeChain) {
+      return getTokensOfChain(activeChain.id).map((token) => fromBridgeCurrencyToCurrencyView(token));
+    }
     return getTokens().map((token) => fromBridgeCurrencyToCurrencyView(token));
-  }, [activeChain, getTokens]);
+  }, [activeChain, getTokens, getTokensOfChain]);
   const active = useMemo(() => selectedToken ?? allCurrencies[0], [allCurrencies, selectedToken]);
   const selectedCurrency = useMemo(() => {
     if (!selectedToken) {

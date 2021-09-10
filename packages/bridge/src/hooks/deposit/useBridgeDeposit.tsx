@@ -1,3 +1,4 @@
+import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
 import {
   Bridge,
   BridgeCurrency,
@@ -8,7 +9,6 @@ import {
   useWebContext,
 } from '@webb-dapp/react-environment/webb-context';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
 
 export interface BridgeDepositApi {
   mixerSizes: MixerSize[];
