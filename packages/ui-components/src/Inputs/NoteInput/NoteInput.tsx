@@ -1,11 +1,13 @@
 import { FormHelperText, InputBase } from '@material-ui/core';
 import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabel';
-import React, { useEffect, useState } from 'react';
+import React, { useMemo } from 'react';
 import styled, { css } from 'styled-components';
-import { Note } from '@webb-tools/sdk-mixer';
 import { useDepositNote } from '@webb-dapp/mixer/hooks/note';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { getEVMChainNameFromInternal } from '@webb-dapp/apps/configs';
+import { BridgeCurrency, useWebContext } from '@webb-dapp/react-environment';
+import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
+import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 
 const NoteInputWrapper = styled.div``;
 type NoteInputProps = {
@@ -20,23 +22,36 @@ const NoteDetails = styled.div`
   padding: 11px;
   margin: 0 -11px;
 `;
+
 export const NoteInput: React.FC<NoteInputProps> = ({ error, onChange, value }) => {
   const depositNote = useDepositNote(value);
-
-  useEffect(() => {
-    const handler = async () => {
-      try {
-        console.log({ value });
-        let d = await Note.deserialize(value);
-        console.log(d);
-        setDepositNote(d);
-      } catch (e) {
-        console.log(e);
-        setDepositNote(null);
+  const { getBridge } = useBridge();
+  const { activeChain } = useWebContext();
+  const bridge = useMemo(() => {
+    try {
+      if (depositNote) {
+        const currency = BridgeCurrency.fromString(depositNote.note.tokenSymbol);
+        return getBridge(currency);
       }
-    };
-    handler();
-  }, [value]);
+    } catch (_) {
+      return null;
+    }
+  }, [depositNote]);
+
+  /*
+	useEffect(() => {
+		const handler = async () => {
+			try {
+				let d = await Note.deserialize(value);
+				onChange(value);
+			} catch (e) {
+				onChange('');
+			}
+		};
+		handler();
+	}, [depositNote]);
+*/
+
   return (
     <InputLabel label={'Note'}>
       <InputBase
@@ -60,18 +75,40 @@ export const NoteInput: React.FC<NoteInputProps> = ({ error, onChange, value }) 
             <tbody>
               <tr>
                 <td>Context:</td>
-                <td style={{ textAlign: 'right' }}>{depositNote.note.prefix.replace('webb.', '')}</td>
+                <td style={{ textAlign: 'right' }}>
+                  <b>{depositNote.note.prefix.replace('webb.', '').toUpperCase()}</b>
+                </td>
               </tr>
               <tr>
                 <td>Amount:</td>
                 <td style={{ textAlign: 'right' }}>
-                  {depositNote.note.amount} {depositNote.note.tokenSymbol}
+                  {depositNote.note.amount} <b>{depositNote.note.tokenSymbol}</b>
                 </td>
               </tr>
               <tr>
-                <td>Chain:</td>
+                <td>{bridge ? 'Destination Chain' : 'Chain'}:</td>
                 <td style={{ textAlign: 'right' }}>{getEVMChainNameFromInternal(Number(depositNote.note.chain))}</td>
               </tr>
+              {bridge ? (
+                <>
+                  <tr>
+                    <td
+                      style={{
+                        verticalAlign: 'baseline',
+                      }}
+                    >
+                      Bridge chains:
+                    </td>
+                    <td style={{ textAlign: 'right' }}>
+                      <div>
+                        {bridge.currency.chainIds.map(getEVMChainNameFromInternal).map((chainName) => (
+                          <div key={`${chainName}-bridge-chain`}> {chainName}</div>
+                        ))}
+                      </div>
+                    </td>
+                  </tr>
+                </>
+              ) : null}
             </tbody>
           </table>
         </NoteDetails>
