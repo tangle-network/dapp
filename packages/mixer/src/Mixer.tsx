@@ -8,7 +8,7 @@ import styled from 'styled-components';
 const MixerWrapper = styled.div``;
 type MixerProps = {};
 
-type RelayerIpInfo = {
+export type RelayerIpInfo = {
   ip: String;
 };
 

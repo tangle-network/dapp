@@ -10,16 +10,17 @@ import {
 } from '@material-ui/core';
 import Icon from '@material-ui/core/Icon';
 import Typography from '@material-ui/core/Typography';
+import { ChainId, chainsPopulated } from '@webb-dapp/apps/configs';
 import { CurrencyContent } from '@webb-dapp/react-environment/types/currency';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabel';
 import { InputSection } from '@webb-dapp/ui-components/Inputs/InputSection/InputSection';
+import { NetworkManager } from '@webb-dapp/ui-components/NetworkManger/NetworkManager';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import styled, { css } from 'styled-components';
-import { ChainId, chainsPopulated } from '@webb-dapp/apps/configs';
 
 const StyledList = styled.ul`
   &&& {
@@ -274,22 +275,26 @@ export const TokenInput: React.FC<TokenInputProps> = ({ chains, onChange, value 
 const ChainInputWrapper = styled.div``;
 type ChainInputProps = {
   chains: ChainId[];
+  label: string;
   selectedChain: ChainId | undefined;
-  setSelectedChain(chain: ChainId | undefined): void;
+  setSelectedChain?(chain: ChainId | undefined): void;
 };
 
-export const ChainInput: React.FC<ChainInputProps> = ({ chains, selectedChain, setSelectedChain }) => {
+export const ChainInput: React.FC<ChainInputProps> = ({ chains, label, selectedChain, setSelectedChain }) => {
   return (
     <InputSection>
       <ChainInputWrapper>
-        <InputLabel label={'Select Destination Chain'}>
-          <TokenInput
-            chains={chains}
-            value={selectedChain}
-            onChange={(chain) => {
-              setSelectedChain(chain);
-            }}
-          />
+        <InputLabel label={label}>
+          {setSelectedChain && (
+            <TokenInput
+              chains={chains}
+              value={selectedChain}
+              onChange={(chain) => {
+                setSelectedChain(chain);
+              }}
+            />
+          )}
+          {!setSelectedChain && <NetworkManager />}
         </InputLabel>
       </ChainInputWrapper>
     </InputSection>
