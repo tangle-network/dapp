@@ -15,7 +15,7 @@ export function unsupportedChain(): InteractiveFeedback {
       list: [
         getEVMChainName(WebbEVMChain.Rinkeby),
         getEVMChainName(WebbEVMChain.Beresheet),
-        getEVMChainName(WebbEVMChain.HarmonyTest1),
+        getEVMChainName(WebbEVMChain.HarmonyTestnet1),
       ],
     },
     {
