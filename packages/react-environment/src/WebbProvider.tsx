@@ -21,7 +21,6 @@ import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { WebbPolkadot } from './api-providers/polkadot';
 import { extensionNotInstalled, unsupportedChain } from './error';
-import { evmChainConflict } from './error/interactive-errors/evm-network-conflict';
 import { SettingProvider } from './SettingProvider';
 import { Chain, netStorageFactory, NetworkStorage, Wallet, WebbApiProvider, WebbContext } from './webb-context';
 
@@ -176,20 +175,6 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
         }
         break;
       case WebbErrorCodes.UnselectedChain:
-        {
-          // Cast the error to an UnselectedChainError
-
-          // Access the parameters from the unselectedChainError for activeOnExtension
-          // And the 'selected' AKA desired chain.
-
-          
-
-          // const interactiveFeedback = evmChainConflict({
-          //   activeOnExtension: ,
-          //   selected: ,
-            
-          // })
-        }
         break;
       case WebbErrorCodes.MixerSizeNotFound:
         break;
