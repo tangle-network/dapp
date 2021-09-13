@@ -2,17 +2,17 @@ import { Fade, FormHelperText, InputBase, MenuItem, Select } from '@material-ui/
 import { MixerButton } from '@webb-dapp/mixer/components/MixerButton/MixerButton';
 import WithdrawingModal from '@webb-dapp/mixer/components/Withdraw/WithdrawingModal';
 import { useWithdraw } from '@webb-dapp/mixer/hooks';
+import { useDepositNote } from '@webb-dapp/mixer/hooks/note';
 import { WithdrawState } from '@webb-dapp/react-environment';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabel';
 import { InputSection } from '@webb-dapp/ui-components/Inputs/InputSection/InputSection';
 import { NoteInput } from '@webb-dapp/ui-components/Inputs/NoteInput/NoteInput';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
-import { ethers } from 'ethers';
 import { Note } from '@webb-tools/sdk-mixer';
+import { ethers } from 'ethers';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { useDepositNote } from '@webb-dapp/mixer/hooks/note';
 
 const WithdrawWrapper = styled.div``;
 type WithdrawProps = {};
