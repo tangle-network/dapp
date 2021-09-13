@@ -145,7 +145,9 @@ export class WebbRelayerBuilder {
                 ?.contracts?.find(
                   (contract) =>
                     contract.address ==
-                    mixerInfo.getMixerInfoBySize(mixerSupport.amount, mixerSupport.tokenSymbol).address.toLowerCase()
+                    mixerInfo
+                      .getTornMixerInfoBySize(mixerSupport.amount, mixerSupport.tokenSymbol)
+                      .address.toLowerCase()
                 )
             );
           }
