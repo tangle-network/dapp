@@ -64,11 +64,7 @@ export class TornadoAnchorContract {
   }
 
   async deposit(commitment: string, onComplete?: (event: DepositEvent) => void) {
-    const overrides = {
-      gasLimit: 6000000,
-      gasPrice: utils.toWei('1', 'gwei'),
-      value: await this.denomination,
-    };
+    const overrides = { value: await this.denomination };
     const filters = await this._contract.filters.Deposit(commitment, null, null);
     this._contract.once(filters, (commitment, insertedIndex, timestamp) => {
       onComplete?.([commitment, insertedIndex, timestamp]);
@@ -209,10 +205,7 @@ export class TornadoAnchorContract {
 
   async withdraw(proof: any, zkp: ZKPTornInputWithMerkle) {
     // tx config
-    const overrides = {
-      gasLimit: 6000000,
-      gasPrice: utils.toWei('2', 'gwei'),
-    };
+    const overrides = {};
     const tx = await this._contract.withdraw(
       proof,
       bufferToFixed(zkp.root),
