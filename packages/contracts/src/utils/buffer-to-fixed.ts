@@ -1,4 +1,4 @@
-const snarkjs = require('snarkjs');
+const snarkjs = require('tornado-snarkjs');
 const bigInt = snarkjs.bigInt;
 export const bufferToFixed = (number: Buffer | any, length = 32) => {
   return (
