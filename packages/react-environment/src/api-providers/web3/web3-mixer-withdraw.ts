@@ -248,7 +248,22 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
         this.emit('stateChange', WithdrawState.Ideal);
       } catch (e) {
         // todo fix this and fetch the error from chain
-        // const reason = await this.inner.reason(e.transactionHash);
+
+        // User rejected transaction from provider
+        if (e.code === 4001) {
+          transactionNotificationConfig.failed?.({
+            address: recipient,
+            data: 'Withdraw Rejected',
+            key: 'mixer-withdraw-evm',
+            path: {
+              method: 'withdraw',
+              section: 'evm-mixer',
+            },
+          });
+
+          this.emit('stateChange', WithdrawState.Ideal);
+          return;
+        }
 
         transactionNotificationConfig.failed?.({
           address: recipient,
