@@ -8,8 +8,6 @@ export enum ChainId {
   Kovan,
   Goerli,
   HarmonyTestnet1,
-  HarmonyTest0,
-  HarmonyTest1,
   Ganache,
 }
 
@@ -25,8 +23,7 @@ export enum WebbEVMChain {
   /*Added EVM Chains on MetaMask*/
   Edgeware = 2021,
   Beresheet = 2022,
-  HarmonyTest0 = 1666700000,
-  HarmonyTest1 = 1666700001,
+  HarmonyTestnet1 = 1666700001,
 }
 
 export const evmIdIntoChainId = (evmId: number | string): ChainId => {
@@ -45,10 +42,8 @@ export const evmIdIntoChainId = (evmId: number | string): ChainId => {
       return ChainId.Edgeware;
     case WebbEVMChain.Beresheet:
       return ChainId.EdgewareTestNet;
-    case WebbEVMChain.HarmonyTest0:
-      return ChainId.HarmonyTest0;
-    case WebbEVMChain.HarmonyTest1:
-      return ChainId.HarmonyTest1;
+    case WebbEVMChain.HarmonyTestnet1:
+      return ChainId.HarmonyTestnet1;
     case WebbEVMChain.Ganache:
       return ChainId.Ganache;
   }
@@ -71,11 +66,7 @@ export const chainIdIntoEVMId = (chainId: ChainId | Number | String): WebbEVMCha
     case ChainId.Goerli:
       return WebbEVMChain.Goerli;
     case ChainId.HarmonyTestnet1:
-      return WebbEVMChain.HarmonyTest0;
-    case ChainId.HarmonyTest0:
-      return WebbEVMChain.HarmonyTest0;
-    case ChainId.HarmonyTest1:
-      return WebbEVMChain.HarmonyTest1;
+      return WebbEVMChain.HarmonyTestnet1;
     case ChainId.Ganache:
       return WebbEVMChain.Ganache;
     default:

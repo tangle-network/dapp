@@ -77,24 +77,7 @@ export const chainsConfig: AppConfig['chains'] = {
   [ChainId.HarmonyTestnet1]: {
     group: 'one',
     id: ChainId.HarmonyTestnet1,
-    evmId: WebbEVMChain.HarmonyTest1,
-    name: 'Harmony Testnet Shard 1',
-    tag: 'test',
-    url: 'https://api.s1.b.hmny.io',
-    evmRpcUrls: ['https://api.s1.b.hmny.io'],
-    logo: HarmonyLogo,
-    currencies: [
-      {
-        currencyId: WebbCurrencyId.ONE,
-        enabled: true,
-      },
-    ],
-    nativeCurrencyId: WebbCurrencyId.ONE,
-  },
-  [ChainId.HarmonyTest1]: {
-    group: 'one',
-    id: ChainId.HarmonyTest1,
-    evmId: WebbEVMChain.HarmonyTest1,
+    evmId: WebbEVMChain.HarmonyTestnet1,
     name: 'Harmony Testnet Shard 1',
     tag: 'test',
     url: 'https://api.s1.b.hmny.io',

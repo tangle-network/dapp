@@ -17,12 +17,12 @@ export type BridgeConfig = Record<string, BridgeConfigEntry>;
 
 const webEthEthereumEdgware = new BridgeCurrency([ChainId.EthereumMainNet, ChainId.Edgeware], WebbCurrencyId.ETH);
 const webEthEthereumEdgwareHarmony = new BridgeCurrency(
-  [ChainId.EthereumMainNet, ChainId.HarmonyTest1, ChainId.Edgeware],
+  [ChainId.EthereumMainNet, ChainId.HarmonyTestnet1, ChainId.Edgeware],
   WebbCurrencyId.ETH
 );
 const webbEdgEthereumEdgware = new BridgeCurrency([ChainId.EthereumMainNet, ChainId.Edgeware], WebbCurrencyId.EDG);
-const webbOneEdgwareHarmony = new BridgeCurrency([ChainId.HarmonyTest1, ChainId.Edgeware], WebbCurrencyId.EDG);
-const webbOneEthereumHarmony = new BridgeCurrency([ChainId.HarmonyTest1, ChainId.Edgeware], WebbCurrencyId.ONE);
+const webbOneEdgwareHarmony = new BridgeCurrency([ChainId.HarmonyTestnet1, ChainId.Edgeware], WebbCurrencyId.EDG);
+const webbOneEthereumHarmony = new BridgeCurrency([ChainId.HarmonyTestnet1, ChainId.Edgeware], WebbCurrencyId.ONE);
 
 export const bridgeConfig: BridgeConfig = {
   /// Eth Edgeware EthereumMainNet
@@ -50,7 +50,7 @@ export const bridgeConfig: BridgeConfig = {
         anchorAddresses: {
           [ChainId.EthereumMainNet]: '0xD7f9BB9957100310aD397D2bA31771D939BD4731',
           [ChainId.Edgeware]: '0xD7f9BB9957100310aD397D2bA31771D939BD4731',
-          [ChainId.HarmonyTest1]: '0xD7f9BB9957100310aD397D2bA31771D939BD4731',
+          [ChainId.HarmonyTestnet1]: '0xD7f9BB9957100310aD397D2bA31771D939BD4731',
         },
         amount: '.1',
       },
@@ -58,7 +58,7 @@ export const bridgeConfig: BridgeConfig = {
         anchorAddresses: {
           [ChainId.EthereumMainNet]: '0xD7f9BB9957100310aD397D2bA31771D939BD4731',
           [ChainId.Edgeware]: '0xD7f9BB9957100310aD397D2bA31771D939BD4731',
-          [ChainId.HarmonyTest1]: '0xD7f9BB9957100310aD397D2bA31771D939BD4731',
+          [ChainId.HarmonyTestnet1]: '0xD7f9BB9957100310aD397D2bA31771D939BD4731',
         },
         amount: '.5',
       },
@@ -66,7 +66,7 @@ export const bridgeConfig: BridgeConfig = {
         anchorAddresses: {
           [ChainId.EthereumMainNet]: '0xD7f9BB9957100310aD397D2bA31771D939BD4731',
           [ChainId.Edgeware]: '0xD7f9BB9957100310aD397D2bA31771D939BD4731',
-          [ChainId.HarmonyTest1]: '0xD7f9BB9957100310aD397D2bA31771D939BD4731',
+          [ChainId.HarmonyTestnet1]: '0xD7f9BB9957100310aD397D2bA31771D939BD4731',
         },
         amount: '1',
       },
@@ -74,7 +74,7 @@ export const bridgeConfig: BridgeConfig = {
         anchorAddresses: {
           [ChainId.EthereumMainNet]: '0xD7f9BB9957100310aD397D2bA31771D939BD4731',
           [ChainId.Edgeware]: '0xD7f9BB9957100310aD397D2bA31771D939BD4731',
-          [ChainId.HarmonyTest1]: '0xD7f9BB9957100310aD397D2bA31771D939BD4731',
+          [ChainId.HarmonyTestnet1]: '0xD7f9BB9957100310aD397D2bA31771D939BD4731',
         },
         amount: '10',
       },
@@ -128,35 +128,35 @@ export const bridgeConfig: BridgeConfig = {
     anchors: [
       {
         anchorAddresses: {
-          [ChainId.HarmonyTest1]: '0xD7f9BB9957100310aD397D2bA31771D939BD4731',
+          [ChainId.HarmonyTestnet1]: '0xD7f9BB9957100310aD397D2bA31771D939BD4731',
           [ChainId.Edgeware]: '0xD7f9BB9957100310aD397D2bA31771D939BD4731',
         },
         amount: '1',
       },
       {
         anchorAddresses: {
-          [ChainId.HarmonyTest1]: '0xD7f9BB9957100310aD397D2bA31771D939BD4731',
+          [ChainId.HarmonyTestnet1]: '0xD7f9BB9957100310aD397D2bA31771D939BD4731',
           [ChainId.Edgeware]: '0xD7f9BB9957100310aD397D2bA31771D939BD4731',
         },
         amount: '10',
       },
       {
         anchorAddresses: {
-          [ChainId.HarmonyTest1]: '0xD7f9BB9957100310aD397D2bA31771D939BD4731',
+          [ChainId.HarmonyTestnet1]: '0xD7f9BB9957100310aD397D2bA31771D939BD4731',
           [ChainId.Edgeware]: '0xD7f9BB9957100310aD397D2bA31771D939BD4731',
         },
         amount: '1000',
       },
       {
         anchorAddresses: {
-          [ChainId.HarmonyTest1]: '0xD7f9BB9957100310aD397D2bA31771D939BD4731',
+          [ChainId.HarmonyTestnet1]: '0xD7f9BB9957100310aD397D2bA31771D939BD4731',
           [ChainId.Edgeware]: '0xD7f9BB9957100310aD397D2bA31771D939BD4731',
         },
         amount: '100000',
       },
     ],
     tokenAddresses: {
-      [ChainId.HarmonyTest1]: '0xD7f9BB9957100310aD397D2bA31771D939BD4731',
+      [ChainId.HarmonyTestnet1]: '0xD7f9BB9957100310aD397D2bA31771D939BD4731',
       [ChainId.Edgeware]: '0xD7f9BB9957100310aD397D2bA31771D939BD4731',
     },
   }, /// One EthereumM Harmony
@@ -165,35 +165,35 @@ export const bridgeConfig: BridgeConfig = {
     anchors: [
       {
         anchorAddresses: {
-          [ChainId.HarmonyTest1]: '0xD7f9BB9957100310aD397D2bA31771D939BD4731',
+          [ChainId.HarmonyTestnet1]: '0xD7f9BB9957100310aD397D2bA31771D939BD4731',
           [ChainId.EthereumMainNet]: '0xD7f9BB9957100310aD397D2bA31771D939BD4731',
         },
         amount: '1',
       },
       {
         anchorAddresses: {
-          [ChainId.HarmonyTest1]: '0xD7f9BB9957100310aD397D2bA31771D939BD4731',
+          [ChainId.HarmonyTestnet1]: '0xD7f9BB9957100310aD397D2bA31771D939BD4731',
           [ChainId.EthereumMainNet]: '0xD7f9BB9957100310aD397D2bA31771D939BD4731',
         },
         amount: '10',
       },
       {
         anchorAddresses: {
-          [ChainId.HarmonyTest1]: '0xD7f9BB9957100310aD397D2bA31771D939BD4731',
+          [ChainId.HarmonyTestnet1]: '0xD7f9BB9957100310aD397D2bA31771D939BD4731',
           [ChainId.EthereumMainNet]: '0xD7f9BB9957100310aD397D2bA31771D939BD4731',
         },
         amount: '1000',
       },
       {
         anchorAddresses: {
-          [ChainId.HarmonyTest1]: '0xD7f9BB9957100310aD397D2bA31771D939BD4731',
+          [ChainId.HarmonyTestnet1]: '0xD7f9BB9957100310aD397D2bA31771D939BD4731',
           [ChainId.EthereumMainNet]: '0xD7f9BB9957100310aD397D2bA31771D939BD4731',
         },
         amount: '100000',
       },
     ],
     tokenAddresses: {
-      [ChainId.HarmonyTest1]: '0xD7f9BB9957100310aD397D2bA31771D939BD4731',
+      [ChainId.HarmonyTestnet1]: '0xD7f9BB9957100310aD397D2bA31771D939BD4731',
       [ChainId.EthereumMainNet]: '0xD7f9BB9957100310aD397D2bA31771D939BD4731',
     },
   },
