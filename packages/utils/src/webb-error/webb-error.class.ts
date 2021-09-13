@@ -2,6 +2,8 @@
 export enum WebbErrorCodes {
   /// Unsupported chain is switch via the extension
   UnsupportedChain,
+  /// Unselected chain is a mismatch between provider and application
+  UnselectedChain,
   /// Attempt to find a mixer size on a contract
   MixerSizeNotFound,
   /// No accounts are available
@@ -52,6 +54,11 @@ export class WebbError extends Error {
         return {
           code,
           message: 'you have switched to unsupported chain',
+        };
+      case WebbErrorCodes.UnselectedChain:
+        return {
+          code,
+          message: 'User did not select the chain',
         };
       case WebbErrorCodes.MixerSizeNotFound:
         return {
