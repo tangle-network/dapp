@@ -219,13 +219,10 @@ class RelayedWithdraw {
   generateWithdrawRequest(chain: RelayedChainInput, proof: string, args: WithdrawRelayerArgs) {
     return {
       [chain.baseOn]: {
-        [chain.name]: {
-          relayWithdraw: {
-            contract: chain.contractAddress,
-            proof,
-            ...args,
-          },
-        },
+        chain: chain.name,
+        contract: chain.contractAddress,
+        proof,
+        ...args,
       },
     };
   }
