@@ -31,7 +31,7 @@ export class EvmChainMixersInfo {
       case WebbEVMChain.Beresheet:
         this.tornMixerInfo = beresheetMixers.tornMixers;
         break;
-      case WebbEVMChain.HarmonyTest1:
+      case WebbEVMChain.HarmonyTestnet1:
         this.tornMixerInfo = harmonyTest1Mixers.tornMixers;
         break;
       default:
