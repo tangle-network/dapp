@@ -6,6 +6,8 @@ import { Note } from '@webb-tools/sdk-mixer';
 import { useDepositNote } from '@webb-dapp/mixer/hooks/note';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { getEVMChainNameFromInternal } from '@webb-dapp/apps/configs';
+import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
+import { useWebContext } from '@webb-dapp/react-environment/webb-context';
 
 const NoteInputWrapper = styled.div``;
 type NoteInputProps = {
@@ -22,6 +24,15 @@ const NoteDetails = styled.div`
 `;
 export const NoteInput: React.FC<NoteInputProps> = ({ error, onChange, value }) => {
   const depositNote = useDepositNote(value);
+  const { activeApi, activeChain } = useWebContext();
+
+  useEffect(() => {
+    if (depositNote) {
+      if (Number(depositNote.note.chain) != activeChain.id) {
+        throw WebbError.from(WebbErrorCodes.UnselectedChain);
+      }
+    }
+  }, [depositNote, activeChain.id]);
 
   return (
     <InputLabel label={'Note'}>
