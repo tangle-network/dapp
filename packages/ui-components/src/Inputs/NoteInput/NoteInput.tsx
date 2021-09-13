@@ -48,13 +48,28 @@ export const NoteInput: React.FC<NoteInputProps> = ({ error, onChange, value }) 
       />
       {depositNote && (
         <NoteDetails>
-          <div>
-            Context: {depositNote.note.prefix.replace('webb.', '')}
-            <br />
-            Amount : {depositNote.note.amount} {depositNote.note.tokenSymbol}
-            <br />
-            Chain : {getEVMChainName(parseInt(depositNote.note.chain))}
-          </div>
+          <table
+            style={{
+              width: '100%',
+            }}
+          >
+            <tbody>
+              <tr>
+                <td>Context:</td>
+                <td style={{ textAlign: 'right' }}>{depositNote.note.prefix.replace('webb.', '')}</td>
+              </tr>
+              <tr>
+                <td>Amount:</td>
+                <td style={{ textAlign: 'right' }}>
+                  {depositNote.note.amount} {depositNote.note.tokenSymbol}
+                </td>
+              </tr>
+              <tr>
+                <td>Chain:</td>
+                <td style={{ textAlign: 'right' }}>{getEVMChainName(parseInt(depositNote.note.chain))}</td>
+              </tr>
+            </tbody>
+          </table>
         </NoteDetails>
       )}
       <FormHelperText error={Boolean(error)}>{error}</FormHelperText>
