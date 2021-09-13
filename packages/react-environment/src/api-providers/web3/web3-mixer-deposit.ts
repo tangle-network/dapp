@@ -1,4 +1,4 @@
-import { evmIdIntoChainId } from '@webb-dapp/apps/configs';
+import { ChainId, chainIdIntoEVMId, evmIdIntoChainId } from '@webb-dapp/apps/configs';
 import { getEVMChainName, getNativeCurrencySymbol } from '@webb-dapp/apps/configs/evm/SupportedMixers';
 import { createTornDeposit, Deposit, depositFromPreimage } from '@webb-dapp/contracts/utils/make-deposit';
 import { DepositPayload as IDepositPayload, MixerDeposit, MixerSize } from '@webb-dapp/react-environment/webb-context';
@@ -16,10 +16,12 @@ type DepositPayload = IDepositPayload<Note, [Deposit, number]>;
 
 export class Web3MixerDeposit extends MixerDeposit<WebbWeb3Provider, DepositPayload> {
   async deposit({ note: depositPayload, params }: DepositPayload): Promise<void> {
+    const chainId = Number(depositPayload.note.chain) as ChainId;
+    const evmChainId = chainIdIntoEVMId(chainId);
     transactionNotificationConfig.loading?.({
       address: '',
       data: React.createElement(DepositNotification, {
-        chain: getEVMChainName(depositPayload.note.chain as any),
+        chain: getEVMChainName(evmChainId),
         amount: Number(depositPayload.note.amount),
         currency: depositPayload.note.tokenSymbol,
       }),
