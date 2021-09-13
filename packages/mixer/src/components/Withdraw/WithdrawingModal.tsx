@@ -1,12 +1,17 @@
 import { Button, Divider, Icon, LinearProgress, Tooltip, Typography } from '@material-ui/core';
 import { WithdrawState } from '@webb-dapp/react-environment';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
+import { DepositNote } from '@webb-tools/wasm-utils';
+import { LoggerService } from '@webb-tools/app-util';
 import React, { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
+
+const logger = LoggerService.get('Withdraw-Modal');
 
 type WithdrawingModalProps = {
   canCancel: boolean;
   stage: WithdrawState;
+  note: DepositNote;
   cancel(): void;
   withdrawTxInfo: any | null;
 };
@@ -74,9 +79,16 @@ const WithdrawInfoRow = styled.div`
 const InfoItemLabel = styled.div`
   flex: 1 0 20%;
   justify-content: center;
+  display: table;
+
+  .MuiTypography-root {
+    vertical-align: middle;
+    display: table-cell;
+  }
 
   .label-icon {
     vertical-align: middle;
+    display: table-cell;
   padding: 1rem 0;
 
   td:nth-child(2) {
@@ -86,8 +98,16 @@ const InfoItemLabel = styled.div`
 
 const InfoItem = styled.div`
   flex: 1 0 20%;
+  display: table;
+  height: 50px;
   justify-content: center;
+  align-items: center;
   text-align: right;
+
+  .MuiTypography-root {
+    vertical-align: middle;
+    display: table-cell;
+  }
 `;
 
 const alternatingMessages = [
@@ -95,7 +115,7 @@ const alternatingMessages = [
   'You may withdraw to another account',
   'Anyone with your note can withdraw, You should keep it secret',
 ];
-const WithdrawingModal: React.FC<WithdrawingModalProps> = ({ canCancel, cancel, stage, withdrawTxInfo }) => {
+const WithdrawingModal: React.FC<WithdrawingModalProps> = ({ canCancel, cancel, note, stage, withdrawTxInfo }) => {
   const [rm, setAlternatingMessage] = useState(0);
   useEffect(() => {
     const handle = setInterval(() => {
@@ -111,8 +131,8 @@ const WithdrawingModal: React.FC<WithdrawingModalProps> = ({ canCancel, cancel, 
         return 'Transaction Done';
       case WithdrawState.Failed:
         return 'Transaction Failed';
-      case WithdrawState.Canceled:
-        return 'Transaction canceled';
+      case WithdrawState.Cancelling:
+        return 'Cancelling Transaction';
       case WithdrawState.GeneratingZk:
         return 'Generating Zero Knowledge proof...';
       case WithdrawState.SendingTransaction:
@@ -166,26 +186,23 @@ const WithdrawingModal: React.FC<WithdrawingModalProps> = ({ canCancel, cancel, 
             <Divider />
             <WithdrawInfoRow>
               <InfoItemLabel>
-                <Icon className={'label-icon'}>info</Icon> Mixer info:
+                <Icon className={'label-icon'}>info</Icon>
+                <Typography variant={'h6'}>Mixer info:</Typography>
               </InfoItemLabel>
               <InfoItem>
-                <Typography variant={'caption'}>
-                  {/*         <b>
-                      This note controls
-                      {' '}
-                      {' '}{ selectedMixerItem && Math.round(selectedMixerItem?.token.amount.toNumber() / 10 ** selectedMixerItem?.token.precision) }
-                      {' '}{ selectedMixerItem && selectedMixerItem?.token.symbol }
-                    </b>*/}
+                <Typography variant={'h6'}>
+                  <b>This note controls {note.amount + ' ' + note.tokenSymbol}</b>
                 </Typography>
               </InfoItem>
             </WithdrawInfoRow>
             <WithdrawInfoRow>
               <InfoItemLabel>
-                <Icon className={'label-icon'}>arrow_upward</Icon> Recipient Address:
+                <Icon className={'label-icon'}>arrow_upward</Icon>
+                <Typography variant={'h6'}>Recipient Address:</Typography>
               </InfoItemLabel>
               <InfoItem>
                 <Tooltip title={withdrawTxInfo.account}>
-                  <Typography variant={'caption'}>
+                  <Typography variant={'h6'}>
                     <b>{transactionString}</b>
                   </Typography>
                 </Tooltip>
@@ -196,6 +213,7 @@ const WithdrawingModal: React.FC<WithdrawingModalProps> = ({ canCancel, cancel, 
       </div>
       <Button
         onClick={() => {
+          logger.info('Cancelled Transaction Button Clicked');
           cancel();
         }}
         color='primary'

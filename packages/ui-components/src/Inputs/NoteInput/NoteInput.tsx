@@ -3,7 +3,9 @@ import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabe
 import React, { useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
 import { Note } from '@webb-tools/sdk-mixer';
+import { useDepositNote } from '@webb-dapp/mixer/hooks/note';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
+import { getEVMChainNameFromInternal } from '@webb-dapp/apps/configs';
 
 const NoteInputWrapper = styled.div``;
 type NoteInputProps = {
@@ -19,7 +21,7 @@ const NoteDetails = styled.div`
   margin: 0 -11px;
 `;
 export const NoteInput: React.FC<NoteInputProps> = ({ error, onChange, value }) => {
-  const [depositNote, setDepositNote] = useState<Note | null>(null);
+  const depositNote = useDepositNote(value);
 
   useEffect(() => {
     const handler = async () => {
@@ -50,13 +52,28 @@ export const NoteInput: React.FC<NoteInputProps> = ({ error, onChange, value }) 
       />
       {depositNote && (
         <NoteDetails>
-          <div>
-            Context: {depositNote.note.prefix.replace('webb.', '')}
-            <br />
-            Amount : {depositNote.note.amount} {depositNote.note.tokenSymbol}
-            <br />
-            Chain : {depositNote.note.chain}
-          </div>
+          <table
+            style={{
+              width: '100%',
+            }}
+          >
+            <tbody>
+              <tr>
+                <td>Context:</td>
+                <td style={{ textAlign: 'right' }}>{depositNote.note.prefix.replace('webb.', '')}</td>
+              </tr>
+              <tr>
+                <td>Amount:</td>
+                <td style={{ textAlign: 'right' }}>
+                  {depositNote.note.amount} {depositNote.note.tokenSymbol}
+                </td>
+              </tr>
+              <tr>
+                <td>Chain:</td>
+                <td style={{ textAlign: 'right' }}>{getEVMChainNameFromInternal(Number(depositNote.note.chain))}</td>
+              </tr>
+            </tbody>
+          </table>
         </NoteDetails>
       )}
       <FormHelperText error={Boolean(error)}>{error}</FormHelperText>

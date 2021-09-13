@@ -19,6 +19,15 @@ export const getEVMChainName = (chainID: number): string => {
   }
 };
 
+export const getEVMChainNameFromInternal = (chainID: number): string => {
+  const chain = Object.values(chainsConfig).find((chainsConfig) => chainsConfig.id === Number(chainID));
+  if (chain) {
+    return chain.name;
+  } else {
+    throw WebbError.from(WebbErrorCodes.UnsupportedChain);
+  }
+};
+
 export type MixerInfo = {
   address: string;
   size: number;

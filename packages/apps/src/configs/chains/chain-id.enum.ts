@@ -20,6 +20,7 @@ export enum WebbEVMChain {
   Rinkeby = 4,
   Kovan = 42,
   Goerli = 5,
+  Ganache = 1337,
 
   /*Added EVM Chains on MetaMask*/
   Edgeware = 2021,
@@ -48,5 +49,36 @@ export const evmIdIntoChainId = (evmId: number | string): ChainId => {
       return ChainId.HarmonyTest0;
     case WebbEVMChain.HarmonyTest1:
       return ChainId.HarmonyTest1;
+    case WebbEVMChain.Ganache:
+      return ChainId.Ganache;
+  }
+};
+
+export const chainIdIntoEVMId = (chainId: ChainId | Number | String): WebbEVMChain => {
+  switch (Number(chainId) as ChainId) {
+    case ChainId.Edgeware:
+      return WebbEVMChain.Edgeware;
+    case ChainId.EdgewareTestNet:
+      return WebbEVMChain.Beresheet;
+    case ChainId.EthereumMainNet:
+      return WebbEVMChain.EthereumMainNet;
+    case ChainId.Rinkeby:
+      return WebbEVMChain.Rinkeby;
+    case ChainId.Ropsten:
+      return WebbEVMChain.Ropsten;
+    case ChainId.Kovan:
+      return WebbEVMChain.Kovan;
+    case ChainId.Goerli:
+      return WebbEVMChain.Goerli;
+    case ChainId.HarmonyTestnet1:
+      return WebbEVMChain.HarmonyTest0;
+    case ChainId.HarmonyTest0:
+      return WebbEVMChain.HarmonyTest0;
+    case ChainId.HarmonyTest1:
+      return WebbEVMChain.HarmonyTest1;
+    case ChainId.Ganache:
+      return WebbEVMChain.Ganache;
+    default:
+      throw Error(`unsupported chain ${chainId}`);
   }
 };
