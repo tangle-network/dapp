@@ -7,7 +7,6 @@ import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { getEVMChainNameFromInternal } from '@webb-dapp/apps/configs';
 import { BridgeCurrency, useWebContext } from '@webb-dapp/react-environment';
 import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
-import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 
 const NoteInputWrapper = styled.div``;
 type NoteInputProps = {
