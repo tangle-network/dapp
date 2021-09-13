@@ -1,5 +1,6 @@
 import { ActiveWebbRelayer, WebbRelayer } from '@webb-dapp/react-environment/webb-context/relayer';
 import { EventBus } from '@webb-tools/app-util';
+import { Note } from '@webb-tools/sdk-mixer';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 export enum WithdrawState {
@@ -61,6 +62,10 @@ export abstract class MixerWithdraw<T> extends EventBus<MixerWithdrawEvents> {
 
   // todo switch to the reactive api
   get relayers(): Promise<WebbRelayer[]> {
+    return Promise.resolve([]);
+  }
+
+  getRelayersByNote(note: Note): Promise<WebbRelayer[]> {
     return Promise.resolve([]);
   }
 

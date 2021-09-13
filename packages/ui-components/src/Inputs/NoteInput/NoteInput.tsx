@@ -3,8 +3,9 @@ import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabe
 import React, { useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
 import { Note } from '@webb-tools/sdk-mixer';
+import { useDepositNote } from '@webb-dapp/mixer/hooks/note';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
-import { getEVMChainName } from '@webb-dapp/apps/configs';
+import { getEVMChainNameFromInternal } from '@webb-dapp/apps/configs';
 
 const NoteInputWrapper = styled.div``;
 type NoteInputProps = {
@@ -20,19 +21,8 @@ const NoteDetails = styled.div`
   margin: 0 -11px;
 `;
 export const NoteInput: React.FC<NoteInputProps> = ({ error, onChange, value }) => {
-  const [depositNote, setDepositNote] = useState<Note | null>(null);
+  const depositNote = useDepositNote(value);
 
-  useEffect(() => {
-    const handler = async () => {
-      try {
-        let d = await Note.deserialize(value);
-        setDepositNote(d);
-      } catch (_) {
-        setDepositNote(null);
-      }
-    };
-    handler();
-  }, [value]);
   return (
     <InputLabel label={'Note'}>
       <InputBase
@@ -66,7 +56,7 @@ export const NoteInput: React.FC<NoteInputProps> = ({ error, onChange, value }) 
               </tr>
               <tr>
                 <td>Chain:</td>
-                <td style={{ textAlign: 'right' }}>{getEVMChainName(parseInt(depositNote.note.chain))}</td>
+                <td style={{ textAlign: 'right' }}>{getEVMChainNameFromInternal(Number(depositNote.note.chain))}</td>
               </tr>
             </tbody>
           </table>
