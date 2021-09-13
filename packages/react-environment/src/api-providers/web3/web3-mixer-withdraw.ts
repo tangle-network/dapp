@@ -1,4 +1,4 @@
-import { ChainId, evmIdIntoChainId } from '@webb-dapp/apps/configs';
+import { ChainId, chainIdIntoEVMId, evmIdIntoChainId } from '@webb-dapp/apps/configs';
 import { chainIdToRelayerName } from '@webb-dapp/apps/configs/relayer-config';
 import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
 import { depositFromPreimage } from '@webb-dapp/contracts/utils/make-deposit';
@@ -82,6 +82,7 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
     const activeRelayer = this.activeRelayer[0];
     const evmNote = await Note.deserialize(note);
     const deposit = depositFromPreimage(evmNote.note.secret.replace('0x', ''));
+    const chainId = Number(evmNote.note.chain) as ChainId;
     console.log(deposit);
     if (activeRelayer && activeRelayer.account) {
       this.emit('stateChange', WithdrawState.GeneratingZk);
@@ -120,7 +121,7 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
       const tx = relayedWithdraw.generateWithdrawRequest(
         {
           baseOn: 'evm',
-          name: chainIdToRelayerName(evmIdIntoChainId(evmNote.note.chain)),
+          name: chainIdToRelayerName(chainId),
           contractAddress: mixerInfo.address,
           endpoint: '',
         },
