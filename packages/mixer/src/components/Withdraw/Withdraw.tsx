@@ -2,16 +2,17 @@ import { Fade, FormHelperText, InputBase, MenuItem, Select } from '@material-ui/
 import { MixerButton } from '@webb-dapp/mixer/components/MixerButton/MixerButton';
 import WithdrawingModal from '@webb-dapp/mixer/components/Withdraw/WithdrawingModal';
 import { useWithdraw } from '@webb-dapp/mixer/hooks';
+import { useDepositNote } from '@webb-dapp/mixer/hooks/note';
 import { WithdrawState } from '@webb-dapp/react-environment';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabel';
 import { InputSection } from '@webb-dapp/ui-components/Inputs/InputSection/InputSection';
 import { NoteInput } from '@webb-dapp/ui-components/Inputs/NoteInput/NoteInput';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
+import { Note } from '@webb-tools/sdk-mixer';
 import { ethers } from 'ethers';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { useDepositNote } from '@webb-dapp/mixer/hooks/note';
 
 const WithdrawWrapper = styled.div``;
 type WithdrawProps = {};
@@ -108,7 +109,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
                         <td>
                           <span style={{ whiteSpace: 'nowrap' }}>Withdraw fee percentage</span>
                         </td>
-                        <td style={{ textAlign: 'right' }}>{relayersState.activeRelayer?.fee}%</td>
+                        <td style={{ textAlign: 'right' }}>{Number(relayersState.activeRelayer?.fee) * 100}%</td>
                       </tr>
 
                       {fees && (
@@ -131,14 +132,17 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
 
       <MixerButton disabled={!recipient} onClick={withdraw} label={'Withdraw'} />
       <Modal open={stage !== WithdrawState.Ideal}>
-        <WithdrawingModal
-          withdrawTxInfo={{
-            account: recipient,
-          }}
-          cancel={cancelWithdraw}
-          stage={stage}
-          canCancel={canCancel}
-        />
+        {depositNote && (
+          <WithdrawingModal
+            withdrawTxInfo={{
+              account: recipient,
+            }}
+            note={depositNote.note}
+            cancel={cancelWithdraw}
+            stage={stage}
+            canCancel={canCancel}
+          />
+        )}
       </Modal>
     </WithdrawWrapper>
   );

@@ -5,6 +5,7 @@ import styled, { css } from 'styled-components';
 import { Note } from '@webb-tools/sdk-mixer';
 import { useDepositNote } from '@webb-dapp/mixer/hooks/note';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
+import { getEVMChainNameFromInternal } from '@webb-dapp/apps/configs';
 
 const NoteInputWrapper = styled.div``;
 type NoteInputProps = {
@@ -55,7 +56,7 @@ export const NoteInput: React.FC<NoteInputProps> = ({ error, onChange, value }) 
               </tr>
               <tr>
                 <td>Chain:</td>
-                <td style={{ textAlign: 'right' }}>{depositNote.note.chain}</td>
+                <td style={{ textAlign: 'right' }}>{getEVMChainNameFromInternal(Number(depositNote.note.chain))}</td>
               </tr>
             </tbody>
           </table>

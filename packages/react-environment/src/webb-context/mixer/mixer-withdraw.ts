@@ -4,7 +4,7 @@ import { Note } from '@webb-tools/sdk-mixer';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 export enum WithdrawState {
-  Canceled,
+  Cancelling,
   Ideal,
 
   GeneratingZk,
@@ -28,12 +28,16 @@ export type MixerWithdrawEvents = {
 };
 export type OptionalRelayer = null | WebbRelayer;
 export type OptionalActiveRelayer = null | ActiveWebbRelayer;
+export type CancelToken = {
+  cancelled: boolean;
+};
 
 export abstract class MixerWithdraw<T> extends EventBus<MixerWithdrawEvents> {
   state: WithdrawState = WithdrawState.Ideal;
   protected emitter = new BehaviorSubject<OptionalActiveRelayer>(null);
   readonly watcher: Observable<OptionalActiveRelayer>;
   private _activeRelayer: OptionalActiveRelayer = null;
+  cancelToken: CancelToken = { cancelled: false };
 
   constructor(protected inner: T) {
     super();
