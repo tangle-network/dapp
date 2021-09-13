@@ -7,10 +7,6 @@ import { WalletId } from '@webb-dapp/apps/configs/wallets/wallet-id.enum';
 import { walletsConfig } from '@webb-dapp/apps/configs/wallets/wallets-config';
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3';
 import { appEvent } from '@webb-dapp/react-environment/app-event';
-import {
-  evmChainConflict,
-  USER_SWITCHED_TO_EXPECT_CHAIN,
-} from '@webb-dapp/react-environment/error/interactive-errors/evm-network-conflict';
 import { insufficientApiInterface } from '@webb-dapp/react-environment/error/interactive-errors/insufficient-api-interface';
 import { DimensionsProvider } from '@webb-dapp/react-environment/layout';
 import { StoreProvier } from '@webb-dapp/react-environment/store';
@@ -327,57 +323,47 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
             webbWeb3Provider.on('providerUpdate', providerUpdateHandler);
 
             webbWeb3Provider.setChainListener();
-
-            const activeChain = Object.values(chainsConfig).find((chain) => chain.evmId === chainId);
-            const cantAddChain = !chain.evmId || !chain.evmRpcUrls;
-            const addEvmChain = () => {
-              if (!chain.evmId || !chain.evmRpcUrls) {
+            const cantAddChain = !chain.evmId && !chain.evmRpcUrls;
+            const addEvmChain = async () => {
+              if (cantAddChain) {
                 return;
               }
-              const currency = currenciesConfig[chain.nativeCurrencyId];
-              return web3Provider.addChain({
-                chainId: `0x${chain.evmId.toString(16)}`,
-                chainName: chain.name,
-                rpcUrls: chain.evmRpcUrls,
-                nativeCurrency: {
-                  decimals: 18,
-                  name: currency.name,
-                  symbol: currency.symbol,
-                },
+
+              // If we support the evmId but don't have an evmRpcUrl, then it is default on metamask
+              await web3Provider.switchChain({
+                chainId: `0x${chain.evmId.toString(16)}`
+              })?.catch(async (switchError) => {
+                console.log('inside catch for switchChain', switchError);
+
+                // cannot switch because network not recognized, so prompt to add it
+                if (switchError.code === 4902) {
+                  const currency = currenciesConfig[chain.nativeCurrencyId];
+                  await web3Provider.addChain({
+                    chainId: `0x${chain.evmId.toString(16)}`,
+                    chainName: chain.name,
+                    rpcUrls: chain.evmRpcUrls,
+                    nativeCurrency: {
+                      decimals: 18,
+                      name: currency.name,
+                      symbol: currency.symbol,
+                    },
+                  });
+                  // add network will prompt the switch, check evmId again and throw if user rejected
+                  const newChainId = await web3Provider.network;
+
+                  if (newChainId != chain.evmId) {
+                    throw switchError;
+                  }
+                }
+                else {
+                  throw switchError;                  
+                } 
               });
             };
             if (chainId !== chain.evmId) {
-              const activeChainName = activeChain ? activeChain.name : 'unknown';
-              const feedback = evmChainConflict(
-                {
-                  activeOnExtension: {
-                    id: chainId,
-                    name: activeChainName,
-                  },
-                  selected: {
-                    id: chain?.evmId ?? 0,
-                    name: chain.name,
-                  },
-                  addEvmChainToMetaMask: cantAddChain ? undefined : addEvmChain,
-                },
-                appEvent
-              );
-              registerInteractiveFeedback(setInteractiveFeedbacks, feedback);
-              const action = await feedback.wait();
-              if (action?.id !== USER_SWITCHED_TO_EXPECT_CHAIN) {
-                return null;
-              } else {
-                const chainId = await web3Provider.network; // storage based on network id
-                if (chainId !== chain.evmId && activeChain) {
-                  notificationApi({
-                    secondaryMessage: `Please make sure you have switched to ${chain.name} chain`,
-                    variant: 'warning',
-                    message: 'Network not switched',
-                  });
-                  return null;
-                }
-              }
+              await addEvmChain();
             }
+
             await setActiveApiWithAccounts(webbWeb3Provider, chain.id);
             /// listen to `providerUpdate` by MetaMask
             localActiveApi = webbWeb3Provider;
@@ -445,6 +431,10 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
             },
           });
         }
+      } else {
+        // If the user did not want to switch to the previously stored chain,
+        // set the previosuly stored chain in the app for display only.
+        setActiveChain(chains[chainConfig.id]);
       }
     };
     init().finally(() => {

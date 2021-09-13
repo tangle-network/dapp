@@ -22,9 +22,6 @@ export function evmChainConflict(params: EvmNetworkConflictParams, appEvent: TAp
   let interactiveFeedback: InteractiveFeedback;
   const addChainContent = [
     {
-      content: `If you don't have ${params.selected.name} in your MetaMask extension`,
-    },
-    {
       any: () => {
         let clicked = false;
         return React.createElement(Button, {
@@ -41,7 +38,7 @@ export function evmChainConflict(params: EvmNetworkConflictParams, appEvent: TAp
             params.addEvmChainToMetaMask?.();
             clicked = true;
           },
-          children: `Add ${params.selected.name}`,
+          children: `Switch to ${params.selected.name}`,
           variant: 'contained',
           color: 'primary',
         });
@@ -50,15 +47,12 @@ export function evmChainConflict(params: EvmNetworkConflictParams, appEvent: TAp
   ];
   const feedbackBody = InteractiveFeedback.feedbackEntries([
     {
-      header: `The select chain isn't active on MetaMask`,
+      header: `You must change networks`,
     },
 
     {
       content: `The selected chain is ${params.selected.name} with id (${params.selected.id});
        however the active on metamask is ${params.activeOnExtension.name} with id ${params.activeOnExtension.id}`,
-    },
-    {
-      content: `To continue using ${params.selected.name}`,
     },
     {
       list: ['Open MetaMask', `select chain ${params.selected.name}`],
@@ -91,7 +85,7 @@ export function evmChainConflict(params: EvmNetworkConflictParams, appEvent: TAp
       interactiveFeedback?.cancelWithoutHandler();
     },
     feedbackBody,
-    WebbErrorCodes.UnsupportedChain
+    WebbErrorCodes.UnselectedChain
   );
   return interactiveFeedback;
 }
