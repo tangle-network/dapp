@@ -21,6 +21,7 @@ import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { WebbPolkadot } from './api-providers/polkadot';
 import { extensionNotInstalled, unsupportedChain } from './error';
+import { evmChainConflict } from './error/interactive-errors/evm-network-conflict';
 import { SettingProvider } from './SettingProvider';
 import { Chain, netStorageFactory, NetworkStorage, Wallet, WebbApiProvider, WebbContext } from './webb-context';
 
@@ -174,6 +175,22 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
           }
         }
         break;
+      case WebbErrorCodes.UnselectedChain:
+        {
+          // Cast the error to an UnselectedChainError
+
+          // Access the parameters from the unselectedChainError for activeOnExtension
+          // And the 'selected' AKA desired chain.
+
+          
+
+          // const interactiveFeedback = evmChainConflict({
+          //   activeOnExtension: ,
+          //   selected: ,
+            
+          // })
+        }
+        break;
       case WebbErrorCodes.MixerSizeNotFound:
         break;
       case WebbErrorCodes.MetaMaskExtensionNotInstalled:
@@ -244,7 +261,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
                   [WebbEVMChain.Rinkeby]: 'https://rinkeby.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4',
                   //default on metamask
                   [WebbEVMChain.Beresheet]: 'http://beresheet1.edgewa.re:9933',
-                  [WebbEVMChain.HarmonyTest1]: 'https://api.s1.b.hmny.io',
+                  [WebbEVMChain.HarmonyTestnet1]: 'https://api.s1.b.hmny.io',
                 },
                 chainId: chain.evmId,
               });

@@ -20,7 +20,7 @@ export const getEVMChainName = (chainID: number): string => {
 };
 
 export const getEVMChainNameFromInternal = (chainID: number): string => {
-  const chain = Object.values(chainsConfig).find((chainsConfig) => chainsConfig.id === Number(chainID));
+  const chain = Object.values(chainsConfig).find((chainsConfig) => chainsConfig.id === chainID);
   if (chain) {
     return chain.name;
   } else {
