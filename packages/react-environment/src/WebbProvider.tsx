@@ -13,7 +13,7 @@ import { StoreProvier } from '@webb-dapp/react-environment/store';
 import { notificationApi } from '@webb-dapp/ui-components/notification';
 import { AccountSwitchNotification } from '@webb-dapp/ui-components/notification/AccountSwitchNotification';
 import { BareProps } from '@webb-dapp/ui-components/types';
-import { InteractiveFeedback, WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
+import { InteractiveFeedback, UnselectedNetworkError, WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import { Account } from '@webb-dapp/wallet/account/Accounts.adapter';
 import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
 import { LoggerService } from '@webb-tools/app-util';
@@ -21,6 +21,7 @@ import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { WebbPolkadot } from './api-providers/polkadot';
 import { extensionNotInstalled, unsupportedChain } from './error';
+import { evmChainConflict } from './error/interactive-errors/evm-network-conflict';
 import { SettingProvider } from './SettingProvider';
 import { Chain, netStorageFactory, NetworkStorage, Wallet, WebbApiProvider, WebbContext } from './webb-context';
 
@@ -175,6 +176,14 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
         }
         break;
       case WebbErrorCodes.UnselectedChain:
+        {
+          const unselectedChainError = e as UnselectedNetworkError;
+
+          const interactiveFeedback = evmChainConflict(unselectedChainError, appEvent);
+          if (interactiveFeedback) {
+            registerInteractiveFeedback(setInteractiveFeedbacks, interactiveFeedback);
+          }
+        }
         break;
       case WebbErrorCodes.MixerSizeNotFound:
         break;
@@ -471,6 +480,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
           }
         },
         activeFeedback,
+        errorHandler: catchWebbError,
       }}
     >
       <StoreProvier>

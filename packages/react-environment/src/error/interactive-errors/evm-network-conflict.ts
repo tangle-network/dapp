@@ -1,26 +1,17 @@
 import { TAppEvent } from '@webb-dapp/react-environment/app-event';
-import { InteractiveFeedback, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
+import { InteractiveFeedback, UnselectedNetworkError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import { Button } from '@material-ui/core';
 import React from 'react';
 import { notificationApi } from '@webb-dapp/ui-components/notification';
 
-type EvmNetworkConflictParams = {
-  activeOnExtension: {
-    name: string;
-    id: string | number;
-  };
-  selected: {
-    name: string;
-    id: string | number;
-  };
-  addEvmChainToMetaMask?(): void;
-};
-
 export const USER_SWITCHED_TO_EXPECT_CHAIN = 'OK';
 
-export function evmChainConflict(params: EvmNetworkConflictParams, appEvent: TAppEvent): InteractiveFeedback {
+export function evmChainConflict(
+  unselectedNetworkError: UnselectedNetworkError,
+  appEvent: TAppEvent
+): InteractiveFeedback {
   let interactiveFeedback: InteractiveFeedback;
-  const addChainContent = [
+  const switchChainContent = [
     {
       any: () => {
         let clicked = false;
@@ -35,10 +26,10 @@ export function evmChainConflict(params: EvmNetworkConflictParams, appEvent: TAp
               });
               return;
             }
-            params.addEvmChainToMetaMask?.();
+            unselectedNetworkError.switchChain();
             clicked = true;
           },
-          children: `Switch to ${params.selected.name}`,
+          children: `Switch to ${unselectedNetworkError.getIntendedChain().name}`,
           variant: 'contained',
           color: 'primary',
         });
@@ -51,13 +42,14 @@ export function evmChainConflict(params: EvmNetworkConflictParams, appEvent: TAp
     },
 
     {
-      content: `The selected chain is ${params.selected.name} with id (${params.selected.id});
-       however the active on metamask is ${params.activeOnExtension.name} with id ${params.activeOnExtension.id}`,
+      content: `It looks like you want to use ${unselectedNetworkError.getIntendedChain().name} with id (${
+        unselectedNetworkError.getIntendedChain().id
+      });
+       however the selected chain is ${unselectedNetworkError.getActiveChain().name} with id ${
+        unselectedNetworkError.getActiveChain().id
+      }`,
     },
-    {
-      list: ['Open MetaMask', `select chain ${params.selected.name}`],
-    },
-    ...(params.addEvmChainToMetaMask ? addChainContent : []),
+    ...switchChainContent,
   ]);
   const actions = InteractiveFeedback.actionsBuilder()
     // .action(
