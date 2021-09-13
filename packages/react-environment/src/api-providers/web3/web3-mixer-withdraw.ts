@@ -23,6 +23,8 @@ const logger = LoggerService.get('Web3MixerWithdraw');
 
 export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
   cancelWithdraw(): Promise<void> {
+    this.cancelToken.cancelled = true;
+    this.emit('stateChange', WithdrawState.Cancelling);
     return Promise.resolve(undefined);
   }
 
@@ -79,6 +81,7 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
   }
 
   async withdraw(note: string, recipient: string): Promise<void> {
+    this.cancelToken.cancelled = false;
     const activeRelayer = this.activeRelayer[0];
     const evmNote = await Note.deserialize(note);
     const deposit = depositFromPreimage(evmNote.note.secret.replace('0x', ''));
@@ -112,8 +115,28 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
         relayer: activeRelayer.account,
         fee: Number(fees),
       });
-      const zkp = await anchorContract.generateZKP(deposit, zkpInputWithoutMerkleProof);
+
+      // This is the part of withdraw that takes a long time
       this.emit('stateChange', WithdrawState.GeneratingZk);
+      const zkp = await anchorContract.generateZKP(deposit, zkpInputWithoutMerkleProof);
+
+      // Check for cancelled here, abort if it was set.
+      // Mark the withdraw mixer as able to withdraw again.
+      if (this.cancelToken.cancelled) {
+        transactionNotificationConfig.failed?.({
+          address: recipient,
+          data: 'Withdraw cancelled',
+          key: 'mixer-withdraw-evm',
+          path: {
+            method: 'withdraw',
+            section: 'evm-mixer',
+          },
+        });
+        this.emit('stateChange', WithdrawState.Ideal);
+        return;
+      }
+
+      this.emit('stateChange', WithdrawState.SendingTransaction);
 
       logger.trace('Generated the zkp', zkp);
       const tx = relayedWithdraw.generateWithdrawRequest(
@@ -174,6 +197,15 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
       await relayedWithdraw.await();
     } else {
       logger.trace('Withdrawing without relayer');
+      transactionNotificationConfig.loading?.({
+        address: recipient,
+        data: React.createElement('p', {}, 'Withdraw In Progress'),
+        key: 'mixer-withdraw-evm',
+        path: {
+          method: 'withdraw',
+          section: 'evm-mixer',
+        },
+      });
       this.emit('stateChange', WithdrawState.GeneratingZk);
       const contract = await this.inner.getContractBySize(Number(evmNote.note.amount), evmNote.note.tokenSymbol);
       try {
@@ -181,17 +213,28 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
           recipient,
           relayer: recipient,
         });
-        const txReset = await contract.withdraw(deposit, zkpInputWithoutMerkleProof);
-        transactionNotificationConfig.loading?.({
-          address: recipient,
-          data: React.createElement('p', {}, 'Withdraw In Progress'),
-          key: 'mixer-withdraw-evm',
-          path: {
-            method: 'withdraw',
-            section: 'evm-mixer',
-          },
-        });
+
+        // This is the part of withdraw that takes a long time
+        const zkp = await contract.generateZKP(deposit, zkpInputWithoutMerkleProof);
+
+        // Check for cancelled here, abort if it was set.
+        // Mark the withdraw mixer as able to withdraw again.
+        if (this.cancelToken.cancelled) {
+          transactionNotificationConfig.failed?.({
+            address: recipient,
+            data: 'Withdraw cancelled',
+            key: 'mixer-withdraw-evm',
+            path: {
+              method: 'withdraw',
+              section: 'evm-mixer',
+            },
+          });
+          this.emit('stateChange', WithdrawState.Ideal);
+          return;
+        }
+
         this.emit('stateChange', WithdrawState.SendingTransaction);
+        const txReset = await contract.withdraw(zkp.proof, zkp.input);
         await txReset.wait();
         transactionNotificationConfig.finalize?.({
           address: recipient,

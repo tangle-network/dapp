@@ -2,8 +2,11 @@ import { Button, Divider, Icon, LinearProgress, Tooltip, Typography } from '@mat
 import { WithdrawState } from '@webb-dapp/react-environment';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 import { DepositNote } from '@webb-tools/wasm-utils';
+import { LoggerService } from '@webb-tools/app-util';
 import React, { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
+
+const logger = LoggerService.get('Withdraw-Modal');
 
 type WithdrawingModalProps = {
   canCancel: boolean;
@@ -128,8 +131,8 @@ const WithdrawingModal: React.FC<WithdrawingModalProps> = ({ canCancel, cancel, 
         return 'Transaction Done';
       case WithdrawState.Failed:
         return 'Transaction Failed';
-      case WithdrawState.Canceled:
-        return 'Transaction canceled';
+      case WithdrawState.Cancelling:
+        return 'Cancelling Transaction';
       case WithdrawState.GeneratingZk:
         return 'Generating Zero Knowledge proof...';
       case WithdrawState.SendingTransaction:
@@ -210,6 +213,7 @@ const WithdrawingModal: React.FC<WithdrawingModalProps> = ({ canCancel, cancel, 
       </div>
       <Button
         onClick={() => {
+          logger.info('Cancelled Transaction Button Clicked');
           cancel();
         }}
         color='primary'

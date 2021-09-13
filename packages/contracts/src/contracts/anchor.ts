@@ -6,12 +6,14 @@ import { MerkleTree } from '@webb-dapp/utils/merkle';
 import { BigNumber, Contract, providers, Signer } from 'ethers';
 import { Log } from '@ethersproject/abstract-provider';
 import { EvmChainMixersInfo } from '@webb-dapp/react-environment/api-providers/web3/EvmChainMixersInfo';
+import { WebbEVMChain } from '@webb-dapp/apps/configs';
 import utils from 'web3-utils';
 import { abi } from '../abis/NativeAnchor.json';
 import { mixerLogger } from '@webb-dapp/mixer/utils';
 import { retryPromise } from '@webb-dapp/utils/retry-promise';
 import { LoggerService } from '@webb-tools/app-util';
 import { ZKPInput, ZKPInputWithoutMerkleProof } from '@webb-dapp/contracts/contracts/types';
+import { CancelToken } from '@webb-dapp/react-environment/webb-context';
 
 const webSnarkUtils = require('websnark/src/utils');
 type DepositEvent = [string, number, BigNumber];
@@ -73,7 +75,21 @@ export class AnchorContract {
     const currentBlock = await this.web3Provider.getBlockNumber();
 
     let logs: Array<Log> = []; // Read the stored logs into this variable
-    const step = 20;
+    let step: number = 20;
+    const chainId = await this.signer.getChainId();
+
+    switch (chainId) {
+      case WebbEVMChain.Beresheet:
+        step = 20;
+        break;
+      case WebbEVMChain.HarmonyTest1:
+        step = 1000;
+        break;
+      case WebbEVMChain.Rinkeby:
+        step = 5000;
+        break;
+    }
+
     try {
       logs = await this.web3Provider.getLogs({
         fromBlock: startingBlock,
@@ -180,21 +196,20 @@ export class AnchorContract {
     return { proof, input: zkpInput };
   }
 
-  async withdraw(deposit: Deposit, zkpInputWithoutMerkleProof: ZKPInputWithoutMerkleProof) {
+  async withdraw(proof: any, zkp: ZKPInput) {
     // tx config
     const overrides = {
       gasLimit: 6000000,
       gasPrice: utils.toWei('1', 'gwei'),
     };
-    const { input, proof } = await this.generateZKP(deposit, zkpInputWithoutMerkleProof);
     const tx = await this._contract.withdraw(
       proof,
-      bufferToFixed(input.root),
-      bufferToFixed(input.nullifierHash),
-      input.recipient,
-      input.relayer,
-      bufferToFixed(input.fee),
-      bufferToFixed(input.refund),
+      bufferToFixed(zkp.root),
+      bufferToFixed(zkp.nullifierHash),
+      zkp.recipient,
+      zkp.relayer,
+      bufferToFixed(zkp.fee),
+      bufferToFixed(zkp.refund),
       overrides
     );
     return tx;
