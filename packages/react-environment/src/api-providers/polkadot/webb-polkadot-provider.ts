@@ -36,6 +36,16 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
     this.api = this.provider.api;
     this.txBuilder = this.provider.txBuilder;
     this.methods = {
+      bridge: {
+        deposit: {
+          inner: {} as any,
+          enabled: false,
+        },
+        withdraw: {
+          inner: {} as any,
+          enabled: false,
+        },
+      },
       mixer: {
         deposit: {
           inner: new PolkadotMixerDeposit(this),

@@ -1,8 +1,8 @@
-import { ChainId, evmIdIntoChainId } from '@webb-dapp/apps/configs';
+import { ChainId, chainIdIntoEVMId, evmIdIntoChainId } from '@webb-dapp/apps/configs';
 import { chainIdToRelayerName } from '@webb-dapp/apps/configs/relayer-config';
 import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
 import { depositFromPreimage } from '@webb-dapp/contracts/utils/make-deposit';
-import { fromDepositIntoZKPInput } from '@webb-dapp/contracts/utils/zkp-adapters';
+import { fromDepositIntoZKPTornPublicInputs } from '@webb-dapp/contracts/utils/zkp-adapters';
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3/webb-web3-provider';
 import {
   MixerWithdraw,
@@ -85,6 +85,8 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
     const activeRelayer = this.activeRelayer[0];
     const evmNote = await Note.deserialize(note);
     const deposit = depositFromPreimage(evmNote.note.secret.replace('0x', ''));
+    const chainId = Number(evmNote.note.chain) as ChainId;
+    console.log(deposit);
     if (activeRelayer && activeRelayer.account) {
       this.emit('stateChange', WithdrawState.GeneratingZk);
 
@@ -110,7 +112,7 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
       const anchorContract = await this.inner.getContractByAddress(mixerInfo.address);
       logger.trace('Generating the zkp');
       const fees = await activeRelayer.fees(note);
-      const zkpInputWithoutMerkleProof = fromDepositIntoZKPInput(deposit, {
+      const zkpInputWithoutMerkleProof = fromDepositIntoZKPTornPublicInputs(deposit, {
         recipient,
         relayer: activeRelayer.account,
         fee: Number(fees),
@@ -142,17 +144,17 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
       const tx = relayedWithdraw.generateWithdrawRequest(
         {
           baseOn: 'evm',
-          name: chainIdToRelayerName(evmIdIntoChainId(evmNote.note.chain)),
+          name: chainIdToRelayerName(chainId),
           contractAddress: mixerInfo.address,
           endpoint: '',
         },
         zkp.proof,
         {
-          fee: bufferToFixed(zkpInputWithoutMerkleProof.fee),
-          nullifierHash: bufferToFixed(deposit.nullifierHash),
-          recipient: zkpInputWithoutMerkleProof.recipient,
-          refund: bufferToFixed(zkpInputWithoutMerkleProof.refund),
-          relayer: zkpInputWithoutMerkleProof.relayer,
+          fee: bufferToFixed(zkp.input.fee),
+          nullifierHash: bufferToFixed(zkp.input.nullifierHash),
+          recipient: zkp.input.recipient,
+          refund: bufferToFixed(zkp.input.refund),
+          relayer: zkp.input.relayer,
           root: bufferToFixed(zkp.input.root),
         }
       );
@@ -209,7 +211,7 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
       this.emit('stateChange', WithdrawState.GeneratingZk);
       const contract = await this.inner.getContractBySize(Number(evmNote.note.amount), evmNote.note.tokenSymbol);
       try {
-        const zkpInputWithoutMerkleProof = fromDepositIntoZKPInput(deposit, {
+        const zkpInputWithoutMerkleProof = fromDepositIntoZKPTornPublicInputs(deposit, {
           recipient,
           relayer: recipient,
         });

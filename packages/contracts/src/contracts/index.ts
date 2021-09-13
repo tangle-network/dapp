@@ -1,3 +1,4 @@
 export * from './types';
-export * from './contract-data.interface';
-export * from './anchor';
+export * from './anchor-interface';
+export * from './tornado-anchor';
+export * from './webb-anchor';
