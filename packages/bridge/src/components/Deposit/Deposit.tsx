@@ -1,22 +1,23 @@
+import { ChainId } from '@webb-dapp/apps/configs';
 import { DepositConfirm } from '@webb-dapp/bridge/components/DepositConfirm/DepositConfirm';
-import { MixerSize } from '@webb-dapp/react-environment/webb-context';
+import { useBridgeDeposit } from '@webb-dapp/bridge/hooks/deposit/useBridgeDeposit';
+import { MixerSize, useWebContext } from '@webb-dapp/react-environment/webb-context';
 import { SpaceBox } from '@webb-dapp/ui-components/Box';
+import { ChainInput } from '@webb-dapp/ui-components/Inputs/ChainInput/ChainInput';
 import { MixerGroupSelect } from '@webb-dapp/ui-components/Inputs/MixerGroupSelect/MixerGroupSelect';
+import { WalletBridgeCurrencyInput } from '@webb-dapp/ui-components/Inputs/WalletBridgeCurrencyInput/WalletBridgeCurrencyInput';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import React, { useCallback, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import { MixerButton } from '../MixerButton/MixerButton';
-import { WalletBridgeCurrencyInput } from '@webb-dapp/ui-components/Inputs/WalletBridgeCurrencyInput/WalletBridgeCurrencyInput';
-import { useBridgeDeposit } from '@webb-dapp/bridge/hooks/deposit/useBridgeDeposit';
-import { ChainId } from '@webb-dapp/apps/configs';
-import { ChainInput } from '@webb-dapp/ui-components/Inputs/ChainInput/ChainInput';
 
 const DepositWrapper = styled.div``;
 type DepositProps = {};
 
 export const Deposit: React.FC<DepositProps> = () => {
   const bridgeDepositApi = useBridgeDeposit();
+  const { activeChain } = useWebContext();
   // const { clearAmount, token } = useBalanceSelect();
   const { depositApi } = bridgeDepositApi;
   const activeBridge = depositApi?.activeBridge;
@@ -27,13 +28,20 @@ export const Deposit: React.FC<DepositProps> = () => {
     return activeBridge.currency;
   }, [activeBridge]);
 
+  const srcChain = useMemo(() => {
+    if (!activeChain) {
+      return undefined;
+    }
+
+    return activeChain.id;
+  }, [activeChain]);
+
   const [showDepositModal, setShowDepositModal] = useState(false);
 
   const handleSuccess = useCallback((): void => {}, []);
   // const [selectedToken, setSelectedToken] = useState<Currency | undefined>(undefined);
 
   const [item, setItem] = useState<MixerSize | undefined>(undefined);
-
   const [destChain, setDestChain] = useState<ChainId | undefined>(undefined);
   const tokenChains = useMemo(() => {
     return selectedBrideCurrency?.chainIds ?? [];
@@ -46,11 +54,22 @@ export const Deposit: React.FC<DepositProps> = () => {
         selectedToken={bridgeDepositApi.selectedBrideCurrency ?? undefined}
       />
       <SpaceBox height={16} />
-      <ChainInput chains={tokenChains} selectedChain={3} setSelectedChain={setDestChain} />
+      <ChainInput
+        chains={tokenChains}
+        label={'Select Source Chain'}
+        selectedChain={srcChain}
+        // TODO: Hook this up to network switcher
+        setSelectedChain={() => {}}
+      />
       <SpaceBox height={16} />
-      <ChainInput chains={tokenChains} selectedChain={destChain} setSelectedChain={setDestChain} />
+      <ChainInput
+        label={'Select Destination Chain'}
+        chains={tokenChains}
+        selectedChain={destChain}
+        setSelectedChain={setDestChain}
+      />
       <SpaceBox height={16} />
-      <MixerGroupSelect items={bridgeDepositApi.mixerSizes} value={item} onChange={setItem} />
+      {destChain && <MixerGroupSelect items={bridgeDepositApi.mixerSizes} value={item} onChange={setItem} />}
       <SpaceBox height={16} />
       <MixerButton
         disabled={disabledDepositButton}
