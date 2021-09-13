@@ -1,4 +1,6 @@
 import { ChainId } from '@webb-dapp/apps/configs';
+import { chainsConfig } from '@webb-dapp/apps/configs/chains';
+import { EvmChainMixersInfo } from '@webb-dapp/react-environment/api-providers/web3/EvmChainMixersInfo';
 import {
   Capabilities,
   RelayedChainConfig,
@@ -8,16 +10,23 @@ import {
 import { Observable, Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
+type MixerQuery = {
+  amount: number;
+  tokenSymbol: string;
+};
+
 type RelayerQuery = {
   baseOn?: 'evm' | 'substrate';
   ipService?: true;
   chainId?: ChainId;
+  mixerSupport?: MixerQuery;
 };
+
 type RelayedChainInput = {
   endpoint: string;
   name: string;
-  contractAddress: string;
   baseOn: 'evm' | 'substrate';
+  contractAddress: string;
 };
 
 export type WithdrawRelayerArgs = {
@@ -57,18 +66,22 @@ export class WebbRelayerBuilder {
     return {
       hasIpService: true,
       supportedChains: {
-        evm: Object.keys(info.evm)
-          .filter((key) => info.evm[key]?.account && Boolean(nameAdapter(key, 'evm')))
-          .reduce((m, key) => {
-            m.set(nameAdapter(key, 'evm'), info.evm[key]);
-            return m;
-          }, new Map()),
-        substrate: Object.keys(info.substrate)
-          .filter((key) => info.substrate[key]?.account && Boolean(nameAdapter(key, 'substrate')))
-          .reduce((m, key) => {
-            m.set(nameAdapter(key, 'substrate'), info.evm[key]);
-            return m;
-          }, new Map()),
+        evm: info.evm ?
+          Object.keys(info.evm)
+            .filter((key) => info.evm[key]?.account && Boolean(nameAdapter(key, 'evm')))
+            .reduce((m, key) => {
+              m.set(nameAdapter(key, 'evm'), info.evm[key]);
+              return m;
+            }, new Map())
+          : new Map(),
+        substrate: info.substrate ?
+          Object.keys(info.substrate)
+            .filter((key) => info.substrate[key]?.account && Boolean(nameAdapter(key, 'substrate')))
+            .reduce((m, key) => {
+              m.set(nameAdapter(key, 'substrate'), info.evm[key]);
+              return m;
+            }, new Map())
+          : new Map(),
       },
     };
   }
@@ -78,6 +91,7 @@ export class WebbRelayerBuilder {
     const res = await fetch(`${config.endpoint}/api/v1/info`);
     const info: RelayerInfo = await res.json();
     const capabilities = WebbRelayerBuilder.infoIntoCapabilities(config, info, this.chainNameAdapter);
+    console.log('Relayer capabilities', capabilities);
     this.capabilities[config.endpoint] = capabilities;
     return capabilities;
   }
@@ -112,13 +126,30 @@ export class WebbRelayerBuilder {
    *  get a list of the suitable relaryes for a given query
    * */
   getRelayer(query: RelayerQuery): WebbRelayer[] {
-    const { baseOn, chainId, ipService } = query;
+    const { baseOn, chainId, ipService, mixerSupport } = query;
     return Object.keys(this.capabilities)
       .filter((key) => {
         const capabilities = this.capabilities[key];
         if (ipService) {
           if (!capabilities.hasIpService) {
             return false;
+          }
+        }
+        if (mixerSupport && baseOn && chainId) {
+          if (baseOn == 'evm') {
+            const evmId = chainsConfig[chainId].evmId!;
+            const mixerInfo = new EvmChainMixersInfo(evmId);
+            return Boolean(
+              capabilities.supportedChains[baseOn]
+                .get(chainId)
+                ?.contracts?.find(
+                  (contract) =>
+                    contract.address ==
+                    mixerInfo
+                      .getTornMixerInfoBySize(mixerSupport.amount, mixerSupport.tokenSymbol)
+                      .address.toLowerCase()
+                )
+            );
           }
         }
         if (baseOn && chainId) {

@@ -1,9 +1,10 @@
 import { ActiveWebbRelayer, WebbRelayer } from '@webb-dapp/react-environment/webb-context/relayer';
 import { EventBus } from '@webb-tools/app-util';
+import { Note } from '@webb-tools/sdk-mixer';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 export enum WithdrawState {
-  Canceled,
+  Cancelling,
   Ideal,
 
   GeneratingZk,
@@ -27,12 +28,16 @@ export type MixerWithdrawEvents = {
 };
 export type OptionalRelayer = null | WebbRelayer;
 export type OptionalActiveRelayer = null | ActiveWebbRelayer;
+export type CancelToken = {
+  cancelled: boolean;
+};
 
 export abstract class MixerWithdraw<T> extends EventBus<MixerWithdrawEvents> {
   state: WithdrawState = WithdrawState.Ideal;
   protected emitter = new BehaviorSubject<OptionalActiveRelayer>(null);
   readonly watcher: Observable<OptionalActiveRelayer>;
   private _activeRelayer: OptionalActiveRelayer = null;
+  cancelToken: CancelToken = { cancelled: false };
 
   constructor(protected inner: T) {
     super();
@@ -57,6 +62,10 @@ export abstract class MixerWithdraw<T> extends EventBus<MixerWithdrawEvents> {
 
   // todo switch to the reactive api
   get relayers(): Promise<WebbRelayer[]> {
+    return Promise.resolve([]);
+  }
+
+  getRelayersByNote(note: Note): Promise<WebbRelayer[]> {
     return Promise.resolve([]);
   }
 
