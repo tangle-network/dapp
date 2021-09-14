@@ -21,7 +21,7 @@ export const Deposit: React.FC<DepositProps> = () => {
   // const { clearAmount, token } = useBalanceSelect();
   const { depositApi } = bridgeDepositApi;
   const activeBridge = depositApi?.activeBridge;
-  const selectedBrideCurrency = useMemo(() => {
+  const selectedBridgeCurrency = useMemo(() => {
     if (!activeBridge) {
       return undefined;
     }
@@ -44,14 +44,14 @@ export const Deposit: React.FC<DepositProps> = () => {
   const [item, setItem] = useState<MixerSize | undefined>(undefined);
   const [destChain, setDestChain] = useState<ChainId | undefined>(undefined);
   const tokenChains = useMemo(() => {
-    return selectedBrideCurrency?.chainIds ?? [];
-  }, [selectedBrideCurrency]);
+    return selectedBridgeCurrency?.chainIds ?? [];
+  }, [selectedBridgeCurrency]);
   const disabledDepositButton = typeof item?.id === 'undefined' || typeof destChain === 'undefined';
   return (
     <DepositWrapper>
       <WalletBridgeCurrencyInput
         setSelectedToken={bridgeDepositApi.setSelectedCurrency}
-        selectedToken={bridgeDepositApi.selectedBrideCurrency ?? undefined}
+        selectedToken={bridgeDepositApi.selectedBridgeCurrency ?? undefined}
       />
       <SpaceBox height={16} />
       <ChainInput
