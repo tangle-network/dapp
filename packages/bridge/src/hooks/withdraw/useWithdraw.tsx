@@ -25,7 +25,7 @@ export const useWithdraw = (params: UseWithdrawProps) => {
     },
   });
   const withdrawApi = useMemo(() => {
-    const withdraw = activeApi?.methods.mixer.withdraw;
+    const withdraw = activeApi?.methods.bridge.withdraw;
     if (!withdraw?.enabled) return null;
     return withdraw.inner;
   }, [activeApi]);

@@ -8,17 +8,12 @@ import { EvmChainMixersInfo } from '@webb-dapp/react-environment/api-providers/w
 import { MerkleTree, PoseidonHasher } from '@webb-dapp/utils/merkle';
 import { retryPromise } from '@webb-dapp/utils/retry-promise';
 import { LoggerService } from '@webb-tools/app-util';
-import { BigNumber, providers, Signer, Contract } from 'ethers';
+import { BigNumber, Contract, providers, Signer } from 'ethers';
 import utils from 'web3-utils';
-import {
-  WEBBAnchor2__factory,
-  WEBBAnchor2__factory as WebbAnchorFactory,
-} from '../types/factories/WEBBAnchor2__factory';
-import {
-  ZKPWebbPublicInputs,
-  ZKPWebbInputWithMerkle,
-  ZKPWebbInputWithoutMerkle,
-} from '@webb-dapp/contracts/contracts/types';
+import { WEBBAnchor2__factory } from '../types/factories/WEBBAnchor2__factory';
+import { ZKPWebbInputWithMerkle, ZKPWebbInputWithoutMerkle } from '@webb-dapp/contracts/contracts/types';
+import { bridgeCurrencyBridgeStorageFactory } from '@webb-dapp/react-environment/api-providers/web3/bridge-storage';
+import { MixerStorage } from '@webb-dapp/apps/configs/storages/EvmChainStorage';
 
 const F = require('circomlib').babyJub.F;
 
@@ -126,7 +121,11 @@ export class WebbAnchorContract {
    *  5- return the path to the leaf.
    * */
   async generateMerkleProof(deposit: Deposit) {
-    const storedContractInfo = await this.mixersInfo.getMixerStorage(this._contract.address);
+    const bridgeStorageStorage = await bridgeCurrencyBridgeStorageFactory();
+    const storedContractInfo: MixerStorage[0] = (await bridgeStorageStorage.get(this._contract.address)) || {
+      lastQueriedBlock: 0,
+      leaves: [] as string[],
+    };
     const treeHeight = await this._contract.levels();
     const tree = new MerkleTree('eth', treeHeight, storedContractInfo.leaves, new PoseidonHasher());
 
@@ -145,10 +144,10 @@ export class WebbAnchorContract {
 
     // compare root against contract, and store if there is a match
     if (knownRoot) {
-      this.mixersInfo.setMixerStorage(this._contract.address, fetchedLeaves.lastQueriedBlock, [
-        ...storedContractInfo.leaves,
-        ...fetchedLeaves.newLeaves,
-      ]);
+      await bridgeStorageStorage.set(this._contract.address, {
+        lastQueriedBlock: fetchedLeaves.lastQueriedBlock,
+        leaves: [...fetchedLeaves.newLeaves, ...storedContractInfo.leaves],
+      });
     }
 
     let leafIndex = [...storedContractInfo.leaves, ...fetchedLeaves.newLeaves].findIndex(
@@ -171,7 +170,14 @@ export class WebbAnchorContract {
       pathIndices,
       root: root as string,
     };
-
+    const proofsData = await webSnarkUtils.genWitnessAndProve(
+      // @ts-ignore
+      window.groth16,
+      zkpInput,
+      circuitData,
+      proving_key
+    );
+    const { proof } = await webSnarkUtils.toSolidityInput(proofsData);
     return { proof, input: zkpInput };
   }
 
@@ -191,6 +197,6 @@ export class WebbAnchorContract {
       bufferToFixed(zkp.refund),
       overrides
     );
-    return tx;
+    await tx.wait();
   }
 }
