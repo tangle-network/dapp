@@ -30,7 +30,7 @@ export const bridgeConfig: BridgeConfig = {
           [ChainId.EdgewareTestNet]: '0xc4f39Adfd41c3c858c71309A3C5484707B99138f',
           [ChainId.Rinkeby]: '0x5aCF1A99945AeC335309Ff0662504c8ebbf5c000',
         },
-        amount: '1',
+        amount: '.1',
       },
     ],
   },
