@@ -4,12 +4,13 @@ import WithdrawingModal from '@webb-dapp/mixer/components/Withdraw/WithdrawingMo
 import { useWithdraw } from '@webb-dapp/mixer/hooks';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabel';
-import { NoteInput } from '@webb-dapp/ui-components/Inputs/NoteInput/NoteInput';
+import { BridgeNoteInput } from '@webb-dapp/ui-components/Inputs/NoteInput/BridgeNoteInput';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { WithdrawState } from '@webb-dapp/react-environment';
 import { InputSection } from '@webb-dapp/ui-components/Inputs/InputSection/InputSection';
+import { useDepositNote } from '@webb-dapp/mixer/';
 
 const WithdrawWrapper = styled.div``;
 type WithdrawProps = {};
@@ -22,11 +23,13 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
     recipient,
     note,
   });
+
+  const depositNote = useDepositNote(note);
   console.log(note);
   return (
     <WithdrawWrapper>
       <InputSection>
-        <NoteInput error={note ? validationErrors.note : ''} value={note} onChange={setNote} />
+        <BridgeNoteInput error={note ? validationErrors.note : ''} value={note} onChange={setNote} />
       </InputSection>
       <SpaceBox height={16} />
 
@@ -51,14 +54,17 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
 
       <MixerButton disabled={!recipient} onClick={withdraw} label={'Withdraw'} />
       <Modal open={stage !== WithdrawState.Ideal}>
-        <WithdrawingModal
-          withdrawTxInfo={{
-            account: recipient,
-          }}
-          cancel={cancelWithdraw}
-          stage={stage}
-          canCancel={canCancel}
-        />
+        {depositNote && (
+          <WithdrawingModal
+            withdrawTxInfo={{
+              account: recipient,
+            }}
+            note={depositNote.note}
+            cancel={cancelWithdraw}
+            stage={stage}
+            canCancel={canCancel}
+          />
+        )}
       </Modal>
     </WithdrawWrapper>
   );

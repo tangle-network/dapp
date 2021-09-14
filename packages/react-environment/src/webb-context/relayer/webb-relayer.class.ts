@@ -138,18 +138,17 @@ export class WebbRelayerBuilder {
         if (mixerSupport && baseOn && chainId) {
           if (baseOn == 'evm') {
             const evmId = chainsConfig[chainId].evmId!;
-            const mixerInfo = new EvmChainMixersInfo(evmId);
-            return Boolean(
-              capabilities.supportedChains[baseOn]
-                .get(chainId)
-                ?.contracts?.find(
-                  (contract) =>
-                    contract.address ==
-                    mixerInfo
-                      .getTornMixerInfoBySize(mixerSupport.amount, mixerSupport.tokenSymbol)
-                      .address.toLowerCase()
-                )
-            );
+            const mixersInfoForChain = new EvmChainMixersInfo(evmId);
+            const mixerInfo = mixersInfoForChain.getTornMixerInfoBySize(mixerSupport.amount, mixerSupport.tokenSymbol);
+            if (mixerInfo) {
+              return Boolean(
+                capabilities.supportedChains[baseOn]
+                  .get(chainId)
+                  ?.contracts?.find((contract) => contract.address == mixerInfo.address.toLowerCase())
+              );
+            } else {
+              return false;
+            }
           }
         }
         if (baseOn && chainId) {

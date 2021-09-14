@@ -5,15 +5,9 @@ import React from 'react';
 import { notificationApi } from '@webb-dapp/ui-components/notification';
 
 type EvmNetworkConflictParams = {
-  activeOnExtension: {
-    name: string;
-    id: string | number;
-  };
-  selected: {
-    name: string;
-    id: string | number;
-  };
-  addEvmChainToMetaMask?(): void;
+  intendedChain: string;
+  selectedChain: string;
+  switchChain?(): void;
 };
 
 export const USER_SWITCHED_TO_EXPECT_CHAIN = 'OK';
@@ -35,10 +29,10 @@ export function evmChainConflict(params: EvmNetworkConflictParams, appEvent: TAp
               });
               return;
             }
-            params.addEvmChainToMetaMask?.();
+            params.switchChain?.();
             clicked = true;
           },
-          children: `Switch to ${params.selected.name}`,
+          children: `Switch to ${params.intendedChain}`,
           variant: 'contained',
           color: 'primary',
         });
@@ -47,17 +41,14 @@ export function evmChainConflict(params: EvmNetworkConflictParams, appEvent: TAp
   ];
   const feedbackBody = InteractiveFeedback.feedbackEntries([
     {
-      header: `You must change networks`,
+      header: `You must switch networks`,
     },
 
     {
-      content: `The selected chain is ${params.selected.name} with id (${params.selected.id});
-       however the active on metamask is ${params.activeOnExtension.name} with id ${params.activeOnExtension.id}`,
+      content: `The selected chain is ${params.selectedChain};
+       however the note is intended for ${params.intendedChain}`,
     },
-    {
-      list: ['Open MetaMask', `select chain ${params.selected.name}`],
-    },
-    ...(params.addEvmChainToMetaMask ? addChainContent : []),
+    ...(params.switchChain ? addChainContent : []),
   ]);
   const actions = InteractiveFeedback.actionsBuilder()
     // .action(

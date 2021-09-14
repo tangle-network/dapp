@@ -7,7 +7,7 @@ import { WithdrawState } from '@webb-dapp/react-environment';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabel';
 import { InputSection } from '@webb-dapp/ui-components/Inputs/InputSection/InputSection';
-import { NoteInput } from '@webb-dapp/ui-components/Inputs/NoteInput/NoteInput';
+import { MixerNoteInput } from '@webb-dapp/ui-components/Inputs/NoteInput/MixerNoteInput';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { Note } from '@webb-tools/sdk-mixer';
 import { ethers } from 'ethers';
@@ -48,7 +48,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
   return (
     <WithdrawWrapper>
       <InputSection>
-        <NoteInput error={note ? validationErrors.note : ''} value={note} onChange={setNote} />
+        <MixerNoteInput error={note ? validationErrors.note : ''} value={note} onChange={setNote} />
       </InputSection>
 
       <SpaceBox height={16} />

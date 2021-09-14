@@ -87,9 +87,6 @@ export class EvmChainMixersInfo {
 
   getTornMixerInfoBySize(mixerSize: number, tokenSymbol: string) {
     const mixerInfo = this.tornMixerInfo.find((mixer) => mixer.symbol == tokenSymbol && mixer.size == mixerSize);
-    if (!mixerInfo) {
-      throw new Error(`There is no information for a ${tokenSymbol} mixer with size ${mixerSize}`);
-    }
     return mixerInfo;
   }
 

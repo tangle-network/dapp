@@ -1,6 +1,6 @@
 import Icon from '@material-ui/core/Icon';
 import WalletConnectProvider from '@walletconnect/web3-provider';
-import { ChainId, chainsConfig, chainsPopulated, currenciesConfig, WebbEVMChain } from '@webb-dapp/apps/configs';
+import { ChainId, chainsPopulated, currenciesConfig, WebbEVMChain } from '@webb-dapp/apps/configs';
 import { getEVMChainName } from '@webb-dapp/apps/configs/evm/SupportedMixers';
 import { getWebbRelayer } from '@webb-dapp/apps/configs/relayer-config';
 import { WalletId } from '@webb-dapp/apps/configs/wallets/wallet-id.enum';
@@ -471,6 +471,9 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
           }
         },
         activeFeedback,
+        registerInteractiveFeedback: (interactiveFeedback: InteractiveFeedback) => {
+          registerInteractiveFeedback(setInteractiveFeedbacks, interactiveFeedback);
+        },
       }}
     >
       <StoreProvier>

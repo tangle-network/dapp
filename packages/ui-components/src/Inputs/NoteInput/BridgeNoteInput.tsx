@@ -5,10 +5,9 @@ import styled, { css } from 'styled-components';
 import { useDepositNote } from '@webb-dapp/mixer/hooks/note';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { getEVMChainNameFromInternal } from '@webb-dapp/apps/configs';
-import { BridgeCurrency, useWebContext } from '@webb-dapp/react-environment';
-import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
+import { BridgeCurrency } from '@webb-dapp/react-environment/webb-context';
+import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge'
 
-const NoteInputWrapper = styled.div``;
 type NoteInputProps = {
   value: string;
   onChange(next: string): void;
@@ -22,13 +21,13 @@ const NoteDetails = styled.div`
   margin: 0 -11px;
 `;
 
-export const NoteInput: React.FC<NoteInputProps> = ({ error, onChange, value }) => {
+export const BridgeNoteInput: React.FC<NoteInputProps> = ({ error, onChange, value }) => {
   const depositNote = useDepositNote(value);
   const { getBridge } = useBridge();
-  const { activeChain } = useWebContext();
+
   const bridge = useMemo(() => {
     try {
-      if (depositNote) {
+      if (depositNote && depositNote.note.prefix == 'bridge') {
         const currency = BridgeCurrency.fromString(depositNote.note.tokenSymbol);
         return getBridge(currency);
       }
@@ -36,20 +35,6 @@ export const NoteInput: React.FC<NoteInputProps> = ({ error, onChange, value }) 
       return null;
     }
   }, [depositNote]);
-
-  /*
-	useEffect(() => {
-		const handler = async () => {
-			try {
-				let d = await Note.deserialize(value);
-				onChange(value);
-			} catch (e) {
-				onChange('');
-			}
-		};
-		handler();
-	}, [depositNote]);
-*/
 
   return (
     <InputLabel label={'Note'}>
@@ -85,7 +70,7 @@ export const NoteInput: React.FC<NoteInputProps> = ({ error, onChange, value }) 
                 </td>
               </tr>
               <tr>
-                <td>{bridge ? 'Destination Chain' : 'Chain'}:</td>
+                <td>Destination Chain:</td>
                 <td style={{ textAlign: 'right' }}>{getEVMChainNameFromInternal(Number(depositNote.note.chain))}</td>
               </tr>
               {bridge ? (
