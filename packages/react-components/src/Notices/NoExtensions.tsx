@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components';
 import { SpaceBox } from '@webb-dapp/ui-components';
 
 const POLKADOT_EXTENSION_PAGE = 'https://polkadot.js.org/extension';
-const METAMASK_EXTENSION_PAGE = 'https://metamask.io/download'
+const METAMASK_EXTENSION_PAGE = 'https://metamask.io/download';
 
 const NoExtensionWrapper = styled.div`
   padding: 1rem;
@@ -49,22 +49,20 @@ const GetMetamaskButton = styled.button`
             background: ${theme.gray4};
           `
         : '';
-  }}
+    }}
 `;
 
 const handleOpenLink = (link: string): void => {
-  window.open(link, "_blank");
-}
+  window.open(link, '_blank');
+};
 
 export const NoExtensions: React.FC = memo(() => {
-
   return (
     <NoExtensionWrapper>
       <Typography color={'textPrimary'}>{'No web3 extensions found, please install one first!'}</Typography>
-      <SpaceBox height={30}/>
-      <GetPolkadotButton as={ButtonBase} 
-        onClick={() => handleOpenLink(POLKADOT_EXTENSION_PAGE)}>
-          {'Get Polkadot{.js}'}
+      <SpaceBox height={30} />
+      <GetPolkadotButton as={ButtonBase} onClick={() => handleOpenLink(POLKADOT_EXTENSION_PAGE)}>
+        {'Get Polkadot{.js}'}
       </GetPolkadotButton>
       {/* <GetMetamaskButton as={ButtonBase} 
         onClick={() => handleOpenLink(METAMASK_EXTENSION_PAGE)}>

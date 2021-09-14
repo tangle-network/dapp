@@ -11,7 +11,11 @@ import { LoggerService } from '@webb-tools/app-util';
 import { BigNumber, providers, Signer } from 'ethers';
 import utils from 'web3-utils';
 import { WEBBAnchor2__factory as WebbAnchorFactory } from '../types/factories/WEBBAnchor2__factory';
-import { ZKPWebbPublicInputs, ZKPWebbInputWithMerkle, ZKPWebbInputWithoutMerkle } from '@webb-dapp/contracts/contracts/types';
+import {
+  ZKPWebbPublicInputs,
+  ZKPWebbInputWithMerkle,
+  ZKPWebbInputWithoutMerkle,
+} from '@webb-dapp/contracts/contracts/types';
 const F = require('circomlib').babyJub.F;
 
 type DepositEvent = [string, number, BigNumber];
@@ -63,7 +67,7 @@ export class WebbAnchorContract {
     await recipient.wait();
   }
 
-  private async getDepositLeaves(startingBlock: number): Promise<{ lastQueriedBlock: number, newLeaves: string[] }> {
+  private async getDepositLeaves(startingBlock: number): Promise<{ lastQueriedBlock: number; newLeaves: string[] }> {
     const filter = this._contract.filters.Deposit(null, null, null);
     const currentBlock = await this.web3Provider.getBlockNumber();
 

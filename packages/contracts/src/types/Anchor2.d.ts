@@ -14,301 +14,164 @@ import {
   Overrides,
   PayableOverrides,
   CallOverrides,
-} from "ethers";
-import { BytesLike } from "@ethersproject/bytes";
-import { Listener, Provider } from "@ethersproject/providers";
-import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
-import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
+} from 'ethers';
+import { BytesLike } from '@ethersproject/bytes';
+import { Listener, Provider } from '@ethersproject/providers';
+import { FunctionFragment, EventFragment, Result } from '@ethersproject/abi';
+import { TypedEventFilter, TypedEvent, TypedListener } from './commons';
 
 interface Anchor2Interface extends ethers.utils.Interface {
   functions: {
-    "FIELD_SIZE()": FunctionFragment;
-    "ROOT_HISTORY_SIZE()": FunctionFragment;
-    "ZERO_VALUE()": FunctionFragment;
-    "addEdge(uint256,bytes32,uint256)": FunctionFragment;
-    "admin()": FunctionFragment;
-    "bridge()": FunctionFragment;
-    "chainID()": FunctionFragment;
-    "commitments(bytes32)": FunctionFragment;
-    "currentNeighborRootIndex(uint256)": FunctionFragment;
-    "currentRootIndex()": FunctionFragment;
-    "denomination()": FunctionFragment;
-    "deposit(bytes32)": FunctionFragment;
-    "edgeExistsForChain(uint256)": FunctionFragment;
-    "edgeIndex(uint256)": FunctionFragment;
-    "edgeList(uint256)": FunctionFragment;
-    "filledSubtrees(uint256)": FunctionFragment;
-    "getLastRoot()": FunctionFragment;
-    "getLatestNeighborRoots()": FunctionFragment;
-    "handler()": FunctionFragment;
-    "hasEdge(uint256)": FunctionFragment;
-    "hashLeftRight(address,bytes32,bytes32)": FunctionFragment;
-    "hasher()": FunctionFragment;
-    "isKnownNeighborRoot(uint256,bytes32)": FunctionFragment;
-    "isKnownRoot(bytes32)": FunctionFragment;
-    "isSpent(bytes32)": FunctionFragment;
-    "isSpentArray(bytes32[])": FunctionFragment;
-    "levels()": FunctionFragment;
-    "neighborRoots(uint256,uint32)": FunctionFragment;
-    "nextIndex()": FunctionFragment;
-    "nullifierHashes(bytes32)": FunctionFragment;
-    "roots(uint256)": FunctionFragment;
-    "setBridge(address)": FunctionFragment;
-    "setHandler(address)": FunctionFragment;
-    "token()": FunctionFragment;
-    "unpackProof(uint256[8])": FunctionFragment;
-    "unwrap(address,uint256)": FunctionFragment;
-    "updateEdge(uint256,bytes32,uint256)": FunctionFragment;
-    "verifier()": FunctionFragment;
-    "withdraw(bytes,bytes,bytes32,address,address,uint256,uint256)": FunctionFragment;
-    "wrap(address,uint256)": FunctionFragment;
-    "zeros(uint256)": FunctionFragment;
+    'FIELD_SIZE()': FunctionFragment;
+    'ROOT_HISTORY_SIZE()': FunctionFragment;
+    'ZERO_VALUE()': FunctionFragment;
+    'addEdge(uint256,bytes32,uint256)': FunctionFragment;
+    'admin()': FunctionFragment;
+    'bridge()': FunctionFragment;
+    'chainID()': FunctionFragment;
+    'commitments(bytes32)': FunctionFragment;
+    'currentNeighborRootIndex(uint256)': FunctionFragment;
+    'currentRootIndex()': FunctionFragment;
+    'denomination()': FunctionFragment;
+    'deposit(bytes32)': FunctionFragment;
+    'edgeExistsForChain(uint256)': FunctionFragment;
+    'edgeIndex(uint256)': FunctionFragment;
+    'edgeList(uint256)': FunctionFragment;
+    'filledSubtrees(uint256)': FunctionFragment;
+    'getLastRoot()': FunctionFragment;
+    'getLatestNeighborRoots()': FunctionFragment;
+    'handler()': FunctionFragment;
+    'hasEdge(uint256)': FunctionFragment;
+    'hashLeftRight(address,bytes32,bytes32)': FunctionFragment;
+    'hasher()': FunctionFragment;
+    'isKnownNeighborRoot(uint256,bytes32)': FunctionFragment;
+    'isKnownRoot(bytes32)': FunctionFragment;
+    'isSpent(bytes32)': FunctionFragment;
+    'isSpentArray(bytes32[])': FunctionFragment;
+    'levels()': FunctionFragment;
+    'neighborRoots(uint256,uint32)': FunctionFragment;
+    'nextIndex()': FunctionFragment;
+    'nullifierHashes(bytes32)': FunctionFragment;
+    'roots(uint256)': FunctionFragment;
+    'setBridge(address)': FunctionFragment;
+    'setHandler(address)': FunctionFragment;
+    'token()': FunctionFragment;
+    'unpackProof(uint256[8])': FunctionFragment;
+    'unwrap(address,uint256)': FunctionFragment;
+    'updateEdge(uint256,bytes32,uint256)': FunctionFragment;
+    'verifier()': FunctionFragment;
+    'withdraw(bytes,bytes,bytes32,address,address,uint256,uint256)': FunctionFragment;
+    'wrap(address,uint256)': FunctionFragment;
+    'zeros(uint256)': FunctionFragment;
   };
 
+  encodeFunctionData(functionFragment: 'FIELD_SIZE', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'ROOT_HISTORY_SIZE', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'ZERO_VALUE', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'addEdge', values: [BigNumberish, BytesLike, BigNumberish]): string;
+  encodeFunctionData(functionFragment: 'admin', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'bridge', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'chainID', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'commitments', values: [BytesLike]): string;
+  encodeFunctionData(functionFragment: 'currentNeighborRootIndex', values: [BigNumberish]): string;
+  encodeFunctionData(functionFragment: 'currentRootIndex', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'denomination', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'deposit', values: [BytesLike]): string;
+  encodeFunctionData(functionFragment: 'edgeExistsForChain', values: [BigNumberish]): string;
+  encodeFunctionData(functionFragment: 'edgeIndex', values: [BigNumberish]): string;
+  encodeFunctionData(functionFragment: 'edgeList', values: [BigNumberish]): string;
+  encodeFunctionData(functionFragment: 'filledSubtrees', values: [BigNumberish]): string;
+  encodeFunctionData(functionFragment: 'getLastRoot', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'getLatestNeighborRoots', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'handler', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'hasEdge', values: [BigNumberish]): string;
+  encodeFunctionData(functionFragment: 'hashLeftRight', values: [string, BytesLike, BytesLike]): string;
+  encodeFunctionData(functionFragment: 'hasher', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'isKnownNeighborRoot', values: [BigNumberish, BytesLike]): string;
+  encodeFunctionData(functionFragment: 'isKnownRoot', values: [BytesLike]): string;
+  encodeFunctionData(functionFragment: 'isSpent', values: [BytesLike]): string;
+  encodeFunctionData(functionFragment: 'isSpentArray', values: [BytesLike[]]): string;
+  encodeFunctionData(functionFragment: 'levels', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'neighborRoots', values: [BigNumberish, BigNumberish]): string;
+  encodeFunctionData(functionFragment: 'nextIndex', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'nullifierHashes', values: [BytesLike]): string;
+  encodeFunctionData(functionFragment: 'roots', values: [BigNumberish]): string;
+  encodeFunctionData(functionFragment: 'setBridge', values: [string]): string;
+  encodeFunctionData(functionFragment: 'setHandler', values: [string]): string;
+  encodeFunctionData(functionFragment: 'token', values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "FIELD_SIZE",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "ROOT_HISTORY_SIZE",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "ZERO_VALUE",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "addEdge",
-    values: [BigNumberish, BytesLike, BigNumberish]
-  ): string;
-  encodeFunctionData(functionFragment: "admin", values?: undefined): string;
-  encodeFunctionData(functionFragment: "bridge", values?: undefined): string;
-  encodeFunctionData(functionFragment: "chainID", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "commitments",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "currentNeighborRootIndex",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "currentRootIndex",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "denomination",
-    values?: undefined
-  ): string;
-  encodeFunctionData(functionFragment: "deposit", values: [BytesLike]): string;
-  encodeFunctionData(
-    functionFragment: "edgeExistsForChain",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "edgeIndex",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "edgeList",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "filledSubtrees",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getLastRoot",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getLatestNeighborRoots",
-    values?: undefined
-  ): string;
-  encodeFunctionData(functionFragment: "handler", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "hasEdge",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "hashLeftRight",
-    values: [string, BytesLike, BytesLike]
-  ): string;
-  encodeFunctionData(functionFragment: "hasher", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "isKnownNeighborRoot",
-    values: [BigNumberish, BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "isKnownRoot",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(functionFragment: "isSpent", values: [BytesLike]): string;
-  encodeFunctionData(
-    functionFragment: "isSpentArray",
-    values: [BytesLike[]]
-  ): string;
-  encodeFunctionData(functionFragment: "levels", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "neighborRoots",
-    values: [BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(functionFragment: "nextIndex", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "nullifierHashes",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(functionFragment: "roots", values: [BigNumberish]): string;
-  encodeFunctionData(functionFragment: "setBridge", values: [string]): string;
-  encodeFunctionData(functionFragment: "setHandler", values: [string]): string;
-  encodeFunctionData(functionFragment: "token", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "unpackProof",
+    functionFragment: 'unpackProof',
     values: [
-      [
-        BigNumberish,
-        BigNumberish,
-        BigNumberish,
-        BigNumberish,
-        BigNumberish,
-        BigNumberish,
-        BigNumberish,
-        BigNumberish
-      ]
+      [BigNumberish, BigNumberish, BigNumberish, BigNumberish, BigNumberish, BigNumberish, BigNumberish, BigNumberish]
     ]
   ): string;
+  encodeFunctionData(functionFragment: 'unwrap', values: [string, BigNumberish]): string;
+  encodeFunctionData(functionFragment: 'updateEdge', values: [BigNumberish, BytesLike, BigNumberish]): string;
+  encodeFunctionData(functionFragment: 'verifier', values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "unwrap",
-    values: [string, BigNumberish]
+    functionFragment: 'withdraw',
+    values: [BytesLike, BytesLike, BytesLike, string, string, BigNumberish, BigNumberish]
   ): string;
-  encodeFunctionData(
-    functionFragment: "updateEdge",
-    values: [BigNumberish, BytesLike, BigNumberish]
-  ): string;
-  encodeFunctionData(functionFragment: "verifier", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "withdraw",
-    values: [
-      BytesLike,
-      BytesLike,
-      BytesLike,
-      string,
-      string,
-      BigNumberish,
-      BigNumberish
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "wrap",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(functionFragment: "zeros", values: [BigNumberish]): string;
+  encodeFunctionData(functionFragment: 'wrap', values: [string, BigNumberish]): string;
+  encodeFunctionData(functionFragment: 'zeros', values: [BigNumberish]): string;
 
-  decodeFunctionResult(functionFragment: "FIELD_SIZE", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "ROOT_HISTORY_SIZE",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "ZERO_VALUE", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "addEdge", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "admin", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "bridge", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "chainID", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "commitments",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "currentNeighborRootIndex",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "currentRootIndex",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "denomination",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "edgeExistsForChain",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "edgeIndex", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "edgeList", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "filledSubtrees",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getLastRoot",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getLatestNeighborRoots",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "handler", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "hasEdge", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "hashLeftRight",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "hasher", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "isKnownNeighborRoot",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "isKnownRoot",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "isSpent", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "isSpentArray",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "levels", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "neighborRoots",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "nextIndex", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "nullifierHashes",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "roots", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "setBridge", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "setHandler", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "token", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "unpackProof",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "unwrap", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "updateEdge", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "verifier", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "wrap", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "zeros", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'FIELD_SIZE', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'ROOT_HISTORY_SIZE', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'ZERO_VALUE', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'addEdge', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'admin', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'bridge', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'chainID', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'commitments', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'currentNeighborRootIndex', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'currentRootIndex', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'denomination', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'deposit', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'edgeExistsForChain', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'edgeIndex', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'edgeList', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'filledSubtrees', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'getLastRoot', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'getLatestNeighborRoots', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'handler', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'hasEdge', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'hashLeftRight', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'hasher', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'isKnownNeighborRoot', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'isKnownRoot', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'isSpent', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'isSpentArray', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'levels', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'neighborRoots', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'nextIndex', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'nullifierHashes', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'roots', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'setBridge', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'setHandler', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'token', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'unpackProof', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'unwrap', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'updateEdge', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'verifier', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'withdraw', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'wrap', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'zeros', data: BytesLike): Result;
 
   events: {
-    "Deposit(bytes32,uint32,uint256)": EventFragment;
-    "EdgeAddition(uint256,uint256,bytes32)": EventFragment;
-    "EdgeUpdate(uint256,uint256,bytes32)": EventFragment;
-    "RootHistoryRecorded(uint256,bytes32[1])": EventFragment;
-    "RootHistoryUpdate(uint256,bytes32[1])": EventFragment;
-    "Withdrawal(address,bytes32,address,uint256)": EventFragment;
+    'Deposit(bytes32,uint32,uint256)': EventFragment;
+    'EdgeAddition(uint256,uint256,bytes32)': EventFragment;
+    'EdgeUpdate(uint256,uint256,bytes32)': EventFragment;
+    'RootHistoryRecorded(uint256,bytes32[1])': EventFragment;
+    'RootHistoryUpdate(uint256,bytes32[1])': EventFragment;
+    'Withdrawal(address,bytes32,address,uint256)': EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "Deposit"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "EdgeAddition"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "EdgeUpdate"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "RootHistoryRecorded"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "RootHistoryUpdate"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Withdrawal"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: 'Deposit'): EventFragment;
+  getEvent(nameOrSignatureOrTopic: 'EdgeAddition'): EventFragment;
+  getEvent(nameOrSignatureOrTopic: 'EdgeUpdate'): EventFragment;
+  getEvent(nameOrSignatureOrTopic: 'RootHistoryRecorded'): EventFragment;
+  getEvent(nameOrSignatureOrTopic: 'RootHistoryUpdate'): EventFragment;
+  getEvent(nameOrSignatureOrTopic: 'Withdrawal'): EventFragment;
 }
 
 export class Anchor2 extends BaseContract {
@@ -376,10 +239,7 @@ export class Anchor2 extends BaseContract {
 
     commitments(arg0: BytesLike, overrides?: CallOverrides): Promise<[boolean]>;
 
-    currentNeighborRootIndex(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[number]>;
+    currentNeighborRootIndex(arg0: BigNumberish, overrides?: CallOverrides): Promise<[number]>;
 
     currentRootIndex(overrides?: CallOverrides): Promise<[number]>;
 
@@ -390,15 +250,9 @@ export class Anchor2 extends BaseContract {
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    edgeExistsForChain(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
+    edgeExistsForChain(arg0: BigNumberish, overrides?: CallOverrides): Promise<[boolean]>;
 
-    edgeIndex(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    edgeIndex(arg0: BigNumberish, overrides?: CallOverrides): Promise<[BigNumber]>;
 
     edgeList(
       arg0: BigNumberish,
@@ -411,68 +265,35 @@ export class Anchor2 extends BaseContract {
       }
     >;
 
-    filledSubtrees(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
+    filledSubtrees(arg0: BigNumberish, overrides?: CallOverrides): Promise<[string]>;
 
     getLastRoot(overrides?: CallOverrides): Promise<[string]>;
 
-    getLatestNeighborRoots(
-      overrides?: CallOverrides
-    ): Promise<[[string]] & { roots: [string] }>;
+    getLatestNeighborRoots(overrides?: CallOverrides): Promise<[[string]] & { roots: [string] }>;
 
     handler(overrides?: CallOverrides): Promise<[string]>;
 
-    hasEdge(
-      _chainID: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
+    hasEdge(_chainID: BigNumberish, overrides?: CallOverrides): Promise<[boolean]>;
 
-    hashLeftRight(
-      _hasher: string,
-      _left: BytesLike,
-      _right: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
+    hashLeftRight(_hasher: string, _left: BytesLike, _right: BytesLike, overrides?: CallOverrides): Promise<[string]>;
 
     hasher(overrides?: CallOverrides): Promise<[string]>;
 
-    isKnownNeighborRoot(
-      neighborChainID: BigNumberish,
-      _root: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
+    isKnownNeighborRoot(neighborChainID: BigNumberish, _root: BytesLike, overrides?: CallOverrides): Promise<[boolean]>;
 
-    isKnownRoot(
-      _root: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
+    isKnownRoot(_root: BytesLike, overrides?: CallOverrides): Promise<[boolean]>;
 
-    isSpent(
-      _nullifierHash: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
+    isSpent(_nullifierHash: BytesLike, overrides?: CallOverrides): Promise<[boolean]>;
 
-    isSpentArray(
-      _nullifierHashes: BytesLike[],
-      overrides?: CallOverrides
-    ): Promise<[boolean[]] & { spent: boolean[] }>;
+    isSpentArray(_nullifierHashes: BytesLike[], overrides?: CallOverrides): Promise<[boolean[]] & { spent: boolean[] }>;
 
     levels(overrides?: CallOverrides): Promise<[number]>;
 
-    neighborRoots(
-      arg0: BigNumberish,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
+    neighborRoots(arg0: BigNumberish, arg1: BigNumberish, overrides?: CallOverrides): Promise<[string]>;
 
     nextIndex(overrides?: CallOverrides): Promise<[number]>;
 
-    nullifierHashes(
-      arg0: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
+    nullifierHashes(arg0: BytesLike, overrides?: CallOverrides): Promise<[boolean]>;
 
     roots(arg0: BigNumberish, overrides?: CallOverrides): Promise<[string]>;
 
@@ -500,13 +321,7 @@ export class Anchor2 extends BaseContract {
         BigNumberish
       ],
       overrides?: CallOverrides
-    ): Promise<
-      [
-        [BigNumber, BigNumber],
-        [[BigNumber, BigNumber], [BigNumber, BigNumber]],
-        [BigNumber, BigNumber]
-      ]
-    >;
+    ): Promise<[[BigNumber, BigNumber], [[BigNumber, BigNumber], [BigNumber, BigNumber]], [BigNumber, BigNumber]]>;
 
     unwrap(
       tokenAddress: string,
@@ -564,10 +379,7 @@ export class Anchor2 extends BaseContract {
 
   commitments(arg0: BytesLike, overrides?: CallOverrides): Promise<boolean>;
 
-  currentNeighborRootIndex(
-    arg0: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<number>;
+  currentNeighborRootIndex(arg0: BigNumberish, overrides?: CallOverrides): Promise<number>;
 
   currentRootIndex(overrides?: CallOverrides): Promise<number>;
 
@@ -578,10 +390,7 @@ export class Anchor2 extends BaseContract {
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  edgeExistsForChain(
-    arg0: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
+  edgeExistsForChain(arg0: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
 
   edgeIndex(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -596,10 +405,7 @@ export class Anchor2 extends BaseContract {
     }
   >;
 
-  filledSubtrees(
-    arg0: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<string>;
+  filledSubtrees(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
   getLastRoot(overrides?: CallOverrides): Promise<string>;
 
@@ -609,40 +415,21 @@ export class Anchor2 extends BaseContract {
 
   hasEdge(_chainID: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
 
-  hashLeftRight(
-    _hasher: string,
-    _left: BytesLike,
-    _right: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<string>;
+  hashLeftRight(_hasher: string, _left: BytesLike, _right: BytesLike, overrides?: CallOverrides): Promise<string>;
 
   hasher(overrides?: CallOverrides): Promise<string>;
 
-  isKnownNeighborRoot(
-    neighborChainID: BigNumberish,
-    _root: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
+  isKnownNeighborRoot(neighborChainID: BigNumberish, _root: BytesLike, overrides?: CallOverrides): Promise<boolean>;
 
   isKnownRoot(_root: BytesLike, overrides?: CallOverrides): Promise<boolean>;
 
-  isSpent(
-    _nullifierHash: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
+  isSpent(_nullifierHash: BytesLike, overrides?: CallOverrides): Promise<boolean>;
 
-  isSpentArray(
-    _nullifierHashes: BytesLike[],
-    overrides?: CallOverrides
-  ): Promise<boolean[]>;
+  isSpentArray(_nullifierHashes: BytesLike[], overrides?: CallOverrides): Promise<boolean[]>;
 
   levels(overrides?: CallOverrides): Promise<number>;
 
-  neighborRoots(
-    arg0: BigNumberish,
-    arg1: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<string>;
+  neighborRoots(arg0: BigNumberish, arg1: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
   nextIndex(overrides?: CallOverrides): Promise<number>;
 
@@ -650,10 +437,7 @@ export class Anchor2 extends BaseContract {
 
   roots(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
-  setBridge(
-    _bridge: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  setBridge(_bridge: string, overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>;
 
   setHandler(
     _handler: string,
@@ -674,13 +458,7 @@ export class Anchor2 extends BaseContract {
       BigNumberish
     ],
     overrides?: CallOverrides
-  ): Promise<
-    [
-      [BigNumber, BigNumber],
-      [[BigNumber, BigNumber], [BigNumber, BigNumber]],
-      [BigNumber, BigNumber]
-    ]
-  >;
+  ): Promise<[[BigNumber, BigNumber], [[BigNumber, BigNumber], [BigNumber, BigNumber]], [BigNumber, BigNumber]]>;
 
   unwrap(
     tokenAddress: string,
@@ -738,10 +516,7 @@ export class Anchor2 extends BaseContract {
 
     commitments(arg0: BytesLike, overrides?: CallOverrides): Promise<boolean>;
 
-    currentNeighborRootIndex(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<number>;
+    currentNeighborRootIndex(arg0: BigNumberish, overrides?: CallOverrides): Promise<number>;
 
     currentRootIndex(overrides?: CallOverrides): Promise<number>;
 
@@ -749,15 +524,9 @@ export class Anchor2 extends BaseContract {
 
     deposit(_commitment: BytesLike, overrides?: CallOverrides): Promise<void>;
 
-    edgeExistsForChain(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
+    edgeExistsForChain(arg0: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
 
-    edgeIndex(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    edgeIndex(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
     edgeList(
       arg0: BigNumberish,
@@ -770,10 +539,7 @@ export class Anchor2 extends BaseContract {
       }
     >;
 
-    filledSubtrees(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<string>;
+    filledSubtrees(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
     getLastRoot(overrides?: CallOverrides): Promise<string>;
 
@@ -781,52 +547,27 @@ export class Anchor2 extends BaseContract {
 
     handler(overrides?: CallOverrides): Promise<string>;
 
-    hasEdge(
-      _chainID: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
+    hasEdge(_chainID: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
 
-    hashLeftRight(
-      _hasher: string,
-      _left: BytesLike,
-      _right: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<string>;
+    hashLeftRight(_hasher: string, _left: BytesLike, _right: BytesLike, overrides?: CallOverrides): Promise<string>;
 
     hasher(overrides?: CallOverrides): Promise<string>;
 
-    isKnownNeighborRoot(
-      neighborChainID: BigNumberish,
-      _root: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
+    isKnownNeighborRoot(neighborChainID: BigNumberish, _root: BytesLike, overrides?: CallOverrides): Promise<boolean>;
 
     isKnownRoot(_root: BytesLike, overrides?: CallOverrides): Promise<boolean>;
 
-    isSpent(
-      _nullifierHash: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
+    isSpent(_nullifierHash: BytesLike, overrides?: CallOverrides): Promise<boolean>;
 
-    isSpentArray(
-      _nullifierHashes: BytesLike[],
-      overrides?: CallOverrides
-    ): Promise<boolean[]>;
+    isSpentArray(_nullifierHashes: BytesLike[], overrides?: CallOverrides): Promise<boolean[]>;
 
     levels(overrides?: CallOverrides): Promise<number>;
 
-    neighborRoots(
-      arg0: BigNumberish,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<string>;
+    neighborRoots(arg0: BigNumberish, arg1: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
     nextIndex(overrides?: CallOverrides): Promise<number>;
 
-    nullifierHashes(
-      arg0: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
+    nullifierHashes(arg0: BytesLike, overrides?: CallOverrides): Promise<boolean>;
 
     roots(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
@@ -848,19 +589,9 @@ export class Anchor2 extends BaseContract {
         BigNumberish
       ],
       overrides?: CallOverrides
-    ): Promise<
-      [
-        [BigNumber, BigNumber],
-        [[BigNumber, BigNumber], [BigNumber, BigNumber]],
-        [BigNumber, BigNumber]
-      ]
-    >;
+    ): Promise<[[BigNumber, BigNumber], [[BigNumber, BigNumber], [BigNumber, BigNumber]], [BigNumber, BigNumber]]>;
 
-    unwrap(
-      tokenAddress: string,
-      amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    unwrap(tokenAddress: string, amount: BigNumberish, overrides?: CallOverrides): Promise<void>;
 
     updateEdge(
       sourceChainID: BigNumberish,
@@ -882,11 +613,7 @@ export class Anchor2 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    wrap(
-      tokenAddress: string,
-      amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    wrap(tokenAddress: string, amount: BigNumberish, overrides?: CallOverrides): Promise<void>;
 
     zeros(i: BigNumberish, overrides?: CallOverrides): Promise<string>;
   };
@@ -896,44 +623,29 @@ export class Anchor2 extends BaseContract {
       commitment?: BytesLike | null,
       leafIndex?: null,
       timestamp?: null
-    ): TypedEventFilter<
-      [string, number, BigNumber],
-      { commitment: string; leafIndex: number; timestamp: BigNumber }
-    >;
+    ): TypedEventFilter<[string, number, BigNumber], { commitment: string; leafIndex: number; timestamp: BigNumber }>;
 
     EdgeAddition(
       chainID?: null,
       height?: null,
       merkleRoot?: null
-    ): TypedEventFilter<
-      [BigNumber, BigNumber, string],
-      { chainID: BigNumber; height: BigNumber; merkleRoot: string }
-    >;
+    ): TypedEventFilter<[BigNumber, BigNumber, string], { chainID: BigNumber; height: BigNumber; merkleRoot: string }>;
 
     EdgeUpdate(
       chainID?: null,
       height?: null,
       merkleRoot?: null
-    ): TypedEventFilter<
-      [BigNumber, BigNumber, string],
-      { chainID: BigNumber; height: BigNumber; merkleRoot: string }
-    >;
+    ): TypedEventFilter<[BigNumber, BigNumber, string], { chainID: BigNumber; height: BigNumber; merkleRoot: string }>;
 
     RootHistoryRecorded(
       timestamp?: null,
       roots?: null
-    ): TypedEventFilter<
-      [BigNumber, [string]],
-      { timestamp: BigNumber; roots: [string] }
-    >;
+    ): TypedEventFilter<[BigNumber, [string]], { timestamp: BigNumber; roots: [string] }>;
 
     RootHistoryUpdate(
       timestamp?: null,
       roots?: null
-    ): TypedEventFilter<
-      [BigNumber, [string]],
-      { timestamp: BigNumber; roots: [string] }
-    >;
+    ): TypedEventFilter<[BigNumber, [string]], { timestamp: BigNumber; roots: [string] }>;
 
     Withdrawal(
       to?: null,
@@ -968,10 +680,7 @@ export class Anchor2 extends BaseContract {
 
     commitments(arg0: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
 
-    currentNeighborRootIndex(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    currentNeighborRootIndex(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
     currentRootIndex(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -982,22 +691,13 @@ export class Anchor2 extends BaseContract {
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    edgeExistsForChain(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    edgeExistsForChain(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
-    edgeIndex(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    edgeIndex(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
     edgeList(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
-    filledSubtrees(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    filledSubtrees(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
     getLastRoot(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1005,67 +705,33 @@ export class Anchor2 extends BaseContract {
 
     handler(overrides?: CallOverrides): Promise<BigNumber>;
 
-    hasEdge(
-      _chainID: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    hasEdge(_chainID: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
-    hashLeftRight(
-      _hasher: string,
-      _left: BytesLike,
-      _right: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    hashLeftRight(_hasher: string, _left: BytesLike, _right: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
 
     hasher(overrides?: CallOverrides): Promise<BigNumber>;
 
-    isKnownNeighborRoot(
-      neighborChainID: BigNumberish,
-      _root: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    isKnownNeighborRoot(neighborChainID: BigNumberish, _root: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
 
-    isKnownRoot(
-      _root: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    isKnownRoot(_root: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
 
-    isSpent(
-      _nullifierHash: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    isSpent(_nullifierHash: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
 
-    isSpentArray(
-      _nullifierHashes: BytesLike[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    isSpentArray(_nullifierHashes: BytesLike[], overrides?: CallOverrides): Promise<BigNumber>;
 
     levels(overrides?: CallOverrides): Promise<BigNumber>;
 
-    neighborRoots(
-      arg0: BigNumberish,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    neighborRoots(arg0: BigNumberish, arg1: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
     nextIndex(overrides?: CallOverrides): Promise<BigNumber>;
 
-    nullifierHashes(
-      arg0: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    nullifierHashes(arg0: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
 
     roots(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
-    setBridge(
-      _bridge: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    setBridge(_bridge: string, overrides?: Overrides & { from?: string | Promise<string> }): Promise<BigNumber>;
 
-    setHandler(
-      _handler: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    setHandler(_handler: string, overrides?: Overrides & { from?: string | Promise<string> }): Promise<BigNumber>;
 
     token(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1138,15 +804,9 @@ export class Anchor2 extends BaseContract {
 
     chainID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    commitments(
-      arg0: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    commitments(arg0: BytesLike, overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    currentNeighborRootIndex(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    currentNeighborRootIndex(arg0: BigNumberish, overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     currentRootIndex(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -1157,38 +817,21 @@ export class Anchor2 extends BaseContract {
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    edgeExistsForChain(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    edgeExistsForChain(arg0: BigNumberish, overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    edgeIndex(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    edgeIndex(arg0: BigNumberish, overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    edgeList(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    edgeList(arg0: BigNumberish, overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    filledSubtrees(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    filledSubtrees(arg0: BigNumberish, overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getLastRoot(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    getLatestNeighborRoots(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    getLatestNeighborRoots(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     handler(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    hasEdge(
-      _chainID: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    hasEdge(_chainID: BigNumberish, overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     hashLeftRight(
       _hasher: string,
@@ -1205,40 +848,21 @@ export class Anchor2 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    isKnownRoot(
-      _root: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    isKnownRoot(_root: BytesLike, overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    isSpent(
-      _nullifierHash: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    isSpent(_nullifierHash: BytesLike, overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    isSpentArray(
-      _nullifierHashes: BytesLike[],
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    isSpentArray(_nullifierHashes: BytesLike[], overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     levels(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    neighborRoots(
-      arg0: BigNumberish,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    neighborRoots(arg0: BigNumberish, arg1: BigNumberish, overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     nextIndex(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    nullifierHashes(
-      arg0: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    nullifierHashes(arg0: BytesLike, overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    roots(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    roots(arg0: BigNumberish, overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     setBridge(
       _bridge: string,
@@ -1298,9 +922,6 @@ export class Anchor2 extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    zeros(
-      i: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    zeros(i: BigNumberish, overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

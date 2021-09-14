@@ -12,7 +12,7 @@ type MixerProps = {};
 export const Bridge: React.FC<MixerProps> = () => {
   const { activeApi } = useWebContext();
   const [ip, setIp] = useState<RelayerIpInfo>({ ip: '' });
-  
+
   useEffect(() => {
     async function getIpInfo() {
       const relayer = await activeApi?.relayingManager.getRelayer({})[0];
