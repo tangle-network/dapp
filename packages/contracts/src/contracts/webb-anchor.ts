@@ -8,14 +8,18 @@ import { EvmChainMixersInfo } from '@webb-dapp/react-environment/api-providers/w
 import { MerkleTree, PoseidonHasher } from '@webb-dapp/utils/merkle';
 import { retryPromise } from '@webb-dapp/utils/retry-promise';
 import { LoggerService } from '@webb-tools/app-util';
-import { BigNumber, providers, Signer } from 'ethers';
+import { BigNumber, providers, Signer, Contract } from 'ethers';
 import utils from 'web3-utils';
-import { WEBBAnchor2__factory as WebbAnchorFactory } from '../types/factories/WEBBAnchor2__factory';
+import {
+  WEBBAnchor2__factory,
+  WEBBAnchor2__factory as WebbAnchorFactory,
+} from '../types/factories/WEBBAnchor2__factory';
 import {
   ZKPWebbPublicInputs,
   ZKPWebbInputWithMerkle,
   ZKPWebbInputWithoutMerkle,
 } from '@webb-dapp/contracts/contracts/types';
+
 const F = require('circomlib').babyJub.F;
 
 type DepositEvent = [string, number, BigNumber];
@@ -27,7 +31,7 @@ export class WebbAnchorContract {
 
   constructor(private mixersInfo: EvmChainMixersInfo, private web3Provider: providers.Web3Provider, address: string) {
     this.signer = this.web3Provider.getSigner();
-    this._contract = WebbAnchorFactory.connect(address, this.signer);
+    this._contract = new Contract(address, WEBBAnchor2__factory.abi, this.signer) as any;
   }
 
   get getLastRoot() {

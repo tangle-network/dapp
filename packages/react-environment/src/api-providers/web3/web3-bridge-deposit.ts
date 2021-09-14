@@ -1,4 +1,4 @@
-import { ChainId, evmIdIntoChainId, webbCurrencyIdToString } from '@webb-dapp/apps/configs';
+import { ChainId, evmIdIntoChainId } from '@webb-dapp/apps/configs';
 import { createTornDeposit, Deposit } from '@webb-dapp/contracts/utils/make-deposit';
 import { BridgeConfig, DepositPayload as IDepositPayload, MixerSize } from '@webb-dapp/react-environment';
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3/webb-web3-provider';
@@ -13,8 +13,27 @@ type DepositPayload = IDepositPayload<Note, [Deposit, number | string]>;
 export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPayload> {
   bridgeConfig: BridgeConfig = {};
 
-  deposit(depositPayload: DepositPayload): Promise<void> {
-    return Promise.resolve(undefined);
+  async deposit(depositPayload: DepositPayload): Promise<void> {
+    // Getting the active bridge
+    const bridge = this.activeBridge;
+    if (!bridge) {
+      throw new Error('api not ready');
+    }
+
+    const commitment = depositPayload.params[0].commitment;
+    const note = depositPayload.note.note;
+    // Find the Anchor for this bridge amount
+    const anchor = bridge.anchors.find((anchor) => anchor.amount == note.amount);
+    if (!anchor) {
+      throw new Error('not Anchor for amount' + note.amount);
+    }
+    // Get the contract address for the destination chain
+    const contractAddress = anchor.anchorAddresses[Number(note.chain) as ChainId];
+    if (!contractAddress) {
+      throw new Error(`No Anchor for the chain ${note.chain}`);
+    }
+    const contract = this.inner.getWebbAnchorByAddress(contractAddress);
+    await contract.deposit(commitment);
   }
 
   async getSizes(): Promise<MixerSize[]> {

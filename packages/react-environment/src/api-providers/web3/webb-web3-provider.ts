@@ -12,6 +12,7 @@ import { Web3Accounts } from '@webb-dapp/wallet/providers/web3/web3-accounts';
 import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
 import { EventBus } from '@webb-tools/app-util';
 import { ethers, providers } from 'ethers';
+import { WebbAnchorContract } from '@webb-dapp/contracts/contracts';
 
 export class WebbWeb3Provider
   extends EventBus<WebbProviderEvents<[number]>>
@@ -96,6 +97,10 @@ export class WebbWeb3Provider
 
   async getContractByAddress(mixerAddress: string): Promise<TornadoAnchorContract> {
     return new TornadoAnchorContract(this.connectedMixers, this.ethersProvider, mixerAddress);
+  }
+
+  getWebbAnchorByAddress(address: string): WebbAnchorContract {
+    return new WebbAnchorContract(this.connectedMixers, this.ethersProvider, address);
   }
 
   getMixerInfoBySize(mixerSize: number, tokenSymbol: string) {
