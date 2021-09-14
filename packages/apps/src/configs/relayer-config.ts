@@ -1,13 +1,16 @@
-import { RelayerConfig, WebbRelayerBuilder } from '@webb-dapp/react-environment/webb-context/relayer';
 import { ChainId } from '@webb-dapp/apps/configs/chains';
+import { RelayerConfig, WebbRelayerBuilder } from '@webb-dapp/react-environment/webb-context/relayer';
 
 let builder: WebbRelayerBuilder | null = null;
 export const relayerConfig: RelayerConfig[] = [
   {
-    address: 'http://localhost:9955',
+    endpoint: 'http://localhost:9955',
   },
   {
-    address: 'https://relayer.nepoche.com',
+    endpoint: 'https://relayer.nepoche.com',
+  },
+  {
+    endpoint: 'https://relayer.webb.tools',
   },
 ];
 
@@ -16,7 +19,7 @@ export function relayerNameToChainId(name: string): ChainId {
     case 'beresheet':
       return ChainId.EdgewareTestNet;
     case 'harmony':
-      return ChainId.HarmonyTest1;
+      return ChainId.HarmonyTestnet1;
     case 'ganache':
       return ChainId.Ganache;
     case 'webb':
@@ -58,10 +61,6 @@ export function chainIdToRelayerName(id: ChainId): string {
     case ChainId.Goerli:
       break;
     case ChainId.HarmonyTestnet1:
-      break;
-    case ChainId.HarmonyTest0:
-      break;
-    case ChainId.HarmonyTest1:
       return RelayerChainName.Harmony;
   }
   throw new Error(`unhandled Chain id ${id}`);

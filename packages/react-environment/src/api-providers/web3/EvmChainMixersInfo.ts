@@ -10,32 +10,38 @@ import { evmChainStorageFactory, MixerStorage } from '@webb-dapp/apps/configs/st
 import { MixerSize } from '@webb-dapp/react-environment';
 import { Storage } from '@webb-dapp/utils';
 
+export type LeafIntervalInfo = {
+  startingBlock: number;
+  endingBlock: number;
+  leaves: string[];
+};
+
 export class EvmChainMixersInfo {
   private mixerStorage: Storage<MixerStorage> | null = null;
-  private mixerInfo: MixerInfo[];
+  private tornMixerInfo: MixerInfo[];
 
   constructor(public chainId: number) {
     switch (chainId) {
       case WebbEVMChain.Rinkeby:
-        this.mixerInfo = rinkebyMixers;
+        this.tornMixerInfo = rinkebyMixers.tornMixers;
         break;
       case WebbEVMChain.EthereumMainNet:
-        this.mixerInfo = ethMainNetMixers;
+        this.tornMixerInfo = ethMainNetMixers.tornMixers;
         break;
       case WebbEVMChain.Beresheet:
-        this.mixerInfo = beresheetMixers;
+        this.tornMixerInfo = beresheetMixers.tornMixers;
         break;
-      case WebbEVMChain.HarmonyTest1:
-        this.mixerInfo = harmonyTest1Mixers;
+      case WebbEVMChain.HarmonyTestnet1:
+        this.tornMixerInfo = harmonyTest1Mixers.tornMixers;
         break;
       default:
-        this.mixerInfo = rinkebyMixers;
+        this.tornMixerInfo = rinkebyMixers.tornMixers;
         break;
     }
   }
 
-  getMixerSizes(tokenSymbol: string): MixerSize[] {
-    const tokenMixers = this.mixerInfo.filter((entry) => entry.symbol == tokenSymbol);
+  getTornMixerSizes(tokenSymbol: string): MixerSize[] {
+    const tokenMixers = this.tornMixerInfo.filter((entry) => entry.symbol == tokenSymbol);
     return tokenMixers.map((contract) => {
       return {
         id: contract.address,
@@ -51,16 +57,18 @@ export class EvmChainMixersInfo {
     }
 
     // get the info from localStorage
+    const mixerInfo = this.getMixerInfoByAddress(contractAddress);
     const storedInfo = await this.mixerStorage.get(contractAddress);
 
     if (!storedInfo) {
       return {
-        lastQueriedBlock: this.getMixerInfoByAddress(contractAddress).createdAtBlock,
+        lastQueriedBlock: mixerInfo.createdAtBlock,
         leaves: [],
       };
     }
 
     return {
+      createdAtBlock: mixerInfo.createdAtBlock,
       lastQueriedBlock: storedInfo.lastQueriedBlock,
       leaves: storedInfo.leaves,
     };
@@ -77,16 +85,14 @@ export class EvmChainMixersInfo {
     });
   }
 
-  getMixerInfoBySize(mixerSize: number, tokenSymbol: string) {
-    const mixerInfo = this.mixerInfo.find((mixer) => mixer.symbol == tokenSymbol && mixer.size == mixerSize);
-    if (!mixerInfo) {
-      throw new Error(`There is no information for a ${tokenSymbol} mixer with size ${mixerSize}`);
-    }
+  getTornMixerInfoBySize(mixerSize: number, tokenSymbol: string) {
+    const mixerInfo = this.tornMixerInfo.find((mixer) => mixer.symbol == tokenSymbol && mixer.size == mixerSize);
     return mixerInfo;
   }
 
   getMixerInfoByAddress(contractAddress: string) {
-    const mixerInfo = this.mixerInfo.find((mixer) => mixer.address == contractAddress);
+    const allMixers = this.tornMixerInfo;
+    const mixerInfo = allMixers.find((mixer) => mixer.address == contractAddress);
     if (!mixerInfo) {
       throw new Error(`There is no information about the contract ${contractAddress}`);
     }

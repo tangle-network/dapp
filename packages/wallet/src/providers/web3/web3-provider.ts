@@ -18,6 +18,10 @@ export interface AddEthereumChainParameter {
   iconUrls?: string[]; // Currently ignored.
 }
 
+export interface SwitchEthereumChainParameter {
+  chainId: string; // A 0x-prefixed hexadecimal string
+}
+
 export interface ClientMetaData {
   description: string;
   url: string;
@@ -138,6 +142,14 @@ export class Web3Provider<T = unknown> {
     const provider = this._inner.currentProvider as AbstractProvider;
     return provider.request?.({
       method: 'wallet_addEthereumChain',
+      params: [chainInput],
+    });
+  }
+
+  switchChain(chainInput: SwitchEthereumChainParameter) {
+    const provider = this._inner.currentProvider as AbstractProvider;
+    return provider.request?.({
+      method: 'wallet_switchEthereumChain',
       params: [chainInput],
     });
   }

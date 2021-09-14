@@ -1,6 +1,8 @@
 import Icon from '@material-ui/core/Icon';
 import WalletConnectProvider from '@walletconnect/web3-provider';
-import { ChainId, chainsConfig, chainsPopulated, currenciesConfig, WebbEVMChain } from '@webb-dapp/apps/configs';
+import { ChainId, chainsPopulated, currenciesConfig, WebbEVMChain } from '@webb-dapp/apps/configs';
+import { getEVMChainName } from '@webb-dapp/apps/configs/evm/SupportedMixers';
+import { getWebbRelayer } from '@webb-dapp/apps/configs/relayer-config';
 import { WalletId } from '@webb-dapp/apps/configs/wallets/wallet-id.enum';
 import { walletsConfig } from '@webb-dapp/apps/configs/wallets/wallets-config';
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3';
@@ -9,22 +11,18 @@ import { insufficientApiInterface } from '@webb-dapp/react-environment/error/int
 import { DimensionsProvider } from '@webb-dapp/react-environment/layout';
 import { StoreProvier } from '@webb-dapp/react-environment/store';
 import { notificationApi } from '@webb-dapp/ui-components/notification';
+import { AccountSwitchNotification } from '@webb-dapp/ui-components/notification/AccountSwitchNotification';
 import { BareProps } from '@webb-dapp/ui-components/types';
 import { InteractiveFeedback, WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import { Account } from '@webb-dapp/wallet/account/Accounts.adapter';
 import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
+import { LoggerService } from '@webb-tools/app-util';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
-import { getEVMChainName } from '@webb-dapp/apps/configs/evm/SupportedMixers';
+
 import { WebbPolkadot } from './api-providers/polkadot';
 import { extensionNotInstalled, unsupportedChain } from './error';
 import { SettingProvider } from './SettingProvider';
 import { Chain, netStorageFactory, NetworkStorage, Wallet, WebbApiProvider, WebbContext } from './webb-context';
-import {
-  evmChainConflict,
-  USER_SWITCHED_TO_EXPECT_CHAIN,
-} from '@webb-dapp/react-environment/error/interactive-errors/evm-network-conflict';
-import { LoggerService } from '@webb-tools/app-util';
-import { getWebbRelayer } from '@webb-dapp/apps/configs/relayer-config';
 
 interface WebbProviderProps extends BareProps {
   applicationName: string;
@@ -149,7 +147,9 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
           ),
           key: 'account-change',
           message: 'Account changed from provider',
-          secondaryMessage: `active account is ${active?.address ?? 'UNKNOWN'}`,
+          secondaryMessage: React.createElement(AccountSwitchNotification, {
+            account: active?.address ?? 'UNKNOWN',
+          }),
         });
         setAccounts(acs);
         _setActiveAccount(acs[0] || null);
@@ -173,6 +173,8 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
             registerInteractiveFeedback(setInteractiveFeedbacks, interactiveFeedback);
           }
         }
+        break;
+      case WebbErrorCodes.UnselectedChain:
         break;
       case WebbErrorCodes.MixerSizeNotFound:
         break;
@@ -209,7 +211,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
     }
     try {
       /// init the active api value
-      let activeApi: WebbApiProvider<any> | null = null;
+      let localActiveApi: WebbApiProvider<any> | null = null;
       switch (wallet.id) {
         case WalletId.Polkadot:
           {
@@ -225,7 +227,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
               relayer
             );
             await setActiveApiWithAccounts(webbPolkadot, chain.id);
-            activeApi = webbPolkadot;
+            localActiveApi = webbPolkadot;
             setLoading(false);
           }
           break;
@@ -244,7 +246,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
                   [WebbEVMChain.Rinkeby]: 'https://rinkeby.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4',
                   //default on metamask
                   [WebbEVMChain.Beresheet]: 'http://beresheet1.edgewa.re:9933',
-                  [WebbEVMChain.HarmonyTest1]: 'https://api.s1.b.hmny.io',
+                  [WebbEVMChain.HarmonyTestnet1]: 'https://api.s1.b.hmny.io',
                 },
                 chainId: chain.evmId,
               });
@@ -289,9 +291,10 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
             }
             /// get the current active chain from metamask
             const chainId = await web3Provider.network; // storage based on network id
+
             const webbWeb3Provider = await WebbWeb3Provider.init(web3Provider, chainId, relayer);
-            webbWeb3Provider.on('providerUpdate', async ([chainId]) => {
-              /// get the nextChain from MetaMask change
+
+            const providerUpdateHandler = async ([chainId]: number[]) => {
               const nextChain = Object.values(chains).find((chain) => chain.evmId === chainId);
               try {
                 /// this will throw if the user switched to unsupported chain
@@ -317,68 +320,62 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
                   catchWebbError(e);
                 }
               }
-            });
+            };
 
-            const activeChain = Object.values(chainsConfig).find((chain) => chain.evmId === chainId);
-            const cantAddChain = !chain.evmId || !chain.evmRpcUrls;
-            const addEvmChain = () => {
-              if (!chain.evmId || !chain.evmRpcUrls) {
+            webbWeb3Provider.on('providerUpdate', providerUpdateHandler);
+
+            webbWeb3Provider.setChainListener();
+            const cantAddChain = !chain.evmId && !chain.evmRpcUrls;
+            const addEvmChain = async () => {
+              if (cantAddChain) {
                 return;
               }
-              const currency = currenciesConfig[chain.nativeCurrencyId];
-              return web3Provider.addChain({
-                chainId: `0x${chain.evmId.toString(16)}`,
-                chainName: chain.name,
-                rpcUrls: chain.evmRpcUrls,
-                nativeCurrency: {
-                  decimals: 18,
-                  name: currency.name,
-                  symbol: currency.symbol,
-                },
+
+              // If we support the evmId but don't have an evmRpcUrl, then it is default on metamask
+              await web3Provider.switchChain({
+                chainId: `0x${chain.evmId.toString(16)}`
+              })?.catch(async (switchError) => {
+                console.log('inside catch for switchChain', switchError);
+
+                // cannot switch because network not recognized, so prompt to add it
+                if (switchError.code === 4902) {
+                  const currency = currenciesConfig[chain.nativeCurrencyId];
+                  await web3Provider.addChain({
+                    chainId: `0x${chain.evmId.toString(16)}`,
+                    chainName: chain.name,
+                    rpcUrls: chain.evmRpcUrls,
+                    nativeCurrency: {
+                      decimals: 18,
+                      name: currency.name,
+                      symbol: currency.symbol,
+                    },
+                  });
+                  // add network will prompt the switch, check evmId again and throw if user rejected
+                  const newChainId = await web3Provider.network;
+
+                  if (newChainId != chain.evmId) {
+                    throw switchError;
+                  }
+                }
+                else {
+                  throw switchError;                  
+                } 
               });
             };
             if (chainId !== chain.evmId) {
-              const activeChainName = activeChain ? activeChain.name : 'unknown';
-              const feedback = evmChainConflict(
-                {
-                  activeOnExtension: {
-                    id: chainId,
-                    name: activeChainName,
-                  },
-                  selected: {
-                    id: chain?.evmId ?? 0,
-                    name: chain.name,
-                  },
-                  addEvmChainToMetaMask: cantAddChain ? undefined : addEvmChain,
-                },
-                appEvent
-              );
-              registerInteractiveFeedback(setInteractiveFeedbacks, feedback);
-              const action = await feedback.wait();
-              if (action?.id !== USER_SWITCHED_TO_EXPECT_CHAIN) {
-                return null;
-              } else {
-                const chainId = await web3Provider.network; // storage based on network id
-                if (chainId !== chain.evmId && activeChain) {
-                  notificationApi({
-                    secondaryMessage: `Please make sure you have switched to ${chain.name} chain`,
-                    variant: 'warning',
-                    message: 'Network not switched',
-                  });
-                  return null;
-                }
-              }
+              await addEvmChain();
             }
+
             await setActiveApiWithAccounts(webbWeb3Provider, chain.id);
             /// listen to `providerUpdate` by MetaMask
-            activeApi = webbWeb3Provider;
+            localActiveApi = webbWeb3Provider;
           }
           break;
       }
       /// settings the user selection
       setActiveChain(chain);
       setActiveWallet(wallet);
-      return activeApi;
+      return localActiveApi;
     } catch (e) {
       if (e instanceof WebbError) {
         /// Catch the errors for the switcher while switching
@@ -436,6 +433,10 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
             },
           });
         }
+      } else {
+        // If the user did not want to switch to the previously stored chain,
+        // set the previosuly stored chain in the app for display only.
+        setActiveChain(chains[chainConfig.id]);
       }
     };
     init().finally(() => {
@@ -470,6 +471,9 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
           }
         },
         activeFeedback,
+        registerInteractiveFeedback: (interactiveFeedback: InteractiveFeedback) => {
+          registerInteractiveFeedback(setInteractiveFeedbacks, interactiveFeedback);
+        },
       }}
     >
       <StoreProvier>

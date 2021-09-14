@@ -1,50 +1,13 @@
 import { ClickAwayListener, Icon, IconButton, List, ListItemAvatar, ListItemText, Typography } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
 import Popper from '@material-ui/core/Popper';
-import { Currency } from '@webb-dapp/react-environment/types/currency';
+import { Currency, CurrencyContent } from '@webb-dapp/react-environment/types/currency';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import styled, { css } from 'styled-components';
-
-const TokenInputWrapper = styled.div<{ open: boolean }>`
-  border-radius: 25px;
-  border: 1px solid ${({ theme }: { theme: Pallet }) => theme.borderColor};
-
-  overflow: hidden;
-  transition: all 0.3s ease-in-out;
-  background: ${({ theme }) => theme.layer3Background} 37%;
-
-  ${({ open, theme }: { open: boolean; theme: Pallet }) => {
-    return open
-      ? css`
-          background: ${theme.layer1Background} 9%;
-          box-shadow: 1px 1px 14px ${theme.type === 'dark' ? 'black' : 'rgba(54, 86, 233, 0.1)'};
-
-          max-height: 350px;
-        `
-      : css`
-          max-height: 50px;
-        `;
-  }}
-  .account-header {
-    display: flex;
-    align-items: center;
-    border-bottom: 1px solid ${({ theme }) => theme.gray13};
-    padding: 5px;
-  }
-
-  .account-avatar {
-    background: transparent;
-  }
-
-  .account-button-wrapper {
-    margin: -20px 0;
-  }
-`;
-
 const StyledList = styled.ul`
   &&& {
     padding: 10px 0 !important;
@@ -66,6 +29,57 @@ const StyledList = styled.ul`
   }
 `;
 
+const TokenInputWrapper = styled.div<{ open: boolean }>`
+  border-radius: 25px;
+  border: 1px solid ${({ theme }: { theme: Pallet }) => theme.borderColor};
+
+  overflow: hidden;
+  transition: all 0.3s ease-in-out;
+  background: ${({ theme }) => theme.layer3Background} 37%;
+
+  ${({ open, theme }: { open: boolean; theme: Pallet }) => {
+    return open
+      ? css`
+          background: ${theme.layer1Background} 9%;
+          box-shadow: 1px 1px 14px ${theme.type === 'dark' ? 'black' : 'rgba(54, 86, 233, 0.1)'};
+
+          max-height: 350px;
+        `
+      : css`
+          max-height: 50px;
+        `;
+  }}
+  ${StyledList} {
+    ${({ open }) => {
+      return open
+        ? css`
+            max-height: 200px;
+            overflow-y: auto;
+          `
+        : css`
+            padding: 0 !important;
+            margin: 0 !important;
+            max-height: 0px !important;
+          `;
+    }}
+  }
+
+  .account-header {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid ${({ theme }) => theme.gray13};
+    padding: 5px;
+  }
+
+  .account-avatar {
+    background: transparent;
+  }
+
+  .account-button-wrapper {
+    margin: -20px 0;
+  }
+`;
+
 const AccountManagerWrapper = styled.div<any>`
   min-width: 200px;
   height: 0;
@@ -75,9 +89,9 @@ const AccountManagerWrapper = styled.div<any>`
 `;
 
 type TokenInputProps = {
-  currencies: Currency[];
-  value?: Currency;
-  onChange(next: Currency | undefined): void;
+  currencies: CurrencyContent[];
+  value?: CurrencyContent;
+  onChange(next: CurrencyContent | undefined): void;
 };
 const ChainName = styled.span`
   max-width: 100px;
@@ -124,7 +138,11 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
             setIsOpen(false);
           }}
         >
-          <Popper placement={'bottom-end'} open={Boolean($wrapper?.current)} anchorEl={$wrapper?.current}>
+          <Popper
+						style={{
+							zIndex: isOpen ? 10 : null,
+						}}
+						placement={'bottom-end'} open={Boolean($wrapper?.current)} anchorEl={$wrapper?.current}>
             <TokenInputWrapper
               open={isOpen}
               style={{

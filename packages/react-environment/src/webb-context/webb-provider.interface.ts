@@ -1,13 +1,15 @@
+import { Bridge, BridgeDeposit, BridgeWithdraw } from '@webb-dapp/react-environment/webb-context/bridge';
+import { WebbRelayerBuilder } from '@webb-dapp/react-environment/webb-context/relayer';
 import { InteractiveFeedback } from '@webb-dapp/utils/webb-error';
 import { AccountsAdapter } from '@webb-dapp/wallet/account/Accounts.adapter';
 import { EventBus } from '@webb-tools/app-util';
 
 import { DepositPayload, MixerDeposit, MixerDepositEvents, MixerWithdraw, MixerWithdrawEvents } from './mixer';
-import { WebbRelayerBuilder } from '@webb-dapp/react-environment/webb-context/relayer';
 
 /// list of the apis that are available for  the provider
 export interface WebbMethods<T> {
   mixer: WebbMixer<T>;
+  bridge: WebbBridge<T>;
 }
 
 export type WebbMethod<T extends EventBus<K>, K extends Record<string, unknown>> = {
@@ -21,6 +23,14 @@ export interface WebbMixer<T> {
   deposit: WebbMethod<MixerDeposit<T, DepositPayload>, MixerDepositEvents>;
   // withdraw
   withdraw: WebbMethod<MixerWithdraw<T>, MixerWithdrawEvents>;
+}
+
+export interface WebbBridge<T> {
+  core: Bridge | null;
+  // deposit
+  deposit: WebbMethod<BridgeDeposit<T, DepositPayload>, MixerDepositEvents>;
+  // withdraw
+  withdraw: WebbMethod<BridgeWithdraw<T>, MixerWithdrawEvents>;
 }
 
 /// TODO improve this and add a spec

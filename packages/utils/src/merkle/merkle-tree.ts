@@ -1,5 +1,8 @@
-import { MimcSpongeHasher } from '@webb-dapp/utils/merkle/sponge-hasher';
 import { Storage } from '@webb-dapp/utils/merkle/storage';
+
+export interface Hasher {
+  hash(level: any, left: any, right: any): any;
+}
 
 interface TraverserHandler {
   handle_index(level: number, element_index: number, sibling_index: number): void;
@@ -12,7 +15,7 @@ class UpdateTraverser implements TraverserHandler {
   constructor(
     private prefix: string,
     private storage: Storage,
-    private hasher: MimcSpongeHasher,
+    private hasher: Hasher,
     public currentElement: any,
     private zeroValues: any
   ) {}
@@ -73,7 +76,7 @@ export class MerkleTree {
     private prefix: string,
     private nLevel: number,
     defaultElements: any[] = [],
-    private hasher: MimcSpongeHasher = new MimcSpongeHasher(),
+    private hasher: Hasher,
     private storage: Storage = new Storage()
   ) {
     let current_zero_value = '21663839004416932945382355908790599225266501822907911457504978515578255421292';
@@ -139,6 +142,27 @@ export class MerkleTree {
     } catch (e) {
       console.error(e);
     }
+  }
+
+  get_root(): string {
+    let root = this.storage.getOrDefault(
+      MerkleTree.keyFormat(this.prefix, this.nLevel, 0),
+      this.zeroValues[this.nLevel]
+    ) as string;
+    return root;
+  }
+
+  // Elements must be ordered
+  batch_insert(elements: any[]) {
+    elements.forEach((elem) => {
+      this.insert(elem);
+    });
+  }
+
+  insert(element: any) {
+    const index = this.totalElements;
+    this.update(index, element, true);
+    this.totalElements++;
   }
 
   path(index: number) {
