@@ -185,7 +185,8 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({ mixerId, onClose, o
           </Typography>
           <SpaceBox height={8} />
           <Typography variant={'body1'} className={'deposit-modal-alert-caption'} color={'textPrimary'}>
-            Please backup your note. If you lose this,<br /> you won't get your deposit back.
+            Please backup your note. If you lose this,
+            <br /> you won't get your deposit back.
           </Typography>
         </header>
 

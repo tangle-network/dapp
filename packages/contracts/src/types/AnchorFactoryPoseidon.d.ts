@@ -13,56 +13,29 @@ import {
   ContractTransaction,
   Overrides,
   CallOverrides,
-} from "ethers";
-import { BytesLike } from "@ethersproject/bytes";
-import { Listener, Provider } from "@ethersproject/providers";
-import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
-import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
+} from 'ethers';
+import { BytesLike } from '@ethersproject/bytes';
+import { Listener, Provider } from '@ethersproject/providers';
+import { FunctionFragment, EventFragment, Result } from '@ethersproject/abi';
+import { TypedEventFilter, TypedEvent, TypedListener } from './commons';
 
 interface AnchorFactoryPoseidonInterface extends ethers.utils.Interface {
   functions: {
-    "create2Anchor2(bytes32,address,address,uint256,uint32,uint32,address,address,address,address)": FunctionFragment;
-    "createAnchor2(address,address,uint256,uint32,uint32,address,address,address,address)": FunctionFragment;
+    'create2Anchor2(bytes32,address,address,uint256,uint32,uint32,address,address,address,address)': FunctionFragment;
+    'createAnchor2(address,address,uint256,uint32,uint32,address,address,address,address)': FunctionFragment;
   };
 
   encodeFunctionData(
-    functionFragment: "create2Anchor2",
-    values: [
-      BytesLike,
-      string,
-      string,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      string,
-      string,
-      string,
-      string
-    ]
+    functionFragment: 'create2Anchor2',
+    values: [BytesLike, string, string, BigNumberish, BigNumberish, BigNumberish, string, string, string, string]
   ): string;
   encodeFunctionData(
-    functionFragment: "createAnchor2",
-    values: [
-      string,
-      string,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      string,
-      string,
-      string,
-      string
-    ]
+    functionFragment: 'createAnchor2',
+    values: [string, string, BigNumberish, BigNumberish, BigNumberish, string, string, string, string]
   ): string;
 
-  decodeFunctionResult(
-    functionFragment: "create2Anchor2",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "createAnchor2",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: 'create2Anchor2', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'createAnchor2', data: BytesLike): Result;
 
   events: {};
 }

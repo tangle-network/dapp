@@ -13,174 +13,100 @@ import {
   ContractTransaction,
   PayableOverrides,
   CallOverrides,
-} from "ethers";
-import { BytesLike } from "@ethersproject/bytes";
-import { Listener, Provider } from "@ethersproject/providers";
-import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
-import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
+} from 'ethers';
+import { BytesLike } from '@ethersproject/bytes';
+import { Listener, Provider } from '@ethersproject/providers';
+import { FunctionFragment, EventFragment, Result } from '@ethersproject/abi';
+import { TypedEventFilter, TypedEvent, TypedListener } from './commons';
 
 interface AnchorPoseidonInterface extends ethers.utils.Interface {
   functions: {
-    "FIELD_SIZE()": FunctionFragment;
-    "ROOT_HISTORY_SIZE()": FunctionFragment;
-    "ZERO_VALUE()": FunctionFragment;
-    "admin()": FunctionFragment;
-    "bridge()": FunctionFragment;
-    "commitments(bytes32)": FunctionFragment;
-    "currentRootIndex()": FunctionFragment;
-    "denomination()": FunctionFragment;
-    "deposit(bytes32)": FunctionFragment;
-    "filledSubtrees(uint256)": FunctionFragment;
-    "getLastRoot()": FunctionFragment;
-    "handler()": FunctionFragment;
-    "hashLeftRight(address,bytes32,bytes32)": FunctionFragment;
-    "hasher()": FunctionFragment;
-    "isKnownRoot(bytes32)": FunctionFragment;
-    "isSpent(bytes32)": FunctionFragment;
-    "isSpentArray(bytes32[])": FunctionFragment;
-    "levels()": FunctionFragment;
-    "nextIndex()": FunctionFragment;
-    "nullifierHashes(bytes32)": FunctionFragment;
-    "roots(uint256)": FunctionFragment;
-    "verifier()": FunctionFragment;
-    "withdraw(bytes,bytes32,bytes32,address,address,uint256,uint256)": FunctionFragment;
-    "zeros(uint256)": FunctionFragment;
+    'FIELD_SIZE()': FunctionFragment;
+    'ROOT_HISTORY_SIZE()': FunctionFragment;
+    'ZERO_VALUE()': FunctionFragment;
+    'admin()': FunctionFragment;
+    'bridge()': FunctionFragment;
+    'commitments(bytes32)': FunctionFragment;
+    'currentRootIndex()': FunctionFragment;
+    'denomination()': FunctionFragment;
+    'deposit(bytes32)': FunctionFragment;
+    'filledSubtrees(uint256)': FunctionFragment;
+    'getLastRoot()': FunctionFragment;
+    'handler()': FunctionFragment;
+    'hashLeftRight(address,bytes32,bytes32)': FunctionFragment;
+    'hasher()': FunctionFragment;
+    'isKnownRoot(bytes32)': FunctionFragment;
+    'isSpent(bytes32)': FunctionFragment;
+    'isSpentArray(bytes32[])': FunctionFragment;
+    'levels()': FunctionFragment;
+    'nextIndex()': FunctionFragment;
+    'nullifierHashes(bytes32)': FunctionFragment;
+    'roots(uint256)': FunctionFragment;
+    'verifier()': FunctionFragment;
+    'withdraw(bytes,bytes32,bytes32,address,address,uint256,uint256)': FunctionFragment;
+    'zeros(uint256)': FunctionFragment;
   };
 
+  encodeFunctionData(functionFragment: 'FIELD_SIZE', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'ROOT_HISTORY_SIZE', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'ZERO_VALUE', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'admin', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'bridge', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'commitments', values: [BytesLike]): string;
+  encodeFunctionData(functionFragment: 'currentRootIndex', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'denomination', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'deposit', values: [BytesLike]): string;
+  encodeFunctionData(functionFragment: 'filledSubtrees', values: [BigNumberish]): string;
+  encodeFunctionData(functionFragment: 'getLastRoot', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'handler', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'hashLeftRight', values: [string, BytesLike, BytesLike]): string;
+  encodeFunctionData(functionFragment: 'hasher', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'isKnownRoot', values: [BytesLike]): string;
+  encodeFunctionData(functionFragment: 'isSpent', values: [BytesLike]): string;
+  encodeFunctionData(functionFragment: 'isSpentArray', values: [BytesLike[]]): string;
+  encodeFunctionData(functionFragment: 'levels', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'nextIndex', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'nullifierHashes', values: [BytesLike]): string;
+  encodeFunctionData(functionFragment: 'roots', values: [BigNumberish]): string;
+  encodeFunctionData(functionFragment: 'verifier', values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "FIELD_SIZE",
-    values?: undefined
+    functionFragment: 'withdraw',
+    values: [BytesLike, BytesLike, BytesLike, string, string, BigNumberish, BigNumberish]
   ): string;
-  encodeFunctionData(
-    functionFragment: "ROOT_HISTORY_SIZE",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "ZERO_VALUE",
-    values?: undefined
-  ): string;
-  encodeFunctionData(functionFragment: "admin", values?: undefined): string;
-  encodeFunctionData(functionFragment: "bridge", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "commitments",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "currentRootIndex",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "denomination",
-    values?: undefined
-  ): string;
-  encodeFunctionData(functionFragment: "deposit", values: [BytesLike]): string;
-  encodeFunctionData(
-    functionFragment: "filledSubtrees",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getLastRoot",
-    values?: undefined
-  ): string;
-  encodeFunctionData(functionFragment: "handler", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "hashLeftRight",
-    values: [string, BytesLike, BytesLike]
-  ): string;
-  encodeFunctionData(functionFragment: "hasher", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "isKnownRoot",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(functionFragment: "isSpent", values: [BytesLike]): string;
-  encodeFunctionData(
-    functionFragment: "isSpentArray",
-    values: [BytesLike[]]
-  ): string;
-  encodeFunctionData(functionFragment: "levels", values?: undefined): string;
-  encodeFunctionData(functionFragment: "nextIndex", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "nullifierHashes",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(functionFragment: "roots", values: [BigNumberish]): string;
-  encodeFunctionData(functionFragment: "verifier", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "withdraw",
-    values: [
-      BytesLike,
-      BytesLike,
-      BytesLike,
-      string,
-      string,
-      BigNumberish,
-      BigNumberish
-    ]
-  ): string;
-  encodeFunctionData(functionFragment: "zeros", values: [BigNumberish]): string;
+  encodeFunctionData(functionFragment: 'zeros', values: [BigNumberish]): string;
 
-  decodeFunctionResult(functionFragment: "FIELD_SIZE", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "ROOT_HISTORY_SIZE",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "ZERO_VALUE", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "admin", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "bridge", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "commitments",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "currentRootIndex",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "denomination",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "filledSubtrees",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getLastRoot",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "handler", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "hashLeftRight",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "hasher", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "isKnownRoot",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "isSpent", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "isSpentArray",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "levels", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "nextIndex", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "nullifierHashes",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "roots", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "verifier", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "zeros", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'FIELD_SIZE', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'ROOT_HISTORY_SIZE', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'ZERO_VALUE', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'admin', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'bridge', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'commitments', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'currentRootIndex', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'denomination', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'deposit', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'filledSubtrees', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'getLastRoot', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'handler', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'hashLeftRight', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'hasher', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'isKnownRoot', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'isSpent', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'isSpentArray', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'levels', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'nextIndex', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'nullifierHashes', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'roots', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'verifier', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'withdraw', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'zeros', data: BytesLike): Result;
 
   events: {
-    "Deposit(bytes32,uint32,uint256)": EventFragment;
-    "Withdrawal(address,bytes32,address,uint256)": EventFragment;
+    'Deposit(bytes32,uint32,uint256)': EventFragment;
+    'Withdrawal(address,bytes32,address,uint256)': EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "Deposit"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Withdrawal"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: 'Deposit'): EventFragment;
+  getEvent(nameOrSignatureOrTopic: 'Withdrawal'): EventFragment;
 }
 
 export class AnchorPoseidon extends BaseContract {
@@ -248,47 +174,27 @@ export class AnchorPoseidon extends BaseContract {
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    filledSubtrees(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
+    filledSubtrees(arg0: BigNumberish, overrides?: CallOverrides): Promise<[string]>;
 
     getLastRoot(overrides?: CallOverrides): Promise<[string]>;
 
     handler(overrides?: CallOverrides): Promise<[string]>;
 
-    hashLeftRight(
-      _hasher: string,
-      _left: BytesLike,
-      _right: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
+    hashLeftRight(_hasher: string, _left: BytesLike, _right: BytesLike, overrides?: CallOverrides): Promise<[string]>;
 
     hasher(overrides?: CallOverrides): Promise<[string]>;
 
-    isKnownRoot(
-      _root: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
+    isKnownRoot(_root: BytesLike, overrides?: CallOverrides): Promise<[boolean]>;
 
-    isSpent(
-      _nullifierHash: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
+    isSpent(_nullifierHash: BytesLike, overrides?: CallOverrides): Promise<[boolean]>;
 
-    isSpentArray(
-      _nullifierHashes: BytesLike[],
-      overrides?: CallOverrides
-    ): Promise<[boolean[]] & { spent: boolean[] }>;
+    isSpentArray(_nullifierHashes: BytesLike[], overrides?: CallOverrides): Promise<[boolean[]] & { spent: boolean[] }>;
 
     levels(overrides?: CallOverrides): Promise<[number]>;
 
     nextIndex(overrides?: CallOverrides): Promise<[number]>;
 
-    nullifierHashes(
-      arg0: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
+    nullifierHashes(arg0: BytesLike, overrides?: CallOverrides): Promise<[boolean]>;
 
     roots(arg0: BigNumberish, overrides?: CallOverrides): Promise<[string]>;
 
@@ -329,35 +235,21 @@ export class AnchorPoseidon extends BaseContract {
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  filledSubtrees(
-    arg0: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<string>;
+  filledSubtrees(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
   getLastRoot(overrides?: CallOverrides): Promise<string>;
 
   handler(overrides?: CallOverrides): Promise<string>;
 
-  hashLeftRight(
-    _hasher: string,
-    _left: BytesLike,
-    _right: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<string>;
+  hashLeftRight(_hasher: string, _left: BytesLike, _right: BytesLike, overrides?: CallOverrides): Promise<string>;
 
   hasher(overrides?: CallOverrides): Promise<string>;
 
   isKnownRoot(_root: BytesLike, overrides?: CallOverrides): Promise<boolean>;
 
-  isSpent(
-    _nullifierHash: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
+  isSpent(_nullifierHash: BytesLike, overrides?: CallOverrides): Promise<boolean>;
 
-  isSpentArray(
-    _nullifierHashes: BytesLike[],
-    overrides?: CallOverrides
-  ): Promise<boolean[]>;
+  isSpentArray(_nullifierHashes: BytesLike[], overrides?: CallOverrides): Promise<boolean[]>;
 
   levels(overrides?: CallOverrides): Promise<number>;
 
@@ -401,44 +293,27 @@ export class AnchorPoseidon extends BaseContract {
 
     deposit(_commitment: BytesLike, overrides?: CallOverrides): Promise<void>;
 
-    filledSubtrees(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<string>;
+    filledSubtrees(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
     getLastRoot(overrides?: CallOverrides): Promise<string>;
 
     handler(overrides?: CallOverrides): Promise<string>;
 
-    hashLeftRight(
-      _hasher: string,
-      _left: BytesLike,
-      _right: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<string>;
+    hashLeftRight(_hasher: string, _left: BytesLike, _right: BytesLike, overrides?: CallOverrides): Promise<string>;
 
     hasher(overrides?: CallOverrides): Promise<string>;
 
     isKnownRoot(_root: BytesLike, overrides?: CallOverrides): Promise<boolean>;
 
-    isSpent(
-      _nullifierHash: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
+    isSpent(_nullifierHash: BytesLike, overrides?: CallOverrides): Promise<boolean>;
 
-    isSpentArray(
-      _nullifierHashes: BytesLike[],
-      overrides?: CallOverrides
-    ): Promise<boolean[]>;
+    isSpentArray(_nullifierHashes: BytesLike[], overrides?: CallOverrides): Promise<boolean[]>;
 
     levels(overrides?: CallOverrides): Promise<number>;
 
     nextIndex(overrides?: CallOverrides): Promise<number>;
 
-    nullifierHashes(
-      arg0: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
+    nullifierHashes(arg0: BytesLike, overrides?: CallOverrides): Promise<boolean>;
 
     roots(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
@@ -463,10 +338,7 @@ export class AnchorPoseidon extends BaseContract {
       commitment?: BytesLike | null,
       leafIndex?: null,
       timestamp?: null
-    ): TypedEventFilter<
-      [string, number, BigNumber],
-      { commitment: string; leafIndex: number; timestamp: BigNumber }
-    >;
+    ): TypedEventFilter<[string, number, BigNumber], { commitment: string; leafIndex: number; timestamp: BigNumber }>;
 
     Withdrawal(
       to?: null,
@@ -501,47 +373,27 @@ export class AnchorPoseidon extends BaseContract {
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    filledSubtrees(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    filledSubtrees(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
     getLastRoot(overrides?: CallOverrides): Promise<BigNumber>;
 
     handler(overrides?: CallOverrides): Promise<BigNumber>;
 
-    hashLeftRight(
-      _hasher: string,
-      _left: BytesLike,
-      _right: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    hashLeftRight(_hasher: string, _left: BytesLike, _right: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
 
     hasher(overrides?: CallOverrides): Promise<BigNumber>;
 
-    isKnownRoot(
-      _root: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    isKnownRoot(_root: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
 
-    isSpent(
-      _nullifierHash: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    isSpent(_nullifierHash: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
 
-    isSpentArray(
-      _nullifierHashes: BytesLike[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    isSpentArray(_nullifierHashes: BytesLike[], overrides?: CallOverrides): Promise<BigNumber>;
 
     levels(overrides?: CallOverrides): Promise<BigNumber>;
 
     nextIndex(overrides?: CallOverrides): Promise<BigNumber>;
 
-    nullifierHashes(
-      arg0: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    nullifierHashes(arg0: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
 
     roots(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -572,10 +424,7 @@ export class AnchorPoseidon extends BaseContract {
 
     bridge(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    commitments(
-      arg0: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    commitments(arg0: BytesLike, overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     currentRootIndex(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -586,10 +435,7 @@ export class AnchorPoseidon extends BaseContract {
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    filledSubtrees(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    filledSubtrees(arg0: BigNumberish, overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getLastRoot(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -604,34 +450,19 @@ export class AnchorPoseidon extends BaseContract {
 
     hasher(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    isKnownRoot(
-      _root: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    isKnownRoot(_root: BytesLike, overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    isSpent(
-      _nullifierHash: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    isSpent(_nullifierHash: BytesLike, overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    isSpentArray(
-      _nullifierHashes: BytesLike[],
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    isSpentArray(_nullifierHashes: BytesLike[], overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     levels(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     nextIndex(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    nullifierHashes(
-      arg0: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    nullifierHashes(arg0: BytesLike, overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    roots(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    roots(arg0: BigNumberish, overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     verifier(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -646,9 +477,6 @@ export class AnchorPoseidon extends BaseContract {
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    zeros(
-      i: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    zeros(i: BigNumberish, overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }
