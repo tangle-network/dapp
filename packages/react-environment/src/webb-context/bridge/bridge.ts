@@ -6,7 +6,7 @@ import { BridgeCurrency } from './bridge-currency';
 export class Bridge {
   private constructor(private readonly configEntry: BridgeConfigEntry) {}
 
-  static from(bridgeCurrency: BridgeCurrency, config: BridgeConfig): Bridge {
+  static from(config: BridgeConfig, bridgeCurrency: BridgeCurrency): Bridge {
     const bridgeConfigEntries = config[bridgeCurrency.name];
     return new Bridge(bridgeConfigEntries);
   }
@@ -35,7 +35,7 @@ export class Bridge {
   /*
    *  Get tokens for a given chain
    * */
-  static GetTokensOfChain(configEntry: BridgeConfig, chainId: ChainId): BridgeCurrency[] {
+  static getTokensOfChain(configEntry: BridgeConfig, chainId: ChainId): BridgeCurrency[] {
     const tokens = Bridge.getTokens(configEntry);
     return tokens.filter((token) => token.hasChain(chainId));
   }

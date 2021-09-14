@@ -1,9 +1,9 @@
-import MixerTabs from '@webb-dapp/mixer';
+import Bridge from '@webb-dapp/bridge';
 import { pageWithFeatures } from '@webb-dapp/react-components/utils/FeaturesGuard/pageWithFeatures';
 import React, { FC } from 'react';
 
 const PageBridge: FC = () => {
-  return <MixerTabs />;
+  return <Bridge />;
 };
 
 export default pageWithFeatures({

@@ -32,11 +32,15 @@ export abstract class BridgeDeposit<T, K extends DepositPayload = DepositPayload
   }
 
   getTokensOfChain(chainId: ChainId) {
-    return Bridge.GetTokensOfChain(this.bridgeConfig, chainId);
+    return Bridge.getTokensOfChain(this.bridgeConfig, chainId);
   }
 
   getTokensOfChains(chainIds: ChainId[]) {
     return Bridge.getTokensOfChains(this.bridgeConfig, chainIds);
   }
+  generateNote(mixerId: number | string): Promise<K> {
+    throw new Error('api not ready:Not mixer api');
+  }
+
   abstract generateBridgeNote(mixerId: number | string, destination: ChainId): Promise<K>;
 }

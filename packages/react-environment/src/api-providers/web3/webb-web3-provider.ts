@@ -41,6 +41,7 @@ export class WebbWeb3Provider
     this.connectedMixers = new EvmChainMixersInfo(chainId);
     this.methods = {
       bridge: {
+        core: null,
         deposit: {
           inner: new Web3BridgeDeposit(this),
           enabled: true,

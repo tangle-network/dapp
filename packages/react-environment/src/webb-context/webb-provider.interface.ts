@@ -1,4 +1,4 @@
-import { BridgeDeposit, BridgeWithdraw } from '@webb-dapp/react-environment/webb-context/bridge';
+import { Bridge, BridgeDeposit, BridgeWithdraw } from '@webb-dapp/react-environment/webb-context/bridge';
 import { WebbRelayerBuilder } from '@webb-dapp/react-environment/webb-context/relayer';
 import { InteractiveFeedback } from '@webb-dapp/utils/webb-error';
 import { AccountsAdapter } from '@webb-dapp/wallet/account/Accounts.adapter';
@@ -26,6 +26,7 @@ export interface WebbMixer<T> {
 }
 
 export interface WebbBridge<T> {
+  core: Bridge | null;
   // deposit
   deposit: WebbMethod<BridgeDeposit<T, DepositPayload>, MixerDepositEvents>;
   // withdraw
