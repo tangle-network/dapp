@@ -28,7 +28,7 @@ export const config: RouterConfigData[] = [
         path: 'mixer',
         title: 'Mixer',
       },
-      {
+      ...(process.env.NODE_ENV === 'development') ? [{
         element: (
           <CSuspense>
             <PageBridge />
@@ -36,7 +36,8 @@ export const config: RouterConfigData[] = [
         ),
         path: 'bridge',
         title: 'Bridge',
-      },
+      }]
+      : [{path: 'null', redirectTo: 'null'}],
       {
         element: <CSuspense>{/*  <PageGovernance />*/}</CSuspense>,
         path: 'governance/*',
@@ -50,4 +51,4 @@ export const config: RouterConfigData[] = [
     element: <Layout.Main sidebar={sideBarConfig} />,
     path: '*',
   },
-];
+].filter((elt) => elt.path !== 'null');
