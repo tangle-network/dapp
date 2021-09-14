@@ -6,7 +6,7 @@ import { useDepositNote } from '@webb-dapp/mixer/hooks/note';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { getEVMChainNameFromInternal } from '@webb-dapp/apps/configs';
 import { BridgeCurrency } from '@webb-dapp/react-environment/webb-context';
-import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge'
+import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
 
 type NoteInputProps = {
   value: string;

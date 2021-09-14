@@ -66,21 +66,21 @@ export class WebbRelayerBuilder {
     return {
       hasIpService: true,
       supportedChains: {
-        evm: info.evm ?
-          Object.keys(info.evm)
-            .filter((key) => info.evm[key]?.account && Boolean(nameAdapter(key, 'evm')))
-            .reduce((m, key) => {
-              m.set(nameAdapter(key, 'evm'), info.evm[key]);
-              return m;
-            }, new Map())
+        evm: info.evm
+          ? Object.keys(info.evm)
+              .filter((key) => info.evm[key]?.account && Boolean(nameAdapter(key, 'evm')))
+              .reduce((m, key) => {
+                m.set(nameAdapter(key, 'evm'), info.evm[key]);
+                return m;
+              }, new Map())
           : new Map(),
-        substrate: info.substrate ?
-          Object.keys(info.substrate)
-            .filter((key) => info.substrate[key]?.account && Boolean(nameAdapter(key, 'substrate')))
-            .reduce((m, key) => {
-              m.set(nameAdapter(key, 'substrate'), info.evm[key]);
-              return m;
-            }, new Map())
+        substrate: info.substrate
+          ? Object.keys(info.substrate)
+              .filter((key) => info.substrate[key]?.account && Boolean(nameAdapter(key, 'substrate')))
+              .reduce((m, key) => {
+                m.set(nameAdapter(key, 'substrate'), info.evm[key]);
+                return m;
+              }, new Map())
           : new Map(),
       },
     };

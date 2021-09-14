@@ -1,13 +1,13 @@
-import { FeedbackEntry, InteractiveFeedback } from "@webb-dapp/utils/webb-error";
+import { FeedbackEntry, InteractiveFeedback } from '@webb-dapp/utils/webb-error';
 import { ReactComponent as NetworksGlobe } from '@webb-dapp/ui-components/assets/NetworksGlobe.svg';
 import NetworksGlobeCircled from '@webb-dapp/ui-components/assets/NetworksGlobeCircled.png';
 import NetworksGlobeCircledInverted from '@webb-dapp/ui-components/assets/NetworksGlobeCircledInverted.png';
 import React from 'react';
-import { Button, Typography } from "@material-ui/core";
+import { Button, Typography } from '@material-ui/core';
 import styled from 'styled-components';
-import { Padding } from "@webb-dapp/ui-components/Padding/Padding";
+import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
 import { CloseIcon } from '@webb-dapp/ui-components/';
-import { useStore } from "@webb-dapp/react-environment/";
+import { useStore } from '@webb-dapp/react-environment/';
 
 const UnselectedNetworkViewWrapper = styled.div`
   text-align: center;
