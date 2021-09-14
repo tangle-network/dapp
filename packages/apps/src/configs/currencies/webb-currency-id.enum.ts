@@ -7,6 +7,8 @@ export enum WebbCurrencyId {
   ETH,
   /// Harmony token
   ONE,
+  /// WEBB
+  WEBB,
 }
 
 export function webbCurrencyIdToString(c: WebbCurrencyId): string {
@@ -19,8 +21,11 @@ export function webbCurrencyIdToString(c: WebbCurrencyId): string {
       return 'ETH';
     case WebbCurrencyId.ONE:
       return 'ONE';
+    case WebbCurrencyId.WEBB:
+      return 'WEBB';
   }
 }
+
 export function webbCurrencyIdFromString(c: string): WebbCurrencyId {
   switch (c) {
     case 'EDG':
@@ -31,6 +36,8 @@ export function webbCurrencyIdFromString(c: string): WebbCurrencyId {
       return WebbCurrencyId.ETH;
     case 'ONE':
       return WebbCurrencyId.ONE;
+    case 'WEBB':
+      return WebbCurrencyId.WEBB;
     default:
       throw new Error(`${c} isn't a valid WebbCurrencyId`);
   }

@@ -23,7 +23,7 @@ import {
 const F = require('circomlib').babyJub.F;
 
 type DepositEvent = [string, number, BigNumber];
-const logger = LoggerService.get('anchor');
+const logger = LoggerService.get('WebbAnchorContract');
 
 export class WebbAnchorContract {
   private _contract: WebbAnchor;
@@ -31,6 +31,7 @@ export class WebbAnchorContract {
 
   constructor(private mixersInfo: EvmChainMixersInfo, private web3Provider: providers.Web3Provider, address: string) {
     this.signer = this.web3Provider.getSigner();
+    logger.info(`Init with address ${address} `);
     this._contract = new Contract(address, WEBBAnchor2__factory.abi, this.signer) as any;
   }
 
@@ -65,7 +66,6 @@ export class WebbAnchorContract {
     const overrides = {
       gasLimit: 6000000,
       gasPrice: utils.toWei('1', 'gwei'),
-      value: await this.denomination,
     };
     const recipient = await this._contract.deposit(commitment, overrides);
     await recipient.wait();
