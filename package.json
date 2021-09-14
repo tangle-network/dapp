@@ -38,7 +38,6 @@
 		"@walletconnect/qrcode-modal": "^1.4.1",
 		"@walletconnect/web3-provider": "^1.4.1",
 		"circom": "^0.5.45",
-		"circomlib": "^0.5.2",
 		"detect-browser": "^5.2.0",
 		"ethers": "^5.1.4",
 		"ffjavascript": "^0.2.38",
