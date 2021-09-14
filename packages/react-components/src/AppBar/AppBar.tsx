@@ -119,11 +119,12 @@ const AppBar: React.FC<AppBarProps> = () => {
               Mixers
             </NavLink>
           </li>
-          <li className={'active'}>
+          {/* <li className={'active'}>
             <NavLink to={'/bridge'} activeClassName={'active'}>
               Bridge
             </NavLink>
-          </li>
+          </li> */}
+
           {/*        <li>
           <NavLink to={'/statistics'}>Statistics</NavLink>
         </li>
