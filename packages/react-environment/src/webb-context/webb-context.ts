@@ -31,7 +31,7 @@ export interface WebbContentState<T = unknown> {
   switchChain(chain: Chain, wallet: Wallet): Promise<WebbApiProvider<T> | null>;
 
   activeFeedback: InteractiveFeedback | null;
-  errorHandler(error: WebbError): void;
+  registerInteractiveFeedback: (interactiveFeedback: InteractiveFeedback) => void;
 }
 
 export const WebbContext = React.createContext<WebbContentState>({
@@ -51,7 +51,7 @@ export const WebbContext = React.createContext<WebbContentState>({
   },
   wallets: {},
   activeFeedback: null,
-  errorHandler(error: WebbError): void {
+  registerInteractiveFeedback: (interactiveFeedback: InteractiveFeedback) => {
     return;
   },
 });

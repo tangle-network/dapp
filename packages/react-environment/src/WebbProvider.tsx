@@ -176,14 +176,6 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
         }
         break;
       case WebbErrorCodes.UnselectedChain:
-        {
-          const unselectedChainError = e as UnselectedNetworkError;
-
-          const interactiveFeedback = evmChainConflict(unselectedChainError, appEvent);
-          if (interactiveFeedback) {
-            registerInteractiveFeedback(setInteractiveFeedbacks, interactiveFeedback);
-          }
-        }
         break;
       case WebbErrorCodes.MixerSizeNotFound:
         break;
@@ -480,7 +472,9 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
           }
         },
         activeFeedback,
-        errorHandler: catchWebbError,
+        registerInteractiveFeedback: (interactiveFeedback: InteractiveFeedback) => {
+          registerInteractiveFeedback(setInteractiveFeedbacks, interactiveFeedback);
+        },
       }}
     >
       <StoreProvier>

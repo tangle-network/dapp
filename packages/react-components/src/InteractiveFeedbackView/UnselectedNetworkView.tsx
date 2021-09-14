@@ -23,7 +23,6 @@ type UnselectedNetworkViewProps = {
 };
 
 const UnselectedNetworkView: React.FC<UnselectedNetworkViewProps> = ({ activeFeedback }) => {
-
   const { setTheme, theme } = useStore('ui');
   const isDarkTheme = theme === 'dark';
 
@@ -44,17 +43,11 @@ const UnselectedNetworkView: React.FC<UnselectedNetworkViewProps> = ({ activeFee
             switch (key) {
               case 'content':
                 return (
-                  <Padding x={0} v={0.5}>
+                  <Padding x={0} v={1}>
                     <Typography className={'text'} style={{ wordWrap: 'break-word' }}>
                       {entry[key]}
                     </Typography>
                   </Padding>
-                );
-              case 'json':
-                return (
-                  <Typography className={'text'}>
-                    <pre>{entry[key]}</pre>
-                  </Typography>
                 );
               case 'header':
                 return (

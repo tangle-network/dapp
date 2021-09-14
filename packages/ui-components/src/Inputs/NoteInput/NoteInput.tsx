@@ -1,14 +1,16 @@
 import { FormHelperText, InputBase } from '@material-ui/core';
 import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabel';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import styled, { css } from 'styled-components';
 import { Note } from '@webb-tools/sdk-mixer';
 import { useDepositNote } from '@webb-dapp/mixer/hooks/note';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { getEVMChainNameFromInternal } from '@webb-dapp/apps/configs';
-import { WebbError, WebbErrorCodes, UnselectedNetworkError } from '@webb-dapp/utils/webb-error';
+import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import { useWebContext } from '@webb-dapp/react-environment/webb-context';
 import { chainsPopulated } from '@webb-dapp/apps/configs';
+import { evmChainConflict } from '@webb-dapp/react-environment/error/interactive-errors/evm-network-conflict';
+import { appEvent } from '@webb-dapp/react-environment/app-event';
 
 const NoteInputWrapper = styled.div``;
 type NoteInputProps = {
@@ -25,31 +27,23 @@ const NoteDetails = styled.div`
 `;
 export const NoteInput: React.FC<NoteInputProps> = ({ error, onChange, value }) => {
   const depositNote = useDepositNote(value);
-  const { activeApi, activeChain, activeWallet, errorHandler, switchChain } = useWebContext();
+  const { activeChain, activeWallet, registerInteractiveFeedback, switchChain } = useWebContext();
 
   useEffect(() => {
     if (depositNote && activeChain && activeWallet) {
       if (Number(depositNote.note.chain) != activeChain.id) {
-        const unselectedNetwork = new UnselectedNetworkError(
+        const feedback = evmChainConflict(
           {
-            name: activeChain.name,
-            id: activeChain.id,
+            intendedChain: getEVMChainNameFromInternal(Number(depositNote.note.chain)),
+            selectedChain: activeChain.name,
+            switchChain: () => switchChain(chainsPopulated[Number(depositNote.note.chain)], activeWallet),
           },
-          {
-            name: depositNote.note.chain,
-            id: Number(depositNote.note.chain),
-          },
-          // Assume the same wallet provider is desired for the switch
-          () => {
-            switchChain(chainsPopulated[Number(depositNote.note.chain)], activeWallet);
-            return;
-          }
+          appEvent
         );
-
-        errorHandler(unselectedNetwork);
+        registerInteractiveFeedback(feedback);
       }
     }
-  });
+  }, [activeChain, depositNote]);
 
   return (
     <InputLabel label={'Note'}>

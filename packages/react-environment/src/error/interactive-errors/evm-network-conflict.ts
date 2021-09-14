@@ -1,17 +1,20 @@
 import { TAppEvent } from '@webb-dapp/react-environment/app-event';
-import { InteractiveFeedback, UnselectedNetworkError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
+import { InteractiveFeedback, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import { Button } from '@material-ui/core';
 import React from 'react';
 import { notificationApi } from '@webb-dapp/ui-components/notification';
 
+type EvmNetworkConflictParams = {
+  intendedChain: string;
+  selectedChain: string;
+  switchChain?(): void;
+};
+
 export const USER_SWITCHED_TO_EXPECT_CHAIN = 'OK';
 
-export function evmChainConflict(
-  unselectedNetworkError: UnselectedNetworkError,
-  appEvent: TAppEvent
-): InteractiveFeedback {
+export function evmChainConflict(params: EvmNetworkConflictParams, appEvent: TAppEvent): InteractiveFeedback {
   let interactiveFeedback: InteractiveFeedback;
-  const switchChainContent = [
+  const addChainContent = [
     {
       any: () => {
         let clicked = false;
@@ -26,10 +29,10 @@ export function evmChainConflict(
               });
               return;
             }
-            unselectedNetworkError.switchChain();
+            params.switchChain?.();
             clicked = true;
           },
-          children: `Switch to ${unselectedNetworkError.getIntendedChain().name}`,
+          children: `Switch to ${params.intendedChain}`,
           variant: 'contained',
           color: 'primary',
         });
@@ -38,18 +41,14 @@ export function evmChainConflict(
   ];
   const feedbackBody = InteractiveFeedback.feedbackEntries([
     {
-      header: `You must change networks`,
+      header: `You must switch networks`,
     },
 
     {
-      content: `It looks like you want to use ${unselectedNetworkError.getIntendedChain().name} with id (${
-        unselectedNetworkError.getIntendedChain().id
-      });
-       however the selected chain is ${unselectedNetworkError.getActiveChain().name} with id ${
-        unselectedNetworkError.getActiveChain().id
-      }`,
+      content: `The selected chain is ${params.selectedChain};
+       however the note is intended for ${params.intendedChain}`,
     },
-    ...switchChainContent,
+    ...(params.switchChain ? addChainContent : []),
   ]);
   const actions = InteractiveFeedback.actionsBuilder()
     // .action(
