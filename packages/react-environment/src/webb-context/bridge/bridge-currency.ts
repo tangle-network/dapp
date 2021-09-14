@@ -24,7 +24,9 @@ export class BridgeCurrency {
     const baseCurrency = webbCurrencyIdToString(this.wrappedCurrency);
     return `webb${baseCurrency}-${paraChains}`;
   }
-
+  get prefix(): string {
+    return `webb${webbCurrencyIdToString(this.wrappedCurrency)}`;
+  }
   static fromString(strBridgeCurrency: string): BridgeCurrency {
     const parts = strBridgeCurrency.split('-');
     let prefix = parts[0].replace('webb', '');

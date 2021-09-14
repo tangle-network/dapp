@@ -11,12 +11,12 @@
 	},
 	"resolutions": {
 		"@polkadot/api": "^4.11.2",
-		"@webb-tools/type-definitions": "^0.1.2-77",
-		"@webb-tools/api": "^0.1.2-77",
-		"@webb-tools/types": "^0.1.2-77",
-		"@webb-tools/app-util": "^0.1.2-77",
-		"@webb-tools/sdk-core": "^0.1.2-77",
-		"@webb-tools/sdk-mixer": "^0.1.2-77"
+	  "@webb-tools/type-definitions": "^0.1.2-82",
+	  "@webb-tools/api": "^0.1.2-82",
+	  "@webb-tools/types": "^0.1.2-82",
+	  "@webb-tools/app-util": "^0.1.2-82",
+	  "@webb-tools/sdk-core": "^0.1.2-82",
+	  "@webb-tools/sdk-mixer": "^0.1.2-82"
 	},
 	"scripts": {
 		"bump-version": "node scripts/bump-version.js",

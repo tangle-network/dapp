@@ -1,16 +1,13 @@
 import { FormHelperText, InputBase } from '@material-ui/core';
 import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabel';
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import styled, { css } from 'styled-components';
 import { useDepositNote } from '@webb-dapp/mixer/hooks/note';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { getEVMChainNameFromInternal } from '@webb-dapp/apps/configs';
-import { useWebContext } from '@webb-dapp/react-environment/webb-context';
-import { chainsPopulated } from '@webb-dapp/apps/configs';
-import { evmChainConflict } from '@webb-dapp/react-environment/error/interactive-errors/evm-network-conflict';
-import { appEvent } from '@webb-dapp/react-environment/app-event';
+import { BridgeCurrency } from '@webb-dapp/react-environment/webb-context';
+import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge'
 
-const NoteInputWrapper = styled.div``;
 type NoteInputProps = {
   value: string;
   onChange(next: string): void;
@@ -23,25 +20,21 @@ const NoteDetails = styled.div`
   padding: 11px;
   margin: 0 -11px;
 `;
-export const NoteInput: React.FC<NoteInputProps> = ({ error, onChange, value }) => {
-  const depositNote = useDepositNote(value);
-  const { activeChain, activeWallet, registerInteractiveFeedback, switchChain } = useWebContext();
 
-  useEffect(() => {
-    if (depositNote && activeChain && activeWallet) {
-      if (Number(depositNote.note.chain) != activeChain.id) {
-        const feedback = evmChainConflict(
-          {
-            intendedChain: getEVMChainNameFromInternal(Number(depositNote.note.chain)),
-            selectedChain: activeChain.name,
-            switchChain: () => switchChain(chainsPopulated[Number(depositNote.note.chain)], activeWallet),
-          },
-          appEvent
-        );
-        registerInteractiveFeedback(feedback);
+export const BridgeNoteInput: React.FC<NoteInputProps> = ({ error, onChange, value }) => {
+  const depositNote = useDepositNote(value);
+  const { getBridge } = useBridge();
+
+  const bridge = useMemo(() => {
+    try {
+      if (depositNote && depositNote.note.prefix == 'bridge') {
+        const currency = BridgeCurrency.fromString(depositNote.note.tokenSymbol);
+        return getBridge(currency);
       }
+    } catch (_) {
+      return null;
     }
-  }, [activeChain, depositNote]);
+  }, [depositNote]);
 
   return (
     <InputLabel label={'Note'}>
@@ -66,18 +59,40 @@ export const NoteInput: React.FC<NoteInputProps> = ({ error, onChange, value }) 
             <tbody>
               <tr>
                 <td>Context:</td>
-                <td style={{ textAlign: 'right' }}>{depositNote.note.prefix.replace('webb.', '')}</td>
+                <td style={{ textAlign: 'right' }}>
+                  <b>{depositNote.note.prefix.replace('webb.', '').toUpperCase()}</b>
+                </td>
               </tr>
               <tr>
                 <td>Amount:</td>
                 <td style={{ textAlign: 'right' }}>
-                  {depositNote.note.amount} {depositNote.note.tokenSymbol}
+                  {depositNote.note.amount} <b>{depositNote.note.tokenSymbol}</b>
                 </td>
               </tr>
               <tr>
-                <td>Chain:</td>
+                <td>Destination Chain:</td>
                 <td style={{ textAlign: 'right' }}>{getEVMChainNameFromInternal(Number(depositNote.note.chain))}</td>
               </tr>
+              {bridge ? (
+                <>
+                  <tr>
+                    <td
+                      style={{
+                        verticalAlign: 'baseline',
+                      }}
+                    >
+                      Bridge chains:
+                    </td>
+                    <td style={{ textAlign: 'right' }}>
+                      <div>
+                        {bridge.currency.chainIds.map(getEVMChainNameFromInternal).map((chainName) => (
+                          <div key={`${chainName}-bridge-chain`}> {chainName}</div>
+                        ))}
+                      </div>
+                    </td>
+                  </tr>
+                </>
+              ) : null}
             </tbody>
           </table>
         </NoteDetails>

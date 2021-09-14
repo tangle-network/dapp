@@ -17,16 +17,12 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
     return Promise.resolve(undefined);
   }
 
-  async generateNote(mixerId: number | string): Promise<DepositPayload> {
-    throw new Error('api not ready');
-  }
-
   async getSizes(): Promise<MixerSize[]> {
     const bridge = this.activeBridge;
     if (bridge) {
       return bridge.anchors.map((anchor) => ({
-        id: `Bridge:${anchor.amount}@${bridge.currency.name}`,
-        title: anchor.amount,
+        id: `Bridge=${anchor.amount}@${bridge.currency.name}`,
+        title: `${anchor.amount} ${bridge.currency.prefix}`,
       }));
     }
     return [];
@@ -42,16 +38,16 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
     if (!bridge) {
       throw new Error('api not ready');
     }
-    const currencyId = bridge.currency.currencyId;
-    const tokenSymbol = webbCurrencyIdToString(currencyId);
+    const tokenSymbol = bridge.currency.name;
     const activeChainEvmId = await this.inner.getChainId();
     const sourceChainId = evmIdIntoChainId(activeChainEvmId);
     const deposit = createTornDeposit();
     const secrets = deposit.preimage;
+    const amount = String(mixerId).replace('Bridge=', '').split('@')[0];
     const noteInput: NoteGenInput = {
       prefix: 'webb.bridge',
       chain: String(destChainId),
-      amount: String(mixerId),
+      amount: amount,
       denomination: '18',
       hashFunction: 'Poseidon',
       curve: 'Bn254',
