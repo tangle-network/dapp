@@ -16,7 +16,7 @@ import {
   ZKPWebbInputWithMerkle,
   ZKPWebbInputWithoutMerkle,
 } from '@webb-dapp/contracts/contracts/types';
-// const F = require('circomlib').babyJub.F;
+const F = require('circomlib').babyJub.F;
 
 type DepositEvent = [string, number, BigNumber];
 const logger = LoggerService.get('anchor');
