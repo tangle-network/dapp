@@ -11,12 +11,11 @@ import {
   WithdrawState,
 } from '@webb-dapp/react-environment/webb-context';
 import { RelayedWithdrawResult, WebbRelayer } from '@webb-dapp/react-environment/webb-context/relayer';
-import { WebbError } from '@webb-dapp/utils/webb-error';
+import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polkadot/transaction-notification-config';
 import { LoggerService } from '@webb-tools/app-util';
 import { Note } from '@webb-tools/sdk-mixer';
 import { BigNumber } from 'ethers';
-import { number } from 'prop-types';
 import React from 'react';
 
 const logger = LoggerService.get('Web3MixerWithdraw');
@@ -40,27 +39,39 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
         basedOn: 'evm',
         chain: chainId,
       },
-      async (note: string, withdrawFeePercentage: number) => {
-        try {
-          const depositNote = await Note.deserialize(note);
-          const evmNote = depositNote.note;
+      // Define the function for retrieving fee information for the relayer
+      async (note: string) => {
+        const depositNote = await Note.deserialize(note);
+        const evmNote = depositNote.note;
 
-          const contract = await this.inner.getContractBySize(Number(evmNote.amount), evmNote.tokenSymbol);
-          const principleBig = await contract.denomination;
+        const contract = await this.inner.getContractBySize(Number(evmNote.amount), evmNote.tokenSymbol);
 
-          const withdrawFeeMill = withdrawFeePercentage * 1000000;
+        // Given the note, iterate over the potential relayers and find the corresponding relayer configuration
+        // for the contract.
+        const supportedContract = relayer.capabilities.supportedChains['evm']
+          .get(Number(evmNote.chain))
+          ?.contracts.find(({ address }) => {
+            return address.toLowerCase() === contract.inner.address.toLowerCase();
+          });
 
-          const withdrawFeeMillBig = BigNumber.from(withdrawFeeMill);
-          const feeBigMill = principleBig.mul(withdrawFeeMillBig);
-
-          const feeBig = feeBigMill.div(BigNumber.from(1000000));
-          return feeBig.toString();
-        } catch (e) {
-          if (e instanceof WebbError) {
-            return '';
-          }
-          throw e;
+        // The user somehow selected a relayer which does not support the mixer.
+        // This should not be possible as only supported mixers should be selectable in the UI.
+        if (!supportedContract) {
+          throw WebbError.from(WebbErrorCodes.RelayerUnsupportedMixer);
         }
+
+        const principleBig = await contract.denomination;
+
+        const withdrawFeeMill = supportedContract.withdrawFeePercentage * 1000000;
+
+        const withdrawFeeMillBig = BigNumber.from(withdrawFeeMill);
+        const feeBigMill = principleBig.mul(withdrawFeeMillBig);
+
+        const feeBig = feeBigMill.div(BigNumber.from(1000000));
+        return {
+          totalFees: feeBig.toString(),
+          withdrawFeePercentage: supportedContract.withdrawFeePercentage,
+        };
       }
     );
   }
