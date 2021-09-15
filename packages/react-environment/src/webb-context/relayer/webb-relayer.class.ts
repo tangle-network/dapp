@@ -65,7 +65,6 @@ export class WebbRelayerBuilder {
     info: RelayerInfo,
     nameAdapter: ChainNameIntoChainId
   ): Capabilities {
-    console.log({ info });
     return {
       hasIpService: true,
       supportedChains: {
@@ -94,7 +93,6 @@ export class WebbRelayerBuilder {
     const res = await fetch(`${config.endpoint}/api/v1/info`);
     const info: RelayerInfo = await res.json();
     const capabilities = WebbRelayerBuilder.infoIntoCapabilities(config, info, this.chainNameAdapter);
-    console.log('Relayer capabilities', capabilities);
     this.capabilities[config.endpoint] = capabilities;
     return capabilities;
   }
@@ -316,7 +314,6 @@ export class ActiveWebbRelayer extends WebbRelayer {
   }
 
   fees = async (note: string) => {
-    // this.config?.contracts.
     return this.getFees(note);
   };
 }

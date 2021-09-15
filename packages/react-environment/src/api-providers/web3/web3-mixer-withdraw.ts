@@ -16,7 +16,6 @@ import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polka
 import { LoggerService } from '@webb-tools/app-util';
 import { Note } from '@webb-tools/sdk-mixer';
 import { BigNumber } from 'ethers';
-import { number } from 'prop-types';
 import React from 'react';
 
 const logger = LoggerService.get('Web3MixerWithdraw');
@@ -52,8 +51,6 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
             ?.contracts.find(({ address }) => {
               return address.toLowerCase() === contract.inner.address.toLowerCase();
             });
-
-          console.log(supportedContract);
 
           if (!supportedContract) {
             throw new Error();
