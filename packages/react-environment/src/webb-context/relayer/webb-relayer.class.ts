@@ -9,6 +9,9 @@ import {
 } from '@webb-dapp/react-environment/webb-context/relayer/types';
 import { Observable, Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
+import { LoggerService } from '@webb-tools/app-util';
+
+const logger = LoggerService.get('webb-relayer class');
 
 type MixerQuery = {
   amount: number;
@@ -62,7 +65,6 @@ export class WebbRelayerBuilder {
     info: RelayerInfo,
     nameAdapter: ChainNameIntoChainId
   ): Capabilities {
-    console.log({ info });
     return {
       hasIpService: true,
       supportedChains: {
@@ -91,7 +93,6 @@ export class WebbRelayerBuilder {
     const res = await fetch(`${config.endpoint}/api/v1/info`);
     const info: RelayerInfo = await res.json();
     const capabilities = WebbRelayerBuilder.infoIntoCapabilities(config, info, this.chainNameAdapter);
-    console.log('Relayer capabilities', capabilities);
     this.capabilities[config.endpoint] = capabilities;
     return capabilities;
   }
@@ -283,7 +284,7 @@ export class WebbRelayer {
   static intoActiveWebRelayer(
     instance: WebbRelayer,
     query: { chain: ChainId; basedOn: 'evm' | 'substrate' },
-    getFees: (note: string, withdrawFeePercentage: number) => Promise<string>
+    getFees: (note: string) => Promise<{ totalFees: string; withdrawFeePercentage: number } | undefined>
   ): ActiveWebbRelayer {
     return new ActiveWebbRelayer(instance.endpoint, instance.capabilities, query, getFees);
   }
@@ -294,7 +295,7 @@ export class ActiveWebbRelayer extends WebbRelayer {
     endpoint: string,
     capabilities: Capabilities,
     private query: { chain: ChainId; basedOn: 'evm' | 'substrate' },
-    private getFees: (note: string, withdrawFeePercentage: number) => Promise<string>
+    private getFees: (note: string) => Promise<{ totalFees: string; withdrawFeePercentage: number } | undefined>
   ) {
     super(endpoint, capabilities);
   }
@@ -304,10 +305,6 @@ export class ActiveWebbRelayer extends WebbRelayer {
     return list.get(this.query.chain);
   }
 
-  get fee(): number | undefined {
-    return this.config?.withdrawFeePercentage;
-  }
-
   get gasLimit(): number | undefined {
     return undefined;
   }
@@ -315,8 +312,8 @@ export class ActiveWebbRelayer extends WebbRelayer {
   get account(): string | undefined {
     return this.config?.account;
   }
+
   fees = async (note: string) => {
-    console.log(this.config?.withdrawFeePercentage, this.config);
-    return this.getFees(note, this.config?.withdrawFeePercentage ?? 0);
+    return this.getFees(note);
   };
 }

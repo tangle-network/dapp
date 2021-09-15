@@ -2,6 +2,9 @@ import { useWebContext, WithdrawState } from '@webb-dapp/react-environment/webb-
 import { ActiveWebbRelayer, WebbRelayer } from '@webb-dapp/react-environment/webb-context/relayer';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Note } from '@webb-tools/sdk-mixer';
+import { LoggerService } from '@webb-tools/app-util';
+
+const logger = LoggerService.get('useWithdrawHook');
 
 export type UseWithdrawProps = {
   note: string;
@@ -57,7 +60,7 @@ export const useWithdraw = (params: UseWithdrawProps) => {
         }
       })
       .catch((err) => {
-        console.log('catch note deserialize useWithdraw', err);
+        logger.info('catch note deserialize useWithdraw', err);
       });
 
     const sub = withdrawApi?.watcher.subscribe((next) => {

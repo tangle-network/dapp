@@ -18,6 +18,8 @@ export enum WebbErrorCodes {
   InsufficientProviderInterface,
   /// EVM session already ended
   EVMSessionAlreadyEnded,
+  /// Relayer does not support the mixer
+  RelayerUnsupportedMixer,
 }
 
 /// An Error message with error metadata
@@ -94,6 +96,11 @@ export class WebbError extends Error {
         return {
           code,
           message: `Attempt to end session and it' already ended or unknown error`,
+        };
+      case WebbErrorCodes.RelayerUnsupportedMixer:
+        return {
+          code,
+          message: `Attempt to use a relayer which does not support the mixer`,
         };
 
       default:
