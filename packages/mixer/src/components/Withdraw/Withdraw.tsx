@@ -21,6 +21,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
   const [note, setNote] = useState('');
 
   const [recipient, setRecipient] = useState('');
+  const [withdrawPercentage, setWithdrawPercentage] = useState(0);
   const [fees, setFees] = useState('');
   const { canCancel, cancelWithdraw, relayersState, setRelayer, stage, validationErrors, withdraw } = useWithdraw({
     recipient,
@@ -34,7 +35,11 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
           return;
         }
         relayersState.activeRelayer.fees(note).then((fees) => {
-          setFees(fees);
+          if (!fees) {
+            return;
+          }
+          setFees(fees.totalFees);
+          setWithdrawPercentage(fees.withdrawFeePercentage);
         });
       } catch (e) {
         return;
@@ -109,7 +114,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
                         <td>
                           <span style={{ whiteSpace: 'nowrap' }}>Withdraw fee percentage</span>
                         </td>
-                        <td style={{ textAlign: 'right' }}>{Number(relayersState.activeRelayer?.fee) * 100}%</td>
+                        <td style={{ textAlign: 'right' }}>{withdrawPercentage * 100}%</td>
                       </tr>
 
                       {fees && (
