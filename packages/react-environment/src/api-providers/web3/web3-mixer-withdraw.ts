@@ -138,7 +138,7 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
       const zkpInputWithoutMerkleProof = fromDepositIntoZKPTornPublicInputs(deposit, {
         recipient,
         relayer: activeRelayer.account,
-        fee: Number(fees),
+        fee: Number(fees?.totalFees),
       });
 
       // This is the part of withdraw that takes a long time
