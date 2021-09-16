@@ -10,8 +10,13 @@ import React, { FC } from 'react';
 import { hot } from 'react-hot-loader/root';
 
 import { config as routerConfig } from './router-config';
+import { createAnchor2Deposit, createTornDeposit } from '@webb-dapp/contracts/utils/make-deposit';
 
 const appLogger = LoggerService.new('App');
+console.log({
+  anchor2: createAnchor2Deposit(0),
+  anchor1: createTornDeposit(),
+});
 const App: FC = () => {
   return (
     <DAppError logger={appLogger}>

@@ -4,7 +4,7 @@ import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web
 import { Note } from '@webb-tools/sdk-mixer';
 
 import { BridgeWithdraw } from '../../webb-context';
-import { ChainId } from '@webb-dapp/apps/configs';
+import { ChainId, chainIdIntoEVMId } from '@webb-dapp/apps/configs';
 
 export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
   bridgeConfig: BridgeConfig = bridgeConfig;
@@ -17,7 +17,8 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
     ///--->
     const parseNote = await Note.deserialize(note);
     ///--->
-    const deposit = depositFromPreimage(parseNote.note.secret.replace('0x', ''));
+    const evmChainId = chainIdIntoEVMId(parseNote.note.chain);
+    const deposit = depositFromPreimage(parseNote.note.secret.replace('0x', ''), Number(evmChainId));
     const token = parseNote.note.tokenSymbol;
     const bridgeCurrency = BridgeCurrency.fromString(token);
     const bridge = Bridge.from(this.bridgeConfig, bridgeCurrency);
@@ -31,7 +32,6 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
     }
     const contract = this.inner.getWebbAnchorByAddress(contractAddress);
     const accounts = await this.inner.accounts.accounts();
-    console.log(accounts);
     const zkpResults = await contract.generateZKP(deposit, {
       destinationChainId: Number(parseNote.note.chain),
       fee: 0,

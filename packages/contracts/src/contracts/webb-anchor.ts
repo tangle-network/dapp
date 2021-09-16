@@ -14,6 +14,8 @@ import { WEBBAnchor2__factory } from '../types/factories/WEBBAnchor2__factory';
 import { ZKPWebbInputWithMerkle, ZKPWebbInputWithoutMerkle } from '@webb-dapp/contracts/contracts/types';
 import { bridgeCurrencyBridgeStorageFactory } from '@webb-dapp/react-environment/api-providers/web3/bridge-storage';
 import { MixerStorage } from '@webb-dapp/apps/configs/storages/EvmChainStorage';
+import { generateWitness, proofAndVerify } from '@webb-dapp/contracts/contracts/webb-utils';
+const Scalar = require('ffjavascript').Scalar;
 
 const F = require('circomlib').babyJub.F;
 
@@ -160,25 +162,27 @@ export class WebbAnchorContract {
   async generateZKP(deposit: Deposit, zkpInputWithoutMerkleProof: ZKPWebbInputWithoutMerkle) {
     const merkleProof = await this.generateMerkleProof(deposit);
     const { pathElements, pathIndex: pathIndices, root } = merkleProof;
-    let circuitData = require('../circuits/withdraw.json');
-    let proving_key = require('../circuits/withdraw_proving_key.bin');
-    proving_key = await fetch(proving_key);
-    proving_key = await proving_key.arrayBuffer();
-    const zkpInput: ZKPWebbInputWithMerkle = {
-      ...zkpInputWithoutMerkleProof,
+    const input = {
+      chainID: BigInt(deposit.chainId),
+      nullifier: deposit.nullifier,
+      secret: deposit.secret,
+      nullifierHash: deposit.nullifierHash,
+      diffs: [root, 0].map((r) => {
+        return F.sub(Scalar.fromString(`${r}`), Scalar.fromString(`${root}`)).toString();
+      }),
+      fee: String(zkpInputWithoutMerkleProof.fee),
       pathElements,
       pathIndices,
-      root: root as string,
+      recipient: zkpInputWithoutMerkleProof.recipient,
+      refund: String(zkpInputWithoutMerkleProof.refund),
+      relayer: zkpInputWithoutMerkleProof.relayer,
+      roots: [root, 0],
     };
-    const proofsData = await webSnarkUtils.genWitnessAndProve(
-      // @ts-ignore
-      window.groth16,
-      zkpInput,
-      circuitData,
-      proving_key
-    );
-    const { proof } = await webSnarkUtils.toSolidityInput(proofsData);
-    return { proof, input: zkpInput };
+    console.log(input);
+    const witness = await generateWitness(input);
+    const proof = await proofAndVerify(witness);
+
+    return { proof: proof.proof, input: zkpInputWithoutMerkleProof };
   }
 
   async withdraw(proof: any, zkp: ZKPWebbInputWithMerkle) {

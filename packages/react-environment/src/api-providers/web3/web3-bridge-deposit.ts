@@ -51,7 +51,7 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
         throw new Error(`No Anchor for the chain ${note.chain}`);
       }
       const contract = this.inner.getWebbAnchorByAddress(contractAddress);
-      await contract.deposit(commitment);
+      await contract.deposit(String(commitment));
       transactionNotificationConfig.finalize?.({
         address: '',
         data: undefined,
@@ -62,6 +62,7 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
         },
       });
     } catch (e) {
+      console.log(e);
       if (!e.code) {
         throw e;
       }
