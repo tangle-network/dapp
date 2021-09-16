@@ -1,5 +1,5 @@
-import { ChainId, evmIdIntoChainId, getEVMChainNameFromInternal } from '@webb-dapp/apps/configs';
-import { createTornDeposit, Deposit } from '@webb-dapp/contracts/utils/make-deposit';
+import { ChainId, chainIdIntoEVMId, getEVMChainNameFromInternal } from '@webb-dapp/apps/configs';
+import { createAnchor2Deposit, Deposit } from '@webb-dapp/contracts/utils/make-deposit';
 import { BridgeConfig, DepositPayload as IDepositPayload, MixerSize } from '@webb-dapp/react-environment';
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3/webb-web3-provider';
 import { Note, NoteGenInput } from '@webb-tools/sdk-mixer';
@@ -113,9 +113,8 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
       throw new Error('api not ready');
     }
     const tokenSymbol = bridge.currency.name;
-    const activeChainEvmId = await this.inner.getChainId();
-    const sourceChainId = evmIdIntoChainId(activeChainEvmId);
-    const deposit = createTornDeposit();
+    const destEvmId = chainIdIntoEVMId(destChainId);
+    const deposit = createAnchor2Deposit(destEvmId);
     const secrets = deposit.preimage;
     const amount = String(mixerId).replace('Bridge=', '').split('@')[0];
     const noteInput: NoteGenInput = {
