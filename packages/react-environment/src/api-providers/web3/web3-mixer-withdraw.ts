@@ -11,6 +11,7 @@ import {
   WithdrawState,
 } from '@webb-dapp/react-environment/webb-context';
 import { RelayedWithdrawResult, WebbRelayer } from '@webb-dapp/react-environment/webb-context/relayer';
+import { useFetch } from '@webb-dapp/react-hooks/useFetch';
 import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polkadot/transaction-notification-config';
 import { LoggerService } from '@webb-tools/app-util';
@@ -128,8 +129,6 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
       });
       logger.info(`Withdrawing through relayer with address ${activeRelayer.endpoint}`);
       logger.trace('Note deserialized', evmNote);
-      const relayedWithdraw = await activeRelayer.initWithdraw();
-      logger.trace('initialized the withdraw WebSocket');
       const mixerInfo = this.inner.getMixerInfoBySize(Number(evmNote.note.amount), evmNote.note.tokenSymbol);
       logger.info(`Withdrawing to mixer info`, mixerInfo);
       const anchorContract = await this.inner.getContractByAddress(mixerInfo.address);
@@ -141,9 +140,14 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
         fee: Number(fees?.totalFees),
       });
 
+      const leavesResponse = await fetch(`${activeRelayer.endpoint}/api/v1/leaves/${mixerInfo.address}`);
+      const leaves: string[] = (await leavesResponse.json()).leaves;
+
       // This is the part of withdraw that takes a long time
       this.emit('stateChange', WithdrawState.GeneratingZk);
-      const zkp = await anchorContract.generateZKP(deposit, zkpInputWithoutMerkleProof);
+      const zkp = await anchorContract.generateZKPWithLeaves(deposit, zkpInputWithoutMerkleProof, leaves);
+
+      logger.trace('Generated the zkp', zkp);
 
       // Check for cancelled here, abort if it was set.
       // Mark the withdraw mixer as able to withdraw again.
@@ -163,7 +167,9 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
 
       this.emit('stateChange', WithdrawState.SendingTransaction);
 
-      logger.trace('Generated the zkp', zkp);
+      const relayedWithdraw = await activeRelayer.initWithdraw();
+      logger.trace('initialized the withdraw WebSocket');
+
       const tx = relayedWithdraw.generateWithdrawRequest(
         {
           baseOn: 'evm',
