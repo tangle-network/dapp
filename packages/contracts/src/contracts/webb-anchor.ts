@@ -11,7 +11,11 @@ import { LoggerService } from '@webb-tools/app-util';
 import { BigNumber, Contract, providers, Signer } from 'ethers';
 import utils from 'web3-utils';
 import { WEBBAnchor2__factory } from '../types/factories/WEBBAnchor2__factory';
-import { ZKPWebbInputWithMerkle, ZKPWebbInputWithoutMerkle } from '@webb-dapp/contracts/contracts/types';
+import {
+  BridgeWitnessInput,
+  ZKPWebbInputWithMerkle,
+  ZKPWebbInputWithoutMerkle,
+} from '@webb-dapp/contracts/contracts/types';
 import { bridgeCurrencyBridgeStorageFactory } from '@webb-dapp/react-environment/api-providers/web3/bridge-storage';
 import { MixerStorage } from '@webb-dapp/apps/configs/storages/EvmChainStorage';
 import { generateWitness, proofAndVerify } from '@webb-dapp/contracts/contracts/webb-utils';
@@ -60,10 +64,7 @@ export class WebbAnchorContract {
   }
 
   async deposit(commitment: string, onComplete?: (event: DepositEvent) => void) {
-    const overrides = {
-      gasLimit: 6000000,
-      gasPrice: utils.toWei('1', 'gwei'),
-    };
+    const overrides = {};
     const recipient = await this._contract.deposit(commitment, overrides);
     await recipient.wait();
   }
@@ -151,7 +152,6 @@ export class WebbAnchorContract {
         leaves: [...fetchedLeaves.newLeaves, ...storedContractInfo.leaves],
       });
     }
-
     let leafIndex = [...storedContractInfo.leaves, ...fetchedLeaves.newLeaves].findIndex(
       (commitment) => commitment == bufferToFixed(deposit.commitment)
     );
@@ -162,7 +162,8 @@ export class WebbAnchorContract {
   async generateZKP(deposit: Deposit, zkpInputWithoutMerkleProof: ZKPWebbInputWithoutMerkle) {
     const merkleProof = await this.generateMerkleProof(deposit);
     const { pathElements, pathIndex: pathIndices, root } = merkleProof;
-    const input = {
+
+    const input: BridgeWitnessInput = {
       chainID: BigInt(deposit.chainId),
       nullifier: deposit.nullifier,
       secret: deposit.secret,
@@ -178,7 +179,7 @@ export class WebbAnchorContract {
       relayer: zkpInputWithoutMerkleProof.relayer,
       roots: [root, 0],
     };
-    console.log(input);
+
     const witness = await generateWitness(input);
     const proof = await proofAndVerify(witness);
 

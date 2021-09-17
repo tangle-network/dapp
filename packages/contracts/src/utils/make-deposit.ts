@@ -58,7 +58,28 @@ export function createAnchor2Deposit(chainId: number) {
   return deposit;
 }
 
-export function depositFromPreimage(hexString: string, chainId: number | undefined = undefined): Deposit {
+export function depositFromAnchor2Preimage(hexString: string, chainId: number): Deposit {
+  const poseidonHasher = new PoseidonHasher();
+  const preimage = Buffer.from(hexString, 'hex');
+  const nullifier = leBuff2int(preimage.slice(0, 31));
+  const secret = leBuff2int(preimage.slice(31, 62));
+  const commitmentBN = poseidonHash3([Number(chainId), nullifier, secret]);
+  const nullifierHash = poseidonHasher.hash(null, nullifier, nullifier);
+  const commitment = bufferToFixed(commitmentBN);
+
+  let deposit: Deposit = {
+    preimage,
+    commitment,
+    nullifierHash,
+    nullifier: bufferToFixed(nullifier),
+    secret: bufferToFixed(secret),
+    chainId: chainId,
+  };
+  return deposit;
+}
+
+/// todo change to tornado
+export function depositFromPreimage(hexString: string): Deposit {
   const preImage = Buffer.from(hexString, 'hex');
   const commitment = pedersenHash(preImage);
   const nullifier = tornSnarkjs.bigInt.leBuff2int(preImage.slice(0, 31));
@@ -71,7 +92,6 @@ export function depositFromPreimage(hexString: string, chainId: number | undefin
     nullifierHash,
     nullifier: nullifier,
     secret: secret,
-    chainId,
   };
   return deposit;
 }

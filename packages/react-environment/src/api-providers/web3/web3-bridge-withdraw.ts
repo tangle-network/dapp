@@ -1,4 +1,4 @@
-import { depositFromPreimage } from '@webb-dapp/contracts/utils/make-deposit';
+import { depositFromAnchor2Preimage, depositFromPreimage } from '@webb-dapp/contracts/utils/make-deposit';
 import { Bridge, bridgeConfig, BridgeConfig, BridgeCurrency } from '@webb-dapp/react-environment';
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3/webb-web3-provider';
 import { Note } from '@webb-tools/sdk-mixer';
@@ -18,7 +18,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
     const parseNote = await Note.deserialize(note);
     ///--->
     const evmChainId = chainIdIntoEVMId(parseNote.note.chain);
-    const deposit = depositFromPreimage(parseNote.note.secret.replace('0x', ''), Number(evmChainId));
+    const deposit = depositFromAnchor2Preimage(parseNote.note.secret.replace('0x', ''), Number(evmChainId));
     const token = parseNote.note.tokenSymbol;
     const bridgeCurrency = BridgeCurrency.fromString(token);
     const bridge = Bridge.from(this.bridgeConfig, bridgeCurrency);

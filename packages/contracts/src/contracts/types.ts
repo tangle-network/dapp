@@ -50,13 +50,13 @@ export type ZKPWebbInputWithMerkle = {
   pathIndices: number[];
 } & ZKPWebbInputWithoutMerkle;
 
-export type BridgeWithesInput = {
+export type BridgeWitnessInput = {
   nullifierHash: string;
   recipient: string;
   relayer: string;
   fee: string;
   refund: string;
-  chainID: string;
+  chainID: bigint;
   roots: [any, 0];
   /// private
   nullifier: string;
@@ -65,5 +65,5 @@ export type BridgeWithesInput = {
 
   pathIndices: number[];
 
-  diffs: string;
+  diffs: string[];
 };
