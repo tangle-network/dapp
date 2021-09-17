@@ -203,6 +203,41 @@ export class TornadoAnchorContract {
     return { proof, input: zkpInput };
   }
 
+  // If leaves are provided, don't do anything with storage
+  async generateZKPWithLeaves(deposit: Deposit, zkpPublicInputs: ZKPTornPublicInputs, leaves: string[]) {
+    const treeHeight = await this._contract.levels();
+    const tree = new MerkleTree('eth', treeHeight, leaves, new MimcSpongeHasher());
+    let leafIndex = leaves.findIndex((commitment) => commitment == bufferToFixed(deposit.commitment));
+    logger.info(`Leaf index ${leafIndex}`);
+    const merkleProof = tree.path(leafIndex);
+
+    const { pathElements, pathIndex: pathIndices, root } = merkleProof;
+    let circuitData = require('../circuits/withdraw.json');
+    let proving_key = require('../circuits/withdraw_proving_key.bin');
+    proving_key = await fetch(proving_key);
+    proving_key = await proving_key.arrayBuffer();
+    const zkpInput: ZKPTornInputWithMerkle = {
+      ...zkpPublicInputs,
+      nullifier: deposit.nullifier,
+      secret: deposit.secret,
+      pathElements,
+      pathIndices,
+      root: root as string,
+    };
+
+    console.log(zkpInput);
+
+    const proofsData = await webSnarkUtils.genWitnessAndProve(
+      // @ts-ignore
+      window.groth16,
+      zkpInput,
+      circuitData,
+      proving_key
+    );
+    const { proof } = await webSnarkUtils.toSolidityInput(proofsData);
+    return { proof, input: zkpInput };
+  }
+
   async withdraw(proof: any, zkp: ZKPTornInputWithMerkle) {
     // tx config
     const overrides = {};
