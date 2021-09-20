@@ -95,3 +95,8 @@ export function depositFromPreimage(hexString: string): Deposit {
   };
   return deposit;
 }
+
+window.gene = {
+  depositFromAnchor2Preimage,
+  createAnchor2Deposit,
+};

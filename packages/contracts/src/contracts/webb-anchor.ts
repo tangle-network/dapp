@@ -19,6 +19,8 @@ import {
 import { bridgeCurrencyBridgeStorageFactory } from '@webb-dapp/react-environment/api-providers/web3/bridge-storage';
 import { MixerStorage } from '@webb-dapp/apps/configs/storages/EvmChainStorage';
 import { generateWitness, proofAndVerify } from '@webb-dapp/contracts/contracts/webb-utils';
+import { generateWithdrawProofCallData } from '@webb-dapp/contracts/utils/bridge-utils';
+
 const Scalar = require('ffjavascript').Scalar;
 
 const F = require('circomlib').babyJub.F;
@@ -142,6 +144,9 @@ export class WebbAnchorContract {
 
     const newRoot = tree.get_root();
     const formattedRoot = bufferToFixed(newRoot);
+    console.log(formattedRoot);
+    const lastRoot = await this._contract.getLastRoot();
+    console.log({ lastRoot });
     const knownRoot = await this._contract.isKnownRoot(formattedRoot);
     logger.info(`knownRoot: ${knownRoot}`);
 
@@ -153,7 +158,7 @@ export class WebbAnchorContract {
       });
     }
     let leafIndex = [...storedContractInfo.leaves, ...fetchedLeaves.newLeaves].findIndex(
-      (commitment) => commitment == bufferToFixed(deposit.commitment)
+      (commitment) => commitment == deposit.commitment
     );
     logger.info(`Leaf index ${leafIndex}`);
     return tree.path(leafIndex);
@@ -179,21 +184,34 @@ export class WebbAnchorContract {
       relayer: zkpInputWithoutMerkleProof.relayer,
       roots: [root, 0],
     };
-
+    console.log(`zkp input`, input);
     const witness = await generateWitness(input);
-    const proof = await proofAndVerify(witness);
 
-    return { proof: proof.proof, input: zkpInputWithoutMerkleProof };
+    const proof = await proofAndVerify(witness);
+    return { proof: proof.proof, input: input, root };
   }
 
-  async withdraw(proof: any, zkp: ZKPWebbInputWithMerkle) {
+  async withdraw(proof: any, zkp: ZKPWebbInputWithMerkle, pub: any) {
     // tx config
     const overrides = {
       gasLimit: 6000000,
       gasPrice: utils.toWei('2', 'gwei'),
     };
+
+    console.log(
+      bufferToFixed(zkp.root),
+      bufferToFixed(zkp.nullifierHash),
+      zkp.recipient,
+      zkp.relayer,
+      bufferToFixed(zkp.fee),
+      bufferToFixed(zkp.refund),
+      overrides
+    );
+
+    const proofBytes = await generateWithdrawProofCallData(proof, pub);
+    console.log({ proofBytes });
     const tx = await this._contract.withdraw(
-      proof,
+      `0x${proofBytes}`,
       bufferToFixed(zkp.root),
       bufferToFixed(zkp.nullifierHash),
       zkp.recipient,

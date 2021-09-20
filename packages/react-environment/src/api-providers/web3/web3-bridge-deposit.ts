@@ -10,6 +10,7 @@ import { BridgeDeposit } from '../../webb-context/bridge/bridge-deposit';
 import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polkadot/transaction-notification-config';
 import React from 'react';
 import { DepositNotification } from '@webb-dapp/ui-components/notification/DepositNotification';
+import { logger } from 'ethers';
 
 type DepositPayload = IDepositPayload<Note, [Deposit, number | string]>;
 
@@ -51,6 +52,7 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
         throw new Error(`No Anchor for the chain ${note.chain}`);
       }
       const contract = this.inner.getWebbAnchorByAddress(contractAddress);
+      logger.info(`Commitment for deposit is ${commitment}`);
       await contract.deposit(String(commitment));
       transactionNotificationConfig.finalize?.({
         address: '',
@@ -131,6 +133,7 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
       secrets: u8aToHex(secrets),
     };
     const note = await Note.generateNote(noteInput);
+    logger.info(`Commitment is ${note.note.secret}`);
     return {
       note: note,
       params: [deposit, mixerId],

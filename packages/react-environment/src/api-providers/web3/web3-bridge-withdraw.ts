@@ -1,10 +1,11 @@
-import { depositFromAnchor2Preimage, depositFromPreimage } from '@webb-dapp/contracts/utils/make-deposit';
+import { depositFromAnchor2Preimage } from '@webb-dapp/contracts/utils/make-deposit';
 import { Bridge, bridgeConfig, BridgeConfig, BridgeCurrency } from '@webb-dapp/react-environment';
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3/webb-web3-provider';
 import { Note } from '@webb-tools/sdk-mixer';
 
 import { BridgeWithdraw } from '../../webb-context';
 import { ChainId, chainIdIntoEVMId } from '@webb-dapp/apps/configs';
+import { logger } from 'ethers';
 
 export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
   bridgeConfig: BridgeConfig = bridgeConfig;
@@ -17,6 +18,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
     ///--->
     const parseNote = await Note.deserialize(note);
     ///--->
+    logger.info(`Commitment is from note ${parseNote.note.secret}`);
     const evmChainId = chainIdIntoEVMId(parseNote.note.chain);
     const deposit = depositFromAnchor2Preimage(parseNote.note.secret.replace('0x', ''), Number(evmChainId));
     const token = parseNote.note.tokenSymbol;
@@ -32,7 +34,8 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
     }
     const contract = this.inner.getWebbAnchorByAddress(contractAddress);
     const accounts = await this.inner.accounts.accounts();
-    const zkpResults = await contract.generateZKP(deposit, {
+    logger.info(`Commitment for withdraw is ${deposit.commitment}`);
+    const input = {
       destinationChainId: Number(parseNote.note.chain),
       fee: 0,
       nullifier: deposit.nullifier,
@@ -41,8 +44,26 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
       refund: 0,
       relayer: accounts[0].address,
       secret: deposit.secret,
-    });
-    await contract.withdraw(zkpResults.proof, zkpResults.proof);
+    };
+    const zkpResults = await contract.generateZKP(deposit, input);
+
+    await contract.withdraw(
+      zkpResults.proof,
+      {
+        destinationChainId: evmChainId,
+        fee: input.fee,
+        nullifier: input.nullifier,
+        nullifierHash: input.nullifierHash,
+        pathElements: zkpResults.input.pathElements,
+        pathIndices: zkpResults.input.pathIndices,
+        recipient: input.recipient,
+        refund: input.refund,
+        relayer: input.relayer,
+        root: zkpResults.root as any,
+        secret: zkpResults.input.secret,
+      },
+      zkpResults.input
+    );
     /*
      * TODO
      * - Generate ZKP based on the bridge circuit
