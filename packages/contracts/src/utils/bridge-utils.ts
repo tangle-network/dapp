@@ -70,7 +70,7 @@ const createUpdateProposalData = (sourceChainID, blockHeight, merkleRoot) => {
 };
 
 const createRootsBytes = (rootArray) => {
-  neighborBytes = '0x';
+  let neighborBytes = '0x';
   for (let i = 0; i < rootArray.length; i++) {
     neighborBytes += toFixedHex(rootArray[i]).substr(2);
   }

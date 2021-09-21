@@ -19,7 +19,7 @@ import {
 import { bridgeCurrencyBridgeStorageFactory } from '@webb-dapp/react-environment/api-providers/web3/bridge-storage';
 import { MixerStorage } from '@webb-dapp/apps/configs/storages/EvmChainStorage';
 import { generateWitness, proofAndVerify } from '@webb-dapp/contracts/contracts/webb-utils';
-import { generateWithdrawProofCallData } from '@webb-dapp/contracts/utils/bridge-utils';
+import { createRootsBytes, generateWithdrawProofCallData } from '@webb-dapp/contracts/utils/bridge-utils';
 
 const Scalar = require('ffjavascript').Scalar;
 
@@ -198,21 +198,22 @@ export class WebbAnchorContract {
       gasPrice: utils.toWei('2', 'gwei'),
     };
 
-    console.log(
-      bufferToFixed(zkp.root),
-      bufferToFixed(zkp.nullifierHash),
-      zkp.recipient,
-      zkp.relayer,
-      bufferToFixed(zkp.fee),
-      bufferToFixed(zkp.refund),
-      overrides
-    );
-
     const proofBytes = await generateWithdrawProofCallData(proof, pub);
-    console.log({ proofBytes });
+
+    console.log({
+      proof: `0x${proofBytes}`,
+      roots: createRootsBytes(pub.roots),
+      nullifierHash: bufferToFixed(zkp.nullifierHash),
+      recipient: zkp.recipient,
+      relayer: zkp.relayer,
+      fee: bufferToFixed(zkp.fee),
+      refund: bufferToFixed(zkp.refund),
+      overrides,
+    });
+
     const tx = await this._contract.withdraw(
       `0x${proofBytes}`,
-      bufferToFixed(zkp.root),
+      createRootsBytes(pub.roots),
       bufferToFixed(zkp.nullifierHash),
       zkp.recipient,
       zkp.relayer,
