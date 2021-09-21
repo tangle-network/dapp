@@ -20,6 +20,8 @@ export enum WebbErrorCodes {
   EVMSessionAlreadyEnded,
   /// Relayer does not support the mixer
   RelayerUnsupportedMixer,
+  /// Relayer is not operating properly (sending bad leaves, etc.)
+  RelayerMisbehaving,
 }
 
 /// An Error message with error metadata
@@ -101,6 +103,11 @@ export class WebbError extends Error {
         return {
           code,
           message: `Attempt to use a relayer which does not support the mixer`,
+        };
+      case WebbErrorCodes.RelayerMisbehaving:
+        return {
+          code,
+          message: `The selected relayer is not operating properly`,
         };
 
       default:
