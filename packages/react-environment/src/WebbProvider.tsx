@@ -195,6 +195,8 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
           registerInteractiveFeedback(setInteractiveFeedbacks, interactiveFeedback);
         }
         break;
+      case WebbErrorCodes.RelayerMisbehaving:
+        break;
       default:
         alert(code);
     }
