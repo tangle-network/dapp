@@ -199,18 +199,6 @@ export class WebbAnchorContract {
     };
 
     const proofBytes = await generateWithdrawProofCallData(proof, pub);
-
-    console.log({
-      proof: `0x${proofBytes}`,
-      roots: createRootsBytes(pub.roots),
-      nullifierHash: bufferToFixed(zkp.nullifierHash),
-      recipient: zkp.recipient,
-      relayer: zkp.relayer,
-      fee: bufferToFixed(zkp.fee),
-      refund: bufferToFixed(zkp.refund),
-      overrides,
-    });
-
     const tx = await this._contract.withdraw(
       `0x${proofBytes}`,
       createRootsBytes(pub.roots),

@@ -19,7 +19,7 @@ export const proofAndVerify = async (witness: any) => {
   const res = await groth16.prove('/assets/fixtures/circuit_final.zkey', witness);
   const vKey = await zkey.exportVerificationKey('/assets/fixtures/circuit_final.zkey');
   const verificationResults = await groth16.verify(vKey, res.publicSignals, res.proof);
-  if (1) {
+  if (verificationResults) {
     return res;
   } else {
     throw new Error('failed to create proof');
