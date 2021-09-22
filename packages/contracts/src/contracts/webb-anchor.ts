@@ -167,13 +167,14 @@ export class WebbAnchorContract {
   async generateZKP(deposit: Deposit, zkpInputWithoutMerkleProof: ZKPWebbInputWithoutMerkle) {
     const merkleProof = await this.generateMerkleProof(deposit);
     const { pathElements, pathIndex: pathIndices, root } = merkleProof;
+    const nr = await this._contract.getLatestNeighborRoots();
 
     const input: BridgeWitnessInput = {
       chainID: BigInt(deposit.chainId),
       nullifier: deposit.nullifier,
       secret: deposit.secret,
       nullifierHash: deposit.nullifierHash,
-      diffs: [root, 0].map((r) => {
+      diffs: [root, ...nr].map((r) => {
         return F.sub(Scalar.fromString(`${r}`), Scalar.fromString(`${root}`)).toString();
       }),
       fee: String(zkpInputWithoutMerkleProof.fee),
@@ -182,7 +183,7 @@ export class WebbAnchorContract {
       recipient: zkpInputWithoutMerkleProof.recipient,
       refund: String(zkpInputWithoutMerkleProof.refund),
       relayer: zkpInputWithoutMerkleProof.relayer,
-      roots: [root, 0],
+      roots: [root, ...nr],
     };
     console.log(`zkp input`, input);
     const witness = await generateWitness(input);

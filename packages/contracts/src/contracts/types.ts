@@ -57,7 +57,7 @@ export type BridgeWitnessInput = {
   fee: string;
   refund: string;
   chainID: bigint;
-  roots: [any, 0];
+  roots: any[];
   /// private
   nullifier: string;
   secret: string;
