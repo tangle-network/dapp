@@ -118,12 +118,15 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
     }
     const tokenSymbol = bridge.currency.name;
     const destEvmId = chainIdIntoEVMId(destChainId);
+    const sourceEvmId = await this.inner.getChainId();
     const deposit = createAnchor2Deposit(destEvmId);
     const secrets = deposit.preimage;
     const amount = String(mixerId).replace('Bridge=', '').split('@')[0];
+    const sourceChainId = evmIdIntoChainId(sourceEvmId);
     const noteInput: NoteGenInput = {
       prefix: 'webb.bridge',
       chain: String(destChainId),
+      sourceChain: String(sourceChainId),
       amount: amount,
       denomination: '18',
       hashFunction: 'Poseidon',
