@@ -169,6 +169,27 @@ export class WebbAnchorContract {
     return tree.path(leafIndex);
   }
 
+  async generateMerkleProofFroRoot(deposit: Deposit, targetRoot: string) {
+    const leaves = [];
+    let lastQueriedBlock = 0;
+
+    const treeHeight = await this._contract.levels();
+    logger.trace(`Generating merkle proof treeHeight ${treeHeight} of deposit`, deposit);
+    const tree = new MerkleTree('eth', treeHeight, [], new PoseidonHasher());
+    const fetchedLeaves = await this.getDepositLeaves(lastQueriedBlock + 1);
+    const insertedLeaves = [];
+    for (const leaf of fetchedLeaves.newLeaves) {
+      tree.insert(leaf);
+      insertedLeaves.push(leaf);
+      const nextRoot = tree.get_root();
+      if (nextRoot === targetRoot) {
+        const index = insertedLeaves.findIndex((l) => l == deposit.commitment);
+        return tree.path(index);
+      }
+    }
+    return undefined;
+  }
+
   async generateZKP(deposit: Deposit, zkpInputWithoutMerkleProof: ZKPWebbInputWithoutMerkle) {
     logger.trace(`Generate zkp with args`, { deposit, zkpInputWithoutMerkleProof });
     /// which merkle root is the neighbor

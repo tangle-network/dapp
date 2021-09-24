@@ -4,11 +4,18 @@ import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web
 import { Note } from '@webb-tools/sdk-mixer';
 
 import { BridgeWithdraw } from '../../webb-context';
-import { ChainId, chainIdIntoEVMId, evmIdIntoChainId, getEVMChainNameFromInternal } from '@webb-dapp/apps/configs';
+import {
+  ChainId,
+  chainIdIntoEVMId,
+  chainsConfig,
+  evmIdIntoChainId,
+  getEVMChainNameFromInternal,
+} from '@webb-dapp/apps/configs';
 import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polkadot/transaction-notification-config';
 import React from 'react';
 import { LoggerService } from '@webb-tools/app-util';
 import { DepositNote } from '@webb-tools/wasm-utils';
+import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
 
 const logger = LoggerService.get('Web3BridgeWithdraw');
 
@@ -98,7 +105,87 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
     });
   }
 
-  async crossChainWithdraw(note: DepositNote, recipient: string) {}
+  async crossChainWithdraw(note: DepositNote, recipient: string) {
+    // check that the active api is over the source chain
+    const sourceChain = Number(note.sourceChain) as ChainId;
+    const sourceChainEvm = chainIdIntoEVMId(sourceChain);
+    const activeChain = await this.inner.getChainId();
+    if (activeChain !== sourceChainEvm) {
+      throw new Error(`Expecting another active api for chain ${sourceChain} found ${evmIdIntoChainId(activeChain)}`);
+    }
+
+    // Temporary Provider for getting Anchors roots
+    const destChainId = Number(note.chain) as ChainId;
+    const destChainEvmId = chainIdIntoEVMId(destChainId);
+    const destChainConfig = chainsConfig[destChainId];
+    const rpc = destChainConfig.url;
+    const destHttpProvider = Web3Provider.fromUri(rpc);
+    const destEthers = destHttpProvider.intoEthersProvider();
+    const deposit = depositFromAnchor2Preimage(note.secret.replace('0x', ''), destChainEvmId);
+
+    // Getting contracts data for source and dest chains
+    const currency = BridgeCurrency.fromString(note.tokenSymbol);
+    const bridge = Bridge.from(this.bridgeConfig, currency);
+    const anchor = bridge.anchors.find((anchor) => anchor.amount === note.amount)!;
+    const destContractAddress = anchor.anchorAddresses[destChainId]!;
+    const sourceContractAddress = anchor.anchorAddresses[sourceChain]!;
+
+    // get root and neighbour root from the dest provider
+    const destAnchor = this.inner.getWebbAnchorByAddressAndProvider(destContractAddress, destEthers);
+    const destLatestRoot = await destAnchor.inner.getLatestNeighborRoots();
+    const destLatestNeighbourRoot = await destAnchor.inner.getLastRoot();
+    await destHttpProvider.endSession();
+
+    // Building the merkle proof
+    const sourceContract = this.inner.getWebbAnchorByAddress(sourceContractAddress);
+    const merkleProof = await sourceContract.generateMerkleProofFroRoot(deposit, destLatestRoot[0]);
+    if (!merkleProof) {
+      throw new Error('Failed to generate Merle proof');
+    }
+
+    /// todo await for provider Change
+    this.inner.innerProvider.switchChain({
+      chainId: `0x${destChainEvmId.toString(16)}`,
+    });
+    const accounts = await this.inner.accounts.accounts();
+    const account = accounts[0];
+
+    const destContractWithSignedProvider = this.inner.getWebbAnchorByAddress(destContractAddress);
+    const input = {
+      destinationChainId: activeChain,
+      secret: deposit.secret,
+      nullifier: deposit.nullifier,
+      nullifierHash: deposit.nullifierHash,
+
+      // Todo change this to the realyer address
+      relayer: account.address,
+      recipient: account.address,
+
+      fee: 0,
+      refund: 0,
+    };
+
+    const zkpResults = await destContractWithSignedProvider.generateZKP(deposit, input);
+
+    await destContractWithSignedProvider.withdraw(
+      zkpResults.proof,
+      {
+        destinationChainId: activeChain,
+        fee: input.fee,
+        nullifier: input.nullifier,
+        nullifierHash: input.nullifierHash,
+        pathElements: zkpResults.input.pathElements,
+        pathIndices: zkpResults.input.pathIndices,
+        recipient: input.recipient,
+        refund: input.refund,
+        relayer: input.relayer,
+        root: zkpResults.root as any,
+        secret: zkpResults.input.secret,
+      },
+      zkpResults.input
+    );
+    throw new Error('not implemented');
+  }
 
   async withdraw(note: string, recipient: string): Promise<void> {
     logger.trace(`Withdraw using note ${note} , recipient ${recipient}`);
