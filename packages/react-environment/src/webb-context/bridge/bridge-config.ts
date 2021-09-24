@@ -15,19 +15,19 @@ export type BridgeConfigEntry = {
 };
 export type BridgeConfig = Record<string, BridgeConfigEntry>;
 
-const webWEBBRinkebyBeresheet = new BridgeCurrency([ChainId.Rinkeby, ChainId.HarmonyTestnet1], WebbCurrencyId.WEBB);
+const webWEBBRinkebyBeresheet = new BridgeCurrency([ChainId.Rinkeby, ChainId.HarmonyTestnet0], WebbCurrencyId.WEBB);
 
 export const bridgeConfig: BridgeConfig = {
   [webWEBBRinkebyBeresheet.name]: {
     asset: webWEBBRinkebyBeresheet,
     tokenAddresses: {
-      [ChainId.HarmonyTestnet1]: '0x9d609F54536Cef34f5F612BD976ca632F1fa208E',
+      [ChainId.HarmonyTestnet0]: '0x9d609F54536Cef34f5F612BD976ca632F1fa208E',
       [ChainId.Rinkeby]: '0x7Cec2Bf7D9c4C3C96Da8a0BfeBAB1E84b8212394',
     },
     anchors: [
       {
         anchorAddresses: {
-          [ChainId.HarmonyTestnet1]: '0x64E9727C4a835D518C34d3A50A8157120CAeb32F',
+          [ChainId.HarmonyTestnet0]: '0x64E9727C4a835D518C34d3A50A8157120CAeb32F',
           [ChainId.Rinkeby]: '0xB42139fFcEF02dC85db12aC9416a19A12381167D',
         },
         amount: '.1',

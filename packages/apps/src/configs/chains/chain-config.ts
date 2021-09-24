@@ -92,6 +92,23 @@ export const chainsConfig: AppConfig['chains'] = {
     ],
     nativeCurrencyId: WebbCurrencyId.ONE,
   },
+  [ChainId.HarmonyTestnet0]: {
+    group: 'one',
+    id: ChainId.HarmonyTestnet0,
+    evmId: WebbEVMChain.HarmonyTestnet0,
+    name: 'Harmony Testnet Shard 0',
+    tag: 'test',
+    url: 'https://api.s0.b.hmny.io',
+    evmRpcUrls: ['https://api.s0.b.hmny.io'],
+    logo: HarmonyLogo,
+    currencies: [
+      {
+        currencyId: WebbCurrencyId.ONE,
+        enabled: true,
+      },
+    ],
+    nativeCurrencyId: WebbCurrencyId.ONE,
+  },
   [ChainId.EthereumMainNet]: {
     group: 'eth',
     id: ChainId.EthereumMainNet,

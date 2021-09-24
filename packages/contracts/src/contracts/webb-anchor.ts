@@ -3,7 +3,6 @@ import { WEBBAnchor2 as WebbAnchor } from '@webb-dapp/contracts/types/WEBBAnchor
 import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
 import { EvmNote } from '@webb-dapp/contracts/utils/evm-note';
 import { createAnchor2Deposit, Deposit } from '@webb-dapp/contracts/utils/make-deposit';
-import { mixerLogger } from '@webb-dapp/mixer/utils';
 import { EvmChainMixersInfo } from '@webb-dapp/react-environment/api-providers/web3/EvmChainMixersInfo';
 import { MerkleTree, PoseidonHasher } from '@webb-dapp/utils/merkle';
 import { retryPromise } from '@webb-dapp/utils/retry-promise';
@@ -27,6 +26,10 @@ const F = require('circomlib').babyJub.F;
 
 type DepositEvent = [string, number, BigNumber];
 const logger = LoggerService.get('WebbAnchorContract');
+type BridgeBlockStorage = Record<string, number>;
+const anchorsStorage: BridgeBlockStorage = {
+  '0x64E9727C4a835D518C34d3A50A8157120CAeb32F': 15183626,
+};
 
 export class WebbAnchorContract {
   private _contract: WebbAnchor;
@@ -73,10 +76,12 @@ export class WebbAnchorContract {
 
   private async getDepositLeaves(startingBlock: number): Promise<{ lastQueriedBlock: number; newLeaves: string[] }> {
     const filter = this._contract.filters.Deposit(null, null, null);
+    logger.trace(`Getting leaves with filter`, filter);
     const currentBlock = await this.web3Provider.getBlockNumber();
 
     let logs: Array<Log> = []; // Read the stored logs into this variable
-    const step = 20;
+    const step = 200;
+    logger.info(`Fetching leaves with steps of ${step} logs/request`);
     try {
       logs = await this.web3Provider.getLogs({
         fromBlock: startingBlock,
@@ -84,7 +89,7 @@ export class WebbAnchorContract {
         ...filter,
       });
     } catch (e) {
-      mixerLogger.log(e);
+      logger.error(e);
 
       // If there is a timeout, query the logs in block increments.
       if (e.code == -32603) {
@@ -98,7 +103,7 @@ export class WebbAnchorContract {
           });
           logs = [...logs, ...nextLogs];
 
-          mixerLogger.log(`Getting logs for block range: ${i} through ${i + step}`);
+          logger.log(`Getting logs for block range: ${i} through ${i + step}`);
         }
       } else {
         throw e;
@@ -125,18 +130,20 @@ export class WebbAnchorContract {
    *  4- Compare against historical roots before adding to local storage
    *  5- return the path to the leaf.
    * */
+
   async generateMerkleProof(deposit: Deposit) {
     const bridgeStorageStorage = await bridgeCurrencyBridgeStorageFactory();
     const storedContractInfo: MixerStorage[0] = (await bridgeStorageStorage.get(this._contract.address)) || {
-      lastQueriedBlock: 0,
+      lastQueriedBlock: anchorsStorage[this._contract.address.toString()] || 0,
       leaves: [] as string[],
     };
     const treeHeight = await this._contract.levels();
+    logger.trace(`Generating merkle proof treeHeight ${treeHeight} of deposit`, deposit);
     const tree = new MerkleTree('eth', treeHeight, storedContractInfo.leaves, new PoseidonHasher());
 
     // Query for missing blocks starting from the stored endingBlock
     const lastQueriedBlock = storedContractInfo.lastQueriedBlock;
-
+    logger.trace(`Getting leaves from lastQueriedBlock `, lastQueriedBlock);
     const fetchedLeaves = await this.getDepositLeaves(lastQueriedBlock + 1);
     logger.trace(`New Leaves ${fetchedLeaves.newLeaves.length}`, fetchedLeaves.newLeaves);
 
@@ -144,31 +151,32 @@ export class WebbAnchorContract {
 
     const newRoot = tree.get_root();
     const formattedRoot = bufferToFixed(newRoot);
-    console.log(formattedRoot);
     const lastRoot = await this._contract.getLastRoot();
-    console.log({ lastRoot });
     const knownRoot = await this._contract.isKnownRoot(formattedRoot);
-    logger.info(`knownRoot: ${knownRoot}`);
-
+    logger.info(`fromBlock ${formattedRoot} -x- last root ${lastRoot} ---> knownRoot: ${knownRoot}`);
     // compare root against contract, and store if there is a match
+    const leaves = [...storedContractInfo.leaves, ...fetchedLeaves.newLeaves];
     if (knownRoot) {
+      logger.info(`Root is known committing to storage ${this._contract.address}`);
       await bridgeStorageStorage.set(this._contract.address, {
         lastQueriedBlock: fetchedLeaves.lastQueriedBlock,
-        leaves: [...fetchedLeaves.newLeaves, ...storedContractInfo.leaves],
+        leaves,
       });
     }
-    let leafIndex = [...storedContractInfo.leaves, ...fetchedLeaves.newLeaves].findIndex(
-      (commitment) => commitment == deposit.commitment
-    );
+    logger.trace(`Getting leaf index  of ${deposit.commitment}`, leaves);
+    let leafIndex = leaves.findIndex((commitment) => commitment == deposit.commitment);
     logger.info(`Leaf index ${leafIndex}`);
     return tree.path(leafIndex);
   }
 
   async generateZKP(deposit: Deposit, zkpInputWithoutMerkleProof: ZKPWebbInputWithoutMerkle) {
+    logger.trace(`Generate zkp with args`, { deposit, zkpInputWithoutMerkleProof });
+    /// which merkle root is the neighbor
     const merkleProof = await this.generateMerkleProof(deposit);
+    logger.trace(`Merkle proof `, merkleProof);
     const { pathElements, pathIndex: pathIndices, root } = merkleProof;
     const nr = await this._contract.getLatestNeighborRoots();
-
+    logger.trace(`Latest Neighbor Roots`, nr);
     const input: BridgeWitnessInput = {
       chainID: BigInt(deposit.chainId),
       nullifier: deposit.nullifier,
@@ -185,21 +193,21 @@ export class WebbAnchorContract {
       relayer: zkpInputWithoutMerkleProof.relayer,
       roots: [root, ...nr],
     };
-    console.log(`zkp input`, input);
+    logger.trace(`Generate witness`, input);
     const witness = await generateWitness(input);
-
+    logger.trace(`Generated witness`, witness);
     const proof = await proofAndVerify(witness);
+    logger.trace(`Zero knowlage proof`, proof);
     return { proof: proof.proof, input: input, root };
   }
 
   async withdraw(proof: any, zkp: ZKPWebbInputWithMerkle, pub: any) {
-    // tx config
     const overrides = {
       gasLimit: 6000000,
       gasPrice: utils.toWei('2', 'gwei'),
     };
-
     const proofBytes = await generateWithdrawProofCallData(proof, pub);
+    logger.trace(`Withdraw proof`, proofBytes);
     const tx = await this._contract.withdraw(
       `0x${proofBytes}`,
       createRootsBytes(pub.roots),

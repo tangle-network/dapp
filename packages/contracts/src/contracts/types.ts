@@ -62,8 +62,6 @@ export type BridgeWitnessInput = {
   nullifier: string;
   secret: string;
   pathElements: string[];
-
   pathIndices: number[];
-
   diffs: string[];
 };

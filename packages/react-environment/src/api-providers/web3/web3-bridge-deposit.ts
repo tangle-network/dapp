@@ -1,4 +1,4 @@
-import { ChainId, chainIdIntoEVMId, getEVMChainNameFromInternal } from '@webb-dapp/apps/configs';
+import { ChainId, chainIdIntoEVMId, evmIdIntoChainId, getEVMChainNameFromInternal } from '@webb-dapp/apps/configs';
 import { createAnchor2Deposit, Deposit } from '@webb-dapp/contracts/utils/make-deposit';
 import { BridgeConfig, DepositPayload as IDepositPayload, MixerSize } from '@webb-dapp/react-environment';
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3/webb-web3-provider';
@@ -26,7 +26,8 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
       // Getting the active bridge
       const commitment = depositPayload.params[0].commitment;
       const note = depositPayload.note.note;
-
+      const sourceEvmId = await this.inner.getChainId();
+      const sourceChainId = evmIdIntoChainId(sourceEvmId);
       transactionNotificationConfig.loading?.({
         address: '',
         data: React.createElement(DepositNotification, {
@@ -47,7 +48,7 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
         throw new Error('not Anchor for amount' + note.amount);
       }
       // Get the contract address for the destination chain
-      const contractAddress = anchor.anchorAddresses[Number(note.chain) as ChainId];
+      const contractAddress = anchor.anchorAddresses[sourceChainId];
       if (!contractAddress) {
         throw new Error(`No Anchor for the chain ${note.chain}`);
       }
