@@ -132,21 +132,37 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
 
     // get root and neighbour root from the dest provider
     const destAnchor = this.inner.getWebbAnchorByAddressAndProvider(destContractAddress, destEthers);
-    const destLatestRoot = await destAnchor.inner.getLatestNeighborRoots();
-    const destLatestNeighbourRoot = await destAnchor.inner.getLastRoot();
-    await destHttpProvider.endSession();
+    const destLatestRoot = await destAnchor.inner.getLastRoot();
+    const destLatestNeighbourRootAr = await destAnchor.inner.getLatestNeighborRoots();
+    const destLatestNeighbourRoot = destLatestNeighbourRootAr[0];
+
+    logger.trace(`destLatestNeighbourRoot ${destLatestNeighbourRoot} , destLatestRoot ${destLatestRoot}`);
+    // await destHttpProvider.endSession();
 
     // Building the merkle proof
     const sourceContract = this.inner.getWebbAnchorByAddress(sourceContractAddress);
-    const merkleProof = await sourceContract.generateMerkleProofFroRoot(deposit, destLatestRoot[0]);
+    const sourceRoot = await sourceContract.inner.getLastRoot();
+    const knwon = await destAnchor.inner.isKnownNeighborRoot(4, sourceRoot);
+    logger.trace(`Dest anchor knwos about the source root ? ${knwon}`);
+
+    const sourceLatestRoot = await sourceContract.inner.getLastRoot();
+    logger.trace(`Source latest root ${sourceLatestRoot}`);
+
+    const isKnroot = await sourceContract.inner.isKnownRoot(destLatestNeighbourRoot);
+    logger.trace(`isKnown root ${isKnroot}`);
+
+    const merkleProof = await sourceContract.generateMerkleProofFroRoot(deposit, destLatestNeighbourRoot);
     if (!merkleProof) {
       throw new Error('Failed to generate Merle proof');
     }
 
+    const chid1 = await this.inner.getChainId();
+    console.log({ chid1 });
     /// todo await for provider Change
-    this.inner.innerProvider.switchChain({
+    await this.inner.innerProvider.switchChain({
       chainId: `0x${destChainEvmId.toString(16)}`,
     });
+    const chid = await this.inner.getChainId();
     const accounts = await this.inner.accounts.accounts();
     const account = accounts[0];
 
@@ -165,7 +181,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
       refund: 0,
     };
 
-    const zkpResults = await destContractWithSignedProvider.generateZKP(deposit, input);
+    const zkpResults = await destContractWithSignedProvider.merkleProofToZKp(merkleProof, deposit, input);
 
     await destContractWithSignedProvider.withdraw(
       zkpResults.proof,
@@ -184,7 +200,6 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
       },
       zkpResults.input
     );
-    throw new Error('not implemented');
   }
 
   async withdraw(note: string, recipient: string): Promise<void> {

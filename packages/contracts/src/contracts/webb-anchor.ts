@@ -35,10 +35,19 @@ export class WebbAnchorContract {
   private _contract: WebbAnchor;
   private readonly signer: Signer;
 
-  constructor(private mixersInfo: EvmChainMixersInfo, private web3Provider: providers.Web3Provider, address: string) {
+  constructor(
+    private mixersInfo: EvmChainMixersInfo,
+    private web3Provider: providers.Web3Provider,
+    address: string,
+    useProvider = false
+  ) {
     this.signer = this.web3Provider.getSigner();
     logger.info(`Init with address ${address} `);
-    this._contract = new Contract(address, WEBBAnchor2__factory.abi, this.signer) as any;
+    this._contract = new Contract(
+      address,
+      WEBBAnchor2__factory.abi,
+      useProvider ? this.web3Provider : this.signer
+    ) as any;
   }
 
   get getLastRoot() {
@@ -170,24 +179,54 @@ export class WebbAnchorContract {
   }
 
   async generateMerkleProofFroRoot(deposit: Deposit, targetRoot: string) {
-    const leaves = [];
+    logger.trace('generate merkle proof with deposit', deposit, ` for the target roof ${targetRoot}`);
     let lastQueriedBlock = 0;
-
     const treeHeight = await this._contract.levels();
     logger.trace(`Generating merkle proof treeHeight ${treeHeight} of deposit`, deposit);
     const tree = new MerkleTree('eth', treeHeight, [], new PoseidonHasher());
     const fetchedLeaves = await this.getDepositLeaves(lastQueriedBlock + 1);
+    logger.trace(`fetched leaves`, fetchedLeaves.newLeaves);
     const insertedLeaves = [];
     for (const leaf of fetchedLeaves.newLeaves) {
       tree.insert(leaf);
       insertedLeaves.push(leaf);
       const nextRoot = tree.get_root();
-      if (nextRoot === targetRoot) {
+      logger.trace(`Adding leaf ${leaf} ->  the root is ${nextRoot}`);
+      if (bufferToFixed(nextRoot) === targetRoot) {
         const index = insertedLeaves.findIndex((l) => l == deposit.commitment);
+        logger.trace(`leaf index if ${index}`);
         return tree.path(index);
       }
     }
     return undefined;
+  }
+
+  async merkleProofToZKp(merkleProof: any, deposit: Deposit, zkpInputWithoutMerkleProof: ZKPWebbInputWithoutMerkle) {
+    const { pathElements, pathIndex: pathIndices, root: merkleRoot } = merkleProof;
+    const localRoot = await this._contract.getLastRoot();
+    const root = bufferToFixed(merkleRoot);
+    const input: BridgeWitnessInput = {
+      chainID: BigInt(deposit.chainId),
+      nullifier: deposit.nullifier,
+      secret: deposit.secret,
+      nullifierHash: deposit.nullifierHash,
+      diffs: [localRoot, root].map((r) => {
+        return F.sub(Scalar.fromString(`${r}`), Scalar.fromString(`${root}`)).toString();
+      }),
+      fee: String(zkpInputWithoutMerkleProof.fee),
+      pathElements,
+      pathIndices,
+      recipient: zkpInputWithoutMerkleProof.recipient,
+      refund: String(zkpInputWithoutMerkleProof.refund),
+      relayer: zkpInputWithoutMerkleProof.relayer,
+      roots: [localRoot, root],
+    };
+    logger.trace(`Generate witness`, input);
+    const witness = await generateWitness(input);
+    logger.trace(`Generated witness`, witness);
+    const proof = await proofAndVerify(witness);
+    logger.trace(`Zero knowlage proof`, proof);
+    return { proof: proof.proof, input: input, root };
   }
 
   async generateZKP(deposit: Deposit, zkpInputWithoutMerkleProof: ZKPWebbInputWithoutMerkle) {

@@ -105,7 +105,7 @@ export class WebbWeb3Provider
   }
 
   getWebbAnchorByAddressAndProvider(address: string, provider: providers.Web3Provider): WebbAnchorContract {
-    return new WebbAnchorContract(this.connectedMixers, provider, address);
+    return new WebbAnchorContract(this.connectedMixers, provider, address, true);
   }
 
   getMixerInfoBySize(mixerSize: number, tokenSymbol: string) {
