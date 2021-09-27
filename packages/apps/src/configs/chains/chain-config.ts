@@ -113,8 +113,8 @@ export const chainsConfig: AppConfig['chains'] = {
     group: 'eth',
     id: ChainId.EthereumMainNet,
     evmId: WebbEVMChain.EthereumMainNet,
-    name: 'Ethereum main net',
-    tag: 'test',
+    name: 'Ethereum mainnet',
+    tag: 'live',
     url: '',
     logo: EtherLogo,
     currencies: [

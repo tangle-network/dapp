@@ -9,6 +9,7 @@ import { mixerLogger } from '@webb-dapp/mixer/utils';
 import { EvmChainMixersInfo } from '@webb-dapp/react-environment/api-providers/web3/EvmChainMixersInfo';
 import { MerkleTree, MimcSpongeHasher } from '@webb-dapp/utils/merkle';
 import { retryPromise } from '@webb-dapp/utils/retry-promise';
+import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import { LoggerService } from '@webb-tools/app-util';
 import { BigNumber, Contract, providers, Signer } from 'ethers';
 import utils from 'web3-utils';
@@ -169,6 +170,78 @@ export class TornadoAnchorContract {
 
   async generateZKP(deposit: Deposit, zkpPublicInputs: ZKPTornPublicInputs) {
     const merkleProof = await this.generateMerkleProof(deposit);
+    const { pathElements, pathIndex: pathIndices, root } = merkleProof;
+    let circuitData = require('../circuits/withdraw.json');
+    let proving_key = require('../circuits/withdraw_proving_key.bin');
+    proving_key = await fetch(proving_key);
+    proving_key = await proving_key.arrayBuffer();
+    const zkpInput: ZKPTornInputWithMerkle = {
+      ...zkpPublicInputs,
+      nullifier: deposit.nullifier,
+      secret: deposit.secret,
+      pathElements,
+      pathIndices,
+      root: root as string,
+    };
+
+    console.log(zkpInput);
+
+    const proofsData = await webSnarkUtils.genWitnessAndProve(
+      // @ts-ignore
+      window.groth16,
+      zkpInput,
+      circuitData,
+      proving_key
+    );
+    const { proof } = await webSnarkUtils.toSolidityInput(proofsData);
+    return { proof, input: zkpInput };
+  }
+
+  // function to call when generating ZKP with a relayer
+  async generateZKPWithLeaves(
+    deposit: Deposit,
+    zkpPublicInputs: ZKPTornPublicInputs,
+    leaves: string[],
+    lastQueriedBlock: number
+  ) {
+    // Build a local merkle tree from the leaves
+    const treeHeight = await this._contract.levels();
+    const tree = new MerkleTree('eth', treeHeight, leaves, new MimcSpongeHasher());
+    let leafIndex = leaves.findIndex((commitment) => commitment == bufferToFixed(deposit.commitment));
+    logger.info(`Leaf index ${leafIndex}`);
+    const merkleProof = tree.path(leafIndex);
+
+    // Verify the local merkle tree against what is on chain
+    const newRoot = tree.get_root();
+    const formattedRoot = bufferToFixed(newRoot);
+    const knownRoot = await this._contract.isKnownRoot(formattedRoot);
+
+    if (!knownRoot) {
+      throw WebbError.from(WebbErrorCodes.RelayerMisbehaving);
+    }
+
+    // verify the last commitment in the leaves occurred at the reported block
+    const filter = this._contract.filters.Deposit(null, null, null);
+    const logs = await this.web3Provider.getLogs({
+      fromBlock: lastQueriedBlock,
+      toBlock: lastQueriedBlock,
+      ...filter,
+    });
+    const events = logs.map((log) => this._contract.interface.parseLog(log));
+    let validLatestDeposit = false;
+    events.forEach((event) => {
+      if (event.args.find((elem) => elem === leaves[leaves.length - 1])) {
+        validLatestDeposit = true;
+      }
+    });
+
+    // If the last commitment occurred at the reported block and
+    // the block is later than what we have stored, save into storage
+    const storedContractInfo = await this.mixersInfo.getMixerStorage(this._contract.address);
+    if (validLatestDeposit && lastQueriedBlock > storedContractInfo.lastQueriedBlock) {
+      this.mixersInfo.setMixerStorage(this._contract.address, lastQueriedBlock, [...leaves]);
+    }
+
     const { pathElements, pathIndex: pathIndices, root } = merkleProof;
     let circuitData = require('../circuits/withdraw.json');
     let proving_key = require('../circuits/withdraw_proving_key.bin');

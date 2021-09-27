@@ -1,7 +1,6 @@
 import { ChainId } from '@webb-dapp/apps/configs';
 
 export type RelayedChainConfig = {
-  withdrawFeePercentage: number;
   account: string;
   contracts: Contract[];
 };
@@ -19,6 +18,7 @@ export interface Contract {
   deployedAt: number;
   leavesWatcher: LeavesWatcher;
   size: number;
+  withdrawFeePercentage: number;
 }
 
 export interface LeavesWatcher {
