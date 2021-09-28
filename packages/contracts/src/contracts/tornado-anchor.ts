@@ -1,19 +1,12 @@
 import { Log } from '@ethersproject/abstract-provider';
 import { WebbEVMChain } from '@webb-dapp/apps/configs';
-import {
-  ZKPTornInputsWithoutMerkle,
-  ZKPTornInputWithMerkle,
-  ZKPTornPublicInputs,
-} from '@webb-dapp/contracts/contracts/types';
+import { ZKPTornInputWithMerkle, ZKPTornPublicInputs } from '@webb-dapp/contracts/contracts/types';
 import { Anchor as TornadoAnchor } from '@webb-dapp/contracts/types/Anchor';
 import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
 import { EvmNote } from '@webb-dapp/contracts/utils/evm-note';
 import { createTornDeposit, Deposit } from '@webb-dapp/contracts/utils/make-deposit';
 import { mixerLogger } from '@webb-dapp/mixer/utils';
-import {
-  EvmChainMixersInfo,
-  LeafIntervalInfo,
-} from '@webb-dapp/react-environment/api-providers/web3/EvmChainMixersInfo';
+import { EvmChainMixersInfo } from '@webb-dapp/react-environment/api-providers/web3/EvmChainMixersInfo';
 import { MerkleTree, MimcSpongeHasher } from '@webb-dapp/utils/merkle';
 import { retryPromise } from '@webb-dapp/utils/retry-promise';
 import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';

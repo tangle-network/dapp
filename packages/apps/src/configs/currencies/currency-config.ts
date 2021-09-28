@@ -1,9 +1,11 @@
-import { AppConfig } from '@webb-dapp/react-environment';
-import React from 'react';
-import { WebbCurrencyId } from './webb-currency-id.enum';
 import EdgewareLogo from '@webb-dapp/apps/configs/logos/EdgewareLogo';
 import EtherLogo from '@webb-dapp/apps/configs/logos/Eth';
 import { HarmonyLogo } from '@webb-dapp/apps/configs/logos/HarmonyLogo';
+import { WEBBLogo } from '@webb-dapp/apps/configs/logos/WebbLogo';
+import { AppConfig } from '@webb-dapp/react-environment';
+import React from 'react';
+
+import { WebbCurrencyId } from './webb-currency-id.enum';
 
 export const currenciesConfig: AppConfig['currencies'] = {
   [WebbCurrencyId.EDG]: {
@@ -33,5 +35,12 @@ export const currenciesConfig: AppConfig['currencies'] = {
     color: '',
     id: WebbCurrencyId.ONE,
     icon: React.createElement(HarmonyLogo),
+  },
+  [WebbCurrencyId.WEBB]: {
+    name: 'WEBB',
+    symbol: 'WEBB',
+    color: '',
+    id: WebbCurrencyId.WEBB,
+    icon: React.createElement(WEBBLogo),
   },
 };

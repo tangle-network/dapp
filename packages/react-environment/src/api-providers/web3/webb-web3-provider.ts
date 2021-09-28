@@ -12,6 +12,8 @@ import { Web3Accounts } from '@webb-dapp/wallet/providers/web3/web3-accounts';
 import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
 import { EventBus } from '@webb-tools/app-util';
 import { ethers, providers } from 'ethers';
+import { WebbAnchorContract } from '@webb-dapp/contracts/contracts';
+import { WEBBAnchor2 } from '@webb-dapp/contracts/types/WEBBAnchor2';
 
 export class WebbWeb3Provider
   extends EventBus<WebbProviderEvents<[number]>>
@@ -98,6 +100,14 @@ export class WebbWeb3Provider
     return new TornadoAnchorContract(this.connectedMixers, this.ethersProvider, mixerAddress);
   }
 
+  getWebbAnchorByAddress(address: string): WebbAnchorContract {
+    return new WebbAnchorContract(this.connectedMixers, this.ethersProvider, address);
+  }
+
+  getWebbAnchorByAddressAndProvider(address: string, provider: providers.Web3Provider): WebbAnchorContract {
+    return new WebbAnchorContract(this.connectedMixers, provider, address, true);
+  }
+
   getMixerInfoBySize(mixerSize: number, tokenSymbol: string) {
     const mixer = this.connectedMixers.getTornMixerInfoBySize(mixerSize, tokenSymbol);
     if (!mixer) {
@@ -153,5 +163,9 @@ export class WebbWeb3Provider
       let reason = ethers.utils.toUtf8String('0x' + code.substr(138));
       return reason;
     }
+  }
+
+  public get innerProvider() {
+    return this.web3Provider;
   }
 }
