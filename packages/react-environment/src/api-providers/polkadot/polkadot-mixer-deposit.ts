@@ -1,20 +1,15 @@
 import { MixerGroupEntry, NativeTokenProperties } from '@webb-dapp/mixer';
 import { Currency } from '@webb-dapp/mixer/utils/currency';
-// @ts-ignore
-import Worker from '@webb-dapp/mixer/utils/mixer.worker';
 import { DepositPayload as IDepositPayload, MixerDeposit } from '@webb-dapp/react-environment/webb-context';
 import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import { Token } from '@webb-tools/sdk-core';
-import { Mixer, Note, NoteGenInput } from '@webb-tools/sdk-mixer';
+import { Note, NoteGenInput } from '@webb-tools/sdk-mixer';
 
 import { WebbPolkadot } from './webb-polkadot-provider';
 
 type DepositPayload = IDepositPayload<Note, [number, Uint8Array[]]>;
 
 export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayload> {
-  private cachedBulletProofsGens: Uint8Array | null = null;
-  private mixer: Mixer | null = null;
-
   async getSizes() {
     // @ts-ignore
     const data: Array<MixerGroupEntry> = await this.inner.api.query.mixer.mixerTrees.entries();
@@ -49,14 +44,6 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
       }))
       .sort((a, b) => (a.value > b.value ? 1 : a.value < b.value ? -1 : 0));
     return groupItem;
-  }
-
-  private async getMixer(): Promise<Mixer> {
-    if (this.mixer) {
-      return this.mixer;
-    }
-    this.mixer = await Mixer.init(new Worker());
-    return this.mixer;
   }
 
   async generateNote(mixerId: number): Promise<DepositPayload> {
