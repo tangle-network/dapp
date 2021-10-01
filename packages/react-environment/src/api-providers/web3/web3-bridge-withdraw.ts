@@ -132,6 +132,8 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
 
     // get root and neighbour root from the dest provider
     const destAnchor = this.inner.getWebbAnchorByAddressAndProvider(destContractAddress, destEthers);
+    const destAnchorChainId = await destAnchor.inner.chainID();
+    console.log(`destAnchor chainID: ${destAnchorChainId}`);
     const destLatestRoot = await destAnchor.inner.getLastRoot();
     const destLatestNeighbourRootAr = await destAnchor.inner.getLatestNeighborRoots();
     const destLatestNeighbourRoot = destLatestNeighbourRootAr[0];
