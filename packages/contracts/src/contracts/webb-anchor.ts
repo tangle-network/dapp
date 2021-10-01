@@ -202,12 +202,6 @@ export class WebbAnchorContract {
 
     logger.trace('generate merkle proof with deposit', deposit, ` for the target roof ${targetRoot}`);
     const fetchedLeaves = await this.getDepositLeaves(lastQueriedBlock + 1, 0);
-    const leaves = [...storedContractInfo.leaves, ...fetchedLeaves.newLeaves];
-
-    await bridgeStorageStorage.set(this._contract.address, {
-      lastQueriedBlock: fetchedLeaves.lastQueriedBlock,
-      leaves,
-    });
 
     logger.trace(`fetched leaves`, fetchedLeaves.newLeaves);
     const insertedLeaves = [];
