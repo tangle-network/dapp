@@ -212,7 +212,6 @@ export class WebbAnchorContract {
     logger.trace(`fetched leaves`, fetchedLeaves.newLeaves);
     const insertedLeaves = [];
 
-    let index = 0;
     for (const leaf of leaves) {
       tree.insert(leaf);
       insertedLeaves.push(leaf);
@@ -221,6 +220,8 @@ export class WebbAnchorContract {
       logger.trace(`Next: ${bufferToFixed(nextRoot)}`);
       logger.trace(`Target: ${targetRoot}`);
       if (bufferToFixed(nextRoot) === targetRoot) {
+        const index = insertedLeaves.findIndex((l) => l == deposit.commitment);
+
         logger.trace(`leaf index is ${index}`);
         logger.info(`Root is known committing to storage ${this._contract.address}`);
 
@@ -231,7 +232,6 @@ export class WebbAnchorContract {
 
         return tree.path(index);
       }
-      index++;
     }
     return undefined;
   }
