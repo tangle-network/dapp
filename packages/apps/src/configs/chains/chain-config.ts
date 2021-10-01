@@ -64,7 +64,8 @@ export const chainsConfig: AppConfig['chains'] = {
     id: ChainId.Rinkeby,
     evmId: WebbEVMChain.Rinkeby,
     name: 'Rinkeby',
-    url: '',
+    url: 'https://rinkeby.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4',
+    evmRpcUrls: ['https://rinkeby.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4'],
     logo: EtherLogo,
     tag: 'test',
     currencies: [
@@ -115,7 +116,8 @@ export const chainsConfig: AppConfig['chains'] = {
     evmId: WebbEVMChain.EthereumMainNet,
     name: 'Ethereum mainnet',
     tag: 'live',
-    url: '',
+    url: 'https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
+    evmRpcUrls: ['https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161'],
     logo: EtherLogo,
     currencies: [
       {

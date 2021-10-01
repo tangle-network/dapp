@@ -7040,6 +7040,17 @@ circomlib@0.5.1:
     ffjavascript "0.1.0"
     web3-utils "^1.3.0"
 
+circomlib@^0.5.2:
+  version "0.5.4"
+  resolved "https://registry.yarnpkg.com/circomlib/-/circomlib-0.5.4.tgz#a02cc7173492650ce92ae83e611fa2a66934e560"
+  integrity sha512-nHtjywQdNwDhhNrHmQ3LzgI4NchLDqt/DyC+1tlDZ9s4JwaTL3AfF481SzJU1EZfgINlN56iOOVMl8HQJEpzbw==
+  dependencies:
+    blake-hash "^1.1.0"
+    blake2b "^2.1.3"
+    circom "0.5.33"
+    ffjavascript "0.2.38"
+    web3-utils "^1.3.0"
+
 cjs-module-lexer@^0.6.0:
   version "0.6.0"
   resolved "https://registry.yarnpkg.com/cjs-module-lexer/-/cjs-module-lexer-0.6.0.tgz#4186fcca0eae175970aee870b9fe2d6cf8d5655f"
@@ -10542,7 +10553,7 @@ ffjavascript@0.2.37:
     wasmcurves "0.0.14"
     web-worker "^1.0.0"
 
-ffjavascript@^0.2.30, ffjavascript@^0.2.38:
+ffjavascript@0.2.38, ffjavascript@^0.2.30, ffjavascript@^0.2.38:
   version "0.2.38"
   resolved "https://registry.yarnpkg.com/ffjavascript/-/ffjavascript-0.2.38.tgz#920832795be1e60a12832da80692b6c86259f3b7"
   integrity sha512-b4dobcci6QxxUvNYFCHw2ONhXwtgSHCzqxbH6c7ipWMOzyoG+MPRMZgAqnUREYX8UC6zqA7AiRmiIB76nxt2TQ==
