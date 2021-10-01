@@ -178,12 +178,15 @@ export class WebbAnchorContract {
     return tree.path(leafIndex);
   }
 
-  async generateMerkleProofForRoot(deposit: Deposit, targetRoot: string) {
+  async generateMerkleProofForRoot(deposit: Deposit, targetRoot: string, contractForCache: WebbAnchorContract) {
     const bridgeStorageStorage = await bridgeCurrencyBridgeStorageFactory();
-    const storedContractInfo: MixerStorage[0] = (await bridgeStorageStorage.get(this._contract.address)) || {
-      lastQueriedBlock: anchorsStorage[this._contract.address.toString()] || 0,
+    const storedContractInfo: MixerStorage[0] = (await bridgeStorageStorage.get(
+      contractForCache._contract.address
+    )) || {
+      lastQueriedBlock: anchorsStorage[contractForCache._contract.address.toString()] || 0,
       leaves: [] as string[],
     };
+    console.log(storedContractInfo);
     const treeHeight = await this._contract.levels();
     logger.trace(`Generating merkle proof treeHeight ${treeHeight} of deposit`, deposit);
     const tree = new MerkleTree('eth', treeHeight, storedContractInfo.leaves, new PoseidonHasher());
@@ -191,6 +194,13 @@ export class WebbAnchorContract {
 
     logger.trace('generate merkle proof with deposit', deposit, ` for the target roof ${targetRoot}`);
     const fetchedLeaves = await this.getDepositLeaves(lastQueriedBlock + 1);
+    const leaves = [...storedContractInfo.leaves, ...fetchedLeaves.newLeaves];
+
+    await bridgeStorageStorage.set(this._contract.address, {
+      lastQueriedBlock: fetchedLeaves.lastQueriedBlock,
+      leaves,
+    });
+
     logger.trace(`fetched leaves`, fetchedLeaves.newLeaves);
     const insertedLeaves = [];
     for (const leaf of fetchedLeaves.newLeaves) {
@@ -200,7 +210,7 @@ export class WebbAnchorContract {
       logger.trace(`Adding leaf ${leaf} ->  the root is ${nextRoot}`);
       if (bufferToFixed(nextRoot) === targetRoot) {
         const index = insertedLeaves.findIndex((l) => l == deposit.commitment);
-        logger.trace(`leaf index if ${index}`);
+        logger.trace(`leaf index is ${index}`);
         logger.info(`Root is known committing to storage ${this._contract.address}`);
 
         const leaves = [...storedContractInfo.leaves, ...insertedLeaves];

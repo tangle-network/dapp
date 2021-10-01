@@ -109,6 +109,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
     // check that the active api is over the source chain
     const sourceChain = Number(note.sourceChain) as ChainId;
     const sourceChainEvm = chainIdIntoEVMId(sourceChain);
+    console.log(sourceChain, sourceChainEvm);
     const activeChain = await this.inner.getChainId();
     if (activeChain !== sourceChainEvm) {
       throw new Error(`Expecting another active api for chain ${sourceChain} found ${evmIdIntoChainId(activeChain)}`);
@@ -116,6 +117,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
     // Temporary Provider for getting Anchors roots
     const destChainId = Number(note.chain) as ChainId;
     const destChainEvmId = chainIdIntoEVMId(destChainId);
+    console.log(destChainId, destChainEvmId);
     const destChainConfig = chainsConfig[destChainId];
     const rpc = destChainConfig.url;
     const destHttpProvider = Web3Provider.fromUri(rpc);
@@ -140,16 +142,17 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
     // Building the merkle proof
     const sourceContract = this.inner.getWebbAnchorByAddress(sourceContractAddress);
     const sourceRoot = await sourceContract.inner.getLastRoot();
-    const knwon = await destAnchor.inner.isKnownNeighborRoot(4, sourceRoot);
-    logger.trace(`Dest anchor knwos about the source root ? ${knwon}`);
+    const known = await destAnchor.inner.isKnownNeighborRoot(4, sourceRoot);
+    logger.trace(`Dest anchor knwos about the source root ? ${known}`);
 
     const sourceLatestRoot = await sourceContract.inner.getLastRoot();
     logger.trace(`Source latest root ${sourceLatestRoot}`);
 
-    const isKnroot = await sourceContract.inner.isKnownRoot(destLatestNeighbourRoot);
-    logger.trace(`isKnown root ${isKnroot}`);
+    const isKnownRoot = await sourceContract.inner.isKnownRoot(destLatestNeighbourRoot);
+    logger.trace(`isKnown root ${isKnownRoot}`);
 
-    const merkleProof = await sourceContract.generateMerkleProofForRoot(deposit, destLatestNeighbourRoot);
+    const merkleProof = await sourceContract.generateMerkleProofForRoot(deposit, destLatestNeighbourRoot, destAnchor);
+    console.log(merkleProof);
     if (!merkleProof) {
       throw new Error('Failed to generate Merle proof');
     }
