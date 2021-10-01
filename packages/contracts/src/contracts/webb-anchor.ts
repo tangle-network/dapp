@@ -89,7 +89,7 @@ export class WebbAnchorContract {
     const currentBlock = await this.web3Provider.getBlockNumber();
 
     let logs: Array<Log> = []; // Read the stored logs into this variable
-    const step = 200;
+    const step = 1024;
     logger.info(`Fetching leaves with steps of ${step} logs/request`);
     try {
       logs = await this.web3Provider.getLogs({
@@ -178,7 +178,7 @@ export class WebbAnchorContract {
     return tree.path(leafIndex);
   }
 
-  async generateMerkleProofFroRoot(deposit: Deposit, targetRoot: string) {
+  async generateMerkleProofForRoot(deposit: Deposit, targetRoot: string) {
     logger.trace('generate merkle proof with deposit', deposit, ` for the target roof ${targetRoot}`);
     let lastQueriedBlock = 0;
     const treeHeight = await this._contract.levels();
@@ -201,7 +201,7 @@ export class WebbAnchorContract {
     return undefined;
   }
 
-  async merkleProofToZKp(merkleProof: any, deposit: Deposit, zkpInputWithoutMerkleProof: ZKPWebbInputWithoutMerkle) {
+  async merkleProofToZKP(merkleProof: any, deposit: Deposit, zkpInputWithoutMerkleProof: ZKPWebbInputWithoutMerkle) {
     const { pathElements, pathIndex: pathIndices, root: merkleRoot } = merkleProof;
     const localRoot = await this._contract.getLastRoot();
     const root = bufferToFixed(merkleRoot);

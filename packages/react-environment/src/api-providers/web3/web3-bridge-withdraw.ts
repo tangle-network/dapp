@@ -113,7 +113,6 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
     if (activeChain !== sourceChainEvm) {
       throw new Error(`Expecting another active api for chain ${sourceChain} found ${evmIdIntoChainId(activeChain)}`);
     }
-
     // Temporary Provider for getting Anchors roots
     const destChainId = Number(note.chain) as ChainId;
     const destChainEvmId = chainIdIntoEVMId(destChainId);
@@ -122,7 +121,6 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
     const destHttpProvider = Web3Provider.fromUri(rpc);
     const destEthers = destHttpProvider.intoEthersProvider();
     const deposit = depositFromAnchor2Preimage(note.secret.replace('0x', ''), destChainEvmId);
-
     // Getting contracts data for source and dest chains
     const currency = BridgeCurrency.fromString(note.tokenSymbol);
     const bridge = Bridge.from(this.bridgeConfig, currency);
@@ -151,7 +149,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
     const isKnroot = await sourceContract.inner.isKnownRoot(destLatestNeighbourRoot);
     logger.trace(`isKnown root ${isKnroot}`);
 
-    const merkleProof = await sourceContract.generateMerkleProofFroRoot(deposit, destLatestNeighbourRoot);
+    const merkleProof = await sourceContract.generateMerkleProofForRoot(deposit, destLatestNeighbourRoot);
     if (!merkleProof) {
       throw new Error('Failed to generate Merle proof');
     }
@@ -181,7 +179,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
       refund: 0,
     };
 
-    const zkpResults = await destContractWithSignedProvider.merkleProofToZKp(merkleProof, deposit, input);
+    const zkpResults = await destContractWithSignedProvider.merkleProofToZKP(merkleProof, deposit, input);
 
     await destContractWithSignedProvider.withdraw(
       zkpResults.proof,
