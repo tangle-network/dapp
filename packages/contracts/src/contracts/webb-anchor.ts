@@ -145,7 +145,7 @@ export class WebbAnchorContract {
 
   async generateMerkleProof(deposit: Deposit) {
     const bridgeStorageStorage = await bridgeCurrencyBridgeStorageFactory();
-    let storedContractInfo: MixerStorage[0] = (await bridgeStorageStorage.get(this._contract.address)) || {
+    const storedContractInfo: MixerStorage[0] = (await bridgeStorageStorage.get(this._contract.address)) || {
       lastQueriedBlock: anchorsStorage[this._contract.address.toString()] || 0,
       leaves: [] as string[],
     };
@@ -156,35 +156,7 @@ export class WebbAnchorContract {
     // Query for missing blocks starting from the stored endingBlock
     const lastQueriedBlock = storedContractInfo.lastQueriedBlock;
     logger.trace(`Getting leaves from lastQueriedBlock `, lastQueriedBlock);
-    const currentBlock = await this.web3Provider.getBlockNumber()
-    // fetch first batch of leaves
-    let fetchedLeaves = await this.getDepositLeaves(lastQueriedBlock + 1, lastQueriedBlock + 1 + 100000);
-    // get all leaves and save them
-    let leaves = [...storedContractInfo.leaves, ...fetchedLeaves.newLeaves];
-    await bridgeStorageStorage.set(this._contract.address, {
-      lastQueriedBlock: fetchedLeaves.lastQueriedBlock,
-      leaves,
-    });
-    // TODO: Save leaves
-    // TODO: Run and save leaves in larger increments
-    while (fetchedLeaves.lastQueriedBlock < currentBlock) {
-      let target = fetchedLeaves.lastQueriedBlock + 100000 + 1 > currentBlock
-        ? currentBlock
-        : fetchedLeaves.lastQueriedBlock + 100000 + 1;
-
-      fetchedLeaves = await this.getDepositLeaves(fetchedLeaves.lastQueriedBlock + 1, target);
-
-      storedContractInfo = (await bridgeStorageStorage.get(this._contract.address)) || {
-        lastQueriedBlock: anchorsStorage[this._contract.address.toString()] || 0,
-        leaves: [] as string[],
-      };
-      let leaves = [...storedContractInfo.leaves, ...fetchedLeaves.newLeaves];
-      await bridgeStorageStorage.set(this._contract.address, {
-        lastQueriedBlock: target,
-        leaves,
-      });
-    }
-
+    const fetchedLeaves = await this.getDepositLeaves(lastQueriedBlock + 1, 0);
     logger.trace(`New Leaves ${fetchedLeaves.newLeaves.length}`, fetchedLeaves.newLeaves);
 
     tree.batch_insert(fetchedLeaves.newLeaves);
@@ -195,7 +167,7 @@ export class WebbAnchorContract {
     const knownRoot = await this._contract.isKnownRoot(formattedRoot);
     logger.info(`fromBlock ${formattedRoot} -x- last root ${lastRoot} ---> knownRoot: ${knownRoot}`);
     // compare root against contract, and store if there is a match
-    leaves = [...storedContractInfo.leaves, ...fetchedLeaves.newLeaves];
+    const leaves = [...storedContractInfo.leaves, ...fetchedLeaves.newLeaves];
     if (knownRoot) {
       logger.info(`Root is known committing to storage ${this._contract.address}`);
       await bridgeStorageStorage.set(this._contract.address, {
@@ -211,12 +183,17 @@ export class WebbAnchorContract {
 
   async generateMerkleProofForRoot(deposit: Deposit, targetRoot: string, contractForCache: WebbAnchorContract) {
     const bridgeStorageStorage = await bridgeCurrencyBridgeStorageFactory();
-    const storedContractInfo: MixerStorage[0] = (await bridgeStorageStorage.get(
-      contractForCache._contract.address
-    )) || {
-      lastQueriedBlock: anchorsStorage[contractForCache._contract.address.toString()] || 0,
+    const storedContractInfo: MixerStorage[0] = (await bridgeStorageStorage.get(this._contract.address)) || {
+      lastQueriedBlock: anchorsStorage[this._contract.address.toString()] || 0,
       leaves: [] as string[],
     };
+
+    // const otheStoredContractInfo: MixerStorage[0] = (await bridgeStorageStorage.get(
+    //   contractForCache._contract.address
+    // )) || {
+    //   lastQueriedBlock: anchorsStorage[contractForCache._contract.address.toString()] || 0,
+    //   leaves: [] as string[],
+    // };
     console.log(storedContractInfo);
     const treeHeight = await this._contract.levels();
     logger.trace(`Generating merkle proof treeHeight ${treeHeight} of deposit`, deposit);
@@ -224,7 +201,7 @@ export class WebbAnchorContract {
     const lastQueriedBlock = storedContractInfo.lastQueriedBlock;
 
     logger.trace('generate merkle proof with deposit', deposit, ` for the target roof ${targetRoot}`);
-    const fetchedLeaves = await this.getDepositLeaves(lastQueriedBlock + 1);
+    const fetchedLeaves = await this.getDepositLeaves(lastQueriedBlock + 1, 0);
     const leaves = [...storedContractInfo.leaves, ...fetchedLeaves.newLeaves];
 
     await bridgeStorageStorage.set(this._contract.address, {
@@ -239,6 +216,8 @@ export class WebbAnchorContract {
       insertedLeaves.push(leaf);
       const nextRoot = tree.get_root();
       logger.trace(`Adding leaf ${leaf} ->  the root is ${nextRoot}`);
+      logger.trace(`Next: ${bufferToFixed(nextRoot)}`);
+      logger.trace(`Target: ${targetRoot}`);
       if (bufferToFixed(nextRoot) === targetRoot) {
         const index = insertedLeaves.findIndex((l) => l == deposit.commitment);
         logger.trace(`leaf index is ${index}`);
