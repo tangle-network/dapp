@@ -202,9 +202,11 @@ export class WebbAnchorContract {
         const index = insertedLeaves.findIndex((l) => l == deposit.commitment);
         logger.trace(`leaf index if ${index}`);
         logger.info(`Root is known committing to storage ${this._contract.address}`);
+
+        const leaves = [...storedContractInfo.leaves, ...insertedLeaves];
         await bridgeStorageStorage.set(this._contract.address, {
           lastQueriedBlock: fetchedLeaves.lastQueriedBlock,
-          leaves: insertedLeaves,
+          leaves,
         });
 
         return tree.path(index);
