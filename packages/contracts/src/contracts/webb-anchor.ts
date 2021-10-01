@@ -83,10 +83,13 @@ export class WebbAnchorContract {
     await recipient.wait();
   }
 
-  private async getDepositLeaves(startingBlock: number): Promise<{ lastQueriedBlock: number; newLeaves: string[] }> {
+  private async getDepositLeaves(
+    startingBlock: number,
+    finalBlock: number
+  ): Promise<{ lastQueriedBlock: number; newLeaves: string[] }> {
     const filter = this._contract.filters.Deposit(null, null, null);
     logger.trace(`Getting leaves with filter`, filter);
-    const currentBlock = await this.web3Provider.getBlockNumber();
+    finalBlock = finalBlock ? finalBlock : await this.web3Provider.getBlockNumber();
 
     let logs: Array<Log> = []; // Read the stored logs into this variable
     const step = 1024;
@@ -94,7 +97,7 @@ export class WebbAnchorContract {
     try {
       logs = await this.web3Provider.getLogs({
         fromBlock: startingBlock,
-        toBlock: currentBlock,
+        toBlock: finalBlock,
         ...filter,
       });
     } catch (e) {
@@ -102,11 +105,11 @@ export class WebbAnchorContract {
 
       // If there is a timeout, query the logs in block increments.
       if (e.code == -32603) {
-        for (let i = startingBlock; i < currentBlock; i += step) {
+        for (let i = startingBlock; i < finalBlock; i += step) {
           const nextLogs = await retryPromise(() => {
             return this.web3Provider.getLogs({
               fromBlock: i,
-              toBlock: currentBlock - i > step ? i + step : currentBlock,
+              toBlock: finalBlock - i > step ? i + step : finalBlock,
               ...filter,
             });
           });
@@ -125,7 +128,7 @@ export class WebbAnchorContract {
       .map((e) => e.args.commitment);
 
     return {
-      lastQueriedBlock: currentBlock,
+      lastQueriedBlock: finalBlock,
       newLeaves: newCommitments,
     };
   }
@@ -142,7 +145,7 @@ export class WebbAnchorContract {
 
   async generateMerkleProof(deposit: Deposit) {
     const bridgeStorageStorage = await bridgeCurrencyBridgeStorageFactory();
-    const storedContractInfo: MixerStorage[0] = (await bridgeStorageStorage.get(this._contract.address)) || {
+    let storedContractInfo: MixerStorage[0] = (await bridgeStorageStorage.get(this._contract.address)) || {
       lastQueriedBlock: anchorsStorage[this._contract.address.toString()] || 0,
       leaves: [] as string[],
     };
@@ -153,7 +156,35 @@ export class WebbAnchorContract {
     // Query for missing blocks starting from the stored endingBlock
     const lastQueriedBlock = storedContractInfo.lastQueriedBlock;
     logger.trace(`Getting leaves from lastQueriedBlock `, lastQueriedBlock);
-    const fetchedLeaves = await this.getDepositLeaves(lastQueriedBlock + 1);
+    const currentBlock = await this.web3Provider.getBlockNumber()
+    // fetch first batch of leaves
+    let fetchedLeaves = await this.getDepositLeaves(lastQueriedBlock + 1, lastQueriedBlock + 1 + 100000);
+    // get all leaves and save them
+    let leaves = [...storedContractInfo.leaves, ...fetchedLeaves.newLeaves];
+    await bridgeStorageStorage.set(this._contract.address, {
+      lastQueriedBlock: fetchedLeaves.lastQueriedBlock,
+      leaves,
+    });
+    // TODO: Save leaves
+    // TODO: Run and save leaves in larger increments
+    while (fetchedLeaves.lastQueriedBlock < currentBlock) {
+      let target = fetchedLeaves.lastQueriedBlock + 100000 + 1 > currentBlock
+        ? currentBlock
+        : fetchedLeaves.lastQueriedBlock + 100000 + 1;
+
+      fetchedLeaves = await this.getDepositLeaves(fetchedLeaves.lastQueriedBlock + 1, target);
+
+      storedContractInfo = (await bridgeStorageStorage.get(this._contract.address)) || {
+        lastQueriedBlock: anchorsStorage[this._contract.address.toString()] || 0,
+        leaves: [] as string[],
+      };
+      let leaves = [...storedContractInfo.leaves, ...fetchedLeaves.newLeaves];
+      await bridgeStorageStorage.set(this._contract.address, {
+        lastQueriedBlock: target,
+        leaves,
+      });
+    }
+
     logger.trace(`New Leaves ${fetchedLeaves.newLeaves.length}`, fetchedLeaves.newLeaves);
 
     tree.batch_insert(fetchedLeaves.newLeaves);
@@ -164,7 +195,7 @@ export class WebbAnchorContract {
     const knownRoot = await this._contract.isKnownRoot(formattedRoot);
     logger.info(`fromBlock ${formattedRoot} -x- last root ${lastRoot} ---> knownRoot: ${knownRoot}`);
     // compare root against contract, and store if there is a match
-    const leaves = [...storedContractInfo.leaves, ...fetchedLeaves.newLeaves];
+    leaves = [...storedContractInfo.leaves, ...fetchedLeaves.newLeaves];
     if (knownRoot) {
       logger.info(`Root is known committing to storage ${this._contract.address}`);
       await bridgeStorageStorage.set(this._contract.address, {
