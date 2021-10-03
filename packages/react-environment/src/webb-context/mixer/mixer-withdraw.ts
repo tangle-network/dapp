@@ -43,6 +43,7 @@ export abstract class MixerWithdraw<T> extends EventBus<MixerWithdrawEvents> {
     super();
     this.watcher = this.emitter.asObservable();
   }
+
   get hasRelayer(): Promise<boolean> {
     return Promise.resolve(false);
   }
@@ -69,7 +70,11 @@ export abstract class MixerWithdraw<T> extends EventBus<MixerWithdrawEvents> {
     return Promise.resolve([]);
   }
 
-  abstract withdraw(note: string, recipient: string): Promise<void>;
+  cancelWithdraw(): Promise<void> {
+    this.cancelToken.cancelled = true;
+    this.emit('stateChange', WithdrawState.Cancelling);
+    return Promise.resolve(undefined);
+  }
 
-  abstract cancelWithdraw(): Promise<void>;
+  abstract withdraw(note: string, recipient: string): Promise<void>;
 }

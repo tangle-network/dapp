@@ -1,12 +1,15 @@
 import { Button, Divider, Icon, LinearProgress, Tooltip, Typography } from '@material-ui/core';
+import { getEVMChainNameFromInternal } from '@webb-dapp/apps/configs';
 import { WithdrawState } from '@webb-dapp/react-environment';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
+import { DepositNote } from '@webb-tools/wasm-utils';
 import React, { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 type WithdrawingModalProps = {
   canCancel: boolean;
   stage: WithdrawState;
+  note: DepositNote;
   cancel(): void;
   withdrawTxInfo: any | null;
 };
@@ -95,7 +98,7 @@ const alternatingMessages = [
   'You may withdraw to another account',
   'Anyone with your note can withdraw, You should keep it secret',
 ];
-const WithdrawingModal: React.FC<WithdrawingModalProps> = ({ canCancel, cancel, stage, withdrawTxInfo }) => {
+const WithdrawingModal: React.FC<WithdrawingModalProps> = ({ canCancel, cancel, note, stage, withdrawTxInfo }) => {
   const [rm, setAlternatingMessage] = useState(0);
   useEffect(() => {
     const handle = setInterval(() => {
@@ -111,7 +114,7 @@ const WithdrawingModal: React.FC<WithdrawingModalProps> = ({ canCancel, cancel, 
         return 'Transaction Done';
       case WithdrawState.Failed:
         return 'Transaction Failed';
-      case WithdrawState.Canceled:
+      case WithdrawState.Cancelling:
         return 'Transaction canceled';
       case WithdrawState.GeneratingZk:
         return 'Generating Zero Knowledge proof...';
@@ -166,16 +169,14 @@ const WithdrawingModal: React.FC<WithdrawingModalProps> = ({ canCancel, cancel, 
             <Divider />
             <WithdrawInfoRow>
               <InfoItemLabel>
-                <Icon className={'label-icon'}>info</Icon> Mixer info:
+                <Icon className={'label-icon'}>info</Icon> Bridge info:
               </InfoItemLabel>
               <InfoItem>
                 <Typography variant={'caption'}>
-                  {/*         <b>
-                      This note controls
-                      {' '}
-                      {' '}{ selectedMixerItem && Math.round(selectedMixerItem?.token.amount.toNumber() / 10 ** selectedMixerItem?.token.precision) }
-                      {' '}{ selectedMixerItem && selectedMixerItem?.token.symbol }
-                    </b>*/}
+                  <b>
+                    Receiving {note.amount + ' ' + note.tokenSymbol} on{' '}
+                    {getEVMChainNameFromInternal(Number(note.chain))}
+                  </b>
                 </Typography>
               </InfoItem>
             </WithdrawInfoRow>

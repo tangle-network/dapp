@@ -22,11 +22,9 @@ const logger = LoggerService.get('Web3BridgeWithdraw');
 export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
   bridgeConfig: BridgeConfig = bridgeConfig;
 
-  cancelWithdraw(): Promise<void> {
-    return Promise.resolve(undefined);
-  }
-
   async sameChainWithdraw(note: DepositNote, recipient: string) {
+    this.cancelToken.cancelled = false;
+
     // Todo Ensure the current provider is the same as the source
     const activeChain = await this.inner.getChainId();
     const internalId = evmIdIntoChainId(activeChain);
@@ -75,24 +73,55 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
         section: `Bridge ${bridge.currency.chainIds.map(getEVMChainNameFromInternal).join('-')}`,
       },
     });
+
+    // Check for cancelled here, abort if it was set.
+    if (this.cancelToken.cancelled) {
+      transactionNotificationConfig.failed?.({
+        address: recipient,
+        data: 'Withdraw cancelled',
+        key: 'mixer-withdraw-evm',
+        path: {
+          method: 'withdraw',
+          section: 'evm-mixer',
+        },
+      });
+      this.emit('stateChange', WithdrawState.Ideal);
+      return;
+    }
+
     this.emit('stateChange', WithdrawState.SendingTransaction);
-    await contract.withdraw(
-      zkpResults.proof,
-      {
-        destinationChainId: activeChain,
-        fee: input.fee,
-        nullifier: input.nullifier,
-        nullifierHash: input.nullifierHash,
-        pathElements: zkpResults.input.pathElements,
-        pathIndices: zkpResults.input.pathIndices,
-        recipient: input.recipient,
-        refund: input.refund,
-        relayer: input.relayer,
-        root: zkpResults.root as any,
-        secret: zkpResults.input.secret,
-      },
-      zkpResults.input
-    );
+    try {
+      await contract.withdraw(
+        zkpResults.proof,
+        {
+          destinationChainId: activeChain,
+          fee: input.fee,
+          nullifier: input.nullifier,
+          nullifierHash: input.nullifierHash,
+          pathElements: zkpResults.input.pathElements,
+          pathIndices: zkpResults.input.pathIndices,
+          recipient: input.recipient,
+          refund: input.refund,
+          relayer: input.relayer,
+          root: zkpResults.root as any,
+          secret: zkpResults.input.secret,
+        },
+        zkpResults.input
+      );
+    } catch (e) {
+      this.emit('stateChange', WithdrawState.Ideal);
+      transactionNotificationConfig.failed?.({
+        address: recipient,
+        data: e?.code === 4001 ? 'Withdraw rejected' : 'Withdraw failed',
+        key: 'bridge-withdraw-evm',
+        path: {
+          method: 'withdraw',
+          section: `Bridge ${bridge.currency.chainIds.map(getEVMChainNameFromInternal).join('-')}`,
+        },
+      });
+      return;
+    }
+
     this.emit('stateChange', WithdrawState.Ideal);
     transactionNotificationConfig.finalize?.({
       address: recipient,
@@ -106,6 +135,8 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
   }
 
   async crossChainWithdraw(note: DepositNote, recipient: string) {
+    this.cancelToken.cancelled = false;
+
     // check that the active api is over the source chain
     const sourceChain = Number(note.sourceChain) as ChainId;
     const sourceChainEvm = chainIdIntoEVMId(sourceChain);
@@ -123,6 +154,8 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
     const destHttpProvider = Web3Provider.fromUri(rpc);
     const destEthers = destHttpProvider.intoEthersProvider();
     const deposit = depositFromAnchor2Preimage(note.secret.replace('0x', ''), destChainEvmId);
+    this.emit('stateChange', WithdrawState.GeneratingZk);
+
     // Getting contracts data for source and dest chains
     const currency = BridgeCurrency.fromString(note.tokenSymbol);
     const bridge = Bridge.from(this.bridgeConfig, currency);
@@ -143,10 +176,6 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
 
     // Building the merkle proof
     const sourceContract = this.inner.getWebbAnchorByAddress(sourceContractAddress);
-    const sourceRoot = await sourceContract.inner.getLastRoot();
-    const known = await destAnchor.inner.isKnownNeighborRoot(4, sourceRoot);
-    logger.trace(`Dest anchor knwos about the source root ? ${known}`);
-
     const sourceLatestRoot = await sourceContract.inner.getLastRoot();
     logger.trace(`Source latest root ${sourceLatestRoot}`);
 
@@ -156,16 +185,45 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
     const merkleProof = await sourceContract.generateMerkleProofForRoot(deposit, destLatestNeighbourRoot, destAnchor);
     console.log(merkleProof);
     if (!merkleProof) {
-      throw new Error('Failed to generate Merle proof');
+      this.emit('stateChange', WithdrawState.Ideal);
+      throw new Error('Failed to generate Merkle proof');
+    }
+
+    // Check for cancelled here, abort if it was set.
+    if (this.cancelToken.cancelled) {
+      transactionNotificationConfig.failed?.({
+        address: recipient,
+        data: 'Withdraw cancelled',
+        key: 'mixer-withdraw-evm',
+        path: {
+          method: 'withdraw',
+          section: 'evm-mixer',
+        },
+      });
+      this.emit('stateChange', WithdrawState.Ideal);
+      return;
     }
 
     const chid1 = await this.inner.getChainId();
     console.log({ chid1 });
     /// todo await for provider Change
-    await this.inner.innerProvider.switchChain({
-      chainId: `0x${destChainEvmId.toString(16)}`,
-    });
-    const chid = await this.inner.getChainId();
+    try {
+      await this.inner.innerProvider.switchChain({
+        chainId: `0x${destChainEvmId.toString(16)}`,
+      });
+    } catch (e) {
+      this.emit('stateChange', WithdrawState.Ideal);
+      transactionNotificationConfig.failed?.({
+        address: recipient,
+        data: e?.code === 4001 ? 'Withdraw rejected' : 'Withdraw failed',
+        key: 'bridge-withdraw-evm',
+        path: {
+          method: 'withdraw',
+          section: `Bridge ${bridge.currency.chainIds.map(getEVMChainNameFromInternal).join('-')}`,
+        },
+      });
+      return;
+    }
     const accounts = await this.inner.accounts.accounts();
     const account = accounts[0];
 
@@ -185,24 +243,50 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
     };
 
     const zkpResults = await destContractWithSignedProvider.merkleProofToZKP(merkleProof, deposit, input);
+    this.emit('stateChange', WithdrawState.SendingTransaction);
 
-    await destContractWithSignedProvider.withdraw(
-      zkpResults.proof,
-      {
-        destinationChainId: activeChain,
-        fee: input.fee,
-        nullifier: input.nullifier,
-        nullifierHash: input.nullifierHash,
-        pathElements: zkpResults.input.pathElements,
-        pathIndices: zkpResults.input.pathIndices,
-        recipient: input.recipient,
-        refund: input.refund,
-        relayer: input.relayer,
-        root: zkpResults.root as any,
-        secret: zkpResults.input.secret,
+    try {
+      await destContractWithSignedProvider.withdraw(
+        zkpResults.proof,
+        {
+          destinationChainId: activeChain,
+          fee: input.fee,
+          nullifier: input.nullifier,
+          nullifierHash: input.nullifierHash,
+          pathElements: zkpResults.input.pathElements,
+          pathIndices: zkpResults.input.pathIndices,
+          recipient: input.recipient,
+          refund: input.refund,
+          relayer: input.relayer,
+          root: zkpResults.root as any,
+          secret: zkpResults.input.secret,
+        },
+        zkpResults.input
+      );
+    } catch (e) {
+      this.emit('stateChange', WithdrawState.Ideal);
+      transactionNotificationConfig.failed?.({
+        address: recipient,
+        data: e?.code === 4001 ? 'Withdraw rejected' : 'Withdraw failed',
+        key: 'bridge-withdraw-evm',
+        path: {
+          method: 'withdraw',
+          section: `Bridge ${bridge.currency.chainIds.map(getEVMChainNameFromInternal).join('-')}`,
+        },
+      });
+      return;
+    }
+
+    this.emit('stateChange', WithdrawState.Ideal);
+    transactionNotificationConfig.finalize?.({
+      address: recipient,
+      data: undefined,
+      key: 'bridge-withdraw-evm',
+      path: {
+        method: 'withdraw',
+        section: `Bridge ${bridge.currency.chainIds.map(getEVMChainNameFromInternal).join('-')}`,
       },
-      zkpResults.input
-    );
+    });
   }
 
   async withdraw(note: string, recipient: string): Promise<void> {
@@ -214,29 +298,12 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
     const targetChainName = getEVMChainNameFromInternal(Number(depositNote.chain) as ChainId);
     logger.trace(`Bridge withdraw from ${sourceChainName} to ${targetChainName}`);
 
-    const token = parseNote.note.tokenSymbol;
-    const bridgeCurrency = BridgeCurrency.fromString(token);
-    const bridge = Bridge.from(this.bridgeConfig, bridgeCurrency);
-
-    try {
-      if (depositNote.sourceChain === depositNote.chain) {
-        logger.trace(`Same chain flow ${sourceChainName}`);
-        return this.sameChainWithdraw(depositNote, recipient);
-      } else {
-        logger.trace(`cross chain flow ${sourceChainName} ----> ${targetChainName}`);
-        return this.crossChainWithdraw(depositNote, recipient);
-      }
-    } catch (e) {
-      this.emit('stateChange', WithdrawState.Ideal);
-      transactionNotificationConfig.failed?.({
-        address: recipient,
-        data: e?.code === 40001 ? 'Withdraw rejected' : 'Withdraw failed',
-        key: 'bridge-withdraw-evm',
-        path: {
-          method: 'withdraw',
-          section: `Bridge ${bridge.currency.chainIds.map(getEVMChainNameFromInternal).join('-')}`,
-        },
-      });
+    if (depositNote.sourceChain === depositNote.chain) {
+      logger.trace(`Same chain flow ${sourceChainName}`);
+      this.sameChainWithdraw(depositNote, recipient);
+    } else {
+      logger.trace(`cross chain flow ${sourceChainName} ----> ${targetChainName}`);
+      this.crossChainWithdraw(depositNote, recipient);
     }
   }
 }

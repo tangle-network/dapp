@@ -22,11 +22,6 @@ import React from 'react';
 const logger = LoggerService.get('Web3MixerWithdraw');
 
 export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
-  cancelWithdraw(): Promise<void> {
-    this.cancelToken.cancelled = true;
-    this.emit('stateChange', WithdrawState.Cancelling);
-    return Promise.resolve(undefined);
-  }
 
   async mapRelayerIntoActive(relayer: OptionalRelayer): Promise<OptionalActiveRelayer> {
     if (!relayer) {

@@ -1,6 +1,6 @@
 import { FormHelperText, InputBase } from '@material-ui/core';
 import { MixerButton } from '@webb-dapp/mixer/components/MixerButton/MixerButton';
-import WithdrawingModal from '@webb-dapp/mixer/components/Withdraw/WithdrawingModal';
+import WithdrawingModal from '@webb-dapp/bridge/components/Withdraw/WithdrawingModal';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabel';
 import { BridgeNoteInput } from '@webb-dapp/ui-components/Inputs/NoteInput/BridgeNoteInput';
