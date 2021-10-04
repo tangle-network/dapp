@@ -1,6 +1,7 @@
 const { override } = require('customize-cra');
 const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
 const path = require('path');
+const exec = require('child_process').exec;
 
 const findPackages = require('../../scripts/findPackages');
 
@@ -8,7 +9,25 @@ const packages = findPackages();
 
 const rewireReactHotLoader = require('react-app-rewire-hot-loader');
 
-module.exports = override(function (config, env) {
+const WebpackPostBuildScript = function() {
+  this.apply = function(compiler) {
+    compiler.hooks.afterEmit.tap('WebpackPostBuildScript', (compilation) => {
+      exec('../../scripts/bigintBabelFix.sh', (err, stdout, stderr) => {
+        if (stdout) process.stdout.write(stdout);
+        if (stderr) process.stderr.write(stderr);
+      });
+    })
+  }
+}
+
+const addWebpackPostBuildScript = config => {
+  config.plugins.push(new WebpackPostBuildScript());
+  return config;
+}
+
+module.exports = override(
+  addWebpackPostBuildScript,
+  function (config, env) {
   // include lib
   config.module.rules.forEach((rule) => {
     if (!Reflect.has(rule, 'oneOf')) {
