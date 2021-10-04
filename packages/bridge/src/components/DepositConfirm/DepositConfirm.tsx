@@ -132,7 +132,7 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({
     provider.generateNote(mixerId, destChain).then((note) => {
       setNote(note);
     });
-  }, [provider, mixerId, destChain]);
+  }, [provider.generateNote, mixerId, destChain]);
   const [backupConfirmation, setBackupConfirmation] = useState(false);
   const generatingNote = !depositPayload;
   return (
@@ -242,7 +242,7 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({
               return;
             }
             setLoading(true);
-            downloadNote();
+            downloadNote(depositPayload);
             onClose();
             await provider.deposit(depositPayload);
             setLoading(false);

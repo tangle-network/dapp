@@ -1,7 +1,6 @@
 import { FormHelperText, InputBase } from '@material-ui/core';
 import { MixerButton } from '@webb-dapp/mixer/components/MixerButton/MixerButton';
-import WithdrawingModal from '@webb-dapp/mixer/components/Withdraw/WithdrawingModal';
-import { useWithdraw } from '@webb-dapp/mixer/hooks';
+import WithdrawingModal from '@webb-dapp/bridge/components/Withdraw/WithdrawingModal';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabel';
 import { BridgeNoteInput } from '@webb-dapp/ui-components/Inputs/NoteInput/BridgeNoteInput';
@@ -10,7 +9,8 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { WithdrawState } from '@webb-dapp/react-environment';
 import { InputSection } from '@webb-dapp/ui-components/Inputs/InputSection/InputSection';
-import { useDepositNote } from '@webb-dapp/mixer/';
+import { useDepositNote } from '@webb-dapp/mixer';
+import { useWithdraw } from '@webb-dapp/bridge/hooks';
 
 const WithdrawWrapper = styled.div``;
 type WithdrawProps = {};
@@ -25,7 +25,6 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
   });
 
   const depositNote = useDepositNote(note);
-  console.log(note);
   return (
     <WithdrawWrapper>
       <InputSection>
