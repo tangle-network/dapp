@@ -31,7 +31,7 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
       transactionNotificationConfig.loading?.({
         address: '',
         data: React.createElement(DepositNotification, {
-          chain: getEVMChainNameFromInternal(Number(note.chain)),
+          chain: getEVMChainNameFromInternal(Number(note.sourceChain)),
           amount: Number(note.amount),
           currency: bridge.currency.name,
         }),
