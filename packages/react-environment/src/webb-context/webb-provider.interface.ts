@@ -23,6 +23,7 @@ export interface WebbMixer<T> {
   deposit: WebbMethod<MixerDeposit<T, DepositPayload>, MixerDepositEvents>;
   // withdraw
   withdraw: WebbMethod<MixerWithdraw<T>, MixerWithdrawEvents>;
+  ///
 }
 
 export interface WebbBridge<T> {
@@ -60,6 +61,10 @@ export type ProvideCapabilities = {
   hasSessions: boolean;
 };
 
+type WebApiCalls = {
+  addToken(input: any): Promise<void>;
+};
+
 export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
   /// Accounts Adapter will have all methods related to the provider accounts
   accounts: AccountsAdapter<any>;
@@ -75,4 +80,6 @@ export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
 
   /// relayer
   relayingManager: WebbRelayerBuilder;
+
+  getProvider(): any;
 }
