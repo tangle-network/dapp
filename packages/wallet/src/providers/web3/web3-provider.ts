@@ -3,8 +3,8 @@ import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import { ethers } from 'ethers';
 import Web3 from 'web3';
 import { AbstractProvider } from 'web3-core';
-import { ProvideCapabilities } from '@webb-dapp/react-environment';
-
+import { Bridge, bridgeConfig, BridgeCurrency, ProvideCapabilities } from '@webb-dapp/react-environment';
+export type AddToken = { address: string; symbol: string; decimals: number; image: string };
 export interface AddEthereumChainParameter {
   chainId: string; // A 0x-prefixed hexadecimal string
   chainName: string;
@@ -151,6 +151,21 @@ export class Web3Provider<T = unknown> {
     return provider.request?.({
       method: 'wallet_switchEthereumChain',
       params: [chainInput],
+    });
+  }
+
+  addToken(addTokenInput: AddToken) {
+    (this._inner.currentProvider as AbstractProvider).request?.({
+      method: 'wallet_watchAsset',
+      params: {
+        type: 'ERC20', // Initially only supports ERC20, but eventually more!
+        options: {
+          address: addTokenInput.address, // The address that the token is at.
+          symbol: addTokenInput.symbol, // A ticker symbol or shorthand, up to 5 chars.
+          decimals: addTokenInput.decimals, // The number of decimals in the token
+          image: 'https://placdholder.com/300', // A string url of the token logo
+        },
+      },
     });
   }
 }

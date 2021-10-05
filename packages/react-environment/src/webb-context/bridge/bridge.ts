@@ -58,4 +58,7 @@ export class Bridge {
       return true;
     });
   }
+  static getConfigEntry(configEntry: BridgeConfig, bridgeCurrency: BridgeCurrency): BridgeConfigEntry {
+    return configEntry[bridgeCurrency.name];
+  }
 }
