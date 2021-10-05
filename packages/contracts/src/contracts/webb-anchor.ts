@@ -82,10 +82,10 @@ export class WebbAnchorContract {
   async deposit(commitment: string, onComplete?: (event: DepositEvent) => void) {
     const overrides = {};
     const tokenAddress = await this._contract.token();
-    const tokenInstance = Erc20Factory.connect(tokenAddress, this.web3Provider);
+    const tokenInstance = Erc20Factory.connect(tokenAddress, this.signer);
 
     // check the approved spending before attempting deposit
-    const userAddress = await this.web3Provider.getSigner().getAddress();
+    const userAddress = await this.signer.getAddress();
     const tokenAllowance = await tokenInstance.allowance(userAddress, this._contract.address);
     const depositAmount = await this.denomination;
     if (tokenAllowance < depositAmount) {
