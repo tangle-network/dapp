@@ -19,6 +19,8 @@ import { bridgeCurrencyBridgeStorageFactory } from '@webb-dapp/react-environment
 import { MixerStorage } from '@webb-dapp/apps/configs/storages/EvmChainStorage';
 import { generateWitness, proofAndVerify } from '@webb-dapp/contracts/contracts/webb-utils';
 import { createRootsBytes, generateWithdrawProofCallData } from '@webb-dapp/contracts/utils/bridge-utils';
+import { Erc20 } from '../types/Erc20';
+import { Erc20Factory } from '../types';
 
 const Scalar = require('ffjavascript').Scalar;
 
@@ -79,6 +81,18 @@ export class WebbAnchorContract {
 
   async deposit(commitment: string, onComplete?: (event: DepositEvent) => void) {
     const overrides = {};
+    const tokenAddress = await this._contract.token();
+    const tokenInstance = Erc20Factory.connect(tokenAddress, this.web3Provider);
+
+    // check the approved spending before attempting deposit
+    const userAddress = await this.web3Provider.getSigner().getAddress();
+    const tokenAllowance = await tokenInstance.allowance(userAddress, this._contract.address);
+    const depositAmount = await this.denomination;
+    if (tokenAllowance < depositAmount) {
+      const tx = await tokenInstance.approve(this._contract.address, depositAmount);
+      await tx.wait();
+    }
+
     const recipient = await this._contract.deposit(commitment, overrides);
     await recipient.wait();
   }

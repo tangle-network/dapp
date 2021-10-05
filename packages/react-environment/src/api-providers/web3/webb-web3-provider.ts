@@ -14,6 +14,7 @@ import { EventBus } from '@webb-tools/app-util';
 import { ethers, providers } from 'ethers';
 import { WebbAnchorContract } from '@webb-dapp/contracts/contracts';
 import { WEBBAnchor2 } from '@webb-dapp/contracts/types/WEBBAnchor2';
+import { Erc20 } from '@webb-dapp/contracts/types/Erc20';
 
 export class WebbWeb3Provider
   extends EventBus<WebbProviderEvents<[number]>>
