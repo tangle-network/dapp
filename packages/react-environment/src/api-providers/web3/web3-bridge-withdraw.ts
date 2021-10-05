@@ -242,7 +242,22 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
       refund: 0,
     };
 
-    const zkpResults = await destContractWithSignedProvider.merkleProofToZKP(merkleProof, deposit, input);
+    let zkpResults;
+    try {
+      zkpResults = await destContractWithSignedProvider.merkleProofToZKP(merkleProof, deposit, input);
+    } catch (e) {
+      this.emit('stateChange', WithdrawState.Ideal);
+      transactionNotificationConfig.failed?.({
+        address: recipient,
+        data: 'Deposit not yet available',
+        key: 'mixer-withdraw-evm',
+        path: {
+          method: 'withdraw',
+          section: 'evm-mixer',
+        },
+      });
+      return;
+    }
     this.emit('stateChange', WithdrawState.SendingTransaction);
 
     try {
