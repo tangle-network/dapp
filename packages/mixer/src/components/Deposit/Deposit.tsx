@@ -1,5 +1,6 @@
 import { DepositConfirm } from '@webb-dapp/mixer/components/DepositConfirm/DepositConfirm';
 import { useDeposit } from '@webb-dapp/mixer/hooks/deposit/useDeposit';
+import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { MixerSize } from '@webb-dapp/react-environment/webb-context';
 import { SpaceBox } from '@webb-dapp/ui-components/Box';
 import { MixerGroupSelect } from '@webb-dapp/ui-components/Inputs/MixerGroupSelect/MixerGroupSelect';
@@ -7,8 +8,6 @@ import { WalletTokenInput } from '@webb-dapp/ui-components/Inputs/WalletTokenInp
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
-
-import { MixerButton } from '../MixerButton/MixerButton';
 
 const DepositWrapper = styled.div``;
 type DepositProps = {};

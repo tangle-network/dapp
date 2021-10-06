@@ -33,6 +33,7 @@ export const useWithdraw = (params: UseWithdrawProps) => {
   const [stage, setStage] = useState<WithdrawState>(WithdrawState.Ideal);
   const { activeApi } = useWebContext();
   const [relayersState, setRelayersState] = useState<RelayersState>(relayersInitState);
+  const [receipt, setReceipt] = useState('');
   const [error, setError] = useState<WithdrawErrors>({
     error: '',
     validationError: {
@@ -102,7 +103,8 @@ export const useWithdraw = (params: UseWithdrawProps) => {
     if (stage === WithdrawState.Ideal) {
       const { note, recipient } = params;
       try {
-        await withdrawApi.withdraw(note, recipient);
+        const txReceipt = await withdrawApi.withdraw(note, recipient);
+        setReceipt(txReceipt);
       } catch (e) {
         console.log('error from withdraw api');
 
@@ -131,6 +133,8 @@ export const useWithdraw = (params: UseWithdrawProps) => {
     [withdrawApi]
   );
   return {
+    receipt,
+    setReceipt,
     stage,
     withdraw,
     canCancel,
