@@ -30,7 +30,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
     });
   }
 
-  async sameChainWithdraw(note: DepositNote, recipient: string) {
+  async sameChainWithdraw(note: DepositNote, recipient: string): Promise<string> {
     this.cancelToken.cancelled = false;
 
     // Todo Ensure the current provider is the same as the source
@@ -94,12 +94,14 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
         },
       });
       this.emit('stateChange', WithdrawState.Ideal);
-      return;
+      return '';
     }
+
+    let txHash: string;
 
     this.emit('stateChange', WithdrawState.SendingTransaction);
     try {
-      await contract.withdraw(
+      txHash = await contract.withdraw(
         zkpResults.proof,
         {
           destinationChainId: activeChain,
@@ -127,7 +129,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
           section: `Bridge ${bridge.currency.chainIds.map(getEVMChainNameFromInternal).join('-')}`,
         },
       });
-      return;
+      return '';
     }
 
     this.emit('stateChange', WithdrawState.Ideal);
@@ -140,6 +142,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
         section: `Bridge ${bridge.currency.chainIds.map(getEVMChainNameFromInternal).join('-')}`,
       },
     });
+    return '';
   }
 
   async crossChainWithdraw(note: DepositNote, recipient: string) {
@@ -209,7 +212,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
         },
       });
       this.emit('stateChange', WithdrawState.Ideal);
-      return;
+      return '';
     }
 
     const chid1 = await this.inner.getChainId();
@@ -230,7 +233,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
           section: `Bridge ${bridge.currency.chainIds.map(getEVMChainNameFromInternal).join('-')}`,
         },
       });
-      return;
+      return '';
     }
     const accounts = await this.inner.accounts.accounts();
     const account = accounts[0];
@@ -264,12 +267,13 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
           section: 'evm-mixer',
         },
       });
-      return;
+      return '';
     }
     this.emit('stateChange', WithdrawState.SendingTransaction);
 
+    let txHash: string;
     try {
-      await destContractWithSignedProvider.withdraw(
+      txHash = await destContractWithSignedProvider.withdraw(
         zkpResults.proof,
         {
           destinationChainId: activeChain,
@@ -297,10 +301,9 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
           section: `Bridge ${bridge.currency.chainIds.map(getEVMChainNameFromInternal).join('-')}`,
         },
       });
-      return;
+      return '';
     }
 
-    this.emit('stateChange', WithdrawState.Ideal);
     transactionNotificationConfig.finalize?.({
       address: recipient,
       data: undefined,
@@ -310,9 +313,12 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
         section: `Bridge ${bridge.currency.chainIds.map(getEVMChainNameFromInternal).join('-')}`,
       },
     });
+    this.emit('stateChange', WithdrawState.Done);
+    this.emit('stateChange', WithdrawState.Ideal);
+    return txHash;
   }
 
-  async withdraw(note: string, recipient: string): Promise<void> {
+  async withdraw(note: string, recipient: string): Promise<string> {
     logger.trace(`Withdraw using note ${note} , recipient ${recipient}`);
 
     const parseNote = await Note.deserialize(note);
@@ -323,10 +329,10 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
 
     if (depositNote.sourceChain === depositNote.chain) {
       logger.trace(`Same chain flow ${sourceChainName}`);
-      this.sameChainWithdraw(depositNote, recipient);
+      return this.sameChainWithdraw(depositNote, recipient);
     } else {
       logger.trace(`cross chain flow ${sourceChainName} ----> ${targetChainName}`);
-      this.crossChainWithdraw(depositNote, recipient);
+      return this.crossChainWithdraw(depositNote, recipient);
     }
   }
 }

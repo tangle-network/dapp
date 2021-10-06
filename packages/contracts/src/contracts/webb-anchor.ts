@@ -310,7 +310,7 @@ export class WebbAnchorContract {
     return { proof: proof.proof, input: input, root };
   }
 
-  async withdraw(proof: any, zkp: ZKPWebbInputWithMerkle, pub: any) {
+  async withdraw(proof: any, zkp: ZKPWebbInputWithMerkle, pub: any): Promise<string> {
     const overrides = {
       gasLimit: 6000000,
       gasPrice: utils.toWei('2', 'gwei'),
@@ -327,6 +327,7 @@ export class WebbAnchorContract {
       bufferToFixed(zkp.refund),
       overrides
     );
-    await tx.wait();
+    const receipt = await tx.wait();
+    return receipt.transactionHash;
   }
 }

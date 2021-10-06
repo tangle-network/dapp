@@ -1,7 +1,8 @@
-import { Deposit, MixerTabs, Withdraw } from '@webb-dapp/mixer/components';
+import { Deposit, Withdraw } from '@webb-dapp/mixer/components';
 import IPDisplay from '@webb-dapp/react-components/IPDisplay/IPDisplay';
 import { useWebContext } from '@webb-dapp/react-environment/webb-context';
 import { SpaceBox } from '@webb-dapp/ui-components';
+import { MixerTabs } from '@webb-dapp/ui-components/Tabs/MixerTabs';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 

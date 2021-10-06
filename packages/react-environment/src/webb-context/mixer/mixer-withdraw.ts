@@ -81,5 +81,6 @@ export abstract class MixerWithdraw<T> extends EventBus<MixerWithdrawEvents> {
     return Promise.resolve(undefined);
   }
 
-  abstract withdraw(note: string, recipient: string): Promise<void>;
+  // Returns the txHash of the withdraw, or ''
+  abstract withdraw(note: string, recipient: string): Promise<string>;
 }
