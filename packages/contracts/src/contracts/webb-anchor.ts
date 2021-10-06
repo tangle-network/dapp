@@ -21,6 +21,7 @@ import { generateWitness, proofAndVerify } from '@webb-dapp/contracts/contracts/
 import { createRootsBytes, generateWithdrawProofCallData } from '@webb-dapp/contracts/utils/bridge-utils';
 import { Erc20 } from '../types/Erc20';
 import { Erc20Factory } from '../types';
+import { WebbRelayer } from '@webb-dapp/react-environment/webb-context/relayer';
 
 const Scalar = require('ffjavascript').Scalar;
 
@@ -196,35 +197,49 @@ export class WebbAnchorContract {
     return tree.path(leafIndex);
   }
 
-  async generateMerkleProofForRoot(deposit: Deposit, targetRoot: string, contractForCache: WebbAnchorContract) {
+  async generateMerkleProofForRoot(deposit: Deposit, targetRoot: string, sourceRelayers: WebbRelayer[]) {
     const bridgeStorageStorage = await bridgeCurrencyBridgeStorageFactory();
-    const bridgeStorageContract = await bridgeStorageStorage.get(this._contract.address);
-    logger.trace(`storage of leaves for contract ${this._contract.address}: `, bridgeStorageContract);
-    const storedContractInfo: MixerStorage[0] = (await bridgeStorageStorage.get(this._contract.address)) || {
-      lastQueriedBlock: anchorsStorage[this._contract.address.toString()] || 0,
-      leaves: [] as string[],
-    };
 
-    // const otheStoredContractInfo: MixerStorage[0] = (await bridgeStorageStorage.get(
-    //   contractForCache._contract.address
-    // )) || {
-    //   lastQueriedBlock: anchorsStorage[contractForCache._contract.address.toString()] || 0,
-    //   leaves: [] as string[],
-    // };
     const treeHeight = await this._contract.levels();
     logger.trace(`Generating merkle proof treeHeight ${treeHeight} of deposit`, deposit);
-    const tree = new MerkleTree('eth', treeHeight, [], new PoseidonHasher());
-    const lastQueriedBlock = storedContractInfo.lastQueriedBlock;
+    let tree = new MerkleTree('eth', treeHeight, [], new PoseidonHasher());
 
-    logger.trace('generate merkle proof with deposit', deposit, ` for the target roof ${targetRoot}`);
+    logger.trace('generate merkle proof with deposit', deposit, ` for the target root ${targetRoot}`);
 
-    // Then, check the new leaves
-    const fetchedLeaves = await this.getDepositLeaves(lastQueriedBlock + 1, 0);
+    let leaves: string[] = [];
+    let lastQueriedBlock: number = 0;
+    let fetchedLeaves;
 
-    const leaves = [...storedContractInfo.leaves, ...fetchedLeaves.newLeaves];
+    // loop through the passed sourceRelayers to fetch leaves
+    for (let i = 0; i < sourceRelayers.length; i++) {
+      const relayerLeaves = await sourceRelayers[i].getLeaves(this.inner.address);
+      tree = new MerkleTree('eth', treeHeight, relayerLeaves.leaves, new PoseidonHasher());
+      if (this.inner.isKnownRoot(tree.get_root())) {
+        if ()
+      }
+    }
 
-    logger.trace(`fetched leaves`, fetchedLeaves.newLeaves);
-    const insertedLeaves = [];
+    if (sourceRelayer) {
+      const leavesResponse = await fetch(`${sourceRelayer.endpoint}/api/v1/leaves/${this._contract.address}`);
+      const formattedLeavesResponse = await leavesResponse.json();
+      leaves = formattedLeavesResponse.leaves;
+      logger.trace(`fetched leaves`, leaves);
+      lastQueriedBlock = parseInt(formattedLeavesResponse.lastQueriedBlock, 16);
+    } else {
+      const bridgeStorageContract = await bridgeStorageStorage.get(this._contract.address);
+      logger.trace(`storage of leaves for contract ${this._contract.address}: `, bridgeStorageContract);
+      const storedContractInfo: MixerStorage[0] = (await bridgeStorageStorage.get(this._contract.address)) || {
+        lastQueriedBlock: anchorsStorage[this._contract.address.toString()] || 0,
+        leaves: [] as string[],
+      };
+      lastQueriedBlock = storedContractInfo.lastQueriedBlock;
+
+      fetchedLeaves = await this.getDepositLeaves(lastQueriedBlock + 1, 0);
+
+      leaves = [...storedContractInfo.leaves, ...fetchedLeaves.newLeaves];
+
+      logger.trace(`fetched leaves`, fetchedLeaves.newLeaves);
+    }
 
     for (const leaf of leaves) {
       tree.insert(leaf);

@@ -144,19 +144,15 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
           fee: Number(fees?.totalFees),
         });
 
-        const leavesResponse = await fetch(`${activeRelayer.endpoint}/api/v1/leaves/${mixerInfo.address}`);
-        const formattedLeavesResponse = await leavesResponse.json();
-        const leaves: string[] = formattedLeavesResponse.leaves;
-        const lastQueriedBlock: number = parseInt(formattedLeavesResponse.lastQueriedBlock, 16);
-        console.log(lastQueriedBlock);
+        const relayerLeaves = await activeRelayer.getLeaves(mixerInfo.address);
 
         // This is the part of withdraw that takes a long time
         this.emit('stateChange', WithdrawState.GeneratingZk);
         const zkp = await anchorContract.generateZKPWithLeaves(
           deposit,
           zkpInputWithoutMerkleProof,
-          leaves,
-          lastQueriedBlock
+          relayerLeaves.leaves,
+          relayerLeaves.lastQueriedBlock
         );
 
         logger.trace('Generated the zkp', zkp);

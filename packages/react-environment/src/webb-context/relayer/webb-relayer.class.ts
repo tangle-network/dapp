@@ -10,8 +10,23 @@ import {
 import { Observable, Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { LoggerService } from '@webb-tools/app-util';
+import { MerkleTree, PoseidonHasher } from '@webb-dapp/utils/merkle';
 
 const logger = LoggerService.get('webb-relayer class');
+
+const shuffleRelayers = (arr: WebbRelayer[]): WebbRelayer[] => {
+  let currentIndex = arr.length;
+  let randomIndex = 0;
+
+  while (currentIndex != 0) {
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+
+    [arr[currentIndex], arr[randomIndex]] = [arr[randomIndex], arr[currentIndex]];
+  }
+
+  return arr;
+};
 
 type MixerQuery = {
   amount: number;
@@ -126,10 +141,11 @@ export class WebbRelayerBuilder {
 
   /*
    *  get a list of the suitable relaryes for a given query
+   *  the list is randomized
    * */
   getRelayer(query: RelayerQuery): WebbRelayer[] {
     const { baseOn, chainId, contractAddress, ipService, mixerSupport } = query;
-    return Object.keys(this.capabilities)
+    const relayers = Object.keys(this.capabilities)
       .filter((key) => {
         const capabilities = this.capabilities[key];
         if (ipService) {
@@ -173,6 +189,8 @@ export class WebbRelayerBuilder {
       .map((key) => {
         return new WebbRelayer(key, this.capabilities[key]);
       });
+    shuffleRelayers(relayers);
+    return relayers;
   }
 }
 
@@ -188,6 +206,11 @@ export enum RelayedWithdrawResult {
   /// failed to create the withdraw
   Errored,
 }
+
+type RelayerLeaves = {
+  leaves: string[];
+  lastQueriedBlock: number;
+};
 
 class RelayedWithdraw {
   /// status of the withdraw
@@ -286,6 +309,23 @@ export class WebbRelayer {
     const req = await fetch(`${this.endpoint}/api/v1/ip`);
     if (req.ok) {
       return req.json();
+    } else {
+      throw new Error('network error');
+    }
+  }
+
+  async getLeaves(contractAddress: string): Promise<RelayerLeaves> {
+    const req = await fetch(`${this.endpoint}/api/v1/leaves/${contractAddress}`);
+    if (req.ok) {
+      const jsonResponse = await req.json();
+      const fetchedLeaves: string[] = jsonResponse.leaves;
+      const lastQueriedBlock: string = jsonResponse.lastQueriedBlock;
+      const lastQueriedBlockNumber: number = parseInt(lastQueriedBlock, 16);
+      console.log(`info fetched from relayer: ${fetchedLeaves} + ${lastQueriedBlockNumber}`);
+      return {
+        leaves: fetchedLeaves,
+        lastQueriedBlock: lastQueriedBlockNumber,
+      };
     } else {
       throw new Error('network error');
     }
