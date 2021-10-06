@@ -1,15 +1,15 @@
 import { Fade, FormHelperText, InputBase, MenuItem, Select } from '@material-ui/core';
-import { MixerButton } from '@webb-dapp/mixer/components/MixerButton/MixerButton';
 import WithdrawingModal from '@webb-dapp/mixer/components/Withdraw/WithdrawingModal';
 import { useWithdraw } from '@webb-dapp/mixer/hooks';
 import { useDepositNote } from '@webb-dapp/mixer/hooks/note';
+import WithdrawSuccessModal from '@webb-dapp/react-components/Withdraw/WithdrawSuccessModal';
 import { WithdrawState } from '@webb-dapp/react-environment';
 import { SpaceBox } from '@webb-dapp/ui-components';
+import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabel';
 import { InputSection } from '@webb-dapp/ui-components/Inputs/InputSection/InputSection';
 import { MixerNoteInput } from '@webb-dapp/ui-components/Inputs/NoteInput/MixerNoteInput';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
-import { Note } from '@webb-tools/sdk-mixer';
 import { ethers } from 'ethers';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
@@ -23,7 +23,18 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
   const [recipient, setRecipient] = useState('');
   const [withdrawPercentage, setWithdrawPercentage] = useState(0);
   const [fees, setFees] = useState('');
-  const { canCancel, cancelWithdraw, relayersState, setRelayer, stage, validationErrors, withdraw } = useWithdraw({
+
+  const {
+    canCancel,
+    cancelWithdraw,
+    receipt,
+    relayersState,
+    setReceipt,
+    setRelayer,
+    stage,
+    validationErrors,
+    withdraw,
+  } = useWithdraw({
     recipient,
     note,
   });
@@ -136,6 +147,8 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
       )}
 
       <MixerButton disabled={!recipient} onClick={withdraw} label={'Withdraw'} />
+
+      {/* Modal to show while in progress */}
       <Modal open={stage !== WithdrawState.Ideal}>
         {depositNote && (
           <WithdrawingModal
@@ -146,6 +159,22 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
             cancel={cancelWithdraw}
             stage={stage}
             canCancel={canCancel}
+          />
+        )}
+      </Modal>
+
+      {/* Modal to show on success  */}
+      <Modal open={receipt != ''}>
+        {depositNote && (
+          <WithdrawSuccessModal
+            receipt={receipt}
+            recipient={recipient}
+            note={depositNote.note}
+            exit={() => {
+              setNote('');
+              setRecipient('');
+              setReceipt('');
+            }}
           />
         )}
       </Modal>

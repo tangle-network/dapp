@@ -398,6 +398,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
     }
     return switchChain(chain, wallet);
   };
+
   useEffect(() => {
     /// init the dApp
     const init = async () => {

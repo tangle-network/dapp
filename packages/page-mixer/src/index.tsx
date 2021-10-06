@@ -1,6 +1,6 @@
 import WalletConnect from '@walletconnect/client';
 import QRCodeModal from '@walletconnect/qrcode-modal';
-import MixerTabs from '@webb-dapp/mixer';
+import Mixer from '@webb-dapp/mixer';
 import { pageWithFeatures } from '@webb-dapp/react-components/utils/FeaturesGuard/pageWithFeatures';
 import React, { FC } from 'react';
 
@@ -43,7 +43,7 @@ connector.on('disconnect', (error, payload) => {
 });
 */
 const PageMixer: FC = () => {
-  return <MixerTabs />;
+  return <Mixer />;
 };
 
 export default pageWithFeatures({
