@@ -22,6 +22,7 @@ type RelayerQuery = {
   baseOn?: 'evm' | 'substrate';
   ipService?: true;
   chainId?: ChainId;
+  contractAddress?: string;
   mixerSupport?: MixerQuery;
 };
 
@@ -127,13 +128,22 @@ export class WebbRelayerBuilder {
    *  get a list of the suitable relaryes for a given query
    * */
   getRelayer(query: RelayerQuery): WebbRelayer[] {
-    const { baseOn, chainId, ipService, mixerSupport } = query;
+    const { baseOn, chainId, contractAddress, ipService, mixerSupport } = query;
     return Object.keys(this.capabilities)
       .filter((key) => {
         const capabilities = this.capabilities[key];
         if (ipService) {
           if (!capabilities.hasIpService) {
             return false;
+          }
+        }
+        if (contractAddress && baseOn && chainId) {
+          if (baseOn == 'evm') {
+            return Boolean(
+              capabilities.supportedChains[baseOn]
+                .get(chainId)
+                ?.contracts?.find((contract) => contract.address == contractAddress)
+            );
           }
         }
         if (mixerSupport && baseOn && chainId) {
