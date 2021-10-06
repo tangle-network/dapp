@@ -22,6 +22,14 @@ const logger = LoggerService.get('Web3BridgeWithdraw');
 export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
   bridgeConfig: BridgeConfig = bridgeConfig;
 
+  async getRelayersByChainAndAddress(chainId: ChainId, address: string) {
+    return this.inner.relayingManager.getRelayer({
+      baseOn: 'evm',
+      chainId: chainId,
+      contractAddress: address,
+    });
+  }
+
   async sameChainWithdraw(note: DepositNote, recipient: string): Promise<string> {
     this.cancelToken.cancelled = false;
 

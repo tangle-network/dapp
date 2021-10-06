@@ -95,6 +95,14 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
     });
   }
 
+  async getRelayersByChainAndAddress(chainId: ChainId, address: string) {
+    return this.inner.relayingManager.getRelayer({
+      baseOn: 'evm',
+      chainId: chainId,
+      contractAddress: address,
+    });
+  }
+
   get hasRelayer() {
     return this.relayers.then((r) => r.length > 0);
   }
