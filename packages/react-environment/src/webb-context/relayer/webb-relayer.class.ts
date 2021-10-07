@@ -145,6 +145,7 @@ export class WebbRelayerBuilder {
    * */
   getRelayer(query: RelayerQuery): WebbRelayer[] {
     const { baseOn, chainId, contractAddress, ipService, mixerSupport } = query;
+
     const relayers = Object.keys(this.capabilities)
       .filter((key) => {
         const capabilities = this.capabilities[key];
@@ -158,7 +159,7 @@ export class WebbRelayerBuilder {
             return Boolean(
               capabilities.supportedChains[baseOn]
                 .get(chainId)
-                ?.contracts?.find((contract) => contract.address == contractAddress)
+                ?.contracts?.find((contract) => contract.address == contractAddress.toLowerCase())
             );
           }
         }

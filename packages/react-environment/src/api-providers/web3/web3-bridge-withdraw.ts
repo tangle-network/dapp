@@ -193,7 +193,22 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
     const isKnownRoot = await sourceContract.inner.isKnownRoot(destLatestNeighbourRoot);
     logger.trace(`isKnown root ${isKnownRoot}`);
 
-    const merkleProof = await sourceContract.generateMerkleProofForRoot(deposit, destLatestNeighbourRoot, destAnchor);
+    // get relayers for the source chain
+    const sourceRelayers = this.inner.relayingManager.getRelayer({
+      chainId: Number(note.sourceChain),
+      baseOn: 'evm',
+      contractAddress: sourceContractAddress,
+    });
+
+    console.log('sourceContractAddress', sourceContractAddress);
+
+    // TODO: filter the relayers for those that are storing the leaves
+
+    const merkleProof = await sourceContract.generateMerkleProofForRoot(
+      deposit,
+      destLatestNeighbourRoot,
+      sourceRelayers
+    );
     console.log(merkleProof);
     if (!merkleProof) {
       this.emit('stateChange', WithdrawState.Ideal);

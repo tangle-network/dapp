@@ -32,6 +32,7 @@ const logger = LoggerService.get('WebbAnchorContract');
 type BridgeBlockStorage = Record<string, number>;
 const anchorsStorage: BridgeBlockStorage = {
   '0x64E9727C4a835D518C34d3A50A8157120CAeb32F': 15183626,
+  '0xb42139ffcef02dc85db12ac9416a19a12381167d': 9326378,
 };
 
 export class WebbAnchorContract {
@@ -78,6 +79,20 @@ export class WebbAnchorContract {
       note,
       deposit,
     };
+  }
+
+  createTreeWithRoot(leaves: string[], targetRoot: string): MerkleTree | undefined {
+    const tree = new MerkleTree('eth', 30, [], new PoseidonHasher());
+
+    for (let i = 0; i < leaves.length; i++) {
+      tree.insert(leaves[i]);
+      const nextRoot = tree.get_root();
+
+      if (bufferToFixed(nextRoot) === targetRoot) {
+        return tree;
+      }
+    }
+    return undefined;
   }
 
   async deposit(commitment: string, onComplete?: (event: DepositEvent) => void) {
@@ -162,7 +177,7 @@ export class WebbAnchorContract {
   async generateMerkleProof(deposit: Deposit) {
     const bridgeStorageStorage = await bridgeCurrencyBridgeStorageFactory();
     const storedContractInfo: MixerStorage[0] = (await bridgeStorageStorage.get(this._contract.address)) || {
-      lastQueriedBlock: anchorsStorage[this._contract.address.toString()] || 0,
+      lastQueriedBlock: 0,
       leaves: [] as string[],
     };
     const treeHeight = await this._contract.levels();
@@ -200,68 +215,74 @@ export class WebbAnchorContract {
   async generateMerkleProofForRoot(deposit: Deposit, targetRoot: string, sourceRelayers: WebbRelayer[]) {
     const bridgeStorageStorage = await bridgeCurrencyBridgeStorageFactory();
 
-    const treeHeight = await this._contract.levels();
-    logger.trace(`Generating merkle proof treeHeight ${treeHeight} of deposit`, deposit);
-    let tree = new MerkleTree('eth', treeHeight, [], new PoseidonHasher());
+    let tree: MerkleTree | undefined;
 
     logger.trace('generate merkle proof with deposit', deposit, ` for the target root ${targetRoot}`);
 
     let leaves: string[] = [];
     let lastQueriedBlock: number = 0;
-    let fetchedLeaves;
+
+    console.log('source relayers:', sourceRelayers);
 
     // loop through the passed sourceRelayers to fetch leaves
     for (let i = 0; i < sourceRelayers.length; i++) {
       const relayerLeaves = await sourceRelayers[i].getLeaves(this.inner.address);
-      tree = new MerkleTree('eth', treeHeight, relayerLeaves.leaves, new PoseidonHasher());
-      if (this.inner.isKnownRoot(tree.get_root())) {
-        if ()
+      tree = this.createTreeWithRoot(relayerLeaves.leaves, targetRoot);
+
+      // Verify the last commitment in the leaves occurred at the reported block
+      const filter = this._contract.filters.Deposit(null, null, null);
+      const logs = await this.web3Provider.getLogs({
+        fromBlock: lastQueriedBlock,
+        toBlock: lastQueriedBlock,
+        ...filter,
+      });
+      const events = logs.map((log) => this._contract.interface.parseLog(log));
+      let validLatestDeposit = false;
+      events.forEach((event) => {
+        if (event.args.find((elem) => elem === leaves[leaves.length - 1])) {
+          validLatestDeposit = true;
+        }
+      });
+
+      // If we were able to build the tree, set potential storage and break out of the loop
+      if (tree && validLatestDeposit) {
+        leaves = relayerLeaves.leaves;
+        lastQueriedBlock = relayerLeaves.lastQueriedBlock;
+        break;
       }
     }
 
-    if (sourceRelayer) {
-      const leavesResponse = await fetch(`${sourceRelayer.endpoint}/api/v1/leaves/${this._contract.address}`);
-      const formattedLeavesResponse = await leavesResponse.json();
-      leaves = formattedLeavesResponse.leaves;
-      logger.trace(`fetched leaves`, leaves);
-      lastQueriedBlock = parseInt(formattedLeavesResponse.lastQueriedBlock, 16);
-    } else {
+    // If the tree was not built with leaves from relayers, attempt from chain / storage directly
+    if (!tree) {
       const bridgeStorageContract = await bridgeStorageStorage.get(this._contract.address);
       logger.trace(`storage of leaves for contract ${this._contract.address}: `, bridgeStorageContract);
       const storedContractInfo: MixerStorage[0] = (await bridgeStorageStorage.get(this._contract.address)) || {
         lastQueriedBlock: anchorsStorage[this._contract.address.toString()] || 0,
         leaves: [] as string[],
       };
-      lastQueriedBlock = storedContractInfo.lastQueriedBlock;
 
-      fetchedLeaves = await this.getDepositLeaves(lastQueriedBlock + 1, 0);
-
+      const fetchedLeaves = await this.getDepositLeaves(storedContractInfo.lastQueriedBlock + 1, 0);
       leaves = [...storedContractInfo.leaves, ...fetchedLeaves.newLeaves];
+      lastQueriedBlock = fetchedLeaves.lastQueriedBlock;
 
       logger.trace(`fetched leaves`, fetchedLeaves.newLeaves);
+      tree = this.createTreeWithRoot(leaves, targetRoot);
     }
 
-    for (const leaf of leaves) {
-      tree.insert(leaf);
-      insertedLeaves.push(leaf);
-      const nextRoot = tree.get_root();
-      logger.trace(`Adding leaf ${leaf} ->  the root is ${nextRoot}`);
-      logger.trace(`Next: ${bufferToFixed(nextRoot)}`);
-      logger.trace(`Target: ${targetRoot}`);
-      if (bufferToFixed(nextRoot) === targetRoot) {
-        const index = insertedLeaves.findIndex((l) => l == deposit.commitment);
+    // if the tree was created, commit to storage
+    if (tree) {
+      logger.info(`Root is known committing to storage ${this._contract.address}`);
 
-        logger.trace(`leaf index is ${index}`);
-        logger.info(`Root is known committing to storage ${this._contract.address}`);
+      await bridgeStorageStorage.set(this._contract.address, {
+        lastQueriedBlock,
+        leaves,
+      });
 
-        await bridgeStorageStorage.set(this._contract.address, {
-          lastQueriedBlock: fetchedLeaves.lastQueriedBlock,
-          leaves,
-        });
+      const index = tree.get_index_of_element(deposit.commitment);
 
-        return tree.path(index);
-      }
+      return tree.path(index);
     }
+
     return undefined;
   }
 
