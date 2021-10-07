@@ -113,7 +113,30 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
     const evmNote = await Note.deserialize(note);
     const deposit = depositFromPreimage(evmNote.note.secret.replace('0x', ''));
     const chainId = Number(evmNote.note.chain) as ChainId;
+    const chainEvmId = chainIdIntoEVMId(chainId);
     console.log(deposit);
+
+    const activeChain = await this.inner.getChainId();
+    if (activeChain !== chainEvmId) {
+      try {
+        await this.inner.innerProvider.switchChain({
+          chainId: `0x${chainEvmId.toString(16)}`,
+        });
+      } catch (e) {
+        this.emit('stateChange', WithdrawState.Ideal);
+        transactionNotificationConfig.failed?.({
+          address: recipient,
+          data: e?.code === 4001 ? 'Withdraw rejected' : 'Withdraw failed',
+          key: 'mixer-withdraw-evm',
+          path: {
+            method: 'withdraw',
+            section: `evm-mixer`,
+          },
+        });
+        return '';
+      }
+    }
+
     if (activeRelayer && activeRelayer.account) {
       try {
         this.emit('stateChange', WithdrawState.GeneratingZk);
