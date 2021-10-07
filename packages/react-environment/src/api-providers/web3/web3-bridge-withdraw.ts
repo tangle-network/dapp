@@ -1,9 +1,3 @@
-import { depositFromAnchor2Preimage } from '@webb-dapp/contracts/utils/make-deposit';
-import { Bridge, bridgeConfig, BridgeConfig, BridgeCurrency, WithdrawState } from '@webb-dapp/react-environment';
-import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3/webb-web3-provider';
-import { Note } from '@webb-tools/sdk-mixer';
-
-import { BridgeWithdraw } from '../../webb-context';
 import {
   ChainId,
   chainIdIntoEVMId,
@@ -11,20 +5,20 @@ import {
   evmIdIntoChainId,
   getEVMChainNameFromInternal,
 } from '@webb-dapp/apps/configs';
-import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polkadot/transaction-notification-config';
-import React from 'react';
-import { LoggerService } from '@webb-tools/app-util';
-import { DepositNote } from '@webb-tools/wasm-utils';
-import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
-import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
-import { WebbAnchorContract } from '@webb-dapp/contracts/contracts';
-import { bridgeCurrencyBridgeStorageFactory } from './bridge-storage';
 import { MixerStorage } from '@webb-dapp/apps/configs/storages/EvmChainStorage';
-type BridgeBlockStorage = Record<string, number>;
-const anchorsStorage: BridgeBlockStorage = {
-  '0x64E9727C4a835D518C34d3A50A8157120CAeb32F': 15183626,
-  '0xb42139ffcef02dc85db12ac9416a19a12381167d': 9326378,
-};
+import { WebbAnchorContract } from '@webb-dapp/contracts/contracts';
+import { depositFromAnchor2Preimage } from '@webb-dapp/contracts/utils/make-deposit';
+import { Bridge, BridgeConfig, bridgeConfig, BridgeCurrency, WithdrawState } from '@webb-dapp/react-environment';
+import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3/webb-web3-provider';
+import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polkadot/transaction-notification-config';
+import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
+import { LoggerService } from '@webb-tools/app-util';
+import { Note } from '@webb-tools/sdk-mixer';
+import { DepositNote } from '@webb-tools/wasm-utils';
+import React from 'react';
+
+import { BridgeWithdraw } from '../../webb-context';
+import { anchorDeploymentBlock, bridgeCurrencyBridgeStorageFactory } from './bridge-storage';
 
 const logger = LoggerService.get('Web3BridgeWithdraw');
 
@@ -248,7 +242,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
     if (!leaves.length) {
       // check if we already cached some values
       const storedContractInfo: MixerStorage[0] = (await bridgeStorageStorage.get(sourceContractAddress)) || {
-        lastQueriedBlock: anchorsStorage[sourceContractAddress],
+        lastQueriedBlock: anchorDeploymentBlock[sourceContractAddress] || 0,
         leaves: [] as string[],
       };
 

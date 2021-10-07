@@ -1,27 +1,29 @@
 import { Log } from '@ethersproject/abstract-provider';
-import { WEBBAnchor2 as WebbAnchor } from '@webb-dapp/contracts/types/WEBBAnchor2';
-import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
-import { EvmNote } from '@webb-dapp/contracts/utils/evm-note';
-import { createAnchor2Deposit, Deposit } from '@webb-dapp/contracts/utils/make-deposit';
-import { EvmChainMixersInfo } from '@webb-dapp/react-environment/api-providers/web3/EvmChainMixersInfo';
-import { MerkleTree, PoseidonHasher } from '@webb-dapp/utils/merkle';
-import { retryPromise } from '@webb-dapp/utils/retry-promise';
-import { LoggerService } from '@webb-tools/app-util';
-import { BigNumber, Contract, ethers, providers, Signer } from 'ethers';
-import utils from 'web3-utils';
-import { WEBBAnchor2__factory } from '../types/factories/WEBBAnchor2__factory';
+import { MixerStorage } from '@webb-dapp/apps/configs/storages/EvmChainStorage';
 import {
   BridgeWitnessInput,
   ZKPWebbInputWithMerkle,
   ZKPWebbInputWithoutMerkle,
 } from '@webb-dapp/contracts/contracts/types';
-import { bridgeCurrencyBridgeStorageFactory } from '@webb-dapp/react-environment/api-providers/web3/bridge-storage';
-import { MixerStorage } from '@webb-dapp/apps/configs/storages/EvmChainStorage';
 import { generateWitness, proofAndVerify } from '@webb-dapp/contracts/contracts/webb-utils';
+import { WEBBAnchor2 as WebbAnchor } from '@webb-dapp/contracts/types/WEBBAnchor2';
 import { createRootsBytes, generateWithdrawProofCallData } from '@webb-dapp/contracts/utils/bridge-utils';
-import { Erc20 } from '../types/Erc20';
+import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
+import { EvmNote } from '@webb-dapp/contracts/utils/evm-note';
+import { createAnchor2Deposit, Deposit } from '@webb-dapp/contracts/utils/make-deposit';
+import {
+  anchorDeploymentBlock,
+  bridgeCurrencyBridgeStorageFactory,
+} from '@webb-dapp/react-environment/api-providers/web3/bridge-storage';
+import { EvmChainMixersInfo } from '@webb-dapp/react-environment/api-providers/web3/EvmChainMixersInfo';
+import { MerkleTree, PoseidonHasher } from '@webb-dapp/utils/merkle';
+import { retryPromise } from '@webb-dapp/utils/retry-promise';
+import { LoggerService } from '@webb-tools/app-util';
+import { BigNumber, Contract, providers, Signer } from 'ethers';
+import utils from 'web3-utils';
+
 import { Erc20Factory } from '../types';
-import { WebbRelayer } from '@webb-dapp/react-environment/webb-context/relayer';
+import { WEBBAnchor2__factory } from '../types/factories/WEBBAnchor2__factory';
 
 const Scalar = require('ffjavascript').Scalar;
 
@@ -180,7 +182,7 @@ export class WebbAnchorContract {
   async generateMerkleProof(deposit: Deposit) {
     const bridgeStorageStorage = await bridgeCurrencyBridgeStorageFactory();
     const storedContractInfo: MixerStorage[0] = (await bridgeStorageStorage.get(this._contract.address)) || {
-      lastQueriedBlock: 0,
+      lastQueriedBlock: anchorDeploymentBlock[this._contract.address.toString()] || 0,
       leaves: [] as string[],
     };
     const treeHeight = await this._contract.levels();
