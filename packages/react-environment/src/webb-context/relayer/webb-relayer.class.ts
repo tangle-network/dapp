@@ -10,7 +10,6 @@ import {
 import { Observable, Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { LoggerService } from '@webb-tools/app-util';
-import { MerkleTree, PoseidonHasher } from '@webb-dapp/utils/merkle';
 
 const logger = LoggerService.get('webb-relayer class');
 
@@ -322,7 +321,7 @@ export class WebbRelayer {
       const fetchedLeaves: string[] = jsonResponse.leaves;
       const lastQueriedBlock: string = jsonResponse.lastQueriedBlock;
       const lastQueriedBlockNumber: number = parseInt(lastQueriedBlock, 16);
-      console.log(`info fetched from relayer: ${fetchedLeaves} + ${lastQueriedBlockNumber}`);
+      logger.info(`info fetched from relayer: ${fetchedLeaves} + ${lastQueriedBlockNumber}`);
       return {
         leaves: fetchedLeaves,
         lastQueriedBlock: lastQueriedBlockNumber,

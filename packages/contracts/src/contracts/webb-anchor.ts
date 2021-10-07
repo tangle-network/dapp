@@ -222,8 +222,6 @@ export class WebbAnchorContract {
     let leaves: string[] = [];
     let lastQueriedBlock: number = 0;
 
-    console.log('source relayers:', sourceRelayers);
-
     // loop through the passed sourceRelayers to fetch leaves
     for (let i = 0; i < sourceRelayers.length; i++) {
       const relayerLeaves = await sourceRelayers[i].getLeaves(this.inner.address);

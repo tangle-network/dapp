@@ -151,7 +151,6 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
     // check that the active api is over the source chain
     const sourceChain = Number(note.sourceChain) as ChainId;
     const sourceChainEvm = chainIdIntoEVMId(sourceChain);
-    console.log(sourceChain, sourceChainEvm);
     const activeChain = await this.inner.getChainId();
     if (activeChain !== sourceChainEvm) {
       throw new Error(`Expecting another active api for chain ${sourceChain} found ${evmIdIntoChainId(activeChain)}`);
@@ -159,7 +158,6 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
     // Temporary Provider for getting Anchors roots
     const destChainId = Number(note.chain) as ChainId;
     const destChainEvmId = chainIdIntoEVMId(destChainId);
-    console.log(destChainId, destChainEvmId);
     const destChainConfig = chainsConfig[destChainId];
     const rpc = destChainConfig.url;
     const destHttpProvider = Web3Provider.fromUri(rpc);
@@ -177,7 +175,6 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
     // get root and neighbour root from the dest provider
     const destAnchor = this.inner.getWebbAnchorByAddressAndProvider(destContractAddress, destEthers);
     const destAnchorChainId = await destAnchor.inner.chainID();
-    console.log(`destAnchor chainID: ${destAnchorChainId}`);
     const destLatestRoot = await destAnchor.inner.getLastRoot();
     const destLatestNeighbourRootAr = await destAnchor.inner.getLatestNeighborRoots();
     const destLatestNeighbourRoot = destLatestNeighbourRootAr[0];
@@ -200,16 +197,11 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
       contractAddress: sourceContractAddress,
     });
 
-    console.log('sourceContractAddress', sourceContractAddress);
-
-    // TODO: filter the relayers for those that are storing the leaves
-
     const merkleProof = await sourceContract.generateMerkleProofForRoot(
       deposit,
       destLatestNeighbourRoot,
       sourceRelayers
     );
-    console.log(merkleProof);
     if (!merkleProof) {
       this.emit('stateChange', WithdrawState.Ideal);
       throw new Error('Failed to generate Merkle proof');
@@ -230,8 +222,6 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
       return '';
     }
 
-    const chid1 = await this.inner.getChainId();
-    console.log({ chid1 });
     /// todo await for provider Change
     try {
       await this.inner.innerProvider.switchChain({
