@@ -18,9 +18,9 @@ export function relayerNameToChainId(name: string): ChainId {
   switch (name) {
     case 'beresheet':
       return ChainId.EdgewareTestNet;
-    case 'harmonys1':
+    case 'harmonytestnet1':
       return ChainId.HarmonyTestnet1;
-    case 'harmonys0':
+    case 'harmonytestnet0':
       return ChainId.HarmonyTestnet0;
     case 'ganache':
       return ChainId.Ganache;
@@ -40,8 +40,8 @@ enum RelayerChainName {
   Webb = 'webb',
   Ganache = 'ganache',
   Beresheet = 'beresheet',
-  HarmonyTestnet0 = 'harmonys0',
-  HarmonyTestnet1 = 'harmonys1',
+  HarmonyTestnet0 = 'harmonytestnet0',
+  HarmonyTestnet1 = 'harmonytestnet1',
   Rinkeby = 'rinkeby',
 }
 
