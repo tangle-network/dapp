@@ -1,7 +1,7 @@
 import { Storage } from '@webb-dapp/utils';
 
 export const anchorDeploymentBlock: Record<string, number> = {
-  '0x64E9727C4a835D518C34d3A50A8157120CAeb32F': 15183626,
+  '0x64e9727c4a835d518c34d3a50a8157120caeb32f': 15183626,
   '0xb42139ffcef02dc85db12ac9416a19a12381167d': 9326378,
 };
 

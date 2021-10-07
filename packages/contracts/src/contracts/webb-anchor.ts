@@ -120,11 +120,11 @@ export class WebbAnchorContract {
       ...filter,
     });
     const events = logs.map((log) => this._contract.interface.parseLog(log));
-    events.forEach((event) => {
-      if (event.args.find((elem) => elem === leaf)) {
+    for (let i = 0; i < events.length; i++) {
+      if (events[i].args.commitment === leaf) {
         return true;
       }
-    });
+    }
     return false;
   }
 
@@ -181,8 +181,10 @@ export class WebbAnchorContract {
 
   async generateMerkleProof(deposit: Deposit) {
     const bridgeStorageStorage = await bridgeCurrencyBridgeStorageFactory();
-    const storedContractInfo: MixerStorage[0] = (await bridgeStorageStorage.get(this._contract.address)) || {
-      lastQueriedBlock: anchorDeploymentBlock[this._contract.address.toString()] || 0,
+    const storedContractInfo: MixerStorage[0] = (await bridgeStorageStorage.get(
+      this._contract.address.toLowerCase()
+    )) || {
+      lastQueriedBlock: anchorDeploymentBlock[this._contract.address.toString().toLowerCase()] || 0,
       leaves: [] as string[],
     };
     const treeHeight = await this._contract.levels();
@@ -206,7 +208,7 @@ export class WebbAnchorContract {
     const leaves = [...storedContractInfo.leaves, ...fetchedLeaves.newLeaves];
     if (knownRoot) {
       logger.info(`Root is known committing to storage ${this._contract.address}`);
-      await bridgeStorageStorage.set(this._contract.address, {
+      await bridgeStorageStorage.set(this._contract.address.toLowerCase(), {
         lastQueriedBlock: fetchedLeaves.lastQueriedBlock,
         leaves,
       });
@@ -218,8 +220,11 @@ export class WebbAnchorContract {
   }
 
   async generateLinkedMerkleProof(sourceDeposit: Deposit, sourceLeaves: string[]) {
-    // Get the source latest root
-    const latestSourceRoot = (await this._contract.getLatestNeighborRoots())[0];
+
+    // Grab the root of the source chain to prove against
+    const edgeIndex = await this._contract.edgeIndex(sourceDeposit.chainId!);
+    const edge = await this._contract.edgeList(edgeIndex);
+    const latestSourceRoot = edge[1];
 
     const tree = WebbAnchorContract.createTreeWithRoot(sourceLeaves, latestSourceRoot);
     if (tree) {

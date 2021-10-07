@@ -221,15 +221,18 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
         relayerLeaves.lastQueriedBlock
       );
 
+      console.log('validLatestLeaf: ', validLatestLeaf);
+
       // leaves from relayer somewhat validated, attempt to build the tree
       if (validLatestLeaf) {
         const tree = WebbAnchorContract.createTreeWithRoot(relayerLeaves.leaves, sourceLatestRoot);
 
         // If we were able to build the tree, set local storage and break out of the loop
         if (tree) {
+          console.log('tree valid, using relayer leaves');
           leaves = relayerLeaves.leaves;
 
-          await bridgeStorageStorage.set(sourceContract.inner.address, {
+          await bridgeStorageStorage.set(sourceContract.inner.address.toLowerCase(), {
             lastQueriedBlock: relayerLeaves.lastQueriedBlock,
             leaves: relayerLeaves.leaves,
           });
@@ -241,8 +244,10 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
     // if we weren't able to get leaves from the relayer, get them directly from chain
     if (!leaves.length) {
       // check if we already cached some values
-      const storedContractInfo: MixerStorage[0] = (await bridgeStorageStorage.get(sourceContractAddress)) || {
-        lastQueriedBlock: anchorDeploymentBlock[sourceContractAddress] || 0,
+      const storedContractInfo: MixerStorage[0] = (await bridgeStorageStorage.get(
+        sourceContractAddress.toLowerCase()
+      )) || {
+        lastQueriedBlock: anchorDeploymentBlock[sourceContractAddress.toLowerCase()] || 0,
         leaves: [] as string[],
       };
 
