@@ -27,22 +27,6 @@ export const MixerNoteInput: React.FC<NoteInputProps> = ({ error, onChange, valu
   const depositNote = useDepositNote(value);
   const { activeChain, activeWallet, registerInteractiveFeedback, switchChain } = useWebContext();
 
-  useEffect(() => {
-    if (depositNote && activeChain && activeWallet) {
-      if (Number(depositNote.note.chain) != activeChain.id) {
-        const feedback = evmChainConflict(
-          {
-            intendedChain: getEVMChainNameFromInternal(Number(depositNote.note.chain)),
-            selectedChain: activeChain.name,
-            switchChain: () => switchChain(chainsPopulated[Number(depositNote.note.chain)], activeWallet),
-          },
-          appEvent
-        );
-        registerInteractiveFeedback(feedback);
-      }
-    }
-  }, [activeChain, depositNote]);
-
   return (
     <InputLabel label={'Note'}>
       <InputBase

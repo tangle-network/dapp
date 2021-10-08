@@ -182,4 +182,23 @@ export class MerkleTree {
       element,
     };
   }
+
+  get_index_of_element(element: any): number {
+    for (let i = 0; i < this.totalElements; i++) {
+      if (this.storage.get(MerkleTree.keyFormat(this.prefix, 0, i)) === element) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  get_leaves(): any[] {
+    let leaves = [];
+
+    for (let i = 0; i < this.totalElements; i++) {
+      leaves.push(this.storage.get(MerkleTree.keyFormat(this.prefix, 0, i)));
+    }
+
+    return leaves;
+  }
 }
