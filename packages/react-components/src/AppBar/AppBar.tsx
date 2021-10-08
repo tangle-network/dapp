@@ -119,13 +119,12 @@ const AppBar: React.FC<AppBarProps> = () => {
               Mixers
             </NavLink>
           </li>
-          {process.env.NODE_ENV === 'development' && (
-            <li className={'active'}>
-              <NavLink to={'/bridge'} activeClassName={'active'}>
-                Bridge
-              </NavLink>
-            </li>
-          )}
+
+          <li className={'active'}>
+            <NavLink to={'/bridge'} activeClassName={'active'}>
+              Bridge
+            </NavLink>
+          </li>
 
           {/*        <li>
           <NavLink to={'/statistics'}>Statistics</NavLink>
