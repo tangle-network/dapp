@@ -9,7 +9,7 @@ import { ChainId, WebbCurrencyId, webbCurrencyIdFromString, webbCurrencyIdToStri
  *  will be ${named} = webbETH (The wrapped currency)
  *  the string that defines the bridge chains is the ${ChainId} of the two anchors
  *  for Edgware => 0 , for Ethereum(main net)  =>  3
- *  the token name will be webbEth-0-1  (the wrapped Eth token the is bridged between Ethereum and Edgware)
+ *  the token name will be webbEth-0-3  (the wrapped Eth token the is bridged between Ethereum and Edgware)
  * */
 export class BridgeCurrency {
   public readonly name: string;

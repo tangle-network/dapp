@@ -99,7 +99,7 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
     });
   }, [chains, radioButtonFilter]);
 
-  const handleRadioFilter = (event) => {
+  const handleRadioFilter = (event: any) => {
     setRadioButtonFilter(event.target.value);
   };
 

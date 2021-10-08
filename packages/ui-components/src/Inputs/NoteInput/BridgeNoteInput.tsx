@@ -40,7 +40,7 @@ export const BridgeNoteInput: React.FC<NoteInputProps> = ({ error, onChange, val
     <InputLabel label={'Note'}>
       <InputBase
         fullWidth
-        placeholder={`webb.mix:v1:4:Circom:Bn254:Poseidon:ETH:18:0.1:5:5:dc92b0096b02746362c56dbee8e28a036f29b600b59cad3e4a114af2e2eb094f9878beaf5699f43d789937130e7ee7ca12e0703ce9cc62297bbb0abc864e`}
+        placeholder={`webb.bridge:v1:4:4:Circom:Bn254:Poseidon:ETH:18:0.1:5:5:dc92b0096b02746362c56dbee8e28a036f29b600b59cad3e4a114af2e2eb094f9878beaf5699f43d789937130e7ee7ca12e0703ce9cc62297bbb0abc864e`}
         multiline={true}
         rows={5}
         value={value}
@@ -69,10 +69,19 @@ export const BridgeNoteInput: React.FC<NoteInputProps> = ({ error, onChange, val
                   {depositNote.note.amount} <b>{depositNote.note.tokenSymbol}</b>
                 </td>
               </tr>
+
+              <tr>
+                <td>Source Chain:</td>
+                <td style={{ textAlign: 'right' }}>
+                  {getEVMChainNameFromInternal(Number(depositNote.note.sourceChain))}
+                </td>
+              </tr>
+
               <tr>
                 <td>Destination Chain:</td>
                 <td style={{ textAlign: 'right' }}>{getEVMChainNameFromInternal(Number(depositNote.note.chain))}</td>
               </tr>
+
               {bridge ? (
                 <>
                   <tr>

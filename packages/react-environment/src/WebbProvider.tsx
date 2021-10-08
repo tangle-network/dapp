@@ -195,6 +195,8 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
           registerInteractiveFeedback(setInteractiveFeedbacks, interactiveFeedback);
         }
         break;
+      case WebbErrorCodes.RelayerMisbehaving:
+        break;
       default:
         alert(code);
     }
@@ -396,6 +398,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
     }
     return switchChain(chain, wallet);
   };
+
   useEffect(() => {
     /// init the dApp
     const init = async () => {
@@ -418,6 +421,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
       const walletConfig = chainConfig.wallets[wallet] || Object.values(chainConfig)[0];
       const activeApi = await switchChain(chainConfig, walletConfig);
       const networkDefaultConfig = await networkStorage.get('networksConfig');
+
       if (activeApi) {
         const accounts = await activeApi.accounts.accounts();
         let defaultAccount = networkDefaultConfig[chainConfig.id]?.defaultAccount;

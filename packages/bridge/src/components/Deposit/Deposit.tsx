@@ -3,6 +3,7 @@ import { DepositConfirm } from '@webb-dapp/bridge/components/DepositConfirm/Depo
 import { useBridgeDeposit } from '@webb-dapp/bridge/hooks/deposit/useBridgeDeposit';
 import { MixerSize, useWebContext } from '@webb-dapp/react-environment/webb-context';
 import { SpaceBox } from '@webb-dapp/ui-components/Box';
+import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { ChainInput } from '@webb-dapp/ui-components/Inputs/ChainInput/ChainInput';
 import { MixerGroupSelect } from '@webb-dapp/ui-components/Inputs/MixerGroupSelect/MixerGroupSelect';
 import { WalletBridgeCurrencyInput } from '@webb-dapp/ui-components/Inputs/WalletBridgeCurrencyInput/WalletBridgeCurrencyInput';
@@ -10,14 +11,12 @@ import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import React, { useCallback, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
-import { MixerButton } from '../MixerButton/MixerButton';
-
 const DepositWrapper = styled.div``;
 type DepositProps = {};
 
 export const Deposit: React.FC<DepositProps> = () => {
   const bridgeDepositApi = useBridgeDeposit();
-  const { activeChain, chains, activeWallet, switchChain } = useWebContext();
+  const { activeChain, activeWallet, chains, switchChain } = useWebContext();
   // const { clearAmount, token } = useBalanceSelect();
   const { depositApi } = bridgeDepositApi;
   const activeBridge = depositApi?.activeBridge;

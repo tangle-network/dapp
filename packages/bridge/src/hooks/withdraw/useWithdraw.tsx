@@ -15,6 +15,7 @@ export type WithdrawErrors = {
 };
 export const useWithdraw = (params: UseWithdrawProps) => {
   const [stage, setStage] = useState<WithdrawState>(WithdrawState.Ideal);
+  const [receipt, setReceipt] = useState('');
   const { activeApi } = useWebContext();
 
   const [error, setError] = useState<WithdrawErrors>({
@@ -25,7 +26,7 @@ export const useWithdraw = (params: UseWithdrawProps) => {
     },
   });
   const withdrawApi = useMemo(() => {
-    const withdraw = activeApi?.methods.mixer.withdraw;
+    const withdraw = activeApi?.methods.bridge.withdraw;
     if (!withdraw?.enabled) return null;
     return withdraw.inner;
   }, [activeApi]);
@@ -59,7 +60,8 @@ export const useWithdraw = (params: UseWithdrawProps) => {
 
     if (stage === WithdrawState.Ideal) {
       const { note, recipient } = params;
-      await withdrawApi.withdraw(note, recipient);
+      const txReceipt = await withdrawApi.withdraw(note, recipient);
+      setReceipt(txReceipt);
     }
   }, [withdrawApi, params, stage]);
 
@@ -75,6 +77,8 @@ export const useWithdraw = (params: UseWithdrawProps) => {
 
   return {
     stage,
+    receipt,
+    setReceipt,
     withdraw,
     canCancel,
     cancelWithdraw,

@@ -3,6 +3,8 @@ import { ActiveWebbRelayer, WebbRelayer } from '@webb-dapp/react-environment/web
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Note } from '@webb-tools/sdk-mixer';
 import { LoggerService } from '@webb-tools/app-util';
+import { InteractiveFeedback, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
+import { misbehavingRelayer } from '@webb-dapp/react-environment/error/interactive-errors/misbehaving-relayer';
 
 const logger = LoggerService.get('useWithdrawHook');
 
@@ -31,6 +33,7 @@ export const useWithdraw = (params: UseWithdrawProps) => {
   const [stage, setStage] = useState<WithdrawState>(WithdrawState.Ideal);
   const { activeApi } = useWebContext();
   const [relayersState, setRelayersState] = useState<RelayersState>(relayersInitState);
+  const [receipt, setReceipt] = useState('');
   const [error, setError] = useState<WithdrawErrors>({
     error: '',
     validationError: {
@@ -38,6 +41,7 @@ export const useWithdraw = (params: UseWithdrawProps) => {
       recipient: '',
     },
   });
+  const { registerInteractiveFeedback } = useWebContext();
   const withdrawApi = useMemo(() => {
     const withdraw = activeApi?.methods.mixer.withdraw;
     if (!withdraw?.enabled) return null;
@@ -98,9 +102,19 @@ export const useWithdraw = (params: UseWithdrawProps) => {
     if (!withdrawApi) return;
     if (stage === WithdrawState.Ideal) {
       const { note, recipient } = params;
-      await withdrawApi.withdraw(note, recipient);
+      try {
+        const txReceipt = await withdrawApi.withdraw(note, recipient);
+        setReceipt(txReceipt);
+      } catch (e) {
+        console.log('error from withdraw api');
+
+        if (e.code === WebbErrorCodes.RelayerMisbehaving) {
+          let interactiveFeedback: InteractiveFeedback = misbehavingRelayer();
+          registerInteractiveFeedback(interactiveFeedback);
+        }
+      }
     }
-  }, [withdrawApi, params, stage]);
+  }, [withdrawApi, stage, params]);
 
   const canCancel = useMemo(() => {
     return stage < WithdrawState.SendingTransaction && stage > WithdrawState.Ideal;
@@ -119,6 +133,8 @@ export const useWithdraw = (params: UseWithdrawProps) => {
     [withdrawApi]
   );
   return {
+    receipt,
+    setReceipt,
     stage,
     withdraw,
     canCancel,
