@@ -251,7 +251,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
         leaves: [] as string[],
       };
 
-      const leavesFromChain = await sourceContract.getDepositLeaves(storedContractInfo.lastQueriedBlock, 0);
+      const leavesFromChain = await sourceContract.getDepositLeaves(storedContractInfo.lastQueriedBlock + 1, 0);
 
       leaves = [...storedContractInfo.leaves, ...leavesFromChain.newLeaves];
     }
