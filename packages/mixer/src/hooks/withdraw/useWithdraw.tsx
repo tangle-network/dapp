@@ -106,7 +106,7 @@ export const useWithdraw = (params: UseWithdrawProps) => {
         const txReceipt = await withdrawApi.withdraw(note, recipient);
         setReceipt(txReceipt);
       } catch (e) {
-        console.log('error from withdraw api');
+        console.log('error from withdraw api', e);
 
         if (e.code === WebbErrorCodes.RelayerMisbehaving) {
           let interactiveFeedback: InteractiveFeedback = misbehavingRelayer();

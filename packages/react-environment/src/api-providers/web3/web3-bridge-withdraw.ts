@@ -36,13 +36,27 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
   async sameChainWithdraw(note: DepositNote, recipient: string): Promise<string> {
     this.cancelToken.cancelled = false;
 
-    // Todo Ensure the current provider is the same as the source
+    const bridge = Bridge.from(this.bridgeConfig, BridgeCurrency.fromString(note.tokenSymbol));
+
     const activeChain = await this.inner.getChainId();
     const internalId = evmIdIntoChainId(activeChain);
     if (Number(note.chain) !== internalId) {
-      throw new Error(`The provider isn't the connected to the expected provider `);
+      try {
+        await this.inner.switchOrAddChain(activeChain);
+      } catch (e) {
+        this.emit('stateChange', WithdrawState.Ideal);
+        transactionNotificationConfig.failed?.({
+          address: recipient,
+          data: 'Withdraw rejected',
+          key: 'bridge-withdraw-evm',
+          path: {
+            method: 'withdraw',
+            section: `Bridge ${bridge.currency.chainIds.map(getEVMChainNameFromInternal).join('-')}`,
+          },
+        });
+        return '';
+      }
     }
-    const bridge = Bridge.from(this.bridgeConfig, BridgeCurrency.fromString(note.tokenSymbol));
 
     const contractAddresses = bridge.anchors.find((anchor) => anchor.amount === note.amount)!;
     const contractAddress = contractAddresses.anchorAddresses[internalId]!;
@@ -177,14 +191,12 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
     const activeChain = await this.inner.getChainId();
     if (activeChain !== destChainEvmId) {
       try {
-        await this.inner.innerProvider.switchChain({
-          chainId: `0x${destChainEvmId.toString(16)}`,
-        });
+        await this.inner.switchOrAddChain(destChainEvmId);
       } catch (e) {
         this.emit('stateChange', WithdrawState.Ideal);
         transactionNotificationConfig.failed?.({
           address: recipient,
-          data: e?.code === 4001 ? 'Withdraw rejected' : 'Withdraw failed',
+          data: 'Withdraw rejected',
           key: 'bridge-withdraw-evm',
           path: {
             method: 'withdraw',
