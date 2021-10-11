@@ -79,6 +79,9 @@ export class WebbAnchorContract {
 
   async deposit(commitment: string, onComplete?: (event: DepositEvent) => void) {
     const overrides = {};
+    const d = this._contract.deployTransaction;
+    console.log(d);
+    return;
     const recipient = await this._contract.deposit(commitment, overrides);
     await recipient.wait();
   }

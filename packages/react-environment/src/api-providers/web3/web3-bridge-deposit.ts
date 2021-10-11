@@ -44,6 +44,7 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
 
       // Find the Anchor for this bridge amount
       const anchor = bridge.anchors.find((anchor) => anchor.amount == note.amount);
+
       if (!anchor) {
         throw new Error('not Anchor for amount' + note.amount);
       }
@@ -53,6 +54,7 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
         throw new Error(`No Anchor for the chain ${note.chain}`);
       }
       const contract = this.inner.getWebbAnchorByAddress(contractAddress);
+
       logger.info(`Commitment for deposit is ${commitment}`);
       await contract.deposit(String(commitment));
       transactionNotificationConfig.finalize?.({
