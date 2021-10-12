@@ -110,7 +110,7 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({ mixerId, onClose, o
   }, [note]);
 
   const handleCopy = useCallback((): void => {
-    notificationApi.addToQue({
+    notificationApi.addToQueue({
       secondaryMessage: 'Deposit note is copied to clipboard',
       message: 'Copied  to clipboard',
       variant: 'success',

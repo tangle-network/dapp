@@ -1,12 +1,14 @@
-import { FormHelperText, InputBase } from '@material-ui/core';
-import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabel';
-import React, { useMemo } from 'react';
-import styled, { css } from 'styled-components';
-import { useDepositNote } from '@webb-dapp/mixer/hooks/note';
-import { Pallet } from '@webb-dapp/ui-components/styling/colors';
+import { FormHelperText, Icon, InputBase } from '@material-ui/core';
 import { getEVMChainNameFromInternal } from '@webb-dapp/apps/configs';
-import { BridgeCurrency } from '@webb-dapp/react-environment/webb-context';
 import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
+import { useDepositNote } from '@webb-dapp/mixer/hooks/note';
+import { BridgeCurrency } from '@webb-dapp/react-environment/webb-context';
+import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabel';
+import { notificationApi } from '@webb-dapp/ui-components/notification';
+import { Pallet } from '@webb-dapp/ui-components/styling/colors';
+import React, { useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
+import styled, { css } from 'styled-components';
 
 type NoteInputProps = {
   value: string;
@@ -24,6 +26,20 @@ const NoteDetails = styled.div`
 export const BridgeNoteInput: React.FC<NoteInputProps> = ({ error, onChange, value }) => {
   const depositNote = useDepositNote(value);
   const { getBridge } = useBridge();
+  const navigate = useNavigate();
+
+  // Switch to mixer tab if note is for mixer
+  useEffect(() => {
+    if (depositNote && depositNote.note.prefix === 'webb.mix') {
+      notificationApi.addToQueue({
+        secondaryMessage: 'Please complete withdraw through the mixer',
+        message: 'Switched to mixer',
+        variant: 'warning',
+        Icon: <Icon>report_problem</Icon>,
+      });
+      navigate('/mixer', { replace: true });
+    }
+  }, [depositNote, navigate]);
 
   const bridge = useMemo(() => {
     try {
