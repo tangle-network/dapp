@@ -11,7 +11,6 @@ import {
   WithdrawState,
 } from '@webb-dapp/react-environment/webb-context';
 import { RelayedWithdrawResult, WebbRelayer } from '@webb-dapp/react-environment/webb-context/relayer';
-import { useFetch } from '@webb-dapp/react-hooks/useFetch';
 import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polkadot/transaction-notification-config';
 import { LoggerService } from '@webb-tools/app-util';
@@ -114,23 +113,26 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
     const deposit = depositFromPreimage(evmNote.note.secret.replace('0x', ''));
     const chainId = Number(evmNote.note.chain) as ChainId;
     const chainEvmId = chainIdIntoEVMId(chainId);
-    console.log(deposit);
 
     const activeChain = await this.inner.getChainId();
+    console.log('activeChain', activeChain);
+    console.log('chainEvmId', chainEvmId);
+    this.emit('stateChange', WithdrawState.GeneratingZk);
+
     if (activeChain !== chainEvmId) {
       try {
-        await this.inner.innerProvider.switchChain({
-          chainId: `0x${chainEvmId.toString(16)}`,
-        });
+        console.log('trying to switch or add');
+        await this.inner.switchOrAddChain(chainEvmId);
       } catch (e) {
+        console.log('error: ', e);
         this.emit('stateChange', WithdrawState.Ideal);
         transactionNotificationConfig.failed?.({
           address: recipient,
-          data: e?.code === 4001 ? 'Withdraw rejected' : 'Withdraw failed',
+          data: 'Withdraw rejected',
           key: 'mixer-withdraw-evm',
           path: {
             method: 'withdraw',
-            section: `evm-mixer`,
+            section: 'evm-mixer',
           },
         });
         return '';
@@ -139,8 +141,6 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
 
     if (activeRelayer && activeRelayer.account) {
       try {
-        this.emit('stateChange', WithdrawState.GeneratingZk);
-
         transactionNotificationConfig.loading?.({
           address: recipient,
           data: React.createElement(
@@ -285,7 +285,6 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
           section: 'evm-mixer',
         },
       });
-      this.emit('stateChange', WithdrawState.GeneratingZk);
       const contract = await this.inner.getContractBySize(Number(evmNote.note.amount), evmNote.note.tokenSymbol);
       try {
         const zkpInputWithoutMerkleProof = fromDepositIntoZKPTornPublicInputs(deposit, {
