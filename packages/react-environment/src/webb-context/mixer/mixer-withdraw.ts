@@ -1,3 +1,4 @@
+import { ChainId } from '@webb-dapp/apps/configs';
 import { ActiveWebbRelayer, WebbRelayer } from '@webb-dapp/react-environment/webb-context/relayer';
 import { EventBus } from '@webb-tools/app-util';
 import { Note } from '@webb-tools/sdk-mixer';
@@ -43,6 +44,7 @@ export abstract class MixerWithdraw<T> extends EventBus<MixerWithdrawEvents> {
     super();
     this.watcher = this.emitter.asObservable();
   }
+
   get hasRelayer(): Promise<boolean> {
     return Promise.resolve(false);
   }
@@ -69,7 +71,16 @@ export abstract class MixerWithdraw<T> extends EventBus<MixerWithdrawEvents> {
     return Promise.resolve([]);
   }
 
-  abstract withdraw(note: string, recipient: string): Promise<void>;
+  getRelayersByChainAndAddress(chainId: ChainId, address: string): Promise<WebbRelayer[]> {
+    return Promise.resolve([]);
+  }
 
-  abstract cancelWithdraw(): Promise<void>;
+  cancelWithdraw(): Promise<void> {
+    this.cancelToken.cancelled = true;
+    this.emit('stateChange', WithdrawState.Cancelling);
+    return Promise.resolve(undefined);
+  }
+
+  // Returns the txHash of the withdraw, or ''
+  abstract withdraw(note: string, recipient: string): Promise<string>;
 }

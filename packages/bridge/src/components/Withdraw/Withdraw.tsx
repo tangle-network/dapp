@@ -1,6 +1,5 @@
 import { FormHelperText, InputBase } from '@material-ui/core';
-import { MixerButton } from '@webb-dapp/mixer/components/MixerButton/MixerButton';
-import WithdrawingModal from '@webb-dapp/mixer/components/Withdraw/WithdrawingModal';
+import WithdrawingModal from '@webb-dapp/bridge/components/Withdraw/WithdrawingModal';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabel';
 import { BridgeNoteInput } from '@webb-dapp/ui-components/Inputs/NoteInput/BridgeNoteInput';
@@ -11,6 +10,8 @@ import { WithdrawState } from '@webb-dapp/react-environment';
 import { InputSection } from '@webb-dapp/ui-components/Inputs/InputSection/InputSection';
 import { useDepositNote } from '@webb-dapp/mixer';
 import { useWithdraw } from '@webb-dapp/bridge/hooks';
+import WithdrawSuccessModal from '@webb-dapp/react-components/Withdraw/WithdrawSuccessModal';
+import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 
 const WithdrawWrapper = styled.div``;
 type WithdrawProps = {};
@@ -19,7 +20,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
   const [note, setNote] = useState('');
   const [recipient, setRecipient] = useState('');
 
-  const { canCancel, cancelWithdraw, stage, validationErrors, withdraw } = useWithdraw({
+  const { canCancel, cancelWithdraw, receipt, setReceipt, stage, validationErrors, withdraw } = useWithdraw({
     recipient,
     note,
   });
@@ -62,6 +63,22 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
             cancel={cancelWithdraw}
             stage={stage}
             canCancel={canCancel}
+          />
+        )}
+      </Modal>
+
+      {/* Modal to show on success  */}
+      <Modal open={receipt != ''}>
+        {depositNote && (
+          <WithdrawSuccessModal
+            receipt={receipt}
+            recipient={recipient}
+            note={depositNote.note}
+            exit={() => {
+              setNote('');
+              setRecipient('');
+              setReceipt('');
+            }}
           />
         )}
       </Modal>

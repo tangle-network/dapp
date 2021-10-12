@@ -22,11 +22,6 @@ import React from 'react';
 const logger = LoggerService.get('Web3MixerWithdraw');
 
 export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
-  cancelWithdraw(): Promise<void> {
-    this.cancelToken.cancelled = true;
-    this.emit('stateChange', WithdrawState.Cancelling);
-    return Promise.resolve(undefined);
-  }
 
   async mapRelayerIntoActive(relayer: OptionalRelayer): Promise<OptionalActiveRelayer> {
     if (!relayer) {
@@ -100,17 +95,48 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
     });
   }
 
+  async getRelayersByChainAndAddress(chainId: ChainId, address: string) {
+    return this.inner.relayingManager.getRelayer({
+      baseOn: 'evm',
+      chainId: chainId,
+      contractAddress: address,
+    });
+  }
+
   get hasRelayer() {
     return this.relayers.then((r) => r.length > 0);
   }
 
-  async withdraw(note: string, recipient: string): Promise<void> {
+  async withdraw(note: string, recipient: string): Promise<string> {
     this.cancelToken.cancelled = false;
     const activeRelayer = this.activeRelayer[0];
     const evmNote = await Note.deserialize(note);
     const deposit = depositFromPreimage(evmNote.note.secret.replace('0x', ''));
     const chainId = Number(evmNote.note.chain) as ChainId;
+    const chainEvmId = chainIdIntoEVMId(chainId);
     console.log(deposit);
+
+    const activeChain = await this.inner.getChainId();
+    if (activeChain !== chainEvmId) {
+      try {
+        await this.inner.innerProvider.switchChain({
+          chainId: `0x${chainEvmId.toString(16)}`,
+        });
+      } catch (e) {
+        this.emit('stateChange', WithdrawState.Ideal);
+        transactionNotificationConfig.failed?.({
+          address: recipient,
+          data: e?.code === 4001 ? 'Withdraw rejected' : 'Withdraw failed',
+          key: 'mixer-withdraw-evm',
+          path: {
+            method: 'withdraw',
+            section: `evm-mixer`,
+          },
+        });
+        return '';
+      }
+    }
+
     if (activeRelayer && activeRelayer.account) {
       try {
         this.emit('stateChange', WithdrawState.GeneratingZk);
@@ -141,19 +167,15 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
           fee: Number(fees?.totalFees),
         });
 
-        const leavesResponse = await fetch(`${activeRelayer.endpoint}/api/v1/leaves/${mixerInfo.address}`);
-        const formattedLeavesResponse = await leavesResponse.json();
-        const leaves: string[] = formattedLeavesResponse.leaves;
-        const lastQueriedBlock: number = parseInt(formattedLeavesResponse.lastQueriedBlock, 16);
-        console.log(lastQueriedBlock);
+        const relayerLeaves = await activeRelayer.getLeaves(mixerInfo.address);
 
         // This is the part of withdraw that takes a long time
         this.emit('stateChange', WithdrawState.GeneratingZk);
         const zkp = await anchorContract.generateZKPWithLeaves(
           deposit,
           zkpInputWithoutMerkleProof,
-          leaves,
-          lastQueriedBlock
+          relayerLeaves.leaves,
+          relayerLeaves.lastQueriedBlock
         );
 
         logger.trace('Generated the zkp', zkp);
@@ -171,7 +193,7 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
             },
           });
           this.emit('stateChange', WithdrawState.Ideal);
-          return;
+          return '';
         }
 
         this.emit('stateChange', WithdrawState.SendingTransaction);
@@ -234,7 +256,8 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
         });
         logger.trace('Sending transaction');
         relayedWithdraw.send(tx);
-        await relayedWithdraw.await();
+        const txHash = await relayedWithdraw.await();
+        return '';
       } catch (e) {
         this.emit('stateChange', WithdrawState.Failed);
         this.emit('stateChange', WithdrawState.Ideal);
@@ -286,12 +309,12 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
             },
           });
           this.emit('stateChange', WithdrawState.Ideal);
-          return;
+          return '';
         }
 
         this.emit('stateChange', WithdrawState.SendingTransaction);
         const txReset = await contract.withdraw(zkp.proof, zkp.input);
-        await txReset.wait();
+        const receipt = await txReset.wait();
         transactionNotificationConfig.finalize?.({
           address: recipient,
           data: undefined,
@@ -302,6 +325,7 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
           },
         });
         this.emit('stateChange', WithdrawState.Ideal);
+        return receipt.transactionHash;
       } catch (e) {
         // todo fix this and fetch the error from chain
 
@@ -318,7 +342,7 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
           });
 
           this.emit('stateChange', WithdrawState.Ideal);
-          return;
+          return '';
         }
 
         transactionNotificationConfig.failed?.({

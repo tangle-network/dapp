@@ -16,12 +16,18 @@ export interface Contract {
   contract: string;
   address: string;
   deployedAt: number;
-  leavesWatcher: LeavesWatcher;
+  eventsWatcher: EventsWatcher;
   size: number;
   withdrawFeePercentage: number;
+  linkedAnchors: LinkedAnchor[];
 }
 
-export interface LeavesWatcher {
+export interface LinkedAnchor {
+  chain: string;
+  address: string;
+}
+
+export interface EventsWatcher {
   enabled: boolean;
   pollingInterval: number;
 }

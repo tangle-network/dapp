@@ -7,8 +7,8 @@ export class Bridge {
   private constructor(private readonly configEntry: BridgeConfigEntry) {}
 
   static from(config: BridgeConfig, bridgeCurrency: BridgeCurrency): Bridge {
-    const bridgeConfigEntries = config[bridgeCurrency.name];
-    return new Bridge(bridgeConfigEntries);
+    const bridgeConfigEntry = config[bridgeCurrency.name];
+    return new Bridge(bridgeConfigEntry);
   }
 
   /*
@@ -23,6 +23,10 @@ export class Bridge {
    * */
   get currency() {
     return this.configEntry.asset;
+  }
+
+  getTokenAddress(chainId: ChainId) {
+    return this.configEntry.tokenAddresses[chainId];
   }
 
   /*
@@ -53,5 +57,8 @@ export class Bridge {
       }
       return true;
     });
+  }
+  static getConfigEntry(configEntry: BridgeConfig, bridgeCurrency: BridgeCurrency): BridgeConfigEntry {
+    return configEntry[bridgeCurrency.name];
   }
 }

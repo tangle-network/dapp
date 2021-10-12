@@ -1,9 +1,3 @@
-import { depositFromAnchor2Preimage } from '@webb-dapp/contracts/utils/make-deposit';
-import { Bridge, bridgeConfig, BridgeConfig, BridgeCurrency, WithdrawState } from '@webb-dapp/react-environment';
-import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3/webb-web3-provider';
-import { Note } from '@webb-tools/sdk-mixer';
-
-import { BridgeWithdraw } from '../../webb-context';
 import {
   ChainId,
   chainIdIntoEVMId,
@@ -11,22 +5,37 @@ import {
   evmIdIntoChainId,
   getEVMChainNameFromInternal,
 } from '@webb-dapp/apps/configs';
+import { MixerStorage } from '@webb-dapp/apps/configs/storages/EvmChainStorage';
+import { WebbAnchorContract } from '@webb-dapp/contracts/contracts';
+import { depositFromAnchor2Preimage } from '@webb-dapp/contracts/utils/make-deposit';
+import { Bridge, BridgeConfig, bridgeConfig, BridgeCurrency, WithdrawState } from '@webb-dapp/react-environment';
+import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3/webb-web3-provider';
 import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polkadot/transaction-notification-config';
-import React from 'react';
-import { LoggerService } from '@webb-tools/app-util';
-import { DepositNote } from '@webb-tools/wasm-utils';
 import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
+import { LoggerService } from '@webb-tools/app-util';
+import { Note } from '@webb-tools/sdk-mixer';
+import { DepositNote } from '@webb-tools/wasm-utils';
+import React from 'react';
+
+import { BridgeWithdraw } from '../../webb-context';
+import { anchorDeploymentBlock, bridgeCurrencyBridgeStorageFactory } from './bridge-storage';
 
 const logger = LoggerService.get('Web3BridgeWithdraw');
 
 export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
   bridgeConfig: BridgeConfig = bridgeConfig;
 
-  cancelWithdraw(): Promise<void> {
-    return Promise.resolve(undefined);
+  async getRelayersByChainAndAddress(chainId: ChainId, address: string) {
+    return this.inner.relayingManager.getRelayer({
+      baseOn: 'evm',
+      chainId: chainId,
+      contractAddress: address,
+    });
   }
 
-  async sameChainWithdraw(note: DepositNote, recipient: string) {
+  async sameChainWithdraw(note: DepositNote, recipient: string): Promise<string> {
+    this.cancelToken.cancelled = false;
+
     // Todo Ensure the current provider is the same as the source
     const activeChain = await this.inner.getChainId();
     const internalId = evmIdIntoChainId(activeChain);
@@ -75,24 +84,57 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
         section: `Bridge ${bridge.currency.chainIds.map(getEVMChainNameFromInternal).join('-')}`,
       },
     });
+
+    // Check for cancelled here, abort if it was set.
+    if (this.cancelToken.cancelled) {
+      transactionNotificationConfig.failed?.({
+        address: recipient,
+        data: 'Withdraw cancelled',
+        key: 'mixer-withdraw-evm',
+        path: {
+          method: 'withdraw',
+          section: 'evm-mixer',
+        },
+      });
+      this.emit('stateChange', WithdrawState.Ideal);
+      return '';
+    }
+
+    let txHash: string;
+
     this.emit('stateChange', WithdrawState.SendingTransaction);
-    await contract.withdraw(
-      zkpResults.proof,
-      {
-        destinationChainId: activeChain,
-        fee: input.fee,
-        nullifier: input.nullifier,
-        nullifierHash: input.nullifierHash,
-        pathElements: zkpResults.input.pathElements,
-        pathIndices: zkpResults.input.pathIndices,
-        recipient: input.recipient,
-        refund: input.refund,
-        relayer: input.relayer,
-        root: zkpResults.root as any,
-        secret: zkpResults.input.secret,
-      },
-      zkpResults.input
-    );
+    try {
+      txHash = await contract.withdraw(
+        zkpResults.proof,
+        {
+          destinationChainId: activeChain,
+          fee: input.fee,
+          nullifier: input.nullifier,
+          nullifierHash: input.nullifierHash,
+          pathElements: zkpResults.input.pathElements,
+          pathIndices: zkpResults.input.pathIndices,
+          recipient: input.recipient,
+          refund: input.refund,
+          relayer: input.relayer,
+          root: zkpResults.root as any,
+          secret: zkpResults.input.secret,
+        },
+        zkpResults.input
+      );
+    } catch (e) {
+      this.emit('stateChange', WithdrawState.Ideal);
+      transactionNotificationConfig.failed?.({
+        address: recipient,
+        data: e?.code === 4001 ? 'Withdraw rejected' : 'Withdraw failed',
+        key: 'bridge-withdraw-evm',
+        path: {
+          method: 'withdraw',
+          section: `Bridge ${bridge.currency.chainIds.map(getEVMChainNameFromInternal).join('-')}`,
+        },
+      });
+      return '';
+    }
+
     this.emit('stateChange', WithdrawState.Ideal);
     transactionNotificationConfig.finalize?.({
       address: recipient,
@@ -103,75 +145,147 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
         section: `Bridge ${bridge.currency.chainIds.map(getEVMChainNameFromInternal).join('-')}`,
       },
     });
+    return '';
   }
 
   async crossChainWithdraw(note: DepositNote, recipient: string) {
-    // check that the active api is over the source chain
-    const sourceChain = Number(note.sourceChain) as ChainId;
-    const sourceChainEvm = chainIdIntoEVMId(sourceChain);
-    const activeChain = await this.inner.getChainId();
-    if (activeChain !== sourceChainEvm) {
-      throw new Error(`Expecting another active api for chain ${sourceChain} found ${evmIdIntoChainId(activeChain)}`);
-    }
+    this.cancelToken.cancelled = false;
+    const bridgeStorageStorage = await bridgeCurrencyBridgeStorageFactory();
 
-    // Temporary Provider for getting Anchors roots
+    // Setup a provider for the source chain
+    const sourceChainId = Number(note.sourceChain) as ChainId;
+    const sourceChainConfig = chainsConfig[sourceChainId];
+    const rpc = sourceChainConfig.url;
+    const sourceHttpProvider = Web3Provider.fromUri(rpc);
+    const sourceEthers = sourceHttpProvider.intoEthersProvider();
+
+    // get info from the destination chain (should be selected)
     const destChainId = Number(note.chain) as ChainId;
     const destChainEvmId = chainIdIntoEVMId(destChainId);
-    const destChainConfig = chainsConfig[destChainId];
-    const rpc = destChainConfig.url;
-    const destHttpProvider = Web3Provider.fromUri(rpc);
-    const destEthers = destHttpProvider.intoEthersProvider();
-    const deposit = depositFromAnchor2Preimage(note.secret.replace('0x', ''), destChainEvmId);
+
+    // get the deposit info
+    const sourceDeposit = depositFromAnchor2Preimage(note.secret.replace('0x', ''), destChainEvmId);
+    this.emit('stateChange', WithdrawState.GeneratingZk);
 
     // Getting contracts data for source and dest chains
     const currency = BridgeCurrency.fromString(note.tokenSymbol);
     const bridge = Bridge.from(this.bridgeConfig, currency);
-    const anchor = bridge.anchors.find((anchor) => anchor.amount === note.amount)!;
-    const destContractAddress = anchor.anchorAddresses[destChainId]!;
-    const sourceContractAddress = anchor.anchorAddresses[sourceChain]!;
+    const linkedAnchors = bridge.anchors.find((anchor) => anchor.amount === note.amount)!;
+    const destContractAddress = linkedAnchors.anchorAddresses[destChainId]!;
+    const sourceContractAddress = linkedAnchors.anchorAddresses[sourceChainId]!;
+
+    const activeChain = await this.inner.getChainId();
+    if (activeChain !== destChainEvmId) {
+      try {
+        await this.inner.innerProvider.switchChain({
+          chainId: `0x${destChainEvmId.toString(16)}`,
+        });
+      } catch (e) {
+        this.emit('stateChange', WithdrawState.Ideal);
+        transactionNotificationConfig.failed?.({
+          address: recipient,
+          data: e?.code === 4001 ? 'Withdraw rejected' : 'Withdraw failed',
+          key: 'bridge-withdraw-evm',
+          path: {
+            method: 'withdraw',
+            section: `Bridge ${bridge.currency.chainIds.map(getEVMChainNameFromInternal).join('-')}`,
+          },
+        });
+        return '';
+      }
+    }
 
     // get root and neighbour root from the dest provider
-    const destAnchor = this.inner.getWebbAnchorByAddressAndProvider(destContractAddress, destEthers);
-    const destLatestRoot = await destAnchor.inner.getLastRoot();
-    const destLatestNeighbourRootAr = await destAnchor.inner.getLatestNeighborRoots();
-    const destLatestNeighbourRoot = destLatestNeighbourRootAr[0];
-
-    logger.trace(`destLatestNeighbourRoot ${destLatestNeighbourRoot} , destLatestRoot ${destLatestRoot}`);
-    // await destHttpProvider.endSession();
+    const destAnchor = this.inner.getWebbAnchorByAddress(destContractAddress);
 
     // Building the merkle proof
-    const sourceContract = this.inner.getWebbAnchorByAddress(sourceContractAddress);
-    const sourceRoot = await sourceContract.inner.getLastRoot();
-    const knwon = await destAnchor.inner.isKnownNeighborRoot(4, sourceRoot);
-    logger.trace(`Dest anchor knwos about the source root ? ${knwon}`);
-
+    const sourceContract = this.inner.getWebbAnchorByAddressAndProvider(sourceContractAddress, sourceEthers);
     const sourceLatestRoot = await sourceContract.inner.getLastRoot();
     logger.trace(`Source latest root ${sourceLatestRoot}`);
 
-    const isKnroot = await sourceContract.inner.isKnownRoot(destLatestNeighbourRoot);
-    logger.trace(`isKnown root ${isKnroot}`);
+    // get relayers for the source chain
+    const sourceRelayers = this.inner.relayingManager.getRelayer({
+      chainId: Number(note.sourceChain),
+      baseOn: 'evm',
+      contractAddress: sourceContractAddress,
+    });
 
-    const merkleProof = await sourceContract.generateMerkleProofFroRoot(deposit, destLatestNeighbourRoot);
-    if (!merkleProof) {
-      throw new Error('Failed to generate Merle proof');
+    let leaves: string[] = [];
+
+    // loop through the sourceRelayers to fetch leaves
+    for (let i = 0; i < sourceRelayers.length; i++) {
+      const relayerLeaves = await sourceRelayers[i].getLeaves(sourceContractAddress);
+
+      const validLatestLeaf = await sourceContract.leafCreatedAtBlock(
+        relayerLeaves.leaves[relayerLeaves.leaves.length - 1],
+        relayerLeaves.lastQueriedBlock
+      );
+
+      console.log('validLatestLeaf: ', validLatestLeaf);
+
+      // leaves from relayer somewhat validated, attempt to build the tree
+      if (validLatestLeaf) {
+        const tree = WebbAnchorContract.createTreeWithRoot(relayerLeaves.leaves, sourceLatestRoot);
+
+        // If we were able to build the tree, set local storage and break out of the loop
+        if (tree) {
+          console.log('tree valid, using relayer leaves');
+          leaves = relayerLeaves.leaves;
+
+          await bridgeStorageStorage.set(sourceContract.inner.address.toLowerCase(), {
+            lastQueriedBlock: relayerLeaves.lastQueriedBlock,
+            leaves: relayerLeaves.leaves,
+          });
+          break;
+        }
+      }
     }
 
-    const chid1 = await this.inner.getChainId();
-    console.log({ chid1 });
-    /// todo await for provider Change
-    await this.inner.innerProvider.switchChain({
-      chainId: `0x${destChainEvmId.toString(16)}`,
-    });
-    const chid = await this.inner.getChainId();
+    // if we weren't able to get leaves from the relayer, get them directly from chain
+    if (!leaves.length) {
+      // check if we already cached some values
+      const storedContractInfo: MixerStorage[0] = (await bridgeStorageStorage.get(
+        sourceContractAddress.toLowerCase()
+      )) || {
+        lastQueriedBlock: anchorDeploymentBlock[sourceContractAddress.toLowerCase()] || 0,
+        leaves: [] as string[],
+      };
+
+      const leavesFromChain = await sourceContract.getDepositLeaves(storedContractInfo.lastQueriedBlock + 1, 0);
+
+      leaves = [...storedContractInfo.leaves, ...leavesFromChain.newLeaves];
+    }
+
+    // generate the merkle proof
+    const merkleProof = await destAnchor.generateLinkedMerkleProof(sourceDeposit, leaves);
+    if (!merkleProof) {
+      this.emit('stateChange', WithdrawState.Ideal);
+      throw new Error('Failed to generate Merkle proof');
+    }
+
+    // Check for cancelled here, abort if it was set.
+    if (this.cancelToken.cancelled) {
+      transactionNotificationConfig.failed?.({
+        address: recipient,
+        data: 'Withdraw cancelled',
+        key: 'mixer-withdraw-evm',
+        path: {
+          method: 'withdraw',
+          section: 'evm-mixer',
+        },
+      });
+      this.emit('stateChange', WithdrawState.Ideal);
+      return '';
+    }
+
     const accounts = await this.inner.accounts.accounts();
     const account = accounts[0];
 
-    const destContractWithSignedProvider = this.inner.getWebbAnchorByAddress(destContractAddress);
     const input = {
       destinationChainId: activeChain,
-      secret: deposit.secret,
-      nullifier: deposit.nullifier,
-      nullifierHash: deposit.nullifierHash,
+      secret: sourceDeposit.secret,
+      nullifier: sourceDeposit.nullifier,
+      nullifierHash: sourceDeposit.nullifierHash,
 
       // Todo change this to the realyer address
       relayer: account.address,
@@ -181,28 +295,72 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
       refund: 0,
     };
 
-    const zkpResults = await destContractWithSignedProvider.merkleProofToZKp(merkleProof, deposit, input);
+    let zkpResults;
+    try {
+      zkpResults = await destAnchor.merkleProofToZKP(merkleProof, sourceDeposit, input);
+    } catch (e) {
+      this.emit('stateChange', WithdrawState.Ideal);
+      transactionNotificationConfig.failed?.({
+        address: recipient,
+        data: 'Deposit not yet available',
+        key: 'mixer-withdraw-evm',
+        path: {
+          method: 'withdraw',
+          section: 'evm-mixer',
+        },
+      });
+      return '';
+    }
+    this.emit('stateChange', WithdrawState.SendingTransaction);
 
-    await destContractWithSignedProvider.withdraw(
-      zkpResults.proof,
-      {
-        destinationChainId: activeChain,
-        fee: input.fee,
-        nullifier: input.nullifier,
-        nullifierHash: input.nullifierHash,
-        pathElements: zkpResults.input.pathElements,
-        pathIndices: zkpResults.input.pathIndices,
-        recipient: input.recipient,
-        refund: input.refund,
-        relayer: input.relayer,
-        root: zkpResults.root as any,
-        secret: zkpResults.input.secret,
+    let txHash: string;
+    try {
+      txHash = await destAnchor.withdraw(
+        zkpResults.proof,
+        {
+          destinationChainId: activeChain,
+          fee: input.fee,
+          nullifier: input.nullifier,
+          nullifierHash: input.nullifierHash,
+          pathElements: zkpResults.input.pathElements,
+          pathIndices: zkpResults.input.pathIndices,
+          recipient: input.recipient,
+          refund: input.refund,
+          relayer: input.relayer,
+          root: zkpResults.root as any,
+          secret: zkpResults.input.secret,
+        },
+        zkpResults.input
+      );
+    } catch (e) {
+      this.emit('stateChange', WithdrawState.Ideal);
+      transactionNotificationConfig.failed?.({
+        address: recipient,
+        data: e?.code === 4001 ? 'Withdraw rejected' : 'Withdraw failed',
+        key: 'bridge-withdraw-evm',
+        path: {
+          method: 'withdraw',
+          section: `Bridge ${bridge.currency.chainIds.map(getEVMChainNameFromInternal).join('-')}`,
+        },
+      });
+      return '';
+    }
+
+    transactionNotificationConfig.finalize?.({
+      address: recipient,
+      data: undefined,
+      key: 'bridge-withdraw-evm',
+      path: {
+        method: 'withdraw',
+        section: `Bridge ${bridge.currency.chainIds.map(getEVMChainNameFromInternal).join('-')}`,
       },
-      zkpResults.input
-    );
+    });
+    this.emit('stateChange', WithdrawState.Done);
+    this.emit('stateChange', WithdrawState.Ideal);
+    return txHash;
   }
 
-  async withdraw(note: string, recipient: string): Promise<void> {
+  async withdraw(note: string, recipient: string): Promise<string> {
     logger.trace(`Withdraw using note ${note} , recipient ${recipient}`);
 
     const parseNote = await Note.deserialize(note);
@@ -211,29 +369,12 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
     const targetChainName = getEVMChainNameFromInternal(Number(depositNote.chain) as ChainId);
     logger.trace(`Bridge withdraw from ${sourceChainName} to ${targetChainName}`);
 
-    const token = parseNote.note.tokenSymbol;
-    const bridgeCurrency = BridgeCurrency.fromString(token);
-    const bridge = Bridge.from(this.bridgeConfig, bridgeCurrency);
-
-    try {
-      if (depositNote.sourceChain === depositNote.chain) {
-        logger.trace(`Same chain flow ${sourceChainName}`);
-        return this.sameChainWithdraw(depositNote, recipient);
-      } else {
-        logger.trace(`cross chain flow ${sourceChainName} ----> ${targetChainName}`);
-        return this.crossChainWithdraw(depositNote, recipient);
-      }
-    } catch (e) {
-      this.emit('stateChange', WithdrawState.Ideal);
-      transactionNotificationConfig.failed?.({
-        address: recipient,
-        data: e?.code === 40001 ? 'Withdraw rejected' : 'Withdraw failed',
-        key: 'bridge-withdraw-evm',
-        path: {
-          method: 'withdraw',
-          section: `Bridge ${bridge.currency.chainIds.map(getEVMChainNameFromInternal).join('-')}`,
-        },
-      });
+    if (depositNote.sourceChain === depositNote.chain) {
+      logger.trace(`Same chain flow ${sourceChainName}`);
+      return this.sameChainWithdraw(depositNote, recipient);
+    } else {
+      logger.trace(`cross chain flow ${sourceChainName} ----> ${targetChainName}`);
+      return this.crossChainWithdraw(depositNote, recipient);
     }
   }
 }

@@ -13,7 +13,6 @@ import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
 import { EventBus } from '@webb-tools/app-util';
 import { ethers, providers } from 'ethers';
 import { WebbAnchorContract } from '@webb-dapp/contracts/contracts';
-import { WEBBAnchor2 } from '@webb-dapp/contracts/types/WEBBAnchor2';
 
 export class WebbWeb3Provider
   extends EventBus<WebbProviderEvents<[number]>>
@@ -64,6 +63,10 @@ export class WebbWeb3Provider
         },
       },
     };
+  }
+
+  getProvider(): Web3Provider {
+    return this.web3Provider;
   }
 
   async setChainListener() {

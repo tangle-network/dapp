@@ -1,13 +1,27 @@
-import { ClickAwayListener, Icon, IconButton, List, ListItemAvatar, ListItemText, Typography } from '@material-ui/core';
+import {
+  ClickAwayListener,
+  Icon,
+  IconButton,
+  List,
+  ListItemAvatar,
+  ListItemText,
+  Tooltip,
+  Typography,
+} from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
 import Popper from '@material-ui/core/Popper';
-import { Currency, CurrencyContent } from '@webb-dapp/react-environment/types/currency';
+import { CurrencyContent } from '@webb-dapp/react-environment/types/currency';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import styled, { css } from 'styled-components';
+import { Bridge, BridgeCurrency, useWebContext } from '@webb-dapp/react-environment';
+import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
+import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
+import { evmIdIntoChainId } from '@webb-dapp/apps/configs';
+
 const StyledList = styled.ul`
   &&& {
     padding: 10px 0 !important;
@@ -130,6 +144,23 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
   const $wrapper = useRef<HTMLDivElement>();
   const [isOpen, setIsOpen] = useState(false);
   const theme = useColorPallet();
+  const { activeApi } = useWebContext();
+  const bridgeApi = useBridge();
+  const addTokenToMetaMask = async (tokenString: string) => {
+    const bt = BridgeCurrency.fromString(tokenString);
+    const configEntry = Bridge.getConfigEntry(bridgeApi.config, bt);
+    const provider: Web3Provider = activeApi?.getProvider();
+
+    const activeEVM = await provider.network;
+    const entryChainId = evmIdIntoChainId(activeEVM);
+    const tokenAddress = configEntry.tokenAddresses[entryChainId];
+    await provider.addToken({
+      address: tokenAddress,
+      decimals: 18,
+      image: '',
+      symbol: bt.prefix,
+    });
+  };
   return (
     <>
       <AccountManagerWrapper ref={$wrapper}>
@@ -160,11 +191,19 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
               >
                 {selected ? (
                   <Flex row ai='center' jc='flex-start' flex={1}>
-                    <Avatar
-                      style={{ background: 'transparent' }}
-                      children={selected?.icon}
-                      className={'token-avatar'}
-                    />
+                    <Tooltip title={<h2>{`Add ${selected?.name} to MetaMask`}</h2>}>
+                      <Avatar
+                        style={{
+                          cursor: 'copy',
+                          background: 'transparent',
+                        }}
+                        children={selected?.icon}
+                        className={'token-avatar'}
+                        onClick={() => {
+                          addTokenToMetaMask(selected?.name);
+                        }}
+                      />
+                    </Tooltip>
                     <Padding x={0.5} />
                     <Flex jc={'center'}>
                       <Typography variant={'h6'} component={'span'}>
@@ -233,7 +272,13 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
                     >
                       <Flex ai='center' row>
                         <ListItemAvatar>
-                          <Avatar style={{ background: 'transparent' }} children={Icon} />
+                          <Avatar
+                            onClick={() => {
+                              addTokenToMetaMask(symbol);
+                            }}
+                            style={{ background: 'transparent' }}
+                            children={Icon}
+                          />
                         </ListItemAvatar>
                         <ListItemText>
                           <Typography variant={'h6'} component={'span'}>

@@ -3,7 +3,7 @@ import { createAnchor2Deposit, Deposit } from '@webb-dapp/contracts/utils/make-d
 import { BridgeConfig, DepositPayload as IDepositPayload, MixerSize } from '@webb-dapp/react-environment';
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3/webb-web3-provider';
 import { Note, NoteGenInput } from '@webb-tools/sdk-mixer';
-
+import { Erc20 } from '@webb-dapp/contracts/types/Erc20';
 import { u8aToHex } from '@polkadot/util';
 
 import { BridgeDeposit } from '../../webb-context/bridge/bridge-deposit';
@@ -31,7 +31,7 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
       transactionNotificationConfig.loading?.({
         address: '',
         data: React.createElement(DepositNotification, {
-          chain: getEVMChainNameFromInternal(Number(note.chain)),
+          chain: getEVMChainNameFromInternal(Number(note.sourceChain)),
           amount: Number(note.amount),
           currency: bridge.currency.name,
         }),
