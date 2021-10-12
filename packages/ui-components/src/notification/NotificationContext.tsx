@@ -14,11 +14,11 @@ export type SnackBarOpts = {
 };
 
 export type NotificationContextProps = {
-  addToQue(opts: Omit<SnackBarOpts, 'close'>): SnackbarKey;
+  addToQueue(opts: Omit<SnackBarOpts, 'close'>): SnackbarKey;
   remove(key: SnackbarKey): void;
 };
 export const NotificationCTXDefaultValue = {
-  addToQue(opts: Omit<SnackBarOpts, 'close'>): SnackbarKey {
+  addToQueue(opts: Omit<SnackBarOpts, 'close'>): SnackbarKey {
     return 0;
   },
   remove(key: SnackbarKey) {},
