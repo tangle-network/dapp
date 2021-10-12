@@ -82,6 +82,7 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
   }
 
   private insureApiInterface() {
+    return;
     // check for RPC
     // @ts-ignore
     const merkleRPC = this.api.rpc.merkle;
