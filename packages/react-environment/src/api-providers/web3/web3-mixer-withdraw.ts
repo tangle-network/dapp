@@ -129,7 +129,7 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
         transactionNotificationConfig.failed?.({
           address: recipient,
           data: 'Withdraw rejected',
-          key: 'bridge-withdraw-evm',
+          key: 'mixer-withdraw-evm',
           path: {
             method: 'withdraw',
             section: 'evm-mixer',
