@@ -1,4 +1,4 @@
-import { Button, Divider, FormControl, Input, InputAdornment, MenuItem, Select } from '@material-ui/core';
+import { Button, Divider, InputBase, MenuItem, Select } from '@material-ui/core';
 import { ActiveWebbRelayer, Capabilities, WebbRelayer } from '@webb-dapp/react-environment';
 import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabel';
 import { InputSection } from '@webb-dapp/ui-components/Inputs/InputSection/InputSection';
@@ -8,6 +8,10 @@ import styled from 'styled-components';
 import { chainIdToRelayerName } from '@webb-dapp/apps/configs/relayer-config';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
 import { SpaceBox } from '@webb-dapp/ui-components';
+import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
+import { Pallet } from '@webb-dapp/ui-components/styling/colors';
+import { setConfig } from 'react-hot-loader';
+import Typography from '@material-ui/core/Typography';
 
 export interface RelayerApiAdapter {
   getInfo(endpoing: string): Promise<Capabilities>;
@@ -31,9 +35,14 @@ enum RelayerInputStatus {
 }
 
 const RelayerInfoModalWrapper = styled.div`
-  background-color: black;
+  background-color: ${({ theme }: { theme: Pallet }) => theme.mainBackground};
   padding: 2rem;
 `;
+const RelayerInfoModalActionsWrapper = styled.div`
+  padding: 1rem;
+  // background-color: ${({ theme }: { theme: Pallet }) => theme.layer2Background};
+`;
+const ContentWrapper = styled.div``;
 const RelayerInput: React.FC<RelayerInputProps> = ({ activeRelayer, relayerApi, relayers, setActiveRelayer }) => {
   const [view, setView] = useState<RelayerInputStatus>(RelayerInputStatus.SelectOfCurrent);
   const [customRelayURl, setCustomRelayURl] = useState('');
@@ -50,7 +59,10 @@ const RelayerInput: React.FC<RelayerInputProps> = ({ activeRelayer, relayerApi, 
   useEffect(() => {
     if (view === RelayerInputStatus.SelectOfCurrent) {
       setCustomRelayURl('');
-      setPersistentCustomRelay('false');
+      setPersistentCustomRelay(false);
+      setCheckRelayStatus({
+        loading: false,
+      });
     }
   }, [view]);
 
@@ -149,113 +161,131 @@ const RelayerInput: React.FC<RelayerInputProps> = ({ activeRelayer, relayerApi, 
       </InputSection>
 
       <Modal open={view > RelayerInputStatus.SelectOfCurrent}>
-        <RelayerInfoModalWrapper style={{ background: 'black' }}>
-          <FormControl fullWidth>
-            <InputLabel>Custom Relayer URL</InputLabel>
-
-            <Input
-              disabled={checkRelayStatus.loading}
-              value={customRelayURl}
-              onChange={({ target: { value } }) => {
-                setCustomRelayURl(value);
-              }}
-              endAdornment={
-                <InputAdornment position='end'>
-                  <Button
-                    style={{
-                      fontSize: '.8rem',
-                      whiteSpace: 'nowrap',
-                    }}
-                    disabled={checkRelayStatus.loading}
-                    onClick={() => {
-                      fetchRelayInfo();
-                    }}
-                    color={'primary'}
-                    variant={'outlined'}
-                  >
-                    Check info
-                  </Button>
-                </InputAdornment>
-              }
-            />
-          </FormControl>
-
-          <SpaceBox height={16} />
-
-          <Divider />
+        <RelayerInfoModalWrapper>
+          <Typography variant={'h2'}>Add Custom relayer</Typography>
+          <br />
+          <InputSection>
+            <InputLabel label={'Custom Relayer URL'}></InputLabel>
+            <Flex row>
+              <InputBase
+                fullWidth
+                margin={'dense'}
+                placeholder={'http://localhost:9955'}
+                disabled={checkRelayStatus.loading}
+                value={customRelayURl}
+                onChange={({ target: { value } }) => {
+                  setCustomRelayURl(value);
+                }}
+              />
+              <Button
+                style={{
+                  fontSize: '.8rem',
+                  whiteSpace: 'nowrap',
+                }}
+                disabled={checkRelayStatus.loading}
+                onClick={() => {
+                  fetchRelayInfo();
+                }}
+                color={'primary'}
+                variant={'outlined'}
+              >
+                Check info
+              </Button>
+            </Flex>
+          </InputSection>
 
           <SpaceBox height={16} />
 
           {relayeInfo && (
-            <div
-              style={{
-                maxHeight: '400px',
-                overflow: 'auto',
-              }}
-            >
-              {relayeInfo.evm.length > 0 && (
-                <>
-                  <ul>
-                    {relayeInfo.evm
-                      .filter((i) => {
-                        try {
-                          chainIdToRelayerName(Number(i.key));
-                          return true;
-                        } catch (e) {
-                          console.log(e, i, i.key);
-                          return false;
-                        }
-                      })
-                      .map((i) => {
-                        return (
-                          <li>
-                            <b>{chainIdToRelayerName(Number(i.key))}</b>
-                            <Padding v>
-                              <b>Account</b>: {i.value.account.toString()} <br />
-                              <b>Contracts</b>:
-                              <Padding x={1.5}>
-                                {i.value.contracts.map((i) => (
-                                  <div>
-                                    <Padding v>
-                                      <b> Size </b>: {i.size?.toString()}
-                                      <br />
-                                      <b>Address</b>: {i.address}
-                                    </Padding>
-                                  </div>
-                                ))}
-                              </Padding>
-                            </Padding>
-                          </li>
-                        );
-                      })}
-                  </ul>
-                </>
-              )}
+            <>
+              <Divider />
 
-              {relayeInfo.substrate.length > 0 && (
-                <>
-                  <ul>
-                    {relayeInfo.substrate.map((i) => {
-                      return <li>{i.value.account}</li>;
-                    })}
-                  </ul>
-                </>
-              )}
-            </div>
+              <SpaceBox height={16} />
+              <ContentWrapper
+                style={{
+                  maxHeight: '400px',
+                  overflow: 'auto',
+                }}
+              >
+                {relayeInfo.evm.length > 0 && (
+                  <>
+                    <ul>
+                      {relayeInfo.evm
+                        .filter((i) => {
+                          try {
+                            chainIdToRelayerName(Number(i.key));
+                            return true;
+                          } catch (e) {
+                            console.log(e, i, i.key);
+                            return false;
+                          }
+                        })
+                        .map((i) => {
+                          return (
+                            <li>
+                              <b>{chainIdToRelayerName(Number(i.key))}</b>
+                              <Padding v>
+                                <b>Account</b>: {i.value.account.toString()} <br />
+                                <b>Contracts</b>:
+                                <Padding x={1.5}>
+                                  {i.value.contracts.map((i) => (
+                                    <div>
+                                      <Padding v>
+                                        <b> Size </b>: {i.size?.toString()}
+                                        <br />
+                                        <b>Address</b>: {i.address}
+                                      </Padding>
+                                    </div>
+                                  ))}
+                                </Padding>
+                              </Padding>
+                            </li>
+                          );
+                        })}
+                    </ul>
+                  </>
+                )}
+
+                {relayeInfo.substrate.length > 0 && (
+                  <>
+                    <ul>
+                      {relayeInfo.substrate.map((i) => {
+                        return <li>{i.value.account}</li>;
+                      })}
+                    </ul>
+                  </>
+                )}
+              </ContentWrapper>
+            </>
           )}
-          <Padding v>
-            <Button
-              fullWidth
-              variant={'contained'}
-              color={'primary'}
-              onClick={() => {
-                handleNewCustomRelayer().catch();
-              }}
-            >
-              Add relayer
-            </Button>
-          </Padding>
         </RelayerInfoModalWrapper>
+        <Divider />
+
+        <Flex row ai={'center'} as={RelayerInfoModalActionsWrapper}>
+          <Button
+            disabled={!checkRelayStatus.capabilities || view === RelayerInputStatus.AddNewCustom}
+            fullWidth
+            variant={'contained'}
+            color={'primary'}
+            onClick={() => {
+              handleNewCustomRelayer().catch();
+            }}
+          >
+            Add relayer
+          </Button>
+
+          <Padding />
+
+          <Button
+            fullWidth
+            variant={'outlined'}
+            onClick={() => {
+              setView(RelayerInputStatus.SelectOfCurrent);
+            }}
+          >
+            Close
+          </Button>
+        </Flex>
       </Modal>
     </RelayerInputWrapper>
   );
