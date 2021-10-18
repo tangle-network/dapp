@@ -143,5 +143,6 @@ export const useWithdraw = (params: UseWithdrawProps) => {
     validationErrors: error.validationError,
     relayersState,
     setRelayer,
+    relayerMethods: activeApi?.relayingManager,
   };
 };

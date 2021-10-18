@@ -104,12 +104,26 @@ export class WebbRelayerBuilder {
   }
 
   /// fetch relayers
-  private async fetchInfo(config: RelayerConfig) {
-    const res = await fetch(`${config.endpoint}/api/v1/info`);
+  private async fetchCapabilitiesAndInsert(config: RelayerConfig) {
+    this.capabilities[config.endpoint] = await this.fetchCapabilities(config.endpoint);
+
+    return this.capabilities;
+  }
+
+  public async fetchCapabilities(endpoint: string): Promise<Capabilities> {
+    const res = await fetch(`${endpoint}/api/v1/info`);
     const info: RelayerInfo = await res.json();
-    const capabilities = WebbRelayerBuilder.infoIntoCapabilities(config, info, this.chainNameAdapter);
-    this.capabilities[config.endpoint] = capabilities;
-    return capabilities;
+    return WebbRelayerBuilder.infoIntoCapabilities(
+      {
+        endpoint,
+      },
+      info,
+      this.chainNameAdapter
+    );
+  }
+
+  public addRelayer(endpoint: string) {
+    return this.fetchCapabilitiesAndInsert({ endpoint });
   }
 
   /**
@@ -127,14 +141,13 @@ export class WebbRelayerBuilder {
     await Promise.allSettled(
       config.map((p) => {
         return Promise.race([
-          relayerBuilder.fetchInfo(p),
+          relayerBuilder.fetchCapabilitiesAndInsert(p),
           new Promise((res) => {
             setTimeout(res.bind(null, null), 5000);
           }),
         ]);
       })
     );
-
     return relayerBuilder;
   }
 
