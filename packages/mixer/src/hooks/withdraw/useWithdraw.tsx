@@ -47,14 +47,34 @@ export const useWithdraw = (params: UseWithdrawProps) => {
     if (!withdraw?.enabled) return null;
     return withdraw.inner;
   }, [activeApi]);
+  console.log({ activeRelayer: relayersState.activeRelayer });
+  useEffect(() => {
+    const sub = activeApi?.relayingManager.listUpdated.subscribe(() => {
+      Note.deserialize(params.note)
+        .then((n) => {
+          if (n) {
+            withdrawApi?.getRelayersByNote(n).then((r) => {
+              setRelayersState((p) => ({
+                ...p,
+                loading: false,
+                relayers: r,
+              }));
+            });
+          }
+        })
+        .catch((err) => {
+          logger.info('catch note deserialize useWithdraw', err);
+        });
+    });
+    return () => sub?.unsubscribe();
+  }, [activeApi, params.note]);
+
   // hook events
   useEffect(() => {
     Note.deserialize(params.note)
       .then((n) => {
         if (n) {
           withdrawApi?.getRelayersByNote(n).then((r) => {
-            console.log(r);
-
             setRelayersState((p) => ({
               ...p,
               loading: false,

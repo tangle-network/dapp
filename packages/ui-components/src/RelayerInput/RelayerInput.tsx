@@ -38,6 +38,7 @@ const RelayerInput: React.FC<RelayerInputProps> = ({ activeRelayer, relayerApi, 
   const [view, setView] = useState<RelayerInputStatus>(RelayerInputStatus.SelectOfCurrent);
   const [customRelayURl, setCustomRelayURl] = useState('');
   const [persistentCustomRelay, setPersistentCustomRelay] = useState(false);
+  const [nextRelayerURL, setNextRelayerURl] = useState('');
   const [checkRelayStatus, setCheckRelayStatus] = useState<{
     loading: boolean;
     capabilities?: Capabilities;
@@ -56,10 +57,19 @@ const RelayerInput: React.FC<RelayerInputProps> = ({ activeRelayer, relayerApi, 
   const handleNewCustomRelayer = useCallback(async () => {
     setView(RelayerInputStatus.AddNewCustom);
     await relayerApi.add(customRelayURl, persistentCustomRelay);
-    setActiveRelayer(relayers.find((r) => r.endpoint === customRelayURl) || null);
+    setNextRelayerURl(customRelayURl);
     setView(RelayerInputStatus.SelectOfCurrent);
   }, [relayerApi, relayers, customRelayURl, persistentCustomRelay, setActiveRelayer]);
-
+  useEffect(() => {
+    if (!nextRelayerURL) {
+      return;
+    }
+    const nextRelayer = relayers.find((r) => r.endpoint === nextRelayerURL);
+    if (nextRelayer) {
+      setActiveRelayer(nextRelayer);
+      setNextRelayerURl('');
+    }
+  }, [nextRelayerURL, relayers]);
   const fetchRelayInfo = useCallback(async () => {
     setCheckRelayStatus({
       loading: true,
@@ -105,7 +115,7 @@ const RelayerInput: React.FC<RelayerInputProps> = ({ activeRelayer, relayerApi, 
         <InputLabel label={'Relayer'}>
           <Select
             fullWidth
-            value={activeRelayer || 'none'}
+            value={activeRelayer?.endpoint || 'none'}
             onChange={async ({ target: { value } }) => {
               switch (value) {
                 case 'none':
@@ -114,8 +124,10 @@ const RelayerInput: React.FC<RelayerInputProps> = ({ activeRelayer, relayerApi, 
                 case 'custom':
                   setView(RelayerInputStatus.AddURlkNewCustom);
                   break;
-                default:
-                  setActiveRelayer(relayers.find((r) => r.endpoint === value) || null);
+                default: {
+                  const nextRelayer = relayers.find((r) => r.endpoint === value);
+                  setActiveRelayer(nextRelayer || null);
+                }
               }
             }}
           >

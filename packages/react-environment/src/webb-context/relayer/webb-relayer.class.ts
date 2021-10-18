@@ -71,8 +71,12 @@ export type ChainNameIntoChainId = (name: string, basedOn: 'evm' | 'substrate') 
 export class WebbRelayerBuilder {
   /// storage for relayers capabilities
   private capabilities: Record<RelayerConfig['endpoint'], Capabilities> = {};
+  private _listUpdated = new Subject<void>();
+  public readonly listUpdated: Observable<void>;
 
-  private constructor(private config: RelayerConfig[], private readonly chainNameAdapter: ChainNameIntoChainId) {}
+  private constructor(private config: RelayerConfig[], private readonly chainNameAdapter: ChainNameIntoChainId) {
+    this.listUpdated = this._listUpdated.asObservable();
+  }
 
   /// Mapping the fetched relayers info to the Capabilities store
   private static infoIntoCapabilities(
@@ -122,8 +126,10 @@ export class WebbRelayerBuilder {
     );
   }
 
-  public addRelayer(endpoint: string) {
-    return this.fetchCapabilitiesAndInsert({ endpoint });
+  public async addRelayer(endpoint: string) {
+    const c = await this.fetchCapabilitiesAndInsert({ endpoint });
+    this._listUpdated.next();
+    return c;
   }
 
   /**
