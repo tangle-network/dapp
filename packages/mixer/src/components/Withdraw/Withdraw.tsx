@@ -1,17 +1,17 @@
-import { Fade, FormHelperText, InputBase, MenuItem, Select } from '@material-ui/core';
+import { FormHelperText, InputBase } from '@material-ui/core';
 import WithdrawingModal from '@webb-dapp/mixer/components/Withdraw/WithdrawingModal';
 import { useWithdraw } from '@webb-dapp/mixer/hooks';
 import { useDepositNote } from '@webb-dapp/mixer/hooks/note';
 import WithdrawSuccessModal from '@webb-dapp/react-components/Withdraw/WithdrawSuccessModal';
-import { WithdrawState } from '@webb-dapp/react-environment';
+import { ActiveWebbRelayer, WithdrawState } from '@webb-dapp/react-environment';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabel';
 import { InputSection } from '@webb-dapp/ui-components/Inputs/InputSection/InputSection';
 import { MixerNoteInput } from '@webb-dapp/ui-components/Inputs/NoteInput/MixerNoteInput';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
-import { ethers } from 'ethers';
-import React, { useEffect, useState } from 'react';
+import RelayerInput, { FeesInfo, RelayerApiAdapter } from '@webb-dapp/ui-components/RelayerInput/RelayerInput';
+import React, { useCallback, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 const WithdrawWrapper = styled.div``;
@@ -28,6 +28,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
     canCancel,
     cancelWithdraw,
     receipt,
+    relayerMethods,
     relayersState,
     setReceipt,
     setRelayer,
@@ -39,26 +40,33 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
     note,
   });
 
-  useEffect(() => {
-    async function getFees() {
+  const feesGetter = useCallback(
+    async (activeRelayer: ActiveWebbRelayer): Promise<FeesInfo> => {
+      const defaultFees: FeesInfo = {
+        totalFees: 0,
+        withdrawFeePercentage: 0,
+      };
       try {
-        if (!relayersState.activeRelayer) {
-          return;
-        }
-        relayersState.activeRelayer.fees(note).then((fees) => {
-          if (!fees) {
-            return;
-          }
-          setFees(fees.totalFees);
-          setWithdrawPercentage(fees.withdrawFeePercentage);
-        });
+        const fees = await activeRelayer.fees(note);
+        return fees || defaultFees;
       } catch (e) {
-        return;
+        console.log(e);
       }
-    }
+      return defaultFees;
+    },
+    [note]
+  );
 
-    getFees();
-  }, [note, relayersState.activeRelayer]);
+  const relayerApi: RelayerApiAdapter = useMemo(() => {
+    return {
+      getInfo: async (endpoint) => {
+        return relayerMethods?.fetchCapabilities(endpoint) ?? ({} as any);
+      },
+      add(endPoint: string, _persistent: boolean) {
+        return relayerMethods?.addRelayer(endPoint);
+      },
+    };
+  }, [relayerMethods]);
 
   const depositNote = useDepositNote(note);
   return (
@@ -89,59 +97,14 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
       <SpaceBox height={16} />
       {depositNote && (
         <>
-          <InputSection>
-            <InputLabel label={'Relayer'}>
-              <Select
-                fullWidth
-                value={relayersState.activeRelayer?.endpoint || 'none'}
-                onChange={({ target: { value } }) => {
-                  setRelayer(relayersState?.relayers.find((i) => i.endpoint === value) ?? null);
-                }}
-              >
-                <MenuItem value={'none'} key={'none'}>
-                  <p style={{ fontSize: 14 }}>None</p>
-                </MenuItem>
-                {relayersState.relayers.map((relayer) => {
-                  return (
-                    <MenuItem value={relayer.endpoint} key={relayer.endpoint}>
-                      <p style={{ fontSize: 14 }}>{relayer.endpoint}</p>
-                    </MenuItem>
-                  );
-                })}
-              </Select>
-              <Fade in={Boolean(relayersState.activeRelayer)} unmountOnExit mountOnEnter timeout={300}>
-                <div
-                  style={{
-                    padding: 10,
-                  }}
-                >
-                  <table
-                    style={{
-                      width: '100%',
-                    }}
-                  >
-                    <tbody>
-                      <tr>
-                        <td>
-                          <span style={{ whiteSpace: 'nowrap' }}>Withdraw fee percentage</span>
-                        </td>
-                        <td style={{ textAlign: 'right' }}>{withdrawPercentage * 100}%</td>
-                      </tr>
-
-                      {fees && (
-                        <tr>
-                          <td>Full fees</td>
-                          <td style={{ textAlign: 'right' }}>
-                            {ethers.utils.formatUnits(fees)} {depositNote && depositNote.note.tokenSymbol}
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              </Fade>
-            </InputLabel>
-          </InputSection>
+          <RelayerInput
+            tokenSymbol={depositNote?.note.tokenSymbol || ''}
+            feesGetter={feesGetter}
+            relayers={relayersState.relayers}
+            setActiveRelayer={setRelayer}
+            relayerApi={relayerApi}
+            activeRelayer={relayersState.activeRelayer}
+          />
           <SpaceBox height={16} />
         </>
       )}

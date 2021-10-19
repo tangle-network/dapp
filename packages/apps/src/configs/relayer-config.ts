@@ -31,7 +31,6 @@ export function relayerNameToChainId(name: string): ChainId {
       return ChainId.Rinkeby;
   }
 
-  console.log('unhandled relayed chain name  ' + name);
   throw new Error('unhandled relayed chain name  ' + name);
 }
 

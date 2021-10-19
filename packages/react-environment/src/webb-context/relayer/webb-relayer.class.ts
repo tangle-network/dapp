@@ -71,8 +71,12 @@ export type ChainNameIntoChainId = (name: string, basedOn: 'evm' | 'substrate') 
 export class WebbRelayerBuilder {
   /// storage for relayers capabilities
   private capabilities: Record<RelayerConfig['endpoint'], Capabilities> = {};
+  private _listUpdated = new Subject<void>();
+  public readonly listUpdated: Observable<void>;
 
-  private constructor(private config: RelayerConfig[], private readonly chainNameAdapter: ChainNameIntoChainId) {}
+  private constructor(private config: RelayerConfig[], private readonly chainNameAdapter: ChainNameIntoChainId) {
+    this.listUpdated = this._listUpdated.asObservable();
+  }
 
   /// Mapping the fetched relayers info to the Capabilities store
   private static infoIntoCapabilities(
@@ -104,12 +108,28 @@ export class WebbRelayerBuilder {
   }
 
   /// fetch relayers
-  private async fetchInfo(config: RelayerConfig) {
-    const res = await fetch(`${config.endpoint}/api/v1/info`);
+  private async fetchCapabilitiesAndInsert(config: RelayerConfig) {
+    this.capabilities[config.endpoint] = await this.fetchCapabilities(config.endpoint);
+
+    return this.capabilities;
+  }
+
+  public async fetchCapabilities(endpoint: string): Promise<Capabilities> {
+    const res = await fetch(`${endpoint}/api/v1/info`);
     const info: RelayerInfo = await res.json();
-    const capabilities = WebbRelayerBuilder.infoIntoCapabilities(config, info, this.chainNameAdapter);
-    this.capabilities[config.endpoint] = capabilities;
-    return capabilities;
+    return WebbRelayerBuilder.infoIntoCapabilities(
+      {
+        endpoint,
+      },
+      info,
+      this.chainNameAdapter
+    );
+  }
+
+  public async addRelayer(endpoint: string) {
+    const c = await this.fetchCapabilitiesAndInsert({ endpoint });
+    this._listUpdated.next();
+    return c;
   }
 
   /**
@@ -127,14 +147,13 @@ export class WebbRelayerBuilder {
     await Promise.allSettled(
       config.map((p) => {
         return Promise.race([
-          relayerBuilder.fetchInfo(p),
+          relayerBuilder.fetchCapabilitiesAndInsert(p),
           new Promise((res) => {
             setTimeout(res.bind(null, null), 5000);
           }),
         ]);
       })
     );
-
     return relayerBuilder;
   }
 
