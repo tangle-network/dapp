@@ -10,9 +10,9 @@ import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabe
 import { InputSection } from '@webb-dapp/ui-components/Inputs/InputSection/InputSection';
 import { MixerNoteInput } from '@webb-dapp/ui-components/Inputs/NoteInput/MixerNoteInput';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
+import RelayerInput, { FeesInfo, RelayerApiAdapter } from '@webb-dapp/ui-components/RelayerInput/RelayerInput';
 import React, { useCallback, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import RelayerInput, { FeesInfo, RelayerApiAdapter } from '@webb-dapp/ui-components/RelayerInput/RelayerInput';
 
 const WithdrawWrapper = styled.div``;
 type WithdrawProps = {};
@@ -28,13 +28,13 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
     canCancel,
     cancelWithdraw,
     receipt,
+    relayerMethods,
     relayersState,
     setReceipt,
     setRelayer,
     stage,
     validationErrors,
     withdraw,
-    relayerMethods,
   } = useWithdraw({
     recipient,
     note,
@@ -59,8 +59,8 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
 
   const relayerApi: RelayerApiAdapter = useMemo(() => {
     return {
-      getInfo: (endpoint) => {
-        return relayerMethods?.fetchCapabilities(endpoint);
+      getInfo: async (endpoint) => {
+        return relayerMethods?.fetchCapabilities(endpoint) ?? ({} as any);
       },
       add(endPoint: string, _persistent: boolean) {
         return relayerMethods?.addRelayer(endPoint);
