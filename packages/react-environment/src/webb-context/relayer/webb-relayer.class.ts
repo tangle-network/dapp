@@ -7,9 +7,9 @@ import {
   RelayerConfig,
   RelayerMessage,
 } from '@webb-dapp/react-environment/webb-context/relayer/types';
+import { LoggerService } from '@webb-tools/app-util';
 import { Observable, Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { LoggerService } from '@webb-tools/app-util';
 
 const logger = LoggerService.get('webb-relayer class');
 
@@ -238,7 +238,7 @@ class RelayedWithdraw {
   readonly watcher: Observable<[RelayedWithdrawResult, string | undefined]>;
   private emitter: Subject<[RelayedWithdrawResult, string | undefined]> = new Subject();
 
-  constructor(private ws: WebSocket) {
+  constructor(private ws: WebSocket, private prefix: string) {
     this.watcher = this.emitter.asObservable();
 
     ws.onmessage = ({ data }) => {
@@ -271,10 +271,12 @@ class RelayedWithdraw {
   generateWithdrawRequest(chain: RelayedChainInput, proof: string, args: WithdrawRelayerArgs) {
     return {
       [chain.baseOn]: {
-        chain: chain.name,
-        contract: chain.contractAddress,
-        proof,
-        ...args,
+        [this.prefix]: {
+          chain: chain.name,
+          contract: chain.contractAddress,
+          proof,
+          ...args,
+        },
       },
     };
   }
@@ -305,7 +307,7 @@ class RelayedWithdraw {
 export class WebbRelayer {
   constructor(readonly endpoint: string, readonly capabilities: Capabilities) {}
 
-  async initWithdraw() {
+  async initWithdraw(target: 'anchor' | 'anchor2') {
     const ws = new WebSocket(this.endpoint.replace('http', 'ws') + '/ws');
     await new Promise((r, c) => {
       ws.onopen = r;
@@ -321,7 +323,16 @@ export class WebbRelayer {
         setTimeout(r, 300);
       });
     }
-    return new RelayedWithdraw(ws);
+    let prefix: string;
+    switch (target) {
+      case 'anchor':
+        prefix = 'anchorRelayTx';
+        break;
+      case 'anchor2':
+        prefix = 'anchor2RelayTx';
+        break;
+    }
+    return new RelayedWithdraw(ws, prefix);
   }
 
   async getIp(): Promise<string> {
