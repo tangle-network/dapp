@@ -1,4 +1,4 @@
-import { Button, Divider, InputBase, MenuItem, Select } from '@material-ui/core';
+import { Button, Divider, Fade, InputBase, MenuItem, Select } from '@material-ui/core';
 import { ActiveWebbRelayer, Capabilities, WebbRelayer } from '@webb-dapp/react-environment';
 import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabel';
 import { InputSection } from '@webb-dapp/ui-components/Inputs/InputSection/InputSection';
@@ -10,8 +10,8 @@ import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
-import { setConfig } from 'react-hot-loader';
 import Typography from '@material-ui/core/Typography';
+import { ethers } from 'ethers';
 
 export interface RelayerApiAdapter {
   getInfo(endpoing: string): Promise<Capabilities>;
@@ -19,13 +19,19 @@ export interface RelayerApiAdapter {
   add(endPoint: string, persistent: boolean): void;
 }
 
+export type FeesInfo = {
+  totalFees: number | string;
+  withdrawFeePercentage: number;
+};
 const RelayerInputWrapper = styled.div``;
 type RelayerInputProps = {
   relayers: WebbRelayer[];
   activeRelayer: ActiveWebbRelayer | null;
-  setActiveRelayer(nextRelayer: WebbRelayer | null): void;
 
   relayerApi: RelayerApiAdapter;
+  tokenSymbol: string;
+  setActiveRelayer(nextRelayer: WebbRelayer | null): void;
+  feesGetter(activeRelayer: ActiveWebbRelayer): Promise<FeesInfo>;
 };
 
 enum RelayerInputStatus {
@@ -43,11 +49,47 @@ const RelayerInfoModalActionsWrapper = styled.div`
   // background-color: ${({ theme }: { theme: Pallet }) => theme.layer2Background};
 `;
 const ContentWrapper = styled.div``;
-const RelayerInput: React.FC<RelayerInputProps> = ({ activeRelayer, relayerApi, relayers, setActiveRelayer }) => {
+const RelayerInput: React.FC<RelayerInputProps> = ({
+  activeRelayer,
+  feesGetter,
+  relayerApi,
+  relayers,
+  setActiveRelayer,
+  tokenSymbol,
+}) => {
   const [view, setView] = useState<RelayerInputStatus>(RelayerInputStatus.SelectOfCurrent);
   const [customRelayURl, setCustomRelayURl] = useState('');
   const [persistentCustomRelay, setPersistentCustomRelay] = useState(false);
   const [nextRelayerURL, setNextRelayerURl] = useState('');
+
+  const [relayingIncentives, setRelayingIncentives] = useState<FeesInfo>({
+    totalFees: 0,
+    withdrawFeePercentage: 0,
+  });
+
+  useEffect(() => {
+    async function getFees() {
+      try {
+        if (!activeRelayer) {
+          return;
+        }
+        feesGetter(activeRelayer).then((fees) => {
+          if (!fees) {
+            return;
+          }
+          setRelayingIncentives({
+            totalFees: fees.totalFees,
+            withdrawFeePercentage: fees.withdrawFeePercentage,
+          });
+        });
+      } catch (e) {
+        return;
+      }
+    }
+
+    getFees();
+  }, [activeRelayer, feesGetter]);
+
   const [checkRelayStatus, setCheckRelayStatus] = useState<{
     loading: boolean;
     capabilities?: Capabilities;
@@ -158,6 +200,37 @@ const RelayerInput: React.FC<RelayerInputProps> = ({ activeRelayer, relayerApi, 
             })}
           </Select>
         </InputLabel>
+        <Fade in={Boolean(activeRelayer)} unmountOnExit mountOnEnter timeout={300}>
+          <div
+            style={{
+              padding: 10,
+            }}
+          >
+            <table
+              style={{
+                width: '100%',
+              }}
+            >
+              <tbody>
+                <tr>
+                  <td>
+                    <span style={{ whiteSpace: 'nowrap' }}>Withdraw fee percentage</span>
+                  </td>
+                  <td style={{ textAlign: 'right' }}>{relayingIncentives.withdrawFeePercentage * 100}%</td>
+                </tr>
+
+                {relayingIncentives.totalFees && (
+                  <tr>
+                    <td>Full fees</td>
+                    <td style={{ textAlign: 'right' }}>
+                      {ethers.utils.formatUnits(relayingIncentives.totalFees)} {tokenSymbol}
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </Fade>
       </InputSection>
 
       <Modal open={view > RelayerInputStatus.SelectOfCurrent}>

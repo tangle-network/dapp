@@ -3,16 +3,16 @@ import WithdrawingModal from '@webb-dapp/mixer/components/Withdraw/WithdrawingMo
 import { useWithdraw } from '@webb-dapp/mixer/hooks';
 import { useDepositNote } from '@webb-dapp/mixer/hooks/note';
 import WithdrawSuccessModal from '@webb-dapp/react-components/Withdraw/WithdrawSuccessModal';
-import { WithdrawState } from '@webb-dapp/react-environment';
+import { ActiveWebbRelayer, WithdrawState } from '@webb-dapp/react-environment';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabel';
 import { InputSection } from '@webb-dapp/ui-components/Inputs/InputSection/InputSection';
 import { MixerNoteInput } from '@webb-dapp/ui-components/Inputs/NoteInput/MixerNoteInput';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import RelayerInput, { RelayerApiAdapter } from '@webb-dapp/ui-components/RelayerInput/RelayerInput';
+import RelayerInput, { FeesInfo, RelayerApiAdapter } from '@webb-dapp/ui-components/RelayerInput/RelayerInput';
 
 const WithdrawWrapper = styled.div``;
 type WithdrawProps = {};
@@ -40,26 +40,22 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
     note,
   });
 
-  useEffect(() => {
-    async function getFees() {
+  const feesGetter = useCallback(
+    async (activeRelayer: ActiveWebbRelayer): Promise<FeesInfo> => {
+      const defaultFees: FeesInfo = {
+        totalFees: 0,
+        withdrawFeePercentage: 0,
+      };
       try {
-        if (!relayersState.activeRelayer) {
-          return;
-        }
-        relayersState.activeRelayer.fees(note).then((fees) => {
-          if (!fees) {
-            return;
-          }
-          setFees(fees.totalFees);
-          setWithdrawPercentage(fees.withdrawFeePercentage);
-        });
+        const fees = await activeRelayer.fees(note);
+        return fees || defaultFees;
       } catch (e) {
-        return;
+        console.log(e);
       }
-    }
-
-    getFees();
-  }, [note, relayersState.activeRelayer]);
+      return defaultFees;
+    },
+    [note]
+  );
 
   const relayerApi: RelayerApiAdapter = useMemo(() => {
     return {
@@ -102,6 +98,8 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
       {depositNote && (
         <>
           <RelayerInput
+            tokenSymbol={depositNote?.note.tokenSymbol || ''}
+            feesGetter={feesGetter}
             relayers={relayersState.relayers}
             setActiveRelayer={setRelayer}
             relayerApi={relayerApi}
@@ -146,36 +144,3 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
     </WithdrawWrapper>
   );
 };
-{
-  /*              <Fade in={Boolean(relayersState.activeRelayer)} unmountOnExit mountOnEnter timeout={300}>
-								<div
-									style={{
-										padding: 10,
-									}}
-								>
-									<table
-										style={{
-											width: '100%',
-										}}
-									>
-										<tbody>
-											<tr>
-												<td>
-													<span style={{ whiteSpace: 'nowrap' }}>Withdraw fee percentage</span>
-												</td>
-												<td style={{ textAlign: 'right' }}>{withdrawPercentage * 100}%</td>
-											</tr>
-
-											{fees && (
-												<tr>
-													<td>Full fees</td>
-													<td style={{ textAlign: 'right' }}>
-														{ethers.utils.formatUnits(fees)} {depositNote && depositNote.note.tokenSymbol}
-													</td>
-												</tr>
-											)}
-										</tbody>
-									</table>
-								</div>
-							</Fade>*/
-}
