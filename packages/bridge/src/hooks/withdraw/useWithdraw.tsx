@@ -113,8 +113,11 @@ export const useWithdraw = (params: UseWithdrawProps) => {
       }));
     });
 
-    return () => Object.values(unsubscribe).forEach((v) => v && v());
-  }, [withdrawApi]);
+    return () => {
+      sub?.unsubscribe();
+      Object.values(unsubscribe).forEach((v) => v && v());
+    }
+  }, [withdrawApi, params.note]);
 
   const withdraw = useCallback(async () => {
     if (!withdrawApi) return;
