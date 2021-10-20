@@ -373,8 +373,13 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
   }
 
   async withdraw(note: string, recipient: string): Promise<string> {
-    logger.trace(`Withdraw using note ${note} , recipient ${recipient}`);
+    const activeRelayer = this.activeRelayer[0];
 
+    if (this.activeRelayer) {
+      // relayer flow
+    }
+
+    logger.trace(`Withdraw using note ${note} , recipient ${recipient}`);
     const parseNote = await Note.deserialize(note);
     const depositNote = parseNote.note;
     const sourceChainName = getEVMChainNameFromInternal(Number(depositNote.sourceChain) as ChainId);
