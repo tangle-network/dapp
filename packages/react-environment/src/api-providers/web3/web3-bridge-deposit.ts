@@ -10,6 +10,7 @@ import { BridgeDeposit } from '../../webb-context/bridge/bridge-deposit';
 import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polkadot/transaction-notification-config';
 import React from 'react';
 import { DepositNotification } from '@webb-dapp/ui-components/notification/DepositNotification';
+import { notificationApi } from '@webb-dapp/ui-components/notification';
 import { logger } from 'ethers';
 
 type DepositPayload = IDepositPayload<Note, [Deposit, number | string]>;
@@ -56,6 +57,16 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
       const contract = this.inner.getWebbAnchorByAddress(contractAddress);
 
       logger.info(`Commitment for deposit is ${commitment}`);
+
+      notificationApi.addToQueue({
+        message: 'Waiting for token approval',
+        variant: 'info',
+        key: 'waiting-approval',
+        autoHideDuration: 50000,
+      });
+      await contract.approve(String(commitment));
+      notificationApi.remove('waiting-approval');
+
       await contract.deposit(String(commitment));
       transactionNotificationConfig.finalize?.({
         address: '',
@@ -72,6 +83,7 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
         throw e;
       }
       if (e.code == 4001) {
+        notificationApi.remove('waiting-approval');
         transactionNotificationConfig.failed?.({
           address: '',
           data: 'User Rejected Deposit',
@@ -83,6 +95,7 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
           },
         });
       } else {
+        notificationApi.remove('waiting-approval');
         transactionNotificationConfig.failed?.({
           address: '',
           data: 'Deposit Transaction Failed',

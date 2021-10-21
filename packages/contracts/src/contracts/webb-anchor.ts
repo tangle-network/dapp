@@ -92,8 +92,7 @@ export class WebbAnchorContract {
     return undefined;
   }
 
-  async deposit(commitment: string, onComplete?: (event: DepositEvent) => void) {
-    const overrides = {};
+  async approve(commitment: string, onComplete?: (event: DepositEvent) => void) {
     const tokenAddress = await this._contract.token();
     const tokenInstance = Erc20Factory.connect(tokenAddress, this.signer);
 
@@ -105,7 +104,10 @@ export class WebbAnchorContract {
       const tx = await tokenInstance.approve(this._contract.address, depositAmount);
       await tx.wait();
     }
+  }
 
+  async deposit(commitment: string, onComplete?: (event: DepositEvent) => void) {
+    const overrides = {};
     const recipient = await this._contract.deposit(commitment, overrides);
     await recipient.wait();
   }
