@@ -2,9 +2,11 @@ import { ChainId, chainIdIntoEVMId, evmIdIntoChainId } from '@webb-dapp/apps/con
 import { getEVMChainName, getNativeCurrencySymbol } from '@webb-dapp/apps/configs/evm/SupportedMixers';
 import { createTornDeposit, Deposit } from '@webb-dapp/contracts/utils/make-deposit';
 import { DepositPayload as IDepositPayload, MixerDeposit, MixerSize } from '@webb-dapp/react-environment/webb-context';
+import { ButtonBase, Checkbox, FormControlLabel, Icon, IconButton, Tooltip, Typography } from '@material-ui/core';
 import { DepositNotification } from '@webb-dapp/ui-components/notification/DepositNotification';
 import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polkadot/transaction-notification-config';
 import { Note, NoteGenInput } from '@webb-tools/sdk-mixer';
+import { notificationApi } from '@webb-dapp/ui-components/notification';
 import React from 'react';
 import utils from 'web3-utils';
 
@@ -35,7 +37,15 @@ export class Web3MixerDeposit extends MixerDeposit<WebbWeb3Provider, DepositPayl
     const contract = await this.inner.getContractBySize(amount, getNativeCurrencySymbol(await this.inner.getChainId()));
     console.log(deposit.commitment);
     try {
+      notificationApi.addToQueue({
+        message: 'Waiting for token approval',
+        variant: 'warning',
+        key: 'waiting-approval',
+        autoHideDuration: 50000,
+      });
       await contract.deposit(deposit.commitment);
+      notificationApi.remove('waiting-approval');
+
       transactionNotificationConfig.finalize?.({
         address: '',
         data: undefined,
@@ -48,6 +58,7 @@ export class Web3MixerDeposit extends MixerDeposit<WebbWeb3Provider, DepositPayl
     } catch (e) {
       console.log(e);
       if (e.code == 4001) {
+        notificationApi.remove('waiting-approval');
         transactionNotificationConfig.failed?.({
           address: '',
           data: 'User Rejected Deposit',
@@ -58,6 +69,7 @@ export class Web3MixerDeposit extends MixerDeposit<WebbWeb3Provider, DepositPayl
           },
         });
       } else {
+        notificationApi.remove('waiting-approval');
         transactionNotificationConfig.failed?.({
           address: '',
           data: 'Deposit Transaction Failed',
