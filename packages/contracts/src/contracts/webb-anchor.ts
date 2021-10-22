@@ -92,15 +92,25 @@ export class WebbAnchorContract {
     return undefined;
   }
 
-  async approve(commitment: string, onComplete?: (event: DepositEvent) => void) {
+  async checkForApprove(onComplete?: (event: DepositEvent) => void) {
+    const userAddress = await this.signer.getAddress();
     const tokenAddress = await this._contract.token();
     const tokenInstance = Erc20Factory.connect(tokenAddress, this.signer);
-
-    // check the approved spending before attempting deposit
-    const userAddress = await this.signer.getAddress();
     const tokenAllowance = await tokenInstance.allowance(userAddress, this._contract.address);
     const depositAmount = await this.denomination;
+    console.log("tokenAllowance", tokenAllowance)
+    console.log("depositAmount", depositAmount)
     if (tokenAllowance < depositAmount) {
+      return tokenInstance;
+    }
+    return null;
+  }
+
+  async approve(tokenInstance: Contract, onComplete?: (event: DepositEvent) => void) {
+    // check the approved spending before attempting deposit
+    if (tokenInstance == null) return;
+    if (tokenInstance != null) {
+      const depositAmount = await this.denomination;
       const tx = await tokenInstance.approve(this._contract.address, depositAmount);
       await tx.wait();
     }

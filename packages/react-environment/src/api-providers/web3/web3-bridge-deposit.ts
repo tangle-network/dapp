@@ -58,25 +58,34 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
 
       logger.info(`Commitment for deposit is ${commitment}`);
 
-      notificationApi.addToQueue({
-        message: 'Waiting for token approval',
-        variant: 'info',
-        key: 'waiting-approval',
-        autoHideDuration: 50000,
-      });
-      await contract.approve(String(commitment));
-      notificationApi.remove('waiting-approval');
-
-      await contract.deposit(String(commitment));
-      transactionNotificationConfig.finalize?.({
-        address: '',
-        data: undefined,
-        key: 'bridge-deposit',
-        path: {
-          method: 'deposit',
-          section: bridge.currency.name,
-        },
-      });
+      const tokenInstance = await contract.checkForApprove();
+      console.log("tokenInstance", tokenInstance);
+      if (tokenInstance != null) {
+        notificationApi.addToQueue({
+          message: 'Waiting for token approval',
+          variant: 'info',
+          key: 'waiting-approval',
+          autoHideDuration: 50000,
+        });
+        await contract.approve(tokenInstance);
+        await contract.deposit(String(commitment));
+        notificationApi.remove('waiting-approval');
+        transactionNotificationConfig.finalize?.({
+          address: '',
+          data: undefined,
+          key: 'bridge-deposit',
+          path: {
+            method: 'deposit',
+            section: bridge.currency.name,
+          },
+        });
+      } else {
+        notificationApi.addToQueue({
+          message: 'Token approval failed',
+          variant: 'error',
+          key: 'waiting-approval',
+        });
+      }
     } catch (e) {
       console.log(e);
       if (!e.code) {
