@@ -65,7 +65,7 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
           message: 'Waiting for token approval',
           variant: 'info',
           key: 'waiting-approval',
-          autoHideDuration: 50000,
+          extras: { persist: true }
         });
         await contract.approve(tokenInstance);
         notificationApi.remove('waiting-approval');
