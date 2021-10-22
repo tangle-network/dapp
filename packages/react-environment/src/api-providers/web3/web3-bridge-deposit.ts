@@ -81,7 +81,7 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
         });
       } else {
         notificationApi.addToQueue({
-          message: 'Token approval failed',
+          message: 'Not enough token balance',
           variant: 'error',
           key: 'waiting-approval',
         });
