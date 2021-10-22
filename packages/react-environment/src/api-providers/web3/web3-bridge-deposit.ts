@@ -68,8 +68,8 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
           autoHideDuration: 50000,
         });
         await contract.approve(tokenInstance);
-        await contract.deposit(String(commitment));
         notificationApi.remove('waiting-approval');
+        await contract.deposit(String(commitment));
         transactionNotificationConfig.finalize?.({
           address: '',
           data: undefined,
