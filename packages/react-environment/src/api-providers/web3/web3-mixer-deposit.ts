@@ -36,6 +36,7 @@ export class Web3MixerDeposit extends MixerDeposit<WebbWeb3Provider, DepositPayl
     console.log(deposit.commitment);
     try {
       await contract.deposit(deposit.commitment);
+
       transactionNotificationConfig.finalize?.({
         address: '',
         data: undefined,
