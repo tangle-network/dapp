@@ -126,6 +126,12 @@ const AppBar: React.FC<AppBarProps> = () => {
             </NavLink>
           </li>
 
+          <li className={'active'}>
+            <NavLink to={'/faucet'} activeClassName={'active'}>
+              Faucet
+            </NavLink>
+          </li>
+
           {/*        <li>
           <NavLink to={'/statistics'}>Statistics</NavLink>
         </li>

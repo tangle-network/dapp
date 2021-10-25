@@ -42,6 +42,12 @@
 	  "@webb-dapp/page-mixer/*": [
 		"page-mixer/src/*"
 	  ],
+	  "@webb-dapp/page-faucet": [
+		"page-faucet/src"
+	  ],
+	  "@webb-dapp/page-faucet/*": [
+		"page-faucet/src/*"
+	  ],
 	  "@webb-dapp/page-governance": [
 		"page-governance/src"
 	  ],
@@ -89,6 +95,12 @@
 	  ],
 	  "@webb-dapp/mixer": [
 		"mixer/src"
+	  ],
+	  "@webb-dapp/faucet/*": [
+		"faucet/src/*"
+	  ],
+	  "@webb-dapp/faucet": [
+		"faucet/src"
 	  ],
 	  "@webb-dapp/wallet/*": [
 		"wallet/src/*"
