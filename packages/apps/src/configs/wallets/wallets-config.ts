@@ -15,6 +15,7 @@ const ANY_EVM = [
   ChainId.Goerli,
   ChainId.HarmonyTestnet1,
   ChainId.HarmonyTestnet0,
+  ChainId.Shiden,
 ];
 export const walletsConfig: AppConfig['wallet'] = {
   [WalletId.Polkadot]: {
@@ -27,7 +28,7 @@ export const walletsConfig: AppConfig['wallet'] = {
     async detect() {
       return true;
     },
-    supportedChainIds: [ChainId.Edgeware, ChainId.EdgewareTestNet, ChainId.EdgewareLocalNet],
+    supportedChainIds: [ChainId.EdgewareTestNet, ChainId.EdgewareLocalNet],
   },
   [WalletId.MetaMask]: {
     id: WalletId.MetaMask,

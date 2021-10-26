@@ -10,6 +10,7 @@ export enum ChainId {
   HarmonyTestnet1,
   HarmonyTestnet0,
   Ganache,
+  Shiden,
 }
 
 export enum WebbEVMChain {
@@ -26,6 +27,7 @@ export enum WebbEVMChain {
   Beresheet = 2022,
   HarmonyTestnet0 = 1666700000,
   HarmonyTestnet1 = 1666700001,
+  Shiden = 336,
 }
 
 export const evmIdIntoChainId = (evmId: number | string): ChainId => {
@@ -50,6 +52,8 @@ export const evmIdIntoChainId = (evmId: number | string): ChainId => {
       return ChainId.HarmonyTestnet0;
     case WebbEVMChain.Ganache:
       return ChainId.Ganache;
+    case WebbEVMChain.Shiden:
+      return ChainId.Shiden;
   }
 };
 
@@ -75,6 +79,8 @@ export const chainIdIntoEVMId = (chainId: ChainId | Number | String): WebbEVMCha
       return WebbEVMChain.HarmonyTestnet1;
     case ChainId.Ganache:
       return WebbEVMChain.Ganache;
+    case ChainId.Shiden:
+      return WebbEVMChain.Shiden;
     default:
       throw Error(`unsupported chain ${chainId}`);
   }

@@ -4,6 +4,7 @@ import { HarmonyLogo } from '@webb-dapp/apps/configs/logos/HarmonyLogo';
 import { AppConfig } from '@webb-dapp/react-environment/webb-context';
 
 import { WebbCurrencyId } from '../currencies/webb-currency-id.enum';
+import ShidenLogo from '../logos/ShidenLogo';
 import { ChainId, WebbEVMChain } from './chain-id.enum';
 
 export const chainsConfig: AppConfig['chains'] = {
@@ -126,5 +127,22 @@ export const chainsConfig: AppConfig['chains'] = {
       },
     ],
     nativeCurrencyId: WebbCurrencyId.ETH,
+  },
+  [ChainId.Shiden]: {
+    group: 'eth',
+    id: ChainId.Shiden,
+    evmId: WebbEVMChain.Shiden,
+    name: 'Shiden',
+    tag: 'live',
+    url: 'https://shiden.api.onfinality.io/public',
+    evmRpcUrls: ['https://shiden.api.onfinality.io/public'],
+    logo: ShidenLogo,
+    currencies: [
+      {
+        currencyId: WebbCurrencyId.SDN,
+        enabled: true,
+      },
+    ],
+    nativeCurrencyId: WebbCurrencyId.SDN,
   },
 };
