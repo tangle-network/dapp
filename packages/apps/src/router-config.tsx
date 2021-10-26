@@ -7,6 +7,7 @@ import { sideBarConfig } from './sidebar-config';
 
 const PageMixer = lazy(() => import('@webb-dapp/page-mixer'));
 const PageBridge = lazy(() => import('@webb-dapp/page-bridge'));
+const PageTransfers = lazy(() => import('@webb-dapp/page-transfer'));
 const CSuspense: FC = ({ children }) => {
   return <Suspense fallback={<PageContentLoading />}>{children}</Suspense>;
 };
@@ -36,6 +37,15 @@ export const config: RouterConfigData[] = [
         ),
         path: 'bridge',
         title: 'Bridge',
+      },
+      {
+        element: (
+          <CSuspense>
+            <PageTransfers />
+          </CSuspense>
+        ),
+        path: 'transfer/*',
+        title: 'Transfer',
       },
       {
         element: <CSuspense>{/*  <PageGovernance />*/}</CSuspense>,
