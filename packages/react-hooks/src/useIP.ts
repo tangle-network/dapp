@@ -14,6 +14,7 @@ export function useIp(activeApi?: WebbApiProvider<any>) {
         setIp(response);
       }
     }
+    getIpInfo()
   }, [activeApi]);
   return ip;
 }
