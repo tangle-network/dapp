@@ -1,10 +1,10 @@
 import EdgewareLogo from '@webb-dapp/apps/configs/logos/EdgewareLogo';
 import EtherLogo from '@webb-dapp/apps/configs/logos/Eth';
-import { HarmonyLogo } from '@webb-dapp/apps/configs/logos/HarmonyLogo';
+import HarmonyLogo from '@webb-dapp/apps/configs/logos/HarmonyLogo';
+import ShidenLogo from '@webb-dapp/apps/configs/logos/ShidenLogo';
 import { AppConfig } from '@webb-dapp/react-environment/webb-context';
 
 import { WebbCurrencyId } from '../currencies/webb-currency-id.enum';
-import ShidenLogo from '../logos/ShidenLogo';
 import { ChainId, WebbEVMChain } from './chain-id.enum';
 
 export const chainsConfig: AppConfig['chains'] = {
