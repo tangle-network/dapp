@@ -23,6 +23,10 @@ const webWEBBRinkebyHarmonyTestnet0 = new BridgeCurrency(
 const webETHRinkebyHarmonyTestnet0 = new BridgeCurrency([ChainId.Rinkeby, ChainId.HarmonyTestnet0], WebbCurrencyId.ETH);
 const webEDGRinkebyBeresheet = new BridgeCurrency([ChainId.Rinkeby, ChainId.EdgewareLocalNet], WebbCurrencyId.EDG);
 const webOneRinkebyHarmonyTestnet0 = new BridgeCurrency([ChainId.Rinkeby, ChainId.HarmonyTestnet0], WebbCurrencyId.ONE);
+const webETHRinkebyHarmonyBeresheet = new BridgeCurrency(
+  [ChainId.Rinkeby, ChainId.EdgewareLocalNet],
+  WebbCurrencyId.ETH
+);
 
 export const bridgeConfig: BridgeConfig = {
   [webWEBBRinkebyHarmonyTestnet0.name]: {
@@ -69,6 +73,22 @@ export const bridgeConfig: BridgeConfig = {
       {
         anchorAddresses: {
           [ChainId.HarmonyTestnet0]: '0x64E9727C4a835D518C34d3A50A8157120CAeb32F',
+          [ChainId.Rinkeby]: '0xB42139fFcEF02dC85db12aC9416a19A12381167D',
+        },
+        amount: '.1',
+      },
+    ],
+  },
+  [webETHRinkebyHarmonyBeresheet.name]: {
+    asset: webETHRinkebyHarmonyBeresheet,
+    tokenAddresses: {
+      [ChainId.EdgewareLocalNet]: '0x9d609F54536Cef34f5F612BD976ca632F1fa208E',
+      [ChainId.Rinkeby]: '0x7Cec2Bf7D9c4C3C96Da8a0BfeBAB1E84b8212394',
+    },
+    anchors: [
+      {
+        anchorAddresses: {
+          [ChainId.EdgewareLocalNet]: '0x64E9727C4a835D518C34d3A50A8157120CAeb32F',
           [ChainId.Rinkeby]: '0xB42139fFcEF02dC85db12aC9416a19A12381167D',
         },
         amount: '.1',

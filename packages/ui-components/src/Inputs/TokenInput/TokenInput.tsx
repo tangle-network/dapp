@@ -102,7 +102,7 @@ const AccountManagerWrapper = styled.div<any>`
   top: -52px;
 `;
 
-type TokenInputProps = {
+export type TokenInputProps = {
   currencies: CurrencyContent[];
   value?: CurrencyContent;
   onChange(next: CurrencyContent | undefined): void;
