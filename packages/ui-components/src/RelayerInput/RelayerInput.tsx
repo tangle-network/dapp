@@ -162,7 +162,6 @@ const RelayerInput: React.FC<RelayerInputProps> = ({
     }
     return null;
   }, [checkRelayStatus]);
-  console.log(relayeInfo);
   return (
     <RelayerInputWrapper>
       <InputSection>

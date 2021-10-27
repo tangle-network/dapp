@@ -129,7 +129,7 @@ export const chainsConfig: AppConfig['chains'] = {
     nativeCurrencyId: WebbCurrencyId.ETH,
   },
   [ChainId.Shiden]: {
-    group: 'eth',
+    group: 'sdn',
     id: ChainId.Shiden,
     evmId: WebbEVMChain.Shiden,
     name: 'Shiden',
