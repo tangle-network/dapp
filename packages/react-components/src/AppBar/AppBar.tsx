@@ -132,6 +132,12 @@ const AppBar: React.FC<AppBarProps> = () => {
             </NavLink>
           </li>
 
+          <li className={'active'}>
+            <NavLink to={'/wrap-unwrap'} activeClassName={'active'}>
+              Wrap/Unwrap
+            </NavLink>
+          </li>
+
           {/*        <li>
           <NavLink to={'/statistics'}>Statistics</NavLink>
         </li>

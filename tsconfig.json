@@ -102,6 +102,12 @@
 	  "@webb-dapp/page-transfer": [
 		"page-transfer/src"
 	  ],
+	  "@webb-dapp/page-wrap-unwrap/*": [
+		"page-wrap-unwrap/src/*"
+	  ],
+	  "@webb-dapp/page-wrap-unwrap": [
+		"page-wrap-unwrap/src"
+	  ],
 	  "@webb-dapp/bridge/*": [
 		"bridge/src/*"
 	  ],
