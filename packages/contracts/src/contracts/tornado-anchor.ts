@@ -85,6 +85,9 @@ export class TornadoAnchorContract {
       case WebbEVMChain.Rinkeby:
         step = 5000;
         break;
+      case WebbEVMChain.Shiden:
+        step = 1000;
+        break;
     }
 
     try {

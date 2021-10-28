@@ -116,6 +116,8 @@ const WithdrawSuccessModal: React.FC<WithdrawingModalProps> = ({ exit, note, rec
         return `https://explorer.pops.one/tx/${txHash}`;
       case ChainId.HarmonyTestnet1:
         return `https://explorer.pops.one/tx/${txHash}`;
+      case ChainId.Shiden:
+        return `https://shiden.subscan.io/tx/${txHash}`;
       default:
         return '';
     }
@@ -135,6 +137,8 @@ const WithdrawSuccessModal: React.FC<WithdrawingModalProps> = ({ exit, note, rec
         return `https://explorer.pops.one/address/${address}`;
       case ChainId.HarmonyTestnet1:
         return `https://explorer.pops.one/address/${address}`;
+      case ChainId.Shiden:
+        return `https://shiden.subscan.io/address/${address}`;
       default:
         return '';
     }
