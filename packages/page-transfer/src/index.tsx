@@ -4,14 +4,19 @@ import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { InputSection } from '@webb-dapp/ui-components/Inputs/InputSection/InputSection';
 import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabel';
-import { Button, FormHelperText, InputBase } from '@material-ui/core';
+import { Button, InputBase } from '@material-ui/core';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import IPDisplay from '@webb-dapp/react-components/IPDisplay/IPDisplay';
 import { useWebContext } from '@webb-dapp/react-environment';
 import { useIp } from '@webb-dapp/react-hooks/useIP';
-import { ChainId, chainsPopulated } from '@webb-dapp/apps/configs';
+import { ChainId, currenciesConfig, WebbCurrencyId } from '@webb-dapp/apps/configs';
 import { ChainInput } from '@webb-dapp/ui-components/Inputs/ChainInput/ChainInput';
+import { TokenInput } from '@webb-dapp/ui-components/Inputs/TokenInput/TokenInput';
+import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
+import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
+import { fromBridgeCurrencyToCurrencyView } from '@webb-dapp/ui-components/Inputs/WalletBridgeCurrencyInput/WalletBridgeCurrencyInput';
+import { Currency, CurrencyContent } from '@webb-dapp/react-environment/types/currency';
 
 const TransferWrapper = styled.div`
   padding: 1rem;
@@ -28,6 +33,10 @@ const TransferWrapper = styled.div`
 const AmountInputWrapper = styled.div`
   position: relative;
   width: 100%;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  padding: 0 0.5rem;
 `;
 const AmountButton = styled.button`
   && {
@@ -45,7 +54,7 @@ const PageTransfers: FC = () => {
   const ip = useIp(activeApi);
   const chains = useMemo(() => {
     return Object.keys(chainsStore);
-  }, []);
+  }, [chainsStore]);
 
   const srcChain = useMemo(() => {
     if (!activeChain) {
@@ -56,7 +65,22 @@ const PageTransfers: FC = () => {
   }, [activeChain]);
   const [destChain, setDestChain] = useState<ChainId | undefined>(undefined);
   const [recipient, setRecipient] = useState('');
+  const bridge = useBridge();
 
+  const nativeTokens = useMemo(() => {
+    return Object.keys(currenciesConfig).map((i) => Number(i) as WebbCurrencyId);
+  }, []);
+
+  const bridgeTokens = useMemo(() => {
+    return bridge.getTokens().filter((currency) => currency.currencyId !== WebbCurrencyId.WEBB);
+  }, [bridge]);
+  const tokens = useMemo(() => {
+    const tokens: CurrencyContent[] = [];
+    tokens.push(...nativeTokens.map(Currency.fromCurrencyId));
+    tokens.push(...bridgeTokens.map(fromBridgeCurrencyToCurrencyView));
+
+    return tokens;
+  }, [bridgeTokens, nativeTokens]);
   return (
     <div>
       <TransferWrapper>
@@ -84,15 +108,33 @@ const PageTransfers: FC = () => {
 
         <InputSection>
           <InputLabel label={'Transfer amount'} />
-          <AmountInputWrapper>
-            <InputBase fullWidth placeholder={'Enter amount'} />
-            <AmountButton color={'primary'} as={Button}>
-              MAX
-            </AmountButton>
-          </AmountInputWrapper>
+          <Flex row ai='stretch'>
+            <div
+              style={{
+                position: 'relative',
+                maxWidth: '200px',
+              }}
+            >
+              <TokenInput
+                wrapperStyles={{
+                  top: 0,
+                }}
+                currencies={tokens}
+                onChange={() => {}}
+              />
+            </div>
+
+            <AmountInputWrapper>
+              <InputBase fullWidth placeholder={'Enter amount'} />
+              <AmountButton color={'primary'} as={Button}>
+                MAX
+              </AmountButton>
+            </AmountInputWrapper>
+          </Flex>
         </InputSection>
 
         <SpaceBox height={16} />
+
         <InputSection>
           <InputLabel label={'Recipient'}>
             <InputBase
