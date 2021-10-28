@@ -82,6 +82,9 @@ export class TornadoAnchorContract {
       case WebbEVMChain.HarmonyTestnet1:
         step = 1000;
         break;
+      case WebbEVMChain.HarmonyMainnet0:
+        step = 1000;
+        break;
       case WebbEVMChain.Rinkeby:
         step = 5000;
         break;

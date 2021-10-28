@@ -3,6 +3,7 @@ import {
   beresheetMixers,
   edgewareMixers,
   ethMainNetMixers,
+  harmonyMainnet0Mixers,
   harmonyTest1Mixers,
   MixerInfo,
   rinkebyMixers,
@@ -38,6 +39,9 @@ export class EvmChainMixersInfo {
         break;
       case WebbEVMChain.HarmonyTestnet1:
         this.tornMixerInfo = harmonyTest1Mixers.tornMixers;
+        break;
+      case WebbEVMChain.HarmonyMainnet0:
+        this.tornMixerInfo = harmonyMainnet0Mixers.tornMixers;
         break;
       case WebbEVMChain.Shiden:
         this.tornMixerInfo = shidenMixers.tornMixers;
