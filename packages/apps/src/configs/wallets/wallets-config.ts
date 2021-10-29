@@ -15,6 +15,7 @@ const ANY_EVM = [
   ChainId.Goerli,
   ChainId.HarmonyTestnet1,
   ChainId.HarmonyTestnet0,
+  ChainId.HarmonyMainnet0,
   ChainId.Shiden,
 ];
 export const walletsConfig: AppConfig['wallet'] = {

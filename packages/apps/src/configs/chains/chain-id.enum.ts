@@ -9,6 +9,7 @@ export enum ChainId {
   Goerli,
   HarmonyTestnet1,
   HarmonyTestnet0,
+  HarmonyMainnet0,
   Ganache,
   Shiden,
 }
@@ -27,6 +28,7 @@ export enum WebbEVMChain {
   Beresheet = 2022,
   HarmonyTestnet0 = 1666700000,
   HarmonyTestnet1 = 1666700001,
+  HarmonyMainnet0 = 1666600000,
   Shiden = 336,
 }
 
@@ -50,6 +52,8 @@ export const evmIdIntoChainId = (evmId: number | string): ChainId => {
       return ChainId.HarmonyTestnet1;
     case WebbEVMChain.HarmonyTestnet0:
       return ChainId.HarmonyTestnet0;
+    case WebbEVMChain.HarmonyMainnet0:
+      return ChainId.HarmonyMainnet0;
     case WebbEVMChain.Ganache:
       return ChainId.Ganache;
     case WebbEVMChain.Shiden:
@@ -77,6 +81,8 @@ export const chainIdIntoEVMId = (chainId: ChainId | Number | String): WebbEVMCha
       return WebbEVMChain.HarmonyTestnet0;
     case ChainId.HarmonyTestnet1:
       return WebbEVMChain.HarmonyTestnet1;
+    case ChainId.HarmonyMainnet0:
+      return WebbEVMChain.HarmonyMainnet0;
     case ChainId.Ganache:
       return WebbEVMChain.Ganache;
     case ChainId.Shiden:

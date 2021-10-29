@@ -134,6 +134,23 @@ export const harmonyTest1Mixers: chainMixers = {
   ],
 };
 
+export const harmonyMainnet0Mixers: chainMixers = {
+  tornMixers: [
+    {
+      size: 100,
+      address: '0x2B9A7085Afba278BEc6bBfFb399A3C042ED05046',
+      symbol: 'ONE',
+      createdAtBlock: 18796580,
+    },
+    {
+      size: 10000,
+      address: '0x4b271E1E67B3eE56467599cd46f1F74A5a369c72',
+      symbol: 'ONE',
+      createdAtBlock: 18796580,
+    },
+  ],
+};
+
 export const shidenMixers: chainMixers = {
   tornMixers: [
     {
