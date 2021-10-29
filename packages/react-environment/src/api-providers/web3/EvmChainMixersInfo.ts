@@ -1,10 +1,13 @@
 import { WebbEVMChain } from '@webb-dapp/apps/configs';
 import {
   beresheetMixers,
-  harmonyTest1Mixers,
+  edgewareMixers,
   ethMainNetMixers,
+  harmonyMainnet0Mixers,
+  harmonyTest1Mixers,
   MixerInfo,
   rinkebyMixers,
+  shidenMixers,
 } from '@webb-dapp/apps/configs/evm/SupportedMixers';
 import { evmChainStorageFactory, MixerStorage } from '@webb-dapp/apps/configs/storages/EvmChainStorage';
 import { MixerSize } from '@webb-dapp/react-environment';
@@ -28,11 +31,20 @@ export class EvmChainMixersInfo {
       case WebbEVMChain.EthereumMainNet:
         this.tornMixerInfo = ethMainNetMixers.tornMixers;
         break;
+      case WebbEVMChain.Edgeware:
+        this.tornMixerInfo = edgewareMixers.tornMixers;
+        break;
       case WebbEVMChain.Beresheet:
         this.tornMixerInfo = beresheetMixers.tornMixers;
         break;
       case WebbEVMChain.HarmonyTestnet1:
         this.tornMixerInfo = harmonyTest1Mixers.tornMixers;
+        break;
+      case WebbEVMChain.HarmonyMainnet0:
+        this.tornMixerInfo = harmonyMainnet0Mixers.tornMixers;
+        break;
+      case WebbEVMChain.Shiden:
+        this.tornMixerInfo = shidenMixers.tornMixers;
         break;
       default:
         this.tornMixerInfo = rinkebyMixers.tornMixers;

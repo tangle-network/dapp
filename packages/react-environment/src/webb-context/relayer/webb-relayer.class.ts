@@ -89,7 +89,7 @@ export class WebbRelayerBuilder {
       supportedChains: {
         evm: info.evm
           ? Object.keys(info.evm)
-              .filter((key) => info.evm[key]?.account && Boolean(nameAdapter(key, 'evm')))
+              .filter((key) => info.evm[key]?.account && nameAdapter(key, 'evm') != null)
               .reduce((m, key) => {
                 m.set(nameAdapter(key, 'evm'), info.evm[key]);
                 return m;
@@ -97,7 +97,7 @@ export class WebbRelayerBuilder {
           : new Map(),
         substrate: info.substrate
           ? Object.keys(info.substrate)
-              .filter((key) => info.substrate[key]?.account && Boolean(nameAdapter(key, 'substrate')))
+              .filter((key) => info.substrate[key]?.account && nameAdapter(key, 'evm') != null)
               .reduce((m, key) => {
                 m.set(nameAdapter(key, 'substrate'), info.evm[key]);
                 return m;
