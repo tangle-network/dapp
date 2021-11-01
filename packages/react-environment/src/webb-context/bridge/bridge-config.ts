@@ -15,25 +15,24 @@ export type BridgeConfigEntry = {
 };
 export type BridgeConfig = Record<string, BridgeConfigEntry>;
 
-const webWEBBRinkebyHarmonyTestnet0 = new BridgeCurrency(
-  [ChainId.Rinkeby, ChainId.HarmonyTestnet0],
-  WebbCurrencyId.WEBB
-);
+const webbETHtest1 = new BridgeCurrency([ChainId.Ropsten, ChainId.Rinkeby, ChainId.Goerli], WebbCurrencyId.WEBB);
 
 export const bridgeConfig: BridgeConfig = {
-  [webWEBBRinkebyHarmonyTestnet0.name]: {
-    asset: webWEBBRinkebyHarmonyTestnet0,
+  [webbETHtest1.name]: {
+    asset: webbETHtest1,
     tokenAddresses: {
-      [ChainId.HarmonyTestnet0]: '0x9d609F54536Cef34f5F612BD976ca632F1fa208E',
-      [ChainId.Rinkeby]: '0x7Cec2Bf7D9c4C3C96Da8a0BfeBAB1E84b8212394',
+      [ChainId.Ropsten]: '0xE91EB19dd96512D33b7a87A8B56b63AF6db103e4',
+      [ChainId.Rinkeby]: '0xcCD83a6ce5512C8dda9043Fc5F635816F66D8B63',
+      [ChainId.Goerli]: '0x64E9727C4a835D518C34d3A50A8157120CAeb32F',
     },
     anchors: [
       {
         anchorAddresses: {
-          [ChainId.HarmonyTestnet0]: '0x64E9727C4a835D518C34d3A50A8157120CAeb32F',
-          [ChainId.Rinkeby]: '0xB42139fFcEF02dC85db12aC9416a19A12381167D',
+          [ChainId.Ropsten]: '0xB039952e6A46b890e2a44835d97dE253482b2Ca2',
+          [ChainId.Rinkeby]: '0x33EAD0AE289f172E00BDD2e5c39BDF5b18F9d63A',
+          [ChainId.Goerli]: '0x19b72e48a90975a5B9F88C5ae907607A13bf827A',
         },
-        amount: '.1',
+        amount: '.01',
       },
     ],
   },
