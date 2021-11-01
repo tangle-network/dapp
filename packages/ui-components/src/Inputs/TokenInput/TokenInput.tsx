@@ -15,8 +15,8 @@ import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import styled, { css } from 'styled-components';
+import React, { CSSProperties, useEffect, useMemo, useRef, useState } from 'react';
+import styled, { css, StyledProps } from 'styled-components';
 import { Bridge, BridgeCurrency, useWebContext } from '@webb-dapp/react-environment';
 import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
 import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
@@ -102,10 +102,11 @@ const AccountManagerWrapper = styled.div<any>`
   top: -52px;
 `;
 
-type TokenInputProps = {
+export type TokenInputProps = {
   currencies: CurrencyContent[];
   value?: CurrencyContent;
   onChange(next: CurrencyContent | undefined): void;
+  wrapperStyles?: CSSProperties;
 };
 const ChainName = styled.span`
   max-width: 100px;
@@ -114,7 +115,7 @@ const ChainName = styled.span`
   text-overflow: ellipsis;
   white-space: nowrap;
 `;
-export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, value }) => {
+export const TokenInput: React.FC<TokenInputProps> = ({ wrapperStyles, currencies, onChange, value }) => {
   const selectItems = useMemo(() => {
     return currencies.map((currency) => {
       const view = currency.view;
@@ -163,7 +164,7 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
   };
   return (
     <>
-      <AccountManagerWrapper ref={$wrapper}>
+      <AccountManagerWrapper ref={$wrapper} style={wrapperStyles}>
         <ClickAwayListener
           onClickAway={() => {
             setIsOpen(false);

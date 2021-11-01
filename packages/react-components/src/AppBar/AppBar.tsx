@@ -21,6 +21,7 @@ const AppBarWrapper = styled.nav`
   flex: 1;
   align-items: center;
   padding: 0 10px;
+
   ${below.sm`
 	 background:#fff;
 	`}
@@ -123,6 +124,17 @@ const AppBar: React.FC<AppBarProps> = () => {
           <li className={'active'}>
             <NavLink to={'/bridge'} activeClassName={'active'}>
               Bridge
+            </NavLink>
+          </li>
+          <li className={'active'}>
+            <NavLink to={'/transfer'} activeClassName={'active'}>
+              Transfer
+            </NavLink>
+          </li>
+
+          <li className={'active'}>
+            <NavLink to={'/wrap-unwrap'} activeClassName={'active'}>
+              Wrap/Unwrap
             </NavLink>
           </li>
 
