@@ -110,4 +110,3 @@ export const bridgeConfig: BridgeConfig = {
     ],
   },
 };
-console.log({ bridgeConfig });
