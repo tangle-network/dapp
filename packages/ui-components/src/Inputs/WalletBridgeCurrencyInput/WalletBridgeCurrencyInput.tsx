@@ -41,7 +41,7 @@ const WrappedIcon = () => {
     </div>
   );
 };
-const fromBridgeCurrencyToCurrencyView = (bridgeCurrency: BridgeCurrency): CurrencyContent => {
+export const fromBridgeCurrencyToCurrencyView = (bridgeCurrency: BridgeCurrency): CurrencyContent => {
   const wrappedCurrency = Currency.fromCurrencyId(bridgeCurrency.currencyId);
   const view = wrappedCurrency.view;
   return {
