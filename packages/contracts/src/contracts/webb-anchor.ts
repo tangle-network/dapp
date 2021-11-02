@@ -90,7 +90,7 @@ export class AnchorContract {
     for (let i = 0; i < leaves.length; i++) {
       tree.insert(leaves[i]);
       const nextRoot = tree.get_root();
-      console.log(`target root: ${targetRoot} \n this root: ${nextRoot}`);
+      console.log(`target root: ${targetRoot} \n this root: ${bufferToFixed(nextRoot)}`);
       if (bufferToFixed(nextRoot) === targetRoot) {
         return tree;
       }
@@ -246,7 +246,9 @@ export class AnchorContract {
     const tree = AnchorContract.createTreeWithRoot(sourceLeaves, latestSourceRoot);
     if (tree) {
       const index = tree.get_index_of_element(sourceDeposit.commitment);
-      return tree.path(index);
+      const path = tree.path(index);
+      console.log('path for proof: ', path);
+      return path;
     }
     return undefined;
   }

@@ -31,8 +31,8 @@ export const bridgeConfig: BridgeConfig = {
     anchors: [
       {
         anchorAddresses: {
-          [ChainId.HarmonyTestnet0]: '0xB4182B3813B7b70BFd3D4d4A5861123F6eC02cfD',
-          [ChainId.Rinkeby]: '0x50B180B63aaacAb76AA029302faaA7d456CFCA64',
+          [ChainId.HarmonyTestnet0]: '0x30a9E294b1Fc166194d2D1AF936CDdfF0e86A47B',
+          [ChainId.Rinkeby]: '0x6244Cf3D15aE8D9F973f080Af561b99c501e5e9D',
         },
         amount: '.1',
       },
