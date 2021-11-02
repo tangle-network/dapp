@@ -6,7 +6,7 @@ import {
   getEVMChainNameFromInternal,
 } from '@webb-dapp/apps/configs';
 import { MixerStorage } from '@webb-dapp/apps/configs/storages/EvmChainStorage';
-import { WebbAnchorContract } from '@webb-dapp/contracts/contracts';
+import { AnchorContract } from '@webb-dapp/contracts/contracts';
 import { depositFromAnchor2Preimage } from '@webb-dapp/contracts/utils/make-deposit';
 import { Bridge, BridgeConfig, bridgeConfig, BridgeCurrency, WithdrawState } from '@webb-dapp/react-environment';
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3/webb-web3-provider';
@@ -259,7 +259,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
 
       // leaves from relayer somewhat validated, attempt to build the tree
       if (validLatestLeaf) {
-        const tree = WebbAnchorContract.createTreeWithRoot(relayerLeaves.leaves, sourceLatestRoot);
+        const tree = AnchorContract.createTreeWithRoot(relayerLeaves.leaves, sourceLatestRoot);
 
         // If we were able to build the tree, set local storage and break out of the loop
         if (tree) {

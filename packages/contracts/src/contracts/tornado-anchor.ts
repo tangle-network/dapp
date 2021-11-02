@@ -1,7 +1,7 @@
 import { Log } from '@ethersproject/abstract-provider';
 import { WebbEVMChain } from '@webb-dapp/apps/configs';
 import { ZKPTornInputWithMerkle, ZKPTornPublicInputs } from '@webb-dapp/contracts/contracts/types';
-import { Anchor as TornadoAnchor } from '@webb-dapp/contracts/types/Anchor';
+import { Tornado } from '@webb-dapp/contracts/types/Tornado';
 import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
 import { EvmNote } from '@webb-dapp/contracts/utils/evm-note';
 import { createTornDeposit, Deposit } from '@webb-dapp/contracts/utils/make-deposit';
@@ -20,8 +20,8 @@ const webSnarkUtils = require('tornado-websnark/src/utils');
 type DepositEvent = [string, number, BigNumber];
 const logger = LoggerService.get('anchor');
 
-export class TornadoAnchorContract {
-  private _contract: TornadoAnchor;
+export class TornadoContract {
+  private _contract: Tornado;
   private readonly signer: Signer;
 
   constructor(private mixersInfo: EvmChainMixersInfo, private web3Provider: providers.Web3Provider, address: string) {

@@ -47,7 +47,7 @@ export class EvmChainMixersInfo {
         this.tornMixerInfo = shidenMixers.tornMixers;
         break;
       default:
-        this.tornMixerInfo = rinkebyMixers.tornMixers;
+        this.tornMixerInfo = [];
         break;
     }
   }

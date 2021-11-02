@@ -76,6 +76,40 @@ export const chainsConfig: AppConfig['chains'] = {
     ],
     nativeCurrencyId: WebbCurrencyId.ETH,
   },
+  [ChainId.Ropsten]: {
+    group: 'eth',
+    id: ChainId.Ropsten,
+    evmId: WebbEVMChain.Ropsten,
+    name: 'Ropsten',
+    url: 'https://ropsten.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4',
+    evmRpcUrls: ['https://ropsten.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4'],
+    logo: EtherLogo,
+    tag: 'test',
+    currencies: [
+      {
+        currencyId: WebbCurrencyId.ETH,
+        enabled: true,
+      },
+    ],
+    nativeCurrencyId: WebbCurrencyId.ETH,
+  },
+  [ChainId.Goerli]: {
+    group: 'eth',
+    id: ChainId.Goerli,
+    evmId: WebbEVMChain.Goerli,
+    name: 'Goerli',
+    url: 'https://goerli.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4',
+    evmRpcUrls: ['https://goerli.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4'],
+    logo: EtherLogo,
+    tag: 'test',
+    currencies: [
+      {
+        currencyId: WebbCurrencyId.ETH,
+        enabled: true,
+      },
+    ],
+    nativeCurrencyId: WebbCurrencyId.ETH,
+  },
   [ChainId.HarmonyTestnet1]: {
     group: 'one',
     id: ChainId.HarmonyTestnet1,

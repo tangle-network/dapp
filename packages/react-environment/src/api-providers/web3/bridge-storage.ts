@@ -1,8 +1,8 @@
 import { Storage } from '@webb-dapp/utils';
 
 export const anchorDeploymentBlock: Record<string, number> = {
-  '0x64e9727c4a835d518c34d3a50a8157120caeb32f': 15183626,
-  '0xb42139ffcef02dc85db12ac9416a19a12381167d': 9326378,
+  '0x30a9e294b1fc166194d2d1af936cddff0e86a47b': 17000000,
+  '0x6244cf3d15ae8d9f973f080af561b99c501e5e9d': 9569482,
 };
 
 type BridgeStorage = Record<string, { lastQueriedBlock: number; leaves: string[] }>;
