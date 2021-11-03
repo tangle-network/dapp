@@ -272,8 +272,9 @@ export class AnchorContract {
       relayer: zkpInputWithoutMerkleProof.relayer,
       roots: [localRoot, root],
     };
-    logger.trace(`Generate witness`, input);
-    const witness = await generateWitness(input);
+    const edges = await this._contract.maxEdges();
+    logger.trace(`Generate witness with edges ${edges}`, input);
+    const witness = await generateWitness(input, edges as any);
     logger.trace(`Generated witness`, witness);
     const proof = await proofAndVerify(witness);
     logger.trace(`Zero knowlage proof`, proof);
@@ -304,8 +305,9 @@ export class AnchorContract {
       relayer: zkpInputWithoutMerkleProof.relayer,
       roots: [root, ...nr],
     };
-    logger.trace(`Generate witness`, input);
-    const witness = await generateWitness(input);
+    const edges = await this._contract.maxEdges();
+    logger.trace(`Generate witness with edges ${edges}`, input);
+    const witness = await generateWitness(input, edges as any);
     logger.trace(`Generated witness`, witness);
     const proof = await proofAndVerify(witness);
     logger.trace(`Zero knowlage proof`, proof);
