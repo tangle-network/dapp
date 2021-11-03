@@ -320,13 +320,13 @@ export class AnchorContract {
       gasPrice: utils.toWei('2', 'gwei'),
     };
     const proofBytes = await generateWithdrawProofCallData(proof, pub);
-    logger.trace(`Withdraw proof`, proofBytes);
     const tx = await this._contract.withdraw(
       `0x${proofBytes}`,
       {
         _roots: createRootsBytes(pub.roots),
         _nullifierHash: bufferToFixed(zkp.nullifierHash),
-        _refreshCommitment: '0',
+        _refreshCommitment: bufferToFixed('0'),
+
         _recipient: zkp.recipient,
         _relayer: zkp.relayer,
         _fee: bufferToFixed(zkp.fee),

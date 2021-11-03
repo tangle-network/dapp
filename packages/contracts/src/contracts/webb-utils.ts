@@ -8,7 +8,6 @@ type MaxEdges = 1 | 2 | 3 | 4 | 5;
 
 export const generateWitness = async (input: BridgeWitnessInput, maxEdges: MaxEdges) => {
   try {
-    console.log(maxEdges);
     const wasmFilePath = `/assets/fixtures/${maxEdges + 1}/poseidon_bridge_${maxEdges + 1}.wasm`;
     const req = await fetch(wasmFilePath);
     const wasmBuf = await req.arrayBuffer();

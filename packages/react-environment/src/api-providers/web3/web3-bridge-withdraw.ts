@@ -367,6 +367,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
         zkpResults.input
       );
     } catch (e) {
+      console.log(e);
       this.emit('stateChange', WithdrawState.Ideal);
       transactionNotificationConfig.failed?.({
         address: recipient,
