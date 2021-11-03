@@ -161,7 +161,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
       this.emit('stateChange', WithdrawState.Ideal);
       transactionNotificationConfig.failed?.({
         address: recipient,
-        data: e?.code === 4001 ? 'Withdraw rejected' : 'Withdraw failed',
+        data: (e as any)?.code === 4001 ? 'Withdraw rejected' : 'Withdraw failed',
         key: 'bridge-withdraw-evm',
         path: {
           method: 'withdraw',
@@ -370,7 +370,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
       this.emit('stateChange', WithdrawState.Ideal);
       transactionNotificationConfig.failed?.({
         address: recipient,
-        data: e?.code === 4001 ? 'Withdraw rejected' : 'Withdraw failed',
+        data: (e as any)?.code === 4001 ? 'Withdraw rejected' : 'Withdraw failed',
         key: 'bridge-withdraw-evm',
         path: {
           method: 'withdraw',

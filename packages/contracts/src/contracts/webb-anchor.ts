@@ -26,8 +26,7 @@ import utils from 'web3-utils';
 import { Erc20Factory } from '../types';
 
 const Scalar = require('ffjavascript').Scalar;
-
-const F = require('circomlib').babyJub.F;
+const F = require('circomlibjs').babyjub.F;
 
 type DepositEvent = [string, number, BigNumber];
 const logger = LoggerService.get('AnchorContract');
@@ -260,6 +259,7 @@ export class AnchorContract {
     const input: BridgeWitnessInput = {
       chainID: BigInt(deposit.chainId!),
       nullifier: deposit.nullifier,
+      refreshCommitment: bufferToFixed('0'),
       secret: deposit.secret,
       nullifierHash: deposit.nullifierHash,
       diffs: [localRoot, root].map((r) => {
@@ -273,8 +273,9 @@ export class AnchorContract {
       relayer: zkpInputWithoutMerkleProof.relayer,
       roots: [localRoot, root],
     };
-    logger.trace(`Generate witness`, input);
-    const witness = await generateWitness(input);
+    const edges = await this._contract.maxEdges();
+    logger.trace(`Generate witness with edges ${edges}`, input);
+    const witness = await generateWitness(input, edges as any);
     logger.trace(`Generated witness`, witness);
     const proof = await proofAndVerify(witness);
     logger.trace(`Zero knowlage proof`, proof);
@@ -292,6 +293,7 @@ export class AnchorContract {
     const input: BridgeWitnessInput = {
       chainID: BigInt(deposit.chainId!),
       nullifier: deposit.nullifier,
+      refreshCommitment: bufferToFixed('0'),
       secret: deposit.secret,
       nullifierHash: deposit.nullifierHash,
       diffs: [root, ...nr].map((r) => {
@@ -305,8 +307,9 @@ export class AnchorContract {
       relayer: zkpInputWithoutMerkleProof.relayer,
       roots: [root, ...nr],
     };
-    logger.trace(`Generate witness`, input);
-    const witness = await generateWitness(input);
+    const edges = await this._contract.maxEdges();
+    logger.trace(`Generate witness with edges ${edges}`, input);
+    const witness = await generateWitness(input, edges as any);
     logger.trace(`Generated witness`, witness);
     const proof = await proofAndVerify(witness);
     logger.trace(`Zero knowlage proof`, proof);
@@ -319,13 +322,13 @@ export class AnchorContract {
       gasPrice: utils.toWei('2', 'gwei'),
     };
     const proofBytes = await generateWithdrawProofCallData(proof, pub);
-    logger.trace(`Withdraw proof`, proofBytes);
     const tx = await this._contract.withdraw(
       `0x${proofBytes}`,
       {
         _roots: createRootsBytes(pub.roots),
         _nullifierHash: bufferToFixed(zkp.nullifierHash),
-        _refreshCommitment: '0',
+        _refreshCommitment: bufferToFixed('0'),
+
         _recipient: zkp.recipient,
         _relayer: zkp.relayer,
         _fee: bufferToFixed(zkp.fee),
@@ -336,4 +339,6 @@ export class AnchorContract {
     const receipt = await tx.wait();
     return receipt.transactionHash;
   }
+
+  /* wrap and unwrap */
 }

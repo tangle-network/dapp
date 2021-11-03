@@ -46,8 +46,7 @@ type RelayedChainInput = {
   baseOn: 'evm' | 'substrate';
   contractAddress: string;
 };
-
-export type WithdrawRelayerArgs = {
+type TornadoRelayerWithdrawArgs = {
   root: string;
   nullifierHash: string;
   recipient: string;
@@ -55,6 +54,19 @@ export type WithdrawRelayerArgs = {
   fee: string;
   refund: string;
 };
+type BridgeRelayerWithdrawArgs = {
+  roots: string[];
+  refresh_commitment: string;
+  nullifier_hash: string;
+  recipient: string;
+  relayer: string;
+  fee: string;
+  refund: string;
+};
+export type ContractBase = 'tornado' | 'anchor';
+export type WithdrawRelayerArgs<C = ContractBase> = C extends 'anchor'
+  ? BridgeRelayerWithdrawArgs
+  : TornadoRelayerWithdrawArgs;
 
 export interface RelayerInfo {
   substrate: Record<string, RelayedChainConfig | null>;
@@ -231,7 +243,7 @@ type RelayerLeaves = {
   lastQueriedBlock: number;
 };
 
-class RelayedWithdraw {
+class RelayedWithdraw<T = ContractBase> {
   /// status of the withdraw
   private status: RelayedWithdrawResult = RelayedWithdrawResult.PreFlight;
   /// watch for the current withdraw status
@@ -242,7 +254,6 @@ class RelayedWithdraw {
     this.watcher = this.emitter.asObservable();
 
     ws.onmessage = ({ data }) => {
-      console.log(data);
       const handledMessage = this.handleMessage(JSON.parse(data));
       this.status = handledMessage[0];
       this.emitter.next(handledMessage);
@@ -268,7 +279,7 @@ class RelayedWithdraw {
     }
   };
 
-  generateWithdrawRequest(chain: RelayedChainInput, proof: string, args: WithdrawRelayerArgs) {
+  generateWithdrawRequest(chain: RelayedChainInput, proof: string, args: WithdrawRelayerArgs<T>) {
     return {
       [chain.baseOn]: {
         [this.prefix]: {
@@ -307,7 +318,7 @@ class RelayedWithdraw {
 export class WebbRelayer {
   constructor(readonly endpoint: string, readonly capabilities: Capabilities) {}
 
-  async initWithdraw(target: 'anchor' | 'anchor2') {
+  async initWithdraw<Target extends ContractBase>(target: Target) {
     const ws = new WebSocket(this.endpoint.replace('http', 'ws') + '/ws');
     await new Promise((r, c) => {
       ws.onopen = r;
@@ -323,16 +334,16 @@ export class WebbRelayer {
         setTimeout(r, 300);
       });
     }
-    let prefix: string;
+    let prefix: string = 'anchorRelayTx';
     switch (target) {
+      case 'tornado':
+        prefix = 'tornadoRelayTx';
+        break;
       case 'anchor':
         prefix = 'anchorRelayTx';
         break;
-      case 'anchor2':
-        prefix = 'anchor2RelayTx';
-        break;
     }
-    return new RelayedWithdraw(ws, prefix);
+    return new RelayedWithdraw<Target>(ws, prefix);
   }
 
   async getIp(): Promise<string> {

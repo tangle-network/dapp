@@ -190,8 +190,6 @@ export class TornadoContract {
       root: root as string,
     };
 
-    console.log(zkpInput);
-
     const proofsData = await webSnarkUtils.genWitnessAndProve(
       // @ts-ignore
       window.groth16,
@@ -245,7 +243,7 @@ export class TornadoContract {
     // the block is later than what we have stored, save into storage
     const storedContractInfo = await this.mixersInfo.getMixerStorage(this._contract.address);
     if (validLatestDeposit && lastQueriedBlock > storedContractInfo.lastQueriedBlock) {
-      this.mixersInfo.setMixerStorage(this._contract.address, lastQueriedBlock, [...leaves]);
+      await this.mixersInfo.setMixerStorage(this._contract.address, lastQueriedBlock, [...leaves]);
     }
 
     const { pathElements, pathIndex: pathIndices, root } = merkleProof;
