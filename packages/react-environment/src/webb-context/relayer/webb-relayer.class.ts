@@ -339,7 +339,7 @@ export class WebbRelayer {
         prefix = 'tornadoRelayTx';
         break;
       case 'anchor2':
-        prefix = 'anchor2RelayTx';
+        prefix = 'anchorRelayTx';
         break;
     }
     return new RelayedWithdraw<Target>(ws, prefix);
