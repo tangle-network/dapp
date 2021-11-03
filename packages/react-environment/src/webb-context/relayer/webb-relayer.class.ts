@@ -337,10 +337,10 @@ export class WebbRelayer {
     let prefix: string = 'anchorRelayTx';
     switch (target) {
       case 'anchor':
-        prefix = 'anchorRelayTx';
+        prefix = 'tornadoRelayTx';
         break;
       case 'anchor2':
-        prefix = 'anchor2RelayTx';
+        prefix = 'anchorRelayTx';
         break;
     }
     return new RelayedWithdraw<Target>(ws, prefix);
