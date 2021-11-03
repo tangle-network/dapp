@@ -1,6 +1,7 @@
 import {
   PolkadotMixerDeposit,
   PolkadotMixerWithdraw,
+  PolkadotWrapUnwrap,
   PolkaTXBuilder,
 } from '@webb-dapp/react-environment/api-providers/polkadot';
 import {
@@ -37,6 +38,7 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
     this.txBuilder = this.provider.txBuilder;
     this.methods = {
       bridge: {
+        core: null,
         deposit: {
           inner: {} as any,
           enabled: false,
@@ -44,6 +46,12 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
         withdraw: {
           inner: {} as any,
           enabled: false,
+        },
+      },
+      wrapUnwrap: {
+        core: {
+          enabled: false,
+          inner: new PolkadotWrapUnwrap(this),
         },
       },
       mixer: {
