@@ -321,6 +321,7 @@ export class AnchorContract {
       gasLimit: 6000000,
       gasPrice: utils.toWei('2', 'gwei'),
     };
+    this._contract.
     const proofBytes = await generateWithdrawProofCallData(proof, pub);
     const tx = await this._contract.withdraw(
       `0x${proofBytes}`,
