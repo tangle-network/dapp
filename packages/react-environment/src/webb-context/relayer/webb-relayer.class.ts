@@ -336,10 +336,10 @@ export class WebbRelayer {
     }
     let prefix: string = 'anchorRelayTx';
     switch (target) {
-      case 'anchor':
+      case 'tornado':
         prefix = 'tornadoRelayTx';
         break;
-      case 'anchor2':
+      case 'anchor':
         prefix = 'anchorRelayTx';
         break;
     }
