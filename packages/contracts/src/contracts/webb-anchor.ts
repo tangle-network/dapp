@@ -259,6 +259,7 @@ export class AnchorContract {
     const input: BridgeWitnessInput = {
       chainID: BigInt(deposit.chainId!),
       nullifier: deposit.nullifier,
+      refreshCommitment: bufferToFixed('0'),
       secret: deposit.secret,
       nullifierHash: deposit.nullifierHash,
       diffs: [localRoot, root].map((r) => {
@@ -292,6 +293,7 @@ export class AnchorContract {
     const input: BridgeWitnessInput = {
       chainID: BigInt(deposit.chainId!),
       nullifier: deposit.nullifier,
+      refreshCommitment: bufferToFixed('0'),
       secret: deposit.secret,
       nullifierHash: deposit.nullifierHash,
       diffs: [root, ...nr].map((r) => {
