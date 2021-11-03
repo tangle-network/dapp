@@ -268,7 +268,7 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
             section: 'evm-mixer',
           },
         });
-        if (e.code === WebbErrorCodes.RelayerMisbehaving) {
+        if ((e as any)?.code === WebbErrorCodes.RelayerMisbehaving) {
           throw e;
         }
       }
@@ -327,7 +327,7 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
         // todo fix this and fetch the error from chain
 
         // User rejected transaction from provider
-        if (e.code === 4001) {
+        if ((e as any)?.code === 4001) {
           transactionNotificationConfig.failed?.({
             address: recipient,
             data: 'Withdraw Rejected',
