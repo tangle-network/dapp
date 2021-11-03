@@ -26,8 +26,7 @@ import utils from 'web3-utils';
 import { Erc20Factory } from '../types';
 
 const Scalar = require('ffjavascript').Scalar;
-
-const F = require('circomlib').babyJub.F;
+const F = require('circomlibjs').babyjub.F;
 
 type DepositEvent = [string, number, BigNumber];
 const logger = LoggerService.get('AnchorContract');
