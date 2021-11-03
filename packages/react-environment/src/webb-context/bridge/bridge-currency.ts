@@ -14,13 +14,13 @@ import { ChainId, WebbCurrencyId, webbCurrencyIdFromString, webbCurrencyIdToStri
 export class BridgeCurrency {
   public readonly name: string;
 
-  constructor(private paraChains: ChainId[], private wrappedCurrency: WebbCurrencyId) {
-    this.paraChains = this.paraChains.sort((a, b) => (a > b ? 1 : a < b ? -1 : 0));
+  constructor(private chains: ChainId[], private wrappedCurrency: WebbCurrencyId) {
+    this.chains = this.chains.sort((a, b) => (a > b ? 1 : a < b ? -1 : 0));
     this.name = this.toString();
   }
 
   private toString(): string {
-    const paraChains = this.paraChains.join('-');
+    const paraChains = this.chains.join('-');
     const baseCurrency = webbCurrencyIdToString(this.wrappedCurrency);
     return `webb${baseCurrency}-${paraChains}`;
   }
@@ -36,7 +36,7 @@ export class BridgeCurrency {
   }
 
   hasChain(chainId: ChainId): boolean {
-    return this.paraChains.includes(chainId);
+    return this.chains.includes(chainId);
   }
 
   get currencyId(): WebbCurrencyId {
@@ -44,6 +44,6 @@ export class BridgeCurrency {
   }
 
   get chainIds(): ChainId[] {
-    return this.paraChains;
+    return this.chains;
   }
 }

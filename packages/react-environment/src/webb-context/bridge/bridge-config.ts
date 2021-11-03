@@ -1,6 +1,10 @@
 import { ChainId, WebbCurrencyId } from '@webb-dapp/apps/configs';
 import { BridgeCurrency } from '@webb-dapp/react-environment/webb-context/bridge/bridge-currency';
 
+// todo change to wrappedTokenAddresses (they are  governed token wrapper contract)
+// todo change to Fixed anchors
+// todo: Add change to Fixed variable anchors
+
 type ChainRecordConfig<T = string> = { [key in ChainId]?: T };
 export type BridgeAnchor = {
   /// Anchor contract addresses Map
@@ -57,5 +61,3 @@ export const bridgeConfig: BridgeConfig = {
     ],
   },
 };
-
-console.log({ bridgeConfig });
