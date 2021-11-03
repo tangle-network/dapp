@@ -63,7 +63,8 @@ type BridgeRelayerWithdrawArgs = {
   fee: string;
   refund: string;
 };
-export type WithdrawRelayerArgs<C = 'anchor' | 'anchor2'> = C extends 'anchor2'
+export type ContractBase = 'tornado' | 'anchor';
+export type WithdrawRelayerArgs<C = ContractBase> = C extends 'anchor'
   ? BridgeRelayerWithdrawArgs
   : TornadoRelayerWithdrawArgs;
 
@@ -242,7 +243,7 @@ type RelayerLeaves = {
   lastQueriedBlock: number;
 };
 
-class RelayedWithdraw<ContractBase = 'anchor' | 'anchor2'> {
+class RelayedWithdraw<T = ContractBase> {
   /// status of the withdraw
   private status: RelayedWithdrawResult = RelayedWithdrawResult.PreFlight;
   /// watch for the current withdraw status
@@ -278,7 +279,7 @@ class RelayedWithdraw<ContractBase = 'anchor' | 'anchor2'> {
     }
   };
 
-  generateWithdrawRequest(chain: RelayedChainInput, proof: string, args: WithdrawRelayerArgs<ContractBase>) {
+  generateWithdrawRequest(chain: RelayedChainInput, proof: string, args: WithdrawRelayerArgs<T>) {
     return {
       [chain.baseOn]: {
         [this.prefix]: {
@@ -317,7 +318,7 @@ class RelayedWithdraw<ContractBase = 'anchor' | 'anchor2'> {
 export class WebbRelayer {
   constructor(readonly endpoint: string, readonly capabilities: Capabilities) {}
 
-  async initWithdraw<Target extends 'anchor' | 'anchor2'>(target: Target) {
+  async initWithdraw<Target extends ContractBase>(target: Target) {
     const ws = new WebSocket(this.endpoint.replace('http', 'ws') + '/ws');
     await new Promise((r, c) => {
       ws.onopen = r;

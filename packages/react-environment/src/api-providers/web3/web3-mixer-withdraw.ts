@@ -196,7 +196,7 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
 
         this.emit('stateChange', WithdrawState.SendingTransaction);
 
-        const relayedWithdraw = await activeRelayer.initWithdraw('anchor');
+        const relayedWithdraw = await activeRelayer.initWithdraw('tornado');
         logger.trace('initialized the withdraw WebSocket');
 
         const tx = relayedWithdraw.generateWithdrawRequest(
