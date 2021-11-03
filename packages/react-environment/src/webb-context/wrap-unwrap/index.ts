@@ -3,7 +3,7 @@ import { BehaviorSubject } from 'rxjs';
 
 export abstract class WrapUnWrap<T, WrapPayload = any, UnwrapPayload = any> {
   private _currentTokenAddress: BehaviorSubject<string | null> = new BehaviorSubject<null | string>(null);
-
+  // todo add events using the Rxjs
   constructor(protected inner: T) {}
 
   setCurrentToken(nextTokenAddress: string | null) {
@@ -26,6 +26,7 @@ export abstract class WrapUnWrap<T, WrapPayload = any, UnwrapPayload = any> {
 
   // transaction has
   abstract wrap(wrapPayload: WrapPayload): Promise<string>;
-
   abstract unwrap(unwrapPayload: UnwrapPayload): Promise<string>;
+
+  // todo add interfaces for infos , supply balance etc
 }
