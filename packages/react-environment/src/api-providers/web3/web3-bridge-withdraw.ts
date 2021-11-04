@@ -44,10 +44,9 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
   }
 
   async getRelayersByNote(evmNote: Note) {
-    const evmId = await this.inner.getChainId();
     return this.inner.relayingManager.getRelayer({
       baseOn: 'evm',
-      chainId: evmIdIntoChainId(evmId),
+      chainId: Number(evmNote.note.chain),
       mixerSupport: {
         amount: Number(evmNote.note.amount),
         tokenSymbol: evmNote.note.tokenSymbol,
@@ -190,6 +189,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
 
     // Setup a provider for the source chain
     const sourceChainId = Number(note.sourceChain) as ChainId;
+    const sourceEvmId = chainIdIntoEVMId(sourceChainId);
     const sourceChainConfig = chainsConfig[sourceChainId];
     const rpc = sourceChainConfig.url;
     const sourceHttpProvider = Web3Provider.fromUri(rpc);
@@ -248,7 +248,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
 
     // loop through the sourceRelayers to fetch leaves
     for (let i = 0; i < sourceRelayers.length; i++) {
-      const relayerLeaves = await sourceRelayers[i].getLeaves(sourceContractAddress);
+      const relayerLeaves = await sourceRelayers[i].getLeaves(sourceEvmId.toString(16), sourceContractAddress);
 
       const validLatestLeaf = await sourceContract.leafCreatedAtBlock(
         relayerLeaves.leaves[relayerLeaves.leaves.length - 1],

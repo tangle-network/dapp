@@ -1,8 +1,8 @@
 import { chainsConfig, currenciesConfig } from '@webb-dapp/apps/configs';
 import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 
-export const getNativeCurrencySymbol = (chainID: number): string => {
-  const chain = Object.values(chainsConfig).find((chainsConfig) => chainsConfig.evmId === chainID);
+export const getNativeCurrencySymbol = (evmId: number): string => {
+  const chain = Object.values(chainsConfig).find((chainsConfig) => chainsConfig.evmId === evmId);
   if (chain) {
     const nativeCurrency = chain.nativeCurrencyId;
     return currenciesConfig[nativeCurrency].symbol;
@@ -10,8 +10,8 @@ export const getNativeCurrencySymbol = (chainID: number): string => {
   return 'Unknown';
 };
 
-export const getEVMChainName = (chainID: number): string => {
-  const chain = Object.values(chainsConfig).find((chainsConfig) => chainsConfig.evmId === chainID);
+export const getEVMChainName = (evmId: number): string => {
+  const chain = Object.values(chainsConfig).find((chainsConfig) => chainsConfig.evmId === evmId);
   if (chain) {
     return chain.name;
   } else {

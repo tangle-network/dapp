@@ -37,7 +37,6 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
       async (note: string) => {
         const depositNote = await Note.deserialize(note);
         const evmNote = depositNote.note;
-
         const contract = await this.inner.getContractBySize(Number(evmNote.amount), evmNote.tokenSymbol);
 
         // Given the note, iterate over the potential relayers and find the corresponding relayer configuration
@@ -81,10 +80,9 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
   }
 
   async getRelayersByNote(evmNote: Note) {
-    const evmId = await this.inner.getChainId();
     return this.inner.relayingManager.getRelayer({
       baseOn: 'evm',
-      chainId: evmIdIntoChainId(evmId),
+      chainId: Number(evmNote.note.chain),
       mixerSupport: {
         amount: Number(evmNote.note.amount),
         tokenSymbol: evmNote.note.tokenSymbol,
@@ -165,7 +163,7 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
           fee: Number(fees?.totalFees),
         });
 
-        const relayerLeaves = await activeRelayer.getLeaves(mixerInfo.address);
+        const relayerLeaves = await activeRelayer.getLeaves(chainEvmId.toString(16), mixerInfo.address);
 
         // This is the part of withdraw that takes a long time
         this.emit('stateChange', WithdrawState.GeneratingZk);
@@ -259,6 +257,7 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
       } catch (e) {
         this.emit('stateChange', WithdrawState.Failed);
         this.emit('stateChange', WithdrawState.Ideal);
+        console.log(e);
         transactionNotificationConfig.failed?.({
           address: recipient,
           data: 'Withdraw failed',
