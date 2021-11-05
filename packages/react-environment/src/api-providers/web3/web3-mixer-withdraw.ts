@@ -55,10 +55,7 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
           throw WebbError.from(WebbErrorCodes.RelayerUnsupportedMixer);
         }
 
-        // const bigDenomination = BigNumber.from(10).pow(Number(evmNote.denomination));
         const principleBig = parseUnits(supportedContract.size.toString(), evmNote.denomination);
-        // const principleBig = BigNumber.from(contractSizeBig).mul(bigDenomination);
-
         const withdrawFeeMill = supportedContract.withdrawFeePercentage * 1000000;
 
         const withdrawFeeMillBig = BigNumber.from(withdrawFeeMill);
@@ -147,7 +144,6 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
           fee: Number(fees?.totalFees),
         });
 
-        console.log('evmId: ', chainEvmId.toString(16));
         const relayerLeaves = await activeRelayer.getLeaves(chainEvmId.toString(16), mixerInfo.address);
 
         // This is the part of withdraw that takes a long time
@@ -242,7 +238,7 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
       } catch (e) {
         this.emit('stateChange', WithdrawState.Failed);
         this.emit('stateChange', WithdrawState.Ideal);
-        console.log(e);
+        logger.trace(e);
         transactionNotificationConfig.failed?.({
           address: recipient,
           data: 'Withdraw failed',

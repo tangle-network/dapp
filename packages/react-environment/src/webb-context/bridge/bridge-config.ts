@@ -63,9 +63,6 @@ export const bridgeConfig: BridgeConfig = {
 };
 
 export const getAnchorAddressForBridge = (assetName: string, chainId: number, amount: number): string | undefined => {
-  console.log('assetName', assetName);
-  console.log('bridgeConfig', bridgeConfig);
-
   const linkedAnchorConfig = bridgeConfig[assetName].anchors.find((anchor) => anchor.amount == amount.toString());
   if (!linkedAnchorConfig) {
     throw new Error('Unsupported configuration for bridge');
