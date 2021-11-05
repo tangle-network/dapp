@@ -189,7 +189,10 @@ export class WebbRelayerBuilder {
             return Boolean(
               capabilities.supportedChains[baseOn]
                 .get(chainId)
-                ?.contracts?.find((contract) => contract.address == contractAddress.toLowerCase())
+                ?.contracts?.find(
+                  (contract) =>
+                    contract.address == contractAddress.toLowerCase() && contract.eventsWatcher.enabled == true
+                )
             );
           }
         }
@@ -202,7 +205,10 @@ export class WebbRelayerBuilder {
               return Boolean(
                 capabilities.supportedChains[baseOn]
                   .get(chainId)
-                  ?.contracts?.find((contract) => contract.address == mixerInfo.address.toLowerCase())
+                  ?.contracts?.find(
+                    (contract) =>
+                      contract.address == mixerInfo.address.toLowerCase() && contract.eventsWatcher.enabled == true
+                  )
               );
             } else {
               return false;
