@@ -1,4 +1,4 @@
-import { ChainId } from '@webb-dapp/apps/configs';
+import { ChainId, getEVMChainNameFromInternal } from '@webb-dapp/apps/configs';
 import { chainsConfig } from '@webb-dapp/apps/configs/chains';
 import { EvmChainMixersInfo } from '@webb-dapp/react-environment/api-providers/web3/EvmChainMixersInfo';
 import {
@@ -10,6 +10,7 @@ import {
 import { LoggerService } from '@webb-tools/app-util';
 import { Observable, Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
+import { bridgeConfig, getAnchorAddressForBridge } from '../bridge';
 
 const logger = LoggerService.get('webb-relayer class');
 
@@ -201,6 +202,7 @@ export class WebbRelayerBuilder {
             const evmId = chainsConfig[chainId].evmId!;
             const mixersInfoForChain = new EvmChainMixersInfo(evmId);
             const mixerInfo = mixersInfoForChain.getTornMixerInfoBySize(mixerSupport.amount, mixerSupport.tokenSymbol);
+            const bridgeAddress = getAnchorAddressForBridge(mixerSupport.tokenSymbol, chainId, mixerSupport.amount);
             if (mixerInfo) {
               return Boolean(
                 capabilities.supportedChains[baseOn]
@@ -208,6 +210,15 @@ export class WebbRelayerBuilder {
                   ?.contracts?.find(
                     (contract) =>
                       contract.address == mixerInfo.address.toLowerCase() && contract.eventsWatcher.enabled == true
+                  )
+              );
+            } else if (bridgeAddress) {
+              return Boolean(
+                capabilities.supportedChains[baseOn]
+                  .get(chainId)
+                  ?.contracts?.find(
+                    (contract) =>
+                      contract.address == bridgeAddress.toLowerCase() && contract.eventsWatcher.enabled == true
                   )
               );
             } else {
