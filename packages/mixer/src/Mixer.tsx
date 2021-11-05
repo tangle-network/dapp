@@ -1,39 +1,27 @@
 import { Deposit, Withdraw } from '@webb-dapp/mixer/components';
 import IPDisplay from '@webb-dapp/react-components/IPDisplay/IPDisplay';
+import { PermissionedAccess } from '@webb-dapp/react-components/PermissionedAccess/PermissionedAccess';
 import { useWebContext } from '@webb-dapp/react-environment/webb-context';
+import { useIp } from '@webb-dapp/react-hooks/useIP';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { MixerTabs } from '@webb-dapp/ui-components/Tabs/MixerTabs';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 
 const MixerWrapper = styled.div``;
 type MixerProps = {};
 
-export type RelayerIpInfo = {
-  ip: String;
-};
-
 export const Mixer: React.FC<MixerProps> = () => {
   const { activeApi } = useWebContext();
-  const [ip, setIp] = useState<RelayerIpInfo>({ ip: '' });
-
-  useEffect(() => {
-    async function getIpInfo() {
-      const relayer = await activeApi?.relayingManager.getRelayer({})[0];
-      if (relayer) {
-        const response = await relayer.getIp();
-        console.log(response);
-        setIp(response);
-      }
-    }
-    getIpInfo();
-  }, [activeApi]);
+  const { ip } = useIp(activeApi);
 
   return (
     <MixerWrapper>
-      <MixerTabs Withdraw={<Withdraw />} Deposit={<Deposit />} />
+      <PermissionedAccess ip={ip}>
+        <MixerTabs Withdraw={<Withdraw />} Deposit={<Deposit />} />
+      </PermissionedAccess>
       <SpaceBox height={8} />
-      <IPDisplay ip={ip.ip} />
+      <IPDisplay ip={ip} />
     </MixerWrapper>
   );
 };

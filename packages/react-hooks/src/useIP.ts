@@ -1,6 +1,9 @@
-import { RelayerIpInfo } from '@webb-dapp/mixer/Mixer';
 import { WebbApiProvider } from '@webb-dapp/react-environment';
 import { useEffect, useState } from 'react';
+
+export type RelayerIpInfo = {
+  ip: string;
+};
 
 export function useIp(activeApi?: WebbApiProvider<any>) {
   const [ip, setIp] = useState<RelayerIpInfo>({ ip: '' });
@@ -14,7 +17,7 @@ export function useIp(activeApi?: WebbApiProvider<any>) {
         setIp(response);
       }
     }
-    getIpInfo()
+    getIpInfo();
   }, [activeApi]);
   return ip;
 }
