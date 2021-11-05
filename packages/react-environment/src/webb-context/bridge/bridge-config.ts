@@ -38,7 +38,7 @@ export const bridgeConfig: BridgeConfig = {
           [ChainId.HarmonyTestnet0]: '0x30a9E294b1Fc166194d2D1AF936CDdfF0e86A47B',
           [ChainId.Rinkeby]: '0x6244Cf3D15aE8D9F973f080Af561b99c501e5e9D',
         },
-        amount: '.1',
+        amount: '0.1',
       },
     ],
   },
@@ -56,8 +56,18 @@ export const bridgeConfig: BridgeConfig = {
           [ChainId.Rinkeby]: '0x15A66977f0A9D21e09eB6C1B42b001aF992f0C8f',
           [ChainId.Goerli]: '0x025348e15e9d5529E5A4A55E8eA7eC923b7fB8b6',
         },
-        amount: '.01',
+        amount: '0.01',
       },
     ],
   },
+};
+
+export const getAnchorAddressForBridge = (assetName: string, chainId: number, amount: number): string | undefined => {
+  const linkedAnchorConfig = bridgeConfig[assetName].anchors.find((anchor) => anchor.amount == amount.toString());
+  if (!linkedAnchorConfig) {
+    throw new Error('Unsupported configuration for bridge');
+  }
+
+  const anchorAddress = linkedAnchorConfig.anchorAddresses[chainId as ChainId];
+  return anchorAddress;
 };

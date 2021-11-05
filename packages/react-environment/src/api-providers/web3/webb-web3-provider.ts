@@ -1,4 +1,4 @@
-import { chainsConfig, currenciesConfig, evmIdIntoChainId } from '@webb-dapp/apps/configs';
+import { chainIdIntoEVMId, chainsConfig, currenciesConfig, evmIdIntoChainId } from '@webb-dapp/apps/configs';
 import { AnchorContract } from '@webb-dapp/contracts/contracts';
 import { TornadoContract } from '@webb-dapp/contracts/contracts/tornado-anchor';
 import { WebbApiProvider, WebbMethods, WebbProviderEvents } from '@webb-dapp/react-environment';
@@ -13,6 +13,7 @@ import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import { Web3Accounts } from '@webb-dapp/wallet/providers/web3/web3-accounts';
 import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
 import { EventBus } from '@webb-tools/app-util';
+import { Note } from '@webb-tools/sdk-mixer';
 import { ethers, providers } from 'ethers';
 
 export class WebbWeb3Provider
@@ -98,6 +99,16 @@ export class WebbWeb3Provider
 
   getMixers() {
     return this.connectedMixers;
+  }
+
+  getTornadoContractAddressByNote(note: Note) {
+    const evmId = chainIdIntoEVMId(Number(note.note.chain));
+    const availableMixers = new EvmChainMixersInfo(evmId);
+    const mixer = availableMixers.getTornMixerInfoBySize(Number(note.note.amount), note.note.tokenSymbol);
+    if (!mixer) {
+      throw new Error('Mixer not found');
+    }
+    return mixer.address;
   }
 
   async getContractByAddress(mixerAddress: string): Promise<TornadoContract> {

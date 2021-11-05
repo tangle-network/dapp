@@ -1,3 +1,4 @@
+import { parseUnits } from '@ethersproject/units';
 import { ChainId, chainIdIntoEVMId, evmIdIntoChainId } from '@webb-dapp/apps/configs';
 import { chainIdToRelayerName } from '@webb-dapp/apps/configs/relayer-config';
 import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
@@ -37,15 +38,15 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
       async (note: string) => {
         const depositNote = await Note.deserialize(note);
         const evmNote = depositNote.note;
+        const contractAddress = await this.inner.getTornadoContractAddressByNote(depositNote);
 
-        const contract = await this.inner.getContractBySize(Number(evmNote.amount), evmNote.tokenSymbol);
-
-        // Given the note, iterate over the potential relayers and find the corresponding relayer configuration
+        // Given the note, iterate over the relayer's supported contracts and find the corresponding configuration
         // for the contract.
         const supportedContract = relayer.capabilities.supportedChains['evm']
           .get(Number(evmNote.chain))
-          ?.contracts.find(({ address }) => {
-            return address.toLowerCase() === contract.inner.address.toLowerCase();
+          ?.contracts.find(({ address, size }) => {
+            // Match on the relayer configuration as well as note
+            return address.toLowerCase() === contractAddress.toLowerCase() && size == Number(evmNote.amount);
           });
 
         // The user somehow selected a relayer which does not support the mixer.
@@ -54,8 +55,7 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
           throw WebbError.from(WebbErrorCodes.RelayerUnsupportedMixer);
         }
 
-        const principleBig = await contract.denomination;
-
+        const principleBig = parseUnits(supportedContract.size.toString(), evmNote.denomination);
         const withdrawFeeMill = supportedContract.withdrawFeePercentage * 1000000;
 
         const withdrawFeeMillBig = BigNumber.from(withdrawFeeMill);
@@ -81,10 +81,9 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
   }
 
   async getRelayersByNote(evmNote: Note) {
-    const evmId = await this.inner.getChainId();
     return this.inner.relayingManager.getRelayer({
       baseOn: 'evm',
-      chainId: evmIdIntoChainId(evmId),
+      chainId: Number(evmNote.note.chain),
       mixerSupport: {
         amount: Number(evmNote.note.amount),
         tokenSymbol: evmNote.note.tokenSymbol,
@@ -117,26 +116,6 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
     console.log('chainEvmId', chainEvmId);
     this.emit('stateChange', WithdrawState.GeneratingZk);
 
-    if (activeChain !== chainEvmId) {
-      try {
-        console.log('trying to switch or add');
-        await this.inner.switchOrAddChain(chainEvmId);
-      } catch (e) {
-        console.log('error: ', e);
-        this.emit('stateChange', WithdrawState.Ideal);
-        transactionNotificationConfig.failed?.({
-          address: recipient,
-          data: 'Withdraw rejected',
-          key: 'mixer-withdraw-evm',
-          path: {
-            method: 'withdraw',
-            section: 'evm-mixer',
-          },
-        });
-        return '';
-      }
-    }
-
     if (activeRelayer && activeRelayer.account) {
       try {
         transactionNotificationConfig.loading?.({
@@ -165,7 +144,7 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
           fee: Number(fees?.totalFees),
         });
 
-        const relayerLeaves = await activeRelayer.getLeaves(mixerInfo.address);
+        const relayerLeaves = await activeRelayer.getLeaves(chainEvmId.toString(16), mixerInfo.address);
 
         // This is the part of withdraw that takes a long time
         this.emit('stateChange', WithdrawState.GeneratingZk);
@@ -259,6 +238,7 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
       } catch (e) {
         this.emit('stateChange', WithdrawState.Failed);
         this.emit('stateChange', WithdrawState.Ideal);
+        logger.trace(e);
         transactionNotificationConfig.failed?.({
           address: recipient,
           data: 'Withdraw failed',
