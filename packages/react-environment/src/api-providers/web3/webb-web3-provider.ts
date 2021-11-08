@@ -46,7 +46,7 @@ export class WebbWeb3Provider
     this.methods = {
       wrapUnwrap: {
         core: {
-          enabled: false,
+          enabled: true,
           inner: new Web3WrapUnwrap(this),
         },
       },

@@ -20,6 +20,7 @@ import { Currency } from '@webb-dapp/react-environment/types/currency';
 import Typography from '@material-ui/core/Typography';
 import { CurrencyId } from '@webb-tools/types/interfaces';
 import { MixerGroupSelect } from '@webb-dapp/ui-components/Inputs/MixerGroupSelect/MixerGroupSelect';
+import { useWrapUnwrap } from '@webb-dapp/page-wrap-unwrap/hooks/useWrapUnwrap';
 
 const TransferWrapper = styled.div`
   padding: 1rem;
@@ -105,89 +106,41 @@ const TabButton = styled.button<{ active?: boolean }>`
 `;
 
 const PageWrappUnwrap: FC = () => {
+  const { leftHandToken, rightHandToken, swap, setLeftHandToken, setRightHandToken, wrappedTokens, tokens } =
+    useWrapUnwrap();
+
   const [isSwap, setIsSwap] = useState(false);
   const [status, setStatus] = useState<'wrap' | 'unwrap'>('wrap');
 
   const { activeApi } = useWebContext();
   const ip = useIp(activeApi);
-  const bridge = useBridge();
 
-  const [bridgeCurrency, setBridgeCurrency] = useState<BridgeCurrency | null>(null);
-  const [wrappedCurrency, setWrappedCurrency] = useState<Currency | null>(null);
   const [useFixedDeposits, setUseFixedDepoists] = useState(true);
-  const [activeTab, setActiveTab] = useState<'deposit' | 'withdraw'>('deposit');
-
-  const bridgeTokens = useMemo(() => {
-    return bridge.getTokens().filter((currency) => currency.currencyId !== WebbCurrencyId.WEBB);
-  }, [bridge]);
-
-  const tokens = useMemo(() => {
-    return status === 'unwrap'
-      ? bridgeTokens.map(fromBridgeCurrencyToCurrencyView)
-      : bridgeTokens
-          .filter((t) => (wrappedCurrency ? t.currencyId === wrappedCurrency.view.id : true))
-          .map(fromBridgeCurrencyToCurrencyView);
-  }, [bridgeTokens, status, wrappedCurrency]);
-
-  const wrappedTokens = useMemo(() => {
-    const birdgetokensFilterd =
-      status == 'wrap' ? bridgeTokens : bridgeTokens.filter((i) => i.name === bridgeCurrency.name);
-    return birdgetokensFilterd
-      .reduce<CurrencyId[]>((a, i) => (a.includes(i.currencyId) ? a : [...a, i.currencyId]), [])
-      .map((currencyId) => Currency.fromCurrencyId(currencyId));
-  }, [bridgeTokens, bridgeCurrency, status]);
-
-  const selectedBridgeCurrency = useMemo(() => {
-    if (!bridgeCurrency) {
-      return undefined;
-    }
-    return fromBridgeCurrencyToCurrencyView(bridgeCurrency);
-  }, [bridgeCurrency]);
-  useEffect(() => {
-    if (!bridgeCurrency) {
-      return;
-    }
-    setWrappedCurrency(Currency.fromCurrencyId(bridgeCurrency?.currencyId));
-  }, [bridgeCurrency]);
 
   const bridgeTokenInputProps: TokenInputProps = useMemo(() => {
     return {
       currencies: tokens,
-      value: selectedBridgeCurrency,
+      value: leftHandToken,
       onChange: (currencyContent) => {
-        if (currencyContent) {
-          setBridgeCurrency(BridgeCurrency.fromString(String(currencyContent.view.id)));
-        }
+        setLeftHandToken(currencyContent);
       },
     };
-  }, [tokens, selectedBridgeCurrency, status]);
+  }, [tokens, leftHandToken]);
 
   const wrappedTokenInputProps: TokenInputProps = useMemo(() => {
     return {
       currencies: wrappedTokens,
-      value: wrappedCurrency,
+      value: rightHandToken,
       onChange: (currencyContent) => {
-        if (currencyContent) {
-          if (status === 'wrap') {
-            const currencyId = Number(currencyContent?.view.id);
-            setWrappedCurrency(Currency.fromCurrencyId(currencyId));
-            if (bridgeCurrency?.currencyId !== currencyId) {
-              setBridgeCurrency(null);
-            }
-          }
-        }
+        setRightHandToken(currencyContent);
       },
     };
-  }, [wrappedTokens, wrappedCurrency, status, bridgeCurrency]);
+  }, [rightHandToken, status, wrappedTokens]);
   const leftInputProps = status === 'unwrap' ? bridgeTokenInputProps : wrappedTokenInputProps;
   const rightInputProps = status === 'wrap' ? bridgeTokenInputProps : wrappedTokenInputProps;
-  const buttonText =
-    bridgeCurrency && wrappedCurrency
-      ? status === 'unwrap'
-        ? `Unwrap ${bridgeCurrency?.name} to ${wrappedCurrency.view.name}`
-        : `Wrap ${wrappedCurrency.view.name} into ${bridgeCurrency.name}`
-      : status;
-  const suffix = status === 'wrap' ? selectedBridgeCurrency?.view.symbol : wrappedCurrency?.view.symbol;
+  const buttonText = 'wrap';
+
+  const suffix = leftHandToken?.view.symbol;
 
   const dummySizes = useMemo(() => {
     return [
@@ -218,12 +171,7 @@ const PageWrappUnwrap: FC = () => {
   const switchToUnwrap = useCallback(() => {
     setStatus('unwrap');
   }, []);
-  useEffect(() => {
-    activeApi?.methods.wrapUnwrap.core.inner.wrap({
-      wrapFrom: 'eth',
-      wrapInto: 'webbETH-4-5-7',
-    });
-  }, [activeApi]);
+
   return (
     <div>
       <TransferWrapper>
