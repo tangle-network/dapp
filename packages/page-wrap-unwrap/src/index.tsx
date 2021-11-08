@@ -1,26 +1,26 @@
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
-import styled, { css } from 'styled-components';
-import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
-import { Pallet } from '@webb-dapp/ui-components/styling/colors';
-import { InputSection } from '@webb-dapp/ui-components/Inputs/InputSection/InputSection';
-import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabel';
-import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { Button, Checkbox, FormControlLabel, IconButton, InputBase, InputProps, Tooltip } from '@material-ui/core';
 import Icon from '@material-ui/core/Icon';
-import { TokenInput, TokenInputProps } from '@webb-dapp/ui-components/Inputs/TokenInput/TokenInput';
-import { SpaceBox } from '@webb-dapp/ui-components';
-import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
+import Typography from '@material-ui/core/Typography';
+import { WebbCurrencyId } from '@webb-dapp/apps/configs';
+import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
+import { useWrapUnwrap } from '@webb-dapp/page-wrap-unwrap/hooks/useWrapUnwrap';
 import IPDisplay from '@webb-dapp/react-components/IPDisplay/IPDisplay';
 import { BridgeCurrency, useWebContext } from '@webb-dapp/react-environment';
-import { useIp } from '@webb-dapp/react-hooks/useIP';
-import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
-import { WebbCurrencyId } from '@webb-dapp/apps/configs';
-import { fromBridgeCurrencyToCurrencyView } from '@webb-dapp/ui-components/Inputs/WalletBridgeCurrencyInput/WalletBridgeCurrencyInput';
 import { Currency } from '@webb-dapp/react-environment/types/currency';
-import Typography from '@material-ui/core/Typography';
-import { CurrencyId } from '@webb-tools/types/interfaces';
+import { useIp } from '@webb-dapp/react-hooks/useIP';
+import { SpaceBox } from '@webb-dapp/ui-components';
+import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
+import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
+import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabel';
+import { InputSection } from '@webb-dapp/ui-components/Inputs/InputSection/InputSection';
 import { MixerGroupSelect } from '@webb-dapp/ui-components/Inputs/MixerGroupSelect/MixerGroupSelect';
-import { useWrapUnwrap } from '@webb-dapp/page-wrap-unwrap/hooks/useWrapUnwrap';
+import { TokenInput, TokenInputProps } from '@webb-dapp/ui-components/Inputs/TokenInput/TokenInput';
+import { fromBridgeCurrencyToCurrencyView } from '@webb-dapp/ui-components/Inputs/WalletBridgeCurrencyInput/WalletBridgeCurrencyInput';
+import { Pallet } from '@webb-dapp/ui-components/styling/colors';
+import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
+import { CurrencyId } from '@webb-tools/types/interfaces';
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import styled, { css } from 'styled-components';
 
 const TransferWrapper = styled.div`
   padding: 1rem;
@@ -110,11 +110,13 @@ const PageWrappUnwrap: FC = () => {
     context: status,
     leftHandToken,
     rightHandToken,
-    swap,
     setLeftHandToken,
     setRightHandToken,
-    wrappedTokens,
+    swap,
     tokens,
+    wrappedTokens,
+
+    execute,
   } = useWrapUnwrap();
 
   const [isSwap, setIsSwap] = useState(false);
@@ -132,7 +134,7 @@ const PageWrappUnwrap: FC = () => {
         setLeftHandToken(currencyContent);
       },
     };
-  }, [tokens, wrappedTokens, leftHandToken, status]);
+  }, [status, tokens, wrappedTokens, leftHandToken, setLeftHandToken]);
 
   const wrappedOrWrappedFrom: TokenInputProps = useMemo(() => {
     return {
@@ -142,7 +144,7 @@ const PageWrappUnwrap: FC = () => {
         setRightHandToken(currencyContent);
       },
     };
-  }, [rightHandToken, tokens, wrappedTokens, status]);
+  }, [status, tokens, wrappedTokens, rightHandToken, setRightHandToken]);
   const leftInputProps = nativeOrWrapToProps;
   const rightInputProps = wrappedOrWrappedFrom;
   const buttonText = status;
@@ -176,12 +178,12 @@ const PageWrappUnwrap: FC = () => {
     if (status === 'unwrap') {
       swap();
     }
-  }, [status]);
+  }, [status, swap]);
   const switchToUnwrap = useCallback(() => {
     if (status === 'wrap') {
       swap();
     }
-  }, [status]);
+  }, [status, swap]);
 
   return (
     <div>
@@ -282,11 +284,11 @@ const PageWrappUnwrap: FC = () => {
             setUseFixedDepoists((t) => !t);
           }}
           control={<Checkbox color={'primary'} />}
-          label={<Typography color={'textPrimary'}>Use Fixed depoists</Typography>}
+          label={<Typography color={'textPrimary'}>Use Fixed deposits</Typography>}
         />
         <SpaceBox height={16} />
 
-        <MixerButton label={buttonText} onClick={() => {}} />
+        <MixerButton label={buttonText} onClick={execute} />
       </TransferWrapper>
 
       <SpaceBox height={8} />

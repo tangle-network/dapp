@@ -18,7 +18,7 @@ export type WrappingEvent = {
   governedTokensUpdate: WrappingTokenId[];
 };
 export type WrappingEventNames = keyof WrappingEvent;
-type Amount = {
+export type Amount = {
   amount: number | string;
 };
 

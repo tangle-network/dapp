@@ -33,8 +33,8 @@ export class WebbGovernedToken {
   }
 
   /// todo assume native
-  async wrap(/*address: string,*/ amount: number) {
-    return this._contract.wrap(`0x0000000000000000000000000000000000000000`, amount);
+  async wrap(address: string, amount: number) {
+    return this._contract.wrap(address, amount);
   }
 
   async unwrap(address: string, amount: number) {
