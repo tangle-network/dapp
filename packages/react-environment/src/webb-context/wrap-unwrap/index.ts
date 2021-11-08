@@ -1,6 +1,6 @@
-import { MixerSize } from '@webb-dapp/react-environment';
-import { BehaviorSubject, Observable } from 'rxjs';
 import { WebbCurrencyId } from '@webb-dapp/apps/configs';
+import { MixerSize } from '@webb-dapp/react-environment';
+import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 
 /**
  *
@@ -21,8 +21,8 @@ export type WrappingEventNames = keyof WrappingEvent;
 export type Amount = {
   amount: number | string;
 };
-type WrappingBalance = {
-  tokenId: WrappingTokenId;
+export type WrappingBalance = {
+  tokenId?: WrappingTokenId;
   balance: string;
 };
 
@@ -133,4 +133,44 @@ export abstract class WrapUnWrap<T, WrapPayload extends Amount = Amount, UnwrapP
    * Observing the liquidity of the two edges
    * */
   abstract get liquidity(): Observable<[WrappingBalance, WrappingBalance]>;
+}
+
+export class WrappingBalanceWatcher {
+  private subscription: Subscription | null = null;
+
+  constructor(
+    private token1: WrappingTokenId | null = null,
+    private token2: WrappingTokenId | null = null,
+    private signal: Observable<[WrappingTokenId | null, WrappingTokenId | null]>
+  ) {
+    this.sub();
+  }
+
+  sub() {
+    this.subscription = this.signal.subscribe(([token1, token2]) => {
+      const token1Updated = token1 !== this.token1;
+      const token2Updated = token2 !== this.token2;
+      if (token1Updated) {
+        this.token1 = token1;
+      }
+      if (token2Updated) {
+        this.token2 = token2;
+      }
+      // **one exists**
+      // ==>one is native
+      // --->> current account balance
+      //  one is governed
+      // --->> current account balance
+      // --->> contract balance
+
+      // two exits
+      // ==>one is native
+      // --->> current account balance
+      // --->> contract balance
+      // ==>two are governed
+
+      // --->> current account balance
+      // --->> current account balance
+    });
+  }
 }

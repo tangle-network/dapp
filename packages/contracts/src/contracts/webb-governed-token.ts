@@ -1,5 +1,4 @@
 import { Contract, providers, Signer } from 'ethers';
-import { EvmChainMixersInfo } from '@webb-dapp/react-environment/api-providers/web3/EvmChainMixersInfo';
 import { GovernedTokenWrapper } from '@webb-dapp/contracts/types/GovernedTokenWrapper';
 import { GovernedTokenWrapper__factory } from '@webb-dapp/contracts/types/factories/GovernedTokenWrapper__factory';
 import { LoggerService } from '@webb-tools/app-util';
@@ -45,6 +44,10 @@ export class WebbGovernedToken {
     return this._contract.totalSupply();
   }
 
+  get contractBalance() {
+    return this.web3Provider.getBalance(this._contract.address);
+  }
+
   async canUnwrap(account: string, amount: number) {
     const [currentWrappedLiquidity, currentNativeLiquidity] = await Promise.all([
       this.currentLiquidity,
@@ -64,11 +67,12 @@ export class WebbGovernedToken {
   private isNativeAllowed() {
     return true;
   }
+
   async canWrap(/*tokenAddress: string*/ amount: number) {
     /*    const tokens = await this._contract.getTokens();
-    if (!tokens.includes(tokenAddress)) {
-      return false;
-    }*/
+		if (!tokens.includes(tokenAddress)) {
+			return false;
+		}*/
     return this.isNativeAllowed();
   }
 }
