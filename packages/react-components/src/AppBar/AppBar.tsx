@@ -116,8 +116,8 @@ const AppBar: React.FC<AppBarProps> = () => {
       {!isMobile && (
         <NavigationWrapper>
           <li className={'active'}>
-            <NavLink to={'/mixer'} activeClassName={'active'}>
-              Mixers
+            <NavLink to={'/tornado'} activeClassName={'active'}>
+              Tornados
             </NavLink>
           </li>
 
