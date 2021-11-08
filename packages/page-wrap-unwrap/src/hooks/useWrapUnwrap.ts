@@ -28,7 +28,7 @@ export function useWrapUnwrap() {
     wrappedTokens: [],
     context: 'wrap',
   });
-  const { leftHandToken, rightHandToken, context } = state;
+  const { amount, context, leftHandToken, rightHandToken } = state;
 
   const wrapUnwrapApi = useMemo(() => {
     const w = activeApi?.methods.wrapUnwrap?.core;
@@ -124,7 +124,17 @@ export function useWrapUnwrap() {
       wrapUnwrapApi?.setCurrentToken(leftHandToken ? currencyContentToWrappingToken(leftHandToken) : null);
       wrapUnwrapApi?.setOtherEdgToken(rightHandToken ? currencyContentToWrappingToken(rightHandToken) : null);
     }
-  }, [leftHandToken, rightHandToken, context]);
+  }, [leftHandToken, rightHandToken, context, wrapUnwrapApi]);
+
+  const execute = useCallback(() => {
+    switch (context) {
+      case 'wrap':
+        wrapUnwrapApi?.wrap({ amount });
+        break;
+      case 'unwrap':
+        wrapUnwrapApi?.wrap({ amount });
+    }
+  }, [context, wrapUnwrapApi, amount]);
 
   return {
     ...state,
@@ -133,5 +143,7 @@ export function useWrapUnwrap() {
 
     setRightHandToken,
     setLeftHandToken,
+
+    execute,
   };
 }

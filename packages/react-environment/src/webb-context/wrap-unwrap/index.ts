@@ -18,8 +18,11 @@ export type WrappingEvent = {
   governedTokensUpdate: WrappingTokenId[];
 };
 export type WrappingEventNames = keyof WrappingEvent;
+type Amount = {
+  amount: number | string;
+};
 
-export abstract class WrapUnWrap<T, WrapPayload extends Object = any, UnwrapPayload extends Object = any> {
+export abstract class WrapUnWrap<T, WrapPayload extends Amount = Amount, UnwrapPayload extends Amount = Amount> {
   private _currentTokenAddress: BehaviorSubject<WrappingTokenId | null> = new BehaviorSubject<null | WrappingTokenId>(
     null
   );
