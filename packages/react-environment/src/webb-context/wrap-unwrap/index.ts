@@ -1,7 +1,7 @@
 import { MixerSize } from '@webb-dapp/react-environment';
 import { BehaviorSubject } from 'rxjs';
 
-export abstract class WrapUnWrap<T, WrapPayload = any, UnwrapPayload = any> {
+export abstract class WrapUnWrap<T, WrapPayload extends Object = any, UnwrapPayload extends Object = any> {
   private _currentTokenAddress: BehaviorSubject<string | null> = new BehaviorSubject<null | string>(null);
   // todo add events using the Rxjs
   constructor(protected inner: T) {}
@@ -19,10 +19,11 @@ export abstract class WrapUnWrap<T, WrapPayload = any, UnwrapPayload = any> {
   }
 
   abstract getSizes(): Promise<MixerSize[]>;
-  abstract getTokensAddress(): Promise<string>;
+  abstract getWrappedTokens(): Promise<string[]>;
+  abstract getNativeTokens(): Promise<string[]>;
 
   abstract canWrap(wrapPayload: WrapPayload): Promise<boolean>;
-  abstract canWrap(unwrapPayload: UnwrapPayload): Promise<boolean>;
+  abstract canUnWrap(unwrapPayload: UnwrapPayload): Promise<boolean>;
 
   // transaction has
   abstract wrap(wrapPayload: WrapPayload): Promise<string>;

@@ -59,13 +59,13 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
       logger.info(`Commitment for deposit is ${commitment}`);
 
       const tokenInstance = await contract.checkForApprove();
-      console.log("tokenInstance", tokenInstance);
+      console.log('tokenInstance', tokenInstance);
       if (tokenInstance != null) {
         notificationApi.addToQueue({
           message: 'Waiting for token approval',
           variant: 'info',
           key: 'waiting-approval',
-          extras: { persist: true }
+          extras: { persist: true },
         });
         await contract.approve(tokenInstance);
         notificationApi.remove('waiting-approval');

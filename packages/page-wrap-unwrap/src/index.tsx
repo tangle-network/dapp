@@ -218,7 +218,12 @@ const PageWrappUnwrap: FC = () => {
   const switchToUnwrap = useCallback(() => {
     setStatus('unwrap');
   }, []);
-
+  useEffect(() => {
+    activeApi?.methods.wrapUnwrap.core.inner.wrap({
+      wrapFrom: 'eth',
+      wrapInto: 'webbETH-4-5-7',
+    });
+  }, [activeApi]);
   return (
     <div>
       <TransferWrapper>

@@ -45,9 +45,9 @@ export const bridgeConfig: BridgeConfig = {
   [webbETHtest1.name]: {
     asset: webbETHtest1,
     tokenAddresses: {
-      [ChainId.Ropsten]: '0x0000000000000000000000000000000000000000',
-      [ChainId.Rinkeby]: '0x0000000000000000000000000000000000000000',
-      [ChainId.Goerli]: '0x0000000000000000000000000000000000000000',
+      [ChainId.Ropsten]: '0x1A3B41985D8888830b6561FCfBE7e9a8678ECfE8',
+      [ChainId.Rinkeby]: '0x8056Ea3056E3bc147CC1416aaf41B2747135B9B0',
+      [ChainId.Goerli]: '0xd20CFb05817D26123f4c777589740DB4f88FC964',
     },
     anchors: [
       {

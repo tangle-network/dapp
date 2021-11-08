@@ -10,19 +10,10 @@ export class WebbGovernedToken {
   private _contract: GovernedTokenWrapper;
   private readonly signer: Signer;
 
-  constructor(
-    private mixersInfo: EvmChainMixersInfo,
-    private web3Provider: providers.Web3Provider,
-    address: string,
-    useProvider = false
-  ) {
+  constructor(private web3Provider: providers.Web3Provider, address: string) {
     this.signer = this.web3Provider.getSigner();
     logger.info(`Init with address ${address} `);
-    this._contract = new Contract(
-      address,
-      GovernedTokenWrapper__factory.abi,
-      useProvider ? this.web3Provider : this.signer
-    ) as any;
+    this._contract = new Contract(address, GovernedTokenWrapper__factory.abi, this.web3Provider) as any;
   }
 
   get tokens() {
@@ -41,7 +32,12 @@ export class WebbGovernedToken {
     return this._contract.balanceOf(account);
   }
 
-  async wrap(address: string, amount: number) {
+  /// todo assume native
+  async wrap(/*address: string,*/ amount: number) {
+    return this._contract.wrap(`0x0000000000000000000000000000000000000000`, amount);
+  }
+
+  async unwrap(address: string, amount: number) {
     return this._contract.wrap(address, amount);
   }
 
@@ -49,8 +45,30 @@ export class WebbGovernedToken {
     return this._contract.totalSupply();
   }
 
-  async canUnwrap(address: string, amount: number) {
-    const currentLiquidity = await this.currentLiquidity;
-    return currentLiquidity.lte(amount);
+  async canUnwrap(account: string, amount: number) {
+    const [currentWrappedLiquidity, currentNativeLiquidity] = await Promise.all([
+      this.currentLiquidity,
+      this.web3Provider.getBalance(this._contract.address),
+    ]);
+    if (currentWrappedLiquidity.lt(amount) || currentWrappedLiquidity.lt(amount)) {
+      // no enough liquidity
+      return false;
+    }
+
+    const userBalance = await this._contract.balanceOf(account);
+    if (userBalance.gte(amount)) return true;
+
+    return false;
+  }
+
+  private isNativeAllowed() {
+    return true;
+  }
+  async canWrap(/*tokenAddress: string*/ amount: number) {
+    /*    const tokens = await this._contract.getTokens();
+    if (!tokens.includes(tokenAddress)) {
+      return false;
+    }*/
+    return this.isNativeAllowed();
   }
 }
