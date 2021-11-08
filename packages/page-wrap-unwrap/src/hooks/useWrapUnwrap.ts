@@ -22,7 +22,7 @@ export function useWrapUnwrap() {
     wrappedTokens: [],
     context: 'wrap',
   });
-  const { leftHandToken, rightHandToken } = state;
+  const { leftHandToken, rightHandToken, context } = state;
 
   const wrapUnwrapApi = useMemo(() => {
     const w = activeApi?.methods.wrapUnwrap?.core;
@@ -60,6 +60,14 @@ export function useWrapUnwrap() {
   }, [initNativeTokens, initGovernedToken]);
 
   useEffect(() => {
+    init();
+    const sub = wrapUnwrapApi?.$currentTokenValue.subscribe((val) => {
+      console.log(`current token value`, val);
+    });
+    return () => sub?.unsubscribe();
+  }, [wrapUnwrapApi, init]);
+
+  useEffect(() => {
     const r = wrapUnwrapApi?.subscription.subscribe((next) => {
       const key = Object.keys(next)[0] as WrappingEventNames;
       switch (key) {
@@ -82,14 +90,10 @@ export function useWrapUnwrap() {
   const swap = useCallback(() => {
     setState((p) => ({
       ...p,
-      rightHandToken: leftHandToken,
       leftHandToken: rightHandToken,
+      rightHandToken: leftHandToken,
+      context: p.context === 'unwrap' ? 'wrap' : 'unwrap',
     }));
-
-    const isNative = leftHandToken?.view.symbol.toLocaleLowerCase().indexOf('webb') === -1;
-    wrapUnwrapApi?.setCurrentToken(
-      leftHandToken ? { variant: isNative ? 'native-token' : 'governed-token', id: leftHandToken.view.id } : null
-    );
   }, [rightHandToken, leftHandToken, wrapUnwrapApi]);
 
   const setRightHandToken = (content: CurrencyContent | undefined) => {
@@ -106,6 +110,20 @@ export function useWrapUnwrap() {
     }));
   };
 
+  useEffect(() => {
+    if (context === 'wrap') {
+      const isNative = rightHandToken?.view.symbol.toLocaleLowerCase().indexOf('webb') === -1;
+      wrapUnwrapApi?.setCurrentToken(
+        rightHandToken ? { variant: isNative ? 'native-token' : 'governed-token', id: rightHandToken.view.id } : null
+      );
+    } else {
+      const isNative = leftHandToken?.view.symbol.toLocaleLowerCase().indexOf('webb') === -1;
+      wrapUnwrapApi?.setCurrentToken(
+        leftHandToken ? { variant: isNative ? 'native-token' : 'governed-token', id: leftHandToken.view.id } : null
+      );
+    }
+  }, [leftHandToken, rightHandToken, context]);
+  console.log(wrapUnwrapApi?.currentToken);
   return {
     ...state,
 

@@ -106,38 +106,45 @@ const TabButton = styled.button<{ active?: boolean }>`
 `;
 
 const PageWrappUnwrap: FC = () => {
-  const { leftHandToken, rightHandToken, swap, setLeftHandToken, setRightHandToken, wrappedTokens, tokens } =
-    useWrapUnwrap();
+  const {
+    context: status,
+    leftHandToken,
+    rightHandToken,
+    swap,
+    setLeftHandToken,
+    setRightHandToken,
+    wrappedTokens,
+    tokens,
+  } = useWrapUnwrap();
 
   const [isSwap, setIsSwap] = useState(false);
-  const [status, setStatus] = useState<'wrap' | 'unwrap'>('wrap');
 
   const { activeApi } = useWebContext();
   const ip = useIp(activeApi);
 
   const [useFixedDeposits, setUseFixedDepoists] = useState(true);
 
-  const bridgeTokenInputProps: TokenInputProps = useMemo(() => {
+  const nativeOrWrapToProps: TokenInputProps = useMemo(() => {
     return {
-      currencies: tokens,
+      currencies: status === 'wrap' ? tokens : wrappedTokens,
       value: leftHandToken,
       onChange: (currencyContent) => {
         setLeftHandToken(currencyContent);
       },
     };
-  }, [tokens, leftHandToken]);
+  }, [tokens, wrappedTokens, leftHandToken, status]);
 
-  const wrappedTokenInputProps: TokenInputProps = useMemo(() => {
+  const wrappedOrWrappedFrom: TokenInputProps = useMemo(() => {
     return {
-      currencies: wrappedTokens,
+      currencies: status === 'unwrap' ? tokens : wrappedTokens,
       value: rightHandToken,
       onChange: (currencyContent) => {
         setRightHandToken(currencyContent);
       },
     };
-  }, [rightHandToken, status, wrappedTokens]);
-  const leftInputProps = status === 'unwrap' ? bridgeTokenInputProps : wrappedTokenInputProps;
-  const rightInputProps = status === 'wrap' ? bridgeTokenInputProps : wrappedTokenInputProps;
+  }, [rightHandToken, tokens, wrappedTokens, status]);
+  const leftInputProps = nativeOrWrapToProps;
+  const rightInputProps = wrappedOrWrappedFrom;
   const buttonText = 'wrap';
 
   const suffix = leftHandToken?.view.symbol;
@@ -166,11 +173,15 @@ const PageWrappUnwrap: FC = () => {
   const [activeSize, setAcitveSize] = useState<any | null>(null);
 
   const switchToWrap = useCallback(() => {
-    setStatus('wrap');
-  }, []);
+    if (status === 'unwrap') {
+      swap();
+    }
+  }, [status]);
   const switchToUnwrap = useCallback(() => {
-    setStatus('unwrap');
-  }, []);
+    if (status === 'wrap') {
+      swap();
+    }
+  }, [status]);
 
   return (
     <div>
@@ -229,7 +240,7 @@ const PageWrappUnwrap: FC = () => {
                       setIsSwap(false);
                     }}
                     onClick={() => {
-                      setStatus((s) => (s === 'wrap' ? 'unwrap' : 'wrap'));
+                      swap();
                     }}
                   >
                     <Icon>{isSwap ? 'swap_horiz' : 'east'}</Icon>
