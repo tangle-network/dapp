@@ -2,6 +2,7 @@ import { BridgeCurrency, useWebContext } from '@webb-dapp/react-environment';
 import { Currency, CurrencyContent } from '@webb-dapp/react-environment/types/currency';
 import { fromBridgeCurrencyToCurrencyView } from '@webb-dapp/ui-components/Inputs/WalletBridgeCurrencyInput/WalletBridgeCurrencyInput';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { WrappingEventNames } from '@webb-dapp/react-environment/webb-context/wrap-unwrap';
 
 export function useWrapUnwrap() {
   const { activeApi } = useWebContext();
@@ -21,7 +22,7 @@ export function useWrapUnwrap() {
     wrappedTokens: [],
     context: 'wrap',
   });
-  const { rightHandToken, leftHandToken } = state;
+  const { leftHandToken, rightHandToken } = state;
 
   const wrapUnwrapApi = useMemo(() => {
     const w = activeApi?.methods.wrapUnwrap?.core;
@@ -32,7 +33,7 @@ export function useWrapUnwrap() {
     return null;
   }, [activeApi]);
 
-  useEffect(() => {
+  const initNativeTokens = useCallback(() => {
     wrapUnwrapApi?.getNativeTokens().then((tokens) => {
       setState((p) => ({
         ...p,
@@ -41,7 +42,7 @@ export function useWrapUnwrap() {
     });
   }, [wrapUnwrapApi]);
 
-  useEffect(() => {
+  const initGovernedToken = useCallback(() => {
     wrapUnwrapApi?.getGovernedTokens().then((tokens) => {
       setState((p) => ({
         ...p,
@@ -53,12 +54,38 @@ export function useWrapUnwrap() {
     });
   }, [wrapUnwrapApi]);
 
+  const init = useCallback(() => {
+    initNativeTokens();
+    initGovernedToken();
+  }, [initNativeTokens, initGovernedToken]);
+
+  useEffect(() => {
+    const r = wrapUnwrapApi?.subscription.subscribe((next) => {
+      const key = Object.keys(next)[0] as WrappingEventNames;
+      switch (key) {
+        case 'ready':
+        case 'stateUpdate':
+          init();
+          break;
+        case 'wrappedTokens':
+          break;
+        case 'nativeTokensUpdate':
+          break;
+        case 'governedTokensUpdate':
+          break;
+      }
+    });
+
+    return () => r?.unsubscribe();
+  }, [init, wrapUnwrapApi]);
+
   const swap = useCallback(() => {
     setState((p) => ({
       ...p,
       rightHandToken: leftHandToken,
       leftHandToken: rightHandToken,
     }));
+
     const isNative = leftHandToken?.view.symbol.toLocaleLowerCase().indexOf('webb') === -1;
     wrapUnwrapApi?.setCurrentToken(
       leftHandToken ? { variant: isNative ? 'native-token' : 'governed-token', id: leftHandToken.view.id } : null

@@ -1,5 +1,5 @@
 import { MixerSize } from '@webb-dapp/react-environment';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { WebbCurrencyId } from '@webb-dapp/apps/configs';
 
 /**
@@ -10,12 +10,23 @@ export type WrappingTokenId = {
   id: WebbCurrencyId | string;
 };
 
+export type WrappingEvent = {
+  ready: null;
+  stateUpdate: null;
+  wrappedTokens: WrappingTokenId[];
+  nativeTokensUpdate: WrappingTokenId[];
+  governedTokensUpdate: WrappingTokenId[];
+};
+export type WrappingEventNames = keyof WrappingEvent;
 export abstract class WrapUnWrap<T, WrapPayload extends Object = any, UnwrapPayload extends Object = any> {
   private _currentTokenAddress: BehaviorSubject<WrappingTokenId | null> = new BehaviorSubject<null | WrappingTokenId>(
     null
   );
+
   // todo add events using the Rxjs
   constructor(protected inner: T) {}
+
+  abstract get subscription(): Observable<Partial<WrappingEvent>>;
 
   setCurrentToken(nextTokenAddress: WrappingTokenId | null) {
     this._currentTokenAddress.next(nextTokenAddress);

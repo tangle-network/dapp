@@ -2,8 +2,8 @@ import { ChainId, evmIdIntoChainId, WebbCurrencyId } from '@webb-dapp/apps/confi
 import { WebbGovernedToken } from '@webb-dapp/contracts/contracts';
 import { Bridge, BridgeConfig, bridgeConfig, BridgeCurrency, MixerSize } from '@webb-dapp/react-environment';
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers';
-import { WrappingTokenId, WrapUnWrap } from '@webb-dapp/react-environment/webb-context/wrap-unwrap';
-import { BehaviorSubject } from 'rxjs';
+import { WrappingEvent, WrappingTokenId, WrapUnWrap } from '@webb-dapp/react-environment/webb-context/wrap-unwrap';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 
 export type Web3WrapPayload = {
   wrapFrom: string;
@@ -19,14 +19,27 @@ export type Web3UnwrapPayload = {
 export class Web3WrapUnwrap extends WrapUnWrap<WebbWeb3Provider, Web3WrapPayload, Web3UnwrapPayload> {
   private bridgeConfig: BridgeConfig = bridgeConfig;
   private _currentChainId = new BehaviorSubject<ChainId | null>(null);
+  private _event = new Subject<Partial<WrappingEvent>>();
+
+  get subscription(): Observable<Partial<WrappingEvent>> {
+    return this._event.asObservable();
+  }
 
   constructor(protected inner: WebbWeb3Provider) {
     super(inner);
+
     inner.getChainId().then((evmChainId) => {
       this._currentChainId.next(evmIdIntoChainId(evmChainId));
+      this._event.next({
+        ready: null,
+      });
     });
+
     inner.on('providerUpdate', ([evmChainId]) => {
       this._currentChainId.next(evmIdIntoChainId(evmChainId));
+      this._event.next({
+        stateUpdate: null,
+      });
     });
   }
 
@@ -69,7 +82,7 @@ export class Web3WrapUnwrap extends WrapUnWrap<WebbWeb3Provider, Web3WrapPayload
   }
 
   async getGovernedTokens(): Promise<WrappingTokenId[]> {
-    if (this.currentToken) {
+    if (this.currentChainId) {
       return Bridge.getTokensOfChain(this.bridgeConfig, this.currentChainId!)
         .filter((currency) => currency.currencyId !== WebbCurrencyId.WEBB)
         .map((i) => ({
