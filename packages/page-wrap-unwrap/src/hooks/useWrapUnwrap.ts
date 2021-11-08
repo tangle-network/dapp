@@ -132,7 +132,7 @@ export function useWrapUnwrap() {
         wrapUnwrapApi?.wrap({ amount });
         break;
       case 'unwrap':
-        wrapUnwrapApi?.wrap({ amount });
+        wrapUnwrapApi?.unwrap({ amount });
     }
   }, [context, wrapUnwrapApi, amount]);
 

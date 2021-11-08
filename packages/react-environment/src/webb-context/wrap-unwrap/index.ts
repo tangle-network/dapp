@@ -21,6 +21,18 @@ export type WrappingEventNames = keyof WrappingEvent;
 export type Amount = {
   amount: number | string;
 };
+type WrappingBalance = {
+  tokenId: WrappingTokenId;
+  balance: string;
+};
+
+/**
+ * Webb wrap unwrap functionality
+ * Stores two tokens of type {WrappingTokenId}
+ * currentToken , otherEdgeToken
+ *  wrap => GovernWrapper<currentToken> and use otherEdgeToken as parameter
+ *  unwrap GovernWrapper<otherEdgeToken> and use currentToken as parameter
+ * */
 
 export abstract class WrapUnWrap<T, WrapPayload extends Amount = Amount, UnwrapPayload extends Amount = Amount> {
   private _currentTokenAddress: BehaviorSubject<WrappingTokenId | null> = new BehaviorSubject<null | WrappingTokenId>(
@@ -28,7 +40,6 @@ export abstract class WrapUnWrap<T, WrapPayload extends Amount = Amount, UnwrapP
   );
   private _otherEdgeToken: BehaviorSubject<WrappingTokenId | null> = new BehaviorSubject<null | WrappingTokenId>(null);
 
-  // todo add events using the Rxjs
   constructor(protected inner: T) {}
 
   abstract get subscription(): Observable<Partial<WrappingEvent>>;
@@ -56,14 +67,14 @@ export abstract class WrapUnWrap<T, WrapPayload extends Amount = Amount, UnwrapP
   }
 
   /**
-   *  Current token
+   *  Other EDG token
    *  */
   get otherEdgToken() {
     return this._otherEdgeToken.value;
   }
 
   /**
-   *  watcher of the current token
+   *  Watcher for other edg token
    *  */
   get $otherEdgeToken() {
     return this._otherEdgeToken.asObservable();
@@ -82,19 +93,16 @@ export abstract class WrapUnWrap<T, WrapPayload extends Amount = Amount, UnwrapP
   abstract getNativeTokens(): Promise<WrappingTokenId[]>;
 
   /**
-   *  For validation
-   * */
-  abstract canWrap(wrapPayload: WrapPayload): Promise<boolean>;
-
-  /**
-   *  For validation
-   * */
-  abstract canUnWrap(unwrapPayload: UnwrapPayload): Promise<boolean>;
-
-  /**
    *  Get list of all the Governed tokens
    * */
   abstract getGovernedTokens(): Promise<WrappingTokenId[]>;
+
+  /**
+   *  For validation pre the Wrapping
+   *  - Validate the user balance of the token to wrap
+   *  - If Wrapping native check if the native token is allowed to be wrapped
+   * */
+  abstract canWrap(wrapPayload: WrapPayload): Promise<boolean>;
 
   /**
    *  Wrap call
@@ -104,11 +112,25 @@ export abstract class WrapUnWrap<T, WrapPayload extends Amount = Amount, UnwrapP
   abstract wrap(wrapPayload: WrapPayload): Promise<string>;
 
   /**
-   *  UNwrap call
+   *  For validation
+   *  -	Check there is enough liquidity
+   *  - If UnWrapping to native check if this allowed
+   * */
+  abstract canUnWrap(unwrapPayload: UnwrapPayload): Promise<boolean>;
+
+  /**
+   *  Unwrap call
    *  - Can Unwrap a token to a GovernedToken
-   *  - Can Unwrap a token to an ERC20
    * */
   abstract unwrap(unwrapPayload: UnwrapPayload): Promise<string>;
 
-  // todo add interfaces for infos , supply balance etc
+  /**
+   * Observing the balances of the two edges
+   * */
+  abstract get balances(): Observable<[WrappingBalance, WrappingBalance]>;
+
+  /**
+   * Observing the liquidity of the two edges
+   * */
+  abstract get liquidity(): Observable<[WrappingBalance, WrappingBalance]>;
 }
