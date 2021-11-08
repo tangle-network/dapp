@@ -1,5 +1,5 @@
 import { MixerSize } from '@webb-dapp/react-environment';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { WebbCurrencyId } from '@webb-dapp/apps/configs';
 
 /**
@@ -18,10 +18,12 @@ export type WrappingEvent = {
   governedTokensUpdate: WrappingTokenId[];
 };
 export type WrappingEventNames = keyof WrappingEvent;
+
 export abstract class WrapUnWrap<T, WrapPayload extends Object = any, UnwrapPayload extends Object = any> {
   private _currentTokenAddress: BehaviorSubject<WrappingTokenId | null> = new BehaviorSubject<null | WrappingTokenId>(
     null
   );
+  private _otherEdgeToken: BehaviorSubject<WrappingTokenId | null> = new BehaviorSubject<null | WrappingTokenId>(null);
 
   // todo add events using the Rxjs
   constructor(protected inner: T) {}
@@ -31,6 +33,7 @@ export abstract class WrapUnWrap<T, WrapPayload extends Object = any, UnwrapPayl
   setCurrentToken(nextTokenAddress: WrappingTokenId | null) {
     this._currentTokenAddress.next(nextTokenAddress);
   }
+
   /**
    *  Current token
    *  */
@@ -42,7 +45,25 @@ export abstract class WrapUnWrap<T, WrapPayload extends Object = any, UnwrapPayl
    *  watcher of the current token
    *  */
   get $currentTokenValue() {
-    return this._currentTokenAddress;
+    return this._currentTokenAddress.asObservable();
+  }
+
+  setOtherEdgToken(nextTokenAddress: WrappingTokenId | null) {
+    this._otherEdgeToken.next(nextTokenAddress);
+  }
+
+  /**
+   *  Current token
+   *  */
+  get otherEdgToken() {
+    return this._otherEdgeToken.value;
+  }
+
+  /**
+   *  watcher of the current token
+   *  */
+  get $otherEdgeToken() {
+    return this._otherEdgeToken.asObservable();
   }
 
   abstract getSizes(): Promise<MixerSize[]>;

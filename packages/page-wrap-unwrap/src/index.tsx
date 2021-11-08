@@ -145,7 +145,7 @@ const PageWrappUnwrap: FC = () => {
   }, [rightHandToken, tokens, wrappedTokens, status]);
   const leftInputProps = nativeOrWrapToProps;
   const rightInputProps = wrappedOrWrappedFrom;
-  const buttonText = 'wrap';
+  const buttonText = status;
 
   const suffix = leftHandToken?.view.symbol;
 
