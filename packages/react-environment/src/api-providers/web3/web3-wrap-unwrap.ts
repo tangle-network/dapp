@@ -92,7 +92,8 @@ export class Web3WrapUnwrap extends WrapUnWrap<WebbWeb3Provider> {
 
   async canUnWrap(unwrapPayload: Web3UnwrapPayload): Promise<boolean> {
     const { amount } = unwrapPayload;
-    const webbGovernedToken = this.governedTokenWrapper(unwrapFrom);
+    const UnwrapTokenId = this.currentToken?.id!;
+    const webbGovernedToken = this.governedTokenWrapper(String(UnwrapTokenId));
 
     const account = await this.inner.accounts.accounts();
     const currentAccount = account[0];
@@ -130,7 +131,7 @@ export class Web3WrapUnwrap extends WrapUnWrap<WebbWeb3Provider> {
     const { amount } = wrapPayload;
     const toWrap = this.otherEdgToken!;
     const wrapInto = this.currentToken?.id!;
-    const webbGovernedToken = this.governedTokenWrapper(wrapInto);
+    const webbGovernedToken = this.governedTokenWrapper(String(wrapInto));
 
     if (toWrap.variant === 'native-token') {
       const tx = await webbGovernedToken.wrap(`0x0000000000000000000000000000000000000000`, Number(amount));
