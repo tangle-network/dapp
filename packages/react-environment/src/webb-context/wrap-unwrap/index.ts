@@ -1,13 +1,23 @@
-import { BridgeCurrency, MixerSize } from '@webb-dapp/react-environment';
+import { MixerSize } from '@webb-dapp/react-environment';
 import { BehaviorSubject } from 'rxjs';
 import { WebbCurrencyId } from '@webb-dapp/apps/configs';
 
+/**
+ *
+ * */
+export type WrappingTokenId = {
+  variant: 'native-token' | 'governed-token';
+  id: WebbCurrencyId | string;
+};
+
 export abstract class WrapUnWrap<T, WrapPayload extends Object = any, UnwrapPayload extends Object = any> {
-  private _currentTokenAddress: BehaviorSubject<string | null> = new BehaviorSubject<null | string>(null);
+  private _currentTokenAddress: BehaviorSubject<WrappingTokenId | null> = new BehaviorSubject<null | WrappingTokenId>(
+    null
+  );
   // todo add events using the Rxjs
   constructor(protected inner: T) {}
 
-  setCurrentToken(nextTokenAddress: string | null) {
+  setCurrentToken(nextTokenAddress: WrappingTokenId | null) {
     this._currentTokenAddress.next(nextTokenAddress);
   }
   /**
@@ -29,12 +39,12 @@ export abstract class WrapUnWrap<T, WrapPayload extends Object = any, UnwrapPayl
   /**
    * Wrapped token that is available for the current token
    *  */
-  abstract getWrappedTokens(): Promise<BridgeCurrency[]>;
+  abstract getWrappedTokens(): Promise<WrappingTokenId[]>;
 
   /**
    * Wrapped token that is available for the current token
    *  */
-  abstract getNativeTokens(): Promise<WebbCurrencyId[]>;
+  abstract getNativeTokens(): Promise<WrappingTokenId[]>;
 
   /**
    *  For validation
@@ -49,7 +59,7 @@ export abstract class WrapUnWrap<T, WrapPayload extends Object = any, UnwrapPayl
   /**
    *  Get list of all the Governed tokens
    * */
-  abstract getGovernedTokens(): Promise<BridgeCurrency[]>;
+  abstract getGovernedTokens(): Promise<WrappingTokenId[]>;
 
   /**
    *  Wrap call

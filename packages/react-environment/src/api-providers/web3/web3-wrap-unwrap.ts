@@ -1,9 +1,9 @@
-import { WrapUnWrap } from '@webb-dapp/react-environment/webb-context/wrap-unwrap';
-import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers';
-import { Bridge, bridgeConfig, BridgeConfig, BridgeCurrency, MixerSize } from '@webb-dapp/react-environment';
 import { ChainId, evmIdIntoChainId, WebbCurrencyId } from '@webb-dapp/apps/configs';
-import { BehaviorSubject } from 'rxjs';
 import { WebbGovernedToken } from '@webb-dapp/contracts/contracts';
+import { Bridge, BridgeConfig, bridgeConfig, BridgeCurrency, MixerSize } from '@webb-dapp/react-environment';
+import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers';
+import { WrappingTokenId, WrapUnWrap } from '@webb-dapp/react-environment/webb-context/wrap-unwrap';
+import { BehaviorSubject } from 'rxjs';
 
 export type Web3WrapPayload = {
   wrapFrom: string;
@@ -34,13 +34,16 @@ export class Web3WrapUnwrap extends WrapUnWrap<WebbWeb3Provider, Web3WrapPayload
     return Promise.resolve([]);
   }
 
-  async getWrappedTokens(): Promise<BridgeCurrency[]> {
+  async getWrappedTokens(): Promise<WrappingTokenId[]> {
     const currentToken = this.currentToken;
     const chainId = this._currentChainId.value;
-    if (currentToken && chainId) {
-      const webbGovernedToken = this.governedTokenWrapper(currentToken);
+    if (currentToken && chainId && currentToken?.variant === 'governed-token') {
+      const webbGovernedToken = this.governedTokenWrapper(String(currentToken.id));
       const tokens = await webbGovernedToken.tokens;
-      return Bridge.getTokensByAddress(this.bridgeConfig, tokens);
+      return Bridge.getTokensByAddress(this.bridgeConfig, tokens).map((i) => ({
+        id: i.name,
+        variant: 'governed-token',
+      }));
     }
     return [];
   }
@@ -49,7 +52,7 @@ export class Web3WrapUnwrap extends WrapUnWrap<WebbWeb3Provider, Web3WrapPayload
     return this._currentChainId.value;
   }
 
-  async getNativeTokens(): Promise<WebbCurrencyId[]> {
+  async getNativeTokens(): Promise<WrappingTokenId[]> {
     if (!this._currentChainId) {
       return [];
     }
@@ -59,14 +62,20 @@ export class Web3WrapUnwrap extends WrapUnWrap<WebbWeb3Provider, Web3WrapPayload
     const nativeTokens = bridgeTokens.reduce<WebbCurrencyId[]>((acc, brideToken) => {
       return acc.includes(brideToken.currencyId) ? acc : [...acc, brideToken.currencyId];
     }, []);
-    return nativeTokens as any;
+    return nativeTokens.map((i) => ({
+      id: i,
+      variant: 'native-token',
+    }));
   }
 
-  async getGovernedTokens(): Promise<BridgeCurrency[]> {
+  async getGovernedTokens(): Promise<WrappingTokenId[]> {
     if (this.currentToken) {
-      return Bridge.getTokensOfChain(this.bridgeConfig, this.currentChainId!).filter(
-        (currency) => currency.currencyId !== WebbCurrencyId.WEBB && currency.currencyId === this.currentToken
-      );
+      return Bridge.getTokensOfChain(this.bridgeConfig, this.currentChainId!)
+        .filter((currency) => currency.currencyId !== WebbCurrencyId.WEBB)
+        .map((i) => ({
+          id: i.name,
+          variant: 'governed-token',
+        }));
     }
     return [];
   }
