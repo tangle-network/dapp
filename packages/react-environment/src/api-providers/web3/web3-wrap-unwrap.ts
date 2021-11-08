@@ -34,15 +34,22 @@ export class Web3WrapUnwrap extends WrapUnWrap<WebbWeb3Provider, Web3WrapPayload
     return Promise.resolve([]);
   }
 
-  getTokensAddress(): Promise<string> {
-    return Promise.resolve('');
+  async getWrappedTokens(): Promise<BridgeCurrency[]> {
+    const currentToken = this.currentToken;
+    const chainId = this._currentChainId.value;
+    if (currentToken && chainId) {
+      const webbGovernedToken = this.governedTokenWrapper(currentToken);
+      const tokens = await webbGovernedToken.tokens;
+      return Bridge.getTokensByAddress(this.bridgeConfig, tokens);
+    }
+    return [];
   }
 
   private get currentChainId() {
     return this._currentChainId.value;
   }
 
-  async getNativeTokens(): Promise<string[]> {
+  async getNativeTokens(): Promise<WebbCurrencyId[]> {
     if (!this._currentChainId) {
       return [];
     }
@@ -55,11 +62,11 @@ export class Web3WrapUnwrap extends WrapUnWrap<WebbWeb3Provider, Web3WrapPayload
     return nativeTokens as any;
   }
 
-  async getWrappedTokens(): Promise<string[]> {
+  async getGovernedTokens(): Promise<BridgeCurrency[]> {
     if (this.currentToken) {
-      return Bridge.getTokensOfChain(this.bridgeConfig, this.currentChainId!)
-        .filter((currency) => currency.currencyId !== WebbCurrencyId.WEBB && currency.currencyId === this.currentToken)
-        .map((b) => b.name);
+      return Bridge.getTokensOfChain(this.bridgeConfig, this.currentChainId!).filter(
+        (currency) => currency.currencyId !== WebbCurrencyId.WEBB && currency.currencyId === this.currentToken
+      );
     }
     return [];
   }
@@ -70,8 +77,7 @@ export class Web3WrapUnwrap extends WrapUnWrap<WebbWeb3Provider, Web3WrapPayload
 
     const account = await this.inner.accounts.accounts();
     const currentAccount = account[0];
-    const canWrap = await webbGovernedToken.canUnwrap(currentAccount.address, Number(amount));
-    return canWrap;
+    return webbGovernedToken.canUnwrap(currentAccount.address, Number(amount));
   }
 
   async unwrap(unwrapPayload: Web3UnwrapPayload): Promise<string> {
@@ -86,11 +92,12 @@ export class Web3WrapUnwrap extends WrapUnWrap<WebbWeb3Provider, Web3WrapPayload
   async canWrap(wrapPayload: Web3WrapPayload): Promise<boolean> {
     const { amount, wrapInto } = wrapPayload;
     const webbGovernedToken = this.governedTokenWrapper(wrapInto);
-    const canWrap = await webbGovernedToken.canWrap(Number(amount));
-    return canWrap;
+    return webbGovernedToken.canWrap(Number(amount));
   }
+
   async wrap(wrapPayload: Web3WrapPayload): Promise<string> {
     const { amount, wrapFrom, wrapInto } = wrapPayload;
+
     const webbGovernedToken = this.governedTokenWrapper(wrapInto);
 
     const tx = await webbGovernedToken.wrap(Number(amount));

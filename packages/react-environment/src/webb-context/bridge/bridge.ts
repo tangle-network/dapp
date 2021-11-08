@@ -36,6 +36,18 @@ export class Bridge {
     return Object.values(configEntry).map((i) => i.asset);
   }
 
+  static getTokensByAddress(config: BridgeConfig, addresses: string[]): BridgeCurrency[] {
+    return Object.values(config)
+      .filter((cfgEntry) => {
+        const tokenAddress = Object.keys(cfgEntry.tokenAddresses).filter((key) => {
+          const bridgeEntry = cfgEntry.tokenAddresses[key as unknown as ChainId]!;
+          return addresses.includes(bridgeEntry);
+        });
+        return tokenAddress.length > 0;
+      })
+      .map((cfg) => cfg.asset);
+  }
+
   /*
    *  Get tokens for a given chain
    * */
@@ -58,6 +70,7 @@ export class Bridge {
       return true;
     });
   }
+
   static getConfigEntry(configEntry: BridgeConfig, bridgeCurrency: BridgeCurrency): BridgeConfigEntry {
     return configEntry[bridgeCurrency.name];
   }

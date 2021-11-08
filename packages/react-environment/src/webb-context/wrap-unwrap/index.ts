@@ -1,5 +1,6 @@
-import { MixerSize } from '@webb-dapp/react-environment';
+import { BridgeCurrency, MixerSize } from '@webb-dapp/react-environment';
 import { BehaviorSubject } from 'rxjs';
+import { WebbCurrencyId } from '@webb-dapp/apps/configs';
 
 export abstract class WrapUnWrap<T, WrapPayload extends Object = any, UnwrapPayload extends Object = any> {
   private _currentTokenAddress: BehaviorSubject<string | null> = new BehaviorSubject<null | string>(null);
@@ -19,11 +20,13 @@ export abstract class WrapUnWrap<T, WrapPayload extends Object = any, UnwrapPayl
   }
 
   abstract getSizes(): Promise<MixerSize[]>;
-  abstract getWrappedTokens(): Promise<string[]>;
-  abstract getNativeTokens(): Promise<string[]>;
+  abstract getWrappedTokens(): Promise<BridgeCurrency[]>;
+  abstract getNativeTokens(): Promise<WebbCurrencyId[]>;
 
   abstract canWrap(wrapPayload: WrapPayload): Promise<boolean>;
   abstract canUnWrap(unwrapPayload: UnwrapPayload): Promise<boolean>;
+
+  abstract getGovernedTokens(): Promise<BridgeCurrency[]>;
 
   // transaction has
   abstract wrap(wrapPayload: WrapPayload): Promise<string>;
