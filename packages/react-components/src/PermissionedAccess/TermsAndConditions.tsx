@@ -11,13 +11,26 @@ type TermsAndConditionsProps = {
 export const TermsAndConditions: React.FC<TermsAndConditionsProps> = (props) => {
   return (
     <ContentWrapper>
-      <div>
+      <Typography variant={'h1'}>Terms and Conditions</Typography>
+      <div style={{ paddingTop: '20px' }}>
         <Typography>
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-          magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-          consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-          pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
-          est laborum."
+          - I am not the person or entities who reside in, are citizens of, are incorporated in, or have a registered
+          office in the United States of America or any Prohibited Localities.
+        </Typography>
+        <Typography style={{ paddingTop: '20px' }}>
+          - I will not in the future access this site or use Webb while located within the United States any Prohibited
+          Localities.
+        </Typography>
+        <Typography style={{ paddingTop: '20px' }}>
+          - I am not using, and will not in the future use, a VPN to mask my physical location from a restricted
+          territory.
+        </Typography>
+        <Typography style={{ paddingTop: '20px' }}>
+          - I am lawfully permitted to access this site and use Webb under the laws of the jurisdiction on which I
+          reside and am located.
+        </Typography>
+        <Typography style={{ paddingTop: '20px' }}>
+          - I understand the risks associated with using Webb protocols.
         </Typography>
       </div>
       <SpaceBox height={16} />
