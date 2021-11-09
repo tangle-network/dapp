@@ -1,7 +1,7 @@
 import { Log } from '@ethersproject/abstract-provider';
 import { WebbEVMChain } from '@webb-dapp/apps/configs';
 import { ZKPTornInputWithMerkle, ZKPTornPublicInputs } from '@webb-dapp/contracts/contracts/types';
-import { Anchor as TornadoAnchor } from '@webb-dapp/contracts/types/Anchor';
+import { Tornado } from '@webb-dapp/contracts/types/Tornado';
 import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
 import { EvmNote } from '@webb-dapp/contracts/utils/evm-note';
 import { createTornDeposit, Deposit } from '@webb-dapp/contracts/utils/make-deposit';
@@ -20,8 +20,8 @@ const webSnarkUtils = require('tornado-websnark/src/utils');
 type DepositEvent = [string, number, BigNumber];
 const logger = LoggerService.get('anchor');
 
-export class TornadoAnchorContract {
-  private _contract: TornadoAnchor;
+export class TornadoContract {
+  private _contract: Tornado;
   private readonly signer: Signer;
 
   constructor(private mixersInfo: EvmChainMixersInfo, private web3Provider: providers.Web3Provider, address: string) {
@@ -82,8 +82,14 @@ export class TornadoAnchorContract {
       case WebbEVMChain.HarmonyTestnet1:
         step = 1000;
         break;
+      case WebbEVMChain.HarmonyMainnet0:
+        step = 1000;
+        break;
       case WebbEVMChain.Rinkeby:
         step = 5000;
+        break;
+      case WebbEVMChain.Shiden:
+        step = 1000;
         break;
     }
 
@@ -184,8 +190,6 @@ export class TornadoAnchorContract {
       root: root as string,
     };
 
-    console.log(zkpInput);
-
     const proofsData = await webSnarkUtils.genWitnessAndProve(
       // @ts-ignore
       window.groth16,
@@ -239,7 +243,7 @@ export class TornadoAnchorContract {
     // the block is later than what we have stored, save into storage
     const storedContractInfo = await this.mixersInfo.getMixerStorage(this._contract.address);
     if (validLatestDeposit && lastQueriedBlock > storedContractInfo.lastQueriedBlock) {
-      this.mixersInfo.setMixerStorage(this._contract.address, lastQueriedBlock, [...leaves]);
+      await this.mixersInfo.setMixerStorage(this._contract.address, lastQueriedBlock, [...leaves]);
     }
 
     const { pathElements, pathIndex: pathIndices, root } = merkleProof;

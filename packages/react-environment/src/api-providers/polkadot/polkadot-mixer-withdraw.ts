@@ -1,77 +1,18 @@
 import { GroupTreeWrapper } from '@webb-dapp/mixer';
-// @ts-ignore1
-import Worker from '@webb-dapp/mixer/utils/merkle.worker';
-import MerkleTree from '@webb-tools/sdk-merkle/tree';
-import { Note } from '@webb-tools/sdk-mixer';
-import { MerkleTree as NodeMerkleTree } from '@webb-tools/types/interfaces';
+// @ts-ignore
+import Worker from '@webb-dapp/mixer/utils/proving-mananger.worker';
+import { ProvingManger } from '@webb-dapp/mixer/utils/proving-manger';
+import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
+import { Note, ZKProof } from '@webb-tools/sdk-mixer';
 
-import { decodeAddress } from '@polkadot/keyring';
 import { u8aToHex } from '@polkadot/util';
 
 import { MixerWithdraw, WithdrawState } from '../../webb-context';
 import { WebbPolkadot } from './webb-polkadot-provider';
-import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 
 export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
-  private cachedBulletProofsGens: Uint8Array | null = null;
-  private merkleTree: MerkleTree | null = null;
   private loading = false;
-  private initialised = false;
-
-  private async getMerkleTree(): Promise<MerkleTree> {
-    // already ready
-    if (this.merkleTree) {
-      await this.merkleTree.restart(new Worker());
-      return this.merkleTree;
-    }
-    // on progress
-    if (this.loading) {
-      return new Promise((resolve, reject) => {
-        let cb: any;
-        cb = this.on('ready', async () => {
-          // remove listener
-          cb && cb();
-          const merkleTree = this.getMerkleTree();
-          resolve(merkleTree);
-        });
-      });
-    }
-    // Init
-    this.emit('loading', true);
-    this.loading = true;
-    const bulletProofGens = await this.getBulletProofGens();
-    this.merkleTree = await MerkleTree.create(new Worker(), 32, bulletProofGens);
-    this.loading = false;
-    this.emit('loading', false);
-    this.emit('ready', undefined);
-    this.initialised = true;
-    return this.merkleTree;
-  }
-
-  private async generateBulletProofs() {
-    const worker = new Worker();
-    const bulletProofGens = await MerkleTree.preGenerateBulletproofGens(worker);
-    worker.terminate();
-    const decoder = new TextDecoder();
-    const bulletProofGensString = decoder.decode(bulletProofGens); // from Uint8Array to String
-    localStorage.setItem('bulletproof_gens', bulletProofGensString);
-    return bulletProofGens;
-  }
-
-  private async getBulletProofGens(): Promise<Uint8Array> {
-    if (this.cachedBulletProofsGens) {
-      return this.cachedBulletProofsGens;
-    }
-    const cachedBulletProof = localStorage.getItem('bulletproof_gens');
-    if (!cachedBulletProof) {
-      this.cachedBulletProofsGens = await this.generateBulletProofs();
-      return this.cachedBulletProofsGens;
-    }
-    const encoder = new TextEncoder();
-    const gens = encoder.encode(cachedBulletProof);
-    this.cachedBulletProofsGens = gens;
-    return gens;
-  }
+  private initialised = true;
 
   cancelWithdraw(): Promise<void> {
     return Promise.resolve(undefined);
@@ -98,22 +39,23 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
 
   async withdraw(note: string, recipient: string): Promise<void> {
     this.emit('stateChange', WithdrawState.GeneratingZk);
-    const merkleTree = await this.getMerkleTree();
     // parse the note
-    const noteParsed = Note.deserialize(note);
-    const treeId = noteParsed.id;
+    const noteParsed = await Note.deserialize(note);
+    const depositAmount = noteParsed.note.amount;
+    const treeId = depositAmount;
     // @ts-ignore
     const nodeMerkleTree: NodeMerkleTree = await this.inner.api.query.merkle.trees([treeId]);
     const groupTreeWrapper = new GroupTreeWrapper(nodeMerkleTree);
     const leaves = await this.fetchTreeLeaves(treeId);
-    await merkleTree.addLeaves(leaves);
+
     try {
-      const zk = await merkleTree.generateZKProof({
+      const pm = new ProvingManger(worker);
+      const zk = (await pm.proof({
+        leaves,
         note,
-        recipient: decodeAddress(recipient),
-        relayer: decodeAddress(recipient),
-        root: groupTreeWrapper.rootHashU8a as any,
-      });
+        recipient,
+        relayer: recipient,
+      })) as ZKProof;
 
       const blockNumber = await this.inner.api.query.system.number();
       const withdrawProof = {
@@ -128,6 +70,7 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
         recipient: recipient,
         relayer: recipient,
       };
+
       this.emit('stateChange', WithdrawState.SendingTransaction);
       const tx = this.inner.txBuilder.build(
         {

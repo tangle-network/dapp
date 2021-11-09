@@ -1,8 +1,8 @@
 import { chainsConfig, currenciesConfig } from '@webb-dapp/apps/configs';
 import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 
-export const getNativeCurrencySymbol = (chainID: number): string => {
-  const chain = Object.values(chainsConfig).find((chainsConfig) => chainsConfig.evmId === chainID);
+export const getNativeCurrencySymbol = (evmId: number): string => {
+  const chain = Object.values(chainsConfig).find((chainsConfig) => chainsConfig.evmId === evmId);
   if (chain) {
     const nativeCurrency = chain.nativeCurrencyId;
     return currenciesConfig[nativeCurrency].symbol;
@@ -10,8 +10,8 @@ export const getNativeCurrencySymbol = (chainID: number): string => {
   return 'Unknown';
 };
 
-export const getEVMChainName = (chainID: number): string => {
-  const chain = Object.values(chainsConfig).find((chainsConfig) => chainsConfig.evmId === chainID);
+export const getEVMChainName = (evmId: number): string => {
+  const chain = Object.values(chainsConfig).find((chainsConfig) => chainsConfig.evmId === evmId);
   if (chain) {
     return chain.name;
   } else {
@@ -91,7 +91,14 @@ export const beresheetMixers: chainMixers = {
 
 // TODO: Deploy anchor contracts on Mainnet EVM.
 export const edgewareMixers: chainMixers = {
-  tornMixers: [],
+  tornMixers: [
+    {
+      size: 10000,
+      address: '0x2B9A7085Afba278BEc6bBfFb399A3C042ED05046',
+      symbol: 'EDG',
+      createdAtBlock: 8828000,
+    },
+  ],
 };
 
 export const harmonyTest0Mixers: chainMixers = {
@@ -123,6 +130,40 @@ export const harmonyTest1Mixers: chainMixers = {
       address: '0x7cd173094eF78FFAeDee4e14576A73a79aA716ac',
       symbol: 'ONE',
       createdAtBlock: 12892840,
+    },
+  ],
+};
+
+export const harmonyMainnet0Mixers: chainMixers = {
+  tornMixers: [
+    {
+      size: 100,
+      address: '0x2B9A7085Afba278BEc6bBfFb399A3C042ED05046',
+      symbol: 'ONE',
+      createdAtBlock: 18796580,
+    },
+    {
+      size: 10000,
+      address: '0x4b271E1E67B3eE56467599cd46f1F74A5a369c72',
+      symbol: 'ONE',
+      createdAtBlock: 18796580,
+    },
+  ],
+};
+
+export const shidenMixers: chainMixers = {
+  tornMixers: [
+    {
+      size: 10,
+      address: '0x2B9A7085Afba278BEc6bBfFb399A3C042ED05046',
+      symbol: 'SDN',
+      createdAtBlock: 566000,
+    },
+    {
+      size: 1000,
+      address: '0x548555a3275B6fadD5d2B9740a7655cB7f856148',
+      symbol: 'SDN',
+      createdAtBlock: 568000,
     },
   ],
 };

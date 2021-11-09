@@ -1,4 +1,4 @@
-import { ChainId } from '@webb-dapp/apps/configs';
+import { ChainId, getEVMChainNameFromInternal } from '@webb-dapp/apps/configs';
 import { chainsConfig } from '@webb-dapp/apps/configs/chains';
 import { EvmChainMixersInfo } from '@webb-dapp/react-environment/api-providers/web3/EvmChainMixersInfo';
 import {
@@ -7,9 +7,10 @@ import {
   RelayerConfig,
   RelayerMessage,
 } from '@webb-dapp/react-environment/webb-context/relayer/types';
+import { LoggerService } from '@webb-tools/app-util';
 import { Observable, Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { LoggerService } from '@webb-tools/app-util';
+import { bridgeConfig, getAnchorAddressForBridge } from '../bridge';
 
 const logger = LoggerService.get('webb-relayer class');
 
@@ -46,8 +47,7 @@ type RelayedChainInput = {
   baseOn: 'evm' | 'substrate';
   contractAddress: string;
 };
-
-export type WithdrawRelayerArgs = {
+type TornadoRelayerWithdrawArgs = {
   root: string;
   nullifierHash: string;
   recipient: string;
@@ -55,6 +55,19 @@ export type WithdrawRelayerArgs = {
   fee: string;
   refund: string;
 };
+type BridgeRelayerWithdrawArgs = {
+  roots: string[];
+  refresh_commitment: string;
+  nullifier_hash: string;
+  recipient: string;
+  relayer: string;
+  fee: string;
+  refund: string;
+};
+export type ContractBase = 'tornado' | 'anchor';
+export type WithdrawRelayerArgs<C = ContractBase> = C extends 'anchor'
+  ? BridgeRelayerWithdrawArgs
+  : TornadoRelayerWithdrawArgs;
 
 export interface RelayerInfo {
   substrate: Record<string, RelayedChainConfig | null>;
@@ -71,8 +84,12 @@ export type ChainNameIntoChainId = (name: string, basedOn: 'evm' | 'substrate') 
 export class WebbRelayerBuilder {
   /// storage for relayers capabilities
   private capabilities: Record<RelayerConfig['endpoint'], Capabilities> = {};
+  private _listUpdated = new Subject<void>();
+  public readonly listUpdated: Observable<void>;
 
-  private constructor(private config: RelayerConfig[], private readonly chainNameAdapter: ChainNameIntoChainId) {}
+  private constructor(private config: RelayerConfig[], private readonly chainNameAdapter: ChainNameIntoChainId) {
+    this.listUpdated = this._listUpdated.asObservable();
+  }
 
   /// Mapping the fetched relayers info to the Capabilities store
   private static infoIntoCapabilities(
@@ -85,7 +102,7 @@ export class WebbRelayerBuilder {
       supportedChains: {
         evm: info.evm
           ? Object.keys(info.evm)
-              .filter((key) => info.evm[key]?.account && Boolean(nameAdapter(key, 'evm')))
+              .filter((key) => info.evm[key]?.account && nameAdapter(key, 'evm') != null)
               .reduce((m, key) => {
                 m.set(nameAdapter(key, 'evm'), info.evm[key]);
                 return m;
@@ -93,7 +110,7 @@ export class WebbRelayerBuilder {
           : new Map(),
         substrate: info.substrate
           ? Object.keys(info.substrate)
-              .filter((key) => info.substrate[key]?.account && Boolean(nameAdapter(key, 'substrate')))
+              .filter((key) => info.substrate[key]?.account && nameAdapter(key, 'evm') != null)
               .reduce((m, key) => {
                 m.set(nameAdapter(key, 'substrate'), info.evm[key]);
                 return m;
@@ -104,12 +121,28 @@ export class WebbRelayerBuilder {
   }
 
   /// fetch relayers
-  private async fetchInfo(config: RelayerConfig) {
-    const res = await fetch(`${config.endpoint}/api/v1/info`);
+  private async fetchCapabilitiesAndInsert(config: RelayerConfig) {
+    this.capabilities[config.endpoint] = await this.fetchCapabilities(config.endpoint);
+
+    return this.capabilities;
+  }
+
+  public async fetchCapabilities(endpoint: string): Promise<Capabilities> {
+    const res = await fetch(`${endpoint}/api/v1/info`);
     const info: RelayerInfo = await res.json();
-    const capabilities = WebbRelayerBuilder.infoIntoCapabilities(config, info, this.chainNameAdapter);
-    this.capabilities[config.endpoint] = capabilities;
-    return capabilities;
+    return WebbRelayerBuilder.infoIntoCapabilities(
+      {
+        endpoint,
+      },
+      info,
+      this.chainNameAdapter
+    );
+  }
+
+  public async addRelayer(endpoint: string) {
+    const c = await this.fetchCapabilitiesAndInsert({ endpoint });
+    this._listUpdated.next();
+    return c;
   }
 
   /**
@@ -127,14 +160,13 @@ export class WebbRelayerBuilder {
     await Promise.allSettled(
       config.map((p) => {
         return Promise.race([
-          relayerBuilder.fetchInfo(p),
+          relayerBuilder.fetchCapabilitiesAndInsert(p),
           new Promise((res) => {
             setTimeout(res.bind(null, null), 5000);
           }),
         ]);
       })
     );
-
     return relayerBuilder;
   }
 
@@ -158,7 +190,10 @@ export class WebbRelayerBuilder {
             return Boolean(
               capabilities.supportedChains[baseOn]
                 .get(chainId)
-                ?.contracts?.find((contract) => contract.address == contractAddress.toLowerCase())
+                ?.contracts?.find(
+                  (contract) =>
+                    contract.address == contractAddress.toLowerCase() && contract.eventsWatcher.enabled == true
+                )
             );
           }
         }
@@ -167,11 +202,24 @@ export class WebbRelayerBuilder {
             const evmId = chainsConfig[chainId].evmId!;
             const mixersInfoForChain = new EvmChainMixersInfo(evmId);
             const mixerInfo = mixersInfoForChain.getTornMixerInfoBySize(mixerSupport.amount, mixerSupport.tokenSymbol);
+            const bridgeAddress = getAnchorAddressForBridge(mixerSupport.tokenSymbol, chainId, mixerSupport.amount);
             if (mixerInfo) {
               return Boolean(
                 capabilities.supportedChains[baseOn]
                   .get(chainId)
-                  ?.contracts?.find((contract) => contract.address == mixerInfo.address.toLowerCase())
+                  ?.contracts?.find(
+                    (contract) =>
+                      contract.address == mixerInfo.address.toLowerCase() && contract.eventsWatcher.enabled == true
+                  )
+              );
+            } else if (bridgeAddress) {
+              return Boolean(
+                capabilities.supportedChains[baseOn]
+                  .get(chainId)
+                  ?.contracts?.find(
+                    (contract) =>
+                      contract.address == bridgeAddress.toLowerCase() && contract.eventsWatcher.enabled == true
+                  )
               );
             } else {
               return false;
@@ -212,18 +260,17 @@ type RelayerLeaves = {
   lastQueriedBlock: number;
 };
 
-class RelayedWithdraw {
+class RelayedWithdraw<T = ContractBase> {
   /// status of the withdraw
   private status: RelayedWithdrawResult = RelayedWithdrawResult.PreFlight;
   /// watch for the current withdraw status
   readonly watcher: Observable<[RelayedWithdrawResult, string | undefined]>;
   private emitter: Subject<[RelayedWithdrawResult, string | undefined]> = new Subject();
 
-  constructor(private ws: WebSocket) {
+  constructor(private ws: WebSocket, private prefix: string) {
     this.watcher = this.emitter.asObservable();
 
     ws.onmessage = ({ data }) => {
-      console.log(data);
       const handledMessage = this.handleMessage(JSON.parse(data));
       this.status = handledMessage[0];
       this.emitter.next(handledMessage);
@@ -249,13 +296,15 @@ class RelayedWithdraw {
     }
   };
 
-  generateWithdrawRequest(chain: RelayedChainInput, proof: string, args: WithdrawRelayerArgs) {
+  generateWithdrawRequest(chain: RelayedChainInput, proof: string, args: WithdrawRelayerArgs<T>) {
     return {
       [chain.baseOn]: {
-        chain: chain.name,
-        contract: chain.contractAddress,
-        proof,
-        ...args,
+        [this.prefix]: {
+          chain: chain.name,
+          contract: chain.contractAddress,
+          proof,
+          ...args,
+        },
       },
     };
   }
@@ -286,7 +335,7 @@ class RelayedWithdraw {
 export class WebbRelayer {
   constructor(readonly endpoint: string, readonly capabilities: Capabilities) {}
 
-  async initWithdraw() {
+  async initWithdraw<Target extends ContractBase>(target: Target) {
     const ws = new WebSocket(this.endpoint.replace('http', 'ws') + '/ws');
     await new Promise((r, c) => {
       ws.onopen = r;
@@ -302,7 +351,16 @@ export class WebbRelayer {
         setTimeout(r, 300);
       });
     }
-    return new RelayedWithdraw(ws);
+    let prefix: string = 'anchorRelayTx';
+    switch (target) {
+      case 'tornado':
+        prefix = 'tornadoRelayTx';
+        break;
+      case 'anchor':
+        prefix = 'anchorRelayTx';
+        break;
+    }
+    return new RelayedWithdraw<Target>(ws, prefix);
   }
 
   async getIp(): Promise<string> {
@@ -314,8 +372,9 @@ export class WebbRelayer {
     }
   }
 
-  async getLeaves(contractAddress: string): Promise<RelayerLeaves> {
-    const req = await fetch(`${this.endpoint}/api/v1/leaves/${contractAddress}`);
+  // chainId should be formatted as a hex string
+  async getLeaves(chainId: string, contractAddress: string): Promise<RelayerLeaves> {
+    const req = await fetch(`${this.endpoint}/api/v1/leaves/${chainId}/${contractAddress}`);
     if (req.ok) {
       const jsonResponse = await req.json();
       const fetchedLeaves: string[] = jsonResponse.leaves;

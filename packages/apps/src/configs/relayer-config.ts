@@ -22,16 +22,20 @@ export function relayerNameToChainId(name: string): ChainId {
       return ChainId.HarmonyTestnet1;
     case 'harmonytestnet0':
       return ChainId.HarmonyTestnet0;
+    case 'harmonymainnet0':
+      return ChainId.HarmonyMainnet0;
     case 'ganache':
       return ChainId.Ganache;
     case 'webb':
     case 'edgeware':
+      return ChainId.Edgeware;
     case 'hedgeware':
     case 'rinkeby':
       return ChainId.Rinkeby;
+    case 'shiden':
+      return ChainId.Shiden;
   }
 
-  console.log('unhandled relayed chain name  ' + name);
   throw new Error('unhandled relayed chain name  ' + name);
 }
 
@@ -42,7 +46,9 @@ enum RelayerChainName {
   Beresheet = 'beresheet',
   HarmonyTestnet0 = 'harmonytestnet0',
   HarmonyTestnet1 = 'harmonytestnet1',
+  HarmonyMainnet0 = 'harmonymainnet0',
   Rinkeby = 'rinkeby',
+  Shiden = 'shiden',
 }
 
 export function chainIdToRelayerName(id: ChainId): string {
@@ -67,6 +73,10 @@ export function chainIdToRelayerName(id: ChainId): string {
       return RelayerChainName.HarmonyTestnet0;
     case ChainId.HarmonyTestnet1:
       return RelayerChainName.HarmonyTestnet1;
+    case ChainId.HarmonyMainnet0:
+      return RelayerChainName.HarmonyMainnet0;
+    case ChainId.Shiden:
+      return RelayerChainName.Shiden;
   }
   throw new Error(`unhandled Chain id ${id}`);
 }

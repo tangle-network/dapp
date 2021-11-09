@@ -1,14 +1,13 @@
-import { FormHelperText, InputBase } from '@material-ui/core';
-import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabel';
-import React, { useEffect } from 'react';
-import styled, { css } from 'styled-components';
-import { useDepositNote } from '@webb-dapp/mixer/hooks/note';
-import { Pallet } from '@webb-dapp/ui-components/styling/colors';
+import { FormHelperText, Icon, InputBase } from '@material-ui/core';
 import { getEVMChainNameFromInternal } from '@webb-dapp/apps/configs';
+import { useDepositNote } from '@webb-dapp/mixer/hooks/note';
 import { useWebContext } from '@webb-dapp/react-environment/webb-context';
-import { chainsPopulated } from '@webb-dapp/apps/configs';
-import { evmChainConflict } from '@webb-dapp/react-environment/error/interactive-errors/evm-network-conflict';
-import { appEvent } from '@webb-dapp/react-environment/app-event';
+import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabel';
+import { notificationApi } from '@webb-dapp/ui-components/notification';
+import { Pallet } from '@webb-dapp/ui-components/styling/colors';
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import styled, { css } from 'styled-components';
 
 type NoteInputProps = {
   value: string;
@@ -25,7 +24,21 @@ const NoteDetails = styled.div`
 
 export const MixerNoteInput: React.FC<NoteInputProps> = ({ error, onChange, value }) => {
   const depositNote = useDepositNote(value);
-  const { activeChain, activeWallet, registerInteractiveFeedback, switchChain } = useWebContext();
+  const navigate = useNavigate();
+  const { registerInteractiveFeedback } = useWebContext();
+
+  // Switch to bridge tab if note is for bridge
+  useEffect(() => {
+    if (depositNote && depositNote.note.prefix === 'webb.bridge') {
+      notificationApi.addToQueue({
+        secondaryMessage: 'Please complete withdraw through the bridge',
+        message: 'Switched to bridge',
+        variant: 'warning',
+        Icon: <Icon>report_problem</Icon>,
+      });
+      navigate('/bridge', { replace: true });
+    }
+  }, [depositNote, navigate]);
 
   return (
     <InputLabel label={'Note'}>

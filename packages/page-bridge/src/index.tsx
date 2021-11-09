@@ -7,6 +7,6 @@ const PageBridge: FC = () => {
 };
 
 export default pageWithFeatures({
-  features: ['mixer'],
-  message: 'The mixer module is not supported on the current chain, please change the current network.',
+  features: ['bridge'],
+  message: 'The bridge module is not supported on the current chain, please change the current network.',
 })(PageBridge);

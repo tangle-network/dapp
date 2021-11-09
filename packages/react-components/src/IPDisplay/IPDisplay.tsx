@@ -68,10 +68,6 @@ const IPDisplay: React.FC<IPDisplayProps> = ({ ip }) => {
             {ip} {createLocationText()}
           </b>
         </Typography>
-        <Typography className={'ip-info'}>Please mask your IP address while using our service!</Typography>
-        <Typography className={'ip-info'}>
-          We recommend <span className={'tor'}>TOR</span>{' '}
-        </Typography>
       </div>
     </IPDisplayWrapper>
   );

@@ -1,4 +1,6 @@
-import { TornadoAnchorContract } from '@webb-dapp/contracts/contracts/tornado-anchor';
+import { chainIdIntoEVMId, chainsConfig, currenciesConfig, evmIdIntoChainId } from '@webb-dapp/apps/configs';
+import { AnchorContract } from '@webb-dapp/contracts/contracts';
+import { TornadoContract } from '@webb-dapp/contracts/contracts/tornado-anchor';
 import { WebbApiProvider, WebbMethods, WebbProviderEvents } from '@webb-dapp/react-environment';
 import { EvmChainMixersInfo } from '@webb-dapp/react-environment/api-providers/web3/EvmChainMixersInfo';
 import { Web3BridgeDeposit } from '@webb-dapp/react-environment/api-providers/web3/web3-bridge-deposit';
@@ -11,6 +13,7 @@ import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import { Web3Accounts } from '@webb-dapp/wallet/providers/web3/web3-accounts';
 import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
 import { EventBus } from '@webb-tools/app-util';
+import { Note } from '@webb-tools/sdk-mixer';
 import { ethers, providers } from 'ethers';
 import { WebbAnchorContract } from '@webb-dapp/contracts/contracts';
 
@@ -99,8 +102,26 @@ export class WebbWeb3Provider
     return this.connectedMixers;
   }
 
-  async getContractByAddress(mixerAddress: string): Promise<TornadoAnchorContract> {
-    return new TornadoAnchorContract(this.connectedMixers, this.ethersProvider, mixerAddress);
+  getTornadoContractAddressByNote(note: Note) {
+    const evmId = chainIdIntoEVMId(Number(note.note.chain));
+    const availableMixers = new EvmChainMixersInfo(evmId);
+    const mixer = availableMixers.getTornMixerInfoBySize(Number(note.note.amount), note.note.tokenSymbol);
+    if (!mixer) {
+      throw new Error('Mixer not found');
+    }
+    return mixer.address;
+  }
+
+  async getContractByAddress(mixerAddress: string): Promise<TornadoContract> {
+    return new TornadoContract(this.connectedMixers, this.ethersProvider, mixerAddress);
+  }
+
+  getWebbAnchorByAddress(address: string): AnchorContract {
+    return new AnchorContract(this.connectedMixers, this.ethersProvider, address);
+  }
+
+  getWebbAnchorByAddressAndProvider(address: string, provider: providers.Web3Provider): AnchorContract {
+    return new AnchorContract(this.connectedMixers, provider, address, true);
   }
 
   getWebbAnchorByAddress(address: string): WebbAnchorContract {
@@ -122,13 +143,13 @@ export class WebbWeb3Provider
   // This function limits the mixer implementation to one type for the token/size pair.
   // Something like a poseidon hasher implementation instead of mimc hasher cannot
   // exist alongside each other.
-  async getContractBySize(mixerSize: number, tokenSymbol: string): Promise<TornadoAnchorContract> {
+  async getContractBySize(mixerSize: number, tokenSymbol: string): Promise<TornadoContract> {
     const mixer = this.connectedMixers.getTornMixerInfoBySize(mixerSize, tokenSymbol);
     if (!mixer) {
       throw WebbError.from(WebbErrorCodes.MixerSizeNotFound);
     }
 
-    return new TornadoAnchorContract(this.connectedMixers, this.ethersProvider, mixer.address);
+    return new TornadoContract(this.connectedMixers, this.ethersProvider, mixer.address);
   }
 
   getEthersProvider(): providers.Web3Provider {
@@ -166,6 +187,43 @@ export class WebbWeb3Provider
       let reason = ethers.utils.toUtf8String('0x' + code.substr(138));
       return reason;
     }
+  }
+
+  switchOrAddChain(evmChainId: number) {
+    return this.web3Provider
+      .switchChain({
+        chainId: `0x${evmChainId.toString(16)}`,
+      })
+      ?.catch(async (switchError) => {
+        console.log('inside catch for switchChain', switchError);
+
+        // cannot switch because network not recognized, so fetch configuration
+        const chainId = evmIdIntoChainId(evmChainId);
+        const chain = chainsConfig[chainId];
+
+        // prompt to add the chain
+        if (switchError.code === 4902) {
+          const currency = currenciesConfig[chain.nativeCurrencyId];
+          await this.web3Provider.addChain({
+            chainId: `0x${evmChainId.toString(16)}`,
+            chainName: chain.name,
+            rpcUrls: chain.evmRpcUrls!,
+            nativeCurrency: {
+              decimals: 18,
+              name: currency.name,
+              symbol: currency.symbol,
+            },
+          });
+          // add network will prompt the switch, check evmId again and throw if user rejected
+          const newChainId = await this.web3Provider.network;
+
+          if (newChainId != chain.evmId) {
+            throw switchError;
+          }
+        } else {
+          throw switchError;
+        }
+      });
   }
 
   public get innerProvider() {

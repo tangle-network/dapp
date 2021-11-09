@@ -1,20 +1,15 @@
 import { MixerGroupEntry, NativeTokenProperties } from '@webb-dapp/mixer';
 import { Currency } from '@webb-dapp/mixer/utils/currency';
-// @ts-ignore
-import Worker from '@webb-dapp/mixer/utils/mixer.worker';
 import { DepositPayload as IDepositPayload, MixerDeposit } from '@webb-dapp/react-environment/webb-context';
+import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import { Token } from '@webb-tools/sdk-core';
-import { Asset, Mixer, Note } from '@webb-tools/sdk-mixer';
+import { Note, NoteGenInput } from '@webb-tools/sdk-mixer';
 
 import { WebbPolkadot } from './webb-polkadot-provider';
-import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 
 type DepositPayload = IDepositPayload<Note, [number, Uint8Array[]]>;
 
 export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayload> {
-  private cachedBulletProofsGens: Uint8Array | null = null;
-  private mixer: Mixer | null = null;
-
   async getSizes() {
     // @ts-ignore
     const data: Array<MixerGroupEntry> = await this.inner.api.query.mixer.mixerTrees.entries();
@@ -45,52 +40,40 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
         id: index,
         value: Math.round(Number(amount.toString()) / Math.pow(10, token.precision)),
         title: Math.round(Number(amount.toString()) / Math.pow(10, token.precision)) + ` ${currency.symbol}`,
+        symbol: currency.symbol,
       }))
       .sort((a, b) => (a.value > b.value ? 1 : a.value < b.value ? -1 : 0));
     return groupItem;
   }
 
-  private async getBulletProofGens(): Promise<Uint8Array> {
-    if (this.cachedBulletProofsGens) {
-      return this.cachedBulletProofsGens;
-    }
-    const cachedBulletProof = localStorage.getItem('bulletproof_gens');
-    if (!cachedBulletProof) {
-      this.cachedBulletProofsGens = await this.generateBulletProofs();
-      return this.cachedBulletProofsGens;
-    }
-    const encoder = new TextEncoder();
-    const gens = encoder.encode(cachedBulletProof);
-    this.cachedBulletProofsGens = gens;
-    return gens;
-  }
-
-  private async getMixer(): Promise<Mixer> {
-    if (this.mixer) {
-      return this.mixer;
-    }
-    const bulletProofGens = await this.getBulletProofGens();
-    this.mixer = await Mixer.init(new Worker(), bulletProofGens);
-    return this.mixer;
-  }
-
-  private async generateBulletProofs() {
-    const worker = new Worker();
-    const bulletProofGens = await Mixer.preGenerateBulletproofGens(worker);
-    worker.terminate();
-    const decoder = new TextDecoder();
-    const bulletProofGensString = decoder.decode(bulletProofGens); // from Uint8Array to String
-    localStorage.setItem('bulletproof_gens', bulletProofGensString);
-    return bulletProofGens;
-  }
-
   async generateNote(mixerId: number): Promise<DepositPayload> {
-    const mixer = await this.getMixer();
+    const sizes = await this.getSizes();
+    const amount = sizes.find((size) => size.id === mixerId);
+    if (!amount) {
+      throw Error('amount not found! for mixer id ' + mixerId);
+    }
+    // todo store the chain id in the provider
+    const chainId = 1; /* this.inner.chainId() */
+    const noteInput: NoteGenInput = {
+      prefix: 'web.mix',
+      version: 'v1',
 
-    const [note, leaf] = await mixer.generateNoteAndLeaf(new Asset(mixerId, 'EDG'));
+      backend: 'Arkworks',
+      hashFunction: 'Poseidon',
+      curve: 'Bn254',
+      denomination: '18',
+
+      amount: String(amount.value),
+      chain: String(chainId),
+      sourceChain: String(chainId),
+      tokenSymbol: amount.symbol,
+    };
+    const depositNote = await Note.generateNote(noteInput);
+    const leaf = depositNote.getLeaf();
+
     return {
-      note,
-      params: [note.id, [leaf]],
+      note: depositNote,
+      params: [Number(depositNote.note.amount), [leaf]],
     };
   }
 
@@ -104,7 +87,6 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
     );
 
     const account = await this.inner.accounts.activeOrDefault;
-    console.log('account', account);
     if (!account) {
       throw WebbError.from(WebbErrorCodes.NoAccountAvailable);
     }

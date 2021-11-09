@@ -1,6 +1,10 @@
 import { ChainId, WebbCurrencyId } from '@webb-dapp/apps/configs';
 import { BridgeCurrency } from '@webb-dapp/react-environment/webb-context/bridge/bridge-currency';
 
+// todo change to wrappedTokenAddresses (they are  governed token wrapper contract)
+// todo change to Fixed anchors
+// todo: Add change to Fixed variable anchors
+
 type ChainRecordConfig<T = string> = { [key in ChainId]?: T };
 export type BridgeAnchor = {
   /// Anchor contract addresses Map
@@ -19,6 +23,7 @@ const webWEBBRinkebyHarmonyTestnet0 = new BridgeCurrency(
   [ChainId.Rinkeby, ChainId.HarmonyTestnet0],
   WebbCurrencyId.WEBB
 );
+const webbETHtest1 = new BridgeCurrency([ChainId.Ropsten, ChainId.Rinkeby, ChainId.Goerli], WebbCurrencyId.ETH);
 
 export const bridgeConfig: BridgeConfig = {
   [webWEBBRinkebyHarmonyTestnet0.name]: {
@@ -30,11 +35,39 @@ export const bridgeConfig: BridgeConfig = {
     anchors: [
       {
         anchorAddresses: {
-          [ChainId.HarmonyTestnet0]: '0x64E9727C4a835D518C34d3A50A8157120CAeb32F',
-          [ChainId.Rinkeby]: '0xB42139fFcEF02dC85db12aC9416a19A12381167D',
+          [ChainId.HarmonyTestnet0]: '0x477eac8B25b24980aCa7373Fd9fD3a7CfA142eeD',
+          [ChainId.Rinkeby]: '0xD6BB4C516e287Ae536EDe8a01fb26FA3E07d7F3E',
         },
-        amount: '.1',
+        amount: '0.1',
       },
     ],
   },
+  [webbETHtest1.name]: {
+    asset: webbETHtest1,
+    tokenAddresses: {
+      [ChainId.Ropsten]: '0x0000000000000000000000000000000000000000',
+      [ChainId.Rinkeby]: '0x0000000000000000000000000000000000000000',
+      [ChainId.Goerli]: '0x0000000000000000000000000000000000000000',
+    },
+    anchors: [
+      {
+        anchorAddresses: {
+          [ChainId.Ropsten]: '0x0711Ea63FDEDD2c8a9d3C9340a5A8F6cd84b6A92',
+          [ChainId.Rinkeby]: '0x15A66977f0A9D21e09eB6C1B42b001aF992f0C8f',
+          [ChainId.Goerli]: '0x025348e15e9d5529E5A4A55E8eA7eC923b7fB8b6',
+        },
+        amount: '0.01',
+      },
+    ],
+  },
+};
+
+export const getAnchorAddressForBridge = (assetName: string, chainId: number, amount: number): string | undefined => {
+  const linkedAnchorConfig = bridgeConfig[assetName].anchors.find((anchor) => anchor.amount == amount.toString());
+  if (!linkedAnchorConfig) {
+    throw new Error('Unsupported configuration for bridge');
+  }
+
+  const anchorAddress = linkedAnchorConfig.anchorAddresses[chainId as ChainId];
+  return anchorAddress;
 };

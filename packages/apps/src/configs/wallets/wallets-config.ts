@@ -15,6 +15,8 @@ const ANY_EVM = [
   ChainId.Goerli,
   ChainId.HarmonyTestnet1,
   ChainId.HarmonyTestnet0,
+  ChainId.HarmonyMainnet0,
+  ChainId.Shiden,
 ];
 export const walletsConfig: AppConfig['wallet'] = {
   [WalletId.Polkadot]: {
@@ -27,7 +29,7 @@ export const walletsConfig: AppConfig['wallet'] = {
     async detect() {
       return true;
     },
-    supportedChainIds: [ChainId.Edgeware, ChainId.EdgewareTestNet, ChainId.EdgewareLocalNet],
+    supportedChainIds: [ChainId.EdgewareLocalNet],
   },
   [WalletId.MetaMask]: {
     id: WalletId.MetaMask,
@@ -45,18 +47,18 @@ export const walletsConfig: AppConfig['wallet'] = {
     },
     supportedChainIds: [...ANY_EVM],
   },
-  3: {
-    id: 3,
-    logo: WalletConnectLogo,
-    name: 'wallet connect',
-    title: `Wallet Connect`,
-    platform: 'EVM',
-    enabled: true,
-    detect() {
-      return true;
-    },
-    supportedChainIds: [...ANY_EVM],
-  },
+  // 3: {
+  //   id: 3,
+  //   logo: WalletConnectLogo,
+  //   name: 'wallet connect',
+  //   title: `Wallet Connect`,
+  //   platform: 'EVM',
+  //   enabled: true,
+  //   detect() {
+  //     return true;
+  //   },
+  //   supportedChainIds: [...ANY_EVM],
+  // },
   // [WalletId.OneWallet]: {
   //   id: WalletId.OneWallet,
   //   logo: HarmonyLogo,
