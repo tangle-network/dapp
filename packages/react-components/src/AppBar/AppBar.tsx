@@ -115,14 +115,14 @@ const AppBar: React.FC<AppBarProps> = () => {
       <SpacerDiv />
       {!isMobile && (
         <NavigationWrapper>
-          { process.env.NODE_ENV == 'production' && (
+          {process.env.NODE_ENV === 'production' && (
             <li className={'active'}>
               <NavLink to={'/tornado'} activeClassName={'active'}>
                 Tornados
               </NavLink>
             </li>
           )}
-          { process.env.NODE_ENV != 'production' && (
+          {process.env.NODE_ENV != 'production' && (
             <>
               <li className={'active'}>
                 <NavLink to={'/tornado'} activeClassName={'active'}>

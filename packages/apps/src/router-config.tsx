@@ -14,7 +14,7 @@ const CSuspense: FC = ({ children }) => {
 };
 
 export const config: RouterConfigData[] =
-  process.env.NODE_ENV == 'production'
+  process.env.NODE_ENV === 'production'
     ? [
       {
         children: [
