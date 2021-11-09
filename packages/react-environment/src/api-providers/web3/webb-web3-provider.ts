@@ -1,6 +1,6 @@
 import { chainIdIntoEVMId, chainsConfig, currenciesConfig, evmIdIntoChainId } from '@webb-dapp/apps/configs';
-import { AnchorContract } from '@webb-dapp/contracts/contracts';
 import { TornadoContract } from '@webb-dapp/contracts/contracts/tornado-anchor';
+import { AnchorContract } from '@webb-dapp/contracts/contracts/webb-anchor';
 import { WebbApiProvider, WebbMethods, WebbProviderEvents } from '@webb-dapp/react-environment';
 import { EvmChainMixersInfo } from '@webb-dapp/react-environment/api-providers/web3/EvmChainMixersInfo';
 import { Web3BridgeDeposit } from '@webb-dapp/react-environment/api-providers/web3/web3-bridge-deposit';
@@ -15,7 +15,6 @@ import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
 import { EventBus } from '@webb-tools/app-util';
 import { Note } from '@webb-tools/sdk-mixer';
 import { ethers, providers } from 'ethers';
-import { WebbAnchorContract } from '@webb-dapp/contracts/contracts';
 
 export class WebbWeb3Provider
   extends EventBus<WebbProviderEvents<[number]>>
@@ -122,14 +121,6 @@ export class WebbWeb3Provider
 
   getWebbAnchorByAddressAndProvider(address: string, provider: providers.Web3Provider): AnchorContract {
     return new AnchorContract(this.connectedMixers, provider, address, true);
-  }
-
-  getWebbAnchorByAddress(address: string): WebbAnchorContract {
-    return new WebbAnchorContract(this.connectedMixers, this.ethersProvider, address);
-  }
-
-  getWebbAnchorByAddressAndProvider(address: string, provider: providers.Web3Provider): WebbAnchorContract {
-    return new WebbAnchorContract(this.connectedMixers, provider, address, true);
   }
 
   getMixerInfoBySize(mixerSize: number, tokenSymbol: string) {
