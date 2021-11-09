@@ -9,9 +9,9 @@ export const sideBarConfig: SidebarConfig = {
   products: [
     {
       icon: <ExchangeIcon />,
-      name: 'Mixer',
-      path: 'mixer',
-      requiredFeatures: ['mixer'],
+      name: 'Tornado',
+      path: 'tornado',
+      requiredFeatures: ['tornado'],
     },
     {
       icon: <GovernanceIcon />,
