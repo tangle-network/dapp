@@ -1,38 +1,26 @@
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
-import styled, { css } from 'styled-components';
-import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
-import { Pallet } from '@webb-dapp/ui-components/styling/colors';
-import { InputSection } from '@webb-dapp/ui-components/Inputs/InputSection/InputSection';
-import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabel';
-import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { Button, Checkbox, FormControlLabel, IconButton, InputBase, InputProps, Tooltip } from '@material-ui/core';
 import Icon from '@material-ui/core/Icon';
-import { TokenInput, TokenInputProps } from '@webb-dapp/ui-components/Inputs/TokenInput/TokenInput';
-import { SpaceBox } from '@webb-dapp/ui-components';
-import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
+import Typography from '@material-ui/core/Typography';
+import { WebbCurrencyId } from '@webb-dapp/apps/configs';
+import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
 import IPDisplay from '@webb-dapp/react-components/IPDisplay/IPDisplay';
 import { BridgeCurrency, useWebContext } from '@webb-dapp/react-environment';
-import { useIp } from '@webb-dapp/react-hooks/useIP';
-import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
-import { WebbCurrencyId } from '@webb-dapp/apps/configs';
-import { fromBridgeCurrencyToCurrencyView } from '@webb-dapp/ui-components/Inputs/WalletBridgeCurrencyInput/WalletBridgeCurrencyInput';
 import { Currency } from '@webb-dapp/react-environment/types/currency';
-import Typography from '@material-ui/core/Typography';
-import { CurrencyId } from '@webb-tools/types/interfaces';
+import { useIp } from '@webb-dapp/react-hooks/useIP';
+import { SpaceBox } from '@webb-dapp/ui-components';
+import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
+import { ContentWrapper } from '@webb-dapp/ui-components/ContentWrappers';
+import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
+import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabel';
+import { InputSection } from '@webb-dapp/ui-components/Inputs/InputSection/InputSection';
 import { MixerGroupSelect } from '@webb-dapp/ui-components/Inputs/MixerGroupSelect/MixerGroupSelect';
+import { TokenInput, TokenInputProps } from '@webb-dapp/ui-components/Inputs/TokenInput/TokenInput';
+import { fromBridgeCurrencyToCurrencyView } from '@webb-dapp/ui-components/Inputs/WalletBridgeCurrencyInput/WalletBridgeCurrencyInput';
+import { Pallet } from '@webb-dapp/ui-components/styling/colors';
+import { CurrencyId } from '@webb-tools/types/interfaces';
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import styled, { css } from 'styled-components';
 
-const TransferWrapper = styled.div`
-  padding: 1rem;
-  ${above.sm`  padding: 2rem;`}
-  max-width: 500px;
-  margin: auto;
-  border-radius: 20px;
-  ${({ theme }: { theme: Pallet }) => css`
-    background: ${theme.layer1Background};
-    border: 1px solid ${theme.borderColor};
-    ${theme.type === 'light' ? `box-shadow: 0px 0px 14px rgba(51, 81, 242, 0.11);` : ''}
-  `}
-`;
 const AmountInputWrapper = styled.div`
   position: relative;
   width: 100%;
@@ -46,18 +34,6 @@ const AmountButton = styled.button`
   }
 `;
 
-const TabsWrapper = styled.div`
-  padding: 1rem;
-  ${above.sm`  padding: 2rem;`}
-  max-width: 500px;
-  margin: auto;
-  border-radius: 20px;
-  ${({ theme }: { theme: Pallet }) => css`
-    background: ${theme.layer1Background};
-    border: 1px solid ${theme.borderColor};
-    ${theme.type === 'light' ? `box-shadow: 0px 0px 14px rgba(51, 81, 242, 0.11);` : ''}
-  `}
-`;
 const TabHeader = styled.header`
   display: flex;
   align-items: center;
@@ -221,7 +197,7 @@ const PageWrappUnwrap: FC = () => {
 
   return (
     <div>
-      <TransferWrapper>
+      <ContentWrapper>
         <TabHeader>
           <TabButton onClick={switchToWrap} active={status === 'wrap'}>
             <span className='mixer-tab-icon'>
@@ -323,7 +299,7 @@ const PageWrappUnwrap: FC = () => {
         <SpaceBox height={16} />
 
         <MixerButton label={buttonText} onClick={() => {}} />
-      </TransferWrapper>
+      </ContentWrapper>
 
       <SpaceBox height={8} />
 

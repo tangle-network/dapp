@@ -1,21 +1,9 @@
 import { Fade } from '@material-ui/core';
+import { ContentWrapper } from '@webb-dapp/ui-components/ContentWrappers';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
-import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
 import React, { useCallback, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
-const MixerTabsWrapper = styled.div`
-  padding: 1rem;
-  ${above.sm`  padding: 2rem;`}
-  max-width: 500px;
-  margin: auto;
-  border-radius: 20px;
-  ${({ theme }: { theme: Pallet }) => css`
-    background: ${theme.layer1Background};
-    border: 1px solid ${theme.borderColor};
-    ${theme.type === 'light' ? `box-shadow: 0px 0px 14px rgba(51, 81, 242, 0.11);` : ''}
-  `}
-`;
 type MixerTabsProps = {
   Deposit: JSX.Element;
   Withdraw: JSX.Element;
@@ -86,7 +74,7 @@ export const MixerTabs: React.FC<MixerTabsProps> = ({ Deposit, Withdraw }) => {
     }
   }, [Deposit, Withdraw, activeTab]);
   return (
-    <MixerTabsWrapper>
+    <ContentWrapper>
       <TabHeader>
         <TabButton onClick={switchToDeposit} active={activeTab === 'deposit'}>
           <span className='mixer-tab-icon'>
@@ -116,6 +104,6 @@ export const MixerTabs: React.FC<MixerTabsProps> = ({ Deposit, Withdraw }) => {
       <Fade timeout={300} in unmountOnExit mountOnEnter key={activeTab + 'fade'}>
         <TabContent>{ActiveTab}</TabContent>
       </Fade>
-    </MixerTabsWrapper>
+    </ContentWrapper>
   );
 };
