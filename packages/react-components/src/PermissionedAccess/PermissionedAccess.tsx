@@ -1,28 +1,11 @@
 import { useFetch } from '@webb-dapp/react-hooks/useFetch';
+import { ContentWrapper } from '@webb-dapp/ui-components/ContentWrappers';
 import { Spinner } from '@webb-dapp/ui-components/Spinner/Spinner';
-import { Pallet } from '@webb-dapp/ui-components/styling/colors';
-import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
 import { Storage } from '@webb-dapp/utils';
 import React, { useEffect, useState } from 'react';
-import styled, { css } from 'styled-components';
+
 import { Geofenced } from './Geofenced';
-
 import { TermsAndConditions } from './TermsAndConditions';
-
-const ContentWrapper = styled.div`
-  padding: 1rem;
-  ${above.sm`  padding: 2rem;`}
-  max-width: 500px;
-  margin: auto;
-  border-radius: 20px;
-  ${({ theme }: { theme: Pallet }) => css`
-    background: ${theme.layer1Background};
-    border: 1px solid ${theme.borderColor};
-    ${theme.type === 'light' ? `box-shadow: 0px 0px 14px rgba(51, 81, 242, 0.11);` : ''}
-  `}
-  maxHeight: '400px',
-  overflow: 'auto',
-`;
 
 enum PermissionedState {
   Checking,
