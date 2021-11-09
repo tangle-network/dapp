@@ -84,7 +84,7 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
     return this.inner.relayingManager.getRelayer({
       baseOn: 'evm',
       chainId: Number(evmNote.note.chain),
-      mixerSupport: {
+      tornadoSupport: {
         amount: Number(evmNote.note.amount),
         tokenSymbol: evmNote.note.tokenSymbol,
       },

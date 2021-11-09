@@ -47,7 +47,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
     return this.inner.relayingManager.getRelayer({
       baseOn: 'evm',
       chainId: Number(evmNote.note.chain),
-      mixerSupport: {
+      bridgeSupport: {
         amount: Number(evmNote.note.amount),
         tokenSymbol: evmNote.note.tokenSymbol,
       },

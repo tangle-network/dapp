@@ -38,7 +38,8 @@ type RelayerQuery = {
   ipService?: true;
   chainId?: ChainId;
   contractAddress?: string;
-  mixerSupport?: MixerQuery;
+  tornadoSupport?: MixerQuery;
+  bridgeSupport?: MixerQuery;
 };
 
 type RelayedChainInput = {
@@ -175,7 +176,7 @@ export class WebbRelayerBuilder {
    *  the list is randomized
    * */
   getRelayer(query: RelayerQuery): WebbRelayer[] {
-    const { baseOn, chainId, contractAddress, ipService, mixerSupport } = query;
+    const { baseOn, bridgeSupport, chainId, contractAddress, ipService, tornadoSupport } = query;
 
     const relayers = Object.keys(this.capabilities)
       .filter((key) => {
@@ -197,12 +198,14 @@ export class WebbRelayerBuilder {
             );
           }
         }
-        if (mixerSupport && baseOn && chainId) {
+        if (tornadoSupport && baseOn && chainId) {
           if (baseOn == 'evm') {
             const evmId = chainsConfig[chainId].evmId!;
             const mixersInfoForChain = new EvmChainMixersInfo(evmId);
-            const mixerInfo = mixersInfoForChain.getTornMixerInfoBySize(mixerSupport.amount, mixerSupport.tokenSymbol);
-            const bridgeAddress = getAnchorAddressForBridge(mixerSupport.tokenSymbol, chainId, mixerSupport.amount);
+            const mixerInfo = mixersInfoForChain.getTornMixerInfoBySize(
+              tornadoSupport.amount,
+              tornadoSupport.tokenSymbol
+            );
             if (mixerInfo) {
               return Boolean(
                 capabilities.supportedChains[baseOn]
@@ -212,7 +215,15 @@ export class WebbRelayerBuilder {
                       contract.address == mixerInfo.address.toLowerCase() && contract.eventsWatcher.enabled == true
                   )
               );
-            } else if (bridgeAddress) {
+            } else {
+              return false;
+            }
+          }
+        }
+        if (bridgeSupport && baseOn && chainId) {
+          if (baseOn == 'evm') {
+            const bridgeAddress = getAnchorAddressForBridge(bridgeSupport.tokenSymbol, chainId, bridgeSupport.amount);
+            if (bridgeAddress) {
               return Boolean(
                 capabilities.supportedChains[baseOn]
                   .get(chainId)
