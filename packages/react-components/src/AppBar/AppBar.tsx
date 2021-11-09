@@ -21,6 +21,7 @@ const AppBarWrapper = styled.nav`
   flex: 1;
   align-items: center;
   padding: 0 10px;
+
   ${below.sm`
 	 background:#fff;
 	`}
@@ -114,27 +115,39 @@ const AppBar: React.FC<AppBarProps> = () => {
       <SpacerDiv />
       {!isMobile && (
         <NavigationWrapper>
-          <li className={'active'}>
-            <NavLink to={'/mixer'} activeClassName={'active'}>
-              Mixers
-            </NavLink>
-          </li>
+          {process.env.NODE_ENV === 'production' && (
+            <li className={'active'}>
+              <NavLink to={'/tornado'} activeClassName={'active'}>
+                Tornados
+              </NavLink>
+            </li>
+          )}
+          {process.env.NODE_ENV != 'production' && (
+            <>
+              <li className={'active'}>
+                <NavLink to={'/tornado'} activeClassName={'active'}>
+                  Tornados
+                </NavLink>
+              </li>
 
-          <li className={'active'}>
-            <NavLink to={'/bridge'} activeClassName={'active'}>
-              Bridge
-            </NavLink>
-          </li>
+              <li className={'active'}>
+                <NavLink to={'/bridge'} activeClassName={'active'}>
+                  Bridge
+                </NavLink>
+              </li>
+              <li className={'active'}>
+                <NavLink to={'/transfer'} activeClassName={'active'}>
+                  Transfer
+                </NavLink>
+              </li>
 
-          {/*        <li>
-          <NavLink to={'/statistics'}>Statistics</NavLink>
-        </li>
-        <li>
-          <NavLink to={'/governance'}>Governance</NavLink>
-        </li>
-        <li>
-          <NavLink to={'/how-it-works'}>How it works</NavLink>
-        </li>*/}
+              <li className={'active'}>
+                <NavLink to={'/wrap-unwrap'} activeClassName={'active'}>
+                  Wrap/Unwrap
+                </NavLink>
+              </li>
+            </>
+          )}
         </NavigationWrapper>
       )}
       <RightNavigation>

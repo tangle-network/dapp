@@ -157,6 +157,7 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
     const opts = options({
       provider: wsProvider,
     });
+    logger.trace('Api Promise options', opts);
 
     const apiPromise = await ApiPromise.create(opts);
     return [apiPromise, currentExtensions];

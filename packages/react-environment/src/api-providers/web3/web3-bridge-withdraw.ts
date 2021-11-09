@@ -6,7 +6,7 @@ import {
   getEVMChainNameFromInternal,
 } from '@webb-dapp/apps/configs';
 import { MixerStorage } from '@webb-dapp/apps/configs/storages/EvmChainStorage';
-import { WebbAnchorContract } from '@webb-dapp/contracts/contracts';
+import { AnchorContract } from '@webb-dapp/contracts/contracts';
 import { depositFromAnchor2Preimage } from '@webb-dapp/contracts/utils/make-deposit';
 import { Bridge, BridgeConfig, bridgeConfig, BridgeCurrency, WithdrawState } from '@webb-dapp/react-environment';
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3/webb-web3-provider';
@@ -33,16 +33,34 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
     });
   }
 
+  get relayers() {
+    return this.inner.getChainId().then((evmId) => {
+      const chainId = evmIdIntoChainId(evmId);
+      return this.inner.relayingManager.getRelayer({
+        baseOn: 'evm',
+        chainId,
+      });
+    });
+  }
+
+  async getRelayersByNote(evmNote: Note) {
+    return this.inner.relayingManager.getRelayer({
+      baseOn: 'evm',
+      chainId: Number(evmNote.note.chain),
+      bridgeSupport: {
+        amount: Number(evmNote.note.amount),
+        tokenSymbol: evmNote.note.tokenSymbol,
+      },
+    });
+  }
+
   async sameChainWithdraw(note: DepositNote, recipient: string): Promise<string> {
     this.cancelToken.cancelled = false;
 
-    // Todo Ensure the current provider is the same as the source
+    const bridge = Bridge.from(this.bridgeConfig, BridgeCurrency.fromString(note.tokenSymbol));
+
     const activeChain = await this.inner.getChainId();
     const internalId = evmIdIntoChainId(activeChain);
-    if (Number(note.chain) !== internalId) {
-      throw new Error(`The provider isn't the connected to the expected provider `);
-    }
-    const bridge = Bridge.from(this.bridgeConfig, BridgeCurrency.fromString(note.tokenSymbol));
 
     const contractAddresses = bridge.anchors.find((anchor) => anchor.amount === note.amount)!;
     const contractAddress = contractAddresses.anchorAddresses[internalId]!;
@@ -125,7 +143,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
       this.emit('stateChange', WithdrawState.Ideal);
       transactionNotificationConfig.failed?.({
         address: recipient,
-        data: e?.code === 4001 ? 'Withdraw rejected' : 'Withdraw failed',
+        data: (e as any)?.code === 4001 ? 'Withdraw rejected' : 'Withdraw failed',
         key: 'bridge-withdraw-evm',
         path: {
           method: 'withdraw',
@@ -154,6 +172,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
 
     // Setup a provider for the source chain
     const sourceChainId = Number(note.sourceChain) as ChainId;
+    const sourceEvmId = chainIdIntoEVMId(sourceChainId);
     const sourceChainConfig = chainsConfig[sourceChainId];
     const rpc = sourceChainConfig.url;
     const sourceHttpProvider = Web3Provider.fromUri(rpc);
@@ -175,25 +194,6 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
     const sourceContractAddress = linkedAnchors.anchorAddresses[sourceChainId]!;
 
     const activeChain = await this.inner.getChainId();
-    if (activeChain !== destChainEvmId) {
-      try {
-        await this.inner.innerProvider.switchChain({
-          chainId: `0x${destChainEvmId.toString(16)}`,
-        });
-      } catch (e) {
-        this.emit('stateChange', WithdrawState.Ideal);
-        transactionNotificationConfig.failed?.({
-          address: recipient,
-          data: e?.code === 4001 ? 'Withdraw rejected' : 'Withdraw failed',
-          key: 'bridge-withdraw-evm',
-          path: {
-            method: 'withdraw',
-            section: `Bridge ${bridge.currency.chainIds.map(getEVMChainNameFromInternal).join('-')}`,
-          },
-        });
-        return '';
-      }
-    }
 
     // get root and neighbour root from the dest provider
     const destAnchor = this.inner.getWebbAnchorByAddress(destContractAddress);
@@ -214,7 +214,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
 
     // loop through the sourceRelayers to fetch leaves
     for (let i = 0; i < sourceRelayers.length; i++) {
-      const relayerLeaves = await sourceRelayers[i].getLeaves(sourceContractAddress);
+      const relayerLeaves = await sourceRelayers[i].getLeaves(sourceEvmId.toString(16), sourceContractAddress);
 
       const validLatestLeaf = await sourceContract.leafCreatedAtBlock(
         relayerLeaves.leaves[relayerLeaves.leaves.length - 1],
@@ -225,7 +225,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
 
       // leaves from relayer somewhat validated, attempt to build the tree
       if (validLatestLeaf) {
-        const tree = WebbAnchorContract.createTreeWithRoot(relayerLeaves.leaves, sourceLatestRoot);
+        const tree = AnchorContract.createTreeWithRoot(relayerLeaves.leaves, sourceLatestRoot);
 
         // If we were able to build the tree, set local storage and break out of the loop
         if (tree) {
@@ -336,7 +336,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
       this.emit('stateChange', WithdrawState.Ideal);
       transactionNotificationConfig.failed?.({
         address: recipient,
-        data: e?.code === 4001 ? 'Withdraw rejected' : 'Withdraw failed',
+        data: (e as any)?.code === 4001 ? 'Withdraw rejected' : 'Withdraw failed',
         key: 'bridge-withdraw-evm',
         path: {
           method: 'withdraw',

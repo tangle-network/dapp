@@ -36,6 +36,7 @@ export class Web3MixerDeposit extends MixerDeposit<WebbWeb3Provider, DepositPayl
     console.log(deposit.commitment);
     try {
       await contract.deposit(deposit.commitment);
+
       transactionNotificationConfig.finalize?.({
         address: '',
         data: undefined,
@@ -47,7 +48,7 @@ export class Web3MixerDeposit extends MixerDeposit<WebbWeb3Provider, DepositPayl
       });
     } catch (e) {
       console.log(e);
-      if (e.code == 4001) {
+      if ((e as any)?.code == 4001) {
         transactionNotificationConfig.failed?.({
           address: '',
           data: 'User Rejected Deposit',

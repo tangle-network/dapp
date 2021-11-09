@@ -53,6 +53,7 @@ export type ZKPWebbInputWithMerkle = {
 export type BridgeWitnessInput = {
   nullifierHash: string;
   recipient: string;
+  refreshCommitment: string;
   relayer: string;
   fee: string;
   refund: string;

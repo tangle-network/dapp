@@ -5,3 +5,10 @@ const data = fs.readFileSync(jsFilePath);
 
 const dist = path.join( __dirname ,'..' , 'packages' , 'apps' , 'public'  , 'assets' , 'snarkjs.min.js');
 fs.writeFileSync(dist ,data);
+
+
+
+
+const init = () => {
+fs.write
+}
