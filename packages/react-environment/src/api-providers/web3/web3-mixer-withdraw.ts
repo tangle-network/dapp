@@ -84,7 +84,7 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
     return this.inner.relayingManager.getRelayer({
       baseOn: 'evm',
       chainId: Number(evmNote.note.chain),
-      mixerSupport: {
+      tornadoSupport: {
         amount: Number(evmNote.note.amount),
         tokenSymbol: evmNote.note.tokenSymbol,
       },
@@ -234,6 +234,9 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
         logger.trace('Sending transaction');
         relayedWithdraw.send(tx);
         const txHash = await relayedWithdraw.await();
+        if (txHash[1]) {
+          return txHash[1];
+        }
         return '';
       } catch (e) {
         this.emit('stateChange', WithdrawState.Failed);

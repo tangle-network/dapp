@@ -1,6 +1,6 @@
 import { chainIdIntoEVMId, chainsConfig, currenciesConfig, evmIdIntoChainId } from '@webb-dapp/apps/configs';
-import { AnchorContract } from '@webb-dapp/contracts/contracts';
 import { TornadoContract } from '@webb-dapp/contracts/contracts/tornado-anchor';
+import { AnchorContract } from '@webb-dapp/contracts/contracts/webb-anchor';
 import { WebbApiProvider, WebbMethods, WebbProviderEvents } from '@webb-dapp/react-environment';
 import { EvmChainMixersInfo } from '@webb-dapp/react-environment/api-providers/web3/EvmChainMixersInfo';
 import { Web3BridgeDeposit } from '@webb-dapp/react-environment/api-providers/web3/web3-bridge-deposit';
