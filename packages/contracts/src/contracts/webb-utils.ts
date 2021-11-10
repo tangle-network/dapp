@@ -19,10 +19,10 @@ export const generateWitness = async (input: BridgeWitnessInput, maxEdges: MaxEd
   }
 };
 
-export const proofAndVerify = async (witness: any) => {
+export const proofAndVerify = async (witness: any, maxEdges: MaxEdges) => {
   console.log(witness);
-  const res = await groth16.prove('/assets/fixtures/circuit_final.zkey', witness);
-  const vKey = await zkey.exportVerificationKey('/assets/fixtures/circuit_final.zkey');
+  const res = await groth16.prove(`/assets/fixtures/${maxEdges + 1}/circuit_final.zkey`, witness);
+  const vKey = await zkey.exportVerificationKey(`/assets/fixtures/${maxEdges + 1}/circuit_final.zkey`);
   const verificationResults = await groth16.verify(vKey, res.publicSignals, res.proof);
   // Todo: Check why the verify fails
   if (verificationResults || true) {
