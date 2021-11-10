@@ -108,15 +108,16 @@ const TabButton = styled.button<{ active?: boolean }>`
 const PageWrappUnwrap: FC = () => {
   const {
     context: status,
+    execute,
     leftHandToken,
     rightHandToken,
     setLeftHandToken,
     setRightHandToken,
     swap,
     tokens,
+    amount,
+    setAmount,
     wrappedTokens,
-
-    execute,
   } = useWrapUnwrap();
 
   const [isSwap, setIsSwap] = useState(false);
@@ -270,7 +271,15 @@ const PageWrappUnwrap: FC = () => {
           <InputSection>
             <InputLabel label={`${status} amount`} />
             <AmountInputWrapper>
-              <InputBase fullWidth placeholder={'Enter amount'} />
+              <InputBase
+                value={amount}
+                onChange={(e) => {
+                  setAmount(Number(e.target.value));
+                }}
+                type={'number'}
+                fullWidth
+                placeholder={'Enter amount'}
+              />
               <AmountButton color={'primary'} as={Button}>
                 MAX
               </AmountButton>

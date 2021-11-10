@@ -1,9 +1,19 @@
-import { Contract, providers, Signer } from 'ethers';
+import { BigNumberish, Contract, PayableOverrides, providers, Signer } from 'ethers';
 import { GovernedTokenWrapper } from '@webb-dapp/contracts/types/GovernedTokenWrapper';
 import { GovernedTokenWrapper__factory } from '@webb-dapp/contracts/types/factories/GovernedTokenWrapper__factory';
 import { LoggerService } from '@webb-tools/app-util';
+import utils from 'web3-utils';
 
 const logger = LoggerService.get('WebbGovernedToken');
+
+export const zeroAddress = '0x0000000000000000000000000000000000000000';
+
+function checkNativeAddress(tokenAddress: string): boolean {
+  if (tokenAddress === zeroAddress || tokenAddress === '0') {
+    return true;
+  }
+  return false;
+}
 
 export class WebbGovernedToken {
   private _contract: GovernedTokenWrapper;
@@ -12,7 +22,7 @@ export class WebbGovernedToken {
   constructor(private web3Provider: providers.Web3Provider, address: string) {
     this.signer = this.web3Provider.getSigner();
     logger.info(`Init with address ${address} `);
-    this._contract = new Contract(address, GovernedTokenWrapper__factory.abi, this.web3Provider) as any;
+    this._contract = new Contract(address, GovernedTokenWrapper__factory.abi, this.signer) as any;
   }
 
   get tokens() {
@@ -32,12 +42,32 @@ export class WebbGovernedToken {
   }
 
   /// todo assume native
-  async wrap(address: string, amount: number) {
-    return this._contract.wrap(address, amount);
+  async wrap(address: string, amount: BigNumberish) {
+    let isNative = checkNativeAddress(address);
+    let amountParam = isNative ? 0 : amount;
+
+    const overrides: PayableOverrides = {
+      gasLimit: 6000000,
+      gasPrice: utils.toWei('2', 'gwei'),
+    };
+
+    if (isNative) {
+      overrides.value = amount;
+    }
+    logger.info(`Wrapping ${isNative ? 'native' : `non-native (${address})`} amount ${amount.toString()}`);
+    return this._contract.wrap(address, amountParam, overrides);
   }
 
-  async unwrap(address: string, amount: number) {
-    return this._contract.wrap(address, amount);
+  async unwrap(address: string, amount: BigNumberish) {
+    const overrides: PayableOverrides = {
+      gasLimit: 6000000,
+      gasPrice: utils.toWei('2', 'gwei'),
+    };
+    logger.info(
+      `Unwrapping ${checkNativeAddress(address) ? 'native' : `non-native (${address})`} amount ${amount.toString()}`
+    );
+
+    return this._contract.unwrap(address, amount, overrides);
   }
 
   get currentLiquidity() {
@@ -48,7 +78,7 @@ export class WebbGovernedToken {
     return this.web3Provider.getBalance(this._contract.address);
   }
 
-  async canUnwrap(account: string, amount: number) {
+  async canUnwrap(account: string, amount: BigNumberish) {
     const [currentWrappedLiquidity, currentNativeLiquidity] = await Promise.all([
       this.currentLiquidity,
       this.web3Provider.getBalance(this._contract.address),
@@ -68,7 +98,7 @@ export class WebbGovernedToken {
     return true;
   }
 
-  async canWrap(/*tokenAddress: string*/ amount: number) {
+  async canWrap(/*tokenAddress: string*/ amount: BigNumberish) {
     /*    const tokens = await this._contract.getTokens();
 		if (!tokens.includes(tokenAddress)) {
 			return false;

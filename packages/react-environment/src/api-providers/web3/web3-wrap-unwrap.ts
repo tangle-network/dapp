@@ -1,5 +1,5 @@
 import { ChainId, evmIdIntoChainId, WebbCurrencyId } from '@webb-dapp/apps/configs';
-import { WebbGovernedToken } from '@webb-dapp/contracts/contracts';
+import { WebbGovernedToken, zeroAddress } from '@webb-dapp/contracts/contracts';
 import { Bridge, BridgeConfig, bridgeConfig, BridgeCurrency, MixerSize } from '@webb-dapp/react-environment';
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers';
 import {
@@ -11,6 +11,7 @@ import {
 } from '@webb-dapp/react-environment/webb-context/wrap-unwrap';
 import { BehaviorSubject, merge, Observable, Subject } from 'rxjs';
 import { filter, map, switchMap } from 'rxjs/operators';
+import Web3 from 'web3';
 
 export type Web3WrapPayload = Amount;
 export type Web3UnwrapPayload = Amount;
@@ -171,45 +172,49 @@ export class Web3WrapUnwrap extends WrapUnWrap<WebbWeb3Provider> {
   }
 
   async unwrap(unwrapPayload: Web3UnwrapPayload): Promise<string> {
-    const { amount } = unwrapPayload;
+    const { amount: amountNumber } = unwrapPayload;
 
     const UnwrapTokenId = this.currentToken?.id!;
     const unwrapToken = this.otherEdgToken!;
+    const amount = Web3.utils.toWei(String(amountNumber), 'ether');
 
     const webbGovernedToken = this.governedTokenWrapper(String(UnwrapTokenId));
     if (unwrapToken.variant === 'native-token') {
-      const tx = await webbGovernedToken.unwrap(`0x0000000000000000000000000000000000000000`, Number(amount));
+      const tx = await webbGovernedToken.unwrap(zeroAddress, amount);
       await tx.wait();
       return tx.hash;
     } else {
       const tokenAddress = this.getAddressFromWrapTokenId(String(unwrapToken.id));
-      const tx = await webbGovernedToken.unwrap(tokenAddress, Number(amount));
+      const tx = await webbGovernedToken.unwrap(tokenAddress, amount);
       await tx.wait();
       return tx.hash;
     }
   }
 
   async canWrap(wrapPayload: Web3WrapPayload): Promise<boolean> {
-    const { amount } = wrapPayload;
+    const { amount: amountNumber } = wrapPayload;
     const _toWrap = this.otherEdgToken?.id!;
     const wrapInto = this.currentToken?.id!;
     const webbGovernedToken = this.governedTokenWrapper(String(wrapInto));
+    const amount = Web3.utils.toWei(String(amountNumber), 'ether');
+
     return webbGovernedToken.canWrap(Number(amount));
   }
 
   async wrap(wrapPayload: Web3WrapPayload): Promise<string> {
-    const { amount } = wrapPayload;
+    const { amount: amountNumber } = wrapPayload;
     const toWrap = this.otherEdgToken!;
     const wrapInto = this.currentToken?.id!;
     const webbGovernedToken = this.governedTokenWrapper(String(wrapInto));
+    const amount = Web3.utils.toWei(String(amountNumber), 'ether');
 
     if (toWrap.variant === 'native-token') {
-      const tx = await webbGovernedToken.wrap(`0x0000000000000000000000000000000000000000`, Number(amount));
+      const tx = await webbGovernedToken.wrap(zeroAddress, amount);
       await tx.wait();
       return tx.hash;
     } else {
       const tokenAddress = this.getAddressFromWrapTokenId(String(toWrap.id));
-      const tx = await webbGovernedToken.wrap(tokenAddress, Number(amount));
+      const tx = await webbGovernedToken.wrap(tokenAddress, amount);
       await tx.wait();
       return tx.hash;
     }

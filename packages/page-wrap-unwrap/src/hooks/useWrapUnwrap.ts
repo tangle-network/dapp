@@ -136,6 +136,10 @@ export function useWrapUnwrap() {
     }
   }, [context, wrapUnwrapApi, amount]);
 
+  const setAmount = (amount: number) => {
+    setState((p) => ({ ...p, amount }));
+  };
+
   return {
     ...state,
 
@@ -143,7 +147,7 @@ export function useWrapUnwrap() {
 
     setRightHandToken,
     setLeftHandToken,
-
+    setAmount,
     execute,
   };
 }
