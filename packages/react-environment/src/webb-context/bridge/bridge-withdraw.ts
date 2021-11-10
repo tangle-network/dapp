@@ -12,7 +12,7 @@ export abstract class BridgeWithdraw<T> extends MixerWithdraw<T> {
   }
 
   getTokensOfChain(chainId: ChainId) {
-    return Bridge.GetTokensOfChain(this.bridgeConfig, chainId);
+    return Bridge.getTokensOfChain(this.bridgeConfig, chainId);
   }
   getTokensOfChains(chainIds: ChainId[]) {
     return Bridge.getTokensOfChains(this.bridgeConfig, chainIds);

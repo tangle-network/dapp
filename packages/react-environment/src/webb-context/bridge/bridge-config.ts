@@ -29,14 +29,14 @@ export const bridgeConfig: BridgeConfig = {
   [webWEBBRinkebyHarmonyTestnet0.name]: {
     asset: webWEBBRinkebyHarmonyTestnet0,
     tokenAddresses: {
-      [ChainId.HarmonyTestnet0]: '0x9d609F54536Cef34f5F612BD976ca632F1fa208E',
-      [ChainId.Rinkeby]: '0x7Cec2Bf7D9c4C3C96Da8a0BfeBAB1E84b8212394',
+      [ChainId.HarmonyTestnet0]: '0x000Ab7A156716fC0a7ce3D6Ce5A2A741Db5548Db',
+      [ChainId.Rinkeby]: '0x2dda9D44078cc48FF6B91170C3C853104B026573',
     },
     anchors: [
       {
         anchorAddresses: {
-          [ChainId.HarmonyTestnet0]: '0x477eac8B25b24980aCa7373Fd9fD3a7CfA142eeD',
-          [ChainId.Rinkeby]: '0xD6BB4C516e287Ae536EDe8a01fb26FA3E07d7F3E',
+          [ChainId.HarmonyTestnet0]: '0x829B0e33F9FC6EAadE34784cA3589F9d7035F93B',
+          [ChainId.Rinkeby]: '0x585C837947Db546Aeb6FfEC1676Ef77B589aC06f',
         },
         amount: '0.1',
       },
@@ -45,16 +45,16 @@ export const bridgeConfig: BridgeConfig = {
   [webbETHtest1.name]: {
     asset: webbETHtest1,
     tokenAddresses: {
-      [ChainId.Ropsten]: '0x0000000000000000000000000000000000000000',
-      [ChainId.Rinkeby]: '0x0000000000000000000000000000000000000000',
-      [ChainId.Goerli]: '0x0000000000000000000000000000000000000000',
+      [ChainId.Ropsten]: '0x64C60d48B58B6d55673c1A70729aD888c613042b',
+      [ChainId.Rinkeby]: '0x5fC258fB4B755eDf06DA24569eB3B7159B83a3F1',
+      [ChainId.Goerli]: '0x5FBEcf0F5E587d2DFe35124De218e50D98F8c965',
     },
     anchors: [
       {
         anchorAddresses: {
-          [ChainId.Ropsten]: '0x0711Ea63FDEDD2c8a9d3C9340a5A8F6cd84b6A92',
-          [ChainId.Rinkeby]: '0x15A66977f0A9D21e09eB6C1B42b001aF992f0C8f',
-          [ChainId.Goerli]: '0x025348e15e9d5529E5A4A55E8eA7eC923b7fB8b6',
+          [ChainId.Ropsten]: '0x254C1cCf426fB7F1dB38Ef37363cbCc5BeFBDF23',
+          [ChainId.Rinkeby]: '0x630D75A08f12a6D196E9E095F5F1d744595334eD',
+          [ChainId.Goerli]: '0xAa35c2064c716641E458bC4415519CF541f7E097',
         },
         amount: '0.01',
       },
