@@ -5,11 +5,13 @@ import { AccountsAdapter } from '@webb-dapp/wallet/account/Accounts.adapter';
 import { EventBus } from '@webb-tools/app-util';
 
 import { DepositPayload, MixerDeposit, MixerDepositEvents, MixerWithdraw, MixerWithdrawEvents } from './mixer';
+import { WrapUnWrap } from '@webb-dapp/react-environment/webb-context/wrap-unwrap';
 
 /// list of the apis that are available for  the provider
 export interface WebbMethods<T> {
   mixer: WebbMixer<T>;
   bridge: WebbBridge<T>;
+  wrapUnwrap: WrapAndUnwrap<T>;
 }
 
 export type WebbMethod<T extends EventBus<K>, K extends Record<string, unknown>> = {
@@ -25,7 +27,12 @@ export interface WebbMixer<T> {
   withdraw: WebbMethod<MixerWithdraw<T>, MixerWithdrawEvents>;
   ///
 }
-
+export interface WrapAndUnwrap<T> {
+  core: {
+    inner: WrapUnWrap<T>;
+    enabled: boolean;
+  };
+}
 export interface WebbBridge<T> {
   core: Bridge | null;
   // deposit

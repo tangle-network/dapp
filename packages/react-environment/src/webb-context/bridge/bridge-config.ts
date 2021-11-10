@@ -31,8 +31,8 @@ export const bridgeConfig: BridgeConfig = {
   [webbWEBBRinkebyGoerli.name]: {
     asset: webbWEBBRinkebyGoerli,
     tokenAddresses: {
-      [ChainId.Goerli]: '0x72277b0eae5c965f735cde6c54d6d7ab177186e6',
-      [ChainId.Rinkeby]: '0x65fd9f7e75Abaa40fD349948e52291Bb0108eE0B',
+      [ChainId.Goerli]: '0x386beAb23Dc9cd965F58541beb2C5976BF01B8C3',
+      [ChainId.Rinkeby]: '0xD81F2Fdad6ef7Dc5951de7724C0aaCF097c39A27',
     },
     anchors: [
       {
@@ -47,9 +47,9 @@ export const bridgeConfig: BridgeConfig = {
   [webbETHtest1.name]: {
     asset: webbETHtest1,
     tokenAddresses: {
-      [ChainId.Ropsten]: '0x0000000000000000000000000000000000000000',
-      [ChainId.Rinkeby]: '0x0000000000000000000000000000000000000000',
-      [ChainId.Goerli]: '0x0000000000000000000000000000000000000000',
+      [ChainId.Ropsten]: '0x068E43Ca7b7fD2dc830f6a23011af16905b6bd46',
+      [ChainId.Rinkeby]: '0x662071e608C18784C8be1785f1b382B1EbA320F7',
+      [ChainId.Goerli]: '0x8C29CEd3a537d89e2bb27fdE7267C5E4Ac1910f8',
     },
     anchors: [
       {

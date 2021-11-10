@@ -3,13 +3,13 @@ import Icon from '@material-ui/core/Icon';
 import Typography from '@material-ui/core/Typography';
 import { WebbCurrencyId } from '@webb-dapp/apps/configs';
 import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
+import { useWrapUnwrap } from '@webb-dapp/page-wrap-unwrap/hooks/useWrapUnwrap';
 import IPDisplay from '@webb-dapp/react-components/IPDisplay/IPDisplay';
-import { BridgeCurrency, useWebContext } from '@webb-dapp/react-environment';
+import { BridgeCurrency, MixerSize, useWebContext } from '@webb-dapp/react-environment';
 import { Currency } from '@webb-dapp/react-environment/types/currency';
 import { useIp } from '@webb-dapp/react-hooks/useIP';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
-import { ContentWrapper } from '@webb-dapp/ui-components/ContentWrappers';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabel';
 import { InputSection } from '@webb-dapp/ui-components/Inputs/InputSection/InputSection';
@@ -17,10 +17,23 @@ import { MixerGroupSelect } from '@webb-dapp/ui-components/Inputs/MixerGroupSele
 import { TokenInput, TokenInputProps } from '@webb-dapp/ui-components/Inputs/TokenInput/TokenInput';
 import { fromBridgeCurrencyToCurrencyView } from '@webb-dapp/ui-components/Inputs/WalletBridgeCurrencyInput/WalletBridgeCurrencyInput';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
+import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
 import { CurrencyId } from '@webb-tools/types/interfaces';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
+const TransferWrapper = styled.div`
+  padding: 1rem;
+  ${above.sm`  padding: 2rem;`}
+  max-width: 500px;
+  margin: auto;
+  border-radius: 20px;
+  ${({ theme }: { theme: Pallet }) => css`
+    background: ${theme.layer1Background};
+    border: 1px solid ${theme.borderColor};
+    ${theme.type === 'light' ? `box-shadow: 0px 0px 14px rgba(51, 81, 242, 0.11);` : ''}
+  `}
+`;
 const AmountInputWrapper = styled.div`
   position: relative;
   width: 100%;
@@ -34,6 +47,18 @@ const AmountButton = styled.button`
   }
 `;
 
+const TabsWrapper = styled.div`
+  padding: 1rem;
+  ${above.sm`  padding: 2rem;`}
+  max-width: 500px;
+  margin: auto;
+  border-radius: 20px;
+  ${({ theme }: { theme: Pallet }) => css`
+    background: ${theme.layer1Background};
+    border: 1px solid ${theme.borderColor};
+    ${theme.type === 'light' ? `box-shadow: 0px 0px 14px rgba(51, 81, 242, 0.11);` : ''}
+  `}
+`;
 const TabHeader = styled.header`
   display: flex;
   align-items: center;
@@ -81,123 +106,93 @@ const TabButton = styled.button<{ active?: boolean }>`
 `;
 
 const PageWrappUnwrap: FC = () => {
-  const [isSwap, setIsSwap] = useState(false);
-  const [status, setStatus] = useState<'wrap' | 'unwrap'>('wrap');
+  const {
+    amount,
+    context: status,
+    execute,
+    leftHandToken,
+    rightHandToken,
+    setAmount,
+    setLeftHandToken,
+    setRightHandToken,
+    swap,
+    tokens,
+    wrappedTokens,
+  } = useWrapUnwrap();
 
+  const [isSwap, setIsSwap] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { activeApi } = useWebContext();
   const ip = useIp(activeApi);
-  const bridge = useBridge();
 
-  const [bridgeCurrency, setBridgeCurrency] = useState<BridgeCurrency | null>(null);
-  const [wrappedCurrency, setWrappedCurrency] = useState<Currency | null>(null);
-  const [useFixedDeposits, setUseFixedDepoists] = useState(true);
-  const [activeTab, setActiveTab] = useState<'deposit' | 'withdraw'>('deposit');
+  const [useFixedDeposits, setUseFixedDepoists] = useState(false);
 
-  const bridgeTokens = useMemo(() => {
-    return bridge.getTokens().filter((currency) => currency.currencyId !== WebbCurrencyId.WEBB);
-  }, [bridge]);
-
-  const tokens = useMemo(() => {
-    return status === 'unwrap'
-      ? bridgeTokens.map(fromBridgeCurrencyToCurrencyView)
-      : bridgeTokens
-          .filter((t) => (wrappedCurrency ? t.currencyId === wrappedCurrency.view.id : true))
-          .map(fromBridgeCurrencyToCurrencyView);
-  }, [bridgeTokens, status, wrappedCurrency]);
-
-  const wrappedTokens = useMemo(() => {
-    const birdgetokensFilterd =
-      status == 'wrap' ? bridgeTokens : bridgeTokens.filter((i) => i.name === bridgeCurrency.name);
-    return birdgetokensFilterd
-      .reduce<CurrencyId[]>((a, i) => (a.includes(i.currencyId) ? a : [...a, i.currencyId]), [])
-      .map((currencyId) => Currency.fromCurrencyId(currencyId));
-  }, [bridgeTokens, bridgeCurrency, status]);
-
-  const selectedBridgeCurrency = useMemo(() => {
-    if (!bridgeCurrency) {
-      return undefined;
-    }
-    return fromBridgeCurrencyToCurrencyView(bridgeCurrency);
-  }, [bridgeCurrency]);
-  useEffect(() => {
-    if (!bridgeCurrency) {
-      return;
-    }
-    setWrappedCurrency(Currency.fromCurrencyId(bridgeCurrency?.currencyId));
-  }, [bridgeCurrency]);
-
-  const bridgeTokenInputProps: TokenInputProps = useMemo(() => {
+  const nativeOrWrapToProps: TokenInputProps = useMemo(() => {
     return {
-      currencies: tokens,
-      value: selectedBridgeCurrency,
+      currencies: status === 'wrap' ? tokens : wrappedTokens,
+      value: leftHandToken,
       onChange: (currencyContent) => {
-        if (currencyContent) {
-          setBridgeCurrency(BridgeCurrency.fromString(String(currencyContent.view.id)));
-        }
+        setLeftHandToken(currencyContent);
       },
     };
-  }, [tokens, selectedBridgeCurrency, status]);
+  }, [status, tokens, wrappedTokens, leftHandToken, setLeftHandToken]);
 
-  const wrappedTokenInputProps: TokenInputProps = useMemo(() => {
+  const wrappedOrWrappedFrom: TokenInputProps = useMemo(() => {
     return {
-      currencies: wrappedTokens,
-      value: wrappedCurrency,
+      currencies: status === 'unwrap' ? tokens : wrappedTokens,
+      value: rightHandToken,
       onChange: (currencyContent) => {
-        if (currencyContent) {
-          if (status === 'wrap') {
-            const currencyId = Number(currencyContent?.view.id);
-            setWrappedCurrency(Currency.fromCurrencyId(currencyId));
-            if (bridgeCurrency?.currencyId !== currencyId) {
-              setBridgeCurrency(null);
-            }
-          }
-        }
+        setRightHandToken(currencyContent);
       },
     };
-  }, [wrappedTokens, wrappedCurrency, status, bridgeCurrency]);
-  const leftInputProps = status === 'unwrap' ? bridgeTokenInputProps : wrappedTokenInputProps;
-  const rightInputProps = status === 'wrap' ? bridgeTokenInputProps : wrappedTokenInputProps;
-  const buttonText =
-    bridgeCurrency && wrappedCurrency
-      ? status === 'unwrap'
-        ? `Unwrap ${bridgeCurrency?.name} to ${wrappedCurrency.view.name}`
-        : `Wrap ${wrappedCurrency.view.name} into ${bridgeCurrency.name}`
-      : status;
-  const suffix = status === 'wrap' ? selectedBridgeCurrency?.view.symbol : wrappedCurrency?.view.symbol;
+  }, [status, tokens, wrappedTokens, rightHandToken, setRightHandToken]);
+  const leftInputProps = nativeOrWrapToProps;
+  const rightInputProps = wrappedOrWrappedFrom;
+  const buttonText = status;
+
+  const suffix = leftHandToken?.view.symbol;
 
   const dummySizes = useMemo(() => {
     return [
       {
+        id: `${status} .1 ${suffix}`,
+        title: `.1 ${suffix}`,
+        amount: 0.1,
+      },
+      {
         id: `${status} 1 ${suffix}`,
         title: `1 ${suffix}`,
+        amount: 1,
       },
       {
         id: `${status} 10 ${suffix}`,
         title: `10 ${suffix}`,
+        amount: 10,
       },
       {
         id: `${status} 100 ${suffix}`,
         title: `100 ${suffix}`,
-      },
-      {
-        id: `${status} 1000 ${suffix}`,
-        title: `1000 ${suffix}`,
+        amount: 100,
       },
     ];
   }, [status, suffix]);
 
-  const [activeSize, setAcitveSize] = useState<any | null>(null);
-
   const switchToWrap = useCallback(() => {
-    setStatus('wrap');
-  }, []);
+    if (status === 'unwrap') {
+      swap();
+    }
+  }, [status, swap]);
   const switchToUnwrap = useCallback(() => {
-    setStatus('unwrap');
-  }, []);
-
+    if (status === 'wrap') {
+      swap();
+    }
+  }, [status, swap]);
+  const activeSize: MixerSize | undefined = useMemo(() => {
+    return dummySizes.find((size) => size.amount === amount);
+  }, [amount, dummySizes]);
   return (
     <div>
-      <ContentWrapper>
+      <TransferWrapper>
         <TabHeader>
           <TabButton onClick={switchToWrap} active={status === 'wrap'}>
             <span className='mixer-tab-icon'>
@@ -252,7 +247,7 @@ const PageWrappUnwrap: FC = () => {
                       setIsSwap(false);
                     }}
                     onClick={() => {
-                      setStatus((s) => (s === 'wrap' ? 'unwrap' : 'wrap'));
+                      swap();
                     }}
                   >
                     <Icon>{isSwap ? 'swap_horiz' : 'east'}</Icon>
@@ -273,14 +268,25 @@ const PageWrappUnwrap: FC = () => {
             items={dummySizes}
             value={activeSize}
             onChange={(i) => {
-              setAcitveSize(i);
+              let size = dummySizes.find((size) => size.id === i.id);
+              if (size) {
+                setAmount(size.amount);
+              }
             }}
           />
         ) : (
           <InputSection>
             <InputLabel label={`${status} amount`} />
             <AmountInputWrapper>
-              <InputBase fullWidth placeholder={'Enter amount'} />
+              <InputBase
+                value={amount}
+                onChange={(e) => {
+                  setAmount(Number(e.target.value));
+                }}
+                type={'number'}
+                fullWidth
+                placeholder={'Enter amount'}
+              />
               <AmountButton color={'primary'} as={Button}>
                 MAX
               </AmountButton>
@@ -294,12 +300,23 @@ const PageWrappUnwrap: FC = () => {
             setUseFixedDepoists((t) => !t);
           }}
           control={<Checkbox color={'primary'} />}
-          label={<Typography color={'textPrimary'}>Use Fixed depoists</Typography>}
+          label={<Typography color={'textPrimary'}>Use Fixed deposits</Typography>}
         />
         <SpaceBox height={16} />
 
-        <MixerButton label={buttonText} onClick={() => {}} />
-      </ContentWrapper>
+        <MixerButton
+          disabled={loading}
+          label={buttonText}
+          onClick={async () => {
+            try {
+              setLoading(true);
+              await execute();
+            } finally {
+              setLoading(false);
+            }
+          }}
+        />
+      </TransferWrapper>
 
       <SpaceBox height={8} />
 

@@ -2,15 +2,16 @@ import { ChainId, chainIdIntoEVMId, evmIdIntoChainId, getEVMChainNameFromInterna
 import { createAnchor2Deposit, Deposit } from '@webb-dapp/contracts/utils/make-deposit';
 import { BridgeConfig, DepositPayload as IDepositPayload, MixerSize } from '@webb-dapp/react-environment';
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3/webb-web3-provider';
+import { notificationApi } from '@webb-dapp/ui-components/notification';
+import { DepositNotification } from '@webb-dapp/ui-components/notification/DepositNotification';
+import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polkadot/transaction-notification-config';
 import { Note, NoteGenInput } from '@webb-tools/sdk-mixer';
+import { logger } from 'ethers';
+import React from 'react';
+
 import { u8aToHex } from '@polkadot/util';
 
 import { BridgeDeposit } from '../../webb-context/bridge/bridge-deposit';
-import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polkadot/transaction-notification-config';
-import React from 'react';
-import { DepositNotification } from '@webb-dapp/ui-components/notification/DepositNotification';
-import { notificationApi } from '@webb-dapp/ui-components/notification';
-import { logger } from 'ethers';
 
 type DepositPayload = IDepositPayload<Note, [Deposit, number | string]>;
 
