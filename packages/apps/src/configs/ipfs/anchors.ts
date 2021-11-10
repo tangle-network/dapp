@@ -1,5 +1,3 @@
-
-
 export const fetchWasmForEdges = async (maxEdges: number) => {
   let ipfsHash: string;
 
@@ -59,7 +57,8 @@ export const fetchKeyForEdges = async (maxEdges: number) => {
 
   try {
     const ipfsKeyRequest = await fetch(`https://ipfs.io/ipfs/${ipfsHash}`);
-    const circuitKey = await ipfsKeyRequest.arrayBuffer();
+    const circuitKeyArrayBuffer = await ipfsKeyRequest.arrayBuffer();
+    const circuitKey = new Uint8Array(circuitKeyArrayBuffer);
     return circuitKey;
   } catch (e) {
     console.log('error when fetching circuit key from ipfs: ', e);
