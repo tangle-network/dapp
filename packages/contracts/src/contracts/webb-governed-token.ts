@@ -24,7 +24,9 @@ export class WebbGovernedToken {
     logger.info(`Init with address ${address} `);
     this._contract = new Contract(address, GovernedTokenWrapper__factory.abi, this.signer) as any;
   }
-
+  get address() {
+    return this._contract.address;
+  }
   get tokens() {
     return this._contract.getTokens();
   }
