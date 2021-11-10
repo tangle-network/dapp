@@ -1,35 +1,22 @@
-import React, { FC, useMemo, useState } from 'react';
-import styled, { css } from 'styled-components';
-import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
-import { Pallet } from '@webb-dapp/ui-components/styling/colors';
-import { InputSection } from '@webb-dapp/ui-components/Inputs/InputSection/InputSection';
-import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabel';
 import { Button, InputBase } from '@material-ui/core';
-import { SpaceBox } from '@webb-dapp/ui-components';
-import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
+import { ChainId, currenciesConfig, WebbCurrencyId } from '@webb-dapp/apps/configs';
+import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
 import IPDisplay from '@webb-dapp/react-components/IPDisplay/IPDisplay';
 import { useWebContext } from '@webb-dapp/react-environment';
-import { useIp } from '@webb-dapp/react-hooks/useIP';
-import { ChainId, currenciesConfig, WebbCurrencyId } from '@webb-dapp/apps/configs';
-import { ChainInput } from '@webb-dapp/ui-components/Inputs/ChainInput/ChainInput';
-import { TokenInput } from '@webb-dapp/ui-components/Inputs/TokenInput/TokenInput';
-import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
-import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
-import { fromBridgeCurrencyToCurrencyView } from '@webb-dapp/ui-components/Inputs/WalletBridgeCurrencyInput/WalletBridgeCurrencyInput';
 import { Currency, CurrencyContent } from '@webb-dapp/react-environment/types/currency';
+import { useIp } from '@webb-dapp/react-hooks/useIP';
+import { SpaceBox } from '@webb-dapp/ui-components';
+import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
+import { ContentWrapper } from '@webb-dapp/ui-components/ContentWrappers';
+import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
+import { ChainInput } from '@webb-dapp/ui-components/Inputs/ChainInput/ChainInput';
+import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabel';
+import { InputSection } from '@webb-dapp/ui-components/Inputs/InputSection/InputSection';
+import { TokenInput } from '@webb-dapp/ui-components/Inputs/TokenInput/TokenInput';
+import { fromBridgeCurrencyToCurrencyView } from '@webb-dapp/ui-components/Inputs/WalletBridgeCurrencyInput/WalletBridgeCurrencyInput';
+import React, { FC, useMemo, useState } from 'react';
+import styled from 'styled-components';
 
-const TransferWrapper = styled.div`
-  padding: 1rem;
-  ${above.sm`  padding: 2rem;`}
-  max-width: 500px;
-  margin: auto;
-  border-radius: 20px;
-  ${({ theme }: { theme: Pallet }) => css`
-    background: ${theme.layer1Background};
-    border: 1px solid ${theme.borderColor};
-    ${theme.type === 'light' ? `box-shadow: 0px 0px 14px rgba(51, 81, 242, 0.11);` : ''}
-  `}
-`;
 const AmountInputWrapper = styled.div`
   position: relative;
   width: 100%;
@@ -83,7 +70,7 @@ const PageTransfers: FC = () => {
   }, [bridgeTokens, nativeTokens]);
   return (
     <div>
-      <TransferWrapper>
+      <ContentWrapper>
         <ChainInput
           chains={chains}
           label={'Select Source Chain'}
@@ -152,7 +139,7 @@ const PageTransfers: FC = () => {
         <SpaceBox height={16} />
 
         <MixerButton label={'Transfer'} onClick={() => {}} />
-      </TransferWrapper>
+      </ContentWrapper>
 
       <SpaceBox height={8} />
 

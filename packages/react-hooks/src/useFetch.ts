@@ -17,12 +17,15 @@ export const useFetch = (url: RequestInfo, initialValue: any) => {
         setData(json);
       } catch (e) {
         logger.error(e);
+        setData({ error: true });
       }
     }
 
     fetchData();
     // Aborting the Request if the component is unmounted before Resolving
-    return () => controller.abort();
+    return () => {
+      controller.abort();
+    };
   }, [url]);
 
   return data;
