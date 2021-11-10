@@ -5,7 +5,7 @@ import { WebbCurrencyId } from '@webb-dapp/apps/configs';
 import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
 import { useWrapUnwrap } from '@webb-dapp/page-wrap-unwrap/hooks/useWrapUnwrap';
 import IPDisplay from '@webb-dapp/react-components/IPDisplay/IPDisplay';
-import { BridgeCurrency, useWebContext } from '@webb-dapp/react-environment';
+import { BridgeCurrency, MixerSize, useWebContext } from '@webb-dapp/react-environment';
 import { Currency } from '@webb-dapp/react-environment/types/currency';
 import { useIp } from '@webb-dapp/react-hooks/useIP';
 import { SpaceBox } from '@webb-dapp/ui-components';
@@ -107,25 +107,25 @@ const TabButton = styled.button<{ active?: boolean }>`
 
 const PageWrappUnwrap: FC = () => {
   const {
+    amount,
     context: status,
     execute,
     leftHandToken,
     rightHandToken,
+    setAmount,
     setLeftHandToken,
     setRightHandToken,
     swap,
     tokens,
-    amount,
-    setAmount,
     wrappedTokens,
   } = useWrapUnwrap();
 
   const [isSwap, setIsSwap] = useState(false);
-
+  const [loading, setLoading] = useState(false);
   const { activeApi } = useWebContext();
   const ip = useIp(activeApi);
 
-  const [useFixedDeposits, setUseFixedDepoists] = useState(true);
+  const [useFixedDeposits, setUseFixedDepoists] = useState(false);
 
   const nativeOrWrapToProps: TokenInputProps = useMemo(() => {
     return {
@@ -155,25 +155,27 @@ const PageWrappUnwrap: FC = () => {
   const dummySizes = useMemo(() => {
     return [
       {
+        id: `${status} .1 ${suffix}`,
+        title: `.1 ${suffix}`,
+        amount: 0.1,
+      },
+      {
         id: `${status} 1 ${suffix}`,
         title: `1 ${suffix}`,
+        amount: 1,
       },
       {
         id: `${status} 10 ${suffix}`,
         title: `10 ${suffix}`,
+        amount: 10,
       },
       {
         id: `${status} 100 ${suffix}`,
         title: `100 ${suffix}`,
-      },
-      {
-        id: `${status} 1000 ${suffix}`,
-        title: `1000 ${suffix}`,
+        amount: 100,
       },
     ];
   }, [status, suffix]);
-
-  const [activeSize, setAcitveSize] = useState<any | null>(null);
 
   const switchToWrap = useCallback(() => {
     if (status === 'unwrap') {
@@ -185,7 +187,9 @@ const PageWrappUnwrap: FC = () => {
       swap();
     }
   }, [status, swap]);
-
+  const activeSize: MixerSize | undefined = useMemo(() => {
+    return dummySizes.find((size) => size.amount === amount);
+  }, [amount, dummySizes]);
   return (
     <div>
       <TransferWrapper>
@@ -264,7 +268,10 @@ const PageWrappUnwrap: FC = () => {
             items={dummySizes}
             value={activeSize}
             onChange={(i) => {
-              setAcitveSize(i);
+              let size = dummySizes.find((size) => size.id === i.id);
+              if (size) {
+                setAmount(size.amount);
+              }
             }}
           />
         ) : (
@@ -297,7 +304,18 @@ const PageWrappUnwrap: FC = () => {
         />
         <SpaceBox height={16} />
 
-        <MixerButton label={buttonText} onClick={execute} />
+        <MixerButton
+          disabled={loading}
+          label={buttonText}
+          onClick={async () => {
+            try {
+              setLoading(true);
+              await execute();
+            } finally {
+              setLoading(false);
+            }
+          }}
+        />
       </TransferWrapper>
 
       <SpaceBox height={8} />

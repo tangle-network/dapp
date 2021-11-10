@@ -129,11 +129,11 @@ export function useWrapUnwrap() {
   const execute = useCallback(() => {
     switch (context) {
       case 'wrap':
-        wrapUnwrapApi?.wrap({ amount });
-        break;
+        return wrapUnwrapApi?.wrap({ amount });
       case 'unwrap':
-        wrapUnwrapApi?.unwrap({ amount });
+        return wrapUnwrapApi?.unwrap({ amount });
     }
+    return Promise.resolve('');
   }, [context, wrapUnwrapApi, amount]);
 
   const setAmount = (amount: number) => {
