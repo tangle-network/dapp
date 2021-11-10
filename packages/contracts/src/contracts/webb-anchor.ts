@@ -24,6 +24,7 @@ import { BigNumber, Contract, providers, Signer } from 'ethers';
 import utils from 'web3-utils';
 
 import { Erc20Factory } from '../types';
+import { Erc20 } from '../types/Erc20';
 
 const Scalar = require('ffjavascript').Scalar;
 const F = require('circomlibjs').babyjub.F;
@@ -97,18 +98,34 @@ export class AnchorContract {
     return undefined;
   }
 
-  async checkForApprove(onComplete?: (event: DepositEvent) => void) {
-    const userAddress = await this.signer.getAddress();
+  async getWebbToken(): Promise<Erc20> {
     const tokenAddress = await this._contract.token();
     const tokenInstance = Erc20Factory.connect(tokenAddress, this.signer);
+    return tokenInstance;
+  }
+
+  async isApprovalRequired(onComplete?: (event: DepositEvent) => void) {
+    const userAddress = await this.signer.getAddress();
+    const tokenInstance = await this.getWebbToken();
     const tokenAllowance = await tokenInstance.allowance(userAddress, this._contract.address);
     const depositAmount = await this.denomination;
     console.log('tokenAllowance', tokenAllowance);
     console.log('depositAmount', depositAmount);
     if (tokenAllowance < depositAmount) {
-      return tokenInstance;
+      return true;
     }
-    return null;
+    return false;
+  }
+
+  async hasEnoughBalance() {
+    const userAddress = await this.signer.getAddress();
+    const tokenInstance = await this.getWebbToken();
+    const tokenBalance = await tokenInstance.balanceOf(userAddress);
+    const depositAmount = await this.denomination;
+    if (tokenBalance < depositAmount) {
+      return false;
+    }
+    return true;
   }
 
   async approve(tokenInstance: Contract, onComplete?: (event: DepositEvent) => void) {
@@ -277,7 +294,7 @@ export class AnchorContract {
     logger.trace(`Generate witness with edges ${edges}`, input);
     const witness = await generateWitness(input, edges as any);
     logger.trace(`Generated witness`, witness);
-    const proof = await proofAndVerify(witness);
+    const proof = await proofAndVerify(witness, edges as any);
     logger.trace(`Zero knowlage proof`, proof);
     return { proof: proof.proof, input: input, root };
   }
@@ -311,7 +328,7 @@ export class AnchorContract {
     logger.trace(`Generate witness with edges ${edges}`, input);
     const witness = await generateWitness(input, edges as any);
     logger.trace(`Generated witness`, witness);
-    const proof = await proofAndVerify(witness);
+    const proof = await proofAndVerify(witness, edges as any);
     logger.trace(`Zero knowlage proof`, proof);
     return { proof: proof.proof, input: input, root };
   }

@@ -2,16 +2,16 @@ import { ChainId, chainIdIntoEVMId, evmIdIntoChainId, getEVMChainNameFromInterna
 import { createAnchor2Deposit, Deposit } from '@webb-dapp/contracts/utils/make-deposit';
 import { BridgeConfig, DepositPayload as IDepositPayload, MixerSize } from '@webb-dapp/react-environment';
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3/webb-web3-provider';
+import { notificationApi } from '@webb-dapp/ui-components/notification';
+import { DepositNotification } from '@webb-dapp/ui-components/notification/DepositNotification';
+import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polkadot/transaction-notification-config';
 import { Note, NoteGenInput } from '@webb-tools/sdk-mixer';
-import { Erc20 } from '@webb-dapp/contracts/types/Erc20';
+import { logger } from 'ethers';
+import React from 'react';
+
 import { u8aToHex } from '@polkadot/util';
 
 import { BridgeDeposit } from '../../webb-context/bridge/bridge-deposit';
-import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polkadot/transaction-notification-config';
-import React from 'react';
-import { DepositNotification } from '@webb-dapp/ui-components/notification/DepositNotification';
-import { notificationApi } from '@webb-dapp/ui-components/notification';
-import { logger } from 'ethers';
 
 type DepositPayload = IDepositPayload<Note, [Deposit, number | string]>;
 
@@ -55,18 +55,17 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
       }
       const contract = this.inner.getWebbAnchorByAddress(contractAddress);
 
-      logger.info(`Commitment for deposit is ${commitment}`);
-
-      const tokenInstance = await contract.checkForApprove();
-      console.log('tokenInstance', tokenInstance);
-      if (tokenInstance != null) {
+      const requiredApproval = await contract.isApprovalRequired();
+      if (requiredApproval) {
         notificationApi.addToQueue({
           message: 'Waiting for token approval',
           variant: 'info',
           key: 'waiting-approval',
           extras: { persist: true },
         });
-        await contract.approve(tokenInstance);
+        const tokenInstance = await contract.getWebbToken();
+        const tx = await tokenInstance.approve(contract.inner.address, await contract.denomination);
+        await tx.wait();
         notificationApi.remove('waiting-approval');
         await contract.deposit(String(commitment));
         transactionNotificationConfig.finalize?.({
@@ -79,11 +78,26 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
           },
         });
       } else {
-        notificationApi.addToQueue({
-          message: 'Not enough token balance',
-          variant: 'error',
-          key: 'waiting-approval',
-        });
+        // Check the balance and see if there is enough to deposit
+        const enoughBalance = await contract.hasEnoughBalance();
+        if (enoughBalance) {
+          await contract.deposit(String(commitment));
+          transactionNotificationConfig.finalize?.({
+            address: '',
+            data: undefined,
+            key: 'bridge-deposit',
+            path: {
+              method: 'deposit',
+              section: bridge.currency.name,
+            },
+          });
+        } else {
+          notificationApi.addToQueue({
+            message: 'Not enough token balance',
+            variant: 'error',
+            key: 'waiting-approval',
+          });
+        }
       }
     } catch (e) {
       console.log(e);
