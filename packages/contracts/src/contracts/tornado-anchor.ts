@@ -1,5 +1,6 @@
 import { Log } from '@ethersproject/abstract-provider';
 import { WebbEVMChain } from '@webb-dapp/apps/configs';
+import { fetchTornadoCircuitData, fetchTornadoProvingKey } from '@webb-dapp/apps/configs/ipfs/tornados';
 import { ZKPTornInputWithMerkle, ZKPTornPublicInputs } from '@webb-dapp/contracts/contracts/types';
 import { Tornado } from '@webb-dapp/contracts/types/Tornado';
 import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
@@ -177,10 +178,8 @@ export class TornadoContract {
   async generateZKP(deposit: Deposit, zkpPublicInputs: ZKPTornPublicInputs) {
     const merkleProof = await this.generateMerkleProof(deposit);
     const { pathElements, pathIndex: pathIndices, root } = merkleProof;
-    let circuitDataResponse = await fetch('https://ipfs.io/ipfs/QmbX8PzkcU1SQwUis3zDWEKsn8Yjgy2vALNeghVM2uh31B');
-    let circuitData = await circuitDataResponse.json();
-    let proving_key_response = await fetch('https://ipfs.io/ipfs/QmQwgF8aWJzGSXoe1o3jrEPdcfBysWctB2Uwu7uRebXe2D');
-    let proving_key = await proving_key_response.arrayBuffer();
+    let circuitData = await fetchTornadoCircuitData();
+    let proving_key = await fetchTornadoProvingKey();
     const zkpInput: ZKPTornInputWithMerkle = {
       ...zkpPublicInputs,
       nullifier: deposit.nullifier,
@@ -247,11 +246,8 @@ export class TornadoContract {
     }
 
     const { pathElements, pathIndex: pathIndices, root } = merkleProof;
-    let circuitDataResponse = await fetch('https://ipfs.io/ipfs/QmbX8PzkcU1SQwUis3zDWEKsn8Yjgy2vALNeghVM2uh31B');
-    let circuitData = await circuitDataResponse.json();
-    // let proving_key = require('../circuits/withdraw_proving_key.bin');
-    let proving_key_response = await fetch('https://ipfs.io/ipfs/QmQwgF8aWJzGSXoe1o3jrEPdcfBysWctB2Uwu7uRebXe2D');
-    let proving_key = await proving_key_response.arrayBuffer();
+    let circuitData = await fetchTornadoCircuitData();
+    let proving_key = await fetchTornadoProvingKey();
     const zkpInput: ZKPTornInputWithMerkle = {
       ...zkpPublicInputs,
       nullifier: deposit.nullifier,
