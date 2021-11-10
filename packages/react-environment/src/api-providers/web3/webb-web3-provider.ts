@@ -15,10 +15,12 @@ import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
 import { EventBus } from '@webb-tools/app-util';
 import { Note } from '@webb-tools/sdk-mixer';
 import { ethers, providers } from 'ethers';
+import { Web3WrapUnwrap } from '@webb-dapp/react-environment/api-providers';
 
 export class WebbWeb3Provider
   extends EventBus<WebbProviderEvents<[number]>>
-  implements WebbApiProvider<WebbWeb3Provider> {
+  implements WebbApiProvider<WebbWeb3Provider>
+{
   readonly accounts: Web3Accounts;
   readonly methods: WebbMethods<WebbWeb3Provider>;
   private ethersProvider: providers.Web3Provider;
@@ -43,6 +45,12 @@ export class WebbWeb3Provider
     });
     this.connectedMixers = new EvmChainMixersInfo(chainId);
     this.methods = {
+      wrapUnwrap: {
+        core: {
+          enabled: true,
+          inner: new Web3WrapUnwrap(this),
+        },
+      },
       bridge: {
         core: null,
         deposit: {

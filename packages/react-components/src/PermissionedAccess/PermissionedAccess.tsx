@@ -4,10 +4,12 @@ import { Spinner } from '@webb-dapp/ui-components/Spinner/Spinner';
 import { Storage } from '@webb-dapp/utils';
 import React, { useEffect, useState } from 'react';
 
+import { DisableAdblock } from './DisableAdblock';
 import { Geofenced } from './Geofenced';
 import { TermsAndConditions } from './TermsAndConditions';
 
 enum PermissionedState {
+  Adblocked,
   Checking,
   Geofenced,
   AcceptTerms,
@@ -48,7 +50,7 @@ export const PermissionedAccess: React.FC<PermissionedAccessProps> = ({ children
   const [permissionedState, setPermissionedState] = useState<PermissionedState>(PermissionedState.Checking);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [acceptedTermsStorage, setAcceptedTermsStorage] = useState<AcceptedTermsStorage | null>(null);
-  const { country_code_iso3 } = useFetch(`https://ipapi.co/${ip}/json`, {});
+  const data = useFetch(`https://ipapi.co/${ip}/json`, {});
 
   const storeAcceptedTerms = () => {
     acceptedTermsStorage?.set('acceptedTerms', true);
@@ -56,12 +58,17 @@ export const PermissionedAccess: React.FC<PermissionedAccessProps> = ({ children
   };
 
   useEffect(() => {
+    console.log('data: ', data);
     const checkPermissions = async () => {
-      if (!country_code_iso3) {
+      if (data.error) {
+        setPermissionedState(PermissionedState.Adblocked);
+        return;
+      }
+      if (!data.country_code_iso3) {
         setPermissionedState(PermissionedState.Checking);
         return;
       }
-      if (country_code_iso3 === 'USA') {
+      if (data.country_code_iso3 === 'USA') {
         setPermissionedState(PermissionedState.Geofenced);
         return;
       }
@@ -75,10 +82,15 @@ export const PermissionedAccess: React.FC<PermissionedAccessProps> = ({ children
       setPermissionedState(PermissionedState.Allowed);
     };
     checkPermissions();
-  }, [country_code_iso3, acceptedTerms]);
+  }, [data, acceptedTerms]);
 
   return (
     <>
+      {permissionedState == PermissionedState.Adblocked && (
+        <div>
+          <DisableAdblock />
+        </div>
+      )}
       {permissionedState == PermissionedState.Checking && (
         <ContentWrapper>
           <Spinner />
