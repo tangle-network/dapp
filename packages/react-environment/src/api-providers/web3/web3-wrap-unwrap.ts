@@ -78,7 +78,6 @@ export class Web3WrapUnwrap extends WrapUnWrap<WebbWeb3Provider> {
       const account = accounts[0];
       const otherValue = this.otherEdgToken;
       const index = o.isCurrent ? 0 : 1;
-      const;
     });
   }
 
