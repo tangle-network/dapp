@@ -189,6 +189,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
             receipt={receipt}
             recipient={recipient}
             note={depositNote.note}
+            relayer={relayersState.activeRelayer}
             exit={() => {
               setNote('');
               setRecipient('');
