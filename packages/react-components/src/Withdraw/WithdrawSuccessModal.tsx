@@ -1,9 +1,12 @@
+import { parseUnits } from '@ethersproject/units';
 import { Button, Divider, Icon, Link, Typography } from '@material-ui/core';
 import { ChainId } from '@webb-dapp/apps/configs';
+import { ActiveWebbRelayer } from '@webb-dapp/react-environment/webb-context/relayer/';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 import { LoggerService } from '@webb-tools/app-util';
 import { DepositNote } from '@webb-tools/wasm-utils';
-import React from 'react';
+import { ethers } from 'ethers';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 
 const logger = LoggerService.get('Withdraw-Modal');
@@ -12,6 +15,7 @@ type WithdrawingModalProps = {
   note: DepositNote;
   recipient: string;
   receipt: string;
+  relayer: ActiveWebbRelayer | null;
   exit(): void;
 };
 
@@ -97,7 +101,7 @@ const buttonStyle = {
   color: 'green',
 };
 
-const WithdrawSuccessModal: React.FC<WithdrawingModalProps> = ({ exit, note, receipt, recipient }) => {
+const WithdrawSuccessModal: React.FC<WithdrawingModalProps> = ({ exit, note, receipt, recipient, relayer }) => {  
   const transactionString = (hexString: string) => {
     return `${hexString.slice(0, 6)}...${hexString.slice(hexString.length - 4, hexString.length)}`;
   };
@@ -148,6 +152,27 @@ const WithdrawSuccessModal: React.FC<WithdrawingModalProps> = ({ exit, note, rec
     }
   };
 
+  const [receivedAmount, setReceivedAmount] = useState('');
+
+  useEffect(() => {
+    const calculateReceivedAmount = async () => {
+      if (!relayer) {
+        setReceivedAmount(`${note.amount} ${note.tokenSymbol}`);
+      } else {
+        const fees = await relayer.fees(note.serialize());
+        if (!fees) {
+          setReceivedAmount(`${note.amount} ${note.tokenSymbol}`);
+        } else {
+          const principleBig = parseUnits(note.amount, note.denomination);
+          const receivedAmount = principleBig.sub(fees.totalFees);
+          setReceivedAmount(`${ethers.utils.formatUnits(receivedAmount, note.denomination)} ${note.tokenSymbol}`);
+        }
+      }
+    };
+
+    calculateReceivedAmount();
+  });
+
   return (
     <WithdrawInfoWrapper>
       <header className={'modal-header'}>
@@ -170,7 +195,7 @@ const WithdrawSuccessModal: React.FC<WithdrawingModalProps> = ({ exit, note, rec
             </InfoItemLabel>
             <InfoItem>
               <Typography variant={'h6'}>
-                <b>{note.amount + ' ' + note.tokenSymbol}</b>
+                <b>{receivedAmount}</b>
               </Typography>
             </InfoItem>
           </WithdrawInfoRow>

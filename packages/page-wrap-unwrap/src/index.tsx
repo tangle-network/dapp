@@ -7,7 +7,6 @@ import { useWrapUnwrap } from '@webb-dapp/page-wrap-unwrap/hooks/useWrapUnwrap';
 import IPDisplay from '@webb-dapp/react-components/IPDisplay/IPDisplay';
 import { BridgeCurrency, MixerSize, useWebContext } from '@webb-dapp/react-environment';
 import { Currency } from '@webb-dapp/react-environment/types/currency';
-import { useIp } from '@webb-dapp/react-hooks/useIP';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
@@ -123,7 +122,6 @@ const PageWrappUnwrap: FC = () => {
   const [isSwap, setIsSwap] = useState(false);
   const [loading, setLoading] = useState(false);
   const { activeApi } = useWebContext();
-  const ip = useIp(activeApi);
 
   const [useFixedDeposits, setUseFixedDepoists] = useState(false);
 
@@ -320,7 +318,7 @@ const PageWrappUnwrap: FC = () => {
 
       <SpaceBox height={8} />
 
-      <IPDisplay ip={ip.ip} />
+      <IPDisplay />
     </div>
   );
 };
