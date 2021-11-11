@@ -6,6 +6,7 @@ import { EventBus } from '@webb-tools/app-util';
 
 import { DepositPayload, MixerDeposit, MixerDepositEvents, MixerWithdraw, MixerWithdrawEvents } from './mixer';
 import { WrapUnWrap } from '@webb-dapp/react-environment/webb-context/wrap-unwrap';
+import { BalanceWatcher } from '@webb-dapp/react-environment/webb-context/balance-watcher';
 
 /// list of the apis that are available for  the provider
 export interface WebbMethods<T> {
@@ -77,7 +78,7 @@ export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
   accounts: AccountsAdapter<any>;
   /// All of the available methods and api of the provider
   methods: WebbMethods<T>;
-
+  balanceWatcher?: BalanceWatcher<T>;
   /// A hook will be called to drop the provider and do cleanup listeners etc..
   destroy(): Promise<void> | void;
 
