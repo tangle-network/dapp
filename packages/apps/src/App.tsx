@@ -1,7 +1,7 @@
 import './initI18n';
 
 import { DAppError } from '@webb-dapp/react-components/utils/Error/DAppError';
-import { RouterProvider, WebbProvider } from '@webb-dapp/react-environment';
+import { RouterProvider, WebbProvider, IpProvider } from '@webb-dapp/react-environment';
 import { UIProvider } from '@webb-dapp/ui-components';
 import { NotificationStacked } from '@webb-dapp/ui-components/notification';
 import Theme from '@webb-dapp/ui-components/styles/Theme';
@@ -18,10 +18,12 @@ const App: FC = () => {
     <DAppError logger={appLogger}>
       <WebbProvider applicationName={'Webb DApp'}>
         <UIProvider>
-          <Theme />
+          <IpProvider>
+            <Theme />
 
-          <RouterProvider config={routerConfig} />
-          <NotificationStacked />
+            <RouterProvider config={routerConfig} />
+            <NotificationStacked />
+          </IpProvider>
         </UIProvider>
       </WebbProvider>
     </DAppError>
