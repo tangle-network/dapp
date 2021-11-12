@@ -15,7 +15,6 @@ import {
   ListItemText,
   Radio,
   RadioGroup,
-  Tooltip,
   Typography,
 } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
@@ -209,6 +208,7 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
                                   margin: '0 10px 0 0',
                                 }}
                                 id={url + wallet.name}
+                                key={`${url}+${wallet.name}`}
                               >
                                 <span
                                   style={{
@@ -306,7 +306,7 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
                       alignItems: 'center',
                     }}
                     id={url + wallet.name}
-                    key={url + wallet.name}
+                    key={`${url}+${wallet.name}`}
                   >
                     <ListItemAvatar>
                       <Avatar
@@ -367,15 +367,13 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
   }, [activeChain]);
   return (
     <>
-      <Tooltip title={'Network'}>
-        <NetworkManagerIndicator
-          connectionMetaData={chainInfo}
-          connectionStatus={connectionStatus}
-          onClick={() => {
-            setOpen(true);
-          }}
-        />
-      </Tooltip>
+      <NetworkManagerIndicator
+        connectionMetaData={chainInfo}
+        connectionStatus={connectionStatus}
+        onClick={() => {
+          setOpen(true);
+        }}
+      />
 
       <Modal
         open={open}

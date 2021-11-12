@@ -75,14 +75,14 @@ export const ThemeSwitcher: React.FC<{
   return (
     <ThemeSwitcherWrapper htmlFor='theme'>
       <input
-        checked={active === 'dark'}
         onClick={() => {
           onChange(active === 'dark' ? 'light' : 'dark');
         }}
         type='check'
         id='theme'
         name='active-theme'
-        value='dark'
+        defaultValue='dark'
+        defaultChecked={true}
       />
       <Slide direction={'left'} in={active === 'dark'}>
         <div className={'theme-entry dark-theme-entry'} onClick={trigger}>
