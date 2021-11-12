@@ -1,5 +1,5 @@
-import { createMuiTheme, ThemeOptions } from '@material-ui/core/styles';
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
+import { createTheme, ThemeOptions } from '@material-ui/core/styles';
+import { Theme } from '@material-ui/core/styles/createTheme';
 
 import { lightMainThemeOverrides } from './overides/light-theme-overrides';
 import { darkMainTheme } from './dark-theme';
@@ -17,7 +17,7 @@ const makeTheme = (opt: Partial<ThemeOptions>, type: 'dark' | 'light'): Theme =>
       },
     };
   }
-  return createMuiTheme({
+  return createTheme({
     ...row,
     ...opt,
     props: {

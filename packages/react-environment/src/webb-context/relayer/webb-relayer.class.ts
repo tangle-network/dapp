@@ -299,7 +299,7 @@ class RelayedWithdraw<T = ContractBase> {
     if (data.error || data.withdraw?.errored) {
       return [RelayedWithdrawResult.Errored, data.error || data.withdraw?.errored?.reason];
     } else if (data.network === 'invalidRelayerAddress') {
-      return [RelayedWithdrawResult.Errored, 'Invalided relayer address'];
+      return [RelayedWithdrawResult.Errored, 'Invalid relayer address'];
     } else if (data.withdraw?.finalized) {
       return [RelayedWithdrawResult.CleanExit, data.withdraw.finalized.txHash];
     } else {
