@@ -1,6 +1,7 @@
 import { Avatar } from '@material-ui/core';
 import { useWebContext } from '@webb-dapp/react-environment';
-import { WalletConfig } from '@webb-dapp/react-environment/types/wallet-config.interface';
+import { ManagedWallet } from '@webb-dapp/react-environment/types/wallet-config.interface';
+import { useWallets } from '@webb-dapp/react-hooks/useWallets';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
@@ -35,13 +36,11 @@ const WalletSelectWrapper = styled.div`
   .select-button-content {
     display: inline-block;
     margin-right: 0.2rem;
+    min-width: 75px;
+    text-align: center;
   }
 `;
 type WalletSelectProps = {};
-
-type Wallet = {
-  connected: boolean;
-} & WalletConfig;
 
 export const WalletSelect: React.FC<WalletSelectProps> = ({}) => {
   const [open, setOpen] = useState(false);
@@ -51,27 +50,10 @@ export const WalletSelect: React.FC<WalletSelectProps> = ({}) => {
   const openModal = useCallback(() => {
     setOpen(true);
   }, []);
-  const [wallets, setWallets] = useState<Wallet[]>([]);
+  const { wallets } = useWallets();
 
-  const [selectedWallet, setSelectedWallet] = useState<Wallet | null>(null);
-  const { activeChain, activeWallet, switchChain } = useWebContext();
-  useEffect(() => {
-    const configureSelectedWallets = async () => {
-      const walletsFromActiveChain = Object.values(activeChain?.wallets ?? {});
-      const wallets = await Promise.all(
-        walletsFromActiveChain.map(async ({ detect, ...walletConfig }) => {
-          const isDetected = (await detect?.()) ?? false;
-          return {
-            ...walletConfig,
-            enabled: isDetected,
-            connected: activeWallet?.id === walletConfig.id,
-          };
-        })
-      );
-      setWallets(wallets);
-    };
-    configureSelectedWallets();
-  }, [activeChain, activeWallet]);
+  const [selectedWallet, setSelectedWallet] = useState<ManagedWallet | null>(null);
+  const { activeChain, switchChain } = useWebContext();
 
   useEffect(() => {
     const nextWallet = wallets.find(({ connected }) => connected);

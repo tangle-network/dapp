@@ -8,8 +8,8 @@ export type NetworkStore = {
       }
     | undefined
   >;
-  defaultNetwork: number;
-  defaultWallet: number;
+  defaultNetwork?: number;
+  defaultWallet?: number;
 };
 export type NetworkStorage = Storage<NetworkStore>;
 
@@ -21,8 +21,8 @@ export const netStorageFactory = () => {
     async fetch(key: string): Promise<NetworkStore> {
       const store: NetworkStore = {
         networksConfig: {},
-        defaultNetwork: 1,
-        defaultWallet: 1,
+        defaultNetwork: undefined,
+        defaultWallet: undefined,
       };
       const storageCached = localStorage.getItem(key);
       if (storageCached) {

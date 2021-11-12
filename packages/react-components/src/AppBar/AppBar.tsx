@@ -1,6 +1,7 @@
 import { ReactComponent as WebbLogo } from '@webb-dapp/react-components/assets/webb-icon.svg';
 import { useStore } from '@webb-dapp/react-environment';
 import { useDimensions } from '@webb-dapp/react-environment/layout';
+import { NetworkManager } from '@webb-dapp/ui-components/NetworkManger/NetworkManager';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 import { below } from '@webb-dapp/ui-components/utils/responsive-utils';
 import React, { useMemo } from 'react';
@@ -8,8 +9,7 @@ import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { AccountManager } from '../AccountManager/AccountManager';
-import { ThemeSwitcher } from './ThemeSwticher';
-import { NetworkManager } from '@webb-dapp/ui-components/NetworkManger/NetworkManager';
+import { ThemeSwitcher } from './ThemeSwitcher';
 
 const AppBarWrapper = styled.nav`
   height: 65px;
@@ -84,7 +84,7 @@ const AppBarWrapper = styled.nav`
 `;
 
 const SpacerDiv = styled.div`
-  width: 244px;
+  //width: 244px;
 `;
 
 const RightNavigation = styled.div`
@@ -95,7 +95,10 @@ const RightNavigation = styled.div`
 
 	`}
 `;
-const NavigationWrapper = styled.ul``;
+const NavigationWrapper = styled.ul`
+  flex: 1;
+  margin: 0 6rem !important;
+`;
 type AppBarProps = {};
 
 const AppBar: React.FC<AppBarProps> = () => {
@@ -112,20 +115,39 @@ const AppBar: React.FC<AppBarProps> = () => {
       <SpacerDiv />
       {!isMobile && (
         <NavigationWrapper>
-          <li className={'active'}>
-            <NavLink to={'/mixer'} activeClassName={'active'}>
-              zkBridge
-            </NavLink>
-          </li>
-          {/*        <li>
-          <NavLink to={'/statistics'}>Statistics</NavLink>
-        </li>
-        <li>
-          <NavLink to={'/governance'}>Governance</NavLink>
-        </li>
-        <li>
-          <NavLink to={'/how-it-works'}>How it works</NavLink>
-        </li>*/}
+          {process.env.NODE_ENV === 'production' && (
+            <li className={'active'}>
+              <NavLink to={'/tornado'} activeclassname={'active'}>
+                Tornados
+              </NavLink>
+            </li>
+          )}
+          {process.env.NODE_ENV != 'production' && (
+            <>
+              <li className={'active'}>
+                <NavLink to={'/tornado'} activeclassname={'active'}>
+                  Tornados
+                </NavLink>
+              </li>
+
+              <li className={'active'}>
+                <NavLink to={'/bridge'} activeclassname={'active'}>
+                  Bridge
+                </NavLink>
+              </li>
+              <li className={'active'}>
+                <NavLink to={'/transfer'} activeclassname={'active'}>
+                  Transfer
+                </NavLink>
+              </li>
+
+              <li className={'active'}>
+                <NavLink to={'/wrap-unwrap'} activeclassname={'active'}>
+                  Wrap/Unwrap
+                </NavLink>
+              </li>
+            </>
+          )}
         </NavigationWrapper>
       )}
       <RightNavigation>

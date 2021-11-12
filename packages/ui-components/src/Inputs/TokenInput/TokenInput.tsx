@@ -1,49 +1,26 @@
-import { ClickAwayListener, Icon, IconButton, List, ListItemAvatar, ListItemText, Typography } from '@material-ui/core';
+import {
+  ClickAwayListener,
+  Icon,
+  IconButton,
+  List,
+  ListItemAvatar,
+  ListItemText,
+  Tooltip,
+  Typography,
+} from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
 import Popper from '@material-ui/core/Popper';
-import { Currency } from '@webb-dapp/react-environment/types/currency';
+import { CurrencyContent } from '@webb-dapp/react-environment/types/currency';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import styled, { css } from 'styled-components';
-
-const TokenInputWrapper = styled.div<{ open: boolean }>`
-  border-radius: 25px;
-  border: 1px solid ${({ theme }: { theme: Pallet }) => theme.borderColor};
-
-  overflow: hidden;
-  transition: all 0.3s ease-in-out;
-  background: ${({ theme }) => theme.layer3Background} 37%;
-
-  ${({ open, theme }: { open: boolean; theme: Pallet }) => {
-    return open
-      ? css`
-          background: ${theme.layer1Background} 9%;
-          box-shadow: 1px 1px 14px ${theme.type === 'dark' ? 'black' : 'rgba(54, 86, 233, 0.1)'};
-
-          max-height: 350px;
-        `
-      : css`
-          max-height: 50px;
-        `;
-  }}
-  .account-header {
-    display: flex;
-    align-items: center;
-    border-bottom: 1px solid ${({ theme }) => theme.gray13};
-    padding: 5px;
-  }
-
-  .account-avatar {
-    background: transparent;
-  }
-
-  .account-button-wrapper {
-    margin: -20px 0;
-  }
-`;
+import React, { CSSProperties, useEffect, useMemo, useRef, useState } from 'react';
+import styled, { css, StyledProps } from 'styled-components';
+import { Bridge, BridgeCurrency, useWebContext } from '@webb-dapp/react-environment';
+import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
+import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
+import { evmIdIntoChainId } from '@webb-dapp/apps/configs';
 
 const StyledList = styled.ul`
   &&& {
@@ -66,18 +43,70 @@ const StyledList = styled.ul`
   }
 `;
 
+const TokenInputWrapper = styled.div<{ open: boolean }>`
+  border-radius: 25px;
+  border: 1px solid ${({ theme }: { theme: Pallet }) => theme.borderColor};
+
+  overflow: hidden;
+  transition: all 0.3s ease-in-out;
+  background: ${({ theme }) => theme.layer3Background} 37%;
+
+  ${({ open, theme }: { open: boolean; theme: Pallet }) => {
+    return open
+      ? css`
+          background: ${theme.layer1Background} 9%;
+          box-shadow: 1px 1px 14px ${theme.type === 'dark' ? 'black' : 'rgba(54, 86, 233, 0.1)'};
+
+          max-height: 350px;
+        `
+      : css`
+          max-height: 50px;
+        `;
+  }}
+  ${StyledList} {
+    ${({ open }) => {
+      return open
+        ? css`
+            max-height: 200px;
+            overflow-y: auto;
+          `
+        : css`
+            padding: 0 !important;
+            margin: 0 !important;
+            max-height: 0px !important;
+          `;
+    }}
+  }
+
+  .account-header {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid ${({ theme }) => theme.gray13};
+    padding: 5px;
+  }
+
+  .account-avatar {
+    background: transparent;
+  }
+
+  .account-button-wrapper {
+    margin: -20px 0;
+  }
+`;
+
 const AccountManagerWrapper = styled.div<any>`
   min-width: 200px;
   height: 0;
   background: #ffffff;
   position: relative;
-  top: -26.5px;
+  top: -52px;
 `;
 
-type TokenInputProps = {
-  currencies: Currency[];
-  value?: Currency;
-  onChange(next: Currency | undefined): void;
+export type TokenInputProps = {
+  currencies: CurrencyContent[];
+  value?: CurrencyContent;
+  onChange(next: CurrencyContent | undefined): void;
+  wrapperStyles?: CSSProperties;
 };
 const ChainName = styled.span`
   max-width: 100px;
@@ -86,7 +115,7 @@ const ChainName = styled.span`
   text-overflow: ellipsis;
   white-space: nowrap;
 `;
-export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, value }) => {
+export const TokenInput: React.FC<TokenInputProps> = ({ wrapperStyles, currencies, onChange, value }) => {
   const selectItems = useMemo(() => {
     return currencies.map((currency) => {
       const view = currency.view;
@@ -116,15 +145,39 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
   const $wrapper = useRef<HTMLDivElement>();
   const [isOpen, setIsOpen] = useState(false);
   const theme = useColorPallet();
+  const { activeApi } = useWebContext();
+  const bridgeApi = useBridge();
+  const addTokenToMetaMask = async (tokenString: string) => {
+    const bt = BridgeCurrency.fromString(tokenString);
+    const configEntry = Bridge.getConfigEntry(bridgeApi.config, bt);
+    const provider: Web3Provider = activeApi?.getProvider();
+
+    const activeEVM = await provider.network;
+    const entryChainId = evmIdIntoChainId(activeEVM);
+    const tokenAddress = configEntry.tokenAddresses[entryChainId];
+    await provider.addToken({
+      address: tokenAddress,
+      decimals: 18,
+      image: '',
+      symbol: bt.prefix,
+    });
+  };
   return (
     <>
-      <AccountManagerWrapper ref={$wrapper}>
+      <AccountManagerWrapper ref={$wrapper} style={wrapperStyles}>
         <ClickAwayListener
           onClickAway={() => {
             setIsOpen(false);
           }}
         >
-          <Popper placement={'bottom-end'} open={Boolean($wrapper?.current)} anchorEl={$wrapper?.current}>
+          <Popper
+            style={{
+              zIndex: isOpen ? 10 : null,
+            }}
+            placement={'bottom-end'}
+            open={Boolean($wrapper?.current)}
+            anchorEl={$wrapper?.current}
+          >
             <TokenInputWrapper
               open={isOpen}
               style={{
@@ -139,16 +192,28 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
               >
                 {selected ? (
                   <Flex row ai='center' jc='flex-start' flex={1}>
-                    <Avatar
-                      style={{ background: 'transparent' }}
-                      children={selected?.icon}
-                      className={'token-avatar'}
-                    />
+                    <Tooltip title={<h2>{`Add ${selected?.name} to MetaMask`}</h2>}>
+                      <Avatar
+                        style={{
+                          cursor: 'copy',
+                          background: 'transparent',
+                        }}
+                        children={selected?.icon}
+                        className={'token-avatar'}
+                        onClick={() => {
+                          addTokenToMetaMask(selected?.name);
+                        }}
+                      />
+                    </Tooltip>
                     <Padding x={0.5} />
                     <Flex jc={'center'}>
-                      <Typography variant={'body2'}>{selected.symbol}</Typography>
-                      <Typography variant={'caption'} color={'textSecondary'}>
-                        <ChainName>{selected.name}</ChainName>
+                      <Typography variant={'h6'} component={'span'}>
+                        <b>{selected.symbol}</b>
+                      </Typography>
+                      <Typography variant={'body2'} color={'textSecondary'}>
+                        <ChainName>
+                          <b>{selected.name}</b>
+                        </ChainName>
                       </Typography>
                     </Flex>
                   </Flex>
@@ -194,7 +259,7 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
               </div>
 
               <StyledList as={List} dense disablePadding>
-                {selectItems.map(({ chainName, icon: Icon, id, self: currency, symbol }) => {
+                {selectItems.map(({ name, icon: Icon, id, self: currency, symbol }) => {
                   const isSelected = selected?.id === id;
                   return (
                     <li
@@ -208,12 +273,20 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
                     >
                       <Flex ai='center' row>
                         <ListItemAvatar>
-                          <Avatar style={{ background: 'transparent' }} children={Icon} />
+                          <Avatar
+                            onClick={() => {
+                              addTokenToMetaMask(symbol);
+                            }}
+                            style={{ background: 'transparent' }}
+                            children={Icon}
+                          />
                         </ListItemAvatar>
                         <ListItemText>
-                          <Typography>{symbol}</Typography>
-                          <Typography variant={'caption'} color={'textSecondary'}>
-                            <ChainName>{chainName}</ChainName>
+                          <Typography variant={'h6'} component={'span'}>
+                            <b>{symbol}</b>
+                          </Typography>
+                          <Typography variant={'body2'} color={'textSecondary'}>
+                            <ChainName>{name}</ChainName>
                           </Typography>
                         </ListItemText>
                       </Flex>

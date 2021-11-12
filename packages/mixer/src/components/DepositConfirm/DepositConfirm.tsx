@@ -1,16 +1,17 @@
 import { ButtonBase, Checkbox, FormControlLabel, Icon, IconButton, Tooltip, Typography } from '@material-ui/core';
-import { MixerButton } from '@webb-dapp/mixer/components/MixerButton/MixerButton';
+import { DepositApi } from '@webb-dapp/mixer/hooks/deposit/useDeposit';
+import { DepositPayload } from '@webb-dapp/react-environment/webb-context';
 import { SpaceBox } from '@webb-dapp/ui-components';
+import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { notificationApi } from '@webb-dapp/ui-components/notification';
 import { Spinner } from '@webb-dapp/ui-components/Spinner/Spinner';
+import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 import { downloadString } from '@webb-dapp/utils';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import styled from 'styled-components';
-import { DepositApi } from '@webb-dapp/mixer/hooks/deposit/useDeposit';
-import { DepositPayload } from '@webb-dapp/react-environment/webb-context';
 
 const DismissWrapper = styled.button``;
 const Dismiss = () => {
@@ -23,6 +24,7 @@ const DepositInfoWrapper = styled.div`
   min-height: 300px;
   position: relative;
   overflow: hidden;
+  background: ${({ theme }: { theme: Pallet }) => (theme.type === 'dark' ? theme.spinnerBackground : '#fff')};
 
   .modal-header {
     position: relative;
@@ -36,7 +38,6 @@ const DepositInfoWrapper = styled.div`
 
   .deposit-modal-alert-caption {
     font-family: ${FontFamilies.AvenirNext};
-    color: #7c7b86;
     text-align: center;
   }
 `;
@@ -82,7 +83,7 @@ const Loading = styled.div`
   width: 100%;
   z-index: 44;
   height: 100%;
-  background: #fff;
+  background: ${({ theme }: { theme: Pallet }) => (theme.type === 'dark' ? theme.spinnerBackground : '#fff')};
 
   ${CloseDepositModal} {
     top: 20px;
@@ -109,7 +110,7 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({ mixerId, onClose, o
   }, [note]);
 
   const handleCopy = useCallback((): void => {
-    notificationApi.addToQue({
+    notificationApi.addToQueue({
       secondaryMessage: 'Deposit note is copied to clipboard',
       message: 'Copied  to clipboard',
       variant: 'success',
@@ -179,12 +180,13 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({ mixerId, onClose, o
 
           <SpaceBox height={16} />
 
-          <Typography variant={'h4'} className={'deposit-modal-alert-header'} color={'textPrimary'}>
+          <Typography variant={'h3'} className={'deposit-modal-alert-header'} color={'textPrimary'}>
             Not so fast! <b>Back up your note.</b>
           </Typography>
           <SpaceBox height={8} />
-          <Typography variant={'body2'} className={'deposit-modal-alert-caption'}>
-            Please backup your note. If you lose this. <br /> you won't get your deposit back.
+          <Typography variant={'body1'} className={'deposit-modal-alert-caption'} color={'textPrimary'}>
+            Please backup your note. If you lose this,
+            <br /> you won't get your deposit back.
           </Typography>
         </header>
 
@@ -219,7 +221,7 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({ mixerId, onClose, o
             setBackupConfirmation((v) => !v);
           }}
           control={<Checkbox color={'primary'} />}
-          label={<Typography color={'primary'}>I confirm,I backed up the note</Typography>}
+          label={<Typography color={'textPrimary'}>I confirm,I backed up the note</Typography>}
         />
 
         <SpaceBox height={8} />

@@ -1,48 +1,67 @@
-import Icon from '@material-ui/core/Icon';
-import { EvmChainStorage } from '@webb-dapp/apps/configs/storages/evm-chain-storage.interface';
-import { AnchorContract } from '@webb-dapp/contracts/contracts/anchor';
-import { WebbApiProvider, WebbMethods } from '@webb-dapp/react-environment';
+import { chainIdIntoEVMId, chainsConfig, currenciesConfig, evmIdIntoChainId } from '@webb-dapp/apps/configs';
+import { TornadoContract } from '@webb-dapp/contracts/contracts/tornado-anchor';
+import { AnchorContract } from '@webb-dapp/contracts/contracts/webb-anchor';
+import { WebbApiProvider, WebbMethods, WebbProviderEvents } from '@webb-dapp/react-environment';
+import { EvmChainMixersInfo } from '@webb-dapp/react-environment/api-providers/web3/EvmChainMixersInfo';
+import { Web3BridgeDeposit } from '@webb-dapp/react-environment/api-providers/web3/web3-bridge-deposit';
+import { Web3BridgeWithdraw } from '@webb-dapp/react-environment/api-providers/web3/web3-bridge-withdraw';
 import { Web3MixerDeposit } from '@webb-dapp/react-environment/api-providers/web3/web3-mixer-deposit';
 import { Web3MixerWithdraw } from '@webb-dapp/react-environment/api-providers/web3/web3-mixer-withdraw';
-import { notificationApi } from '@webb-dapp/ui-components/notification';
-import { Storage } from '@webb-dapp/utils';
+import { MixerSize } from '@webb-dapp/react-environment/webb-context';
+import { WebbRelayerBuilder } from '@webb-dapp/react-environment/webb-context/relayer';
+import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import { Web3Accounts } from '@webb-dapp/wallet/providers/web3/web3-accounts';
 import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
-import { providers } from 'ethers';
-import React from 'react';
+import { EventBus } from '@webb-tools/app-util';
+import { Note } from '@webb-tools/sdk-mixer';
+import { ethers, providers } from 'ethers';
+import { Web3WrapUnwrap } from '@webb-dapp/react-environment/api-providers';
 
-export enum WebbEVMChain {
-  Main = 1,
-  Rinkeby = 4,
-  Beresheet = 2022,
-}
-
-export type EVMStorage = Record<string, EvmChainStorage>;
-
-export class WebbWeb3Provider implements WebbApiProvider<WebbWeb3Provider> {
+export class WebbWeb3Provider
+  extends EventBus<WebbProviderEvents<[number]>>
+  implements WebbApiProvider<WebbWeb3Provider>
+{
   readonly accounts: Web3Accounts;
   readonly methods: WebbMethods<WebbWeb3Provider>;
   private ethersProvider: providers.Web3Provider;
+  private connectedMixers: EvmChainMixersInfo;
 
-  private constructor(private web3Provider: Web3Provider, private storage: Storage<EVMStorage>) {
+  private constructor(
+    private web3Provider: Web3Provider,
+    private chainId: number,
+    readonly relayingManager: WebbRelayerBuilder
+  ) {
+    super();
     this.accounts = new Web3Accounts(web3Provider.eth);
     this.ethersProvider = web3Provider.intoEthersProvider();
+
+    // Remove listeners for chainChanged on the previous object
     // @ts-ignore
-    // todo fix me @(AhmedKorim)
-    this.ethersProvider.provider?.on?.('chainChanged', async () => {
-      const chainId = await this.web3Provider.network;
-      console.log(chainId);
-      const localName = await WebbWeb3Provider.storageName(chainId);
-      notificationApi({
-        message: 'Web3: changed the connected network',
-        variant: 'info',
-        Icon: React.createElement(Icon, null, ['leak_add']),
-        secondaryMessage: `Connection is switched to ${chainId} chain`,
-      });
-      this.ethersProvider = web3Provider.intoEthersProvider();
-      this.storage = await Storage.get(localName);
+    this.ethersProvider.provider?.removeAllListeners('chainChanged');
+
+    // @ts-ignore
+    this.ethersProvider.provider?.on?.('accountsChanged', () => {
+      this.emit('newAccounts', this.accounts);
     });
+    this.connectedMixers = new EvmChainMixersInfo(chainId);
     this.methods = {
+      wrapUnwrap: {
+        core: {
+          enabled: true,
+          inner: new Web3WrapUnwrap(this),
+        },
+      },
+      bridge: {
+        core: null,
+        deposit: {
+          inner: new Web3BridgeDeposit(this),
+          enabled: true,
+        },
+        withdraw: {
+          inner: new Web3BridgeWithdraw(this),
+          enabled: true,
+        },
+      },
       mixer: {
         deposit: {
           enabled: true,
@@ -56,39 +75,157 @@ export class WebbWeb3Provider implements WebbApiProvider<WebbWeb3Provider> {
     };
   }
 
-  static storageName(id: number): string {
-    switch (id) {
-      case WebbEVMChain.Rinkeby:
-        return 'rinkeby';
-      case WebbEVMChain.Main:
-        return 'main';
-      case WebbEVMChain.Beresheet:
-        return 'beresheet';
-      default:
-        throw new Error('unsupported chain');
-    }
+  getProvider(): Web3Provider {
+    return this.web3Provider;
   }
 
-  get chainStorage(): Promise<EVMStorage> {
-    return this.storage.dump();
+  async setChainListener() {
+    this.ethersProvider = this.web3Provider.intoEthersProvider();
+    const handler = async () => {
+      const chainId = await this.web3Provider.network;
+      this.emit('providerUpdate', [chainId]);
+    };
+    // @ts-ignore
+    this.ethersProvider.provider?.on?.('chainChanged', handler);
   }
 
-  async getContractWithAddress(mixerId: string): Promise<AnchorContract> {
-    return new AnchorContract(this.ethersProvider, mixerId);
+  setStorage(chainId: number) {
+    this.connectedMixers = new EvmChainMixersInfo(chainId);
   }
 
-  async getContract(mixerSize: number, name: string): Promise<AnchorContract> {
-    const mixerSizes = await this.storage.get(name);
-    const mixer = mixerSizes.contractsInfo.find((config) => config.size === Number(mixerSize));
-    console.log(mixer);
+  async destroy(): Promise<void> {
+    this.subscriptions = {
+      providerUpdate: [],
+      interactiveFeedback: [],
+    };
+  }
+
+  async getChainId(): Promise<number> {
+    const chainId = (await this.ethersProvider.getNetwork()).chainId;
+    return chainId;
+  }
+
+  getMixers() {
+    return this.connectedMixers;
+  }
+
+  getTornadoContractAddressByNote(note: Note) {
+    const evmId = chainIdIntoEVMId(Number(note.note.chain));
+    const availableMixers = new EvmChainMixersInfo(evmId);
+    const mixer = availableMixers.getTornMixerInfoBySize(Number(note.note.amount), note.note.tokenSymbol);
     if (!mixer) {
-      throw new Error(`mixer size  not found on this contract`);
+      throw new Error('Mixer not found');
     }
-
-    return new AnchorContract(this.ethersProvider, mixer.address);
+    return mixer.address;
   }
 
-  static async init(web3Provider: Web3Provider, storage: Storage<EVMStorage>) {
-    return new WebbWeb3Provider(web3Provider, storage);
+  async getContractByAddress(mixerAddress: string): Promise<TornadoContract> {
+    return new TornadoContract(this.connectedMixers, this.ethersProvider, mixerAddress);
+  }
+
+  getWebbAnchorByAddress(address: string): AnchorContract {
+    return new AnchorContract(this.connectedMixers, this.ethersProvider, address);
+  }
+
+  getWebbAnchorByAddressAndProvider(address: string, provider: providers.Web3Provider): AnchorContract {
+    return new AnchorContract(this.connectedMixers, provider, address, true);
+  }
+
+  getMixerInfoBySize(mixerSize: number, tokenSymbol: string) {
+    const mixer = this.connectedMixers.getTornMixerInfoBySize(mixerSize, tokenSymbol);
+    if (!mixer) {
+      throw WebbError.from(WebbErrorCodes.MixerSizeNotFound);
+    }
+    return mixer;
+  }
+
+  // This function limits the mixer implementation to one type for the token/size pair.
+  // Something like a poseidon hasher implementation instead of mimc hasher cannot
+  // exist alongside each other.
+  async getContractBySize(mixerSize: number, tokenSymbol: string): Promise<TornadoContract> {
+    const mixer = this.connectedMixers.getTornMixerInfoBySize(mixerSize, tokenSymbol);
+    if (!mixer) {
+      throw WebbError.from(WebbErrorCodes.MixerSizeNotFound);
+    }
+
+    return new TornadoContract(this.connectedMixers, this.ethersProvider, mixer.address);
+  }
+
+  getEthersProvider(): providers.Web3Provider {
+    return this.ethersProvider;
+  }
+
+  getMixerSizes(tokenSymbol: string): Promise<MixerSize[]> {
+    return Promise.resolve(this.connectedMixers.getTornMixerSizes(tokenSymbol));
+  }
+
+  static async init(web3Provider: Web3Provider, chainId: number, relayerBuilder: WebbRelayerBuilder) {
+    return new WebbWeb3Provider(web3Provider, chainId, relayerBuilder);
+  }
+
+  get capabilities() {
+    return this.web3Provider.capabilities;
+  }
+
+  endSession(): Promise<void> {
+    return this.web3Provider.endSession();
+  }
+
+  async reason(hash: string) {
+    const a = await this.ethersProvider.getTransaction(hash);
+    if (!a) {
+      throw new Error('TX not found');
+    }
+    try {
+      // @ts-ignore
+      let code = await this.ethersProvider.call(a, a.blockNumber);
+      console.log({ ERRORCODE: code });
+    } catch (err) {
+      console.log({ e: err });
+      const code = err.message.replace('Reverted ', '');
+      let reason = ethers.utils.toUtf8String('0x' + code.substr(138));
+      return reason;
+    }
+  }
+
+  switchOrAddChain(evmChainId: number) {
+    return this.web3Provider
+      .switchChain({
+        chainId: `0x${evmChainId.toString(16)}`,
+      })
+      ?.catch(async (switchError) => {
+        console.log('inside catch for switchChain', switchError);
+
+        // cannot switch because network not recognized, so fetch configuration
+        const chainId = evmIdIntoChainId(evmChainId);
+        const chain = chainsConfig[chainId];
+
+        // prompt to add the chain
+        if (switchError.code === 4902) {
+          const currency = currenciesConfig[chain.nativeCurrencyId];
+          await this.web3Provider.addChain({
+            chainId: `0x${evmChainId.toString(16)}`,
+            chainName: chain.name,
+            rpcUrls: chain.evmRpcUrls!,
+            nativeCurrency: {
+              decimals: 18,
+              name: currency.name,
+              symbol: currency.symbol,
+            },
+          });
+          // add network will prompt the switch, check evmId again and throw if user rejected
+          const newChainId = await this.web3Provider.network;
+
+          if (newChainId != chain.evmId) {
+            throw switchError;
+          }
+        } else {
+          throw switchError;
+        }
+      });
+  }
+
+  public get innerProvider() {
+    return this.web3Provider;
   }
 }

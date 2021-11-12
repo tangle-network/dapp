@@ -3,6 +3,8 @@ export interface WalletConfig {
   logo: React.ComponentType;
   name: string;
   title: string;
+  platform: string;
+
   // the wallet isn't live yet
   enabled: boolean;
 
@@ -10,4 +12,10 @@ export interface WalletConfig {
   detect?(): boolean | Promise<boolean>;
 
   supportedChainIds: number[];
-};
+}
+
+export type ManagedWallet = {
+  connected: boolean;
+  endSession(): Promise<void>;
+  canEndSession: boolean;
+} & WalletConfig;

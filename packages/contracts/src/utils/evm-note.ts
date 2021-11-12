@@ -1,8 +1,9 @@
 import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
 import { Deposit } from '@webb-dapp/contracts/utils/make-deposit';
 import { pedersenHash } from '@webb-dapp/contracts/utils/pedersen-hash';
+import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 
-const snarkjs = require('snarkjs');
+const snarkjs = require('tornado-snarkjs');
 
 export class EvmNote {
   constructor(
@@ -16,9 +17,9 @@ export class EvmNote {
     const noteRegex = /anchor-(?<currency>\w+)-(?<amount>[\d.]+)-(?<chainId>\d+)-0x(?<note>[0-9a-fA-F]{124})/g;
     try {
       const { currency, amount, note, chainId } = noteRegex.exec(noteString)?.groups as Record<string, any>;
-      return new EvmNote(currency, amount, chainId, Buffer.from(note, 'hex'));
+      return new EvmNote(currency, Number(amount), Number(chainId), Buffer.from(note, 'hex'));
     } catch (e) {
-      throw Error('failed to parse :INVALID NOTE');
+      throw WebbError.from(WebbErrorCodes.NoteParsingFailure);
     }
   }
 

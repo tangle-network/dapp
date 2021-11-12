@@ -1,15 +1,6 @@
-import { chainsPopulated } from '@webb-dapp/apps/configs/wallets/chains-populated';
-import { currenciesConfig } from '@webb-dapp/apps/configs/wallets/currency-config';
+import { chainsPopulated, currenciesConfig, WebbCurrencyId } from '@webb-dapp/apps/configs';
 import { Chain } from '@webb-dapp/react-environment';
-import { Token } from '@webb-tools/sdk-core';
 import { createElement } from 'react';
-
-export type WebbCurrencyId = number;
-
-interface Data {
-  currencyId: WebbCurrencyId;
-  token: Token;
-}
 
 //TODO handle state from the provider
 const chains = chainsPopulated;
@@ -25,8 +16,18 @@ export interface CurrencyView {
 
 export interface CurrencyConfig extends Omit<CurrencyView, 'chainName'> {}
 
-export class Currency {
-  constructor(private data: CurrencyConfig) {}
+export abstract class CurrencyContent {
+  static getChainOfCurrency(currency: WebbCurrencyId) {
+    return Object.values(chains).find((chain) => chain.nativeCurrencyId == currency);
+  }
+
+  abstract get view(): CurrencyView;
+}
+
+export class Currency extends CurrencyContent {
+  constructor(private data: CurrencyConfig) {
+    super();
+  }
 
   static fromCurrencyId(currencyId: WebbCurrencyId) {
     const currencyConfig = currenciesConfig[currencyId];

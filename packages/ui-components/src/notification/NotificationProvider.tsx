@@ -12,7 +12,7 @@ export const NotificationProvider: React.FC<{
 }> = ({ children, setOptions }) => {
   const { closeSnackbar, enqueueSnackbar } = useSnackbar();
 
-  const addToQue = useCallback(
+  const addToQueue = useCallback(
     (opts: SnackBarOpts) => {
       const snackKey: SnackbarKey = opts.key || new Date().getTime() + Math.random();
       setOptions(snackKey, { ...opts, close: closeSnackbar });
@@ -31,14 +31,14 @@ export const NotificationProvider: React.FC<{
 
   useEffect(() => {
     _notificationApi = {
-      addToQue,
+      addToQueue,
       remove,
     };
   }, []);
   return (
     <NotificationContext.Provider
       value={{
-        addToQue,
+        addToQueue,
         remove,
       }}
       children={children}
@@ -47,10 +47,10 @@ export const NotificationProvider: React.FC<{
 };
 
 export const notificationApi = (opts: Omit<SnackBarOpts, 'close'>) => {
-  return _notificationApi.addToQue(opts);
+  return _notificationApi.addToQueue(opts);
 };
-notificationApi.addToQue = (opts: Omit<SnackBarOpts, 'close'>): SnackbarKey => {
-  return _notificationApi.addToQue(opts);
+notificationApi.addToQueue = (opts: Omit<SnackBarOpts, 'close'>): SnackbarKey => {
+  return _notificationApi.addToQueue(opts);
 };
 notificationApi.remove = (key: SnackbarKey): void => {
   return _notificationApi.remove(key);

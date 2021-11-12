@@ -2,6 +2,8 @@ import { WebbApiProvider } from '@webb-dapp/react-environment/webb-context/webb-
 import { Chain, Wallet } from '@webb-dapp/react-environment/webb-context/common';
 import { Account } from '@webb-dapp/wallet/account/Accounts.adapter';
 import React from 'react';
+import { InteractiveFeedback } from '@webb-dapp/utils/webb-error';
+
 interface Note {
   serialize(): string;
 
@@ -20,10 +22,16 @@ export interface WebbContentState<T = unknown> {
 
   accounts: Account[];
   activeAccount: Account | null;
-  isInit: boolean;
+  isConnecting: boolean;
+
   setActiveAccount<T extends Account>(account: T): Promise<void>;
 
+  inactivateApi(): Promise<void>;
+
   switchChain(chain: Chain, wallet: Wallet): Promise<WebbApiProvider<T> | null>;
+
+  activeFeedback: InteractiveFeedback | null;
+  registerInteractiveFeedback: (interactiveFeedback: InteractiveFeedback) => void;
 }
 
 export const WebbContext = React.createContext<WebbContentState>({
@@ -31,14 +39,21 @@ export const WebbContext = React.createContext<WebbContentState>({
   accounts: [],
   loading: true,
   activeAccount: null,
-  isInit: false,
+  isConnecting: false,
   setActiveAccount<T extends Account>(account: T): Promise<void> {
     return Promise.resolve();
   },
   switchChain(chain, wallet) {
     return Promise.resolve(null);
   },
+  inactivateApi(): Promise<void> {
+    return Promise.resolve();
+  },
   wallets: {},
+  activeFeedback: null,
+  registerInteractiveFeedback: (interactiveFeedback: InteractiveFeedback) => {
+    return;
+  },
 });
 
 export const useWebContext = <T = unknown>() => {
