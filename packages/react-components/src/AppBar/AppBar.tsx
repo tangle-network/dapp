@@ -9,7 +9,7 @@ import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { AccountManager } from '../AccountManager/AccountManager';
-import { ThemeSwitcher } from './ThemeSwticher';
+import { ThemeSwitcher } from './ThemeSwitcher';
 
 const AppBarWrapper = styled.nav`
   height: 65px;
@@ -117,7 +117,7 @@ const AppBar: React.FC<AppBarProps> = () => {
         <NavigationWrapper>
           {process.env.NODE_ENV === 'production' && (
             <li className={'active'}>
-              <NavLink to={'/tornado'} activeClassName={'active'}>
+              <NavLink to={'/tornado'} activeclassname={'active'}>
                 Tornados
               </NavLink>
             </li>
@@ -125,24 +125,24 @@ const AppBar: React.FC<AppBarProps> = () => {
           {process.env.NODE_ENV != 'production' && (
             <>
               <li className={'active'}>
-                <NavLink to={'/tornado'} activeClassName={'active'}>
+                <NavLink to={'/tornado'} activeclassname={'active'}>
                   Tornados
                 </NavLink>
               </li>
 
               <li className={'active'}>
-                <NavLink to={'/bridge'} activeClassName={'active'}>
+                <NavLink to={'/bridge'} activeclassname={'active'}>
                   Bridge
                 </NavLink>
               </li>
               <li className={'active'}>
-                <NavLink to={'/transfer'} activeClassName={'active'}>
+                <NavLink to={'/transfer'} activeclassname={'active'}>
                   Transfer
                 </NavLink>
               </li>
 
               <li className={'active'}>
-                <NavLink to={'/wrap-unwrap'} activeClassName={'active'}>
+                <NavLink to={'/wrap-unwrap'} activeclassname={'active'}>
                   Wrap/Unwrap
                 </NavLink>
               </li>

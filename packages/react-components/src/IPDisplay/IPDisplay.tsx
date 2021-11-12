@@ -1,5 +1,5 @@
 import { Icon, Typography } from '@material-ui/core';
-import { useFetch } from '@webb-dapp/react-hooks/';
+import { useIp } from '@webb-dapp/react-environment';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
@@ -42,16 +42,14 @@ const IPDisplayWrapper = styled.div`
   }
 `;
 
-type IPDisplayProps = {
-  ip: String;
-};
+type IPDisplayProps = {};
 
-const IPDisplay: React.FC<IPDisplayProps> = ({ ip }) => {
-  const { city, country_code_iso3 } = useFetch(`https://ipapi.co/${ip}/json`, {});
+const IPDisplay: React.FC<IPDisplayProps> = () => {
+  const { city, countryCode, ip } = useIp();
 
   function createLocationText() {
-    if (city && country_code_iso3) {
-      return `${city}, ${country_code_iso3}`;
+    if (city && countryCode) {
+      return `${city}, ${countryCode}`;
     }
     return '';
   }

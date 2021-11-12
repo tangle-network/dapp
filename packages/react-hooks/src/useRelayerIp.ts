@@ -5,7 +5,7 @@ export type RelayerIpInfo = {
   ip: string;
 };
 
-export function useIp(activeApi?: WebbApiProvider<any>) {
+export function useRelayerIp(activeApi?: WebbApiProvider<any>) {
   const [ip, setIp] = useState<RelayerIpInfo>({ ip: '' });
 
   useEffect(() => {

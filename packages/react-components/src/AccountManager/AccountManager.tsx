@@ -191,7 +191,7 @@ export const AccountManager: React.FC<AccountManagerProps> = () => {
                     <Avatar className={'account-avatar'}>{account.avatar}</Avatar>
 
                     <ListItemText>
-                      <Flex as={'p'} flex={1}>
+                      <Flex flex={1}>
                         <Tooltip title={account.name} placement={'left'}>
                           <AccountName as={Typography} color={'textPrimary'}>
                             {name}
