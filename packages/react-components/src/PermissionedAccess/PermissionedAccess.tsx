@@ -80,7 +80,7 @@ export const PermissionedAccess: React.FC<PermissionedAccessProps> = ({ children
       setPermissionedState(PermissionedState.Allowed);
     };
     checkPermissions();
-  }, [countryCode]);
+  }, [acceptedTerms, countryCode]);
 
   return (
     <>
