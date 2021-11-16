@@ -9,6 +9,7 @@ import { u8aToHex } from '@polkadot/util';
 
 import { MixerWithdraw, WithdrawState } from '../../webb-context';
 import { WebbPolkadot } from './webb-polkadot-provider';
+import { PolkadotMixerDeposit } from '.';
 
 export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
   private loading = false;
@@ -25,7 +26,7 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
     const leaves: Uint8Array[] = [];
 
     while (done === false) {
-      const treeLeaves: Uint8Array[] = await (this.inner.api.rpc as any).merkle.treeLeaves(treeId, from, to);
+      const treeLeaves: Uint8Array[] = await (this.inner.api.rpc as any).mt.getLeaves(treeId, from, to);
       if (treeLeaves.length === 0) {
         done = true;
         break;
@@ -42,21 +43,25 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
     // parse the note
     const noteParsed = await Note.deserialize(note);
     const depositAmount = noteParsed.note.amount;
-    const treeId = depositAmount;
+    const amount = depositAmount;
+    const sizes = await PolkadotMixerDeposit.getSizes(this.inner.api);
+    const treeId = sizes.find((s) => s.value === amount)?.treeId!;
+    console.log(treeId);
     // @ts-ignore
-    const nodeMerkleTree: NodeMerkleTree = await this.inner.api.query.merkle.trees([treeId]);
+    const nodeMerkleTree = await this.inner.api.query.merkleTree.trees(treeId);
+    console.log(nodeMerkleTree.toHuman());
     const groupTreeWrapper = new GroupTreeWrapper(nodeMerkleTree);
     const leaves = await this.fetchTreeLeaves(treeId);
-
+    console.log(leaves);
     try {
-      const pm = new ProvingManger(worker);
-      const zk = (await pm.proof({
+      const pm = new ProvingManger(new Worker());
+      const zk = await pm.proof({
         leaves,
         note,
         recipient,
         relayer: recipient,
-      })) as ZKProof;
-
+      });
+      console.log({ zk });
       const blockNumber = await this.inner.api.query.system.number();
       const withdrawProof = {
         cached_block: blockNumber,

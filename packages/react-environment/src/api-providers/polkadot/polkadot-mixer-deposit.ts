@@ -6,25 +6,27 @@ import { Token } from '@webb-tools/sdk-core';
 import { Note, NoteGenInput } from '@webb-tools/sdk-mixer';
 
 import { WebbPolkadot } from './webb-polkadot-provider';
+import { ApiPromise } from '@polkadot/api';
 
 type DepositPayload = IDepositPayload<Note, [number, Uint8Array[]]>;
 
 export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayload> {
-  async getSizes() {
+  static async getSizes(api: ApiPromise) {
+    const data: Array<MixerGroupEntry> = await api.query.mixer.mixers.entries();
     // @ts-ignore
-    const data: Array<MixerGroupEntry> = await this.inner.api.query.mixer.mixerTrees.entries();
-    console.log('polkadot-mixer-deposit', data);
-    // @ts-ignore
-    const tokenProperty: Array<NativeTokenProperties> = await this.inner.api.rpc.system.properties();
+    const tokenProperty: Array<NativeTokenProperties> = await api.rpc.system.properties();
     const groupItem = data
-      .map((entry) => {
-        const cId: number = entry[1]['currency_id'].toNumber();
-        const amount = entry[1]['fixed_deposit_size'];
-
+      .map(([storageKey, info]) => {
+        const cId: number = Number(info.toHuman().asset);
+        const amount = info.toHuman().depositSize;
+        const id = Number(storageKey.toString());
+        console.log(info.toHuman(), 'info ::human');
+        const treeId = storageKey.toHuman()[0];
         return {
+          id,
           amount: amount,
-          currency: Currency.fromCurrencyId(cId, this.inner.api, 0),
-          id: Number((entry[0].toHuman() as any[])[0]),
+          currency: Currency.fromCurrencyId(cId, api, 0),
+          treeId,
           token: new Token({
             amount: amount.toString(),
             // TODO: Pull from active chain
@@ -36,14 +38,19 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
           }),
         };
       })
-      .map(({ amount, currency, token }, index) => ({
-        id: index,
-        value: Math.round(Number(amount.toString()) / Math.pow(10, token.precision)),
-        title: Math.round(Number(amount.toString()) / Math.pow(10, token.precision)) + ` ${currency.symbol}`,
+      .map(({ treeId, amount, currency, token, id }) => ({
+        id,
+        treeId,
+        value: amount,
+        title: amount + ` ${currency.symbol}`,
         symbol: currency.symbol,
       }))
       .sort((a, b) => (a.value > b.value ? 1 : a.value < b.value ? -1 : 0));
     return groupItem;
+  }
+
+  async getSizes() {
+    return PolkadotMixerDeposit.getSizes(this.inner.api);
   }
 
   async generateNote(mixerId: number): Promise<DepositPayload> {
@@ -55,7 +62,7 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
     // todo store the chain id in the provider
     const chainId = 1; /* this.inner.chainId() */
     const noteInput: NoteGenInput = {
-      prefix: 'web.mix',
+      prefix: 'webb.mix',
       version: 'v1',
 
       backend: 'Arkworks',
@@ -73,7 +80,7 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
 
     return {
       note: depositNote,
-      params: [Number(depositNote.note.amount), [leaf]],
+      params: [Number(depositNote.note.amount), leaf],
     };
   }
 
