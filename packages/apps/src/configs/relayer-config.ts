@@ -12,6 +12,12 @@ export const relayerConfig: RelayerConfig[] = [
   {
     endpoint: 'https://relayer.webb.tools',
   },
+  {
+    endpoint: 'https://webb.pops.one',
+  },
+  {
+    endpoint: 'https://relayer.bldnodes.org',
+  },
 ];
 
 export function relayerNameToChainId(name: string): ChainId {
