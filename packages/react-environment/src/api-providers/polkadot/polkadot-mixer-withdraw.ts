@@ -1,15 +1,25 @@
 import { GroupTreeWrapper } from '@webb-dapp/mixer';
 // @ts-ignore
 import Worker from '@webb-dapp/mixer/utils/proving-mananger.worker';
-import { ProvingManger } from '@webb-dapp/mixer/utils/proving-manger';
 import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
-import { Note, ZKProof } from '@webb-tools/sdk-mixer';
-
-import { u8aToHex } from '@polkadot/util';
+import { Note } from '@webb-tools/sdk-mixer';
+import { ProvingManger } from '@webb-tools/sdk-core';
 
 import { MixerWithdraw, WithdrawState } from '../../webb-context';
 import { WebbPolkadot } from './webb-polkadot-provider';
 import { PolkadotMixerDeposit } from '.';
+import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
+
+type WithdrawProof = {
+  id: string;
+  proof_bytes: string;
+  root: string;
+  nullifier_hash: string;
+  recipient: string;
+  relayer: string;
+  fee: string;
+  refund: string;
+};
 
 export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
   private loading = false;
@@ -61,19 +71,16 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
         recipient,
         relayer: recipient,
       });
-      console.log({ zk });
       const blockNumber = await this.inner.api.query.system.number();
-      const withdrawProof = {
-        cached_block: blockNumber,
-        cached_root: groupTreeWrapper.rootHashU8a,
-        comms: zk.commitments,
-        leaf_index_commitments: zk.leafIndexCommitments,
-        mixer_id: treeId,
-        nullifier_hash: zk.nullifierHash,
-        proof_bytes: u8aToHex(zk.proof),
-        proof_commitments: zk.proofCommitments,
+      const withdrawProof: WithdrawProof = {
+        id: treeId,
+        proofBytes: zk.proof as any,
+        root: zk.root,
+        nullifierHash: zk.nullifier_hash,
         recipient: recipient,
         relayer: recipient,
+        fee: bufferToFixed('0'),
+        refund: bufferToFixed('0'),
       };
 
       this.emit('stateChange', WithdrawState.SendingTransaction);
@@ -104,6 +111,7 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
       this.emit('stateChange', WithdrawState.Failed);
       throw e;
     }
+
     // get mixer
     // get tree leaves
     // get mixer info

@@ -12,12 +12,13 @@
   "resolutions": {
 	"eslint": "^6.6.0",
 	"@polkadot/api": "^6.1.2",
-    "@webb-tools/type-definitions": "0.1.4-7",
-    "@webb-tools/api": "0.1.4-7",
-    "@webb-tools/types": "0.1.4-7",
-    "@webb-tools/app-util": "0.1.4-7",
-    "@webb-tools/sdk-core": "0.1.4-7",
-    "@webb-tools/sdk-mixer": "0.1.4-7"
+    "@webb-tools/type-definitions": "file:../webb.js/packages/type-definitions/build",
+    "@webb-tools/api": "file:../webb.js/packages/api/build",
+    "@webb-tools/types": "file:../webb.js/packages/types/build",
+    "@webb-tools/app-util": "file:../webb.js/packages/app-util/build",
+    "@webb-tools/sdk-core": "file:../webb.js/packages/sdk-core/build",
+    "@webb-tools/sdk-mixer": "file:../webb.js/packages/sdk-mixer/build"
+
   },
   "scripts": {
     "bump-version": "node scripts/bump-version.js",
