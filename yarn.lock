@@ -4584,10 +4584,8 @@
     "@polkadot/types" "^6.1.2"
     "@webb-tools/type-definitions" "0.1.4-7"
 
-"@webb-tools/wasm-utils@^0.1.4-7":
+"@webb-tools/wasm-utils@^0.1.4-7", "@webb-tools/wasm-utils@file:../webb.js/packages/wasm-utils/build":
   version "0.1.4-7"
-  resolved "https://registry.yarnpkg.com/@webb-tools/wasm-utils/-/wasm-utils-0.1.4-7.tgz#0cc457e7a12d4a5ed387c2559aba7b14263ab2a8"
-  integrity sha512-aBI0zbErHQUFOIA74dfE2CpUfvsJPGTw7BHmjW/BzeKtU2ICMZGaPJ3u/Uwx9VgPUGKFcyOUIosLJZWHJL1V+g==
 
 "@wry/context@^0.4.0":
   version "0.4.4"

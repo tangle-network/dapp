@@ -9,7 +9,8 @@ import { MixerWithdraw, WithdrawState } from '../../webb-context';
 import { WebbPolkadot } from './webb-polkadot-provider';
 import { PolkadotMixerDeposit } from '.';
 import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
-
+import { addressToEvm } from '@polkadot/util-crypto';
+import { hexToU8a, u8aToHex } from '@polkadot/util';
 type WithdrawProof = {
   id: string;
   proof_bytes: string;
@@ -62,34 +63,45 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
     console.log(nodeMerkleTree.toHuman());
     const groupTreeWrapper = new GroupTreeWrapper(nodeMerkleTree);
     const leaves = await this.fetchTreeLeaves(treeId);
-    console.log(leaves);
+
     try {
       const pm = new ProvingManger(new Worker());
+      const hexAddress = u8aToHex(addressToEvm('jn5LuB5d51srpmZqiBNgWu11C6AeVxEygggjWsifcG1myqr'));
       const zk = await pm.proof({
         leaves,
         note,
-        recipient,
-        relayer: recipient,
+        recipient: hexAddress.replace('0x', ''),
+        relayer: hexAddress.replace('0x', ''),
       });
       const blockNumber = await this.inner.api.query.system.number();
+      console.log(zk);
       const withdrawProof: WithdrawProof = {
         id: treeId,
-        proofBytes: zk.proof as any,
+        proof_bytes: zk.proof as any,
         root: zk.root,
-        nullifierHash: zk.nullifier_hash,
-        recipient: recipient,
-        relayer: recipient,
+        nullifier_hash: zk.nullifier_hash,
+        recipient: hexAddress.replace('0x', ''),
+        relayer: hexAddress.replace('0x', ''),
         fee: bufferToFixed('0'),
         refund: bufferToFixed('0'),
       };
-
+      console.log(withdrawProof);
       this.emit('stateChange', WithdrawState.SendingTransaction);
       const tx = this.inner.txBuilder.build(
         {
           section: 'mixer',
           method: 'withdraw',
         },
-        [withdrawProof]
+        [
+          treeId,
+          `0x${withdrawProof.proof_bytes}`,
+          `0x${withdrawProof.root}`,
+          `0x${withdrawProof.nullifier_hash}`,
+          hexAddress,
+          hexAddress,
+          0,
+          0,
+        ]
       );
       tx.on('finalize', () => {
         console.log('withdraw done');
