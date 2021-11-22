@@ -8,8 +8,10 @@ import { Note, NoteGenInput } from '@webb-tools/sdk-mixer';
 import { WebbPolkadot } from './webb-polkadot-provider';
 import { ApiPromise } from '@polkadot/api';
 import { ORMLCurrency } from '@webb-dapp/react-environment/types/orml-currency';
+import { LoggerService } from '@webb-tools/app-util';
 
 type DepositPayload = IDepositPayload<Note, [number, Uint8Array[]]>;
+const logger = LoggerService.get('tornado-deposit');
 
 export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayload> {
   private readonly tokens: ORMLCurrency;
@@ -62,13 +64,16 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
   }
 
   async generateNote(mixerId: number): Promise<DepositPayload> {
+    logger.info(`Depositing to mixer id ${mixerId}`);
     const sizes = await this.getSizes();
+    console.log(sizes);
     const amount = sizes.find((size) => size.id === mixerId);
     if (!amount) {
       throw Error('amount not found! for mixer id ' + mixerId);
     }
-    // todo store the chain id in the provider
-    const chainId = 1; /* this.inner.chainId() */
+    const treeId = amount?.treeId;
+    logger.info(`Depositing to tree id ${treeId}`);
+    const chainId = 1;
     const noteInput: NoteGenInput = {
       prefix: 'webb.mix',
       version: 'v1',
@@ -88,7 +93,7 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
 
     return {
       note: depositNote,
-      params: [Number(depositNote.note.amount), leaf],
+      params: [Number(treeId), leaf],
     };
   }
 
@@ -108,7 +113,7 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
     tx.on('finalize', () => {
       console.log('deposit done');
     });
-    tx.on('finalize', (e: any) => {
+    tx.on('failed', (e: any) => {
       console.log('deposit failed', e);
     });
     tx.on('extrinsicSuccess', () => {

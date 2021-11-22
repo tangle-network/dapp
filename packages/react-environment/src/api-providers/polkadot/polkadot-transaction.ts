@@ -5,6 +5,7 @@ import { ApiPromise, SubmittableResult } from '@polkadot/api';
 import { SubmittableExtrinsic } from '@polkadot/api/submittable/types';
 import { web3FromAddress } from '@polkadot/extension-dapp';
 import React from 'react';
+import { createSign } from 'crypto';
 
 type MethodPath = {
   section: string;
@@ -43,6 +44,7 @@ export class PolkadotTx<P extends Array<any>> extends EventBus<PolkadotTXEvents>
   }
 
   async call(signAddress: string) {
+    txLogger.info(`Sending transaction by`, signAddress, this.parms);
     this.transactionAddress = signAddress;
     const api = this.apiPromise;
     await api.isReady;
@@ -120,6 +122,7 @@ export class PolkadotTx<P extends Array<any>> extends EventBus<PolkadotTXEvents>
           }
         });
       } catch (e) {
+        console.log(e);
         const errorMessage = this.errorHandler(e);
         this.emitWithPayload('failed', errorMessage);
         reject(errorMessage);
