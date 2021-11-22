@@ -51,5 +51,5 @@ jobs:
     - name: build
       run: |
         yarn install --frozen-lockfile
-        yarn build:dapp
+        yarn build:dapp:production
 #        yarn build:dashboard
