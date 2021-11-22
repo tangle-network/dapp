@@ -23,6 +23,7 @@ import { WebbPolkadot } from './api-providers/polkadot';
 import { extensionNotInstalled, unsupportedChain } from './error';
 import { SettingProvider } from './SettingProvider';
 import { Chain, netStorageFactory, NetworkStorage, Wallet, WebbApiProvider, WebbContext } from './webb-context';
+import { logger } from 'ethers';
 
 interface WebbProviderProps extends BareProps {
   applicationName: string;
@@ -132,7 +133,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
           await nextActiveApi?.accounts.setActiveAccount(defaultFromSettings);
         }
       } else {
-        await setActiveAccount(accounts[0]);
+        // await setActiveAccount(accounts[0]);
       }
       setActiveApi(nextActiveApi);
       nextActiveApi?.on('newAccounts', async (accounts) => {
@@ -427,6 +428,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
         let defaultAccount = networkDefaultConfig[chainConfig.id]?.defaultAccount;
         defaultAccount = defaultAccount ?? accounts[0]?.address;
         const defaultFromSettings = accounts.find((account) => account.address === defaultAccount);
+        logger.info(`Default account from settings`, defaultFromSettings);
         if (defaultFromSettings) {
           _setActiveAccount(defaultFromSettings);
           await activeApi.accounts.setActiveAccount(defaultFromSettings);

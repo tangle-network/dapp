@@ -7,10 +7,18 @@ import { Note, NoteGenInput } from '@webb-tools/sdk-mixer';
 
 import { WebbPolkadot } from './webb-polkadot-provider';
 import { ApiPromise } from '@polkadot/api';
+import { ORMLCurrency } from '@webb-dapp/react-environment/types/orml-currency';
 
 type DepositPayload = IDepositPayload<Note, [number, Uint8Array[]]>;
 
 export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayload> {
+  private readonly tokens: ORMLCurrency;
+
+  constructor(t: WebbPolkadot) {
+    super(t);
+    this.tokens = new ORMLCurrency(t);
+  }
+
   static async getSizes(api: ApiPromise) {
     const data: Array<MixerGroupEntry> = await api.query.mixer.mixers.entries();
     // @ts-ignore
