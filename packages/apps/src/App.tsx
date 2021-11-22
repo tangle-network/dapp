@@ -30,4 +30,4 @@ const App: FC = () => {
   );
 };
 
-export default process.env.NODE_ENV === 'development' ? hot(App) : App;
+export default process.env.REACT_APP_BUILD_ENV === 'development' ? hot(App) : App;
