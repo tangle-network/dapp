@@ -57,7 +57,7 @@ export class PolkadotTx<P extends Array<any>> extends EventBus<PolkadotTXEvents>
     this.notificationKey = uniqueId(`${this.path.section}-${this.path.method}`);
     await api.setSigner(injector.signer);
     const txResults = await api.tx[this.path.section][this.path.method](...this.parms).signAsync(signAddress, {
-      nonce: accountInfo.nonce.toNumber(),
+      nonce: -1,
     });
     this.emitWithPayload('beforeSend', undefined);
     this.emitWithPayload('loading', React.createElement('div'));
