@@ -6,6 +6,28 @@ import { SubmittableExtrinsic } from '@polkadot/api/submittable/types';
 import { web3FromAddress } from '@polkadot/extension-dapp';
 import React from 'react';
 
+export type QueueTxStatus =
+  | 'future'
+  | 'ready'
+  | 'finalized'
+  | 'finalitytimeout'
+  | 'usurped'
+  | 'dropped'
+  | 'inblock'
+  | 'invalid'
+  | 'broadcast'
+  | 'cancelled'
+  | 'completed'
+  | 'error'
+  | 'incomplete'
+  | 'queued'
+  | 'qr'
+  | 'retracted'
+  | 'sending'
+  | 'signing'
+  | 'sent'
+  | 'blocked';
+
 type MethodPath = {
   section: string;
   method: string;
@@ -104,40 +126,38 @@ export class PolkadotTx<P extends Array<any>> extends EventBus<PolkadotTXEvents>
       try {
         await tx.send((result) => {
           const status = result.status;
-          const events = result.events;
-          console.log(events);
+          const events = result.events.filter(({ event: { section } }) => section === 'system');
+          const txStatus = result.status.type.toLowerCase() as QueueTxStatus;
+          console.log(txStatus);
           if (status.isInBlock || status.isFinalized) {
             for (const event of events) {
               const {
-                event: {
-                  data: [result],
-                },
+                event: { method, data },
               } = event;
-              console.log(result);
-              if (result.isError) {
-                let error = result.asError;
-                if (error.isModule) {
-                  // for module errors, we have the section indexed, lookup
-                  const decoded = this.apiPromise.registry.findMetaError(error.asModule);
-                  console.log(decoded, 'error decoded');
-                  const { docs, name, section } = decoded;
+              const [dispatchError] = data as any;
 
-                  const errorMessage = `${section}.${name}: ${docs.join(' ')}`;
-                  this.emitWithPayload('failed', errorMessage);
-                  reject(errorMessage);
-                  break;
-                } else {
-                  // Other, CannotLookup, BadOrigin, no extra info
-                  const errorMessage = error.toString();
-                  this.emitWithPayload('failed', errorMessage);
-                  reject(errorMessage);
-                  break;
+              if (method === 'ExtrinsicFailed') {
+                let message = dispatchError.type;
+
+                if (dispatchError.isModule) {
+                  try {
+                    const mod = dispatchError.asModule;
+                    const error = dispatchError.registry.findMetaError(mod);
+
+                    message = `${error.section}.${error.name}`;
+                  } catch (error) {
+                    const message = this.errorHandler(error as any);
+                    reject(message);
+                  }
+                } else if (dispatchError.isToken) {
+                  message = `${dispatchError.type}.${dispatchError.asToken.type}`;
                 }
+
+                this.emitWithPayload('failed', message);
+                reject(message);
+              } else if (method === 'ExtrinsicSuccess') {
               }
             }
-
-            resolve(result.dispatchInfo?.toString());
-            return this.emitWithPayload('finalize', undefined);
           }
         });
       } catch (e) {
