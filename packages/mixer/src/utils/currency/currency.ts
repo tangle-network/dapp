@@ -13,7 +13,7 @@ export class Currency {
   private constructor(private _inner: Data, private _apiRx: ApiRx | ApiPromise) {}
 
   static tokenFrom(currencyId: CurrencyId, amount: number) {
-    const id = currencyId?.toNumber() ?? currencyId;
+    const id = currencyId?.toNumber?.() ?? currencyId;
     switch (id) {
       case 0:
         return new Token({
@@ -38,7 +38,7 @@ export class Currency {
     let cid: CurrencyId;
     if (typeof currencyId === 'number') {
       // @ts-ignore
-      cid = api.createType('CurrencyId', currencyId);
+      cid = currencyId;
     } else {
       cid = currencyId;
     }
@@ -68,11 +68,10 @@ export class Currency {
         cid = 1;
     }
     // @ts-ignore
-    const currencyId: CurrencyId = apiRx.createType('CurrencyId', cid);
 
     return new Currency(
       {
-        currencyId,
+        currencyId: 1,
         token,
       },
       apiRx

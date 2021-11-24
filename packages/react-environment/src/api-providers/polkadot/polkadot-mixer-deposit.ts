@@ -9,8 +9,12 @@ import { WebbPolkadot } from './webb-polkadot-provider';
 import { ApiPromise } from '@polkadot/api';
 import { ORMLCurrency } from '@webb-dapp/react-environment/types/orml-currency';
 import { LoggerService } from '@webb-tools/app-util';
+import { string } from 'prop-types';
+import { web3FromAddress } from '@polkadot/extension-dapp';
+import { uniqueId } from 'lodash';
+import { u8aToHex } from '@polkadot/util';
 
-type DepositPayload = IDepositPayload<Note, [number, Uint8Array[]]>;
+type DepositPayload = IDepositPayload<Note, [number, string]>;
 const logger = LoggerService.get('tornado-deposit');
 
 export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayload> {
@@ -29,9 +33,10 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
       .map(([storageKey, info]) => {
         const cId: number = Number(info.toHuman().asset);
         const amount = info.toHuman().depositSize;
-        const id = Number(storageKey.toString());
-        console.log(info.toHuman(), 'info ::human');
         const treeId = storageKey.toHuman()[0];
+
+        const id = storageKey.toString() + treeId;
+        console.log(info.toHuman(), 'info ::human');
         return {
           id,
           amount: amount,
@@ -66,7 +71,6 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
   async generateNote(mixerId: number): Promise<DepositPayload> {
     logger.info(`Depositing to mixer id ${mixerId}`);
     const sizes = await this.getSizes();
-    console.log(sizes);
     const amount = sizes.find((size) => size.id === mixerId);
     if (!amount) {
       throw Error('amount not found! for mixer id ' + mixerId);
@@ -93,11 +97,23 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
 
     return {
       note: depositNote,
-      params: [Number(treeId), leaf],
+      params: [Number(treeId), u8aToHex(leaf)],
     };
   }
 
   async deposit(depositPayload: DepositPayload): Promise<void> {
+    /*    const account = await this.inner.accounts.activeOrDefault;
+    const address: string = account?.address!;
+    const accountInfo = await this.inner.api.query.system.account(address);
+    const injector = await web3FromAddress(address);
+    await this.inner.api.setSigner(injector.signer);
+    console.log(depositPayload.params[0], depositPayload.params[1]);
+    console.log('tx params', depositPayload.params[0], depositPayload.params[1], address);
+    const txResults = await this.inner.api.tx.mixer
+      .deposit(depositPayload.params[0], `0x000000000000000000000000000000000000000000000000000000000002123`)
+      .signAsync(address);
+    await txResults.send();*/
+
     const tx = this.inner.txBuilder.build(
       {
         section: 'mixer',

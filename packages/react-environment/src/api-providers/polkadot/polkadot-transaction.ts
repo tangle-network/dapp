@@ -5,7 +5,6 @@ import { ApiPromise, SubmittableResult } from '@polkadot/api';
 import { SubmittableExtrinsic } from '@polkadot/api/submittable/types';
 import { web3FromAddress } from '@polkadot/extension-dapp';
 import React from 'react';
-import { createSign } from 'crypto';
 
 type MethodPath = {
   section: string;
@@ -44,7 +43,7 @@ export class PolkadotTx<P extends Array<any>> extends EventBus<PolkadotTXEvents>
   }
 
   async call(signAddress: string) {
-    txLogger.info(`Sending transaction by`, signAddress, this.parms);
+    txLogger.info(`Sending ${this.path.section} ${this.path.method} transaction by`, signAddress, this.parms);
     this.transactionAddress = signAddress;
     const api = this.apiPromise;
     await api.isReady;
@@ -103,22 +102,42 @@ export class PolkadotTx<P extends Array<any>> extends EventBus<PolkadotTXEvents>
     // eslint-disable-next-line no-async-promise-executor
     return new Promise(async (resolve, reject) => {
       try {
-        await tx.send((status) => {
-          if (status.isCompleted) {
-            if (status.isError) {
-              let message = this.errorHandler(status);
-              this.emitWithPayload('failed', message);
-              return reject(message);
+        await tx.send((result) => {
+          const status = result.status;
+          const events = result.events;
+          console.log(events);
+          if (status.isInBlock || status.isFinalized) {
+            for (const event of events) {
+              const {
+                event: {
+                  data: [result],
+                },
+              } = event;
+              console.log(result);
+              if (result.isError) {
+                let error = result.asError;
+                if (error.isModule) {
+                  // for module errors, we have the section indexed, lookup
+                  const decoded = this.apiPromise.registry.findMetaError(error.asModule);
+                  console.log(decoded, 'error decoded');
+                  const { docs, name, section } = decoded;
+
+                  const errorMessage = `${section}.${name}: ${docs.join(' ')}`;
+                  this.emitWithPayload('failed', errorMessage);
+                  reject(errorMessage);
+                  break;
+                } else {
+                  // Other, CannotLookup, BadOrigin, no extra info
+                  const errorMessage = error.toString();
+                  this.emitWithPayload('failed', errorMessage);
+                  reject(errorMessage);
+                  break;
+                }
+              }
             }
-            if (status.isFinalized) {
-              resolve(status.dispatchInfo?.toString());
-              return this.emitWithPayload('finalize', undefined);
-            }
-          } else if (status.isError) {
-            const errorMessage = this.errorHandler(status);
-            console.log(errorMessage);
-            this.emitWithPayload('failed', errorMessage);
-            reject(errorMessage);
+
+            resolve(result.dispatchInfo?.toString());
+            return this.emitWithPayload('finalize', undefined);
           }
         });
       } catch (e) {

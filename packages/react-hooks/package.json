@@ -11,7 +11,7 @@
     "@webb-tools/api": "0.1.2-18",
     "@webb-tools/types": "0.1.2-18",
     "@influxdata/influxdb-client": "^1.8.0",
-	"@polkadot/api": "^6.1.2",
+	"@polkadot/api": "^6.9.2",
 	"@polkadot/extension-dapp": "^0.35.0-beta.35",
     "@umijs/use-request": "^1.4.3",
     "axios": "^0.21.0",

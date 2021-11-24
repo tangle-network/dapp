@@ -11,7 +11,7 @@
   },
   "resolutions": {
 	"eslint": "^6.6.0",
-	"@polkadot/api": "^6.1.2",
+	"@polkadot/api": "^6.9.2",
     "@webb-tools/type-definitions": "file:../webb.js/packages/type-definitions/build",
     "@webb-tools/api": "file:../webb.js/packages/api/build",
     "@webb-tools/types": "file:../webb.js/packages/types/build",

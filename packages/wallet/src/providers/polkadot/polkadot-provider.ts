@@ -154,7 +154,7 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
       }
     });
 
-    const opts = options({
+    const apiPromise = await ApiPromise.create({
       provider: wsProvider,
       rpc: {
         mt: {
@@ -187,9 +187,6 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
         },
       },
     });
-    logger.trace('Api Promise options', opts);
-
-    const apiPromise = await ApiPromise.create(opts);
     return [apiPromise, currentExtensions];
   }
 

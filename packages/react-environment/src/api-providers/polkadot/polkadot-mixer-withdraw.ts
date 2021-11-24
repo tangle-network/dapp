@@ -60,7 +60,6 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
     console.log(treeId);
     // @ts-ignore
     const nodeMerkleTree = await this.inner.api.query.merkleTree.trees(treeId);
-    console.log(nodeMerkleTree.toHuman());
     const groupTreeWrapper = new GroupTreeWrapper(nodeMerkleTree);
     const leaves = await this.fetchTreeLeaves(treeId);
 
@@ -74,7 +73,7 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
         relayer: hexAddress.replace('0x', ''),
       });
       const blockNumber = await this.inner.api.query.system.number();
-      console.log(zk);
+
       const withdrawProof: WithdrawProof = {
         id: treeId,
         proof_bytes: zk.proof as any,
