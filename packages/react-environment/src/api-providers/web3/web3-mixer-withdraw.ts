@@ -135,7 +135,7 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
         logger.trace('Note deserialized', evmNote);
         const mixerInfo = this.inner.getMixerInfoBySize(Number(evmNote.note.amount), evmNote.note.tokenSymbol);
         logger.info(`Withdrawing to mixer info`, mixerInfo);
-        const anchorContract = await this.inner.getContractByAddress(mixerInfo.address);
+        const tornadoContract = await this.inner.getContractByAddress(mixerInfo.address);
         logger.trace('Generating the zkp');
         const fees = await activeRelayer.fees(note);
         const zkpInputWithoutMerkleProof = fromDepositIntoZKPTornPublicInputs(deposit, {
@@ -148,7 +148,7 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
 
         // This is the part of withdraw that takes a long time
         this.emit('stateChange', WithdrawState.GeneratingZk);
-        const zkp = await anchorContract.generateZKPWithLeaves(
+        const zkp = await tornadoContract.generateZKPWithLeaves(
           deposit,
           zkpInputWithoutMerkleProof,
           relayerLeaves.leaves,
@@ -257,6 +257,7 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
       }
     } else {
       logger.trace('Withdrawing without relayer');
+
       transactionNotificationConfig.loading?.({
         address: recipient,
         data: React.createElement('p', {}, 'Withdraw In Progress'),
@@ -267,14 +268,28 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
         },
       });
       const contract = await this.inner.getContractBySize(Number(evmNote.note.amount), evmNote.note.tokenSymbol);
+      // Still retrieve supported relayers for leaf querying
+      const relayers = await this.getRelayersByNote(evmNote);
+      let zkp: any;
+      const zkpInputWithoutMerkleProof = fromDepositIntoZKPTornPublicInputs(deposit, {
+        recipient,
+        relayer: recipient,
+      });
       try {
-        const zkpInputWithoutMerkleProof = fromDepositIntoZKPTornPublicInputs(deposit, {
-          recipient,
-          relayer: recipient,
-        });
+        if (relayers.length) {
+          const relayerLeaves = await relayers[0].getLeaves(chainEvmId.toString(16), contract.inner.address);
 
-        // This is the part of withdraw that takes a long time
-        const zkp = await contract.generateZKP(deposit, zkpInputWithoutMerkleProof);
+          zkp = await contract.generateZKPWithLeaves(
+            deposit,
+            zkpInputWithoutMerkleProof,
+            relayerLeaves.leaves,
+            relayerLeaves.lastQueriedBlock
+          );
+        } else {
+          // This is the part of withdraw that takes a long time
+          zkp = await contract.generateZKP(deposit, zkpInputWithoutMerkleProof);
+        }
+        logger.trace('Generated the zkp', zkp);
 
         // Check for cancelled here, abort if it was set.
         // Mark the withdraw mixer as able to withdraw again.
