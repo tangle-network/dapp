@@ -24,7 +24,10 @@ const webWEBBRinkebyHarmonyTestnet0 = new BridgeCurrency(
   WebbCurrencyId.WEBB
 );
 
-const webbETHtest1 = new BridgeCurrency([ChainId.Ropsten, ChainId.Rinkeby, ChainId.Goerli], WebbCurrencyId.ETH);
+const webbETHtest1 = new BridgeCurrency(
+  [ChainId.Ropsten, ChainId.Rinkeby, ChainId.Goerli, ChainId.Kovan, ChainId.OptimismTestnet, ChainId.ArbitrumTestnet],
+  WebbCurrencyId.ETH
+);
 const webbWEBBRinkebyGoerli = new BridgeCurrency([ChainId.Rinkeby, ChainId.Goerli], WebbCurrencyId.WEBB);
 
 export const bridgeConfig: BridgeConfig = {
@@ -47,18 +50,24 @@ export const bridgeConfig: BridgeConfig = {
   [webbETHtest1.name]: {
     asset: webbETHtest1,
     tokenAddresses: {
-      [ChainId.Ropsten]: '0x068E43Ca7b7fD2dc830f6a23011af16905b6bd46',
-      [ChainId.Rinkeby]: '0x662071e608C18784C8be1785f1b382B1EbA320F7',
-      [ChainId.Goerli]: '0x8C29CEd3a537d89e2bb27fdE7267C5E4Ac1910f8',
+      [ChainId.Ropsten]: '0x2C165572FeBE99C25644eF3433989D6e37F2a8bE',
+      [ChainId.Rinkeby]: '0x80DF11835B03bE444fd6f6587bEa70175d12da39',
+      [ChainId.Goerli]: '0x021C3Ad0971c10f39a36E783419A491FB2dE3f64',
+      [ChainId.Kovan]: '0xdd1CcAb2fB769A0D07bb9795F309964a12A79F7D',
+      [ChainId.OptimismTestnet]: '0x33Ae40e485fcb8fD196f22229ba094F2b1680Bb7',
+      [ChainId.ArbitrumTestnet]: '0x95A5CcfCa50F7Dcf410CE397Bb7Becf1b42Ae601',
     },
     anchors: [
       {
         anchorAddresses: {
-          [ChainId.Ropsten]: '0x03812879Bc2Cc702956671036463E6873f631786',
-          [ChainId.Rinkeby]: '0x0ab17504465cB1b5235c6b4020A65faf070D5cDA',
-          [ChainId.Goerli]: '0x0Aa49a86f526E44853A2704984d6A91C7289Fc93',
+          [ChainId.Ropsten]: '0x8DB24d0Df8cc4CEbF275528f7725E560F50329bf',
+          [ChainId.Rinkeby]: '0x99285189A0DA76dce5D3Da6Cf71aD3f2b498DC88',
+          [ChainId.Goerli]: '0xC44A4EcAC4f23b6F92485Cb1c90dBEd75a987BC8',
+          [ChainId.Kovan]: '0xd961d7Cf4d001EC57ff3F6F9F6428B73b7d924Bc',
+          [ChainId.OptimismTestnet]: '0xd2e52699762D00f142e2c61280cd87D47B3A3b97',
+          [ChainId.ArbitrumTestnet]: '0x626FEc5Ffa7Bf1EE8CEd7daBdE545630473E3ABb',
         },
-        amount: '0.01',
+        amount: '0.1',
       },
     ],
   },

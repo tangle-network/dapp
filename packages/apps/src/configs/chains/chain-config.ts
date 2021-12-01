@@ -5,6 +5,7 @@ import ShidenLogo from '@webb-dapp/apps/configs/logos/ShidenLogo';
 import { AppConfig } from '@webb-dapp/react-environment/webb-context';
 
 import { WebbCurrencyId } from '../currencies/webb-currency-id.enum';
+import ArbitrumLogo from '../logos/ArbitrumLogo';
 import { ChainId, WebbEVMChain } from './chain-id.enum';
 
 export const chainsConfig: AppConfig['chains'] = {
@@ -101,6 +102,57 @@ export const chainsConfig: AppConfig['chains'] = {
     url: 'https://goerli.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4',
     evmRpcUrls: ['https://goerli.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4'],
     logo: EtherLogo,
+    tag: 'test',
+    currencies: [
+      {
+        currencyId: WebbCurrencyId.ETH,
+        enabled: true,
+      },
+    ],
+    nativeCurrencyId: WebbCurrencyId.ETH,
+  },
+  [ChainId.Kovan]: {
+    group: 'eth',
+    id: ChainId.Kovan,
+    evmId: WebbEVMChain.Kovan,
+    name: 'Kovan',
+    url: 'https://kovan.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4',
+    evmRpcUrls: ['https://goerli.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4'],
+    logo: EtherLogo,
+    tag: 'test',
+    currencies: [
+      {
+        currencyId: WebbCurrencyId.ETH,
+        enabled: true,
+      },
+    ],
+    nativeCurrencyId: WebbCurrencyId.ETH,
+  },
+  [ChainId.OptimismTestnet]: {
+    group: 'eth',
+    id: ChainId.OptimismTestnet,
+    evmId: WebbEVMChain.OptimismTestnet,
+    name: 'Optimism Testnet',
+    url: 'https://kovan.optimism.io',
+    evmRpcUrls: ['https://kovan.optimism.io'],
+    logo: EtherLogo,
+    tag: 'test',
+    currencies: [
+      {
+        currencyId: WebbCurrencyId.ETH,
+        enabled: true,
+      },
+    ],
+    nativeCurrencyId: WebbCurrencyId.ETH,
+  },
+  [ChainId.ArbitrumTestnet]: {
+    group: 'eth',
+    id: ChainId.ArbitrumTestnet,
+    evmId: WebbEVMChain.ArbitrumTestnet,
+    name: 'Arbitrum Testnet',
+    url: 'https://rinkeby.arbitrum.io/rpc',
+    evmRpcUrls: ['https://rinkeby.arbitrum.io/rpc'],
+    logo: ArbitrumLogo,
     tag: 'test',
     currencies: [
       {
