@@ -1,11 +1,12 @@
+import ArbitrumLogo from '@webb-dapp/apps/configs/logos/ArbitrumLogo';
 import EdgewareLogo from '@webb-dapp/apps/configs/logos/EdgewareLogo';
 import EtherLogo from '@webb-dapp/apps/configs/logos/Eth';
 import HarmonyLogo from '@webb-dapp/apps/configs/logos/HarmonyLogo';
+import OptimismLogo from '@webb-dapp/apps/configs/logos/OptimismLogo';
 import ShidenLogo from '@webb-dapp/apps/configs/logos/ShidenLogo';
 import { AppConfig } from '@webb-dapp/react-environment/webb-context';
 
 import { WebbCurrencyId } from '../currencies/webb-currency-id.enum';
-import ArbitrumLogo from '../logos/ArbitrumLogo';
 import { ChainId, WebbEVMChain } from './chain-id.enum';
 
 export const chainsConfig: AppConfig['chains'] = {
@@ -135,7 +136,7 @@ export const chainsConfig: AppConfig['chains'] = {
     name: 'Optimism Testnet',
     url: 'https://kovan.optimism.io',
     evmRpcUrls: ['https://kovan.optimism.io'],
-    logo: EtherLogo,
+    logo: OptimismLogo,
     tag: 'test',
     currencies: [
       {

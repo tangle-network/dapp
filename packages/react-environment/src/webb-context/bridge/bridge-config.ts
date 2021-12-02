@@ -19,34 +19,12 @@ export type BridgeConfigEntry = {
 };
 export type BridgeConfig = Record<string, BridgeConfigEntry>;
 
-const webWEBBRinkebyHarmonyTestnet0 = new BridgeCurrency(
-  [ChainId.Rinkeby, ChainId.HarmonyTestnet0],
-  WebbCurrencyId.WEBB
-);
-
 const webbETHtest1 = new BridgeCurrency(
   [ChainId.Ropsten, ChainId.Rinkeby, ChainId.Goerli, ChainId.Kovan, ChainId.OptimismTestnet, ChainId.ArbitrumTestnet],
   WebbCurrencyId.ETH
 );
-const webbWEBBRinkebyGoerli = new BridgeCurrency([ChainId.Rinkeby, ChainId.Goerli], WebbCurrencyId.WEBB);
 
 export const bridgeConfig: BridgeConfig = {
-  [webbWEBBRinkebyGoerli.name]: {
-    asset: webbWEBBRinkebyGoerli,
-    tokenAddresses: {
-      [ChainId.Goerli]: '0x386beAb23Dc9cd965F58541beb2C5976BF01B8C3',
-      [ChainId.Rinkeby]: '0xD81F2Fdad6ef7Dc5951de7724C0aaCF097c39A27',
-    },
-    anchors: [
-      {
-        anchorAddresses: {
-          [ChainId.Goerli]: '0xD24Eea4f4e17f7a708b2b156D3B90C921659BE80',
-          [ChainId.Rinkeby]: '0x8431fDec940555becED3f4C04374c1D60b4ac07e',
-        },
-        amount: '0.1',
-      },
-    ],
-  },
   [webbETHtest1.name]: {
     asset: webbETHtest1,
     tokenAddresses: {
