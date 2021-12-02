@@ -40,6 +40,10 @@ export function relayerNameToChainId(name: string): ChainId {
       return ChainId.Rinkeby;
     case 'shiden':
       return ChainId.Shiden;
+    case 'optimismtest':
+      return ChainId.OptimismTestnet;
+    case 'arbitrumtest':
+      return ChainId.ArbitrumTestnet;
   }
 
   throw new Error('unhandled relayed chain name  ' + name);

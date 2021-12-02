@@ -257,7 +257,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
     }
 
     // generate the merkle proof
-    const merkleProof = await destAnchor.generateLinkedMerkleProof(sourceDeposit, leaves);
+    const merkleProof = await destAnchor.generateLinkedMerkleProof(sourceDeposit, leaves, sourceEvmId);
     if (!merkleProof) {
       this.emit('stateChange', WithdrawState.Ideal);
       throw new Error('Failed to generate Merkle proof');
@@ -299,6 +299,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
     try {
       zkpResults = await destAnchor.merkleProofToZKP(merkleProof, sourceDeposit, input);
     } catch (e) {
+      console.log(e);
       this.emit('stateChange', WithdrawState.Ideal);
       transactionNotificationConfig.failed?.({
         address: recipient,
