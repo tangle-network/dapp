@@ -68,6 +68,7 @@ export const chainsConfig: AppConfig['chains'] = {
     name: 'Rinkeby',
     url: 'https://rinkeby.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4',
     evmRpcUrls: ['https://rinkeby.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4'],
+    blockExplorerStub: 'https://rinkeby.etherscan.io',
     logo: EtherLogo,
     tag: 'test',
     currencies: [
@@ -85,6 +86,7 @@ export const chainsConfig: AppConfig['chains'] = {
     name: 'Ropsten',
     url: 'https://ropsten.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4',
     evmRpcUrls: ['https://ropsten.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4'],
+    blockExplorerStub: 'https://ropsten.etherscan.io',
     logo: EtherLogo,
     tag: 'test',
     currencies: [
@@ -102,6 +104,7 @@ export const chainsConfig: AppConfig['chains'] = {
     name: 'Goerli',
     url: 'https://goerli.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4',
     evmRpcUrls: ['https://goerli.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4'],
+    blockExplorerStub: 'https://goerli.etherscan.io',
     logo: EtherLogo,
     tag: 'test',
     currencies: [
@@ -119,6 +122,7 @@ export const chainsConfig: AppConfig['chains'] = {
     name: 'Kovan',
     url: 'https://kovan.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4',
     evmRpcUrls: ['https://goerli.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4'],
+    blockExplorerStub: 'https://kovan.etherscan.io',
     logo: EtherLogo,
     tag: 'test',
     currencies: [
@@ -136,6 +140,7 @@ export const chainsConfig: AppConfig['chains'] = {
     name: 'Optimism Testnet',
     url: 'https://kovan.optimism.io',
     evmRpcUrls: ['https://kovan.optimism.io'],
+    blockExplorerStub: 'https://kovan-optimistic.etherscan.io',
     logo: OptimismLogo,
     tag: 'test',
     currencies: [
@@ -153,6 +158,7 @@ export const chainsConfig: AppConfig['chains'] = {
     name: 'Arbitrum Testnet',
     url: 'https://rinkeby.arbitrum.io/rpc',
     evmRpcUrls: ['https://rinkeby.arbitrum.io/rpc'],
+    blockExplorerStub: 'https://testnet.arbiscan.io',
     logo: ArbitrumLogo,
     tag: 'test',
     currencies: [

@@ -273,6 +273,7 @@ export class AnchorContract {
   async merkleProofToZKP(merkleProof: any, deposit: Deposit, zkpInputWithoutMerkleProof: ZKPWebbInputWithoutMerkle) {
     const { pathElements, pathIndex: pathIndices, root: merkleRoot } = merkleProof;
     const localRoot = await this._contract.getLastRoot();
+    const nr = await this._contract.getLatestNeighborRoots();
     const root = bufferToFixed(merkleRoot);
     const input: BridgeWitnessInput = {
       chainID: BigInt(zkpInputWithoutMerkleProof.destinationChainId),
@@ -280,7 +281,7 @@ export class AnchorContract {
       refreshCommitment: bufferToFixed('0'),
       secret: deposit.secret,
       nullifierHash: deposit.nullifierHash,
-      diffs: [localRoot, root].map((r) => {
+      diffs: [localRoot, ...nr].map((r) => {
         return F.sub(Scalar.fromString(`${r}`), Scalar.fromString(`${root}`)).toString();
       }),
       fee: String(zkpInputWithoutMerkleProof.fee),
@@ -289,7 +290,7 @@ export class AnchorContract {
       recipient: zkpInputWithoutMerkleProof.recipient,
       refund: String(zkpInputWithoutMerkleProof.refund),
       relayer: zkpInputWithoutMerkleProof.relayer,
-      roots: [localRoot, root],
+      roots: [localRoot, ...nr],
     };
     const edges = await this._contract.maxEdges();
     logger.trace(`Generate witness with edges ${edges}`, input);
