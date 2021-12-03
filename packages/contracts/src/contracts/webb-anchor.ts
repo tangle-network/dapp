@@ -338,7 +338,6 @@ export class AnchorContract {
   async withdraw(proof: any, zkp: ZKPWebbInputWithMerkle, pub: any): Promise<string> {
     const overrides = {
       gasLimit: 6000000,
-      gasPrice: utils.toWei('2', 'gwei'),
     };
     const proofBytes = await generateWithdrawProofCallData(proof, pub);
     const tx = await this._contract.withdraw(
