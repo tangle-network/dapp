@@ -297,7 +297,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
 
     let zkpResults;
     try {
-      zkpResults = await destAnchor.merkleProofToZKP(merkleProof, sourceDeposit, input);
+      zkpResults = await destAnchor.merkleProofToZKP(merkleProof, sourceEvmId, sourceDeposit, input);
     } catch (e) {
       console.log(e);
       this.emit('stateChange', WithdrawState.Ideal);
