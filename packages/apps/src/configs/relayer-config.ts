@@ -46,9 +46,9 @@ export function relayerNameToChainId(name: string): ChainId {
       return ChainId.Kovan;
     case 'shiden':
       return ChainId.Shiden;
-    case 'optimismtest':
+    case 'optimismtestnet':
       return ChainId.OptimismTestnet;
-    case 'arbitrumtest':
+    case 'arbitrumtestnet':
       return ChainId.ArbitrumTestnet;
   }
 
