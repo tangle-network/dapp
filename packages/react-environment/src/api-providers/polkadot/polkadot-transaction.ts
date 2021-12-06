@@ -156,7 +156,7 @@ export class PolkadotTx<P extends Array<any>> extends EventBus<PolkadotTXEvents>
                 this.emitWithPayload('failed', message);
                 reject(message);
               } else if (method === 'ExtrinsicSuccess') {
-              	// tod return the TX hash
+                // todo return the TX hash
                 resolve('okay');
                 return this.emitWithPayload('finalize', undefined);
               }

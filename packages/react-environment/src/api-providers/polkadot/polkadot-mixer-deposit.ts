@@ -81,7 +81,8 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
     const noteInput: NoteGenInput = {
       prefix: 'webb.mix',
       version: 'v1',
-
+      exponentiation: '5',
+      width: '3',
       backend: 'Arkworks',
       hashFunction: 'Poseidon',
       curve: 'Bn254',
@@ -102,18 +103,6 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
   }
 
   async deposit(depositPayload: DepositPayload): Promise<void> {
-    /*    const account = await this.inner.accounts.activeOrDefault;
-    const address: string = account?.address!;
-    const accountInfo = await this.inner.api.query.system.account(address);
-    const injector = await web3FromAddress(address);
-    await this.inner.api.setSigner(injector.signer);
-    console.log(depositPayload.params[0], depositPayload.params[1]);
-    console.log('tx params', depositPayload.params[0], depositPayload.params[1], address);
-    const txResults = await this.inner.api.tx.mixer
-      .deposit(depositPayload.params[0], `0x000000000000000000000000000000000000000000000000000000000002123`)
-      .signAsync(address);
-    await txResults.send();*/
-
     const tx = this.inner.txBuilder.build(
       {
         section: 'mixer',

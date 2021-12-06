@@ -11,6 +11,7 @@ import { PolkadotMixerDeposit } from '.';
 import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
 import { addressToEvm } from '@polkadot/util-crypto';
 import { hexToU8a, u8aToHex } from '@polkadot/util';
+import { decodeAddress } from '@polkadot/keyring';
 type WithdrawProof = {
   id: string;
   proof_bytes: string;
@@ -65,7 +66,8 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
 
     try {
       const pm = new ProvingManger(new Worker());
-      const hexAddress = u8aToHex(addressToEvm('jn5LuB5d51srpmZqiBNgWu11C6AeVxEygggjWsifcG1myqr'));
+      const hexAddress = u8aToHex(decodeAddress('jn5LuB5d51srpmZqiBNgWu11C6AeVxEygggjWsifcG1myqr'));
+
       const zk = await pm.proof({
         leaves,
         note,
