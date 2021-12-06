@@ -232,6 +232,9 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
           }
         });
         logger.trace('Sending transaction');
+        // stringify the request
+        const data2 = JSON.stringify(tx);
+        console.log(data2);
         relayedWithdraw.send(tx);
         const txHash = await relayedWithdraw.await();
         if (txHash[1]) {
