@@ -164,6 +164,25 @@ function hexifyBigInts(o) {
   }
 }
 
+// Convert a hex string to a byte array
+function hexStringToBytes(str: string) {
+  if (str.slice(0, 2) === '0x') {
+    str = str.substr(2);
+  }
+
+  if (!str) {
+    return new Uint8Array();
+  }
+
+  var a = [];
+  for (var i = 0, len = str.length; i < len; i += 2) {
+    // @ts-ignore
+    a.push(parseInt(str.substr(i, 2), 16));
+  }
+
+  return new Uint8Array(a);
+}
+
 function toSolidityInput(proof, publicSignals) {
   const result = {
     pi_a: [proof.pi_a[0], proof.pi_a[1]],
@@ -227,6 +246,7 @@ export {
   toFixedHex,
   arrayToFixedHex,
   toHex,
+  hexStringToBytes,
   abiEncode,
   generateDeposit,
   getFunctionSignature,

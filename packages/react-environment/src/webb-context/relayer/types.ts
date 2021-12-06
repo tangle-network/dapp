@@ -2,6 +2,7 @@ import { ChainId } from '@webb-dapp/apps/configs';
 
 export type RelayedChainConfig = {
   account: string;
+  beneficiary?: string;
   contracts: Contract[];
 };
 export type Capabilities = {
