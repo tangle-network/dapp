@@ -253,10 +253,11 @@ export class AnchorContract {
     return tree.path(leafIndex);
   }
 
-  async generateLinkedMerkleProof(sourceDeposit: Deposit, sourceLeaves: string[]) {
+  async generateLinkedMerkleProof(sourceDeposit: Deposit, sourceLeaves: string[], sourceChainId: number) {
     // Grab the root of the source chain to prove against
-    const edgeIndex = await this._contract.edgeIndex(sourceDeposit.chainId!);
+    const edgeIndex = await this._contract.edgeIndex(sourceChainId);
     const edge = await this._contract.edgeList(edgeIndex);
+    console.log('retrieved edge while generating merkle proof: ', edge);
     const latestSourceRoot = edge[1];
 
     const tree = AnchorContract.createTreeWithRoot(sourceLeaves, latestSourceRoot);
@@ -269,17 +270,28 @@ export class AnchorContract {
     return undefined;
   }
 
-  async merkleProofToZKP(merkleProof: any, deposit: Deposit, zkpInputWithoutMerkleProof: ZKPWebbInputWithoutMerkle) {
+  async merkleProofToZKP(
+    merkleProof: any,
+    sourceEvmId: number,
+    deposit: Deposit,
+    zkpInputWithoutMerkleProof: ZKPWebbInputWithoutMerkle
+  ) {
     const { pathElements, pathIndex: pathIndices, root: merkleRoot } = merkleProof;
     const localRoot = await this._contract.getLastRoot();
+    let nr = await this._contract.getLatestNeighborRoots();
+    const sourceChainRootIndex = (await this._contract.edgeIndex(sourceEvmId)).toNumber();
     const root = bufferToFixed(merkleRoot);
+    // create a mutable copy of the returned neighbor roots and overwrite the root used
+    // in the merkle proof
+    let neighborRoots = [...nr];
+    neighborRoots[sourceChainRootIndex] = root;
     const input: BridgeWitnessInput = {
-      chainID: BigInt(deposit.chainId!),
+      chainID: BigInt(zkpInputWithoutMerkleProof.destinationChainId),
       nullifier: deposit.nullifier,
       refreshCommitment: bufferToFixed('0'),
       secret: deposit.secret,
       nullifierHash: deposit.nullifierHash,
-      diffs: [localRoot, root].map((r) => {
+      diffs: [localRoot, ...neighborRoots].map((r) => {
         return F.sub(Scalar.fromString(`${r}`), Scalar.fromString(`${root}`)).toString();
       }),
       fee: String(zkpInputWithoutMerkleProof.fee),
@@ -288,7 +300,7 @@ export class AnchorContract {
       recipient: zkpInputWithoutMerkleProof.recipient,
       refund: String(zkpInputWithoutMerkleProof.refund),
       relayer: zkpInputWithoutMerkleProof.relayer,
-      roots: [localRoot, root],
+      roots: [localRoot, ...neighborRoots],
     };
     const edges = await this._contract.maxEdges();
     logger.trace(`Generate witness with edges ${edges}`, input);
@@ -336,7 +348,6 @@ export class AnchorContract {
   async withdraw(proof: any, zkp: ZKPWebbInputWithMerkle, pub: any): Promise<string> {
     const overrides = {
       gasLimit: 6000000,
-      gasPrice: utils.toWei('2', 'gwei'),
     };
     const proofBytes = await generateWithdrawProofCallData(proof, pub);
     const tx = await this._contract.withdraw(

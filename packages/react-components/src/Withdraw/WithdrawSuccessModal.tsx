@@ -1,12 +1,12 @@
 import { parseUnits } from '@ethersproject/units';
 import { Button, Divider, Icon, Link, Typography } from '@material-ui/core';
-import { ChainId } from '@webb-dapp/apps/configs';
+import { ChainId, chainsConfig } from '@webb-dapp/apps/configs';
 import { ActiveWebbRelayer } from '@webb-dapp/react-environment/webb-context/relayer/';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 import { LoggerService } from '@webb-tools/app-util';
 import { DepositNote } from '@webb-tools/wasm-utils';
 import { ethers } from 'ethers';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 const logger = LoggerService.get('Withdraw-Modal');
@@ -101,55 +101,25 @@ const buttonStyle = {
   color: 'green',
 };
 
-const WithdrawSuccessModal: React.FC<WithdrawingModalProps> = ({ exit, note, receipt, recipient, relayer }) => {  
+const WithdrawSuccessModal: React.FC<WithdrawingModalProps> = ({ exit, note, receipt, recipient, relayer }) => {
   const transactionString = (hexString: string) => {
     return `${hexString.slice(0, 6)}...${hexString.slice(hexString.length - 4, hexString.length)}`;
   };
 
   const getBlockExplorerTx = (txHash: string): string => {
-    switch (Number(note.chain)) {
-      case ChainId.Edgeware:
-        return '';
-      case ChainId.EdgewareLocalNet:
-        return '';
-      case ChainId.EdgewareTestNet:
-        return '';
-      case ChainId.Rinkeby:
-        return `https://rinkeby.etherscan.io/tx/${txHash}`;
-      case ChainId.HarmonyTestnet0:
-        return `https://explorer.pops.one/tx/${txHash}`;
-      case ChainId.HarmonyTestnet1:
-        return `https://explorer.pops.one/tx/${txHash}`;
-      case ChainId.HarmonyMainnet0:
-        return `https://explorer.harmony.one/tx/${txHash}`;
-      case ChainId.Shiden:
-        return `https://shiden.subscan.io/tx/${txHash}`;
-      default:
-        return '';
-    }
+    const chainId = Number(note.chain);
+    const url = chainsConfig[chainId].blockExplorerStub
+      ? `${chainsConfig[chainId].blockExplorerStub}/tx/${txHash}`
+      : '';
+    return url;
   };
 
   const getBlockExplorerAddress = (address: string): string => {
-    switch (Number(note.chain)) {
-      case ChainId.Edgeware:
-        return '';
-      case ChainId.EdgewareLocalNet:
-        return '';
-      case ChainId.EdgewareTestNet:
-        return '';
-      case ChainId.Rinkeby:
-        return `https://rinkeby.etherscan.io/address/${address}`;
-      case ChainId.HarmonyTestnet0:
-        return `https://explorer.pops.one/address/${address}`;
-      case ChainId.HarmonyTestnet1:
-        return `https://explorer.pops.one/address/${address}`;
-      case ChainId.HarmonyMainnet0:
-        return `https://explorer.harmony.one/address/${address}`;
-      case ChainId.Shiden:
-        return `https://shiden.subscan.io/address/${address}`;
-      default:
-        return '';
-    }
+    const chainId = Number(note.chain);
+    const url = chainsConfig[chainId].blockExplorerStub
+      ? `${chainsConfig[chainId].blockExplorerStub}/address/${address}`
+      : '';
+    return url;
   };
 
   const [receivedAmount, setReceivedAmount] = useState('');

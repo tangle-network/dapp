@@ -1,8 +1,9 @@
-import { AppConfig } from '@webb-dapp/react-environment/webb-context';
-import { WalletId } from '../wallets/wallet-id.enum';
-import { PolkaLogo } from '@webb-dapp/apps/configs/logos/PolkaLogo';
 import { MetaMaskLogo } from '@webb-dapp/apps/configs/logos/MetaMaskLogo';
+import { PolkaLogo } from '@webb-dapp/apps/configs/logos/PolkaLogo';
+import { AppConfig } from '@webb-dapp/react-environment/webb-context';
+
 import { ChainId } from '../chains/chain-id.enum';
+import { WalletId } from '../wallets/wallet-id.enum';
 // import { WalletConnectLogo } from '@webb-dapp/apps/configs/logos/WalletConnectLogo';
 
 const ANY_EVM = [
@@ -17,6 +18,8 @@ const ANY_EVM = [
   ChainId.HarmonyTestnet0,
   ChainId.HarmonyMainnet0,
   ChainId.Shiden,
+  ChainId.OptimismTestnet,
+  ChainId.ArbitrumTestnet,
 ];
 export const walletsConfig: AppConfig['wallet'] = {
   [WalletId.Polkadot]: {
