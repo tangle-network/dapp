@@ -28,6 +28,24 @@ export const config: RouterConfigData[] =
             title: 'Tornado',
           },
           {
+            element: (
+              <CSuspense>
+                <PageBridge />
+              </CSuspense>
+            ),
+            path: 'bridge',
+            title: 'Bridge',
+          },
+          {
+            element: (
+              <CSuspense>
+                <PageWrapUnwrap />
+              </CSuspense>
+            ),
+            path: 'wrap-unwrap/*',
+            title: 'Wrap/Unwrap assets',
+          },
+          {
             path: '*',
             redirectTo: 'tornado',
           },

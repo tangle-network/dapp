@@ -115,39 +115,29 @@ const AppBar: React.FC<AppBarProps> = () => {
       <SpacerDiv />
       {!isMobile && (
         <NavigationWrapper>
-          {process.env.REACT_APP_BUILD_ENV === 'production' && (
+          <li className={'active'}>
+            <NavLink to={'/tornado'} activeclassname={'active'}>
+              Tornados
+            </NavLink>
+          </li>
+          <li className={'active'}>
+            <NavLink to={'/bridge'} activeclassname={'active'}>
+              Bridge
+            </NavLink>
+          </li>
+          {process.env.REACT_APP_BUILD_ENV != 'production' && (
             <li className={'active'}>
-              <NavLink to={'/tornado'} activeclassname={'active'}>
-                Tornados
+              <NavLink to={'/transfer'} activeclassname={'active'}>
+                Transfer
               </NavLink>
             </li>
           )}
-          {process.env.REACT_APP_BUILD_ENV != 'production' && (
-            <>
-              <li className={'active'}>
-                <NavLink to={'/tornado'} activeclassname={'active'}>
-                  Tornados
-                </NavLink>
-              </li>
 
-              <li className={'active'}>
-                <NavLink to={'/bridge'} activeclassname={'active'}>
-                  Bridge
-                </NavLink>
-              </li>
-              <li className={'active'}>
-                <NavLink to={'/transfer'} activeclassname={'active'}>
-                  Transfer
-                </NavLink>
-              </li>
-
-              <li className={'active'}>
-                <NavLink to={'/wrap-unwrap'} activeclassname={'active'}>
-                  Wrap/Unwrap
-                </NavLink>
-              </li>
-            </>
-          )}
+          <li className={'active'}>
+            <NavLink to={'/wrap-unwrap'} activeclassname={'active'}>
+              Wrap/Unwrap
+            </NavLink>
+          </li>
         </NavigationWrapper>
       )}
       <RightNavigation>
