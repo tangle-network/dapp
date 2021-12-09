@@ -15,7 +15,7 @@ type WithdrawingModalProps = {
 };
 
 const WithdrawInfoWrapper = styled.div`
-  width: 500px;
+  flex: 1;
   min-height: 300px;
   position: relative;
   overflow: hidden;
