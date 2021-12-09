@@ -1,4 +1,4 @@
-import { useIp } from '@webb-dapp/react-environment/';
+import { useIp, useWebContext } from '@webb-dapp/react-environment';
 import { useFetch } from '@webb-dapp/react-hooks/useFetch';
 import { ContentWrapper } from '@webb-dapp/ui-components/ContentWrappers';
 import { Spinner } from '@webb-dapp/ui-components/Spinner/Spinner';
@@ -50,6 +50,7 @@ export const PermissionedAccess: React.FC<PermissionedAccessProps> = ({ children
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [acceptedTermsStorage, setAcceptedTermsStorage] = useState<AcceptedTermsStorage | null>(null);
   const { countryCode } = useIp();
+  const { activeChain } = useWebContext();
 
   const storeAcceptedTerms = () => {
     acceptedTermsStorage?.set('acceptedTerms', true);
@@ -79,8 +80,12 @@ export const PermissionedAccess: React.FC<PermissionedAccessProps> = ({ children
       }
       setPermissionedState(PermissionedState.Allowed);
     };
-    checkPermissions();
-  }, [acceptedTerms, countryCode]);
+    if (activeChain?.tag === ('test' || 'dev')) {
+      setPermissionedState(PermissionedState.Allowed);
+    } else {
+      checkPermissions();
+    }
+  }, [acceptedTerms, countryCode, activeChain]);
 
   return (
     <>
