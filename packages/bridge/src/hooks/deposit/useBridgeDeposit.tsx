@@ -57,6 +57,7 @@ export const useBridgeDeposit = (): BridgeDepositApi => {
       });
     });
     return () => {
+      setActiveBridge(null);
       unSub && unSub();
       subscribe.unsubscribe();
     };
