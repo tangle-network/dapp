@@ -1,7 +1,7 @@
 import { Button, Checkbox, FormControlLabel, IconButton, InputBase, InputProps, Tooltip } from '@material-ui/core';
 import Icon from '@material-ui/core/Icon';
 import Typography from '@material-ui/core/Typography';
-import { WebbCurrencyId } from '@webb-dapp/apps/configs';
+import { WebbNativeCurrencyId } from '@webb-dapp/apps/configs';
 import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
 import { useWrapUnwrap } from '@webb-dapp/page-wrap-unwrap/hooks/useWrapUnwrap';
 import IPDisplay from '@webb-dapp/react-components/IPDisplay/IPDisplay';

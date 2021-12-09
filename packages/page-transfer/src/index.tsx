@@ -1,5 +1,5 @@
 import { Button, InputBase } from '@material-ui/core';
-import { ChainId, currenciesConfig, WebbCurrencyId } from '@webb-dapp/apps/configs';
+import { ChainId, currenciesConfig, WebbNativeCurrencyId } from '@webb-dapp/apps/configs';
 import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
 import IPDisplay from '@webb-dapp/react-components/IPDisplay/IPDisplay';
 import { useWebContext } from '@webb-dapp/react-environment';
@@ -53,11 +53,11 @@ const PageTransfers: FC = () => {
   const bridge = useBridge();
 
   const nativeTokens = useMemo(() => {
-    return Object.keys(currenciesConfig).map((i) => Number(i) as WebbCurrencyId);
+    return Object.keys(currenciesConfig).map((i) => Number(i) as WebbNativeCurrencyId);
   }, []);
 
   const bridgeTokens = useMemo(() => {
-    return bridge.getTokens().filter((currency) => currency.currencyId !== WebbCurrencyId.WEBB);
+    return bridge.getTokens().filter((currency) => currency.currencyId !== WebbNativeCurrencyId.WEBB);
   }, [bridge]);
   const tokens = useMemo(() => {
     const tokens: CurrencyContent[] = [];

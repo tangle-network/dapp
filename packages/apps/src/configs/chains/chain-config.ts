@@ -6,7 +6,7 @@ import OptimismLogo from '@webb-dapp/apps/configs/logos/OptimismLogo';
 import ShidenLogo from '@webb-dapp/apps/configs/logos/ShidenLogo';
 import { AppConfig } from '@webb-dapp/react-environment/webb-context';
 
-import { WebbCurrencyId } from '../currencies/webb-currency-id.enum';
+import { WebbNativeCurrencyId } from '../currencies/webb-currency-id.enum';
 import { ChainId, WebbEVMChain } from './chain-id.enum';
 
 export const chainsConfig: AppConfig['chains'] = {
@@ -20,11 +20,11 @@ export const chainsConfig: AppConfig['chains'] = {
     name: 'Edgeware Development',
     currencies: [
       {
-        currencyId: WebbCurrencyId.EDG,
+        currencyId: WebbNativeCurrencyId.EDG,
         enabled: true,
       },
     ],
-    nativeCurrencyId: WebbCurrencyId.EDG,
+    nativeCurrencyId: WebbNativeCurrencyId.EDG,
   },
   [ChainId.EdgewareTestNet]: {
     group: 'edgeware',
@@ -37,11 +37,11 @@ export const chainsConfig: AppConfig['chains'] = {
     logo: EdgewareLogo,
     currencies: [
       {
-        currencyId: WebbCurrencyId.TEDG,
+        currencyId: WebbNativeCurrencyId.TEDG,
         enabled: true,
       },
     ],
-    nativeCurrencyId: WebbCurrencyId.TEDG,
+    nativeCurrencyId: WebbNativeCurrencyId.TEDG,
   },
   // [ChainId.Edgeware]: {
   //   group: 'edgeware',
@@ -73,11 +73,11 @@ export const chainsConfig: AppConfig['chains'] = {
     tag: 'test',
     currencies: [
       {
-        currencyId: WebbCurrencyId.ETH,
+        currencyId: WebbNativeCurrencyId.ETH,
         enabled: true,
       },
     ],
-    nativeCurrencyId: WebbCurrencyId.ETH,
+    nativeCurrencyId: WebbNativeCurrencyId.ETH,
   },
   [ChainId.Ropsten]: {
     group: 'eth',
@@ -91,11 +91,11 @@ export const chainsConfig: AppConfig['chains'] = {
     tag: 'test',
     currencies: [
       {
-        currencyId: WebbCurrencyId.ETH,
+        currencyId: WebbNativeCurrencyId.ETH,
         enabled: true,
       },
     ],
-    nativeCurrencyId: WebbCurrencyId.ETH,
+    nativeCurrencyId: WebbNativeCurrencyId.ETH,
   },
   [ChainId.Goerli]: {
     group: 'eth',
@@ -109,11 +109,11 @@ export const chainsConfig: AppConfig['chains'] = {
     tag: 'test',
     currencies: [
       {
-        currencyId: WebbCurrencyId.ETH,
+        currencyId: WebbNativeCurrencyId.ETH,
         enabled: true,
       },
     ],
-    nativeCurrencyId: WebbCurrencyId.ETH,
+    nativeCurrencyId: WebbNativeCurrencyId.ETH,
   },
   [ChainId.Kovan]: {
     group: 'eth',
@@ -127,11 +127,11 @@ export const chainsConfig: AppConfig['chains'] = {
     tag: 'test',
     currencies: [
       {
-        currencyId: WebbCurrencyId.ETH,
+        currencyId: WebbNativeCurrencyId.ETH,
         enabled: true,
       },
     ],
-    nativeCurrencyId: WebbCurrencyId.ETH,
+    nativeCurrencyId: WebbNativeCurrencyId.ETH,
   },
   [ChainId.OptimismTestnet]: {
     group: 'eth',
@@ -145,11 +145,11 @@ export const chainsConfig: AppConfig['chains'] = {
     tag: 'test',
     currencies: [
       {
-        currencyId: WebbCurrencyId.ETH,
+        currencyId: WebbNativeCurrencyId.ETH,
         enabled: true,
       },
     ],
-    nativeCurrencyId: WebbCurrencyId.ETH,
+    nativeCurrencyId: WebbNativeCurrencyId.ETH,
   },
   [ChainId.ArbitrumTestnet]: {
     group: 'eth',
@@ -163,11 +163,11 @@ export const chainsConfig: AppConfig['chains'] = {
     tag: 'test',
     currencies: [
       {
-        currencyId: WebbCurrencyId.ETH,
+        currencyId: WebbNativeCurrencyId.ETH,
         enabled: true,
       },
     ],
-    nativeCurrencyId: WebbCurrencyId.ETH,
+    nativeCurrencyId: WebbNativeCurrencyId.ETH,
   },
   [ChainId.HarmonyTestnet1]: {
     group: 'one',
@@ -180,11 +180,11 @@ export const chainsConfig: AppConfig['chains'] = {
     logo: HarmonyLogo,
     currencies: [
       {
-        currencyId: WebbCurrencyId.ONE,
+        currencyId: WebbNativeCurrencyId.ONE,
         enabled: true,
       },
     ],
-    nativeCurrencyId: WebbCurrencyId.ONE,
+    nativeCurrencyId: WebbNativeCurrencyId.ONE,
   },
   // [ChainId.HarmonyTestnet0]: {
   //   group: 'one',
@@ -214,11 +214,11 @@ export const chainsConfig: AppConfig['chains'] = {
     logo: HarmonyLogo,
     currencies: [
       {
-        currencyId: WebbCurrencyId.ONE,
+        currencyId: WebbNativeCurrencyId.ONE,
         enabled: true,
       },
     ],
-    nativeCurrencyId: WebbCurrencyId.ONE,
+    nativeCurrencyId: WebbNativeCurrencyId.ONE,
   },
   // [ChainId.EthereumMainNet]: {
   //   group: 'eth',
@@ -248,10 +248,10 @@ export const chainsConfig: AppConfig['chains'] = {
     logo: ShidenLogo,
     currencies: [
       {
-        currencyId: WebbCurrencyId.SDN,
+        currencyId: WebbNativeCurrencyId.SDN,
         enabled: true,
       },
     ],
-    nativeCurrencyId: WebbCurrencyId.SDN,
+    nativeCurrencyId: WebbNativeCurrencyId.SDN,
   },
 };

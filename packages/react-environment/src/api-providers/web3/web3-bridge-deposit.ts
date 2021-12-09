@@ -55,6 +55,20 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
       }
       const contract = this.inner.getWebbAnchorByAddress(contractAddress);
 
+      if (!(await contract.hasEnoughBalance())) {
+        await contract.wrapAndDeposit(commitment,);
+        transactionNotificationConfig.finalize?.({
+          address: '',
+          data: undefined,
+          key: 'bridge-deposit',
+          path: {
+            method: 'deposit',
+            section: bridge.currency.name,
+          },
+        });
+        return;
+      }
+
       const requiredApproval = await contract.isApprovalRequired();
       if (requiredApproval) {
         notificationApi.addToQueue({

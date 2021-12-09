@@ -1,4 +1,4 @@
-import { ChainId, WebbCurrencyId, webbCurrencyIdFromString, webbCurrencyIdToString } from '@webb-dapp/apps/configs';
+import { ChainId, WebbNativeCurrencyId, webbNativeCurrencyIdFromString, webbNativeCurrencyIdToString } from '@webb-dapp/apps/configs';
 
 /*
  *
@@ -14,24 +14,24 @@ import { ChainId, WebbCurrencyId, webbCurrencyIdFromString, webbCurrencyIdToStri
 export class BridgeCurrency {
   public readonly name: string;
 
-  constructor(private chains: ChainId[], private wrappedCurrency: WebbCurrencyId) {
+  constructor(private chains: ChainId[], private wrappedCurrency: WebbNativeCurrencyId) {
     this.chains = this.chains.sort((a, b) => (a > b ? 1 : a < b ? -1 : 0));
     this.name = this.toString();
   }
 
   private toString(): string {
     const paraChains = this.chains.join('-');
-    const baseCurrency = webbCurrencyIdToString(this.wrappedCurrency);
+    const baseCurrency = webbNativeCurrencyIdToString(this.wrappedCurrency);
     return `webb${baseCurrency}-${paraChains}`;
   }
   get prefix(): string {
-    return `webb${webbCurrencyIdToString(this.wrappedCurrency)}`;
+    return `webb${webbNativeCurrencyIdToString(this.wrappedCurrency)}`;
   }
   static fromString(strBridgeCurrency: string): BridgeCurrency {
     const parts = strBridgeCurrency.split('-');
     let prefix = parts[0].replace('webb', '');
     let chainIds = parts.slice(1, parts.length).map((c) => Number(c) as ChainId);
-    let wrappedCurrency = webbCurrencyIdFromString(prefix);
+    let wrappedCurrency = webbNativeCurrencyIdFromString(prefix);
     return new BridgeCurrency(chainIds, wrappedCurrency);
   }
 
@@ -39,7 +39,7 @@ export class BridgeCurrency {
     return this.chains.includes(chainId);
   }
 
-  get currencyId(): WebbCurrencyId {
+  get currencyId(): WebbNativeCurrencyId {
     return this.wrappedCurrency;
   }
 

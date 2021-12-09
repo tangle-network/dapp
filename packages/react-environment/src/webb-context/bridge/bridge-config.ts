@@ -1,4 +1,4 @@
-import { ChainId, WebbCurrencyId } from '@webb-dapp/apps/configs';
+import { ChainId, WebbNativeCurrencyId } from '@webb-dapp/apps/configs';
 import { BridgeCurrency } from '@webb-dapp/react-environment/webb-context/bridge/bridge-currency';
 
 // todo change to wrappedTokenAddresses (they are  governed token wrapper contract)
@@ -21,7 +21,7 @@ export type BridgeConfig = Record<string, BridgeConfigEntry>;
 
 const webbETHtest1 = new BridgeCurrency(
   [ChainId.Ropsten, ChainId.Rinkeby, ChainId.Goerli, ChainId.Kovan, ChainId.OptimismTestnet, ChainId.ArbitrumTestnet],
-  WebbCurrencyId.ETH
+  WebbNativeCurrencyId.ETH
 );
 
 export const bridgeConfig: BridgeConfig = {

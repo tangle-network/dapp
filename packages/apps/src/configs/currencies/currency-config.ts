@@ -6,49 +6,49 @@ import WEBBLogo from '@webb-dapp/apps/configs/logos/WebbLogo';
 import { AppConfig } from '@webb-dapp/react-environment';
 import React from 'react';
 
-import { WebbCurrencyId } from './webb-currency-id.enum';
+import { WebbNativeCurrencyId } from './webb-currency-id.enum';
 
 export const currenciesConfig: AppConfig['currencies'] = {
-  [WebbCurrencyId.EDG]: {
+  [WebbNativeCurrencyId.EDG]: {
     name: 'Edgeware token',
     symbol: 'EDG',
     color: '',
-    id: WebbCurrencyId.EDG,
+    id: WebbNativeCurrencyId.EDG,
     icon: React.createElement(EdgewareLogo),
   },
-  [WebbCurrencyId.TEDG]: {
+  [WebbNativeCurrencyId.TEDG]: {
     name: 'Edgeware testnet token',
     symbol: 'tEDG',
     color: '',
-    id: WebbCurrencyId.TEDG,
+    id: WebbNativeCurrencyId.TEDG,
     icon: React.createElement(EdgewareLogo),
   },
-  [WebbCurrencyId.ETH]: {
+  [WebbNativeCurrencyId.ETH]: {
     name: 'Ethereum',
     symbol: 'ETH',
     color: '',
-    id: WebbCurrencyId.ETH,
+    id: WebbNativeCurrencyId.ETH,
     icon: React.createElement(EtherLogo),
   },
-  [WebbCurrencyId.ONE]: {
+  [WebbNativeCurrencyId.ONE]: {
     name: 'Harmony',
     symbol: 'ONE',
     color: '',
-    id: WebbCurrencyId.ONE,
+    id: WebbNativeCurrencyId.ONE,
     icon: React.createElement(HarmonyLogo),
   },
-  [WebbCurrencyId.WEBB]: {
+  [WebbNativeCurrencyId.WEBB]: {
     name: 'WEBB',
     symbol: 'WEBB',
     color: '',
-    id: WebbCurrencyId.WEBB,
+    id: WebbNativeCurrencyId.WEBB,
     icon: React.createElement(WEBBLogo),
   },
-  [WebbCurrencyId.SDN]: {
+  [WebbNativeCurrencyId.SDN]: {
     name: 'Shiden',
     symbol: 'SDN',
     color: '',
-    id: WebbCurrencyId.SDN,
+    id: WebbNativeCurrencyId.SDN,
     icon: React.createElement(ShidenLogo),
   },
 };
