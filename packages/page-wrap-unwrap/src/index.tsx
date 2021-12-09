@@ -104,7 +104,7 @@ const TabButton = styled.button<{ active?: boolean }>`
   border-radius: 32px;
 `;
 
-const PageWrappUnwrap: FC = () => {
+const PageWrapUnwrap: FC = () => {
   const {
     amount,
     context: status,
@@ -121,9 +121,8 @@ const PageWrappUnwrap: FC = () => {
 
   const [isSwap, setIsSwap] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { activeApi } = useWebContext();
 
-  const [useFixedDeposits, setUseFixedDepoists] = useState(false);
+  const [useFixedDeposits, setUseFixedDeposits] = useState(false);
 
   const nativeOrWrapToProps: TokenInputProps = useMemo(() => {
     return {
@@ -133,7 +132,7 @@ const PageWrappUnwrap: FC = () => {
         setLeftHandToken(currencyContent);
       },
     };
-  }, [status, tokens, wrappedTokens, leftHandToken, setLeftHandToken]);
+  }, [status, tokens, wrappedTokens, leftHandToken]);
 
   const wrappedOrWrappedFrom: TokenInputProps = useMemo(() => {
     return {
@@ -143,7 +142,7 @@ const PageWrappUnwrap: FC = () => {
         setRightHandToken(currencyContent);
       },
     };
-  }, [status, tokens, wrappedTokens, rightHandToken, setRightHandToken]);
+  }, [status, tokens, wrappedTokens, rightHandToken]);
   const leftInputProps = nativeOrWrapToProps;
   const rightInputProps = wrappedOrWrappedFrom;
   const buttonText = status;
@@ -295,7 +294,7 @@ const PageWrappUnwrap: FC = () => {
           value={useFixedDeposits}
           checked={useFixedDeposits}
           onChange={() => {
-            setUseFixedDepoists((t) => !t);
+            setUseFixedDeposits((t) => !t);
           }}
           control={<Checkbox color={'primary'} />}
           label={<Typography color={'textPrimary'}>Use Fixed deposits</Typography>}
@@ -323,4 +322,4 @@ const PageWrappUnwrap: FC = () => {
   );
 };
 
-export default PageWrappUnwrap;
+export default PageWrapUnwrap;

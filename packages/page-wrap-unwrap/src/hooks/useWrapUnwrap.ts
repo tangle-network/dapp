@@ -67,6 +67,7 @@ export function useWrapUnwrap() {
 
   useEffect(() => {
     init();
+    console.log('useEffect init loop');
     const sub = wrapUnwrapApi?.$currentTokenValue.subscribe((val) => {
       console.log(`current token value`, val);
     });
@@ -89,6 +90,7 @@ export function useWrapUnwrap() {
           break;
       }
     });
+    console.log('useEffect subscription loop');
 
     return () => r?.unsubscribe();
   }, [init, wrapUnwrapApi]);
@@ -124,6 +126,7 @@ export function useWrapUnwrap() {
       wrapUnwrapApi?.setCurrentToken(leftHandToken ? currencyContentToWrappingToken(leftHandToken) : null);
       wrapUnwrapApi?.setOtherEdgToken(rightHandToken ? currencyContentToWrappingToken(rightHandToken) : null);
     }
+    console.log('useEffect context? loop');
   }, [leftHandToken, rightHandToken, context, wrapUnwrapApi]);
 
   const execute = useCallback(() => {
