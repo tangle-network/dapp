@@ -16,7 +16,7 @@ export const Mixer: React.FC<MixerProps> = () => {
   return (
     <MixerWrapper>
       <PermissionedAccess>
-        <MixerTabs Withdraw={<Withdraw />} Deposit={<Deposit />} />
+        <MixerTabs Withdraw={<Withdraw />} Deposit={<Deposit />} fullWidth={false} />
       </PermissionedAccess>
       <SpaceBox height={8} />
       <IPDisplay />
