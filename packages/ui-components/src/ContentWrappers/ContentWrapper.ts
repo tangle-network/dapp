@@ -2,10 +2,17 @@ import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
 import styled, { css } from 'styled-components';
 
-export const ContentWrapper = styled.div`
+export const ContentWrapper = styled.div<{ fullWidth?: boolean }>`
   padding: 1rem;
   ${above.sm`  padding: 2rem;`}
-  max-width: 500px;
+  ${({ fullWidth }) =>
+    !fullWidth
+      ? `max-width: 500px;`
+      : `
+  width: 100%;
+  flex: 1;
+  `};
+
   margin: auto;
   border-radius: 20px;
   ${({ theme }: { theme: Pallet }) => css`

@@ -7,6 +7,7 @@ import styled, { css } from 'styled-components';
 type MixerTabsProps = {
   Deposit: JSX.Element;
   Withdraw: JSX.Element;
+  fullWidth?: boolean;
 };
 const TabHeader = styled.header`
   display: flex;
@@ -55,7 +56,7 @@ const TabButton = styled.button<{ active?: boolean }>`
 const TabContent = styled.div`
   padding: 16px 0;
 `;
-export const MixerTabs: React.FC<MixerTabsProps> = ({ Deposit, Withdraw }) => {
+export const MixerTabs: React.FC<MixerTabsProps> = ({ Deposit, Withdraw, fullWidth = true }) => {
   const [activeTab, setActiveTab] = useState<'deposit' | 'withdraw'>('deposit');
   const switchToDeposit = useCallback(() => {
     setActiveTab('deposit');
@@ -74,7 +75,7 @@ export const MixerTabs: React.FC<MixerTabsProps> = ({ Deposit, Withdraw }) => {
     }
   }, [Deposit, Withdraw, activeTab]);
   return (
-    <ContentWrapper>
+    <ContentWrapper fullWidth={fullWidth}>
       <TabHeader>
         <TabButton onClick={switchToDeposit} active={activeTab === 'deposit'}>
           <span className='mixer-tab-icon'>

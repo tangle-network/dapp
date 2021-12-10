@@ -7,6 +7,7 @@ import styled, { css } from 'styled-components';
 type StatsTabsProps = {
   TokenInfo: JSX.Element;
   TokenStats: JSX.Element;
+  fullWidth?: boolean;
 };
 const TabHeader = styled.header`
   display: flex;
@@ -55,7 +56,7 @@ const TabButton = styled.button<{ active?: boolean }>`
 const TabContent = styled.div`
   padding: 16px 0;
 `;
-export const StatsTabs: React.FC<StatsTabsProps> = ({ TokenInfo, TokenStats }) => {
+export const StatsTabs: React.FC<StatsTabsProps> = ({ TokenInfo, TokenStats, fullWidth = false }) => {
   const [activeTab, setActiveTab] = useState<'info' | 'statistics'>('info');
   const switchToInfo = useCallback(() => {
     setActiveTab('info');
@@ -74,7 +75,7 @@ export const StatsTabs: React.FC<StatsTabsProps> = ({ TokenInfo, TokenStats }) =
     }
   }, [TokenInfo, TokenStats, activeTab]);
   return (
-    <ContentWrapper>
+    <ContentWrapper fullWidth={fullWidth}>
       <TabHeader>
         <TabButton onClick={switchToInfo} active={activeTab === 'info'}>
           <span className='mixer-tab-icon'>
