@@ -9,9 +9,10 @@ import { MixerWithdraw, WithdrawState } from '../../webb-context';
 import { WebbPolkadot } from './webb-polkadot-provider';
 import { PolkadotMixerDeposit } from '.';
 import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
-import { addressToEvm } from '@polkadot/util-crypto';
-import { hexToU8a, u8aToHex } from '@polkadot/util';
+import { u8aToHex } from '@polkadot/util';
 import { decodeAddress } from '@polkadot/keyring';
+import { LoggerService } from '@webb-tools/app-util';
+
 type WithdrawProof = {
   id: string;
   proof_bytes: string;
@@ -22,7 +23,7 @@ type WithdrawProof = {
   fee: string;
   refund: string;
 };
-
+const logger = LoggerService.get('PolkadotMixerWithdraw');
 export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
   private loading = false;
   private initialised = true;
@@ -38,12 +39,12 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
     const leaves: Uint8Array[] = [];
 
     while (done === false) {
-      const treeLeaves: Uint8Array[] = await (this.inner.api.rpc as any).mt.getLeaves(treeId, from, to);
+      const treeLeaves: any[] = await (this.inner.api.rpc as any).mt.getLeaves(treeId, from, to);
       if (treeLeaves.length === 0) {
         done = true;
         break;
       }
-      leaves.push(...treeLeaves);
+      leaves.push(...treeLeaves.map((i) => i.toU8a()));
       from = to;
       to = to + 511;
     }
@@ -58,23 +59,27 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
     const amount = depositAmount;
     const sizes = await PolkadotMixerDeposit.getSizes(this.inner.api);
     const treeId = sizes.find((s) => s.value === amount)?.treeId!;
-    console.log(treeId);
+    logger.info(`treeid `, treeId);
     // @ts-ignore
-    const nodeMerkleTree = await this.inner.api.query.merkleTree.trees(treeId);
+    const nodeMerkleTree = await this.inner.api.query.merkleTreeBn254.trees(treeId);
     const groupTreeWrapper = new GroupTreeWrapper(nodeMerkleTree);
     const leaves = await this.fetchTreeLeaves(treeId);
-
+    logger.info(leaves.map((i) => u8aToHex(i)));
     try {
       const pm = new ProvingManger(new Worker());
       const hexAddress = u8aToHex(decodeAddress('jn5LuB5d51srpmZqiBNgWu11C6AeVxEygggjWsifcG1myqr'));
-
-      const zk = await pm.proof({
+      const proofInput = {
         leaves,
         note,
+        leafIndex: 1,
+        refund: 0,
+        fee: 0,
         recipient: hexAddress.replace('0x', ''),
         relayer: hexAddress.replace('0x', ''),
-      });
-      const blockNumber = await this.inner.api.query.system.number();
+      };
+      logger.info(`proofInput `, proofInput);
+
+      const zk = await pm.proof(proofInput);
 
       const withdrawProof: WithdrawProof = {
         id: treeId,
@@ -86,11 +91,11 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
         fee: bufferToFixed('0'),
         refund: bufferToFixed('0'),
       };
-      console.log(withdrawProof);
+      logger.info(`WithdrawProof`, withdrawProof);
       this.emit('stateChange', WithdrawState.SendingTransaction);
       const tx = this.inner.txBuilder.build(
         {
-          section: 'mixer',
+          section: 'mixerBn254',
           method: 'withdraw',
         },
         [
@@ -98,8 +103,8 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
           `0x${withdrawProof.proof_bytes}`,
           `0x${withdrawProof.root}`,
           `0x${withdrawProof.nullifier_hash}`,
-          hexAddress,
-          hexAddress,
+          'jn5LuB5d51srpmZqiBNgWu11C6AeVxEygggjWsifcG1myqr',
+          'jn5LuB5d51srpmZqiBNgWu11C6AeVxEygggjWsifcG1myqr',
           0,
           0,
         ]

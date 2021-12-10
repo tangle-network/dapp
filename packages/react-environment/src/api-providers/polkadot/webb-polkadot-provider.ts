@@ -95,8 +95,8 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
     // @ts-ignore
     const merkleRPC = Boolean(this.api.rpc.mt.getLeaves);
     // merkle rpc
-    const merklePallet = this.api.query.merkleTree;
-    const mixerPallet = this.api.query.mixer;
+    const merklePallet = this.api.query.merkleTreeBn254;
+    const mixerPallet = this.api.query.mixerBn254;
     if (!merklePallet || !merkleRPC || !mixerPallet) {
       throw WebbError.from(WebbErrorCodes.InsufficientProviderInterface);
     }

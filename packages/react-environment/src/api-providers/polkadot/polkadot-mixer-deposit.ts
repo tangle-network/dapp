@@ -26,7 +26,7 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
   }
 
   static async getSizes(api: ApiPromise) {
-    const data: Array<MixerGroupEntry> = await api.query.mixer.mixers.entries();
+    const data: Array<MixerGroupEntry> = await api.query.mixerBn254.mixers.entries();
     // @ts-ignore
     const tokenProperty: Array<NativeTokenProperties> = await api.rpc.system.properties();
     const groupItem = data
@@ -105,7 +105,7 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
   async deposit(depositPayload: DepositPayload): Promise<void> {
     const tx = this.inner.txBuilder.build(
       {
-        section: 'mixer',
+        section: 'mixerBn254',
         method: 'deposit',
       },
       depositPayload.params
