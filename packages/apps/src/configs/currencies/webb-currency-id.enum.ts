@@ -1,4 +1,4 @@
-export enum WebbNativeCurrencyId {
+export enum WebbCurrencyId {
   /// Production edgeware token
   EDG,
   /// Test edgeware token
@@ -12,37 +12,37 @@ export enum WebbNativeCurrencyId {
   SDN,
 }
 
-export function webbNativeCurrencyIdToString(c: WebbNativeCurrencyId): string {
+export function webbCurrencyIdToString(c: WebbCurrencyId): string {
   switch (c) {
-    case WebbNativeCurrencyId.EDG:
+    case WebbCurrencyId.EDG:
       return 'EDG';
-    case WebbNativeCurrencyId.TEDG:
+    case WebbCurrencyId.TEDG:
       return 'TEDG';
-    case WebbNativeCurrencyId.ETH:
+    case WebbCurrencyId.ETH:
       return 'ETH';
-    case WebbNativeCurrencyId.ONE:
+    case WebbCurrencyId.ONE:
       return 'ONE';
-    case WebbNativeCurrencyId.WEBB:
+    case WebbCurrencyId.WEBB:
       return 'WEBB';
-    case WebbNativeCurrencyId.SDN:
+    case WebbCurrencyId.SDN:
       return 'SDN';
   }
 }
 
-export function webbNativeCurrencyIdFromString(c: string): WebbNativeCurrencyId {
+export function webbCurrencyIdFromString(c: string): WebbCurrencyId {
   switch (c) {
     case 'EDG':
-      return WebbNativeCurrencyId.EDG;
+      return WebbCurrencyId.EDG;
     case 'TEDG':
-      return WebbNativeCurrencyId.TEDG;
+      return WebbCurrencyId.TEDG;
     case 'ETH':
-      return WebbNativeCurrencyId.ETH;
+      return WebbCurrencyId.ETH;
     case 'ONE':
-      return WebbNativeCurrencyId.ONE;
+      return WebbCurrencyId.ONE;
     case 'WEBB':
-      return WebbNativeCurrencyId.WEBB;
+      return WebbCurrencyId.WEBB;
     case 'SDN':
-      return WebbNativeCurrencyId.SDN;
+      return WebbCurrencyId.SDN;
     default:
       throw new Error(`${c} isn't a valid WebbCurrencyId`);
   }

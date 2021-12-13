@@ -1,4 +1,4 @@
-import { ChainId, evmIdIntoChainId, WebbNativeCurrencyId, webbNativeCurrencyIdToString } from '@webb-dapp/apps/configs';
+import { ChainId, evmIdIntoChainId, WebbCurrencyId, webbCurrencyIdToString } from '@webb-dapp/apps/configs';
 import { WebbGovernedToken, zeroAddress } from '@webb-dapp/contracts/contracts';
 import { Bridge, BridgeConfig, bridgeConfig, BridgeCurrency, MixerSize } from '@webb-dapp/react-environment';
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers';
@@ -140,9 +140,9 @@ export class Web3WrapUnwrap extends WrapUnWrap<WebbWeb3Provider> {
       return [];
     }
     const bridgeTokens = Bridge.getTokensOfChain(this.bridgeConfig, this.currentChainId!).filter(
-      (currency) => currency.currencyId !== WebbNativeCurrencyId.WEBB
+      (currency) => currency.currencyId !== WebbCurrencyId.WEBB
     );
-    const nativeTokens = bridgeTokens.reduce<WebbNativeCurrencyId[]>((acc, brideToken) => {
+    const nativeTokens = bridgeTokens.reduce<WebbCurrencyId[]>((acc, brideToken) => {
       return acc.includes(brideToken.currencyId) ? acc : [...acc, brideToken.currencyId];
     }, []);
     return nativeTokens.map((i) => ({
@@ -154,7 +154,7 @@ export class Web3WrapUnwrap extends WrapUnWrap<WebbWeb3Provider> {
   async getGovernedTokens(): Promise<WrappingTokenId[]> {
     if (this.currentChainId) {
       return Bridge.getTokensOfChain(this.bridgeConfig, this.currentChainId!)
-        .filter((currency) => currency.currencyId !== WebbNativeCurrencyId.WEBB)
+        .filter((currency) => currency.currencyId !== WebbCurrencyId.WEBB)
         .map((i) => ({
           id: i.name,
           variant: 'governed-token',
@@ -197,7 +197,7 @@ export class Web3WrapUnwrap extends WrapUnWrap<WebbWeb3Provider> {
           data: React.createElement(
             'p',
             { style: { fontSize: '.9rem' } }, // Matches Typography variant=h6
-            `Unwrapping ${String(amountNumber)}  of ${UnwrapTokenId}   to  ${webbNativeCurrencyIdToString(
+            `Unwrapping ${String(amountNumber)}  of ${UnwrapTokenId}   to  ${webbCurrencyIdToString(
               Number(unwrapToken.id)
             )}`
           ),
@@ -282,7 +282,7 @@ export class Web3WrapUnwrap extends WrapUnWrap<WebbWeb3Provider> {
           data: React.createElement(
             'p',
             { style: { fontSize: '.9rem' } }, // Matches Typography variant=h6
-            `Wrapping ${String(amountNumber)} of ${webbNativeCurrencyIdToString(Number(toWrap.id))} to ${wrapInto}`
+            `Wrapping ${String(amountNumber)} of ${webbCurrencyIdToString(Number(toWrap.id))} to ${wrapInto}`
           ),
           path,
         });

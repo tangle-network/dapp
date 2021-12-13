@@ -1,4 +1,4 @@
-import { WebbNativeCurrencyId } from '@webb-dapp/apps/configs';
+import { WebbCurrencyId } from '@webb-dapp/apps/configs';
 
 export interface ChainConfig {
   id: number;
@@ -10,6 +10,6 @@ export interface ChainConfig {
   evmRpcUrls?: string[];
   blockExplorerStub?: string;
   logo: React.ComponentType;
-  nativeCurrencyId: WebbNativeCurrencyId;
-  currencies: Array<{ currencyId: WebbNativeCurrencyId; enabled: boolean }>;
+  nativeCurrencyId: WebbCurrencyId;
+  currencies: Array<{ currencyId: WebbCurrencyId; enabled: boolean; address: string }>;
 }

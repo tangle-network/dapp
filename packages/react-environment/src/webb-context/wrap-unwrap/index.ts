@@ -1,4 +1,4 @@
-import { WebbNativeCurrencyId } from '@webb-dapp/apps/configs';
+import { WebbCurrencyId } from '@webb-dapp/apps/configs';
 import { MixerSize } from '@webb-dapp/react-environment';
 import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 
@@ -7,7 +7,7 @@ import { BehaviorSubject, Observable, Subscription } from 'rxjs';
  * */
 export type WrappingTokenId = {
   variant: 'native-token' | 'governed-token';
-  id: WebbNativeCurrencyId | string;
+  id: WebbCurrencyId | string;
 };
 
 export type WrappingEvent = {
