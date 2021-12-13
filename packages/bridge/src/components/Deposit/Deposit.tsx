@@ -1,8 +1,9 @@
-import { Checkbox, FormControlLabel } from '@material-ui/core';
+import { Checkbox, FormControlLabel, Typography } from '@material-ui/core';
 import { ChainId, WebbCurrencyId } from '@webb-dapp/apps/configs';
 import { DepositConfirm } from '@webb-dapp/bridge/components/DepositConfirm/DepositConfirm';
 import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
 import { useBridgeDeposit } from '@webb-dapp/bridge/hooks/deposit/useBridgeDeposit';
+import { Erc20Factory } from '@webb-dapp/contracts/types';
 import { Currency } from '@webb-dapp/react-environment/types/currency';
 import { MixerSize, useWebContext } from '@webb-dapp/react-environment/webb-context';
 import { SpaceBox } from '@webb-dapp/ui-components/Box';
@@ -20,7 +21,6 @@ const DepositWrapper = styled.div``;
 type DepositProps = {};
 
 export const Deposit: React.FC<DepositProps> = () => {
-  const bridgeApi = useBridge();
   const bridgeDepositApi = useBridgeDeposit();
   const { activeApi, activeChain, activeWallet, chains, switchChain } = useWebContext();
   // const { clearAmount, token } = useBalanceSelect();
@@ -30,6 +30,7 @@ export const Deposit: React.FC<DepositProps> = () => {
     if (!activeBridge) {
       return undefined;
     }
+
     return activeBridge.currency;
   }, [activeBridge]);
 
@@ -41,10 +42,22 @@ export const Deposit: React.FC<DepositProps> = () => {
     return activeChain.id;
   }, [activeChain]);
 
+  const [wrappedTokenBalance, setWrappedTokenBalance] = useState('');
+
+  useEffect(() => {
+    if (!activeChain || !activeBridge || !activeApi) return;
+
+    // todo: figure out what happens for polkadot - won't be depositing by address
+    const tokenAddress = activeBridge.getTokenAddress(activeChain.id)!;
+    activeApi.methods.chainQuery.tokenBalanceByAddress(tokenAddress).then((balance) => {
+      console.log('balance of wrappable: ', balance);
+      setWrappedTokenBalance(balance);
+    });
+  }, [activeApi, activeBridge, activeChain]);
+
   const [showDepositModal, setShowDepositModal] = useState(false);
 
   const handleSuccess = useCallback((): void => {}, []);
-  // const [selectedToken, setSelectedToken] = useState<Currency | undefined>(undefined);
 
   const [item, setItem] = useState<MixerSize | undefined>(undefined);
   const [destChain, setDestChain] = useState<ChainId | undefined>(undefined);
@@ -61,6 +74,17 @@ export const Deposit: React.FC<DepositProps> = () => {
 
   // State for the selected wrappable asset
   const [wrappableAsset, setWrappableAsset] = useState<Currency | undefined>(undefined);
+
+  const [wrappableTokenBalance, setWrappableTokenBalance] = useState<String>('');
+
+  useEffect(() => {
+    if (!wrappableAsset || !activeApi) return;
+
+    activeApi.methods.chainQuery.tokenBalanceByCurrencyId(wrappableAsset.view.id).then((balance) => {
+      console.log('balance of wrappable: ', balance);
+      setWrappableTokenBalance(balance);
+    });
+  }, [wrappableAsset, activeApi]);
 
   useEffect(() => {
     if (!selectedBridgeCurrency || !activeChain || !bridgeDepositApi.depositApi) return;
@@ -101,21 +125,39 @@ export const Deposit: React.FC<DepositProps> = () => {
       {typeof destChain !== 'undefined' && (
         <MixerGroupSelect items={bridgeDepositApi.mixerSizes} value={item} onChange={setItem} />
       )}
-      <FormControlLabel
-        label={'Wrap Assets'}
-        control={
-          <Checkbox
-            checked={showWrappableAssets}
-            onChange={() => {
-              // Clear the selected wrappable asset if unchecked
-              if (showWrappableAssets) {
-                setWrappableAsset(undefined);
+      {selectedBridgeCurrency && (
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            {showWrappableAssets && wrappableAsset && (
+              <Typography>
+                {wrappableAsset.view.symbol} Balance: {wrappableTokenBalance}
+              </Typography>
+            )}
+            {!showWrappableAssets && selectedBridgeCurrency && (
+              <Typography>
+                {selectedBridgeCurrency?.prefix} Balance: {wrappedTokenBalance}
+              </Typography>
+            )}
+          </div>
+          <div style={{ alignItems: 'center' }}>
+            <FormControlLabel
+              label={'Wrap Assets'}
+              control={
+                <Checkbox
+                  checked={showWrappableAssets}
+                  onChange={() => {
+                    // Clear the selected wrappable asset if unchecked
+                    if (showWrappableAssets) {
+                      setWrappableAsset(undefined);
+                    }
+                    setShowWrappableAssets(!showWrappableAssets);
+                  }}
+                />
               }
-              setShowWrappableAssets(!showWrappableAssets);
-            }}
-          />
-        }
-      />
+            />
+          </div>
+        </div>
+      )}
       {showWrappableAssets && wrappableAssets.length && (
         <>
           {/* used for positioning the token input label */}
