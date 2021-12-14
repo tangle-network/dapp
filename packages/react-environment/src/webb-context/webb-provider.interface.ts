@@ -6,12 +6,14 @@ import { EventBus } from '@webb-tools/app-util';
 
 import { DepositPayload, MixerDeposit, MixerDepositEvents, MixerWithdraw, MixerWithdrawEvents } from './mixer';
 import { WrapUnWrap } from '@webb-dapp/react-environment/webb-context/wrap-unwrap';
+import { ChainQuery } from '@webb-dapp/react-environment/webb-context/chain-query';
 
 /// list of the apis that are available for  the provider
 export interface WebbMethods<T> {
   mixer: WebbMixer<T>;
   bridge: WebbBridge<T>;
   wrapUnwrap: WrapAndUnwrap<T>;
+  chainQuery: ChainQuery<T>;
 }
 
 export type WebbMethod<T extends EventBus<K>, K extends Record<string, unknown>> = {
@@ -25,7 +27,6 @@ export interface WebbMixer<T> {
   deposit: WebbMethod<MixerDeposit<T, DepositPayload>, MixerDepositEvents>;
   // withdraw
   withdraw: WebbMethod<MixerWithdraw<T>, MixerWithdrawEvents>;
-  ///
 }
 export interface WrapAndUnwrap<T> {
   core: {

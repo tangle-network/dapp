@@ -1,4 +1,9 @@
-import { ChainId, WebbCurrencyId, webbCurrencyIdFromString, webbCurrencyIdToString } from '@webb-dapp/apps/configs';
+import {
+  ChainId,
+  WebbCurrencyId,
+  webbCurrencyIdFromString,
+  webbCurrencyIdToString,
+} from '@webb-dapp/apps/configs';
 
 /*
  *

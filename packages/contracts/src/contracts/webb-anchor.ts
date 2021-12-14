@@ -144,6 +144,20 @@ export class AnchorContract {
     await recipient.wait();
   }
 
+  async wrapAndDeposit(commitment: string, tokenAddress?: string) {
+    const value = await this._contract.denomination();
+    const overrides = { value: value };
+
+    console.log('tokenString: ', tokenAddress);
+
+    const tx = await this._contract.wrapAndDeposit(
+      tokenAddress || '0x0000000000000000000000000000000000000000',
+      commitment,
+      overrides
+    );
+    const receipt = await tx.wait();
+  }
+
   // Verify the leaf occurred at the reported block
   // This is important to check the behavior of relayers before modifying local storage
   async leafCreatedAtBlock(leaf: string, blockNumber: number): Promise<boolean> {

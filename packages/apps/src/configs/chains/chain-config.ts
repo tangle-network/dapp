@@ -22,6 +22,7 @@ export const chainsConfig: AppConfig['chains'] = {
       {
         currencyId: WebbCurrencyId.EDG,
         enabled: true,
+        address: '0x0000000000000000000000000000000000000000', // special address in smart contract to represent native asset
       },
     ],
     nativeCurrencyId: WebbCurrencyId.EDG,
@@ -39,6 +40,7 @@ export const chainsConfig: AppConfig['chains'] = {
       {
         currencyId: WebbCurrencyId.TEDG,
         enabled: true,
+        address: '0x0000000000000000000000000000000000000000',
       },
     ],
     nativeCurrencyId: WebbCurrencyId.TEDG,
@@ -75,6 +77,7 @@ export const chainsConfig: AppConfig['chains'] = {
       {
         currencyId: WebbCurrencyId.ETH,
         enabled: true,
+        address: '0x0000000000000000000000000000000000000000',
       },
     ],
     nativeCurrencyId: WebbCurrencyId.ETH,
@@ -93,6 +96,7 @@ export const chainsConfig: AppConfig['chains'] = {
       {
         currencyId: WebbCurrencyId.ETH,
         enabled: true,
+        address: '0x0000000000000000000000000000000000000000',
       },
     ],
     nativeCurrencyId: WebbCurrencyId.ETH,
@@ -111,6 +115,7 @@ export const chainsConfig: AppConfig['chains'] = {
       {
         currencyId: WebbCurrencyId.ETH,
         enabled: true,
+        address: '0x0000000000000000000000000000000000000000',
       },
     ],
     nativeCurrencyId: WebbCurrencyId.ETH,
@@ -129,6 +134,7 @@ export const chainsConfig: AppConfig['chains'] = {
       {
         currencyId: WebbCurrencyId.ETH,
         enabled: true,
+        address: '0x0000000000000000000000000000000000000000',
       },
     ],
     nativeCurrencyId: WebbCurrencyId.ETH,
@@ -147,6 +153,7 @@ export const chainsConfig: AppConfig['chains'] = {
       {
         currencyId: WebbCurrencyId.ETH,
         enabled: true,
+        address: '0x0000000000000000000000000000000000000000',
       },
     ],
     nativeCurrencyId: WebbCurrencyId.ETH,
@@ -165,6 +172,7 @@ export const chainsConfig: AppConfig['chains'] = {
       {
         currencyId: WebbCurrencyId.ETH,
         enabled: true,
+        address: '0x0000000000000000000000000000000000000000',
       },
     ],
     nativeCurrencyId: WebbCurrencyId.ETH,
@@ -182,6 +190,7 @@ export const chainsConfig: AppConfig['chains'] = {
       {
         currencyId: WebbCurrencyId.ONE,
         enabled: true,
+        address: '0x0000000000000000000000000000000000000000',
       },
     ],
     nativeCurrencyId: WebbCurrencyId.ONE,
@@ -216,6 +225,7 @@ export const chainsConfig: AppConfig['chains'] = {
       {
         currencyId: WebbCurrencyId.ONE,
         enabled: true,
+        address: '0x0000000000000000000000000000000000000000',
       },
     ],
     nativeCurrencyId: WebbCurrencyId.ONE,
@@ -250,6 +260,7 @@ export const chainsConfig: AppConfig['chains'] = {
       {
         currencyId: WebbCurrencyId.SDN,
         enabled: true,
+        address: '0x0000000000000000000000000000000000000000',
       },
     ],
     nativeCurrencyId: WebbCurrencyId.SDN,

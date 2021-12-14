@@ -94,8 +94,8 @@ export class WebbGovernedToken {
     return false;
   }
 
-  private isNativeAllowed() {
-    return true;
+  async isNativeAllowed() {
+    return await this._contract.isNativeAllowed();
   }
 
   async canWrap(/*tokenAddress: string*/ amount: BigNumberish) {
