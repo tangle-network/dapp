@@ -10,8 +10,6 @@ import React, { FC } from 'react';
 import { hot } from 'react-hot-loader/root';
 
 import { config as routerConfig } from './router-config';
-import { u8aToHex } from '@polkadot/util';
-import { decodeAddress } from '@polkadot/keyring';
 
 const appLogger = LoggerService.new('App');
 

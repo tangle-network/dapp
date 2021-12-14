@@ -12,7 +12,12 @@ import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
 import { u8aToHex } from '@polkadot/util';
 import { decodeAddress } from '@polkadot/keyring';
 import { LoggerService } from '@webb-tools/app-util';
-
+import { ProvingManagerSetupInput } from '@webb-tools/sdk-core/proving/proving-manager-thread';
+async function fetchSubstratePK() {
+  const req = await fetch('/sub-fixtures/proving_key.bin');
+  const res = await req.arrayBuffer();
+  return new Uint8Array(res);
+}
 type WithdrawProof = {
   id: string;
   proof_bytes: string;
@@ -68,7 +73,8 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
     try {
       const pm = new ProvingManger(new Worker());
       const hexAddress = u8aToHex(decodeAddress('jn5LuB5d51srpmZqiBNgWu11C6AeVxEygggjWsifcG1myqr'));
-      const proofInput = {
+      const provingKey = await fetchSubstratePK();
+      const proofInput: ProvingManagerSetupInput = {
         leaves,
         note,
         leafIndex: 1,
@@ -76,6 +82,7 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
         fee: 0,
         recipient: hexAddress.replace('0x', ''),
         relayer: hexAddress.replace('0x', ''),
+        provingKey,
       };
       logger.info(`proofInput `, proofInput);
 
