@@ -134,7 +134,7 @@ export const Deposit: React.FC<DepositProps> = () => {
       {typeof destChain !== 'undefined' && (
         <MixerGroupSelect items={bridgeDepositApi.mixerSizes} value={item} onChange={selectBridgeAmount} />
       )}
-      {selectedBridgeCurrency && (
+      {selectedBridgeCurrency && typeof destChain !== 'undefined' && (
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center' }}>
             {showWrappableAssets && wrappableAsset && (
@@ -188,7 +188,7 @@ export const Deposit: React.FC<DepositProps> = () => {
         onClick={() => {
           setShowDepositModal(true);
         }}
-        label={'Deposit'}
+        label={showWrappableAssets ? 'Wrap and Deposit' : 'Deposit'}
       />
       <Modal open={showDepositModal}>
         <DepositConfirm
