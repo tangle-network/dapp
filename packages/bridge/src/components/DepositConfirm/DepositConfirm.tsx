@@ -1,7 +1,8 @@
 import { ButtonBase, Checkbox, FormControlLabel, Icon, IconButton, Tooltip, Typography } from '@material-ui/core';
 import { ChainId } from '@webb-dapp/apps/configs';
 import { BridgeDepositApi as DepositApi } from '@webb-dapp/bridge/hooks/deposit/useBridgeDeposit';
-import { DepositPayload } from '@webb-dapp/react-environment/webb-context';
+import { Currency } from '@webb-dapp/react-environment/types/currency';
+import { DepositPayload, useWebContext } from '@webb-dapp/react-environment/webb-context';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
@@ -48,6 +49,7 @@ type DepositInfoProps = {
   onSuccess(): void;
   mixerId: number | undefined;
   destChain: ChainId | undefined;
+  wrappableAsset: Currency | undefined;
 };
 
 const GeneratedNote = styled.p`
@@ -103,7 +105,9 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({
   onSuccess,
   open,
   provider,
+  wrappableAsset,
 }) => {
+  const { activeChain } = useWebContext();
   const [depositPayload, setNote] = useState<DepositPayload | undefined>(undefined);
   const [loading, setLoading] = useState(false);
   const note = useMemo(() => {
@@ -129,7 +133,11 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({
     if (typeof destChain === 'undefined' || !mixerId) {
       return setNote(undefined);
     }
-    provider.generateNote(mixerId, destChain).then((note) => {
+
+    const wrappableCurrency = activeChain?.currencies.find(
+      (currency) => currency.currencyId == wrappableAsset?.view.id
+    );
+    provider.generateNote(mixerId, destChain, wrappableCurrency?.address).then((note) => {
       setNote(note);
     });
   }, [provider.generateNote, mixerId, destChain]);
@@ -242,7 +250,7 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({
               return;
             }
             setLoading(true);
-            downloadNote(depositPayload);
+            downloadNote();
             onClose();
             await provider.deposit(depositPayload);
             setLoading(false);

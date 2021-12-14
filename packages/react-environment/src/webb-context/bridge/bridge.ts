@@ -32,8 +32,8 @@ export class Bridge {
   /*
    *  Get all tokens
    * */
-  static getTokens(configEntry: BridgeConfig): BridgeCurrency[] {
-    return Object.values(configEntry).map((i) => i.asset);
+  static getTokens(config: BridgeConfig): BridgeCurrency[] {
+    return Object.values(config).map((i) => i.asset);
   }
 
   static getTokensByAddress(config: BridgeConfig, addresses: string[]): BridgeCurrency[] {
@@ -51,16 +51,16 @@ export class Bridge {
   /*
    *  Get tokens for a given chain
    * */
-  static getTokensOfChain(configEntry: BridgeConfig, chainId: ChainId): BridgeCurrency[] {
-    const tokens = Bridge.getTokens(configEntry);
+  static getTokensOfChain(config: BridgeConfig, chainId: ChainId): BridgeCurrency[] {
+    const tokens = Bridge.getTokens(config);
     return tokens.filter((token) => token.hasChain(chainId));
   }
 
   /*
    *  Get tokens that all that supports given chains
    * */
-  static getTokensOfChains(configEntry: BridgeConfig, chainIds: ChainId[]): BridgeCurrency[] {
-    const tokens = Bridge.getTokens(configEntry);
+  static getTokensOfChains(config: BridgeConfig, chainIds: ChainId[]): BridgeCurrency[] {
+    const tokens = Bridge.getTokens(config);
     return tokens.filter((token) => {
       for (let chainId of chainIds) {
         if (!token.hasChain(chainId)) {
@@ -71,7 +71,7 @@ export class Bridge {
     });
   }
 
-  static getConfigEntry(configEntry: BridgeConfig, bridgeCurrency: BridgeCurrency): BridgeConfigEntry {
-    return configEntry[bridgeCurrency.name];
+  static getConfigEntry(config: BridgeConfig, bridgeCurrency: BridgeCurrency): BridgeConfigEntry {
+    return config[bridgeCurrency.name];
   }
 }

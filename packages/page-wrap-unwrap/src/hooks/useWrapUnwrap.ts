@@ -142,12 +142,10 @@ export function useWrapUnwrap() {
 
   return {
     ...state,
-
+    execute,
     swap,
-
     setRightHandToken,
     setLeftHandToken,
     setAmount,
-    execute,
   };
 }
