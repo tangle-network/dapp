@@ -50,7 +50,6 @@ export const Deposit: React.FC<DepositProps> = () => {
     // todo: figure out what happens for polkadot - won't be depositing by address
     const tokenAddress = activeBridge.getTokenAddress(activeChain.id)!;
     activeApi.methods.chainQuery.tokenBalanceByAddress(tokenAddress).then((balance) => {
-      console.log('balance of wrappable: ', balance);
       setWrappedTokenBalance(balance);
     });
   }, [activeApi, activeBridge, activeChain]);
@@ -61,6 +60,17 @@ export const Deposit: React.FC<DepositProps> = () => {
 
   const [item, setItem] = useState<MixerSize | undefined>(undefined);
   const [destChain, setDestChain] = useState<ChainId | undefined>(undefined);
+
+  // helper for automatic selection of 'wrap and deposit' if not enough bridge token
+  const selectBridgeAmount = (mixerSize: MixerSize) => {
+    setItem(mixerSize);
+    // get the amount from mixersize data
+    const titleData = mixerSize.title.split(' ');
+    if (Number(wrappedTokenBalance) < Number(titleData[0])) {
+      setShowWrappableAssets(true);
+    }
+  };
+
   const tokenChains = useMemo(() => {
     return selectedBridgeCurrency?.chainIds ?? [];
   }, [selectedBridgeCurrency]);
@@ -81,7 +91,6 @@ export const Deposit: React.FC<DepositProps> = () => {
     if (!wrappableAsset || !activeApi) return;
 
     activeApi.methods.chainQuery.tokenBalanceByCurrencyId(wrappableAsset.view.id).then((balance) => {
-      console.log('balance of wrappable: ', balance);
       setWrappableTokenBalance(balance);
     });
   }, [wrappableAsset, activeApi]);
@@ -123,7 +132,7 @@ export const Deposit: React.FC<DepositProps> = () => {
       />
       <SpaceBox height={16} />
       {typeof destChain !== 'undefined' && (
-        <MixerGroupSelect items={bridgeDepositApi.mixerSizes} value={item} onChange={setItem} />
+        <MixerGroupSelect items={bridgeDepositApi.mixerSizes} value={item} onChange={selectBridgeAmount} />
       )}
       {selectedBridgeCurrency && (
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
