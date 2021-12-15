@@ -9,12 +9,12 @@ import { MixerWithdraw, WithdrawState } from '../../webb-context';
 import { WebbPolkadot } from './webb-polkadot-provider';
 import { PolkadotMixerDeposit } from '.';
 import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
-import { u8aToHex } from '@polkadot/util';
+import { hexToU8a, u8aToHex } from '@polkadot/util';
 import { decodeAddress } from '@polkadot/keyring';
 import { LoggerService } from '@webb-tools/app-util';
 import { ProvingManagerSetupInput } from '@webb-tools/sdk-core/proving/proving-manager-thread';
 async function fetchSubstratePK() {
-  const req = await fetch('/sub-fixtures/proving_key.bin');
+  const req = await fetch('/sub-fixtures/proving_key_uncompresed.bin');
   const res = await req.arrayBuffer();
   return new Uint8Array(res);
 }
@@ -69,6 +69,10 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
     const nodeMerkleTree = await this.inner.api.query.merkleTreeBn254.trees(treeId);
     const groupTreeWrapper = new GroupTreeWrapper(nodeMerkleTree);
     const leaves = await this.fetchTreeLeaves(treeId);
+    const leaf = u8aToHex(noteParsed.getLeaf());
+    const leafIndex = leaves.findIndex((l) => u8aToHex(l) === leaf);
+    logger.info(`leaf ${leaf} has index `, leafIndex);
+
     logger.info(leaves.map((i) => u8aToHex(i)));
     try {
       const pm = new ProvingManger(new Worker());
@@ -77,7 +81,7 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
       const proofInput: ProvingManagerSetupInput = {
         leaves,
         note,
-        leafIndex: 1,
+        leafIndex,
         refund: 0,
         fee: 0,
         recipient: hexAddress.replace('0x', ''),

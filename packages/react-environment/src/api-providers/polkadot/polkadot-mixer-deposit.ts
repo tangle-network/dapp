@@ -29,6 +29,7 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
     const data: Array<MixerGroupEntry> = await api.query.mixerBn254.mixers.entries();
     // @ts-ignore
     const tokenProperty: Array<NativeTokenProperties> = await api.rpc.system.properties();
+    console.log(data);
     const groupItem = data
       .map(([storageKey, info]) => {
         const cId: number = Number(info.toHuman().asset);
