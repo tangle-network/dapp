@@ -1,5 +1,6 @@
-import { ChainId, chainIdIntoEVMId, evmIdIntoChainId, getEVMChainNameFromInternal } from '@webb-dapp/apps/configs';
+import { ChainId, chainIdIntoEVMId, chainsConfig, currenciesConfig, evmIdIntoChainId, getEVMChainNameFromInternal } from '@webb-dapp/apps/configs';
 import { createAnchor2Deposit, Deposit } from '@webb-dapp/contracts/utils/make-deposit';
+import { WebbGovernedToken } from '@webb-dapp/contracts/contracts';
 import { BridgeConfig, DepositPayload as IDepositPayload, MixerSize } from '@webb-dapp/react-environment';
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3/webb-web3-provider';
 import { notificationApi } from '@webb-dapp/ui-components/notification';
@@ -12,8 +13,9 @@ import React from 'react';
 import { u8aToHex } from '@polkadot/util';
 
 import { BridgeDeposit } from '../../webb-context/bridge/bridge-deposit';
+import { Currency } from '@webb-dapp/react-environment/types/currency';
 
-type DepositPayload = IDepositPayload<Note, [Deposit, number | string]>;
+type DepositPayload = IDepositPayload<Note, [Deposit, number | string, string?]>;
 
 export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPayload> {
   bridgeConfig: BridgeConfig = {};
@@ -38,7 +40,7 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
         }),
         key: 'bridge-deposit',
         path: {
-          method: 'deposit',
+          method: depositPayload.params[2] ? 'wrap and deposit' : 'deposit',
           section: bridge.currency.name,
         },
       });
@@ -54,6 +56,21 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
         throw new Error(`No Anchor for the chain ${note.chain}`);
       }
       const contract = this.inner.getWebbAnchorByAddress(contractAddress);
+
+      // If a wrappableAsset was selected, perform a wrapAndDeposit
+      if (depositPayload.params[2]) {
+        await contract.wrapAndDeposit(commitment, depositPayload.params[2]);
+        transactionNotificationConfig.finalize?.({
+          address: '',
+          data: undefined,
+          key: 'bridge-deposit',
+          path: {
+            method: 'wrap and deposit',
+            section: bridge.currency.name,
+          },
+        });
+        return;
+      }
 
       const requiredApproval = await contract.isApprovalRequired();
       if (requiredApproval) {
@@ -143,12 +160,45 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
     return [];
   }
 
+  async getWrappableAssets(chainId: ChainId): Promise<Currency[]> {
+    const bridge = this.activeBridge;
+    if (bridge) {
+      const wrappedTokenAddress = bridge.getTokenAddress(chainId);
+      if (!wrappedTokenAddress) return [];
+
+      const wrappedToken = new WebbGovernedToken(this.inner.getEthersProvider(), wrappedTokenAddress);
+      const tokenAddresses = await wrappedToken.tokens;
+
+      // take the currencies of the chain and return the ones that have addresses
+      const wrappableAssets = chainsConfig[chainId].currencies.filter((currency) => {
+        return tokenAddresses.find((tokenAddress) => tokenAddress === currency.address);
+      });
+
+      const wrappableCurrencies = wrappableAssets.map((asset) => {
+        return Currency.fromCurrencyId(asset.currencyId);
+      });
+
+      const isNativeWrappable = await wrappedToken.isNativeAllowed();
+
+      if (isNativeWrappable) {
+        wrappableCurrencies.push(Currency.fromCurrencyId(chainsConfig[chainId].nativeCurrencyId));
+      }
+
+      return wrappableCurrencies;
+    }
+    return [];
+  }
+
   /*
    *
    *  Mixer id => the fixed deposit amount
    * destChainId => the Chain the token will be bridged to
    * */
-  async generateBridgeNote(mixerId: number | string, destChainId: ChainId): Promise<DepositPayload> {
+  async generateBridgeNote(
+    mixerId: number | string,
+    destChainId: ChainId,
+    wrappableAssetAddress?: string
+  ): Promise<DepositPayload> {
     const bridge = this.activeBridge;
     if (!bridge) {
       throw new Error('api not ready');
@@ -177,7 +227,7 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
     logger.info(`Commitment is ${note.note.secret}`);
     return {
       note: note,
-      params: [deposit, mixerId],
+      params: [deposit, mixerId, wrappableAssetAddress],
     };
   }
 }
