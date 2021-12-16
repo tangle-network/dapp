@@ -1,18 +1,20 @@
+import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
 import { GroupTreeWrapper } from '@webb-dapp/mixer';
 // @ts-ignore
-import Worker from '@webb-dapp/mixer/utils/proving-mananger.worker';
+import Worker from '@webb-dapp/mixer/utils/proving-manager.worker';
 import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
-import { Note } from '@webb-tools/sdk-mixer';
+import { LoggerService } from '@webb-tools/app-util';
 import { ProvingManger } from '@webb-tools/sdk-core';
+import { ProvingManagerSetupInput } from '@webb-tools/sdk-core/proving/proving-manager-thread';
+import { Note } from '@webb-tools/sdk-mixer';
+
+import { decodeAddress } from '@polkadot/keyring';
+import { hexToU8a, u8aToHex } from '@polkadot/util';
 
 import { MixerWithdraw, WithdrawState } from '../../webb-context';
 import { WebbPolkadot } from './webb-polkadot-provider';
 import { PolkadotMixerDeposit } from '.';
-import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
-import { hexToU8a, u8aToHex } from '@polkadot/util';
-import { decodeAddress } from '@polkadot/keyring';
-import { LoggerService } from '@webb-tools/app-util';
-import { ProvingManagerSetupInput } from '@webb-tools/sdk-core/proving/proving-manager-thread';
+
 async function fetchSubstratePK() {
   const req = await fetch('/sub-fixtures/proving_key_uncompresed.bin');
   const res = await req.arrayBuffer();
@@ -65,9 +67,7 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
     const sizes = await PolkadotMixerDeposit.getSizes(this.inner.api);
     const treeId = sizes.find((s) => s.value === amount)?.treeId!;
     logger.info(`treeid `, treeId);
-    // @ts-ignore
-    const nodeMerkleTree = await this.inner.api.query.merkleTreeBn254.trees(treeId);
-    const groupTreeWrapper = new GroupTreeWrapper(nodeMerkleTree);
+
     const leaves = await this.fetchTreeLeaves(treeId);
     const leaf = u8aToHex(noteParsed.getLeaf());
     const leafIndex = leaves.findIndex((l) => u8aToHex(l) === leaf);
@@ -90,13 +90,13 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
       };
       logger.info(`proofInput `, proofInput);
 
-      const zk = await pm.proof(proofInput);
+      const zkProofMetadata = await pm.proof(proofInput);
 
       const withdrawProof: WithdrawProof = {
         id: treeId,
-        proof_bytes: zk.proof as any,
-        root: zk.root,
-        nullifier_hash: zk.nullifier_hash,
+        proof_bytes: zkProofMetadata.proof as any,
+        root: zkProofMetadata.root,
+        nullifier_hash: zkProofMetadata.nullifier_hash,
         recipient: hexAddress.replace('0x', ''),
         relayer: hexAddress.replace('0x', ''),
         fee: bufferToFixed('0'),
@@ -111,7 +111,7 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
         },
         [
           treeId,
-          `0x${withdrawProof.proof_bytes}`,
+          hexToU8a(withdrawProof.proof_bytes),
           `0x${withdrawProof.root}`,
           `0x${withdrawProof.nullifier_hash}`,
           'jn5LuB5d51srpmZqiBNgWu11C6AeVxEygggjWsifcG1myqr',
