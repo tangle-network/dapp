@@ -111,7 +111,7 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
         },
         [
           treeId,
-          hexToU8a(withdrawProof.proof_bytes),
+          hexToU8a(`0x${withdrawProof.proof_bytes}`),
           `0x${withdrawProof.root}`,
           `0x${withdrawProof.nullifier_hash}`,
           'jn5LuB5d51srpmZqiBNgWu11C6AeVxEygggjWsifcG1myqr',
