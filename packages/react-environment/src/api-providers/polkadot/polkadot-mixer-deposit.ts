@@ -83,7 +83,7 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
       prefix: 'webb.mix',
       version: 'v1',
       exponentiation: '5',
-      width: '3',
+      width: '5',
       backend: 'Arkworks',
       hashFunction: 'Poseidon',
       curve: 'Bn254',
