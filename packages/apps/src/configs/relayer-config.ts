@@ -34,12 +34,22 @@ export function relayerNameToChainId(name: string): ChainId {
       return ChainId.Ganache;
     case 'webb':
     case 'edgeware':
-      return ChainId.Edgeware;
     case 'hedgeware':
+      break;
+    case 'ropsten':
+      return ChainId.Ropsten;
     case 'rinkeby':
       return ChainId.Rinkeby;
+    case 'goerli':
+      return ChainId.Goerli;
+    case 'kovan':
+      return ChainId.Kovan;
     case 'shiden':
       return ChainId.Shiden;
+    case 'optimismtestnet':
+      return ChainId.OptimismTestnet;
+    case 'arbitrumtestnet':
+      return ChainId.ArbitrumTestnet;
   }
 
   throw new Error('unhandled relayed chain name  ' + name);
@@ -53,8 +63,13 @@ enum RelayerChainName {
   HarmonyTestnet0 = 'harmonytestnet0',
   HarmonyTestnet1 = 'harmonytestnet1',
   HarmonyMainnet0 = 'harmonymainnet0',
+  Ropsten = 'ropsten',
   Rinkeby = 'rinkeby',
+  Goerli = 'goerli',
+  Kovan = 'kovan',
   Shiden = 'shiden',
+  OptimismTestnet = 'optimismtestnet',
+  ArbitrumTestnet = 'arbitrumtestnet',
 }
 
 export function chainIdToRelayerName(id: ChainId): string {
@@ -70,11 +85,11 @@ export function chainIdToRelayerName(id: ChainId): string {
     case ChainId.Rinkeby:
       return RelayerChainName.Rinkeby;
     case ChainId.Ropsten:
-      break;
+      return RelayerChainName.Ropsten;
     case ChainId.Kovan:
-      break;
+      return RelayerChainName.Kovan;
     case ChainId.Goerli:
-      break;
+      return RelayerChainName.Goerli;
     case ChainId.HarmonyTestnet0:
       return RelayerChainName.HarmonyTestnet0;
     case ChainId.HarmonyTestnet1:
@@ -83,6 +98,10 @@ export function chainIdToRelayerName(id: ChainId): string {
       return RelayerChainName.HarmonyMainnet0;
     case ChainId.Shiden:
       return RelayerChainName.Shiden;
+    case ChainId.OptimismTestnet:
+      return RelayerChainName.OptimismTestnet;
+    case ChainId.ArbitrumTestnet:
+      return RelayerChainName.ArbitrumTestnet;
   }
   throw new Error(`unhandled Chain id ${id}`);
 }

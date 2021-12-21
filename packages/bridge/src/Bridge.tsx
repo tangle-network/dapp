@@ -11,8 +11,6 @@ const MixerWrapper = styled.div``;
 type MixerProps = {};
 
 export const Bridge: React.FC<MixerProps> = () => {
-  const { activeApi } = useWebContext();
-
   return (
     <MixerWrapper>
       <PermissionedAccess>

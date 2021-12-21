@@ -1,0 +1,67 @@
+import { chainsConfig, evmIdIntoChainId, WebbCurrencyId } from '@webb-dapp/apps/configs';
+import { Erc20Factory } from '@webb-dapp/contracts/types';
+import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers';
+import { ChainQuery } from '@webb-dapp/react-environment/webb-context/chain-query';
+import { ethers } from 'ethers';
+
+export class Web3ChainQuery extends ChainQuery<WebbWeb3Provider> {
+  constructor(protected inner: WebbWeb3Provider) {
+    super(inner);
+  }
+
+  async tokenBalanceByCurrencyId(currency: WebbCurrencyId): Promise<string> {
+    const provider = this.inner.getEthersProvider();
+
+    // check if the token is the native token of this chain
+    const { chainId: evmId } = await provider.getNetwork();
+    const webbChain = evmIdIntoChainId(evmId);
+
+    const accounts = await this.inner.accounts.accounts();
+    if (!accounts || !accounts.length) {
+      console.log('no account selected');
+      return '';
+    }
+    // Return the balance of the account if native currency
+    if (chainsConfig[webbChain].nativeCurrencyId == currency) {
+      const tokenBalanceBig = await provider.getBalance(accounts[0].address);
+      const tokenBalance = ethers.utils.formatEther(tokenBalanceBig);
+      return tokenBalance;
+    } else {
+      // Find the currency address on this chain
+      const currencyOnChain = chainsConfig[webbChain].currencies.find(
+        (chainCurrency) => chainCurrency.currencyId == currency
+      );
+
+      if (!currencyOnChain) return '';
+
+      // Create a token instance for this chain
+      const tokenInstance = Erc20Factory.connect(currencyOnChain.address, provider);
+      const tokenBalanceBig = await tokenInstance.balanceOf(accounts[0].address);
+      const tokenBalance = ethers.utils.formatEther(tokenBalanceBig);
+      return tokenBalance;
+    }
+  }
+
+  async tokenBalanceByAddress(address: string): Promise<string> {
+    const provider = this.inner.getEthersProvider();
+
+    const accounts = await this.inner.accounts.accounts();
+    if (!accounts || !accounts.length) {
+      console.log('no account selected');
+      return '';
+    }
+
+    // Return the balance of the account if native currency
+    if (address === '0x0000000000000000000000000000000000000000') {
+      const tokenBalanceBig = await provider.getBalance(accounts[0].address);
+      const tokenBalance = ethers.utils.formatEther(tokenBalanceBig);
+      return tokenBalance;
+    } else {
+      // Create a token instance for this chain
+      const tokenInstance = Erc20Factory.connect(address, provider);
+      const tokenBalanceBig = await tokenInstance.balanceOf(accounts[0].address);
+      const tokenBalance = ethers.utils.formatEther(tokenBalanceBig);
+      return tokenBalance;
+    }
+  }
+}

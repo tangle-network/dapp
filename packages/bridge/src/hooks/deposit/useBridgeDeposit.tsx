@@ -16,7 +16,7 @@ export interface BridgeDepositApi {
 
   deposit(payload: DepositPayload): Promise<void>;
 
-  generateNote(mixerId: number, destChain: ChainId): Promise<DepositPayload>;
+  generateNote(mixerId: number, destChain: ChainId, wrappableAsset: string | undefined): Promise<DepositPayload>;
 
   loadingState: MixerDeposit['loading'];
   error: string;
@@ -57,17 +57,18 @@ export const useBridgeDeposit = (): BridgeDepositApi => {
       });
     });
     return () => {
+      setActiveBridge(null);
       unSub && unSub();
       subscribe.unsubscribe();
     };
   }, [depositApi]);
   const [activeBridge, setActiveBridge] = useState<Bridge | null>(depositApi?.activeBridge ?? null);
   const generateNote = useCallback(
-    async (mixerId: number, destChain: ChainId) => {
+    async (mixerId: number, destChain: ChainId, wrappableAsset: string | undefined) => {
       if (!depositApi) {
         throw new Error('Not ready');
       }
-      return depositApi?.generateBridgeNote(mixerId, destChain);
+      return depositApi?.generateBridgeNote(mixerId, destChain, wrappableAsset);
     },
     [depositApi]
   );
