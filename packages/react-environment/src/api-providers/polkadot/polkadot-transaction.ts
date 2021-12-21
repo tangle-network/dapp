@@ -82,11 +82,12 @@ export class PolkadotTx<P extends Array<any>> extends EventBus<PolkadotTXEvents>
     });
     this.emitWithPayload('beforeSend', undefined);
     this.emitWithPayload('loading', React.createElement('div'));
-
+    const hash = txResults.hash.toString();
     await this.send(txResults);
 
     this.emitWithPayload('afterSend', undefined);
     this.transactionAddress = null;
+    return hash;
   }
 
   protected emitWithPayload<E extends keyof PolkadotTXEvents>(
@@ -128,7 +129,7 @@ export class PolkadotTx<P extends Array<any>> extends EventBus<PolkadotTXEvents>
           const status = result.status;
           const events = result.events.filter(({ event: { section } }) => section === 'system');
           const txStatus = result.status.type.toLowerCase() as QueueTxStatus;
-          console.log(txStatus);
+          console.log(result.toHuman());
           if (status.isInBlock || status.isFinalized) {
             for (const event of events) {
               const {
