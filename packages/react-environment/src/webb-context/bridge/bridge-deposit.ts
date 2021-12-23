@@ -1,7 +1,9 @@
 import { ChainId } from '@webb-dapp/apps/configs';
+import { Currency } from '@webb-dapp/react-environment/types/currency';
 import { Bridge } from '@webb-dapp/react-environment/webb-context/bridge/bridge';
 import { BridgeConfig } from '@webb-dapp/react-environment/webb-context/bridge/bridge-config';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { BridgeCurrency } from '.';
 
 import { DepositPayload, MixerDeposit } from '../mixer/mixer-deposit';
 
@@ -38,9 +40,18 @@ export abstract class BridgeDeposit<T, K extends DepositPayload = DepositPayload
   getTokensOfChains(chainIds: ChainId[]) {
     return Bridge.getTokensOfChains(this.bridgeConfig, chainIds);
   }
+
+  getWrappableAssets(chain: ChainId): Promise<Currency[]> {
+    return Promise.resolve([]);
+  }
+
   generateNote(mixerId: number | string): Promise<K> {
     throw new Error('api not ready:Not mixer api');
   }
 
-  abstract generateBridgeNote(mixerId: number | string, destination: ChainId): Promise<K>;
+  abstract generateBridgeNote(
+    mixerId: number | string,
+    destination: ChainId,
+    wrappableAssetAddress?: string
+  ): Promise<K>;
 }

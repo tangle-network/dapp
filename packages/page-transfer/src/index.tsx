@@ -4,7 +4,6 @@ import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
 import IPDisplay from '@webb-dapp/react-components/IPDisplay/IPDisplay';
 import { useWebContext } from '@webb-dapp/react-environment';
 import { Currency, CurrencyContent } from '@webb-dapp/react-environment/types/currency';
-import { useIp } from '@webb-dapp/react-hooks/useIP';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { ContentWrapper } from '@webb-dapp/ui-components/ContentWrappers';
@@ -38,7 +37,6 @@ const PageTransfers: FC = () => {
   const [isSwap, setIsSwap] = useState(false);
   const { activeApi, activeChain, activeWallet, chains: chainsStore, switchChain } = useWebContext();
 
-  const ip = useIp(activeApi);
   const chains = useMemo(() => {
     return Object.keys(chainsStore);
   }, [chainsStore]);
@@ -143,7 +141,7 @@ const PageTransfers: FC = () => {
 
       <SpaceBox height={8} />
 
-      <IPDisplay ip={ip.ip} />
+      <IPDisplay />
     </div>
   );
 };

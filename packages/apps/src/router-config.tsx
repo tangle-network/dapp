@@ -14,7 +14,7 @@ const CSuspense: FC = ({ children }) => {
 };
 
 export const config: RouterConfigData[] =
-  process.env.NODE_ENV === 'production'
+  process.env.REACT_APP_BUILD_ENV === 'production'
     ? [
       {
         children: [
@@ -26,6 +26,24 @@ export const config: RouterConfigData[] =
             ),
             path: 'tornado',
             title: 'Tornado',
+          },
+          {
+            element: (
+              <CSuspense>
+                <PageBridge />
+              </CSuspense>
+            ),
+            path: 'bridge',
+            title: 'Bridge',
+          },
+          {
+            element: (
+              <CSuspense>
+                <PageWrapUnwrap />
+              </CSuspense>
+            ),
+            path: 'wrap-unwrap/*',
+            title: 'Wrap/Unwrap assets',
           },
           {
             path: '*',

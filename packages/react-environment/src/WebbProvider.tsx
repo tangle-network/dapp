@@ -288,7 +288,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
                       alignItems: 'center',
                     },
                   },
-                  [React.createElement(wallet.logo)]
+                  [React.createElement(wallet.logo, { key: `${wallet.id}logo` })]
                 ),
               });
             }

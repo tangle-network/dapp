@@ -57,9 +57,9 @@ type TornadoRelayerWithdrawArgs = {
   refund: string;
 };
 type BridgeRelayerWithdrawArgs = {
-  roots: string[];
-  refresh_commitment: string;
-  nullifier_hash: string;
+  roots: number[];
+  refreshCommitment: string;
+  nullifierHash: string;
   recipient: string;
   relayer: string;
   fee: string;
@@ -98,12 +98,17 @@ export class WebbRelayerBuilder {
     info: RelayerInfo,
     nameAdapter: ChainNameIntoChainId
   ): Capabilities {
+
+    console.log('received info: ', info);
+
     return {
       hasIpService: true,
       supportedChains: {
         evm: info.evm
           ? Object.keys(info.evm)
-              .filter((key) => info.evm[key]?.account && nameAdapter(key, 'evm') != null)
+              .filter((key) => 
+                (info.evm[key]?.account || info.evm[key]?.beneficiary) && nameAdapter(key, 'evm') != null
+              )
               .reduce((m, key) => {
                 m.set(nameAdapter(key, 'evm'), info.evm[key]);
                 return m;
@@ -124,6 +129,8 @@ export class WebbRelayerBuilder {
   /// fetch relayers
   private async fetchCapabilitiesAndInsert(config: RelayerConfig) {
     this.capabilities[config.endpoint] = await this.fetchCapabilities(config.endpoint);
+
+    console.log(this.capabilities[config.endpoint]);
 
     return this.capabilities;
   }
@@ -168,6 +175,7 @@ export class WebbRelayerBuilder {
         ]);
       })
     );
+    console.log(relayerBuilder);
     return relayerBuilder;
   }
 
@@ -299,7 +307,7 @@ class RelayedWithdraw<T = ContractBase> {
     if (data.error || data.withdraw?.errored) {
       return [RelayedWithdrawResult.Errored, data.error || data.withdraw?.errored?.reason];
     } else if (data.network === 'invalidRelayerAddress') {
-      return [RelayedWithdrawResult.Errored, 'Invalided relayer address'];
+      return [RelayedWithdrawResult.Errored, 'Invalid relayer address'];
     } else if (data.withdraw?.finalized) {
       return [RelayedWithdrawResult.CleanExit, data.withdraw.finalized.txHash];
     } else {
@@ -431,6 +439,10 @@ export class ActiveWebbRelayer extends WebbRelayer {
 
   get account(): string | undefined {
     return this.config?.account;
+  }
+
+  get beneficiary(): string | undefined {
+    return this.config?.beneficiary;
   }
 
   fees = async (note: string) => {

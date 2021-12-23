@@ -1,3 +1,4 @@
+import { useIp, useWebContext } from '@webb-dapp/react-environment';
 import { useFetch } from '@webb-dapp/react-hooks/useFetch';
 import { ContentWrapper } from '@webb-dapp/ui-components/ContentWrappers';
 import { Spinner } from '@webb-dapp/ui-components/Spinner/Spinner';
@@ -42,15 +43,14 @@ export const acceptedTermsStorageFactory = () => {
   });
 };
 
-type PermissionedAccessProps = {
-  ip: string;
-};
+type PermissionedAccessProps = {};
 
-export const PermissionedAccess: React.FC<PermissionedAccessProps> = ({ children, ip }) => {
+export const PermissionedAccess: React.FC<PermissionedAccessProps> = ({ children }) => {
   const [permissionedState, setPermissionedState] = useState<PermissionedState>(PermissionedState.Checking);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [acceptedTermsStorage, setAcceptedTermsStorage] = useState<AcceptedTermsStorage | null>(null);
-  const data = useFetch(`https://ipapi.co/${ip}/json`, {});
+  const { countryCode } = useIp();
+  const { activeChain } = useWebContext();
 
   const storeAcceptedTerms = () => {
     acceptedTermsStorage?.set('acceptedTerms', true);
@@ -58,17 +58,16 @@ export const PermissionedAccess: React.FC<PermissionedAccessProps> = ({ children
   };
 
   useEffect(() => {
-    console.log('data: ', data);
     const checkPermissions = async () => {
-      if (data.error) {
-        setPermissionedState(PermissionedState.Adblocked);
-        return;
-      }
-      if (!data.country_code_iso3) {
+      if (!countryCode) {
         setPermissionedState(PermissionedState.Checking);
         return;
       }
-      if (data.country_code_iso3 === 'USA') {
+      if (countryCode === 'unknown') {
+        setPermissionedState(PermissionedState.Adblocked);
+        return;
+      }
+      if (countryCode === 'USA') {
         setPermissionedState(PermissionedState.Geofenced);
         return;
       }
@@ -81,8 +80,12 @@ export const PermissionedAccess: React.FC<PermissionedAccessProps> = ({ children
       }
       setPermissionedState(PermissionedState.Allowed);
     };
-    checkPermissions();
-  }, [data, acceptedTerms]);
+    if (activeChain?.tag === ('test' || 'dev')) {
+      setPermissionedState(PermissionedState.Allowed);
+    } else {
+      checkPermissions();
+    }
+  }, [acceptedTerms, countryCode, activeChain]);
 
   return (
     <>

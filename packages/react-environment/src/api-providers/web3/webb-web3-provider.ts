@@ -7,6 +7,7 @@ import { Web3BridgeDeposit } from '@webb-dapp/react-environment/api-providers/we
 import { Web3BridgeWithdraw } from '@webb-dapp/react-environment/api-providers/web3/web3-bridge-withdraw';
 import { Web3MixerDeposit } from '@webb-dapp/react-environment/api-providers/web3/web3-mixer-deposit';
 import { Web3MixerWithdraw } from '@webb-dapp/react-environment/api-providers/web3/web3-mixer-withdraw';
+import { Web3ChainQuery } from '@webb-dapp/react-environment/api-providers/web3/web3-chain-query';
 import { MixerSize } from '@webb-dapp/react-environment/webb-context';
 import { WebbRelayerBuilder } from '@webb-dapp/react-environment/webb-context/relayer';
 import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
@@ -72,6 +73,7 @@ export class WebbWeb3Provider
           inner: new Web3MixerWithdraw(this),
         },
       },
+      chainQuery: new Web3ChainQuery(this),
     };
   }
 

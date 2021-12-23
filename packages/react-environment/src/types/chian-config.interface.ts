@@ -8,7 +8,8 @@ export interface ChainConfig {
   tag?: 'dev' | 'test' | 'live';
   url: string;
   evmRpcUrls?: string[];
+  blockExplorerStub?: string;
   logo: React.ComponentType;
   nativeCurrencyId: WebbCurrencyId;
-  currencies: Array<{ currencyId: WebbCurrencyId; enabled: boolean }>;
+  currencies: Array<{ currencyId: WebbCurrencyId; enabled: boolean; address: string }>;
 }

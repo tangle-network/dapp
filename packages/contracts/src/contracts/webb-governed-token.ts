@@ -50,7 +50,6 @@ export class WebbGovernedToken {
 
     const overrides: PayableOverrides = {
       gasLimit: 6000000,
-      gasPrice: utils.toWei('2', 'gwei'),
     };
 
     if (isNative) {
@@ -63,7 +62,6 @@ export class WebbGovernedToken {
   async unwrap(address: string, amount: BigNumberish) {
     const overrides: PayableOverrides = {
       gasLimit: 6000000,
-      gasPrice: utils.toWei('2', 'gwei'),
     };
     logger.info(
       `Unwrapping ${checkNativeAddress(address) ? 'native' : `non-native (${address})`} amount ${amount.toString()}`
@@ -96,8 +94,8 @@ export class WebbGovernedToken {
     return false;
   }
 
-  private isNativeAllowed() {
-    return true;
+  async isNativeAllowed() {
+    return await this._contract.isNativeAllowed();
   }
 
   async canWrap(/*tokenAddress: string*/ amount: BigNumberish) {

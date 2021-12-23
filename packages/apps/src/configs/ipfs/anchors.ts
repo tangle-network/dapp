@@ -3,22 +3,22 @@ export const fetchWasmForEdges = async (maxEdges: number) => {
 
   switch (maxEdges) {
     case 1:
-      ipfsHash = 'QmSVAxEWahZdH4gnS3qcWKbApSxsDU22YH1Z6GS5WWWZTa';
+      ipfsHash = 'QmUZVsPd3fDWfncbiZfWVKi4DX9PG1VX8oqVQrCHXFh8dV';
       break;
     case 2:
-      ipfsHash = 'QmdxeboQBZwut9UEkViuZqFSiAJHyJ32dvbJpCZfWwkp3T';
+      ipfsHash = 'QmZcyRgorkHDWf5Tx8jnb1D9mKkwWc5DdYbWYspJLSGNbG';
       break;
     case 3:
-      ipfsHash = 'QmRvAJhUQ7Rm3RSYTZ5r13BvdRXnd1gEXaSm7icQ7k5af4';
+      ipfsHash = 'QmWy3pxQt9tYFyDSnqiyNtgjMacex37sPeneZBYCpFTkCz';
       break;
     case 4:
-      ipfsHash = 'QmZoVake28adxmvK5T44bzKYLMBfwQ9hfqt8hcmab5DC4R';
+      ipfsHash = 'Qma7YsTpqUuBVGawLEZhrQyobtKSX1kJW25q2rdGQYaGf5';
       break;
     case 5:
-      ipfsHash = 'QmXVeUkKJYvShyov1VJzE748kW78VYvb3DYyEVYuXRonoJ';
+      ipfsHash = 'Qme47CdNasWDUz2u1m1HtbqMJG3vLPFyDj2Gr5HT3JAzLn';
       break;
     default:
-      ipfsHash = 'QmSVAxEWahZdH4gnS3qcWKbApSxsDU22YH1Z6GS5WWWZTa';
+      ipfsHash = 'QmUZVsPd3fDWfncbiZfWVKi4DX9PG1VX8oqVQrCHXFh8dV';
       break;
   }
 
@@ -36,22 +36,22 @@ export const fetchKeyForEdges = async (maxEdges: number) => {
 
   switch (maxEdges) {
     case 1:
-      ipfsHash = 'QmUBkb5P6CJbtywEdr2xiAY8rJz4Aak1uvu28oxoC3Z5QF';
+      ipfsHash = 'QmY2QVnVepKKamEzUYy2Hzw5ZQrtrG31repDr25Gr7SYWd';
       break;
     case 2:
-      ipfsHash = 'QmRukP3kL2dHQc9jpV4gdwi2WVLsbQk8j72WXeqJY2xqQa';
+      ipfsHash = 'QmeaX6KfJTC9oixvjig4RMS3bMNizAqQXNRTh6sadAnzps';
       break;
     case 3:
-      ipfsHash = 'QmWaGocEr1NMKageZmEUCoDxcQVeYCkddcDnW6z4JX4mh7';
+      ipfsHash = 'QmPs3SCyZ2uboSrpzdQAT9JkYyybjrpcAF2Fhb2QYHgWf8';
       break;
     case 4:
-      ipfsHash = 'QmRzqsRmXNCkm9ZrETFygLG6TgRQBnYyhYxAsQvwPsr3dH';
+      ipfsHash = 'QmdBsxtCBzYQw1yo3n4goeVyZ5iDhJN33QSBqX88Dz3mVX';
       break;
     case 5:
-      ipfsHash = 'QmR6jms4hbvtzore2wWeri1Q9dCt9hoRAAx2jBq9BLg4Ak';
+      ipfsHash = 'Qmc58Pq8iP3y12crAvjyVdnT2z9hA7TyduhANjSNrJz8Sp';
       break;
     default:
-      ipfsHash = 'QmUBkb5P6CJbtywEdr2xiAY8rJz4Aak1uvu28oxoC3Z5QF';
+      ipfsHash = 'QmY2QVnVepKKamEzUYy2Hzw5ZQrtrG31repDr25Gr7SYWd';
       break;
   }
 
