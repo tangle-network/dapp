@@ -3,6 +3,7 @@ import { Token } from '@webb-tools/sdk-core';
 import { CurrencyId } from '@webb-tools/types/interfaces/types';
 
 import { ApiPromise, ApiRx } from '@polkadot/api';
+import { ORMLAsset } from '@webb-dapp/react-environment/types/orml-currency';
 
 interface Data {
   currencyId: CurrencyId;
@@ -33,7 +34,21 @@ export class Currency {
         });
     }
   }
-
+  static fromORMLAsset(asset: ORMLAsset, api: ApiPromise | ApiRx, amount: number = 0): Currency {
+    return new Currency(
+      {
+        currencyId: asset.id as any,
+        token: new Token({
+          amount,
+          chain: 'edgeware',
+          name: asset.name,
+          symbol: asset.name,
+          precision: 18,
+        }),
+      },
+      api
+    );
+  }
   static fromCurrencyId(currencyId: CurrencyId | number, api: ApiRx | ApiPromise, amount: number = 0): Currency {
     let cid: CurrencyId;
     if (typeof currencyId === 'number') {

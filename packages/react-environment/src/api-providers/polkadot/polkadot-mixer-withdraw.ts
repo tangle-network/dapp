@@ -65,7 +65,7 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
     const noteParsed = await Note.deserialize(note);
     const depositAmount = noteParsed.note.amount;
     const amount = depositAmount;
-    const sizes = await PolkadotMixerDeposit.getSizes(this.inner.api);
+    const sizes = await PolkadotMixerDeposit.getSizes(this.inner);
     const treeId = sizes.find((s) => s.value === amount)?.treeId!;
     logger.trace(`Tree Id `, treeId);
     const leaves = await this.fetchTreeLeaves(treeId);

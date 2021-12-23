@@ -87,6 +87,7 @@ export class PolkadotTx<P extends Array<any>> extends EventBus<PolkadotTXEvents>
 
     this.emitWithPayload('afterSend', undefined);
     this.transactionAddress = null;
+    txLogger.info(`Tx ${this.path.section} ${this.path.method} is Done: TX hash=`, hash);
     return hash;
   }
 
@@ -129,7 +130,6 @@ export class PolkadotTx<P extends Array<any>> extends EventBus<PolkadotTXEvents>
           const status = result.status;
           const events = result.events.filter(({ event: { section } }) => section === 'system');
           const txStatus = result.status.type.toLowerCase() as QueueTxStatus;
-          console.log(result.toHuman());
           if (status.isInBlock || status.isFinalized) {
             for (const event of events) {
               const {

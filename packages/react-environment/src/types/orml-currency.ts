@@ -5,6 +5,7 @@ export type ORMLAsset = {
   existentialDeposit: string;
   locked: false;
   name: string;
+  id: string;
 };
 const logger = LoggerService.get('currencies');
 export class ORMLCurrency {
@@ -12,7 +13,12 @@ export class ORMLCurrency {
 
   async list() {
     const assets = await this.api.api.query.assetRegistry.assets.entries();
-    return assets.map(([_, i]) => i.toHuman()) as ORMLAsset[];
+    return assets.map(([storageKey, i]) => ({
+      // @ts-ignore
+      ...i.toHuman(),
+      // @ts-ignore
+      id: storageKey.toHuman()[0] as string,
+    })) as ORMLAsset[];
   }
 
   async getBalance() {

@@ -9,9 +9,6 @@ import { WebbPolkadot } from './webb-polkadot-provider';
 import { ApiPromise } from '@polkadot/api';
 import { ORMLCurrency } from '@webb-dapp/react-environment/types/orml-currency';
 import { LoggerService } from '@webb-tools/app-util';
-import { string } from 'prop-types';
-import { web3FromAddress } from '@polkadot/extension-dapp';
-import { uniqueId } from 'lodash';
 import { u8aToHex } from '@polkadot/util';
 
 type DepositPayload = IDepositPayload<Note, [number, string]>;
@@ -25,32 +22,34 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
     this.tokens = new ORMLCurrency(t);
   }
 
-  static async getSizes(api: ApiPromise) {
+  static async getSizes(webbPolkadot: WebbPolkadot) {
+    const api = webbPolkadot.api;
+    const ormlCurrency = new ORMLCurrency(webbPolkadot);
+    const ormlAssets = await ormlCurrency.list();
+
     const data: Array<MixerGroupEntry> = await api.query.mixerBn254.mixers.entries();
     // @ts-ignore
     const tokenProperty: Array<NativeTokenProperties> = await api.rpc.system.properties();
-    console.log(data);
     const groupItem = data
       .map(([storageKey, info]) => {
         const cId: number = Number(info.toHuman().asset);
         const amount = info.toHuman().depositSize;
         const treeId = storageKey.toHuman()[0];
-
+        const asset = ormlAssets.find((asset) => asset.id == cId)!;
         const id = storageKey.toString() + treeId;
-        console.log(info.toHuman(), 'info ::human');
         return {
           id,
           amount: amount,
-          currency: Currency.fromCurrencyId(cId, api, 0),
+          currency: Currency.fromORMLAsset(asset, api, amount),
           treeId,
           token: new Token({
             amount: amount.toString(),
             // TODO: Pull from active chain
             chain: 'edgeware',
-            name: 'DEV',
+            name: asset.name,
             // @ts-ignore
             precision: Number(tokenProperty?.toHuman().tokenDecimals?.[0] ?? 12),
-            symbol: 'EDG',
+            symbol: asset.name,
           }),
         };
       })
@@ -66,7 +65,7 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
   }
 
   async getSizes() {
-    return PolkadotMixerDeposit.getSizes(this.inner.api);
+    return PolkadotMixerDeposit.getSizes(this.inner);
   }
 
   async generateNote(mixerId: number): Promise<DepositPayload> {
