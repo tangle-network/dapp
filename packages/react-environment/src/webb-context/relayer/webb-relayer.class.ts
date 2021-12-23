@@ -78,7 +78,7 @@ export interface RelayerInfo {
 export type ChainNameIntoChainId = (name: string, basedOn: 'evm' | 'substrate') => ChainId | null;
 
 /**
- *  Webb relayers manger
+ *  Webb relayers manager
  *  this will fetch/mange/provide this relayers and there capabilities
  *
  * */

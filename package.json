@@ -10,14 +10,15 @@
     "yarn": "1.x"
   },
   "resolutions": {
-    "eslint": "^6.6.0",
-    "@polkadot/api": "^6.1.2",
-    "@webb-tools/type-definitions": "0.1.4-6",
-    "@webb-tools/api": "0.1.4-6",
-    "@webb-tools/types": "0.1.4-6",
-    "@webb-tools/app-util": "0.1.4-6",
-    "@webb-tools/sdk-core": "0.1.4-6",
-    "@webb-tools/sdk-mixer": "0.1.4-6"
+	"eslint": "^6.6.0",
+	"@polkadot/api": "^6.9.2",
+    "@webb-tools/type-definitions": "0.1.4-8",
+    "@webb-tools/api": "0.1.4-8",
+    "@webb-tools/types": "0.1.4-8",
+    "@webb-tools/app-util": "0.1.4-8",
+    "@webb-tools/sdk-core": "0.1.4-8",
+    "@webb-tools/sdk-mixer": "0.1.4-8",
+    "@webb-tools/wasm-utils": "0.1.4-8"
   },
   "scripts": {
     "bump-version": "node scripts/bump-version.js",

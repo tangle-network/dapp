@@ -91,14 +91,14 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
     }
   }
 
-  private insureApiInterface() {
-    return;
+  private async insureApiInterface() {
     // check for RPC
+    console.log(this.api, 'api');
     // @ts-ignore
-    const merkleRPC = this.api.rpc.merkle;
+    const merkleRPC = Boolean(this.api.rpc.mt.getLeaves);
     // merkle rpc
-    const merklePallet = this.api.query.merkle;
-    const mixerPallet = this.api.query.mixer;
+    const merklePallet = this.api.query.merkleTreeBn254;
+    const mixerPallet = this.api.query.mixerBn254;
     if (!merklePallet || !merkleRPC || !mixerPallet) {
       throw WebbError.from(WebbErrorCodes.InsufficientProviderInterface);
     }
@@ -112,7 +112,7 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
   ): Promise<WebbPolkadot> {
     const [apiPromise, injectedExtension] = await PolkadotProvider.getParams(appName, endpoints, errorHandler.onError);
     const instance = new WebbPolkadot(apiPromise, injectedExtension, relayerBuilder);
-    instance.insureApiInterface();
+    await instance.insureApiInterface();
     /// check metadata update
     await instance.awaitMetaDataCheck();
     await apiPromise.isReady;
