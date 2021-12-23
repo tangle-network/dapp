@@ -20,6 +20,7 @@ const ANY_EVM = [
   ChainId.Shiden,
   ChainId.OptimismTestnet,
   ChainId.ArbitrumTestnet,
+  ChainId.PolygonTestnet,
 ];
 export const walletsConfig: AppConfig['wallet'] = {
   [WalletId.Polkadot]: {

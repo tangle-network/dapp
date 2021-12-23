@@ -21,6 +21,7 @@ const DepositWrapper = styled.div``;
 type DepositProps = {};
 
 export const Deposit: React.FC<DepositProps> = () => {
+  const bridgeApi = useBridge();
   const bridgeDepositApi = useBridgeDeposit();
   const { activeApi, activeChain, activeWallet, chains, switchChain } = useWebContext();
   // const { clearAmount, token } = useBalanceSelect();
@@ -166,6 +167,21 @@ export const Deposit: React.FC<DepositProps> = () => {
             />
           </div>
         </div>
+      )}
+      {showWrappableAssets && wrappableAssets.length && (
+        <>
+          {/* used for positioning the token input label */}
+          <div style={{ height: '52px' }}></div>
+          <TokenInput
+            currencies={wrappableAssets}
+            value={wrappableAsset}
+            onChange={(currencyContent) => {
+              if (currencyContent) {
+                setWrappableAsset(Currency.fromCurrencyId(currencyContent.view.id as WebbCurrencyId));
+              }
+            }}
+          />
+        </>
       )}
       {showWrappableAssets && wrappableAssets.length && (
         <>
