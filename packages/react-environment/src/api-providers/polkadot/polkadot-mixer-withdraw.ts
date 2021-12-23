@@ -1,6 +1,6 @@
 import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
 // @ts-ignore
-import Worker from '@webb-dapp/mixer/utils/proving-manger.worker';
+import Worker from '@webb-dapp/mixer/utils/proving-manager.worker';
 import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import { LoggerService } from '@webb-tools/app-util';
 import { ProvingManger } from '@webb-tools/sdk-core';
