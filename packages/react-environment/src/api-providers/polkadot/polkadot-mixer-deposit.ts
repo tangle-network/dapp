@@ -1,5 +1,5 @@
 import { StorageKey } from '@polkadot/types';
-import { MixerInfo } from '@webb-tools/types/interfaces/mixer';
+import { PalletMixerMixerMetadata } from '@webb-tools/types/interfaces/pallets';
 import { MixerGroupEntry, NativeTokenProperties } from '@webb-dapp/mixer';
 import { Currency } from '@webb-dapp/mixer/utils/currency';
 import { DepositPayload as IDepositPayload, MixerDeposit } from '@webb-dapp/react-environment/webb-context';
@@ -32,17 +32,20 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
     // @ts-ignore
     const tokenProperty: Array<NativeTokenProperties> = await api.rpc.system.properties();
     const groupItem = data
-      .map(([storageKey, info]: [StorageKey, MixerInfo]) => {
+      .map(([storageKey, info]: [StorageKey, PalletMixerMixerMetadata]) => {
         const cId: number = Number(info.toHuman().asset);
         const amount = info.toHuman().depositSize;
         const treeId = storageKey.toHuman()[0];
         const id = storageKey.toString() + treeId;
+        // parse number from amount string
+        // TODO: Get and parse native / non-native token denomination
+        const amountNumber = Number(amount?.toString().replaceAll(',', '')) * 1.0 / Math.pow(10, 12);
         const currency = (cId)
-          ? Currency.fromORMLAsset(ormlAssets.find((asset) => asset.id == cId)!, api, amount)
-          : Currency.fromCurrencyId(cId, amount);
+          ? Currency.fromORMLAsset(ormlAssets.find((asset) => asset.id == cId)!, api, amountNumber)
+          : Currency.fromCurrencyId(cId, api, amountNumber);
         return {
           id,
-          amount: amount,
+          amount: amountNumber,
           currency: currency,
           treeId,
           token: currency.token,
@@ -69,9 +72,6 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
     const amount = sizes.find((size) => size.id === mixerId);
     const properties = await this.inner.api.rpc.system.properties();
     const denomination = properties.tokenDecimals.toHuman() || 12;
-    console.log(Number(amount?.value), Math.pow(10, Number(denomination)));
-    const noteAmount = Number(amount?.value?.toString()) * 1.0 / Math.pow(10, Number(denomination));
-    console.log(noteAmount);
     if (!amount) {
       throw Error('amount not found! for mixer id ' + mixerId);
     }
