@@ -1,9 +1,4 @@
-import {
-  ChainId,
-  WebbCurrencyId,
-  webbCurrencyIdFromString,
-  webbCurrencyIdToString,
-} from '@webb-dapp/apps/configs';
+import { ChainId, WebbCurrencyId, webbCurrencyIdFromString, webbCurrencyIdToString } from '@webb-dapp/apps/configs';
 
 /*
  *
@@ -11,41 +6,58 @@ import {
  *
  *  Example:
  *  A bridge between Ethereum and Edgware with the currency ETH
- *  will be ${named} = webbETH (The wrapped currency)
+ *  will be ${named} = webb$ETH (The wrapped currency)
  *  the string that defines the bridge chains is the ${ChainId} of the two anchors
- *  for Edgware => 0 , for Ethereum(main net)  =>  3
- *  the token name will be webbEth-0-3  (the wrapped Eth token the is bridged between Ethereum and Edgware)
+ *  for Edgeware => 0 , for Ethereum(main net)  =>  3
+ *  the token name will be webb$ETH-0-3  (the wrapped Eth token the is bridged between Ethereum and Edgware)
+ *
+ *  2Token Example:
+ *  A bridge between Rinkeby and Ropsten for ETH and WETH
+ *  will be ${named} = webb$ETH$WETH-4-5
  * */
 export class BridgeCurrency {
   public readonly name: string;
 
-  constructor(private chains: ChainId[], private wrappedCurrency: WebbCurrencyId) {
-    this.chains = this.chains.sort((a, b) => (a > b ? 1 : a < b ? -1 : 0));
+  constructor(private chains: ChainId[], private wrappedCurrencies: WebbCurrencyId[]) {
+    this.chains = chains.sort((a, b) => (a > b ? 1 : a < b ? -1 : 0));
+    this.wrappedCurrencies = wrappedCurrencies.sort((a, b) => (a > b ? 1 : a < b ? -1 : 0));
     this.name = this.toString();
   }
 
   private toString(): string {
     const paraChains = this.chains.join('-');
-    const baseCurrency = webbCurrencyIdToString(this.wrappedCurrency);
-    return `webb${baseCurrency}-${paraChains}`;
+    let baseCurrencies = '';
+    this.wrappedCurrencies.forEach((currency) => {
+      baseCurrencies = baseCurrencies + '$' + webbCurrencyIdToString(currency);
+    });
+    console.log('baseCurrencies: ', baseCurrencies);
+    return `webb${baseCurrencies}-${paraChains}`;
   }
+
   get prefix(): string {
-    return `webb${webbCurrencyIdToString(this.wrappedCurrency)}`;
+    let baseCurrencies = '';
+    this.wrappedCurrencies.forEach((currency) => {
+      baseCurrencies = baseCurrencies + '$' + webbCurrencyIdToString(currency);
+    });
+    return `webb${baseCurrencies}`;
   }
+
   static fromString(strBridgeCurrency: string): BridgeCurrency {
     const parts = strBridgeCurrency.split('-');
-    let prefix = parts[0].replace('webb', '');
+    // parse the currencies used for the bridge and remove the 'webb' prefix
+    let currencies = parts[0].split('$').slice(1, -1);
+    let wrappedCurrencies: WebbCurrencyId[] = currencies.map((c) => webbCurrencyIdFromString(c));
+
     let chainIds = parts.slice(1, parts.length).map((c) => Number(c) as ChainId);
-    let wrappedCurrency = webbCurrencyIdFromString(prefix);
-    return new BridgeCurrency(chainIds, wrappedCurrency);
+    return new BridgeCurrency(chainIds, wrappedCurrencies);
   }
 
   hasChain(chainId: ChainId): boolean {
     return this.chains.includes(chainId);
   }
 
-  get currencyId(): WebbCurrencyId {
-    return this.wrappedCurrency;
+  get currencyIds(): WebbCurrencyId[] {
+    return this.wrappedCurrencies;
   }
 
   get chainIds(): ChainId[] {

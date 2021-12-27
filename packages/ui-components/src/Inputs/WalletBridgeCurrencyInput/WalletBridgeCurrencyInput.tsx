@@ -42,7 +42,8 @@ const WrappedIcon = () => {
   );
 };
 export const fromBridgeCurrencyToCurrencyView = (bridgeCurrency: BridgeCurrency): CurrencyContent => {
-  const wrappedCurrency = Currency.fromCurrencyId(bridgeCurrency.currencyId);
+  console.log('detected currencyId: ', bridgeCurrency.currencyIds[0]);
+  const wrappedCurrency = Currency.fromCurrencyId(bridgeCurrency.currencyIds[0]);
   const view = wrappedCurrency.view;
   return {
     get view(): CurrencyView {
