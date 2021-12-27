@@ -7,6 +7,7 @@ export type ORMLAsset = {
   name: string;
   id: string;
 };
+
 const logger = LoggerService.get('currencies');
 export class ORMLCurrency {
   constructor(private api: WebbPolkadot) {}

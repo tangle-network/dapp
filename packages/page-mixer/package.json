@@ -6,7 +6,7 @@
   "author": "Acala Developers <hello@acala.network>, Webb Developers <drew@webb.tools>",
   "homepage": "https://github.com/webb-tools/webb-dapp#readme",
   "dependencies": {
-    "@webb-tools/sdk-mixer": "^0.1.2-22",
-    "@webb-tools/sdk-core": "^0.1.2-22"
+    "@webb-tools/sdk-mixer": "^0.1.4-9",
+    "@webb-tools/sdk-core": "^0.1.4-9"
   }
 }

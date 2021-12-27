@@ -125,13 +125,13 @@ const AppBar: React.FC<AppBarProps> = () => {
               Bridge
             </NavLink>
           </li>
-          {process.env.REACT_APP_BUILD_ENV != 'production' && (
+          {/* {process.env.REACT_APP_BUILD_ENV != 'production' && (
             <li className={'active'}>
               <NavLink to={'/transfer'} activeclassname={'active'}>
                 Transfer
               </NavLink>
             </li>
-          )}
+          )} */}
 
           <li className={'active'}>
             <NavLink to={'/wrap-unwrap'} activeclassname={'active'}>

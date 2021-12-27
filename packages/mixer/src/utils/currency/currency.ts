@@ -19,17 +19,17 @@ export class Currency {
       case 0:
         return new Token({
           amount,
-          chain: 'edgeware',
-          name: 'EDG',
-          precision: 18,
-          symbol: 'EDG',
+          chain: 'dev',
+          name: 'WEBB',
+          precision: 12,
+          symbol: 'WEBB',
         });
       default:
         return new Token({
           amount,
           chain: 'dev',
           name: 'WEBB',
-          precision: 18,
+          precision: 12,
           symbol: 'WEBB',
         });
     }
@@ -40,7 +40,7 @@ export class Currency {
         currencyId: asset.id as any,
         token: new Token({
           amount,
-          chain: 'edgeware',
+          chain: 'dev',
           name: asset.name,
           symbol: asset.name,
           precision: 18,
