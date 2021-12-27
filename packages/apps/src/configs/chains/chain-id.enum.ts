@@ -14,6 +14,7 @@ export enum ChainId {
   Shiden,
   OptimismTestnet,
   ArbitrumTestnet,
+  WebbDevelopment,
 }
 
 export enum WebbEVMChain {

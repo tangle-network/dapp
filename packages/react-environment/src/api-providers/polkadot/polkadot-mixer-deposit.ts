@@ -1,8 +1,9 @@
+import { StorageKey } from '@polkadot/types';
+import { MixerInfo } from '@webb-tools/types/interfaces/mixer';
 import { MixerGroupEntry, NativeTokenProperties } from '@webb-dapp/mixer';
 import { Currency } from '@webb-dapp/mixer/utils/currency';
 import { DepositPayload as IDepositPayload, MixerDeposit } from '@webb-dapp/react-environment/webb-context';
 import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
-import { Token } from '@webb-tools/sdk-core';
 import { Note, NoteGenInput } from '@webb-tools/sdk-mixer';
 
 import { WebbPolkadot } from './webb-polkadot-provider';
@@ -31,26 +32,20 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
     // @ts-ignore
     const tokenProperty: Array<NativeTokenProperties> = await api.rpc.system.properties();
     const groupItem = data
-      .map(([storageKey, info]) => {
+      .map(([storageKey, info]: [StorageKey, MixerInfo]) => {
         const cId: number = Number(info.toHuman().asset);
         const amount = info.toHuman().depositSize;
         const treeId = storageKey.toHuman()[0];
-        const asset = ormlAssets.find((asset) => asset.id == cId)!;
         const id = storageKey.toString() + treeId;
+        const currency = (cId)
+          ? Currency.fromORMLAsset(ormlAssets.find((asset) => asset.id == cId)!, api, amount)
+          : Currency.fromCurrencyId(cId, amount);
         return {
           id,
           amount: amount,
-          currency: Currency.fromORMLAsset(asset, api, amount),
+          currency: currency,
           treeId,
-          token: new Token({
-            amount: amount.toString(),
-            // TODO: Pull from active chain
-            chain: 'edgeware',
-            name: asset.name,
-            // @ts-ignore
-            precision: Number(tokenProperty?.toHuman().tokenDecimals?.[0] ?? 12),
-            symbol: asset.name,
-          }),
+          token: currency.token,
         };
       })
       .map(({ treeId, amount, currency, token, id }) => ({
@@ -68,25 +63,29 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
     return PolkadotMixerDeposit.getSizes(this.inner);
   }
 
-  async generateNote(mixerId: number): Promise<DepositPayload> {
+  async generateNote(mixerId: number, chainId: number): Promise<DepositPayload> {
     logger.info(`Depositing to mixer id ${mixerId}`);
     const sizes = await this.getSizes();
     const amount = sizes.find((size) => size.id === mixerId);
+    const properties = await this.inner.api.rpc.system.properties();
+    const denomination = properties.tokenDecimals.toHuman() || 12;
+    console.log(Number(amount?.value), Math.pow(10, Number(denomination)));
+    const noteAmount = Number(amount?.value?.toString()) * 1.0 / Math.pow(10, Number(denomination));
+    console.log(noteAmount);
     if (!amount) {
       throw Error('amount not found! for mixer id ' + mixerId);
     }
     const treeId = amount?.treeId;
     logger.info(`Depositing to tree id ${treeId}`);
-    const chainId = 1;
     const noteInput: NoteGenInput = {
       prefix: 'webb.mix',
       version: 'v1',
       exponentiation: '5',
-      width: '5',
+      width: '3',
       backend: 'Arkworks',
       hashFunction: 'Poseidon',
       curve: 'Bn254',
-      denomination: '18',
+      denomination: `${denomination}`,
 
       amount: String(amount.value),
       chain: String(chainId),

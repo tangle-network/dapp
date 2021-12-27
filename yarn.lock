@@ -4943,7 +4943,7 @@
     "@webassemblyjs/wast-parser" "1.8.5"
     "@xtuc/long" "4.2.2"
 
-"@webb-tools/api@0.1.2-18", "@webb-tools/api@0.1.4-8", "@webb-tools/api@^0.1.2-22", "@webb-tools/api@^0.1.4-8":
+"@webb-tools/api@0.1.2-18", "@webb-tools/api@0.1.4-8", "@webb-tools/api@^0.1.4-8", "@webb-tools/api@^0.1.4-8":
   version "0.1.4-8"
   resolved "https://registry.yarnpkg.com/@webb-tools/api/-/api-0.1.4-8.tgz#5e37724468506bae306f80c044b2e364053d7e29"
   integrity sha512-WN6KRQFw3koJ6ZSUz5EJWJpwu4Oq1VHSX0clYcbLy7E7VfMDnoRpYPg5qdIrqc55U38qmHe1ojFqyWRcTfiNiQ==
@@ -4962,7 +4962,7 @@
     "@babel/runtime" "^7.10.2"
     bignumber.js "^9.0.0"
 
-"@webb-tools/sdk-core@0.1.2-18", "@webb-tools/sdk-core@0.1.4-8", "@webb-tools/sdk-core@^0.1.2-22", "@webb-tools/sdk-core@^0.1.2-75", "@webb-tools/sdk-core@^0.1.4-8":
+"@webb-tools/sdk-core@0.1.2-18", "@webb-tools/sdk-core@0.1.4-8", "@webb-tools/sdk-core@^0.1.4-8", "@webb-tools/sdk-core@^0.1.2-75", "@webb-tools/sdk-core@^0.1.4-8":
   version "0.1.4-8"
   resolved "https://registry.yarnpkg.com/@webb-tools/sdk-core/-/sdk-core-0.1.4-8.tgz#6fa715ad0ebf526da3f94bf432f509e2f78d8b15"
   integrity sha512-N/YapdohzqjJkBSBMZr813qBzbFORBE11+3YKLwE1nwKUZdIgyK+/5Y3lFebSBLt4F/u6vS2K7XZIr52qsy8eQ==
@@ -4982,7 +4982,7 @@
     "@webb-tools/sdk-core" "^0.1.2-75"
     lodash "^4.17.20"
 
-"@webb-tools/sdk-mixer@0.1.4-8", "@webb-tools/sdk-mixer@^0.1.2-22":
+"@webb-tools/sdk-mixer@0.1.4-8", "@webb-tools/sdk-mixer@^0.1.4-8":
   version "0.1.4-8"
   resolved "https://registry.yarnpkg.com/@webb-tools/sdk-mixer/-/sdk-mixer-0.1.4-8.tgz#ade832c027f6bf8ed57f83b98cf31b198d3c7d92"
   integrity sha512-+WcCmthIxZUIilQPKCbaehcH9sSHcTDyuQARB1Fm0PHUh5Chs19QFRsDyThBy8npOcfxdGzpGWPJ5eWfEmMeLg==

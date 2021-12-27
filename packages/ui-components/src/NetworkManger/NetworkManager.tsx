@@ -152,14 +152,13 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
       case ConnectionStep.SelectChain:
         return (
           <List>
-            {filteredNetworks.map((chain) => {
+            {filteredNetworks.map((chain, inx) => {
               const { id, logo, name, tag, url, wallets } = chain;
               const viaWallets = Object.values(wallets);
               const ChainIcon = logo;
               return (
-                <>
+                <React.Fragment key={`${id}${url}-group`}>
                   <ListItem
-                    key={`${id}${url}-group`}
                     aria-label='gender'
                     selected={userSelectedChain?.id === id}
                     button
@@ -236,7 +235,7 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
                     </ListItemSecondaryAction>
                   </ListItem>
                   <Divider variant={'fullWidth'} />
-                </>
+                </React.Fragment>
               );
             })}
           </List>
