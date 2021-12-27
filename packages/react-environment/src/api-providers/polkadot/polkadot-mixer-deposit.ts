@@ -27,7 +27,6 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
     const api = webbPolkadot.api;
     const ormlCurrency = new ORMLCurrency(webbPolkadot);
     const ormlAssets = await ormlCurrency.list();
-
     const data: Array<MixerGroupEntry> = await api.query.mixerBn254.mixers.entries();
     // @ts-ignore
     const tokenProperty: Array<NativeTokenProperties> = await api.rpc.system.properties();
@@ -36,6 +35,14 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
         const cId: number = Number(info.toHuman().asset);
         const amount = info.toHuman().depositSize;
         const treeId = storageKey.toHuman()[0];
+
+        const asset = ormlAssets.find((asset) => asset.id == cId) || {
+          locked: false,
+          existentialDeposit: 30000,
+          id: '0',
+          name: 'WEBB',
+        };
+
         const id = storageKey.toString() + treeId;
         // parse number from amount string
         // TODO: Get and parse native / non-native token denomination
