@@ -183,21 +183,6 @@ export const Deposit: React.FC<DepositProps> = () => {
           />
         </>
       )}
-      {showWrappableAssets && wrappableAssets.length && (
-        <>
-          {/* used for positioning the token input label */}
-          <div style={{ height: '52px' }}></div>
-          <TokenInput
-            currencies={wrappableAssets}
-            value={wrappableAsset}
-            onChange={(currencyContent) => {
-              if (currencyContent) {
-                setWrappableAsset(Currency.fromCurrencyId(currencyContent.view.id as WebbCurrencyId));
-              }
-            }}
-          />
-        </>
-      )}
       <SpaceBox height={16} />
       <MixerButton
         disabled={disabledDepositButton}
