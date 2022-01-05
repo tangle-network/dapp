@@ -4567,26 +4567,32 @@
     "@webassemblyjs/wast-parser" "1.8.5"
     "@xtuc/long" "4.2.2"
 
-"@webb-tools/api@^0.1.4-9", "@webb-tools/api@file:../webb.js/packages/api/build":
-  version "0.1.4-9"
+"@webb-tools/api@0.1.4-10", "@webb-tools/api@^0.1.4-10", "@webb-tools/api@^0.1.4-9":
+  version "0.1.4-10"
+  resolved "https://registry.yarnpkg.com/@webb-tools/api/-/api-0.1.4-10.tgz#ab6cd57740e978ff98d2c30028c6d8fd6b732899"
+  integrity sha512-NybRaqgIMjm580l/ibtKX2hWZrtXIMVA68qqHiZeN0zW2ChDzNMwnmeDvDrS72v2KgZ4Rp5ZuTMH/a3IeZzl3Q==
   dependencies:
     "@babel/runtime" "^7.10.2"
     "@edgeware/node-types" "3.5.1-erup-4"
     "@polkadot/api" "^6.9.2"
     "@polkadot/rpc-core" "^6.9.2"
-    "@webb-tools/types" "0.1.4-9"
+    "@webb-tools/types" "0.1.4-10"
 
-"@webb-tools/app-util@^0.1.4-9", "@webb-tools/app-util@file:../webb.js/packages/app-util/build":
-  version "0.1.4-9"
+"@webb-tools/app-util@0.1.4-10", "@webb-tools/app-util@^0.1.4-9":
+  version "0.1.4-10"
+  resolved "https://registry.yarnpkg.com/@webb-tools/app-util/-/app-util-0.1.4-10.tgz#a2c5639855b2144bba12abdaa9071cc854b07d46"
+  integrity sha512-1wGOpDd9zHBu/TDsGBag8MtMXAgLp5Jh13rRrz2ko1LyyT9Hv8cuN6NzBytzxzrFMU8UXvA2uYRobyVq9yGoxA==
   dependencies:
     "@babel/runtime" "^7.10.2"
     bignumber.js "^9.0.0"
 
-"@webb-tools/sdk-core@^0.1.2-75", "@webb-tools/sdk-core@^0.1.4-9", "@webb-tools/sdk-core@file:../webb.js/packages/sdk-core/build":
-  version "0.1.4-9"
+"@webb-tools/sdk-core@0.1.4-10", "@webb-tools/sdk-core@^0.1.2-75", "@webb-tools/sdk-core@^0.1.4-9":
+  version "0.1.4-10"
+  resolved "https://registry.yarnpkg.com/@webb-tools/sdk-core/-/sdk-core-0.1.4-10.tgz#b8bacbaac227edecef50c1d01515cfe0f8a235bd"
+  integrity sha512-mh3ElMzfNivy6F0fh2TNcy4HWoqP7tDLe/pC7ToV2eTiR1Vk19EDWMNh/7JpFKvL045ZIk/erZfWSN9CLscWPg==
   dependencies:
     "@types/events" "^3.0.0"
-    "@webb-tools/api" "^0.1.4-9"
+    "@webb-tools/api" "^0.1.4-10"
     bignumber.js "^9.0.0"
     events "^3.2.0"
     lodash "^4.17.20"
@@ -4612,23 +4618,29 @@
     "@webb-tools/wasm-utils" "^0.1.4-9"
     lodash "^4.17.20"
 
-"@webb-tools/type-definitions@0.1.4-9", "@webb-tools/type-definitions@file:../webb.js/packages/type-definitions/build":
-  version "0.1.4-9"
+"@webb-tools/type-definitions@0.1.4-10":
+  version "0.1.4-10"
+  resolved "https://registry.yarnpkg.com/@webb-tools/type-definitions/-/type-definitions-0.1.4-10.tgz#46885ad591f5c6336b753b3b4376447099b26a34"
+  integrity sha512-4klnDTWrGZgdfL0qlojwgsff6OTK9/A/LUaSMOdLwdf043E9REUAOgh2SMZUamBEydfk2FirB9QtSuSms1fixw==
   dependencies:
     "@open-web3/orml-type-definitions" "^0.8.2-6"
 
-"@webb-tools/types@0.1.4-9", "@webb-tools/types@^0.1.4-9", "@webb-tools/types@file:../webb.js/packages/types/build":
-  version "0.1.4-9"
+"@webb-tools/types@0.1.4-10", "@webb-tools/types@^0.1.4-9":
+  version "0.1.4-10"
+  resolved "https://registry.yarnpkg.com/@webb-tools/types/-/types-0.1.4-10.tgz#0dcafd01be3abc2b0042dd2f5f5062b1b25e0ee8"
+  integrity sha512-mZj9seYwKLU4KzurRpV5PSWJOyn1Pup3eqn7CeNbo0zQKHZG7mzzbJyUxr7HpHelzqEOWsA0sPv2aPhIU98J1Q==
   dependencies:
     "@babel/runtime" "^7.10.2"
     "@open-web3/orml-types" "^0.8.2-6"
     "@polkadot/metadata" "^4.17.1"
     "@polkadot/typegen" "^6.9.2"
     "@polkadot/types" "^6.9.2"
-    "@webb-tools/type-definitions" "0.1.4-9"
+    "@webb-tools/type-definitions" "0.1.4-10"
 
-"@webb-tools/wasm-utils@^0.1.4-9", "@webb-tools/wasm-utils@file:../webb.js/packages/wasm-utils/build":
-  version "0.1.4-9"
+"@webb-tools/wasm-utils@0.1.4-10", "@webb-tools/wasm-utils@^0.1.4-9":
+  version "0.1.4-10"
+  resolved "https://registry.yarnpkg.com/@webb-tools/wasm-utils/-/wasm-utils-0.1.4-10.tgz#80e5e77c5a218e1eef66d6786e05adb684ac59b2"
+  integrity sha512-6NJIRO2zOlofmuP5UA8hfFQgInhYKHwop9Y9YECU5jesCWxw/WzEkeU+XuU7cgipNFwif6QK8B8T0psS8lBGBg==
 
 "@wry/context@^0.4.0":
   version "0.4.4"
