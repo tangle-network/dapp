@@ -1,6 +1,6 @@
 import { Log } from '@ethersproject/abstract-provider';
 import { WebbEVMChain } from '@webb-dapp/apps/configs';
-import { fetchTornadoCircuitData, fetchTornadoProvingKey } from '@webb-dapp/apps/configs/ipfs/tornados';
+import { fetchTornadoCircuitData, fetchTornadoProvingKey } from '@webb-dapp/apps/configs/ipfs/evm/tornados';
 import { ZKPTornInputWithMerkle, ZKPTornPublicInputs } from '@webb-dapp/contracts/contracts/types';
 import { Tornado } from '@webb-dapp/contracts/types/Tornado';
 import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';

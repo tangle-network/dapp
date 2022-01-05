@@ -1,4 +1,4 @@
-import { fetchKeyForEdges, fetchWasmForEdges } from '@webb-dapp/apps/configs/ipfs/anchors';
+import { fetchKeyForEdges, fetchWasmForEdges } from '@webb-dapp/apps/configs/ipfs/evm/anchors';
 import { BridgeWitnessInput } from '@webb-dapp/contracts/contracts/types';
 
 const groth16 = require('snarkjs/src/groth16');
