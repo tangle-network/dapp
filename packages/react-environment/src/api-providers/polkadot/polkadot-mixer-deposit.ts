@@ -4,7 +4,7 @@ import { MixerGroupEntry, NativeTokenProperties } from '@webb-dapp/mixer';
 import { Currency } from '@webb-dapp/mixer/utils/currency';
 import { DepositPayload as IDepositPayload, MixerDeposit } from '@webb-dapp/react-environment/webb-context';
 import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
-import { Note, NoteGenInput } from '@webb-tools/sdk-mixer';
+import { Note, NoteGenInput } from '@webb-tools/sdk-core';
 
 import { WebbPolkadot } from './webb-polkadot-provider';
 import { ApiPromise } from '@polkadot/api';
@@ -46,8 +46,8 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
         const id = storageKey.toString() + treeId;
         // parse number from amount string
         // TODO: Get and parse native / non-native token denomination
-        const amountNumber = Number(amount?.toString().replaceAll(',', '')) * 1.0 / Math.pow(10, 12);
-        const currency = (cId)
+        const amountNumber = (Number(amount?.toString().replaceAll(',', '')) * 1.0) / Math.pow(10, 12);
+        const currency = cId
           ? Currency.fromORMLAsset(ormlAssets.find((asset) => asset.id == cId)!, api, amountNumber)
           : Currency.fromCurrencyId(cId, api, amountNumber);
         return {
@@ -85,10 +85,10 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
     const treeId = amount?.treeId;
     logger.info(`Depositing to tree id ${treeId}`);
     const noteInput: NoteGenInput = {
-      prefix: 'webb.mix',
+      prefix: 'webb.mixer',
       version: 'v1',
       exponentiation: '5',
-      width: '3',
+      width: '5',
       backend: 'Arkworks',
       hashFunction: 'Poseidon',
       curve: 'Bn254',
