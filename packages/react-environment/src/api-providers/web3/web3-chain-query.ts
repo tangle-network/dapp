@@ -1,5 +1,5 @@
 import { chainsConfig, evmIdIntoChainId, WebbCurrencyId } from '@webb-dapp/apps/configs';
-import { Erc20Factory } from '@webb-dapp/contracts/types';
+import { ERC20__factory } from '@webb-dapp/contracts/types';
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers';
 import { ChainQuery } from '@webb-dapp/react-environment/webb-context/chain-query';
 import { ethers } from 'ethers';
@@ -35,7 +35,7 @@ export class Web3ChainQuery extends ChainQuery<WebbWeb3Provider> {
       if (!currencyOnChain) return '';
 
       // Create a token instance for this chain
-      const tokenInstance = Erc20Factory.connect(currencyOnChain.address, provider);
+      const tokenInstance = ERC20__factory.connect(currencyOnChain.address, provider);
       const tokenBalanceBig = await tokenInstance.balanceOf(accounts[0].address);
       const tokenBalance = ethers.utils.formatEther(tokenBalanceBig);
       return tokenBalance;
@@ -58,7 +58,7 @@ export class Web3ChainQuery extends ChainQuery<WebbWeb3Provider> {
       return tokenBalance;
     } else {
       // Create a token instance for this chain
-      const tokenInstance = Erc20Factory.connect(address, provider);
+      const tokenInstance = ERC20__factory.connect(address, provider);
       const tokenBalanceBig = await tokenInstance.balanceOf(accounts[0].address);
       const tokenBalance = ethers.utils.formatEther(tokenBalanceBig);
       return tokenBalance;

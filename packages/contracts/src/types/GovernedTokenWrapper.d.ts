@@ -18,14 +18,14 @@ import {
 import { BytesLike } from "@ethersproject/bytes";
 import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
-import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
+import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface GovernedTokenWrapperInterface extends ethers.utils.Interface {
   functions: {
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
     "MINTER_ROLE()": FunctionFragment;
     "PAUSER_ROLE()": FunctionFragment;
-    "add(address)": FunctionFragment;
+    "add(address,uint256)": FunctionFragment;
     "allowance(address,address)": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
@@ -33,6 +33,9 @@ interface GovernedTokenWrapperInterface extends ethers.utils.Interface {
     "burnFrom(address,uint256)": FunctionFragment;
     "decimals()": FunctionFragment;
     "decreaseAllowance(address,uint256)": FunctionFragment;
+    "getAmountToWrap(uint256)": FunctionFragment;
+    "getFee()": FunctionFragment;
+    "getFeeFromAmount(uint256)": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
     "getRoleMember(bytes32,uint256)": FunctionFragment;
     "getRoleMemberCount(bytes32)": FunctionFragment;
@@ -40,14 +43,18 @@ interface GovernedTokenWrapperInterface extends ethers.utils.Interface {
     "governor()": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
+    "historicalTokens(uint256)": FunctionFragment;
     "increaseAllowance(address,uint256)": FunctionFragment;
     "isNativeAllowed()": FunctionFragment;
     "mint(address,uint256)": FunctionFragment;
     "name()": FunctionFragment;
     "pause()": FunctionFragment;
     "paused()": FunctionFragment;
+    "proposalNonce()": FunctionFragment;
+    "remove(address,uint256)": FunctionFragment;
     "renounceRole(bytes32,address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
+    "setFee(uint8,uint256)": FunctionFragment;
     "setGovernor(address)": FunctionFragment;
     "setNativeAllowed(bool)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
@@ -79,7 +86,10 @@ interface GovernedTokenWrapperInterface extends ethers.utils.Interface {
     functionFragment: "PAUSER_ROLE",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "add", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "add",
+    values: [string, BigNumberish]
+  ): string;
   encodeFunctionData(
     functionFragment: "allowance",
     values: [string, string]
@@ -98,6 +108,15 @@ interface GovernedTokenWrapperInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "decreaseAllowance",
     values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getAmountToWrap",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(functionFragment: "getFee", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "getFeeFromAmount",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "getRoleAdmin",
@@ -122,6 +141,10 @@ interface GovernedTokenWrapperInterface extends ethers.utils.Interface {
     values: [BytesLike, string]
   ): string;
   encodeFunctionData(
+    functionFragment: "historicalTokens",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "increaseAllowance",
     values: [string, BigNumberish]
   ): string;
@@ -137,12 +160,24 @@ interface GovernedTokenWrapperInterface extends ethers.utils.Interface {
   encodeFunctionData(functionFragment: "pause", values?: undefined): string;
   encodeFunctionData(functionFragment: "paused", values?: undefined): string;
   encodeFunctionData(
+    functionFragment: "proposalNonce",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "remove",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "renounceRole",
     values: [BytesLike, string]
   ): string;
   encodeFunctionData(
     functionFragment: "revokeRole",
     values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setFee",
+    values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "setGovernor", values: [string]): string;
   encodeFunctionData(
@@ -228,6 +263,15 @@ interface GovernedTokenWrapperInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "getAmountToWrap",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "getFee", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getFeeFromAmount",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getRoleAdmin",
     data: BytesLike
   ): Result;
@@ -244,6 +288,10 @@ interface GovernedTokenWrapperInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "historicalTokens",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "increaseAllowance",
     data: BytesLike
   ): Result;
@@ -256,10 +304,16 @@ interface GovernedTokenWrapperInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "proposalNonce",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "remove", data: BytesLike): Result;
+  decodeFunctionResult(
     functionFragment: "renounceRole",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "setFee", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setGovernor",
     data: BytesLike
@@ -324,6 +378,38 @@ interface GovernedTokenWrapperInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
 }
 
+export type ApprovalEvent = TypedEvent<
+  [string, string, BigNumber] & {
+    owner: string;
+    spender: string;
+    value: BigNumber;
+  }
+>;
+
+export type PausedEvent = TypedEvent<[string] & { account: string }>;
+
+export type RoleAdminChangedEvent = TypedEvent<
+  [string, string, string] & {
+    role: string;
+    previousAdminRole: string;
+    newAdminRole: string;
+  }
+>;
+
+export type RoleGrantedEvent = TypedEvent<
+  [string, string, string] & { role: string; account: string; sender: string }
+>;
+
+export type RoleRevokedEvent = TypedEvent<
+  [string, string, string] & { role: string; account: string; sender: string }
+>;
+
+export type TransferEvent = TypedEvent<
+  [string, string, BigNumber] & { from: string; to: string; value: BigNumber }
+>;
+
+export type UnpausedEvent = TypedEvent<[string] & { account: string }>;
+
 export class GovernedTokenWrapper extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
@@ -376,6 +462,7 @@ export class GovernedTokenWrapper extends BaseContract {
 
     add(
       tokenAddress: string,
+      nonce: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -412,6 +499,18 @@ export class GovernedTokenWrapper extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    getAmountToWrap(
+      deposit: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    getFee(overrides?: CallOverrides): Promise<[number]>;
+
+    getFeeFromAmount(
+      amountToWrap: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<[string]>;
 
     getRoleMember(
@@ -441,6 +540,11 @@ export class GovernedTokenWrapper extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    historicalTokens(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
     increaseAllowance(
       spender: string,
       addedValue: BigNumberish,
@@ -463,6 +567,14 @@ export class GovernedTokenWrapper extends BaseContract {
 
     paused(overrides?: CallOverrides): Promise<[boolean]>;
 
+    proposalNonce(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    remove(
+      tokenAddress: string,
+      nonce: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     renounceRole(
       role: BytesLike,
       account: string,
@@ -472,6 +584,12 @@ export class GovernedTokenWrapper extends BaseContract {
     revokeRole(
       role: BytesLike,
       account: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setFee(
+      _feePercentage: BigNumberish,
+      nonce: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -570,6 +688,7 @@ export class GovernedTokenWrapper extends BaseContract {
 
   add(
     tokenAddress: string,
+    nonce: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -606,6 +725,18 @@ export class GovernedTokenWrapper extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  getAmountToWrap(
+    deposit: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  getFee(overrides?: CallOverrides): Promise<number>;
+
+  getFeeFromAmount(
+    amountToWrap: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
 
   getRoleMember(
@@ -635,6 +766,11 @@ export class GovernedTokenWrapper extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  historicalTokens(
+    arg0: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
   increaseAllowance(
     spender: string,
     addedValue: BigNumberish,
@@ -657,6 +793,14 @@ export class GovernedTokenWrapper extends BaseContract {
 
   paused(overrides?: CallOverrides): Promise<boolean>;
 
+  proposalNonce(overrides?: CallOverrides): Promise<BigNumber>;
+
+  remove(
+    tokenAddress: string,
+    nonce: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   renounceRole(
     role: BytesLike,
     account: string,
@@ -666,6 +810,12 @@ export class GovernedTokenWrapper extends BaseContract {
   revokeRole(
     role: BytesLike,
     account: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setFee(
+    _feePercentage: BigNumberish,
+    nonce: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -762,7 +912,11 @@ export class GovernedTokenWrapper extends BaseContract {
 
     PAUSER_ROLE(overrides?: CallOverrides): Promise<string>;
 
-    add(tokenAddress: string, overrides?: CallOverrides): Promise<void>;
+    add(
+      tokenAddress: string,
+      nonce: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     allowance(
       owner: string,
@@ -794,6 +948,18 @@ export class GovernedTokenWrapper extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    getAmountToWrap(
+      deposit: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getFee(overrides?: CallOverrides): Promise<number>;
+
+    getFeeFromAmount(
+      amountToWrap: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
 
     getRoleMember(
@@ -823,6 +989,11 @@ export class GovernedTokenWrapper extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    historicalTokens(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
     increaseAllowance(
       spender: string,
       addedValue: BigNumberish,
@@ -843,6 +1014,14 @@ export class GovernedTokenWrapper extends BaseContract {
 
     paused(overrides?: CallOverrides): Promise<boolean>;
 
+    proposalNonce(overrides?: CallOverrides): Promise<BigNumber>;
+
+    remove(
+      tokenAddress: string,
+      nonce: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     renounceRole(
       role: BytesLike,
       account: string,
@@ -852,6 +1031,12 @@ export class GovernedTokenWrapper extends BaseContract {
     revokeRole(
       role: BytesLike,
       account: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setFee(
+      _feePercentage: BigNumberish,
+      nonce: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -935,6 +1120,15 @@ export class GovernedTokenWrapper extends BaseContract {
   };
 
   filters: {
+    "Approval(address,address,uint256)"(
+      owner?: string | null,
+      spender?: string | null,
+      value?: null
+    ): TypedEventFilter<
+      [string, string, BigNumber],
+      { owner: string; spender: string; value: BigNumber }
+    >;
+
     Approval(
       owner?: string | null,
       spender?: string | null,
@@ -944,7 +1138,20 @@ export class GovernedTokenWrapper extends BaseContract {
       { owner: string; spender: string; value: BigNumber }
     >;
 
+    "Paused(address)"(
+      account?: null
+    ): TypedEventFilter<[string], { account: string }>;
+
     Paused(account?: null): TypedEventFilter<[string], { account: string }>;
+
+    "RoleAdminChanged(bytes32,bytes32,bytes32)"(
+      role?: BytesLike | null,
+      previousAdminRole?: BytesLike | null,
+      newAdminRole?: BytesLike | null
+    ): TypedEventFilter<
+      [string, string, string],
+      { role: string; previousAdminRole: string; newAdminRole: string }
+    >;
 
     RoleAdminChanged(
       role?: BytesLike | null,
@@ -955,7 +1162,25 @@ export class GovernedTokenWrapper extends BaseContract {
       { role: string; previousAdminRole: string; newAdminRole: string }
     >;
 
+    "RoleGranted(bytes32,address,address)"(
+      role?: BytesLike | null,
+      account?: string | null,
+      sender?: string | null
+    ): TypedEventFilter<
+      [string, string, string],
+      { role: string; account: string; sender: string }
+    >;
+
     RoleGranted(
+      role?: BytesLike | null,
+      account?: string | null,
+      sender?: string | null
+    ): TypedEventFilter<
+      [string, string, string],
+      { role: string; account: string; sender: string }
+    >;
+
+    "RoleRevoked(bytes32,address,address)"(
       role?: BytesLike | null,
       account?: string | null,
       sender?: string | null
@@ -973,6 +1198,15 @@ export class GovernedTokenWrapper extends BaseContract {
       { role: string; account: string; sender: string }
     >;
 
+    "Transfer(address,address,uint256)"(
+      from?: string | null,
+      to?: string | null,
+      value?: null
+    ): TypedEventFilter<
+      [string, string, BigNumber],
+      { from: string; to: string; value: BigNumber }
+    >;
+
     Transfer(
       from?: string | null,
       to?: string | null,
@@ -981,6 +1215,10 @@ export class GovernedTokenWrapper extends BaseContract {
       [string, string, BigNumber],
       { from: string; to: string; value: BigNumber }
     >;
+
+    "Unpaused(address)"(
+      account?: null
+    ): TypedEventFilter<[string], { account: string }>;
 
     Unpaused(account?: null): TypedEventFilter<[string], { account: string }>;
   };
@@ -994,6 +1232,7 @@ export class GovernedTokenWrapper extends BaseContract {
 
     add(
       tokenAddress: string,
+      nonce: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1030,6 +1269,18 @@ export class GovernedTokenWrapper extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    getAmountToWrap(
+      deposit: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getFee(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getFeeFromAmount(
+      amountToWrap: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getRoleAdmin(
       role: BytesLike,
       overrides?: CallOverrides
@@ -1062,6 +1313,11 @@ export class GovernedTokenWrapper extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    historicalTokens(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     increaseAllowance(
       spender: string,
       addedValue: BigNumberish,
@@ -1084,6 +1340,14 @@ export class GovernedTokenWrapper extends BaseContract {
 
     paused(overrides?: CallOverrides): Promise<BigNumber>;
 
+    proposalNonce(overrides?: CallOverrides): Promise<BigNumber>;
+
+    remove(
+      tokenAddress: string,
+      nonce: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     renounceRole(
       role: BytesLike,
       account: string,
@@ -1093,6 +1357,12 @@ export class GovernedTokenWrapper extends BaseContract {
     revokeRole(
       role: BytesLike,
       account: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setFee(
+      _feePercentage: BigNumberish,
+      nonce: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1194,6 +1464,7 @@ export class GovernedTokenWrapper extends BaseContract {
 
     add(
       tokenAddress: string,
+      nonce: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1233,6 +1504,18 @@ export class GovernedTokenWrapper extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    getAmountToWrap(
+      deposit: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getFeeFromAmount(
+      amountToWrap: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getRoleAdmin(
       role: BytesLike,
       overrides?: CallOverrides
@@ -1265,6 +1548,11 @@ export class GovernedTokenWrapper extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    historicalTokens(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     increaseAllowance(
       spender: string,
       addedValue: BigNumberish,
@@ -1287,6 +1575,14 @@ export class GovernedTokenWrapper extends BaseContract {
 
     paused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    proposalNonce(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    remove(
+      tokenAddress: string,
+      nonce: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     renounceRole(
       role: BytesLike,
       account: string,
@@ -1296,6 +1592,12 @@ export class GovernedTokenWrapper extends BaseContract {
     revokeRole(
       role: BytesLike,
       account: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setFee(
+      _feePercentage: BigNumberish,
+      nonce: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

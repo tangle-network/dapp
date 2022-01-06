@@ -14,6 +14,7 @@ import { u8aToHex } from '@polkadot/util';
 
 import { BridgeDeposit } from '../../webb-context/bridge/bridge-deposit';
 import { Currency } from '@webb-dapp/react-environment/types/currency';
+import { ERC20__factory } from '@webb-dapp/contracts/types';
 
 type DepositPayload = IDepositPayload<Note, [Deposit, number | string, string?]>;
 
@@ -59,43 +60,56 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
 
       // If a wrappableAsset was selected, perform a wrapAndDeposit
       if (depositPayload.params[2]) {
-        await contract.wrapAndDeposit(commitment, depositPayload.params[2]);
-        transactionNotificationConfig.finalize?.({
-          address: '',
-          data: undefined,
-          key: 'bridge-deposit',
-          path: {
-            method: 'wrap and deposit',
-            section: bridge.currency.name,
-          },
-        });
-        return;
-      }
+        const requiredApproval = await contract.isWrappableTokenApprovalRequired(depositPayload.params[2]);
+        if (requiredApproval) {
+          notificationApi.addToQueue({
+            message: 'Waiting for token approval',
+            variant: 'info',
+            key: 'waiting-approval',
+            extras: { persist: true },
+          });
+          const tokenInstance = await ERC20__factory.connect(depositPayload.params[2], this.inner.getEthersProvider().getSigner());
+          const webbToken = await contract.getWebbToken();
+          const tx = await tokenInstance.approve(webbToken.address, await contract.denomination);
+          await tx.wait();
+          notificationApi.remove('waiting-approval');
+        }
 
-      const requiredApproval = await contract.isApprovalRequired();
-      if (requiredApproval) {
-        notificationApi.addToQueue({
-          message: 'Waiting for token approval',
-          variant: 'info',
-          key: 'waiting-approval',
-          extras: { persist: true },
-        });
-        const tokenInstance = await contract.getWebbToken();
-        const tx = await tokenInstance.approve(contract.inner.address, await contract.denomination);
-        await tx.wait();
-        notificationApi.remove('waiting-approval');
-        await contract.deposit(String(commitment));
-        transactionNotificationConfig.finalize?.({
-          address: '',
-          data: undefined,
-          key: 'bridge-deposit',
-          path: {
-            method: 'deposit',
-            section: bridge.currency.name,
-          },
-        });
+        const enoughBalance = await contract.hasEnoughBalance(depositPayload.params[2]);
+        if (enoughBalance) {
+          await contract.wrapAndDeposit(commitment, depositPayload.params[2]);
+          transactionNotificationConfig.finalize?.({
+            address: '',
+            data: undefined,
+            key: 'bridge-deposit',
+            path: {
+              method: 'wrap and deposit',
+              section: bridge.currency.name,
+            },
+          });
+        } else {
+          notificationApi.addToQueue({
+            message: 'Not enough token balance',
+            variant: 'error',
+            key: 'waiting-approval',
+          });
+        }
+        return;
       } else {
-        // Check the balance and see if there is enough to deposit
+        const requiredApproval = await contract.isWebbTokenApprovalRequired();
+        if (requiredApproval) {
+          notificationApi.addToQueue({
+            message: 'Waiting for token approval',
+            variant: 'info',
+            key: 'waiting-approval',
+            extras: { persist: true },
+          });
+          const tokenInstance = await contract.getWebbToken();
+          const tx = await tokenInstance.approve(contract.inner.address, await contract.denomination);
+          await tx.wait();
+          notificationApi.remove('waiting-approval');
+        }
+
         const enoughBalance = await contract.hasEnoughBalance();
         if (enoughBalance) {
           await contract.deposit(String(commitment));
@@ -116,7 +130,7 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
           });
         }
       }
-    } catch (e) {
+    } catch (e: any) {
       console.log(e);
       if (!e.code) {
         throw e;
