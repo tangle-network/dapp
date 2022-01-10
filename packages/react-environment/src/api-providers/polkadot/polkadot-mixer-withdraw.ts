@@ -80,10 +80,6 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
       if (!account) {
         throw WebbError.from(WebbErrorCodes.NoAccountAvailable);
       }
-      // accounts
-      const senderAccount = await this.inner.accounts.activeOrDefault;
-      // ss58 format
-      const accountId = senderAccount?.address!;
       const recipientAccountHex = u8aToHex(decodeAddress(recipient));
       // ss58 format
       const relayerAccountId = recipient;

@@ -108,7 +108,7 @@ const WithdrawSuccessModal: React.FC<WithdrawingModalProps> = ({ exit, note, rec
 
   const getBlockExplorerTx = (txHash: string): string => {
     const chainId = Number(note.chain);
-    const url = chainsConfig[chainId].blockExplorerStub
+    const url = chainsConfig[chainId]?.blockExplorerStub
       ? `${chainsConfig[chainId].blockExplorerStub}/tx/${txHash}`
       : '';
     return url;
@@ -116,7 +116,7 @@ const WithdrawSuccessModal: React.FC<WithdrawingModalProps> = ({ exit, note, rec
 
   const getBlockExplorerAddress = (address: string): string => {
     const chainId = Number(note.chain);
-    const url = chainsConfig[chainId].blockExplorerStub
+    const url = chainsConfig[chainId]?.blockExplorerStub
       ? `${chainsConfig[chainId].blockExplorerStub}/address/${address}`
       : '';
     return url;
