@@ -1,10 +1,9 @@
-const { override, addWebpackAlias } = require('customize-cra');
+const { override, addWebpackAlias, getBabelLoader } = require('customize-cra');
 const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
 const path = require('path');
 const exec = require('child_process').exec;
 
 const findPackages = require('../../scripts/findPackages');
-console.log('babel config');
 const packages = findPackages();
 
 const rewireReactHotLoader = require('react-app-rewire-hot-loader');
@@ -89,7 +88,6 @@ module.exports = override(addWebpackPostBuildScript, function (config, env) {
     config = rewireReactHotLoader(config, env);
   } else {
     const paths = configPaths('../../tsconfig.json');
-    let p = {};
     for (const key of Object.keys(paths)) {
       p[key + '/'] = path.resolve(process.cwd(), '..', '..', paths[key]);
     }

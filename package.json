@@ -32,7 +32,8 @@
     "test": "polkadot-dev-run-test",
     "lint": "polkadot-dev-run-lint",
     "ts-check": "tsc --noEmit -p ./tsconfig.json",
-    "format": "prettier --write \"packages/**/*.{ts,js,jsx,tsx}\""
+    "format": "prettier --write \"packages/**/*.{ts,js,jsx,tsx}\"",
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "@material-ui/core": "^4.11.3",
@@ -40,6 +41,7 @@
     "@walletconnect/client": "^1.4.1",
     "@walletconnect/qrcode-modal": "^1.4.1",
     "@walletconnect/web3-provider": "^1.4.1",
+    "D": "^1.0.0",
     "circom": "^0.5.45",
     "circomlib": "^2.0.1",
     "circomlibjs": "^0.0.8",
@@ -50,6 +52,7 @@
     "history": "^5.0.0",
     "maci-crypto": "^0.9.1",
     "notistack": "^1.0.6",
+    "patch-package": "^6.4.7",
     "prop-types": "^15.7.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
