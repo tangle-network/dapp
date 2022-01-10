@@ -1,28 +1,6 @@
 {
+  "extends": "./tsconfig.build.json",
   "compilerOptions": {
-	"target": "es5",
-	"lib": [
-	  "dom",
-	  "dom.iterable",
-	  "esnext"
-	],
-	"allowJs": true,
-	"skipLibCheck": true,
-	"esModuleInterop": true,
-	"allowSyntheticDefaultImports": true,
-	"strict": true,
-	"forceConsistentCasingInFileNames": true,
-	"module": "esnext",
-	"moduleResolution": "node",
-	"resolveJsonModule": true,
-	"typeRoots": [
-	  "node_modules/@types",
-	  "packages/apps/types"
-	],
-	"isolatedModules": true,
-	"noEmit": true,
-	"jsx": "react",
-	"baseUrl": "./packages",
 	"paths": {
 	  "@webb-dapp/apps/*": [
 		"apps/src/*"
@@ -126,12 +104,6 @@
 	  "@webb-dapp/contracts": [
 		"contracts/src"
 	  ]
-	},
-	"skipDefaultLibCheck": true
-  },
-  "exclude": [
-	"build/**/*",
-	"**/build/**/*",
-	"scripts/*"
-  ]
+	}
+  }
 }
