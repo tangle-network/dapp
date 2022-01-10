@@ -88,6 +88,7 @@ module.exports = override(addWebpackPostBuildScript, function (config, env) {
     config = rewireReactHotLoader(config, env);
   } else {
     const paths = configPaths('../../tsconfig.json');
+    const p = {};
     for (const key of Object.keys(paths)) {
       p[key + '/'] = path.resolve(process.cwd(), '..', '..', paths[key]);
     }
