@@ -286,6 +286,7 @@ export const chainsConfig: AppConfig['chains'] = {
     tag: 'live',
     url: 'https://shiden.api.onfinality.io/public',
     evmRpcUrls: ['https://shiden.api.onfinality.io/public'],
+    blockExplorerStub: 'https://shiden.subscan.io',
     logo: ShidenLogo,
     currencies: [
       {
@@ -304,6 +305,7 @@ export const chainsConfig: AppConfig['chains'] = {
     tag: 'test',
     url: 'https://rpc-mumbai.maticvigil.com/',
     evmRpcUrls: ['https://rpc-mumbai.maticvigil.com/'],
+    blockExplorerStub: 'https://mumbai.polygonscan.com/',
     logo: PolygonLogo,
     currencies: [
       {

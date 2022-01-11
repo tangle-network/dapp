@@ -19,7 +19,7 @@ export type BridgeConfigEntry = {
 };
 export type BridgeConfig = Record<string, BridgeConfigEntry>;
 
-const webbWETHtest2 = new BridgeCurrency(
+const webbWETHtest3 = new BridgeCurrency(
   [
     ChainId.Ropsten,
     ChainId.Rinkeby,
@@ -32,25 +32,25 @@ const webbWETHtest2 = new BridgeCurrency(
 );
 
 export const bridgeConfig: BridgeConfig = {
-  [webbWETHtest2.name]: {
-    asset: webbWETHtest2,
+  [webbWETHtest3.name]: {
+    asset: webbWETHtest3,
     tokenAddresses: {
-      [ChainId.Ropsten]: '0x68667f0d3f1184e061bEbe51d15aFF54ca1C4615',
-      [ChainId.Rinkeby]: '0x4afBE7bd0A0f7b10bB0fa0c5f3c6D0A376375e64',
-      [ChainId.Goerli]: '0x9Bb56eb884BEAe73C64F15C02FE86aF767264949',
-      [ChainId.PolygonTestnet]: '0xE91EB19dd96512D33b7a87A8B56b63AF6db103e4',
-      [ChainId.OptimismTestnet]: '0x2C165572FeBE99C25644eF3433989D6e37F2a8bE',
-      [ChainId.ArbitrumTestnet]: '0xB30d9F95e052E5b0b24a5f18833D51f5fCf42B3a',
+      [ChainId.Ropsten]: '0x105779076d17FAe5EAADF010CA677475549F49E4',
+      [ChainId.Rinkeby]: '0x4e7D4BEe028655F2865d9D147cF7B609c516d39C',
+      [ChainId.Goerli]: '0x5257c558c246311552A824c491285667B3a445a2',
+      [ChainId.PolygonTestnet]: '0x50A7b748F3C50F808a289cA041E48834A41A6d95',
+      [ChainId.OptimismTestnet]: '0xEAF873F1F6c91fEf73d4839b5fC7954554BBE518',
+      [ChainId.ArbitrumTestnet]: '0xD6F1E78B5F1Ebf8fF5a60C9d52eabFa73E5c5220',
     },
     anchors: [
       {
         anchorAddresses: {
-          [ChainId.Ropsten]: '0x67113f749696ca459ccca451d7686561c5a69172',
-          [ChainId.Rinkeby]: '0x60897804fc2c3ab55be07d2f77c7900eba218b5e',
-          [ChainId.Goerli]: '0xe0d36e297f63991fa9ea39fba26a6d3f359aa70a',
-          [ChainId.PolygonTestnet]: '0x6f82483876ab96dd948805db93da675e920362ed',
-          [ChainId.OptimismTestnet]: '0x4446bccbde6d906e0cd65a55eb13913018ab1f58',
-          [ChainId.ArbitrumTestnet]: '0xaabfe16c55062a9446d06c4f8ff7a64ff750fb27',
+          [ChainId.Ropsten]: '0x97747a4De7302Ff7Ee3334e33138879469BFEcf8',
+          [ChainId.Rinkeby]: '0x09B722aA809A076027FA51902e431a8C03e3f8dF',
+          [ChainId.Goerli]: '0x6aA5C74953F7Da1556a298C5e129E417410474E2',
+          [ChainId.PolygonTestnet]: '0x12323BcABB342096669d80F968f7a31bdB29d4C4',
+          [ChainId.OptimismTestnet]: '0xC44A4EcAC4f23b6F92485Cb1c90dBEd75a987BC8',
+          [ChainId.ArbitrumTestnet]: '0xD8a8F9629a98EABFF31CfA9493f274A4D5e768Cd',
         },
         amount: '0.1',
       },

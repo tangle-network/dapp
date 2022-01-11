@@ -393,7 +393,9 @@ export class WebbRelayer {
 
   // chainId should be formatted as a hex string
   async getLeaves(chainId: string, contractAddress: string): Promise<RelayerLeaves> {
-    const req = await fetch(`${this.endpoint}/api/v1/leaves/${chainId}/${contractAddress}`);
+    const url = `${this.endpoint}/api/v1/leaves/${chainId}/${contractAddress}`;
+    logger.info(`fetching info from: ${url}`);
+    const req = await fetch(url);
     if (req.ok) {
       const jsonResponse = await req.json();
       const fetchedLeaves: string[] = jsonResponse.leaves;

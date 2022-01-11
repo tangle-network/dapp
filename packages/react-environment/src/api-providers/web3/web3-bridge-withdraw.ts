@@ -364,6 +364,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
     const activeRelayer = this.activeRelayer[0];
 
     if (activeRelayer && (activeRelayer.account || activeRelayer.beneficiary)) {
+      logger.log(`withdrawing through relayer`);
       const input = {
         destinationChainId: activeChain,
         secret: sourceDeposit.secret,
@@ -475,6 +476,8 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
       txHash = txResult[1];
     } else {
       try {
+        logger.log(`withdrawing without relayer`);
+
         const input = {
           destinationChainId: activeChain,
           secret: sourceDeposit.secret,
