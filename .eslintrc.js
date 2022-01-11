@@ -22,7 +22,7 @@ module.exports = {
     'sort-keys': 'off',
     'no-empty-pattern': 'off',
     '@typescript-eslint/no-non-null-assertion': 'off',
-		'typescript-eslint/indent': 'off',
+		'@typescript-eslint/indent': 'off',
 	},
   overrides: [
     {

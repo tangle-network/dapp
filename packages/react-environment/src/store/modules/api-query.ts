@@ -12,17 +12,17 @@ export const useApiQueryStore = createStore<ApiQueryStoreState, ApiQueryStoreMan
   {
     get:
       ({ state }) =>
-        (key: string): any => {
-          return state[key];
-        },
+      (key: string): any => {
+        return state[key];
+      },
     set:
       ({ setState, stateRef }) =>
-        (key: string, value: any): void => {
+      (key: string, value: any): void => {
         // update query result
-          setState({
-            ...stateRef.current,
-            [key]: value,
-          });
-        },
+        setState({
+          ...stateRef.current,
+          [key]: value,
+        });
+      },
   }
 );
