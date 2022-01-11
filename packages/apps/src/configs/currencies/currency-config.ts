@@ -53,14 +53,14 @@ export const currenciesConfig: AppConfig['currencies'] = {
     icon: React.createElement(ShidenLogo),
   },
   [WebbCurrencyId.WETH]: {
-    name: 'WETH',
+    name: 'Wrapped Ethereum',
     symbol: 'WETH',
     color: '',
     id: WebbCurrencyId.WETH,
     icon: React.createElement(EtherLogo),
   },
   [WebbCurrencyId.MATIC]: {
-    name: 'MATIC',
+    name: 'Polygon',
     symbol: 'MATIC',
     color: '',
     id: WebbCurrencyId.MATIC,

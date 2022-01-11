@@ -64,7 +64,7 @@ export const fromBridgeCurrencyToCurrencyView = (bridgeCurrency: BridgeCurrency)
             {view.icon}
           </div>
         ),
-        id: bridgeCurrency.name,
+        id: bridgeCurrency.toString(),
         name: bridgeCurrency.name,
         symbol: bridgeCurrency.prefix,
       };
@@ -80,7 +80,6 @@ export const WalletBridgeCurrencyInput: React.FC<WalletTokenInputProps> = ({ sel
     }
     return getTokens().map((token) => fromBridgeCurrencyToCurrencyView(token));
   }, [activeChain, getTokens, getTokensOfChain]);
-  const active = useMemo(() => selectedToken ?? allCurrencies[0], [allCurrencies, selectedToken]);
   const selectedCurrency = useMemo(() => {
     if (!selectedToken) {
       return undefined;

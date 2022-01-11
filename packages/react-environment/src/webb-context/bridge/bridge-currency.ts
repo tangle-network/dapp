@@ -24,7 +24,7 @@ export class BridgeCurrency {
     this.name = this.toString();
   }
 
-  private toString(): string {
+  toString(): string {
     const paraChains = this.chains.join('-');
     let baseCurrencies = '';
     this.wrappedCurrencies.forEach((currency) => {

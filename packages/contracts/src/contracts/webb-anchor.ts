@@ -21,7 +21,7 @@ import { LoggerService } from '@webb-tools/app-util';
 import { BigNumber, BigNumberish, Contract, ethers, providers, Signer } from 'ethers';
 import utils from 'web3-utils';
 
-import { ERC20 } from '../types/ERC20';
+import { ERC20 } from '../types/Erc20';
 import { FixedDepositAnchor } from '../types/FixedDepositAnchor';
 import { ERC20__factory, FixedDepositAnchor__factory } from '../types';
 

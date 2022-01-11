@@ -236,6 +236,8 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
       version: 'v1',
       tokenSymbol: tokenSymbol,
       secrets: u8aToHex(secrets),
+      exponentiation: '5',
+      width: '3',
     };
     const note = await Note.generateNote(noteInput);
     logger.info(`Commitment is ${note.note.secret}`);

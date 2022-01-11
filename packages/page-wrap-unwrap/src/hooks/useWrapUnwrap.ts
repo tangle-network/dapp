@@ -40,7 +40,7 @@ export function useWrapUnwrap() {
   }, [activeApi]);
 
   const initNativeTokens = useCallback(() => {
-    wrapUnwrapApi?.getNativeTokens().then((tokens) => {
+    wrapUnwrapApi?.getWrappableTokens().then((tokens) => {
       setState((p) => ({
         ...p,
         tokens: tokens.map((token) => Currency.fromCurrencyId(Number(token.id))),

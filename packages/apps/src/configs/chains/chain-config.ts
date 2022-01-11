@@ -11,6 +11,10 @@ import PolygonLogo from '../logos/PolygonLogo';
 import WEBBLogo from '../logos/WebbLogo';
 import { ChainId, WebbEVMChain } from './chain-id.enum';
 
+export const getSupportedCurrenciesOfChain = (chainId: ChainId): WebbCurrencyId[] => {
+  return chainsConfig[chainId].currencies.map((entry) => entry.currencyId);
+}
+
 export const chainsConfig: AppConfig['chains'] = {
   [ChainId.WebbDevelopment]: {
     id: ChainId.WebbDevelopment,
