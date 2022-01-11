@@ -2,7 +2,7 @@ const { override, addWebpackAlias, getBabelLoader } = require('customize-cra');
 const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
 const path = require('path');
 const exec = require('child_process').exec;
-
+const nodeExternals = require('webpack-node-externals');
 const findPackages = require('../../scripts/findPackages');
 const packages = findPackages();
 
@@ -94,6 +94,14 @@ module.exports = override(addWebpackPostBuildScript, function (config, env) {
     }
     addWebpackAlias(p)(config);
   }
-
+  config.stats = {
+    warningsFilter: [
+      (w) => {
+        console.log(w);
+        return false;
+      },
+    ],
+  };
+  config.externals = [nodeExternals()];
   return config;
 });

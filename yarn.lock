@@ -4567,32 +4567,26 @@
     "@webassemblyjs/wast-parser" "1.8.5"
     "@xtuc/long" "4.2.2"
 
-"@webb-tools/api@0.1.4-11", "@webb-tools/api@^0.1.4-11", "@webb-tools/api@^0.1.4-9":
-  version "0.1.4-11"
-  resolved "https://registry.yarnpkg.com/@webb-tools/api/-/api-0.1.4-11.tgz#fc9a8b7a269d409b6004e082c642e7584f01586f"
-  integrity sha512-kdm8Zj+vkWyVz43Le+Hm4TWfPZ9Yx5XKSdsCdb3VD4xEcncmaJamQ8D1A2+9GT4IzZSWiKIVszd0TgpgwLwK7g==
+"@webb-tools/api@^0.1.4-10", "@webb-tools/api@^0.1.4-9", "@webb-tools/api@file:../webb.js/packages/api/build":
+  version "0.1.4-10"
   dependencies:
     "@babel/runtime" "^7.10.2"
     "@edgeware/node-types" "3.5.1-erup-4"
     "@polkadot/api" "^6.9.2"
     "@polkadot/rpc-core" "^6.9.2"
-    "@webb-tools/types" "0.1.4-11"
+    "@webb-tools/types" "0.1.4-10"
 
-"@webb-tools/app-util@0.1.4-11", "@webb-tools/app-util@^0.1.4-9":
-  version "0.1.4-11"
-  resolved "https://registry.yarnpkg.com/@webb-tools/app-util/-/app-util-0.1.4-11.tgz#bed1c7b542e16e311b85345b91139e0fd9326a11"
-  integrity sha512-eGMW8jxIlZie1IoFzHFDXnC93rqxZXz/tQo5u9D2lvqOHGRdFwBAQRfk/cC8WY7la8VPskbZRievWOmZnC/AJQ==
+"@webb-tools/app-util@^0.1.4-9", "@webb-tools/app-util@file:../webb.js/packages/app-util/build":
+  version "0.1.4-10"
   dependencies:
     "@babel/runtime" "^7.10.2"
     bignumber.js "^9.0.0"
 
-"@webb-tools/sdk-core@0.1.4-11", "@webb-tools/sdk-core@^0.1.2-75", "@webb-tools/sdk-core@^0.1.4-9":
-  version "0.1.4-11"
-  resolved "https://registry.yarnpkg.com/@webb-tools/sdk-core/-/sdk-core-0.1.4-11.tgz#f9e35bcbc714e385a7d5c02a8fc53f909e16fa6e"
-  integrity sha512-gQy1RNgdT87inE76/JuwGmC8XdMi4vG4Zsah+hoi5p58KlitVWd8hFT4Ze8b4QO1bVUvsDKssVUtXSxIR7YLsw==
+"@webb-tools/sdk-core@^0.1.2-75", "@webb-tools/sdk-core@^0.1.4-9", "@webb-tools/sdk-core@file:../webb.js/packages/sdk-core/build":
+  version "0.1.4-10"
   dependencies:
     "@types/events" "^3.0.0"
-    "@webb-tools/api" "^0.1.4-11"
+    "@webb-tools/api" "^0.1.4-10"
     bignumber.js "^9.0.0"
     events "^3.2.0"
     lodash "^4.17.20"
@@ -4618,29 +4612,23 @@
     "@webb-tools/wasm-utils" "^0.1.4-9"
     lodash "^4.17.20"
 
-"@webb-tools/type-definitions@0.1.4-11":
-  version "0.1.4-11"
-  resolved "https://registry.yarnpkg.com/@webb-tools/type-definitions/-/type-definitions-0.1.4-11.tgz#ec68c889e9c75c3302430b2044f4ebbd620406e7"
-  integrity sha512-+6DI2H6wc3/9ua4np17Hkytg3LtVsoayUl02ntBLtAHc3A+m5agTA54oysY1I9M0/bylQBE191drb8bSQgN0PA==
+"@webb-tools/type-definitions@0.1.4-10", "@webb-tools/type-definitions@file:../webb.js/packages/type-definitions/build":
+  version "0.1.4-10"
   dependencies:
     "@open-web3/orml-type-definitions" "^0.8.2-6"
 
-"@webb-tools/types@0.1.4-11", "@webb-tools/types@^0.1.4-9":
-  version "0.1.4-11"
-  resolved "https://registry.yarnpkg.com/@webb-tools/types/-/types-0.1.4-11.tgz#10b6bf30c0a66324cc084aa5cbd4b5794225544e"
-  integrity sha512-wxodaTQjteDbAGrV77DNQPO38nVpHOIA5l1pkqfrFDcMUSD1TqUhzkvT7tU3QHxuVslGuuG7t2rxDxhHKyYrsQ==
+"@webb-tools/types@0.1.4-10", "@webb-tools/types@^0.1.4-9", "@webb-tools/types@file:../webb.js/packages/types/build":
+  version "0.1.4-10"
   dependencies:
     "@babel/runtime" "^7.10.2"
     "@open-web3/orml-types" "^0.8.2-6"
     "@polkadot/metadata" "^4.17.1"
     "@polkadot/typegen" "^6.9.2"
     "@polkadot/types" "^6.9.2"
-    "@webb-tools/type-definitions" "0.1.4-11"
+    "@webb-tools/type-definitions" "0.1.4-10"
 
-"@webb-tools/wasm-utils@0.1.4-11", "@webb-tools/wasm-utils@^0.1.4-9":
-  version "0.1.4-11"
-  resolved "https://registry.yarnpkg.com/@webb-tools/wasm-utils/-/wasm-utils-0.1.4-11.tgz#fbe45adc6fbab882b175223b318bf417e7eb2ad4"
-  integrity sha512-wrrsNjon+CyVpOi83t+Pwk1e95tpfQpxUFwuq0Ktu8D+i4nXdz8GC6QECAB/rlpEPpt6go9LCKKJSL+vc+sTxA==
+"@webb-tools/wasm-utils@^0.1.4-9", "@webb-tools/wasm-utils@file:../webb.js/packages/wasm-utils/build":
+  version "0.1.4-10"
 
 "@wry/context@^0.4.0":
   version "0.4.4"
@@ -20624,6 +20612,11 @@ webpack-manifest-plugin@2.2.0:
     lodash ">=3.5 <5"
     object.entries "^1.1.0"
     tapable "^1.0.0"
+
+webpack-node-externals@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/webpack-node-externals/-/webpack-node-externals-3.0.0.tgz#1a3407c158d547a9feb4229a9e3385b7b60c9917"
+  integrity sha512-LnL6Z3GGDPht/AigwRh2dvL9PQPFQ8skEpVrWZXLWBYmqcaojHNN0onvHzie6rq7EWKrrBfPYqNEzTJgiwEQDQ==
 
 webpack-sources@^1.1.0, webpack-sources@^1.4.0, webpack-sources@^1.4.1, webpack-sources@^1.4.3:
   version "1.4.3"
