@@ -15,6 +15,7 @@ export enum ChainId {
   OptimismTestnet,
   ArbitrumTestnet,
   PolygonTestnet,
+  WebbDevelopment,
 }
 
 export enum WebbEVMChain {

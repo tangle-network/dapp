@@ -45,7 +45,7 @@ export class Currency {
     const token = Currency.tokenFrom(cid, amount);
     const cw = new Currency(
       {
-        currencyId: cid,
+        currencyId: 0,
         token,
       },
       api
@@ -68,11 +68,11 @@ export class Currency {
         cid = 1;
     }
     // @ts-ignore
-    const currencyId: CurrencyId = apiRx.createType('CurrencyId', cid);
+    // const currencyId: CurrencyId = apiRx.createType('CurrencyId', cid);
 
     return new Currency(
       {
-        currencyId,
+        currencyId: 0,
         token,
       },
       apiRx

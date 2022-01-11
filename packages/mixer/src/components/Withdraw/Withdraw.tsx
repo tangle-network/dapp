@@ -15,6 +15,7 @@ import RelayerInput, { FeesInfo, RelayerApiAdapter } from '@webb-dapp/ui-compone
 import { Note } from '@webb-tools/sdk-mixer';
 import React, { useCallback, useMemo, useState } from 'react';
 import styled from 'styled-components';
+import { WebbPolkadot } from '@webb-dapp/react-environment/api-providers';
 
 const WithdrawWrapper = styled.div``;
 type WithdrawProps = {};
@@ -72,19 +73,22 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
   }, [relayerMethods]);
 
   const depositNote = useDepositNote(note);
-  const determineDisabled = () => {
-    if (depositNote && determineSwitchButton()) {
+  const disabledButton = useMemo(() => {
+    console.log(depositNote, recipient);
+    return !(depositNote && recipient);
+    /*  if (depositNote && determineSwitchButton()) {
       return false;
     } else if (depositNote && recipient) {
       return false;
     }
-    return true;
-  };
+    return true;*/
+  }, [recipient, depositNote]);
   const determineSwitchButton = () => {
-    if (depositNote && activeChain && activeChain.evmId != chainIdIntoEVMId(depositNote.note.chain)) {
+    return false;
+    /*    if (depositNote && activeChain && activeChain.evmId != chainIdIntoEVMId(depositNote.note.chain)) {
       return true;
     }
-    return false;
+    return false;*/
   };
   const switchChain = async (note: Note | null) => {
     if (!note) return;
@@ -167,7 +171,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
       )}
 
       <MixerButton
-        disabled={determineDisabled()}
+        disabled={disabledButton}
         onClick={determineSwitchButton() ? () => switchChain(depositNote) : withdraw}
         label={determineSwitchButton() ? 'Switch chains to withdraw' : 'Withdraw'}
       />

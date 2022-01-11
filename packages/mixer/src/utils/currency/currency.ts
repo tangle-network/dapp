@@ -3,6 +3,7 @@ import { Token } from '@webb-tools/sdk-core';
 import { CurrencyId } from '@webb-tools/types/interfaces/types';
 
 import { ApiPromise, ApiRx } from '@polkadot/api';
+import { ORMLAsset } from '@webb-dapp/react-environment/types/orml-currency';
 
 interface Data {
   currencyId: CurrencyId;
@@ -13,32 +14,46 @@ export class Currency {
   private constructor(private _inner: Data, private _apiRx: ApiRx | ApiPromise) {}
 
   static tokenFrom(currencyId: CurrencyId, amount: number) {
-    const id = currencyId?.toNumber() ?? currencyId;
+    const id = currencyId?.toNumber?.() ?? currencyId;
     switch (id) {
       case 0:
         return new Token({
           amount,
-          chain: 'edgeware',
-          name: 'EDG',
-          precision: 18,
-          symbol: 'EDG',
+          chain: 'dev',
+          name: 'WEBB',
+          precision: 12,
+          symbol: 'WEBB',
         });
       default:
         return new Token({
           amount,
           chain: 'dev',
           name: 'WEBB',
-          precision: 18,
+          precision: 12,
           symbol: 'WEBB',
         });
     }
   }
-
+  static fromORMLAsset(asset: ORMLAsset, api: ApiPromise | ApiRx, amount: number = 0): Currency {
+    return new Currency(
+      {
+        currencyId: asset.id as any,
+        token: new Token({
+          amount,
+          chain: 'dev',
+          name: asset.name,
+          symbol: asset.name,
+          precision: 18,
+        }),
+      },
+      api
+    );
+  }
   static fromCurrencyId(currencyId: CurrencyId | number, api: ApiRx | ApiPromise, amount: number = 0): Currency {
     let cid: CurrencyId;
     if (typeof currencyId === 'number') {
       // @ts-ignore
-      cid = api.createType('CurrencyId', currencyId);
+      cid = currencyId;
     } else {
       cid = currencyId;
     }
@@ -68,11 +83,10 @@ export class Currency {
         cid = 1;
     }
     // @ts-ignore
-    const currencyId: CurrencyId = apiRx.createType('CurrencyId', cid);
 
     return new Currency(
       {
-        currencyId,
+        currencyId: 1,
         token,
       },
       apiRx

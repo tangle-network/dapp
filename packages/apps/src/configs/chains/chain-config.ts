@@ -8,25 +8,26 @@ import { AppConfig } from '@webb-dapp/react-environment/webb-context';
 
 import { WebbCurrencyId } from '../currencies/webb-currency-id.enum';
 import PolygonLogo from '../logos/PolygonLogo';
+import WEBBLogo from '../logos/WebbLogo';
 import { ChainId, WebbEVMChain } from './chain-id.enum';
 
 export const chainsConfig: AppConfig['chains'] = {
-  [ChainId.EdgewareLocalNet]: {
-    id: ChainId.EdgewareLocalNet,
-    group: 'edgeware',
+  [ChainId.WebbDevelopment]: {
+    id: ChainId.WebbDevelopment,
+    group: 'webb',
     tag: 'dev',
     evmId: undefined,
-    logo: EdgewareLogo,
+    logo: WEBBLogo,
     url: 'ws://127.0.0.1:9944',
-    name: 'Edgeware Development',
+    name: 'Webb Development',
     currencies: [
       {
-        currencyId: WebbCurrencyId.EDG,
+        currencyId: WebbCurrencyId.WEBB,
         enabled: true,
         address: '0x0000000000000000000000000000000000000000', // special address in smart contract to represent native asset
       },
     ],
-    nativeCurrencyId: WebbCurrencyId.EDG,
+    nativeCurrencyId: WebbCurrencyId.WEBB,
   },
   [ChainId.EdgewareTestNet]: {
     group: 'edgeware',
