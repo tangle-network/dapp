@@ -4,8 +4,8 @@ import Worker from '@webb-dapp/mixer/utils/proving-manager.worker';
 import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import { LoggerService } from '@webb-tools/app-util';
 import { ProvingManager } from '@webb-tools/sdk-core';
-import { ProvingManagerSetupInput } from '@webb-tools/sdk-core/proving/proving-manager-thread';
 import { Note } from '@webb-tools/sdk-core';
+import { ProvingManagerSetupInput } from '@webb-tools/sdk-core/proving/proving-manager-thread';
 
 import { decodeAddress } from '@polkadot/keyring';
 import { u8aToHex } from '@polkadot/util';

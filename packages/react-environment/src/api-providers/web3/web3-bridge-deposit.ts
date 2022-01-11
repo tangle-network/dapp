@@ -1,8 +1,16 @@
-import { ChainId, chainIdIntoEVMId, chainsConfig, currenciesConfig, evmIdIntoChainId, getEVMChainNameFromInternal } from '@webb-dapp/apps/configs';
-import { createAnchor2Deposit, Deposit } from '@webb-dapp/contracts/utils/make-deposit';
+import {
+  ChainId,
+  chainIdIntoEVMId,
+  chainsConfig,
+  currenciesConfig,
+  evmIdIntoChainId,
+  getEVMChainNameFromInternal,
+} from '@webb-dapp/apps/configs';
 import { WebbGovernedToken } from '@webb-dapp/contracts/contracts';
+import { createAnchor2Deposit, Deposit } from '@webb-dapp/contracts/utils/make-deposit';
 import { BridgeConfig, DepositPayload as IDepositPayload, MixerSize } from '@webb-dapp/react-environment';
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3/webb-web3-provider';
+import { Currency } from '@webb-dapp/react-environment/types/currency';
 import { notificationApi } from '@webb-dapp/ui-components/notification';
 import { DepositNotification } from '@webb-dapp/ui-components/notification/DepositNotification';
 import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polkadot/transaction-notification-config';
@@ -13,7 +21,6 @@ import React from 'react';
 import { u8aToHex } from '@polkadot/util';
 
 import { BridgeDeposit } from '../../webb-context/bridge/bridge-deposit';
-import { Currency } from '@webb-dapp/react-environment/types/currency';
 
 type DepositPayload = IDepositPayload<Note, [Deposit, number | string, string?]>;
 

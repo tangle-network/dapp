@@ -50,7 +50,7 @@ export const BridgeNoteInput: React.FC<NoteInputProps> = ({ error, onChange, val
     } catch (_) {
       return null;
     }
-  }, [depositNote]);
+  }, [depositNote, getBridge]);
 
   return (
     <InputLabel label={'Note'}>

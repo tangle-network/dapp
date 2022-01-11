@@ -3,9 +3,9 @@ import { Currency } from '@webb-dapp/react-environment/types/currency';
 import { Bridge } from '@webb-dapp/react-environment/webb-context/bridge/bridge';
 import { BridgeConfig } from '@webb-dapp/react-environment/webb-context/bridge/bridge-config';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { BridgeCurrency } from '.';
 
 import { DepositPayload, MixerDeposit } from '../mixer/mixer-deposit';
+import { BridgeCurrency } from '.';
 
 type BridgeState = {};
 

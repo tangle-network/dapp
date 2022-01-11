@@ -122,7 +122,7 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({ mixerId, onClose, o
     provider.generateNote(mixerId, activeChain?.id).then((note) => {
       setNote(note);
     });
-  }, [provider, mixerId]);
+  }, [provider, mixerId, activeChain.id]);
   const [backupConfirmation, setBackupConfirmation] = useState(false);
   const generatingNote = !depositPayload;
   return (

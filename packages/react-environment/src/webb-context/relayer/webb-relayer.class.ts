@@ -10,6 +10,7 @@ import {
 import { LoggerService } from '@webb-tools/app-util';
 import { Observable, Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
+
 import { bridgeConfig, getAnchorAddressForBridge } from '../bridge';
 
 const logger = LoggerService.get('webb-relayer class');
@@ -98,7 +99,6 @@ export class WebbRelayerBuilder {
     info: RelayerInfo,
     nameAdapter: ChainNameIntoChainId
   ): Capabilities {
-
     console.log('received info: ', info);
 
     return {
@@ -106,9 +106,7 @@ export class WebbRelayerBuilder {
       supportedChains: {
         evm: info.evm
           ? Object.keys(info.evm)
-              .filter((key) => 
-                (info.evm[key]?.account || info.evm[key]?.beneficiary) && nameAdapter(key, 'evm') != null
-              )
+              .filter((info.evm[key]?.account || info.evm[key]?.beneficiary) && nameAdapter(key, 'evm') != null)
               .reduce((m, key) => {
                 m.set(nameAdapter(key, 'evm'), info.evm[key]);
                 return m;

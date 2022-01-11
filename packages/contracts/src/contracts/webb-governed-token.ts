@@ -1,7 +1,7 @@
-import { BigNumberish, Contract, PayableOverrides, providers, Signer } from 'ethers';
-import { GovernedTokenWrapper } from '@webb-dapp/contracts/types/GovernedTokenWrapper';
 import { GovernedTokenWrapper__factory } from '@webb-dapp/contracts/types/factories/GovernedTokenWrapper__factory';
+import { GovernedTokenWrapper } from '@webb-dapp/contracts/types/GovernedTokenWrapper';
 import { LoggerService } from '@webb-tools/app-util';
+import { BigNumberish, Contract, PayableOverrides, providers, Signer } from 'ethers';
 import utils from 'web3-utils';
 
 const logger = LoggerService.get('WebbGovernedToken');

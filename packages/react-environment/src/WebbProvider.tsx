@@ -17,13 +17,13 @@ import { InteractiveFeedback, WebbError, WebbErrorCodes } from '@webb-dapp/utils
 import { Account } from '@webb-dapp/wallet/account/Accounts.adapter';
 import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
 import { LoggerService } from '@webb-tools/app-util';
+import { logger } from 'ethers';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { WebbPolkadot } from './api-providers/polkadot';
 import { extensionNotInstalled, unsupportedChain } from './error';
 import { SettingProvider } from './SettingProvider';
 import { Chain, netStorageFactory, NetworkStorage, Wallet, WebbApiProvider, WebbContext } from './webb-context';
-import { logger } from 'ethers';
 
 interface WebbProviderProps extends BareProps {
   applicationName: string;

@@ -1,16 +1,17 @@
-import { StorageKey } from '@polkadot/types';
-import { PalletMixerMixerMetadata } from '@webb-tools/types/interfaces/pallets';
 import { MixerGroupEntry, NativeTokenProperties } from '@webb-dapp/mixer';
 import { Currency } from '@webb-dapp/mixer/utils/currency';
+import { ORMLCurrency } from '@webb-dapp/react-environment/types/orml-currency';
 import { DepositPayload as IDepositPayload, MixerDeposit } from '@webb-dapp/react-environment/webb-context';
 import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
+import { LoggerService } from '@webb-tools/app-util';
 import { Note, NoteGenInput } from '@webb-tools/sdk-core';
+import { PalletMixerMixerMetadata } from '@webb-tools/types/interfaces/pallets';
+
+import { ApiPromise } from '@polkadot/api';
+import { StorageKey } from '@polkadot/types';
+import { u8aToHex } from '@polkadot/util';
 
 import { WebbPolkadot } from './webb-polkadot-provider';
-import { ApiPromise } from '@polkadot/api';
-import { ORMLCurrency } from '@webb-dapp/react-environment/types/orml-currency';
-import { LoggerService } from '@webb-tools/app-util';
-import { u8aToHex } from '@polkadot/util';
 
 type DepositPayload = IDepositPayload<Note, [number, string]>;
 const logger = LoggerService.get('tornado-deposit');
@@ -58,7 +59,7 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
           token: currency.token,
         };
       })
-      .map(({ treeId, amount, currency, token, id }) => ({
+      .map(({ amount, currency, id, token, treeId }) => ({
         id,
         treeId,
         value: amount,

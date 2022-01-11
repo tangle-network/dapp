@@ -10,26 +10,28 @@ type PageConfig = {
   title?: string;
 };
 
-export const pageWithFeatures = <T extends object>({ features, message, title }: PageConfig) => (
-  Component: React.ComponentType<T>
-): React.ComponentType<T> => (props) => {
-  const isSupported = useFeatures(features);
+export const pageWithFeatures =
+  <T extends object>({ features, message, title }: PageConfig) =>
+    (Component: React.ComponentType<T>): React.ComponentType<T> =>
+      (props) => {
+        const isSupported = useFeatures(features);
 
-  if (isSupported) {
-    return <Component {...props} />;
-  }
+        if (isSupported) {
+          return <Component {...props} />;
+        }
 
-  return (
-    <Flex row>
-      <Flex flex={1}>
-        <Information
-          variant={'warning'}
-          content={
-            message || "This feature isn't supported on the current chain, please consider changing the current network"
-          }
-          title={title || "Page isn't supported on the current chain"}
-        />
-      </Flex>
-    </Flex>
-  );
-};
+        return (
+          <Flex row>
+            <Flex flex={1}>
+              <Information
+                variant={'warning'}
+                content={
+                  message ||
+              "This feature isn't supported on the current chain, please consider changing the current network"
+                }
+                title={title || "Page isn't supported on the current chain"}
+              />
+            </Flex>
+          </Flex>
+        );
+      };

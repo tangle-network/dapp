@@ -1,8 +1,8 @@
 import { DepositConfirm } from '@webb-dapp/mixer/components/DepositConfirm/DepositConfirm';
 import { useDeposit } from '@webb-dapp/mixer/hooks/deposit/useDeposit';
-import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { MixerSize } from '@webb-dapp/react-environment/webb-context';
 import { SpaceBox } from '@webb-dapp/ui-components/Box';
+import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { MixerGroupSelect } from '@webb-dapp/ui-components/Inputs/MixerGroupSelect/MixerGroupSelect';
 import { WalletTokenInput } from '@webb-dapp/ui-components/Inputs/WalletTokenInput/WalletTokenInput';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';

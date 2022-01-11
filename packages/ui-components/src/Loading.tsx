@@ -11,5 +11,5 @@ const PageContentSkeleton = styled.div`
 `;
 
 export const PageContentLoading: FC = () => {
-  return <PageContentSkeleton active paragraph={{ rows: 1 }} title={"false"} />;
+  return <PageContentSkeleton active paragraph={{ rows: 1 }} title={'false'} />;
 };

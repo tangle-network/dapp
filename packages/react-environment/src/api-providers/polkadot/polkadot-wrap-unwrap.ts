@@ -1,6 +1,6 @@
-import { WrapUnWrap } from '@webb-dapp/react-environment/webb-context/wrap-unwrap';
-import { WebbPolkadot } from '@webb-dapp/react-environment/api-providers';
 import { MixerSize } from '@webb-dapp/react-environment';
+import { WebbPolkadot } from '@webb-dapp/react-environment/api-providers';
+import { WrapUnWrap } from '@webb-dapp/react-environment/webb-context/wrap-unwrap';
 
 export class PolkadotWrapUnwrap extends WrapUnWrap<WebbPolkadot> {
   canWrap(wrapPayload: any): Promise<boolean> {

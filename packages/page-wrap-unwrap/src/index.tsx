@@ -132,7 +132,7 @@ const PageWrapUnwrap: FC = () => {
         setLeftHandToken(currencyContent);
       },
     };
-  }, [status, tokens, wrappedTokens, leftHandToken]);
+  }, [status, tokens, wrappedTokens, leftHandToken, setLeftHandToken]);
 
   const wrappedOrWrappedFrom: TokenInputProps = useMemo(() => {
     return {
@@ -142,7 +142,7 @@ const PageWrapUnwrap: FC = () => {
         setRightHandToken(currencyContent);
       },
     };
-  }, [status, tokens, wrappedTokens, rightHandToken]);
+  }, [status, tokens, wrappedTokens, rightHandToken, setRightHandToken]);
   const leftInputProps = nativeOrWrapToProps;
   const rightInputProps = wrappedOrWrappedFrom;
   const buttonText = status;
