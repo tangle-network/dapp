@@ -21,11 +21,7 @@ import React from 'react';
 import { u8aToHex } from '@polkadot/util';
 
 import { BridgeDeposit } from '../../webb-context/bridge/bridge-deposit';
-<<<<<<< HEAD
-import { Currency } from '@webb-dapp/react-environment/types/currency';
 import { ERC20__factory } from '@webb-dapp/contracts/types';
-=======
->>>>>>> develop
 
 type DepositPayload = IDepositPayload<Note, [Deposit, number | string, string?]>;
 
@@ -250,8 +246,6 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
       version: 'v1',
       tokenSymbol: tokenSymbol,
       secrets: u8aToHex(secrets),
-      exponentiation: '5',
-      width: '3',
     };
     const note = await Note.generateNote(noteInput);
     logger.info(`Commitment is ${note.note.secret}`);
