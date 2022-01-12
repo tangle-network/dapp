@@ -3,7 +3,7 @@ import { useWithdraw } from '@webb-dapp/mixer/hooks';
 import { useWebContext, WithdrawState } from '@webb-dapp/react-environment';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 import { LoggerService } from '@webb-tools/app-util';
-import { DepositNote } from '@webb-tools/wasm-utils';
+import { JsNote as DepositNote } from '@webb-tools/wasm-utils';
 import React, { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 

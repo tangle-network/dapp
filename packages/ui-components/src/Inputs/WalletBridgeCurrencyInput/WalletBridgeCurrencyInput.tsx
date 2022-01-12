@@ -102,7 +102,8 @@ export const WalletBridgeCurrencyInput: React.FC<WalletTokenInputProps> = ({ sel
               value={selectedCurrency}
               onChange={(currencyContent) => {
                 if (currencyContent) {
-                  setSelectedToken(BridgeCurrency.fromString(currencyContent.view.id));
+                  // TODO validate the id is BridgeCurrency id not WebbCurrencyId
+                  setSelectedToken(BridgeCurrency.fromString(currencyContent.view.id as string));
                 }
               }}
             />

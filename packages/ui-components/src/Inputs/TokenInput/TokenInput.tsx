@@ -155,6 +155,9 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
     const activeEVM = await provider.network;
     const entryChainId = evmIdIntoChainId(activeEVM);
     const tokenAddress = configEntry.tokenAddresses[entryChainId];
+    if (!tokenAddress) {
+      return;
+    }
     await provider.addToken({
       address: tokenAddress,
       decimals: 18,
@@ -172,7 +175,7 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
         >
           <Popper
             style={{
-              zIndex: isOpen ? 10 : null,
+              zIndex: isOpen ? 10 : undefined,
             }}
             placement={'bottom-end'}
             open={Boolean($wrapper?.current)}

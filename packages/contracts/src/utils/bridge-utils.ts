@@ -1,5 +1,6 @@
 /* eslint-disable */
 // TODO resole eslint issue and merge this to protocol solidity
+//@ts-nocheck
 import { PoseidonHasher3 } from '@webb-dapp/contracts/utils/poseidon-hash3';
 
 /**

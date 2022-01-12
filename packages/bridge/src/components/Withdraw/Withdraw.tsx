@@ -85,7 +85,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
   const switchChain = async (note: Note | null) => {
     if (!note) return;
     if (!activeApi) return;
-    const newChainId = Number(note.note.chain);
+    const newChainId = Number(note.note.targetChainId);
     const chain = chainsPopulated[newChainId];
 
     const web3Provider = activeApi.getProvider();

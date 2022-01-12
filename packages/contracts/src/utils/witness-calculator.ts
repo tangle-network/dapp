@@ -1,5 +1,7 @@
 /* eslint-disable */
+// @ts-nocheck
 // TODO resole eslint issue and merge this to protocol solidity
+// @ts-ignore
 module.exports = async function builder(code, options) {
   options = options || {};
 
