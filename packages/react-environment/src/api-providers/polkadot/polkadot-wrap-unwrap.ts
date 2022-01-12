@@ -42,7 +42,7 @@ export class PolkadotWrapUnwrap extends WrapUnWrap<WebbPolkadot> {
     return Promise.resolve([]);
   }
 
-  getNativeTokens(): Promise<WrappingTokenId[]> {
+  getWrappableTokens(): Promise<WrappingTokenId[]> {
     return Promise.resolve([]);
   }
 

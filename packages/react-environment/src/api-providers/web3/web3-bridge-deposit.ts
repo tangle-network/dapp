@@ -7,6 +7,7 @@ import {
   getEVMChainNameFromInternal,
 } from '@webb-dapp/apps/configs';
 import { WebbGovernedToken } from '@webb-dapp/contracts/contracts';
+import { ERC20__factory } from '@webb-dapp/contracts/types';
 import { createAnchor2Deposit, Deposit } from '@webb-dapp/contracts/utils/make-deposit';
 import { BridgeConfig, DepositPayload as IDepositPayload, MixerSize } from '@webb-dapp/react-environment';
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3/webb-web3-provider';
@@ -21,7 +22,6 @@ import React from 'react';
 import { u8aToHex } from '@polkadot/util';
 
 import { BridgeDeposit } from '../../webb-context/bridge/bridge-deposit';
-import { ERC20__factory } from '@webb-dapp/contracts/types';
 
 type DepositPayload = IDepositPayload<Note, [Deposit, number | string, string?]>;
 

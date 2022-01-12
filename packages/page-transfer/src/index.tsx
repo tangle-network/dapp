@@ -57,7 +57,7 @@ const PageTransfers: FC = () => {
   }, []);
 
   const bridgeTokens = useMemo(() => {
-    return bridge.getTokens().filter((currency) => currency.currencyId !== WebbCurrencyId.WEBB);
+    return bridge.getTokens().filter((currency) => !currency.currencyIds.includes(WebbCurrencyId.WEBB));
   }, [bridge]);
   const tokens = useMemo(() => {
     const tokens: CurrencyContent[] = [];
