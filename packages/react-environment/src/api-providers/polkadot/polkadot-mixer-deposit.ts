@@ -6,6 +6,7 @@ import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import { LoggerService } from '@webb-tools/app-util';
 import { Note, NoteGenInput } from '@webb-tools/sdk-core';
 import { PalletMixerMixerMetadata } from '@webb-tools/types/interfaces/pallets';
+
 import { u8aToHex } from '@polkadot/util';
 
 import { WebbPolkadot } from './webb-polkadot-provider';
