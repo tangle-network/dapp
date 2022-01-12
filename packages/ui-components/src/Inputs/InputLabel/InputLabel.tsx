@@ -1,8 +1,8 @@
+import { Typography } from '@material-ui/core';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
+import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 import React from 'react';
 import styled, { css } from 'styled-components';
-import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
-import { Typography } from '@material-ui/core';
 
 type LabelStatus = 'initial' | 'highlighted' | 'error';
 

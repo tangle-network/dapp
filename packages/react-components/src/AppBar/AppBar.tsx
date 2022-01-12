@@ -116,27 +116,22 @@ const AppBar: React.FC<AppBarProps> = () => {
       {!isMobile && (
         <NavigationWrapper>
           <li className={'active'}>
-            <NavLink to={'/tornado'} activeclassname={'active'}>
-              Tornados
-            </NavLink>
+            <NavLink to={'/tornado'}>Tornados</NavLink>
           </li>
           <li className={'active'}>
-            <NavLink to={'/bridge'} activeclassname={'active'}>
-              Bridge
-            </NavLink>
+            <NavLink to={'/bridge'}>Bridge</NavLink>
           </li>
-          {process.env.REACT_APP_BUILD_ENV != 'production' && (
+
+          {/* {process.env.REACT_APP_BUILD_ENV != 'production' && (
             <li className={'active'}>
               <NavLink to={'/transfer'} activeclassname={'active'}>
                 Transfer
               </NavLink>
             </li>
-          )}
+          )} */}
 
           <li className={'active'}>
-            <NavLink to={'/wrap-unwrap'} activeclassname={'active'}>
-              Wrap/Unwrap
-            </NavLink>
+            <NavLink to={'/wrap-unwrap'}>Wrap/Unwrap</NavLink>
           </li>
         </NavigationWrapper>
       )}

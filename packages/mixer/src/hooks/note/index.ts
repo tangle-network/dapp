@@ -1,4 +1,4 @@
-import { Note } from '@webb-tools/sdk-mixer';
+import { Note } from '@webb-tools/sdk-core';
 import { useEffect, useState } from 'react';
 
 export const useDepositNote = (value: string): null | Note => {

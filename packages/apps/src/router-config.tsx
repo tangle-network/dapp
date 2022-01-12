@@ -12,10 +12,15 @@ const PageWrapUnwrap = lazy(() => import('@webb-dapp/page-wrap-unwrap'));
 const CSuspense: FC = ({ children }) => {
   return <Suspense fallback={<PageContentLoading />}>{children}</Suspense>;
 };
-
-export const config: RouterConfigData[] =
-  process.env.REACT_APP_BUILD_ENV === 'production'
-    ? [
+let isProduction = (() => {
+  try {
+    return process.env.REACT_APP_BUILD_ENV === 'production';
+  } catch (_) {
+    return false;
+  }
+})();
+export const config: RouterConfigData[] = isProduction
+  ? [
       {
         children: [
           {
@@ -54,7 +59,7 @@ export const config: RouterConfigData[] =
         path: '*',
       },
     ].filter((elt) => elt.path !== 'null')
-    : [
+  : [
       {
         children: [
           {

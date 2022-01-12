@@ -3,8 +3,8 @@ import { Currency } from '@webb-dapp/react-environment/types/currency';
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
 
-import { InputSection } from '../InputSection/InputSection';
 import { InputLabel } from '../InputLabel/InputLabel';
+import { InputSection } from '../InputSection/InputSection';
 import { TokenInput } from '../TokenInput/TokenInput';
 import { WalletSelect } from '../WalletSelect/WalletSelect';
 

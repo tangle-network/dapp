@@ -50,7 +50,7 @@ export const BridgeNoteInput: React.FC<NoteInputProps> = ({ error, onChange, val
     } catch (_) {
       return null;
     }
-  }, [depositNote]);
+  }, [depositNote, getBridge]);
 
   return (
     <InputLabel label={'Note'}>
@@ -89,13 +89,15 @@ export const BridgeNoteInput: React.FC<NoteInputProps> = ({ error, onChange, val
               <tr>
                 <td>Source Chain:</td>
                 <td style={{ textAlign: 'right' }}>
-                  {getEVMChainNameFromInternal(Number(depositNote.note.sourceChain))}
+                  {getEVMChainNameFromInternal(Number(depositNote.note.sourceChainId))}
                 </td>
               </tr>
 
               <tr>
                 <td>Destination Chain:</td>
-                <td style={{ textAlign: 'right' }}>{getEVMChainNameFromInternal(Number(depositNote.note.chain))}</td>
+                <td style={{ textAlign: 'right' }}>
+                  {getEVMChainNameFromInternal(Number(depositNote.note.targetChainId))}
+                </td>
               </tr>
 
               {bridge ? (

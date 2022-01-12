@@ -6,7 +6,7 @@ import { createElement } from 'react';
 const chains = chainsPopulated;
 
 export interface CurrencyView {
-  id: WebbCurrencyId;
+  id: WebbCurrencyId | string | number;
   icon: ReturnType<typeof createElement>;
   name: string;
   color?: string;

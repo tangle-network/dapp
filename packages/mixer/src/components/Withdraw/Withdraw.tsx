@@ -5,6 +5,7 @@ import { useWithdraw } from '@webb-dapp/mixer/hooks';
 import { useDepositNote } from '@webb-dapp/mixer/hooks/note';
 import WithdrawSuccessModal from '@webb-dapp/react-components/Withdraw/WithdrawSuccessModal';
 import { ActiveWebbRelayer, useWebContext, WithdrawState } from '@webb-dapp/react-environment';
+import { WebbPolkadot } from '@webb-dapp/react-environment/api-providers';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabel';
@@ -12,10 +13,9 @@ import { InputSection } from '@webb-dapp/ui-components/Inputs/InputSection/Input
 import { MixerNoteInput } from '@webb-dapp/ui-components/Inputs/NoteInput/MixerNoteInput';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import RelayerInput, { FeesInfo, RelayerApiAdapter } from '@webb-dapp/ui-components/RelayerInput/RelayerInput';
-import { Note } from '@webb-tools/sdk-mixer';
+import { Note } from '@webb-tools/sdk-core';
 import React, { useCallback, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { WebbPolkadot } from '@webb-dapp/react-environment/api-providers';
 
 const WithdrawWrapper = styled.div``;
 type WithdrawProps = {};
@@ -93,7 +93,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
   const switchChain = async (note: Note | null) => {
     if (!note) return;
     if (!activeApi) return;
-    const newChainId = Number(note.note.chain);
+    const newChainId = Number(note?.note.targetChainId);
     const chain = chainsPopulated[newChainId];
 
     const web3Provider = activeApi.getProvider();

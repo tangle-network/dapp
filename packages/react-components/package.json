@@ -7,10 +7,10 @@
   "homepage": "https://github.com/webb-tools/webb-dapp#readme",
   "dependencies": {
     "@webb-dapp/react-hooks": "0.2.1-beta.1",
-    "@webb-tools/api": "0.1.2-18",
-    "@webb-tools/app-util": "0.1.2-18",
-    "@webb-tools/sdk-core": "0.1.2-18",
-    "@webb-tools/types": "0.1.2-18",
+    "@webb-tools/api": "^0.1.4-9",
+    "@webb-tools/app-util": "^0.1.4-9",
+    "@webb-tools/sdk-core": "^0.1.4-9",
+    "@webb-tools/types": "^0.1.4-9",
 	"@polkadot/api": "^6.9.2",
 
 	"@polkadot/react-identicon": "^0.52.1",

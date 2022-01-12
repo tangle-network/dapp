@@ -1,13 +1,13 @@
+import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
 import { BridgeCurrency, useWebContext } from '@webb-dapp/react-environment';
 import { Currency, CurrencyContent, CurrencyView } from '@webb-dapp/react-environment/types/currency';
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
 
-import { InputSection } from '../InputSection/InputSection';
 import { InputLabel } from '../InputLabel/InputLabel';
+import { InputSection } from '../InputSection/InputSection';
 import { TokenInput } from '../TokenInput/TokenInput';
 import { WalletSelect } from '../WalletSelect/WalletSelect';
-import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
 
 const WalletTokenInputWrapper = styled.div`
   display: flex;
@@ -102,7 +102,8 @@ export const WalletBridgeCurrencyInput: React.FC<WalletTokenInputProps> = ({ sel
               value={selectedCurrency}
               onChange={(currencyContent) => {
                 if (currencyContent) {
-                  setSelectedToken(BridgeCurrency.fromString(currencyContent.view.id));
+                  // TODO validate the id is BridgeCurrency id not WebbCurrencyId
+                  setSelectedToken(BridgeCurrency.fromString(currencyContent.view.id as string));
                 }
               }}
             />
