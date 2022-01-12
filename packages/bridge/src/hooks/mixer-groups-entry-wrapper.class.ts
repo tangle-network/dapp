@@ -1,6 +1,6 @@
 import { Currency } from '@webb-dapp/mixer/utils/currency';
 import { Token } from '@webb-tools/sdk-core';
-import { Balance, MixerInfo } from '@webb-tools/types/interfaces';
+import { Balance, PalletMixerMixerMetadata as MixerInfo } from '@webb-tools/types/interfaces';
 import { CurrencyId } from '@webb-tools/types/interfaces/types';
 
 import { ApiPromise, ApiRx } from '@polkadot/api';

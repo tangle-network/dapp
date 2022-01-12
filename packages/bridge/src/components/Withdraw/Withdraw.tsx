@@ -13,7 +13,7 @@ import { InputSection } from '@webb-dapp/ui-components/Inputs/InputSection/Input
 import { BridgeNoteInput } from '@webb-dapp/ui-components/Inputs/NoteInput/BridgeNoteInput';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import RelayerInput, { FeesInfo, RelayerApiAdapter } from '@webb-dapp/ui-components/RelayerInput/RelayerInput';
-import { Note } from '@webb-tools/sdk-mixer';
+import { Note } from '@webb-tools/sdk-core';
 import React, { useCallback, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
@@ -77,7 +77,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
     return true;
   };
   const determineSwitchButton = () => {
-    if (depositNote && activeChain && activeChain.evmId != chainIdIntoEVMId(depositNote.note.chain)) {
+    if (depositNote && activeChain && activeChain.evmId != chainIdIntoEVMId(depositNote.note.targetChainId)) {
       return true;
     }
     return false;
