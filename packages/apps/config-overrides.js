@@ -1,33 +1,30 @@
-const { override } = require('customize-cra');
+const { override, addWebpackAlias, getBabelLoader } = require('customize-cra');
 const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
 const path = require('path');
 const exec = require('child_process').exec;
-
+const nodeExternals = require('webpack-node-externals');
 const findPackages = require('../../scripts/findPackages');
-
 const packages = findPackages();
 
 const rewireReactHotLoader = require('react-app-rewire-hot-loader');
-
-const WebpackPostBuildScript = function() {
-  this.apply = function(compiler) {
+const { aliasDangerous, configPaths, CracoAliasPlugin } = require('react-app-rewire-alias/lib/aliasDangerous');
+const WebpackPostBuildScript = function () {
+  this.apply = function (compiler) {
     compiler.hooks.afterEmit.tap('WebpackPostBuildScript', (compilation) => {
       exec('../../scripts/bigintBabelFix.sh', (err, stdout, stderr) => {
         if (stdout) process.stdout.write(stdout);
         if (stderr) process.stderr.write(stderr);
       });
-    })
-  }
-}
+    });
+  };
+};
 
-const addWebpackPostBuildScript = config => {
+const addWebpackPostBuildScript = (config) => {
   config.plugins.push(new WebpackPostBuildScript());
   return config;
-}
+};
 
-module.exports = override(
-  addWebpackPostBuildScript,
-  function (config, env) {
+module.exports = override(addWebpackPostBuildScript, function (config, env) {
   // include lib
   config.module.rules.forEach((rule) => {
     if (!Reflect.has(rule, 'oneOf')) {
@@ -88,8 +85,14 @@ module.exports = override(
       ...(config.resolve.alias || {}),
       'react-dom': '@hot-loader/react-dom',
     };
+    config = rewireReactHotLoader(config, env);
+  } else {
+    const paths = configPaths('../../tsconfig.json');
+    const p = {};
+    for (const key of Object.keys(paths)) {
+      p[key + '/'] = path.resolve(process.cwd(), '..', '..', paths[key]);
+    }
+    addWebpackAlias(p)(config);
   }
-
-  config = rewireReactHotLoader(config, env);
   return config;
 });

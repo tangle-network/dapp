@@ -17,13 +17,13 @@ import { InteractiveFeedback, WebbError, WebbErrorCodes } from '@webb-dapp/utils
 import { Account } from '@webb-dapp/wallet/account/Accounts.adapter';
 import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
 import { LoggerService } from '@webb-tools/app-util';
+import { logger } from 'ethers';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { WebbPolkadot } from './api-providers/polkadot';
 import { extensionNotInstalled, unsupportedChain } from './error';
 import { SettingProvider } from './SettingProvider';
 import { Chain, netStorageFactory, NetworkStorage, Wallet, WebbApiProvider, WebbContext } from './webb-context';
-import { logger } from 'ethers';
 
 interface WebbProviderProps extends BareProps {
   applicationName: string;
@@ -337,18 +337,18 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
               // If we support the evmId but don't have an evmRpcUrl, then it is default on metamask
               await web3Provider
                 .switchChain({
-                  chainId: `0x${chain.evmId.toString(16)}`,
+                  chainId: `0x${chain.evmId?.toString(16)}`,
                 })
                 ?.catch(async (switchError) => {
                   console.log('inside catch for switchChain', switchError);
 
                   // cannot switch because network not recognized, so prompt to add it
-                  if (switchError.code === 4902) {
+                  if (switchError.code === 4902 && chain.evmId) {
                     const currency = currenciesConfig[chain.nativeCurrencyId];
                     await web3Provider.addChain({
                       chainId: `0x${chain.evmId.toString(16)}`,
                       chainName: chain.name,
-                      rpcUrls: chain.evmRpcUrls,
+                      rpcUrls: chain.evmRpcUrls ?? [],
                       nativeCurrency: {
                         decimals: 18,
                         name: currency.name,

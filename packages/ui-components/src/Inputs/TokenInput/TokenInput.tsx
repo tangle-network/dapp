@@ -10,17 +10,17 @@ import {
 } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
 import Popper from '@material-ui/core/Popper';
+import { evmIdIntoChainId } from '@webb-dapp/apps/configs';
+import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
+import { Bridge, BridgeCurrency, useWebContext } from '@webb-dapp/react-environment';
 import { CurrencyContent } from '@webb-dapp/react-environment/types/currency';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
+import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
 import React, { CSSProperties, useEffect, useMemo, useRef, useState } from 'react';
 import styled, { css, StyledProps } from 'styled-components';
-import { Bridge, BridgeCurrency, useWebContext } from '@webb-dapp/react-environment';
-import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
-import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
-import { evmIdIntoChainId } from '@webb-dapp/apps/configs';
 
 const StyledList = styled.ul`
   &&& {
@@ -115,7 +115,7 @@ const ChainName = styled.span`
   text-overflow: ellipsis;
   white-space: nowrap;
 `;
-export const TokenInput: React.FC<TokenInputProps> = ({ wrapperStyles, currencies, onChange, value }) => {
+export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, value, wrapperStyles }) => {
   const selectItems = useMemo(() => {
     return currencies.map((currency) => {
       const view = currency.view;
@@ -155,6 +155,9 @@ export const TokenInput: React.FC<TokenInputProps> = ({ wrapperStyles, currencie
     const activeEVM = await provider.network;
     const entryChainId = evmIdIntoChainId(activeEVM);
     const tokenAddress = configEntry.tokenAddresses[entryChainId];
+    if (!tokenAddress) {
+      return;
+    }
     await provider.addToken({
       address: tokenAddress,
       decimals: 18,
@@ -172,7 +175,7 @@ export const TokenInput: React.FC<TokenInputProps> = ({ wrapperStyles, currencie
         >
           <Popper
             style={{
-              zIndex: isOpen ? 10 : null,
+              zIndex: isOpen ? 10 : undefined,
             }}
             placement={'bottom-end'}
             open={Boolean($wrapper?.current)}
@@ -259,7 +262,7 @@ export const TokenInput: React.FC<TokenInputProps> = ({ wrapperStyles, currencie
               </div>
 
               <StyledList as={List} dense disablePadding>
-                {selectItems.map(({ name, icon: Icon, id, self: currency, symbol }) => {
+                {selectItems.map(({ icon: Icon, id, name, self: currency, symbol }) => {
                   const isSelected = selected?.id === id;
                   return (
                     <li

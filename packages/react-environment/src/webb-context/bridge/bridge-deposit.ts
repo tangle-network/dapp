@@ -5,6 +5,7 @@ import { BridgeConfig } from '@webb-dapp/react-environment/webb-context/bridge/b
 import { BehaviorSubject, Observable } from 'rxjs';
 
 import { DepositPayload, MixerDeposit } from '../mixer/mixer-deposit';
+import { BridgeCurrency } from '.';
 
 export abstract class BridgeDeposit<T, K extends DepositPayload = DepositPayload<any>> extends MixerDeposit<T, K> {
   abstract bridgeConfig: BridgeConfig;

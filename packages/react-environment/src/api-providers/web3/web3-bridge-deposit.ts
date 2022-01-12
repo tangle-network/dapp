@@ -1,8 +1,16 @@
-import { ChainId, chainIdIntoEVMId, chainsConfig, currenciesConfig, evmIdIntoChainId, getEVMChainNameFromInternal } from '@webb-dapp/apps/configs';
-import { createAnchor2Deposit, Deposit } from '@webb-dapp/contracts/utils/make-deposit';
+import {
+  ChainId,
+  chainIdIntoEVMId,
+  chainsConfig,
+  currenciesConfig,
+  evmIdIntoChainId,
+  getEVMChainNameFromInternal,
+} from '@webb-dapp/apps/configs';
 import { WebbGovernedToken } from '@webb-dapp/contracts/contracts';
+import { createAnchor2Deposit, Deposit } from '@webb-dapp/contracts/utils/make-deposit';
 import { BridgeConfig, DepositPayload as IDepositPayload, MixerSize } from '@webb-dapp/react-environment';
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3/webb-web3-provider';
+import { Currency } from '@webb-dapp/react-environment/types/currency';
 import { notificationApi } from '@webb-dapp/ui-components/notification';
 import { DepositNotification } from '@webb-dapp/ui-components/notification/DepositNotification';
 import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polkadot/transaction-notification-config';
@@ -13,8 +21,11 @@ import React from 'react';
 import { u8aToHex } from '@polkadot/util';
 
 import { BridgeDeposit } from '../../webb-context/bridge/bridge-deposit';
+<<<<<<< HEAD
 import { Currency } from '@webb-dapp/react-environment/types/currency';
 import { ERC20__factory } from '@webb-dapp/contracts/types';
+=======
+>>>>>>> develop
 
 type DepositPayload = IDepositPayload<Note, [Deposit, number | string, string?]>;
 
@@ -132,10 +143,10 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
       }
     } catch (e: any) {
       console.log(e);
-      if (!e.code) {
+      if ((e as any)?.code) {
         throw e;
       }
-      if (e.code == 4001) {
+      if ((e as any)?.code == 4001) {
         notificationApi.remove('waiting-approval');
         transactionNotificationConfig.failed?.({
           address: '',
@@ -226,6 +237,8 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
     const amount = String(mixerId).replace('Bridge=', '').split('@')[0];
     const sourceChainId = evmIdIntoChainId(sourceEvmId);
     const noteInput: NoteGenInput = {
+      exponentiation: '5',
+      width: '3',
       prefix: 'webb.bridge',
       chain: String(destChainId),
       sourceChain: String(sourceChainId),

@@ -89,7 +89,8 @@ export const Deposit: React.FC<DepositProps> = () => {
   useEffect(() => {
     if (!wrappableAsset || !activeApi) return;
 
-    activeApi.methods.chainQuery.tokenBalanceByCurrencyId(wrappableAsset.view.id).then((balance) => {
+    // TODO: handle when the token id isn't WebbCurrencyId
+    activeApi.methods.chainQuery.tokenBalanceByCurrencyId(wrappableAsset.view.id as any).then((balance) => {
       setWrappableTokenBalance(balance);
     });
   }, [wrappableAsset, activeApi]);

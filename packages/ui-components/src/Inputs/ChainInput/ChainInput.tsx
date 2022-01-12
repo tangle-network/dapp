@@ -128,7 +128,7 @@ export const TokenInput: React.FC<TokenInputProps> = ({ chains, onChange, value 
   }, [chains]);
 
   useEffect(() => {
-    if (!chains.includes(value)) {
+    if (value && !chains.includes(value)) {
       onChange(undefined);
     }
   }, [value, chains, onChange]);
@@ -155,7 +155,7 @@ export const TokenInput: React.FC<TokenInputProps> = ({ chains, onChange, value 
         >
           <Popper
             style={{
-              zIndex: isOpen ? 10 : null,
+              zIndex: isOpen ? 10 : undefined,
             }}
             placement={'bottom-end'}
             open={Boolean($wrapper?.current)}

@@ -63,4 +63,4 @@ export const fetchKeyForEdges = async (maxEdges: number) => {
   } catch (e) {
     console.log('error when fetching circuit key from ipfs: ', e);
   }
-}
+};

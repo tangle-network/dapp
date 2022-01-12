@@ -33,7 +33,7 @@ import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polka
 import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
 import { LoggerService } from '@webb-tools/app-util';
 import { Note } from '@webb-tools/sdk-mixer';
-import { DepositNote } from '@webb-tools/wasm-utils';
+import { JsNote as DepositNote } from '@webb-tools/wasm-utils';
 import { BigNumber } from 'ethers';
 import React from 'react';
 
@@ -247,7 +247,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
     const bridgeStorageStorage = await bridgeCurrencyBridgeStorageFactory();
 
     // Setup a provider for the source chain
-    const sourceChainId = Number(note.sourceChain) as ChainId;
+    const sourceChainId = Number(note.sourceChainId) as ChainId;
     const sourceEvmId = chainIdIntoEVMId(sourceChainId);
     const sourceChainConfig = chainsConfig[sourceChainId];
     const rpc = sourceChainConfig.url;
@@ -255,7 +255,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
     const sourceEthers = sourceHttpProvider.intoEthersProvider();
 
     // get info from the destination chain (should be selected)
-    const destChainId = Number(note.chain) as ChainId;
+    const destChainId = Number(note.targetChainId) as ChainId;
     const destChainEvmId = chainIdIntoEVMId(destChainId);
 
     // get the deposit info
@@ -282,7 +282,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
 
     // get relayers for the source chain
     const sourceRelayers = this.inner.relayingManager.getRelayer({
-      chainId: Number(note.sourceChain),
+      chainId: Number(note.sourceChainId),
       baseOn: 'evm',
       bridgeSupport: {
         amount: Number(note.amount),
