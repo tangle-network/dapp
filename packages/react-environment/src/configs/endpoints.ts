@@ -14,8 +14,9 @@ export interface EndpointConfigItem {
 export type EndpointConfig = Record<EndpointType, EndpointConfigItem[]>;
 const endpointDefaults: Omit<EndpointConfigItem, 'name' | 'url'> = {
   features: {
-    mixer: false,
+    tornado: false,
     governance: true,
+    bridge: false,
   },
 };
 

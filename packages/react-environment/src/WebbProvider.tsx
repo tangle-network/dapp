@@ -337,18 +337,18 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
               // If we support the evmId but don't have an evmRpcUrl, then it is default on metamask
               await web3Provider
                 .switchChain({
-                  chainId: `0x${chain.evmId.toString(16)}`,
+                  chainId: `0x${chain.evmId?.toString(16)}`,
                 })
                 ?.catch(async (switchError) => {
                   console.log('inside catch for switchChain', switchError);
 
                   // cannot switch because network not recognized, so prompt to add it
-                  if (switchError.code === 4902) {
+                  if (switchError.code === 4902 && chain.evmId) {
                     const currency = currenciesConfig[chain.nativeCurrencyId];
                     await web3Provider.addChain({
                       chainId: `0x${chain.evmId.toString(16)}`,
                       chainName: chain.name,
-                      rpcUrls: chain.evmRpcUrls,
+                      rpcUrls: chain.evmRpcUrls ?? [],
                       nativeCurrency: {
                         decimals: 18,
                         name: currency.name,

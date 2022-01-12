@@ -125,10 +125,10 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
       }
     } catch (e) {
       console.log(e);
-      if (!e.code) {
+      if ((e as any)?.code) {
         throw e;
       }
-      if (e.code == 4001) {
+      if ((e as any)?.code == 4001) {
         notificationApi.remove('waiting-approval');
         transactionNotificationConfig.failed?.({
           address: '',
@@ -218,6 +218,8 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
     const amount = String(mixerId).replace('Bridge=', '').split('@')[0];
     const sourceChainId = evmIdIntoChainId(sourceEvmId);
     const noteInput: NoteGenInput = {
+      exponentiation: '5',
+      width: '3',
       prefix: 'webb.bridge',
       chain: String(destChainId),
       sourceChain: String(sourceChainId),

@@ -182,9 +182,9 @@ export class WebbWeb3Provider
       // @ts-ignore
       let code = await this.ethersProvider.call(a, a.blockNumber);
       console.log({ ERRORCODE: code });
-    } catch (err) {
-      console.log({ e: err });
-      const code = err.message.replace('Reverted ', '');
+    } catch (e) {
+      let err = e as any;
+      const code = err?.message.replace('Reverted ', '');
       let reason = ethers.utils.toUtf8String('0x' + code.substr(138));
       return reason;
     }
