@@ -1,4 +1,5 @@
 import { ChainId, WebbCurrencyId, webbCurrencyIdFromString, webbCurrencyIdToString } from '@webb-dapp/apps/configs';
+import { getNameFromBridgeCurrencyId } from './bridge-config';
 
 /*
  *
@@ -18,10 +19,10 @@ import { ChainId, WebbCurrencyId, webbCurrencyIdFromString, webbCurrencyIdToStri
 export class BridgeCurrency {
   public readonly name: string;
 
-  constructor(private chains: ChainId[], private wrappedCurrencies: WebbCurrencyId[]) {
+  constructor(private chains: ChainId[], private wrappedCurrencies: WebbCurrencyId[], name: string) {
     this.chains = chains.sort((a, b) => (a > b ? 1 : a < b ? -1 : 0));
     this.wrappedCurrencies = wrappedCurrencies.sort((a, b) => (a > b ? 1 : a < b ? -1 : 0));
-    this.name = this.toString();
+    this.name = name;
   }
 
   toString(): string {
@@ -51,7 +52,8 @@ export class BridgeCurrency {
     });
 
     let chainIds = parts.slice(1, parts.length).map((c) => Number(c) as ChainId);
-    return new BridgeCurrency(chainIds, wrappedCurrencies);
+    const webbTokenName = getNameFromBridgeCurrencyId(strBridgeCurrency);
+    return new BridgeCurrency(chainIds, wrappedCurrencies, webbTokenName);
   }
 
   hasChain(chainId: ChainId): boolean {

@@ -143,7 +143,7 @@ export const Deposit: React.FC<DepositProps> = () => {
             )}
             {!showWrappableAssets && selectedBridgeCurrency && (
               <Typography>
-                {selectedBridgeCurrency?.prefix} Balance: {wrappedTokenBalance}
+                {selectedBridgeCurrency?.name} Balance: {wrappedTokenBalance}
               </Typography>
             )}
           </div>

@@ -66,7 +66,7 @@ export const fromBridgeCurrencyToCurrencyView = (bridgeCurrency: BridgeCurrency)
         ),
         id: bridgeCurrency.toString(),
         name: bridgeCurrency.name,
-        symbol: bridgeCurrency.prefix,
+        symbol: bridgeCurrency.name,
       };
     },
   };

@@ -168,7 +168,7 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
     if (bridge) {
       return bridge.anchors.map((anchor) => ({
         id: `Bridge=${anchor.amount}@${bridge.currency.name}`,
-        title: `${anchor.amount} ${bridge.currency.prefix}`,
+        title: `${anchor.amount} ${bridge.currency.name}`,
       }));
     }
     return [];
@@ -207,6 +207,7 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
    *
    *  Mixer id => the fixed deposit amount
    * destChainId => the Chain the token will be bridged to
+   * If the wrappableAssetAddress is not provided, it is assumed to be the address of the webbToken
    * */
   async generateBridgeNote(
     mixerId: number | string,

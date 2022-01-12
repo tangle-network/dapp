@@ -19,7 +19,12 @@ export type BridgeConfigEntry = {
 };
 export type BridgeConfig = Record<string, BridgeConfigEntry>;
 
-const webbWETHtest3 = new BridgeCurrency(
+export const getNameFromBridgeCurrencyId = (id: string): string => {
+  if (id === 'webb$ETH$WETH-4-5-7-13-14-15') return 'webbWETH';
+  return 'unknown';
+}
+
+const webbWETHtest1 = new BridgeCurrency(
   [
     ChainId.Ropsten,
     ChainId.Rinkeby,
@@ -28,12 +33,13 @@ const webbWETHtest3 = new BridgeCurrency(
     ChainId.OptimismTestnet,
     ChainId.ArbitrumTestnet,
   ],
-  [WebbCurrencyId.ETH, WebbCurrencyId.WETH]
+  [WebbCurrencyId.ETH, WebbCurrencyId.WETH],
+  'webbWETH'
 );
 
 export const bridgeConfig: BridgeConfig = {
-  [webbWETHtest3.name]: {
-    asset: webbWETHtest3,
+  [webbWETHtest1.name]: {
+    asset: webbWETHtest1,
     tokenAddresses: {
       [ChainId.Ropsten]: '0x105779076d17FAe5EAADF010CA677475549F49E4',
       [ChainId.Rinkeby]: '0x4e7D4BEe028655F2865d9D147cF7B609c516d39C',
