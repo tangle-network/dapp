@@ -1,4 +1,10 @@
 {
+
+  "exclude": [
+	"build/**/*",
+	"**/build/**/*",
+	"scripts/*"
+  ],
   "compilerOptions": {
 	"target": "es5",
 	"lib": [
@@ -23,6 +29,7 @@
 	"noEmit": true,
 	"jsx": "react",
 	"baseUrl": "./packages",
+	"skipDefaultLibCheck": true,
 	"paths": {
 	  "@webb-dapp/apps/*": [
 		"apps/src/*"
@@ -126,12 +133,6 @@
 	  "@webb-dapp/contracts": [
 		"contracts/src"
 	  ]
-	},
-	"skipDefaultLibCheck": true
-  },
-  "exclude": [
-	"build/**/*",
-	"**/build/**/*",
-	"scripts/*"
-  ]
+	}
+  }
 }

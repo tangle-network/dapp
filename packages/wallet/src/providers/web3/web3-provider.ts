@@ -1,9 +1,9 @@
 import WalletConnectProvider from '@walletconnect/web3-provider';
+import { Bridge, bridgeConfig, BridgeCurrency, ProvideCapabilities } from '@webb-dapp/react-environment';
 import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import { ethers } from 'ethers';
 import Web3 from 'web3';
 import { AbstractProvider } from 'web3-core';
-import { Bridge, bridgeConfig, BridgeCurrency, ProvideCapabilities } from '@webb-dapp/react-environment';
 export type AddToken = { address: string; symbol: string; decimals: number; image: string };
 export interface AddEthereumChainParameter {
   chainId: string; // A 0x-prefixed hexadecimal string
@@ -84,7 +84,7 @@ export class Web3Provider<T = unknown> {
 
   static async fromWalletConnectProvider(WCProvider: WalletConnectProvider) {
     await WCProvider.enable();
-    const web3 = new Web3((WCProvider as unknown) as any);
+    const web3 = new Web3(WCProvider as unknown as any);
     const web3Provider = new Web3Provider<WalletConnectProvider>(web3, WCProvider.walletMeta);
     web3Provider._capabilities = {
       addNetworkRpc: false,

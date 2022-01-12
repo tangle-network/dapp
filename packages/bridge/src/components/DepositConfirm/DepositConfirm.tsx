@@ -140,7 +140,7 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({
     provider.generateNote(mixerId, destChain, wrappableCurrency?.address).then((note) => {
       setNote(note);
     });
-  }, [provider.generateNote, mixerId, destChain]);
+  }, [provider, mixerId, destChain, activeChain, wrappableAsset]);
   const [backupConfirmation, setBackupConfirmation] = useState(false);
   const generatingNote = !depositPayload;
   return (
