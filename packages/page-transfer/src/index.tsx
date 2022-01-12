@@ -37,8 +37,8 @@ const PageTransfers: FC = () => {
   const [isSwap, setIsSwap] = useState(false);
   const { activeApi, activeChain, activeWallet, chains: chainsStore, switchChain } = useWebContext();
 
-  const chains = useMemo(() => {
-    return Object.keys(chainsStore);
+  const chains: ChainId[] = useMemo(() => {
+    return Object.keys(chainsStore).map((i) => Number(i));
   }, [chainsStore]);
 
   const srcChain = useMemo(() => {

@@ -115,7 +115,7 @@ export class PolkadotTx<P extends Array<any>> extends EventBus<PolkadotTXEvents>
 
         message = `${error.section}.${error.name}`;
       } catch (error) {
-        message = Reflect.has(error, 'toString') ? error.toString() : error;
+        message = Reflect.has(error as any, 'toString') ? (error as any)?.toString() : error;
       }
     }
     this.emitWithPayload('failed', message);
@@ -166,7 +166,7 @@ export class PolkadotTx<P extends Array<any>> extends EventBus<PolkadotTXEvents>
         });
       } catch (e) {
         console.log(e);
-        const errorMessage = this.errorHandler(e);
+        const errorMessage = this.errorHandler(e as any);
         this.emitWithPayload('failed', errorMessage);
         reject(errorMessage);
       }

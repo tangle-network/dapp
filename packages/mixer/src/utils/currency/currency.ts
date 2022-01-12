@@ -1,9 +1,10 @@
+import { WebbCurrencyId } from '@webb-dapp/apps/configs';
 import { TOKEN_COLOR, TOKEN_FULLNAMES, TOKEN_IMAGES } from '@webb-dapp/mixer/utils/currency/constants';
+import { ORMLAsset } from '@webb-dapp/react-environment/types/orml-currency';
 import { Token } from '@webb-tools/sdk-core';
 import { CurrencyId } from '@webb-tools/types/interfaces/types';
 
 import { ApiPromise, ApiRx } from '@polkadot/api';
-import { ORMLAsset } from '@webb-dapp/react-environment/types/orml-currency';
 
 interface Data {
   currencyId: CurrencyId;
@@ -86,7 +87,7 @@ export class Currency {
 
     return new Currency(
       {
-        currencyId: 1,
+        currencyId: 1 as any,
         token,
       },
       apiRx

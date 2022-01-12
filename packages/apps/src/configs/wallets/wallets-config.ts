@@ -1,10 +1,10 @@
 import { MetaMaskLogo } from '@webb-dapp/apps/configs/logos/MetaMaskLogo';
 import { PolkaLogo } from '@webb-dapp/apps/configs/logos/PolkaLogo';
+import { WalletConnectLogo } from '@webb-dapp/apps/configs/logos/WalletConnectLogo';
 import { AppConfig } from '@webb-dapp/react-environment/webb-context';
 
 import { ChainId } from '../chains/chain-id.enum';
 import { WalletId } from '../wallets/wallet-id.enum';
-import { WalletConnectLogo } from '@webb-dapp/apps/configs/logos/WalletConnectLogo';
 
 const ANY_EVM = [
   ChainId.Edgeware,

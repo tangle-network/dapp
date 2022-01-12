@@ -1,6 +1,5 @@
 const base = require('@polkadot/dev/config/eslint.cjs');
 
-console.log('babel config');
 // add override for any (a metric ton of them, initial conversion)
 module.exports = {
   ...base,
@@ -23,7 +22,8 @@ module.exports = {
     'sort-keys': 'off',
     'no-empty-pattern': 'off',
     '@typescript-eslint/no-non-null-assertion': 'off',
-  },
+		'@typescript-eslint/indent': 'off',
+	},
   overrides: [
     {
       files: ['*.ts', '*.tsx'],

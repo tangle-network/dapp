@@ -16,7 +16,7 @@ export class EvmNote {
   static deserialize(noteString: string) {
     const noteRegex = /anchor-(?<currency>\w+)-(?<amount>[\d.]+)-(?<chainId>\d+)-0x(?<note>[0-9a-fA-F]{124})/g;
     try {
-      const { currency, amount, note, chainId } = noteRegex.exec(noteString)?.groups as Record<string, any>;
+      const { amount, chainId, currency, note } = noteRegex.exec(noteString)?.groups as Record<string, any>;
       return new EvmNote(currency, Number(amount), Number(chainId), Buffer.from(note, 'hex'));
     } catch (e) {
       throw WebbError.from(WebbErrorCodes.NoteParsingFailure);

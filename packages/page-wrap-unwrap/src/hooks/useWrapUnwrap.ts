@@ -1,8 +1,8 @@
 import { BridgeCurrency, useWebContext } from '@webb-dapp/react-environment';
 import { Currency, CurrencyContent } from '@webb-dapp/react-environment/types/currency';
+import { WrappingEventNames, WrappingTokenId } from '@webb-dapp/react-environment/webb-context/wrap-unwrap';
 import { fromBridgeCurrencyToCurrencyView } from '@webb-dapp/ui-components/Inputs/WalletBridgeCurrencyInput/WalletBridgeCurrencyInput';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { WrappingEventNames, WrappingTokenId } from '@webb-dapp/react-environment/webb-context/wrap-unwrap';
 
 const currencyContentToWrappingToken = (currentContent: CurrencyContent): WrappingTokenId => {
   const isNative = currentContent?.view.symbol.toLocaleLowerCase().indexOf('webb') === -1;
@@ -100,7 +100,7 @@ export function useWrapUnwrap() {
       rightHandToken: leftHandToken,
       context: p.context === 'unwrap' ? 'wrap' : 'unwrap',
     }));
-  }, [rightHandToken, leftHandToken, wrapUnwrapApi]);
+  }, [rightHandToken, leftHandToken]);
 
   const setRightHandToken = (content: CurrencyContent | undefined) => {
     setState((p) => ({

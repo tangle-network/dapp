@@ -5,6 +5,7 @@ import { useWithdraw } from '@webb-dapp/mixer/hooks';
 import { useDepositNote } from '@webb-dapp/mixer/hooks/note';
 import WithdrawSuccessModal from '@webb-dapp/react-components/Withdraw/WithdrawSuccessModal';
 import { ActiveWebbRelayer, useWebContext, WithdrawState } from '@webb-dapp/react-environment';
+import { WebbPolkadot } from '@webb-dapp/react-environment/api-providers';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabel';
@@ -15,7 +16,6 @@ import RelayerInput, { FeesInfo, RelayerApiAdapter } from '@webb-dapp/ui-compone
 import { Note } from '@webb-tools/sdk-core';
 import React, { useCallback, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { WebbPolkadot } from '@webb-dapp/react-environment/api-providers';
 
 const WithdrawWrapper = styled.div``;
 type WithdrawProps = {};

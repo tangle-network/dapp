@@ -13,7 +13,7 @@ function useSetting<T>(key: string, defaultValue?: T): { value: T; setValue: (va
 
   const setValue = useCallback(
     (value: T): void => {
-      window.localStorage.setItem(key, (value as any) as string);
+      window.localStorage.setItem(key, value as any as string);
       _setValue(value);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -24,14 +24,14 @@ function useSetting<T>(key: string, defaultValue?: T): { value: T; setValue: (va
     const storaged = window.localStorage.getItem(key);
 
     if (storaged) {
-      _setValue((storaged as any) as T);
+      _setValue(storaged as any as T);
     } else if (defaultValue) {
       _setValue(defaultValue);
     }
     /* eslint-disable-next-line  react-hooks/exhaustive-deps */
   }, [_setValue, defaultValue]);
 
-  return { setValue, value: (value as any) as T };
+  return { setValue, value: value as any as T };
 }
 
 export interface SettingDate {

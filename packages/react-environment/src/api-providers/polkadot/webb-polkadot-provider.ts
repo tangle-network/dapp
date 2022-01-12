@@ -7,6 +7,7 @@ import {
 } from '@webb-dapp/react-environment/api-providers/polkadot';
 import {
   ApiInitHandler,
+  ProvideCapabilities,
   WebbApiProvider,
   WebbMethods,
   WebbProviderEvents,
@@ -67,6 +68,12 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
       },
       chainQuery: new PolkadotChainQuery(this),
     };
+  }
+
+  capabilities?: ProvideCapabilities | undefined;
+
+  getProvider() {
+    return this.provider;
   }
 
   async awaitMetaDataCheck() {
