@@ -1,4 +1,3 @@
-import { Spinner } from '@webb-dapp/ui-components/Spinner/Spinner';
 import React, { FC } from 'react';
 import styled from 'styled-components';
 
@@ -11,5 +10,5 @@ const PageContentSkeleton = styled.div`
 `;
 
 export const PageContentLoading: FC = () => {
-  return <PageContentSkeleton active paragraph={{ rows: 1 }} title={'false'} />;
+  return <PageContentSkeleton />;
 };

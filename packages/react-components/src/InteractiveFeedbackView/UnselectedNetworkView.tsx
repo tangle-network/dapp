@@ -1,9 +1,7 @@
 import { Button, Typography } from '@material-ui/core';
-import { useStore } from '@webb-dapp/react-environment/';
-import { CloseIcon } from '@webb-dapp/ui-components/';
-import { ReactComponent as NetworksGlobe } from '@webb-dapp/ui-components/assets/NetworksGlobe.svg';
+import { useStore } from '@webb-dapp/react-environment';
+import { CloseIcon } from '@webb-dapp/ui-components';
 import NetworksGlobeCircled from '@webb-dapp/ui-components/assets/NetworksGlobeCircled.png';
-import NetworksGlobeCircledInverted from '@webb-dapp/ui-components/assets/NetworksGlobeCircledInverted.png';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
 import { FeedbackEntry, InteractiveFeedback } from '@webb-dapp/utils/webb-error';
 import React from 'react';

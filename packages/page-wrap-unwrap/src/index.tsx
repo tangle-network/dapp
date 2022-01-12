@@ -127,7 +127,7 @@ const PageWrapUnwrap: FC = () => {
   const nativeOrWrapToProps: TokenInputProps = useMemo(() => {
     return {
       currencies: status === 'wrap' ? tokens : wrappedTokens,
-      value: leftHandToken,
+      value: leftHandToken ?? undefined,
       onChange: (currencyContent) => {
         setLeftHandToken(currencyContent);
       },
@@ -137,7 +137,7 @@ const PageWrapUnwrap: FC = () => {
   const wrappedOrWrappedFrom: TokenInputProps = useMemo(() => {
     return {
       currencies: status === 'unwrap' ? tokens : wrappedTokens,
-      value: rightHandToken,
+      value: rightHandToken ?? undefined,
       onChange: (currencyContent) => {
         setRightHandToken(currencyContent);
       },

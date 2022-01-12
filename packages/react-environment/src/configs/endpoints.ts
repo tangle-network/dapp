@@ -41,7 +41,7 @@ export const DEFAULT_ENDPOINTS: EndpointConfig = {
       ...endpointDefaults,
       features: {
         ...endpointDefaults.features,
-        mixer: true,
+        tornado: true,
       },
     },
   ],
