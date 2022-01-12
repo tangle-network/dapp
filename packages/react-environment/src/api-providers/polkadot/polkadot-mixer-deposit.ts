@@ -1,4 +1,4 @@
-import { MixerGroupEntry, NativeTokenProperties } from '@webb-dapp/mixer';
+import { NativeTokenProperties } from '@webb-dapp/mixer';
 import { Currency } from '@webb-dapp/mixer/utils/currency';
 import { ORMLCurrency } from '@webb-dapp/react-environment/types/orml-currency';
 import { DepositPayload as IDepositPayload, MixerDeposit } from '@webb-dapp/react-environment/webb-context';
@@ -6,9 +6,6 @@ import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import { LoggerService } from '@webb-tools/app-util';
 import { Note, NoteGenInput } from '@webb-tools/sdk-core';
 import { PalletMixerMixerMetadata } from '@webb-tools/types/interfaces/pallets';
-
-import { ApiPromise } from '@polkadot/api';
-import { StorageKey } from '@polkadot/types';
 import { u8aToHex } from '@polkadot/util';
 
 import { WebbPolkadot } from './webb-polkadot-provider';
@@ -38,7 +35,7 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
         const cId: number = Number(mixerInfo.asset);
         const amount = mixerInfo.depositSize;
         // @ts-ignore
-				const treeId = storageKey.toHuman()[0];
+        const treeId = storageKey.toHuman()[0];
         console.log(treeId);
         const asset = ormlAssets.find((asset) => Number(asset.id) === cId) || {
           locked: false,
