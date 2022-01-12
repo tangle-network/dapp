@@ -1,4 +1,4 @@
-import { ChainId, getEVMChainNameFromInternal } from '@webb-dapp/apps/configs';
+import { ChainId } from '@webb-dapp/apps/configs';
 import { chainsConfig } from '@webb-dapp/apps/configs/chains';
 import { EvmChainMixersInfo } from '@webb-dapp/react-environment/api-providers/web3/EvmChainMixersInfo';
 import {
@@ -11,7 +11,7 @@ import { LoggerService } from '@webb-tools/app-util';
 import { Observable, Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
-import { bridgeConfig, getAnchorAddressForBridge } from '../bridge';
+import { getAnchorAddressForBridge } from '../bridge';
 
 const logger = LoggerService.get('webb-relayer class');
 
@@ -106,7 +106,9 @@ export class WebbRelayerBuilder {
       supportedChains: {
         evm: info.evm
           ? Object.keys(info.evm)
-              .filter((info.evm[key]?.account || info.evm[key]?.beneficiary) && nameAdapter(key, 'evm') != null)
+              .filter(
+                (key) => (info.evm[key]?.account || info.evm[key]?.beneficiary) && nameAdapter(key, 'evm') != null
+              )
               .reduce((m, key) => {
                 m.set(nameAdapter(key, 'evm'), info.evm[key]);
                 return m;
