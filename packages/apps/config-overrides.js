@@ -94,14 +94,5 @@ module.exports = override(addWebpackPostBuildScript, function (config, env) {
     }
     addWebpackAlias(p)(config);
   }
-  config.stats = {
-    warningsFilter: [
-      (w) => {
-        console.log(w);
-        return false;
-      },
-    ],
-  };
-  config.externals = [nodeExternals()];
   return config;
 });
