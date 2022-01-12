@@ -22,7 +22,7 @@ export type BridgeConfig = Record<string, BridgeConfigEntry>;
 export const getNameFromBridgeCurrencyId = (id: string): string => {
   if (id === 'webb$ETH$WETH-4-5-7-13-14-15') return 'webbWETH';
   return 'unknown';
-}
+};
 
 const webbWETHtest1 = new BridgeCurrency(
   [

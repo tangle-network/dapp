@@ -13,166 +13,95 @@ import {
   ContractTransaction,
   Overrides,
   CallOverrides,
-} from "ethers";
-import { BytesLike } from "@ethersproject/bytes";
-import { Listener, Provider } from "@ethersproject/providers";
-import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
-import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
+} from 'ethers';
+import { BytesLike } from '@ethersproject/bytes';
+import { Listener, Provider } from '@ethersproject/providers';
+import { FunctionFragment, EventFragment, Result } from '@ethersproject/abi';
+import type { TypedEventFilter, TypedEvent, TypedListener } from './common';
 
 interface SignatureBridgeInterface extends ethers.utils.Interface {
   functions: {
-    "_counts(uint256)": FunctionFragment;
-    "_resourceIDToHandlerAddress(bytes32)": FunctionFragment;
-    "adminMigrateBridgeWithSignature(bytes32[],address,bytes)": FunctionFragment;
-    "adminSetResourceWithSignature(address,bytes32,address,bytes)": FunctionFragment;
-    "checkPubKey(bytes)": FunctionFragment;
-    "executeProposalWithSignature(bytes,bytes)": FunctionFragment;
-    "getChainId()": FunctionFragment;
-    "governor()": FunctionFragment;
-    "isGovernor()": FunctionFragment;
-    "isSignatureFromGovernor(bytes,bytes)": FunctionFragment;
-    "paused()": FunctionFragment;
-    "recover(bytes,bytes)": FunctionFragment;
-    "refreshNonce()": FunctionFragment;
-    "renounceOwnership()": FunctionFragment;
-    "transferOwnership(address,uint32)": FunctionFragment;
-    "transferOwnershipWithSignature(address,uint32,bytes)": FunctionFragment;
-    "transferOwnershipWithSignaturePubKey(bytes,uint32,bytes)": FunctionFragment;
-    "verify(bytes32,uint8,bytes32,bytes32)": FunctionFragment;
+    '_counts(uint256)': FunctionFragment;
+    '_resourceIDToHandlerAddress(bytes32)': FunctionFragment;
+    'adminMigrateBridgeWithSignature(bytes32[],address,bytes)': FunctionFragment;
+    'adminSetResourceWithSignature(address,bytes32,address,bytes)': FunctionFragment;
+    'checkPubKey(bytes)': FunctionFragment;
+    'executeProposalWithSignature(bytes,bytes)': FunctionFragment;
+    'getChainId()': FunctionFragment;
+    'governor()': FunctionFragment;
+    'isGovernor()': FunctionFragment;
+    'isSignatureFromGovernor(bytes,bytes)': FunctionFragment;
+    'paused()': FunctionFragment;
+    'recover(bytes,bytes)': FunctionFragment;
+    'refreshNonce()': FunctionFragment;
+    'renounceOwnership()': FunctionFragment;
+    'transferOwnership(address,uint32)': FunctionFragment;
+    'transferOwnershipWithSignature(address,uint32,bytes)': FunctionFragment;
+    'transferOwnershipWithSignaturePubKey(bytes,uint32,bytes)': FunctionFragment;
+    'verify(bytes32,uint8,bytes32,bytes32)': FunctionFragment;
   };
 
+  encodeFunctionData(functionFragment: '_counts', values: [BigNumberish]): string;
+  encodeFunctionData(functionFragment: '_resourceIDToHandlerAddress', values: [BytesLike]): string;
   encodeFunctionData(
-    functionFragment: "_counts",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_resourceIDToHandlerAddress",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "adminMigrateBridgeWithSignature",
+    functionFragment: 'adminMigrateBridgeWithSignature',
     values: [BytesLike[], string, BytesLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "adminSetResourceWithSignature",
+    functionFragment: 'adminSetResourceWithSignature',
     values: [string, BytesLike, string, BytesLike]
   ): string;
+  encodeFunctionData(functionFragment: 'checkPubKey', values: [BytesLike]): string;
+  encodeFunctionData(functionFragment: 'executeProposalWithSignature', values: [BytesLike, BytesLike]): string;
+  encodeFunctionData(functionFragment: 'getChainId', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'governor', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'isGovernor', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'isSignatureFromGovernor', values: [BytesLike, BytesLike]): string;
+  encodeFunctionData(functionFragment: 'paused', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'recover', values: [BytesLike, BytesLike]): string;
+  encodeFunctionData(functionFragment: 'refreshNonce', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'renounceOwnership', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'transferOwnership', values: [string, BigNumberish]): string;
   encodeFunctionData(
-    functionFragment: "checkPubKey",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "executeProposalWithSignature",
-    values: [BytesLike, BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getChainId",
-    values?: undefined
-  ): string;
-  encodeFunctionData(functionFragment: "governor", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "isGovernor",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "isSignatureFromGovernor",
-    values: [BytesLike, BytesLike]
-  ): string;
-  encodeFunctionData(functionFragment: "paused", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "recover",
-    values: [BytesLike, BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "refreshNonce",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "renounceOwnership",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "transferOwnership",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "transferOwnershipWithSignature",
+    functionFragment: 'transferOwnershipWithSignature',
     values: [string, BigNumberish, BytesLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "transferOwnershipWithSignaturePubKey",
+    functionFragment: 'transferOwnershipWithSignaturePubKey',
     values: [BytesLike, BigNumberish, BytesLike]
   ): string;
-  encodeFunctionData(
-    functionFragment: "verify",
-    values: [BytesLike, BigNumberish, BytesLike, BytesLike]
-  ): string;
+  encodeFunctionData(functionFragment: 'verify', values: [BytesLike, BigNumberish, BytesLike, BytesLike]): string;
 
-  decodeFunctionResult(functionFragment: "_counts", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "_resourceIDToHandlerAddress",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "adminMigrateBridgeWithSignature",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "adminSetResourceWithSignature",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "checkPubKey",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "executeProposalWithSignature",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "getChainId", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "governor", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "isGovernor", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "isSignatureFromGovernor",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "recover", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "refreshNonce",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "renounceOwnership",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "transferOwnership",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "transferOwnershipWithSignature",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "transferOwnershipWithSignaturePubKey",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "verify", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: '_counts', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: '_resourceIDToHandlerAddress', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'adminMigrateBridgeWithSignature', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'adminSetResourceWithSignature', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'checkPubKey', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'executeProposalWithSignature', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'getChainId', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'governor', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'isGovernor', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'isSignatureFromGovernor', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'paused', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'recover', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'refreshNonce', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'renounceOwnership', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'transferOwnership', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'transferOwnershipWithSignature', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'transferOwnershipWithSignaturePubKey', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'verify', data: BytesLike): Result;
 
   events: {
-    "GovernanceOwnershipTransferred(address,address)": EventFragment;
-    "Paused(address)": EventFragment;
-    "RecoveredAddress(address)": EventFragment;
-    "Unpaused(address)": EventFragment;
+    'GovernanceOwnershipTransferred(address,address)': EventFragment;
+    'Paused(address)': EventFragment;
+    'RecoveredAddress(address)': EventFragment;
+    'Unpaused(address)': EventFragment;
   };
 
-  getEvent(
-    nameOrSignatureOrTopic: "GovernanceOwnershipTransferred"
-  ): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "RecoveredAddress"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: 'GovernanceOwnershipTransferred'): EventFragment;
+  getEvent(nameOrSignatureOrTopic: 'Paused'): EventFragment;
+  getEvent(nameOrSignatureOrTopic: 'RecoveredAddress'): EventFragment;
+  getEvent(nameOrSignatureOrTopic: 'Unpaused'): EventFragment;
 }
 
 export type GovernanceOwnershipTransferredEvent = TypedEvent<
@@ -181,9 +110,7 @@ export type GovernanceOwnershipTransferredEvent = TypedEvent<
 
 export type PausedEvent = TypedEvent<[string] & { account: string }>;
 
-export type RecoveredAddressEvent = TypedEvent<
-  [string] & { recovered: string }
->;
+export type RecoveredAddressEvent = TypedEvent<[string] & { recovered: string }>;
 
 export type UnpausedEvent = TypedEvent<[string] & { account: string }>;
 
@@ -231,15 +158,9 @@ export class SignatureBridge extends BaseContract {
   interface: SignatureBridgeInterface;
 
   functions: {
-    _counts(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    _counts(arg0: BigNumberish, overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    _resourceIDToHandlerAddress(
-      arg0: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
+    _resourceIDToHandlerAddress(arg0: BytesLike, overrides?: CallOverrides): Promise<[string]>;
 
     adminMigrateBridgeWithSignature(
       resourceIDs: BytesLike[],
@@ -256,10 +177,7 @@ export class SignatureBridge extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    checkPubKey(
-      pubkey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
+    checkPubKey(pubkey: BytesLike, overrides?: CallOverrides): Promise<[boolean]>;
 
     executeProposalWithSignature(
       data: BytesLike,
@@ -273,11 +191,7 @@ export class SignatureBridge extends BaseContract {
 
     isGovernor(overrides?: CallOverrides): Promise<[boolean]>;
 
-    isSignatureFromGovernor(
-      data: BytesLike,
-      sig: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
+    isSignatureFromGovernor(data: BytesLike, sig: BytesLike, overrides?: CallOverrides): Promise<[boolean]>;
 
     paused(overrides?: CallOverrides): Promise<[boolean]>;
 
@@ -289,9 +203,7 @@ export class SignatureBridge extends BaseContract {
 
     refreshNonce(overrides?: CallOverrides): Promise<[number]>;
 
-    renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    renounceOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>;
 
     transferOwnership(
       newOwner: string,
@@ -313,21 +225,12 @@ export class SignatureBridge extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    verify(
-      hash: BytesLike,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
+    verify(hash: BytesLike, v: BigNumberish, r: BytesLike, s: BytesLike, overrides?: CallOverrides): Promise<[boolean]>;
   };
 
   _counts(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
-  _resourceIDToHandlerAddress(
-    arg0: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<string>;
+  _resourceIDToHandlerAddress(arg0: BytesLike, overrides?: CallOverrides): Promise<string>;
 
   adminMigrateBridgeWithSignature(
     resourceIDs: BytesLike[],
@@ -358,11 +261,7 @@ export class SignatureBridge extends BaseContract {
 
   isGovernor(overrides?: CallOverrides): Promise<boolean>;
 
-  isSignatureFromGovernor(
-    data: BytesLike,
-    sig: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
+  isSignatureFromGovernor(data: BytesLike, sig: BytesLike, overrides?: CallOverrides): Promise<boolean>;
 
   paused(overrides?: CallOverrides): Promise<boolean>;
 
@@ -374,9 +273,7 @@ export class SignatureBridge extends BaseContract {
 
   refreshNonce(overrides?: CallOverrides): Promise<number>;
 
-  renounceOwnership(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  renounceOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>;
 
   transferOwnership(
     newOwner: string,
@@ -398,21 +295,12 @@ export class SignatureBridge extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  verify(
-    hash: BytesLike,
-    v: BigNumberish,
-    r: BytesLike,
-    s: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
+  verify(hash: BytesLike, v: BigNumberish, r: BytesLike, s: BytesLike, overrides?: CallOverrides): Promise<boolean>;
 
   callStatic: {
     _counts(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
-    _resourceIDToHandlerAddress(
-      arg0: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<string>;
+    _resourceIDToHandlerAddress(arg0: BytesLike, overrides?: CallOverrides): Promise<string>;
 
     adminMigrateBridgeWithSignature(
       resourceIDs: BytesLike[],
@@ -431,11 +319,7 @@ export class SignatureBridge extends BaseContract {
 
     checkPubKey(pubkey: BytesLike, overrides?: CallOverrides): Promise<boolean>;
 
-    executeProposalWithSignature(
-      data: BytesLike,
-      sig: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    executeProposalWithSignature(data: BytesLike, sig: BytesLike, overrides?: CallOverrides): Promise<void>;
 
     getChainId(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -443,29 +327,17 @@ export class SignatureBridge extends BaseContract {
 
     isGovernor(overrides?: CallOverrides): Promise<boolean>;
 
-    isSignatureFromGovernor(
-      data: BytesLike,
-      sig: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
+    isSignatureFromGovernor(data: BytesLike, sig: BytesLike, overrides?: CallOverrides): Promise<boolean>;
 
     paused(overrides?: CallOverrides): Promise<boolean>;
 
-    recover(
-      data: BytesLike,
-      sig: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    recover(data: BytesLike, sig: BytesLike, overrides?: CallOverrides): Promise<void>;
 
     refreshNonce(overrides?: CallOverrides): Promise<number>;
 
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
-    transferOwnership(
-      newOwner: string,
-      nonce: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    transferOwnership(newOwner: string, nonce: BigNumberish, overrides?: CallOverrides): Promise<void>;
 
     transferOwnershipWithSignature(
       newOwner: string,
@@ -481,49 +353,29 @@ export class SignatureBridge extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    verify(
-      hash: BytesLike,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
+    verify(hash: BytesLike, v: BigNumberish, r: BytesLike, s: BytesLike, overrides?: CallOverrides): Promise<boolean>;
   };
 
   filters: {
-    "GovernanceOwnershipTransferred(address,address)"(
+    'GovernanceOwnershipTransferred(address,address)'(
       previousOwner?: string | null,
       newOwner?: string | null
-    ): TypedEventFilter<
-      [string, string],
-      { previousOwner: string; newOwner: string }
-    >;
+    ): TypedEventFilter<[string, string], { previousOwner: string; newOwner: string }>;
 
     GovernanceOwnershipTransferred(
       previousOwner?: string | null,
       newOwner?: string | null
-    ): TypedEventFilter<
-      [string, string],
-      { previousOwner: string; newOwner: string }
-    >;
+    ): TypedEventFilter<[string, string], { previousOwner: string; newOwner: string }>;
 
-    "Paused(address)"(
-      account?: null
-    ): TypedEventFilter<[string], { account: string }>;
+    'Paused(address)'(account?: null): TypedEventFilter<[string], { account: string }>;
 
     Paused(account?: null): TypedEventFilter<[string], { account: string }>;
 
-    "RecoveredAddress(address)"(
-      recovered?: string | null
-    ): TypedEventFilter<[string], { recovered: string }>;
+    'RecoveredAddress(address)'(recovered?: string | null): TypedEventFilter<[string], { recovered: string }>;
 
-    RecoveredAddress(
-      recovered?: string | null
-    ): TypedEventFilter<[string], { recovered: string }>;
+    RecoveredAddress(recovered?: string | null): TypedEventFilter<[string], { recovered: string }>;
 
-    "Unpaused(address)"(
-      account?: null
-    ): TypedEventFilter<[string], { account: string }>;
+    'Unpaused(address)'(account?: null): TypedEventFilter<[string], { account: string }>;
 
     Unpaused(account?: null): TypedEventFilter<[string], { account: string }>;
   };
@@ -531,10 +383,7 @@ export class SignatureBridge extends BaseContract {
   estimateGas: {
     _counts(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
-    _resourceIDToHandlerAddress(
-      arg0: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    _resourceIDToHandlerAddress(arg0: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
 
     adminMigrateBridgeWithSignature(
       resourceIDs: BytesLike[],
@@ -551,10 +400,7 @@ export class SignatureBridge extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    checkPubKey(
-      pubkey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    checkPubKey(pubkey: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
 
     executeProposalWithSignature(
       data: BytesLike,
@@ -568,11 +414,7 @@ export class SignatureBridge extends BaseContract {
 
     isGovernor(overrides?: CallOverrides): Promise<BigNumber>;
 
-    isSignatureFromGovernor(
-      data: BytesLike,
-      sig: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    isSignatureFromGovernor(data: BytesLike, sig: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
 
     paused(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -584,9 +426,7 @@ export class SignatureBridge extends BaseContract {
 
     refreshNonce(overrides?: CallOverrides): Promise<BigNumber>;
 
-    renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    renounceOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<BigNumber>;
 
     transferOwnership(
       newOwner: string,
@@ -608,25 +448,13 @@ export class SignatureBridge extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    verify(
-      hash: BytesLike,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    verify(hash: BytesLike, v: BigNumberish, r: BytesLike, s: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    _counts(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    _counts(arg0: BigNumberish, overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    _resourceIDToHandlerAddress(
-      arg0: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    _resourceIDToHandlerAddress(arg0: BytesLike, overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     adminMigrateBridgeWithSignature(
       resourceIDs: BytesLike[],
@@ -643,10 +471,7 @@ export class SignatureBridge extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    checkPubKey(
-      pubkey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    checkPubKey(pubkey: BytesLike, overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     executeProposalWithSignature(
       data: BytesLike,
@@ -660,11 +485,7 @@ export class SignatureBridge extends BaseContract {
 
     isGovernor(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    isSignatureFromGovernor(
-      data: BytesLike,
-      sig: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    isSignatureFromGovernor(data: BytesLike, sig: BytesLike, overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     paused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -676,9 +497,7 @@ export class SignatureBridge extends BaseContract {
 
     refreshNonce(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+    renounceOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<PopulatedTransaction>;
 
     transferOwnership(
       newOwner: string,

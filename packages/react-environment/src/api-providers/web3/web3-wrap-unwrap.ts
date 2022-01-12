@@ -1,4 +1,11 @@
-import { ChainId, evmIdIntoChainId, WebbCurrencyId, webbCurrencyIdToString, chainsConfig, getSupportedCurrenciesOfChain } from '@webb-dapp/apps/configs';
+import {
+  ChainId,
+  evmIdIntoChainId,
+  WebbCurrencyId,
+  webbCurrencyIdToString,
+  chainsConfig,
+  getSupportedCurrenciesOfChain,
+} from '@webb-dapp/apps/configs';
 import { WebbGovernedToken, zeroAddress } from '@webb-dapp/contracts/contracts';
 import { Bridge, BridgeConfig, bridgeConfig, BridgeCurrency, MixerSize } from '@webb-dapp/react-environment';
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers';

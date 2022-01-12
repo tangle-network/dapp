@@ -53,7 +53,11 @@ export class AnchorContract {
   ) {
     this.signer = this.web3Provider.getSigner();
     logger.info(`Init with address ${address} `);
-    this._contract = new Contract(address, FixedDepositAnchor__factory.abi, useProvider ? this.web3Provider : this.signer) as any;
+    this._contract = new Contract(
+      address,
+      FixedDepositAnchor__factory.abi,
+      useProvider ? this.web3Provider : this.signer
+    ) as any;
   }
 
   get getLastRoot() {
@@ -189,13 +193,9 @@ export class AnchorContract {
       await tx.wait();
       console.log('wrapAndDeposit completed for native token to webb token');
     } else {
-      const overrides = { };
+      const overrides = {};
 
-      const tx = await this._contract.wrapAndDeposit(
-        tokenAddress,
-        commitment,
-        overrides
-      );
+      const tx = await this._contract.wrapAndDeposit(tokenAddress, commitment, overrides);
       await tx.wait();
       console.log('wrapAndDeposit completed for wrappable asset to webb token');
     }

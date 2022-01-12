@@ -75,7 +75,10 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
             key: 'waiting-approval',
             extras: { persist: true },
           });
-          const tokenInstance = await ERC20__factory.connect(depositPayload.params[2], this.inner.getEthersProvider().getSigner());
+          const tokenInstance = await ERC20__factory.connect(
+            depositPayload.params[2],
+            this.inner.getEthersProvider().getSigner()
+          );
           const webbToken = await contract.getWebbToken();
           const tx = await tokenInstance.approve(webbToken.address, await contract.denomination);
           await tx.wait();

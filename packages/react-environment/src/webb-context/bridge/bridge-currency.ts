@@ -48,7 +48,7 @@ export class BridgeCurrency {
     // parse the currencies used for the bridge and remove the 'webb' prefix
     let currencies = parts[0].split('$').splice(1);
     let wrappedCurrencies: WebbCurrencyId[] = currencies.map((c) => {
-      return webbCurrencyIdFromString(c)
+      return webbCurrencyIdFromString(c);
     });
 
     let chainIds = parts.slice(1, parts.length).map((c) => Number(c) as ChainId);
