@@ -102,6 +102,5 @@ module.exports = override(addWebpackPostBuildScript, function (config, env) {
       },
     ],
   };
-  config.externals = [nodeExternals()];
   return config;
 });
