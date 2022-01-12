@@ -28,16 +28,17 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
     const api = webbPolkadot.api;
     const ormlCurrency = new ORMLCurrency(webbPolkadot);
     const ormlAssets = await ormlCurrency.list();
-    const data: Array<MixerGroupEntry> = await api.query.mixerBn254.mixers.entries();
+    const data = await api.query.mixerBn254.mixers.entries();
     // @ts-ignore
     const tokenProperty: Array<NativeTokenProperties> = await api.rpc.system.properties();
     const groupItem = data
-      .map(([storageKey, info]: [StorageKey, PalletMixerMixerMetadata]) => {
-        const cId: number = Number(info.toHuman().asset);
-        const amount = info.toHuman().depositSize;
-        const treeId = storageKey.toHuman()[0];
+      .map(([storageKey, info]) => {
+        const mixerInfo = info.toHuman() as unknown as PalletMixerMixerMetadata;
+        const cId: number = Number(mixerInfo.asset);
+        const amount = mixerInfo.deposit_size.toNumber();
+        const treeId = storageKey[0];
 
-        const asset = ormlAssets.find((asset) => asset.id == cId) || {
+        const asset = ormlAssets.find((asset) => Number(asset.id) === cId) || {
           locked: false,
           existentialDeposit: 30000,
           id: '0',
@@ -49,7 +50,7 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
         // TODO: Get and parse native / non-native token denomination
         const amountNumber = (Number(amount?.toString().replaceAll(',', '')) * 1.0) / Math.pow(10, 12);
         const currency = cId
-          ? Currency.fromORMLAsset(ormlAssets.find((asset) => asset.id == cId)!, api, amountNumber)
+          ? Currency.fromORMLAsset(ormlAssets.find((asset) => Number(asset.id) === cId)!, api, amountNumber)
           : Currency.fromCurrencyId(cId, api, amountNumber);
         return {
           id,
@@ -77,7 +78,7 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
   async generateNote(mixerId: number, chainId: number): Promise<DepositPayload> {
     logger.info(`Depositing to mixer id ${mixerId}`);
     const sizes = await this.getSizes();
-    const amount = sizes.find((size) => size.id === mixerId);
+    const amount = sizes.find((size) => Number(size.id) === mixerId);
     const properties = await this.inner.api.rpc.system.properties();
     const denomination = properties.tokenDecimals.toHuman() || 12;
     if (!amount) {

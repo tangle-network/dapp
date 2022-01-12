@@ -101,7 +101,7 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
       const zkProofMetadata = await pm.proof(proofInput);
 
       const withdrawProof: WithdrawProof = {
-        id: treeId,
+        id: String(treeId),
         proofBytes: `0x${zkProofMetadata.proof}` as any,
         root: `0x${zkProofMetadata.root}`,
         nullifierHash: `0x${zkProofMetadata.nullifierHash}`,

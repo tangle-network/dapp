@@ -30,7 +30,7 @@ export class ORMLCurrency {
       const ormlBalances = await this.api.api.query.tokens.accounts.entries(activeAccount.address);
       logger.info(`ORML Balances ${ormlBalances.length}`, ormlBalances);
       return ormlBalances.map(([storageKey, balance]) => {
-        const currencyId = storageKey.toHuman()[0];
+        const currencyId = storageKey[0];
         return {
           id: currencyId,
           balance: balance.toHuman(),

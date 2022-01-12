@@ -86,6 +86,8 @@ export class Web3MixerDeposit extends MixerDeposit<WebbWeb3Provider, DepositPayl
     const noteChain = String(evmIdIntoChainId(chainId));
     const secrets = deposit.preimage;
     const noteInput: NoteGenInput = {
+      exponentiation: '5',
+      width: '3',
       prefix: 'webb.mix',
       chain: noteChain,
       sourceChain: noteChain,
