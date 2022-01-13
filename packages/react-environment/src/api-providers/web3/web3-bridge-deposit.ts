@@ -7,6 +7,7 @@ import {
   getEVMChainNameFromInternal,
 } from '@webb-dapp/apps/configs';
 import { WebbGovernedToken } from '@webb-dapp/contracts/contracts';
+import { ERC20__factory } from '@webb-dapp/contracts/types';
 import { createAnchor2Deposit, Deposit } from '@webb-dapp/contracts/utils/make-deposit';
 import { BridgeConfig, DepositPayload as IDepositPayload, MixerSize } from '@webb-dapp/react-environment';
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3/webb-web3-provider';
@@ -66,43 +67,59 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
 
       // If a wrappableAsset was selected, perform a wrapAndDeposit
       if (depositPayload.params[2]) {
-        await contract.wrapAndDeposit(commitment, depositPayload.params[2]);
-        transactionNotificationConfig.finalize?.({
-          address: '',
-          data: undefined,
-          key: 'bridge-deposit',
-          path: {
-            method: 'wrap and deposit',
-            section: bridge.currency.name,
-          },
-        });
-        return;
-      }
+        const requiredApproval = await contract.isWrappableTokenApprovalRequired(depositPayload.params[2]);
+        if (requiredApproval) {
+          notificationApi.addToQueue({
+            message: 'Waiting for token approval',
+            variant: 'info',
+            key: 'waiting-approval',
+            extras: { persist: true },
+          });
+          const tokenInstance = await ERC20__factory.connect(
+            depositPayload.params[2],
+            this.inner.getEthersProvider().getSigner()
+          );
+          const webbToken = await contract.getWebbToken();
+          const tx = await tokenInstance.approve(webbToken.address, await contract.denomination);
+          await tx.wait();
+          notificationApi.remove('waiting-approval');
+        }
 
-      const requiredApproval = await contract.isApprovalRequired();
-      if (requiredApproval) {
-        notificationApi.addToQueue({
-          message: 'Waiting for token approval',
-          variant: 'info',
-          key: 'waiting-approval',
-          extras: { persist: true },
-        });
-        const tokenInstance = await contract.getWebbToken();
-        const tx = await tokenInstance.approve(contract.inner.address, await contract.denomination);
-        await tx.wait();
-        notificationApi.remove('waiting-approval');
-        await contract.deposit(String(commitment));
-        transactionNotificationConfig.finalize?.({
-          address: '',
-          data: undefined,
-          key: 'bridge-deposit',
-          path: {
-            method: 'deposit',
-            section: bridge.currency.name,
-          },
-        });
+        const enoughBalance = await contract.hasEnoughBalance(depositPayload.params[2]);
+        if (enoughBalance) {
+          await contract.wrapAndDeposit(commitment, depositPayload.params[2]);
+          transactionNotificationConfig.finalize?.({
+            address: '',
+            data: undefined,
+            key: 'bridge-deposit',
+            path: {
+              method: 'wrap and deposit',
+              section: bridge.currency.name,
+            },
+          });
+        } else {
+          notificationApi.addToQueue({
+            message: 'Not enough token balance',
+            variant: 'error',
+            key: 'waiting-approval',
+          });
+        }
+        return;
       } else {
-        // Check the balance and see if there is enough to deposit
+        const requiredApproval = await contract.isWebbTokenApprovalRequired();
+        if (requiredApproval) {
+          notificationApi.addToQueue({
+            message: 'Waiting for token approval',
+            variant: 'info',
+            key: 'waiting-approval',
+            extras: { persist: true },
+          });
+          const tokenInstance = await contract.getWebbToken();
+          const tx = await tokenInstance.approve(contract.inner.address, await contract.denomination);
+          await tx.wait();
+          notificationApi.remove('waiting-approval');
+        }
+
         const enoughBalance = await contract.hasEnoughBalance();
         if (enoughBalance) {
           await contract.deposit(String(commitment));
@@ -123,7 +140,7 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
           });
         }
       }
-    } catch (e) {
+    } catch (e: any) {
       console.log(e);
       if ((e as any)?.code) {
         throw e;
@@ -161,7 +178,7 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
     if (bridge) {
       return bridge.anchors.map((anchor) => ({
         id: `Bridge=${anchor.amount}@${bridge.currency.name}`,
-        title: `${anchor.amount} ${bridge.currency.prefix}`,
+        title: `${anchor.amount} ${bridge.currency.name}`,
       }));
     }
     return [];
@@ -200,6 +217,7 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
    *
    *  Mixer id => the fixed deposit amount
    * destChainId => the Chain the token will be bridged to
+   * If the wrappableAssetAddress is not provided, it is assumed to be the address of the webbToken
    * */
   async generateBridgeNote(
     mixerId: number | string,

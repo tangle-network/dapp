@@ -1,6 +1,7 @@
 import EdgewareLogo from '@webb-dapp/apps/configs/logos/EdgewareLogo';
 import EtherLogo from '@webb-dapp/apps/configs/logos/Eth';
 import HarmonyLogo from '@webb-dapp/apps/configs/logos/HarmonyLogo';
+import PolygonLogo from '@webb-dapp/apps/configs/logos/PolygonLogo';
 import ShidenLogo from '@webb-dapp/apps/configs/logos/ShidenLogo';
 import WEBBLogo from '@webb-dapp/apps/configs/logos/WebbLogo';
 import { AppConfig } from '@webb-dapp/react-environment';
@@ -50,5 +51,19 @@ export const currenciesConfig: AppConfig['currencies'] = {
     color: '',
     id: WebbCurrencyId.SDN,
     icon: React.createElement(ShidenLogo),
+  },
+  [WebbCurrencyId.WETH]: {
+    name: 'Wrapped Ethereum',
+    symbol: 'WETH',
+    color: '',
+    id: WebbCurrencyId.WETH,
+    icon: React.createElement(EtherLogo),
+  },
+  [WebbCurrencyId.MATIC]: {
+    name: 'Polygon',
+    symbol: 'MATIC',
+    color: '',
+    id: WebbCurrencyId.MATIC,
+    icon: React.createElement(PolygonLogo),
   },
 };

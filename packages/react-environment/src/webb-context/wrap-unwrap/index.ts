@@ -85,12 +85,7 @@ export abstract class WrapUnWrap<T, WrapPayload extends Amount = Amount, UnwrapP
   /**
    * Wrapped token that is available for the current token
    *  */
-  abstract getWrappedTokens(): Promise<WrappingTokenId[]>;
-
-  /**
-   * Wrapped token that is available for the current token
-   *  */
-  abstract getNativeTokens(): Promise<WrappingTokenId[]>;
+  abstract getWrappableTokens(): Promise<WrappingTokenId[]>;
 
   /**
    *  Get list of all the Governed tokens

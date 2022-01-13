@@ -42,7 +42,8 @@ const WrappedIcon = () => {
   );
 };
 export const fromBridgeCurrencyToCurrencyView = (bridgeCurrency: BridgeCurrency): CurrencyContent => {
-  const wrappedCurrency = Currency.fromCurrencyId(bridgeCurrency.currencyId);
+  console.log('detected currencyId: ', bridgeCurrency.currencyIds[0]);
+  const wrappedCurrency = Currency.fromCurrencyId(bridgeCurrency.currencyIds[0]);
   const view = wrappedCurrency.view;
   return {
     get view(): CurrencyView {
@@ -63,9 +64,9 @@ export const fromBridgeCurrencyToCurrencyView = (bridgeCurrency: BridgeCurrency)
             {view.icon}
           </div>
         ),
-        id: bridgeCurrency.name,
+        id: bridgeCurrency.toString(),
         name: bridgeCurrency.name,
-        symbol: bridgeCurrency.prefix,
+        symbol: bridgeCurrency.name,
       };
     },
   };
@@ -79,7 +80,6 @@ export const WalletBridgeCurrencyInput: React.FC<WalletTokenInputProps> = ({ sel
     }
     return getTokens().map((token) => fromBridgeCurrencyToCurrencyView(token));
   }, [activeChain, getTokens, getTokensOfChain]);
-  const active = useMemo(() => selectedToken ?? allCurrencies[0], [allCurrencies, selectedToken]);
   const selectedCurrency = useMemo(() => {
     if (!selectedToken) {
       return undefined;

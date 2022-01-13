@@ -132,7 +132,8 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
   async sameChainWithdraw(note: DepositNote, recipient: string): Promise<string> {
     this.cancelToken.cancelled = false;
 
-    const bridge = Bridge.from(this.bridgeConfig, BridgeCurrency.fromString(note.tokenSymbol));
+    const bridgeCurrencyId = bridgeConfig[note.tokenSymbol].asset.toString();
+    const bridge = Bridge.from(this.bridgeConfig, BridgeCurrency.fromString(bridgeCurrencyId));
 
     const activeChain = await this.inner.getChainId();
     const internalId = evmIdIntoChainId(activeChain);
@@ -262,7 +263,8 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
     this.emit('stateChange', WithdrawState.GeneratingZk);
 
     // Getting contracts data for source and dest chains
-    const currency = BridgeCurrency.fromString(note.tokenSymbol);
+    const bridgeCurrencyId = bridgeConfig[note.tokenSymbol].asset.toString();
+    const currency = BridgeCurrency.fromString(bridgeCurrencyId);
     const bridge = Bridge.from(this.bridgeConfig, currency);
     const linkedAnchors = bridge.anchors.find((anchor) => anchor.amount === note.amount)!;
     const destContractAddress = linkedAnchors.anchorAddresses[destChainId]!;
@@ -364,6 +366,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
     const activeRelayer = this.activeRelayer[0];
 
     if (activeRelayer && (activeRelayer.account || activeRelayer.beneficiary)) {
+      logger.log(`withdrawing through relayer`);
       const input = {
         destinationChainId: activeChain,
         secret: sourceDeposit.secret,
@@ -475,6 +478,8 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
       txHash = txResult[1];
     } else {
       try {
+        logger.log(`withdrawing without relayer`);
+
         const input = {
           destinationChainId: activeChain,
           secret: sourceDeposit.secret,

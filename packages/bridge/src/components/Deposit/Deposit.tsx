@@ -3,13 +3,11 @@ import { ChainId, WebbCurrencyId } from '@webb-dapp/apps/configs';
 import { DepositConfirm } from '@webb-dapp/bridge/components/DepositConfirm/DepositConfirm';
 import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
 import { useBridgeDeposit } from '@webb-dapp/bridge/hooks/deposit/useBridgeDeposit';
-import { Erc20Factory } from '@webb-dapp/contracts/types';
 import { Currency } from '@webb-dapp/react-environment/types/currency';
 import { MixerSize, useWebContext } from '@webb-dapp/react-environment/webb-context';
 import { SpaceBox } from '@webb-dapp/ui-components/Box';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { ChainInput } from '@webb-dapp/ui-components/Inputs/ChainInput/ChainInput';
-import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabel';
 import { MixerGroupSelect } from '@webb-dapp/ui-components/Inputs/MixerGroupSelect/MixerGroupSelect';
 import { TokenInput } from '@webb-dapp/ui-components/Inputs/TokenInput/TokenInput';
 import { WalletBridgeCurrencyInput } from '@webb-dapp/ui-components/Inputs/WalletBridgeCurrencyInput/WalletBridgeCurrencyInput';
@@ -21,6 +19,7 @@ const DepositWrapper = styled.div``;
 type DepositProps = {};
 
 export const Deposit: React.FC<DepositProps> = () => {
+  const bridgeApi = useBridge();
   const bridgeDepositApi = useBridgeDeposit();
   const { activeApi, activeChain, activeWallet, chains, switchChain } = useWebContext();
   // const { clearAmount, token } = useBalanceSelect();
@@ -145,7 +144,7 @@ export const Deposit: React.FC<DepositProps> = () => {
             )}
             {!showWrappableAssets && selectedBridgeCurrency && (
               <Typography>
-                {selectedBridgeCurrency?.prefix} Balance: {wrappedTokenBalance}
+                {selectedBridgeCurrency?.name} Balance: {wrappedTokenBalance}
               </Typography>
             )}
           </div>

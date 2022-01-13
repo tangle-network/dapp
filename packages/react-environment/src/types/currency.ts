@@ -17,10 +17,6 @@ export interface CurrencyView {
 export interface CurrencyConfig extends Omit<CurrencyView, 'chainName'> {}
 
 export abstract class CurrencyContent {
-  static getChainOfCurrency(currency: WebbCurrencyId) {
-    return Object.values(chains).find((chain) => chain.nativeCurrencyId == currency);
-  }
-
   abstract get view(): CurrencyView;
 }
 

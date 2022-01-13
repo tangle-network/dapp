@@ -6,8 +6,6 @@ import {
   ZKPWebbInputWithoutMerkle,
 } from '@webb-dapp/contracts/contracts/types';
 import { generateWitness, proofAndVerify } from '@webb-dapp/contracts/contracts/webb-utils';
-import { Anchor } from '@webb-dapp/contracts/types/Anchor';
-import { Anchor__factory } from '@webb-dapp/contracts/types/factories/Anchor__factory';
 import { createRootsBytes, generateWithdrawProofCallData } from '@webb-dapp/contracts/utils/bridge-utils';
 import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
 import { EvmNote } from '@webb-dapp/contracts/utils/evm-note';
@@ -20,11 +18,12 @@ import { EvmChainMixersInfo } from '@webb-dapp/react-environment/api-providers/w
 import { MerkleTree, PoseidonHasher } from '@webb-dapp/utils/merkle';
 import { retryPromise } from '@webb-dapp/utils/retry-promise';
 import { LoggerService } from '@webb-tools/app-util';
-import { BigNumber, Contract, providers, Signer } from 'ethers';
+import { BigNumber, BigNumberish, Contract, ethers, providers, Signer } from 'ethers';
 import utils from 'web3-utils';
 
-import { Erc20Factory } from '../types';
-import { Erc20 } from '../types/Erc20';
+import { ERC20__factory, FixedDepositAnchor__factory } from '../types';
+import { ERC20 } from '../types/ERC20';
+import { FixedDepositAnchor } from '../types/FixedDepositAnchor';
 
 const Scalar = require('ffjavascript').Scalar;
 const F = require('circomlibjs').babyjub.F;
@@ -43,7 +42,7 @@ export interface IPublicInputs {
 }
 
 export class AnchorContract {
-  private _contract: Anchor;
+  private _contract: FixedDepositAnchor;
   private readonly signer: Signer;
 
   constructor(
@@ -54,7 +53,11 @@ export class AnchorContract {
   ) {
     this.signer = this.web3Provider.getSigner();
     logger.info(`Init with address ${address} `);
-    this._contract = new Contract(address, Anchor__factory.abi, useProvider ? this.web3Provider : this.signer) as any;
+    this._contract = new Contract(
+      address,
+      FixedDepositAnchor__factory.abi,
+      useProvider ? this.web3Provider : this.signer
+    ) as any;
   }
 
   get getLastRoot() {
@@ -98,13 +101,13 @@ export class AnchorContract {
     return undefined;
   }
 
-  async getWebbToken(): Promise<Erc20> {
+  async getWebbToken(): Promise<ERC20> {
     const tokenAddress = await this._contract.token();
-    const tokenInstance = Erc20Factory.connect(tokenAddress, this.signer);
+    const tokenInstance = ERC20__factory.connect(tokenAddress, this.signer);
     return tokenInstance;
   }
 
-  async isApprovalRequired(onComplete?: (event: DepositEvent) => void) {
+  async isWebbTokenApprovalRequired(onComplete?: (event: DepositEvent) => void) {
     const userAddress = await this.signer.getAddress();
     const tokenInstance = await this.getWebbToken();
     const tokenAllowance = await tokenInstance.allowance(userAddress, this._contract.address);
@@ -117,11 +120,43 @@ export class AnchorContract {
     return false;
   }
 
-  async hasEnoughBalance() {
+  async isWrappableTokenApprovalRequired(tokenAddress: string) {
+    // Native token never requires approval
+    if (tokenAddress === '0x0000000000000000000000000000000000000000') return false;
+
     const userAddress = await this.signer.getAddress();
-    const tokenInstance = await this.getWebbToken();
-    const tokenBalance = await tokenInstance.balanceOf(userAddress);
+    const tokenInstance = ERC20__factory.connect(tokenAddress, this.signer);
+    const webbToken = await this.getWebbToken();
+    const tokenAllowance = await webbToken.allowance(userAddress, webbToken.address);
     const depositAmount = await this.denomination;
+
+    if (tokenAllowance < depositAmount) {
+      return true;
+    }
+    return false;
+  }
+
+  async hasEnoughBalance(tokenAddress?: string) {
+    const userAddress = await this.signer.getAddress();
+    const depositAmount = await this.denomination;
+    let tokenBalance: BigNumber;
+
+    // If a token address was supplied, the user is querying for enough balance of a wrappableToken
+    if (tokenAddress) {
+      // query for native balance
+      if (tokenAddress === '0x0000000000000000000000000000000000000000') {
+        tokenBalance = await this.signer.getBalance();
+      } else {
+        const tokenInstance = ERC20__factory.connect(tokenAddress, this.signer);
+        tokenBalance = await tokenInstance.balanceOf(userAddress);
+      }
+    }
+    // querying for balance of the webbToken
+    else {
+      const tokenInstance = await this.getWebbToken();
+      tokenBalance = await tokenInstance.balanceOf(userAddress);
+    }
+
     if (tokenBalance < depositAmount) {
       return false;
     }
@@ -144,18 +179,26 @@ export class AnchorContract {
     await recipient.wait();
   }
 
-  async wrapAndDeposit(commitment: string, tokenAddress?: string) {
+  async wrapAndDeposit(commitment: string, tokenAddress: string) {
     const value = await this._contract.denomination();
-    const overrides = { value: value };
 
-    console.log('tokenString: ', tokenAddress);
+    if (tokenAddress === '0x0000000000000000000000000000000000000000') {
+      const overrides = { value: value };
 
-    const tx = await this._contract.wrapAndDeposit(
-      tokenAddress || '0x0000000000000000000000000000000000000000',
-      commitment,
-      overrides
-    );
-    const receipt = await tx.wait();
+      const tx = await this._contract.wrapAndDeposit(
+        '0x0000000000000000000000000000000000000000',
+        commitment,
+        overrides
+      );
+      await tx.wait();
+      console.log('wrapAndDeposit completed for native token to webb token');
+    } else {
+      const overrides = {};
+
+      const tx = await this._contract.wrapAndDeposit(tokenAddress, commitment, overrides);
+      await tx.wait();
+      console.log('wrapAndDeposit completed for wrappable asset to webb token');
+    }
   }
 
   // Verify the leaf occurred at the reported block

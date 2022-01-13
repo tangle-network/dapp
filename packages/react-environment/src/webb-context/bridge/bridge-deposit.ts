@@ -7,8 +7,6 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { DepositPayload, MixerDeposit } from '../mixer/mixer-deposit';
 import { BridgeCurrency } from '.';
 
-type BridgeState = {};
-
 export abstract class BridgeDeposit<T, K extends DepositPayload = DepositPayload<any>> extends MixerDeposit<T, K> {
   abstract bridgeConfig: BridgeConfig;
   private _activeBridge: Bridge | null = null;

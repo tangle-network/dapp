@@ -7,6 +7,7 @@ export class Bridge {
   private constructor(private readonly configEntry: BridgeConfigEntry) {}
 
   static from(config: BridgeConfig, bridgeCurrency: BridgeCurrency): Bridge {
+    console.log('bridgeCurrency in Bridge static constructor: ', bridgeCurrency.name);
     const bridgeConfigEntry = config[bridgeCurrency.name];
     return new Bridge(bridgeConfigEntry);
   }

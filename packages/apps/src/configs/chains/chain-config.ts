@@ -7,8 +7,13 @@ import ShidenLogo from '@webb-dapp/apps/configs/logos/ShidenLogo';
 import { AppConfig } from '@webb-dapp/react-environment/webb-context';
 
 import { WebbCurrencyId } from '../currencies/webb-currency-id.enum';
+import PolygonLogo from '../logos/PolygonLogo';
 import WEBBLogo from '../logos/WebbLogo';
 import { ChainId, WebbEVMChain } from './chain-id.enum';
+
+export const getSupportedCurrenciesOfChain = (chainId: ChainId): WebbCurrencyId[] => {
+  return chainsConfig[chainId].currencies.map((entry) => entry.currencyId);
+};
 
 export const chainsConfig: AppConfig['chains'] = {
   [ChainId.WebbDevelopment]: {
@@ -80,6 +85,11 @@ export const chainsConfig: AppConfig['chains'] = {
         enabled: true,
         address: '0x0000000000000000000000000000000000000000',
       },
+      {
+        currencyId: WebbCurrencyId.WETH,
+        enabled: true,
+        address: '0xc778417E063141139Fce010982780140Aa0cD5Ab',
+      },
     ],
     nativeCurrencyId: WebbCurrencyId.ETH,
   },
@@ -98,6 +108,11 @@ export const chainsConfig: AppConfig['chains'] = {
         currencyId: WebbCurrencyId.ETH,
         enabled: true,
         address: '0x0000000000000000000000000000000000000000',
+      },
+      {
+        currencyId: WebbCurrencyId.WETH,
+        enabled: true,
+        address: '0xc778417E063141139Fce010982780140Aa0cD5Ab',
       },
     ],
     nativeCurrencyId: WebbCurrencyId.ETH,
@@ -118,6 +133,11 @@ export const chainsConfig: AppConfig['chains'] = {
         enabled: true,
         address: '0x0000000000000000000000000000000000000000',
       },
+      {
+        currencyId: WebbCurrencyId.WETH,
+        enabled: true,
+        address: '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6',
+      },
     ],
     nativeCurrencyId: WebbCurrencyId.ETH,
   },
@@ -136,6 +156,11 @@ export const chainsConfig: AppConfig['chains'] = {
         currencyId: WebbCurrencyId.ETH,
         enabled: true,
         address: '0x0000000000000000000000000000000000000000',
+      },
+      {
+        currencyId: WebbCurrencyId.WETH,
+        enabled: true,
+        address: '0xd0A1E359811322d97991E03f863a0C30C2cF029C',
       },
     ],
     nativeCurrencyId: WebbCurrencyId.ETH,
@@ -156,6 +181,11 @@ export const chainsConfig: AppConfig['chains'] = {
         enabled: true,
         address: '0x0000000000000000000000000000000000000000',
       },
+      {
+        currencyId: WebbCurrencyId.WETH,
+        enabled: true,
+        address: '0xbC6F6b680bc61e30dB47721c6D1c5cde19C1300d',
+      },
     ],
     nativeCurrencyId: WebbCurrencyId.ETH,
   },
@@ -174,6 +204,11 @@ export const chainsConfig: AppConfig['chains'] = {
         currencyId: WebbCurrencyId.ETH,
         enabled: true,
         address: '0x0000000000000000000000000000000000000000',
+      },
+      {
+        currencyId: WebbCurrencyId.WETH,
+        enabled: true,
+        address: '0xEBbc3452Cc911591e4F18f3b36727Df45d6bd1f9',
       },
     ],
     nativeCurrencyId: WebbCurrencyId.ETH,
@@ -256,6 +291,7 @@ export const chainsConfig: AppConfig['chains'] = {
     tag: 'live',
     url: 'https://shiden.api.onfinality.io/public',
     evmRpcUrls: ['https://shiden.api.onfinality.io/public'],
+    blockExplorerStub: 'https://shiden.subscan.io',
     logo: ShidenLogo,
     currencies: [
       {
@@ -265,5 +301,29 @@ export const chainsConfig: AppConfig['chains'] = {
       },
     ],
     nativeCurrencyId: WebbCurrencyId.SDN,
+  },
+  [ChainId.PolygonTestnet]: {
+    group: 'matic',
+    id: ChainId.PolygonTestnet,
+    evmId: WebbEVMChain.PolygonTestnet,
+    name: 'Polygon Testnet',
+    tag: 'test',
+    url: 'https://rpc-mumbai.maticvigil.com/',
+    evmRpcUrls: ['https://rpc-mumbai.maticvigil.com/'],
+    blockExplorerStub: 'https://mumbai.polygonscan.com/',
+    logo: PolygonLogo,
+    currencies: [
+      {
+        currencyId: WebbCurrencyId.MATIC,
+        enabled: true,
+        address: '0x0000000000000000000000000000000000000000',
+      },
+      {
+        currencyId: WebbCurrencyId.WETH,
+        enabled: true,
+        address: '0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889',
+      },
+    ],
+    nativeCurrencyId: WebbCurrencyId.MATIC,
   },
 };
