@@ -213,7 +213,6 @@ const WithdrawingModal: React.FC<WithdrawingModalProps> = ({ canCancel, cancel, 
       </div>
       <Button
         onClick={() => {
-          logger.info('Cancelled Transaction Button Clicked');
           cancel();
         }}
         color='primary'

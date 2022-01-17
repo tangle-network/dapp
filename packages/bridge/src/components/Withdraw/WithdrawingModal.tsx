@@ -203,7 +203,7 @@ const WithdrawingModal: React.FC<WithdrawingModalProps> = ({ canCancel, cancel, 
         disabled={!canCancel}
         className={'cancel-button'}
       >
-        Cancel
+        {stage > WithdrawState.SendingTransaction ? 'Close' : 'Cancel'}
       </Button>
     </WithdrawInfoWrapper>
   );

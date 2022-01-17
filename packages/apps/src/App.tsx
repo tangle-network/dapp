@@ -19,7 +19,6 @@ const App: FC = () => {
         <UIProvider>
           <IpProvider>
             <Theme />
-
             <RouterProvider config={routerConfig} />
             <NotificationStacked />
           </IpProvider>
