@@ -136,14 +136,23 @@ export const useWithdraw = (params: UseWithdrawProps) => {
   }, [withdrawApi, stage, params, registerInteractiveFeedback]);
 
   const canCancel = useMemo(() => {
-    return stage < WithdrawState.SendingTransaction && stage > WithdrawState.Ideal;
+    const isBeforeSendingTX = stage < WithdrawState.SendingTransaction;
+    const actionStarted = stage > WithdrawState.Ideal;
+    const actionEnded = stage > WithdrawState.SendingTransaction;
+    const canCancel = isBeforeSendingTX && actionStarted;
+    return canCancel || actionEnded;
   }, [stage]);
 
   const cancelWithdraw = useCallback(async () => {
     if (canCancel) {
-      await withdrawApi?.cancelWithdraw();
+      if (stage !== WithdrawState.Ideal) {
+        await withdrawApi?.cancelWithdraw();
+        setStage(WithdrawState.Ideal);
+      } else {
+        setStage(WithdrawState.Ideal);
+      }
     }
-  }, [canCancel, withdrawApi]);
+  }, [canCancel, withdrawApi, stage, setStage]);
 
   const setRelayer = useCallback(
     (nextRelayer: WebbRelayer | null) => {

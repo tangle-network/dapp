@@ -201,6 +201,8 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
               setNote('');
               setRecipient('');
               setReceipt('');
+              /// will reset the tx handler
+              return cancelWithdraw();
             }}
           />
         )}
