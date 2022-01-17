@@ -2,7 +2,7 @@ export type AppMode = 'development' | 'production';
 
 export function appMode(): AppMode {
   // @ts-ignore
-  return mode;
+  return process.env.NODE_ENV;
 }
 
 export function isProduction() {
