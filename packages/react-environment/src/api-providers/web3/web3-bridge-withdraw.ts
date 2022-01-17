@@ -32,7 +32,7 @@ import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polkadot/transaction-notification-config';
 import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
 import { LoggerService } from '@webb-tools/app-util';
-import { Note } from '@webb-tools/sdk-mixer';
+import { Note } from '@webb-tools/sdk-core';
 import { JsNote as DepositNote } from '@webb-tools/wasm-utils';
 import { BigNumber } from 'ethers';
 import React from 'react';
@@ -62,7 +62,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
         const evmNote = depositNote.note;
         const contractAddress = await getAnchorAddressForBridge(
           evmNote.tokenSymbol,
-          Number(evmNote.chain),
+          Number(evmNote.sourceChainId),
           Number(evmNote.amount)
         );
 
@@ -73,7 +73,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
         // Given the note, iterate over the relayer's supported contracts and find the corresponding configuration
         // for the contract.
         const supportedContract = relayer.capabilities.supportedChains['evm']
-          .get(Number(evmNote.chain))
+          .get(Number(evmNote.targetChainId))
           ?.contracts.find(({ address, size }) => {
             // Match on the relayer configuration as well as note
             return address.toLowerCase() === contractAddress.toLowerCase() && size == Number(evmNote.amount);
@@ -121,7 +121,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
   async getRelayersByNote(evmNote: Note) {
     return this.inner.relayingManager.getRelayer({
       baseOn: 'evm',
-      chainId: Number(evmNote.note.chain),
+      chainId: Number(evmNote.note.targetChainId),
       bridgeSupport: {
         amount: Number(evmNote.note.amount),
         tokenSymbol: evmNote.note.tokenSymbol,
@@ -562,11 +562,11 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
 
     const parseNote = await Note.deserialize(note);
     const depositNote = parseNote.note;
-    const sourceChainName = getEVMChainNameFromInternal(Number(depositNote.sourceChain) as ChainId);
-    const targetChainName = getEVMChainNameFromInternal(Number(depositNote.chain) as ChainId);
+    const sourceChainName = getEVMChainNameFromInternal(Number(depositNote.sourceChainId) as ChainId);
+    const targetChainName = getEVMChainNameFromInternal(Number(depositNote.targetChainId) as ChainId);
     logger.trace(`Bridge withdraw from ${sourceChainName} to ${targetChainName}`);
 
-    if (depositNote.sourceChain === depositNote.chain) {
+    if (depositNote.sourceChainId === depositNote.targetChainId) {
       logger.trace(`Same chain flow ${sourceChainName}`);
       return this.sameChainWithdraw(depositNote, recipient);
     } else {

@@ -14,6 +14,7 @@ export const generateWitness = async (input: BridgeWitnessInput, maxEdges: MaxEd
     return buff;
   } catch (e) {
     console.log({ snarkError: e });
+    throw new Error('failed to generate witness');
   }
 };
 

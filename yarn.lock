@@ -4606,9 +4606,9 @@
     "@webb-tools/sdk-core" "^0.1.2-75"
     lodash "^4.17.20"
 
-"@webb-tools/sdk-mixer@^0.1.4-9":
+"@webb-tools/sdk-core@^0.1.4-9":
   version "0.1.4-9"
-  resolved "https://registry.yarnpkg.com/@webb-tools/sdk-mixer/-/sdk-mixer-0.1.4-9.tgz#3a4afcc5741a75473cacf152faab94a26fb61350"
+  resolved "https://registry.yarnpkg.com/@webb-tools/sdk-core/-/sdk-core-0.1.4-9.tgz#3a4afcc5741a75473cacf152faab94a26fb61350"
   integrity sha512-oJLKhSH/jKhhFwT3qQ7gf8kLnycGKaD8Ei0iaza4IZngDmShawvNGK+9zTvgCGFhgJJ8qaUBuFJiAPnst/VpVw==
   dependencies:
     "@polkadot/util" "^6.5.1"

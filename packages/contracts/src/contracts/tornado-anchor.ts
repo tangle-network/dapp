@@ -39,6 +39,10 @@ export class TornadoContract {
   }
 
   get denomination() {
+    console.log('before a call to contract');
+    console.log('address is: ', this._contract.address);
+    console.log('after a call to contract');
+
     return this._contract.denomination();
   }
 
