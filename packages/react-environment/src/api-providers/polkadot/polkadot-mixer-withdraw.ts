@@ -1,10 +1,8 @@
-import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
 // @ts-ignore
 import Worker from '@webb-dapp/mixer/utils/proving-manager.worker';
 import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import { LoggerService } from '@webb-tools/app-util';
-import { ProvingManager } from '@webb-tools/sdk-core';
-import { Note } from '@webb-tools/sdk-core';
+import { Note, ProvingManager } from '@webb-tools/sdk-core';
 import { ProvingManagerSetupInput } from '@webb-tools/sdk-core/proving/proving-manager-thread';
 
 import { decodeAddress } from '@polkadot/keyring';
@@ -13,13 +11,20 @@ import { u8aToHex } from '@polkadot/util';
 import { MixerWithdraw, WithdrawState } from '../../webb-context';
 import { WebbPolkadot } from './webb-polkadot-provider';
 import { PolkadotMixerDeposit } from '.';
+import { getCachedFixtureURI, isProduction } from '@webb-dapp/utils/misc';
+
+const logger = LoggerService.get('PolkadotMixerWithdraw');
 
 async function fetchSubstrateProvingKey() {
-  const ipfsKeyRequest = await fetch(`https://ipfs.io/ipfs/QmQWnELR1oRUpoAo6URNK2XbGCfEk6sPdJioeSYqZW6cqi`);
+  const IPFSUrl = `https://ipfs.io/ipfs/QmQWnELR1oRUpoAo6URNK2XbGCfEk6sPdJioeSYqZW6cqi`;
+  const cachedURI = getCachedFixtureURI('QmQWnELR1oRUpoAo6URNK2XbGCfEk6sPdJioeSYqZW6cqi');
+  const ipfsKeyRequest = await fetch(isProduction() ? IPFSUrl : cachedURI);
   const circuitKeyArrayBuffer = await ipfsKeyRequest.arrayBuffer();
+  logger.info(`Done Fetching key`);
   const circuitKey = new Uint8Array(circuitKeyArrayBuffer);
   return circuitKey;
 }
+
 type WithdrawProof = {
   id: string;
   proofBytes: string;
@@ -30,7 +35,6 @@ type WithdrawProof = {
   fee: number;
   refund: number;
 };
-const logger = LoggerService.get('PolkadotMixerWithdraw');
 
 export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
   private loading = false;
