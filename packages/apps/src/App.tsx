@@ -11,14 +11,7 @@ import { hot } from 'react-hot-loader/root';
 
 import { config as routerConfig } from './router-config';
 
-async function fetchSubstratePK() {
-  const req = await fetch('/sub-fixtures/proving_key.bin');
-  const res = await req.arrayBuffer();
-  const ua = new Uint8Array(res);
-  return ua;
-}
 
-fetchSubstratePK();
 const appLogger = LoggerService.new('App');
 const App: FC = () => {
   return (

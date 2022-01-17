@@ -2,10 +2,9 @@ const { override, addWebpackAlias, getBabelLoader } = require('customize-cra');
 const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
 const path = require('path');
 const exec = require('child_process').exec;
-const nodeExternals = require('webpack-node-externals');
 const findPackages = require('../../scripts/findPackages');
 const packages = findPackages();
-
+const webpack = require('webpack');
 const rewireReactHotLoader = require('react-app-rewire-hot-loader');
 const { aliasDangerous, configPaths, CracoAliasPlugin } = require('react-app-rewire-alias/lib/aliasDangerous');
 const WebpackPostBuildScript = function () {
@@ -80,6 +79,13 @@ module.exports = override(addWebpackPostBuildScript, function (config, env) {
 
     return pre;
   }, {});
+
+  config.plugins.push(
+    new webpack.DefinePlugin({
+      'mode': JSON.stringify(process.env.NODE_ENV || 'development'),
+    })
+  );
+
   if (config.mode !== 'production') {
     config.resolve.alias = {
       ...(config.resolve.alias || {}),
