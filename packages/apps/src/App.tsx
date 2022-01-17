@@ -10,7 +10,7 @@ import React, { FC } from 'react';
 import { hot } from 'react-hot-loader/root';
 
 import { config as routerConfig } from './router-config';
-console.log();
+console.log(process.env);
 const appLogger = LoggerService.new('App');
 const App: FC = () => {
   return (
