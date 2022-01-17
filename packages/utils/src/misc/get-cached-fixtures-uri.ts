@@ -1,3 +1,3 @@
 export function getCachedFixtureURI(fileName: string) {
-  return `/catched-fixtures/${fileName}`;
+  return `/cached-fixtures/${fileName}`;
 }
