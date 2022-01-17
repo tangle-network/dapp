@@ -1,17 +1,17 @@
 // @ts-ignore
-import Worker from "@webb-dapp/mixer/utils/proving-manager.worker";
-import { getCachedFixtureURI, isProduction } from "@webb-dapp/utils/misc";
-import { WebbError, WebbErrorCodes } from "@webb-dapp/utils/webb-error";
-import { LoggerService } from "@webb-tools/app-util";
-import { Note, ProvingManager } from "@webb-tools/sdk-core";
-import { ProvingManagerSetupInput } from "@webb-tools/sdk-core/proving/proving-manager-thread";
+import Worker from '@webb-dapp/mixer/utils/proving-manager.worker';
+import { getCachedFixtureURI, isProduction } from '@webb-dapp/utils/misc';
+import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
+import { LoggerService } from '@webb-tools/app-util';
+import { Note, ProvingManager } from '@webb-tools/sdk-core';
+import { ProvingManagerSetupInput } from '@webb-tools/sdk-core/proving/proving-manager-thread';
 
-import { decodeAddress } from "@polkadot/keyring";
-import { u8aToHex } from "@polkadot/util";
+import { decodeAddress } from '@polkadot/keyring';
+import { u8aToHex } from '@polkadot/util';
 
-import { MixerWithdraw, WithdrawState } from "../../webb-context";
-import { WebbPolkadot } from "./webb-polkadot-provider";
-import { PolkadotMixerDeposit } from ".";
+import { MixerWithdraw, WithdrawState } from '../../webb-context';
+import { WebbPolkadot } from './webb-polkadot-provider';
+import { PolkadotMixerDeposit } from '.';
 
 const logger = LoggerService.get('PolkadotMixerWithdraw');
 
