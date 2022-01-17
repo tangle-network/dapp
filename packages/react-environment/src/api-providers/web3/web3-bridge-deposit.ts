@@ -15,7 +15,7 @@ import { Currency } from '@webb-dapp/react-environment/types/currency';
 import { notificationApi } from '@webb-dapp/ui-components/notification';
 import { DepositNotification } from '@webb-dapp/ui-components/notification/DepositNotification';
 import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polkadot/transaction-notification-config';
-import { Note, NoteGenInput } from '@webb-tools/sdk-mixer';
+import { Note, NoteGenInput } from '@webb-tools/sdk-core';
 import { logger } from 'ethers';
 import React from 'react';
 
@@ -42,7 +42,7 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
       transactionNotificationConfig.loading?.({
         address: '',
         data: React.createElement(DepositNotification, {
-          chain: getEVMChainNameFromInternal(Number(note.sourceChain)),
+          chain: getEVMChainNameFromInternal(Number(note.sourceChainId)),
           amount: Number(note.amount),
           currency: bridge.currency.name,
         }),
@@ -61,7 +61,7 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
       // Get the contract address for the destination chain
       const contractAddress = anchor.anchorAddresses[sourceChainId];
       if (!contractAddress) {
-        throw new Error(`No Anchor for the chain ${note.chain}`);
+        throw new Error(`No Anchor for the chain ${note.targetChainId}`);
       }
       const contract = this.inner.getWebbAnchorByAddress(contractAddress);
 
