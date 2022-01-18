@@ -121,7 +121,6 @@ export const SettingProvider: FC<PropsWithChildren<any>> = ({ children }) => {
 
       return;
     }
-
   }, [setEndpoint]);
 
   // set browser type

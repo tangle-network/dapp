@@ -1,4 +1,10 @@
-import { ChainId, getNameFromBridgeCurrencyId, WebbCurrencyId, webbCurrencyIdFromString, webbCurrencyIdToString } from '@webb-dapp/apps/configs';
+import {
+  ChainId,
+  getNameFromBridgeCurrencyId,
+  WebbCurrencyId,
+  webbCurrencyIdFromString,
+  webbCurrencyIdToString,
+} from '@webb-dapp/apps/configs';
 
 /*
  *

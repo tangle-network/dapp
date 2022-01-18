@@ -7,8 +7,8 @@ import {
   chainIdIntoEVMId,
   chainsConfig,
   evmIdIntoChainId,
-  getEVMChainNameFromInternal,
   getAnchorAddressForBridge,
+  getEVMChainNameFromInternal,
 } from '@webb-dapp/apps/configs';
 import { chainIdToRelayerName } from '@webb-dapp/apps/configs/relayer-config';
 import { MixerStorage } from '@webb-dapp/apps/configs/storages/EvmChainStorage';
@@ -16,11 +16,7 @@ import { AnchorContract } from '@webb-dapp/contracts/contracts';
 import { generateWithdrawProofCallData, hexStringToBytes } from '@webb-dapp/contracts/utils/bridge-utils';
 import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
 import { depositFromAnchor2Preimage } from '@webb-dapp/contracts/utils/make-deposit';
-import {
-  Bridge,
-  RelayedWithdrawResult,
-  WebbRelayer,
-} from '@webb-dapp/react-environment';
+import { Bridge, RelayedWithdrawResult, WebbRelayer } from '@webb-dapp/react-environment';
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3/webb-web3-provider';
 import {
   BridgeWithdraw,
