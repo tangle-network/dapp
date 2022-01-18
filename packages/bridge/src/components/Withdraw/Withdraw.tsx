@@ -194,6 +194,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
               setNote('');
               setRecipient('');
               setReceipt('');
+              return cancelWithdraw();
             }}
           />
         )}

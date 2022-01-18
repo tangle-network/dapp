@@ -16,7 +16,7 @@ type WithdrawingModalProps = {
   recipient: string;
   receipt: string;
   relayer: ActiveWebbRelayer | null;
-  exit(): void;
+  exit(): void | Promise<void>;
 };
 
 const WithdrawInfoWrapper = styled.div`
