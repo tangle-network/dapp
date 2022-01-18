@@ -1,1 +1,1 @@
-export * from './sotrage';
+export * from './storage';

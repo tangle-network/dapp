@@ -11,7 +11,11 @@ import {
   getEVMChainNameFromInternal,
 } from '@webb-dapp/apps/configs';
 import { chainIdToRelayerName } from '@webb-dapp/apps/configs/relayer-config';
-import { MixerStorage } from '@webb-dapp/apps/configs/storages/EvmChainStorage';
+import {
+  anchorDeploymentBlock,
+  bridgeCurrencyBridgeStorageFactory,
+  MixerStorage,
+} from '@webb-dapp/apps/configs/storages';
 import { AnchorContract } from '@webb-dapp/contracts/contracts';
 import { generateWithdrawProofCallData, hexStringToBytes } from '@webb-dapp/contracts/utils/bridge-utils';
 import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
@@ -32,8 +36,6 @@ import { Note } from '@webb-tools/sdk-core';
 import { JsNote as DepositNote } from '@webb-tools/wasm-utils';
 import { BigNumber } from 'ethers';
 import React from 'react';
-
-import { anchorDeploymentBlock, bridgeCurrencyBridgeStorageFactory } from './bridge-storage';
 
 const logger = LoggerService.get('Web3BridgeWithdraw');
 
