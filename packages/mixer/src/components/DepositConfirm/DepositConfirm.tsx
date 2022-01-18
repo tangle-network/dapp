@@ -9,10 +9,10 @@ import { Spinner } from '@webb-dapp/ui-components/Spinner/Spinner';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 import { downloadString } from '@webb-dapp/utils';
+import { ethers } from 'ethers';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import styled from 'styled-components';
-import { ethers } from 'ethers';
 
 const DismissWrapper = styled.button``;
 const Dismiss = () => {
@@ -120,9 +120,10 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({ mixerId, onClose, o
     });
   }, []);
   useEffect(() => {
-    let desiredMixer: string | number;
+    let desiredMixer: string | number = '';
     // If the mixerId is of string type, it could either be an address or a mixerId intended for use in substrate
-    if (typeof mixerId === 'string') ethers.utils.isAddress(mixerId) ? desiredMixer = mixerId : desiredMixer = Number(mixerId);
+    if (typeof mixerId === 'string')
+      ethers.utils.isAddress(mixerId) ? (desiredMixer = mixerId) : (desiredMixer = Number(mixerId));
     provider.generateNote(desiredMixer, activeChain?.id).then((note) => {
       setNote(note);
     });

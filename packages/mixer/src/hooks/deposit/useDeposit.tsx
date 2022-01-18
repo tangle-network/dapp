@@ -6,7 +6,7 @@ export interface DepositApi {
 
   deposit(payload: DepositPayload): Promise<void>;
 
-  generateNote(mixer: number, chainId?: number): Promise<DepositPayload>;
+  generateNote(mixer: number | string, chainId?: number): Promise<DepositPayload>;
 
   loadingState: MixerDeposit['loading'];
   error: string;
