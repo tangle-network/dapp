@@ -4,7 +4,7 @@ import { createTornDeposit, Deposit } from '@webb-dapp/contracts/utils/make-depo
 import { DepositPayload as IDepositPayload, MixerDeposit, MixerSize } from '@webb-dapp/react-environment/webb-context';
 import { DepositNotification } from '@webb-dapp/ui-components/notification/DepositNotification';
 import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polkadot/transaction-notification-config';
-import { Note, NoteGenInput } from '@webb-tools/sdk-mixer';
+import { Note, NoteGenInput } from '@webb-tools/sdk-core';
 import React from 'react';
 import utils from 'web3-utils';
 
@@ -16,7 +16,7 @@ type DepositPayload = IDepositPayload<Note, [Deposit, number]>;
 
 export class Web3MixerDeposit extends MixerDeposit<WebbWeb3Provider, DepositPayload> {
   async deposit({ note: depositPayload, params }: DepositPayload): Promise<void> {
-    const chainId = Number(depositPayload.note.chain) as ChainId;
+    const chainId = Number(depositPayload.note.targetChainId) as ChainId;
     const evmChainId = chainIdIntoEVMId(chainId);
     transactionNotificationConfig.loading?.({
       address: '',
@@ -88,7 +88,7 @@ export class Web3MixerDeposit extends MixerDeposit<WebbWeb3Provider, DepositPayl
     const noteInput: NoteGenInput = {
       exponentiation: '5',
       width: '3',
-      prefix: 'webb.mix',
+      prefix: 'webb.mixer',
       chain: noteChain,
       sourceChain: noteChain,
       amount: String(depositSize),

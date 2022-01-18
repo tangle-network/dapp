@@ -15,7 +15,7 @@ import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import { Web3Accounts } from '@webb-dapp/wallet/providers/web3/web3-accounts';
 import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
 import { EventBus } from '@webb-tools/app-util';
-import { Note } from '@webb-tools/sdk-mixer';
+import { Note } from '@webb-tools/sdk-core';
 import { ethers, providers } from 'ethers';
 
 export class WebbWeb3Provider
@@ -112,7 +112,7 @@ export class WebbWeb3Provider
   }
 
   getTornadoContractAddressByNote(note: Note) {
-    const evmId = chainIdIntoEVMId(Number(note.note.chain));
+    const evmId = chainIdIntoEVMId(Number(note.note.targetChainId));
     const availableMixers = new EvmChainMixersInfo(evmId);
     const mixer = availableMixers.getTornMixerInfoBySize(Number(note.note.amount), note.note.tokenSymbol);
     if (!mixer) {

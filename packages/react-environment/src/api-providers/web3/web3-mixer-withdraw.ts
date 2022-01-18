@@ -15,7 +15,7 @@ import { RelayedWithdrawResult, WebbRelayer } from '@webb-dapp/react-environment
 import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polkadot/transaction-notification-config';
 import { LoggerService } from '@webb-tools/app-util';
-import { Note } from '@webb-tools/sdk-mixer';
+import { Note } from '@webb-tools/sdk-core';
 import { BigNumber } from 'ethers';
 import React from 'react';
 
@@ -43,7 +43,7 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
         // Given the note, iterate over the relayer's supported contracts and find the corresponding configuration
         // for the contract.
         const supportedContract = relayer.capabilities.supportedChains['evm']
-          .get(Number(evmNote.chain))
+          .get(Number(evmNote.targetChainId))
           ?.contracts.find(({ address, size }) => {
             // Match on the relayer configuration as well as note
             return address.toLowerCase() === contractAddress.toLowerCase() && size == Number(evmNote.amount);
@@ -83,7 +83,7 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
   async getRelayersByNote(evmNote: Note) {
     return this.inner.relayingManager.getRelayer({
       baseOn: 'evm',
-      chainId: Number(evmNote.note.chain),
+      chainId: Number(evmNote.note.targetChainId),
       tornadoSupport: {
         amount: Number(evmNote.note.amount),
         tokenSymbol: evmNote.note.tokenSymbol,
@@ -108,7 +108,7 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
     const activeRelayer = this.activeRelayer[0];
     const evmNote = await Note.deserialize(note);
     const deposit = depositFromPreimage(evmNote.note.secret.replace('0x', ''));
-    const chainId = Number(evmNote.note.chain) as ChainId;
+    const chainId = Number(evmNote.note.targetChainId) as ChainId;
     const chainEvmId = chainIdIntoEVMId(chainId);
 
     const activeChain = await this.inner.getChainId();
