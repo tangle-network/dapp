@@ -28,3 +28,4 @@ export * from './wallets';
 export * from './currencies';
 export * from './chains';
 export * from './evm/SupportedMixers';
+export * from './bridge';

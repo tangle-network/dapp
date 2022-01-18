@@ -2,8 +2,6 @@ import { useModal, useTranslation } from '@webb-dapp/react-hooks';
 import { noop } from 'lodash';
 import React, { createContext, FC, PropsWithChildren, useCallback, useEffect, useMemo, useState } from 'react';
 
-import { DEFAULT_ENDPOINTS, EndpointConfig } from './configs/endpoints';
-
 export type Language = 'zh' | 'en';
 export type Theme = 'normal' | 'dark';
 export type Browser = 'firefox' | 'chrome' | 'unknown' | undefined;
@@ -35,10 +33,8 @@ function useSetting<T>(key: string, defaultValue?: T): { value: T; setValue: (va
 }
 
 export interface SettingDate {
-  selectableEndpoints: EndpointConfig;
   browser: Browser;
   endpoint: string;
-  allEndpoints: string[];
   language: 'zh' | 'en' | string;
   theme: 'normal' | 'dark';
   changeEndpoint: (endpoints: string) => void;
@@ -51,14 +47,12 @@ export interface SettingDate {
 }
 
 export const SettingContext = createContext<SettingDate>({
-  allEndpoints: [],
   browser: 'unknown',
   changeEndpoint: noop as any,
   closeSetting: noop,
   endpoint: '',
   language: 'en',
   openSetting: noop,
-  selectableEndpoints: DEFAULT_ENDPOINTS,
   setLanguage: noop as any,
   setTheme: noop as any,
   settingVisible: false,
@@ -73,9 +67,6 @@ export const SettingProvider: FC<PropsWithChildren<any>> = ({ children }) => {
   const [endpoint, setEndpoint] = useState<string>('');
   const { i18n } = useTranslation();
 
-  const allEndpoints = useMemo(() => {
-    return DEFAULT_ENDPOINTS.testnet.map((item) => item.url);
-  }, []);
   const changeEndpoint = useCallback(
     (endpoint: string, reload?: boolean) => {
       setEndpoint(endpoint);
@@ -131,7 +122,6 @@ export const SettingProvider: FC<PropsWithChildren<any>> = ({ children }) => {
       return;
     }
 
-    setEndpoint(DEFAULT_ENDPOINTS.testnet[0].url);
   }, [setEndpoint]);
 
   // set browser type
@@ -154,14 +144,12 @@ export const SettingProvider: FC<PropsWithChildren<any>> = ({ children }) => {
   return (
     <SettingContext.Provider
       value={{
-        allEndpoints,
         browser,
         changeEndpoint,
         closeSetting,
         endpoint,
         language,
         openSetting,
-        selectableEndpoints: DEFAULT_ENDPOINTS,
         setLanguage,
         setTheme,
         settingVisible,
