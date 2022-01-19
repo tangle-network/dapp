@@ -74,13 +74,16 @@ type BridgeRelayerWithdrawArgs = {
 };
 export type ContractBase = 'tornado' | 'anchor';
 type CMDSwitcher<T extends RelayerCMDBase> = T extends 'evm' ? EVMCMDKeys : SubstrateCMDKeys;
-export type WithdrawRelayerArgs<A extends RelayerCMDBase, C extends CMDSwitcher<A>> = A extends 'evm'
-  ? C extends keyof RelayerEVMCommands
-    ? RelayerEVMCommands[C]
-    : never
-  : C extends keyof RelayerSubstrateCommands
-  ? RelayerSubstrateCommands[C]
-  : never;
+export type WithdrawRelayerArgs<A extends RelayerCMDBase, C extends CMDSwitcher<A>> = Omit<
+  A extends 'evm'
+    ? C extends keyof RelayerEVMCommands
+      ? RelayerEVMCommands[C]
+      : never
+    : C extends keyof RelayerSubstrateCommands
+    ? RelayerSubstrateCommands[C]
+    : never,
+  keyof RelayedChainInput
+>;
 
 export interface RelayerInfo {
   substrate: Record<string, RelayedChainConfig | null>;
@@ -290,7 +293,7 @@ type RelayerLeaves = {
   lastQueriedBlock: number;
 };
 
-class RelayedWithdraw<T extends RelayerCMDKey> {
+class RelayedWithdraw {
   /// status of the withdraw
   private status: RelayedWithdrawResult = RelayedWithdrawResult.PreFlight;
   /// watch for the current withdraw status
@@ -326,15 +329,14 @@ class RelayedWithdraw<T extends RelayerCMDKey> {
     }
   };
 
-  generateWithdrawRequest<I extends RelayedChainInput>(
-    chain: I,
+  generateWithdrawRequest<T extends RelayedChainInput, C extends CMDSwitcher<T['baseOn']>>(
+    chain: T,
     proof: string,
-    args: WithdrawRelayerArgs<I['baseOn'], T>
+    args: WithdrawRelayerArgs<T['baseOn'], C>
   ) {
     return {
       [chain.baseOn]: {
         [this.prefix]: {
-          chain: chain.name,
           contract: chain.contractAddress,
           proof,
           ...args,
@@ -386,15 +388,7 @@ export class WebbRelayer {
       });
     }
     let prefix: string = 'anchorRelayTx';
-    switch (target) {
-      case 'tornado':
-        prefix = 'tornadoRelayTx';
-        break;
-      case 'anchor':
-        prefix = 'anchorRelayTx';
-        break;
-    }
-    return new RelayedWithdraw<Target>(ws, prefix);
+    return new RelayedWithdraw(ws, prefix);
   }
 
   async getIp(): Promise<string> {
