@@ -47,6 +47,7 @@ export interface Withdraw {
 export interface Finalized {
   txHash: string;
 }
+
 export interface Errored {
   reason: string;
 }
@@ -56,3 +57,44 @@ export type RelayerMessage = {
   error?: string;
   network?: string;
 };
+export type RelayerCMDBase = 'evm' | 'substrate';
+export type MixerRelayTx = {
+  chain: string;
+  // Tree ID (Mixer tree id)
+  id: number;
+  proof: string;
+  root: string;
+  nullifierHash: string;
+  // Ss558 Format
+  recipient: string;
+  // Ss558 Format
+  relayer: string;
+  feed: number;
+  refund: number;
+};
+
+type TornadoRelayTransaction = {
+  chain: string;
+  // The target contract.
+  contract: string;
+  // Proof bytes
+  fee: number;
+  nullifierHash: string;
+  recipient: string;
+  refund: number;
+  relayer: string;
+  root: string;
+};
+type AnchorRelayTransaction = TornadoRelayTransaction & {
+  refreshCommitment: string;
+};
+export type RelayerSubstrateCommands = {
+  mixerRelayTx: MixerRelayTx;
+};
+export type RelayerEVMCommands = {
+  tornadoRelayTransaction: TornadoRelayTransaction;
+  anchorRelayTransaction: AnchorRelayTransaction;
+};
+export type EVMCMDKeys = keyof RelayerEVMCommands;
+export type SubstrateCMDKeys = keyof RelayerSubstrateCommands;
+export type RelayerCMDKey = EVMCMDKeys | SubstrateCMDKeys;

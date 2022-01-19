@@ -3,9 +3,15 @@ import { chainsConfig } from '@webb-dapp/apps/configs/chains';
 import { EvmChainMixersInfo } from '@webb-dapp/react-environment/api-providers/web3/EvmChainMixersInfo';
 import {
   Capabilities,
+  EVMCMDKeys,
   RelayedChainConfig,
+  RelayerCMDBase,
+  RelayerCMDKey,
   RelayerConfig,
+  RelayerEVMCommands,
   RelayerMessage,
+  RelayerSubstrateCommands,
+  SubstrateCMDKeys,
 } from '@webb-dapp/react-environment/webb-context/relayer/types';
 import { LoggerService } from '@webb-tools/app-util';
 import { Observable, Subject } from 'rxjs';
@@ -46,7 +52,7 @@ type RelayerQuery = {
 type RelayedChainInput = {
   endpoint: string;
   name: string;
-  baseOn: 'evm' | 'substrate';
+  baseOn: RelayerCMDBase;
   contractAddress: string;
 };
 type TornadoRelayerWithdrawArgs = {
@@ -67,9 +73,14 @@ type BridgeRelayerWithdrawArgs = {
   refund: string;
 };
 export type ContractBase = 'tornado' | 'anchor';
-export type WithdrawRelayerArgs<C = ContractBase> = C extends 'anchor'
-  ? BridgeRelayerWithdrawArgs
-  : TornadoRelayerWithdrawArgs;
+type CMDSwitcher<T extends RelayerCMDBase> = T extends 'evm' ? EVMCMDKeys : SubstrateCMDKeys;
+export type WithdrawRelayerArgs<A extends RelayerCMDBase, C extends CMDSwitcher<A>> = A extends 'evm'
+  ? C extends keyof RelayerEVMCommands
+    ? RelayerEVMCommands[C]
+    : never
+  : C extends keyof RelayerSubstrateCommands
+  ? RelayerSubstrateCommands[C]
+  : never;
 
 export interface RelayerInfo {
   substrate: Record<string, RelayedChainConfig | null>;
@@ -279,7 +290,7 @@ type RelayerLeaves = {
   lastQueriedBlock: number;
 };
 
-class RelayedWithdraw<T = ContractBase> {
+class RelayedWithdraw<T extends RelayerCMDKey> {
   /// status of the withdraw
   private status: RelayedWithdrawResult = RelayedWithdrawResult.PreFlight;
   /// watch for the current withdraw status
@@ -315,7 +326,11 @@ class RelayedWithdraw<T = ContractBase> {
     }
   };
 
-  generateWithdrawRequest(chain: RelayedChainInput, proof: string, args: WithdrawRelayerArgs<T>) {
+  generateWithdrawRequest<I extends RelayedChainInput>(
+    chain: I,
+    proof: string,
+    args: WithdrawRelayerArgs<I['baseOn'], T>
+  ) {
     return {
       [chain.baseOn]: {
         [this.prefix]: {
@@ -354,7 +369,7 @@ class RelayedWithdraw<T = ContractBase> {
 export class WebbRelayer {
   constructor(readonly endpoint: string, readonly capabilities: Capabilities) {}
 
-  async initWithdraw<Target extends ContractBase>(target: Target) {
+  async initWithdraw<Target extends RelayerCMDKey>(target: Target) {
     const ws = new WebSocket(this.endpoint.replace('http', 'ws') + '/ws');
     await new Promise((r, c) => {
       ws.onopen = r;
