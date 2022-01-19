@@ -7,13 +7,14 @@ import { Note, ProvingManager } from '@webb-tools/sdk-core';
 import { ProvingManagerSetupInput } from '@webb-tools/sdk-core/proving/proving-manager-thread';
 
 import { decodeAddress } from '@polkadot/keyring';
-import { u8aToHex } from '@polkadot/util';
+import { hexToU8a, u8aToHex } from '@polkadot/util';
 
-import { MixerWithdraw, WithdrawState } from '../../webb-context';
+import { MixerWithdraw, OptionalActiveRelayer, OptionalRelayer, WithdrawState } from '../../webb-context';
 import { WebbPolkadot } from './webb-polkadot-provider';
 import { PolkadotMixerDeposit } from '.';
-import { RelayedWithdrawResult } from '@webb-dapp/react-environment';
+import { RelayedWithdrawResult, WebbRelayer } from '@webb-dapp/react-environment';
 import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polkadot/transaction-notification-config';
+import { ChainId } from '@webb-dapp/apps/configs';
 
 const logger = LoggerService.get('PolkadotMixerWithdraw');
 
@@ -45,7 +46,35 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
   cancelWithdraw(): Promise<void> {
     return Promise.resolve(undefined);
   }
+  get relayers() {
+    return this.inner.relayingManager.getRelayer({});
+  }
 
+  async getRelayersByNote(evmNote: Note) {
+    return this.inner.relayingManager.getRelayer({});
+  }
+
+  async getRelayersByChainAndAddress(chainId: ChainId, address: string) {
+    return this.inner.relayingManager.getRelayer({});
+  }
+  async mapRelayerIntoActive(relayer: OptionalRelayer): Promise<OptionalActiveRelayer> {
+    if (!relayer) {
+      return null;
+    }
+    return WebbRelayer.intoActiveWebRelayer(
+      relayer,
+      {
+        basedOn: 'substrate',
+        chain: ChainId.WebbDevelopment,
+      },
+      async () => {
+        return {
+          totalFees: '0',
+          withdrawFeePercentage: 0,
+        };
+      }
+    );
+  }
   async fetchTreeLeaves(treeId: string | number): Promise<Uint8Array[]> {
     let done = false;
     let from = 0;
@@ -96,8 +125,8 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
 
       const provingKey = await fetchSubstrateProvingKey();
       const activeRelayer = this.activeRelayer[0];
-      if (activeRelayer && activeRelayer.account && activeRelayer.beneficiary) {
-        const relayerAccountHex = u8aToHex(decodeAddress(activeRelayer.account));
+      if (activeRelayer) {
+        const relayerAccountHex = u8aToHex(decodeAddress('nJrsrH8dov9Z36kTDpabgCZT8CbK1FbmjJvfU6qbMTG4g4c'));
 
         logger.info(`withdrawing through relayer`, activeRelayer);
         const proofInput: ProvingManagerSetupInput = {
@@ -122,6 +151,7 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
           refund: 0,
         };
         this.emit('stateChange', WithdrawState.SendingTransaction);
+        console.log(withdrawProof, treeId, 'withdraw proof');
         const relayerMixerTx = await activeRelayer.initWithdraw('mixerRelayTx');
         const relayerWithdrawPayload = relayerMixerTx.generateWithdrawRequest(
           {

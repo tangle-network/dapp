@@ -15,4 +15,5 @@ i18n.use(initReactI18next).init({
   defaultNS: 'translations',
   fallbackLng: 'en',
   ns: ['apps', 'page-mixer', 'react-components'],
+  resources
 });

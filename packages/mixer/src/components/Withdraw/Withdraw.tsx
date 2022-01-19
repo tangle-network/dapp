@@ -43,7 +43,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
     recipient,
     note,
   });
-
+  console.log(relayersState, 'relayersState');
   const feesGetter = useCallback(
     async (activeRelayer: ActiveWebbRelayer): Promise<FeesInfo> => {
       const defaultFees: FeesInfo = {
@@ -97,7 +97,9 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
     const chain = chainsPopulated[newChainId];
 
     const web3Provider = activeApi.getProvider();
-
+    if (!web3Provider) {
+      return;
+    }
     await web3Provider
       .switchChain({
         chainId: `0x${chain.evmId?.toString(16)}`,
@@ -129,7 +131,12 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
         }
       });
   };
-
+  const relayers = relayersState.relayers;
+  const activeRelayer = relayersState.activeRelayer;
+  console.log({
+    relayersState,
+    relayers,
+  });
   return (
     <WithdrawWrapper>
       <InputSection>
@@ -161,10 +168,10 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
           <RelayerInput
             tokenSymbol={depositNote?.note.tokenSymbol || ''}
             feesGetter={feesGetter}
-            relayers={relayersState.relayers}
+            relayers={relayers}
             setActiveRelayer={setRelayer}
             relayerApi={relayerApi}
-            activeRelayer={relayersState.activeRelayer}
+            activeRelayer={activeRelayer}
           />
           <SpaceBox height={16} />
         </>

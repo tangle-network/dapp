@@ -131,7 +131,7 @@ export class WebbRelayerBuilder {
           : new Map(),
         substrate: info.substrate
           ? Object.keys(info.substrate)
-              .filter((key) => info.substrate[key]?.account && nameAdapter(key, 'evm') != null)
+              .filter((key) => (info.evm[key]?.account || info.evm[key]?.beneficiary)&& nameAdapter(key, 'substrate') != null)
               .reduce((m, key) => {
                 m.set(nameAdapter(key, 'substrate'), info.evm[key]);
                 return m;
@@ -200,7 +200,6 @@ export class WebbRelayerBuilder {
    * */
   getRelayer(query: RelayerQuery): WebbRelayer[] {
     const { baseOn, bridgeSupport, chainId, contractAddress, ipService, tornadoSupport } = query;
-
     const relayers = Object.keys(this.capabilities)
       .filter((key) => {
         const capabilities = this.capabilities[key];

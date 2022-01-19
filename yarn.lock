@@ -4605,7 +4605,7 @@
   dependencies:
     "@open-web3/orml-type-definitions" "^0.8.2-6"
 
-"@webb-tools/types@0.1.4-12", "@webb-tools/types@^0.1.4-11", "@webb-tools/types@^0.1.4-12":
+"@webb-tools/types@0.1.4-12", "@webb-tools/types@^0.1.4-12":
   version "0.1.4-12"
   resolved "https://registry.yarnpkg.com/@webb-tools/types/-/types-0.1.4-12.tgz#34cd640816713963dfc37a668427fafcbeef9034"
   integrity sha512-h/d4WeA+u0OfqTXAaGCXjyYZyy8rnTHiWlYhqBi1gpO0joWMYbna5UiUtPttkxtNZtFDYvOnwWzMBhmbggZFeg==
