@@ -62,9 +62,9 @@ export type MixerRelayTx = {
   chain: string;
   // Tree ID (Mixer tree id)
   id: number;
-  proof: string;
-  root: string;
-  nullifierHash: string;
+  proof: Array<number>;
+  root: Array<number>;
+  nullifierHash: Array<number>;
   // Ss558 Format
   recipient: string;
   // Ss558 Format

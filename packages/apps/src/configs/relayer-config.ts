@@ -1,5 +1,5 @@
-import { ChainId } from "@webb-dapp/apps/configs/chains";
-import { RelayerConfig, WebbRelayerBuilder } from "@webb-dapp/react-environment/webb-context/relayer";
+import { ChainId } from '@webb-dapp/apps/configs/chains';
+import { RelayerConfig, WebbRelayerBuilder } from '@webb-dapp/react-environment/webb-context/relayer';
 
 let builder: WebbRelayerBuilder | null = null;
 export const relayerConfig: RelayerConfig[] = [
@@ -121,7 +121,9 @@ export async function getWebbRelayer() {
           return null;
         }
       }
+
       if (basedOn === 'substrate') {
+        // TODO: fix this
         return ChainId.WebbDevelopment;
       }
       return null;

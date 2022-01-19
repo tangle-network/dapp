@@ -75,14 +75,17 @@ type BridgeRelayerWithdrawArgs = {
 };
 export type ContractBase = 'tornado' | 'anchor';
 type CMDSwitcher<T extends RelayerCMDBase> = T extends 'evm' ? EVMCMDKeys : SubstrateCMDKeys;
+
+export type RelayerCMDs<A extends RelayerCMDBase, C extends CMDSwitcher<A>> = A extends 'evm'
+  ? C extends keyof RelayerEVMCommands
+    ? RelayerEVMCommands[C]
+    : never
+  : C extends keyof RelayerSubstrateCommands
+  ? RelayerSubstrateCommands[C]
+  : never;
+
 export type WithdrawRelayerArgs<A extends RelayerCMDBase, C extends CMDSwitcher<A>> = Omit<
-  A extends 'evm'
-    ? C extends keyof RelayerEVMCommands
-      ? RelayerEVMCommands[C]
-      : never
-    : C extends keyof RelayerSubstrateCommands
-    ? RelayerSubstrateCommands[C]
-    : never,
+  RelayerCMDs<A, C>,
   keyof RelayedChainInput | 'proof'
 >;
 
@@ -131,7 +134,10 @@ export class WebbRelayerBuilder {
           : new Map(),
         substrate: info.substrate
           ? Object.keys(info.substrate)
-              .filter((key) => (info.evm[key]?.account || info.evm[key]?.beneficiary)&& nameAdapter(key, 'substrate') != null)
+              .filter(
+                (key) =>
+                  info.evm[key]?.account || info.evm[key]?.beneficiary || 1 /*&& nameAdapter(key, 'substrate') != null*/
+              )
               .reduce((m, key) => {
                 m.set(nameAdapter(key, 'substrate'), info.evm[key]);
                 return m;
@@ -263,6 +269,7 @@ export class WebbRelayerBuilder {
           return Boolean(capabilities.supportedChains[baseOn].get(chainId));
         }
         if (baseOn && !chainId) {
+          console.log(capabilities.supportedChains, baseOn);
           return capabilities.supportedChains[baseOn].size > 0;
         }
         return true;
@@ -331,7 +338,7 @@ class RelayedWithdraw {
 
   generateWithdrawRequest<T extends RelayedChainInput, C extends CMDSwitcher<T['baseOn']>>(
     chain: T,
-    proof: string,
+    proof: RelayerCMDs<T['baseOn'], C>['proof'] ,
     args: WithdrawRelayerArgs<T['baseOn'], C>
   ) {
     return {

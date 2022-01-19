@@ -46,6 +46,7 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
   cancelWithdraw(): Promise<void> {
     return Promise.resolve(undefined);
   }
+
   get relayers() {
     return this.inner.relayingManager.getRelayer({});
   }
@@ -57,6 +58,7 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
   async getRelayersByChainAndAddress(chainId: ChainId, address: string) {
     return this.inner.relayingManager.getRelayer({});
   }
+
   async mapRelayerIntoActive(relayer: OptionalRelayer): Promise<OptionalActiveRelayer> {
     if (!relayer) {
       return null;
@@ -75,6 +77,7 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
       }
     );
   }
+
   async fetchTreeLeaves(treeId: string | number): Promise<Uint8Array[]> {
     let done = false;
     let from = 0;
@@ -95,6 +98,7 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
   }
 
   async submitViaRelayer() {}
+
 
   async withdraw(note: string, recipient: string): Promise<string> {
     this.emit('stateChange', WithdrawState.GeneratingZk);
@@ -161,16 +165,16 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
             // TODO change this from the config
             name: 'localnode',
           },
-          withdrawProof.proofBytes,
+          Array.from(hexToU8a(withdrawProof.proofBytes)),
           {
             chain: 'localnode',
             fee: withdrawProof.fee,
-            nullifierHash: withdrawProof.nullifierHash,
+            nullifierHash: Array.from(hexToU8a(withdrawProof.nullifierHash)),
             recipient: withdrawProof.recipient,
             refund: withdrawProof.refund,
-            root: withdrawProof.root,
+            root: Array.from(hexToU8a(withdrawProof.root)),
             relayer: withdrawProof.relayer,
-            id: treeId,
+            id: Number(treeId),
           }
         );
         relayerMixerTx.watcher.subscribe(([results, message]) => {
