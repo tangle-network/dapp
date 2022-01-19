@@ -175,7 +175,7 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
 
         this.emit('stateChange', WithdrawState.SendingTransaction);
 
-        const relayedWithdraw = await activeRelayer.initWithdraw('tornado');
+        const relayedWithdraw = await activeRelayer.initWithdraw('tornadoRelayTransaction');
         logger.trace('initialized the withdraw WebSocket');
 
         const tx = relayedWithdraw.generateWithdrawRequest(
@@ -187,6 +187,8 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
           },
           zkp.proof,
           {
+            chain: chainIdToRelayerName(chainId),
+            contract: mixerInfo.address,
             fee: bufferToFixed(zkp.input.fee),
             nullifierHash: bufferToFixed(zkp.input.nullifierHash),
             recipient: zkp.input.recipient,

@@ -53,6 +53,7 @@ type RelayedChainInput = {
   endpoint: string;
   name: string;
   baseOn: RelayerCMDBase;
+  // TODO: change to just contract
   contractAddress: string;
 };
 type TornadoRelayerWithdrawArgs = {
@@ -82,7 +83,7 @@ export type WithdrawRelayerArgs<A extends RelayerCMDBase, C extends CMDSwitcher<
     : C extends keyof RelayerSubstrateCommands
     ? RelayerSubstrateCommands[C]
     : never,
-  keyof RelayedChainInput
+  keyof RelayedChainInput | 'proof'
 >;
 
 export interface RelayerInfo {

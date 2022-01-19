@@ -78,10 +78,13 @@ type TornadoRelayTransaction = {
   // The target contract.
   contract: string;
   // Proof bytes
-  fee: number;
+  proof: string;
+  // Fixed length Hex string
+  fee: string;
   nullifierHash: string;
   recipient: string;
-  refund: number;
+  // Fixed length Hex string
+  refund: string;
   relayer: string;
   root: string;
 };
