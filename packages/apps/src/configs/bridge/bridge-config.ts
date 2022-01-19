@@ -36,6 +36,18 @@ const webbWETHtest1 = new BridgeCurrency(
   'webbWETH'
 );
 
+// addresses of the wrapped token n each chain it lives on
+// const webbETHtest1 = new BridgeCurrency({
+// 	[ChainId.Ropsten]: '0x2C165572FeBE99C25644eF3433989D6e37F2a8bE',
+// 	[ChainId.Rinkeby]: '0x80DF11835B03bE444fd6f6587bEa70175d12da39',
+// 	[ChainId.Goerli]: '0x021C3Ad0971c10f39a36E783419A491FB2dE3f64',
+// 	[ChainId.Kovan]: '0xdd1CcAb2fB769A0D07bb9795F309964a12A79F7D',
+// 	[ChainId.OptimismTestnet]: '0x33Ae40e485fcb8fD196f22229ba094F2b1680Bb7',
+// 	[ChainId.ArbitrumTestnet]: '0x95A5CcfCa50F7Dcf410CE397Bb7Becf1b42Ae601',
+// },
+// "bridge-name"
+// );
+
 export const bridgeConfig: BridgeConfig = {
   [webbWETHtest1.name]: {
     asset: webbWETHtest1,

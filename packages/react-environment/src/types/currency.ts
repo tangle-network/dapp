@@ -1,4 +1,4 @@
-import { chainsPopulated, currenciesConfig, WebbCurrencyId } from '@webb-dapp/apps/configs';
+import { ChainId, chainsPopulated, currenciesConfig, WebbCurrencyId } from '@webb-dapp/apps/configs';
 import { Chain } from '@webb-dapp/react-environment';
 import { createElement } from 'react';
 
@@ -11,7 +11,7 @@ export interface CurrencyView {
   name: string;
   color?: string;
   symbol: string;
-  chainName: string;
+  addresses?: Map<ChainId, string>;
 }
 
 export interface CurrencyConfig extends Omit<CurrencyView, 'chainName'> {}
@@ -42,7 +42,6 @@ export class Currency extends CurrencyContent {
   get view(): CurrencyView {
     const nativeCurrencyForChain = Object.values(chains).find((chain) => chain.nativeCurrencyId == this.data.id);
     return {
-      chainName: nativeCurrencyForChain?.name ?? '',
       icon: this.data.icon,
       id: this.data.id,
       name: this.data.name,
