@@ -301,7 +301,7 @@ class RelayedWithdraw {
   readonly watcher: Observable<[RelayedWithdrawResult, string | undefined]>;
   private emitter: Subject<[RelayedWithdrawResult, string | undefined]> = new Subject();
 
-  constructor(private ws: WebSocket, private prefix: string) {
+  constructor(private ws: WebSocket, private prefix: RelayerCMDKey) {
     this.watcher = this.emitter.asObservable();
 
     ws.onmessage = ({ data }) => {
@@ -388,8 +388,7 @@ export class WebbRelayer {
         setTimeout(r, 300);
       });
     }
-    let prefix: string = 'anchorRelayTx';
-    return new RelayedWithdraw(ws, prefix);
+    return new RelayedWithdraw(ws, target);
   }
 
   async getIp(): Promise<string> {

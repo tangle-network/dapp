@@ -12,6 +12,8 @@ import { u8aToHex } from '@polkadot/util';
 import { MixerWithdraw, WithdrawState } from '../../webb-context';
 import { WebbPolkadot } from './webb-polkadot-provider';
 import { PolkadotMixerDeposit } from '.';
+import { RelayedWithdrawResult } from '@webb-dapp/react-environment';
+import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polkadot/transaction-notification-config';
 
 const logger = LoggerService.get('PolkadotMixerWithdraw');
 
@@ -63,6 +65,8 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
     return leaves;
   }
 
+  async submitViaRelayer() {}
+
   async withdraw(note: string, recipient: string): Promise<string> {
     this.emit('stateChange', WithdrawState.GeneratingZk);
 
@@ -91,6 +95,95 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
       const relayerAccountHex = recipientAccountHex;
 
       const provingKey = await fetchSubstrateProvingKey();
+      const activeRelayer = this.activeRelayer[0];
+      if (activeRelayer && activeRelayer.account && activeRelayer.beneficiary) {
+        const relayerAccountHex = u8aToHex(decodeAddress(activeRelayer.account));
+
+        logger.info(`withdrawing through relayer`, activeRelayer);
+        const proofInput: ProvingManagerSetupInput = {
+          leaves,
+          note,
+          leafIndex,
+          refund: 0,
+          fee: 0,
+          recipient: recipientAccountHex.replace('0x', ''),
+          relayer: relayerAccountHex.replace('0x', ''),
+          provingKey,
+        };
+        const zkProofMetadata = await pm.proof(proofInput);
+        const withdrawProof: WithdrawProof = {
+          id: String(treeId),
+          proofBytes: `0x${zkProofMetadata.proof}` as any,
+          root: `0x${zkProofMetadata.root}`,
+          nullifierHash: `0x${zkProofMetadata.nullifierHash}`,
+          recipient: recipient,
+          relayer: relayerAccountId,
+          fee: 0,
+          refund: 0,
+        };
+        this.emit('stateChange', WithdrawState.SendingTransaction);
+        const relayerMixerTx = await activeRelayer.initWithdraw('mixerRelayTx');
+        const relayerWithdrawPayload = relayerMixerTx.generateWithdrawRequest(
+          {
+            baseOn: 'substrate',
+            contractAddress: '',
+            endpoint: '',
+            // TODO change this from the config
+            name: 'localnode',
+          },
+          withdrawProof.proofBytes,
+          {
+            chain: 'localnode',
+            fee: withdrawProof.fee,
+            nullifierHash: withdrawProof.nullifierHash,
+            recipient: withdrawProof.recipient,
+            refund: withdrawProof.refund,
+            root: withdrawProof.root,
+            relayer: withdrawProof.relayer,
+            id: treeId,
+          }
+        );
+        relayerMixerTx.watcher.subscribe(([results, message]) => {
+          switch (results) {
+            case RelayedWithdrawResult.PreFlight:
+              this.emit('stateChange', WithdrawState.SendingTransaction);
+              break;
+            case RelayedWithdrawResult.OnFlight:
+              break;
+            case RelayedWithdrawResult.Continue:
+              break;
+            case RelayedWithdrawResult.CleanExit:
+              this.emit('stateChange', WithdrawState.Done);
+              this.emit('stateChange', WithdrawState.Ideal);
+              transactionNotificationConfig.finalize?.({
+                address: recipient,
+                data: undefined,
+                key: 'mixer-withdraw-sub',
+                path: {
+                  method: 'mixerBn254',
+                  section: 'withdraw',
+                },
+              });
+              break;
+            case RelayedWithdrawResult.Errored:
+              this.emit('stateChange', WithdrawState.Failed);
+              this.emit('stateChange', WithdrawState.Ideal);
+              transactionNotificationConfig.failed?.({
+                address: recipient,
+                data: message || 'Withdraw failed',
+                key: 'mixer-withdraw-sub',
+                path: {
+                  method: 'mixerBn254',
+                  section: 'withdraw',
+                },
+              });
+              break;
+          }
+        });
+        relayerMixerTx.send(relayerWithdrawPayload);
+        await relayerMixerTx.await();
+        return '';
+      }
       const proofInput: ProvingManagerSetupInput = {
         leaves,
         note,
@@ -117,6 +210,7 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
       };
       logger.trace(`submitting the transaction of withdraw with params`, withdrawProof);
       this.emit('stateChange', WithdrawState.SendingTransaction);
+
       const tx = this.inner.txBuilder.build(
         {
           section: 'mixerBn254',

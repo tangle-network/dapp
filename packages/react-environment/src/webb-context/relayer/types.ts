@@ -69,7 +69,7 @@ export type MixerRelayTx = {
   recipient: string;
   // Ss558 Format
   relayer: string;
-  feed: number;
+  fee: number;
   refund: number;
 };
 
