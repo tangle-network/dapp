@@ -20,6 +20,15 @@ export const relayerConfig: RelayerConfig[] = [
   },
 ];
 
+export function relayerSubstrateNameToChainId(name: string): ChainId {
+  switch (name) {
+    case 'localnode':
+      return ChainId.WebbDevelopment;
+  }
+
+  throw new Error('unhandled relayed chain name  ' + name);
+}
+
 export function relayerNameToChainId(name: string): ChainId {
   switch (name) {
     case 'beresheet':
@@ -114,19 +123,11 @@ export function chainIdToRelayerName(id: ChainId): string {
 export async function getWebbRelayer() {
   if (!builder) {
     builder = await WebbRelayerBuilder.initBuilder(relayerConfig, (name, basedOn) => {
-      if (basedOn === 'evm') {
-        try {
-          return relayerNameToChainId(name);
-        } catch (e) {
-          return null;
-        }
+      try {
+        return basedOn === 'evm' ? relayerNameToChainId(name) : relayerSubstrateNameToChainId(name);
+      } catch (e) {
+        return null;
       }
-
-      if (basedOn === 'substrate') {
-        // TODO: fix this
-        return ChainId.WebbDevelopment;
-      }
-      return null;
     });
   }
   return builder;
