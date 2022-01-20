@@ -18,6 +18,7 @@ import {
   bridgeConfig,
   BridgeCurrency,
   RelayedWithdrawResult,
+  RelayerCMDBase,
   WebbRelayer,
 } from '@webb-dapp/react-environment';
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3/webb-web3-provider';
@@ -198,6 +199,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
 
     this.emit('stateChange', WithdrawState.SendingTransaction);
     try {
+      // TODO consume tx hash
       txHash = await contract.withdraw(
         zkpResults.proof,
         {
@@ -408,18 +410,20 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
       const relayerRootsBytes = hexStringToBytes(relayerRootString);
       const relayerRoots = Array.from(relayerRootsBytes);
 
-      const relayedWithdraw = await activeRelayer.initWithdraw('anchor');
+      const relayedWithdraw = await activeRelayer.initWithdraw('anchorRelayTransaction');
       logger.trace('initialized the withdraw WebSocket');
-
-      const tx = relayedWithdraw.generateWithdrawRequest(
-        {
-          baseOn: 'evm',
-          name: chainIdToRelayerName(destChainId),
-          contractAddress: destContractAddress,
-          endpoint: '',
-        },
+      const chainInfo = {
+        baseOn: 'evm' as RelayerCMDBase,
+        name: chainIdToRelayerName(destChainId),
+        contractAddress: destContractAddress,
+        endpoint: '',
+      };
+      const tx = relayedWithdraw.generateWithdrawRequest<typeof chainInfo, 'anchorRelayTransaction'>(
+        chainInfo,
         `0x${proofBytes}`,
         {
+          contract: destContractAddress,
+          chain: chainIdToRelayerName(destChainId),
           fee: bufferToFixed(zkp.input.fee),
           nullifierHash: bufferToFixed(zkp.input.nullifierHash),
           refreshCommitment: '0x0000000000000000000000000000000000000000000000000000000000000000',

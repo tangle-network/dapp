@@ -49,7 +49,7 @@ type RelayerQuery = {
   bridgeSupport?: MixerQuery;
 };
 
-type RelayedChainInput = {
+export type RelayedChainInput = {
   endpoint: string;
   name: string;
   baseOn: RelayerCMDBase;
@@ -88,7 +88,6 @@ export type WithdrawRelayerArgs<A extends RelayerCMDBase, C extends CMDSwitcher<
   RelayerCMDs<A, C>,
   keyof RelayedChainInput | 'proof'
 >;
-
 export interface RelayerInfo {
   substrate: Record<string, RelayedChainConfig | null>;
   evm: Record<string, RelayedChainConfig | null>;

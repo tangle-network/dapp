@@ -1,10 +1,14 @@
+import { ChainId } from '@webb-dapp/apps/configs';
 // @ts-ignore
 import Worker from '@webb-dapp/mixer/utils/proving-manager.worker';
+import { RelayedWithdrawResult, WebbRelayer } from '@webb-dapp/react-environment';
 import { getCachedFixtureURI, isProduction } from '@webb-dapp/utils/misc';
 import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
+import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polkadot/transaction-notification-config';
 import { LoggerService } from '@webb-tools/app-util';
 import { Note, ProvingManager } from '@webb-tools/sdk-core';
 import { ProvingManagerSetupInput } from '@webb-tools/sdk-core/proving/proving-manager-thread';
+import React from 'react';
 
 import { decodeAddress } from '@polkadot/keyring';
 import { hexToU8a, u8aToHex } from '@polkadot/util';
@@ -12,10 +16,6 @@ import { hexToU8a, u8aToHex } from '@polkadot/util';
 import { MixerWithdraw, OptionalActiveRelayer, OptionalRelayer, WithdrawState } from '../../webb-context';
 import { WebbPolkadot } from './webb-polkadot-provider';
 import { PolkadotMixerDeposit } from '.';
-import { RelayedWithdrawResult, WebbRelayer } from '@webb-dapp/react-environment';
-import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polkadot/transaction-notification-config';
-import { ChainId } from '@webb-dapp/apps/configs';
-import React from 'react';
 
 const logger = LoggerService.get('PolkadotMixerWithdraw');
 const transactionString = (hexString: string) => {

@@ -88,8 +88,9 @@ type TornadoRelayTransaction = {
   relayer: string;
   root: string;
 };
-type AnchorRelayTransaction = TornadoRelayTransaction & {
+type AnchorRelayTransaction = Omit<TornadoRelayTransaction, 'root'> & {
   refreshCommitment: string;
+  roots: Array<number>;
 };
 export type RelayerSubstrateCommands = {
   mixerRelayTx: MixerRelayTx;
