@@ -1,15 +1,7 @@
-import { BridgeCurrency } from '@webb-dapp/apps/configs';
 import { useWebContext } from '@webb-dapp/react-environment';
 import { Currency, CurrencyContent } from '@webb-dapp/react-environment/webb-context/currency/currency';
-import { WrappingEventNames, WrappingTokenId } from '@webb-dapp/react-environment/webb-context/wrap-unwrap';
-import { fromBridgeCurrencyToCurrencyView } from '@webb-dapp/ui-components/Inputs/WalletBridgeCurrencyInput/WalletBridgeCurrencyInput';
+import { WrappingEventNames } from '@webb-dapp/react-environment/webb-context/wrap-unwrap';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-
-const currencyContentToWrappingToken = (currentContent: CurrencyContent): WrappingTokenId => {
-  const isNative = currentContent?.view.symbol.toLocaleLowerCase().indexOf('webb') === -1;
-
-  return { variant: isNative ? 'native-token' : 'governed-token', id: currentContent.view.id };
-};
 
 export function useWrapUnwrap() {
   const { activeApi } = useWebContext();
@@ -44,7 +36,7 @@ export function useWrapUnwrap() {
     wrapUnwrapApi?.getWrappableTokens().then((tokens) => {
       setState((p) => ({
         ...p,
-        tokens: tokens.map((token) => Currency.fromCurrencyId(Number(token.id))),
+        tokens: tokens.map((token) => Currency.fromCurrencyId(token)),
       }));
     });
   }, [wrapUnwrapApi]);
@@ -53,10 +45,7 @@ export function useWrapUnwrap() {
     wrapUnwrapApi?.getGovernedTokens().then((tokens) => {
       setState((p) => ({
         ...p,
-        wrappedTokens: tokens.map((token) => {
-          const bridgeCurrency = BridgeCurrency.fromString(String(token.id));
-          return fromBridgeCurrencyToCurrencyView(bridgeCurrency);
-        }),
+        wrappedTokens: tokens.map((token) => Currency.fromCurrencyId(token)),
       }));
     });
   }, [wrapUnwrapApi]);
@@ -119,11 +108,11 @@ export function useWrapUnwrap() {
 
   useEffect(() => {
     if (context === 'wrap') {
-      wrapUnwrapApi?.setCurrentToken(rightHandToken ? currencyContentToWrappingToken(rightHandToken) : null);
-      wrapUnwrapApi?.setOtherEdgToken(leftHandToken ? currencyContentToWrappingToken(leftHandToken) : null);
+      wrapUnwrapApi?.setCurrentToken(rightHandToken ? rightHandToken.view.id : null);
+      wrapUnwrapApi?.setOtherEdgToken(leftHandToken ? leftHandToken.view.id : null);
     } else {
-      wrapUnwrapApi?.setCurrentToken(leftHandToken ? currencyContentToWrappingToken(leftHandToken) : null);
-      wrapUnwrapApi?.setOtherEdgToken(rightHandToken ? currencyContentToWrappingToken(rightHandToken) : null);
+      wrapUnwrapApi?.setCurrentToken(leftHandToken ? leftHandToken.view.id : null);
+      wrapUnwrapApi?.setOtherEdgToken(rightHandToken ? rightHandToken.view.id : null);
     }
   }, [leftHandToken, rightHandToken, context, wrapUnwrapApi]);
 

@@ -5,24 +5,20 @@ import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 /**
  *
  * */
-export type WrappingTokenId = {
-  variant: 'native-token' | 'governed-token';
-  id: WebbCurrencyId | string;
-};
 
 export type WrappingEvent = {
   ready: null;
   stateUpdate: null;
-  wrappedTokens: WrappingTokenId[];
-  nativeTokensUpdate: WrappingTokenId[];
-  governedTokensUpdate: WrappingTokenId[];
+  wrappedTokens: WebbCurrencyId[];
+  nativeTokensUpdate: WebbCurrencyId[];
+  governedTokensUpdate: WebbCurrencyId[];
 };
 export type WrappingEventNames = keyof WrappingEvent;
 export type Amount = {
   amount: number | string;
 };
 export type WrappingBalance = {
-  tokenId?: WrappingTokenId;
+  tokenId?: WebbCurrencyId;
   balance: string;
 };
 
@@ -35,16 +31,16 @@ export type WrappingBalance = {
  * */
 
 export abstract class WrapUnWrap<T, WrapPayload extends Amount = Amount, UnwrapPayload extends Amount = Amount> {
-  private _currentTokenAddress: BehaviorSubject<WrappingTokenId | null> = new BehaviorSubject<null | WrappingTokenId>(
+  private _currentTokenAddress: BehaviorSubject<WebbCurrencyId | null> = new BehaviorSubject<null | WebbCurrencyId>(
     null
   );
-  private _otherEdgeToken: BehaviorSubject<WrappingTokenId | null> = new BehaviorSubject<null | WrappingTokenId>(null);
+  private _otherEdgeToken: BehaviorSubject<WebbCurrencyId | null> = new BehaviorSubject<null | WebbCurrencyId>(null);
 
   constructor(protected inner: T) {}
 
   abstract get subscription(): Observable<Partial<WrappingEvent>>;
 
-  setCurrentToken(nextTokenAddress: WrappingTokenId | null) {
+  setCurrentToken(nextTokenAddress: WebbCurrencyId | null) {
     this._currentTokenAddress.next(nextTokenAddress);
   }
 
@@ -62,7 +58,7 @@ export abstract class WrapUnWrap<T, WrapPayload extends Amount = Amount, UnwrapP
     return this._currentTokenAddress.asObservable();
   }
 
-  setOtherEdgToken(nextTokenAddress: WrappingTokenId | null) {
+  setOtherEdgToken(nextTokenAddress: WebbCurrencyId | null) {
     this._otherEdgeToken.next(nextTokenAddress);
   }
 
@@ -85,12 +81,12 @@ export abstract class WrapUnWrap<T, WrapPayload extends Amount = Amount, UnwrapP
   /**
    * Wrapped token that is available for the current token
    *  */
-  abstract getWrappableTokens(): Promise<WrappingTokenId[]>;
+  abstract getWrappableTokens(): Promise<WebbCurrencyId[]>;
 
   /**
    *  Get list of all the Governed tokens
    * */
-  abstract getGovernedTokens(): Promise<WrappingTokenId[]>;
+  abstract getGovernedTokens(): Promise<WebbCurrencyId[]>;
 
   /**
    *  For validation pre the Wrapping
@@ -134,9 +130,9 @@ export class WrappingBalanceWatcher {
   private subscription: Subscription | null = null;
 
   constructor(
-    private token1: WrappingTokenId | null = null,
-    private token2: WrappingTokenId | null = null,
-    private signal: Observable<[WrappingTokenId | null, WrappingTokenId | null]>
+    private token1: WebbCurrencyId | null = null,
+    private token2: WebbCurrencyId | null = null,
+    private signal: Observable<[WebbCurrencyId | null, WebbCurrencyId | null]>
   ) {
     this.sub();
   }

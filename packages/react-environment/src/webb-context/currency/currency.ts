@@ -24,6 +24,10 @@ export class Currency extends CurrencyContent {
     return this.data.addresses.has(chain);
   }
 
+  getChainIds(): ChainId[] {
+    return Array.from(this.data.addresses.keys());
+  }
+
   get view(): CurrencyView {
     return {
       icon: this.data.icon,

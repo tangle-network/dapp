@@ -1,17 +1,8 @@
 import { ChainId, WebbCurrencyId } from '@webb-dapp/apps/configs';
-
-//
-export type ChainAddressConfig = { [key in ChainId]?: string };
-
-export type AnchorConfigEntry = {
-  amount: string;
-  anchorAddresses: ChainAddressConfig;
-}
+import { AppConfig } from '@webb-dapp/react-environment/webb-context';
 
 // Anchor config is indexed by WebbCurrencyId
-export type AnchorConfig = Record<number, AnchorConfigEntry[]>;
-
-export const anchorsConfig: AnchorConfig = {
+export const anchorsConfig: AppConfig['anchors'] = {
   [WebbCurrencyId.webbWETH]: [
     {
       amount: '0.1',
@@ -22,7 +13,7 @@ export const anchorsConfig: AnchorConfig = {
         [ChainId.PolygonTestnet]: '0x12323BcABB342096669d80F968f7a31bdB29d4C4',
         [ChainId.OptimismTestnet]: '0xC44A4EcAC4f23b6F92485Cb1c90dBEd75a987BC8',
         [ChainId.ArbitrumTestnet]: '0xD8a8F9629a98EABFF31CfA9493f274A4D5e768Cd',
-      }
-    }
+      },
+    },
   ],
-}
+};

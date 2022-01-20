@@ -1,8 +1,9 @@
-import { ChainId, WebbCurrencyId } from "@webb-dapp/apps/configs";
-import { createElement } from "react";
+import { ChainId, WebbCurrencyId } from '@webb-dapp/apps/configs';
+import { createElement } from 'react';
 
 export enum CurrencyType {
-  WrappableCurrency,
+  WrappableEvmCurrency,
+  OrmlCurrency,
   BridgeCurrency,
 }
 

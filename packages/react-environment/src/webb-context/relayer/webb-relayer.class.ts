@@ -1,4 +1,4 @@
-import { ChainId, chainsConfig, getAnchorAddressForBridge } from '@webb-dapp/apps/configs';
+import { ChainId, chainsConfig, getAnchorAddressForBridge, webbCurrencyIdFromString } from '@webb-dapp/apps/configs';
 import { EvmChainMixersInfo } from '@webb-dapp/react-environment/api-providers/web3/EvmChainMixersInfo';
 import {
   Capabilities,
@@ -227,7 +227,11 @@ export class WebbRelayerBuilder {
         }
         if (bridgeSupport && baseOn && chainId) {
           if (baseOn == 'evm') {
-            const bridgeAddress = getAnchorAddressForBridge(bridgeSupport.tokenSymbol, chainId, bridgeSupport.amount);
+            const bridgeAddress = getAnchorAddressForBridge(
+              webbCurrencyIdFromString(bridgeSupport.tokenSymbol),
+              chainId,
+              bridgeSupport.amount
+            );
             if (bridgeAddress) {
               return Boolean(
                 capabilities.supportedChains[baseOn]

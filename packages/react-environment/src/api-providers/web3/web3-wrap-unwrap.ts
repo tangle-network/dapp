@@ -1,6 +1,7 @@
 import {
   bridgeConfigByAsset,
   ChainId,
+  chainsConfig,
   currenciesConfig,
   evmIdIntoChainId,
   getSupportedCurrenciesOfChain,
@@ -10,11 +11,11 @@ import {
 import { WebbGovernedToken, zeroAddress } from '@webb-dapp/contracts/contracts';
 import { Bridge, MixerSize } from '@webb-dapp/react-environment';
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers';
+import { CurrencyType } from '@webb-dapp/react-environment/types/currency-config.interface';
 import {
   Amount,
   WrappingBalance,
   WrappingEvent,
-  WrappingTokenId,
   WrapUnWrap,
 } from '@webb-dapp/react-environment/webb-context/wrap-unwrap';
 import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polkadot/transaction-notification-config';
@@ -33,8 +34,6 @@ const defaultBalance: WrappingBalance = {
 export class Web3WrapUnwrap extends WrapUnWrap<WebbWeb3Provider> {
   private _balances = new BehaviorSubject<[WrappingBalance, WrappingBalance]>([defaultBalance, defaultBalance]);
   private _liquidity = new BehaviorSubject<[WrappingBalance, WrappingBalance]>([defaultBalance, defaultBalance]);
-
-  private bridgeConfig: BridgeConfig = bridgeConfig;
   private _currentChainId = new BehaviorSubject<ChainId | null>(null);
   private _event = new Subject<Partial<WrappingEvent>>();
 
@@ -92,35 +91,6 @@ export class Web3WrapUnwrap extends WrapUnWrap<WebbWeb3Provider> {
     });
   }
 
-  async getContractLiquidity(tokenId: WrappingTokenId) {
-    if (tokenId.variant === 'native-token') {
-      return null;
-    }
-    const webbGovernedToken = this.governedTokenWrapper(String(tokenId.id));
-    const balance = await webbGovernedToken.contractBalance;
-    return {
-      balance: balance.toString(),
-      tokenId: tokenId,
-    };
-  }
-
-  async getBalance(tokenId: WrappingTokenId, account: string): Promise<WrappingBalance> {
-    if (tokenId.variant === 'native-token') {
-      const balance = await this.inner.innerProvider.eth.getBalance(account);
-      return {
-        balance,
-        tokenId: tokenId,
-      };
-    } else {
-      const webbGovernedToken = this.governedTokenWrapper(String(tokenId.id));
-      const balance = await webbGovernedToken.getBalanceOf(account);
-      return {
-        balance: balance.toString(),
-        tokenId: tokenId,
-      };
-    }
-  }
-
   getSizes(): Promise<MixerSize[]> {
     return Promise.resolve([]);
   }
@@ -129,44 +99,25 @@ export class Web3WrapUnwrap extends WrapUnWrap<WebbWeb3Provider> {
     return this._currentChainId.value;
   }
 
-  async getWrappableTokens(): Promise<WrappingTokenId[]> {
-    if (!this._currentChainId) {
-      return [];
+  // TODO: Dynamic wrappable currencies
+  async getWrappableTokens(): Promise<WebbCurrencyId[]> {
+    if (this.currentChainId) {
+      return chainsConfig[this.currentChainId].currencies;
     }
-    const bridgeTokens = Bridge.getTokensOfChain(this.bridgeConfig, this.currentChainId!).filter(
-      (currency) => !currency.currencyIds.includes(WebbCurrencyId.WEBB)
-    );
-    const wrappableTokens = bridgeTokens.reduce<WebbCurrencyId[]>((acc, bridgeToken) => {
-      for (let currency of bridgeToken.currencyIds) {
-        if (!acc.includes(currency) && getSupportedCurrenciesOfChain(this.currentChainId!).includes(currency)) {
-          acc = [...acc, currency];
-        }
-      }
-
-      return acc;
-    }, []);
-    return wrappableTokens.map((i) => ({
-      id: i,
-      variant: 'native-token',
-    }));
+    return [];
   }
 
-  async getGovernedTokens(): Promise<WrappingTokenId[]> {
+  async getGovernedTokens(): Promise<WebbCurrencyId[]> {
     if (this.currentChainId) {
-      return Bridge.getTokensOfChain(this.bridgeConfig, this.currentChainId!)
-        .filter((currency) => !currency.currencyIds.includes(WebbCurrencyId.WEBB))
-        .map((i) => ({
-          id: i.toString(),
-          variant: 'governed-token',
-        }));
+      return Bridge.getTokensOfChain(this.currentChainId).map((currency) => currency.view.id);
     }
     return [];
   }
 
   async canUnWrap(unwrapPayload: Web3UnwrapPayload): Promise<boolean> {
     const { amount } = unwrapPayload;
-    const UnwrapTokenId = this.currentToken?.id!;
-    const webbGovernedToken = this.governedTokenWrapper(String(UnwrapTokenId));
+    const UnwrapTokenId = this.currentToken!;
+    const webbGovernedToken = this.governedTokenWrapper(UnwrapTokenId);
 
     const account = await this.inner.accounts.accounts();
     const currentAccount = account[0];
@@ -176,68 +127,42 @@ export class Web3WrapUnwrap extends WrapUnWrap<WebbWeb3Provider> {
   async unwrap(unwrapPayload: Web3UnwrapPayload): Promise<string> {
     const { amount: amountNumber } = unwrapPayload;
 
-    const UnwrapTokenId = this.currentToken?.id!;
+    const UnwrapTokenId = this.currentToken!;
     const unwrapToken = this.otherEdgToken!;
     const amount = Web3.utils.toWei(String(amountNumber), 'ether');
 
-    const webbGovernedToken = this.governedTokenWrapper(String(UnwrapTokenId));
+    const webbGovernedToken = this.governedTokenWrapper(UnwrapTokenId);
     let path = {
       method: '',
       section: '',
     };
     try {
-      if (unwrapToken.variant === 'native-token') {
-        path = {
-          method: `wrap`,
-          section: `GovernedTokenWrapper`,
-        };
-        transactionNotificationConfig.loading?.({
-          address: 'recipient',
-          key: 'unwrap asset',
-          data: React.createElement(
-            'p',
-            { style: { fontSize: '.9rem' } }, // Matches Typography variant=h6
-            `Unwrapping ${String(amountNumber)}  of ${UnwrapTokenId}   to  ${webbCurrencyIdToString(
-              Number(unwrapToken.id)
-            )}`
-          ),
-          path,
-        });
-        const tx = await webbGovernedToken.unwrap(zeroAddress, amount);
-        await tx.wait();
-        transactionNotificationConfig.finalize?.({
-          address: 'recipient',
-          key: 'unwrap asset',
-          data: undefined,
-          path,
-        });
-        return tx.hash;
-      } else {
-        path = {
-          method: `wrap`,
-          section: `GovernedTokenWrapper`,
-        };
-        transactionNotificationConfig.loading?.({
-          address: 'recipient',
-          key: 'unwrap asset',
-          data: React.createElement(
-            'p',
-            { style: { fontSize: '.9rem' } }, // Matches Typography variant=h6
-            `Unwrapping ${String(amountNumber)}  of ${UnwrapTokenId}   to  ${unwrapToken.id}`
-          ),
-          path,
-        });
-        const tokenAddress = this.getAddressFromWrapTokenId(String(unwrapToken.id));
-        const tx = await webbGovernedToken.unwrap(tokenAddress, amount);
-        await tx.wait();
-        transactionNotificationConfig.finalize?.({
-          address: 'recipient',
-          key: 'unwrap asset',
-          data: undefined,
-          path,
-        });
-        return tx.hash;
-      }
+      path = {
+        method: `wrap`,
+        section: `GovernedTokenWrapper`,
+      };
+      transactionNotificationConfig.loading?.({
+        address: 'recipient',
+        key: 'unwrap asset',
+        data: React.createElement(
+          'p',
+          { style: { fontSize: '.9rem' } }, // Matches Typography variant=h6
+          `Unwrapping ${String(amountNumber)}  of ${UnwrapTokenId}   to  ${webbCurrencyIdToString(unwrapToken)}`
+        ),
+        path,
+      });
+      const tx = await webbGovernedToken.unwrap(
+        currenciesConfig[unwrapToken].addresses.get(this.currentChainId!)!,
+        amount
+      );
+      await tx.wait();
+      transactionNotificationConfig.finalize?.({
+        address: 'recipient',
+        key: 'unwrap asset',
+        data: undefined,
+        path,
+      });
+      return tx.hash;
     } catch (e) {
       transactionNotificationConfig.failed?.({
         address: 'recipient',
@@ -251,9 +176,9 @@ export class Web3WrapUnwrap extends WrapUnWrap<WebbWeb3Provider> {
 
   async canWrap(wrapPayload: Web3WrapPayload): Promise<boolean> {
     const { amount: amountNumber } = wrapPayload;
-    const _toWrap = this.otherEdgToken?.id!;
-    const wrapInto = this.currentToken?.id!;
-    const webbGovernedToken = this.governedTokenWrapper(String(wrapInto));
+    const _toWrap = this.otherEdgToken!;
+    const wrapInto = this.currentToken!;
+    const webbGovernedToken = this.governedTokenWrapper(wrapInto);
     const amount = Web3.utils.toWei(String(amountNumber), 'ether');
 
     return webbGovernedToken.canWrap(Number(amount));
@@ -263,64 +188,37 @@ export class Web3WrapUnwrap extends WrapUnWrap<WebbWeb3Provider> {
     const { amount: amountNumber } = wrapPayload;
 
     const toWrap = this.otherEdgToken!;
-    const wrapInto = this.currentToken?.id!;
-    const webbGovernedToken = this.governedTokenWrapper(String(wrapInto));
+    const wrapInto = this.currentToken!;
+    const webbGovernedToken = this.governedTokenWrapper(wrapInto);
     const amount = Web3.utils.toWei(String(amountNumber), 'ether');
     let path = {
       method: '',
       section: '',
     };
     try {
-      if (toWrap.variant === 'native-token') {
-        path = {
-          method: `wrap`,
-          section: `GovernedTokenWrapper`,
-        };
-        transactionNotificationConfig.loading?.({
-          address: 'recipient',
-          key: 'wrap asset',
-          data: React.createElement(
-            'p',
-            { style: { fontSize: '.9rem' } }, // Matches Typography variant=h6
-            `Wrapping ${String(amountNumber)} of ${webbCurrencyIdToString(Number(toWrap.id))} to ${wrapInto}`
-          ),
-          path,
-        });
-        const tx = await webbGovernedToken.wrap(zeroAddress, amount);
-        await tx.wait();
-        transactionNotificationConfig.finalize?.({
-          address: 'recipient',
-          key: 'wrap asset',
-          data: undefined,
-          path,
-        });
-        return tx.hash;
-      } else {
-        path = {
-          method: `wrap`,
-          section: `GovernedTokenWrapper`,
-        };
-        transactionNotificationConfig.loading?.({
-          address: 'recipient',
-          key: 'wrap asset',
-          data: React.createElement(
-            'p',
-            { style: { fontSize: '.9rem' } }, // Matches Typography variant=h6
-            `Wrapping ${String(amountNumber)} of ${wrapInto} to ${wrapInto}`
-          ),
-          path,
-        });
-        const tokenAddress = this.getAddressFromWrapTokenId(toWrap.id as WebbCurrencyId);
-        const tx = await webbGovernedToken.wrap(tokenAddress, amount);
-        await tx.wait();
-        transactionNotificationConfig.finalize?.({
-          address: 'recipient',
-          key: 'wrap asset',
-          data: undefined,
-          path,
-        });
-        return tx.hash;
-      }
+      path = {
+        method: `wrap`,
+        section: `GovernedTokenWrapper`,
+      };
+      transactionNotificationConfig.loading?.({
+        address: 'recipient',
+        key: 'wrap asset',
+        data: React.createElement(
+          'p',
+          { style: { fontSize: '.9rem' } }, // Matches Typography variant=h6
+          `Wrapping ${String(amountNumber)} of ${webbCurrencyIdToString(toWrap)} to ${wrapInto}`
+        ),
+        path,
+      });
+      const tx = await webbGovernedToken.wrap(currenciesConfig[toWrap].addresses.get(this.currentChainId!)!, amount);
+      await tx.wait();
+      transactionNotificationConfig.finalize?.({
+        address: 'recipient',
+        key: 'wrap asset',
+        data: undefined,
+        path,
+      });
+      return tx.hash;
     } catch (e) {
       transactionNotificationConfig.failed?.({
         address: 'recipient',
@@ -334,7 +232,7 @@ export class Web3WrapUnwrap extends WrapUnWrap<WebbWeb3Provider> {
 
   private getAddressFromWrapTokenId(id: WebbCurrencyId): string {
     const currentNetwork = this.currentChainId!;
-    return currenciesConfig[id].addresses.get(currentNetwork)!; 
+    return currenciesConfig[id].addresses.get(currentNetwork)!;
   }
 
   governedTokenWrapper(id: WebbCurrencyId): WebbGovernedToken {

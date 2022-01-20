@@ -7,7 +7,7 @@ import ShidenLogo from '@webb-dapp/apps/configs/logos/ShidenLogo';
 import WEBBLogo from '@webb-dapp/apps/configs/logos/WebbLogo';
 import WebbWrappedLogo from '@webb-dapp/apps/configs/logos/WebbWrappedLogo';
 import { AppConfig } from '@webb-dapp/react-environment';
-import { CurrencyType } from '@webb-dapp/react-environment/webb-context/currency/currency';
+import { CurrencyType } from '@webb-dapp/react-environment/types/currency-config.interface';
 import React from 'react';
 
 import { WebbCurrencyId } from './webb-currency-id.enum';
@@ -18,7 +18,7 @@ export const currenciesConfig: AppConfig['currencies'] = {
     symbol: 'EDG',
     color: '',
     id: WebbCurrencyId.EDG,
-    type: CurrencyType.WrappableCurrency,
+    type: CurrencyType.OrmlCurrency,
     icon: React.createElement(EdgewareLogo),
     addresses: new Map(),
   },
@@ -27,7 +27,7 @@ export const currenciesConfig: AppConfig['currencies'] = {
     symbol: 'tEDG',
     color: '',
     id: WebbCurrencyId.TEDG,
-    type: CurrencyType.WrappableCurrency,
+    type: CurrencyType.OrmlCurrency,
     icon: React.createElement(EdgewareLogo),
     addresses: new Map(),
   },
@@ -36,7 +36,7 @@ export const currenciesConfig: AppConfig['currencies'] = {
     symbol: 'ETH',
     color: '',
     id: WebbCurrencyId.ETH,
-    type: CurrencyType.WrappableCurrency,
+    type: CurrencyType.WrappableEvmCurrency,
     icon: React.createElement(EtherLogo),
     addresses: new Map([
       [ChainId.Ropsten, '0x0000000000000000000000000000000000000000'],
@@ -52,7 +52,7 @@ export const currenciesConfig: AppConfig['currencies'] = {
     symbol: 'ONE',
     color: '',
     id: WebbCurrencyId.ONE,
-    type: CurrencyType.WrappableCurrency,
+    type: CurrencyType.WrappableEvmCurrency,
     icon: React.createElement(HarmonyLogo),
     addresses: new Map([
       [ChainId.HarmonyMainnet0, '0x0000000000000000000000000000000000000000'],
@@ -65,7 +65,7 @@ export const currenciesConfig: AppConfig['currencies'] = {
     symbol: 'WEBB',
     color: '',
     id: WebbCurrencyId.WEBB,
-    type: CurrencyType.WrappableCurrency,
+    type: CurrencyType.WrappableEvmCurrency,
     icon: React.createElement(WEBBLogo),
     addresses: new Map(),
   },
@@ -74,7 +74,7 @@ export const currenciesConfig: AppConfig['currencies'] = {
     symbol: 'SDN',
     color: '',
     id: WebbCurrencyId.SDN,
-    type: CurrencyType.WrappableCurrency,
+    type: CurrencyType.WrappableEvmCurrency,
     icon: React.createElement(ShidenLogo),
     addresses: new Map([[ChainId.Shiden, '0x0000000000000000000000000000000000000000']]),
   },
@@ -83,7 +83,7 @@ export const currenciesConfig: AppConfig['currencies'] = {
     symbol: 'WETH',
     color: '',
     id: WebbCurrencyId.WETH,
-    type: CurrencyType.WrappableCurrency,
+    type: CurrencyType.WrappableEvmCurrency,
     icon: React.createElement(EtherLogo),
     addresses: new Map([
       [ChainId.Ropsten, '0xc778417E063141139Fce010982780140Aa0cD5Ab'],
@@ -100,24 +100,24 @@ export const currenciesConfig: AppConfig['currencies'] = {
     symbol: 'MATIC',
     color: '',
     id: WebbCurrencyId.MATIC,
-    type: CurrencyType.WrappableCurrency,
+    type: CurrencyType.WrappableEvmCurrency,
     icon: React.createElement(PolygonLogo),
     addresses: new Map([[ChainId.PolygonTestnet, '0x0000000000000000000000000000000000000000']]),
   },
   [WebbCurrencyId.webbWETH]: {
-    name: "webbWETH-4-5-7-13-14-15",
+    name: 'webbWETH-4-5-7-13-14-15',
     symbol: 'webbWETH',
     color: '',
     id: WebbCurrencyId.webbWETH,
     type: CurrencyType.BridgeCurrency,
     icon: WebbWrappedLogo(EtherLogo()),
-    addresses: new Map([  
-      [ChainId.Ropsten, "0x105779076d17FAe5EAADF010CA677475549F49E4"],
-      [ChainId.Rinkeby, "0x4e7D4BEe028655F2865d9D147cF7B609c516d39C"],
-      [ChainId.Goerli, "0x5257c558c246311552A824c491285667B3a445a2"],
-      [ChainId.PolygonTestnet, "0x50A7b748F3C50F808a289cA041E48834A41A6d95"],
-      [ChainId.OptimismTestnet, "0xEAF873F1F6c91fEf73d4839b5fC7954554BBE518"],
-      [ChainId.ArbitrumTestnet, "0xD6F1E78B5F1Ebf8fF5a60C9d52eabFa73E5c5220"],
+    addresses: new Map([
+      [ChainId.Ropsten, '0x105779076d17FAe5EAADF010CA677475549F49E4'],
+      [ChainId.Rinkeby, '0x4e7D4BEe028655F2865d9D147cF7B609c516d39C'],
+      [ChainId.Goerli, '0x5257c558c246311552A824c491285667B3a445a2'],
+      [ChainId.PolygonTestnet, '0x50A7b748F3C50F808a289cA041E48834A41A6d95'],
+      [ChainId.OptimismTestnet, '0xEAF873F1F6c91fEf73d4839b5fC7954554BBE518'],
+      [ChainId.ArbitrumTestnet, '0xD6F1E78B5F1Ebf8fF5a60C9d52eabFa73E5c5220'],
     ]),
   },
 };
@@ -126,13 +126,12 @@ export const currenciesConfig: AppConfig['currencies'] = {
 // currency Address => currency ID
 const createReverseCurrencyMap = (): Map<string, WebbCurrencyId> => {
   let contractMapping = new Map<string, WebbCurrencyId>();
-  
-  Object.values(currenciesConfig)
-	  .forEach((config) => {
-		  config.addresses.forEach((addressEntry) => {
-        contractMapping.set(addressEntry, config.id as WebbCurrencyId);
-      })
-	  });
+
+  Object.values(currenciesConfig).forEach((config) => {
+    config.addresses.forEach((addressEntry) => {
+      contractMapping.set(addressEntry, config.id as WebbCurrencyId);
+    });
+  });
 
   return contractMapping;
 };

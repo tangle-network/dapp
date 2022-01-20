@@ -277,7 +277,7 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
                         <ListItemAvatar>
                           <Avatar
                             onClick={() => {
-                              addTokenToMetaMask(selected?.id);
+                              addTokenToMetaMask(selected?.id!);
                             }}
                             style={{ background: 'transparent' }}
                             children={Icon}

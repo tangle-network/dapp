@@ -1,7 +1,6 @@
 import * as React from 'react';
 
 function WebbWrappedLogo(element: JSX.Element) {
-
   return (
     <div
       style={{
@@ -27,11 +26,11 @@ function WebbWrappedLogo(element: JSX.Element) {
           color: 'blue',
         }}
       >
-      🕸
+        🕸
       </div>
-    {element}
+      {element}
     </div>
-  )
+  );
 }
 
 export default WebbWrappedLogo;

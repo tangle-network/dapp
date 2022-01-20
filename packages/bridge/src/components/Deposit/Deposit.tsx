@@ -3,8 +3,8 @@ import { ChainId, WebbCurrencyId } from '@webb-dapp/apps/configs';
 import { DepositConfirm } from '@webb-dapp/bridge/components/DepositConfirm/DepositConfirm';
 import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
 import { useBridgeDeposit } from '@webb-dapp/bridge/hooks/deposit/useBridgeDeposit';
-import { Currency } from '@webb-dapp/react-environment/webb-context/currency/currency';
 import { MixerSize, useWebContext } from '@webb-dapp/react-environment/webb-context';
+import { Currency } from '@webb-dapp/react-environment/webb-context/currency/currency';
 import { SpaceBox } from '@webb-dapp/ui-components/Box';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { ChainInput } from '@webb-dapp/ui-components/Inputs/ChainInput/ChainInput';
@@ -71,7 +71,7 @@ export const Deposit: React.FC<DepositProps> = () => {
   };
 
   const tokenChains = useMemo(() => {
-    return selectedBridgeCurrency?.chainIds ?? [];
+    return selectedBridgeCurrency?.getChainIds() ?? [];
   }, [selectedBridgeCurrency]);
   const disabledDepositButton = typeof item?.id === 'undefined' || typeof destChain === 'undefined';
 
@@ -144,7 +144,7 @@ export const Deposit: React.FC<DepositProps> = () => {
             )}
             {!showWrappableAssets && selectedBridgeCurrency && (
               <Typography>
-                {selectedBridgeCurrency?.name} Balance: {wrappedTokenBalance}
+                {selectedBridgeCurrency?.view.symbol} Balance: {wrappedTokenBalance}
               </Typography>
             )}
           </div>
