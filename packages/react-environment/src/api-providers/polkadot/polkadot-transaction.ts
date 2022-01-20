@@ -43,7 +43,7 @@ type PolkadotTXEvents = {
   beforeSend: PolkadotTXEventsPayload;
   afterSend: PolkadotTXEventsPayload;
   failed: PolkadotTXEventsPayload<string>;
-  finalize: PolkadotTXEventsPayload;
+  finalize: PolkadotTXEventsPayload<string | void | undefined>;
   inBlock: PolkadotTXEventsPayload;
   extrinsicSuccess: PolkadotTXEventsPayload;
   loading: PolkadotTXEventsPayload<JSX.Element>;
