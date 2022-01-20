@@ -16,7 +16,7 @@ export const useBridge = () => {
     [config]
   );
   const getBridge = (bridgeCurrency: BridgeCurrency) => {
-    return Bridge.from(config, bridgeCurrency);
+    return Bridge.from(bridgeCurrency);
   };
   return {
     getBridge,

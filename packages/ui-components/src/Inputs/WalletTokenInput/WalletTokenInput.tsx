@@ -1,5 +1,5 @@
 import { useWebContext } from '@webb-dapp/react-environment';
-import { Currency } from '@webb-dapp/react-environment/types/currency';
+import { Currency } from '@webb-dapp/react-environment/webb-context/currency/currency';
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
 

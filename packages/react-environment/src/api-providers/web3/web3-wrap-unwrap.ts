@@ -1,8 +1,7 @@
 import {
-  BridgeConfig,
-  bridgeConfig,
-  BridgeCurrency,
+  bridgeConfigByAsset,
   ChainId,
+  currenciesConfig,
   evmIdIntoChainId,
   getSupportedCurrenciesOfChain,
   WebbCurrencyId,
@@ -311,7 +310,7 @@ export class Web3WrapUnwrap extends WrapUnWrap<WebbWeb3Provider> {
           ),
           path,
         });
-        const tokenAddress = this.getAddressFromWrapTokenId(String(toWrap.id));
+        const tokenAddress = this.getAddressFromWrapTokenId(toWrap.id as WebbCurrencyId);
         const tx = await webbGovernedToken.wrap(tokenAddress, amount);
         await tx.wait();
         transactionNotificationConfig.finalize?.({
@@ -333,20 +332,13 @@ export class Web3WrapUnwrap extends WrapUnWrap<WebbWeb3Provider> {
     }
   }
 
-  private getAddressFromWrapTokenId(id: string): string {
-    const bridgeCurrency = BridgeCurrency.fromString(id);
-    const bridgeEntry = Bridge.getConfigEntry(this.bridgeConfig, bridgeCurrency);
+  private getAddressFromWrapTokenId(id: WebbCurrencyId): string {
     const currentNetwork = this.currentChainId!;
-
-    return bridgeEntry.tokenAddresses[currentNetwork]!;
+    return currenciesConfig[id].addresses.get(currentNetwork)!; 
   }
 
-  governedTokenWrapper(id: string): WebbGovernedToken {
-    const bridgeCurrency = BridgeCurrency.fromString(id);
-    const bridgeEntry = Bridge.getConfigEntry(this.bridgeConfig, bridgeCurrency);
-    const currentNetwork = this.currentChainId!;
-
-    const contractAddress = bridgeEntry.tokenAddresses[currentNetwork]!;
+  governedTokenWrapper(id: WebbCurrencyId): WebbGovernedToken {
+    const contractAddress = this.getAddressFromWrapTokenId(id);
     return new WebbGovernedToken(this.inner.getEthersProvider(), contractAddress);
   }
 }

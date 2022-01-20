@@ -3,7 +3,7 @@ import { ChainId, WebbCurrencyId } from '@webb-dapp/apps/configs';
 import { DepositConfirm } from '@webb-dapp/bridge/components/DepositConfirm/DepositConfirm';
 import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
 import { useBridgeDeposit } from '@webb-dapp/bridge/hooks/deposit/useBridgeDeposit';
-import { Currency } from '@webb-dapp/react-environment/types/currency';
+import { Currency } from '@webb-dapp/react-environment/webb-context/currency/currency';
 import { MixerSize, useWebContext } from '@webb-dapp/react-environment/webb-context';
 import { SpaceBox } from '@webb-dapp/ui-components/Box';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';

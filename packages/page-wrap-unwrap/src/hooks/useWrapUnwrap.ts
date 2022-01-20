@@ -1,6 +1,6 @@
 import { BridgeCurrency } from '@webb-dapp/apps/configs';
 import { useWebContext } from '@webb-dapp/react-environment';
-import { Currency, CurrencyContent } from '@webb-dapp/react-environment/types/currency';
+import { Currency, CurrencyContent } from '@webb-dapp/react-environment/webb-context/currency/currency';
 import { WrappingEventNames, WrappingTokenId } from '@webb-dapp/react-environment/webb-context/wrap-unwrap';
 import { fromBridgeCurrencyToCurrencyView } from '@webb-dapp/ui-components/Inputs/WalletBridgeCurrencyInput/WalletBridgeCurrencyInput';
 import { useCallback, useEffect, useMemo, useState } from 'react';

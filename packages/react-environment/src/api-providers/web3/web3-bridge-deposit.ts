@@ -12,7 +12,7 @@ import { ERC20__factory } from '@webb-dapp/contracts/types';
 import { createAnchor2Deposit, Deposit } from '@webb-dapp/contracts/utils/make-deposit';
 import { DepositPayload as IDepositPayload, MixerSize } from '@webb-dapp/react-environment';
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3/webb-web3-provider';
-import { Currency } from '@webb-dapp/react-environment/types/currency';
+import { Currency } from '@webb-dapp/react-environment/webb-context/currency/currency';
 import { notificationApi } from '@webb-dapp/ui-components/notification';
 import { DepositNotification } from '@webb-dapp/ui-components/notification/DepositNotification';
 import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polkadot/transaction-notification-config';

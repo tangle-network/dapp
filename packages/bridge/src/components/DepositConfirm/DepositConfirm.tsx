@@ -1,7 +1,7 @@
 import { ButtonBase, Checkbox, FormControlLabel, Icon, IconButton, Tooltip, Typography } from '@material-ui/core';
 import { ChainId } from '@webb-dapp/apps/configs';
 import { BridgeDepositApi as DepositApi } from '@webb-dapp/bridge/hooks/deposit/useBridgeDeposit';
-import { Currency } from '@webb-dapp/react-environment/types/currency';
+import { Currency } from '@webb-dapp/react-environment/webb-context/currency/currency';
 import { DepositPayload, useWebContext } from '@webb-dapp/react-environment/webb-context';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';

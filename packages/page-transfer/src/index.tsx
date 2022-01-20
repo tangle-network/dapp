@@ -3,7 +3,7 @@ import { ChainId, currenciesConfig, WebbCurrencyId } from '@webb-dapp/apps/confi
 import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
 import IPDisplay from '@webb-dapp/react-components/IPDisplay/IPDisplay';
 import { useWebContext } from '@webb-dapp/react-environment';
-import { Currency, CurrencyContent } from '@webb-dapp/react-environment/types/currency';
+import { Currency, CurrencyContent } from '@webb-dapp/react-environment/webb-context/currency/currency';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { ContentWrapper } from '@webb-dapp/ui-components/ContentWrappers';
