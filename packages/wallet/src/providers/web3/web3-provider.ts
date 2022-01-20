@@ -1,5 +1,5 @@
 import WalletConnectProvider from '@walletconnect/web3-provider';
-import { Bridge, bridgeConfig, BridgeCurrency, ProvideCapabilities } from '@webb-dapp/react-environment';
+import { ProvideCapabilities } from '@webb-dapp/react-environment';
 import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import { ethers } from 'ethers';
 import Web3 from 'web3';

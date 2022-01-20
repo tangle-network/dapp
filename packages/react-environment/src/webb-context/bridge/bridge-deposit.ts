@@ -1,11 +1,9 @@
-import { ChainId } from '@webb-dapp/apps/configs';
+import { BridgeConfig, BridgeCurrency, ChainId } from '@webb-dapp/apps/configs';
 import { Currency } from '@webb-dapp/react-environment/types/currency';
 import { Bridge } from '@webb-dapp/react-environment/webb-context/bridge/bridge';
-import { BridgeConfig } from '@webb-dapp/react-environment/webb-context/bridge/bridge-config';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 import { DepositPayload, MixerDeposit } from '../mixer/mixer-deposit';
-import { BridgeCurrency } from '.';
 
 export abstract class BridgeDeposit<T, K extends DepositPayload = DepositPayload<any>> extends MixerDeposit<T, K> {
   abstract bridgeConfig: BridgeConfig;

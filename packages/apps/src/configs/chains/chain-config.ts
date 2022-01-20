@@ -3,12 +3,12 @@ import EdgewareLogo from '@webb-dapp/apps/configs/logos/EdgewareLogo';
 import EtherLogo from '@webb-dapp/apps/configs/logos/Eth';
 import HarmonyLogo from '@webb-dapp/apps/configs/logos/HarmonyLogo';
 import OptimismLogo from '@webb-dapp/apps/configs/logos/OptimismLogo';
+import PolygonLogo from '@webb-dapp/apps/configs/logos/PolygonLogo';
 import ShidenLogo from '@webb-dapp/apps/configs/logos/ShidenLogo';
+import WEBBLogo from '@webb-dapp/apps/configs/logos/WebbLogo';
 import { AppConfig } from '@webb-dapp/react-environment/webb-context';
 
 import { WebbCurrencyId } from '../currencies/webb-currency-id.enum';
-import PolygonLogo from '../logos/PolygonLogo';
-import WEBBLogo from '../logos/WebbLogo';
 import { ChainId, WebbEVMChain } from './chain-id.enum';
 
 export const getSupportedCurrenciesOfChain = (chainId: ChainId): WebbCurrencyId[] => {

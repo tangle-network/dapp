@@ -1,8 +1,7 @@
-import { ChainId } from '@webb-dapp/apps/configs';
+import { BridgeCurrency, ChainId } from '@webb-dapp/apps/configs';
 import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
 import {
   Bridge,
-  BridgeCurrency,
   BridgeDeposit,
   DepositPayload,
   MixerDeposit,

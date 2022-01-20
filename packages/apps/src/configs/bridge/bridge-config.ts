@@ -1,5 +1,4 @@
-import { ChainId, WebbCurrencyId } from '@webb-dapp/apps/configs';
-import { BridgeCurrency } from '@webb-dapp/react-environment/webb-context/bridge/bridge-currency';
+import { BridgeCurrency, ChainId, WebbCurrencyId } from '@webb-dapp/apps/configs';
 
 // todo change to wrappedTokenAddresses (they are  governed token wrapper contract)
 // todo change to Fixed anchors
@@ -65,7 +64,7 @@ export const bridgeConfig: BridgeConfig = {
 };
 
 export const getAnchorAddressForBridge = (assetName: string, chainId: number, amount: number): string | undefined => {
-  const linkedAnchorConfig = bridgeConfig[assetName]?.anchors.find((anchor) => anchor.amount == amount.toString());
+  const linkedAnchorConfig = bridgeConfig[assetName]?.anchors.find((anchor) => anchor.amount === amount.toString());
   if (!linkedAnchorConfig) {
     throw new Error('Unsupported configuration for bridge');
   }

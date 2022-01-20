@@ -1,5 +1,6 @@
+import { BridgeCurrency } from '@webb-dapp/apps/configs';
 import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
-import { BridgeCurrency, useWebContext } from '@webb-dapp/react-environment';
+import { useWebContext } from '@webb-dapp/react-environment';
 import { Currency, CurrencyContent, CurrencyView } from '@webb-dapp/react-environment/types/currency';
 import React, { useMemo } from 'react';
 import styled from 'styled-components';

@@ -1,6 +1,5 @@
-import { ChainId } from '@webb-dapp/apps/configs';
+import { BridgeConfig, ChainId } from '@webb-dapp/apps/configs';
 import { Bridge } from '@webb-dapp/react-environment/webb-context/bridge/bridge';
-import { BridgeConfig } from '@webb-dapp/react-environment/webb-context/bridge/bridge-config';
 
 import { MixerWithdraw } from '../mixer/mixer-withdraw';
 

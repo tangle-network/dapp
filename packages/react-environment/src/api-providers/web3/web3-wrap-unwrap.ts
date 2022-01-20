@@ -1,13 +1,15 @@
 import {
+  BridgeConfig,
+  bridgeConfig,
+  BridgeCurrency,
   ChainId,
-  chainsConfig,
   evmIdIntoChainId,
   getSupportedCurrenciesOfChain,
   WebbCurrencyId,
   webbCurrencyIdToString,
 } from '@webb-dapp/apps/configs';
 import { WebbGovernedToken, zeroAddress } from '@webb-dapp/contracts/contracts';
-import { Bridge, BridgeConfig, bridgeConfig, BridgeCurrency, MixerSize } from '@webb-dapp/react-environment';
+import { Bridge, MixerSize } from '@webb-dapp/react-environment';
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers';
 import {
   Amount,
