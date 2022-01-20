@@ -11,5 +11,5 @@ export interface ChainConfig {
   blockExplorerStub?: string;
   logo: React.ComponentType;
   nativeCurrencyId: WebbCurrencyId;
-  currencies: Array<{ currencyId: WebbCurrencyId; enabled: boolean; address: string }>;
+  currencies: Array<WebbCurrencyId>;
 }

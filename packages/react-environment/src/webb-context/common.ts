@@ -1,4 +1,4 @@
-import { ChainConfig } from '@webb-dapp/react-environment/types/chian-config.interface';
+import { ChainConfig } from '@webb-dapp/react-environment/types/chain-config.interface';
 import { CurrencyConfig } from '@webb-dapp/react-environment/types/currency';
 import { WalletConfig } from '@webb-dapp/react-environment/types/wallet-config.interface';
 

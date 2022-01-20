@@ -130,14 +130,12 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({
     });
   }, []);
   useEffect(() => {
-    if (typeof destChain === 'undefined' || !mixerId) {
+    if (typeof destChain === 'undefined' || !mixerId || !activeChain) {
       return setNote(undefined);
     }
 
-    const wrappableCurrency = activeChain?.currencies.find(
-      (currency) => currency.currencyId == wrappableAsset?.view.id
-    );
-    provider.generateNote(mixerId, destChain, wrappableCurrency?.address).then((note) => {
+    const wrappableCurrencyAddress: string | undefined = wrappableAsset?.getAddress(activeChain.id);
+    provider.generateNote(mixerId, destChain, wrappableCurrencyAddress).then((note) => {
       setNote(note);
     });
   }, [provider, mixerId, destChain, activeChain, wrappableAsset]);

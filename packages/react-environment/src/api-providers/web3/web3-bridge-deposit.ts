@@ -3,6 +3,7 @@ import {
   ChainId,
   chainIdIntoEVMId,
   chainsConfig,
+  currenciesConfig,
   evmIdIntoChainId,
   getEVMChainNameFromInternal,
 } from '@webb-dapp/apps/configs';
@@ -190,23 +191,23 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
       const wrappedTokenAddress = bridge.getTokenAddress(chainId);
       if (!wrappedTokenAddress) return [];
 
+      // Get the available token addresses which can wrap into the wrappedToken
       const wrappedToken = new WebbGovernedToken(this.inner.getEthersProvider(), wrappedTokenAddress);
       const tokenAddresses = await wrappedToken.tokens;
 
-      // take the currencies of the chain and return the ones that have addresses
-      const wrappableAssets = chainsConfig[chainId].currencies.filter((currency) => {
-        return tokenAddresses.find((tokenAddress) => tokenAddress === currency.address);
+      // TODO: dynamic wrappable assets - consider some Currency constructor via address & default token config.
+
+      // If the tokenAddress matches one of the wrappableCurrencies, return it
+      const wrappableCurrencyIds = chainsConfig[chainId].currencies.filter((currencyId) => {
+        const wrappableTokenAddress = currenciesConfig[currencyId].addresses.get(chainId);
+        return wrappableTokenAddress && tokenAddresses.includes(wrappableTokenAddress);
       });
 
-      const wrappableCurrencies = wrappableAssets.map((asset) => {
-        return Currency.fromCurrencyId(asset.currencyId);
+      if (await wrappedToken.isNativeAllowed()) wrappableCurrencyIds.push(chainsConfig[chainId].nativeCurrencyId);
+
+      const wrappableCurrencies = wrappableCurrencyIds.map((currencyId) => {
+        return Currency.fromCurrencyId(currencyId);
       });
-
-      const isNativeWrappable = await wrappedToken.isNativeAllowed();
-
-      if (isNativeWrappable) {
-        wrappableCurrencies.push(Currency.fromCurrencyId(chainsConfig[chainId].nativeCurrencyId));
-      }
 
       return wrappableCurrencies;
     }

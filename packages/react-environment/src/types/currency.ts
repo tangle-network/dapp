@@ -6,20 +6,22 @@ import { createElement } from 'react';
 const chains = chainsPopulated;
 
 export interface CurrencyView {
-  id: WebbCurrencyId | string | number;
+  id: WebbCurrencyId | string;
   icon: ReturnType<typeof createElement>;
   name: string;
   color?: string;
   symbol: string;
-  addresses?: Map<ChainId, string>;
 }
 
-export interface CurrencyConfig extends Omit<CurrencyView, 'chainName'> {}
+export interface CurrencyConfig extends CurrencyView {
+  addresses: Map<ChainId, string>;
+}
 
 export abstract class CurrencyContent {
   abstract get view(): CurrencyView;
 }
 
+// This currency class assumes that instances are wrappable assets.
 export class Currency extends CurrencyContent {
   constructor(private data: CurrencyConfig) {
     super();
@@ -32,15 +34,18 @@ export class Currency extends CurrencyContent {
 
   get supportedChains(): Chain[] {
     return Object.values(chains).filter((chain) => {
-      const currencyIndex = chain.currencies.findIndex((currency) => {
-        return this.data.id == currency.currencyId;
-      });
-      return currencyIndex > -1;
+      if (chain.currencies.includes(this.data.id as WebbCurrencyId)) {
+        return true;
+      }
+      return false;
     });
   }
 
+  getAddress(chain: ChainId): string | undefined {
+    return this.data.addresses.get(chain);
+  }
+
   get view(): CurrencyView {
-    const nativeCurrencyForChain = Object.values(chains).find((chain) => chain.nativeCurrencyId == this.data.id);
     return {
       icon: this.data.icon,
       id: this.data.id,

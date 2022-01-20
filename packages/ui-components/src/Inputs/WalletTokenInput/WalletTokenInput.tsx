@@ -24,7 +24,7 @@ type WalletTokenInputProps = {
 export const WalletTokenInput: React.FC<WalletTokenInputProps> = ({ selectedToken, setSelectedToken }) => {
   const { activeChain, activeWallet } = useWebContext();
   const allCurrencies = useMemo(() => {
-    return activeChain?.currencies.map(({ currencyId }) => Currency.fromCurrencyId(currencyId)) ?? [];
+    return activeChain?.currencies.map((currencyId) => Currency.fromCurrencyId(currencyId)) ?? [];
   }, [activeChain]);
   const active = useMemo(() => selectedToken ?? allCurrencies[0], [allCurrencies, selectedToken]);
   return (
