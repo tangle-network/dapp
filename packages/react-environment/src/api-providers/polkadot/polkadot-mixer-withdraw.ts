@@ -21,6 +21,7 @@ const logger = LoggerService.get('PolkadotMixerWithdraw');
 const transactionString = (hexString: string) => {
   return `${hexString.slice(0, 6)}...${hexString.slice(hexString.length - 4, hexString.length)}`;
 };
+
 async function fetchSubstrateProvingKey() {
   const IPFSUrl = `https://ipfs.io/ipfs/QmQWnELR1oRUpoAo6URNK2XbGCfEk6sPdJioeSYqZW6cqi`;
   const cachedURI = getCachedFixtureURI('QmQWnELR1oRUpoAo6URNK2XbGCfEk6sPdJioeSYqZW6cqi');
@@ -131,8 +132,9 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
 
       const provingKey = await fetchSubstrateProvingKey();
       const activeRelayer = this.activeRelayer[0];
-      if (activeRelayer) {
-        const relayerAccountHex = u8aToHex(decodeAddress('nJrsrH8dov9Z36kTDpabgCZT8CbK1FbmjJvfU6qbMTG4g4c'));
+      if (activeRelayer && activeRelayer.beneficiary) {
+        const relayerAccountId = activeRelayer.beneficiary;
+        const relayerAccountHex = u8aToHex(decodeAddress(activeRelayer.beneficiary));
         transactionNotificationConfig.loading?.({
           address: activeRelayer.endpoint,
           data: React.createElement(

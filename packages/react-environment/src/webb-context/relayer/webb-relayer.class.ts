@@ -134,12 +134,9 @@ export class WebbRelayerBuilder {
           : new Map(),
         substrate: info.substrate
           ? Object.keys(info.substrate)
-              .filter(
-                (key) =>
-                  info.evm[key]?.account || info.evm[key]?.beneficiary || 1 /*&& nameAdapter(key, 'substrate') != null*/
-              )
+              .filter((key) => info.substrate[key]?.beneficiary || nameAdapter(key, 'substrate') != null)
               .reduce((m, key) => {
-                m.set(nameAdapter(key, 'substrate'), info.evm[key]);
+                m.set(nameAdapter(key, 'substrate'), info.substrate[key]);
                 return m;
               }, new Map())
           : new Map(),
@@ -338,7 +335,7 @@ class RelayedWithdraw {
 
   generateWithdrawRequest<T extends RelayedChainInput, C extends CMDSwitcher<T['baseOn']>>(
     chain: T,
-    proof: RelayerCMDs<T['baseOn'], C>['proof'] ,
+    proof: RelayerCMDs<T['baseOn'], C>['proof'],
     args: WithdrawRelayerArgs<T['baseOn'], C>
   ) {
     return {
