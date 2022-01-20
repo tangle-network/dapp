@@ -104,43 +104,56 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
   async submitViaRelayer() {}
 
   async withdraw(note: string, recipient: string): Promise<string> {
-    this.emit('stateChange', WithdrawState.GeneratingZk);
-
-    // parse the note
-    const noteParsed = await Note.deserialize(note);
-    const depositAmount = noteParsed.note.amount;
-    const amount = depositAmount;
-    const sizes = await PolkadotMixerDeposit.getSizes(this.inner);
-    const treeId = sizes.find((s) => s.value === Number(amount))?.treeId!;
-    logger.trace(`Tree Id `, treeId);
-    const leaves = await this.fetchTreeLeaves(treeId);
-    const leaf = u8aToHex(noteParsed.getLeaf());
-    const leafIndex = leaves.findIndex((l) => u8aToHex(l) === leaf);
-    logger.trace(`leaf ${leaf} has index `, leafIndex);
-
-    logger.trace(leaves.map((i) => u8aToHex(i)));
     try {
-      const pm = new ProvingManager(new Worker());
+      // Get the sender account
       const account = await this.inner.accounts.activeOrDefault;
       if (!account) {
         throw WebbError.from(WebbErrorCodes.NoAccountAvailable);
       }
+
+      this.emit('stateChange', WithdrawState.GeneratingZk);
+
+      // parse the note
+      const noteParsed = await Note.deserialize(note);
+      const depositAmount = noteParsed.note.amount;
+      const amount = depositAmount;
+      const sizes = await PolkadotMixerDeposit.getSizes(this.inner);
+      const treeId = sizes.find((s) => s.value === Number(amount))?.treeId!;
+      logger.trace(`Tree Id `, treeId);
+      const leaves = await this.fetchTreeLeaves(treeId);
+      const leaf = u8aToHex(noteParsed.getLeaf());
+      const leafIndex = leaves.findIndex((l) => u8aToHex(l) === leaf);
+      logger.trace(`leaf ${leaf} has index `, leafIndex);
+      logger.trace(leaves.map((i) => u8aToHex(i)));
+      const activeRelayer = this.activeRelayer[0];
+
+      const pm = new ProvingManager(new Worker());
+
       const recipientAccountHex = u8aToHex(decodeAddress(recipient));
       // ss58 format
-      const relayerAccountId = recipient;
-      const relayerAccountHex = recipientAccountHex;
-
+      const relayerAccountId = activeRelayer ? activeRelayer.beneficiary! : recipient;
+      const relayerAccountHex = u8aToHex(decodeAddress(relayerAccountId));
+      // fetching the proving key
       const provingKey = await fetchSubstrateProvingKey();
-      const activeRelayer = this.activeRelayer[0];
-      if (activeRelayer && activeRelayer.beneficiary) {
-        const relayerAccountId = activeRelayer.beneficiary;
-        const relayerAccountHex = u8aToHex(decodeAddress(activeRelayer.beneficiary));
+      const isValidRelayer = Boolean(activeRelayer && activeRelayer.beneficiary);
+      const proofInput: ProvingManagerSetupInput = {
+        leaves,
+        note,
+        leafIndex,
+        refund: 0,
+        fee: 0,
+        recipient: recipientAccountHex.replace('0x', ''),
+        relayer: relayerAccountHex.replace('0x', ''),
+        provingKey,
+      };
+
+      if (isValidRelayer) {
         transactionNotificationConfig.loading?.({
-          address: activeRelayer.endpoint,
+          address: activeRelayer!.endpoint,
           data: React.createElement(
             'p',
             { style: { fontSize: '.9rem' } }, // Matches Typography variant=h6
-            `Withdraw throw ${activeRelayer.endpoint} in progress`
+            `Withdraw throw ${activeRelayer!.endpoint} in progress`
           ),
           key: 'mixer-withdraw-sub',
           path: {
@@ -148,31 +161,24 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
             section: 'withdraw',
           },
         });
-        logger.info(`withdrawing through relayer`, activeRelayer);
-        const proofInput: ProvingManagerSetupInput = {
-          leaves,
-          note,
-          leafIndex,
-          refund: 0,
-          fee: 0,
-          recipient: recipientAccountHex.replace('0x', ''),
-          relayer: relayerAccountHex.replace('0x', ''),
-          provingKey,
-        };
-        const zkProofMetadata = await pm.proof(proofInput);
-        const withdrawProof: WithdrawProof = {
-          id: String(treeId),
-          proofBytes: `0x${zkProofMetadata.proof}` as any,
-          root: `0x${zkProofMetadata.root}`,
-          nullifierHash: `0x${zkProofMetadata.nullifierHash}`,
-          recipient: recipient,
-          relayer: relayerAccountId,
-          fee: 0,
-          refund: 0,
-        };
-        this.emit('stateChange', WithdrawState.SendingTransaction);
+      }
+      const zkProofMetadata = await pm.proof(proofInput);
 
-        const relayerMixerTx = await activeRelayer.initWithdraw('mixerRelayTx');
+      const withdrawProof: WithdrawProof = {
+        id: String(treeId),
+        proofBytes: `0x${zkProofMetadata.proof}` as any,
+        root: `0x${zkProofMetadata.root}`,
+        nullifierHash: `0x${zkProofMetadata.nullifierHash}`,
+        recipient: recipient,
+        relayer: relayerAccountId,
+        fee: 0,
+        refund: 0,
+      };
+      // withdraw throw relayer
+      if (isValidRelayer) {
+        logger.info(`withdrawing through relayer`, activeRelayer);
+        this.emit('stateChange', WithdrawState.SendingTransaction);
+        const relayerMixerTx = await activeRelayer!.initWithdraw('mixerRelayTx');
         const relayerWithdrawPayload = relayerMixerTx.generateWithdrawRequest(
           {
             baseOn: 'substrate',
@@ -206,7 +212,7 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
               this.emit('stateChange', WithdrawState.Done);
               this.emit('stateChange', WithdrawState.Ideal);
               transactionNotificationConfig.finalize?.({
-                address: activeRelayer.endpoint,
+                address: activeRelayer!.endpoint,
                 data: `TX hash: ${transactionString(message || '')}`,
                 key: 'mixer-withdraw-sub',
                 path: {
@@ -231,7 +237,7 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
           }
         });
         transactionNotificationConfig.loading?.({
-          address: activeRelayer.endpoint,
+          address: activeRelayer!.endpoint,
           data: React.createElement(
             'p',
             { style: { fontSize: '.9rem' } }, // Matches Typography variant=h6
@@ -247,30 +253,6 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
         const [results, message] = await relayerMixerTx.await();
         return message ?? '';
       }
-      const proofInput: ProvingManagerSetupInput = {
-        leaves,
-        note,
-        leafIndex,
-        refund: 0,
-        fee: 0,
-        recipient: recipientAccountHex.replace('0x', ''),
-        relayer: relayerAccountHex.replace('0x', ''),
-        provingKey,
-      };
-      logger.trace(`Generating zkp proof with proof inputs `, proofInput);
-
-      const zkProofMetadata = await pm.proof(proofInput);
-
-      const withdrawProof: WithdrawProof = {
-        id: String(treeId),
-        proofBytes: `0x${zkProofMetadata.proof}` as any,
-        root: `0x${zkProofMetadata.root}`,
-        nullifierHash: `0x${zkProofMetadata.nullifierHash}`,
-        recipient: recipient,
-        relayer: relayerAccountId,
-        fee: 0,
-        refund: 0,
-      };
       logger.trace(`submitting the transaction of withdraw with params`, withdrawProof);
       this.emit('stateChange', WithdrawState.SendingTransaction);
 
