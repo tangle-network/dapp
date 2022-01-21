@@ -9,7 +9,7 @@ import {
   ZKPWebbInputWithMerkle,
   ZKPWebbInputWithoutMerkle,
 } from '@webb-dapp/contracts/contracts/types';
-import { generateWitness, proofAndVerify } from '@webb-dapp/contracts/contracts/webb-utils';
+import { generateWitness, proofAndVerify, zeroAddress } from '@webb-dapp/contracts/contracts/webb-utils';
 import { createRootsBytes, generateWithdrawProofCallData } from '@webb-dapp/contracts/utils/bridge-utils';
 import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
 import { EvmNote } from '@webb-dapp/contracts/utils/evm-note';
@@ -122,7 +122,7 @@ export class AnchorContract {
 
   async isWrappableTokenApprovalRequired(tokenAddress: string) {
     // Native token never requires approval
-    if (tokenAddress === '0x0000000000000000000000000000000000000000') return false;
+    if (tokenAddress === zeroAddress) return false;
 
     const userAddress = await this.signer.getAddress();
     const tokenInstance = ERC20__factory.connect(tokenAddress, this.signer);
@@ -144,7 +144,7 @@ export class AnchorContract {
     // If a token address was supplied, the user is querying for enough balance of a wrappableToken
     if (tokenAddress) {
       // query for native balance
-      if (tokenAddress === '0x0000000000000000000000000000000000000000') {
+      if (tokenAddress === zeroAddress) {
         tokenBalance = await this.signer.getBalance();
       } else {
         const tokenInstance = ERC20__factory.connect(tokenAddress, this.signer);
@@ -182,11 +182,11 @@ export class AnchorContract {
   async wrapAndDeposit(commitment: string, tokenAddress: string) {
     const value = await this._contract.denomination();
 
-    if (tokenAddress === '0x0000000000000000000000000000000000000000') {
+    if (tokenAddress === zeroAddress) {
       const overrides = { value: value };
 
       const tx = await this._contract.wrapAndDeposit(
-        '0x0000000000000000000000000000000000000000',
+        zeroAddress,
         commitment,
         overrides
       );

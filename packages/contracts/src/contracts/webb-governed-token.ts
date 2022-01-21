@@ -2,11 +2,10 @@ import { GovernedTokenWrapper__factory } from '@webb-dapp/contracts/types/factor
 import { GovernedTokenWrapper } from '@webb-dapp/contracts/types/GovernedTokenWrapper';
 import { LoggerService } from '@webb-tools/app-util';
 import { BigNumberish, Contract, PayableOverrides, providers, Signer } from 'ethers';
+import { zeroAddress } from './webb-utils';
 import utils from 'web3-utils';
 
 const logger = LoggerService.get('WebbGovernedToken');
-
-export const zeroAddress = '0x0000000000000000000000000000000000000000';
 
 function checkNativeAddress(tokenAddress: string): boolean {
   if (tokenAddress === zeroAddress || tokenAddress === '0') {

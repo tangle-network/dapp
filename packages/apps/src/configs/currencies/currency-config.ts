@@ -9,6 +9,7 @@ import WebbWrappedLogo from '@webb-dapp/apps/configs/logos/WebbWrappedLogo';
 import { AppConfig } from '@webb-dapp/react-environment';
 import { CurrencyType } from '@webb-dapp/react-environment/types/currency-config.interface';
 import React from 'react';
+import { zeroAddress } from '@webb-dapp/contracts/contracts';
 
 import { WebbCurrencyId } from './webb-currency-id.enum';
 
@@ -39,12 +40,12 @@ export const currenciesConfig: AppConfig['currencies'] = {
     type: CurrencyType.WrappableEvmCurrency,
     icon: React.createElement(EtherLogo),
     addresses: new Map([
-      [ChainId.Ropsten, '0x0000000000000000000000000000000000000000'],
-      [ChainId.Rinkeby, '0x0000000000000000000000000000000000000000'],
-      [ChainId.Goerli, '0x0000000000000000000000000000000000000000'],
-      [ChainId.Kovan, '0x0000000000000000000000000000000000000000'],
-      [ChainId.OptimismTestnet, '0x0000000000000000000000000000000000000000'],
-      [ChainId.ArbitrumTestnet, '0x0000000000000000000000000000000000000000'],
+      [ChainId.Ropsten, zeroAddress],
+      [ChainId.Rinkeby, zeroAddress],
+      [ChainId.Goerli, zeroAddress],
+      [ChainId.Kovan, zeroAddress],
+      [ChainId.OptimismTestnet, zeroAddress],
+      [ChainId.ArbitrumTestnet, zeroAddress],
     ]),
   },
   [WebbCurrencyId.ONE]: {
@@ -55,9 +56,9 @@ export const currenciesConfig: AppConfig['currencies'] = {
     type: CurrencyType.WrappableEvmCurrency,
     icon: React.createElement(HarmonyLogo),
     addresses: new Map([
-      [ChainId.HarmonyMainnet0, '0x0000000000000000000000000000000000000000'],
-      [ChainId.HarmonyTestnet0, '0x0000000000000000000000000000000000000000'],
-      [ChainId.HarmonyTestnet1, '0x0000000000000000000000000000000000000000'],
+      [ChainId.HarmonyMainnet0, zeroAddress],
+      [ChainId.HarmonyTestnet0, zeroAddress],
+      [ChainId.HarmonyTestnet1, zeroAddress],
     ]),
   },
   [WebbCurrencyId.WEBB]: {
@@ -76,7 +77,7 @@ export const currenciesConfig: AppConfig['currencies'] = {
     id: WebbCurrencyId.SDN,
     type: CurrencyType.WrappableEvmCurrency,
     icon: React.createElement(ShidenLogo),
-    addresses: new Map([[ChainId.Shiden, '0x0000000000000000000000000000000000000000']]),
+    addresses: new Map([[ChainId.Shiden, zeroAddress]]),
   },
   [WebbCurrencyId.WETH]: {
     name: 'Wrapped Ethereum',
@@ -102,7 +103,7 @@ export const currenciesConfig: AppConfig['currencies'] = {
     id: WebbCurrencyId.MATIC,
     type: CurrencyType.WrappableEvmCurrency,
     icon: React.createElement(PolygonLogo),
-    addresses: new Map([[ChainId.PolygonTestnet, '0x0000000000000000000000000000000000000000']]),
+    addresses: new Map([[ChainId.PolygonTestnet, zeroAddress]]),
   },
   [WebbCurrencyId.webbWETH]: {
     name: 'webbETH-test-1',

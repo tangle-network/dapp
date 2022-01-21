@@ -3,6 +3,7 @@ import { ERC20__factory } from '@webb-dapp/contracts/types';
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers';
 import { ChainQuery } from '@webb-dapp/react-environment/webb-context/chain-query';
 import { Currency } from '@webb-dapp/react-environment/webb-context/currency/currency';
+import { zeroAddress } from '@webb-dapp/contracts/contracts';
 import { ethers } from 'ethers';
 
 export class Web3ChainQuery extends ChainQuery<WebbWeb3Provider> {
@@ -51,7 +52,7 @@ export class Web3ChainQuery extends ChainQuery<WebbWeb3Provider> {
     }
 
     // Return the balance of the account if native currency
-    if (address === '0x0000000000000000000000000000000000000000') {
+    if (address === zeroAddress) {
       const tokenBalanceBig = await provider.getBalance(accounts[0].address);
       const tokenBalance = ethers.utils.formatEther(tokenBalanceBig);
       return tokenBalance;
