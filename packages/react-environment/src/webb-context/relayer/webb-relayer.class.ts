@@ -121,6 +121,9 @@ export class WebbRelayerBuilder {
         evm: info.evm
           ? Object.keys(info.evm)
               .filter(
+                /**
+                 * account is deprecated but it's kept here for backward compatibility
+                 * */
                 (key) => (info.evm[key]?.account || info.evm[key]?.beneficiary) && nameAdapter(key, 'evm') != null
               )
               .reduce((m, key) => {
@@ -130,11 +133,7 @@ export class WebbRelayerBuilder {
           : new Map(),
         substrate: info.substrate
           ? Object.keys(info.substrate)
-              .filter(
-                (key) =>
-                  (info.substrate[key]?.beneficiary || info.substrate[key]?.account) &&
-                  nameAdapter(key, 'substrate') != null
-              )
+              .filter((key) => info.substrate[key]?.beneficiary && nameAdapter(key, 'substrate') != null)
               .reduce((m, key) => {
                 m.set(nameAdapter(key, 'substrate'), info.substrate[key]);
                 return m;
