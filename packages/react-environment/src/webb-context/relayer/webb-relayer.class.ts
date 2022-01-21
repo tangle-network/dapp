@@ -130,7 +130,11 @@ export class WebbRelayerBuilder {
           : new Map(),
         substrate: info.substrate
           ? Object.keys(info.substrate)
-              .filter((key) => info.substrate[key]?.beneficiary || nameAdapter(key, 'substrate') != null)
+              .filter(
+                (key) =>
+                  (info.substrate[key]?.beneficiary || info.substrate[key]?.account) &&
+                  nameAdapter(key, 'substrate') != null
+              )
               .reduce((m, key) => {
                 m.set(nameAdapter(key, 'substrate'), info.substrate[key]);
                 return m;
