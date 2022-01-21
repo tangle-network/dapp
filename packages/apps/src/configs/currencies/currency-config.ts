@@ -105,7 +105,7 @@ export const currenciesConfig: AppConfig['currencies'] = {
     addresses: new Map([[ChainId.PolygonTestnet, '0x0000000000000000000000000000000000000000']]),
   },
   [WebbCurrencyId.webbWETH]: {
-    name: 'webbWETH-4-5-7-13-14-15',
+    name: 'webbETH-test-1',
     symbol: 'webbWETH',
     color: '',
     id: WebbCurrencyId.webbWETH,

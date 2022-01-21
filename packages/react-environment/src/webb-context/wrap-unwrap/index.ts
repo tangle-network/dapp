@@ -31,35 +31,33 @@ export type WrappingBalance = {
  * */
 
 export abstract class WrapUnWrap<T, WrapPayload extends Amount = Amount, UnwrapPayload extends Amount = Amount> {
-  private _currentTokenAddress: BehaviorSubject<WebbCurrencyId | null> = new BehaviorSubject<null | WebbCurrencyId>(
-    null
-  );
+  private _currentToken: BehaviorSubject<WebbCurrencyId | null> = new BehaviorSubject<null | WebbCurrencyId>(null);
   private _otherEdgeToken: BehaviorSubject<WebbCurrencyId | null> = new BehaviorSubject<null | WebbCurrencyId>(null);
 
   constructor(protected inner: T) {}
 
   abstract get subscription(): Observable<Partial<WrappingEvent>>;
 
-  setCurrentToken(nextTokenAddress: WebbCurrencyId | null) {
-    this._currentTokenAddress.next(nextTokenAddress);
+  setCurrentToken(nextToken: WebbCurrencyId | null) {
+    this._currentToken.next(nextToken);
   }
 
   /**
    *  Current token
    *  */
   get currentToken() {
-    return this._currentTokenAddress.value;
+    return this._currentToken.value;
   }
 
   /**
    *  watcher of the current token
    *  */
   get $currentTokenValue() {
-    return this._currentTokenAddress.asObservable();
+    return this._currentToken.asObservable();
   }
 
-  setOtherEdgToken(nextTokenAddress: WebbCurrencyId | null) {
-    this._otherEdgeToken.next(nextTokenAddress);
+  setOtherEdgToken(nextToken: WebbCurrencyId | null) {
+    this._otherEdgeToken.next(nextToken);
   }
 
   /**

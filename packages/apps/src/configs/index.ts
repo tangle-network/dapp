@@ -24,11 +24,9 @@ export const chainsPopulated = Object.values(chainsConfig).reduce(
   {} as Record<number, Chain>
 );
 
-console.log(chainsPopulated);
-
-export * from './anchors';
-export * from './bridges';
 export * from './currencies';
 export * from './chains';
+export * from './anchors';
+export * from './bridges';
 export * from './evm/SupportedMixers';
 export * from './wallets';

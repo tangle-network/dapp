@@ -138,7 +138,7 @@ export class Web3WrapUnwrap extends WrapUnWrap<WebbWeb3Provider> {
     };
     try {
       path = {
-        method: `wrap`,
+        method: `unwrap`,
         section: `GovernedTokenWrapper`,
       };
       transactionNotificationConfig.loading?.({
@@ -147,7 +147,7 @@ export class Web3WrapUnwrap extends WrapUnWrap<WebbWeb3Provider> {
         data: React.createElement(
           'p',
           { style: { fontSize: '.9rem' } }, // Matches Typography variant=h6
-          `Unwrapping ${String(amountNumber)}  of ${UnwrapTokenId}   to  ${webbCurrencyIdToString(unwrapToken)}`
+          `Unwrapping ${String(amountNumber)}  of ${webbCurrencyIdToString(UnwrapTokenId)}   to  ${webbCurrencyIdToString(unwrapToken)}`
         ),
         path,
       });
@@ -164,10 +164,11 @@ export class Web3WrapUnwrap extends WrapUnWrap<WebbWeb3Provider> {
       });
       return tx.hash;
     } catch (e) {
+      console.log('error while unwrapping: ', e);
       transactionNotificationConfig.failed?.({
         address: 'recipient',
-        key: 'wrap asset',
-        data: 'wrapping failed',
+        key: 'unwrap asset',
+        data: 'unwrapping failed',
         path,
       });
       return '';
@@ -206,10 +207,11 @@ export class Web3WrapUnwrap extends WrapUnWrap<WebbWeb3Provider> {
         data: React.createElement(
           'p',
           { style: { fontSize: '.9rem' } }, // Matches Typography variant=h6
-          `Wrapping ${String(amountNumber)} of ${webbCurrencyIdToString(toWrap)} to ${wrapInto}`
+          `Wrapping ${String(amountNumber)} of ${webbCurrencyIdToString(toWrap)} to ${webbCurrencyIdToString(wrapInto)}`
         ),
         path,
       });
+      console.log('address of token to wrap into webbGovernedToken', currenciesConfig[toWrap].addresses.get(this.currentChainId!)!);
       const tx = await webbGovernedToken.wrap(currenciesConfig[toWrap].addresses.get(this.currentChainId!)!, amount);
       await tx.wait();
       transactionNotificationConfig.finalize?.({
@@ -220,6 +222,7 @@ export class Web3WrapUnwrap extends WrapUnWrap<WebbWeb3Provider> {
       });
       return tx.hash;
     } catch (e) {
+      console.log('error while wrapping: ', e);
       transactionNotificationConfig.failed?.({
         address: 'recipient',
         key: 'wrap asset',
@@ -232,7 +235,9 @@ export class Web3WrapUnwrap extends WrapUnWrap<WebbWeb3Provider> {
 
   private getAddressFromWrapTokenId(id: WebbCurrencyId): string {
     const currentNetwork = this.currentChainId!;
-    return currenciesConfig[id].addresses.get(currentNetwork)!;
+    const address = currenciesConfig[id].addresses.get(currentNetwork)!;
+    console.log(address);
+    return address;
   }
 
   governedTokenWrapper(id: WebbCurrencyId): WebbGovernedToken {
