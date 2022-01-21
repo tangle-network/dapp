@@ -52,11 +52,19 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
   }
 
   get relayers() {
-    return this.inner.relayingManager.getRelayer({});
+    return Promise.resolve(
+      this.inner.relayingManager.getRelayer({
+        baseOn: 'substrate',
+      })
+    );
   }
 
   async getRelayersByNote(evmNote: Note) {
-    return this.inner.relayingManager.getRelayer({});
+    return Promise.resolve(
+      this.inner.relayingManager.getRelayer({
+        baseOn: 'substrate',
+      })
+    );
   }
 
   async getRelayersByChainAndAddress(chainId: ChainId, address: string) {
