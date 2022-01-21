@@ -303,8 +303,6 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
         relayerLeaves.lastQueriedBlock
       );
 
-      console.log('validLatestLeaf: ', validLatestLeaf);
-
       // leaves from relayer somewhat validated, attempt to build the tree
       if (validLatestLeaf) {
         const tree = AnchorContract.createTreeWithRoot(relayerLeaves.leaves, sourceLatestRoot);

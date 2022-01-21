@@ -33,7 +33,6 @@ export class Web3MixerDeposit extends MixerDeposit<WebbWeb3Provider, DepositPayl
     });
     const [deposit, amount] = params;
     const contract = await this.inner.getContractBySize(amount, getNativeCurrencySymbol(await this.inner.getChainId()));
-    console.log(deposit.commitment);
     try {
       await contract.deposit(deposit.commitment);
 

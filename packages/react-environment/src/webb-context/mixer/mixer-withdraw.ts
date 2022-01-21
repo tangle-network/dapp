@@ -63,7 +63,7 @@ export abstract class MixerWithdraw<T> extends EventBus<MixerWithdrawEvents> {
   }
 
   // todo switch to the reactive api
-  get relayers(): Promise<WebbRelayer[]> | WebbRelayer[] {
+  get relayers(): Promise<WebbRelayer[]> {
     return Promise.resolve([]);
   }
 

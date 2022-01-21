@@ -99,7 +99,6 @@ export const Deposit: React.FC<DepositProps> = () => {
     if (!selectedBridgeCurrency || !activeChain || !bridgeDepositApi.depositApi) return;
 
     bridgeDepositApi.depositApi.getWrappableAssets(activeChain.id).then((wrappableCurrencies) => {
-      console.log(wrappableCurrencies);
       setWrappableAssets(wrappableCurrencies);
     });
   }, [activeChain, selectedBridgeCurrency, bridgeDepositApi.depositApi]);

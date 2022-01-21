@@ -40,7 +40,6 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
     recipient,
     note,
   });
-  console.log('relayerState', relayersState);
   const feesGetter = useCallback(
     async (activeRelayer: ActiveWebbRelayer): Promise<FeesInfo> => {
       const defaultFees: FeesInfo = {

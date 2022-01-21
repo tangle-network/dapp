@@ -1,11 +1,10 @@
 import { FormHelperText, InputBase } from '@material-ui/core';
-import { chainIdIntoEVMId, chainsPopulated, currenciesConfig } from '@webb-dapp/apps/configs';
+import { chainsPopulated, currenciesConfig } from '@webb-dapp/apps/configs';
 import WithdrawingModal from '@webb-dapp/mixer/components/Withdraw/WithdrawingModal';
 import { useWithdraw } from '@webb-dapp/mixer/hooks';
 import { useDepositNote } from '@webb-dapp/mixer/hooks/note';
 import WithdrawSuccessModal from '@webb-dapp/react-components/Withdraw/WithdrawSuccessModal';
 import { ActiveWebbRelayer, useWebContext, WithdrawState } from '@webb-dapp/react-environment';
-import { WebbPolkadot } from '@webb-dapp/react-environment/api-providers';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabel';
@@ -133,10 +132,6 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
   };
   const relayers = relayersState.relayers;
   const activeRelayer = relayersState.activeRelayer;
-  console.log({
-    relayersState,
-    relayers,
-  });
   return (
     <WithdrawWrapper>
       <InputSection>

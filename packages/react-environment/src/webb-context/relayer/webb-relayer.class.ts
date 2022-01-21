@@ -146,9 +146,6 @@ export class WebbRelayerBuilder {
   /// fetch relayers
   private async fetchCapabilitiesAndInsert(config: RelayerConfig) {
     this.capabilities[config.endpoint] = await this.fetchCapabilities(config.endpoint);
-
-    console.log(this.capabilities[config.endpoint]);
-
     return this.capabilities;
   }
 
