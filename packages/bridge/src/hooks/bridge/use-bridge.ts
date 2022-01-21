@@ -1,5 +1,5 @@
-import { ChainId } from '@webb-dapp/apps/configs';
-import { Bridge, BridgeConfig, bridgeConfig, BridgeCurrency, useWebContext } from '@webb-dapp/react-environment';
+import { BridgeConfig, bridgeConfig, BridgeCurrency, ChainId } from '@webb-dapp/apps/configs';
+import { Bridge } from '@webb-dapp/react-environment';
 import { useCallback, useMemo } from 'react';
 
 export const useBridge = () => {

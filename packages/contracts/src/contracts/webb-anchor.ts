@@ -1,5 +1,9 @@
 import { Log } from '@ethersproject/abstract-provider';
-import { MixerStorage } from '@webb-dapp/apps/configs/storages/EvmChainStorage';
+import {
+  anchorDeploymentBlock,
+  bridgeCurrencyBridgeStorageFactory,
+  MixerStorage,
+} from '@webb-dapp/apps/configs/storages';
 import {
   BridgeWitnessInput,
   ZKPWebbInputWithMerkle,
@@ -10,10 +14,6 @@ import { createRootsBytes, generateWithdrawProofCallData } from '@webb-dapp/cont
 import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
 import { EvmNote } from '@webb-dapp/contracts/utils/evm-note';
 import { createAnchor2Deposit, Deposit } from '@webb-dapp/contracts/utils/make-deposit';
-import {
-  anchorDeploymentBlock,
-  bridgeCurrencyBridgeStorageFactory,
-} from '@webb-dapp/react-environment/api-providers/web3/bridge-storage';
 import { EvmChainMixersInfo } from '@webb-dapp/react-environment/api-providers/web3/EvmChainMixersInfo';
 import { MerkleTree, PoseidonHasher } from '@webb-dapp/utils/merkle';
 import { retryPromise } from '@webb-dapp/utils/retry-promise';

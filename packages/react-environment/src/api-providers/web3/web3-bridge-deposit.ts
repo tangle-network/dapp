@@ -1,15 +1,15 @@
 import {
+  BridgeConfig,
   ChainId,
   chainIdIntoEVMId,
   chainsConfig,
-  currenciesConfig,
   evmIdIntoChainId,
   getEVMChainNameFromInternal,
 } from '@webb-dapp/apps/configs';
 import { WebbGovernedToken } from '@webb-dapp/contracts/contracts';
 import { ERC20__factory } from '@webb-dapp/contracts/types';
 import { createAnchor2Deposit, Deposit } from '@webb-dapp/contracts/utils/make-deposit';
-import { BridgeConfig, DepositPayload as IDepositPayload, MixerSize } from '@webb-dapp/react-environment';
+import { DepositPayload as IDepositPayload, MixerSize } from '@webb-dapp/react-environment';
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3/webb-web3-provider';
 import { Currency } from '@webb-dapp/react-environment/types/currency';
 import { notificationApi } from '@webb-dapp/ui-components/notification';

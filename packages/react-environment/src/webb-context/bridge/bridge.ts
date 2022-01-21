@@ -1,7 +1,4 @@
-import { ChainId } from '@webb-dapp/apps/configs';
-
-import { BridgeAnchor, BridgeConfig, BridgeConfigEntry } from './bridge-config';
-import { BridgeCurrency } from './bridge-currency';
+import { BridgeAnchor, BridgeConfig, BridgeConfigEntry, BridgeCurrency, ChainId } from '@webb-dapp/apps/configs';
 
 export class Bridge {
   private constructor(private readonly configEntry: BridgeConfigEntry) {}

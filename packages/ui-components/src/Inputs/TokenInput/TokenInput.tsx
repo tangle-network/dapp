@@ -10,9 +10,9 @@ import {
 } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
 import Popper from '@material-ui/core/Popper';
-import { evmIdIntoChainId } from '@webb-dapp/apps/configs';
+import { BridgeCurrency, evmIdIntoChainId } from '@webb-dapp/apps/configs';
 import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
-import { Bridge, BridgeCurrency, useWebContext } from '@webb-dapp/react-environment';
+import { Bridge, useWebContext } from '@webb-dapp/react-environment';
 import { CurrencyContent } from '@webb-dapp/react-environment/types/currency';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
@@ -20,7 +20,7 @@ import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
 import React, { CSSProperties, useEffect, useMemo, useRef, useState } from 'react';
-import styled, { css, StyledProps } from 'styled-components';
+import styled, { css } from 'styled-components';
 
 const StyledList = styled.ul`
   &&& {

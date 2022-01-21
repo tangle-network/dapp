@@ -1,5 +1,4 @@
-import { ChainId } from '@webb-dapp/apps/configs';
-import { chainsConfig } from '@webb-dapp/apps/configs/chains';
+import { ChainId, chainsConfig, getAnchorAddressForBridge } from '@webb-dapp/apps/configs';
 import { EvmChainMixersInfo } from '@webb-dapp/react-environment/api-providers/web3/EvmChainMixersInfo';
 import {
   Capabilities,
@@ -16,8 +15,6 @@ import {
 import { LoggerService } from '@webb-tools/app-util';
 import { Observable, Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
-
-import { getAnchorAddressForBridge } from '../bridge';
 
 const logger = LoggerService.get('webb-relayer class');
 

@@ -1,30 +1,29 @@
 import { parseUnits } from '@ethersproject/units';
 import {
+  BridgeConfig,
+  bridgeConfig,
+  BridgeCurrency,
   ChainId,
   chainIdIntoEVMId,
   chainsConfig,
   evmIdIntoChainId,
+  getAnchorAddressForBridge,
   getEVMChainNameFromInternal,
 } from '@webb-dapp/apps/configs';
 import { chainIdToRelayerName } from '@webb-dapp/apps/configs/relayer-config';
-import { MixerStorage } from '@webb-dapp/apps/configs/storages/EvmChainStorage';
+import {
+  anchorDeploymentBlock,
+  bridgeCurrencyBridgeStorageFactory,
+  MixerStorage,
+} from '@webb-dapp/apps/configs/storages';
 import { AnchorContract } from '@webb-dapp/contracts/contracts';
 import { generateWithdrawProofCallData, hexStringToBytes } from '@webb-dapp/contracts/utils/bridge-utils';
 import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
 import { depositFromAnchor2Preimage } from '@webb-dapp/contracts/utils/make-deposit';
-import {
-  Bridge,
-  BridgeConfig,
-  bridgeConfig,
-  BridgeCurrency,
-  RelayedWithdrawResult,
-  RelayerCMDBase,
-  WebbRelayer,
-} from '@webb-dapp/react-environment';
+import { Bridge, RelayedWithdrawResult, WebbRelayer } from '@webb-dapp/react-environment';
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3/webb-web3-provider';
 import {
   BridgeWithdraw,
-  getAnchorAddressForBridge,
   OptionalActiveRelayer,
   OptionalRelayer,
   WithdrawState,
@@ -37,8 +36,6 @@ import { Note } from '@webb-tools/sdk-core';
 import { JsNote as DepositNote } from '@webb-tools/wasm-utils';
 import { BigNumber } from 'ethers';
 import React from 'react';
-
-import { anchorDeploymentBlock, bridgeCurrencyBridgeStorageFactory } from './bridge-storage';
 
 const logger = LoggerService.get('Web3BridgeWithdraw');
 
@@ -199,7 +196,6 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
 
     this.emit('stateChange', WithdrawState.SendingTransaction);
     try {
-      // TODO consume tx hash
       txHash = await contract.withdraw(
         zkpResults.proof,
         {
@@ -302,6 +298,8 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
         relayerLeaves.leaves[relayerLeaves.leaves.length - 1],
         relayerLeaves.lastQueriedBlock
       );
+
+      console.log('validLatestLeaf: ', validLatestLeaf);
 
       // leaves from relayer somewhat validated, attempt to build the tree
       if (validLatestLeaf) {
@@ -408,20 +406,18 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
       const relayerRootsBytes = hexStringToBytes(relayerRootString);
       const relayerRoots = Array.from(relayerRootsBytes);
 
-      const relayedWithdraw = await activeRelayer.initWithdraw('anchorRelayTransaction');
+      const relayedWithdraw = await activeRelayer.initWithdraw('anchor');
       logger.trace('initialized the withdraw WebSocket');
-      const chainInfo = {
-        baseOn: 'evm' as RelayerCMDBase,
-        name: chainIdToRelayerName(destChainId),
-        contractAddress: destContractAddress,
-        endpoint: '',
-      };
-      const tx = relayedWithdraw.generateWithdrawRequest<typeof chainInfo, 'anchorRelayTransaction'>(
-        chainInfo,
+
+      const tx = relayedWithdraw.generateWithdrawRequest(
+        {
+          baseOn: 'evm',
+          name: chainIdToRelayerName(destChainId),
+          contractAddress: destContractAddress,
+          endpoint: '',
+        },
         `0x${proofBytes}`,
         {
-          contract: destContractAddress,
-          chain: chainIdToRelayerName(destChainId),
           fee: bufferToFixed(zkp.input.fee),
           nullifierHash: bufferToFixed(zkp.input.nullifierHash),
           refreshCommitment: '0x0000000000000000000000000000000000000000000000000000000000000000',
