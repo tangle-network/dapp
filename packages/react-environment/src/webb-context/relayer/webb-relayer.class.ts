@@ -2,9 +2,15 @@ import { ChainId, chainsConfig, getAnchorAddressForBridge, webbCurrencyIdFromStr
 import { EvmChainMixersInfo } from '@webb-dapp/react-environment/api-providers/web3/EvmChainMixersInfo';
 import {
   Capabilities,
+  EVMCMDKeys,
   RelayedChainConfig,
+  RelayerCMDBase,
+  RelayerCMDKey,
   RelayerConfig,
+  RelayerEVMCommands,
   RelayerMessage,
+  RelayerSubstrateCommands,
+  SubstrateCMDKeys,
 } from '@webb-dapp/react-environment/webb-context/relayer/types';
 import { LoggerService } from '@webb-tools/app-util';
 import { Observable, Subject } from 'rxjs';
@@ -40,10 +46,11 @@ type RelayerQuery = {
   bridgeSupport?: MixerQuery;
 };
 
-type RelayedChainInput = {
+export type RelayedChainInput = {
   endpoint: string;
   name: string;
-  baseOn: 'evm' | 'substrate';
+  baseOn: RelayerCMDBase;
+  // TODO: change to just contract
   contractAddress: string;
 };
 type TornadoRelayerWithdrawArgs = {
@@ -64,10 +71,20 @@ type BridgeRelayerWithdrawArgs = {
   refund: string;
 };
 export type ContractBase = 'tornado' | 'anchor';
-export type WithdrawRelayerArgs<C = ContractBase> = C extends 'anchor'
-  ? BridgeRelayerWithdrawArgs
-  : TornadoRelayerWithdrawArgs;
+type CMDSwitcher<T extends RelayerCMDBase> = T extends 'evm' ? EVMCMDKeys : SubstrateCMDKeys;
 
+export type RelayerCMDs<A extends RelayerCMDBase, C extends CMDSwitcher<A>> = A extends 'evm'
+  ? C extends keyof RelayerEVMCommands
+    ? RelayerEVMCommands[C]
+    : never
+  : C extends keyof RelayerSubstrateCommands
+  ? RelayerSubstrateCommands[C]
+  : never;
+
+export type WithdrawRelayerArgs<A extends RelayerCMDBase, C extends CMDSwitcher<A>> = Omit<
+  RelayerCMDs<A, C>,
+  keyof RelayedChainInput | 'proof'
+>;
 export interface RelayerInfo {
   substrate: Record<string, RelayedChainConfig | null>;
   evm: Record<string, RelayedChainConfig | null>;
@@ -104,6 +121,9 @@ export class WebbRelayerBuilder {
         evm: info.evm
           ? Object.keys(info.evm)
               .filter(
+                /**
+                 * account is deprecated but it's kept here for backward compatibility
+                 * */
                 (key) => (info.evm[key]?.account || info.evm[key]?.beneficiary) && nameAdapter(key, 'evm') != null
               )
               .reduce((m, key) => {
@@ -113,9 +133,9 @@ export class WebbRelayerBuilder {
           : new Map(),
         substrate: info.substrate
           ? Object.keys(info.substrate)
-              .filter((key) => info.substrate[key]?.account && nameAdapter(key, 'evm') != null)
+              .filter((key) => info.substrate[key]?.beneficiary && nameAdapter(key, 'substrate') != null)
               .reduce((m, key) => {
-                m.set(nameAdapter(key, 'substrate'), info.evm[key]);
+                m.set(nameAdapter(key, 'substrate'), info.substrate[key]);
                 return m;
               }, new Map())
           : new Map(),
@@ -126,9 +146,6 @@ export class WebbRelayerBuilder {
   /// fetch relayers
   private async fetchCapabilitiesAndInsert(config: RelayerConfig) {
     this.capabilities[config.endpoint] = await this.fetchCapabilities(config.endpoint);
-
-    console.log(this.capabilities[config.endpoint]);
-
     return this.capabilities;
   }
 
@@ -182,7 +199,6 @@ export class WebbRelayerBuilder {
    * */
   getRelayer(query: RelayerQuery): WebbRelayer[] {
     const { baseOn, bridgeSupport, chainId, contractAddress, ipService, tornadoSupport } = query;
-
     const relayers = Object.keys(this.capabilities)
       .filter((key) => {
         const capabilities = this.capabilities[key];
@@ -250,6 +266,7 @@ export class WebbRelayerBuilder {
           return Boolean(capabilities.supportedChains[baseOn].get(chainId));
         }
         if (baseOn && !chainId) {
+          console.log(capabilities.supportedChains, baseOn);
           return capabilities.supportedChains[baseOn].size > 0;
         }
         return true;
@@ -280,14 +297,14 @@ type RelayerLeaves = {
   lastQueriedBlock: number;
 };
 
-class RelayedWithdraw<T = ContractBase> {
+class RelayedWithdraw {
   /// status of the withdraw
   private status: RelayedWithdrawResult = RelayedWithdrawResult.PreFlight;
   /// watch for the current withdraw status
   readonly watcher: Observable<[RelayedWithdrawResult, string | undefined]>;
   private emitter: Subject<[RelayedWithdrawResult, string | undefined]> = new Subject();
 
-  constructor(private ws: WebSocket, private prefix: string) {
+  constructor(private ws: WebSocket, private prefix: RelayerCMDKey) {
     this.watcher = this.emitter.asObservable();
 
     ws.onmessage = ({ data }) => {
@@ -316,11 +333,14 @@ class RelayedWithdraw<T = ContractBase> {
     }
   };
 
-  generateWithdrawRequest(chain: RelayedChainInput, proof: string, args: WithdrawRelayerArgs<T>) {
+  generateWithdrawRequest<T extends RelayedChainInput, C extends CMDSwitcher<T['baseOn']>>(
+    chain: T,
+    proof: RelayerCMDs<T['baseOn'], C>['proof'],
+    args: WithdrawRelayerArgs<T['baseOn'], C>
+  ) {
     return {
       [chain.baseOn]: {
         [this.prefix]: {
-          chain: chain.name,
           contract: chain.contractAddress,
           proof,
           ...args,
@@ -355,7 +375,7 @@ class RelayedWithdraw<T = ContractBase> {
 export class WebbRelayer {
   constructor(readonly endpoint: string, readonly capabilities: Capabilities) {}
 
-  async initWithdraw<Target extends ContractBase>(target: Target) {
+  async initWithdraw<Target extends RelayerCMDKey>(target: Target) {
     const ws = new WebSocket(this.endpoint.replace('http', 'ws') + '/ws');
     await new Promise((r, c) => {
       ws.onopen = r;
@@ -371,16 +391,7 @@ export class WebbRelayer {
         setTimeout(r, 300);
       });
     }
-    let prefix: string = 'anchorRelayTx';
-    switch (target) {
-      case 'tornado':
-        prefix = 'tornadoRelayTx';
-        break;
-      case 'anchor':
-        prefix = 'anchorRelayTx';
-        break;
-    }
-    return new RelayedWithdraw<Target>(ws, prefix);
+    return new RelayedWithdraw(ws, target);
   }
 
   async getIp(): Promise<string> {

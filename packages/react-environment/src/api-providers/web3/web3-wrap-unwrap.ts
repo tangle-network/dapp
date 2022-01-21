@@ -147,7 +147,9 @@ export class Web3WrapUnwrap extends WrapUnWrap<WebbWeb3Provider> {
         data: React.createElement(
           'p',
           { style: { fontSize: '.9rem' } }, // Matches Typography variant=h6
-          `Unwrapping ${String(amountNumber)}  of ${webbCurrencyIdToString(UnwrapTokenId)}   to  ${webbCurrencyIdToString(unwrapToken)}`
+          `Unwrapping ${String(amountNumber)}  of ${webbCurrencyIdToString(
+            UnwrapTokenId
+          )}   to  ${webbCurrencyIdToString(unwrapToken)}`
         ),
         path,
       });
@@ -211,7 +213,10 @@ export class Web3WrapUnwrap extends WrapUnWrap<WebbWeb3Provider> {
         ),
         path,
       });
-      console.log('address of token to wrap into webbGovernedToken', currenciesConfig[toWrap].addresses.get(this.currentChainId!)!);
+      console.log(
+        'address of token to wrap into webbGovernedToken',
+        currenciesConfig[toWrap].addresses.get(this.currentChainId!)!
+      );
       const tx = await webbGovernedToken.wrap(currenciesConfig[toWrap].addresses.get(this.currentChainId!)!, amount);
       await tx.wait();
       transactionNotificationConfig.finalize?.({

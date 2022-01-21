@@ -43,7 +43,7 @@ type PolkadotTXEvents = {
   beforeSend: PolkadotTXEventsPayload;
   afterSend: PolkadotTXEventsPayload;
   failed: PolkadotTXEventsPayload<string>;
-  finalize: PolkadotTXEventsPayload;
+  finalize: PolkadotTXEventsPayload<string | void | undefined>;
   inBlock: PolkadotTXEventsPayload;
   extrinsicSuccess: PolkadotTXEventsPayload;
   loading: PolkadotTXEventsPayload<JSX.Element>;
@@ -51,7 +51,7 @@ type PolkadotTXEvents = {
 
 export type NotificationConfig = {
   loading?: (data: PolkadotTXEventsPayload<JSX.Element>) => void;
-  finalize?: (data: PolkadotTXEventsPayload) => void;
+  finalize?: (data: PolkadotTXEventsPayload<string | void | undefined>) => void;
   failed?: (data: PolkadotTXEventsPayload<string>) => void;
 };
 const txLogger = LoggerService.get('PolkadotTx');

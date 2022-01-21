@@ -11,7 +11,7 @@ import {
   OptionalRelayer,
   WithdrawState,
 } from '@webb-dapp/react-environment/webb-context';
-import { RelayedWithdrawResult, WebbRelayer } from '@webb-dapp/react-environment/webb-context/relayer';
+import { RelayedWithdrawResult, RelayerCMDBase, WebbRelayer } from '@webb-dapp/react-environment/webb-context/relayer';
 import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polkadot/transaction-notification-config';
 import { LoggerService } from '@webb-tools/app-util';
@@ -175,18 +175,20 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
 
         this.emit('stateChange', WithdrawState.SendingTransaction);
 
-        const relayedWithdraw = await activeRelayer.initWithdraw('tornado');
+        const relayedWithdraw = await activeRelayer.initWithdraw('tornadoRelayTransaction');
         logger.trace('initialized the withdraw WebSocket');
-
-        const tx = relayedWithdraw.generateWithdrawRequest(
-          {
-            baseOn: 'evm',
-            name: chainIdToRelayerName(chainId),
-            contractAddress: mixerInfo.address,
-            endpoint: '',
-          },
+        const chainInput = {
+          baseOn: 'evm' as RelayerCMDBase,
+          name: chainIdToRelayerName(chainId),
+          contractAddress: mixerInfo.address,
+          endpoint: '',
+        };
+        const tx = relayedWithdraw.generateWithdrawRequest<typeof chainInput, 'tornadoRelayTransaction'>(
+          chainInput,
           zkp.proof,
           {
+            chain: chainIdToRelayerName(chainId),
+            contract: mixerInfo.address,
             fee: bufferToFixed(zkp.input.fee),
             nullifierHash: bufferToFixed(zkp.input.nullifierHash),
             recipient: zkp.input.recipient,

@@ -257,8 +257,6 @@ export class TornadoContract {
       root: root as string,
     };
 
-    console.log(zkpInput);
-
     const proofsData = await webSnarkUtils.genWitnessAndProve(
       // @ts-ignore
       window.groth16,
