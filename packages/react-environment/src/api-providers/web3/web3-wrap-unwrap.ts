@@ -12,6 +12,7 @@ import { WebbGovernedToken, zeroAddress } from '@webb-dapp/contracts/contracts';
 import { Bridge, MixerSize } from '@webb-dapp/react-environment';
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers';
 import { CurrencyType } from '@webb-dapp/react-environment/types/currency-config.interface';
+import { Currency } from '@webb-dapp/react-environment/webb-context/currency/currency';
 import {
   Amount,
   WrappingBalance,
@@ -102,7 +103,10 @@ export class Web3WrapUnwrap extends WrapUnWrap<WebbWeb3Provider> {
   // TODO: Dynamic wrappable currencies
   async getWrappableTokens(): Promise<WebbCurrencyId[]> {
     if (this.currentChainId) {
-      return chainsConfig[this.currentChainId].currencies;
+      const currenciesOfChain = chainsConfig[this.currentChainId].currencies;
+      currenciesOfChain.filter((currencyId) => {
+        return Currency.isWrappableCurrency(currencyId);
+      });
     }
     return [];
   }

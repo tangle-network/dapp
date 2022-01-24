@@ -64,6 +64,7 @@ export function useWrapUnwrap() {
   }, [wrapUnwrapApi, init]);
 
   useEffect(() => {
+    console.log('useEffect for wrapUnwrapApi subscription');
     const r = wrapUnwrapApi?.subscription.subscribe((next) => {
       const key = Object.keys(next)[0] as WrappingEventNames;
       switch (key) {

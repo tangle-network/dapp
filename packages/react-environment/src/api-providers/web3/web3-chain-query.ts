@@ -1,9 +1,9 @@
 import { chainsConfig, evmIdIntoChainId, WebbCurrencyId } from '@webb-dapp/apps/configs';
+import { zeroAddress } from '@webb-dapp/contracts/contracts';
 import { ERC20__factory } from '@webb-dapp/contracts/types';
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers';
 import { ChainQuery } from '@webb-dapp/react-environment/webb-context/chain-query';
 import { Currency } from '@webb-dapp/react-environment/webb-context/currency/currency';
-import { zeroAddress } from '@webb-dapp/contracts/contracts';
 import { ethers } from 'ethers';
 
 export class Web3ChainQuery extends ChainQuery<WebbWeb3Provider> {

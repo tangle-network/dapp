@@ -1,10 +1,14 @@
 import { ChainId, WebbCurrencyId } from '@webb-dapp/apps/configs';
 import { createElement } from 'react';
 
+// The CurrencyType is used to distinguish token responsibilities.
+// i.e. an Erc20 type can wrap into a BridgeErc20, but ORML tokens should
+// not wrap into BridgeErc20.
 export enum CurrencyType {
-  WrappableEvmCurrency,
-  OrmlCurrency,
-  BridgeCurrency,
+  Erc20,
+  NativeEvm,
+  ORML,
+  BridgeErc20,
 }
 
 export interface CurrencyView {

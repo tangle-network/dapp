@@ -35,7 +35,7 @@ export class Bridge {
    *  Get all Bridge tokens
    * */
   static getTokens(): Currency[] {
-    const bridgeCurrenciesConfig = Object.values(currenciesConfig).filter((i) => i.type == CurrencyType.BridgeCurrency);
+    const bridgeCurrenciesConfig = Object.values(currenciesConfig).filter((i) => i.type == CurrencyType.BridgeErc20);
     return bridgeCurrenciesConfig.map((config) => {
       return Currency.fromCurrencyId(config.id);
     });

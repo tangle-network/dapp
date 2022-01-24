@@ -185,11 +185,7 @@ export class AnchorContract {
     if (tokenAddress === zeroAddress) {
       const overrides = { value: value };
 
-      const tx = await this._contract.wrapAndDeposit(
-        zeroAddress,
-        commitment,
-        overrides
-      );
+      const tx = await this._contract.wrapAndDeposit(zeroAddress, commitment, overrides);
       await tx.wait();
       console.log('wrapAndDeposit completed for native token to webb token');
     } else {

@@ -1,5 +1,9 @@
 import { ChainId, currenciesConfig, WebbCurrencyId } from '@webb-dapp/apps/configs';
-import { CurrencyConfig, CurrencyView } from '@webb-dapp/react-environment/types/currency-config.interface';
+import {
+  CurrencyConfig,
+  CurrencyType,
+  CurrencyView,
+} from '@webb-dapp/react-environment/types/currency-config.interface';
 
 export abstract class CurrencyContent {
   abstract get view(): CurrencyView;
@@ -14,6 +18,15 @@ export class Currency extends CurrencyContent {
   static fromCurrencyId(currencyId: WebbCurrencyId) {
     const currencyConfig = currenciesConfig[currencyId];
     return new Currency(currencyConfig);
+  }
+
+  static isWrappableCurrency(currencyId: WebbCurrencyId) {
+    if (
+      currenciesConfig[currencyId].type === CurrencyType.NativeEvm ||
+      currenciesConfig[currencyId].type === CurrencyType.Erc20
+    )
+      return true;
+    return false;
   }
 
   getAddress(chain: ChainId): string | undefined {

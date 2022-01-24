@@ -6,10 +6,10 @@ import PolygonLogo from '@webb-dapp/apps/configs/logos/PolygonLogo';
 import ShidenLogo from '@webb-dapp/apps/configs/logos/ShidenLogo';
 import WEBBLogo from '@webb-dapp/apps/configs/logos/WebbLogo';
 import WebbWrappedLogo from '@webb-dapp/apps/configs/logos/WebbWrappedLogo';
+import { zeroAddress } from '@webb-dapp/contracts/contracts';
 import { AppConfig } from '@webb-dapp/react-environment';
 import { CurrencyType } from '@webb-dapp/react-environment/types/currency-config.interface';
 import React from 'react';
-import { zeroAddress } from '@webb-dapp/contracts/contracts';
 
 import { WebbCurrencyId } from './webb-currency-id.enum';
 
@@ -19,7 +19,7 @@ export const currenciesConfig: AppConfig['currencies'] = {
     symbol: 'EDG',
     color: '',
     id: WebbCurrencyId.EDG,
-    type: CurrencyType.OrmlCurrency,
+    type: CurrencyType.ORML,
     icon: React.createElement(EdgewareLogo),
     addresses: new Map(),
   },
@@ -28,7 +28,7 @@ export const currenciesConfig: AppConfig['currencies'] = {
     symbol: 'tEDG',
     color: '',
     id: WebbCurrencyId.TEDG,
-    type: CurrencyType.OrmlCurrency,
+    type: CurrencyType.ORML,
     icon: React.createElement(EdgewareLogo),
     addresses: new Map(),
   },
@@ -37,7 +37,7 @@ export const currenciesConfig: AppConfig['currencies'] = {
     symbol: 'ETH',
     color: '',
     id: WebbCurrencyId.ETH,
-    type: CurrencyType.WrappableEvmCurrency,
+    type: CurrencyType.NativeEvm,
     icon: React.createElement(EtherLogo),
     addresses: new Map([
       [ChainId.Ropsten, zeroAddress],
@@ -53,7 +53,7 @@ export const currenciesConfig: AppConfig['currencies'] = {
     symbol: 'ONE',
     color: '',
     id: WebbCurrencyId.ONE,
-    type: CurrencyType.WrappableEvmCurrency,
+    type: CurrencyType.NativeEvm,
     icon: React.createElement(HarmonyLogo),
     addresses: new Map([
       [ChainId.HarmonyMainnet0, zeroAddress],
@@ -66,7 +66,7 @@ export const currenciesConfig: AppConfig['currencies'] = {
     symbol: 'WEBB',
     color: '',
     id: WebbCurrencyId.WEBB,
-    type: CurrencyType.WrappableEvmCurrency,
+    type: CurrencyType.ORML,
     icon: React.createElement(WEBBLogo),
     addresses: new Map(),
   },
@@ -75,7 +75,7 @@ export const currenciesConfig: AppConfig['currencies'] = {
     symbol: 'SDN',
     color: '',
     id: WebbCurrencyId.SDN,
-    type: CurrencyType.WrappableEvmCurrency,
+    type: CurrencyType.NativeEvm,
     icon: React.createElement(ShidenLogo),
     addresses: new Map([[ChainId.Shiden, zeroAddress]]),
   },
@@ -84,7 +84,7 @@ export const currenciesConfig: AppConfig['currencies'] = {
     symbol: 'WETH',
     color: '',
     id: WebbCurrencyId.WETH,
-    type: CurrencyType.WrappableEvmCurrency,
+    type: CurrencyType.Erc20,
     icon: React.createElement(EtherLogo),
     addresses: new Map([
       [ChainId.Ropsten, '0xc778417E063141139Fce010982780140Aa0cD5Ab'],
@@ -101,7 +101,7 @@ export const currenciesConfig: AppConfig['currencies'] = {
     symbol: 'MATIC',
     color: '',
     id: WebbCurrencyId.MATIC,
-    type: CurrencyType.WrappableEvmCurrency,
+    type: CurrencyType.NativeEvm,
     icon: React.createElement(PolygonLogo),
     addresses: new Map([[ChainId.PolygonTestnet, zeroAddress]]),
   },
@@ -110,7 +110,7 @@ export const currenciesConfig: AppConfig['currencies'] = {
     symbol: 'webbWETH',
     color: '',
     id: WebbCurrencyId.webbWETH,
-    type: CurrencyType.BridgeCurrency,
+    type: CurrencyType.BridgeErc20,
     icon: WebbWrappedLogo(EtherLogo()),
     addresses: new Map([
       [ChainId.Ropsten, '0x105779076d17FAe5EAADF010CA677475549F49E4'],
