@@ -99,11 +99,11 @@ export class Web3WrapUnwrap extends WrapUnWrap<WebbWeb3Provider> {
   }
 
   // TODO: Dynamic wrappable currencies
-  // 
+  //
   async getWrappableTokens(governedCurrency: WebbCurrencyId | null): Promise<WebbCurrencyId[]> {
     if (this.currentChainId) {
       const currenciesOfChain = chainsConfig[this.currentChainId].currencies;
-      const wrappableCurrencies =  currenciesOfChain.filter((currencyId) => {
+      const wrappableCurrencies = currenciesOfChain.filter((currencyId) => {
         return Currency.isWrappableCurrency(currencyId);
       });
       if (governedCurrency) {
@@ -224,7 +224,9 @@ export class Web3WrapUnwrap extends WrapUnWrap<WebbWeb3Provider> {
         data: React.createElement(
           'p',
           { style: { fontSize: '.9rem' } }, // Matches Typography variant=h6
-          `Wrapping ${String(amountNumber)} of ${webbCurrencyIdToString(wrappableTokenId)} to ${webbCurrencyIdToString(governableTokenId)}`
+          `Wrapping ${String(amountNumber)} of ${webbCurrencyIdToString(wrappableTokenId)} to ${webbCurrencyIdToString(
+            governableTokenId
+          )}`
         ),
         path,
       });
@@ -232,7 +234,10 @@ export class Web3WrapUnwrap extends WrapUnWrap<WebbWeb3Provider> {
         'address of token to wrap into webbGovernedToken',
         currenciesConfig[wrappableTokenId].addresses.get(this.currentChainId!)!
       );
-      const tx = await webbGovernedToken.wrap(currenciesConfig[wrappableTokenId].addresses.get(this.currentChainId!)!, amount);
+      const tx = await webbGovernedToken.wrap(
+        currenciesConfig[wrappableTokenId].addresses.get(this.currentChainId!)!,
+        amount
+      );
       await tx.wait();
       transactionNotificationConfig.finalize?.({
         address: 'recipient',

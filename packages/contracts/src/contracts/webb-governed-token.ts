@@ -104,9 +104,9 @@ export class WebbGovernedToken {
     console.log('canWrap?: ', tokenAddress);
     const tokens = await this._contract.getTokens();
     console.log('tokens list: ', tokens);
-		if (tokens.includes(tokenAddress)) {
-			return true;
-		}
+    if (tokens.includes(tokenAddress)) {
+      return true;
+    }
     if (tokenAddress === zeroAddress) {
       return this.isNativeAllowed();
     }

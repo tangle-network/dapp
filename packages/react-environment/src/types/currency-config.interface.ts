@@ -14,8 +14,8 @@ export enum CurrencyType {
 // - Governable refers to a currency that supports the wrapping of 'Wrappable' currencies,
 //   which can be modified from governance.
 export enum CurrencyRole {
-  Wrappable, 
-  Governable, 
+  Wrappable,
+  Governable,
 }
 
 export interface CurrencyView {
