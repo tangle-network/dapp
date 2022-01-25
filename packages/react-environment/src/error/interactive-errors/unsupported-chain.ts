@@ -1,5 +1,4 @@
-import { WebbEVMChain } from '@webb-dapp/apps/configs';
-import { getEVMChainName } from '@webb-dapp/apps/configs/evm/SupportedMixers';
+import { getEVMChainName, WebbEVMChain } from '@webb-dapp/apps/configs';
 import { InteractiveFeedback, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 
 export function unsupportedChain(): InteractiveFeedback {
