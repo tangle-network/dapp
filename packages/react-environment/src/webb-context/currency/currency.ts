@@ -1,6 +1,7 @@
 import { ChainId, currenciesConfig, WebbCurrencyId } from '@webb-dapp/apps/configs';
 import {
   CurrencyConfig,
+  CurrencyRole,
   CurrencyType,
   CurrencyView,
 } from '@webb-dapp/react-environment/types/currency-config.interface';
@@ -21,10 +22,7 @@ export class Currency extends CurrencyContent {
   }
 
   static isWrappableCurrency(currencyId: WebbCurrencyId) {
-    if (
-      currenciesConfig[currencyId].type === CurrencyType.NativeEvm ||
-      currenciesConfig[currencyId].type === CurrencyType.Erc20
-    )
+    if (currenciesConfig[currencyId].role == CurrencyRole.Wrappable)
       return true;
     return false;
   }

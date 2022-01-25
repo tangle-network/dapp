@@ -1,4 +1,7 @@
-import { useWebContext } from '@webb-dapp/react-environment';
+import { currenciesConfig, WebbCurrencyId } from '@webb-dapp/apps/configs';
+import { WebbGovernedToken } from '@webb-dapp/contracts/contracts';
+import { Bridge, useWebContext } from '@webb-dapp/react-environment';
+import { CurrencyType } from '@webb-dapp/react-environment/types/currency-config.interface';
 import { Currency, CurrencyContent } from '@webb-dapp/react-environment/webb-context/currency/currency';
 import { WrappingEventNames } from '@webb-dapp/react-environment/webb-context/wrap-unwrap';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -32,8 +35,8 @@ export function useWrapUnwrap() {
     return null;
   }, [activeApi]);
 
-  const initNativeTokens = useCallback(() => {
-    wrapUnwrapApi?.getWrappableTokens().then((tokens) => {
+  const initWrappableTokens = useCallback(() => {
+    wrapUnwrapApi?.getWrappableTokens(wrapUnwrapApi.currentToken).then((tokens) => {
       setState((p) => ({
         ...p,
         tokens: tokens.map((token) => Currency.fromCurrencyId(token)),
@@ -51,13 +54,13 @@ export function useWrapUnwrap() {
   }, [wrapUnwrapApi]);
 
   const init = useCallback(() => {
-    initNativeTokens();
+    initWrappableTokens();
     initGovernedToken();
-  }, [initNativeTokens, initGovernedToken]);
+  }, [initWrappableTokens, initGovernedToken]);
 
   useEffect(() => {
     init();
-    const sub = wrapUnwrapApi?.$currentTokenValue.subscribe((val) => {
+    const sub = wrapUnwrapApi?.$currentTokenValue.subscribe(async (val) => {
       console.log(`current token value`, val);
     });
     return () => sub?.unsubscribe();

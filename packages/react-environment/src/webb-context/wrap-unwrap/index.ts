@@ -77,9 +77,10 @@ export abstract class WrapUnWrap<T, WrapPayload extends Amount = Amount, UnwrapP
   abstract getSizes(): Promise<MixerSize[]>;
 
   /**
-   * Wrapped token that is available for the current token
+   * WrappableTokens available for display,
+   * If a governedTokenId is passed in, get wrappable tokens for that governedTokenId
    *  */
-  abstract getWrappableTokens(): Promise<WebbCurrencyId[]>;
+  abstract getWrappableTokens(governedTokenId: WebbCurrencyId | null): Promise<WebbCurrencyId[]>;
 
   /**
    *  Get list of all the Governed tokens

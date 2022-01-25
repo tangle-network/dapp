@@ -1,6 +1,6 @@
 import { bridgeConfigByAsset, ChainId, currenciesConfig, WebbCurrencyId } from '@webb-dapp/apps/configs';
 import { BridgeConfig } from '@webb-dapp/react-environment/types/bridge-config.interface';
-import { CurrencyType } from '@webb-dapp/react-environment/types/currency-config.interface';
+import { CurrencyRole, CurrencyType } from '@webb-dapp/react-environment/types/currency-config.interface';
 
 import { Currency } from '../currency/currency';
 
@@ -35,7 +35,7 @@ export class Bridge {
    *  Get all Bridge tokens
    * */
   static getTokens(): Currency[] {
-    const bridgeCurrenciesConfig = Object.values(currenciesConfig).filter((i) => i.type == CurrencyType.BridgeErc20);
+    const bridgeCurrenciesConfig = Object.values(currenciesConfig).filter((i) => i.role == CurrencyRole.Governable);
     return bridgeCurrenciesConfig.map((config) => {
       return Currency.fromCurrencyId(config.id);
     });
