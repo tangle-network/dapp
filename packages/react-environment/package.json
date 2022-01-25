@@ -6,8 +6,8 @@
   "author": "Acala Developers <hello@acala.network>, Webb Developers <drew@webb.tools>",
   "homepage": "https://github.com/webb-tools/webb-dapp#readme",
   "dependencies": {
-    "@webb-tools/api": "^0.1.4-11",
-    "@webb-tools/sdk-core": "^0.1.4-11",
+    "@webb-tools/api": "^0.1.4-15",
+    "@webb-tools/sdk-core": "^0.1.4-15",
     "@influxdata/influxdb-client-browser": "^1.8.0",
     "@polkadot/api": "^6.9.2",
     "@polkadot/extension-dapp": "^0.35.0-beta.35"
