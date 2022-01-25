@@ -1,8 +1,8 @@
 import { ButtonBase, Checkbox, FormControlLabel, Icon, IconButton, Tooltip, Typography } from '@material-ui/core';
 import { ChainId } from '@webb-dapp/apps/configs';
 import { BridgeDepositApi as DepositApi } from '@webb-dapp/bridge/hooks/deposit/useBridgeDeposit';
-import { Currency } from '@webb-dapp/react-environment/types/currency';
 import { DepositPayload, useWebContext } from '@webb-dapp/react-environment/webb-context';
+import { Currency } from '@webb-dapp/react-environment/webb-context/currency/currency';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
@@ -130,14 +130,12 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({
     });
   }, []);
   useEffect(() => {
-    if (typeof destChain === 'undefined' || !mixerId) {
+    if (typeof destChain === 'undefined' || !mixerId || !activeChain) {
       return setNote(undefined);
     }
 
-    const wrappableCurrency = activeChain?.currencies.find(
-      (currency) => currency.currencyId == wrappableAsset?.view.id
-    );
-    provider.generateNote(mixerId, destChain, wrappableCurrency?.address).then((note) => {
+    const wrappableCurrencyAddress: string | undefined = wrappableAsset?.getAddress(activeChain.id);
+    provider.generateNote(mixerId, destChain, wrappableCurrencyAddress).then((note) => {
       setNote(note);
     });
   }, [provider, mixerId, destChain, activeChain, wrappableAsset]);

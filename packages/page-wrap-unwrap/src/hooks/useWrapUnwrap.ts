@@ -1,15 +1,10 @@
-import { BridgeCurrency } from '@webb-dapp/apps/configs';
-import { useWebContext } from '@webb-dapp/react-environment';
-import { Currency, CurrencyContent } from '@webb-dapp/react-environment/types/currency';
-import { WrappingEventNames, WrappingTokenId } from '@webb-dapp/react-environment/webb-context/wrap-unwrap';
-import { fromBridgeCurrencyToCurrencyView } from '@webb-dapp/ui-components/Inputs/WalletBridgeCurrencyInput/WalletBridgeCurrencyInput';
+import { currenciesConfig, WebbCurrencyId } from '@webb-dapp/apps/configs';
+import { WebbGovernedToken } from '@webb-dapp/contracts/contracts';
+import { Bridge, useWebContext } from '@webb-dapp/react-environment';
+import { CurrencyType } from '@webb-dapp/react-environment/types/currency-config.interface';
+import { Currency, CurrencyContent } from '@webb-dapp/react-environment/webb-context/currency/currency';
+import { WrappingEventNames } from '@webb-dapp/react-environment/webb-context/wrap-unwrap';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-
-const currencyContentToWrappingToken = (currentContent: CurrencyContent): WrappingTokenId => {
-  const isNative = currentContent?.view.symbol.toLocaleLowerCase().indexOf('webb') === -1;
-
-  return { variant: isNative ? 'native-token' : 'governed-token', id: currentContent.view.id };
-};
 
 export function useWrapUnwrap() {
   const { activeApi } = useWebContext();
@@ -40,11 +35,11 @@ export function useWrapUnwrap() {
     return null;
   }, [activeApi]);
 
-  const initNativeTokens = useCallback(() => {
-    wrapUnwrapApi?.getWrappableTokens().then((tokens) => {
+  const initWrappableTokens = useCallback(() => {
+    wrapUnwrapApi?.getWrappableTokens(wrapUnwrapApi.currentToken).then((tokens) => {
       setState((p) => ({
         ...p,
-        tokens: tokens.map((token) => Currency.fromCurrencyId(Number(token.id))),
+        tokens: tokens.map((token) => Currency.fromCurrencyId(token)),
       }));
     });
   }, [wrapUnwrapApi]);
@@ -53,28 +48,26 @@ export function useWrapUnwrap() {
     wrapUnwrapApi?.getGovernedTokens().then((tokens) => {
       setState((p) => ({
         ...p,
-        wrappedTokens: tokens.map((token) => {
-          const bridgeCurrency = BridgeCurrency.fromString(String(token.id));
-          return fromBridgeCurrencyToCurrencyView(bridgeCurrency);
-        }),
+        wrappedTokens: tokens.map((token) => Currency.fromCurrencyId(token)),
       }));
     });
   }, [wrapUnwrapApi]);
 
   const init = useCallback(() => {
-    initNativeTokens();
+    initWrappableTokens();
     initGovernedToken();
-  }, [initNativeTokens, initGovernedToken]);
+  }, [initWrappableTokens, initGovernedToken]);
 
   useEffect(() => {
     init();
-    const sub = wrapUnwrapApi?.$currentTokenValue.subscribe((val) => {
+    const sub = wrapUnwrapApi?.$currentTokenValue.subscribe(async (val) => {
       console.log(`current token value`, val);
     });
     return () => sub?.unsubscribe();
   }, [wrapUnwrapApi, init]);
 
   useEffect(() => {
+    console.log('useEffect for wrapUnwrapApi subscription');
     const r = wrapUnwrapApi?.subscription.subscribe((next) => {
       const key = Object.keys(next)[0] as WrappingEventNames;
       switch (key) {
@@ -119,11 +112,11 @@ export function useWrapUnwrap() {
 
   useEffect(() => {
     if (context === 'wrap') {
-      wrapUnwrapApi?.setCurrentToken(rightHandToken ? currencyContentToWrappingToken(rightHandToken) : null);
-      wrapUnwrapApi?.setOtherEdgToken(leftHandToken ? currencyContentToWrappingToken(leftHandToken) : null);
+      wrapUnwrapApi?.setCurrentToken(rightHandToken ? rightHandToken.view.id : null);
+      wrapUnwrapApi?.setOtherEdgToken(leftHandToken ? leftHandToken.view.id : null);
     } else {
-      wrapUnwrapApi?.setCurrentToken(leftHandToken ? currencyContentToWrappingToken(leftHandToken) : null);
-      wrapUnwrapApi?.setOtherEdgToken(rightHandToken ? currencyContentToWrappingToken(rightHandToken) : null);
+      wrapUnwrapApi?.setCurrentToken(leftHandToken ? leftHandToken.view.id : null);
+      wrapUnwrapApi?.setOtherEdgToken(rightHandToken ? rightHandToken.view.id : null);
     }
   }, [leftHandToken, rightHandToken, context, wrapUnwrapApi]);
 

@@ -10,10 +10,10 @@ import {
 } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
 import Popper from '@material-ui/core/Popper';
-import { BridgeCurrency, evmIdIntoChainId } from '@webb-dapp/apps/configs';
+import { currenciesConfig, evmIdIntoChainId, WebbCurrencyId } from '@webb-dapp/apps/configs';
 import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
 import { Bridge, useWebContext } from '@webb-dapp/react-environment';
-import { CurrencyContent } from '@webb-dapp/react-environment/types/currency';
+import { CurrencyContent } from '@webb-dapp/react-environment/webb-context/currency/currency';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
@@ -147,14 +147,13 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
   const theme = useColorPallet();
   const { activeApi } = useWebContext();
   const bridgeApi = useBridge();
-  const addTokenToMetaMask = async (tokenString: string) => {
-    const bt = BridgeCurrency.fromString(tokenString);
-    const configEntry = Bridge.getConfigEntry(bridgeApi.config, bt);
+  const addTokenToMetaMask = async (currencyId: WebbCurrencyId) => {
     const provider: Web3Provider = activeApi?.getProvider();
-
     const activeEVM = await provider.network;
     const entryChainId = evmIdIntoChainId(activeEVM);
-    const tokenAddress = configEntry.tokenAddresses[entryChainId];
+
+    const token = currenciesConfig[currencyId];
+    const tokenAddress = token.addresses.get(entryChainId);
     if (!tokenAddress) {
       return;
     }
@@ -162,7 +161,7 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
       address: tokenAddress,
       decimals: 18,
       image: '',
-      symbol: bt.prefix,
+      symbol: token.symbol,
     });
   };
   return (
@@ -204,7 +203,7 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
                         children={selected?.icon}
                         className={'token-avatar'}
                         onClick={() => {
-                          addTokenToMetaMask(selected?.name);
+                          addTokenToMetaMask(selected?.id);
                         }}
                       />
                     </Tooltip>
@@ -278,7 +277,7 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
                         <ListItemAvatar>
                           <Avatar
                             onClick={() => {
-                              addTokenToMetaMask(symbol);
+                              addTokenToMetaMask(selected?.id!);
                             }}
                             style={{ background: 'transparent' }}
                             children={Icon}

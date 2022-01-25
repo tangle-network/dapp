@@ -1,5 +1,7 @@
-import { ChainConfig } from '@webb-dapp/react-environment/types/chian-config.interface';
-import { CurrencyConfig } from '@webb-dapp/react-environment/types/currency';
+import { AnchorConfigEntry } from '@webb-dapp/react-environment/types/anchor-config.interface';
+import { BridgeConfig } from '@webb-dapp/react-environment/types/bridge-config.interface';
+import { ChainConfig } from '@webb-dapp/react-environment/types/chain-config.interface';
+import { CurrencyConfig } from '@webb-dapp/react-environment/types/currency-config.interface';
 import { WalletConfig } from '@webb-dapp/react-environment/types/wallet-config.interface';
 
 export type Chain = ChainConfig & {
@@ -11,4 +13,6 @@ export type AppConfig = {
   wallet: Record<number, WalletConfig>;
   chains: Record<number, ChainConfig>;
   currencies: Record<number, CurrencyConfig>;
+  bridgeByAsset: Record<number, BridgeConfig>;
+  anchors: Record<number, AnchorConfigEntry[]>;
 };

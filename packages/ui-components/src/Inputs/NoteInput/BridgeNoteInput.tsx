@@ -1,7 +1,8 @@
 import { FormHelperText, Icon, InputBase } from '@material-ui/core';
-import { BridgeCurrency, getEVMChainNameFromInternal } from '@webb-dapp/apps/configs';
+import { getEVMChainNameFromInternal, webbCurrencyIdFromString } from '@webb-dapp/apps/configs';
 import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
 import { useDepositNote } from '@webb-dapp/mixer/hooks/note';
+import { Currency } from '@webb-dapp/react-environment/webb-context/currency/currency';
 import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabel';
 import { notificationApi } from '@webb-dapp/ui-components/notification';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
@@ -43,7 +44,7 @@ export const BridgeNoteInput: React.FC<NoteInputProps> = ({ error, onChange, val
   const bridge = useMemo(() => {
     try {
       if (depositNote && depositNote.note.prefix == 'bridge') {
-        const currency = BridgeCurrency.fromString(depositNote.note.tokenSymbol);
+        const currency = Currency.fromCurrencyId(webbCurrencyIdFromString(depositNote.note.tokenSymbol));
         return getBridge(currency);
       }
     } catch (_) {
@@ -111,9 +112,12 @@ export const BridgeNoteInput: React.FC<NoteInputProps> = ({ error, onChange, val
                     </td>
                     <td style={{ textAlign: 'right' }}>
                       <div>
-                        {bridge.currency.chainIds.map(getEVMChainNameFromInternal).map((chainName) => (
-                          <div key={`${chainName}-bridge-chain`}> {chainName}</div>
-                        ))}
+                        {bridge.currency
+                          .getChainIds()
+                          .map(getEVMChainNameFromInternal)
+                          .map((chainName) => (
+                            <div key={`${chainName}-bridge-chain`}> {chainName}</div>
+                          ))}
                       </div>
                     </td>
                   </tr>

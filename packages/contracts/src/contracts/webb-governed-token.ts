@@ -4,9 +4,9 @@ import { LoggerService } from '@webb-tools/app-util';
 import { BigNumberish, Contract, PayableOverrides, providers, Signer } from 'ethers';
 import utils from 'web3-utils';
 
-const logger = LoggerService.get('WebbGovernedToken');
+import { zeroAddress } from './webb-utils';
 
-export const zeroAddress = '0x0000000000000000000000000000000000000000';
+const logger = LoggerService.get('WebbGovernedToken');
 
 function checkNativeAddress(tokenAddress: string): boolean {
   if (tokenAddress === zeroAddress || tokenAddress === '0') {
@@ -95,14 +95,21 @@ export class WebbGovernedToken {
   }
 
   async isNativeAllowed() {
-    return await this._contract.isNativeAllowed();
+    const nativeAllowed = await this._contract.isNativeAllowed();
+    console.log('native is ', nativeAllowed);
+    return nativeAllowed;
   }
 
-  async canWrap(/*tokenAddress: string*/ amount: BigNumberish) {
-    /*    const tokens = await this._contract.getTokens();
-		if (!tokens.includes(tokenAddress)) {
-			return false;
-		}*/
-    return this.isNativeAllowed();
+  async canWrap(tokenAddress: string) {
+    console.log('canWrap?: ', tokenAddress);
+    const tokens = await this._contract.getTokens();
+    console.log('tokens list: ', tokens);
+    if (tokens.includes(tokenAddress)) {
+      return true;
+    }
+    if (tokenAddress === zeroAddress) {
+      return this.isNativeAllowed();
+    }
+    return false;
   }
 }

@@ -1,10 +1,10 @@
+import { WebbCurrencyId } from '@webb-dapp/apps/configs';
 import { MixerSize } from '@webb-dapp/react-environment';
 import { WebbPolkadot } from '@webb-dapp/react-environment/api-providers';
 import {
   Amount,
   WrappingBalance,
   WrappingEvent,
-  WrappingTokenId,
   WrapUnWrap,
 } from '@webb-dapp/react-environment/webb-context/wrap-unwrap';
 import { Observable } from 'rxjs';
@@ -38,15 +38,15 @@ export class PolkadotWrapUnwrap extends WrapUnWrap<WebbPolkadot> {
     return Promise.resolve(false);
   }
 
-  getGovernedTokens(): Promise<WrappingTokenId[]> {
+  getGovernedTokens(): Promise<WebbCurrencyId[]> {
     return Promise.resolve([]);
   }
 
-  getWrappableTokens(): Promise<WrappingTokenId[]> {
+  getWrappableTokens(): Promise<WebbCurrencyId[]> {
     return Promise.resolve([]);
   }
 
-  getWrappedTokens(): Promise<WrappingTokenId[]> {
+  getWrappedTokens(): Promise<WebbCurrencyId[]> {
     return Promise.resolve([]);
   }
 

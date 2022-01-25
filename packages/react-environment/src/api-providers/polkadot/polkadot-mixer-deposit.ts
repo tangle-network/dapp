@@ -1,7 +1,7 @@
 import { NativeTokenProperties } from '@webb-dapp/mixer';
 import { Currency } from '@webb-dapp/mixer/utils/currency';
-import { ORMLCurrency } from '@webb-dapp/react-environment/types/orml-currency';
 import { DepositPayload as IDepositPayload, MixerDeposit } from '@webb-dapp/react-environment/webb-context';
+import { ORMLCurrency } from '@webb-dapp/react-environment/webb-context/currency/orml-currency';
 import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import { LoggerService } from '@webb-tools/app-util';
 import { Note, NoteGenInput } from '@webb-tools/sdk-core';

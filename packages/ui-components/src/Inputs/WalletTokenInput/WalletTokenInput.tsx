@@ -1,5 +1,5 @@
 import { useWebContext } from '@webb-dapp/react-environment';
-import { Currency } from '@webb-dapp/react-environment/types/currency';
+import { Currency } from '@webb-dapp/react-environment/webb-context/currency/currency';
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
 
@@ -24,7 +24,7 @@ type WalletTokenInputProps = {
 export const WalletTokenInput: React.FC<WalletTokenInputProps> = ({ selectedToken, setSelectedToken }) => {
   const { activeChain, activeWallet } = useWebContext();
   const allCurrencies = useMemo(() => {
-    return activeChain?.currencies.map(({ currencyId }) => Currency.fromCurrencyId(currencyId)) ?? [];
+    return activeChain?.currencies.map((currencyId) => Currency.fromCurrencyId(currencyId)) ?? [];
   }, [activeChain]);
   const active = useMemo(() => selectedToken ?? allCurrencies[0], [allCurrencies, selectedToken]);
   return (

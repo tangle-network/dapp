@@ -6,6 +6,8 @@ const zkey = require('snarkjs/src/zkey');
 
 type MaxEdges = 1 | 2 | 3 | 4 | 5;
 
+export const zeroAddress = '0x0000000000000000000000000000000000000000';
+
 export const generateWitness = async (input: BridgeWitnessInput, maxEdges: MaxEdges) => {
   try {
     const wasmBuf = await fetchWasmForEdges(maxEdges);

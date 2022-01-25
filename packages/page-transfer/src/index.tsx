@@ -3,7 +3,7 @@ import { ChainId, currenciesConfig, WebbCurrencyId } from '@webb-dapp/apps/confi
 import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
 import IPDisplay from '@webb-dapp/react-components/IPDisplay/IPDisplay';
 import { useWebContext } from '@webb-dapp/react-environment';
-import { Currency, CurrencyContent } from '@webb-dapp/react-environment/types/currency';
+import { Currency, CurrencyContent } from '@webb-dapp/react-environment/webb-context/currency/currency';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { ContentWrapper } from '@webb-dapp/ui-components/ContentWrappers';
@@ -12,7 +12,6 @@ import { ChainInput } from '@webb-dapp/ui-components/Inputs/ChainInput/ChainInpu
 import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabel';
 import { InputSection } from '@webb-dapp/ui-components/Inputs/InputSection/InputSection';
 import { TokenInput } from '@webb-dapp/ui-components/Inputs/TokenInput/TokenInput';
-import { fromBridgeCurrencyToCurrencyView } from '@webb-dapp/ui-components/Inputs/WalletBridgeCurrencyInput/WalletBridgeCurrencyInput';
 import React, { FC, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
@@ -52,20 +51,12 @@ const PageTransfers: FC = () => {
   const [recipient, setRecipient] = useState('');
   const bridge = useBridge();
 
-  const nativeTokens = useMemo(() => {
-    return Object.keys(currenciesConfig).map((i) => Number(i) as WebbCurrencyId);
-  }, []);
-
-  const bridgeTokens = useMemo(() => {
-    return bridge.getTokens().filter((currency) => !currency.currencyIds.includes(WebbCurrencyId.WEBB));
-  }, [bridge]);
   const tokens = useMemo(() => {
     const tokens: CurrencyContent[] = [];
-    tokens.push(...nativeTokens.map(Currency.fromCurrencyId));
-    tokens.push(...bridgeTokens.map(fromBridgeCurrencyToCurrencyView));
+    tokens.push(...Object.keys(currenciesConfig).map((id) => Currency.fromCurrencyId(Number(id))));
 
     return tokens;
-  }, [bridgeTokens, nativeTokens]);
+  }, []);
   return (
     <div>
       <ContentWrapper>

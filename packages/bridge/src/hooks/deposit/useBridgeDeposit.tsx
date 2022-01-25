@@ -1,4 +1,4 @@
-import { BridgeCurrency, ChainId } from '@webb-dapp/apps/configs';
+import { ChainId } from '@webb-dapp/apps/configs';
 import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
 import {
   Bridge,
@@ -8,6 +8,7 @@ import {
   MixerSize,
   useWebContext,
 } from '@webb-dapp/react-environment/webb-context';
+import { Currency } from '@webb-dapp/react-environment/webb-context/currency/currency';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 export interface BridgeDepositApi {
@@ -20,8 +21,8 @@ export interface BridgeDepositApi {
   loadingState: MixerDeposit['loading'];
   error: string;
   depositApi: BridgeDeposit<any> | null;
-  selectedBridgeCurrency: BridgeCurrency | null;
-  setSelectedCurrency(nextBridgeCurrency: BridgeCurrency): void;
+  selectedBridgeCurrency: Currency | null;
+  setSelectedCurrency(nextBridgeCurrency: Currency): void;
 }
 
 export const useBridgeDeposit = (): BridgeDepositApi => {
@@ -85,7 +86,7 @@ export const useBridgeDeposit = (): BridgeDepositApi => {
     }
     return activeBridge.currency;
   }, [activeBridge]);
-  const setSelectedCurrency = (bridgeCurrency: BridgeCurrency) => {
+  const setSelectedCurrency = (bridgeCurrency: Currency) => {
     const bridge = bridgeApi.getBridge(bridgeCurrency);
     depositApi?.setBridge(bridge);
   };

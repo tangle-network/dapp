@@ -11,7 +11,7 @@ import {
 import Icon from '@material-ui/core/Icon';
 import Typography from '@material-ui/core/Typography';
 import { ChainId, chainsPopulated } from '@webb-dapp/apps/configs';
-import { CurrencyContent } from '@webb-dapp/react-environment/types/currency';
+import { CurrencyContent } from '@webb-dapp/react-environment/webb-context/currency/currency';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabel';
