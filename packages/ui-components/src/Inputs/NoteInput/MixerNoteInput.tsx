@@ -76,7 +76,7 @@ export const MixerNoteInput: React.FC<NoteInputProps> = ({ error, onChange, valu
               </tr>
               <tr>
                 <td>Chain:</td>
-                {/*<td style={{ textAlign: 'right' }}>{getEVMChainNameFromInternal(Number(depositNote.note.chain))}</td>*/}
+                <td style={{ textAlign: 'right' }}>{getEVMChainNameFromInternal(Number(depositNote.note.targetChainId))}</td>
               </tr>
             </tbody>
           </table>
