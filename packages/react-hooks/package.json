@@ -8,8 +8,8 @@
   "dependencies": {
     "@webb-dapp/react-environment": "0.2.1-beta.1",
     "@webb-dapp/ui-components": "0.2.1-beta.1",
-    "@webb-tools/api": "^0.1.4-15",
-    "@webb-tools/types": "^0.1.4-15",
+    "@webb-tools/api": "^0.1.4-26",
+    "@webb-tools/types": "^0.1.4-26",
     "@influxdata/influxdb-client": "^1.8.0",
     "@polkadot/api": "^6.9.2",
     "@polkadot/extension-dapp": "^0.35.0-beta.35",
