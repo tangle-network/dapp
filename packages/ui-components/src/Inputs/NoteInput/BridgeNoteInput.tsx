@@ -30,7 +30,7 @@ export const BridgeNoteInput: React.FC<NoteInputProps> = ({ error, onChange, val
 
   // Switch to mixer tab if note is for mixer
   useEffect(() => {
-    if (depositNote && depositNote.note.prefix === 'webb.mix') {
+    if (depositNote && depositNote.note.prefix === 'webb.mixer') {
       notificationApi.addToQueue({
         secondaryMessage: 'Please complete withdraw through the mixer',
         message: 'Switched to mixer',
@@ -43,7 +43,7 @@ export const BridgeNoteInput: React.FC<NoteInputProps> = ({ error, onChange, val
 
   const bridge = useMemo(() => {
     try {
-      if (depositNote && depositNote.note.prefix == 'bridge') {
+      if (depositNote && depositNote.note.prefix == 'webb.bridge') {
         const currency = Currency.fromCurrencyId(webbCurrencyIdFromString(depositNote.note.tokenSymbol));
         return getBridge(currency);
       }
