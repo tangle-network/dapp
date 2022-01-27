@@ -6,7 +6,8 @@ import {
   WebbCurrencyId,
   webbCurrencyIdToString,
 } from '@webb-dapp/apps/configs';
-import { WebbGovernedToken } from '@webb-dapp/contracts/contracts';
+import { WebbGovernedToken, zeroAddress } from '@webb-dapp/contracts/contracts';
+import { ERC20__factory } from '@webb-dapp/contracts/types';
 import { Bridge, MixerSize } from '@webb-dapp/react-environment';
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers';
 import { CurrencyType } from '@webb-dapp/react-environment/types/currency-config.interface';
@@ -18,6 +19,7 @@ import {
   WrapUnWrap,
 } from '@webb-dapp/react-environment/webb-context/wrap-unwrap';
 import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polkadot/transaction-notification-config';
+import { ContractTransaction } from 'ethers';
 import React from 'react';
 import { BehaviorSubject, merge, Observable, Subject } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
@@ -230,14 +232,26 @@ export class Web3WrapUnwrap extends WrapUnWrap<WebbWeb3Provider> {
         ),
         path,
       });
-      console.log(
-        'address of token to wrap into webbGovernedToken',
-        currenciesConfig[wrappableTokenId].addresses.get(this.currentChainId!)!
-      );
-      const tx = await webbGovernedToken.wrap(
-        currenciesConfig[wrappableTokenId].addresses.get(this.currentChainId!)!,
-        amount
-      );
+      console.log('address of token to wrap into webbGovernedToken', this.getAddressFromWrapTokenId(wrappableTokenId));
+      let tx: ContractTransaction;
+      // If wrapping an erc20, check for approvals
+      if (this.getAddressFromWrapTokenId(wrappableTokenId) != zeroAddress) {
+        const wrappableTokenInstance = ERC20__factory.connect(
+          this.getAddressFromWrapTokenId(wrappableTokenId),
+          this.inner.getEthersProvider().getSigner()
+        );
+        const wrappableTokenAllowance = await wrappableTokenInstance.allowance(
+          await this.inner.getEthersProvider().getSigner().getAddress(),
+          wrappableTokenInstance.address
+        );
+        console.log(wrappableTokenAllowance);
+        if (wrappableTokenAllowance.lt(amount)) {
+          tx = await wrappableTokenInstance.approve(webbGovernedToken.address, amount);
+          await tx.wait();
+        }
+      }
+
+      tx = await webbGovernedToken.wrap(this.getAddressFromWrapTokenId(wrappableTokenId), amount);
       await tx.wait();
       transactionNotificationConfig.finalize?.({
         address: 'recipient',
@@ -261,7 +275,6 @@ export class Web3WrapUnwrap extends WrapUnWrap<WebbWeb3Provider> {
   private getAddressFromWrapTokenId(id: WebbCurrencyId): string {
     const currentNetwork = this.currentChainId!;
     const address = currenciesConfig[id].addresses.get(currentNetwork)!;
-    console.log(address);
     return address;
   }
 
