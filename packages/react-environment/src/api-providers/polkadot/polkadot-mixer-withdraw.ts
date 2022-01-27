@@ -23,8 +23,8 @@ const transactionString = (hexString: string) => {
 };
 
 async function fetchSubstrateProvingKey() {
-  const IPFSUrl = `https://ipfs.io/ipfs/QmQWnELR1oRUpoAo6URNK2XbGCfEk6sPdJioeSYqZW6cqi`;
-  const cachedURI = getCachedFixtureURI('QmQWnELR1oRUpoAo6URNK2XbGCfEk6sPdJioeSYqZW6cqi');
+  const IPFSUrl = `https://ipfs.io/ipfs/QmYDtGX7Wf5qUPEpGsgrX6oss2m2mm8vi7uzNdK4C9yJdZ`;
+  const cachedURI = getCachedFixtureURI('QmYDtGX7Wf5qUPEpGsgrX6oss2m2mm8vi7uzNdK4C9yJdZ');
   const ipfsKeyRequest = await fetch(isProduction() ? IPFSUrl : cachedURI);
   const circuitKeyArrayBuffer = await ipfsKeyRequest.arrayBuffer();
   logger.info(`Done Fetching key`);

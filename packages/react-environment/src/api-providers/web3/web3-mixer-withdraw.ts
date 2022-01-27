@@ -175,7 +175,7 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
 
         this.emit('stateChange', WithdrawState.SendingTransaction);
 
-        const relayedWithdraw = await activeRelayer.initWithdraw('tornadoRelayTransaction');
+        const relayedWithdraw = await activeRelayer.initWithdraw('tornadoRelayTx');
         logger.trace('initialized the withdraw WebSocket');
         const chainInput = {
           baseOn: 'evm' as RelayerCMDBase,
@@ -183,20 +183,16 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
           contractAddress: mixerInfo.address,
           endpoint: '',
         };
-        const tx = relayedWithdraw.generateWithdrawRequest<typeof chainInput, 'tornadoRelayTransaction'>(
-          chainInput,
-          zkp.proof,
-          {
-            chain: chainIdToRelayerName(chainId),
-            contract: mixerInfo.address,
-            fee: bufferToFixed(zkp.input.fee),
-            nullifierHash: bufferToFixed(zkp.input.nullifierHash),
-            recipient: zkp.input.recipient,
-            refund: bufferToFixed(zkp.input.refund),
-            relayer: zkp.input.relayer,
-            root: bufferToFixed(zkp.input.root),
-          }
-        );
+        const tx = relayedWithdraw.generateWithdrawRequest<typeof chainInput, 'tornadoRelayTx'>(chainInput, zkp.proof, {
+          chain: chainIdToRelayerName(chainId),
+          contract: mixerInfo.address,
+          fee: bufferToFixed(zkp.input.fee),
+          nullifierHash: bufferToFixed(zkp.input.nullifierHash),
+          recipient: zkp.input.recipient,
+          refund: bufferToFixed(zkp.input.refund),
+          relayer: zkp.input.relayer,
+          root: bufferToFixed(zkp.input.root),
+        });
         relayedWithdraw.watcher.subscribe(([nextValue, message]) => {
           switch (nextValue) {
             case RelayedWithdrawResult.PreFlight:
