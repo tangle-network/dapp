@@ -56,7 +56,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
         const evmNote = depositNote.note;
         const contractAddress = await getAnchorAddressForBridge(
           webbCurrencyIdFromString(evmNote.tokenSymbol),
-          Number(evmNote.sourceChainId),
+          Number(evmNote.targetChainId),
           Number(evmNote.amount)
         );
 
@@ -401,7 +401,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
       const relayerRootsBytes = hexStringToBytes(relayerRootString);
       const relayerRoots = Array.from(relayerRootsBytes);
 
-      const relayedWithdraw = await activeRelayer.initWithdraw('anchorRelayTransaction');
+      const relayedWithdraw = await activeRelayer.initWithdraw('anchorRelayTx');
       logger.trace('initialized the withdraw WebSocket');
 
       const chainInfo = {
@@ -411,7 +411,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
         endpoint: '',
       };
 
-      const tx = relayedWithdraw.generateWithdrawRequest<typeof chainInfo, 'anchorRelayTransaction'>(
+      const tx = relayedWithdraw.generateWithdrawRequest<typeof chainInfo, 'anchorRelayTx'>(
         chainInfo,
         `0x${proofBytes}`,
         {

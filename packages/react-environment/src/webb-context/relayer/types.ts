@@ -96,8 +96,8 @@ export type RelayerSubstrateCommands = {
   mixerRelayTx: MixerRelayTx;
 };
 export type RelayerEVMCommands = {
-  tornadoRelayTransaction: TornadoRelayTransaction;
-  anchorRelayTransaction: AnchorRelayTransaction;
+  tornadoRelayTx: TornadoRelayTransaction;
+  anchorRelayTx: AnchorRelayTransaction;
 };
 export type EVMCMDKeys = keyof RelayerEVMCommands;
 export type SubstrateCMDKeys = keyof RelayerSubstrateCommands;
