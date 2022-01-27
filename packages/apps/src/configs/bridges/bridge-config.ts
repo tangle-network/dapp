@@ -25,5 +25,6 @@ export const getAnchorAddressForBridge = (
   }
 
   const anchorAddress = linkedAnchorConfig.anchorAddresses[chainId as ChainId];
+  console.log('got anchor address: ', anchorAddress);
   return anchorAddress;
 };
