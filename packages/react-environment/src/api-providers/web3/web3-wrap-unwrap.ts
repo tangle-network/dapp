@@ -18,6 +18,7 @@ import {
   WrappingEvent,
   WrapUnWrap,
 } from '@webb-dapp/react-environment/webb-context/wrap-unwrap';
+import { notificationApi } from '@webb-dapp/ui-components/notification';
 import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polkadot/transaction-notification-config';
 import { ContractTransaction } from 'ethers';
 import React from 'react';
@@ -246,8 +247,15 @@ export class Web3WrapUnwrap extends WrapUnWrap<WebbWeb3Provider> {
         );
         console.log(wrappableTokenAllowance);
         if (wrappableTokenAllowance.lt(amount)) {
+          notificationApi.addToQueue({
+            message: 'Waiting for token approval',
+            variant: 'info',
+            key: 'waiting-approval',
+            extras: { persist: true },
+          });
           tx = await wrappableTokenInstance.approve(webbGovernedToken.address, amount);
           await tx.wait();
+          notificationApi.remove('waiting-approval');
         }
       }
 
