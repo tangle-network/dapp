@@ -46,7 +46,7 @@ export function useWrapUnwrap() {
             governedTokens: governedTokens!.map((token) => Currency.fromCurrencyId(token)),
           }));
         }
-      })
+      });
     }
   }, [wrapUnwrapApi]);
 
@@ -57,19 +57,25 @@ export function useWrapUnwrap() {
     }));
   }, []);
 
-  const setWrappableToken = useCallback((content: CurrencyContent | null) => {
-    if (content?.view.id) {
-      console.log('setWrappableToken in useWrapUnwrap called',  content.view.id);
-      wrapUnwrapApi?.setWrappableToken(content.view.id);
-    }
-  }, [wrapUnwrapApi]);
+  const setWrappableToken = useCallback(
+    (content: CurrencyContent | null) => {
+      if (content?.view.id) {
+        console.log('setWrappableToken in useWrapUnwrap called', content.view.id);
+        wrapUnwrapApi?.setWrappableToken(content.view.id);
+      }
+    },
+    [wrapUnwrapApi]
+  );
 
-  const setGovernedToken = useCallback((content: CurrencyContent | null) => {
-    if (content?.view.id) {
-      console.log('setGovernedToken in useWrapUnwrap called', content.view.id);
-      wrapUnwrapApi?.setGovernedToken(content.view.id);
-    }
-  }, [wrapUnwrapApi]);
+  const setGovernedToken = useCallback(
+    (content: CurrencyContent | null) => {
+      if (content?.view.id) {
+        console.log('setGovernedToken in useWrapUnwrap called', content.view.id);
+        wrapUnwrapApi?.setGovernedToken(content.view.id);
+      }
+    },
+    [wrapUnwrapApi]
+  );
 
   const execute = useCallback(() => {
     switch (context) {

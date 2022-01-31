@@ -20,7 +20,7 @@ type DepositProps = {};
 
 export const Deposit: React.FC<DepositProps> = () => {
   const bridgeDepositApi = useBridgeDeposit();
-  const { activeApi, activeChain, activeWallet, chains, switchChain, loading } = useWebContext();
+  const { activeApi, activeChain, activeWallet, chains, loading, switchChain } = useWebContext();
   // const { clearAmount, token } = useBalanceSelect();
   const { depositApi, selectedBridgeCurrency, setSelectedCurrency } = bridgeDepositApi;
   const activeBridge = depositApi?.activeBridge;
