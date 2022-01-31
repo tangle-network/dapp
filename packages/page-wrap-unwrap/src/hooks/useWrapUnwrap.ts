@@ -1,8 +1,7 @@
-import { Bridge, useWebContext } from '@webb-dapp/react-environment';
+import { useWebContext } from '@webb-dapp/react-environment';
 import { Currency, CurrencyContent } from '@webb-dapp/react-environment/webb-context/currency/currency';
 import { WrappingEventNames } from '@webb-dapp/react-environment/webb-context/wrap-unwrap';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { filter, map, mergeWith } from 'rxjs/operators';
 
 export function useWrapUnwrap() {
   const { activeApi, activeChain } = useWebContext();
@@ -53,9 +52,9 @@ export function useWrapUnwrap() {
           wrappableTokens: wrappableTokens.map((token) => Currency.fromCurrencyId(token)),
           governedTokens: governedTokens.map((token) => Currency.fromCurrencyId(token)),
         }));
-      })
+      });
     });
-  }, [wrapUnwrapApi, context, activeChain])
+  }, [wrapUnwrapApi]);
 
   const swap = useCallback(() => {
     setState((p) => ({
@@ -104,20 +103,20 @@ export function useWrapUnwrap() {
         case 'wrappableTokenUpdate':
           setState((p) => ({
             ...p,
-            wrappableToken: Currency.fromCurrencyId(next.wrappableTokenUpdate!)
+            wrappableToken: Currency.fromCurrencyId(next.wrappableTokenUpdate!),
           }));
           break;
         case 'governedTokenUpdate':
           setState((p) => ({
             ...p,
-            governedToken: Currency.fromCurrencyId(next.governedTokenUpdate!)
-          }))
+            governedToken: Currency.fromCurrencyId(next.governedTokenUpdate!),
+          }));
           break;
       }
     });
 
     return () => r?.unsubscribe();
-  }, [wrapUnwrapApi]);
+  }, [initTokens, wrapUnwrapApi]);
 
   return {
     ...state,

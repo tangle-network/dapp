@@ -119,7 +119,7 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
   const selectItems = useMemo(() => {
     const selectableItems = currencies.map((currency) => {
       return {
-        ...(currency.view),
+        ...currency.view,
         self: currency,
       };
     });
@@ -127,14 +127,14 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
     return selectableItems;
   }, [currencies]);
 
-  const selected = value ? { ...(value.view), self: value } : null;
+  const selected = value ? { ...value.view, self: value } : null;
   useEffect(() => {
     if (value) {
       onChange(value);
       return;
     }
-  }, [currencies])
-  
+  }, [currencies, onChange, value]);
+
   const $wrapper = useRef<HTMLDivElement>();
   const [isOpen, setIsOpen] = useState(false);
   const theme = useColorPallet();

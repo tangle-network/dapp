@@ -258,8 +258,12 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
           },
         });
         relayerMixerTx.send(relayerWithdrawPayload);
-        const [results, message] = await relayerMixerTx.await();
-        return message ?? '';
+        const results = await relayerMixerTx.await();
+        if (results) {
+          const [relayerResults, message] = results;
+          return message ?? '';
+        }
+        return '';
       }
       logger.trace(`submitting the transaction of withdraw with params`, withdrawProof);
       this.emit('stateChange', WithdrawState.SendingTransaction);

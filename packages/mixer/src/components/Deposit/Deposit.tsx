@@ -30,8 +30,10 @@ export const Deposit: React.FC<DepositProps> = () => {
 
   return (
     <DepositWrapper>
-      <WalletTokenInput 
-        setSelectedToken={(token) => {setSelectedToken(token)}}
+      <WalletTokenInput
+        setSelectedToken={(token) => {
+          setSelectedToken(token);
+        }}
         selectedToken={selectedToken}
       />
       <SpaceBox height={16} />

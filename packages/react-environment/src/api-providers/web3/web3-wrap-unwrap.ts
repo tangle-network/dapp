@@ -23,7 +23,6 @@ import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polka
 import { ContractTransaction } from 'ethers';
 import React from 'react';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { filter, map, mergeWith } from 'rxjs/operators';
 import Web3 from 'web3';
 
 export type Web3WrapPayload = Amount;

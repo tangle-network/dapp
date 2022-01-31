@@ -41,7 +41,7 @@ export const WalletBridgeCurrencyInput: React.FC<WalletTokenInputProps> = ({ sel
       setSelectedToken(allCurrencies[0]);
       return;
     }
-  }, [allCurrencies])
+  }, [allCurrencies, selectedToken, setSelectedToken]);
 
   return (
     <InputSection>

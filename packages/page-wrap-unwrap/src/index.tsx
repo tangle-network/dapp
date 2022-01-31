@@ -13,7 +13,7 @@ import { MixerGroupSelect } from '@webb-dapp/ui-components/Inputs/MixerGroupSele
 import { TokenInput, TokenInputProps } from '@webb-dapp/ui-components/Inputs/TokenInput/TokenInput';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { FC, useCallback, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
 const TransferWrapper = styled.div`
@@ -105,13 +105,13 @@ const PageWrapUnwrap: FC = () => {
     context,
     execute,
     governedToken,
-    wrappableToken,
+    governedTokens,
     setAmount,
     setGovernedToken,
     setWrappableToken,
     swap,
+    wrappableToken,
     wrappableTokens,
-    governedTokens,
   } = useWrapUnwrap();
 
   const [isSwap, setIsSwap] = useState(false);
@@ -125,18 +125,18 @@ const PageWrapUnwrap: FC = () => {
       value: context === 'wrap' ? wrappableToken : governedToken,
       onChange: (currencyContent) => {
         context === 'wrap' ? setWrappableToken(currencyContent) : setGovernedToken(currencyContent);
-      }
-    }
-  }, [wrappableTokens, governedTokens, context, wrappableToken, governedToken]);
+      },
+    };
+  }, [context, wrappableTokens, governedTokens, wrappableToken, governedToken, setWrappableToken, setGovernedToken]);
   const rightInputProps: TokenInputProps = useMemo(() => {
     return {
       currencies: context === 'wrap' ? governedTokens : wrappableTokens,
       value: context === 'wrap' ? governedToken : wrappableToken,
       onChange: (currencyContent) => {
         context === 'wrap' ? setGovernedToken(currencyContent) : setWrappableToken(currencyContent);
-      }
+      },
     };
-  }, [wrappableTokens, governedTokens, context, wrappableToken, governedToken]);
+  }, [context, governedTokens, wrappableTokens, governedToken, wrappableToken, setGovernedToken, setWrappableToken]);
 
   const buttonText = context;
 
@@ -296,7 +296,7 @@ const PageWrapUnwrap: FC = () => {
         <SpaceBox height={16} />
 
         <MixerButton
-          disabled={loading || (!governedToken || !wrappableToken)}
+          disabled={loading || !governedToken || !wrappableToken}
           label={buttonText}
           onClick={async () => {
             console.log('governedToken: ', governedToken);
