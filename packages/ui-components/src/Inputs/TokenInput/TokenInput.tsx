@@ -11,8 +11,7 @@ import {
 import Avatar from '@material-ui/core/Avatar';
 import Popper from '@material-ui/core/Popper';
 import { currenciesConfig, evmIdIntoChainId, WebbCurrencyId } from '@webb-dapp/apps/configs';
-import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
-import { Bridge, useWebContext } from '@webb-dapp/react-environment';
+import { useWebContext } from '@webb-dapp/react-environment';
 import { CurrencyContent } from '@webb-dapp/react-environment/webb-context/currency/currency';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
@@ -116,6 +115,7 @@ const ChainName = styled.span`
   white-space: nowrap;
 `;
 export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, value, wrapperStyles }) => {
+  const { activeApi } = useWebContext();
   const selectItems = useMemo(() => {
     const selectableItems = currencies.map((currency) => {
       return {
@@ -127,18 +127,27 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
     return selectableItems;
   }, [currencies]);
 
-  const selected = value ? { ...value.view, self: value } : null;
-  useEffect(() => {
-    if (value) {
-      onChange(value);
-      return;
+  const selected = useMemo(() => {
+    if (!value) {
+      return undefined;
     }
-  }, [currencies, onChange, value]);
+    const view = value.view;
+    return {
+      ...view,
+      self: value,
+    };
+  }, [value]);
+
+  // useEffect(() => {
+  //   if (!value) {
+  //     onChange(currencies[0]);
+  //     return;
+  //   }
+  // }, [currencies, onChange, value]);
 
   const $wrapper = useRef<HTMLDivElement>();
   const [isOpen, setIsOpen] = useState(false);
   const theme = useColorPallet();
-  const { activeApi } = useWebContext();
 
   const addTokenToMetaMask = async (currencyId: WebbCurrencyId) => {
     const provider: Web3Provider = activeApi?.getProvider();

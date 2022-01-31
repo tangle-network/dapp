@@ -3,7 +3,7 @@ import Icon from '@material-ui/core/Icon';
 import Typography from '@material-ui/core/Typography';
 import { useWrapUnwrap } from '@webb-dapp/page-wrap-unwrap/hooks/useWrapUnwrap';
 import IPDisplay from '@webb-dapp/react-components/IPDisplay/IPDisplay';
-import { MixerSize } from '@webb-dapp/react-environment';
+import { MixerSize, useWebContext } from '@webb-dapp/react-environment';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
@@ -13,7 +13,7 @@ import { MixerGroupSelect } from '@webb-dapp/ui-components/Inputs/MixerGroupSele
 import { TokenInput, TokenInputProps } from '@webb-dapp/ui-components/Inputs/TokenInput/TokenInput';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
-import React, { FC, useCallback, useMemo, useState } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
 const TransferWrapper = styled.div`
@@ -100,6 +100,7 @@ const TabButton = styled.button<{ active?: boolean }>`
 `;
 
 const PageWrapUnwrap: FC = () => {
+  const { activeApi, activeChain } = useWebContext();
   const {
     amount,
     context,
@@ -180,6 +181,28 @@ const PageWrapUnwrap: FC = () => {
   const activeSize: MixerSize | undefined = useMemo(() => {
     return dummySizes.find((size) => size.amount === amount);
   }, [amount, dummySizes]);
+
+  // If the available currencies or web context change, it is possible
+  // that a token was selected which is no longer available.
+  // Make sure to clear these tokens.
+  useEffect(() => {
+    if (governedTokens.length) {
+      const supportedToken = governedTokens.find((token) => {
+        token.view.id;
+      });
+      if (!supportedToken) {
+        setGovernedToken(governedTokens[0]);
+      }
+    }
+    if (wrappableTokens.length) {
+      const supportedToken = wrappableTokens.find((token) => {
+        token.view.id;
+      });
+      if (!supportedToken) {
+        setWrappableToken(wrappableTokens[0]);
+      }
+    }
+  }, [activeChain, activeApi, governedTokens, wrappableTokens, setGovernedToken, setWrappableToken]);
 
   return (
     <div>

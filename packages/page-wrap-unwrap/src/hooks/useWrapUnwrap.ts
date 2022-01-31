@@ -35,25 +35,19 @@ export function useWrapUnwrap() {
 
   const initTokens = useCallback(() => {
     // Clear any previous state
-    setState((p) => ({
-      ...p,
-      wrappableToken: null,
-      governedToken: null,
-    }));
-
-    // first, grab all possible governed tokens
-    wrapUnwrapApi?.getGovernedTokens().then((governedTokens) => {
-      // then grab all the possible wrappable tokens
-      wrapUnwrapApi.getWrappableTokens().then((wrappableTokens) => {
-        // then, save them as options in the UI
+    if (wrapUnwrapApi) {
+      Promise.all([wrapUnwrapApi.getGovernedTokens(), wrapUnwrapApi.getWrappableTokens()]).then((values) => {
+        const [governedTokens, wrappableTokens] = values;
         console.log('setState of wrappableTokens and governedTokens in hook');
-        setState((p) => ({
-          ...p,
-          wrappableTokens: wrappableTokens.map((token) => Currency.fromCurrencyId(token)),
-          governedTokens: governedTokens.map((token) => Currency.fromCurrencyId(token)),
-        }));
-      });
-    });
+        if (governedTokens && wrappableTokens) {
+          setState((p) => ({
+            ...p,
+            wrappableTokens: wrappableTokens!.map((token) => Currency.fromCurrencyId(token)),
+            governedTokens: governedTokens!.map((token) => Currency.fromCurrencyId(token)),
+          }));
+        }
+      })
+    }
   }, [wrapUnwrapApi]);
 
   const swap = useCallback(() => {
@@ -63,19 +57,19 @@ export function useWrapUnwrap() {
     }));
   }, []);
 
-  const setWrappableToken = (content: CurrencyContent | null) => {
+  const setWrappableToken = useCallback((content: CurrencyContent | null) => {
     if (content?.view.id) {
-      console.log('setWrappableToken in useWrapUnwrap called');
-      wrapUnwrapApi?.setWrappableToken(content.view.id ?? null);
+      console.log('setWrappableToken in useWrapUnwrap called',  content.view.id);
+      wrapUnwrapApi?.setWrappableToken(content.view.id);
     }
-  };
+  }, [wrapUnwrapApi]);
 
-  const setGovernedToken = (content: CurrencyContent | null) => {
+  const setGovernedToken = useCallback((content: CurrencyContent | null) => {
     if (content?.view.id) {
-      console.log('setGovernedToken in useWrapUnwrap called');
+      console.log('setGovernedToken in useWrapUnwrap called', content.view.id);
       wrapUnwrapApi?.setGovernedToken(content.view.id);
     }
-  };
+  }, [wrapUnwrapApi]);
 
   const execute = useCallback(() => {
     switch (context) {

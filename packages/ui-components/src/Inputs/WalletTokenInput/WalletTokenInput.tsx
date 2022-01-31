@@ -26,7 +26,7 @@ export const WalletTokenInput: React.FC<WalletTokenInputProps> = ({ selectedToke
   const allCurrencies = useMemo(() => {
     return activeChain?.nativeCurrencyId ? [Currency.fromCurrencyId(activeChain.nativeCurrencyId)] : [];
   }, [activeChain]);
-  const active = selectedToken ?? allCurrencies[0];
+  const active = useMemo(() => selectedToken ?? allCurrencies[0], [allCurrencies, selectedToken]);
 
   return (
     <InputSection>

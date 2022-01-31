@@ -87,6 +87,7 @@ export const useBridgeDeposit = (): BridgeDepositApi => {
     return activeBridge.currency;
   }, [activeBridge]);
   const setSelectedCurrency = (bridgeCurrency: Currency) => {
+    console.log('setSelectedCurrency: ', bridgeCurrency);
     const bridge = bridgeApi.getBridge(bridgeCurrency);
     depositApi?.setBridge(bridge);
   };

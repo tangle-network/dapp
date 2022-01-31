@@ -20,7 +20,7 @@ type DepositProps = {};
 
 export const Deposit: React.FC<DepositProps> = () => {
   const bridgeDepositApi = useBridgeDeposit();
-  const { activeApi, activeChain, activeWallet, chains, switchChain } = useWebContext();
+  const { activeApi, activeChain, activeWallet, chains, switchChain, loading } = useWebContext();
   // const { clearAmount, token } = useBalanceSelect();
   const { depositApi, selectedBridgeCurrency, setSelectedCurrency } = bridgeDepositApi;
   const activeBridge = depositApi?.activeBridge;
@@ -78,7 +78,7 @@ export const Deposit: React.FC<DepositProps> = () => {
   }, [wrappableAsset, activeApi]);
 
   useEffect(() => {
-    if (!selectedBridgeCurrency || !activeChain || !depositApi) return;
+    if (!selectedBridgeCurrency || !activeChain || !depositApi || loading) return;
 
     depositApi.getWrappableAssets(activeChain.id).then((wrappableCurrencies) => {
       setShowWrappableAssets(false);
@@ -88,7 +88,7 @@ export const Deposit: React.FC<DepositProps> = () => {
         setWrappableAsset(wrappableCurrencies[0]);
       }
     });
-  }, [activeChain, selectedBridgeCurrency, depositApi]);
+  }, [activeChain, selectedBridgeCurrency, depositApi, loading]);
 
   // helper for automatic selection of 'wrap and deposit' if not enough bridge token
   const selectBridgeAmount = (mixerSize: MixerSize) => {
