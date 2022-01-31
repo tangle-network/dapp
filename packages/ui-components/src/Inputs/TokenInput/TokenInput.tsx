@@ -104,8 +104,8 @@ const AccountManagerWrapper = styled.div<any>`
 
 export type TokenInputProps = {
   currencies: CurrencyContent[];
-  value?: CurrencyContent;
-  onChange(next: CurrencyContent | undefined): void;
+  value?: CurrencyContent | null;
+  onChange(next: CurrencyContent | null): void;
   wrapperStyles?: CSSProperties;
 };
 const ChainName = styled.span`
@@ -117,36 +117,29 @@ const ChainName = styled.span`
 `;
 export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, value, wrapperStyles }) => {
   const selectItems = useMemo(() => {
-    return currencies.map((currency) => {
-      const view = currency.view;
+    const selectableItems = currencies.map((currency) => {
       return {
-        ...view,
+        ...(currency.view),
         self: currency,
       };
     });
+
+    return selectableItems;
   }, [currencies]);
 
+  const selected = value ? { ...(value.view), self: value } : null;
   useEffect(() => {
-    if (!value) {
-      onChange(currencies[0]);
+    if (value) {
+      onChange(value);
+      return;
     }
-  }, [value, currencies, onChange]);
-
-  const selected = useMemo(() => {
-    if (!value) {
-      return undefined;
-    }
-    const view = value.view;
-    return {
-      ...view,
-      self: value,
-    };
-  }, [value]);
+  }, [currencies])
+  
   const $wrapper = useRef<HTMLDivElement>();
   const [isOpen, setIsOpen] = useState(false);
   const theme = useColorPallet();
   const { activeApi } = useWebContext();
-  const bridgeApi = useBridge();
+
   const addTokenToMetaMask = async (currencyId: WebbCurrencyId) => {
     const provider: Web3Provider = activeApi?.getProvider();
     const activeEVM = await provider.network;
@@ -194,16 +187,16 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
               >
                 {selected ? (
                   <Flex row ai='center' jc='flex-start' flex={1}>
-                    <Tooltip title={<h2>{`Add ${selected?.name} to MetaMask`}</h2>}>
+                    <Tooltip title={<h2>{`Add ${selected.name} to MetaMask`}</h2>}>
                       <Avatar
                         style={{
                           cursor: 'copy',
                           background: 'transparent',
                         }}
-                        children={selected?.icon}
+                        children={selected.icon}
                         className={'token-avatar'}
                         onClick={() => {
-                          addTokenToMetaMask(selected?.id);
+                          addTokenToMetaMask(selected.id);
                         }}
                       />
                     </Tooltip>

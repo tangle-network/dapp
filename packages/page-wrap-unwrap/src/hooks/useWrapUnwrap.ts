@@ -1,30 +1,29 @@
-import { currenciesConfig, WebbCurrencyId } from '@webb-dapp/apps/configs';
-import { WebbGovernedToken } from '@webb-dapp/contracts/contracts';
 import { Bridge, useWebContext } from '@webb-dapp/react-environment';
-import { CurrencyType } from '@webb-dapp/react-environment/types/currency-config.interface';
 import { Currency, CurrencyContent } from '@webb-dapp/react-environment/webb-context/currency/currency';
 import { WrappingEventNames } from '@webb-dapp/react-environment/webb-context/wrap-unwrap';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { filter, map, mergeWith } from 'rxjs/operators';
 
 export function useWrapUnwrap() {
-  const { activeApi } = useWebContext();
+  const { activeApi, activeChain } = useWebContext();
 
+  // This state will control the UI options
   const [state, setState] = useState<{
-    tokens: CurrencyContent[];
-    wrappedTokens: CurrencyContent[];
-    rightHandToken: CurrencyContent | null;
-    leftHandToken: CurrencyContent | null;
+    governedToken: CurrencyContent | null;
+    wrappableToken: CurrencyContent | null;
+    governedTokens: CurrencyContent[];
+    wrappableTokens: CurrencyContent[];
     amount: number;
     context: 'wrap' | 'unwrap';
   }>({
-    leftHandToken: null,
-    rightHandToken: null,
+    governedToken: null,
+    wrappableToken: null,
     amount: 0,
-    tokens: [],
-    wrappedTokens: [],
+    governedTokens: [],
+    wrappableTokens: [],
     context: 'wrap',
   });
-  const { amount, context, leftHandToken, rightHandToken } = state;
+  const { amount, context } = state;
 
   const wrapUnwrapApi = useMemo(() => {
     const w = activeApi?.methods.wrapUnwrap?.core;
@@ -35,90 +34,49 @@ export function useWrapUnwrap() {
     return null;
   }, [activeApi]);
 
-  const initWrappableTokens = useCallback(() => {
-    wrapUnwrapApi?.getWrappableTokens(wrapUnwrapApi.currentToken).then((tokens) => {
-      setState((p) => ({
-        ...p,
-        tokens: tokens.map((token) => Currency.fromCurrencyId(token)),
-      }));
+  const initTokens = useCallback(() => {
+    // Clear any previous state
+    setState((p) => ({
+      ...p,
+      wrappableToken: null,
+      governedToken: null,
+    }));
+
+    // first, grab all possible governed tokens
+    wrapUnwrapApi?.getGovernedTokens().then((governedTokens) => {
+      // then grab all the possible wrappable tokens
+      wrapUnwrapApi.getWrappableTokens().then((wrappableTokens) => {
+        // then, save them as options in the UI
+        console.log('setState of wrappableTokens and governedTokens in hook');
+        setState((p) => ({
+          ...p,
+          wrappableTokens: wrappableTokens.map((token) => Currency.fromCurrencyId(token)),
+          governedTokens: governedTokens.map((token) => Currency.fromCurrencyId(token)),
+        }));
+      })
     });
-  }, [wrapUnwrapApi]);
-
-  const initGovernedToken = useCallback(() => {
-    wrapUnwrapApi?.getGovernedTokens().then((tokens) => {
-      setState((p) => ({
-        ...p,
-        wrappedTokens: tokens.map((token) => Currency.fromCurrencyId(token)),
-      }));
-    });
-  }, [wrapUnwrapApi]);
-
-  const init = useCallback(() => {
-    initWrappableTokens();
-    initGovernedToken();
-  }, [initWrappableTokens, initGovernedToken]);
-
-  useEffect(() => {
-    init();
-    const sub = wrapUnwrapApi?.$currentTokenValue.subscribe(async (val) => {
-      console.log(`current token value`, val);
-    });
-    return () => sub?.unsubscribe();
-  }, [wrapUnwrapApi, init]);
-
-  useEffect(() => {
-    console.log('useEffect for wrapUnwrapApi subscription');
-    const r = wrapUnwrapApi?.subscription.subscribe((next) => {
-      const key = Object.keys(next)[0] as WrappingEventNames;
-      switch (key) {
-        case 'ready':
-        case 'stateUpdate':
-          init();
-          break;
-        case 'wrappedTokens':
-          break;
-        case 'nativeTokensUpdate':
-          break;
-        case 'governedTokensUpdate':
-          break;
-      }
-    });
-
-    return () => r?.unsubscribe();
-  }, [init, wrapUnwrapApi]);
+  }, [wrapUnwrapApi, context, activeChain])
 
   const swap = useCallback(() => {
     setState((p) => ({
       ...p,
-      leftHandToken: rightHandToken,
-      rightHandToken: leftHandToken,
       context: p.context === 'unwrap' ? 'wrap' : 'unwrap',
     }));
-  }, [rightHandToken, leftHandToken]);
+  }, []);
 
-  const setRightHandToken = (content: CurrencyContent | undefined) => {
-    setState((p) => ({
-      ...p,
-      rightHandToken: content || null,
-    }));
-  };
-
-  const setLeftHandToken = (content: CurrencyContent | undefined) => {
-    setState((p) => ({
-      ...p,
-      leftHandToken: content || null,
-    }));
-  };
-
-  useEffect(() => {
-    if (context === 'wrap') {
-      wrapUnwrapApi?.setCurrentToken(rightHandToken ? rightHandToken.view.id : null);
-      wrapUnwrapApi?.setOtherEdgToken(leftHandToken ? leftHandToken.view.id : null);
-    } else {
-      wrapUnwrapApi?.setCurrentToken(leftHandToken ? leftHandToken.view.id : null);
-      wrapUnwrapApi?.setOtherEdgToken(rightHandToken ? rightHandToken.view.id : null);
+  const setWrappableToken = (content: CurrencyContent | null) => {
+    if (content?.view.id) {
+      console.log('setWrappableToken in useWrapUnwrap called');
+      wrapUnwrapApi?.setWrappableToken(content.view.id ?? null);
     }
-  }, [leftHandToken, rightHandToken, context, wrapUnwrapApi]);
+  };
+
+  const setGovernedToken = (content: CurrencyContent | null) => {
+    if (content?.view.id) {
+      console.log('setGovernedToken in useWrapUnwrap called');
+      wrapUnwrapApi?.setGovernedToken(content.view.id);
+    }
+  };
 
   const execute = useCallback(() => {
     switch (context) {
@@ -127,19 +85,46 @@ export function useWrapUnwrap() {
       case 'unwrap':
         return wrapUnwrapApi?.unwrap({ amount });
     }
-    return Promise.resolve('');
   }, [context, wrapUnwrapApi, amount]);
 
   const setAmount = (amount: number) => {
     setState((p) => ({ ...p, amount }));
   };
 
+  useEffect(() => {
+    console.log('useEffect for wrapUnwrapApi subscription');
+    initTokens();
+    const r = wrapUnwrapApi?.subscription.subscribe((next) => {
+      const key = Object.keys(next)[0] as WrappingEventNames;
+      switch (key) {
+        case 'ready':
+        case 'stateUpdate':
+          initTokens();
+          break;
+        case 'wrappableTokenUpdate':
+          setState((p) => ({
+            ...p,
+            wrappableToken: Currency.fromCurrencyId(next.wrappableTokenUpdate!)
+          }));
+          break;
+        case 'governedTokenUpdate':
+          setState((p) => ({
+            ...p,
+            governedToken: Currency.fromCurrencyId(next.governedTokenUpdate!)
+          }))
+          break;
+      }
+    });
+
+    return () => r?.unsubscribe();
+  }, [wrapUnwrapApi]);
+
   return {
     ...state,
     execute,
     swap,
-    setRightHandToken,
-    setLeftHandToken,
+    setGovernedToken,
+    setWrappableToken,
     setAmount,
   };
 }

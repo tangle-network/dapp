@@ -1,6 +1,7 @@
 import { DepositConfirm } from '@webb-dapp/mixer/components/DepositConfirm/DepositConfirm';
 import { useDeposit } from '@webb-dapp/mixer/hooks/deposit/useDeposit';
 import { MixerSize } from '@webb-dapp/react-environment/webb-context';
+import { Currency } from '@webb-dapp/react-environment/webb-context/currency/currency';
 import { SpaceBox } from '@webb-dapp/ui-components/Box';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { MixerGroupSelect } from '@webb-dapp/ui-components/Inputs/MixerGroupSelect/MixerGroupSelect';
@@ -18,7 +19,7 @@ export const Deposit: React.FC<DepositProps> = () => {
   const [showDepositModal, setShowDepositModal] = useState(false);
 
   const handleSuccess = useCallback((): void => {}, []);
-  // const [selectedToken, setSelectedToken] = useState<Currency | undefined>(undefined);
+  const [selectedToken, setSelectedToken] = useState<Currency | undefined>(undefined);
 
   const [item, setItem] = useState<MixerSize | undefined>(undefined);
 
@@ -29,7 +30,10 @@ export const Deposit: React.FC<DepositProps> = () => {
 
   return (
     <DepositWrapper>
-      <WalletTokenInput setSelectedToken={(token) => {}} selectedToken={undefined} />
+      <WalletTokenInput 
+        setSelectedToken={(token) => {setSelectedToken(token)}}
+        selectedToken={selectedToken}
+      />
       <SpaceBox height={16} />
       {depositApi && depositApi.mixerSizes.length > 0 && (
         <MixerGroupSelect items={depositApi.mixerSizes} value={item} onChange={setItem} />

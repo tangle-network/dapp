@@ -57,6 +57,7 @@
     "prop-types": "^15.7.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "rxjs": "7.5.2",
     "snarkjs": "^0.4.6",
     "tinycolor2": "^1.4.2",
     "tornado-circomlib": "git+https://github.com/webb-tools/tornado-circomlib.git",

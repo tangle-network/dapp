@@ -184,6 +184,7 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
 
   async getWrappableAssets(chainId: ChainId): Promise<Currency[]> {
     const bridge = this.activeBridge;
+    console.log('getWrappableAssets: ', chainId);
     if (bridge) {
       const wrappedTokenAddress = bridge.getTokenAddress(chainId);
       if (!wrappedTokenAddress) return [];

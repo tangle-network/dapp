@@ -13,7 +13,7 @@ import { MixerGroupSelect } from '@webb-dapp/ui-components/Inputs/MixerGroupSele
 import { TokenInput, TokenInputProps } from '@webb-dapp/ui-components/Inputs/TokenInput/TokenInput';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
-import React, { FC, useCallback, useMemo, useState } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
 const TransferWrapper = styled.div`
@@ -102,16 +102,16 @@ const TabButton = styled.button<{ active?: boolean }>`
 const PageWrapUnwrap: FC = () => {
   const {
     amount,
-    context: status,
+    context,
     execute,
-    leftHandToken,
-    rightHandToken,
+    governedToken,
+    wrappableToken,
     setAmount,
-    setLeftHandToken,
-    setRightHandToken,
+    setGovernedToken,
+    setWrappableToken,
     swap,
-    tokens,
-    wrappedTokens,
+    wrappableTokens,
+    governedTokens,
   } = useWrapUnwrap();
 
   const [isSwap, setIsSwap] = useState(false);
@@ -119,74 +119,73 @@ const PageWrapUnwrap: FC = () => {
 
   const [useFixedDeposits, setUseFixedDeposits] = useState(false);
 
-  const nativeOrWrapToProps: TokenInputProps = useMemo(() => {
+  const leftInputProps: TokenInputProps = useMemo(() => {
     return {
-      currencies: status === 'wrap' ? tokens : wrappedTokens,
-      value: leftHandToken ?? undefined,
+      currencies: context === 'wrap' ? wrappableTokens : governedTokens,
+      value: context === 'wrap' ? wrappableToken : governedToken,
       onChange: (currencyContent) => {
-        setLeftHandToken(currencyContent);
-      },
-    };
-  }, [status, tokens, wrappedTokens, leftHandToken, setLeftHandToken]);
-
-  const wrappedOrWrappedFrom: TokenInputProps = useMemo(() => {
+        context === 'wrap' ? setWrappableToken(currencyContent) : setGovernedToken(currencyContent);
+      }
+    }
+  }, [wrappableTokens, governedTokens, context, wrappableToken, governedToken]);
+  const rightInputProps: TokenInputProps = useMemo(() => {
     return {
-      currencies: status === 'unwrap' ? tokens : wrappedTokens,
-      value: rightHandToken ?? undefined,
+      currencies: context === 'wrap' ? governedTokens : wrappableTokens,
+      value: context === 'wrap' ? governedToken : wrappableToken,
       onChange: (currencyContent) => {
-        setRightHandToken(currencyContent);
-      },
+        context === 'wrap' ? setGovernedToken(currencyContent) : setWrappableToken(currencyContent);
+      }
     };
-  }, [status, tokens, wrappedTokens, rightHandToken, setRightHandToken]);
-  const leftInputProps = nativeOrWrapToProps;
-  const rightInputProps = wrappedOrWrappedFrom;
-  const buttonText = status;
+  }, [wrappableTokens, governedTokens, context, wrappableToken, governedToken]);
 
-  const suffix = leftHandToken?.view.symbol;
+  const buttonText = context;
+
+  const suffix = context === 'wrap' ? wrappableToken?.view.symbol : governedToken?.view.symbol;
 
   const dummySizes = useMemo(() => {
     return [
       {
-        id: `${status} .1 ${suffix}`,
+        id: `${context} .1 ${suffix}`,
         title: `.1 ${suffix}`,
         amount: 0.1,
       },
       {
-        id: `${status} 1 ${suffix}`,
+        id: `${context} 1 ${suffix}`,
         title: `1 ${suffix}`,
         amount: 1,
       },
       {
-        id: `${status} 10 ${suffix}`,
+        id: `${context} 10 ${suffix}`,
         title: `10 ${suffix}`,
         amount: 10,
       },
       {
-        id: `${status} 100 ${suffix}`,
+        id: `${context} 100 ${suffix}`,
         title: `100 ${suffix}`,
         amount: 100,
       },
     ];
-  }, [status, suffix]);
+  }, [context, suffix]);
 
   const switchToWrap = useCallback(() => {
-    if (status === 'unwrap') {
+    if (context === 'unwrap') {
       swap();
     }
-  }, [status, swap]);
+  }, [context, swap]);
   const switchToUnwrap = useCallback(() => {
-    if (status === 'wrap') {
+    if (context === 'wrap') {
       swap();
     }
-  }, [status, swap]);
+  }, [context, swap]);
   const activeSize: MixerSize | undefined = useMemo(() => {
     return dummySizes.find((size) => size.amount === amount);
   }, [amount, dummySizes]);
+
   return (
     <div>
       <TransferWrapper>
         <TabHeader>
-          <TabButton onClick={switchToWrap} active={status === 'wrap'}>
+          <TabButton onClick={switchToWrap} active={context === 'wrap'}>
             <span className='mixer-tab-icon'>
               <svg width='36' height='36' viewBox='0 0 36 36' fill='none' xmlns='http://www.w3.org/2000/svg'>
                 <circle cx='18' cy='18' r='18' fill='#3351F2' />
@@ -198,7 +197,7 @@ const PageWrapUnwrap: FC = () => {
             </span>
             <span className='mixer-tab-label'>Wrap</span>
           </TabButton>
-          <TabButton onClick={switchToUnwrap} active={status === 'unwrap'}>
+          <TabButton onClick={switchToUnwrap} active={context === 'unwrap'}>
             <span className='mixer-tab-icon'>
               <svg width='36' height='36' viewBox='0 0 36 36' fill='none' xmlns='http://www.w3.org/2000/svg'>
                 <circle cx='18' cy='18' r='18' fill='#52B684' />
@@ -268,7 +267,7 @@ const PageWrapUnwrap: FC = () => {
           />
         ) : (
           <InputSection>
-            <InputLabel label={`${status} amount`} />
+            <InputLabel label={`${context} amount`} />
             <AmountInputWrapper>
               <InputBase
                 value={amount}
@@ -297,9 +296,11 @@ const PageWrapUnwrap: FC = () => {
         <SpaceBox height={16} />
 
         <MixerButton
-          disabled={loading}
+          disabled={loading || (!governedToken || !wrappableToken)}
           label={buttonText}
           onClick={async () => {
+            console.log('governedToken: ', governedToken);
+            console.log('wrappableToken: ', wrappableToken);
             try {
               setLoading(true);
               await execute();

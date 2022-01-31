@@ -9,9 +9,8 @@ import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 export type WrappingEvent = {
   ready: null;
   stateUpdate: null;
-  wrappedTokens: WebbCurrencyId[];
-  nativeTokensUpdate: WebbCurrencyId[];
-  governedTokensUpdate: WebbCurrencyId[];
+  wrappableTokenUpdate: WebbCurrencyId | null;
+  governedTokenUpdate: WebbCurrencyId | null;
 };
 export type WrappingEventNames = keyof WrappingEvent;
 export type Amount = {
@@ -31,47 +30,47 @@ export type WrappingBalance = {
  * */
 
 export abstract class WrapUnWrap<T, WrapPayload extends Amount = Amount, UnwrapPayload extends Amount = Amount> {
-  private _currentToken: BehaviorSubject<WebbCurrencyId | null> = new BehaviorSubject<null | WebbCurrencyId>(null);
-  private _otherEdgeToken: BehaviorSubject<WebbCurrencyId | null> = new BehaviorSubject<null | WebbCurrencyId>(null);
+  protected _wrappableToken: BehaviorSubject<WebbCurrencyId | null> = new BehaviorSubject<null | WebbCurrencyId>(null);
+  protected _governedToken: BehaviorSubject<WebbCurrencyId | null> = new BehaviorSubject<null | WebbCurrencyId>(null);
 
   constructor(protected inner: T) {}
 
   abstract get subscription(): Observable<Partial<WrappingEvent>>;
 
-  setCurrentToken(nextToken: WebbCurrencyId | null) {
-    this._currentToken.next(nextToken);
+  setGovernedToken(nextToken: WebbCurrencyId | null) {
+    this._governedToken.next(nextToken);
   }
 
   /**
    *  Current token
    *  */
-  get currentToken() {
-    return this._currentToken.value;
+  get governedToken() {
+    return this._governedToken.value;
   }
 
   /**
    *  watcher of the current token
    *  */
-  get $currentTokenValue() {
-    return this._currentToken.asObservable();
+  get $governedToken() {
+    return this._governedToken.asObservable();
   }
 
-  setOtherEdgToken(nextToken: WebbCurrencyId | null) {
-    this._otherEdgeToken.next(nextToken);
+  setWrappableToken(nextToken: WebbCurrencyId | null) {
+    this._wrappableToken.next(nextToken);
   }
 
   /**
    *  Other EDG token
    *  */
-  get otherEdgToken() {
-    return this._otherEdgeToken.value;
+  get wrappableToken() {
+    return this._wrappableToken.value;
   }
 
   /**
    *  Watcher for other edg token
    *  */
-  get $otherEdgeToken() {
-    return this._otherEdgeToken.asObservable();
+  get $wrappableToken() {
+    return this._wrappableToken.asObservable();
   }
 
   abstract getSizes(): Promise<MixerSize[]>;
@@ -80,7 +79,7 @@ export abstract class WrapUnWrap<T, WrapPayload extends Amount = Amount, UnwrapP
    * WrappableTokens available for display,
    * If a governedTokenId is passed in, get wrappable tokens for that governedTokenId
    *  */
-  abstract getWrappableTokens(governedTokenId: WebbCurrencyId | null): Promise<WebbCurrencyId[]>;
+  abstract getWrappableTokens(governedTokenId?: WebbCurrencyId | null): Promise<WebbCurrencyId[]>;
 
   /**
    *  Get list of all the Governed tokens
