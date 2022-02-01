@@ -18,7 +18,7 @@ import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
-import React, { CSSProperties, useEffect, useMemo, useRef, useState } from 'react';
+import React, { CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styled, { css } from 'styled-components';
 
 const StyledList = styled.ul`
@@ -139,11 +139,7 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
     };
   }, [value]);
 
-  useEffect(() => {
-    onChange(null);
-  }, [])
-
-  const $wrapper = useRef<HTMLDivElement>();
+  const [$wrapper, setWrapper] = useState<{ current: HTMLDivElement | null }>({ current: null });
   const [isOpen, setIsOpen] = useState(false);
   const theme = useColorPallet();
 
@@ -165,148 +161,149 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
     });
   };
 
-  console.log('wrapper value: ', $wrapper);
+  const wrapperRef = useCallback(
+    (current: HTMLDivElement | null) => {
+      setWrapper({ current });
+    },
+    [setWrapper]
+  );
+  // Generate a random id for the <Popper/> component
+  const nonce = useMemo(() => String(Math.random()) + performance.now(), []);
   return (
-    <>
-      <AccountManagerWrapper ref={(arg: any) => {
-        console.log('arg value: ', arg);
-        $wrapper.current = arg;
-      }} style={wrapperStyles}>
-        <ClickAwayListener
-          onClickAway={() => {
-            setIsOpen(false);
+    <AccountManagerWrapper  ref={wrapperRef} style={wrapperStyles}>
+      <ClickAwayListener
+        onClickAway={() => {
+          setIsOpen(false);
+        }}
+      >
+        <Popper
+          style={{
+            zIndex: isOpen ? 10 : undefined,
           }}
+          placement={'bottom-end'}
+          open={Boolean($wrapper?.current)}
+          anchorEl={$wrapper?.current}
+          key={`currencies-${currencies.length}-${nonce}`}
         >
-          <Popper
+          <TokenInputWrapper
+            open={isOpen}
             style={{
-              zIndex: isOpen ? 10 : undefined,
+              width: $wrapper.current?.offsetWidth,
             }}
-            placement={'bottom-end'}
-            open={Boolean($wrapper?.current)}
-            anchorEl={$wrapper?.current}
-            key={`currencies${currencies.length}`}
           >
-            <div>hello</div>
-            <TokenInputWrapper
-              open={isOpen}
-              style={{
-                width: $wrapper.current?.offsetWidth,
+            <div
+              onClick={() => {
+                setIsOpen((p) => !p);
               }}
+              className='account-header'
             >
-              <div
-                onClick={() => {
-                  setIsOpen((p) => !p);
-                }}
-                className='account-header'
-              >
-                {selected ? (
-                  <Flex row ai='center' jc='flex-start' flex={1}>
-                    <Tooltip title={<h2>{`Add ${selected.name} to MetaMask`}</h2>}>
-                      <Avatar
-                        style={{
-                          cursor: 'copy',
-                          background: 'transparent',
-                        }}
-                        children={selected.icon}
-                        className={'token-avatar'}
-                        onClick={() => {
-                          addTokenToMetaMask(selected.id);
-                        }}
-                      />
-                    </Tooltip>
-                    <Padding x={0.5} />
-                    <Flex jc={'center'}>
-                      <Typography variant={'h6'} component={'span'}>
-                        <b>{selected.symbol}</b>
-                      </Typography>
-                      <Typography variant={'body2'} color={'textSecondary'}>
-                        <ChainName>
-                          <b>{selected.name}</b>
-                        </ChainName>
-                      </Typography>
-                    </Flex>
-                  </Flex>
-                ) : (
-                  <Flex row ai='center' jc='flex-start' flex={1}>
+              {selected ? (
+                <Flex row ai='center' jc='flex-start' flex={1}>
+                  <Tooltip title={<h2>{`Add ${selected.name} to MetaMask`}</h2>}>
                     <Avatar
                       style={{
-                        background: theme.warning,
+                        cursor: 'copy',
+                        background: 'transparent',
                       }}
-                    >
-                      <Icon
-                        style={{
-                          color: '#fff',
-                        }}
-                        fontSize={'large'}
-                      >
-                        generating_tokens
-                      </Icon>
-                    </Avatar>
-                    <Padding x={0.5} />
-                    <Flex jc={'center'}>
-                      <Typography variant={'caption'} color={'textSecondary'} style={{ whiteSpace: 'nowrap' }}>
-                        Select Token
-                      </Typography>
-                    </Flex>
+                      children={selected.icon}
+                      className={'token-avatar'}
+                      onClick={() => {
+                        addTokenToMetaMask(selected.id);
+                      }}
+                    />
+                  </Tooltip>
+                  <Padding x={0.5} />
+                  <Flex jc={'center'}>
+                    <Typography variant={'h6'} component={'span'}>
+                      <b>{selected.symbol}</b>
+                    </Typography>
+                    <Typography variant={'body2'} color={'textSecondary'}>
+                      <ChainName>
+                        <b>{selected.name}</b>
+                      </ChainName>
+                    </Typography>
                   </Flex>
-                )}
-
-                <div className={'account-button-wrapper'}>
-                  <IconButton
+                </Flex>
+              ) : (
+                <Flex row ai='center' jc='flex-start' flex={1}>
+                  <Avatar
                     style={{
-                      transform: isOpen ? 'rotate(180deg)' : 'rotate(0)',
-                      transition: 'all ease .3s',
-                    }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setIsOpen((p) => !p);
+                      background: theme.warning,
                     }}
                   >
-                    <Icon>expand_more</Icon>
-                  </IconButton>
-                </div>
-              </div>
-
-              <StyledList as={List} dense disablePadding>
-                {selectItems.map(({ icon: Icon, id, name, self: currency, symbol }) => {
-                  const isSelected = selected?.id === id;
-                  return (
-                    <li
-                      role={'button'}
-                      onClick={() => {
-                        setIsOpen(false);
-                        onChange(currency);
+                    <Icon
+                      style={{
+                        color: '#fff',
                       }}
-                      className={isSelected ? 'selected' : ''}
-                      key={id + symbol + 'currency'}
+                      fontSize={'large'}
                     >
-                      <Flex ai='center' row>
-                        <ListItemAvatar>
-                          <Avatar
-                            onClick={() => {
-                              addTokenToMetaMask(selected?.id!);
-                            }}
-                            style={{ background: 'transparent' }}
-                            children={Icon}
-                          />
-                        </ListItemAvatar>
-                        <ListItemText>
-                          <Typography variant={'h6'} component={'span'}>
-                            <b>{symbol}</b>
-                          </Typography>
-                          <Typography variant={'body2'} color={'textSecondary'}>
-                            <ChainName>{name}</ChainName>
-                          </Typography>
-                        </ListItemText>
-                      </Flex>
-                    </li>
-                  );
-                })}
-              </StyledList>
-            </TokenInputWrapper>
-          </Popper>
-        </ClickAwayListener>
-      </AccountManagerWrapper>
-    </>
+                      generating_tokens
+                    </Icon>
+                  </Avatar>
+                  <Padding x={0.5} />
+                  <Flex jc={'center'}>
+                    <Typography variant={'caption'} color={'textSecondary'} style={{ whiteSpace: 'nowrap' }}>
+                      Select Token
+                    </Typography>
+                  </Flex>
+                </Flex>
+              )}
+
+              <div className={'account-button-wrapper'}>
+                <IconButton
+                  style={{
+                    transform: isOpen ? 'rotate(180deg)' : 'rotate(0)',
+                    transition: 'all ease .3s',
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsOpen((p) => !p);
+                  }}
+                >
+                  <Icon>expand_more</Icon>
+                </IconButton>
+              </div>
+            </div>
+
+            <StyledList as={List} dense disablePadding>
+              {selectItems.map(({ icon: Icon, id, name, self: currency, symbol }) => {
+                const isSelected = selected?.id === id;
+                return (
+                  <li
+                    role={'button'}
+                    onClick={() => {
+                      setIsOpen(false);
+                      onChange(currency);
+                    }}
+                    className={isSelected ? 'selected' : ''}
+                    key={id + symbol + 'currency'}
+                  >
+                    <Flex ai='center' row>
+                      <ListItemAvatar>
+                        <Avatar
+                          onClick={() => {
+                            addTokenToMetaMask(selected?.id!);
+                          }}
+                          style={{ background: 'transparent' }}
+                          children={Icon}
+                        />
+                      </ListItemAvatar>
+                      <ListItemText>
+                        <Typography variant={'h6'} component={'span'}>
+                          <b>{symbol}</b>
+                        </Typography>
+                        <Typography variant={'body2'} color={'textSecondary'}>
+                          <ChainName>{name}</ChainName>
+                        </Typography>
+                      </ListItemText>
+                    </Flex>
+                  </li>
+                );
+              })}
+            </StyledList>
+          </TokenInputWrapper>
+        </Popper>
+      </ClickAwayListener>
+    </AccountManagerWrapper>
   );
 };
