@@ -1,5 +1,10 @@
-import { ChainId, chainIdIntoEVMId, evmIdIntoChainId } from '@webb-dapp/apps/configs';
-import { getEVMChainName, getNativeCurrencySymbol } from '@webb-dapp/apps/configs/evm/SupportedMixers';
+import {
+  ChainId,
+  chainIdIntoEVMId,
+  evmIdIntoChainId,
+  getEVMChainName,
+  getNativeCurrencySymbol,
+} from '@webb-dapp/apps/configs';
 import { createTornDeposit, Deposit } from '@webb-dapp/contracts/utils/make-deposit';
 import { DepositPayload as IDepositPayload, MixerDeposit, MixerSize } from '@webb-dapp/react-environment/webb-context';
 import { DepositNotification } from '@webb-dapp/ui-components/notification/DepositNotification';

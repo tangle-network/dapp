@@ -28,5 +28,5 @@ export * from './currencies';
 export * from './chains';
 export * from './anchors';
 export * from './bridges';
-export * from './evm/SupportedMixers';
+export * from './mixers';
 export * from './wallets';
