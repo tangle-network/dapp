@@ -49,7 +49,7 @@ type DepositInfoProps = {
   onSuccess(): void;
   mixerId: number | undefined;
   destChain: ChainId | undefined;
-  wrappableAsset: Currency | undefined;
+  wrappableAsset: Currency | null | undefined;
 };
 
 const GeneratedNote = styled.p`

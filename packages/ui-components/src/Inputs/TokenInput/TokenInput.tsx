@@ -95,7 +95,7 @@ const TokenInputWrapper = styled.div<{ open: boolean }>`
 
 const AccountManagerWrapper = styled.div<any>`
   min-width: 200px;
-  height: 0;
+  height: 52;
   background: #ffffff;
   position: relative;
   top: -52px;
@@ -114,6 +114,7 @@ const ChainName = styled.span`
   text-overflow: ellipsis;
   white-space: nowrap;
 `;
+
 export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, value, wrapperStyles }) => {
   const { activeApi } = useWebContext();
   const selectItems = useMemo(() => {
@@ -138,12 +139,9 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
     };
   }, [value]);
 
-  // useEffect(() => {
-  //   if (!value) {
-  //     onChange(currencies[0]);
-  //     return;
-  //   }
-  // }, [currencies, onChange, value]);
+  useEffect(() => {
+    onChange(null);
+  }, [])
 
   const $wrapper = useRef<HTMLDivElement>();
   const [isOpen, setIsOpen] = useState(false);
@@ -166,9 +164,14 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
       symbol: token.symbol,
     });
   };
+
+  console.log('wrapper value: ', $wrapper);
   return (
     <>
-      <AccountManagerWrapper ref={$wrapper} style={wrapperStyles}>
+      <AccountManagerWrapper ref={(arg: any) => {
+        console.log('arg value: ', arg);
+        $wrapper.current = arg;
+      }} style={wrapperStyles}>
         <ClickAwayListener
           onClickAway={() => {
             setIsOpen(false);
@@ -181,7 +184,9 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
             placement={'bottom-end'}
             open={Boolean($wrapper?.current)}
             anchorEl={$wrapper?.current}
+            key={`currencies${currencies.length}`}
           >
+            <div>hello</div>
             <TokenInputWrapper
               open={isOpen}
               style={{
