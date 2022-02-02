@@ -1,6 +1,7 @@
 import { Layout } from '@webb-dapp/react-components';
 import { RouterConfigData } from '@webb-dapp/react-environment';
 import { PageContentLoading } from '@webb-dapp/ui-components';
+import { isProduction } from '@webb-dapp/utils/misc';
 import React, { FC, lazy, Suspense } from 'react';
 
 import { sideBarConfig } from './sidebar-config';
@@ -12,14 +13,8 @@ const PageWrapUnwrap = lazy(() => import('@webb-dapp/page-wrap-unwrap'));
 const CSuspense: FC = ({ children }) => {
   return <Suspense fallback={<PageContentLoading />}>{children}</Suspense>;
 };
-let isProduction = (() => {
-  try {
-    return process.env.REACT_APP_BUILD_ENV === 'production';
-  } catch (_) {
-    return false;
-  }
-})();
-export const config: RouterConfigData[] = isProduction
+
+export const config: RouterConfigData[] = isProduction()
   ? [
       {
         children: [
