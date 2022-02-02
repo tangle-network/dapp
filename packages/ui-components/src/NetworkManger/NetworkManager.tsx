@@ -108,13 +108,9 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
       <FilterSection>
         <FormControl>
           <RadioGroup value={radioButtonFilter} onChange={handleRadioFilter} row>
-            {isProduction() && (
-              <FormControlLabel value='live' control={<Radio />} label='live' />
-            )}
+            {isProduction() && <FormControlLabel value='live' control={<Radio />} label='live' />}
             <FormControlLabel value='test' control={<Radio />} label='test' />
-            {isDevelopment() && (
-              <FormControlLabel value='dev' control={<Radio />} label='dev' />
-            )}
+            {isDevelopment() && <FormControlLabel value='dev' control={<Radio />} label='dev' />}
           </RadioGroup>
         </FormControl>
       </FilterSection>
