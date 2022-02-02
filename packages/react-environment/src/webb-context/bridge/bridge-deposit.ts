@@ -1,9 +1,7 @@
 import { ChainId } from '@webb-dapp/apps/configs';
-import { Currency } from '@webb-dapp/react-environment/types/currency';
 import { Bridge } from '@webb-dapp/react-environment/webb-context/bridge/bridge';
 import { Currency } from '@webb-dapp/react-environment/webb-context/currency/currency';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { BridgeCurrency } from '.';
 
 import { DepositPayload, MixerDeposit } from '../mixer/mixer-deposit';
 
