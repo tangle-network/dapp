@@ -1,3 +1,4 @@
+// Do NOT change the ordering of this enum and always add to the end. Otherwise notes may break.
 export enum WebbCurrencyId {
   /// Production edgeware token
   EDG,
@@ -10,6 +11,9 @@ export enum WebbCurrencyId {
   /// WEBB
   WEBB,
   SDN,
+  WETH,
+  MATIC,
+  webbWETH,
 }
 
 export function webbCurrencyIdToString(c: WebbCurrencyId): string {
@@ -26,6 +30,12 @@ export function webbCurrencyIdToString(c: WebbCurrencyId): string {
       return 'WEBB';
     case WebbCurrencyId.SDN:
       return 'SDN';
+    case WebbCurrencyId.WETH:
+      return 'WETH';
+    case WebbCurrencyId.MATIC:
+      return 'MATIC';
+    case WebbCurrencyId.webbWETH:
+      return 'webbWETH';
   }
 }
 
@@ -43,6 +53,12 @@ export function webbCurrencyIdFromString(c: string): WebbCurrencyId {
       return WebbCurrencyId.WEBB;
     case 'SDN':
       return WebbCurrencyId.SDN;
+    case 'WETH':
+      return WebbCurrencyId.WETH;
+    case 'MATIC':
+      return WebbCurrencyId.MATIC;
+    case 'webbWETH':
+      return WebbCurrencyId.webbWETH;
     default:
       throw new Error(`${c} isn't a valid WebbCurrencyId`);
   }

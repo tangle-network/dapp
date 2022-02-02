@@ -2,9 +2,11 @@ import { chainIdIntoEVMId, chainsConfig, currenciesConfig, evmIdIntoChainId } fr
 import { TornadoContract } from '@webb-dapp/contracts/contracts/tornado-anchor';
 import { AnchorContract } from '@webb-dapp/contracts/contracts/webb-anchor';
 import { WebbApiProvider, WebbMethods, WebbProviderEvents } from '@webb-dapp/react-environment';
+import { Web3WrapUnwrap } from '@webb-dapp/react-environment/api-providers';
 import { EvmChainMixersInfo } from '@webb-dapp/react-environment/api-providers/web3/EvmChainMixersInfo';
 import { Web3BridgeDeposit } from '@webb-dapp/react-environment/api-providers/web3/web3-bridge-deposit';
 import { Web3BridgeWithdraw } from '@webb-dapp/react-environment/api-providers/web3/web3-bridge-withdraw';
+import { Web3ChainQuery } from '@webb-dapp/react-environment/api-providers/web3/web3-chain-query';
 import { Web3MixerDeposit } from '@webb-dapp/react-environment/api-providers/web3/web3-mixer-deposit';
 import { Web3MixerWithdraw } from '@webb-dapp/react-environment/api-providers/web3/web3-mixer-withdraw';
 import { Web3ChainQuery } from '@webb-dapp/react-environment/api-providers/web3/web3-chain-query';
@@ -14,9 +16,8 @@ import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import { Web3Accounts } from '@webb-dapp/wallet/providers/web3/web3-accounts';
 import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
 import { EventBus } from '@webb-tools/app-util';
-import { Note } from '@webb-tools/sdk-mixer';
+import { Note } from '@webb-tools/sdk-core';
 import { ethers, providers } from 'ethers';
-import { Web3WrapUnwrap } from '@webb-dapp/react-environment/api-providers';
 
 export class WebbWeb3Provider
   extends EventBus<WebbProviderEvents<[number]>>
@@ -112,7 +113,7 @@ export class WebbWeb3Provider
   }
 
   getTornadoContractAddressByNote(note: Note) {
-    const evmId = chainIdIntoEVMId(Number(note.note.chain));
+    const evmId = chainIdIntoEVMId(Number(note.note.targetChainId));
     const availableMixers = new EvmChainMixersInfo(evmId);
     const mixer = availableMixers.getTornMixerInfoBySize(Number(note.note.amount), note.note.tokenSymbol);
     if (!mixer) {
@@ -182,9 +183,9 @@ export class WebbWeb3Provider
       // @ts-ignore
       let code = await this.ethersProvider.call(a, a.blockNumber);
       console.log({ ERRORCODE: code });
-    } catch (err) {
-      console.log({ e: err });
-      const code = err.message.replace('Reverted ', '');
+    } catch (e) {
+      let err = e as any;
+      const code = err?.message.replace('Reverted ', '');
       let reason = ethers.utils.toUtf8String('0x' + code.substr(138));
       return reason;
     }

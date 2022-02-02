@@ -151,7 +151,7 @@ interface PageType extends FC<BareProps & { fullscreen?: boolean }> {
   Content: typeof Content;
 }
 
-export const Page = (_Page as unknown) as PageType;
+export const Page = _Page as unknown as PageType;
 
 Page.Title = Title;
 Page.Content = Content;

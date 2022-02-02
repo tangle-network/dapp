@@ -1,16 +1,8 @@
-import { WebbEVMChain } from '@webb-dapp/apps/configs';
-import {
-  beresheetMixers,
-  edgewareMixers,
-  ethMainNetMixers,
-  harmonyMainnet0Mixers,
-  harmonyTest1Mixers,
-  MixerInfo,
-  rinkebyMixers,
-  shidenMixers,
-} from '@webb-dapp/apps/configs/evm/SupportedMixers';
+import { evmIdIntoChainId, WebbEVMChain } from '@webb-dapp/apps/configs';
+import { mixersConfig } from '@webb-dapp/apps/configs/mixers';
 import { evmChainStorageFactory, MixerStorage } from '@webb-dapp/apps/configs/storages/EvmChainStorage';
 import { MixerSize } from '@webb-dapp/react-environment';
+import { MixerConfig } from '@webb-dapp/react-environment/types/mixer-config.interface';
 import { Storage } from '@webb-dapp/utils';
 
 export type LeafIntervalInfo = {
@@ -21,39 +13,15 @@ export type LeafIntervalInfo = {
 
 export class EvmChainMixersInfo {
   private mixerStorage: Storage<MixerStorage> | null = null;
-  private tornMixerInfo: MixerInfo[];
+  private mixerConfig: MixerConfig;
 
-  constructor(public chainId: number) {
-    switch (chainId) {
-      case WebbEVMChain.Rinkeby:
-        this.tornMixerInfo = rinkebyMixers.tornMixers;
-        break;
-      case WebbEVMChain.EthereumMainNet:
-        this.tornMixerInfo = ethMainNetMixers.tornMixers;
-        break;
-      case WebbEVMChain.Edgeware:
-        this.tornMixerInfo = edgewareMixers.tornMixers;
-        break;
-      case WebbEVMChain.Beresheet:
-        this.tornMixerInfo = beresheetMixers.tornMixers;
-        break;
-      case WebbEVMChain.HarmonyTestnet1:
-        this.tornMixerInfo = harmonyTest1Mixers.tornMixers;
-        break;
-      case WebbEVMChain.HarmonyMainnet0:
-        this.tornMixerInfo = harmonyMainnet0Mixers.tornMixers;
-        break;
-      case WebbEVMChain.Shiden:
-        this.tornMixerInfo = shidenMixers.tornMixers;
-        break;
-      default:
-        this.tornMixerInfo = [];
-        break;
-    }
+  constructor(public evmId: WebbEVMChain) {
+    const webbChainId = evmIdIntoChainId(evmId);
+    this.mixerConfig = mixersConfig[webbChainId] ?? { tornMixers: [] };
   }
 
   getTornMixerSizes(tokenSymbol: string): MixerSize[] {
-    const tokenMixers = this.tornMixerInfo.filter((entry) => entry.symbol == tokenSymbol);
+    const tokenMixers = this.mixerConfig.tornMixers.filter((entry) => entry.symbol == tokenSymbol);
     return tokenMixers.map((contract) => {
       return {
         id: contract.address,
@@ -65,7 +33,7 @@ export class EvmChainMixersInfo {
   async getMixerStorage(contractAddress: string) {
     // create the mixerStorage if it didn't exist
     if (!this.mixerStorage) {
-      this.mixerStorage = await evmChainStorageFactory(this.chainId);
+      this.mixerStorage = await evmChainStorageFactory(this.evmId);
     }
 
     // get the info from localStorage
@@ -88,7 +56,7 @@ export class EvmChainMixersInfo {
 
   async setMixerStorage(contractAddress: string, lastQueriedBlock: number, leaves: string[]) {
     if (!this.mixerStorage) {
-      this.mixerStorage = await evmChainStorageFactory(this.chainId);
+      this.mixerStorage = await evmChainStorageFactory(this.evmId);
     }
 
     this.mixerStorage.set(contractAddress, {
@@ -98,12 +66,14 @@ export class EvmChainMixersInfo {
   }
 
   getTornMixerInfoBySize(mixerSize: number, tokenSymbol: string) {
-    const mixerInfo = this.tornMixerInfo.find((mixer) => mixer.symbol == tokenSymbol && mixer.size == mixerSize);
+    const mixerInfo = this.mixerConfig.tornMixers.find(
+      (mixer) => mixer.symbol == tokenSymbol && mixer.size == mixerSize
+    );
     return mixerInfo;
   }
 
   getMixerInfoByAddress(contractAddress: string) {
-    const allMixers = this.tornMixerInfo;
+    const allMixers = this.mixerConfig.tornMixers;
     const mixerInfo = allMixers.find((mixer) => mixer.address == contractAddress);
     if (!mixerInfo) {
       throw new Error(`There is no information about the contract ${contractAddress}`);

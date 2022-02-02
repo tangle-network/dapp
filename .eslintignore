@@ -16,3 +16,5 @@ build/**
 
 /packages/**/src/**/*.spec.ts
 /packages/**/src/**/*.spec.tsx
+packages/apps/public/assets/*.js
+/packages/contracts/src/types/index.d.ts

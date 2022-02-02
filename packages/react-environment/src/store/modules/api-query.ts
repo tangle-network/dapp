@@ -10,15 +10,19 @@ interface ApiQueryStoreManipulate<T = ApiQueryStoreState> extends ManipulationsC
 export const useApiQueryStore = createStore<ApiQueryStoreState, ApiQueryStoreManipulate<ApiQueryStoreState>>(
   {},
   {
-    get: ({ state }) => (key: string): any => {
-      return state[key];
-    },
-    set: ({ setState, stateRef }) => (key: string, value: any): void => {
-      // update query result
-      setState({
-        ...stateRef.current,
-        [key]: value,
-      });
-    },
+    get:
+      ({ state }) =>
+      (key: string): any => {
+        return state[key];
+      },
+    set:
+      ({ setState, stateRef }) =>
+      (key: string, value: any): void => {
+        // update query result
+        setState({
+          ...stateRef.current,
+          [key]: value,
+        });
+      },
   }
 );

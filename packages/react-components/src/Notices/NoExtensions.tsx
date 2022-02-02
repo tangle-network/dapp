@@ -1,7 +1,7 @@
 import { ButtonBase, Typography } from '@material-ui/core';
+import { SpaceBox } from '@webb-dapp/ui-components';
 import React, { memo } from 'react';
 import styled, { css } from 'styled-components';
-import { SpaceBox } from '@webb-dapp/ui-components';
 
 const POLKADOT_EXTENSION_PAGE = 'https://polkadot.js.org/extension';
 const METAMASK_EXTENSION_PAGE = 'https://metamask.io/download';

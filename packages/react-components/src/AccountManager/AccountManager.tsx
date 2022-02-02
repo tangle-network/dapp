@@ -175,7 +175,7 @@ export const AccountManager: React.FC<AccountManagerProps> = () => {
             </div>
 
             <StyledList as={List} dense disablePadding>
-              {accountAddresses.map((account) => {
+              {accountAddresses.map((account, inx) => {
                 const { address, name } = account;
                 const isActive = address === active?.address;
                 return (

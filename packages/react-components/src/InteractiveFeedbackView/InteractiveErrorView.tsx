@@ -1,8 +1,9 @@
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
-import React, { useMemo } from 'react';
 import { InteractiveFeedback, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
-import UnselectedNetworkView from './UnselectedNetworkView';
+import React, { useMemo } from 'react';
+
 import DefaultErrorView from './DefaultErrorView';
+import UnselectedNetworkView from './UnselectedNetworkView';
 
 type InteractiveErrorViewProps = {
   activeFeedback: InteractiveFeedback | null;

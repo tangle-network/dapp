@@ -1,13 +1,13 @@
-import { BridgeCurrency, useWebContext } from '@webb-dapp/react-environment';
-import { Currency, CurrencyContent, CurrencyView } from '@webb-dapp/react-environment/types/currency';
-import React, { useMemo } from 'react';
+import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
+import { useWebContext } from '@webb-dapp/react-environment';
+import { Currency } from '@webb-dapp/react-environment/webb-context/currency/currency';
+import React, { useEffect, useMemo } from 'react';
 import styled from 'styled-components';
 
-import { InputSection } from '../InputSection/InputSection';
 import { InputLabel } from '../InputLabel/InputLabel';
+import { InputSection } from '../InputSection/InputSection';
 import { TokenInput } from '../TokenInput/TokenInput';
 import { WalletSelect } from '../WalletSelect/WalletSelect';
-import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
 
 const WalletTokenInputWrapper = styled.div`
   display: flex;
@@ -18,74 +18,27 @@ const WalletTokenInputWrapper = styled.div`
 `;
 
 type WalletTokenInputProps = {
-  setSelectedToken(token: BridgeCurrency): void;
-  selectedToken: BridgeCurrency | undefined;
+  setSelectedToken(token: Currency): void;
+  selectedToken: Currency | undefined;
 };
-const WrappedIcon = () => {
-  return (
-    <div
-      style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: 4,
-        color: 'blue',
-      }}
-    >
-      🕸
-    </div>
-  );
-};
-export const fromBridgeCurrencyToCurrencyView = (bridgeCurrency: BridgeCurrency): CurrencyContent => {
-  const wrappedCurrency = Currency.fromCurrencyId(bridgeCurrency.currencyId);
-  const view = wrappedCurrency.view;
-  return {
-    get view(): CurrencyView {
-      return {
-        ...view,
-        icon: (
-          <div
-            style={{
-              width: '100%',
-              height: '100%',
-              position: 'relative',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <WrappedIcon />
-            {view.icon}
-          </div>
-        ),
-        id: bridgeCurrency.name,
-        name: bridgeCurrency.name,
-        symbol: bridgeCurrency.prefix,
-      };
-    },
-  };
-};
+
 export const WalletBridgeCurrencyInput: React.FC<WalletTokenInputProps> = ({ selectedToken, setSelectedToken }) => {
   const { activeChain, activeWallet } = useWebContext();
   const { getTokens, getTokensOfChain } = useBridge();
   const allCurrencies = useMemo(() => {
     if (activeChain) {
-      return getTokensOfChain(activeChain.id).map((token) => fromBridgeCurrencyToCurrencyView(token));
+      return getTokensOfChain(activeChain.id);
     }
-    return getTokens().map((token) => fromBridgeCurrencyToCurrencyView(token));
+    return getTokens();
   }, [activeChain, getTokens, getTokensOfChain]);
-  const active = useMemo(() => selectedToken ?? allCurrencies[0], [allCurrencies, selectedToken]);
-  const selectedCurrency = useMemo(() => {
-    if (!selectedToken) {
-      return undefined;
+
+  useEffect(() => {
+    if (!selectedToken && allCurrencies.length) {
+      setSelectedToken(allCurrencies[0]);
+      return;
     }
-    return fromBridgeCurrencyToCurrencyView(selectedToken);
-  }, [selectedToken]);
+  }, [allCurrencies, selectedToken, setSelectedToken]);
+
   return (
     <InputSection>
       <WalletTokenInputWrapper>
@@ -99,10 +52,11 @@ export const WalletBridgeCurrencyInput: React.FC<WalletTokenInputProps> = ({ sel
             <div style={{ height: '52px' }}></div>
             <TokenInput
               currencies={allCurrencies}
-              value={selectedCurrency}
+              value={selectedToken}
               onChange={(currencyContent) => {
                 if (currencyContent) {
-                  setSelectedToken(BridgeCurrency.fromString(currencyContent.view.id));
+                  // TODO validate the id is BridgeCurrency id not WebbCurrencyId
+                  setSelectedToken(Currency.fromCurrencyId(currencyContent.view.id));
                 }
               }}
             />

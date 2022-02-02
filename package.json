@@ -11,18 +11,19 @@
   },
   "resolutions": {
     "eslint": "^6.6.0",
-    "@polkadot/api": "^6.1.2",
-    "@webb-tools/type-definitions": "0.1.4-6",
-    "@webb-tools/api": "0.1.4-6",
-    "@webb-tools/types": "0.1.4-6",
-    "@webb-tools/app-util": "0.1.4-6",
-    "@webb-tools/sdk-core": "0.1.4-6",
-    "@webb-tools/sdk-mixer": "0.1.4-6"
+    "@polkadot/api": "^6.9.2",
+	"@webb-tools/type-definitions": "0.1.4-26",
+	"@webb-tools/api": "0.1.4-26",
+	"@webb-tools/types": "0.1.4-26",
+	"@webb-tools/app-util": "0.1.4-26",
+	"@webb-tools/sdk-core": "0.1.4-26",
+	"@webb-tools/wasm-utils": "0.1.4-26"
   },
   "scripts": {
     "bump-version": "node scripts/bump-version.js",
     "start:dapp": "REACT_APP_BUILD_ENV=development yarn run build:i18n && cd packages/apps && REACT_APP_BUILD_ENV=development react-app-rewired start",
-    "build:dapp:production": "cd packages/apps && REACT_APP_BUILD_ENV=production react-app-rewired build",
+    "build:dapp:production::unwrapped": "cd packages/apps && REACT_APP_BUILD_ENV=production react-app-rewired build",
+    "build:dapp:production": "node ./scripts/build-without-warnings.js",
     "build:dapp:development": "cd packages/apps && REACT_APP_BUILD_ENV=development react-app-rewired build",
     "start:dashboard": "exit 0",
     "build:dashboard": "exit 0",
@@ -32,7 +33,8 @@
     "test": "polkadot-dev-run-test",
     "lint": "polkadot-dev-run-lint",
     "ts-check": "tsc --noEmit -p ./tsconfig.json",
-    "format": "prettier --write \"packages/**/*.{ts,js,jsx,tsx}\""
+    "format": "prettier --write \"packages/**/*.{ts,js,jsx,tsx}\"",
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "@material-ui/core": "^4.11.3",
@@ -40,6 +42,7 @@
     "@walletconnect/client": "^1.4.1",
     "@walletconnect/qrcode-modal": "^1.4.1",
     "@walletconnect/web3-provider": "^1.4.1",
+    "D": "^1.0.0",
     "circom": "^0.5.45",
     "circomlib": "^2.0.1",
     "circomlibjs": "^0.0.8",
@@ -50,9 +53,11 @@
     "history": "^5.0.0",
     "maci-crypto": "^0.9.1",
     "notistack": "^1.0.6",
+    "patch-package": "^6.4.7",
     "prop-types": "^15.7.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "rxjs": "7.5.2",
     "snarkjs": "^0.4.6",
     "tinycolor2": "^1.4.2",
     "tornado-circomlib": "git+https://github.com/webb-tools/tornado-circomlib.git",
@@ -97,6 +102,7 @@
     "jest-config": "^26.6.3",
     "jest-css-modules": "^2.1.0",
     "prettier": "^2.2.1",
+    "react-app-rewire-alias": "^1.1.7",
     "react-app-rewire-hot-loader": "^2.0.1",
     "react-app-rewired": "^2.1.8",
     "react-hot-loader": "^4.13.0",
@@ -105,6 +111,7 @@
     "ts-jest": "^24.3.0",
     "typescript": "^4.4.3",
     "wasm-loader": "^1.3.0",
+    "webpack-node-externals": "^3.0.0",
     "worker-loader": "^3.0.7"
   }
 }
