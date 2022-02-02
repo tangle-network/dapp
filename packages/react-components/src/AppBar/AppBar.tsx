@@ -121,15 +121,6 @@ const AppBar: React.FC<AppBarProps> = () => {
           <li className={'active'}>
             <NavLink to={'/bridge'}>Bridge</NavLink>
           </li>
-
-          {/* {process.env.REACT_APP_BUILD_ENV != 'production' && (
-            <li className={'active'}>
-              <NavLink to={'/transfer'} activeclassname={'active'}>
-                Transfer
-              </NavLink>
-            </li>
-          )} */}
-
           <li className={'active'}>
             <NavLink to={'/wrap-unwrap'}>Wrap/Unwrap</NavLink>
           </li>
@@ -142,15 +133,6 @@ const AppBar: React.FC<AppBarProps> = () => {
             setTheme(next === 'light' ? 'default' : 'dark');
           }}
         />
-        {/*        <Tooltip title='Need help?'>
-          <IconButton
-            onClick={() => {
-              window.open('https://medium.com/', '_blank');
-            }}
-          >
-            <Icon>help</Icon>
-          </IconButton>
-        </Tooltip>*/}
         {!isMobile && <NetworkManager />}
         <AccountManager />
       </RightNavigation>
