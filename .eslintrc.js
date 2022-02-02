@@ -21,8 +21,9 @@ module.exports = {
     'no-unused-vars': 'off',
     'sort-keys': 'off',
     'no-empty-pattern': 'off',
-		'@typescript-eslint/no-non-null-assertion':'off'
-  },
+    '@typescript-eslint/no-non-null-assertion': 'off',
+		'@typescript-eslint/indent': 'off',
+	},
   overrides: [
     {
       files: ['*.ts', '*.tsx'],

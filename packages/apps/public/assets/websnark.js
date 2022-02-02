@@ -2056,8 +2056,10 @@
           NativeBigInt.prototype.over = NativeBigInt.prototype.divide = function (v) {
             return new NativeBigInt(this.value / parseValue(v).value);
           };
-          SmallInteger.prototype.over = SmallInteger.prototype.divide = BigInteger.prototype.over =
-            BigInteger.prototype.divide;
+          SmallInteger.prototype.over =
+            SmallInteger.prototype.divide =
+            BigInteger.prototype.over =
+              BigInteger.prototype.divide;
 
           BigInteger.prototype.mod = function (v) {
             return divModAny(this, v)[1];
@@ -2065,8 +2067,10 @@
           NativeBigInt.prototype.mod = NativeBigInt.prototype.remainder = function (v) {
             return new NativeBigInt(this.value % parseValue(v).value);
           };
-          SmallInteger.prototype.remainder = SmallInteger.prototype.mod = BigInteger.prototype.remainder =
-            BigInteger.prototype.mod;
+          SmallInteger.prototype.remainder =
+            SmallInteger.prototype.mod =
+            BigInteger.prototype.remainder =
+              BigInteger.prototype.mod;
 
           BigInteger.prototype.pow = function (v) {
             var n = parseValue(v),
@@ -2238,38 +2242,62 @@
           BigInteger.prototype.equals = function (v) {
             return this.compare(v) === 0;
           };
-          NativeBigInt.prototype.eq = NativeBigInt.prototype.equals = SmallInteger.prototype.eq = SmallInteger.prototype.equals = BigInteger.prototype.eq =
-            BigInteger.prototype.equals;
+          NativeBigInt.prototype.eq =
+            NativeBigInt.prototype.equals =
+            SmallInteger.prototype.eq =
+            SmallInteger.prototype.equals =
+            BigInteger.prototype.eq =
+              BigInteger.prototype.equals;
 
           BigInteger.prototype.notEquals = function (v) {
             return this.compare(v) !== 0;
           };
-          NativeBigInt.prototype.neq = NativeBigInt.prototype.notEquals = SmallInteger.prototype.neq = SmallInteger.prototype.notEquals = BigInteger.prototype.neq =
-            BigInteger.prototype.notEquals;
+          NativeBigInt.prototype.neq =
+            NativeBigInt.prototype.notEquals =
+            SmallInteger.prototype.neq =
+            SmallInteger.prototype.notEquals =
+            BigInteger.prototype.neq =
+              BigInteger.prototype.notEquals;
 
           BigInteger.prototype.greater = function (v) {
             return this.compare(v) > 0;
           };
-          NativeBigInt.prototype.gt = NativeBigInt.prototype.greater = SmallInteger.prototype.gt = SmallInteger.prototype.greater = BigInteger.prototype.gt =
-            BigInteger.prototype.greater;
+          NativeBigInt.prototype.gt =
+            NativeBigInt.prototype.greater =
+            SmallInteger.prototype.gt =
+            SmallInteger.prototype.greater =
+            BigInteger.prototype.gt =
+              BigInteger.prototype.greater;
 
           BigInteger.prototype.lesser = function (v) {
             return this.compare(v) < 0;
           };
-          NativeBigInt.prototype.lt = NativeBigInt.prototype.lesser = SmallInteger.prototype.lt = SmallInteger.prototype.lesser = BigInteger.prototype.lt =
-            BigInteger.prototype.lesser;
+          NativeBigInt.prototype.lt =
+            NativeBigInt.prototype.lesser =
+            SmallInteger.prototype.lt =
+            SmallInteger.prototype.lesser =
+            BigInteger.prototype.lt =
+              BigInteger.prototype.lesser;
 
           BigInteger.prototype.greaterOrEquals = function (v) {
             return this.compare(v) >= 0;
           };
-          NativeBigInt.prototype.geq = NativeBigInt.prototype.greaterOrEquals = SmallInteger.prototype.geq = SmallInteger.prototype.greaterOrEquals = BigInteger.prototype.geq =
-            BigInteger.prototype.greaterOrEquals;
+          NativeBigInt.prototype.geq =
+            NativeBigInt.prototype.greaterOrEquals =
+            SmallInteger.prototype.geq =
+            SmallInteger.prototype.greaterOrEquals =
+            BigInteger.prototype.geq =
+              BigInteger.prototype.greaterOrEquals;
 
           BigInteger.prototype.lesserOrEquals = function (v) {
             return this.compare(v) <= 0;
           };
-          NativeBigInt.prototype.leq = NativeBigInt.prototype.lesserOrEquals = SmallInteger.prototype.leq = SmallInteger.prototype.lesserOrEquals = BigInteger.prototype.leq =
-            BigInteger.prototype.lesserOrEquals;
+          NativeBigInt.prototype.leq =
+            NativeBigInt.prototype.lesserOrEquals =
+            SmallInteger.prototype.leq =
+            SmallInteger.prototype.lesserOrEquals =
+            BigInteger.prototype.leq =
+              BigInteger.prototype.lesserOrEquals;
 
           BigInteger.prototype.isEven = function () {
             return (this.value[0] & 1) === 0;
@@ -2832,9 +2860,12 @@
 
           NativeBigInt.prototype.toString = SmallInteger.prototype.toString;
 
-          NativeBigInt.prototype.toJSON = BigInteger.prototype.toJSON = SmallInteger.prototype.toJSON = function () {
-            return this.toString();
-          };
+          NativeBigInt.prototype.toJSON =
+            BigInteger.prototype.toJSON =
+            SmallInteger.prototype.toJSON =
+              function () {
+                return this.toString();
+              };
 
           BigInteger.prototype.valueOf = function () {
             return parseInt(this.toString(), 10);

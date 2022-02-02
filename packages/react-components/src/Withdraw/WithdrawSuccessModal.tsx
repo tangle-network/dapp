@@ -1,10 +1,10 @@
 import { parseUnits } from '@ethersproject/units';
 import { Button, Divider, Icon, Link, Typography } from '@material-ui/core';
-import { ChainId, chainsConfig } from '@webb-dapp/apps/configs';
+import { chainsConfig } from '@webb-dapp/apps/configs';
 import { ActiveWebbRelayer } from '@webb-dapp/react-environment/webb-context/relayer/';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 import { LoggerService } from '@webb-tools/app-util';
-import { DepositNote } from '@webb-tools/wasm-utils';
+import { JsNote as DepositNote } from '@webb-tools/wasm-utils';
 import { ethers } from 'ethers';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
@@ -16,7 +16,7 @@ type WithdrawingModalProps = {
   recipient: string;
   receipt: string;
   relayer: ActiveWebbRelayer | null;
-  exit(): void;
+  exit(): void | Promise<void>;
 };
 
 const WithdrawInfoWrapper = styled.div`
@@ -34,7 +34,7 @@ const WithdrawInfoWrapper = styled.div`
     padding-top: 1rem;
     font-family: ${FontFamilies.AvenirNext};
     text-align: center;
-    font-weight: medium;
+    font-weight: normal;
   }
 `;
 
@@ -107,16 +107,16 @@ const WithdrawSuccessModal: React.FC<WithdrawingModalProps> = ({ exit, note, rec
   };
 
   const getBlockExplorerTx = (txHash: string): string => {
-    const chainId = Number(note.chain);
-    const url = chainsConfig[chainId].blockExplorerStub
+    const chainId = Number(note.targetChainId);
+    const url = chainsConfig[chainId]?.blockExplorerStub
       ? `${chainsConfig[chainId].blockExplorerStub}/tx/${txHash}`
       : '';
     return url;
   };
 
   const getBlockExplorerAddress = (address: string): string => {
-    const chainId = Number(note.chain);
-    const url = chainsConfig[chainId].blockExplorerStub
+    const chainId = Number(note.targetChainId);
+    const url = chainsConfig[chainId]?.blockExplorerStub
       ? `${chainsConfig[chainId].blockExplorerStub}/address/${address}`
       : '';
     return url;

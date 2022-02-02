@@ -11,7 +11,7 @@ import {
 import Icon from '@material-ui/core/Icon';
 import Typography from '@material-ui/core/Typography';
 import { ChainId, chainsPopulated } from '@webb-dapp/apps/configs';
-import { CurrencyContent } from '@webb-dapp/react-environment/types/currency';
+import { CurrencyContent } from '@webb-dapp/react-environment/webb-context/currency/currency';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabel';
@@ -128,7 +128,7 @@ export const TokenInput: React.FC<TokenInputProps> = ({ chains, onChange, value 
   }, [chains]);
 
   useEffect(() => {
-    if (!chains.includes(value)) {
+    if (value && !chains.includes(value)) {
       onChange(undefined);
     }
   }, [value, chains, onChange]);
@@ -155,7 +155,7 @@ export const TokenInput: React.FC<TokenInputProps> = ({ chains, onChange, value 
         >
           <Popper
             style={{
-              zIndex: isOpen ? 10 : null,
+              zIndex: isOpen ? 10 : undefined,
             }}
             placement={'bottom-end'}
             open={Boolean($wrapper?.current)}

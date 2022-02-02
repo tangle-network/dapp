@@ -1,6 +1,7 @@
+import { Chain, Wallet } from '@webb-dapp/react-environment';
+
 import { chainsConfig } from './chains/chain-config';
 import { walletsConfig } from './wallets/wallets-config';
-import { Chain, Wallet } from '@webb-dapp/react-environment';
 
 export const chainsPopulated = Object.values(chainsConfig).reduce(
   (acc, chainsConfig) => ({
@@ -23,7 +24,9 @@ export const chainsPopulated = Object.values(chainsConfig).reduce(
   {} as Record<number, Chain>
 );
 
-export * from './wallets';
 export * from './currencies';
 export * from './chains';
-export * from './evm/SupportedMixers';
+export * from './anchors';
+export * from './bridges';
+export * from './mixers';
+export * from './wallets';

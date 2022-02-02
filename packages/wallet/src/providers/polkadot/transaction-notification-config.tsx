@@ -34,7 +34,7 @@ export const transactionNotificationConfig: NotificationConfig = {
       extras: {
         persist: false,
       },
-      message: 'Submit Transaction Success',
+      message: data.data ?? 'Submit Transaction Success',
       key: data.key,
       variant: 'success',
     });

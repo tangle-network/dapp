@@ -1,6 +1,6 @@
 import { Log } from '@ethersproject/abstract-provider';
 import { WebbEVMChain } from '@webb-dapp/apps/configs';
-import { fetchTornadoCircuitData, fetchTornadoProvingKey } from '@webb-dapp/apps/configs/ipfs/tornados';
+import { fetchTornadoCircuitData, fetchTornadoProvingKey } from '@webb-dapp/apps/configs/ipfs/evm/tornados';
 import { ZKPTornInputWithMerkle, ZKPTornPublicInputs } from '@webb-dapp/contracts/contracts/types';
 import { Tornado } from '@webb-dapp/contracts/types/Tornado';
 import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
@@ -61,7 +61,7 @@ export class TornadoContract {
   async deposit(commitment: string, onComplete?: (event: DepositEvent) => void) {
     const overrides = { value: await this.denomination };
     const filters = await this._contract.filters.Deposit(commitment, null, null);
-    this._contract.once(filters, (commitment, insertedIndex, timestamp) => {
+    this._contract.once(filters, (commitment: any, insertedIndex: number, timestamp: BigNumber) => {
       onComplete?.([commitment, insertedIndex, timestamp]);
     });
     const recipient = await this._contract.deposit(commitment, overrides);
@@ -104,7 +104,7 @@ export class TornadoContract {
       mixerLogger.log(e);
 
       // If there is a timeout, query the logs in block increments.
-      if (e.code == -32603) {
+      if ((e as any)?.code == -32603) {
         for (let i = startingBlock; i < currentBlock; i += step) {
           const nextLogs = await retryPromise(() => {
             return this.web3Provider.getLogs({
@@ -256,8 +256,6 @@ export class TornadoContract {
       pathIndices,
       root: root as string,
     };
-
-    console.log(zkpInput);
 
     const proofsData = await webSnarkUtils.genWitnessAndProve(
       // @ts-ignore

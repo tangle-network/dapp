@@ -61,7 +61,6 @@ const RelayerInput: React.FC<RelayerInputProps> = ({
   const [customRelayURl, setCustomRelayURl] = useState('');
   const [persistentCustomRelay, setPersistentCustomRelay] = useState(false);
   const [nextRelayerURL, setNextRelayerURl] = useState('');
-
   const [relayingIncentives, setRelayingIncentives] = useState<FeesInfo>({
     totalFees: 0,
     withdrawFeePercentage: 0,
