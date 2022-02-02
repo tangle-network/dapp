@@ -235,10 +235,10 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
         console.log(data2);
         relayedWithdraw.send(tx);
         const txHash = await relayedWithdraw.await();
-        if (txHash[1]) {
-          return txHash[1];
+        if (!txHash || !txHash[1]) {
+          return '';
         }
-        return '';
+        return txHash[1];
       } catch (e) {
         this.emit('stateChange', WithdrawState.Failed);
         this.emit('stateChange', WithdrawState.Ideal);

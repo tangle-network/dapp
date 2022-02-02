@@ -9,7 +9,9 @@ import {
   useWebContext,
 } from '@webb-dapp/react-environment/webb-context';
 import { Currency } from '@webb-dapp/react-environment/webb-context/currency/currency';
+import { LoggerService } from '@webb-tools/app-util';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+const logger = LoggerService.get('useBridgeDeposit');
 
 export interface BridgeDepositApi {
   mixerSizes: MixerSize[];
@@ -87,6 +89,7 @@ export const useBridgeDeposit = (): BridgeDepositApi => {
     return activeBridge.currency;
   }, [activeBridge]);
   const setSelectedCurrency = (bridgeCurrency: Currency) => {
+    logger.log('setSelectedCurrency: ', bridgeCurrency);
     const bridge = bridgeApi.getBridge(bridgeCurrency);
     depositApi?.setBridge(bridge);
   };

@@ -469,7 +469,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
 
       relayedWithdraw.send(tx);
       const txResult = await relayedWithdraw.await();
-      if (!txResult[1]) {
+      if (!txResult || !txResult[1]) {
         return '';
       }
       txHash = txResult[1];

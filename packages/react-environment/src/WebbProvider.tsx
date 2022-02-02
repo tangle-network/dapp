@@ -212,6 +212,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
       await activeApi.destroy();
     }
     try {
+      setLoading(true);
       /// init the active api value
       let localActiveApi: WebbApiProvider<any> | null = null;
       switch (wallet.id) {
@@ -378,6 +379,8 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
       /// settings the user selection
       setActiveChain(chain);
       setActiveWallet(wallet);
+      console.log('setActiveChain and setActiveWallet');
+      setLoading(false);
       return localActiveApi;
     } catch (e) {
       if (e instanceof WebbError) {

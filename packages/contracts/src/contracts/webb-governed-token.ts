@@ -96,14 +96,13 @@ export class WebbGovernedToken {
 
   async isNativeAllowed() {
     const nativeAllowed = await this._contract.isNativeAllowed();
-    console.log('native is ', nativeAllowed);
     return nativeAllowed;
   }
 
+  // Checks if the governed token wraps a particular token.
+  // Does NOT check if allowances for ERC20s are satisfied.
   async canWrap(tokenAddress: string) {
-    console.log('canWrap?: ', tokenAddress);
     const tokens = await this._contract.getTokens();
-    console.log('tokens list: ', tokens);
     if (tokens.includes(tokenAddress)) {
       return true;
     }

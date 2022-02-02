@@ -3,7 +3,7 @@ import Icon from '@material-ui/core/Icon';
 import Typography from '@material-ui/core/Typography';
 import { useWrapUnwrap } from '@webb-dapp/page-wrap-unwrap/hooks/useWrapUnwrap';
 import IPDisplay from '@webb-dapp/react-components/IPDisplay/IPDisplay';
-import { MixerSize } from '@webb-dapp/react-environment';
+import { MixerSize, useWebContext } from '@webb-dapp/react-environment';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
@@ -13,8 +13,10 @@ import { MixerGroupSelect } from '@webb-dapp/ui-components/Inputs/MixerGroupSele
 import { TokenInput, TokenInputProps } from '@webb-dapp/ui-components/Inputs/TokenInput/TokenInput';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
-import React, { FC, useCallback, useMemo, useState } from 'react';
+import { LoggerService } from '@webb-tools/app-util';
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
+const logger = LoggerService.get('page-wrap-unwrap');
 
 const TransferWrapper = styled.div`
   padding: 1rem;
@@ -100,18 +102,19 @@ const TabButton = styled.button<{ active?: boolean }>`
 `;
 
 const PageWrapUnwrap: FC = () => {
+  const { activeApi, activeChain } = useWebContext();
   const {
     amount,
-    context: status,
+    context,
     execute,
-    leftHandToken,
-    rightHandToken,
+    governedToken,
+    governedTokens,
     setAmount,
-    setLeftHandToken,
-    setRightHandToken,
+    setGovernedToken,
+    setWrappableToken,
     swap,
-    tokens,
-    wrappedTokens,
+    wrappableToken,
+    wrappableTokens,
   } = useWrapUnwrap();
 
   const [isSwap, setIsSwap] = useState(false);
@@ -119,74 +122,95 @@ const PageWrapUnwrap: FC = () => {
 
   const [useFixedDeposits, setUseFixedDeposits] = useState(false);
 
-  const nativeOrWrapToProps: TokenInputProps = useMemo(() => {
+  const leftInputProps: TokenInputProps = useMemo(() => {
     return {
-      currencies: status === 'wrap' ? tokens : wrappedTokens,
-      value: leftHandToken ?? undefined,
+      currencies: context === 'wrap' ? wrappableTokens : governedTokens,
+      value: context === 'wrap' ? wrappableToken : governedToken,
       onChange: (currencyContent) => {
-        setLeftHandToken(currencyContent);
+        context === 'wrap' ? setWrappableToken(currencyContent) : setGovernedToken(currencyContent);
       },
     };
-  }, [status, tokens, wrappedTokens, leftHandToken, setLeftHandToken]);
-
-  const wrappedOrWrappedFrom: TokenInputProps = useMemo(() => {
+  }, [context, wrappableTokens, governedTokens, wrappableToken, governedToken, setWrappableToken, setGovernedToken]);
+  const rightInputProps: TokenInputProps = useMemo(() => {
     return {
-      currencies: status === 'unwrap' ? tokens : wrappedTokens,
-      value: rightHandToken ?? undefined,
+      currencies: context === 'wrap' ? governedTokens : wrappableTokens,
+      value: context === 'wrap' ? governedToken : wrappableToken,
       onChange: (currencyContent) => {
-        setRightHandToken(currencyContent);
+        context === 'wrap' ? setGovernedToken(currencyContent) : setWrappableToken(currencyContent);
       },
     };
-  }, [status, tokens, wrappedTokens, rightHandToken, setRightHandToken]);
-  const leftInputProps = nativeOrWrapToProps;
-  const rightInputProps = wrappedOrWrappedFrom;
-  const buttonText = status;
+  }, [context, governedTokens, wrappableTokens, governedToken, wrappableToken, setGovernedToken, setWrappableToken]);
 
-  const suffix = leftHandToken?.view.symbol;
+  const buttonText = context;
+
+  const suffix = context === 'wrap' ? wrappableToken?.view.symbol : governedToken?.view.symbol;
 
   const dummySizes = useMemo(() => {
     return [
       {
-        id: `${status} .1 ${suffix}`,
+        id: `${context} .1 ${suffix}`,
         title: `.1 ${suffix}`,
         amount: 0.1,
       },
       {
-        id: `${status} 1 ${suffix}`,
+        id: `${context} 1 ${suffix}`,
         title: `1 ${suffix}`,
         amount: 1,
       },
       {
-        id: `${status} 10 ${suffix}`,
+        id: `${context} 10 ${suffix}`,
         title: `10 ${suffix}`,
         amount: 10,
       },
       {
-        id: `${status} 100 ${suffix}`,
+        id: `${context} 100 ${suffix}`,
         title: `100 ${suffix}`,
         amount: 100,
       },
     ];
-  }, [status, suffix]);
+  }, [context, suffix]);
 
   const switchToWrap = useCallback(() => {
-    if (status === 'unwrap') {
+    if (context === 'unwrap') {
       swap();
     }
-  }, [status, swap]);
+  }, [context, swap]);
   const switchToUnwrap = useCallback(() => {
-    if (status === 'wrap') {
+    if (context === 'wrap') {
       swap();
     }
-  }, [status, swap]);
+  }, [context, swap]);
   const activeSize: MixerSize | undefined = useMemo(() => {
     return dummySizes.find((size) => size.amount === amount);
   }, [amount, dummySizes]);
+
+  // If the available currencies or web context change, it is possible
+  // that a token was selected which is no longer available.
+  // Make sure to clear these tokens.
+  useEffect(() => {
+    if (governedTokens.length) {
+      const supportedToken = governedTokens.find((token) => {
+        token.view.id;
+      });
+      if (!supportedToken) {
+        setGovernedToken(governedTokens[0]);
+      }
+    }
+    if (wrappableTokens.length) {
+      const supportedToken = wrappableTokens.find((token) => {
+        token.view.id;
+      });
+      if (!supportedToken) {
+        setWrappableToken(wrappableTokens[0]);
+      }
+    }
+  }, [activeChain, activeApi, governedTokens, wrappableTokens, setGovernedToken, setWrappableToken]);
+
   return (
     <div>
       <TransferWrapper>
         <TabHeader>
-          <TabButton onClick={switchToWrap} active={status === 'wrap'}>
+          <TabButton onClick={switchToWrap} active={context === 'wrap'}>
             <span className='mixer-tab-icon'>
               <svg width='36' height='36' viewBox='0 0 36 36' fill='none' xmlns='http://www.w3.org/2000/svg'>
                 <circle cx='18' cy='18' r='18' fill='#3351F2' />
@@ -198,7 +222,7 @@ const PageWrapUnwrap: FC = () => {
             </span>
             <span className='mixer-tab-label'>Wrap</span>
           </TabButton>
-          <TabButton onClick={switchToUnwrap} active={status === 'unwrap'}>
+          <TabButton onClick={switchToUnwrap} active={context === 'unwrap'}>
             <span className='mixer-tab-icon'>
               <svg width='36' height='36' viewBox='0 0 36 36' fill='none' xmlns='http://www.w3.org/2000/svg'>
                 <circle cx='18' cy='18' r='18' fill='#52B684' />
@@ -268,7 +292,7 @@ const PageWrapUnwrap: FC = () => {
           />
         ) : (
           <InputSection>
-            <InputLabel label={`${status} amount`} />
+            <InputLabel label={`${context} amount`} />
             <AmountInputWrapper>
               <InputBase
                 value={amount}
@@ -297,9 +321,11 @@ const PageWrapUnwrap: FC = () => {
         <SpaceBox height={16} />
 
         <MixerButton
-          disabled={loading}
+          disabled={loading || !governedToken || !wrappableToken}
           label={buttonText}
           onClick={async () => {
+            logger.log('governedToken: ', governedToken);
+            logger.log('wrappableToken: ', wrappableToken);
             try {
               setLoading(true);
               await execute();

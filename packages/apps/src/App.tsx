@@ -10,8 +10,8 @@ import React, { FC } from 'react';
 import { hot } from 'react-hot-loader/root';
 
 import { config as routerConfig } from './router-config';
-console.log(process.env);
 const appLogger = LoggerService.new('App');
+appLogger.log('process.env: ', process.env);
 const App: FC = () => {
   return (
     <DAppError logger={appLogger}>

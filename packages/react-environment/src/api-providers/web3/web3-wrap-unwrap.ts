@@ -6,7 +6,8 @@ import {
   WebbCurrencyId,
   webbCurrencyIdToString,
 } from '@webb-dapp/apps/configs';
-import { WebbGovernedToken } from '@webb-dapp/contracts/contracts';
+import { WebbGovernedToken, zeroAddress } from '@webb-dapp/contracts/contracts';
+import { ERC20__factory } from '@webb-dapp/contracts/types';
 import { Bridge, MixerSize } from '@webb-dapp/react-environment';
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers';
 import { CurrencyType } from '@webb-dapp/react-environment/types/currency-config.interface';
@@ -17,10 +18,11 @@ import {
   WrappingEvent,
   WrapUnWrap,
 } from '@webb-dapp/react-environment/webb-context/wrap-unwrap';
+import { notificationApi } from '@webb-dapp/ui-components/notification';
 import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polkadot/transaction-notification-config';
+import { ContractTransaction } from 'ethers';
 import React from 'react';
-import { BehaviorSubject, merge, Observable, Subject } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import Web3 from 'web3';
 
 export type Web3WrapPayload = Amount;
@@ -64,29 +66,19 @@ export class Web3WrapUnwrap extends WrapUnWrap<WebbWeb3Provider> {
         stateUpdate: null,
       });
     });
-    merge(
-      this.$currentTokenValue.pipe(
-        filter((t) => Boolean(t)),
-        map((t) => ({
-          isCurrent: true,
-          value: t,
-        }))
-      ),
-      this.$otherEdgeToken.pipe(
-        filter((t) => Boolean(t)),
-        map((t) => ({
-          isCurrent: false,
-          value: t,
-        }))
-      )
-    ).subscribe(async (o) => {
-      if (!o.value) {
-        return;
-      }
-      const accounts = await this.inner.accounts.accounts();
-      const account = accounts[0];
-      const otherValue = this.otherEdgToken;
-      const index = o.isCurrent ? 0 : 1;
+  }
+
+  setGovernedToken(nextToken: WebbCurrencyId | null) {
+    this._governedToken.next(nextToken);
+    this._event.next({
+      governedTokenUpdate: nextToken,
+    });
+  }
+
+  setWrappableToken(nextToken: WebbCurrencyId | null) {
+    this._wrappableToken.next(nextToken);
+    this._event.next({
+      wrappableTokenUpdate: nextToken,
     });
   }
 
@@ -100,7 +92,7 @@ export class Web3WrapUnwrap extends WrapUnWrap<WebbWeb3Provider> {
 
   // TODO: Dynamic wrappable currencies
   //
-  async getWrappableTokens(governedCurrency: WebbCurrencyId | null): Promise<WebbCurrencyId[]> {
+  async getWrappableTokens(governedCurrency?: WebbCurrencyId | null): Promise<WebbCurrencyId[]> {
     if (this.currentChainId) {
       const currenciesOfChain = chainsConfig[this.currentChainId].currencies;
       const wrappableCurrencies = currenciesOfChain.filter((currencyId) => {
@@ -128,7 +120,7 @@ export class Web3WrapUnwrap extends WrapUnWrap<WebbWeb3Provider> {
 
   async canUnWrap(unwrapPayload: Web3UnwrapPayload): Promise<boolean> {
     const { amount } = unwrapPayload;
-    const governedTokenId = this.currentToken!;
+    const governedTokenId = this.governedToken!;
     const webbGovernedToken = this.governedTokenWrapper(governedTokenId);
 
     const account = await this.inner.accounts.accounts();
@@ -139,8 +131,8 @@ export class Web3WrapUnwrap extends WrapUnWrap<WebbWeb3Provider> {
   async unwrap(unwrapPayload: Web3UnwrapPayload): Promise<string> {
     const { amount: amountNumber } = unwrapPayload;
 
-    const governedTokenId = this.currentToken!;
-    const wrappableTokenId = this.otherEdgToken!;
+    const governedTokenId = this.governedToken!;
+    const wrappableTokenId = this.wrappableToken!;
     const amount = Web3.utils.toWei(String(amountNumber), 'ether');
 
     const webbGovernedToken = this.governedTokenWrapper(governedTokenId);
@@ -190,14 +182,14 @@ export class Web3WrapUnwrap extends WrapUnWrap<WebbWeb3Provider> {
   }
 
   async canWrap(): Promise<boolean> {
-    const toWrapId = this.otherEdgToken!;
-    const wrapIntoId = this.currentToken!;
-    const webbGovernedToken = this.governedTokenWrapper(wrapIntoId);
+    const governedToken = this.governedToken!;
+    const wrappableToken = this.wrappableToken!;
+    const webbGovernedToken = this.governedTokenWrapper(governedToken);
 
-    if (currenciesConfig[toWrapId].type == CurrencyType.NATIVE) {
+    if (currenciesConfig[wrappableToken].type == CurrencyType.NATIVE) {
       return webbGovernedToken.isNativeAllowed();
     } else {
-      const tokenAddress = currenciesConfig[toWrapId].addresses.get(this.currentChainId!)!;
+      const tokenAddress = currenciesConfig[governedToken].addresses.get(this.currentChainId!)!;
       return webbGovernedToken.canWrap(tokenAddress);
     }
   }
@@ -205,8 +197,8 @@ export class Web3WrapUnwrap extends WrapUnWrap<WebbWeb3Provider> {
   async wrap(wrapPayload: Web3WrapPayload): Promise<string> {
     const { amount: amountNumber } = wrapPayload;
 
-    const wrappableTokenId = this.otherEdgToken!;
-    const governableTokenId = this.currentToken!;
+    const wrappableTokenId = this.wrappableToken!;
+    const governableTokenId = this.governedToken!;
     const webbGovernedToken = this.governedTokenWrapper(governableTokenId);
     const amount = Web3.utils.toWei(String(amountNumber), 'ether');
     let path = {
@@ -230,14 +222,33 @@ export class Web3WrapUnwrap extends WrapUnWrap<WebbWeb3Provider> {
         ),
         path,
       });
-      console.log(
-        'address of token to wrap into webbGovernedToken',
-        currenciesConfig[wrappableTokenId].addresses.get(this.currentChainId!)!
-      );
-      const tx = await webbGovernedToken.wrap(
-        currenciesConfig[wrappableTokenId].addresses.get(this.currentChainId!)!,
-        amount
-      );
+      console.log('address of token to wrap into webbGovernedToken', this.getAddressFromWrapTokenId(wrappableTokenId));
+      let tx: ContractTransaction;
+      // If wrapping an erc20, check for approvals
+      if (this.getAddressFromWrapTokenId(wrappableTokenId) != zeroAddress) {
+        const wrappableTokenInstance = ERC20__factory.connect(
+          this.getAddressFromWrapTokenId(wrappableTokenId),
+          this.inner.getEthersProvider().getSigner()
+        );
+        const wrappableTokenAllowance = await wrappableTokenInstance.allowance(
+          await this.inner.getEthersProvider().getSigner().getAddress(),
+          wrappableTokenInstance.address
+        );
+        console.log(wrappableTokenAllowance);
+        if (wrappableTokenAllowance.lt(amount)) {
+          notificationApi.addToQueue({
+            message: 'Waiting for token approval',
+            variant: 'info',
+            key: 'waiting-approval',
+            extras: { persist: true },
+          });
+          tx = await wrappableTokenInstance.approve(webbGovernedToken.address, amount);
+          await tx.wait();
+          notificationApi.remove('waiting-approval');
+        }
+      }
+
+      tx = await webbGovernedToken.wrap(this.getAddressFromWrapTokenId(wrappableTokenId), amount);
       await tx.wait();
       transactionNotificationConfig.finalize?.({
         address: 'recipient',
@@ -261,7 +272,6 @@ export class Web3WrapUnwrap extends WrapUnWrap<WebbWeb3Provider> {
   private getAddressFromWrapTokenId(id: WebbCurrencyId): string {
     const currentNetwork = this.currentChainId!;
     const address = currenciesConfig[id].addresses.get(currentNetwork)!;
-    console.log(address);
     return address;
   }
 
