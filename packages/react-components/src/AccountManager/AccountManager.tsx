@@ -129,7 +129,14 @@ export const AccountManager: React.FC<AccountManagerProps> = () => {
           setIsOpen(false);
         }}
       >
-        <Popper placement={'bottom-end'} open={Boolean($wrapper?.current)} anchorEl={$wrapper?.current}>
+        <Popper
+          placement={'bottom-end'}
+          open={Boolean($wrapper?.current)}
+          anchorEl={$wrapper?.current}
+          style={{
+            zIndex: 101,
+          }}
+        >
           <AccountManagerContent
             open={isOpen}
             style={{

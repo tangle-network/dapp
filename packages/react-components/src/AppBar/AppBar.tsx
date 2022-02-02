@@ -21,12 +21,15 @@ const AppBarWrapper = styled.nav`
   flex: 1;
   align-items: center;
   padding: 0 10px;
+  z-index: 100;
 
-  ${below.sm`
-	 background:#fff;
-	`}
+  background: ${({ theme }) => theme.mainBackground};
   .webb-logo {
     max-width: 100px;
+    z-index: 101;
+  }
+  .div {
+    z-index: 101;
   }
 
   ul {
@@ -35,8 +38,10 @@ const AppBarWrapper = styled.nav`
     margin: auto;
     padding: 0;
     list-style: none;
+    z-index: 101;
 
     li {
+      z-index: 101;
       a {
         height: 100%;
         min-width: 70px;
@@ -92,7 +97,6 @@ const RightNavigation = styled.div`
   align-items: center;
   ${below.sm`
 	  margin-left: auto;
-
 	`}
 `;
 const NavigationWrapper = styled.ul`
