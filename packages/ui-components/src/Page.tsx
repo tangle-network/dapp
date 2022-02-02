@@ -128,13 +128,9 @@ _Page = memo(styled(_Page)`
   overflow-y: overlay;
   overflow: auto;
 
-  border-radius: 0 0 40px 40px;
+  border-radius: 40px 40px 40px 40px;
   padding: 0 10px;
 
-  ${above.sm`
-  border-radius: 40px 40px 0 0;
-
-	`};
   transition: all ease-in-out 0.5s;
   background: ${({ theme }) => {
     return theme.background;
