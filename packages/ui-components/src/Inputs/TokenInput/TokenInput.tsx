@@ -170,7 +170,7 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
   // Generate a random id for the <Popper/> component
   const nonce = useMemo(() => String(Math.random()) + performance.now(), []);
   return (
-    <AccountManagerWrapper  ref={wrapperRef} style={wrapperStyles}>
+    <AccountManagerWrapper ref={wrapperRef} style={wrapperStyles}>
       <ClickAwayListener
         onClickAway={() => {
           setIsOpen(false);
