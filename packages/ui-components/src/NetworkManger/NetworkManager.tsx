@@ -26,6 +26,7 @@ import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
+import { isDevelopment, isProduction } from '@webb-dapp/utils/misc';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
@@ -107,13 +108,9 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
       <FilterSection>
         <FormControl>
           <RadioGroup value={radioButtonFilter} onChange={handleRadioFilter} row>
-            {process.env.REACT_APP_BUILD_ENV === 'production' && (
-              <FormControlLabel value='live' control={<Radio />} label='live' />
-            )}
+            {isProduction() && <FormControlLabel value='live' control={<Radio />} label='live' />}
             <FormControlLabel value='test' control={<Radio />} label='test' />
-            {process.env.REACT_APP_BUILD_ENV === 'development' && (
-              <FormControlLabel value='dev' control={<Radio />} label='dev' />
-            )}
+            {isDevelopment() && <FormControlLabel value='dev' control={<Radio />} label='dev' />}
           </RadioGroup>
         </FormControl>
       </FilterSection>
