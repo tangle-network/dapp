@@ -1,7 +1,9 @@
 import { useWebContext } from '@webb-dapp/react-environment';
 import { Currency, CurrencyContent } from '@webb-dapp/react-environment/webb-context/currency/currency';
 import { WrappingEventNames } from '@webb-dapp/react-environment/webb-context/wrap-unwrap';
+import { LoggerService } from '@webb-tools/app-util';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+const logger = LoggerService.get('useWrapUnwrap');
 
 export function useWrapUnwrap() {
   const { activeApi, activeChain } = useWebContext();
@@ -26,7 +28,7 @@ export function useWrapUnwrap() {
 
   const wrapUnwrapApi = useMemo(() => {
     const w = activeApi?.methods.wrapUnwrap?.core;
-    console.log(w);
+    logger.log(w);
     if (w?.enabled) {
       return w.inner;
     }
@@ -38,7 +40,7 @@ export function useWrapUnwrap() {
     if (wrapUnwrapApi) {
       Promise.all([wrapUnwrapApi.getGovernedTokens(), wrapUnwrapApi.getWrappableTokens()]).then((values) => {
         const [governedTokens, wrappableTokens] = values;
-        console.log('setState of wrappableTokens and governedTokens in hook');
+        logger.log('setState of wrappableTokens and governedTokens in hook');
         if (governedTokens && wrappableTokens) {
           setState((p) => ({
             ...p,
@@ -60,7 +62,7 @@ export function useWrapUnwrap() {
   const setWrappableToken = useCallback(
     (content: CurrencyContent | null) => {
       if (content?.view.id) {
-        console.log('setWrappableToken in useWrapUnwrap called', content.view.id);
+        logger.log('setWrappableToken in useWrapUnwrap called', content.view.id);
         wrapUnwrapApi?.setWrappableToken(content.view.id);
       }
     },
@@ -70,7 +72,7 @@ export function useWrapUnwrap() {
   const setGovernedToken = useCallback(
     (content: CurrencyContent | null) => {
       if (content?.view.id) {
-        console.log('setGovernedToken in useWrapUnwrap called', content.view.id);
+        logger.log('setGovernedToken in useWrapUnwrap called', content.view.id);
         wrapUnwrapApi?.setGovernedToken(content.view.id);
       }
     },
@@ -91,7 +93,7 @@ export function useWrapUnwrap() {
   };
 
   useEffect(() => {
-    console.log('useEffect for wrapUnwrapApi subscription');
+    logger.log('useEffect for wrapUnwrapApi subscription');
     initTokens();
     const r = wrapUnwrapApi?.subscription.subscribe((next) => {
       const key = Object.keys(next)[0] as WrappingEventNames;

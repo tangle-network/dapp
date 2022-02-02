@@ -13,8 +13,10 @@ import { MixerGroupSelect } from '@webb-dapp/ui-components/Inputs/MixerGroupSele
 import { TokenInput, TokenInputProps } from '@webb-dapp/ui-components/Inputs/TokenInput/TokenInput';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
+import { LoggerService } from '@webb-tools/app-util';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
+const logger = LoggerService.get('page-wrap-unwrap');
 
 const TransferWrapper = styled.div`
   padding: 1rem;
@@ -322,8 +324,8 @@ const PageWrapUnwrap: FC = () => {
           disabled={loading || !governedToken || !wrappableToken}
           label={buttonText}
           onClick={async () => {
-            console.log('governedToken: ', governedToken);
-            console.log('wrappableToken: ', wrappableToken);
+            logger.log('governedToken: ', governedToken);
+            logger.log('wrappableToken: ', wrappableToken);
             try {
               setLoading(true);
               await execute();

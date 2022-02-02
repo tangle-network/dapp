@@ -15,13 +15,14 @@ import { Currency } from '@webb-dapp/react-environment/webb-context/currency/cur
 import { notificationApi } from '@webb-dapp/ui-components/notification';
 import { DepositNotification } from '@webb-dapp/ui-components/notification/DepositNotification';
 import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polkadot/transaction-notification-config';
+import { LoggerService } from '@webb-tools/app-util';
 import { Note, NoteGenInput } from '@webb-tools/sdk-core';
-import { logger } from 'ethers';
 import React from 'react';
 
 import { u8aToHex } from '@polkadot/util';
 
 import { BridgeDeposit } from '../../webb-context/bridge/bridge-deposit';
+const logger = LoggerService.get('web3-bridge-deposit');
 
 type DepositPayload = IDepositPayload<Note, [Deposit, number | string, string?]>;
 
@@ -184,7 +185,7 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
 
   async getWrappableAssets(chainId: ChainId): Promise<Currency[]> {
     const bridge = this.activeBridge;
-    console.log('getWrappableAssets: ', chainId);
+    logger.log('getWrappableAssets of chain: ', chainId);
     if (bridge) {
       const wrappedTokenAddress = bridge.getTokenAddress(chainId);
       if (!wrappedTokenAddress) return [];

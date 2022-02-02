@@ -93,7 +93,7 @@ export class AnchorContract {
     for (let i = 0; i < leaves.length; i++) {
       tree.insert(leaves[i]);
       const nextRoot = tree.get_root();
-      console.log(`target root: ${targetRoot} \n this root: ${bufferToFixed(nextRoot)}`);
+      logger.log(`target root: ${targetRoot} \n this root: ${bufferToFixed(nextRoot)}`);
       if (bufferToFixed(nextRoot) === targetRoot) {
         return tree;
       }
@@ -112,8 +112,8 @@ export class AnchorContract {
     const tokenInstance = await this.getWebbToken();
     const tokenAllowance = await tokenInstance.allowance(userAddress, this._contract.address);
     const depositAmount = await this.denomination;
-    console.log('tokenAllowance', tokenAllowance);
-    console.log('depositAmount', depositAmount);
+    logger.log('tokenAllowance', tokenAllowance);
+    logger.log('depositAmount', depositAmount);
     if (tokenAllowance < depositAmount) {
       return true;
     }
@@ -187,13 +187,13 @@ export class AnchorContract {
 
       const tx = await this._contract.wrapAndDeposit(zeroAddress, commitment, overrides);
       await tx.wait();
-      console.log('wrapAndDeposit completed for native token to webb token');
+      logger.log('wrapAndDeposit completed for native token to webb token');
     } else {
       const overrides = {};
 
       const tx = await this._contract.wrapAndDeposit(tokenAddress, commitment, overrides);
       await tx.wait();
-      console.log('wrapAndDeposit completed for wrappable asset to webb token');
+      logger.log('wrapAndDeposit completed for wrappable asset to webb token');
     }
   }
 
@@ -310,14 +310,14 @@ export class AnchorContract {
     // Grab the root of the source chain to prove against
     const edgeIndex = await this._contract.edgeIndex(sourceChainId);
     const edge = await this._contract.edgeList(edgeIndex);
-    console.log('retrieved edge while generating merkle proof: ', edge);
+    logger.log('retrieved edge while generating merkle proof: ', edge);
     const latestSourceRoot = edge[1];
 
     const tree = AnchorContract.createTreeWithRoot(sourceLeaves, latestSourceRoot);
     if (tree) {
       const index = tree.get_index_of_element(sourceDeposit.commitment);
       const path = tree.path(index);
-      console.log('path for proof: ', path);
+      logger.log('path for proof: ', path);
       return path;
     }
     return undefined;

@@ -1,5 +1,7 @@
 import { anchorsConfig, ChainId, WebbCurrencyId } from '@webb-dapp/apps/configs';
 import { AppConfig } from '@webb-dapp/react-environment/webb-context';
+import { LoggerService } from '@webb-tools/app-util';
+const logger = LoggerService.get('bridge-config');
 
 // todo change to wrappedTokenAddresses (they are  governed token wrapper contract)
 // todo change to Fixed anchors
@@ -25,6 +27,6 @@ export const getAnchorAddressForBridge = (
   }
 
   const anchorAddress = linkedAnchorConfig.anchorAddresses[chainId as ChainId];
-  console.log('got anchor address: ', anchorAddress);
+  logger.log('got anchor address: ', anchorAddress);
   return anchorAddress;
 };
