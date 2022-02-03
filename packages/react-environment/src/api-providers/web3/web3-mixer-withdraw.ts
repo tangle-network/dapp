@@ -116,7 +116,7 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
     console.log('chainEvmId', chainEvmId);
     this.emit('stateChange', WithdrawState.GeneratingZk);
 
-    if (activeRelayer && activeRelayer.account) {
+    if (activeRelayer && (activeRelayer.beneficiary || activeRelayer.account)) {
       try {
         transactionNotificationConfig.loading?.({
           address: recipient,
@@ -140,7 +140,7 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
         const fees = await activeRelayer.fees(note);
         const zkpInputWithoutMerkleProof = fromDepositIntoZKPTornPublicInputs(deposit, {
           recipient,
-          relayer: activeRelayer.account,
+          relayer: activeRelayer.account ?? activeRelayer.beneficiary,
           fee: Number(fees?.totalFees),
         });
 
