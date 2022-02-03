@@ -197,7 +197,7 @@ export const Deposit: React.FC<DepositProps> = () => {
           provider={bridgeDepositApi}
           mixerId={item?.id ? (item.id as any) : undefined}
           destChain={destChain}
-          wrappableAsset={wrappableCurrency}
+          wrappableAsset={showWrappableAssets ? wrappableCurrency : null}
         />
       </Modal>
     </DepositWrapper>
