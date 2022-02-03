@@ -2,18 +2,23 @@
 
 # Webb Dapp
 
-Webb web app with mixer features.
+A decentralized interface into the Webb protocol
 
 # Overview
 
 - [apps](https://github.com/webb-tools/webb-dapp/tree/master/packages/apps): the endpoint of the dapp
-- [page-governance](https://github.com/webb-tools/webb-dapp/tree/master/packages/page-governance): the page for
-  governance
-- [page-mixer](https://github.com/webb-tools/webb-dapp/tree/master/packages/page-mixer): the page for mixer
-  deposit/withdrawals
-- [page-wallet](https://github.com/webb-tools/webb-dapp/tree/master/packages/page-wallet): the page for an basic wallet
+- [bridge](https://github.com/webb-tools/webb-dapp/tree/master/packages/bridge): UI Components and hooks for the bridge
+- [contracts](https://github.com/webb-tools/webb-dapp/tree/master/packages/contracts): Types and logic for interacting with smart contracts and generating zero knowledge proofs
+- [mixer](https://github.com/webb-tools/webb-dapp/tree/master/packages/mixer): UI Components and hooks for the mixer (tornados)
+- [page-xxx](https://github.com/webb-tools/webb-dapp/tree/master/packages/): The top view of different pages in the dapp
+- [react-components](https://github.com/webb-tools/webb-dapp/tree/master/packages/react-components): application-specific React UI components
+- [react-environment](https://github.com/webb-tools/webb-dapp/tree/master/packages/react-environment): Typescript classes and APIs for application logic
+- [react-hooks](https://github.com/webb-tools/webb-dapp/tree/master/packages/react-hooks): A variety of useful react hooks
+- [ui-components](https://github.com/webb-tools/webb-dapp/tree/master/packages/ui-components): Reusable UI components
+- [utils](https://github.com/webb-tools/webb-dapp/tree/master/packages/utils): Utilities like automatic note download, application storage, etc. 
+- [wallet](https://github.com/webb-tools/webb-dapp/tree/master/packages/wallet): For handling wallet logic of substrate/evm
 
-# Development
+# Run locally
 
 1. Clone this repo
 
@@ -27,12 +32,28 @@ Webb web app with mixer features.
    yarn install
    ```
 
-3. Launch the UI
+3. Build the application:
    ```base
-   yarn run start:dapp
+   yarn build:dapp:development
    ```
 
+4. Serve the website from `packages/apps/build/`
+    - You can use something like: [dead-server](https://www.npmjs.com/package/dead-server)
+
+# Development
+While working in development, make the following changes:
+
+1. Download the relevant fixtures locally for [protocol-solidity](https://github.com/webb-tools/protocol-solidity-fixtures) and [protocol-substrate](https://github.com/webb-tools/protocol-substrate-fixtures).
+
+2. Rename the files to the appropriate IPFS hash name and place the files in `packages/apps/public/cached-fixtures`
+
+3. Run the application with `yarn start:dapp`
+
+These changes are made to minimize IPFS downloads.
+
 ## Running local webb-tools
+
+To test a webb-tools local build in the dapp, update the yarn resolutions with the following:
 
 ```json
 {
