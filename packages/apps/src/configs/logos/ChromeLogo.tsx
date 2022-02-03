@@ -5,7 +5,7 @@ function ChromeLogo() {
     <svg xmlns='http://www.w3.org/2000/svg' xmlnsXlink='http://www.w3.org/1999/xlink' viewBox='1 1 176 176'>
       <style>
         {
-          '.prefix__B{clip-path:url(#prefix__C)}.prefix__C{fill:#3e2723}.prefix__D{fill-opacity:.15}.prefix__E{fill-opacity:.2}'
+          '.prefix__B{clip-path:url(#prefix__C)}.prefix__C{fill:#3e2723}.prefix__D{fillOpacity:.15}.prefix__E{fillOpacity:.2}'
         }
       </style>
       <defs>

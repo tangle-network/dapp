@@ -3,6 +3,7 @@ import './styles/notification.scss';
 import './styles/table.scss';
 
 import { MuiThemeProvider, PaperProps } from '@material-ui/core';
+import InteractiveErrorView from '@webb-dapp/react-components/InteractiveFeedbackView/InteractiveErrorView';
 import { useStore, useWebContext } from '@webb-dapp/react-environment';
 import { darkPallet, lightPallet } from '@webb-dapp/ui-components/styling/colors';
 import makeTheme from '@webb-dapp/ui-components/styling/themes/makeTheme';
@@ -10,7 +11,6 @@ import React, { FC, useMemo, useState } from 'react';
 import styled, { ThemeProvider } from 'styled-components';
 
 import { BareProps } from './types';
-import InteractiveErrorView from '@webb-dapp/react-components/InteractiveFeedbackView/InteractiveErrorView';
 
 export interface UIData {
   phantomdata: any;

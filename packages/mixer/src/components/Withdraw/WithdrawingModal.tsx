@@ -1,11 +1,10 @@
 import { Button, Divider, Icon, LinearProgress, Tooltip, Typography } from '@material-ui/core';
-import { useWebContext, WithdrawState } from '@webb-dapp/react-environment';
+import { WithdrawState } from '@webb-dapp/react-environment';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
-import { DepositNote } from '@webb-tools/wasm-utils';
 import { LoggerService } from '@webb-tools/app-util';
+import { JsNote as DepositNote } from '@webb-tools/wasm-utils';
 import React, { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { useWithdraw } from '@webb-dapp/mixer/hooks';
 
 const logger = LoggerService.get('Withdraw-Modal');
 
@@ -78,23 +77,23 @@ const WithdrawInfoRow = styled.div`
 `;
 
 const InfoItemLabel = styled.div`
-  flex: 1 0 20%;
-  justify-content: center;
-  display: table;
+	flex: 1 0 20%;
+	justify-content: center;
+	display: table;
 
-  .MuiTypography-root {
-    vertical-align: middle;
-    display: table-cell;
-  }
+	.MuiTypography-root {
+		vertical-align: middle;
+		display: table-cell;
+	}
 
-  .label-icon {
-    vertical-align: middle;
-    display: table-cell;
-  padding: 1rem 0;
+	.label-icon {
+		vertical-align: middle;
+		display: table-cell;
+		padding: 1rem 0;
 
-  td:nth-child(2) {
-    padding: 0 2rem;
-  }
+		td:nth-child(2) {
+			padding: 0 2rem;
+		}
 `;
 
 const InfoItem = styled.div`
@@ -214,14 +213,13 @@ const WithdrawingModal: React.FC<WithdrawingModalProps> = ({ canCancel, cancel, 
       </div>
       <Button
         onClick={() => {
-          logger.info('Cancelled Transaction Button Clicked');
           cancel();
         }}
         color='primary'
         disabled={!canCancel}
         className={'cancel-button'}
       >
-        Cancel
+        {stage > WithdrawState.SendingTransaction ? 'Close' : 'Cancel'}
       </Button>
     </WithdrawInfoWrapper>
   );

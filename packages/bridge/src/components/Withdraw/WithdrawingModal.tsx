@@ -2,7 +2,7 @@ import { Button, Divider, Icon, LinearProgress, Tooltip, Typography } from '@mat
 import { getEVMChainNameFromInternal } from '@webb-dapp/apps/configs';
 import { WithdrawState } from '@webb-dapp/react-environment';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
-import { DepositNote } from '@webb-tools/wasm-utils';
+import { JsNote as DepositNote } from '@webb-tools/wasm-utils';
 import React, { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
@@ -175,7 +175,7 @@ const WithdrawingModal: React.FC<WithdrawingModalProps> = ({ canCancel, cancel, 
                 <Typography variant={'caption'}>
                   <b>
                     Receiving {note.amount + ' ' + note.tokenSymbol} on{' '}
-                    {getEVMChainNameFromInternal(Number(note.chain))}
+                    {getEVMChainNameFromInternal(Number(note.targetChainId))}
                   </b>
                 </Typography>
               </InfoItem>
@@ -203,7 +203,7 @@ const WithdrawingModal: React.FC<WithdrawingModalProps> = ({ canCancel, cancel, 
         disabled={!canCancel}
         className={'cancel-button'}
       >
-        Cancel
+        {stage > WithdrawState.SendingTransaction ? 'Close' : 'Cancel'}
       </Button>
     </WithdrawInfoWrapper>
   );

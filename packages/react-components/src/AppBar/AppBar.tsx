@@ -21,12 +21,15 @@ const AppBarWrapper = styled.nav`
   flex: 1;
   align-items: center;
   padding: 0 10px;
+  z-index: 100;
 
-  ${below.sm`
-	 background:#fff;
-	`}
+  background: ${({ theme }) => theme.mainBackground};
   .webb-logo {
     max-width: 100px;
+    z-index: 101;
+  }
+  .div {
+    z-index: 101;
   }
 
   ul {
@@ -35,8 +38,10 @@ const AppBarWrapper = styled.nav`
     margin: auto;
     padding: 0;
     list-style: none;
+    z-index: 101;
 
     li {
+      z-index: 101;
       a {
         height: 100%;
         min-width: 70px;
@@ -92,7 +97,6 @@ const RightNavigation = styled.div`
   align-items: center;
   ${below.sm`
 	  margin-left: auto;
-
 	`}
 `;
 const NavigationWrapper = styled.ul`
@@ -116,27 +120,13 @@ const AppBar: React.FC<AppBarProps> = () => {
       {!isMobile && (
         <NavigationWrapper>
           <li className={'active'}>
-            <NavLink to={'/tornado'} activeclassname={'active'}>
-              Tornados
-            </NavLink>
+            <NavLink to={'/tornado'}>Tornados</NavLink>
           </li>
           <li className={'active'}>
-            <NavLink to={'/bridge'} activeclassname={'active'}>
-              Bridge
-            </NavLink>
+            <NavLink to={'/bridge'}>Bridge</NavLink>
           </li>
-          {process.env.REACT_APP_BUILD_ENV != 'production' && (
-            <li className={'active'}>
-              <NavLink to={'/transfer'} activeclassname={'active'}>
-                Transfer
-              </NavLink>
-            </li>
-          )}
-
           <li className={'active'}>
-            <NavLink to={'/wrap-unwrap'} activeclassname={'active'}>
-              Wrap/Unwrap
-            </NavLink>
+            <NavLink to={'/wrap-unwrap'}>Wrap/Unwrap</NavLink>
           </li>
         </NavigationWrapper>
       )}
@@ -147,15 +137,6 @@ const AppBar: React.FC<AppBarProps> = () => {
             setTheme(next === 'light' ? 'default' : 'dark');
           }}
         />
-        {/*        <Tooltip title='Need help?'>
-          <IconButton
-            onClick={() => {
-              window.open('https://medium.com/', '_blank');
-            }}
-          >
-            <Icon>help</Icon>
-          </IconButton>
-        </Tooltip>*/}
         {!isMobile && <NetworkManager />}
         <AccountManager />
       </RightNavigation>

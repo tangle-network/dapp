@@ -3,29 +3,29 @@ import EdgewareLogo from '@webb-dapp/apps/configs/logos/EdgewareLogo';
 import EtherLogo from '@webb-dapp/apps/configs/logos/Eth';
 import HarmonyLogo from '@webb-dapp/apps/configs/logos/HarmonyLogo';
 import OptimismLogo from '@webb-dapp/apps/configs/logos/OptimismLogo';
+import PolygonLogo from '@webb-dapp/apps/configs/logos/PolygonLogo';
 import ShidenLogo from '@webb-dapp/apps/configs/logos/ShidenLogo';
+import WEBBLogo from '@webb-dapp/apps/configs/logos/WebbLogo';
 import { AppConfig } from '@webb-dapp/react-environment/webb-context';
 
 import { WebbCurrencyId } from '../currencies/webb-currency-id.enum';
 import { ChainId, WebbEVMChain } from './chain-id.enum';
 
+export const getSupportedCurrenciesOfChain = (chainId: ChainId): WebbCurrencyId[] => {
+  return chainsConfig[chainId].currencies;
+};
+
 export const chainsConfig: AppConfig['chains'] = {
-  [ChainId.EdgewareLocalNet]: {
-    id: ChainId.EdgewareLocalNet,
-    group: 'edgeware',
+  [ChainId.WebbDevelopment]: {
+    id: ChainId.WebbDevelopment,
+    group: 'webb',
     tag: 'dev',
     evmId: undefined,
-    logo: EdgewareLogo,
+    logo: WEBBLogo,
     url: 'ws://127.0.0.1:9944',
-    name: 'Edgeware Development',
-    currencies: [
-      {
-        currencyId: WebbCurrencyId.EDG,
-        enabled: true,
-        address: '0x0000000000000000000000000000000000000000', // special address in smart contract to represent native asset
-      },
-    ],
-    nativeCurrencyId: WebbCurrencyId.EDG,
+    name: 'Webb Development',
+    currencies: [WebbCurrencyId.WEBB],
+    nativeCurrencyId: WebbCurrencyId.WEBB,
   },
   [ChainId.EdgewareTestNet]: {
     group: 'edgeware',
@@ -36,13 +36,7 @@ export const chainsConfig: AppConfig['chains'] = {
     url: 'wss://beresheet1.edgewa.re',
     evmRpcUrls: ['https://beresheet.edgewa.re/evm'],
     logo: EdgewareLogo,
-    currencies: [
-      {
-        currencyId: WebbCurrencyId.TEDG,
-        enabled: true,
-        address: '0x0000000000000000000000000000000000000000',
-      },
-    ],
+    currencies: [WebbCurrencyId.TEDG],
     nativeCurrencyId: WebbCurrencyId.TEDG,
   },
   // [ChainId.Edgeware]: {
@@ -73,13 +67,7 @@ export const chainsConfig: AppConfig['chains'] = {
     blockExplorerStub: 'https://rinkeby.etherscan.io',
     logo: EtherLogo,
     tag: 'test',
-    currencies: [
-      {
-        currencyId: WebbCurrencyId.ETH,
-        enabled: true,
-        address: '0x0000000000000000000000000000000000000000',
-      },
-    ],
+    currencies: [WebbCurrencyId.ETH, WebbCurrencyId.WETH],
     nativeCurrencyId: WebbCurrencyId.ETH,
   },
   [ChainId.Ropsten]: {
@@ -92,13 +80,7 @@ export const chainsConfig: AppConfig['chains'] = {
     blockExplorerStub: 'https://ropsten.etherscan.io',
     logo: EtherLogo,
     tag: 'test',
-    currencies: [
-      {
-        currencyId: WebbCurrencyId.ETH,
-        enabled: true,
-        address: '0x0000000000000000000000000000000000000000',
-      },
-    ],
+    currencies: [WebbCurrencyId.ETH, WebbCurrencyId.WETH],
     nativeCurrencyId: WebbCurrencyId.ETH,
   },
   [ChainId.Goerli]: {
@@ -111,13 +93,7 @@ export const chainsConfig: AppConfig['chains'] = {
     blockExplorerStub: 'https://goerli.etherscan.io',
     logo: EtherLogo,
     tag: 'test',
-    currencies: [
-      {
-        currencyId: WebbCurrencyId.ETH,
-        enabled: true,
-        address: '0x0000000000000000000000000000000000000000',
-      },
-    ],
+    currencies: [WebbCurrencyId.ETH, WebbCurrencyId.WETH],
     nativeCurrencyId: WebbCurrencyId.ETH,
   },
   [ChainId.Kovan]: {
@@ -130,13 +106,7 @@ export const chainsConfig: AppConfig['chains'] = {
     blockExplorerStub: 'https://kovan.etherscan.io',
     logo: EtherLogo,
     tag: 'test',
-    currencies: [
-      {
-        currencyId: WebbCurrencyId.ETH,
-        enabled: true,
-        address: '0x0000000000000000000000000000000000000000',
-      },
-    ],
+    currencies: [WebbCurrencyId.ETH, WebbCurrencyId.WETH],
     nativeCurrencyId: WebbCurrencyId.ETH,
   },
   [ChainId.OptimismTestnet]: {
@@ -149,13 +119,7 @@ export const chainsConfig: AppConfig['chains'] = {
     blockExplorerStub: 'https://kovan-optimistic.etherscan.io',
     logo: OptimismLogo,
     tag: 'test',
-    currencies: [
-      {
-        currencyId: WebbCurrencyId.ETH,
-        enabled: true,
-        address: '0x0000000000000000000000000000000000000000',
-      },
-    ],
+    currencies: [WebbCurrencyId.ETH, WebbCurrencyId.WETH],
     nativeCurrencyId: WebbCurrencyId.ETH,
   },
   [ChainId.ArbitrumTestnet]: {
@@ -168,13 +132,7 @@ export const chainsConfig: AppConfig['chains'] = {
     blockExplorerStub: 'https://testnet.arbiscan.io',
     logo: ArbitrumLogo,
     tag: 'test',
-    currencies: [
-      {
-        currencyId: WebbCurrencyId.ETH,
-        enabled: true,
-        address: '0x0000000000000000000000000000000000000000',
-      },
-    ],
+    currencies: [WebbCurrencyId.ETH, WebbCurrencyId.WETH],
     nativeCurrencyId: WebbCurrencyId.ETH,
   },
   [ChainId.HarmonyTestnet1]: {
@@ -186,13 +144,7 @@ export const chainsConfig: AppConfig['chains'] = {
     url: 'https://api.s1.b.hmny.io',
     evmRpcUrls: ['https://api.s1.b.hmny.io'],
     logo: HarmonyLogo,
-    currencies: [
-      {
-        currencyId: WebbCurrencyId.ONE,
-        enabled: true,
-        address: '0x0000000000000000000000000000000000000000',
-      },
-    ],
+    currencies: [WebbCurrencyId.ONE],
     nativeCurrencyId: WebbCurrencyId.ONE,
   },
   // [ChainId.HarmonyTestnet0]: {
@@ -221,13 +173,7 @@ export const chainsConfig: AppConfig['chains'] = {
     url: 'https://api.harmony.one',
     evmRpcUrls: ['https://api.harmony.one'],
     logo: HarmonyLogo,
-    currencies: [
-      {
-        currencyId: WebbCurrencyId.ONE,
-        enabled: true,
-        address: '0x0000000000000000000000000000000000000000',
-      },
-    ],
+    currencies: [WebbCurrencyId.ONE],
     nativeCurrencyId: WebbCurrencyId.ONE,
   },
   // [ChainId.EthereumMainNet]: {
@@ -255,14 +201,22 @@ export const chainsConfig: AppConfig['chains'] = {
     tag: 'live',
     url: 'https://shiden.api.onfinality.io/public',
     evmRpcUrls: ['https://shiden.api.onfinality.io/public'],
+    blockExplorerStub: 'https://shiden.subscan.io',
     logo: ShidenLogo,
-    currencies: [
-      {
-        currencyId: WebbCurrencyId.SDN,
-        enabled: true,
-        address: '0x0000000000000000000000000000000000000000',
-      },
-    ],
+    currencies: [WebbCurrencyId.SDN],
     nativeCurrencyId: WebbCurrencyId.SDN,
+  },
+  [ChainId.PolygonTestnet]: {
+    group: 'matic',
+    id: ChainId.PolygonTestnet,
+    evmId: WebbEVMChain.PolygonTestnet,
+    name: 'Polygon Testnet',
+    tag: 'test',
+    url: 'https://rpc-mumbai.maticvigil.com/',
+    evmRpcUrls: ['https://rpc-mumbai.maticvigil.com/'],
+    blockExplorerStub: 'https://mumbai.polygonscan.com/',
+    logo: PolygonLogo,
+    currencies: [WebbCurrencyId.MATIC, WebbCurrencyId.WETH],
+    nativeCurrencyId: WebbCurrencyId.MATIC,
   },
 };

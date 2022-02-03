@@ -154,12 +154,39 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
       }
     });
 
-    const opts = options({
+    const apiPromise = await ApiPromise.create({
       provider: wsProvider,
+      rpc: {
+        mt: {
+          getLeaves: {
+            description: 'Query for the tree leaves',
+            params: [
+              {
+                name: 'tree_id',
+                type: 'u32',
+                isOptional: false,
+              },
+              {
+                name: 'from',
+                type: 'u32',
+                isOptional: false,
+              },
+              {
+                name: 'to',
+                type: 'u32',
+                isOptional: false,
+              },
+              {
+                name: 'at',
+                type: 'Hash',
+                isOptional: true,
+              },
+            ],
+            type: 'Vec<[u8; 32]>',
+          },
+        },
+      },
     });
-    logger.trace('Api Promise options', opts);
-
-    const apiPromise = await ApiPromise.create(opts);
     return [apiPromise, currentExtensions];
   }
 

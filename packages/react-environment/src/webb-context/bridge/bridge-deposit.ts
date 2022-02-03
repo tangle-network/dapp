@@ -1,16 +1,11 @@
 import { ChainId } from '@webb-dapp/apps/configs';
-import { Currency } from '@webb-dapp/react-environment/types/currency';
 import { Bridge } from '@webb-dapp/react-environment/webb-context/bridge/bridge';
-import { BridgeConfig } from '@webb-dapp/react-environment/webb-context/bridge/bridge-config';
+import { Currency } from '@webb-dapp/react-environment/webb-context/currency/currency';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { BridgeCurrency } from '.';
 
 import { DepositPayload, MixerDeposit } from '../mixer/mixer-deposit';
 
-type BridgeState = {};
-
 export abstract class BridgeDeposit<T, K extends DepositPayload = DepositPayload<any>> extends MixerDeposit<T, K> {
-  abstract bridgeConfig: BridgeConfig;
   private _activeBridge: Bridge | null = null;
   private emitter = new BehaviorSubject<null | Bridge>(null);
   readonly bridgeWatcher: Observable<null | Bridge>;
@@ -21,7 +16,7 @@ export abstract class BridgeDeposit<T, K extends DepositPayload = DepositPayload
   }
 
   get tokens() {
-    return Bridge.getTokens(this.bridgeConfig);
+    return Bridge.getTokens();
   }
 
   setBridge(bridge: Bridge | null) {
@@ -34,11 +29,7 @@ export abstract class BridgeDeposit<T, K extends DepositPayload = DepositPayload
   }
 
   getTokensOfChain(chainId: ChainId) {
-    return Bridge.getTokensOfChain(this.bridgeConfig, chainId);
-  }
-
-  getTokensOfChains(chainIds: ChainId[]) {
-    return Bridge.getTokensOfChains(this.bridgeConfig, chainIds);
+    return Bridge.getTokensOfChain(chainId);
   }
 
   getWrappableAssets(chain: ChainId): Promise<Currency[]> {
