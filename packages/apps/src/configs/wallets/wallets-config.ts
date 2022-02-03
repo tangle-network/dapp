@@ -51,18 +51,18 @@ export const walletsConfig: AppConfig['wallet'] = {
     },
     supportedChainIds: [...ANY_EVM],
   },
-  3: {
-    id: 3,
-    logo: WalletConnectLogo,
-    name: 'wallet connect',
-    title: `Wallet Connect`,
-    platform: 'EVM',
-    enabled: true,
-    detect() {
-      return true;
-    },
-    supportedChainIds: [...ANY_EVM],
-  },
+  // 3: {
+  //   id: 3,
+  //   logo: WalletConnectLogo,
+  //   name: 'wallet connect',
+  //   title: `Wallet Connect`,
+  //   platform: 'EVM',
+  //   enabled: true,
+  //   detect() {
+  //     return true;
+  //   },
+  //   supportedChainIds: [...ANY_EVM],
+  // },
   // [WalletId.OneWallet]: {
   //   id: WalletId.OneWallet,
   //   logo: HarmonyLogo,
