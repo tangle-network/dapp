@@ -7,25 +7,15 @@ A decentralized interface into the Webb protocol
 # Overview
 
 - [apps](https://github.com/webb-tools/webb-dapp/tree/master/packages/apps): the endpoint of the dapp
-
 - [bridge](https://github.com/webb-tools/webb-dapp/tree/master/packages/bridge): UI Components and hooks for the bridge
-
 - [contracts](https://github.com/webb-tools/webb-dapp/tree/master/packages/contracts): Types and logic for interacting with smart contracts and generating zero knowledge proofs
-
 - [mixer](https://github.com/webb-tools/webb-dapp/tree/master/packages/mixer): UI Components and hooks for the mixer (tornados)
-
 - [page-xxx](https://github.com/webb-tools/webb-dapp/tree/master/packages/): The top view of different pages in the dapp
-
 - [react-components](https://github.com/webb-tools/webb-dapp/tree/master/packages/react-components): application-specific React UI components
-
 - [react-environment](https://github.com/webb-tools/webb-dapp/tree/master/packages/react-environment): Typescript classes and APIs for application logic
-
 - [react-hooks](https://github.com/webb-tools/webb-dapp/tree/master/packages/react-hooks): A variety of useful react hooks
-
 - [ui-components](https://github.com/webb-tools/webb-dapp/tree/master/packages/ui-components): Reusable UI components
-
 - [utils](https://github.com/webb-tools/webb-dapp/tree/master/packages/utils): Utilities like automatic note download, application storage, etc. 
-
 - [wallet](https://github.com/webb-tools/webb-dapp/tree/master/packages/wallet): For handling wallet logic of substrate/evm
 
 # Run locally
@@ -48,7 +38,7 @@ A decentralized interface into the Webb protocol
    ```
 
 4. Serve the website from `packages/apps/build/`
-  - You can use something like: [dead-server](https://www.npmjs.com/package/dead-server)
+    - You can use something like: [dead-server](https://www.npmjs.com/package/dead-server)
 
 # Development
 While working in development, make the following changes:
