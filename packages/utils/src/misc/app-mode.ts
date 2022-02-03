@@ -13,9 +13,6 @@ export function isDevelopment() {
   return appMode() === 'development';
 }
 
-export function isLocalServer() {
-  return process.env.NODE_ENV === 'development';
-}
 export function isLocalFixtures() {
   return process.env.REACT_APP_LOCL_FIXTURES === 'true';
 }

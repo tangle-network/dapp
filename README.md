@@ -32,36 +32,30 @@ A decentralized interface into the Webb protocol
    yarn install
    ```
 
-3. Build the application:
+3. Start the dapp:
 
    ```base
-   yarn build:dapp:development
+   yarn start:dapp
    ```
-
-4. Serve the website from `packages/apps/build/`
-   - You can use something like: [dead-server](https://www.npmjs.com/package/dead-server)
-
-# Development
-
-## Running the DApp without worrying about fixtures
-run `yarn start:dApp` Solidity fixtures already bundled ,and Substrate fixtures are fetched from IPFS.
-
-## Use cached substrate fixtures
+## Use locally cached substrate fixtures
    - Download the proving key from [proving_key_uncompressed.bin](https://github.com/webb-tools/protocol-substrate-fixtures/blob/main/mixer/bn254/x5/proving_key_uncompressed.bin).
    - Save it to `packages/apps/public/cached-fixtures` , <i> the file name should be `proving_key_uncompressed.bin` </i>.
    - Run the dApp with `yarn start:localDapp`
 
- ## Mixer setup with [Local substrate node](https://github.com/webb-tools/darkwebb-substrate)
+## Mixer setup with [Local substrate node](https://github.com/webb-tools/protocol-substrate) and [Relayer](https://github.com/webb-tools/relayer)
+
+#### Local nodes
 1. Clone the node: `git clone https://github.com/webb-tools/protocol-substrate`
-2. We are using [ORML](https://github.com/open-web3-stack/open-runtime-module-library/tree/a5ee7866c763efbd3afe0cd81fec54cede83a65f) fork, and fixtures to run the mixers `git submodule update --init` to populate them
-3. Build the `standalone-node` by `cargo build --release -p darkwebb-standalone-node`.
-4. we initially have mixers populated for testing make sure you have native asset on you wallet.
+2. We are using [ORML](https://github.com/open-web3-stack/open-runtime-module-library/tree/a5ee7866c763efbd3afe0cd81fec54cede83a65f) fork, and fixed zero knowledge keys to run the mixers. Run `git submodule update --init` to populate them.
+3. Build the `darkwebb-standalone-node` by `cargo build --release -p darkwebb-standalone-node`.
+4. Startup two standalone nodes in other terminal instances:
+   - `./target/release/darkwebb-standalone-node --dev --alice --node-key 0000000000000000000000000000000000000000000000000000000000000001 --ws-port=9944 --rpc-cors all`
+	- `./target/release/darkwebb-standalone-node --dev --bob --port 33334 --tmp --bootnodes /ip4/127.0.0.1/tcp/30333/p2p/12D3KooWEyoppNCUx8Yx66oV9fJnriXwCcXwDDUA2kj6vnc6iDEp`
 
-## Fixtures
-
-Fixtures can be found at [protocol-solidity](https://github.com/webb-tools/protocol-solidity-fixtures) and [protocol-substrate](https://github.com/webb-tools/protocol-substrate-fixtures),
-for the `develop` branch setup no worries about protocol solidity fixtures
-
+#### Relayer
+1. Clone the relayer: `git clone https://github.com/webb-tools/relayer.git`
+2. Build the relayer: `cargo build --release`
+3. Run with the local substrate configuration: `./target/release/webb-relayer -c config/local-substrate -vvv`
 
 ## Running local webb-tools
 

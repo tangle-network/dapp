@@ -2,7 +2,7 @@ import { ChainId } from '@webb-dapp/apps/configs';
 // @ts-ignore
 import Worker from '@webb-dapp/mixer/utils/proving-manager.worker';
 import { RelayedWithdrawResult, WebbRelayer } from '@webb-dapp/react-environment';
-import { getCachedFixtureURI, useLocalFixtures, withLocalFixtures } from '@webb-dapp/utils/misc';
+import { getCachedFixtureURI, withLocalFixtures } from '@webb-dapp/utils/misc';
 import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polkadot/transaction-notification-config';
 import { LoggerService } from '@webb-tools/app-util';
