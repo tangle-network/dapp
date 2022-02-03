@@ -2,7 +2,7 @@ import { ChainId } from '@webb-dapp/apps/configs';
 // @ts-ignore
 import Worker from '@webb-dapp/mixer/utils/proving-manager.worker';
 import { RelayedWithdrawResult, WebbRelayer } from '@webb-dapp/react-environment';
-import { getCachedFixtureURI, isLocalServer } from '@webb-dapp/utils/misc';
+import { getCachedFixtureURI, useLocalFixtures, withLocalFixtures } from '@webb-dapp/utils/misc';
 import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polkadot/transaction-notification-config';
 import { LoggerService } from '@webb-tools/app-util';
@@ -24,8 +24,8 @@ const transactionString = (hexString: string) => {
 
 async function fetchSubstrateProvingKey() {
   const IPFSUrl = `https://ipfs.io/ipfs/QmYDtGX7Wf5qUPEpGsgrX6oss2m2mm8vi7uzNdK4C9yJdZ`;
-  const cachedURI = getCachedFixtureURI('QmYDtGX7Wf5qUPEpGsgrX6oss2m2mm8vi7uzNdK4C9yJdZ');
-  const ipfsKeyRequest = await fetch(isLocalServer() ? cachedURI : IPFSUrl);
+  const cachedURI = getCachedFixtureURI('proving_key_uncompressed.bin');
+  const ipfsKeyRequest = await fetch(withLocalFixtures() ? cachedURI : IPFSUrl);
   const circuitKeyArrayBuffer = await ipfsKeyRequest.arrayBuffer();
   logger.info(`Done Fetching key`);
   const circuitKey = new Uint8Array(circuitKeyArrayBuffer);

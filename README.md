@@ -15,7 +15,7 @@ A decentralized interface into the Webb protocol
 - [react-environment](https://github.com/webb-tools/webb-dapp/tree/master/packages/react-environment): Typescript classes and APIs for application logic
 - [react-hooks](https://github.com/webb-tools/webb-dapp/tree/master/packages/react-hooks): A variety of useful react hooks
 - [ui-components](https://github.com/webb-tools/webb-dapp/tree/master/packages/ui-components): Reusable UI components
-- [utils](https://github.com/webb-tools/webb-dapp/tree/master/packages/utils): Utilities like automatic note download, application storage, etc. 
+- [utils](https://github.com/webb-tools/webb-dapp/tree/master/packages/utils): Utilities like automatic note download, application storage, etc.
 - [wallet](https://github.com/webb-tools/webb-dapp/tree/master/packages/wallet): For handling wallet logic of substrate/evm
 
 # Run locally
@@ -43,11 +43,16 @@ A decentralized interface into the Webb protocol
 # Development
 While working in development, make the following changes:
 
-1. Download the relevant fixtures locally for [protocol-solidity](https://github.com/webb-tools/protocol-solidity-fixtures) and [protocol-substrate](https://github.com/webb-tools/protocol-substrate-fixtures).
+1. Download the relevant fixtures locally for [protocol-solidity](https://github.com/webb-tools/protocol-solidity-fixtures) and [protocol-substrate](https://github.com/webb-tools/protocol-substrate-fixtures),
+for the `develop` branch setup no worries about protocol solidity fixtures
+2.On development run `yarn start:dapp` the dApp will fetch the substrate fixtures from IPFS, we are adding caching soon, to use local fixtures and not download if every time
+   use `yarn start:localDapp`
+    - You will need to download the fixtures for mixer from [proving_key_uncompressed.bin](https://github.com/webb-tools/protocol-substrate-fixtures/blob/main/mixer/bn254/x5/proving_key_uncompressed.bin)
+	- Save it to `packages/apps/public/cached-fixtures`
 
-2. Rename the files to the appropriate IPFS hash name and place the files in `packages/apps/public/cached-fixtures`
+3. Rename the files to the appropriate IPFS hash name and place the files in `packages/apps/public/cached-fixtures`, <i> the file name should be `proving_key_uncompressed.bin` </i>
 
-3. Run the application with `yarn start:dapp`
+4. Run the application with `yarn start:dapp`
 
 These changes are made to minimize IPFS downloads.
 

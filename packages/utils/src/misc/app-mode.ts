@@ -16,3 +16,11 @@ export function isDevelopment() {
 export function isLocalServer() {
   return process.env.NODE_ENV === 'development';
 }
+export function isLocalFixtures() {
+  return process.env.REACT_APP_LOCL_FIXTURES === 'true';
+}
+
+export function withLocalFixtures() {
+  const dev = isDevelopment();
+  return dev && isLocalFixtures;
+}
