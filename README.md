@@ -43,17 +43,15 @@ A decentralized interface into the Webb protocol
 
 # Development
 
-While working in development, make the following changes:
+## Running the DApp without worrying about fixtures
+run `yarn start:dApp` Solidity fixtures already bundled ,and Substrate fixtures are fetched from IPFS.
 
-1. Running the DApp without worrying about fixtures just `yarn start:dApp`.
-   - Solidity fixtures already bundled.
-   - Substrate fixtures are fetched from IPFS.
-2. For substrate side of the mixer to not fetch the fixtures every time (we are working on caching them),
+## Use cached substrate fixtures
    - Download the proving key from [proving_key_uncompressed.bin](https://github.com/webb-tools/protocol-substrate-fixtures/blob/main/mixer/bn254/x5/proving_key_uncompressed.bin).
    - Save it to `packages/apps/public/cached-fixtures` , <i> the file name should be `proving_key_uncompressed.bin` </i>.
    - Run the dApp with `yarn start:localDapp`
 
- ## mixer setup [Local substrate node](https://github.com/webb-tools/darkwebb-substrate)
+ ## Mixer setup with [Local substrate node](https://github.com/webb-tools/darkwebb-substrate)
 1. Clone the node: `git clone https://github.com/webb-tools/protocol-substrate`
 2. We are using [ORML](https://github.com/open-web3-stack/open-runtime-module-library/tree/a5ee7866c763efbd3afe0cd81fec54cede83a65f) fork, and fixtures to run the mixers `git submodule update --init` to populate them
 3. Build the `standalone-node` by `cargo build --release -p darkwebb-standalone-node`.
