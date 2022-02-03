@@ -6,7 +6,7 @@ A decentralized interface into the Webb protocol
 
 # Overview
 
-- [apps](https://github.com/webb-tools/webb-dapp/tree/master/packages/apps): the endpoint of the dapp
+- [apps](https://github.com/webb-tools/webb-dapp/tree/master/packages/apps): The endpoint of the dapp
 - [bridge](https://github.com/webb-tools/webb-dapp/tree/master/packages/bridge): UI Components and hooks for the bridge
 - [contracts](https://github.com/webb-tools/webb-dapp/tree/master/packages/contracts): Types and logic for interacting with smart contracts and generating zero knowledge proofs
 - [mixer](https://github.com/webb-tools/webb-dapp/tree/master/packages/mixer): UI Components and hooks for the mixer (tornados)
@@ -33,28 +33,37 @@ A decentralized interface into the Webb protocol
    ```
 
 3. Build the application:
+
    ```base
    yarn build:dapp:development
    ```
 
 4. Serve the website from `packages/apps/build/`
-    - You can use something like: [dead-server](https://www.npmjs.com/package/dead-server)
+   - You can use something like: [dead-server](https://www.npmjs.com/package/dead-server)
 
 # Development
+
 While working in development, make the following changes:
 
-1. Download the relevant fixtures locally for [protocol-solidity](https://github.com/webb-tools/protocol-solidity-fixtures) and [protocol-substrate](https://github.com/webb-tools/protocol-substrate-fixtures),
+1. Running the DApp without worrying about fixtures just `yarn start:dApp`.
+   - Solidity fixtures already bundled.
+   - Substrate fixtures are fetched from IPFS.
+2. For substrate side of the mixer to not fetch the fixtures every time (we are working on caching them),
+   - Download the proving key from [proving_key_uncompressed.bin](https://github.com/webb-tools/protocol-substrate-fixtures/blob/main/mixer/bn254/x5/proving_key_uncompressed.bin).
+   - Save it to `packages/apps/public/cached-fixtures` , <i> the file name should be `proving_key_uncompressed.bin` </i>.
+   - Run the dApp with `yarn start:localDapp`
+
+ ## mixer setup [Local substrate node](https://github.com/webb-tools/darkwebb-substrate)
+1. Clone the node: `git clone https://github.com/webb-tools/protocol-substrate`
+2. We are using [ORML](https://github.com/open-web3-stack/open-runtime-module-library/tree/a5ee7866c763efbd3afe0cd81fec54cede83a65f) fork, and fixtures to run the mixers `git submodule update --init` to populate them
+3. Build the `standalone-node` by `cargo build --release -p darkwebb-standalone-node`.
+4. we initially have mixers populated for testing make sure you have native asset on you wallet.
+
+## Fixtures
+
+Fixtures can be found at [protocol-solidity](https://github.com/webb-tools/protocol-solidity-fixtures) and [protocol-substrate](https://github.com/webb-tools/protocol-substrate-fixtures),
 for the `develop` branch setup no worries about protocol solidity fixtures
-2.On development run `yarn start:dapp` the dApp will fetch the substrate fixtures from IPFS, we are adding caching soon, to use local fixtures and not download if every time
-   use `yarn start:localDapp`
-    - You will need to download the fixtures for mixer from [proving_key_uncompressed.bin](https://github.com/webb-tools/protocol-substrate-fixtures/blob/main/mixer/bn254/x5/proving_key_uncompressed.bin)
-	- Save it to `packages/apps/public/cached-fixtures`
 
-3. Rename the files to the appropriate IPFS hash name and place the files in `packages/apps/public/cached-fixtures`, <i> the file name should be `proving_key_uncompressed.bin` </i>
-
-4. Run the application with `yarn start:dapp`
-
-These changes are made to minimize IPFS downloads.
 
 ## Running local webb-tools
 
