@@ -12,3 +12,7 @@ export function isProduction() {
 export function isDevelopment() {
   return appMode() === 'development';
 }
+
+export function isLocalServer() {
+  return process.env.NODE_ENV === 'development';
+}
