@@ -6,7 +6,7 @@ A decentralized interface into the Webb protocol
 
 # Overview
 
-- [apps](https://github.com/webb-tools/webb-dapp/tree/master/packages/apps): the endpoint of the dapp
+- [apps](https://github.com/webb-tools/webb-dapp/tree/master/packages/apps): The endpoint of the dapp
 - [bridge](https://github.com/webb-tools/webb-dapp/tree/master/packages/bridge): UI Components and hooks for the bridge
 - [contracts](https://github.com/webb-tools/webb-dapp/tree/master/packages/contracts): Types and logic for interacting with smart contracts and generating zero knowledge proofs
 - [mixer](https://github.com/webb-tools/webb-dapp/tree/master/packages/mixer): UI Components and hooks for the mixer (tornados)
@@ -15,7 +15,7 @@ A decentralized interface into the Webb protocol
 - [react-environment](https://github.com/webb-tools/webb-dapp/tree/master/packages/react-environment): Typescript classes and APIs for application logic
 - [react-hooks](https://github.com/webb-tools/webb-dapp/tree/master/packages/react-hooks): A variety of useful react hooks
 - [ui-components](https://github.com/webb-tools/webb-dapp/tree/master/packages/ui-components): Reusable UI components
-- [utils](https://github.com/webb-tools/webb-dapp/tree/master/packages/utils): Utilities like automatic note download, application storage, etc. 
+- [utils](https://github.com/webb-tools/webb-dapp/tree/master/packages/utils): Utilities like automatic note download, application storage, etc.
 - [wallet](https://github.com/webb-tools/webb-dapp/tree/master/packages/wallet): For handling wallet logic of substrate/evm
 
 # Run locally
@@ -32,24 +32,30 @@ A decentralized interface into the Webb protocol
    yarn install
    ```
 
-3. Build the application:
+3. Start the dapp:
+
    ```base
-   yarn build:dapp:development
+   yarn start:dapp
    ```
+## Use locally cached substrate fixtures
+   - Download the proving key from [proving_key_uncompressed.bin](https://github.com/webb-tools/protocol-substrate-fixtures/blob/main/mixer/bn254/x5/proving_key_uncompressed.bin).
+   - Save it to `packages/apps/public/cached-fixtures` , <i> the file name should be `proving_key_uncompressed.bin` </i>.
+   - Run the dApp with `yarn start:localDapp`
 
-4. Serve the website from `packages/apps/build/`
-    - You can use something like: [dead-server](https://www.npmjs.com/package/dead-server)
+## Mixer setup with [Local substrate node](https://github.com/webb-tools/protocol-substrate) and [Relayer](https://github.com/webb-tools/relayer)
 
-# Development
-While working in development, make the following changes:
+#### Local nodes
+1. Clone the node: `git clone https://github.com/webb-tools/protocol-substrate`
+2. We are using [ORML](https://github.com/open-web3-stack/open-runtime-module-library/tree/a5ee7866c763efbd3afe0cd81fec54cede83a65f) fork, and fixed zero knowledge keys to run the mixers. Run `git submodule update --init` to populate them.
+3. Build the `darkwebb-standalone-node` by `cargo build --release -p darkwebb-standalone-node`.
+4. Startup two standalone nodes in other terminal instances:
+   - `./target/release/darkwebb-standalone-node --dev --alice --node-key 0000000000000000000000000000000000000000000000000000000000000001 --ws-port=9944 --rpc-cors all`
+	- `./target/release/darkwebb-standalone-node --dev --bob --port 33334 --tmp --bootnodes /ip4/127.0.0.1/tcp/30333/p2p/12D3KooWEyoppNCUx8Yx66oV9fJnriXwCcXwDDUA2kj6vnc6iDEp`
 
-1. Download the relevant fixtures locally for [protocol-solidity](https://github.com/webb-tools/protocol-solidity-fixtures) and [protocol-substrate](https://github.com/webb-tools/protocol-substrate-fixtures).
-
-2. Rename the files to the appropriate IPFS hash name and place the files in `packages/apps/public/cached-fixtures`
-
-3. Run the application with `yarn start:dapp`
-
-These changes are made to minimize IPFS downloads.
+#### Relayer
+1. Clone the relayer: `git clone https://github.com/webb-tools/relayer.git`
+2. Build the relayer: `cargo build --release`
+3. Run with the local substrate configuration: `./target/release/webb-relayer -c config/local-substrate -vvv`
 
 ## Running local webb-tools
 

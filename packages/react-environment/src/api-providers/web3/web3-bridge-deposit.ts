@@ -141,9 +141,6 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
       }
     } catch (e: any) {
       console.log(e);
-      if ((e as any)?.code) {
-        throw e;
-      }
       if ((e as any)?.code == 4001) {
         notificationApi.remove('waiting-approval');
         transactionNotificationConfig.failed?.({
