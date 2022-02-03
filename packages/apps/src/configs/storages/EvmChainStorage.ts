@@ -1,5 +1,5 @@
+import { getEVMChainName } from '@webb-dapp/apps/configs/';
 import { Storage } from '@webb-dapp/utils';
-import { getEVMChainName } from '@webb-dapp/apps/configs/evm/SupportedMixers';
 
 export type MixerStorage = Record<string, { lastQueriedBlock: number; leaves: string[] }>;
 

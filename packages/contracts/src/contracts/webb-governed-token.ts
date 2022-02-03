@@ -1,12 +1,12 @@
-import { BigNumberish, Contract, PayableOverrides, providers, Signer } from 'ethers';
-import { GovernedTokenWrapper } from '@webb-dapp/contracts/types/GovernedTokenWrapper';
 import { GovernedTokenWrapper__factory } from '@webb-dapp/contracts/types/factories/GovernedTokenWrapper__factory';
+import { GovernedTokenWrapper } from '@webb-dapp/contracts/types/GovernedTokenWrapper';
 import { LoggerService } from '@webb-tools/app-util';
+import { BigNumberish, Contract, PayableOverrides, providers, Signer } from 'ethers';
 import utils from 'web3-utils';
 
-const logger = LoggerService.get('WebbGovernedToken');
+import { zeroAddress } from './webb-utils';
 
-export const zeroAddress = '0x0000000000000000000000000000000000000000';
+const logger = LoggerService.get('WebbGovernedToken');
 
 function checkNativeAddress(tokenAddress: string): boolean {
   if (tokenAddress === zeroAddress || tokenAddress === '0') {
@@ -95,14 +95,20 @@ export class WebbGovernedToken {
   }
 
   async isNativeAllowed() {
-    return await this._contract.isNativeAllowed();
+    const nativeAllowed = await this._contract.isNativeAllowed();
+    return nativeAllowed;
   }
 
-  async canWrap(/*tokenAddress: string*/ amount: BigNumberish) {
-    /*    const tokens = await this._contract.getTokens();
-		if (!tokens.includes(tokenAddress)) {
-			return false;
-		}*/
-    return this.isNativeAllowed();
+  // Checks if the governed token wraps a particular token.
+  // Does NOT check if allowances for ERC20s are satisfied.
+  async canWrap(tokenAddress: string) {
+    const tokens = await this._contract.getTokens();
+    if (tokens.includes(tokenAddress)) {
+      return true;
+    }
+    if (tokenAddress === zeroAddress) {
+      return this.isNativeAllowed();
+    }
+    return false;
   }
 }

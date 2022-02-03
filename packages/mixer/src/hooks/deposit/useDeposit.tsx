@@ -6,7 +6,7 @@ export interface DepositApi {
 
   deposit(payload: DepositPayload): Promise<void>;
 
-  generateNote(mixer: number): Promise<DepositPayload>;
+  generateNote(mixer: number | string, chainId?: number): Promise<DepositPayload>;
 
   loadingState: MixerDeposit['loading'];
   error: string;
@@ -39,13 +39,13 @@ export const useDeposit = (): DepositApi => {
   }, [depositApi]);
 
   const generateNote = useCallback(
-    async (mixerId: number) => {
+    async (mixerId: number, chainId?: number) => {
       if (!depositApi) {
         // TODO: fix this to be dependent ont he api state
         // disable buttons
         throw new Error('Not ready');
       } else {
-        return depositApi?.generateNote(mixerId);
+        return depositApi?.generateNote(mixerId, chainId);
       }
     },
     [depositApi]

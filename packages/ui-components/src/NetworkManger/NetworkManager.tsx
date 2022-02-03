@@ -20,14 +20,14 @@ import {
 import Avatar from '@material-ui/core/Avatar';
 import ListItem from '@material-ui/core/ListItem';
 import { Chain, useWebContext, Wallet } from '@webb-dapp/react-environment';
+import { appEvent } from '@webb-dapp/react-environment/app-event';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
+import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
-import { Pallet } from '@webb-dapp/ui-components/styling/colors';
-import { appEvent } from '@webb-dapp/react-environment/app-event';
 
 const NetworkManagerWrapper = styled.div`
   padding: 1rem;
@@ -107,9 +107,11 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
       <FilterSection>
         <FormControl>
           <RadioGroup value={radioButtonFilter} onChange={handleRadioFilter} row>
-            {(process.env.REACT_APP_BUILD_ENV === 'production') && <FormControlLabel value='live' control={<Radio />} label='live' />}
+            {process.env.REACT_APP_BUILD_ENV === 'production' && (
+              <FormControlLabel value='live' control={<Radio />} label='live' />
+            )}
             <FormControlLabel value='test' control={<Radio />} label='test' />
-            {(process.env.REACT_APP_BUILD_ENV === 'development') && <FormControlLabel value='dev' control={<Radio />} label='dev' />}
+            <FormControlLabel value='dev' control={<Radio />} label='dev' />
           </RadioGroup>
         </FormControl>
       </FilterSection>
@@ -152,14 +154,13 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
       case ConnectionStep.SelectChain:
         return (
           <List>
-            {filteredNetworks.map((chain) => {
+            {filteredNetworks.map((chain, inx) => {
               const { id, logo, name, tag, url, wallets } = chain;
               const viaWallets = Object.values(wallets);
               const ChainIcon = logo;
               return (
-                <>
+                <React.Fragment key={`${id}${url}-group`}>
                   <ListItem
-                    key={`${id}${url}-group`}
                     aria-label='gender'
                     selected={userSelectedChain?.id === id}
                     button
@@ -236,7 +237,7 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
                     </ListItemSecondaryAction>
                   </ListItem>
                   <Divider variant={'fullWidth'} />
-                </>
+                </React.Fragment>
               );
             })}
           </List>
@@ -345,26 +346,25 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
       setConnectionStatus('no-connection');
     }
   }, [activeChain, isConnecting]);
-  const chainInfo = useMemo<NetworkManagerIndicatorProps['connectionMetaData'] | undefined>(() => {
-    if (!activeChain) {
-      return undefined;
-    }
-    return {
-      hoverMessage: activeChain.url,
-      chainIcon: (
-        <Avatar
-          style={{
-            height: 35,
-            width: 35,
-          }}
-        >
-          <activeChain.logo />
-        </Avatar>
-      ),
-      details: activeChain.url,
-      chainName: activeChain.name,
-    };
-  }, [activeChain]);
+
+  const chainInfo: NetworkManagerIndicatorProps['connectionMetaData'] | undefined = activeChain
+    ? {
+        hoverMessage: activeChain.url,
+        chainIcon: (
+          <Avatar
+            style={{
+              height: 35,
+              width: 35,
+            }}
+          >
+            <activeChain.logo />
+          </Avatar>
+        ),
+        details: activeChain.url,
+        chainName: activeChain.name,
+      }
+    : undefined;
+
   return (
     <>
       <NetworkManagerIndicator
@@ -470,9 +470,9 @@ const NetworkIndecatorWrapper = styled.button`
 `;
 
 export const NetworkManagerIndicator: React.FC<NetworkManagerIndicatorProps> = ({
-  onClick,
   connectionMetaData,
   connectionStatus,
+  onClick,
 }) => {
   const icon = useMemo(() => {
     switch (connectionStatus) {

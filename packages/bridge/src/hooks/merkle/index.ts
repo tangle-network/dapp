@@ -1,1 +1,1 @@
-export * from './useGroupTree';
+export default {};

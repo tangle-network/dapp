@@ -13,7 +13,7 @@ import { InputSection } from '@webb-dapp/ui-components/Inputs/InputSection/Input
 import { BridgeNoteInput } from '@webb-dapp/ui-components/Inputs/NoteInput/BridgeNoteInput';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import RelayerInput, { FeesInfo, RelayerApiAdapter } from '@webb-dapp/ui-components/RelayerInput/RelayerInput';
-import { Note } from '@webb-tools/sdk-mixer';
+import { Note } from '@webb-tools/sdk-core';
 import React, { useCallback, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
@@ -40,7 +40,6 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
     recipient,
     note,
   });
-  console.log('relayerState', relayersState);
   const feesGetter = useCallback(
     async (activeRelayer: ActiveWebbRelayer): Promise<FeesInfo> => {
       const defaultFees: FeesInfo = {
@@ -77,7 +76,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
     return true;
   };
   const determineSwitchButton = () => {
-    if (depositNote && activeChain && activeChain.evmId != chainIdIntoEVMId(depositNote.note.chain)) {
+    if (depositNote && activeChain && activeChain.evmId != chainIdIntoEVMId(depositNote.note.targetChainId)) {
       return true;
     }
     return false;
@@ -85,7 +84,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
   const switchChain = async (note: Note | null) => {
     if (!note) return;
     if (!activeApi) return;
-    const newChainId = Number(note.note.chain);
+    const newChainId = Number(note.note.targetChainId);
     const chain = chainsPopulated[newChainId];
 
     const web3Provider = activeApi.getProvider();
@@ -194,6 +193,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
               setNote('');
               setRecipient('');
               setReceipt('');
+              return cancelWithdraw();
             }}
           />
         )}

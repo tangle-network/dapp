@@ -1,12 +1,12 @@
 import { Bridge, BridgeDeposit, BridgeWithdraw } from '@webb-dapp/react-environment/webb-context/bridge';
+import { ChainQuery } from '@webb-dapp/react-environment/webb-context/chain-query';
 import { WebbRelayerBuilder } from '@webb-dapp/react-environment/webb-context/relayer';
+import { WrapUnWrap } from '@webb-dapp/react-environment/webb-context/wrap-unwrap';
 import { InteractiveFeedback } from '@webb-dapp/utils/webb-error';
 import { AccountsAdapter } from '@webb-dapp/wallet/account/Accounts.adapter';
 import { EventBus } from '@webb-tools/app-util';
 
 import { DepositPayload, MixerDeposit, MixerDepositEvents, MixerWithdraw, MixerWithdrawEvents } from './mixer';
-import { WrapUnWrap } from '@webb-dapp/react-environment/webb-context/wrap-unwrap';
-import { ChainQuery } from '@webb-dapp/react-environment/webb-context/chain-query';
 
 /// list of the apis that are available for  the provider
 export interface WebbMethods<T> {

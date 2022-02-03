@@ -129,7 +129,14 @@ export const AccountManager: React.FC<AccountManagerProps> = () => {
           setIsOpen(false);
         }}
       >
-        <Popper placement={'bottom-end'} open={Boolean($wrapper?.current)} anchorEl={$wrapper?.current}>
+        <Popper
+          placement={'bottom-end'}
+          open={Boolean($wrapper?.current)}
+          anchorEl={$wrapper?.current}
+          style={{
+            zIndex: 101,
+          }}
+        >
           <AccountManagerContent
             open={isOpen}
             style={{
@@ -175,7 +182,7 @@ export const AccountManager: React.FC<AccountManagerProps> = () => {
             </div>
 
             <StyledList as={List} dense disablePadding>
-              {accountAddresses.map((account) => {
+              {accountAddresses.map((account, inx) => {
                 const { address, name } = account;
                 const isActive = address === active?.address;
                 return (

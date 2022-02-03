@@ -1,10 +1,12 @@
-import { fetchKeyForEdges, fetchWasmForEdges } from '@webb-dapp/apps/configs/ipfs/anchors';
+import { fetchKeyForEdges, fetchWasmForEdges } from '@webb-dapp/apps/configs/ipfs/evm/anchors';
 import { BridgeWitnessInput } from '@webb-dapp/contracts/contracts/types';
 
 const groth16 = require('snarkjs/src/groth16');
 const zkey = require('snarkjs/src/zkey');
 
 type MaxEdges = 1 | 2 | 3 | 4 | 5;
+
+export const zeroAddress = '0x0000000000000000000000000000000000000000';
 
 export const generateWitness = async (input: BridgeWitnessInput, maxEdges: MaxEdges) => {
   try {
@@ -14,6 +16,7 @@ export const generateWitness = async (input: BridgeWitnessInput, maxEdges: MaxEd
     return buff;
   } catch (e) {
     console.log({ snarkError: e });
+    throw new Error('failed to generate witness');
   }
 };
 

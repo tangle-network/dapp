@@ -4,26 +4,24 @@ import {
   chainIdIntoEVMId,
   chainsConfig,
   evmIdIntoChainId,
+  getAnchorAddressForBridge,
   getEVMChainNameFromInternal,
+  webbCurrencyIdFromString,
 } from '@webb-dapp/apps/configs';
 import { chainIdToRelayerName } from '@webb-dapp/apps/configs/relayer-config';
-import { MixerStorage } from '@webb-dapp/apps/configs/storages/EvmChainStorage';
+import {
+  anchorDeploymentBlock,
+  bridgeCurrencyBridgeStorageFactory,
+  MixerStorage,
+} from '@webb-dapp/apps/configs/storages';
 import { AnchorContract } from '@webb-dapp/contracts/contracts';
 import { generateWithdrawProofCallData, hexStringToBytes } from '@webb-dapp/contracts/utils/bridge-utils';
 import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
 import { depositFromAnchor2Preimage } from '@webb-dapp/contracts/utils/make-deposit';
-import {
-  Bridge,
-  BridgeConfig,
-  bridgeConfig,
-  BridgeCurrency,
-  RelayedWithdrawResult,
-  WebbRelayer,
-} from '@webb-dapp/react-environment';
+import { Bridge, RelayedWithdrawResult, RelayerCMDBase, WebbRelayer } from '@webb-dapp/react-environment';
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3/webb-web3-provider';
 import {
   BridgeWithdraw,
-  getAnchorAddressForBridge,
   OptionalActiveRelayer,
   OptionalRelayer,
   WithdrawState,
@@ -32,18 +30,14 @@ import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polkadot/transaction-notification-config';
 import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
 import { LoggerService } from '@webb-tools/app-util';
-import { Note } from '@webb-tools/sdk-mixer';
-import { DepositNote } from '@webb-tools/wasm-utils';
+import { Note } from '@webb-tools/sdk-core';
+import { JsNote as DepositNote } from '@webb-tools/wasm-utils';
 import { BigNumber } from 'ethers';
 import React from 'react';
-
-import { anchorDeploymentBlock, bridgeCurrencyBridgeStorageFactory } from './bridge-storage';
 
 const logger = LoggerService.get('Web3BridgeWithdraw');
 
 export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
-  bridgeConfig: BridgeConfig = bridgeConfig;
-
   async mapRelayerIntoActive(relayer: OptionalRelayer): Promise<OptionalActiveRelayer> {
     if (!relayer) {
       return null;
@@ -61,8 +55,8 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
         const depositNote = await Note.deserialize(note);
         const evmNote = depositNote.note;
         const contractAddress = await getAnchorAddressForBridge(
-          evmNote.tokenSymbol,
-          Number(evmNote.chain),
+          webbCurrencyIdFromString(evmNote.tokenSymbol),
+          Number(evmNote.targetChainId),
           Number(evmNote.amount)
         );
 
@@ -73,7 +67,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
         // Given the note, iterate over the relayer's supported contracts and find the corresponding configuration
         // for the contract.
         const supportedContract = relayer.capabilities.supportedChains['evm']
-          .get(Number(evmNote.chain))
+          .get(Number(evmNote.targetChainId))
           ?.contracts.find(({ address, size }) => {
             // Match on the relayer configuration as well as note
             return address.toLowerCase() === contractAddress.toLowerCase() && size == Number(evmNote.amount);
@@ -121,7 +115,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
   async getRelayersByNote(evmNote: Note) {
     return this.inner.relayingManager.getRelayer({
       baseOn: 'evm',
-      chainId: Number(evmNote.note.chain),
+      chainId: Number(evmNote.note.targetChainId),
       bridgeSupport: {
         amount: Number(evmNote.note.amount),
         tokenSymbol: evmNote.note.tokenSymbol,
@@ -132,7 +126,8 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
   async sameChainWithdraw(note: DepositNote, recipient: string): Promise<string> {
     this.cancelToken.cancelled = false;
 
-    const bridge = Bridge.from(this.bridgeConfig, BridgeCurrency.fromString(note.tokenSymbol));
+    const bridgeCurrencyId = webbCurrencyIdFromString(note.tokenSymbol);
+    const bridge = Bridge.from(bridgeCurrencyId);
 
     const activeChain = await this.inner.getChainId();
     const internalId = evmIdIntoChainId(activeChain);
@@ -174,7 +169,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
       key: 'bridge-withdraw-evm',
       path: {
         method: 'withdraw',
-        section: `Bridge ${bridge.currency.chainIds.map(getEVMChainNameFromInternal).join('-')}`,
+        section: `Bridge ${bridge.currency.getChainIds().map(getEVMChainNameFromInternal).join('-')}`,
       },
     });
 
@@ -222,7 +217,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
         key: 'bridge-withdraw-evm',
         path: {
           method: 'withdraw',
-          section: `Bridge ${bridge.currency.chainIds.map(getEVMChainNameFromInternal).join('-')}`,
+          section: `Bridge ${bridge.currency.getChainIds().map(getEVMChainNameFromInternal).join('-')}`,
         },
       });
       return '';
@@ -235,7 +230,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
       key: 'bridge-withdraw-evm',
       path: {
         method: 'withdraw',
-        section: `Bridge ${bridge.currency.chainIds.map(getEVMChainNameFromInternal).join('-')}`,
+        section: `Bridge ${bridge.currency.getChainIds().map(getEVMChainNameFromInternal).join('-')}`,
       },
     });
     return '';
@@ -246,7 +241,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
     const bridgeStorageStorage = await bridgeCurrencyBridgeStorageFactory();
 
     // Setup a provider for the source chain
-    const sourceChainId = Number(note.sourceChain) as ChainId;
+    const sourceChainId = Number(note.sourceChainId) as ChainId;
     const sourceEvmId = chainIdIntoEVMId(sourceChainId);
     const sourceChainConfig = chainsConfig[sourceChainId];
     const rpc = sourceChainConfig.url;
@@ -254,7 +249,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
     const sourceEthers = sourceHttpProvider.intoEthersProvider();
 
     // get info from the destination chain (should be selected)
-    const destChainId = Number(note.chain) as ChainId;
+    const destChainId = Number(note.targetChainId) as ChainId;
     const destChainEvmId = chainIdIntoEVMId(destChainId);
 
     // get the deposit info
@@ -262,8 +257,8 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
     this.emit('stateChange', WithdrawState.GeneratingZk);
 
     // Getting contracts data for source and dest chains
-    const currency = BridgeCurrency.fromString(note.tokenSymbol);
-    const bridge = Bridge.from(this.bridgeConfig, currency);
+    const bridgeCurrencyId = webbCurrencyIdFromString(note.tokenSymbol);
+    const bridge = Bridge.from(bridgeCurrencyId);
     const linkedAnchors = bridge.anchors.find((anchor) => anchor.amount === note.amount)!;
     const destContractAddress = linkedAnchors.anchorAddresses[destChainId]!;
     const sourceContractAddress = linkedAnchors.anchorAddresses[sourceChainId]!;
@@ -280,7 +275,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
 
     // get relayers for the source chain
     const sourceRelayers = this.inner.relayingManager.getRelayer({
-      chainId: Number(note.sourceChain),
+      chainId: Number(note.sourceChainId),
       baseOn: 'evm',
       bridgeSupport: {
         amount: Number(note.amount),
@@ -364,6 +359,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
     const activeRelayer = this.activeRelayer[0];
 
     if (activeRelayer && (activeRelayer.account || activeRelayer.beneficiary)) {
+      logger.log(`withdrawing through relayer`);
       const input = {
         destinationChainId: activeChain,
         secret: sourceDeposit.secret,
@@ -405,20 +401,24 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
       const relayerRootsBytes = hexStringToBytes(relayerRootString);
       const relayerRoots = Array.from(relayerRootsBytes);
 
-      const relayedWithdraw = await activeRelayer.initWithdraw('anchor');
+      const relayedWithdraw = await activeRelayer.initWithdraw('anchorRelayTx');
       logger.trace('initialized the withdraw WebSocket');
 
-      const tx = relayedWithdraw.generateWithdrawRequest(
-        {
-          baseOn: 'evm',
-          name: chainIdToRelayerName(destChainId),
-          contractAddress: destContractAddress,
-          endpoint: '',
-        },
+      const chainInfo = {
+        baseOn: 'evm' as RelayerCMDBase,
+        name: chainIdToRelayerName(destChainId),
+        contractAddress: destContractAddress,
+        endpoint: '',
+      };
+
+      const tx = relayedWithdraw.generateWithdrawRequest<typeof chainInfo, 'anchorRelayTx'>(
+        chainInfo,
         `0x${proofBytes}`,
         {
           fee: bufferToFixed(zkp.input.fee),
           nullifierHash: bufferToFixed(zkp.input.nullifierHash),
+          chain: chainInfo.name,
+          contract: chainInfo.contractAddress,
           refreshCommitment: '0x0000000000000000000000000000000000000000000000000000000000000000',
           recipient: zkp.input.recipient,
           refund: bufferToFixed(zkp.input.refund),
@@ -469,12 +469,14 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
 
       relayedWithdraw.send(tx);
       const txResult = await relayedWithdraw.await();
-      if (!txResult[1]) {
+      if (!txResult || !txResult[1]) {
         return '';
       }
       txHash = txResult[1];
     } else {
       try {
+        logger.log(`withdrawing without relayer`);
+
         const input = {
           destinationChainId: activeChain,
           secret: sourceDeposit.secret,
@@ -531,7 +533,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
           key: 'bridge-withdraw-evm',
           path: {
             method: 'withdraw',
-            section: `Bridge ${bridge.currency.chainIds.map(getEVMChainNameFromInternal).join('-')}`,
+            section: `Bridge ${bridge.currency.getChainIds().map(getEVMChainNameFromInternal).join('-')}`,
           },
         });
         return '';
@@ -544,7 +546,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
       key: 'bridge-withdraw-evm',
       path: {
         method: 'withdraw',
-        section: `Bridge ${bridge.currency.chainIds.map(getEVMChainNameFromInternal).join('-')}`,
+        section: `Bridge ${bridge.currency.getChainIds().map(getEVMChainNameFromInternal).join('-')}`,
       },
     });
     this.emit('stateChange', WithdrawState.Done);
@@ -557,11 +559,11 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
 
     const parseNote = await Note.deserialize(note);
     const depositNote = parseNote.note;
-    const sourceChainName = getEVMChainNameFromInternal(Number(depositNote.sourceChain) as ChainId);
-    const targetChainName = getEVMChainNameFromInternal(Number(depositNote.chain) as ChainId);
+    const sourceChainName = getEVMChainNameFromInternal(Number(depositNote.sourceChainId) as ChainId);
+    const targetChainName = getEVMChainNameFromInternal(Number(depositNote.targetChainId) as ChainId);
     logger.trace(`Bridge withdraw from ${sourceChainName} to ${targetChainName}`);
 
-    if (depositNote.sourceChain === depositNote.chain) {
+    if (depositNote.sourceChainId === depositNote.targetChainId) {
       logger.trace(`Same chain flow ${sourceChainName}`);
       return this.sameChainWithdraw(depositNote, recipient);
     } else {

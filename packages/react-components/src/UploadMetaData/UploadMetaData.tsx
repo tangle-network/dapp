@@ -1,9 +1,9 @@
-import React from 'react';
-import styled from 'styled-components';
-import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
-import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
 import { Button, Typography } from '@material-ui/core';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
+import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
+import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
+import React from 'react';
+import styled from 'styled-components';
 
 const UploadMetaDataWrapper = styled.div``;
 type UploadMetaDataProps = {

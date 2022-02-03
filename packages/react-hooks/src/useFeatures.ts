@@ -3,7 +3,6 @@ import { AppFeatures } from '@webb-dapp/ui-components/types';
 import { useMemo } from 'react';
 
 export const useFeatures = (features: AppFeatures[]): boolean => {
-  const { selectableEndpoints } = useSetting();
   /*
   const selectedEndpoint = useMemo(
     () =>

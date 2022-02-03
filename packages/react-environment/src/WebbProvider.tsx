@@ -1,7 +1,6 @@
 import Icon from '@material-ui/core/Icon';
 import WalletConnectProvider from '@walletconnect/web3-provider';
-import { ChainId, chainsPopulated, currenciesConfig, WebbEVMChain } from '@webb-dapp/apps/configs';
-import { getEVMChainName } from '@webb-dapp/apps/configs/evm/SupportedMixers';
+import { ChainId, chainsPopulated, currenciesConfig, getEVMChainName, WebbEVMChain } from '@webb-dapp/apps/configs';
 import { getWebbRelayer } from '@webb-dapp/apps/configs/relayer-config';
 import { WalletId } from '@webb-dapp/apps/configs/wallets/wallet-id.enum';
 import { walletsConfig } from '@webb-dapp/apps/configs/wallets/wallets-config';
@@ -17,6 +16,7 @@ import { InteractiveFeedback, WebbError, WebbErrorCodes } from '@webb-dapp/utils
 import { Account } from '@webb-dapp/wallet/account/Accounts.adapter';
 import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
 import { LoggerService } from '@webb-tools/app-util';
+import { logger } from 'ethers';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { WebbPolkadot } from './api-providers/polkadot';
@@ -132,7 +132,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
           await nextActiveApi?.accounts.setActiveAccount(defaultFromSettings);
         }
       } else {
-        await setActiveAccount(accounts[0]);
+        // await setActiveAccount(accounts[0]);
       }
       setActiveApi(nextActiveApi);
       nextActiveApi?.on('newAccounts', async (accounts) => {
@@ -212,6 +212,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
       await activeApi.destroy();
     }
     try {
+      setLoading(true);
       /// init the active api value
       let localActiveApi: WebbApiProvider<any> | null = null;
       switch (wallet.id) {
@@ -336,18 +337,18 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
               // If we support the evmId but don't have an evmRpcUrl, then it is default on metamask
               await web3Provider
                 .switchChain({
-                  chainId: `0x${chain.evmId.toString(16)}`,
+                  chainId: `0x${chain.evmId?.toString(16)}`,
                 })
                 ?.catch(async (switchError) => {
                   console.log('inside catch for switchChain', switchError);
 
                   // cannot switch because network not recognized, so prompt to add it
-                  if (switchError.code === 4902) {
+                  if (switchError.code === 4902 && chain.evmId) {
                     const currency = currenciesConfig[chain.nativeCurrencyId];
                     await web3Provider.addChain({
                       chainId: `0x${chain.evmId.toString(16)}`,
                       chainName: chain.name,
-                      rpcUrls: chain.evmRpcUrls,
+                      rpcUrls: chain.evmRpcUrls ?? [],
                       nativeCurrency: {
                         decimals: 18,
                         name: currency.name,
@@ -378,6 +379,8 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
       /// settings the user selection
       setActiveChain(chain);
       setActiveWallet(wallet);
+      console.log('setActiveChain and setActiveWallet');
+      setLoading(false);
       return localActiveApi;
     } catch (e) {
       if (e instanceof WebbError) {
@@ -427,6 +430,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
         let defaultAccount = networkDefaultConfig[chainConfig.id]?.defaultAccount;
         defaultAccount = defaultAccount ?? accounts[0]?.address;
         const defaultFromSettings = accounts.find((account) => account.address === defaultAccount);
+        logger.info(`Default account from settings`, defaultFromSettings);
         if (defaultFromSettings) {
           _setActiveAccount(defaultFromSettings);
           await activeApi.accounts.setActiveAccount(defaultFromSettings);
