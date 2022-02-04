@@ -210,15 +210,20 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
     return [];
   }
 
-  /*
-   *
-   *  Mixer id => the fixed deposit amount
-   * destChainId => the Chain the token will be bridged to
-   * If the wrappableAssetAddress is not provided, it is assumed to be the address of the webbToken
-   * */
+  /**
+   * Generates a bridge note for the given mixer and target destination chain.
+   * Note: If the wrappableAssetAddress is not provided, it is assumed to be
+   *       the address of the webbToken
+   * Note: This functione expects `destChainId` is explicitly the correctly computed
+   *       target chain id with the type encoded in its value.
+   * @param mixerId - the mixerId 
+   * @param destChainId - encoded destination chain Id and chain type
+   * @param wrappableAssetAddress - the address of the token to wrap into the bridge
+   * @returns 
+   */
   async generateBridgeNote(
     mixerId: number | string,
-    destChainId: ChainId,
+    destChainId: number,
     wrappableAssetAddress?: string
   ): Promise<DepositPayload> {
     const bridge = this.activeBridge;
@@ -226,9 +231,9 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
       throw new Error('api not ready');
     }
     const tokenSymbol = bridge.currency.view.symbol;
-    const destEvmId = chainIdIntoEVMId(destChainId);
+    // const destEvmId = chainIdIntoEVMId(destChainId);
     const sourceEvmId = await this.inner.getChainId();
-    const deposit = createAnchor2Deposit(destEvmId);
+    const deposit = createAnchor2Deposit(destChainId);
     const secrets = deposit.preimage;
     const amount = String(mixerId).replace('Bridge=', '').split('@')[0];
     const sourceChainId = evmIdIntoChainId(sourceEvmId);
