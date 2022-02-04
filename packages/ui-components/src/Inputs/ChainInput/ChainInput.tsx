@@ -117,10 +117,10 @@ const ChainName = styled.span`
 export const TokenInput: React.FC<TokenInputProps> = ({ chains, onChange, value }) => {
   const selectItems = useMemo(() => {
     return chains.map((chainId) => {
-      if (!chainsPopulated[chainId]) {
+      if (!chainsPopulated[chainId[1]]) {
         throw new Error(`Chain with ${chainId} isn't configured`);
       }
-      const chain = chainsPopulated[chainId];
+      const chain = chainsPopulated[chainId[1]];
       return {
         id: chainId,
         chain,
@@ -140,7 +140,7 @@ export const TokenInput: React.FC<TokenInputProps> = ({ chains, onChange, value 
     }
     return {
       id: value,
-      chain: chainsPopulated[value],
+      chain: chainsPopulated[value[1]],
     };
   }, [value]);
   const $wrapper = useRef<HTMLDivElement>();

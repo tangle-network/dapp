@@ -21,6 +21,7 @@ type DepositProps = {};
 export const Deposit: React.FC<DepositProps> = () => {
   const [wrappedTokenBalance, setWrappedTokenBalance] = useState('');
   const [item, setItem] = useState<MixerSize | undefined>(undefined);
+  // TODO: Use organised chain id type
   const [destChain, setDestChain] = useState<[ChainType, ChainId] | undefined>(undefined);
 
   const [wrappableTokenBalance, setWrappableTokenBalance] = useState<String>('');
@@ -113,11 +114,12 @@ export const Deposit: React.FC<DepositProps> = () => {
       <ChainInput
         chains={tokenChains}
         label={'Select Source Chain'}
-        selectedChain={srcChain}
+        // TODO: Figure out how to embed the chain type for the active chain
+        selectedChain={[ChainType.EVM, srcChain || 0]}
         // TODO: Hook this up to network switcher
         setSelectedChain={async (chainId) => {
           if (typeof chainId !== 'undefined' && activeWallet) {
-            const nextChain = chains[chainId];
+            const nextChain = chains[chainId[1]];
             await switchChain(nextChain, activeWallet);
           }
         }}

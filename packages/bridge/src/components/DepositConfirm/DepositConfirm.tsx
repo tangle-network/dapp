@@ -48,6 +48,7 @@ type DepositInfoProps = {
   provider: DepositApi;
   onSuccess(): void;
   mixerId: number | undefined;
+  // TODO: Use organised chain id type
   destChain: [ChainType, ChainId] | undefined;
   wrappableAsset: Currency | null | undefined;
 };
