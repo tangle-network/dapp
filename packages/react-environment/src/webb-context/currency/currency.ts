@@ -1,4 +1,4 @@
-import { ChainId, currenciesConfig, WebbCurrencyId } from '@webb-dapp/apps/configs';
+import { ChainId, ChainType, currenciesConfig, WebbCurrencyId } from '@webb-dapp/apps/configs';
 import {
   CurrencyConfig,
   CurrencyRole,
@@ -36,6 +36,14 @@ export class Currency extends CurrencyContent {
 
   getChainIds(): ChainId[] {
     return Array.from(this.data.addresses.keys());
+  }
+
+  // TODO: Create a structured type
+  // interface ChainIdWithType { chain: ChainId; type: ChainType; }
+  getChainIdsAndTypes(): [ChainType, ChainId][] {
+    return Array.from(this.data.addresses.keys()).map((chainId) => {
+      return [ChainType.EVM, chainId];
+    });
   }
 
   get view(): CurrencyView {

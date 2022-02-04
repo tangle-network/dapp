@@ -1,5 +1,5 @@
 import { Checkbox, FormControlLabel, Typography } from '@material-ui/core';
-import { ChainId, WebbCurrencyId } from '@webb-dapp/apps/configs';
+import { ChainId, ChainType, WebbCurrencyId } from '@webb-dapp/apps/configs';
 import { DepositConfirm } from '@webb-dapp/bridge/components/DepositConfirm/DepositConfirm';
 import { useBridgeDeposit } from '@webb-dapp/bridge/hooks/deposit/useBridgeDeposit';
 import { useWrapUnwrap } from '@webb-dapp/page-wrap-unwrap/hooks/useWrapUnwrap';
@@ -21,7 +21,7 @@ type DepositProps = {};
 export const Deposit: React.FC<DepositProps> = () => {
   const [wrappedTokenBalance, setWrappedTokenBalance] = useState('');
   const [item, setItem] = useState<MixerSize | undefined>(undefined);
-  const [destChain, setDestChain] = useState<ChainId | undefined>(undefined);
+  const [destChain, setDestChain] = useState<[ChainType, ChainId] | undefined>(undefined);
 
   const [wrappableTokenBalance, setWrappableTokenBalance] = useState<String>('');
   // boolean flag for displaying the wrapped asset input
@@ -58,7 +58,7 @@ export const Deposit: React.FC<DepositProps> = () => {
 
   // TODO: Return both the internal Chain ID and the type somehow
   const tokenChains = useMemo(() => {
-    return selectedBridgeCurrency?.getChainIds() ?? [];
+    return selectedBridgeCurrency?.getChainIdsAndTypes() ?? [];
   }, [selectedBridgeCurrency]);
 
   const disabledDepositButton = useMemo(() => {

@@ -1,4 +1,4 @@
-import { ChainId, chainIdIntoEVMId } from '@webb-dapp/apps/configs';
+import { ChainId, chainIdIntoEVMId, ChainType } from '@webb-dapp/apps/configs';
 import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
 import {
   Bridge,
@@ -18,7 +18,7 @@ export interface BridgeDepositApi {
 
   deposit(payload: DepositPayload): Promise<void>;
 
-  generateNote(mixerId: number, destChain: ChainId, wrappableAsset: string | undefined): Promise<DepositPayload>;
+  generateNote(mixerId: number, destChainType: ChainType, destChain: ChainId, wrappableAsset: string | undefined): Promise<DepositPayload>;
 
   loadingState: MixerDeposit['loading'];
   error: string;
@@ -71,10 +71,14 @@ export const useBridgeDeposit = (): BridgeDepositApi => {
         throw new Error('Not ready');
       }
 
-      let rawId: number;
+      // TODO: Implement properly
+      const chainIdIntoSubstrateId = (chainId: ChainId): number => { return chainId; };
+      const computeChainIdType = (type: ChainType, raw: number): number => { return raw; };
+
+      let rawId: number = 0;
       if (destChainType == ChainType.EVM) {
         rawId = Number(chainIdIntoEVMId(destChain));
-      } else if (destChainId == ChainType.Substrate) {
+      } else if (destChainType == ChainType.Substrate) {
         rawId = Number(chainIdIntoSubstrateId(destChain));
       }
 

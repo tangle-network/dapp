@@ -1,3 +1,12 @@
+export enum ChainType {
+  EVM = 0x0100,
+  Substrate = 0x0200,
+  PolkadotRelayChain = 0x0301,
+  KusamaRelayChain = 0x0302,
+  PolkadotParachain = 0x0310,
+  KusamaParachain = 0x0311,
+}
+
 export enum ChainId {
   Edgeware,
   EdgewareTestNet,
