@@ -56,6 +56,7 @@ export const Deposit: React.FC<DepositProps> = () => {
 
   const handleSuccess = useCallback((): void => {}, []);
 
+  // TODO: Return both the internal Chain ID and the type somehow
   const tokenChains = useMemo(() => {
     return selectedBridgeCurrency?.getChainIds() ?? [];
   }, [selectedBridgeCurrency]);
