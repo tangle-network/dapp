@@ -1,4 +1,4 @@
-import { ChainId } from '@webb-dapp/apps/configs';
+import { ChainId, chainIdIntoEVMId } from '@webb-dapp/apps/configs';
 import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
 import {
   Bridge,
@@ -66,9 +66,15 @@ export const useBridgeDeposit = (): BridgeDepositApi => {
   }, [depositApi]);
   const [activeBridge, setActiveBridge] = useState<Bridge | null>(depositApi?.activeBridge ?? null);
   const generateNote = useCallback(
-    async (mixerId: number, destChain: ChainId, wrappableAsset: string | undefined) => {
+    async (mixerId: number, destChainType: ChainType, destChain: ChainId, wrappableAsset: string | undefined) => {
       if (!depositApi) {
         throw new Error('Not ready');
+      }
+
+      let destChainId: number;
+      if (destChainType == ChainType.EVM) {
+        const evmId = Number(chainIdIntoEVMId(destChain));
+        destChainId = computeChainIdType(ChainType.EVM, evmId);
       }
       return depositApi?.generateBridgeNote(mixerId, destChain, wrappableAsset);
     },

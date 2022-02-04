@@ -42,7 +42,7 @@ export abstract class BridgeDeposit<T, K extends DepositPayload = DepositPayload
 
   abstract generateBridgeNote(
     mixerId: number | string,
-    destination: ChainId,
+    destination: number,
     wrappableAssetAddress?: string
   ): Promise<K>;
 }
