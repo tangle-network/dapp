@@ -78,6 +78,9 @@ export const useBridgeDeposit = (): BridgeDepositApi => {
         rawId = Number(chainIdIntoSubstrateId(destChain));
       }
 
+      // Compute the updated chain Id + type combination
+      // This turns a likely 32-bit chain ID into a 48-bit chain ID
+      // since the chain type is 2 bytes long: 2 + 4 bytes = 6 bytes.
       const destChainId = computeChainIdType(destChainType, rawId);
       return depositApi?.generateBridgeNote(mixerId, destChainId, wrappableAsset);
     },

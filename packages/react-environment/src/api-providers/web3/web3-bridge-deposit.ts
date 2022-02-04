@@ -214,7 +214,7 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
    * Generates a bridge note for the given mixer and target destination chain.
    * Note: If the wrappableAssetAddress is not provided, it is assumed to be
    *       the address of the webbToken
-   * Note: This functione expects `destChainId` is explicitly the correctly computed
+   * Note: This functione expects `destChainId` is EXPLICITLY the correctly computed
    *       target chain id with the type encoded in its value.
    * @param mixerId - the mixerId 
    * @param destChainId - encoded destination chain Id and chain type
