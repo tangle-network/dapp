@@ -12,12 +12,12 @@
   "resolutions": {
     "eslint": "^6.6.0",
     "@polkadot/api": "^6.9.2",
-	"@webb-tools/type-definitions": "0.1.4-26",
-	"@webb-tools/api": "0.1.4-26",
-	"@webb-tools/types": "0.1.4-26",
-	"@webb-tools/app-util": "0.1.4-26",
-	"@webb-tools/sdk-core": "0.1.4-26",
-	"@webb-tools/wasm-utils": "0.1.4-26"
+    "@webb-tools/type-definitions": "0.1.4-26",
+    "@webb-tools/api": "0.1.4-26",
+    "@webb-tools/types": "0.1.4-26",
+    "@webb-tools/app-util": "0.1.4-26",
+    "@webb-tools/sdk-core": "0.1.4-26",
+    "@webb-tools/wasm-utils": "0.1.4-26"
   },
   "scripts": {
     "bump-version": "node scripts/bump-version.js",
@@ -65,7 +65,8 @@
     "tornado-snarkjs": "git+https://github.com/tornadocash/snarkjs.git#869181cfaf7526fe8972073d31655493a04326d5",
     "tornado-websnark": "git+https://github.com/webb-tools/websnark.git",
     "wasmsnark": "^0.0.10",
-    "web3": "^1.3.5"
+    "web3": "^1.3.5",
+    "yargs": "^17.3.1"
   },
   "devDependencies": {
     "@babel/plugin-syntax-import-meta": "^7.10.4",
