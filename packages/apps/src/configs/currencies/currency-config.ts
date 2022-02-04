@@ -83,7 +83,9 @@ export const currenciesConfig: AppConfig['currencies'] = {
     type: CurrencyType.NATIVE,
     role: CurrencyRole.Wrappable,
     icon: React.createElement(ShidenLogo),
-    addresses: new Map([[ChainId.Shiden, zeroAddress]]),
+    addresses: new Map([
+      [ChainId.Shiden, zeroAddress]
+    ]),
   },
   [WebbCurrencyId.WETH]: {
     name: 'Wrapped Ethereum',
@@ -121,6 +123,7 @@ export const currenciesConfig: AppConfig['currencies'] = {
     type: CurrencyType.ERC20,
     role: CurrencyRole.Governable,
     icon: WebbWrappedLogo(EtherLogo()),
+    // TODO: Either extend a chain type here or as another property in the currency config
     addresses: new Map([
       [ChainId.Ropsten, '0x105779076d17FAe5EAADF010CA677475549F49E4'],
       [ChainId.Rinkeby, '0x4e7D4BEe028655F2865d9D147cF7B609c516d39C'],

@@ -42,6 +42,7 @@ export class Currency extends CurrencyContent {
   // interface ChainIdWithType { chain: ChainId; type: ChainType; }
   getChainIdsAndTypes(): [ChainType, ChainId][] {
     return Array.from(this.data.addresses.keys()).map((chainId) => {
+      // TODO: Get the actual chain type from the hardcoded currency config
       return [ChainType.EVM, chainId];
     });
   }

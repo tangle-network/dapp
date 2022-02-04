@@ -27,6 +27,23 @@ export enum ChainId {
   WebbDevelopment,
 }
 
+export enum SubstrateChain {
+  Edgeware = 7,
+}
+
+export enum PolkadotRelayChain {
+  Mainnet = 0,
+}
+
+export enum KusamaRelayChain {
+  Mainnet = 2,
+}
+
+export enum KusamaParachain {
+  Shiden = 2007,
+}
+
+// TODO: Change to EVMChain
 export enum WebbEVMChain {
   /*Default EVM Chains on MetaMask*/
   EthereumMainNet = 1,
