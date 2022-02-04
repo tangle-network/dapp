@@ -71,12 +71,15 @@ export const useBridgeDeposit = (): BridgeDepositApi => {
         throw new Error('Not ready');
       }
 
-      let destChainId: number;
+      let rawId: number;
       if (destChainType == ChainType.EVM) {
-        const evmId = Number(chainIdIntoEVMId(destChain));
-        destChainId = computeChainIdType(ChainType.EVM, evmId);
+        rawId = Number(chainIdIntoEVMId(destChain));
+      } else if (destChainId == ChainType.Substrate) {
+        rawId = Number(chainIdIntoSubstrateId(destChain));
       }
-      return depositApi?.generateBridgeNote(mixerId, destChain, wrappableAsset);
+
+      const destChainId = computeChainIdType(destChainType, rawId);
+      return depositApi?.generateBridgeNote(mixerId, destChainId, wrappableAsset);
     },
     [depositApi]
   );
