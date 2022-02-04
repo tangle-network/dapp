@@ -31,17 +31,21 @@ export const WalletTokenInput: React.FC<WalletTokenInputProps> = ({ selectedToke
   return (
     <InputSection>
       <WalletTokenInputWrapper>
-        <InputLabel label={'Select Wallet'}>
-          <WalletSelect />
-        </InputLabel>
-
-        {activeWallet && (
-          <InputLabel label={'Select Token'}>
-            {/* used for positioning the token input label */}
-            <div style={{ height: '52px' }}></div>
-            <TokenInput currencies={allCurrencies} value={active} onChange={setSelectedToken} />
+        <div style={{ flexGrow: 2 }}>
+          <InputLabel label={'Select Wallet'}>
+            <WalletSelect />
           </InputLabel>
-        )}
+        </div>
+        <div style={{ flexShrink: 1 }}>
+
+        </div>
+        <div style={{ flexGrow: 2 }}>
+          {activeWallet && (
+            <InputLabel label={'Select Token'}>
+              <TokenInput currencies={allCurrencies} value={active} onChange={setSelectedToken} />
+            </InputLabel>
+          )}
+        </div>
       </WalletTokenInputWrapper>
     </InputSection>
   );
