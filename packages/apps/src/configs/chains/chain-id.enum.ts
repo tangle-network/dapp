@@ -7,6 +7,22 @@ export enum ChainType {
   KusamaParachain = 0x0311,
 }
 
+export enum SubstrateChain {
+  Edgeware = 7,
+}
+
+export enum PolkadotRelayChain {
+  Mainnet = 0,
+}
+
+export enum KusamaRelayChain {
+  Mainnet = 2,
+}
+
+export enum KusamaParachain {
+  Shiden = 2007,
+}
+
 export enum ChainId {
   Edgeware,
   EdgewareTestNet,
@@ -25,22 +41,6 @@ export enum ChainId {
   ArbitrumTestnet,
   PolygonTestnet,
   WebbDevelopment,
-}
-
-export enum SubstrateChain {
-  Edgeware = 7,
-}
-
-export enum PolkadotRelayChain {
-  Mainnet = 0,
-}
-
-export enum KusamaRelayChain {
-  Mainnet = 2,
-}
-
-export enum KusamaParachain {
-  Shiden = 2007,
 }
 
 // TODO: Change to EVMChain
