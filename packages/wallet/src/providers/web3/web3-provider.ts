@@ -1,5 +1,7 @@
 import WalletConnectProvider from '@walletconnect/web3-provider';
+import { evmIdIntoChainId, WalletId } from '@webb-dapp/apps/configs';
 import { ProvideCapabilities } from '@webb-dapp/react-environment';
+import { appEvent } from '@webb-dapp/react-environment/app-event';
 import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import { ethers } from 'ethers';
 import Web3 from 'web3';
@@ -148,10 +150,18 @@ export class Web3Provider<T = unknown> {
 
   switchChain(chainInput: SwitchEthereumChainParameter) {
     const provider = this._inner.currentProvider as AbstractProvider;
-    return provider.request?.({
-      method: 'wallet_switchEthereumChain',
-      params: [chainInput],
-    });
+    return provider
+      .request?.({
+        method: 'wallet_switchEthereumChain',
+        params: [chainInput],
+      })
+      .then(async () => {
+        if (this.helperApi instanceof WalletConnectProvider) {
+          appEvent.send('networkSwitched', [evmIdIntoChainId(await this.network), WalletId.WalletConnectV1]);
+        } else {
+          appEvent.send('networkSwitched', [evmIdIntoChainId(await this.network), WalletId.MetaMask]);
+        }
+      });
   }
 
   addToken(addTokenInput: AddToken) {
@@ -163,7 +173,7 @@ export class Web3Provider<T = unknown> {
           address: addTokenInput.address, // The address that the token is at.
           symbol: addTokenInput.symbol, // A ticker symbol or shorthand, up to 5 chars.
           decimals: addTokenInput.decimals, // The number of decimals in the token
-          image: 'https://placdholder.com/300', // A string url of the token logo
+          image: addTokenInput.image, // A string url of the token logo
         },
       },
     });

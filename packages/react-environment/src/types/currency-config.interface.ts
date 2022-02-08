@@ -21,6 +21,7 @@ export enum CurrencyRole {
 export interface CurrencyView {
   id: WebbCurrencyId;
   icon: ReturnType<typeof createElement>;
+  imageUrl?: string;
   type: CurrencyType;
   name: string;
   color?: string;

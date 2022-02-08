@@ -12,12 +12,12 @@
   "resolutions": {
     "eslint": "^6.6.0",
     "@polkadot/api": "^6.9.2",
-	"@webb-tools/type-definitions": "0.1.4-26",
-	"@webb-tools/api": "0.1.4-26",
-	"@webb-tools/types": "0.1.4-26",
-	"@webb-tools/app-util": "0.1.4-26",
-	"@webb-tools/sdk-core": "0.1.4-26",
-	"@webb-tools/wasm-utils": "0.1.4-26"
+    "@webb-tools/type-definitions": "0.1.4-26",
+    "@webb-tools/api": "0.1.4-26",
+    "@webb-tools/types": "0.1.4-26",
+    "@webb-tools/app-util": "0.1.4-26",
+    "@webb-tools/sdk-core": "0.1.4-26",
+    "@webb-tools/wasm-utils": "0.1.4-26"
   },
   "scripts": {
     "bump-version": "node scripts/bump-version.js",
@@ -40,9 +40,9 @@
   "dependencies": {
     "@material-ui/core": "^4.11.3",
     "@polkadot/networks": "^7.4.1",
-    "@walletconnect/client": "^1.4.1",
-    "@walletconnect/qrcode-modal": "^1.4.1",
-    "@walletconnect/web3-provider": "^1.4.1",
+    "@walletconnect/client": "^1.7.1",
+    "@walletconnect/qrcode-modal": "^1.7.1",
+    "@walletconnect/web3-provider": "^1.7.1",
     "D": "^1.0.0",
     "circom": "^0.5.45",
     "circomlib": "^2.0.1",

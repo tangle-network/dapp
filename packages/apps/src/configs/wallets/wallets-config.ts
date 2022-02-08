@@ -7,15 +7,15 @@ import { ChainId } from '../chains/chain-id.enum';
 import { WalletId } from '../wallets/wallet-id.enum';
 
 const ANY_EVM = [
-  ChainId.Edgeware,
+  //ChainId.Edgeware,
   ChainId.EdgewareTestNet,
-  ChainId.EthereumMainNet,
+  // ChainId.EthereumMainNet,
   ChainId.Rinkeby,
   ChainId.Kovan,
   ChainId.Ropsten,
   ChainId.Goerli,
   ChainId.HarmonyTestnet1,
-  ChainId.HarmonyTestnet0,
+  //ChainId.HarmonyTestnet0,
   ChainId.HarmonyMainnet0,
   ChainId.Shiden,
   ChainId.OptimismTestnet,
@@ -51,8 +51,8 @@ export const walletsConfig: AppConfig['wallet'] = {
     },
     supportedChainIds: [...ANY_EVM],
   },
-  3: {
-    id: 3,
+  [WalletId.WalletConnectV1]: {
+    id: WalletId.WalletConnectV1,
     logo: WalletConnectLogo,
     name: 'wallet connect',
     title: `Wallet Connect`,

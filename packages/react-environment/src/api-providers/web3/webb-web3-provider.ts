@@ -82,13 +82,12 @@ export class WebbWeb3Provider
   }
 
   async setChainListener() {
-    this.ethersProvider = this.web3Provider.intoEthersProvider();
     const handler = async () => {
       const chainId = await this.web3Provider.network;
       this.emit('providerUpdate', [chainId]);
     };
     // @ts-ignore
-    this.ethersProvider.provider?.on?.('chainChanged', handler);
+    this.web3Provider.provider.on?.('chainChanged', handler);
   }
 
   setStorage(chainId: number) {
@@ -96,6 +95,7 @@ export class WebbWeb3Provider
   }
 
   async destroy(): Promise<void> {
+    await this.endSession();
     this.subscriptions = {
       providerUpdate: [],
       interactiveFeedback: [],
