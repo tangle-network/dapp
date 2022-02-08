@@ -72,7 +72,7 @@ const PopperList = styled.div<{ open: boolean }>`
     overflow: hidden;
     border-radius: 0px 0px 25px 25px;
     border: 1px solid ${({ theme }) => (theme.type === 'dark' ? 'black' : theme.gray13)};
-    background: ${({ theme }) => theme.background};
+    background: ${({ theme }) => theme.layer1Background};
     overflow: hidden;
 
     ${({ open, theme }) => {
@@ -139,7 +139,7 @@ const DropdownInput: React.FC<DropdownInputProps> = ({ chains, onChange, value }
       chain: chainsPopulated[value],
     };
   }, [value]);
-  const $wrapper = useRef<HTMLDivElement>();
+  const $wrapper = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
   const theme = useColorPallet();
   return (
@@ -150,10 +150,7 @@ const DropdownInput: React.FC<DropdownInputProps> = ({ chains, onChange, value }
             setIsOpen(false);
           }}
         >
-          <InputWrapper
-            open={isOpen}
-            ref={$wrapper}
-          >
+          <InputWrapper open={isOpen} ref={$wrapper}>
             <div
               onClick={() => {
                 setIsOpen((p) => !p);

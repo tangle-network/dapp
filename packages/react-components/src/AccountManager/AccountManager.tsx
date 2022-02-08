@@ -72,7 +72,6 @@ const AccountManagerContent = styled.div<{ open: boolean }>`
 `;
 
 const PopperList = styled.div<{ open: boolean }>`
-
   ${StyledList} {
     border-radius: 0px 0px 25px 25px;
     overflow: hidden;
@@ -131,11 +130,10 @@ export const AccountManager: React.FC<AccountManagerProps> = () => {
       })) ?? []
     );
   }, [accounts]);
-  const $wrapper = useRef<HTMLDivElement>();
+  const $wrapper = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
   return (
     <div style={{ width: '230px' }}>
-
       <ClickAwayListener
         onClickAway={() => {
           setIsOpen(false);
@@ -177,11 +175,7 @@ export const AccountManager: React.FC<AccountManagerProps> = () => {
               </IconButton>
             </div>
           </div>
-          <Popper
-            placement={'bottom-end'}
-            open={isOpen}
-            anchorEl={$wrapper?.current}
-          >
+          <Popper placement={'bottom-end'} open={isOpen} anchorEl={$wrapper?.current}>
             <PopperList open={isOpen} style={{ width: $wrapper.current?.clientWidth }}>
               <StyledList as={List} dense disablePadding>
                 {accountAddresses.map((account, inx) => {

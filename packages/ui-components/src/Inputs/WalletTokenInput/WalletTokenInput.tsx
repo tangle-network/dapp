@@ -36,9 +36,7 @@ export const WalletTokenInput: React.FC<WalletTokenInputProps> = ({ selectedToke
             <WalletSelect />
           </InputLabel>
         </div>
-        <div style={{ flexShrink: 1 }}>
-
-        </div>
+        <div style={{ flexShrink: 1 }}></div>
         <div style={{ flexGrow: 2 }}>
           {activeWallet && (
             <InputLabel label={'Select Token'}>

@@ -65,11 +65,9 @@ const TokenInputWrapper = styled.div<{ open: boolean }>`
   .account-avatar {
     background: transparent;
   }
-
 `;
 
 const PopperList = styled.div<{ open: boolean }>`
-
   ${StyledList} {
     overflow: hidden;
     .account-avatar {
