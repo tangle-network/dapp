@@ -2,7 +2,7 @@ import {
   ChainId,
   chainsConfig,
   currenciesConfig,
-  evmIdIntoChainId,
+  evmIdIntoInternalChainId,
   WebbCurrencyId,
   webbCurrencyIdToString,
 } from '@webb-dapp/apps/configs';
@@ -54,14 +54,14 @@ export class Web3WrapUnwrap extends WrapUnWrap<WebbWeb3Provider> {
     super(inner);
 
     inner.getChainId().then((evmChainId) => {
-      this._currentChainId.next(evmIdIntoChainId(evmChainId));
+      this._currentChainId.next(evmIdIntoInternalChainId(evmChainId));
       this._event.next({
         ready: null,
       });
     });
 
     inner.on('providerUpdate', ([evmChainId]) => {
-      this._currentChainId.next(evmIdIntoChainId(evmChainId));
+      this._currentChainId.next(evmIdIntoInternalChainId(evmChainId));
       this._event.next({
         stateUpdate: null,
       });

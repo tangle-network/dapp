@@ -1,6 +1,6 @@
 import Icon from '@material-ui/core/Icon';
 import WalletConnectProvider from '@walletconnect/web3-provider';
-import { ChainId, chainsPopulated, currenciesConfig, getEVMChainName, WebbEVMChain } from '@webb-dapp/apps/configs';
+import { ChainId, chainsPopulated, currenciesConfig, EVMChain, getEVMChainName } from '@webb-dapp/apps/configs';
 import { getWebbRelayer } from '@webb-dapp/apps/configs/relayer-config';
 import { WalletId } from '@webb-dapp/apps/configs/wallets/wallet-id.enum';
 import { walletsConfig } from '@webb-dapp/apps/configs/wallets/wallets-config';
@@ -242,14 +242,14 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
               const provider = new WalletConnectProvider({
                 rpc: {
                   //default on metamask
-                  [WebbEVMChain.EthereumMainNet]: 'https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
-                  [WebbEVMChain.Ropsten]: 'https://ropsten.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
-                  [WebbEVMChain.Goerli]: 'https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
-                  [WebbEVMChain.Kovan]: 'https://kovan.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
-                  [WebbEVMChain.Rinkeby]: 'https://rinkeby.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4',
+                  [EVMChain.EthereumMainNet]: 'https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
+                  [EVMChain.Ropsten]: 'https://ropsten.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
+                  [EVMChain.Goerli]: 'https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
+                  [EVMChain.Kovan]: 'https://kovan.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
+                  [EVMChain.Rinkeby]: 'https://rinkeby.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4',
                   //default on metamask
-                  [WebbEVMChain.Beresheet]: 'http://beresheet1.edgewa.re:9933',
-                  [WebbEVMChain.HarmonyTestnet1]: 'https://api.s1.b.hmny.io',
+                  [EVMChain.Beresheet]: 'http://beresheet1.edgewa.re:9933',
+                  [EVMChain.HarmonyTestnet1]: 'https://api.s1.b.hmny.io',
                 },
                 chainId: chain.evmId,
               });

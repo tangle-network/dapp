@@ -1,4 +1,4 @@
-import { ChainId } from '@webb-dapp/apps/configs/chains';
+import { ChainId, ChainType } from '@webb-dapp/apps/configs/chains';
 import EdgewareLogo from '@webb-dapp/apps/configs/logos/EdgewareLogo';
 import EtherLogo from '@webb-dapp/apps/configs/logos/Eth';
 import HarmonyLogo from '@webb-dapp/apps/configs/logos/HarmonyLogo';
@@ -13,8 +13,10 @@ import React from 'react';
 
 import { WebbCurrencyId } from './webb-currency-id.enum';
 
+// TODO: THe chainTypes need to be reviewed
 export const currenciesConfig: AppConfig['currencies'] = {
   [WebbCurrencyId.EDG]: {
+    chainType: ChainType.EVM,
     name: 'Edgeware token',
     symbol: 'EDG',
     color: '',
@@ -25,6 +27,7 @@ export const currenciesConfig: AppConfig['currencies'] = {
     addresses: new Map(),
   },
   [WebbCurrencyId.TEDG]: {
+    chainType: ChainType.EVM,
     name: 'Edgeware testnet token',
     symbol: 'tEDG',
     color: '',
@@ -35,6 +38,7 @@ export const currenciesConfig: AppConfig['currencies'] = {
     addresses: new Map(),
   },
   [WebbCurrencyId.ETH]: {
+    chainType: ChainType.EVM,
     name: 'Ethereum',
     symbol: 'ETH',
     color: '',
@@ -52,6 +56,7 @@ export const currenciesConfig: AppConfig['currencies'] = {
     ]),
   },
   [WebbCurrencyId.ONE]: {
+    chainType: ChainType.EVM,
     name: 'Harmony',
     symbol: 'ONE',
     color: '',
@@ -66,6 +71,8 @@ export const currenciesConfig: AppConfig['currencies'] = {
     ]),
   },
   [WebbCurrencyId.WEBB]: {
+    // IS THIS AN EVM CHAIN?
+    chainType: ChainType.EVM,
     name: 'WEBB',
     symbol: 'WEBB',
     color: '',
@@ -76,6 +83,7 @@ export const currenciesConfig: AppConfig['currencies'] = {
     addresses: new Map(),
   },
   [WebbCurrencyId.SDN]: {
+    chainType: ChainType.KusamaParachain,
     name: 'Shiden',
     symbol: 'SDN',
     color: '',
@@ -83,11 +91,10 @@ export const currenciesConfig: AppConfig['currencies'] = {
     type: CurrencyType.NATIVE,
     role: CurrencyRole.Wrappable,
     icon: React.createElement(ShidenLogo),
-    addresses: new Map([
-      [ChainId.Shiden, zeroAddress]
-    ]),
+    addresses: new Map([[ChainId.Shiden, zeroAddress]]),
   },
   [WebbCurrencyId.WETH]: {
+    chainType: ChainType.EVM,
     name: 'Wrapped Ethereum',
     symbol: 'WETH',
     color: '',
@@ -106,6 +113,7 @@ export const currenciesConfig: AppConfig['currencies'] = {
     ]),
   },
   [WebbCurrencyId.MATIC]: {
+    chainType: ChainType.EVM,
     name: 'Polygon',
     symbol: 'MATIC',
     color: '',
@@ -116,6 +124,7 @@ export const currenciesConfig: AppConfig['currencies'] = {
     addresses: new Map([[ChainId.PolygonTestnet, zeroAddress]]),
   },
   [WebbCurrencyId.webbWETH]: {
+    chainType: ChainType.EVM,
     name: 'webbETH-test-1',
     symbol: 'webbWETH',
     color: '',
@@ -123,7 +132,6 @@ export const currenciesConfig: AppConfig['currencies'] = {
     type: CurrencyType.ERC20,
     role: CurrencyRole.Governable,
     icon: WebbWrappedLogo(EtherLogo()),
-    // TODO: Either extend a chain type here or as another property in the currency config
     addresses: new Map([
       [ChainId.Ropsten, '0x105779076d17FAe5EAADF010CA677475549F49E4'],
       [ChainId.Rinkeby, '0x4e7D4BEe028655F2865d9D147cF7B609c516d39C'],

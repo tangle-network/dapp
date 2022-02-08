@@ -40,7 +40,7 @@ export const Deposit: React.FC<DepositProps> = () => {
       return undefined;
     }
 
-    return activeChain.id;
+    return activeChain;
   }, [activeChain]);
 
   useEffect(() => {
@@ -57,7 +57,7 @@ export const Deposit: React.FC<DepositProps> = () => {
 
   const handleSuccess = useCallback((): void => {}, []);
 
-  // TODO: Return both the internal Chain ID and the type somehow
+  // TODO Ensure that this is working properly
   const tokenChains = useMemo(() => {
     return selectedBridgeCurrency?.getChainIdsAndTypes() ?? [];
   }, [selectedBridgeCurrency]);
@@ -115,7 +115,7 @@ export const Deposit: React.FC<DepositProps> = () => {
         chains={tokenChains}
         label={'Select Source Chain'}
         // TODO: Figure out how to embed the chain type for the active chain
-        selectedChain={[ChainType.EVM, srcChain || 0]}
+        selectedChain={[srcChain?.chainType || 0, srcChain?.id || 0]}
         // TODO: Hook this up to network switcher
         setSelectedChain={async (chainId) => {
           if (typeof chainId !== 'undefined' && activeWallet) {

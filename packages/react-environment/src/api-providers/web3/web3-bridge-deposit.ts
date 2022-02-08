@@ -1,10 +1,10 @@
 import {
   ChainId,
-  chainIdIntoEVMId,
   chainsConfig,
   currenciesConfig,
-  evmIdIntoChainId,
+  evmIdIntoInternalChainId,
   getEVMChainNameFromInternal,
+  internalChainIdIntoEVMId,
 } from '@webb-dapp/apps/configs';
 import { WebbGovernedToken } from '@webb-dapp/contracts/contracts';
 import { ERC20__factory } from '@webb-dapp/contracts/types';
@@ -37,7 +37,7 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
       const commitment = depositPayload.params[0].commitment;
       const note = depositPayload.note.note;
       const sourceEvmId = await this.inner.getChainId();
-      const sourceChainId = evmIdIntoChainId(sourceEvmId);
+      const sourceChainId = evmIdIntoInternalChainId(sourceEvmId);
       transactionNotificationConfig.loading?.({
         address: '',
         data: React.createElement(DepositNotification, {
@@ -216,10 +216,10 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
    *       the address of the webbToken
    * Note: This functione expects `destChainId` is EXPLICITLY the correctly computed
    *       target chain id with the type encoded in its value.
-   * @param mixerId - the mixerId 
+   * @param mixerId - the mixerId
    * @param destChainId - encoded destination chain Id and chain type
    * @param wrappableAssetAddress - the address of the token to wrap into the bridge
-   * @returns 
+   * @returns
    */
   async generateBridgeNote(
     mixerId: number | string,
@@ -231,12 +231,12 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
       throw new Error('api not ready');
     }
     const tokenSymbol = bridge.currency.view.symbol;
-    // const destEvmId = chainIdIntoEVMId(destChainId);
+    // const destEvmId = internalChainIdIntoEVMId(destChainId);
     const sourceEvmId = await this.inner.getChainId();
     const deposit = createAnchor2Deposit(destChainId);
     const secrets = deposit.preimage;
     const amount = String(mixerId).replace('Bridge=', '').split('@')[0];
-    const sourceChainId = evmIdIntoChainId(sourceEvmId);
+    const sourceChainId = evmIdIntoInternalChainId(sourceEvmId);
     const noteInput: NoteGenInput = {
       exponentiation: '5',
       width: '3',

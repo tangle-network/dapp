@@ -1,7 +1,8 @@
-import { WebbCurrencyId } from '@webb-dapp/apps/configs';
+import { ChainType, WebbCurrencyId } from '@webb-dapp/apps/configs';
 
 export interface ChainConfig {
   id: number;
+  chainType: ChainType;
   name: string;
   group: string;
   evmId: number | undefined;

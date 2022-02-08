@@ -38,12 +38,10 @@ export class Currency extends CurrencyContent {
     return Array.from(this.data.addresses.keys());
   }
 
-  // TODO: Create a structured type
-  // interface ChainIdWithType { chain: ChainId; type: ChainType; }
   getChainIdsAndTypes(): [ChainType, ChainId][] {
+    const chainType = this.data.chainType;
     return Array.from(this.data.addresses.keys()).map((chainId) => {
-      // TODO: Get the actual chain type from the hardcoded currency config
-      return [ChainType.EVM, chainId];
+      return [chainType, chainId];
     });
   }
 

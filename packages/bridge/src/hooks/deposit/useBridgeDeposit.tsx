@@ -1,4 +1,4 @@
-import { ChainId, chainIdIntoEVMId, ChainType } from '@webb-dapp/apps/configs';
+import { ChainId, ChainType, computeChainIdType, internalChainIdToChainId } from '@webb-dapp/apps/configs';
 import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
 import {
   Bridge,
@@ -18,7 +18,12 @@ export interface BridgeDepositApi {
 
   deposit(payload: DepositPayload): Promise<void>;
 
-  generateNote(mixerId: number, destChainType: ChainType, destChain: ChainId, wrappableAsset: string | undefined): Promise<DepositPayload>;
+  generateNote(
+    mixerId: number,
+    destChainType: ChainType,
+    destChain: ChainId,
+    wrappableAsset: string | undefined
+  ): Promise<DepositPayload>;
 
   loadingState: MixerDeposit['loading'];
   error: string;
@@ -70,22 +75,8 @@ export const useBridgeDeposit = (): BridgeDepositApi => {
       if (!depositApi) {
         throw new Error('Not ready');
       }
-
-      // TODO: Implement properly
-      const chainIdIntoSubstrateId = (chainId: ChainId): number => { return chainId; };
-      const computeChainIdType = (type: ChainType, raw: number): number => { return raw; };
-
-      let rawId: number = 0;
-      if (destChainType == ChainType.EVM) {
-        rawId = Number(chainIdIntoEVMId(destChain));
-      } else if (destChainType == ChainType.Substrate) {
-        rawId = Number(chainIdIntoSubstrateId(destChain));
-      }
-
-      // Compute the updated chain Id + type combination
-      // This turns a likely 32-bit chain ID into a 48-bit chain ID
-      // since the chain type is 2 bytes long: 2 + 4 bytes = 6 bytes.
-      const destChainId = computeChainIdType(destChainType, rawId);
+      const chainId = internalChainIdToChainId(destChainType, destChain);
+      const destChainId = computeChainIdType(destChainType, chainId);
       return depositApi?.generateBridgeNote(mixerId, destChainId, wrappableAsset);
     },
     [depositApi]
@@ -104,6 +95,7 @@ export const useBridgeDeposit = (): BridgeDepositApi => {
     }
     return activeBridge.currency;
   }, [activeBridge]);
+
   const setSelectedCurrency = (bridgeCurrency: Currency) => {
     logger.log('setSelectedCurrency: ', bridgeCurrency);
     const bridge = bridgeApi.getBridge(bridgeCurrency);

@@ -1,5 +1,5 @@
 import { parseUnits } from '@ethersproject/units';
-import { ChainId, chainIdIntoEVMId, evmIdIntoChainId } from '@webb-dapp/apps/configs';
+import { ChainId, evmIdIntoInternalChainId, internalChainIdIntoEVMId } from '@webb-dapp/apps/configs';
 import { chainIdToRelayerName } from '@webb-dapp/apps/configs/relayer-config';
 import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
 import { depositFromPreimage } from '@webb-dapp/contracts/utils/make-deposit';
@@ -27,7 +27,7 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
       return null;
     }
     const evmId = await this.inner.getChainId();
-    const chainId = evmIdIntoChainId(evmId);
+    const chainId = evmIdIntoInternalChainId(evmId);
     return WebbRelayer.intoActiveWebRelayer(
       relayer,
       {
@@ -72,7 +72,7 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
 
   get relayers() {
     return this.inner.getChainId().then((evmId) => {
-      const chainId = evmIdIntoChainId(evmId);
+      const chainId = evmIdIntoInternalChainId(evmId);
       return this.inner.relayingManager.getRelayer({
         baseOn: 'evm',
         chainId,
@@ -109,7 +109,7 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
     const evmNote = await Note.deserialize(note);
     const deposit = depositFromPreimage(evmNote.note.secret.replace('0x', ''));
     const chainId = Number(evmNote.note.targetChainId) as ChainId;
-    const chainEvmId = chainIdIntoEVMId(chainId);
+    const chainEvmId = internalChainIdIntoEVMId(chainId);
 
     const activeChain = await this.inner.getChainId();
     console.log('activeChain', activeChain);

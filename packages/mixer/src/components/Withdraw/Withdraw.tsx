@@ -84,7 +84,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
   }, [recipient, depositNote]);
   const determineSwitchButton = () => {
     return false;
-    /*    if (depositNote && activeChain && activeChain.evmId != chainIdIntoEVMId(depositNote.note.chain)) {
+    /*    if (depositNote && activeChain && activeChain.evmId != internalChainIdIntoEVMId(depositNote.note.chain)) {
       return true;
     }
     return false;*/

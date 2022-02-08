@@ -1,3 +1,4 @@
+// must match u16 in rust
 export enum ChainType {
   EVM = 0x0100,
   Substrate = 0x0200,
@@ -23,6 +24,7 @@ export enum KusamaParachain {
   Shiden = 2007,
 }
 
+// INTERNAL CHAIN IDS
 export enum ChainId {
   Edgeware,
   EdgewareTestNet,
@@ -43,8 +45,7 @@ export enum ChainId {
   WebbDevelopment,
 }
 
-// TODO: Change to EVMChain
-export enum WebbEVMChain {
+export enum EVMChain {
   /*Default EVM Chains on MetaMask*/
   EthereumMainNet = 1,
   Ropsten = 3,
@@ -65,74 +66,95 @@ export enum WebbEVMChain {
   PolygonTestnet = 80001,
 }
 
-export const evmIdIntoChainId = (evmId: number | string): ChainId => {
-  switch (Number(evmId) as WebbEVMChain) {
-    case WebbEVMChain.EthereumMainNet:
+export const evmIdIntoInternalChainId = (evmId: number | string): ChainId => {
+  switch (Number(evmId) as EVMChain) {
+    case EVMChain.EthereumMainNet:
       return ChainId.EthereumMainNet;
-    case WebbEVMChain.Ropsten:
+    case EVMChain.Ropsten:
       return ChainId.Ropsten;
-    case WebbEVMChain.Rinkeby:
+    case EVMChain.Rinkeby:
       return ChainId.Rinkeby;
-    case WebbEVMChain.Kovan:
+    case EVMChain.Kovan:
       return ChainId.Kovan;
-    case WebbEVMChain.Goerli:
+    case EVMChain.Goerli:
       return ChainId.Goerli;
-    case WebbEVMChain.Edgeware:
+    case EVMChain.Edgeware:
       return ChainId.Edgeware;
-    case WebbEVMChain.Beresheet:
+    case EVMChain.Beresheet:
       return ChainId.EdgewareTestNet;
-    case WebbEVMChain.HarmonyTestnet1:
+    case EVMChain.HarmonyTestnet1:
       return ChainId.HarmonyTestnet1;
-    case WebbEVMChain.HarmonyTestnet0:
+    case EVMChain.HarmonyTestnet0:
       return ChainId.HarmonyTestnet0;
-    case WebbEVMChain.HarmonyMainnet0:
+    case EVMChain.HarmonyMainnet0:
       return ChainId.HarmonyMainnet0;
-    case WebbEVMChain.Ganache:
+    case EVMChain.Ganache:
       return ChainId.Ganache;
-    case WebbEVMChain.Shiden:
+    case EVMChain.Shiden:
       return ChainId.Shiden;
-    case WebbEVMChain.OptimismTestnet:
+    case EVMChain.OptimismTestnet:
       return ChainId.OptimismTestnet;
-    case WebbEVMChain.ArbitrumTestnet:
+    case EVMChain.ArbitrumTestnet:
       return ChainId.ArbitrumTestnet;
-    case WebbEVMChain.PolygonTestnet:
+    case EVMChain.PolygonTestnet:
       return ChainId.PolygonTestnet;
   }
 };
 
-export const chainIdIntoEVMId = (chainId: ChainId | Number | String): WebbEVMChain => {
+export const internalChainIdIntoEVMId = (chainId: ChainId | Number | String): EVMChain => {
   switch (Number(chainId) as ChainId) {
     case ChainId.Edgeware:
-      return WebbEVMChain.Edgeware;
+      return EVMChain.Edgeware;
     case ChainId.EdgewareTestNet:
-      return WebbEVMChain.Beresheet;
+      return EVMChain.Beresheet;
     case ChainId.EthereumMainNet:
-      return WebbEVMChain.EthereumMainNet;
+      return EVMChain.EthereumMainNet;
     case ChainId.Rinkeby:
-      return WebbEVMChain.Rinkeby;
+      return EVMChain.Rinkeby;
     case ChainId.Ropsten:
-      return WebbEVMChain.Ropsten;
+      return EVMChain.Ropsten;
     case ChainId.Kovan:
-      return WebbEVMChain.Kovan;
+      return EVMChain.Kovan;
     case ChainId.Goerli:
-      return WebbEVMChain.Goerli;
+      return EVMChain.Goerli;
     case ChainId.HarmonyTestnet0:
-      return WebbEVMChain.HarmonyTestnet0;
+      return EVMChain.HarmonyTestnet0;
     case ChainId.HarmonyTestnet1:
-      return WebbEVMChain.HarmonyTestnet1;
+      return EVMChain.HarmonyTestnet1;
     case ChainId.HarmonyMainnet0:
-      return WebbEVMChain.HarmonyMainnet0;
+      return EVMChain.HarmonyMainnet0;
     case ChainId.Ganache:
-      return WebbEVMChain.Ganache;
+      return EVMChain.Ganache;
     case ChainId.Shiden:
-      return WebbEVMChain.Shiden;
+      return EVMChain.Shiden;
     case ChainId.OptimismTestnet:
-      return WebbEVMChain.OptimismTestnet;
+      return EVMChain.OptimismTestnet;
     case ChainId.ArbitrumTestnet:
-      return WebbEVMChain.ArbitrumTestnet;
+      return EVMChain.ArbitrumTestnet;
     case ChainId.PolygonTestnet:
-      return WebbEVMChain.PolygonTestnet;
+      return EVMChain.PolygonTestnet;
     default:
       throw Error(`unsupported chain ${chainId}`);
+  }
+};
+
+export const internalChainIdIntoSubstrateId = (chainId: ChainId | Number | String): number => {
+  switch (Number(chainId) as ChainId) {
+    case ChainId.Edgeware:
+      return SubstrateChain.Edgeware;
+    default:
+      throw Error(`unsupported chain ${chainId}`);
+  }
+};
+
+export const internalChainIdToChainId = (chainType: ChainType, internalId: ChainId) => {
+  switch (chainType) {
+    case ChainType.EVM:
+      return internalChainIdIntoEVMId(internalId);
+    case ChainType.Substrate:
+      return internalChainIdIntoSubstrateId(internalId);
+    // TODO: Handle other cases
+    default:
+      throw new Error('chainType not handled in internalChainIdToChainId');
   }
 };
