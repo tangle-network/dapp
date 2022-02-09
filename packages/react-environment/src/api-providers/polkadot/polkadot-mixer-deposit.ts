@@ -37,7 +37,7 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
     // @ts-ignore
     const tokenProperty: Array<NativeTokenProperties> = await api.rpc.system.properties();
     const groupItem = data
-      .map(([storageKey, info]: [StorageKey, PalletMixerMixerMetadata]) => {
+      .map(([storageKey, info]) => {
         const mixerInfo = (info as PalletMixerMixerMetadata).toHuman();
         console.log(mixerInfo);
         const cId: number = Number(mixerInfo.asset);

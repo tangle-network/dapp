@@ -16,7 +16,7 @@ export class ORMLCurrency {
 
   async list() {
     const assets = await this.api.api.query.assetRegistry.assets.entries();
-    return assets.map(([storageKey, i]: [StorageKey, PalletAssetRegistryAssetDetails]) => ({
+    return assets.map(([storageKey, i]) => ({
       // @ts-ignore
       ...i.toHuman(),
       // @ts-ignore
@@ -31,7 +31,7 @@ export class ORMLCurrency {
     if (activeAccount) {
       const ormlBalances = await this.api.api.query.tokens.accounts.entries(activeAccount.address);
       logger.info(`ORML Balances ${ormlBalances.length}`, ormlBalances);
-      return ormlBalances.map(([storageKey, balance]: [StorageKey, Balance]) => {
+      return ormlBalances.map(([storageKey, balance]) => {
         const currencyId = storageKey[0];
         return {
           id: currencyId,
