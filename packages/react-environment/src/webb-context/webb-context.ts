@@ -1,4 +1,4 @@
-import { Chain, Wallet } from '@webb-dapp/react-environment/webb-context/common';
+import { AppConfig, Chain, Wallet } from '@webb-dapp/react-environment/webb-context/common';
 import { WebbApiProvider } from '@webb-dapp/react-environment/webb-context/webb-provider.interface';
 import { InteractiveFeedback } from '@webb-dapp/utils/webb-error';
 import { Account } from '@webb-dapp/wallet/account/Accounts.adapter';
@@ -12,14 +12,14 @@ interface Note {
 
 type DespotStates = 'ideal' | 'generating-note' | 'depositing';
 
-export interface WebbContentState<T = unknown> {
+export interface WebbContextState<T = unknown> {
   loading: boolean;
   wallets: Record<number, Wallet>;
   chains: Record<number, Chain>;
   activeApi?: WebbApiProvider<T>;
   activeWallet?: Wallet;
   activeChain?: Chain;
-
+  appConfig: AppConfig;
   accounts: Account[];
   activeAccount: Account | null;
   isConnecting: boolean;
@@ -34,12 +34,22 @@ export interface WebbContentState<T = unknown> {
   registerInteractiveFeedback: (interactiveFeedback: InteractiveFeedback) => void;
 }
 
-export const WebbContext = React.createContext<WebbContentState>({
+export const WebbContext = React.createContext<WebbContextState>({
   chains: {},
   accounts: [],
   loading: true,
+  wallets: {},
+
   activeAccount: null,
   isConnecting: false,
+  appConfig: {
+    anchors: {},
+    bridgeByAsset: {},
+    chains: {},
+    currencies: {},
+    mixers: {},
+    wallet: {},
+  },
   setActiveAccount<T extends Account>(account: T): Promise<void> {
     return Promise.resolve();
   },
@@ -49,7 +59,6 @@ export const WebbContext = React.createContext<WebbContentState>({
   inactivateApi(): Promise<void> {
     return Promise.resolve();
   },
-  wallets: {},
   activeFeedback: null,
   registerInteractiveFeedback: (interactiveFeedback: InteractiveFeedback) => {
     return;
@@ -57,5 +66,5 @@ export const WebbContext = React.createContext<WebbContentState>({
 });
 
 export const useWebContext = <T = unknown>() => {
-  return React.useContext(WebbContext) as WebbContentState<T>;
+  return React.useContext(WebbContext) as WebbContextState<T>;
 };

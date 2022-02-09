@@ -1,6 +1,13 @@
 import Icon from '@material-ui/core/Icon';
 import WalletConnectProvider from '@walletconnect/web3-provider';
-import { ChainId, chainsPopulated, currenciesConfig, getEVMChainName, WebbEVMChain } from '@webb-dapp/apps/configs';
+import {
+  ChainId,
+  chainsPopulated,
+  currenciesConfig,
+  getEVMChainName,
+  staticAppConfig,
+  WebbEVMChain,
+} from '@webb-dapp/apps/configs';
 import { getWebbRelayer } from '@webb-dapp/apps/configs/relayer-config';
 import { WalletId } from '@webb-dapp/apps/configs/wallets/wallet-id.enum';
 import { walletsConfig } from '@webb-dapp/apps/configs/wallets/wallets-config';
@@ -22,7 +29,15 @@ import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { WebbPolkadot } from './api-providers/polkadot';
 import { extensionNotInstalled, unsupportedChain } from './error';
 import { SettingProvider } from './SettingProvider';
-import { Chain, netStorageFactory, NetworkStorage, Wallet, WebbApiProvider, WebbContext } from './webb-context';
+import {
+  AppConfigApi,
+  Chain,
+  netStorageFactory,
+  NetworkStorage,
+  Wallet,
+  WebbApiProvider,
+  WebbContext,
+} from './webb-context';
 
 interface WebbProviderProps extends BareProps {
   applicationName: string;
@@ -43,9 +58,20 @@ const registerInteractiveFeedback = (
   });
 };
 
+const appConfigApi = new AppConfigApi(staticAppConfig);
+
 export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Dapp', children }) => {
   const [activeWallet, setActiveWallet] = useState<Wallet | undefined>(undefined);
   const [activeChain, setActiveChain] = useState<Chain | undefined>(undefined);
+
+  const [appConfig, setAppConfig] = useState(appConfigApi.config);
+
+  useEffect(() => {
+    appConfigApi.$config.subscribe((next) => {
+      setAppConfig(next);
+    });
+  }, []);
+
   const [activeApi, setActiveApi] = useState<WebbApiProvider<any> | undefined>(undefined);
   const [loading, setLoading] = useState(true);
   const [networkStorage, setNetworkStorage] = useState<NetworkStorage | null>(null);
@@ -227,7 +253,8 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
                   registerInteractiveFeedback(setInteractiveFeedbacks, feedback);
                 },
               },
-              relayer
+              relayer,
+              appConfigApi
             );
             await setActiveApiWithAccounts(webbPolkadot, chain.id);
             localActiveApi = webbPolkadot;
@@ -295,7 +322,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
             /// get the current active chain from metamask
             const chainId = await web3Provider.network; // storage based on network id
 
-            const webbWeb3Provider = await WebbWeb3Provider.init(web3Provider, chainId, relayer);
+            const webbWeb3Provider = await WebbWeb3Provider.init(web3Provider, chainId, relayer, appConfigApi);
 
             const providerUpdateHandler = async ([chainId]: number[]) => {
               const nextChain = Object.values(chains).find((chain) => chain.evmId === chainId);
@@ -473,6 +500,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
         setActiveAccount,
         switchChain: switchChainAndStore,
         isConnecting,
+        appConfig,
         async inactivateApi(): Promise<void> {
           setActiveApi(undefined);
           if (activeApi) {

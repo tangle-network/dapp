@@ -7,6 +7,7 @@ import {
 } from '@webb-dapp/react-environment/api-providers/polkadot';
 import {
   ApiInitHandler,
+  AppConfigApi,
   ProvideCapabilities,
   WebbApiProvider,
   WebbMethods,
@@ -31,7 +32,8 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
   private constructor(
     apiPromise: ApiPromise,
     injectedExtension: InjectedExtension,
-    readonly relayingManager: WebbRelayerBuilder
+    readonly relayingManager: WebbRelayerBuilder,
+    public readonly appConfig: AppConfigApi
   ) {
     super();
     this.provider = new PolkadotProvider(apiPromise, injectedExtension);
@@ -115,10 +117,11 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
     appName: string,
     endpoints: string[],
     errorHandler: ApiInitHandler,
-    relayerBuilder: WebbRelayerBuilder
+    relayerBuilder: WebbRelayerBuilder,
+    config: AppConfigApi
   ): Promise<WebbPolkadot> {
     const [apiPromise, injectedExtension] = await PolkadotProvider.getParams(appName, endpoints, errorHandler.onError);
-    const instance = new WebbPolkadot(apiPromise, injectedExtension, relayerBuilder);
+    const instance = new WebbPolkadot(apiPromise, injectedExtension, relayerBuilder, config);
     await instance.insureApiInterface();
     /// check metadata update
     await instance.awaitMetaDataCheck();
