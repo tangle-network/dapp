@@ -1,5 +1,6 @@
-import { ChainId, chainsConfig, getAnchorAddressForBridge, webbCurrencyIdFromString } from '@webb-dapp/apps/configs';
+import { ChainId, chainsConfig, webbCurrencyIdFromString } from '@webb-dapp/apps/configs';
 import { EvmChainMixersInfo } from '@webb-dapp/react-environment/api-providers/web3/EvmChainMixersInfo';
+import { AppConfigApi } from '@webb-dapp/react-environment/webb-context';
 import {
   Capabilities,
   EVMCMDKeys,
@@ -85,6 +86,7 @@ export type WithdrawRelayerArgs<A extends RelayerCMDBase, C extends CMDSwitcher<
   RelayerCMDs<A, C>,
   keyof RelayedChainInput | 'proof'
 >;
+
 export interface RelayerInfo {
   substrate: Record<string, RelayedChainConfig | null>;
   evm: Record<string, RelayedChainConfig | null>;
@@ -103,7 +105,11 @@ export class WebbRelayerBuilder {
   private _listUpdated = new Subject<void>();
   public readonly listUpdated: Observable<void>;
 
-  private constructor(private config: RelayerConfig[], private readonly chainNameAdapter: ChainNameIntoChainId) {
+  private constructor(
+    private config: RelayerConfig[],
+    private readonly chainNameAdapter: ChainNameIntoChainId,
+    private readonly appConfig: AppConfigApi
+  ) {
     this.listUpdated = this._listUpdated.asObservable();
   }
 
@@ -173,9 +179,10 @@ export class WebbRelayerBuilder {
    * */
   static async initBuilder(
     config: RelayerConfig[],
-    chainNameAdapter: ChainNameIntoChainId
+    chainNameAdapter: ChainNameIntoChainId,
+    appConfig: AppConfigApi
   ): Promise<WebbRelayerBuilder> {
-    const relayerBuilder = new WebbRelayerBuilder(config, chainNameAdapter);
+    const relayerBuilder = new WebbRelayerBuilder(config, chainNameAdapter, appConfig);
 
     // For all relayers in the config, fetch the info - but timeout after 5 seconds
     // This is done to prevent issues with relayers which are not operating properly
@@ -222,7 +229,7 @@ export class WebbRelayerBuilder {
         if (tornadoSupport && baseOn && chainId) {
           if (baseOn == 'evm') {
             const evmId = chainsConfig[chainId].evmId!;
-            const mixersInfoForChain = new EvmChainMixersInfo(evmId);
+            const mixersInfoForChain = new EvmChainMixersInfo(evmId, this.appConfig);
             const mixerInfo = mixersInfoForChain.getTornMixerInfoBySize(
               tornadoSupport.amount,
               tornadoSupport.tokenSymbol
@@ -243,7 +250,7 @@ export class WebbRelayerBuilder {
         }
         if (bridgeSupport && baseOn && chainId) {
           if (baseOn == 'evm') {
-            const bridgeAddress = getAnchorAddressForBridge(
+            const bridgeAddress = this.appConfig.getAnchorAddressForBridge(
               webbCurrencyIdFromString(bridgeSupport.tokenSymbol),
               chainId,
               bridgeSupport.amount

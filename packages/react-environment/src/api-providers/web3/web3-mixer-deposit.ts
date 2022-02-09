@@ -1,10 +1,4 @@
-import {
-  ChainId,
-  chainIdIntoEVMId,
-  evmIdIntoChainId,
-  getEVMChainName,
-  getNativeCurrencySymbol,
-} from '@webb-dapp/apps/configs';
+import { ChainId, chainIdIntoEVMId, evmIdIntoChainId, getEVMChainName } from '@webb-dapp/apps/configs';
 import { createTornDeposit, Deposit } from '@webb-dapp/contracts/utils/make-deposit';
 import { DepositPayload as IDepositPayload, MixerDeposit, MixerSize } from '@webb-dapp/react-environment/webb-context';
 import { DepositNotification } from '@webb-dapp/ui-components/notification/DepositNotification';
@@ -37,7 +31,8 @@ export class Web3MixerDeposit extends MixerDeposit<WebbWeb3Provider, DepositPayl
       },
     });
     const [deposit, amount] = params;
-    const contract = await this.inner.getContractBySize(amount, getNativeCurrencySymbol(await this.inner.getChainId()));
+    const symbol = this.inner.appConfig.getNativeCurrencySymbol(await this.inner.getChainId());
+    const contract = await this.inner.getContractBySize(amount, symbol);
     try {
       await contract.deposit(deposit.commitment);
 
@@ -113,6 +108,7 @@ export class Web3MixerDeposit extends MixerDeposit<WebbWeb3Provider, DepositPayl
   }
 
   async getSizes(): Promise<MixerSize[]> {
-    return this.inner.getMixerSizes(getNativeCurrencySymbol(await this.inner.getChainId()));
+    const symbol = this.inner.appConfig.getNativeCurrencySymbol(await this.inner.getChainId());
+    return this.inner.getMixerSizes(symbol);
   }
 }

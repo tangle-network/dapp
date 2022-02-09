@@ -45,7 +45,7 @@ export class WebbWeb3Provider
     this.ethersProvider.provider?.on?.('accountsChanged', () => {
       this.emit('newAccounts', this.accounts);
     });
-    this.connectedMixers = new EvmChainMixersInfo(chainId);
+    this.connectedMixers = new EvmChainMixersInfo(chainId, appConfig);
     this.methods = {
       wrapUnwrap: {
         core: {
@@ -93,7 +93,7 @@ export class WebbWeb3Provider
   }
 
   setStorage(chainId: number) {
-    this.connectedMixers = new EvmChainMixersInfo(chainId);
+    this.connectedMixers = new EvmChainMixersInfo(chainId, this.appConfig);
   }
 
   async destroy(): Promise<void> {
@@ -114,7 +114,7 @@ export class WebbWeb3Provider
 
   getTornadoContractAddressByNote(note: Note) {
     const evmId = chainIdIntoEVMId(Number(note.note.targetChainId));
-    const availableMixers = new EvmChainMixersInfo(evmId);
+    const availableMixers = new EvmChainMixersInfo(evmId, this.appConfig);
     const mixer = availableMixers.getTornMixerInfoBySize(Number(note.note.amount), note.note.tokenSymbol);
     if (!mixer) {
       throw new Error('Mixer not found');

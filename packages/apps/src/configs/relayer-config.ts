@@ -1,4 +1,5 @@
 import { ChainId } from '@webb-dapp/apps/configs/chains';
+import { AppConfigApi } from '@webb-dapp/react-environment';
 import { RelayerConfig, WebbRelayerBuilder } from '@webb-dapp/react-environment/webb-context/relayer';
 
 let builder: WebbRelayerBuilder | null = null;
@@ -120,15 +121,19 @@ export function chainIdToRelayerName(id: ChainId): string {
   throw new Error(`unhandled Chain id ${id}`);
 }
 
-export async function getWebbRelayer() {
+export async function getWebbRelayer(appConfigApi: AppConfigApi) {
   if (!builder) {
-    builder = await WebbRelayerBuilder.initBuilder(relayerConfig, (name, basedOn) => {
-      try {
-        return basedOn === 'evm' ? relayerNameToChainId(name) : relayerSubstrateNameToChainId(name);
-      } catch (e) {
-        return null;
-      }
-    });
+    builder = await WebbRelayerBuilder.initBuilder(
+      relayerConfig,
+      (name, basedOn) => {
+        try {
+          return basedOn === 'evm' ? relayerNameToChainId(name) : relayerSubstrateNameToChainId(name);
+        } catch (e) {
+          return null;
+        }
+      },
+      appConfigApi
+    );
   }
   return builder;
 }

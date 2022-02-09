@@ -64,13 +64,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
   const [activeWallet, setActiveWallet] = useState<Wallet | undefined>(undefined);
   const [activeChain, setActiveChain] = useState<Chain | undefined>(undefined);
 
-  const [appConfig, setAppConfig] = useState(appConfigApi.config);
-
-  useEffect(() => {
-    appConfigApi.$config.subscribe((next) => {
-      setAppConfig(next);
-    });
-  }, []);
+  const appConfig = useMemo(() => appConfigApi, []);
 
   const [activeApi, setActiveApi] = useState<WebbApiProvider<any> | undefined>(undefined);
   const [loading, setLoading] = useState(true);
@@ -229,7 +223,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
   };
   /// Network switcher
   const switchChain = async (chain: Chain, _wallet: Wallet) => {
-    const relayer = await getWebbRelayer();
+    const relayer = await getWebbRelayer(appConfig);
 
     const wallet = _wallet || activeWallet;
     // wallet cleanup

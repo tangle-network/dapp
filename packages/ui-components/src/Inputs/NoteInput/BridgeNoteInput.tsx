@@ -1,12 +1,13 @@
 import { FormHelperText, Icon, InputBase } from '@material-ui/core';
-import { getEVMChainNameFromInternal, webbCurrencyIdFromString } from '@webb-dapp/apps/configs';
+import { webbCurrencyIdFromString } from '@webb-dapp/apps/configs';
 import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
 import { useDepositNote } from '@webb-dapp/mixer/hooks/note';
+import { useWebContext } from '@webb-dapp/react-environment';
 import { Currency } from '@webb-dapp/react-environment/webb-context/currency/currency';
 import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabel';
 import { notificationApi } from '@webb-dapp/ui-components/notification';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
-import React, { useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 
@@ -27,7 +28,13 @@ export const BridgeNoteInput: React.FC<NoteInputProps> = ({ error, onChange, val
   const depositNote = useDepositNote(value);
   const { getBridge } = useBridge();
   const navigate = useNavigate();
-
+  const { appConfig } = useWebContext();
+  const getEVMChainNameFromInternal = useCallback(
+    (id) => {
+      return appConfig.getEVMChainNameFromInternal(id);
+    },
+    [appConfig]
+  );
   // Switch to mixer tab if note is for mixer
   useEffect(() => {
     if (depositNote && depositNote.note.prefix === 'webb.mixer') {

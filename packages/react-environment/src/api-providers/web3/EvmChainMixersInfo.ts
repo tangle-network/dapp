@@ -1,7 +1,6 @@
 import { evmIdIntoChainId, WebbEVMChain } from '@webb-dapp/apps/configs';
-import { mixersConfig } from '@webb-dapp/apps/configs/mixers';
 import { evmChainStorageFactory, MixerStorage } from '@webb-dapp/apps/configs/storages/EvmChainStorage';
-import { MixerSize } from '@webb-dapp/react-environment';
+import { AppConfigApi, MixerSize } from '@webb-dapp/react-environment';
 import { MixerConfig } from '@webb-dapp/react-environment/types/mixer-config.interface';
 import { Storage } from '@webb-dapp/utils';
 
@@ -15,9 +14,9 @@ export class EvmChainMixersInfo {
   private mixerStorage: Storage<MixerStorage> | null = null;
   private mixerConfig: MixerConfig;
 
-  constructor(public evmId: WebbEVMChain) {
+  constructor(public evmId: WebbEVMChain, private appConfigApi: AppConfigApi) {
     const webbChainId = evmIdIntoChainId(evmId);
-    this.mixerConfig = mixersConfig[webbChainId] ?? { tornMixers: [] };
+    this.mixerConfig = this.appConfigApi.config.mixers[webbChainId] ?? { tornMixers: [] };
   }
 
   getTornMixerSizes(tokenSymbol: string): MixerSize[] {
@@ -33,7 +32,7 @@ export class EvmChainMixersInfo {
   async getMixerStorage(contractAddress: string) {
     // create the mixerStorage if it didn't exist
     if (!this.mixerStorage) {
-      this.mixerStorage = await evmChainStorageFactory(this.evmId);
+      this.mixerStorage = await evmChainStorageFactory(this.evmId, this.appConfigApi);
     }
 
     // get the info from localStorage
@@ -56,20 +55,17 @@ export class EvmChainMixersInfo {
 
   async setMixerStorage(contractAddress: string, lastQueriedBlock: number, leaves: string[]) {
     if (!this.mixerStorage) {
-      this.mixerStorage = await evmChainStorageFactory(this.evmId);
+      this.mixerStorage = await evmChainStorageFactory(this.evmId, this.appConfigApi);
     }
 
-    this.mixerStorage.set(contractAddress, {
+    await this.mixerStorage.set(contractAddress, {
       lastQueriedBlock,
       leaves,
     });
   }
 
   getTornMixerInfoBySize(mixerSize: number, tokenSymbol: string) {
-    const mixerInfo = this.mixerConfig.tornMixers.find(
-      (mixer) => mixer.symbol == tokenSymbol && mixer.size == mixerSize
-    );
-    return mixerInfo;
+    return this.mixerConfig.tornMixers.find((mixer) => mixer.symbol == tokenSymbol && mixer.size == mixerSize);
   }
 
   getMixerInfoByAddress(contractAddress: string) {

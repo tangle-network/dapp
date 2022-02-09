@@ -1,11 +1,10 @@
 import { FormHelperText, Icon, InputBase } from '@material-ui/core';
-import { getEVMChainNameFromInternal } from '@webb-dapp/apps/configs';
 import { useDepositNote } from '@webb-dapp/mixer/hooks/note';
 import { useWebContext } from '@webb-dapp/react-environment/webb-context';
 import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabel';
 import { notificationApi } from '@webb-dapp/ui-components/notification';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 
@@ -25,7 +24,6 @@ const NoteDetails = styled.div`
 export const MixerNoteInput: React.FC<NoteInputProps> = ({ error, onChange, value }) => {
   const depositNote = useDepositNote(value);
   const navigate = useNavigate();
-  const { registerInteractiveFeedback } = useWebContext();
 
   // Switch to bridge tab if note is for bridge
   useEffect(() => {
@@ -39,6 +37,14 @@ export const MixerNoteInput: React.FC<NoteInputProps> = ({ error, onChange, valu
       navigate('/bridge', { replace: true });
     }
   }, [depositNote, navigate]);
+
+  const { appConfig } = useWebContext();
+  const getEVMChainNameFromInternal = useCallback(
+    (id) => {
+      return appConfig.getEVMChainNameFromInternal(id);
+    },
+    [appConfig]
+  );
 
   return (
     <InputLabel label={'Note'}>

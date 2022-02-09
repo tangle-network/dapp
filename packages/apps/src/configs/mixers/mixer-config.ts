@@ -2,26 +2,8 @@ import { ChainId, chainsConfig, currenciesConfig } from '@webb-dapp/apps/configs
 import { AppConfig } from '@webb-dapp/react-environment/webb-context';
 import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 
-export const getNativeCurrencySymbol = (evmId: number): string => {
-  const chain = Object.values(chainsConfig).find((chainsConfig) => chainsConfig.evmId === evmId);
-  if (chain) {
-    const nativeCurrency = chain.nativeCurrencyId;
-    return currenciesConfig[nativeCurrency].symbol;
-  }
-  return 'Unknown';
-};
-
 export const getEVMChainName = (evmId: number): string => {
   const chain = Object.values(chainsConfig).find((chainsConfig) => chainsConfig.evmId === evmId);
-  if (chain) {
-    return chain.name;
-  } else {
-    throw WebbError.from(WebbErrorCodes.UnsupportedChain);
-  }
-};
-
-export const getEVMChainNameFromInternal = (chainID: number): string => {
-  const chain = Object.values(chainsConfig).find((chainsConfig) => chainsConfig.id === chainID);
   if (chain) {
     return chain.name;
   } else {

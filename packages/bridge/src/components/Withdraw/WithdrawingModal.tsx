@@ -1,6 +1,5 @@
 import { Button, Divider, Icon, LinearProgress, Tooltip, Typography } from '@material-ui/core';
-import { getEVMChainNameFromInternal } from '@webb-dapp/apps/configs';
-import { WithdrawState } from '@webb-dapp/react-environment';
+import { useWebContext, WithdrawState } from '@webb-dapp/react-environment';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 import { JsNote as DepositNote } from '@webb-tools/wasm-utils';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -75,16 +74,16 @@ const WithdrawInfoRow = styled.div`
 `;
 
 const InfoItemLabel = styled.div`
-  flex: 1 0 20%;
-  justify-content: center;
+	flex: 1 0 20%;
+	justify-content: center;
 
-  .label-icon {
-    vertical-align: middle;
-  padding: 1rem 0;
+	.label-icon {
+		vertical-align: middle;
+		padding: 1rem 0;
 
-  td:nth-child(2) {
-    padding: 0 2rem;
-  }
+		td:nth-child(2) {
+			padding: 0 2rem;
+		}
 `;
 
 const InfoItem = styled.div`
@@ -99,6 +98,7 @@ const alternatingMessages = [
   'Anyone with your note can withdraw, You should keep it secret',
 ];
 const WithdrawingModal: React.FC<WithdrawingModalProps> = ({ canCancel, cancel, note, stage, withdrawTxInfo }) => {
+  const { appConfig } = useWebContext();
   const [rm, setAlternatingMessage] = useState(0);
   useEffect(() => {
     const handle = setInterval(() => {
@@ -131,6 +131,11 @@ const WithdrawingModal: React.FC<WithdrawingModalProps> = ({ canCancel, cancel, 
     const address = withdrawTxInfo.account;
     return `${address.slice(0, 6)}...${address.slice(address.length - 6, address.length)}`;
   }, [withdrawTxInfo]);
+
+  const chainName = useMemo(() => {
+    const chainId = note.targetChainId;
+    return appConfig.getEVMChainNameFromInternal(Number(chainId));
+  }, [note, appConfig]);
 
   return (
     <WithdrawInfoWrapper>
@@ -174,8 +179,7 @@ const WithdrawingModal: React.FC<WithdrawingModalProps> = ({ canCancel, cancel, 
               <InfoItem>
                 <Typography variant={'caption'}>
                   <b>
-                    Receiving {note.amount + ' ' + note.tokenSymbol} on{' '}
-                    {getEVMChainNameFromInternal(Number(note.targetChainId))}
+                    Receiving {note.amount + ' ' + note.tokenSymbol} on {chainName}
                   </b>
                 </Typography>
               </InfoItem>

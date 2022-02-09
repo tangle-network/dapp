@@ -1,11 +1,11 @@
-import { getEVMChainName } from '@webb-dapp/apps/configs/';
+import { AppConfigApi } from '@webb-dapp/react-environment';
 import { Storage } from '@webb-dapp/utils';
 
 export type MixerStorage = Record<string, { lastQueriedBlock: number; leaves: string[] }>;
 
-export const evmChainStorageFactory = (chainId: number) => {
+export const evmChainStorageFactory = (chainId: number, configApi: AppConfigApi) => {
   // localStorage will have key: <name of chain>, value: { Record<contractAddress: string, info: DynamicMixerInfoStore> }
-  return Storage.newFromCache<MixerStorage>(getEVMChainName(chainId), {
+  return Storage.newFromCache<MixerStorage>(configApi.getEVMChainName(chainId), {
     async commit(key: string, data: MixerStorage): Promise<void> {
       localStorage.setItem(key, JSON.stringify(data));
     },

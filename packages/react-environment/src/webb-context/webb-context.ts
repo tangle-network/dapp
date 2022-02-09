@@ -1,4 +1,4 @@
-import { AppConfig, Chain, Wallet } from '@webb-dapp/react-environment/webb-context/common';
+import { AppConfigApi, Chain, Wallet } from '@webb-dapp/react-environment/webb-context/common';
 import { WebbApiProvider } from '@webb-dapp/react-environment/webb-context/webb-provider.interface';
 import { InteractiveFeedback } from '@webb-dapp/utils/webb-error';
 import { Account } from '@webb-dapp/wallet/account/Accounts.adapter';
@@ -19,7 +19,7 @@ export interface WebbContextState<T = unknown> {
   activeApi?: WebbApiProvider<T>;
   activeWallet?: Wallet;
   activeChain?: Chain;
-  appConfig: AppConfig;
+  appConfig: AppConfigApi;
   accounts: Account[];
   activeAccount: Account | null;
   isConnecting: boolean;
@@ -42,14 +42,14 @@ export const WebbContext = React.createContext<WebbContextState>({
 
   activeAccount: null,
   isConnecting: false,
-  appConfig: {
+  appConfig: new AppConfigApi({
     anchors: {},
     bridgeByAsset: {},
     chains: {},
     currencies: {},
     mixers: {},
     wallet: {},
-  },
+  }),
   setActiveAccount<T extends Account>(account: T): Promise<void> {
     return Promise.resolve();
   },

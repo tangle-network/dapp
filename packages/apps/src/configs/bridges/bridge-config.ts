@@ -13,20 +13,3 @@ export const bridgeConfigByAsset: AppConfig['bridgeByAsset'] = {
     anchors: anchorsConfig[WebbCurrencyId.webbWETH],
   },
 };
-
-export const getAnchorAddressForBridge = (
-  assetId: WebbCurrencyId,
-  chainId: number,
-  amount: number
-): string | undefined => {
-  const linkedAnchorConfig = bridgeConfigByAsset[assetId]?.anchors.find(
-    (anchor) => anchor.amount === amount.toString()
-  );
-  if (!linkedAnchorConfig) {
-    throw new Error('Unsupported configuration for bridge');
-  }
-
-  const anchorAddress = linkedAnchorConfig.anchorAddresses[chainId as ChainId];
-  logger.log('got anchor address: ', anchorAddress);
-  return anchorAddress;
-};

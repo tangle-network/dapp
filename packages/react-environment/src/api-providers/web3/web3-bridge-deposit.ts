@@ -1,11 +1,4 @@
-import {
-  ChainId,
-  chainIdIntoEVMId,
-  chainsConfig,
-  currenciesConfig,
-  evmIdIntoChainId,
-  getEVMChainNameFromInternal,
-} from '@webb-dapp/apps/configs';
+import { ChainId, chainIdIntoEVMId, chainsConfig, currenciesConfig, evmIdIntoChainId } from '@webb-dapp/apps/configs';
 import { WebbGovernedToken } from '@webb-dapp/contracts/contracts';
 import { ERC20__factory } from '@webb-dapp/contracts/types';
 import { createAnchor2Deposit, Deposit } from '@webb-dapp/contracts/utils/make-deposit';
@@ -22,6 +15,7 @@ import React from 'react';
 import { u8aToHex } from '@polkadot/util';
 
 import { BridgeDeposit } from '../../webb-context/bridge/bridge-deposit';
+
 const logger = LoggerService.get('web3-bridge-deposit');
 
 type DepositPayload = IDepositPayload<Note, [Deposit, number | string, string?]>;
@@ -38,10 +32,11 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
       const note = depositPayload.note.note;
       const sourceEvmId = await this.inner.getChainId();
       const sourceChainId = evmIdIntoChainId(sourceEvmId);
+      const chainName = this.inner.appConfig.getEVMChainNameFromInternal(Number(note.sourceChainId));
       transactionNotificationConfig.loading?.({
         address: '',
         data: React.createElement(DepositNotification, {
-          chain: getEVMChainNameFromInternal(Number(note.sourceChainId)),
+          chain: chainName,
           amount: Number(note.amount),
           currency: bridge.currency.view.name,
         }),
