@@ -7,10 +7,17 @@ import { LoggerService } from '@webb-tools/app-util';
 import { Note, NoteGenInput } from '@webb-tools/sdk-core';
 import { PalletMixerMixerMetadata } from '@webb-tools/types/interfaces/pallets';
 
+import { StorageKey } from '@polkadot/types';
 import { u8aToHex } from '@polkadot/util';
 
 import { WebbPolkadot } from './webb-polkadot-provider';
-
+export type Size = {
+  id: string;
+  treeId: string;
+  value: number;
+  title: string;
+  symbol: string;
+};
 type DepositPayload = IDepositPayload<Note, [number, string]>;
 const logger = LoggerService.get('tornado-deposit');
 
@@ -22,7 +29,7 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
     this.tokens = new ORMLCurrency(t);
   }
 
-  static async getSizes(webbPolkadot: WebbPolkadot) {
+  static async getSizes(webbPolkadot: WebbPolkadot): Promise<Size[]> {
     const api = webbPolkadot.api;
     const ormlCurrency = new ORMLCurrency(webbPolkadot);
     const ormlAssets = await ormlCurrency.list();
@@ -30,7 +37,7 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
     // @ts-ignore
     const tokenProperty: Array<NativeTokenProperties> = await api.rpc.system.properties();
     const groupItem = data
-      .map(([storageKey, info]) => {
+      .map(([storageKey, info]: [StorageKey, PalletMixerMixerMetadata]) => {
         const mixerInfo = (info as PalletMixerMixerMetadata).toHuman();
         console.log(mixerInfo);
         const cId: number = Number(mixerInfo.asset);
@@ -54,20 +61,13 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
           : Currency.fromCurrencyId(cId, api, amountNumber);
         return {
           id,
-          amount: amountNumber,
-          currency: currency,
           treeId,
-          token: currency.token,
+          value: amountNumber,
+          title: amount + ` ${currency.symbol}`,
+          symbol: currency.symbol,
         };
       })
-      .map(({ amount, currency, id, token, treeId }) => ({
-        id,
-        treeId,
-        value: amount,
-        title: amount + ` ${currency.symbol}`,
-        symbol: currency.symbol,
-      }))
-      .sort((a, b) => (a.value > b.value ? 1 : a.value < b.value ? -1 : 0));
+      .sort((a: { value: number }, b: { value: number }) => (a.value > b.value ? 1 : a.value < b.value ? -1 : 0));
     return groupItem;
   }
 

@@ -1,6 +1,8 @@
 import { WebbPolkadot } from '@webb-dapp/react-environment/api-providers';
 import { LoggerService } from '@webb-tools/app-util';
+import { Balance, PalletAssetRegistryAssetDetails } from '@webb-tools/types/interfaces';
 
+import { StorageKey } from '@polkadot/types';
 export type ORMLAsset = {
   existentialDeposit: string;
   locked: false;
@@ -14,7 +16,7 @@ export class ORMLCurrency {
 
   async list() {
     const assets = await this.api.api.query.assetRegistry.assets.entries();
-    return assets.map(([storageKey, i]) => ({
+    return assets.map(([storageKey, i]: [StorageKey, PalletAssetRegistryAssetDetails]) => ({
       // @ts-ignore
       ...i.toHuman(),
       // @ts-ignore
@@ -29,7 +31,7 @@ export class ORMLCurrency {
     if (activeAccount) {
       const ormlBalances = await this.api.api.query.tokens.accounts.entries(activeAccount.address);
       logger.info(`ORML Balances ${ormlBalances.length}`, ormlBalances);
-      return ormlBalances.map(([storageKey, balance]) => {
+      return ormlBalances.map(([storageKey, balance]: [StorageKey, Balance]) => {
         const currencyId = storageKey[0];
         return {
           id: currencyId,
