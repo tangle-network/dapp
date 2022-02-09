@@ -1,13 +1,13 @@
+import { ChainId, currenciesConfig, WebbCurrencyId } from '@webb-dapp/apps/configs';
 import { AnchorConfigEntry } from '@webb-dapp/react-environment/types/anchor-config.interface';
 import { BridgeConfig } from '@webb-dapp/react-environment/types/bridge-config.interface';
 import { ChainConfig } from '@webb-dapp/react-environment/types/chain-config.interface';
 import { CurrencyConfig } from '@webb-dapp/react-environment/types/currency-config.interface';
 import { MixerConfig } from '@webb-dapp/react-environment/types/mixer-config.interface';
 import { WalletConfig } from '@webb-dapp/react-environment/types/wallet-config.interface';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { ChainId, chainsConfig, currenciesConfig, WebbCurrencyId } from '@webb-dapp/apps/configs';
-import { LoggerService } from '@webb-tools/app-util';
 import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
+import { LoggerService } from '@webb-tools/app-util';
+import { BehaviorSubject, map, Observable } from 'rxjs';
 
 const logger = LoggerService.get('config api');
 
@@ -24,31 +24,12 @@ export type AppConfig = {
   anchors: Record<number, AnchorConfigEntry[]>;
   mixers: Record<number, MixerConfig>;
 };
-
-export class AppConfigApi {
-  private readonly _appConfig: BehaviorSubject<AppConfig>;
-
-  constructor(staticConfig: AppConfig) {
-    this._appConfig = new BehaviorSubject({ ...staticConfig });
-  }
-
-  get $config(): Observable<AppConfig> {
-    return this._appConfig.asObservable();
-  }
-
-  get config(): AppConfig {
-    return {
-      ...this._appConfig.value,
-    };
-  }
-
-  set config(partialConfig: Partial<AppConfig>) {
-    const nextConfig = {
-      ...this.config,
-      ...partialConfig,
-    };
-    this._appConfig.next(nextConfig);
-  }
+/*
+ * Base configuration class with the utils
+ *
+ * */
+abstract class AppConfigBase {
+  abstract get config(): AppConfig;
 
   public getAnchorAddressForBridge(assetId: WebbCurrencyId, chainId: number, amount: number): string | undefined {
     const linkedAnchorConfig = this.config.bridgeByAsset[assetId]?.anchors.find(
@@ -88,5 +69,46 @@ export class AppConfigApi {
     } else {
       throw WebbError.from(WebbErrorCodes.UnsupportedChain);
     }
+  }
+}
+
+/*
+ * Enhanced version of `AppConfig`
+ * this will be for reading/ maping purposes
+
+ * */
+export class EnhancedAppConfig extends AppConfigBase {
+  constructor(public config: AppConfig) {
+    super();
+  }
+}
+
+/**
+ *
+ * */
+export class AppConfigApi extends AppConfigBase {
+  private readonly _appConfig: BehaviorSubject<AppConfig>;
+
+  constructor(staticConfig: AppConfig) {
+    super();
+    this._appConfig = new BehaviorSubject({ ...staticConfig });
+  }
+
+  get $config(): Observable<EnhancedAppConfig> {
+    return this._appConfig.asObservable().pipe(map((config) => new EnhancedAppConfig(config)));
+  }
+
+  get config(): AppConfig {
+    return {
+      ...this._appConfig.value,
+    };
+  }
+
+  set config(partialConfig: Partial<AppConfig>) {
+    const nextConfig = {
+      ...this.config,
+      ...partialConfig,
+    };
+    this._appConfig.next(nextConfig);
   }
 }

@@ -25,6 +25,7 @@ import { SettingProvider } from './SettingProvider';
 import {
   AppConfigApi,
   Chain,
+  EnhancedAppConfig,
   netStorageFactory,
   NetworkStorage,
   Wallet,
@@ -57,8 +58,12 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
   const [activeWallet, setActiveWallet] = useState<Wallet | undefined>(undefined);
   const [activeChain, setActiveChain] = useState<Chain | undefined>(undefined);
 
-  const appConfig = useMemo(() => appConfigApi, []);
+  const [appConfig, setAppConfig] = useState(new EnhancedAppConfig(appConfigApi.config));
 
+  useEffect(() => {
+    let subscription = appConfigApi.$config.subscribe((nextConfig) => setAppConfig(nextConfig));
+    return () => subscription.unsubscribe();
+  }, []);
   const [activeApi, setActiveApi] = useState<WebbApiProvider<any> | undefined>(undefined);
   const [loading, setLoading] = useState(true);
   const [networkStorage, setNetworkStorage] = useState<NetworkStorage | null>(null);
@@ -181,7 +186,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
       case WebbErrorCodes.UnsupportedChain:
         {
           setActiveChain(undefined);
-          const interactiveFeedback = unsupportedChain(appConfig);
+          const interactiveFeedback = unsupportedChain(appConfigApi);
           if (interactiveFeedback) {
             registerInteractiveFeedback(setInteractiveFeedbacks, interactiveFeedback);
           }
@@ -216,7 +221,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
   };
   /// Network switcher
   const switchChain = async (chain: Chain, _wallet: Wallet) => {
-    const relayer = await getWebbRelayer(appConfig);
+    const relayer = await getWebbRelayer(appConfigApi);
 
     const wallet = _wallet || activeWallet;
     // wallet cleanup
