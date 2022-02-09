@@ -250,7 +250,7 @@ const PageWrapUnwrap: FC = () => {
             }}
           >
             <Flex flex={2}>
-              <TokenInput wrapperStyles={{ top: -25 }} {...leftInputProps} />
+              <TokenInput {...leftInputProps} />
             </Flex>
             <Flex flex={1} row ai={'center'} jc={'center'}>
               <span>
