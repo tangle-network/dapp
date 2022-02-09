@@ -1,4 +1,4 @@
-import { ChainId, chainIdIntoEVMId, evmIdIntoChainId, getEVMChainName } from '@webb-dapp/apps/configs';
+import { ChainId, chainIdIntoEVMId, evmIdIntoChainId } from '@webb-dapp/apps/configs';
 import { createTornDeposit, Deposit } from '@webb-dapp/contracts/utils/make-deposit';
 import { DepositPayload as IDepositPayload, MixerDeposit, MixerSize } from '@webb-dapp/react-environment/webb-context';
 import { DepositNotification } from '@webb-dapp/ui-components/notification/DepositNotification';
@@ -20,7 +20,7 @@ export class Web3MixerDeposit extends MixerDeposit<WebbWeb3Provider, DepositPayl
     transactionNotificationConfig.loading?.({
       address: '',
       data: React.createElement(DepositNotification, {
-        chain: getEVMChainName(evmChainId),
+        chain: this.inner.appConfig.getEVMChainName(evmChainId),
         amount: Number(depositPayload.note.amount),
         currency: depositPayload.note.tokenSymbol,
       }),

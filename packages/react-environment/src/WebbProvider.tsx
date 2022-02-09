@@ -1,13 +1,6 @@
 import Icon from '@material-ui/core/Icon';
 import WalletConnectProvider from '@walletconnect/web3-provider';
-import {
-  ChainId,
-  chainsPopulated,
-  currenciesConfig,
-  getEVMChainName,
-  staticAppConfig,
-  WebbEVMChain,
-} from '@webb-dapp/apps/configs';
+import { ChainId, chainsPopulated, currenciesConfig, staticAppConfig, WebbEVMChain } from '@webb-dapp/apps/configs';
 import { getWebbRelayer } from '@webb-dapp/apps/configs/relayer-config';
 import { WalletId } from '@webb-dapp/apps/configs/wallets/wallet-id.enum';
 import { walletsConfig } from '@webb-dapp/apps/configs/wallets/wallets-config';
@@ -188,7 +181,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
       case WebbErrorCodes.UnsupportedChain:
         {
           setActiveChain(undefined);
-          const interactiveFeedback = unsupportedChain();
+          const interactiveFeedback = unsupportedChain(appConfig);
           if (interactiveFeedback) {
             registerInteractiveFeedback(setInteractiveFeedbacks, interactiveFeedback);
           }
@@ -322,7 +315,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
               const nextChain = Object.values(chains).find((chain) => chain.evmId === chainId);
               try {
                 /// this will throw if the user switched to unsupported chain
-                const name = getEVMChainName(chainId);
+                const name = appConfig.getEVMChainName(chainId);
                 /// Alerting that the provider has changed via the extension
                 notificationApi({
                   message: 'Web3: changed the connected network',

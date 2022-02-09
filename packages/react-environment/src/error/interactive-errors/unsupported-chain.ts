@@ -1,7 +1,8 @@
-import { getEVMChainName, WebbEVMChain } from '@webb-dapp/apps/configs';
+import { WebbEVMChain } from '@webb-dapp/apps/configs';
+import { AppConfigApi } from '@webb-dapp/react-environment';
 import { InteractiveFeedback, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 
-export function unsupportedChain(): InteractiveFeedback {
+export function unsupportedChain(appConfigApi: AppConfigApi): InteractiveFeedback {
   let interactiveFeedback: InteractiveFeedback;
   const feedbackBody = InteractiveFeedback.feedbackEntries([
     {
@@ -12,9 +13,9 @@ export function unsupportedChain(): InteractiveFeedback {
     },
     {
       list: [
-        getEVMChainName(WebbEVMChain.Rinkeby),
-        getEVMChainName(WebbEVMChain.Beresheet),
-        getEVMChainName(WebbEVMChain.HarmonyTestnet1),
+        appConfigApi.getEVMChainName(WebbEVMChain.Rinkeby),
+        appConfigApi.getEVMChainName(WebbEVMChain.Beresheet),
+        appConfigApi.getEVMChainName(WebbEVMChain.HarmonyTestnet1),
       ],
     },
     {
