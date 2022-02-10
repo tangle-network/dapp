@@ -25,7 +25,8 @@ const AppBarWrapper = styled.nav`
 
   background: ${({ theme }) => theme.mainBackground};
   .webb-logo {
-    max-width: 100px;
+    min-width: 75px;
+    max-width: 75px;
     z-index: 101;
   }
   .div {
@@ -98,6 +99,7 @@ const RightNavigation = styled.div`
   ${below.sm`
 	  margin-left: auto;
 	`}
+  margin-right: 30px;
 `;
 const NavigationWrapper = styled.ul`
   flex: 1;

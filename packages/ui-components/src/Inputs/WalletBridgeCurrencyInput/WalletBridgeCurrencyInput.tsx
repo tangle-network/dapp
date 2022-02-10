@@ -48,8 +48,6 @@ export const WalletBridgeCurrencyInput: React.FC<WalletTokenInputProps> = ({ sel
 
         {activeWallet && (
           <InputLabel label={'Select Token'}>
-            {/* used for positioning the token input label */}
-            <div style={{ height: '52px' }}></div>
             <TokenInput
               currencies={allCurrencies}
               value={selectedToken}

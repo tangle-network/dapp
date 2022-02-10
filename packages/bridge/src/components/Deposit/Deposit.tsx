@@ -114,7 +114,7 @@ export const Deposit: React.FC<DepositProps> = () => {
         chains={tokenChains}
         label={'Select Source Chain'}
         // TODO: Figure out how to embed the chain type for the active chain
-        selectedChain={[srcChain?.chainType || 0, srcChain?.id || 0]}
+        selectedChain={[srcChain?.chainType || -1, srcChain?.id || -1]}
         // TODO: Hook this up to network switcher
         setSelectedChain={async (chainId) => {
           if (typeof chainId !== 'undefined' && activeWallet) {
@@ -165,10 +165,6 @@ export const Deposit: React.FC<DepositProps> = () => {
       )}
       {showWrappableAssets && wrappableTokens.length && (
         <TokenInput
-          wrapperStyles={{
-            height: 52,
-            background: 'transparent',
-          }}
           currencies={wrappableTokens}
           value={wrappableCurrency}
           onChange={(currencyContent) => {
