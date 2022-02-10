@@ -7,6 +7,8 @@ import {
   typeAndIdFromChainIdType,
   ChainTypeId,
 } from './chain-utils';
+
+// TODO: Move utils and tests to webb.js
 describe('test various conversion functions', () => {
   test('byte array to num converts correctly', () => {
     const arr = [2, 0, 0, 0, 122, 105];

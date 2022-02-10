@@ -140,7 +140,7 @@ const DropdownInput: React.FC<DropdownInputProps> = ({ chains, onChange, value }
     if (Number(value[0]) === -1 || Number(value[1]) === -1) {
       return undefined;
     }
-    
+
     return {
       id: value,
       chain: chainsPopulated[value[1]],
