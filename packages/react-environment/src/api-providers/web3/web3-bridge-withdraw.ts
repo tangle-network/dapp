@@ -1,10 +1,10 @@
 import { parseUnits } from '@ethersproject/units';
 import {
-  ChainId,
   chainsConfig,
   evmIdIntoInternalChainId,
   getAnchorAddressForBridge,
   getEVMChainNameFromInternal,
+  InternalChainId,
   internalChainIdIntoEVMId,
   webbCurrencyIdFromString,
 } from '@webb-dapp/apps/configs';
@@ -94,7 +94,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
     );
   }
 
-  async getRelayersByChainAndAddress(chainId: ChainId, address: string) {
+  async getRelayersByChainAndAddress(chainId: InternalChainId, address: string) {
     return this.inner.relayingManager.getRelayer({
       baseOn: 'evm',
       chainId: chainId,
@@ -241,7 +241,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
     const bridgeStorageStorage = await bridgeCurrencyBridgeStorageFactory();
 
     // Setup a provider for the source chain
-    const sourceChainId = Number(note.sourceChainId) as ChainId;
+    const sourceChainId = Number(note.sourceChainId) as InternalChainId;
     const sourceEvmId = internalChainIdIntoEVMId(sourceChainId);
     const sourceChainConfig = chainsConfig[sourceChainId];
     const rpc = sourceChainConfig.url;
@@ -249,7 +249,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
     const sourceEthers = sourceHttpProvider.intoEthersProvider();
 
     // get info from the destination chain (should be selected)
-    const destChainId = Number(note.targetChainId) as ChainId;
+    const destChainId = Number(note.targetChainId) as InternalChainId;
     const destChainEvmId = internalChainIdIntoEVMId(destChainId);
 
     // get the deposit info
@@ -559,8 +559,8 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
 
     const parseNote = await Note.deserialize(note);
     const depositNote = parseNote.note;
-    const sourceChainName = getEVMChainNameFromInternal(Number(depositNote.sourceChainId) as ChainId);
-    const targetChainName = getEVMChainNameFromInternal(Number(depositNote.targetChainId) as ChainId);
+    const sourceChainName = getEVMChainNameFromInternal(Number(depositNote.sourceChainId) as InternalChainId);
+    const targetChainName = getEVMChainNameFromInternal(Number(depositNote.targetChainId) as InternalChainId);
     logger.trace(`Bridge withdraw from ${sourceChainName} to ${targetChainName}`);
 
     if (depositNote.sourceChainId === depositNote.targetChainId) {

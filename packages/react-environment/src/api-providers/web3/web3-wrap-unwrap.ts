@@ -1,8 +1,8 @@
 import {
-  ChainId,
   chainsConfig,
   currenciesConfig,
   evmIdIntoInternalChainId,
+  InternalChainId,
   WebbCurrencyId,
   webbCurrencyIdToString,
 } from '@webb-dapp/apps/configs';
@@ -35,7 +35,7 @@ const defaultBalance: WrappingBalance = {
 export class Web3WrapUnwrap extends WrapUnWrap<WebbWeb3Provider> {
   private _balances = new BehaviorSubject<[WrappingBalance, WrappingBalance]>([defaultBalance, defaultBalance]);
   private _liquidity = new BehaviorSubject<[WrappingBalance, WrappingBalance]>([defaultBalance, defaultBalance]);
-  private _currentChainId = new BehaviorSubject<ChainId | null>(null);
+  private _currentChainId = new BehaviorSubject<InternalChainId | null>(null);
   private _event = new Subject<Partial<WrappingEvent>>();
 
   get balances(): Observable<[WrappingBalance, WrappingBalance]> {

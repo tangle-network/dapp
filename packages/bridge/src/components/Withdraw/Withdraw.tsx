@@ -1,5 +1,5 @@
 import { FormHelperText, InputBase } from '@material-ui/core';
-import { chainsPopulated, currenciesConfig, internalChainIdIntoEVMId } from '@webb-dapp/apps/configs';
+import { chainsPopulated, ChainType, currenciesConfig, internalChainIdIntoEVMId } from '@webb-dapp/apps/configs';
 import WithdrawingModal from '@webb-dapp/bridge/components/Withdraw/WithdrawingModal';
 import { useWithdraw } from '@webb-dapp/bridge/hooks';
 import { useDepositNote } from '@webb-dapp/mixer';
@@ -76,7 +76,12 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
     return true;
   };
   const determineSwitchButton = () => {
-    if (depositNote && activeChain && activeChain.evmId != internalChainIdIntoEVMId(depositNote.note.targetChainId)) {
+    if (
+      depositNote &&
+      activeChain &&
+      activeChain.chainType == ChainType.EVM &&
+      activeChain.evmId != internalChainIdIntoEVMId(depositNote.note.targetChainId)
+    ) {
       return true;
     }
     return false;

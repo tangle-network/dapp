@@ -1,4 +1,4 @@
-import { EVMChain, evmIdIntoInternalChainId } from '@webb-dapp/apps/configs';
+import { EVMChainId, evmIdIntoInternalChainId } from '@webb-dapp/apps/configs';
 import { mixersConfig } from '@webb-dapp/apps/configs/mixers';
 import { evmChainStorageFactory, MixerStorage } from '@webb-dapp/apps/configs/storages/EvmChainStorage';
 import { MixerSize } from '@webb-dapp/react-environment';
@@ -15,7 +15,7 @@ export class EvmChainMixersInfo {
   private mixerStorage: Storage<MixerStorage> | null = null;
   private mixerConfig: MixerConfig;
 
-  constructor(public evmId: EVMChain) {
+  constructor(public evmId: EVMChainId) {
     const webbChainId = evmIdIntoInternalChainId(evmId);
     this.mixerConfig = mixersConfig[webbChainId] ?? { tornMixers: [] };
   }

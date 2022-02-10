@@ -1,4 +1,4 @@
-import { bridgeConfigByAsset, ChainId, currenciesConfig, WebbCurrencyId } from '@webb-dapp/apps/configs';
+import { bridgeConfigByAsset, currenciesConfig, InternalChainId, WebbCurrencyId } from '@webb-dapp/apps/configs';
 import { BridgeConfig } from '@webb-dapp/react-environment/types/bridge-config.interface';
 import { CurrencyRole, CurrencyType } from '@webb-dapp/react-environment/types/currency-config.interface';
 
@@ -27,7 +27,7 @@ export class Bridge {
     return Currency.fromCurrencyId(this.bridgeConfig.asset);
   }
 
-  getTokenAddress(chainId: ChainId) {
+  getTokenAddress(chainId: InternalChainId) {
     return currenciesConfig[this.bridgeConfig.asset].addresses.get(chainId);
   }
 
@@ -44,7 +44,7 @@ export class Bridge {
   /*
    *  Get all Bridge tokens for a given chain
    * */
-  static getTokensOfChain(chainId: ChainId): Currency[] {
+  static getTokensOfChain(chainId: InternalChainId): Currency[] {
     const tokens = Bridge.getTokens();
     return tokens.filter((token) => token.hasChain(chainId));
   }

@@ -10,7 +10,7 @@ import {
 } from '@material-ui/core';
 import Icon from '@material-ui/core/Icon';
 import Typography from '@material-ui/core/Typography';
-import { ChainId, chainsPopulated, ChainType } from '@webb-dapp/apps/configs';
+import { chainsPopulated, ChainType, InternalChainId } from '@webb-dapp/apps/configs';
 import { CurrencyContent } from '@webb-dapp/react-environment/webb-context/currency/currency';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
@@ -101,11 +101,10 @@ const AccountManagerWrapper = styled.div<any>`
   position: relative;
 `;
 
-// TODO: Use organised chain id type
 type TokenInputProps = {
-  chains: [ChainType, ChainId][];
-  value?: [ChainType, ChainId];
-  onChange(next: [ChainType, ChainId] | undefined): void;
+  chains: [ChainType, InternalChainId][];
+  value?: [ChainType, InternalChainId];
+  onChange(next: [ChainType, InternalChainId] | undefined): void;
 };
 const ChainName = styled.span`
   display: inline-block;
@@ -275,10 +274,10 @@ export const TokenInput: React.FC<TokenInputProps> = ({ chains, onChange, value 
 
 const ChainInputWrapper = styled.div``;
 type ChainInputProps = {
-  chains: [ChainType, ChainId][];
+  chains: [ChainType, InternalChainId][];
   label: string;
-  selectedChain: [ChainType, ChainId] | undefined;
-  setSelectedChain?(chain: [ChainType, ChainId] | undefined): void;
+  selectedChain: [ChainType, InternalChainId] | undefined;
+  setSelectedChain?(chain: [ChainType, InternalChainId] | undefined): void;
 };
 
 export const ChainInput: React.FC<ChainInputProps> = ({ chains, label, selectedChain, setSelectedChain }) => {

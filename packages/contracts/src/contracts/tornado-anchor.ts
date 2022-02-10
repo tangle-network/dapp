@@ -1,5 +1,5 @@
 import { Log } from '@ethersproject/abstract-provider';
-import { EVMChain } from '@webb-dapp/apps/configs';
+import { EVMChainId } from '@webb-dapp/apps/configs';
 import { fetchTornadoCircuitData, fetchTornadoProvingKey } from '@webb-dapp/apps/configs/ipfs/evm/tornados';
 import { ZKPTornInputWithMerkle, ZKPTornPublicInputs } from '@webb-dapp/contracts/contracts/types';
 import { Tornado } from '@webb-dapp/contracts/types/Tornado';
@@ -77,19 +77,19 @@ export class TornadoContract {
     const chainId = await this.signer.getChainId();
 
     switch (chainId) {
-      case EVMChain.Beresheet:
+      case EVMChainId.Beresheet:
         step = 20;
         break;
-      case EVMChain.HarmonyTestnet1:
+      case EVMChainId.HarmonyTestnet1:
         step = 1000;
         break;
-      case EVMChain.HarmonyMainnet0:
+      case EVMChainId.HarmonyMainnet0:
         step = 1000;
         break;
-      case EVMChain.Rinkeby:
+      case EVMChainId.Rinkeby:
         step = 5000;
         break;
-      case EVMChain.Shiden:
+      case EVMChainId.Shiden:
         step = 1000;
         break;
     }

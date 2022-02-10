@@ -1,5 +1,5 @@
 import { Button, InputBase } from '@material-ui/core';
-import { ChainId, currenciesConfig, WebbCurrencyId } from '@webb-dapp/apps/configs';
+import { currenciesConfig, InternalChainId, WebbCurrencyId } from '@webb-dapp/apps/configs';
 import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
 import IPDisplay from '@webb-dapp/react-components/IPDisplay/IPDisplay';
 import { useWebContext } from '@webb-dapp/react-environment';
@@ -36,7 +36,7 @@ const PageTransfers: FC = () => {
   const [isSwap, setIsSwap] = useState(false);
   const { activeApi, activeChain, activeWallet, chains: chainsStore, switchChain } = useWebContext();
 
-  const chains: ChainId[] = useMemo(() => {
+  const chains: InternalChainId[] = useMemo(() => {
     return Object.keys(chainsStore).map((i) => Number(i));
   }, [chainsStore]);
 
@@ -47,7 +47,7 @@ const PageTransfers: FC = () => {
 
     return activeChain.id;
   }, [activeChain]);
-  const [destChain, setDestChain] = useState<ChainId | undefined>(undefined);
+  const [destChain, setDestChain] = useState<InternalChainId | undefined>(undefined);
   const [recipient, setRecipient] = useState('');
   const bridge = useBridge();
 

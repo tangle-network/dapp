@@ -1,9 +1,9 @@
 import {
-  ChainId,
   chainsConfig,
   currenciesConfig,
   evmIdIntoInternalChainId,
   getEVMChainNameFromInternal,
+  InternalChainId,
   internalChainIdIntoEVMId,
 } from '@webb-dapp/apps/configs';
 import { WebbGovernedToken } from '@webb-dapp/contracts/contracts';
@@ -180,7 +180,7 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
     return [];
   }
 
-  async getWrappableAssets(chainId: ChainId): Promise<Currency[]> {
+  async getWrappableAssets(chainId: InternalChainId): Promise<Currency[]> {
     const bridge = this.activeBridge;
     logger.log('getWrappableAssets of chain: ', chainId);
     if (bridge) {

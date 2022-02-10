@@ -1,4 +1,4 @@
-import { ChainId } from '@webb-dapp/apps/configs';
+import { InternalChainId } from '@webb-dapp/apps/configs';
 import { Bridge } from '@webb-dapp/react-environment/webb-context/bridge/bridge';
 import { Currency } from '@webb-dapp/react-environment/webb-context/currency/currency';
 import { BehaviorSubject, Observable } from 'rxjs';
@@ -28,11 +28,11 @@ export abstract class BridgeDeposit<T, K extends DepositPayload = DepositPayload
     return this._activeBridge;
   }
 
-  getTokensOfChain(chainId: ChainId) {
+  getTokensOfChain(chainId: InternalChainId) {
     return Bridge.getTokensOfChain(chainId);
   }
 
-  getWrappableAssets(chain: ChainId): Promise<Currency[]> {
+  getWrappableAssets(chain: InternalChainId): Promise<Currency[]> {
     return Promise.resolve([]);
   }
 

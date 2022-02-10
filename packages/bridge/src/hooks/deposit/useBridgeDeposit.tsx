@@ -1,4 +1,4 @@
-import { ChainId, ChainType, computeChainIdType, internalChainIdToChainId } from '@webb-dapp/apps/configs';
+import { ChainType, computeChainIdType, InternalChainId, internalChainIdToChainId } from '@webb-dapp/apps/configs';
 import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
 import {
   Bridge,
@@ -21,7 +21,7 @@ export interface BridgeDepositApi {
   generateNote(
     mixerId: number,
     destChainType: ChainType,
-    destChain: ChainId,
+    destChain: InternalChainId,
     wrappableAsset: string | undefined
   ): Promise<DepositPayload>;
 
@@ -71,7 +71,12 @@ export const useBridgeDeposit = (): BridgeDepositApi => {
   }, [depositApi]);
   const [activeBridge, setActiveBridge] = useState<Bridge | null>(depositApi?.activeBridge ?? null);
   const generateNote = useCallback(
-    async (mixerId: number, destChainType: ChainType, destChain: ChainId, wrappableAsset: string | undefined) => {
+    async (
+      mixerId: number,
+      destChainType: ChainType,
+      destChain: InternalChainId,
+      wrappableAsset: string | undefined
+    ) => {
       if (!depositApi) {
         throw new Error('Not ready');
       }

@@ -1,8 +1,8 @@
 import {
-  ChainId,
   evmIdIntoInternalChainId,
   getEVMChainName,
   getNativeCurrencySymbol,
+  InternalChainId,
   internalChainIdIntoEVMId,
 } from '@webb-dapp/apps/configs';
 import { createTornDeposit, Deposit } from '@webb-dapp/contracts/utils/make-deposit';
@@ -21,7 +21,7 @@ type DepositPayload = IDepositPayload<Note, [Deposit, number]>;
 
 export class Web3MixerDeposit extends MixerDeposit<WebbWeb3Provider, DepositPayload> {
   async deposit({ note: depositPayload, params }: DepositPayload): Promise<void> {
-    const chainId = Number(depositPayload.note.targetChainId) as ChainId;
+    const chainId = Number(depositPayload.note.targetChainId) as InternalChainId;
     const evmChainId = internalChainIdIntoEVMId(chainId);
     transactionNotificationConfig.loading?.({
       address: '',

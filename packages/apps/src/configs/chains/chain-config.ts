@@ -9,18 +9,16 @@ import WEBBLogo from '@webb-dapp/apps/configs/logos/WebbLogo';
 import { AppConfig } from '@webb-dapp/react-environment/webb-context';
 
 import { WebbCurrencyId } from '../currencies/webb-currency-id.enum';
-import { ChainType } from '..';
-import { ChainId, EVMChain } from './chain-id.enum';
+import { ChainType, EVMChainId, InternalChainId } from './chain-id.enum';
 
-export const getSupportedCurrenciesOfChain = (chainId: ChainId): WebbCurrencyId[] => {
+export const getSupportedCurrenciesOfChain = (chainId: InternalChainId): WebbCurrencyId[] => {
   return chainsConfig[chainId].currencies;
 };
 
-// TODO: The chainType needs to be reviewed
 export const chainsConfig: AppConfig['chains'] = {
-  [ChainId.WebbDevelopment]: {
-    chainType: ChainType.EVM,
-    id: ChainId.WebbDevelopment,
+  [InternalChainId.WebbDevelopment]: {
+    chainType: ChainType.Substrate,
+    id: InternalChainId.WebbDevelopment,
     group: 'webb',
     tag: 'dev',
     evmId: undefined,
@@ -31,12 +29,12 @@ export const chainsConfig: AppConfig['chains'] = {
     nativeCurrencyId: WebbCurrencyId.WEBB,
   },
   // this is the EVM edgeware
-  [ChainId.EdgewareTestNet]: {
+  [InternalChainId.EdgewareTestNet]: {
     chainType: ChainType.EVM,
     group: 'edgeware',
     tag: 'test',
-    id: ChainId.EdgewareTestNet,
-    evmId: EVMChain.Beresheet,
+    id: InternalChainId.EdgewareTestNet,
+    evmId: EVMChainId.Beresheet,
     name: 'Beresheet (Edgeware Testnet)',
     url: 'wss://beresheet1.edgewa.re',
     evmRpcUrls: ['https://beresheet.edgewa.re/evm'],
@@ -63,11 +61,11 @@ export const chainsConfig: AppConfig['chains'] = {
   //   nativeCurrencyId: WebbCurrencyId.EDG,
   // },
 
-  [ChainId.Rinkeby]: {
+  [InternalChainId.Rinkeby]: {
     chainType: ChainType.EVM,
     group: 'eth',
-    id: ChainId.Rinkeby,
-    evmId: EVMChain.Rinkeby,
+    id: InternalChainId.Rinkeby,
+    evmId: EVMChainId.Rinkeby,
     name: 'Rinkeby',
     url: 'https://rinkeby.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4',
     evmRpcUrls: ['https://rinkeby.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4'],
@@ -77,11 +75,11 @@ export const chainsConfig: AppConfig['chains'] = {
     currencies: [WebbCurrencyId.ETH, WebbCurrencyId.WETH],
     nativeCurrencyId: WebbCurrencyId.ETH,
   },
-  [ChainId.Ropsten]: {
+  [InternalChainId.Ropsten]: {
     chainType: ChainType.EVM,
     group: 'eth',
-    id: ChainId.Ropsten,
-    evmId: EVMChain.Ropsten,
+    id: InternalChainId.Ropsten,
+    evmId: EVMChainId.Ropsten,
     name: 'Ropsten',
     url: 'https://ropsten.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4',
     evmRpcUrls: ['https://ropsten.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4'],
@@ -91,11 +89,11 @@ export const chainsConfig: AppConfig['chains'] = {
     currencies: [WebbCurrencyId.ETH, WebbCurrencyId.WETH],
     nativeCurrencyId: WebbCurrencyId.ETH,
   },
-  [ChainId.Goerli]: {
+  [InternalChainId.Goerli]: {
     chainType: ChainType.EVM,
     group: 'eth',
-    id: ChainId.Goerli,
-    evmId: EVMChain.Goerli,
+    id: InternalChainId.Goerli,
+    evmId: EVMChainId.Goerli,
     name: 'Goerli',
     url: 'https://goerli.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4',
     evmRpcUrls: ['https://goerli.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4'],
@@ -105,11 +103,11 @@ export const chainsConfig: AppConfig['chains'] = {
     currencies: [WebbCurrencyId.ETH, WebbCurrencyId.WETH],
     nativeCurrencyId: WebbCurrencyId.ETH,
   },
-  [ChainId.Kovan]: {
+  [InternalChainId.Kovan]: {
     chainType: ChainType.EVM,
     group: 'eth',
-    id: ChainId.Kovan,
-    evmId: EVMChain.Kovan,
+    id: InternalChainId.Kovan,
+    evmId: EVMChainId.Kovan,
     name: 'Kovan',
     url: 'https://kovan.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4',
     evmRpcUrls: ['https://goerli.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4'],
@@ -119,11 +117,11 @@ export const chainsConfig: AppConfig['chains'] = {
     currencies: [WebbCurrencyId.ETH, WebbCurrencyId.WETH],
     nativeCurrencyId: WebbCurrencyId.ETH,
   },
-  [ChainId.OptimismTestnet]: {
+  [InternalChainId.OptimismTestnet]: {
     chainType: ChainType.EVM,
     group: 'eth',
-    id: ChainId.OptimismTestnet,
-    evmId: EVMChain.OptimismTestnet,
+    id: InternalChainId.OptimismTestnet,
+    evmId: EVMChainId.OptimismTestnet,
     name: 'Optimism Testnet',
     url: 'https://kovan.optimism.io',
     evmRpcUrls: ['https://kovan.optimism.io'],
@@ -133,11 +131,11 @@ export const chainsConfig: AppConfig['chains'] = {
     currencies: [WebbCurrencyId.ETH, WebbCurrencyId.WETH],
     nativeCurrencyId: WebbCurrencyId.ETH,
   },
-  [ChainId.ArbitrumTestnet]: {
+  [InternalChainId.ArbitrumTestnet]: {
     chainType: ChainType.EVM,
     group: 'eth',
-    id: ChainId.ArbitrumTestnet,
-    evmId: EVMChain.ArbitrumTestnet,
+    id: InternalChainId.ArbitrumTestnet,
+    evmId: EVMChainId.ArbitrumTestnet,
     name: 'Arbitrum Testnet',
     url: 'https://rinkeby.arbitrum.io/rpc',
     evmRpcUrls: ['https://rinkeby.arbitrum.io/rpc'],
@@ -147,11 +145,11 @@ export const chainsConfig: AppConfig['chains'] = {
     currencies: [WebbCurrencyId.ETH, WebbCurrencyId.WETH],
     nativeCurrencyId: WebbCurrencyId.ETH,
   },
-  [ChainId.HarmonyTestnet1]: {
+  [InternalChainId.HarmonyTestnet1]: {
     chainType: ChainType.EVM,
     group: 'one',
-    id: ChainId.HarmonyTestnet1,
-    evmId: EVMChain.HarmonyTestnet1,
+    id: InternalChainId.HarmonyTestnet1,
+    evmId: EVMChainId.HarmonyTestnet1,
     name: 'Harmony Testnet Shard 1',
     tag: 'test',
     url: 'https://api.s1.b.hmny.io',
@@ -178,11 +176,11 @@ export const chainsConfig: AppConfig['chains'] = {
   //   ],
   //   nativeCurrencyId: WebbCurrencyId.ONE,
   // },
-  [ChainId.HarmonyMainnet0]: {
+  [InternalChainId.HarmonyMainnet0]: {
     chainType: ChainType.EVM,
     group: 'one',
-    id: ChainId.HarmonyMainnet0,
-    evmId: EVMChain.HarmonyMainnet0,
+    id: InternalChainId.HarmonyMainnet0,
+    evmId: EVMChainId.HarmonyMainnet0,
     name: 'Harmony Mainnet Shard 0',
     tag: 'live',
     url: 'https://api.harmony.one',
@@ -209,11 +207,11 @@ export const chainsConfig: AppConfig['chains'] = {
   //   ],
   //   nativeCurrencyId: WebbCurrencyId.ETH,
   // },
-  [ChainId.Shiden]: {
+  [InternalChainId.Shiden]: {
     chainType: ChainType.KusamaParachain,
     group: 'sdn',
-    id: ChainId.Shiden,
-    evmId: EVMChain.Shiden,
+    id: InternalChainId.Shiden,
+    evmId: EVMChainId.Shiden,
     name: 'Shiden',
     tag: 'live',
     url: 'https://shiden.api.onfinality.io/public',
@@ -223,11 +221,11 @@ export const chainsConfig: AppConfig['chains'] = {
     currencies: [WebbCurrencyId.SDN],
     nativeCurrencyId: WebbCurrencyId.SDN,
   },
-  [ChainId.PolygonTestnet]: {
+  [InternalChainId.PolygonTestnet]: {
     chainType: ChainType.EVM,
     group: 'matic',
-    id: ChainId.PolygonTestnet,
-    evmId: EVMChain.PolygonTestnet,
+    id: InternalChainId.PolygonTestnet,
+    evmId: EVMChainId.PolygonTestnet,
     name: 'Polygon Testnet',
     tag: 'test',
     url: 'https://rpc-mumbai.maticvigil.com/',
