@@ -1,5 +1,5 @@
 import AppBar from '@webb-dapp/react-components/AppBar/AppBar';
-import { BottomNavigation } from '@webb-dapp/react-components/BottomNavigation/BottomNavigation';
+import { BottomWalletSelection } from '@webb-dapp/react-components/BottomWalletSelection/BottomWalletSelection';
 import { useDimensions } from '@webb-dapp/react-environment/layout';
 import { Page, styled } from '@webb-dapp/ui-components';
 import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
@@ -60,7 +60,7 @@ const Main: FC<MainLayoutProps> = memo(({ children, sidebar }) => {
       <MainContainer>
         <AppBar toggleSidebarDisplay={() => setSidebarDisplay(!sidebarDisplay)}/>
         <ContentWrapper>{content}</ContentWrapper>
-        {/*<BottomNavigation />*/}
+        <BottomWalletSelection />
       </MainContainer>
     </div>
     :
@@ -69,7 +69,6 @@ const Main: FC<MainLayoutProps> = memo(({ children, sidebar }) => {
       <MainContainer>
         <AppBar toggleSidebarDisplay={() => setSidebarDisplay(!sidebarDisplay)}/>
         <ContentWrapper>{content}</ContentWrapper>
-        {/*<BottomNavigation />*/}
       </MainContainer>
     </div>
   );

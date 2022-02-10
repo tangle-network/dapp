@@ -111,9 +111,8 @@ const AppBar: React.FC<AppBarProps> = ({ toggleSidebarDisplay }) => {
   const isMobile = useMemo(() => {
     return width <= size.sm;
   }, [width, size]);
-  const { pageTitle, setTheme, theme } = useStore('ui');
+  const { pageTitle } = useStore('ui');
 
-  const isDarkTheme = theme === 'dark';
   return ( isMobile ? 
     <>
       <AppBarWrapper>
@@ -131,7 +130,7 @@ const AppBar: React.FC<AppBarProps> = ({ toggleSidebarDisplay }) => {
     </>
     :
     <AppBarWrapper>
-      <Typography variant='h3'><b>{pageTitle?.toString()}</b></Typography>
+      <Typography variant='h2'><b>{pageTitle?.toString()}</b></Typography>
       <RightNavigation>
         <NetworkManager />
         <AccountManager />

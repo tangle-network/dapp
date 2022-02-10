@@ -1,7 +1,6 @@
 import { Layout } from '@webb-dapp/react-components';
 import { RouterConfigData } from '@webb-dapp/react-environment';
 import { PageContentLoading } from '@webb-dapp/ui-components';
-import { isProduction } from '@webb-dapp/utils/misc';
 import React, { FC, lazy, Suspense } from 'react';
 
 import { sideBarConfig } from './sidebar-config';

@@ -70,7 +70,7 @@ export class Web3Account extends Account<Eth> {
   }
 
   get name(): string {
-    return `${this.address.slice(0, 4)}..${this.address.slice(-4)}`;
+    return '';
   }
 }
 
