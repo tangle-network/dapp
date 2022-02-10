@@ -1,4 +1,4 @@
-import { Icon, IconButton } from '@material-ui/core';
+import { Icon, IconButton, Typography } from '@material-ui/core';
 import { ReactComponent as WebbLogo } from '@webb-dapp/react-components/assets/webb-icon.svg';
 import { useStore } from '@webb-dapp/react-environment';
 import { useDimensions } from '@webb-dapp/react-environment/layout';
@@ -111,7 +111,7 @@ const AppBar: React.FC<AppBarProps> = ({ toggleSidebarDisplay }) => {
   const isMobile = useMemo(() => {
     return width <= size.sm;
   }, [width, size]);
-  const { setTheme, theme } = useStore('ui');
+  const { pageTitle, setTheme, theme } = useStore('ui');
 
   const isDarkTheme = theme === 'dark';
   return ( isMobile ? 
@@ -126,13 +126,12 @@ const AppBar: React.FC<AppBarProps> = ({ toggleSidebarDisplay }) => {
         </RightNavigation>
       </AppBarWrapper>
       <LowerSection>
-        <div>PageTitle</div>
+        <Typography variant='h2'><b>{pageTitle?.toString()}</b></Typography>
       </LowerSection>
     </>
     :
     <AppBarWrapper>
-      {/* <PageTitle /> */}
-      <div>PageTitle</div>
+      <Typography variant='h3'><b>{pageTitle?.toString()}</b></Typography>
       <RightNavigation>
         <NetworkManager />
         <AccountManager />
