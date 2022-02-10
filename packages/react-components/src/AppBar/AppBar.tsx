@@ -1,24 +1,21 @@
+import { Icon, IconButton } from '@material-ui/core';
 import { ReactComponent as WebbLogo } from '@webb-dapp/react-components/assets/webb-icon.svg';
 import { useStore } from '@webb-dapp/react-environment';
 import { useDimensions } from '@webb-dapp/react-environment/layout';
 import { NetworkManager } from '@webb-dapp/ui-components/NetworkManger/NetworkManager';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
-import { below } from '@webb-dapp/ui-components/utils/responsive-utils';
 import React, { useMemo } from 'react';
-import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { AccountManager } from '../AccountManager/AccountManager';
-import { ThemeSwitcher } from './ThemeSwitcher';
 
-const AppBarWrapper = styled.nav`
-  height: 65px;
+const AppBarWrapper = styled.div`
   max-height: 65px;
   width: 100%;
-  max-width: 1440px;
   margin: auto;
   display: flex;
   flex: 1;
+  justify-content: space-between;
   align-items: center;
   padding: 0 10px;
   z-index: 100;
@@ -89,25 +86,27 @@ const AppBarWrapper = styled.nav`
   }
 `;
 
-const SpacerDiv = styled.div`
-  //width: 244px;
+const UpperSection = styled.div`
+`;
+
+const LowerSection = styled.div`
+  display: flex;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
 `;
 
 const RightNavigation = styled.div`
   display: flex;
   align-items: center;
-  ${below.sm`
-	  margin-left: auto;
-	`}
-  margin-right: 30px;
+  margin-right: 20px;
 `;
-const NavigationWrapper = styled.ul`
-  flex: 1;
-  margin: 0 6rem !important;
-`;
-type AppBarProps = {};
 
-const AppBar: React.FC<AppBarProps> = () => {
+type AppBarProps = {
+  toggleSidebarDisplay: () => void;
+};
+
+const AppBar: React.FC<AppBarProps> = ({ toggleSidebarDisplay }) => {
   const { size, width } = useDimensions();
   const isMobile = useMemo(() => {
     return width <= size.sm;
@@ -115,31 +114,27 @@ const AppBar: React.FC<AppBarProps> = () => {
   const { setTheme, theme } = useStore('ui');
 
   const isDarkTheme = theme === 'dark';
-  return (
+  return ( isMobile ? 
+    <>
+      <AppBarWrapper>
+        <WebbLogo className={'webb-logo'} />
+        <RightNavigation>
+          <NetworkManager />
+          <IconButton onClick={toggleSidebarDisplay}>
+            <Icon>menu</Icon>
+          </IconButton>
+        </RightNavigation>
+      </AppBarWrapper>
+      <LowerSection>
+        <div>PageTitle</div>
+      </LowerSection>
+    </>
+    :
     <AppBarWrapper>
-      <WebbLogo className={'webb-logo'} />
-      <SpacerDiv />
-      {!isMobile && (
-        <NavigationWrapper>
-          <li className={'active'}>
-            <NavLink to={'/tornado'}>Tornados</NavLink>
-          </li>
-          <li className={'active'}>
-            <NavLink to={'/bridge'}>Bridge</NavLink>
-          </li>
-          <li className={'active'}>
-            <NavLink to={'/wrap-unwrap'}>Wrap/Unwrap</NavLink>
-          </li>
-        </NavigationWrapper>
-      )}
+      {/* <PageTitle /> */}
+      <div>PageTitle</div>
       <RightNavigation>
-        <ThemeSwitcher
-          active={isDarkTheme ? 'dark' : 'light'}
-          onChange={(next) => {
-            setTheme(next === 'light' ? 'default' : 'dark');
-          }}
-        />
-        {!isMobile && <NetworkManager />}
+        <NetworkManager />
         <AccountManager />
       </RightNavigation>
     </AppBarWrapper>
