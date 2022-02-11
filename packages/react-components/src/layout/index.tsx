@@ -3,7 +3,7 @@ import { BottomWalletSelection } from '@webb-dapp/react-components/BottomWalletS
 import { useDimensions } from '@webb-dapp/react-environment/layout';
 import { Page, styled } from '@webb-dapp/ui-components';
 import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
-import React, { FC, memo, useMemo, useState } from 'react';
+import React, { FC, memo, useEffect, useMemo, useState } from 'react';
 
 import { SidebarConfig } from '../Sidebar/types';
 import { Sidebar } from '..';
@@ -36,15 +36,8 @@ const Main: FC<MainLayoutProps> = memo(({ children, sidebar }) => {
 
   const { size, width } = useDimensions();
   const isMobile = useMemo(() => {
-    if (width <= size.md && sidebarDisplay) {
-      setSidebarDisplay(false);
-    }
-    if (width > size.md && !sidebarDisplay) {
-      setSidebarDisplay(true);
-    }
-
     return width <= size.sm;
-  }, [width, size.md, size.sm, sidebarDisplay]);
+  }, [width, size]);
 
   const content = useMemo(() => {
     return (
@@ -53,6 +46,14 @@ const Main: FC<MainLayoutProps> = memo(({ children, sidebar }) => {
       </Page>
     );
   }, [children]);
+
+  // Always set sidebar display to false when resized to larger screens
+  useEffect(() => {
+    if (!isMobile && sidebarDisplay) {
+      setSidebarDisplay(false);
+    }
+  }, [isMobile, sidebarDisplay]);
+
   return isMobile ? (
     <div>
       <Sidebar collapse={!sidebarDisplay} isMobile={true} config={sidebar} setSidebarDisplay={setSidebarDisplay} />
