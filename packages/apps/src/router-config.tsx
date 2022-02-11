@@ -50,5 +50,4 @@ export const config: RouterConfigData[] = [
     element: <Layout.Main sidebar={sideBarConfig} />,
     path: '*',
   },
-].filter((elt) => elt.path !== 'null')
-
+].filter((elt) => elt.path !== 'null');

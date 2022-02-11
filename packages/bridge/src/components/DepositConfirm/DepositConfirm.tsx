@@ -147,7 +147,7 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({
             Generating your deposit note...
           </Typography>
           <Tooltip title={'close'}>
-            <CloseButton onClick={onClose}/>
+            <CloseButton onClick={onClose} />
           </Tooltip>
         </Loading>
       )}
@@ -172,7 +172,7 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({
               </svg>
             </div>
             <Tooltip title={'close'}>
-              <CloseButton onClick={onClose}/>
+              <CloseButton onClick={onClose} />
             </Tooltip>
           </Flex>
 

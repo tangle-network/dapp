@@ -1,20 +1,18 @@
 import { ReactComponent as WebbLogo } from '@webb-dapp/react-components/assets/webb-icon.svg';
-import IPDisplay from '@webb-dapp/react-components/IPDisplay/IPDisplay'
+import IPDisplay from '@webb-dapp/react-components/IPDisplay/IPDisplay';
 import { useStore } from '@webb-dapp/react-environment';
 import { styled } from '@webb-dapp/ui-components';
 import { CloseButton } from '@webb-dapp/ui-components/Buttons/CloseButton';
 import React, { FC, useMemo, useState } from 'react';
-import { ThemeSwitcher } from '../AppBar/ThemeSwitcher';
 
+import { ThemeSwitcher } from '../AppBar/ThemeSwitcher';
 import { SidebarActiveContext } from './context';
 import { Products } from './Products';
 import { Slider } from './Slider';
 import { SocialPlatform } from './SocialPlatform';
 import { SidebarConfig } from './types';
 
-const SidebarMobileNav = styled.nav`
-
-`;
+const SidebarMobileNav = styled.nav``;
 interface SidebarProps {
   collapse: boolean;
   isMobile: boolean;
@@ -22,7 +20,7 @@ interface SidebarProps {
   setSidebarDisplay: (value: boolean) => void;
 }
 
-const SidebarRoot = styled.div<{ collapse: boolean, isMobile: boolean }>`
+const SidebarRoot = styled.div<{ collapse: boolean; isMobile: boolean }>`
   position: ${({ isMobile }) => (isMobile ? 'fixed' : 'relative')};
   display: ${({ collapse }): string => (collapse ? 'none' : 'flex')};
   flex-direction: column;
@@ -40,7 +38,7 @@ const LogoContainer = styled.div`
   margin: 20px;
 `;
 
-export const Sidebar: FC<SidebarProps> = ({ collapse, isMobile, setSidebarDisplay, config }) => {
+export const Sidebar: FC<SidebarProps> = ({ collapse, config, isMobile, setSidebarDisplay }) => {
   const [active, setActive] = useState<HTMLElement | null>(null);
   const data = useMemo(
     () => ({
@@ -51,18 +49,16 @@ export const Sidebar: FC<SidebarProps> = ({ collapse, isMobile, setSidebarDispla
   );
   const { setTheme, theme } = useStore('ui');
   const isDarkTheme = theme === 'dark';
-    
+
   return useMemo(
     () => (
       <SidebarActiveContext.Provider value={data}>
         <SidebarRoot collapse={collapse} isMobile={isMobile}>
           <LogoContainer>
             <WebbLogo />
-            {isMobile && 
-              <CloseButton onClick={() => setSidebarDisplay(false)}/>
-            }
+            {isMobile && <CloseButton onClick={() => setSidebarDisplay(false)} />}
           </LogoContainer>
-          <IPDisplay/>
+          <IPDisplay />
           {config.products ? <Products collapse={collapse} data={config.products} /> : null}
           <ThemeSwitcher
             active={isDarkTheme ? 'dark' : 'light'}
@@ -75,6 +71,16 @@ export const Sidebar: FC<SidebarProps> = ({ collapse, isMobile, setSidebarDispla
         </SidebarRoot>
       </SidebarActiveContext.Provider>
     ),
-    [data, collapse, isMobile, config.socialPlatforms, active, theme]
+    [
+      data,
+      collapse,
+      isMobile,
+      config.products,
+      config.socialPlatforms,
+      isDarkTheme,
+      active,
+      setSidebarDisplay,
+      setTheme,
+    ]
   );
 };

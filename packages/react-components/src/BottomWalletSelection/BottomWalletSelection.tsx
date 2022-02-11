@@ -1,15 +1,14 @@
 import { Avatar, Typography } from '@material-ui/core';
 import { useWebContext } from '@webb-dapp/react-environment';
 import { ManagedWallet } from '@webb-dapp/react-environment/types/wallet-config.interface';
+import { useAccounts } from '@webb-dapp/react-hooks/useAccounts';
 import { useWallets } from '@webb-dapp/react-hooks/useWallets';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
+import { WalletManager } from '@webb-dapp/ui-components/Inputs/WalletSelect/WalletManager';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
-import React, { useMemo, useEffect, useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
-
-import { WalletManager } from '@webb-dapp/ui-components/Inputs/WalletSelect/WalletManager';
-import { useAccounts } from '@webb-dapp/react-hooks/useAccounts';
 
 const BottomSelectionWrapper = styled.div`
   display: flex;
@@ -97,7 +96,9 @@ export const BottomWalletSelection: React.FC<WalletSelectProps> = ({}) => {
               </div>
             </BottomSelectionWrapper>
             <div className={'manage-wallet-text'}>
-              <Typography variant='h5'><b>Manage Wallet</b></Typography>
+              <Typography variant='h5'>
+                <b>Manage Wallet</b>
+              </Typography>
             </div>
           </>
         )}
@@ -117,4 +118,3 @@ export const BottomWalletSelection: React.FC<WalletSelectProps> = ({}) => {
     </BottomSelectionWrapper>
   );
 };
-

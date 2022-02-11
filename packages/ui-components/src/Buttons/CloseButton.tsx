@@ -1,9 +1,9 @@
-import { ButtonBase } from "@material-ui/core";
+import { ButtonBase } from '@material-ui/core';
 import React from 'react';
-import styled from "styled-components";
+import styled from 'styled-components';
 
 type CloseButtonProps = {
-  onClick: () => void
+  onClick: () => void;
 };
 
 const CloseDepositModal = styled.button`
@@ -24,4 +24,4 @@ export const CloseButton: React.FC<CloseButtonProps> = ({ onClick }) => {
       </svg>
     </CloseDepositModal>
   );
-}
+};

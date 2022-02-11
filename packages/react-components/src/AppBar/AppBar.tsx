@@ -86,8 +86,7 @@ const AppBarWrapper = styled.div`
   }
 `;
 
-const UpperSection = styled.div`
-`;
+const UpperSection = styled.div``;
 
 const LowerSection = styled.div`
   display: flex;
@@ -113,7 +112,7 @@ const AppBar: React.FC<AppBarProps> = ({ toggleSidebarDisplay }) => {
   }, [width, size]);
   const { pageTitle } = useStore('ui');
 
-  return ( isMobile ? 
+  return isMobile ? (
     <>
       <AppBarWrapper>
         <WebbLogo className={'webb-logo'} />
@@ -125,12 +124,16 @@ const AppBar: React.FC<AppBarProps> = ({ toggleSidebarDisplay }) => {
         </RightNavigation>
       </AppBarWrapper>
       <LowerSection>
-        <Typography variant='h2'><b>{pageTitle?.toString()}</b></Typography>
+        <Typography variant='h2'>
+          <b>{pageTitle?.toString()}</b>
+        </Typography>
       </LowerSection>
     </>
-    :
+  ) : (
     <AppBarWrapper>
-      <Typography variant='h2'><b>{pageTitle?.toString()}</b></Typography>
+      <Typography variant='h2'>
+        <b>{pageTitle?.toString()}</b>
+      </Typography>
       <RightNavigation>
         <NetworkManager />
         <AccountManager />

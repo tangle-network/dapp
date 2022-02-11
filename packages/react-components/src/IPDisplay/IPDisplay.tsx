@@ -55,9 +55,7 @@ const IPDisplay: React.FC<IPDisplayProps> = () => {
 
   return (
     <IPDisplayWrapper>
-      <Icon className={'label-icon'}>
-        room
-      </Icon>
+      <Icon className={'label-icon'}>room</Icon>
       <div style={{ paddingLeft: 5 }}>
         <Typography className={'ip-text'} variant={'h5'}>
           <b>Your IP</b>

@@ -4,9 +4,9 @@ import { useDimensions } from '@webb-dapp/react-environment/layout';
 import { Page, styled } from '@webb-dapp/ui-components';
 import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
 import React, { FC, memo, useMemo, useState } from 'react';
-import { Sidebar } from '..';
 
 import { SidebarConfig } from '../Sidebar/types';
+import { Sidebar } from '..';
 
 const MainContainer = styled.div`
   display: flex;
@@ -44,7 +44,7 @@ const Main: FC<MainLayoutProps> = memo(({ children, sidebar }) => {
     }
 
     return width <= size.sm;
-  }, [width, size]);
+  }, [width, size.md, size.sm, sidebarDisplay]);
 
   const content = useMemo(() => {
     return (
@@ -53,20 +53,20 @@ const Main: FC<MainLayoutProps> = memo(({ children, sidebar }) => {
       </Page>
     );
   }, [children]);
-  return ( isMobile ?
+  return isMobile ? (
     <div>
-      <Sidebar collapse={!sidebarDisplay} isMobile={true} config={sidebar} setSidebarDisplay={setSidebarDisplay}/>
+      <Sidebar collapse={!sidebarDisplay} isMobile={true} config={sidebar} setSidebarDisplay={setSidebarDisplay} />
       <MainContainer>
-        <AppBar toggleSidebarDisplay={() => setSidebarDisplay(!sidebarDisplay)}/>
+        <AppBar toggleSidebarDisplay={() => setSidebarDisplay(!sidebarDisplay)} />
         <ContentWrapper>{content}</ContentWrapper>
         <BottomWalletSelection />
       </MainContainer>
     </div>
-    :
-    <div style={{display: 'flex'}}>
-      <Sidebar collapse={false} isMobile={false} config={sidebar} setSidebarDisplay={()=>{}}/>
+  ) : (
+    <div style={{ display: 'flex' }}>
+      <Sidebar collapse={false} isMobile={false} config={sidebar} setSidebarDisplay={() => {}} />
       <MainContainer>
-        <AppBar toggleSidebarDisplay={() => setSidebarDisplay(!sidebarDisplay)}/>
+        <AppBar toggleSidebarDisplay={() => setSidebarDisplay(!sidebarDisplay)} />
         <ContentWrapper>{content}</ContentWrapper>
       </MainContainer>
     </div>
