@@ -23,7 +23,7 @@ interface SidebarProps {
 }
 
 const SidebarRoot = styled.div<{ collapse: boolean, isMobile: boolean }>`
-  position: relative;
+  position: ${({ isMobile }) => (isMobile ? 'fixed' : 'relative')};
   display: ${({ collapse }): string => (collapse ? 'none' : 'flex')};
   flex-direction: column;
   height: 100vh;
@@ -31,7 +31,7 @@ const SidebarRoot = styled.div<{ collapse: boolean, isMobile: boolean }>`
   box-shadow: 0 20px 20px 0 rgba(12, 28, 90, 0.09);
   transition: width 500ms ease;
   background: var(--card-background);
-  overflow: hidden;
+  z-index: 300;
 `;
 
 const LogoContainer = styled.div`

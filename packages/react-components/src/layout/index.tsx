@@ -12,8 +12,8 @@ const MainContainer = styled.div`
   display: flex;
   flex-grow: 1;
   flex-direction: column;
-  height: 100vh;
   overflow: hidden;
+  height: 100vh;
   background: var(--platform-background);
 `;
 const ContentWrapper = styled.main`
@@ -21,7 +21,6 @@ const ContentWrapper = styled.main`
   flex: 1;
   flex-grow: 1;
   max-height: calc(100vh - 110px);
-  overflow: hidden;
   ${above.sm`
     max-height: calc(100vh - 65px);
 	`}
@@ -55,7 +54,7 @@ const Main: FC<MainLayoutProps> = memo(({ children, sidebar }) => {
     );
   }, [children]);
   return ( isMobile ?
-    <div style={{ overflow: 'hidden' }}>
+    <div>
       <Sidebar collapse={!sidebarDisplay} isMobile={true} config={sidebar} setSidebarDisplay={setSidebarDisplay}/>
       <MainContainer>
         <AppBar toggleSidebarDisplay={() => setSidebarDisplay(!sidebarDisplay)}/>
