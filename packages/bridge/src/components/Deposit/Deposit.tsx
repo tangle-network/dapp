@@ -56,7 +56,6 @@ export const Deposit: React.FC<DepositProps> = () => {
 
   const handleSuccess = useCallback((): void => {}, []);
 
-  // TODO Ensure that this is working properly
   const tokenChains = useMemo(() => {
     return selectedBridgeCurrency?.getChainIdsAndTypes() ?? [];
   }, [selectedBridgeCurrency]);

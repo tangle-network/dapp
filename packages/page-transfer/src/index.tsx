@@ -1,5 +1,5 @@
 import { Button, InputBase } from '@material-ui/core';
-import { currenciesConfig, InternalChainId, WebbCurrencyId } from '@webb-dapp/apps/configs';
+import { ChainType, currenciesConfig, InternalChainId, WebbCurrencyId } from '@webb-dapp/apps/configs';
 import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
 import IPDisplay from '@webb-dapp/react-components/IPDisplay/IPDisplay';
 import { useWebContext } from '@webb-dapp/react-environment';
@@ -36,20 +36,26 @@ const PageTransfers: FC = () => {
   const [isSwap, setIsSwap] = useState(false);
   const { activeApi, activeChain, activeWallet, chains: chainsStore, switchChain } = useWebContext();
 
-  const chains: InternalChainId[] = useMemo(() => {
-    return Object.keys(chainsStore).map((i) => Number(i));
+  const chains: [ChainType, InternalChainId][] = useMemo(() => {
+    const arr: [ChainType, InternalChainId][] = [];
+    Object.entries(chainsStore).forEach((el) => {
+      arr.push([el[1].chainType, Number(el[0])]);
+    });
+    return arr;
   }, [chainsStore]);
 
-  const srcChain = useMemo(() => {
+  const srcChain: [ChainType, InternalChainId] | undefined = useMemo(() => {
     if (!activeChain) {
       return undefined;
     }
 
-    return activeChain.id;
+    return [activeChain.chainType, activeChain.id];
   }, [activeChain]);
-  const [destChain, setDestChain] = useState<InternalChainId | undefined>(undefined);
+  const [destChain, setDestChain] = useState<[ChainType, InternalChainId] | undefined>(undefined);
   const [recipient, setRecipient] = useState('');
   const bridge = useBridge();
+
+  console.log(destChain);
 
   const tokens = useMemo(() => {
     const tokens: CurrencyContent[] = [];
@@ -65,9 +71,9 @@ const PageTransfers: FC = () => {
           label={'Select Source Chain'}
           selectedChain={srcChain}
           // TODO: Hook this up to network switcher
-          setSelectedChain={async (chainId) => {
-            if (typeof chainId !== 'undefined' && activeWallet) {
-              const nextChain = chainsStore[chainId];
+          setSelectedChain={async (chainTypeInternalChainId) => {
+            if (typeof chainTypeInternalChainId !== 'undefined' && activeWallet) {
+              const nextChain = chainsStore[chainTypeInternalChainId[1]];
               await switchChain(nextChain, activeWallet);
             }
           }}
