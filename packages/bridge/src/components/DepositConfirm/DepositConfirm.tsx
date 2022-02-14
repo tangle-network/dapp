@@ -4,6 +4,7 @@ import { BridgeDepositApi as DepositApi } from '@webb-dapp/bridge/hooks/deposit/
 import { DepositPayload, useWebContext } from '@webb-dapp/react-environment/webb-context';
 import { Currency } from '@webb-dapp/react-environment/webb-context/currency/currency';
 import { SpaceBox } from '@webb-dapp/ui-components';
+import { CloseButton } from '@webb-dapp/ui-components/Buttons/CloseButton';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { notificationApi } from '@webb-dapp/ui-components/notification';
@@ -72,12 +73,6 @@ const GeneratedNote = styled.p`
     right: 45px;
   }
 `;
-const CloseDepositModal = styled.button`
-  &&& {
-    position: absolute;
-    right: 20px;
-  }
-`;
 
 const Loading = styled.div`
   position: absolute;
@@ -88,7 +83,7 @@ const Loading = styled.div`
   height: 100%;
   background: #fff;
 
-  ${CloseDepositModal} {
+  .button {
     top: 20px;
     right: 20px;
   }
@@ -152,14 +147,7 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({
             Generating your deposit note...
           </Typography>
           <Tooltip title={'close'}>
-            <CloseDepositModal as={ButtonBase} onClick={onClose}>
-              <svg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'>
-                <path
-                  d='M12.5074 10L19.5575 2.94985C20.1475 2.35988 20.1475 1.35693 19.5575 0.766962L19.233 0.442478C18.6431 -0.147493 17.6401 -0.147493 17.0501 0.442478L10 7.49263L2.94985 0.442478C2.35988 -0.147493 1.35693 -0.147493 0.766962 0.442478L0.442478 0.766962C-0.147493 1.35693 -0.147493 2.35988 0.442478 2.94985L7.49263 10L0.442478 17.0501C-0.147493 17.6401 -0.147493 18.6431 0.442478 19.233L0.766962 19.5575C1.35693 20.1475 2.35988 20.1475 2.94985 19.5575L10 12.5074L17.0501 19.5575C17.6401 20.1475 18.6431 20.1475 19.233 19.5575L19.5575 19.233C20.1475 18.6431 20.1475 17.6401 19.5575 17.0501L12.5074 10Z'
-                  fill='#C8CEDD'
-                />
-              </svg>
-            </CloseDepositModal>
+            <CloseButton onClick={onClose} />
           </Tooltip>
         </Loading>
       )}
@@ -184,14 +172,7 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({
               </svg>
             </div>
             <Tooltip title={'close'}>
-              <CloseDepositModal as={ButtonBase} onClick={onClose}>
-                <svg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'>
-                  <path
-                    d='M12.5074 10L19.5575 2.94985C20.1475 2.35988 20.1475 1.35693 19.5575 0.766962L19.233 0.442478C18.6431 -0.147493 17.6401 -0.147493 17.0501 0.442478L10 7.49263L2.94985 0.442478C2.35988 -0.147493 1.35693 -0.147493 0.766962 0.442478L0.442478 0.766962C-0.147493 1.35693 -0.147493 2.35988 0.442478 2.94985L7.49263 10L0.442478 17.0501C-0.147493 17.6401 -0.147493 18.6431 0.442478 19.233L0.766962 19.5575C1.35693 20.1475 2.35988 20.1475 2.94985 19.5575L10 12.5074L17.0501 19.5575C17.6401 20.1475 18.6431 20.1475 19.233 19.5575L19.5575 19.233C20.1475 18.6431 20.1475 17.6401 19.5575 17.0501L12.5074 10Z'
-                    fill='#C8CEDD'
-                  />
-                </svg>
-              </CloseDepositModal>
+              <CloseButton onClick={onClose} />
             </Tooltip>
           </Flex>
 

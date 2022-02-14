@@ -6,7 +6,7 @@ import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { WalletManger } from './WalletManger';
+import { WalletManager } from './WalletManager';
 
 const ConnectWalletButtonWrapper = styled.div`
   box-sizing: border-box;
@@ -62,7 +62,7 @@ export const ConnectWalletButton: React.FC<{}> = () => {
       </ConnectWalletButtonWrapper>
 
       <Modal open={open} onClose={closeModal}>
-        <WalletManger
+        <WalletManager
           wallets={wallets}
           setSelectedWallet={async (wallet) => {
             if (activeChain) {

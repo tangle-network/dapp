@@ -7,15 +7,14 @@ import React, { useState } from 'react';
 import styled, { css } from 'styled-components';
 
 const IPDisplayWrapper = styled.div`
-  padding: 1rem;
-  ${above.sm`  padding: 2rem;`}
-  max-width: 500px;
-  margin: auto;
-  border-radius: 20px;
   display: flex;
   align-items: center;
+  justify-content: left;
+  padding: 1rem;
+  border-radius: 20px;
+
   ${({ theme }: { theme: Pallet }) => css`
-    background: ${theme.layer1Background};
+    background: ${theme.layer2Background};
     border: 1px solid ${theme.borderColor};
     ${theme.type === 'light' ? `box-shadow: 0px 0px 14px rgba(51, 81, 242, 0.11);` : ''}
     .label-icon {
@@ -56,15 +55,13 @@ const IPDisplay: React.FC<IPDisplayProps> = () => {
 
   return (
     <IPDisplayWrapper>
-      <Icon className={'label-icon'} style={{ fontSize: 40 }}>
-        room
-      </Icon>
+      <Icon className={'label-icon'}>room</Icon>
       <div style={{ paddingLeft: 5 }}>
         <Typography className={'ip-text'} variant={'h5'}>
-          Your IP Address is:{' '}
-          <b>
-            {ip} {createLocationText()}
-          </b>
+          <b>Your IP</b>
+        </Typography>
+        <Typography className={'ip-text'} variant={'h5'}>
+          {ip} {createLocationText()}
         </Typography>
       </div>
     </IPDisplayWrapper>
