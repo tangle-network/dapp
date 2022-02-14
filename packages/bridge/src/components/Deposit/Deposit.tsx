@@ -163,10 +163,6 @@ export const Deposit: React.FC<DepositProps> = () => {
       )}
       {showWrappableAssets && wrappableTokens.length && (
         <TokenInput
-          wrapperStyles={{
-            height: 52,
-            background: 'transparent',
-          }}
           currencies={wrappableTokens}
           value={wrappableCurrency}
           onChange={(currencyContent) => {

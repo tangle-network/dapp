@@ -161,7 +161,7 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
           data: React.createElement(
             'p',
             { style: { fontSize: '.9rem' } }, // Matches Typography variant=h6
-            `Withdraw throw ${activeRelayer!.endpoint} in progress`
+            `Withdraw through ${activeRelayer!.endpoint} in progress`
           ),
           key: 'mixer-withdraw-sub',
           path: {
