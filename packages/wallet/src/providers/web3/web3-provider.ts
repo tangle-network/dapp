@@ -1,7 +1,6 @@
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import { evmIdIntoChainId, WalletId } from '@webb-dapp/apps/configs';
 import { ProvideCapabilities } from '@webb-dapp/react-environment';
-import { appEvent } from '@webb-dapp/react-environment/app-event';
 import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import { ethers } from 'ethers';
 import Web3 from 'web3';
@@ -150,18 +149,10 @@ export class Web3Provider<T = unknown> {
 
   switchChain(chainInput: SwitchEthereumChainParameter) {
     const provider = this._inner.currentProvider as AbstractProvider;
-    return provider
-      .request?.({
-        method: 'wallet_switchEthereumChain',
-        params: [chainInput],
-      })
-      .then(async () => {
-        if (this.helperApi instanceof WalletConnectProvider) {
-          appEvent.send('networkSwitched', [evmIdIntoChainId(await this.network), WalletId.WalletConnectV1]);
-        } else {
-          appEvent.send('networkSwitched', [evmIdIntoChainId(await this.network), WalletId.MetaMask]);
-        }
-      });
+    return provider.request?.({
+      method: 'wallet_switchEthereumChain',
+      params: [chainInput],
+    });
   }
 
   addToken(addTokenInput: AddToken) {

@@ -1,6 +1,13 @@
 import Icon from '@material-ui/core/Icon';
 import WalletConnectProvider from '@walletconnect/web3-provider';
-import { ChainId, chainsPopulated, currenciesConfig, getEVMChainName, WebbEVMChain } from '@webb-dapp/apps/configs';
+import {
+  ChainId,
+  chainsPopulated,
+  currenciesConfig,
+  evmIdIntoChainId,
+  getEVMChainName,
+  WebbEVMChain,
+} from '@webb-dapp/apps/configs';
 import { getWebbRelayer } from '@webb-dapp/apps/configs/relayer-config';
 import { WalletId } from '@webb-dapp/apps/configs/wallets/wallet-id.enum';
 import { walletsConfig } from '@webb-dapp/apps/configs/wallets/wallets-config';
@@ -331,6 +338,13 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
               await web3Provider
                 .switchChain({
                   chainId: `0x${chain.evmId?.toString(16)}`,
+                })
+                ?.then(async () => {
+                  if (web3Provider instanceof WalletConnectProvider) {
+                    appEvent.send('networkSwitched', [evmIdIntoChainId(await chainId), WalletId.WalletConnectV1]);
+                  } else {
+                    appEvent.send('networkSwitched', [evmIdIntoChainId(await chainId), WalletId.MetaMask]);
+                  }
                 })
                 ?.catch(async (switchError) => {
                   console.log('inside catch for switchChain', switchError);
