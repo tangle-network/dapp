@@ -278,14 +278,23 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
       });
       try {
         if (relayers.length) {
-          const relayerLeaves = await relayers[0].getLeaves(chainEvmId.toString(16), contract.inner.address);
-
-          zkp = await contract.generateZKPWithLeaves(
-            deposit,
-            zkpInputWithoutMerkleProof,
-            relayerLeaves.leaves,
-            relayerLeaves.lastQueriedBlock
-          );
+          try {
+            const relayerLeaves = await relayers[0].getLeaves(chainEvmId.toString(16), contract.inner.address);
+            zkp = await contract.generateZKPWithLeaves(
+              deposit,
+              zkpInputWithoutMerkleProof,
+              relayerLeaves.leaves,
+              relayerLeaves.lastQueriedBlock
+            );
+          } catch (e) {
+            // If attempting to fetch leaves from the available relayer failed, query from chain.
+            if ((e as any)?.code === WebbErrorCodes.RelayerMisbehaving) {
+              zkp = await contract.generateZKP(deposit, zkpInputWithoutMerkleProof);
+            } else {
+              logger.log('error in web3 mixer withdraw: ', e);
+              throw e;
+            }
+          }
         } else {
           // This is the part of withdraw that takes a long time
           zkp = await contract.generateZKP(deposit, zkpInputWithoutMerkleProof);
