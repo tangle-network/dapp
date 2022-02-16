@@ -15,7 +15,9 @@ export class Currency extends CurrencyContent {
   constructor(private data: CurrencyConfig) {
     super();
   }
-
+  get id() {
+    return this.data.id;
+  }
   static fromCurrencyId(currencyId: WebbCurrencyId) {
     const currencyConfig = currenciesConfig[currencyId];
     return new Currency(currencyConfig);

@@ -1,5 +1,4 @@
 import { ChainId, WebbCurrencyId } from '@webb-dapp/apps/configs';
-import { BridgeConfig } from '@webb-dapp/react-environment/types/bridge-config.interface';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 import { Currency } from '../currency/currency';
@@ -27,27 +26,48 @@ export abstract class BridgeApi<Api, BridgeConfigEntry> {
     this._watcher = this._store.asObservable();
   }
 
+  get $store() {
+    return this._watcher;
+  }
+
   get store(): BridgeStore<BridgeConfigEntry> {
     return this._store.value;
+  }
+
+  get bridgeIds() {
+    return Object.keys(this.store.config) as BridgeCurrencyIndex[];
   }
 
   protected set store(next: Partial<BridgeStore<BridgeConfigEntry>>) {
     this._store.next({ ...this.store, ...next });
   }
 
-  abstract getCurrency(currencyId: BridgeCurrencyIndex): Promise<Currency | null>;
+  abstract get currency(): Currency | null;
 
   abstract getCurrencies(): Promise<Currency[]>;
 
   // For evm
-  abstract getTokenAddress(currencyId: BridgeCurrencyIndex, chainId: ChainId): string | null;
+  abstract getTokenAddress(currencyId: WebbCurrencyId, chainId: ChainId): string | null;
+
+  get activeBridge(): BridgeConfigEntry | undefined {
+    return this.store.activeBridge;
+  }
 
   abstract getAnchors(): Promise<AnchorBase[]>;
-  ///
+
   setActiveBridge(activeBridge: BridgeConfigEntry | undefined) {
     this.store = {
       ...this.store,
       activeBridge: activeBridge,
     };
+  }
+  abstract getWrappableAssets(chainId: ChainId): Promise<Currency[]>;
+
+  /*
+   *  Get all Bridge tokens for a given chain
+   * */
+  async getTokensOfChain(chainId: ChainId): Promise<Currency[]> {
+    const tokens = await this.getCurrencies();
+    return tokens.filter((token) => token.hasChain(chainId));
   }
 }

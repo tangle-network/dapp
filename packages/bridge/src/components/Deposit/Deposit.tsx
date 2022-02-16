@@ -30,7 +30,6 @@ export const Deposit: React.FC<DepositProps> = () => {
   const bridgeDepositApi = useBridgeDeposit();
   const { depositApi, selectedBridgeCurrency, setSelectedCurrency } = bridgeDepositApi;
   const activeBridge = depositApi?.activeBridge;
-
   const { setWrappableToken, wrappableToken, wrappableTokens } = useWrapUnwrap();
   const { activeApi, activeChain, activeWallet, chains, loading, switchChain } = useWebContext();
 
@@ -101,7 +100,7 @@ export const Deposit: React.FC<DepositProps> = () => {
       setWrappableToken(wrappableTokens[0]);
     }
   }, [setWrappableToken, wrappableTokens, wrappableToken]);
-
+  console.log(selectedBridgeCurrency, 'selectedBridgeCurrency');
   return (
     <DepositWrapper>
       <WalletBridgeCurrencyInput

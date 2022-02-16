@@ -27,8 +27,12 @@ const logger = LoggerService.get('web3-bridge-deposit');
 type DepositPayload = IDepositPayload<Note, [Deposit, number | string, string?]>;
 
 export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPayload> {
+  private get bridgeApi() {
+    return this.inner.methods.bridgeApi;
+  }
+
   async deposit(depositPayload: DepositPayload): Promise<void> {
-    const bridge = this.activeBridge;
+    const bridge = this.bridgeApi.activeBridge;
     if (!bridge) {
       throw new Error('api not ready');
     }
@@ -52,17 +56,18 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
         },
       });
 
+      const anchors = await this.bridgeApi.getAnchors();
       // Find the Anchor for this bridge amount
-      const anchor = bridge.anchors.find((anchor) => anchor.amount == note.amount);
+      const anchor = anchors.find((anchor) => anchor.amount == note.amount);
       if (!anchor) {
         throw new Error('not Anchor for amount' + note.amount);
       }
       // Get the contract address for the destination chain
-      const contractAddress = anchor.anchorAddresses[sourceChainId];
+      const contractAddress = anchor.neighbours[sourceChainId];
       if (!contractAddress) {
         throw new Error(`No Anchor for the chain ${note.targetChainId}`);
       }
-      const contract = this.inner.getWebbAnchorByAddress(contractAddress);
+      const contract = this.inner.getWebbAnchorByAddress(contractAddress as string);
 
       // If a wrappableAsset was selected, perform a wrapAndDeposit
       if (depositPayload.params[2]) {
@@ -170,42 +175,13 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
   }
 
   async getSizes(): Promise<MixerSize[]> {
-    const bridge = this.activeBridge;
-    if (bridge) {
-      return bridge.anchors.map((anchor) => ({
-        id: `Bridge=${anchor.amount}@${bridge.currency.view.name}`,
-        title: `${anchor.amount} ${bridge.currency.view.name}`,
+    const anchors = await this.bridgeApi.getAnchors();
+    const currency = this.bridgeApi.currency;
+    if (currency) {
+      return anchors.map((anchor) => ({
+        id: `Bridge=${anchor.amount}@${currency.view.name}`,
+        title: `${anchor.amount} ${currency.view.name}`,
       }));
-    }
-    return [];
-  }
-
-  async getWrappableAssets(chainId: ChainId): Promise<Currency[]> {
-    const bridge = this.activeBridge;
-    logger.log('getWrappableAssets of chain: ', chainId);
-    if (bridge) {
-      const wrappedTokenAddress = bridge.getTokenAddress(chainId);
-      if (!wrappedTokenAddress) return [];
-
-      // Get the available token addresses which can wrap into the wrappedToken
-      const wrappedToken = new WebbGovernedToken(this.inner.getEthersProvider(), wrappedTokenAddress);
-      const tokenAddresses = await wrappedToken.tokens;
-
-      // TODO: dynamic wrappable assets - consider some Currency constructor via address & default token config.
-
-      // If the tokenAddress matches one of the wrappableCurrencies, return it
-      const wrappableCurrencyIds = chainsConfig[chainId].currencies.filter((currencyId) => {
-        const wrappableTokenAddress = currenciesConfig[currencyId].addresses.get(chainId);
-        return wrappableTokenAddress && tokenAddresses.includes(wrappableTokenAddress);
-      });
-
-      if (await wrappedToken.isNativeAllowed()) wrappableCurrencyIds.push(chainsConfig[chainId].nativeCurrencyId);
-
-      const wrappableCurrencies = wrappableCurrencyIds.map((currencyId) => {
-        return Currency.fromCurrencyId(currencyId);
-      });
-
-      return wrappableCurrencies;
     }
     return [];
   }
@@ -221,7 +197,8 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
     destChainId: ChainId,
     wrappableAssetAddress?: string
   ): Promise<DepositPayload> {
-    const bridge = this.activeBridge;
+    const bridge = this.bridgeApi.activeBridge;
+
     if (!bridge) {
       throw new Error('api not ready');
     }
