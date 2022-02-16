@@ -1,5 +1,5 @@
 import { FormHelperText, InputBase } from '@material-ui/core';
-import { chainsPopulated, ChainType, currenciesConfig, internalChainIdIntoEVMId } from '@webb-dapp/apps/configs';
+import { chainsPopulated, ChainType, currenciesConfig, evmIdIntoInternalChainId, internalChainIdIntoEVMId, typeAndIdFromChainIdType } from '@webb-dapp/apps/configs';
 import WithdrawingModal from '@webb-dapp/bridge/components/Withdraw/WithdrawingModal';
 import { useWithdraw } from '@webb-dapp/bridge/hooks';
 import { useDepositNote } from '@webb-dapp/mixer';
@@ -24,6 +24,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
   const [note, setNote] = useState('');
   const [recipient, setRecipient] = useState('');
   const { activeApi, activeChain } = useWebContext();
+  const depositNote = useDepositNote(note);
 
   const {
     canCancel,
@@ -38,7 +39,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
     withdraw,
   } = useWithdraw({
     recipient,
-    note,
+    note: depositNote,
   });
   const feesGetter = useCallback(
     async (activeRelayer: ActiveWebbRelayer): Promise<FeesInfo> => {
@@ -80,7 +81,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
       depositNote &&
       activeChain &&
       activeChain.chainType == ChainType.EVM &&
-      activeChain.evmId != internalChainIdIntoEVMId(depositNote.note.targetChainId)
+      activeChain.evmId != typeAndIdFromChainIdType(Number(depositNote.note.targetChainId)).chainId
     ) {
       return true;
     }
@@ -89,8 +90,9 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
   const switchChain = async (note: Note | null) => {
     if (!note) return;
     if (!activeApi) return;
-    const newChainId = Number(note.note.targetChainId);
-    const chain = chainsPopulated[newChainId];
+    const chainId = typeAndIdFromChainIdType(Number(note.note.targetChainId)).chainId;
+    const internalChainId = evmIdIntoInternalChainId(chainId);
+    const chain = chainsPopulated[internalChainId];
 
     const web3Provider = activeApi.getProvider();
 
@@ -126,7 +128,6 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
       });
   };
 
-  const depositNote = useDepositNote(note);
   return (
     <WithdrawWrapper>
       <InputSection>

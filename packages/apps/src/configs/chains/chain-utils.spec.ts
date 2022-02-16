@@ -1,11 +1,10 @@
-import { ChainType, InternalChainId } from './chain-id.enum';
+import { ChainType, ChainTypeId } from './chain-id.enum';
 
 import {
   byteArrayToNum,
   numToByteArray,
   computeChainIdType,
   typeAndIdFromChainIdType,
-  ChainTypeId,
 } from './chain-utils';
 
 // TODO: Move utils and tests to webb.js
