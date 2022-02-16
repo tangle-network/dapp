@@ -1,7 +1,6 @@
 import { Button, InputBase } from '@material-ui/core';
 import { ChainType, currenciesConfig, InternalChainId, WebbCurrencyId } from '@webb-dapp/apps/configs';
 import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
-import IPDisplay from '@webb-dapp/react-components/IPDisplay/IPDisplay';
 import { useWebContext } from '@webb-dapp/react-environment';
 import { Currency, CurrencyContent } from '@webb-dapp/react-environment/webb-context/currency/currency';
 import { SpaceBox } from '@webb-dapp/ui-components';
@@ -135,10 +134,6 @@ const PageTransfers: FC = () => {
 
         <MixerButton label={'Transfer'} onClick={() => {}} />
       </ContentWrapper>
-
-      <SpaceBox height={8} />
-
-      <IPDisplay />
     </div>
   );
 };

@@ -51,8 +51,8 @@ export const walletsConfig: AppConfig['wallet'] = {
     },
     supportedChainIds: [...ANY_EVM],
   },
-  3: {
-    id: 3,
+  [WalletId.WalletConnectV1]: {
+    id: WalletId.WalletConnectV1,
     logo: WalletConnectLogo,
     name: 'wallet connect',
     title: `Wallet Connect`,

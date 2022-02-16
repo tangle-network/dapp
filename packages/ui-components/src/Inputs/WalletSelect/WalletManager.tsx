@@ -20,13 +20,13 @@ import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
 import React from 'react';
 import styled, { css } from 'styled-components';
 
-const WalletMangerWrapper = styled.div`
+const WalletManagerWrapper = styled.div`
   ${above.sm`
 min-width:540px;
 
 `}
 `;
-type WalletMangerProps = {
+type WalletManagerProps = {
   close(): void;
   setSelectedWallet(wallet: ManagedWallet): void;
   wallets: ManagedWallet[];
@@ -69,9 +69,9 @@ const StyledListItem = styled.li`
   }
 `;
 
-export const WalletManger: React.FC<WalletMangerProps> = ({ close, setSelectedWallet, wallets }) => {
+export const WalletManager: React.FC<WalletManagerProps> = ({ close, setSelectedWallet, wallets }) => {
   return (
-    <WalletMangerWrapper>
+    <WalletManagerWrapper>
       <WalletManagerContentWrapper>
         <Flex row ai={'center'} as={'header'}>
           <Flex flex={1} row ai='center'>
@@ -153,6 +153,6 @@ export const WalletManger: React.FC<WalletMangerProps> = ({ close, setSelectedWa
           })}
         </List>
       </WalletManagerContentWrapper>
-    </WalletMangerWrapper>
+    </WalletManagerWrapper>
   );
 };

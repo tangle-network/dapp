@@ -1,9 +1,11 @@
+import { ChainId, WalletId } from '@webb-dapp/apps/configs';
 import { Chain, Wallet } from '@webb-dapp/react-environment';
 import { Account } from '@webb-dapp/wallet/account/Accounts.adapter';
 import { EventBus } from '@webb-tools/app-util';
 
 export type AppEvents = {
   changeNetworkSwitcherVisibility: boolean;
+  networkSwitched: [ChainId, WalletId];
   switchNetwork: [Chain, Wallet];
   setActiveAccount: Account;
 };

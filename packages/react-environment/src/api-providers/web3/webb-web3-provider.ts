@@ -101,6 +101,7 @@ export class WebbWeb3Provider
   }
 
   async destroy(): Promise<void> {
+    await this.endSession();
     this.subscriptions = {
       providerUpdate: [],
       interactiveFeedback: [],

@@ -109,7 +109,10 @@ type AccountManagerProps = {};
 
 export const AccountManager: React.FC<AccountManagerProps> = () => {
   const { accounts, active, setActiveAccount } = useAccounts();
-  const name = useMemo(() => active?.name || active?.address || '', [active]);
+  const name = useMemo(
+    () => active?.name || (active && `${active?.address.slice(0, 4)}..${active?.address.slice(-4)}`) || '',
+    [active]
+  );
   const accountvatar = useMemo(() => active?.avatar || <span />, [active]);
   const { allCurrencies } = useConstants();
   const ActiveCurrency = useMemo(() => {
