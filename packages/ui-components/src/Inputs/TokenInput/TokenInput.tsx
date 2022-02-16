@@ -156,7 +156,7 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
     await provider.addToken({
       address: tokenAddress,
       decimals: 18,
-      image: '',
+      image: token.imageUrl ?? '',
       symbol: token.symbol,
     });
   };

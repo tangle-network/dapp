@@ -92,6 +92,7 @@ export const currenciesConfig: AppConfig['currencies'] = {
     id: WebbCurrencyId.WETH,
     type: CurrencyType.ERC20,
     role: CurrencyRole.Wrappable,
+    imageUrl: 'https://www.polysa.finance/images/farms/weth.png',
     icon: React.createElement(EtherLogo),
     addresses: new Map([
       [ChainId.Ropsten, '0xc778417E063141139Fce010982780140Aa0cD5Ab'],

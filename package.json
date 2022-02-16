@@ -40,9 +40,9 @@
   "dependencies": {
     "@material-ui/core": "^4.11.3",
     "@polkadot/networks": "^7.4.1",
-    "@walletconnect/client": "^1.4.1",
-    "@walletconnect/qrcode-modal": "^1.4.1",
-    "@walletconnect/web3-provider": "^1.4.1",
+    "@walletconnect/client": "^1.7.1",
+    "@walletconnect/qrcode-modal": "^1.7.1",
+    "@walletconnect/web3-provider": "^1.7.1",
     "D": "^1.0.0",
     "circom": "^0.5.45",
     "circomlib": "^2.0.1",

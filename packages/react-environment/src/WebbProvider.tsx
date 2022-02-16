@@ -1,6 +1,13 @@
 import Icon from '@material-ui/core/Icon';
 import WalletConnectProvider from '@walletconnect/web3-provider';
-import { ChainId, chainsPopulated, currenciesConfig, getEVMChainName, WebbEVMChain } from '@webb-dapp/apps/configs';
+import {
+  ChainId,
+  chainsPopulated,
+  currenciesConfig,
+  evmIdIntoChainId,
+  getEVMChainName,
+  WebbEVMChain,
+} from '@webb-dapp/apps/configs';
 import { getWebbRelayer } from '@webb-dapp/apps/configs/relayer-config';
 import { WalletId } from '@webb-dapp/apps/configs/wallets/wallet-id.enum';
 import { walletsConfig } from '@webb-dapp/apps/configs/wallets/wallets-config';
@@ -104,7 +111,6 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
 
   /// Forcefully tell react to rerender the application with api change
   const forceActiveApiUpdate = (activeApi: WebbApiProvider<any>) => {
-    setActiveApi(undefined);
     setActiveApi(activeApi);
     interactiveFeedbacks.forEach((interactiveFeedback) => {
       if (interactiveFeedback.reason === WebbErrorCodes.UnsupportedChain) {
@@ -235,10 +241,10 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
           }
           break;
         case WalletId.MetaMask:
-        case WalletId.WalletConnect:
+        case WalletId.WalletConnectV1:
           {
             let web3Provider: Web3Provider;
-            if (wallet?.id === WalletId.WalletConnect) {
+            if (wallet?.id === WalletId.WalletConnectV1) {
               const provider = new WalletConnectProvider({
                 rpc: {
                   //default on metamask
@@ -262,12 +268,6 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
 
             const clientInfo = web3Provider.clientMeta;
             if (clientInfo) {
-              let message = '';
-              if (wallet?.id === WalletId.WalletConnect) {
-                message = `Connected to WalletConnect ${clientInfo.name}`;
-              } else {
-                message = `Connected to ${clientInfo.name}`;
-              }
               notificationApi({
                 message: 'Connected to EVM wallet',
                 secondaryMessage: `Connected to ${clientInfo.name}`,
@@ -339,6 +339,13 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
                 .switchChain({
                   chainId: `0x${chain.evmId?.toString(16)}`,
                 })
+                ?.then(async () => {
+                  if (web3Provider instanceof WalletConnectProvider) {
+                    appEvent.send('networkSwitched', [evmIdIntoChainId(await chainId), WalletId.WalletConnectV1]);
+                  } else {
+                    appEvent.send('networkSwitched', [evmIdIntoChainId(await chainId), WalletId.MetaMask]);
+                  }
+                })
                 ?.catch(async (switchError) => {
                   console.log('inside catch for switchChain', switchError);
 
@@ -393,13 +400,14 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
   };
   /// a util will store the network/wallet config before switching
   const switchChainAndStore = async (chain: Chain, wallet: Wallet) => {
-    if (networkStorage) {
+    const provider = await switchChain(chain, wallet);
+    if (provider && networkStorage) {
       await Promise.all([
         networkStorage.set('defaultNetwork', chain.id),
         networkStorage.set('defaultWallet', wallet.id),
       ]);
     }
-    return switchChain(chain, wallet);
+    return provider;
   };
 
   useEffect(() => {
@@ -450,6 +458,10 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
     };
     init().finally(() => {
       setIsConnecting(false);
+    });
+    appEvent.on('networkSwitched', async ([chain, wallet]) => {
+      const networkStorage = await netStorageFactory();
+      await Promise.all([networkStorage.set('defaultNetwork', chain), networkStorage.set('defaultWallet', wallet)]);
     });
     appEvent.on('switchNetwork', ([chain, wallet]) => {
       switchChainAndStore(chain, wallet);
