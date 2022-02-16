@@ -7,7 +7,7 @@ import { AnchorBase, BridgeApi } from '@webb-dapp/react-environment/webb-context
 import { Currency } from '@webb-dapp/react-environment/webb-context/currency/currency';
 
 export class Web3BridgeApi extends BridgeApi<WebbWeb3Provider, BridgeConfig> {
-  getTokenAddress(currencyId: WebbCurrencyId, chainId: ChainId): string | null {
+  getTokenAddress(chainId: ChainId): string | null {
     const activeBridgeAsset = this.store.activeBridge?.asset;
     return activeBridgeAsset ? currenciesConfig[activeBridgeAsset].addresses.get(chainId) ?? null : null;
   }
@@ -42,7 +42,7 @@ export class Web3BridgeApi extends BridgeApi<WebbWeb3Provider, BridgeConfig> {
     if (!bridge) {
       return [];
     }
-    const wrappedTokenAddress = this.getTokenAddress(bridge.asset, chainId);
+    const wrappedTokenAddress = this.getTokenAddress(chainId);
     if (!wrappedTokenAddress) return [];
 
     // Get the available token addresses which can wrap into the wrappedToken

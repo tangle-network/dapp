@@ -47,7 +47,7 @@ export abstract class BridgeApi<Api, BridgeConfigEntry> {
   abstract getCurrencies(): Promise<Currency[]>;
 
   // For evm
-  abstract getTokenAddress(currencyId: WebbCurrencyId, chainId: ChainId): string | null;
+  abstract getTokenAddress(chainId: ChainId): string | null;
 
   get activeBridge(): BridgeConfigEntry | undefined {
     return this.store.activeBridge;
