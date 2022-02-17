@@ -1,13 +1,6 @@
-import {
-  chainsConfig,
-  ChainType,
-  ChainTypeId,
-  currenciesConfig,
-  EVMChainId,
-  InternalChainId,
-  SubstrateChainId,
-} from '@webb-dapp/apps/configs';
 import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
+
+import { ChainType, ChainTypeId, EVMChainId, InternalChainId, SubstrateChainId } from './chain-id.enum';
 
 export const byteArrayToNum = (arr: number[]): number => {
   let n = 0;
@@ -160,36 +153,4 @@ export const internalChainIdIntoSubstrateId = (chainId: InternalChainId | Number
     default:
       throw Error(`Internal Id ${chainId} is not a substrate id`);
   }
-};
-
-export const chainNameFromInternalId = (internalId: InternalChainId): string => {
-  const chain = chainsConfig[internalId];
-  return chain.name;
-};
-
-export const getEVMChainName = (evmId: number): string => {
-  const chain = Object.values(chainsConfig).find((chainsConfig) => chainsConfig.chainId === evmId);
-  if (chain) {
-    return chain.name;
-  } else {
-    throw WebbError.from(WebbErrorCodes.UnsupportedChain);
-  }
-};
-
-export const getEVMChainNameFromInternal = (chainID: number): string => {
-  const chain = Object.values(chainsConfig).find((chainsConfig) => chainsConfig.id === chainID);
-  if (chain) {
-    return chain.name;
-  } else {
-    throw WebbError.from(WebbErrorCodes.UnsupportedChain);
-  }
-};
-
-export const getNativeCurrencySymbol = (evmId: number): string => {
-  const chain = Object.values(chainsConfig).find((chainsConfig) => chainsConfig.chainId === evmId);
-  if (chain) {
-    const nativeCurrency = chain.nativeCurrencyId;
-    return currenciesConfig[nativeCurrency].symbol;
-  }
-  return 'Unknown';
 };

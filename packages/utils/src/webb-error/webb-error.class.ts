@@ -111,6 +111,11 @@ export class WebbError extends Error {
           code,
           message: `The selected relayer is not operating properly`,
         };
+      case WebbErrorCodes.ChainIdTypeUnformatted:
+        return {
+          code,
+          message: `Parsing of a ChainIdType failed`,
+        };
 
       default:
         return {
