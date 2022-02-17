@@ -1,10 +1,10 @@
 import Icon from '@material-ui/core/Icon';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import { ChainId, chainsPopulated, currenciesConfig, getEVMChainName, WebbEVMChain } from '@webb-dapp/apps/configs';
+import { walletsConfig } from '@webb-dapp/apps/configs';
 import { getWebbRelayer } from '@webb-dapp/apps/configs/relayer-config';
 import { WalletId } from '@webb-dapp/apps/configs/wallets/wallet-id.enum';
-import { walletsConfig } from '@webb-dapp/apps/configs/wallets/wallets-config';
-import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3';
+import { WebbPolkadot, WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers';
 import { appEvent } from '@webb-dapp/react-environment/app-event';
 import { insufficientApiInterface } from '@webb-dapp/react-environment/error/interactive-errors/insufficient-api-interface';
 import { DimensionsProvider } from '@webb-dapp/react-environment/layout';
@@ -19,7 +19,6 @@ import { LoggerService } from '@webb-tools/app-util';
 import { logger } from 'ethers';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 
-import { WebbPolkadot } from './api-providers/polkadot';
 import { extensionNotInstalled, unsupportedChain } from './error';
 import { SettingProvider } from './SettingProvider';
 import { Chain, netStorageFactory, NetworkStorage, Wallet, WebbApiProvider, WebbContext } from './webb-context';

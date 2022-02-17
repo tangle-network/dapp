@@ -13,12 +13,12 @@
     "eslint": "^6.6.0",
     "@polkadot/api": "^6.9.2",
 	"react-error-overlay": "6.0.9",
-    "@webb-tools/type-definitions": "0.1.4-26",
-    "@webb-tools/api": "0.1.4-26",
-    "@webb-tools/types": "0.1.4-26",
-    "@webb-tools/app-util": "0.1.4-26",
-    "@webb-tools/sdk-core": "0.1.4-26",
-    "@webb-tools/wasm-utils": "0.1.4-26"
+    "@webb-tools/type-definitions": "0.1.4-35",
+    "@webb-tools/api": "0.1.4-35",
+    "@webb-tools/types": "0.1.4-35",
+    "@webb-tools/app-util": "0.1.4-35",
+    "@webb-tools/sdk-core": "0.1.4-35",
+    "@webb-tools/wasm-utils": "0.1.4-35"
   },
   "scripts": {
     "bump-version": "node scripts/bump-version.js",

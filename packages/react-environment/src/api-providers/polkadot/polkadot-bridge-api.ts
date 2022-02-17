@@ -21,21 +21,25 @@ export class PolkadotBridgeApi extends BridgeApi<WebbPolkadot, SubstrateBridgeCo
 
   constructor(inner: WebbPolkadot, s: Record<BridgeCurrencyIndex, SubstrateBridgeConfigEntry>) {
     super(inner, s);
-    this.ORMLAssetsApi = new ORMLCurrency(inner);
-    this.ORMLAssetsApi.list().then((assets) => {
-      this.ORMLCurrencies = assets.reduce(
-        (acc, asset) => ({
-          ...acc,
-          [`ORML@${asset.id}`]: asset,
-        }),
-        {}
-      );
-    });
-    this.initAnchors()
-      .then()
-      .catch((e) => {
-        console.log(e);
+    try {
+      this.ORMLAssetsApi = new ORMLCurrency(inner);
+      this.ORMLAssetsApi.list().then((assets) => {
+        this.ORMLCurrencies = assets.reduce(
+          (acc, asset) => ({
+            ...acc,
+            [`ORML@${asset.id}`]: asset,
+          }),
+          {}
+        );
       });
+      this.initAnchors()
+        .then()
+        .catch((e) => {
+          console.log(e);
+        });
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   private async initAnchors() {
@@ -83,7 +87,7 @@ export class PolkadotBridgeApi extends BridgeApi<WebbPolkadot, SubstrateBridgeCo
     /*TODO: for substrate we assume anchors are in one chain*/
     return (Object.values(this.store.config) as SubstrateBridgeConfigEntry[]).map((i) => ({
       // zero as we don't have many chains
-      neighbours: { 0: i.treeId },
+      neighbours: { [ChainId.WebbDevelopment]: i.treeId },
       amount: i.depositSize,
     }));
   }

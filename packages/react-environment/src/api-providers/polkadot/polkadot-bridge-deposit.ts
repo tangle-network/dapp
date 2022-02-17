@@ -40,13 +40,21 @@ export class PolkadotBridgeDeposit extends BridgeDeposit<WebbPolkadot, DepositPa
     }
     const tokenSymbol = currency.view.symbol;
     const destChainId = destination;
-    const sourceChainId = this.inner.api.registry.chainSS58!;
+    // TODO: add mappers similar to evm chain id
+    // const sourceChainId = this.inner.api.registry.chainSS58!;
+    const sourceChainId = ChainId.WebbDevelopment;
     const anchorPath = String(mixerId).replace('Bridge=', '').split('@');
     const amount = anchorPath[0];
-    const anchorIndex = anchorPath[1];
+    const anchorIndex = anchorPath[2];
     const anchors = await this.bridgeApi.getAnchors();
     const anchor = anchors[Number(anchorIndex)];
-    const treeId = anchor.neighbours[0] as number; // TODO: Anchor in one chain the 0 id contains the treeId
+    console.log({
+      amount,
+      anchorIndex,
+      anchor,
+      anchors,
+    });
+    const treeId = anchor.neighbours[ChainId.WebbDevelopment] as number; // TODO: Anchor in one chain the 0 id contains the treeId
     const noteInput: NoteGenInput = {
       exponentiation: '5',
       width: '4',
@@ -57,10 +65,11 @@ export class PolkadotBridgeDeposit extends BridgeDeposit<WebbPolkadot, DepositPa
       denomination: '18',
       hashFunction: 'Poseidon',
       curve: 'Bn254',
-      backend: 'Circom',
+      backend: 'Arkworks',
       version: 'v1',
       tokenSymbol: tokenSymbol,
     };
+    console.log(noteInput);
     const note = await Note.generateNote(noteInput);
     const leaf = note.getLeaf();
     return {

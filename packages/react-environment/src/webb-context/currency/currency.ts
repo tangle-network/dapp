@@ -2,7 +2,6 @@ import { ChainId, currenciesConfig, WebbCurrencyId } from '@webb-dapp/apps/confi
 import {
   CurrencyConfig,
   CurrencyRole,
-  CurrencyType,
   CurrencyView,
 } from '@webb-dapp/react-environment/types/currency-config.interface';
 import { ORMLAsset } from '@webb-dapp/react-environment/webb-context/currency/orml-currency';
@@ -24,11 +23,12 @@ export class Currency extends CurrencyContent {
     return new Currency(currencyConfig);
   }
 
+  // TODO: this should be removed instead use the constructor
   static fromORMLAsset(asset: ORMLAsset): Currency {
     return new Currency({
       ...currenciesConfig[WebbCurrencyId.WEBB],
       id: `ORML@${asset.id}`,
-      addresses: new Map(),
+      addresses: new Map([[ChainId.WebbDevelopment, asset.id]]),
       symbol: asset.name.slice(0, 3).toLocaleUpperCase(),
       name: asset.name,
     });
