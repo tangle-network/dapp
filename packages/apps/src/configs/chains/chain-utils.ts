@@ -1,4 +1,13 @@
-import { ChainType, ChainTypeId, EVMChainId, InternalChainId, SubstrateChain } from '@webb-dapp/apps/configs';
+import {
+  chainsConfig,
+  ChainType,
+  ChainTypeId,
+  currenciesConfig,
+  EVMChainId,
+  InternalChainId,
+  SubstrateChainId,
+} from '@webb-dapp/apps/configs';
+import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 
 export const byteArrayToNum = (arr: number[]): number => {
   let n = 0;
@@ -37,6 +46,28 @@ export const typeAndIdFromChainIdType = (chainIdType: number): ChainTypeId => {
   let chainType = byteArrayToNum(byteArray.slice(0, 2));
   let chainId = byteArrayToNum(byteArray.slice(2));
   return { chainType, chainId };
+};
+
+export const internalChainIdToChainId = (chainType: ChainType, internalId: InternalChainId) => {
+  switch (chainType) {
+    case ChainType.EVM:
+      return internalChainIdIntoEVMId(internalId);
+    case ChainType.Substrate:
+      return internalChainIdIntoSubstrateId(internalId);
+    default:
+      throw new Error('chainType not handled in internalChainIdToChainId');
+  }
+};
+
+export const chainTypeIdToInternalId = (chainTypeId: ChainTypeId): InternalChainId => {
+  switch (chainTypeId.chainType) {
+    case ChainType.EVM:
+      return evmIdIntoInternalChainId(chainTypeId.chainId);
+    case ChainType.Substrate:
+      return substrateIdIntoInternalChainId(chainTypeId.chainId);
+    default:
+      throw new Error('chainTypeId not handled in chainTypeIdToInternalId');
+  }
 };
 
 export const evmIdIntoInternalChainId = (evmId: number | string): InternalChainId => {
@@ -107,43 +138,56 @@ export const internalChainIdIntoEVMId = (chainId: InternalChainId | Number | Str
     case InternalChainId.PolygonTestnet:
       return EVMChainId.PolygonTestnet;
     default:
-      throw Error(`unsupported chain ${chainId}`);
+      throw Error(`unsupported evm id: ${chainId}`);
   }
 };
 
-export const internalChainIdIntoSubstrateId = (chainId: InternalChainId | Number | String): number => {
+export const substrateIdIntoInternalChainId = (chainId: SubstrateChainId): InternalChainId => {
+  switch (Number(chainId) as SubstrateChainId) {
+    case SubstrateChainId.Edgeware:
+      return InternalChainId.Edgeware;
+    default:
+      throw Error(`Unsupported substrate id: ${chainId}`);
+  }
+};
+
+export const internalChainIdIntoSubstrateId = (chainId: InternalChainId | Number | String): SubstrateChainId => {
   switch (Number(chainId) as InternalChainId) {
     case InternalChainId.Edgeware:
-      return SubstrateChain.Edgeware;
+      return SubstrateChainId.Edgeware;
     default:
-      throw Error(`unsupported chain ${chainId}`);
+      throw Error(`Internal Id ${chainId} is not a substrate id`);
   }
 };
 
-export const internalChainIdToChainId = (chainType: ChainType, internalId: InternalChainId) => {
-  switch (chainType) {
-    case ChainType.EVM:
-      return internalChainIdIntoEVMId(internalId);
-    case ChainType.Substrate:
-      return internalChainIdIntoSubstrateId(internalId);
-    default:
-      throw new Error('chainType not handled in internalChainIdToChainId');
+export const chainNameFromInternalId = (internalId: InternalChainId): string => {
+  const chain = chainsConfig[internalId];
+  return chain.name;
+};
+
+export const getEVMChainName = (evmId: number): string => {
+  const chain = Object.values(chainsConfig).find((chainsConfig) => chainsConfig.evmId === evmId);
+  if (chain) {
+    return chain.name;
+  } else {
+    throw WebbError.from(WebbErrorCodes.UnsupportedChain);
   }
 };
 
-// CURRENTLY UNNECESSARY SINCE JS/TS AUTOMATICALLY CONVERTS HEXSTRINGS TO NUMBERS, BUT PERHAPS USEFUL LATER
-// for converting chainType/hex string to a byte array of two bytes
-// export const chainTypeToByteArray = (chainType: ChainType) => {
-//   let str = chainType.toString(16);
-//   // need to maintain the leading zero
-//   if (str.length < 4) {
-//     str = '0' + str;
-//   }
-//   let arr = [];
-//   for (let i = 0; i < str.length; i += 2) {
-//     let strSlice = str.slice(i, i + 2);
-//     let byte = parseInt(strSlice, 16);
-//     arr.push(byte || 0);
-//   }
-//   return arr;
-// };
+export const getEVMChainNameFromInternal = (chainID: number): string => {
+  const chain = Object.values(chainsConfig).find((chainsConfig) => chainsConfig.id === chainID);
+  if (chain) {
+    return chain.name;
+  } else {
+    throw WebbError.from(WebbErrorCodes.UnsupportedChain);
+  }
+};
+
+export const getNativeCurrencySymbol = (evmId: number): string => {
+  const chain = Object.values(chainsConfig).find((chainsConfig) => chainsConfig.evmId === evmId);
+  if (chain) {
+    const nativeCurrency = chain.nativeCurrencyId;
+    return currenciesConfig[nativeCurrency].symbol;
+  }
+  return 'Unknown';
+};

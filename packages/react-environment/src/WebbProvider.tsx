@@ -4,8 +4,8 @@ import {
   chainsPopulated,
   currenciesConfig,
   EVMChainId,
-  getEVMChainName,
   evmIdIntoInternalChainId,
+  getEVMChainName,
   InternalChainId,
 } from '@webb-dapp/apps/configs';
 import { getWebbRelayer } from '@webb-dapp/apps/configs/relayer-config';
@@ -341,7 +341,10 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
                 })
                 ?.then(async () => {
                   if (web3Provider instanceof WalletConnectProvider) {
-                    appEvent.send('networkSwitched', [evmIdIntoInternalChainId(await chainId), WalletId.WalletConnectV1]);
+                    appEvent.send('networkSwitched', [
+                      evmIdIntoInternalChainId(await chainId),
+                      WalletId.WalletConnectV1,
+                    ]);
                   } else {
                     appEvent.send('networkSwitched', [evmIdIntoInternalChainId(await chainId), WalletId.MetaMask]);
                   }

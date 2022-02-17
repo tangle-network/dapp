@@ -239,7 +239,7 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
     const deposit = createAnchor2Deposit(destChainId);
     const secrets = deposit.preimage;
     const amount = String(mixerId).replace('Bridge=', '').split('@')[0];
-    
+
     const noteInput: NoteGenInput = {
       exponentiation: '5',
       width: '3',

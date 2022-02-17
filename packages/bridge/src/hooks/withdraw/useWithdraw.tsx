@@ -116,7 +116,7 @@ export const useWithdraw = (params: UseWithdrawProps) => {
           setReceipt(txReceipt);
         } catch (e) {
           console.log('error from withdraw api', e);
-  
+
           if ((e as any)?.code === WebbErrorCodes.RelayerMisbehaving) {
             let interactiveFeedback: InteractiveFeedback = misbehavingRelayer();
             registerInteractiveFeedback(interactiveFeedback);

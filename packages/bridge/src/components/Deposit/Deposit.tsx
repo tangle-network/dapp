@@ -1,5 +1,11 @@
 import { Checkbox, FormControlLabel, Typography } from '@material-ui/core';
-import { ChainType, InternalChainId, WebbCurrencyId } from '@webb-dapp/apps/configs';
+import {
+  ChainType,
+  ChainTypeId,
+  chainTypeIdToInternalId,
+  InternalChainId,
+  WebbCurrencyId,
+} from '@webb-dapp/apps/configs';
 import { DepositConfirm } from '@webb-dapp/bridge/components/DepositConfirm/DepositConfirm';
 import { useBridgeDeposit } from '@webb-dapp/bridge/hooks/deposit/useBridgeDeposit';
 import { useWrapUnwrap } from '@webb-dapp/page-wrap-unwrap/hooks/useWrapUnwrap';
@@ -21,7 +27,7 @@ type DepositProps = {};
 export const Deposit: React.FC<DepositProps> = () => {
   const [wrappedTokenBalance, setWrappedTokenBalance] = useState('');
   const [item, setItem] = useState<MixerSize | undefined>(undefined);
-  const [destChain, setDestChain] = useState<[ChainType, InternalChainId] | undefined>(undefined);
+  const [destChain, setDestChain] = useState<ChainTypeId | undefined>(undefined);
 
   const [wrappableTokenBalance, setWrappableTokenBalance] = useState<String>('');
   // boolean flag for displaying the wrapped asset input
@@ -113,11 +119,10 @@ export const Deposit: React.FC<DepositProps> = () => {
         chains={tokenChains}
         label={'Select Source Chain'}
         // TODO: Figure out how to embed the chain type for the active chain
-        selectedChain={[srcChain?.chainType || -1, srcChain?.id || -1]}
-        // TODO: Hook this up to network switcher
+        selectedChain={{ chainType: srcChain?.chainType || -1, chainId: srcChain?.evmId || -1 }}
         setSelectedChain={async (chainId) => {
           if (typeof chainId !== 'undefined' && activeWallet) {
-            const nextChain = chains[chainId[1]];
+            const nextChain = chains[chainTypeIdToInternalId(chainId)];
             await switchChain(nextChain, activeWallet);
           }
         }}

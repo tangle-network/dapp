@@ -13,7 +13,7 @@ export interface ChainTypeId {
   chainId: number;
 }
 
-export enum SubstrateChain {
+export enum SubstrateChainId {
   Edgeware = 7,
 }
 

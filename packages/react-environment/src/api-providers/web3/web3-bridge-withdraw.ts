@@ -1,12 +1,12 @@
 import { parseUnits } from '@ethersproject/units';
 import {
   chainsConfig,
+  chainTypeIdToInternalId,
   evmIdIntoInternalChainId,
   getAnchorAddressForBridge,
   getEVMChainName,
   getEVMChainNameFromInternal,
   InternalChainId,
-  internalChainIdIntoEVMId,
   typeAndIdFromChainIdType,
   webbCurrencyIdFromString,
 } from '@webb-dapp/apps/configs';
@@ -253,11 +253,10 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
 
     // get info from the destination chain (should be selected)
     const destChainIdType = typeAndIdFromChainIdType(Number(note.targetChainId));
-    const destChainEvmId = destChainIdType.chainId;
-    const destInternalId = evmIdIntoInternalChainId(destChainEvmId);
+    const destInternalId = chainTypeIdToInternalId(destChainIdType);
 
     // get the deposit info
-    const sourceDeposit = depositFromAnchor2Preimage(note.secret.replace('0x', ''), destChainEvmId);
+    const sourceDeposit = depositFromAnchor2Preimage(note.secret.replace('0x', ''), destChainIdType.chainId);
     this.emit('stateChange', WithdrawState.GeneratingZk);
 
     // Getting contracts data for source and dest chains
@@ -279,7 +278,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
 
     // get relayers for the source chain
     const sourceRelayers = this.inner.relayingManager.getRelayer({
-      chainId: evmIdIntoInternalChainId(typeAndIdFromChainIdType(Number(note.sourceChainId)).chainId),
+      chainId: chainTypeIdToInternalId(typeAndIdFromChainIdType(Number(note.sourceChainId))),
       baseOn: 'evm',
       bridgeSupport: {
         amount: Number(note.amount),

@@ -1,5 +1,10 @@
 import { FormHelperText, Icon, InputBase } from '@material-ui/core';
-import { getEVMChainName, getEVMChainNameFromInternal, typeAndIdFromChainIdType, webbCurrencyIdFromString } from '@webb-dapp/apps/configs';
+import {
+  getEVMChainName,
+  getEVMChainNameFromInternal,
+  typeAndIdFromChainIdType,
+  webbCurrencyIdFromString,
+} from '@webb-dapp/apps/configs';
 import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
 import { useDepositNote } from '@webb-dapp/mixer/hooks/note';
 import { Currency } from '@webb-dapp/react-environment/webb-context/currency/currency';

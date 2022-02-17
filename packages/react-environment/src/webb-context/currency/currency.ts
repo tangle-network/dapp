@@ -1,8 +1,7 @@
-import { ChainType, currenciesConfig, InternalChainId, WebbCurrencyId } from '@webb-dapp/apps/configs';
+import { ChainTypeId, currenciesConfig, InternalChainId, WebbCurrencyId } from '@webb-dapp/apps/configs';
 import {
   CurrencyConfig,
   CurrencyRole,
-  CurrencyType,
   CurrencyView,
 } from '@webb-dapp/react-environment/types/currency-config.interface';
 
@@ -38,10 +37,10 @@ export class Currency extends CurrencyContent {
     return Array.from(this.data.addresses.keys());
   }
 
-  getChainIdsAndTypes(): [ChainType, InternalChainId][] {
+  getChainIdsAndTypes(): ChainTypeId[] {
     const chainType = this.data.chainType;
     return Array.from(this.data.addresses.keys()).map((chainId) => {
-      return [chainType, chainId];
+      return { chainType, chainId };
     });
   }
 

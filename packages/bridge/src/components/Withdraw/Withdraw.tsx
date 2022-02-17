@@ -1,5 +1,13 @@
 import { FormHelperText, InputBase } from '@material-ui/core';
-import { chainsPopulated, ChainType, currenciesConfig, evmIdIntoInternalChainId, internalChainIdIntoEVMId, typeAndIdFromChainIdType } from '@webb-dapp/apps/configs';
+import {
+  chainsPopulated,
+  ChainType,
+  chainTypeIdToInternalId,
+  currenciesConfig,
+  evmIdIntoInternalChainId,
+  internalChainIdIntoEVMId,
+  typeAndIdFromChainIdType,
+} from '@webb-dapp/apps/configs';
 import WithdrawingModal from '@webb-dapp/bridge/components/Withdraw/WithdrawingModal';
 import { useWithdraw } from '@webb-dapp/bridge/hooks';
 import { useDepositNote } from '@webb-dapp/mixer';
@@ -90,8 +98,8 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
   const switchChain = async (note: Note | null) => {
     if (!note) return;
     if (!activeApi) return;
-    const chainId = typeAndIdFromChainIdType(Number(note.note.targetChainId)).chainId;
-    const internalChainId = evmIdIntoInternalChainId(chainId);
+    const chainTypeId = typeAndIdFromChainIdType(Number(note.note.targetChainId));
+    const internalChainId = chainTypeIdToInternalId(chainTypeId);
     const chain = chainsPopulated[internalChainId];
 
     const web3Provider = activeApi.getProvider();

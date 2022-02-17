@@ -1,5 +1,5 @@
 import { Button, InputBase } from '@material-ui/core';
-import { ChainType, currenciesConfig, InternalChainId, WebbCurrencyId } from '@webb-dapp/apps/configs';
+import { ChainTypeId, currenciesConfig, InternalChainId, WebbCurrencyId } from '@webb-dapp/apps/configs';
 import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
 import { useWebContext } from '@webb-dapp/react-environment';
 import { Currency, CurrencyContent } from '@webb-dapp/react-environment/webb-context/currency/currency';
@@ -35,22 +35,22 @@ const PageTransfers: FC = () => {
   const [isSwap, setIsSwap] = useState(false);
   const { activeApi, activeChain, activeWallet, chains: chainsStore, switchChain } = useWebContext();
 
-  const chains: [ChainType, InternalChainId][] = useMemo(() => {
-    const arr: [ChainType, InternalChainId][] = [];
-    Object.entries(chainsStore).forEach((el) => {
-      arr.push([el[1].chainType, Number(el[0])]);
+  const chains: ChainTypeId[] = useMemo(() => {
+    const arr: ChainTypeId[] = [];
+    Object.values(chainsStore).forEach((el) => {
+      arr.push({ chainType: el.chainType, chainId: Number(el.evmId) });
     });
     return arr;
   }, [chainsStore]);
 
-  const srcChain: [ChainType, InternalChainId] | undefined = useMemo(() => {
+  const srcChain: ChainTypeId | undefined = useMemo(() => {
     if (!activeChain) {
       return undefined;
     }
 
-    return [activeChain.chainType, activeChain.id];
+    return { chainType: activeChain.chainType, chainId: activeChain.evmId };
   }, [activeChain]);
-  const [destChain, setDestChain] = useState<[ChainType, InternalChainId] | undefined>(undefined);
+  const [destChain, setDestChain] = useState<ChainTypeId | undefined>(undefined);
   const [recipient, setRecipient] = useState('');
   const bridge = useBridge();
 

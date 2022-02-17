@@ -1,5 +1,5 @@
 import { ButtonBase, Checkbox, FormControlLabel, Icon, IconButton, Tooltip, Typography } from '@material-ui/core';
-import { ChainType, InternalChainId } from '@webb-dapp/apps/configs';
+import { ChainType, ChainTypeId, InternalChainId } from '@webb-dapp/apps/configs';
 import { BridgeDepositApi as DepositApi } from '@webb-dapp/bridge/hooks/deposit/useBridgeDeposit';
 import { DepositPayload, useWebContext } from '@webb-dapp/react-environment/webb-context';
 import { Currency } from '@webb-dapp/react-environment/webb-context/currency/currency';
@@ -49,7 +49,7 @@ type DepositInfoProps = {
   provider: DepositApi;
   onSuccess(): void;
   mixerId: number | undefined;
-  destChain: [ChainType, InternalChainId] | undefined;
+  destChain: ChainTypeId | undefined;
   wrappableAsset: Currency | null | undefined;
 };
 
@@ -130,7 +130,7 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({
     }
 
     const wrappableCurrencyAddress: string | undefined = wrappableAsset?.getAddress(activeChain.id);
-    provider.generateNote(mixerId, destChain[0], destChain[1], wrappableCurrencyAddress).then((note) => {
+    provider.generateNote(mixerId, destChain, wrappableCurrencyAddress).then((note) => {
       setNote(note);
     });
   }, [provider, mixerId, destChain, activeChain, wrappableAsset]);
