@@ -29,7 +29,6 @@ export interface CurrencyView {
 }
 
 export interface CurrencyConfig extends CurrencyView {
-  chainType: ChainType;
   addresses: Map<InternalChainId, string>;
   role: CurrencyRole;
 }

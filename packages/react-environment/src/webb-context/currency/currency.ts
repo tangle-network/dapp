@@ -1,4 +1,5 @@
 import {
+  chainsConfig,
   ChainTypeId,
   currenciesConfig,
   InternalChainId,
@@ -44,9 +45,8 @@ export class Currency extends CurrencyContent {
   }
 
   getChainIdsAndTypes(): ChainTypeId[] {
-    const chainType = this.data.chainType;
     return Array.from(this.data.addresses.keys()).map((internalId) => {
-      return { chainType, chainId: internalChainIdToChainId(chainType, internalId) };
+      return { chainType: chainsConfig[internalId].chainType, chainId: chainsConfig[internalId].chainId };
     });
   }
 

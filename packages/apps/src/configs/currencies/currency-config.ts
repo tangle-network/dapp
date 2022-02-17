@@ -15,7 +15,6 @@ import { WebbCurrencyId } from './webb-currency-id.enum';
 
 export const currenciesConfig: AppConfig['currencies'] = {
   [WebbCurrencyId.EDG]: {
-    chainType: ChainType.EVM,
     name: 'Edgeware token',
     symbol: 'EDG',
     color: '',
@@ -26,7 +25,6 @@ export const currenciesConfig: AppConfig['currencies'] = {
     addresses: new Map(),
   },
   [WebbCurrencyId.TEDG]: {
-    chainType: ChainType.EVM,
     name: 'Edgeware testnet token',
     symbol: 'tEDG',
     color: '',
@@ -37,7 +35,6 @@ export const currenciesConfig: AppConfig['currencies'] = {
     addresses: new Map(),
   },
   [WebbCurrencyId.ETH]: {
-    chainType: ChainType.EVM,
     name: 'Ethereum',
     symbol: 'ETH',
     color: '',
@@ -55,7 +52,6 @@ export const currenciesConfig: AppConfig['currencies'] = {
     ]),
   },
   [WebbCurrencyId.ONE]: {
-    chainType: ChainType.EVM,
     name: 'Harmony',
     symbol: 'ONE',
     color: '',
@@ -71,7 +67,6 @@ export const currenciesConfig: AppConfig['currencies'] = {
   },
   [WebbCurrencyId.WEBB]: {
     // IS THIS AN EVM CHAIN?
-    chainType: ChainType.EVM,
     name: 'WEBB',
     symbol: 'WEBB',
     color: '',
@@ -82,7 +77,6 @@ export const currenciesConfig: AppConfig['currencies'] = {
     addresses: new Map(),
   },
   [WebbCurrencyId.SDN]: {
-    chainType: ChainType.KusamaParachain,
     name: 'Shiden',
     symbol: 'SDN',
     color: '',
@@ -93,7 +87,6 @@ export const currenciesConfig: AppConfig['currencies'] = {
     addresses: new Map([[InternalChainId.Shiden, zeroAddress]]),
   },
   [WebbCurrencyId.WETH]: {
-    chainType: ChainType.EVM,
     name: 'Wrapped Ethereum',
     symbol: 'WETH',
     color: '',
@@ -113,7 +106,6 @@ export const currenciesConfig: AppConfig['currencies'] = {
     ]),
   },
   [WebbCurrencyId.MATIC]: {
-    chainType: ChainType.EVM,
     name: 'Polygon',
     symbol: 'MATIC',
     color: '',
@@ -124,7 +116,6 @@ export const currenciesConfig: AppConfig['currencies'] = {
     addresses: new Map([[InternalChainId.PolygonTestnet, zeroAddress]]),
   },
   [WebbCurrencyId.webbWETH]: {
-    chainType: ChainType.EVM,
     name: 'webbETH-test-1',
     symbol: 'webbWETH',
     color: '',
