@@ -1,8 +1,11 @@
+import type { OperationError } from '@webb-tools/wasm-utils';
+
 import { ChainId } from '@webb-dapp/apps/configs';
 // @ts-ignore
 import Worker from '@webb-dapp/mixer/utils/proving-manager.worker';
-import { BridgeWithdraw, WithdrawState } from '@webb-dapp/react-environment';
+import { WithdrawState } from '@webb-dapp/react-environment';
 import { WebbPolkadot } from '@webb-dapp/react-environment/api-providers';
+import { getCachedFixtureURI, withLocalFixtures } from '@webb-dapp/utils/misc';
 import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import { LoggerService } from '@webb-tools/app-util';
 import { Note, ProvingManager } from '@webb-tools/sdk-core';
@@ -11,6 +14,7 @@ import { ProvingManagerSetupInput } from '@webb-tools/sdk-core/proving/proving-m
 import { decodeAddress } from '@polkadot/keyring';
 import { hexToU8a, u8aToHex } from '@polkadot/util';
 
+import { BridgeWithdraw } from '../../webb-context/bridge/bridge-withdraw';
 const logger = LoggerService.get('PolkadotBridgeWithdraw');
 export type AnchorWithdrawProof = {
   id: string;
@@ -97,7 +101,7 @@ export class PolkadotBridgeWithdraw extends BridgeWithdraw<WebbPolkadot> {
         recipient: recipientAccountHex.replace('0x', ''),
         relayer: relayerAccountHex.replace('0x', ''),
         provingKey,
-        commitment: `0x${commitment}`,
+        commitment,
         roots: [hexToU8a(root), hexToU8a(root)],
       };
       const zkProofMetadata = await pm.proof(proofInput);
@@ -141,6 +145,12 @@ export class PolkadotBridgeWithdraw extends BridgeWithdraw<WebbPolkadot> {
     }
   }
 }
-function fetchSubstrateProvingKey() {
-  return new Uint8Array();
+async function fetchSubstrateProvingKey() {
+  const IPFSUrl = `https://ipfs.io/ipfs/QmYDtGX7Wf5qUPEpGsgrX6oss2m2mm8vi7uzNdK4C9yJdZ`;
+  const cachedURI = getCachedFixtureURI('proving_key_uncompressed_anchor.bin');
+  const ipfsKeyRequest = await fetch(withLocalFixtures() ? cachedURI : IPFSUrl);
+  const circuitKeyArrayBuffer = await ipfsKeyRequest.arrayBuffer();
+  logger.info(`Done Fetching key`);
+  const circuitKey = new Uint8Array(circuitKeyArrayBuffer);
+  return circuitKey;
 }

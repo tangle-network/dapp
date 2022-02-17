@@ -85,7 +85,7 @@ export const useWithdraw = (params: UseWithdrawProps) => {
         }
       })
       .catch((err) => {
-        logger.info('catch note deserialize useWithdraw', err);
+        logger.info('catch note deserialize useWithdraw', err, params.note);
       });
 
     const sub = withdrawApi?.watcher.subscribe((next) => {

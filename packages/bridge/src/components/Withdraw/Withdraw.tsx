@@ -5,6 +5,7 @@ import { useWithdraw } from '@webb-dapp/bridge/hooks';
 import { useDepositNote } from '@webb-dapp/mixer';
 import WithdrawSuccessModal from '@webb-dapp/react-components/Withdraw/WithdrawSuccessModal';
 import { useWebContext, WithdrawState } from '@webb-dapp/react-environment';
+import { WebbPolkadot } from '@webb-dapp/react-environment/api-providers';
 import { ActiveWebbRelayer } from '@webb-dapp/react-environment/webb-context/relayer';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
@@ -40,6 +41,9 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
     recipient,
     note,
   });
+  const depositNote = useDepositNote(note);
+
+  /// TODO: expose hook
   const feesGetter = useCallback(
     async (activeRelayer: ActiveWebbRelayer): Promise<FeesInfo> => {
       const defaultFees: FeesInfo = {
@@ -57,6 +61,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
     [note]
   );
 
+  /// TODO: expose hook
   const relayerApi: RelayerApiAdapter = useMemo(() => {
     return {
       getInfo: async (endpoint) => {
@@ -67,20 +72,34 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
       },
     };
   }, [relayerMethods]);
-  const determineDisabled = () => {
-    if (depositNote && determineSwitchButton()) {
+
+  const shouldSwitchChain = useMemo(() => {
+    if (!depositNote || !activeChain) {
+      return false;
+    }
+    // TODO consume the ChainTypeID
+    // the note target Substrate?
+    if (depositNote.note.prefix === 'webb.anchor') {
+      console.log(activeChain?.id, depositNote.note.targetChainId);
+      if (activeChain?.id !== Number(depositNote.note.targetChainId)) {
+        return true;
+      }
+    } else {
+      // The note target EVM
+      return activeChain.evmId != chainIdIntoEVMId(depositNote.note.targetChainId);
+    }
+
+    return false;
+  }, [activeChain, depositNote]);
+
+  const isDisabled = useMemo(() => {
+    if (depositNote && shouldSwitchChain) {
       return false;
     } else if (depositNote && recipient) {
       return false;
     }
     return true;
-  };
-  const determineSwitchButton = () => {
-    if (depositNote && activeChain && activeChain.evmId != chainIdIntoEVMId(depositNote.note.targetChainId)) {
-      return true;
-    }
-    return false;
-  };
+  }, [shouldSwitchChain, depositNote, recipient]);
   const switchChain = async (note: Note | null) => {
     if (!note) return;
     if (!activeApi) return;
@@ -121,7 +140,6 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
       });
   };
 
-  const depositNote = useDepositNote(note);
   return (
     <WithdrawWrapper>
       <InputSection>
@@ -161,11 +179,16 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
           <SpaceBox height={16} />
         </>
       )}
-
+      {!shouldSwitchChain ? 'OK' : 'shouldSwitchChain'}
       <MixerButton
-        disabled={determineDisabled()}
-        onClick={determineSwitchButton() ? () => switchChain(depositNote) : withdraw}
-        label={determineSwitchButton() ? 'Switch chains to withdraw' : 'Withdraw'}
+        disabled={isDisabled}
+        onClick={() => {
+          if (shouldSwitchChain) {
+            return switchChain(depositNote);
+          }
+          withdraw();
+        }}
+        label={shouldSwitchChain ? 'Switch chains to withdraw' : 'Withdraw'}
       />
       <Modal open={stage !== WithdrawState.Ideal}>
         {depositNote && (
