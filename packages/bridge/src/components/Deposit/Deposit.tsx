@@ -103,7 +103,6 @@ export const Deposit: React.FC<DepositProps> = () => {
       setWrappableToken(wrappableTokens[0]);
     }
   }, [setWrappableToken, wrappableTokens, wrappableToken]);
-  console.log(selectedBridgeCurrency, 'selectedBridgeCurrency');
   return (
     <DepositWrapper>
       <WalletBridgeCurrencyInput

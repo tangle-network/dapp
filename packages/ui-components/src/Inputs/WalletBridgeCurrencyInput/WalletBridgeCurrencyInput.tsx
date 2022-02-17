@@ -33,7 +33,6 @@ export const WalletBridgeCurrencyInput: React.FC<WalletTokenInputProps> = ({ sel
       return;
     }
   }, [allCurrencies, selectedToken, setSelectedToken]);
-  console.log(selectedToken, 'selectedToken');
   return (
     <InputSection>
       <WalletTokenInputWrapper>
@@ -47,7 +46,6 @@ export const WalletBridgeCurrencyInput: React.FC<WalletTokenInputProps> = ({ sel
               currencies={allCurrencies}
               value={selectedToken}
               onChange={(currencyContent) => {
-                console.log(currencyContent);
                 if (currencyContent) {
                   // TODO validate the id is BridgeCurrency id not WebbCurrencyId
                   setSelectedToken(currencyContent.view.id);

@@ -146,6 +146,7 @@ export class PolkadotBridgeWithdraw extends BridgeWithdraw<WebbPolkadot> {
   }
 }
 async function fetchSubstrateProvingKey() {
+  // TODO: change to anchor fixture
   const IPFSUrl = `https://ipfs.io/ipfs/QmYDtGX7Wf5qUPEpGsgrX6oss2m2mm8vi7uzNdK4C9yJdZ`;
   const cachedURI = getCachedFixtureURI('proving_key_uncompressed_anchor.bin');
   const ipfsKeyRequest = await fetch(withLocalFixtures() ? cachedURI : IPFSUrl);
