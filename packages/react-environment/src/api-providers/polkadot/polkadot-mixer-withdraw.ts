@@ -27,7 +27,7 @@ async function fetchSubstrateProvingKey() {
   const cachedURI = getCachedFixtureURI('proving_key_uncompressed.bin');
   const ipfsKeyRequest = await fetch(withLocalFixtures() ? cachedURI : IPFSUrl);
   const circuitKeyArrayBuffer = await ipfsKeyRequest.arrayBuffer();
-  logger.info(`Done Fetching key`);
+  logger.info(`Done Fetching key from ${ipfsKeyRequest.url}`);
   const circuitKey = new Uint8Array(circuitKeyArrayBuffer);
   return circuitKey;
 }

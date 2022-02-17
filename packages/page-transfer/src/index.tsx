@@ -1,5 +1,11 @@
 import { Button, InputBase } from '@material-ui/core';
-import { ChainTypeId, currenciesConfig, InternalChainId, WebbCurrencyId } from '@webb-dapp/apps/configs';
+import {
+  ChainTypeId,
+  chainTypeIdToInternalId,
+  currenciesConfig,
+  InternalChainId,
+  WebbCurrencyId,
+} from '@webb-dapp/apps/configs';
 import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
 import { useWebContext } from '@webb-dapp/react-environment';
 import { Currency, CurrencyContent } from '@webb-dapp/react-environment/webb-context/currency/currency';
@@ -38,7 +44,7 @@ const PageTransfers: FC = () => {
   const chains: ChainTypeId[] = useMemo(() => {
     const arr: ChainTypeId[] = [];
     Object.values(chainsStore).forEach((el) => {
-      arr.push({ chainType: el.chainType, chainId: Number(el.evmId) });
+      arr.push({ chainType: el.chainType, chainId: Number(el.chainId) });
     });
     return arr;
   }, [chainsStore]);
@@ -48,7 +54,7 @@ const PageTransfers: FC = () => {
       return undefined;
     }
 
-    return { chainType: activeChain.chainType, chainId: activeChain.evmId };
+    return { chainType: activeChain.chainType, chainId: activeChain.chainId };
   }, [activeChain]);
   const [destChain, setDestChain] = useState<ChainTypeId | undefined>(undefined);
   const [recipient, setRecipient] = useState('');
@@ -70,9 +76,9 @@ const PageTransfers: FC = () => {
           label={'Select Source Chain'}
           selectedChain={srcChain}
           // TODO: Hook this up to network switcher
-          setSelectedChain={async (chainTypeInternalChainId) => {
-            if (typeof chainTypeInternalChainId !== 'undefined' && activeWallet) {
-              const nextChain = chainsStore[chainTypeInternalChainId[1]];
+          setSelectedChain={async (chainTypeId) => {
+            if (typeof chainTypeId !== 'undefined' && activeWallet) {
+              const nextChain = chainsStore[chainTypeIdToInternalId(chainTypeId)];
               await switchChain(nextChain, activeWallet);
             }
           }}

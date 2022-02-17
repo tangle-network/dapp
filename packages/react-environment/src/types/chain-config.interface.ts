@@ -5,7 +5,7 @@ export interface ChainConfig {
   chainType: ChainType;
   name: string;
   group: string;
-  evmId: number | undefined;
+  chainId: number;
   tag?: 'dev' | 'test' | 'live';
   url: string;
   evmRpcUrls?: string[];

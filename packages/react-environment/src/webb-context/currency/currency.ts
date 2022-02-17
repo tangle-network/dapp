@@ -1,4 +1,4 @@
-import { ChainTypeId, currenciesConfig, InternalChainId, WebbCurrencyId } from '@webb-dapp/apps/configs';
+import { ChainTypeId, currenciesConfig, InternalChainId, internalChainIdToChainId, WebbCurrencyId } from '@webb-dapp/apps/configs';
 import {
   CurrencyConfig,
   CurrencyRole,
@@ -39,8 +39,8 @@ export class Currency extends CurrencyContent {
 
   getChainIdsAndTypes(): ChainTypeId[] {
     const chainType = this.data.chainType;
-    return Array.from(this.data.addresses.keys()).map((chainId) => {
-      return { chainType, chainId };
+    return Array.from(this.data.addresses.keys()).map((internalId) => {
+      return { chainType, chainId: internalChainIdToChainId(chainType, internalId) };
     });
   }
 

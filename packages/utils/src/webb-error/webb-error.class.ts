@@ -22,6 +22,8 @@ export enum WebbErrorCodes {
   RelayerUnsupportedMixer,
   /// Relayer is not operating properly (sending bad leaves, etc.)
   RelayerMisbehaving,
+  /// Failed to parse the chainId
+  ChainIdTypeUnformatted
 }
 
 /// An Error message with error metadata

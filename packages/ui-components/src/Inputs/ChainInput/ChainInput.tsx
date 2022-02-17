@@ -125,7 +125,7 @@ const DropdownInput: React.FC<DropdownInputProps> = ({ chains, onChange, value }
 
     return {
       id: value,
-      chain: chainsPopulated[evmIdIntoInternalChainId(value.chainId)],
+      chain: chainsPopulated[chainTypeIdToInternalId(value)],
     };
   }, [value]);
   const $wrapper = useRef<HTMLDivElement>(null);
@@ -218,7 +218,8 @@ const DropdownInput: React.FC<DropdownInputProps> = ({ chains, onChange, value }
                 <StyledList as={List} dense disablePadding>
                   {chains.map((chainTypeId) => {
                     const isSelected = selected?.id === chainTypeId;
-                    const chain = chainsPopulated[chainTypeIdToInternalId(chainTypeId)];
+                    console.log('chainTypeId: ', chainTypeId);
+                    let chain = chainsPopulated[chainTypeIdToInternalId(chainTypeId)];
                     return (
                       <li
                         role={'button'}

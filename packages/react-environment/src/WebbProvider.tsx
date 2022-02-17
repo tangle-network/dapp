@@ -257,7 +257,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
                   [EVMChainId.Beresheet]: 'http://beresheet1.edgewa.re:9933',
                   [EVMChainId.HarmonyTestnet1]: 'https://api.s1.b.hmny.io',
                 },
-                chainId: chain.evmId,
+                chainId: chain.chainId,
               });
 
               web3Provider = await Web3Provider.fromWalletConnectProvider(provider);
@@ -298,7 +298,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
             const webbWeb3Provider = await WebbWeb3Provider.init(web3Provider, chainId, relayer);
 
             const providerUpdateHandler = async ([chainId]: number[]) => {
-              const nextChain = Object.values(chains).find((chain) => chain.evmId === chainId);
+              const nextChain = Object.values(chains).find((chain) => chain.chainId === chainId);
               try {
                 /// this will throw if the user switched to unsupported chain
                 const name = getEVMChainName(chainId);
@@ -328,7 +328,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
             webbWeb3Provider.on('providerUpdate', providerUpdateHandler);
 
             webbWeb3Provider.setChainListener();
-            const cantAddChain = !chain.evmId && !chain.evmRpcUrls;
+            const cantAddChain = !chain.chainId && !chain.evmRpcUrls;
             const addEvmChain = async () => {
               if (cantAddChain) {
                 return;
@@ -337,7 +337,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
               // If we support the evmId but don't have an evmRpcUrl, then it is default on metamask
               await web3Provider
                 .switchChain({
-                  chainId: `0x${chain.evmId?.toString(16)}`,
+                  chainId: `0x${chain.chainId?.toString(16)}`,
                 })
                 ?.then(async () => {
                   if (web3Provider instanceof WalletConnectProvider) {
@@ -353,10 +353,10 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
                   console.log('inside catch for switchChain', switchError);
 
                   // cannot switch because network not recognized, so prompt to add it
-                  if (switchError.code === 4902 && chain.evmId) {
+                  if (switchError.code === 4902 && chain.chainId) {
                     const currency = currenciesConfig[chain.nativeCurrencyId];
                     await web3Provider.addChain({
-                      chainId: `0x${chain.evmId.toString(16)}`,
+                      chainId: `0x${chain.chainId.toString(16)}`,
                       chainName: chain.name,
                       rpcUrls: chain.evmRpcUrls ?? [],
                       nativeCurrency: {
@@ -368,7 +368,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
                     // add network will prompt the switch, check evmId again and throw if user rejected
                     const newChainId = await web3Provider.network;
 
-                    if (newChainId != chain.evmId) {
+                    if (newChainId != chain.chainId) {
                       throw switchError;
                     }
                   } else {
@@ -376,7 +376,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
                   }
                 });
             };
-            if (chainId !== chain.evmId) {
+            if (chainId !== chain.chainId) {
               await addEvmChain();
             }
 

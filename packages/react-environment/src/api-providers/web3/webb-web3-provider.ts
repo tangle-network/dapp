@@ -224,7 +224,7 @@ export class WebbWeb3Provider
           // add network will prompt the switch, check evmId again and throw if user rejected
           const newChainId = await this.web3Provider.network;
 
-          if (newChainId != chain.evmId) {
+          if (newChainId != chain.chainId) {
             throw switchError;
           }
         } else {

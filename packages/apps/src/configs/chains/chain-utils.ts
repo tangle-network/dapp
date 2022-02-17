@@ -55,7 +55,7 @@ export const internalChainIdToChainId = (chainType: ChainType, internalId: Inter
     case ChainType.Substrate:
       return internalChainIdIntoSubstrateId(internalId);
     default:
-      throw new Error('chainType not handled in internalChainIdToChainId');
+      throw WebbError.from(WebbErrorCodes.ChainIdTypeUnformatted);
   }
 };
 
@@ -146,6 +146,8 @@ export const substrateIdIntoInternalChainId = (chainId: SubstrateChainId): Inter
   switch (Number(chainId) as SubstrateChainId) {
     case SubstrateChainId.Edgeware:
       return InternalChainId.Edgeware;
+    case SubstrateChainId.Webb:
+      return InternalChainId.WebbDevelopment;
     default:
       throw Error(`Unsupported substrate id: ${chainId}`);
   }
@@ -166,7 +168,7 @@ export const chainNameFromInternalId = (internalId: InternalChainId): string => 
 };
 
 export const getEVMChainName = (evmId: number): string => {
-  const chain = Object.values(chainsConfig).find((chainsConfig) => chainsConfig.evmId === evmId);
+  const chain = Object.values(chainsConfig).find((chainsConfig) => chainsConfig.chainId === evmId);
   if (chain) {
     return chain.name;
   } else {
@@ -184,7 +186,7 @@ export const getEVMChainNameFromInternal = (chainID: number): string => {
 };
 
 export const getNativeCurrencySymbol = (evmId: number): string => {
-  const chain = Object.values(chainsConfig).find((chainsConfig) => chainsConfig.evmId === evmId);
+  const chain = Object.values(chainsConfig).find((chainsConfig) => chainsConfig.chainId === evmId);
   if (chain) {
     const nativeCurrency = chain.nativeCurrencyId;
     return currenciesConfig[nativeCurrency].symbol;

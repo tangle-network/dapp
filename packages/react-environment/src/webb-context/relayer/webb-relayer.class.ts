@@ -226,7 +226,7 @@ export class WebbRelayerBuilder {
         }
         if (tornadoSupport && baseOn && chainId) {
           if (baseOn == 'evm') {
-            const evmId = chainsConfig[chainId].evmId!;
+            const evmId = chainsConfig[chainId].chainId!;
             const mixersInfoForChain = new EvmChainMixersInfo(evmId);
             const mixerInfo = mixersInfoForChain.getTornMixerInfoBySize(
               tornadoSupport.amount,

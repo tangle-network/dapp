@@ -63,7 +63,8 @@ export const Deposit: React.FC<DepositProps> = () => {
   const handleSuccess = useCallback((): void => {}, []);
 
   const tokenChains = useMemo(() => {
-    return selectedBridgeCurrency?.getChainIdsAndTypes() ?? [];
+    const chains = selectedBridgeCurrency?.getChainIdsAndTypes() ?? [];
+    return chains;
   }, [selectedBridgeCurrency]);
 
   const disabledDepositButton = useMemo(() => {
@@ -119,7 +120,7 @@ export const Deposit: React.FC<DepositProps> = () => {
         chains={tokenChains}
         label={'Select Source Chain'}
         // TODO: Figure out how to embed the chain type for the active chain
-        selectedChain={{ chainType: srcChain?.chainType || -1, chainId: srcChain?.evmId || -1 }}
+        selectedChain={{ chainType: srcChain?.chainType || -1, chainId: srcChain?.chainId || -1 }}
         setSelectedChain={async (chainId) => {
           if (typeof chainId !== 'undefined' && activeWallet) {
             const nextChain = chains[chainTypeIdToInternalId(chainId)];
