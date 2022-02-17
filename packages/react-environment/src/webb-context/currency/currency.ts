@@ -1,4 +1,10 @@
-import { ChainTypeId, currenciesConfig, InternalChainId, internalChainIdToChainId, WebbCurrencyId } from '@webb-dapp/apps/configs';
+import {
+  ChainTypeId,
+  currenciesConfig,
+  InternalChainId,
+  internalChainIdToChainId,
+  WebbCurrencyId,
+} from '@webb-dapp/apps/configs';
 import {
   CurrencyConfig,
   CurrencyRole,

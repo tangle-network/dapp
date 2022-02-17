@@ -114,7 +114,7 @@ const WithdrawSuccessModal: React.FC<WithdrawingModalProps> = ({ exit, note, rec
   const getBlockExplorerTx = (txHash: string): string => {
     let chainId: InternalChainId;
     try {
-      chainId = chainTypeIdToInternalId(typeAndIdFromChainIdType(Number(note.targetChainId)));     
+      chainId = chainTypeIdToInternalId(typeAndIdFromChainIdType(Number(note.targetChainId)));
     } catch (e) {
       chainId = Number(note.targetChainId);
     }
@@ -127,7 +127,7 @@ const WithdrawSuccessModal: React.FC<WithdrawingModalProps> = ({ exit, note, rec
   const getBlockExplorerAddress = (address: string): string => {
     let chainId: InternalChainId;
     try {
-      chainId = chainTypeIdToInternalId(typeAndIdFromChainIdType(Number(note.targetChainId)));     
+      chainId = chainTypeIdToInternalId(typeAndIdFromChainIdType(Number(note.targetChainId)));
     } catch (e) {
       chainId = Number(note.targetChainId);
     }
