@@ -208,7 +208,7 @@ export const chainsConfig: AppConfig['chains'] = {
   //   nativeCurrencyId: WebbCurrencyId.ETH,
   // },
   [InternalChainId.Shiden]: {
-    chainType: ChainType.KusamaParachain,
+    chainType: ChainType.EVM,
     group: 'sdn',
     id: InternalChainId.Shiden,
     chainId: EVMChainId.Shiden,

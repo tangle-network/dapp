@@ -10,7 +10,7 @@ export enum ChainType {
 
 export interface ChainTypeId {
   chainType: ChainType;
-  chainId: number;
+  chainId: EVMChainId | SubstrateChainId;
 }
 
 export enum SubstrateChainId {
@@ -24,10 +24,6 @@ export enum PolkadotRelayChain {
 
 export enum KusamaRelayChain {
   Mainnet = 2,
-}
-
-export enum KusamaParachain {
-  Shiden = 2007,
 }
 
 // INTERNAL CHAIN IDS

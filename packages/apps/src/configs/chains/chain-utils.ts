@@ -57,7 +57,7 @@ export const chainTypeIdToInternalId = (chainTypeId: ChainTypeId): InternalChain
     case ChainType.EVM:
       return evmIdIntoInternalChainId(chainTypeId.chainId);
     case ChainType.Substrate:
-      return substrateIdIntoInternalChainId(chainTypeId.chainId);
+      return substrateIdIntoInternalChainId(chainTypeId.chainId as SubstrateChainId);
     default:
       throw new Error('chainTypeId not handled in chainTypeIdToInternalId');
   }
