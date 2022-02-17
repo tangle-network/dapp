@@ -5,6 +5,7 @@ import {
   CurrencyType,
   CurrencyView,
 } from '@webb-dapp/react-environment/types/currency-config.interface';
+import { ORMLAsset } from '@webb-dapp/react-environment/webb-context/currency/orml-currency';
 
 export abstract class CurrencyContent {
   abstract get view(): CurrencyView;
@@ -12,7 +13,7 @@ export abstract class CurrencyContent {
 
 // This currency class assumes that instances are wrappable assets.
 export class Currency extends CurrencyContent {
-  constructor(private data: CurrencyConfig) {
+  constructor(private data: Omit<CurrencyConfig, 'id'> & { id: string | WebbCurrencyId }) {
     super();
   }
   get id() {
@@ -21,6 +22,16 @@ export class Currency extends CurrencyContent {
   static fromCurrencyId(currencyId: WebbCurrencyId) {
     const currencyConfig = currenciesConfig[currencyId];
     return new Currency(currencyConfig);
+  }
+
+  static fromORMLAsset(asset: ORMLAsset): Currency {
+    return new Currency({
+      ...currenciesConfig[WebbCurrencyId.WEBB],
+      id: `ORML@${asset.id}`,
+      addresses: new Map(),
+      symbol: asset.name.slice(0, 3).toLocaleUpperCase(),
+      name: asset.name,
+    });
   }
 
   static isWrappableCurrency(currencyId: WebbCurrencyId) {
@@ -43,6 +54,7 @@ export class Currency extends CurrencyContent {
   get view(): CurrencyView {
     return {
       icon: this.data.icon,
+      // @ts-ignore
       id: this.data.id,
       type: this.data.type,
       name: this.data.name,

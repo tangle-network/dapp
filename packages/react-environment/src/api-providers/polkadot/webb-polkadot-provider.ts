@@ -5,6 +5,8 @@ import {
   PolkadotWrapUnwrap,
   PolkaTXBuilder,
 } from '@webb-dapp/react-environment/api-providers/polkadot';
+import { PolkadotBridgeApi } from '@webb-dapp/react-environment/api-providers/polkadot/polkadot-bridge-api';
+import { PolkadotBridgeDeposit } from '@webb-dapp/react-environment/api-providers/polkadot/polkadot-bridge-deposit';
 import {
   ApiInitHandler,
   ProvideCapabilities,
@@ -42,8 +44,8 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
       bridge: {
         core: null,
         deposit: {
-          inner: {} as any,
-          enabled: false,
+          inner: new PolkadotBridgeDeposit(this),
+          enabled: true,
         },
         withdraw: {
           inner: {} as any,
@@ -67,6 +69,7 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
         },
       },
       chainQuery: new PolkadotChainQuery(this),
+      bridgeApi: new PolkadotBridgeApi(this, {}),
     };
   }
 
