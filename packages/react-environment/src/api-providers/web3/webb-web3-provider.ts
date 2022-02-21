@@ -1,4 +1,5 @@
 import {
+  bridgeConfigByAsset,
   chainsConfig,
   currenciesConfig,
   evmIdIntoInternalChainId,
