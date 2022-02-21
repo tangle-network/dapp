@@ -66,7 +66,6 @@ export const useWithdraw = (params: UseWithdrawProps) => {
   const { registerInteractiveFeedback } = useWebContext();
   // hook events
   useEffect(() => {
-
     if (params.note) {
       withdrawApi?.getRelayersByNote(params.note).then((r) => {
         setRelayersState((p) => ({
