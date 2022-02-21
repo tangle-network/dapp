@@ -1,69 +1,16 @@
-import { ChainId } from '@webb-dapp/apps/configs';
+import { ChainId, currenciesConfig } from '@webb-dapp/apps/configs';
 import { WebbPolkadot } from '@webb-dapp/react-environment/api-providers';
-import {
-  AnchorBase,
-  BridgeApi,
-  BridgeCurrencyIndex,
-} from '@webb-dapp/react-environment/webb-context/bridge/bridge-api';
+import { BridgeConfig } from '@webb-dapp/react-environment/types/bridge-config.interface';
+import { CurrencyRole, CurrencyType } from '@webb-dapp/react-environment/types/currency-config.interface';
+import { AnchorBase, BridgeApi } from '@webb-dapp/react-environment/webb-context/bridge/bridge-api';
 import { Currency } from '@webb-dapp/react-environment/webb-context/currency/currency';
-import { ORMLAsset, ORMLCurrency } from '@webb-dapp/react-environment/webb-context/currency/orml-currency';
+import { ORMLAsset } from '@webb-dapp/react-environment/webb-context/currency/orml-currency';
 
-export type SubstrateBridgeConfigEntry = {
-  treeId: string;
-  depositSize: string;
-  asset: string;
-};
-
-export class PolkadotBridgeApi extends BridgeApi<WebbPolkadot, SubstrateBridgeConfigEntry> {
+export class PolkadotBridgeApi extends BridgeApi<WebbPolkadot, BridgeConfig> {
   private ORMLCurrencies: Record<string, ORMLAsset> = {};
 
-  private readonly ORMLAssetsApi: ORMLCurrency;
-
-  constructor(inner: WebbPolkadot, s: Record<BridgeCurrencyIndex, SubstrateBridgeConfigEntry>) {
-    super(inner, s);
-    try {
-      this.ORMLAssetsApi = new ORMLCurrency(inner);
-      this.ORMLAssetsApi.list().then((assets) => {
-        this.ORMLCurrencies = assets.reduce(
-          (acc, asset) => ({
-            ...acc,
-            [`ORML@${asset.id}`]: asset,
-          }),
-          {}
-        );
-      });
-      this.initAnchors()
-        .then()
-        .catch((e) => {
-          console.log(e);
-        });
-    } catch (e) {
-      console.log(e);
-    }
-  }
-
-  private async initAnchors() {
-    const api = this.inner.api;
-    const anchors = await api.query.anchorBn254.anchors.entries();
-    // @ts-ignore
-    const data = anchors.map(([key, entry]): SubstrateBridgeConfigEntry => {
-      const treeId = (key.toHuman() as Array<string>)[0];
-      const anchor: { depositSize: string; asset: string } = entry.toHuman();
-      return {
-        asset: anchor.asset,
-        depositSize: anchor.depositSize,
-        treeId: treeId,
-      };
-    });
-    this.store = {
-      config: data.reduce(
-        (acc, anchor) => ({
-          ...acc,
-          [`ORML@${anchor.asset}`]: anchor,
-        }),
-        {}
-      ),
-    };
+  private get activeBridgeAsset() {
+    return this.store.activeBridge?.asset ?? null;
   }
 
   getTokenAddress(chainId: ChainId): string | null {
@@ -71,25 +18,25 @@ export class PolkadotBridgeApi extends BridgeApi<WebbPolkadot, SubstrateBridgeCo
   }
 
   async getCurrencies(): Promise<Currency[]> {
-    return Object.values(this.ORMLCurrencies).map((i) => Currency.fromORMLAsset(i));
-  }
-
-  private get activeBridgeAsset(): ORMLAsset | null {
-    const asset = this.store.activeBridge?.asset;
-    return asset ? this.ORMLCurrencies[`ORML@${asset}`] : null;
+    const bridgeCurrenciesConfig = Object.values(currenciesConfig).filter(
+      (i) => i.type === CurrencyType.ORML && i.role == CurrencyRole.Governable
+    );
+    return bridgeCurrenciesConfig.map((config) => {
+      return Currency.fromCurrencyId(config.id);
+    });
   }
 
   get currency(): Currency | null {
-    return this.activeBridgeAsset ? Currency.fromORMLAsset(this.activeBridgeAsset) : null;
+    return this.activeBridgeAsset ? Currency.fromCurrencyId(this.activeBridgeAsset) : null;
   }
 
   async getAnchors(): Promise<AnchorBase[]> {
-    /*TODO: for substrate we assume anchors are in one chain*/
-    return (Object.values(this.store.config) as SubstrateBridgeConfigEntry[]).map((i) => ({
-      // zero as we don't have many chains
-      neighbours: { [ChainId.WebbDevelopment]: i.treeId },
-      amount: i.depositSize,
-    }));
+    return (
+      this.store.activeBridge?.anchors.map((anchor) => ({
+        amount: anchor.amount,
+        neighbours: anchor.anchorTreeIds,
+      })) ?? []
+    );
   }
 
   async getWrappableAssets(chainId: ChainId): Promise<Currency[]> {

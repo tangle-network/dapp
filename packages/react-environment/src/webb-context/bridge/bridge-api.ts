@@ -56,7 +56,6 @@ export abstract class BridgeApi<Api, BridgeConfigEntry> {
   abstract getAnchors(): Promise<AnchorBase[]>;
 
   setActiveBridge(activeBridge: BridgeConfigEntry | undefined) {
-    console.log({ activeBridge });
     this.store = {
       ...this.store,
       activeBridge: activeBridge,

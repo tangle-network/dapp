@@ -1,3 +1,4 @@
+import { bridgeConfigByAsset } from '@webb-dapp/apps/configs';
 import {
   PolkadotChainQuery,
   PolkadotMixerDeposit,
@@ -70,7 +71,7 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
         },
       },
       chainQuery: new PolkadotChainQuery(this),
-      bridgeApi: new PolkadotBridgeApi(this, {}),
+      bridgeApi: new PolkadotBridgeApi(this, bridgeConfigByAsset),
     };
   }
 

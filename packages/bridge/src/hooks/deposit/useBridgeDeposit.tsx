@@ -89,6 +89,11 @@ export const useBridgeDeposit = (): BridgeDepositApi => {
     if (activeBridgeApi) {
       if (bridgeCurrency) {
         const nextBridge = activeBridgeApi.store.config[bridgeCurrency];
+        console.log(activeBridgeApi.store);
+        console.log({ nextBridge, bridgeCurrency });
+        if (!nextBridge) {
+          return;
+        }
         activeBridgeApi.setActiveBridge(nextBridge);
       } else {
         activeBridgeApi.setActiveBridge(undefined);
