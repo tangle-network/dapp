@@ -35,7 +35,7 @@ export class Currency extends CurrencyContent {
     return new Currency({
       ...currenciesConfig[WebbCurrencyId.WEBB],
       id: `ORML@${asset.id}`,
-      addresses: new Map([[ChainId.WebbDevelopment, asset.id]]),
+      addresses: new Map([[InternalChainId.WebbDevelopment, asset.id]]),
       symbol: asset.name.slice(0, 3).toLocaleUpperCase(),
       name: asset.name,
     });

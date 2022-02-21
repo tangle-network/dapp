@@ -1,5 +1,3 @@
-import { ChainId } from '@webb-dapp/apps/configs';
-
 import { DepositPayload, MixerDeposit } from '../mixer/mixer-deposit';
 
 export abstract class BridgeDeposit<T, K extends DepositPayload = DepositPayload<any>> extends MixerDeposit<T, K> {

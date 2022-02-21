@@ -1,4 +1,4 @@
-import { ChainId, WebbCurrencyId } from '@webb-dapp/apps/configs';
+import { ChainTypeId, chainTypeIdToInternalId, InternalChainId, WebbCurrencyId } from '@webb-dapp/apps/configs';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 import { Currency } from '../currency/currency';
@@ -12,7 +12,7 @@ type BridgeStore<BridgeConfigEntry, BridgeConfig = Record<BridgeCurrencyIndex, B
 export type AnchorBase = {
   amount: string | number;
   neighbours: {
-    [key in ChainId]?: string | number;
+    [key in InternalChainId]?: string | number;
   };
 };
 export abstract class BridgeApi<Api, BridgeConfigEntry> {
@@ -47,7 +47,7 @@ export abstract class BridgeApi<Api, BridgeConfigEntry> {
   abstract getCurrencies(): Promise<Currency[]>;
 
   // For evm
-  abstract getTokenAddress(chainId: ChainId): string | null;
+  abstract getTokenAddress(chainId: ChainTypeId): string | null;
 
   get activeBridge(): BridgeConfigEntry | undefined {
     return this.store.activeBridge;
@@ -61,13 +61,14 @@ export abstract class BridgeApi<Api, BridgeConfigEntry> {
       activeBridge: activeBridge,
     };
   }
-  abstract getWrappableAssets(chainId: ChainId): Promise<Currency[]>;
+  abstract getWrappableAssets(chainId: ChainTypeId): Promise<Currency[]>;
 
   /*
    *  Get all Bridge tokens for a given chain
    * */
-  async getTokensOfChain(chainId: ChainId): Promise<Currency[]> {
+  async getTokensOfChain(chainId: ChainTypeId): Promise<Currency[]> {
     const tokens = await this.getCurrencies();
-    return tokens.filter((token) => token.hasChain(chainId));
+    const internalChainId = chainTypeIdToInternalId(chainId);
+    return tokens.filter((token) => token.hasChain(internalChainId));
   }
 }

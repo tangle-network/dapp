@@ -6,13 +6,13 @@ import {
   evmIdIntoInternalChainId,
   getEVMChainNameFromInternal,
   InternalChainId,
-  internalChainIdIntoEVMId,
 } from '@webb-dapp/apps/configs';
 import { WebbGovernedToken } from '@webb-dapp/contracts/contracts';
 import { ERC20__factory } from '@webb-dapp/contracts/types';
 import { createAnchor2Deposit, Deposit } from '@webb-dapp/contracts/utils/make-deposit';
 import { DepositPayload as IDepositPayload, MixerSize } from '@webb-dapp/react-environment';
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3/webb-web3-provider';
+import { Currency } from '@webb-dapp/react-environment/webb-context/currency/currency';
 import { notificationApi } from '@webb-dapp/ui-components/notification';
 import { DepositNotification } from '@webb-dapp/ui-components/notification/DepositNotification';
 import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polkadot/transaction-notification-config';
@@ -66,7 +66,7 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
         throw new Error('not Anchor for amount' + note.amount);
       }
       // Get the contract address for the destination chain
-      const contractAddress = anchor.neighbours[sourceChainId];
+      const contractAddress = anchor.neighbours[sourceInternalId];
       if (!contractAddress) {
         throw new Error(`No Anchor for the chain ${note.targetChainId}`);
       }
@@ -190,7 +190,8 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
   }
 
   async getWrappableAssets(chainId: InternalChainId): Promise<Currency[]> {
-    const bridge = this.activeBridge;
+    const bridge = this.bridgeApi.activeBridge;
+
     logger.log('getWrappableAssets of chain: ', chainId);
     if (bridge) {
       const wrappedTokenAddress = bridge.getTokenAddress(chainId);

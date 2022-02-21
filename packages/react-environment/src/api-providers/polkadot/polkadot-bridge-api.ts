@@ -1,4 +1,4 @@
-import { ChainId, currenciesConfig } from '@webb-dapp/apps/configs';
+import { ChainTypeId, currenciesConfig } from '@webb-dapp/apps/configs';
 import { WebbPolkadot } from '@webb-dapp/react-environment/api-providers';
 import { BridgeConfig } from '@webb-dapp/react-environment/types/bridge-config.interface';
 import { CurrencyRole, CurrencyType } from '@webb-dapp/react-environment/types/currency-config.interface';
@@ -13,7 +13,7 @@ export class PolkadotBridgeApi extends BridgeApi<WebbPolkadot, BridgeConfig> {
     return this.store.activeBridge?.asset ?? null;
   }
 
-  getTokenAddress(chainId: ChainId): string | null {
+  getTokenAddress(chainId: ChainTypeId): string | null {
     return null;
   }
 
@@ -39,7 +39,7 @@ export class PolkadotBridgeApi extends BridgeApi<WebbPolkadot, BridgeConfig> {
     );
   }
 
-  async getWrappableAssets(chainId: ChainId): Promise<Currency[]> {
+  async getWrappableAssets(chainId: ChainTypeId): Promise<Currency[]> {
     return [];
   }
 }

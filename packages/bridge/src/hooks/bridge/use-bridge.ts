@@ -1,4 +1,4 @@
-import { ChainId } from '@webb-dapp/apps/configs';
+import { ChainTypeId } from '@webb-dapp/apps/configs';
 import { useWebContext } from '@webb-dapp/react-environment';
 import { Currency } from '@webb-dapp/react-environment/webb-context/currency/currency';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -13,7 +13,7 @@ export const useBridge = () => {
   }, [bridgeApi]);
 
   const getTokensOfChain = useCallback(
-    (chainId: ChainId): Promise<Currency[]> => {
+    (chainId: ChainTypeId): Promise<Currency[]> => {
       return bridgeApi?.getTokensOfChain(chainId) ?? Promise.resolve([]);
     },
     [bridgeApi]
