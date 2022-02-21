@@ -1,7 +1,5 @@
-import type { OperationError } from '@webb-tools/wasm-utils';
-
-import { ChainId } from '@webb-dapp/apps/configs';
 // @ts-ignore
+import { InternalChainId } from '@webb-dapp/apps/configs';
 import Worker from '@webb-dapp/mixer/utils/proving-manager.worker';
 import { WithdrawState } from '@webb-dapp/react-environment';
 import { WebbPolkadot } from '@webb-dapp/react-environment/api-providers';
@@ -74,15 +72,15 @@ export class PolkadotBridgeWithdraw extends BridgeWithdraw<WebbPolkadot> {
       const amount = parseNote.note.amount;
       const anchors = await this.inner.methods.bridgeApi.getAnchors();
       const anchor = anchors.find((a) => a.amount === amount)!;
-      const treeId = anchor.neighbours[ChainId.WebbDevelopment] as string;
+      const treeId = anchor.neighbours[InternalChainId.WebbDevelopment] as string;
 
       const leaves = await this.fetchRPCTreeLeaves(treeId);
       const leaf = depositNote.getLeafCommitment();
       const leafHex = u8aToHex(leaf);
       let leafIndex = leaves.findIndex((leaf) => u8aToHex(leaf) === leafHex);
 
-      const sourceChainId = Number(depositNote.sourceChainId) as ChainId;
-      const targetChainId = Number(depositNote.targetChainId) as ChainId;
+      const sourceChainId = Number(depositNote.sourceChainId) as InternalChainId;
+      const targetChainId = Number(depositNote.targetChainId) as InternalChainId;
 
       const pm = new ProvingManager(new Worker());
 

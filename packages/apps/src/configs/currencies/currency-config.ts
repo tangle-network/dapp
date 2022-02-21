@@ -74,7 +74,7 @@ export const currenciesConfig: AppConfig['currencies'] = {
     type: CurrencyType.ORML,
     role: CurrencyRole.Governable,
     icon: React.createElement(WEBBLogo),
-    addresses: new Map([[ChainId.WebbDevelopment, ZERO]]),
+    addresses: new Map([[InternalChainId.WebbDevelopment, ZERO]]),
   },
   [WebbCurrencyId.SDN]: {
     name: 'Shiden',

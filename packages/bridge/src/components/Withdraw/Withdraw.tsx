@@ -4,8 +4,6 @@ import {
   ChainType,
   chainTypeIdToInternalId,
   currenciesConfig,
-  evmIdIntoInternalChainId,
-  internalChainIdIntoEVMId,
   typeAndIdFromChainIdType,
 } from '@webb-dapp/apps/configs';
 import WithdrawingModal from '@webb-dapp/bridge/components/Withdraw/WithdrawingModal';
@@ -13,7 +11,6 @@ import { useWithdraw } from '@webb-dapp/bridge/hooks';
 import { useDepositNote } from '@webb-dapp/mixer';
 import WithdrawSuccessModal from '@webb-dapp/react-components/Withdraw/WithdrawSuccessModal';
 import { useWebContext, WithdrawState } from '@webb-dapp/react-environment';
-import { WebbPolkadot } from '@webb-dapp/react-environment/api-providers';
 import { ActiveWebbRelayer } from '@webb-dapp/react-environment/webb-context/relayer';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
@@ -51,7 +48,6 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
     note: depositNote,
   });
 
-
   /// TODO: expose hook
   const feesGetter = useCallback(
     async (activeRelayer: ActiveWebbRelayer): Promise<FeesInfo> => {
@@ -86,19 +82,9 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
     if (!depositNote || !activeChain) {
       return false;
     }
-    // TODO consume the ChainTypeID
-    // the note target Substrate?
-    if (depositNote.note.prefix === 'webb.anchor') {
-      console.log(activeChain?.id, depositNote.note.targetChainId);
-      if (activeChain?.id !== Number(depositNote.note.targetChainId)) {
-        return true;
-      }
-    } else {
-      // The note target EVM
-      return activeChain.evmId != chainIdIntoEVMId(depositNote.note.targetChainId);
-    }
+    const chainId = typeAndIdFromChainIdType(Number(depositNote.note.targetChainId)).chainId;
 
-    return false;
+    return activeChain.chainId !== chainId;
   }, [activeChain, depositNote]);
 
   const isDisabled = useMemo(() => {
@@ -108,19 +94,8 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
       return false;
     }
     return true;
-  };
-  const determineSwitchButton = () => {
-    if (
-      depositNote &&
-      activeChain &&
-      activeChain.chainType == ChainType.EVM &&
-      activeChain.chainId != typeAndIdFromChainIdType(Number(depositNote.note.targetChainId)).chainId
-    ) {
-      return true;
-    }
-    return false;
-  };
-  }, [shouldSwitchChain, depositNote, recipient]);
+  }, [depositNote, shouldSwitchChain, recipient]);
+
   const switchChain = async (note: Note | null) => {
     if (!note) return;
     if (!activeApi) return;

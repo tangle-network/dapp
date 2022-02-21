@@ -21,21 +21,21 @@ export const anchorsConfig: AppConfig['anchors'] = {
     {
       amount: '10',
       anchorTreeIds: {
-        [ChainId.WebbDevelopment]: '3',
+        [InternalChainId.WebbDevelopment]: '3',
       },
       anchorAddresses: {},
     },
     {
       amount: '100',
       anchorTreeIds: {
-        [ChainId.WebbDevelopment]: '4',
+        [InternalChainId.WebbDevelopment]: '4',
       },
       anchorAddresses: {},
     },
     {
       amount: '1000',
       anchorTreeIds: {
-        [ChainId.WebbDevelopment]: '5',
+        [InternalChainId.WebbDevelopment]: '5',
       },
       anchorAddresses: {},
     },
