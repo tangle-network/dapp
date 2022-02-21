@@ -28,7 +28,7 @@ export type AnchorWithdrawProof = {
 
 export class PolkadotBridgeWithdraw extends BridgeWithdraw<WebbPolkadot> {
   async fetchRPCTreeLeaves(treeId: string | number): Promise<Uint8Array[]> {
-    console.log(`Fetching leaves for tree with id ${treeId}`);
+    logger.trace(`Fetching leaves for tree with id ${treeId}`);
     let done = false;
     let from = 0;
     let to = 511;
@@ -47,7 +47,7 @@ export class PolkadotBridgeWithdraw extends BridgeWithdraw<WebbPolkadot> {
     return leaves;
   }
   async fetchCachedRoot(treeId: string) {
-    console.log(`fetching metadata for tree id ${treeId}`);
+    logger.trace(`fetching metadata for tree id ${treeId}`);
     const storage =
       // @ts-ignore
       await this.inner.api.query.merkleTreeBn254.trees(treeId);
@@ -78,7 +78,7 @@ export class PolkadotBridgeWithdraw extends BridgeWithdraw<WebbPolkadot> {
       const leaf = depositNote.getLeafCommitment();
       const leafHex = u8aToHex(leaf);
       let leafIndex = leaves.findIndex((leaf) => u8aToHex(leaf) === leafHex);
-      console.log(leaves.map((i) => u8aToHex(i)));
+      logger.trace(leaves.map((i) => u8aToHex(i)));
       const pm = new ProvingManager(new Worker());
 
       const recipientAccountHex = u8aToHex(decodeAddress(recipient));
