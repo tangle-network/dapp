@@ -1,4 +1,4 @@
-import { ChainType, computeChainIdType, InternalChainId } from '@webb-dapp/apps/configs';
+import { ChainType, computeChainIdType, InternalChainId, SubstrateChainId } from '@webb-dapp/apps/configs';
 import { DepositPayload as IDepositPayload, MixerSize } from '@webb-dapp/react-environment';
 import { WebbPolkadot } from '@webb-dapp/react-environment/api-providers/polkadot/webb-polkadot-provider';
 import { BridgeConfig } from '@webb-dapp/react-environment/types/bridge-config.interface';
@@ -42,7 +42,8 @@ export class PolkadotBridgeDeposit extends BridgeDeposit<WebbPolkadot, DepositPa
     const tokenSymbol = currency.view.symbol;
     const destChainId = destination;
     // TODO: add mappers similar to evm chain id
-    const chainId = this.inner.api.registry.chainSS58!;
+    // const chainId = this.inner.api.registry.chainSS58!;
+    const chainId = SubstrateChainId.Webb;
     const sourceChainId = computeChainIdType(ChainType.Substrate, chainId);
     const anchorPath = String(mixerId).replace('Bridge=', '').split('@');
     const amount = anchorPath[0];

@@ -1,5 +1,5 @@
-// @ts-ignore
 import { InternalChainId } from '@webb-dapp/apps/configs';
+// @ts-ignore
 import Worker from '@webb-dapp/mixer/utils/proving-manager.worker';
 import { WithdrawState } from '@webb-dapp/react-environment';
 import { WebbPolkadot } from '@webb-dapp/react-environment/api-providers';
@@ -78,10 +78,7 @@ export class PolkadotBridgeWithdraw extends BridgeWithdraw<WebbPolkadot> {
       const leaf = depositNote.getLeafCommitment();
       const leafHex = u8aToHex(leaf);
       let leafIndex = leaves.findIndex((leaf) => u8aToHex(leaf) === leafHex);
-
-      const sourceChainId = Number(depositNote.sourceChainId) as InternalChainId;
-      const targetChainId = Number(depositNote.targetChainId) as InternalChainId;
-
+      console.log(leaves.map((i) => u8aToHex(i)));
       const pm = new ProvingManager(new Worker());
 
       const recipientAccountHex = u8aToHex(decodeAddress(recipient));
@@ -110,8 +107,8 @@ export class PolkadotBridgeWithdraw extends BridgeWithdraw<WebbPolkadot> {
         nullifierHash: `0x${zkProofMetadata.nullifierHash}`,
         recipient: accountId,
         relayer: relayerAccountId,
-        fee: 5,
-        refund: 1,
+        fee: 0,
+        refund: 0,
         commitment: `0x${commitment}`,
       };
       const parms = [
