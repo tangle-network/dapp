@@ -1,12 +1,12 @@
 import Icon from '@material-ui/core/Icon';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import {
-  ChainId,
   chainsPopulated,
   currenciesConfig,
-  evmIdIntoChainId,
+  EVMChainId,
+  evmIdIntoInternalChainId,
   getEVMChainName,
-  WebbEVMChain,
+  InternalChainId,
 } from '@webb-dapp/apps/configs';
 import { getWebbRelayer } from '@webb-dapp/apps/configs/relayer-config';
 import { WalletId } from '@webb-dapp/apps/configs/wallets/wallet-id.enum';
@@ -248,16 +248,16 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
               const provider = new WalletConnectProvider({
                 rpc: {
                   //default on metamask
-                  [WebbEVMChain.EthereumMainNet]: 'https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
-                  [WebbEVMChain.Ropsten]: 'https://ropsten.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
-                  [WebbEVMChain.Goerli]: 'https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
-                  [WebbEVMChain.Kovan]: 'https://kovan.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
-                  [WebbEVMChain.Rinkeby]: 'https://rinkeby.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4',
+                  [EVMChainId.EthereumMainNet]: 'https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
+                  [EVMChainId.Ropsten]: 'https://ropsten.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
+                  [EVMChainId.Goerli]: 'https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
+                  [EVMChainId.Kovan]: 'https://kovan.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
+                  [EVMChainId.Rinkeby]: 'https://rinkeby.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4',
                   //default on metamask
-                  [WebbEVMChain.Beresheet]: 'http://beresheet1.edgewa.re:9933',
-                  [WebbEVMChain.HarmonyTestnet1]: 'https://api.s1.b.hmny.io',
+                  [EVMChainId.Beresheet]: 'http://beresheet1.edgewa.re:9933',
+                  [EVMChainId.HarmonyTestnet1]: 'https://api.s1.b.hmny.io',
                 },
-                chainId: chain.evmId,
+                chainId: chain.chainId,
               });
 
               web3Provider = await Web3Provider.fromWalletConnectProvider(provider);
@@ -298,7 +298,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
             const webbWeb3Provider = await WebbWeb3Provider.init(web3Provider, chainId, relayer);
 
             const providerUpdateHandler = async ([chainId]: number[]) => {
-              const nextChain = Object.values(chains).find((chain) => chain.evmId === chainId);
+              const nextChain = Object.values(chains).find((chain) => chain.chainId === chainId);
               try {
                 /// this will throw if the user switched to unsupported chain
                 const name = getEVMChainName(chainId);
@@ -328,7 +328,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
             webbWeb3Provider.on('providerUpdate', providerUpdateHandler);
 
             webbWeb3Provider.setChainListener();
-            const cantAddChain = !chain.evmId && !chain.evmRpcUrls;
+            const cantAddChain = !chain.chainId && !chain.evmRpcUrls;
             const addEvmChain = async () => {
               if (cantAddChain) {
                 return;
@@ -337,23 +337,26 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
               // If we support the evmId but don't have an evmRpcUrl, then it is default on metamask
               await web3Provider
                 .switchChain({
-                  chainId: `0x${chain.evmId?.toString(16)}`,
+                  chainId: `0x${chain.chainId?.toString(16)}`,
                 })
                 ?.then(async () => {
                   if (web3Provider instanceof WalletConnectProvider) {
-                    appEvent.send('networkSwitched', [evmIdIntoChainId(await chainId), WalletId.WalletConnectV1]);
+                    appEvent.send('networkSwitched', [
+                      evmIdIntoInternalChainId(await chainId),
+                      WalletId.WalletConnectV1,
+                    ]);
                   } else {
-                    appEvent.send('networkSwitched', [evmIdIntoChainId(await chainId), WalletId.MetaMask]);
+                    appEvent.send('networkSwitched', [evmIdIntoInternalChainId(await chainId), WalletId.MetaMask]);
                   }
                 })
                 ?.catch(async (switchError) => {
                   console.log('inside catch for switchChain', switchError);
 
                   // cannot switch because network not recognized, so prompt to add it
-                  if (switchError.code === 4902 && chain.evmId) {
+                  if (switchError.code === 4902 && chain.chainId) {
                     const currency = currenciesConfig[chain.nativeCurrencyId];
                     await web3Provider.addChain({
-                      chainId: `0x${chain.evmId.toString(16)}`,
+                      chainId: `0x${chain.chainId.toString(16)}`,
                       chainName: chain.name,
                       rpcUrls: chain.evmRpcUrls ?? [],
                       nativeCurrency: {
@@ -365,7 +368,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
                     // add network will prompt the switch, check evmId again and throw if user rejected
                     const newChainId = await web3Provider.network;
 
-                    if (newChainId != chain.evmId) {
+                    if (newChainId != chain.chainId) {
                       throw switchError;
                     }
                   } else {
@@ -373,7 +376,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
                   }
                 });
             };
-            if (chainId !== chain.evmId) {
+            if (chainId !== chain.chainId) {
               await addEvmChain();
             }
 
@@ -423,7 +426,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
       ]);
       /// if there's no chain, set the default to Rinkeby and return
       if (!net || !wallet) {
-        setActiveChain(chains[ChainId.Rinkeby]);
+        setActiveChain(chains[InternalChainId.Rinkeby]);
         return;
       }
       /// chain config by net id

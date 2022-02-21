@@ -1,9 +1,9 @@
 import {
-  ChainId,
-  chainIdIntoEVMId,
-  evmIdIntoChainId,
+  evmIdIntoInternalChainId,
   getEVMChainName,
   getNativeCurrencySymbol,
+  InternalChainId,
+  internalChainIdIntoEVMId,
 } from '@webb-dapp/apps/configs';
 import { createTornDeposit, Deposit } from '@webb-dapp/contracts/utils/make-deposit';
 import { DepositPayload as IDepositPayload, MixerDeposit, MixerSize } from '@webb-dapp/react-environment/webb-context';
@@ -21,8 +21,8 @@ type DepositPayload = IDepositPayload<Note, [Deposit, number]>;
 
 export class Web3MixerDeposit extends MixerDeposit<WebbWeb3Provider, DepositPayload> {
   async deposit({ note: depositPayload, params }: DepositPayload): Promise<void> {
-    const chainId = Number(depositPayload.note.targetChainId) as ChainId;
-    const evmChainId = chainIdIntoEVMId(chainId);
+    const chainId = Number(depositPayload.note.targetChainId) as InternalChainId;
+    const evmChainId = internalChainIdIntoEVMId(chainId);
     transactionNotificationConfig.loading?.({
       address: '',
       data: React.createElement(DepositNotification, {
@@ -87,7 +87,7 @@ export class Web3MixerDeposit extends MixerDeposit<WebbWeb3Provider, DepositPayl
     const depositSize = Number.parseFloat(utils.fromWei(depositSizeBN.toString(), 'ether'));
     const chainId = await this.inner.getChainId();
     const deposit = createTornDeposit();
-    const noteChain = String(evmIdIntoChainId(chainId));
+    const noteChain = String(evmIdIntoInternalChainId(chainId));
     const secrets = deposit.preimage;
     const noteInput: NoteGenInput = {
       exponentiation: '5',

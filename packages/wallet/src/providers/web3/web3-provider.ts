@@ -1,5 +1,4 @@
 import WalletConnectProvider from '@walletconnect/web3-provider';
-import { evmIdIntoChainId, WalletId } from '@webb-dapp/apps/configs';
 import { ProvideCapabilities } from '@webb-dapp/react-environment';
 import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import { ethers } from 'ethers';

@@ -1,4 +1,4 @@
-import { ChainId } from '@webb-dapp/apps/configs';
+import { InternalChainId } from '@webb-dapp/apps/configs';
 // @ts-ignore
 import Worker from '@webb-dapp/mixer/utils/proving-manager.worker';
 import { RelayedWithdrawResult, WebbRelayer } from '@webb-dapp/react-environment';
@@ -27,7 +27,7 @@ async function fetchSubstrateProvingKey() {
   const cachedURI = getCachedFixtureURI('proving_key_uncompressed.bin');
   const ipfsKeyRequest = await fetch(withLocalFixtures() ? cachedURI : IPFSUrl);
   const circuitKeyArrayBuffer = await ipfsKeyRequest.arrayBuffer();
-  logger.info(`Done Fetching key`);
+  logger.info(`Done Fetching key from ${ipfsKeyRequest.url}`);
   const circuitKey = new Uint8Array(circuitKeyArrayBuffer);
   return circuitKey;
 }
@@ -67,7 +67,7 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
     );
   }
 
-  async getRelayersByChainAndAddress(chainId: ChainId, address: string) {
+  async getRelayersByChainAndAddress(chainId: InternalChainId, address: string) {
     return this.inner.relayingManager.getRelayer({});
   }
 
@@ -79,7 +79,7 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
       relayer,
       {
         basedOn: 'substrate',
-        chain: ChainId.WebbDevelopment,
+        chain: InternalChainId.WebbDevelopment,
       },
       async () => {
         return {

@@ -1,5 +1,13 @@
 import { FormHelperText, InputBase } from '@material-ui/core';
-import { chainIdIntoEVMId, chainsPopulated, currenciesConfig } from '@webb-dapp/apps/configs';
+import {
+  chainsPopulated,
+  ChainType,
+  chainTypeIdToInternalId,
+  currenciesConfig,
+  evmIdIntoInternalChainId,
+  internalChainIdIntoEVMId,
+  typeAndIdFromChainIdType,
+} from '@webb-dapp/apps/configs';
 import WithdrawingModal from '@webb-dapp/bridge/components/Withdraw/WithdrawingModal';
 import { useWithdraw } from '@webb-dapp/bridge/hooks';
 import { useDepositNote } from '@webb-dapp/mixer';
@@ -24,6 +32,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
   const [note, setNote] = useState('');
   const [recipient, setRecipient] = useState('');
   const { activeApi, activeChain } = useWebContext();
+  const depositNote = useDepositNote(note);
 
   const {
     canCancel,
@@ -38,7 +47,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
     withdraw,
   } = useWithdraw({
     recipient,
-    note,
+    note: depositNote,
   });
   const feesGetter = useCallback(
     async (activeRelayer: ActiveWebbRelayer): Promise<FeesInfo> => {
@@ -76,7 +85,12 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
     return true;
   };
   const determineSwitchButton = () => {
-    if (depositNote && activeChain && activeChain.evmId != chainIdIntoEVMId(depositNote.note.targetChainId)) {
+    if (
+      depositNote &&
+      activeChain &&
+      activeChain.chainType == ChainType.EVM &&
+      activeChain.chainId != typeAndIdFromChainIdType(Number(depositNote.note.targetChainId)).chainId
+    ) {
       return true;
     }
     return false;
@@ -84,14 +98,15 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
   const switchChain = async (note: Note | null) => {
     if (!note) return;
     if (!activeApi) return;
-    const newChainId = Number(note.note.targetChainId);
-    const chain = chainsPopulated[newChainId];
+    const chainTypeId = typeAndIdFromChainIdType(Number(note.note.targetChainId));
+    const internalChainId = chainTypeIdToInternalId(chainTypeId);
+    const chain = chainsPopulated[internalChainId];
 
     const web3Provider = activeApi.getProvider();
 
     await web3Provider
       .switchChain({
-        chainId: `0x${chain.evmId?.toString(16)}`,
+        chainId: `0x${chain.chainId?.toString(16)}`,
       })
       ?.catch(async (switchError: any) => {
         console.log('inside catch for switchChain', switchError);
@@ -100,7 +115,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
         if (switchError.code === 4902) {
           const currency = currenciesConfig[chain.nativeCurrencyId];
           await web3Provider.addChain({
-            chainId: `0x${chain.evmId?.toString(16)}`,
+            chainId: `0x${chain.chainId?.toString(16)}`,
             chainName: chain.name,
             rpcUrls: chain.evmRpcUrls,
             nativeCurrency: {
@@ -112,7 +127,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
           // add network will prompt the switch, check evmId again and throw if user rejected
           const newChainId = await web3Provider.network;
 
-          if (newChainId != chain.evmId) {
+          if (newChainId != chain.chainId) {
             throw switchError;
           }
         } else {
@@ -121,7 +136,6 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
       });
   };
 
-  const depositNote = useDepositNote(note);
   return (
     <WithdrawWrapper>
       <InputSection>

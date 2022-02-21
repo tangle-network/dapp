@@ -1,4 +1,4 @@
-import { ChainId } from '@webb-dapp/apps/configs';
+import { InternalChainId } from '@webb-dapp/apps/configs';
 
 export type RelayedChainConfig = {
   account: string;
@@ -8,8 +8,8 @@ export type RelayedChainConfig = {
 export type Capabilities = {
   hasIpService: boolean;
   supportedChains: {
-    substrate: Map<ChainId, RelayedChainConfig>;
-    evm: Map<ChainId, RelayedChainConfig>;
+    substrate: Map<InternalChainId, RelayedChainConfig>;
+    evm: Map<InternalChainId, RelayedChainConfig>;
   };
 };
 

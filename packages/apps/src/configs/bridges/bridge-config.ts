@@ -1,4 +1,4 @@
-import { anchorsConfig, ChainId, WebbCurrencyId } from '@webb-dapp/apps/configs';
+import { anchorsConfig, InternalChainId, WebbCurrencyId } from '@webb-dapp/apps/configs';
 import { AppConfig } from '@webb-dapp/react-environment/webb-context';
 import { LoggerService } from '@webb-tools/app-util';
 const logger = LoggerService.get('bridge-config');
@@ -26,7 +26,7 @@ export const getAnchorAddressForBridge = (
     throw new Error('Unsupported configuration for bridge');
   }
 
-  const anchorAddress = linkedAnchorConfig.anchorAddresses[chainId as ChainId];
+  const anchorAddress = linkedAnchorConfig.anchorAddresses[chainId as InternalChainId];
   logger.log('got anchor address: ', anchorAddress);
   return anchorAddress;
 };

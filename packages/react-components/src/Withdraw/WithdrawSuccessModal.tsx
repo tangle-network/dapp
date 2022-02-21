@@ -1,6 +1,11 @@
 import { parseUnits } from '@ethersproject/units';
 import { Button, Divider, Icon, Link, Typography } from '@material-ui/core';
-import { chainsConfig } from '@webb-dapp/apps/configs';
+import {
+  chainsConfig,
+  chainTypeIdToInternalId,
+  InternalChainId,
+  typeAndIdFromChainIdType,
+} from '@webb-dapp/apps/configs';
 import { ActiveWebbRelayer } from '@webb-dapp/react-environment/webb-context/relayer/';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 import { LoggerService } from '@webb-tools/app-util';
@@ -107,7 +112,12 @@ const WithdrawSuccessModal: React.FC<WithdrawingModalProps> = ({ exit, note, rec
   };
 
   const getBlockExplorerTx = (txHash: string): string => {
-    const chainId = Number(note.targetChainId);
+    let chainId: InternalChainId;
+    try {
+      chainId = chainTypeIdToInternalId(typeAndIdFromChainIdType(Number(note.targetChainId)));
+    } catch (e) {
+      chainId = Number(note.targetChainId);
+    }
     const url = chainsConfig[chainId]?.blockExplorerStub
       ? `${chainsConfig[chainId].blockExplorerStub}/tx/${txHash}`
       : '';
@@ -115,7 +125,12 @@ const WithdrawSuccessModal: React.FC<WithdrawingModalProps> = ({ exit, note, rec
   };
 
   const getBlockExplorerAddress = (address: string): string => {
-    const chainId = Number(note.targetChainId);
+    let chainId: InternalChainId;
+    try {
+      chainId = chainTypeIdToInternalId(typeAndIdFromChainIdType(Number(note.targetChainId)));
+    } catch (e) {
+      chainId = Number(note.targetChainId);
+    }
     const url = chainsConfig[chainId]?.blockExplorerStub
       ? `${chainsConfig[chainId].blockExplorerStub}/address/${address}`
       : '';

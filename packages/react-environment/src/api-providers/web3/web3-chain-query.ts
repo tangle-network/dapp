@@ -1,4 +1,4 @@
-import { chainsConfig, evmIdIntoChainId, WebbCurrencyId } from '@webb-dapp/apps/configs';
+import { chainsConfig, evmIdIntoInternalChainId, WebbCurrencyId } from '@webb-dapp/apps/configs';
 import { zeroAddress } from '@webb-dapp/contracts/contracts';
 import { ERC20__factory } from '@webb-dapp/contracts/types';
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers';
@@ -16,7 +16,7 @@ export class Web3ChainQuery extends ChainQuery<WebbWeb3Provider> {
 
     // check if the token is the native token of this chain
     const { chainId: evmId } = await provider.getNetwork();
-    const webbChain = evmIdIntoChainId(evmId);
+    const webbChain = evmIdIntoInternalChainId(evmId);
 
     const accounts = await this.inner.accounts.accounts();
     if (!accounts || !accounts.length) {

@@ -1,4 +1,4 @@
-import { ChainId, WebbCurrencyId } from '@webb-dapp/apps/configs';
+import { ChainType, InternalChainId, WebbCurrencyId } from '@webb-dapp/apps/configs';
 import { createElement } from 'react';
 
 // The CurrencyType distinguishes how to interact with a particular currency in terms of
@@ -29,6 +29,6 @@ export interface CurrencyView {
 }
 
 export interface CurrencyConfig extends CurrencyView {
-  addresses: Map<ChainId, string>;
+  addresses: Map<InternalChainId, string>;
   role: CurrencyRole;
 }

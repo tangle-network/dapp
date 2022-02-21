@@ -1,5 +1,10 @@
 import { FormHelperText, Icon, InputBase } from '@material-ui/core';
-import { getEVMChainNameFromInternal, webbCurrencyIdFromString } from '@webb-dapp/apps/configs';
+import {
+  getEVMChainName,
+  getEVMChainNameFromInternal,
+  typeAndIdFromChainIdType,
+  webbCurrencyIdFromString,
+} from '@webb-dapp/apps/configs';
 import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
 import { useDepositNote } from '@webb-dapp/mixer/hooks/note';
 import { Currency } from '@webb-dapp/react-environment/webb-context/currency/currency';
@@ -89,14 +94,14 @@ export const BridgeNoteInput: React.FC<NoteInputProps> = ({ error, onChange, val
               <tr>
                 <td>Source Chain:</td>
                 <td style={{ textAlign: 'right' }}>
-                  {getEVMChainNameFromInternal(Number(depositNote.note.sourceChainId))}
+                  {getEVMChainName(typeAndIdFromChainIdType(Number(depositNote.note.sourceChainId)).chainId)}
                 </td>
               </tr>
 
               <tr>
                 <td>Destination Chain:</td>
                 <td style={{ textAlign: 'right' }}>
-                  {getEVMChainNameFromInternal(Number(depositNote.note.targetChainId))}
+                  {getEVMChainName(typeAndIdFromChainIdType(Number(depositNote.note.targetChainId)).chainId)}
                 </td>
               </tr>
 

@@ -1,16 +1,12 @@
-import {
-  Avatar,
-  ClickAwayListener,
-  IconButton,
-  InputBase,
-  List,
-  ListItemAvatar,
-  ListItemText,
-  Popper,
-} from '@material-ui/core';
+import { Avatar, ClickAwayListener, IconButton, List, ListItemAvatar, ListItemText, Popper } from '@material-ui/core';
 import Icon from '@material-ui/core/Icon';
 import Typography from '@material-ui/core/Typography';
-import { ChainId, chainsPopulated } from '@webb-dapp/apps/configs';
+import {
+  chainsPopulated,
+  ChainTypeId,
+  chainTypeIdToInternalId,
+  evmIdIntoInternalChainId,
+} from '@webb-dapp/apps/configs';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabel';
@@ -99,10 +95,11 @@ const PopperList = styled.div<{ open: boolean }>`
 `;
 
 type DropdownInputProps = {
-  chains: ChainId[];
-  value?: ChainId;
-  onChange(next: ChainId | undefined): void;
+  chains: ChainTypeId[];
+  value?: ChainTypeId;
+  onChange(next: ChainTypeId | undefined): void;
 };
+
 const ChainName = styled.span`
   display: inline-block;
   overflow: hidden;
@@ -111,19 +108,6 @@ const ChainName = styled.span`
   width: 100%;
 `;
 const DropdownInput: React.FC<DropdownInputProps> = ({ chains, onChange, value }) => {
-  const selectItems = useMemo(() => {
-    return chains.map((chainId) => {
-      if (!chainsPopulated[chainId]) {
-        throw new Error(`Chain with ${chainId} isn't configured`);
-      }
-      const chain = chainsPopulated[chainId];
-      return {
-        id: chainId,
-        chain,
-      };
-    });
-  }, [chains]);
-
   useEffect(() => {
     if (value && !chains.includes(value)) {
       onChange(undefined);
@@ -134,14 +118,20 @@ const DropdownInput: React.FC<DropdownInputProps> = ({ chains, onChange, value }
     if (!value && typeof value === 'undefined') {
       return undefined;
     }
+
+    if (Number(value.chainType) === -1 || Number(value.chainId) === -1) {
+      return undefined;
+    }
+
     return {
       id: value,
-      chain: chainsPopulated[value],
+      chain: chainsPopulated[chainTypeIdToInternalId(value)],
     };
   }, [value]);
   const $wrapper = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
   const theme = useColorPallet();
+  console.log('Selected', selected);
   return (
     <>
       <div>
@@ -226,18 +216,20 @@ const DropdownInput: React.FC<DropdownInputProps> = ({ chains, onChange, value }
             >
               <PopperList open={isOpen}>
                 <StyledList as={List} dense disablePadding>
-                  {selectItems.map(({ chain, id }) => {
-                    const isSelected = selected?.id === id;
+                  {chains.map((chainTypeId) => {
+                    const isSelected = selected?.id === chainTypeId;
+                    console.log('chainTypeId: ', chainTypeId);
+                    let chain = chainsPopulated[chainTypeIdToInternalId(chainTypeId)];
                     return (
                       <li
                         role={'button'}
                         onClick={() => {
                           setIsOpen(false);
-                          console.log(id);
-                          onChange(id);
+                          console.log(chainTypeId);
+                          onChange(chainTypeId);
                         }}
                         className={isSelected ? 'selected' : ''}
-                        key={id + String(chain.evmRpcUrls?.join('-')) + 'currency'}
+                        key={`${chainTypeId}-chain-input`}
                       >
                         <Flex ai='center' row flex={1}>
                           <ListItemAvatar>
@@ -267,10 +259,10 @@ const DropdownInput: React.FC<DropdownInputProps> = ({ chains, onChange, value }
 
 const ChainInputWrapper = styled.div``;
 type ChainInputProps = {
-  chains: ChainId[];
+  chains: ChainTypeId[];
   label: string;
-  selectedChain: ChainId | undefined;
-  setSelectedChain?(chain: ChainId | undefined): void;
+  selectedChain: ChainTypeId | undefined;
+  setSelectedChain?(chain: ChainTypeId | undefined): void;
 };
 
 export const ChainInput: React.FC<ChainInputProps> = ({ chains, label, selectedChain, setSelectedChain }) => {
