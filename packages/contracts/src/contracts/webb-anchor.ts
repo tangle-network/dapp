@@ -316,6 +316,7 @@ export class AnchorContract {
     const tree = AnchorContract.createTreeWithRoot(sourceLeaves, latestSourceRoot);
     if (tree) {
       const index = tree.get_index_of_element(sourceDeposit.commitment);
+      console.log('index of element: ', index);
       const path = tree.path(index);
       logger.log('path for proof: ', path);
       return path;

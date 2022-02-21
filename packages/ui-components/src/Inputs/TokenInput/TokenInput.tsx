@@ -10,7 +10,7 @@ import {
 } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
 import Popper from '@material-ui/core/Popper';
-import { currenciesConfig, evmIdIntoChainId, WebbCurrencyId } from '@webb-dapp/apps/configs';
+import { currenciesConfig, evmIdIntoInternalChainId, WebbCurrencyId } from '@webb-dapp/apps/configs';
 import { useWebContext } from '@webb-dapp/react-environment';
 import { CurrencyContent } from '@webb-dapp/react-environment/webb-context/currency/currency';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
@@ -146,7 +146,7 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
   const addTokenToMetaMask = async (currencyId: WebbCurrencyId) => {
     const provider: Web3Provider = activeApi?.getProvider();
     const activeEVM = await provider.network;
-    const entryChainId = evmIdIntoChainId(activeEVM);
+    const entryChainId = evmIdIntoInternalChainId(activeEVM);
 
     const token = currenciesConfig[currencyId];
     const tokenAddress = token.addresses.get(entryChainId);
@@ -156,7 +156,7 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
     await provider.addToken({
       address: tokenAddress,
       decimals: 18,
-      image: '',
+      image: token.imageUrl ?? '',
       symbol: token.symbol,
     });
   };

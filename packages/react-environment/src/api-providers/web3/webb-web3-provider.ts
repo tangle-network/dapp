@@ -1,9 +1,8 @@
 import {
-  bridgeConfigByAsset,
-  chainIdIntoEVMId,
   chainsConfig,
   currenciesConfig,
-  evmIdIntoChainId,
+  evmIdIntoInternalChainId,
+  internalChainIdIntoEVMId,
 } from '@webb-dapp/apps/configs';
 import { TornadoContract } from '@webb-dapp/contracts/contracts/tornado-anchor';
 import { AnchorContract } from '@webb-dapp/contracts/contracts/webb-anchor';
@@ -104,6 +103,7 @@ export class WebbWeb3Provider
   }
 
   async destroy(): Promise<void> {
+    await this.endSession();
     this.subscriptions = {
       providerUpdate: [],
       interactiveFeedback: [],
@@ -120,7 +120,7 @@ export class WebbWeb3Provider
   }
 
   getTornadoContractAddressByNote(note: Note) {
-    const evmId = chainIdIntoEVMId(Number(note.note.targetChainId));
+    const evmId = internalChainIdIntoEVMId(Number(note.note.targetChainId));
     const availableMixers = new EvmChainMixersInfo(evmId);
     const mixer = availableMixers.getTornMixerInfoBySize(Number(note.note.amount), note.note.tokenSymbol);
     if (!mixer) {
@@ -207,7 +207,7 @@ export class WebbWeb3Provider
         console.log('inside catch for switchChain', switchError);
 
         // cannot switch because network not recognized, so fetch configuration
-        const chainId = evmIdIntoChainId(evmChainId);
+        const chainId = evmIdIntoInternalChainId(evmChainId);
         const chain = chainsConfig[chainId];
 
         // prompt to add the chain
@@ -226,7 +226,7 @@ export class WebbWeb3Provider
           // add network will prompt the switch, check evmId again and throw if user rejected
           const newChainId = await this.web3Provider.network;
 
-          if (newChainId != chain.evmId) {
+          if (newChainId != chain.chainId) {
             throw switchError;
           }
         } else {

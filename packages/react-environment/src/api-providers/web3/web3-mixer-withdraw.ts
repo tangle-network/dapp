@@ -1,5 +1,5 @@
 import { parseUnits } from '@ethersproject/units';
-import { ChainId, chainIdIntoEVMId, evmIdIntoChainId } from '@webb-dapp/apps/configs';
+import { evmIdIntoInternalChainId, InternalChainId, internalChainIdIntoEVMId } from '@webb-dapp/apps/configs';
 import { chainIdToRelayerName } from '@webb-dapp/apps/configs/relayer-config';
 import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
 import { depositFromPreimage } from '@webb-dapp/contracts/utils/make-deposit';
@@ -27,7 +27,7 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
       return null;
     }
     const evmId = await this.inner.getChainId();
-    const chainId = evmIdIntoChainId(evmId);
+    const chainId = evmIdIntoInternalChainId(evmId);
     return WebbRelayer.intoActiveWebRelayer(
       relayer,
       {
@@ -72,7 +72,7 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
 
   get relayers() {
     return this.inner.getChainId().then((evmId) => {
-      const chainId = evmIdIntoChainId(evmId);
+      const chainId = evmIdIntoInternalChainId(evmId);
       return this.inner.relayingManager.getRelayer({
         baseOn: 'evm',
         chainId,
@@ -91,7 +91,7 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
     });
   }
 
-  async getRelayersByChainAndAddress(chainId: ChainId, address: string) {
+  async getRelayersByChainAndAddress(chainId: InternalChainId, address: string) {
     return this.inner.relayingManager.getRelayer({
       baseOn: 'evm',
       chainId: chainId,
@@ -108,8 +108,8 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
     const activeRelayer = this.activeRelayer[0];
     const evmNote = await Note.deserialize(note);
     const deposit = depositFromPreimage(evmNote.note.secret.replace('0x', ''));
-    const chainId = Number(evmNote.note.targetChainId) as ChainId;
-    const chainEvmId = chainIdIntoEVMId(chainId);
+    const chainId = Number(evmNote.note.targetChainId) as InternalChainId;
+    const chainEvmId = internalChainIdIntoEVMId(chainId);
 
     const activeChain = await this.inner.getChainId();
     console.log('activeChain', activeChain);
@@ -278,14 +278,23 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
       });
       try {
         if (relayers.length) {
-          const relayerLeaves = await relayers[0].getLeaves(chainEvmId.toString(16), contract.inner.address);
-
-          zkp = await contract.generateZKPWithLeaves(
-            deposit,
-            zkpInputWithoutMerkleProof,
-            relayerLeaves.leaves,
-            relayerLeaves.lastQueriedBlock
-          );
+          try {
+            const relayerLeaves = await relayers[0].getLeaves(chainEvmId.toString(16), contract.inner.address);
+            zkp = await contract.generateZKPWithLeaves(
+              deposit,
+              zkpInputWithoutMerkleProof,
+              relayerLeaves.leaves,
+              relayerLeaves.lastQueriedBlock
+            );
+          } catch (e) {
+            // If attempting to fetch leaves from the available relayer failed, query from chain.
+            if ((e as any)?.code === WebbErrorCodes.RelayerMisbehaving) {
+              zkp = await contract.generateZKP(deposit, zkpInputWithoutMerkleProof);
+            } else {
+              logger.log('error in web3 mixer withdraw: ', e);
+              throw e;
+            }
+          }
         } else {
           // This is the part of withdraw that takes a long time
           zkp = await contract.generateZKP(deposit, zkpInputWithoutMerkleProof);

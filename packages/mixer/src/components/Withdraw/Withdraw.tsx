@@ -84,7 +84,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
   }, [recipient, depositNote]);
   const determineSwitchButton = () => {
     return false;
-    /*    if (depositNote && activeChain && activeChain.evmId != chainIdIntoEVMId(depositNote.note.chain)) {
+    /*    if (depositNote && activeChain && activeChain.evmId != internalChainIdIntoEVMId(depositNote.note.chain)) {
       return true;
     }
     return false;*/
@@ -101,7 +101,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
     }
     await web3Provider
       .switchChain({
-        chainId: `0x${chain.evmId?.toString(16)}`,
+        chainId: `0x${chain.chainId?.toString(16)}`,
       })
       ?.catch(async (switchError: any) => {
         console.log('inside catch for switchChain', switchError);
@@ -110,7 +110,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
         if (switchError.code === 4902) {
           const currency = currenciesConfig[chain.nativeCurrencyId];
           await web3Provider.addChain({
-            chainId: `0x${chain.evmId?.toString(16)}`,
+            chainId: `0x${chain.chainId?.toString(16)}`,
             chainName: chain.name,
             rpcUrls: chain.evmRpcUrls,
             nativeCurrency: {
@@ -122,7 +122,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
           // add network will prompt the switch, check evmId again and throw if user rejected
           const newChainId = await web3Provider.network;
 
-          if (newChainId != chain.evmId) {
+          if (newChainId != chain.chainId) {
             throw switchError;
           }
         } else {

@@ -19,5 +19,6 @@ export function isLocalFixtures() {
 
 export function withLocalFixtures() {
   const dev = isDevelopment();
-  return dev && isLocalFixtures;
+  console.log('local fixtures react app env: ', process.env.REACT_APP_LOCL_FIXTURES);
+  return dev && isLocalFixtures();
 }

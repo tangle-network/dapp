@@ -1,4 +1,14 @@
-import { ChainId, chainIdIntoEVMId, evmIdIntoChainId, getEVMChainNameFromInternal } from '@webb-dapp/apps/configs';
+import {
+  chainsConfig,
+  ChainType,
+  computeChainIdType,
+  currenciesConfig,
+  evmIdIntoInternalChainId,
+  getEVMChainNameFromInternal,
+  InternalChainId,
+  internalChainIdIntoEVMId,
+} from '@webb-dapp/apps/configs';
+import { WebbGovernedToken } from '@webb-dapp/contracts/contracts';
 import { ERC20__factory } from '@webb-dapp/contracts/types';
 import { createAnchor2Deposit, Deposit } from '@webb-dapp/contracts/utils/make-deposit';
 import { DepositPayload as IDepositPayload, MixerSize } from '@webb-dapp/react-environment';
@@ -33,11 +43,12 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
       const commitment = depositPayload.params[0].commitment;
       const note = depositPayload.note.note;
       const sourceEvmId = await this.inner.getChainId();
-      const sourceChainId = evmIdIntoChainId(sourceEvmId);
+      const sourceChainId = computeChainIdType(ChainType.EVM, sourceEvmId);
+      const sourceInternalId = evmIdIntoInternalChainId(sourceEvmId);
       transactionNotificationConfig.loading?.({
         address: '',
         data: React.createElement(DepositNotification, {
-          chain: getEVMChainNameFromInternal(Number(note.sourceChainId)),
+          chain: getEVMChainNameFromInternal(Number(sourceInternalId)),
           amount: Number(note.amount),
           currency: bridge.currency.view.name,
         }),
@@ -178,6 +189,47 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
     return [];
   }
 
+  async getWrappableAssets(chainId: InternalChainId): Promise<Currency[]> {
+    const bridge = this.activeBridge;
+    logger.log('getWrappableAssets of chain: ', chainId);
+    if (bridge) {
+      const wrappedTokenAddress = bridge.getTokenAddress(chainId);
+      if (!wrappedTokenAddress) return [];
+
+      // Get the available token addresses which can wrap into the wrappedToken
+      const wrappedToken = new WebbGovernedToken(this.inner.getEthersProvider(), wrappedTokenAddress);
+      const tokenAddresses = await wrappedToken.tokens;
+
+      // TODO: dynamic wrappable assets - consider some Currency constructor via address & default token config.
+
+      // If the tokenAddress matches one of the wrappableCurrencies, return it
+      const wrappableCurrencyIds = chainsConfig[chainId].currencies.filter((currencyId) => {
+        const wrappableTokenAddress = currenciesConfig[currencyId].addresses.get(chainId);
+        return wrappableTokenAddress && tokenAddresses.includes(wrappableTokenAddress);
+      });
+
+      if (await wrappedToken.isNativeAllowed()) wrappableCurrencyIds.push(chainsConfig[chainId].nativeCurrencyId);
+
+      const wrappableCurrencies = wrappableCurrencyIds.map((currencyId) => {
+        return Currency.fromCurrencyId(currencyId);
+      });
+
+      return wrappableCurrencies;
+    }
+    return [];
+  }
+
+  /**
+   * Generates a bridge note for the given mixer and target destination chain.
+   * Note: If the wrappableAssetAddress is not provided, it is assumed to be
+   *       the address of the webbToken
+   * Note: This functione expects `destChainId` is EXPLICITLY the correctly computed
+   *       target chain id with the type encoded in its value.
+   * @param mixerId - the mixerId
+   * @param destChainId - encoded destination chain Id and chain type
+   * @param wrappableAssetAddress - the address of the token to wrap into the bridge
+   * @returns
+   */
   /*
    *
    *  Mixer id => the fixed deposit amount
@@ -186,7 +238,7 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
    * */
   async generateBridgeNote(
     mixerId: number | string,
-    destChainId: ChainId,
+    destChainId: number,
     wrappableAssetAddress?: string
   ): Promise<DepositPayload> {
     const bridge = this.bridgeApi.activeBridge;
@@ -195,12 +247,12 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
       throw new Error('api not ready');
     }
     const tokenSymbol = bridge.currency.view.symbol;
-    const destEvmId = chainIdIntoEVMId(destChainId);
     const sourceEvmId = await this.inner.getChainId();
-    const deposit = createAnchor2Deposit(destEvmId);
+    const sourceChainId = computeChainIdType(ChainType.EVM, sourceEvmId);
+    const deposit = createAnchor2Deposit(destChainId);
     const secrets = deposit.preimage;
     const amount = String(mixerId).replace('Bridge=', '').split('@')[0];
-    const sourceChainId = evmIdIntoChainId(sourceEvmId);
+
     const noteInput: NoteGenInput = {
       exponentiation: '5',
       width: '3',

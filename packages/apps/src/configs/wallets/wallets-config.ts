@@ -3,24 +3,24 @@ import { PolkaLogo } from '@webb-dapp/apps/configs/logos/PolkaLogo';
 import { WalletConnectLogo } from '@webb-dapp/apps/configs/logos/WalletConnectLogo';
 import { AppConfig } from '@webb-dapp/react-environment/webb-context';
 
-import { ChainId } from '../chains/chain-id.enum';
+import { InternalChainId } from '../chains/chain-id.enum';
 import { WalletId } from '../wallets/wallet-id.enum';
 
 const ANY_EVM = [
-  ChainId.Edgeware,
-  ChainId.EdgewareTestNet,
-  ChainId.EthereumMainNet,
-  ChainId.Rinkeby,
-  ChainId.Kovan,
-  ChainId.Ropsten,
-  ChainId.Goerli,
-  ChainId.HarmonyTestnet1,
-  ChainId.HarmonyTestnet0,
-  ChainId.HarmonyMainnet0,
-  ChainId.Shiden,
-  ChainId.OptimismTestnet,
-  ChainId.ArbitrumTestnet,
-  ChainId.PolygonTestnet,
+  InternalChainId.Edgeware,
+  InternalChainId.EdgewareTestNet,
+  InternalChainId.EthereumMainNet,
+  InternalChainId.Rinkeby,
+  InternalChainId.Kovan,
+  InternalChainId.Ropsten,
+  InternalChainId.Goerli,
+  InternalChainId.HarmonyTestnet1,
+  InternalChainId.HarmonyTestnet0,
+  InternalChainId.HarmonyMainnet0,
+  InternalChainId.Shiden,
+  InternalChainId.OptimismTestnet,
+  InternalChainId.ArbitrumTestnet,
+  InternalChainId.PolygonTestnet,
 ];
 export const walletsConfig: AppConfig['wallet'] = {
   [WalletId.Polkadot]: {
@@ -33,7 +33,7 @@ export const walletsConfig: AppConfig['wallet'] = {
     async detect() {
       return true;
     },
-    supportedChainIds: [ChainId.EdgewareLocalNet, ChainId.WebbDevelopment],
+    supportedChainIds: [InternalChainId.EdgewareLocalNet, InternalChainId.WebbDevelopment],
   },
   [WalletId.MetaMask]: {
     id: WalletId.MetaMask,
@@ -51,8 +51,8 @@ export const walletsConfig: AppConfig['wallet'] = {
     },
     supportedChainIds: [...ANY_EVM],
   },
-  3: {
-    id: 3,
+  [WalletId.WalletConnectV1]: {
+    id: WalletId.WalletConnectV1,
     logo: WalletConnectLogo,
     name: 'wallet connect',
     title: `Wallet Connect`,
