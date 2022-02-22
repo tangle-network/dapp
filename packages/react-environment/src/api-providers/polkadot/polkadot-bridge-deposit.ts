@@ -4,11 +4,14 @@ import { WebbPolkadot } from '@webb-dapp/react-environment/api-providers/polkado
 import { BridgeConfig } from '@webb-dapp/react-environment/types/bridge-config.interface';
 import { BridgeApi } from '@webb-dapp/react-environment/webb-context/bridge/bridge-api';
 import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
+import { LoggerService } from '@webb-tools/app-util';
 import { Note, NoteGenInput } from '@webb-tools/sdk-core';
 
 import { u8aToHex } from '@polkadot/util';
 
 import { BridgeDeposit } from '../../webb-context/bridge/bridge-deposit';
+
+const logger = LoggerService.get('PolkadotBridgeDeposit');
 
 type DepositPayload = IDepositPayload<Note, [number, string]>;
 
@@ -37,6 +40,7 @@ export class PolkadotBridgeDeposit extends BridgeDeposit<WebbPolkadot, DepositPa
     const currency = this.bridgeApi.currency;
 
     if (!currency) {
+      logger.error('Not currency/active bridge available');
       throw new Error('api not ready');
     }
     const tokenSymbol = currency.view.symbol;
@@ -50,7 +54,7 @@ export class PolkadotBridgeDeposit extends BridgeDeposit<WebbPolkadot, DepositPa
     const anchorIndex = anchorPath[2];
     const anchors = await this.bridgeApi.getAnchors();
     const anchor = anchors[Number(anchorIndex)];
-    console.log({
+    logger.trace({
       amount,
       anchorIndex,
       anchor,
@@ -74,12 +78,14 @@ export class PolkadotBridgeDeposit extends BridgeDeposit<WebbPolkadot, DepositPa
       version: 'v1',
       tokenSymbol: tokenSymbol,
     };
-    console.log(noteInput);
+    logger.log('note input', noteInput);
     const note = await Note.generateNote(noteInput);
     const leaf = note.getLeaf();
+    const leafHex = u8aToHex(leaf);
+    logger.trace(`treeId ${treeId}, Leaf ${leafHex}`);
     return {
       note,
-      params: [treeId, u8aToHex(leaf)],
+      params: [treeId, leafHex],
     };
   }
 
