@@ -6,7 +6,7 @@ import PolygonLogo from '@webb-dapp/apps/configs/logos/PolygonLogo';
 import ShidenLogo from '@webb-dapp/apps/configs/logos/ShidenLogo';
 import WEBBLogo from '@webb-dapp/apps/configs/logos/WebbLogo';
 import WebbWrappedLogo from '@webb-dapp/apps/configs/logos/WebbWrappedLogo';
-import { zeroAddress } from '@webb-dapp/contracts/contracts';
+import { ZERO, zeroAddress } from '@webb-dapp/contracts/contracts';
 import { AppConfig } from '@webb-dapp/react-environment';
 import { CurrencyRole, CurrencyType } from '@webb-dapp/react-environment/types/currency-config.interface';
 import React from 'react';
@@ -72,9 +72,9 @@ export const currenciesConfig: AppConfig['currencies'] = {
     color: '',
     id: WebbCurrencyId.WEBB,
     type: CurrencyType.ORML,
-    role: CurrencyRole.Wrappable,
+    role: CurrencyRole.Governable,
     icon: React.createElement(WEBBLogo),
-    addresses: new Map(),
+    addresses: new Map([[InternalChainId.WebbDevelopment, ZERO]]),
   },
   [WebbCurrencyId.SDN]: {
     name: 'Shiden',

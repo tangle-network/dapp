@@ -1,4 +1,5 @@
 import {
+  bridgeConfigByAsset,
   chainsConfig,
   currenciesConfig,
   evmIdIntoInternalChainId,
@@ -9,6 +10,7 @@ import { AnchorContract } from '@webb-dapp/contracts/contracts/webb-anchor';
 import { WebbApiProvider, WebbMethods, WebbProviderEvents } from '@webb-dapp/react-environment';
 import { Web3WrapUnwrap } from '@webb-dapp/react-environment/api-providers';
 import { EvmChainMixersInfo } from '@webb-dapp/react-environment/api-providers/web3/EvmChainMixersInfo';
+import { Web3BridgeApi } from '@webb-dapp/react-environment/api-providers/web3/web3-bridge-api';
 import { Web3BridgeDeposit } from '@webb-dapp/react-environment/api-providers/web3/web3-bridge-deposit';
 import { Web3BridgeWithdraw } from '@webb-dapp/react-environment/api-providers/web3/web3-bridge-withdraw';
 import { Web3ChainQuery } from '@webb-dapp/react-environment/api-providers/web3/web3-chain-query';
@@ -79,6 +81,7 @@ export class WebbWeb3Provider
         },
       },
       chainQuery: new Web3ChainQuery(this),
+      bridgeApi: new Web3BridgeApi(this, bridgeConfigByAsset),
     };
   }
 

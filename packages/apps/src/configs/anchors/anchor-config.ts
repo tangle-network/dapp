@@ -6,6 +6,7 @@ export const anchorsConfig: AppConfig['anchors'] = {
   [WebbCurrencyId.webbWETH]: [
     {
       amount: '0.1',
+      anchorTreeIds: {},
       anchorAddresses: {
         [InternalChainId.Ropsten]: '0x97747a4De7302Ff7Ee3334e33138879469BFEcf8',
         [InternalChainId.Rinkeby]: '0x09B722aA809A076027FA51902e431a8C03e3f8dF',
@@ -14,6 +15,29 @@ export const anchorsConfig: AppConfig['anchors'] = {
         [InternalChainId.OptimismTestnet]: '0xC44A4EcAC4f23b6F92485Cb1c90dBEd75a987BC8',
         [InternalChainId.ArbitrumTestnet]: '0xD8a8F9629a98EABFF31CfA9493f274A4D5e768Cd',
       },
+    },
+  ],
+  [WebbCurrencyId.WEBB]: [
+    {
+      amount: '10',
+      anchorTreeIds: {
+        [InternalChainId.WebbDevelopment]: '3',
+      },
+      anchorAddresses: {},
+    },
+    {
+      amount: '100',
+      anchorTreeIds: {
+        [InternalChainId.WebbDevelopment]: '4',
+      },
+      anchorAddresses: {},
+    },
+    {
+      amount: '1000',
+      anchorTreeIds: {
+        [InternalChainId.WebbDevelopment]: '5',
+      },
+      anchorAddresses: {},
     },
   ],
 };

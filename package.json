@@ -12,17 +12,18 @@
   "resolutions": {
     "eslint": "^6.6.0",
     "@polkadot/api": "^6.9.2",
-    "@webb-tools/type-definitions": "0.1.4-26",
-    "@webb-tools/api": "0.1.4-26",
-    "@webb-tools/types": "0.1.4-26",
-    "@webb-tools/app-util": "0.1.4-26",
-    "@webb-tools/sdk-core": "0.1.4-26",
-    "@webb-tools/wasm-utils": "0.1.4-26"
+    "react-error-overlay": "6.0.9",
+    "@webb-tools/type-definitions": "0.1.4-35",
+    "@webb-tools/api": "0.1.4-35",
+    "@webb-tools/types": "0.1.4-35",
+    "@webb-tools/app-util": "0.1.4-35",
+    "@webb-tools/sdk-core": "0.1.4-35",
+    "@webb-tools/wasm-utils": "0.1.4-35"
   },
   "scripts": {
     "bump-version": "node scripts/bump-version.js",
     "start:dapp": "REACT_APP_BUILD_ENV=development yarn run build:i18n && cd packages/apps && REACT_APP_BUILD_ENV=development react-app-rewired start",
-    "start:localDapp": "REACT_APP_BUILD_ENV=development REACT_APP_LOCL_FIXTURES=true yarn run build:i18n && cd packages/apps && REACT_APP_BUILD_ENV=development react-app-rewired start",
+    "start:localDapp": " yarn run build:i18n && cd packages/apps && REACT_APP_BUILD_ENV=development REACT_APP_LOCAL_FIXTURES=true react-app-rewired start",
     "build:dapp:production::unwrapped": "cd packages/apps && REACT_APP_BUILD_ENV=production react-app-rewired build",
     "build:dapp:production": "node ./scripts/build-without-warnings.js",
     "build:dapp:development": "cd packages/apps && REACT_APP_BUILD_ENV=development react-app-rewired build",

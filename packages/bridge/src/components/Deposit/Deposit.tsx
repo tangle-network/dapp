@@ -35,7 +35,6 @@ export const Deposit: React.FC<DepositProps> = () => {
 
   const bridgeDepositApi = useBridgeDeposit();
   const { depositApi, selectedBridgeCurrency, setSelectedCurrency } = bridgeDepositApi;
-  const activeBridge = depositApi?.activeBridge;
 
   const { setWrappableToken, wrappableToken, wrappableTokens } = useWrapUnwrap();
   const { activeApi, activeChain, activeWallet, chains, loading, switchChain } = useWebContext();
@@ -49,14 +48,20 @@ export const Deposit: React.FC<DepositProps> = () => {
   }, [activeChain]);
 
   useEffect(() => {
-    if (!activeChain || !activeBridge || !activeApi) return;
+    if (!activeChain || !activeApi) return;
 
     // todo: figure out what happens for polkadot - won't be depositing by address
-    const tokenAddress = activeBridge.getTokenAddress(activeChain.id)!;
+    const tokenAddress = activeApi.methods.bridgeApi.getTokenAddress({
+      chainId: activeChain.chainId,
+      chainType: activeChain.chainType,
+    });
+    if (!tokenAddress) {
+      return;
+    }
     activeApi.methods.chainQuery.tokenBalanceByAddress(tokenAddress).then((balance) => {
       setWrappedTokenBalance(balance);
     });
-  }, [activeApi, activeBridge, activeChain]);
+  }, [activeApi, activeChain]);
 
   const [showDepositModal, setShowDepositModal] = useState(false);
 
@@ -108,7 +113,6 @@ export const Deposit: React.FC<DepositProps> = () => {
       setWrappableToken(wrappableTokens[0]);
     }
   }, [setWrappableToken, wrappableTokens, wrappableToken]);
-
   return (
     <DepositWrapper>
       <WalletBridgeCurrencyInput

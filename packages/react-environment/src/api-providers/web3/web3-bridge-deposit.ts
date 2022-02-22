@@ -6,7 +6,6 @@ import {
   evmIdIntoInternalChainId,
   getEVMChainNameFromInternal,
   InternalChainId,
-  internalChainIdIntoEVMId,
 } from '@webb-dapp/apps/configs';
 import { WebbGovernedToken } from '@webb-dapp/contracts/contracts';
 import { ERC20__factory } from '@webb-dapp/contracts/types';
@@ -24,13 +23,18 @@ import React from 'react';
 import { u8aToHex } from '@polkadot/util';
 
 import { BridgeDeposit } from '../../webb-context/bridge/bridge-deposit';
+
 const logger = LoggerService.get('web3-bridge-deposit');
 
 type DepositPayload = IDepositPayload<Note, [Deposit, number | string, string?]>;
 
 export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPayload> {
+  private get bridgeApi() {
+    return this.inner.methods.bridgeApi;
+  }
+
   async deposit(depositPayload: DepositPayload): Promise<void> {
-    const bridge = this.activeBridge;
+    const bridge = this.bridgeApi.activeBridge;
     if (!bridge) {
       throw new Error('api not ready');
     }
@@ -55,17 +59,18 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
         },
       });
 
+      const anchors = await this.bridgeApi.getAnchors();
       // Find the Anchor for this bridge amount
-      const anchor = bridge.anchors.find((anchor) => anchor.amount == note.amount);
+      const anchor = anchors.find((anchor) => anchor.amount == note.amount);
       if (!anchor) {
         throw new Error('not Anchor for amount' + note.amount);
       }
       // Get the contract address for the destination chain
-      const contractAddress = anchor.anchorAddresses[sourceInternalId];
+      const contractAddress = anchor.neighbours[sourceInternalId];
       if (!contractAddress) {
         throw new Error(`No Anchor for the chain ${note.targetChainId}`);
       }
-      const contract = this.inner.getWebbAnchorByAddress(contractAddress);
+      const contract = this.inner.getWebbAnchorByAddress(contractAddress as string);
 
       // If a wrappableAsset was selected, perform a wrapAndDeposit
       if (depositPayload.params[2]) {
@@ -173,18 +178,20 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
   }
 
   async getSizes(): Promise<MixerSize[]> {
-    const bridge = this.activeBridge;
-    if (bridge) {
-      return bridge.anchors.map((anchor) => ({
-        id: `Bridge=${anchor.amount}@${bridge.currency.view.name}`,
-        title: `${anchor.amount} ${bridge.currency.view.name}`,
+    const anchors = await this.bridgeApi.getAnchors();
+    const currency = this.bridgeApi.currency;
+    if (currency) {
+      return anchors.map((anchor) => ({
+        id: `Bridge=${anchor.amount}@${currency.view.name}`,
+        title: `${anchor.amount} ${currency.view.name}`,
       }));
     }
     return [];
   }
 
   async getWrappableAssets(chainId: InternalChainId): Promise<Currency[]> {
-    const bridge = this.activeBridge;
+    const bridge = this.bridgeApi.activeBridge;
+
     logger.log('getWrappableAssets of chain: ', chainId);
     if (bridge) {
       const wrappedTokenAddress = bridge.getTokenAddress(chainId);
@@ -224,12 +231,19 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
    * @param wrappableAssetAddress - the address of the token to wrap into the bridge
    * @returns
    */
+  /*
+   *
+   *  Mixer id => the fixed deposit amount
+   * destChainId => the Chain the token will be bridged to
+   * If the wrappableAssetAddress is not provided, it is assumed to be the address of the webbToken
+   * */
   async generateBridgeNote(
     mixerId: number | string,
     destChainId: number,
     wrappableAssetAddress?: string
   ): Promise<DepositPayload> {
-    const bridge = this.activeBridge;
+    const bridge = this.bridgeApi.activeBridge;
+
     if (!bridge) {
       throw new Error('api not ready');
     }

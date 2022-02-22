@@ -14,7 +14,7 @@ export interface ChainTypeId {
 }
 
 export enum SubstrateChainId {
-  Webb = 1,
+  Webb = 1080,
   Edgeware = 7,
 }
 
