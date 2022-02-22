@@ -95,6 +95,10 @@ export const evmIdIntoInternalChainId = (evmId: number | string): InternalChainI
       return InternalChainId.ArbitrumTestnet;
     case EVMChainId.PolygonTestnet:
       return InternalChainId.PolygonTestnet;
+    case EVMChainId.HermesLocalnet:
+      return InternalChainId.HermesLocalnet;
+    case EVMChainId.AthenaLocalnet:
+      return InternalChainId.AthenaLocalnet;
   }
 };
 
@@ -130,6 +134,10 @@ export const internalChainIdIntoEVMId = (chainId: InternalChainId | Number | Str
       return EVMChainId.ArbitrumTestnet;
     case InternalChainId.PolygonTestnet:
       return EVMChainId.PolygonTestnet;
+    case InternalChainId.HermesLocalnet:
+      return EVMChainId.HermesLocalnet;
+    case InternalChainId.AthenaLocalnet:
+      return EVMChainId.AthenaLocalnet;
     default:
       throw Error(`unsupported evm id: ${chainId}`);
   }

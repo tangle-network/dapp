@@ -16,4 +16,13 @@ export const anchorsConfig: AppConfig['anchors'] = {
       },
     },
   ],
+  [WebbCurrencyId.webbDEV]: [
+    {
+      amount: '1',
+      anchorAddresses: {
+        [InternalChainId.HermesLocalnet]: '0x510C6297cC30A058F41eb4AF1BFC9953EaD8b577',
+        [InternalChainId.AthenaLocalnet]: '0x7758F98C1c487E5653795470eEab6C4698bE541b',
+      },
+    },
+  ],
 };

@@ -141,7 +141,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
     const accounts = await this.inner.accounts.accounts();
     const account = accounts[0];
 
-    const deposit = depositFromAnchor2Preimage(note.secret.replace('0x', ''), Number(activeChain));
+    const deposit = depositFromAnchor2Preimage(note.secrets.replace('0x', ''), Number(activeChain));
     logger.info(`Commitment for withdraw is ${deposit.commitment}`);
 
     const input = {
@@ -256,7 +256,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
     const destInternalId = chainTypeIdToInternalId(destChainIdType);
 
     // get the deposit info
-    const sourceDeposit = depositFromAnchor2Preimage(note.secret.replace('0x', ''), destChainIdType.chainId);
+    const sourceDeposit = depositFromAnchor2Preimage(note.secrets.replace('0x', ''), destChainIdType.chainId);
     this.emit('stateChange', WithdrawState.GeneratingZk);
 
     // Getting contracts data for source and dest chains

@@ -1,12 +1,14 @@
 import {
   chainsConfig,
   ChainType,
+  chainTypeIdToInternalId,
   computeChainIdType,
   currenciesConfig,
   evmIdIntoInternalChainId,
   getEVMChainNameFromInternal,
   InternalChainId,
   internalChainIdIntoEVMId,
+  typeAndIdFromChainIdType,
 } from '@webb-dapp/apps/configs';
 import { WebbGovernedToken } from '@webb-dapp/contracts/contracts';
 import { ERC20__factory } from '@webb-dapp/contracts/types';
@@ -237,26 +239,33 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
     const sourceEvmId = await this.inner.getChainId();
     const sourceChainId = computeChainIdType(ChainType.EVM, sourceEvmId);
     const deposit = createAnchor2Deposit(destChainId);
+    const srcChainInternal = evmIdIntoInternalChainId(sourceEvmId);
+    const destChainInternal = chainTypeIdToInternalId(typeAndIdFromChainIdType(destChainId));
     const secrets = deposit.preimage;
+    const target = bridge.getTokenAddress(destChainInternal);
+    const srcAddress = bridge.getTokenAddress(srcChainInternal);
+    console.log('mixerId: ', mixerId);
     const amount = String(mixerId).replace('Bridge=', '').split('@')[0];
 
     const noteInput: NoteGenInput = {
       exponentiation: '5',
       width: '3',
-      prefix: 'webb.bridge',
+      protocol: 'anchor',
       chain: String(destChainId),
       sourceChain: String(sourceChainId),
+      sourceIdentifyingData: srcAddress,
+      targetIdentifyingData: target,
       amount: amount,
       denomination: '18',
       hashFunction: 'Poseidon',
       curve: 'Bn254',
       backend: 'Circom',
-      version: 'v1',
+      version: 'v2',
       tokenSymbol: tokenSymbol,
       secrets: u8aToHex(secrets),
     };
     const note = await Note.generateNote(noteInput);
-    logger.info(`Commitment is ${note.note.secret}`);
+    logger.info(`Commitment is ${note.note.secrets}`);
     return {
       note: note,
       params: [deposit, mixerId, wrappableAssetAddress],

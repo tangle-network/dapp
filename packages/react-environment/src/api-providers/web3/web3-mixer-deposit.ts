@@ -90,17 +90,19 @@ export class Web3MixerDeposit extends MixerDeposit<WebbWeb3Provider, DepositPayl
     const noteChain = String(evmIdIntoInternalChainId(chainId));
     const secrets = deposit.preimage;
     const noteInput: NoteGenInput = {
+      protocol: 'mixer',
       exponentiation: '5',
       width: '3',
-      prefix: 'webb.mixer',
       chain: noteChain,
       sourceChain: noteChain,
+      sourceIdentifyingData: mixerAddress,
+      targetIdentifyingData: mixerAddress,
       amount: String(depositSize),
       denomination: '18',
       hashFunction: 'Poseidon',
       curve: 'Bn254',
       backend: 'Circom',
-      version: 'v1',
+      version: 'v2',
       tokenSymbol: mixerInfo.symbol,
       secrets: u8aToHex(secrets),
     };

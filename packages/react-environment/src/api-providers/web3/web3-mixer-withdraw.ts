@@ -107,7 +107,7 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
     this.cancelToken.cancelled = false;
     const activeRelayer = this.activeRelayer[0];
     const evmNote = await Note.deserialize(note);
-    const deposit = depositFromPreimage(evmNote.note.secret.replace('0x', ''));
+    const deposit = depositFromPreimage(evmNote.note.secrets.replace('0x', ''));
     const chainId = Number(evmNote.note.targetChainId) as InternalChainId;
     const chainEvmId = internalChainIdIntoEVMId(chainId);
 

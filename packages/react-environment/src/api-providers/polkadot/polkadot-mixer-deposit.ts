@@ -87,7 +87,7 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
     const treeId = amount?.treeId;
     logger.info(`Depositing to tree id ${treeId}`);
     const noteInput: NoteGenInput = {
-      prefix: 'webb.mixer',
+      protocol: 'mixer',
       version: 'v1',
       exponentiation: '5',
       width: '5',
@@ -95,10 +95,11 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
       hashFunction: 'Poseidon',
       curve: 'Bn254',
       denomination: `${denomination}`,
-
       amount: String(amount.value),
       chain: String(chainId),
       sourceChain: String(chainId),
+      sourceIdentifyingData: treeId.toString(),
+      targetIdentifyingData: treeId.toString(),
       tokenSymbol: amount.symbol,
     };
     const depositNote = await Note.generateNote(noteInput);

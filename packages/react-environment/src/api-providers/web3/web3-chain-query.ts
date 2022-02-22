@@ -44,6 +44,7 @@ export class Web3ChainQuery extends ChainQuery<WebbWeb3Provider> {
 
   async tokenBalanceByAddress(address: string): Promise<string> {
     const provider = this.inner.getEthersProvider();
+    console.log('provider: ', await provider.getBlockNumber());
 
     const accounts = await this.inner.accounts.accounts();
     if (!accounts || !accounts.length) {

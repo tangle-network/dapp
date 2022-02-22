@@ -45,6 +45,8 @@ export enum InternalChainId {
   ArbitrumTestnet,
   PolygonTestnet,
   WebbDevelopment,
+  HermesLocalnet,
+  AthenaLocalnet,
 }
 
 export enum EVMChainId {
@@ -66,4 +68,6 @@ export enum EVMChainId {
   OptimismTestnet = 69,
   ArbitrumTestnet = 421611,
   PolygonTestnet = 80001,
+  HermesLocalnet = 5001,
+  AthenaLocalnet = 5002,
 }

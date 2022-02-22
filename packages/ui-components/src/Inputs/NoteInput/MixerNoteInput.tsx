@@ -29,7 +29,7 @@ export const MixerNoteInput: React.FC<NoteInputProps> = ({ error, onChange, valu
 
   // Switch to bridge tab if note is for bridge
   useEffect(() => {
-    if (depositNote && depositNote.note.prefix === 'webb.bridge') {
+    if (depositNote && depositNote.note.protocol === 'anchor') {
       notificationApi.addToQueue({
         secondaryMessage: 'Please complete withdraw through the bridge',
         message: 'Switched to bridge',
@@ -65,7 +65,7 @@ export const MixerNoteInput: React.FC<NoteInputProps> = ({ error, onChange, valu
               <tr>
                 <td>Context:</td>
                 <td style={{ textAlign: 'right' }}>
-                  <b>{depositNote.note.prefix.replace('webb.', '').toUpperCase()}</b>
+                  <b>{depositNote.note.protocol.toUpperCase()}</b>
                 </td>
               </tr>
               <tr>
