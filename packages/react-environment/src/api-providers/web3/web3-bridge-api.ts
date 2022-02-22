@@ -2,7 +2,7 @@ import { chainsConfig, ChainTypeId, chainTypeIdToInternalId, currenciesConfig } 
 import { WebbGovernedToken } from '@webb-dapp/contracts/contracts';
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers';
 import { BridgeConfig } from '@webb-dapp/react-environment/types/bridge-config.interface';
-import { CurrencyRole } from '@webb-dapp/react-environment/types/currency-config.interface';
+import { CurrencyRole, CurrencyType } from '@webb-dapp/react-environment/types/currency-config.interface';
 import { AnchorBase, BridgeApi } from '@webb-dapp/react-environment/webb-context/bridge/bridge-api';
 import { Currency } from '@webb-dapp/react-environment/webb-context/currency/currency';
 
@@ -14,7 +14,9 @@ export class Web3BridgeApi extends BridgeApi<WebbWeb3Provider, BridgeConfig> {
   }
 
   async getCurrencies(): Promise<Currency[]> {
-    const bridgeCurrenciesConfig = Object.values(currenciesConfig).filter((i) => i.role == CurrencyRole.Governable);
+    const bridgeCurrenciesConfig = Object.values(currenciesConfig).filter((i) => {
+      return i.role == CurrencyRole.Governable && i.type == CurrencyType.ERC20;
+    });
     return bridgeCurrenciesConfig.map((config) => {
       return Currency.fromCurrencyId(config.id);
     });
