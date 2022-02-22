@@ -46,7 +46,7 @@ export class PolkadotBridgeWithdraw extends BridgeWithdraw<WebbPolkadot> {
     }
     return leaves;
   }
-  async fetchCachedRoot(treeId: string) {
+  async fetchRoot(treeId: string) {
     logger.trace(`fetching metadata for tree id ${treeId}`);
     const storage =
       // @ts-ignore
