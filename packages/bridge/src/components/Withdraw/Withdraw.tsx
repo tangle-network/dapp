@@ -4,8 +4,6 @@ import {
   ChainType,
   chainTypeIdToInternalId,
   currenciesConfig,
-  evmIdIntoInternalChainId,
-  internalChainIdIntoEVMId,
   typeAndIdFromChainIdType,
 } from '@webb-dapp/apps/configs';
 import WithdrawingModal from '@webb-dapp/bridge/components/Withdraw/WithdrawingModal';
@@ -49,6 +47,8 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
     recipient,
     note: depositNote,
   });
+
+  /// TODO: expose hook
   const feesGetter = useCallback(
     async (activeRelayer: ActiveWebbRelayer): Promise<FeesInfo> => {
       const defaultFees: FeesInfo = {
@@ -66,6 +66,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
     [note]
   );
 
+  /// TODO: expose hook
   const relayerApi: RelayerApiAdapter = useMemo(() => {
     return {
       getInfo: async (endpoint) => {
@@ -76,25 +77,25 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
       },
     };
   }, [relayerMethods]);
-  const determineDisabled = () => {
-    if (depositNote && determineSwitchButton()) {
+
+  const shouldSwitchChain = useMemo(() => {
+    if (!depositNote || !activeChain) {
+      return false;
+    }
+    const chainId = typeAndIdFromChainIdType(Number(depositNote.note.targetChainId)).chainId;
+
+    return activeChain.chainId !== chainId;
+  }, [activeChain, depositNote]);
+
+  const isDisabled = useMemo(() => {
+    if (depositNote && shouldSwitchChain) {
       return false;
     } else if (depositNote && recipient) {
       return false;
     }
     return true;
-  };
-  const determineSwitchButton = () => {
-    if (
-      depositNote &&
-      activeChain &&
-      activeChain.chainType == ChainType.EVM &&
-      activeChain.chainId != typeAndIdFromChainIdType(Number(depositNote.note.targetChainId)).chainId
-    ) {
-      return true;
-    }
-    return false;
-  };
+  }, [depositNote, shouldSwitchChain, recipient]);
+
   const switchChain = async (note: Note | null) => {
     if (!note) return;
     if (!activeApi) return;
@@ -175,11 +176,15 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
           <SpaceBox height={16} />
         </>
       )}
-
       <MixerButton
-        disabled={determineDisabled()}
-        onClick={determineSwitchButton() ? () => switchChain(depositNote) : withdraw}
-        label={determineSwitchButton() ? 'Switch chains to withdraw' : 'Withdraw'}
+        disabled={isDisabled}
+        onClick={() => {
+          if (shouldSwitchChain) {
+            return switchChain(depositNote);
+          }
+          withdraw();
+        }}
+        label={shouldSwitchChain ? 'Switch chains to withdraw' : 'Withdraw'}
       />
       <Modal open={stage !== WithdrawState.Ideal}>
         {depositNote && (

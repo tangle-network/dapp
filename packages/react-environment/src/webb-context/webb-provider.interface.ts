@@ -1,4 +1,5 @@
 import { Bridge, BridgeDeposit, BridgeWithdraw } from '@webb-dapp/react-environment/webb-context/bridge';
+import { BridgeApi } from '@webb-dapp/react-environment/webb-context/bridge/bridge-api';
 import { ChainQuery } from '@webb-dapp/react-environment/webb-context/chain-query';
 import { WebbRelayerBuilder } from '@webb-dapp/react-environment/webb-context/relayer';
 import { WrapUnWrap } from '@webb-dapp/react-environment/webb-context/wrap-unwrap';
@@ -14,6 +15,7 @@ export interface WebbMethods<T> {
   bridge: WebbBridge<T>;
   wrapUnwrap: WrapAndUnwrap<T>;
   chainQuery: ChainQuery<T>;
+  bridgeApi: BridgeApi<T, any>;
 }
 
 export type WebbMethod<T extends EventBus<K>, K extends Record<string, unknown>> = {

@@ -32,12 +32,10 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
     const groupItem = data
       .map(([storageKey, info]) => {
         const mixerInfo = (info as PalletMixerMixerMetadata).toHuman();
-        console.log(mixerInfo);
         const cId: number = Number(mixerInfo.asset);
         const amount = mixerInfo.depositSize;
         // @ts-ignore
         const treeId = storageKey.toHuman()[0];
-        console.log(treeId);
         const asset = ormlAssets.find((asset) => Number(asset.id) === cId) || {
           locked: false,
           existentialDeposit: 30000,

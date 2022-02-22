@@ -240,6 +240,7 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
       tokenSymbol: this.apiPromise.registry.chainTokens[0] || 'Unit',
       types: options({}).types as any,
     };
+    console.log(metadataDef);
     return metadataDef;
   }
 

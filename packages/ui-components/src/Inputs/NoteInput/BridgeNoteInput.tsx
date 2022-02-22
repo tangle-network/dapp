@@ -30,7 +30,7 @@ const NoteDetails = styled.div`
 
 export const BridgeNoteInput: React.FC<NoteInputProps> = ({ error, onChange, value }) => {
   const depositNote = useDepositNote(value);
-  const { getBridge } = useBridge();
+  const { bridgeApi } = useBridge();
   const navigate = useNavigate();
 
   // Switch to mixer tab if note is for mixer
@@ -46,16 +46,15 @@ export const BridgeNoteInput: React.FC<NoteInputProps> = ({ error, onChange, val
     }
   }, [depositNote, navigate]);
 
-  const bridge = useMemo(() => {
+  const currency = useMemo(() => {
     try {
-      if (depositNote && depositNote.note.protocol == 'anchor') {
-        const currency = Currency.fromCurrencyId(webbCurrencyIdFromString(depositNote.note.tokenSymbol));
-        return getBridge(currency);
+      if (depositNote && (depositNote.note.protocol == 'anchor')) {
+        return bridgeApi?.currency;
       }
     } catch (_) {
       return null;
     }
-  }, [depositNote, getBridge]);
+  }, [depositNote, bridgeApi]);
 
   return (
     <InputLabel label={'Note'}>
@@ -105,7 +104,7 @@ export const BridgeNoteInput: React.FC<NoteInputProps> = ({ error, onChange, val
                 </td>
               </tr>
 
-              {bridge ? (
+              {currency ? (
                 <>
                   <tr>
                     <td
@@ -117,7 +116,7 @@ export const BridgeNoteInput: React.FC<NoteInputProps> = ({ error, onChange, val
                     </td>
                     <td style={{ textAlign: 'right' }}>
                       <div>
-                        {bridge.currency
+                        {currency
                           .getChainIds()
                           .map(getEVMChainNameFromInternal)
                           .map((chainName) => (
