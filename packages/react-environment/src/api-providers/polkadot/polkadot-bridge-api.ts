@@ -15,9 +15,12 @@ export class PolkadotBridgeApi extends BridgeApi<WebbPolkadot, BridgeConfig> {
   }
 
   async getCurrencies(): Promise<Currency[]> {
-    const bridgeCurrenciesConfig = Object.values(currenciesConfig).filter(
-      (i) => i.type === CurrencyType.ORML && i.role == CurrencyRole.Governable
-    );
+    const bridgeCurrenciesConfig = Object.values(currenciesConfig).filter((i) => {
+      const isValid = i.type === CurrencyType.ORML && i.role == CurrencyRole.Governable;
+      // TODO : Validate whether the chain supports the token
+      const isSupported = true;
+      return isValid && isSupported;
+    });
     return bridgeCurrenciesConfig.map((config) => {
       return Currency.fromCurrencyId(config.id);
     });
