@@ -85,7 +85,7 @@ export class PolkadotBridgeWithdraw extends BridgeWithdraw<WebbPolkadot> {
       const relayerAccountHex = u8aToHex(decodeAddress(recipient));
       const provingKey = await fetchSubstrateProvingKey();
       const commitment = '0000000000000000000000000000000000000000000000000000000000000000';
-      const root = await this.fetchCachedRoot(treeId);
+      const root = await this.fetchRoot(treeId);
 
       const proofInput: ProvingManagerSetupInput = {
         leaves,

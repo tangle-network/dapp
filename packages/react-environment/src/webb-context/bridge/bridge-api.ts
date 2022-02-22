@@ -3,7 +3,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 
 import { Currency } from '../currency/currency';
 
-export type BridgeCurrencyIndex = string | WebbCurrencyId;
+export type BridgeCurrencyIndex = string | number | WebbCurrencyId;
 
 type BridgeStore<BridgeConfigEntry, BridgeConfig = Record<BridgeCurrencyIndex, BridgeConfigEntry>> = {
   config: BridgeConfig;
