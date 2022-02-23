@@ -1,6 +1,6 @@
 import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
 import { pedersenHash } from '@webb-dapp/contracts/utils/pedersen-hash';
-import { poseidonHash3 } from '@webb-dapp/contracts/utils/poseidon-hash3';
+import { poseidonHash3, PoseidonHasher3 } from '@webb-dapp/contracts/utils/poseidon-hash3';
 import { PoseidonHasher } from '@webb-dapp/utils/merkle/poseidon-hasher';
 
 const tornSnarkjs = require('tornado-snarkjs');
@@ -39,7 +39,7 @@ export function createTornDeposit() {
 }
 
 export function createAnchor2Deposit(chainId: number) {
-  const poseidonHasher = new PoseidonHasher();
+  const poseidonHasher = new PoseidonHasher3();
   const preimage = crypto.randomBytes(62);
   const nullifier = leBuff2int(preimage.slice(0, 31));
   const secret = leBuff2int(preimage.slice(31, 62));
@@ -59,7 +59,7 @@ export function createAnchor2Deposit(chainId: number) {
 }
 
 export function depositFromAnchor2Preimage(hexString: string, chainId: number): Deposit {
-  const poseidonHasher = new PoseidonHasher();
+  const poseidonHasher = new PoseidonHasher3();
   const preimage = Buffer.from(hexString, 'hex');
   const nullifier = leBuff2int(preimage.slice(0, 31));
   const secret = leBuff2int(preimage.slice(31, 62));
