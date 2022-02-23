@@ -240,6 +240,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
 
   async crossChainWithdraw(note: DepositNote, recipient: string) {
     this.cancelToken.cancelled = false;
+    console.log('crossChainWithdraw note: ', note);
     const bridgeStorageStorage = await bridgeCurrencyBridgeStorageFactory();
 
     // Setup a provider for the source chain

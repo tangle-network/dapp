@@ -16,6 +16,10 @@ export const bridgeConfigByAsset: AppConfig['bridgeByAsset'] = {
     asset: WebbCurrencyId.WEBB,
     anchors: anchorsConfig[WebbCurrencyId.WEBB],
   },
+  [WebbCurrencyId.webbDEV]: {
+    asset: WebbCurrencyId.webbDEV,
+    anchors: anchorsConfig[WebbCurrencyId.webbDEV],
+  },
 };
 
 export const getAnchorAddressForBridge = (

@@ -26,6 +26,7 @@ import React from 'react';
 import { u8aToHex } from '@polkadot/util';
 
 import { BridgeDeposit } from '../../webb-context/bridge/bridge-deposit';
+import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
 
 const logger = LoggerService.get('web3-bridge-deposit');
 
@@ -37,8 +38,8 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
   }
 
   async deposit(depositPayload: DepositPayload): Promise<void> {
-    const bridge = this.bridgeApi.activeBridge;
-    if (!bridge) {
+    const currency = this.bridgeApi.currency;
+    if (!currency) {
       throw new Error('api not ready');
     }
     try {
@@ -53,12 +54,12 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
         data: React.createElement(DepositNotification, {
           chain: getEVMChainNameFromInternal(Number(sourceInternalId)),
           amount: Number(note.amount),
-          currency: bridge.currency.view.name,
+          currency: currency.view.name,
         }),
         key: 'bridge-deposit',
         path: {
           method: depositPayload.params[2] ? 'wrap and deposit' : 'deposit',
-          section: bridge.currency.view.name,
+          section: currency.view.name,
         },
       });
 
@@ -104,7 +105,7 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
             key: 'bridge-deposit',
             path: {
               method: 'wrap and deposit',
-              section: bridge.currency.view.name,
+              section: currency.view.name,
             },
           });
         } else {
@@ -139,7 +140,7 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
             key: 'bridge-deposit',
             path: {
               method: 'deposit',
-              section: bridge.currency.view.name,
+              section: currency.view.name,
             },
           });
         } else {
@@ -161,7 +162,7 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
 
           path: {
             method: 'deposit',
-            section: bridge.currency.view.name,
+            section: currency.view.name,
           },
         });
       } else {
@@ -173,7 +174,7 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
 
           path: {
             method: 'deposit',
-            section: bridge.currency.view.name,
+            section: currency.view.name,
           },
         });
       }
@@ -245,26 +246,25 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
     destChainId: number,
     wrappableAssetAddress?: string
   ): Promise<DepositPayload> {
-    const bridge = this.bridgeApi.activeBridge;
+    const currency = this.bridgeApi.currency;
 
-    if (!bridge) {
+    if (!currency) {
       throw new Error('api not ready');
     }
-    const tokenSymbol = bridge.currency.view.symbol;
+    const tokenSymbol = currency.view.symbol;
     const sourceEvmId = await this.inner.getChainId();
     const sourceChainId = computeChainIdType(ChainType.EVM, sourceEvmId);
     const deposit = createAnchor2Deposit(destChainId);
     const srcChainInternal = evmIdIntoInternalChainId(sourceEvmId);
     const destChainInternal = chainTypeIdToInternalId(typeAndIdFromChainIdType(destChainId));
-    const secrets = deposit.preimage;
-    const target = bridge.getTokenAddress(destChainInternal);
-    const srcAddress = bridge.getTokenAddress(srcChainInternal);
+    const target = currency.getAddress(destChainInternal);
+    const srcAddress = currency.getAddress(srcChainInternal);
     console.log('mixerId: ', mixerId);
     const amount = String(mixerId).replace('Bridge=', '').split('@')[0];
 
     const noteInput: NoteGenInput = {
       exponentiation: '5',
-      width: '3',
+      width: '4',
       protocol: 'anchor',
       chain: String(destChainId),
       sourceChain: String(sourceChainId),
@@ -277,7 +277,7 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
       backend: 'Circom',
       version: 'v2',
       tokenSymbol: tokenSymbol,
-      secrets: u8aToHex(secrets),
+      secrets: `${bufferToFixed(destChainId, 6)}:${deposit.nullifier}:${deposit.secret}`,
     };
     const note = await Note.generateNote(noteInput);
     logger.info(`Commitment is ${note.note.secrets}`);

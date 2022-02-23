@@ -141,7 +141,7 @@ export const currenciesConfig: AppConfig['currencies'] = {
     id: WebbCurrencyId.DEV,
     type: CurrencyType.ERC20,
     role: CurrencyRole.Wrappable,
-    icon: WebbWrappedLogo(EtherLogo()),
+    icon: React.createElement(EtherLogo),
     addresses: new Map([
       [InternalChainId.HermesLocalnet, '0x2946259E0334f33A064106302415aD3391BeD384'],
       [InternalChainId.AthenaLocalnet, '0xF2E246BB76DF876Cef8b38ae84130F4F55De395b'],

@@ -48,7 +48,7 @@ export const BridgeNoteInput: React.FC<NoteInputProps> = ({ error, onChange, val
 
   const currency = useMemo(() => {
     try {
-      if (depositNote && (depositNote.note.protocol == 'anchor')) {
+      if (depositNote && depositNote.note.protocol == 'anchor') {
         return bridgeApi?.currency;
       }
     } catch (_) {

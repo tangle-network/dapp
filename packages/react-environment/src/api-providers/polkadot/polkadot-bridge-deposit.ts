@@ -63,9 +63,11 @@ export class PolkadotBridgeDeposit extends BridgeDeposit<WebbPolkadot, DepositPa
     const noteInput: NoteGenInput = {
       exponentiation: '5',
       width: '4',
-      prefix: 'webb.anchor',
+      protocol: 'anchor',
       chain: String(destChainId),
       sourceChain: String(sourceChainId),
+      sourceIdentifyingData: treeId.toString(),
+      targetIdentifyingData: treeId.toString(),
       amount: amount,
       denomination: '18',
       hashFunction: 'Poseidon',
