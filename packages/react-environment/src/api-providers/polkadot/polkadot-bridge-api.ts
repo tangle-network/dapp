@@ -4,11 +4,8 @@ import { BridgeConfig } from '@webb-dapp/react-environment/types/bridge-config.i
 import { CurrencyRole, CurrencyType } from '@webb-dapp/react-environment/types/currency-config.interface';
 import { AnchorBase, BridgeApi } from '@webb-dapp/react-environment/webb-context/bridge/bridge-api';
 import { Currency } from '@webb-dapp/react-environment/webb-context/currency/currency';
-import { ORMLAsset } from '@webb-dapp/react-environment/webb-context/currency/orml-currency';
 
 export class PolkadotBridgeApi extends BridgeApi<WebbPolkadot, BridgeConfig> {
-  private ORMLCurrencies: Record<string, ORMLAsset> = {};
-
   private get activeBridgeAsset() {
     return this.store.activeBridge?.asset ?? null;
   }
@@ -18,9 +15,12 @@ export class PolkadotBridgeApi extends BridgeApi<WebbPolkadot, BridgeConfig> {
   }
 
   async getCurrencies(): Promise<Currency[]> {
-    const bridgeCurrenciesConfig = Object.values(currenciesConfig).filter(
-      (i) => i.type === CurrencyType.ORML && i.role == CurrencyRole.Governable
-    );
+    const bridgeCurrenciesConfig = Object.values(currenciesConfig).filter((i) => {
+      const isValid = i.type === CurrencyType.ORML && i.role == CurrencyRole.Governable;
+      // TODO : Validate whether the chain supports the token
+      const isSupported = true;
+      return isValid && isSupported;
+    });
     return bridgeCurrenciesConfig.map((config) => {
       return Currency.fromCurrencyId(config.id);
     });

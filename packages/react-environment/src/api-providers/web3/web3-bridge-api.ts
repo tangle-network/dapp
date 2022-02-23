@@ -20,11 +20,12 @@ export class Web3BridgeApi extends BridgeApi<WebbWeb3Provider, BridgeConfig> {
   }
 
   async getCurrencies(): Promise<Currency[]> {
-    const evmId = await this.inner.getChainId();
-
+    const currentChainId = await this.inner.getChainId();
+    const internalChainId = evmIdIntoInternalChainId(currentChainId);
     const bridgeCurrenciesConfig = Object.values(currenciesConfig).filter((i) => {
-      const supportedOnCurrentChain = i.addresses.has(evmIdIntoInternalChainId(evmId));
-      return i.role == CurrencyRole.Governable && i.type == CurrencyType.ERC20 && supportedOnCurrentChain;
+      const isValid = i.role == CurrencyRole.Governable && i.type == CurrencyType.ERC20;
+      const isSupported = Currency.fromCurrencyId(i.id).hasChain(internalChainId);
+      return isSupported && isValid;
     });
     return bridgeCurrenciesConfig.map((config) => {
       return Currency.fromCurrencyId(config.id);

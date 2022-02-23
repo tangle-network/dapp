@@ -23,7 +23,7 @@
   "scripts": {
     "bump-version": "node scripts/bump-version.js",
     "start:dapp": "REACT_APP_BUILD_ENV=development yarn run build:i18n && cd packages/apps && REACT_APP_BUILD_ENV=development react-app-rewired start",
-    "start:localDapp": " yarn run build:i18n && cd packages/apps && REACT_APP_BUILD_ENV=development REACT_APP_LOCL_FIXTURES=true react-app-rewired start",
+    "start:localDapp": " yarn run build:i18n && cd packages/apps && REACT_APP_BUILD_ENV=development REACT_APP_LOCAL_FIXTURES=true react-app-rewired start",
     "build:dapp:production::unwrapped": "cd packages/apps && REACT_APP_BUILD_ENV=production react-app-rewired build",
     "build:dapp:production": "node ./scripts/build-without-warnings.js",
     "build:dapp:development": "cd packages/apps && REACT_APP_BUILD_ENV=development react-app-rewired build",
