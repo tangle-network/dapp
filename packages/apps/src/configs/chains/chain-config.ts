@@ -9,6 +9,7 @@ import WEBBLogo from '@webb-dapp/apps/configs/logos/WebbLogo';
 import { AppConfig } from '@webb-dapp/react-environment/webb-context';
 
 import { WebbCurrencyId } from '../currencies/webb-currency-id.enum';
+import GanacheLogo from '../logos/GanacheLogo';
 import { ChainType, EVMChainId, InternalChainId, SubstrateChainId } from './chain-id.enum';
 
 export const getSupportedCurrenciesOfChain = (chainId: InternalChainId): WebbCurrencyId[] => {
@@ -244,7 +245,7 @@ export const chainsConfig: AppConfig['chains'] = {
     tag: 'dev',
     url: 'http://127.0.0.1:5001',
     evmRpcUrls: ['http://127.0.0.1:5001'],
-    logo: EtherLogo,
+    logo: GanacheLogo,
     currencies: [WebbCurrencyId.ETH, WebbCurrencyId.DEV],
     nativeCurrencyId: WebbCurrencyId.ETH,
   },
@@ -257,7 +258,7 @@ export const chainsConfig: AppConfig['chains'] = {
     tag: 'dev',
     url: 'http://127.0.0.1:5002',
     evmRpcUrls: ['http://127.0.0.1:5002'],
-    logo: EtherLogo,
+    logo: GanacheLogo,
     currencies: [WebbCurrencyId.ETH, WebbCurrencyId.DEV],
     nativeCurrencyId: WebbCurrencyId.ETH,
   },

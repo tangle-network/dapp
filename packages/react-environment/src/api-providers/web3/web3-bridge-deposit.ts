@@ -39,11 +39,11 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
 
   async deposit(depositPayload: DepositPayload): Promise<void> {
     const bridge = this.bridgeApi.activeBridge;
-    if (!bridge) {
+    const currency = this.bridgeApi.currency
+    if (!bridge || !currency) {
       throw new Error('api not ready');
-    }
+    } 
     try {
-      // Getting the active bridge
       const commitment = depositPayload.params[0].commitment;
       const note = depositPayload.note.note;
       const sourceEvmId = await this.inner.getChainId();
@@ -54,12 +54,12 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
         data: React.createElement(DepositNotification, {
           chain: getEVMChainNameFromInternal(Number(sourceInternalId)),
           amount: Number(note.amount),
-          currency: bridge.currency.view.name,
+          currency: currency.view.name,
         }),
         key: 'bridge-deposit',
         path: {
           method: depositPayload.params[2] ? 'wrap and deposit' : 'deposit',
-          section: bridge.currency.view.name,
+          section: currency.view.name,
         },
       });
 
@@ -105,7 +105,7 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
             key: 'bridge-deposit',
             path: {
               method: 'wrap and deposit',
-              section: bridge.currency.view.name,
+              section: currency.view.name,
             },
           });
         } else {
@@ -140,7 +140,7 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
             key: 'bridge-deposit',
             path: {
               method: 'deposit',
-              section: bridge.currency.view.name,
+              section: currency.view.name,
             },
           });
         } else {
@@ -162,7 +162,7 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
 
           path: {
             method: 'deposit',
-            section: bridge.currency.view.name,
+            section: currency.view.name,
           },
         });
       } else {
@@ -174,7 +174,7 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
 
           path: {
             method: 'deposit',
-            section: bridge.currency.view.name,
+            section: currency.view.name,
           },
         });
       }
@@ -247,18 +247,20 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
     wrappableAssetAddress?: string
   ): Promise<DepositPayload> {
     const bridge = this.bridgeApi.activeBridge;
+    const currency = this.bridgeApi.currency;
 
-    if (!bridge) {
+    if (!bridge || !currency) {
       throw new Error('api not ready');
     }
-    const tokenSymbol = bridge.currency.view.symbol;
+    console.log(bridge)
+    const tokenSymbol = currency.view.symbol;
     const sourceEvmId = await this.inner.getChainId();
     const sourceChainId = computeChainIdType(ChainType.EVM, sourceEvmId);
     const deposit = createAnchor2Deposit(destChainId);
     const srcChainInternal = evmIdIntoInternalChainId(sourceEvmId);
     const destChainInternal = chainTypeIdToInternalId(parseChainIdType(destChainId));
-    const target = bridge.currency.getAddress(destChainInternal);
-    const srcAddress = bridge.currency.getAddress(srcChainInternal);
+    const target = currency.getAddress(destChainInternal);
+    const srcAddress = currency.getAddress(srcChainInternal);
     console.log('mixerId: ', mixerId);
     const amount = String(mixerId).replace('Bridge=', '').split('@')[0];
 
@@ -279,6 +281,7 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
       tokenSymbol: tokenSymbol,
       secrets: `${bufferToFixed(destChainId, 6)}:${deposit.nullifier}:${deposit.secret}`,
     };
+    console.log(noteInput);
     const note = await Note.generateNote(noteInput);
     logger.info(`Commitment is ${note.note.secrets}`);
     return {

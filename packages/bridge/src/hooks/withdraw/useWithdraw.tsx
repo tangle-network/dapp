@@ -78,8 +78,8 @@ export const useWithdraw = (params: UseWithdrawProps) => {
           relayers: r,
         }));
       });
-      const nextBridge = bridgeApi?.store.config[webbCurrencyIdFromString(params.note.note.tokenSymbol)];
-      bridgeApi?.setActiveBridge(nextBridge);
+      // const nextBridge = bridgeApi?.store.config[webbCurrencyIdFromString(params.note.note.tokenSymbol)];
+      // bridgeApi?.setActiveBridge(nextBridge);
     }
 
     const sub = withdrawApi?.watcher.subscribe((next) => {

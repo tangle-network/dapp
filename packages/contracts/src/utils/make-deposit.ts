@@ -1,6 +1,6 @@
 import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
 import { pedersenHash } from '@webb-dapp/contracts/utils/pedersen-hash';
-import { poseidonHash3, PoseidonHasher3 } from '@webb-dapp/contracts/utils/poseidon-hash3';
+import { poseidonHash3 } from '@webb-dapp/contracts/utils/poseidon-hash3';
 import { PoseidonHasher } from '@webb-dapp/utils/merkle/poseidon-hasher';
 import { JsNote as DepositNote } from '@webb-tools/wasm-utils';
 
@@ -44,16 +44,22 @@ export function createAnchor2Deposit(chainId: number) {
   const preimage = crypto.randomBytes(62);
   const nullifier = leBuff2int(preimage.slice(0, 31));
   const secret = leBuff2int(preimage.slice(31, 62));
-  const commitmentBN = poseidonHash3([Number(chainId), nullifier, secret]);
+  console.log('chainId: ')
+  const commitmentBN = poseidonHash3([chainId, nullifier, secret ]);
   const nullifierHash = poseidonHasher.hash(null, nullifier, nullifier);
+  console.log('secret: ', secret);
+  console.log('nullifier: ', nullifier);
+  console.log('commitmentBN: ', commitmentBN);
   const commitment = bufferToFixed(commitmentBN);
+
+  console.log('commitment when creating deposit note: ', commitment)
 
   let deposit: Deposit = {
     preimage,
     commitment,
     nullifierHash,
-    nullifier: bufferToFixed(nullifier),
-    secret: bufferToFixed(secret),
+    nullifier: bufferToFixed(nullifier).substring(2),
+    secret: bufferToFixed(secret).substring(2),
     chainId: chainId,
   };
   return deposit;
@@ -67,11 +73,14 @@ export function depositFromAnchorNote(note: DepositNote): Deposit {
   const preimage = Buffer.from(preimageString);
   const nullifier = leBuff2int(Buffer.from(noteSecretParts[1], 'hex'));
   const secret = leBuff2int(Buffer.from(noteSecretParts[2], 'hex'));
-  const commitmentBN = poseidonHash3([Number(note.targetChainId), nullifier, secret]);
+  console.log('secret: ', noteSecretParts[2]);
+  console.log('nullifier: ', noteSecretParts[1])
+  const commitmentBN = poseidonHash3([chainId, nullifier, secret]);
+  console.log('commitmentBN: ', commitmentBN);
   const nullifierHash = poseidonHasher.hash(null, nullifier, nullifier);
   const commitment = bufferToFixed(commitmentBN);
 
-  console.log('commitment: ', commitment);
+  console.log('commitment when parsing note: ', commitment);
 
   let deposit: Deposit = {
     preimage,
