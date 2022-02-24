@@ -34,7 +34,7 @@ export const computeChainIdType = (chainType: ChainType, chainId: number | Inter
   return byteArrayToNum(fullArray);
 };
 
-export const typeAndIdFromChainIdType = (chainIdType: number): ChainTypeId => {
+export const parseChainIdType = (chainIdType: number): ChainTypeId => {
   let byteArray = numToByteArray(chainIdType, 4);
   let chainType = byteArrayToNum(byteArray.slice(0, 2));
   let chainId = byteArrayToNum(byteArray.slice(2));

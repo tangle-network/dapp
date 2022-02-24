@@ -2,6 +2,7 @@ import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
 import { pedersenHash } from '@webb-dapp/contracts/utils/pedersen-hash';
 import { poseidonHash3, PoseidonHasher3 } from '@webb-dapp/contracts/utils/poseidon-hash3';
 import { PoseidonHasher } from '@webb-dapp/utils/merkle/poseidon-hasher';
+import { JsNote as DepositNote } from '@webb-tools/wasm-utils';
 
 const tornSnarkjs = require('tornado-snarkjs');
 const utils = require('ffjavascript').utils;
@@ -39,7 +40,7 @@ export function createTornDeposit() {
 }
 
 export function createAnchor2Deposit(chainId: number) {
-  const poseidonHasher = new PoseidonHasher3();
+  const poseidonHasher = new PoseidonHasher();
   const preimage = crypto.randomBytes(62);
   const nullifier = leBuff2int(preimage.slice(0, 31));
   const secret = leBuff2int(preimage.slice(31, 62));
@@ -58,14 +59,19 @@ export function createAnchor2Deposit(chainId: number) {
   return deposit;
 }
 
-export function depositFromAnchor2Preimage(hexString: string, chainId: number): Deposit {
-  const poseidonHasher = new PoseidonHasher3();
-  const preimage = Buffer.from(hexString, 'hex');
-  const nullifier = leBuff2int(preimage.slice(0, 31));
-  const secret = leBuff2int(preimage.slice(31, 62));
-  const commitmentBN = poseidonHash3([Number(chainId), nullifier, secret]);
+export function depositFromAnchorNote(note: DepositNote): Deposit {
+  const poseidonHasher = new PoseidonHasher();
+  const noteSecretParts = note.secrets.split(':');
+  const chainId = Number(note.targetChainId);
+  const preimageString = note.secrets.replaceAll(':', '');
+  const preimage = Buffer.from(preimageString);
+  const nullifier = leBuff2int(Buffer.from(noteSecretParts[1], 'hex'));
+  const secret = leBuff2int(Buffer.from(noteSecretParts[2], 'hex'));
+  const commitmentBN = poseidonHash3([Number(note.targetChainId), nullifier, secret]);
   const nullifierHash = poseidonHasher.hash(null, nullifier, nullifier);
   const commitment = bufferToFixed(commitmentBN);
+
+  console.log('commitment: ', commitment);
 
   let deposit: Deposit = {
     preimage,

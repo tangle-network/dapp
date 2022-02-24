@@ -8,10 +8,11 @@ import {
   getEVMChainNameFromInternal,
   InternalChainId,
   internalChainIdIntoEVMId,
-  typeAndIdFromChainIdType,
+  parseChainIdType,
 } from '@webb-dapp/apps/configs';
 import { WebbGovernedToken } from '@webb-dapp/contracts/contracts';
 import { ERC20__factory } from '@webb-dapp/contracts/types';
+import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
 import { createAnchor2Deposit, Deposit } from '@webb-dapp/contracts/utils/make-deposit';
 import { DepositPayload as IDepositPayload, MixerSize } from '@webb-dapp/react-environment';
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3/webb-web3-provider';
@@ -26,7 +27,6 @@ import React from 'react';
 import { u8aToHex } from '@polkadot/util';
 
 import { BridgeDeposit } from '../../webb-context/bridge/bridge-deposit';
-import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
 
 const logger = LoggerService.get('web3-bridge-deposit');
 
@@ -256,7 +256,7 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
     const sourceChainId = computeChainIdType(ChainType.EVM, sourceEvmId);
     const deposit = createAnchor2Deposit(destChainId);
     const srcChainInternal = evmIdIntoInternalChainId(sourceEvmId);
-    const destChainInternal = chainTypeIdToInternalId(typeAndIdFromChainIdType(destChainId));
+    const destChainInternal = chainTypeIdToInternalId(parseChainIdType(destChainId));
     const target = bridge.currency.getAddress(destChainInternal);
     const srcAddress = bridge.currency.getAddress(srcChainInternal);
     console.log('mixerId: ', mixerId);
