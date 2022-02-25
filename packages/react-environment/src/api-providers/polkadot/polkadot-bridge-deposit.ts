@@ -10,6 +10,7 @@ import { Note, NoteGenInput } from '@webb-tools/sdk-core';
 import { u8aToHex } from '@polkadot/util';
 
 import { BridgeDeposit } from '../../webb-context/bridge/bridge-deposit';
+import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
 
 const logger = LoggerService.get('PolkadotBridgeDeposit');
 
@@ -68,9 +69,9 @@ export class PolkadotBridgeDeposit extends BridgeDeposit<WebbPolkadot, DepositPa
       exponentiation: '5',
       width: '4',
       protocol: 'anchor',
-      chain: String(destChainId),
-      sourceChain: String(sourceChainId),
-      sourceIdentifyingData: treeId.toString(),
+      chain: bufferToFixed(destChainId, 6).substring(2),
+      sourceChain: bufferToFixed(sourceChainId, 6).substring(2),
+      sourceIdentifyingData: anchorIndex.toString(),
       targetIdentifyingData: treeId.toString(),
       amount: amount,
       denomination: '18',

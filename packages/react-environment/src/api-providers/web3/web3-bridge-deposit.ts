@@ -45,6 +45,7 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
     } 
     try {
       const commitment = depositPayload.params[0].commitment;
+      console.log('commitment in web3 bridge deposit: ', commitment);
       const note = depositPayload.note.note;
       const sourceEvmId = await this.inner.getChainId();
       const sourceChainId = computeChainIdType(ChainType.EVM, sourceEvmId);
@@ -133,7 +134,7 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
 
         const enoughBalance = await contract.hasEnoughBalance();
         if (enoughBalance) {
-          await contract.deposit(String(commitment));
+          await contract.deposit(commitment);
           transactionNotificationConfig.finalize?.({
             address: '',
             data: undefined,
@@ -268,8 +269,8 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
       exponentiation: '5',
       width: '4',
       protocol: 'anchor',
-      chain: String(destChainId),
-      sourceChain: String(sourceChainId),
+      chain: bufferToFixed(destChainId, 6),
+      sourceChain: bufferToFixed(sourceChainId, 6),
       sourceIdentifyingData: srcAddress,
       targetIdentifyingData: target,
       amount: amount,

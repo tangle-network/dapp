@@ -71,16 +71,11 @@ export function depositFromAnchorNote(note: DepositNote): Deposit {
   const chainId = Number(note.targetChainId);
   const preimageString = note.secrets.replaceAll(':', '');
   const preimage = Buffer.from(preimageString);
-  const nullifier = leBuff2int(Buffer.from(noteSecretParts[1], 'hex'));
-  const secret = leBuff2int(Buffer.from(noteSecretParts[2], 'hex'));
-  console.log('secret: ', noteSecretParts[2]);
-  console.log('nullifier: ', noteSecretParts[1])
+  const nullifier = '0x' + noteSecretParts[1];
+  const secret = '0x' + noteSecretParts[2];
   const commitmentBN = poseidonHash3([chainId, nullifier, secret]);
-  console.log('commitmentBN: ', commitmentBN);
   const nullifierHash = poseidonHasher.hash(null, nullifier, nullifier);
   const commitment = bufferToFixed(commitmentBN);
-
-  console.log('commitment when parsing note: ', commitment);
 
   let deposit: Deposit = {
     preimage,

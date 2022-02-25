@@ -158,6 +158,8 @@ export const internalChainIdIntoSubstrateId = (chainId: InternalChainId | Number
   switch (Number(chainId) as InternalChainId) {
     case InternalChainId.Edgeware:
       return SubstrateChainId.Edgeware;
+    case InternalChainId.WebbDevelopment:
+      return SubstrateChainId.Webb;
     default:
       throw Error(`Internal Id ${chainId} is not a substrate id`);
   }

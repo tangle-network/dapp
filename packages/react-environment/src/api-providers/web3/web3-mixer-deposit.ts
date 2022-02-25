@@ -1,4 +1,6 @@
 import {
+  ChainType,
+  computeChainIdType,
   evmIdIntoInternalChainId,
   getEVMChainName,
   getNativeCurrencySymbol,
@@ -16,6 +18,7 @@ import utils from 'web3-utils';
 import { u8aToHex } from '@polkadot/util';
 
 import { WebbWeb3Provider } from './webb-web3-provider';
+import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
 
 type DepositPayload = IDepositPayload<Note, [Deposit, number]>;
 
@@ -87,14 +90,14 @@ export class Web3MixerDeposit extends MixerDeposit<WebbWeb3Provider, DepositPayl
     const depositSize = Number.parseFloat(utils.fromWei(depositSizeBN.toString(), 'ether'));
     const chainId = await this.inner.getChainId();
     const deposit = createTornDeposit();
-    const noteChain = String(evmIdIntoInternalChainId(chainId));
+    const noteChain = computeChainIdType(ChainType.EVM, chainId);
     const secrets = deposit.preimage;
     const noteInput: NoteGenInput = {
       protocol: 'mixer',
       exponentiation: '5',
       width: '3',
-      chain: noteChain,
-      sourceChain: noteChain,
+      chain: bufferToFixed(noteChain, 6).substring(2),
+      sourceChain: bufferToFixed(noteChain, 6).substring(2),
       sourceIdentifyingData: mixerAddress,
       targetIdentifyingData: mixerAddress,
       amount: String(depositSize),

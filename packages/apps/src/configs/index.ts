@@ -3,7 +3,7 @@ import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 
 import { chainsConfig } from './chains/chain-config';
 import { walletsConfig } from './wallets/wallets-config';
-import { InternalChainId } from './chains';
+import { ChainTypeId, chainTypeIdToInternalId, InternalChainId } from './chains';
 import { currenciesConfig } from './currencies';
 
 export const chainsPopulated = Object.values(chainsConfig).reduce(
@@ -27,11 +27,6 @@ export const chainsPopulated = Object.values(chainsConfig).reduce(
   {} as Record<number, Chain>
 );
 
-export const chainNameFromInternalId = (internalId: InternalChainId): string => {
-  const chain = chainsConfig[internalId];
-  return chain.name;
-};
-
 export const getEVMChainName = (evmId: number): string => {
   const chain = Object.values(chainsConfig).find((chainsConfig) => chainsConfig.chainId === evmId);
   if (chain) {
@@ -39,6 +34,16 @@ export const getEVMChainName = (evmId: number): string => {
   } else {
     throw WebbError.from(WebbErrorCodes.UnsupportedChain);
   }
+};
+
+export const chainNameFromInternalId = (internalId: InternalChainId): string => {
+  const chain = chainsConfig[internalId];
+  return chain.name;
+};
+
+export const getChainNameFromChainId = (chainIdType: ChainTypeId): string => {
+  const internalId = chainTypeIdToInternalId(chainIdType);
+  return chainNameFromInternalId(internalId);
 };
 
 export const getEVMChainNameFromInternal = (chainID: number): string => {
