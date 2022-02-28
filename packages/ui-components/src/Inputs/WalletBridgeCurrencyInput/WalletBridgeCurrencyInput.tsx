@@ -19,7 +19,7 @@ const WalletTokenInputWrapper = styled.div`
 `;
 
 type WalletTokenInputProps = {
-  setSelectedToken(token: BridgeCurrencyIndex): void;
+  setSelectedToken(token: BridgeCurrencyIndex | undefined): void;
   selectedToken: Currency | undefined;
 };
 
@@ -30,6 +30,13 @@ export const WalletBridgeCurrencyInput: React.FC<WalletTokenInputProps> = ({ sel
   useEffect(() => {
     if (!selectedToken && allCurrencies.length) {
       setSelectedToken(allCurrencies[0].id);
+      return;
+    }
+    if (selectedToken) {
+      const selectedIsInList = allCurrencies.findIndex((c) => c.id === selectedToken.id) > -1;
+      if (!selectedIsInList) {
+        allCurrencies[0] ? setSelectedToken(allCurrencies[0].id) : setSelectedToken(undefined);
+      }
       return;
     }
   }, [allCurrencies, selectedToken, setSelectedToken]);
@@ -49,6 +56,8 @@ export const WalletBridgeCurrencyInput: React.FC<WalletTokenInputProps> = ({ sel
                 if (currencyContent) {
                   // TODO validate the id is BridgeCurrency id not WebbCurrencyId
                   setSelectedToken(currencyContent.view.id);
+                } else {
+                  setSelectedToken(undefined);
                 }
               }}
             />

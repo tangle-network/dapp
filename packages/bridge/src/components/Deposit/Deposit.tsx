@@ -111,8 +111,17 @@ export const Deposit: React.FC<DepositProps> = () => {
   useEffect(() => {
     if (wrappableTokens && wrappableTokens.length && !wrappableToken) {
       setWrappableToken(wrappableTokens[0]);
+      return;
+    }
+    if (wrappableToken) {
+      const isInList = wrappableTokens.findIndex((c) => c.view.id === wrappableToken?.view.id) > -1;
+      if (!isInList) {
+        setWrappableToken(wrappableTokens[0]);
+      }
     }
   }, [setWrappableToken, wrappableTokens, wrappableToken]);
+
+  console.log({ wrappableCurrency });
   return (
     <DepositWrapper>
       <WalletBridgeCurrencyInput
