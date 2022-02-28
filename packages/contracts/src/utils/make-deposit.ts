@@ -44,8 +44,8 @@ export function createAnchor2Deposit(chainId: number) {
   const preimage = crypto.randomBytes(62);
   const nullifier = leBuff2int(preimage.slice(0, 31));
   const secret = leBuff2int(preimage.slice(31, 62));
-  console.log('chainId: ')
-  const commitmentBN = poseidonHash3([chainId, nullifier, secret ]);
+  console.log('chainId: ', chainId);
+  const commitmentBN = poseidonHash3([chainId, nullifier, secret]);
   const nullifierHash = poseidonHasher.hash(null, nullifier, nullifier);
   console.log('secret: ', secret);
   console.log('nullifier: ', nullifier);

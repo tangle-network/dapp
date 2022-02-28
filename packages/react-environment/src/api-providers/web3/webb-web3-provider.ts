@@ -2,8 +2,10 @@ import {
   bridgeConfigByAsset,
   chainsConfig,
   currenciesConfig,
+  EVMChainId,
   evmIdIntoInternalChainId,
   internalChainIdIntoEVMId,
+  parseChainIdType,
 } from '@webb-dapp/apps/configs';
 import { TornadoContract } from '@webb-dapp/contracts/contracts/tornado-anchor';
 import { AnchorContract } from '@webb-dapp/contracts/contracts/webb-anchor';
@@ -121,7 +123,7 @@ export class WebbWeb3Provider
   }
 
   getTornadoContractAddressByNote(note: Note) {
-    const evmId = internalChainIdIntoEVMId(Number(note.note.targetChainId));
+    const evmId = parseChainIdType(Number(note.note.targetChainId)).chainId as EVMChainId;
     const availableMixers = new EvmChainMixersInfo(evmId);
     const mixer = availableMixers.getTornMixerInfoBySize(Number(note.note.amount), note.note.tokenSymbol);
     if (!mixer) {

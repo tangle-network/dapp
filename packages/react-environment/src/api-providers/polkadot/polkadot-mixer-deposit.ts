@@ -100,14 +100,15 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
       curve: 'Bn254',
       denomination: `${denomination}`,
       amount: String(amount.value),
-      chain: bufferToFixed(chainIdType, 6).substring(2),
-      sourceChain: bufferToFixed(chainIdType, 6).substring(2),
+      chain: chainIdType.toString(),
+      sourceChain: chainIdType.toString(),
       sourceIdentifyingData: treeId.toString(),
       targetIdentifyingData: treeId.toString(),
       tokenSymbol: amount.symbol,
     };
     logger.info(`noteInput in generateNote: `, noteInput);
     const depositNote = await Note.generateNote(noteInput);
+    logger.info(`generated Note from input: `, depositNote.note);
     const leaf = depositNote.getLeaf();
 
     return {

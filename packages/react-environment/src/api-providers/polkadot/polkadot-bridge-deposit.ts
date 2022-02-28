@@ -69,8 +69,8 @@ export class PolkadotBridgeDeposit extends BridgeDeposit<WebbPolkadot, DepositPa
       exponentiation: '5',
       width: '4',
       protocol: 'anchor',
-      chain: bufferToFixed(destChainId, 6).substring(2),
-      sourceChain: bufferToFixed(sourceChainId, 6).substring(2),
+      chain: destChainId.toString(),
+      sourceChain: sourceChainId.toString(),
       sourceIdentifyingData: anchorIndex.toString(),
       targetIdentifyingData: treeId.toString(),
       amount: amount,
@@ -83,6 +83,7 @@ export class PolkadotBridgeDeposit extends BridgeDeposit<WebbPolkadot, DepositPa
     };
     logger.log('note input', noteInput);
     const note = await Note.generateNote(noteInput);
+    logger.log('Generated note: ', note.note);
     const leaf = note.getLeaf();
     const leafHex = u8aToHex(leaf);
     logger.trace(`treeId ${treeId}, Leaf ${leafHex}`);

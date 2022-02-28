@@ -269,8 +269,8 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
       exponentiation: '5',
       width: '4',
       protocol: 'anchor',
-      chain: bufferToFixed(destChainId, 6),
-      sourceChain: bufferToFixed(sourceChainId, 6),
+      chain: destChainId.toString(),
+      sourceChain: sourceChainId.toString(),
       sourceIdentifyingData: srcAddress,
       targetIdentifyingData: target,
       amount: amount,
@@ -280,7 +280,7 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
       backend: 'Circom',
       version: 'v2',
       tokenSymbol: tokenSymbol,
-      secrets: `${bufferToFixed(destChainId, 6)}:${deposit.nullifier}:${deposit.secret}`,
+      secrets: `${bufferToFixed(destChainId, 6).substring(2)}:${deposit.nullifier}:${deposit.secret}`,
     };
     console.log(noteInput);
     const note = await Note.generateNote(noteInput);

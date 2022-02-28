@@ -114,7 +114,7 @@ export const useWithdraw = (params: UseWithdrawProps) => {
   }, [withdrawApi, params.note, bridgeApi]);
 
   const withdraw = useCallback(async () => {
-    if (!withdrawApi) return;
+    if (!withdrawApi || !params.note) return;
     if (stage === WithdrawState.Ideal) {
       if (params.note) {
         try {

@@ -79,7 +79,7 @@ export const MixerNoteInput: React.FC<NoteInputProps> = ({ error, onChange, valu
               <tr>
                 <td>Chain:</td>
                 <td style={{ textAlign: 'right' }}>
-                  {getChainNameFromChainId(parseChainIdType(Number(`0x${depositNote.note.targetChainId}`)))}
+                  {getChainNameFromChainId(parseChainIdType(Number(depositNote.note.targetChainId)))}
                 </td>
               </tr>
             </tbody>
