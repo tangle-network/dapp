@@ -1,11 +1,5 @@
 import { Checkbox, FormControlLabel, Typography } from '@material-ui/core';
-import {
-  ChainType,
-  ChainTypeId,
-  chainTypeIdToInternalId,
-  InternalChainId,
-  WebbCurrencyId,
-} from '@webb-dapp/apps/configs';
+import { ChainTypeId, chainTypeIdToInternalId, WebbCurrencyId } from '@webb-dapp/apps/configs';
 import { DepositConfirm } from '@webb-dapp/bridge/components/DepositConfirm/DepositConfirm';
 import { useBridgeDeposit } from '@webb-dapp/bridge/hooks/deposit/useBridgeDeposit';
 import { useWrapUnwrap } from '@webb-dapp/page-wrap-unwrap/hooks/useWrapUnwrap';
