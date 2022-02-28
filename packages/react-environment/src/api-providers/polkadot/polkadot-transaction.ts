@@ -59,7 +59,7 @@ const txLogger = LoggerService.get('PolkadotTx');
 export class PolkadotTx<P extends Array<any>> extends EventBus<PolkadotTXEvents> {
   private notificationKey: string = '';
   private transactionAddress: string | null = null;
-
+  private isWrapped = false;
   constructor(private apiPromise: ApiPromise, private path: MethodPath, private parms: P) {
     super();
   }
@@ -95,6 +95,9 @@ export class PolkadotTx<P extends Array<any>> extends EventBus<PolkadotTXEvents>
     event: E,
     data: PolkadotTXEvents[E]['data']
   ): void | Promise<void> {
+    if (this.isWrapped) {
+      return;
+    }
     this.emit(event, {
       key: this.notificationKey,
       path: this.path,
@@ -153,13 +156,14 @@ export class PolkadotTx<P extends Array<any>> extends EventBus<PolkadotTXEvents>
                 } else if (dispatchError.isToken) {
                   message = `${dispatchError.type}.${dispatchError.asToken.type}`;
                 }
-
+                this.isWrapped = true;
                 this.emitWithPayload('failed', message);
                 reject(message);
               } else if (method === 'ExtrinsicSuccess') {
                 // todo return the TX hash
                 resolve('okay');
-                return this.emitWithPayload('finalize', undefined);
+                this.emitWithPayload('finalize', undefined);
+                this.isWrapped = true;
               }
             }
           }

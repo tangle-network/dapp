@@ -1,11 +1,5 @@
 import { Checkbox, FormControlLabel, Typography } from '@material-ui/core';
-import {
-  ChainType,
-  ChainTypeId,
-  chainTypeIdToInternalId,
-  InternalChainId,
-  WebbCurrencyId,
-} from '@webb-dapp/apps/configs';
+import { ChainTypeId, chainTypeIdToInternalId, WebbCurrencyId } from '@webb-dapp/apps/configs';
 import { DepositConfirm } from '@webb-dapp/bridge/components/DepositConfirm/DepositConfirm';
 import { useBridgeDeposit } from '@webb-dapp/bridge/hooks/deposit/useBridgeDeposit';
 import { useWrapUnwrap } from '@webb-dapp/page-wrap-unwrap/hooks/useWrapUnwrap';
@@ -111,8 +105,17 @@ export const Deposit: React.FC<DepositProps> = () => {
   useEffect(() => {
     if (wrappableTokens && wrappableTokens.length && !wrappableToken) {
       setWrappableToken(wrappableTokens[0]);
+      return;
+    }
+    if (wrappableToken) {
+      const isInList = wrappableTokens.findIndex((c) => c.view.id === wrappableToken?.view.id) > -1;
+      if (!isInList) {
+        setWrappableToken(wrappableTokens[0]);
+      }
     }
   }, [setWrappableToken, wrappableTokens, wrappableToken]);
+
+  console.log({ wrappableCurrency });
   return (
     <DepositWrapper>
       <WalletBridgeCurrencyInput
