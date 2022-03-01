@@ -1,4 +1,5 @@
 import { ChainType, computeChainIdType, InternalChainId, SubstrateChainId } from '@webb-dapp/apps/configs';
+import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
 import { DepositPayload as IDepositPayload, MixerSize } from '@webb-dapp/react-environment';
 import { WebbPolkadot } from '@webb-dapp/react-environment/api-providers/polkadot/webb-polkadot-provider';
 import { BridgeConfig } from '@webb-dapp/react-environment/types/bridge-config.interface';
@@ -10,7 +11,6 @@ import { Note, NoteGenInput } from '@webb-tools/sdk-core';
 import { u8aToHex } from '@polkadot/util';
 
 import { BridgeDeposit } from '../../webb-context/bridge/bridge-deposit';
-import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
 
 const logger = LoggerService.get('PolkadotBridgeDeposit');
 

@@ -51,8 +51,7 @@ export const MixerNoteInput: React.FC<NoteInputProps> = ({ error, onChange, valu
         inputProps={{ style: { fontSize: 14 } }}
         onChange={(event) => {
           console.log(event.target.value);
-          if (event.target.value && event.target.value != '')
-            onChange?.(event.target.value as string);
+          if (event.target.value && event.target.value != '') onChange?.(event.target.value as string);
         }}
       />
       {depositNote && (

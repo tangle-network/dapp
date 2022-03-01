@@ -52,7 +52,7 @@ export function createAnchor2Deposit(chainId: number) {
   console.log('commitmentBN: ', commitmentBN);
   const commitment = bufferToFixed(commitmentBN);
 
-  console.log('commitment when creating deposit note: ', commitment)
+  console.log('commitment when creating deposit note: ', commitment);
 
   let deposit: Deposit = {
     preimage,

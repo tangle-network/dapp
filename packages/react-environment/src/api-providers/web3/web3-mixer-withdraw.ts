@@ -1,5 +1,11 @@
 import { parseUnits } from '@ethersproject/units';
-import { chainTypeIdToInternalId, evmIdIntoInternalChainId, InternalChainId, internalChainIdIntoEVMId, parseChainIdType } from '@webb-dapp/apps/configs';
+import {
+  chainTypeIdToInternalId,
+  evmIdIntoInternalChainId,
+  InternalChainId,
+  internalChainIdIntoEVMId,
+  parseChainIdType,
+} from '@webb-dapp/apps/configs';
 import { chainIdToRelayerName } from '@webb-dapp/apps/configs/relayer-config';
 import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
 import { depositFromPreimage } from '@webb-dapp/contracts/utils/make-deposit';

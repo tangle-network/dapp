@@ -39,10 +39,10 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
 
   async deposit(depositPayload: DepositPayload): Promise<void> {
     const bridge = this.bridgeApi.activeBridge;
-    const currency = this.bridgeApi.currency
+    const currency = this.bridgeApi.currency;
     if (!bridge || !currency) {
       throw new Error('api not ready');
-    } 
+    }
     try {
       const commitment = depositPayload.params[0].commitment;
       const note = depositPayload.note.note;

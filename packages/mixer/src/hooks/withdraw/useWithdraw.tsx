@@ -47,7 +47,7 @@ export const useWithdraw = (params: UseWithdrawProps) => {
     if (!withdraw?.enabled) return null;
     return withdraw.inner;
   }, [activeApi]);
-  
+
   useEffect(() => {
     const sub = activeApi?.relayingManager.listUpdated.subscribe(() => {
       if (params.note) {
