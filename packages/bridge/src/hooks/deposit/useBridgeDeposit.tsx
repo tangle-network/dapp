@@ -60,12 +60,12 @@ export const useBridgeDeposit = (): BridgeDepositApi => {
     depositApi.getSizes().then((mixerSizes) => {
       setMixerSizes(mixerSizes);
     });
-
+    setSelectedBridgeCurrency(bridgeApi.currency);
     const subscribe = bridgeApi.$store.subscribe((bridge) => {
       depositApi.getSizes().then((mixerSizes) => {
         setMixerSizes(mixerSizes);
       });
-
+      console.log(bridgeApi.currency);
       setSelectedBridgeCurrency(bridgeApi.currency);
     });
     return () => {
@@ -96,12 +96,7 @@ export const useBridgeDeposit = (): BridgeDepositApi => {
     const activeBridgeApi = bridgeApi;
     if (activeBridgeApi) {
       if (bridgeCurrency) {
-        const nextBridge = activeBridgeApi.store.config[bridgeCurrency];
-        console.log(activeBridgeApi.store);
-        console.log({ nextBridge, bridgeCurrency });
-        if (!nextBridge) {
-          return;
-        }
+        const nextBridge = activeBridgeApi.store.config[bridgeCurrency] || undefined;
         activeBridgeApi.setActiveBridge(nextBridge);
       } else {
         activeBridgeApi.setActiveBridge(undefined);
