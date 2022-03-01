@@ -99,6 +99,7 @@ export class PolkadotBridgeWithdraw extends BridgeWithdraw<WebbPolkadot> {
         commitment,
         roots: [hexToU8a(root), hexToU8a(root)],
       };
+      logger.log('proofInput to webb.js: ', proofInput);
       const zkProofMetadata = await pm.proof(proofInput);
       const withdrawProof: AnchorWithdrawProof = {
         id: treeId,

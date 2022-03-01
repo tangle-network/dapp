@@ -81,7 +81,6 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
   }
 
   async getRelayersByNote(evmNote: Note) {
-    console.log('note in getRelayersByNote: ', evmNote);
     return this.inner.relayingManager.getRelayer({
       baseOn: 'evm',
       chainId: chainTypeIdToInternalId(parseChainIdType(Number(evmNote.note.targetChainId))),
@@ -112,9 +111,6 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
     const chainEvmId = parseChainIdType(Number(evmNote.note.targetChainId)).chainId;
     const chainId = evmIdIntoInternalChainId(chainEvmId);
 
-    const activeChain = await this.inner.getChainId();
-    console.log('activeChain', activeChain);
-    console.log('chainEvmId', chainEvmId);
     this.emit('stateChange', WithdrawState.GeneratingZk);
 
     if (activeRelayer && (activeRelayer.beneficiary || activeRelayer.account)) {

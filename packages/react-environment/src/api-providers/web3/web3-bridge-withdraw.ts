@@ -20,7 +20,6 @@ import { AnchorContract } from '@webb-dapp/contracts/contracts';
 import { generateWithdrawProofCallData, hexStringToBytes } from '@webb-dapp/contracts/utils/bridge-utils';
 import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
 import { depositFromAnchorNote } from '@webb-dapp/contracts/utils/make-deposit';
-import { poseidonHash3 } from '@webb-dapp/contracts/utils/poseidon-hash3';
 import { Bridge, RelayedWithdrawResult, RelayerCMDBase, WebbRelayer } from '@webb-dapp/react-environment';
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3/webb-web3-provider';
 import {
@@ -241,7 +240,6 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
 
   async crossChainWithdraw(note: DepositNote, recipient: string) {
     this.cancelToken.cancelled = false;
-    console.log('crossChainWithdraw note: ', note);
     const bridgeStorageStorage = await bridgeCurrencyBridgeStorageFactory();
 
     // Setup a provider for the source chain
@@ -263,7 +261,6 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
 
     // Getting contracts data for source and dest chains
     const bridgeCurrency = this.inner.methods.bridgeApi.currency;
-    console.log('detected bridge currency: ', bridgeCurrency?.view.name);
     // await this.inner.methods.bridgeApi.setActiveBridge()
     const availableAnchors = await this.inner.methods.bridgeApi.getAnchors();
     const selectedAnchor = availableAnchors.find((anchor) => anchor.amount == note.amount);
@@ -496,7 +493,6 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
           fee: 0,
           refund: 0,
         };
-        console.log('calculated commitment: ', sourceDeposit.commitment);
 
         let zkpResults;
         try {

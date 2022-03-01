@@ -1,6 +1,5 @@
 import { FormHelperText, Icon, InputBase } from '@material-ui/core';
-import { chainNameFromInternalId, getChainNameFromChainId, getEVMChainName, getEVMChainNameFromInternal, parseChainIdType } from '@webb-dapp/apps/configs';
-import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
+import { getChainNameFromChainId, parseChainIdType } from '@webb-dapp/apps/configs';
 import { useDepositNote } from '@webb-dapp/mixer/hooks/note';
 import { useWebContext } from '@webb-dapp/react-environment/webb-context';
 import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabel';

@@ -45,7 +45,6 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
     } 
     try {
       const commitment = depositPayload.params[0].commitment;
-      console.log('commitment in web3 bridge deposit: ', commitment);
       const note = depositPayload.note.note;
       const sourceEvmId = await this.inner.getChainId();
       const sourceChainId = computeChainIdType(ChainType.EVM, sourceEvmId);
@@ -253,7 +252,6 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
     if (!bridge || !currency) {
       throw new Error('api not ready');
     }
-    console.log(bridge)
     const tokenSymbol = currency.view.symbol;
     const sourceEvmId = await this.inner.getChainId();
     const sourceChainId = computeChainIdType(ChainType.EVM, sourceEvmId);
@@ -262,7 +260,6 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
     const destChainInternal = chainTypeIdToInternalId(parseChainIdType(destChainId));
     const target = currency.getAddress(destChainInternal);
     const srcAddress = currency.getAddress(srcChainInternal);
-    console.log('mixerId: ', mixerId);
     const amount = String(mixerId).replace('Bridge=', '').split('@')[0];
 
     const noteInput: NoteGenInput = {
@@ -282,9 +279,8 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
       tokenSymbol: tokenSymbol,
       secrets: `${bufferToFixed(destChainId, 6).substring(2)}:${deposit.nullifier}:${deposit.secret}`,
     };
-    console.log(noteInput);
+    logger.info(`noteInput to generateNote: ${noteInput}`);
     const note = await Note.generateNote(noteInput);
-    logger.info(`Commitment is ${note.note.secrets}`);
     return {
       note: note,
       params: [deposit, mixerId, wrappableAssetAddress],

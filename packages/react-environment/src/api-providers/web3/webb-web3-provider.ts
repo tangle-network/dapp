@@ -4,7 +4,6 @@ import {
   currenciesConfig,
   EVMChainId,
   evmIdIntoInternalChainId,
-  internalChainIdIntoEVMId,
   parseChainIdType,
 } from '@webb-dapp/apps/configs';
 import { TornadoContract } from '@webb-dapp/contracts/contracts/tornado-anchor';

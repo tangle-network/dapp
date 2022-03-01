@@ -1,11 +1,8 @@
 import {
   ChainType,
   computeChainIdType,
-  evmIdIntoInternalChainId,
   getEVMChainName,
   getNativeCurrencySymbol,
-  InternalChainId,
-  internalChainIdIntoEVMId,
   parseChainIdType,
 } from '@webb-dapp/apps/configs';
 import { createTornDeposit, Deposit } from '@webb-dapp/contracts/utils/make-deposit';
@@ -19,7 +16,6 @@ import utils from 'web3-utils';
 import { u8aToHex } from '@polkadot/util';
 
 import { WebbWeb3Provider } from './webb-web3-provider';
-import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
 
 type DepositPayload = IDepositPayload<Note, [Deposit, number]>;
 
