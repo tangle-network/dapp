@@ -8,7 +8,7 @@ import {
 } from '@webb-dapp/apps/configs';
 import { TornadoContract } from '@webb-dapp/contracts/contracts/tornado-anchor';
 import { AnchorContract } from '@webb-dapp/contracts/contracts/webb-anchor';
-import { WebbApiProvider, WebbMethods, WebbProviderEvents } from '@webb-dapp/react-environment';
+import { AppConfig, WebbApiProvider, WebbMethods, WebbProviderEvents } from '@webb-dapp/react-environment';
 import { Web3WrapUnwrap } from '@webb-dapp/react-environment/api-providers';
 import { EvmChainMixersInfo } from '@webb-dapp/react-environment/api-providers/web3/EvmChainMixersInfo';
 import { Web3BridgeApi } from '@webb-dapp/react-environment/api-providers/web3/web3-bridge-api';
@@ -38,7 +38,8 @@ export class WebbWeb3Provider
   private constructor(
     private web3Provider: Web3Provider,
     private chainId: number,
-    readonly relayingManager: WebbRelayerBuilder
+    readonly relayingManager: WebbRelayerBuilder,
+    readonly config: AppConfig
   ) {
     super();
     this.accounts = new Web3Accounts(web3Provider.eth);
@@ -171,8 +172,13 @@ export class WebbWeb3Provider
     return Promise.resolve(this.connectedMixers.getTornMixerSizes(tokenSymbol));
   }
 
-  static async init(web3Provider: Web3Provider, chainId: number, relayerBuilder: WebbRelayerBuilder) {
-    return new WebbWeb3Provider(web3Provider, chainId, relayerBuilder);
+  static async init(
+    web3Provider: Web3Provider,
+    chainId: number,
+    relayerBuilder: WebbRelayerBuilder,
+    appConfig: AppConfig
+  ) {
+    return new WebbWeb3Provider(web3Provider, chainId, relayerBuilder, appConfig);
   }
 
   get capabilities() {

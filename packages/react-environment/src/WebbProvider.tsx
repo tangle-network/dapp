@@ -1,12 +1,16 @@
 import Icon from '@material-ui/core/Icon';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import {
+  anchorsConfig,
+  bridgeConfigByAsset,
+  chainsConfig,
   chainsPopulated,
   currenciesConfig,
   EVMChainId,
   evmIdIntoInternalChainId,
   getEVMChainName,
   InternalChainId,
+  mixersConfig,
   walletsConfig,
 } from '@webb-dapp/apps/configs';
 import { getWebbRelayer } from '@webb-dapp/apps/configs/relayer-config';
@@ -28,7 +32,15 @@ import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { extensionNotInstalled, unsupportedChain } from './error';
 import { SettingProvider } from './SettingProvider';
-import { Chain, netStorageFactory, NetworkStorage, Wallet, WebbApiProvider, WebbContext } from './webb-context';
+import {
+  AppConfig,
+  Chain,
+  netStorageFactory,
+  NetworkStorage,
+  Wallet,
+  WebbApiProvider,
+  WebbContext,
+} from './webb-context';
 
 interface WebbProviderProps extends BareProps {
   applicationName: string;
@@ -47,6 +59,14 @@ const registerInteractiveFeedback = (
     setter((p) => p.filter((entry) => entry !== interactiveFeedback));
     off && off?.();
   });
+};
+const appConfig: AppConfig = {
+  anchors: anchorsConfig,
+  bridgeByAsset: bridgeConfigByAsset,
+  chains: chainsConfig,
+  currencies: currenciesConfig,
+  mixers: mixersConfig,
+  wallet: walletsConfig,
 };
 
 export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Dapp', children }) => {
@@ -232,7 +252,8 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
                   registerInteractiveFeedback(setInteractiveFeedbacks, feedback);
                 },
               },
-              relayer
+              relayer,
+              appConfig
             );
             await setActiveApiWithAccounts(webbPolkadot, chain.id);
             localActiveApi = webbPolkadot;
@@ -294,7 +315,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
             /// get the current active chain from metamask
             const chainId = await web3Provider.network; // storage based on network id
 
-            const webbWeb3Provider = await WebbWeb3Provider.init(web3Provider, chainId, relayer);
+            const webbWeb3Provider = await WebbWeb3Provider.init(web3Provider, chainId, relayer, appConfig);
 
             const providerUpdateHandler = async ([chainId]: number[]) => {
               const nextChain = Object.values(chains).find((chain) => chain.chainId === chainId);
