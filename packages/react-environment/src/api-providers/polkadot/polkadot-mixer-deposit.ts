@@ -1,5 +1,4 @@
-import { chainsConfig, ChainType, computeChainIdType, internalChainIdToChainId } from '@webb-dapp/apps/configs';
-import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
+import { ChainType, computeChainIdType, internalChainIdToChainId } from '@webb-dapp/apps/configs';
 import { NativeTokenProperties } from '@webb-dapp/mixer';
 import { Currency } from '@webb-dapp/mixer/utils/currency';
 import { DepositPayload as IDepositPayload, MixerDeposit } from '@webb-dapp/react-environment/webb-context';
@@ -79,7 +78,6 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
 
   async generateNote(mixerId: number, chainId: number): Promise<DepositPayload> {
     logger.info(`Depositing to mixer id ${mixerId}`);
-    chainsConfig[chainId];
     const chainIdType = computeChainIdType(ChainType.Substrate, internalChainIdToChainId(ChainType.Substrate, chainId));
     const sizes = await this.getSizes();
     const amount = sizes.find((size) => Number(size.id) === mixerId);

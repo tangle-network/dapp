@@ -1,13 +1,10 @@
 import {
-  chainsConfig,
   ChainType,
   chainTypeIdToInternalId,
   computeChainIdType,
-  currenciesConfig,
   evmIdIntoInternalChainId,
   getEVMChainNameFromInternal,
   InternalChainId,
-  internalChainIdIntoEVMId,
   parseChainIdType,
 } from '@webb-dapp/apps/configs';
 import { WebbGovernedToken } from '@webb-dapp/contracts/contracts';
@@ -24,8 +21,6 @@ import { LoggerService } from '@webb-tools/app-util';
 import { Note, NoteGenInput } from '@webb-tools/sdk-core';
 import React from 'react';
 
-import { u8aToHex } from '@polkadot/util';
-
 import { BridgeDeposit } from '../../webb-context/bridge/bridge-deposit';
 
 const logger = LoggerService.get('web3-bridge-deposit');
@@ -36,7 +31,9 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
   private get bridgeApi() {
     return this.inner.methods.bridgeApi;
   }
-
+  private get config() {
+    return this.inner.config;
+  }
   async deposit(depositPayload: DepositPayload): Promise<void> {
     const bridge = this.bridgeApi.activeBridge;
     const currency = this.bridgeApi.currency;
@@ -208,12 +205,12 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
       // TODO: dynamic wrappable assets - consider some Currency constructor via address & default token config.
 
       // If the tokenAddress matches one of the wrappableCurrencies, return it
-      const wrappableCurrencyIds = chainsConfig[chainId].currencies.filter((currencyId) => {
-        const wrappableTokenAddress = currenciesConfig[currencyId].addresses.get(chainId);
+      const wrappableCurrencyIds = this.config.chains[chainId].currencies.filter((currencyId) => {
+        const wrappableTokenAddress = this.config.currencies[currencyId].addresses.get(chainId);
         return wrappableTokenAddress && tokenAddresses.includes(wrappableTokenAddress);
       });
 
-      if (await wrappedToken.isNativeAllowed()) wrappableCurrencyIds.push(chainsConfig[chainId].nativeCurrencyId);
+      if (await wrappedToken.isNativeAllowed()) wrappableCurrencyIds.push(this.config.chains[chainId].nativeCurrencyId);
 
       const wrappableCurrencies = wrappableCurrencyIds.map((currencyId) => {
         return Currency.fromCurrencyId(currencyId);

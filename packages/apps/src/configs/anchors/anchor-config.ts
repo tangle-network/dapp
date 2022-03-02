@@ -1,5 +1,7 @@
-import { InternalChainId, WebbCurrencyId } from '@webb-dapp/apps/configs';
 import { AppConfig } from '@webb-dapp/react-environment/webb-context';
+
+import { InternalChainId } from '../chains/chain-id.enum';
+import { WebbCurrencyId } from '../currencies/webb-currency-id.enum';
 
 // Anchor config is indexed by WebbCurrencyId
 export const anchorsConfig: AppConfig['anchors'] = {

@@ -1,14 +1,7 @@
-import {
-  bridgeConfigByAsset,
-  chainsConfig,
-  currenciesConfig,
-  EVMChainId,
-  evmIdIntoInternalChainId,
-  parseChainIdType,
-} from '@webb-dapp/apps/configs';
+import { EVMChainId, evmIdIntoInternalChainId, parseChainIdType } from '@webb-dapp/apps/configs';
 import { TornadoContract } from '@webb-dapp/contracts/contracts/tornado-anchor';
 import { AnchorContract } from '@webb-dapp/contracts/contracts/webb-anchor';
-import { WebbApiProvider, WebbMethods, WebbProviderEvents } from '@webb-dapp/react-environment';
+import { AppConfig, WebbApiProvider, WebbMethods, WebbProviderEvents } from '@webb-dapp/react-environment';
 import { Web3WrapUnwrap } from '@webb-dapp/react-environment/api-providers';
 import { EvmChainMixersInfo } from '@webb-dapp/react-environment/api-providers/web3/EvmChainMixersInfo';
 import { Web3BridgeApi } from '@webb-dapp/react-environment/api-providers/web3/web3-bridge-api';
@@ -38,7 +31,8 @@ export class WebbWeb3Provider
   private constructor(
     private web3Provider: Web3Provider,
     private chainId: number,
-    readonly relayingManager: WebbRelayerBuilder
+    readonly relayingManager: WebbRelayerBuilder,
+    readonly config: AppConfig
   ) {
     super();
     this.accounts = new Web3Accounts(web3Provider.eth);
@@ -82,7 +76,7 @@ export class WebbWeb3Provider
         },
       },
       chainQuery: new Web3ChainQuery(this),
-      bridgeApi: new Web3BridgeApi(this, bridgeConfigByAsset),
+      bridgeApi: new Web3BridgeApi(this, this.config.bridgeByAsset),
     };
   }
 
@@ -171,8 +165,13 @@ export class WebbWeb3Provider
     return Promise.resolve(this.connectedMixers.getTornMixerSizes(tokenSymbol));
   }
 
-  static async init(web3Provider: Web3Provider, chainId: number, relayerBuilder: WebbRelayerBuilder) {
-    return new WebbWeb3Provider(web3Provider, chainId, relayerBuilder);
+  static async init(
+    web3Provider: Web3Provider,
+    chainId: number,
+    relayerBuilder: WebbRelayerBuilder,
+    appConfig: AppConfig
+  ) {
+    return new WebbWeb3Provider(web3Provider, chainId, relayerBuilder, appConfig);
   }
 
   get capabilities() {
@@ -199,7 +198,6 @@ export class WebbWeb3Provider
       return reason;
     }
   }
-
   switchOrAddChain(evmChainId: number) {
     return this.web3Provider
       .switchChain({
@@ -210,11 +208,11 @@ export class WebbWeb3Provider
 
         // cannot switch because network not recognized, so fetch configuration
         const chainId = evmIdIntoInternalChainId(evmChainId);
-        const chain = chainsConfig[chainId];
+        const chain = this.config.chains[chainId];
 
         // prompt to add the chain
         if (switchError.code === 4902) {
-          const currency = currenciesConfig[chain.nativeCurrencyId];
+          const currency = this.config.currencies[chain.nativeCurrencyId];
           await this.web3Provider.addChain({
             chainId: `0x${evmChainId.toString(16)}`,
             chainName: chain.name,

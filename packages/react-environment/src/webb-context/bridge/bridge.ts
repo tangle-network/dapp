@@ -1,13 +1,14 @@
-import { bridgeConfigByAsset, currenciesConfig, InternalChainId, WebbCurrencyId } from '@webb-dapp/apps/configs';
+import { currenciesConfig, InternalChainId, WebbCurrencyId } from '@webb-dapp/apps/configs';
 import { BridgeConfig } from '@webb-dapp/react-environment/types/bridge-config.interface';
-import { CurrencyRole, CurrencyType } from '@webb-dapp/react-environment/types/currency-config.interface';
+import { CurrencyRole } from '@webb-dapp/react-environment/types/currency-config.interface';
+import { AppConfig } from '@webb-dapp/react-environment/webb-context';
 
 import { Currency } from '../currency/currency';
 
 export class Bridge {
   private constructor(private bridgeConfig: BridgeConfig) {}
 
-  static from(bridgeCurrency: WebbCurrencyId): Bridge {
+  static from(bridgeCurrency: WebbCurrencyId, bridgeConfigByAsset: AppConfig['bridgeByAsset']): Bridge {
     console.log('WebbCurrencyId in Bridge static constructor: ', bridgeCurrency);
     const bridgeConfig = bridgeConfigByAsset[bridgeCurrency];
     return new Bridge(bridgeConfig);

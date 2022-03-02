@@ -1,6 +1,5 @@
 import { parseUnits } from '@ethersproject/units';
 import {
-  chainsConfig,
   chainTypeIdToInternalId,
   evmIdIntoInternalChainId,
   getAnchorAddressForBridge,
@@ -40,6 +39,9 @@ import React from 'react';
 const logger = LoggerService.get('Web3BridgeWithdraw');
 
 export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
+  private get config() {
+    return this.inner.config;
+  }
   async mapRelayerIntoActive(relayer: OptionalRelayer): Promise<OptionalActiveRelayer> {
     if (!relayer) {
       return null;
@@ -129,7 +131,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
     this.cancelToken.cancelled = false;
 
     const bridgeCurrencyId = webbCurrencyIdFromString(note.tokenSymbol);
-    const bridge = Bridge.from(bridgeCurrencyId);
+    const bridge = Bridge.from(bridgeCurrencyId, this.inner.config.bridgeByAsset);
 
     const activeChain = await this.inner.getChainId();
     const internalId = evmIdIntoInternalChainId(activeChain);
@@ -246,7 +248,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
     const sourceChainIdType = parseChainIdType(Number(note.sourceChainId));
     const sourceEvmId = sourceChainIdType.chainId;
     const sourceInternalId = evmIdIntoInternalChainId(sourceEvmId);
-    const sourceChainConfig = chainsConfig[sourceInternalId];
+    const sourceChainConfig = this.config.chains[sourceInternalId];
     const rpc = sourceChainConfig.url;
     const sourceHttpProvider = Web3Provider.fromUri(rpc);
     const sourceEthers = sourceHttpProvider.intoEthersProvider();
