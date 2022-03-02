@@ -1,3 +1,5 @@
+import { chainsConfig, ChainType, computeChainIdType, internalChainIdToChainId } from '@webb-dapp/apps/configs';
+import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
 import { NativeTokenProperties } from '@webb-dapp/mixer';
 import { Currency } from '@webb-dapp/mixer/utils/currency';
 import { DepositPayload as IDepositPayload, MixerDeposit } from '@webb-dapp/react-environment/webb-context';
@@ -42,8 +44,10 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
           id: '0',
           name: 'WEBB',
         };
+        console.log('treeId: ', treeId);
 
         const id = storageKey.toString() + treeId;
+        console.log('id in getSizes: ', id);
         // parse number from amount string
         // TODO: Get and parse native / non-native token denomination
         const amountNumber = (Number(amount?.toString().replaceAll(',', '')) * 1.0) / Math.pow(10, 12);
@@ -59,7 +63,7 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
         };
       })
       .map(({ amount, currency, id, token, treeId }) => ({
-        id,
+        id: treeId,
         treeId,
         value: amount,
         title: amount + ` ${currency.symbol}`,
@@ -75,6 +79,8 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
 
   async generateNote(mixerId: number, chainId: number): Promise<DepositPayload> {
     logger.info(`Depositing to mixer id ${mixerId}`);
+    chainsConfig[chainId];
+    const chainIdType = computeChainIdType(ChainType.Substrate, internalChainIdToChainId(ChainType.Substrate, chainId));
     const sizes = await this.getSizes();
     const amount = sizes.find((size) => Number(size.id) === mixerId);
     const properties = await this.inner.api.rpc.system.properties();
@@ -85,21 +91,24 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
     const treeId = amount?.treeId;
     logger.info(`Depositing to tree id ${treeId}`);
     const noteInput: NoteGenInput = {
-      prefix: 'webb.mixer',
-      version: 'v1',
+      protocol: 'mixer',
+      version: 'v2',
       exponentiation: '5',
       width: '5',
       backend: 'Arkworks',
       hashFunction: 'Poseidon',
       curve: 'Bn254',
       denomination: `${denomination}`,
-
       amount: String(amount.value),
-      chain: String(chainId),
-      sourceChain: String(chainId),
+      chain: chainIdType.toString(),
+      sourceChain: chainIdType.toString(),
+      sourceIdentifyingData: treeId.toString(),
+      targetIdentifyingData: treeId.toString(),
       tokenSymbol: amount.symbol,
     };
+    logger.info(`noteInput in generateNote: `, noteInput);
     const depositNote = await Note.generateNote(noteInput);
+    logger.info(`generated Note from input: `, depositNote.note);
     const leaf = depositNote.getLeaf();
 
     return {

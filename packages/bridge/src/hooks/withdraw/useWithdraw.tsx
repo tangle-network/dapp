@@ -1,3 +1,4 @@
+import { chainTypeIdToInternalId, parseChainIdType, webbCurrencyIdFromString } from '@webb-dapp/apps/configs';
 import { misbehavingRelayer } from '@webb-dapp/react-environment/error/interactive-errors/misbehaving-relayer';
 import { useWebContext, WithdrawState } from '@webb-dapp/react-environment/webb-context';
 import { ActiveWebbRelayer, WebbRelayer } from '@webb-dapp/react-environment/webb-context/relayer';
@@ -5,6 +6,8 @@ import { InteractiveFeedback, WebbErrorCodes } from '@webb-dapp/utils/webb-error
 import { LoggerService } from '@webb-tools/app-util';
 import { Note } from '@webb-tools/sdk-core';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+
+import { useBridge } from '../bridge/use-bridge';
 
 const logger = LoggerService.get('useWithdrawHook');
 
@@ -34,6 +37,7 @@ export const useWithdraw = (params: UseWithdrawProps) => {
   const [stage, setStage] = useState<WithdrawState>(WithdrawState.Ideal);
   const [receipt, setReceipt] = useState('');
   const [relayersState, setRelayersState] = useState<RelayersState>(relayersInitState);
+  const { bridgeApi } = useBridge();
   const { activeApi } = useWebContext();
 
   const [error, setError] = useState<WithdrawErrors>({
@@ -74,6 +78,8 @@ export const useWithdraw = (params: UseWithdrawProps) => {
           relayers: r,
         }));
       });
+      // const nextBridge = bridgeApi?.store.config[webbCurrencyIdFromString(params.note.note.tokenSymbol)];
+      // bridgeApi?.setActiveBridge(nextBridge);
     }
 
     const sub = withdrawApi?.watcher.subscribe((next) => {
@@ -105,10 +111,10 @@ export const useWithdraw = (params: UseWithdrawProps) => {
       sub?.unsubscribe();
       Object.values(unsubscribe).forEach((v) => v && v());
     };
-  }, [withdrawApi, params.note]);
+  }, [withdrawApi, params.note, bridgeApi]);
 
   const withdraw = useCallback(async () => {
-    if (!withdrawApi) return;
+    if (!withdrawApi || !params.note) return;
     if (stage === WithdrawState.Ideal) {
       if (params.note) {
         try {

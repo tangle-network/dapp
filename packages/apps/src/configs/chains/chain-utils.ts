@@ -34,7 +34,7 @@ export const computeChainIdType = (chainType: ChainType, chainId: number | Inter
   return byteArrayToNum(fullArray);
 };
 
-export const typeAndIdFromChainIdType = (chainIdType: number): ChainTypeId => {
+export const parseChainIdType = (chainIdType: number): ChainTypeId => {
   let byteArray = numToByteArray(chainIdType, 4);
   let chainType = byteArrayToNum(byteArray.slice(0, 2));
   let chainId = byteArrayToNum(byteArray.slice(2));
@@ -95,6 +95,10 @@ export const evmIdIntoInternalChainId = (evmId: number | string): InternalChainI
       return InternalChainId.ArbitrumTestnet;
     case EVMChainId.PolygonTestnet:
       return InternalChainId.PolygonTestnet;
+    case EVMChainId.HermesLocalnet:
+      return InternalChainId.HermesLocalnet;
+    case EVMChainId.AthenaLocalnet:
+      return InternalChainId.AthenaLocalnet;
   }
 };
 
@@ -130,6 +134,10 @@ export const internalChainIdIntoEVMId = (chainId: InternalChainId | Number | Str
       return EVMChainId.ArbitrumTestnet;
     case InternalChainId.PolygonTestnet:
       return EVMChainId.PolygonTestnet;
+    case InternalChainId.HermesLocalnet:
+      return EVMChainId.HermesLocalnet;
+    case InternalChainId.AthenaLocalnet:
+      return EVMChainId.AthenaLocalnet;
     default:
       throw Error(`unsupported evm id: ${chainId}`);
   }
@@ -150,6 +158,8 @@ export const internalChainIdIntoSubstrateId = (chainId: InternalChainId | Number
   switch (Number(chainId) as InternalChainId) {
     case InternalChainId.Edgeware:
       return SubstrateChainId.Edgeware;
+    case InternalChainId.WebbDevelopment:
+      return SubstrateChainId.Webb;
     default:
       throw Error(`Internal Id ${chainId} is not a substrate id`);
   }

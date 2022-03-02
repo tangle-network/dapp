@@ -21,6 +21,7 @@ type WithdrawProps = {};
 
 export const Withdraw: React.FC<WithdrawProps> = () => {
   const [note, setNote] = useState('');
+  const depositNote = useDepositNote(note);
 
   const [recipient, setRecipient] = useState('');
   const [withdrawPercentage, setWithdrawPercentage] = useState(0);
@@ -40,7 +41,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
     withdraw,
   } = useWithdraw({
     recipient,
-    note,
+    note: depositNote,
   });
   console.log(relayersState, 'relayersState');
   const feesGetter = useCallback(
@@ -71,7 +72,6 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
     };
   }, [relayerMethods]);
 
-  const depositNote = useDepositNote(note);
   const disabledButton = useMemo(() => {
     console.log(depositNote, recipient);
     return !(depositNote && recipient);

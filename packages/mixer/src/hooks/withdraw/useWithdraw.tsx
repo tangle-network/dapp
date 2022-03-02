@@ -9,7 +9,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 const logger = LoggerService.get('useWithdrawHook');
 
 export type UseWithdrawProps = {
-  note: string;
+  note: Note | null;
   recipient: string;
 };
 export type WithdrawErrors = {
@@ -47,44 +47,33 @@ export const useWithdraw = (params: UseWithdrawProps) => {
     if (!withdraw?.enabled) return null;
     return withdraw.inner;
   }, [activeApi]);
+
   useEffect(() => {
     const sub = activeApi?.relayingManager.listUpdated.subscribe(() => {
-      Note.deserialize(params.note)
-        .then((n) => {
-          if (n) {
-            withdrawApi?.getRelayersByNote(n).then((r) => {
-              setRelayersState((p) => ({
-                ...p,
-                loading: false,
-                relayers: r,
-              }));
-            });
-          }
-        })
-        .catch((err) => {
-          logger.info('catch note deserialize useWithdraw', err);
+      if (params.note) {
+        withdrawApi?.getRelayersByNote(params.note).then((r) => {
+          setRelayersState((p) => ({
+            ...p,
+            loading: false,
+            relayers: r,
+          }));
         });
+      }
     });
     return () => sub?.unsubscribe();
   }, [activeApi, params.note, withdrawApi]);
 
   // hook events
   useEffect(() => {
-    Note.deserialize(params.note)
-      .then((n) => {
-        if (n) {
-          withdrawApi?.getRelayersByNote(n).then((r) => {
-            setRelayersState((p) => ({
-              ...p,
-              loading: false,
-              relayers: r,
-            }));
-          });
-        }
-      })
-      .catch((err) => {
-        logger.info('catch note deserialize useWithdraw', err);
+    if (params.note) {
+      withdrawApi?.getRelayersByNote(params.note).then((r) => {
+        setRelayersState((p) => ({
+          ...p,
+          loading: false,
+          relayers: r,
+        }));
       });
+    }
 
     const sub = withdrawApi?.watcher.subscribe((next) => {
       setRelayersState((p) => ({
@@ -118,11 +107,11 @@ export const useWithdraw = (params: UseWithdrawProps) => {
   }, [withdrawApi, params.note]);
 
   const withdraw = useCallback(async () => {
-    if (!withdrawApi) return;
+    if (!withdrawApi || !params.note) return;
     if (stage === WithdrawState.Ideal) {
       const { note, recipient } = params;
       try {
-        const txReceipt = await withdrawApi.withdraw(note, recipient);
+        const txReceipt = await withdrawApi.withdraw(note.serialize(), recipient);
         setReceipt(txReceipt);
       } catch (e) {
         console.log('error from withdraw api', e);

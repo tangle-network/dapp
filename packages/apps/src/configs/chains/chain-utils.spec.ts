@@ -4,7 +4,7 @@ import {
   byteArrayToNum,
   numToByteArray,
   computeChainIdType,
-  typeAndIdFromChainIdType,
+  parseChainIdType,
 } from './chain-utils';
 
 // TODO: Move utils and tests to webb.js
@@ -50,6 +50,6 @@ describe('test various conversion functions', () => {
       chainType: chainTypeResult,
       chainId: chainIdResult,
     };
-    expect(typeAndIdFromChainIdType(chainIdType)).toEqual(result);
+    expect(parseChainIdType(chainIdType)).toEqual(result);
   });
 });
