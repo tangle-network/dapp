@@ -1,10 +1,7 @@
-import { AppConfig, Chain, Wallet } from '@webb-dapp/react-environment';
+import { Chain, Wallet } from '@webb-dapp/react-environment';
 import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 
-import { anchorsConfig } from './anchors/anchor-config';
-import { bridgeConfigByAsset } from './bridges/bridge-config';
 import { chainsConfig } from './chains/chain-config';
-import { mixersConfig } from './mixers/mixer-config';
 import { walletsConfig } from './wallets/wallets-config';
 import { ChainTypeId, chainTypeIdToInternalId, InternalChainId } from './chains';
 import { currenciesConfig } from './currencies';
