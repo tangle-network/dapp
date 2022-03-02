@@ -47,7 +47,7 @@ export const lightMainTheme: ThemeOptions = {
       disabled: tinycolor(lightPallet.primaryText).lighten(lightenRate).toHexString(),
     },
     background: {
-      default: lightPallet.mainBackground,
+      default: lightPallet.componentBackground,
       paper: lightPallet.background,
     },
   },
@@ -59,7 +59,7 @@ export const lightMainTheme: ThemeOptions = {
   overrides: {
     MuiBackdrop: {
       root: {
-        backgroundColor: lightPallet.backdrop,
+        backgroundColor: lightPallet.background,
       },
     },
     MuiMenu: {

@@ -8,7 +8,6 @@ export const basePallet = {
   /*Main*/
   primary: '#3351F2',
   secondary: '#52B684',
-  backdrop: 'rgba(20,20,20,0.12)',
 
   /*Content color*/
   success: '#48b87e',
@@ -27,15 +26,8 @@ export const basePallet = {
 
   gray13: 'rgba(200, 206, 221, 0.3)',
 
-  cardBackground: '#fff',
   darkGray: '#22262b',
-  tabHeader: 'rgba(34, 38, 43, 1)',
 
-  borderColor: 'rgb(34,38,43)',
-  borderColor2: 'rgba(56, 60, 64, 1)',
-  layer1Background: 'rgba(21, 26, 30, 1)',
-  layer2Background: 'rgba(34, 38, 43, 1)',
-  layer3Background: 'rgba(56, 60, 64, 1)',
   type: 'base',
   spinnerBackground: 'rgb(42,42,42)',
 };

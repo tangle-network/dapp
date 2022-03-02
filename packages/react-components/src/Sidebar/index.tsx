@@ -28,7 +28,7 @@ const SidebarRoot = styled.div<{ collapse: boolean; isMobile: boolean }>`
   width: ${({ isMobile }): string => (isMobile ? '100vw' : '200px')};
   box-shadow: 0 20px 20px 0 rgba(12, 28, 90, 0.09);
   transition: width 500ms ease;
-  background: var(--card-background);
+  background: ${({ theme }) => theme.menuBackground};
   z-index: 300;
 `;
 

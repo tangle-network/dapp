@@ -98,6 +98,6 @@ export const LightTheme = createGlobalStyle`
 	}
 
 	body {
-		background: ${lightPallet.mainBackground} !important;
+		background: ${lightPallet.componentBackground} !important;
 	}
 `;

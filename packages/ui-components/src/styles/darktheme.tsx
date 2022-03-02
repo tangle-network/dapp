@@ -59,8 +59,9 @@ export const DarkTheme = createGlobalStyle`
 
 		--sidebar-item-height: 58px;
 
-		--platform-background: ${darkPallet.mainBackground};
-		--card-background: #222;
+		--platform-background: ${darkPallet.background};
+		--card-background: ${darkPallet.cardBackground};
+		--menu-background: ${darkPallet.menuBackground};
 
 		--information-background: rgba(0, 0, 0, 0.4);
 		--information-title-color: #0155ff;
@@ -102,7 +103,6 @@ export const DarkTheme = createGlobalStyle`
 	}
 
 	body {
-
-		background: ${darkPallet.mainBackground} !important;
+		background: ${darkPallet.componentBackground} !important;
 	}
 `;

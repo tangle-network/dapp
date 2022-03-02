@@ -6,7 +6,7 @@ import { darkPallet } from '../colors';
 import { FontFamilies } from '../fonts/font-families.enum';
 
 const lightenRate = 5;
-const darkenRate = 15;
+const darkenRate = 5;
 
 export const darkMainTheme: ThemeOptions = {
   palette: {
@@ -47,7 +47,7 @@ export const darkMainTheme: ThemeOptions = {
       disabled: tinycolor(darkPallet.primaryText).lighten(lightenRate).toHexString(),
     },
     background: {
-      default: darkPallet.mainBackground,
+      default: darkPallet.componentBackground,
       paper: darkPallet.background,
     },
     type: 'dark',
@@ -60,7 +60,7 @@ export const darkMainTheme: ThemeOptions = {
   overrides: {
     MuiBackdrop: {
       root: {
-        backgroundColor: darkPallet.backdrop,
+        backgroundColor: darkPallet.background,
       },
     },
     MuiMenu: {
