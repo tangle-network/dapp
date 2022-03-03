@@ -6,39 +6,55 @@ import { SocialItem } from './types';
 const SocialPlatformRoot = styled.div<{ collapse: boolean }>`
   display: flex;
   flex-direction: ${({ collapse }): string => (collapse ? 'column' : 'row')};
+  justify-content: space-between;
   margin-bottom: 60px;
   padding: 0 24px;
 `;
 
-const SocialPlatformItemRoot = styled.a<{ collapse: boolean }>`
-  margin-right: 12px;
-  padding: 0;
-  width: 24px;
-  height: 24px;
-  margin-top: ${({ collapse }): number => (collapse ? 16 : 0)}px;
+export const IconLink = styled.a`
+color: #fff;
+font-size: 16px;
+line-height: 26px;
+letter-spacing: -0.06em;
+white-space: nowrap;
 
-  &:hover {
-    transform: scale(1.1);
-    background: none;
-  }
-
-  & svg {
-    margin: 0;
-  }
-`;
-
-interface SocialPlatformItemProps {
-  data: SocialItem;
-  collapse: boolean;
+path {
+  fill: ${({ theme }) => theme.primary};
 }
 
-const SocialPlatformItem: FC<SocialPlatformItemProps> = ({ collapse, data }) => {
+transition: all 0.3s ease-in-out;
+
+&:hover {
+  text-decoration: none;
+  fill: #3e5bf8;
+
+  path {
+    fill: #3e5bf8;
+  }
+}
+`;
+
+const SocialIcon = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 25px;
+  height: 25px;
+`;
+
+export const SocialLink: React.FC<{
+  to: string;
+  title: string;
+  Icon: React.ReactNode;
+}> = ({ to, title, Icon }) => {
   return (
-    <SocialPlatformItemRoot collapse={collapse} href={data.href} rel={data.rel} target='_blank'>
-      {data.icon}
-    </SocialPlatformItemRoot>
+    <IconLink target="_blank" href={to} title={title}>
+      <SocialIcon>
+        {Icon}
+      </SocialIcon>
+    </IconLink>
   );
-};
+}
 
 interface SocialPlatformProps {
   collapse: boolean;
@@ -49,7 +65,7 @@ export const SocialPlatform: FC<SocialPlatformProps> = ({ collapse, data }) => {
   return (
     <SocialPlatformRoot collapse={collapse}>
       {data.map((item) => (
-        <SocialPlatformItem collapse={collapse} data={item} key={`social-platform-${item.href}`} />
+        <SocialLink to={item.href} title={item.name || `social-unknown`}  Icon={item.icon} key={`social-platform-${item.href}`} />
       ))}
     </SocialPlatformRoot>
   );
