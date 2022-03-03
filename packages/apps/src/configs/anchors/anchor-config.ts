@@ -1,5 +1,7 @@
-import { InternalChainId, WebbCurrencyId } from '@webb-dapp/apps/configs';
 import { AppConfig } from '@webb-dapp/react-environment/webb-context';
+
+import { InternalChainId } from '../chains/chain-id.enum';
+import { WebbCurrencyId } from '../currencies/webb-currency-id.enum';
 
 // Anchor config is indexed by WebbCurrencyId
 export const anchorsConfig: AppConfig['anchors'] = {
@@ -38,6 +40,16 @@ export const anchorsConfig: AppConfig['anchors'] = {
         [InternalChainId.WebbDevelopment]: '5',
       },
       anchorAddresses: {},
+    },
+  ],
+  [WebbCurrencyId.webbDEV]: [
+    {
+      amount: '1',
+      anchorTreeIds: {},
+      anchorAddresses: {
+        [InternalChainId.HermesLocalnet]: '0x510C6297cC30A058F41eb4AF1BFC9953EaD8b577',
+        [InternalChainId.AthenaLocalnet]: '0x7758F98C1c487E5653795470eEab6C4698bE541b',
+      },
     },
   ],
 };

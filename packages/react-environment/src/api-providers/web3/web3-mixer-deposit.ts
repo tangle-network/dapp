@@ -1,9 +1,9 @@
 import {
-  evmIdIntoInternalChainId,
+  ChainType,
+  computeChainIdType,
   getEVMChainName,
   getNativeCurrencySymbol,
-  InternalChainId,
-  internalChainIdIntoEVMId,
+  parseChainIdType,
 } from '@webb-dapp/apps/configs';
 import { createTornDeposit, Deposit } from '@webb-dapp/contracts/utils/make-deposit';
 import { DepositPayload as IDepositPayload, MixerDeposit, MixerSize } from '@webb-dapp/react-environment/webb-context';
@@ -21,8 +21,8 @@ type DepositPayload = IDepositPayload<Note, [Deposit, number]>;
 
 export class Web3MixerDeposit extends MixerDeposit<WebbWeb3Provider, DepositPayload> {
   async deposit({ note: depositPayload, params }: DepositPayload): Promise<void> {
-    const chainId = Number(depositPayload.note.targetChainId) as InternalChainId;
-    const evmChainId = internalChainIdIntoEVMId(chainId);
+    const chainId = Number(depositPayload.note.targetChainId);
+    const evmChainId = parseChainIdType(chainId).chainId;
     transactionNotificationConfig.loading?.({
       address: '',
       data: React.createElement(DepositNotification, {
@@ -87,20 +87,22 @@ export class Web3MixerDeposit extends MixerDeposit<WebbWeb3Provider, DepositPayl
     const depositSize = Number.parseFloat(utils.fromWei(depositSizeBN.toString(), 'ether'));
     const chainId = await this.inner.getChainId();
     const deposit = createTornDeposit();
-    const noteChain = String(evmIdIntoInternalChainId(chainId));
+    const noteChain = computeChainIdType(ChainType.EVM, chainId);
     const secrets = deposit.preimage;
     const noteInput: NoteGenInput = {
+      protocol: 'mixer',
       exponentiation: '5',
       width: '3',
-      prefix: 'webb.mixer',
-      chain: noteChain,
-      sourceChain: noteChain,
+      chain: noteChain.toString(),
+      sourceChain: noteChain.toString(),
+      sourceIdentifyingData: mixerAddress,
+      targetIdentifyingData: mixerAddress,
       amount: String(depositSize),
       denomination: '18',
       hashFunction: 'Poseidon',
       curve: 'Bn254',
       backend: 'Circom',
-      version: 'v1',
+      version: 'v2',
       tokenSymbol: mixerInfo.symbol,
       secrets: u8aToHex(secrets),
     };

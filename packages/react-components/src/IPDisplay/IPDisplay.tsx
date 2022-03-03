@@ -18,7 +18,7 @@ const IPDisplayWrapper = styled.div`
     border: 1px solid ${theme.borderColor};
 
     .label-icon {
-      font-size: 40px;
+      font-size: 30px;
       color: ${theme.primary};
     }
 
@@ -56,12 +56,15 @@ const IPDisplay: React.FC<IPDisplayProps> = () => {
   return (
     <IPDisplayWrapper>
       <Icon className={'label-icon'}>room</Icon>
-      <div style={{ paddingLeft: 5 }}>
+      <div style={{ paddingLeft: 5, width: '80%' }}>
         <Typography className={'ip-text'} variant={'h5'}>
           <b>Your IP</b>
         </Typography>
-        <Typography className={'ip-text'} variant={'h5'}>
-          {ip} {createLocationText()}
+        <Typography style={{ lineHeight: 1 }} className={'ip-text'} noWrap={true} variant={'h6'}>
+          {ip}
+        </Typography>
+        <Typography style={{ lineHeight: 1 }} className={'ip-text'} variant={'h6'}>
+          {createLocationText()}
         </Typography>
       </div>
     </IPDisplayWrapper>

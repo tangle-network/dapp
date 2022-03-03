@@ -21,6 +21,8 @@ const ANY_EVM = [
   InternalChainId.OptimismTestnet,
   InternalChainId.ArbitrumTestnet,
   InternalChainId.PolygonTestnet,
+  InternalChainId.HermesLocalnet,
+  InternalChainId.AthenaLocalnet,
 ];
 export const walletsConfig: AppConfig['wallet'] = {
   [WalletId.Polkadot]: {

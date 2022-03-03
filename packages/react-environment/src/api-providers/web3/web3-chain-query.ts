@@ -1,4 +1,4 @@
-import { chainsConfig, evmIdIntoInternalChainId, WebbCurrencyId } from '@webb-dapp/apps/configs';
+import { evmIdIntoInternalChainId, WebbCurrencyId } from '@webb-dapp/apps/configs';
 import { zeroAddress } from '@webb-dapp/contracts/contracts';
 import { ERC20__factory } from '@webb-dapp/contracts/types';
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers';
@@ -10,7 +10,9 @@ export class Web3ChainQuery extends ChainQuery<WebbWeb3Provider> {
   constructor(protected inner: WebbWeb3Provider) {
     super(inner);
   }
-
+  private get config() {
+    return this.inner.config;
+  }
   async tokenBalanceByCurrencyId(currencyId: WebbCurrencyId): Promise<string> {
     const provider = this.inner.getEthersProvider();
 
@@ -24,7 +26,7 @@ export class Web3ChainQuery extends ChainQuery<WebbWeb3Provider> {
       return '';
     }
     // Return the balance of the account if native currency
-    if (chainsConfig[webbChain].nativeCurrencyId == currencyId) {
+    if (this.config.chains[webbChain].nativeCurrencyId == currencyId) {
       const tokenBalanceBig = await provider.getBalance(accounts[0].address);
       const tokenBalance = ethers.utils.formatEther(tokenBalanceBig);
       return tokenBalance;

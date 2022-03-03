@@ -1,6 +1,7 @@
 import { Bridge, BridgeDeposit, BridgeWithdraw } from '@webb-dapp/react-environment/webb-context/bridge';
 import { BridgeApi } from '@webb-dapp/react-environment/webb-context/bridge/bridge-api';
 import { ChainQuery } from '@webb-dapp/react-environment/webb-context/chain-query';
+import { AppConfig } from '@webb-dapp/react-environment/webb-context/common';
 import { WebbRelayerBuilder } from '@webb-dapp/react-environment/webb-context/relayer';
 import { WrapUnWrap } from '@webb-dapp/react-environment/webb-context/wrap-unwrap';
 import { InteractiveFeedback } from '@webb-dapp/utils/webb-error';
@@ -92,4 +93,6 @@ export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
   relayingManager: WebbRelayerBuilder;
 
   getProvider(): any;
+  // Configs
+  config: AppConfig;
 }
