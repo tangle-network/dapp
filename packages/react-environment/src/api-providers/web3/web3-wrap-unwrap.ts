@@ -1,6 +1,4 @@
 import {
-  chainsConfig,
-  currenciesConfig,
   evmIdIntoInternalChainId,
   InternalChainId,
   WebbCurrencyId,
@@ -37,6 +35,10 @@ export class Web3WrapUnwrap extends WrapUnWrap<WebbWeb3Provider> {
   private _liquidity = new BehaviorSubject<[WrappingBalance, WrappingBalance]>([defaultBalance, defaultBalance]);
   private _currentChainId = new BehaviorSubject<InternalChainId | null>(null);
   private _event = new Subject<Partial<WrappingEvent>>();
+
+  private get config() {
+    return this.inner.config;
+  }
 
   get balances(): Observable<[WrappingBalance, WrappingBalance]> {
     return this._balances.asObservable();
@@ -94,14 +96,14 @@ export class Web3WrapUnwrap extends WrapUnWrap<WebbWeb3Provider> {
   //
   async getWrappableTokens(governedCurrency?: WebbCurrencyId | null): Promise<WebbCurrencyId[]> {
     if (this.currentChainId) {
-      const currenciesOfChain = chainsConfig[this.currentChainId].currencies;
+      const currenciesOfChain = this.config.chains[this.currentChainId].currencies;
       const wrappableCurrencies = currenciesOfChain.filter((currencyId) => {
         return Currency.isWrappableCurrency(currencyId);
       });
       if (governedCurrency) {
         const webbGovernedToken = this.governedTokenWrapper(governedCurrency);
         return wrappableCurrencies.filter((token) => {
-          const tokenAddress = currenciesConfig[token].addresses.get(this.currentChainId!)!;
+          const tokenAddress = this.config.currencies[token].addresses.get(this.currentChainId!)!;
           return webbGovernedToken.canWrap(tokenAddress);
         });
       } else {
@@ -158,7 +160,7 @@ export class Web3WrapUnwrap extends WrapUnWrap<WebbWeb3Provider> {
         path,
       });
       const tx = await webbGovernedToken.unwrap(
-        currenciesConfig[wrappableTokenId].addresses.get(this.currentChainId!)!,
+        this.config.currencies[wrappableTokenId].addresses.get(this.currentChainId!)!,
         amount
       );
       await tx.wait();
@@ -186,10 +188,10 @@ export class Web3WrapUnwrap extends WrapUnWrap<WebbWeb3Provider> {
     const wrappableToken = this.wrappableToken!;
     const webbGovernedToken = this.governedTokenWrapper(governedToken);
 
-    if (currenciesConfig[wrappableToken].type == CurrencyType.NATIVE) {
+    if (this.config.currencies[wrappableToken].type == CurrencyType.NATIVE) {
       return webbGovernedToken.isNativeAllowed();
     } else {
-      const tokenAddress = currenciesConfig[governedToken].addresses.get(this.currentChainId!)!;
+      const tokenAddress = this.config.currencies[governedToken].addresses.get(this.currentChainId!)!;
       return webbGovernedToken.canWrap(tokenAddress);
     }
   }
@@ -271,7 +273,7 @@ export class Web3WrapUnwrap extends WrapUnWrap<WebbWeb3Provider> {
 
   private getAddressFromWrapTokenId(id: WebbCurrencyId): string {
     const currentNetwork = this.currentChainId!;
-    const address = currenciesConfig[id].addresses.get(currentNetwork)!;
+    const address = this.config.currencies[id].addresses.get(currentNetwork)!;
     return address;
   }
 

@@ -9,6 +9,7 @@ import WEBBLogo from '@webb-dapp/apps/configs/logos/WebbLogo';
 import { AppConfig } from '@webb-dapp/react-environment/webb-context';
 
 import { WebbCurrencyId } from '../currencies/webb-currency-id.enum';
+import GanacheLogo from '../logos/GanacheLogo';
 import { ChainType, EVMChainId, InternalChainId, SubstrateChainId } from './chain-id.enum';
 
 export const getSupportedCurrenciesOfChain = (chainId: InternalChainId): WebbCurrencyId[] => {
@@ -234,5 +235,31 @@ export const chainsConfig: AppConfig['chains'] = {
     logo: PolygonLogo,
     currencies: [WebbCurrencyId.MATIC, WebbCurrencyId.WETH],
     nativeCurrencyId: WebbCurrencyId.MATIC,
+  },
+  [InternalChainId.HermesLocalnet]: {
+    chainType: ChainType.EVM,
+    group: 'eth',
+    id: InternalChainId.HermesLocalnet,
+    chainId: EVMChainId.HermesLocalnet,
+    name: 'Hermes Localnet',
+    tag: 'dev',
+    url: 'http://127.0.0.1:5001',
+    evmRpcUrls: ['http://127.0.0.1:5001'],
+    logo: GanacheLogo,
+    currencies: [WebbCurrencyId.ETH, WebbCurrencyId.DEV],
+    nativeCurrencyId: WebbCurrencyId.ETH,
+  },
+  [InternalChainId.AthenaLocalnet]: {
+    chainType: ChainType.EVM,
+    group: 'eth',
+    id: InternalChainId.AthenaLocalnet,
+    chainId: EVMChainId.AthenaLocalnet,
+    name: 'Athena Localnet',
+    tag: 'dev',
+    url: 'http://127.0.0.1:5002',
+    evmRpcUrls: ['http://127.0.0.1:5002'],
+    logo: GanacheLogo,
+    currencies: [WebbCurrencyId.ETH, WebbCurrencyId.DEV],
+    nativeCurrencyId: WebbCurrencyId.ETH,
   },
 };

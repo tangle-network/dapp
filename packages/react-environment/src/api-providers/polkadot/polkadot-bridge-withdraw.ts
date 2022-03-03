@@ -23,7 +23,7 @@ export type AnchorWithdrawProof = {
   relayer: string;
   fee: number;
   refund: number;
-  commitment: string;
+  refreshCommitment: string;
 };
 
 export class PolkadotBridgeWithdraw extends BridgeWithdraw<WebbPolkadot> {
@@ -84,7 +84,7 @@ export class PolkadotBridgeWithdraw extends BridgeWithdraw<WebbPolkadot> {
       const recipientAccountHex = u8aToHex(decodeAddress(recipient));
       const relayerAccountHex = u8aToHex(decodeAddress(recipient));
       const provingKey = await fetchSubstrateProvingKey();
-      const commitment = '0000000000000000000000000000000000000000000000000000000000000000';
+      const refreshCommitment = '0000000000000000000000000000000000000000000000000000000000000000';
       const root = await this.fetchRoot(treeId);
 
       const proofInput: ProvingManagerSetupInput = {
@@ -96,9 +96,10 @@ export class PolkadotBridgeWithdraw extends BridgeWithdraw<WebbPolkadot> {
         recipient: recipientAccountHex.replace('0x', ''),
         relayer: relayerAccountHex.replace('0x', ''),
         provingKey,
-        commitment,
+        refreshCommitment,
         roots: [hexToU8a(root), hexToU8a(root)],
       };
+      logger.log('proofInput to webb.js: ', proofInput);
       const zkProofMetadata = await pm.proof(proofInput);
       const withdrawProof: AnchorWithdrawProof = {
         id: treeId,
@@ -109,7 +110,7 @@ export class PolkadotBridgeWithdraw extends BridgeWithdraw<WebbPolkadot> {
         relayer: relayerAccountId,
         fee: 0,
         refund: 0,
-        commitment: `0x${commitment}`,
+        refreshCommitment: `0x${refreshCommitment}`,
       };
       const parms = [
         withdrawProof.id,
@@ -120,7 +121,7 @@ export class PolkadotBridgeWithdraw extends BridgeWithdraw<WebbPolkadot> {
         withdrawProof.relayer,
         withdrawProof.fee,
         withdrawProof.refund,
-        withdrawProof.commitment,
+        withdrawProof.refreshCommitment,
       ];
 
       this.emit('stateChange', WithdrawState.SendingTransaction);

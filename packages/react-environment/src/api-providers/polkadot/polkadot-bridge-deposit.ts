@@ -1,4 +1,5 @@
 import { ChainType, computeChainIdType, InternalChainId, SubstrateChainId } from '@webb-dapp/apps/configs';
+import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
 import { DepositPayload as IDepositPayload, MixerSize } from '@webb-dapp/react-environment';
 import { WebbPolkadot } from '@webb-dapp/react-environment/api-providers/polkadot/webb-polkadot-provider';
 import { BridgeConfig } from '@webb-dapp/react-environment/types/bridge-config.interface';
@@ -67,9 +68,11 @@ export class PolkadotBridgeDeposit extends BridgeDeposit<WebbPolkadot, DepositPa
     const noteInput: NoteGenInput = {
       exponentiation: '5',
       width: '4',
-      prefix: 'webb.anchor',
-      chain: String(destChainId),
-      sourceChain: String(sourceChainId),
+      protocol: 'anchor',
+      chain: destChainId.toString(),
+      sourceChain: sourceChainId.toString(),
+      sourceIdentifyingData: anchorIndex.toString(),
+      targetIdentifyingData: treeId.toString(),
       amount: amount,
       denomination: '18',
       hashFunction: 'Poseidon',
@@ -80,6 +83,7 @@ export class PolkadotBridgeDeposit extends BridgeDeposit<WebbPolkadot, DepositPa
     };
     logger.log('note input', noteInput);
     const note = await Note.generateNote(noteInput);
+    logger.log('Generated note: ', note.note);
     const leaf = note.getLeaf();
     const leafHex = u8aToHex(leaf);
     logger.trace(`treeId ${treeId}, Leaf ${leafHex}`);

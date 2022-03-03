@@ -2,7 +2,7 @@ import { FormHelperText, Icon, InputBase } from '@material-ui/core';
 import {
   getEVMChainName,
   getEVMChainNameFromInternal,
-  typeAndIdFromChainIdType,
+  parseChainIdType,
   webbCurrencyIdFromString,
 } from '@webb-dapp/apps/configs';
 import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
@@ -35,7 +35,7 @@ export const BridgeNoteInput: React.FC<NoteInputProps> = ({ error, onChange, val
 
   // Switch to mixer tab if note is for mixer
   useEffect(() => {
-    if (depositNote && depositNote.note.prefix === 'webb.mixer') {
+    if (depositNote && depositNote.note.protocol === 'mixer') {
       notificationApi.addToQueue({
         secondaryMessage: 'Please complete withdraw through the mixer',
         message: 'Switched to mixer',
@@ -48,7 +48,7 @@ export const BridgeNoteInput: React.FC<NoteInputProps> = ({ error, onChange, val
 
   const currency = useMemo(() => {
     try {
-      if (depositNote && (depositNote.note.prefix == 'webb.bridge' || depositNote.note.prefix === 'webb.anchor')) {
+      if (depositNote && depositNote.note.protocol == 'anchor') {
         return bridgeApi?.currency;
       }
     } catch (_) {
@@ -80,7 +80,7 @@ export const BridgeNoteInput: React.FC<NoteInputProps> = ({ error, onChange, val
               <tr>
                 <td>Context:</td>
                 <td style={{ textAlign: 'right' }}>
-                  <b>{depositNote.note.prefix.replace('webb.', '').toUpperCase()}</b>
+                  <b>{depositNote.note.protocol.toUpperCase()}</b>
                 </td>
               </tr>
               <tr>
@@ -93,14 +93,14 @@ export const BridgeNoteInput: React.FC<NoteInputProps> = ({ error, onChange, val
               <tr>
                 <td>Source Chain:</td>
                 <td style={{ textAlign: 'right' }}>
-                  {getEVMChainName(typeAndIdFromChainIdType(Number(depositNote.note.sourceChainId)).chainId)}
+                  {getEVMChainName(parseChainIdType(Number(depositNote.note.sourceChainId)).chainId)}
                 </td>
               </tr>
 
               <tr>
                 <td>Destination Chain:</td>
                 <td style={{ textAlign: 'right' }}>
-                  {getEVMChainName(typeAndIdFromChainIdType(Number(depositNote.note.targetChainId)).chainId)}
+                  {getEVMChainName(parseChainIdType(Number(depositNote.note.targetChainId)).chainId)}
                 </td>
               </tr>
 

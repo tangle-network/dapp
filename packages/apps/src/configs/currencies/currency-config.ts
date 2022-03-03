@@ -49,6 +49,8 @@ export const currenciesConfig: AppConfig['currencies'] = {
       [InternalChainId.Kovan, zeroAddress],
       [InternalChainId.OptimismTestnet, zeroAddress],
       [InternalChainId.ArbitrumTestnet, zeroAddress],
+      [InternalChainId.HermesLocalnet, zeroAddress],
+      [InternalChainId.AthenaLocalnet, zeroAddress],
     ]),
   },
   [WebbCurrencyId.ONE]: {
@@ -130,6 +132,32 @@ export const currenciesConfig: AppConfig['currencies'] = {
       [InternalChainId.PolygonTestnet, '0x50A7b748F3C50F808a289cA041E48834A41A6d95'],
       [InternalChainId.OptimismTestnet, '0xEAF873F1F6c91fEf73d4839b5fC7954554BBE518'],
       [InternalChainId.ArbitrumTestnet, '0xD6F1E78B5F1Ebf8fF5a60C9d52eabFa73E5c5220'],
+    ]),
+  },
+  [WebbCurrencyId.DEV]: {
+    name: 'Development Token',
+    symbol: 'DEV',
+    color: '',
+    id: WebbCurrencyId.DEV,
+    type: CurrencyType.ERC20,
+    role: CurrencyRole.Wrappable,
+    icon: React.createElement(EtherLogo),
+    addresses: new Map([
+      [InternalChainId.HermesLocalnet, '0x2946259E0334f33A064106302415aD3391BeD384'],
+      [InternalChainId.AthenaLocalnet, '0xF2E246BB76DF876Cef8b38ae84130F4F55De395b'],
+    ]),
+  },
+  [WebbCurrencyId.webbDEV]: {
+    name: 'Webb Development Token',
+    symbol: 'webbDEV',
+    color: '',
+    id: WebbCurrencyId.webbDEV,
+    type: CurrencyType.ERC20,
+    role: CurrencyRole.Governable,
+    icon: WebbWrappedLogo(EtherLogo()),
+    addresses: new Map([
+      [InternalChainId.HermesLocalnet, '0xD24260C102B5D128cbEFA0F655E5be3c2370677C'],
+      [InternalChainId.AthenaLocalnet, '0xD30C8839c1145609E564b986F667b273Ddcb8496'],
     ]),
   },
 };

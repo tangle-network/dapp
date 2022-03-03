@@ -7,6 +7,8 @@ export const anchorDeploymentBlock: Record<string, number> = {
   '0x12323bcabb342096669d80f968f7a31bdb29d4c4': 23781159,
   '0xc44a4ecac4f23b6f92485cb1c90dbed75a987bc8': 877902,
   '0xd8a8f9629a98eabff31cfa9493f274a4d5e768cd': 8301075,
+  '0x510c6297cc30a058f41eb4af1bfc9953ead8b577': 1,
+  '0x7758f98c1c487e5653795470eeab6c4698be541b': 1,
 };
 
 type BridgeStorage = Record<string, { lastQueriedBlock: number; leaves: string[] }>;

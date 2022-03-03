@@ -92,6 +92,7 @@ export class AnchorContract {
 
     for (let i = 0; i < leaves.length; i++) {
       tree.insert(leaves[i]);
+      console.log('createTreeWithRoot - leaf: ', leaves[i]);
       const nextRoot = tree.get_root();
       logger.log(`target root: ${targetRoot} \n this root: ${bufferToFixed(nextRoot)}`);
       if (bufferToFixed(nextRoot) === targetRoot) {
@@ -340,21 +341,20 @@ export class AnchorContract {
     let neighborRoots = [...nr];
     neighborRoots[sourceChainRootIndex] = root;
     const input: BridgeWitnessInput = {
-      chainID: BigInt(zkpInputWithoutMerkleProof.destinationChainId),
-      nullifier: deposit.nullifier,
-      refreshCommitment: bufferToFixed('0'),
-      secret: deposit.secret,
+      //public
       nullifierHash: deposit.nullifierHash,
-      diffs: [localRoot, ...neighborRoots].map((r) => {
-        return F.sub(Scalar.fromString(`${r}`), Scalar.fromString(`${root}`)).toString();
-      }),
+      refreshCommitment: bufferToFixed('0'),
+      recipient: zkpInputWithoutMerkleProof.recipient,
+      relayer: zkpInputWithoutMerkleProof.relayer,
       fee: String(zkpInputWithoutMerkleProof.fee),
+      refund: String(zkpInputWithoutMerkleProof.refund),
+      chainID: BigInt(zkpInputWithoutMerkleProof.destinationChainId),
+      roots: [localRoot, ...neighborRoots],
+      //private
+      nullifier: deposit.nullifier,
+      secret: deposit.secret,
       pathElements,
       pathIndices,
-      recipient: zkpInputWithoutMerkleProof.recipient,
-      refund: String(zkpInputWithoutMerkleProof.refund),
-      relayer: zkpInputWithoutMerkleProof.relayer,
-      roots: [localRoot, ...neighborRoots],
     };
     const edges = await this._contract.maxEdges();
     logger.trace(`Generate witness with edges ${edges}`, input);
@@ -374,21 +374,20 @@ export class AnchorContract {
     const nr = await this._contract.getLatestNeighborRoots();
     logger.trace(`Latest Neighbor Roots`, nr);
     const input: BridgeWitnessInput = {
-      chainID: BigInt(deposit.chainId!),
-      nullifier: deposit.nullifier,
-      refreshCommitment: bufferToFixed('0'),
-      secret: deposit.secret,
+      //public
       nullifierHash: deposit.nullifierHash,
-      diffs: [root, ...nr].map((r) => {
-        return F.sub(Scalar.fromString(`${r}`), Scalar.fromString(`${root}`)).toString();
-      }),
+      refreshCommitment: bufferToFixed('0'),
+      recipient: zkpInputWithoutMerkleProof.recipient,
+      relayer: zkpInputWithoutMerkleProof.relayer,
       fee: String(zkpInputWithoutMerkleProof.fee),
+      refund: String(zkpInputWithoutMerkleProof.refund),
+      chainID: BigInt(deposit.chainId!),
+      roots: [root, ...nr],
+      //private
+      nullifier: deposit.nullifier,
+      secret: deposit.secret,
       pathElements,
       pathIndices,
-      recipient: zkpInputWithoutMerkleProof.recipient,
-      refund: String(zkpInputWithoutMerkleProof.refund),
-      relayer: zkpInputWithoutMerkleProof.relayer,
-      roots: [root, ...nr],
     };
     const edges = await this._contract.maxEdges();
     logger.trace(`Generate witness with edges ${edges}`, input);

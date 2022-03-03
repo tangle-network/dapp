@@ -4,7 +4,7 @@ import {
   ChainType,
   chainTypeIdToInternalId,
   currenciesConfig,
-  typeAndIdFromChainIdType,
+  parseChainIdType,
 } from '@webb-dapp/apps/configs';
 import WithdrawingModal from '@webb-dapp/bridge/components/Withdraw/WithdrawingModal';
 import { useWithdraw } from '@webb-dapp/bridge/hooks';
@@ -82,7 +82,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
     if (!depositNote || !activeChain) {
       return false;
     }
-    const chainId = typeAndIdFromChainIdType(Number(depositNote.note.targetChainId)).chainId;
+    const chainId = parseChainIdType(Number(depositNote.note.targetChainId)).chainId;
 
     return activeChain.chainId !== chainId;
   }, [activeChain, depositNote]);
@@ -99,7 +99,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
   const switchChain = async (note: Note | null) => {
     if (!note) return;
     if (!activeApi) return;
-    const chainTypeId = typeAndIdFromChainIdType(Number(note.note.targetChainId));
+    const chainTypeId = parseChainIdType(Number(note.note.targetChainId));
     const internalChainId = chainTypeIdToInternalId(chainTypeId);
     const chain = chainsPopulated[internalChainId];
 
