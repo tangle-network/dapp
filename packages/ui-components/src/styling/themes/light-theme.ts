@@ -52,6 +52,9 @@ export const lightMainTheme: ThemeOptions = {
     },
   },
   typography: {
+    allVariants: {
+      color: lightPallet.primaryText,
+    },
     htmlFontSize: 17,
     fontSize: 12,
     fontFamily: [FontFamilies.Bitum, 'serif'].join(','),

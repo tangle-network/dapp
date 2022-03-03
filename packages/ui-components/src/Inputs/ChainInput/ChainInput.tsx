@@ -26,7 +26,7 @@ const StyledList = styled.ul`
 
     &.selected,
     :hover {
-      background: ${({ theme }: { theme: Pallet }) => (theme.type === 'dark' ? theme.layer3Background : theme.gray1)};
+      background: ${({ theme }: { theme: Pallet }) => theme.heavySelectionBackground};
     }
 
     position: relative;
@@ -34,20 +34,18 @@ const StyledList = styled.ul`
 `;
 
 const InputWrapper = styled.div<{ open: boolean }>`
-  border-radius: 25px;
-  border: 1px solid ${({ theme }: { theme: Pallet }) => theme.borderColor};
+  border-radius: 8px;
+  border: ${({ theme }: { theme: Pallet }) => theme.heavySelectionBorder};
 
   overflow: hidden;
   transition: all 0.3s ease-in-out;
-  background: ${({ theme }) => theme.layer3Background} 37%;
+  background: ${({ theme }) => theme.heavySelectionBackground};
 
   ${({ open, theme }) => {
     return open
       ? css`
-          background: ${theme.layer1Background} 9%;
-          box-shadow: 1px 1px 14px ${theme.type === 'dark' ? 'black' : 'rgba(54, 86, 233, 0.1)'};
           max-height: 350px;
-          border-radius: 25px 25px 0 0;
+          border-radius: 8px 8px 0 0;
         `
       : css``;
   }}
@@ -68,16 +66,8 @@ const PopperList = styled.div<{ open: boolean }>`
     overflow: hidden;
     border-radius: 0px 0px 25px 25px;
     border: 1px solid ${({ theme }) => (theme.type === 'dark' ? 'black' : theme.gray13)};
-    background: ${({ theme }) => theme.layer1Background};
+    background: ${({ theme }: { theme: Pallet }) => theme.componentBackground};
     overflow: hidden;
-
-    ${({ open, theme }) => {
-      return open
-        ? css`
-            box-shadow: 1px 1px 14px ${theme.type === 'dark' ? 'black' : 'rgba(54, 86, 233, 0.1)'};
-          `
-        : css``;
-    }}
 
     ${({ open }) => {
       return open
@@ -91,6 +81,11 @@ const PopperList = styled.div<{ open: boolean }>`
             max-height: 0px !important;
           `;
     }}
+
+    li {
+      padding-top: 10px;
+      background: ${({ theme }: { theme: Pallet }) => theme.heavySelectionBackground};
+    }
   }
 `;
 
@@ -221,30 +216,32 @@ const DropdownInput: React.FC<DropdownInputProps> = ({ chains, onChange, value }
                     console.log('chainTypeId: ', chainTypeId);
                     let chain = chainsPopulated[chainTypeIdToInternalId(chainTypeId)];
                     return (
-                      <li
-                        role={'button'}
-                        onClick={() => {
-                          setIsOpen(false);
-                          console.log(chainTypeId);
-                          onChange(chainTypeId);
-                        }}
-                        className={isSelected ? 'selected' : ''}
-                        key={`${chainTypeId}-chain-input`}
-                      >
-                        <Flex ai='center' row flex={1}>
-                          <ListItemAvatar>
-                            <Avatar style={{ background: 'transparent' }} children={<chain.logo />} />
-                          </ListItemAvatar>
-                          <ListItemText>
-                            <Typography variant={'h6'} component={'span'} display={'block'}>
-                              <b>{chain.name}</b>
-                            </Typography>
-                            <Typography variant={'body2'} color={'textSecondary'}>
-                              <ChainName>{chain.name}</ChainName>
-                            </Typography>
-                          </ListItemText>
-                        </Flex>
-                      </li>
+                      <div>
+                        <li
+                          role={'button'}
+                          onClick={() => {
+                            setIsOpen(false);
+                            console.log(chainTypeId);
+                            onChange(chainTypeId);
+                          }}
+                          className={isSelected ? 'selected' : ''}
+                          key={`${chainTypeId}-chain-input`}
+                        >
+                          <Flex ai='center' row flex={1}>
+                            <ListItemAvatar>
+                              <Avatar style={{ background: 'transparent' }} children={<chain.logo />} />
+                            </ListItemAvatar>
+                            <ListItemText>
+                              <Typography variant={'h6'} component={'span'} display={'block'}>
+                                <b>{chain.name}</b>
+                              </Typography>
+                              <Typography variant={'body2'} color={'textSecondary'}>
+                                <ChainName>{chain.name}</ChainName>
+                              </Typography>
+                            </ListItemText>
+                          </Flex>
+                        </li>
+                      </div>
                     );
                   })}
                 </StyledList>

@@ -53,11 +53,7 @@ export const LightTheme = createGlobalStyle`
 
 		--card-shadow: 0 0 21px rgba(23, 65, 212, 0.15);
 
-
 		--sidebar-item-height: 58px;
-
-		--platform-background: #f8f9fd;
-		--card-background: var(--platform-background);
 
 		--information-background: #edf3ff;
 		--information-title-color: #0155ff;

@@ -12,7 +12,6 @@ import { Slider } from './Slider';
 import { SocialPlatform } from './SocialPlatform';
 import { SidebarConfig } from './types';
 
-const SidebarMobileNav = styled.nav``;
 interface SidebarProps {
   collapse: boolean;
   isMobile: boolean;
@@ -26,7 +25,7 @@ const SidebarRoot = styled.div<{ collapse: boolean; isMobile: boolean }>`
   flex-direction: column;
   height: 100vh;
   width: ${({ isMobile }): string => (isMobile ? '100vw' : '200px')};
-  box-shadow: 0 20px 20px 0 rgba(12, 28, 90, 0.09);
+  border-right: 1px solid rgba(0, 0, 0, 0.12);
   transition: width 500ms ease;
   background: ${({ theme }) => theme.menuBackground};
   z-index: 300;

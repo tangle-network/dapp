@@ -3,18 +3,22 @@ import { basePallet } from './base-pallet';
 export const darkPallet = {
   ...basePallet,
   type: 'dark',
-  primaryText: '#d3cef6',
+  primaryText: '#FFFFFF',
   secondaryText: '#a3a0b7',
-  borderColor: 'rgb(34,38,43)',
+  borderColor: 'rgba(255, 255, 255, 0.22)',
   borderColor2: 'rgba(56, 60, 64, 1)',
 
   tabHeader: '#22262B',
 
   background: 'radial-gradient(102.76% 90.28% at 47.6% 114.36%, #010240 0%, #000000 100%)',
-  componentBackground: `#242324`,
-  cardBackground: '#151A1E',
+  cardBackground: '#181818',
   menuBackground: '#000',
-  layer1Background: 'rgba(21, 26, 30, 1)',
+  componentBackground: `#242324`,
+
+  lightSelectionBackground: '#131313',
+  heavySelectionBackground: 'rgba(255, 255, 255, 0.07)',
+  heavySelectionBorder: '1px solid rgba(255, 255, 255, 0.19)',
+  layer1Background: '#181818',
   layer2Background: 'rgba(34, 38, 43, 1)',
   layer3Background: 'rgba(56, 60, 64, 1)',
 };

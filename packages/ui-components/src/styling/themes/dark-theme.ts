@@ -53,6 +53,9 @@ export const darkMainTheme: ThemeOptions = {
     type: 'dark',
   },
   typography: {
+    allVariants: {
+      color: darkPallet.primaryText,
+    },
     htmlFontSize: 17,
     fontSize: 12,
     fontFamily: [FontFamilies.Bitum, 'serif'].join(','),

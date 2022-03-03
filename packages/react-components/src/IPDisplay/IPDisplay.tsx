@@ -16,7 +16,7 @@ const IPDisplayWrapper = styled.div`
   ${({ theme }: { theme: Pallet }) => css`
     background: ${theme.layer2Background};
     border: 1px solid ${theme.borderColor};
-    ${theme.type === 'light' ? `box-shadow: 0px 0px 14px rgba(51, 81, 242, 0.11);` : ''}
+
     .label-icon {
       font-size: 40px;
       color: ${theme.primary};

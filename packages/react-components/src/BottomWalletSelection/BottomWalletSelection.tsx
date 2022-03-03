@@ -17,6 +17,7 @@ const BottomSelectionWrapper = styled.div`
   width: 100%;
   flex-direction: row;
   cursor: pointer;
+  background: ${({ theme }) => theme.lightSelectionBackground}
 `;
 
 const AccountName = styled.p`
@@ -24,6 +25,7 @@ const AccountName = styled.p`
   text-overflow: ellipsis;
   max-width: 220px;
   overflow: hidden;
+  color: ${({ theme }) => theme.primaryText}
 `;
 
 const WalletSelectWrapper = styled.div`
@@ -33,7 +35,7 @@ const WalletSelectWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: ${({ theme }) => theme.layer1Background}
+  background: ${({ theme }) => theme.lightSelectionBackground}
   cursor: pointer;
   padding: 0px 20px 0px 20px;
 
@@ -48,6 +50,7 @@ const WalletSelectWrapper = styled.div`
     width: 100%;
     flex: 1;
     justify-content: end;
+    color: ${({ theme }) => theme.accentColor}
   }
 `;
 type WalletSelectProps = {};
