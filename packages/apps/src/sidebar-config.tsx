@@ -1,5 +1,6 @@
 import { ReactComponent as EmailIcon } from '@webb-dapp/apps/assets/email.svg';
 import { ReactComponent as TwitterIcon } from '@webb-dapp/apps/assets/twitter.svg';
+import { ReactComponent as DiscordIcon } from '@webb-dapp/apps/assets/discord.svg';
 import { SidebarConfig } from '@webb-dapp/react-components/Sidebar/types';
 import React from 'react';
 
@@ -41,5 +42,11 @@ export const sideBarConfig: SidebarConfig = {
       name: 'Twitter',
       rel: 'twitter',
     },
+    {
+      href: 'https://discord.gg/cBQHf6B7',
+      icon: <DiscordIcon />,
+      name: 'Discord',
+      rel: 'discord',
+    }
   ],
 };
