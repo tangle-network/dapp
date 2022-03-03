@@ -1,6 +1,7 @@
 import { ReactComponent as EmailIcon } from '@webb-dapp/apps/assets/email.svg';
 import { SidebarConfig } from '@webb-dapp/react-components/Sidebar/types';
 import React from 'react';
+
 import { CommonWealthLogo } from './configs/logos/CommonWealthLogo';
 import { DiscordLogo } from './configs/logos/DiscordLogo';
 import { GithubLogo } from './configs/logos/GithubLogo';
@@ -62,6 +63,6 @@ export const sideBarConfig: SidebarConfig = {
       icon: <CommonWealthLogo />,
       name: 'Commonwealth',
       rel: 'commonwealth',
-    }
+    },
   ],
 };

@@ -13,26 +13,26 @@ const SocialPlatformRoot = styled.div<{ collapse: boolean }>`
 `;
 
 export const IconLink = styled.a`
-color: #fff;
-font-size: 16px;
-line-height: 26px;
-letter-spacing: -0.06em;
-white-space: nowrap;
-
-path {
-  fill: ${({ theme }) => theme.primary};
-}
-
-transition: all 0.3s ease-in-out;
-
-&:hover {
-  text-decoration: none;
-  fill: #3e5bf8;
+  color: #fff;
+  font-size: 16px;
+  line-height: 26px;
+  letter-spacing: -0.06em;
+  white-space: nowrap;
 
   path {
-    fill: #3e5bf8;
+    fill: ${({ theme }) => theme.primary};
   }
-}
+
+  transition: all 0.3s ease-in-out;
+
+  &:hover {
+    text-decoration: none;
+    fill: #3e5bf8;
+
+    path {
+      fill: #3e5bf8;
+    }
+  }
 `;
 
 const SocialIcon = styled.div`
@@ -47,15 +47,13 @@ export const SocialLink: React.FC<{
   to: string;
   title: string;
   Icon: React.ReactNode;
-}> = ({ to, title, Icon }) => {
+}> = ({ Icon, title, to }) => {
   return (
-    <IconLink target="_blank" href={to} title={title}>
-      <SocialIcon>
-        {Icon}
-      </SocialIcon>
+    <IconLink target='_blank' href={to} title={title}>
+      <SocialIcon>{Icon}</SocialIcon>
     </IconLink>
   );
-}
+};
 
 interface SocialPlatformProps {
   collapse: boolean;
@@ -66,7 +64,12 @@ export const SocialPlatform: FC<SocialPlatformProps> = ({ collapse, data }) => {
   return (
     <SocialPlatformRoot collapse={collapse}>
       {data.map((item) => (
-        <SocialLink to={item.href} title={item.name || `social-unknown`} Icon={item.icon} key={`social-platform-${item.href}`} />
+        <SocialLink
+          to={item.href}
+          title={item.name || `social-unknown`}
+          Icon={item.icon}
+          key={`social-platform-${item.href}`}
+        />
       ))}
     </SocialPlatformRoot>
   );
