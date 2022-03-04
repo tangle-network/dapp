@@ -45,11 +45,12 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
         const depositNote = await Note.deserialize(note);
         const evmNote = depositNote.note;
         const contractAddress = await this.inner.getTornadoContractAddressByNote(depositNote);
+        const targetChainIdType = parseChainIdType(Number(evmNote.targetChainId));
 
         // Given the note, iterate over the relayer's supported contracts and find the corresponding configuration
         // for the contract.
         const supportedContract = relayer.capabilities.supportedChains['evm']
-          .get(Number(evmNote.targetChainId))
+          .get(chainTypeIdToInternalId(targetChainIdType))
           ?.contracts.find(({ address, size }) => {
             // Match on the relayer configuration as well as note
             return address.toLowerCase() === contractAddress.toLowerCase() && size == Number(evmNote.amount);
