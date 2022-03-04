@@ -12,6 +12,7 @@ import {
   ApiInitHandler,
   AppConfig,
   ProvideCapabilities,
+  ProviderNotification,
   WebbApiProvider,
   WebbMethods,
   WebbProviderEvents,
@@ -36,7 +37,8 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
     apiPromise: ApiPromise,
     injectedExtension: InjectedExtension,
     readonly relayingManager: WebbRelayerBuilder,
-    readonly config: AppConfig
+    readonly config: AppConfig,
+    readonly notification: ProviderNotification
   ) {
     super();
     this.provider = new PolkadotProvider(apiPromise, injectedExtension);
@@ -122,10 +124,11 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
     endpoints: string[],
     errorHandler: ApiInitHandler,
     relayerBuilder: WebbRelayerBuilder,
-    appConfig: AppConfig
+    appConfig: AppConfig,
+    notification: ProviderNotification
   ): Promise<WebbPolkadot> {
     const [apiPromise, injectedExtension] = await PolkadotProvider.getParams(appName, endpoints, errorHandler.onError);
-    const instance = new WebbPolkadot(apiPromise, injectedExtension, relayerBuilder, appConfig);
+    const instance = new WebbPolkadot(apiPromise, injectedExtension, relayerBuilder, appConfig, notification);
     await instance.insureApiInterface();
     /// check metadata update
     await instance.awaitMetaDataCheck();

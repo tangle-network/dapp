@@ -6,7 +6,7 @@ import React from 'react';
 
 export const transactionNotificationConfig: NotificationConfig = {
   failed(data) {
-    notificationApi({
+    return notificationApi({
       extras: {
         persist: false,
       },
@@ -16,7 +16,7 @@ export const transactionNotificationConfig: NotificationConfig = {
     });
   },
   loading(data) {
-    notificationApi({
+    return notificationApi({
       extras: {
         persist: true,
       },
@@ -30,7 +30,7 @@ export const transactionNotificationConfig: NotificationConfig = {
     });
   },
   finalize(data) {
-    notificationApi({
+    return notificationApi({
       extras: {
         persist: false,
       },

@@ -25,6 +25,7 @@ import { AccountSwitchNotification } from '@webb-dapp/ui-components/notification
 import { BareProps } from '@webb-dapp/ui-components/types';
 import { InteractiveFeedback, WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import { Account } from '@webb-dapp/wallet/account/Accounts.adapter';
+import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polkadot/transaction-notification-config';
 import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
 import { LoggerService } from '@webb-tools/app-util';
 import { logger } from 'ethers';
@@ -37,6 +38,10 @@ import {
   Chain,
   netStorageFactory,
   NetworkStorage,
+  NotificationData,
+  NotificationKey,
+  ProviderNotification,
+  TXNotificationPayload,
   Wallet,
   WebbApiProvider,
   WebbContext,
@@ -68,7 +73,45 @@ const appConfig: AppConfig = {
   mixers: mixersConfig,
   wallet: walletsConfig,
 };
-
+const notification: ProviderNotification = {
+  addToQueue(data: NotificationData): NotificationKey {
+    return notificationApi.addToQueue({
+      extras: {
+        persist: data.persist,
+      },
+      variant: data.variant,
+      secondaryMessage: data.description,
+      message: data.message,
+    });
+  },
+  remove(key: NotificationKey) {
+    notificationApi.remove(key);
+  },
+  failed(payload: TXNotificationPayload<any>): NotificationKey {
+    return transactionNotificationConfig.failed({
+      data: payload.data,
+      key: String(payload.key),
+      address: payload.address,
+      path: payload.path,
+    });
+  },
+  loading(payload: TXNotificationPayload<any>): NotificationKey {
+    return transactionNotificationConfig.failed({
+      data: payload.data,
+      key: String(payload.key),
+      address: payload.address,
+      path: payload.path,
+    });
+  },
+  finalize(payload: TXNotificationPayload<any>): NotificationKey {
+    return transactionNotificationConfig.failed({
+      data: payload.data,
+      key: String(payload.key),
+      address: payload.address,
+      path: payload.path,
+    });
+  },
+};
 export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Dapp', children }) => {
   const [activeWallet, setActiveWallet] = useState<Wallet | undefined>(undefined);
   const [activeChain, setActiveChain] = useState<Chain | undefined>(undefined);
@@ -253,7 +296,8 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
                 },
               },
               relayer,
-              appConfig
+              appConfig,
+              notification
             );
             await setActiveApiWithAccounts(webbPolkadot, chain.id);
             localActiveApi = webbPolkadot;
@@ -315,7 +359,13 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
             /// get the current active chain from metamask
             const chainId = await web3Provider.network; // storage based on network id
 
-            const webbWeb3Provider = await WebbWeb3Provider.init(web3Provider, chainId, relayer, appConfig);
+            const webbWeb3Provider = await WebbWeb3Provider.init(
+              web3Provider,
+              chainId,
+              relayer,
+              appConfig,
+              notification
+            );
 
             const providerUpdateHandler = async ([chainId]: number[]) => {
               const nextChain = Object.values(chains).find((chain) => chain.chainId === chainId);

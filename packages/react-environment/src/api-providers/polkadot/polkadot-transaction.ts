@@ -50,9 +50,9 @@ type PolkadotTXEvents = {
 };
 
 export type NotificationConfig = {
-  loading?: (data: PolkadotTXEventsPayload<JSX.Element>) => void;
-  finalize?: (data: PolkadotTXEventsPayload<string | void | undefined>) => void;
-  failed?: (data: PolkadotTXEventsPayload<string>) => void;
+  loading: (data: PolkadotTXEventsPayload<JSX.Element>) => string | number;
+  finalize: (data: PolkadotTXEventsPayload<string | void | undefined>) => string | number;
+  failed: (data: PolkadotTXEventsPayload<string>) => string | number;
 };
 const txLogger = LoggerService.get('PolkadotTx');
 

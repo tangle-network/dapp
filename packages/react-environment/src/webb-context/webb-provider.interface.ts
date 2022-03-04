@@ -75,8 +75,16 @@ export type ProvideCapabilities = {
 type WebApiCalls = {
   addToken(input: any): Promise<void>;
 };
-type NotificationKey = string | number;
-type NotificationData = {};
+export type NotificationKey = string | number;
+export type VariantType = 'default' | 'error' | 'success' | 'warning' | 'info';
+
+export type NotificationData = {
+  persist: boolean;
+  message: string;
+  description: string;
+  variant: VariantType;
+  action: string;
+};
 
 export type NotificationApi = {
   addToQueue(data: NotificationData): NotificationKey;
@@ -87,7 +95,7 @@ type MethodPath = {
   method: string;
 };
 
-type TXNotificationPayload<T = undefined> = {
+export type TXNotificationPayload<T = undefined> = {
   // Generic data for the transaction payload
   data: T;
   // notification key
@@ -96,7 +104,7 @@ type TXNotificationPayload<T = undefined> = {
   // More metadata for the transaction path (EX Anchor::Deposit ,VAnchor::Withdraw)
   path: MethodPath;
 };
-
+// Transaction notification
 export type TXNotification = {
   // Transaction status is in progress
   loading(payload: TXNotificationPayload<any>): NotificationKey;
@@ -105,7 +113,7 @@ export type TXNotification = {
   // Transaction Done with success
   finalize(payload: TXNotificationPayload<any>): NotificationKey;
 };
-
+export type ProviderNotification = NotificationApi & TXNotification;
 export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
   /// Accounts Adapter will have all methods related to the provider accounts
   accounts: AccountsAdapter<any>;
@@ -126,5 +134,5 @@ export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
   // Configs
   config: AppConfig;
   // Notification
-  notification: NotificationApi & TXNotification;
+  notification: ProviderNotification;
 }
