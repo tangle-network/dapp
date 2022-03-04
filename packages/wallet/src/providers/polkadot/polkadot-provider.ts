@@ -2,7 +2,6 @@ import { ApiInitHandler } from '@webb-dapp/react-environment';
 import { PolkaTXBuilder } from '@webb-dapp/react-environment/api-providers/polkadot';
 import { InteractiveFeedback, WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import { PolkadotAccount, PolkadotAccounts } from '@webb-dapp/wallet/providers/polkadot/polkadot-accounts';
-import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polkadot/transaction-notification-config';
 import { optionsWithEdgeware as options } from '@webb-tools/api';
 import { EventBus, LoggerService } from '@webb-tools/app-util';
 import { isNumber } from 'lodash';
@@ -25,11 +24,13 @@ const logger = LoggerService.get('Polkadot-Provider');
 
 export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
   private _accounts: PolkadotAccounts;
-  public txBuilder: PolkaTXBuilder;
 
-  constructor(protected apiPromise: ApiPromise, protected injectedExtension: InjectedExtension) {
+  constructor(
+    protected apiPromise: ApiPromise,
+    protected injectedExtension: InjectedExtension,
+    readonly txBuilder: PolkaTXBuilder
+  ) {
     super();
-    this.txBuilder = new PolkaTXBuilder(this.apiPromise, transactionNotificationConfig);
     this.hookListeners();
     this._accounts = new PolkadotAccounts(this.injectedExtension);
   }
@@ -37,14 +38,15 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
   static async fromExtension(
     appName: string,
     [endPoint, ...allEndPoints]: string[],
-    apiInitHandler: ApiInitHandler
+    apiInitHandler: ApiInitHandler,
+    txBuilder: PolkaTXBuilder
   ): Promise<PolkadotProvider> {
     const [apiPromise, currentExtensions] = await PolkadotProvider.getParams(
       appName,
       [endPoint, ...allEndPoints],
       apiInitHandler.onError
     );
-    return new PolkadotProvider(apiPromise, currentExtensions);
+    return new PolkadotProvider(apiPromise, currentExtensions, txBuilder);
   }
 
   static async getParams(

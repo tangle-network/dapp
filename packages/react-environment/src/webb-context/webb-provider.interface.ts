@@ -129,7 +129,7 @@ export type NotificationPayload = {
   // if true the notification will be dismissed by the user or with another action
   persist: boolean;
 };
-export type ProviderNotification = (notification: NotificationPayload) => void;
+export type NotificationHandler = (notification: NotificationPayload) => void;
 export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
   /// Accounts Adapter will have all methods related to the provider accounts
   accounts: AccountsAdapter<any>;
@@ -150,5 +150,5 @@ export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
   // Configs
   config: AppConfig;
   // Notification handler
-  notificationHandler: ProviderNotification;
+  notificationHandler: NotificationHandler;
 }

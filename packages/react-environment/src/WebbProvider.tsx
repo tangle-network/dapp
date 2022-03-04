@@ -83,6 +83,7 @@ function notificationHandler(notification: NotificationPayload) {
               persist: false,
             },
             message: notification.message ?? 'Submit Transaction Success',
+            secondaryMessage: notification.description,
             key: notification.key,
             variant: 'success',
           });
@@ -94,6 +95,7 @@ function notificationHandler(notification: NotificationPayload) {
             },
             key: notification.key,
             message: notification.message,
+            secondaryMessage: notification.description,
             variant: 'error',
           });
         } else {

@@ -3,7 +3,7 @@ import { TornadoContract } from '@webb-dapp/contracts/contracts/tornado-anchor';
 import { AnchorContract } from '@webb-dapp/contracts/contracts/webb-anchor';
 import {
   AppConfig,
-  ProviderNotification,
+  NotificationHandler,
   WebbApiProvider,
   WebbMethods,
   WebbProviderEvents,
@@ -39,7 +39,7 @@ export class WebbWeb3Provider
     private chainId: number,
     readonly relayingManager: WebbRelayerBuilder,
     readonly config: AppConfig,
-    readonly notificationHandler: ProviderNotification
+    readonly notificationHandler: NotificationHandler
   ) {
     super();
     this.accounts = new Web3Accounts(web3Provider.eth);
@@ -177,7 +177,7 @@ export class WebbWeb3Provider
     chainId: number,
     relayerBuilder: WebbRelayerBuilder,
     appConfig: AppConfig,
-    notification: ProviderNotification
+    notification: NotificationHandler
   ) {
     return new WebbWeb3Provider(web3Provider, chainId, relayerBuilder, appConfig, notification);
   }
