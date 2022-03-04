@@ -121,6 +121,7 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({ mixerId, onClose, o
   }, []);
   useEffect(() => {
     let desiredMixer: string | number = '';
+    console.log('mixerId in depositConfirm: ', mixerId);
     // If the mixerId is of string type, it could either be an address or a mixerId intended for use in substrate
     if (typeof mixerId === 'string')
       ethers.utils.isAddress(mixerId) ? (desiredMixer = mixerId) : (desiredMixer = Number(mixerId));

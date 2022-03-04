@@ -1,36 +1,8 @@
-import { ChainId, chainsConfig, currenciesConfig } from '@webb-dapp/apps/configs';
+import { InternalChainId } from '@webb-dapp/apps/configs';
 import { AppConfig } from '@webb-dapp/react-environment/webb-context';
-import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
-
-export const getNativeCurrencySymbol = (evmId: number): string => {
-  const chain = Object.values(chainsConfig).find((chainsConfig) => chainsConfig.evmId === evmId);
-  if (chain) {
-    const nativeCurrency = chain.nativeCurrencyId;
-    return currenciesConfig[nativeCurrency].symbol;
-  }
-  return 'Unknown';
-};
-
-export const getEVMChainName = (evmId: number): string => {
-  const chain = Object.values(chainsConfig).find((chainsConfig) => chainsConfig.evmId === evmId);
-  if (chain) {
-    return chain.name;
-  } else {
-    throw WebbError.from(WebbErrorCodes.UnsupportedChain);
-  }
-};
-
-export const getEVMChainNameFromInternal = (chainID: number): string => {
-  const chain = Object.values(chainsConfig).find((chainsConfig) => chainsConfig.id === chainID);
-  if (chain) {
-    return chain.name;
-  } else {
-    throw WebbError.from(WebbErrorCodes.UnsupportedChain);
-  }
-};
 
 export const mixersConfig: AppConfig['mixers'] = {
-  [ChainId.Edgeware]: {
+  [InternalChainId.Edgeware]: {
     tornMixers: [
       {
         size: 10000,
@@ -40,7 +12,7 @@ export const mixersConfig: AppConfig['mixers'] = {
       },
     ],
   },
-  [ChainId.EdgewareTestNet]: {
+  [InternalChainId.EdgewareTestNet]: {
     tornMixers: [
       {
         size: 10,
@@ -68,7 +40,7 @@ export const mixersConfig: AppConfig['mixers'] = {
       },
     ],
   },
-  [ChainId.Rinkeby]: {
+  [InternalChainId.Rinkeby]: {
     tornMixers: [
       {
         size: 0.1,
@@ -84,7 +56,7 @@ export const mixersConfig: AppConfig['mixers'] = {
       },
     ],
   },
-  [ChainId.HarmonyTestnet1]: {
+  [InternalChainId.HarmonyTestnet1]: {
     tornMixers: [
       {
         size: 100,
@@ -112,7 +84,7 @@ export const mixersConfig: AppConfig['mixers'] = {
       },
     ],
   },
-  [ChainId.HarmonyMainnet0]: {
+  [InternalChainId.HarmonyMainnet0]: {
     tornMixers: [
       {
         size: 100,
@@ -128,7 +100,7 @@ export const mixersConfig: AppConfig['mixers'] = {
       },
     ],
   },
-  [ChainId.Shiden]: {
+  [InternalChainId.Shiden]: {
     tornMixers: [
       {
         size: 10,

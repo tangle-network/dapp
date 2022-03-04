@@ -1,4 +1,9 @@
-import { ChainId, chainsConfig, getAnchorAddressForBridge, webbCurrencyIdFromString } from '@webb-dapp/apps/configs';
+import {
+  chainsConfig,
+  getAnchorAddressForBridge,
+  InternalChainId,
+  webbCurrencyIdFromString,
+} from '@webb-dapp/apps/configs';
 import { EvmChainMixersInfo } from '@webb-dapp/react-environment/api-providers/web3/EvmChainMixersInfo';
 import {
   Capabilities,
@@ -40,7 +45,7 @@ type MixerQuery = {
 type RelayerQuery = {
   baseOn?: 'evm' | 'substrate';
   ipService?: true;
-  chainId?: ChainId;
+  chainId?: InternalChainId;
   contractAddress?: string;
   tornadoSupport?: MixerQuery;
   bridgeSupport?: MixerQuery;
@@ -90,7 +95,7 @@ export interface RelayerInfo {
   evm: Record<string, RelayedChainConfig | null>;
 }
 
-export type ChainNameIntoChainId = (name: string, basedOn: 'evm' | 'substrate') => ChainId | null;
+export type ChainNameIntoChainId = (name: string, basedOn: 'evm' | 'substrate') => InternalChainId | null;
 
 /**
  *  Webb relayers manager
@@ -221,7 +226,7 @@ export class WebbRelayerBuilder {
         }
         if (tornadoSupport && baseOn && chainId) {
           if (baseOn == 'evm') {
-            const evmId = chainsConfig[chainId].evmId!;
+            const evmId = chainsConfig[chainId].chainId!;
             const mixersInfoForChain = new EvmChainMixersInfo(evmId);
             const mixerInfo = mixersInfoForChain.getTornMixerInfoBySize(
               tornadoSupport.amount,
@@ -425,7 +430,7 @@ export class WebbRelayer {
 
   static intoActiveWebRelayer(
     instance: WebbRelayer,
-    query: { chain: ChainId; basedOn: 'evm' | 'substrate' },
+    query: { chain: InternalChainId; basedOn: 'evm' | 'substrate' },
     getFees: (note: string) => Promise<{ totalFees: string; withdrawFeePercentage: number } | undefined>
   ): ActiveWebbRelayer {
     return new ActiveWebbRelayer(instance.endpoint, instance.capabilities, query, getFees);
@@ -436,7 +441,7 @@ export class ActiveWebbRelayer extends WebbRelayer {
   constructor(
     endpoint: string,
     capabilities: Capabilities,
-    private query: { chain: ChainId; basedOn: 'evm' | 'substrate' },
+    private query: { chain: InternalChainId; basedOn: 'evm' | 'substrate' },
     private getFees: (note: string) => Promise<{ totalFees: string; withdrawFeePercentage: number } | undefined>
   ) {
     super(endpoint, capabilities);

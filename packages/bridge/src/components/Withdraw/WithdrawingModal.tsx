@@ -1,5 +1,5 @@
 import { Button, Divider, Icon, LinearProgress, Tooltip, Typography } from '@material-ui/core';
-import { getEVMChainNameFromInternal } from '@webb-dapp/apps/configs';
+import { getEVMChainName, getEVMChainNameFromInternal, parseChainIdType } from '@webb-dapp/apps/configs';
 import { WithdrawState } from '@webb-dapp/react-environment';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 import { JsNote as DepositNote } from '@webb-tools/wasm-utils';
@@ -175,7 +175,7 @@ const WithdrawingModal: React.FC<WithdrawingModalProps> = ({ canCancel, cancel, 
                 <Typography variant={'caption'}>
                   <b>
                     Receiving {note.amount + ' ' + note.tokenSymbol} on{' '}
-                    {getEVMChainNameFromInternal(Number(note.targetChainId))}
+                    {getEVMChainName(parseChainIdType(Number(note.targetChainId)).chainId)}
                   </b>
                 </Typography>
               </InfoItem>

@@ -191,7 +191,7 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
   }
 
   hookListeners() {
-    this.apiPromise.on('error', (e) => {
+    this.apiPromise.on('error', () => {
       this.emit('error', undefined);
     });
 
@@ -240,6 +240,7 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
       tokenSymbol: this.apiPromise.registry.chainTokens[0] || 'Unit',
       types: options({}).types as any,
     };
+    logger.trace('Polkadot api metadata', metadataDef);
     return metadataDef;
   }
 

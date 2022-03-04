@@ -2,7 +2,6 @@ import { Button, Checkbox, FormControlLabel, IconButton, InputBase, Tooltip } fr
 import Icon from '@material-ui/core/Icon';
 import Typography from '@material-ui/core/Typography';
 import { useWrapUnwrap } from '@webb-dapp/page-wrap-unwrap/hooks/useWrapUnwrap';
-import IPDisplay from '@webb-dapp/react-components/IPDisplay/IPDisplay';
 import { MixerSize, useWebContext } from '@webb-dapp/react-environment';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
@@ -250,7 +249,7 @@ const PageWrapUnwrap: FC = () => {
             }}
           >
             <Flex flex={2}>
-              <TokenInput wrapperStyles={{ top: -25 }} {...leftInputProps} />
+              <TokenInput {...leftInputProps} />
             </Flex>
             <Flex flex={1} row ai={'center'} jc={'center'}>
               <span>
@@ -335,10 +334,6 @@ const PageWrapUnwrap: FC = () => {
           }}
         />
       </TransferWrapper>
-
-      <SpaceBox height={8} />
-
-      <IPDisplay />
     </div>
   );
 };

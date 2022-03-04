@@ -1,7 +1,12 @@
 import { Button, InputBase } from '@material-ui/core';
-import { ChainId, currenciesConfig, WebbCurrencyId } from '@webb-dapp/apps/configs';
+import {
+  ChainTypeId,
+  chainTypeIdToInternalId,
+  currenciesConfig,
+  InternalChainId,
+  WebbCurrencyId,
+} from '@webb-dapp/apps/configs';
 import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
-import IPDisplay from '@webb-dapp/react-components/IPDisplay/IPDisplay';
 import { useWebContext } from '@webb-dapp/react-environment';
 import { Currency, CurrencyContent } from '@webb-dapp/react-environment/webb-context/currency/currency';
 import { SpaceBox } from '@webb-dapp/ui-components';
@@ -36,20 +41,26 @@ const PageTransfers: FC = () => {
   const [isSwap, setIsSwap] = useState(false);
   const { activeApi, activeChain, activeWallet, chains: chainsStore, switchChain } = useWebContext();
 
-  const chains: ChainId[] = useMemo(() => {
-    return Object.keys(chainsStore).map((i) => Number(i));
+  const chains: ChainTypeId[] = useMemo(() => {
+    const arr: ChainTypeId[] = [];
+    Object.values(chainsStore).forEach((el) => {
+      arr.push({ chainType: el.chainType, chainId: Number(el.chainId) });
+    });
+    return arr;
   }, [chainsStore]);
 
-  const srcChain = useMemo(() => {
+  const srcChain: ChainTypeId | undefined = useMemo(() => {
     if (!activeChain) {
       return undefined;
     }
 
-    return activeChain.id;
+    return { chainType: activeChain.chainType, chainId: activeChain.chainId };
   }, [activeChain]);
-  const [destChain, setDestChain] = useState<ChainId | undefined>(undefined);
+  const [destChain, setDestChain] = useState<ChainTypeId | undefined>(undefined);
   const [recipient, setRecipient] = useState('');
   const bridge = useBridge();
+
+  console.log(destChain);
 
   const tokens = useMemo(() => {
     const tokens: CurrencyContent[] = [];
@@ -65,9 +76,9 @@ const PageTransfers: FC = () => {
           label={'Select Source Chain'}
           selectedChain={srcChain}
           // TODO: Hook this up to network switcher
-          setSelectedChain={async (chainId) => {
-            if (typeof chainId !== 'undefined' && activeWallet) {
-              const nextChain = chainsStore[chainId];
+          setSelectedChain={async (chainTypeId) => {
+            if (typeof chainTypeId !== 'undefined' && activeWallet) {
+              const nextChain = chainsStore[chainTypeIdToInternalId(chainTypeId)];
               await switchChain(nextChain, activeWallet);
             }
           }}
@@ -129,10 +140,6 @@ const PageTransfers: FC = () => {
 
         <MixerButton label={'Transfer'} onClick={() => {}} />
       </ContentWrapper>
-
-      <SpaceBox height={8} />
-
-      <IPDisplay />
     </div>
   );
 };
