@@ -12,7 +12,6 @@ import { Slider } from './Slider';
 import { SocialPlatform } from './SocialPlatform';
 import { SidebarConfig } from './types';
 
-const SidebarMobileNav = styled.nav``;
 interface SidebarProps {
   collapse: boolean;
   isMobile: boolean;
@@ -66,6 +65,7 @@ export const Sidebar: FC<SidebarProps> = ({ collapse, config, isMobile, setSideb
               setTheme(next === 'light' ? 'default' : 'dark');
             }}
           />
+          <div style={{ height: '10px' }}></div>
           {config.socialPlatforms ? <SocialPlatform collapse={collapse} data={config.socialPlatforms} /> : null}
           <Slider target={active} />
         </SidebarRoot>
