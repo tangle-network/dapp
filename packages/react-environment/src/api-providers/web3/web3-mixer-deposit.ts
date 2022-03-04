@@ -23,54 +23,45 @@ export class Web3MixerDeposit extends MixerDeposit<WebbWeb3Provider, DepositPayl
   async deposit({ note: depositPayload, params }: DepositPayload): Promise<void> {
     const chainId = Number(depositPayload.note.targetChainId);
     const evmChainId = parseChainIdType(chainId).chainId;
-    transactionNotificationConfig.loading?.({
-      address: '',
-      data: React.createElement(DepositNotification, {
+    this.inner.notificationHandler({
+      name: 'Transaction',
+      key: 'web3-mixer-deposit',
+      level: 'loading',
+      description: 'Depositing',
+      data: {
         chain: getEVMChainName(evmChainId),
-        amount: Number(depositPayload.note.amount),
+        amount: String(Number(depositPayload.note.amount)),
         currency: depositPayload.note.tokenSymbol,
-      }),
-      key: 'mixer-deposit-evm',
-      path: {
-        method: 'deposit',
-        section: 'evm-mixer',
       },
+      message: 'mixer:deposit',
     });
     const [deposit, amount] = params;
     const contract = await this.inner.getContractBySize(amount, getNativeCurrencySymbol(await this.inner.getChainId()));
     try {
       await contract.deposit(deposit.commitment);
-
-      transactionNotificationConfig.finalize?.({
-        address: '',
-        data: undefined,
-        key: `mixer-deposit-evm`,
-        path: {
-          method: 'deposit',
-          section: 'evm-mixer',
-        },
+      this.inner.notificationHandler({
+        name: 'Transaction',
+        key: 'web3-mixer-deposit',
+        level: 'success',
+        description: 'Deposit succeed',
+        message: 'mixer:deposit',
       });
     } catch (e) {
-      console.log(e);
       if ((e as any)?.code == 4001) {
-        transactionNotificationConfig.failed?.({
-          address: '',
-          data: 'User Rejected Deposit',
-          key: `mixer-deposit-evm`,
-          path: {
-            method: 'deposit',
-            section: 'evm-mixer',
-          },
+        this.inner.notificationHandler({
+          name: 'Transaction',
+          key: 'web3-mixer-deposit',
+          level: 'error',
+          description: 'User Rejected Deposit',
+          message: 'mixer:deposit',
         });
       } else {
-        transactionNotificationConfig.failed?.({
-          address: '',
-          data: 'Deposit Transaction Failed',
-          key: `mixer-deposit-evm`,
-          path: {
-            method: 'deposit',
-            section: 'evm-mixer',
-          },
+        this.inner.notificationHandler({
+          name: 'Transaction',
+          key: 'web3-mixer-deposit',
+          level: 'error',
+          description: 'Deposit Failed',
+          message: 'mixer:deposit',
         });
       }
     }

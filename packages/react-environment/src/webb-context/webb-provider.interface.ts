@@ -126,8 +126,10 @@ export type NotificationPayload = {
   key: string;
   //level
   level: NotificationLevel;
+  // Record for more metadata
+  data?: Record<string, string>;
   // if true the notification will be dismissed by the user or with another action
-  persist: boolean;
+  persist?: boolean;
 };
 export type NotificationHandler = (notification: NotificationPayload) => void;
 export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {

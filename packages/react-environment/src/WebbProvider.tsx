@@ -1,3 +1,4 @@
+import { Typography } from '@material-ui/core';
 import Icon from '@material-ui/core/Icon';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import {
@@ -77,13 +78,22 @@ function notificationHandler(notification: NotificationPayload) {
       {
         const isFailed = notification.level === 'error';
         const isFinalized = notification.level === 'success';
+        const description = notification.data ? (
+          <div>
+            {Object.keys(notification.data).map((i) => (
+              <Typography variant={'h6'}>{notification.data?.[i]}</Typography>
+            ))}
+          </div>
+        ) : (
+          notification.description
+        );
         if (isFinalized) {
           notificationApi({
             extras: {
               persist: false,
             },
             message: notification.message ?? 'Submit Transaction Success',
-            secondaryMessage: notification.description,
+            secondaryMessage: description,
             key: notification.key,
             variant: 'success',
           });
@@ -95,7 +105,7 @@ function notificationHandler(notification: NotificationPayload) {
             },
             key: notification.key,
             message: notification.message,
-            secondaryMessage: notification.description,
+            secondaryMessage: description,
             variant: 'error',
           });
         } else {
@@ -105,7 +115,7 @@ function notificationHandler(notification: NotificationPayload) {
             },
             key: notification.key,
             message: notification.message,
-            secondaryMessage: notification.description,
+            secondaryMessage: description,
             variant: 'info',
             // eslint-disable-next-line sort-keys
             Icon: <Spinner />,
