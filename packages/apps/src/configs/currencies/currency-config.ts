@@ -1,10 +1,10 @@
 import { ChainType, InternalChainId } from '@webb-dapp/apps/configs/chains';
-import EdgewareLogo from '@webb-dapp/apps/configs/logos/EdgewareLogo';
+import EdgewareLogo from '@webb-dapp/apps/configs/logos/chains/EdgewareLogo';
 import EtherLogo from '@webb-dapp/apps/configs/logos/Eth';
-import HarmonyLogo from '@webb-dapp/apps/configs/logos/HarmonyLogo';
-import PolygonLogo from '@webb-dapp/apps/configs/logos/PolygonLogo';
-import ShidenLogo from '@webb-dapp/apps/configs/logos/ShidenLogo';
-import WEBBLogo from '@webb-dapp/apps/configs/logos/WebbLogo';
+import HarmonyLogo from '@webb-dapp/apps/configs/logos/chains/HarmonyLogo';
+import PolygonLogo from '@webb-dapp/apps/configs/logos/chains/PolygonLogo';
+import ShidenLogo from '@webb-dapp/apps/configs/logos/chains/ShidenLogo';
+import WEBBLogo from '@webb-dapp/apps/configs/logos/chains/WebbLogo';
 import WebbWrappedLogo from '@webb-dapp/apps/configs/logos/WebbWrappedLogo';
 import { ZERO, zeroAddress } from '@webb-dapp/contracts/contracts';
 import { AppConfig } from '@webb-dapp/react-environment';

@@ -44,10 +44,9 @@ input {
 		left: 5px;
 		height: calc(100% - 10px);
 		width: calc(100% - 10px);
-		background: ${({ theme }: { theme: Pallet }) => (theme.type === 'light' ? 'rgba(71, 69, 83, 0.1)' : '#3351F2')};
+		background: #B6B6B6;
 		border-radius: 32px;
-
-	}
+  }
 }
 `;
 export const ThemeSwitcher: React.FC<{

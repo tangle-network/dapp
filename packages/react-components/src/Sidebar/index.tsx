@@ -1,5 +1,6 @@
 import { ReactComponent as WebbLogo } from '@webb-dapp/react-components/assets/webb-icon.svg';
 import IPDisplay from '@webb-dapp/react-components/IPDisplay/IPDisplay';
+import { SpaceBox } from '@webb-dapp/ui-components';
 import { useStore } from '@webb-dapp/react-environment';
 import { styled } from '@webb-dapp/ui-components';
 import { CloseButton } from '@webb-dapp/ui-components/Buttons/CloseButton';
@@ -57,7 +58,8 @@ export const Sidebar: FC<SidebarProps> = ({ collapse, config, isMobile, setSideb
             <WebbLogo />
             {isMobile && <CloseButton onClick={() => setSidebarDisplay(false)} />}
           </LogoContainer>
-          <IPDisplay />
+          <IPDisplay/>
+          <SpaceBox height={16} />
           {config.products ? <Products collapse={collapse} data={config.products} /> : null}
           <ThemeSwitcher
             active={isDarkTheme ? 'dark' : 'light'}

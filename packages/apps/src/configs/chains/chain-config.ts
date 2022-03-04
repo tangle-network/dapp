@@ -1,15 +1,15 @@
-import ArbitrumLogo from '@webb-dapp/apps/configs/logos/ArbitrumLogo';
-import EdgewareLogo from '@webb-dapp/apps/configs/logos/EdgewareLogo';
+import ArbitrumLogo from '@webb-dapp/apps/configs/logos/chains/ArbitrumLogo';
+import EdgewareLogo from '@webb-dapp/apps/configs/logos/chains/EdgewareLogo';
 import EtherLogo from '@webb-dapp/apps/configs/logos/Eth';
-import HarmonyLogo from '@webb-dapp/apps/configs/logos/HarmonyLogo';
-import OptimismLogo from '@webb-dapp/apps/configs/logos/OptimismLogo';
-import PolygonLogo from '@webb-dapp/apps/configs/logos/PolygonLogo';
-import ShidenLogo from '@webb-dapp/apps/configs/logos/ShidenLogo';
-import WEBBLogo from '@webb-dapp/apps/configs/logos/WebbLogo';
+import GanacheLogo from '@webb-dapp/apps/configs/logos/chains/GanacheLogo';
+import HarmonyLogo from '@webb-dapp/apps/configs/logos/chains/HarmonyLogo';
+import OptimismLogo from '@webb-dapp/apps/configs/logos/chains/OptimismLogo';
+import PolygonLogo from '@webb-dapp/apps/configs/logos/chains/PolygonLogo';
+import ShidenLogo from '@webb-dapp/apps/configs/logos/chains/ShidenLogo';
+import WEBBLogo from '@webb-dapp/apps/configs/logos/chains/WebbLogo';
 import { AppConfig } from '@webb-dapp/react-environment/webb-context';
 
 import { WebbCurrencyId } from '../currencies/webb-currency-id.enum';
-import GanacheLogo from '../logos/GanacheLogo';
 import { ChainType, EVMChainId, InternalChainId, SubstrateChainId } from './chain-id.enum';
 
 export const getSupportedCurrenciesOfChain = (chainId: InternalChainId): WebbCurrencyId[] => {

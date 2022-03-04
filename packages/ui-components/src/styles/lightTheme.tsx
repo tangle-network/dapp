@@ -26,6 +26,8 @@ export const LightTheme = createGlobalStyle`
 		--color-info: var(--color-blue);
 		--color-warning: var(--color-orange);
 
+		--accent-color: ${lightPallet.accentColor};
+		--checkbox-color: '#000'
 		--border-color: #e9e9e9;
 		--dividing-color: #ecf0f2;
 
@@ -73,6 +75,12 @@ export const LightTheme = createGlobalStyle`
 		--input-shadow: rgba(1, 85, 255, 0.2);
 		--input-border-color-error: rgba(255, 90, 90, 1);
 		--input-shadow-error: rgba(255, 90, 90, 0.2);
+	}
+
+	.active-menu-item {
+		path: {
+			fill: ${lightPallet.accentColor};
+		}
 	}
 
 	/* overwrite ant style */

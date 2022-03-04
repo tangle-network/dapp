@@ -20,17 +20,15 @@ export const IconLink = styled.a`
   white-space: nowrap;
 
   path {
-    fill: ${({ theme }) => theme.primary};
+    fill: #B6B6B6;
   }
 
   transition: all 0.3s ease-in-out;
 
   &:hover {
     text-decoration: none;
-    fill: #3e5bf8;
-
     path {
-      fill: #3e5bf8;
+      fill: ${({ theme }) => theme.accentColor};
     }
   }
 `;
