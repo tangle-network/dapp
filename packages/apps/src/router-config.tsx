@@ -8,6 +8,7 @@ import { sideBarConfig } from './sidebar-config';
 const PageMixer = lazy(() => import('@webb-dapp/page-mixer'));
 const PageBridge = lazy(() => import('@webb-dapp/page-bridge'));
 const PageWrapUnwrap = lazy(() => import('@webb-dapp/page-wrap-unwrap'));
+const PageStatistics = lazy(() => import('@webb-dapp/page-statistics'));
 const CSuspense: FC = ({ children }) => {
   return <Suspense fallback={<PageContentLoading />}>{children}</Suspense>;
 };
@@ -41,6 +42,60 @@ export const config: RouterConfigData[] = [
         ),
         path: 'wrap-unwrap/*',
         title: 'Wrap/Unwrap',
+      },
+      {
+        element: (
+          <CSuspense>
+            <PageStatistics view={'overview'}/>
+          </CSuspense>
+        ),
+        path: 'statistics/overview/*',
+        title: 'Statistics Overview',
+      },
+      {
+        element: (
+          <CSuspense>
+            <PageStatistics view={'deposits'}/>
+          </CSuspense>
+        ),
+        path: 'statistics/deposits/*',
+        title: 'Deposit Statistics',
+      },
+      {
+        element: (
+          <CSuspense>
+            <PageStatistics view={'withdrawals'}/>
+          </CSuspense>
+        ),
+        path: 'statistics/withdrawals/*',
+        title: 'Withdrawal Statistics',
+      },
+      {
+        element: (
+          <CSuspense>
+            <PageStatistics view={'relayers'}/>
+          </CSuspense>
+        ),
+        path: 'statistics/relayers/*',
+        title: 'Relayer Statistics',
+      },
+      {
+        element: (
+          <CSuspense>
+            <PageStatistics view={'dkg'}/>
+          </CSuspense>
+        ),
+        path: 'statistics/dkg/*',
+        title: 'DKG Statistics',
+      },
+      {
+        element: (
+          <CSuspense>
+            <PageStatistics view={'overview'}/>
+          </CSuspense>
+        ),
+        path: 'statistics/*',
+        title: 'Statistics Overview',
       },
       {
         path: '*',

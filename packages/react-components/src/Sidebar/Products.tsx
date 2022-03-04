@@ -85,6 +85,7 @@ const ProductItem: FC<ProductItemProps> = memo(({ collapse, data }) => {
   const isMatch = useMatch(data.path ?? '__unset__path');
 
   const handleClick = useCallback(() => {
+    console.log(data.path);
     setSubMenu(null);
   }, [setSubMenu]);
 
@@ -106,7 +107,7 @@ const ProductItem: FC<ProductItemProps> = memo(({ collapse, data }) => {
         </ProductCell>
         <ProductList collapse={!isOpen}>
           {data.items.map((item) => (
-            <ProductItem collapse={collapse} data={item} key={`${data.name}_${item.name}`} />
+            <ProductSubItem collapse={collapse} data={item} key={`${data.name}_${item.name}`} />
           ))}
         </ProductList>
       </>
@@ -119,6 +120,39 @@ const ProductItem: FC<ProductItemProps> = memo(({ collapse, data }) => {
       <ProductName collapse={collapse}>{data.name}</ProductName>
     </CNavLink>
   );
+});
+
+const ProductSubItem: FC<ProductItemProps> = memo(({ collapse, data }) => {
+  const { setSubMenu } = useStore('ui');
+  const ref = createRef<HTMLAnchorElement>();
+  const { active, setActive } = useContext(SidebarActiveContext);
+  const isMatch = useMatch(data.path ?? '__unset__path');
+
+  const handleClick = useCallback(() => {
+    console.log(data.path);
+    setSubMenu(null);
+  }, [setSubMenu]);
+
+  useEffect(() => {
+    if (!isMatch) return;
+
+    if (!!isMatch && setActive && data.path && active !== ref.current) {
+      setActive(ref.current);
+    }
+  }, [isMatch, setActive, ref, data, active]);
+
+
+  return (
+    <CNavLink $hasIcon={!!data.icon} onClick={handleClick} ref={ref} to={data.path ?? '__unset__path'} style={
+      {
+        height: '30px',
+        paddingLeft: '30px',
+      }
+    }>
+      {data.icon}
+      <ProductName collapse={collapse}>{data.name}</ProductName>
+    </CNavLink>
+  )
 });
 
 ProductItem.displayName = 'ProductItem';

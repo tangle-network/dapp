@@ -1,19 +1,14 @@
 import { SidebarConfig } from '@webb-dapp/react-components/Sidebar/types';
-import { themeOverrides } from '@webb-dapp/ui-components/styling/themes/overides/light-theme-overrides';
 import React from 'react';
+
+import { BridgePageLogo } from './configs/logos/pages/BridgePageLogo';
+import { StatisticsPageLogo } from './configs/logos/pages/StatisticsPageLogo';
+import { TornadoPageLogo } from './configs/logos/pages/TornadoPageLogo';
+import { WrapPageLogo } from './configs/logos/pages/WrapPageLogo';
 
 import { CommonWealthLogo } from './configs/logos/CommonWealthLogo';
 import { DiscordLogo } from './configs/logos/DiscordLogo';
 import { GithubLogo } from './configs/logos/GithubLogo';
-// import { ReactComponent as TornadoPageLogo } from '@webb-dapp/apps/assets/TornadoPageLogo.svg';
-// import { ReactComponent as BridgePageLogo } from '@webb-dapp/apps/assets/BridgePageLogo.svg';
-// import { ReactComponent as WrapPageLogo } from '@webb-dapp/apps/assets/WrapPageLogo.svg';
-// import { ReactComponent as GovernancePageLogo } from '@webb-dapp/apps/assets/GovernancePageLogo.svg';
-// import { ReactComponent as CrowdloanPageLogo } from '@webb-dapp/apps/assets/CrowdloanPageLogo.svg';
-// import { ReactComponent as StatisticsPageLogo } from '@webb-dapp/apps/assets/StatisticsPageLogo.svg';
-import { BridgePageLogo } from './configs/logos/pages/BridgePageLogo';
-import { TornadoPageLogo } from './configs/logos/pages/TornadoPageLogo';
-import { WrapPageLogo } from './configs/logos/pages/WrapPageLogo';
 import { TelegramLogo } from './configs/logos/TelegramLogo';
 import { TwitterLogo } from './configs/logos/TwitterLogo';
 
@@ -34,16 +29,33 @@ export const sideBarConfig: SidebarConfig = {
       name: 'Wrap/Unwrap',
       icon: <WrapPageLogo />,
     },
-    // {
-    //   path: 'governance',
-    //   name: 'Governance',
-    //   items: [
-    //     {
-    //       path: 'governance',
-    //       name: 'Substrate Democracy',
-    //     }
-    //   ]
-    // },
+    {
+      path: 'statistics',
+      name: 'Statistics',
+      icon: <StatisticsPageLogo/>,
+      items: [
+        {
+          path: 'statistics/overview',
+          name: 'Overview',
+        },
+        {
+          path: 'statistics/deposits',
+          name: 'Deposits',
+        },
+        {
+          path: 'statistics/withdrawals',
+          name: 'Withdrawals',
+        },
+        {
+          path: 'statistics/relayers',
+          name: 'Relayers',
+        },
+        {
+          path: 'statistics/dkg',
+          name: 'DKG Governance',
+        },
+      ]
+    },
   ],
   socialPlatforms: [
     {
