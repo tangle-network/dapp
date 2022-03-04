@@ -38,7 +38,7 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
     injectedExtension: InjectedExtension,
     readonly relayingManager: WebbRelayerBuilder,
     readonly config: AppConfig,
-    readonly notification: ProviderNotification
+    readonly notificationHandler: ProviderNotification
   ) {
     super();
     this.provider = new PolkadotProvider(apiPromise, injectedExtension);

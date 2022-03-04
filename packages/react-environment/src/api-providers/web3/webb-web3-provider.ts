@@ -39,7 +39,7 @@ export class WebbWeb3Provider
     private chainId: number,
     readonly relayingManager: WebbRelayerBuilder,
     readonly config: AppConfig,
-    readonly notification: ProviderNotification
+    readonly notificationHandler: ProviderNotification
   ) {
     super();
     this.accounts = new Web3Accounts(web3Provider.eth);

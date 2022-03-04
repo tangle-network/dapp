@@ -22,10 +22,10 @@ import { DimensionsProvider } from '@webb-dapp/react-environment/layout';
 import { StoreProvier } from '@webb-dapp/react-environment/store';
 import { notificationApi } from '@webb-dapp/ui-components/notification';
 import { AccountSwitchNotification } from '@webb-dapp/ui-components/notification/AccountSwitchNotification';
+import { Spinner } from '@webb-dapp/ui-components/Spinner/Spinner';
 import { BareProps } from '@webb-dapp/ui-components/types';
 import { InteractiveFeedback, WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import { Account } from '@webb-dapp/wallet/account/Accounts.adapter';
-import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polkadot/transaction-notification-config';
 import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
 import { LoggerService } from '@webb-tools/app-util';
 import { logger } from 'ethers';
@@ -38,10 +38,7 @@ import {
   Chain,
   netStorageFactory,
   NetworkStorage,
-  NotificationData,
-  NotificationKey,
-  ProviderNotification,
-  TXNotificationPayload,
+  NotificationPayload,
   Wallet,
   WebbApiProvider,
   WebbContext,
@@ -73,45 +70,52 @@ const appConfig: AppConfig = {
   mixers: mixersConfig,
   wallet: walletsConfig,
 };
-const notification: ProviderNotification = {
-  addToQueue(data: NotificationData): NotificationKey {
-    return notificationApi.addToQueue({
-      extras: {
-        persist: data.persist,
-      },
-      variant: data.variant,
-      secondaryMessage: data.description,
-      message: data.message,
-    });
-  },
-  remove(key: NotificationKey) {
-    notificationApi.remove(key);
-  },
-  failed(payload: TXNotificationPayload<any>): NotificationKey {
-    return transactionNotificationConfig.failed({
-      data: payload.data,
-      key: String(payload.key),
-      address: payload.address,
-      path: payload.path,
-    });
-  },
-  loading(payload: TXNotificationPayload<any>): NotificationKey {
-    return transactionNotificationConfig.failed({
-      data: payload.data,
-      key: String(payload.key),
-      address: payload.address,
-      path: payload.path,
-    });
-  },
-  finalize(payload: TXNotificationPayload<any>): NotificationKey {
-    return transactionNotificationConfig.failed({
-      data: payload.data,
-      key: String(payload.key),
-      address: payload.address,
-      path: payload.path,
-    });
-  },
-};
+
+function notificationHandler(notification: NotificationPayload) {
+  switch (notification.name) {
+    case 'Transaction':
+      {
+        const isFailed = notification.level === 'error';
+        const isFinalized = notification.level === 'success';
+        if (isFinalized) {
+          notificationApi({
+            extras: {
+              persist: false,
+            },
+            message: notification.message ?? 'Submit Transaction Success',
+            key: notification.key,
+            variant: 'success',
+          });
+          setTimeout(() => notificationApi.remove(notification.key), 6000);
+        } else if (isFailed) {
+          notificationApi({
+            extras: {
+              persist: false,
+            },
+            key: notification.key,
+            message: notification.message,
+            variant: 'error',
+          });
+        } else {
+          notificationApi({
+            extras: {
+              persist: true,
+            },
+            key: notification.key,
+            message: notification.message,
+            secondaryMessage: notification.description,
+            variant: 'info',
+            // eslint-disable-next-line sort-keys
+            Icon: <Spinner />,
+            transparent: true,
+          });
+        }
+      }
+
+      break;
+  }
+}
+
 export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Dapp', children }) => {
   const [activeWallet, setActiveWallet] = useState<Wallet | undefined>(undefined);
   const [activeChain, setActiveChain] = useState<Chain | undefined>(undefined);
@@ -297,7 +301,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
               },
               relayer,
               appConfig,
-              notification
+              notificationHandler
             );
             await setActiveApiWithAccounts(webbPolkadot, chain.id);
             localActiveApi = webbPolkadot;
@@ -364,7 +368,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
               chainId,
               relayer,
               appConfig,
-              notification
+              notificationHandler
             );
 
             const providerUpdateHandler = async ([chainId]: number[]) => {

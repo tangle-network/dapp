@@ -113,7 +113,23 @@ export type TXNotification = {
   // Transaction Done with success
   finalize(payload: TXNotificationPayload<any>): NotificationKey;
 };
-export type ProviderNotification = NotificationApi & TXNotification;
+export type NotificationLevel = 'loading' | 'error' | 'success' | 'warning' | 'info';
+
+export type NotificationPayload = {
+  // Title of the notification
+  message: string;
+  // details about the notification
+  description: string;
+  // Event name/ event identifier
+  name: 'Transaction';
+  // key for a given notification
+  key: string;
+  //level
+  level: NotificationLevel;
+  // if true the notification will be dismissed by the user or with another action
+  persist: boolean;
+};
+export type ProviderNotification = (notification: NotificationPayload) => void;
 export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
   /// Accounts Adapter will have all methods related to the provider accounts
   accounts: AccountsAdapter<any>;
@@ -133,6 +149,6 @@ export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
   getProvider(): any;
   // Configs
   config: AppConfig;
-  // Notification
-  notification: ProviderNotification;
+  // Notification handler
+  notificationHandler: ProviderNotification;
 }
