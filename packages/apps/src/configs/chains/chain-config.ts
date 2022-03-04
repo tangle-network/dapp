@@ -1,12 +1,12 @@
 import ArbitrumLogo from '@webb-dapp/apps/configs/logos/chains/ArbitrumLogo';
 import EdgewareLogo from '@webb-dapp/apps/configs/logos/chains/EdgewareLogo';
-import EtherLogo from '@webb-dapp/apps/configs/logos/Eth';
 import GanacheLogo from '@webb-dapp/apps/configs/logos/chains/GanacheLogo';
 import HarmonyLogo from '@webb-dapp/apps/configs/logos/chains/HarmonyLogo';
 import OptimismLogo from '@webb-dapp/apps/configs/logos/chains/OptimismLogo';
 import PolygonLogo from '@webb-dapp/apps/configs/logos/chains/PolygonLogo';
 import ShidenLogo from '@webb-dapp/apps/configs/logos/chains/ShidenLogo';
 import WEBBLogo from '@webb-dapp/apps/configs/logos/chains/WebbLogo';
+import EtherLogo from '@webb-dapp/apps/configs/logos/Eth';
 import { AppConfig } from '@webb-dapp/react-environment/webb-context';
 
 import { WebbCurrencyId } from '../currencies/webb-currency-id.enum';

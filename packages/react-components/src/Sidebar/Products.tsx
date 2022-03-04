@@ -27,12 +27,12 @@ export const CNavLink = styled(NavLink)<NavLinkProps & { $hasIcon?: boolean }>`
   }
 
   &.active span {
-    color: ${({ theme }) => theme.type === 'dark' ? theme.accentColor : '#000000'};
+    color: ${({ theme }) => (theme.type === 'dark' ? theme.accentColor : '#000000')};
   }
 
   &.active svg {
     path {
-      fill: ${({ theme }) => theme.type === 'dark' ? theme.accentColor : '#000000'};
+      fill: ${({ theme }) => (theme.type === 'dark' ? theme.accentColor : '#000000')};
     }
   }
 
@@ -59,7 +59,7 @@ const ProductName = styled.span<{ collapse: boolean }>`
   font-size: var(--text-size-sm);
   line-height: 20px;
   font-weight: 500;
-  color: #B6B6B6;
+  color: #b6b6b6;
 `;
 
 interface ProductListProps {

@@ -69,7 +69,9 @@ const TabButton = styled.button<{ active?: boolean }>`
 
   ${({ active, theme }) => {
     if (active) {
-      return css`border-right: 1px solid #${theme.accentColor};`
+      return css`
+        border-right: 1px solid #${theme.accentColor};
+      `;
     }
   }}
 

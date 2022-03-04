@@ -17,7 +17,7 @@ const BottomSelectionWrapper = styled.div`
   width: 100%;
   flex-direction: row;
   cursor: pointer;
-  background: ${({ theme }) => theme.lightSelectionBackground}
+  background: ${({ theme }) => theme.lightSelectionBackground};
 `;
 
 const AccountName = styled.p`
@@ -25,7 +25,7 @@ const AccountName = styled.p`
   text-overflow: ellipsis;
   max-width: 220px;
   overflow: hidden;
-  color: ${({ theme }) => theme.primaryText}
+  color: ${({ theme }) => theme.primaryText};
 `;
 
 const WalletSelectWrapper = styled.div`

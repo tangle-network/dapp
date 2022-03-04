@@ -1,5 +1,5 @@
 import { AppFeatures } from '@webb-dapp/ui-components/types';
-import { ReactElement, FC } from 'react';
+import { FC, ReactElement } from 'react';
 
 export interface SideBarItem {
   icon?: ReactElement;

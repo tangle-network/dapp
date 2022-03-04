@@ -13,7 +13,7 @@ export const lightPallet = {
   cardBackground: '#fff',
   componentBackground: `#ffffff`,
   menuBackground: '#ffffff',
-  
+
   lightSelectionBackground: '#F0F0F0',
   heavySelectionBackground: '#E3E3E3',
   heavySelectionBorder: '1px solid #C5C5C5',

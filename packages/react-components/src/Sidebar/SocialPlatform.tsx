@@ -20,7 +20,7 @@ export const IconLink = styled.a`
   white-space: nowrap;
 
   path {
-    fill: #B6B6B6;
+    fill: #b6b6b6;
   }
 
   transition: all 0.3s ease-in-out;
