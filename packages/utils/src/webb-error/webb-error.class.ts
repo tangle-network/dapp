@@ -22,6 +22,8 @@ export enum WebbErrorCodes {
   RelayerUnsupportedMixer,
   /// Relayer is not operating properly (sending bad leaves, etc.)
   RelayerMisbehaving,
+  /// Failed to parse the chainId
+  ChainIdTypeUnformatted,
 }
 
 /// An Error message with error metadata
@@ -108,6 +110,11 @@ export class WebbError extends Error {
         return {
           code,
           message: `The selected relayer is not operating properly`,
+        };
+      case WebbErrorCodes.ChainIdTypeUnformatted:
+        return {
+          code,
+          message: `Parsing of a ChainIdType failed`,
         };
 
       default:

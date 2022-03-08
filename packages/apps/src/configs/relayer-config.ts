@@ -1,4 +1,4 @@
-import { ChainId } from '@webb-dapp/apps/configs/chains';
+import { InternalChainId } from '@webb-dapp/apps/configs/chains';
 import { RelayerConfig, WebbRelayerBuilder } from '@webb-dapp/react-environment/webb-context/relayer';
 
 let builder: WebbRelayerBuilder | null = null;
@@ -20,47 +20,47 @@ export const relayerConfig: RelayerConfig[] = [
   },
 ];
 
-export function relayerSubstrateNameToChainId(name: string): ChainId {
+export function relayerSubstrateNameToChainId(name: string): InternalChainId {
   switch (name) {
     case 'localnode':
-      return ChainId.WebbDevelopment;
+      return InternalChainId.WebbDevelopment;
   }
 
   throw new Error('unhandled relayed chain name  ' + name);
 }
 
-export function relayerNameToChainId(name: string): ChainId {
+export function relayerNameToChainId(name: string): InternalChainId {
   switch (name) {
     case 'beresheet':
-      return ChainId.EdgewareTestNet;
+      return InternalChainId.EdgewareTestNet;
     case 'harmonytestnet1':
-      return ChainId.HarmonyTestnet1;
+      return InternalChainId.HarmonyTestnet1;
     case 'harmonytestnet0':
-      return ChainId.HarmonyTestnet0;
+      return InternalChainId.HarmonyTestnet0;
     case 'harmonymainnet0':
-      return ChainId.HarmonyMainnet0;
+      return InternalChainId.HarmonyMainnet0;
     case 'ganache':
-      return ChainId.Ganache;
+      return InternalChainId.Ganache;
     case 'webb':
     case 'edgeware':
     case 'hedgeware':
       break;
     case 'ropsten':
-      return ChainId.Ropsten;
+      return InternalChainId.Ropsten;
     case 'rinkeby':
-      return ChainId.Rinkeby;
+      return InternalChainId.Rinkeby;
     case 'goerli':
-      return ChainId.Goerli;
+      return InternalChainId.Goerli;
     case 'kovan':
-      return ChainId.Kovan;
+      return InternalChainId.Kovan;
     case 'shiden':
-      return ChainId.Shiden;
+      return InternalChainId.Shiden;
     case 'optimismtestnet':
-      return ChainId.OptimismTestnet;
+      return InternalChainId.OptimismTestnet;
     case 'arbitrumtestnet':
-      return ChainId.ArbitrumTestnet;
+      return InternalChainId.ArbitrumTestnet;
     case 'polygontestnet':
-      return ChainId.PolygonTestnet;
+      return InternalChainId.PolygonTestnet;
   }
 
   throw new Error('unhandled relayed chain name  ' + name);
@@ -84,37 +84,37 @@ enum RelayerChainName {
   PolygonTestnet = 'polygontestnet',
 }
 
-export function chainIdToRelayerName(id: ChainId): string {
+export function chainIdToRelayerName(id: InternalChainId): string {
   switch (id) {
-    case ChainId.Edgeware:
+    case InternalChainId.Edgeware:
       return RelayerChainName.Edgeware;
-    case ChainId.EdgewareTestNet:
+    case InternalChainId.EdgewareTestNet:
       return RelayerChainName.Beresheet;
-    case ChainId.EdgewareLocalNet:
+    case InternalChainId.EdgewareLocalNet:
       break;
-    case ChainId.EthereumMainNet:
+    case InternalChainId.EthereumMainNet:
       break;
-    case ChainId.Rinkeby:
+    case InternalChainId.Rinkeby:
       return RelayerChainName.Rinkeby;
-    case ChainId.Ropsten:
+    case InternalChainId.Ropsten:
       return RelayerChainName.Ropsten;
-    case ChainId.Kovan:
+    case InternalChainId.Kovan:
       return RelayerChainName.Kovan;
-    case ChainId.Goerli:
+    case InternalChainId.Goerli:
       return RelayerChainName.Goerli;
-    case ChainId.HarmonyTestnet0:
+    case InternalChainId.HarmonyTestnet0:
       return RelayerChainName.HarmonyTestnet0;
-    case ChainId.HarmonyTestnet1:
+    case InternalChainId.HarmonyTestnet1:
       return RelayerChainName.HarmonyTestnet1;
-    case ChainId.HarmonyMainnet0:
+    case InternalChainId.HarmonyMainnet0:
       return RelayerChainName.HarmonyMainnet0;
-    case ChainId.Shiden:
+    case InternalChainId.Shiden:
       return RelayerChainName.Shiden;
-    case ChainId.OptimismTestnet:
+    case InternalChainId.OptimismTestnet:
       return RelayerChainName.OptimismTestnet;
-    case ChainId.ArbitrumTestnet:
+    case InternalChainId.ArbitrumTestnet:
       return RelayerChainName.ArbitrumTestnet;
-    case ChainId.PolygonTestnet:
+    case InternalChainId.PolygonTestnet:
       return RelayerChainName.PolygonTestnet;
   }
   throw new Error(`unhandled Chain id ${id}`);

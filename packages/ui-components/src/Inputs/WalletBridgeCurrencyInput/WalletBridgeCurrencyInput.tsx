@@ -1,7 +1,8 @@
 import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
 import { useWebContext } from '@webb-dapp/react-environment';
+import { BridgeCurrencyIndex } from '@webb-dapp/react-environment/webb-context/bridge/bridge-api';
 import { Currency } from '@webb-dapp/react-environment/webb-context/currency/currency';
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 
 import { InputLabel } from '../InputLabel/InputLabel';
@@ -18,27 +19,27 @@ const WalletTokenInputWrapper = styled.div`
 `;
 
 type WalletTokenInputProps = {
-  setSelectedToken(token: Currency): void;
+  setSelectedToken(token: BridgeCurrencyIndex | undefined): void;
   selectedToken: Currency | undefined;
 };
 
 export const WalletBridgeCurrencyInput: React.FC<WalletTokenInputProps> = ({ selectedToken, setSelectedToken }) => {
-  const { activeChain, activeWallet } = useWebContext();
-  const { getTokens, getTokensOfChain } = useBridge();
-  const allCurrencies = useMemo(() => {
-    if (activeChain) {
-      return getTokensOfChain(activeChain.id);
-    }
-    return getTokens();
-  }, [activeChain, getTokens, getTokensOfChain]);
+  const { activeWallet } = useWebContext();
+  const { tokens: allCurrencies } = useBridge();
 
   useEffect(() => {
     if (!selectedToken && allCurrencies.length) {
-      setSelectedToken(allCurrencies[0]);
+      setSelectedToken(allCurrencies[0].id);
+      return;
+    }
+    if (selectedToken) {
+      const selectedIsInList = allCurrencies.findIndex((c) => c.id === selectedToken.id) > -1;
+      if (!selectedIsInList) {
+        allCurrencies[0] ? setSelectedToken(allCurrencies[0].id) : setSelectedToken(undefined);
+      }
       return;
     }
   }, [allCurrencies, selectedToken, setSelectedToken]);
-
   return (
     <InputSection>
       <WalletTokenInputWrapper>
@@ -48,15 +49,15 @@ export const WalletBridgeCurrencyInput: React.FC<WalletTokenInputProps> = ({ sel
 
         {activeWallet && (
           <InputLabel label={'Select Token'}>
-            {/* used for positioning the token input label */}
-            <div style={{ height: '52px' }}></div>
             <TokenInput
               currencies={allCurrencies}
               value={selectedToken}
               onChange={(currencyContent) => {
                 if (currencyContent) {
                   // TODO validate the id is BridgeCurrency id not WebbCurrencyId
-                  setSelectedToken(Currency.fromCurrencyId(currencyContent.view.id));
+                  setSelectedToken(currencyContent.view.id);
+                } else {
+                  setSelectedToken(undefined);
                 }
               }}
             />

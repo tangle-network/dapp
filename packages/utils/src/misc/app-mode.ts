@@ -1,5 +1,7 @@
-export type AppMode = 'development' | 'production';
+import { LoggerService } from '@webb-tools/app-util';
 
+export type AppMode = 'development' | 'production';
+const appLogger = LoggerService.get('App');
 export function appMode(): AppMode {
   // @ts-ignore
   return process.env.REACT_APP_BUILD_ENV;
@@ -14,10 +16,11 @@ export function isDevelopment() {
 }
 
 export function isLocalFixtures() {
-  return process.env.REACT_APP_LOCL_FIXTURES === 'true';
+  return process.env.REACT_APP_LOCAL_FIXTURES === 'true';
 }
 
 export function withLocalFixtures() {
   const dev = isDevelopment();
-  return dev && isLocalFixtures;
+  appLogger.info('local fixtures react app env: ', process.env.REACT_APP_LOCAL_FIXTURES);
+  return dev && isLocalFixtures();
 }

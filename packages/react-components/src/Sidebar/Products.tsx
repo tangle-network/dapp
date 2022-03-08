@@ -17,7 +17,6 @@ export const CNavLink = styled(NavLink)<NavLinkProps & { $hasIcon?: boolean }>`
   display: flex;
   justify-items: flex-start;
   align-items: center;
-  padding: 21px;
   padding-left: ${({ $hasIcon }): number => ($hasIcon ? 21 : 40)}px;
   height: var(--sidebar-item-height);
   cursor: pointer;

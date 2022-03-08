@@ -1,4 +1,4 @@
-import { getEVMChainName, WebbEVMChain } from '@webb-dapp/apps/configs';
+import { EVMChainId, getEVMChainName } from '@webb-dapp/apps/configs';
 import { InteractiveFeedback, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 
 export function unsupportedChain(): InteractiveFeedback {
@@ -12,9 +12,9 @@ export function unsupportedChain(): InteractiveFeedback {
     },
     {
       list: [
-        getEVMChainName(WebbEVMChain.Rinkeby),
-        getEVMChainName(WebbEVMChain.Beresheet),
-        getEVMChainName(WebbEVMChain.HarmonyTestnet1),
+        getEVMChainName(EVMChainId.Rinkeby),
+        getEVMChainName(EVMChainId.Beresheet),
+        getEVMChainName(EVMChainId.HarmonyTestnet1),
       ],
     },
     {

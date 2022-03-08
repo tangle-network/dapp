@@ -6,28 +6,14 @@ import styled from 'styled-components';
 const ThemeSwitcherWrapper = styled.label`
 	width: 64px;
 	height: 50px;
+  margin-left: 15px;
 	overflow: hidden;
 	position: relative;
 	border-radius: 32px;
 	&:before, &:after {
 		transition: all .4s;
 	}
-
-	&:before {
-		position: absolute;
-		content: "";
-		top: 0;
-		left: 0;
-		height: 100%;
-		width: 100%;
-		z-index: 1;
-		background: ${({ theme }: { theme: Pallet }) => (theme.type === 'light' ? 'white' : 'rgba(51, 81, 242, 0.28)')};
-		border-radius: 32px;
-	}
-
 }
-
-;
 
 input {
 	width: 0;
