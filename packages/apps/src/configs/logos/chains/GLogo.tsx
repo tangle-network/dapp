@@ -1,5 +1,5 @@
-import * as React from 'react';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
+import * as React from 'react';
 
 export const GLogo: React.FC = () => {
   const palette = useColorPallet();

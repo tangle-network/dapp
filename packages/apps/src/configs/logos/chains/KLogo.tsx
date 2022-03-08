@@ -1,9 +1,9 @@
-import * as React from 'react';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
+import * as React from 'react';
 
 export const KLogo: React.FC = () => {
   const palette = useColorPallet();
-  
+
   return (
     <svg width='36' height='37' viewBox='0 0 36 37' fill='none' xmlns='http://www.w3.org/2000/svg'>
       <circle cx='18' cy='18.5' r='17.75' fill='url(#paint0_linear_4_4389)' />
