@@ -14,11 +14,8 @@ import { createAnchor2Deposit, Deposit } from '@webb-dapp/contracts/utils/make-d
 import { DepositPayload as IDepositPayload, MixerSize } from '@webb-dapp/react-environment';
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3/webb-web3-provider';
 import { Currency } from '@webb-dapp/react-environment/webb-context/currency/currency';
-import { DepositNotification } from '@webb-dapp/ui-components/notification/DepositNotification';
-import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polkadot/transaction-notification-config';
 import { LoggerService } from '@webb-tools/app-util';
 import { Note, NoteGenInput } from '@webb-tools/sdk-core';
-import React from 'react';
 
 import { BridgeDeposit } from '../../webb-context/bridge/bridge-deposit';
 
@@ -47,19 +44,7 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
       const sourceEvmId = await this.inner.getChainId();
       const sourceChainId = computeChainIdType(ChainType.EVM, sourceEvmId);
       const sourceInternalId = evmIdIntoInternalChainId(sourceEvmId);
-      transactionNotificationConfig.loading?.({
-        address: '',
-        data: React.createElement(DepositNotification, {
-          chain: getEVMChainNameFromInternal(Number(sourceInternalId)),
-          amount: Number(note.amount),
-          currency: currency.view.name,
-        }),
-        key: 'bridge-deposit',
-        path: {
-          method: depositPayload.params[2] ? 'wrap and deposit' : 'deposit',
-          section: currency.view.name,
-        },
-      });
+
       this.inner.notificationHandler({
         key: 'bridge-deposit',
         level: 'loading',

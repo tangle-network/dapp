@@ -3,7 +3,6 @@ import {
   chainTypeIdToInternalId,
   evmIdIntoInternalChainId,
   InternalChainId,
-  internalChainIdIntoEVMId,
   parseChainIdType,
 } from '@webb-dapp/apps/configs';
 import { chainIdToRelayerName } from '@webb-dapp/apps/configs/relayer-config';
@@ -19,11 +18,9 @@ import {
 } from '@webb-dapp/react-environment/webb-context';
 import { RelayedWithdrawResult, RelayerCMDBase, WebbRelayer } from '@webb-dapp/react-environment/webb-context/relayer';
 import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
-import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polkadot/transaction-notification-config';
 import { LoggerService } from '@webb-tools/app-util';
 import { Note } from '@webb-tools/sdk-core';
 import { BigNumber } from 'ethers';
-import React from 'react';
 
 const logger = LoggerService.get('Web3MixerWithdraw');
 
@@ -121,19 +118,14 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
 
     if (activeRelayer && (activeRelayer.beneficiary || activeRelayer.account)) {
       try {
-        transactionNotificationConfig.loading?.({
-          address: recipient,
-          data: React.createElement(
-            'p',
-            { style: { fontSize: '.9rem' } }, // Matches Typography variant=h6
-            `Relaying withdraw through ${activeRelayer.endpoint}`
-          ),
+        this.inner.notificationHandler({
+          description: `Relaying withdraw through ${activeRelayer.endpoint}`,
+          level: 'loading',
+          message: 'evm-mixer:withdraw',
+          name: 'Transaction',
           key: 'mixer-withdraw-evm',
-          path: {
-            method: 'withdraw',
-            section: 'evm-mixer',
-          },
         });
+
         logger.info(`Withdrawing through relayer with address ${activeRelayer.endpoint}`);
         logger.trace('Note deserialized', evmNote);
         const mixerInfo = this.inner.getMixerInfoBySize(Number(evmNote.note.amount), evmNote.note.tokenSymbol);
@@ -163,14 +155,12 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
         // Check for cancelled here, abort if it was set.
         // Mark the withdraw mixer as able to withdraw again.
         if (this.cancelToken.cancelled) {
-          transactionNotificationConfig.failed?.({
-            address: recipient,
-            data: 'Withdraw cancelled',
+          this.inner.notificationHandler({
+            description: 'Withdraw cancelled',
+            level: 'error',
+            message: 'evm-mixer:withdraw',
+            name: 'Transaction',
             key: 'mixer-withdraw-evm',
-            path: {
-              method: 'withdraw',
-              section: 'evm-mixer',
-            },
           });
           this.emit('stateChange', WithdrawState.Ideal);
           return '';
@@ -207,28 +197,27 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
             case RelayedWithdrawResult.CleanExit:
               this.emit('stateChange', WithdrawState.Done);
               this.emit('stateChange', WithdrawState.Ideal);
-              transactionNotificationConfig.finalize?.({
-                address: recipient,
-                data: undefined,
+              this.inner.notificationHandler({
+                description: 'Withdraw success',
+                level: 'success',
+                message: 'evm-mixer:withdraw',
+                name: 'Transaction',
                 key: 'mixer-withdraw-evm',
-                path: {
-                  method: 'withdraw',
-                  section: 'evm-mixer',
-                },
               });
+
               break;
             case RelayedWithdrawResult.Errored:
               this.emit('stateChange', WithdrawState.Failed);
               this.emit('stateChange', WithdrawState.Ideal);
-              transactionNotificationConfig.failed?.({
-                address: recipient,
-                data: message || 'Withdraw failed',
+
+              this.inner.notificationHandler({
+                description: message || 'Withdraw failed',
+                level: 'error',
+                message: 'evm-mixer:withdraw',
+                name: 'Transaction',
                 key: 'mixer-withdraw-evm',
-                path: {
-                  method: 'withdraw',
-                  section: 'evm-mixer',
-                },
               });
+
               break;
           }
         });
@@ -246,15 +235,15 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
         this.emit('stateChange', WithdrawState.Failed);
         this.emit('stateChange', WithdrawState.Ideal);
         logger.trace(e);
-        transactionNotificationConfig.failed?.({
-          address: recipient,
-          data: 'Withdraw failed',
+
+        this.inner.notificationHandler({
+          description: 'Withdraw failed',
+          level: 'error',
+          message: 'evm-mixer:withdraw',
+          name: 'Transaction',
           key: 'mixer-withdraw-evm',
-          path: {
-            method: 'withdraw',
-            section: 'evm-mixer',
-          },
         });
+
         if ((e as any)?.code === WebbErrorCodes.RelayerMisbehaving) {
           throw e;
         }
@@ -262,15 +251,14 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
     } else {
       logger.trace('Withdrawing without relayer');
 
-      transactionNotificationConfig.loading?.({
-        address: recipient,
-        data: React.createElement('p', {}, 'Withdraw In Progress'),
+      this.inner.notificationHandler({
+        description: 'Withdraw In Progress',
+        level: 'loading',
+        message: 'evm-mixer:withdraw',
+        name: 'Transaction',
         key: 'mixer-withdraw-evm',
-        path: {
-          method: 'withdraw',
-          section: 'evm-mixer',
-        },
       });
+
       const contract = await this.inner.getContractBySize(Number(evmNote.note.amount), evmNote.note.tokenSymbol);
       // Still retrieve supported relayers for leaf querying
       const relayers = await this.getRelayersByNote(evmNote);
@@ -307,14 +295,12 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
         // Check for cancelled here, abort if it was set.
         // Mark the withdraw mixer as able to withdraw again.
         if (this.cancelToken.cancelled) {
-          transactionNotificationConfig.failed?.({
-            address: recipient,
-            data: 'Withdraw cancelled',
+          this.inner.notificationHandler({
+            description: 'Withdraw canceled',
+            level: 'error',
+            message: 'evm-mixer:withdraw',
+            name: 'Transaction',
             key: 'mixer-withdraw-evm',
-            path: {
-              method: 'withdraw',
-              section: 'evm-mixer',
-            },
           });
           this.emit('stateChange', WithdrawState.Ideal);
           return '';
@@ -323,15 +309,15 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
         this.emit('stateChange', WithdrawState.SendingTransaction);
         const txReset = await contract.withdraw(zkp.proof, zkp.input);
         const receipt = await txReset.wait();
-        transactionNotificationConfig.finalize?.({
-          address: recipient,
-          data: undefined,
+
+        this.inner.notificationHandler({
+          description: 'Withdraw success',
+          level: 'success',
+          message: 'evm-mixer:withdraw',
+          name: 'Transaction',
           key: 'mixer-withdraw-evm',
-          path: {
-            method: 'withdraw',
-            section: 'evm-mixer',
-          },
         });
+
         this.emit('stateChange', WithdrawState.Ideal);
         return receipt.transactionHash;
       } catch (e) {
@@ -339,28 +325,23 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
 
         // User rejected transaction from provider
         if ((e as any)?.code === 4001) {
-          transactionNotificationConfig.failed?.({
-            address: recipient,
-            data: 'Withdraw Rejected',
+          this.inner.notificationHandler({
+            description: 'Withdraw Rejected',
+            level: 'error',
+            message: 'evm-mixer:withdraw',
+            name: 'Transaction',
             key: 'mixer-withdraw-evm',
-            path: {
-              method: 'withdraw',
-              section: 'evm-mixer',
-            },
           });
 
           this.emit('stateChange', WithdrawState.Ideal);
           return '';
         }
-
-        transactionNotificationConfig.failed?.({
-          address: recipient,
-          data: 'Withdraw failed',
+        this.inner.notificationHandler({
+          description: 'Withdraw Failed',
+          level: 'error',
+          message: 'evm-mixer:withdraw',
+          name: 'Transaction',
           key: 'mixer-withdraw-evm',
-          path: {
-            method: 'withdraw',
-            section: 'evm-mixer',
-          },
         });
         throw e;
       }

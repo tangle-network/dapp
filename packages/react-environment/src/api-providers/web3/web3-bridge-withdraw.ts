@@ -28,13 +28,11 @@ import {
   WithdrawState,
 } from '@webb-dapp/react-environment/webb-context';
 import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
-import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polkadot/transaction-notification-config';
 import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
 import { LoggerService } from '@webb-tools/app-util';
 import { Note } from '@webb-tools/sdk-core';
 import { JsNote as DepositNote } from '@webb-tools/wasm-utils';
 import { BigNumber } from 'ethers';
-import React from 'react';
 
 const logger = LoggerService.get('Web3BridgeWithdraw');
 
@@ -334,14 +332,12 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
 
     // Check for cancelled here, abort if it was set.
     if (this.cancelToken.cancelled) {
-      transactionNotificationConfig.failed?.({
-        address: recipient,
-        data: 'Withdraw cancelled',
+      this.inner.notificationHandler({
+        description: 'Withdraw cancelled',
         key: 'mixer-withdraw-evm',
-        path: {
-          method: 'withdraw',
-          section: 'evm-mixer',
-        },
+        message: 'bridge:withdraw',
+        name: 'Transaction',
+        level: 'error',
       });
       this.emit('stateChange', WithdrawState.Ideal);
       return '';
@@ -374,15 +370,15 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
       } catch (e) {
         console.log(e);
         this.emit('stateChange', WithdrawState.Ideal);
-        transactionNotificationConfig.failed?.({
-          address: recipient,
-          data: 'Deposit not yet available',
+
+        this.inner.notificationHandler({
+          description: 'Deposit not yet available',
           key: 'mixer-withdraw-evm',
-          path: {
-            method: 'withdraw',
-            section: 'evm-mixer',
-          },
+          message: 'bridge:withdraw',
+          name: 'Transaction',
+          level: 'error',
         });
+
         return '';
       }
 
@@ -433,28 +429,28 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
           case RelayedWithdrawResult.CleanExit:
             this.emit('stateChange', WithdrawState.Done);
             this.emit('stateChange', WithdrawState.Ideal);
-            transactionNotificationConfig.finalize?.({
-              address: recipient,
-              data: undefined,
+
+            this.inner.notificationHandler({
+              description: 'Withdraw success',
               key: 'mixer-withdraw-evm',
-              path: {
-                method: 'withdraw',
-                section: 'evm-mixer',
-              },
+              message: 'bridge:withdraw',
+              name: 'Transaction',
+              level: 'success',
             });
+
             break;
           case RelayedWithdrawResult.Errored:
             this.emit('stateChange', WithdrawState.Failed);
             this.emit('stateChange', WithdrawState.Ideal);
-            transactionNotificationConfig.failed?.({
-              address: recipient,
-              data: message || 'Withdraw failed',
+
+            this.inner.notificationHandler({
+              description: message || 'Withdraw failed',
               key: 'mixer-withdraw-evm',
-              path: {
-                method: 'withdraw',
-                section: 'evm-mixer',
-              },
+              message: 'bridge:withdraw',
+              name: 'Transaction',
+              level: 'error',
             });
+
             break;
         }
       });
@@ -492,15 +488,15 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
         } catch (e) {
           console.log(e);
           this.emit('stateChange', WithdrawState.Ideal);
-          transactionNotificationConfig.failed?.({
-            address: recipient,
-            data: 'Deposit not yet available',
+
+          this.inner.notificationHandler({
+            description: 'Deposit not yet available',
             key: 'mixer-withdraw-evm',
-            path: {
-              method: 'withdraw',
-              section: 'evm-mixer',
-            },
+            message: 'bridge:withdraw',
+            name: 'Transaction',
+            level: 'error',
           });
+
           return '';
         }
         txHash = await destAnchor.withdraw(
@@ -522,28 +518,25 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
         );
       } catch (e) {
         this.emit('stateChange', WithdrawState.Ideal);
-        transactionNotificationConfig.failed?.({
-          address: recipient,
-          data: (e as any)?.code === 4001 ? 'Withdraw rejected' : 'Withdraw failed',
+        this.inner.notificationHandler({
+          message: `Bridge ${bridgeCurrency?.getChainIds().map(getEVMChainNameFromInternal).join('-')}:withdraw`,
+          description: (e as any)?.code === 4001 ? 'Withdraw rejected' : 'Withdraw failed',
           key: 'bridge-withdraw-evm',
-          path: {
-            method: 'withdraw',
-            section: `Bridge ${bridgeCurrency?.getChainIds().map(getEVMChainNameFromInternal).join('-')}`,
-          },
+          level: 'error',
+          name: 'Transaction',
         });
         return '';
       }
     }
 
-    transactionNotificationConfig.finalize?.({
-      address: recipient,
-      data: undefined,
+    this.inner.notificationHandler({
+      message: `Bridge ${bridgeCurrency?.getChainIds().map(getEVMChainNameFromInternal).join('-')}:withdraw`,
+      description: 'Withdraw done',
       key: 'bridge-withdraw-evm',
-      path: {
-        method: 'withdraw',
-        section: `Bridge ${bridgeCurrency?.getChainIds().map(getEVMChainNameFromInternal).join('-')}`,
-      },
+      level: 'success',
+      name: 'Transaction',
     });
+
     this.emit('stateChange', WithdrawState.Done);
     this.emit('stateChange', WithdrawState.Ideal);
     return txHash;
