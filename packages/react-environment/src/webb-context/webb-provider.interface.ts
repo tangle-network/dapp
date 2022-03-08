@@ -122,7 +122,7 @@ export type NotificationPayload = {
   description: string;
   // Event name/ event identifier
   name: 'Transaction' | 'Approval';
-  // key for a given notification
+  // key for a given notification can be used to remove/dismiss a notification
   key: string;
   //level
   level: NotificationLevel;
@@ -131,6 +131,7 @@ export type NotificationPayload = {
   // if true the notification will be dismissed by the user or with another action
   persist?: boolean;
 };
+// Function call to register a notification
 export type NotificationHandler = ((notification: NotificationPayload) => string | number) & {
   // remove the notification programmatically
   remove(key: string | number): void;
