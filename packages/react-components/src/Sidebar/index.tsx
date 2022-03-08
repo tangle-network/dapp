@@ -69,20 +69,9 @@ export const Sidebar: FC<SidebarProps> = ({ collapse, config, isMobile, setSideb
           />
           <div style={{ height: '10px' }}></div>
           {config.socialPlatforms ? <SocialPlatform collapse={collapse} data={config.socialPlatforms} /> : null}
-          <Slider target={active} />
         </SidebarRoot>
       </SidebarActiveContext.Provider>
     ),
-    [
-      data,
-      collapse,
-      isMobile,
-      config.products,
-      config.socialPlatforms,
-      isDarkTheme,
-      active,
-      setSidebarDisplay,
-      setTheme,
-    ]
+    [data, collapse, isMobile, config.products, config.socialPlatforms, isDarkTheme, setSidebarDisplay, setTheme]
   );
 };

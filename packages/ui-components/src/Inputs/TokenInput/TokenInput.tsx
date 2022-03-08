@@ -32,7 +32,7 @@ const StyledList = styled.ul`
 
     &.selected,
     :hover {
-      background: ${({ theme }: { theme: Pallet }) => (theme.type === 'dark' ? theme.layer3Background : theme.gray1)};
+      background: ${({ theme }) => (theme.type === 'dark' ? theme.layer3Background : theme.gray1)};
     }
 
     position: relative;
@@ -40,11 +40,10 @@ const StyledList = styled.ul`
 `;
 
 const TokenInputWrapper = styled.div<{ open: boolean }>`
-  width: '230px';
   border-radius: 25px;
-  border: 1px solid ${({ theme }: { theme: Pallet }) => theme.borderColor};
+  border: ${({ theme }) => theme.heavySelectionBorder};
   overflow: hidden;
-  background: ${({ theme }) => theme.layer3Background} 37%;
+  background: ${({ theme }) => theme.heavySelectionBackground};
 
   ${({ open, theme }) => {
     return open

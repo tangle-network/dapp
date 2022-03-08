@@ -46,7 +46,7 @@ export const config: RouterConfigData[] = [
       {
         element: (
           <CSuspense>
-            <PageStatistics view={'overview'}/>
+            <PageStatistics view={'overview'} />
           </CSuspense>
         ),
         path: 'statistics/overview/*',
@@ -55,7 +55,7 @@ export const config: RouterConfigData[] = [
       {
         element: (
           <CSuspense>
-            <PageStatistics view={'deposits'}/>
+            <PageStatistics view={'deposits'} />
           </CSuspense>
         ),
         path: 'statistics/deposits/*',
@@ -64,7 +64,7 @@ export const config: RouterConfigData[] = [
       {
         element: (
           <CSuspense>
-            <PageStatistics view={'withdrawals'}/>
+            <PageStatistics view={'withdrawals'} />
           </CSuspense>
         ),
         path: 'statistics/withdrawals/*',
@@ -73,7 +73,7 @@ export const config: RouterConfigData[] = [
       {
         element: (
           <CSuspense>
-            <PageStatistics view={'relayers'}/>
+            <PageStatistics view={'relayers'} />
           </CSuspense>
         ),
         path: 'statistics/relayers/*',
@@ -82,7 +82,7 @@ export const config: RouterConfigData[] = [
       {
         element: (
           <CSuspense>
-            <PageStatistics view={'dkg'}/>
+            <PageStatistics view={'dkg'} />
           </CSuspense>
         ),
         path: 'statistics/dkg/*',
@@ -91,7 +91,7 @@ export const config: RouterConfigData[] = [
       {
         element: (
           <CSuspense>
-            <PageStatistics view={'overview'}/>
+            <PageStatistics view={'overview'} />
           </CSuspense>
         ),
         path: 'statistics/*',

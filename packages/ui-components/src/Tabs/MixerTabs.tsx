@@ -36,7 +36,7 @@ const TabButton = styled.button<{ active?: boolean }>`
   .mixer-tab-label {
     font-size: 16px;
     color: ${({ active, theme }) => {
-      return !active ? (theme as Pallet).primaryText : (theme as Pallet).accentColor;
+      return !active ? theme.primaryText : theme.type === 'dark' ? theme.accentColor : '#000000';
     }};
   }
 
@@ -52,9 +52,9 @@ const TabButton = styled.button<{ active?: boolean }>`
       } else {
         return css`
           background: #ffffff;
-          border-right: 1px solid ${theme.accentColor};
-          border-top: 1px solid ${theme.accentColor};
-          border-left: 1px solid ${theme.accentColor};
+          border-right: 1px solid #000000;
+          border-top: 1px solid #000000;
+          border-left: 1px solid #000000;
         `;
       }
     } else {

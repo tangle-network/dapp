@@ -87,7 +87,7 @@ const ProductItem: FC<ProductItemProps> = memo(({ collapse, data }) => {
   const handleClick = useCallback(() => {
     console.log(data.path);
     setSubMenu(null);
-  }, [setSubMenu]);
+  }, [data.path, setSubMenu]);
 
   useEffect(() => {
     if (!isMatch) return;
@@ -131,7 +131,7 @@ const ProductSubItem: FC<ProductItemProps> = memo(({ collapse, data }) => {
   const handleClick = useCallback(() => {
     console.log(data.path);
     setSubMenu(null);
-  }, [setSubMenu]);
+  }, [data.path, setSubMenu]);
 
   useEffect(() => {
     if (!isMatch) return;
@@ -141,18 +141,21 @@ const ProductSubItem: FC<ProductItemProps> = memo(({ collapse, data }) => {
     }
   }, [isMatch, setActive, ref, data, active]);
 
-
   return (
-    <CNavLink $hasIcon={!!data.icon} onClick={handleClick} ref={ref} to={data.path ?? '__unset__path'} style={
-      {
+    <CNavLink
+      $hasIcon={!!data.icon}
+      onClick={handleClick}
+      ref={ref}
+      to={data.path ?? '__unset__path'}
+      style={{
         height: '30px',
         paddingLeft: '30px',
-      }
-    }>
+      }}
+    >
       {data.icon}
       <ProductName collapse={collapse}>{data.name}</ProductName>
     </CNavLink>
-  )
+  );
 });
 
 ProductItem.displayName = 'ProductItem';

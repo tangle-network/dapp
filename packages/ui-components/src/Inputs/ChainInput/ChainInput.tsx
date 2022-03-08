@@ -1,12 +1,7 @@
 import { Avatar, ClickAwayListener, IconButton, List, ListItemAvatar, ListItemText, Popper } from '@material-ui/core';
 import Icon from '@material-ui/core/Icon';
 import Typography from '@material-ui/core/Typography';
-import {
-  chainsPopulated,
-  ChainTypeId,
-  chainTypeIdToInternalId,
-  evmIdIntoInternalChainId,
-} from '@webb-dapp/apps/configs';
+import { chainsPopulated, ChainTypeId, chainTypeIdToInternalId } from '@webb-dapp/apps/configs';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabel';

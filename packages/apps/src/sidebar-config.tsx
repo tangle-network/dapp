@@ -1,14 +1,13 @@
 import { SidebarConfig } from '@webb-dapp/react-components/Sidebar/types';
 import React from 'react';
 
+import { CommonWealthLogo } from './configs/logos/CommonWealthLogo';
+import { DiscordLogo } from './configs/logos/DiscordLogo';
+import { GithubLogo } from './configs/logos/GithubLogo';
 import { BridgePageLogo } from './configs/logos/pages/BridgePageLogo';
 import { StatisticsPageLogo } from './configs/logos/pages/StatisticsPageLogo';
 import { TornadoPageLogo } from './configs/logos/pages/TornadoPageLogo';
 import { WrapPageLogo } from './configs/logos/pages/WrapPageLogo';
-
-import { CommonWealthLogo } from './configs/logos/CommonWealthLogo';
-import { DiscordLogo } from './configs/logos/DiscordLogo';
-import { GithubLogo } from './configs/logos/GithubLogo';
 import { TelegramLogo } from './configs/logos/TelegramLogo';
 import { TwitterLogo } from './configs/logos/TwitterLogo';
 
@@ -32,7 +31,7 @@ export const sideBarConfig: SidebarConfig = {
     {
       path: 'statistics',
       name: 'Statistics',
-      icon: <StatisticsPageLogo/>,
+      icon: <StatisticsPageLogo />,
       items: [
         {
           path: 'statistics/overview',
@@ -54,7 +53,7 @@ export const sideBarConfig: SidebarConfig = {
           path: 'statistics/dkg',
           name: 'DKG Governance',
         },
-      ]
+      ],
     },
   ],
   socialPlatforms: [

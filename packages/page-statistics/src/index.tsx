@@ -1,42 +1,29 @@
-
 import React, { FC } from 'react';
 import styled from 'styled-components';
-import { StatisticsOverview } from './StatisticsOverview';
+
 import { DepositStatistics } from './DepositStatistics';
-import { WithdrawalStatistics } from './WithdrawalStatistics';
-import { RelayersStatistics } from './RelayerStatistics';
 import { DKGStatistics } from './DKGStatistics';
+import { RelayersStatistics } from './RelayerStatistics';
+import { StatisticsOverview } from './StatisticsOverview';
+import { WithdrawalStatistics } from './WithdrawalStatistics';
 
 type StatisticsPageProps = {
-  view: string
+  view: string;
 };
 
-const PageStatistics: FC<StatisticsPageProps> = ({view}) => {
-
+const PageStatistics: FC<StatisticsPageProps> = ({ view }) => {
   if (view === 'overview') {
-    return (
-      <StatisticsOverview/>
-    )
+    return <StatisticsOverview />;
   } else if (view === 'deposits') {
-    return (
-      <DepositStatistics/>
-    )
+    return <DepositStatistics />;
   } else if (view === 'withdrawals') {
-    return (
-      <WithdrawalStatistics/>
-    )
+    return <WithdrawalStatistics />;
   } else if (view === 'relayers') {
-    return (
-      <RelayersStatistics/>
-    )
+    return <RelayersStatistics />;
   } else if (view === 'dkg') {
-    return (
-      <DKGStatistics/>
-    )
+    return <DKGStatistics />;
   } else {
-    return (
-      <StatisticsOverview/>
-    )
+    return <StatisticsOverview />;
   }
 };
 
