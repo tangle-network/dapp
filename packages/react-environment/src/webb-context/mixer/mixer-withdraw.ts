@@ -1,4 +1,4 @@
-import { ChainId } from '@webb-dapp/apps/configs';
+import { InternalChainId } from '@webb-dapp/apps/configs';
 import { ActiveWebbRelayer, WebbRelayer } from '@webb-dapp/react-environment/webb-context/relayer';
 import { EventBus } from '@webb-tools/app-util';
 import { Note } from '@webb-tools/sdk-core';
@@ -71,7 +71,7 @@ export abstract class MixerWithdraw<T> extends EventBus<MixerWithdrawEvents> {
     return Promise.resolve([]);
   }
 
-  getRelayersByChainAndAddress(chainId: ChainId, address: string): Promise<WebbRelayer[]> {
+  getRelayersByChainAndAddress(chainId: InternalChainId, address: string): Promise<WebbRelayer[]> {
     return Promise.resolve([]);
   }
 

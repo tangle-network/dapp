@@ -1,5 +1,10 @@
 import { FormHelperText, Icon, InputBase } from '@material-ui/core';
-import { getEVMChainNameFromInternal, webbCurrencyIdFromString } from '@webb-dapp/apps/configs';
+import {
+  getEVMChainName,
+  getEVMChainNameFromInternal,
+  parseChainIdType,
+  webbCurrencyIdFromString,
+} from '@webb-dapp/apps/configs';
 import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
 import { useDepositNote } from '@webb-dapp/mixer/hooks/note';
 import { Currency } from '@webb-dapp/react-environment/webb-context/currency/currency';
@@ -25,12 +30,12 @@ const NoteDetails = styled.div`
 
 export const BridgeNoteInput: React.FC<NoteInputProps> = ({ error, onChange, value }) => {
   const depositNote = useDepositNote(value);
-  const { getBridge } = useBridge();
+  const { bridgeApi } = useBridge();
   const navigate = useNavigate();
 
   // Switch to mixer tab if note is for mixer
   useEffect(() => {
-    if (depositNote && depositNote.note.prefix === 'webb.mixer') {
+    if (depositNote && depositNote.note.protocol === 'mixer') {
       notificationApi.addToQueue({
         secondaryMessage: 'Please complete withdraw through the mixer',
         message: 'Switched to mixer',
@@ -41,16 +46,15 @@ export const BridgeNoteInput: React.FC<NoteInputProps> = ({ error, onChange, val
     }
   }, [depositNote, navigate]);
 
-  const bridge = useMemo(() => {
+  const currency = useMemo(() => {
     try {
-      if (depositNote && depositNote.note.prefix == 'webb.bridge') {
-        const currency = Currency.fromCurrencyId(webbCurrencyIdFromString(depositNote.note.tokenSymbol));
-        return getBridge(currency);
+      if (depositNote && depositNote.note.protocol == 'anchor') {
+        return bridgeApi?.currency;
       }
     } catch (_) {
       return null;
     }
-  }, [depositNote, getBridge]);
+  }, [depositNote, bridgeApi]);
 
   return (
     <InputLabel label={'Note'}>
@@ -76,7 +80,7 @@ export const BridgeNoteInput: React.FC<NoteInputProps> = ({ error, onChange, val
               <tr>
                 <td>Context:</td>
                 <td style={{ textAlign: 'right' }}>
-                  <b>{depositNote.note.prefix.replace('webb.', '').toUpperCase()}</b>
+                  <b>{depositNote.note.protocol.toUpperCase()}</b>
                 </td>
               </tr>
               <tr>
@@ -89,18 +93,18 @@ export const BridgeNoteInput: React.FC<NoteInputProps> = ({ error, onChange, val
               <tr>
                 <td>Source Chain:</td>
                 <td style={{ textAlign: 'right' }}>
-                  {getEVMChainNameFromInternal(Number(depositNote.note.sourceChainId))}
+                  {getEVMChainName(parseChainIdType(Number(depositNote.note.sourceChainId)).chainId)}
                 </td>
               </tr>
 
               <tr>
                 <td>Destination Chain:</td>
                 <td style={{ textAlign: 'right' }}>
-                  {getEVMChainNameFromInternal(Number(depositNote.note.targetChainId))}
+                  {getEVMChainName(parseChainIdType(Number(depositNote.note.targetChainId)).chainId)}
                 </td>
               </tr>
 
-              {bridge ? (
+              {currency ? (
                 <>
                   <tr>
                     <td
@@ -112,7 +116,7 @@ export const BridgeNoteInput: React.FC<NoteInputProps> = ({ error, onChange, val
                     </td>
                     <td style={{ textAlign: 'right' }}>
                       <div>
-                        {bridge.currency
+                        {currency
                           .getChainIds()
                           .map(getEVMChainNameFromInternal)
                           .map((chainName) => (

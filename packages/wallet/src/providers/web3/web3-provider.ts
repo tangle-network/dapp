@@ -163,7 +163,7 @@ export class Web3Provider<T = unknown> {
           address: addTokenInput.address, // The address that the token is at.
           symbol: addTokenInput.symbol, // A ticker symbol or shorthand, up to 5 chars.
           decimals: addTokenInput.decimals, // The number of decimals in the token
-          image: 'https://placdholder.com/300', // A string url of the token logo
+          image: addTokenInput.image, // A string url of the token logo
         },
       },
     });

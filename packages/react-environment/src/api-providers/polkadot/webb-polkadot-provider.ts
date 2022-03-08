@@ -5,8 +5,12 @@ import {
   PolkadotWrapUnwrap,
   PolkaTXBuilder,
 } from '@webb-dapp/react-environment/api-providers/polkadot';
+import { PolkadotBridgeApi } from '@webb-dapp/react-environment/api-providers/polkadot/polkadot-bridge-api';
+import { PolkadotBridgeDeposit } from '@webb-dapp/react-environment/api-providers/polkadot/polkadot-bridge-deposit';
+import { PolkadotBridgeWithdraw } from '@webb-dapp/react-environment/api-providers/polkadot/polkadot-bridge-withdraw';
 import {
   ApiInitHandler,
+  AppConfig,
   ProvideCapabilities,
   WebbApiProvider,
   WebbMethods,
@@ -31,7 +35,8 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
   private constructor(
     apiPromise: ApiPromise,
     injectedExtension: InjectedExtension,
-    readonly relayingManager: WebbRelayerBuilder
+    readonly relayingManager: WebbRelayerBuilder,
+    readonly config: AppConfig
   ) {
     super();
     this.provider = new PolkadotProvider(apiPromise, injectedExtension);
@@ -42,12 +47,12 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
       bridge: {
         core: null,
         deposit: {
-          inner: {} as any,
-          enabled: false,
+          inner: new PolkadotBridgeDeposit(this),
+          enabled: true,
         },
         withdraw: {
-          inner: {} as any,
-          enabled: false,
+          inner: new PolkadotBridgeWithdraw(this),
+          enabled: true,
         },
       },
       wrapUnwrap: {
@@ -67,6 +72,7 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
         },
       },
       chainQuery: new PolkadotChainQuery(this),
+      bridgeApi: new PolkadotBridgeApi(this, this.config.bridgeByAsset),
     };
   }
 
@@ -115,10 +121,11 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
     appName: string,
     endpoints: string[],
     errorHandler: ApiInitHandler,
-    relayerBuilder: WebbRelayerBuilder
+    relayerBuilder: WebbRelayerBuilder,
+    appConfig: AppConfig
   ): Promise<WebbPolkadot> {
     const [apiPromise, injectedExtension] = await PolkadotProvider.getParams(appName, endpoints, errorHandler.onError);
-    const instance = new WebbPolkadot(apiPromise, injectedExtension, relayerBuilder);
+    const instance = new WebbPolkadot(apiPromise, injectedExtension, relayerBuilder, appConfig);
     await instance.insureApiInterface();
     /// check metadata update
     await instance.awaitMetaDataCheck();
