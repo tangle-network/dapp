@@ -149,21 +149,25 @@ const PageWrapUnwrap: FC = () => {
         id: `${context} .1 ${suffix}`,
         title: `.1 ${suffix}`,
         amount: 0.1,
+        asset: `${suffix}`
       },
       {
         id: `${context} 1 ${suffix}`,
         title: `1 ${suffix}`,
         amount: 1,
+        asset: `${suffix}`
       },
       {
         id: `${context} 10 ${suffix}`,
         title: `10 ${suffix}`,
         amount: 10,
+        asset: `${suffix}`
       },
       {
         id: `${context} 100 ${suffix}`,
         title: `100 ${suffix}`,
         amount: 100,
+        asset: `${suffix}`
       },
     ];
   }, [context, suffix]);

@@ -26,6 +26,8 @@ export class EvmChainMixersInfo {
       return {
         id: contract.address,
         title: `${contract.size} ${contract.symbol}`,
+        amount: contract.size,
+        asset: contract.symbol,
       };
     });
   }

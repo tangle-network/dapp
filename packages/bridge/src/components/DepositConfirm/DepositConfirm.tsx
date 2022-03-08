@@ -1,7 +1,7 @@
 import { ButtonBase, Checkbox, FormControlLabel, Icon, IconButton, Tooltip, Typography } from '@material-ui/core';
 import { ChainType, ChainTypeId, InternalChainId } from '@webb-dapp/apps/configs';
 import { BridgeDepositApi as DepositApi } from '@webb-dapp/bridge/hooks/deposit/useBridgeDeposit';
-import { DepositPayload, useWebContext } from '@webb-dapp/react-environment/webb-context';
+import { DepositPayload, MixerSize, useWebContext } from '@webb-dapp/react-environment/webb-context';
 import { Currency } from '@webb-dapp/react-environment/webb-context/currency/currency';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { CloseButton } from '@webb-dapp/ui-components/Buttons/CloseButton';
@@ -15,11 +15,6 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import styled from 'styled-components';
 import { DepositAmountDecal } from './DepositAmountDecal';
-
-const DismissWrapper = styled.button``;
-const Dismiss = () => {
-  return <DismissWrapper>dismiss</DismissWrapper>;
-};
 
 const DepositInfoWrapper = styled.div`
   padding: 1rem 2rem;
@@ -49,7 +44,7 @@ type DepositInfoProps = {
   onClose(): void;
   provider: DepositApi;
   onSuccess(): void;
-  mixerId: number | undefined;
+  mixerSize: MixerSize | undefined;
   destChain: ChainTypeId | undefined;
   wrappableAsset: Currency | null | undefined;
 };
@@ -96,7 +91,7 @@ const Loading = styled.div`
 
 export const DepositConfirm: React.FC<DepositInfoProps> = ({
   destChain,
-  mixerId,
+  mixerSize,
   onClose,
   onSuccess,
   open,
@@ -126,15 +121,15 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({
     });
   }, []);
   useEffect(() => {
-    if (typeof destChain === 'undefined' || !mixerId || !activeChain) {
+    if (typeof destChain === 'undefined' || !mixerSize || !activeChain) {
       return setNote(undefined);
     }
 
     const wrappableCurrencyAddress: string | undefined = wrappableAsset?.getAddress(activeChain.id);
-    provider.generateNote(mixerId, destChain, wrappableCurrencyAddress).then((note) => {
+    provider.generateNote(Number(mixerSize.id), destChain, wrappableCurrencyAddress).then((note) => {
       setNote(note);
     });
-  }, [provider, mixerId, destChain, activeChain, wrappableAsset]);
+  }, [provider, mixerSize, destChain, activeChain, wrappableAsset]);
   const [backupConfirmation, setBackupConfirmation] = useState(false);
   const generatingNote = !depositPayload;
   return (

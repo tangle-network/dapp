@@ -88,9 +88,7 @@ export const Deposit: React.FC<DepositProps> = () => {
   // helper for automatic selection of 'wrap and deposit' if not enough bridge token
   const selectBridgeAmount = (mixerSize: MixerSize) => {
     setItem(mixerSize);
-    // get the amount from mixersize data
-    const titleData = mixerSize.title.split(' ');
-    if (Number(wrappedTokenBalance) < Number(titleData[0])) {
+    if (Number(wrappedTokenBalance) < mixerSize.amount) {
       if (wrappableToken) {
         setShowWrappableAssets(true);
       }
@@ -205,7 +203,7 @@ export const Deposit: React.FC<DepositProps> = () => {
             setShowDepositModal(false);
           }}
           provider={bridgeDepositApi}
-          mixerId={item?.id ? (item.id as any) : undefined}
+          mixerSize={item}
           destChain={destChain}
           wrappableAsset={showWrappableAssets ? wrappableCurrency : null}
         />
