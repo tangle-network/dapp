@@ -104,6 +104,8 @@ export class PolkadotBridgeDeposit extends BridgeDeposit<WebbPolkadot, DepositPa
       return anchors.map((anchor, anchorIndex) => ({
         id: `Bridge=${anchor.amount}@${currency.view.name}@${anchorIndex}`,
         title: `${anchor.amount} ${currency.view.name}`,
+        amount: Number(anchor.amount),
+        asset: currency.view.name,
       }));
     }
     return [];

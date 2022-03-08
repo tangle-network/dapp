@@ -15,6 +15,8 @@ export type DespotStates = 'ideal' | 'generating-note' | 'depositing';
 export type MixerSize = {
   id: number | string;
   title: string;
+  amount: number;
+  asset: string;
 };
 
 export abstract class MixerDeposit<

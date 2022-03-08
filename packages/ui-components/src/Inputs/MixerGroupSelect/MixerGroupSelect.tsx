@@ -76,7 +76,7 @@ export const MixerGroupSelect: React.FC<MixerGroupSelectProps> = ({ items, onCha
     <InputSection>
       <InputLabel label={'Select Amount'}>
         <MixerGroupSelectWrapper>
-          {mixerSizes.map(({ id, selected, title }) => {
+          {mixerSizes.map(({ id, selected, title, amount, asset }) => {
             return (
               <AmountChipWrapper
                 key={id + title}
@@ -85,10 +85,12 @@ export const MixerGroupSelect: React.FC<MixerGroupSelectProps> = ({ items, onCha
                   onChange?.({
                     title,
                     id,
+                    amount,
+                    asset
                   });
                 }}
               >
-                {title}
+                {amount}
               </AmountChipWrapper>
             );
           })}
