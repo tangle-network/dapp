@@ -74,60 +74,63 @@ const appConfig: AppConfig = {
 
 function notificationHandler(notification: NotificationPayload) {
   switch (notification.name) {
-    case 'Transaction':
-      {
-        const isFailed = notification.level === 'error';
-        const isFinalized = notification.level === 'success';
-        const description = notification.data ? (
-          <div>
-            {Object.keys(notification.data).map((i) => (
-              <Typography variant={'h6'}>{notification.data?.[i]}</Typography>
-            ))}
-          </div>
-        ) : (
-          notification.description
-        );
-        if (isFinalized) {
-          notificationApi({
-            extras: {
-              persist: false,
-            },
-            message: notification.message ?? 'Submit Transaction Success',
-            secondaryMessage: description,
-            key: notification.key,
-            variant: 'success',
-          });
-          setTimeout(() => notificationApi.remove(notification.key), 6000);
-        } else if (isFailed) {
-          notificationApi({
-            extras: {
-              persist: false,
-            },
-            key: notification.key,
-            message: notification.message,
-            secondaryMessage: description,
-            variant: 'error',
-          });
-        } else {
-          notificationApi({
-            extras: {
-              persist: true,
-            },
-            key: notification.key,
-            message: notification.message,
-            secondaryMessage: description,
-            variant: 'info',
-            // eslint-disable-next-line sort-keys
-            Icon: <Spinner />,
-            transparent: true,
-          });
-        }
+    case 'Transaction': {
+      const isFailed = notification.level === 'error';
+      const isFinalized = notification.level === 'success';
+      const description = notification.data ? (
+        <div>
+          {Object.keys(notification.data).map((i) => (
+            <Typography variant={'h6'}>{notification.data?.[i]}</Typography>
+          ))}
+        </div>
+      ) : (
+        notification.description
+      );
+      if (isFinalized) {
+        const key = notificationApi({
+          extras: {
+            persist: false,
+          },
+          message: notification.message ?? 'Submit Transaction Success',
+          secondaryMessage: description,
+          key: notification.key,
+          variant: 'success',
+        });
+        setTimeout(() => notificationApi.remove(notification.key), 6000);
+        return key;
+      } else if (isFailed) {
+        return notificationApi({
+          extras: {
+            persist: false,
+          },
+          key: notification.key,
+          message: notification.message,
+          secondaryMessage: description,
+          variant: 'error',
+        });
+      } else {
+        return notificationApi({
+          extras: {
+            persist: true,
+          },
+          key: notification.key,
+          message: notification.message,
+          secondaryMessage: description,
+          variant: 'info',
+          // eslint-disable-next-line sort-keys
+          Icon: <Spinner />,
+          transparent: true,
+        });
       }
-
-      break;
+    }
+    default:
+      return '';
   }
 }
 
+notificationHandler.remove = (key: string | number) => {
+  notificationApi.remove(key);
+};
 export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Dapp', children }) => {
   const [activeWallet, setActiveWallet] = useState<Wallet | undefined>(undefined);
   const [activeChain, setActiveChain] = useState<Chain | undefined>(undefined);

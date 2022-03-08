@@ -152,7 +152,7 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
       nullifier: deposit.nullifier,
       nullifierHash: deposit.nullifierHash,
 
-      // Todo change this to the realyer address
+      // Todo change this to the RELAYER address
       relayer: account.address,
       recipient: account.address,
 
@@ -161,32 +161,25 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
     };
 
     logger.trace(`input for zkp`, input);
+    const section = `Bridge ${bridge.currency.getChainIds().map(getEVMChainNameFromInternal).join('-')}`;
+    const key = `web3-bridge-withdraw`;
     this.emit('stateChange', WithdrawState.GeneratingZk);
     const zkpResults = await contract.generateZKP(deposit, input);
-    transactionNotificationConfig.loading?.({
-      address: recipient,
-      data: React.createElement(
-        'p',
-        { style: { fontSize: '.9rem' } }, // Matches Typography variant=h6
-        `Withdraw in progress`
-      ),
-      key: 'bridge-withdraw-evm',
-      path: {
-        method: 'withdraw',
-        section: `Bridge ${bridge.currency.getChainIds().map(getEVMChainNameFromInternal).join('-')}`,
-      },
+    this.inner.notificationHandler({
+      description: 'Withdraw in progress',
+      key,
+      level: 'loading',
+      message: `${section}:withdraw`,
+      name: 'Transaction',
     });
-
     // Check for cancelled here, abort if it was set.
     if (this.cancelToken.cancelled) {
-      transactionNotificationConfig.failed?.({
-        address: recipient,
-        data: 'Withdraw cancelled',
-        key: 'mixer-withdraw-evm',
-        path: {
-          method: 'withdraw',
-          section: 'evm-mixer',
-        },
+      this.inner.notificationHandler({
+        description: 'Withdraw canceled',
+        key,
+        level: 'error',
+        message: `${section}:withdraw`,
+        name: 'Transaction',
       });
       this.emit('stateChange', WithdrawState.Ideal);
       return '';
@@ -215,27 +208,24 @@ export class Web3BridgeWithdraw extends BridgeWithdraw<WebbWeb3Provider> {
       );
     } catch (e) {
       this.emit('stateChange', WithdrawState.Ideal);
-      transactionNotificationConfig.failed?.({
-        address: recipient,
-        data: (e as any)?.code === 4001 ? 'Withdraw rejected' : 'Withdraw failed',
-        key: 'bridge-withdraw-evm',
-        path: {
-          method: 'withdraw',
-          section: `Bridge ${bridge.currency.getChainIds().map(getEVMChainNameFromInternal).join('-')}`,
-        },
+
+      this.inner.notificationHandler({
+        description: (e as any)?.code === 4001 ? 'Withdraw rejected' : 'Withdraw failed',
+        key,
+        level: 'error',
+        message: `${section}:withdraw`,
+        name: 'Transaction',
       });
       return '';
     }
 
     this.emit('stateChange', WithdrawState.Ideal);
-    transactionNotificationConfig.finalize?.({
-      address: recipient,
-      data: undefined,
-      key: 'bridge-withdraw-evm',
-      path: {
-        method: 'withdraw',
-        section: `Bridge ${bridge.currency.getChainIds().map(getEVMChainNameFromInternal).join('-')}`,
-      },
+    this.inner.notificationHandler({
+      description: recipient,
+      key,
+      level: 'success',
+      message: `${section}:withdraw`,
+      name: 'Transaction',
     });
     return '';
   }
