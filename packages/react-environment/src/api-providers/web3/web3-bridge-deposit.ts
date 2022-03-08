@@ -94,7 +94,7 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
             description: 'Waiting for token approval',
             persist: true,
             level: 'info',
-            name: 'Transaction',
+            name: 'Approval',
             message: 'Waiting for token approval',
             key: 'waiting-approval',
           });
@@ -146,7 +146,7 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
             description: 'Waiting for token approval',
             persist: true,
             level: 'info',
-            name: 'Transaction',
+            name: 'Approval',
             message: 'Waiting for token approval',
             key: 'waiting-approval',
           });

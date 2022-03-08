@@ -7,10 +7,7 @@ import {
 } from '@webb-dapp/apps/configs';
 import { createTornDeposit, Deposit } from '@webb-dapp/contracts/utils/make-deposit';
 import { DepositPayload as IDepositPayload, MixerDeposit, MixerSize } from '@webb-dapp/react-environment/webb-context';
-import { DepositNotification } from '@webb-dapp/ui-components/notification/DepositNotification';
-import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polkadot/transaction-notification-config';
 import { Note, NoteGenInput } from '@webb-tools/sdk-core';
-import React from 'react';
 import utils from 'web3-utils';
 
 import { u8aToHex } from '@polkadot/util';

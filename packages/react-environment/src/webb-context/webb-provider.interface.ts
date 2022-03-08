@@ -121,7 +121,7 @@ export type NotificationPayload = {
   // details about the notification
   description: string;
   // Event name/ event identifier
-  name: 'Transaction';
+  name: 'Transaction' | 'Approval';
   // key for a given notification
   key: string;
   //level
