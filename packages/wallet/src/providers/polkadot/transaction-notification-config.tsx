@@ -30,7 +30,7 @@ export const transactionNotificationConfig: NotificationConfig = {
     });
   },
   finalize(data) {
-    return notificationApi({
+    const notificationId = notificationApi({
       extras: {
         persist: false,
       },
@@ -39,5 +39,6 @@ export const transactionNotificationConfig: NotificationConfig = {
       variant: 'success',
     });
     setTimeout(() => notificationApi.remove(data.key), 6000);
+    return notificationId;
   },
 };
