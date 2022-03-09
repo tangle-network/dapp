@@ -68,7 +68,7 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
         title: amount + ` ${currency.symbol}`,
         symbol: currency.symbol,
         amount: amount,
-        asset: currency.fullName,
+        asset: currency.symbol,
       }))
       .sort((a, b) => (a.value > b.value ? 1 : a.value < b.value ? -1 : 0));
     return groupItem;

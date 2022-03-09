@@ -3,6 +3,7 @@ import { ChainType, ChainTypeId, InternalChainId } from '@webb-dapp/apps/configs
 import { BridgeDepositApi as DepositApi } from '@webb-dapp/bridge/hooks/deposit/useBridgeDeposit';
 import { DepositPayload, MixerSize, useWebContext } from '@webb-dapp/react-environment/webb-context';
 import { Currency } from '@webb-dapp/react-environment/webb-context/currency/currency';
+import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { CloseButton } from '@webb-dapp/ui-components/Buttons/CloseButton';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
@@ -24,6 +25,7 @@ const DepositInfoWrapper = styled.div`
   overflow: hidden;
 
   .modal-header {
+    padding-top: 15px;
     position: relative;
     width: 100%;
   }
@@ -52,19 +54,22 @@ type DepositInfoProps = {
 const GeneratedNote = styled.p`
   border-radius: 10px;
   padding: 0.7rem;
-  border: 1px solid #ebeefd;
   word-break: break-all;
   position: relative;
   min-height: 120px;
+  background: ${({ theme }) => theme.heavySelectionBackground};
+  color: ${({ theme }) => theme.primaryText};
 
   .copy-button {
     position: absolute;
+    padding-top: 10px;
     bottom: 0;
     right: 0;
   }
 
   .download-button {
     position: absolute;
+    padding-top: 10px;
     bottom: 0;
     right: 45px;
   }
@@ -98,6 +103,7 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({
   provider,
   wrappableAsset,
 }) => {
+  const palette = useColorPallet();
   const { activeChain } = useWebContext();
   const [depositPayload, setNote] = useState<DepositPayload | undefined>(undefined);
   const [loading, setLoading] = useState(false);
@@ -126,7 +132,7 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({
     }
 
     const wrappableCurrencyAddress: string | undefined = wrappableAsset?.getAddress(activeChain.id);
-    provider.generateNote(Number(mixerSize.id), destChain, wrappableCurrencyAddress).then((note) => {
+    provider.generateNote(mixerSize.id, destChain, wrappableCurrencyAddress).then((note) => {
       setNote(note);
     });
   }, [provider, mixerSize, destChain, activeChain, wrappableAsset]);
@@ -161,8 +167,7 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({
             Please backup your note. If you lose this. <br /> you won't get your deposit back.
           </Typography>
           <SpaceBox height={20} />
-          <DepositAmountDecal amount={'1'} />
-          
+          <DepositAmountDecal amount={mixerSize?.amount || 0} symbol={mixerSize?.asset || 'UNKN'} />
         </header>
 
         <SpaceBox height={16} />
@@ -195,8 +200,8 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({
           onChange={() => {
             setBackupConfirmation((v) => !v);
           }}
-          control={<Checkbox color={'primary'} />}
-          label={<Typography color={'primary'}>I confirm,I backed up the note</Typography>}
+          control={<Checkbox color={'primary'} style={{ color: palette.accentColor }} />}
+          label={<Typography style={{ color: palette.primaryText }}>I confirm, I backed up the note</Typography>}
         />
 
         <SpaceBox height={8} />

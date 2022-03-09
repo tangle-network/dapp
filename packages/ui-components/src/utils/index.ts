@@ -23,3 +23,13 @@ export function getInputBorder(noBorder: boolean, error: boolean): string {
 
   return '1px solid var(--input-border-color)';
 }
+
+export function getRoundedAmountString(amount: number) {  
+  if (amount >= 10000000) {
+    return `${amount / 1000000}M`;
+  } else if (amount >= 100000) {
+    return `${amount / 1000}K`;
+  } else {
+    return `${amount}`;
+  }
+}
