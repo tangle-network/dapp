@@ -11,7 +11,6 @@ const NoExtensionWrapper = styled.div`
   max-width: 500px;
   margin: auto;
   border-radius: 20px;
-  box-shadow: 0px 0px 14px rgba(51, 81, 242, 0.11);
 `;
 
 const GetPolkadotButton = styled.button`

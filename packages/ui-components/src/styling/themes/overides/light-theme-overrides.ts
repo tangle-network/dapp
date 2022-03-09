@@ -3,7 +3,7 @@ import { ThemeOptions } from '@material-ui/core';
 
 import { FontFamilies } from '../../fonts/font-families.enum';
 
-export const lightMainThemeOverrides: ThemeOptions['overrides'] = {
+export const themeOverrides: ThemeOptions['overrides'] = {
   MuiButton: {
     root: {},
   },

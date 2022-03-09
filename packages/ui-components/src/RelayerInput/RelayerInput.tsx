@@ -41,7 +41,7 @@ enum RelayerInputStatus {
 }
 
 const RelayerInfoModalWrapper = styled.div`
-  background-color: ${({ theme }: { theme: Pallet }) => theme.mainBackground};
+  background-color: ${({ theme }: { theme: Pallet }) => theme.componentBackground};
   padding: 2rem;
 `;
 const RelayerInfoModalActionsWrapper = styled.div`

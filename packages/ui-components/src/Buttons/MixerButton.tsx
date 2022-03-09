@@ -6,7 +6,7 @@ import styled, { css } from 'styled-components';
 const MixerButtonWrapper = styled.button`
 	&&& {
 		width: 100%;
-		background: ${({ theme }) => theme.primary};
+		background: ${({ theme }) => theme.accentColor};
 		border-radius: 31px;
 		color: #fff;
 		height: 60px;
