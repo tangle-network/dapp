@@ -23,7 +23,17 @@ export const CNavLink = styled(NavLink)<NavLinkProps & { $hasIcon?: boolean }>`
 
   &:hover,
   &.active {
-    background: var(--list-item-background);
+    background: ${({ theme }) => theme.lightSelectionBackground};
+  }
+
+  &.active span {
+    color: ${({ theme }) => (theme.type === 'dark' ? theme.accentColor : '#000000')};
+  }
+
+  &.active svg {
+    path {
+      fill: ${({ theme }) => (theme.type === 'dark' ? theme.accentColor : '#000000')};
+    }
   }
 
   &:after {
@@ -49,7 +59,7 @@ const ProductName = styled.span<{ collapse: boolean }>`
   font-size: var(--text-size-sm);
   line-height: 20px;
   font-weight: 500;
-  color: var(--color-primary) !important;
+  color: #b6b6b6;
 `;
 
 interface ProductListProps {
@@ -75,8 +85,9 @@ const ProductItem: FC<ProductItemProps> = memo(({ collapse, data }) => {
   const isMatch = useMatch(data.path ?? '__unset__path');
 
   const handleClick = useCallback(() => {
+    console.log(data.path);
     setSubMenu(null);
-  }, [setSubMenu]);
+  }, [data.path, setSubMenu]);
 
   useEffect(() => {
     if (!isMatch) return;
@@ -96,7 +107,7 @@ const ProductItem: FC<ProductItemProps> = memo(({ collapse, data }) => {
         </ProductCell>
         <ProductList collapse={!isOpen}>
           {data.items.map((item) => (
-            <ProductItem collapse={collapse} data={item} key={`${data.name}_${item.name}`} />
+            <ProductSubItem collapse={collapse} data={item} key={`${data.name}_${item.name}`} />
           ))}
         </ProductList>
       </>
@@ -105,6 +116,42 @@ const ProductItem: FC<ProductItemProps> = memo(({ collapse, data }) => {
 
   return (
     <CNavLink $hasIcon={!!data.icon} onClick={handleClick} ref={ref} to={data.path ?? '__unset__path'}>
+      {data.icon}
+      <ProductName collapse={collapse}>{data.name}</ProductName>
+    </CNavLink>
+  );
+});
+
+const ProductSubItem: FC<ProductItemProps> = memo(({ collapse, data }) => {
+  const { setSubMenu } = useStore('ui');
+  const ref = createRef<HTMLAnchorElement>();
+  const { active, setActive } = useContext(SidebarActiveContext);
+  const isMatch = useMatch(data.path ?? '__unset__path');
+
+  const handleClick = useCallback(() => {
+    console.log(data.path);
+    setSubMenu(null);
+  }, [data.path, setSubMenu]);
+
+  useEffect(() => {
+    if (!isMatch) return;
+
+    if (!!isMatch && setActive && data.path && active !== ref.current) {
+      setActive(ref.current);
+    }
+  }, [isMatch, setActive, ref, data, active]);
+
+  return (
+    <CNavLink
+      $hasIcon={!!data.icon}
+      onClick={handleClick}
+      ref={ref}
+      to={data.path ?? '__unset__path'}
+      style={{
+        height: '30px',
+        paddingLeft: '30px',
+      }}
+    >
       {data.icon}
       <ProductName collapse={collapse}>{data.name}</ProductName>
     </CNavLink>

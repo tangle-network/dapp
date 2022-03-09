@@ -26,6 +26,8 @@ export const LightTheme = createGlobalStyle`
 		--color-info: var(--color-blue);
 		--color-warning: var(--color-orange);
 
+		--accent-color: ${lightPallet.accentColor};
+		--checkbox-color: '#000'
 		--border-color: #e9e9e9;
 		--dividing-color: #ecf0f2;
 
@@ -53,11 +55,7 @@ export const LightTheme = createGlobalStyle`
 
 		--card-shadow: 0 0 21px rgba(23, 65, 212, 0.15);
 
-
 		--sidebar-item-height: 58px;
-
-		--platform-background: #f8f9fd;
-		--card-background: var(--platform-background);
 
 		--information-background: #edf3ff;
 		--information-title-color: #0155ff;
@@ -79,6 +77,12 @@ export const LightTheme = createGlobalStyle`
 		--input-shadow-error: rgba(255, 90, 90, 0.2);
 	}
 
+	.active-menu-item {
+		path: {
+			fill: ${lightPallet.accentColor};
+		}
+	}
+
 	/* overwrite ant style */
 	.ant-steps-item-process .ant-steps-item-icon {
 		background: var(--color-primary);
@@ -98,6 +102,6 @@ export const LightTheme = createGlobalStyle`
 	}
 
 	body {
-		background: ${lightPallet.mainBackground} !important;
+		background: ${lightPallet.componentBackground} !important;
 	}
 `;

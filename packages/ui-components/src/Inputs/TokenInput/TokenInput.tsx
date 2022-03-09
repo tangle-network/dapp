@@ -32,7 +32,7 @@ const StyledList = styled.ul`
 
     &.selected,
     :hover {
-      background: ${({ theme }: { theme: Pallet }) => (theme.type === 'dark' ? theme.layer3Background : theme.gray1)};
+      background: ${({ theme }) => (theme.type === 'dark' ? theme.layer3Background : theme.gray1)};
     }
 
     position: relative;
@@ -40,17 +40,15 @@ const StyledList = styled.ul`
 `;
 
 const TokenInputWrapper = styled.div<{ open: boolean }>`
-  width: '230px';
   border-radius: 25px;
-  border: 1px solid ${({ theme }: { theme: Pallet }) => theme.borderColor};
+  border: ${({ theme }) => theme.heavySelectionBorder};
   overflow: hidden;
-  background: ${({ theme }) => theme.layer3Background} 37%;
+  background: ${({ theme }) => theme.heavySelectionBackground};
 
   ${({ open, theme }) => {
     return open
       ? css`
-          background: ${theme.layer1Background} 9%;
-          box-shadow: 1px 1px 14px ${theme.type === 'dark' ? 'black' : 'rgba(54, 86, 233, 0.1)'};
+          background: ${theme.layer1Background};
           max-height: 350px;
           border-radius: 25px 25px 0 0;
         `
@@ -77,14 +75,6 @@ const PopperList = styled.div<{ open: boolean }>`
     border: 1px solid ${({ theme }) => (theme.type === 'dark' ? 'black' : theme.gray13)};
     background: ${({ theme }) => theme.background};
     overflow: hidden;
-
-    ${({ open, theme }) => {
-      return open
-        ? css`
-            box-shadow: 1px 1px 14px ${theme.type === 'dark' ? 'black' : 'rgba(54, 86, 233, 0.1)'};
-          `
-        : css``;
-    }}
 
     ${({ open }) => {
       return open

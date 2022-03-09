@@ -115,6 +115,12 @@
 	  "@webb-dapp/page-wrap-unwrap": [
 		"page-wrap-unwrap/src"
 	  ],
+	  "@webb-dapp/page-statistics/*": [
+		"page-statistics/src/*"
+	  ],
+	  "@webb-dapp/page-statistics": [
+		"page-statistics/src"
+	  ],
 	  "@webb-dapp/bridge/*": [
 		"bridge/src/*"
 	  ],

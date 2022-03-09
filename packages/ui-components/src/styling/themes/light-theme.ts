@@ -47,11 +47,14 @@ export const lightMainTheme: ThemeOptions = {
       disabled: tinycolor(lightPallet.primaryText).lighten(lightenRate).toHexString(),
     },
     background: {
-      default: lightPallet.mainBackground,
+      default: lightPallet.componentBackground,
       paper: lightPallet.background,
     },
   },
   typography: {
+    allVariants: {
+      color: lightPallet.primaryText,
+    },
     htmlFontSize: 17,
     fontSize: 12,
     fontFamily: [FontFamilies.Bitum, 'serif'].join(','),
@@ -59,7 +62,7 @@ export const lightMainTheme: ThemeOptions = {
   overrides: {
     MuiBackdrop: {
       root: {
-        backgroundColor: lightPallet.backdrop,
+        backgroundColor: lightPallet.background,
       },
     },
     MuiMenu: {

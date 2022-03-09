@@ -425,13 +425,13 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
   );
 };
 
-const NetworkIndecatorWrapper = styled.button`
+const NetworkIndicatorWrapper = styled.button`
   && {
     min-height: 53px;
     border-radius: 32px;
     margin: 0 1rem;
     padding: 0 0.3rem;
-    //background: ${({ theme }: { theme: Pallet }) => theme.background};
+    background: ${({ theme }: { theme: Pallet }) => theme.lightSelectionBackground};
     position: relative;
 
     &:before {
@@ -442,7 +442,7 @@ const NetworkIndecatorWrapper = styled.button`
       height: 100%;
       width: 100%;
       z-index: 1;
-      background: ${({ theme }: { theme: Pallet }) => (theme.type === 'light' ? 'white' : 'rgba(51, 81, 242, 0.28)')};
+      background: ${({ theme }: { theme: Pallet }) => theme.lightSelectionBackground};
       border-radius: 32px;
     }
 
@@ -454,7 +454,7 @@ const NetworkIndecatorWrapper = styled.button`
       left: 2px;
       height: calc(100% - 4px);
       width: calc(100% - 4px);
-      background: ${({ theme }: { theme: Pallet }) => (theme.type === 'light' ? 'rgba(71, 69, 83, 0.1)' : 'black')};
+      background: ${({ theme }: { theme: Pallet }) => theme.lightSelectionBackground};
       border-radius: 32px;
     }
 
@@ -503,7 +503,7 @@ export const NetworkManagerIndicator: React.FC<NetworkManagerIndicatorProps> = (
     }
   }, [connectionMetaData, connectionStatus]);
   return (
-    <NetworkIndecatorWrapper as={ButtonBase} onClick={onClick}>
+    <NetworkIndicatorWrapper as={ButtonBase} onClick={onClick}>
       <Flex row ai={'center'} jc='space-between' as={Padding}>
         <Flex>{icon}</Flex>
         {connectionMetaData ? (
@@ -520,6 +520,6 @@ export const NetworkManagerIndicator: React.FC<NetworkManagerIndicatorProps> = (
           ''
         )}
       </Flex>
-    </NetworkIndecatorWrapper>
+    </NetworkIndicatorWrapper>
   );
 };

@@ -127,15 +127,9 @@ _Page = memo(styled(_Page)`
   overflow-y: auto;
   overflow-y: overlay;
   overflow: auto;
-
-  border-radius: 40px 40px 40px 40px;
   padding: 0 10px;
 
   transition: all ease-in-out 0.5s;
-  background: ${({ theme }) => {
-    return theme.background;
-  }};
-  box-shadow: 0px 0px 14px rgba(51, 81, 242, 0.11);
 `);
 
 const Content: FC<BareProps> = memo(styled.div`

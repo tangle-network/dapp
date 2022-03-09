@@ -120,7 +120,7 @@ export const Alert: React.FC<{
         return pallet.info;
       default:
       case 'default':
-        return lightPallet.mainBackground;
+        return lightPallet.componentBackground;
     }
   }, [opts, pallet]);
   const close = useCallback(() => opts.close($key), [$key, opts]);

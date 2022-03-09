@@ -47,7 +47,7 @@ const AccountManagerContent = styled.div<{ open: boolean }>`
   width: '230px';
   border-radius: 25px;
   border: 1px solid ${({ theme }) => (theme.type === 'dark' ? 'black' : theme.gray13)};
-  background: ${({ theme }) => theme.background};
+  background: ${({ theme }) => theme.lightSelectionBackground};
   overflow: hidden;
 
   ${({ open, theme }) => {
@@ -81,14 +81,6 @@ const PopperList = styled.div<{ open: boolean }>`
     border: 1px solid ${({ theme }) => (theme.type === 'dark' ? 'black' : theme.gray13)};
     background: ${({ theme }) => theme.background};
     overflow: hidden;
-
-    ${({ open, theme }) => {
-      return open
-        ? css`
-            box-shadow: 1px 1px 14px ${theme.type === 'dark' ? 'black' : 'rgba(54, 86, 233, 0.1)'};
-          `
-        : css``;
-    }}
 
     ${({ open }) => {
       return open

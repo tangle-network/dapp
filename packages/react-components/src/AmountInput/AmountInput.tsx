@@ -81,7 +81,6 @@ const Radio = styled.input`
   padding: 0;
   margin: 0;
   outline: none;
-  box-shadow: none;
   border: none;
 
   :before,

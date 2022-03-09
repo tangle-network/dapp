@@ -6,7 +6,6 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-variant-numeric: tabular-nums;
-  color: var(--text-color-normal);
   font-weight: 400;
   transition: all ease-in-out 0.2s;
   font-size: 14px;
@@ -103,9 +102,6 @@ span {
 
   --sidebar-item-height: 58px;
 
-  --platform-background: #333;
-  --card-background: #222;
-
   --information-background: rgba(0, 0, 0, 0.4);
   --information-title-color: #0155ff;
   --information-content-color: #95addc;
@@ -124,25 +120,4 @@ span {
   --input-shadow: rgba(1, 85, 255, 0.2);
   --input-border-color-error: rgba(255, 90, 90, 1);
   --input-shadow-error: rgba(255, 90, 90, 0.2);
-}
-
-/* overwrite ant style */
-.ant-steps-item-process .ant-steps-item-icon {
-  background: var(--color-primary);
-  border-color: var(--color-primary);
-}
-
-.ant-steps-item-finish .ant-steps-item-icon {
-  border-color: var(--color-primary);
-}
-
-.ant-steps-item-finish .ant-steps-item-icon > .ant-steps-icon {
-  color: var(--color-primary);
-}
-
-.ant-dropdown-menu {
-  border-radius: 12px;
-}
-.ant-notification {
-  z-index: 4000;
 }
