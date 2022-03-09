@@ -28,11 +28,11 @@ const AmountChipWrapper = styled.span<{ selected?: boolean }>`
   text-transform: capitalize;
   ${({ selected, theme }: { theme: Pallet; selected?: boolean }) => css`
     && {
-      border: 1px solid ${theme.borderColor2};
+      border: 1px solid ${selected && theme.type === 'dark' ? theme.accentColor : theme.borderColor};
       border-radius: 20px;
-      background: ${selected ? (theme.type === 'light' ? `#ebedf2` : theme.primary) : theme.layer3Background};
+      background: ${selected && theme.type === 'light' ? theme.accentColor : 'transparent'};
       font-family: ${FontFamilies.AvenirNext};
-      color: ${theme.primaryText};
+      color: ${selected && theme.type === 'dark' ? theme.accentColor : theme.primaryText};
       height: 40px;
       padding: 0 5px;
       flex: 1;
@@ -76,7 +76,7 @@ export const MixerGroupSelect: React.FC<MixerGroupSelectProps> = ({ items, onCha
     <InputSection>
       <InputLabel label={'Select Amount'}>
         <MixerGroupSelectWrapper>
-          {mixerSizes.map(({ id, selected, title }) => {
+          {mixerSizes.map(({ id, selected, title, amount, asset }) => {
             return (
               <AmountChipWrapper
                 key={id + title}
@@ -85,10 +85,12 @@ export const MixerGroupSelect: React.FC<MixerGroupSelectProps> = ({ items, onCha
                   onChange?.({
                     title,
                     id,
+                    amount,
+                    asset
                   });
                 }}
               >
-                {title}
+                {amount}
               </AmountChipWrapper>
             );
           })}

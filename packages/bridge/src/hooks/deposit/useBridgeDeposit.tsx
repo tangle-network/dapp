@@ -26,7 +26,7 @@ export interface BridgeDepositApi {
 
   deposit(payload: DepositPayload): Promise<void>;
 
-  generateNote(mixerId: number, destChain: ChainTypeId, wrappableAsset: string | undefined): Promise<DepositPayload>;
+  generateNote(mixerId: number | string, destChain: ChainTypeId, wrappableAsset: string | undefined): Promise<DepositPayload>;
 
   loadingState: MixerDeposit['loading'];
   error: string;
@@ -75,7 +75,7 @@ export const useBridgeDeposit = (): BridgeDepositApi => {
   }, [depositApi, bridgeApi]);
 
   const generateNote = useCallback(
-    async (mixerId: number, destChainTypeId: ChainTypeId, wrappableAsset: string | undefined) => {
+    async (mixerId: number | string, destChainTypeId: ChainTypeId, wrappableAsset: string | undefined) => {
       if (!depositApi) {
         throw new Error('Not ready');
       }

@@ -59,7 +59,7 @@ export const Deposit: React.FC<DepositProps> = () => {
             setShowDepositModal(false);
           }}
           provider={depositApi}
-          mixerId={item?.id ?? 0}
+          mixerSize={item}
         />
       </Modal>
     </DepositWrapper>

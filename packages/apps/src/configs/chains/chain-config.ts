@@ -1,15 +1,15 @@
-import ArbitrumLogo from '@webb-dapp/apps/configs/logos/ArbitrumLogo';
-import EdgewareLogo from '@webb-dapp/apps/configs/logos/EdgewareLogo';
-import EtherLogo from '@webb-dapp/apps/configs/logos/Eth';
-import HarmonyLogo from '@webb-dapp/apps/configs/logos/HarmonyLogo';
-import OptimismLogo from '@webb-dapp/apps/configs/logos/OptimismLogo';
-import PolygonLogo from '@webb-dapp/apps/configs/logos/PolygonLogo';
-import ShidenLogo from '@webb-dapp/apps/configs/logos/ShidenLogo';
-import WEBBLogo from '@webb-dapp/apps/configs/logos/WebbLogo';
+import { GLogo, KLogo, RLogo } from '@webb-dapp/apps/configs/logos/chains';
+import ArbitrumLogo from '@webb-dapp/apps/configs/logos/chains/ArbitrumLogo';
+import EdgewareLogo from '@webb-dapp/apps/configs/logos/chains/EdgewareLogo';
+import GanacheLogo from '@webb-dapp/apps/configs/logos/chains/GanacheLogo';
+import HarmonyLogo from '@webb-dapp/apps/configs/logos/chains/HarmonyLogo';
+import OptimismLogo from '@webb-dapp/apps/configs/logos/chains/OptimismLogo';
+import PolygonLogo from '@webb-dapp/apps/configs/logos/chains/PolygonLogo';
+import ShidenLogo from '@webb-dapp/apps/configs/logos/chains/ShidenLogo';
+import WEBBLogo from '@webb-dapp/apps/configs/logos/chains/WebbLogo';
 import { AppConfig } from '@webb-dapp/react-environment/webb-context';
 
 import { WebbCurrencyId } from '../currencies/webb-currency-id.enum';
-import GanacheLogo from '../logos/GanacheLogo';
 import { ChainType, EVMChainId, InternalChainId, SubstrateChainId } from './chain-id.enum';
 
 export const getSupportedCurrenciesOfChain = (chainId: InternalChainId): WebbCurrencyId[] => {
@@ -71,7 +71,7 @@ export const chainsConfig: AppConfig['chains'] = {
     url: 'https://rinkeby.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4',
     evmRpcUrls: ['https://rinkeby.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4'],
     blockExplorerStub: 'https://rinkeby.etherscan.io',
-    logo: EtherLogo,
+    logo: RLogo,
     tag: 'test',
     currencies: [WebbCurrencyId.ETH, WebbCurrencyId.WETH],
     nativeCurrencyId: WebbCurrencyId.ETH,
@@ -85,7 +85,7 @@ export const chainsConfig: AppConfig['chains'] = {
     url: 'https://ropsten.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4',
     evmRpcUrls: ['https://ropsten.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4'],
     blockExplorerStub: 'https://ropsten.etherscan.io',
-    logo: EtherLogo,
+    logo: RLogo,
     tag: 'test',
     currencies: [WebbCurrencyId.ETH, WebbCurrencyId.WETH],
     nativeCurrencyId: WebbCurrencyId.ETH,
@@ -99,7 +99,7 @@ export const chainsConfig: AppConfig['chains'] = {
     url: 'https://goerli.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4',
     evmRpcUrls: ['https://goerli.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4'],
     blockExplorerStub: 'https://goerli.etherscan.io',
-    logo: EtherLogo,
+    logo: GLogo,
     tag: 'test',
     currencies: [WebbCurrencyId.ETH, WebbCurrencyId.WETH],
     nativeCurrencyId: WebbCurrencyId.ETH,
@@ -113,7 +113,7 @@ export const chainsConfig: AppConfig['chains'] = {
     url: 'https://kovan.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4',
     evmRpcUrls: ['https://goerli.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4'],
     blockExplorerStub: 'https://kovan.etherscan.io',
-    logo: EtherLogo,
+    logo: KLogo,
     tag: 'test',
     currencies: [WebbCurrencyId.ETH, WebbCurrencyId.WETH],
     nativeCurrencyId: WebbCurrencyId.ETH,

@@ -26,7 +26,6 @@ const TransferWrapper = styled.div`
   ${({ theme }: { theme: Pallet }) => css`
     background: ${theme.layer1Background};
     border: 1px solid ${theme.borderColor};
-    ${theme.type === 'light' ? `box-shadow: 0px 0px 14px rgba(51, 81, 242, 0.11);` : ''}
   `}
 `;
 const AmountInputWrapper = styled.div`
@@ -150,21 +149,25 @@ const PageWrapUnwrap: FC = () => {
         id: `${context} .1 ${suffix}`,
         title: `.1 ${suffix}`,
         amount: 0.1,
+        asset: `${suffix}`
       },
       {
         id: `${context} 1 ${suffix}`,
         title: `1 ${suffix}`,
         amount: 1,
+        asset: `${suffix}`
       },
       {
         id: `${context} 10 ${suffix}`,
         title: `10 ${suffix}`,
         amount: 10,
+        asset: `${suffix}`
       },
       {
         id: `${context} 100 ${suffix}`,
         title: `100 ${suffix}`,
         amount: 100,
+        asset: `${suffix}`
       },
     ];
   }, [context, suffix]);

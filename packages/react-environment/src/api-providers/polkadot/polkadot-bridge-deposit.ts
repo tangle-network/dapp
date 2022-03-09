@@ -39,6 +39,7 @@ export class PolkadotBridgeDeposit extends BridgeDeposit<WebbPolkadot, DepositPa
     wrappableAssetAddress: string | undefined
   ): Promise<DepositPayload> {
     const currency = this.bridgeApi.currency;
+    logger.log('mixer id: ', mixerId);
 
     if (!currency) {
       logger.error('Not currency/active bridge available');
@@ -104,6 +105,8 @@ export class PolkadotBridgeDeposit extends BridgeDeposit<WebbPolkadot, DepositPa
       return anchors.map((anchor, anchorIndex) => ({
         id: `Bridge=${anchor.amount}@${currency.view.name}@${anchorIndex}`,
         title: `${anchor.amount} ${currency.view.name}`,
+        amount: Number(anchor.amount),
+        asset: currency.view.name,
       }));
     }
     return [];

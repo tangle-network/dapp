@@ -1,10 +1,13 @@
-import { ReactComponent as EmailIcon } from '@webb-dapp/apps/assets/email.svg';
 import { SidebarConfig } from '@webb-dapp/react-components/Sidebar/types';
 import React from 'react';
 
 import { CommonWealthLogo } from './configs/logos/CommonWealthLogo';
 import { DiscordLogo } from './configs/logos/DiscordLogo';
 import { GithubLogo } from './configs/logos/GithubLogo';
+import { BridgePageLogo } from './configs/logos/pages/BridgePageLogo';
+import { StatisticsPageLogo } from './configs/logos/pages/StatisticsPageLogo';
+import { TornadoPageLogo } from './configs/logos/pages/TornadoPageLogo';
+import { WrapPageLogo } from './configs/logos/pages/WrapPageLogo';
 import { TelegramLogo } from './configs/logos/TelegramLogo';
 import { TwitterLogo } from './configs/logos/TwitterLogo';
 
@@ -13,25 +16,45 @@ export const sideBarConfig: SidebarConfig = {
     {
       path: 'tornado',
       name: 'Tornados',
+      icon: <TornadoPageLogo />,
     },
     {
       path: 'bridge',
       name: 'Bridges',
+      icon: <BridgePageLogo />,
     },
     {
       path: 'wrap-unwrap',
       name: 'Wrap/Unwrap',
+      icon: <WrapPageLogo />,
     },
-    // {
-    //   path: 'governance',
-    //   name: 'Governance',
-    //   items: [
-    //     {
-    //       path: 'governance',
-    //       name: 'Substrate Democracy',
-    //     }
-    //   ]
-    // },
+    {
+      path: 'statistics',
+      name: 'Statistics',
+      icon: <StatisticsPageLogo />,
+      items: [
+        {
+          path: 'statistics/overview',
+          name: 'Overview',
+        },
+        {
+          path: 'statistics/deposits',
+          name: 'Deposits',
+        },
+        {
+          path: 'statistics/withdrawals',
+          name: 'Withdrawals',
+        },
+        {
+          path: 'statistics/relayers',
+          name: 'Relayers',
+        },
+        {
+          path: 'statistics/dkg',
+          name: 'DKG Governance',
+        },
+      ],
+    },
   ],
   socialPlatforms: [
     {
