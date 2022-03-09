@@ -1,6 +1,7 @@
 import { Checkbox, FormControlLabel, Typography } from '@material-ui/core';
 import { ChainTypeId, chainTypeIdToInternalId, WebbCurrencyId } from '@webb-dapp/apps/configs';
 import { DepositConfirm } from '@webb-dapp/bridge/components/DepositConfirm/DepositConfirm';
+import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
 import { useBridgeDeposit } from '@webb-dapp/bridge/hooks/deposit/useBridgeDeposit';
 import { useWrapUnwrap } from '@webb-dapp/page-wrap-unwrap/hooks/useWrapUnwrap';
 import { MixerSize, useWebContext } from '@webb-dapp/react-environment/webb-context';
@@ -8,6 +9,7 @@ import { Currency } from '@webb-dapp/react-environment/webb-context/currency/cur
 import { SpaceBox } from '@webb-dapp/ui-components/Box';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { ChainInput } from '@webb-dapp/ui-components/Inputs/ChainInput/ChainInput';
+import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabel';
 import { MixerGroupSelect } from '@webb-dapp/ui-components/Inputs/MixerGroupSelect/MixerGroupSelect';
 import { TokenInput } from '@webb-dapp/ui-components/Inputs/TokenInput/TokenInput';
 import { WalletBridgeCurrencyInput } from '@webb-dapp/ui-components/Inputs/WalletBridgeCurrencyInput/WalletBridgeCurrencyInput';

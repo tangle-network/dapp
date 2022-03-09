@@ -1,3 +1,4 @@
+import { NotificationHandler } from '@webb-dapp/react-environment';
 import { EventBus, LoggerService } from '@webb-tools/app-util';
 import { uniqueId } from 'lodash';
 import React from 'react';
@@ -50,9 +51,9 @@ type PolkadotTXEvents = {
 };
 
 export type NotificationConfig = {
-  loading?: (data: PolkadotTXEventsPayload<JSX.Element>) => void;
-  finalize?: (data: PolkadotTXEventsPayload<string | void | undefined>) => void;
-  failed?: (data: PolkadotTXEventsPayload<string>) => void;
+  loading: (data: PolkadotTXEventsPayload<JSX.Element>) => string | number;
+  finalize: (data: PolkadotTXEventsPayload<string | void | undefined>) => string | number;
+  failed: (data: PolkadotTXEventsPayload<string>) => string | number;
 };
 const txLogger = LoggerService.get('PolkadotTx');
 
@@ -179,26 +180,48 @@ export class PolkadotTx<P extends Array<any>> extends EventBus<PolkadotTXEvents>
 }
 
 export class PolkaTXBuilder {
-  constructor(private apiPromise: ApiPromise, private notificationConfig: NotificationConfig) {}
+  constructor(private apiPromise: ApiPromise, private notificationHandler: NotificationHandler) {}
 
   buildWithoutNotification<P extends Array<any>>({ method, section }: MethodPath, params: P): PolkadotTx<P> {
     return new PolkadotTx<P>(this.apiPromise.clone(), { method, section }, params);
   }
 
-  build<P extends Array<any>>(path: MethodPath, params: P, notificationConfig?: NotificationConfig): PolkadotTx<P> {
+  build<P extends Array<any>>(path: MethodPath, params: P, notificationHandler?: NotificationHandler): PolkadotTx<P> {
     const tx = this.buildWithoutNotification(path, params);
-    const nc = notificationConfig || this.notificationConfig;
+    const handler = notificationHandler || this.notificationHandler;
 
     tx.on('loading', (data) => {
-      nc.loading?.(data);
+      handler({
+        message: `${data.path.section}:${data.path.method}`,
+        key: data.key,
+        description: data.address,
+        level: 'loading',
+        name: 'Transaction',
+        persist: true,
+      });
     });
 
     tx.on('finalize', (data) => {
-      nc.finalize?.(data);
+      handler({
+        message: `${data.path.section}:${data.path.method}`,
+        key: data.key,
+        description: data.address,
+        level: 'success',
+        name: 'Transaction',
+        persist: true,
+      });
     });
 
     tx.on('failed', (data) => {
-      nc.failed?.(data);
+      console.log(data);
+      handler({
+        message: `${data.path.section}:${data.path.method}`,
+        key: data.key,
+        description: data.data,
+        level: 'error',
+        name: 'Transaction',
+        persist: true,
+      });
     });
 
     return tx;

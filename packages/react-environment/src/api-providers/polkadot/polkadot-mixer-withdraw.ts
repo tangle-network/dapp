@@ -4,11 +4,9 @@ import Worker from '@webb-dapp/mixer/utils/proving-manager.worker';
 import { RelayedWithdrawResult, WebbRelayer } from '@webb-dapp/react-environment';
 import { getCachedFixtureURI, withLocalFixtures } from '@webb-dapp/utils/misc';
 import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
-import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polkadot/transaction-notification-config';
 import { LoggerService } from '@webb-tools/app-util';
 import { Note, ProvingManager } from '@webb-tools/sdk-core';
 import { ProvingManagerSetupInput } from '@webb-tools/sdk-core/proving/proving-manager-thread';
-import React from 'react';
 
 import { decodeAddress } from '@polkadot/keyring';
 import { hexToU8a, u8aToHex } from '@polkadot/util';
@@ -156,18 +154,12 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
       };
 
       if (isValidRelayer) {
-        transactionNotificationConfig.loading?.({
-          address: activeRelayer!.endpoint,
-          data: React.createElement(
-            'p',
-            { style: { fontSize: '.9rem' } }, // Matches Typography variant=h6
-            `Withdraw through ${activeRelayer!.endpoint} in progress`
-          ),
+        this.inner.notificationHandler({
+          level: 'loading',
+          name: 'Transaction',
+          description: `Withdraw through ${activeRelayer!.endpoint} in progress`,
+          message: 'mixerBn254:withdraw',
           key: 'mixer-withdraw-sub',
-          path: {
-            method: 'mixerBn254',
-            section: 'withdraw',
-          },
         });
       }
       const zkProofMetadata = await pm.proof(proofInput);
@@ -219,44 +211,40 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
             case RelayedWithdrawResult.CleanExit:
               this.emit('stateChange', WithdrawState.Done);
               this.emit('stateChange', WithdrawState.Ideal);
-              transactionNotificationConfig.finalize?.({
-                address: activeRelayer!.endpoint,
-                data: `TX hash: ${transactionString(message || '')}`,
+
+              this.inner.notificationHandler({
+                level: 'success',
+                name: 'Transaction',
+                description: `TX hash: ${transactionString(message || '')}`,
+                message: 'mixerBn254:withdraw',
                 key: 'mixer-withdraw-sub',
-                path: {
-                  method: 'mixerBn254',
-                  section: 'withdraw',
-                },
               });
+
               break;
             case RelayedWithdrawResult.Errored:
               this.emit('stateChange', WithdrawState.Failed);
               this.emit('stateChange', WithdrawState.Ideal);
-              transactionNotificationConfig.failed?.({
-                address: recipient,
-                data: message || 'Withdraw failed',
+
+              this.inner.notificationHandler({
+                level: 'success',
+                name: 'Transaction',
+                description: message || 'Withdraw failed',
+                message: 'mixerBn254:withdraw',
                 key: 'mixer-withdraw-sub',
-                path: {
-                  method: 'mixerBn254',
-                  section: 'withdraw',
-                },
               });
               break;
           }
         });
-        transactionNotificationConfig.loading?.({
-          address: activeRelayer!.endpoint,
-          data: React.createElement(
-            'p',
-            { style: { fontSize: '.9rem' } }, // Matches Typography variant=h6
-            `Sending TX to relayer`
-          ),
+
+        this.inner.notificationHandler({
+          level: 'loading',
+          message: 'mixerBn254:withdraw',
+          description: 'Sending TX to relayer',
+          name: 'Transaction',
+
           key: 'mixer-withdraw-sub',
-          path: {
-            method: 'mixerBn254',
-            section: 'withdraw',
-          },
         });
+
         relayerMixerTx.send(relayerWithdrawPayload);
         const results = await relayerMixerTx.await();
         if (results) {
