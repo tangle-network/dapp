@@ -2,6 +2,7 @@ import {
   PolkadotChainQuery,
   PolkadotMixerDeposit,
   PolkadotMixerWithdraw,
+  PolkadotTx,
   PolkadotWrapUnwrap,
   PolkaTXBuilder,
 } from '@webb-dapp/react-environment/api-providers/polkadot';
@@ -11,6 +12,7 @@ import { PolkadotBridgeWithdraw } from '@webb-dapp/react-environment/api-provide
 import {
   ApiInitHandler,
   AppConfig,
+  NotificationHandler,
   ProvideCapabilities,
   WebbApiProvider,
   WebbMethods,
@@ -36,10 +38,15 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
     apiPromise: ApiPromise,
     injectedExtension: InjectedExtension,
     readonly relayingManager: WebbRelayerBuilder,
-    readonly config: AppConfig
+    readonly config: AppConfig,
+    readonly notificationHandler: NotificationHandler
   ) {
     super();
-    this.provider = new PolkadotProvider(apiPromise, injectedExtension);
+    this.provider = new PolkadotProvider(
+      apiPromise,
+      injectedExtension,
+      new PolkaTXBuilder(apiPromise, notificationHandler)
+    );
     this.accounts = this.provider.accounts;
     this.api = this.provider.api;
     this.txBuilder = this.provider.txBuilder;
@@ -122,10 +129,11 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
     endpoints: string[],
     errorHandler: ApiInitHandler,
     relayerBuilder: WebbRelayerBuilder,
-    appConfig: AppConfig
+    appConfig: AppConfig,
+    notification: NotificationHandler
   ): Promise<WebbPolkadot> {
     const [apiPromise, injectedExtension] = await PolkadotProvider.getParams(appName, endpoints, errorHandler.onError);
-    const instance = new WebbPolkadot(apiPromise, injectedExtension, relayerBuilder, appConfig);
+    const instance = new WebbPolkadot(apiPromise, injectedExtension, relayerBuilder, appConfig, notification);
     await instance.insureApiInterface();
     /// check metadata update
     await instance.awaitMetaDataCheck();

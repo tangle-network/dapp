@@ -1,3 +1,4 @@
+import { Typography } from '@material-ui/core';
 import Icon from '@material-ui/core/Icon';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import {
@@ -22,6 +23,7 @@ import { DimensionsProvider } from '@webb-dapp/react-environment/layout';
 import { StoreProvier } from '@webb-dapp/react-environment/store';
 import { notificationApi } from '@webb-dapp/ui-components/notification';
 import { AccountSwitchNotification } from '@webb-dapp/ui-components/notification/AccountSwitchNotification';
+import { Spinner } from '@webb-dapp/ui-components/Spinner/Spinner';
 import { BareProps } from '@webb-dapp/ui-components/types';
 import { InteractiveFeedback, WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import { Account } from '@webb-dapp/wallet/account/Accounts.adapter';
@@ -37,6 +39,7 @@ import {
   Chain,
   netStorageFactory,
   NetworkStorage,
+  NotificationPayload,
   Wallet,
   WebbApiProvider,
   WebbContext,
@@ -69,6 +72,65 @@ const appConfig: AppConfig = {
   wallet: walletsConfig,
 };
 
+function notificationHandler(notification: NotificationPayload) {
+  switch (notification.name) {
+    case 'Transaction': {
+      const isFailed = notification.level === 'error';
+      const isFinalized = notification.level === 'success';
+      const description = notification.data ? (
+        <div>
+          {Object.keys(notification.data).map((i) => (
+            <Typography variant={'h6'}>{notification.data?.[i]}</Typography>
+          ))}
+        </div>
+      ) : (
+        notification.description
+      );
+      if (isFinalized) {
+        const key = notificationApi({
+          extras: {
+            persist: false,
+          },
+          message: notification.message ?? 'Submit Transaction Success',
+          secondaryMessage: description,
+          key: notification.key,
+          variant: 'success',
+        });
+        setTimeout(() => notificationApi.remove(notification.key), 6000);
+        return key;
+      } else if (isFailed) {
+        return notificationApi({
+          extras: {
+            persist: false,
+          },
+          key: notification.key,
+          message: notification.message,
+          secondaryMessage: description,
+          variant: 'error',
+        });
+      } else {
+        return notificationApi({
+          extras: {
+            persist: true,
+          },
+          key: notification.key,
+          message: notification.message,
+          secondaryMessage: description,
+          variant: 'info',
+          // eslint-disable-next-line sort-keys
+          Icon: <Spinner />,
+          transparent: true,
+        });
+      }
+    }
+    default:
+      return '';
+  }
+}
+
+notificationHandler.remove = (key: string | number) => {
+  notificationApi.remove(key);
+};
 export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Dapp', children }) => {
   const [activeWallet, setActiveWallet] = useState<Wallet | undefined>(undefined);
   const [activeChain, setActiveChain] = useState<Chain | undefined>(undefined);
@@ -253,7 +315,8 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
                 },
               },
               relayer,
-              appConfig
+              appConfig,
+              notificationHandler
             );
             await setActiveApiWithAccounts(webbPolkadot, chain.id);
             localActiveApi = webbPolkadot;
@@ -315,7 +378,13 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
             /// get the current active chain from metamask
             const chainId = await web3Provider.network; // storage based on network id
 
-            const webbWeb3Provider = await WebbWeb3Provider.init(web3Provider, chainId, relayer, appConfig);
+            const webbWeb3Provider = await WebbWeb3Provider.init(
+              web3Provider,
+              chainId,
+              relayer,
+              appConfig,
+              notificationHandler
+            );
 
             const providerUpdateHandler = async ([chainId]: number[]) => {
               const nextChain = Object.values(chains).find((chain) => chain.chainId === chainId);

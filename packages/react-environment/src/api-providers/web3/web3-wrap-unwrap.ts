@@ -16,10 +16,7 @@ import {
   WrappingEvent,
   WrapUnWrap,
 } from '@webb-dapp/react-environment/webb-context/wrap-unwrap';
-import { notificationApi } from '@webb-dapp/ui-components/notification';
-import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polkadot/transaction-notification-config';
 import { ContractTransaction } from 'ethers';
-import React from 'react';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import Web3 from 'web3';
 
@@ -147,38 +144,43 @@ export class Web3WrapUnwrap extends WrapUnWrap<WebbWeb3Provider> {
         method: `unwrap`,
         section: `GovernedTokenWrapper`,
       };
-      transactionNotificationConfig.loading?.({
-        address: 'recipient',
-        key: 'unwrap asset',
-        data: React.createElement(
-          'p',
-          { style: { fontSize: '.9rem' } }, // Matches Typography variant=h6
-          `Unwrapping ${String(amountNumber)}  of ${webbCurrencyIdToString(
-            governedTokenId
-          )}   to  ${webbCurrencyIdToString(wrappableTokenId)}`
-        ),
-        path,
+      this.inner.notificationHandler({
+        key: 'unwrap-asset',
+        name: 'Transaction',
+        message: 'GovernedTokenWrapper:unwrap',
+        level: 'loading',
+        description: `Unwrapping ${amountNumber} of ${webbCurrencyIdToString(
+          governedTokenId
+        )} to ${webbCurrencyIdToString(wrappableTokenId)}`,
       });
       const tx = await webbGovernedToken.unwrap(
         this.config.currencies[wrappableTokenId].addresses.get(this.currentChainId!)!,
         amount
       );
       await tx.wait();
-      transactionNotificationConfig.finalize?.({
-        address: 'recipient',
-        key: 'unwrap asset',
-        data: undefined,
-        path,
+      this.inner.notificationHandler({
+        key: 'unwrap-asset',
+        name: 'Transaction',
+        message: 'GovernedTokenWrapper:unwrap',
+        level: 'success',
+        description: `Unwrapping ${amountNumber} of ${webbCurrencyIdToString(
+          governedTokenId
+        )} to ${webbCurrencyIdToString(wrappableTokenId)}`,
       });
+
       return tx.hash;
     } catch (e) {
       console.log('error while unwrapping: ', e);
-      transactionNotificationConfig.failed?.({
-        address: 'recipient',
-        key: 'unwrap asset',
-        data: 'unwrapping failed',
-        path,
+      this.inner.notificationHandler({
+        key: 'unwrap-asset',
+        name: 'Transaction',
+        message: 'GovernedTokenWrapper:unwrap',
+        level: 'error',
+        description: `Failed to unwrap ${amountNumber} of ${webbCurrencyIdToString(
+          governedTokenId
+        )} to ${webbCurrencyIdToString(wrappableTokenId)}`,
       });
+
       return '';
     }
   }
@@ -212,17 +214,15 @@ export class Web3WrapUnwrap extends WrapUnWrap<WebbWeb3Provider> {
         method: `wrap`,
         section: `GovernedTokenWrapper`,
       };
-      transactionNotificationConfig.loading?.({
-        address: 'recipient',
-        key: 'wrap asset',
-        data: React.createElement(
-          'p',
-          { style: { fontSize: '.9rem' } }, // Matches Typography variant=h6
-          `Wrapping ${String(amountNumber)} of ${webbCurrencyIdToString(wrappableTokenId)} to ${webbCurrencyIdToString(
-            governableTokenId
-          )}`
-        ),
-        path,
+
+      this.inner.notificationHandler({
+        key: 'wrap-asset',
+        name: 'Transaction',
+        message: 'GovernedTokenWrapper:wrap',
+        level: 'loading',
+        description: `Wrapping ${String(amountNumber)} of ${webbCurrencyIdToString(
+          wrappableTokenId
+        )} to ${webbCurrencyIdToString(governableTokenId)}`,
       });
       console.log('address of token to wrap into webbGovernedToken', this.getAddressFromWrapTokenId(wrappableTokenId));
       let tx: ContractTransaction;
@@ -238,34 +238,42 @@ export class Web3WrapUnwrap extends WrapUnWrap<WebbWeb3Provider> {
         );
         console.log(wrappableTokenAllowance);
         if (wrappableTokenAllowance.lt(amount)) {
-          notificationApi.addToQueue({
+          this.inner.notificationHandler({
+            description: 'Waiting for token approval',
+            persist: true,
+            level: 'info',
+            name: 'Approval',
             message: 'Waiting for token approval',
-            variant: 'info',
             key: 'waiting-approval',
-            extras: { persist: true },
           });
           tx = await wrappableTokenInstance.approve(webbGovernedToken.address, amount);
           await tx.wait();
-          notificationApi.remove('waiting-approval');
+          this.inner.notificationHandler.remove('waiting-approval');
         }
       }
 
       tx = await webbGovernedToken.wrap(this.getAddressFromWrapTokenId(wrappableTokenId), amount);
       await tx.wait();
-      transactionNotificationConfig.finalize?.({
-        address: 'recipient',
-        key: 'wrap asset',
-        data: undefined,
-        path,
+      this.inner.notificationHandler({
+        key: 'wrap-asset',
+        name: 'Transaction',
+        message: 'GovernedTokenWrapper:wrap',
+        level: 'success',
+        description: `Wrapping ${String(amountNumber)} of ${webbCurrencyIdToString(
+          wrappableTokenId
+        )} to ${webbCurrencyIdToString(governableTokenId)}`,
       });
       return tx.hash;
     } catch (e) {
       console.log('error while wrapping: ', e);
-      transactionNotificationConfig.failed?.({
-        address: 'recipient',
-        key: 'wrap asset',
-        data: 'wrapping failed',
-        path,
+      this.inner.notificationHandler({
+        key: 'wrap-asset',
+        name: 'Transaction',
+        message: 'GovernedTokenWrapper:wrap',
+        level: 'error',
+        description: `Failed to wrap ${String(amountNumber)} of ${webbCurrencyIdToString(
+          wrappableTokenId
+        )} to ${webbCurrencyIdToString(governableTokenId)}`,
       });
       return '';
     }

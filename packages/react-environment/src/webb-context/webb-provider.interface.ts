@@ -75,7 +75,67 @@ export type ProvideCapabilities = {
 type WebApiCalls = {
   addToken(input: any): Promise<void>;
 };
+export type NotificationKey = string | number;
+export type VariantType = 'default' | 'error' | 'success' | 'warning' | 'info';
 
+export type NotificationData = {
+  persist: boolean;
+  message: string;
+  description: string;
+  variant: VariantType;
+  action: string;
+};
+
+export type NotificationApi = {
+  addToQueue(data: NotificationData): NotificationKey;
+  remove(key: NotificationKey): void;
+};
+type MethodPath = {
+  section: string;
+  method: string;
+};
+
+export type TXNotificationPayload<T = undefined> = {
+  // Generic data for the transaction payload
+  data: T;
+  // notification key
+  key: NotificationKey;
+  address: string;
+  // More metadata for the transaction path (EX Anchor::Deposit ,VAnchor::Withdraw)
+  path: MethodPath;
+};
+// Transaction notification
+export type TXNotification = {
+  // Transaction status is in progress
+  loading(payload: TXNotificationPayload<any>): NotificationKey;
+  // Transaction failed
+  failed(payload: TXNotificationPayload<any>): NotificationKey;
+  // Transaction Done with success
+  finalize(payload: TXNotificationPayload<any>): NotificationKey;
+};
+export type NotificationLevel = 'loading' | 'error' | 'success' | 'warning' | 'info';
+
+export type NotificationPayload = {
+  // Title of the notification
+  message: string;
+  // details about the notification
+  description: string;
+  // Event name/ event identifier
+  name: 'Transaction' | 'Approval';
+  // key for a given notification can be used to remove/dismiss a notification
+  key: string;
+  //level
+  level: NotificationLevel;
+  // Record for more metadata
+  data?: Record<string, string>;
+  // if true the notification will be dismissed by the user or with another action
+  persist?: boolean;
+};
+// Function call to register a notification
+export type NotificationHandler = ((notification: NotificationPayload) => string | number) & {
+  // remove the notification programmatically
+  remove(key: string | number): void;
+};
 export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
   /// Accounts Adapter will have all methods related to the provider accounts
   accounts: AccountsAdapter<any>;
@@ -95,4 +155,6 @@ export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
   getProvider(): any;
   // Configs
   config: AppConfig;
+  // Notification handler
+  notificationHandler: NotificationHandler;
 }

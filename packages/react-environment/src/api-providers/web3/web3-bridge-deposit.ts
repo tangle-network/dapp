@@ -14,12 +14,8 @@ import { createAnchor2Deposit, Deposit } from '@webb-dapp/contracts/utils/make-d
 import { DepositPayload as IDepositPayload, MixerSize } from '@webb-dapp/react-environment';
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3/webb-web3-provider';
 import { Currency } from '@webb-dapp/react-environment/webb-context/currency/currency';
-import { notificationApi } from '@webb-dapp/ui-components/notification';
-import { DepositNotification } from '@webb-dapp/ui-components/notification/DepositNotification';
-import { transactionNotificationConfig } from '@webb-dapp/wallet/providers/polkadot/transaction-notification-config';
 import { LoggerService } from '@webb-tools/app-util';
 import { Note, NoteGenInput } from '@webb-tools/sdk-core';
-import React from 'react';
 
 import { BridgeDeposit } from '../../webb-context/bridge/bridge-deposit';
 
@@ -31,9 +27,11 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
   private get bridgeApi() {
     return this.inner.methods.bridgeApi;
   }
+
   private get config() {
     return this.inner.config;
   }
+
   async deposit(depositPayload: DepositPayload): Promise<void> {
     const bridge = this.bridgeApi.activeBridge;
     const currency = this.bridgeApi.currency;
@@ -46,17 +44,17 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
       const sourceEvmId = await this.inner.getChainId();
       const sourceChainId = computeChainIdType(ChainType.EVM, sourceEvmId);
       const sourceInternalId = evmIdIntoInternalChainId(sourceEvmId);
-      transactionNotificationConfig.loading?.({
-        address: '',
-        data: React.createElement(DepositNotification, {
-          chain: getEVMChainNameFromInternal(Number(sourceInternalId)),
-          amount: Number(note.amount),
-          currency: currency.view.name,
-        }),
+
+      this.inner.notificationHandler({
         key: 'bridge-deposit',
-        path: {
-          method: depositPayload.params[2] ? 'wrap and deposit' : 'deposit',
-          section: currency.view.name,
+        level: 'loading',
+        name: 'Transaction',
+        description: 'Depositing',
+        message: `bridge:${depositPayload.params[2] ? 'wrap and deposit' : 'deposit'}`,
+        data: {
+          chain: getEVMChainNameFromInternal(Number(sourceInternalId)),
+          amount: note.amount,
+          currency: currency.view.name,
         },
       });
 
@@ -77,11 +75,13 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
       if (depositPayload.params[2]) {
         const requiredApproval = await contract.isWrappableTokenApprovalRequired(depositPayload.params[2]);
         if (requiredApproval) {
-          notificationApi.addToQueue({
+          this.inner.notificationHandler({
+            description: 'Waiting for token approval',
+            persist: true,
+            level: 'info',
+            name: 'Approval',
             message: 'Waiting for token approval',
-            variant: 'info',
             key: 'waiting-approval',
-            extras: { persist: true },
           });
           const tokenInstance = await ERC20__factory.connect(
             depositPayload.params[2],
@@ -90,89 +90,106 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
           const webbToken = await contract.getWebbToken();
           const tx = await tokenInstance.approve(webbToken.address, await contract.denomination);
           await tx.wait();
-          notificationApi.remove('waiting-approval');
+          this.inner.notificationHandler.remove('waiting-approval');
         }
 
         const enoughBalance = await contract.hasEnoughBalance(depositPayload.params[2]);
         if (enoughBalance) {
           await contract.wrapAndDeposit(commitment, depositPayload.params[2]);
-          transactionNotificationConfig.finalize?.({
-            address: '',
-            data: undefined,
+
+          this.inner.notificationHandler({
             key: 'bridge-deposit',
-            path: {
-              method: 'wrap and deposit',
-              section: currency.view.name,
+            level: 'success',
+            name: 'Transaction',
+            description: 'Depositing',
+            message: `${currency.view.name}:wrap and deposit`,
+            data: {
+              chain: getEVMChainNameFromInternal(Number(sourceInternalId)),
+              amount: note.amount,
+              currency: currency.view.name,
             },
           });
         } else {
-          notificationApi.addToQueue({
-            message: 'Not enough token balance',
-            variant: 'error',
-            key: 'waiting-approval',
+          this.inner.notificationHandler({
+            key: 'bridge-deposit',
+            level: 'error',
+            name: 'Transaction',
+            description: 'Not enough token balance',
+            message: `${currency.view.name}:wrap and deposit`,
+            data: {
+              chain: getEVMChainNameFromInternal(Number(sourceInternalId)),
+              amount: note.amount,
+              currency: currency.view.name,
+            },
           });
         }
         return;
       } else {
         const requiredApproval = await contract.isWebbTokenApprovalRequired();
         if (requiredApproval) {
-          notificationApi.addToQueue({
+          this.inner.notificationHandler({
+            description: 'Waiting for token approval',
+            persist: true,
+            level: 'info',
+            name: 'Approval',
             message: 'Waiting for token approval',
-            variant: 'info',
             key: 'waiting-approval',
-            extras: { persist: true },
           });
           const tokenInstance = await contract.getWebbToken();
           const tx = await tokenInstance.approve(contract.inner.address, await contract.denomination);
           await tx.wait();
-          notificationApi.remove('waiting-approval');
+          this.inner.notificationHandler.remove('waiting-approval');
         }
 
         const enoughBalance = await contract.hasEnoughBalance();
         if (enoughBalance) {
           await contract.deposit(commitment);
-          transactionNotificationConfig.finalize?.({
-            address: '',
-            data: undefined,
+          this.inner.notificationHandler({
             key: 'bridge-deposit',
-            path: {
-              method: 'deposit',
-              section: currency.view.name,
+            level: 'success',
+            name: 'Transaction',
+            description: 'Depositing',
+            message: `${currency.view.name}:deposit`,
+            data: {
+              chain: getEVMChainNameFromInternal(Number(sourceInternalId)),
+              amount: note.amount,
+              currency: currency.view.name,
             },
           });
         } else {
-          notificationApi.addToQueue({
-            message: 'Not enough token balance',
-            variant: 'error',
-            key: 'waiting-approval',
+          this.inner.notificationHandler({
+            key: 'bridge-deposit',
+            level: 'error',
+            name: 'Transaction',
+            description: 'Not enough token balance',
+            message: `${currency.view.name}deposit`,
+            data: {
+              chain: getEVMChainNameFromInternal(Number(sourceInternalId)),
+              amount: note.amount,
+              currency: currency.view.name,
+            },
           });
         }
       }
     } catch (e: any) {
       console.log(e);
       if ((e as any)?.code == 4001) {
-        notificationApi.remove('waiting-approval');
-        transactionNotificationConfig.failed?.({
-          address: '',
-          data: 'User Rejected Deposit',
+        this.inner.notificationHandler.remove('waiting-approval');
+        this.inner.notificationHandler({
           key: 'bridge-deposit',
-
-          path: {
-            method: 'deposit',
-            section: currency.view.name,
-          },
+          level: 'error',
+          name: 'Transaction',
+          description: 'user rejected deposit',
+          message: `${currency.view.name}:deposit`,
         });
       } else {
-        notificationApi.remove('waiting-approval');
-        transactionNotificationConfig.failed?.({
-          address: '',
-          data: 'Deposit Transaction Failed',
+        this.inner.notificationHandler.remove('waiting-approval');
+        this.inner.notificationHandler({
           key: 'bridge-deposit',
-
-          path: {
-            method: 'deposit',
-            section: currency.view.name,
-          },
+          level: 'error',
+          name: 'Transaction',
+          description: 'Deposit Transaction Failed',
+          message: `${currency.view.name}:deposit`,
         });
       }
     }
@@ -232,6 +249,7 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
    * @param wrappableAssetAddress - the address of the token to wrap into the bridge
    * @returns
    */
+
   /*
    *
    *  Mixer id => the fixed deposit amount
