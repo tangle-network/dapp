@@ -4,8 +4,6 @@ import Typography from '@material-ui/core/Typography';
 import { chainsPopulated, ChainTypeId, chainTypeIdToInternalId } from '@webb-dapp/apps/configs';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
-import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabel';
-import { InputSection } from '@webb-dapp/ui-components/Inputs/InputSection/InputSection';
 import { NetworkManager } from '@webb-dapp/ui-components/NetworkManger/NetworkManager';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
@@ -175,7 +173,7 @@ const DropdownInput: React.FC<DropdownInputProps> = ({ chains, onChange, value }
                   <Padding x={0.5} />
                   <Flex jc={'center'}>
                     <Typography variant={'caption'} color={'textSecondary'} style={{ whiteSpace: 'nowrap' }}>
-                      Select bridge chain
+                      Select chain
                     </Typography>
                   </Flex>
                 </Flex>
@@ -249,31 +247,28 @@ const DropdownInput: React.FC<DropdownInputProps> = ({ chains, onChange, value }
   );
 };
 
-const ChainInputWrapper = styled.div``;
+const ChainInputWrapper = styled.div`
+  width: 40%;
+`;
 type ChainInputProps = {
   chains: ChainTypeId[];
-  label: string;
   selectedChain: ChainTypeId | undefined;
   setSelectedChain?(chain: ChainTypeId | undefined): void;
 };
 
-export const ChainInput: React.FC<ChainInputProps> = ({ chains, label, selectedChain, setSelectedChain }) => {
+export const ChainInput: React.FC<ChainInputProps> = ({ chains, selectedChain, setSelectedChain }) => {
   return (
-    <InputSection>
-      <ChainInputWrapper>
-        <InputLabel label={label}>
-          {setSelectedChain && (
-            <DropdownInput
-              chains={chains}
-              value={selectedChain}
-              onChange={(chain) => {
-                setSelectedChain(chain);
-              }}
-            />
-          )}
-          {!setSelectedChain && <NetworkManager />}
-        </InputLabel>
-      </ChainInputWrapper>
-    </InputSection>
+    <ChainInputWrapper>
+      {setSelectedChain && (
+        <DropdownInput
+          chains={chains}
+          value={selectedChain}
+          onChange={(chain) => {
+            setSelectedChain(chain);
+          }}
+        />
+      )}
+      {!setSelectedChain && <NetworkManager />}
+    </ChainInputWrapper>
   );
 };

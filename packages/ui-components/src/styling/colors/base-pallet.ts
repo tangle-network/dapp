@@ -9,6 +9,7 @@ export const basePallet = {
   primary: '#3351F2',
   secondary: '#52B684',
   accentColor: '#FF0000',
+  iconColor: '#B6B6B6',
 
   /*Content color*/
   success: '#48b87e',

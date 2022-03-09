@@ -18,7 +18,7 @@ export const darkPallet = {
   lightSelectionBackground: '#131313',
   heavySelectionBackground: 'rgba(255, 255, 255, 0.07)',
   heavySelectionBorder: '1px solid rgba(255, 255, 255, 0.19)',
-  layer1Background: '#181818',
-  layer2Background: 'rgba(34, 38, 43, 1)',
+  layer1Background: '#242324',
+  layer2Background: '#131313',
   layer3Background: 'rgba(56, 60, 64, 1)',
 };

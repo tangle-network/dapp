@@ -14,7 +14,6 @@ const ContentWrapper = styled.div`
   border-radius: 8px;
   ${({ theme }: { theme: Pallet }) => css`
     background: ${theme.layer1Background};
-    border: 1px solid ${theme.borderColor};
   `}
 `;
 

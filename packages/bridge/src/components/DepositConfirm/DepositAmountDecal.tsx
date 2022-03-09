@@ -24,16 +24,15 @@ const AmountCircle = styled.div`
   .resized-amount {
     font-weight: 600;
     letter-spacing: -1px;
-    font-size: 2vw;
-    color: ${({ theme }) => theme.accentColor}
+    font-size: 20px;
+    color: ${({ theme }) => theme.accentColor};
   }
 
   .resized-symbol {
-    font-size: 1vw;
-    color: ${({ theme }) => theme.accentColor}
+    font-size: 8px;
+    color: ${({ theme }) => theme.accentColor};
   }
 `
-
 
 interface DepositAmountDecalProps {
   amount: number;
