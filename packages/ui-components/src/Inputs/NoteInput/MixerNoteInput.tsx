@@ -1,5 +1,5 @@
 import { FormHelperText, Icon, InputBase } from '@material-ui/core';
-import { getEVMChainNameFromInternal } from '@webb-dapp/apps/configs';
+import { getChainNameFromChainId, parseChainIdType } from '@webb-dapp/apps/configs';
 import { useDepositNote } from '@webb-dapp/mixer/hooks/note';
 import { useWebContext } from '@webb-dapp/react-environment/webb-context';
 import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabel';
@@ -29,7 +29,7 @@ export const MixerNoteInput: React.FC<NoteInputProps> = ({ error, onChange, valu
 
   // Switch to bridge tab if note is for bridge
   useEffect(() => {
-    if (depositNote && depositNote.note.prefix === 'webb.bridge') {
+    if (depositNote && depositNote.note.protocol === 'anchor') {
       notificationApi.addToQueue({
         secondaryMessage: 'Please complete withdraw through the bridge',
         message: 'Switched to bridge',
@@ -44,14 +44,14 @@ export const MixerNoteInput: React.FC<NoteInputProps> = ({ error, onChange, valu
     <InputLabel label={'Note'}>
       <InputBase
         fullWidth
-        placeholder={`webb.mix:v1:4:Circom:Bn254:Poseidon:ETH:18:0.1:5:5:dc92b0096b02746362c56dbee8e28a036f29b600b59cad3e4a114af2e2eb094f9878beaf5699f43d789937130e7ee7ca12e0703ce9cc62297bbb0abc864e`}
+        placeholder={`webb://v2:mixer/020000000438:020000000438/0:0/32f696ed77356ffc0b55bc514d821463d0ddf241e0b9228b024f080542b5052b:0b895f6905aa559ac330ddaafc1afae3580eef4c0ff15ee3f41726ed1da31402/?curve=Bn254&width=5&exp=5&hf=Poseidon&backend=Arkworks&token=WEBB&denom=12&amount=10`}
         multiline={true}
         rows={5}
         value={value}
         inputProps={{ style: { fontSize: 14 } }}
         onChange={(event) => {
           console.log(event.target.value);
-          onChange?.(event.target.value as string);
+          if (event.target.value && event.target.value != '') onChange?.(event.target.value as string);
         }}
       />
       {depositNote && (
@@ -65,7 +65,7 @@ export const MixerNoteInput: React.FC<NoteInputProps> = ({ error, onChange, valu
               <tr>
                 <td>Context:</td>
                 <td style={{ textAlign: 'right' }}>
-                  <b>{depositNote.note.prefix.replace('webb.', '').toUpperCase()}</b>
+                  <b>{depositNote.note.protocol.toUpperCase()}</b>
                 </td>
               </tr>
               <tr>
@@ -77,7 +77,7 @@ export const MixerNoteInput: React.FC<NoteInputProps> = ({ error, onChange, valu
               <tr>
                 <td>Chain:</td>
                 <td style={{ textAlign: 'right' }}>
-                  {getEVMChainNameFromInternal(Number(depositNote.note.targetChainId))}
+                  {getChainNameFromChainId(parseChainIdType(Number(depositNote.note.targetChainId)))}
                 </td>
               </tr>
             </tbody>

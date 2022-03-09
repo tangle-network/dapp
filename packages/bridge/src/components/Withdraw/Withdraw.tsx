@@ -1,5 +1,11 @@
 import { FormHelperText, InputBase } from '@material-ui/core';
-import { chainIdIntoEVMId, chainsPopulated, currenciesConfig } from '@webb-dapp/apps/configs';
+import {
+  chainsPopulated,
+  ChainType,
+  chainTypeIdToInternalId,
+  currenciesConfig,
+  parseChainIdType,
+} from '@webb-dapp/apps/configs';
 import WithdrawingModal from '@webb-dapp/bridge/components/Withdraw/WithdrawingModal';
 import { useWithdraw } from '@webb-dapp/bridge/hooks';
 import { useDepositNote } from '@webb-dapp/mixer';
@@ -24,6 +30,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
   const [note, setNote] = useState('');
   const [recipient, setRecipient] = useState('');
   const { activeApi, activeChain } = useWebContext();
+  const depositNote = useDepositNote(note);
 
   const {
     canCancel,
@@ -38,8 +45,10 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
     withdraw,
   } = useWithdraw({
     recipient,
-    note,
+    note: depositNote,
   });
+
+  /// TODO: expose hook
   const feesGetter = useCallback(
     async (activeRelayer: ActiveWebbRelayer): Promise<FeesInfo> => {
       const defaultFees: FeesInfo = {
@@ -57,6 +66,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
     [note]
   );
 
+  /// TODO: expose hook
   const relayerApi: RelayerApiAdapter = useMemo(() => {
     return {
       getInfo: async (endpoint) => {
@@ -67,31 +77,37 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
       },
     };
   }, [relayerMethods]);
-  const determineDisabled = () => {
-    if (depositNote && determineSwitchButton()) {
+
+  const shouldSwitchChain = useMemo(() => {
+    if (!depositNote || !activeChain) {
+      return false;
+    }
+    const chainId = parseChainIdType(Number(depositNote.note.targetChainId)).chainId;
+
+    return activeChain.chainId !== chainId;
+  }, [activeChain, depositNote]);
+
+  const isDisabled = useMemo(() => {
+    if (depositNote && shouldSwitchChain) {
       return false;
     } else if (depositNote && recipient) {
       return false;
     }
     return true;
-  };
-  const determineSwitchButton = () => {
-    if (depositNote && activeChain && activeChain.evmId != chainIdIntoEVMId(depositNote.note.targetChainId)) {
-      return true;
-    }
-    return false;
-  };
+  }, [depositNote, shouldSwitchChain, recipient]);
+
   const switchChain = async (note: Note | null) => {
     if (!note) return;
     if (!activeApi) return;
-    const newChainId = Number(note.note.targetChainId);
-    const chain = chainsPopulated[newChainId];
+    const chainTypeId = parseChainIdType(Number(note.note.targetChainId));
+    const internalChainId = chainTypeIdToInternalId(chainTypeId);
+    const chain = chainsPopulated[internalChainId];
 
     const web3Provider = activeApi.getProvider();
 
     await web3Provider
       .switchChain({
-        chainId: `0x${chain.evmId?.toString(16)}`,
+        chainId: `0x${chain.chainId?.toString(16)}`,
       })
       ?.catch(async (switchError: any) => {
         console.log('inside catch for switchChain', switchError);
@@ -100,7 +116,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
         if (switchError.code === 4902) {
           const currency = currenciesConfig[chain.nativeCurrencyId];
           await web3Provider.addChain({
-            chainId: `0x${chain.evmId?.toString(16)}`,
+            chainId: `0x${chain.chainId?.toString(16)}`,
             chainName: chain.name,
             rpcUrls: chain.evmRpcUrls,
             nativeCurrency: {
@@ -112,7 +128,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
           // add network will prompt the switch, check evmId again and throw if user rejected
           const newChainId = await web3Provider.network;
 
-          if (newChainId != chain.evmId) {
+          if (newChainId != chain.chainId) {
             throw switchError;
           }
         } else {
@@ -121,7 +137,6 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
       });
   };
 
-  const depositNote = useDepositNote(note);
   return (
     <WithdrawWrapper>
       <InputSection>
@@ -161,11 +176,15 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
           <SpaceBox height={16} />
         </>
       )}
-
       <MixerButton
-        disabled={determineDisabled()}
-        onClick={determineSwitchButton() ? () => switchChain(depositNote) : withdraw}
-        label={determineSwitchButton() ? 'Switch chains to withdraw' : 'Withdraw'}
+        disabled={isDisabled}
+        onClick={() => {
+          if (shouldSwitchChain) {
+            return switchChain(depositNote);
+          }
+          withdraw();
+        }}
+        label={shouldSwitchChain ? 'Switch chains to withdraw' : 'Withdraw'}
       />
       <Modal open={stage !== WithdrawState.Ideal}>
         {depositNote && (

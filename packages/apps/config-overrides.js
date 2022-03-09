@@ -1,12 +1,13 @@
 const { override, addWebpackAlias, getBabelLoader } = require('customize-cra');
 const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
+const webpack = require('webpack');
 const path = require('path');
 const exec = require('child_process').exec;
 const findPackages = require('../../scripts/findPackages');
 const packages = findPackages();
 
 const rewireReactHotLoader = require('react-app-rewire-hot-loader');
-const {  configPaths } = require('react-app-rewire-alias/lib/aliasDangerous');
+const { configPaths } = require('react-app-rewire-alias/lib/aliasDangerous');
 const WebpackPostBuildScript = function () {
   this.apply = function (compiler) {
     compiler.hooks.afterEmit.tap('WebpackPostBuildScript', (compilation) => {
@@ -20,10 +21,17 @@ const WebpackPostBuildScript = function () {
 
 const addWebpackPostBuildScript = (config) => {
   config.plugins.push(new WebpackPostBuildScript());
+
   return config;
 };
 
 module.exports = override(addWebpackPostBuildScript, function (config, env) {
+  config.plugins.push(
+    new webpack.ProvidePlugin({
+      'process.env.NODE_ENV': JSON.stringify(config.mode),
+    })
+  );
+
   // include lib
   config.module.rules.forEach((rule) => {
     if (!Reflect.has(rule, 'oneOf')) {
@@ -79,7 +87,6 @@ module.exports = override(addWebpackPostBuildScript, function (config, env) {
 
     return pre;
   }, {});
-
 
   if (config.mode !== 'production') {
     config.resolve.alias = {

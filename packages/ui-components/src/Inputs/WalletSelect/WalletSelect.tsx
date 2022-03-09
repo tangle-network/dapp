@@ -8,7 +8,7 @@ import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
 import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { WalletManger } from './WalletManger';
+import { WalletManager } from './WalletManager';
 
 const WalletSelectWrapper = styled.div`
   box-sizing: border-box;
@@ -94,7 +94,7 @@ export const WalletSelect: React.FC<WalletSelectProps> = ({}) => {
       </WalletSelectWrapper>
 
       <Modal open={open} onClose={closeModal}>
-        <WalletManger
+        <WalletManager
           wallets={wallets}
           setSelectedWallet={async (wallet) => {
             if (activeChain) {

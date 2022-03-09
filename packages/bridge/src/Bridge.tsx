@@ -1,5 +1,4 @@
 import { Deposit, Withdraw } from '@webb-dapp/bridge/components';
-import IPDisplay from '@webb-dapp/react-components/IPDisplay/IPDisplay';
 import { SpaceBox } from '@webb-dapp/ui-components/Box';
 import { MixerTabs } from '@webb-dapp/ui-components/Tabs/MixerTabs';
 import React from 'react';
@@ -12,8 +11,6 @@ export const Bridge: React.FC<MixerProps> = () => {
   return (
     <MixerWrapper>
       <MixerTabs Withdraw={<Withdraw />} Deposit={<Deposit />} />
-      <SpaceBox height={8} />
-      <IPDisplay />
     </MixerWrapper>
   );
 };

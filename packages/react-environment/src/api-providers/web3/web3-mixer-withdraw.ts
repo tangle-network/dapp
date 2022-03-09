@@ -1,5 +1,11 @@
 import { parseUnits } from '@ethersproject/units';
-import { ChainId, chainIdIntoEVMId, evmIdIntoChainId } from '@webb-dapp/apps/configs';
+import {
+  chainTypeIdToInternalId,
+  evmIdIntoInternalChainId,
+  InternalChainId,
+  internalChainIdIntoEVMId,
+  parseChainIdType,
+} from '@webb-dapp/apps/configs';
 import { chainIdToRelayerName } from '@webb-dapp/apps/configs/relayer-config';
 import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
 import { depositFromPreimage } from '@webb-dapp/contracts/utils/make-deposit';
@@ -27,7 +33,7 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
       return null;
     }
     const evmId = await this.inner.getChainId();
-    const chainId = evmIdIntoChainId(evmId);
+    const chainId = evmIdIntoInternalChainId(evmId);
     return WebbRelayer.intoActiveWebRelayer(
       relayer,
       {
@@ -39,11 +45,12 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
         const depositNote = await Note.deserialize(note);
         const evmNote = depositNote.note;
         const contractAddress = await this.inner.getTornadoContractAddressByNote(depositNote);
+        const targetChainIdType = parseChainIdType(Number(evmNote.targetChainId));
 
         // Given the note, iterate over the relayer's supported contracts and find the corresponding configuration
         // for the contract.
         const supportedContract = relayer.capabilities.supportedChains['evm']
-          .get(Number(evmNote.targetChainId))
+          .get(chainTypeIdToInternalId(targetChainIdType))
           ?.contracts.find(({ address, size }) => {
             // Match on the relayer configuration as well as note
             return address.toLowerCase() === contractAddress.toLowerCase() && size == Number(evmNote.amount);
@@ -72,7 +79,7 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
 
   get relayers() {
     return this.inner.getChainId().then((evmId) => {
-      const chainId = evmIdIntoChainId(evmId);
+      const chainId = evmIdIntoInternalChainId(evmId);
       return this.inner.relayingManager.getRelayer({
         baseOn: 'evm',
         chainId,
@@ -83,7 +90,7 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
   async getRelayersByNote(evmNote: Note) {
     return this.inner.relayingManager.getRelayer({
       baseOn: 'evm',
-      chainId: Number(evmNote.note.targetChainId),
+      chainId: chainTypeIdToInternalId(parseChainIdType(Number(evmNote.note.targetChainId))),
       tornadoSupport: {
         amount: Number(evmNote.note.amount),
         tokenSymbol: evmNote.note.tokenSymbol,
@@ -91,7 +98,7 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
     });
   }
 
-  async getRelayersByChainAndAddress(chainId: ChainId, address: string) {
+  async getRelayersByChainAndAddress(chainId: InternalChainId, address: string) {
     return this.inner.relayingManager.getRelayer({
       baseOn: 'evm',
       chainId: chainId,
@@ -107,13 +114,10 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
     this.cancelToken.cancelled = false;
     const activeRelayer = this.activeRelayer[0];
     const evmNote = await Note.deserialize(note);
-    const deposit = depositFromPreimage(evmNote.note.secret.replace('0x', ''));
-    const chainId = Number(evmNote.note.targetChainId) as ChainId;
-    const chainEvmId = chainIdIntoEVMId(chainId);
+    const deposit = depositFromPreimage(evmNote.note.secrets.replace('0x', ''));
+    const chainEvmId = parseChainIdType(Number(evmNote.note.targetChainId)).chainId;
+    const chainId = evmIdIntoInternalChainId(chainEvmId);
 
-    const activeChain = await this.inner.getChainId();
-    console.log('activeChain', activeChain);
-    console.log('chainEvmId', chainEvmId);
     this.emit('stateChange', WithdrawState.GeneratingZk);
 
     if (activeRelayer && (activeRelayer.beneficiary || activeRelayer.account)) {
@@ -280,7 +284,6 @@ export class Web3MixerWithdraw extends MixerWithdraw<WebbWeb3Provider> {
         if (relayers.length) {
           try {
             const relayerLeaves = await relayers[0].getLeaves(chainEvmId.toString(16), contract.inner.address);
-
             zkp = await contract.generateZKPWithLeaves(
               deposit,
               zkpInputWithoutMerkleProof,
