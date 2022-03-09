@@ -1,9 +1,10 @@
 import { ButtonBase, Checkbox, FormControlLabel, Icon, IconButton, Tooltip, Typography } from '@material-ui/core';
 import { DepositAmountDecal } from '@webb-dapp/bridge/components/DepositConfirm/DepositAmountDecal';
-import { CloseButton } from '@webb-dapp/ui-components/Buttons/CloseButton';
 import { DepositApi } from '@webb-dapp/mixer/hooks/deposit/useDeposit';
 import { DepositPayload, MixerSize, useWebContext } from '@webb-dapp/react-environment/webb-context';
+import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { SpaceBox } from '@webb-dapp/ui-components';
+import { CloseButton } from '@webb-dapp/ui-components/Buttons/CloseButton';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { notificationApi } from '@webb-dapp/ui-components/notification';
@@ -15,7 +16,6 @@ import { ethers } from 'ethers';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import styled from 'styled-components';
-import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 
 const DismissWrapper = styled.button``;
 const Dismiss = () => {
@@ -161,7 +161,7 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({ mixerSize, onClose,
         </Loading>
       )}
       <>
-      <header className={'modal-header'}>
+        <header className={'modal-header'}>
           <Flex row ai={'center'} jc={'center'}>
             <CloseButton onClick={onClose} />
           </Flex>

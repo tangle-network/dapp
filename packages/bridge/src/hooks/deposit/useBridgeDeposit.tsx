@@ -26,7 +26,11 @@ export interface BridgeDepositApi {
 
   deposit(payload: DepositPayload): Promise<void>;
 
-  generateNote(mixerId: number | string, destChain: ChainTypeId, wrappableAsset: string | undefined): Promise<DepositPayload>;
+  generateNote(
+    mixerId: number | string,
+    destChain: ChainTypeId,
+    wrappableAsset: string | undefined
+  ): Promise<DepositPayload>;
 
   loadingState: MixerDeposit['loading'];
   error: string;

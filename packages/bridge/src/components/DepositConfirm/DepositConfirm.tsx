@@ -15,6 +15,7 @@ import { downloadString } from '@webb-dapp/utils';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import styled from 'styled-components';
+
 import { DepositAmountDecal } from './DepositAmountDecal';
 
 const DepositInfoWrapper = styled.div`
