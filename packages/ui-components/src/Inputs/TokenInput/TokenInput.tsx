@@ -267,7 +267,8 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
                         setIsOpen(false);
                         onChange(currency);
                       }}
-                      fontSize={'large'}
+                      className={isSelected ? 'selected' : ''}
+                      key={id + symbol + 'currency'}
                     >
                       <Flex ai='center' row>
                         <ListItemAvatar>
