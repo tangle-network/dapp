@@ -24,8 +24,6 @@ import React from 'react';
 import { BridgeDeposit } from '../../webb-context/bridge/bridge-deposit';
 const logger = LoggerService.get('web3-bridge-deposit');
 
-const logger = LoggerService.get('web3-bridge-deposit');
-
 type DepositPayload = IDepositPayload<Note, [Deposit, number | string, string?]>;
 
 export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPayload> {

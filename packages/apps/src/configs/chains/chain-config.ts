@@ -16,10 +16,6 @@ export const getSupportedCurrenciesOfChain = (chainId: InternalChainId): WebbCur
   return chainsConfig[chainId].currencies;
 };
 
-export const getSupportedCurrenciesOfChain = (chainId: ChainId): WebbCurrencyId[] => {
-  return chainsConfig[chainId].currencies;
-};
-
 export const chainsConfig: AppConfig['chains'] = {
   [InternalChainId.WebbDevelopment]: {
     chainType: ChainType.Substrate,
