@@ -7,7 +7,7 @@ import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { NetworkManager } from '@webb-dapp/ui-components/NetworkManger/NetworkManager';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { CSSProperties, useEffect, useMemo, useRef, useState } from 'react';
 import styled, { css } from 'styled-components';
 
 const StyledList = styled.ul`
@@ -147,11 +147,6 @@ const DropdownInput: React.FC<DropdownInputProps> = ({ chains, onChange, value }
                     <Typography variant={'h6'} component={'span'} display={'block'}>
                       <b>{selected.chain.name}</b>
                     </Typography>
-                    <Typography variant={'body2'} color={'textSecondary'}>
-                      <ChainName>
-                        <b>{selected.chain.name}</b>
-                      </ChainName>
-                    </Typography>
                   </div>
                 </Flex>
               ) : (
@@ -247,18 +242,16 @@ const DropdownInput: React.FC<DropdownInputProps> = ({ chains, onChange, value }
   );
 };
 
-const ChainInputWrapper = styled.div`
-  width: 40%;
-`;
 type ChainInputProps = {
   chains: ChainTypeId[];
   selectedChain: ChainTypeId | undefined;
   setSelectedChain?(chain: ChainTypeId | undefined): void;
+  wrapperStyles?: CSSProperties;
 };
 
-export const ChainInput: React.FC<ChainInputProps> = ({ chains, selectedChain, setSelectedChain }) => {
+export const ChainInput: React.FC<ChainInputProps> = ({ wrapperStyles, chains, selectedChain, setSelectedChain }) => {
   return (
-    <ChainInputWrapper>
+    <div style={wrapperStyles}>
       {setSelectedChain && (
         <DropdownInput
           chains={chains}
@@ -269,6 +262,6 @@ export const ChainInput: React.FC<ChainInputProps> = ({ chains, selectedChain, s
         />
       )}
       {!setSelectedChain && <NetworkManager />}
-    </ChainInputWrapper>
+    </div>
   );
 };
