@@ -94,7 +94,7 @@ const PopperList = styled.div<{ open: boolean }>`
 export type TokenInputProps = {
   currencies: CurrencyContent[];
   value?: CurrencyContent | null;
-  onChange(next: CurrencyContent | null): void;
+  onChange(next: CurrencyContent): void;
   wrapperStyles?: CSSProperties;
 };
 const ChainName = styled.span`

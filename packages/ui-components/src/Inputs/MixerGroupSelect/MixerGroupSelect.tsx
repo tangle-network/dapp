@@ -95,7 +95,7 @@ export const MixerGroupSelect: React.FC<MixerGroupSelectProps> = ({ items, onCha
         })}
       </MixerGroupSelectWrapper>
       <FlexBox width='20%' justifyContent='center' alignItems='center'>
-        <p>{items[0].asset}</p>
+        <p>{items[0] && items[0].asset}</p>
       </FlexBox>
     </InputSection>
   );
