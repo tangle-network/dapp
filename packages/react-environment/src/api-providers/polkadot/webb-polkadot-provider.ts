@@ -2,7 +2,6 @@ import {
   PolkadotChainQuery,
   PolkadotMixerDeposit,
   PolkadotMixerWithdraw,
-  PolkadotTx,
   PolkadotWrapUnwrap,
   PolkaTXBuilder,
 } from '@webb-dapp/react-environment/api-providers/polkadot';
@@ -20,17 +19,15 @@ import {
 } from '@webb-dapp/react-environment/webb-context';
 import { WebbRelayerBuilder } from '@webb-dapp/react-environment/webb-context/relayer';
 import { ActionsBuilder, InteractiveFeedback, WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
-import { PolkadotAccounts } from '@webb-dapp/wallet/providers/polkadot/polkadot-accounts';
 import { PolkadotProvider } from '@webb-dapp/wallet/providers/polkadot/polkadot-provider';
 import { EventBus } from '@webb-tools/app-util';
 
 import { ApiPromise } from '@polkadot/api';
-import { InjectedExtension } from '@polkadot/extension-inject/types';
+import { InjectedAccount, InjectedExtension } from '@polkadot/extension-inject/types';
+import { AccountsAdapter } from '@webb-dapp/wallet/account/Accounts.adapter';
 
 export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbApiProvider<WebbPolkadot> {
   readonly methods: WebbMethods<WebbPolkadot>;
-  private readonly provider: PolkadotProvider;
-  accounts: PolkadotAccounts;
   readonly api: ApiPromise;
   readonly txBuilder: PolkaTXBuilder;
 
@@ -39,7 +36,9 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
     injectedExtension: InjectedExtension,
     readonly relayingManager: WebbRelayerBuilder,
     readonly config: AppConfig,
-    readonly notificationHandler: NotificationHandler
+    readonly notificationHandler: NotificationHandler,
+    private readonly provider: PolkadotProvider,
+    readonly accounts: AccountsAdapter<InjectedExtension, InjectedAccount>
   ) {
     super();
     this.provider = new PolkadotProvider(
@@ -133,7 +132,44 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
     notification: NotificationHandler
   ): Promise<WebbPolkadot> {
     const [apiPromise, injectedExtension] = await PolkadotProvider.getParams(appName, endpoints, errorHandler.onError);
-    const instance = new WebbPolkadot(apiPromise, injectedExtension, relayerBuilder, appConfig, notification);
+    const provider = new PolkadotProvider(apiPromise, injectedExtension, new PolkaTXBuilder(apiPromise, notification));
+    const accounts = provider.accounts;
+    const instance = new WebbPolkadot(
+      apiPromise,
+      injectedExtension,
+      relayerBuilder,
+      appConfig,
+      notification,
+      provider,
+      accounts
+    );
+    await instance.insureApiInterface();
+    /// check metadata update
+    await instance.awaitMetaDataCheck();
+    await apiPromise.isReady;
+    return instance;
+  }
+
+  static async initWithCustomAccountsAdapter(
+    appName: string,
+    endpoints: string[],
+    errorHandler: ApiInitHandler,
+    relayerBuilder: WebbRelayerBuilder,
+    appConfig: AppConfig,
+    notification: NotificationHandler,
+    accounts: AccountsAdapter<InjectedExtension, InjectedAccount>
+  ): Promise<WebbPolkadot> {
+    const [apiPromise, injectedExtension] = await PolkadotProvider.getParams(appName, endpoints, errorHandler.onError);
+    const provider = new PolkadotProvider(apiPromise, injectedExtension, new PolkaTXBuilder(apiPromise, notification));
+    const instance = new WebbPolkadot(
+      apiPromise,
+      injectedExtension,
+      relayerBuilder,
+      appConfig,
+      notification,
+      provider,
+      accounts
+    );
     await instance.insureApiInterface();
     /// check metadata update
     await instance.awaitMetaDataCheck();
