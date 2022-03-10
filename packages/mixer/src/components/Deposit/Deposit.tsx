@@ -13,7 +13,7 @@ import { MixerGroupSelect } from '@webb-dapp/ui-components/Inputs/MixerGroupSele
 import { TokenInput } from '@webb-dapp/ui-components/Inputs/TokenInput/TokenInput';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { getRoundedAmountString } from '@webb-dapp/ui-components/utils';
-import React, { useCallback, useEffect, useState, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 const DepositWrapper = styled.div``;
@@ -41,15 +41,15 @@ const TokenInputWrapper = styled.div`
 
 const TokenBalance = styled.div`
   border: 1px solid ${({ theme }) => theme.primaryText};
-  border-radius: 5px; 
+  border-radius: 5px;
   margin-left: 5px;
   padding: 0 5px;
-`
+`;
 
 type DepositProps = {};
 
 export const Deposit: React.FC<DepositProps> = () => {
-  const { activeChain, activeApi, activeWallet, chains, switchChain } = useWebContext();
+  const { activeApi, activeChain, activeWallet, chains, switchChain } = useWebContext();
   const depositApi = useDeposit();
   const palette = useColorPallet();
 
@@ -75,13 +75,15 @@ export const Deposit: React.FC<DepositProps> = () => {
     activeApi.methods.chainQuery.tokenBalanceByCurrencyId(selectedToken.view.id as any).then((balance) => {
       setTokenBalance(balance);
     });
-  }, [activeApi, activeChain, selectedToken])
+  }, [activeApi, activeChain, selectedToken]);
 
   return (
     <DepositWrapper>
       <TokenInputWrapper>
         <div className='titles-and-information'>
-          <Typography variant='h6'><b>TOKEN</b></Typography>
+          <Typography variant='h6'>
+            <b>TOKEN</b>
+          </Typography>
         </div>
         <RequiredWalletSelection>
           <div className='token-dropdown-section'>
@@ -97,11 +99,13 @@ export const Deposit: React.FC<DepositProps> = () => {
         </RequiredWalletSelection>
         <div className='titles-and-information'>
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            <Typography variant='h6'><b>AMOUNT</b></Typography>
+            <Typography variant='h6'>
+              <b>AMOUNT</b>
+            </Typography>
           </div>
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <div>
-              <Typography 
+              <Typography
                 variant='body2'
                 style={{ color: palette.type === 'dark' ? palette.accentColor : palette.primaryText }}
               >

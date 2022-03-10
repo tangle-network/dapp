@@ -52,10 +52,10 @@ const TokenInputWrapper = styled.div`
 
 const TokenBalance = styled.div`
   border: 1px solid ${({ theme }) => theme.primaryText};
-  border-radius: 5px; 
+  border-radius: 5px;
   margin-left: 5px;
   padding: 0 5px;
-`
+`;
 
 type DepositProps = {};
 
@@ -160,7 +160,9 @@ export const Deposit: React.FC<DepositProps> = () => {
   return (
     <DepositWrapper>
       <ChainInputWrapper>
-        <Typography variant={'h6'} style={{ marginBottom: '10px' }}><b>CHAIN</b></Typography>
+        <Typography variant={'h6'} style={{ marginBottom: '10px' }}>
+          <b>CHAIN</b>
+        </Typography>
         <div className='chain-dropdown-section'>
           <ChainInput
             chains={tokenChains}
@@ -186,7 +188,9 @@ export const Deposit: React.FC<DepositProps> = () => {
       <TokenInputWrapper>
         <div className='titles-and-information'>
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            <Typography variant='h6'><b>TOKEN</b></Typography>
+            <Typography variant='h6'>
+              <b>TOKEN</b>
+            </Typography>
           </div>
           <FormControlLabel
             label={'Wrap Assets?'}
@@ -215,7 +219,7 @@ export const Deposit: React.FC<DepositProps> = () => {
                   }}
                   wrapperStyles={{ width: '42%' }}
                 />
-                <CircledArrowRight/>
+                <CircledArrowRight />
               </>
             )}
             <TokenInput
@@ -229,7 +233,7 @@ export const Deposit: React.FC<DepositProps> = () => {
                   setSelectedCurrency(undefined);
                 }
               }}
-              wrapperStyles={ showWrappableAssets ? { width: '42%' } : { width: '100%' }}
+              wrapperStyles={showWrappableAssets ? { width: '42%' } : { width: '100%' }}
             />
           </div>
         </RequiredWalletSelection>
@@ -237,11 +241,13 @@ export const Deposit: React.FC<DepositProps> = () => {
           <>
             <div className='titles-and-information'>
               <div style={{ display: 'flex', alignItems: 'center' }}>
-                <Typography variant='h6'><b>AMOUNT</b></Typography>
+                <Typography variant='h6'>
+                  <b>AMOUNT</b>
+                </Typography>
               </div>
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <div>
-                  <Typography 
+                  <Typography
                     variant='body2'
                     style={{ color: palette.type === 'dark' ? palette.accentColor : palette.primaryText }}
                   >
@@ -251,7 +257,9 @@ export const Deposit: React.FC<DepositProps> = () => {
                 <TokenBalance>
                   {showWrappableAssets && wrappableToken && wrappableCurrency && (
                     <Typography variant='body2'>
-                      <b>{getRoundedAmountString(Number(wrappableTokenBalance))} {wrappableCurrency.view.symbol}</b>
+                      <b>
+                        {getRoundedAmountString(Number(wrappableTokenBalance))} {wrappableCurrency.view.symbol}
+                      </b>
                     </Typography>
                   )}
                   {!showWrappableAssets && selectedBridgeCurrency && (

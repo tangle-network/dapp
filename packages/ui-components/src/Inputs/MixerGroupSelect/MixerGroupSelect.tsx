@@ -4,8 +4,8 @@ import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 import React, { useEffect, useMemo } from 'react';
 import styled, { css } from 'styled-components';
-import { FlexBox, getRoundedAmountString } from '../..';
 
+import { FlexBox, getRoundedAmountString } from '../..';
 import { InputSection } from '../InputSection/InputSection';
 
 const MixerGroupSelectWrapper = styled.div`
@@ -75,7 +75,7 @@ export const MixerGroupSelect: React.FC<MixerGroupSelectProps> = ({ items, onCha
   return (
     <InputSection>
       <MixerGroupSelectWrapper style={{ width: '80%' }}>
-        {mixerSizes.map(({ id, selected, title, amount, asset }) => {
+        {mixerSizes.map(({ amount, asset, id, selected, title }) => {
           return (
             <AmountChipWrapper
               key={id + title}
@@ -85,7 +85,7 @@ export const MixerGroupSelect: React.FC<MixerGroupSelectProps> = ({ items, onCha
                   title,
                   id,
                   amount,
-                  asset
+                  asset,
                 });
               }}
             >

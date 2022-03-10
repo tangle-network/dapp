@@ -249,7 +249,7 @@ type ChainInputProps = {
   wrapperStyles?: CSSProperties;
 };
 
-export const ChainInput: React.FC<ChainInputProps> = ({ wrapperStyles, chains, selectedChain, setSelectedChain }) => {
+export const ChainInput: React.FC<ChainInputProps> = ({ chains, selectedChain, setSelectedChain, wrapperStyles }) => {
   return (
     <div style={wrapperStyles}>
       {setSelectedChain && (

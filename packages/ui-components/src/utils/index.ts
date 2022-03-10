@@ -30,7 +30,7 @@ export function getRoundedAmountString(amount: number) {
   } else if (amount >= 100000) {
     return `${amount / 1000}K`;
   } else if (amount.toString().length > 5) {
-    return `${amount.toPrecision(4)}`
+    return `${amount.toPrecision(4)}`;
   } else {
     return `${amount}`;
   }

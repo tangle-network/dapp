@@ -10,16 +10,12 @@ export const RequiredWalletSelection: React.FC<RequiredWalletSelectionProps> = (
 
   return (
     <>
-    {!activeWallet &&
-      <FlexBox>
-        <WalletSelect />
-      </FlexBox>
-    }
-    {activeWallet && 
-      <FlexBox>
-        {children}
-      </FlexBox>
-    }
+      {!activeWallet && (
+        <FlexBox>
+          <WalletSelect />
+        </FlexBox>
+      )}
+      {activeWallet && <FlexBox>{children}</FlexBox>}
     </>
   );
-}
+};
