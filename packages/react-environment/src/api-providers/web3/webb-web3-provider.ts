@@ -26,7 +26,7 @@ import { EventBus } from '@webb-tools/app-util';
 import { Note } from '@webb-tools/sdk-core';
 import { ethers, providers } from 'ethers';
 import { Eth } from 'web3-eth';
-import {NotifiH}
+
 export class WebbWeb3Provider
   extends EventBus<WebbProviderEvents<[number]>>
   implements WebbApiProvider<WebbWeb3Provider>
