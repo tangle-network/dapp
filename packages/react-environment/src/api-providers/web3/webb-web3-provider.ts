@@ -19,17 +19,18 @@ import { Web3MixerWithdraw } from '@webb-dapp/react-environment/api-providers/we
 import { MixerSize } from '@webb-dapp/react-environment/webb-context';
 import { WebbRelayerBuilder } from '@webb-dapp/react-environment/webb-context/relayer';
 import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
+import { AccountsAdapter } from '@webb-dapp/wallet/account/Accounts.adapter';
 import { Web3Accounts } from '@webb-dapp/wallet/providers/web3/web3-accounts';
 import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
 import { EventBus } from '@webb-tools/app-util';
 import { Note } from '@webb-tools/sdk-core';
 import { ethers, providers } from 'ethers';
-
+import { Eth } from 'web3-eth';
+import {NotifiH}
 export class WebbWeb3Provider
   extends EventBus<WebbProviderEvents<[number]>>
   implements WebbApiProvider<WebbWeb3Provider>
 {
-  readonly accounts: Web3Accounts;
   readonly methods: WebbMethods<WebbWeb3Provider>;
   private ethersProvider: providers.Web3Provider;
   private connectedMixers: EvmChainMixersInfo;
@@ -39,10 +40,10 @@ export class WebbWeb3Provider
     private chainId: number,
     readonly relayingManager: WebbRelayerBuilder,
     readonly config: AppConfig,
-    readonly notificationHandler: NotificationHandler
+    readonly notificationHandler: NotificationHandler,
+    readonly accounts: AccountsAdapter<Eth>
   ) {
     super();
-    this.accounts = new Web3Accounts(web3Provider.eth);
     this.ethersProvider = web3Provider.intoEthersProvider();
 
     // Remove listeners for chainChanged on the previous object
@@ -172,6 +173,7 @@ export class WebbWeb3Provider
     return Promise.resolve(this.connectedMixers.getTornMixerSizes(tokenSymbol));
   }
 
+  // Init web3 provider with the `Web3Accounts` as the default account provider
   static async init(
     web3Provider: Web3Provider,
     chainId: number,
@@ -179,7 +181,20 @@ export class WebbWeb3Provider
     appConfig: AppConfig,
     notification: NotificationHandler
   ) {
-    return new WebbWeb3Provider(web3Provider, chainId, relayerBuilder, appConfig, notification);
+    const accounts = new Web3Accounts(web3Provider.eth);
+    return new WebbWeb3Provider(web3Provider, chainId, relayerBuilder, appConfig, notification, accounts);
+  }
+
+  // Init web3 provider with a generic account provider
+  static async initWithCustomAccountAdapter(
+    web3Provider: Web3Provider,
+    chainId: number,
+    relayerBuilder: WebbRelayerBuilder,
+    appConfig: AppConfig,
+    notification: NotificationHandler,
+    web3AccountProvider: AccountsAdapter<Eth>
+  ) {
+    return new WebbWeb3Provider(web3Provider, chainId, relayerBuilder, appConfig, notification, web3AccountProvider);
   }
 
   get capabilities() {
@@ -206,6 +221,7 @@ export class WebbWeb3Provider
       return reason;
     }
   }
+
   switchOrAddChain(evmChainId: number) {
     return this.web3Provider
       .switchChain({

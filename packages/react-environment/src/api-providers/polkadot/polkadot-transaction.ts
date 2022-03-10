@@ -47,7 +47,7 @@ type PolkadotTXEvents = {
   finalize: PolkadotTXEventsPayload<string | void | undefined>;
   inBlock: PolkadotTXEventsPayload;
   extrinsicSuccess: PolkadotTXEventsPayload;
-  loading: PolkadotTXEventsPayload<JSX.Element>;
+  loading: PolkadotTXEventsPayload<any>;
 };
 
 export type NotificationConfig = {
@@ -82,7 +82,7 @@ export class PolkadotTx<P extends Array<any>> extends EventBus<PolkadotTXEvents>
       nonce: -1,
     });
     this.emitWithPayload('beforeSend', undefined);
-    this.emitWithPayload('loading', React.createElement('div'));
+    this.emitWithPayload('loading', '');
     const hash = txResults.hash.toString();
     await this.send(txResults);
 
