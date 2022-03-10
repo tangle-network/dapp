@@ -3,7 +3,7 @@ import { basePallet } from './base-pallet';
 export const lightPallet = {
   ...basePallet,
   type: 'light',
-  primaryText: '#474553',
+  primaryText: '#000000',
 
   tabHeader: '#EBEEFD',
   borderColor: 'rgba(0, 0, 0, 0.13)',
