@@ -2,12 +2,11 @@ import { Icon, IconButton, Typography } from '@material-ui/core';
 import { ReactComponent as WebbLogo } from '@webb-dapp/react-components/assets/webb-icon.svg';
 import { useStore } from '@webb-dapp/react-environment';
 import { useDimensions } from '@webb-dapp/react-environment/layout';
+import { WalletSelect } from '@webb-dapp/ui-components/Inputs/WalletSelect/WalletSelect';
 import { NetworkManager } from '@webb-dapp/ui-components/NetworkManger/NetworkManager';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
-
-import { AccountManager } from '../AccountManager/AccountManager';
 
 const AppBarWrapper = styled.div`
   max-height: 65px;
@@ -86,8 +85,6 @@ const AppBarWrapper = styled.div`
   }
 `;
 
-const UpperSection = styled.div``;
-
 const LowerSection = styled.div`
   display: flex;
   height: 40px;
@@ -136,7 +133,7 @@ const AppBar: React.FC<AppBarProps> = ({ toggleSidebarDisplay }) => {
       </Typography>
       <RightNavigation>
         <NetworkManager />
-        <AccountManager />
+        <WalletSelect />
       </RightNavigation>
     </AppBarWrapper>
   );

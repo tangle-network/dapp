@@ -28,7 +28,7 @@ const DepositInfoWrapper = styled.div`
   min-height: 300px;
   position: relative;
   overflow: hidden;
-  background: ${({ theme }: { theme: Pallet }) => (theme.type === 'dark' ? theme.spinnerBackground : '#fff')};
+  background: ${({ theme }: { theme: Pallet }) => theme.modalBackground};
 
   .modal-header {
     padding-top: 15px;

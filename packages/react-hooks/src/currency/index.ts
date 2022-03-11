@@ -1,1 +1,2 @@
-export * from './useCurrencyFromToken';
+export * from './getNativeCurrencyBalance';
+export * from './getNativeCurrencySymbol';

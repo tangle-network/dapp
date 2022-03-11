@@ -4,7 +4,7 @@ export const darkPallet = {
   ...basePallet,
   type: 'dark',
   primaryText: '#FFFFFF',
-  secondaryText: '#a3a0b7',
+  secondaryText: '#B6B6B6',
   borderColor: 'rgba(255, 255, 255, 0.22)',
   borderColor2: 'rgba(56, 60, 64, 1)',
 
@@ -14,10 +14,11 @@ export const darkPallet = {
   cardBackground: '#181818',
   menuBackground: '#000',
   componentBackground: `#242324`,
+  modalBackground: '#242424',
 
   lightSelectionBackground: '#131313',
   heavySelectionBackground: 'rgba(255, 255, 255, 0.07)',
-  heavySelectionBorder: '1px solid rgba(255, 255, 255, 0.19)',
+  heavySelectionBorderColor: 'rgba(255, 255, 255, 0.19)',
   layer1Background: '#181818',
   layer2Background: 'rgba(34, 38, 43, 1)',
   layer3Background: 'rgba(56, 60, 64, 1)',

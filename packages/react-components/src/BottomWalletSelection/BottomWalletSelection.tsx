@@ -109,12 +109,6 @@ export const BottomWalletSelection: React.FC<WalletSelectProps> = ({}) => {
 
       <Modal open={open} onClose={closeModal}>
         <WalletManager
-          wallets={wallets}
-          setSelectedWallet={async (wallet) => {
-            if (activeChain) {
-              await switchChain(activeChain, wallet);
-            }
-          }}
           close={closeModal}
         />
       </Modal>
