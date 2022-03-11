@@ -108,9 +108,7 @@ export const BottomWalletSelection: React.FC<WalletSelectProps> = ({}) => {
       </WalletSelectWrapper>
 
       <Modal open={open} onClose={closeModal}>
-        <WalletManager
-          close={closeModal}
-        />
+        <WalletManager close={closeModal} />
       </Modal>
     </BottomSelectionWrapper>
   );

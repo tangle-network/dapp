@@ -148,7 +148,7 @@ export const AccountManager: React.FC<AccountManagerProps> = () => {
               </IconButton>
             </div>
           </div>
-          <Popper placement={'bottom-end'} open={isOpen} anchorEl={$wrapper?.current} style={{ zIndex: '1500' }} >
+          <Popper placement={'bottom-end'} open={isOpen} anchorEl={$wrapper?.current} style={{ zIndex: '1500' }}>
             <PopperList open={isOpen} style={{ width: $wrapper.current?.clientWidth }}>
               <StyledList as={List} dense disablePadding>
                 {accountAddresses.map((account, inx) => {

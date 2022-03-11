@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
 import { useWebContext } from '@webb-dapp/react-environment/webb-context';
+import { useEffect, useState } from 'react';
 
-export const getNativeCurrencyBalance = () => {
+export const useNativeCurrencyBalance = () => {
   const { activeApi, activeChain } = useWebContext();
 
   const [balance, setBalance] = useState('');

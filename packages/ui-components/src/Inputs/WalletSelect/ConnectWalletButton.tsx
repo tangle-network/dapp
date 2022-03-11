@@ -51,9 +51,7 @@ export const ConnectWalletButton: React.FC<{}> = () => {
       </ConnectWalletButtonWrapper>
 
       <Modal open={open} onClose={closeModal}>
-        <WalletManager
-          close={closeModal}
-        />
+        <WalletManager close={closeModal} />
       </Modal>
     </>
   );

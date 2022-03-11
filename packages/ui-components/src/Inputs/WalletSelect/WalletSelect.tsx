@@ -1,7 +1,7 @@
 import { Avatar } from '@material-ui/core';
 import { useWebContext } from '@webb-dapp/react-environment';
 import { ManagedWallet } from '@webb-dapp/react-environment/types/wallet-config.interface';
-import { getNativeCurrencyBalance, getNativeCurrencySymbol } from '@webb-dapp/react-hooks/currency';
+import { useNativeCurrencyBalance, useNativeCurrencySymbol } from '@webb-dapp/react-hooks/currency';
 import { useAccounts } from '@webb-dapp/react-hooks/useAccounts';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { useWallets } from '@webb-dapp/react-hooks/useWallets';
@@ -10,8 +10,8 @@ import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { getRoundedAmountString } from '../..';
 
+import { getRoundedAmountString } from '../..';
 import { WalletManager } from './WalletManager';
 
 const WalletSelectWrapper = styled.div`
@@ -57,7 +57,7 @@ const WalletSelectWrapper = styled.div`
 
   .account-balance {
     font-size: 12px;
-    color: ${({ theme }) => theme.type === 'dark' ? theme.accentColor : '#000000'}
+    color: ${({ theme }) => (theme.type === 'dark' ? theme.accentColor : '#000000')}
   }
 `;
 type WalletSelectProps = {};
@@ -84,7 +84,9 @@ export const WalletSelect: React.FC<WalletSelectProps> = ({}) => {
     }
   }, [wallets, setSelectedWallet]);
 
-  const amountBalanceString = `${getRoundedAmountString(Number(getNativeCurrencyBalance()))}${getNativeCurrencySymbol()}`;
+  const amountBalanceString = `${getRoundedAmountString(
+    Number(useNativeCurrencyBalance())
+  )}${useNativeCurrencySymbol()}`;
 
   return (
     <>
@@ -125,9 +127,7 @@ export const WalletSelect: React.FC<WalletSelectProps> = ({}) => {
       </WalletSelectWrapper>
 
       <Modal open={open} onClose={closeModal}>
-        <WalletManager
-          close={closeModal}
-        />
+        <WalletManager close={closeModal} />
       </Modal>
     </>
   );

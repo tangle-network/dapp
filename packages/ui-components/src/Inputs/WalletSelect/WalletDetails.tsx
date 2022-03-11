@@ -1,14 +1,14 @@
-import { Avatar, Typography } from "@material-ui/core";
-import { WalletId } from "@webb-dapp/apps/configs";
-import { AccountManager } from "@webb-dapp/react-components/AccountManager/AccountManager";
-import { useWebContext } from "@webb-dapp/react-environment";
-import { ManagedWallet } from "@webb-dapp/react-environment/types/wallet-config.interface";
-import { getNativeCurrencyBalance, getNativeCurrencySymbol, useAccounts } from '@webb-dapp/react-hooks';
-
+import { Avatar, Typography } from '@material-ui/core';
+import { WalletId } from '@webb-dapp/apps/configs';
+import { AccountManager } from '@webb-dapp/react-components/AccountManager/AccountManager';
+import { useWebContext } from '@webb-dapp/react-environment';
+import { ManagedWallet } from '@webb-dapp/react-environment/types/wallet-config.interface';
+import { useAccounts, useNativeCurrencyBalance, useNativeCurrencySymbol } from '@webb-dapp/react-hooks';
 import React, { useMemo } from 'react';
-import CopyToClipboard from "react-copy-to-clipboard";
+import CopyToClipboard from 'react-copy-to-clipboard';
 import styled, { css } from 'styled-components';
-import { getRoundedAmountString } from "../..";
+
+import { getRoundedAmountString } from '../..';
 
 const ColorCircle1 = styled.div<{ color: string }>`
   position: absolute;
@@ -18,7 +18,7 @@ const ColorCircle1 = styled.div<{ color: string }>`
   height: 120px;
   width: 120px;
   transform: rotate(-15deg)
-  background: ${({color}) => color};
+  background: ${({ color }) => color};
 `;
 
 const ColorCircle2 = styled.div<{ color: string }>`
@@ -29,7 +29,7 @@ const ColorCircle2 = styled.div<{ color: string }>`
   height: 120px;
   width: 120px;
   transform: rotate(-15deg);
-  background: ${({color}) => color};
+  background: ${({ color }) => color};
 `;
 
 const ConnectionDetails = styled.div<{ walletId: number }>`
@@ -43,11 +43,11 @@ const ConnectionDetails = styled.div<{ walletId: number }>`
     if (walletId == WalletId.WalletConnectV1)
       return css`
         background: linear-gradient(133.59deg, #286afa 15.85%, #9db1fc 81.66%);
-      `
+      `;
     else
       return css`
         background: linear-gradient(133.59deg, #fcad3a 15.85%, #fee4bf 81.66%);
-      `
+      `;
   }}
 
   .text-section {
@@ -64,7 +64,7 @@ const ConnectionDetails = styled.div<{ walletId: number }>`
     flex: 1;
     justify-content: center;
   }
-`
+`;
 
 const BottomSelectionWrapper = styled.div`
   display: flex;
@@ -85,8 +85,8 @@ const BottomSelectionWrapper = styled.div`
     height: 20px;
     padding: 0 10px;
     border-radius: 14px;
-    border: 1px solid ${({ theme }) => theme.type === 'dark' ? theme.accentColor : '#000000'};
-    color: ${({ theme }) => theme.type === 'dark' ? theme.accentColor : '#000000'};
+    border: 1px solid ${({ theme }) => (theme.type === 'dark' ? theme.accentColor : '#000000')};
+    color: ${({ theme }) => (theme.type === 'dark' ? theme.accentColor : '#000000')};
   }
 `;
 
@@ -99,7 +99,7 @@ const AddressDetails = styled.div`
   z-index: 99;
   background: ${({ theme }) => theme.heavySelectionBackground};
   border-radius: 10px;
-`
+`;
 
 const AccountName = styled.p`
   white-space: nowrap;
@@ -111,10 +111,9 @@ const AccountName = styled.p`
 
 type WalletDetailsProps = {
   wallet: ManagedWallet;
-}
+};
 
 export const WalletDetails: React.FC<WalletDetailsProps> = ({ wallet }) => {
-
   const { activeChain } = useWebContext();
   const { active } = useAccounts();
   const name = useMemo(() => active?.name || active?.address || '', [active]);
@@ -122,24 +121,20 @@ export const WalletDetails: React.FC<WalletDetailsProps> = ({ wallet }) => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', width: '100%' }}>
       <ConnectionDetails walletId={wallet.id}>
-        <div className="text-section">
-          <div className="text-container">
+        <div className='text-section'>
+          <div className='text-container'>
             <Typography style={{ fontSize: '13px', color: 'black' }}>Balance</Typography>
             <Typography style={{ fontSize: '16px', color: 'black' }}>
-              {getRoundedAmountString(Number(getNativeCurrencyBalance()))} {getNativeCurrencySymbol()}
+              {getRoundedAmountString(Number(useNativeCurrencyBalance()))} {useNativeCurrencySymbol()}
             </Typography>
           </div>
-          <div className="text-container">
+          <div className='text-container'>
             <Typography style={{ fontSize: '13px', color: 'black' }}>Network</Typography>
-            <Typography style={{ fontSize: '16px', color: 'black' }}>
-              {activeChain?.name}
-            </Typography>
+            <Typography style={{ fontSize: '16px', color: 'black' }}>{activeChain?.name}</Typography>
           </div>
-          <div className="text-container">
+          <div className='text-container'>
             <Typography style={{ fontSize: '13px', color: 'black' }}>Wallet</Typography>
-            <Typography style={{ fontSize: '16px', color: 'black' }}>
-              {wallet.title}
-            </Typography>
+            <Typography style={{ fontSize: '16px', color: 'black' }}>{wallet.title}</Typography>
           </div>
         </div>
       </ConnectionDetails>
@@ -149,22 +144,23 @@ export const WalletDetails: React.FC<WalletDetailsProps> = ({ wallet }) => {
             <wallet.logo />
           </Avatar>
           <div style={{ display: 'flex', flexGrow: '1', paddingLeft: '10px' }}>
-            {wallet.id === WalletId.Polkadot ? 
+            {wallet.id === WalletId.Polkadot ? (
               <div style={{ display: 'flex', width: '100%', justifyContent: 'center' }}>
                 <AccountManager />
-              </div> :
+              </div>
+            ) : (
               <>
                 <AccountName>{name}</AccountName>
               </>
-            }
+            )}
           </div>
           <CopyToClipboard text={active?.address} {...({ className: 'copy-button' } as any)}>
-            <Typography style={{ fontSize: '13px',  }}>
+            <Typography style={{ fontSize: '13px' }}>
               <b>COPY</b>
             </Typography>
           </CopyToClipboard>
         </BottomSelectionWrapper>
       </AddressDetails>
     </div>
-  )
-}
+  );
+};

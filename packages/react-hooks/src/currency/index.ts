@@ -1,2 +1,2 @@
-export * from './getNativeCurrencyBalance';
-export * from './getNativeCurrencySymbol';
+export * from './useNativeCurrencyBalance';
+export * from './useNativeCurrencySymbol';

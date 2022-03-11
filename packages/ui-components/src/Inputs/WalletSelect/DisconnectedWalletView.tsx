@@ -11,12 +11,10 @@ import {
   Tooltip,
   Typography,
 } from '@material-ui/core';
-import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
-import { SpaceBox } from '@webb-dapp/ui-components';
-import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
-
 import { ManagedWallet } from '@webb-dapp/react-environment/types/wallet-config.interface';
-
+import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
+import { SpaceBox } from '@webb-dapp/ui-components';
+import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import React from 'react';
 import styled from 'styled-components';
 
@@ -24,8 +22,7 @@ const CloseButton = styled.button`
   vertical-align: middle;
 `;
 
-const DisconnectedWalletWrapper = styled.div`
-`;
+const DisconnectedWalletWrapper = styled.div``;
 
 const StyledListItem = styled.li`
   && {
@@ -41,7 +38,11 @@ type DisconnectedWalletViewProps = {
   wallets: ManagedWallet[];
 };
 
-export const DisconnectedWalletView: React.FC<DisconnectedWalletViewProps> = ({ close, setSelectedWallet, wallets }) => {
+export const DisconnectedWalletView: React.FC<DisconnectedWalletViewProps> = ({
+  close,
+  setSelectedWallet,
+  wallets,
+}) => {
   const palette = useColorPallet();
 
   return (
@@ -52,7 +53,7 @@ export const DisconnectedWalletView: React.FC<DisconnectedWalletViewProps> = ({ 
             Connect your wallet
           </Typography>
           <SpaceBox height={8} />
-          <Typography variant={'h6'} color={'textSecondary'} >
+          <Typography variant={'h6'} color={'textSecondary'}>
             Select your Wallet Provider
           </Typography>
         </Flex>
@@ -98,6 +99,5 @@ export const DisconnectedWalletView: React.FC<DisconnectedWalletViewProps> = ({ 
         })}
       </List>
     </DisconnectedWalletWrapper>
-  )
-
-}
+  );
+};

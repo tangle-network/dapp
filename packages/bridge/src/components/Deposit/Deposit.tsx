@@ -21,9 +21,8 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
 const DepositWrapper = styled.div<{ wallet: WalletConfig | undefined }>`
-  ${({ wallet, theme }) => {
-    if (wallet)
-      return css``;
+  ${({ theme, wallet }) => {
+    if (wallet) return css``;
     else
       return css`
         padding: 25px 35px;
@@ -31,7 +30,7 @@ const DepositWrapper = styled.div<{ wallet: WalletConfig | undefined }>`
         border: 1px solid ${theme.borderColor};
         border-radius: 0 0 13px 13px;
       `;
-  }} 
+  }}
 `;
 
 const ChainInputWrapper = styled.div`

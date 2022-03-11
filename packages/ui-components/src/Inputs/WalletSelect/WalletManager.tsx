@@ -1,11 +1,12 @@
 import { ManagedWallet } from '@webb-dapp/react-environment/types/wallet-config.interface';
-import { useWallets } from '@webb-dapp/react-hooks/useWallets';
 import { useWebContext } from '@webb-dapp/react-environment/webb-context';
+import { useWallets } from '@webb-dapp/react-hooks/useWallets';
 import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { DisconnectedWalletView } from './DisconnectedWalletView';
+
 import { ConnectedWalletView } from './ConnectedWalletView';
+import { DisconnectedWalletView } from './DisconnectedWalletView';
 
 const WalletManagerWrapper = styled.div`
   width: 440px;
@@ -27,11 +28,11 @@ export const WalletManager: React.FC<WalletManagerProps> = ({ close }) => {
       setSelectedWallet(nextWallet);
     }
   }, [wallets, setSelectedWallet]);
-  
+
   return (
     <WalletManagerWrapper>
-      {!selectedWallet && 
-        <DisconnectedWalletView 
+      {!selectedWallet && (
+        <DisconnectedWalletView
           wallets={wallets}
           setSelectedWallet={async (wallet) => {
             if (activeChain) {
@@ -40,17 +41,21 @@ export const WalletManager: React.FC<WalletManagerProps> = ({ close }) => {
           }}
           close={close}
         />
-      }
-      {selectedWallet &&
+      )}
+      {selectedWallet && (
         <>
-          <ConnectedWalletView close={close} connectedWallet={selectedWallet} disconnectWallet={() => {
-            if (selectedWallet.canEndSession) {
-              selectedWallet.endSession();
-            }
-            setSelectedWallet(null);
-          }}/>
+          <ConnectedWalletView
+            close={close}
+            connectedWallet={selectedWallet}
+            disconnectWallet={() => {
+              if (selectedWallet.canEndSession) {
+                selectedWallet.endSession();
+              }
+              setSelectedWallet(null);
+            }}
+          />
         </>
-      }
+      )}
     </WalletManagerWrapper>
   );
 };

@@ -11,16 +11,15 @@ import {
   Tooltip,
   Typography,
 } from '@material-ui/core';
-import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
-import { SpaceBox } from '@webb-dapp/ui-components';
+import { WalletId } from '@webb-dapp/apps/configs';
+import { ManagedWallet } from '@webb-dapp/react-environment/types/wallet-config.interface';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
-
-import { ManagedWallet } from "@webb-dapp/react-environment/types/wallet-config.interface"
-
+import { SpaceBox } from '@webb-dapp/ui-components';
+import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import React from 'react';
 import styled, { css } from 'styled-components';
+
 import { WalletDetails } from './WalletDetails';
-import { WalletId } from '@webb-dapp/apps/configs';
 
 const ConnectedWalletWrapper = styled.div`
   display: flex;
@@ -30,7 +29,6 @@ const ConnectedWalletWrapper = styled.div`
   .modal-heading {
     width: 100%;
   }
-
 `;
 
 const CloseButton = styled.button`
@@ -41,16 +39,16 @@ const DisconnectWalletButton = styled.button<{ walletId: number }>`
   cursor: pointer;
   margin-top: 20px;
   background: transparent;
-  
+
   ${({ walletId }) => {
     if (walletId == WalletId.WalletConnectV1)
       return css`
         color: #9db1fc;
-      `
+      `;
     else
       return css`
-        ${({ theme }) => theme.type === 'dark' ? 'color: #FFC149' : 'color: #E59F16'};
-      `
+        ${({ theme }) => (theme.type === 'dark' ? 'color: #FFC149' : 'color: #E59F16')};
+      `;
   }}
 `;
 
@@ -58,9 +56,13 @@ type ConnectedWalletViewProps = {
   close(): void;
   connectedWallet: ManagedWallet;
   disconnectWallet(): void;
-}
+};
 
-export const ConnectedWalletView: React.FC<ConnectedWalletViewProps> = ({ close, connectedWallet, disconnectWallet }) => {
+export const ConnectedWalletView: React.FC<ConnectedWalletViewProps> = ({
+  close,
+  connectedWallet,
+  disconnectWallet,
+}) => {
   const palette = useColorPallet();
 
   return (
@@ -71,7 +73,7 @@ export const ConnectedWalletView: React.FC<ConnectedWalletViewProps> = ({ close,
             Wallet
           </Typography>
           <SpaceBox height={8} />
-          <Typography variant={'h6'} color={'textSecondary'} >
+          <Typography variant={'h6'} color={'textSecondary'}>
             Your connected wallet info
           </Typography>
         </Flex>
@@ -87,10 +89,10 @@ export const ConnectedWalletView: React.FC<ConnectedWalletViewProps> = ({ close,
         </div>
       </Flex>
       <SpaceBox height={12} />
-      <WalletDetails wallet={connectedWallet}/>
+      <WalletDetails wallet={connectedWallet} />
       <DisconnectWalletButton walletId={connectedWallet.id} onClick={disconnectWallet}>
         -DISCONNECT
       </DisconnectWalletButton>
     </ConnectedWalletWrapper>
   );
-}
+};

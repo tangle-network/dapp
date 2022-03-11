@@ -1,7 +1,7 @@
 import { useWebContext } from '@webb-dapp/react-environment/webb-context';
 import { Currency } from '@webb-dapp/react-environment/webb-context/currency/currency';
 
-export const getNativeCurrencySymbol = () => {
+export const useNativeCurrencySymbol = () => {
   const { activeChain } = useWebContext();
   if (!activeChain) return '';
 
