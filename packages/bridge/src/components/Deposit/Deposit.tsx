@@ -219,38 +219,36 @@ export const Deposit: React.FC<DepositProps> = () => {
               }
             />
           </div>
-          <RequiredWalletSelection>
-            <div className='token-dropdown-section'>
-              {showWrappableAssets && (
-                <>
-                  <TokenInput
-                    currencies={wrappableTokens}
-                    value={wrappableCurrency}
-                    onChange={(currencyContent) => {
-                      setWrappableToken(
-                        currencyContent ? Currency.fromCurrencyId(currencyContent.view.id as WebbCurrencyId) : null
-                      );
-                    }}
-                    wrapperStyles={{ width: '42%' }}
-                  />
-                  <CircledArrowRight />
-                </>
-              )}
-              <TokenInput
-                currencies={bridgeCurrencies}
-                value={selectedBridgeCurrency}
-                onChange={(currencyContent) => {
-                  if (currencyContent) {
-                    // TODO validate the id is BridgeCurrency id not WebbCurrencyId
-                    setSelectedCurrency(currencyContent.view.id);
-                  } else {
-                    setSelectedCurrency(undefined);
-                  }
-                }}
-                wrapperStyles={showWrappableAssets ? { width: '42%' } : { width: '100%' }}
-              />
-            </div>
-          </RequiredWalletSelection>
+          <div className='token-dropdown-section'>
+            {showWrappableAssets && (
+              <>
+                <TokenInput
+                  currencies={wrappableTokens}
+                  value={wrappableCurrency}
+                  onChange={(currencyContent) => {
+                    setWrappableToken(
+                      currencyContent ? Currency.fromCurrencyId(currencyContent.view.id as WebbCurrencyId) : null
+                    );
+                  }}
+                  wrapperStyles={{ width: '42%' }}
+                />
+                <CircledArrowRight />
+              </>
+            )}
+            <TokenInput
+              currencies={bridgeCurrencies}
+              value={selectedBridgeCurrency}
+              onChange={(currencyContent) => {
+                if (currencyContent) {
+                  // TODO validate the id is BridgeCurrency id not WebbCurrencyId
+                  setSelectedCurrency(currencyContent.view.id);
+                } else {
+                  setSelectedCurrency(undefined);
+                }
+              }}
+              wrapperStyles={showWrappableAssets ? { width: '42%' } : { width: '100%' }}
+            />
+          </div>
           {typeof destChain !== 'undefined' && (
             <>
               <div className='titles-and-information'>
