@@ -37,12 +37,18 @@ const WalletSelectWrapper = styled.div<{ wallet: ManagedWallet | null }>`
   padding: 0px 20px 0px 20px;
 
   ${({ wallet }) => {
-    if (wallet) return css`justify-content: space-between;`;
-    else return css`justify-content: center;`
+    if (wallet)
+      return css`
+        justify-content: space-between;
+      `;
+    else
+      return css`
+        justify-content: center;
+      `;
   }}
 
   .select-wallet-text {
-    color: ${({ theme}) => theme.primaryText};
+    color: ${({ theme }) => theme.primaryText};
   }
 
   .wallet-logo-wrapper {
@@ -94,9 +100,7 @@ export const BottomWalletSelection: React.FC<WalletSelectProps> = ({}) => {
         }}
         wallet={selectedWallet}
       >
-        {!selectedWallet && 
-          <p className='select-wallet-text'>Select a wallet</p>
-        }
+        {!selectedWallet && <p className='select-wallet-text'>Select a wallet</p>}
         {selectedWallet && (
           <>
             <BottomSelectionWrapper>

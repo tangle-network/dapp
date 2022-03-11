@@ -37,7 +37,7 @@ const WalletSelectWrapper = styled.div`
     text-overflow: ellipsis;
     overflow: hidden;
     text-align: center;
-    color: ${({ theme}) => theme.primaryText};
+    color: ${({ theme }) => theme.primaryText};
   }
 
   .account-name {
