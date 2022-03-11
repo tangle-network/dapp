@@ -73,7 +73,6 @@ const PageTransfers: FC = () => {
       <ContentWrapper>
         <ChainInput
           chains={chains}
-          label={'Select Source Chain'}
           selectedChain={srcChain}
           // TODO: Hook this up to network switcher
           setSelectedChain={async (chainTypeId) => {
@@ -84,12 +83,7 @@ const PageTransfers: FC = () => {
           }}
         />
         <SpaceBox height={16} />
-        <ChainInput
-          label={'Select Destination Chain'}
-          chains={chains}
-          selectedChain={destChain}
-          setSelectedChain={setDestChain}
-        />
+        <ChainInput chains={chains} selectedChain={destChain} setSelectedChain={setDestChain} />
 
         <SpaceBox height={16} />
 

@@ -40,7 +40,8 @@ const StyledList = styled.ul`
 `;
 
 const TokenInputWrapper = styled.div<{ open: boolean }>`
-  border-radius: 25px;
+  width: 100%;
+  border-radius: 8px;
   border: 1px solid ${({ theme }) => theme.heavySelectionBorderColor};
   overflow: hidden;
   background: ${({ theme }) => theme.heavySelectionBackground};
@@ -50,7 +51,6 @@ const TokenInputWrapper = styled.div<{ open: boolean }>`
       ? css`
           background: ${theme.layer1Background};
           max-height: 350px;
-          border-radius: 25px 25px 0 0;
         `
       : css``;
   }}
@@ -71,7 +71,7 @@ const PopperList = styled.div<{ open: boolean }>`
     .account-avatar {
       background: transparent;
     }
-    border-radius: 0px 0px 25px 25px;
+    border-radius: 0px 0px 8px 8px;
     border: 1px solid ${({ theme }) => (theme.type === 'dark' ? 'black' : theme.gray13)};
     background: ${({ theme }) => theme.background};
     overflow: hidden;
@@ -94,7 +94,7 @@ const PopperList = styled.div<{ open: boolean }>`
 export type TokenInputProps = {
   currencies: CurrencyContent[];
   value?: CurrencyContent | null;
-  onChange(next: CurrencyContent | null): void;
+  onChange(next: CurrencyContent): void;
   wrapperStyles?: CSSProperties;
 };
 const ChainName = styled.span`
@@ -160,13 +160,13 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
   // Generate a random id for the <Popper/> component
   const nonce = useMemo(() => String(Math.random()) + performance.now(), []);
   return (
-    <div>
+    <div style={wrapperStyles}>
       <ClickAwayListener
         onClickAway={() => {
           setIsOpen(false);
         }}
       >
-        <TokenInputWrapper open={isOpen} ref={wrapperRef} style={wrapperStyles}>
+        <TokenInputWrapper open={isOpen} ref={wrapperRef}>
           <div
             onClick={(event) => {
               setIsOpen((p) => !p);
@@ -188,15 +188,9 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
                     }}
                   />
                 </Tooltip>
-                <Padding x={0.5} />
                 <Flex jc={'center'}>
                   <Typography variant={'h6'} component={'span'}>
                     <b>{selected.symbol}</b>
-                  </Typography>
-                  <Typography variant={'body2'} color={'textSecondary'}>
-                    <ChainName>
-                      <b>{selected.name}</b>
-                    </ChainName>
                   </Typography>
                 </Flex>
               </Flex>

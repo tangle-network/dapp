@@ -12,7 +12,6 @@ const IPDisplayWrapper = styled.div`
   align-items: center;
   justify-content: left;
   padding: 1rem;
-  border-radius: 20px;
 
   ${({ theme }: { theme: Pallet }) => css`
     background: ${theme.lightSelectionBackground};

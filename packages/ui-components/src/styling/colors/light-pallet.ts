@@ -19,7 +19,7 @@ export const lightPallet = {
   lightSelectionBackground: '#F0F0F0',
   heavySelectionBackground: '#E3E3E3',
   heavySelectionBorderColor: '#C5C5C5',
-  layer1Background: 'white',
-  layer2Background: '#F4F4F4',
+  layer1Background: '#F4F4F4',
+  layer2Background: 'white',
   layer3Background: 'white',
 };
