@@ -1,27 +1,38 @@
 import { Typography } from '@material-ui/core';
-import { chainTypeIdToInternalId } from '@webb-dapp/apps/configs';
 import { DepositConfirm } from '@webb-dapp/mixer/components/DepositConfirm/DepositConfirm';
 import { useDeposit } from '@webb-dapp/mixer/hooks/deposit/useDeposit';
 import { RequiredWalletSelection } from '@webb-dapp/react-components/RequiredWalletSelection/RequiredWalletSelection';
+import { WalletConfig } from '@webb-dapp/react-environment/types/wallet-config.interface';
 import { MixerSize, useWebContext } from '@webb-dapp/react-environment/webb-context';
 import { Currency } from '@webb-dapp/react-environment/webb-context/currency/currency';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { SpaceBox } from '@webb-dapp/ui-components/Box';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
-import { ChainInput } from '@webb-dapp/ui-components/Inputs/ChainInput/ChainInput';
 import { MixerGroupSelect } from '@webb-dapp/ui-components/Inputs/MixerGroupSelect/MixerGroupSelect';
 import { TokenInput } from '@webb-dapp/ui-components/Inputs/TokenInput/TokenInput';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { getRoundedAmountString } from '@webb-dapp/ui-components/utils';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
-const DepositWrapper = styled.div``;
+const DepositWrapper = styled.div<{ wallet: WalletConfig | undefined }>`
+  ${({ wallet, theme }) => {
+    if (wallet)
+      return css``;
+    else
+      return css`
+        padding: 25px 35px;
+        background: ${theme.layer2Background};
+        border: 1px solid ${theme.borderColor};
+        border-radius: 0 0 13px 13px;
+      `;
+  }} 
+`;
 
 const TokenInputWrapper = styled.div`
   padding: 25px 35px;
   background: ${({ theme }) => theme.layer2Background};
-  border-radius: 13px;
+  border-radius: 0 0 13px 13px;
   border: 1px solid ${({ theme }) => theme.borderColor};
 
   .titles-and-information {
@@ -78,14 +89,14 @@ export const Deposit: React.FC<DepositProps> = () => {
   }, [activeApi, activeChain, selectedToken]);
 
   return (
-    <DepositWrapper>
-      <TokenInputWrapper>
-        <div className='titles-and-information'>
-          <Typography variant='h6'>
-            <b>TOKEN</b>
-          </Typography>
-        </div>
-        <RequiredWalletSelection>
+    <DepositWrapper wallet={activeWallet}>
+      <RequiredWalletSelection>
+        <TokenInputWrapper>
+          <div className='titles-and-information'>
+            <Typography variant='h6'>
+              <b>TOKEN</b>
+            </Typography>
+          </div>
           <div className='token-dropdown-section'>
             <TokenInput
               currencies={allCurrencies}
@@ -96,52 +107,52 @@ export const Deposit: React.FC<DepositProps> = () => {
               wrapperStyles={{ width: '100%' }}
             />
           </div>
-        </RequiredWalletSelection>
-        <div className='titles-and-information'>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <Typography variant='h6'>
-              <b>AMOUNT</b>
-            </Typography>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <div>
-              <Typography
-                variant='body2'
-                style={{ color: palette.type === 'dark' ? palette.accentColor : palette.primaryText }}
-              >
-                Your Balance~
+          <div className='titles-and-information'>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <Typography variant='h6'>
+                <b>AMOUNT</b>
               </Typography>
             </div>
-            <TokenBalance>
-              <Typography variant='body2'>
-                {getRoundedAmountString(Number(tokenBalance))} {selectedToken?.view.symbol}
-              </Typography>
-            </TokenBalance>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <div>
+                <Typography
+                  variant='body2'
+                  style={{ color: palette.type === 'dark' ? palette.accentColor : palette.primaryText }}
+                >
+                  Your Balance~
+                </Typography>
+              </div>
+              <TokenBalance>
+                <Typography variant='body2'>
+                  {getRoundedAmountString(Number(tokenBalance))} {selectedToken?.view.symbol}
+                </Typography>
+              </TokenBalance>
+            </div>
           </div>
-        </div>
-        <MixerGroupSelect items={depositApi.mixerSizes} value={item} onChange={setItem} />
-        <SpaceBox height={16} />
-        <MixerButton
-          disabled={!depositApi.ready || !item}
-          onClick={() => {
-            setShowDepositModal(true);
-          }}
-          label={'Deposit'}
-        />
-      </TokenInputWrapper>
-      <Modal open={showDepositModal}>
-        <DepositConfirm
-          onSuccess={() => {
-            setShowDepositModal(false);
-          }}
-          open={showDepositModal}
-          onClose={() => {
-            setShowDepositModal(false);
-          }}
-          provider={depositApi}
-          mixerSize={item}
-        />
-      </Modal>
+          <MixerGroupSelect items={depositApi.mixerSizes} value={item} onChange={setItem} />
+          <SpaceBox height={16} />
+          <MixerButton
+            disabled={!depositApi.ready || !item}
+            onClick={() => {
+              setShowDepositModal(true);
+            }}
+            label={'Deposit'}
+          />
+        </TokenInputWrapper>
+        <Modal open={showDepositModal}>
+          <DepositConfirm
+            onSuccess={() => {
+              setShowDepositModal(false);
+            }}
+            open={showDepositModal}
+            onClose={() => {
+              setShowDepositModal(false);
+            }}
+            provider={depositApi}
+            mixerSize={item}
+          />
+        </Modal>
+      </RequiredWalletSelection>
     </DepositWrapper>
   );
 };
