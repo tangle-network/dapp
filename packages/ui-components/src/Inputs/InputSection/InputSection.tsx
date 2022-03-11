@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components';
 export const InputSection = styled.div`
   display: flex;
   ${({ theme }: { theme: Pallet }) => css`
-    border: 2px solid ${theme.heavySelectionBorder};
+    border: 2px solid ${theme.heavySelectionBorderColor};
     color: ${theme.primaryText};
     background: ${theme.heavySelectionBackground};
   `}

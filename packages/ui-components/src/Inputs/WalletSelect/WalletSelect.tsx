@@ -45,14 +45,19 @@ const WalletSelectWrapper = styled.div`
   }
 
   .account-name {
-    display: flex;
+    display: block;
     margin-right: 0.2rem;
-    width: 140px;
+    width: 100px;
     text-overflow: ellipsis;
     overflow: hidden;
     text-align: center;
     font-size: 12px;
     color: ${({ theme }) => theme.secondaryText};
+  }
+
+  .account-balance {
+    font-size: 12px;
+    color: ${({ theme }) => theme.type === 'dark' ? theme.accentColor : '#000000'}
   }
 `;
 type WalletSelectProps = {};
@@ -79,7 +84,7 @@ export const WalletSelect: React.FC<WalletSelectProps> = ({}) => {
     }
   }, [wallets, setSelectedWallet]);
 
-  const amountBalanceString = `${getRoundedAmountString(Number(getNativeCurrencyBalance()))} ${getNativeCurrencySymbol()}`;
+  const amountBalanceString = `${getRoundedAmountString(Number(getNativeCurrencyBalance()))}${getNativeCurrencySymbol()}`;
 
   return (
     <>
