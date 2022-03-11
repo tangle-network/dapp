@@ -66,7 +66,7 @@ const ConnectionDetails = styled.div<{ walletId: number }>`
   }
 `;
 
-const BottomSelectionWrapper = styled.div`
+const AddressSectionWrapper = styled.div`
   display: flex;
   height: 40px;
   width: 100%;
@@ -139,7 +139,7 @@ export const WalletDetails: React.FC<WalletDetailsProps> = ({ wallet }) => {
         </div>
       </ConnectionDetails>
       <AddressDetails>
-        <BottomSelectionWrapper>
+        <AddressSectionWrapper>
           <Avatar className={'wallet-logo-wrapper'}>
             <wallet.logo />
           </Avatar>
@@ -159,7 +159,7 @@ export const WalletDetails: React.FC<WalletDetailsProps> = ({ wallet }) => {
               <b>COPY</b>
             </Typography>
           </CopyToClipboard>
-        </BottomSelectionWrapper>
+        </AddressSectionWrapper>
       </AddressDetails>
     </div>
   );

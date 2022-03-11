@@ -3,12 +3,10 @@ import { useWebContext } from '@webb-dapp/react-environment';
 import { ManagedWallet } from '@webb-dapp/react-environment/types/wallet-config.interface';
 import { useAccounts } from '@webb-dapp/react-hooks/useAccounts';
 import { useWallets } from '@webb-dapp/react-hooks/useWallets';
-import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { WalletManager } from '@webb-dapp/ui-components/Inputs/WalletSelect/WalletManager';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
-import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 const BottomSelectionWrapper = styled.div`
   display: flex;
@@ -28,16 +26,24 @@ const AccountName = styled.p`
   color: ${({ theme }) => theme.primaryText};
 `;
 
-const WalletSelectWrapper = styled.div`
+const WalletSelectWrapper = styled.div<{ wallet: ManagedWallet | null }>`
   max-height: 55px;
   width: 100%;
   flex: 1;
   display: flex;
   align-items: center;
-  justify-content: space-between;
   background: ${({ theme }) => theme.lightSelectionBackground}
   cursor: pointer;
   padding: 0px 20px 0px 20px;
+
+  ${({ wallet }) => {
+    if (wallet) return css`justify-content: space-between;`;
+    else return css`justify-content: center;`
+  }}
+
+  .select-wallet-text {
+    color: ${({ theme}) => theme.primaryText};
+  }
 
   .wallet-logo-wrapper {
     width: 20px;
@@ -67,7 +73,7 @@ export const BottomWalletSelection: React.FC<WalletSelectProps> = ({}) => {
   const { wallets } = useWallets();
 
   const [selectedWallet, setSelectedWallet] = useState<ManagedWallet | null>(null);
-  const { activeChain, switchChain } = useWebContext();
+  const { activeChain } = useWebContext();
   const { active } = useAccounts();
   const name = useMemo(() => active?.name || active?.address || '', [active]);
 
@@ -86,8 +92,11 @@ export const BottomWalletSelection: React.FC<WalletSelectProps> = ({}) => {
           }
           openModal();
         }}
+        wallet={selectedWallet}
       >
-        {!selectedWallet && <span>Select a wallet</span>}
+        {!selectedWallet && 
+          <p className='select-wallet-text'>Select a wallet</p>
+        }
         {selectedWallet && (
           <>
             <BottomSelectionWrapper>

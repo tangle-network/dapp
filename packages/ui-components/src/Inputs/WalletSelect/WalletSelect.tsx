@@ -31,17 +31,13 @@ const WalletSelectWrapper = styled.div`
   border-radius: 12px;
   background: ${({ theme }) => theme.lightSelectionBackground};
 
-  .select-button {
-
-  }
-
   .select-wallet-button {
     display: flex;
     width: 100%
     text-overflow: ellipsis;
     overflow: hidden;
     text-align: center;
-    color: ${({ theme }) => theme.secondaryText};
+    color: ${({ theme}) => theme.primaryText};
   }
 
   .account-name {
