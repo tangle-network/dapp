@@ -1,9 +1,7 @@
 import { Typography } from '@material-ui/core';
 import { useWebContext } from '@webb-dapp/react-environment';
-import { ManagedWallet } from '@webb-dapp/react-environment/types/wallet-config.interface';
-import { useWallets } from '@webb-dapp/react-hooks/useWallets';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import styled from 'styled-components';
 
 import { WalletManager } from './WalletManager';
@@ -34,16 +32,7 @@ export const ConnectWalletButton: React.FC<{}> = () => {
     setOpen(true);
   }, []);
 
-  const { wallets } = useWallets();
-  const [selectedWallet, setSelectedWallet] = useState<ManagedWallet | null>(null);
-  const { activeChain, activeWallet, switchChain } = useWebContext();
-
-  useEffect(() => {
-    const nextWallet = wallets.find(({ connected }) => connected);
-    if (nextWallet) {
-      setSelectedWallet(nextWallet);
-    }
-  }, [wallets, setSelectedWallet]);
+  const { activeChain } = useWebContext();
 
   return (
     <>
@@ -62,15 +51,7 @@ export const ConnectWalletButton: React.FC<{}> = () => {
       </ConnectWalletButtonWrapper>
 
       <Modal open={open} onClose={closeModal}>
-        <WalletManager
-          wallets={wallets}
-          setSelectedWallet={async (wallet) => {
-            if (activeChain) {
-              await switchChain(activeChain, wallet);
-            }
-          }}
-          close={closeModal}
-        />
+        <WalletManager close={closeModal} />
       </Modal>
     </>
   );

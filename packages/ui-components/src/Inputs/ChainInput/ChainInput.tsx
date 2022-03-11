@@ -28,7 +28,7 @@ const StyledList = styled.ul`
 
 const InputWrapper = styled.div<{ open: boolean }>`
   border-radius: 8px;
-  border: ${({ theme }: { theme: Pallet }) => theme.heavySelectionBorder};
+  border: 1px solid ${({ theme }: { theme: Pallet }) => theme.heavySelectionBorderColor};
 
   overflow: hidden;
   transition: all 0.3s ease-in-out;

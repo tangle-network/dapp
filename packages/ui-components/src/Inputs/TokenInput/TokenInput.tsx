@@ -42,7 +42,7 @@ const StyledList = styled.ul`
 const TokenInputWrapper = styled.div<{ open: boolean }>`
   width: 100%;
   border-radius: 8px;
-  border: ${({ theme }) => theme.heavySelectionBorder};
+  border: 1px solid ${({ theme }) => theme.heavySelectionBorderColor};
   overflow: hidden;
   background: ${({ theme }) => theme.heavySelectionBackground};
 

@@ -1,19 +1,14 @@
 import {
   ClickAwayListener,
-  Fade,
-  Grow,
   Icon,
   IconButton,
   List,
   ListItemSecondaryAction,
   ListItemText,
-  Slide,
-  Tooltip,
   Typography,
 } from '@material-ui/core';
-import Avatar from '@material-ui/core/Avatar';
 import Popper from '@material-ui/core/Popper';
-import { useAccounts, useConstants } from '@webb-dapp/react-hooks';
+import { useAccounts } from '@webb-dapp/react-hooks';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import React, { useMemo, useRef, useState } from 'react';
 import styled, { css } from 'styled-components';
@@ -32,7 +27,7 @@ const StyledList = styled.ul`
     cursor: pointer;
     display: flex;
     align-items: center;
-    padding: 5px;
+    padding-left: 15px;
 
     &.selected,
     :hover {
@@ -44,26 +39,26 @@ const StyledList = styled.ul`
 `;
 
 const AccountManagerContent = styled.div<{ open: boolean }>`
-  width: '230px';
+  width: '100%';
   border-radius: 25px;
-  border: 1px solid ${({ theme }) => (theme.type === 'dark' ? 'black' : theme.gray13)};
-  background: ${({ theme }) => theme.lightSelectionBackground};
+  border: 1px solid ${({ theme }) => theme.heavySelectionBorderColor};
+  background: ${({ theme }) => theme.heavySelectionBackground};
   overflow: hidden;
 
   ${({ open, theme }) => {
     return open
       ? css`
-          box-shadow: 1px 1px 14px ${theme.type === 'dark' ? 'black' : 'rgba(54, 86, 233, 0.1)'};
           border-radius: 25px 25px 0px 0px;
         `
       : css``;
   }}
 
   .account-header {
+    height: 30px;
+    padding-left: 15px;
     display: flex;
     align-items: center;
     border-bottom: 1px solid ${({ open, theme }) => (open ? theme.gray13 : 'transparent')};
-    padding: 5px;
   }
 
   .account-avatar {
@@ -79,7 +74,7 @@ const PopperList = styled.div<{ open: boolean }>`
       background: transparent;
     }
     border: 1px solid ${({ theme }) => (theme.type === 'dark' ? 'black' : theme.gray13)};
-    background: ${({ theme }) => theme.background};
+    background: ${({ theme }) => theme.layer3Background};
     overflow: hidden;
 
     ${({ open }) => {
@@ -105,15 +100,6 @@ export const AccountManager: React.FC<AccountManagerProps> = () => {
     () => active?.name || (active && `${active?.address.slice(0, 4)}..${active?.address.slice(-4)}`) || '',
     [active]
   );
-  const accountvatar = useMemo(() => active?.avatar || <span />, [active]);
-  const { allCurrencies } = useConstants();
-  const ActiveCurrency = useMemo(() => {
-    const ac = allCurrencies[0];
-    if (ac) {
-      return ac.toString();
-    }
-    return '';
-  }, [allCurrencies]);
 
   const accountAddresses = useMemo(() => {
     return (
@@ -136,25 +122,17 @@ export const AccountManager: React.FC<AccountManagerProps> = () => {
       >
         <AccountManagerContent open={isOpen} ref={$wrapper}>
           <div className='account-header'>
-            <Avatar className={'account-avatar'}>{accountvatar}</Avatar>
-
-            <Slide in={true} key={active?.address}>
-              <div
-                style={{
-                  display: 'flex',
-                  flex: '1',
-                }}
-              >
-                <AccountName as={Typography} color={'textPrimary'}>
-                  {name}
-                </AccountName>
-                {ActiveCurrency && (
-                  <Typography variant={'body2'} color={'textSecondary'}>
-                    {ActiveCurrency}
-                  </Typography>
-                )}
-              </div>
-            </Slide>
+            <div
+              style={{
+                display: 'flex',
+                flex: '1',
+                marginLeft: '10px',
+              }}
+            >
+              <AccountName as={Typography} color={'textPrimary'}>
+                {name}
+              </AccountName>
+            </div>
 
             <div className={'account-button-wrapper'}>
               <IconButton
@@ -170,7 +148,7 @@ export const AccountManager: React.FC<AccountManagerProps> = () => {
               </IconButton>
             </div>
           </div>
-          <Popper placement={'bottom-end'} open={isOpen} anchorEl={$wrapper?.current}>
+          <Popper placement={'bottom-end'} open={isOpen} anchorEl={$wrapper?.current} style={{ zIndex: '1500' }}>
             <PopperList open={isOpen} style={{ width: $wrapper.current?.clientWidth }}>
               <StyledList as={List} dense disablePadding>
                 {accountAddresses.map((account, inx) => {
@@ -186,20 +164,11 @@ export const AccountManager: React.FC<AccountManagerProps> = () => {
                       className={isActive ? 'selected' : ''}
                       key={address + 'accountlist'}
                     >
-                      <Avatar className={'account-avatar'}>{account.avatar}</Avatar>
-
                       <ListItemText>
                         <Flex flex={1}>
-                          <Tooltip title={account.name} placement={'left'}>
-                            <AccountName as={Typography} color={'textPrimary'}>
-                              {name}
-                            </AccountName>
-                          </Tooltip>
-                          {ActiveCurrency && (
-                            <Typography variant={'body2'} color={'textSecondary'}>
-                              {ActiveCurrency}
-                            </Typography>
-                          )}
+                          <AccountName as={Typography} color={'textPrimary'}>
+                            {name}
+                          </AccountName>
                         </Flex>
                       </ListItemText>
 

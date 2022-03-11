@@ -5,6 +5,7 @@ import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
 import { useBridgeDeposit } from '@webb-dapp/bridge/hooks/deposit/useBridgeDeposit';
 import { useWrapUnwrap } from '@webb-dapp/page-wrap-unwrap/hooks/useWrapUnwrap';
 import { RequiredWalletSelection } from '@webb-dapp/react-components/RequiredWalletSelection/RequiredWalletSelection';
+import { WalletConfig } from '@webb-dapp/react-environment/types/wallet-config.interface';
 import { MixerSize, useWebContext } from '@webb-dapp/react-environment/webb-context';
 import { Currency } from '@webb-dapp/react-environment/webb-context/currency/currency';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
@@ -17,9 +18,21 @@ import CircledArrowRight from '@webb-dapp/ui-components/misc/CircledArrowRight';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { getRoundedAmountString } from '@webb-dapp/ui-components/utils';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
-const DepositWrapper = styled.div``;
+const DepositWrapper = styled.div<{ wallet: WalletConfig | undefined }>`
+  ${({ theme, wallet }) => {
+    if (wallet) return css``;
+    else
+      return css`
+        padding: 25px 35px;
+        background: ${theme.layer2Background};
+        border: 1px solid ${theme.borderColor};
+        border-radius: 0 0 13px 13px;
+      `;
+  }}
+`;
+
 const ChainInputWrapper = styled.div`
   padding: 25px 35px;
   background: ${({ theme }) => theme.layer1Background};
@@ -158,54 +171,54 @@ export const Deposit: React.FC<DepositProps> = () => {
 
   console.log({ wrappableCurrency });
   return (
-    <DepositWrapper>
-      <ChainInputWrapper>
-        <Typography variant={'h6'} style={{ marginBottom: '10px' }}>
-          <b>CHAIN</b>
-        </Typography>
-        <div className='chain-dropdown-section'>
-          <ChainInput
-            chains={tokenChains}
-            // TODO: Figure out how to embed the chain type for the active chain
-            selectedChain={{ chainType: srcChain?.chainType || -1, chainId: srcChain?.chainId || -1 }}
-            setSelectedChain={async (chainId) => {
-              if (typeof chainId !== 'undefined' && activeWallet) {
-                const nextChain = chains[chainTypeIdToInternalId(chainId)];
-                await switchChain(nextChain, activeWallet);
-              }
-            }}
-            wrapperStyles={{ width: '42%' }}
-          />
-          <CircledArrowRight />
-          <ChainInput
-            chains={tokenChains}
-            selectedChain={destChain}
-            setSelectedChain={setDestChain}
-            wrapperStyles={{ width: '42%' }}
-          />
-        </div>
-      </ChainInputWrapper>
-      <TokenInputWrapper>
-        <div className='titles-and-information'>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <Typography variant='h6'>
-              <b>TOKEN</b>
-            </Typography>
+    <DepositWrapper wallet={activeWallet}>
+      <RequiredWalletSelection>
+        <ChainInputWrapper>
+          <Typography variant={'h6'} style={{ marginBottom: '10px' }}>
+            <b>CHAIN</b>
+          </Typography>
+          <div className='chain-dropdown-section'>
+            <ChainInput
+              chains={tokenChains}
+              // TODO: Figure out how to embed the chain type for the active chain
+              selectedChain={{ chainType: srcChain?.chainType || -1, chainId: srcChain?.chainId || -1 }}
+              setSelectedChain={async (chainId) => {
+                if (typeof chainId !== 'undefined' && activeWallet) {
+                  const nextChain = chains[chainTypeIdToInternalId(chainId)];
+                  await switchChain(nextChain, activeWallet);
+                }
+              }}
+              wrapperStyles={{ width: '42%' }}
+            />
+            <CircledArrowRight />
+            <ChainInput
+              chains={tokenChains}
+              selectedChain={destChain}
+              setSelectedChain={setDestChain}
+              wrapperStyles={{ width: '42%' }}
+            />
           </div>
-          <FormControlLabel
-            label={'Wrap Assets?'}
-            control={
-              <Checkbox
-                checked={showWrappableAssets}
-                onChange={() => {
-                  setShowWrappableAssets(!showWrappableAssets);
-                }}
-                style={{ color: palette.accentColor }}
-              />
-            }
-          />
-        </div>
-        <RequiredWalletSelection>
+        </ChainInputWrapper>
+        <TokenInputWrapper>
+          <div className='titles-and-information'>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <Typography variant='h6'>
+                <b>TOKEN</b>
+              </Typography>
+            </div>
+            <FormControlLabel
+              label={'Wrap Assets?'}
+              control={
+                <Checkbox
+                  checked={showWrappableAssets}
+                  onChange={() => {
+                    setShowWrappableAssets(!showWrappableAssets);
+                  }}
+                  style={{ color: palette.accentColor }}
+                />
+              }
+            />
+          </div>
           <div className='token-dropdown-section'>
             {showWrappableAssets && (
               <>
@@ -236,68 +249,68 @@ export const Deposit: React.FC<DepositProps> = () => {
               wrapperStyles={showWrappableAssets ? { width: '42%' } : { width: '100%' }}
             />
           </div>
-        </RequiredWalletSelection>
-        {typeof destChain !== 'undefined' && (
-          <>
-            <div className='titles-and-information'>
-              <div style={{ display: 'flex', alignItems: 'center' }}>
-                <Typography variant='h6'>
-                  <b>AMOUNT</b>
-                </Typography>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center' }}>
-                <div>
-                  <Typography
-                    variant='body2'
-                    style={{ color: palette.type === 'dark' ? palette.accentColor : palette.primaryText }}
-                  >
-                    Your Balance~
+          {typeof destChain !== 'undefined' && (
+            <>
+              <div className='titles-and-information'>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <Typography variant='h6'>
+                    <b>AMOUNT</b>
                   </Typography>
                 </div>
-                <TokenBalance>
-                  {showWrappableAssets && wrappableToken && wrappableCurrency && (
-                    <Typography variant='body2'>
-                      <b>
-                        {getRoundedAmountString(Number(wrappableTokenBalance))} {wrappableCurrency.view.symbol}
-                      </b>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <div>
+                    <Typography
+                      variant='body2'
+                      style={{ color: palette.type === 'dark' ? palette.accentColor : palette.primaryText }}
+                    >
+                      Your Balance~
                     </Typography>
-                  )}
-                  {!showWrappableAssets && selectedBridgeCurrency && (
-                    <Typography variant='body2'>
-                      {getRoundedAmountString(Number(wrappedTokenBalance))} {selectedBridgeCurrency?.view.symbol}
-                    </Typography>
-                  )}
-                </TokenBalance>
+                  </div>
+                  <TokenBalance>
+                    {showWrappableAssets && wrappableToken && wrappableCurrency && (
+                      <Typography variant='body2'>
+                        <b>
+                          {getRoundedAmountString(Number(wrappableTokenBalance))} {wrappableCurrency.view.symbol}
+                        </b>
+                      </Typography>
+                    )}
+                    {!showWrappableAssets && selectedBridgeCurrency && (
+                      <Typography variant='body2'>
+                        {getRoundedAmountString(Number(wrappedTokenBalance))} {selectedBridgeCurrency?.view.symbol}
+                      </Typography>
+                    )}
+                  </TokenBalance>
+                </div>
               </div>
-            </div>
-            <MixerGroupSelect items={bridgeDepositApi.mixerSizes} value={item} onChange={selectBridgeAmount} />
-          </>
-        )}
-        <SpaceBox height={16} />
-        <MixerButton
-          disabled={disabledDepositButton}
-          onClick={() => {
-            setShowDepositModal(true);
-          }}
-          label={showWrappableAssets ? 'Wrap and Deposit' : 'Deposit'}
-        />
-      </TokenInputWrapper>
-      <Modal open={showDepositModal}>
-        <DepositConfirm
-          onSuccess={() => {
-            handleSuccess();
-            setShowDepositModal(false);
-          }}
-          open={showDepositModal}
-          onClose={() => {
-            setShowDepositModal(false);
-          }}
-          provider={bridgeDepositApi}
-          mixerSize={item}
-          destChain={destChain}
-          wrappableAsset={showWrappableAssets ? wrappableCurrency : null}
-        />
-      </Modal>
+              <MixerGroupSelect items={bridgeDepositApi.mixerSizes} value={item} onChange={selectBridgeAmount} />
+            </>
+          )}
+          <SpaceBox height={16} />
+          <MixerButton
+            disabled={disabledDepositButton}
+            onClick={() => {
+              setShowDepositModal(true);
+            }}
+            label={showWrappableAssets ? 'Wrap and Deposit' : 'Deposit'}
+          />
+        </TokenInputWrapper>
+        <Modal open={showDepositModal}>
+          <DepositConfirm
+            onSuccess={() => {
+              handleSuccess();
+              setShowDepositModal(false);
+            }}
+            open={showDepositModal}
+            onClose={() => {
+              setShowDepositModal(false);
+            }}
+            provider={bridgeDepositApi}
+            mixerSize={item}
+            destChain={destChain}
+            wrappableAsset={showWrappableAssets ? wrappableCurrency : null}
+          />
+        </Modal>
+      </RequiredWalletSelection>
     </DepositWrapper>
   );
 };
