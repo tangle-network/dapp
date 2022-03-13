@@ -7,10 +7,9 @@ import {
   getChainNameFromChainId,
   parseChainIdType,
 } from '@webb-dapp/apps/configs';
-import WithdrawingModal from '@webb-dapp/bridge/components/Withdraw/WithdrawingModal';
 import { useWithdraw } from '@webb-dapp/bridge/hooks';
 import { useDepositNote } from '@webb-dapp/mixer';
-import WithdrawSuccessModal from '@webb-dapp/react-components/Withdraw/WithdrawSuccessModal';
+import { WithdrawSuccessModal, WithdrawingModal } from '@webb-dapp/react-components/Withdraw';
 import { useWebContext, WithdrawState } from '@webb-dapp/react-environment';
 import { WalletConfig } from '@webb-dapp/react-environment/types/wallet-config.interface';
 import { ActiveWebbRelayer } from '@webb-dapp/react-environment/webb-context/relayer';

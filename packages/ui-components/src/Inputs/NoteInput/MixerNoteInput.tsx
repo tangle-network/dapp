@@ -41,12 +41,10 @@ export const MixerNoteInput: React.FC<NoteInputProps> = ({ error, onChange, valu
   }, [depositNote, navigate]);
 
   return (
-    <InputLabel label={'Note'}>
+    <>
       <InputBase
         fullWidth
-        placeholder={`webb://v2:mixer/020000000438:020000000438/0:0/32f696ed77356ffc0b55bc514d821463d0ddf241e0b9228b024f080542b5052b:0b895f6905aa559ac330ddaafc1afae3580eef4c0ff15ee3f41726ed1da31402/?curve=Bn254&width=5&exp=5&hf=Poseidon&backend=Arkworks&token=WEBB&denom=12&amount=10`}
-        multiline={true}
-        rows={5}
+        placeholder={`Please paste your note here`}
         value={value}
         inputProps={{ style: { fontSize: 14 } }}
         onChange={(event) => {
@@ -54,37 +52,7 @@ export const MixerNoteInput: React.FC<NoteInputProps> = ({ error, onChange, valu
           if (event.target.value && event.target.value != '') onChange?.(event.target.value as string);
         }}
       />
-      {depositNote && (
-        <NoteDetails>
-          <table
-            style={{
-              width: '100%',
-            }}
-          >
-            <tbody>
-              <tr>
-                <td>Context:</td>
-                <td style={{ textAlign: 'right' }}>
-                  <b>{depositNote.note.protocol.toUpperCase()}</b>
-                </td>
-              </tr>
-              <tr>
-                <td>Amount:</td>
-                <td style={{ textAlign: 'right' }}>
-                  {depositNote.note.amount} <b>{depositNote.note.tokenSymbol}</b>
-                </td>
-              </tr>
-              <tr>
-                <td>Chain:</td>
-                <td style={{ textAlign: 'right' }}>
-                  {getChainNameFromChainId(parseChainIdType(Number(depositNote.note.targetChainId)))}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </NoteDetails>
-      )}
       <FormHelperText error={Boolean(error)}>{error}</FormHelperText>
-    </InputLabel>
+    </>
   );
 };

@@ -119,7 +119,7 @@ const InfoItem = styled.div`
   color: ${({ theme }) => theme.type === 'dark' ? theme.accentColor : '#000000'};
 `;
 
-const WithdrawSuccessModal: React.FC<WithdrawingModalProps> = ({ exit, note, receipt, recipient, relayer }) => {
+export const WithdrawSuccessModal: React.FC<WithdrawingModalProps> = ({ exit, note, receipt, recipient, relayer }) => {
   const transactionString = (hexString: string) => {
     return `${hexString.slice(0, 6)}...${hexString.slice(hexString.length - 4, hexString.length)}`;
   };
@@ -232,4 +232,3 @@ const WithdrawSuccessModal: React.FC<WithdrawingModalProps> = ({ exit, note, rec
     </WithdrawInfoWrapper>
   );
 };
-export default WithdrawSuccessModal;
