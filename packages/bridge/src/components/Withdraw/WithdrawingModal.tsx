@@ -1,6 +1,8 @@
 import { Button, Divider, Icon, LinearProgress, Tooltip, Typography } from '@material-ui/core';
 import { getEVMChainName, getEVMChainNameFromInternal, parseChainIdType } from '@webb-dapp/apps/configs';
 import { WithdrawState } from '@webb-dapp/react-environment';
+import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
+import { SpaceBox } from '@webb-dapp/ui-components/Box';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 import { JsNote as DepositNote } from '@webb-tools/wasm-utils';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -16,14 +18,14 @@ type WithdrawingModalProps = {
 
 const WithdrawInfoWrapper = styled.div`
   width: 500px;
-  min-height: 300px;
+  padding: 20px;
   position: relative;
   overflow: hidden;
+  background: ${({ theme }) => theme.layer2Background};
 
   .modal-header {
     position: relative;
     width: 100%;
-    background: ${({ theme }) => theme.mainBackground};
   }
 
   .withdraw-modal-header {
@@ -50,10 +52,23 @@ const WithdrawInfoWrapper = styled.div`
     padding-bottom: 1rem;
   }
 
+  .linear-progress-styles,
+  .MuiLinearProgress-colorPrimary {
+    background-color: #FFFFFF;
+
+    .MuiLinearProgress-bar {
+      background-color: ${({ theme }) => theme.type === 'dark' ? theme.accentColor : '#000000' };
+    }
+  }
+
+  .cancel-button-container {
+    display: flex;
+    justify-content: flex-end;
+  }
+
   .cancel-button {
-    position: absolute;
-    bottom: 20px;
-    right: 20px;
+    background: ${({ theme }) => theme.layer3Background };
+    color: ${({ theme }) => theme.type === 'dark' ? theme.accentColor : '#000000' };
   }
 `;
 
@@ -66,21 +81,25 @@ const TxCompleteContainer = styled.div`
 
 const TransactionSummaryWrapper = styled.div`
   padding: 1rem 2rem;
+  background: ${({ theme }) => theme.heavySelectionBackground};
+  border-radius: 15px;
 `;
 
 const WithdrawInfoRow = styled.div`
   display: flex;
   width: 100%;
-  padding: 0.2rem 0.2rem;
 `;
 
 const InfoItemLabel = styled.div`
   flex: 1 0 20%;
   justify-content: center;
+  color: ${({ theme }) => theme.type === 'dark' ? 'rgba(255, 255, 255, 0.69)' : 'rgba(0, 0, 0, 0.69)'};
+  font-size: .8rem;
 
   .label-icon {
     vertical-align: middle;
-  padding: 1rem 0;
+    padding: 1rem 0;
+  }
 
   td:nth-child(2) {
     padding: 0 2rem;
@@ -88,24 +107,15 @@ const InfoItemLabel = styled.div`
 `;
 
 const InfoItem = styled.div`
+  display: flex;
   flex: 1 0 20%;
-  justify-content: center;
+  justify-content: flex-end;
   text-align: right;
+  align-items: center;
+  color: ${({ theme }) => theme.type === 'dark' ? theme.accentColor : '#000000'};
 `;
 
-const alternatingMessages = [
-  `Generating Zero Knowledge proofs takes around 1 minute`,
-  'You may withdraw to another account',
-  'Anyone with your note can withdraw, You should keep it secret',
-];
 const WithdrawingModal: React.FC<WithdrawingModalProps> = ({ canCancel, cancel, note, stage, withdrawTxInfo }) => {
-  const [rm, setAlternatingMessage] = useState(0);
-  useEffect(() => {
-    const handle = setInterval(() => {
-      setAlternatingMessage((p) => (p === alternatingMessages.length - 1 ? 0 : p + 1));
-    }, 10000);
-    return () => clearInterval(handle);
-  }, []);
   const message = useMemo(() => {
     switch (stage) {
       case WithdrawState.Ideal:
@@ -146,16 +156,13 @@ const WithdrawingModal: React.FC<WithdrawingModalProps> = ({ canCancel, cancel, 
         ) : (
           <>
             <Typography variant={'h4'} className={'withdraw-modal-header'} color={'textPrimary'}>
-              Transaction is being processed
+              <b>Transaction is being processed</b>
             </Typography>
             <div className={'progress-content'}>
               <Typography variant={'h6'} className={'withdraw-modal-header-caption'}>
                 {message}
               </Typography>
-              <LinearProgress value={10} variant={'indeterminate'} />
-              <Typography gutterBottom variant={'caption'}>
-                {alternatingMessages[rm]}
-              </Typography>
+              <LinearProgress value={10} variant={'indeterminate'} className={'linear-progress-styles'}/>
             </div>
           </>
         )}
@@ -163,10 +170,9 @@ const WithdrawingModal: React.FC<WithdrawingModalProps> = ({ canCancel, cancel, 
       <div>
         {withdrawTxInfo && (
           <TransactionSummaryWrapper>
-            <Typography variant={'subtitle1'} color={'textPrimary'}>
-              Transaction summary
+            <Typography variant={'h6'} color={'textPrimary'}>
+              <b>Transaction summary</b>
             </Typography>
-            <Divider />
             <WithdrawInfoRow>
               <InfoItemLabel>
                 <Icon className={'label-icon'}>info</Icon> Bridge info:
@@ -195,16 +201,18 @@ const WithdrawingModal: React.FC<WithdrawingModalProps> = ({ canCancel, cancel, 
           </TransactionSummaryWrapper>
         )}
       </div>
-      <Button
-        onClick={() => {
-          cancel();
-        }}
-        color='primary'
-        disabled={!canCancel}
-        className={'cancel-button'}
-      >
-        {stage > WithdrawState.SendingTransaction ? 'Close' : 'Cancel'}
-      </Button>
+      <SpaceBox height={10} />
+      <div className={'cancel-button-container'}>
+        <Button
+          onClick={() => {
+            cancel();
+          }}
+          disabled={!canCancel}
+          className={'cancel-button'}
+        >
+          {stage > WithdrawState.SendingTransaction ? 'Close' : 'Cancel'}
+        </Button>
+      </div>
     </WithdrawInfoWrapper>
   );
 };

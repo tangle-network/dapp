@@ -97,7 +97,7 @@ export type TokenInputProps = {
   onChange(next: CurrencyContent): void;
   wrapperStyles?: CSSProperties;
 };
-const ChainName = styled.span`
+const TokenName = styled.span`
   max-width: 100px;
   display: inline-block;
   overflow: hidden;
@@ -189,7 +189,7 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
                   />
                 </Tooltip>
                 <Flex jc={'center'}>
-                  <Typography variant={'h6'} component={'span'}>
+                  <Typography variant={'h6'} component={'span'} style={{ paddingLeft: '5px' }}>
                     <b>{selected.symbol}</b>
                   </Typography>
                 </Flex>
@@ -269,7 +269,7 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
                             <b>{symbol}</b>
                           </Typography>
                           <Typography variant={'body2'} color={'textSecondary'}>
-                            <ChainName>{name}</ChainName>
+                            <TokenName>{name}</TokenName>
                           </Typography>
                         </ListItemText>
                       </Flex>
