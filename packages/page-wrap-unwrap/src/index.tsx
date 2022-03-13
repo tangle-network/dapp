@@ -2,19 +2,17 @@ import { Button, Checkbox, FormControlLabel, IconButton, InputBase, Tooltip } fr
 import Icon from '@material-ui/core/Icon';
 import Typography from '@material-ui/core/Typography';
 import { useWrapUnwrap } from '@webb-dapp/page-wrap-unwrap/hooks/useWrapUnwrap';
-import { MixerSize, useWebContext } from '@webb-dapp/react-environment';
+import { useWebContext } from '@webb-dapp/react-environment';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
-import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabel';
-import { InputSection } from '@webb-dapp/ui-components/Inputs/InputSection/InputSection';
-import { MixerGroupSelect } from '@webb-dapp/ui-components/Inputs/MixerGroupSelect/MixerGroupSelect';
 import { TokenInput, TokenInputProps } from '@webb-dapp/ui-components/Inputs/TokenInput/TokenInput';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
 import { LoggerService } from '@webb-tools/app-util';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
+
 const logger = LoggerService.get('page-wrap-unwrap');
 
 const TransferWrapper = styled.div`
@@ -118,8 +116,6 @@ const PageWrapUnwrap: FC = () => {
   const [isSwap, setIsSwap] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const [useFixedDeposits, setUseFixedDeposits] = useState(false);
-
   const leftInputProps: TokenInputProps = useMemo(() => {
     return {
       currencies: context === 'wrap' ? wrappableTokens : governedTokens,
@@ -143,35 +139,6 @@ const PageWrapUnwrap: FC = () => {
 
   const suffix = context === 'wrap' ? wrappableToken?.view.symbol : governedToken?.view.symbol;
 
-  const dummySizes = useMemo(() => {
-    return [
-      {
-        id: `${context} .1 ${suffix}`,
-        title: `.1 ${suffix}`,
-        amount: 0.1,
-        asset: `${suffix}`,
-      },
-      {
-        id: `${context} 1 ${suffix}`,
-        title: `1 ${suffix}`,
-        amount: 1,
-        asset: `${suffix}`,
-      },
-      {
-        id: `${context} 10 ${suffix}`,
-        title: `10 ${suffix}`,
-        amount: 10,
-        asset: `${suffix}`,
-      },
-      {
-        id: `${context} 100 ${suffix}`,
-        title: `100 ${suffix}`,
-        amount: 100,
-        asset: `${suffix}`,
-      },
-    ];
-  }, [context, suffix]);
-
   const switchToWrap = useCallback(() => {
     if (context === 'unwrap') {
       swap();
@@ -182,9 +149,6 @@ const PageWrapUnwrap: FC = () => {
       swap();
     }
   }, [context, swap]);
-  const activeSize: MixerSize | undefined = useMemo(() => {
-    return dummySizes.find((size) => size.amount === amount);
-  }, [amount, dummySizes]);
 
   // If the available currencies or web context change, it is possible
   // that a token was selected which is no longer available.
@@ -240,94 +204,61 @@ const PageWrapUnwrap: FC = () => {
 
         <SpaceBox height={16} />
 
-        <InputSection>
-          <InputLabel label={'Transfer Token'} />
-          <SpaceBox height={5} />
-          <Flex
-            row
-            ai={'center'}
-            flex={1}
-            style={{
-              position: 'relative',
-            }}
-          >
-            <Flex flex={2}>
-              <TokenInput {...leftInputProps} />
-            </Flex>
-            <Flex flex={1} row ai={'center'} jc={'center'}>
-              <span>
-                <Tooltip title={'Swap tokens'}>
-                  <IconButton
-                    onMouseEnter={() => {
-                      setIsSwap(true);
-                    }}
-                    onMouseLeave={() => {
-                      setIsSwap(false);
-                    }}
-                    onClick={() => {
-                      swap();
-                    }}
-                  >
-                    <Icon>{isSwap ? 'swap_horiz' : 'east'}</Icon>
-                  </IconButton>
-                </Tooltip>
-              </span>
-            </Flex>
-            <Flex flex={2}>
-              <TokenInput wrapperStyles={{ top: -25 }} {...rightInputProps} />
-            </Flex>
-          </Flex>
-        </InputSection>
-
-        <SpaceBox height={16} />
-
-        {useFixedDeposits ? (
-          <MixerGroupSelect
-            items={dummySizes}
-            value={activeSize}
-            onChange={(i) => {
-              let size = dummySizes.find((size) => size.id === i.id);
-              if (size) {
-                setAmount(size.amount);
-              }
-            }}
-          />
-        ) : (
-          <InputSection>
-            <InputLabel label={`${context} amount`} />
-            <AmountInputWrapper>
-              <InputBase
-                value={amount}
-                onChange={(e) => {
-                  setAmount(Number(e.target.value));
-                }}
-                type={'number'}
-                fullWidth
-                placeholder={'Enter amount'}
-              />
-              <AmountButton color={'primary'} as={Button}>
-                MAX
-              </AmountButton>
-            </AmountInputWrapper>
-          </InputSection>
-        )}
-        <FormControlLabel
-          value={useFixedDeposits}
-          checked={useFixedDeposits}
-          onChange={() => {
-            setUseFixedDeposits((t) => !t);
+        <Flex
+          row
+          ai={'center'}
+          flex={1}
+          style={{
+            position: 'relative',
           }}
-          control={<Checkbox color={'primary'} />}
-          label={<Typography color={'textPrimary'}>Use Fixed deposits</Typography>}
-        />
+        >
+          <Flex flex={2}>
+            <TokenInput {...leftInputProps} />
+          </Flex>
+          <Flex flex={1} row ai={'center'} jc={'center'}>
+            <span>
+              <Tooltip title={'Swap tokens'}>
+                <IconButton
+                  onMouseEnter={() => {
+                    setIsSwap(true);
+                  }}
+                  onMouseLeave={() => {
+                    setIsSwap(false);
+                  }}
+                  onClick={() => {
+                    swap();
+                  }}
+                >
+                  <Icon>{isSwap ? 'swap_horiz' : 'east'}</Icon>
+                </IconButton>
+              </Tooltip>
+            </span>
+          </Flex>
+          <Flex flex={2}>
+            <TokenInput wrapperStyles={{ top: -25 }} {...rightInputProps} />
+          </Flex>
+        </Flex>
+        <SpaceBox height={16} />
+        <AmountInputWrapper>
+          <InputBase
+            value={amount}
+            onChange={(e) => {
+              setAmount(Number(e.target.value));
+            }}
+            type={'number'}
+            fullWidth
+            placeholder={'Enter amount'}
+          />
+          <AmountButton color={'primary'} as={Button}>
+            MAX
+          </AmountButton>
+        </AmountInputWrapper>
         <SpaceBox height={16} />
 
         <MixerButton
           disabled={loading || !governedToken || !wrappableToken}
           label={buttonText}
           onClick={async () => {
-            logger.log('governedToken: ', governedToken);
-            logger.log('wrappableToken: ', wrappableToken);
             try {
               setLoading(true);
               await execute();
