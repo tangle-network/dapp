@@ -3,7 +3,8 @@ import Icon from '@material-ui/core/Icon';
 import Typography from '@material-ui/core/Typography';
 import { useWrapUnwrap } from '@webb-dapp/page-wrap-unwrap/hooks/useWrapUnwrap';
 import { useWebContext } from '@webb-dapp/react-environment';
-import { SpaceBox } from '@webb-dapp/ui-components';
+import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
+import { getRoundedAmountString, SpaceBox } from '@webb-dapp/ui-components';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { TokenInput, TokenInputProps } from '@webb-dapp/ui-components/Inputs/TokenInput/TokenInput';
@@ -27,30 +28,23 @@ const TransferWrapper = styled.div`
   `}
 `;
 const AmountInputWrapper = styled.div`
-  position: relative;
-  width: 100%;
-`;
-const AmountButton = styled.button`
-  && {
-    position: absolute;
-    top: 50%;
-    right: 0;
-    transform: translate3d(0, -50%, 0);
-  }
+  display: flex;
+  ${({ theme }: { theme: Pallet }) => css`
+    border: 1px solid ${theme.heavySelectionBorderColor};
+    color: ${theme.primaryText};
+    background: ${theme.heavySelectionBackground};
+  `}
+  height: 50px;
+  border-radius: 10px;
+  padding: 5px;
+  align-items: center;
+  justify-content: space-between;
 `;
 
-const TabsWrapper = styled.div`
-  padding: 1rem;
-  ${above.sm`  padding: 2rem;`}
-  max-width: 500px;
-  margin: auto;
-  border-radius: 20px;
-  ${({ theme }: { theme: Pallet }) => css`
-    background: ${theme.layer1Background};
-    border: 1px solid ${theme.borderColor};
-    ${theme.type === 'light' ? `box-shadow: 0px 0px 14px rgba(51, 81, 242, 0.11);` : ''}
-  `}
+const AmountButton = styled.button`
+
 `;
+
 const TabHeader = styled.header`
   display: flex;
   align-items: center;
@@ -97,6 +91,13 @@ const TabButton = styled.button<{ active?: boolean }>`
   border-radius: 32px;
 `;
 
+const TokenBalance = styled.div`
+  border: 1px solid ${({ theme }) => theme.primaryText};
+  border-radius: 5px;
+  margin-left: 5px;
+  padding: 0 5px;
+`;
+
 const PageWrapUnwrap: FC = () => {
   const { activeApi, activeChain } = useWebContext();
   const {
@@ -112,9 +113,13 @@ const PageWrapUnwrap: FC = () => {
     wrappableToken,
     wrappableTokens,
   } = useWrapUnwrap();
+  const palette = useColorPallet();
+  const [displayedAmount, setDisplayedAmount] = useState<string | null>(null);
 
   const [isSwap, setIsSwap] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [wrappableTokenBalance, setWrappableTokenBalance] = useState(0);
+  const [governedTokenBalance, setGovernedTokenBalance] = useState(0);
 
   const leftInputProps: TokenInputProps = useMemo(() => {
     return {
@@ -137,8 +142,6 @@ const PageWrapUnwrap: FC = () => {
 
   const buttonText = context;
 
-  const suffix = context === 'wrap' ? wrappableToken?.view.symbol : governedToken?.view.symbol;
-
   const switchToWrap = useCallback(() => {
     if (context === 'unwrap') {
       swap();
@@ -155,20 +158,28 @@ const PageWrapUnwrap: FC = () => {
   // Make sure to clear these tokens.
   useEffect(() => {
     if (governedTokens.length) {
-      const supportedToken = governedTokens.find((token) => {
+      let supportedToken = governedTokens.find((token) => {
         token.view.id;
       });
       if (!supportedToken) {
+        supportedToken = governedTokens[0];
         setGovernedToken(governedTokens[0]);
       }
+      activeApi?.methods.chainQuery.tokenBalanceByCurrencyId(supportedToken.view.id as any).then((balance) => {
+        setGovernedTokenBalance(Number(balance));
+      });
     }
     if (wrappableTokens.length) {
-      const supportedToken = wrappableTokens.find((token) => {
+      let supportedToken = wrappableTokens.find((token) => {
         token.view.id;
       });
       if (!supportedToken) {
+        supportedToken = wrappableTokens[0];
         setWrappableToken(wrappableTokens[0]);
       }
+      activeApi?.methods.chainQuery.tokenBalanceByCurrencyId(supportedToken.view.id as any).then((balance) => {
+        setWrappableTokenBalance(Number(balance));
+      });
     }
   }, [activeChain, activeApi, governedTokens, wrappableTokens, setGovernedToken, setWrappableToken]);
 
@@ -239,24 +250,67 @@ const PageWrapUnwrap: FC = () => {
           </Flex>
         </Flex>
         <SpaceBox height={16} />
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+          <div>
+            <Typography
+              variant='body2'
+              style={{ color: palette.type === 'dark' ? palette.accentColor : palette.primaryText }}
+            >
+              Your Balance~
+            </Typography>
+          </div>
+          <TokenBalance>
+            {wrappableToken && context === "wrap" && (
+              <Typography variant='body2'>
+                <b>
+                  {getRoundedAmountString(wrappableTokenBalance)} {wrappableToken.view.symbol}
+                </b>
+              </Typography>
+            )}
+            {governedToken && context === "unwrap" && (
+              <Typography variant='body2'>
+                {getRoundedAmountString(governedTokenBalance)} {governedToken.view.symbol}
+              </Typography>
+            )}
+          </TokenBalance>
+        </div>
+        <SpaceBox height={16} />
         <AmountInputWrapper>
-          <InputBase
-            value={amount}
-            onChange={(e) => {
-              setAmount(Number(e.target.value));
-            }}
-            type={'number'}
-            fullWidth
-            placeholder={'Enter amount'}
-          />
-          <AmountButton color={'primary'} as={Button}>
-            MAX
-          </AmountButton>
+          <div style={{ width: '100%' }}>
+            <InputBase
+              placeholder={`Enter Amount`}
+              fullWidth
+              value={displayedAmount}
+              inputProps={{ style: { fontSize: 14, paddingLeft: '15px' } }}
+              onChange={(event) => {
+                setDisplayedAmount(event.target.value);
+                let maybeNumber = Number(event.target.value);
+                if (!Number.isNaN(maybeNumber)) {
+                  setAmount(Number(event.target.value));
+                } else {
+                  setAmount(null);
+                }
+              }}
+            />
+          </div>
+          <div>
+            <AmountButton color={'primary'} as={Button} onClick={() => {
+              if (context === 'wrap') {
+                setDisplayedAmount(wrappableTokenBalance.toString())
+                setAmount(wrappableTokenBalance)
+              } else {
+                setDisplayedAmount(governedTokenBalance.toString())
+                setAmount(governedTokenBalance)
+              }
+            }}>
+              MAX
+            </AmountButton>
+          </div>
         </AmountInputWrapper>
         <SpaceBox height={16} />
 
         <MixerButton
-          disabled={loading || !governedToken || !wrappableToken}
+          disabled={loading || !governedToken || !wrappableToken || !amount}
           label={buttonText}
           onClick={async () => {
             try {
