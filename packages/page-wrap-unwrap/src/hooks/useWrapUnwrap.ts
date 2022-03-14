@@ -14,12 +14,12 @@ export function useWrapUnwrap() {
     wrappableToken: CurrencyContent | null;
     governedTokens: CurrencyContent[];
     wrappableTokens: CurrencyContent[];
-    amount: number;
+    amount: number | null;
     context: 'wrap' | 'unwrap';
   }>({
     governedToken: null,
     wrappableToken: null,
-    amount: 0,
+    amount: null,
     governedTokens: [],
     wrappableTokens: [],
     context: 'wrap',
@@ -80,6 +80,8 @@ export function useWrapUnwrap() {
   );
 
   const execute = useCallback(() => {
+    if (!amount) return;
+
     switch (context) {
       case 'wrap':
         return wrapUnwrapApi?.wrap({ amount });
@@ -88,7 +90,7 @@ export function useWrapUnwrap() {
     }
   }, [context, wrapUnwrapApi, amount]);
 
-  const setAmount = (amount: number) => {
+  const setAmount = (amount: number | null) => {
     setState((p) => ({ ...p, amount }));
   };
 
