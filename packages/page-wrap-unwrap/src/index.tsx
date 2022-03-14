@@ -43,9 +43,7 @@ const AmountInputWrapper = styled.div`
   justify-content: space-between;
 `;
 
-const AmountButton = styled.button`
-
-`;
+const AmountButton = styled.button``;
 
 const TabHeader = styled.header`
   display: flex;
@@ -258,14 +256,14 @@ const PageWrapUnwrap: FC = () => {
                 </Typography>
               </div>
               <TokenBalance>
-                {wrappableToken && context === "wrap" && (
+                {wrappableToken && context === 'wrap' && (
                   <Typography variant='body2'>
                     <b>
                       {getRoundedAmountString(wrappableTokenBalance)} {wrappableToken.view.symbol}
                     </b>
                   </Typography>
                 )}
-                {governedToken && context === "unwrap" && (
+                {governedToken && context === 'unwrap' && (
                   <Typography variant='body2'>
                     {getRoundedAmountString(governedTokenBalance)} {governedToken.view.symbol}
                   </Typography>
@@ -292,15 +290,19 @@ const PageWrapUnwrap: FC = () => {
                 />
               </div>
               <div>
-                <AmountButton color={'primary'} as={Button} onClick={() => {
-                  if (context === 'wrap') {
-                    setDisplayedAmount(wrappableTokenBalance.toString())
-                    setAmount(wrappableTokenBalance)
-                  } else {
-                    setDisplayedAmount(governedTokenBalance.toString())
-                    setAmount(governedTokenBalance)
-                  }
-                }}>
+                <AmountButton
+                  color={'primary'}
+                  as={Button}
+                  onClick={() => {
+                    if (context === 'wrap') {
+                      setDisplayedAmount(wrappableTokenBalance.toString());
+                      setAmount(wrappableTokenBalance);
+                    } else {
+                      setDisplayedAmount(governedTokenBalance.toString());
+                      setAmount(governedTokenBalance);
+                    }
+                  }}
+                >
                   MAX
                 </AmountButton>
               </div>

@@ -2,7 +2,7 @@ import { FormHelperText, InputBase, Typography } from '@material-ui/core';
 import { chainsPopulated, currenciesConfig, getChainNameFromChainId, parseChainIdType } from '@webb-dapp/apps/configs';
 import { useWithdraw } from '@webb-dapp/mixer/hooks';
 import { useDepositNote } from '@webb-dapp/mixer/hooks/note';
-import { WithdrawSuccessModal, WithdrawingModal } from '@webb-dapp/react-components/Withdraw';
+import { WithdrawingModal, WithdrawSuccessModal } from '@webb-dapp/react-components/Withdraw';
 import { ActiveWebbRelayer, useWebContext, WithdrawState } from '@webb-dapp/react-environment';
 import { WalletConfig } from '@webb-dapp/react-environment/types/wallet-config.interface';
 import { SpaceBox } from '@webb-dapp/ui-components';
@@ -89,10 +89,10 @@ const AddressAndInfoSection = styled.div`
     justify-content: space-between;
     padding: 8px 35px;
     .title {
-      color: ${({ theme }) => theme.type === 'dark' ? 'rgba(255, 255, 255, 0.69)' : 'rgba(0, 0, 0, 0.69)'};
+      color: ${({ theme }) => (theme.type === 'dark' ? 'rgba(255, 255, 255, 0.69)' : 'rgba(0, 0, 0, 0.69)')};
     }
     .value {
-      color: ${({ theme }) => theme.type === 'dark' ? theme.accentColor : '#000000'};
+      color: ${({ theme }) => (theme.type === 'dark' ? theme.accentColor : '#000000')};
     }
   }
   .total-amount {
@@ -102,10 +102,10 @@ const AddressAndInfoSection = styled.div`
     padding: 16px 35px;
     background: ${({ theme }) => theme.heavySelectionBackground};
     .title {
-      color: ${({ theme }) => theme.type === 'dark' ? 'rgba(255, 255, 255, 0.69)' : 'rgba(0, 0, 0, 0.69)'};
+      color: ${({ theme }) => (theme.type === 'dark' ? 'rgba(255, 255, 255, 0.69)' : 'rgba(0, 0, 0, 0.69)')};
     }
     .value {
-      color: ${({ theme }) => theme.type === 'dark' ? theme.accentColor : '#000000'};
+      color: ${({ theme }) => (theme.type === 'dark' ? theme.accentColor : '#000000')};
     }
   }
 `;
@@ -274,13 +274,13 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
           <SpaceBox height={16} />
           <div className='information-item'>
             <p className='title'>Deposit Amount</p>
-            <p className='value'>{depositNote.note.amount}{' '}{depositNote.note.tokenSymbol}</p>
+            <p className='value'>
+              {depositNote.note.amount} {depositNote.note.tokenSymbol}
+            </p>
           </div>
           <div className='information-item'>
             <p className='title'>Chains</p>
-            <p className='value'>
-              {getChainNameFromChainId(parseChainIdType(Number(depositNote.note.sourceChainId)))}
-            </p>
+            <p className='value'>{getChainNameFromChainId(parseChainIdType(Number(depositNote.note.sourceChainId)))}</p>
           </div>
           <div className='information-item'>
             <p className='title'>Relayer Fee</p>

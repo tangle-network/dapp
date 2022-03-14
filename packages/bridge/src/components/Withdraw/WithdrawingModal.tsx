@@ -54,10 +54,10 @@ const WithdrawInfoWrapper = styled.div`
 
   .linear-progress-styles,
   .MuiLinearProgress-colorPrimary {
-    background-color: #FFFFFF;
+    background-color: #ffffff;
 
     .MuiLinearProgress-bar {
-      background-color: ${({ theme }) => theme.type === 'dark' ? theme.accentColor : '#000000' };
+      background-color: ${({ theme }) => (theme.type === 'dark' ? theme.accentColor : '#000000')};
     }
   }
 
@@ -67,8 +67,8 @@ const WithdrawInfoWrapper = styled.div`
   }
 
   .cancel-button {
-    background: ${({ theme }) => theme.layer3Background };
-    color: ${({ theme }) => theme.type === 'dark' ? theme.accentColor : '#000000' };
+    background: ${({ theme }) => theme.layer3Background};
+    color: ${({ theme }) => (theme.type === 'dark' ? theme.accentColor : '#000000')};
   }
 `;
 
@@ -93,8 +93,8 @@ const WithdrawInfoRow = styled.div`
 const InfoItemLabel = styled.div`
   flex: 1 0 20%;
   justify-content: center;
-  color: ${({ theme }) => theme.type === 'dark' ? 'rgba(255, 255, 255, 0.69)' : 'rgba(0, 0, 0, 0.69)'};
-  font-size: .8rem;
+  color: ${({ theme }) => (theme.type === 'dark' ? 'rgba(255, 255, 255, 0.69)' : 'rgba(0, 0, 0, 0.69)')};
+  font-size: 0.8rem;
 
   .label-icon {
     vertical-align: middle;
@@ -112,7 +112,7 @@ const InfoItem = styled.div`
   justify-content: flex-end;
   text-align: right;
   align-items: center;
-  color: ${({ theme }) => theme.type === 'dark' ? theme.accentColor : '#000000'};
+  color: ${({ theme }) => (theme.type === 'dark' ? theme.accentColor : '#000000')};
 `;
 
 const WithdrawingModal: React.FC<WithdrawingModalProps> = ({ canCancel, cancel, note, stage, withdrawTxInfo }) => {
@@ -162,7 +162,7 @@ const WithdrawingModal: React.FC<WithdrawingModalProps> = ({ canCancel, cancel, 
               <Typography variant={'h6'} className={'withdraw-modal-header-caption'}>
                 {message}
               </Typography>
-              <LinearProgress value={10} variant={'indeterminate'} className={'linear-progress-styles'}/>
+              <LinearProgress value={10} variant={'indeterminate'} className={'linear-progress-styles'} />
             </div>
           </>
         )}
