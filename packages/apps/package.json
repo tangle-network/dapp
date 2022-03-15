@@ -5,10 +5,6 @@
   "author": "Acala Developers <hello@acala.network>, Webb Developers <drew@webb.tools>",
   "homepage": ".",
   "dependencies": {
-    "@apollo/react-hooks": "^3.1.5",
-    "apollo-boost": "^0.4.9",
-    "graphql": "^15.3.0",
-    "node-sass": "^4.13.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-router": "^6.0.0-beta.0",
@@ -16,6 +12,14 @@
     "react-scripts": "3.4.1"
   },
   "devDependencies": {
+    "@babel/preset-react": "7.16.7",
+    "@babel/preset-env": "7.16.11",
+    "@babel/preset-typescript": "7.16.7",
+    "@babel/plugin-proposal-private-methods": "7.16.11",
+    "@babel/plugin-proposal-private-property-in-object": "7.16.7",
+    "@babel/plugin-proposal-class-properties": "7.16.7",
+    "@babel/plugin-transform-react-jsx": "7.17.3",
+    "@babel/plugin-transform-runtime": "7.17.0",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",

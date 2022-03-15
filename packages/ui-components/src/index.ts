@@ -14,6 +14,5 @@ export * from './utils';
 
 export * from './Animation';
 
-export * from './NumberInput';
 export * from './Box';
 export * from './Information';

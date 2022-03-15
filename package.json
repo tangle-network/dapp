@@ -11,14 +11,14 @@
   },
   "resolutions": {
     "eslint": "^6.6.0",
-    "@polkadot/api": "^6.9.2",
+    "@polkadot/api": "^7.12.1",
     "react-error-overlay": "6.0.9",
-    "@webb-tools/type-definitions": "0.1.4-37",
-    "@webb-tools/api": "0.1.4-37",
-    "@webb-tools/types": "0.1.4-37",
-    "@webb-tools/app-util": "0.1.4-37",
-    "@webb-tools/sdk-core": "0.1.4-37",
-    "@webb-tools/wasm-utils": "0.1.4-37"
+    "@webb-tools/type-definitions": "file:../webb.js/packages/type-definitions/build",
+    "@webb-tools/api": "file:../webb.js/packages/api/build",
+    "@webb-tools/types": "file:../webb.js/packages/types/build",
+    "@webb-tools/app-util": "file:../webb.js/packages/app-util/build",
+    "@webb-tools/sdk-core": "file:../webb.js/packages/sdk-core/build",
+    "@webb-tools/wasm-utils": "file:../webb.js/packages/wasm-utils/build"
   },
   "scripts": {
     "bump-version": "node scripts/bump-version.js",
@@ -40,7 +40,7 @@
   },
   "dependencies": {
     "@material-ui/core": "^4.11.3",
-    "@polkadot/networks": "^7.4.1",
+    "@polkadot/networks": "^8.5.1",
     "@walletconnect/client": "^1.7.1",
     "@walletconnect/qrcode-modal": "^1.7.1",
     "@walletconnect/web3-provider": "^1.7.1",
@@ -72,7 +72,7 @@
     "@babel/plugin-syntax-import-meta": "^7.10.4",
     "@hot-loader/react-dom": "^16",
     "@open-web3/dev-config": "^0.1.13",
-    "@polkadot/dev": "^0.61.24",
+    "@polkadot/dev": "^0.65.90",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
