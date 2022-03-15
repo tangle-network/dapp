@@ -2,6 +2,7 @@ import { parseUnits } from '@ethersproject/units';
 import { Button, Divider, Icon, Link, Typography } from '@material-ui/core';
 import { chainsConfig, chainTypeIdToInternalId, InternalChainId, parseChainIdType } from '@webb-dapp/apps/configs';
 import { ActiveWebbRelayer } from '@webb-dapp/react-environment/webb-context/relayer/';
+import { SpaceBox } from '@webb-dapp/ui-components/Box';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 import { LoggerService } from '@webb-tools/app-util';
 import { JsNote as DepositNote } from '@webb-tools/wasm-utils';
@@ -20,21 +21,58 @@ type WithdrawingModalProps = {
 };
 
 const WithdrawInfoWrapper = styled.div`
-  min-height: 300px;
+  width: 500px;
+  padding: 20px;
   position: relative;
   overflow: hidden;
+  background: ${({ theme }) => theme.layer2Background};
 
   .modal-header {
     position: relative;
     width: 100%;
-    background: ${({ theme }) => theme.mainBackground};
   }
 
   .withdraw-modal-header {
     padding-top: 1rem;
     font-family: ${FontFamilies.AvenirNext};
     text-align: center;
-    font-weight: normal;
+    font-weight: medium;
+  }
+
+  .withdraw-modal-header-complete {
+    font-family: ${FontFamilies.AvenirNext};
+    text-align: center;
+    font-weight: medium;
+  }
+
+  .progress-content {
+    padding: 0 2rem 1rem;
+  }
+
+  .withdraw-modal-header-caption {
+    font-family: ${FontFamilies.AvenirNext};
+    color: #7c7b86;
+    text-align: center;
+    padding-bottom: 1rem;
+  }
+
+  .linear-progress-styles,
+  .MuiLinearProgress-colorPrimary {
+    background-color: #ffffff;
+
+    .MuiLinearProgress-bar {
+      background-color: ${({ theme }) => (theme.type === 'dark' ? theme.accentColor : '#000000')};
+    }
+  }
+
+  .cancel-button-container {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .cancel-button {
+    background: ${({ theme }) => theme.layer3Background};
+    color: green;
   }
 `;
 
@@ -47,28 +85,25 @@ const TxCompleteContainer = styled.div`
 
 const TransactionSummaryWrapper = styled.div`
   padding: 1rem 2rem;
+  background: ${({ theme }) => theme.heavySelectionBackground};
+  border-radius: 15px;
 `;
 
 const WithdrawInfoRow = styled.div`
   display: flex;
   width: 100%;
-  padding: 0.2rem 0.2rem;
 `;
 
 const InfoItemLabel = styled.div`
   flex: 1 0 20%;
   justify-content: center;
-  display: table;
-
-  .MuiTypography-root {
-    vertical-align: middle;
-    display: table-cell;
-  }
+  color: ${({ theme }) => (theme.type === 'dark' ? 'rgba(255, 255, 255, 0.69)' : 'rgba(0, 0, 0, 0.69)')};
+  font-size: 0.8rem;
 
   .label-icon {
     vertical-align: middle;
-    display: table-cell;
-  padding: 1rem 0;
+    padding: 1rem 0;
+  }
 
   td:nth-child(2) {
     padding: 0 2rem;
@@ -76,32 +111,15 @@ const InfoItemLabel = styled.div`
 `;
 
 const InfoItem = styled.div`
-  flex: 1 0 20%;
-  display: table;
-  height: 50px;
-  justify-content: center;
-  align-items: center;
-  text-align: right;
-
-  .MuiTypography-root {
-    vertical-align: middle;
-    display: table-cell;
-  }
-`;
-
-const ButtonContainer = styled.div`
   display: flex;
+  flex: 1 0 20%;
   justify-content: flex-end;
-  width: 100%;
+  text-align: right;
+  align-items: center;
+  color: ${({ theme }) => (theme.type === 'dark' ? theme.accentColor : '#000000')};
 `;
 
-const buttonStyle = {
-  padding: '0px 20px 20px 0px',
-  backgroundColor: 'transparent',
-  color: 'green',
-};
-
-const WithdrawSuccessModal: React.FC<WithdrawingModalProps> = ({ exit, note, receipt, recipient, relayer }) => {
+export const WithdrawSuccessModal: React.FC<WithdrawingModalProps> = ({ exit, note, receipt, recipient, relayer }) => {
   const transactionString = (hexString: string) => {
     return `${hexString.slice(0, 6)}...${hexString.slice(hexString.length - 4, hexString.length)}`;
   };
@@ -164,14 +182,12 @@ const WithdrawSuccessModal: React.FC<WithdrawingModalProps> = ({ exit, note, rec
       </header>
       <div>
         <TransactionSummaryWrapper>
-          <Typography variant={'subtitle1'} color={'textPrimary'}>
+          <Typography variant={'h6'} color={'textPrimary'}>
             Transaction summary
           </Typography>
-          <Divider />
           <WithdrawInfoRow>
             <InfoItemLabel>
-              <Icon className={'label-icon'}>paid</Icon>
-              <Typography variant={'h6'}>Received:</Typography>
+              <Icon className={'label-icon'}>paid</Icon>Received:
             </InfoItemLabel>
             <InfoItem>
               <Typography variant={'h6'}>
@@ -181,40 +197,38 @@ const WithdrawSuccessModal: React.FC<WithdrawingModalProps> = ({ exit, note, rec
           </WithdrawInfoRow>
           <WithdrawInfoRow>
             <InfoItemLabel>
-              <Icon className={'label-icon'}>arrow_upward</Icon>
-              <Typography variant={'h6'}>Recipient Address:</Typography>
+              <Icon className={'label-icon'}>arrow_upward</Icon>Recipient Address:
             </InfoItemLabel>
             <InfoItem>
-              <Link variant={'h6'} href={`${getBlockExplorerAddress(recipient)}`} target={'_blank'}>
+              <Link underline='always' variant={'h6'} href={`${getBlockExplorerAddress(recipient)}`} target={'_blank'}>
                 <b>{transactionString(recipient)}</b>
               </Link>
             </InfoItem>
           </WithdrawInfoRow>
           <WithdrawInfoRow>
             <InfoItemLabel>
-              <Icon className={'label-icon'}>info</Icon>
-              <Typography variant={'h6'}>Transaction Receipt:</Typography>
+              <Icon className={'label-icon'}>info</Icon>Transaction Receipt:
             </InfoItemLabel>
             <InfoItem>
-              <Link variant={'h6'} href={`${getBlockExplorerTx(receipt)}`} target={'_blank'}>
+              <Link underline='always' variant={'h6'} href={`${getBlockExplorerTx(receipt)}`} target={'_blank'}>
                 <b>{transactionString(receipt)}</b>
               </Link>
             </InfoItem>
           </WithdrawInfoRow>
         </TransactionSummaryWrapper>
       </div>
-      <ButtonContainer>
+      <SpaceBox height={10} />
+      <div className={'cancel-button-container'}>
         <Button
           onClick={() => {
             logger.info('User saw withdraw success modal and closed');
             exit();
           }}
-          style={buttonStyle}
+          className={'cancel-button'}
         >
           Confirm
         </Button>
-      </ButtonContainer>
+      </div>
     </WithdrawInfoWrapper>
   );
 };
-export default WithdrawSuccessModal;

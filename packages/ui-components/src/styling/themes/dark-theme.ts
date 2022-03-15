@@ -104,5 +104,15 @@ export const darkMainTheme: ThemeOptions = {
         fontSize: '0.95rem',
       },
     },
+    MuiLinearProgress: {
+      root: {
+        backgroundColor: '#FFFFFF',
+        color: '#FFFFFF',
+      },
+      bar: {
+        backgroundColor: darkPallet.accentColor,
+        color: darkPallet.accentColor,
+      },
+    },
   },
 };
