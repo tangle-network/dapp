@@ -1,4 +1,4 @@
-const { override, addWebpackAlias, useBabelRc, getBabelLoader, addBabelPreset, addBabelPresets, addBabelPlugin } = require('customize-cra');
+const { override, addWebpackAlias, useBabelRc, getBabelLoader, addBabelPreset, addBabelPresets, addBabelPlugin, addExternalBabelPlugin } = require('customize-cra');
 const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
 const webpack = require('webpack');
 const path = require('path');
@@ -39,15 +39,27 @@ module.exports = override(
   ...addBabelPresets(
     '@babel/preset-typescript',
     ['@babel/preset-react', { development: false, runtime: 'automatic' }],
-    ['@babel/preset-env', { modules: 'commonjs', targets: { browsers: '>0.25% and last 2 versions and not ie 11 and not OperaMini all', node: '12' } }]
+    ['@babel/preset-env', { loose: true, modules: 'commonjs', targets: { browsers: '>0.25% and last 2 versions and not ie 11 and not OperaMini all', node: '12' } }]
   ),
   addBabelPlugin('@babel/plugin-proposal-nullish-coalescing-operator'),
+  addBabelPlugin('@babel/plugin-proposal-numeric-separator'),
   addBabelPlugin('@babel/plugin-proposal-optional-chaining'),
   addBabelPlugin(['@babel/plugin-transform-runtime', { "useESModules": false }]),
+  addBabelPlugin('@babel/plugin-syntax-bigint'),
   addBabelPlugin('@babel/plugin-transform-react-jsx'),
+  addBabelPlugin('babel-plugin-styled-components'),
   addBabelPlugin(['@babel/plugin-proposal-class-properties', { "loose": true }]),
   addBabelPlugin(['@babel/plugin-proposal-private-methods', { "loose": true }]),
   addBabelPlugin(['@babel/plugin-proposal-private-property-in-object', { "loose": true }]),
+  addExternalBabelPlugin('@babel/plugin-proposal-nullish-coalescing-operator'),
+  addExternalBabelPlugin('@babel/plugin-proposal-numeric-separator'),
+  addExternalBabelPlugin('@babel/plugin-proposal-optional-chaining'),
+  addExternalBabelPlugin(['@babel/plugin-transform-runtime', { "useESModules": false }]),
+  addExternalBabelPlugin('@babel/plugin-transform-react-jsx'),
+  addExternalBabelPlugin('babel-plugin-styled-components'),
+  addExternalBabelPlugin(['@babel/plugin-proposal-class-properties', { "loose": true }]),
+  addExternalBabelPlugin(['@babel/plugin-proposal-private-methods', { "loose": true }]),
+  addExternalBabelPlugin(['@babel/plugin-proposal-private-property-in-object', { "loose": true }]),
   addWebpackPostBuildScript,
   function (config, env) {
     config.plugins.push(
