@@ -1,11 +1,12 @@
 import { useStore } from '@webb-dapp/react-environment';
 import { useModal } from '@webb-dapp/react-hooks';
-import { ArrowIcon, styled } from '@webb-dapp/ui-components';
+import { ArrowIcon } from '@webb-dapp/ui-components';
 import React, { createRef, FC, memo, useCallback, useContext, useEffect } from 'react';
 import { NavLink, NavLinkProps, useMatch } from 'react-router-dom';
 
 import { SidebarActiveContext } from './context';
 import { ProductItem as IProductItem } from './types';
+import styled from 'styled-components';
 
 interface ProductItemProps {
   collapse: boolean;
@@ -70,7 +71,7 @@ const ProductList = styled.div<ProductListProps>`
   display: ${(props): string => (props.collapse ? 'none' : 'block')};
 `;
 
-const ProductArrow = styled(ArrowIcon)<{ open: boolean }>`
+const ProductArrow = styled(props => <ArrowIcon {...props} />)<{ open: boolean }>`
   transform: rotate(${(props): number => (props.open ? -180 : 0)}deg);
   & g {
     stroke: var(--color-primary);

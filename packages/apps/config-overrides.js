@@ -20,9 +20,6 @@ const WebpackPostBuildScript = function () {
 };
 
 const addWebpackPostBuildScript = (config) => {
-  console.log(getBabelLoader(config).options.presets);
-  console.log(getBabelLoader(config).options.plugins);
-
   config.plugins.push(new WebpackPostBuildScript());
 
   return config;
@@ -47,8 +44,6 @@ module.exports = override(
   addBabelPlugin(['@babel/plugin-transform-runtime', { "useESModules": false }]),
   addBabelPlugin('@babel/plugin-syntax-bigint'),
   addBabelPlugin('@babel/plugin-transform-react-jsx'),
-  addBabelPlugin('@babel/plugin-syntax-dynamic-import'),
-  addBabelPlugin('@babel/plugin-syntax-import-meta'),
   addBabelPlugin('@babel/plugin-syntax-top-level-await'),
   addBabelPlugin('babel-plugin-styled-components'),
   addBabelPlugin(['@babel/plugin-proposal-class-properties', { "loose": true }]),
@@ -57,8 +52,6 @@ module.exports = override(
   addExternalBabelPlugin('@babel/plugin-proposal-nullish-coalescing-operator'),
   addExternalBabelPlugin('@babel/plugin-proposal-numeric-separator'),
   addExternalBabelPlugin('@babel/plugin-proposal-optional-chaining'),
-  addExternalBabelPlugin('@babel/plugin-syntax-dynamic-import'),
-  addExternalBabelPlugin('@babel/plugin-syntax-import-meta'),
   addExternalBabelPlugin('@babel/plugin-syntax-top-level-await'),
   addExternalBabelPlugin(['@babel/plugin-transform-runtime', { "useESModules": false }]),
   addExternalBabelPlugin('@babel/plugin-transform-react-jsx'),
@@ -92,6 +85,12 @@ module.exports = override(
       include: /node_modules/,
       type: 'javascript/auto',
     });
+
+    config.module.rules.push({
+      test: /\.js$/,
+      loader: require.resolve('@open-wc/webpack-import-meta-loader'),
+      include: path.resolve(__dirname, '../../node_modules/@polkadot'),
+    })
 
     const wasmExtensionRegExp = /\.wasm$/;
     config.resolve.extensions.push('.wasm');

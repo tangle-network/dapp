@@ -71,6 +71,7 @@
   "devDependencies": {
     "@babel/plugin-syntax-import-meta": "^7.10.4",
     "@hot-loader/react-dom": "^16",
+    "@open-wc/webpack-import-meta-loader": "^0.4.7",
     "@open-web3/dev-config": "^0.1.13",
     "@polkadot/dev": "^0.65.90",
     "@testing-library/jest-dom": "^4.2.4",
