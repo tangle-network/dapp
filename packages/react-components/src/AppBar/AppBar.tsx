@@ -1,5 +1,5 @@
 import { Icon, IconButton, Typography } from '@material-ui/core';
-import { ReactComponent as WebbLogo } from '@webb-dapp/react-components/assets/webb-icon.svg';
+import { WebbFullNameLogo } from '@webb-dapp/react-components/assets/WebbFullNameLogo';
 import { useStore } from '@webb-dapp/react-environment';
 import { useDimensions } from '@webb-dapp/react-environment/layout';
 import { WalletSelect } from '@webb-dapp/ui-components/Inputs/WalletSelect/WalletSelect';
@@ -112,7 +112,9 @@ const AppBar: React.FC<AppBarProps> = ({ toggleSidebarDisplay }) => {
   return isMobile ? (
     <>
       <AppBarWrapper>
-        <WebbLogo className={'webb-logo'} />
+        <div className={'webb-logo'}>
+          <WebbFullNameLogo />
+        </div>
         <RightNavigation>
           <NetworkManager />
           <IconButton onClick={toggleSidebarDisplay}>

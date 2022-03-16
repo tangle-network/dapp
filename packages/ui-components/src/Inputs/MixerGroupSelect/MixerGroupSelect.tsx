@@ -12,7 +12,7 @@ const MixerGroupSelectWrapper = styled.div`
   min-height: 38px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: space-around;
   max-width: 100%;
   flex-wrap: wrap;
   overflow: auto;

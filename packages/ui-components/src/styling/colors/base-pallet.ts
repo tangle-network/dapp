@@ -8,7 +8,7 @@ export const basePallet = {
   /*Main*/
   primary: '#3351F2',
   secondary: '#52B684',
-  accentColor: '#FF0000',
+  accentColor: '#3351F2',
   iconColor: '#B6B6B6',
 
   /*Content color*/
