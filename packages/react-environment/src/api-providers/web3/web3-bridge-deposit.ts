@@ -283,7 +283,7 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
       exponentiation: '5',
       width: '4',
       protocol: 'anchor',
-      chain: destChainId.toString(),
+      targetChain: destChainId.toString(),
       sourceChain: sourceChainId.toString(),
       sourceIdentifyingData: srcAddress,
       targetIdentifyingData: target,

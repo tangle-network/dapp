@@ -70,7 +70,7 @@ export class PolkadotBridgeDeposit extends BridgeDeposit<WebbPolkadot, DepositPa
       exponentiation: '5',
       width: '4',
       protocol: 'anchor',
-      chain: destChainId.toString(),
+      targetChain: destChainId.toString(),
       sourceChain: sourceChainId.toString(),
       sourceIdentifyingData: anchorIndex.toString(),
       targetIdentifyingData: treeId.toString(),

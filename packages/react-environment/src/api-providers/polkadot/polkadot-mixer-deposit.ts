@@ -100,7 +100,7 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
       curve: 'Bn254',
       denomination: `${denomination}`,
       amount: String(amount.value),
-      chain: chainIdType.toString(),
+      targetChain: chainIdType.toString(),
       sourceChain: chainIdType.toString(),
       sourceIdentifyingData: treeId.toString(),
       targetIdentifyingData: treeId.toString(),
