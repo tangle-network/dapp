@@ -94,7 +94,7 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
       protocol: 'mixer',
       version: 'v2',
       exponentiation: '5',
-      width: '5',
+      width: '3',
       backend: 'Arkworks',
       hashFunction: 'Poseidon',
       curve: 'Bn254',
