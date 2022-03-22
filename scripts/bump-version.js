@@ -18,7 +18,7 @@ const execSync = require('@polkadot/dev/scripts/execSync');
 
 const repo = `https://${process.env.GH_PAT}@github.com/${process.env.GITHUB_REPOSITORY}.git`;
 
-console.log('$ acala bump version', process.argv.slice(2).join(' '));
+console.log('$ webb bump version', process.argv.slice(2).join(' '));
 
 function gitSetup () {
   execSync('git config push.default simple');

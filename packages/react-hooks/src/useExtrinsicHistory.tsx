@@ -73,7 +73,7 @@ interval(1000 * 30).subscribe(() => {
   refresh$.next(count++);
 });
 
-const SUBSCAN_TX = 'https://acala-testnet.subscan.io/api/scan/extrinsics';
+const SUBSCAN_TX = 'https://dummyurl.io/api/scan/extrinsics';
 
 export const useHistory = (query?: QueryParams): HooksReturnType => {
   const savedQuery = useRef<string>('');

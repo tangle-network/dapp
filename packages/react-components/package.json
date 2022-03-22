@@ -3,7 +3,7 @@
   "version": "0.2.1-beta.1",
   "description": "react components",
   "main": "index.js",
-  "author": "Acala Developers <hello@acala.network>, Webb Developers <drew@webb.tools>",
+  "author": "Webb Developers <drew@webb.tools>",
   "homepage": "https://github.com/webb-tools/webb-dapp#readme",
   "dependencies": {
     "@webb-dapp/react-hooks": "0.2.1-beta.1",
