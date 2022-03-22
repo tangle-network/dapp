@@ -1,3 +1,5 @@
+import './styles/global.css';
+
 import styled from 'styled-components';
 
 // export common thirdpart packages

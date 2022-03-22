@@ -1,5 +1,3 @@
-import './styles/global.css';
-
 import { MuiThemeProvider, PaperProps } from '@material-ui/core';
 import InteractiveErrorView from '@webb-dapp/react-components/InteractiveFeedbackView/InteractiveErrorView';
 import { useStore, useWebContext } from '@webb-dapp/react-environment';

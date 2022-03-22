@@ -1,8 +1,9 @@
 import { fetchKeyForEdges, fetchWasmForEdges } from '@webb-dapp/apps/configs/ipfs/evm/anchors';
 import { BridgeWitnessInput } from '@webb-dapp/contracts/contracts/types';
 
-const groth16 = require('snarkjs/src/groth16');
-const zkey = require('snarkjs/src/zkey');
+const snarkjs = require('snarkjs');
+const groth16 = snarkjs.groth16;
+const zkey = snarkjs.zkey;
 
 type MaxEdges = 1 | 2 | 3 | 4 | 5;
 

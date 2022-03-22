@@ -23,7 +23,6 @@ function mapChunks(name, regs, inc) {
       },
     }),
     {}
-    
   );
 }
 
@@ -49,6 +48,9 @@ function createWebpack(context, mode = 'production') {
     : [];
 
   return {
+    experiments: {
+      asyncWebAssembly: true,
+    },
     context,
     entry: ['@babel/polyfill', './src/index.tsx'],
     mode,
@@ -61,7 +63,7 @@ function createWebpack(context, mode = 'production') {
         {
           include: /node_modules/,
           test: /\.css$/,
-          use: [MiniCssExtractPlugin.loader, require.resolve('css-loader')],
+          use: [MiniCssExtractPlugin.loader, require.resolve('css-loader'), require.resolve('style-loader')],
         },
         {
           exclude: /(node_modules)/,
@@ -181,6 +183,7 @@ function createWebpack(context, mode = 'production') {
         os: require.resolve('os-browserify/browser'),
         path: require.resolve('path-browserify'),
         stream: require.resolve('stream-browserify'),
+        fs: false,
       },
     },
   };
