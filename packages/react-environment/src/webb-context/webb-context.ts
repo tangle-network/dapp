@@ -1,7 +1,7 @@
 import { Chain, Wallet } from '@webb-dapp/react-environment/webb-context/common';
-import { WebbApiProvider } from '@webb-dapp/react-environment/webb-context/webb-provider.interface';
-import { InteractiveFeedback } from '@webb-dapp/utils/webb-error';
 import { Account } from '@webb-dapp/wallet/account/Accounts.adapter';
+import { WebbApiProvider } from '@webb-tools/api-providers';
+import { InteractiveFeedback } from '@webb-tools/api-providers/webb-error';
 import React from 'react';
 
 interface Note {
