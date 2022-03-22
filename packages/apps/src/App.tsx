@@ -1,3 +1,4 @@
+import '@webb-dapp/ui-components/styles/global.css';
 import './initI18n';
 
 import { DAppError } from '@webb-dapp/react-components/utils/Error/DAppError';

@@ -61,15 +61,15 @@ function createWebpack(context, mode = 'production') {
           type: 'asset/resource',
         },
         {
-          include: /node_modules/,
+          include: /(node_modules)/,
           test: /\.css$/,
-          use: [MiniCssExtractPlugin.loader, require.resolve('css-loader'), require.resolve('style-loader')],
+          use: [MiniCssExtractPlugin.loader, require.resolve('css-loader')],
         },
         {
           exclude: /(node_modules)/,
           test: /\.(js|mjs|ts|tsx)$/,
           use: [
-            // require.resolve('thread-loader'),
+            require.resolve('thread-loader'),
             {
               loader: require.resolve('babel-loader'),
               options: require('@polkadot/dev/config/babel-config-webpack.cjs'),
