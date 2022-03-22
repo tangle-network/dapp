@@ -61,8 +61,8 @@ function createWebpack(context, mode = 'production') {
           type: 'asset/resource',
         },
         {
-          include: /(node_modules)/,
-          test: /\.css$/,
+          include: /node_modules/,
+          test: /\.css$/i,
           use: [MiniCssExtractPlugin.loader, require.resolve('css-loader')],
         },
         {
