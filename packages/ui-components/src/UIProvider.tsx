@@ -1,5 +1,3 @@
-import './styles/global.css';
-
 import { MuiThemeProvider, PaperProps } from '@material-ui/core';
 import InteractiveErrorView from '@webb-dapp/react-components/InteractiveFeedbackView/InteractiveErrorView';
 import { useStore, useWebContext } from '@webb-dapp/react-environment';
@@ -8,6 +6,7 @@ import makeTheme from '@webb-dapp/ui-components/styling/themes/makeTheme';
 import React, { FC, useMemo, useState } from 'react';
 import styled, { ThemeProvider } from 'styled-components';
 
+import { GlobalStylesheet } from './styles/global';
 import { BareProps } from './types';
 
 export interface UIData {
@@ -30,13 +29,16 @@ export const UIProvider: FC<BareProps> = ({ children }) => {
   const { activeFeedback } = useWebContext();
 
   return (
-    <UIContext.Provider value={state}>
-      <ThemeProvider theme={pallet}>
-        <MuiThemeProvider theme={muiTheme}>
-          {children}
-          <InteractiveErrorView activeFeedback={activeFeedback} />
-        </MuiThemeProvider>
-      </ThemeProvider>
-    </UIContext.Provider>
+    <>
+      <GlobalStylesheet />
+      <UIContext.Provider value={state}>
+        <ThemeProvider theme={pallet}>
+          <MuiThemeProvider theme={muiTheme}>
+            {children}
+            <InteractiveErrorView activeFeedback={activeFeedback} />
+          </MuiThemeProvider>
+        </ThemeProvider>
+      </UIContext.Provider>
+    </>
   );
 };
