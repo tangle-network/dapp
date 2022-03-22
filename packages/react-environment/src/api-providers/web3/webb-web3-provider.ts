@@ -1,6 +1,7 @@
 import { EVMChainId, evmIdIntoInternalChainId, parseChainIdType } from '@webb-dapp/apps/configs';
 import { TornadoContract } from '@webb-dapp/contracts/contracts/tornado-anchor';
 import { AnchorContract } from '@webb-dapp/contracts/contracts/webb-anchor';
+// eslint-disable-next-line import-newlines/enforce
 import {
   AppConfig,
   NotificationHandler,
