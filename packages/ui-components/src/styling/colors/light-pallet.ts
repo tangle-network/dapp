@@ -3,7 +3,8 @@ import { basePallet } from './base-pallet';
 export const lightPallet = {
   ...basePallet,
   type: 'light',
-  primaryText: '#474553',
+  primaryText: '#000000',
+  secondaryText: '#969696',
 
   tabHeader: '#EBEEFD',
   borderColor: 'rgba(0, 0, 0, 0.13)',
@@ -13,11 +14,12 @@ export const lightPallet = {
   cardBackground: '#fff',
   componentBackground: `#ffffff`,
   menuBackground: '#ffffff',
+  modalBackground: '#ffffff',
 
   lightSelectionBackground: '#F0F0F0',
   heavySelectionBackground: '#E3E3E3',
-  heavySelectionBorder: '1px solid #C5C5C5',
-  layer1Background: 'white',
-  layer2Background: '#F4F4F4',
+  heavySelectionBorderColor: '#C5C5C5',
+  layer1Background: '#F4F4F4',
+  layer2Background: 'white',
   layer3Background: 'white',
 };

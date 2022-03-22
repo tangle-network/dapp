@@ -67,6 +67,8 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
         value: amount,
         title: amount + ` ${currency.symbol}`,
         symbol: currency.symbol,
+        amount: amount,
+        asset: currency.symbol,
       }))
       .sort((a, b) => (a.value > b.value ? 1 : a.value < b.value ? -1 : 0));
     return groupItem;
@@ -92,13 +94,13 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
       protocol: 'mixer',
       version: 'v2',
       exponentiation: '5',
-      width: '5',
+      width: '3',
       backend: 'Arkworks',
       hashFunction: 'Poseidon',
       curve: 'Bn254',
       denomination: `${denomination}`,
       amount: String(amount.value),
-      chain: chainIdType.toString(),
+      targetChain: chainIdType.toString(),
       sourceChain: chainIdType.toString(),
       sourceIdentifyingData: treeId.toString(),
       targetIdentifyingData: treeId.toString(),

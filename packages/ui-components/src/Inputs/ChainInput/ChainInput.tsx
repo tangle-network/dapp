@@ -4,12 +4,10 @@ import Typography from '@material-ui/core/Typography';
 import { chainsPopulated, ChainTypeId, chainTypeIdToInternalId } from '@webb-dapp/apps/configs';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
-import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabel';
-import { InputSection } from '@webb-dapp/ui-components/Inputs/InputSection/InputSection';
 import { NetworkManager } from '@webb-dapp/ui-components/NetworkManger/NetworkManager';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { CSSProperties, useEffect, useMemo, useRef, useState } from 'react';
 import styled, { css } from 'styled-components';
 
 const StyledList = styled.ul`
@@ -30,7 +28,7 @@ const StyledList = styled.ul`
 
 const InputWrapper = styled.div<{ open: boolean }>`
   border-radius: 8px;
-  border: ${({ theme }: { theme: Pallet }) => theme.heavySelectionBorder};
+  border: 1px solid ${({ theme }: { theme: Pallet }) => theme.heavySelectionBorderColor};
 
   overflow: hidden;
   transition: all 0.3s ease-in-out;
@@ -149,11 +147,6 @@ const DropdownInput: React.FC<DropdownInputProps> = ({ chains, onChange, value }
                     <Typography variant={'h6'} component={'span'} display={'block'}>
                       <b>{selected.chain.name}</b>
                     </Typography>
-                    <Typography variant={'body2'} color={'textSecondary'}>
-                      <ChainName>
-                        <b>{selected.chain.name}</b>
-                      </ChainName>
-                    </Typography>
                   </div>
                 </Flex>
               ) : (
@@ -175,7 +168,7 @@ const DropdownInput: React.FC<DropdownInputProps> = ({ chains, onChange, value }
                   <Padding x={0.5} />
                   <Flex jc={'center'}>
                     <Typography variant={'caption'} color={'textSecondary'} style={{ whiteSpace: 'nowrap' }}>
-                      Select bridge chain
+                      Select chain
                     </Typography>
                   </Flex>
                 </Flex>
@@ -249,31 +242,26 @@ const DropdownInput: React.FC<DropdownInputProps> = ({ chains, onChange, value }
   );
 };
 
-const ChainInputWrapper = styled.div``;
 type ChainInputProps = {
   chains: ChainTypeId[];
-  label: string;
   selectedChain: ChainTypeId | undefined;
   setSelectedChain?(chain: ChainTypeId | undefined): void;
+  wrapperStyles?: CSSProperties;
 };
 
-export const ChainInput: React.FC<ChainInputProps> = ({ chains, label, selectedChain, setSelectedChain }) => {
+export const ChainInput: React.FC<ChainInputProps> = ({ chains, selectedChain, setSelectedChain, wrapperStyles }) => {
   return (
-    <InputSection>
-      <ChainInputWrapper>
-        <InputLabel label={label}>
-          {setSelectedChain && (
-            <DropdownInput
-              chains={chains}
-              value={selectedChain}
-              onChange={(chain) => {
-                setSelectedChain(chain);
-              }}
-            />
-          )}
-          {!setSelectedChain && <NetworkManager />}
-        </InputLabel>
-      </ChainInputWrapper>
-    </InputSection>
+    <div style={wrapperStyles}>
+      {setSelectedChain && (
+        <DropdownInput
+          chains={chains}
+          value={selectedChain}
+          onChange={(chain) => {
+            setSelectedChain(chain);
+          }}
+        />
+      )}
+      {!setSelectedChain && <NetworkManager />}
+    </div>
   );
 };

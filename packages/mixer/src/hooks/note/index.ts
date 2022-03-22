@@ -2,7 +2,6 @@ import {
   ChainType,
   computeChainIdType,
   internalChainIdIntoEVMId,
-  internalChainIdToChainId,
 } from '@webb-dapp/apps/configs';
 import { Note, NoteGenInput } from '@webb-tools/sdk-core';
 import { useEffect, useState } from 'react';
@@ -24,7 +23,7 @@ export const useDepositNote = (value: string): null | Note => {
           const newNoteInput: NoteGenInput = {
             protocol: d.note.protocol,
             version: 'v2',
-            chain: computeChainIdType(ChainType.EVM, internalChainIdIntoEVMId(Number(d.note.sourceChainId))).toString(),
+            targetChain: computeChainIdType(ChainType.EVM, internalChainIdIntoEVMId(Number(d.note.sourceChainId))).toString(),
             sourceChain: computeChainIdType(
               ChainType.EVM,
               internalChainIdIntoEVMId(Number(d.note.sourceChainId))

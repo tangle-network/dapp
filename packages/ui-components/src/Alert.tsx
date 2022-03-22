@@ -1,5 +1,3 @@
-import './Alert.scss';
-
 import clsx from 'clsx';
 import React, { FC, ReactNode } from 'react';
 import styled from 'styled-components';

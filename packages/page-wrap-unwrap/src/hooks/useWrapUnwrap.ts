@@ -5,21 +5,37 @@ import { LoggerService } from '@webb-tools/app-util';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 const logger = LoggerService.get('useWrapUnwrap');
 
+// 'Governed' tokens represent a token which can be minted from a deposit
+//    of various 'wrappable' tokens. Governed tokens are the tokens which are bridged
+//    in the webb system.
+// 'Wrappable' tokens represent tokens which can be deposited into a wrapper
+//    contract - which will mint an appropriate amount of 'governed' token.
+interface WrapUnwrapUIState {
+  // Tracks the currently selected governedToken.
+  governedToken: CurrencyContent | null;
+  // Tracks the currently selected wrappableToken
+  wrappableToken: CurrencyContent | null;
+  // Tracks the available governedTokens for selection
+  //  - This depends on the WebContext's activeApi.
+  governedTokens: CurrencyContent[];
+  // Tracks the available wrappableTokens for selection
+  //  - This depends on the WebContext's activeApi.
+  wrappableTokens: CurrencyContent[];
+  // Track the user input for desired amount to wrap/unwrap
+  amount: number | null;
+  // Track the user input for use of wrap or unwrap
+  context: 'wrap' | 'unwrap';
+}
+
+// The useWrapUnwrap hook is intended to
 export function useWrapUnwrap() {
   const { activeApi, activeChain } = useWebContext();
 
-  // This state will control the UI options
-  const [state, setState] = useState<{
-    governedToken: CurrencyContent | null;
-    wrappableToken: CurrencyContent | null;
-    governedTokens: CurrencyContent[];
-    wrappableTokens: CurrencyContent[];
-    amount: number;
-    context: 'wrap' | 'unwrap';
-  }>({
+  // The UI will look at this state to determine which options to present to the user
+  const [state, setState] = useState<WrapUnwrapUIState>({
     governedToken: null,
     wrappableToken: null,
-    amount: 0,
+    amount: null,
     governedTokens: [],
     wrappableTokens: [],
     context: 'wrap',
@@ -80,6 +96,8 @@ export function useWrapUnwrap() {
   );
 
   const execute = useCallback(() => {
+    if (!amount) return;
+
     switch (context) {
       case 'wrap':
         return wrapUnwrapApi?.wrap({ amount });
@@ -88,10 +106,13 @@ export function useWrapUnwrap() {
     }
   }, [context, wrapUnwrapApi, amount]);
 
-  const setAmount = (amount: number) => {
+  const setAmount = (amount: number | null) => {
     setState((p) => ({ ...p, amount }));
   };
 
+  // The wrapUnwrapApi (activeApi) manages its state. This hook listens to an Observable value exposed by the wrapUnwrapApi.
+  // When it receives information about a state update in the api (state for web3 / polkadot interaction),
+  // it will update this hook's state (state for user display)
   useEffect(() => {
     logger.log('useEffect for wrapUnwrapApi subscription');
     initTokens();

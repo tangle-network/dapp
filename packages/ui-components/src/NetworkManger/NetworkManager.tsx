@@ -427,8 +427,8 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
 
 const NetworkIndicatorWrapper = styled.button`
   && {
-    min-height: 53px;
-    border-radius: 32px;
+    height: 45px;
+    border-radius: 8px;
     margin: 0 1rem;
     padding: 0 0.3rem;
     background: ${({ theme }: { theme: Pallet }) => theme.lightSelectionBackground};

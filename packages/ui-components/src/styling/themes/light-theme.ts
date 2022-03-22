@@ -103,5 +103,13 @@ export const lightMainTheme: ThemeOptions = {
         fontSize: '0.95rem',
       },
     },
+    MuiLinearProgress: {
+      colorPrimary: {
+        backgroundColor: '#FFFFFF',
+      },
+      barColorPrimary: {
+        backgroundColor: '#000000',
+      },
+    },
   },
 };

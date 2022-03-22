@@ -1,6 +1,4 @@
 import './styles/global.css';
-import './styles/notification.scss';
-import './styles/table.scss';
 
 import { MuiThemeProvider, PaperProps } from '@material-ui/core';
 import InteractiveErrorView from '@webb-dapp/react-components/InteractiveFeedbackView/InteractiveErrorView';

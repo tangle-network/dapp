@@ -2,12 +2,13 @@ import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import styled, { css } from 'styled-components';
 
 export const InputSection = styled.div`
+  display: flex;
   ${({ theme }: { theme: Pallet }) => css`
-    border: 2px solid ${theme.borderColor2};
+    border: 2px solid ${theme.heavySelectionBorderColor};
     color: ${theme.primaryText};
-    background: ${theme.layer2Background};
+    background: ${theme.heavySelectionBackground};
   `}
-  padding: 10px;
+  padding: 2px;
   border-radius: 10px;
   min-height: 80px;
 `;

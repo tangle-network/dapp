@@ -81,7 +81,7 @@ export class Web3MixerDeposit extends MixerDeposit<WebbWeb3Provider, DepositPayl
       protocol: 'mixer',
       exponentiation: '5',
       width: '3',
-      chain: noteChain.toString(),
+      targetChain: noteChain.toString(),
       sourceChain: noteChain.toString(),
       sourceIdentifyingData: mixerAddress,
       targetIdentifyingData: mixerAddress,

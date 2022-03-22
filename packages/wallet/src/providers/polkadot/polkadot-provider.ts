@@ -2,7 +2,6 @@ import { ApiInitHandler } from '@webb-dapp/react-environment';
 import { PolkaTXBuilder } from '@webb-dapp/react-environment/api-providers/polkadot';
 import { InteractiveFeedback, WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import { PolkadotAccount, PolkadotAccounts } from '@webb-dapp/wallet/providers/polkadot/polkadot-accounts';
-import { optionsWithEdgeware as options } from '@webb-tools/api';
 import { EventBus, LoggerService } from '@webb-tools/app-util';
 import { isNumber } from 'lodash';
 
@@ -240,7 +239,7 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
       ss58Format: isNumber(this.apiPromise.registry.chainSS58) ? this.apiPromise.registry.chainSS58 : 42,
       tokenDecimals: isNumber(this.apiPromise.registry.chainDecimals) ? this.apiPromise.registry.chainDecimals : 12,
       tokenSymbol: this.apiPromise.registry.chainTokens[0] || 'Unit',
-      types: options({}).types as any,
+      types: {} as any,
     };
     logger.trace('Polkadot api metadata', metadataDef);
     return metadataDef;
