@@ -17,7 +17,7 @@ import { createAnchor2Deposit, Deposit } from '@webb-dapp/contracts/utils/make-d
 import { EvmChainMixersInfo } from '@webb-dapp/react-environment/api-providers/web3/EvmChainMixersInfo';
 import { MerkleTree, PoseidonHasher } from '@webb-dapp/utils/merkle';
 import { retryPromise } from '@webb-dapp/utils/retry-promise';
-import { LoggerService } from '@nepoche/app-util';
+import { LoggerService } from '@webb-tools/app-util';
 import { BigNumber, BigNumberish, Contract, ethers, providers, Signer } from 'ethers';
 import utils from 'web3-utils';
 

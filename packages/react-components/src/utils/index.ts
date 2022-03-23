@@ -1,5 +1,5 @@
-import { Fixed18 } from '@nepoche/app-util';
-import { FixedPointNumber } from '@nepoche/sdk-core';
+import { Fixed18 } from '@webb-tools/app-util';
+import { FixedPointNumber } from '@webb-tools/sdk-core';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 

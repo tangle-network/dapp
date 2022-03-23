@@ -7,7 +7,7 @@ import {
 } from '@webb-dapp/apps/configs';
 import { createTornDeposit, Deposit } from '@webb-dapp/contracts/utils/make-deposit';
 import { DepositPayload as IDepositPayload, MixerDeposit, MixerSize } from '@webb-dapp/react-environment/webb-context';
-import { Note, NoteGenInput } from '@nepoche/sdk-core';
+import { Note, NoteGenInput } from '@webb-tools/sdk-core';
 import utils from 'web3-utils';
 
 import { u8aToHex } from '@polkadot/util';

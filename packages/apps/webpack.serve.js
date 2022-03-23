@@ -7,7 +7,9 @@ const { merge } = require('webpack-merge');
 
 const baseConfig = require('./webpack.base.js');
 
-module.exports = merge(baseConfig(__dirname, 'development'), {
+const isDevelopment = process.env.NODE_ENV !== 'production';
+
+module.exports = merge(baseConfig(__dirname, isDevelopment ? 'development' : 'production'), {
   devServer: {
     hot: true,
     open: false,

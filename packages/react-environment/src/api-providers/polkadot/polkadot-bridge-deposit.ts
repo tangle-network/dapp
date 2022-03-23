@@ -5,8 +5,8 @@ import { WebbPolkadot } from '@webb-dapp/react-environment/api-providers/polkado
 import { BridgeConfig } from '@webb-dapp/react-environment/types/bridge-config.interface';
 import { BridgeApi } from '@webb-dapp/react-environment/webb-context/bridge/bridge-api';
 import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
-import { LoggerService } from '@nepoche/app-util';
-import { Note, NoteGenInput } from '@nepoche/sdk-core';
+import { LoggerService } from '@webb-tools/app-util';
+import { Note, NoteGenInput } from '@webb-tools/sdk-core';
 
 import { u8aToHex } from '@polkadot/util';
 

@@ -1,12 +1,12 @@
-import { LoggerService } from '@nepoche/app-util';
-import { Note, ProvingManager } from '@nepoche/sdk-core';
-import { ProvingManagerSetupInput } from '@nepoche/sdk-core/proving/proving-manager-thread';
 import { InternalChainId } from '@webb-dapp/apps/configs';
 // @ts-ignore
 // import { Worker } from '@webb-dapp/mixer/utils/proving-manager.worker';
 import { RelayedWithdrawResult, WebbRelayer } from '@webb-dapp/react-environment';
 import { getCachedFixtureURI, withLocalFixtures } from '@webb-dapp/utils/misc';
 import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
+import { LoggerService } from '@webb-tools/app-util';
+import { Note, ProvingManager } from '@webb-tools/sdk-core';
+import { ProvingManagerSetupInput } from '@webb-tools/sdk-core/proving/proving-manager-thread';
 
 import { decodeAddress } from '@polkadot/keyring';
 import { hexToU8a, u8aToHex } from '@polkadot/util';

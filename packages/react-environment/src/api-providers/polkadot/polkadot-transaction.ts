@@ -1,5 +1,5 @@
 import { NotificationHandler } from '@webb-dapp/react-environment';
-import { EventBus, LoggerService } from '@nepoche/app-util';
+import { EventBus, LoggerService } from '@webb-tools/app-util';
 import { uniqueId } from 'lodash';
 import React from 'react';
 

@@ -29,9 +29,9 @@ import {
 } from '@webb-dapp/react-environment/webb-context';
 import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
-import { LoggerService } from '@nepoche/app-util';
-import { Note } from '@nepoche/sdk-core';
-import { JsNote as DepositNote } from '@nepoche/wasm-utils';
+import { LoggerService } from '@webb-tools/app-util';
+import { Note } from '@webb-tools/sdk-core';
+import { JsNote as DepositNote } from '@webb-tools/wasm-utils';
 import { BigNumber } from 'ethers';
 
 const logger = LoggerService.get('Web3BridgeWithdraw');

@@ -11,7 +11,7 @@ import { EvmChainMixersInfo } from '@webb-dapp/react-environment/api-providers/w
 import { MerkleTree, MimcSpongeHasher } from '@webb-dapp/utils/merkle';
 import { retryPromise } from '@webb-dapp/utils/retry-promise';
 import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
-import { LoggerService } from '@nepoche/app-util';
+import { LoggerService } from '@webb-tools/app-util';
 import { BigNumber, Contract, providers, Signer } from 'ethers';
 import utils from 'web3-utils';
 

@@ -26,14 +26,14 @@ function mapChunks(name, regs, inc) {
   );
 }
 
-function createWebpack(context, mode = 'production') {
-  const pkgJson = require(path.join(context, 'package.json'));
+function createWebpack(env, mode = 'production') {
+  const pkgJson = require(path.join(env.context, 'package.json'));
   const alias = findPackages().reduce((alias, { dir, name }) => {
-    alias[name] = path.resolve(context, `../${dir}/src`);
+    alias[name] = path.resolve(env.context, `../${dir}/src`);
 
     return alias;
   }, {});
-  const plugins = fs.existsSync(path.join(context, 'public'))
+  const plugins = fs.existsSync(path.join(env.context, 'public'))
     ? new CopyWebpackPlugin({
         patterns: [
           {
@@ -51,7 +51,7 @@ function createWebpack(context, mode = 'production') {
     experiments: {
       asyncWebAssembly: true,
     },
-    context,
+    context: env.context,
     entry: ['@babel/polyfill', './src/index.tsx'],
     mode,
     module: {
@@ -142,7 +142,7 @@ function createWebpack(context, mode = 'production') {
       filename: '[name].[contenthash:8].js',
       globalObject: "(typeof self !== 'undefined' ? self : this)",
       hashFunction: 'xxhash64',
-      path: path.join(context, 'build'),
+      path: path.join(env.context, 'build'),
       publicPath: '',
     },
     performance: {
@@ -158,11 +158,8 @@ function createWebpack(context, mode = 'production') {
         resourceRegExp: /^\.\/locale$/,
       }),
       new webpack.DefinePlugin({
-        'process.env': {
-          NODE_ENV: JSON.stringify(mode),
-          VERSION: JSON.stringify(pkgJson.version),
-          WS_URL: JSON.stringify(process.env.WS_URL),
-        },
+        'process.env.NODE_ENV': JSON.stringify(mode),
+        'process.env.REACT_APP_LOCAL_FIXTURES': env.REACT_APP_LOCAL_FIXTURES,
       }),
       new webpack.optimize.SplitChunksPlugin(),
       new MiniCssExtractPlugin({

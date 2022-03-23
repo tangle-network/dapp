@@ -1,8 +1,8 @@
 import { WebbCurrencyId } from '@webb-dapp/apps/configs';
 import { TOKEN_COLOR, TOKEN_FULLNAMES, TOKEN_IMAGES } from '@webb-dapp/mixer/utils/currency/constants';
 import { ORMLAsset } from '@webb-dapp/react-environment/webb-context/currency/orml-currency';
-import { Token } from '@nepoche/sdk-core';
-import { CurrencyId } from '@nepoche/types/interfaces/types';
+import { Token } from '@webb-tools/sdk-core';
+import { CurrencyId } from '@webb-tools/types/interfaces/types';
 
 import { ApiPromise, ApiRx } from '@polkadot/api';
 

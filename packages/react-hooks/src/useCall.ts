@@ -1,6 +1,6 @@
 /*
 import { useStore } from '@webb-dapp/react-environment';
-import { LoggerService } from '@nepoche/app-util';
+import { LoggerService } from '@webb-tools/app-util';
 import { get, isEmpty } from 'lodash';
 import { useEffect, useMemo } from 'react';
 import { Observable, Subscription } from 'rxjs';

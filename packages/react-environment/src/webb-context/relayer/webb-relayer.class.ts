@@ -17,7 +17,7 @@ import {
   RelayerSubstrateCommands,
   SubstrateCMDKeys,
 } from '@webb-dapp/react-environment/webb-context/relayer/types';
-import { LoggerService } from '@nepoche/app-util';
+import { LoggerService } from '@webb-tools/app-util';
 import { Observable, Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 

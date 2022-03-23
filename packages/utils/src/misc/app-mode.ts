@@ -1,4 +1,4 @@
-import { LoggerService } from '@nepoche/app-util';
+import { LoggerService } from '@webb-tools/app-util';
 
 export type AppMode = 'development' | 'production';
 const appLogger = LoggerService.get('App');

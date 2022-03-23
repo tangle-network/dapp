@@ -1,4 +1,4 @@
-import { EventBus } from '@nepoche/app-util';
+import { EventBus } from '@webb-tools/app-util';
 
 import { Note } from './note';
 

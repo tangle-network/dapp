@@ -1,4 +1,4 @@
-import { EventBus } from '@nepoche/app-util';
+import { EventBus } from '@webb-tools/app-util';
 
 export interface StorageHandler<T> {
   inner: T;
