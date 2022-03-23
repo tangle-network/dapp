@@ -4,7 +4,7 @@ import { WithdrawState } from '@webb-dapp/react-environment';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { SpaceBox } from '@webb-dapp/ui-components/Box';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
-import { JsNote as DepositNote } from '@webb-tools/wasm-utils';
+import { JsNote as DepositNote } from '@drewstone/wasm-utils';
 import React, { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 

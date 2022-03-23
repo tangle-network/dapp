@@ -1,3 +1,3 @@
-import { ProvingManagerWrapper } from '@webb-tools/sdk-core';
+import { ProvingManagerWrapper } from '@drewstone/sdk-core';
 
 new ProvingManagerWrapper();

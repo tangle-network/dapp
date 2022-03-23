@@ -1,5 +1,5 @@
 import { WebbPolkadot } from '@webb-dapp/react-environment/api-providers';
-import { LoggerService } from '@webb-tools/app-util';
+import { LoggerService } from '@drewstone/app-util';
 
 export type ORMLAsset = {
   existentialDeposit: string;

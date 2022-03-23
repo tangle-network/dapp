@@ -1,4 +1,4 @@
-import { EventBus } from '@webb-tools/app-util';
+import { EventBus } from '@drewstone/app-util';
 
 export type FeedbackLevel = 'error' | 'info' | 'warning' | 'success';
 export type Action = {

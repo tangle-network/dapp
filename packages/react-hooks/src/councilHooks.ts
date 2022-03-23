@@ -1,5 +1,5 @@
 /*
-import { AccountId } from '@webb-tools/types/interfaces/types';
+import { AccountId } from '@drewstone/types/interfaces/types';
 import { useEffect, useMemo, useState } from 'react';
 import { combineLatest, Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';

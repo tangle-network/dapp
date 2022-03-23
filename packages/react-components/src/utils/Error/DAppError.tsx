@@ -1,4 +1,4 @@
-import { LoggerService } from '@webb-tools/app-util';
+import { LoggerService } from '@drewstone/app-util';
 import React from 'react';
 
 interface DAppErrorState {

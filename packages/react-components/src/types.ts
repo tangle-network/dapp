@@ -1,5 +1,5 @@
 import { CurrencyLike } from '@webb-dapp/react-hooks/types';
-import { CurrencyId } from '@webb-tools/types/interfaces';
+import { CurrencyId } from '@drewstone/types/interfaces';
 
 export type CurrencyChangeFN =
   | ((token: string) => void)

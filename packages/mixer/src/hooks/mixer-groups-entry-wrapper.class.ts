@@ -1,6 +1,6 @@
 import { Currency } from '@webb-dapp/mixer/utils/currency';
-import { Token } from '@webb-tools/sdk-core';
-import { Balance, PalletMixerMixerMetadata as MixerInfo } from '@webb-tools/types/interfaces';
+import { Token } from '@drewstone/sdk-core';
+import { Balance, PalletMixerMixerMetadata as MixerInfo } from '@drewstone/types/interfaces';
 
 import { StorageKey } from '@polkadot/types';
 

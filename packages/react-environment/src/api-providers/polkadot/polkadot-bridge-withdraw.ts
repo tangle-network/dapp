@@ -1,13 +1,11 @@
+import { LoggerService } from '@drewstone/app-util';
+import { Note, ProvingManager } from '@drewstone/sdk-core';
+import { ProvingManagerSetupInput } from '@drewstone/sdk-core/proving/proving-manager-thread';
 import { InternalChainId } from '@webb-dapp/apps/configs';
-// @ts-ignore
-import Worker from '@webb-dapp/mixer/utils/proving-manager.worker';
 import { WithdrawState } from '@webb-dapp/react-environment';
 import { WebbPolkadot } from '@webb-dapp/react-environment/api-providers';
 import { getCachedFixtureURI, withLocalFixtures } from '@webb-dapp/utils/misc';
 import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
-import { LoggerService } from '@webb-tools/app-util';
-import { Note, ProvingManager } from '@webb-tools/sdk-core';
-import { ProvingManagerSetupInput } from '@webb-tools/sdk-core/proving/proving-manager-thread';
 
 import { decodeAddress } from '@polkadot/keyring';
 import { hexToU8a, u8aToHex } from '@polkadot/util';
@@ -79,7 +77,8 @@ export class PolkadotBridgeWithdraw extends BridgeWithdraw<WebbPolkadot> {
       const leafHex = u8aToHex(leaf);
       let leafIndex = leaves.findIndex((leaf) => u8aToHex(leaf) === leafHex);
       logger.trace(leaves.map((i) => u8aToHex(i)));
-      const pm = new ProvingManager(new Worker());
+      const worker = new Worker(new URL('@webb-dapp/mixer/utils/proving-manager.worker', import.meta.url));
+      const pm = new ProvingManager(worker);
 
       const recipientAccountHex = u8aToHex(decodeAddress(recipient));
       const relayerAccountHex = u8aToHex(decodeAddress(recipient));

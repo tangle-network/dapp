@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { AccountId, CurrencyId } from '@webb-tools/types/interfaces';
+import { AccountId, CurrencyId } from '@drewstone/types/interfaces';
 
 export type CallParam = any;
 

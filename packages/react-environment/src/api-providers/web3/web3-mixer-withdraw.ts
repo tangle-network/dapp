@@ -18,8 +18,8 @@ import {
 } from '@webb-dapp/react-environment/webb-context';
 import { RelayedWithdrawResult, RelayerCMDBase, WebbRelayer } from '@webb-dapp/react-environment/webb-context/relayer';
 import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
-import { LoggerService } from '@webb-tools/app-util';
-import { Note } from '@webb-tools/sdk-core';
+import { LoggerService } from '@drewstone/app-util';
+import { Note } from '@drewstone/sdk-core';
 import { BigNumber } from 'ethers';
 
 const logger = LoggerService.get('Web3MixerWithdraw');

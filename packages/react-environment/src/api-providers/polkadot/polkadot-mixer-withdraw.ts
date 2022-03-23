@@ -1,12 +1,12 @@
+import { LoggerService } from '@drewstone/app-util';
+import { Note, ProvingManager } from '@drewstone/sdk-core';
+import { ProvingManagerSetupInput } from '@drewstone/sdk-core/proving/proving-manager-thread';
 import { InternalChainId } from '@webb-dapp/apps/configs';
 // @ts-ignore
-import Worker from '@webb-dapp/mixer/utils/proving-manager.worker';
+// import { Worker } from '@webb-dapp/mixer/utils/proving-manager.worker';
 import { RelayedWithdrawResult, WebbRelayer } from '@webb-dapp/react-environment';
 import { getCachedFixtureURI, withLocalFixtures } from '@webb-dapp/utils/misc';
 import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
-import { LoggerService } from '@webb-tools/app-util';
-import { Note, ProvingManager } from '@webb-tools/sdk-core';
-import { ProvingManagerSetupInput } from '@webb-tools/sdk-core/proving/proving-manager-thread';
 
 import { decodeAddress } from '@polkadot/keyring';
 import { hexToU8a, u8aToHex } from '@polkadot/util';
@@ -133,7 +133,8 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
       logger.trace(leaves.map((i) => u8aToHex(i)));
       const activeRelayer = this.activeRelayer[0];
 
-      const pm = new ProvingManager(new Worker());
+      const worker = new Worker(new URL('@webb-dapp/mixer/utils/proving-manager.worker', import.meta.url));
+      const pm = new ProvingManager(worker);
 
       const recipientAccountHex = u8aToHex(decodeAddress(recipient));
       // ss58 format

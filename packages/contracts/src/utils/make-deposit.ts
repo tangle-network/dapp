@@ -2,7 +2,7 @@ import { bufferToFixed } from '@webb-dapp/contracts/utils/buffer-to-fixed';
 import { pedersenHash } from '@webb-dapp/contracts/utils/pedersen-hash';
 import { poseidonHash3 } from '@webb-dapp/contracts/utils/poseidon-hash3';
 import { PoseidonHasher } from '@webb-dapp/utils/merkle/poseidon-hasher';
-import { JsNote as DepositNote } from '@webb-tools/wasm-utils';
+import { JsNote as DepositNote } from '@drewstone/wasm-utils';
 
 const tornSnarkjs = require('tornado-snarkjs');
 const utils = require('ffjavascript').utils;

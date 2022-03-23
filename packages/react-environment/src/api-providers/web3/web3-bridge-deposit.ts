@@ -14,8 +14,8 @@ import { createAnchor2Deposit, Deposit } from '@webb-dapp/contracts/utils/make-d
 import { DepositPayload as IDepositPayload, MixerSize } from '@webb-dapp/react-environment';
 import { WebbWeb3Provider } from '@webb-dapp/react-environment/api-providers/web3/webb-web3-provider';
 import { Currency } from '@webb-dapp/react-environment/webb-context/currency/currency';
-import { LoggerService } from '@webb-tools/app-util';
-import { Note, NoteGenInput } from '@webb-tools/sdk-core';
+import { LoggerService } from '@drewstone/app-util';
+import { Note, NoteGenInput } from '@drewstone/sdk-core';
 
 import { BridgeDeposit } from '../../webb-context/bridge/bridge-deposit';
 

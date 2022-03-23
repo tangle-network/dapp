@@ -1,4 +1,4 @@
-import { LoggerService } from '@webb-tools/app-util';
+import { LoggerService } from '@drewstone/app-util';
 import { useEffect, useState } from 'react';
 
 export const useFetch = (url: RequestInfo, initialValue: any) => {

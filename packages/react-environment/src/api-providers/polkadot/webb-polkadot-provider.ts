@@ -22,7 +22,7 @@ import { WebbRelayerBuilder } from '@webb-dapp/react-environment/webb-context/re
 import { ActionsBuilder, InteractiveFeedback, WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import { PolkadotAccounts } from '@webb-dapp/wallet/providers/polkadot/polkadot-accounts';
 import { PolkadotProvider } from '@webb-dapp/wallet/providers/polkadot/polkadot-provider';
-import { EventBus } from '@webb-tools/app-util';
+import { EventBus } from '@drewstone/app-util';
 
 import { ApiPromise } from '@polkadot/api';
 import { InjectedExtension } from '@polkadot/extension-inject/types';

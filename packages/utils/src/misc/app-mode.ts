@@ -1,4 +1,4 @@
-import { LoggerService } from '@webb-tools/app-util';
+import { LoggerService } from '@drewstone/app-util';
 
 export type AppMode = 'development' | 'production';
 const appLogger = LoggerService.get('App');

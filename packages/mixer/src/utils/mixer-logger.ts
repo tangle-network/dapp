@@ -1,3 +1,3 @@
-import { LoggerService } from '@webb-tools/app-util';
+import { LoggerService } from '@drewstone/app-util';
 
 export const mixerLogger = LoggerService.get('MixerUsage');
