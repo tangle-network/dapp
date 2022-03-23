@@ -13,12 +13,12 @@
     "eslint": "^6.6.0",
     "@polkadot/api": "7.13.1",
     "react-error-overlay": "6.0.9",
-    "@nepoche/type-definitions": "file:../../test/nepoche/webb.js/packages/type-definitions/build",
-    "@nepoche/api": "file:../../test/nepoche/webb.js/packages/api/build",
-    "@nepoche/types": "file:../../test/nepoche/webb.js/packages/types/build",
-    "@nepoche/app-util": "file:../../test/nepoche/webb.js/packages/app-util/build",
-    "@nepoche/sdk-core": "file:../../test/nepoche/webb.js/packages/sdk-core/build",
-    "@nepoche/wasm-utils": "file:../../test/nepoche/webb.js/packages/wasm-utils/build"
+    "@nepoche/type-definitions": "0.1.6",
+    "@nepoche/api": "0.1.6",
+    "@nepoche/types": "0.1.6",
+    "@nepoche/app-util": "0.1.6",
+    "@nepoche/sdk-core": "0.1.6",
+    "@nepoche/wasm-utils": "0.1.6"
   },
   "scripts": {
     "bump-version": "node scripts/bump-version.js",

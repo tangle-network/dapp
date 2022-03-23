@@ -64,12 +64,12 @@ To test a webb-tools local build in the dapp, update the yarn resolutions with t
 ```json
 {
   "resolutions": {
-    "@nepoche/type-definitions": "file:../webb.js/packages/type-definitions/build",
-    "@nepoche/api": "file:../webb.js/packages/api/build",
-    "@nepoche/types": "file:../webb.js/packages/types/build",
-    "@nepoche/app-util": "file:../webb.js/packages/app-util/build",
-    "@nepoche/sdk-core": "file:../webb.js/packages/sdk-core/build",
-    "@nepoche/wasm-utils": "file:../webb.js/packages/wasm-utils/build"
+    "@webb-tools/type-definitions": "file:../webb.js/packages/type-definitions/build",
+    "@webb-tools/api": "file:../webb.js/packages/api/build",
+    "@webb-tools/types": "file:../webb.js/packages/types/build",
+    "@webb-tools/app-util": "file:../webb.js/packages/app-util/build",
+    "@webb-tools/sdk-core": "file:../webb.js/packages/sdk-core/build",
+    "@webb-tools/wasm-utils": "file:../webb.js/packages/wasm-utils/build"
   }
 }
 ```

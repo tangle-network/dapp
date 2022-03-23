@@ -2299,22 +2299,28 @@
     call-me-maybe "^1.0.1"
     glob-to-regexp "^0.3.0"
 
-"@nepoche/api@0.1.6", "@nepoche/api@file:../../test/nepoche/webb.js/packages/api/build", "@nepoche/api@file:../test/nepoche/webb.js/packages/api/build":
+"@nepoche/api@0.1.6":
   version "0.1.6"
+  resolved "https://registry.yarnpkg.com/@nepoche/api/-/api-0.1.6.tgz#1ed059d132f1373466cdf06ffc031dd36b35c5c9"
+  integrity sha512-+gXudg4b/W5Vrsg4a/TVgMP/6QXnaWvVjDX7QyYJkvsfOeWca6nOn5O/niOPyqftjggQKrdmegN/qTL6RPpAxA==
   dependencies:
     "@babel/runtime" "^7.10.2"
     "@nepoche/types" "0.1.6"
     "@polkadot/api" "^7.13.1"
     "@polkadot/rpc-core" "^7.13.1"
 
-"@nepoche/app-util@file:../../test/nepoche/webb.js/packages/app-util/build", "@nepoche/app-util@file:../test/nepoche/webb.js/packages/app-util/build":
+"@nepoche/app-util@0.1.6":
   version "0.1.6"
+  resolved "https://registry.yarnpkg.com/@nepoche/app-util/-/app-util-0.1.6.tgz#7e173e7a60179fd6c79636db1e795a9ffa40649c"
+  integrity sha512-KgDBj0FL8jJ8x6wpDYTFFetgkvCedcdI/YpLuxWIg4TNpQTCabpBAYBd5H2pQmtRqWTCfFAtYjLApB14UBGJ+g==
   dependencies:
     "@babel/runtime" "^7.10.2"
     bignumber.js "^9.0.0"
 
-"@nepoche/sdk-core@file:../../test/nepoche/webb.js/packages/sdk-core/build", "@nepoche/sdk-core@file:../test/nepoche/webb.js/packages/sdk-core/build":
+"@nepoche/sdk-core@0.1.6":
   version "0.1.6"
+  resolved "https://registry.yarnpkg.com/@nepoche/sdk-core/-/sdk-core-0.1.6.tgz#98843e02c18f02ed69cebadc7f4cea5e4c3f3c9e"
+  integrity sha512-id8WEbFxaNGKE6G8AIi/Yw51POc2g+ljsHGLVdH4UESW4H2nWQrLWW0Ve5FjmS9bHfUO/CuLkl+lOa6x5Mlasg==
   dependencies:
     "@nepoche/api" "0.1.6"
     "@nepoche/wasm-utils" "0.1.6"
@@ -2323,13 +2329,17 @@
     events "^3.2.0"
     lodash "^4.17.20"
 
-"@nepoche/type-definitions@0.1.6", "@nepoche/type-definitions@file:../../test/nepoche/webb.js/packages/type-definitions/build":
+"@nepoche/type-definitions@0.1.6":
   version "0.1.6"
+  resolved "https://registry.yarnpkg.com/@nepoche/type-definitions/-/type-definitions-0.1.6.tgz#8ebba461969dfe1cdc018930bf83a4ea5c59ab75"
+  integrity sha512-qIiBX4pLRzxZvQYd6w1vRKiGS1sYirXPSyTKHLq2FaXcrwaEXxGdC2puTAMCTgKIHBq8DfzODFXSltIEPvt8mw==
   dependencies:
     "@open-web3/orml-type-definitions" "^1.0.1"
 
-"@nepoche/types@0.1.6", "@nepoche/types@file:../../test/nepoche/webb.js/packages/types/build", "@nepoche/types@file:../test/nepoche/webb.js/packages/types/build":
+"@nepoche/types@0.1.6":
   version "0.1.6"
+  resolved "https://registry.yarnpkg.com/@nepoche/types/-/types-0.1.6.tgz#4cc58f4feb75be714325a365a4c75ffa01fd8179"
+  integrity sha512-8butyS45sVdXyFRLLcAlpJi2frDiMcCMqDSpgzTz8LXwQThJv2CI1cQszMmQ/RsgzEZCwv9KkQ0x5GszT5+Myg==
   dependencies:
     "@babel/runtime" "^7.10.2"
     "@nepoche/type-definitions" "0.1.6"
@@ -2337,8 +2347,10 @@
     "@polkadot/typegen" "^7.13.1"
     "@polkadot/types" "^7.13.1"
 
-"@nepoche/wasm-utils@0.1.6", "@nepoche/wasm-utils@file:../../test/nepoche/webb.js/packages/wasm-utils/build":
+"@nepoche/wasm-utils@0.1.6":
   version "0.1.6"
+  resolved "https://registry.yarnpkg.com/@nepoche/wasm-utils/-/wasm-utils-0.1.6.tgz#68380a3cf5236b7477981ab718fbdf059fa7085a"
+  integrity sha512-JrWVXb2cOS6sqXtu7MdkmgTn4JnKZ8vXk4SDNxCWh+TjHAY2IB78trrFJ9XVxwKNFmxwzMKKJLo3IpWRX7uh6g==
 
 "@nicolo-ribaudo/chokidar-2@2.1.8-no-fsevents.3":
   version "2.1.8-no-fsevents.3"

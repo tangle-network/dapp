@@ -9,8 +9,8 @@
     "@influxdata/influxdb-client-browser": "^1.8.0",
     "@polkadot/api": "7.13.1",
     "@polkadot/extension-dapp": "^0.42.9",
-    "@nepoche/api": "file:../../../test/nepoche/webb.js/packages/api/build",
-    "@nepoche/sdk-core": "file:../../../test/nepoche/webb.js/packages/sdk-core/build"
+    "@nepoche/api": "0.1.6",
+    "@nepoche/sdk-core": "0.1.6"
   },
   "devDependencies": {
     "@types/url-parse": "^1.4.3"
