@@ -1,6 +1,6 @@
-import { LoggerService } from '@drewstone/app-util';
-import { Note, ProvingManager } from '@drewstone/sdk-core';
-import { ProvingManagerSetupInput } from '@drewstone/sdk-core/proving/proving-manager-thread';
+import { LoggerService } from '@nepoche/app-util';
+import { Note, ProvingManager } from '@nepoche/sdk-core';
+import { ProvingManagerSetupInput } from '@nepoche/sdk-core/proving/proving-manager-thread';
 import { InternalChainId } from '@webb-dapp/apps/configs';
 import { WithdrawState } from '@webb-dapp/react-environment';
 import { WebbPolkadot } from '@webb-dapp/react-environment/api-providers';

@@ -1,7 +1,7 @@
 import { InternalChainId, WalletId } from '@webb-dapp/apps/configs';
 import { Chain, Wallet } from '@webb-dapp/react-environment';
 import { Account } from '@webb-dapp/wallet/account/Accounts.adapter';
-import { EventBus } from '@drewstone/app-util';
+import { EventBus } from '@nepoche/app-util';
 
 export type AppEvents = {
   changeNetworkSwitcherVisibility: boolean;

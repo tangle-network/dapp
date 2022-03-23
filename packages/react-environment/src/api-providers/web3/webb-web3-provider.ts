@@ -22,8 +22,8 @@ import { WebbRelayerBuilder } from '@webb-dapp/react-environment/webb-context/re
 import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import { Web3Accounts } from '@webb-dapp/wallet/providers/web3/web3-accounts';
 import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
-import { EventBus } from '@drewstone/app-util';
-import { Note } from '@drewstone/sdk-core';
+import { EventBus } from '@nepoche/app-util';
+import { Note } from '@nepoche/sdk-core';
 import { ethers, providers } from 'ethers';
 
 export class WebbWeb3Provider

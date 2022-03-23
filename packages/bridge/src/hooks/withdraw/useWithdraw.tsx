@@ -3,8 +3,8 @@ import { misbehavingRelayer } from '@webb-dapp/react-environment/error/interacti
 import { useWebContext, WithdrawState } from '@webb-dapp/react-environment/webb-context';
 import { ActiveWebbRelayer, WebbRelayer } from '@webb-dapp/react-environment/webb-context/relayer';
 import { InteractiveFeedback, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
-import { LoggerService } from '@drewstone/app-util';
-import { Note } from '@drewstone/sdk-core';
+import { LoggerService } from '@nepoche/app-util';
+import { Note } from '@nepoche/sdk-core';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { useBridge } from '../bridge/use-bridge';

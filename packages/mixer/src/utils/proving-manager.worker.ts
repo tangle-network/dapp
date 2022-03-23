@@ -1,3 +1,3 @@
-import { ProvingManagerWrapper } from '@drewstone/sdk-core';
+import { ProvingManagerWrapper } from '@nepoche/sdk-core';
 
 new ProvingManagerWrapper();

@@ -1,7 +1,7 @@
 import { useWebContext } from '@webb-dapp/react-environment';
 import { Currency, CurrencyContent } from '@webb-dapp/react-environment/webb-context/currency/currency';
 import { WrappingEventNames } from '@webb-dapp/react-environment/webb-context/wrap-unwrap';
-import { LoggerService } from '@drewstone/app-util';
+import { LoggerService } from '@nepoche/app-util';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 const logger = LoggerService.get('useWrapUnwrap');
 

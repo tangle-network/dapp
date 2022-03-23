@@ -1,3 +1,3 @@
-import { LoggerService } from '@drewstone/app-util';
+import { LoggerService } from '@nepoche/app-util';
 
 export const merkleLogger = LoggerService.get('MerkleUsage');

@@ -1,6 +1,6 @@
-import { LoggerService } from '@drewstone/app-util';
-import { Note, NoteGenInput } from '@drewstone/sdk-core';
-import { PalletMixerMixerMetadata } from '@drewstone/types/interfaces/pallets';
+import { LoggerService } from '@nepoche/app-util';
+import { Note, NoteGenInput } from '@nepoche/sdk-core';
+import { PalletMixerMixerMetadata } from '@nepoche/types/interfaces/pallets';
 import { ChainType, computeChainIdType, internalChainIdToChainId } from '@webb-dapp/apps/configs';
 import { NativeTokenProperties } from '@webb-dapp/mixer';
 import { Currency } from '@webb-dapp/mixer/utils/currency';

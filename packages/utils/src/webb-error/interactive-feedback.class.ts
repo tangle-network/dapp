@@ -1,4 +1,4 @@
-import { EventBus } from '@drewstone/app-util';
+import { EventBus } from '@nepoche/app-util';
 
 export type FeedbackLevel = 'error' | 'info' | 'warning' | 'success';
 export type Action = {

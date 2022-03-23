@@ -1,6 +1,6 @@
 import { anchorsConfig, InternalChainId, WebbCurrencyId } from '@webb-dapp/apps/configs';
 import { AppConfig } from '@webb-dapp/react-environment/webb-context';
-import { LoggerService } from '@drewstone/app-util';
+import { LoggerService } from '@nepoche/app-util';
 const logger = LoggerService.get('bridge-config');
 
 // todo change to wrappedTokenAddresses (they are  governed token wrapper contract)

@@ -2,7 +2,7 @@ import { ApiInitHandler } from '@webb-dapp/react-environment';
 import { PolkaTXBuilder } from '@webb-dapp/react-environment/api-providers/polkadot';
 import { InteractiveFeedback, WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
 import { PolkadotAccount, PolkadotAccounts } from '@webb-dapp/wallet/providers/polkadot/polkadot-accounts';
-import { EventBus, LoggerService } from '@drewstone/app-util';
+import { EventBus, LoggerService } from '@nepoche/app-util';
 import { isNumber } from 'lodash';
 
 import { ApiPromise, WsProvider } from '@polkadot/api';

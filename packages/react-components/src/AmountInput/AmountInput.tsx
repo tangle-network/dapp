@@ -1,5 +1,5 @@
 import { MixerGroupItem } from '@webb-dapp/mixer';
-import { Token } from '@drewstone/sdk-core';
+import { Token } from '@nepoche/sdk-core';
 import clsx from 'clsx';
 import React, { useEffect, useMemo } from 'react';
 import styled from 'styled-components';

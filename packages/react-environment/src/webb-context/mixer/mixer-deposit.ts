@@ -1,4 +1,4 @@
-import { EventBus } from '@drewstone/app-util';
+import { EventBus } from '@nepoche/app-util';
 
 import { Note } from './note';
 

@@ -4,8 +4,8 @@ import { chainsConfig, chainTypeIdToInternalId, InternalChainId, parseChainIdTyp
 import { ActiveWebbRelayer } from '@webb-dapp/react-environment/webb-context/relayer/';
 import { SpaceBox } from '@webb-dapp/ui-components/Box';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
-import { LoggerService } from '@drewstone/app-util';
-import { JsNote as DepositNote } from '@drewstone/wasm-utils';
+import { LoggerService } from '@nepoche/app-util';
+import { JsNote as DepositNote } from '@nepoche/wasm-utils';
 import { ethers } from 'ethers';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';

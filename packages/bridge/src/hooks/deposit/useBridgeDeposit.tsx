@@ -16,7 +16,7 @@ import {
 } from '@webb-dapp/react-environment/webb-context';
 import { BridgeCurrencyIndex } from '@webb-dapp/react-environment/webb-context/bridge/bridge-api';
 import { Currency } from '@webb-dapp/react-environment/webb-context/currency/currency';
-import { LoggerService } from '@drewstone/app-util';
+import { LoggerService } from '@nepoche/app-util';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 const logger = LoggerService.get('useBridgeDeposit');

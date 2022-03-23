@@ -1,4 +1,4 @@
-import { CurrencyId } from '@drewstone/types/interfaces';
+import { CurrencyId } from '@nepoche/types/interfaces';
 import { useMemo } from 'react';
 
 import { useApi } from './useApi';

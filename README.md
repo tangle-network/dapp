@@ -64,12 +64,12 @@ To test a webb-tools local build in the dapp, update the yarn resolutions with t
 ```json
 {
   "resolutions": {
-    "@drewstone/type-definitions": "file:../webb.js/packages/type-definitions/build",
-    "@drewstone/api": "file:../webb.js/packages/api/build",
-    "@drewstone/types": "file:../webb.js/packages/types/build",
-    "@drewstone/app-util": "file:../webb.js/packages/app-util/build",
-    "@drewstone/sdk-core": "file:../webb.js/packages/sdk-core/build",
-    "@drewstone/wasm-utils": "file:../webb.js/packages/wasm-utils/build"
+    "@nepoche/type-definitions": "file:../webb.js/packages/type-definitions/build",
+    "@nepoche/api": "file:../webb.js/packages/api/build",
+    "@nepoche/types": "file:../webb.js/packages/types/build",
+    "@nepoche/app-util": "file:../webb.js/packages/app-util/build",
+    "@nepoche/sdk-core": "file:../webb.js/packages/sdk-core/build",
+    "@nepoche/wasm-utils": "file:../webb.js/packages/wasm-utils/build"
   }
 }
 ```

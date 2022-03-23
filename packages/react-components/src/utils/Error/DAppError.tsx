@@ -1,4 +1,4 @@
-import { LoggerService } from '@drewstone/app-util';
+import { LoggerService } from '@nepoche/app-util';
 import React from 'react';
 
 interface DAppErrorState {

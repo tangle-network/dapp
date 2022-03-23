@@ -3,7 +3,7 @@ import {
   computeChainIdType,
   internalChainIdIntoEVMId,
 } from '@webb-dapp/apps/configs';
-import { Note, NoteGenInput } from '@drewstone/sdk-core';
+import { Note, NoteGenInput } from '@nepoche/sdk-core';
 import { useEffect, useState } from 'react';
 
 export const useDepositNote = (value: string): null | Note => {

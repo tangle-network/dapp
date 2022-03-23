@@ -1,5 +1,5 @@
-import { Fixed18 } from '@drewstone/app-util';
-import { FixedPointNumber } from '@drewstone/sdk-core';
+import { Fixed18 } from '@nepoche/app-util';
+import { FixedPointNumber } from '@nepoche/sdk-core';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 

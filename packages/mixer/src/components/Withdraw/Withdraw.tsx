@@ -12,7 +12,7 @@ import { MixerNoteInput } from '@webb-dapp/ui-components/Inputs/NoteInput/MixerN
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { FeesInfo, RelayerApiAdapter } from '@webb-dapp/ui-components/RelayerInput/RelayerInput';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
-import { Note } from '@drewstone/sdk-core';
+import { Note } from '@nepoche/sdk-core';
 import React, { useCallback, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 

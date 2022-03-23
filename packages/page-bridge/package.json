@@ -6,6 +6,6 @@
   "author": "Webb Developers <drew@webb.tools>",
   "homepage": "https://github.com/webb-tools/webb-dapp#readme",
   "dependencies": {
-    "@drewstone/sdk-core": "file:../../../webb.js/packages/sdk-core/build"
+    "@nepoche/sdk-core": "file:../../../test/nepoche/webb.js/packages/sdk-core/build"
   }
 }

@@ -1,5 +1,5 @@
 import { CurrencyLike } from '@webb-dapp/react-hooks/types';
-import { CurrencyId } from '@drewstone/types/interfaces';
+import { CurrencyId } from '@nepoche/types/interfaces';
 
 export type CurrencyChangeFN =
   | ((token: string) => void)
