@@ -2,9 +2,7 @@ import { Typography } from '@material-ui/core';
 import { DepositConfirm } from '@webb-dapp/mixer/components/DepositConfirm/DepositConfirm';
 import { useDeposit } from '@webb-dapp/mixer/hooks/deposit/useDeposit';
 import { RequiredWalletSelection } from '@webb-dapp/react-components/RequiredWalletSelection/RequiredWalletSelection';
-import { WalletConfig } from '@webb-dapp/react-environment/types/wallet-config.interface';
-import { MixerSize, useWebContext } from '@webb-dapp/react-environment/webb-context';
-import { Currency } from '@webb-dapp/react-environment/webb-context/currency/currency';
+import { useWebContext } from '@webb-dapp/react-environment';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { SpaceBox } from '@webb-dapp/ui-components/Box';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
@@ -12,7 +10,10 @@ import { MixerGroupSelect } from '@webb-dapp/ui-components/Inputs/MixerGroupSele
 import { TokenInput } from '@webb-dapp/ui-components/Inputs/TokenInput/TokenInput';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { getRoundedAmountString } from '@webb-dapp/ui-components/utils';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { MixerSize } from '@webb-tools/api-providers';
+import { WalletConfig } from '@webb-tools/api-providers/types/wallet-config.interface';
+import { Currency } from '@webb-tools/api-providers/webb-context/currency/currency';
+import React, { useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
 const DepositWrapper = styled.div<{ wallet: WalletConfig | undefined }>`

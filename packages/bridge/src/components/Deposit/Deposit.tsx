@@ -5,9 +5,7 @@ import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
 import { useBridgeDeposit } from '@webb-dapp/bridge/hooks/deposit/useBridgeDeposit';
 import { useWrapUnwrap } from '@webb-dapp/page-wrap-unwrap/hooks/useWrapUnwrap';
 import { RequiredWalletSelection } from '@webb-dapp/react-components/RequiredWalletSelection/RequiredWalletSelection';
-import { WalletConfig } from '@webb-dapp/react-environment/types/wallet-config.interface';
-import { MixerSize, useWebContext } from '@webb-dapp/react-environment/webb-context';
-import { Currency } from '@webb-dapp/react-environment/webb-context/currency/currency';
+import { useWebContext } from '@webb-dapp/react-environment/webb-context';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { SpaceBox } from '@webb-dapp/ui-components/Box';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
@@ -17,6 +15,9 @@ import { TokenInput } from '@webb-dapp/ui-components/Inputs/TokenInput/TokenInpu
 import CircledArrowRight from '@webb-dapp/ui-components/misc/CircledArrowRight';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { getRoundedAmountString } from '@webb-dapp/ui-components/utils';
+import { MixerSize } from '@webb-tools/api-providers';
+import { WalletConfig } from '@webb-tools/api-providers/types/wallet-config.interface';
+import { Currency } from '@webb-tools/api-providers/webb-context/currency/currency';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 

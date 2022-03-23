@@ -1,5 +1,5 @@
 import { anchorsConfig, InternalChainId, WebbCurrencyId } from '@webb-dapp/apps/configs';
-import { AppConfig } from '@webb-dapp/react-environment/webb-context';
+import { AppConfig } from '@webb-tools/api-providers';
 import { LoggerService } from '@webb-tools/app-util';
 const logger = LoggerService.get('bridge-config');
 

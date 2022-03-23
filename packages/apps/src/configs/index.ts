@@ -1,5 +1,5 @@
-import { Chain, Wallet } from '@webb-dapp/react-environment';
 import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
+import { Chain, Wallet } from '@webb-tools/api-providers';
 
 import { chainsConfig } from './chains/chain-config';
 import { walletsConfig } from './wallets/wallets-config';

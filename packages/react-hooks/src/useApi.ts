@@ -1,4 +1,5 @@
-import { useWebContext, WebbApiProvider } from '@webb-dapp/react-environment';
+import { useWebContext } from '@webb-dapp/react-environment';
+import { WebbApiProvider } from '@webb-tools/api-providers';
 
 /**
  * @name useApi

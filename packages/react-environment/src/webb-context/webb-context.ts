@@ -1,6 +1,5 @@
-import { Chain, Wallet } from '@webb-dapp/react-environment/webb-context/common';
 import { Account } from '@webb-dapp/wallet/account/Accounts.adapter';
-import { WebbApiProvider } from '@webb-tools/api-providers';
+import { Chain, Wallet, WebbApiProvider } from '@webb-tools/api-providers';
 import { InteractiveFeedback } from '@webb-tools/api-providers/webb-error';
 import React from 'react';
 
@@ -12,7 +11,7 @@ interface Note {
 
 type DespotStates = 'ideal' | 'generating-note' | 'depositing';
 
-export interface WebbContentState<T = unknown> {
+export interface WebbContextState<T = unknown> {
   loading: boolean;
   wallets: Record<number, Wallet>;
   chains: Record<number, Chain>;
@@ -34,7 +33,7 @@ export interface WebbContentState<T = unknown> {
   registerInteractiveFeedback: (interactiveFeedback: InteractiveFeedback) => void;
 }
 
-export const WebbContext = React.createContext<WebbContentState>({
+export const WebbContext = React.createContext<WebbContextState>({
   chains: {},
   accounts: [],
   loading: true,
@@ -57,5 +56,5 @@ export const WebbContext = React.createContext<WebbContentState>({
 });
 
 export const useWebContext = <T = unknown>() => {
-  return React.useContext(WebbContext) as WebbContentState<T>;
+  return React.useContext(WebbContext) as WebbContextState<T>;
 };

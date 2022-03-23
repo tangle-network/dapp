@@ -1,7 +1,7 @@
-import { ApiInitHandler } from '@webb-dapp/react-environment';
-import { PolkaTXBuilder } from '@webb-dapp/react-environment/api-providers/polkadot';
-import { InteractiveFeedback, WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
-import { PolkadotAccount, PolkadotAccounts } from '@webb-dapp/wallet/providers/polkadot/polkadot-accounts';
+import { PolkadotAccounts } from '@webb-dapp/wallet/providers/polkadot/polkadot-accounts';
+import { ApiInitHandler, PolkaTXBuilder } from '@webb-tools/api-providers';
+import { PolkadotAccount } from '@webb-tools/api-providers/ext-providers';
+import { InteractiveFeedback, WebbError, WebbErrorCodes } from '@webb-tools/api-providers/webb-error';
 import { EventBus, LoggerService } from '@webb-tools/app-util';
 import { isNumber } from 'lodash';
 

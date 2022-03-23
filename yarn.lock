@@ -2739,6 +2739,16 @@
     typescript "^4.6.2"
     yargs "^17.3.1"
 
+"@polkadot/extension-dapp@^0.35.0-beta.35":
+  version "0.35.1"
+  resolved "https://registry.yarnpkg.com/@polkadot/extension-dapp/-/extension-dapp-0.35.1.tgz#d94f2ce497dba85302a248c895e2f055c2ec2509"
+  integrity sha512-lwBcqAvMCJAS14BxOitP5elr9rcKzW85AtEWgcBtMRmO8u8TncJzXM3W/Sz3UCNOBVpgEKJbEsgV9/FOqxCqHw==
+  dependencies:
+    "@babel/runtime" "^7.12.5"
+    "@polkadot/extension-inject" "^0.35.1"
+    "@polkadot/util" "^4.2.1"
+    "@polkadot/util-crypto" "^4.2.1"
+
 "@polkadot/extension-dapp@^0.42.9":
   version "0.42.9"
   resolved "https://registry.yarnpkg.com/@polkadot/extension-dapp/-/extension-dapp-0.42.9.tgz#faef1cbc0bb062a562e2b02b47e28c19d88aca65"
@@ -2748,6 +2758,13 @@
     "@polkadot/extension-inject" "^0.42.9"
     "@polkadot/util" "^8.5.1"
     "@polkadot/util-crypto" "^8.5.1"
+
+"@polkadot/extension-inject@^0.35.1":
+  version "0.35.1"
+  resolved "https://registry.yarnpkg.com/@polkadot/extension-inject/-/extension-inject-0.35.1.tgz#fdacb090b140e0f66bd0530a867b70e882f9be84"
+  integrity sha512-O2wp5JHo6jZvT9mQV3YVrCNHgUPBeoG7ZGMWE/612Y5P5SvS5cyOR1cKG35LrcXCmCc9bqM11wsHPl5raMXk2w==
+  dependencies:
+    "@babel/runtime" "^7.12.5"
 
 "@polkadot/extension-inject@^0.42.9":
   version "0.42.9"
@@ -2780,6 +2797,13 @@
     "@polkadot/types-known" "4.17.1"
     "@polkadot/util" "^6.11.1"
     "@polkadot/util-crypto" "^6.11.1"
+
+"@polkadot/networks@4.2.1":
+  version "4.2.1"
+  resolved "https://registry.yarnpkg.com/@polkadot/networks/-/networks-4.2.1.tgz#b0ca69807ed60189f1c958bb27cfeb3cb1c6b12b"
+  integrity sha512-T1tg0V0uG09Vdce2O4KfEcWO3/fZh4VYt0bmJ6iPwC+x6yv939X2BKvuFTDDVNT3fqBpGzWQlwiTXYQ15o9bGA==
+  dependencies:
+    "@babel/runtime" "^7.12.5"
 
 "@polkadot/networks@6.11.1", "@polkadot/networks@^6.11.1":
   version "6.11.1"
@@ -3010,6 +3034,27 @@
     ed2curve "^0.3.0"
     tweetnacl "^1.0.3"
 
+"@polkadot/util-crypto@^4.2.1":
+  version "4.2.1"
+  resolved "https://registry.yarnpkg.com/@polkadot/util-crypto/-/util-crypto-4.2.1.tgz#a342cd6b400c69ed61cd929917030ed2f43c59d1"
+  integrity sha512-U1rCdzBQxVTA854HRpt2d4InDnPCfHD15JiWAwIzjBvq7i59EcTbVSqV02fcwet/KpmT3XYa25xoiff+alzCBA==
+  dependencies:
+    "@babel/runtime" "^7.12.5"
+    "@polkadot/networks" "4.2.1"
+    "@polkadot/util" "4.2.1"
+    "@polkadot/wasm-crypto" "^2.0.1"
+    "@polkadot/x-randomvalues" "4.2.1"
+    base-x "^3.0.8"
+    blakejs "^1.1.0"
+    bn.js "^4.11.9"
+    create-hash "^1.2.0"
+    elliptic "^6.5.3"
+    hash.js "^1.1.7"
+    js-sha3 "^0.8.0"
+    scryptsy "^2.1.0"
+    tweetnacl "^1.0.3"
+    xxhashjs "^0.2.2"
+
 "@polkadot/util-crypto@^6.11.1":
   version "6.11.1"
   resolved "https://registry.yarnpkg.com/@polkadot/util-crypto/-/util-crypto-6.11.1.tgz#7a36acf5c8bf52541609ec0b0b2a69af295d652e"
@@ -3031,6 +3076,19 @@
     scryptsy "^2.1.0"
     tweetnacl "^1.0.3"
     xxhashjs "^0.2.2"
+
+"@polkadot/util@4.2.1", "@polkadot/util@^4.2.1":
+  version "4.2.1"
+  resolved "https://registry.yarnpkg.com/@polkadot/util/-/util-4.2.1.tgz#1845d03be7e418a14ec2ef929d6288f326f2145d"
+  integrity sha512-eO/IFbSDjqVPPWPnARDFydy2Kt992Th+8ByleTkCRqWk0aNYaseO1pGKNdwrYbLfUR3JlyWqvJ60lITeS+qAfQ==
+  dependencies:
+    "@babel/runtime" "^7.12.5"
+    "@polkadot/x-textdecoder" "4.2.1"
+    "@polkadot/x-textencoder" "4.2.1"
+    "@types/bn.js" "^4.11.6"
+    bn.js "^4.11.9"
+    camelcase "^5.3.1"
+    ip-regex "^4.2.0"
 
 "@polkadot/util@6.11.1", "@polkadot/util@^6.11.1":
   version "6.11.1"
@@ -3073,6 +3131,11 @@
   dependencies:
     "@babel/runtime" "^7.17.2"
 
+"@polkadot/wasm-crypto@^2.0.1":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@polkadot/wasm-crypto/-/wasm-crypto-2.0.1.tgz#cf7384385f832f6389520cc00e52a87fda6f29b6"
+  integrity sha512-Vb0q4NToCRHXYJwhLWc4NTy77+n1dtJmkiE1tt8j1pmY4IJ4UL25yBxaS8NCS1LGqofdUYK1wwgrHiq5A78PFA==
+
 "@polkadot/wasm-crypto@^4.0.2", "@polkadot/wasm-crypto@^4.6.1":
   version "4.6.1"
   resolved "https://registry.yarnpkg.com/@polkadot/wasm-crypto/-/wasm-crypto-4.6.1.tgz#12f8481e6f9021928435168beb0697d57ff573e9"
@@ -3114,6 +3177,13 @@
   dependencies:
     "@babel/runtime" "^7.17.2"
 
+"@polkadot/x-randomvalues@4.2.1":
+  version "4.2.1"
+  resolved "https://registry.yarnpkg.com/@polkadot/x-randomvalues/-/x-randomvalues-4.2.1.tgz#91fd272f8bb79a59b20055a4514f944888a6ee76"
+  integrity sha512-eOfz/KnHYFVl9l0zlhlwomKMzFASgolaQV6uXSN38np+99/+F38wlbOSXFbfZ5H3vmMCt4y/UUTLtoGV/44yLg==
+  dependencies:
+    "@babel/runtime" "^7.12.5"
+
 "@polkadot/x-randomvalues@6.11.1":
   version "6.11.1"
   resolved "https://registry.yarnpkg.com/@polkadot/x-randomvalues/-/x-randomvalues-6.11.1.tgz#f006fa250c8e82c92ccb769976a45a8e7f3df28b"
@@ -3138,6 +3208,13 @@
     "@babel/runtime" "^7.14.6"
     rxjs "^6.6.7"
 
+"@polkadot/x-textdecoder@4.2.1":
+  version "4.2.1"
+  resolved "https://registry.yarnpkg.com/@polkadot/x-textdecoder/-/x-textdecoder-4.2.1.tgz#c2fe9f5da9498d982f8fd9244a52e039c0f0dacc"
+  integrity sha512-B5t20PryMKr7kdd7q+kmzJPU01l28ZDD06cQ/ZFkybI7avI6PIz/U33ctXxiHOatbBRO6Ez8uzrWd3JmaQ2bGQ==
+  dependencies:
+    "@babel/runtime" "^7.12.5"
+
 "@polkadot/x-textdecoder@6.11.1":
   version "6.11.1"
   resolved "https://registry.yarnpkg.com/@polkadot/x-textdecoder/-/x-textdecoder-6.11.1.tgz#6cc314645681cc4639085c03b65328671c7f182c"
@@ -3153,6 +3230,13 @@
   dependencies:
     "@babel/runtime" "^7.17.2"
     "@polkadot/x-global" "8.5.1"
+
+"@polkadot/x-textencoder@4.2.1":
+  version "4.2.1"
+  resolved "https://registry.yarnpkg.com/@polkadot/x-textencoder/-/x-textencoder-4.2.1.tgz#cf6b92d7de0fb2dde8314e0f359dd83dc9f25036"
+  integrity sha512-EHc6RS9kjdP28q6EYlSgHF2MrJCdOTc5EVlqHL7V1UKLh3vD6QaWGYBwbzXNFPXO3RYPO/DKYCu4RxAVSM1OOg==
+  dependencies:
+    "@babel/runtime" "^7.12.5"
 
 "@polkadot/x-textencoder@6.11.1":
   version "6.11.1"
@@ -4599,7 +4683,7 @@
     js-sha3 "0.8.0"
     query-string "6.13.5"
 
-"@walletconnect/web3-provider@^1.7.1":
+"@walletconnect/web3-provider@^1.7.1", "@walletconnect/web3-provider@^1.7.5":
   version "1.7.5"
   resolved "https://registry.yarnpkg.com/@walletconnect/web3-provider/-/web3-provider-1.7.5.tgz#bed98d2cb859fc501b0d155b6c128e0de6a49ee5"
   integrity sha512-x+UWOTu7jd9qog9NWhaspOmVRDJPnQrgZBscnaSC+x/aAsi52VUrd1GZ9c5UNZFgss41fdx3Z2KhkPeVrlrbuQ==
@@ -4769,47 +4853,59 @@
     "@webassemblyjs/wast-parser" "1.8.5"
     "@xtuc/long" "4.2.2"
 
-"@webb-tools/api@^0.1.4-39", "@webb-tools/api@file:../webb.js/packages/api/build":
+"@webb-tools/api-providers@file:../webb.js/packages/api-providers/build":
   version "0.1.4-39"
+  dependencies:
+    "@babel/runtime" "^7.10.2"
+    "@polkadot/extension-dapp" "^0.35.0-beta.35"
+    "@walletconnect/web3-provider" "^1.7.5"
+    bignumber.js "^9.0.0"
+    snarkjs "^0.4.6"
+    tornado-circomlib "git+https://github.com/webb-tools/tornado-circomlib.git"
+    tornado-snarkjs "git+https://github.com/tornadocash/snarkjs.git#869181cfaf7526fe8972073d31655493a04326d5"
+    tornado-websnark "git+https://github.com/webb-tools/websnark.git"
+
+"@webb-tools/api@^0.1.4-42", "@webb-tools/api@file:../webb.js/packages/api/build":
+  version "0.1.4-42"
   dependencies:
     "@babel/runtime" "^7.10.2"
     "@polkadot/api" "^7.12.1"
     "@polkadot/rpc-core" "^7.12.1"
-    "@webb-tools/types" "0.1.4-39"
+    "@webb-tools/types" "0.1.4-42"
 
 "@webb-tools/app-util@file:../webb.js/packages/app-util/build":
-  version "0.1.4-39"
+  version "0.1.4-42"
   dependencies:
     "@babel/runtime" "^7.10.2"
     bignumber.js "^9.0.0"
 
 "@webb-tools/sdk-core@file:../webb.js/packages/sdk-core/build":
-  version "0.1.4-39"
+  version "0.1.4-42"
   dependencies:
     "@types/events" "^3.0.0"
-    "@webb-tools/api" "^0.1.4-39"
-    "@webb-tools/wasm-utils" "^0.1.4-39"
+    "@webb-tools/api" "^0.1.4-42"
+    "@webb-tools/wasm-utils" "^0.1.4-42"
     bignumber.js "^9.0.0"
     events "^3.2.0"
     lodash "^4.17.20"
 
-"@webb-tools/type-definitions@0.1.4-39", "@webb-tools/type-definitions@file:../webb.js/packages/type-definitions/build":
-  version "0.1.4-39"
+"@webb-tools/type-definitions@0.1.4-42", "@webb-tools/type-definitions@file:../webb.js/packages/type-definitions/build":
+  version "0.1.4-42"
   dependencies:
     "@open-web3/orml-type-definitions" "^1.0.1"
 
-"@webb-tools/types@0.1.4-39", "@webb-tools/types@file:../webb.js/packages/types/build":
-  version "0.1.4-39"
+"@webb-tools/types@0.1.4-42", "@webb-tools/types@file:../webb.js/packages/types/build":
+  version "0.1.4-42"
   dependencies:
     "@babel/runtime" "^7.10.2"
     "@open-web3/orml-types" "^1.0.1"
     "@polkadot/metadata" "^4.17.1"
     "@polkadot/typegen" "^7.12.1"
     "@polkadot/types" "^7.12.1"
-    "@webb-tools/type-definitions" "0.1.4-39"
+    "@webb-tools/type-definitions" "0.1.4-42"
 
-"@webb-tools/wasm-utils@^0.1.4-39", "@webb-tools/wasm-utils@file:../webb.js/packages/wasm-utils/build":
-  version "0.1.4-39"
+"@webb-tools/wasm-utils@^0.1.4-42", "@webb-tools/wasm-utils@file:../webb.js/packages/wasm-utils/build":
+  version "0.1.4-42"
 
 "@xtuc/ieee754@^1.2.0":
   version "1.2.0"
@@ -11629,7 +11725,7 @@ ip-regex@^2.1.0:
   resolved "https://registry.yarnpkg.com/ip-regex/-/ip-regex-2.1.0.tgz#fa78bf5d2e6913c911ce9f819ee5146bb6d844e9"
   integrity sha1-+ni/XS5pE8kRzp+BnuUUa7bYROk=
 
-ip-regex@^4.3.0:
+ip-regex@^4.2.0, ip-regex@^4.3.0:
   version "4.3.0"
   resolved "https://registry.yarnpkg.com/ip-regex/-/ip-regex-4.3.0.tgz#687275ab0f57fa76978ff8f4dddc8a23d5990db5"
   integrity sha512-B9ZWJxHHOHUhUjCPrMpLD4xEq35bUTClHM1S6CBU5ixQnkZmwipwgc96vAd7AAGM9TGHvJR+Uss+/Ak6UphK+Q==

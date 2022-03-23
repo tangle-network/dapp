@@ -1,4 +1,4 @@
-import { AppConfig } from '@webb-dapp/react-environment/webb-context';
+import { AppConfig } from '@webb-tools/api-providers';
 
 import { InternalChainId } from '../chains/chain-id.enum';
 import { WebbCurrencyId } from '../currencies/webb-currency-id.enum';

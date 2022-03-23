@@ -1,6 +1,6 @@
-import { NotificationConfig } from '@webb-dapp/react-environment/api-providers/polkadot';
 import { notificationApi } from '@webb-dapp/ui-components/notification';
 import { Spinner } from '@webb-dapp/ui-components/Spinner/Spinner';
+import { NotificationConfig } from '@webb-tools/api-providers';
 import React from 'react';
 
 export const transactionNotificationConfig: NotificationConfig = {

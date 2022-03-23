@@ -1,7 +1,6 @@
 import { Button, Divider, Fade, InputBase, MenuItem, Select } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import { chainIdToRelayerName } from '@webb-dapp/apps/configs/relayer-config';
-import { ActiveWebbRelayer, Capabilities, WebbRelayer } from '@webb-dapp/react-environment';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabel';
@@ -9,6 +8,7 @@ import { InputSection } from '@webb-dapp/ui-components/Inputs/InputSection/Input
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
+import { ActiveWebbRelayer, Capabilities, WebbRelayer } from '@webb-tools/api-providers/webb-context/relayer';
 import { ethers } from 'ethers';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';

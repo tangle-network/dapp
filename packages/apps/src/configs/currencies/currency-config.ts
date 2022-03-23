@@ -6,9 +6,9 @@ import ShidenLogo from '@webb-dapp/apps/configs/logos/chains/ShidenLogo';
 import WEBBLogo from '@webb-dapp/apps/configs/logos/chains/WebbLogo';
 import EtherLogo from '@webb-dapp/apps/configs/logos/Eth';
 import WebbWrappedLogo from '@webb-dapp/apps/configs/logos/WebbWrappedLogo';
-import { ZERO, zeroAddress } from '@webb-dapp/contracts/contracts';
-import { AppConfig } from '@webb-dapp/react-environment';
-import { CurrencyRole, CurrencyType } from '@webb-dapp/react-environment/types/currency-config.interface';
+import { AppConfig } from '@webb-tools/api-providers';
+import { ZERO, zeroAddress } from '@webb-tools/api-providers/contracts';
+import { CurrencyRole, CurrencyType } from '@webb-tools/api-providers/types/currency-config.interface';
 import React from 'react';
 
 import { WebbCurrencyId } from './webb-currency-id.enum';
