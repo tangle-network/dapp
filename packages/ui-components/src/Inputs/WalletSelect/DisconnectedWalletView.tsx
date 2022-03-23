@@ -1,20 +1,8 @@
-import {
-  Avatar,
-  ButtonBase,
-  Icon,
-  IconButton,
-  List,
-  ListItem,
-  ListItemAvatar,
-  ListItemSecondaryAction,
-  ListItemText,
-  Tooltip,
-  Typography,
-} from '@material-ui/core';
-import { ManagedWallet } from '@webb-dapp/react-environment/types/wallet-config.interface';
+import { Avatar, ButtonBase, List, ListItem, ListItemAvatar, ListItemText, Typography } from '@material-ui/core';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
+import { ManagedWallet } from '@webb-tools/api-providers/types/wallet-config.interface';
 import React from 'react';
 import styled from 'styled-components';
 

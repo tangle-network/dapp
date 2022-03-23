@@ -1,14 +1,7 @@
 import { Button, InputBase } from '@material-ui/core';
-import {
-  ChainTypeId,
-  chainTypeIdToInternalId,
-  currenciesConfig,
-  InternalChainId,
-  WebbCurrencyId,
-} from '@webb-dapp/apps/configs';
+import { ChainTypeId, chainTypeIdToInternalId, currenciesConfig } from '@webb-dapp/apps/configs';
 import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
 import { useWebContext } from '@webb-dapp/react-environment';
-import { Currency, CurrencyContent } from '@webb-dapp/react-environment/webb-context/currency/currency';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { ContentWrapper } from '@webb-dapp/ui-components/ContentWrappers';
@@ -17,6 +10,7 @@ import { ChainInput } from '@webb-dapp/ui-components/Inputs/ChainInput/ChainInpu
 import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabel';
 import { InputSection } from '@webb-dapp/ui-components/Inputs/InputSection/InputSection';
 import { TokenInput } from '@webb-dapp/ui-components/Inputs/TokenInput/TokenInput';
+import { Currency, CurrencyContent } from '@webb-tools/api-providers/webb-context/currency/currency';
 import React, { FC, useMemo, useState } from 'react';
 import styled from 'styled-components';
 

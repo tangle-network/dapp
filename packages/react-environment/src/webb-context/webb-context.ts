@@ -1,8 +1,8 @@
 import { Account } from '@webb-dapp/wallet/account/Accounts.adapter';
 import { Chain, Wallet, WebbApiProvider } from '@webb-tools/api-providers';
+import { AppConfig } from '@webb-tools/api-providers';
 import { InteractiveFeedback } from '@webb-tools/api-providers/webb-error';
 import React from 'react';
-
 interface Note {
   serialize(): string;
 
@@ -18,7 +18,7 @@ export interface WebbContextState<T = unknown> {
   activeApi?: WebbApiProvider<T>;
   activeWallet?: Wallet;
   activeChain?: Chain;
-
+  appConfig: AppConfig;
   accounts: Account[];
   activeAccount: Account | null;
   isConnecting: boolean;
@@ -50,6 +50,14 @@ export const WebbContext = React.createContext<WebbContextState>({
   },
   wallets: {},
   activeFeedback: null,
+  appConfig: {
+    wallet: {},
+    anchors: {},
+    bridgeByAsset: {},
+    chains: {},
+    currencies: {},
+    mixers: {},
+  },
   registerInteractiveFeedback: (interactiveFeedback: InteractiveFeedback) => {
     return;
   },
@@ -57,4 +65,8 @@ export const WebbContext = React.createContext<WebbContextState>({
 
 export const useWebContext = <T = unknown>() => {
   return React.useContext(WebbContext) as WebbContextState<T>;
+};
+export const useAppConfig = () => {
+  const { appConfig } = useWebContext();
+  return appConfig;
 };

@@ -1,7 +1,6 @@
 import { FormHelperText, InputBase, Typography } from '@material-ui/core';
 import {
   chainsPopulated,
-  ChainType,
   chainTypeIdToInternalId,
   currenciesConfig,
   getChainNameFromChainId,
@@ -10,18 +9,17 @@ import {
 import { useWithdraw } from '@webb-dapp/bridge/hooks';
 import { useDepositNote } from '@webb-dapp/mixer';
 import { WithdrawingModal, WithdrawSuccessModal } from '@webb-dapp/react-components/Withdraw';
-import { useWebContext, WithdrawState } from '@webb-dapp/react-environment';
-import { WalletConfig } from '@webb-dapp/react-environment/types/wallet-config.interface';
-import { ActiveWebbRelayer } from '@webb-dapp/react-environment/webb-context/relayer';
+import { useWebContext } from '@webb-dapp/react-environment';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { SettingsIcon } from '@webb-dapp/ui-components/assets/SettingsIcon';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
-import { InputLabel } from '@webb-dapp/ui-components/Inputs/InputLabel/InputLabel';
-import { InputSection } from '@webb-dapp/ui-components/Inputs/InputSection/InputSection';
 import { BridgeNoteInput } from '@webb-dapp/ui-components/Inputs/NoteInput/BridgeNoteInput';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
-import RelayerInput, { FeesInfo, RelayerApiAdapter } from '@webb-dapp/ui-components/RelayerInput/RelayerInput';
+import { FeesInfo, RelayerApiAdapter } from '@webb-dapp/ui-components/RelayerInput/RelayerInput';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
+import { WithdrawState } from '@webb-tools/api-providers';
+import { WalletConfig } from '@webb-tools/api-providers/types/wallet-config.interface';
+import { ActiveWebbRelayer } from '@webb-tools/api-providers/webb-context/relayer';
 import { Note } from '@webb-tools/sdk-core';
 import React, { useCallback, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';

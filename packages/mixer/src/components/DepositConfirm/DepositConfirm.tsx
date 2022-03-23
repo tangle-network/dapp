@@ -1,7 +1,7 @@
 import { ButtonBase, Checkbox, FormControlLabel, Icon, IconButton, Tooltip, Typography } from '@material-ui/core';
 import { DepositAmountDecal } from '@webb-dapp/bridge/components/DepositConfirm/DepositAmountDecal';
 import { DepositApi } from '@webb-dapp/mixer/hooks/deposit/useDeposit';
-import { DepositPayload, MixerSize, useWebContext } from '@webb-dapp/react-environment/webb-context';
+import { useWebContext } from '@webb-dapp/react-environment/webb-context';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { CloseButton } from '@webb-dapp/ui-components/Buttons/CloseButton';
@@ -12,6 +12,7 @@ import { Spinner } from '@webb-dapp/ui-components/Spinner/Spinner';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 import { downloadString } from '@webb-dapp/utils';
+import { DepositPayload, MixerSize } from '@webb-tools/api-providers';
 import { ethers } from 'ethers';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';

@@ -1,11 +1,10 @@
-import { Button, Divider, Icon, LinearProgress, Tooltip, Typography } from '@material-ui/core';
-import { getEVMChainName, getEVMChainNameFromInternal, parseChainIdType } from '@webb-dapp/apps/configs';
-import { WithdrawState } from '@webb-dapp/react-environment';
-import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
+import { Button, Icon, LinearProgress, Tooltip, Typography } from '@material-ui/core';
+import { getEVMChainName, parseChainIdType } from '@webb-dapp/apps/configs';
 import { SpaceBox } from '@webb-dapp/ui-components/Box';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
+import { WithdrawState } from '@webb-tools/api-providers';
 import { JsNote as DepositNote } from '@webb-tools/wasm-utils';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import styled from 'styled-components';
 
 type WithdrawingModalProps = {

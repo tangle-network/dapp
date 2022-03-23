@@ -1,6 +1,6 @@
 import { InternalChainId, WalletId } from '@webb-dapp/apps/configs';
-import { Chain, Wallet } from '@webb-dapp/react-environment';
 import { Account } from '@webb-dapp/wallet/account/Accounts.adapter';
+import { Chain, Wallet } from '@webb-tools/api-providers';
 import { EventBus } from '@webb-tools/app-util';
 
 export type AppEvents = {

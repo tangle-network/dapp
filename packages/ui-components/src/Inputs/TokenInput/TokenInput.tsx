@@ -12,12 +12,11 @@ import Avatar from '@material-ui/core/Avatar';
 import Popper from '@material-ui/core/Popper';
 import { currenciesConfig, evmIdIntoInternalChainId, WebbCurrencyId } from '@webb-dapp/apps/configs';
 import { useWebContext } from '@webb-dapp/react-environment';
-import { CurrencyContent } from '@webb-dapp/react-environment/webb-context/currency/currency';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
-import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
+import { CurrencyContent } from '@webb-tools/api-providers/webb-context/currency/currency';
 import React, { CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styled, { css } from 'styled-components';
 

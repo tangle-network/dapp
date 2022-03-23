@@ -20,12 +20,21 @@ import { appEvent } from '@webb-dapp/react-environment/app-event';
 import { insufficientApiInterface } from '@webb-dapp/react-environment/error/interactive-errors/insufficient-api-interface';
 import { DimensionsProvider } from '@webb-dapp/react-environment/layout';
 import { StoreProvier } from '@webb-dapp/react-environment/store';
+import { netStorageFactory, WebbContext } from '@webb-dapp/react-environment/webb-context';
 import { notificationApi } from '@webb-dapp/ui-components/notification';
 import { AccountSwitchNotification } from '@webb-dapp/ui-components/notification/AccountSwitchNotification';
 import { Spinner } from '@webb-dapp/ui-components/Spinner/Spinner';
 import { BareProps } from '@webb-dapp/ui-components/types';
 import { Account } from '@webb-dapp/wallet/account/Accounts.adapter';
-import { WebbPolkadot, WebbWeb3Provider } from '@webb-tools/api-providers';
+import {
+  AppConfig,
+  Chain,
+  NetworkStorage,
+  NotificationPayload,
+  Wallet,
+  WebbPolkadot,
+  WebbWeb3Provider,
+} from '@webb-tools/api-providers';
 import { WebbApiProvider } from '@webb-tools/api-providers';
 import { Web3Provider } from '@webb-tools/api-providers/ext-providers';
 import { InteractiveFeedback, WebbError, WebbErrorCodes } from '@webb-tools/api-providers/webb-error';
@@ -37,15 +46,7 @@ import { extensionNotInstalled, unsupportedChain } from './error';
 // @ts-ignore
 import Worker from './proving-manager.worker';
 import { SettingProvider } from './SettingProvider';
-import {
-  AppConfig,
-  Chain,
-  netStorageFactory,
-  NetworkStorage,
-  NotificationPayload,
-  Wallet,
-  WebbContext,
-} from './webb-context';
+
 interface WebbProviderProps extends BareProps {
   applicationName: string;
   applicationVersion?: string;
@@ -582,6 +583,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
         accounts,
         activeAccount,
         setActiveAccount,
+        appConfig,
         switchChain: switchChainAndStore,
         isConnecting,
         async inactivateApi(): Promise<void> {

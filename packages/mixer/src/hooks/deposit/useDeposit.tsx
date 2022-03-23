@@ -1,4 +1,5 @@
-import { DepositPayload, MixerDeposit, MixerSize, useWebContext } from '@webb-dapp/react-environment/webb-context';
+import { useWebContext } from '@webb-dapp/react-environment/webb-context';
+import { DepositPayload, MixerDeposit, MixerSize } from '@webb-tools/api-providers';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 export interface DepositApi {
