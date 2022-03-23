@@ -7,8 +7,8 @@
   "homepage": "https://github.com/webb-tools/webb-dapp#readme",
   "dependencies": {
     "@influxdata/influxdb-client": "^1.8.0",
-    "@polkadot/api": "^7.12.1",
-    "@polkadot/extension-dapp": "^0.42.9",
+    "@polkadot/api": "7.13.1",
+    "@polkadot/extension-dapp": "0.42.9",
     "@umijs/use-request": "^1.4.3",
     "@webb-dapp/react-environment": "0.2.1-beta.1",
     "@webb-dapp/ui-components": "0.2.1-beta.1",

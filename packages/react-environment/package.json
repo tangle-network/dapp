@@ -7,7 +7,7 @@
   "homepage": "https://github.com/webb-tools/webb-dapp#readme",
   "dependencies": {
     "@influxdata/influxdb-client-browser": "^1.8.0",
-    "@polkadot/api": "^7.12.1",
+    "@polkadot/api": "7.13.1",
     "@polkadot/extension-dapp": "^0.42.9",
     "@nepoche/api": "file:../../../test/nepoche/webb.js/packages/api/build",
     "@nepoche/sdk-core": "file:../../../test/nepoche/webb.js/packages/sdk-core/build"
