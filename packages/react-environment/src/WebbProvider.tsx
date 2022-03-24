@@ -33,8 +33,8 @@ import {
   WebbWeb3Provider,
 } from '@webb-tools/api-providers';
 import { WebbApiProvider } from '@webb-tools/api-providers';
+import { InteractiveFeedback, WebbError, WebbErrorCodes } from '@webb-tools/api-providers';
 import { Web3Provider } from '@webb-tools/api-providers/ext-providers';
-import { InteractiveFeedback, WebbError, WebbErrorCodes } from '@webb-tools/api-providers/webb-error';
 import { LoggerService } from '@webb-tools/app-util';
 import { logger } from 'ethers';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';

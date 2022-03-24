@@ -1,15 +1,9 @@
 import { FormHelperText, InputBase, Typography } from '@material-ui/core';
-import {
-  chainsPopulated,
-  chainTypeIdToInternalId,
-  currenciesConfig,
-  getChainNameFromChainId,
-  parseChainIdType,
-} from '@webb-dapp/apps/configs';
+import { chainsPopulated } from '@webb-dapp/apps/configs';
 import { useWithdraw } from '@webb-dapp/bridge/hooks';
 import { useDepositNote } from '@webb-dapp/mixer';
 import { WithdrawingModal, WithdrawSuccessModal } from '@webb-dapp/react-components/Withdraw';
-import { useWebContext } from '@webb-dapp/react-environment';
+import { useAppConfig, useWebContext } from '@webb-dapp/react-environment';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { SettingsIcon } from '@webb-dapp/ui-components/assets/SettingsIcon';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
@@ -17,7 +11,13 @@ import { BridgeNoteInput } from '@webb-dapp/ui-components/Inputs/NoteInput/Bridg
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { FeesInfo, RelayerApiAdapter } from '@webb-dapp/ui-components/RelayerInput/RelayerInput';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
-import { ActiveWebbRelayer, WithdrawState } from '@webb-tools/api-providers';
+import {
+  ActiveWebbRelayer,
+  chainTypeIdToInternalId,
+  getChainNameFromChainId,
+  parseChainIdType,
+  WithdrawState,
+} from '@webb-tools/api-providers';
 import { WalletConfig } from '@webb-tools/api-providers/types/wallet-config.interface';
 import { Note } from '@webb-tools/sdk-core';
 import React, { useCallback, useMemo, useState } from 'react';
@@ -151,7 +151,8 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
     recipient,
     note: depositNote,
   });
-
+  const appConfig = useAppConfig();
+  const { currencies: currenciesConfig } = appConfig;
   /// TODO: expose hook
   const feesGetter = useCallback(
     async (activeRelayer: ActiveWebbRelayer): Promise<FeesInfo> => {
@@ -297,9 +298,9 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
           <div className='information-item'>
             <p className='title'>Chains</p>
             <p className='value'>
-              {getChainNameFromChainId(parseChainIdType(Number(depositNote.note.sourceChainId)))}
+              {getChainNameFromChainId(appConfig, parseChainIdType(Number(depositNote.note.sourceChainId)))}
               {` -> `}
-              {getChainNameFromChainId(parseChainIdType(Number(depositNote.note.targetChainId)))}
+              {getChainNameFromChainId(appConfig, parseChainIdType(Number(depositNote.note.targetChainId)))}
             </p>
           </div>
           <div className='information-item'>
