@@ -8,7 +8,7 @@ import { InputSection } from '@webb-dapp/ui-components/Inputs/InputSection/Input
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
-import { ActiveWebbRelayer, Capabilities, WebbRelayer } from '@webb-tools/api-providers/webb-context/relayer';
+import { ActiveWebbRelayer, Capabilities, WebbRelayer } from '@webb-tools/api-providers';
 import { ethers } from 'ethers';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';

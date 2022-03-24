@@ -2,7 +2,7 @@ import { Button, Typography } from '@material-ui/core';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
-import { FeedbackEntry, InteractiveFeedback } from '@webb-dapp/utils/webb-error';
+import { FeedbackEntry, InteractiveFeedback } from '@webb-tools/api-providers';
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
 

@@ -1,6 +1,6 @@
-import { InternalChainId, WalletId } from '@webb-dapp/apps/configs';
+import { WalletId } from '@webb-dapp/apps/configs';
 import { Account } from '@webb-dapp/wallet/account/Accounts.adapter';
-import { Chain, Wallet } from '@webb-tools/api-providers';
+import { Chain, InternalChainId, Wallet } from '@webb-tools/api-providers';
 import { EventBus } from '@webb-tools/app-util';
 
 export type AppEvents = {
@@ -12,10 +12,12 @@ export type AppEvents = {
 
 class AppEvent extends EventBus<AppEvents> {
   public readonly send: <E extends keyof AppEvents>(event: E, data: AppEvents[E]) => void | Promise<void>;
+
   constructor() {
     super();
     this.send = this.emit;
   }
 }
+
 export type TAppEvent = InstanceType<typeof AppEvent>;
 export const appEvent = new AppEvent();

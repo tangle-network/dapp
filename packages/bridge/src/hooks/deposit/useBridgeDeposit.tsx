@@ -1,10 +1,14 @@
 import { ChainTypeId, computeChainIdType } from '@webb-dapp/apps/configs';
 import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
 import { useWebContext } from '@webb-dapp/react-environment';
-import { DepositPayload, MixerDeposit, MixerSize } from '@webb-tools/api-providers';
-import { BridgeDeposit } from '@webb-tools/api-providers/bridge';
-import { BridgeCurrencyIndex } from '@webb-tools/api-providers/bridge/bridge-api';
-import { Currency } from '@webb-tools/api-providers/webb-context/currency/currency';
+import {
+  BridgeCurrencyIndex,
+  BridgeDeposit,
+  Currency,
+  DepositPayload,
+  MixerDeposit,
+  MixerSize,
+} from '@webb-tools/api-providers';
 import { LoggerService } from '@webb-tools/app-util';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 

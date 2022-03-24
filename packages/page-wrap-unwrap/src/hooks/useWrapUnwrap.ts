@@ -1,8 +1,8 @@
 import { useAppConfig, useWebContext } from '@webb-dapp/react-environment';
-import { Currency, CurrencyContent } from '@webb-tools/api-providers/webb-context/currency/currency';
-import { WrappingEventNames } from '@webb-tools/api-providers/webb-context/wrap-unwrap';
+import { Currency, CurrencyContent, WrappingEventNames } from '@webb-tools/api-providers';
 import { LoggerService } from '@webb-tools/app-util';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+
 const logger = LoggerService.get('useWrapUnwrap');
 
 // 'Governed' tokens represent a token which can be minted from a deposit

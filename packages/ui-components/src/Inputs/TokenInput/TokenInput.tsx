@@ -1,23 +1,22 @@
 import {
+  Avatar,
   ClickAwayListener,
   Icon,
   IconButton,
   List,
   ListItemAvatar,
   ListItemText,
+  Popper,
   Tooltip,
   Typography,
 } from '@material-ui/core';
-import Avatar from '@material-ui/core/Avatar';
-import Popper from '@material-ui/core/Popper';
-import { currenciesConfig, evmIdIntoInternalChainId, WebbCurrencyId } from '@webb-dapp/apps/configs';
+import { currenciesConfig } from '@webb-dapp/apps/configs';
 import { useWebContext } from '@webb-dapp/react-environment';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
-import { Web3Provider } from '@webb-dapp/wallet/providers/web3/web3-provider';
-import { CurrencyContent } from '@webb-tools/api-providers/webb-context/currency/currency';
-import React, { CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { CurrencyContent, evmIdIntoInternalChainId, Web3Provider, WebbCurrencyId } from '@webb-tools/api-providers';
+import React, { CSSProperties, useCallback, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
 const StyledList = styled.ul`

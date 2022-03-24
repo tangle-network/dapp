@@ -10,9 +10,7 @@ import { MixerGroupSelect } from '@webb-dapp/ui-components/Inputs/MixerGroupSele
 import { TokenInput } from '@webb-dapp/ui-components/Inputs/TokenInput/TokenInput';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { getRoundedAmountString } from '@webb-dapp/ui-components/utils';
-import { MixerSize } from '@webb-tools/api-providers';
-import { WalletConfig } from '@webb-tools/api-providers/types/wallet-config.interface';
-import { Currency } from '@webb-tools/api-providers/webb-context/currency/currency';
+import { Currency, MixerSize, WalletConfig } from '@webb-tools/api-providers';
 import React, { useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 

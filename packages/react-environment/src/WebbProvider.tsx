@@ -7,10 +7,6 @@ import {
   chainsConfig,
   chainsPopulated,
   currenciesConfig,
-  EVMChainId,
-  evmIdIntoInternalChainId,
-  getEVMChainName,
-  InternalChainId,
   mixersConfig,
   walletsConfig,
 } from '@webb-dapp/apps/configs';
@@ -26,6 +22,7 @@ import { AccountSwitchNotification } from '@webb-dapp/ui-components/notification
 import { Spinner } from '@webb-dapp/ui-components/Spinner/Spinner';
 import { BareProps } from '@webb-dapp/ui-components/types';
 import { Account } from '@webb-dapp/wallet/account/Accounts.adapter';
+import { EVMChainId, evmIdIntoInternalChainId, getEVMChainName, InternalChainId } from '@webb-tools/api-providers';
 import {
   AppConfig,
   Chain,
@@ -51,7 +48,7 @@ interface WebbProviderProps extends BareProps {
   applicationName: string;
   applicationVersion?: string;
 }
-
+console.log(WebbPolkadot, WebbWeb3Provider);
 const chains = chainsPopulated;
 
 const registerInteractiveFeedback = (
@@ -262,7 +259,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
       case WebbErrorCodes.UnsupportedChain:
         {
           setActiveChain(undefined);
-          const interactiveFeedback = unsupportedChain();
+          const interactiveFeedback = unsupportedChain(appConfig);
           if (interactiveFeedback) {
             registerInteractiveFeedback(setInteractiveFeedbacks, interactiveFeedback);
           }
@@ -398,7 +395,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
               const nextChain = Object.values(chains).find((chain) => chain.chainId === chainId);
               try {
                 /// this will throw if the user switched to unsupported chain
-                const name = getEVMChainName(chainId);
+                const name = getEVMChainName(appConfig, chainId);
                 /// Alerting that the provider has changed via the extension
                 notificationApi({
                   message: 'Web3: changed the connected network',

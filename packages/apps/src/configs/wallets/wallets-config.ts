@@ -2,8 +2,8 @@ import { MetaMaskLogo } from '@webb-dapp/apps/configs/logos/MetaMaskLogo';
 import { PolkaLogo } from '@webb-dapp/apps/configs/logos/PolkaLogo';
 import { WalletConnectLogo } from '@webb-dapp/apps/configs/logos/WalletConnectLogo';
 import { AppConfig } from '@webb-tools/api-providers';
+import { InternalChainId } from '@webb-tools/api-providers';
 
-import { InternalChainId } from '../chains/chain-id.enum';
 import { WalletId } from '../wallets/wallet-id.enum';
 
 const ANY_EVM = [

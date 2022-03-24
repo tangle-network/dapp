@@ -1,4 +1,3 @@
-import { ChainType, InternalChainId } from '@webb-dapp/apps/configs/chains';
 import EdgewareLogo from '@webb-dapp/apps/configs/logos/chains/EdgewareLogo';
 import HarmonyLogo from '@webb-dapp/apps/configs/logos/chains/HarmonyLogo';
 import PolygonLogo from '@webb-dapp/apps/configs/logos/chains/PolygonLogo';
@@ -6,12 +5,16 @@ import ShidenLogo from '@webb-dapp/apps/configs/logos/chains/ShidenLogo';
 import WEBBLogo from '@webb-dapp/apps/configs/logos/chains/WebbLogo';
 import EtherLogo from '@webb-dapp/apps/configs/logos/Eth';
 import WebbWrappedLogo from '@webb-dapp/apps/configs/logos/WebbWrappedLogo';
-import { AppConfig } from '@webb-tools/api-providers';
-import { ZERO, zeroAddress } from '@webb-tools/api-providers/contracts';
-import { CurrencyRole, CurrencyType } from '@webb-tools/api-providers/types/currency-config.interface';
+import {
+  AppConfig,
+  CurrencyRole,
+  CurrencyType,
+  InternalChainId,
+  WebbCurrencyId,
+  ZERO,
+  zeroAddress,
+} from '@webb-tools/api-providers';
 import React from 'react';
-
-import { WebbCurrencyId } from './webb-currency-id.enum';
 
 export const currenciesConfig: AppConfig['currencies'] = {
   [WebbCurrencyId.EDG]: {

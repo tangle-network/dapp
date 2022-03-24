@@ -17,9 +17,8 @@ import { BridgeNoteInput } from '@webb-dapp/ui-components/Inputs/NoteInput/Bridg
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { FeesInfo, RelayerApiAdapter } from '@webb-dapp/ui-components/RelayerInput/RelayerInput';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
-import { WithdrawState } from '@webb-tools/api-providers';
+import { ActiveWebbRelayer, WithdrawState } from '@webb-tools/api-providers';
 import { WalletConfig } from '@webb-tools/api-providers/types/wallet-config.interface';
-import { ActiveWebbRelayer } from '@webb-tools/api-providers/webb-context/relayer';
 import { Note } from '@webb-tools/sdk-core';
 import React, { useCallback, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
