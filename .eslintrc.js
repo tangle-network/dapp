@@ -23,6 +23,12 @@ module.exports = {
     'no-empty-pattern': 'off',
     '@typescript-eslint/no-non-null-assertion': 'off',
 		'@typescript-eslint/indent': 'off',
+    'react/jsx-no-bind': 'off',
+    'react/jsx-tag-spacing': 'off',
+    'react/jsx-first-prop-new-line': 'off',
+    'react/jsx-closing-bracket-location': 'off',
+    'import-newlines/enforce': 'off',
+    'brace-style': 'off',
 	},
   overrides: [
     {

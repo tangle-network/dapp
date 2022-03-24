@@ -1,11 +1,11 @@
-import { LoggerService } from '@webb-tools/app-util';
-import { Note, ProvingManager } from '@webb-tools/sdk-core';
-import { ProvingManagerSetupInput } from '@webb-tools/sdk-core/proving/proving-manager-thread';
 import { InternalChainId } from '@webb-dapp/apps/configs';
 import { WithdrawState } from '@webb-dapp/react-environment';
 import { WebbPolkadot } from '@webb-dapp/react-environment/api-providers';
 import { getCachedFixtureURI, withLocalFixtures } from '@webb-dapp/utils/misc';
 import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
+import { LoggerService } from '@webb-tools/app-util';
+import { Note, ProvingManager } from '@webb-tools/sdk-core';
+import { ProvingManagerSetupInput } from '@webb-tools/sdk-core/proving/proving-manager-thread';
 
 import { decodeAddress } from '@polkadot/keyring';
 import { hexToU8a, u8aToHex } from '@polkadot/util';

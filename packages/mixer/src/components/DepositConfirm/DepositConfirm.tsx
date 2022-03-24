@@ -126,12 +126,15 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({ mixerSize, onClose,
     });
   }, []);
   useEffect(() => {
-    if (!mixerSize) return;
+    if (!mixerSize) {
+      return;
+    }
     let desiredMixer: string | number = '';
     console.log('mixerId in depositConfirm: ', mixerSize.id);
     // If the mixerId is of string type, it could either be an address or a mixerId intended for use in substrate
-    if (typeof mixerSize.id === 'string')
+    if (typeof mixerSize.id === 'string') {
       ethers.utils.isAddress(mixerSize.id) ? (desiredMixer = mixerSize.id) : (desiredMixer = Number(mixerSize.id));
+    }
     provider.generateNote(desiredMixer, activeChain?.id).then((note) => {
       setNote(note);
     });

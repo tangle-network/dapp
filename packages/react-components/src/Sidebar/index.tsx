@@ -3,6 +3,7 @@ import { useStore } from '@webb-dapp/react-environment';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { CloseButton } from '@webb-dapp/ui-components/Buttons/CloseButton';
 import React, { FC, useMemo, useState } from 'react';
+import styled from 'styled-components';
 
 import { ThemeSwitcher } from '../AppBar/ThemeSwitcher';
 import { WebbFullNameLogo } from '../assets/WebbFullNameLogo';
@@ -11,7 +12,6 @@ import { Products } from './Products';
 import { Slider } from './Slider';
 import { SocialPlatform } from './SocialPlatform';
 import { SidebarConfig } from './types';
-import styled from 'styled-components';
 
 interface SidebarProps {
   collapse: boolean;

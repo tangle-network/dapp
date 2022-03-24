@@ -20,14 +20,18 @@ export const Slider: FC<SliderProps> = memo(({ target }) => {
   const [currentTop, setCurrentTop] = useState<number>(0);
 
   useLayoutEffect(() => {
-    if (!target) return;
+    if (!target) {
+      return;
+    }
 
     const { top } = target.getBoundingClientRect();
 
     setCurrentTop(top);
   }, [target, setCurrentTop]);
 
-  if (!currentTop) return null;
+  if (!currentTop) {
+    return null;
+  }
 
   return (
     <Motion defaultStyle={{ top: currentTop }} style={{ top: spring(currentTop) }}>

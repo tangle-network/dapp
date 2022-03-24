@@ -22,14 +22,16 @@ import styled, { css } from 'styled-components';
 
 const DepositWrapper = styled.div<{ wallet: WalletConfig | undefined }>`
   ${({ theme, wallet }) => {
-    if (wallet) return css``;
-    else
+    if (wallet) {
+      return css``;
+    } else {
       return css`
         padding: 25px 35px;
         background: ${theme.layer2Background};
         border: 1px solid ${theme.borderColor};
         border-radius: 0 0 13px 13px;
       `;
+    }
   }}
 `;
 
@@ -98,7 +100,9 @@ export const Deposit: React.FC<DepositProps> = () => {
   }, [activeChain]);
 
   useEffect(() => {
-    if (!activeChain || !activeApi) return;
+    if (!activeChain || !activeApi) {
+      return;
+    }
 
     // todo: figure out what happens for polkadot - won't be depositing by address
     const tokenAddress = activeApi.methods.bridgeApi.getTokenAddress({
@@ -134,7 +138,9 @@ export const Deposit: React.FC<DepositProps> = () => {
   }, [wrappableToken]);
 
   useEffect(() => {
-    if (!wrappableToken || !activeApi || loading) return;
+    if (!wrappableToken || !activeApi || loading) {
+      return;
+    }
     // TODO: handle when the token id isn't WebbCurrencyId
     activeApi.methods.chainQuery.tokenBalanceByCurrencyId(wrappableToken.view.id as any).then((balance) => {
       setWrappableTokenBalance(balance);

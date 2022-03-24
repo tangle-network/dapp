@@ -17,14 +17,16 @@ import styled, { css } from 'styled-components';
 
 const DepositWrapper = styled.div<{ wallet: WalletConfig | undefined }>`
   ${({ theme, wallet }) => {
-    if (wallet) return css``;
-    else
+    if (wallet) {
+      return css``;
+    } else {
       return css`
         padding: 25px 35px;
         background: ${theme.layer2Background};
         border: 1px solid ${theme.borderColor};
         border-radius: 0 0 13px 13px;
       `;
+    }
   }}
 `;
 
@@ -80,7 +82,9 @@ export const Deposit: React.FC<DepositProps> = () => {
 
   // Side effect for getting the balance of the token
   useEffect(() => {
-    if (!selectedToken || !activeChain || !activeApi) return;
+    if (!selectedToken || !activeChain || !activeApi) {
+      return;
+    }
 
     activeApi.methods.chainQuery.tokenBalanceByCurrencyId(selectedToken.view.id as any).then((balance) => {
       setTokenBalance(balance);

@@ -1,5 +1,6 @@
-import { Hasher } from './merkle-tree';
 import { poseidon } from 'circomlibjs';
+
+import { Hasher } from './merkle-tree';
 
 const hashLeftRight = (left: bigint, right: bigint) => {
   return poseidon([left, right]);

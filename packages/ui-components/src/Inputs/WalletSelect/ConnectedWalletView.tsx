@@ -41,14 +41,15 @@ const DisconnectWalletButton = styled.button<{ walletId: number }>`
   background: transparent;
 
   ${({ walletId }) => {
-    if (walletId == WalletId.WalletConnectV1)
+    if (walletId == WalletId.WalletConnectV1) {
       return css`
         color: #9db1fc;
       `;
-    else
+    } else {
       return css`
         ${({ theme }) => (theme.type === 'dark' ? 'color: #FFC149' : 'color: #E59F16')};
       `;
+    }
   }}
 `;
 

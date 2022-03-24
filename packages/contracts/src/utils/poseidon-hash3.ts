@@ -5,7 +5,9 @@ const hashLeftRight = (left: bigint, right: bigint) => {
 };
 
 export function poseidonHash3(inputs: any[]) {
-  if (inputs.length !== 3) throw new Error('panic');
+  if (inputs.length !== 3) {
+    throw new Error('panic');
+  }
   return circomlib.poseidon(inputs);
 }
 
@@ -15,7 +17,9 @@ export class PoseidonHasher3 {
   }
 
   hash3(inputs: any) {
-    if (inputs.length !== 3) throw new Error('panic');
+    if (inputs.length !== 3) {
+      throw new Error('panic');
+    }
     return circomlib.poseidon(inputs);
   }
 }

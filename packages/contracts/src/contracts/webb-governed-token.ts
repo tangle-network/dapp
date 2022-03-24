@@ -89,7 +89,9 @@ export class WebbGovernedToken {
     }
 
     const userBalance = await this._contract.balanceOf(account);
-    if (userBalance.gte(amount)) return true;
+    if (userBalance.gte(amount)) {
+      return true;
+    }
 
     return false;
   }

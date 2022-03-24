@@ -120,7 +120,9 @@ export class AnchorContract {
 
   async isWrappableTokenApprovalRequired(tokenAddress: string) {
     // Native token never requires approval
-    if (tokenAddress === zeroAddress) return false;
+    if (tokenAddress === zeroAddress) {
+      return false;
+    }
 
     const userAddress = await this.signer.getAddress();
     const tokenInstance = ERC20__factory.connect(tokenAddress, this.signer);
@@ -148,9 +150,8 @@ export class AnchorContract {
         const tokenInstance = ERC20__factory.connect(tokenAddress, this.signer);
         tokenBalance = await tokenInstance.balanceOf(userAddress);
       }
-    }
-    // querying for balance of the webbToken
-    else {
+    } else {
+      // querying for balance of the webbToken
       const tokenInstance = await this.getWebbToken();
       tokenBalance = await tokenInstance.balanceOf(userAddress);
     }
@@ -163,7 +164,9 @@ export class AnchorContract {
 
   async approve(tokenInstance: Contract, onComplete?: (event: DepositEvent) => void) {
     // check the approved spending before attempting deposit
-    if (tokenInstance == null) return;
+    if (tokenInstance == null) {
+      return;
+    }
     if (tokenInstance != null) {
       const depositAmount = await this.denomination;
       const tx = await tokenInstance.approve(this._contract.address, depositAmount);

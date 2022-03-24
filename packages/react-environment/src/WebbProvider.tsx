@@ -183,7 +183,9 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
         });
       }
 
-      if (!activeApi) return;
+      if (!activeApi) {
+        return;
+      }
       _setActiveAccount(account);
       await activeApi.accounts.setActiveAccount(account);
     },
