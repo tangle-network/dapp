@@ -3,12 +3,12 @@ import { Button, Divider, Icon, Link, Typography } from '@material-ui/core';
 import { chainsConfig, chainTypeIdToInternalId, InternalChainId, parseChainIdType } from '@webb-dapp/apps/configs';
 import { SpaceBox } from '@webb-dapp/ui-components/Box';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
+import { ActiveWebbRelayer } from '@webb-tools/api-providers/webb-context/relayer';
 import { LoggerService } from '@webb-tools/app-util';
 import { JsNote as DepositNote } from '@webb-tools/wasm-utils';
 import { ethers } from 'ethers';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { ActiveWebbRelayer } from "@webb-tools/api-providers/webb-context/relayer";
 
 const logger = LoggerService.get('Withdraw-Modal');
 
