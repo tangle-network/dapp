@@ -24,8 +24,7 @@
     "bump-version": "node scripts/bump-version.js",
     "start:dapp": "cd packages/apps && yarn webpack-cli serve --config webpack.dev.js --port 3000",
     "start:localDapp": "cd packages/apps && yarn webpack-cli serve --config webpack.dev.js --port 3000 --env LOCAL_FIXTURES=true",
-    "build:dapp:production::unwrapped": "cd packages/apps && webpack --config ",
-    "build:dapp:production": "node ./scripts/build-without-warnings.js",
+    "build:dapp:production": "cd packages/apps && npx webpack --config webpack.prod.js --mode production",
     "build:dapp:development": "cd packages/apps && npx webpack --config webpack.dev.js --mode development --env LOCAL_FIXTURES=true",
     "start:dashboard": "exit 0",
     "build:dashboard": "exit 0",
@@ -62,7 +61,6 @@
     "tornado-circomlib": "git+https://github.com/webb-tools/tornado-circomlib.git",
     "tornado-snarkjs": "git+https://github.com/tornadocash/snarkjs.git#869181cfaf7526fe8972073d31655493a04326d5",
     "tornado-websnark": "git+https://github.com/webb-tools/websnark.git",
-    "wasmsnark": "^0.0.10",
     "web3": "^1.3.5"
   },
   "devDependencies": {
