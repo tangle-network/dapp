@@ -1,9 +1,10 @@
-import { ChainTypeId, computeChainIdType } from '@webb-dapp/apps/configs';
 import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
 import { useWebContext } from '@webb-dapp/react-environment';
 import {
   BridgeCurrencyIndex,
   BridgeDeposit,
+  ChainTypeId,
+  computeChainIdType,
   Currency,
   DepositPayload,
   MixerDeposit,
