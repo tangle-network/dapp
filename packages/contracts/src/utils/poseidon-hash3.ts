@@ -1,6 +1,8 @@
 const circomlib = require('circomlibjs');
-const maci = require('maci-crypto');
-const { hashLeftRight } = maci;
+
+const hashLeftRight = (left: bigint, right: bigint) => {
+  return circomlib.poseidon([left, right]);
+};
 
 export function poseidonHash3(inputs: any[]) {
   if (inputs.length !== 3) throw new Error('panic');
