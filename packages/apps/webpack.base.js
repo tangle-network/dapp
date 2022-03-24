@@ -1,4 +1,4 @@
-// Copyright 2017-2022 @polkadot/apps authors & contributors
+// Copyriget 2017-2022 @polkadot/apps authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable camelcase */
@@ -27,7 +27,6 @@ function mapChunks(name, regs, inc) {
 }
 
 function createWebpack(env, mode = 'production') {
-  const pkgJson = require(path.join(env.context, 'package.json'));
   const alias = findPackages().reduce((alias, { dir, name }) => {
     alias[name] = path.resolve(env.context, `../${dir}/src`);
 
@@ -63,7 +62,10 @@ function createWebpack(env, mode = 'production') {
         {
           include: /node_modules/,
           test: /\.css$/i,
-          use: [MiniCssExtractPlugin.loader, require.resolve('css-loader')],
+          loader: require.resolve('css-loader'),
+          options: {
+            url: true,
+          },
         },
         {
           exclude: /(node_modules)/,
@@ -159,7 +161,7 @@ function createWebpack(env, mode = 'production') {
       }),
       new webpack.DefinePlugin({
         'process.env.NODE_ENV': JSON.stringify(mode),
-        'process.env.REACT_APP_LOCAL_FIXTURES': env.REACT_APP_LOCAL_FIXTURES,
+        'process.env.LOCAL_FIXTURES': JSON.stringify(env.LOCAL_FIXTURES),
       }),
       new webpack.optimize.SplitChunksPlugin(),
       new MiniCssExtractPlugin({
@@ -181,6 +183,7 @@ function createWebpack(env, mode = 'production') {
         path: require.resolve('path-browserify'),
         stream: require.resolve('stream-browserify'),
         fs: false,
+        url: false,
       },
     },
   };

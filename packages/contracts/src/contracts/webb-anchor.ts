@@ -25,9 +25,6 @@ import { ERC20__factory, FixedDepositAnchor__factory } from '../types';
 import { ERC20 } from '../types/ERC20';
 import { FixedDepositAnchor } from '../types/FixedDepositAnchor';
 
-const Scalar = require('ffjavascript').Scalar;
-const F = require('circomlibjs').babyjub.F;
-
 type DepositEvent = [string, number, BigNumber];
 const logger = LoggerService.get('AnchorContract');
 

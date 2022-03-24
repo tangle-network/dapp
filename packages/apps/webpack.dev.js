@@ -14,7 +14,7 @@ module.exports = (env) => {
 
   console.log('environment in dev', env);
   return merge(baseConfig(env, 'development'), {
-    devtool: process.env.BUILD_ANALYZE ? 'source-map' : false,
+    devtool: 'eval-source-map',
     devServer: {
       hot: true,
       open: false,

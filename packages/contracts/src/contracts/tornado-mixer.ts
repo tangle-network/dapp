@@ -15,7 +15,7 @@ import { LoggerService } from '@webb-tools/app-util';
 import { BigNumber, Contract, providers, Signer } from 'ethers';
 import utils from 'web3-utils';
 
-import { abi } from '../abis/NativeAnchor.json';
+import NativeAnchorArtifact from '../abis/NativeAnchor.json';
 
 const webSnarkUtils = require('tornado-websnark/src/utils');
 type DepositEvent = [string, number, BigNumber];
@@ -27,7 +27,7 @@ export class TornadoContract {
 
   constructor(private mixersInfo: EvmChainMixersInfo, private web3Provider: providers.Web3Provider, address: string) {
     this.signer = this.web3Provider.getSigner();
-    this._contract = new Contract(address, abi, this.signer) as any;
+    this._contract = new Contract(address, NativeAnchorArtifact.abi, this.signer) as any;
   }
 
   get getLastRoot() {
