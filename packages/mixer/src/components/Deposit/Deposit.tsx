@@ -2,7 +2,7 @@ import { Typography } from '@material-ui/core';
 import { DepositConfirm } from '@webb-dapp/mixer/components/DepositConfirm/DepositConfirm';
 import { useDeposit } from '@webb-dapp/mixer/hooks/deposit/useDeposit';
 import { RequiredWalletSelection } from '@webb-dapp/react-components/RequiredWalletSelection/RequiredWalletSelection';
-import { useWebContext } from '@webb-dapp/react-environment';
+import { useAppConfig, useWebContext } from '@webb-dapp/react-environment';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { SpaceBox } from '@webb-dapp/ui-components/Box';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
@@ -63,15 +63,17 @@ export const Deposit: React.FC<DepositProps> = () => {
   const { activeApi, activeChain, activeWallet, chains, switchChain } = useWebContext();
   const depositApi = useDeposit();
   const palette = useColorPallet();
-
+  const { currencies: currenciesConfig } = useAppConfig();
   const [showDepositModal, setShowDepositModal] = useState(false);
   const [selectedToken, setSelectedToken] = useState<Currency | undefined>(undefined);
   const [item, setItem] = useState<MixerSize | undefined>(undefined);
   const [tokenBalance, setTokenBalance] = useState('');
 
   const allCurrencies = useMemo(() => {
-    return activeChain?.nativeCurrencyId ? [Currency.fromCurrencyId(activeChain.nativeCurrencyId)] : [];
-  }, [activeChain]);
+    return activeChain?.nativeCurrencyId
+      ? [Currency.fromCurrencyId(currenciesConfig, activeChain.nativeCurrencyId)]
+      : [];
+  }, [activeChain, currenciesConfig]);
   const active = useMemo(() => selectedToken ?? allCurrencies[0], [allCurrencies, selectedToken]);
 
   // Whenever mixerSizes change (like chain switch), set selected mixer to undefined
@@ -102,7 +104,7 @@ export const Deposit: React.FC<DepositProps> = () => {
               currencies={allCurrencies}
               value={active}
               onChange={(token) => {
-                setSelectedToken(Currency.fromCurrencyId(token.view.id));
+                setSelectedToken(Currency.fromCurrencyId(currenciesConfig, token.view.id));
               }}
               wrapperStyles={{ width: '100%' }}
             />

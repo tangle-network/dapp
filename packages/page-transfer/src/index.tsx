@@ -1,7 +1,7 @@
 import { Button, InputBase } from '@material-ui/core';
 import { ChainTypeId, chainTypeIdToInternalId, currenciesConfig } from '@webb-dapp/apps/configs';
 import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
-import { useWebContext } from '@webb-dapp/react-environment';
+import { useAppConfig, useWebContext } from '@webb-dapp/react-environment';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { ContentWrapper } from '@webb-dapp/ui-components/ContentWrappers';
@@ -34,7 +34,7 @@ const AmountButton = styled.button`
 const PageTransfers: FC = () => {
   const [isSwap, setIsSwap] = useState(false);
   const { activeApi, activeChain, activeWallet, chains: chainsStore, switchChain } = useWebContext();
-
+  const { currencies: currenciesConfig } = useAppConfig();
   const chains: ChainTypeId[] = useMemo(() => {
     const arr: ChainTypeId[] = [];
     Object.values(chainsStore).forEach((el) => {
@@ -58,10 +58,10 @@ const PageTransfers: FC = () => {
 
   const tokens = useMemo(() => {
     const tokens: CurrencyContent[] = [];
-    tokens.push(...Object.keys(currenciesConfig).map((id) => Currency.fromCurrencyId(Number(id))));
+    tokens.push(...Object.keys(currenciesConfig).map((id) => Currency.fromCurrencyId(currenciesConfig, Number(id))));
 
     return tokens;
-  }, []);
+  }, [currenciesConfig]);
   return (
     <div>
       <ContentWrapper>
