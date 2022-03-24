@@ -57,7 +57,7 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "rxjs": "7.5.2",
-    "snarkjs": "^0.4.6",
+    "snarkjs": "0.4.15",
     "tinycolor2": "^1.4.2",
     "tornado-circomlib": "git+https://github.com/webb-tools/tornado-circomlib.git",
     "tornado-snarkjs": "git+https://github.com/tornadocash/snarkjs.git#869181cfaf7526fe8972073d31655493a04326d5",

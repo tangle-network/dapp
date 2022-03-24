@@ -3,7 +3,7 @@ import { BridgeWitnessInput } from '@webb-dapp/contracts/contracts/types';
 
 const snarkjs = require('snarkjs');
 const groth16 = snarkjs.groth16;
-const zkey = snarkjs.zkey;
+const zkey = snarkjs.zKey;
 
 type MaxEdges = 1 | 2 | 3 | 4 | 5;
 
@@ -31,6 +31,7 @@ export const generateWitness = async (input: BridgeWitnessInput, maxEdges: MaxEd
 export const proofAndVerify = async (witness: any, maxEdges: MaxEdges) => {
   console.log(witness);
   const circuitKey = await fetchKeyForEdges(maxEdges);
+  console.log(snarkjs);
   const res = await groth16.prove(circuitKey, witness);
   const vKey = await zkey.exportVerificationKey(circuitKey);
   const verificationResults = await groth16.verify(vKey, res.publicSignals, res.proof);
