@@ -20,14 +20,16 @@ import styled, { css } from 'styled-components';
 
 const WithdrawWrapper = styled.div<{ wallet: WalletConfig | undefined }>`
   ${({ theme, wallet }) => {
-    if (wallet) return css``;
-    else
+    if (wallet) {
+      return css``;
+    } else {
       return css`
         padding: 25px 35px;
         background: ${theme.layer2Background};
         border: 1px solid ${theme.borderColor};
         border-radius: 0 0 13px 13px;
       `;
+    }
   }}
   background: ${({ theme }) => theme.lightSelectionBackground};
   border-radius: 10px;
@@ -185,8 +187,12 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
     return false;*/
   };
   const switchChain = async (note: Note | null) => {
-    if (!note) return;
-    if (!activeApi) return;
+    if (!note) {
+      return;
+    }
+    if (!activeApi) {
+      return;
+    }
     const newChainId = Number(note?.note.targetChainId);
     const chain = chainsPopulated[newChainId];
 

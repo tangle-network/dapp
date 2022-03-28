@@ -3,14 +3,14 @@
   "version": "0.2.1-beta.1",
   "description": "react environment",
   "main": "index.js",
-  "author": "Acala Developers <hello@acala.network>, Webb Developers <drew@webb.tools>",
+  "author": "Webb Developers <drew@webb.tools>",
   "homepage": "https://github.com/webb-tools/webb-dapp#readme",
   "dependencies": {
-    "@webb-tools/api": "file:../../../webb.js/packages/api/build",
-    "@webb-tools/sdk-core": "file:../../../webb.js/packages/sdk-core/build",
     "@influxdata/influxdb-client-browser": "^1.8.0",
-    "@polkadot/api": "^7.12.1",
-    "@polkadot/extension-dapp": "^0.42.9"
+    "@polkadot/api": "7.13.1",
+    "@polkadot/extension-dapp": "^0.42.9",
+    "@webb-tools/api": "0.1.4-43",
+    "@webb-tools/sdk-core": "0.1.4-43"
   },
   "devDependencies": {
     "@types/url-parse": "^1.4.3"

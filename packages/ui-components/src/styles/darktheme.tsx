@@ -2,8 +2,6 @@ import { darkPallet } from '@webb-dapp/ui-components/styling/colors';
 import { createGlobalStyle } from 'styled-components';
 
 export const DarkTheme = createGlobalStyle`
-
-
 	:root {
 		--color-primary: #3e5bf8;
 		--color-primary-light: #2f3db5;

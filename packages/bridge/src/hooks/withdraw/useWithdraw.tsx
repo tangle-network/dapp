@@ -54,7 +54,9 @@ export const useWithdraw = (params: UseWithdrawProps) => {
   });
   const withdrawApi = useMemo(() => {
     const withdraw = activeApi?.methods.bridge.withdraw;
-    if (!withdraw?.enabled) return null;
+    if (!withdraw?.enabled) {
+      return null;
+    }
     return withdraw.inner;
   }, [activeApi]);
 
@@ -94,7 +96,9 @@ export const useWithdraw = (params: UseWithdrawProps) => {
       }));
     });
     const unsubscribe: Record<string, (() => void) | void> = {};
-    if (!withdrawApi) return;
+    if (!withdrawApi) {
+      return;
+    }
     unsubscribe['stateChange'] = withdrawApi.on('stateChange', (stage: WithdrawState) => {
       setStage(stage);
     });
@@ -119,7 +123,9 @@ export const useWithdraw = (params: UseWithdrawProps) => {
   }, [withdrawApi, params.note, bridgeApi]);
 
   const withdraw = useCallback(async () => {
-    if (!withdrawApi || !params.note) return;
+    if (!withdrawApi || !params.note) {
+      return;
+    }
     if (stage === WithdrawState.Ideal) {
       if (params.note) {
         try {

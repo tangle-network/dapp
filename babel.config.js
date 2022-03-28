@@ -1,4 +1,3 @@
-
 const plugins = require('@polkadot/dev/config/babel-plugins.cjs');
 const presets = require('@polkadot/dev/config/babel-presets.cjs');
 

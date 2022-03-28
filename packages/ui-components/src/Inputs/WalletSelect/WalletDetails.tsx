@@ -40,14 +40,15 @@ const ConnectionDetails = styled.div<{ walletId: number }>`
   z-index: 104;
 
   ${({ walletId }) => {
-    if (walletId == WalletId.WalletConnectV1)
+    if (walletId == WalletId.WalletConnectV1) {
       return css`
         background: linear-gradient(133.59deg, #286afa 15.85%, #9db1fc 81.66%);
       `;
-    else
+    } else {
       return css`
         background: linear-gradient(133.59deg, #fcad3a 15.85%, #fee4bf 81.66%);
       `;
+    }
   }}
 
   .text-section {

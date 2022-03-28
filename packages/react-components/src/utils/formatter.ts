@@ -36,7 +36,9 @@ export const formatNumber = (
   let [i, d] = _num.split('.');
 
   // test if the i is a validate number at first
-  if (!/^-?[0-9]*$/.test(i)) return 'N/A';
+  if (!/^-?[0-9]*$/.test(i)) {
+    return 'N/A';
+  }
 
   if (config.decimalLength) {
     d = (d || '').slice(0, config.decimalLength).padEnd(config.decimalLength, '0');
@@ -94,13 +96,21 @@ export const formatAddress = (address: string, isMini?: boolean): string => {
 };
 
 export const formatBalance = (balance: FixedPointNumber | Fixed18 | Codec | number | string | undefined): number => {
-  if (typeof balance === 'number') return balance;
+  if (typeof balance === 'number') {
+    return balance;
+  }
 
-  if (typeof balance === 'string') return Number(balance);
+  if (typeof balance === 'string') {
+    return Number(balance);
+  }
 
-  if (balance instanceof FixedPointNumber) return balance.toNumber();
+  if (balance instanceof FixedPointNumber) {
+    return balance.toNumber();
+  }
 
-  if (balance instanceof Fixed18) return balance.toNumber(6, 3);
+  if (balance instanceof Fixed18) {
+    return balance.toNumber(6, 3);
+  }
 
   try {
     // for Codec

@@ -55,13 +55,17 @@ export const isSimilarZero = (target: FixedPointNumber, minimum: FixedPointNumbe
     target = FixedPointNumber.ZERO.minus(target);
   }
 
-  if (target.isLessOrEqualTo(minimum)) return true;
+  if (target.isLessOrEqualTo(minimum)) {
+    return true;
+  }
 
   return false;
 };
 
 export const isCodec = (target: any): boolean => {
-  if (typeof target !== 'object') return false;
+  if (typeof target !== 'object') {
+    return false;
+  }
 
   return Reflect.has(target, 'toHuman');
 };

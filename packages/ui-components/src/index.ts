@@ -3,7 +3,6 @@ import styled from 'styled-components';
 // export common thirdpart packages
 export { styled };
 
-export * from './Alert';
 export * from './Loading';
 
 export * from './Icon';

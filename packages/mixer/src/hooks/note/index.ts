@@ -1,4 +1,4 @@
-import { ChainType, computeChainIdType, internalChainIdIntoEVMId } from '@webb-tools/api-providers';
+import { ChainType, computeChainIdType, internalChainIdIntoEVMId } from '@webb-dapp/apps/configs';
 import { Note, NoteGenInput } from '@webb-tools/sdk-core';
 import { useEffect, useState } from 'react';
 
@@ -8,7 +8,9 @@ export const useDepositNote = (value: string): null | Note => {
   useEffect(() => {
     const handler = async () => {
       try {
-        if (value === '') throw new Error('empty value');
+        if (value === '') {
+          throw new Error('empty value');
+        }
         let d = await Note.deserialize(value);
         // const noteLeaf = d.getLeaf();
         // console.log('noteLeaf: ', noteLeaf.toString());

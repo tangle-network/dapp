@@ -1,12 +1,12 @@
 import React, { ReactNode } from 'react';
 
-import { ReactComponent as ArrowPixelIcon } from './assets/arrow-pixel.svg';
-import { ReactComponent as CheckedCircleIcon } from './assets/checked-circle.svg';
-import { ReactComponent as CloseIcon } from './assets/close.svg';
-import { ReactComponent as CopyIcon } from './assets/copy.svg';
-import { ReactComponent as EditIcon } from './assets/edit.svg';
-import { ReactComponent as SwapIcon } from './assets/swap.svg';
-import { ReactComponent as SwitchIcon } from './assets/switch.svg';
+import * as ArrowPixelIcon from './assets/arrow-pixel.svg';
+import * as CheckedCircleIcon from './assets/checked-circle.svg';
+import * as CloseIcon from './assets/close.svg';
+import * as CopyIcon from './assets/copy.svg';
+import * as EditIcon from './assets/edit.svg';
+import * as SwapIcon from './assets/swap.svg';
+import * as SwitchIcon from './assets/switch.svg';
 
 export { CopyIcon, CloseIcon, CheckedCircleIcon, EditIcon, SwapIcon, SwitchIcon, ArrowPixelIcon };
 

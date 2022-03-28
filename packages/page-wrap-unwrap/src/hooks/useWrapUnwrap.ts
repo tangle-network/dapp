@@ -96,7 +96,9 @@ export function useWrapUnwrap() {
   );
 
   const execute = useCallback(() => {
-    if (!amount) return;
+    if (!amount) {
+      return;
+    }
 
     switch (context) {
       case 'wrap':

@@ -44,13 +44,17 @@ export const useBridgeDeposit = (): BridgeDepositApi => {
   /// api
   const depositApi = useMemo(() => {
     const depositApi = activeApi?.methods.bridge.deposit;
-    if (!depositApi?.enabled) return null;
+    if (!depositApi?.enabled) {
+      return null;
+    }
     return depositApi.inner;
   }, [activeApi]);
 
   // hook events
   useEffect(() => {
-    if (!depositApi || !bridgeApi) return;
+    if (!depositApi || !bridgeApi) {
+      return;
+    }
     const unSub = depositApi.on('error', (error) => {
       setError(error);
     });

@@ -184,7 +184,9 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
         });
       }
 
-      if (!activeApi) return;
+      if (!activeApi) {
+        return;
+      }
       _setActiveAccount(account);
       // TODO resolve the account inner type issue
       await activeApi.accounts.setActiveAccount(account as any);

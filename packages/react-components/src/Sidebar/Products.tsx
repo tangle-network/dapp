@@ -3,10 +3,10 @@ import { useModal } from '@webb-dapp/react-hooks';
 import { ArrowDownIcon } from '@webb-dapp/ui-components/assets/ArrowDownIcon';
 import React, { createRef, FC, memo, useCallback, useContext, useEffect } from 'react';
 import { NavLink, NavLinkProps, useMatch } from 'react-router-dom';
+import styled from 'styled-components';
 
 import { SidebarActiveContext } from './context';
 import { ProductItem as IProductItem } from './types';
-import styled from 'styled-components';
 
 interface ProductItemProps {
   collapse: boolean;
@@ -71,7 +71,7 @@ const ProductList = styled.div<ProductListProps>`
   display: ${(props): string => (props.collapse ? 'none' : 'block')};
 `;
 
-const ProductArrow = styled(props => <ArrowDownIcon {...props} />)<{ open: boolean }>`
+const ProductArrow = styled((props) => <ArrowDownIcon {...props} />)<{ open: boolean }>`
   transform: rotate(${(props): number => (props.open ? -180 : 0)}deg);
   & g {
     stroke: var(--color-primary);
@@ -90,7 +90,9 @@ const ProductSubItem: FC<ProductItemProps> = memo(({ collapse, data }) => {
   }, [data.path, setSubMenu]);
 
   useEffect(() => {
-    if (!isMatch) return;
+    if (!isMatch) {
+      return;
+    }
 
     if (!!isMatch && setActive && data.path && active !== ref.current) {
       setActive(ref.current);
@@ -127,7 +129,9 @@ const ProductItem: FC<ProductItemProps> = memo(({ collapse, data }) => {
   }, [data.path, setSubMenu]);
 
   useEffect(() => {
-    if (!isMatch) return;
+    if (!isMatch) {
+      return;
+    }
 
     if (!!isMatch && setActive && data.path && active !== ref.current) {
       setActive(ref.current);
