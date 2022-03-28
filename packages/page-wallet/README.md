@@ -1,1 +1,0 @@
-@webb-dapp/page-wallet

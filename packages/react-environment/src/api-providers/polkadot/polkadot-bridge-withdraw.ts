@@ -1,6 +1,4 @@
 import { InternalChainId } from '@webb-dapp/apps/configs';
-// @ts-ignore
-import Worker from '@webb-dapp/mixer/utils/proving-manager.worker';
 import { WithdrawState } from '@webb-dapp/react-environment';
 import { WebbPolkadot } from '@webb-dapp/react-environment/api-providers';
 import { getCachedFixtureURI, withLocalFixtures } from '@webb-dapp/utils/misc';
@@ -79,7 +77,8 @@ export class PolkadotBridgeWithdraw extends BridgeWithdraw<WebbPolkadot> {
       const leafHex = u8aToHex(leaf);
       let leafIndex = leaves.findIndex((leaf) => u8aToHex(leaf) === leafHex);
       logger.trace(leaves.map((i) => u8aToHex(i)));
-      const pm = new ProvingManager(new Worker());
+      const worker = new Worker(new URL('@webb-dapp/mixer/utils/proving-manager.worker', import.meta.url));
+      const pm = new ProvingManager(worker);
 
       const recipientAccountHex = u8aToHex(decodeAddress(recipient));
       const relayerAccountHex = u8aToHex(decodeAddress(recipient));
@@ -143,8 +142,8 @@ export class PolkadotBridgeWithdraw extends BridgeWithdraw<WebbPolkadot> {
 }
 async function fetchSubstrateProvingKey() {
   // TODO: change to anchor fixture
-  const IPFSUrl = `https://ipfs.io/ipfs/QmYDtGX7Wf5qUPEpGsgrX6oss2m2mm8vi7uzNdK4C9yJdZ`;
-  const cachedURI = getCachedFixtureURI('proving_key_uncompressed_anchor.bin');
+  const IPFSUrl = `https://ipfs.io/ipfs/QmXRGKJZvFpCRw5ZvdxoeXtyteof4w1tPrdu9Jopz8YzB3`;
+  const cachedURI = getCachedFixtureURI('proving_key_substrate_anchor.bin');
   const ipfsKeyRequest = await fetch(withLocalFixtures() ? cachedURI : IPFSUrl);
   const circuitKeyArrayBuffer = await ipfsKeyRequest.arrayBuffer();
   logger.info(`Done Fetching key`);

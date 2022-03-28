@@ -1,6 +1,6 @@
 import { InternalChainId } from '@webb-dapp/apps/configs';
 // @ts-ignore
-import Worker from '@webb-dapp/mixer/utils/proving-manager.worker';
+// import { Worker } from '@webb-dapp/mixer/utils/proving-manager.worker';
 import { RelayedWithdrawResult, WebbRelayer } from '@webb-dapp/react-environment';
 import { getCachedFixtureURI, withLocalFixtures } from '@webb-dapp/utils/misc';
 import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
@@ -21,8 +21,8 @@ const transactionString = (hexString: string) => {
 };
 
 async function fetchSubstrateProvingKey() {
-  const IPFSUrl = `https://ipfs.io/ipfs/QmYDtGX7Wf5qUPEpGsgrX6oss2m2mm8vi7uzNdK4C9yJdZ`;
-  const cachedURI = getCachedFixtureURI('proving_key_uncompressed.bin');
+  const IPFSUrl = `https://ipfs.io/ipfs/QmfQUgqRXCdUiogiRU8ZdLFZD2vqVb9fHpLkL6DsGHwoLH`;
+  const cachedURI = getCachedFixtureURI('proving_key_substrate_mixer.bin');
   const ipfsKeyRequest = await fetch(withLocalFixtures() ? cachedURI : IPFSUrl);
   const circuitKeyArrayBuffer = await ipfsKeyRequest.arrayBuffer();
   logger.info(`Done Fetching key from ${ipfsKeyRequest.url}`);
@@ -133,7 +133,8 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
       logger.trace(leaves.map((i) => u8aToHex(i)));
       const activeRelayer = this.activeRelayer[0];
 
-      const pm = new ProvingManager(new Worker());
+      const worker = new Worker(new URL('@webb-dapp/mixer/utils/proving-manager.worker', import.meta.url));
+      const pm = new ProvingManager(worker);
 
       const recipientAccountHex = u8aToHex(decodeAddress(recipient));
       // ss58 format

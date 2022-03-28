@@ -64,7 +64,9 @@ export const TextAnimation: FC<{ value: ReactNode } & BareProps> = ({ className,
   }, [value, setPrevValue, setMotionData]);
 
   useLayoutEffect(() => {
-    if (!$value.current || !$container.current) return;
+    if (!$value.current || !$container.current) {
+      return;
+    }
 
     const height = window.getComputedStyle($value.current).height;
 

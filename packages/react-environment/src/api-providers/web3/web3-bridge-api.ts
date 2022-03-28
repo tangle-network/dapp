@@ -52,7 +52,9 @@ export class Web3BridgeApi extends BridgeApi<WebbWeb3Provider, BridgeConfig> {
       return [];
     }
     const wrappedTokenAddress = this.getTokenAddress(chainTypeId);
-    if (!wrappedTokenAddress) return [];
+    if (!wrappedTokenAddress) {
+      return [];
+    }
 
     // Get the available token addresses which can wrap into the wrappedToken
     const wrappedToken = new WebbGovernedToken(this.inner.getEthersProvider(), wrappedTokenAddress);
@@ -64,8 +66,9 @@ export class Web3BridgeApi extends BridgeApi<WebbWeb3Provider, BridgeConfig> {
       const wrappableTokenAddress = this.config.currencies[currencyId].addresses.get(internalChainId);
       return wrappableTokenAddress && tokenAddresses.includes(wrappableTokenAddress);
     });
-    if (await wrappedToken.isNativeAllowed())
+    if (await wrappedToken.isNativeAllowed()) {
       wrappableCurrencyIds.push(this.config.chains[internalChainId].nativeCurrencyId);
+    }
 
     const wrappableCurrencies = wrappableCurrencyIds.map((currencyId) => {
       return Currency.fromCurrencyId(currencyId);

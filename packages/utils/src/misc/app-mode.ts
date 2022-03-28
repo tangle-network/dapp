@@ -4,7 +4,7 @@ export type AppMode = 'development' | 'production';
 const appLogger = LoggerService.get('App');
 export function appMode(): AppMode {
   // @ts-ignore
-  return process.env.REACT_APP_BUILD_ENV;
+  return process.env.NODE_ENV;
 }
 
 export function isProduction() {
@@ -16,11 +16,12 @@ export function isDevelopment() {
 }
 
 export function isLocalFixtures() {
-  return process.env.REACT_APP_LOCAL_FIXTURES === 'true';
+  return process.env.LOCAL_FIXTURES === 'true';
 }
 
 export function withLocalFixtures() {
   const dev = isDevelopment();
-  appLogger.info('local fixtures react app env: ', process.env.REACT_APP_LOCAL_FIXTURES);
+  console.log('local fixtures react app env: ', process.env.LOCAL_FIXTURES);
+  console.log('isDevelopment? ', dev);
   return dev && isLocalFixtures();
 }

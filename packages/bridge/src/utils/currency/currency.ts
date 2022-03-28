@@ -1,28 +1,21 @@
+import type { u64 } from '@polkadot/types';
+
 import { TOKEN_COLOR, TOKEN_FULLNAMES, TOKEN_IMAGES } from '@webb-dapp/mixer/utils/currency/constants';
 import { Token } from '@webb-tools/sdk-core';
-import { CurrencyId } from '@webb-tools/types/interfaces/types';
 
 import { ApiPromise, ApiRx } from '@polkadot/api';
 
 interface Data {
-  currencyId: CurrencyId;
+  currencyId: u64;
   token: Token;
 }
 
 export class Currency {
   private constructor(private _inner: Data, private _apiRx: ApiRx | ApiPromise) {}
 
-  static tokenFrom(currencyId: CurrencyId, amount: number) {
+  static tokenFrom(currencyId: u64, amount: number) {
     const id = currencyId?.toNumber() ?? currencyId;
     switch (id) {
-      case 0:
-        return new Token({
-          amount,
-          chain: 'edgeware',
-          name: 'EDG',
-          precision: 18,
-          symbol: 'EDG',
-        });
       default:
         return new Token({
           amount,
@@ -34,11 +27,11 @@ export class Currency {
     }
   }
 
-  static fromCurrencyId(currencyId: CurrencyId | number, api: ApiRx | ApiPromise, amount: number = 0): Currency {
-    let cid: CurrencyId;
+  static fromCurrencyId(currencyId: u64 | number, api: ApiRx | ApiPromise, amount: number = 0): Currency {
+    let cid: u64;
     if (typeof currencyId === 'number') {
       // @ts-ignore
-      cid = api.createType('CurrencyId', currencyId);
+      cid = api.createType('u64', currencyId);
     } else {
       cid = currencyId;
     }

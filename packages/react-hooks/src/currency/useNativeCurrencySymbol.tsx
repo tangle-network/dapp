@@ -3,7 +3,9 @@ import { Currency } from '@webb-dapp/react-environment/webb-context/currency/cur
 
 export const useNativeCurrencySymbol = () => {
   const { activeChain } = useWebContext();
-  if (!activeChain) return '';
+  if (!activeChain) {
+    return '';
+  }
 
   const currency = Currency.fromCurrencyId(activeChain.nativeCurrencyId);
   return currency.view.symbol;

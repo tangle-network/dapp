@@ -201,7 +201,6 @@ const DropdownInput: React.FC<DropdownInputProps> = ({ chains, onChange, value }
                 <StyledList as={List} dense disablePadding>
                   {chains.map((chainTypeId) => {
                     const isSelected = selected?.id === chainTypeId;
-                    console.log('chainTypeId: ', chainTypeId);
                     let chain = chainsPopulated[chainTypeIdToInternalId(chainTypeId)];
                     return (
                       <div>

@@ -22,13 +22,17 @@ export const useDeposit = (): DepositApi => {
   /// api
   const depositApi = useMemo(() => {
     const depositApi = activeApi?.methods.mixer.deposit;
-    if (!depositApi?.enabled) return null;
+    if (!depositApi?.enabled) {
+      return null;
+    }
     return depositApi.inner;
   }, [activeApi]);
 
   // hook events
   useEffect(() => {
-    if (!depositApi) return;
+    if (!depositApi) {
+      return;
+    }
     const unSub = depositApi.on('error', (error) => {
       setError(error);
     });

@@ -4,7 +4,9 @@ import { ChainType, ChainTypeId, EVMChainId, InternalChainId, SubstrateChainId }
 
 export const byteArrayToNum = (arr: number[]): number => {
   let n = 0;
-  for (let i of arr) n = n * 256 + i;
+  for (let i of arr) {
+    n = n * 256 + i;
+  }
   return n;
 };
 

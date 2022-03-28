@@ -37,14 +37,15 @@ const WalletSelectWrapper = styled.div<{ wallet: ManagedWallet | null }>`
   padding: 0px 20px 0px 20px;
 
   ${({ wallet }) => {
-    if (wallet)
+    if (wallet) {
       return css`
         justify-content: space-between;
       `;
-    else
+    } else {
       return css`
         justify-content: center;
       `;
+    }
   }}
 
   .select-wallet-text {

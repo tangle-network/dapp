@@ -37,7 +37,9 @@ export function usePageTitle(config: { content: ReactNode; breadcrumb?: UIData['
   const ui = useStore('ui');
 
   useEffect(() => {
-    if (!_config.content && !_config.breadcrumb) return;
+    if (!_config.content && !_config.breadcrumb) {
+      return;
+    }
 
     ui.setTitle(_config);
     /* eslint-disable-next-line */

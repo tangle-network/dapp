@@ -2,8 +2,6 @@ import { lightPallet } from '@webb-dapp/ui-components/styling/colors';
 import { createGlobalStyle } from 'styled-components';
 
 export const LightTheme = createGlobalStyle`
-
-
 	:root {
 		--color-primary: #173dc9;
 		--color-primary-light: #2938ce;

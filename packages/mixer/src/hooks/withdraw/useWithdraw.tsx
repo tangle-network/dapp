@@ -44,7 +44,9 @@ export const useWithdraw = (params: UseWithdrawProps) => {
   const { registerInteractiveFeedback } = useWebContext();
   const withdrawApi = useMemo(() => {
     const withdraw = activeApi?.methods.mixer.withdraw;
-    if (!withdraw?.enabled) return null;
+    if (!withdraw?.enabled) {
+      return null;
+    }
     return withdraw.inner;
   }, [activeApi]);
 
@@ -82,7 +84,9 @@ export const useWithdraw = (params: UseWithdrawProps) => {
       }));
     });
     const unsubscribe: Record<string, (() => void) | void> = {};
-    if (!withdrawApi) return;
+    if (!withdrawApi) {
+      return;
+    }
     unsubscribe['stateChange'] = withdrawApi.on('stateChange', (stage: WithdrawState) => {
       setStage(stage);
     });
@@ -107,7 +111,9 @@ export const useWithdraw = (params: UseWithdrawProps) => {
   }, [withdrawApi, params.note]);
 
   const withdraw = useCallback(async () => {
-    if (!withdrawApi || !params.note) return;
+    if (!withdrawApi || !params.note) {
+      return;
+    }
     if (stage === WithdrawState.Ideal) {
       const { note, recipient } = params;
       try {

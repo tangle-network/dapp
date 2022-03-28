@@ -156,8 +156,8 @@ export const currenciesConfig: AppConfig['currencies'] = {
     role: CurrencyRole.Governable,
     icon: WebbWrappedLogo(EtherLogo()),
     addresses: new Map([
-      [InternalChainId.HermesLocalnet, '0xD24260C102B5D128cbEFA0F655E5be3c2370677C'],
-      [InternalChainId.AthenaLocalnet, '0xD30C8839c1145609E564b986F667b273Ddcb8496'],
+      [InternalChainId.HermesLocalnet, '0x510C6297cC30A058F41eb4AF1BFC9953EaD8b577'],
+      [InternalChainId.AthenaLocalnet, '0x7758F98C1c487E5653795470eEab6C4698bE541b'],
     ]),
   },
 };

@@ -78,7 +78,9 @@ export const useInputValue = <T>(defaultValue: Partial<T>, options?: Options<T>)
   }, [ref, reset, error, setValidator]);
 
   useLayoutEffect(() => {
-    if (!validator.current) return;
+    if (!validator.current) {
+      return;
+    }
 
     const _validator = validator.current(value);
 

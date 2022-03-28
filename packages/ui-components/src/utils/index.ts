@@ -7,19 +7,29 @@ export const nextTick = (fn: Function): void => {
 };
 
 export function getInputShadow(noBorder: boolean, error: boolean, focused: boolean): string {
-  if (noBorder) return 'none';
+  if (noBorder) {
+    return 'none';
+  }
 
-  if (error) return '0 0 2px 2px var(--input-shadow-error)';
+  if (error) {
+    return '0 0 2px 2px var(--input-shadow-error)';
+  }
 
-  if (focused) return '0 0 2px 2px var(--input-shadow)';
+  if (focused) {
+    return '0 0 2px 2px var(--input-shadow)';
+  }
 
   return 'none';
 }
 
 export function getInputBorder(noBorder: boolean, error: boolean): string {
-  if (noBorder) return 'none';
+  if (noBorder) {
+    return 'none';
+  }
 
-  if (error) return '1px solid var(--input-border-color-error)';
+  if (error) {
+    return '1px solid var(--input-border-color-error)';
+  }
 
   return '1px solid var(--input-border-color)';
 }

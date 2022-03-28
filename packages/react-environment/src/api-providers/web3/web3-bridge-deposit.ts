@@ -215,7 +215,9 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
     logger.log('getWrappableAssets of chain: ', chainId);
     if (bridge) {
       const wrappedTokenAddress = bridge.getTokenAddress(chainId);
-      if (!wrappedTokenAddress) return [];
+      if (!wrappedTokenAddress) {
+        return [];
+      }
 
       // Get the available token addresses which can wrap into the wrappedToken
       const wrappedToken = new WebbGovernedToken(this.inner.getEthersProvider(), wrappedTokenAddress);
@@ -229,7 +231,9 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
         return wrappableTokenAddress && tokenAddresses.includes(wrappableTokenAddress);
       });
 
-      if (await wrappedToken.isNativeAllowed()) wrappableCurrencyIds.push(this.config.chains[chainId].nativeCurrencyId);
+      if (await wrappedToken.isNativeAllowed()) {
+        wrappableCurrencyIds.push(this.config.chains[chainId].nativeCurrencyId);
+      }
 
       const wrappableCurrencies = wrappableCurrencyIds.map((currencyId) => {
         return Currency.fromCurrencyId(currencyId);
@@ -283,7 +287,7 @@ export class Web3BridgeDeposit extends BridgeDeposit<WebbWeb3Provider, DepositPa
       exponentiation: '5',
       width: '4',
       protocol: 'anchor',
-      chain: destChainId.toString(),
+      targetChain: destChainId.toString(),
       sourceChain: sourceChainId.toString(),
       sourceIdentifyingData: srcAddress,
       targetIdentifyingData: target,
