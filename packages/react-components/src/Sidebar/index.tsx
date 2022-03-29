@@ -12,7 +12,6 @@ import { Products } from './Products';
 import { Slider } from './Slider';
 import { SocialPlatform } from './SocialPlatform';
 import { SidebarConfig } from './types';
-import styled from 'styled-components';
 
 interface SidebarProps {
   collapse: boolean;

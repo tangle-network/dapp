@@ -22,32 +22,36 @@ import { AccountSwitchNotification } from '@webb-dapp/ui-components/notification
 import { Spinner } from '@webb-dapp/ui-components/Spinner/Spinner';
 import { BareProps } from '@webb-dapp/ui-components/types';
 import { Account } from '@webb-dapp/wallet/account/Accounts.adapter';
-import { EVMChainId, evmIdIntoInternalChainId, getEVMChainName, InternalChainId } from '@webb-tools/api-providers';
 import {
   AppConfig,
   Chain,
+  EVMChainId,
+  evmIdIntoInternalChainId,
+  getEVMChainName,
+  InteractiveFeedback,
+  InternalChainId,
   NetworkStorage,
   NotificationPayload,
   Wallet,
+  WebbApiProvider,
+  WebbError,
+  WebbErrorCodes,
   WebbPolkadot,
   WebbWeb3Provider,
 } from '@webb-tools/api-providers';
-import { WebbApiProvider } from '@webb-tools/api-providers';
-import { InteractiveFeedback, WebbError, WebbErrorCodes } from '@webb-tools/api-providers';
 import { Web3Provider } from '@webb-tools/api-providers/ext-providers';
 import { LoggerService } from '@webb-tools/app-util';
 import { logger } from 'ethers';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { extensionNotInstalled, unsupportedChain } from './error';
-// @ts-ignore
-import Worker from './proving-manager.worker';
 import { SettingProvider } from './SettingProvider';
 
 interface WebbProviderProps extends BareProps {
   applicationName: string;
   applicationVersion?: string;
 }
+
 console.log(WebbPolkadot, WebbWeb3Provider);
 const chains = chainsPopulated;
 
@@ -323,7 +327,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
               relayer,
               appConfig,
               notificationHandler,
-              () => new Worker()
+              () => new Worker(new URL('./proving-manager.worker'), import.meta.url as any)
             );
             await setActiveApiWithAccounts(webbPolkadot, chain.id);
             localActiveApi = webbPolkadot;
