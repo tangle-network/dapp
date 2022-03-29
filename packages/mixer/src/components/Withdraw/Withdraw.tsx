@@ -1,5 +1,5 @@
 import { FormHelperText, InputBase, Typography } from '@material-ui/core';
-import { chainsPopulated, currenciesConfig, getChainNameFromChainId, parseChainIdType } from '@webb-dapp/apps/configs';
+import { chainsPopulated, currenciesConfig, getChainNameFromChainId } from '@webb-dapp/apps/configs';
 import { useWithdraw } from '@webb-dapp/mixer/hooks';
 import { useDepositNote } from '@webb-dapp/mixer/hooks/note';
 import { WithdrawingModal, WithdrawSuccessModal } from '@webb-dapp/react-components/Withdraw';

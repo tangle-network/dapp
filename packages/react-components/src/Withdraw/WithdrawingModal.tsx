@@ -1,7 +1,8 @@
 import { Button, Icon, LinearProgress, Tooltip, Typography } from '@material-ui/core';
-import { getEVMChainName, parseChainIdType } from '@webb-dapp/apps/configs';
+import { useAppConfig } from '@webb-dapp/react-environment';
 import { SpaceBox } from '@webb-dapp/ui-components/Box';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
+import { getEVMChainName, parseChainIdType } from '@webb-tools/api-providers';
 import { WithdrawState } from '@webb-tools/api-providers';
 import { JsNote as DepositNote } from '@webb-tools/wasm-utils';
 import React, { useMemo } from 'react';
@@ -31,13 +32,13 @@ const WithdrawInfoWrapper = styled.div`
     padding-top: 1rem;
     font-family: ${FontFamilies.AvenirNext};
     text-align: center;
-    font-weight: medium;
+    font-weight: normal;
   }
 
   .withdraw-modal-header-complete {
     font-family: ${FontFamilies.AvenirNext};
     text-align: center;
-    font-weight: medium;
+    font-weight: normal;
   }
 
   .progress-content {
@@ -146,7 +147,7 @@ export const WithdrawingModal: React.FC<WithdrawingModalProps> = ({
     const address = withdrawTxInfo.account;
     return `${address.slice(0, 6)}...${address.slice(address.length - 6, address.length)}`;
   }, [withdrawTxInfo]);
-
+  const appConfig = useAppConfig();
   return (
     <WithdrawInfoWrapper>
       <header className={'modal-header'}>
@@ -186,7 +187,7 @@ export const WithdrawingModal: React.FC<WithdrawingModalProps> = ({
                 <Typography variant={'caption'}>
                   <b>
                     Receiving {note.amount + ' ' + note.tokenSymbol} on{' '}
-                    {getEVMChainName(parseChainIdType(Number(note.targetChainId)).chainId)}
+                    {getEVMChainName(appConfig, parseChainIdType(Number(note.targetChainId)).chainId)}
                   </b>
                 </Typography>
               </InfoItem>
