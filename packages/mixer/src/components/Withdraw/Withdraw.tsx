@@ -11,7 +11,7 @@ import { MixerNoteInput } from '@webb-dapp/ui-components/Inputs/NoteInput/MixerN
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { FeesInfo, RelayerApiAdapter } from '@webb-dapp/ui-components/RelayerInput/RelayerInput';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
-import { WithdrawState } from '@webb-tools/api-providers';
+import { parseChainIdType, WithdrawState } from '@webb-tools/api-providers';
 import { ActiveWebbRelayer } from '@webb-tools/api-providers';
 import { WalletConfig } from '@webb-tools/api-providers';
 import { Note } from '@webb-tools/sdk-core';
