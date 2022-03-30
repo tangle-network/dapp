@@ -52,7 +52,6 @@ interface WebbProviderProps extends BareProps {
   applicationVersion?: string;
 }
 
-console.log(WebbPolkadot, WebbWeb3Provider);
 const chains = chainsPopulated;
 
 const registerInteractiveFeedback = (
@@ -226,7 +225,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
         if (defaultFromSettings) {
           // TODO resolve the account inner type issue
           _setActiveAccount(defaultFromSettings as any);
-          await nextActiveApi?.accounts.setActiveAccount(defaultFromSettings);
+          await nextActiveApi.accounts.setActiveAccount(defaultFromSettings);
         }
       } else {
         // await setActiveAccount(accounts[0]);
@@ -316,6 +315,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
         case WalletId.Polkadot:
           {
             const url = chain.url;
+            console.log('url: ', url);
             const webbPolkadot = await WebbPolkadot.init(
               'Webb DApp',
               [url],
@@ -327,7 +327,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
               relayer,
               appConfig,
               notificationHandler,
-              () => new Worker(new URL('./proving-manager.worker'), import.meta.url as any)
+              () => new Worker(new URL('./proving-manager.worker', import.meta.url))
             );
             await setActiveApiWithAccounts(webbPolkadot, chain.id);
             localActiveApi = webbPolkadot;

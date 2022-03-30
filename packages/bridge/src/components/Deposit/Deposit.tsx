@@ -107,7 +107,7 @@ export const Deposit: React.FC<DepositProps> = () => {
     }
 
     // todo: figure out what happens for polkadot - won't be depositing by address
-    const tokenAddress = activeApi.methods.bridgeApi.getTokenAddress({
+    const tokenAddress = activeApi.methods.anchorApi.getTokenAddress({
       chainId: activeChain.chainId,
       chainType: activeChain.chainType,
     });

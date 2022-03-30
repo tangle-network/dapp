@@ -43,7 +43,7 @@ export const useBridgeDeposit = (): BridgeDepositApi => {
   const [selectedBridgeCurrency, setSelectedBridgeCurrency] = useState<null | Currency>(null);
   /// api
   const depositApi = useMemo(() => {
-    const depositApi = activeApi?.methods.bridge.deposit;
+    const depositApi = activeApi?.methods.anchor.deposit;
     if (!depositApi?.enabled) {
       return null;
     }

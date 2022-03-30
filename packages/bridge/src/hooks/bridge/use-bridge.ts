@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 export const useBridge = () => {
   const { activeApi } = useWebContext();
-  const bridgeApi = useMemo(() => activeApi?.methods.bridgeApi, [activeApi]);
+  const bridgeApi = useMemo(() => activeApi?.methods.anchorApi, [activeApi]);
   const [tokens, setTokens] = useState<Currency[]>([]);
 
   useEffect(() => {

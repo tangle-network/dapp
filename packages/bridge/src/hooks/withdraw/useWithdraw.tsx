@@ -53,7 +53,7 @@ export const useWithdraw = (params: UseWithdrawProps) => {
     },
   });
   const withdrawApi = useMemo(() => {
-    const withdraw = activeApi?.methods.bridge.withdraw;
+    const withdraw = activeApi?.methods.anchor.withdraw;
     if (!withdraw?.enabled) {
       return null;
     }
