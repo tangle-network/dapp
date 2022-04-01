@@ -13,13 +13,13 @@
     "eslint": "^6.6.0",
     "@polkadot/api": "7.13.1",
     "react-error-overlay": "6.0.9",
-    "@webb-tools/type-definitions": "file:../webb.js/packages/type-definitions/build",
-    "@webb-tools/api": "file:../webb.js/packages/api/build",
-    "@webb-tools/types": "file:../webb.js/packages/types/build",
-    "@webb-tools/app-util": "file:../webb.js/packages/app-util/build",
-    "@webb-tools/sdk-core": "file:../webb.js/packages/sdk-core/build",
-    "@webb-tools/wasm-utils": "file:../webb.js/packages/wasm-utils/build",
-    "@webb-tools/api-providers": "file:../webb.js/packages/api-providers/build"
+    "@webb-tools/type-definitions": "0.1.4-45",
+    "@webb-tools/api": "0.1.4-45",
+    "@webb-tools/types": "0.1.4-45",
+    "@webb-tools/app-util": "0.1.4-45",
+    "@webb-tools/sdk-core": "0.1.4-45",
+    "@webb-tools/wasm-utils": "0.1.4-45",
+    "@webb-tools/api-providers": "0.1.4-45"
   },
   "scripts": {
     "bump-version": "node scripts/bump-version.js",
@@ -59,7 +59,7 @@
     "tornado-snarkjs": "git+https://github.com/tornadocash/snarkjs.git#869181cfaf7526fe8972073d31655493a04326d5",
     "tornado-websnark": "git+https://github.com/webb-tools/websnark.git",
     "web3": "^1.3.5",
-    "@webb-tools/api-providers": "file:../webb.js/packages/api-providers/build"
+    "@webb-tools/api-providers": "0.1.4-45"
   },
   "devDependencies": {
     "@babel/plugin-syntax-import-meta": "^7.10.4",
