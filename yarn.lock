@@ -4502,28 +4502,29 @@
     "@xtuc/long" "4.2.2"
 
 "@webb-tools/api-providers@file:../webb.js/packages/api-providers/build":
-  version "0.1.4-39"
+  version "0.1.4-45"
   dependencies:
     "@babel/runtime" "^7.10.2"
     "@polkadot/extension-dapp" "^0.35.0-beta.35"
     "@walletconnect/web3-provider" "^1.7.5"
     "@webb-tools/contracts" "0.1.7"
+    "@webb-tools/utils" "0.1.7"
     bignumber.js "^9.0.0"
     snarkjs "^0.4.6"
     tornado-circomlib "git+https://github.com/webb-tools/tornado-circomlib.git"
     tornado-snarkjs "git+https://github.com/tornadocash/snarkjs.git#869181cfaf7526fe8972073d31655493a04326d5"
     tornado-websnark "git+https://github.com/webb-tools/websnark.git"
 
-"@webb-tools/api@0.1.4-43", "@webb-tools/api@file:../webb.js/packages/api/build":
-  version "0.1.4-43"
+"@webb-tools/api@0.1.4-43", "@webb-tools/api@0.1.4-45", "@webb-tools/api@file:../webb.js/packages/api/build":
+  version "0.1.4-45"
   dependencies:
     "@babel/runtime" "^7.10.2"
     "@polkadot/api" "7.13.1"
     "@polkadot/rpc-core" "7.13.1"
-    "@webb-tools/types" "0.1.4-43"
+    "@webb-tools/types" "0.1.4-45"
 
 "@webb-tools/app-util@0.1.4-43", "@webb-tools/app-util@file:../webb.js/packages/app-util/build":
-  version "0.1.4-43"
+  version "0.1.4-45"
   dependencies:
     "@babel/runtime" "^7.10.2"
     bignumber.js "^9.0.0"
@@ -4538,31 +4539,43 @@
     ethers "5.5.1"
 
 "@webb-tools/sdk-core@0.1.4-43", "@webb-tools/sdk-core@file:../webb.js/packages/sdk-core/build":
-  version "0.1.4-43"
+  version "0.1.4-45"
   dependencies:
     "@types/events" "^3.0.0"
-    "@webb-tools/api" "0.1.4-43"
-    "@webb-tools/wasm-utils" "0.1.4-43"
+    "@webb-tools/api" "0.1.4-45"
+    "@webb-tools/wasm-utils" "0.1.4-45"
     bignumber.js "^9.0.0"
     events "^3.2.0"
     lodash "^4.17.20"
 
-"@webb-tools/type-definitions@0.1.4-43", "@webb-tools/type-definitions@file:../webb.js/packages/type-definitions/build":
-  version "0.1.4-43"
+"@webb-tools/type-definitions@0.1.4-45", "@webb-tools/type-definitions@file:../webb.js/packages/type-definitions/build":
+  version "0.1.4-45"
   dependencies:
     "@open-web3/orml-type-definitions" "^1.0.1"
 
-"@webb-tools/types@0.1.4-43", "@webb-tools/types@file:../webb.js/packages/types/build":
-  version "0.1.4-43"
+"@webb-tools/types@0.1.4-43", "@webb-tools/types@0.1.4-45", "@webb-tools/types@file:../webb.js/packages/types/build":
+  version "0.1.4-45"
   dependencies:
     "@babel/runtime" "^7.10.2"
     "@open-web3/orml-types" "^1.0.1"
     "@polkadot/typegen" "7.13.1"
     "@polkadot/types" "7.13.1"
-    "@webb-tools/type-definitions" "0.1.4-43"
+    "@webb-tools/type-definitions" "0.1.4-45"
 
-"@webb-tools/wasm-utils@0.1.4-43", "@webb-tools/wasm-utils@file:../webb.js/packages/wasm-utils/build":
-  version "0.1.4-43"
+"@webb-tools/utils@0.1.7":
+  version "0.1.7"
+  resolved "https://registry.yarnpkg.com/@webb-tools/utils/-/utils-0.1.7.tgz#e0b4de966cbb261af38f76665a7d941ee22c01e5"
+  integrity sha512-kiB0UGYH6jvTiiziawZI4KU+W+W7O9KWaXCDT+lUTCiWXY70GnGOGVZFv44l7MmH2Lr5WlmWqb9oCbiS8rccmg==
+  dependencies:
+    bn.js "4.11.6"
+    circomlibjs "^0.0.8"
+    elliptic "^6.5.3"
+    eth-sig-util "^3.0.1"
+    ethers "5.5.1"
+    ffjavascript "^0.2.43"
+
+"@webb-tools/wasm-utils@0.1.4-45", "@webb-tools/wasm-utils@file:../webb.js/packages/wasm-utils/build":
+  version "0.1.4-45"
 
 "@webpack-cli/configtest@^1.1.1":
   version "1.1.1"
@@ -8860,7 +8873,7 @@ ffjavascript@0.2.48:
     wasmcurves "0.1.0"
     web-worker "^1.2.0"
 
-ffjavascript@^0.2.38, ffjavascript@^0.2.48:
+ffjavascript@^0.2.38, ffjavascript@^0.2.43, ffjavascript@^0.2.48:
   version "0.2.51"
   resolved "https://registry.yarnpkg.com/ffjavascript/-/ffjavascript-0.2.51.tgz#5d714686e3a5bde96dc57be84babc61911283629"
   integrity sha512-qshvFIjU6cWMQOtKwpU4JZOKfKHfN8TFJ0Tst1Bd/V8AfgzAUScqA+zRT6sLGdV9zlumLsMgrLzGVRK4kf6RQA==
