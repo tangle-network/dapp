@@ -1,5 +1,4 @@
-import { Account } from '@webb-dapp/wallet/account/Accounts.adapter';
-import { Chain, Wallet, WebbApiProvider } from '@webb-tools/api-providers';
+import { Account, Chain, Wallet, WebbApiProvider } from '@webb-tools/api-providers';
 import { AppConfig } from '@webb-tools/api-providers';
 import { InteractiveFeedback } from '@webb-tools/api-providers/webb-error';
 import React from 'react';

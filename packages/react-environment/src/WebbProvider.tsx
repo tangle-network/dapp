@@ -21,8 +21,8 @@ import { notificationApi } from '@webb-dapp/ui-components/notification';
 import { AccountSwitchNotification } from '@webb-dapp/ui-components/notification/AccountSwitchNotification';
 import { Spinner } from '@webb-dapp/ui-components/Spinner/Spinner';
 import { BareProps } from '@webb-dapp/ui-components/types';
-import { Account } from '@webb-dapp/wallet/account/Accounts.adapter';
 import {
+  Account,
   AppConfig,
   Chain,
   EVMChainId,
