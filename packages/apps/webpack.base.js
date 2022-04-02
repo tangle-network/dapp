@@ -33,17 +33,19 @@ function createWebpack(env, mode = 'production') {
     return alias;
   }, {});
   const plugins = fs.existsSync(path.join(env.context, 'public'))
-    ? new CopyWebpackPlugin({
-        patterns: [
-          {
-            from: 'public',
-            globOptions: {
-              dot: true,
-              ignore: ['**/index.html'],
+    ? [
+        new CopyWebpackPlugin({
+          patterns: [
+            {
+              from: 'public',
+              globOptions: {
+                dot: true,
+                ignore: ['**/index.html'],
+              },
             },
-          },
-        ],
-      })
+          ],
+        }),
+      ]
     : [];
 
   return {
