@@ -4583,7 +4583,7 @@
     "@webassemblyjs/ast" "1.11.1"
     "@xtuc/long" "4.2.2"
 
-"@webb-tools/api-providers@0.1.4-46", "@webb-tools/api-providers@0.1.4-47":
+"@webb-tools/api-providers@0.1.4-47":
   version "0.1.4-47"
   resolved "https://registry.yarnpkg.com/@webb-tools/api-providers/-/api-providers-0.1.4-47.tgz#4fdac61bcbfc406494ab82cf9ac0de1bc8db1fe4"
   integrity sha512-bda4AVgHq4YAoAKvWQnArUmbA18QwxnAjHIKyYPvK6jGVNnGxwAMIhDzSLlnXMvtWkBq8pWYxe4kgbDs6oGgDQ==
@@ -4599,7 +4599,7 @@
     tornado-snarkjs "git+https://github.com/tornadocash/snarkjs.git#869181cfaf7526fe8972073d31655493a04326d5"
     tornado-websnark "git+https://github.com/webb-tools/websnark.git"
 
-"@webb-tools/api@0.1.4-43", "@webb-tools/api@0.1.4-47":
+"@webb-tools/api@0.1.4-47":
   version "0.1.4-47"
   resolved "https://registry.yarnpkg.com/@webb-tools/api/-/api-0.1.4-47.tgz#a519017ce99db4ff94ea18986adfd228b22a2a47"
   integrity sha512-mtmHapUvcPPedAt5gcieO8GSaeeHLCcI/R7+4oduSmDrrhT6Agdv5K+qqqsS0hqEOf+F9rOYYhVp70iOwA02vA==
@@ -4609,7 +4609,7 @@
     "@polkadot/rpc-core" "7.13.1"
     "@webb-tools/types" "0.1.4-47"
 
-"@webb-tools/app-util@0.1.4-43", "@webb-tools/app-util@0.1.4-47":
+"@webb-tools/app-util@0.1.4-47":
   version "0.1.4-47"
   resolved "https://registry.yarnpkg.com/@webb-tools/app-util/-/app-util-0.1.4-47.tgz#c82f6e2b6103ed03b54afb851717bec4b22a4e7f"
   integrity sha512-/KWU2Cs0hHRcJh5iTYkDFlLEKevy8JnVvD/iCzj2K2+PZEkCA8/0edS88/tJdb2dWBQH7TnHlHIeTKsdZpbytw==
@@ -4626,7 +4626,7 @@
     "@typechain/hardhat" "^2.3.0"
     ethers "5.5.1"
 
-"@webb-tools/sdk-core@0.1.4-43", "@webb-tools/sdk-core@0.1.4-47":
+"@webb-tools/sdk-core@0.1.4-47":
   version "0.1.4-47"
   resolved "https://registry.yarnpkg.com/@webb-tools/sdk-core/-/sdk-core-0.1.4-47.tgz#b59b73106fd90b19d9c388903000984d9ffa7dac"
   integrity sha512-luOpP73G/IwjXGe0l+y8KkTPBf+ZlC6zfqf7pbiMuznzAUBu5SrQOfHHctx8fOn4EqdsQTk6mYVNhWYKoQuuhg==
@@ -4645,7 +4645,7 @@
   dependencies:
     "@open-web3/orml-type-definitions" "^1.0.1"
 
-"@webb-tools/types@0.1.4-43", "@webb-tools/types@0.1.4-47":
+"@webb-tools/types@0.1.4-47":
   version "0.1.4-47"
   resolved "https://registry.yarnpkg.com/@webb-tools/types/-/types-0.1.4-47.tgz#f699433f55d848a19f911088243cf4957b56f8a6"
   integrity sha512-bY7nZnkiF1ADL2TCF+bk0aaEbWQulKWiOO3yvFlAvSZylNzVVeNItnV2CYS+69XxDfvcLF2Xtw6odKacmJSVKg==

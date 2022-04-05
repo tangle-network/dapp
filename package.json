@@ -39,7 +39,7 @@
     "@walletconnect/client": "^1.7.1",
     "@walletconnect/qrcode-modal": "^1.7.1",
     "@walletconnect/web3-provider": "^1.7.1",
-    "@webb-tools/api-providers": "0.1.4-46",
+    "@webb-tools/api-providers": "0.1.4-47",
     "D": "^1.0.0",
     "circom": "^0.5.45",
     "circomlib": "^2.0.1",
