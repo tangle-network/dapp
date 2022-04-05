@@ -65,7 +65,7 @@ export const DimensionsProvider: React.FC = ({ children }) => {
 
     return () => {
       window.removeEventListener('resize', resizeHandler);
-      window.removeEventListener('scrollø', scrollHandler);
+      window.removeEventListener('scroll', scrollHandler);
     };
   }, []);
   return (

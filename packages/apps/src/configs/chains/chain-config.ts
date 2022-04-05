@@ -7,10 +7,9 @@ import OptimismLogo from '@webb-dapp/apps/configs/logos/chains/OptimismLogo';
 import PolygonLogo from '@webb-dapp/apps/configs/logos/chains/PolygonLogo';
 import ShidenLogo from '@webb-dapp/apps/configs/logos/chains/ShidenLogo';
 import WEBBLogo from '@webb-dapp/apps/configs/logos/chains/WebbLogo';
-import { AppConfig } from '@webb-dapp/react-environment/webb-context';
-
-import { WebbCurrencyId } from '../currencies/webb-currency-id.enum';
-import { ChainType, EVMChainId, InternalChainId, SubstrateChainId } from './chain-id.enum';
+import { AppConfig } from '@webb-tools/api-providers';
+import { WebbCurrencyId } from '@webb-tools/api-providers';
+import { ChainType, EVMChainId, InternalChainId, SubstrateChainId } from '@webb-tools/api-providers';
 
 export const getSupportedCurrenciesOfChain = (chainId: InternalChainId): WebbCurrencyId[] => {
   return chainsConfig[chainId].currencies;

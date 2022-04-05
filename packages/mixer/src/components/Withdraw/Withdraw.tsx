@@ -1,10 +1,9 @@
 import { FormHelperText, InputBase, Typography } from '@material-ui/core';
-import { chainsPopulated, currenciesConfig, getChainNameFromChainId, parseChainIdType } from '@webb-dapp/apps/configs';
+import { chainsPopulated, currenciesConfig, getChainNameFromChainId } from '@webb-dapp/apps/configs';
 import { useWithdraw } from '@webb-dapp/mixer/hooks';
 import { useDepositNote } from '@webb-dapp/mixer/hooks/note';
 import { WithdrawingModal, WithdrawSuccessModal } from '@webb-dapp/react-components/Withdraw';
-import { ActiveWebbRelayer, useWebContext, WithdrawState } from '@webb-dapp/react-environment';
-import { WalletConfig } from '@webb-dapp/react-environment/types/wallet-config.interface';
+import { useWebContext } from '@webb-dapp/react-environment';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { SettingsIcon } from '@webb-dapp/ui-components/assets/SettingsIcon';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
@@ -12,6 +11,9 @@ import { MixerNoteInput } from '@webb-dapp/ui-components/Inputs/NoteInput/MixerN
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { FeesInfo, RelayerApiAdapter } from '@webb-dapp/ui-components/RelayerInput/RelayerInput';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
+import { parseChainIdType, WithdrawState } from '@webb-tools/api-providers';
+import { ActiveWebbRelayer } from '@webb-tools/api-providers';
+import { WalletConfig } from '@webb-tools/api-providers';
 import { Note } from '@webb-tools/sdk-core';
 import React, { useCallback, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';

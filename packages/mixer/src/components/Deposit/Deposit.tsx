@@ -2,9 +2,7 @@ import { Typography } from '@material-ui/core';
 import { DepositConfirm } from '@webb-dapp/mixer/components/DepositConfirm/DepositConfirm';
 import { useDeposit } from '@webb-dapp/mixer/hooks/deposit/useDeposit';
 import { RequiredWalletSelection } from '@webb-dapp/react-components/RequiredWalletSelection/RequiredWalletSelection';
-import { WalletConfig } from '@webb-dapp/react-environment/types/wallet-config.interface';
-import { MixerSize, useWebContext } from '@webb-dapp/react-environment/webb-context';
-import { Currency } from '@webb-dapp/react-environment/webb-context/currency/currency';
+import { useAppConfig, useWebContext } from '@webb-dapp/react-environment';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { SpaceBox } from '@webb-dapp/ui-components/Box';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
@@ -12,7 +10,8 @@ import { MixerGroupSelect } from '@webb-dapp/ui-components/Inputs/MixerGroupSele
 import { TokenInput } from '@webb-dapp/ui-components/Inputs/TokenInput/TokenInput';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { getRoundedAmountString } from '@webb-dapp/ui-components/utils';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { Currency, MixerSize, WalletConfig } from '@webb-tools/api-providers';
+import React, { useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
 const DepositWrapper = styled.div<{ wallet: WalletConfig | undefined }>`
@@ -64,15 +63,17 @@ export const Deposit: React.FC<DepositProps> = () => {
   const { activeApi, activeChain, activeWallet, chains, switchChain } = useWebContext();
   const depositApi = useDeposit();
   const palette = useColorPallet();
-
+  const { currencies: currenciesConfig } = useAppConfig();
   const [showDepositModal, setShowDepositModal] = useState(false);
   const [selectedToken, setSelectedToken] = useState<Currency | undefined>(undefined);
   const [item, setItem] = useState<MixerSize | undefined>(undefined);
   const [tokenBalance, setTokenBalance] = useState('');
 
   const allCurrencies = useMemo(() => {
-    return activeChain?.nativeCurrencyId ? [Currency.fromCurrencyId(activeChain.nativeCurrencyId)] : [];
-  }, [activeChain]);
+    return activeChain?.nativeCurrencyId
+      ? [Currency.fromCurrencyId(currenciesConfig, activeChain.nativeCurrencyId)]
+      : [];
+  }, [activeChain, currenciesConfig]);
   const active = useMemo(() => selectedToken ?? allCurrencies[0], [allCurrencies, selectedToken]);
 
   // Whenever mixerSizes change (like chain switch), set selected mixer to undefined
@@ -105,7 +106,7 @@ export const Deposit: React.FC<DepositProps> = () => {
               currencies={allCurrencies}
               value={active}
               onChange={(token) => {
-                setSelectedToken(Currency.fromCurrencyId(token.view.id));
+                setSelectedToken(Currency.fromCurrencyId(currenciesConfig, token.view.id));
               }}
               wrapperStyles={{ width: '100%' }}
             />

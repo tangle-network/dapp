@@ -1,5 +1,4 @@
-import { InternalChainId } from '@webb-dapp/apps/configs';
-import { AppConfig } from '@webb-dapp/react-environment/webb-context';
+import { AppConfig, InternalChainId } from '@webb-tools/api-providers';
 
 export const mixersConfig: AppConfig['mixers'] = {
   [InternalChainId.Edgeware]: {

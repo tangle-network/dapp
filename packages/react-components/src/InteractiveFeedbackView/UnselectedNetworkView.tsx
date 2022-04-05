@@ -3,7 +3,7 @@ import { useStore } from '@webb-dapp/react-environment';
 import { CloseIcon } from '@webb-dapp/ui-components';
 import NetworksGlobeCircled from '@webb-dapp/ui-components/assets/NetworksGlobeCircled.png';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
-import { FeedbackEntry, InteractiveFeedback } from '@webb-dapp/utils/webb-error';
+import { FeedbackEntry, InteractiveFeedback } from '@webb-tools/api-providers';
 import React from 'react';
 import styled from 'styled-components';
 

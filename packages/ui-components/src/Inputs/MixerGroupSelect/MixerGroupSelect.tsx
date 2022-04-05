@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/indent */
-import { MixerSize } from '@webb-dapp/react-environment/webb-context';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
+import { MixerSize } from '@webb-tools/api-providers';
 import React, { useEffect, useMemo } from 'react';
 import styled, { css } from 'styled-components';
 

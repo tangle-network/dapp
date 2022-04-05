@@ -1,8 +1,8 @@
-import { useWebContext } from '@webb-dapp/react-environment';
-import { Currency, CurrencyContent } from '@webb-dapp/react-environment/webb-context/currency/currency';
-import { WrappingEventNames } from '@webb-dapp/react-environment/webb-context/wrap-unwrap';
+import { useAppConfig, useWebContext } from '@webb-dapp/react-environment';
+import { Currency, CurrencyContent, WrappingEventNames } from '@webb-tools/api-providers';
 import { LoggerService } from '@webb-tools/app-util';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+
 const logger = LoggerService.get('useWrapUnwrap');
 
 // 'Governed' tokens represent a token which can be minted from a deposit
@@ -41,7 +41,7 @@ export function useWrapUnwrap() {
     context: 'wrap',
   });
   const { amount, context } = state;
-
+  const { currencies: currenciesConfig } = useAppConfig();
   const wrapUnwrapApi = useMemo(() => {
     const w = activeApi?.methods.wrapUnwrap?.core;
     logger.log(w);
@@ -60,13 +60,13 @@ export function useWrapUnwrap() {
         if (governedTokens && wrappableTokens) {
           setState((p) => ({
             ...p,
-            wrappableTokens: wrappableTokens!.map((token) => Currency.fromCurrencyId(token)),
-            governedTokens: governedTokens!.map((token) => Currency.fromCurrencyId(token)),
+            wrappableTokens: wrappableTokens!.map((token) => Currency.fromCurrencyId(currenciesConfig, token)),
+            governedTokens: governedTokens!.map((token) => Currency.fromCurrencyId(currenciesConfig, token)),
           }));
         }
       });
     }
-  }, [wrapUnwrapApi]);
+  }, [wrapUnwrapApi, currenciesConfig]);
 
   const swap = useCallback(() => {
     setState((p) => ({
@@ -128,20 +128,20 @@ export function useWrapUnwrap() {
         case 'wrappableTokenUpdate':
           setState((p) => ({
             ...p,
-            wrappableToken: Currency.fromCurrencyId(next.wrappableTokenUpdate!),
+            wrappableToken: Currency.fromCurrencyId(currenciesConfig, next.wrappableTokenUpdate!),
           }));
           break;
         case 'governedTokenUpdate':
           setState((p) => ({
             ...p,
-            governedToken: Currency.fromCurrencyId(next.governedTokenUpdate!),
+            governedToken: Currency.fromCurrencyId(currenciesConfig, next.governedTokenUpdate!),
           }));
           break;
       }
     });
 
     return () => r?.unsubscribe();
-  }, [initTokens, wrapUnwrapApi]);
+  }, [currenciesConfig, initTokens, wrapUnwrapApi]);
 
   return {
     ...state,

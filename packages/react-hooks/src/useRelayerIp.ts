@@ -1,4 +1,4 @@
-import { WebbApiProvider } from '@webb-dapp/react-environment';
+import { WebbApiProvider } from '@webb-tools/api-providers';
 import { useEffect, useState } from 'react';
 
 export type RelayerIpInfo = {

@@ -1,8 +1,12 @@
-import { chainTypeIdToInternalId, parseChainIdType, webbCurrencyIdFromString } from '@webb-dapp/apps/configs';
 import { misbehavingRelayer } from '@webb-dapp/react-environment/error/interactive-errors/misbehaving-relayer';
-import { useWebContext, WithdrawState } from '@webb-dapp/react-environment/webb-context';
-import { ActiveWebbRelayer, WebbRelayer } from '@webb-dapp/react-environment/webb-context/relayer';
-import { InteractiveFeedback, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
+import { useWebContext } from '@webb-dapp/react-environment/webb-context';
+import {
+  ActiveWebbRelayer,
+  InteractiveFeedback,
+  WebbErrorCodes,
+  WebbRelayer,
+  WithdrawState,
+} from '@webb-tools/api-providers';
 import { LoggerService } from '@webb-tools/app-util';
 import { Note } from '@webb-tools/sdk-core';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -15,6 +19,7 @@ export type UseWithdrawProps = {
   note: Note | null;
   recipient: string;
 };
+
 export type WithdrawErrors = {
   error: string;
 
@@ -48,7 +53,7 @@ export const useWithdraw = (params: UseWithdrawProps) => {
     },
   });
   const withdrawApi = useMemo(() => {
-    const withdraw = activeApi?.methods.bridge.withdraw;
+    const withdraw = activeApi?.methods.anchor.withdraw;
     if (!withdraw?.enabled) {
       return null;
     }

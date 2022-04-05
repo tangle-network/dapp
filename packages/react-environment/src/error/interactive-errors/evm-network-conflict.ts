@@ -1,7 +1,7 @@
 import { Button } from '@material-ui/core';
 import { TAppEvent } from '@webb-dapp/react-environment/app-event';
 import { notificationApi } from '@webb-dapp/ui-components/notification';
-import { InteractiveFeedback, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
+import { InteractiveFeedback, WebbErrorCodes } from '@webb-tools/api-providers/webb-error';
 import React from 'react';
 
 type EvmNetworkConflictParams = {

@@ -1,11 +1,10 @@
-import { ChainTypeId } from '@webb-dapp/apps/configs';
 import { useWebContext } from '@webb-dapp/react-environment';
-import { Currency } from '@webb-dapp/react-environment/webb-context/currency/currency';
+import { ChainTypeId, Currency } from '@webb-tools/api-providers';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 export const useBridge = () => {
   const { activeApi } = useWebContext();
-  const bridgeApi = useMemo(() => activeApi?.methods.bridgeApi, [activeApi]);
+  const bridgeApi = useMemo(() => activeApi?.methods.anchorApi, [activeApi]);
   const [tokens, setTokens] = useState<Currency[]>([]);
 
   useEffect(() => {

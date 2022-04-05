@@ -1,13 +1,10 @@
 import { Checkbox, FormControlLabel, Typography } from '@material-ui/core';
-import { ChainTypeId, chainTypeIdToInternalId, WebbCurrencyId } from '@webb-dapp/apps/configs';
 import { DepositConfirm } from '@webb-dapp/bridge/components/DepositConfirm/DepositConfirm';
 import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
 import { useBridgeDeposit } from '@webb-dapp/bridge/hooks/deposit/useBridgeDeposit';
 import { useWrapUnwrap } from '@webb-dapp/page-wrap-unwrap/hooks/useWrapUnwrap';
 import { RequiredWalletSelection } from '@webb-dapp/react-components/RequiredWalletSelection/RequiredWalletSelection';
-import { WalletConfig } from '@webb-dapp/react-environment/types/wallet-config.interface';
-import { MixerSize, useWebContext } from '@webb-dapp/react-environment/webb-context';
-import { Currency } from '@webb-dapp/react-environment/webb-context/currency/currency';
+import { useAppConfig, useWebContext } from '@webb-dapp/react-environment/webb-context';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { SpaceBox } from '@webb-dapp/ui-components/Box';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
@@ -17,6 +14,10 @@ import { TokenInput } from '@webb-dapp/ui-components/Inputs/TokenInput/TokenInpu
 import CircledArrowRight from '@webb-dapp/ui-components/misc/CircledArrowRight';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { getRoundedAmountString } from '@webb-dapp/ui-components/utils';
+import { ChainTypeId, chainTypeIdToInternalId, WebbCurrencyId } from '@webb-tools/api-providers';
+import { MixerSize } from '@webb-tools/api-providers';
+import { Currency } from '@webb-tools/api-providers';
+import { WalletConfig } from '@webb-tools/api-providers/types/wallet-config.interface';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
@@ -78,6 +79,7 @@ export const Deposit: React.FC<DepositProps> = () => {
   const [wrappedTokenBalance, setWrappedTokenBalance] = useState('');
   const [item, setItem] = useState<MixerSize | undefined>(undefined);
   const [destChain, setDestChain] = useState<ChainTypeId | undefined>(undefined);
+  const { chains: chainsConfig, currencies: currenciesConfig } = useAppConfig();
 
   const [wrappableTokenBalance, setWrappableTokenBalance] = useState<String>('');
   // boolean flag for displaying the wrapped asset input
@@ -105,7 +107,7 @@ export const Deposit: React.FC<DepositProps> = () => {
     }
 
     // todo: figure out what happens for polkadot - won't be depositing by address
-    const tokenAddress = activeApi.methods.bridgeApi.getTokenAddress({
+    const tokenAddress = activeApi.methods.anchorApi.getTokenAddress({
       chainId: activeChain.chainId,
       chainType: activeChain.chainType,
     });
@@ -122,9 +124,9 @@ export const Deposit: React.FC<DepositProps> = () => {
   const handleSuccess = useCallback((): void => {}, []);
 
   const tokenChains = useMemo(() => {
-    const chains = selectedBridgeCurrency?.getChainIdsAndTypes() ?? [];
+    const chains = selectedBridgeCurrency?.getChainIdsAndTypes(chainsConfig) ?? [];
     return chains;
-  }, [selectedBridgeCurrency]);
+  }, [chainsConfig, selectedBridgeCurrency]);
 
   const disabledDepositButton = useMemo(() => {
     return typeof item?.id === 'undefined' || typeof destChain === 'undefined';
@@ -132,10 +134,10 @@ export const Deposit: React.FC<DepositProps> = () => {
 
   const wrappableCurrency = useMemo<Currency | undefined>(() => {
     if (wrappableToken) {
-      return Currency.fromCurrencyId(wrappableToken.view.id);
+      return Currency.fromCurrencyId(currenciesConfig, wrappableToken.view.id);
     }
     return undefined;
-  }, [wrappableToken]);
+  }, [currenciesConfig, wrappableToken]);
 
   useEffect(() => {
     if (!wrappableToken || !activeApi || loading) {
@@ -175,7 +177,6 @@ export const Deposit: React.FC<DepositProps> = () => {
     }
   }, [setWrappableToken, wrappableTokens, wrappableToken]);
 
-  console.log({ wrappableCurrency });
   return (
     <DepositWrapper wallet={activeWallet}>
       <RequiredWalletSelection>
@@ -233,7 +234,9 @@ export const Deposit: React.FC<DepositProps> = () => {
                   value={wrappableCurrency}
                   onChange={(currencyContent) => {
                     setWrappableToken(
-                      currencyContent ? Currency.fromCurrencyId(currencyContent.view.id as WebbCurrencyId) : null
+                      currencyContent
+                        ? Currency.fromCurrencyId(currenciesConfig, currencyContent.view.id as WebbCurrencyId)
+                        : null
                     );
                   }}
                   wrapperStyles={{ width: '42%' }}

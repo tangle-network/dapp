@@ -20,6 +20,12 @@ module.exports = (env) => {
       open: false,
       port: 3000,
       static: path.resolve(__dirname, 'build'),
+      client: {
+        overlay: {
+          errors: true,
+          warnings: false, // Hide warnings as they present on the terminal
+        },
+      },
     },
     plugins: [
       new HtmlWebpackPlugin({

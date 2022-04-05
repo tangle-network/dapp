@@ -1,17 +1,5 @@
-import { Storage } from '@webb-dapp/utils';
-
-export type NetworkStore = {
-  networksConfig: Record<
-    number,
-    | {
-        defaultAccount: string;
-      }
-    | undefined
-  >;
-  defaultNetwork?: number;
-  defaultWallet?: number;
-};
-export type NetworkStorage = Storage<NetworkStore>;
+import { NetworkStore } from '@webb-tools/api-providers';
+import { Storage } from '@webb-tools/api-providers/storage';
 
 export const netStorageFactory = () => {
   return Storage.newFromCache<NetworkStore>('app', {

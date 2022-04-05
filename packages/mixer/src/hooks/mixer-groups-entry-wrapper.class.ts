@@ -1,4 +1,4 @@
-import { Currency } from '@webb-dapp/mixer/utils/currency';
+import { Currency } from '@webb-tools/api-providers';
 import { Token } from '@webb-tools/sdk-core';
 import { Balance, PalletMixerMixerMetadata as MixerInfo } from '@webb-tools/types/interfaces';
 

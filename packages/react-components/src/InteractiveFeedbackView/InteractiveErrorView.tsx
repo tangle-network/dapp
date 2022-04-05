@@ -1,5 +1,5 @@
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
-import { InteractiveFeedback, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
+import { InteractiveFeedback, WebbErrorCodes } from '@webb-tools/api-providers';
 import React, { useMemo } from 'react';
 
 import DefaultErrorView from './DefaultErrorView';

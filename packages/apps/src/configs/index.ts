@@ -1,9 +1,15 @@
-import { Chain, Wallet } from '@webb-dapp/react-environment';
-import { WebbError, WebbErrorCodes } from '@webb-dapp/utils/webb-error';
+import {
+  Chain,
+  ChainTypeId,
+  chainTypeIdToInternalId,
+  InternalChainId,
+  Wallet,
+  WebbError,
+  WebbErrorCodes,
+} from '@webb-tools/api-providers';
 
 import { chainsConfig } from './chains/chain-config';
 import { walletsConfig } from './wallets/wallets-config';
-import { ChainTypeId, chainTypeIdToInternalId, InternalChainId } from './chains';
 import { currenciesConfig } from './currencies';
 
 export const chainsPopulated = Object.values(chainsConfig).reduce(

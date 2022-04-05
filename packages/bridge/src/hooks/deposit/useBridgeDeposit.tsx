@@ -1,21 +1,15 @@
+import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
+import { useWebContext } from '@webb-dapp/react-environment';
 import {
-  ChainType,
+  BridgeCurrencyIndex,
+  BridgeDeposit,
   ChainTypeId,
   computeChainIdType,
-  InternalChainId,
-  internalChainIdToChainId,
-} from '@webb-dapp/apps/configs';
-import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
-import {
-  Bridge,
-  BridgeDeposit,
+  Currency,
   DepositPayload,
   MixerDeposit,
   MixerSize,
-  useWebContext,
-} from '@webb-dapp/react-environment/webb-context';
-import { BridgeCurrencyIndex } from '@webb-dapp/react-environment/webb-context/bridge/bridge-api';
-import { Currency } from '@webb-dapp/react-environment/webb-context/currency/currency';
+} from '@webb-tools/api-providers';
 import { LoggerService } from '@webb-tools/app-util';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -49,7 +43,7 @@ export const useBridgeDeposit = (): BridgeDepositApi => {
   const [selectedBridgeCurrency, setSelectedBridgeCurrency] = useState<null | Currency>(null);
   /// api
   const depositApi = useMemo(() => {
-    const depositApi = activeApi?.methods.bridge.deposit;
+    const depositApi = activeApi?.methods.anchor.deposit;
     if (!depositApi?.enabled) {
       return null;
     }

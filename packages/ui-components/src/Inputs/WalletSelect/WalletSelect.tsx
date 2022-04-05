@@ -1,14 +1,13 @@
 import { Avatar } from '@material-ui/core';
 import { useWebContext } from '@webb-dapp/react-environment';
-import { ManagedWallet } from '@webb-dapp/react-environment/types/wallet-config.interface';
 import { useNativeCurrencyBalance, useNativeCurrencySymbol } from '@webb-dapp/react-hooks/currency';
 import { useAccounts } from '@webb-dapp/react-hooks/useAccounts';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { useWallets } from '@webb-dapp/react-hooks/useWallets';
-import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { ManagedWallet } from '@webb-tools/api-providers/types/wallet-config.interface';
+import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { getRoundedAmountString } from '../..';
@@ -33,7 +32,7 @@ const WalletSelectWrapper = styled.div`
 
   .select-wallet-button {
     display: flex;
-    width: 100%
+    width: 100%;
     text-overflow: ellipsis;
     overflow: hidden;
     text-align: center;
@@ -53,7 +52,7 @@ const WalletSelectWrapper = styled.div`
 
   .account-balance {
     font-size: 12px;
-    color: ${({ theme }) => (theme.type === 'dark' ? theme.accentColor : '#000000')}
+    color: ${({ theme }) => (theme.type === 'dark' ? theme.accentColor : '#000000')};
   }
 `;
 type WalletSelectProps = {};
