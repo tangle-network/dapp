@@ -1,13 +1,10 @@
 import { FormHelperText, Icon, InputBase } from '@material-ui/core';
-import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
 import { useDepositNote } from '@webb-dapp/mixer/hooks/note';
 import { useWebContext } from '@webb-dapp/react-environment/webb-context';
 import { notificationApi } from '@webb-dapp/ui-components/notification';
-import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { webbCurrencyIdFromString } from '@webb-tools/api-providers';
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import styled, { css } from 'styled-components';
 
 type NoteInputProps = {
   value: string;

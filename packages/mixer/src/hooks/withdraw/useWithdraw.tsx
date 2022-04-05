@@ -24,7 +24,7 @@ export type WithdrawErrors = {
     recipient: string;
   };
 };
-type RelayersState = {
+export type RelayersState = {
   relayers: WebbRelayer[];
   loading: boolean;
   activeRelayer: null | ActiveWebbRelayer;

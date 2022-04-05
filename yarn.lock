@@ -4578,10 +4578,8 @@
     "@webassemblyjs/ast" "1.11.1"
     "@xtuc/long" "4.2.2"
 
-"@webb-tools/api-providers@0.1.4-46":
+"@webb-tools/api-providers@0.1.4-46", "@webb-tools/api-providers@file:../webb.js/packages/api-providers/build":
   version "0.1.4-46"
-  resolved "https://registry.yarnpkg.com/@webb-tools/api-providers/-/api-providers-0.1.4-46.tgz#80676363a45c47e49e25b2f2807aa12f2609bff7"
-  integrity sha512-Mz4N8qVcLMll53+zE23GosOrmEA/9w5xm0TSorIm6Rz7+p1MPYbs1f1OeT8VQPV2bIOPPN4ib8KNuXGX7Guegg==
   dependencies:
     "@babel/runtime" "^7.10.2"
     "@polkadot/extension-dapp" "^0.35.0-beta.35"
@@ -4633,10 +4631,8 @@
     events "^3.2.0"
     lodash "^4.17.20"
 
-"@webb-tools/type-definitions@0.1.4-46":
+"@webb-tools/type-definitions@0.1.4-46", "@webb-tools/type-definitions@file:../webb.js/packages/type-definitions/build":
   version "0.1.4-46"
-  resolved "https://registry.yarnpkg.com/@webb-tools/type-definitions/-/type-definitions-0.1.4-46.tgz#4a31afd2c5a1fe1feeac3bcb7e0c65c7318efac7"
-  integrity sha512-M0+WSagJqdyjGDwfC01qcnEFzgl0Pj35TUB2c+OdltxHq1V89YjprEGbJhbCOxBdMwPMSIOpZYLkHedupJZWVg==
   dependencies:
     "@open-web3/orml-type-definitions" "^1.0.1"
 

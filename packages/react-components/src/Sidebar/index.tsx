@@ -9,7 +9,6 @@ import { ThemeSwitcher } from '../AppBar/ThemeSwitcher';
 import { WebbFullNameLogo } from '../assets/WebbFullNameLogo';
 import { SidebarActiveContext } from './context';
 import { Products } from './Products';
-import { Slider } from './Slider';
 import { SocialPlatform } from './SocialPlatform';
 import { SidebarConfig } from './types';
 

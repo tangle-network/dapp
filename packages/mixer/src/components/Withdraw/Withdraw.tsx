@@ -2,20 +2,22 @@ import { FormHelperText, InputBase, Typography } from '@material-ui/core';
 import { chainsPopulated, currenciesConfig, getChainNameFromChainId } from '@webb-dapp/apps/configs';
 import { useWithdraw } from '@webb-dapp/mixer/hooks';
 import { useDepositNote } from '@webb-dapp/mixer/hooks/note';
+import { RelayerModal } from '@webb-dapp/react-components/Relayer/RelayerModal';
 import { WithdrawingModal, WithdrawSuccessModal } from '@webb-dapp/react-components/Withdraw';
 import { useWebContext } from '@webb-dapp/react-environment';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { SettingsIcon } from '@webb-dapp/ui-components/assets/SettingsIcon';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { MixerNoteInput } from '@webb-dapp/ui-components/Inputs/NoteInput/MixerNoteInput';
+import { FeesInfo, RelayerApiAdapter } from '@webb-dapp/ui-components/Inputs/RelayerInput/RelayerInput';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
-import { FeesInfo, RelayerApiAdapter } from '@webb-dapp/ui-components/RelayerInput/RelayerInput';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { parseChainIdType, WithdrawState } from '@webb-tools/api-providers';
-import { ActiveWebbRelayer } from '@webb-tools/api-providers';
+import { ActiveWebbRelayer, WebbRelayer } from '@webb-tools/api-providers';
 import { WalletConfig } from '@webb-tools/api-providers';
 import { Note } from '@webb-tools/sdk-core';
-import React, { useCallback, useMemo, useState } from 'react';
+import { ethers } from 'ethers';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
 const WithdrawWrapper = styled.div<{ wallet: WalletConfig | undefined }>`
@@ -121,8 +123,9 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
   const depositNote = useDepositNote(note);
 
   const [recipient, setRecipient] = useState('');
+  const [showRelayerModal, setShowRelayerModal] = useState(false);
   const [withdrawPercentage, setWithdrawPercentage] = useState(0);
-  const [fees, setFees] = useState('');
+  const [fees, setFees] = useState('0');
   const { activeApi, activeChain, activeWallet } = useWebContext();
 
   const {
@@ -141,33 +144,6 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
     note: depositNote,
   });
   console.log(relayersState, 'relayersState');
-  const feesGetter = useCallback(
-    async (activeRelayer: ActiveWebbRelayer): Promise<FeesInfo> => {
-      const defaultFees: FeesInfo = {
-        totalFees: 0,
-        withdrawFeePercentage: 0,
-      };
-      try {
-        const fees = await activeRelayer.fees(note);
-        return fees || defaultFees;
-      } catch (e) {
-        console.log(e);
-      }
-      return defaultFees;
-    },
-    [note]
-  );
-
-  const relayerApi: RelayerApiAdapter = useMemo(() => {
-    return {
-      getInfo: async (endpoint) => {
-        return relayerMethods?.fetchCapabilities(endpoint) ?? ({} as any);
-      },
-      add(endPoint: string, _persistent: boolean) {
-        return relayerMethods?.addRelayer(endPoint);
-      },
-    };
-  }, [relayerMethods]);
 
   const disabledButton = useMemo(() => {
     console.log(depositNote, recipient);
@@ -232,6 +208,17 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
       });
   };
 
+  // Side effect for fetching the relayer fees if applicable
+  useEffect(() => {
+    if (relayersState.activeRelayer && depositNote) {
+      relayersState.activeRelayer.fees(depositNote.note.serialize()).then((feeInfo) => {
+        if (feeInfo) {
+          setFees(ethers.utils.formatUnits(feeInfo.totalFees, depositNote.note.denomination));
+        }
+      });
+    }
+  }, [relayersState, depositNote]);
+
   return (
     <WithdrawWrapper wallet={activeWallet}>
       <WithdrawNoteSection>
@@ -245,7 +232,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
             role='button'
             aria-disabled={!activeChain}
             onClick={() => {
-              console.log('open relayer settings modal');
+              setShowRelayerModal(true);
             }}
             className='select-button'
           >
@@ -288,11 +275,15 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
           </div>
           <div className='information-item'>
             <p className='title'>Chains</p>
-            <p className='value'>{getChainNameFromChainId(parseChainIdType(Number(depositNote.note.sourceChainId)))}</p>
+            <p className='value'>
+              {fees} {depositNote.note.tokenSymbol}
+            </p>
           </div>
           <div className='information-item'>
             <p className='title'>Relayer Fee</p>
-            <p className='value'>{relayersState.activeRelayer ? feesGetter(relayersState.activeRelayer) : '0'}</p>
+            <p className='value'>
+              {Number(depositNote.note.amount) - Number(fees)} {depositNote.note.tokenSymbol}
+            </p>
           </div>
           <SpaceBox height={4} />
           <div className='total-amount'>
@@ -342,6 +333,21 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
             }}
           />
         )}
+      </Modal>
+
+      {/* Modal to show for relayer settings */}
+      <Modal open={showRelayerModal}>
+        <RelayerModal
+          note={depositNote}
+          state={relayersState}
+          methods={relayerMethods}
+          onChange={(nextRelayer: WebbRelayer | null) => {
+            setRelayer(nextRelayer);
+          }}
+          onClose={() => {
+            setShowRelayerModal(false);
+          }}
+        />
       </Modal>
     </WithdrawWrapper>
   );

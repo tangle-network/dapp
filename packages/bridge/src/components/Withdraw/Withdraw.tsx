@@ -8,11 +8,12 @@ import { SpaceBox } from '@webb-dapp/ui-components';
 import { SettingsIcon } from '@webb-dapp/ui-components/assets/SettingsIcon';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { BridgeNoteInput } from '@webb-dapp/ui-components/Inputs/NoteInput/BridgeNoteInput';
+import { FeesInfo, RelayerApiAdapter, RelayerInput } from '@webb-dapp/ui-components/Inputs/RelayerInput/RelayerInput';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
-import { FeesInfo, RelayerApiAdapter } from '@webb-dapp/ui-components/RelayerInput/RelayerInput';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import {
   ActiveWebbRelayer,
+  ChainType,
   chainTypeIdToInternalId,
   getChainNameFromChainId,
   parseChainIdType,
@@ -20,7 +21,8 @@ import {
 } from '@webb-tools/api-providers';
 import { WalletConfig } from '@webb-tools/api-providers/types/wallet-config.interface';
 import { Note } from '@webb-tools/sdk-core';
-import React, { useCallback, useMemo, useState } from 'react';
+import { ethers } from 'ethers';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
 const WithdrawWrapper = styled.div<{ wallet: WalletConfig | undefined }>`
