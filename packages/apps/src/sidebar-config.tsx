@@ -14,8 +14,8 @@ import { TwitterLogo } from './configs/logos/TwitterLogo';
 export const sideBarConfig: SidebarConfig = {
   products: [
     {
-      path: 'tornado',
-      name: 'Tornados',
+      path: 'mixer',
+      name: 'Mixers',
       icon: <TornadoPageLogo />,
     },
     {

@@ -22,8 +22,8 @@ export const config: RouterConfigData[] = [
             <PageMixer />
           </CSuspense>
         ),
-        path: 'tornado',
-        title: 'Tornados',
+        path: 'mixer/*',
+        title: 'Mixers',
       },
       {
         element: (
@@ -31,7 +31,7 @@ export const config: RouterConfigData[] = [
             <PageBridge />
           </CSuspense>
         ),
-        path: 'bridge',
+        path: 'bridge/*',
         title: 'Bridges',
       },
       {
@@ -99,7 +99,7 @@ export const config: RouterConfigData[] = [
       },
       {
         path: '*',
-        redirectTo: 'tornado',
+        redirectTo: 'mixer',
       },
     ],
     element: <Layout.Main sidebar={sideBarConfig} />,

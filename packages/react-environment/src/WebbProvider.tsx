@@ -7,7 +7,6 @@ import {
   chainsConfig,
   chainsPopulated,
   currenciesConfig,
-  mixersConfig,
   walletsConfig,
 } from '@webb-dapp/apps/configs';
 import { getWebbRelayer } from '@webb-dapp/apps/configs/relayer-config';
@@ -70,7 +69,7 @@ const appConfig: AppConfig = {
   bridgeByAsset: bridgeConfigByAsset,
   chains: chainsConfig,
   currencies: currenciesConfig,
-  mixers: mixersConfig,
+  mixers: {},
   wallet: walletsConfig,
 };
 

@@ -74,5 +74,4 @@ export * from './currencies';
 export * from './chains';
 export * from './anchors';
 export * from './bridges';
-export * from './mixers';
 export * from './wallets';
