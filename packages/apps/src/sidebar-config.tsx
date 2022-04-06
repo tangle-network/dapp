@@ -5,7 +5,6 @@ import { CommonWealthLogo } from './configs/logos/CommonWealthLogo';
 import { DiscordLogo } from './configs/logos/DiscordLogo';
 import { GithubLogo } from './configs/logos/GithubLogo';
 import { BridgePageLogo } from './configs/logos/pages/BridgePageLogo';
-import { StatisticsPageLogo } from './configs/logos/pages/StatisticsPageLogo';
 import { TornadoPageLogo } from './configs/logos/pages/TornadoPageLogo';
 import { WrapPageLogo } from './configs/logos/pages/WrapPageLogo';
 import { TelegramLogo } from './configs/logos/TelegramLogo';
@@ -27,33 +26,6 @@ export const sideBarConfig: SidebarConfig = {
       path: 'wrap-unwrap',
       name: 'Wrap/Unwrap',
       icon: <WrapPageLogo />,
-    },
-    {
-      path: 'statistics',
-      name: 'Statistics',
-      icon: <StatisticsPageLogo />,
-      items: [
-        {
-          path: 'statistics/overview',
-          name: 'Overview',
-        },
-        {
-          path: 'statistics/deposits',
-          name: 'Deposits',
-        },
-        {
-          path: 'statistics/withdrawals',
-          name: 'Withdrawals',
-        },
-        {
-          path: 'statistics/relayers',
-          name: 'Relayers',
-        },
-        {
-          path: 'statistics/dkg',
-          name: 'DKG Governance',
-        },
-      ],
     },
   ],
   socialPlatforms: [
