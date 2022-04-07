@@ -24,7 +24,7 @@ export const bridgeConfigByAsset: AppConfig['bridgeByAsset'] = {
 
 export const getAnchorAddressForBridge = (
   assetId: WebbCurrencyId,
-  chainId: number,
+  chainId: InternalChainId,
   amount: number
 ): string | undefined => {
   const linkedAnchorConfig = bridgeConfigByAsset[assetId]?.anchors.find(
@@ -34,7 +34,7 @@ export const getAnchorAddressForBridge = (
     throw new Error('Unsupported configuration for bridge');
   }
 
-  const anchorAddress = linkedAnchorConfig.anchorAddresses[chainId as InternalChainId];
-  logger.log('got anchor address: ', anchorAddress);
+  // Compute the internal chain id
+  const anchorAddress = linkedAnchorConfig.anchorAddresses[chainId];
   return anchorAddress;
 };

@@ -62,6 +62,10 @@ export function relayerNameToChainId(name: string): InternalChainId {
       return InternalChainId.ArbitrumTestnet;
     case 'polygontestnet':
       return InternalChainId.PolygonTestnet;
+    case 'hermes':
+      return InternalChainId.HermesLocalnet;
+    case 'athena':
+      return InternalChainId.AthenaLocalnet;
   }
 
   throw new Error('unhandled relayed chain name  ' + name);
@@ -83,6 +87,8 @@ enum RelayerChainName {
   OptimismTestnet = 'optimismtestnet',
   ArbitrumTestnet = 'arbitrumtestnet',
   PolygonTestnet = 'polygontestnet',
+  HermesLocalnet = 'hermes',
+  AthenaLocalnet = 'athena',
 }
 
 export function chainIdToRelayerName(id: InternalChainId): string {
@@ -117,6 +123,10 @@ export function chainIdToRelayerName(id: InternalChainId): string {
       return RelayerChainName.ArbitrumTestnet;
     case InternalChainId.PolygonTestnet:
       return RelayerChainName.PolygonTestnet;
+    case InternalChainId.HermesLocalnet:
+      return RelayerChainName.HermesLocalnet;
+    case InternalChainId.AthenaLocalnet:
+      return RelayerChainName.AthenaLocalnet;
   }
   throw new Error(`unhandled Chain id ${id}`);
 }
