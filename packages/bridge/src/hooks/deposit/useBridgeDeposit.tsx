@@ -1,8 +1,8 @@
 import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
 import { useWebContext } from '@webb-dapp/react-environment';
 import {
+  AnchorDeposit,
   BridgeCurrencyIndex,
-  BridgeDeposit,
   ChainTypeId,
   computeChainIdType,
   Currency,
@@ -28,7 +28,7 @@ export interface BridgeDepositApi {
 
   loadingState: MixerDeposit['loading'];
   error: string;
-  depositApi: BridgeDeposit<any> | null;
+  depositApi: AnchorDeposit<any> | null;
   selectedBridgeCurrency: Currency | null;
 
   setSelectedCurrency(bridgeCurrency: BridgeCurrencyIndex | undefined): void;
@@ -36,7 +36,7 @@ export interface BridgeDepositApi {
 
 export const useBridgeDeposit = (): BridgeDepositApi => {
   const { activeApi } = useWebContext();
-  const [loadingState, setLoadingState] = useState<BridgeDeposit<any>['loading']>('ideal');
+  const [loadingState, setLoadingState] = useState<AnchorDeposit<any>['loading']>('ideal');
   const [error, setError] = useState('');
   const [mixerSizes, setMixerSizes] = useState<MixerSize[]>([]);
   const { bridgeApi, getTokensOfChain } = useBridge();
