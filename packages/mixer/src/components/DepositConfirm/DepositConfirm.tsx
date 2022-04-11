@@ -12,7 +12,7 @@ import { Spinner } from '@webb-dapp/ui-components/Spinner/Spinner';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 import { downloadString } from '@webb-dapp/utils';
-import { DepositPayload, MixerSize } from '@webb-tools/api-providers';
+import { ChainTypeId, computeChainIdType, DepositPayload, MixerSize } from '@webb-tools/api-providers';
 import { ethers } from 'ethers';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
@@ -127,16 +127,21 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({ mixerSize, onClose,
     });
   }, []);
   useEffect(() => {
-    if (!mixerSize) {
+    if (!mixerSize || !activeChain) {
       return;
     }
     let desiredMixer: string | number = '';
     console.log('mixerId in depositConfirm: ', mixerSize.id);
-    // If the mixerId is of string type, it could either be an address or a mixerId intended for use in substrate
+    // MixerIds may be strings or numbers. EVM Mixer ids will have a 'Bridge' prefix.
     if (typeof mixerSize.id === 'string') {
-      ethers.utils.isAddress(mixerSize.id) ? (desiredMixer = mixerSize.id) : (desiredMixer = Number(mixerSize.id));
+      mixerSize.id.includes('Bridge') ? (desiredMixer = mixerSize.id) : (desiredMixer = Number(mixerSize.id));
     }
-    provider.generateNote(desiredMixer, activeChain?.id).then((note) => {
+    const chainIdType: ChainTypeId = {
+      chainType: activeChain.chainType,
+      chainId: activeChain.chainId,
+    };
+
+    provider.generateNote(desiredMixer, chainIdType).then((note) => {
       setNote(note);
     });
   }, [provider, mixerSize, activeChain]);
