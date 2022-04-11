@@ -55,7 +55,6 @@ export const WebbContext = React.createContext<WebbContextState>({
     bridgeByAsset: {},
     chains: {},
     currencies: {},
-    mixers: {},
   },
   registerInteractiveFeedback: (interactiveFeedback: InteractiveFeedback) => {
     return;

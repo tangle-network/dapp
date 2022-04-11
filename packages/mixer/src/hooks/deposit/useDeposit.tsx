@@ -1,5 +1,5 @@
 import { useWebContext } from '@webb-dapp/react-environment/webb-context';
-import { DepositPayload, MixerDeposit, MixerSize } from '@webb-tools/api-providers';
+import { ChainTypeId, computeChainIdType, DepositPayload, MixerDeposit, MixerSize } from '@webb-tools/api-providers';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 export interface DepositApi {
@@ -7,7 +7,7 @@ export interface DepositApi {
 
   deposit(payload: DepositPayload): Promise<void>;
 
-  generateNote(mixer: number | string, chainId?: number): Promise<DepositPayload>;
+  generateNote(mixer: number | string, chainTypeId: ChainTypeId): Promise<DepositPayload>;
 
   loadingState: MixerDeposit['loading'];
   error: string;
@@ -44,13 +44,14 @@ export const useDeposit = (): DepositApi => {
   }, [depositApi]);
 
   const generateNote = useCallback(
-    async (mixerId: number, chainId?: number) => {
+    async (mixerId: number | string, chainTypeId: ChainTypeId) => {
       if (!depositApi) {
         // TODO: fix this to be dependent ont he api state
         // disable buttons
         throw new Error('Not ready');
       } else {
-        return depositApi?.generateNote(mixerId, chainId);
+        const encodedChainIdType = computeChainIdType(chainTypeId?.chainType, chainTypeId?.chainId);
+        return depositApi?.generateNote(mixerId, encodedChainIdType);
       }
     },
     [depositApi]

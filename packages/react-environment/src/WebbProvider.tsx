@@ -7,7 +7,6 @@ import {
   chainsConfig,
   chainsPopulated,
   currenciesConfig,
-  mixersConfig,
   walletsConfig,
 } from '@webb-dapp/apps/configs';
 import { getWebbRelayer } from '@webb-dapp/apps/configs/relayer-config';
@@ -70,7 +69,6 @@ const appConfig: AppConfig = {
   bridgeByAsset: bridgeConfigByAsset,
   chains: chainsConfig,
   currencies: currenciesConfig,
-  mixers: mixersConfig,
   wallet: walletsConfig,
 };
 
@@ -409,7 +407,6 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
                   Icon: React.createElement(Icon, null, ['leak_add']),
                   secondaryMessage: `Connection is switched to ${name} chain`,
                 });
-                webbWeb3Provider.setStorage(chainId);
                 setActiveWallet(wallet);
                 forceActiveApiUpdate(webbWeb3Provider);
                 setActiveChain(nextChain ? nextChain : chain);

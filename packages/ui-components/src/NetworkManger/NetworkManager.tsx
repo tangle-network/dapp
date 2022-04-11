@@ -68,7 +68,7 @@ const FilterSection = styled.div`
 export const NetworkManager: React.FC<NetworkManagerProps> = () => {
   const [open, setOpen] = useState(false);
 
-  const [radioButtonFilter, setRadioButtonFilter] = useState('test');
+  const [radioButtonFilter, setRadioButtonFilter] = useState('dev');
 
   const { activeChain, activeWallet, chains, isConnecting, switchChain: _switchChain } = useWebContext();
   const [connectionStatus, setConnectionStatus] = useState<ConnectingState>(
@@ -108,8 +108,8 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
       <FilterSection>
         <FormControl>
           <RadioGroup value={radioButtonFilter} onChange={handleRadioFilter} row>
-            <FormControlLabel value='live' control={<Radio />} label='live' />
-            <FormControlLabel value='test' control={<Radio />} label='test' />
+            {/* <FormControlLabel value='live' control={<Radio />} label='live' />
+            <FormControlLabel value='test' control={<Radio />} label='test' /> */}
             <FormControlLabel value='dev' control={<Radio />} label='dev' />
           </RadioGroup>
         </FormControl>
