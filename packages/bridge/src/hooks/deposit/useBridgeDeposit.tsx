@@ -95,13 +95,12 @@ export const useBridgeDeposit = (): BridgeDepositApi => {
   );
 
   const setSelectedCurrency = (bridgeCurrency: BridgeCurrencyIndex | undefined) => {
-    const activeBridgeApi = bridgeApi;
-    if (activeBridgeApi) {
+    if (bridgeApi) {
       if (bridgeCurrency) {
-        const nextBridge = activeBridgeApi.store.config[bridgeCurrency] || undefined;
-        activeBridgeApi.setActiveBridge(nextBridge);
+        const nextBridge = bridgeApi.store.config[bridgeCurrency] || undefined;
+        bridgeApi.setActiveBridge(nextBridge);
       } else {
-        activeBridgeApi.setActiveBridge(undefined);
+        bridgeApi.setActiveBridge(undefined);
       }
     }
   };
