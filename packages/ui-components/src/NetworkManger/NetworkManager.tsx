@@ -1,4 +1,5 @@
 import {
+  Avatar,
   Badge,
   Button,
   ButtonBase,
@@ -10,6 +11,7 @@ import {
   IconButton,
   LinearProgress,
   List,
+  ListItem,
   ListItemAvatar,
   ListItemSecondaryAction,
   ListItemText,
@@ -17,8 +19,6 @@ import {
   RadioGroup,
   Typography,
 } from '@material-ui/core';
-import Avatar from '@material-ui/core/Avatar';
-import ListItem from '@material-ui/core/ListItem';
 import { useWebContext } from '@webb-dapp/react-environment';
 import { appEvent } from '@webb-dapp/react-environment/app-event';
 import { SpaceBox } from '@webb-dapp/ui-components';
@@ -108,8 +108,8 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
       <FilterSection>
         <FormControl>
           <RadioGroup value={radioButtonFilter} onChange={handleRadioFilter} row>
-            {/* <FormControlLabel value='live' control={<Radio />} label='live' />
-            <FormControlLabel value='test' control={<Radio />} label='test' /> */}
+            {/* <FormControlLabel value='live' control={<Radio />} label='live' /> */}
+            <FormControlLabel value='test' control={<Radio />} label='test' />
             <FormControlLabel value='dev' control={<Radio />} label='dev' />
           </RadioGroup>
         </FormControl>
