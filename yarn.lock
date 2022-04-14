@@ -4594,10 +4594,8 @@
     "@webb-tools/utils" "^0.1.7"
     snarkjs "0.4.16"
 
-"@webb-tools/api-providers@0.1.4-48":
+"@webb-tools/api-providers@0.1.4-48", "@webb-tools/api-providers@file:../webb.js/packages/api-providers/build":
   version "0.1.4-48"
-  resolved "https://registry.yarnpkg.com/@webb-tools/api-providers/-/api-providers-0.1.4-48.tgz#c2e693df2efb9456c92469c8f090c4861b832a69"
-  integrity sha512-Ig+So48VpmswEOf9C4vYVIbBUZMzelZW6TOxaDEmAxio60dWAsfp51e26K9L2ow27Alom4c1vwqx6ZFNVuSiYA==
   dependencies:
     "@babel/runtime" "^7.10.2"
     "@polkadot/extension-dapp" "^0.35.0-beta.35"
@@ -4609,20 +4607,16 @@
     bignumber.js "^9.0.0"
     snarkjs "0.4.16"
 
-"@webb-tools/api@0.1.4-48":
+"@webb-tools/api@0.1.4-48", "@webb-tools/api@file:../webb.js/packages/api/build":
   version "0.1.4-48"
-  resolved "https://registry.yarnpkg.com/@webb-tools/api/-/api-0.1.4-48.tgz#26d6c6f5459009ff72e575c9243de509fc14507d"
-  integrity sha512-I/3sC+NEmulmuQS1tqWxIdveWpt0ZuDKTYT8zE0fsa8ejBMCUnup3opmL7MnKjJ46/EUVfufI/1jzvoQPOXzxg==
   dependencies:
     "@babel/runtime" "^7.10.2"
     "@polkadot/api" "7.13.1"
     "@polkadot/rpc-core" "7.13.1"
     "@webb-tools/types" "0.1.4-48"
 
-"@webb-tools/app-util@0.1.4-48":
+"@webb-tools/app-util@file:../webb.js/packages/app-util/build":
   version "0.1.4-48"
-  resolved "https://registry.yarnpkg.com/@webb-tools/app-util/-/app-util-0.1.4-48.tgz#87b85f8f35db185651a779f27fc3f57df2629765"
-  integrity sha512-270llMMoljl3xaVu/aMRS5tXopf1RMJwKPyjIw6SI32CvN0DNmBB3q4d1+1tkVGoHyapVEUOJH/E0NBNTYqjSQ==
   dependencies:
     "@babel/runtime" "^7.10.2"
     bignumber.js "^9.0.0"
@@ -4653,10 +4647,8 @@
     "@webb-tools/tokens" "^0.1.10"
     "@webb-tools/utils" "^0.1.7"
 
-"@webb-tools/sdk-core@0.1.4-48":
+"@webb-tools/sdk-core@file:../webb.js/packages/sdk-core/build":
   version "0.1.4-48"
-  resolved "https://registry.yarnpkg.com/@webb-tools/sdk-core/-/sdk-core-0.1.4-48.tgz#2bf2d60299bcae923fb8b0dedb30b3a8f18f59e7"
-  integrity sha512-aUUQ5hxY6Zoc2nlVyhX0BL1MU2wNNXsUGwkkm9DmNQcTEBMDSv28fHZwPWlqzyoZolxEqGUOAKI/2JvIisj8hQ==
   dependencies:
     "@types/events" "^3.0.0"
     "@webb-tools/api" "0.1.4-48"
@@ -4674,17 +4666,13 @@
     "@webb-tools/utils" "^0.1.7"
     ethers "5.5.1"
 
-"@webb-tools/type-definitions@0.1.4-48":
+"@webb-tools/type-definitions@0.1.4-48", "@webb-tools/type-definitions@file:../webb.js/packages/type-definitions/build":
   version "0.1.4-48"
-  resolved "https://registry.yarnpkg.com/@webb-tools/type-definitions/-/type-definitions-0.1.4-48.tgz#6ff7ef7e2f00d2049b4e9336c4df786948afb15e"
-  integrity sha512-huKeRgX1I1Cha2XQzi6CMmHCYuDjtoIb9kh1TjSlLphNKudFI0plaZjXwmKTS06Fl0k7w99n/93IbO8Wqu5GWg==
   dependencies:
     "@open-web3/orml-type-definitions" "^1.0.1"
 
-"@webb-tools/types@0.1.4-48":
+"@webb-tools/types@0.1.4-48", "@webb-tools/types@file:../webb.js/packages/types/build":
   version "0.1.4-48"
-  resolved "https://registry.yarnpkg.com/@webb-tools/types/-/types-0.1.4-48.tgz#f2e13a4c55f963ab0625ef79ff15cd695959cf16"
-  integrity sha512-w/IzbTEqEP+4BYQhAepzuGKVrrABRb8i16i/8cO8ecgITBhvhfOIOcab2ueQvAiAwb9QltsgaExeSWCUmOTlcQ==
   dependencies:
     "@babel/runtime" "^7.10.2"
     "@open-web3/orml-types" "^1.0.1"
@@ -4704,10 +4692,8 @@
     ethers "5.5.1"
     ffjavascript "^0.2.43"
 
-"@webb-tools/wasm-utils@0.1.4-48":
+"@webb-tools/wasm-utils@0.1.4-48", "@webb-tools/wasm-utils@file:../webb.js/packages/wasm-utils/build":
   version "0.1.4-48"
-  resolved "https://registry.yarnpkg.com/@webb-tools/wasm-utils/-/wasm-utils-0.1.4-48.tgz#523e2b405c39e1e483c4abef715f006ca851feea"
-  integrity sha512-dph2L+HTEFTMTF54foD9jDiV53W58RVD65Qjiv0hVTMWDL59jBSmQpyeuz4ExP8t+PsUTkgiS9Z7hea2DOYklA==
 
 "@webpack-cli/configtest@^1.1.1":
   version "1.1.1"

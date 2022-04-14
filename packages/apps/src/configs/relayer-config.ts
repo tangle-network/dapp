@@ -25,6 +25,8 @@ export function relayerSubstrateNameToChainId(name: string): InternalChainId {
   switch (name) {
     case 'localnode':
       return InternalChainId.WebbDevelopment;
+    case 'webbeggnet':
+      return InternalChainId.WebbEggnet;
   }
 
   throw new Error('unhandled relayed chain name  ' + name);

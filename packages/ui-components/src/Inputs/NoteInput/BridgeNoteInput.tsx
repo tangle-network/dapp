@@ -34,7 +34,7 @@ export const BridgeNoteInput: React.FC<NoteInputProps> = ({ error, onChange, val
       // Set the appropriate active bridge
       const bridgedCurrency = webbCurrencyIdFromString(depositNote.note.tokenSymbol);
 
-      if (anchorApi && anchorApi.bridgeIds.includes(bridgedCurrency)) {
+      if (anchorApi && anchorApi.bridgeIds.includes(bridgedCurrency.toString())) {
         anchorApi.setActiveBridge(anchorApi.store.config[bridgedCurrency]);
       }
     }
