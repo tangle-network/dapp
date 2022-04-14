@@ -91,6 +91,8 @@ enum RelayerChainName {
   PolygonTestnet = 'polygontestnet',
   HermesLocalnet = 'hermes',
   AthenaLocalnet = 'athena',
+  WebbDevelopment = 'localnode',
+  WebbEggnet = 'webbeggnet',
 }
 
 export function chainIdToRelayerName(id: InternalChainId): string {
@@ -129,6 +131,10 @@ export function chainIdToRelayerName(id: InternalChainId): string {
       return RelayerChainName.HermesLocalnet;
     case InternalChainId.AthenaLocalnet:
       return RelayerChainName.AthenaLocalnet;
+    case InternalChainId.WebbDevelopment:
+      return RelayerChainName.WebbDevelopment;
+    case InternalChainId.WebbEggnet:
+      return RelayerChainName.WebbEggnet;
   }
   throw new Error(`unhandled Chain id ${id}`);
 }

@@ -43,7 +43,7 @@ export const useWithdraw = (params: UseWithdrawProps) => {
   const [receipt, setReceipt] = useState('');
   const [relayersState, setRelayersState] = useState<RelayersState>(relayersInitState);
   const { bridgeApi } = useBridge();
-  const { activeApi } = useWebContext();
+  const { activeApi, activeChain } = useWebContext();
 
   const [error, setError] = useState<WithdrawErrors>({
     error: '',
@@ -162,9 +162,9 @@ export const useWithdraw = (params: UseWithdrawProps) => {
 
   const setRelayer = useCallback(
     (nextRelayer: WebbRelayer | null) => {
-      withdrawApi?.setActiveRelayer(nextRelayer);
+      withdrawApi?.setActiveRelayer(nextRelayer, activeChain?.id!);
     },
-    [withdrawApi]
+    [withdrawApi, activeChain]
   );
   return {
     stage,
