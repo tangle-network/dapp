@@ -116,7 +116,7 @@ git submodule update --init
 3. Build the `webb-standalone-node` by running:
    
 ```bash   
-cargo build --release -p darkwebb-standalone-node
+cargo build --release -p webb-standalone-node
 ```
 
 4. Startup two standalone nodes in other terminal instances:
