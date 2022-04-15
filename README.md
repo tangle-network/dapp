@@ -113,7 +113,7 @@ Follow the below steps to get up and running. 🏃
 git submodule update --init
 ```
 
-3. Build the `darkwebb-standalone-node` by running:
+3. Build the `webb-standalone-node` by running:
    
 ```bash   
 cargo build --release -p darkwebb-standalone-node
