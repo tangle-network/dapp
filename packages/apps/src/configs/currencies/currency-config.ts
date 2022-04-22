@@ -70,8 +70,9 @@ export const currenciesConfig: AppConfig['currencies'] = {
       [InternalChainId.HarmonyTestnet1, zeroAddress],
     ]),
   },
+  // This currency represents the native currency
+  // of a protocol-substrate local chain.
   [WebbCurrencyId.WEBB]: {
-    // IS THIS AN EVM CHAIN?
     name: 'WEBB',
     symbol: 'WEBB',
     color: '',

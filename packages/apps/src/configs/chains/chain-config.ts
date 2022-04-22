@@ -268,7 +268,7 @@ export const chainsConfig: AppConfig['chains'] = {
     tag: 'test',
     chainId: SubstrateChainId.WebbEggnet,
     logo: WEBBLogo,
-    url: 'wss://standalone.webb.tools',
+    url: 'wss://standalone.webb.tools/wss',
     name: 'Webb EggNet',
     currencies: [WebbCurrencyId.WEBB],
     nativeCurrencyId: WebbCurrencyId.WEBB,
