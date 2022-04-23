@@ -39,6 +39,8 @@ const DepositWrapper = styled.div<{ wallet: WalletConfig | undefined }>`
 const ChainInputWrapper = styled.div`
   padding: 25px 35px;
   background: ${({ theme }) => theme.layer1Background};
+  border: 1px solid ${({ theme }) => theme.borderColor};
+  border-bottom: none;
 
   .chain-dropdown-section {
     display: flex;
@@ -48,7 +50,7 @@ const ChainInputWrapper = styled.div`
 const TokenInputWrapper = styled.div`
   padding: 25px 35px;
   background: ${({ theme }) => theme.layer2Background};
-  border-radius: 13px;
+  border-radius: 0px 0px 13px 13px;
   border: 1px solid ${({ theme }) => theme.borderColor};
 
   .titles-and-information {
