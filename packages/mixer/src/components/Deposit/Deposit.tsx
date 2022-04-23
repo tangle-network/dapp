@@ -79,10 +79,10 @@ export const Deposit: React.FC<DepositProps> = () => {
   }, [activeChain, currenciesConfig]);
   const active = useMemo(() => selectedToken ?? allCurrencies[0], [allCurrencies, selectedToken]);
 
-  // Whenever mixerSizes change (like chain switch), set selected mixer to undefined
+  // Whenever mixerSizes change (like chain switch) or token changes, set selected mixer to undefined
   useEffect(() => {
     setItem(undefined);
-  }, [depositApi.mixerSizes]);
+  }, [depositApi.mixerSizes, active]);
 
   // Side effect for getting the balance of the token
   useEffect(() => {
@@ -97,7 +97,6 @@ export const Deposit: React.FC<DepositProps> = () => {
 
   const intendedMixers = useMemo(() => {
     return depositApi.mixerSizes.filter((mixerSize) => {
-      console.log('mixerSize in intendedMixers: ', mixerSize);
       return mixerSize.asset === active.view.symbol;
     });
   }, [depositApi.mixerSizes, active]);

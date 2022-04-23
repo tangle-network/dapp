@@ -13,11 +13,8 @@ export const useDepositNote = (value: string): null | Note => {
         }
         let d = await Note.deserialize(value);
         // const noteLeaf = d.getLeaf();
-        // console.log('noteLeaf: ', noteLeaf.toString());
-        console.log('Note: ', d.note);
         // Check for legacy notes and update fields (like internal chain id -> chain id type)
         if (d.note.version === 'v1') {
-          console.log('useDepositNote: detected v1');
           const newNoteInput: NoteGenInput = {
             protocol: d.note.protocol,
             version: 'v2',
@@ -48,7 +45,6 @@ export const useDepositNote = (value: string): null | Note => {
             secrets: d.note.secrets,
           };
           let newNote = await Note.generateNote(newNoteInput);
-          console.log('right before setDepositNote', newNote);
           setDepositNote(newNote);
         } else {
           setDepositNote(d);

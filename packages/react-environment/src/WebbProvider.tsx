@@ -486,7 +486,6 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
       /// settings the user selection
       setActiveChain(chain);
       setActiveWallet(wallet);
-      console.log('setActiveChain and setActiveWallet');
       setLoading(false);
       return localActiveApi;
     } catch (e) {
