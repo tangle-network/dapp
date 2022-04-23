@@ -38,6 +38,7 @@ export const useDeposit = (): DepositApi => {
       setError(error);
     });
     depositApi.getSizes().then((mixerSizes) => {
+      console.log('set mixer sizes after getSizes: ', mixerSizes);
       setMixerSizes(mixerSizes);
     });
     return () => unSub && unSub();

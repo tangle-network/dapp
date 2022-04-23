@@ -58,13 +58,20 @@ export const useBridgeDeposit = (): BridgeDepositApi => {
     const unSub = depositApi.on('error', (error) => {
       setError(error);
     });
+    setSelectedBridgeCurrency(bridgeApi.currency);
 
     depositApi.getSizes().then((mixerSizes) => {
+      mixerSizes.filter((mixerSize) => {
+        mixerSize.id === selectedBridgeCurrency?.id;
+      });
       setMixerSizes(mixerSizes);
     });
-    setSelectedBridgeCurrency(bridgeApi.currency);
     const subscribe = bridgeApi.$store.subscribe((bridge) => {
       depositApi.getSizes().then((mixerSizes) => {
+        mixerSizes.filter((mixerSize) => {
+          console.log('mixerSize: ', mixerSize);
+          mixerSize.id === selectedBridgeCurrency?.id;
+        });
         setMixerSizes(mixerSizes);
       });
       console.log(bridgeApi.currency);
@@ -74,7 +81,7 @@ export const useBridgeDeposit = (): BridgeDepositApi => {
       unSub && unSub();
       subscribe.unsubscribe();
     };
-  }, [depositApi, bridgeApi]);
+  }, [depositApi, bridgeApi, selectedBridgeCurrency?.id]);
 
   const generateNote = useCallback(
     async (mixerId: number | string, destChainTypeId: ChainTypeId, wrappableAsset: string | undefined) => {

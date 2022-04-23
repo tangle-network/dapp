@@ -1,4 +1,5 @@
 import EdgewareLogo from '@webb-dapp/apps/configs/logos/chains/EdgewareLogo';
+import GanacheLogo from '@webb-dapp/apps/configs/logos/chains/GanacheLogo';
 import HarmonyLogo from '@webb-dapp/apps/configs/logos/chains/HarmonyLogo';
 import PolygonLogo from '@webb-dapp/apps/configs/logos/chains/PolygonLogo';
 import ShidenLogo from '@webb-dapp/apps/configs/logos/chains/ShidenLogo';
@@ -163,6 +164,16 @@ export const currenciesConfig: AppConfig['currencies'] = {
       [InternalChainId.HermesLocalnet, '0x510C6297cC30A058F41eb4AF1BFC9953EaD8b577'],
       [InternalChainId.AthenaLocalnet, '0x7758F98C1c487E5653795470eEab6C4698bE541b'],
     ]),
+  },
+  [WebbCurrencyId.TEST]: {
+    name: 'Test Token',
+    symbol: 'TEST',
+    color: '',
+    id: WebbCurrencyId.TEST,
+    type: CurrencyType.ORML,
+    role: CurrencyRole.Governable,
+    icon: React.createElement(GanacheLogo),
+    addresses: new Map([[InternalChainId.WebbDevelopment, '1']]),
   },
 };
 

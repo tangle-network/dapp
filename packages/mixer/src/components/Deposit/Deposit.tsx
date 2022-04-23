@@ -1,4 +1,5 @@
 import { Typography } from '@material-ui/core';
+import { chainsConfig } from '@webb-dapp/apps/configs';
 import { DepositConfirm } from '@webb-dapp/mixer/components/DepositConfirm/DepositConfirm';
 import { useDeposit } from '@webb-dapp/mixer/hooks/deposit/useDeposit';
 import { RequiredWalletSelection } from '@webb-dapp/react-components/RequiredWalletSelection/RequiredWalletSelection';
@@ -60,7 +61,7 @@ const TokenBalance = styled.div`
 type DepositProps = {};
 
 export const Deposit: React.FC<DepositProps> = () => {
-  const { activeApi, activeChain, activeWallet, chains, switchChain } = useWebContext();
+  const { activeApi, activeChain, activeWallet } = useWebContext();
   const depositApi = useDeposit();
   const palette = useColorPallet();
   const { currencies: currenciesConfig } = useAppConfig();
@@ -70,8 +71,10 @@ export const Deposit: React.FC<DepositProps> = () => {
   const [tokenBalance, setTokenBalance] = useState('');
 
   const allCurrencies = useMemo(() => {
-    return activeChain?.nativeCurrencyId
-      ? [Currency.fromCurrencyId(currenciesConfig, activeChain.nativeCurrencyId)]
+    return activeChain
+      ? chainsConfig[activeChain.id].currencies.map((currencyId) => {
+          return Currency.fromCurrencyId(currenciesConfig, currencyId);
+        })
       : [];
   }, [activeChain, currenciesConfig]);
   const active = useMemo(() => selectedToken ?? allCurrencies[0], [allCurrencies, selectedToken]);
@@ -91,6 +94,13 @@ export const Deposit: React.FC<DepositProps> = () => {
       setTokenBalance(balance);
     });
   }, [activeApi, activeChain, selectedToken]);
+
+  const intendedMixers = useMemo(() => {
+    return depositApi.mixerSizes.filter((mixerSize) => {
+      console.log('mixerSize in intendedMixers: ', mixerSize);
+      return mixerSize.asset === active.view.symbol;
+    });
+  }, [depositApi.mixerSizes, active]);
 
   return (
     <DepositWrapper wallet={activeWallet}>
@@ -133,7 +143,7 @@ export const Deposit: React.FC<DepositProps> = () => {
               </TokenBalance>
             </div>
           </div>
-          <MixerGroupSelect items={depositApi.mixerSizes} value={item} onChange={setItem} />
+          <MixerGroupSelect items={intendedMixers} value={item} onChange={setItem} />
           <SpaceBox height={16} />
           <MixerButton
             disabled={!depositApi.ready || !item}
