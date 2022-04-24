@@ -7,7 +7,7 @@ import GanacheLogo from '@webb-dapp/apps/configs/logos/chains/GanacheLogo';
 // import PolygonLogo from '@webb-dapp/apps/configs/logos/chains/PolygonLogo';
 // import ShidenLogo from '@webb-dapp/apps/configs/logos/chains/ShidenLogo';
 import WEBBLogo from '@webb-dapp/apps/configs/logos/chains/WebbLogo';
-import { AppConfig } from '@webb-tools/api-providers';
+import { AppConfig, SubstrateDevelopChainId } from '@webb-tools/api-providers';
 import { WebbCurrencyId } from '@webb-tools/api-providers';
 import { ChainType, EVMChainId, InternalChainId, SubstrateChainId } from '@webb-tools/api-providers';
 
@@ -16,15 +16,15 @@ export const getSupportedCurrenciesOfChain = (chainId: InternalChainId): WebbCur
 };
 
 export const chainsConfig: AppConfig['chains'] = {
-  [InternalChainId.WebbDevelopment]: {
-    chainType: ChainType.Substrate,
-    id: InternalChainId.WebbDevelopment,
+  [InternalChainId.ProtocolSubstrateStandalone]: {
+    chainType: ChainType.SubstrateDevelopment,
+    id: InternalChainId.ProtocolSubstrateStandalone,
     group: 'webb',
     tag: 'dev',
-    chainId: SubstrateChainId.Egg,
+    chainId: SubstrateDevelopChainId.ProtocolSubstrateStandalone,
     logo: WEBBLogo,
     url: 'ws://127.0.0.1:9944',
-    name: 'Webb Development',
+    name: 'Protocol Substrate Development',
     currencies: [WebbCurrencyId.WEBB, WebbCurrencyId.TEST],
     nativeCurrencyId: WebbCurrencyId.WEBB,
   },
@@ -260,5 +260,29 @@ export const chainsConfig: AppConfig['chains'] = {
     logo: GanacheLogo,
     currencies: [WebbCurrencyId.ETH, WebbCurrencyId.DEV],
     nativeCurrencyId: WebbCurrencyId.ETH,
+  },
+  [InternalChainId.DkgSubstrateStandalone]: {
+    chainType: ChainType.SubstrateDevelopment,
+    id: InternalChainId.DkgSubstrateStandalone,
+    group: 'webb',
+    tag: 'dev',
+    chainId: SubstrateDevelopChainId.DkgSubstrateStandalone,
+    logo: WEBBLogo,
+    url: 'ws://127.0.0.1:9944',
+    name: 'Webb Development',
+    currencies: [WebbCurrencyId.WEBB],
+    nativeCurrencyId: WebbCurrencyId.WEBB,
+  },
+  [InternalChainId.EggStandalone]: {
+    chainType: ChainType.Substrate,
+    id: InternalChainId.EggStandalone,
+    group: 'webb',
+    tag: 'test',
+    chainId: SubstrateChainId.EggStandalone,
+    logo: WEBBLogo,
+    url: 'wss://standalone.webb.tools',
+    name: 'Webb Eggnet',
+    currencies: [WebbCurrencyId.WEBB],
+    nativeCurrencyId: WebbCurrencyId.WEBB,
   },
 };

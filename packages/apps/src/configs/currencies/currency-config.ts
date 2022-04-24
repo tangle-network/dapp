@@ -81,7 +81,12 @@ export const currenciesConfig: AppConfig['currencies'] = {
     type: CurrencyType.ORML,
     role: CurrencyRole.Governable,
     icon: React.createElement(WEBBLogo),
-    addresses: new Map([[InternalChainId.WebbDevelopment, ZERO]]),
+    addresses: new Map([
+      [InternalChainId.EggStandalone, ZERO],
+      [InternalChainId.EggDevelopStandalone, ZERO],
+      [InternalChainId.ProtocolSubstrateStandalone, ZERO],
+      [InternalChainId.DkgSubstrateStandalone, ZERO],
+    ]),
   },
   [WebbCurrencyId.SDN]: {
     name: 'Shiden',
@@ -173,7 +178,7 @@ export const currenciesConfig: AppConfig['currencies'] = {
     type: CurrencyType.ORML,
     role: CurrencyRole.Governable,
     icon: React.createElement(GanacheLogo),
-    addresses: new Map([[InternalChainId.WebbDevelopment, '1']]),
+    addresses: new Map([[InternalChainId.ProtocolSubstrateStandalone, '1']]),
   },
 };
 

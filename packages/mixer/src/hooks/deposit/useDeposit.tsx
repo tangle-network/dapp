@@ -50,7 +50,7 @@ export const useDeposit = (): DepositApi => {
         // disable buttons
         throw new Error('Not ready');
       } else {
-        const encodedChainIdType = computeChainIdType(chainTypeId?.chainType, chainTypeId?.chainId);
+        const encodedChainIdType = computeChainIdType(chainTypeId.chainType, chainTypeId.chainId);
         return depositApi?.generateNote(mixerId, encodedChainIdType);
       }
     },
