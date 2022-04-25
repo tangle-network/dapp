@@ -72,34 +72,34 @@ export const Deposit: React.FC<DepositProps> = () => {
 
   const allCurrencies = useMemo(() => {
     return activeChain
-      ? chainsConfig[activeChain.id].currencies.map((currencyId) => {
+      ? activeChain.currencies.map((currencyId) => {
           return Currency.fromCurrencyId(currenciesConfig, currencyId);
         })
       : [];
   }, [activeChain, currenciesConfig]);
-  const active = useMemo(() => selectedToken ?? allCurrencies[0], [allCurrencies, selectedToken]);
+  const activeToken = useMemo(() => selectedToken ?? allCurrencies[0], [allCurrencies, selectedToken]);
 
   // Whenever mixerSizes change (like chain switch) or token changes, set selected mixer to undefined
   useEffect(() => {
     setItem(undefined);
-  }, [depositApi.mixerSizes, active]);
+  }, [depositApi.mixerSizes, activeToken]);
 
   // Side effect for getting the balance of the token
   useEffect(() => {
-    if (!selectedToken || !activeChain || !activeApi) {
+    if (!activeToken || !activeChain || !activeApi) {
       return;
     }
 
-    activeApi.methods.chainQuery.tokenBalanceByCurrencyId(selectedToken.view.id as any).then((balance) => {
+    activeApi.methods.chainQuery.tokenBalanceByCurrencyId(activeToken.view.id as any).then((balance) => {
       setTokenBalance(balance);
     });
-  }, [activeApi, activeChain, selectedToken]);
+  }, [activeApi, activeChain, activeToken]);
 
   const intendedMixers = useMemo(() => {
     return depositApi.mixerSizes.filter((mixerSize) => {
-      return mixerSize.asset === active.view.symbol;
+      return mixerSize.asset === activeToken.view.symbol;
     });
-  }, [depositApi.mixerSizes, active]);
+  }, [depositApi.mixerSizes, activeToken]);
 
   return (
     <DepositWrapper wallet={activeWallet}>
@@ -113,7 +113,7 @@ export const Deposit: React.FC<DepositProps> = () => {
           <div className='token-dropdown-section'>
             <TokenInput
               currencies={allCurrencies}
-              value={active}
+              value={activeToken}
               onChange={(token) => {
                 setSelectedToken(Currency.fromCurrencyId(currenciesConfig, token.view.id));
               }}

@@ -7,9 +7,14 @@ import GanacheLogo from '@webb-dapp/apps/configs/logos/chains/GanacheLogo';
 // import PolygonLogo from '@webb-dapp/apps/configs/logos/chains/PolygonLogo';
 // import ShidenLogo from '@webb-dapp/apps/configs/logos/chains/ShidenLogo';
 import WEBBLogo from '@webb-dapp/apps/configs/logos/chains/WebbLogo';
-import { AppConfig, SubstrateDevelopChainId } from '@webb-tools/api-providers';
-import { WebbCurrencyId } from '@webb-tools/api-providers';
-import { ChainType, EVMChainId, InternalChainId, SubstrateChainId } from '@webb-tools/api-providers';
+import {
+  AppConfig,
+  ChainType,
+  EVMChainId,
+  InternalChainId,
+  SubstrateChainId,
+  WebbCurrencyId,
+} from '@webb-tools/api-providers';
 
 export const getSupportedCurrenciesOfChain = (chainId: InternalChainId): WebbCurrencyId[] => {
   return chainsConfig[chainId].currencies;
@@ -17,11 +22,11 @@ export const getSupportedCurrenciesOfChain = (chainId: InternalChainId): WebbCur
 
 export const chainsConfig: AppConfig['chains'] = {
   [InternalChainId.ProtocolSubstrateStandalone]: {
-    chainType: ChainType.SubstrateDevelopment,
+    chainType: ChainType.Substrate,
     id: InternalChainId.ProtocolSubstrateStandalone,
     group: 'webb',
     tag: 'dev',
-    chainId: SubstrateDevelopChainId.ProtocolSubstrateStandalone,
+    chainId: SubstrateChainId.ProtocolSubstrateStandalone,
     logo: WEBBLogo,
     url: 'ws://127.0.0.1:9944',
     name: 'Protocol Substrate Development',
@@ -245,8 +250,8 @@ export const chainsConfig: AppConfig['chains'] = {
     url: 'http://127.0.0.1:5001',
     evmRpcUrls: ['http://127.0.0.1:5001'],
     logo: GanacheLogo,
-    currencies: [WebbCurrencyId.ETH, WebbCurrencyId.DEV],
-    nativeCurrencyId: WebbCurrencyId.ETH,
+    currencies: [WebbCurrencyId.webbDEV, WebbCurrencyId.DEV],
+    nativeCurrencyId: WebbCurrencyId.DEV,
   },
   [InternalChainId.AthenaLocalnet]: {
     chainType: ChainType.EVM,
@@ -258,21 +263,21 @@ export const chainsConfig: AppConfig['chains'] = {
     url: 'http://127.0.0.1:5002',
     evmRpcUrls: ['http://127.0.0.1:5002'],
     logo: GanacheLogo,
-    currencies: [WebbCurrencyId.ETH, WebbCurrencyId.DEV],
-    nativeCurrencyId: WebbCurrencyId.ETH,
+    currencies: [WebbCurrencyId.webbDEV, WebbCurrencyId.DEV],
+    nativeCurrencyId: WebbCurrencyId.DEV,
   },
-  [InternalChainId.DkgSubstrateStandalone]: {
-    chainType: ChainType.SubstrateDevelopment,
-    id: InternalChainId.DkgSubstrateStandalone,
-    group: 'webb',
-    tag: 'dev',
-    chainId: SubstrateDevelopChainId.DkgSubstrateStandalone,
-    logo: WEBBLogo,
-    url: 'ws://127.0.0.1:9944',
-    name: 'Webb Development',
-    currencies: [WebbCurrencyId.WEBB],
-    nativeCurrencyId: WebbCurrencyId.WEBB,
-  },
+  // [InternalChainId.DkgSubstrateStandalone]: {
+  //   chainType: ChainType.SubstrateDevelopment,
+  //   id: InternalChainId.DkgSubstrateStandalone,
+  //   group: 'webb',
+  //   tag: 'dev',
+  //   chainId: SubstrateChainId.DkgSubstrateStandalone,
+  //   logo: WEBBLogo,
+  //   url: 'ws://127.0.0.1:9944',
+  //   name: 'Webb Development',
+  //   currencies: [WebbCurrencyId.WEBB],
+  //   nativeCurrencyId: WebbCurrencyId.WEBB,
+  // },
   [InternalChainId.EggStandalone]: {
     chainType: ChainType.Substrate,
     id: InternalChainId.EggStandalone,

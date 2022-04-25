@@ -83,9 +83,7 @@ export const currenciesConfig: AppConfig['currencies'] = {
     icon: React.createElement(WEBBLogo),
     addresses: new Map([
       [InternalChainId.EggStandalone, ZERO],
-      [InternalChainId.EggDevelopStandalone, ZERO],
       [InternalChainId.ProtocolSubstrateStandalone, ZERO],
-      [InternalChainId.DkgSubstrateStandalone, ZERO],
     ]),
   },
   [WebbCurrencyId.SDN]: {

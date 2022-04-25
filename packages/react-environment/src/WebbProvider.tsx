@@ -23,6 +23,7 @@ import { BareProps } from '@webb-dapp/ui-components/types';
 import {
   Account,
   AppConfig,
+  BridgeConfig,
   Chain,
   EVMChainId,
   evmIdIntoInternalChainId,
@@ -70,6 +71,21 @@ const appConfig: AppConfig = {
   chains: chainsConfig,
   currencies: currenciesConfig,
   wallet: walletsConfig,
+};
+
+// Select a reasonable default bridge
+const getDefaultBridge = (chain: Chain, bridgeConfig: Record<number, BridgeConfig>): BridgeConfig | undefined => {
+  // Iterate over the supported currencies until a bridge is found
+  const supportedCurrencies = chain.currencies;
+  for (const currency of supportedCurrencies) {
+    console.log('currency: ', currency);
+    console.log('keys: ', Object.keys(bridgeConfig));
+    if (Object.keys(bridgeConfig).includes(currency.toString())) {
+      return bridgeConfig[currency];
+    }
+  }
+
+  return undefined;
 };
 
 function notificationHandler(notification: NotificationPayload) {
@@ -480,6 +496,10 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
             await setActiveApiWithAccounts(webbWeb3Provider, chain.id);
             /// listen to `providerUpdate` by MetaMask
             localActiveApi = webbWeb3Provider;
+
+            // set a reasonable default for the active bridge
+            const defaultBridge = getDefaultBridge(chain, bridgeConfigByAsset);
+            localActiveApi.methods.anchorApi.setActiveBridge(defaultBridge);
           }
           break;
       }
