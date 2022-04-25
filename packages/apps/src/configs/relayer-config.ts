@@ -24,9 +24,9 @@ export const relayerConfig: RelayerConfig[] = [
 export function relayerSubstrateNameToChainId(name: string): InternalChainId {
   switch (name) {
     case 'localnode':
-      return InternalChainId.WebbDevelopment;
+      return InternalChainId.ProtocolSubstrateStandalone;
     case 'webbeggnet':
-      return InternalChainId.WebbEggnet;
+      return InternalChainId.EggStandalone;
   }
 
   throw new Error('unhandled relayed chain name  ' + name);
@@ -91,7 +91,7 @@ enum RelayerChainName {
   PolygonTestnet = 'polygontestnet',
   HermesLocalnet = 'hermes',
   AthenaLocalnet = 'athena',
-  WebbDevelopment = 'localnode',
+  ProtocolSubstrateStandalone = 'localnode',
   WebbEggnet = 'webbeggnet',
 }
 
@@ -131,9 +131,9 @@ export function chainIdToRelayerName(id: InternalChainId): string {
       return RelayerChainName.HermesLocalnet;
     case InternalChainId.AthenaLocalnet:
       return RelayerChainName.AthenaLocalnet;
-    case InternalChainId.WebbDevelopment:
-      return RelayerChainName.WebbDevelopment;
-    case InternalChainId.WebbEggnet:
+    case InternalChainId.ProtocolSubstrateStandalone:
+      return RelayerChainName.ProtocolSubstrateStandalone;
+    case InternalChainId.EggStandalone:
       return RelayerChainName.WebbEggnet;
   }
   throw new Error(`unhandled Chain id ${id}`);
