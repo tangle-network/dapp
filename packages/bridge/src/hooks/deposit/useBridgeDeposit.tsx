@@ -58,13 +58,22 @@ export const useBridgeDeposit = (): BridgeDepositApi => {
     const unSub = depositApi.on('error', (error) => {
       setError(error);
     });
-
-    depositApi.getSizes().then((mixerSizes) => {
-      setMixerSizes(mixerSizes);
-    });
     setSelectedBridgeCurrency(bridgeApi.currency);
+
+    if (bridgeApi.activeBridge) {
+      depositApi.getSizes().then((mixerSizes) => {
+        mixerSizes.filter((mixerSize) => {
+          mixerSize.id === selectedBridgeCurrency?.id;
+        });
+        setMixerSizes(mixerSizes);
+      });
+    }
     const subscribe = bridgeApi.$store.subscribe((bridge) => {
       depositApi.getSizes().then((mixerSizes) => {
+        mixerSizes.filter((mixerSize) => {
+          console.log('mixerSize: ', mixerSize);
+          mixerSize.id === selectedBridgeCurrency?.id;
+        });
         setMixerSizes(mixerSizes);
       });
       console.log(bridgeApi.currency);
@@ -74,7 +83,7 @@ export const useBridgeDeposit = (): BridgeDepositApi => {
       unSub && unSub();
       subscribe.unsubscribe();
     };
-  }, [depositApi, bridgeApi]);
+  }, [depositApi, bridgeApi, selectedBridgeCurrency?.id, bridgeApi?.activeBridge]);
 
   const generateNote = useCallback(
     async (mixerId: number | string, destChainTypeId: ChainTypeId, wrappableAsset: string | undefined) => {

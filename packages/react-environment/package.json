@@ -9,8 +9,8 @@
     "@influxdata/influxdb-client-browser": "^1.8.0",
     "@polkadot/api": "7.13.1",
     "@polkadot/extension-dapp": "^0.42.9",
-    "@webb-tools/api": "0.1.4-48",
-    "@webb-tools/sdk-core": "0.1.4-48"
+    "@webb-tools/api": "0.1.4-55",
+    "@webb-tools/sdk-core": "0.1.4-55"
   },
   "devDependencies": {
     "@types/url-parse": "^1.4.3"

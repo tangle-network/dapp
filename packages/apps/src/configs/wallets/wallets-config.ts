@@ -35,7 +35,13 @@ export const walletsConfig: AppConfig['wallet'] = {
     async detect() {
       return true;
     },
-    supportedChainIds: [InternalChainId.EdgewareLocalNet, InternalChainId.WebbDevelopment],
+    supportedChainIds: [
+      InternalChainId.EdgewareLocalNet,
+      InternalChainId.EggStandalone,
+      InternalChainId.EggDevelopStandalone,
+      InternalChainId.DkgSubstrateStandalone,
+      InternalChainId.ProtocolSubstrateStandalone,
+    ],
   },
   [WalletId.MetaMask]: {
     id: WalletId.MetaMask,

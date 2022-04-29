@@ -274,21 +274,17 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
             </p>
           </div>
           <div className='information-item'>
-            <p className='title'>Chains</p>
-            <p className='value'>
-              {fees} {depositNote.note.tokenSymbol}
-            </p>
-          </div>
-          <div className='information-item'>
             <p className='title'>Relayer Fee</p>
             <p className='value'>
-              {Number(depositNote.note.amount) - Number(fees)} {depositNote.note.tokenSymbol}
+              {Number(fees)} {depositNote.note.tokenSymbol}
             </p>
           </div>
           <SpaceBox height={4} />
           <div className='total-amount'>
             <p className='title'>Total Amount</p>
-            <p className='value'>.1 webbWETH</p>
+            <p className='value'>
+              {Number(depositNote.note.amount) - Number(fees)} {depositNote.note.tokenSymbol}
+            </p>
           </div>
           <SpaceBox height={8} />
           <div style={{ padding: '10px 35px' }}>

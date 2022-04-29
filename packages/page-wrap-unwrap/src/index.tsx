@@ -180,9 +180,11 @@ const PageWrapUnwrap: FC = () => {
         supportedToken = governedTokens[0];
         setGovernedToken(governedTokens[0]);
       }
-      activeApi?.methods.chainQuery.tokenBalanceByCurrencyId(supportedToken.view.id as any).then((balance) => {
-        setGovernedTokenBalance(Number(balance));
-      });
+      activeApi?.methods.chainQuery
+        .tokenBalanceByCurrencyId(activeChain!.id, supportedToken.view.id as any)
+        .then((balance) => {
+          setGovernedTokenBalance(Number(balance));
+        });
     }
     if (wrappableTokens.length) {
       let supportedToken = wrappableTokens.find((token) => {
@@ -192,9 +194,11 @@ const PageWrapUnwrap: FC = () => {
         supportedToken = wrappableTokens[0];
         setWrappableToken(wrappableTokens[0]);
       }
-      activeApi?.methods.chainQuery.tokenBalanceByCurrencyId(supportedToken.view.id as any).then((balance) => {
-        setWrappableTokenBalance(Number(balance));
-      });
+      activeApi?.methods.chainQuery
+        .tokenBalanceByCurrencyId(activeChain!.id, supportedToken.view.id as any)
+        .then((balance) => {
+          setWrappableTokenBalance(Number(balance));
+        });
     }
   }, [activeChain, activeApi, governedTokens, wrappableTokens, setGovernedToken, setWrappableToken]);
 

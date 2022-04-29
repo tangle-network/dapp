@@ -1,8 +1,8 @@
 import { Button, Icon, LinearProgress, Tooltip, Typography } from '@material-ui/core';
-import { getEVMChainName, parseChainIdType } from '@webb-dapp/apps/configs';
+import { useAppConfig } from '@webb-dapp/react-environment/webb-context';
 import { SpaceBox } from '@webb-dapp/ui-components/Box';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
-import { WithdrawState } from '@webb-tools/api-providers';
+import { getChainNameFromChainId, parseChainIdType, WithdrawState } from '@webb-tools/api-providers';
 import { JsNote as DepositNote } from '@webb-tools/wasm-utils';
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
@@ -115,6 +115,8 @@ const InfoItem = styled.div`
 `;
 
 const WithdrawingModal: React.FC<WithdrawingModalProps> = ({ canCancel, cancel, note, stage, withdrawTxInfo }) => {
+  const config = useAppConfig();
+
   const message = useMemo(() => {
     switch (stage) {
       case WithdrawState.Ideal:
@@ -180,7 +182,7 @@ const WithdrawingModal: React.FC<WithdrawingModalProps> = ({ canCancel, cancel, 
                 <Typography variant={'caption'}>
                   <b>
                     Receiving {note.amount + ' ' + note.tokenSymbol} on{' '}
-                    {getEVMChainName(parseChainIdType(Number(note.targetChainId)).chainId)}
+                    {getChainNameFromChainId(config, parseChainIdType(Number(note.targetChainId)))}
                   </b>
                 </Typography>
               </InfoItem>

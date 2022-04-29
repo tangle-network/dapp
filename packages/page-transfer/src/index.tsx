@@ -51,9 +51,6 @@ const PageTransfers: FC = () => {
   }, [activeChain]);
   const [destChain, setDestChain] = useState<ChainTypeId | undefined>(undefined);
   const [recipient, setRecipient] = useState('');
-  const bridge = useBridge();
-
-  console.log(destChain);
 
   const tokens = useMemo(() => {
     const tokens: CurrencyContent[] = [];

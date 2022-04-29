@@ -1,4 +1,5 @@
 import { Typography } from '@material-ui/core';
+import { chainsConfig } from '@webb-dapp/apps/configs';
 import { DepositConfirm } from '@webb-dapp/mixer/components/DepositConfirm/DepositConfirm';
 import { useDeposit } from '@webb-dapp/mixer/hooks/deposit/useDeposit';
 import { RequiredWalletSelection } from '@webb-dapp/react-components/RequiredWalletSelection/RequiredWalletSelection';
@@ -60,7 +61,7 @@ const TokenBalance = styled.div`
 type DepositProps = {};
 
 export const Deposit: React.FC<DepositProps> = () => {
-  const { activeApi, activeChain, activeWallet, chains, switchChain } = useWebContext();
+  const { activeApi, activeChain, activeWallet } = useWebContext();
   const depositApi = useDeposit();
   const palette = useColorPallet();
   const { currencies: currenciesConfig } = useAppConfig();
@@ -70,27 +71,37 @@ export const Deposit: React.FC<DepositProps> = () => {
   const [tokenBalance, setTokenBalance] = useState('');
 
   const allCurrencies = useMemo(() => {
-    return activeChain?.nativeCurrencyId
-      ? [Currency.fromCurrencyId(currenciesConfig, activeChain.nativeCurrencyId)]
+    return activeChain
+      ? activeChain.currencies.map((currencyId) => {
+          return Currency.fromCurrencyId(currenciesConfig, currencyId);
+        })
       : [];
   }, [activeChain, currenciesConfig]);
-  const active = useMemo(() => selectedToken ?? allCurrencies[0], [allCurrencies, selectedToken]);
+  const activeToken = useMemo(() => selectedToken ?? allCurrencies[0], [allCurrencies, selectedToken]);
 
-  // Whenever mixerSizes change (like chain switch), set selected mixer to undefined
+  // Whenever mixerSizes change (like chain switch) or token changes, set selected mixer to undefined
   useEffect(() => {
     setItem(undefined);
-  }, [depositApi.mixerSizes]);
+  }, [depositApi.mixerSizes, activeToken]);
 
   // Side effect for getting the balance of the token
   useEffect(() => {
-    if (!selectedToken || !activeChain || !activeApi) {
+    if (!activeToken || !activeChain || !activeApi) {
       return;
     }
 
-    activeApi.methods.chainQuery.tokenBalanceByCurrencyId(selectedToken.view.id as any).then((balance) => {
-      setTokenBalance(balance);
+    activeApi.methods.chainQuery
+      .tokenBalanceByCurrencyId(activeChain.id, activeToken.view.id as any)
+      .then((balance) => {
+        setTokenBalance(balance);
+      });
+  }, [activeApi, activeApi?.accounts.activeOrDefault, activeChain, activeToken]);
+
+  const intendedMixers = useMemo(() => {
+    return depositApi.mixerSizes.filter((mixerSize) => {
+      return mixerSize.asset === activeToken.view.symbol;
     });
-  }, [activeApi, activeChain, selectedToken]);
+  }, [depositApi.mixerSizes, activeToken]);
 
   return (
     <DepositWrapper wallet={activeWallet}>
@@ -104,7 +115,7 @@ export const Deposit: React.FC<DepositProps> = () => {
           <div className='token-dropdown-section'>
             <TokenInput
               currencies={allCurrencies}
-              value={active}
+              value={activeToken}
               onChange={(token) => {
                 setSelectedToken(Currency.fromCurrencyId(currenciesConfig, token.view.id));
               }}
@@ -133,7 +144,7 @@ export const Deposit: React.FC<DepositProps> = () => {
               </TokenBalance>
             </div>
           </div>
-          <MixerGroupSelect items={depositApi.mixerSizes} value={item} onChange={setItem} />
+          <MixerGroupSelect items={intendedMixers} value={item} onChange={setItem} />
           <SpaceBox height={16} />
           <MixerButton
             disabled={!depositApi.ready || !item}

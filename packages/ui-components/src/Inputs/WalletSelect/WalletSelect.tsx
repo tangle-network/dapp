@@ -81,7 +81,7 @@ export const WalletSelect: React.FC<WalletSelectProps> = ({}) => {
 
   const amountBalanceString = `${getRoundedAmountString(
     Number(useNativeCurrencyBalance())
-  )}${useNativeCurrencySymbol()}`;
+  )} ${useNativeCurrencySymbol()}`;
 
   return (
     <>
@@ -89,9 +89,6 @@ export const WalletSelect: React.FC<WalletSelectProps> = ({}) => {
         role='button'
         aria-disabled={!activeChain}
         onClick={() => {
-          if (!activeChain) {
-            return;
-          }
           openModal();
         }}
         className='select-button'
