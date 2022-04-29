@@ -8,11 +8,13 @@ export const useNativeCurrencyBalance = () => {
 
   useEffect(() => {
     if (activeChain && activeApi) {
-      activeApi.methods.chainQuery.tokenBalanceByCurrencyId(activeChain.nativeCurrencyId).then((balance) => {
-        setBalance(balance);
-      });
+      activeApi.methods.chainQuery
+        .tokenBalanceByCurrencyId(activeChain.id, activeChain.nativeCurrencyId)
+        .then((balance) => {
+          setBalance(balance);
+        });
     }
-  }, [activeChain, activeApi]);
+  }, [activeChain, activeApi, activeApi?.accounts.activeOrDefault]);
 
   return balance;
 };
