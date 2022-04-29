@@ -90,10 +90,12 @@ export const Deposit: React.FC<DepositProps> = () => {
       return;
     }
 
-    activeApi.methods.chainQuery.tokenBalanceByCurrencyId(activeToken.view.id as any).then((balance) => {
-      setTokenBalance(balance);
-    });
-  }, [activeApi, activeChain, activeToken]);
+    activeApi.methods.chainQuery
+      .tokenBalanceByCurrencyId(activeChain.id, activeToken.view.id as any)
+      .then((balance) => {
+        setTokenBalance(balance);
+      });
+  }, [activeApi, activeApi?.accounts.activeOrDefault, activeChain, activeToken]);
 
   const intendedMixers = useMemo(() => {
     return depositApi.mixerSizes.filter((mixerSize) => {

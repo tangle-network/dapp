@@ -142,14 +142,16 @@ export const Deposit: React.FC<DepositProps> = () => {
   }, [currenciesConfig, wrappableToken]);
 
   useEffect(() => {
-    if (!wrappableToken || !activeApi || loading) {
+    if (!wrappableToken || !activeApi || !activeChain || loading) {
       return;
     }
     // TODO: handle when the token id isn't WebbCurrencyId
-    activeApi.methods.chainQuery.tokenBalanceByCurrencyId(wrappableToken.view.id as any).then((balance) => {
-      setWrappableTokenBalance(balance);
-    });
-  }, [wrappableToken, activeApi, loading]);
+    activeApi.methods.chainQuery
+      .tokenBalanceByCurrencyId(activeChain.id, wrappableToken.view.id as any)
+      .then((balance) => {
+        setWrappableTokenBalance(balance);
+      });
+  }, [wrappableToken, activeApi, loading, activeChain]);
 
   // helper for automatic selection of 'wrap and deposit' if not enough bridge token
   const selectBridgeAmount = (mixerSize: MixerSize) => {

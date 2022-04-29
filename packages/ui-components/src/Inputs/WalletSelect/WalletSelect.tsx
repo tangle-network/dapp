@@ -81,7 +81,7 @@ export const WalletSelect: React.FC<WalletSelectProps> = ({}) => {
 
   const amountBalanceString = `${getRoundedAmountString(
     Number(useNativeCurrencyBalance())
-  )}${useNativeCurrencySymbol()}`;
+  )} ${useNativeCurrencySymbol()}`;
 
   return (
     <>
