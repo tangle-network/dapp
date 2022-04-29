@@ -540,9 +540,8 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
         networkStorage.get('defaultNetwork'),
         networkStorage.get('defaultWallet'),
       ]);
-      /// if there's no chain, set the default to Rinkeby and return
+      /// if there's no chain, return
       if (!net || !wallet) {
-        setActiveChain(chains[InternalChainId.Rinkeby]);
         return;
       }
       /// chain config by net id

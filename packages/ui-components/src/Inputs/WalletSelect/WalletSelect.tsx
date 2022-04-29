@@ -89,9 +89,6 @@ export const WalletSelect: React.FC<WalletSelectProps> = ({}) => {
         role='button'
         aria-disabled={!activeChain}
         onClick={() => {
-          if (!activeChain) {
-            return;
-          }
           openModal();
         }}
         className='select-button'

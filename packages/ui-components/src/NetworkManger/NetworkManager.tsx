@@ -493,7 +493,11 @@ export const NetworkManagerIndicator: React.FC<NetworkManagerIndicatorProps> = (
         );
 
       case 'no-connection':
-        return <Icon fontSize={'large'}>podcasts</Icon>;
+        return (
+          <div>
+            <Typography variant='body1'>Select a Network</Typography>
+          </div>
+        );
 
       case 'error':
         return <Icon fontSize={'large'}>podcasts</Icon>;

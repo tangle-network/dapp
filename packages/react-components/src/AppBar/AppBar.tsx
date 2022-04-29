@@ -1,6 +1,6 @@
 import { Icon, IconButton, Typography } from '@material-ui/core';
 import { WebbFullNameLogo } from '@webb-dapp/react-components/assets/WebbFullNameLogo';
-import { useStore } from '@webb-dapp/react-environment';
+import { useStore, useWebContext } from '@webb-dapp/react-environment';
 import { useDimensions } from '@webb-dapp/react-environment/layout';
 import { WalletSelect } from '@webb-dapp/ui-components/Inputs/WalletSelect/WalletSelect';
 import { NetworkManager } from '@webb-dapp/ui-components/NetworkManger/NetworkManager';
@@ -103,6 +103,7 @@ type AppBarProps = {
 };
 
 const AppBar: React.FC<AppBarProps> = ({ toggleSidebarDisplay }) => {
+  const { activeChain } = useWebContext();
   const { size, width } = useDimensions();
   const isMobile = useMemo(() => {
     return width <= size.sm;
@@ -135,7 +136,7 @@ const AppBar: React.FC<AppBarProps> = ({ toggleSidebarDisplay }) => {
       </Typography>
       <RightNavigation>
         <NetworkManager />
-        <WalletSelect />
+        {activeChain && <WalletSelect />}
       </RightNavigation>
     </AppBarWrapper>
   );
