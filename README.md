@@ -100,7 +100,7 @@ Eager to try out the Webb Dapp and see it in full action? You can setup a local 
 
 ### Mixer setup with [local substrate node](https://github.com/webb-tools/protocol-substrate) and [Relayer](https://github.com/webb-tools/relayer)
 
-Follow the below steps to get up and running. 🏃
+Follow the below steps to get up and running or follow the detailed how-to guide [here](https://docs.webb.tools/how-to-guides/v1/substrate-mixer/local-mixer/).
 #### Setup local nodes
 1. Clone the protocol-substrate repo:
 ```bash
