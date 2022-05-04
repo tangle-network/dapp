@@ -5,6 +5,7 @@ import PolygonLogo from '@webb-dapp/apps/configs/logos/chains/PolygonLogo';
 import ShidenLogo from '@webb-dapp/apps/configs/logos/chains/ShidenLogo';
 import WEBBLogo from '@webb-dapp/apps/configs/logos/chains/WebbLogo';
 import EtherLogo from '@webb-dapp/apps/configs/logos/Eth';
+import { PolkaLogo } from '@webb-dapp/apps/configs/logos/PolkaLogo';
 import WebbWrappedLogo from '@webb-dapp/apps/configs/logos/WebbWrappedLogo';
 import {
   AppConfig,
@@ -177,6 +178,16 @@ export const currenciesConfig: AppConfig['currencies'] = {
     role: CurrencyRole.Governable,
     icon: React.createElement(GanacheLogo),
     addresses: new Map([[InternalChainId.ProtocolSubstrateStandalone, '1']]),
+  },
+  [WebbCurrencyId.NEW]: {
+    name: 'New Token',
+    symbol: 'NEW',
+    color: '',
+    id: WebbCurrencyId.NEW,
+    type: CurrencyType.ORML,
+    role: CurrencyRole.Governable,
+    icon: React.createElement(PolkaLogo),
+    addresses: new Map([[InternalChainId.ProtocolSubstrateStandalone, '2']]),
   },
 };
 

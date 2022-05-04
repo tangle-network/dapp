@@ -30,7 +30,7 @@ export const chainsConfig: AppConfig['chains'] = {
     logo: WEBBLogo,
     url: 'ws://127.0.0.1:9944',
     name: 'Protocol Substrate Development',
-    currencies: [WebbCurrencyId.WEBB, WebbCurrencyId.TEST],
+    currencies: [WebbCurrencyId.WEBB, WebbCurrencyId.TEST, WebbCurrencyId.NEW],
     nativeCurrencyId: WebbCurrencyId.WEBB,
   },
   // this is the EVM edgeware
