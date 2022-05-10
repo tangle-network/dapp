@@ -8,7 +8,7 @@ interface Note {
   // deserialize(noteStr: string): Note;
 }
 
-type DespotStates = 'ideal' | 'generating-note' | 'depositing';
+type DepositStates = 'ideal' | 'generating-note' | 'depositing';
 
 export interface WebbContextState<T = unknown> {
   loading: boolean;
