@@ -4819,17 +4819,21 @@
     "@webb-tools/utils" "^0.1.7"
     snarkjs "0.4.16"
 
-"@webb-tools/api-derive@0.1.4-58", "@webb-tools/api-derive@file:../webb.js/packages/api-derive/build":
-  version "0.1.4-58"
+"@webb-tools/api-derive@0.1.4-60":
+  version "0.1.4-60"
+  resolved "https://registry.yarnpkg.com/@webb-tools/api-derive/-/api-derive-0.1.4-60.tgz#bd2261ffa5126031913f085022d153d245062e06"
+  integrity sha512-puxke8hG4He3wzQxWCf5wLdBguE0qLbqurCggV9wmwH8PMMm2HD2/WGDTlscmldNCDoFkUbYuveZ3kSRT1i+5Q==
   dependencies:
     "@babel/runtime" "^7.10.2"
     "@polkadot/api" "8.1.1"
     "@polkadot/rpc-core" "8.1.1"
-    "@webb-tools/api" "0.1.4-58"
-    "@webb-tools/types" "0.1.4-58"
+    "@webb-tools/api" "0.1.4-60"
+    "@webb-tools/types" "0.1.4-60"
 
-"@webb-tools/api-providers@file:../webb.js/packages/api-providers/build":
-  version "0.1.4-58"
+"@webb-tools/api-providers@0.1.4-60":
+  version "0.1.4-60"
+  resolved "https://registry.yarnpkg.com/@webb-tools/api-providers/-/api-providers-0.1.4-60.tgz#1746838ebaed1287172721f3da81440488b6db84"
+  integrity sha512-fMG7PlQ1DjLkB4ZGxt2E+COtcTKJ7ibarQiACptilO6Kc6uGTPsJewwbCQ/cN8scwe7UasOQ26WF9b0GHdN0BA==
   dependencies:
     "@babel/runtime" "^7.10.2"
     "@polkadot/extension-dapp" "^0.35.0-beta.35"
@@ -4841,16 +4845,20 @@
     bignumber.js "^9.0.0"
     snarkjs "0.4.16"
 
-"@webb-tools/api@0.1.4-58", "@webb-tools/api@file:../webb.js/packages/api/build":
-  version "0.1.4-58"
+"@webb-tools/api@0.1.4-60":
+  version "0.1.4-60"
+  resolved "https://registry.yarnpkg.com/@webb-tools/api/-/api-0.1.4-60.tgz#196fa5efb568a235f08e974343d8bd984c12886e"
+  integrity sha512-TDHqW9COPv/lc2MDtGxrnN4UnVHbQ+M3EnCZCcn3jvX8vfzp0/glvD6/0VUk/Mh+zyHT2BuqM4gqt6v9FIZfpA==
   dependencies:
     "@babel/runtime" "^7.10.2"
     "@polkadot/api" "8.1.1"
     "@polkadot/rpc-core" "8.1.1"
-    "@webb-tools/api-derive" "0.1.4-58"
+    "@webb-tools/api-derive" "0.1.4-60"
 
-"@webb-tools/app-util@file:../webb.js/packages/app-util/build":
-  version "0.1.4-58"
+"@webb-tools/app-util@0.1.4-60":
+  version "0.1.4-60"
+  resolved "https://registry.yarnpkg.com/@webb-tools/app-util/-/app-util-0.1.4-60.tgz#f649d227f3100a47f887f01e9fe9afb174d08f58"
+  integrity sha512-DToTGBMMRRRpz7wG4NXykYIY0+o0MdhPi02LJL0umIvJShkYc3D/f3/BARaImXWsFAI+sdOWzGrFlOafMeLUBg==
   dependencies:
     "@babel/runtime" "^7.10.2"
     bignumber.js "^9.0.0"
@@ -4881,12 +4889,14 @@
     "@webb-tools/tokens" "^0.1.11"
     "@webb-tools/utils" "^0.1.7"
 
-"@webb-tools/sdk-core@file:../webb.js/packages/sdk-core/build":
-  version "0.1.4-58"
+"@webb-tools/sdk-core@0.1.4-60":
+  version "0.1.4-60"
+  resolved "https://registry.yarnpkg.com/@webb-tools/sdk-core/-/sdk-core-0.1.4-60.tgz#a4bfc45283409afe08856dc44112a720afb25ed0"
+  integrity sha512-6tivQ9ZbX1RhfJTV3Jp9TRu4g63tLh1bGLDmGioxyDVMzZIYXBvz4rJNEOya8/nuehqxyJjI1mfo6RgktO1uqA==
   dependencies:
     "@types/events" "^3.0.0"
-    "@webb-tools/api" "0.1.4-58"
-    "@webb-tools/wasm-utils" "0.1.4-58"
+    "@webb-tools/api" "0.1.4-60"
+    "@webb-tools/wasm-utils" "0.1.4-60"
     bignumber.js "^9.0.0"
     events "^3.2.0"
     lodash "^4.17.20"
@@ -4900,8 +4910,10 @@
     "@webb-tools/utils" "^0.1.7"
     ethers "5.5.1"
 
-"@webb-tools/types@0.1.4-58", "@webb-tools/types@file:../webb.js/packages/types/build":
-  version "0.1.4-58"
+"@webb-tools/types@0.1.4-60":
+  version "0.1.4-60"
+  resolved "https://registry.yarnpkg.com/@webb-tools/types/-/types-0.1.4-60.tgz#c093c5960bf85ef919d0eb9204f4c236eeebe672"
+  integrity sha512-c9TGxIJ5Rzse4Bk9ntLzoGXMuJ33oGpuxDPzlIzEIS8aK9rBNoXlvpvoubD5GKWMe+6s4s3g51Rx2GRD8cxgsw==
   dependencies:
     "@babel/runtime" "^7.10.2"
     "@open-web3/orml-types" "^1.1.3"
@@ -4921,8 +4933,10 @@
     ethers "5.5.1"
     ffjavascript "^0.2.43"
 
-"@webb-tools/wasm-utils@0.1.4-58", "@webb-tools/wasm-utils@file:../webb.js/packages/wasm-utils/build":
-  version "0.1.4-58"
+"@webb-tools/wasm-utils@0.1.4-60":
+  version "0.1.4-60"
+  resolved "https://registry.yarnpkg.com/@webb-tools/wasm-utils/-/wasm-utils-0.1.4-60.tgz#b8d311680b698c3802754738d79a7b72a9e03d73"
+  integrity sha512-nqv3l6eG9/ts0b6BMGLVU5FLDJJ+M816kMkJfSmDYSkDhFwRtu6Fbv8fFGJGnG5SciAdELoJbMEfqoKwTLUUuQ==
 
 "@webpack-cli/configtest@^1.1.1":
   version "1.1.1"
