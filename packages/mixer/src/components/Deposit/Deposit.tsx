@@ -99,6 +99,9 @@ export const Deposit: React.FC<DepositProps> = () => {
 
   const intendedMixers = useMemo(() => {
     return depositApi.mixerSizes.filter((mixerSize) => {
+      if (!activeToken) {
+        return false;
+      }
       return mixerSize.asset === activeToken.view.symbol;
     });
   }, [depositApi.mixerSizes, activeToken]);
