@@ -1,4 +1,3 @@
-// import { GLogo, KLogo, RLogo } from '@webb-dapp/apps/configs/logos/chains';
 // import ArbitrumLogo from '@webb-dapp/apps/configs/logos/chains/ArbitrumLogo';
 // import EdgewareLogo from '@webb-dapp/apps/configs/logos/chains/EdgewareLogo';
 import GanacheLogo from '@webb-dapp/apps/configs/logos/chains/GanacheLogo';
@@ -7,6 +6,7 @@ import GanacheLogo from '@webb-dapp/apps/configs/logos/chains/GanacheLogo';
 // import PolygonLogo from '@webb-dapp/apps/configs/logos/chains/PolygonLogo';
 // import ShidenLogo from '@webb-dapp/apps/configs/logos/chains/ShidenLogo';
 import WEBBLogo from '@webb-dapp/apps/configs/logos/chains/WebbLogo';
+import EtherLogo from '@webb-dapp/apps/configs/logos/Eth';
 import {
   AppConfig,
   ChainType,
@@ -75,9 +75,9 @@ export const chainsConfig: AppConfig['chains'] = {
   //   url: 'https://rinkeby.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4',
   //   evmRpcUrls: ['https://rinkeby.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4'],
   //   blockExplorerStub: 'https://rinkeby.etherscan.io',
-  //   logo: RLogo,
+  //   logo: EtherLogo,
   //   tag: 'test',
-  //   currencies: [WebbCurrencyId.ETH, WebbCurrencyId.WETH],
+  //   currencies: [WebbCurrencyId.ETH, WebbCurrencyId.WETH, WebbCurrencyId.webbWETH],
   //   nativeCurrencyId: WebbCurrencyId.ETH,
   // },
   // [InternalChainId.Ropsten]: {
@@ -89,9 +89,9 @@ export const chainsConfig: AppConfig['chains'] = {
   //   url: 'https://ropsten.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4',
   //   evmRpcUrls: ['https://ropsten.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4'],
   //   blockExplorerStub: 'https://ropsten.etherscan.io',
-  //   logo: RLogo,
+  //   logo: EtherLogo,
   //   tag: 'test',
-  //   currencies: [WebbCurrencyId.ETH, WebbCurrencyId.WETH],
+  //   currencies: [WebbCurrencyId.ETH, WebbCurrencyId.WETH, WebbCurrencyId.webbWETH],
   //   nativeCurrencyId: WebbCurrencyId.ETH,
   // },
   // [InternalChainId.Goerli]: {
@@ -103,9 +103,9 @@ export const chainsConfig: AppConfig['chains'] = {
   //   url: 'https://goerli.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4',
   //   evmRpcUrls: ['https://goerli.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4'],
   //   blockExplorerStub: 'https://goerli.etherscan.io',
-  //   logo: GLogo,
+  //   logo: EtherLogo,
   //   tag: 'test',
-  //   currencies: [WebbCurrencyId.ETH, WebbCurrencyId.WETH],
+  //   currencies: [WebbCurrencyId.ETH, WebbCurrencyId.WETH, WebbCurrencyId.webbWETH],
   //   nativeCurrencyId: WebbCurrencyId.ETH,
   // },
   // [InternalChainId.Kovan]: {
@@ -133,7 +133,7 @@ export const chainsConfig: AppConfig['chains'] = {
   //   blockExplorerStub: 'https://kovan-optimistic.etherscan.io',
   //   logo: OptimismLogo,
   //   tag: 'test',
-  //   currencies: [WebbCurrencyId.ETH, WebbCurrencyId.WETH],
+  //   currencies: [WebbCurrencyId.ETH, WebbCurrencyId.WETH, WebbCurrencyId.webbWETH],
   //   nativeCurrencyId: WebbCurrencyId.ETH,
   // },
   // [InternalChainId.ArbitrumTestnet]: {
@@ -147,7 +147,7 @@ export const chainsConfig: AppConfig['chains'] = {
   //   blockExplorerStub: 'https://testnet.arbiscan.io',
   //   logo: ArbitrumLogo,
   //   tag: 'test',
-  //   currencies: [WebbCurrencyId.ETH, WebbCurrencyId.WETH],
+  //   currencies: [WebbCurrencyId.ETH, WebbCurrencyId.WETH, WebbCurrencyId.webbWETH],
   //   nativeCurrencyId: WebbCurrencyId.ETH,
   // },
   // [InternalChainId.HarmonyTestnet1]: {
@@ -237,7 +237,7 @@ export const chainsConfig: AppConfig['chains'] = {
   //   evmRpcUrls: ['https://rpc-mumbai.maticvigil.com/'],
   //   blockExplorerStub: 'https://mumbai.polygonscan.com/',
   //   logo: PolygonLogo,
-  //   currencies: [WebbCurrencyId.MATIC, WebbCurrencyId.WETH],
+  //   currencies: [WebbCurrencyId.MATIC, WebbCurrencyId.WETH, WebbCurrencyId.webbWETH],
   //   nativeCurrencyId: WebbCurrencyId.MATIC,
   // },
   [InternalChainId.HermesLocalnet]: {
@@ -250,8 +250,8 @@ export const chainsConfig: AppConfig['chains'] = {
     url: 'http://127.0.0.1:5001',
     evmRpcUrls: ['http://127.0.0.1:5001'],
     logo: GanacheLogo,
-    currencies: [WebbCurrencyId.webbDEV, WebbCurrencyId.DEV],
-    nativeCurrencyId: WebbCurrencyId.DEV,
+    currencies: [WebbCurrencyId.webbDEV, WebbCurrencyId.DEV, WebbCurrencyId.ETH],
+    nativeCurrencyId: WebbCurrencyId.ETH,
   },
   [InternalChainId.AthenaLocalnet]: {
     chainType: ChainType.EVM,
@@ -263,8 +263,21 @@ export const chainsConfig: AppConfig['chains'] = {
     url: 'http://127.0.0.1:5002',
     evmRpcUrls: ['http://127.0.0.1:5002'],
     logo: GanacheLogo,
-    currencies: [WebbCurrencyId.webbDEV, WebbCurrencyId.DEV],
-    nativeCurrencyId: WebbCurrencyId.DEV,
+    currencies: [WebbCurrencyId.webbDEV, WebbCurrencyId.DEV, WebbCurrencyId.ETH],
+    nativeCurrencyId: WebbCurrencyId.ETH,
+  },
+  [InternalChainId.DemeterLocalnet]: {
+    chainType: ChainType.EVM,
+    group: 'eth',
+    id: InternalChainId.DemeterLocalnet,
+    chainId: EVMChainId.DemeterLocalnet,
+    name: 'Demeter Localnet',
+    tag: 'dev',
+    url: 'http://127.0.0.1:5003',
+    evmRpcUrls: ['http://127.0.0.1:5003'],
+    logo: GanacheLogo,
+    currencies: [WebbCurrencyId.webbDEV, WebbCurrencyId.DEV, WebbCurrencyId.ETH],
+    nativeCurrencyId: WebbCurrencyId.ETH,
   },
   // [InternalChainId.DkgSubstrateStandalone]: {
   //   chainType: ChainType.SubstrateDevelopment,

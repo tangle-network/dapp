@@ -354,6 +354,7 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
             style={{
               height: 35,
               width: 35,
+              background: 'transparent',
             }}
           >
             <activeChain.logo />
