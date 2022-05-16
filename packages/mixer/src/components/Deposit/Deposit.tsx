@@ -99,6 +99,10 @@ export const Deposit: React.FC<DepositProps> = () => {
 
   const intendedMixers = useMemo(() => {
     return depositApi.mixerSizes.filter((mixerSize) => {
+      // Cannot assume activeToken will have a value. If it doesn't, then automatically return false.
+      if (!activeToken) {
+        return false;
+      }
       return mixerSize.asset === activeToken.view.symbol;
     });
   }, [depositApi.mixerSizes, activeToken]);
