@@ -36,23 +36,6 @@ jobs:
           yarn install --frozen-lockfile
           yarn ts-check
 
-  test:
-    name: Test
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [16.x]
-    steps:
-      - uses: actions/checkout@v1
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node-version }}
-      - name: test
-        run: |
-          yarn install --frozen-lockfile
-          yarn test
-
   build_code:
     name: Build Code
     runs-on: ubuntu-latest
