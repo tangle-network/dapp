@@ -12,7 +12,7 @@ export type StoreData = {
 
 const StoreContext = createContext<StoreData>({} as any);
 
-export const StoreProvier: FC<BareProps> = ({ children }) => {
+export const StoreProvider: FC<BareProps> = ({ children }) => {
   const apiQuery = useApiQueryStore();
   const ui = useUIConfig();
   const data = useMemo(

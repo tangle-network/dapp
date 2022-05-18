@@ -1,3 +1,4 @@
+// @ts-ignore
 import { getCachedFixtureURI, withLocalFixtures } from '@webb-dapp/utils/misc';
 
 export const fetchWasmForEdges = async (maxEdges: number) => {

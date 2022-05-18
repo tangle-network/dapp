@@ -1,5 +1,4 @@
 import { Typography } from '@material-ui/core';
-import { chainsConfig } from '@webb-dapp/apps/configs';
 import { DepositConfirm } from '@webb-dapp/mixer/components/DepositConfirm/DepositConfirm';
 import { useDeposit } from '@webb-dapp/mixer/hooks/deposit/useDeposit';
 import { RequiredWalletSelection } from '@webb-dapp/react-components/RequiredWalletSelection/RequiredWalletSelection';

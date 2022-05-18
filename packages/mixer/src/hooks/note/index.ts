@@ -12,7 +12,6 @@ export const useDepositNote = (value: string): null | Note => {
           throw new Error('empty value');
         }
         let d = await Note.deserialize(value);
-        // const noteLeaf = d.getLeaf();
         // Check for legacy notes and update fields (like internal chain id -> chain id type)
         if (d.note.version === 'v1') {
           const newNoteInput: NoteGenInput = {

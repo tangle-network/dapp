@@ -19,6 +19,23 @@ jobs:
           yarn install --frozen-lockfile
           yarn lint
 
+  ts-check:
+    name: ts-check
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [16.x]
+    steps:
+      - uses: actions/checkout@v1
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: check
+        run: |
+          yarn install --frozen-lockfile
+          yarn ts-check
+
   test:
     name: Test
     runs-on: ubuntu-latest
@@ -52,5 +69,3 @@ jobs:
         run: |
           yarn install --frozen-lockfile
           yarn build:dapp:production
-
-#        yarn build:dashboard

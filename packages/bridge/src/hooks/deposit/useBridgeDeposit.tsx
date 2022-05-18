@@ -10,11 +10,7 @@ import {
   MixerDeposit,
   MixerSize,
 } from '@webb-tools/api-providers';
-import { LoggerService } from '@webb-tools/app-util';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-
-const logger = LoggerService.get('useBridgeDeposit');
-
 export interface BridgeDepositApi {
   mixerSizes: MixerSize[];
 
@@ -71,12 +67,10 @@ export const useBridgeDeposit = (): BridgeDepositApi => {
     const subscribe = bridgeApi.$store.subscribe((bridge) => {
       depositApi.getSizes().then((mixerSizes) => {
         mixerSizes.filter((mixerSize) => {
-          console.log('mixerSize: ', mixerSize);
           mixerSize.id === selectedBridgeCurrency?.id;
         });
         setMixerSizes(mixerSizes);
       });
-      console.log(bridgeApi.currency);
       setSelectedBridgeCurrency(bridgeApi.currency);
     });
     return () => {

@@ -51,15 +51,6 @@ export function evmChainConflict(params: EvmNetworkConflictParams, appEvent: TAp
     ...(params.switchChain ? addChainContent : []),
   ]);
   const actions = InteractiveFeedback.actionsBuilder()
-    // .action(
-    //   'Ok,I switched',
-    //   () => {
-    //     console.log('Ok,I switched');
-    //     interactiveFeedback?.cancelWithoutHandler();
-    //   },
-    //   'success',
-    //   USER_SWITCHED_TO_EXPECT_CHAIN
-    // )
     .action(
       'Reselect chain',
       () => {

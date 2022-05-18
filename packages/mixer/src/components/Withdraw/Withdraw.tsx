@@ -9,15 +9,14 @@ import { SpaceBox } from '@webb-dapp/ui-components';
 import { SettingsIcon } from '@webb-dapp/ui-components/assets/SettingsIcon';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { MixerNoteInput } from '@webb-dapp/ui-components/Inputs/NoteInput/MixerNoteInput';
-import { FeesInfo, RelayerApiAdapter } from '@webb-dapp/ui-components/Inputs/RelayerInput/RelayerInput';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
-import { parseChainIdType, WithdrawState } from '@webb-tools/api-providers';
-import { ActiveWebbRelayer, WebbRelayer } from '@webb-tools/api-providers';
+import { WithdrawState } from '@webb-tools/api-providers';
+import { WebbRelayer } from '@webb-tools/api-providers';
 import { WalletConfig } from '@webb-tools/api-providers';
 import { Note } from '@webb-tools/sdk-core';
 import { ethers } from 'ethers';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
 const WithdrawWrapper = styled.div<{ wallet: WalletConfig | undefined }>`
@@ -124,7 +123,6 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
 
   const [recipient, setRecipient] = useState('');
   const [showRelayerModal, setShowRelayerModal] = useState(false);
-  const [withdrawPercentage, setWithdrawPercentage] = useState(0);
   const [fees, setFees] = useState('0');
   const { activeApi, activeChain, activeWallet } = useWebContext();
 
@@ -143,24 +141,12 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
     recipient,
     note: depositNote,
   });
-  console.log(relayersState, 'relayersState');
 
   const disabledButton = useMemo(() => {
-    console.log(depositNote, recipient);
     return !(depositNote && recipient);
-    /*  if (depositNote && determineSwitchButton()) {
-      return false;
-    } else if (depositNote && recipient) {
-      return false;
-    }
-    return true;*/
   }, [recipient, depositNote]);
   const determineSwitchButton = () => {
     return false;
-    /*    if (depositNote && activeChain && activeChain.evmId != internalChainIdIntoEVMId(depositNote.note.chain)) {
-      return true;
-    }
-    return false;*/
   };
   const switchChain = async (note: Note | null) => {
     if (!note) {
@@ -181,7 +167,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
         chainId: `0x${chain.chainId?.toString(16)}`,
       })
       ?.catch(async (switchError: any) => {
-        console.log('inside catch for switchChain', switchError);
+        console.log('SwitchError: ', switchError);
 
         // cannot switch because network not recognized, so prompt to add it
         if (switchError.code === 4902) {

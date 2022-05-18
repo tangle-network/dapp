@@ -12,4 +12,4 @@ export interface ClickAbleProps {
 export type MessageType = 'success' | 'info' | 'warning' | 'error';
 
 export type Style = 'normal' | 'primary' | 'warning' | 'error';
-export type AppFeatures = 'tornado' | 'bridge' | 'governance';
+export type AppFeatures = 'mixer' | 'bridge' | 'governance';

@@ -120,7 +120,6 @@ const DropdownInput: React.FC<DropdownInputProps> = ({ chains, onChange, value }
   const $wrapper = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
   const theme = useColorPallet();
-  console.log('Selected', selected);
   return (
     <>
       <div>
@@ -209,7 +208,6 @@ const DropdownInput: React.FC<DropdownInputProps> = ({ chains, onChange, value }
                           role={'button'}
                           onClick={() => {
                             setIsOpen(false);
-                            console.log(chainTypeId);
                             onChange(chainTypeId);
                           }}
                           className={isSelected ? 'selected' : ''}

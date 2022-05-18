@@ -1,5 +1,4 @@
 import { useIp, useWebContext } from '@webb-dapp/react-environment';
-import { useFetch } from '@webb-dapp/react-hooks/useFetch';
 import { ContentWrapper } from '@webb-dapp/ui-components/ContentWrappers';
 import { Spinner } from '@webb-dapp/ui-components/Spinner/Spinner';
 import { Storage } from '@webb-dapp/utils';
