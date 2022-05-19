@@ -10,28 +10,6 @@ import styled, { css } from 'styled-components';
 
 import { getRoundedAmountString } from '../..';
 
-const ColorCircle1 = styled.div<{ color: string }>`
-  position: absolute;
-  border-radius: 50%;
-  top: 80px;
-  left: 40px;
-  height: 120px;
-  width: 120px;
-  transform: rotate(-15deg)
-  background: ${({ color }) => color};
-`;
-
-const ColorCircle2 = styled.div<{ color: string }>`
-  position: absolute;
-  border-radius: 50%;
-  top: 80px;
-  left: 60px;
-  height: 120px;
-  width: 120px;
-  transform: rotate(-15deg);
-  background: ${({ color }) => color};
-`;
-
 const ConnectionDetails = styled.div<{ walletId: number }>`
   display: flex;
   border-radius: 10px;

@@ -13,8 +13,6 @@ import { FeesInfo, RelayerApiAdapter, RelayerInput } from '@webb-dapp/ui-compone
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import {
-  ActiveWebbRelayer,
-  ChainType,
   chainTypeIdToInternalId,
   getChainNameFromChainId,
   parseChainIdType,
@@ -24,7 +22,7 @@ import {
 import { WalletConfig } from '@webb-tools/api-providers/types/wallet-config.interface';
 import { Note } from '@webb-tools/sdk-core';
 import { ethers } from 'ethers';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
 const WithdrawWrapper = styled.div<{ wallet: WalletConfig | undefined }>`
@@ -160,7 +158,6 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
     note: depositNote,
   });
   const appConfig = useAppConfig();
-  const { currencies: currenciesConfig } = appConfig;
 
   const shouldSwitchChain = useMemo(() => {
     if (!depositNote || !activeChain) {

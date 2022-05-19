@@ -85,9 +85,8 @@ const ProductSubItem: FC<ProductItemProps> = memo(({ collapse, data }) => {
   const isMatch = useMatch(data.path ?? '__unset__path');
 
   const handleClick = useCallback(() => {
-    console.log(data.path);
     setSubMenu(null);
-  }, [data.path, setSubMenu]);
+  }, [setSubMenu]);
 
   useEffect(() => {
     if (!isMatch) {
@@ -124,9 +123,8 @@ const ProductItem: FC<ProductItemProps> = memo(({ collapse, data }) => {
   const isMatch = useMatch(data.path ?? '__unset__path');
 
   const handleClick = useCallback(() => {
-    console.log(data.path);
     setSubMenu(null);
-  }, [data.path, setSubMenu]);
+  }, [setSubMenu]);
 
   useEffect(() => {
     if (!isMatch) {

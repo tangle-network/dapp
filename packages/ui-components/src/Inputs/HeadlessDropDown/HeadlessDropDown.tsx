@@ -1,6 +1,6 @@
 import { MenuItem } from '@material-ui/core';
 import Menu from '@material-ui/core/Menu';
-import React, { ComponentProps } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 
 const HeadlessDropdownWrapper = styled.div<any>`

@@ -1,10 +1,9 @@
-import { Icon, Typography } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 import { LocationLogo } from '@webb-dapp/apps/configs/logos/LocationLogo';
 import { useIp } from '@webb-dapp/react-environment';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
-import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
-import React, { useState } from 'react';
+import React from 'react';
 import styled, { css } from 'styled-components';
 
 const IPDisplayWrapper = styled.div`

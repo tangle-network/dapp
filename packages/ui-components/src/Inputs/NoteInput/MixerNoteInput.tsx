@@ -13,13 +13,6 @@ type NoteInputProps = {
   onChange(next: string): void;
   error?: string;
 };
-const NoteDetails = styled.div`
-  ${({ theme }: { theme: Pallet }) => css`
-    border-top: 2px solid ${theme.borderColor2};
-  `};
-  padding: 11px;
-  margin: 0 -11px;
-`;
 
 export const MixerNoteInput: React.FC<NoteInputProps> = ({ error, onChange, value }) => {
   const depositNote = useDepositNote(value);
@@ -54,7 +47,6 @@ export const MixerNoteInput: React.FC<NoteInputProps> = ({ error, onChange, valu
         value={value}
         inputProps={{ style: { fontSize: 14 } }}
         onChange={(event) => {
-          console.log(event.target.value);
           if (event.target.value && event.target.value != '') {
             onChange?.(event.target.value as string);
           }

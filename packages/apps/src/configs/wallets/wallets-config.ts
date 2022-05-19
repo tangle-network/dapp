@@ -7,8 +7,6 @@ import { InternalChainId } from '@webb-tools/api-providers';
 import { WalletId } from '../wallets/wallet-id.enum';
 
 const ANY_EVM = [
-  InternalChainId.Edgeware,
-  InternalChainId.EdgewareTestNet,
   InternalChainId.EthereumMainNet,
   InternalChainId.Rinkeby,
   InternalChainId.Kovan,
@@ -37,7 +35,6 @@ export const walletsConfig: AppConfig['wallet'] = {
       return true;
     },
     supportedChainIds: [
-      InternalChainId.EdgewareLocalNet,
       InternalChainId.EggStandalone,
       InternalChainId.EggDevelopStandalone,
       InternalChainId.DkgSubstrateStandalone,

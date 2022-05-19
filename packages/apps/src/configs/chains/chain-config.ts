@@ -1,5 +1,4 @@
 // import ArbitrumLogo from '@webb-dapp/apps/configs/logos/chains/ArbitrumLogo';
-// import EdgewareLogo from '@webb-dapp/apps/configs/logos/chains/EdgewareLogo';
 import GanacheLogo from '@webb-dapp/apps/configs/logos/chains/GanacheLogo';
 // import HarmonyLogo from '@webb-dapp/apps/configs/logos/chains/HarmonyLogo';
 // import OptimismLogo from '@webb-dapp/apps/configs/logos/chains/OptimismLogo';
@@ -33,39 +32,6 @@ export const chainsConfig: AppConfig['chains'] = {
     currencies: [WebbCurrencyId.WEBB, WebbCurrencyId.TEST],
     nativeCurrencyId: WebbCurrencyId.WEBB,
   },
-  // this is the EVM edgeware
-  // [InternalChainId.EdgewareTestNet]: {
-  //   chainType: ChainType.EVM,
-  //   group: 'edgeware',
-  //   tag: 'test',
-  //   id: InternalChainId.EdgewareTestNet,
-  //   chainId: EVMChainId.Beresheet,
-  //   name: 'Beresheet (Edgeware Testnet)',
-  //   url: 'wss://beresheet1.edgewa.re',
-  //   evmRpcUrls: ['https://beresheet.edgewa.re/evm'],
-  //   logo: EdgewareLogo,
-  //   currencies: [WebbCurrencyId.TEDG],
-  //   nativeCurrencyId: WebbCurrencyId.TEDG,
-  // },
-  // [ChainId.Edgeware]: {
-  // chainType: ChainType,
-  //   group: 'edgeware',
-  //   tag: 'live',
-  //   id: ChainId.Edgeware,
-  //   evmId: EVMChain.Edgeware,
-  //   name: 'Edgeware',
-  //   evmRpcUrls: ['https://mainnet.edgewa.re/evm'],
-  //   url: 'wss://mainnet1.edgewa.re',
-  //   logo: EdgewareLogo,
-  //   currencies: [
-  //     {
-  //       currencyId: WebbCurrencyId.EDG,
-  //       enabled: true,
-  //     },
-  //   ],
-  //   nativeCurrencyId: WebbCurrencyId.EDG,
-  // },
-
   // [InternalChainId.Rinkeby]: {
   //   chainType: ChainType.EVM,
   //   group: 'eth',

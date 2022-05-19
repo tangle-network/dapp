@@ -14,7 +14,7 @@ import { WalletId } from '@webb-dapp/apps/configs/wallets/wallet-id.enum';
 import { appEvent } from '@webb-dapp/react-environment/app-event';
 import { insufficientApiInterface } from '@webb-dapp/react-environment/error/interactive-errors/insufficient-api-interface';
 import { DimensionsProvider } from '@webb-dapp/react-environment/layout';
-import { StoreProvier } from '@webb-dapp/react-environment/store';
+import { StoreProvider } from '@webb-dapp/react-environment/store';
 import { netStorageFactory, WebbContext } from '@webb-dapp/react-environment/webb-context';
 import { notificationApi } from '@webb-dapp/ui-components/notification';
 import { AccountSwitchNotification } from '@webb-dapp/ui-components/notification/AccountSwitchNotification';
@@ -29,7 +29,6 @@ import {
   evmIdIntoInternalChainId,
   getEVMChainName,
   InteractiveFeedback,
-  InternalChainId,
   NetworkStorage,
   NotificationPayload,
   Wallet,
@@ -78,8 +77,6 @@ const getDefaultBridge = (chain: Chain, bridgeConfig: Record<number, BridgeConfi
   // Iterate over the supported currencies until a bridge is found
   const supportedCurrencies = chain.currencies;
   for (const currency of supportedCurrencies) {
-    console.log('currency: ', currency);
-    console.log('keys: ', Object.keys(bridgeConfig));
     if (Object.keys(bridgeConfig).includes(currency.toString())) {
       return bridgeConfig[currency];
     }
@@ -329,7 +326,6 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
         case WalletId.Polkadot:
           {
             const url = chain.url;
-            console.log('url: ', url);
             const webbPolkadot = await WebbPolkadot.init(
               'Webb DApp',
               [url],
@@ -616,11 +612,11 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
         },
       }}
     >
-      <StoreProvier>
+      <StoreProvider>
         <SettingProvider>
           <DimensionsProvider>{children}</DimensionsProvider>
         </SettingProvider>
-      </StoreProvier>
+      </StoreProvider>
     </WebbContext.Provider>
   );
 };

@@ -1,4 +1,5 @@
 import { WalletId } from '@webb-dapp/apps/configs';
+// @ts-ignore
 import { Account } from '@webb-dapp/wallet/account/Accounts.adapter';
 import { Chain, InternalChainId, Wallet } from '@webb-tools/api-providers';
 import { EventBus } from '@webb-tools/app-util';

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { ReactNode } from 'react';
 
 import * as ArrowPixelIcon from './assets/arrow-pixel.svg';
