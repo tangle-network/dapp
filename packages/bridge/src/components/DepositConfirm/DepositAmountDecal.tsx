@@ -40,7 +40,7 @@ interface DepositAmountDecalProps {
 }
 
 export const DepositAmountDecal: React.FC<DepositAmountDecalProps> = ({ amount, symbol }) => {
-  const palette = useColorPallet();
+  useColorPallet();
 
   return (
     <DecalWrapper>

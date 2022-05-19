@@ -131,7 +131,6 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({ mixerSize, onClose,
       return;
     }
     let desiredMixer: string | number = '';
-    console.log('mixerId in depositConfirm: ', mixerSize.id);
     // MixerIds may be strings or numbers. EVM Mixer ids will have a 'Bridge' prefix.
     if (typeof mixerSize.id === 'string') {
       mixerSize.id.includes('Bridge') ? (desiredMixer = mixerSize.id) : (desiredMixer = Number(mixerSize.id));

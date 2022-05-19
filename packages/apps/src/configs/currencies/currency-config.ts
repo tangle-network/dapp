@@ -1,4 +1,3 @@
-import EdgewareLogo from '@webb-dapp/apps/configs/logos/chains/EdgewareLogo';
 import GanacheLogo from '@webb-dapp/apps/configs/logos/chains/GanacheLogo';
 import HarmonyLogo from '@webb-dapp/apps/configs/logos/chains/HarmonyLogo';
 import PolygonLogo from '@webb-dapp/apps/configs/logos/chains/PolygonLogo';
@@ -13,32 +12,11 @@ import {
   CurrencyType,
   InternalChainId,
   WebbCurrencyId,
-  ZERO,
   zeroAddress,
 } from '@webb-tools/api-providers';
 import React from 'react';
 
 export const currenciesConfig: AppConfig['currencies'] = {
-  [WebbCurrencyId.EDG]: {
-    name: 'Edgeware token',
-    symbol: 'EDG',
-    color: '',
-    id: WebbCurrencyId.EDG,
-    type: CurrencyType.ORML,
-    role: CurrencyRole.Wrappable,
-    icon: React.createElement(EdgewareLogo),
-    addresses: new Map(),
-  },
-  [WebbCurrencyId.TEDG]: {
-    name: 'Edgeware testnet token',
-    symbol: 'tEDG',
-    color: '',
-    id: WebbCurrencyId.TEDG,
-    type: CurrencyType.ORML,
-    role: CurrencyRole.Wrappable,
-    icon: React.createElement(EdgewareLogo),
-    addresses: new Map(),
-  },
   [WebbCurrencyId.ETH]: {
     name: 'Ethereum',
     symbol: 'ETH',

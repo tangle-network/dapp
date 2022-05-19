@@ -5,7 +5,7 @@ import { CommonWealthLogo } from './configs/logos/CommonWealthLogo';
 import { DiscordLogo } from './configs/logos/DiscordLogo';
 import { GithubLogo } from './configs/logos/GithubLogo';
 import { BridgePageLogo } from './configs/logos/pages/BridgePageLogo';
-import { TornadoPageLogo } from './configs/logos/pages/TornadoPageLogo';
+import { MixerPageLogo } from './configs/logos/pages/MixerPageLogo';
 import { WrapPageLogo } from './configs/logos/pages/WrapPageLogo';
 import { TelegramLogo } from './configs/logos/TelegramLogo';
 import { TwitterLogo } from './configs/logos/TwitterLogo';
@@ -15,7 +15,7 @@ export const sideBarConfig: SidebarConfig = {
     {
       path: 'mixer',
       name: 'Mixers',
-      icon: <TornadoPageLogo />,
+      icon: <MixerPageLogo />,
     },
     {
       path: 'bridge',
@@ -36,7 +36,7 @@ export const sideBarConfig: SidebarConfig = {
       rel: 'twitter',
     },
     {
-      href: 'https://discord.gg/cBQHf6B7',
+      href: 'https://discord.gg/cv8EfJu3Tn',
       icon: <DiscordLogo />,
       name: 'Discord',
       rel: 'discord',

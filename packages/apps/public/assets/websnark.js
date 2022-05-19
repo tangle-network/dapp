@@ -5702,7 +5702,6 @@ object-assign
 
           triggerComponent(c) {
             this.log('Component Treiggered: ' + this.circuit.components[c].name);
-            //        console.log("Start Component Treiggered: " + this.circuit.components[c].name);
 
             // Set notInitSignals to -1 to not initialize again
             this.notInitSignals[c]--;
@@ -5723,7 +5722,6 @@ object-assign
             this.circuit.templates[template](this);
             this.scopes = oldScope;
             this.currentComponent = oldComponent;
-            //        console.log("End Component Treiggered: " + this.circuit.components[c].name);
           }
 
           callFunction(functionName, params) {
@@ -5943,7 +5941,6 @@ object-assign
               return S;
             };
             const S = `[ ${lc2str(c[0])} ] * [ ${lc2str(c[1])} ] - [ ${lc2str(c[2])} ] = 0`;
-            console.log(S);
           }
 
           printConstraints() {

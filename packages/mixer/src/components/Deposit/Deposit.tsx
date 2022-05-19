@@ -1,5 +1,4 @@
 import { Typography } from '@material-ui/core';
-import { chainsConfig } from '@webb-dapp/apps/configs';
 import { DepositConfirm } from '@webb-dapp/mixer/components/DepositConfirm/DepositConfirm';
 import { useDeposit } from '@webb-dapp/mixer/hooks/deposit/useDeposit';
 import { RequiredWalletSelection } from '@webb-dapp/react-components/RequiredWalletSelection/RequiredWalletSelection';
@@ -99,6 +98,7 @@ export const Deposit: React.FC<DepositProps> = () => {
 
   const intendedMixers = useMemo(() => {
     return depositApi.mixerSizes.filter((mixerSize) => {
+      // Cannot assume activeToken will have a value. If it doesn't, then automatically return false.
       if (!activeToken) {
         return false;
       }

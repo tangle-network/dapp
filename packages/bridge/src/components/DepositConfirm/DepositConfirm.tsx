@@ -99,8 +99,6 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({
   destChain,
   mixerSize,
   onClose,
-  onSuccess,
-  open,
   provider,
   wrappableAsset,
 }) => {

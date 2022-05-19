@@ -4,8 +4,6 @@ import { InteractiveFeedback } from '@webb-tools/api-providers/webb-error';
 import React from 'react';
 interface Note {
   serialize(): string;
-
-  // deserialize(noteStr: string): Note;
 }
 
 type DepositStates = 'ideal' | 'generating-note' | 'depositing';
@@ -21,13 +19,9 @@ export interface WebbContextState<T = unknown> {
   accounts: Account[];
   activeAccount: Account | null;
   isConnecting: boolean;
-
   setActiveAccount<T extends Account>(account: T): Promise<void>;
-
   inactivateApi(): Promise<void>;
-
   switchChain(chain: Chain, wallet: Wallet): Promise<WebbApiProvider<T> | null>;
-
   activeFeedback: InteractiveFeedback | null;
   registerInteractiveFeedback: (interactiveFeedback: InteractiveFeedback) => void;
 }

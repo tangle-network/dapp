@@ -1,9 +1,6 @@
+// @ts-ignore
 import { CurrencyId } from '@webb-tools/types/interfaces';
 import { useMemo } from 'react';
-
-import { useApi } from './useApi';
-
-const CURRENCIES_WEIGHT = new Map<string, number>([['EDG', 9]]);
 
 export type HooksReturnType = {
   allCurrencies: CurrencyId[];

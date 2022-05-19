@@ -40,7 +40,6 @@ export interface SettingDate {
   changeEndpoint: (endpoints: string) => void;
   setTheme: (theme: Theme) => void;
   setLanguage: (language: Language) => void;
-
   settingVisible: boolean;
   openSetting: () => void;
   closeSetting: () => void;

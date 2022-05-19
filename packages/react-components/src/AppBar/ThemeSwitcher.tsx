@@ -1,5 +1,4 @@
 import { Slide } from '@material-ui/core';
-import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import React, { useCallback, useRef } from 'react';
 import styled from 'styled-components';
 

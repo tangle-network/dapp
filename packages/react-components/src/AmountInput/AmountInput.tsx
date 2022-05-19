@@ -136,7 +136,7 @@ const AmountInput: React.FC<AmountInputProps> = ({ items, onChange, value }) => 
         const amount = new Token({
           amount: item.amount.toString(),
           // TODO: Pull from active chain
-          chain: 'edgeware',
+          chain: 'dev',
           name: 'DEV',
           precision: 12,
           symbol: 'DEV',

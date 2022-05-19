@@ -7,11 +7,8 @@ import {
   WebbRelayer,
   WithdrawState,
 } from '@webb-tools/api-providers';
-import { LoggerService } from '@webb-tools/app-util';
 import { Note } from '@webb-tools/sdk-core';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-
-const logger = LoggerService.get('useWithdrawHook');
 
 export type UseWithdrawProps = {
   note: Note | null;

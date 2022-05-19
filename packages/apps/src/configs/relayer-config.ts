@@ -45,8 +45,6 @@ export function relayerNameToChainId(name: string): InternalChainId {
     case 'ganache':
       return InternalChainId.Ganache;
     case 'webb':
-    case 'edgeware':
-    case 'hedgeware':
       break;
     case 'ropsten':
       return InternalChainId.Ropsten;

@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const TornadoPageLogo: React.FC = () => {
+export const MixerPageLogo: React.FC = () => {
   return (
     <svg width='14' height='22' viewBox='0 0 14 22' fill='none' xmlns='http://www.w3.org/2000/svg'>
       <path

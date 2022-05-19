@@ -1,13 +1,10 @@
 /* eslint-disable sort-keys */
 import { createStyles, Theme } from '@material-ui/core';
-import Icon from '@material-ui/core/Icon';
 import MuiModel, { ModalProps as MuiModalProps } from '@material-ui/core/Modal';
 import Slide from '@material-ui/core/Slide';
 import { makeStyles } from '@material-ui/core/styles';
 import Tooltip from '@material-ui/core/Tooltip';
 import React from 'react';
-
-// import PerfectScrollbar from 'react-perfect-scrollbar';
 
 export interface ModalProps extends Omit<MuiModalProps, 'children'> {
   closeButton?: boolean;
@@ -91,7 +88,6 @@ export const Modal: React.FC<ModalProps> = ({ children, closeButton, unlimitedWi
             <Tooltip title={'close'}>
               <button
                 onClick={() => {
-                  console.log('close', props.onClose);
                   // @ts-ignore
                   props.onClose && props.onClose();
                 }}

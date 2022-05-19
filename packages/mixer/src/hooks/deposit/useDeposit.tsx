@@ -48,7 +48,7 @@ export const useDeposit = (): DepositApi => {
   const generateNote = useCallback(
     async (mixerId: number | string, chainTypeId: ChainTypeId) => {
       if (!depositApi) {
-        // TODO: fix this to be dependent ont he api state
+        // TODO: fix this to be dependent on the api state
         // disable buttons
         throw new Error('Not ready');
       } else {
