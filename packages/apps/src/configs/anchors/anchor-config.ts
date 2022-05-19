@@ -14,6 +14,7 @@ export const anchorsConfig: AppConfig['anchors'] = {
         [InternalChainId.OptimismTestnet]: '0x09d2d6520be3922549c81885477258f41c96c43f',
         [InternalChainId.ArbitrumTestnet]: '0x2d21bc3f8cb399d3b7091309afe1986cdb9f2e39',
       },
+      type: 'fixed',
     },
   ],
   [WebbCurrencyId.WEBB]: [
@@ -23,6 +24,7 @@ export const anchorsConfig: AppConfig['anchors'] = {
         [InternalChainId.ProtocolSubstrateStandalone]: '3',
       },
       anchorAddresses: {},
+      type: 'fixed',
     },
     {
       amount: '100',
@@ -30,6 +32,7 @@ export const anchorsConfig: AppConfig['anchors'] = {
         [InternalChainId.ProtocolSubstrateStandalone]: '4',
       },
       anchorAddresses: {},
+      type: 'fixed',
     },
     {
       amount: '1000',
@@ -37,6 +40,7 @@ export const anchorsConfig: AppConfig['anchors'] = {
         [InternalChainId.ProtocolSubstrateStandalone]: '5',
       },
       anchorAddresses: {},
+      type: 'fixed',
     },
   ],
   [WebbCurrencyId.webbDEV]: [
@@ -48,6 +52,7 @@ export const anchorsConfig: AppConfig['anchors'] = {
         [InternalChainId.AthenaLocalnet]: '0xcd75Ad7AC9C9325105f798c476E84176648F391A',
         [InternalChainId.DemeterLocalnet]: '0x4e3df2073bf4b43B9944b8e5A463b1E185D6448C',
       },
+      type: 'fixed',
     },
     {
       amount: '0.01',
@@ -57,6 +62,16 @@ export const anchorsConfig: AppConfig['anchors'] = {
         [InternalChainId.AthenaLocalnet]: '0x3d3955aAe5Bdf9E6547A140Baad4BC57Fa4EBA17',
         [InternalChainId.DemeterLocalnet]: '0x91eB86019FD8D7c5a9E31143D422850A13F670A3',
       },
+      type: 'fixed',
+    },
+    {
+      anchorTreeIds: {},
+      anchorAddresses: {
+        [InternalChainId.HermesLocalnet]: '0xb824C5F99339C7E486a1b452B635886BE82bc8b7',
+        [InternalChainId.AthenaLocalnet]: '0xFEe587E68c470DAE8147B46bB39fF230A29D4769',
+        [InternalChainId.DemeterLocalnet]: '0xdB587ef6aaA16b5719CDd3AaB316F0E70473e9Be',
+      },
+      type: 'variable',
     },
   ],
 };
