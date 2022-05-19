@@ -2503,7 +2503,7 @@
     "@polkadot/util-crypto" "^9.0.1"
     rxjs "^7.5.5"
 
-"@polkadot/api@7.13.1", "@polkadot/api@8.1.1":
+"@polkadot/api@8.1.1":
   version "8.1.1"
   resolved "https://registry.yarnpkg.com/@polkadot/api/-/api-8.1.1.tgz#dab093beb1258848dcd164e73b50642264f5d040"
   integrity sha512-XAprWhVFdy23YDuGqMc6rTW6CemsbhngQ1e5wMcQKNWxHgCf1mF0Hhvbv/Z4+x6bLG70OELoX7Ssz1mk0tptVQ==
@@ -4808,14 +4808,14 @@
     "@webassemblyjs/ast" "1.11.1"
     "@xtuc/long" "4.2.2"
 
-"@webb-tools/anchors@0.1.12", "@webb-tools/anchors@0.1.14":
-  version "0.1.12"
-  resolved "https://registry.yarnpkg.com/@webb-tools/anchors/-/anchors-0.1.12.tgz#6f08a815f747e0b6f5807abb787d7ec2caeb90fd"
-  integrity sha512-CW7bGHbDuQ+b+SfwidU7z98NLVIRRqwD0IvcOu7NvKt38EHxvG5srcFKhww4sEen+cCNYvOL8UznUV1wTgIgCg==
+"@webb-tools/anchors@0.1.14":
+  version "0.1.14"
+  resolved "https://registry.yarnpkg.com/@webb-tools/anchors/-/anchors-0.1.14.tgz#5de023409f9a521dbba93f3111930699fedcfea8"
+  integrity sha512-D0vx9CGcD7WlpOFLPU6h3q3fr7dKsoHoK+2OvmMrToJifsYFr4XhX8/47Fhi8go4JYZjqYN55t72a7wLz6Kodg==
   dependencies:
-    "@webb-tools/contracts" "^0.1.8"
-    "@webb-tools/interfaces" "^0.1.9"
-    "@webb-tools/merkle-tree" "^0.1.12"
+    "@webb-tools/contracts" "^0.1.10"
+    "@webb-tools/interfaces" "^0.1.11"
+    "@webb-tools/merkle-tree" "^0.1.14"
     "@webb-tools/utils" "^0.1.7"
     snarkjs "0.4.16"
 
@@ -4855,30 +4855,31 @@
     "@babel/runtime" "^7.10.2"
     bignumber.js "^9.0.0"
 
-"@webb-tools/contracts@0.1.10", "@webb-tools/contracts@0.1.8", "@webb-tools/contracts@^0.1.8":
-  version "0.1.8"
-  resolved "https://registry.yarnpkg.com/@webb-tools/contracts/-/contracts-0.1.8.tgz#abe32f04f6e4afe5176160830c53cf7f1122bf54"
-  integrity sha512-oKwmwEVYsITafrdjdroNscFeXH1nx2IINmNptpBt67Y+MEhQq5pehSeo+udjDqqYz76Z1Z549zCEk4nv0+9ubQ==
+"@webb-tools/contracts@0.1.10", "@webb-tools/contracts@^0.1.10":
+  version "0.1.10"
+  resolved "https://registry.yarnpkg.com/@webb-tools/contracts/-/contracts-0.1.10.tgz#70669db203d696107ff12f69412c206741be8a14"
+  integrity sha512-P5KCcbZBrGcQCn/5C58D4NLUtU+0ZZOUxo0yeqGSDFPHmg+2SJDVt89G6oJ3jNdvmFXewYX3n9fXx1WkKRFBYQ==
   dependencies:
     "@typechain/ethers-v5" "^7.0.1"
     "@typechain/hardhat" "^2.3.0"
     ethers "5.5.1"
 
-"@webb-tools/interfaces@0.1.11", "@webb-tools/interfaces@0.1.9", "@webb-tools/interfaces@^0.1.9":
-  version "0.1.9"
-  resolved "https://registry.yarnpkg.com/@webb-tools/interfaces/-/interfaces-0.1.9.tgz#8f06125a3ba17939ebaad178bdfdc45e1c4db6e0"
-  integrity sha512-U0yovL3ZP/b8PCLGE+gHvidRUGCMeL+1wnWZj0iIAPid111kQXH5Tsw12m+xy6Ex2kENzOu6o8TkONfdJMzxaA==
+"@webb-tools/interfaces@0.1.11", "@webb-tools/interfaces@^0.1.11":
+  version "0.1.11"
+  resolved "https://registry.yarnpkg.com/@webb-tools/interfaces/-/interfaces-0.1.11.tgz#6e37504e2137cc1f5fbc471f878dca8bc05cbe49"
+  integrity sha512-7dueH0utbYBnWIpOq4xkO4/KMl/3xc25Lo7yBwhScjVFs/9ih1z3R0JjOFcKfhZgDAQS5PzlFAScM2Fkofi+bg==
   dependencies:
+    "@webb-tools/contracts" "^0.1.10"
     "@webb-tools/utils" "^0.1.7"
 
-"@webb-tools/merkle-tree@^0.1.12":
-  version "0.1.12"
-  resolved "https://registry.yarnpkg.com/@webb-tools/merkle-tree/-/merkle-tree-0.1.12.tgz#da9608c45eb1575e5aa693a6998b6cd3100b76ad"
-  integrity sha512-NjKXEzL/hRkJyGZIgpgGArQsVYZEKgJLxSVuHLHzwRC493+s/F7WXTdUuvIjqtPuoBGONzSCH6pY+9+OVbRFFw==
+"@webb-tools/merkle-tree@^0.1.14":
+  version "0.1.14"
+  resolved "https://registry.yarnpkg.com/@webb-tools/merkle-tree/-/merkle-tree-0.1.14.tgz#9ae8b2d52b6c1117eaa2d2ef9505395af21c2488"
+  integrity sha512-67dI+tHtRyhmLaTkgkDEH2gtNAFpb57BccpN3nUZhrjZ8f+RMfidU3KoUpzAos+eSzkV2w8J1WnRK41daQUtig==
   dependencies:
-    "@webb-tools/contracts" "^0.1.8"
-    "@webb-tools/interfaces" "^0.1.9"
-    "@webb-tools/tokens" "^0.1.11"
+    "@webb-tools/contracts" "^0.1.10"
+    "@webb-tools/interfaces" "^0.1.11"
+    "@webb-tools/tokens" "^0.1.13"
     "@webb-tools/utils" "^0.1.7"
 
 "@webb-tools/sdk-core@file:../webb.js/packages/sdk-core/build":
@@ -4891,12 +4892,12 @@
     events "^3.2.0"
     lodash "^4.17.20"
 
-"@webb-tools/tokens@^0.1.11":
-  version "0.1.11"
-  resolved "https://registry.yarnpkg.com/@webb-tools/tokens/-/tokens-0.1.11.tgz#28b26b52c38edd5321e80bd34c615cd9bdab1c06"
-  integrity sha512-zGWY3ZlNM9TtTBiwOSrR0VRaKys3wLMM2xBXUtHsj1WMmc0ZLJMRbTZ0qn8GZ4fdi8diQpp1qA61WFQe9ELdtQ==
+"@webb-tools/tokens@^0.1.13":
+  version "0.1.13"
+  resolved "https://registry.yarnpkg.com/@webb-tools/tokens/-/tokens-0.1.13.tgz#cab6eefabf04fbebd8a2a8717a56c943e3c962ad"
+  integrity sha512-D4InKeT8iPMHM7Q0Jd055fYIaVIeCDI+LEyF4xVVm3C7KeHsuEoeu1xpZpeL9pjHkNkWX0B/aktCNveRcC7GSQ==
   dependencies:
-    "@webb-tools/contracts" "^0.1.8"
+    "@webb-tools/contracts" "^0.1.10"
     "@webb-tools/utils" "^0.1.7"
     ethers "5.5.1"
 

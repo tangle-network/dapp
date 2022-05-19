@@ -212,6 +212,7 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({
             if (!depositPayload) {
               return;
             }
+            console.log('depositPayload: ', depositPayload);
             setLoading(true);
             downloadNote();
             onClose();
