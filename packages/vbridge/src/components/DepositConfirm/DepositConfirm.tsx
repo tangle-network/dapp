@@ -1,5 +1,4 @@
 import { Checkbox, FormControlLabel, Icon, IconButton, Tooltip, Typography } from '@material-ui/core';
-import { BridgeDepositApi as DepositApi } from '@webb-dapp/bridge/hooks/deposit/useBridgeDeposit';
 import { useWebContext } from '@webb-dapp/react-environment/webb-context';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { SpaceBox } from '@webb-dapp/ui-components';
@@ -10,8 +9,9 @@ import { notificationApi } from '@webb-dapp/ui-components/notification';
 import { Spinner } from '@webb-dapp/ui-components/Spinner/Spinner';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 import { downloadString } from '@webb-dapp/utils';
+import { VBridgeDepositApi as DepositApi } from '@webb-dapp/vbridge/hooks/deposit/useBridgeDeposit';
 import { ChainTypeId } from '@webb-tools/api-providers';
-import { Currency, DepositPayload, MixerSize } from '@webb-tools/api-providers';
+import { Currency, DepositPayload } from '@webb-tools/api-providers';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import styled from 'styled-components';
@@ -47,7 +47,8 @@ type DepositInfoProps = {
   onClose(): void;
   provider: DepositApi;
   onSuccess(): void;
-  mixerSize: MixerSize | undefined;
+  anchorId: number | string;
+  amount: number;
   destChain: ChainTypeId | undefined;
   wrappableAsset: Currency | null | undefined;
 };
@@ -96,8 +97,9 @@ const Loading = styled.div`
 `;
 
 export const DepositConfirm: React.FC<DepositInfoProps> = ({
+  amount,
+  anchorId,
   destChain,
-  mixerSize,
   onClose,
   provider,
   wrappableAsset,
@@ -126,15 +128,15 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({
     });
   }, []);
   useEffect(() => {
-    if (typeof destChain === 'undefined' || !mixerSize || !activeChain) {
+    if (typeof destChain === 'undefined' || !amount || !activeChain) {
       return setNote(undefined);
     }
 
     const wrappableCurrencyAddress: string | undefined = wrappableAsset?.getAddress(activeChain.id);
-    provider.generateNote(mixerSize.id, destChain, wrappableCurrencyAddress).then((note) => {
+    provider.generateNote(anchorId, destChain, amount, wrappableCurrencyAddress).then((note) => {
       setNote(note);
     });
-  }, [provider, mixerSize, destChain, activeChain, wrappableAsset]);
+  }, [provider, anchorId, amount, destChain, activeChain, wrappableAsset]);
   const [backupConfirmation, setBackupConfirmation] = useState(false);
   const generatingNote = !depositPayload;
   return (
@@ -166,7 +168,7 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({
             Please backup your note. If you lose this. <br /> you won't get your deposit back.
           </Typography>
           <SpaceBox height={20} />
-          <DepositAmountDecal amount={mixerSize?.amount || 0} symbol={mixerSize?.asset || 'UNKN'} />
+          <DepositAmountDecal amount={amount} symbol={provider.selectedBridgeCurrency?.view.symbol || 'UNKN'} />
         </header>
 
         <SpaceBox height={16} />

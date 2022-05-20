@@ -7,6 +7,7 @@ import { sideBarConfig } from './sidebar-config';
 
 const PageMixer = lazy(() => import('@webb-dapp/page-mixer'));
 const PageBridge = lazy(() => import('@webb-dapp/page-bridge'));
+const PageVBridge = lazy(() => import('@webb-dapp/vbridge'));
 const PageWrapUnwrap = lazy(() => import('@webb-dapp/page-wrap-unwrap'));
 const PageStatistics = lazy(() => import('@webb-dapp/page-statistics'));
 const CSuspense: FC = ({ children }) => {
@@ -33,6 +34,15 @@ export const config: RouterConfigData[] = [
         ),
         path: 'bridge/*',
         title: 'Bridges',
+      },
+      {
+        element: (
+          <CSuspense>
+            <PageVBridge />
+          </CSuspense>
+        ),
+        path: 'vbridge/*',
+        title: 'VariableBridges',
       },
       {
         element: (

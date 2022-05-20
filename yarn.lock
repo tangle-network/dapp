@@ -4808,10 +4808,8 @@
     "@webassemblyjs/ast" "1.11.1"
     "@xtuc/long" "4.2.2"
 
-"@webb-tools/anchors@0.1.14":
+"@webb-tools/anchors@file:../protocol-solidity/packages/anchors", "@webb-tools/anchors@file:../webb.js/protocol-solidity/packages/anchors":
   version "0.1.14"
-  resolved "https://registry.yarnpkg.com/@webb-tools/anchors/-/anchors-0.1.14.tgz#5de023409f9a521dbba93f3111930699fedcfea8"
-  integrity sha512-D0vx9CGcD7WlpOFLPU6h3q3fr7dKsoHoK+2OvmMrToJifsYFr4XhX8/47Fhi8go4JYZjqYN55t72a7wLz6Kodg==
   dependencies:
     "@webb-tools/contracts" "^0.1.10"
     "@webb-tools/interfaces" "^0.1.11"
@@ -4834,10 +4832,10 @@
     "@babel/runtime" "^7.10.2"
     "@polkadot/extension-dapp" "^0.35.0-beta.35"
     "@walletconnect/web3-provider" "^1.7.5"
-    "@webb-tools/anchors" "0.1.14"
-    "@webb-tools/contracts" "0.1.10"
-    "@webb-tools/interfaces" "0.1.11"
-    "@webb-tools/utils" "0.1.7"
+    "@webb-tools/anchors" "file:../../Library/Caches/Yarn/v6/npm-@webb-tools-api-providers-0.1.4-61-90d3f21e-7663-4fda-bc6c-6a02da15e9a6-1653060237930/protocol-solidity/packages/anchors"
+    "@webb-tools/contracts" "file:../../Library/Caches/Yarn/v6/npm-@webb-tools-api-providers-0.1.4-61-90d3f21e-7663-4fda-bc6c-6a02da15e9a6-1653060237930/protocol-solidity/packages/contracts"
+    "@webb-tools/interfaces" "file:../../Library/Caches/Yarn/v6/npm-@webb-tools-api-providers-0.1.4-61-90d3f21e-7663-4fda-bc6c-6a02da15e9a6-1653060237930/protocol-solidity/packages/interfaces"
+    "@webb-tools/utils" "file:../../Library/Caches/Yarn/v6/npm-@webb-tools-api-providers-0.1.4-61-90d3f21e-7663-4fda-bc6c-6a02da15e9a6-1653060237930/protocol-solidity/packages/utils"
     bignumber.js "^9.0.0"
     snarkjs "0.4.16"
 
@@ -4855,19 +4853,15 @@
     "@babel/runtime" "^7.10.2"
     bignumber.js "^9.0.0"
 
-"@webb-tools/contracts@0.1.10", "@webb-tools/contracts@^0.1.10":
+"@webb-tools/contracts@^0.1.10", "@webb-tools/contracts@file:../protocol-solidity/packages/contracts", "@webb-tools/contracts@file:../webb.js/protocol-solidity/packages/contracts":
   version "0.1.10"
-  resolved "https://registry.yarnpkg.com/@webb-tools/contracts/-/contracts-0.1.10.tgz#70669db203d696107ff12f69412c206741be8a14"
-  integrity sha512-P5KCcbZBrGcQCn/5C58D4NLUtU+0ZZOUxo0yeqGSDFPHmg+2SJDVt89G6oJ3jNdvmFXewYX3n9fXx1WkKRFBYQ==
   dependencies:
     "@typechain/ethers-v5" "^7.0.1"
     "@typechain/hardhat" "^2.3.0"
     ethers "5.5.1"
 
-"@webb-tools/interfaces@0.1.11", "@webb-tools/interfaces@^0.1.11":
+"@webb-tools/interfaces@^0.1.11", "@webb-tools/interfaces@file:../protocol-solidity/packages/interfaces", "@webb-tools/interfaces@file:../webb.js/protocol-solidity/packages/interfaces":
   version "0.1.11"
-  resolved "https://registry.yarnpkg.com/@webb-tools/interfaces/-/interfaces-0.1.11.tgz#6e37504e2137cc1f5fbc471f878dca8bc05cbe49"
-  integrity sha512-7dueH0utbYBnWIpOq4xkO4/KMl/3xc25Lo7yBwhScjVFs/9ih1z3R0JjOFcKfhZgDAQS5PzlFAScM2Fkofi+bg==
   dependencies:
     "@webb-tools/contracts" "^0.1.10"
     "@webb-tools/utils" "^0.1.7"
@@ -4910,10 +4904,8 @@
     "@polkadot/typegen" "8.1.1"
     "@polkadot/types" "8.1.1"
 
-"@webb-tools/utils@0.1.7", "@webb-tools/utils@^0.1.7":
+"@webb-tools/utils@^0.1.7", "@webb-tools/utils@file:../protocol-solidity/packages/utils", "@webb-tools/utils@file:../webb.js/protocol-solidity/packages/utils":
   version "0.1.7"
-  resolved "https://registry.yarnpkg.com/@webb-tools/utils/-/utils-0.1.7.tgz#e0b4de966cbb261af38f76665a7d941ee22c01e5"
-  integrity sha512-kiB0UGYH6jvTiiziawZI4KU+W+W7O9KWaXCDT+lUTCiWXY70GnGOGVZFv44l7MmH2Lr5WlmWqb9oCbiS8rccmg==
   dependencies:
     bn.js "4.11.6"
     circomlibjs "^0.0.8"
