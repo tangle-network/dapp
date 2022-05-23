@@ -1,9 +1,7 @@
 import ArbitrumLogo from '@webb-dapp/apps/configs/logos/chains/ArbitrumLogo';
 import GanacheLogo from '@webb-dapp/apps/configs/logos/chains/GanacheLogo';
-// import HarmonyLogo from '@webb-dapp/apps/configs/logos/chains/HarmonyLogo';
 import OptimismLogo from '@webb-dapp/apps/configs/logos/chains/OptimismLogo';
 import PolygonLogo from '@webb-dapp/apps/configs/logos/chains/PolygonLogo';
-// import ShidenLogo from '@webb-dapp/apps/configs/logos/chains/ShidenLogo';
 import WEBBLogo from '@webb-dapp/apps/configs/logos/chains/WebbLogo';
 import EtherLogo from '@webb-dapp/apps/configs/logos/Eth';
 import {
@@ -74,20 +72,6 @@ export const chainsConfig: AppConfig['chains'] = {
     currencies: [WebbCurrencyId.ETH, WebbCurrencyId.WETH, WebbCurrencyId.webbWETH],
     nativeCurrencyId: WebbCurrencyId.ETH,
   },
-  // [InternalChainId.Kovan]: {
-  //   chainType: ChainType.EVM,
-  //   group: 'eth',
-  //   id: InternalChainId.Kovan,
-  //   chainId: EVMChainId.Kovan,
-  //   name: 'Kovan',
-  //   url: 'https://kovan.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4',
-  //   evmRpcUrls: ['https://goerli.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4'],
-  //   blockExplorerStub: 'https://kovan.etherscan.io',
-  //   logo: KLogo,
-  //   tag: 'test',
-  //   currencies: [WebbCurrencyId.ETH, WebbCurrencyId.WETH],
-  //   nativeCurrencyId: WebbCurrencyId.ETH,
-  // },
   [InternalChainId.OptimismTestnet]: {
     chainType: ChainType.EVM,
     group: 'eth',
@@ -116,82 +100,6 @@ export const chainsConfig: AppConfig['chains'] = {
     currencies: [WebbCurrencyId.ETH, WebbCurrencyId.WETH, WebbCurrencyId.webbWETH],
     nativeCurrencyId: WebbCurrencyId.ETH,
   },
-  // [InternalChainId.HarmonyTestnet1]: {
-  //   chainType: ChainType.EVM,
-  //   group: 'one',
-  //   id: InternalChainId.HarmonyTestnet1,
-  //   chainId: EVMChainId.HarmonyTestnet1,
-  //   name: 'Harmony Testnet Shard 1',
-  //   tag: 'test',
-  //   url: 'https://api.s1.b.hmny.io',
-  //   evmRpcUrls: ['https://api.s1.b.hmny.io'],
-  //   logo: HarmonyLogo,
-  //   currencies: [WebbCurrencyId.ONE],
-  //   nativeCurrencyId: WebbCurrencyId.ONE,
-  // },
-  // [ChainId.HarmonyTestnet0]: {
-  // chainType: ChainType,
-  //   group: 'one',
-  //   id: ChainId.HarmonyTestnet0,
-  //   evmId: EVMChain.HarmonyTestnet0,
-  //   name: 'Harmony Testnet Shard 0',
-  //   tag: 'test',
-  //   url: 'https://api.s0.b.hmny.io',
-  //   evmRpcUrls: ['https://api.s0.b.hmny.io'],
-  //   logo: HarmonyLogo,
-  //   currencies: [
-  //     {
-  //       currencyId: WebbCurrencyId.ONE,
-  //       enabled: true,
-  //     },
-  //   ],
-  //   nativeCurrencyId: WebbCurrencyId.ONE,
-  // },
-  // [InternalChainId.HarmonyMainnet0]: {
-  //   chainType: ChainType.EVM,
-  //   group: 'one',
-  //   id: InternalChainId.HarmonyMainnet0,
-  //   chainId: EVMChainId.HarmonyMainnet0,
-  //   name: 'Harmony Mainnet Shard 0',
-  //   tag: 'live',
-  //   url: 'https://api.harmony.one',
-  //   evmRpcUrls: ['https://api.harmony.one'],
-  //   logo: HarmonyLogo,
-  //   currencies: [WebbCurrencyId.ONE],
-  //   nativeCurrencyId: WebbCurrencyId.ONE,
-  // },
-  // [ChainId.EthereumMainNet]: {
-  // chainType: ChainType,
-  //   group: 'eth',
-  //   id: ChainId.EthereumMainNet,
-  //   evmId: EVMChain.EthereumMainNet,
-  //   name: 'Ethereum mainnet',
-  //   tag: 'live',
-  //   url: 'https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
-  //   evmRpcUrls: ['https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161'],
-  //   logo: EtherLogo,
-  //   currencies: [
-  //     {
-  //       currencyId: WebbCurrencyId.ETH,
-  //       enabled: true,
-  //     },
-  //   ],
-  //   nativeCurrencyId: WebbCurrencyId.ETH,
-  // },
-  // [InternalChainId.Shiden]: {
-  //   chainType: ChainType.EVM,
-  //   group: 'sdn',
-  //   id: InternalChainId.Shiden,
-  //   chainId: EVMChainId.Shiden,
-  //   name: 'Shiden',
-  //   tag: 'live',
-  //   url: 'https://shiden.api.onfinality.io/public',
-  //   evmRpcUrls: ['https://shiden.api.onfinality.io/public'],
-  //   blockExplorerStub: 'https://shiden.subscan.io',
-  //   logo: ShidenLogo,
-  //   currencies: [WebbCurrencyId.SDN],
-  //   nativeCurrencyId: WebbCurrencyId.SDN,
-  // },
   [InternalChainId.PolygonTestnet]: {
     chainType: ChainType.EVM,
     group: 'matic',
@@ -245,18 +153,6 @@ export const chainsConfig: AppConfig['chains'] = {
     currencies: [WebbCurrencyId.webbDEV, WebbCurrencyId.DEV, WebbCurrencyId.ETH],
     nativeCurrencyId: WebbCurrencyId.ETH,
   },
-  // [InternalChainId.DkgSubstrateStandalone]: {
-  //   chainType: ChainType.SubstrateDevelopment,
-  //   id: InternalChainId.DkgSubstrateStandalone,
-  //   group: 'webb',
-  //   tag: 'dev',
-  //   chainId: SubstrateChainId.DkgSubstrateStandalone,
-  //   logo: WEBBLogo,
-  //   url: 'ws://127.0.0.1:9944',
-  //   name: 'Webb Development',
-  //   currencies: [WebbCurrencyId.WEBB],
-  //   nativeCurrencyId: WebbCurrencyId.WEBB,
-  // },
   [InternalChainId.EggStandalone]: {
     chainType: ChainType.Substrate,
     id: InternalChainId.EggStandalone,
