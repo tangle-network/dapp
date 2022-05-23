@@ -9,28 +9,28 @@ import {
   DepositPayload,
   MixerDeposit,
   MixerSize,
+  VAnchorDeposit,
 } from '@webb-tools/api-providers';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-export interface BridgeDepositApi {
-  mixerSizes: MixerSize[];
-
+export interface VBridgeDepositApi {
   deposit(payload: DepositPayload): Promise<void>;
 
   generateNote(
     mixerId: number | string,
     destChain: ChainTypeId,
+    amount: number,
     wrappableAsset: string | undefined
   ): Promise<DepositPayload>;
 
   loadingState: MixerDeposit['loading'];
   error: string;
-  depositApi: AnchorDeposit<any> | null;
+  depositApi: VAnchorDeposit<any> | null;
   selectedBridgeCurrency: Currency | null;
 
   setSelectedCurrency(bridgeCurrency: BridgeCurrencyIndex | undefined): void;
 }
 
-export const useBridgeDeposit = (): BridgeDepositApi => {
+export const useBridgeDeposit = (): VBridgeDepositApi => {
   const { activeApi } = useWebContext();
   const [loadingState, setLoadingState] = useState<AnchorDeposit<any>['loading']>('ideal');
   const [error, setError] = useState('');
@@ -39,7 +39,7 @@ export const useBridgeDeposit = (): BridgeDepositApi => {
   const [selectedBridgeCurrency, setSelectedBridgeCurrency] = useState<null | Currency>(null);
   /// api
   const depositApi = useMemo(() => {
-    const depositApi = activeApi?.methods.fixedAnchor.deposit;
+    const depositApi = activeApi?.methods.variableAnchor.deposit;
     if (!depositApi?.enabled) {
       return null;
     }
@@ -80,12 +80,17 @@ export const useBridgeDeposit = (): BridgeDepositApi => {
   }, [depositApi, bridgeApi, selectedBridgeCurrency?.id, bridgeApi?.activeBridge]);
 
   const generateNote = useCallback(
-    async (mixerId: number | string, destChainTypeId: ChainTypeId, wrappableAsset: string | undefined) => {
+    async (
+      anchorId: number | string,
+      destChainTypeId: ChainTypeId,
+      amount: number,
+      wrappableAsset: string | undefined
+    ) => {
       if (!depositApi) {
         throw new Error('Not ready');
       }
       const destChainId = computeChainIdType(destChainTypeId.chainType, destChainTypeId.chainId);
-      return depositApi?.generateBridgeNote(mixerId, destChainId, wrappableAsset);
+      return depositApi?.generateBridgeNote(anchorId, destChainId, amount, wrappableAsset);
     },
     [depositApi]
   );
@@ -110,7 +115,6 @@ export const useBridgeDeposit = (): BridgeDepositApi => {
 
   return {
     depositApi,
-    mixerSizes,
     deposit,
     generateNote,
     loadingState,

@@ -4,6 +4,7 @@ import PolygonLogo from '@webb-dapp/apps/configs/logos/chains/PolygonLogo';
 import ShidenLogo from '@webb-dapp/apps/configs/logos/chains/ShidenLogo';
 import WEBBLogo from '@webb-dapp/apps/configs/logos/chains/WebbLogo';
 import EtherLogo from '@webb-dapp/apps/configs/logos/Eth';
+import { PolkaLogo } from '@webb-dapp/apps/configs/logos/PolkaLogo';
 import WebbWrappedLogo from '@webb-dapp/apps/configs/logos/WebbWrappedLogo';
 import {
   AppConfig,
