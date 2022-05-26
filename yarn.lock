@@ -3171,6 +3171,20 @@
     bn.js "^5.2.0"
     ip-regex "^4.3.0"
 
+"@polkadot/util@9.0.1":
+  version "9.0.1"
+  resolved "https://registry.yarnpkg.com/@polkadot/util/-/util-9.0.1.tgz#cedd3d44733df72245907eb13b86dafa32a52116"
+  integrity sha512-MuiuAb0VcnNpBFpbXZ4v0roxEVSpfx3bDR9qR31XCYCUODDKXa04srFz2EXI0pov087mTprIUE+x9wIWkH9QUg==
+  dependencies:
+    "@babel/runtime" "^7.17.9"
+    "@polkadot/x-bigint" "9.0.1"
+    "@polkadot/x-global" "9.0.1"
+    "@polkadot/x-textdecoder" "9.0.1"
+    "@polkadot/x-textencoder" "9.0.1"
+    "@types/bn.js" "^5.1.0"
+    bn.js "^5.2.0"
+    ip-regex "^4.3.0"
+
 "@polkadot/util@9.2.1", "@polkadot/util@^9.0.1":
   version "9.2.1"
   resolved "https://registry.yarnpkg.com/@polkadot/util/-/util-9.2.1.tgz#cf1af36418ea6f351cceaac747162707c6a00a36"
@@ -3280,6 +3294,14 @@
     "@babel/runtime" "^7.17.8"
     "@polkadot/x-global" "8.7.1"
 
+"@polkadot/x-bigint@9.0.1":
+  version "9.0.1"
+  resolved "https://registry.yarnpkg.com/@polkadot/x-bigint/-/x-bigint-9.0.1.tgz#8ce29cff85b0fcd088a3c1bc3dadc324afb66d88"
+  integrity sha512-At+huOL4WYdNh8PHy7r94y5JpilphsPLEuyM+K3M/aE2R9G/2f0qTK9AjHeyNyeIrhw6Bc4uzO5K2Ka72HjS2g==
+  dependencies:
+    "@babel/runtime" "^7.17.9"
+    "@polkadot/x-global" "9.0.1"
+
 "@polkadot/x-bigint@9.2.1":
   version "9.2.1"
   resolved "https://registry.yarnpkg.com/@polkadot/x-bigint/-/x-bigint-9.2.1.tgz#78efd6058277ad95fda7470283399f2e4c76be8d"
@@ -3321,6 +3343,13 @@
   integrity sha512-WOgUor16IihgNVdiTVGAWksYLUAlqjmODmIK1cuWrLOZtV1VBomWcb3obkO9sh5P6iWziAvCB/i+L0vnTN9ZCA==
   dependencies:
     "@babel/runtime" "^7.17.8"
+
+"@polkadot/x-global@9.0.1":
+  version "9.0.1"
+  resolved "https://registry.yarnpkg.com/@polkadot/x-global/-/x-global-9.0.1.tgz#3fb9a6c9b8a86af542c4a514c0af4ba895a5ed5f"
+  integrity sha512-C4K3laEYWMlWc1fJFUC5Kd6gxSC0GIe/ajClPjiKf5cwCGkGgtkcB7uvpzvnMAdxYpXiUnMHbJB6X/QyV/VG+Q==
+  dependencies:
+    "@babel/runtime" "^7.17.9"
 
 "@polkadot/x-global@9.2.1", "@polkadot/x-global@^9.0.1":
   version "9.2.1"
@@ -3375,6 +3404,14 @@
     "@babel/runtime" "^7.17.8"
     "@polkadot/x-global" "8.7.1"
 
+"@polkadot/x-textdecoder@9.0.1":
+  version "9.0.1"
+  resolved "https://registry.yarnpkg.com/@polkadot/x-textdecoder/-/x-textdecoder-9.0.1.tgz#dda6234550d770f34cbd12eb0ad9cf3efaf47dfe"
+  integrity sha512-SudTQiluYIRO8EXF02kfWZGfsXrvJq4D2yURiIeIeWbrAShRUcQES7W01iGa5xvaHSW249eJ3fHbeDTNQd5B6Q==
+  dependencies:
+    "@babel/runtime" "^7.17.9"
+    "@polkadot/x-global" "9.0.1"
+
 "@polkadot/x-textdecoder@9.2.1":
   version "9.2.1"
   resolved "https://registry.yarnpkg.com/@polkadot/x-textdecoder/-/x-textdecoder-9.2.1.tgz#e83c25bd52f62cf680439d96d71d9d1f37224257"
@@ -3405,6 +3442,14 @@
   dependencies:
     "@babel/runtime" "^7.17.8"
     "@polkadot/x-global" "8.7.1"
+
+"@polkadot/x-textencoder@9.0.1":
+  version "9.0.1"
+  resolved "https://registry.yarnpkg.com/@polkadot/x-textencoder/-/x-textencoder-9.0.1.tgz#4013a5160a542472d5bdd94fb5b28b32f7e0bc9f"
+  integrity sha512-73LeTasA3iDJMCLQXZd21wzNjs1Xr2xNXW03Yja3OPLneGK6Zlqz77AAYcjhQd2dgSFoH2NQ1JvdffXT9y1sGA==
+  dependencies:
+    "@babel/runtime" "^7.17.9"
+    "@polkadot/x-global" "9.0.1"
 
 "@polkadot/x-textencoder@9.2.1":
   version "9.2.1"
@@ -4947,17 +4992,17 @@
     "@webb-tools/utils" "^0.1.8"
     snarkjs "0.4.16"
 
-"@webb-tools/api-derive@0.1.4-62", "@webb-tools/api-derive@file:../webb.js/packages/api-derive/build":
-  version "0.1.4-62"
+"@webb-tools/api-derive@0.1.4-64", "@webb-tools/api-derive@file:../webb.js/packages/api-derive/build":
+  version "0.1.4-64"
   dependencies:
     "@babel/runtime" "^7.10.2"
     "@polkadot/api" "8.1.1"
     "@polkadot/rpc-core" "8.1.1"
-    "@webb-tools/api" "0.1.4-62"
-    "@webb-tools/types" "0.1.4-62"
+    "@webb-tools/api" "0.1.4-64"
+    "@webb-tools/types" "0.1.4-64"
 
 "@webb-tools/api-providers@file:../webb.js/packages/api-providers/build":
-  version "0.1.4-62"
+  version "0.1.4-64"
   dependencies:
     "@babel/runtime" "^7.10.2"
     "@polkadot/extension-dapp" "^0.35.0-beta.35"
@@ -4969,16 +5014,16 @@
     bignumber.js "^9.0.0"
     snarkjs "0.4.16"
 
-"@webb-tools/api@0.1.4-62", "@webb-tools/api@file:../webb.js/packages/api/build":
-  version "0.1.4-62"
+"@webb-tools/api@0.1.4-64", "@webb-tools/api@file:../webb.js/packages/api/build":
+  version "0.1.4-64"
   dependencies:
     "@babel/runtime" "^7.10.2"
     "@polkadot/api" "8.1.1"
     "@polkadot/rpc-core" "8.1.1"
-    "@webb-tools/api-derive" "0.1.4-62"
+    "@webb-tools/api-derive" "0.1.4-64"
 
 "@webb-tools/app-util@file:../webb.js/packages/app-util/build":
-  version "0.1.4-62"
+  version "0.1.4-64"
   dependencies:
     "@babel/runtime" "^7.10.2"
     bignumber.js "^9.0.0"
@@ -5011,11 +5056,12 @@
     "@webb-tools/utils" "^0.1.8"
 
 "@webb-tools/sdk-core@0.1.4-62", "@webb-tools/sdk-core@file:../webb.js/packages/sdk-core/build":
-  version "0.1.4-62"
+  version "0.1.4-64"
   dependencies:
+    "@polkadot/util" "9.0.1"
     "@types/events" "^3.0.0"
-    "@webb-tools/api" "0.1.4-62"
-    "@webb-tools/wasm-utils" "0.1.4-62"
+    "@webb-tools/api" "0.1.4-64"
+    "@webb-tools/wasm-utils" "0.1.4-64"
     bignumber.js "^9.0.0"
     events "^3.2.0"
     lodash "^4.17.20"
@@ -5029,8 +5075,8 @@
     "@webb-tools/utils" "^0.1.8"
     ethers "5.5.1"
 
-"@webb-tools/types@0.1.4-62", "@webb-tools/types@file:../webb.js/packages/types/build":
-  version "0.1.4-62"
+"@webb-tools/types@0.1.4-64", "@webb-tools/types@file:../webb.js/packages/types/build":
+  version "0.1.4-64"
   dependencies:
     "@babel/runtime" "^7.10.2"
     "@open-web3/orml-types" "^1.1.3"
@@ -5050,8 +5096,8 @@
     ethers "5.5.1"
     ffjavascript "^0.2.43"
 
-"@webb-tools/wasm-utils@0.1.4-62", "@webb-tools/wasm-utils@file:../webb.js/packages/wasm-utils/build":
-  version "0.1.4-62"
+"@webb-tools/wasm-utils@0.1.4-64", "@webb-tools/wasm-utils@file:../webb.js/packages/wasm-utils/build":
+  version "0.1.4-64"
 
 "@webpack-cli/configtest@^1.1.1":
   version "1.1.1"

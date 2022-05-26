@@ -1,8 +1,8 @@
 import { AppConfig } from '@webb-tools/api-providers';
-import { RelayerConfig, WebbRelayerBuilder } from '@webb-tools/api-providers';
+import { RelayerConfig, WebbRelayerManagerFactory } from '@webb-tools/api-providers';
 import { InternalChainId } from '@webb-tools/api-providers/chains';
 
-let builder: WebbRelayerBuilder | null = null;
+let relayerManagerFactory: WebbRelayerManagerFactory | null = null;
 export const relayerConfig: RelayerConfig[] = [
   {
     endpoint: 'http://localhost:9955',
@@ -137,9 +137,9 @@ export function chainIdToRelayerName(id: InternalChainId): string {
   throw new Error(`unhandled Chain id ${id}`);
 }
 
-export async function getWebbRelayer(appConfig: AppConfig) {
-  if (!builder) {
-    builder = await WebbRelayerBuilder.initBuilder(
+export async function getRelayerManagerFactory(appConfig: AppConfig) {
+  if (!relayerManagerFactory) {
+    relayerManagerFactory = await WebbRelayerManagerFactory.init(
       relayerConfig,
       (name, basedOn) => {
         try {
@@ -151,5 +151,5 @@ export async function getWebbRelayer(appConfig: AppConfig) {
       appConfig
     );
   }
-  return builder;
+  return relayerManagerFactory;
 }

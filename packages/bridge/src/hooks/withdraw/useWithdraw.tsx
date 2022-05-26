@@ -58,9 +58,9 @@ export const useWithdraw = (params: UseWithdrawProps) => {
   }, [activeApi]);
 
   useEffect(() => {
-    const sub = activeApi?.relayingManager.listUpdated.subscribe(() => {
+    const sub = activeApi?.relayerManager.listUpdated.subscribe(() => {
       if (params.note) {
-        withdrawApi?.getRelayersByNote(params.note).then((r: WebbRelayer[]) => {
+        activeApi.relayerManager.getRelayersByNote(params.note).then((r: WebbRelayer[]) => {
           setRelayersState((p) => ({
             ...p,
             loading: false,
@@ -70,12 +70,12 @@ export const useWithdraw = (params: UseWithdrawProps) => {
       }
     });
     return () => sub?.unsubscribe();
-  }, [activeApi, params.note, withdrawApi]);
+  }, [activeApi, params.note]);
   const { registerInteractiveFeedback } = useWebContext();
   // hook events
   useEffect(() => {
     if (params.note) {
-      withdrawApi?.getRelayersByNote(params.note).then((r: WebbRelayer[]) => {
+      activeApi?.relayerManager.getRelayersByNote(params.note).then((r: WebbRelayer[]) => {
         setRelayersState((p) => ({
           ...p,
           loading: false,
@@ -84,7 +84,7 @@ export const useWithdraw = (params: UseWithdrawProps) => {
       });
     }
 
-    const sub = withdrawApi?.watcher.subscribe((next: OptionalActiveRelayer) => {
+    const sub = activeApi?.relayerManager.activeRelayerWatcher.subscribe((next: OptionalActiveRelayer) => {
       setRelayersState((p) => ({
         ...p,
         activeRelayer: next,
@@ -118,7 +118,7 @@ export const useWithdraw = (params: UseWithdrawProps) => {
       sub?.unsubscribe();
       Object.values(unsubscribe).forEach((v) => v && v());
     };
-  }, [withdrawApi, params.note, bridgeApi]);
+  }, [withdrawApi, params.note, bridgeApi, activeApi?.relayerManager]);
 
   const withdraw = useCallback(async () => {
     if (!withdrawApi || !params.note) {
@@ -162,9 +162,9 @@ export const useWithdraw = (params: UseWithdrawProps) => {
 
   const setRelayer = useCallback(
     (nextRelayer: WebbRelayer | null) => {
-      withdrawApi?.setActiveRelayer(nextRelayer, activeChain?.id!);
+      activeApi?.relayerManager.setActiveRelayer(nextRelayer, activeChain?.id!);
     },
-    [withdrawApi, activeChain]
+    [activeChain, activeApi?.relayerManager]
   );
   return {
     stage,

@@ -9,7 +9,7 @@ import {
   currenciesConfig,
   walletsConfig,
 } from '@webb-dapp/apps/configs';
-import { getWebbRelayer } from '@webb-dapp/apps/configs/relayer-config';
+import { getRelayerManagerFactory } from '@webb-dapp/apps/configs/relayer-config';
 import { WalletId } from '@webb-dapp/apps/configs/wallets/wallet-id.enum';
 import { appEvent } from '@webb-dapp/react-environment/app-event';
 import { insufficientApiInterface } from '@webb-dapp/react-environment/error/interactive-errors/insufficient-api-interface';
@@ -310,7 +310,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
   };
   /// Network switcher
   const switchChain = async (chain: Chain, _wallet: Wallet) => {
-    const relayer = await getWebbRelayer(appConfig);
+    const relayerManagerFactory = await getRelayerManagerFactory(appConfig);
 
     const wallet = _wallet || activeWallet;
     // wallet cleanup
@@ -325,6 +325,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
       switch (wallet.id) {
         case WalletId.Polkadot:
           {
+            const relayerManager = await relayerManagerFactory.getRelayerManager('substrate');
             const url = chain.url;
             const webbPolkadot = await WebbPolkadot.init(
               'Webb DApp',
@@ -334,7 +335,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
                   registerInteractiveFeedback(setInteractiveFeedbacks, feedback);
                 },
               },
-              relayer,
+              relayerManager,
               appConfig,
               notificationHandler,
               () => new Worker(new URL('./proving-manager.worker', import.meta.url))
@@ -399,10 +400,12 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
             /// get the current active chain from metamask
             const chainId = await web3Provider.network; // storage based on network id
 
+            const relayerManager = await relayerManagerFactory.getRelayerManager('evm');
+
             const webbWeb3Provider = await WebbWeb3Provider.init(
               web3Provider,
               chainId,
-              relayer,
+              relayerManager,
               appConfig,
               notificationHandler
             );
