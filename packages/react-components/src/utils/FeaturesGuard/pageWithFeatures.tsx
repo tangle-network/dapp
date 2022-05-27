@@ -17,6 +17,7 @@ export const pageWithFeatures =
     const isSupported = useFeatures(features);
 
     if (isSupported) {
+      // @ts-ignore
       return <Component {...props} />;
     }
 

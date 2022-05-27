@@ -66,6 +66,7 @@ export const Flex: React.FC<IFlexProps> = ({
 
   if (Component) {
     return (
+      // @ts-ignore
       <Component style={styles.flex} {...(asProps || {})} {...rest}>
         {children}
       </Component>

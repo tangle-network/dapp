@@ -1,10 +1,12 @@
 import { Typography } from '@material-ui/core';
+import { getRelayerManagerFactory } from '@webb-dapp/apps/configs/relayer-config';
 import { RelayersState } from '@webb-dapp/mixer';
+import { useAppConfig, useWebContext } from '@webb-dapp/react-environment/webb-context';
 import { SpaceBox } from '@webb-dapp/ui-components/Box';
 import { CloseButton } from '@webb-dapp/ui-components/Buttons/CloseButton';
 import { FeesInfo, RelayerApiAdapter, RelayerInput } from '@webb-dapp/ui-components/Inputs/RelayerInput/RelayerInput';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
-import { ActiveWebbRelayer, WebbRelayer, WebbRelayerBuilder } from '@webb-tools/api-providers';
+import { ActiveWebbRelayer, WebbRelayer, WebbRelayerManager } from '@webb-tools/api-providers';
 import { Note } from '@webb-tools/sdk-core';
 import React, { useCallback, useMemo } from 'react';
 import styled from 'styled-components';
@@ -38,12 +40,15 @@ const RelayerModalWrapper = styled.div`
 type RelayerModalProps = {
   note: Note | null;
   state: RelayersState;
-  methods: WebbRelayerBuilder | undefined;
+  methods: WebbRelayerManager | undefined;
   onChange: (nextRelayer: WebbRelayer | null) => void;
   onClose: () => void;
 };
 
 export const RelayerModal: React.FC<RelayerModalProps> = ({ methods, note, onChange, onClose, state }) => {
+  const config = useAppConfig();
+  const { activeApi } = useWebContext();
+
   const feesGetter = useCallback(
     async (activeRelayer: ActiveWebbRelayer): Promise<FeesInfo> => {
       const defaultFees: FeesInfo = {
@@ -64,13 +69,17 @@ export const RelayerModal: React.FC<RelayerModalProps> = ({ methods, note, onCha
   const relayerApi: RelayerApiAdapter = useMemo(() => {
     return {
       getInfo: async (endpoint) => {
-        return methods?.fetchCapabilities(endpoint) ?? ({} as any);
+        const relayerManagerFactory = await getRelayerManagerFactory(config);
+        return relayerManagerFactory.fetchCapabilities(endpoint) ?? ({} as any);
       },
-      add(endPoint: string, _persistent: boolean) {
-        return methods?.addRelayer(endPoint);
+      add: async (endPoint: string, _persistent: boolean) => {
+        const relayerManagerFactory = await getRelayerManagerFactory(config);
+        const relayerCapabilities = await relayerManagerFactory.addRelayer(endPoint);
+        const relayer = new WebbRelayer(endPoint, relayerCapabilities[endPoint]);
+        activeApi?.relayerManager.addRelayer(relayer);
       },
     };
-  }, [methods]);
+  }, [config, activeApi]);
 
   return (
     <RelayerModalWrapper>

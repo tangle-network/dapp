@@ -2,7 +2,7 @@ import { Avatar, ButtonBase, List, ListItem, ListItemAvatar, ListItemText, Typog
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
-import { ManagedWallet } from '@webb-tools/api-providers/types/wallet-config.interface';
+import { ManagedWallet } from '@webb-tools/api-providers';
 import React from 'react';
 import styled from 'styled-components';
 

@@ -9,17 +9,16 @@ import { SpaceBox } from '@webb-dapp/ui-components';
 import { SettingsIcon } from '@webb-dapp/ui-components/assets/SettingsIcon';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { BridgeNoteInput } from '@webb-dapp/ui-components/Inputs/NoteInput/BridgeNoteInput';
-import { FeesInfo, RelayerApiAdapter, RelayerInput } from '@webb-dapp/ui-components/Inputs/RelayerInput/RelayerInput';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import {
   chainTypeIdToInternalId,
   getChainNameFromChainId,
   parseChainIdType,
+  WalletConfig,
   WebbRelayer,
   WithdrawState,
 } from '@webb-tools/api-providers';
-import { WalletConfig } from '@webb-tools/api-providers/types/wallet-config.interface';
 import { Note } from '@webb-tools/sdk-core';
 import { ethers } from 'ethers';
 import React, { useEffect, useMemo, useState } from 'react';

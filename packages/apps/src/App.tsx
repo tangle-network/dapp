@@ -13,6 +13,7 @@ const appLogger = LoggerService.new('App');
 appLogger.log('process.env: ', process.env);
 const App: FC = () => {
   return (
+    // @ts-ignore
     <DAppError logger={appLogger}>
       <WebbProvider applicationName={'Webb DApp'}>
         <UIProvider>

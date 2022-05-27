@@ -10,7 +10,7 @@ export function useRelayerIp(activeApi?: WebbApiProvider<any>) {
 
   useEffect(() => {
     async function getIpInfo() {
-      const relayer = await activeApi?.relayingManager.getRelayer({})[0];
+      const relayer = await activeApi?.relayerManager.getRelayers({})[0];
       if (relayer) {
         const response = await relayer.getIp();
         // @ts-ignore

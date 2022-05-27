@@ -6,7 +6,7 @@ import { MetaMaskLogo } from '@webb-dapp/apps/configs/logos/MetaMaskLogo';
 import { PolkaLogo } from '@webb-dapp/apps/configs/logos/PolkaLogo';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
 import { getPlatformMetaData, SupportedBrowsers } from '@webb-dapp/utils/platform';
-import { InteractiveFeedback, WebbErrorCodes } from '@webb-tools/api-providers/webb-error';
+import { InteractiveFeedback, WebbErrorCodes } from '@webb-tools/api-providers';
 import React from 'react';
 //TODO : move to wallet config
 const metaMaskConfig = {
@@ -28,7 +28,7 @@ const polkadotConfig = {
 
 export function extensionNotInstalled(extension: 'metamask' | 'polkadot'): InteractiveFeedback {
   const platformMetaData = getPlatformMetaData();
-  let Logo: React.ComponentType = () => null;
+  let Logo: () => JSX.Element;
   const config = extension === 'metamask' ? metaMaskConfig : polkadotConfig;
   switch (platformMetaData.id) {
     case SupportedBrowsers.Chrome:

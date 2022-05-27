@@ -1,12 +1,5 @@
-import { Account, Chain, Wallet, WebbApiProvider } from '@webb-tools/api-providers';
-import { AppConfig } from '@webb-tools/api-providers';
-import { InteractiveFeedback } from '@webb-tools/api-providers/webb-error';
+import { Account, AppConfig, Chain, InteractiveFeedback, Wallet, WebbApiProvider } from '@webb-tools/api-providers';
 import React from 'react';
-interface Note {
-  serialize(): string;
-}
-
-type DepositStates = 'ideal' | 'generating-note' | 'depositing';
 
 export interface WebbContextState<T = unknown> {
   loading: boolean;

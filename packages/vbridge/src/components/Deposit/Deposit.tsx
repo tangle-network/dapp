@@ -15,10 +15,7 @@ import { getRoundedAmountString } from '@webb-dapp/ui-components/utils';
 import { DepositConfirm } from '@webb-dapp/vbridge/components/DepositConfirm/DepositConfirm';
 import { useBridge } from '@webb-dapp/vbridge/hooks/bridge/use-bridge';
 import { useBridgeDeposit } from '@webb-dapp/vbridge/hooks/deposit/useBridgeDeposit';
-import { ChainTypeId, WebbCurrencyId } from '@webb-tools/api-providers';
-import { MixerSize } from '@webb-tools/api-providers';
-import { Currency } from '@webb-tools/api-providers';
-import { WalletConfig } from '@webb-tools/api-providers/types/wallet-config.interface';
+import { ChainTypeId, Currency, MixerSize, WalletConfig, WebbCurrencyId } from '@webb-tools/api-providers';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
