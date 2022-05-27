@@ -11,7 +11,7 @@
     "@polkadot/extension-dapp": "^0.42.9",
     "@webb-tools/api": "file:../../../webb.js/packages/api/build",
     "@webb-tools/api-providers": "file:../../../webb.js/packages/api-providers/build",
-    "@webb-tools/sdk-core": "0.1.4-62"
+    "@webb-tools/sdk-core": "file:../../../webb.js/packages/sdk-core/build"
   },
   "devDependencies": {
     "@types/url-parse": "^1.4.3"

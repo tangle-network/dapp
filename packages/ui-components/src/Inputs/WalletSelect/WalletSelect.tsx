@@ -6,7 +6,7 @@ import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { useWallets } from '@webb-dapp/react-hooks/useWallets';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
-import { ManagedWallet } from '@webb-tools/api-providers/types/wallet-config.interface';
+import { ManagedWallet } from '@webb-tools/api-providers';
 import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 

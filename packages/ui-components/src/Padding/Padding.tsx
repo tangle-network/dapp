@@ -40,6 +40,7 @@ export const Padding: React.FC<IPaddingProps> = ({
   // @ts-ignore
   const C = as || 'div';
   return (
+    // @ts-ignore
     <C style={styles.Padding} {...rest} {...asProps}>
       {children}
     </C>

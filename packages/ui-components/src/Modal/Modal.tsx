@@ -68,6 +68,7 @@ export const Modal: React.FC<ModalProps> = ({ children, closeButton, unlimitedWi
     unlimitedWidth,
   });
   return (
+    // @ts-ignore
     <MuiModel
       style={{
         overflow: 'auto',

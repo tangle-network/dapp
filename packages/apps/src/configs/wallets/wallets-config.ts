@@ -1,8 +1,7 @@
 import { MetaMaskLogo } from '@webb-dapp/apps/configs/logos/MetaMaskLogo';
 import { PolkaLogo } from '@webb-dapp/apps/configs/logos/PolkaLogo';
 import { WalletConnectLogo } from '@webb-dapp/apps/configs/logos/WalletConnectLogo';
-import { AppConfig } from '@webb-tools/api-providers';
-import { InternalChainId } from '@webb-tools/api-providers';
+import { AppConfig, InternalChainId } from '@webb-tools/api-providers';
 
 import { WalletId } from '../wallets/wallet-id.enum';
 

@@ -28,7 +28,7 @@ const polkadotConfig = {
 
 export function extensionNotInstalled(extension: 'metamask' | 'polkadot'): InteractiveFeedback {
   const platformMetaData = getPlatformMetaData();
-  let Logo: React.ComponentType = () => null;
+  let Logo: () => JSX.Element;
   const config = extension === 'metamask' ? metaMaskConfig : polkadotConfig;
   switch (platformMetaData.id) {
     case SupportedBrowsers.Chrome:

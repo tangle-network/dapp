@@ -20,6 +20,7 @@ export function NotificationStacked() {
     [options]
   );
   return (
+    //@ts-ignore
     <SnackbarProvider
       anchorOrigin={{
         horizontal: 'right',
@@ -36,6 +37,7 @@ export function NotificationStacked() {
           return <div />;
         }
         return (
+          //@ts-ignore
           <SnackbarContent>
             <Alert onUnmount={cleanOpt} $key={key} message={message} opts={opts} />
           </SnackbarContent>

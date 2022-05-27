@@ -1,5 +1,5 @@
 import { FormHelperText, InputBase, Typography } from '@material-ui/core';
-import { chainsPopulated, currenciesConfig, getChainNameFromChainId } from '@webb-dapp/apps/configs';
+import { chainsPopulated, currenciesConfig } from '@webb-dapp/apps/configs';
 import { useWithdraw } from '@webb-dapp/mixer/hooks';
 import { useDepositNote } from '@webb-dapp/mixer/hooks/note';
 import { RelayerModal } from '@webb-dapp/react-components/Relayer/RelayerModal';
@@ -11,9 +11,7 @@ import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { MixerNoteInput } from '@webb-dapp/ui-components/Inputs/NoteInput/MixerNoteInput';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
-import { WithdrawState } from '@webb-tools/api-providers';
-import { WebbRelayer } from '@webb-tools/api-providers';
-import { WalletConfig } from '@webb-tools/api-providers';
+import { WalletConfig, WebbRelayer, WithdrawState } from '@webb-tools/api-providers';
 import { Note } from '@webb-tools/sdk-core';
 import { ethers } from 'ethers';
 import React, { useEffect, useMemo, useState } from 'react';

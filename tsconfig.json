@@ -26,7 +26,7 @@
 		],
 		"isolatedModules": true,
 		"noEmit": true,
-		"jsx": "react",
+		"jsx": "react-jsx",
 		"baseUrl": "./packages",
 		"skipDefaultLibCheck": true,
 		"paths": {
