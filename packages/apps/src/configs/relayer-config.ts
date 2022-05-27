@@ -1,6 +1,4 @@
-import { AppConfig } from '@webb-tools/api-providers';
-import { RelayerConfig, WebbRelayerBuilder } from '@webb-tools/api-providers';
-import { InternalChainId } from '@webb-tools/api-providers/chains';
+import { AppConfig, InternalChainId, RelayerConfig, WebbRelayerBuilder } from '@webb-tools/api-providers';
 
 let builder: WebbRelayerBuilder | null = null;
 export const relayerConfig: RelayerConfig[] = [

@@ -20,10 +20,10 @@
     "@webb-tools/sdk-core": "file:../webb.js/packages/sdk-core/build",
     "@webb-tools/wasm-utils": "file:../webb.js/packages/wasm-utils/build",
     "@webb-tools/api-providers": "file:../webb.js/packages/api-providers/build",
-    "@webb-tools/utils": "0.1.8",
-    "@webb-tools/contracts": "0.1.11",
-    "@webb-tools/interfaces": "0.1.12",
-    "@webb-tools/anchors": "0.1.15"
+    "@webb-tools/utils": "file:../protocol-solidity/packages/utils",
+    "@webb-tools/contracts": "file:../protocol-solidity/packages/contracts",
+    "@webb-tools/interfaces": "file:../protocol-solidity/packages/interfaces",
+    "@webb-tools/anchors": "file:../protocol-solidity/packages/anchors"
   },
   "scripts": {
     "bump-version": "node scripts/bump-version.js",
