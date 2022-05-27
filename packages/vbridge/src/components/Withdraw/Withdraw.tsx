@@ -1,6 +1,5 @@
 import { FormHelperText, InputBase, Typography } from '@material-ui/core';
 import { chainsPopulated } from '@webb-dapp/apps/configs';
-import { useWithdraw } from '@webb-dapp/bridge/hooks';
 import { useDepositNote } from '@webb-dapp/mixer';
 import { RelayerModal } from '@webb-dapp/react-components/Relayer/RelayerModal';
 import { WithdrawingModal, WithdrawSuccessModal } from '@webb-dapp/react-components/Withdraw';
@@ -9,9 +8,9 @@ import { SpaceBox } from '@webb-dapp/ui-components';
 import { SettingsIcon } from '@webb-dapp/ui-components/assets/SettingsIcon';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { BridgeNoteInput } from '@webb-dapp/ui-components/Inputs/NoteInput/BridgeNoteInput';
-import { FeesInfo, RelayerApiAdapter, RelayerInput } from '@webb-dapp/ui-components/Inputs/RelayerInput/RelayerInput';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
+import { useWithdraw } from '@webb-dapp/vbridge/hooks/withdraw/useWithdraw';
 import {
   chainTypeIdToInternalId,
   getChainNameFromChainId,
