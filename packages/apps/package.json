@@ -8,7 +8,7 @@
     "@babel/core": "^7.17.8",
     "@babel/polyfill": "^7.12.1",
     "@babel/runtime": "^7.17.8",
-    "@webb-tools/api-providers": "file:../../../webb.js/packages/api-providers/build",
+    "@webb-tools/api-providers": "0.1.4-67",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-router": "^6.0.0-beta.0",
