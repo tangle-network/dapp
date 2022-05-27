@@ -15,6 +15,7 @@ import { useBridge } from '../bridge/use-bridge';
 export type UseWithdrawProps = {
   note: Note | null;
   recipient: string;
+  amount: number;
 };
 
 export type WithdrawErrors = {
@@ -127,7 +128,11 @@ export const useWithdraw = (params: UseWithdrawProps) => {
     if (stage === WithdrawState.Ideal) {
       if (params.note) {
         try {
-          const txReceipt = await withdrawApi.withdraw(params.note?.serialize(), params.recipient);
+          const txReceipt = await withdrawApi.withdraw(
+            [params.note?.serialize()],
+            params.recipient,
+            params.amount.toString()
+          );
           setReceipt(txReceipt);
         } catch (e) {
           console.log('error from withdraw api', e);

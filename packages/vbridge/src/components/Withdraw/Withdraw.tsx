@@ -137,6 +137,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
   const [note, setNote] = useState('');
   const [recipient, setRecipient] = useState('');
   const [showRelayerModal, setShowRelayerModal] = useState(false);
+  const [withdrawAmount, setWithdrawAmount] = useState(0);
   const [fees, setFees] = useState('0');
   const { activeApi, activeChain, activeWallet, switchChain } = useWebContext();
   const depositNote = useDepositNote(note);
@@ -155,6 +156,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
   } = useWithdraw({
     recipient,
     note: depositNote,
+    amount: withdrawAmount,
   });
   const appConfig = useAppConfig();
 
