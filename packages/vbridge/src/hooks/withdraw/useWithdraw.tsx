@@ -118,7 +118,7 @@ export const useWithdraw = (params: UseWithdrawProps) => {
       sub?.unsubscribe();
       Object.values(unsubscribe).forEach((v) => v && v());
     };
-  }, [withdrawApi, params.note, bridgeApi]);
+  }, [withdrawApi, params.note, activeApi?.relayerManager]);
 
   const withdraw = useCallback(async () => {
     if (!withdrawApi || !params.note) {
@@ -164,7 +164,7 @@ export const useWithdraw = (params: UseWithdrawProps) => {
     (nextRelayer: WebbRelayer | null) => {
       activeApi?.relayerManager.setActiveRelayer(nextRelayer, activeChain?.id!);
     },
-    [withdrawApi, activeChain]
+    [activeApi?.relayerManager, activeChain]
   );
   return {
     stage,
