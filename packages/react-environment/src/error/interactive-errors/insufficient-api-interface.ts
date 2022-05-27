@@ -1,5 +1,5 @@
 import { TAppEvent } from '@webb-dapp/react-environment/app-event';
-import { InteractiveFeedback, WebbErrorCodes } from '@webb-tools/api-providers/webb-error';
+import { InteractiveFeedback, WebbErrorCodes } from '@webb-tools/api-providers';
 
 export function insufficientApiInterface(appEvent: TAppEvent): InteractiveFeedback {
   let interactiveFeedback: InteractiveFeedback;

@@ -15,10 +15,10 @@ import {
   chainTypeIdToInternalId,
   getChainNameFromChainId,
   parseChainIdType,
+  WalletConfig,
   WebbRelayer,
   WithdrawState,
 } from '@webb-tools/api-providers';
-import { WalletConfig } from '@webb-tools/api-providers/types/wallet-config.interface';
 import { Note } from '@webb-tools/sdk-core';
 import { ethers } from 'ethers';
 import React, { useEffect, useMemo, useState } from 'react';

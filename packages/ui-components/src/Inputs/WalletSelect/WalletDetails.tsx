@@ -3,7 +3,7 @@ import { WalletId } from '@webb-dapp/apps/configs';
 import { AccountManager } from '@webb-dapp/react-components/AccountManager/AccountManager';
 import { useWebContext } from '@webb-dapp/react-environment';
 import { useAccounts, useNativeCurrencyBalance, useNativeCurrencySymbol } from '@webb-dapp/react-hooks';
-import { ManagedWallet } from '@webb-tools/api-providers/types/wallet-config.interface';
+import { ManagedWallet } from '@webb-tools/api-providers';
 import React, { useMemo } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import styled, { css } from 'styled-components';

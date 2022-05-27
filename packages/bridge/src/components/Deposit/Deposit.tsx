@@ -14,10 +14,14 @@ import { TokenInput } from '@webb-dapp/ui-components/Inputs/TokenInput/TokenInpu
 import CircledArrowRight from '@webb-dapp/ui-components/misc/CircledArrowRight';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { getRoundedAmountString } from '@webb-dapp/ui-components/utils';
-import { ChainTypeId, chainTypeIdToInternalId, WebbCurrencyId } from '@webb-tools/api-providers';
-import { MixerSize } from '@webb-tools/api-providers';
-import { Currency } from '@webb-tools/api-providers';
-import { WalletConfig } from '@webb-tools/api-providers/types/wallet-config.interface';
+import {
+  ChainTypeId,
+  chainTypeIdToInternalId,
+  Currency,
+  MixerSize,
+  WalletConfig,
+  WebbCurrencyId,
+} from '@webb-tools/api-providers';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 

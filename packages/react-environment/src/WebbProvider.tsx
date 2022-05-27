@@ -32,13 +32,13 @@ import {
   NetworkStorage,
   NotificationPayload,
   Wallet,
+  Web3Provider,
   WebbApiProvider,
   WebbError,
   WebbErrorCodes,
   WebbPolkadot,
   WebbWeb3Provider,
 } from '@webb-tools/api-providers';
-import { Web3Provider } from '@webb-tools/api-providers/ext-providers';
 import { LoggerService } from '@webb-tools/app-util';
 import { logger } from 'ethers';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';

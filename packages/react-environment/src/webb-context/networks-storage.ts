@@ -1,5 +1,4 @@
-import { NetworkStore } from '@webb-tools/api-providers';
-import { Storage } from '@webb-tools/api-providers/storage';
+import { NetworkStore, Storage } from '@webb-tools/api-providers';
 
 export const netStorageFactory = () => {
   return Storage.newFromCache<NetworkStore>('app', {
