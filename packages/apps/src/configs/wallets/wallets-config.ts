@@ -27,7 +27,7 @@ export const walletsConfig: AppConfig['wallet'] = {
     id: WalletId.Polkadot,
     logo: PolkaLogo,
     name: 'polkadot-js',
-    title: `Polkadot`,
+    title: `PolkadotJS Extension`,
     platform: 'Substrate',
     enabled: true,
     async detect() {
