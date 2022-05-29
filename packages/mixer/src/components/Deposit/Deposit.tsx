@@ -1,4 +1,5 @@
 import { Typography } from '@material-ui/core';
+import { Currency, MixerSize, WalletConfig } from '@webb-dapp/api-providers';
 import { DepositConfirm } from '@webb-dapp/mixer/components/DepositConfirm/DepositConfirm';
 import { useDeposit } from '@webb-dapp/mixer/hooks/deposit/useDeposit';
 import { RequiredWalletSelection } from '@webb-dapp/react-components/RequiredWalletSelection/RequiredWalletSelection';
@@ -10,7 +11,6 @@ import { MixerGroupSelect } from '@webb-dapp/ui-components/Inputs/MixerGroupSele
 import { TokenInput } from '@webb-dapp/ui-components/Inputs/TokenInput/TokenInput';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { getRoundedAmountString } from '@webb-dapp/ui-components/utils';
-import { Currency, MixerSize, WalletConfig } from '@webb-tools/api-providers';
 import React, { useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 

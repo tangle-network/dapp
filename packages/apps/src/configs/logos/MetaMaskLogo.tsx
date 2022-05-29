@@ -12,7 +12,7 @@ export const MetaMaskLogo = () => {
     >
       <style>
         {
-          '.prefix__st1,.prefix__st2,.prefix__st3,.prefix__st4,.prefix__st5,.prefix__st6,.prefix__st9{fill:#e4761b;stroke:#e4761b;stroke-linecap:round;stroke-linejoin:round}.prefix__st2,.prefix__st3,.prefix__st4,.prefix__st5,.prefix__st6,.prefix__st9{fill:#d7c1b3;stroke:#d7c1b3}.prefix__st3,.prefix__st4,.prefix__st5,.prefix__st6,.prefix__st9{fill:#233447;stroke:#233447}.prefix__st4,.prefix__st5,.prefix__st6,.prefix__st9{fill:#cd6116;stroke:#cd6116}.prefix__st5,.prefix__st6,.prefix__st9{fill:#e4751f;stroke:#e4751f}.prefix__st6,.prefix__st9{fill:#f6851b;stroke:#f6851b}.prefix__st9{fill:#763d16;stroke:#763d16}'
+          '.prefix__st1,.prefix__st2,.prefix__st3,.prefix__st4,.prefix__st5,.prefix__st6,.prefix__st9{fill:#e4761b;stroke:#e4761b;strokeLinecap:round;strokeLinejoin:round}.prefix__st2,.prefix__st3,.prefix__st4,.prefix__st5,.prefix__st6,.prefix__st9{fill:#d7c1b3;stroke:#d7c1b3}.prefix__st3,.prefix__st4,.prefix__st5,.prefix__st6,.prefix__st9{fill:#233447;stroke:#233447}.prefix__st4,.prefix__st5,.prefix__st6,.prefix__st9{fill:#cd6116;stroke:#cd6116}.prefix__st5,.prefix__st6,.prefix__st9{fill:#e4751f;stroke:#e4751f}.prefix__st6,.prefix__st9{fill:#f6851b;stroke:#f6851b}.prefix__st9{fill:#763d16;stroke:#763d16}'
         }
       </style>
       <path

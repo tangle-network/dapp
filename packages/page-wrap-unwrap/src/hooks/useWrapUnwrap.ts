@@ -1,5 +1,5 @@
+import { Currency, CurrencyContent, WrappingEventNames } from '@webb-dapp/api-providers';
 import { useAppConfig, useWebContext } from '@webb-dapp/react-environment';
-import { Currency, CurrencyContent, WrappingEventNames } from '@webb-tools/api-providers';
 import { LoggerService } from '@webb-tools/app-util';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 

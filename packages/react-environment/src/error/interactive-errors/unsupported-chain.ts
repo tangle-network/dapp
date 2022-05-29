@@ -1,4 +1,4 @@
-import { AppConfig, EVMChainId, getEVMChainName, InteractiveFeedback, WebbErrorCodes } from '@webb-tools/api-providers';
+import { AppConfig, EVMChainId, getEVMChainName, InteractiveFeedback, WebbErrorCodes } from '@webb-dapp/api-providers';
 
 export function unsupportedChain(appConfig: AppConfig): InteractiveFeedback {
   let interactiveFeedback: InteractiveFeedback;

@@ -19,11 +19,10 @@
     "@webb-tools/app-util": "0.1.4-67",
     "@webb-tools/sdk-core": "0.1.4-67",
     "@webb-tools/wasm-utils": "0.1.4-67",
-    "@webb-tools/api-providers": "0.1.4-67",
-    "@webb-tools/utils": "0.1.8",
-    "@webb-tools/contracts": "0.1.11",
-    "@webb-tools/interfaces": "0.1.12",
-    "@webb-tools/anchors": "0.1.15"
+    "@webb-tools/utils": "0.1.9",
+    "@webb-tools/contracts": "0.1.12",
+    "@webb-tools/interfaces": "0.1.13",
+    "@webb-tools/anchors": "0.1.16"
   },
   "scripts": {
     "bump-version": "node scripts/bump-version.js",
@@ -85,7 +84,6 @@
     "@webb-tools/app-util": "0.1.4-67",
     "@webb-tools/sdk-core": "0.1.4-67",
     "@webb-tools/wasm-utils": "0.1.4-67",
-    "@webb-tools/api-providers": "0.1.4-67",
     "babel-plugin-bundled-import-meta": "^0.3.2",
     "cross-env": "^7.0.3",
     "enzyme": "^3.11.0",

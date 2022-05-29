@@ -1,12 +1,12 @@
 import { Button, Typography } from '@material-ui/core';
 import Icon from '@material-ui/core/Icon';
+import { InteractiveFeedback, WebbErrorCodes } from '@webb-dapp/api-providers';
 import ChromeLogo from '@webb-dapp/apps/configs/logos/ChromeLogo';
 import FireFoxLogo from '@webb-dapp/apps/configs/logos/FireFoxLogo';
 import { MetaMaskLogo } from '@webb-dapp/apps/configs/logos/MetaMaskLogo';
 import { PolkaLogo } from '@webb-dapp/apps/configs/logos/PolkaLogo';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
 import { getPlatformMetaData, SupportedBrowsers } from '@webb-dapp/utils/platform';
-import { InteractiveFeedback, WebbErrorCodes } from '@webb-tools/api-providers';
 import React from 'react';
 //TODO : move to wallet config
 const metaMaskConfig = {

@@ -1,9 +1,9 @@
 import { Button, Icon, LinearProgress, Tooltip, Typography } from '@material-ui/core';
+import { getEVMChainName, parseChainIdType } from '@webb-dapp/api-providers';
+import { WithdrawState } from '@webb-dapp/api-providers';
 import { useAppConfig } from '@webb-dapp/react-environment';
 import { SpaceBox } from '@webb-dapp/ui-components/Box';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
-import { getEVMChainName, parseChainIdType } from '@webb-tools/api-providers';
-import { WithdrawState } from '@webb-tools/api-providers';
 import { JsNote as DepositNote } from '@webb-tools/wasm-utils';
 import React, { useMemo } from 'react';
 import styled from 'styled-components';

@@ -1,10 +1,10 @@
 import { Avatar, Typography } from '@material-ui/core';
+import { ManagedWallet } from '@webb-dapp/api-providers';
 import { useWebContext } from '@webb-dapp/react-environment';
 import { useAccounts } from '@webb-dapp/react-hooks/useAccounts';
 import { useWallets } from '@webb-dapp/react-hooks/useWallets';
 import { WalletManager } from '@webb-dapp/ui-components/Inputs/WalletSelect/WalletManager';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
-import { ManagedWallet } from '@webb-tools/api-providers';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 

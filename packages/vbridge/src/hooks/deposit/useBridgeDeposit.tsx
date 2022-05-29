@@ -1,5 +1,3 @@
-import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
-import { useWebContext } from '@webb-dapp/react-environment';
 import {
   AnchorDeposit,
   BridgeCurrencyIndex,
@@ -10,7 +8,9 @@ import {
   MixerDeposit,
   MixerSize,
   VAnchorDeposit,
-} from '@webb-tools/api-providers';
+} from '@webb-dapp/api-providers';
+import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
+import { useWebContext } from '@webb-dapp/react-environment';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 export interface VBridgeDepositApi {
   deposit(payload: DepositPayload): Promise<void>;

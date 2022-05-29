@@ -1,3 +1,11 @@
+import {
+  AppConfig,
+  CurrencyRole,
+  CurrencyType,
+  InternalChainId,
+  WebbCurrencyId,
+  zeroAddress,
+} from '@webb-dapp/api-providers';
 import GanacheLogo from '@webb-dapp/apps/configs/logos/chains/GanacheLogo';
 import HarmonyLogo from '@webb-dapp/apps/configs/logos/chains/HarmonyLogo';
 import PolygonLogo from '@webb-dapp/apps/configs/logos/chains/PolygonLogo';
@@ -6,14 +14,6 @@ import WEBBLogo from '@webb-dapp/apps/configs/logos/chains/WebbLogo';
 import EtherLogo from '@webb-dapp/apps/configs/logos/Eth';
 import { PolkaLogo } from '@webb-dapp/apps/configs/logos/PolkaLogo';
 import WebbWrappedLogo from '@webb-dapp/apps/configs/logos/WebbWrappedLogo';
-import {
-  AppConfig,
-  CurrencyRole,
-  CurrencyType,
-  InternalChainId,
-  WebbCurrencyId,
-  zeroAddress,
-} from '@webb-tools/api-providers';
 import React from 'react';
 
 export const currenciesConfig: AppConfig['currencies'] = {

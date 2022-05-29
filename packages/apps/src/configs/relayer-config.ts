@@ -1,4 +1,4 @@
-import { AppConfig, InternalChainId, RelayerConfig, WebbRelayerManagerFactory } from '@webb-tools/api-providers';
+import { AppConfig, InternalChainId, RelayerConfig, WebbRelayerManagerFactory } from '@webb-dapp/api-providers';
 
 let relayerManagerFactory: WebbRelayerManagerFactory | null = null;
 export const relayerConfig: RelayerConfig[] = [

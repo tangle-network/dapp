@@ -30,6 +30,12 @@
 		"baseUrl": "./packages",
 		"skipDefaultLibCheck": true,
 		"paths": {
+			"@webb-dapp/api-providers/*": [
+				"api-providers/src/*"
+			],
+			"@webb-dapp/api-providers": [
+				"api-providers/src"
+			],
 			"@webb-dapp/apps/*": [
 				"apps/src/*"
 			],

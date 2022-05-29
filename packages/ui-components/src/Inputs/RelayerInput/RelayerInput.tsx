@@ -10,18 +10,18 @@ import {
 } from '@material-ui/core';
 import Icon from '@material-ui/core/Icon';
 import Typography from '@material-ui/core/Typography';
+import { ActiveWebbRelayer, Capabilities, WebbRelayer } from '@webb-dapp/api-providers';
 import { chainIdToRelayerName } from '@webb-dapp/apps/configs/relayer-config';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
-import { ActiveWebbRelayer, Capabilities, WebbRelayer } from '@webb-tools/api-providers';
 import { ethers } from 'ethers';
 import React, { CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styled, { css } from 'styled-components';
 
-import { SpaceBox } from '../..';
+import { SpaceBox } from '../../';
 import { ContentWrapper } from '../../ContentWrappers';
 
 export interface RelayerApiAdapter {

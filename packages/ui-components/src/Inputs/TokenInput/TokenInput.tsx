@@ -10,12 +10,12 @@ import {
   Tooltip,
   Typography,
 } from '@material-ui/core';
+import { CurrencyContent, evmIdIntoInternalChainId, Web3Provider, WebbCurrencyId } from '@webb-dapp/api-providers';
 import { currenciesConfig } from '@webb-dapp/apps/configs';
 import { useWebContext } from '@webb-dapp/react-environment';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
-import { CurrencyContent, evmIdIntoInternalChainId, Web3Provider, WebbCurrencyId } from '@webb-tools/api-providers';
 import React, { CSSProperties, useCallback, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 

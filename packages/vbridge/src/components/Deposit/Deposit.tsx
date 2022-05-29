@@ -1,4 +1,5 @@
 import { Checkbox, FormControlLabel, Typography } from '@material-ui/core';
+import { ChainTypeId, Currency, MixerSize, WalletConfig, WebbCurrencyId } from '@webb-dapp/api-providers';
 import { useWrapUnwrap } from '@webb-dapp/page-wrap-unwrap/hooks/useWrapUnwrap';
 import { RequiredWalletSelection } from '@webb-dapp/react-components/RequiredWalletSelection/RequiredWalletSelection';
 import { useAppConfig, useWebContext } from '@webb-dapp/react-environment/webb-context';
@@ -15,7 +16,6 @@ import { getRoundedAmountString } from '@webb-dapp/ui-components/utils';
 import { DepositConfirm } from '@webb-dapp/vbridge/components/DepositConfirm/DepositConfirm';
 import { useBridge } from '@webb-dapp/vbridge/hooks/bridge/use-bridge';
 import { useBridgeDeposit } from '@webb-dapp/vbridge/hooks/deposit/useBridgeDeposit';
-import { ChainTypeId, Currency, MixerSize, WalletConfig, WebbCurrencyId } from '@webb-tools/api-providers';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 

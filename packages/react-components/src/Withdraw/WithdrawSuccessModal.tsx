@@ -1,14 +1,14 @@
 import { parseUnits } from '@ethersproject/units';
 import { Button, Icon, Link, Typography } from '@material-ui/core';
-import { chainsConfig } from '@webb-dapp/apps/configs';
-import { SpaceBox } from '@webb-dapp/ui-components/Box';
-import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 import {
   ActiveWebbRelayer,
   chainTypeIdToInternalId,
   InternalChainId,
   parseChainIdType,
-} from '@webb-tools/api-providers';
+} from '@webb-dapp/api-providers';
+import { chainsConfig } from '@webb-dapp/apps/configs';
+import { SpaceBox } from '@webb-dapp/ui-components/Box';
+import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 import { LoggerService } from '@webb-tools/app-util';
 import { JsNote as DepositNote } from '@webb-tools/wasm-utils';
 import { ethers } from 'ethers';

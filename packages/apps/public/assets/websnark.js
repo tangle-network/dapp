@@ -1272,7 +1272,7 @@
         var revLookup = [];
         var Arr = typeof Uint8Array !== 'undefined' ? Uint8Array : Array;
 
-        var code = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+        var code = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+';
         for (var i = 0, len = code.length; i < len; ++i) {
           lookup[i] = code[i];
           revLookup[code.charCodeAt(i)] = i;
@@ -5109,7 +5109,7 @@ object-assign
         };
 
         process.cwd = function () {
-          return '/';
+          return '';
         };
         process.chdir = function (dir) {
           throw new Error('process.chdir is not supported');

@@ -1,14 +1,14 @@
 import { Avatar, Typography } from '@material-ui/core';
+import { ManagedWallet } from '@webb-dapp/api-providers';
 import { WalletId } from '@webb-dapp/apps/configs';
 import { AccountManager } from '@webb-dapp/react-components/AccountManager/AccountManager';
 import { useWebContext } from '@webb-dapp/react-environment';
 import { useAccounts, useNativeCurrencyBalance, useNativeCurrencySymbol } from '@webb-dapp/react-hooks';
-import { ManagedWallet } from '@webb-tools/api-providers';
 import React, { useMemo } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import styled, { css } from 'styled-components';
 
-import { getRoundedAmountString } from '../..';
+import { getRoundedAmountString } from '../../';
 
 const ConnectionDetails = styled.div<{ walletId: number }>`
   display: flex;
