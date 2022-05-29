@@ -220,6 +220,26 @@ yarn lint
 yarn format
 ```
 
+### Working with changes to webb.js
+The dApp utilises the [webb.js](https://github.com/webb-tools/webb.js) API for lots of internal logic. If you are developing against the dApp and working on new changes to the API, the process below, while cumbersome, should be followed exactly.
+
+You will need to update all instances of the packages to point to local build outputs of the API library. Your `package.json` resolutions should look like:
+```
+  "resolutions": {
+    ...
+    "@webb-tools/api": "file:../webb.js/packages/api/build",
+    "@webb-tools/api-derive": "file:../webb.js/packages/api-derive/build",
+    "@webb-tools/types": "file:../webb.js/packages/types/build",
+    "@webb-tools/app-util": "file:../webb.js/packages/app-util/build",
+    "@webb-tools/sdk-core": "file:../webb.js/packages/sdk-core/build",
+    "@webb-tools/wasm-utils": "file:../webb.js/packages/wasm-utils/build",
+    "@webb-tools/api-providers": "file:../webb.js/packages/api-providers/build",
+    ...
+  },
+```
+
+Additionally, each individual depenendency in sub-packages of the dApp should also be changed to point to local build outputs of the API. From there, you only need to rebuild the API after changes for them to take effect in the dApp.
+
 <h2 id="license"> License </h2>
 
 Licensed under <a href="LICENSE">Apache 2.0 license</a>.
