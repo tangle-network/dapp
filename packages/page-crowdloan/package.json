@@ -1,7 +1,7 @@
 {
-  "name": "@webb-dapp/page-transfer",
+  "name": "@webb-dapp/page-crowdloan",
   "version": "0.2.1-beta.1",
-  "description": "transfer page",
+  "description": "Page for participating on Webb's crowdloan",
   "main": "index.js",
   "author": "Webb Developers <drew@webb.tools>",
   "homepage": "https://github.com/webb-tools/webb-dapp#readme"

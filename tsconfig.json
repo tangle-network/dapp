@@ -42,23 +42,11 @@
 			"@webb-dapp/apps": [
 				"apps/src"
 			],
-			"@webb-dapp/page-wallet": [
-				"page-wallet/src"
-			],
-			"@webb-dapp/page-wallet/*": [
-				"page-wallet/src/*"
-			],
 			"@webb-dapp/page-mixer": [
 				"page-mixer/src"
 			],
 			"@webb-dapp/page-mixer/*": [
 				"page-mixer/src/*"
-			],
-			"@webb-dapp/page-governance": [
-				"page-governance/src"
-			],
-			"@webb-dapp/page-governance/*": [
-				"page-governance/src/*"
 			],
 			"@webb-dapp/page-mixer-charts": [
 				"page-mixer-charts/src"
@@ -108,17 +96,17 @@
 			"@webb-dapp/wallet": [
 				"wallet/src"
 			],
-			"@webb-dapp/page-transfer/*": [
-				"page-transfer/src/*"
-			],
-			"@webb-dapp/page-transfer": [
-				"page-transfer/src"
-			],
 			"@webb-dapp/page-wrap-unwrap/*": [
 				"page-wrap-unwrap/src/*"
 			],
 			"@webb-dapp/page-wrap-unwrap": [
 				"page-wrap-unwrap/src"
+			],
+			"@webb-dapp/page-crowdloan/*": [
+				"page-crowdloan/src/*"
+			],
+			"@webb-dapp/page-crowdloan": [
+				"page-crowdloan/src"
 			],
 			"@webb-dapp/page-statistics/*": [
 				"page-statistics/src/*"

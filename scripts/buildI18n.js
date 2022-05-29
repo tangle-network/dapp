@@ -80,12 +80,9 @@ i18n.use(initReactI18next).init({
 
 const dappModules = [
   'apps',
-  // 'page-wallet',
-  // 'page-loan',
   'page-mixer',
-  // 'page-homa',
-  // 'page-oracle-price',
-  // 'page-governance',
+  'page-bridge',
+  'page-vbridge',
   'react-components',
 ];
 

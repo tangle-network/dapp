@@ -1,6 +1,6 @@
-# @webb-tools/api-providers
+# @webb-dapp/api-providers
 
-API providers for webb protocol , this package facilitates building apps on top of webb.
+API providers for the dApp. This package facilitates chain connections and backend logic for the dApp.
 
 # Api interface
 
