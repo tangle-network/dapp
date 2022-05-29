@@ -53,6 +53,15 @@ export const config: RouterConfigData[] = [
         path: 'wrap-unwrap/*',
         title: 'Wrap/Unwrap',
       },
+      // {
+      //   element: (
+      //     <CSuspense>
+      //       <PageWrapUnwrap />
+      //     </CSuspense>
+      //   ),
+      //   path: 'wrap-unwrap/*',
+      //   title: 'Wrap/Unwrap',
+      // },
       {
         element: (
           <CSuspense>

@@ -51,7 +51,7 @@ export const chainsConfig: AppConfig['chains'] = {
     id: InternalChainId.Polkadot,
     group: 'webb',
     tag: 'live',
-    chainId: SubstrateChainId.EggStandalone,
+    chainId: SubstrateChainId.Polkadot,
     logo: DOTLogo,
     url: 'wss://rpc.polkadot.io',
     name: 'Polkadot Relay Chain',

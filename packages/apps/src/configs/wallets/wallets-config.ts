@@ -38,6 +38,8 @@ export const walletsConfig: AppConfig['wallet'] = {
       InternalChainId.EggDevelopStandalone,
       InternalChainId.DkgSubstrateStandalone,
       InternalChainId.ProtocolSubstrateStandalone,
+      InternalChainId.Kusama,
+      InternalChainId.Polkadot,
     ],
   },
   [WalletId.MetaMask]: {

@@ -19,22 +19,18 @@ export interface ChainTypeId {
   chainId: EVMChainId | SubstrateChainId;
 }
 
+// Enums for network IDs / SS58 encodings for Substrate chains
 export enum SubstrateChainId {
   Edgeware = 7,
   ProtocolSubstrateStandalone = 1080,
   EggStandalone = 1081, // Used for EggNet Standalone test deployment
-}
-
-export enum PolkadotRelayChain {
-  Mainnet = 0,
-}
-
-export enum KusamaRelayChain {
-  Mainnet = 2,
+  Kusama = 2,
+  Polkadot = 0,
 }
 
 // INTERNAL CHAIN IDS
 // ONLY APPEND OR NOTES WILL BREAK
+// TODO: Modify this to use typed chain Ids for the enum values
 export enum InternalChainId {
   Edgeware,
   EdgewareTestNet,
@@ -59,6 +55,8 @@ export enum InternalChainId {
   EggDevelopStandalone,
   DkgSubstrateStandalone,
   DemeterLocalnet,
+  Kusama,
+  Polkadot,
 }
 
 export enum EVMChainId {

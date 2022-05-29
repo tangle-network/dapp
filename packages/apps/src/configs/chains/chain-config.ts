@@ -1,7 +1,7 @@
 import { AppConfig, InternalChainId, WebbCurrencyId } from '@webb-dapp/api-providers';
 
-import * as EvmNetworks from './evm';
-import * as SubstrateNetworks from './substrate';
+import { chainsConfig as EvmNetworks } from './evm';
+import { chainsConfig as SubstrateNetworks } from './substrate';
 
 export const getSupportedCurrenciesOfChain = (chainId: InternalChainId): WebbCurrencyId[] => {
   return chainsConfig[chainId].currencies;
