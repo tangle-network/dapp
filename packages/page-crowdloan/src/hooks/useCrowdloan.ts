@@ -3,8 +3,6 @@ import { useAppConfig, useWebContext } from '@webb-dapp/react-environment';
 import { LoggerService } from '@webb-tools/app-util';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-const logger = LoggerService.get('useCrowdloan');
-
 // 'Governed' tokens represent a token which can be minted from a deposit
 //    of various 'wrappable' tokens. Governed tokens are the tokens which are bridged
 //    in the webb system.
@@ -29,18 +27,17 @@ export function useCrowdloan() {
   const { amount, contributor } = state;
   const { currencies: currenciesConfig } = useAppConfig();
   const contributeApi = useMemo(() => {
-    const w = activeApi?.methods.crowdloan;
-    logger.log(w);
-    return w;
-  }, [activeApi]);
+    // const w = activeApi?.methods.crowdloan;
+    return null;
+  }, []);
 
   const execute = useCallback(() => {
     if (!amount) {
       return;
     }
 
-    return contributeApi?.contribute({ amount });
-  }, [contributeApi, amount]);
+    // return contributeApi?.contribute({ amount });
+  }, [amount]);
 
   const setAmount = (amount: number) => {
     setState((p) => ({ ...p, amount }));

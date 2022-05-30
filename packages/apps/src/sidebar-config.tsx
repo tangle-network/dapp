@@ -33,11 +33,6 @@ export const sideBarConfig: SidebarConfig = {
       name: 'Wrap/Unwrap',
       icon: <WrapPageLogo />,
     },
-    {
-      path: 'crowdloan',
-      name: 'Crowdloan',
-      icon: <CrowdloanPageLogo />,
-    },
   ],
   socialPlatforms: [
     {
