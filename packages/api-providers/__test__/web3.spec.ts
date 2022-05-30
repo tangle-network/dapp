@@ -1,30 +1,14 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { WebbRelayerManagerFactory } from '@webb-tools/api-providers/relayer/relayer-manager-factory';
-import { startGanacheServer } from '@webb-tools/test-utils/startGanacheServer';
+import { startGanacheServer } from '@webb-tools/test-utils';
 import { getChainIdType } from '@webb-tools/utils';
-import { expect } from 'chai';
 import { ethers } from 'ethers';
 
-import { Web3Provider, WebbCurrencyId, WebbWeb3Provider } from '../../';
-// import { ethers } from 'ethers';
-import { initPolkadotProvider } from './utils/init-polkadot-provider';
+import { WebbRelayerManagerFactory } from '..';
+import { Web3Provider, WebbCurrencyId, WebbWeb3Provider } from '../';
 import { mockAppConfig } from './utils/mock-config';
 import mockNotificationHandler from './utils/mock-notification-handler';
-
-describe('Bootstrap providers', function () {
-  this.timeout(120_000);
-
-  // This test assumes a node is running at localhost - but this interferes with
-  // integration tests run through docker.
-  it.skip('Should init Polkadot provider', async () => {
-    const provider = await initPolkadotProvider();
-    const chainProperties = await provider.api.rpc.system.properties();
-
-    expect(chainProperties).not.equal(null);
-  });
-});
 
 describe.skip('Note provider interactions', () => {
   let provider: WebbWeb3Provider;

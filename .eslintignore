@@ -1,7 +1,6 @@
 
 .eslintrc.js
 babel.config.js
-jest.config.js
 setupTest.ts
 
 scripts/**

@@ -204,6 +204,8 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
           name: 'Transaction',
         });
 
+        console.log('relayerWithdrawPayload: ', relayerWithdrawPayload);
+
         relayerMixerTx.send(relayerWithdrawPayload);
         const results = await relayerMixerTx.await();
 
