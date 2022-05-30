@@ -14,7 +14,7 @@ import { getRoundedAmountString } from '@webb-dapp/ui-components/utils';
 import React, { useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
-const DepositWrapper = styled.div<{ wallet: WalletConfig | undefined }>`
+export const DepositWrapper = styled.div<{ wallet: WalletConfig | undefined }>`
   ${({ theme, wallet }) => {
     if (wallet) {
       return css``;
@@ -29,7 +29,7 @@ const DepositWrapper = styled.div<{ wallet: WalletConfig | undefined }>`
   }}
 `;
 
-const TokenInputWrapper = styled.div`
+export const TokenInputWrapper = styled.div`
   padding: 25px 35px;
   background: ${({ theme }) => theme.layer2Background};
   border-radius: 0 0 13px 13px;
@@ -50,7 +50,7 @@ const TokenInputWrapper = styled.div`
   }
 `;
 
-const TokenBalance = styled.div`
+export const TokenBalance = styled.div`
   border: 1px solid ${({ theme }) => theme.primaryText};
   border-radius: 5px;
   margin-left: 5px;

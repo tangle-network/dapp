@@ -10,6 +10,7 @@ import { WebbRelayerManager } from './relayer/webb-relayer-manager';
 import { AnchorDeposit, AnchorWithdraw, VAnchorDeposit } from './anchor';
 import { ChainQuery } from './chain-query';
 import { AppConfig } from './common';
+import { Crowdloan } from './crowdloan';
 import { DepositPayload, MixerDeposit, MixerDepositEvents, MixerWithdraw, WebbWithdrawEvents } from './mixer';
 import { WrapUnwrap } from './wrap-unwrap';
 
@@ -23,6 +24,8 @@ export interface WebbMethods<T extends WebbApiProvider<any>> {
   variableAnchor: WebbVariableAnchor<T>;
   // Wrap and unwrap API
   wrapUnwrap: WrapAndUnwrap<T>;
+  // Crowdloan
+  crowdloan: Crowdloan<T>;
   // Chain query : an API for querying chain storage used currently for balances
   chainQuery: ChainQuery<T>;
   // Anchor API developed initially for to handle the difference between
