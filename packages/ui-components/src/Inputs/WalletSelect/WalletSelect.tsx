@@ -1,4 +1,5 @@
 import { Avatar } from '@material-ui/core';
+import { ManagedWallet } from '@webb-dapp/api-providers';
 import { useWebContext } from '@webb-dapp/react-environment';
 import { useNativeCurrencyBalance, useNativeCurrencySymbol } from '@webb-dapp/react-hooks/currency';
 import { useAccounts } from '@webb-dapp/react-hooks/useAccounts';
@@ -6,11 +7,10 @@ import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { useWallets } from '@webb-dapp/react-hooks/useWallets';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
-import { ManagedWallet } from '@webb-tools/api-providers';
 import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { getRoundedAmountString } from '../..';
+import { getRoundedAmountString } from '../../';
 import { WalletManager } from './WalletManager';
 
 const WalletSelectWrapper = styled.div`

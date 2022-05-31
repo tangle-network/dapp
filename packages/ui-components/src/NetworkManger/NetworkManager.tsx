@@ -19,6 +19,7 @@ import {
   RadioGroup,
   Typography,
 } from '@material-ui/core';
+import { Chain, Wallet } from '@webb-dapp/api-providers';
 import { useWebContext } from '@webb-dapp/react-environment';
 import { appEvent } from '@webb-dapp/react-environment/app-event';
 import { SpaceBox } from '@webb-dapp/ui-components';
@@ -26,7 +27,6 @@ import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
-import { Chain, Wallet } from '@webb-tools/api-providers';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
@@ -108,7 +108,7 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
       <FilterSection>
         <FormControl>
           <RadioGroup value={radioButtonFilter} onChange={handleRadioFilter} row>
-            {/* <FormControlLabel value='live' control={<Radio />} label='live' /> */}
+            <FormControlLabel value='live' control={<Radio />} label='live' />
             <FormControlLabel value='test' control={<Radio />} label='test' />
             <FormControlLabel value='dev' control={<Radio />} label='dev' />
           </RadioGroup>

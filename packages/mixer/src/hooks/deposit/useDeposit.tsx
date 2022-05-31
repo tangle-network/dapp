@@ -1,6 +1,6 @@
+import { ChainTypeId, computeChainIdType, DepositPayload, MixerDeposit, MixerSize } from '@webb-dapp/api-providers';
 import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
 import { useWebContext } from '@webb-dapp/react-environment/webb-context';
-import { ChainTypeId, computeChainIdType, DepositPayload, MixerDeposit, MixerSize } from '@webb-tools/api-providers';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 export interface DepositApi {

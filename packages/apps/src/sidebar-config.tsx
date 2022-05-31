@@ -5,6 +5,7 @@ import { CommonWealthLogo } from './configs/logos/CommonWealthLogo';
 import { DiscordLogo } from './configs/logos/DiscordLogo';
 import { GithubLogo } from './configs/logos/GithubLogo';
 import { BridgePageLogo } from './configs/logos/pages/BridgePageLogo';
+import { CrowdloanPageLogo } from './configs/logos/pages/CrowdloanPageLogo';
 import { MixerPageLogo } from './configs/logos/pages/MixerPageLogo';
 import { WrapPageLogo } from './configs/logos/pages/WrapPageLogo';
 import { TelegramLogo } from './configs/logos/TelegramLogo';

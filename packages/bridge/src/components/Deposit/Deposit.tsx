@@ -1,4 +1,12 @@
 import { Checkbox, FormControlLabel, Typography } from '@material-ui/core';
+import {
+  ChainTypeId,
+  chainTypeIdToInternalId,
+  Currency,
+  MixerSize,
+  WalletConfig,
+  WebbCurrencyId,
+} from '@webb-dapp/api-providers';
 import { DepositConfirm } from '@webb-dapp/bridge/components/DepositConfirm/DepositConfirm';
 import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
 import { useBridgeDeposit } from '@webb-dapp/bridge/hooks/deposit/useBridgeDeposit';
@@ -14,14 +22,6 @@ import { TokenInput } from '@webb-dapp/ui-components/Inputs/TokenInput/TokenInpu
 import CircledArrowRight from '@webb-dapp/ui-components/misc/CircledArrowRight';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { getRoundedAmountString } from '@webb-dapp/ui-components/utils';
-import {
-  ChainTypeId,
-  chainTypeIdToInternalId,
-  Currency,
-  MixerSize,
-  WalletConfig,
-  WebbCurrencyId,
-} from '@webb-tools/api-providers';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 

@@ -1,6 +1,6 @@
+import { ManagedWallet } from '@webb-dapp/api-providers';
 import { useWebContext } from '@webb-dapp/react-environment/webb-context';
 import { useWallets } from '@webb-dapp/react-hooks/useWallets';
-import { ManagedWallet } from '@webb-tools/api-providers';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 

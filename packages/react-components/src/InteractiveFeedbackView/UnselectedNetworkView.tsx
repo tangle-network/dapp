@@ -1,10 +1,10 @@
 import { Button, Typography } from '@material-ui/core';
+import { FeedbackEntry, InteractiveFeedback } from '@webb-dapp/api-providers';
 import { useStore } from '@webb-dapp/react-environment';
 import { CloseIcon } from '@webb-dapp/ui-components';
 // @ts-ignore
 import NetworksGlobeCircled from '@webb-dapp/ui-components/assets/NetworksGlobeCircled.png';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
-import { FeedbackEntry, InteractiveFeedback } from '@webb-tools/api-providers';
 import React from 'react';
 import styled from 'styled-components';
 

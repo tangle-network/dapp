@@ -1,4 +1,4 @@
-import { Account, AppConfig, Chain, InteractiveFeedback, Wallet, WebbApiProvider } from '@webb-tools/api-providers';
+import { Account, AppConfig, Chain, InteractiveFeedback, Wallet, WebbApiProvider } from '@webb-dapp/api-providers';
 import React from 'react';
 
 export interface WebbContextState<T = unknown> {

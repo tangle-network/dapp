@@ -1,4 +1,4 @@
-import { ChainType, computeChainIdType, internalChainIdIntoEVMId } from '@webb-tools/api-providers';
+import { ChainType, computeChainIdType, internalChainIdIntoEVMId } from '@webb-dapp/api-providers';
 import { Note, NoteGenInput } from '@webb-tools/sdk-core';
 import { useEffect, useState } from 'react';
 

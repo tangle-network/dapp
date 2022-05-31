@@ -9,16 +9,16 @@ export const RightArrowIcon: React.FC = () => {
       <path
         d='M7.08337 17H26.9167'
         stroke={palette.type === 'dark' ? palette.iconColor : '#000000'}
-        stroke-width='2'
-        stroke-linecap='round'
-        stroke-linejoin='round'
+        strokeWidth='2'
+        strokeLinecap='round'
+        strokeLinejoin='round'
       />
       <path
         d='M17 7.08334L26.9167 17L17 26.9167'
         stroke={palette.type === 'dark' ? palette.iconColor : '#000000'}
-        stroke-width='2'
-        stroke-linecap='round'
-        stroke-linejoin='round'
+        strokeWidth='2'
+        strokeLinecap='round'
+        strokeLinejoin='round'
       />
     </svg>
   );

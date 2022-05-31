@@ -9,7 +9,9 @@ const PageMixer = lazy(() => import('@webb-dapp/page-mixer'));
 const PageBridge = lazy(() => import('@webb-dapp/page-bridge'));
 const PageVBridge = lazy(() => import('@webb-dapp/vbridge'));
 const PageWrapUnwrap = lazy(() => import('@webb-dapp/page-wrap-unwrap'));
+const PageCrowdloan = lazy(() => import('@webb-dapp/page-crowdloan'));
 const PageStatistics = lazy(() => import('@webb-dapp/page-statistics'));
+
 const CSuspense: FC = ({ children }) => {
   return <Suspense fallback={<PageContentLoading />}>{children}</Suspense>;
 };
@@ -52,6 +54,15 @@ export const config: RouterConfigData[] = [
         ),
         path: 'wrap-unwrap/*',
         title: 'Wrap/Unwrap',
+      },
+      {
+        element: (
+          <CSuspense>
+            <PageCrowdloan />
+          </CSuspense>
+        ),
+        path: 'crowdloan/*',
+        title: 'Crowdloan',
       },
       {
         element: (

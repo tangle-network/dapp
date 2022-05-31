@@ -2,6 +2,25 @@ import { Typography } from '@material-ui/core';
 import Icon from '@material-ui/core/Icon';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import {
+  Account,
+  AppConfig,
+  BridgeConfig,
+  Chain,
+  EVMChainId,
+  evmIdIntoInternalChainId,
+  getEVMChainName,
+  InteractiveFeedback,
+  NetworkStorage,
+  NotificationPayload,
+  Wallet,
+  Web3Provider,
+  WebbApiProvider,
+  WebbError,
+  WebbErrorCodes,
+  WebbPolkadot,
+  WebbWeb3Provider,
+} from '@webb-dapp/api-providers';
+import {
   anchorsConfig,
   bridgeConfigByAsset,
   chainsConfig,
@@ -20,25 +39,6 @@ import { notificationApi } from '@webb-dapp/ui-components/notification';
 import { AccountSwitchNotification } from '@webb-dapp/ui-components/notification/AccountSwitchNotification';
 import { Spinner } from '@webb-dapp/ui-components/Spinner/Spinner';
 import { BareProps } from '@webb-dapp/ui-components/types';
-import {
-  Account,
-  AppConfig,
-  BridgeConfig,
-  Chain,
-  EVMChainId,
-  evmIdIntoInternalChainId,
-  getEVMChainName,
-  InteractiveFeedback,
-  NetworkStorage,
-  NotificationPayload,
-  Wallet,
-  Web3Provider,
-  WebbApiProvider,
-  WebbError,
-  WebbErrorCodes,
-  WebbPolkadot,
-  WebbWeb3Provider,
-} from '@webb-tools/api-providers';
 import { LoggerService } from '@webb-tools/app-util';
 import { logger } from 'ethers';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';

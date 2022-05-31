@@ -6,7 +6,7 @@ import {
   Wallet,
   WebbError,
   WebbErrorCodes,
-} from '@webb-tools/api-providers';
+} from '@webb-dapp/api-providers';
 
 import { chainsConfig } from './chains/chain-config';
 import { walletsConfig } from './wallets/wallets-config';

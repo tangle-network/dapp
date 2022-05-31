@@ -1,4 +1,6 @@
 import { Checkbox, FormControlLabel, Icon, IconButton, Tooltip, Typography } from '@material-ui/core';
+import { ChainTypeId } from '@webb-dapp/api-providers';
+import { Currency, DepositPayload } from '@webb-dapp/api-providers';
 import { useWebContext } from '@webb-dapp/react-environment/webb-context';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { SpaceBox } from '@webb-dapp/ui-components';
@@ -10,8 +12,6 @@ import { Spinner } from '@webb-dapp/ui-components/Spinner/Spinner';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 import { downloadString } from '@webb-dapp/utils';
 import { VBridgeDepositApi as DepositApi } from '@webb-dapp/vbridge/hooks/deposit/useBridgeDeposit';
-import { ChainTypeId } from '@webb-tools/api-providers';
-import { Currency, DepositPayload } from '@webb-tools/api-providers';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import styled from 'styled-components';

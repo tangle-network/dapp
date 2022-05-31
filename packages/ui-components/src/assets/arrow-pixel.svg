@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg width="6px" height="10px" viewBox="0 0 6 10" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
     <title>Arrow-pixel</title>
-    <g id="最新" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+    <g id="最新" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
         <g id="Governance" transform="translate(-1394.000000, -514.000000)" fill="#173DC9">
             <path d="M1396,522 L1396,524 L1394,524 L1394,522 L1396,522 Z M1398,520 L1398,522 L1396,522 L1396,520 L1398,520 Z M1400,518 L1400,520 L1398,520 L1398,518 L1400,518 Z M1398,516 L1398,518 L1396,518 L1396,516 L1398,516 Z M1396,514 L1396,516 L1394,516 L1394,514 L1396,514 Z" id="icon_arrow_left-copy"></path>
         </g>

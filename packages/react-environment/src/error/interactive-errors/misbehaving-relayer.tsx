@@ -1,4 +1,4 @@
-import { InteractiveFeedback, WebbErrorCodes } from '@webb-tools/api-providers';
+import { InteractiveFeedback, WebbErrorCodes } from '@webb-dapp/api-providers';
 
 export function misbehavingRelayer(): InteractiveFeedback {
   let interactiveFeedback: InteractiveFeedback;
