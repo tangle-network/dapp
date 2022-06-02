@@ -16,7 +16,6 @@
     "dayjs": "^1.8.25",
     "i18next": "^19.7.0",
     "react": "^16.13.1",
-    "react-copy-to-clipboard": "^5.0.2",
     "react-dom": "^16.13.1",
     "react-i18next": "^11.7.1",
     "styled": "^1.0.0",
@@ -24,7 +23,6 @@
   },
   "devDependencies": {
     "@types/react": "^16.9.0",
-    "@types/react-copy-to-clipboard": "^4.3.0",
     "@types/react-dom": "^16.9.0"
   }
 }
