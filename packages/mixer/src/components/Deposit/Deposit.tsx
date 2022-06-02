@@ -76,7 +76,10 @@ export const Deposit: React.FC<DepositProps> = () => {
         })
       : [];
   }, [activeChain, currenciesConfig]);
-  const activeToken = useMemo(() => selectedToken ?? allCurrencies[0], [allCurrencies, selectedToken]);
+  const activeToken = useMemo<Currency | undefined>(
+    () => selectedToken ?? allCurrencies[0],
+    [allCurrencies, selectedToken]
+  );
 
   // Whenever mixerSizes change (like chain switch) or token changes, set selected mixer to undefined
   useEffect(() => {
@@ -142,7 +145,8 @@ export const Deposit: React.FC<DepositProps> = () => {
               </div>
               <TokenBalance>
                 <Typography variant='body2'>
-                  {getRoundedAmountString(Number(tokenBalance))} {selectedToken?.view.symbol}
+                  {getRoundedAmountString(Number(tokenBalance))}{' '}
+                  {selectedToken?.view.symbol ?? activeToken?.view.symbol}
                 </Typography>
               </TokenBalance>
             </div>
