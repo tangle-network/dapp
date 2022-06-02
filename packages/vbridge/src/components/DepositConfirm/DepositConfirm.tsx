@@ -1,8 +1,8 @@
 import { Checkbox, FormControlLabel, Icon, IconButton, Tooltip, Typography } from '@material-ui/core';
-import { ChainTypeId } from '@webb-dapp/api-providers';
-import { Currency, DepositPayload } from '@webb-dapp/api-providers';
+import { ChainTypeId, Currency, DepositPayload } from '@webb-dapp/api-providers';
 import { useWebContext } from '@webb-dapp/react-environment/webb-context';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
+import { useCopyable } from '@webb-dapp/react-hooks/useCopyable';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { CloseButton } from '@webb-dapp/ui-components/Buttons/CloseButton';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
@@ -13,7 +13,6 @@ import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-famili
 import { downloadString } from '@webb-dapp/utils';
 import { VBridgeDepositApi as DepositApi } from '@webb-dapp/vbridge/hooks/deposit/useBridgeDeposit';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import CopyToClipboard from 'react-copy-to-clipboard';
 import styled from 'styled-components';
 
 import { DepositAmountDecal } from './DepositAmountDecal';
@@ -42,6 +41,7 @@ const DepositInfoWrapper = styled.div`
     text-align: center;
   }
 `;
+
 type DepositInfoProps = {
   open: boolean;
   onClose(): void;
@@ -53,7 +53,7 @@ type DepositInfoProps = {
   wrappableAsset: Currency | null | undefined;
 };
 
-const GeneratedNote = styled.p`
+const GeneratedNote = styled.div`
   border-radius: 10px;
   padding: 0.7rem;
   word-break: break-all;
@@ -63,17 +63,11 @@ const GeneratedNote = styled.p`
   color: ${({ theme }) => theme.primaryText};
 
   .copy-button {
-    position: absolute;
-    padding-top: 10px;
-    bottom: 0;
-    right: 0;
+    display: block;
   }
 
   .download-button {
-    position: absolute;
-    padding-top: 10px;
-    bottom: 0;
-    right: 45px;
+    display: block;
   }
 `;
 
@@ -94,6 +88,11 @@ const Loading = styled.div`
   > div {
     height: 200px;
   }
+`;
+
+const Actions = styled.div`
+  display: flex;
+  justify-content: flex-end;
 `;
 
 export const DepositConfirm: React.FC<DepositInfoProps> = ({
@@ -119,14 +118,18 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({
     downloadString(note, note.slice(-note.length - 10) + '.txt');
   }, [note]);
 
+  const { copy, isCopied } = useCopyable();
   const handleCopy = useCallback((): void => {
+    copy(note ?? '');
+
     notificationApi.addToQueue({
       secondaryMessage: 'Deposit note is copied to clipboard',
       message: 'Copied  to clipboard',
       variant: 'success',
       Icon: <Icon>content_copy</Icon>,
     });
-  }, []);
+  }, [note, copy]);
+
   useEffect(() => {
     if (typeof destChain === 'undefined' || !amount || !activeChain) {
       return setNote(undefined);
@@ -137,8 +140,10 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({
       setNote(note);
     });
   }, [provider, anchorId, amount, destChain, activeChain, wrappableAsset]);
+
   const [backupConfirmation, setBackupConfirmation] = useState(false);
   const generatingNote = !depositPayload;
+
   return (
     <DepositInfoWrapper>
       {generatingNote && (
@@ -150,7 +155,10 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({
             Generating your deposit note...
           </Typography>
           <Tooltip title={'close'}>
-            <CloseButton onClick={onClose} />
+            {/* for `Tooltip` forwardRef */}
+            <span>
+              <CloseButton onClick={onClose} />
+            </span>
           </Tooltip>
         </Loading>
       )}
@@ -177,19 +185,18 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({
           <>
             <GeneratedNote>
               {note}
-              <br />
-              <Tooltip title={'Download Note'}>
-                <IconButton className={'download-button'} onClick={downloadNote}>
-                  <Icon>download</Icon>
-                </IconButton>
-              </Tooltip>
-              <Tooltip title={`Copy note the clipboard`}>
-                <CopyToClipboard onCopy={handleCopy} text={note} {...({ className: 'copy-button' } as any)}>
-                  <IconButton>
+              <Actions>
+                <Tooltip title={'Download Note'}>
+                  <IconButton className={'download-button'} onClick={downloadNote}>
+                    <Icon>download</Icon>
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title={isCopied ? `Copied` : `Copy note the clipboard`}>
+                  <IconButton onClick={handleCopy} {...({ className: 'copy-button' } as any)}>
                     <Icon>content_copy</Icon>
                   </IconButton>
-                </CopyToClipboard>
-              </Tooltip>
+                </Tooltip>
+              </Actions>
             </GeneratedNote>
           </>
         )}
