@@ -21,3 +21,4 @@ export * from './useModal';
 export * from './useSubscription';
 export * from './useInputValue';
 export * from './currency';
+export * from './useCopyable';
