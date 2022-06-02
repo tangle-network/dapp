@@ -64,15 +64,11 @@ const GeneratedNote = styled.p`
   color: ${({ theme }) => theme.primaryText};
 
   .copy-button {
-    position: absolute;
-    bottom: 0;
-    right: 0;
+    display: block;
   }
 
   .download-button {
-    position: absolute;
-    bottom: 0;
-    right: 45px;
+    display: block;
   }
 `;
 const CloseDepositModal = styled.button`
@@ -99,6 +95,11 @@ const Loading = styled.div`
   > div {
     height: 200px;
   }
+`;
+
+const Actions = styled.div`
+  display: flex;
+  justify-content: flex-end;
 `;
 
 export const DepositConfirm: React.FC<DepositInfoProps> = ({ mixerSize, onClose, onSuccess, open, provider }) => {
@@ -190,19 +191,20 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({ mixerSize, onClose,
           <>
             <GeneratedNote>
               {note}
-              <br />
-              <Tooltip title={'Download Note'}>
-                <IconButton className={'download-button'} onClick={downloadNote}>
-                  <Icon>download</Icon>
-                </IconButton>
-              </Tooltip>
-              <Tooltip title={`Copy note the clipboard`}>
-                <CopyToClipboard onCopy={handleCopy} text={note} {...({ className: 'copy-button' } as any)}>
-                  <IconButton>
-                    <Icon>content_copy</Icon>
+              <Actions>
+                <Tooltip title={'Download Note'}>
+                  <IconButton className={'download-button'} onClick={downloadNote}>
+                    <Icon>download</Icon>
                   </IconButton>
-                </CopyToClipboard>
-              </Tooltip>
+                </Tooltip>
+                <Tooltip title={`Copy note the clipboard`}>
+                  <CopyToClipboard onCopy={handleCopy} text={note} {...({ className: 'copy-buton' } as any)}>
+                    <IconButton>
+                      <Icon>content_copy</Icon>
+                    </IconButton>
+                  </CopyToClipboard>
+                </Tooltip>
+              </Actions>
             </GeneratedNote>
           </>
         )}
