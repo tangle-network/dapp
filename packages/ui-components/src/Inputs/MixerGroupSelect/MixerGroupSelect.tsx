@@ -75,24 +75,26 @@ export const MixerGroupSelect: React.FC<MixerGroupSelectProps> = ({ items, onCha
   return (
     <InputSection>
       <MixerGroupSelectWrapper style={{ width: '80%' }}>
-        {mixerSizes.map(({ amount, asset, id, selected, title }) => {
-          return (
-            <AmountChipWrapper
-              key={id + title}
-              selected={selected}
-              onClick={() => {
-                onChange?.({
-                  title,
-                  id,
-                  amount,
-                  asset,
-                });
-              }}
-            >
-              {getRoundedAmountString(amount)}
-            </AmountChipWrapper>
-          );
-        })}
+        {mixerSizes
+          .filter(({ amount }) => !isNaN(amount))
+          .map(({ amount, asset, id, selected, title }) => {
+            return (
+              <AmountChipWrapper
+                key={id + title}
+                selected={selected}
+                onClick={() => {
+                  onChange?.({
+                    title,
+                    id,
+                    amount,
+                    asset,
+                  });
+                }}
+              >
+                {getRoundedAmountString(amount)}
+              </AmountChipWrapper>
+            );
+          })}
       </MixerGroupSelectWrapper>
       <FlexBox width='20%' justifyContent='center' alignItems='center'>
         <p>{items[0] && items[0].asset}</p>
