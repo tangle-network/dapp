@@ -5,10 +5,10 @@ type SetTimeoutReturnType = ReturnType<typeof setTimeout>;
 
 /**
  *
- * @param {number} deplay The deplay time to reset time copy state in milisecond (default 3000)
+ * @param {number} display The display time to reset time copy state in miliseconds (default 3000)
  * @returns {Object} An object contains `isCopied`, `copiedText` and `copy` function
  */
-export const useCopyable = (deplay: number = 3000) => {
+export const useCopyable = (display: number = 3000) => {
   const ref = useRef<string>('');
   const [isCopied, setIsCopied] = useState(false);
   const [_timeout, _setTimeout] = useState<SetTimeoutReturnType | undefined>();
@@ -22,7 +22,7 @@ export const useCopyable = (deplay: number = 3000) => {
     copyToClipboard(value);
     setIsCopied(true);
 
-    const timeoutObj = setTimeout(() => setIsCopied(false), deplay);
+    const timeoutObj = setTimeout(() => setIsCopied(false), display);
     _setTimeout(timeoutObj);
   };
 
