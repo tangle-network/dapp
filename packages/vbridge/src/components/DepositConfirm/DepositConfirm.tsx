@@ -191,7 +191,7 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({
                     <Icon>download</Icon>
                   </IconButton>
                 </Tooltip>
-                <Tooltip title={isCopied ? `Copied` : `Copy note the clipboard`}>
+                <Tooltip title={isCopied ? `Copied` : `Copy to clipboard`}>
                   <IconButton onClick={handleCopy} {...({ className: 'copy-button' } as any)}>
                     <Icon>content_copy</Icon>
                   </IconButton>
