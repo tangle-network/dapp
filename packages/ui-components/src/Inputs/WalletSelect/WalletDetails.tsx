@@ -1,11 +1,10 @@
-import { Avatar, Typography } from '@material-ui/core';
+import { Avatar, Tooltip, Typography } from '@material-ui/core';
 import { ManagedWallet } from '@webb-dapp/api-providers';
 import { WalletId } from '@webb-dapp/apps/configs';
 import { AccountManager } from '@webb-dapp/react-components/AccountManager/AccountManager';
 import { useWebContext } from '@webb-dapp/react-environment';
-import { useAccounts, useNativeCurrencyBalance, useNativeCurrencySymbol } from '@webb-dapp/react-hooks';
-import React, { useMemo } from 'react';
-import CopyToClipboard from 'react-copy-to-clipboard';
+import { useAccounts, useCopyable, useNativeCurrencyBalance, useNativeCurrencySymbol } from '@webb-dapp/react-hooks';
+import React, { useCallback, useMemo } from 'react';
 import styled, { css } from 'styled-components';
 
 import { getRoundedAmountString } from '../../';
@@ -93,9 +92,16 @@ type WalletDetailsProps = {
 };
 
 export const WalletDetails: React.FC<WalletDetailsProps> = ({ wallet }) => {
+  const { copy, isCopied } = useCopyable();
+
   const { activeChain } = useWebContext();
   const { active } = useAccounts();
   const name = useMemo(() => active?.name || active?.address || '', [active]);
+
+  /** Handler */
+  const handleCopy = useCallback((): void => {
+    copy(active?.address ?? '');
+  }, [active, copy]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', width: '100%' }}>
@@ -133,11 +139,11 @@ export const WalletDetails: React.FC<WalletDetailsProps> = ({ wallet }) => {
               </>
             )}
           </div>
-          <CopyToClipboard text={active?.address} {...({ className: 'copy-button' } as any)}>
-            <Typography style={{ fontSize: '13px' }}>
+          <Tooltip title={isCopied ? 'Copied!' : 'Copy to clipboard'} arrow>
+            <Typography onClick={handleCopy} style={{ fontSize: '13px' }} {...({ className: 'copy-button' } as any)}>
               <b>COPY</b>
             </Typography>
-          </CopyToClipboard>
+          </Tooltip>
         </AddressSectionWrapper>
       </AddressDetails>
     </div>
