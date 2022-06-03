@@ -2664,23 +2664,6 @@
     "@polkadot/util" "9.3.1"
     "@substrate/ss58-registry" "^1.20.0"
 
-"@polkadot/react-identicon@1.3.1":
-  version "1.3.1"
-  resolved "https://registry.yarnpkg.com/@polkadot/react-identicon/-/react-identicon-1.3.1.tgz#77d48d64b23f96887571a3aac8083e4e0e981242"
-  integrity sha512-9RB8asAn493fAlNL3EECybgXjj2Qamb44apOFvRjUPPx+Eyek7+VqcCa0W9kyP2KrG+Vnj9DgPB2uQGNALG20Q==
-  dependencies:
-    "@babel/runtime" "^7.17.8"
-    "@polkadot/keyring" "^8.6.1"
-    "@polkadot/ui-settings" "1.3.1"
-    "@polkadot/ui-shared" "1.3.1"
-    "@polkadot/util" "^8.6.1"
-    "@polkadot/util-crypto" "^8.6.1"
-    color "^3.2.1"
-    ethereum-blockies-base64 "^1.0.2"
-    jdenticon "3.1.1"
-    react-copy-to-clipboard "^5.0.4"
-    styled-components "^5.3.3"
-
 "@polkadot/rpc-augment@8.1.1":
   version "8.1.1"
   resolved "https://registry.yarnpkg.com/@polkadot/rpc-augment/-/rpc-augment-8.1.1.tgz#e23df5014fc16958ffd1b7a95659ef8993da5004"
@@ -13205,14 +13188,6 @@ rc@^1.2.7, rc@^1.2.8:
     ini "~1.3.0"
     minimist "^1.2.0"
     strip-json-comments "~2.0.1"
-
-react-copy-to-clipboard@^5.0.4:
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/react-copy-to-clipboard/-/react-copy-to-clipboard-5.1.0.tgz#09aae5ec4c62750ccb2e6421a58725eabc41255c"
-  integrity sha512-k61RsNgAayIJNoy9yDsYzDe/yAZAzEbEgcz3DZMhF686LEyukcE1hzurxe85JandPUG+yTfGVFzuEw3xt8WP/A==
-  dependencies:
-    copy-to-clipboard "^3.3.1"
-    prop-types "^15.8.1"
 
 react-dom@^16.13.1:
   version "16.14.0"
