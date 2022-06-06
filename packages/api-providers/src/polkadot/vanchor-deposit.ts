@@ -3,9 +3,10 @@
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
+import type { Backend, Curve } from '@webb-tools/wasm-utils';
+
 import { LoggerService } from '@webb-tools/app-util';
 import { Note, NoteGenInput, ProvingManager, ProvingManagerSetupInput } from '@webb-tools/sdk-core';
-import { JsUtxo } from '@webb-tools/wasm-utils';
 
 import { decodeAddress } from '@polkadot/keyring';
 import { hexToU8a, u8aToHex } from '@polkadot/util';
@@ -19,6 +20,22 @@ import { naclEncrypt, randomAsU8a } from '@polkadot/util-crypto';
 
 import { computeChainIdType, InternalChainId } from '../chains';
 import { WebbError, WebbErrorCodes } from '../webb-error';
+// TODO: export this from webb.js
+
+async function create_utxo(
+  curve: Curve,
+  backend: Backend,
+  input_size: number,
+  anchor_size: number,
+  amount: string,
+  chain_id: string,
+  index?: string,
+  private_key?: Uint8Array,
+  blinding?: Uint8Array
+) {
+  const wasm = await import('@webb-tools/wasm-utils');
+  return new wasm.JsUtxo(curve, backend, input_size, anchor_size, amount, chain_id, index, private_key, blinding);
+}
 
 // The Deposit Payload is the note and [treeId]
 type DepositPayload = IDepositPayload<Note, [number]>;
@@ -105,7 +122,7 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
     }
     return indexBeforeInsertion + shiftedIndex;
   }
-  async deposit(depositPayload: DepositPayload, recipient: string): Promise<Note> {
+  async deposit(depositPayload: DepositPayload, recipient: string): Promise<void> {
     // Getting the  active account
     const account = await this.inner.accounts.activeOrDefault;
     const secret = randomAsU8a();
@@ -125,7 +142,7 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
 
     // output
     const output1 = note.getUtxo();
-    const output2 = new JsUtxo('Bn254', 'Arkworks', 2, 2, '0', targetChainId, undefined);
+    const output2 = await create_utxo('Bn254', 'Arkworks', 2, 2, '0', targetChainId, undefined);
     let publicAmount = note.amount;
     const inputNotes = note.defaultUtxoNote();
 
@@ -191,7 +208,7 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
     const leafIndex = await this.getleafIndex(insertedLeaf, indexBeforeInsertion, treeId);
     note.mutateIndex(String(leafIndex));
     console.log(txHash);
-    return Note.deserialize(note.serialize());
+    // return Note.deserialize(note.serialize());
   }
 
   async getSizes(): Promise<VAnchorSize[]> {
