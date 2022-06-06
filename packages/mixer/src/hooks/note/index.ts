@@ -49,8 +49,6 @@ export const useDepositNote = (value: string): null | Note => {
           setDepositNote(d);
         }
       } catch (e) {
-        console.log('passed value was: ', value);
-        console.log('Error of: ', e);
         setDepositNote(null);
       }
     };

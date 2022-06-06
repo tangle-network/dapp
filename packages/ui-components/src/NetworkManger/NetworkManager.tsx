@@ -74,6 +74,7 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
   const [connectionStatus, setConnectionStatus] = useState<ConnectingState>(
     activeChain ? 'connected' : isConnecting ? 'connecting' : 'no-connection'
   );
+
   const switchChain = useCallback(
     async (chain: Chain, wallet: Wallet) => {
       try {
@@ -148,9 +149,10 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
     });
     return () => off && off();
   }, []);
+
   const content = useMemo(() => {
     switch (connectionStep) {
-      case ConnectionStep.SelectChain:
+      case ConnectionStep.SelectChain: {
         return (
           <List>
             {filteredNetworks.map((chain, inx) => {
@@ -177,6 +179,7 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
                         }}
                         invisible={!tag}
                         color={'primary'}
+                        overlap='rectangular'
                       >
                         <Avatar
                           style={{
@@ -241,6 +244,8 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
             })}
           </List>
         );
+      }
+
       case ConnectionStep.SelectWallet: {
         if (!userSelectedChain) {
           return null;
@@ -261,6 +266,7 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
                   }}
                   invisible={!tag}
                   color={'primary'}
+                  overlap='rectangular'
                 >
                   <Avatar
                     style={{
@@ -331,10 +337,12 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
         );
       }
 
-      case ConnectionStep.Connecting:
+      case ConnectionStep.Connecting: {
         return <LinearProgress />;
+      }
     }
   }, [filteredNetworks, activeWallet, activeChain, connectionStep, userSelectedChain, switchChain, handleCancel]);
+
   useEffect(() => {
     if (isConnecting) {
       return setConnectionStatus('connecting');
@@ -508,6 +516,7 @@ export const NetworkManagerIndicator: React.FC<NetworkManagerIndicatorProps> = (
         return connectionMetaData?.chainIcon ? connectionMetaData?.chainIcon : <Icon fontSize={'large'}>podcasts</Icon>;
     }
   }, [connectionMetaData, connectionStatus]);
+
   return (
     <NetworkIndicatorWrapper as={ButtonBase} onClick={onClick}>
       <Flex row ai={'center'} jc='space-between' as={Padding}>

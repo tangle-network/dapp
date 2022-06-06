@@ -203,31 +203,29 @@ const DropdownInput: React.FC<DropdownInputProps> = ({ chains, onChange, value }
                     const isSelected = selected?.id === chainTypeId;
                     let chain = chainsPopulated[chainTypeIdToInternalId(chainTypeId)];
                     return (
-                      <div>
-                        <li
-                          role={'button'}
-                          onClick={() => {
-                            setIsOpen(false);
-                            onChange(chainTypeId);
-                          }}
-                          className={isSelected ? 'selected' : ''}
-                          key={`${chainTypeId}-chain-input`}
-                        >
-                          <Flex ai='center' row flex={1}>
-                            <ListItemAvatar>
-                              <Avatar style={{ background: 'transparent' }} children={<chain.logo />} />
-                            </ListItemAvatar>
-                            <ListItemText>
-                              <Typography variant={'h6'} component={'span'} display={'block'}>
-                                <b>{chain.name}</b>
-                              </Typography>
-                              <Typography variant={'body2'} color={'textSecondary'}>
-                                <ChainName>{chain.name}</ChainName>
-                              </Typography>
-                            </ListItemText>
-                          </Flex>
-                        </li>
-                      </div>
+                      <li
+                        role={'button'}
+                        onClick={() => {
+                          setIsOpen(false);
+                          onChange(chainTypeId);
+                        }}
+                        className={isSelected ? 'selected' : ''}
+                        key={`${chainTypeId.chainId}-chain-input`}
+                      >
+                        <Flex ai='center' row flex={1}>
+                          <ListItemAvatar>
+                            <Avatar style={{ background: 'transparent' }} children={<chain.logo />} />
+                          </ListItemAvatar>
+                          <ListItemText>
+                            <Typography variant={'h6'} component={'span'} display={'block'}>
+                              <b>{chain.name}</b>
+                            </Typography>
+                            <Typography variant={'body2'} color={'textSecondary'}>
+                              <ChainName>{chain.name}</ChainName>
+                            </Typography>
+                          </ListItemText>
+                        </Flex>
+                      </li>
                     );
                   })}
                 </StyledList>

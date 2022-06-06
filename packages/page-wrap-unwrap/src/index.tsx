@@ -129,7 +129,7 @@ const PageWrapUnwrap: FC = () => {
     wrappableTokens,
   } = useWrapUnwrap();
   const palette = useColorPallet();
-  const [displayedAmount, setDisplayedAmount] = useState<string | null>(null);
+  const [displayedAmount, setDisplayedAmount] = useState<string>('');
 
   const [isSwap, setIsSwap] = useState(false);
   const [loading, setLoading] = useState(false);

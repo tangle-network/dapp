@@ -11,7 +11,7 @@ function ArbitrumLogo() {
       width='470.287px'
       height='514.251px'
       viewBox='0 0 470.287 514.251'
-      enable-background='new 0 0 470.287 514.251'
+      enableBackground='new 0 0 470.287 514.251'
       xmlSpace='preserve'
     >
       <g id='Background'></g>

@@ -92,8 +92,10 @@ function notificationHandler(notification: NotificationPayload) {
       const isFinalized = notification.level === 'success';
       const description = notification.data ? (
         <div>
-          {Object.keys(notification.data).map((i) => (
-            <Typography variant={'h6'}>{notification.data?.[i]}</Typography>
+          {Object.keys(notification.data).map((i, idx) => (
+            <Typography variant={'h6'} key={`${i}${idx}`}>
+              {notification.data?.[i]}
+            </Typography>
           ))}
         </div>
       ) : (
