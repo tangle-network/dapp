@@ -1,7 +1,6 @@
 import { AppConfig, WebbCurrencyId } from '@webb-dapp/api-providers';
-import { anchorsConfig } from '@webb-dapp/apps/configs';
-import { LoggerService } from '@webb-tools/app-util';
-const logger = LoggerService.get('bridge-config');
+
+import { anchorsConfig } from '../anchors/anchor-config';
 
 export const bridgeConfigByAsset: AppConfig['bridgeByAsset'] = {
   [WebbCurrencyId.webbWETH]: {

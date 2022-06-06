@@ -3,19 +3,21 @@
 
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
 
+import type { WebbWeb3Provider } from './webb-provider';
+
 import { Note } from '@webb-tools/sdk-core';
 import { JsNote as DepositNote } from '@webb-tools/wasm-utils';
 
+import { AnchorApi, VAnchorWithdraw, WithdrawState } from '../abstracts';
 import { ChainType, computeChainIdType, evmIdIntoInternalChainId } from '../chains';
 import { utxoFromVAnchorNote } from '../contracts/utils/make-deposit';
+import { BridgeConfig } from '../types';
 import {
   BridgeStorage,
   bridgeStorageFactory,
   getAnchorDeploymentBlockNumber,
   getEVMChainNameFromInternal,
 } from '../utils';
-import { AnchorApi, BridgeConfig, VAnchorWithdraw, WithdrawState } from '../';
-import { WebbWeb3Provider } from './webb-provider';
 
 export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
   protected get bridgeApi() {

@@ -6,11 +6,11 @@ import { ContractTransaction } from 'ethers';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import Web3 from 'web3';
 
+import { Amount, Bridge, Currency, MixerSize, WrappingBalance, WrappingEvent, WrapUnwrap } from '../abstracts';
 import { evmIdIntoInternalChainId, InternalChainId } from '../chains';
 import { WebbGovernedToken, zeroAddress } from '../contracts';
 import { WebbCurrencyId, webbCurrencyIdToString } from '../enums';
 import { CurrencyType } from '../types/currency-config.interface';
-import { Amount, Bridge, Currency, MixerSize, WrappingBalance, WrappingEvent, WrapUnwrap } from '../';
 import { WebbWeb3Provider } from './webb-provider';
 
 export type Web3WrapPayload = Amount;

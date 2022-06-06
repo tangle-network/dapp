@@ -1,11 +1,12 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
+import type { WebbApiProvider } from '../webb-provider.interface';
+
 import { EventBus } from '@webb-tools/app-util';
 
-import { InternalChainId } from '../../';
-import { WebbApiProvider } from '../webb-provider.interface';
-import { CancelToken, WebbWithdrawEvents, WithdrawState } from '..';
+import { InternalChainId } from '../../chains';
+import { CancelToken, WebbWithdrawEvents, WithdrawState } from '../mixer';
 import { Bridge } from './bridge';
 
 export abstract class VAnchorWithdraw<T extends WebbApiProvider<any>> extends EventBus<WebbWithdrawEvents> {

@@ -13,11 +13,12 @@ import { hexToU8a, u8aToHex } from '@polkadot/util';
 import { DepositPayload as IDepositPayload, VAnchorDeposit, VAnchorSize } from '../abstracts';
 const logger = LoggerService.get('PolkadotVBridgeDeposit');
 
+import type { WebbPolkadot } from './webb-provider';
+
 import { naclEncrypt, randomAsU8a } from '@polkadot/util-crypto';
 
 import { computeChainIdType, InternalChainId } from '../chains';
 import { WebbError, WebbErrorCodes } from '../webb-error';
-import { WebbPolkadot } from './webb-provider';
 
 // The Deposit Payload is the note and [treeId]
 type DepositPayload = IDepositPayload<Note, [number]>;
@@ -25,7 +26,7 @@ type DepositPayload = IDepositPayload<Note, [number]>;
  * Webb Anchor API implementation for Polkadot
  **/
 
-export async function fetchSubstrateAnchorProvingKey() {
+async function fetchSubstrateAnchorProvingKey() {
   return new Uint8Array([]);
 }
 
