@@ -1,13 +1,14 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { BridgeConfig } from '../../';
+import { BridgeConfig } from '../..';
+import { MixerSize } from '../../abstracts';
 import { DepositPayload, MixerDeposit } from '../mixer/mixer-deposit';
 import { WebbApiProvider } from '../webb-provider.interface';
 import { AnchorApi } from './anchor-api';
 
 // Todo: should we extract the interface of MixerDeposit on another class and rename `generateBridgeNote` to generate note
-
+export type VAnchorSize = Omit<MixerSize, 'amount'>;
 /**
  * Anchor deposit abstract interface as fixed anchor share similar functionality as the mixer
  * The interface looks the same but there's a different function for note Generation
