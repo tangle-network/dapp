@@ -1,7 +1,7 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { Note, ProvingManager, ProvingManagerSetupInput } from '@webb-tools/sdk-core';
+import { ArkworksProvingManager, Note, ProvingManagerSetupInput } from '@webb-tools/sdk-core';
 
 import { decodeAddress } from '@polkadot/keyring';
 import { hexToU8a, u8aToHex } from '@polkadot/util';
@@ -103,7 +103,7 @@ export class PolkadotAnchorWithdraw extends AnchorWithdraw<WebbPolkadot> {
 
       // Init a worker from the factory with `wasm-utils` key
       const worker = this.inner.wasmFactory('wasm-utils');
-      const pm = new ProvingManager(worker);
+      const pm = new ArkworksProvingManager(worker);
 
       // Converting accounts into hex
       const recipientAccountHex = u8aToHex(decodeAddress(recipient));

@@ -35,8 +35,6 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
       .filter(([_, info]) => !info.isEmpty)
       // storageKey is treeId.  Info is {depositSize, asset}
       .map(([storageKey, info]) => {
-        // TODO: Figure out why typescript complains about an `unwrap()`
-        //       while running protocol-substrate locally.
         const mixerInfo: PalletMixerMixerMetadata = info.unwrap();
         const cId = Number(mixerInfo.asset);
         const amount = mixerInfo.depositSize;

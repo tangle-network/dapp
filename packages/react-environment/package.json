@@ -7,10 +7,10 @@
   "homepage": "https://github.com/webb-tools/webb-dapp#readme",
   "dependencies": {
     "@influxdata/influxdb-client-browser": "^1.8.0",
-    "@polkadot/api": "8.1.1",
+    "@polkadot/api": "8.6.2",
     "@polkadot/extension-dapp": "^0.43.1",
-    "@webb-tools/api": "0.1.4-72",
-    "@webb-tools/sdk-core": "0.1.4-72"
+    "@webb-tools/api": "file:../../../webb.js/packages/api/build",
+    "@webb-tools/sdk-core": "file:../../../webb.js/packages/sdk-core/build"
   },
   "devDependencies": {
     "@types/url-parse": "^1.4.3"

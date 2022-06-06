@@ -85,6 +85,8 @@ export const useBridgeDeposit = (): BridgeDepositApi => {
         throw new Error('Not ready');
       }
       const destChainId = computeChainIdType(destChainTypeId.chainType, destChainTypeId.chainId);
+      console.log('mixerId: ', mixerId);
+      console.log('destChainId: ', destChainId);
       return depositApi?.generateBridgeNote(mixerId, destChainId, wrappableAsset);
     },
     [depositApi]

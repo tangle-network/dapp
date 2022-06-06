@@ -13,7 +13,7 @@ import {
   FixedDepositAnchor__factory,
 } from '@webb-tools/contracts';
 import { IAnchorDepositInfo } from '@webb-tools/interfaces';
-import { MerkleTree } from '@webb-tools/merkle-tree';
+import { MerkleTree } from '@webb-tools/sdk-core';
 import { getFixedAnchorExtDataHash, toFixedHex } from '@webb-tools/utils';
 import { BigNumber, Contract, providers, Signer } from 'ethers';
 
@@ -44,20 +44,24 @@ export class AnchorContract {
     this._contract = FixedDepositAnchor__factory.connect(address, useProvider ? this.web3Provider : this.signer);
   }
 
-  get getLastRoot() {
+  get inner() {
+    return this._contract;
+  }
+
+  async getLastRoot() {
     return this._contract.getLastRoot();
   }
 
-  get nextIndex() {
+  async getNextIndex() {
     return this._contract.nextIndex();
   }
 
-  get denomination() {
+  async getDenomination() {
     return this._contract.denomination();
   }
 
-  get inner() {
-    return this._contract;
+  async getEvmId() {
+    return this.web3Provider.getSigner().getChainId();
   }
 
   async getWebbToken(): Promise<ERC20> {
@@ -71,7 +75,7 @@ export class AnchorContract {
     const userAddress = await this.signer.getAddress();
     const tokenInstance = await this.getWebbToken();
     const tokenAllowance = await tokenInstance.allowance(userAddress, this._contract.address);
-    const depositAmount = await this.denomination;
+    const depositAmount = await this.getDenomination();
 
     logger.log('tokenAllowance', tokenAllowance);
     logger.log('depositAmount', depositAmount);
@@ -92,7 +96,7 @@ export class AnchorContract {
     const userAddress = await this.signer.getAddress();
     const webbToken = await this.getWebbToken();
     const tokenAllowance = await webbToken.allowance(userAddress, webbToken.address);
-    const depositAmount = await this.denomination;
+    const depositAmount = await this.getDenomination();
 
     if (tokenAllowance < depositAmount) {
       return true;
@@ -103,7 +107,7 @@ export class AnchorContract {
 
   async hasEnoughBalance(tokenAddress?: string) {
     const userAddress = await this.signer.getAddress();
-    const depositAmount = await this.denomination;
+    const depositAmount = await this.getDenomination();
     let tokenBalance: BigNumber;
 
     // If a token address was supplied, the user is querying for enough balance of a wrappableToken
@@ -137,7 +141,7 @@ export class AnchorContract {
     }
 
     if (tokenInstance != null) {
-      const depositAmount = await this.denomination;
+      const depositAmount = await this.getDenomination();
       const tx = await tokenInstance.approve(this._contract.address, depositAmount);
 
       await tx.wait();

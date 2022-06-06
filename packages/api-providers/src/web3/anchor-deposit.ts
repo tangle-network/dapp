@@ -91,7 +91,7 @@ export class Web3AnchorDeposit extends AnchorDeposit<WebbWeb3Provider, DepositPa
             this.inner.getEthersProvider().getSigner()
           );
           const webbToken = await contract.getWebbToken();
-          const tx = await tokenInstance.approve(webbToken.address, await contract.denomination);
+          const tx = await tokenInstance.approve(webbToken.address, await contract.getDenomination());
 
           await tx.wait();
           this.inner.notificationHandler.remove('waiting-approval');
@@ -143,7 +143,7 @@ export class Web3AnchorDeposit extends AnchorDeposit<WebbWeb3Provider, DepositPa
             persist: true,
           });
           const tokenInstance = await contract.getWebbToken();
-          const tx = await tokenInstance.approve(contract.inner.address, await contract.denomination);
+          const tx = await tokenInstance.approve(contract.inner.address, await contract.getDenomination());
 
           await tx.wait();
           this.inner.notificationHandler.remove('waiting-approval');
