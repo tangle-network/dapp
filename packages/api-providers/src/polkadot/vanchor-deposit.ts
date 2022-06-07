@@ -3,25 +3,24 @@
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
+import '@webb-tools/api-derive/index.js';
+
+import type { WebbPolkadot } from './webb-provider';
+
+import { createUtxoBn254CT2, getCachedFixtureURI, withLocalFixtures } from '@webb-dapp/api-providers/utils';
 import { LoggerService } from '@webb-tools/app-util';
 import { ArkworksProvingManager, Note, NoteGenInput, ProvingManagerSetupInput } from '@webb-tools/sdk-core';
 
 import { decodeAddress } from '@polkadot/keyring';
 import { hexToU8a, u8aToHex } from '@polkadot/util';
-
-import { DepositPayload as IDepositPayload, VAnchorDeposit, VAnchorSize } from '../abstracts';
-const logger = LoggerService.get('PolkadotVBridgeDeposit');
-
-import '@webb-tools/api-derive/index.js';
-
-import type { WebbPolkadot } from './webb-provider';
-
-import { createUtxo, createUtxoBn254CT2 } from '@webb-dapp/api-providers/utils';
-
 import { naclEncrypt, randomAsU8a } from '@polkadot/util-crypto';
 
+import { DepositPayload as IDepositPayload, VAnchorDeposit } from '../abstracts';
 import { computeChainIdType, InternalChainId } from '../chains';
 import { WebbError, WebbErrorCodes } from '../webb-error';
+
+const logger = LoggerService.get('PolkadotVBridgeDeposit');
+
 // TODO: export this from webb.js
 
 // The Deposit Payload is the note and [treeId]
@@ -30,8 +29,16 @@ type DepositPayload = IDepositPayload<Note, [number]>;
  * Webb Anchor API implementation for Polkadot
  **/
 
-async function fetchSubstrateAnchorProvingKey() {
-  return new Uint8Array([]);
+async function fetchSubstrateVAnchorProvingKey() {
+  const IPFSUrl = 'https://ipfs.io/ipfs/QmZiNuAKp2QGp281bqasNqvqccPCGp4yoxWbK8feecefML';
+  const cachedURI = getCachedFixtureURI('proving_key_uncompressed_vanchor_2_2_2.bin');
+  const ipfsKeyRequest = await fetch(withLocalFixtures() ? cachedURI : IPFSUrl);
+  const circuitKeyArrayBuffer = await ipfsKeyRequest.arrayBuffer();
+
+  logger.info('Done Fetching key');
+  const circuitKey = new Uint8Array(circuitKeyArrayBuffer);
+
+  return circuitKey;
 }
 
 export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, DepositPayload> {
@@ -134,8 +141,12 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
     leavesMap[targetChainId] = [];
     const tree = await this.inner.api.query.merkleTreeBn254.trees(treeId);
     const root = tree.unwrap().root.toHex();
-    const rootsSet = [hexToU8a(root), hexToU8a(root)];
-    const provingKey = await fetchSubstrateAnchorProvingKey();
+    const neighborRoots: string[] = await (this.inner.api.rpc as any).lt
+      .getNeighborRoots(treeId)
+      .then((roots: any) => roots.toHuman());
+
+    const rootsSet = [hexToU8a(root), hexToU8a(neighborRoots[0])];
+    const provingKey = await fetchSubstrateVAnchorProvingKey();
 
     const { encrypted: comEnc1 } = naclEncrypt(output1.commitment, secret);
     const { encrypted: comEnc2 } = naclEncrypt(output2.commitment, secret);
@@ -187,17 +198,20 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
 
     const worker = this.inner.wasmFactory('wasm-utils');
     const pm = new ArkworksProvingManager(worker);
-    console.log(vanchorDepositSetup);
+    const outputCommitments = [output1.commitment, output2.commitment];
     const data = await pm.prove('vanchor', vanchorDepositSetup);
     const vanchorProofData = {
       proof: `0x${data.proof}`,
       publicAmount: data.publicAmount,
       roots: rootsSet,
-      inputNullifiers: data.inputUtxos.map((input) => `0x${input.nullifier}`),
-      outputCommitments: data.outputNotes.map((note) => u8aToHex(note.getLeaf())),
+      inputNullifiers: [inputNotes].map((input) => {
+        const utxo = input.getUtxo();
+        return `0x${utxo.nullifier}`;
+      }),
+      outputCommitments: outputCommitments.map((c) => u8aToHex(c)),
       extDataHash: data.extDataHash,
     };
-
+    console.log([treeId, vanchorProofData, extData]);
     // @ts-ignore
     const leafsCount = await this.inner.api.derive.merkleTreeBn254.getLeafCountForTree(Number(treeId));
     const indexBeforeInsertion = Math.max(leafsCount - 1, 0);
