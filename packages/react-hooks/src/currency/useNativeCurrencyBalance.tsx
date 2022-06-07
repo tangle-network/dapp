@@ -7,13 +7,21 @@ export const useNativeCurrencyBalance = () => {
   const [balance, setBalance] = useState('');
 
   useEffect(() => {
+    let isSubscribed = true;
+
     if (activeChain && activeApi) {
       activeApi.methods.chainQuery
         .tokenBalanceByCurrencyId(activeChain.id, activeChain.nativeCurrencyId)
         .then((balance) => {
-          setBalance(balance);
+          if (isSubscribed) {
+            setBalance(balance);
+          }
         });
     }
+
+    return () => {
+      isSubscribed = false;
+    };
   }, [activeChain, activeApi, activeApi?.accounts.activeOrDefault]);
 
   return balance;

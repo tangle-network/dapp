@@ -59,12 +59,15 @@ type WalletSelectProps = {};
 
 export const WalletSelect: React.FC<WalletSelectProps> = ({}) => {
   const [open, setOpen] = useState(false);
+
   const closeModal = useCallback(() => {
     setOpen(false);
   }, []);
+
   const openModal = useCallback(() => {
     setOpen(true);
   }, []);
+
   const { wallets } = useWallets();
 
   const [selectedWallet, setSelectedWallet] = useState<ManagedWallet | null>(null);

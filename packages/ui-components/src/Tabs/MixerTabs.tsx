@@ -23,6 +23,7 @@ const TabHeader = styled.header`
   max-width: 500px;
   margin: auto;
 `;
+
 const TabButton = styled.button<{ active?: boolean }>`
   width: 50%;
   display: flex;
@@ -107,7 +108,7 @@ export const MixerTabs: React.FC<MixerTabsProps> = ({ Deposit, Withdraw }) => {
       </TabHeader>
       <ContentWrapper>
         <Fade timeout={300} in unmountOnExit mountOnEnter key={activeTab + 'fade'}>
-          {ActiveTab}
+          <div>{ActiveTab}</div>
         </Fade>
       </ContentWrapper>
     </div>

@@ -37,12 +37,16 @@ const UnselectedNetworkView: React.FC<UnselectedNetworkViewProps> = ({ activeFee
           <img src={NetworksGlobeCircled} />
         </div>
         <div style={{ maxWidth: '350px' }}>
-          {activeFeedback.feedbackBody.map((entry) => {
+          {activeFeedback.feedbackBody.map((entry, idx) => {
             const key = Object.keys(entry)[0] as keyof FeedbackEntry;
+            const commonProps = {
+              key: `${key}${idx}`,
+            };
+
             switch (key) {
               case 'content':
                 return (
-                  <Padding x={0} v={1}>
+                  <Padding x={0} v={1} {...commonProps}>
                     <Typography className={'text'} style={{ wordWrap: 'break-word' }}>
                       {entry[key]}
                     </Typography>
@@ -50,12 +54,12 @@ const UnselectedNetworkView: React.FC<UnselectedNetworkViewProps> = ({ activeFee
                 );
               case 'header':
                 return (
-                  <Typography variant={'h3'} style={{ wordWrap: 'break-word' }}>
+                  <Typography variant={'h3'} style={{ wordWrap: 'break-word' }} {...commonProps}>
                     {entry[key]}
                   </Typography>
                 );
               case 'any':
-                return entry[key]?.() ?? null;
+                return <div {...commonProps}>{entry[key]?.() ?? null}</div>;
             }
           })}
         </div>

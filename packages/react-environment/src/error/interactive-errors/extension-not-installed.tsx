@@ -10,7 +10,7 @@ import { getPlatformMetaData, SupportedBrowsers } from '@webb-dapp/utils/platfor
 import React from 'react';
 //TODO : move to wallet config
 const metaMaskConfig = {
-  homeLink: 'https://https://metamask.io/',
+  homeLink: 'https://metamask.io/',
   installLinks: {
     [SupportedBrowsers.FireFox]: 'https://addons.mozilla.org/firefox/addon/ether-metamask/',
     [SupportedBrowsers.Chrome]:
