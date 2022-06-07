@@ -3,10 +3,8 @@
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import type { Backend, Curve } from '@webb-tools/wasm-utils';
-
 import { LoggerService } from '@webb-tools/app-util';
-import { Note, NoteGenInput, ProvingManager, ProvingManagerSetupInput } from '@webb-tools/sdk-core';
+import { ArkworksProvingManager, Note, NoteGenInput, ProvingManagerSetupInput } from '@webb-tools/sdk-core';
 
 import { decodeAddress } from '@polkadot/keyring';
 import { hexToU8a, u8aToHex } from '@polkadot/util';
@@ -14,28 +12,17 @@ import { hexToU8a, u8aToHex } from '@polkadot/util';
 import { DepositPayload as IDepositPayload, VAnchorDeposit, VAnchorSize } from '../abstracts';
 const logger = LoggerService.get('PolkadotVBridgeDeposit');
 
+import '@webb-tools/api-derive/index.js';
+
 import type { WebbPolkadot } from './webb-provider';
+
+import { createUtxo, createUtxoBn254CT2 } from '@webb-dapp/api-providers/utils';
 
 import { naclEncrypt, randomAsU8a } from '@polkadot/util-crypto';
 
 import { computeChainIdType, InternalChainId } from '../chains';
 import { WebbError, WebbErrorCodes } from '../webb-error';
 // TODO: export this from webb.js
-
-async function create_utxo(
-  curve: Curve,
-  backend: Backend,
-  input_size: number,
-  anchor_size: number,
-  amount: string,
-  chain_id: string,
-  index?: string,
-  private_key?: Uint8Array,
-  blinding?: Uint8Array
-) {
-  const wasm = await import('@webb-tools/wasm-utils');
-  return new wasm.JsUtxo(curve, backend, input_size, anchor_size, amount, chain_id, index, private_key, blinding);
-}
 
 // The Deposit Payload is the note and [treeId]
 type DepositPayload = IDepositPayload<Note, [number]>;
@@ -49,7 +36,7 @@ async function fetchSubstrateAnchorProvingKey() {
 
 export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, DepositPayload> {
   async generateBridgeNote(
-    vanchorId: string | number,
+    _vanchorId: string | number, // always Zero as there will be only one vanchor
     destination: number,
     amount: number,
     wrappableAssetAddress?: string
@@ -64,16 +51,13 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
     }
     const tokenSymbol = currency.view.symbol;
     const destChainId = destination;
-    // TODO: add mappers similar to evm chain id
-    // const chainId = this.inner.api.registry.chainSS58!;
+    // Chain id of the active API
     const chainId = await this.inner.api.consts.linkableTreeBn254.chainIdentifier;
     const chainType = await this.inner.api.consts.linkableTreeBn254.chainType;
     const sourceChainId = computeChainIdType(Number(chainType.toHex()), Number(chainId));
-    const anchorPath = String(vanchorId).replace('Bridge=', '').split('@');
-    const anchorIndex = anchorPath[2];
     const anchors = await this.bridgeApi.getVariableAnchors();
-    const anchor = anchors[Number(anchorIndex)];
-
+    const anchor = anchors[0];
+    // Tree id for the target chain
     const treeId = anchor.neighbours[InternalChainId.ProtocolSubstrateStandalone] as number;
 
     const noteInput: NoteGenInput = {
@@ -85,7 +69,7 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
       hashFunction: 'Poseidon',
       protocol: 'vanchor',
       sourceChain: sourceChainId.toString(),
-      sourceIdentifyingData: anchorIndex.toString(),
+      sourceIdentifyingData: String(0),
       targetChain: destChainId.toString(),
       targetIdentifyingData: treeId.toString(),
       tokenSymbol: tokenSymbol,
@@ -142,7 +126,7 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
 
     // output
     const output1 = note.getUtxo();
-    const output2 = await create_utxo('Bn254', 'Arkworks', 2, 2, '0', targetChainId, undefined);
+    const output2 = await createUtxoBn254CT2(2, '0', targetChainId, undefined);
     let publicAmount = note.amount;
     const inputNotes = note.defaultUtxoNote();
 
@@ -174,21 +158,43 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
       relayer: relayerAccountDecoded,
       roots: rootsSet,
       chainId: note.targetChainId,
-      indices: [0, 0],
+      indices: [0],
       inputNotes: [inputNotes.serialize()],
       publicAmount,
-      output: [output1, output2],
+      outputParams: [
+        {
+          amount: output1.amountRaw,
+          backend: 'Arkworks',
+          curve: 'Bn254',
+          blinding: hexToU8a(`0x${output1.blinding}`),
+          chainId: String(output1.chainIdRaw),
+          anchorSize: 2,
+          inputSize: 2,
+          privateKey: hexToU8a(`0x${output1.secret_key}`),
+        },
+        {
+          amount: output2.amountRaw,
+          backend: 'Arkworks',
+          curve: 'Bn254',
+          blinding: hexToU8a(`0x${output2.blinding}`),
+          chainId: String(output2.chainIdRaw),
+          anchorSize: 2,
+          inputSize: 2,
+          privateKey: hexToU8a(`0x${output2.secret_key}`),
+        },
+      ],
     };
 
     const worker = this.inner.wasmFactory('wasm-utils');
-    const pm = new ProvingManager(worker);
+    const pm = new ArkworksProvingManager(worker);
+    console.log(vanchorDepositSetup);
     const data = await pm.prove('vanchor', vanchorDepositSetup);
     const vanchorProofData = {
       proof: `0x${data.proof}`,
       publicAmount: data.publicAmount,
       roots: rootsSet,
       inputNullifiers: data.inputUtxos.map((input) => `0x${input.nullifier}`),
-      outputCommitments: data.outputNotes.map((note) => u8aToHex(note.getLeafCommitment())),
+      outputCommitments: data.outputNotes.map((note) => u8aToHex(note.getLeaf())),
       extDataHash: data.extDataHash,
     };
 
@@ -207,23 +213,11 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
     const insertedLeaf = note.getLeafCommitment();
     const leafIndex = await this.getleafIndex(insertedLeaf, indexBeforeInsertion, treeId);
     note.mutateIndex(String(leafIndex));
-    console.log(txHash);
+    console.log(txHash, leafIndex);
     // return Note.deserialize(note.serialize());
   }
 
-  async getSizes(): Promise<VAnchorSize[]> {
-    const fixedAnchors = await this.bridgeApi.getVariableAnchors();
-    const currency = this.bridgeApi.currency;
-
-    if (currency) {
-      return fixedAnchors.map((anchor, anchorIndex) => ({
-        amount: Number(anchor.amount),
-        asset: currency.view.symbol,
-        id: `Bridge=variable@${currency.view.name}@${anchorIndex}`,
-        title: `${anchor.amount} ${currency.view.name}`,
-      }));
-    }
-
+  async getSizes() {
     return [];
   }
 }

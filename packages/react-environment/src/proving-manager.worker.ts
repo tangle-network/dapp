@@ -1,3 +1,3 @@
-import { ProvingManagerWrapper } from '@webb-tools/sdk-core';
+import { ArkworksProvingManagerWrapper } from '@webb-tools/sdk-core';
 
-new ProvingManagerWrapper('worker');
+new ArkworksProvingManagerWrapper('worker');
