@@ -77,7 +77,7 @@ export const anchorsConfig: AppConfig['anchors'] = {
   [WebbCurrencyId.TEST]: [
     {
       anchorTreeIds: {
-        [InternalChainId.ProtocolSubstrateStandalone]: '8',
+        [InternalChainId.ProtocolSubstrateStandalone]: '9',
       },
       anchorAddresses: {},
       type: 'variable',

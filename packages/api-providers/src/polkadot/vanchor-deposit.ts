@@ -127,6 +127,7 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
     const recipientAccountDecoded = decodeAddress(accountId);
     const relayerAccountDecoded = decodeAddress(relayerAccountId);
 
+    // output note
     const { note } = depositPayload.note;
     const treeId = depositPayload.params[0];
     const targetChainId = note.targetChainId;
@@ -135,7 +136,7 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
     const output1 = note.getUtxo();
     const output2 = await createUtxoBn254CT2(2, '0', targetChainId, undefined);
     let publicAmount = note.amount;
-    const inputNotes = note.defaultUtxoNote();
+    const inputNote = note.defaultUtxoNote();
 
     const leavesMap: any = {};
     leavesMap[targetChainId] = [];
@@ -170,7 +171,7 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
       roots: rootsSet,
       chainId: note.targetChainId,
       indices: [0],
-      inputNotes: [inputNotes.serialize()],
+      inputNotes: [inputNote.serialize()],
       publicAmount,
       outputParams: [
         {
@@ -204,7 +205,7 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
       proof: `0x${data.proof}`,
       publicAmount: data.publicAmount,
       roots: rootsSet,
-      inputNullifiers: [inputNotes].map((input) => {
+      inputNullifiers: [inputNote].map((input) => {
         const utxo = input.getUtxo();
         return `0x${utxo.nullifier}`;
       }),
