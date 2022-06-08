@@ -2,7 +2,7 @@ import { useWebContext } from '@webb-dapp/react-environment/webb-context';
 import { useEffect, useState } from 'react';
 
 export const useNativeCurrencyBalance = () => {
-  const { activeApi, activeChain } = useWebContext();
+  const { activeAccount, activeApi, activeChain } = useWebContext();
 
   const [balance, setBalance] = useState('');
 
@@ -22,7 +22,7 @@ export const useNativeCurrencyBalance = () => {
     return () => {
       isSubscribed = false;
     };
-  }, [activeChain, activeApi, activeApi?.accounts.activeOrDefault]);
+  }, [activeChain, activeApi, activeAccount, activeApi?.accounts.activeOrDefault]);
 
   return balance;
 };
