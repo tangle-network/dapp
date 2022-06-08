@@ -15,6 +15,7 @@ import {
   NoteGenInput,
   ProofInterface,
   ProvingManagerSetupInput,
+  WasmUtxo,
 } from '@webb-tools/sdk-core';
 import { BigNumber } from 'ethers';
 
@@ -27,21 +28,24 @@ import { computeChainIdType, InternalChainId } from '../chains';
 import { WebbError, WebbErrorCodes } from '../webb-error';
 
 const logger = LoggerService.get('PolkadotVBridgeDeposit');
+
 export function currencyToUnitI128(currencyAmount: number) {
   let bn = BigNumber.from(currencyAmount);
   return bn.mul(1_000_000_000_000);
 }
+
 // TODO: export this from webb.js
 
 // The Deposit Payload is the note and [treeId]
 type DepositPayload = IDepositPayload<Note, [number]>;
+
 /**
  * Webb Anchor API implementation for Polkadot
  **/
 
 async function fetchSubstrateVAnchorProvingKey() {
   const IPFSUrl = 'https://ipfs.io/ipfs/QmZiNuAKp2QGp281bqasNqvqccPCGp4yoxWbK8feecefML';
-  const cachedURI = getCachedFixtureURI('proving_key_uncompressed_anchor.bin');
+  const cachedURI = getCachedFixtureURI('proving_key_uncompressed_sub_vanchor_2_2_2.bin');
   const ipfsKeyRequest = await fetch(withLocalFixtures() ? cachedURI : IPFSUrl);
   const circuitKeyArrayBuffer = await ipfsKeyRequest.arrayBuffer();
 
@@ -49,6 +53,28 @@ async function fetchSubstrateVAnchorProvingKey() {
   const circuitKey = new Uint8Array(circuitKeyArrayBuffer);
 
   return circuitKey;
+}
+
+async function generateVAnchorNote(amount: number, chainId: number, outputChainId: number, index?: number) {
+  const note = await Note.generateNote({
+    amount: String(amount),
+    backend: 'Arkworks',
+    curve: 'Bn254',
+    denomination: String(18),
+    exponentiation: String(5),
+    hashFunction: 'Poseidon',
+    index,
+    protocol: 'vanchor',
+    sourceChain: String(chainId),
+    sourceIdentifyingData: '1',
+    targetChain: String(outputChainId),
+    targetIdentifyingData: '1',
+    tokenSymbol: 'WEBB',
+    version: 'v2',
+    width: String(5),
+  });
+
+  return note;
 }
 
 async function fetchSubstrateVAAnchorVerifyingKey() {
@@ -66,6 +92,7 @@ async function verfyProof(data: ProofInterface<'vanchor'>, vk: Uint8Array) {
   const wasm = await import('@webb-tools/wasm-utils');
   return wasm.verify_js_proof(data.proof, data.publicInputs, u8aToHex(vk).replace('0x', ''), 'Bn254');
 }
+
 export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, DepositPayload> {
   async generateBridgeNote(
     _vanchorId: string | number, // always Zero as there will be only one vanchor
@@ -114,6 +141,7 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
       params: [treeId],
     };
   }
+
   private async getleafIndex(leaf: Uint8Array, indexBeforeInsertion: number, treeId: number): Promise<number> {
     const api = this.inner.api;
     /**
@@ -138,6 +166,7 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
     }
     return indexBeforeInsertion + shiftedIndex;
   }
+
   async deposit(depositPayload: DepositPayload, recipient: string): Promise<void> {
     // Getting the  active account
     const account = await this.inner.accounts.activeOrDefault;
@@ -159,7 +188,7 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
 
     // output
     const output1 = note.getUtxo();
-    const output2 = await createUtxoBn254CT2(2, '0', targetChainId, undefined);
+    const output2 = await WasmUtxo.new('Bn254', 'Arkworks', 2, 2, '0', targetChainId, undefined);
     let publicAmount = note.amount;
     const inputNote = note.defaultUtxoNote();
 
@@ -224,24 +253,17 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
 
     const worker = this.inner.wasmFactory('wasm-utils');
     const pm = new ArkworksProvingManager(worker);
-    const outputCommitments = [output1.commitment, output2.commitment];
     const data = await pm.prove('vanchor', vanchorDepositSetup);
-    const vk = await fetchSubstrateVAAnchorVerifyingKey();
-    const isValidProof = await verfyProof(data, vk);
-    console.log(`is valid proof ${isValidProof}`);
     const vanchorProofData = {
       proof: `0x${data.proof}`,
       publicAmount: data.publicAmount,
       roots: rootsSet,
-      inputNullifiers: [inputNote].map((input) => {
-        const utxo = input.getUtxo();
+      inputNullifiers: data.inputUtxos.map((utxo) => {
         return `0x${utxo.nullifier}`;
       }),
-      outputCommitments: outputCommitments.map((c) => u8aToHex(c)),
+      outputCommitments: data.outputNotes.map((note) => u8aToHex(note.getLeaf())),
       extDataHash: data.extDataHash,
     };
-    console.log([treeId, vanchorProofData, extData]);
-    // @ts-ignore
     const leafsCount = await this.inner.api.derive.merkleTreeBn254.getLeafCountForTree(Number(treeId));
     const indexBeforeInsertion = Math.max(leafsCount - 1, 0);
     const tx = this.inner.txBuilder.build(
