@@ -9,7 +9,14 @@ import type { WebbPolkadot } from './webb-provider';
 
 import { createUtxoBn254CT2, getCachedFixtureURI, withLocalFixtures } from '@webb-dapp/api-providers/utils';
 import { LoggerService } from '@webb-tools/app-util';
-import { ArkworksProvingManager, Note, NoteGenInput, ProvingManagerSetupInput } from '@webb-tools/sdk-core';
+import {
+  ArkworksProvingManager,
+  Note,
+  NoteGenInput,
+  ProofInterface,
+  ProvingManagerSetupInput,
+} from '@webb-tools/sdk-core';
+import { BigNumber } from 'ethers';
 
 import { decodeAddress } from '@polkadot/keyring';
 import { hexToU8a, u8aToHex } from '@polkadot/util';
@@ -20,7 +27,10 @@ import { computeChainIdType, InternalChainId } from '../chains';
 import { WebbError, WebbErrorCodes } from '../webb-error';
 
 const logger = LoggerService.get('PolkadotVBridgeDeposit');
-
+export function currencyToUnitI128(currencyAmount: number) {
+  let bn = BigNumber.from(currencyAmount);
+  return bn.mul(1_000_000_000_000);
+}
 // TODO: export this from webb.js
 
 // The Deposit Payload is the note and [treeId]
@@ -31,7 +41,7 @@ type DepositPayload = IDepositPayload<Note, [number]>;
 
 async function fetchSubstrateVAnchorProvingKey() {
   const IPFSUrl = 'https://ipfs.io/ipfs/QmZiNuAKp2QGp281bqasNqvqccPCGp4yoxWbK8feecefML';
-  const cachedURI = getCachedFixtureURI('proving_key_uncompressed_vanchor_2_2_2.bin');
+  const cachedURI = getCachedFixtureURI('proving_key_uncompressed_anchor.bin');
   const ipfsKeyRequest = await fetch(withLocalFixtures() ? cachedURI : IPFSUrl);
   const circuitKeyArrayBuffer = await ipfsKeyRequest.arrayBuffer();
 
@@ -41,6 +51,21 @@ async function fetchSubstrateVAnchorProvingKey() {
   return circuitKey;
 }
 
+async function fetchSubstrateVAAnchorVerifyingKey() {
+  const cachedURI = getCachedFixtureURI('vanchor_sub_vk_un_2_2_2.bin');
+  const ipfsKeyRequest = await fetch(cachedURI);
+  const circuitKeyArrayBuffer = await ipfsKeyRequest.arrayBuffer();
+
+  logger.info('Done Fetching key');
+  const circuitKey = new Uint8Array(circuitKeyArrayBuffer);
+
+  return circuitKey;
+}
+
+async function verfyProof(data: ProofInterface<'vanchor'>, vk: Uint8Array) {
+  const wasm = await import('@webb-tools/wasm-utils');
+  return wasm.verify_js_proof(data.proof, data.publicInputs, u8aToHex(vk).replace('0x', ''), 'Bn254');
+}
 export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, DepositPayload> {
   async generateBridgeNote(
     _vanchorId: string | number, // always Zero as there will be only one vanchor
@@ -68,7 +93,7 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
     const treeId = anchor.neighbours[InternalChainId.ProtocolSubstrateStandalone] as number;
 
     const noteInput: NoteGenInput = {
-      amount: String(amount),
+      amount: currencyToUnitI128(amount).toString(),
       backend: 'Arkworks',
       curve: 'Bn254',
       denomination: '18',
@@ -156,7 +181,7 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
       relayer: accountId,
       recipient: relayerAccountId,
       fee: 0,
-      extAmount: Number(publicAmount),
+      extAmount: BigNumber.from(publicAmount),
       encryptedOutput1: u8aToHex(comEnc1),
       encryptedOutput2: u8aToHex(comEnc2),
     };
@@ -201,6 +226,9 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
     const pm = new ArkworksProvingManager(worker);
     const outputCommitments = [output1.commitment, output2.commitment];
     const data = await pm.prove('vanchor', vanchorDepositSetup);
+    const vk = await fetchSubstrateVAAnchorVerifyingKey();
+    const isValidProof = await verfyProof(data, vk);
+    console.log(`is valid proof ${isValidProof}`);
     const vanchorProofData = {
       proof: `0x${data.proof}`,
       publicAmount: data.publicAmount,
