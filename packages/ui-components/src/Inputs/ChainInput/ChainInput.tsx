@@ -5,12 +5,15 @@ import { ChainTypeId, chainTypeIdToInternalId } from '@webb-dapp/api-providers';
 import { chainsPopulated } from '@webb-dapp/apps/configs';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
+import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { NetworkManager } from '@webb-dapp/ui-components/NetworkManger/NetworkManager';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { above, useBreakpoint } from '@webb-dapp/ui-components/utils/responsive-utils';
 import React, { CSSProperties, useEffect, useMemo, useRef, useState } from 'react';
 import styled, { css } from 'styled-components';
+
+import ChainSelection from '../ChainSelection/ChainSelection';
 
 const StyledList = styled.ul`
   li {
@@ -133,6 +136,7 @@ const ChainName = styled.span`
   white-space: nowrap;
   width: 100%;
 `;
+
 const DropdownInput: React.FC<DropdownInputProps> = ({ chains, onChange, value }) => {
   useEffect(() => {
     if (value && !chains.includes(value)) {
@@ -237,48 +241,14 @@ const DropdownInput: React.FC<DropdownInputProps> = ({ chains, onChange, value }
                 </IconButton>
               </div>
             </div>
-            <Popper
-              style={{
-                width: $wrapper.current?.offsetWidth,
-              }}
-              placement={'bottom-end'}
-              open={isOpen}
-              anchorEl={$wrapper?.current}
-            >
-              <PopperList open={isOpen}>
-                <StyledList as={List} dense disablePadding>
-                  {chains.map((chainTypeId) => {
-                    const isSelected = selected?.id === chainTypeId;
-                    let chain = chainsPopulated[chainTypeIdToInternalId(chainTypeId)];
-                    return (
-                      <li
-                        role={'button'}
-                        onClick={() => {
-                          setIsOpen(false);
-                          onChange(chainTypeId);
-                        }}
-                        className={isSelected ? 'selected' : ''}
-                        key={`${chainTypeId.chainId}-chain-input`}
-                      >
-                        <Flex ai='center' row flex={1}>
-                          <ListItemAvatar>
-                            <Avatar style={{ background: 'transparent' }} children={<chain.logo />} />
-                          </ListItemAvatar>
-                          <ListItemText>
-                            <Typography variant={'h6'} component={'span'} display={'block'}>
-                              <b>{chain.name}</b>
-                            </Typography>
-                            <Typography variant={'body2'} color={'textSecondary'}>
-                              <ChainName>{chain.name}</ChainName>
-                            </Typography>
-                          </ListItemText>
-                        </Flex>
-                      </li>
-                    );
-                  })}
-                </StyledList>
-              </PopperList>
-            </Popper>
+            <Modal open={isOpen} hasBlur onClose={() => setIsOpen(false)}>
+              <ChainSelection
+                chainTypeIds={chains}
+                onClose={() => setIsOpen(false)}
+                selectedChain={selected?.chain}
+                onChange={onChange}
+              />
+            </Modal>
           </InputWrapper>
         </ClickAwayListener>
       </div>

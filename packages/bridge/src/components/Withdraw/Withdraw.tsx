@@ -38,7 +38,7 @@ const WithdrawWrapper = styled.div<{ wallet: WalletConfig | undefined }>`
       `;
     }
   }}
-  background: ${({ theme }) => theme.lightSelectionBackground};
+  background: ${({ theme }) => theme.layer1Background};
   border-radius: 10px;
 
   .titles-and-information {
