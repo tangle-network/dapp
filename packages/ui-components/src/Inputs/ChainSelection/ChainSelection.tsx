@@ -18,6 +18,7 @@ const ChainSelectionWrapper = styled.div`
   padding: 12px 18px;
   margin: 0 auto;
   width: 80vw;
+  min-height: 40vh;
   max-height: 50vh;
 
   ${above.sm`

@@ -1,4 +1,4 @@
-import { Avatar, ClickAwayListener, IconButton, List, ListItemAvatar, ListItemText, Popper } from '@material-ui/core';
+import { Avatar, ClickAwayListener, IconButton } from '@material-ui/core';
 import Icon from '@material-ui/core/Icon';
 import Typography from '@material-ui/core/Typography';
 import { ChainTypeId, chainTypeIdToInternalId } from '@webb-dapp/api-providers';
@@ -14,22 +14,6 @@ import React, { CSSProperties, useEffect, useMemo, useRef, useState } from 'reac
 import styled, { css } from 'styled-components';
 
 import ChainSelection from '../ChainSelection/ChainSelection';
-
-const StyledList = styled.ul`
-  li {
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    padding: 5px;
-
-    &.selected,
-    :hover {
-      background: ${({ theme }: { theme: Pallet }) => theme.heavySelectionBackground};
-    }
-
-    position: relative;
-  }
-`;
 
 const InputWrapper = styled.div<{ open: boolean }>`
   border-radius: 8px;
@@ -95,47 +79,11 @@ const InputWrapper = styled.div<{ open: boolean }>`
   }
 `;
 
-const PopperList = styled.div<{ open: boolean }>`
-  ${StyledList} {
-    overflow: hidden;
-    border-radius: 0px 0px 25px 25px;
-    border: 1px solid ${({ theme }) => (theme.type === 'dark' ? 'black' : theme.gray13)};
-    background: ${({ theme }: { theme: Pallet }) => theme.componentBackground};
-    overflow: hidden;
-
-    ${({ open }) => {
-      return open
-        ? css`
-            max-height: 200px;
-            overflow-y: auto;
-          `
-        : css`
-            padding: 0 !important;
-            margin: 0 !important;
-            max-height: 0px !important;
-          `;
-    }}
-
-    li {
-      padding-top: 10px;
-      background: ${({ theme }: { theme: Pallet }) => theme.heavySelectionBackground};
-    }
-  }
-`;
-
 type DropdownInputProps = {
   chains: ChainTypeId[];
   value?: ChainTypeId;
   onChange(next: ChainTypeId | undefined): void;
 };
-
-const ChainName = styled.span`
-  display: inline-block;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  width: 100%;
-`;
 
 const DropdownInput: React.FC<DropdownInputProps> = ({ chains, onChange, value }) => {
   useEffect(() => {
