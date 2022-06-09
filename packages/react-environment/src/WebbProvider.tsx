@@ -188,26 +188,37 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
   /// callback for setting active account
   /// it will store on the provider and the storage of the network
   const setActiveAccount = useCallback(
-    async (account: Account<any>) => {
-      if (networkStorage && activeChain) {
-        const networksConfig = await networkStorage.get('networksConfig');
-        networkStorage?.set('networksConfig', {
+    async (
+      account: Account<any>,
+      options: {
+        networkStorage?: NetworkStorage | undefined | null;
+        chain?: Chain | undefined;
+        activeApi?: WebbApiProvider<any> | undefined;
+      } = {}
+    ) => {
+      const innerNetworkStorage = options.networkStorage ?? networkStorage;
+      const innerChain = options.chain ?? activeChain;
+      const innerActiveApi = options.activeApi ?? activeApi;
+
+      if (innerNetworkStorage && innerChain) {
+        const networksConfig = await innerNetworkStorage.get('networksConfig');
+        innerNetworkStorage?.set('networksConfig', {
           ...networksConfig,
-          [activeChain.id]: {
-            ...networksConfig[activeChain.id],
+          [innerChain.id]: {
+            ...networksConfig[innerChain.id],
             defaultAccount: account.address,
           },
         });
       }
 
-      if (!activeApi) {
+      if (!innerActiveApi) {
         return;
       }
       _setActiveAccount(account);
       // TODO resolve the account inner type issue
-      await activeApi.accounts.setActiveAccount(account as any);
+      await innerActiveApi.accounts.setActiveAccount(account as any);
     },
-    [activeApi, networkStorage, activeChain]
+    [activeApi, activeChain, networkStorage]
   );
 
   /// Forcefully tell react to rerender the application with api change
@@ -223,26 +234,32 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
   /// this will set the active api and the accounts
   const setActiveApiWithAccounts = async (
     nextActiveApi: WebbApiProvider<any> | undefined,
-    chainId: number
+    chain: Chain,
+    _networkStorage?: NetworkStorage | null
   ): Promise<void> => {
     if (nextActiveApi) {
+      let hasSetFromStorage = false;
       const accounts = await nextActiveApi.accounts.accounts();
       // TODO resolve the account inner type issue
       setAccounts(accounts as any);
 
-      if (networkStorage) {
-        const networkDefaultConfig = await networkStorage.get('networksConfig');
-        let defaultAccount = networkDefaultConfig?.[chainId]?.defaultAccount;
+      if (_networkStorage) {
+        const networkDefaultConfig = await _networkStorage.get('networksConfig');
+        let defaultAccount = networkDefaultConfig?.[chain.id]?.defaultAccount;
         defaultAccount = defaultAccount ?? accounts[0]?.address;
         const defaultFromSettings = accounts.find((account) => account.address === defaultAccount);
         if (defaultFromSettings) {
           // TODO resolve the account inner type issue
           _setActiveAccount(defaultFromSettings as any);
           await nextActiveApi.accounts.setActiveAccount(defaultFromSettings);
+          hasSetFromStorage = true;
         }
-      } else {
-        // await setActiveAccount(accounts[0]);
       }
+
+      if (!hasSetFromStorage) {
+        await setActiveAccount(accounts[0], { networkStorage: _networkStorage, chain, activeApi: nextActiveApi });
+      }
+
       setActiveApi(nextActiveApi);
       nextActiveApi?.on('newAccounts', async (accounts) => {
         const acs = await accounts.accounts();
@@ -269,6 +286,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
       _setActiveAccount(null);
     }
   };
+
   /// Error handler for the `WebbError`
   const catchWebbError = (e: WebbError) => {
     const errorMessage = e.errorMessage;
@@ -310,8 +328,9 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
         alert(code);
     }
   };
+
   /// Network switcher
-  const switchChain = async (chain: Chain, _wallet: Wallet) => {
+  const switchChain = async (chain: Chain, _wallet: Wallet, _networkStorage?: NetworkStorage | undefined) => {
     const relayerManagerFactory = await getRelayerManagerFactory(appConfig);
 
     const wallet = _wallet || activeWallet;
@@ -342,7 +361,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
               notificationHandler,
               () => new Worker(new URL('./proving-manager.worker', import.meta.url))
             );
-            await setActiveApiWithAccounts(webbPolkadot, chain.id);
+            await setActiveApiWithAccounts(webbPolkadot, chain, _networkStorage ?? networkStorage);
             localActiveApi = webbPolkadot;
             setLoading(false);
           }
@@ -442,6 +461,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
             webbWeb3Provider.on('providerUpdate', providerUpdateHandler);
 
             webbWeb3Provider.setChainListener();
+            webbWeb3Provider.setAccountListener();
             const cantAddChain = !chain.chainId && !chain.evmRpcUrls;
             const addEvmChain = async () => {
               if (cantAddChain) {
@@ -494,7 +514,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
               await addEvmChain();
             }
 
-            await setActiveApiWithAccounts(webbWeb3Provider, chain.id);
+            await setActiveApiWithAccounts(webbWeb3Provider, chain, _networkStorage ?? networkStorage);
             /// listen to `providerUpdate` by MetaMask
             localActiveApi = webbWeb3Provider;
 
@@ -518,6 +538,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
       return null;
     }
   };
+
   /// a util will store the network/wallet config before switching
   const switchChainAndStore = async (chain: Chain, wallet: Wallet) => {
     const provider = await switchChain(chain, wallet);
@@ -534,12 +555,12 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
     /// init the dApp
     const init = async () => {
       setIsConnecting(true);
-      const networkStorage = await netStorageFactory();
-      setNetworkStorage(networkStorage);
+      const _networkStorage = await netStorageFactory();
+      setNetworkStorage(_networkStorage);
       /// get the default wallet and network from storage
       const [net, wallet] = await Promise.all([
-        networkStorage.get('defaultNetwork'),
-        networkStorage.get('defaultWallet'),
+        _networkStorage.get('defaultNetwork'),
+        _networkStorage.get('defaultWallet'),
       ]);
       /// if there's no chain, return
       if (!net || !wallet) {
@@ -549,8 +570,8 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
       const chainConfig = chains[net];
       // wallet config by chain
       const walletConfig = chainConfig.wallets[wallet] || Object.values(chainConfig)[0];
-      const activeApi = await switchChain(chainConfig, walletConfig);
-      const networkDefaultConfig = await networkStorage.get('networksConfig');
+      const activeApi = await switchChain(chainConfig, walletConfig, _networkStorage);
+      const networkDefaultConfig = await _networkStorage.get('networksConfig');
 
       if (activeApi) {
         const accounts = await activeApi.accounts.accounts();
@@ -561,7 +582,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
         if (defaultFromSettings) {
           _setActiveAccount(defaultFromSettings);
           await activeApi.accounts.setActiveAccount(defaultFromSettings);
-          networkStorage?.set('networksConfig', {
+          _networkStorage?.set('networksConfig', {
             ...networkDefaultConfig,
             [chainConfig.id]: {
               ...chainConfig,
@@ -590,6 +611,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
   return (
     <WebbContext.Provider
       value={{

@@ -110,6 +110,16 @@ export class WebbWeb3Provider
     this.ethersProvider.provider?.on?.('chainChanged', handler);
   }
 
+  async setAccountListener() {
+    const handler = async () => {
+      this.emit('newAccounts', this.accounts);
+    };
+
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    this.ethersProvider.provider?.on?.('accountsChanged', handler);
+  }
+
   async destroy(): Promise<void> {
     await this.endSession();
     this.subscriptions = {
