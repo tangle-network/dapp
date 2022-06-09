@@ -8,6 +8,7 @@ import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { NetworkManager } from '@webb-dapp/ui-components/NetworkManger/NetworkManager';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
+import { above, useBreakpoint } from '@webb-dapp/ui-components/utils/responsive-utils';
 import React, { CSSProperties, useEffect, useMemo, useRef, useState } from 'react';
 import styled, { css } from 'styled-components';
 
@@ -48,10 +49,46 @@ const InputWrapper = styled.div<{ open: boolean }>`
     display: flex;
     align-items: center;
     padding: 5px;
+
+    ${above.xs`
+      padding: 8px 12px;
+    `}
   }
 
   .account-button-wrapper {
     margin: -20px 0;
+  }
+
+  .token-avatar {
+    width: 26px;
+    height: 26px;
+
+    ${above.xs`
+      width: 32px;
+      height: 32px;
+    `}
+  }
+
+  .chain-text {
+    max-width: 54px;
+    margin-left: 4px;
+
+    ${above.xs`
+      max-width: none;
+      margin-left: 0px;
+    `}
+
+    * {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+
+      ${above.xs`
+        overflow: auto;
+        white-space: normal;
+        text-overflow: clip;
+      `}
+    }
   }
 `;
 
@@ -117,9 +154,13 @@ const DropdownInput: React.FC<DropdownInputProps> = ({ chains, onChange, value }
       chain: chainsPopulated[chainTypeIdToInternalId(value)],
     };
   }, [value]);
+
   const $wrapper = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
   const theme = useColorPallet();
+
+  const { isXsOrAbove } = useBreakpoint();
+
   return (
     <>
       <div>
@@ -142,10 +183,15 @@ const DropdownInput: React.FC<DropdownInputProps> = ({ chains, onChange, value }
                     children={<selected.chain.logo />}
                     className={'token-avatar'}
                   />
-                  <Padding x={0.5} />
-                  <div>
-                    <Typography variant={'h6'} component={'span'} display={'block'}>
-                      <b>{selected.chain.name}</b>
+                  {isXsOrAbove && <Padding x={0.5} />}
+                  <div className='chain-text'>
+                    <Typography
+                      variant={isXsOrAbove ? 'subtitle1' : 'caption'}
+                      component={'span'}
+                      display={'block'}
+                      style={{ fontWeight: '700' }}
+                    >
+                      {selected.chain.name}
                     </Typography>
                   </div>
                 </Flex>
@@ -155,27 +201,29 @@ const DropdownInput: React.FC<DropdownInputProps> = ({ chains, onChange, value }
                     style={{
                       background: theme.warning,
                     }}
+                    className={'token-avatar'}
                   >
                     <Icon
                       style={{
                         color: '#fff',
                       }}
-                      fontSize={'large'}
+                      fontSize={isXsOrAbove ? 'large' : 'medium'}
                     >
                       generating_tokens
                     </Icon>
                   </Avatar>
-                  <Padding x={0.5} />
-                  <Flex jc={'center'}>
-                    <Typography variant={'caption'} color={'textSecondary'} style={{ whiteSpace: 'nowrap' }}>
+                  {isXsOrAbove && <Padding x={0.5} />}
+                  <div className='chain-text'>
+                    <Typography display='block' variant={isXsOrAbove ? 'subtitle1' : 'caption'} color={'textSecondary'}>
                       Select chain
                     </Typography>
-                  </Flex>
+                  </div>
                 </Flex>
               )}
 
               <div className={'account-button-wrapper'}>
                 <IconButton
+                  size='small'
                   style={{
                     transform: isOpen ? 'rotate(180deg)' : 'rotate(0)',
                     transition: 'all ease .3s',

@@ -22,6 +22,7 @@ import { TokenInput } from '@webb-dapp/ui-components/Inputs/TokenInput/TokenInpu
 import CircledArrowRight from '@webb-dapp/ui-components/misc/CircledArrowRight';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { getRoundedAmountString } from '@webb-dapp/ui-components/utils';
+import { above, useBreakpoint } from '@webb-dapp/ui-components/utils/responsive-utils';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
@@ -41,21 +42,32 @@ const DepositWrapper = styled.div<{ wallet: WalletConfig | undefined }>`
 `;
 
 const ChainInputWrapper = styled.div`
-  padding: 25px 35px;
+  padding: 12px 14px;
   background: ${({ theme }) => theme.layer1Background};
-  border: 1px solid ${({ theme }) => theme.borderColor};
   border-bottom: none;
 
   .chain-dropdown-section {
     display: flex;
     justify-content: space-between;
+    align-items: center;
   }
+
+  ${above.xs`
+    padding: 25px 35px;
+  `}
 `;
+
 const TokenInputWrapper = styled.div`
-  padding: 25px 35px;
+  padding: 12px 14px;
   background: ${({ theme }) => theme.layer2Background};
-  border-radius: 0px 0px 13px 13px;
-  border: 1px solid ${({ theme }) => theme.borderColor};
+  border-radius: 8px;
+  border: 0.5px solid ${({ theme }) => theme.borderColor};
+
+  ${above.xs`
+    border-radius: 16px;
+    border-width: 1px;
+    padding: 25px 35px;
+  `}
 
   .titles-and-information {
     display: flex;
@@ -68,6 +80,7 @@ const TokenInputWrapper = styled.div`
     display: flex;
     width: 100%;
     justify-content: space-between;
+    align-items: center;
     margin-bottom: 20px;
   }
 `;
@@ -98,6 +111,7 @@ export const Deposit: React.FC<DepositProps> = () => {
   const { setWrappableToken, wrappableToken, wrappableTokens } = useWrapUnwrap();
   const { activeApi, activeChain, activeWallet, chains, loading, switchChain } = useWebContext();
   const palette = useColorPallet();
+  const { isXsOrAbove } = useBreakpoint();
 
   const srcChain = useMemo(() => {
     if (!activeChain) {
@@ -222,9 +236,10 @@ export const Deposit: React.FC<DepositProps> = () => {
               </Typography>
             </div>
             <FormControlLabel
-              label={'Wrap Assets?'}
+              label={<Typography variant='h6'>Wrap Assets?</Typography>}
               control={
                 <Checkbox
+                  size={isXsOrAbove ? 'medium' : 'small'}
                   checked={showWrappableAssets}
                   onChange={() => {
                     setShowWrappableAssets(!showWrappableAssets);

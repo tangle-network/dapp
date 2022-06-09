@@ -3,6 +3,8 @@ import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import React, { useCallback, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
+import { above } from '../utils/responsive-utils';
+
 type MixerTabsProps = {
   Deposit: JSX.Element;
   Withdraw: JSX.Element;
@@ -11,9 +13,13 @@ type MixerTabsProps = {
 const ContentWrapper = styled.div`
   max-width: 500px;
   margin: auto;
-  border-radius: 8px;
+  border-radius: 0px 0px 8px 8px;
   ${({ theme }: { theme: Pallet }) => css`
     background: ${theme.layer1Background};
+  `}
+
+  ${above.xs`
+    border-radius: 0px 0px 16px 16px;
   `}
 `;
 
@@ -22,10 +28,12 @@ const TabHeader = styled.header`
   align-items: center;
   max-width: 500px;
   margin: auto;
+  border: 0.5px solid ${({ theme }) => theme.borderColor};
+  border-radius: 16px 16px 0px 0px;
 `;
 
 const TabButton = styled.button<{ active?: boolean }>`
-  width: 50%;
+  width: ${({ active }) => (active ? '60%' : '40%')};
   display: flex;
   height: 46px;
   cursor: pointer;
@@ -33,49 +41,36 @@ const TabButton = styled.button<{ active?: boolean }>`
   justify-content: center;
   transition: all 0.4s ease-in-out;
 
+  ${above.xs`
+    width: 50%;
+  `}
+
   .mixer-tab-label {
     font-size: 16px;
+    font-weight: ${({ active }) => (active ? '800' : 'normal')};
     color: ${({ active, theme }) => {
       return !active ? theme.primaryText : theme.type === 'dark' ? theme.accentColor : '#000000';
     }};
   }
 
+  background: transparent;
+  border-radius: 16px 16px 0px 0px;
+
   ${({ active, theme }) => {
     if (active) {
       if (theme.type === 'dark') {
         return css`
-          background: #131313;
-          border-right: 1px solid ${theme.accentColor};
-          border-top: 1px solid ${theme.accentColor};
-          border-left: 1px solid ${theme.accentColor};
+          border: 2px solid ${theme.accentColor};
         `;
       } else {
         return css`
-          background: #ffffff;
-          border-right: 1px solid #000000;
-          border-top: 1px solid #000000;
-          border-left: 1px solid #000000;
+          border: 1px solid #000;
         `;
       }
-    } else {
-      return css`
-        background: transparent;
-        border-right: 1px solid ${theme.borderColor};
-        border-top: 1px solid ${theme.borderColor};
-        border-left: 1px solid ${theme.borderColor};
-      `;
     }
   }}
 
-  ${({ active, theme }) => {
-    if (active) {
-      return css`
-        border-right: 1px solid #${theme.accentColor};
-      `;
-    }
-  }}
-
-  border-radius: 12px 12px 0px 0px;
+  border-bottom: none;
 `;
 
 export const MixerTabs: React.FC<MixerTabsProps> = ({ Deposit, Withdraw }) => {
