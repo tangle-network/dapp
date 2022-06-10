@@ -14,6 +14,11 @@ import { ContributePayload, Crowdloan, CrowdloanEvent } from './crowdloan';
 import { DepositPayload, MixerDeposit, MixerDepositEvents, MixerWithdraw, WebbWithdrawEvents } from './mixer';
 import { WrapUnwrap } from './wrap-unwrap';
 
+export interface RelayChainMethods<T extends WebbApiProvider<any>> {
+  // Crowdloan API
+  crowdloan: WebbCrowdloan<T>;
+}
+
 /// list of the apis that are available for  the provider
 export interface WebbMethods<T extends WebbApiProvider<any>> {
   // Mixer API
@@ -32,8 +37,6 @@ export interface WebbMethods<T extends WebbApiProvider<any>> {
   // Since a bridge is just the connection between LinkableAnchors,
   // It also contains information about the Bridge API.
   anchorApi: AnchorApi<T, any>;
-  // Crowdloan API
-  crowdloan: WebbCrowdloan<T>;
 }
 
 export type WebbMethod<T extends EventBus<K>, K extends Record<string, unknown>> = {
@@ -202,6 +205,7 @@ export type WasmFactory = (name?: string) => Worker | null;
 export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
   accounts: AccountsAdapter<any>;
   methods: WebbMethods<WebbApiProvider<T>>;
+  relayChainMethods: RelayChainMethods<WebbApiProvider<T>> | null;
 
   destroy(): Promise<void> | void;
 

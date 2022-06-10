@@ -26,8 +26,7 @@ export class PolkadotCrowdloan extends Crowdloan<WebbPolkadot, ContributePayload
         method: 'contribute',
       },
       [
-        // TODO: Replace with proper parachain ID
-        2020,
+        contributePayload.parachainId,
         contributePayload.amount,
         undefined, // required
       ]

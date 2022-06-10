@@ -6,6 +6,7 @@ import { EventBus } from '@webb-tools/app-util';
 import { ApiPromise } from '@polkadot/api';
 import { InjectedAccount, InjectedExtension } from '@polkadot/extension-inject/types';
 
+import { RelayChainMethods } from '../abstracts';
 import { AccountsAdapter } from '../account/Accounts.adapter';
 import { PolkadotProvider } from '../ext-providers';
 import { ActionsBuilder, InteractiveFeedback, WebbError, WebbErrorCodes } from '../webb-error';
@@ -34,6 +35,7 @@ import { PolkadotWrapUnwrap } from './wrap-unwrap';
 
 export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbApiProvider<WebbPolkadot> {
   readonly methods: WebbMethods<WebbPolkadot>;
+  readonly relayChainMethods: RelayChainMethods<WebbPolkadot>;
   readonly api: ApiPromise;
   readonly txBuilder: PolkaTXBuilder;
 
@@ -56,15 +58,17 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
     this.accounts = this.provider.accounts;
     this.api = this.provider.api;
     this.txBuilder = this.provider.txBuilder;
-    this.methods = {
-      anchorApi: new PolkadotAnchorApi(this, this.config.bridgeByAsset),
-      chainQuery: new PolkadotChainQuery(this),
+    this.relayChainMethods = {
       crowdloan: {
         contribute: {
           enabled: true,
           inner: new PolkadotCrowdloan(this),
         },
       },
+    };
+    this.methods = {
+      anchorApi: new PolkadotAnchorApi(this, this.config.bridgeByAsset),
+      chainQuery: new PolkadotChainQuery(this),
       fixedAnchor: {
         deposit: {
           enabled: true,

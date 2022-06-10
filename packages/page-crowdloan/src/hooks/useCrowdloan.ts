@@ -28,7 +28,7 @@ export function useCrowdloan() {
   const { amount } = state;
 
   const crowdloanApi = useMemo(() => {
-    const crowdloanApi = activeApi?.methods.crowdloan.contribute;
+    const crowdloanApi = activeApi?.relayChainMethods?.crowdloan.contribute;
     if (!crowdloanApi?.enabled) {
       return null;
     }
@@ -40,7 +40,11 @@ export function useCrowdloan() {
       return;
     }
 
-    crowdloanApi?.contribute(amount);
+    crowdloanApi?.contribute({
+      // TODO: Change to proper parachain ID
+      parachainId: '2000',
+      amount,
+    });
   }, [crowdloanApi, amount]);
 
   const setAmount = (amount: number) => {
