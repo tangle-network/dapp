@@ -29,7 +29,7 @@ const TransferWrapper = styled.div`
   }}
 `;
 
-const AmountInputWrapper = styled.div`
+export const AmountInputWrapper = styled.div`
   display: flex;
   ${({ theme }: { theme: Pallet }) => css`
     border: 1px solid ${theme.heavySelectionBorderColor};
@@ -43,7 +43,7 @@ const AmountInputWrapper = styled.div`
   justify-content: space-between;
 `;
 
-const AmountButton = styled.button``;
+export const AmountButton = styled.button``;
 
 const TabHeader = styled.header`
   display: flex;

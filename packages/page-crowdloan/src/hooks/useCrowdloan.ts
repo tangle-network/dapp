@@ -24,20 +24,24 @@ export function useCrowdloan() {
     amount: 0,
     contributor: null,
   });
-  const { amount, contributor } = state;
-  const { currencies: currenciesConfig } = useAppConfig();
-  const contributeApi = useMemo(() => {
-    // const w = activeApi?.methods.crowdloan;
-    return null;
-  }, []);
+
+  const { amount } = state;
+
+  const crowdloanApi = useMemo(() => {
+    const crowdloanApi = activeApi?.methods.crowdloan.contribute;
+    if (!crowdloanApi?.enabled) {
+      return null;
+    }
+    return crowdloanApi.inner;
+  }, [activeApi]);
 
   const execute = useCallback(() => {
     if (!amount) {
       return;
     }
 
-    // return contributeApi?.contribute({ amount });
-  }, [amount]);
+    crowdloanApi?.contribute(amount);
+  }, [crowdloanApi, amount]);
 
   const setAmount = (amount: number) => {
     setState((p) => ({ ...p, amount }));

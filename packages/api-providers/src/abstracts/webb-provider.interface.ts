@@ -10,6 +10,7 @@ import { WebbRelayerManager } from './relayer/webb-relayer-manager';
 import { AnchorDeposit, AnchorWithdraw, VAnchorDeposit } from './anchor';
 import { ChainQuery } from './chain-query';
 import { AppConfig } from './common';
+import { Crowdloan, CrowdloanAmount, CrowdloanEvent } from './crowdloan';
 import { DepositPayload, MixerDeposit, MixerDepositEvents, MixerWithdraw, WebbWithdrawEvents } from './mixer';
 import { WrapUnwrap } from './wrap-unwrap';
 
@@ -31,6 +32,8 @@ export interface WebbMethods<T extends WebbApiProvider<any>> {
   // Since a bridge is just the connection between LinkableAnchors,
   // It also contains information about the Bridge API.
   anchorApi: AnchorApi<T, any>;
+  // Crowdloan API
+  crowdloan: WebbCrowdloan<T>;
 }
 
 export type WebbMethod<T extends EventBus<K>, K extends Record<string, unknown>> = {
@@ -58,6 +61,11 @@ export interface WebbVariableAnchor<T extends WebbApiProvider<any>> {
   deposit: WebbMethod<VAnchorDeposit<T, DepositPayload>, MixerDepositEvents>;
   // withdraw
   withdraw: WebbMethod<VAnchorWithdraw<T>, WebbWithdrawEvents>;
+}
+
+export interface WebbCrowdloan<T extends WebbApiProvider<any>> {
+  // contribute
+  contribute: WebbMethod<Crowdloan<T, CrowdloanAmount>, CrowdloanEvent>;
 }
 
 export interface WrapAndUnwrap<T> {

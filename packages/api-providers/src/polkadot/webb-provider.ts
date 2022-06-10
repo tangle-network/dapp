@@ -23,6 +23,7 @@ import { PolkadotAnchorApi } from './anchor-api';
 import { PolkadotAnchorDeposit } from './anchor-deposit';
 import { PolkadotAnchorWithdraw } from './anchor-withdraw';
 import { PolkadotChainQuery } from './chain-query';
+import { PolkadotCrowdloan } from './crowdloan';
 import { PolkadotMixerDeposit } from './mixer-deposit';
 import { PolkadotMixerWithdraw } from './mixer-withdraw';
 import { PolkadotRelayerManager } from './relayer-manager';
@@ -58,6 +59,12 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
     this.methods = {
       anchorApi: new PolkadotAnchorApi(this, this.config.bridgeByAsset),
       chainQuery: new PolkadotChainQuery(this),
+      crowdloan: {
+        contribute: {
+          enabled: true,
+          inner: new PolkadotCrowdloan(this),
+        },
+      },
       fixedAnchor: {
         deposit: {
           enabled: true,
@@ -134,7 +141,7 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
     }
   }
 
-  private async insureApiInterface() {
+  private async ensureApiInterface() {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     const merkleRPC = Boolean(this.api.rpc.mt.getLeaves);
@@ -148,7 +155,7 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
   }
 
   static async init(
-    appName: string, // App name Arbitrary name
+    appName: string, // App name, arbitrary name
     endpoints: string[], // Endpoints of the substrate node
     errorHandler: ApiInitHandler, // Error handler that will be used to catch errors while initializing the provider
     relayerBuilder: PolkadotRelayerManager, // Webb Relayer builder for relaying withdraw
@@ -169,12 +176,10 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
       accounts,
       wasmFactory
     );
-
-    await instance.insureApiInterface();
     /// check metadata update
     await instance.awaitMetaDataCheck();
     await apiPromise.isReady;
-
+    // await instance.ensureApiInterface();
     return instance;
   }
 
@@ -202,7 +207,7 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
       wasmFactory
     );
 
-    await instance.insureApiInterface();
+    await instance.ensureApiInterface();
     /// check metadata update
     await instance.awaitMetaDataCheck();
     await apiPromise.isReady;

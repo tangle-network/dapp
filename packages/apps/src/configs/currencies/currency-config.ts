@@ -160,6 +160,26 @@ export const currenciesConfig: AppConfig['currencies'] = {
     icon: React.createElement(GanacheLogo),
     addresses: new Map([[InternalChainId.ProtocolSubstrateStandalone, '1']]),
   },
+  [WebbCurrencyId.KSM]: {
+    name: 'Kusama',
+    symbol: 'KSM',
+    color: '',
+    id: WebbCurrencyId.KSM,
+    type: CurrencyType.NATIVE,
+    role: CurrencyRole.Wrappable,
+    icon: React.createElement(WEBBLogo),
+    addresses: new Map([[InternalChainId.Kusama, '0']]),
+  },
+  [WebbCurrencyId.DOT]: {
+    name: 'Polkadot',
+    symbol: 'DOT',
+    color: '',
+    id: WebbCurrencyId.DOT,
+    type: CurrencyType.NATIVE,
+    role: CurrencyRole.Wrappable,
+    icon: React.createElement(WEBBLogo),
+    addresses: new Map([[InternalChainId.Polkadot, '0']]),
+  },
 };
 
 // on startup build a new map
