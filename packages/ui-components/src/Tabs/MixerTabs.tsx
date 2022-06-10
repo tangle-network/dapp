@@ -1,9 +1,8 @@
 import { Fade } from '@material-ui/core';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
+import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
 import React, { useCallback, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
-
-import { above } from '../utils/responsive-utils';
 
 type MixerTabsProps = {
   Deposit: JSX.Element;

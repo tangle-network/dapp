@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/indent */
 import { ButtonBase, ButtonBaseProps } from '@material-ui/core';
+import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
 import React from 'react';
 import styled, { css } from 'styled-components';
-
-import { above } from '../utils/responsive-utils';
 
 const MixerButtonWrapper = styled.button`
   &&& {
