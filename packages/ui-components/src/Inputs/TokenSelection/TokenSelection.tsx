@@ -17,8 +17,6 @@ const TokenSelectionWrapper = styled.div`
   padding: 12px 18px;
   margin: 0 auto;
   width: 80vw;
-  min-height: 40vh;
-  max-height: 50vh;
 
   ${above.sm`
     width: 40vw;
@@ -68,7 +66,7 @@ const SearchIconWrapper = styled.div`
 
 const TokensList = styled.ul`
   margin-top: 24px;
-  max-height: 70%;
+  height: 256px;
   overflow-y: scroll;
 `;
 
