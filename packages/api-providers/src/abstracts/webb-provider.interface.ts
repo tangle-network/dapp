@@ -10,7 +10,7 @@ import { WebbRelayerManager } from './relayer/webb-relayer-manager';
 import { AnchorDeposit, AnchorWithdraw, VAnchorDeposit } from './anchor';
 import { ChainQuery } from './chain-query';
 import { AppConfig } from './common';
-import { Crowdloan, CrowdloanAmount, CrowdloanEvent } from './crowdloan';
+import { ContributePayload, Crowdloan, CrowdloanEvent } from './crowdloan';
 import { DepositPayload, MixerDeposit, MixerDepositEvents, MixerWithdraw, WebbWithdrawEvents } from './mixer';
 import { WrapUnwrap } from './wrap-unwrap';
 
@@ -65,7 +65,7 @@ export interface WebbVariableAnchor<T extends WebbApiProvider<any>> {
 
 export interface WebbCrowdloan<T extends WebbApiProvider<any>> {
   // contribute
-  contribute: WebbMethod<Crowdloan<T, CrowdloanAmount>, CrowdloanEvent>;
+  contribute: WebbMethod<Crowdloan<T, ContributePayload>, CrowdloanEvent>;
 }
 
 export interface WrapAndUnwrap<T> {
