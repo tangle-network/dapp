@@ -11,7 +11,7 @@ const MixerButtonWrapper = styled.button`
     background: ${({ theme }) => theme.accentColor};
     border-radius: 8px;
     color: #fff;
-    height: 40px;
+    padding: 8px 0px;
     transition: all ease-in-out 0.3s;
     font-weight: bold;
 
@@ -25,12 +25,12 @@ const MixerButtonWrapper = styled.button`
 
     .mixer-button {
       text-transform: uppercase !important;
-      font-size: 18px;
+      font-size: 16px;
       font-weight: bold;
     }
 
     ${above.xs`
-			height: 60px;	
+      padding: 16px 0px;
 		`}
   }
 `;

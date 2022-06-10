@@ -81,7 +81,6 @@ const TokenInputWrapper = styled.div`
     width: 100%;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
   }
 `;
 
