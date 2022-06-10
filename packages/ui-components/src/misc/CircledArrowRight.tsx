@@ -1,8 +1,8 @@
+import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
 import * as React from 'react';
 import styled from 'styled-components';
 
 import { RightArrowIcon } from '../assets/RightArrow';
-import { above } from '../utils/responsive-utils';
 
 const CircleWrapper = styled.div`
   display: flex;
