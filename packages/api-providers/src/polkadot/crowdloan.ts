@@ -26,6 +26,7 @@ export class PolkadotCrowdloan extends Crowdloan<WebbPolkadot, ContributePayload
         method: 'contribute',
       },
       [
+        // TODO: Replace with proper parachain ID
         2020,
         contributePayload.amount,
         undefined, // required
@@ -39,13 +40,13 @@ export class PolkadotCrowdloan extends Crowdloan<WebbPolkadot, ContributePayload
     }
 
     tx.on('finalize', () => {
-      console.log('deposit done');
+      console.log('contribution done');
     });
     tx.on('failed', (e: any) => {
-      console.log('deposit failed', e);
+      console.log('contribution failed', e);
     });
     tx.on('extrinsicSuccess', () => {
-      console.log('deposit done');
+      console.log('contribution done');
     });
     await tx.call(account.address);
   }
