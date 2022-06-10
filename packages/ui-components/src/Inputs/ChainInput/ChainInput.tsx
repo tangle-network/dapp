@@ -1,31 +1,19 @@
-import { Avatar, ClickAwayListener, IconButton, List, ListItemAvatar, ListItemText, Popper } from '@material-ui/core';
+import { Avatar, ClickAwayListener, IconButton } from '@material-ui/core';
 import Icon from '@material-ui/core/Icon';
 import Typography from '@material-ui/core/Typography';
 import { ChainTypeId, chainTypeIdToInternalId } from '@webb-dapp/api-providers';
 import { chainsPopulated } from '@webb-dapp/apps/configs';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
+import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { NetworkManager } from '@webb-dapp/ui-components/NetworkManger/NetworkManager';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
+import { above, useBreakpoint } from '@webb-dapp/ui-components/utils/responsive-utils';
 import React, { CSSProperties, useEffect, useMemo, useRef, useState } from 'react';
 import styled, { css } from 'styled-components';
 
-const StyledList = styled.ul`
-  li {
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    padding: 5px;
-
-    &.selected,
-    :hover {
-      background: ${({ theme }: { theme: Pallet }) => theme.heavySelectionBackground};
-    }
-
-    position: relative;
-  }
-`;
+import ChainSelection from '../ChainSelection/ChainSelection';
 
 const InputWrapper = styled.div<{ open: boolean }>`
   border-radius: 8px;
@@ -48,37 +36,45 @@ const InputWrapper = styled.div<{ open: boolean }>`
     display: flex;
     align-items: center;
     padding: 5px;
+
+    ${above.xs`
+      padding: 8px 12px;
+    `}
   }
 
   .account-button-wrapper {
     margin: -20px 0;
   }
-`;
 
-const PopperList = styled.div<{ open: boolean }>`
-  ${StyledList} {
-    overflow: hidden;
-    border-radius: 0px 0px 25px 25px;
-    border: 1px solid ${({ theme }) => (theme.type === 'dark' ? 'black' : theme.gray13)};
-    background: ${({ theme }: { theme: Pallet }) => theme.componentBackground};
-    overflow: hidden;
+  .token-avatar {
+    width: 26px;
+    height: 26px;
 
-    ${({ open }) => {
-      return open
-        ? css`
-            max-height: 200px;
-            overflow-y: auto;
-          `
-        : css`
-            padding: 0 !important;
-            margin: 0 !important;
-            max-height: 0px !important;
-          `;
-    }}
+    ${above.xs`
+      width: 32px;
+      height: 32px;
+    `}
+  }
 
-    li {
-      padding-top: 10px;
-      background: ${({ theme }: { theme: Pallet }) => theme.heavySelectionBackground};
+  .chain-text {
+    max-width: 54px;
+    margin-left: 4px;
+
+    ${above.xs`
+      max-width: none;
+      margin-left: 0px;
+    `}
+
+    * {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+
+      ${above.xs`
+        overflow: auto;
+        white-space: normal;
+        text-overflow: clip;
+      `}
     }
   }
 `;
@@ -89,13 +85,6 @@ type DropdownInputProps = {
   onChange(next: ChainTypeId | undefined): void;
 };
 
-const ChainName = styled.span`
-  display: inline-block;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  width: 100%;
-`;
 const DropdownInput: React.FC<DropdownInputProps> = ({ chains, onChange, value }) => {
   useEffect(() => {
     if (value && !chains.includes(value)) {
@@ -117,9 +106,13 @@ const DropdownInput: React.FC<DropdownInputProps> = ({ chains, onChange, value }
       chain: chainsPopulated[chainTypeIdToInternalId(value)],
     };
   }, [value]);
+
   const $wrapper = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
   const theme = useColorPallet();
+
+  const { isXsOrAbove } = useBreakpoint();
+
   return (
     <>
       <div>
@@ -142,10 +135,15 @@ const DropdownInput: React.FC<DropdownInputProps> = ({ chains, onChange, value }
                     children={<selected.chain.logo />}
                     className={'token-avatar'}
                   />
-                  <Padding x={0.5} />
-                  <div>
-                    <Typography variant={'h6'} component={'span'} display={'block'}>
-                      <b>{selected.chain.name}</b>
+                  {isXsOrAbove && <Padding x={0.5} />}
+                  <div className='chain-text'>
+                    <Typography
+                      variant={isXsOrAbove ? 'subtitle1' : 'caption'}
+                      component={'span'}
+                      display={'block'}
+                      style={{ fontWeight: '700' }}
+                    >
+                      {selected.chain.name}
                     </Typography>
                   </div>
                 </Flex>
@@ -155,27 +153,29 @@ const DropdownInput: React.FC<DropdownInputProps> = ({ chains, onChange, value }
                     style={{
                       background: theme.warning,
                     }}
+                    className={'token-avatar'}
                   >
                     <Icon
                       style={{
                         color: '#fff',
                       }}
-                      fontSize={'large'}
+                      fontSize={isXsOrAbove ? 'large' : 'medium'}
                     >
                       generating_tokens
                     </Icon>
                   </Avatar>
-                  <Padding x={0.5} />
-                  <Flex jc={'center'}>
-                    <Typography variant={'caption'} color={'textSecondary'} style={{ whiteSpace: 'nowrap' }}>
+                  {isXsOrAbove && <Padding x={0.5} />}
+                  <div className='chain-text'>
+                    <Typography display='block' variant={isXsOrAbove ? 'subtitle1' : 'caption'} color={'textSecondary'}>
                       Select chain
                     </Typography>
-                  </Flex>
+                  </div>
                 </Flex>
               )}
 
               <div className={'account-button-wrapper'}>
                 <IconButton
+                  size='small'
                   style={{
                     transform: isOpen ? 'rotate(180deg)' : 'rotate(0)',
                     transition: 'all ease .3s',
@@ -189,48 +189,14 @@ const DropdownInput: React.FC<DropdownInputProps> = ({ chains, onChange, value }
                 </IconButton>
               </div>
             </div>
-            <Popper
-              style={{
-                width: $wrapper.current?.offsetWidth,
-              }}
-              placement={'bottom-end'}
-              open={isOpen}
-              anchorEl={$wrapper?.current}
-            >
-              <PopperList open={isOpen}>
-                <StyledList as={List} dense disablePadding>
-                  {chains.map((chainTypeId) => {
-                    const isSelected = selected?.id === chainTypeId;
-                    let chain = chainsPopulated[chainTypeIdToInternalId(chainTypeId)];
-                    return (
-                      <li
-                        role={'button'}
-                        onClick={() => {
-                          setIsOpen(false);
-                          onChange(chainTypeId);
-                        }}
-                        className={isSelected ? 'selected' : ''}
-                        key={`${chainTypeId.chainId}-chain-input`}
-                      >
-                        <Flex ai='center' row flex={1}>
-                          <ListItemAvatar>
-                            <Avatar style={{ background: 'transparent' }} children={<chain.logo />} />
-                          </ListItemAvatar>
-                          <ListItemText>
-                            <Typography variant={'h6'} component={'span'} display={'block'}>
-                              <b>{chain.name}</b>
-                            </Typography>
-                            <Typography variant={'body2'} color={'textSecondary'}>
-                              <ChainName>{chain.name}</ChainName>
-                            </Typography>
-                          </ListItemText>
-                        </Flex>
-                      </li>
-                    );
-                  })}
-                </StyledList>
-              </PopperList>
-            </Popper>
+            <Modal open={isOpen} hasBlur onClose={() => setIsOpen(false)}>
+              <ChainSelection
+                chainTypeIds={chains}
+                onClose={() => setIsOpen(false)}
+                selectedChain={selected?.chain}
+                onChange={onChange}
+              />
+            </Modal>
           </InputWrapper>
         </ClickAwayListener>
       </div>

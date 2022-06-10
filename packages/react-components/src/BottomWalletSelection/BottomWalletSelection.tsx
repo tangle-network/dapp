@@ -5,6 +5,7 @@ import { useAccounts } from '@webb-dapp/react-hooks/useAccounts';
 import { useWallets } from '@webb-dapp/react-hooks/useWallets';
 import { WalletManager } from '@webb-dapp/ui-components/Inputs/WalletSelect/WalletManager';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
+import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
@@ -21,9 +22,13 @@ const BottomSelectionWrapper = styled.div`
 const AccountName = styled.p`
   white-space: nowrap;
   text-overflow: ellipsis;
-  max-width: 220px;
+  max-width: 110px;
   overflow: hidden;
   color: ${({ theme }) => theme.primaryText};
+
+  ${above.xs`
+    max-width: 220px;
+  `}
 `;
 
 const WalletSelectWrapper = styled.div<{ wallet: ManagedWallet | null }>`
@@ -32,9 +37,9 @@ const WalletSelectWrapper = styled.div<{ wallet: ManagedWallet | null }>`
   flex: 1;
   display: flex;
   align-items: center;
-  background: ${({ theme }) => theme.lightSelectionBackground}
+  background: ${({ theme }) => theme.lightSelectionBackground};
   cursor: pointer;
-  padding: 0px 20px 0px 20px;
+  padding: 0px 20px;
 
   ${({ wallet }) => {
     if (wallet) {
@@ -63,9 +68,10 @@ const WalletSelectWrapper = styled.div<{ wallet: ManagedWallet | null }>`
     width: 100%;
     flex: 1;
     justify-content: end;
-    color: ${({ theme }) => theme.accentColor}
+    color: ${({ theme }) => theme.accentColor};
   }
 `;
+
 type WalletSelectProps = {};
 
 //TODO Remove exported WalletSelect in new UI
@@ -90,6 +96,7 @@ export const BottomWalletSelection: React.FC<WalletSelectProps> = ({}) => {
       setSelectedWallet(nextWallet);
     }
   }, [wallets, setSelectedWallet]);
+
   return (
     <BottomSelectionWrapper>
       <WalletSelectWrapper
@@ -113,7 +120,7 @@ export const BottomWalletSelection: React.FC<WalletSelectProps> = ({}) => {
               </div>
             </BottomSelectionWrapper>
             <div className={'manage-wallet-text'}>
-              <Typography variant='h5'>
+              <Typography variant='subtitle1'>
                 <b>Manage Wallet</b>
               </Typography>
             </div>
