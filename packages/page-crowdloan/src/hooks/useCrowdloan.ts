@@ -1,64 +1,75 @@
 import { Account, Currency, CurrencyContent, WrappingEventNames } from '@webb-dapp/api-providers';
+import { CrowdloanFundInfo } from '@webb-dapp/api-providers/abstracts/crowdloan';
 import { useAppConfig, useWebContext } from '@webb-dapp/react-environment';
 import { LoggerService } from '@webb-tools/app-util';
+import { FixedPointNumber } from '@webb-tools/sdk-core';
+import { BigNumber } from 'ethers';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-// 'Governed' tokens represent a token which can be minted from a deposit
-//    of various 'wrappable' tokens. Governed tokens are the tokens which are bridged
-//    in the webb system.
-// 'Wrappable' tokens represent tokens which can be deposited into a wrapper
-//    contract - which will mint an appropriate amount of 'governed' token.
+import { FundInfo } from '@polkadot/types/interfaces';
+
 interface CrowdloanUIState {
-  // Tracks the currently selected governedToken.
-  contributor: Account | null;
+  // Tracks fund info of the total contributions made to the parachain
+  fundInfo: CrowdloanFundInfo;
   // Track the user input for desired amount to participate with
-  amount: number;
+  amount: FixedPointNumber;
 }
 
 // The useCrowdloan hook is intended to
 export function useCrowdloan() {
-  const { activeApi, activeChain } = useWebContext();
+  const { activeApi } = useWebContext();
 
   // The UI will look at this state to determine which options to present to the user
   const [state, setState] = useState<CrowdloanUIState>({
-    amount: 0,
-    contributor: null,
+    amount: new FixedPointNumber(0),
+    fundInfo: {
+      raised: BigInt(0),
+      cap: BigInt(0),
+      end: BigInt(0),
+    },
   });
 
-  const { amount } = state;
+  const { amount, fundInfo } = state;
 
   const crowdloanApi = useMemo(() => {
-    const crowdloanApi = activeApi?.relayChainMethods?.crowdloan.contribute;
-    if (!crowdloanApi?.enabled) {
-      return null;
-    }
-    return crowdloanApi.inner;
+    const crowdloanApi = activeApi?.relayChainMethods?.crowdloan;
+    return crowdloanApi;
   }, [activeApi]);
 
-  const execute = useCallback(() => {
-    if (!amount) {
+  const contribute = useCallback(() => {
+    if (!amount || !crowdloanApi?.enabled) {
       return;
     }
 
-    crowdloanApi?.contribute({
+    crowdloanApi?.inner.contribute({
       // TODO: Change to proper parachain ID
-      parachainId: '2000',
+      parachainId: 2121,
       amount,
     });
   }, [crowdloanApi, amount]);
 
-  const setAmount = (amount: number) => {
+  const getFundInfo = useCallback(() => {
+    if (!crowdloanApi?.enabled) {
+      return;
+    }
+
+    crowdloanApi?.inner.getFundInfo(2121).then((fundInfo) => {
+      setFundInfo(fundInfo);
+    });
+  }, [crowdloanApi]);
+
+  const setAmount = (amount: FixedPointNumber) => {
     setState((p) => ({ ...p, amount }));
   };
 
-  const setContributor = (amount: number) => {
-    setState((p) => ({ ...p, amount }));
+  const setFundInfo = (fundInfo: CrowdloanFundInfo) => {
+    setState((p) => ({ ...p, fundInfo }));
   };
 
   return {
     ...state,
+    getFundInfo,
     setAmount,
-    setContributor,
-    execute,
+    contribute,
   };
 }

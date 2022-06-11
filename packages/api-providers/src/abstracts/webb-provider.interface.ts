@@ -16,7 +16,7 @@ import { WrapUnwrap } from './wrap-unwrap';
 
 export interface RelayChainMethods<T extends WebbApiProvider<any>> {
   // Crowdloan API
-  crowdloan: WebbCrowdloan<T>;
+  crowdloan: WebbMethod<Crowdloan<T, ContributePayload>, CrowdloanEvent>;
 }
 
 /// list of the apis that are available for  the provider
@@ -64,11 +64,6 @@ export interface WebbVariableAnchor<T extends WebbApiProvider<any>> {
   deposit: WebbMethod<VAnchorDeposit<T, DepositPayload>, MixerDepositEvents>;
   // withdraw
   withdraw: WebbMethod<VAnchorWithdraw<T>, WebbWithdrawEvents>;
-}
-
-export interface WebbCrowdloan<T extends WebbApiProvider<any>> {
-  // contribute
-  contribute: WebbMethod<Crowdloan<T, ContributePayload>, CrowdloanEvent>;
 }
 
 export interface WrapAndUnwrap<T> {

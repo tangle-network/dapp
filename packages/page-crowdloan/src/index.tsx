@@ -11,8 +11,11 @@ import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { ContentWrapper } from '@webb-dapp/ui-components/ContentWrappers';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { getRoundedAmountString } from '@webb-dapp/ui-components/utils';
+import { FixedPointNumber } from '@webb-tools/sdk-core';
 import { FC, useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
+
+import { BN } from '@polkadot/util';
 
 import { useCrowdloan } from './hooks/useCrowdloan';
 
@@ -49,11 +52,13 @@ const ContributeWrapper = styled.div<{ wallet: WalletConfig | undefined }>`
 
 const PageCrowdloan: FC = () => {
   const { activeApi, activeChain, activeWallet } = useWebContext();
-  const { amount, execute, setAmount } = useCrowdloan();
+  const { amount, contribute, fundInfo, getFundInfo, setAmount } = useCrowdloan();
   const palette = useColorPallet();
   const { currencies: currenciesConfig } = useAppConfig();
   const [displayedAmount, setDisplayedAmount] = useState<string>('');
+  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [blockNumber, setBlockNumber] = useState(0);
   const [tokenBalance, setTokenBalance] = useState(0);
 
   const allCurrencies = useMemo(() => {
@@ -65,7 +70,7 @@ const PageCrowdloan: FC = () => {
   }, [activeChain, currenciesConfig]);
   const activeToken = useMemo(() => allCurrencies[0], [allCurrencies]);
 
-  // Side effect for getting the balance of the token
+  // Get balance of token
   useEffect(() => {
     if (!activeToken || !activeChain || !activeApi) {
       return;
@@ -78,11 +83,55 @@ const PageCrowdloan: FC = () => {
       });
   }, [activeApi, activeApi?.accounts.activeOrDefault, activeChain, activeToken]);
 
+  // Get current block
+  useEffect(() => {
+    if (!activeChain || !activeApi) {
+      return;
+    }
+
+    activeApi.methods.chainQuery.currentBlock().then((blockNumber) => {
+      setBlockNumber(blockNumber);
+    });
+  }, [activeApi, activeApi?.accounts.activeOrDefault, activeChain, activeToken]);
+
+  useEffect(() => {
+    if (fundInfo.cap > BigInt(0)) {
+      return;
+    }
+
+    getFundInfo();
+  }, [fundInfo, getFundInfo]);
   return (
     <div>
       <ContentWrapper>
         <ContributeWrapper wallet={activeWallet}>
           <div className='titles-and-information'>
+            {fundInfo && (
+              <>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <Typography variant='h6'>
+                    <b>RAISED: </b>
+                    {fundInfo?.raised.toString()}
+                  </Typography>
+                  <SpaceBox height={16} />
+                  <Typography variant='h6'>
+                    <b>CAP: </b>
+                    {fundInfo?.cap.toString()}
+                  </Typography>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <Typography variant='h6'>
+                    <b>CURRENT BLOCK: </b>
+                    {blockNumber}
+                  </Typography>
+                  <SpaceBox height={16} />
+                  <Typography variant='h6'>
+                    <b>END BLOCK: </b>
+                    {fundInfo?.end.toString()}
+                  </Typography>
+                </div>
+              </>
+            )}
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <Typography variant='h6'>
                 <b>BALANCE</b>
@@ -106,6 +155,7 @@ const PageCrowdloan: FC = () => {
             <AmountInputWrapper>
               <div style={{ width: '100%' }}>
                 <InputBase
+                  disabled={BigInt(blockNumber) > fundInfo.end}
                   placeholder={`Enter Amount`}
                   fullWidth
                   value={displayedAmount}
@@ -114,9 +164,19 @@ const PageCrowdloan: FC = () => {
                     setDisplayedAmount(event.target.value);
                     let maybeNumber = Number(event.target.value);
                     if (!Number.isNaN(maybeNumber)) {
-                      setAmount(Number(event.target.value));
+                      let fixed = new FixedPointNumber(event.target.value, activeToken.getDecimals());
+                      let cap = FixedPointNumber.fromInner(fundInfo.cap.toString(), activeToken.getDecimals());
+                      let raised = FixedPointNumber.fromInner(fundInfo.raised.toString(), activeToken.getDecimals());
+                      if (fixed.isLessThan(new FixedPointNumber(0.1, activeToken.getDecimals()))) {
+                        setError('Amount must be greater than 0.1');
+                      } else if (cap.minus(raised).isGreaterThan(fixed)) {
+                        setError('');
+                        setAmount(fixed);
+                      } else {
+                        setError('Amount exceeds the cap');
+                      }
                     } else {
-                      setAmount(0);
+                      setAmount(new FixedPointNumber(tokenBalance, activeToken.getDecimals()));
                     }
                   }}
                 />
@@ -127,7 +187,7 @@ const PageCrowdloan: FC = () => {
                   as={Button}
                   onClick={() => {
                     setDisplayedAmount(tokenBalance.toString());
-                    setAmount(tokenBalance);
+                    setAmount(new FixedPointNumber(tokenBalance, activeToken.getDecimals()));
                   }}
                 >
                   MAX
@@ -135,14 +195,13 @@ const PageCrowdloan: FC = () => {
               </div>
             </AmountInputWrapper>
             <SpaceBox height={16} />
-
             <MixerButton
-              disabled={loading || !amount}
-              label={'contribute'}
+              disabled={loading || !amount || !!error || BigInt(blockNumber) > fundInfo.end}
+              label={error ? 'Amount exceeds cap' : BigInt(blockNumber) > fundInfo.end ? 'Funding ended' : 'Contribute'}
               onClick={async () => {
                 try {
                   setLoading(true);
-                  await execute();
+                  await contribute();
                 } finally {
                   setLoading(false);
                 }

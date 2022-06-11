@@ -60,10 +60,8 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
     this.txBuilder = this.provider.txBuilder;
     this.relayChainMethods = {
       crowdloan: {
-        contribute: {
-          enabled: true,
-          inner: new PolkadotCrowdloan(this),
-        },
+        enabled: true,
+        inner: new PolkadotCrowdloan(this),
       },
     };
     this.methods = {

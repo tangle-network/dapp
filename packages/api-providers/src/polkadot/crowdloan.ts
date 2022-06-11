@@ -7,7 +7,9 @@ import '@webb-tools/types';
 
 import { LoggerService } from '@webb-tools/app-util';
 
-import { ContributePayload, Crowdloan } from '../abstracts/crowdloan';
+import { FundInfo } from '@polkadot/types/interfaces';
+
+import { ContributePayload, Crowdloan, CrowdloanFundInfo } from '../abstracts/crowdloan';
 import { WebbError, WebbErrorCodes } from '../webb-error';
 import { WebbPolkadot } from './webb-provider';
 
@@ -19,6 +21,18 @@ export class PolkadotCrowdloan extends Crowdloan<WebbPolkadot, ContributePayload
     super(inner);
   }
 
+  async getFundInfo(parachainId: number): Promise<CrowdloanFundInfo> {
+    // @ts-ignore
+    let fundInfo: FundInfo = await this.inner.api.query.crowdloan.funds(parachainId);
+    let fundInfoJSON = fundInfo.toJSON();
+
+    return {
+      raised: BigInt(fundInfoJSON.raised?.toString() || 0),
+      cap: BigInt(fundInfoJSON.cap?.toString() || 0),
+      end: BigInt(fundInfoJSON.end?.toString() || 0),
+    };
+  }
+
   async contribute(contributePayload: ContributePayload): Promise<void> {
     const tx = this.inner.txBuilder.build(
       {
@@ -27,7 +41,7 @@ export class PolkadotCrowdloan extends Crowdloan<WebbPolkadot, ContributePayload
       },
       [
         contributePayload.parachainId,
-        contributePayload.amount,
+        contributePayload.amount._getInner(),
         undefined, // required
       ]
     );

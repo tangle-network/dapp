@@ -2,7 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { EventBus } from '@webb-tools/app-util';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { FixedPointNumber } from '@webb-tools/sdk-core';
+import { BehaviorSubject } from 'rxjs';
+
+import { BN } from '@polkadot/util';
 
 import { WebbCurrencyId } from '../../enums';
 
@@ -11,8 +14,14 @@ export type CrowdloanEvent = {
 };
 
 export type ContributePayload = {
-  amount: number | string;
-  parachainId: string;
+  amount: FixedPointNumber;
+  parachainId: number;
+};
+
+export type CrowdloanFundInfo = {
+  raised: BigInt;
+  end: BigInt;
+  cap: BigInt;
 };
 
 /**
@@ -29,8 +38,8 @@ export abstract class Crowdloan<T, CrowdloanPayload extends ContributePayload> e
    **/
   abstract contribute(crowdloanPayload: CrowdloanPayload): Promise<void>;
 
-  // /**
-  //  * Observing the balances of the two edges
-  //  **/
-  // abstract get getContribution(): Observable<CrowdloanAmount>;
+  /**
+   * Observing the balances of the two edges
+   **/
+  abstract getFundInfo(parachainId: number): Promise<CrowdloanFundInfo>;
 }
