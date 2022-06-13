@@ -154,45 +154,6 @@ const ChainSelection: React.FC<ChainSelectionProps> = ({ chainTypeIds, onChange,
     };
   }, [searchChains]);
 
-  /** Component */
-  const ChainListValues = useCallback(
-    () => (
-      <>
-        {displayChainTypeIds.map((chainTypeId, idx) => {
-          const chain = getChainFromChainTypeId(chainTypeId);
-          const selected = selectedChain?.id === chain.id;
-
-          return (
-            <ListItem
-              key={chain.id}
-              idx={idx}
-              selected={selected}
-              onClick={
-                selected
-                  ? undefined
-                  : () => {
-                      onClose?.();
-                      onChange(chainTypeId);
-                    }
-              }
-            >
-              <ListItemAvatar>
-                <Avatar className='list-item-avatar' children={<chain.logo />} />
-              </ListItemAvatar>
-              <ListItemText className='list-item-text'>
-                <Typography variant={'h6'} component={'span'} display={'block'}>
-                  <b>{chain.name}</b>
-                </Typography>
-              </ListItemText>
-              {selected && <CircleStatus />}
-            </ListItem>
-          );
-        })}
-      </>
-    ),
-    [displayChainTypeIds, selectedChain, getChainFromChainTypeId, onClose, onChange]
-  );
-
   return (
     <ChainSelectionWrapper>
       <Flex row jc='space-between' ai='center'>
@@ -219,7 +180,30 @@ const ChainSelection: React.FC<ChainSelectionProps> = ({ chainTypeIds, onChange,
         />
       </SearchWrapper>
       <ChainsList>
-        <ChainListValues />
+        {displayChainTypeIds.map((chainTypeId, idx) => {
+          const chain = getChainFromChainTypeId(chainTypeId);
+          const selected = selectedChain?.id === chain.id;
+          const onClick = selected
+            ? undefined
+            : () => {
+                onClose?.();
+                onChange(chainTypeId);
+              };
+
+          return (
+            <ListItem key={chain.id} idx={idx} selected={selected} onClick={onClick}>
+              <ListItemAvatar>
+                <Avatar className='list-item-avatar' children={<chain.logo />} />
+              </ListItemAvatar>
+              <ListItemText className='list-item-text'>
+                <Typography variant={'h6'} component={'span'} display={'block'}>
+                  <b>{chain.name}</b>
+                </Typography>
+              </ListItemText>
+              {selected && <CircleStatus />}
+            </ListItem>
+          );
+        })}
       </ChainsList>
     </ChainSelectionWrapper>
   );
