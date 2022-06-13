@@ -3,7 +3,7 @@
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import '@webb-tools/api-derive/index.js';
+import '@webb-tools/api-derive/cjs/index.js';
 
 import type { WebbPolkadot } from './webb-provider';
 
@@ -23,7 +23,7 @@ import { decodeAddress } from '@polkadot/keyring';
 import { hexToU8a, u8aToHex } from '@polkadot/util';
 import { naclEncrypt, randomAsU8a } from '@polkadot/util-crypto';
 
-import { DepositPayload as IDepositPayload, VAnchorDeposit } from '../abstracts';
+import { DepositPayload as IDepositPayload, VAnchorDeposit, WithdrawState } from '../abstracts';
 import { computeChainIdType, InternalChainId } from '../chains';
 import { WebbError, WebbErrorCodes } from '../webb-error';
 
@@ -53,44 +53,6 @@ async function fetchSubstrateVAnchorProvingKey() {
   const circuitKey = new Uint8Array(circuitKeyArrayBuffer);
 
   return circuitKey;
-}
-
-async function generateVAnchorNote(amount: number, chainId: number, outputChainId: number, index?: number) {
-  const note = await Note.generateNote({
-    amount: String(amount),
-    backend: 'Arkworks',
-    curve: 'Bn254',
-    denomination: String(18),
-    exponentiation: String(5),
-    hashFunction: 'Poseidon',
-    index,
-    protocol: 'vanchor',
-    sourceChain: String(chainId),
-    sourceIdentifyingData: '1',
-    targetChain: String(outputChainId),
-    targetIdentifyingData: '1',
-    tokenSymbol: 'WEBB',
-    version: 'v2',
-    width: String(5),
-  });
-
-  return note;
-}
-
-async function fetchSubstrateVAAnchorVerifyingKey() {
-  const cachedURI = getCachedFixtureURI('vanchor_sub_vk_un_2_2_2.bin');
-  const ipfsKeyRequest = await fetch(cachedURI);
-  const circuitKeyArrayBuffer = await ipfsKeyRequest.arrayBuffer();
-
-  logger.info('Done Fetching key');
-  const circuitKey = new Uint8Array(circuitKeyArrayBuffer);
-
-  return circuitKey;
-}
-
-async function verfyProof(data: ProofInterface<'vanchor'>, vk: Uint8Array) {
-  const wasm = await import('@webb-tools/wasm-utils');
-  return wasm.verify_js_proof(data.proof, data.publicInputs, u8aToHex(vk).replace('0x', ''), 'Bn254');
 }
 
 export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, DepositPayload> {
@@ -167,102 +129,112 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
     return indexBeforeInsertion + shiftedIndex;
   }
 
-  async deposit(depositPayload: DepositPayload, recipient: string): Promise<void> {
+  async deposit(depositPayload: DepositPayload, recipient: string): Promise<Note> {
     // Getting the  active account
-    const account = await this.inner.accounts.activeOrDefault;
-    const secret = randomAsU8a();
+    try {
+      const account = await this.inner.accounts.activeOrDefault;
+      const secret = randomAsU8a();
+      this.emit('stateChange', WithdrawState.GeneratingZk);
 
-    if (!account) {
-      throw WebbError.from(WebbErrorCodes.NoAccountAvailable);
+      if (!account) {
+        throw WebbError.from(WebbErrorCodes.NoAccountAvailable);
+      }
+
+      const accountId = account.address;
+      const relayerAccountId = account.address;
+      const recipientAccountDecoded = decodeAddress(accountId);
+      const relayerAccountDecoded = decodeAddress(relayerAccountId);
+
+      // output note
+      const depositNote = depositPayload.note;
+      const { note } = depositNote;
+
+      const treeId = depositPayload.params[0];
+      const targetChainId = note.targetChainId;
+
+      const output1 = new Utxo(note.getUtxo());
+
+      const output2 = await Utxo.generateUtxo({
+        backend: 'Arkworks',
+        curve: 'Bn254',
+        chainId: targetChainId,
+        amount: '0',
+      });
+      let publicAmount = note.amount;
+      const inputNote = depositPayload.note.getDefaultUtxoNote();
+
+      const leavesMap: any = {};
+      leavesMap[targetChainId] = [];
+      const tree = await this.inner.api.query.merkleTreeBn254.trees(treeId);
+      const root = tree.unwrap().root.toHex();
+      const neighborRoots: string[] = await (this.inner.api.rpc as any).lt
+        .getNeighborRoots(treeId)
+        .then((roots: any) => roots.toHuman());
+
+      const rootsSet = [hexToU8a(root), hexToU8a(neighborRoots[0])];
+      const provingKey = await fetchSubstrateVAnchorProvingKey();
+
+      const { encrypted: comEnc1 } = naclEncrypt(output1.commitment, secret);
+      const { encrypted: comEnc2 } = naclEncrypt(output2.commitment, secret);
+
+      const extData = {
+        relayer: accountId,
+        recipient: relayerAccountId,
+        fee: 0,
+        extAmount: BigNumber.from(publicAmount),
+        encryptedOutput1: u8aToHex(comEnc1),
+        encryptedOutput2: u8aToHex(comEnc2),
+      };
+      const vanchorDepositSetup: ProvingManagerSetupInput<'vanchor'> = {
+        encryptedCommitments: [comEnc1, comEnc2],
+        extAmount: publicAmount,
+        fee: '0',
+        leavesMap,
+        provingKey,
+        recipient: recipientAccountDecoded,
+        relayer: relayerAccountDecoded,
+        roots: rootsSet,
+        chainId: note.targetChainId,
+        indices: [0],
+        inputNotes: [inputNote],
+        publicAmount,
+        output: [output1, output2],
+      };
+      const worker = this.inner.wasmFactory('wasm-utils');
+      const pm = new ArkworksProvingManager(worker);
+      const data = await pm.prove('vanchor', vanchorDepositSetup);
+      const vanchorProofData = {
+        proof: `0x${data.proof}`,
+        publicAmount: data.publicAmount,
+        roots: rootsSet,
+        inputNullifiers: data.inputUtxos.map((utxo) => {
+          return `0x${utxo.nullifier}`;
+        }),
+        outputCommitments: data.outputNotes.map((note) => u8aToHex(note.getLeaf())),
+        extDataHash: data.extDataHash,
+      };
+      this.emit('stateChange', WithdrawState.SendingTransaction);
+      const leafsCount = await this.inner.api.derive.merkleTreeBn254.getLeafCountForTree(Number(treeId));
+      const indexBeforeInsertion = Math.max(leafsCount - 1, 0);
+      const tx = this.inner.txBuilder.build(
+        {
+          method: 'transact',
+          section: 'vAnchorBn254',
+        },
+        [treeId, vanchorProofData, extData]
+      );
+      const txHash = await tx.call(account.address);
+
+      const insertedLeaf = depositNote.getLeaf();
+      const leafIndex = await this.getleafIndex(insertedLeaf, indexBeforeInsertion, treeId);
+      await depositNote.mutateIndex(String(leafIndex));
+      console.log(txHash, leafIndex);
+      this.emit('stateChange', WithdrawState.Done);
+      return depositNote;
+    } catch (e) {
+      this.emit('stateChange', WithdrawState.Failed);
+      throw e;
     }
-
-    const accountId = account.address;
-    const relayerAccountId = account.address;
-    const recipientAccountDecoded = decodeAddress(accountId);
-    const relayerAccountDecoded = decodeAddress(relayerAccountId);
-
-    // output note
-    const { note } = depositPayload.note;
-    const treeId = depositPayload.params[0];
-    const targetChainId = note.targetChainId;
-
-    const output1 = new Utxo(note.getUtxo());
-
-    const output2 = await Utxo.generateUtxo({
-      backend: 'Arkworks',
-      curve: 'Bn254',
-      chainId: targetChainId,
-      amount: '0',
-    });
-    let publicAmount = note.amount;
-    const inputNote = depositPayload.note.getDefaultUtxoNote();
-
-    const leavesMap: any = {};
-    leavesMap[targetChainId] = [];
-    const tree = await this.inner.api.query.merkleTreeBn254.trees(treeId);
-    const root = tree.unwrap().root.toHex();
-    const neighborRoots: string[] = await (this.inner.api.rpc as any).lt
-      .getNeighborRoots(treeId)
-      .then((roots: any) => roots.toHuman());
-
-    const rootsSet = [hexToU8a(root), hexToU8a(neighborRoots[0])];
-    const provingKey = await fetchSubstrateVAnchorProvingKey();
-
-    const { encrypted: comEnc1 } = naclEncrypt(output1.commitment, secret);
-    const { encrypted: comEnc2 } = naclEncrypt(output2.commitment, secret);
-
-    const extData = {
-      relayer: accountId,
-      recipient: relayerAccountId,
-      fee: 0,
-      extAmount: BigNumber.from(publicAmount),
-      encryptedOutput1: u8aToHex(comEnc1),
-      encryptedOutput2: u8aToHex(comEnc2),
-    };
-    const vanchorDepositSetup: ProvingManagerSetupInput<'vanchor'> = {
-      encryptedCommitments: [comEnc1, comEnc2],
-      extAmount: publicAmount,
-      fee: '0',
-      leavesMap,
-      provingKey,
-      recipient: recipientAccountDecoded,
-      relayer: relayerAccountDecoded,
-      roots: rootsSet,
-      chainId: note.targetChainId,
-      indices: [0],
-      inputNotes: [inputNote],
-      publicAmount,
-      output: [output1, output2],
-    };
-    const worker = this.inner.wasmFactory('wasm-utils');
-    const pm = new ArkworksProvingManager(worker);
-    const data = await pm.prove('vanchor', vanchorDepositSetup);
-    const vanchorProofData = {
-      proof: `0x${data.proof}`,
-      publicAmount: data.publicAmount,
-      roots: rootsSet,
-      inputNullifiers: data.inputUtxos.map((utxo) => {
-        return `0x${utxo.nullifier}`;
-      }),
-      outputCommitments: data.outputNotes.map((note) => u8aToHex(note.getLeaf())),
-      extDataHash: data.extDataHash,
-    };
-    const leafsCount = await this.inner.api.derive.merkleTreeBn254.getLeafCountForTree(Number(treeId));
-    const indexBeforeInsertion = Math.max(leafsCount - 1, 0);
-    const tx = this.inner.txBuilder.build(
-      {
-        method: 'transact',
-        section: 'vAnchorBn254',
-      },
-      [treeId, vanchorProofData, extData]
-    );
-    const txHash = await tx.call(account.address);
-
-    const insertedLeaf = note.getLeafCommitment();
-    const leafIndex = await this.getleafIndex(insertedLeaf, indexBeforeInsertion, treeId);
-    note.mutateIndex(String(leafIndex));
-    console.log(txHash, leafIndex);
-    // return Note.deserialize(note.serialize());
   }
 
   async getSizes() {

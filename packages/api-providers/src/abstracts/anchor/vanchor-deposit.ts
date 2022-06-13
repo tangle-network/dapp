@@ -1,9 +1,12 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { BridgeConfig } from '../..';
+import { EventBus } from '@webb-tools/app-util';
+import { Note } from '@webb-tools/sdk-core';
+
+import { BridgeConfig, CancelToken, DespotStates, WebbWithdrawEvents, WithdrawState } from '../..';
 import { MixerSize } from '../../abstracts';
-import { DepositPayload, MixerDeposit } from '../mixer/mixer-deposit';
+import { DepositPayload } from '../mixer/mixer-deposit';
 import { WebbApiProvider } from '../webb-provider.interface';
 import { AnchorApi } from './anchor-api';
 
@@ -16,7 +19,39 @@ export type VAnchorSize = Omit<MixerSize, 'amount'>;
 export abstract class VAnchorDeposit<
   T extends WebbApiProvider<any>,
   K extends DepositPayload = DepositPayload<any>
-> extends MixerDeposit<T, K> {
+> extends EventBus<WebbWithdrawEvents> {
+  state: WithdrawState = WithdrawState.Ideal;
+  cancelToken: CancelToken = { cancelled: false };
+
+  constructor(protected inner: T) {
+    super();
+  }
+
+  /**
+   * Note generate step this should be called to get the payload `K`
+   * The implementation of the function will be responsible for consuming the  provider
+   * and the params `mixerId`,`chainId` to generate the wright deposit note and the Payload `k`
+   * the mixerId is passed as a param but the list of mixerId's is got via the `getSizes` call
+   **/
+  generateNote(vanchorId: number | string): Promise<K> {
+    throw new Error('api not ready ' + vanchorId);
+  }
+
+  /**
+   * The deposit call it should receive the payload of type `K`
+   * The implementation should
+   * - Mutate the `loading` status of the instance
+   * - Use the event bus to emit the status of the transaction
+   **/
+  // TODO: update the impls to return the TX hash instead of void
+  abstract deposit(depositPayload: K): Promise<Note>;
+
+  // The current instance status
+  loading: DespotStates = 'ideal';
+
+  // Get mixer sizes for display and selection
+  abstract getSizes(): Promise<MixerSize[]>;
+
   protected get bridgeApi() {
     return this.inner.methods.anchorApi as AnchorApi<T, BridgeConfig>;
   }
@@ -25,8 +60,11 @@ export abstract class VAnchorDeposit<
     return this.inner.config;
   }
 
-  generateNote(anchorId: number | string): Promise<K> {
-    throw new Error('api not ready:Not mixer api for ' + anchorId);
+  cancelDeposit(): Promise<void> {
+    this.cancelToken.cancelled = true;
+    this.emit('stateChange', WithdrawState.Cancelling);
+
+    return Promise.resolve(undefined);
   }
 
   /** For the VAnchor, a bridge note represents a UTXO.
