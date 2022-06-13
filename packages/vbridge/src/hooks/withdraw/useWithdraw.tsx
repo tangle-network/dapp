@@ -13,7 +13,8 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useBridge } from '../bridge/use-bridge';
 
 export type UseWithdrawProps = {
-  note: Note | null;
+  note: Note[] | null;
+  amount: string;
   recipient: string;
 };
 
@@ -50,7 +51,7 @@ export const useWithdraw = (params: UseWithdrawProps) => {
     },
   });
   const withdrawApi = useMemo(() => {
-    const withdraw = activeApi?.methods.fixedAnchor.withdraw;
+    const withdraw = activeApi?.methods.variableAnchor.withdraw;
     if (!withdraw?.enabled) {
       return null;
     }
@@ -60,7 +61,7 @@ export const useWithdraw = (params: UseWithdrawProps) => {
   useEffect(() => {
     const sub = activeApi?.relayerManager.listUpdated.subscribe(() => {
       if (params.note) {
-        activeApi?.relayerManager.getRelayersByNote(params.note).then((r: WebbRelayer[]) => {
+        activeApi?.relayerManager.getRelayersByNote(params.note[0]).then((r: WebbRelayer[]) => {
           setRelayersState((p) => ({
             ...p,
             loading: false,
@@ -75,7 +76,7 @@ export const useWithdraw = (params: UseWithdrawProps) => {
   // hook events
   useEffect(() => {
     if (params.note) {
-      activeApi?.relayerManager.getRelayersByNote(params.note).then((r: WebbRelayer[]) => {
+      activeApi?.relayerManager.getRelayersByNote(params.note[0]).then((r: WebbRelayer[]) => {
         setRelayersState((p) => ({
           ...p,
           loading: false,
@@ -127,7 +128,8 @@ export const useWithdraw = (params: UseWithdrawProps) => {
     if (stage === WithdrawState.Ideal) {
       if (params.note) {
         try {
-          const txReceipt = await withdrawApi.withdraw(params.note?.serialize(), params.recipient);
+          const notes = params.note.map((note) => note.serialize());
+          const txReceipt = await withdrawApi.withdraw(notes, params.recipient, params.amount);
           setReceipt(txReceipt);
         } catch (e) {
           console.log('error from withdraw api', e);
