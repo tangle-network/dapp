@@ -22,6 +22,7 @@ import { hexToU8a, u8aToHex } from '@polkadot/util';
 import { naclEncrypt, randomAsU8a } from '@polkadot/util-crypto';
 
 import { VAnchorWithdraw } from '../abstracts/anchor/vanchor-withdraw';
+
 const logger = LoggerService.get('SubstrateVAnchorWithdraw');
 
 async function fetchSubstrateVAnchorProvingKey() {
@@ -73,9 +74,19 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
       curve: 'Bn254',
     });
     let publicAmount = -amount;
+
+    const latestIndex = inputNotes.reduce((index, { note }) => {
+      if (index < Number(note.index)) {
+        return Number(note.index);
+      }
+      return index;
+    }, 0);
+    console.log(`last leaf index ${latestIndex}`);
+    const leaves = await this.inner.api.derive.merkleTreeBn254.getLeavesForTree(treeId, 0, latestIndex);
     const leavesMap: any = {};
     /// Assume same chain withdraw-deposit
-    leavesMap[targetChainId] = [];
+    leavesMap[targetChainId] = leaves;
+    console.log(leaves);
     const tree = await this.inner.api.query.merkleTreeBn254.trees(treeId);
     const root = tree.unwrap().root.toHex();
     const neighborRoots: string[] = await (this.inner.api.rpc as any).lt

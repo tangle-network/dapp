@@ -15,11 +15,12 @@ import { useAppConfig, useWebContext } from '@webb-dapp/react-environment';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { SettingsIcon } from '@webb-dapp/ui-components/assets/SettingsIcon';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
+import { AmountInput } from '@webb-dapp/ui-components/Inputs/AmountInput/AmountInput';
 import { BridgeNoteInput } from '@webb-dapp/ui-components/Inputs/NoteInput/BridgeNoteInput';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
-import { useWithdraw } from '@webb-dapp/vbridge';
-import { WithdrawingModal } from '@webb-dapp/vbridge/components/Withdraw/WithdrawingModal';
+import WithdrawingModal from '@webb-dapp/vbridge/components/Withdraw/WithdrawingModal';
+import { useWithdraw } from '@webb-dapp/vbridge/hooks/withdraw/useWithdraw';
 import { Note } from '@webb-tools/sdk-core';
 import { ethers } from 'ethers';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -136,7 +137,8 @@ type WithdrawProps = {};
 
 export const Withdraw: React.FC<WithdrawProps> = () => {
   const [notes, setNotes] = useState<string[]>([]);
-  const [amount, setAmount] = useState('');
+  const [parsedAmount, setParsedAmount] = useState<number>(0);
+
   const [recipient, setRecipient] = useState('');
   const [showRelayerModal, setShowRelayerModal] = useState(false);
   const [fees, setFees] = useState('0');
@@ -171,14 +173,14 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
     validationErrors,
     withdraw,
   } = useWithdraw({
-    amount,
+    amount: String(parsedAmount),
     note: depositNotes,
     recipient,
   });
   const appConfig = useAppConfig();
 
   const shouldSwitchChain = useMemo(() => {
-    if (!depositNotes || !activeChain) {
+    if (!depositInfo || !activeChain) {
       return false;
     }
     const chainId = parseChainIdType(Number(depositInfo.targetChainId)).chainId;
@@ -189,11 +191,11 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
   const isDisabled = useMemo(() => {
     if (depositNotes && shouldSwitchChain) {
       return false;
-    } else if (depositNotes && recipient) {
+    } else if (depositNotes && recipient && parsedAmount) {
       return false;
     }
     return true;
-  }, [depositNotes, shouldSwitchChain, recipient]);
+  }, [depositNotes, shouldSwitchChain, recipient, parsedAmount]);
 
   const switchChainFromNote = async (note: Note | null) => {
     if (!note) {
@@ -218,7 +220,15 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
       });
     }
   }, [relayersState, depositInfo]);
+  const [userAmountInput, setUserAmountInput] = useState<string>('');
 
+  const parseAndSetAmount = (amount: string): void => {
+    setUserAmountInput(amount);
+    let parsedAmount = Number(amount);
+    if (!isNaN(parsedAmount)) {
+      setParsedAmount(parsedAmount);
+    }
+  };
   return (
     <WithdrawWrapper wallet={activeWallet}>
       <WithdrawNoteSection>
@@ -240,6 +250,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
             <p style={{ fontSize: '14px', color: '#B6B6B6', marginLeft: '5px' }}>RELAYER</p>
           </RelayerSettings>
         </div>
+
         <div className='note-input'>
           <BridgeNoteInput
             error={notes ? validationErrors.note : ''}
@@ -271,6 +282,14 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
               {validationErrors.recipient}
             </FormHelperText>
           </div>
+          <div style={{ padding: '10px 35px' }}>
+            <Typography variant={'h6'}>
+              <b>WITHDRAW AMOUNT</b>
+            </Typography>
+          </div>
+          <div className='address-input'>
+            <AmountInput error={''} onChange={parseAndSetAmount} value={userAmountInput} />
+          </div>
           <SpaceBox height={16} />
           <div className='information-item'>
             <p className='title'>Deposit Amount</p>
@@ -296,18 +315,18 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
           <div className='total-amount'>
             <p className='title'>Total Amount</p>
             <p className='value'>
-              {Number(depositInfo.amount) - Number(fees)} {depositInfo.tokenSymbol}
+              {Number(parsedAmount) - Number(fees)} {depositInfo.tokenSymbol}
             </p>
           </div>
           <SpaceBox height={8} />
           <div style={{ padding: '10px 35px' }}>
             <MixerButton
               disabled={isDisabled}
-              onClick={() => {
+              onClick={async () => {
                 if (shouldSwitchChain) {
                   return switchChainFromNote(depositInfo.note);
                 }
-                withdraw();
+                await withdraw();
               }}
               label={shouldSwitchChain ? 'Switch chains to withdraw' : 'Withdraw'}
             />
@@ -321,7 +340,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
             withdrawTxInfo={{
               account: recipient,
             }}
-            note={depositNotes}
+            note={depositInfo?.note.note}
             cancel={cancelWithdraw}
             stage={stage}
             canCancel={canCancel}
