@@ -27,6 +27,7 @@ import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
+import { above, useBreakpoint } from '@webb-dapp/ui-components/utils/responsive-utils';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
@@ -358,13 +359,7 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
     ? {
         hoverMessage: activeChain.url,
         chainIcon: (
-          <Avatar
-            style={{
-              height: 35,
-              width: 35,
-              background: 'transparent',
-            }}
-          >
+          <Avatar className='chain-avatar'>
             <activeChain.logo />
           </Avatar>
         ),
@@ -437,12 +432,16 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
 
 const NetworkIndicatorWrapper = styled.button`
   && {
-    height: 45px;
+    min-height: 40px;
     border-radius: 8px;
-    margin: 0 1rem;
-    padding: 0 0.3rem;
+    padding: 0.3rem 0.5rem;
     background: ${({ theme }: { theme: Pallet }) => theme.lightSelectionBackground};
     position: relative;
+
+    ${above.xs`
+      padding: 0.5rem 0.7rem;
+      margin: 0 1rem;
+    `}
 
     &:before {
       position: absolute;
@@ -475,6 +474,17 @@ const NetworkIndicatorWrapper = styled.button`
   }
 
   cursor: pointer;
+
+  .chain-avatar {
+    width: 29px;
+    height: 29px;
+    background: transparent;
+
+    ${above.xs`
+      width: 35px;
+      height: 35px;
+    `}
+  }
 `;
 
 export const NetworkManagerIndicator: React.FC<NetworkManagerIndicatorProps> = ({
@@ -482,6 +492,8 @@ export const NetworkManagerIndicator: React.FC<NetworkManagerIndicatorProps> = (
   connectionStatus,
   onClick,
 }) => {
+  const { isXsOrAbove } = useBreakpoint();
+
   const icon = useMemo(() => {
     switch (connectionStatus) {
       case 'connecting':
@@ -509,24 +521,28 @@ export const NetworkManagerIndicator: React.FC<NetworkManagerIndicatorProps> = (
         );
 
       case 'error':
-        return <Icon fontSize={'large'}>podcasts</Icon>;
+        return <Icon fontSize={isXsOrAbove ? 'large' : 'medium'}>podcasts</Icon>;
 
       case 'connected':
       default:
-        return connectionMetaData?.chainIcon ? connectionMetaData?.chainIcon : <Icon fontSize={'large'}>podcasts</Icon>;
+        return connectionMetaData?.chainIcon ? (
+          connectionMetaData?.chainIcon
+        ) : (
+          <Icon fontSize={isXsOrAbove ? 'large' : 'medium'}>podcasts</Icon>
+        );
     }
-  }, [connectionMetaData, connectionStatus]);
+  }, [connectionMetaData, connectionStatus, isXsOrAbove]);
 
   return (
     <NetworkIndicatorWrapper as={ButtonBase} onClick={onClick}>
-      <Flex row ai={'center'} jc='space-between' as={Padding}>
+      <Flex row ai={'center'} jc='space-between'>
         <Flex>{icon}</Flex>
         {connectionMetaData ? (
           <>
-            <Padding />
+            <Padding x={0.5} />
 
             <Flex col>
-              <Typography variant='body1'>
+              <Typography variant='subtitle1'>
                 <b style={{ whiteSpace: 'nowrap' }}>{connectionMetaData.chainName}</b>
               </Typography>
             </Flex>

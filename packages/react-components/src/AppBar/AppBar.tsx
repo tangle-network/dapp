@@ -21,8 +21,7 @@ const AppBarWrapper = styled.div`
 
   background: ${({ theme }) => theme.mainBackground};
   .webb-logo {
-    min-width: 75px;
-    max-width: 75px;
+    width: 75px;
     z-index: 101;
   }
   .div {
@@ -124,7 +123,7 @@ const AppBar: React.FC<AppBarProps> = ({ toggleSidebarDisplay }) => {
         </RightNavigation>
       </AppBarWrapper>
       <LowerSection>
-        <Typography variant='h2'>
+        <Typography variant='h3'>
           <b>{pageTitle?.toString()}</b>
         </Typography>
       </LowerSection>
