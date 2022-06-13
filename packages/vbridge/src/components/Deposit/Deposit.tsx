@@ -1,5 +1,12 @@
 import { Checkbox, FormControlLabel, Typography } from '@material-ui/core';
-import { ChainTypeId, Currency, MixerSize, WalletConfig, WebbCurrencyId } from '@webb-dapp/api-providers';
+import {
+  ChainTypeId,
+  Currency,
+  MixerSize,
+  WalletConfig,
+  WebbCurrencyId,
+  WithdrawState,
+} from '@webb-dapp/api-providers';
 import { useWrapUnwrap } from '@webb-dapp/page-wrap-unwrap/hooks/useWrapUnwrap';
 import { RequiredWalletSelection } from '@webb-dapp/react-components/RequiredWalletSelection/RequiredWalletSelection';
 import { useAppConfig, useWebContext } from '@webb-dapp/react-environment/webb-context';
@@ -101,7 +108,7 @@ export const Deposit: React.FC<DepositProps> = () => {
 
   const { tokens: bridgeCurrencies } = useBridge();
   const bridgeDepositApi = useBridgeDeposit();
-  const { selectedBridgeCurrency, setSelectedCurrency } = bridgeDepositApi;
+  const { selectedBridgeCurrency, setSelectedCurrency, stage } = bridgeDepositApi;
 
   const { setWrappableToken, wrappableToken, wrappableTokens } = useWrapUnwrap();
   const { activeApi, activeChain, activeWallet, chains, loading, switchChain } = useWebContext();
@@ -143,8 +150,8 @@ export const Deposit: React.FC<DepositProps> = () => {
   }, [chainsConfig, selectedBridgeCurrency]);
 
   const disabledDepositButton = useMemo(() => {
-    return amount === 0 || typeof destChain === 'undefined';
-  }, [amount, destChain]);
+    return amount === 0 || typeof destChain === 'undefined' || stage !== WithdrawState.Ideal;
+  }, [amount, destChain, stage]);
 
   const wrappableCurrency = useMemo<Currency | undefined>(() => {
     if (wrappableToken) {

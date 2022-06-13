@@ -37,8 +37,8 @@ export const useBridgeDeposit = (): VBridgeDepositApi => {
   const { activeApi } = useWebContext();
   const [stage, setStage] = useState<WithdrawState>(WithdrawState.Ideal);
   const [error, setError] = useState('');
-  const [mixerSizes, setMixerSizes] = useState<MixerSize[]>([]);
-  const { bridgeApi, getTokensOfChain } = useBridge();
+  const [_mixerSizes, setMixerSizes] = useState<MixerSize[]>([]);
+  const { bridgeApi } = useBridge();
   const [selectedBridgeCurrency, setSelectedBridgeCurrency] = useState<null | Currency>(null);
   /// api
   const depositApi = useMemo(() => {
@@ -72,7 +72,7 @@ export const useBridgeDeposit = (): VBridgeDepositApi => {
         setMixerSizes(mixerSizes);
       });
     }
-    const subscribe = bridgeApi.$store.subscribe((bridge) => {
+    const subscribe = bridgeApi.$store.subscribe((_bridge) => {
       depositApi.getSizes().then((mixerSizes) => {
         mixerSizes.filter((mixerSize) => {
           mixerSize.id === selectedBridgeCurrency?.id;

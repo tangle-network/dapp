@@ -230,6 +230,8 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
       await depositNote.mutateIndex(String(leafIndex));
       console.log(txHash, leafIndex);
       this.emit('stateChange', WithdrawState.Done);
+      console.log(depositNote.note.index);
+      console.log(depositNote.serialize());
       return depositNote;
     } catch (e) {
       this.emit('stateChange', WithdrawState.Failed);

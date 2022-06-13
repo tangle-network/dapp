@@ -111,12 +111,16 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({
     return depositPayload?.note.serialize();
   }, [depositPayload]);
 
-  const downloadNote = useCallback(() => {
-    if (!note) {
-      return;
-    }
-    downloadString(note, note.slice(-note.length - 10) + '.txt');
-  }, [note]);
+  const downloadNote = useCallback(
+    (noteStr?: string) => {
+      let noteToDownload = noteStr || note;
+      if (!noteToDownload) {
+        return;
+      }
+      downloadString(noteToDownload, noteToDownload.slice(-noteToDownload.length - 10) + '.txt');
+    },
+    [note]
+  );
 
   const { copy, isCopied } = useCopyable();
   const handleCopy = useCallback((): void => {
@@ -223,7 +227,11 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({
             setLoading(true);
             downloadNote();
             onClose();
-            await provider.deposit(depositPayload);
+            const note = await provider.deposit(depositPayload);
+            // download note with the index
+            if (note) {
+              downloadNote(note.serialize());
+            }
             setLoading(false);
           }}
           disabled={!backupConfirmation || !depositPayload || loading}
