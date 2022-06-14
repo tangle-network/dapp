@@ -19,6 +19,7 @@ import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { BridgeNoteInput } from '@webb-dapp/ui-components/Inputs/NoteInput/BridgeNoteInput';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
+import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
 import { Note } from '@webb-tools/sdk-core';
 import { ethers } from 'ethers';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -37,7 +38,7 @@ const WithdrawWrapper = styled.div<{ wallet: WalletConfig | undefined }>`
       `;
     }
   }}
-  background: ${({ theme }) => theme.lightSelectionBackground};
+  background: ${({ theme }) => theme.layer1Background};
   border-radius: 10px;
 
   .titles-and-information {
@@ -65,8 +66,15 @@ const RelayerSettings = styled.div`
 `;
 
 const WithdrawNoteSection = styled.div`
-  padding: 25px 35px;
+  padding: 12px 14px;
+  padding-bottom: 25px;
   background: ${({ theme }) => theme.layer1Background};
+  border-radius: 8px;
+
+  ${above.xs`
+    padding: 25px 35px;
+    border-radius: 16px;
+  `}
 
   .note-input {
     display: flex;

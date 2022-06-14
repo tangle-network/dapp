@@ -16,6 +16,7 @@ import { useWebContext } from '@webb-dapp/react-environment';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
+import { above, useBreakpoint } from '@webb-dapp/ui-components/utils/responsive-utils';
 import React, { CSSProperties, useCallback, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
@@ -57,7 +58,45 @@ const TokenInputWrapper = styled.div<{ open: boolean }>`
     display: flex;
     align-items: center;
     padding: 5px;
+
+    ${above.xs`
+      padding: 8px 12px;
+    `}
   }
+
+  .token-avatar {
+    width: 26px;
+    height: 26px;
+
+    ${above.xs`
+      width: 32px;
+      height: 32px;
+    `}
+  }
+
+  .token-text {
+    max-width: 54px;
+    margin-left: 4px;
+    font-weight: 600;
+
+    ${above.xs`
+      max-width: none;
+      margin-left: 0px;
+    `}
+
+    * {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+
+      ${above.xs`
+        overflow: auto;
+        white-space: normal;
+        text-overflow: clip;
+      `}
+    }
+  }
+
   .account-avatar {
     background: transparent;
   }
@@ -95,6 +134,7 @@ export type TokenInputProps = {
   onChange(next: CurrencyContent): void;
   wrapperStyles?: CSSProperties;
 };
+
 const TokenName = styled.span`
   max-width: 100px;
   display: inline-block;
@@ -155,8 +195,11 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
     },
     [setWrapper]
   );
+
   // Generate a random id for the <Popper/> component
   const nonce = useMemo(() => String(Math.random()) + performance.now(), []);
+  const { isXsOrAbove } = useBreakpoint();
+
   return (
     <div style={wrapperStyles}>
       <ClickAwayListener
@@ -186,9 +229,10 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
                     }}
                   />
                 </Tooltip>
-                <Flex jc={'center'}>
-                  <Typography variant={'h6'} component={'span'} style={{ paddingLeft: '5px' }}>
-                    <b>{selected.symbol}</b>
+                {isXsOrAbove && <Padding x={0.5} />}
+                <Flex jc={'center'} className='token-text'>
+                  <Typography variant={'h6'} component={'span'}>
+                    {selected.symbol}
                   </Typography>
                 </Flex>
               </Flex>
@@ -198,19 +242,25 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
                   style={{
                     background: theme.warning,
                   }}
+                  className='token-avatar'
                 >
                   <Icon
                     style={{
                       color: '#fff',
                     }}
-                    fontSize={'large'}
+                    fontSize={isXsOrAbove ? 'large' : 'medium'}
                   >
                     generating_tokens
                   </Icon>
                 </Avatar>
-                <Padding x={0.5} />
-                <Flex jc={'center'}>
-                  <Typography variant={'caption'} color={'textSecondary'} style={{ whiteSpace: 'nowrap' }}>
+                {isXsOrAbove && <Padding x={0.5} />}
+                <Flex jc={'center'} className='chain-text'>
+                  <Typography
+                    display='block'
+                    variant={isXsOrAbove ? 'subtitle1' : 'caption'}
+                    color={'textSecondary'}
+                    style={{ whiteSpace: 'nowrap' }}
+                  >
                     Select Token
                   </Typography>
                 </Flex>
@@ -219,6 +269,7 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
 
             <div className={'account-button-wrapper'}>
               <IconButton
+                size='small'
                 style={{
                   transform: isOpen ? 'rotate(180deg)' : 'rotate(0)',
                   transition: 'all ease .3s',
