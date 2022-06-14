@@ -1,5 +1,4 @@
-import { Button, Checkbox, FormControlLabel, IconButton, InputBase, Tooltip } from '@material-ui/core';
-import { Typography } from '@material-ui/core';
+import { alpha, ButtonBase, Checkbox, InputBase, Typography } from '@material-ui/core';
 import { Currency } from '@webb-dapp/api-providers';
 import { WalletConfig } from '@webb-dapp/api-providers/types';
 import { TokenBalance } from '@webb-dapp/mixer/components';
@@ -9,17 +8,17 @@ import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { SpaceBox } from '@webb-dapp/ui-components/Box';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { ContentWrapper } from '@webb-dapp/ui-components/ContentWrappers';
+import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { getRoundedAmountString } from '@webb-dapp/ui-components/utils';
+import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
 import { FixedPointNumber } from '@webb-tools/sdk-core';
 import { FC, useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
-import { BN } from '@polkadot/util';
-
 import { useCrowdloan } from './hooks/useCrowdloan';
 
-export const AmountInputWrapper = styled.div`
+export const AmountInputWrapper = styled.div<{ disabled: boolean }>`
   display: flex;
   ${({ theme }: { theme: Pallet }) => css`
     border: 1px solid ${theme.heavySelectionBorderColor};
@@ -28,12 +27,28 @@ export const AmountInputWrapper = styled.div`
   `}
   height: 50px;
   border-radius: 10px;
-  padding: 5px;
+  padding: 8px 16px;
   align-items: center;
   justify-content: space-between;
+  margin-bottom: 8px;
+
+  && {
+    cursor: ${({ disabled }) => (disabled ? 'no-drop' : 'auto')};
+  }
 `;
 
-export const AmountButton = styled.button``;
+export const AmountButton = styled.button`
+  padding: 0 4px;
+
+  && {
+    transition: none;
+    color: ${({ theme }) => alpha(theme.accentColor, 0.8)};
+
+    :hover {
+      color: ${({ theme }) => theme.accentColor};
+    }
+  }
+`;
 
 const ContributeWrapper = styled.div<{ wallet: WalletConfig | undefined }>`
   ${({ theme, wallet }) => {
@@ -48,18 +63,45 @@ const ContributeWrapper = styled.div<{ wallet: WalletConfig | undefined }>`
       `;
     }
   }}
+
+  .checkbox-label {
+    padding: 8px;
+    padding-left: 0;
+
+    ${above.xs`
+      padding: 8px 32px;
+      padding-left: 0;
+    `}
+  }
 `;
 
-const PageCrowdloan: FC = () => {
+type TitleInfoProps = { label: string; value?: string; style?: React.CSSProperties };
+
+const TitleInfo: React.FC<TitleInfoProps> = ({ label, style, value = '-' }) => {
+  return (
+    <div style={style}>
+      <Typography variant='caption'>{label}</Typography>
+      <Typography variant='h5' component='p'>
+        {value}
+      </Typography>
+    </div>
+  );
+};
+
+export type PageCrowdloanProps = {};
+
+const PageCrowdloan: FC<PageCrowdloanProps> = () => {
   const { activeApi, activeChain, activeWallet } = useWebContext();
   const { amount, contribute, fundInfo, getFundInfo, setAmount } = useCrowdloan();
   const palette = useColorPallet();
   const { currencies: currenciesConfig } = useAppConfig();
+
   const [displayedAmount, setDisplayedAmount] = useState<string>('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [blockNumber, setBlockNumber] = useState(0);
   const [tokenBalance, setTokenBalance] = useState(0);
+  const [isConfirmed, setIsConfirmed] = useState(false);
 
   const allCurrencies = useMemo(() => {
     return activeChain
@@ -68,7 +110,14 @@ const PageCrowdloan: FC = () => {
         })
       : [];
   }, [activeChain, currenciesConfig]);
+
   const activeToken = useMemo(() => allCurrencies[0], [allCurrencies]);
+  const isFundingEnded = useMemo(() => BigInt(blockNumber) > fundInfo.end, [blockNumber, fundInfo]);
+  const confirmText = useMemo(
+    () =>
+      "Your KSM will be contributed to the crowdloan for Webb's Kusama parachain slot lease and locked for the duration of the lease. If this crowdloan does not win an auction slot, your KSM will be returned.",
+    []
+  );
 
   // Get balance of token
   useEffect(() => {
@@ -101,116 +150,110 @@ const PageCrowdloan: FC = () => {
 
     getFundInfo();
   }, [fundInfo, getFundInfo]);
+
   return (
-    <div>
-      <ContentWrapper>
-        <ContributeWrapper wallet={activeWallet}>
-          <div className='titles-and-information'>
-            {fundInfo && (
-              <>
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <Typography variant='h6'>
-                    <b>RAISED: </b>
-                    {fundInfo?.raised.toString()}
-                  </Typography>
-                  <SpaceBox height={16} />
-                  <Typography variant='h6'>
-                    <b>CAP: </b>
-                    {fundInfo?.cap.toString()}
-                  </Typography>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <Typography variant='h6'>
-                    <b>CURRENT BLOCK: </b>
-                    {blockNumber}
-                  </Typography>
-                  <SpaceBox height={16} />
-                  <Typography variant='h6'>
-                    <b>END BLOCK: </b>
-                    {fundInfo?.end.toString()}
-                  </Typography>
-                </div>
-              </>
-            )}
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <Typography variant='h6'>
-                <b>BALANCE</b>
+    <ContentWrapper>
+      <ContributeWrapper wallet={activeWallet}>
+        <div className='titles-and-information'>
+          {fundInfo && (
+            <Flex row jc='space-between' ai='center' style={{ marginBottom: '16px' }}>
+              <Flex style={{ minWidth: '35%' }} jc='center'>
+                <TitleInfo label='RAISED' value={fundInfo?.raised.toString()} style={{ marginBottom: '4px' }} />
+                <TitleInfo label='CURRENT BLOCK' value={blockNumber.toString()} />
+              </Flex>
+              <Flex style={{ minWidth: '35%' }}>
+                <TitleInfo label='CAP' value={fundInfo?.cap.toString()} style={{ marginBottom: '4px' }} />
+                <TitleInfo label='END BLOCK' value={fundInfo?.end.toString()} />
+              </Flex>
+            </Flex>
+          )}
+
+          <Flex row jc='flex-end' style={{ marginBottom: '8px' }}>
+            <div>
+              <Typography
+                variant='body2'
+                style={{ color: palette.type === 'dark' ? palette.accentColor : palette.primaryText }}
+              >
+                Your Balance~
               </Typography>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <div>
-                <Typography
-                  variant='body2'
-                  style={{ color: palette.type === 'dark' ? palette.accentColor : palette.primaryText }}
-                >
-                  Your Balance~
-                </Typography>
-              </div>
-              <TokenBalance>
-                <Typography variant='body2'>
-                  {getRoundedAmountString(Number(tokenBalance))} {activeToken?.view.symbol}
-                </Typography>
-              </TokenBalance>
-            </div>
-            <AmountInputWrapper>
-              <div style={{ width: '100%' }}>
-                <InputBase
-                  disabled={BigInt(blockNumber) > fundInfo.end}
-                  placeholder={`Enter Amount`}
-                  fullWidth
-                  value={displayedAmount}
-                  inputProps={{ style: { fontSize: 14, paddingLeft: '15px' } }}
-                  onChange={(event) => {
-                    setDisplayedAmount(event.target.value);
-                    let maybeNumber = Number(event.target.value);
-                    if (!Number.isNaN(maybeNumber)) {
-                      let fixed = new FixedPointNumber(event.target.value, activeToken.getDecimals());
-                      let cap = FixedPointNumber.fromInner(fundInfo.cap.toString(), activeToken.getDecimals());
-                      let raised = FixedPointNumber.fromInner(fundInfo.raised.toString(), activeToken.getDecimals());
-                      if (fixed.isLessThan(new FixedPointNumber(0.1, activeToken.getDecimals()))) {
-                        setError('Amount must be greater than 0.1');
-                      } else if (cap.minus(raised).isGreaterThan(fixed)) {
-                        setError('');
-                        setAmount(fixed);
-                      } else {
-                        setError('Amount exceeds the cap');
-                      }
-                    } else {
-                      setAmount(new FixedPointNumber(tokenBalance, activeToken.getDecimals()));
-                    }
-                  }}
-                />
-              </div>
-              <div>
-                <AmountButton
-                  color={'primary'}
-                  as={Button}
-                  onClick={() => {
-                    setDisplayedAmount(tokenBalance.toString());
-                    setAmount(new FixedPointNumber(tokenBalance, activeToken.getDecimals()));
-                  }}
-                >
-                  MAX
-                </AmountButton>
-              </div>
-            </AmountInputWrapper>
-            <SpaceBox height={16} />
-            <MixerButton
-              disabled={loading || !amount || !!error || BigInt(blockNumber) > fundInfo.end}
-              label={error ? 'Amount exceeds cap' : BigInt(blockNumber) > fundInfo.end ? 'Funding ended' : 'Contribute'}
-              onClick={async () => {
-                try {
-                  setLoading(true);
-                  await contribute();
-                } finally {
-                  setLoading(false);
+            <TokenBalance>
+              <Typography variant='body2'>
+                {getRoundedAmountString(Number(tokenBalance))} {activeToken?.view.symbol}
+              </Typography>
+            </TokenBalance>
+          </Flex>
+
+          <AmountInputWrapper disabled={isFundingEnded}>
+            <InputBase
+              disabled={isFundingEnded}
+              placeholder={`Enter Amount`}
+              fullWidth
+              value={displayedAmount}
+              inputProps={{ style: { fontSize: 14, cursor: isFundingEnded ? 'no-drop' : 'auto' } }}
+              onChange={(event) => {
+                setDisplayedAmount(event.target.value);
+                let maybeNumber = Number(event.target.value);
+                if (!Number.isNaN(maybeNumber)) {
+                  let fixed = new FixedPointNumber(event.target.value, activeToken.getDecimals());
+                  let cap = FixedPointNumber.fromInner(fundInfo.cap.toString(), activeToken.getDecimals());
+                  let raised = FixedPointNumber.fromInner(fundInfo.raised.toString(), activeToken.getDecimals());
+                  if (fixed.isLessThan(new FixedPointNumber(0.1, activeToken.getDecimals()))) {
+                    setError('Amount must be greater than 0.1');
+                  } else if (cap.minus(raised).isGreaterThan(fixed)) {
+                    setError('');
+                    setAmount(fixed);
+                  } else {
+                    setError('Amount exceeds the cap');
+                  }
+                } else {
+                  setAmount(new FixedPointNumber(tokenBalance, activeToken.getDecimals()));
                 }
               }}
             />
-          </div>
-        </ContributeWrapper>
-      </ContentWrapper>
-    </div>
+            <AmountButton
+              disabled={isFundingEnded}
+              as={ButtonBase}
+              onClick={() => {
+                setDisplayedAmount(tokenBalance.toString());
+                setAmount(new FixedPointNumber(tokenBalance, activeToken.getDecimals()));
+              }}
+            >
+              MAX
+            </AmountButton>
+          </AmountInputWrapper>
+
+          <Flex row ai='flex-start' style={{ marginLeft: '-9px', opacity: isFundingEnded ? 0.4 : 1 }}>
+            <Checkbox
+              disabled={isFundingEnded}
+              size='medium'
+              checked={isConfirmed}
+              onChange={() => setIsConfirmed((p) => !p)}
+              inputProps={{ 'aria-label': 'controlled' }}
+              style={{ color: palette.accentColor, display: 'block' }}
+            />
+            <Typography display='block' variant='caption' className='checkbox-label'>
+              {confirmText}
+            </Typography>
+          </Flex>
+
+          <SpaceBox height={16} />
+
+          <MixerButton
+            disabled={loading || !amount || !!error || isFundingEnded || !isConfirmed}
+            label={error ? 'Amount exceeds cap' : isFundingEnded ? 'Funding ended' : 'Contribute'}
+            onClick={async () => {
+              try {
+                setLoading(true);
+                await contribute();
+              } finally {
+                setLoading(false);
+              }
+            }}
+          />
+        </div>
+      </ContributeWrapper>
+    </ContentWrapper>
   );
 };
 
