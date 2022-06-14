@@ -107,10 +107,8 @@ const DropdownInput: React.FC<DropdownInputProps> = ({ chains, onChange, value }
     };
   }, [value]);
 
-  const $wrapper = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
   const theme = useColorPallet();
-
   const { isXsOrAbove } = useBreakpoint();
 
   return (
@@ -121,7 +119,7 @@ const DropdownInput: React.FC<DropdownInputProps> = ({ chains, onChange, value }
             setIsOpen(false);
           }}
         >
-          <InputWrapper open={isOpen} ref={$wrapper}>
+          <InputWrapper open={isOpen}>
             <div
               onClick={() => {
                 setIsOpen((p) => !p);
