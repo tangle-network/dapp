@@ -107,35 +107,6 @@ const ContributeWrapper = styled.div<{ wallet: WalletConfig | undefined }>`
   }
 `;
 
-const InfoWrapper = styled.div`
-  box-sizing: border-box;
-  margin-top: 20px;
-  width: 90%;
-
-  ${above.sm`
-    width: 60%;
-  `}
-
-  ${above.md`
-    margin-top: 0px; 
-    width: auto;
-    max-width: 384px;
-  `}
-`;
-
-type TitleInfoProps = { label: string; value?: string; style?: React.CSSProperties };
-
-const TitleInfo: React.FC<TitleInfoProps> = ({ label, style, value = '-' }) => {
-  return (
-    <div style={style}>
-      <Typography variant='caption'>{label}</Typography>
-      <Typography variant='h5' component='p'>
-        {value}
-      </Typography>
-    </div>
-  );
-};
-
 export type PageCrowdloanProps = {};
 
 const PageCrowdloan: FC<PageCrowdloanProps> = () => {
@@ -203,19 +174,6 @@ const PageCrowdloan: FC<PageCrowdloanProps> = () => {
     <PageCrowdloanWrapper>
       <ContributeWrapper wallet={activeWallet}>
         <div className='titles-and-information'>
-          {fundInfo && (
-            <Flex row jc='space-between' ai='center' style={{ marginBottom: '16px' }}>
-              <Flex style={{ minWidth: '47%' }} jc='center'>
-                <TitleInfo label='RAISED' value={fundInfo?.raised.toString()} style={{ marginBottom: '4px' }} />
-                <TitleInfo label='CURRENT BLOCK' value={blockNumber.toString()} />
-              </Flex>
-              <Flex style={{ minWidth: '47%' }}>
-                <TitleInfo label='CAP' value={fundInfo?.cap.toString()} style={{ marginBottom: '4px' }} />
-                <TitleInfo label='END BLOCK' value={fundInfo?.end.toString()} />
-              </Flex>
-            </Flex>
-          )}
-
           <Flex row jc='flex-end' style={{ marginBottom: '8px' }}>
             <div>
               <Typography
@@ -301,9 +259,6 @@ const PageCrowdloan: FC<PageCrowdloanProps> = () => {
           />
         </div>
       </ContributeWrapper>
-      <InfoWrapper>
-        <CrowdloanInfo />
-      </InfoWrapper>
     </PageCrowdloanWrapper>
   );
 };
