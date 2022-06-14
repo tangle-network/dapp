@@ -25,7 +25,6 @@ import { naclEncrypt, randomAsU8a } from '@polkadot/util-crypto';
 import { VAnchorWithdraw } from '../abstracts/anchor/vanchor-withdraw';
 
 const logger = LoggerService.get('SubstrateVAnchorWithdraw');
-
 async function fetchSubstrateVAnchorProvingKey() {
   const IPFSUrl = 'https://ipfs.io/ipfs/QmZiNuAKp2QGp281bqasNqvqccPCGp4yoxWbK8feecefML';
   const cachedURI = getCachedFixtureURI('proving_key_uncompressed_sub_vanchor_2_2_2.bin');
@@ -39,10 +38,13 @@ async function fetchSubstrateVAnchorProvingKey() {
 }
 
 export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
-  async withdraw(notes: string[], recipient: string, amountUnit: string): Promise<string> {
+  async withdraw(_notes: string[], recipient: string, amountUnit: string): Promise<string> {
     const secret = randomAsU8a();
     const account = await this.inner.accounts.activeOrDefault;
-
+    const notes = [
+      'webb://v2:vanchor/2199023256632:2199023256632/9:9/3804000000020000000000000000000000000000000000000000000000000000:0080c6a47e8d0300000000000000000000000000000000000000000000000000:985efa5808b6c01fd7035fd0440256a6570bc75a38a9267dc6d3e96d63e9031d:63e54b34a3518d780d5f8a4b8c73a15fb0d3ad40ac2ef8deec110c4247b0292f/?curve=Bn254&width=5&exp=5&hf=Poseidon&backend=Arkworks&token=TEST&denom=18&amount=1000000000000000&index=3',
+      'webb://v2:vanchor/2199023256632:2199023256632/9:9/3804000000020000000000000000000000000000000000000000000000000000:0080c6a47e8d0300000000000000000000000000000000000000000000000000:a492d97a80585fd34831027835e653483763ace17468413404c3e81892a1930b:874444f2c5516175d57d0aa53839f765117a63b2d7600ab9c69ccdedd9f72a2b/?curve=Bn254&width=5&exp=5&hf=Poseidon&backend=Arkworks&token=TEST&denom=18&amount=1000000000000000&index=5',
+    ];
     this.emit('stateChange', WithdrawState.GeneratingZk);
 
     if (!account) {
@@ -150,6 +152,10 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
     this.emit('stateChange', WithdrawState.SendingTransaction);
     const leafsCount = await this.inner.api.derive.merkleTreeBn254.getLeafCountForTree(Number(treeId));
     const indexBeforeInsertion = Math.max(leafsCount - 1, 0);
+    console.log({
+      leafsCount,
+      indexBeforeInsertion,
+    });
     const tx = this.inner.txBuilder.build(
       {
         method: 'transact',
@@ -161,6 +167,7 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
 
     const txHash = await tx.call(account.address);
     const leafIndex = await this.getleafIndex(outputCommitment, indexBeforeInsertion, treeId);
+
     console.log(txHash, leafIndex);
     // to update utxo for the output note
   }
@@ -187,6 +194,6 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
     if (shiftedIndex === -1) {
       throw new Error(`Leaf isn't in the tree`);
     }
-    return indexBeforeInsertion + shiftedIndex;
+    return Math.max(indexBeforeInsertion + shiftedIndex - 1, 0);
   }
 }

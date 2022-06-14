@@ -126,7 +126,7 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
     if (shiftedIndex === -1) {
       throw new Error(`Leaf isn't in the tree`);
     }
-    return indexBeforeInsertion + shiftedIndex;
+    return Math.max(indexBeforeInsertion + shiftedIndex - 1, 0);
   }
 
   async deposit(depositPayload: DepositPayload, recipient: string): Promise<Note> {
@@ -216,6 +216,7 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
       this.emit('stateChange', WithdrawState.SendingTransaction);
       const leafsCount = await this.inner.api.derive.merkleTreeBn254.getLeafCountForTree(Number(treeId));
       const indexBeforeInsertion = Math.max(leafsCount - 1, 0);
+      console.log({ leafsCount, indexBeforeInsertion });
       const tx = this.inner.txBuilder.build(
         {
           method: 'transact',
