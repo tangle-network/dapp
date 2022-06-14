@@ -90,7 +90,7 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
       hashFunction: 'Poseidon',
       protocol: 'vanchor',
       sourceChain: sourceChainId.toString(),
-      sourceIdentifyingData: String(0),
+      sourceIdentifyingData: treeId.toString(),
       targetChain: destChainId.toString(),
       targetIdentifyingData: treeId.toString(),
       tokenSymbol: tokenSymbol,
@@ -223,6 +223,7 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
         },
         [treeId, vanchorProofData, extData]
       );
+      console.log([treeId, vanchorProofData, extData]);
       const txHash = await tx.call(account.address);
 
       const insertedLeaf = depositNote.getLeaf();

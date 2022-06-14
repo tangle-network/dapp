@@ -7,6 +7,7 @@ import '@webb-tools/api-derive/cjs/index.js';
 import type { WebbPolkadot } from './webb-provider';
 
 import {
+  currencyToUnitI128,
   getCachedFixtureURI,
   WebbError,
   WebbErrorCodes,
@@ -38,7 +39,7 @@ async function fetchSubstrateVAnchorProvingKey() {
 }
 
 export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
-  async withdraw(notes: string[], recipient: string, amount: string): Promise<string> {
+  async withdraw(notes: string[], recipient: string, amountUnit: string): Promise<string> {
     const secret = randomAsU8a();
     const account = await this.inner.accounts.activeOrDefault;
 
@@ -55,7 +56,15 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
 
     const inputNotes = await Promise.all(notes.map((note) => Note.deserialize(note)));
     const inputAmounts: number = inputNotes.reduce((acc: number, { note }) => acc + Number(note.amount), 0);
+    // const amount = currencyToUnitI128(Number(amountUnit)).toString();
+    const amount = String(inputAmounts);
+
     const reminder = inputAmounts - Number(amount);
+    console.log(`
+    input amount ${inputAmounts}
+    amount to withdraw ${amount}
+   reminder ${reminder}
+    `);
     if (reminder < 0) {
       throw new Error(`Input ${inputAmounts} is less than the withdrawn amount ${amount}`);
     }
@@ -86,7 +95,7 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
     const leavesMap: any = {};
     /// Assume same chain withdraw-deposit
     leavesMap[targetChainId] = leaves;
-    console.log(leaves);
+    console.log(leaves.map((l) => u8aToHex(l)));
     const tree = await this.inner.api.query.merkleTreeBn254.trees(treeId);
     const root = tree.unwrap().root.toHex();
     const neighborRoots: string[] = await (this.inner.api.rpc as any).lt
@@ -126,7 +135,7 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
       publicAmount: String(publicAmount),
       output: [output1, output2],
     };
-
+    console.log(vnachorWithdrawSetup);
     const data = await pm.prove('vanchor', vnachorWithdrawSetup);
     const vanchorProofData = {
       proof: `0x${data.proof}`,
@@ -148,6 +157,8 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
       },
       [treeId, vanchorProofData, extData]
     );
+    console.log([treeId, vanchorProofData, extData]);
+
     const txHash = await tx.call(account.address);
     const leafIndex = await this.getleafIndex(outputCommitment, indexBeforeInsertion, treeId);
     console.log(txHash, leafIndex);
