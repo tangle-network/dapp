@@ -7,7 +7,6 @@ import { useAppConfig, useWebContext } from '@webb-dapp/react-environment/webb-c
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { SpaceBox } from '@webb-dapp/ui-components/Box';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
-import { ContentWrapper } from '@webb-dapp/ui-components/ContentWrappers';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { getRoundedAmountString } from '@webb-dapp/ui-components/utils';
@@ -17,6 +16,20 @@ import { FC, useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
 import { useCrowdloan } from './hooks/useCrowdloan';
+import { CrowdloanInfo } from './CrowdloanInfo';
+
+export const PageCrowdloanWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0px auto;
+
+  ${above.md`
+    flex-direction: row; 
+    align-items: flex-start;
+  `}
+`;
 
 export const AmountInputWrapper = styled.div<{ disabled: boolean }>`
   display: flex;
@@ -51,6 +64,24 @@ export const AmountButton = styled.button`
 `;
 
 const ContributeWrapper = styled.div<{ wallet: WalletConfig | undefined }>`
+  box-sizing: border-box;
+  padding: 1rem;
+  ${above.sm`  padding: 2rem;`}
+  width: 90%;
+  border-radius: 20px;
+  ${({ theme }: { theme: Pallet }) => css`
+    background: ${theme.layer1Background};
+    border: 1px solid ${theme.borderColor};
+  `}
+
+  ${above.sm`
+    width: 60%;
+  `}
+
+  ${above.md`
+    width: 49%;
+  `}
+
   ${({ theme, wallet }) => {
     if (wallet) {
       return css``;
@@ -73,6 +104,21 @@ const ContributeWrapper = styled.div<{ wallet: WalletConfig | undefined }>`
       padding-left: 0;
     `}
   }
+`;
+
+const InfoWrapper = styled.div`
+  box-sizing: border-box;
+  margin-top: 20px;
+  width: 90%;
+
+  ${above.sm`
+    width: 60%;
+  `}
+
+  ${above.md`
+    margin-top: 0px; 
+    width: 49%;
+  `}
 `;
 
 type TitleInfoProps = { label: string; value?: string; style?: React.CSSProperties };
@@ -152,16 +198,16 @@ const PageCrowdloan: FC<PageCrowdloanProps> = () => {
   }, [fundInfo, getFundInfo]);
 
   return (
-    <ContentWrapper>
+    <PageCrowdloanWrapper>
       <ContributeWrapper wallet={activeWallet}>
         <div className='titles-and-information'>
           {fundInfo && (
             <Flex row jc='space-between' ai='center' style={{ marginBottom: '16px' }}>
-              <Flex style={{ minWidth: '35%' }} jc='center'>
+              <Flex style={{ minWidth: '47%' }} jc='center'>
                 <TitleInfo label='RAISED' value={fundInfo?.raised.toString()} style={{ marginBottom: '4px' }} />
                 <TitleInfo label='CURRENT BLOCK' value={blockNumber.toString()} />
               </Flex>
-              <Flex style={{ minWidth: '35%' }}>
+              <Flex style={{ minWidth: '47%' }}>
                 <TitleInfo label='CAP' value={fundInfo?.cap.toString()} style={{ marginBottom: '4px' }} />
                 <TitleInfo label='END BLOCK' value={fundInfo?.end.toString()} />
               </Flex>
@@ -253,7 +299,10 @@ const PageCrowdloan: FC<PageCrowdloanProps> = () => {
           />
         </div>
       </ContributeWrapper>
-    </ContentWrapper>
+      <InfoWrapper>
+        <CrowdloanInfo />
+      </InfoWrapper>
+    </PageCrowdloanWrapper>
   );
 };
 
