@@ -8,10 +8,9 @@ import styled, { css } from 'styled-components';
 const SummaryWrapper = styled.section`
   padding: 8px 1rem;
   ${above.sm` padding: 16px 2rem; `}
-  max-width: 500px;
   border-radius: 16px;
   ${({ theme }: { theme: Pallet }) => css`
-    background: transparent;
+    background: ${theme.layer1Background};
     border: 1px solid ${alpha(theme.borderColor, 0.1)};
   `}
 `;
@@ -35,26 +34,31 @@ const StatisticDataWrapper = styled.div`
     margin-bottom: 4px;
   }
 
+  .caption {
+    color: ${({ theme }) => (theme.type === 'dark' ? theme.accentColor : theme.primaryText)};
+  }
+
   ::before {
     position: absolute;
     content: '';
-    top: 4px;
-    bottom: 8px;
+    top: 0px;
+    bottom: 0px;
     left: 0;
     width: 2px;
     border-radius: 2px;
-    background-color: #000;
+    background-color: ${({ theme }) => (theme.type === 'dark' ? theme.accentColor : '#000')};
   }
 `;
 
 const OverviewWrapper = styled.section`
   margin-top: 20px;
-  max-width: 500px;
 
   .overview-content {
     font-weight: 300;
     overflow: auto;
     white-space: pre-wrap;
+    margin-top: 4px;
+    color: ${({ theme }) => theme.secondaryText};
   }
 `;
 
@@ -69,7 +73,7 @@ const StatisticData: React.FC<StatProps> = ({ caption, value }) => {
       <Typography display='block' variant='h5' className='value'>
         {value}
       </Typography>
-      <Typography display='block' variant='caption'>
+      <Typography display='block' variant='caption' className='caption'>
         {caption}
       </Typography>
     </StatisticDataWrapper>

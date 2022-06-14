@@ -21,7 +21,7 @@ import { CrowdloanInfo } from './CrowdloanInfo';
 export const PageCrowdloanWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   margin: 0px auto;
 
@@ -80,6 +80,7 @@ const ContributeWrapper = styled.div<{ wallet: WalletConfig | undefined }>`
 
   ${above.md`
     width: 49%;
+    margin-right: 36px;
   `}
 
   ${({ theme, wallet }) => {
@@ -117,7 +118,8 @@ const InfoWrapper = styled.div`
 
   ${above.md`
     margin-top: 0px; 
-    width: 49%;
+    width: auto;
+    max-width: 384px;
   `}
 `;
 
