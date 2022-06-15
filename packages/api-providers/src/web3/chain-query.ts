@@ -20,6 +20,11 @@ export class Web3ChainQuery extends ChainQuery<WebbWeb3Provider> {
     return this.inner.config;
   }
 
+  async currentBlock(): Promise<number> {
+    const provider = this.inner.getEthersProvider();
+    return provider.getBlockNumber();
+  }
+
   async tokenBalanceByCurrencyId(chainId: InternalChainId, currencyId: WebbCurrencyId): Promise<string> {
     const provider = this.inner.getEthersProvider();
 

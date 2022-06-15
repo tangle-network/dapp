@@ -29,6 +29,7 @@ export interface CurrencyView {
   type: CurrencyType;
   name: string;
   color?: string;
+  decimals?: number;
   symbol: string;
 }
 

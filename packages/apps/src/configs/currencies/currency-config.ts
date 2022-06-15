@@ -20,6 +20,7 @@ export const currenciesConfig: AppConfig['currencies'] = {
   [WebbCurrencyId.ETH]: {
     name: 'Ethereum',
     symbol: 'ETH',
+    decimals: 18,
     color: '',
     id: WebbCurrencyId.ETH,
     type: CurrencyType.NATIVE,
@@ -40,6 +41,7 @@ export const currenciesConfig: AppConfig['currencies'] = {
   [WebbCurrencyId.ONE]: {
     name: 'Harmony',
     symbol: 'ONE',
+    decimals: 18,
     color: '',
     id: WebbCurrencyId.ONE,
     type: CurrencyType.NATIVE,
@@ -56,19 +58,22 @@ export const currenciesConfig: AppConfig['currencies'] = {
   [WebbCurrencyId.WEBB]: {
     name: 'WEBB',
     symbol: 'WEBB',
+    decimals: 18,
     color: '',
     id: WebbCurrencyId.WEBB,
-    type: CurrencyType.ORML,
-    role: CurrencyRole.Governable,
+    type: CurrencyType.NATIVE,
+    role: CurrencyRole.Wrappable,
     icon: React.createElement(WEBBLogo),
     addresses: new Map([
       [InternalChainId.EggStandalone, '0'],
+      [InternalChainId.DkgSubstrateStandalone, '0'],
       [InternalChainId.ProtocolSubstrateStandalone, '0'],
     ]),
   },
   [WebbCurrencyId.SDN]: {
     name: 'Shiden',
     symbol: 'SDN',
+    decimals: 18,
     color: '',
     id: WebbCurrencyId.SDN,
     type: CurrencyType.NATIVE,
@@ -79,6 +84,7 @@ export const currenciesConfig: AppConfig['currencies'] = {
   [WebbCurrencyId.WETH]: {
     name: 'Wrapped Ethereum',
     symbol: 'WETH',
+    decimals: 18,
     color: '',
     id: WebbCurrencyId.WETH,
     type: CurrencyType.ERC20,
@@ -98,6 +104,7 @@ export const currenciesConfig: AppConfig['currencies'] = {
   [WebbCurrencyId.MATIC]: {
     name: 'Polygon',
     symbol: 'MATIC',
+    decimals: 18,
     color: '',
     id: WebbCurrencyId.MATIC,
     type: CurrencyType.NATIVE,
@@ -108,6 +115,7 @@ export const currenciesConfig: AppConfig['currencies'] = {
   [WebbCurrencyId.webbWETH]: {
     name: 'webbETH-test-1',
     symbol: 'webbWETH',
+    decimals: 18,
     color: '',
     id: WebbCurrencyId.webbWETH,
     type: CurrencyType.ERC20,
@@ -125,6 +133,7 @@ export const currenciesConfig: AppConfig['currencies'] = {
   [WebbCurrencyId.DEV]: {
     name: 'Development Token',
     symbol: 'DEV',
+    decimals: 18,
     color: '',
     id: WebbCurrencyId.DEV,
     type: CurrencyType.ERC20,
@@ -139,6 +148,7 @@ export const currenciesConfig: AppConfig['currencies'] = {
   [WebbCurrencyId.webbDEV]: {
     name: 'Webb Development Token',
     symbol: 'webbDEV',
+    decimals: 18,
     color: '',
     id: WebbCurrencyId.webbDEV,
     type: CurrencyType.ERC20,
@@ -153,12 +163,35 @@ export const currenciesConfig: AppConfig['currencies'] = {
   [WebbCurrencyId.TEST]: {
     name: 'Test Token',
     symbol: 'TEST',
+    decimals: 18,
     color: '',
     id: WebbCurrencyId.TEST,
     type: CurrencyType.ORML,
     role: CurrencyRole.Governable,
     icon: React.createElement(GanacheLogo),
     addresses: new Map([[InternalChainId.ProtocolSubstrateStandalone, '1']]),
+  },
+  [WebbCurrencyId.KSM]: {
+    name: 'Kusama',
+    symbol: 'KSM',
+    decimals: 12,
+    color: '',
+    id: WebbCurrencyId.KSM,
+    type: CurrencyType.NATIVE,
+    role: CurrencyRole.Wrappable,
+    icon: React.createElement(WEBBLogo),
+    addresses: new Map([[InternalChainId.Kusama, '0']]),
+  },
+  [WebbCurrencyId.DOT]: {
+    name: 'Polkadot',
+    symbol: 'DOT',
+    decimals: 10,
+    color: '',
+    id: WebbCurrencyId.DOT,
+    type: CurrencyType.NATIVE,
+    role: CurrencyRole.Wrappable,
+    icon: React.createElement(WEBBLogo),
+    addresses: new Map([[InternalChainId.Polkadot, '0']]),
   },
 };
 
