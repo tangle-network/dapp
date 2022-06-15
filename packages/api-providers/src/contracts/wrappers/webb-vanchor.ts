@@ -4,22 +4,16 @@
 /* eslint-disable camelcase */
 
 import { Log } from '@ethersproject/abstract-provider';
+import { retryPromise } from '@webb-dapp/api-providers/utils/retry-promise';
 import { VAnchor as VAnchorWrapper } from '@webb-tools/anchors';
 import { LoggerService } from '@webb-tools/app-util';
 import { ERC20, ERC20__factory as ERC20Factory, VAnchor, VAnchor__factory } from '@webb-tools/contracts';
 import { IAnchorDepositInfo } from '@webb-tools/interfaces';
-import { MerkleTree } from '@webb-tools/merkle-tree';
-import { Utxo } from '@webb-tools/utils';
+import { buildVariableWitnessCalculator, MerkleTree, Utxo } from '@webb-tools/sdk-core';
 import { BigNumber, BigNumberish, Contract, providers, Signer } from 'ethers';
 
-import {
-  buildVariableWitness,
-  fetchVariableAnchorKeyForEdges,
-  fetchVariableAnchorWasmForEdges,
-  retryPromise,
-} from '../../';
+import { fetchVariableAnchorKeyForEdges, fetchVariableAnchorWasmForEdges } from '../../ipfs/index';
 import { zeroAddress } from '..';
-import { ZKPWebbAnchorInputWithMerkle } from './types';
 
 const logger = LoggerService.get('AnchorContract');
 
@@ -45,16 +39,20 @@ export class VAnchorContract {
     this._contract = VAnchor__factory.connect(address, useProvider ? this.web3Provider : this.signer);
   }
 
-  get getLastRoot() {
+  get inner() {
+    return this._contract;
+  }
+
+  async getLastRoot() {
     return this._contract.getLastRoot();
   }
 
-  get nextIndex() {
+  async getNextIndex() {
     return this._contract.nextIndex();
   }
 
-  get inner() {
-    return this._contract;
+  async getEvmId() {
+    return this.web3Provider.getSigner().getChainId();
   }
 
   async initializeWrapper() {
@@ -63,11 +61,11 @@ export class VAnchorContract {
 
       const smallKey = await fetchVariableAnchorKeyForEdges(maxEdges, true);
       const smallWasm = await fetchVariableAnchorWasmForEdges(maxEdges, true);
-      const smallWitnessCalc = await buildVariableWitness(smallWasm, {});
+      const smallWitnessCalc = await buildVariableWitnessCalculator(smallWasm, {});
 
       const largeKey = await fetchVariableAnchorKeyForEdges(maxEdges, false);
       const largeWasm = await fetchVariableAnchorWasmForEdges(maxEdges, false);
-      const largeWitnessCalc = await buildVariableWitness(largeWasm, {});
+      const largeWitnessCalc = await buildVariableWitnessCalculator(largeWasm, {});
 
       // Get the necessary fixtures for populating the VAnchor wrapper instance.
       this.wrapper = await VAnchorWrapper.connect(
@@ -293,11 +291,12 @@ export class VAnchorContract {
     return undefined;
   }
 
-  async withdraw(proof: any, zkp: ZKPWebbAnchorInputWithMerkle, pub: any): Promise<string> {
-    console.log('withdraw not implemented', proof, zkp, pub);
-
-    return 'unimplemented';
+  async getRootsForProof(): Promise<string[]> {
+    const neighborEdges = await this._contract.getLatestNeighborEdges();
+    const neighborRoots = neighborEdges.map((rootData) => {
+      return rootData.root;
+    });
+    let thisRoot = await this._contract.getLastRoot();
+    return [thisRoot, ...neighborRoots];
   }
-
-  /* wrap and unwrap */
 }

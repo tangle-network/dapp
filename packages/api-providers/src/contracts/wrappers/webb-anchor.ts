@@ -13,8 +13,7 @@ import {
   FixedDepositAnchor__factory,
 } from '@webb-tools/contracts';
 import { IAnchorDepositInfo } from '@webb-tools/interfaces';
-import { MerkleTree } from '@webb-tools/sdk-core';
-import { getFixedAnchorExtDataHash, toFixedHex } from '@webb-tools/utils';
+import { getFixedAnchorExtDataHash, MerkleTree, toFixedHex } from '@webb-tools/sdk-core';
 import { BigNumber, Contract, providers, Signer } from 'ethers';
 
 import { retryPromise } from '../../';

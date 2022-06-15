@@ -37,7 +37,7 @@ const relayersInitState: RelayersState = {
 };
 export const useWithdraw = (params: UseWithdrawProps) => {
   const [stage, setStage] = useState<WithdrawState>(WithdrawState.Ideal);
-  const [receipt, setReceipt] = useState('');
+  const [outputUtxos, setOutputUtxos] = useState<string[]>([]);
   const [relayersState, setRelayersState] = useState<RelayersState>(relayersInitState);
   const { bridgeApi } = useBridge();
   const { activeApi, activeChain } = useWebContext();
@@ -50,7 +50,7 @@ export const useWithdraw = (params: UseWithdrawProps) => {
     },
   });
   const withdrawApi = useMemo(() => {
-    const withdraw = activeApi?.methods.fixedAnchor.withdraw;
+    const withdraw = activeApi?.methods.variableAnchor.withdraw;
     if (!withdraw?.enabled) {
       return null;
     }
@@ -127,8 +127,12 @@ export const useWithdraw = (params: UseWithdrawProps) => {
     if (stage === WithdrawState.Ideal) {
       if (params.note) {
         try {
-          const txReceipt = await withdrawApi.withdraw(params.note?.serialize(), params.recipient);
-          setReceipt(txReceipt);
+          const outputUtxos = await withdrawApi.withdraw(
+            [params.note?.serialize()],
+            params.recipient,
+            params.note.note.amount
+          );
+          setOutputUtxos(outputUtxos);
         } catch (e) {
           console.log('error from withdraw api', e);
 
@@ -168,8 +172,8 @@ export const useWithdraw = (params: UseWithdrawProps) => {
   );
   return {
     stage,
-    receipt,
-    setReceipt,
+    setOutputUtxos,
+    outputUtxos,
     withdraw,
     canCancel,
     cancelWithdraw,

@@ -64,12 +64,8 @@ export class PolkadotAnchorDeposit extends AnchorDeposit<WebbPolkadot, DepositPa
     console.log('anchorId:', anchorId);
     const anchorPath = String(anchorId).replace('Bridge=', '').split('@');
     const amount = anchorPath[0];
-    const anchorIndex = anchorPath[2];
-    const anchors = await this.bridgeApi.getAnchors();
-    const anchor = anchors[Number(anchorIndex)];
+    const anchorTreeId = anchorPath[2];
 
-    // TODO: Anchor in one chain the 0 id contains the treeId
-    const treeId = anchor.neighbours[InternalChainId.ProtocolSubstrateStandalone] as number;
     // Create the note gen input
     const noteInput: NoteGenInput = {
       amount: amount,
@@ -80,9 +76,9 @@ export class PolkadotAnchorDeposit extends AnchorDeposit<WebbPolkadot, DepositPa
       hashFunction: 'Poseidon',
       protocol: 'anchor',
       sourceChain: sourceChainId.toString(),
-      sourceIdentifyingData: anchorIndex.toString(),
+      sourceIdentifyingData: anchorTreeId,
       targetChain: destChainId.toString(),
-      targetIdentifyingData: treeId.toString(),
+      targetIdentifyingData: anchorTreeId,
       tokenSymbol: tokenSymbol,
       width: '4',
     };
@@ -94,11 +90,11 @@ export class PolkadotAnchorDeposit extends AnchorDeposit<WebbPolkadot, DepositPa
     const leaf = note.getLeaf();
     const leafHex = u8aToHex(leaf);
 
-    logger.trace(`treeId ${treeId}, Leaf ${leafHex}`);
+    logger.trace(`treeId ${anchorTreeId}, Leaf ${leafHex}`);
 
     return {
       note,
-      params: [treeId, leafHex],
+      params: [Number(anchorTreeId), leafHex],
     };
   }
 

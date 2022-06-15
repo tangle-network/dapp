@@ -143,6 +143,10 @@ export class WebbWeb3Provider
     return new AnchorContract(provider, address, true);
   }
 
+  getVariableAnchorByAddressAndProvider(address: string, provider: providers.Web3Provider): VAnchorContract {
+    return new VAnchorContract(provider, address, true);
+  }
+
   getEthersProvider(): providers.Web3Provider {
     return this.ethersProvider;
   }

@@ -104,8 +104,7 @@ export class Web3AnchorWithdraw extends AnchorWithdraw<WebbWeb3Provider> {
 
     // Set up a provider for the source chain
     const sourceChainIdType = parseChainIdType(Number(jsNote.sourceChainId));
-    const sourceEvmId = sourceChainIdType.chainId;
-    const sourceInternalId = evmIdIntoInternalChainId(sourceEvmId);
+    const sourceInternalId = evmIdIntoInternalChainId(sourceChainIdType.chainId);
     const sourceChainConfig = this.config.chains[sourceInternalId];
     const sourceHttpProvider = Web3Provider.fromUri(sourceChainConfig.url);
     const sourceEthers = sourceHttpProvider.intoEthersProvider();
@@ -218,7 +217,7 @@ export class Web3AnchorWithdraw extends AnchorWithdraw<WebbWeb3Provider> {
       return '';
     }
 
-    const pm = new CircomProvingManager(new Uint8Array(wasmBuf), null);
+    const pm = new CircomProvingManager(new Uint8Array(wasmBuf), await destAnchor.inner.levels(), null);
 
     console.log('after creating the proving manager');
 

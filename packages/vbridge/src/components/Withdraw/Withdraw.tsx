@@ -8,7 +8,6 @@ import {
   WithdrawState,
 } from '@webb-dapp/api-providers';
 import { chainsPopulated } from '@webb-dapp/apps/configs';
-import { useWithdraw } from '@webb-dapp/bridge/hooks';
 import { useDepositNote } from '@webb-dapp/mixer';
 import { RelayerModal } from '@webb-dapp/react-components/Relayer/RelayerModal';
 import { WithdrawingModal, WithdrawSuccessModal } from '@webb-dapp/react-components/Withdraw';
@@ -19,6 +18,7 @@ import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { BridgeNoteInput } from '@webb-dapp/ui-components/Inputs/NoteInput/BridgeNoteInput';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
+import { useWithdraw } from '@webb-dapp/vbridge';
 import { Note } from '@webb-tools/sdk-core';
 import { ethers } from 'ethers';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -144,10 +144,10 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
   const {
     canCancel,
     cancelWithdraw,
-    receipt,
+    outputUtxos,
     relayerMethods,
     relayersState,
-    setReceipt,
+    setOutputUtxos,
     setRelayer,
     stage,
     validationErrors,
@@ -305,17 +305,16 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
       </Modal>
 
       {/* Modal to show on success  */}
-      <Modal open={receipt != ''}>
+      <Modal open={outputUtxos.length > 0}>
         {depositNote && (
           <WithdrawSuccessModal
-            receipt={receipt}
+            receipt={''}
             recipient={recipient}
             note={depositNote.note}
             relayer={relayersState.activeRelayer}
             exit={() => {
               setNote('');
               setRecipient('');
-              setReceipt('');
               return cancelWithdraw();
             }}
           />

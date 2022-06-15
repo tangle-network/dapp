@@ -1,21 +1,26 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { IAnchorDepositInfo } from '@webb-tools/interfaces';
-// TODO: Update after protocol-solidity moves 'poseidonHash' to 'PoseidonHasher'
-import { Keypair, PoseidonHasher, toFixedHex, Utxo } from '@webb-tools/utils';
-import { JsNote as DepositNote } from '@webb-tools/wasm-utils';
+import type { JsNote as DepositNote } from '@webb-tools/wasm-utils';
 
-import { keypairStorageFactory } from '../../';
+import { IAnchorDepositInfo } from '@webb-tools/interfaces';
+import { Keypair, toFixedHex, Utxo } from '@webb-tools/sdk-core';
+
+import { hexToU8a } from '@polkadot/util';
+
+const { poseidon } = require('circomlibjs');
+
+import { BigNumber } from 'ethers';
+
+import { keypairStorageFactory } from '../../utils/storage';
 
 export function depositFromAnchorNote(note: DepositNote): IAnchorDepositInfo {
-  const poseidonHasher = new PoseidonHasher();
   const noteSecretParts = note.secrets.split(':');
   const chainId = Number(note.targetChainId);
   const nullifier = '0x' + noteSecretParts[1];
   const secret = '0x' + noteSecretParts[2];
-  const commitmentBN = poseidonHasher.hash3([chainId, nullifier, secret]);
-  const nullifierHash = poseidonHasher.hash(null, nullifier, nullifier);
+  const commitmentBN = poseidon([chainId, nullifier, secret]);
+  const nullifierHash = poseidon([null, nullifier, nullifier]);
   const commitment = toFixedHex(commitmentBN);
 
   const deposit: IAnchorDepositInfo = {
@@ -32,7 +37,8 @@ export function depositFromAnchorNote(note: DepositNote): IAnchorDepositInfo {
 export async function utxoFromVAnchorNote(note: DepositNote): Promise<Utxo> {
   const noteSecretParts = note.secrets.split(':');
   const chainId = '0x' + noteSecretParts[0];
-  const amount = '0x' + noteSecretParts[1];
+  const amount = BigNumber.from('0x' + noteSecretParts[1]).toString();
+  const secretKey = '0x' + noteSecretParts[2];
   const blinding = '0x' + noteSecretParts[3];
 
   const keypairStorage = await keypairStorageFactory();
@@ -44,5 +50,14 @@ export async function utxoFromVAnchorNote(note: DepositNote): Promise<Utxo> {
 
   const keypair = new Keypair(storedKeypair.keypair);
 
-  return new Utxo({ amount, blinding, chainId, keypair });
+  return Utxo.generateUtxo({
+    curve: note.curve,
+    backend: note.backend,
+    amount,
+    blinding: hexToU8a(blinding),
+    privateKey: hexToU8a(secretKey),
+    chainId: noteSecretParts[0],
+    index: note.index,
+    keypair,
+  });
 }

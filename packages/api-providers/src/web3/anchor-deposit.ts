@@ -6,9 +6,8 @@ import { LoggerService } from '@webb-tools/app-util';
 // eslint-disable-next-line camelcase
 import { ERC20__factory as ERC20Factory } from '@webb-tools/contracts';
 import { IAnchorDepositInfo } from '@webb-tools/interfaces';
-import { Note, NoteGenInput } from '@webb-tools/sdk-core';
+import { Note, NoteGenInput, toFixedHex } from '@webb-tools/sdk-core';
 import { GovernedTokenWrapper } from '@webb-tools/tokens';
-import { toFixedHex } from '@webb-tools/utils';
 
 import { AnchorDeposit, Currency, DepositPayload as IDepositPayload, MixerSize } from '../abstracts';
 import {
@@ -329,9 +328,9 @@ export class Web3AnchorDeposit extends AnchorDeposit<WebbWeb3Provider, DepositPa
         16
       )}`,
       sourceChain: sourceChainId.toString(),
-      sourceIdentifyingData: srcAddress,
+      sourceIdentifyingData: srcAddress!,
       targetChain: destChainId.toString(),
-      targetIdentifyingData: destAddress,
+      targetIdentifyingData: destAddress!,
       tokenSymbol: tokenSymbol,
       version: 'v2',
       width: '4',

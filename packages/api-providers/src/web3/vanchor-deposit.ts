@@ -3,11 +3,11 @@
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import { VAnchor } from '@webb-tools/anchors';
 import { ERC20__factory as ERC20Factory } from '@webb-tools/contracts';
-import { Note, NoteGenInput } from '@webb-tools/sdk-core';
-import { Keypair, randomBN, toFixedHex, Utxo } from '@webb-tools/utils';
+import { Keypair, Note, NoteGenInput, toFixedHex, Utxo } from '@webb-tools/sdk-core';
 import { BigNumber, ethers } from 'ethers';
+
+import { hexToU8a } from '@polkadot/util';
 
 import { DepositPayload as IDepositPayload, MixerSize, VAnchorDeposit } from '../abstracts';
 import {
@@ -76,11 +76,12 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
     }
 
     // Convert the amount to units of wei
-    const depositOutputUtxo = VAnchor.generateUTXO({
-      amount: BigNumber.from(ethers.utils.parseEther(amount.toString())),
-      blinding: randomBN(),
-      chainId: BigNumber.from(destination),
-      index: 0,
+    const depositOutputUtxo = await Utxo.generateUtxo({
+      curve: 'Bn254',
+      backend: 'Circom',
+      amount: ethers.utils.parseEther(amount.toString()).toString(),
+      chainId: destination.toString(),
+      privateKey: hexToU8a(keypair.privkey),
       keypair,
     });
 
@@ -103,15 +104,15 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
       exponentiation: '5',
       hashFunction: 'Poseidon',
       protocol: 'vanchor',
-      secrets: `${toFixedHex(destination, 6).substring(2)}:${BigNumber.from(
-        depositOutputUtxo.amount
-      ).toHexString()}:${depositOutputUtxo.keypair.pubkey.toHexString()}:${BigNumber.from(
-        depositOutputUtxo.blinding
-      ).toHexString()}`,
+      secrets:
+        `${toFixedHex(destination, 6).substring(2)}:` +
+        `${depositOutputUtxo.amount}:` +
+        `${keypair.pubkey.toHexString()}:` +
+        `${BigNumber.from(depositOutputUtxo.blinding).toHexString()}`,
       sourceChain: sourceChainId.toString(),
-      sourceIdentifyingData: srcAddress,
+      sourceIdentifyingData: srcAddress!,
       targetChain: destination.toString(),
-      targetIdentifyingData: destAddress,
+      targetIdentifyingData: destAddress!,
       tokenSymbol: tokenSymbol,
       version: 'v2',
       width: '4',

@@ -4,10 +4,10 @@
 import { ArkworksProvingManager, Note, ProvingManagerSetupInput } from '@webb-tools/sdk-core';
 
 import { decodeAddress } from '@polkadot/keyring';
-import { hexToU8a, u8aToHex } from '@polkadot/util';
+import { u8aToHex } from '@polkadot/util';
 
 import { AnchorWithdraw, WithdrawState } from '../abstracts';
-import { InternalChainId } from '../chains';
+import { chainTypeIdToInternalId, InternalChainId, parseChainIdType, substrateIdIntoInternalChainId } from '../chains';
 import { WebbError, WebbErrorCodes } from '../webb-error';
 import { fetchSubstrateAnchorProvingKey } from '../';
 import { WebbPolkadot } from './webb-provider';
@@ -58,15 +58,9 @@ export class PolkadotAnchorWithdraw extends AnchorWithdraw<WebbPolkadot> {
     return leaves;
   }
 
-  async fetchRoot(treeId: string) {
-    const storage =
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      await this.inner.api.query.merkleTreeBn254.trees(treeId);
-
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    return storage.toHuman().root;
+  async fetchRoot(treeId: number) {
+    const storage = await this.inner.api.query.merkleTreeBn254.trees(treeId);
+    return storage.unwrap().root;
   }
 
   async withdraw(note: string, recipient: string): Promise<string> {
@@ -92,8 +86,13 @@ export class PolkadotAnchorWithdraw extends AnchorWithdraw<WebbPolkadot> {
       const anchors = await this.inner.methods.anchorApi.getAnchors();
       // Get the anchor of the note amount
       const anchor = anchors.find((a) => a.amount === amount)!;
-      // TODO : Make the key dynamic not just WebbDevelopment!
-      const treeId = anchor.neighbours[InternalChainId.ProtocolSubstrateStandalone] as string;
+
+      const treeId = anchor.neighbours[chainTypeIdToInternalId(parseChainIdType(Number(parseNote.note.sourceChainId)))];
+
+      if (!treeId) {
+        throw new Error('Could not find the treeId');
+      }
+
       // Fetching tree leaves
       const leaves = await this.fetchRPCTreeLeaves(treeId);
       const leaf = depositNote.getLeafCommitment();
@@ -114,7 +113,7 @@ export class PolkadotAnchorWithdraw extends AnchorWithdraw<WebbPolkadot> {
       // Pass in an empty leaf for the refresh commitment
       const refreshCommitment = '0000000000000000000000000000000000000000000000000000000000000000';
       // Get the linked tree root
-      const root = await this.fetchRoot(treeId);
+      const root = await this.fetchRoot(Number(treeId));
 
       const proofInput: ProvingManagerSetupInput<'anchor'> = {
         fee: 0,
@@ -126,13 +125,19 @@ export class PolkadotAnchorWithdraw extends AnchorWithdraw<WebbPolkadot> {
         refreshCommitment,
         refund: 0,
         relayer: relayerAccountHex.replace('0x', ''),
-        roots: [hexToU8a(root), hexToU8a(root)],
+        // Enter
+        roots: [root, root],
       };
 
+      console.log('proofInput: ', proofInput);
+
       const zkProofMetadata = await pm.prove('anchor', proofInput);
+
+      console.log('proofOutput: ', zkProofMetadata);
+
       const withdrawProof: AnchorWithdrawProof = {
         fee: 0,
-        id: treeId,
+        id: treeId.toString(),
         nullifierHash: `0x${zkProofMetadata.nullifierHash}`,
         proofBytes: `0x${zkProofMetadata.proof}` as any,
         recipient: accountId,
