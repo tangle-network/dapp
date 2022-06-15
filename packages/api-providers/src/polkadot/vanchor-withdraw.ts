@@ -23,7 +23,11 @@ import { hexToU8a, u8aToHex } from '@polkadot/util';
 import { naclEncrypt, randomAsU8a } from '@polkadot/util-crypto';
 
 import { VAnchorWithdraw } from '../abstracts/anchor/vanchor-withdraw';
-
+async function rootOfLeaves(leaves: Uint8Array[]) {
+  const wasm = await import('@webb-tools/wasm-utils');
+  const tree = new wasm.MTBn254X5(leaves, '0');
+  return hexToU8a(`0x${tree.root}`);
+}
 const logger = LoggerService.get('SubstrateVAnchorWithdraw');
 async function fetchSubstrateVAnchorProvingKey() {
   const IPFSUrl = 'https://ipfs.io/ipfs/QmZiNuAKp2QGp281bqasNqvqccPCGp4yoxWbK8feecefML';
@@ -38,13 +42,10 @@ async function fetchSubstrateVAnchorProvingKey() {
 }
 
 export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
-  async withdraw(_notes: string[], recipient: string, amountUnit: string): Promise<string> {
+  async withdraw(notes: string[], recipient: string, amountUnit: string): Promise<string> {
     const secret = randomAsU8a();
     const account = await this.inner.accounts.activeOrDefault;
-    const notes = [
-      'webb://v2:vanchor/2199023256632:2199023256632/9:9/3804000000020000000000000000000000000000000000000000000000000000:0080c6a47e8d0300000000000000000000000000000000000000000000000000:985efa5808b6c01fd7035fd0440256a6570bc75a38a9267dc6d3e96d63e9031d:63e54b34a3518d780d5f8a4b8c73a15fb0d3ad40ac2ef8deec110c4247b0292f/?curve=Bn254&width=5&exp=5&hf=Poseidon&backend=Arkworks&token=TEST&denom=18&amount=1000000000000000&index=3',
-      'webb://v2:vanchor/2199023256632:2199023256632/9:9/3804000000020000000000000000000000000000000000000000000000000000:0080c6a47e8d0300000000000000000000000000000000000000000000000000:a492d97a80585fd34831027835e653483763ace17468413404c3e81892a1930b:874444f2c5516175d57d0aa53839f765117a63b2d7600ab9c69ccdedd9f72a2b/?curve=Bn254&width=5&exp=5&hf=Poseidon&backend=Arkworks&token=TEST&denom=18&amount=1000000000000000&index=5',
-    ];
+
     this.emit('stateChange', WithdrawState.GeneratingZk);
 
     if (!account) {
@@ -58,8 +59,7 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
 
     const inputNotes = await Promise.all(notes.map((note) => Note.deserialize(note)));
     const inputAmounts: number = inputNotes.reduce((acc: number, { note }) => acc + Number(note.amount), 0);
-    // const amount = currencyToUnitI128(Number(amountUnit)).toString();
-    const amount = String(inputAmounts);
+    const amount = currencyToUnitI128(Number(amountUnit)).toString();
 
     const reminder = inputAmounts - Number(amount);
     console.log(`
@@ -97,13 +97,11 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
     const leavesMap: any = {};
     /// Assume same chain withdraw-deposit
     leavesMap[targetChainId] = leaves;
-    console.log(leaves.map((l) => u8aToHex(l)));
-    const tree = await this.inner.api.query.merkleTreeBn254.trees(treeId);
-    const root = tree.unwrap().root.toHex();
+    const root = await rootOfLeaves(leaves);
     const neighborRoots: string[] = await (this.inner.api.rpc as any).lt
       .getNeighborRoots(treeId)
       .then((roots: any) => roots.toHuman());
-    const rootsSet = [hexToU8a(root), hexToU8a(neighborRoots[0])];
+    const rootsSet = [root, hexToU8a(neighborRoots[0])];
     const outputNote = await Note.deserialize(inputNotes[0].serialize());
     const outputCommitment = output1.commitment;
     const { encrypted: comEnc1 } = naclEncrypt(output1.commitment, secret);
