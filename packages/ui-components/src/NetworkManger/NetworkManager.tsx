@@ -361,7 +361,7 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
     ? {
         hoverMessage: activeChain.url,
         chainIcon: (
-          <Avatar className='chain-avatar'>
+          <Avatar className='avatar'>
             <activeChain.logo />
           </Avatar>
         ),
@@ -432,7 +432,7 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
   );
 };
 
-const NetworkIndicatorWrapper = styled.button`
+export const NetworkIndicatorWrapper = styled.button`
   && {
     min-height: 32px;
     border-radius: 8px;
@@ -449,7 +449,7 @@ const NetworkIndicatorWrapper = styled.button`
 
   cursor: pointer;
 
-  .chain-avatar {
+  .avatar {
     width: 28px;
     height: 28px;
     background: transparent;
@@ -461,7 +461,7 @@ const NetworkIndicatorWrapper = styled.button`
   }
 `;
 
-const DownIconWrapper = styled(Flex).attrs({
+export const DownIconWrapper = styled(Flex).attrs({
   row: true,
   jc: 'center',
   ai: 'center',
@@ -522,10 +522,11 @@ export const NetworkManagerIndicator: React.FC<NetworkManagerIndicatorProps> = (
 
         {connectionMetaData ? (
           <Flex row jc='space-between' ai='center' flex={1}>
-            <Typography variant='subtitle1' style={{ maxWidth: '64px' }}>
-              <b style={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
-                {connectionMetaData.chainName}
-              </b>
+            <Typography
+              variant='subtitle1'
+              style={{ maxWidth: '64px', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}
+            >
+              <b>{connectionMetaData.chainName}</b>
             </Typography>
 
             <DownIconWrapper>
