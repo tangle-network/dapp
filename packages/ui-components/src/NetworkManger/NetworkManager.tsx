@@ -31,6 +31,8 @@ import { above, useBreakpoint } from '@webb-dapp/ui-components/utils/responsive-
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
+import { ArrowDownIcon } from '../assets/ArrowDownIcon';
+
 const NetworkManagerWrapper = styled.div`
   padding: 1rem;
   ${({ theme }: { theme: Pallet }) => css`
@@ -432,59 +434,39 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
 
 const NetworkIndicatorWrapper = styled.button`
   && {
-    min-height: 40px;
+    min-height: 32px;
     border-radius: 8px;
-    padding: 0.3rem 0.5rem;
+    padding: 4px;
     background: ${({ theme }: { theme: Pallet }) => theme.lightSelectionBackground};
     position: relative;
+    width: 124px;
 
     ${above.xs`
-      padding: 0.5rem 0.7rem;
       margin: 0 1rem;
+      width: 132px;
     `}
-
-    &:before {
-      position: absolute;
-      content: '';
-      top: 0;
-      left: 0;
-      height: 100%;
-      width: 100%;
-      z-index: 1;
-      background: ${({ theme }: { theme: Pallet }) => theme.lightSelectionBackground};
-      border-radius: 32px;
-    }
-
-    &:after {
-      z-index: 2;
-      position: absolute;
-      content: '';
-      top: 2px;
-      left: 2px;
-      height: calc(100% - 4px);
-      width: calc(100% - 4px);
-      background: ${({ theme }: { theme: Pallet }) => theme.lightSelectionBackground};
-      border-radius: 32px;
-    }
-
-    *:first-child {
-      position: relative;
-      z-index: 3;
-    }
   }
 
   cursor: pointer;
 
   .chain-avatar {
-    width: 29px;
-    height: 29px;
+    width: 28px;
+    height: 28px;
     background: transparent;
 
     ${above.xs`
-      width: 35px;
-      height: 35px;
+      width: 32px;
+      height: 32px;
     `}
   }
+`;
+
+const DownIconWrapper = styled(Flex).attrs({
+  row: true,
+  jc: 'center',
+  ai: 'center',
+})`
+  padding-right: 4px;
 `;
 
 export const NetworkManagerIndicator: React.FC<NetworkManagerIndicatorProps> = ({
@@ -502,14 +484,14 @@ export const NetworkManagerIndicator: React.FC<NetworkManagerIndicatorProps> = (
             ai={'center'}
             jc={'center'}
             style={{
-              width: 35,
-              height: 35,
+              width: 29,
+              height: 29,
             }}
           >
             <Icon style={{ position: 'absolute' }} fontSize={'small'}>
               podcasts
             </Icon>
-            <CircularProgress style={{ position: 'absolute' }} size={32} />
+            <CircularProgress style={{ position: 'absolute' }} size={26.5} />
           </Flex>
         );
 
@@ -535,18 +517,21 @@ export const NetworkManagerIndicator: React.FC<NetworkManagerIndicatorProps> = (
 
   return (
     <NetworkIndicatorWrapper as={ButtonBase} onClick={onClick}>
-      <Flex row ai={'center'} jc='space-between'>
-        <Flex>{icon}</Flex>
-        {connectionMetaData ? (
-          <>
-            <Padding x={0.5} />
+      <Flex flex={1} row ai={'center'} style={{ width: '100%' }}>
+        <Flex style={{ marginRight: '4px' }}>{icon}</Flex>
 
-            <Flex col>
-              <Typography variant='subtitle1'>
-                <b style={{ whiteSpace: 'nowrap' }}>{connectionMetaData.chainName}</b>
-              </Typography>
-            </Flex>
-          </>
+        {connectionMetaData ? (
+          <Flex row jc='space-between' ai='center' flex={1}>
+            <Typography variant='subtitle1' style={{ maxWidth: '64px' }}>
+              <b style={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
+                {connectionMetaData.chainName}
+              </b>
+            </Typography>
+
+            <DownIconWrapper>
+              <ArrowDownIcon />
+            </DownIconWrapper>
+          </Flex>
         ) : (
           ''
         )}

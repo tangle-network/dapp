@@ -2,23 +2,17 @@ import * as React from 'react';
 
 function EtherLogo() {
   return (
-    <svg
-      xmlns='http://www.w3.org/2000/svg'
-      shapeRendering='geometricPrecision'
-      textRendering='geometricPrecision'
-      imageRendering='optimizeQuality'
-      clipRule='evenodd'
-      viewBox='0 0 784.37 1277.39'
-      width={30}
-      height={30}
-    >
-      <g fillRule='nonzero'>
-        <path fill='#343434' d='M392.07 0l-8.57 29.11v844.63l8.57 8.55 392.06-231.75z' />
-        <path fill='#8C8C8C' d='M392.07 0L0 650.54l392.07 231.75V472.33z' />
-        <path fill='#3C3C3B' d='M392.07 956.52l-4.83 5.89v300.87l4.83 14.1 392.3-552.49z' />
-        <path fill='#8C8C8C' d='M392.07 1277.38V956.52L0 724.89z' />
-        <path fill='#141414' d='M392.07 882.29l392.06-231.75-392.06-178.21z' />
-        <path fill='#393939' d='M0 650.54l392.07 231.75V472.33z' />
+    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'>
+      <g fill='none' fillRule='evenodd'>
+        <circle cx='16' cy='16' r='16' fill='#627EEA' />
+        <g fill='#FFF' fillRule='nonzero'>
+          <path fillOpacity='.602' d='M16.498 4v8.87l7.497 3.35z' />
+          <path d='M16.498 4L9 16.22l7.498-3.35z' />
+          <path fillOpacity='.602' d='M16.498 21.968v6.027L24 17.616z' />
+          <path d='M16.498 27.995v-6.028L9 17.616z' />
+          <path fillOpacity='.2' d='M16.498 20.573l7.497-4.353-7.497-3.348z' />
+          <path fillOpacity='.602' d='M9 16.22l7.498 4.353v-7.701z' />
+        </g>
       </g>
     </svg>
   );
