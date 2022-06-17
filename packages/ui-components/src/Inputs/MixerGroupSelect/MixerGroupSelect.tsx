@@ -2,6 +2,7 @@
 import { MixerSize } from '@webb-dapp/api-providers';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
+import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
 import React, { useEffect, useMemo } from 'react';
 import styled, { css } from 'styled-components';
 
@@ -11,32 +12,32 @@ import { InputSection } from '../InputSection/InputSection';
 const MixerGroupSelectWrapper = styled.div`
   min-height: 38px;
   display: flex;
-  align-items: center;
-  justify-content: space-around;
-  max-width: 100%;
   flex-wrap: wrap;
   overflow: auto;
+  width: 70%;
+  justify-content: space-around;
+  align-items: baseline;
 `;
+
 type MixerGroupSelectProps = {
   items: MixerSize[];
   value?: MixerSize;
   onChange?(item: MixerSize): void;
 };
+
 const AmountChipWrapper = styled.div<{ selected?: boolean }>`
   cursor: pointer;
   transition: all ease 0.3s;
   text-transform: capitalize;
-  height: 50px;
-  max-width: 50px;
   ${({ selected, theme }: { theme: Pallet; selected?: boolean }) => css`
     && {
+      height: 45px;
+      width: 45px;
       border: 1px solid ${selected && theme.type === 'dark' ? theme.accentColor : theme.borderColor};
       border-radius: 50%;
       background: ${selected && theme.type === 'light' ? theme.accentColor : 'transparent'};
       font-family: ${FontFamilies.AvenirNext};
       color: ${selected && theme.type === 'dark' ? theme.accentColor : theme.primaryText};
-      flex: 1;
-      margin: 5px;
       white-space: nowrap;
       display: flex;
       align-items: center;
@@ -48,6 +49,11 @@ const AmountChipWrapper = styled.div<{ selected?: boolean }>`
       line-height: 19px;
       text-align: center;
       letter-spacing: -0.065em;
+
+      ${above.sm`
+        height: 55px;
+        width: 55px;
+      `}
     }
   `}
 `;
@@ -74,10 +80,10 @@ export const MixerGroupSelect: React.FC<MixerGroupSelectProps> = ({ items, onCha
 
   return (
     <InputSection>
-      <MixerGroupSelectWrapper style={{ width: '80%' }}>
+      <MixerGroupSelectWrapper>
         {mixerSizes
           .filter(({ amount }) => !isNaN(amount))
-          .map(({ amount, asset, id, selected, title }) => {
+          .map(({ amount, asset, id, selected, title }, idx) => {
             return (
               <AmountChipWrapper
                 key={id + title}
@@ -96,9 +102,7 @@ export const MixerGroupSelect: React.FC<MixerGroupSelectProps> = ({ items, onCha
             );
           })}
       </MixerGroupSelectWrapper>
-      <FlexBox width='20%' justifyContent='center' alignItems='center'>
-        <p>{items[0] && items[0].asset}</p>
-      </FlexBox>
+      <p>{items[0] && items[0].asset}</p>
     </InputSection>
   );
 };

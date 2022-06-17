@@ -84,6 +84,10 @@ const TokenInputWrapper = styled.div`
   }
 `;
 
+const AmountWrapper = styled.div`
+  margin-top: 20px;
+`;
+
 const TokenBalance = styled.div`
   border: 1px solid ${({ theme }) => theme.primaryText};
   border-radius: 5px;
@@ -281,7 +285,7 @@ export const Deposit: React.FC<DepositProps> = () => {
             />
           </div>
           {typeof destChain !== 'undefined' && (
-            <>
+            <AmountWrapper>
               <div className='titles-and-information'>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                   <Typography variant='h6'>
@@ -314,7 +318,7 @@ export const Deposit: React.FC<DepositProps> = () => {
                 </div>
               </div>
               <MixerGroupSelect items={bridgeDepositApi.mixerSizes} value={item} onChange={selectBridgeAmount} />
-            </>
+            </AmountWrapper>
           )}
           <SpaceBox height={16} />
           <MixerButton
