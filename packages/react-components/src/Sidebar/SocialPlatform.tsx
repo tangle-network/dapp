@@ -5,11 +5,9 @@ import { SocialItem } from './types';
 
 const SocialPlatformRoot = styled.div<{ collapse: boolean }>`
   display: flex;
-  width: 150px;
   flex-direction: ${({ collapse }): string => (collapse ? 'column' : 'row')};
-  justify-content: space-around;
+  justify-content: space-evenly;
   margin-bottom: 60px;
-  padding: 0 24px;
 `;
 
 export const IconLink = styled.a`
@@ -37,8 +35,8 @@ const SocialIcon = styled.div`
   display: flex;
   justify-content: 'space-between';
   align-items: center;
-  width: 25px;
-  height: 25px;
+  width: 28px;
+  height: 28px;
 `;
 
 export const SocialLink: React.FC<{
