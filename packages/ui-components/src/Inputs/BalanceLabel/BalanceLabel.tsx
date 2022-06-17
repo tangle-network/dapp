@@ -1,5 +1,6 @@
+import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
 import React from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import { sharedLabelCss } from '../shared';
 
@@ -9,10 +10,19 @@ const BalanceLabelWrapper = styled.div`
   font-weight: 300;
 `;
 
+const fontSize = css`
+  font-size: 12px;
+
+  ${above.xs`
+    font-size: 14px;
+  `}
+`;
+
 const BalanceText = styled.span`
   display: block;
   color: ${({ theme }) => (theme.type === 'dark' ? theme.accentColor : theme.primaryText)};
   ${sharedLabelCss}
+  ${fontSize}
 `;
 
 const BalanceValue = styled.span`
@@ -21,7 +31,9 @@ const BalanceValue = styled.span`
   border-radius: 5px;
   margin-left: 5px;
   padding: 0 5px;
+  color: ${({ theme }) => theme.primaryText};
   ${sharedLabelCss}
+  ${fontSize}
 `;
 
 export type BalanceLabelProp = {

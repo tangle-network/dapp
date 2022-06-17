@@ -10,8 +10,16 @@ export const CheckBox: React.FC<CheckBoxProps> = ({ checked, label, onChange, si
 
   return (
     <FormControlLabel
+      style={{ marginRight: '0px' }}
       label={label && <CheckBoxText>{label}</CheckBoxText>}
-      control={<Checkbox size={size} checked={checked} onChange={onChange} style={{ color: pallet.accentColor }} />}
+      control={
+        <Checkbox
+          size={size}
+          checked={checked}
+          onChange={onChange}
+          style={{ color: pallet.accentColor, padding: '0px', paddingRight: '4px' }}
+        />
+      }
     />
   );
 };

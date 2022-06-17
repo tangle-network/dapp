@@ -5,6 +5,7 @@ import { sharedLabelCss } from '../shared';
 
 export const TextLabelWrapper = styled.label`
   display: block;
+  color: ${({ theme }) => theme.primaryText};
   font-weight: 600;
   ${sharedLabelCss}
 `;
