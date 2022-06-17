@@ -7,7 +7,10 @@ import { useAppConfig, useWebContext } from '@webb-dapp/react-environment';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { SpaceBox } from '@webb-dapp/ui-components/Box';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
+import { BalanceLabel } from '@webb-dapp/ui-components/Inputs/BalanceLabel/BalanceLabel';
+import { InputTitle } from '@webb-dapp/ui-components/Inputs/InputTitle/InputTitle';
 import { MixerGroupSelect } from '@webb-dapp/ui-components/Inputs/MixerGroupSelect/MixerGroupSelect';
+import { TextLabel } from '@webb-dapp/ui-components/Inputs/TextLabel/TextLabel';
 import { TokenInput } from '@webb-dapp/ui-components/Inputs/TokenInput/TokenInput';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { getRoundedAmountString } from '@webb-dapp/ui-components/utils';
@@ -34,13 +37,6 @@ export const TokenInputWrapper = styled.div`
   background: ${({ theme }) => theme.layer2Background};
   border-radius: 0 0 13px 13px;
   border: 1px solid ${({ theme }) => theme.borderColor};
-
-  .titles-and-information {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-  }
 
   .token-dropdown-section {
     display: flex;
@@ -113,11 +109,7 @@ export const Deposit: React.FC<DepositProps> = () => {
     <DepositWrapper wallet={activeWallet}>
       <RequiredWalletSelection>
         <TokenInputWrapper>
-          <div className='titles-and-information'>
-            <Typography variant='h6'>
-              <b>TOKEN</b>
-            </Typography>
-          </div>
+          <InputTitle leftLabel={<TextLabel value='TOKEN' />} />
           <div className='token-dropdown-section'>
             <TokenInput
               currencies={allCurrencies}
@@ -128,29 +120,18 @@ export const Deposit: React.FC<DepositProps> = () => {
               wrapperStyles={{ width: '100%' }}
             />
           </div>
-          <div className='titles-and-information'>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <Typography variant='h6'>
-                <b>AMOUNT</b>
-              </Typography>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <div>
-                <Typography
-                  variant='body2'
-                  style={{ color: palette.type === 'dark' ? palette.accentColor : palette.primaryText }}
-                >
-                  Your Balance~
-                </Typography>
-              </div>
-              <TokenBalance>
-                <Typography variant='body2'>
-                  {getRoundedAmountString(Number(tokenBalance))}{' '}
-                  {selectedToken?.view.symbol ?? activeToken?.view.symbol}
-                </Typography>
-              </TokenBalance>
-            </div>
-          </div>
+          <InputTitle
+            leftLabel={<TextLabel value='AMOUNT' />}
+            rightLabel={
+              <BalanceLabel
+                value={
+                  getRoundedAmountString(Number(tokenBalance)) +
+                  ' ' +
+                  (selectedToken?.view.symbol ?? activeToken?.view.symbol ?? '')
+                }
+              />
+            }
+          />
           <MixerGroupSelect items={intendedMixers} value={item} onChange={setItem} />
           <SpaceBox height={16} />
           <MixerButton
