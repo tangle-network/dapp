@@ -18,10 +18,6 @@ import { getRoundedAmountString } from '../../';
 import { WalletManager } from './WalletManager';
 
 const WalletSelectWrapper = styled(NetworkIndicatorWrapper)`
-  && {
-    margin: 0;
-  }
-
   .select-wallet-button {
     display: flex;
     width: 100%;

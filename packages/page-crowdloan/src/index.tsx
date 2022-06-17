@@ -17,7 +17,6 @@ import { FC, useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
 import { useCrowdloan } from './hooks/useCrowdloan';
-import { CrowdloanInfo } from './CrowdloanInfo';
 
 const ALLOTTED_REWARDS_POOL = 5000000;
 
@@ -74,21 +73,12 @@ export const AmountButton = styled.button`
 
 const ContributeWrapper = styled.div<{ wallet: WalletConfig | undefined }>`
   box-sizing: border-box;
-  width: 90%;
-  border-radius: 20px;
+  border-radius: 12px;
   ${({ theme }: { theme: Pallet }) => css`
     background: ${theme.layer2Background};
     border: 1px solid ${theme.borderColor};
   `}
-
-  ${above.sm`
-    width: 60%;
-  `}
-
-  ${above.md`
-    width: 49%;
-    margin-right: 36px;
-  `}
+  max-width: 500px;
 
   .checkbox-wrapper {
     margin-left: -9px;
@@ -172,7 +162,7 @@ const PageCrowdloan: FC<PageCrowdloanProps> = () => {
   const { amount, contribute, fundInfo, getFundInfo, setAmount } = useCrowdloan();
   const palette = useColorPallet();
   const { currencies: currenciesConfig } = useAppConfig();
-  const { isXsOrAbove } = useBreakpoint();
+  const { isMdOrAbove } = useBreakpoint();
 
   const [displayedAmount, setDisplayedAmount] = useState<string>('');
   const [error, setError] = useState('');
@@ -240,7 +230,7 @@ const PageCrowdloan: FC<PageCrowdloanProps> = () => {
         <TitleWrapper>
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <Typography variant='h6'>
-              <b>{isXsOrAbove ? 'Contribution Amount' : 'Amount'}</b>
+              <b>{isMdOrAbove ? 'Contribution Amount' : 'Amount'}</b>
             </Typography>
           </div>
           <div style={{ display: 'flex', alignItems: 'center' }}>

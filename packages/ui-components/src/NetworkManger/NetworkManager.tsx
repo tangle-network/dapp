@@ -440,9 +440,10 @@ export const NetworkIndicatorWrapper = styled.button`
     background: ${({ theme }: { theme: Pallet }) => theme.lightSelectionBackground};
     position: relative;
     width: 108px;
+    margin-right: 8px;
 
     ${above.xs`
-      margin: 0 1rem;
+      margin-right: 0.5rem;
       width: 132px;
     `}
 
