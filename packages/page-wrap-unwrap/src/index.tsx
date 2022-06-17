@@ -8,6 +8,8 @@ import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { getRoundedAmountString, SpaceBox } from '@webb-dapp/ui-components';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
+import { BalanceLabel } from '@webb-dapp/ui-components/Inputs/BalanceLabel/BalanceLabel';
+import { InputTitle } from '@webb-dapp/ui-components/Inputs/InputTitle/InputTitle';
 import { TokenInput, TokenInputProps } from '@webb-dapp/ui-components/Inputs/TokenInput/TokenInput';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
@@ -113,13 +115,6 @@ const TabButton = styled.button<{ active?: boolean }>`
   border-radius: 12px 12px 0px 0px;
 `;
 
-const TokenBalance = styled.div`
-  border: 1px solid ${({ theme }) => theme.primaryText};
-  border-radius: 5px;
-  margin-left: 5px;
-  padding: 0 5px;
-`;
-
 const PageWrapUnwrap: FC = () => {
   const { activeApi, activeChain, activeWallet } = useWebContext();
   const {
@@ -152,6 +147,7 @@ const PageWrapUnwrap: FC = () => {
       },
     };
   }, [context, wrappableTokens, governedTokens, wrappableToken, governedToken, setWrappableToken, setGovernedToken]);
+
   const rightInputProps: TokenInputProps = useMemo(() => {
     return {
       currencies: context === 'wrap' ? governedTokens : wrappableTokens,
@@ -161,6 +157,18 @@ const PageWrapUnwrap: FC = () => {
       },
     };
   }, [context, governedTokens, wrappableTokens, governedToken, wrappableToken, setGovernedToken, setWrappableToken]);
+
+  const balance = useMemo(() => {
+    if (wrappableToken && context === 'wrap') {
+      return `${getRoundedAmountString(wrappableTokenBalance)} ${wrappableToken.view.symbol}`;
+    }
+
+    if (governedToken && context === 'unwrap') {
+      return `${getRoundedAmountString(governedTokenBalance)} ${governedToken.view.symbol}`;
+    }
+
+    return '-';
+  }, [context, governedToken, governedTokenBalance, wrappableToken, wrappableTokenBalance]);
 
   const buttonText = context;
 
@@ -256,31 +264,7 @@ const PageWrapUnwrap: FC = () => {
             </Flex>
           </Flex>
           <SpaceBox height={16} />
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
-            <div>
-              <Typography
-                variant='body2'
-                style={{ color: palette.type === 'dark' ? palette.accentColor : palette.primaryText }}
-              >
-                Your Balance~
-              </Typography>
-            </div>
-            <TokenBalance>
-              {wrappableToken && context === 'wrap' && (
-                <Typography variant='body2'>
-                  <b>
-                    {getRoundedAmountString(wrappableTokenBalance)} {wrappableToken.view.symbol}
-                  </b>
-                </Typography>
-              )}
-              {governedToken && context === 'unwrap' && (
-                <Typography variant='body2'>
-                  {getRoundedAmountString(governedTokenBalance)} {governedToken.view.symbol}
-                </Typography>
-              )}
-            </TokenBalance>
-          </div>
-          <SpaceBox height={16} />
+          <InputTitle rightLabel={<BalanceLabel value={balance} />} />
           <AmountInputWrapper>
             <div style={{ width: '100%' }}>
               <InputBase
