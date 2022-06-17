@@ -90,19 +90,6 @@ const ContributeWrapper = styled.div<{ wallet: WalletConfig | undefined }>`
     margin-right: 36px;
   `}
 
-  ${({ theme, wallet }) => {
-    if (wallet) {
-      return css``;
-    } else {
-      return css`
-        padding: 25px 35px;
-        background: ${theme.layer2Background};
-        border: 1px solid ${theme.borderColor};
-        border-radius: 0 0 13px 13px;
-      `;
-    }
-  }}
-
   .checkbox-wrapper {
     margin-left: -9px;
     padding: 0 1rem;
