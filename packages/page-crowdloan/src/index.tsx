@@ -188,7 +188,13 @@ const PageCrowdloan: FC<PageCrowdloanProps> = () => {
   const palette = useColorPallet();
   const { currencies: currenciesConfig } = useAppConfig();
   const { isXsOrAbove } = useBreakpoint();
-  const { close, status } = useModal(true);
+
+  /** TODO:
+   * - Determine when the modal will open
+   * - Transaction url
+   * */
+  const { close, status } = useModal(false);
+  const transactionUrl = useMemo(() => 'https://etherscan.io', []);
 
   const [displayedAmount, setDisplayedAmount] = useState<string>('');
   const [error, setError] = useState('');
@@ -379,17 +385,8 @@ const PageCrowdloan: FC<PageCrowdloanProps> = () => {
         </ContributeWrapper>
       </PageCrowdloanWrapper>
 
-      {/** TODO:
-       * - Determine when the modal will open
-       * - Transaction url
-       * */}
       <Modal open={status} onClose={close}>
-        <ConfirmationModal
-          onClose={close}
-          amountContributed={amount}
-          estRewards={estReward}
-          txUrl='https://etherscan.io'
-        />
+        <ConfirmationModal onClose={close} amountContributed={amount} estRewards={estReward} txUrl={transactionUrl} />
       </Modal>
     </Fragment>
   );

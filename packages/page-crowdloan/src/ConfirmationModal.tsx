@@ -94,7 +94,7 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
       </InfoWrapper>
 
       <Typography variant={isXsOrAbove ? 'subtitle1' : 'caption'} component='p' style={{ marginTop: '24px' }}>
-        Check your contribution transaction here
+        Check your contribution transaction here{' '}
         <Link href={txUrl} underline='hover' target='_blank' rel='noreferrer' style={{ color: linkColor.toString() }}>
           (link)
         </Link>
