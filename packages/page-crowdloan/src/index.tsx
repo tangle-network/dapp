@@ -9,6 +9,8 @@ import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { SpaceBox } from '@webb-dapp/ui-components/Box';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
+import { BalanceLabel } from '@webb-dapp/ui-components/Inputs/BalanceLabel/BalanceLabel';
+import { InputTitle } from '@webb-dapp/ui-components/Inputs/InputTitle/InputTitle';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { getRoundedAmountString } from '@webb-dapp/ui-components/utils';
 import { above, useBreakpoint } from '@webb-dapp/ui-components/utils/responsive-utils';
@@ -111,9 +113,6 @@ const MixerButtonWrapper = styled.div`
 `;
 
 const TitleWrapper = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 8px;
   padding: 0 1rem;
   padding-top: 1rem;
 
@@ -228,24 +227,14 @@ const PageCrowdloan: FC<PageCrowdloanProps> = () => {
     <PageCrowdloanWrapper>
       <ContributeWrapper wallet={activeWallet}>
         <TitleWrapper>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <Typography variant='h6'>
-              <b>{isMdOrAbove ? 'Contribution Amount' : 'Amount'}</b>
-            </Typography>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <Typography
-              variant='body2'
-              style={{ color: palette.type === 'dark' ? palette.accentColor : palette.primaryText }}
-            >
-              Your Balance~
-            </Typography>
-            <TokenBalance>
-              <Typography variant='body2'>
-                {getRoundedAmountString(Number(tokenBalance))} {activeToken?.view.symbol}
-              </Typography>
-            </TokenBalance>
-          </div>
+          <InputTitle
+            leftLabel={isMdOrAbove ? 'Contribution Amount' : 'Amount'}
+            rightLabel={
+              <BalanceLabel
+                value={`${getRoundedAmountString(Number(tokenBalance))} ${activeToken?.view.symbol}`.trim()}
+              />
+            }
+          />
         </TitleWrapper>
 
         <AmountInputWrapper disabled={isFundingEnded}>
