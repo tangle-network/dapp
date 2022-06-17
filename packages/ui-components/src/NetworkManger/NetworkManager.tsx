@@ -439,11 +439,11 @@ export const NetworkIndicatorWrapper = styled.button`
     padding: 4px;
     background: ${({ theme }: { theme: Pallet }) => theme.lightSelectionBackground};
     position: relative;
-    width: 124px;
+    width: 140px;
 
     ${above.xs`
       margin: 0 1rem;
-      width: 132px;
+      width: 148px;
     `}
   }
 
@@ -486,6 +486,7 @@ export const NetworkManagerIndicator: React.FC<NetworkManagerIndicatorProps> = (
             style={{
               width: 29,
               height: 29,
+              marginRight: '4px',
             }}
           >
             <Icon style={{ position: 'absolute' }} fontSize={'small'}>
@@ -498,17 +499,21 @@ export const NetworkManagerIndicator: React.FC<NetworkManagerIndicatorProps> = (
       case 'no-connection':
         return (
           <div>
-            <Typography variant='body1'>Select a Network</Typography>
+            <Typography variant='subtitle1'>Select a Network</Typography>
           </div>
         );
 
       case 'error':
-        return <Icon fontSize={isXsOrAbove ? 'large' : 'medium'}>podcasts</Icon>;
+        return (
+          <div>
+            <Icon fontSize={isXsOrAbove ? 'large' : 'medium'}>podcasts</Icon>
+          </div>
+        );
 
       case 'connected':
       default:
         return connectionMetaData?.chainIcon ? (
-          connectionMetaData?.chainIcon
+          <div style={{ marginRight: '4px' }}>{connectionMetaData?.chainIcon}</div>
         ) : (
           <Icon fontSize={isXsOrAbove ? 'large' : 'medium'}>podcasts</Icon>
         );
@@ -517,8 +522,8 @@ export const NetworkManagerIndicator: React.FC<NetworkManagerIndicatorProps> = (
 
   return (
     <NetworkIndicatorWrapper as={ButtonBase} onClick={onClick}>
-      <Flex flex={1} row ai={'center'} style={{ width: '100%' }}>
-        <Flex style={{ marginRight: '4px' }}>{icon}</Flex>
+      <Flex flex={1} row ai='center' jc='center' style={{ width: '100%' }}>
+        <Flex>{icon}</Flex>
 
         {connectionMetaData ? (
           <Flex row jc='space-between' ai='center' flex={1}>

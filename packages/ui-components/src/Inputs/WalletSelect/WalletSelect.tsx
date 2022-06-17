@@ -11,7 +11,7 @@ import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { DownIconWrapper, NetworkIndicatorWrapper } from '@webb-dapp/ui-components/NetworkManger/NetworkManager';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
 import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
 import { getRoundedAmountString } from '../../';
@@ -20,12 +20,6 @@ import { WalletManager } from './WalletManager';
 const WalletSelectWrapper = styled(NetworkIndicatorWrapper)`
   && {
     margin: 0;
-    width: 196px;
-
-    ${above.xs`
-      margin: 0; 
-      width: 204px;
-  `}
   }
 
   .select-wallet-button {
@@ -49,24 +43,10 @@ const ellipsisText = css`
   text-overflow: ellipsis;
 `;
 
-const AccountBalance = styled(Typography)`
-  && {
-    display: block;
-    max-width: 28px;
-    ${ellipsisText}
-    margin-right: 2px;
-  }
-`;
-
 const AccountAddress = styled(Typography)`
   display: block;
   color: ${({ theme }) => theme.secondaryText};
-  max-width: 80px;
   ${ellipsisText}
-
-  && {
-    margin-left: 8px;
-  }
 `;
 
 type WalletSelectProps = {};
@@ -87,7 +67,19 @@ export const WalletSelect: React.FC<WalletSelectProps> = ({}) => {
   const [selectedWallet, setSelectedWallet] = useState<ManagedWallet | null>(null);
   const { active: selectedAccount } = useAccounts();
   const { activeChain } = useWebContext();
-  const palette = useColorPallet();
+
+  const displayInfo = useMemo(() => {
+    if (selectedWallet?.name.toLowerCase().includes('polkadot')) {
+      const name = selectedAccount?.name.slice(0, 12) || 'Account';
+      return name.length > 12 ? name.slice(0, 12) + '..' : name;
+    }
+
+    const name = 'Account ';
+    const address = selectedAccount?.address ?? '';
+    const truncatedAddress = address.toLowerCase().startsWith('0x') ? address.slice(2) : address;
+
+    return (name + truncatedAddress.slice(0, 4)).trim();
+  }, [selectedAccount, selectedWallet]);
 
   useEffect(() => {
     const nextWallet = wallets.find(({ connected }) => connected);
@@ -95,9 +87,6 @@ export const WalletSelect: React.FC<WalletSelectProps> = ({}) => {
       setSelectedWallet(nextWallet);
     }
   }, [wallets, setSelectedWallet]);
-
-  const amountBalance = getRoundedAmountString(Number(useNativeCurrencyBalance()));
-  const tokenSymbol = useNativeCurrencySymbol();
 
   return (
     <>
@@ -117,17 +106,9 @@ export const WalletSelect: React.FC<WalletSelectProps> = ({}) => {
             </Avatar>
 
             <Flex row jc='space-between' ai='center' flex={1}>
-              <WalletContentWrapper>
-                <Flex row style={{ color: palette.type === 'dark' ? palette.accentColor : palette.primaryText }}>
-                  <AccountBalance color='inherit' variant='subtitle1'>
-                    {amountBalance}
-                  </AccountBalance>
-                  <Typography color='inherit' display='block' variant='subtitle1'>
-                    {tokenSymbol}
-                  </Typography>
-                </Flex>
-                <AccountAddress variant='subtitle1'>{selectedAccount?.name || selectedAccount?.address}</AccountAddress>
-              </WalletContentWrapper>
+              <AccountAddress style={{ maxWidth: '80px' }} variant='subtitle1'>
+                {displayInfo}
+              </AccountAddress>
 
               <DownIconWrapper>
                 <ArrowDownIcon />
