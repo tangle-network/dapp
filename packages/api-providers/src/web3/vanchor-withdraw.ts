@@ -3,18 +3,28 @@
 
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
 
-import type { JsUtxo } from '@webb-tools/wasm-utils';
 import type { WebbWeb3Provider } from './webb-provider';
 
-import { CircomProvingManager, CircomUtxo, Keypair, MerkleTree, Note, ProvingManagerSetupInput, Utxo } from '@webb-tools/sdk-core';
-import { BigNumber, ContractReceipt, ethers } from 'ethers';
+import {
+  CircomProvingManager,
+  CircomUtxo,
+  FIELD_SIZE,
+  Keypair,
+  MerkleTree,
+  Note,
+  ProvingManagerSetupInput,
+  randomBN,
+  toFixedHex,
+  Utxo,
+} from '@webb-tools/sdk-core';
+import { BigNumber, BigNumberish, ContractReceipt, ethers } from 'ethers';
 
 import { hexToU8a, u8aToHex } from '@polkadot/util';
 
 import { AnchorApi, VAnchorWithdraw, WebbRelayer, WithdrawState } from '../abstracts';
 import { ChainType, computeChainIdType, evmIdIntoInternalChainId, parseChainIdType } from '../chains';
 import { VAnchorContract } from '../contracts';
-import { utxoFromVAnchorNote } from '../contracts/utils/make-deposit';
+import { generateCircomCommitment, utxoFromVAnchorNote } from '../contracts/utils/make-deposit';
 import { Web3Provider } from '../ext-providers/web3/web3-provider';
 import { fetchVariableAnchorKeyForEdges, fetchVariableAnchorWasmForEdges } from '../ipfs/evm/anchors';
 import { Storage } from '../storage';
@@ -116,8 +126,9 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
     const activeChain = await this.inner.getChainId();
     const destChainIdType = computeChainIdType(ChainType.EVM, activeChain);
     const internalId = evmIdIntoInternalChainId(activeChain);
-    const contractAddress = anchorConfigsForBridge.anchorAddresses[internalId]!;
-    const destVAnchor = await this.inner.getVariableAnchorByAddress(contractAddress);
+    const destAddress = anchorConfigsForBridge.anchorAddresses[internalId]!;
+    const destVAnchor = await this.inner.getVariableAnchorByAddress(destAddress);
+    const treeHeight = await destVAnchor._contract.levels();
 
     // Loop through the notes and populate the leaves map
     const leavesMap: Record<string, Uint8Array[]> = {};
@@ -129,9 +140,12 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
     let sumInputNotes: BigNumber = BigNumber.from(0);
 
     // Create input UTXOs for convenience calculations
-    let inputUTXOs: Utxo[] = [];
+    let inputUtxos: Utxo[] = [];
+
+    console.log('before note loop');
 
     for (const note of notes) {
+      console.log(note);
       const parsedNote = (await Note.deserialize(note)).note;
       console.log('inside loop, parsedNote: ', parsedNote);
       sumInputNotes = ethers.utils.parseUnits(parsedNote.amount, parsedNote.denomination).add(sumInputNotes);
@@ -178,8 +192,10 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
         destHistorySourceRoot = edge[1];
       }
 
+      leavesMap[parsedNote.sourceChainId].map((leaf) => console.log(u8aToHex(leaf)));
+
       const testMerkleTree = new MerkleTree(
-        5,
+        treeHeight,
         leavesMap[parsedNote.sourceChainId].map((leaf) => u8aToHex(leaf))
       );
 
@@ -187,7 +203,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
 
       // Remove leaves from the leaves map which have not yet been relayed
       const provingTree = MerkleTree.createTreeWithRoot(
-        5,
+        treeHeight,
         leavesMap[parsedNote.sourceChainId].map((leaf) => u8aToHex(leaf)),
         destHistorySourceRoot
       );
@@ -195,17 +211,58 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
         console.log('fetched leaves do not match bridged anchor state');
         throw new Error('fetched leaves do not match bridged anchor state');
       }
+      provingTree.elements().map((el) => console.log(el));
       const provingLeaves = provingTree.elements().map((el) => hexToU8a(el.toHexString()));
       leavesMap[parsedNote.sourceChainId] = provingLeaves;
-      const leafIndex = provingTree.getIndexByElement(u8aToHex(parsedNote.getLeafCommitment()));
+      const commitment = generateCircomCommitment(parsedNote);
+      const leafIndex = provingTree.getIndexByElement(commitment);
+      console.log('createdCommitment from note: ', commitment);
+      console.log('leafIndex in proving tree: ', leafIndex);
       leafIndices.push(leafIndex);
 
-      parsedNote.mutateIndex(leafIndex.toString());
+      const utxo = await utxoFromVAnchorNote(parsedNote, leafIndex);
+      inputUtxos.push(utxo);
+    }
 
-      const utxo = await utxoFromVAnchorNote(parsedNote);
-      inputUTXOs.push(utxo);
+    const randomKeypair = new Keypair();
 
-      console.log('utxo amount: ', utxo.amount);
+    // Add default input notes if required
+    while (inputUtxos.length !== 2 && inputUtxos.length < 16) {
+      inputUtxos.push(
+        await CircomUtxo.generateUtxo({
+          curve: 'Bn254',
+          backend: 'Circom',
+          chainId: destChainIdType.toString(),
+          originChainId: destChainIdType.toString(),
+          amount: '0',
+          blinding: hexToU8a(randomBN(31).toHexString()),
+          keypair: randomKeypair,
+        })
+      );
+    }
+
+    // Populate the leaves if not already populated.
+    if (!leavesMap[destChainIdType.toString()]) {
+      const leafStorage = await bridgeStorageFactory(destChainIdType);
+
+      // check if we already cached some values.
+      const storedContractInfo: BridgeStorage[0] = (await leafStorage.get(destAddress.toLowerCase())) || {
+        lastQueriedBlock: getAnchorDeploymentBlockNumber(destChainIdType, destAddress) || 0,
+        leaves: [] as string[],
+      };
+
+      const leavesFromChain = await destVAnchor.getDepositLeaves(storedContractInfo.lastQueriedBlock + 1, 0);
+
+      console.log('populating all the leaves for chain: ', destChainIdType);
+      // Only populate the leaves map if there are actually leaves to populate.
+      if (leavesFromChain.newLeaves.length != 0 || storedContractInfo.leaves.length != 0) {
+        leavesMap[destChainIdType.toString()] = [...storedContractInfo.leaves, ...leavesFromChain.newLeaves].map(
+          (leaf) => {
+            console.log(leaf);
+            return hexToU8a(leaf);
+          }
+        );
+      }
     }
 
     // Check for cancelled here, abort if it was set.
@@ -241,7 +298,6 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
 
     console.log('change utxo: ', changeUtxo.amount);
 
-    const encChangeCommitment = keypair.encrypt(Buffer.from(changeUtxo.commitment));
     const dummyUtxo = await CircomUtxo.generateUtxo({
       curve: 'Bn254',
       backend: 'Circom',
@@ -249,7 +305,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
       chainId: destChainIdType.toString(),
       keypair,
     });
-    const encDummyCommitment = keypair.encrypt(Buffer.from(dummyUtxo.commitment));
+    const outputUtxos = [changeUtxo, dummyUtxo];
 
     // Create the proving manager - zk fixtures are fetched depending on the contract
     // max edges as well as the number of input notes.
@@ -264,26 +320,21 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
       wasmBuffer = await fetchVariableAnchorWasmForEdges(maxEdges, true);
     }
 
-    const proofInput: ProvingManagerSetupInput<'vanchor'> = {
-      chainId: destChainIdType.toString(),
-      encryptedCommitments: [hexToU8a(encChangeCommitment), hexToU8a(encDummyCommitment)],
-      extAmount: '0',
-      fee: '0',
-      indices: leafIndices,
-      inputNotes: notes,
-      leavesMap,
-      output: [changeUtxo, dummyUtxo],
-      provingKey,
-      publicAmount: amount,
-      recipient: hexToU8a(recipient),
-      relayer: hexToU8a(recipient),
-      // Roots are calculated from leavesMap in CircomProvingManager
-      roots: [],
-    };
+    let extAmount = BigNumber.from(0)
+      .add(outputUtxos.reduce((sum: BigNumber, x: Utxo) => sum.add(x.amount), BigNumber.from(0)))
+      .sub(inputUtxos.reduce((sum: BigNumber, x: Utxo) => sum.add(x.amount), BigNumber.from(0)));
 
-    const pm = new CircomProvingManager(wasmBuffer, 5, null);
-    const proof = await pm.prove('vanchor', proofInput);
-    const rootsArray = await destVAnchor.getRootsForProof();
+    const { extData, outputNotes, publicInputs } = await destVAnchor.setupTransaction(
+      inputUtxos,
+      [changeUtxo, dummyUtxo],
+      extAmount,
+      0,
+      recipient,
+      recipient,
+      leavesMap,
+      provingKey,
+      Buffer.from(wasmBuffer)
+    );
 
     // Check for cancelled here, abort if it was set.
     if (this.cancelToken.cancelled) {
@@ -308,25 +359,15 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
     try {
       const tx = await destVAnchor.inner.transact(
         {
-          extDataHash: u8aToHex(proof.extDataHash),
-          inputNullifiers: inputUTXOs.map((utxo) => utxo.nullifier),
-          outputCommitments: [u8aToHex(changeUtxo.commitment), u8aToHex(dummyUtxo.commitment)],
-          publicAmount: amount,
-          proof: proof.proof,
-          roots: `0x${rootsArray.join('')}`,
+          ...publicInputs,
+          outputCommitments: [publicInputs.outputCommitments[0], publicInputs.outputCommitments[1]],
         },
-        {
-          extAmount: '0',
-          encryptedOutput1: encChangeCommitment,
-          encryptedOutput2: encDummyCommitment,
-          fee: 0,
-          recipient,
-          relayer: recipient,
-        }
+        extData
       );
       receipt = await tx.wait();
     } catch (e) {
       this.emit('stateChange', WithdrawState.Ideal);
+      console.log(e);
 
       this.inner.notificationHandler({
         description: (e as any)?.code === 4001 ? 'Withdraw rejected' : 'Withdraw failed',
@@ -348,11 +389,13 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
 
     if (!insertedCommitmentEvent) {
       throw new Error("Uh oh, we didn't find our commitment in the insertions... inserted garbage");
+    } else {
+      console.log(insertedCommitmentEvent);
+      console.log(insertedCommitmentEvent.args);
     }
 
-    const changeNote = proof.outputNotes.find((note) => note.getLeaf() === changeUtxo.commitment)!;
-
-    changeNote.mutateIndex(insertedCommitmentEvent.args![1]);
+    const changeNote: Note = outputNotes.find((note: Note) => generateCircomCommitment(note.note) === hexCommitment)!;
+    changeNote.mutateIndex(insertedCommitmentEvent.args![1].toString());
 
     this.emit('stateChange', WithdrawState.Ideal);
     this.inner.notificationHandler({

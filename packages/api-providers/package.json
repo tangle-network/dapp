@@ -24,6 +24,7 @@
     "@webb-tools/anchors": "file:../../../protocol-solidity/packages/anchors",
     "@webb-tools/contracts": "file:../../../protocol-solidity/packages/contracts",
     "@webb-tools/interfaces": "file:../../../protocol-solidity/packages/interfaces",
+    "@webb-tools/tokens": "file:../../../protocol-solidity/packages/tokens",
     "bignumber.js": "^9.0.0",
     "snarkjs": "0.4.16"
   },

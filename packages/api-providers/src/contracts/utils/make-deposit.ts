@@ -4,7 +4,7 @@
 import type { JsNote as DepositNote } from '@webb-tools/wasm-utils';
 
 import { IAnchorDepositInfo } from '@webb-tools/interfaces';
-import { Keypair, toFixedHex, Utxo } from '@webb-tools/sdk-core';
+import { CircomUtxo, Keypair, toFixedHex, Utxo } from '@webb-tools/sdk-core';
 
 import { hexToU8a } from '@polkadot/util';
 
@@ -34,12 +34,13 @@ export function depositFromAnchorNote(note: DepositNote): IAnchorDepositInfo {
   return deposit;
 }
 
-export async function utxoFromVAnchorNote(note: DepositNote): Promise<Utxo> {
+export async function utxoFromVAnchorNote(note: DepositNote, leafIndex: number): Promise<Utxo> {
   const noteSecretParts = note.secrets.split(':');
-  const chainId = '0x' + noteSecretParts[0];
+  const chainId = note.targetChainId;
   const amount = BigNumber.from('0x' + noteSecretParts[1]).toString();
   const secretKey = '0x' + noteSecretParts[2];
   const blinding = '0x' + noteSecretParts[3];
+  const originChainId = note.sourceChainId;
 
   const keypairStorage = await keypairStorageFactory();
   const storedKeypair = await keypairStorage.get('keypair');
@@ -50,14 +51,29 @@ export async function utxoFromVAnchorNote(note: DepositNote): Promise<Utxo> {
 
   const keypair = new Keypair(storedKeypair.keypair);
 
-  return Utxo.generateUtxo({
+  return CircomUtxo.generateUtxo({
     curve: note.curve,
     backend: note.backend,
     amount,
     blinding: hexToU8a(blinding),
     privateKey: hexToU8a(secretKey),
-    chainId: noteSecretParts[0],
-    index: note.index,
+    originChainId,
+    chainId,
+    index: leafIndex.toString(),
     keypair,
   });
 }
+
+export const generateCircomCommitment = (note: DepositNote): string => {
+  const noteSecretParts = note.secrets.split(':');
+  const chainId = BigNumber.from('0x' + noteSecretParts[0]).toString();
+  const amount = BigNumber.from('0x' + noteSecretParts[1]).toString();
+  const secretKey = '0x' + noteSecretParts[2];
+  const blinding = '0x' + noteSecretParts[3];
+
+  const keypair = new Keypair(secretKey);
+
+  const hash = poseidon([chainId, amount, keypair.pubkey, blinding]);
+
+  return BigNumber.from(hash).toHexString();
+};

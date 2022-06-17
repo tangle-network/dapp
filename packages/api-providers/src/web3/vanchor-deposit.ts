@@ -4,10 +4,18 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { ERC20__factory as ERC20Factory } from '@webb-tools/contracts';
-import { Keypair, Note, NoteGenInput, toFixedHex, Utxo } from '@webb-tools/sdk-core';
+import {
+  buildVariableWitnessCalculator,
+  CircomUtxo,
+  Keypair,
+  Note,
+  NoteGenInput,
+  toFixedHex,
+  Utxo,
+} from '@webb-tools/sdk-core';
 import { BigNumber, ethers } from 'ethers';
 
-import { hexToU8a } from '@polkadot/util';
+import { hexToU8a, u8aToHex } from '@polkadot/util';
 
 import { DepositPayload as IDepositPayload, MixerSize, VAnchorDeposit } from '../abstracts';
 import {
@@ -17,7 +25,16 @@ import {
   evmIdIntoInternalChainId,
   parseChainIdType,
 } from '../chains';
-import { getEVMChainNameFromInternal, keypairStorageFactory } from '..';
+import {
+  BridgeStorage,
+  bridgeStorageFactory,
+  fetchVariableAnchorKeyForEdges,
+  fetchVariableAnchorWasmForEdges,
+  getAnchorDeploymentBlockNumber,
+  getEVMChainNameFromInternal,
+  keypairStorageFactory,
+  Web3Provider,
+} from '..';
 import { WebbWeb3Provider } from './webb-provider';
 
 type DepositPayload = IDepositPayload<Note, [Utxo, number | string, string?]>;
@@ -75,15 +92,18 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
       await keypairStorage.set('keypair', { keypair: keypair.privkey });
     }
 
+    console.log('amount in generateBridgeNote: ', amount.toString());
+
     // Convert the amount to units of wei
-    const depositOutputUtxo = await Utxo.generateUtxo({
+    const depositOutputUtxo = await CircomUtxo.generateUtxo({
       curve: 'Bn254',
       backend: 'Circom',
       amount: ethers.utils.parseEther(amount.toString()).toString(),
       chainId: destination.toString(),
-      privateKey: hexToU8a(keypair.privkey),
       keypair,
     });
+
+    console.log('amount set on the utxo: ', depositOutputUtxo.amount);
 
     const srcChainInternal = evmIdIntoInternalChainId(sourceEvmId);
     const destChainInternal = chainTypeIdToInternalId(parseChainIdType(destination));
@@ -105,10 +125,10 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
       hashFunction: 'Poseidon',
       protocol: 'vanchor',
       secrets:
-        `${toFixedHex(destination, 6).substring(2)}:` +
-        `${depositOutputUtxo.amount}:` +
-        `${keypair.pubkey.toHexString()}:` +
-        `${BigNumber.from(depositOutputUtxo.blinding).toHexString()}`,
+        `${toFixedHex(destination, 8).substring(2)}:` +
+        `${toFixedHex(depositOutputUtxo.amount).substring(2)}:` +
+        `${toFixedHex(keypair.privkey).substring(2)}:` +
+        `${depositOutputUtxo.blinding}`,
       sourceChain: sourceChainId.toString(),
       sourceIdentifyingData: srcAddress!,
       targetChain: destination.toString(),
@@ -136,8 +156,16 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
 
     try {
       const note = depositPayload.note.note;
+      const utxo = depositPayload.params[0];
+      console.log(utxo.serialize());
+
       const amount = depositPayload.params[0].amount;
+
+      console.log('noteString in deposit: ', depositPayload.note.serialize());
+      console.log('amount in deposit: ', depositPayload.params[0].amount);
+
       const sourceEvmId = await this.inner.getChainId();
+      const sourceChainId = computeChainIdType(ChainType.EVM, sourceEvmId);
       const sourceInternalId = evmIdIntoInternalChainId(sourceEvmId);
 
       this.inner.notificationHandler({
@@ -154,6 +182,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
       });
 
       const anchors = await this.bridgeApi.getAnchors();
+
       // Find the only configurable VAnchor
       const vanchor = anchors.find((anchor) => !anchor.amount);
 
@@ -162,20 +191,70 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
       }
 
       // Get the contract address for the destination chain
-      const contractAddress = vanchor.neighbours[sourceInternalId];
+      const srcAddress = vanchor.neighbours[sourceInternalId] as string;
 
-      if (!contractAddress) {
+      if (!srcAddress) {
         throw new Error(`No Anchor for the chain ${note.targetChainId}`);
       }
 
-      const vanchorWrapper = await this.inner.getVariableAnchorByAddress(contractAddress as string);
+      const srcVAnchor = await this.inner.getVariableAnchorByAddress(srcAddress);
+      const maxEdges = await srcVAnchor._contract.maxEdges();
+
+      // Fetch the fixtures
+      const smallKey = await fetchVariableAnchorKeyForEdges(maxEdges, true);
+      const smallWasm = await fetchVariableAnchorWasmForEdges(maxEdges, true);
+      const leavesMap: Record<string, Uint8Array[]> = {};
+
+      // Fetch the leaves from the source chain
+      let leafStorage = await bridgeStorageFactory(Number(sourceChainId));
+
+      // check if we already cached some values.
+      let storedContractInfo: BridgeStorage[0] = (await leafStorage.get(srcAddress.toLowerCase())) || {
+        lastQueriedBlock: getAnchorDeploymentBlockNumber(Number(sourceChainId), srcAddress) || 0,
+        leaves: [] as string[],
+      };
+
+      let leavesFromChain = await srcVAnchor.getDepositLeaves(storedContractInfo.lastQueriedBlock + 1, 0);
+
+      // Only populate the leaves map if there are actually leaves to populate.
+      if (leavesFromChain.newLeaves.length != 0 || storedContractInfo.leaves.length != 0) {
+        leavesMap[sourceChainId.toString()] = [...storedContractInfo.leaves, ...leavesFromChain.newLeaves].map(
+          (leaf) => {
+            console.log(leaf);
+            return hexToU8a(leaf);
+          }
+        );
+      }
+
+      // Set up a provider for the dest chain
+      const destChainTypeId = parseChainIdType(Number(utxo.chainId));
+      const destInternalId = evmIdIntoInternalChainId(destChainTypeId.chainId);
+      const destChainConfig = this.config.chains[destInternalId];
+      const destHttpProvider = Web3Provider.fromUri(destChainConfig.url);
+      const destEthers = destHttpProvider.intoEthersProvider();
+      const destAddress = vanchor.neighbours[destInternalId] as string;
+      const destVAnchor = await this.inner.getVariableAnchorByAddressAndProvider(destAddress, destEthers);
+      leafStorage = await bridgeStorageFactory(Number(utxo.chainId));
+
+      // check if we already cached some values.
+      storedContractInfo = (await leafStorage.get(destAddress.toLowerCase())) || {
+        lastQueriedBlock: getAnchorDeploymentBlockNumber(Number(utxo.chainId), destAddress) || 0,
+        leaves: [] as string[],
+      };
+
+      leavesFromChain = await destVAnchor.getDepositLeaves(storedContractInfo.lastQueriedBlock + 1, 0);
+
+      // Only populate the leaves map if there are actually leaves to populate.
+      if (leavesFromChain.newLeaves.length != 0 || storedContractInfo.leaves.length != 0) {
+        leavesMap[utxo.chainId] = [...storedContractInfo.leaves, ...leavesFromChain.newLeaves].map((leaf) => {
+          console.log(leaf);
+          return hexToU8a(leaf);
+        });
+      }
 
       // If a wrappableAsset was selected, perform a wrapAndDeposit
       if (depositPayload.params[2]) {
-        const requiredApproval = await vanchorWrapper.isWrappableTokenApprovalRequired(
-          depositPayload.params[2],
-          amount
-        );
+        const requiredApproval = await destVAnchor.isWrappableTokenApprovalRequired(depositPayload.params[2], amount);
 
         if (requiredApproval) {
           this.inner.notificationHandler({
@@ -190,17 +269,17 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
             depositPayload.params[2],
             this.inner.getEthersProvider().getSigner()
           );
-          const webbToken = await vanchorWrapper.getWebbToken();
+          const webbToken = await srcVAnchor.getWebbToken();
           const tx = await tokenInstance.approve(webbToken.address, amount);
 
           await tx.wait();
           this.inner.notificationHandler.remove('waiting-approval');
         }
 
-        const enoughBalance = await vanchorWrapper.hasEnoughBalance(depositPayload.params[2]);
+        const enoughBalance = await srcVAnchor.hasEnoughBalance(depositPayload.params[2]);
 
         if (enoughBalance) {
-          await vanchorWrapper.wrapAndDeposit(depositPayload.params[0], depositPayload.params[2]);
+          await srcVAnchor.wrapAndDeposit(depositPayload.params[0], depositPayload.params[2]);
 
           this.inner.notificationHandler({
             data: {
@@ -231,7 +310,9 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
 
         return;
       } else {
-        const requiredApproval = await vanchorWrapper.isWebbTokenApprovalRequired(amount);
+        console.log('in else case of vanchor deposit');
+        const requiredApproval = await srcVAnchor.isWebbTokenApprovalRequired(amount);
+        console.log('required approval: ', requiredApproval);
 
         if (requiredApproval) {
           this.inner.notificationHandler({
@@ -242,17 +323,28 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
             name: 'Approval',
             persist: true,
           });
-          const tokenInstance = await vanchorWrapper.getWebbToken();
-          const tx = await tokenInstance.approve(vanchorWrapper.inner.address, amount);
+          const tokenInstance = await srcVAnchor.getWebbToken();
+          const tx = await tokenInstance.approve(srcVAnchor.inner.address, amount);
 
           await tx.wait();
           this.inner.notificationHandler.remove('waiting-approval');
         }
 
-        const enoughBalance = await vanchorWrapper.hasEnoughBalance(amount);
+        const enoughBalance = await srcVAnchor.hasEnoughBalance(amount);
 
         if (enoughBalance) {
-          await vanchorWrapper.deposit(depositPayload.params[0]);
+          const tx = await srcVAnchor.deposit(
+            depositPayload.params[0] as CircomUtxo,
+            leavesMap,
+            smallKey,
+            Buffer.from(smallWasm)
+          );
+
+          console.log('Commitment on deposit: ', u8aToHex(depositPayload.params[0].commitment));
+
+          // emit event for waiting for transaction to confirm
+          await tx.wait();
+
           this.inner.notificationHandler({
             data: {
               amount: note.amount,
