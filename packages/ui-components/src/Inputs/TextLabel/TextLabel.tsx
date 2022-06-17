@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { sharedLabelCss } from '../InputTitle/InputTitle';
+import { sharedLabelCss } from '../shared';
 
 export const TextLabelWrapper = styled.label`
   display: block;
