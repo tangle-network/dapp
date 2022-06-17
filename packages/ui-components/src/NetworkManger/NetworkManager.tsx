@@ -439,11 +439,15 @@ export const NetworkIndicatorWrapper = styled.button`
     padding: 4px;
     background: ${({ theme }: { theme: Pallet }) => theme.lightSelectionBackground};
     position: relative;
-    width: 140px;
+    width: 108px;
 
     ${above.xs`
       margin: 0 1rem;
-      width: 148px;
+      width: 132px;
+    `}
+
+    ${above.md`
+      width: 148px; 
     `}
   }
 
@@ -474,7 +478,7 @@ export const NetworkManagerIndicator: React.FC<NetworkManagerIndicatorProps> = (
   connectionStatus,
   onClick,
 }) => {
-  const { isXsOrAbove } = useBreakpoint();
+  const { isMdOrAbove, isXsOrAbove } = useBreakpoint();
 
   const icon = useMemo(() => {
     switch (connectionStatus) {
@@ -534,9 +538,11 @@ export const NetworkManagerIndicator: React.FC<NetworkManagerIndicatorProps> = (
               <b>{connectionMetaData.chainName}</b>
             </Typography>
 
-            <DownIconWrapper>
-              <ArrowDownIcon />
-            </DownIconWrapper>
+            {isMdOrAbove && (
+              <DownIconWrapper>
+                <ArrowDownIcon />
+              </DownIconWrapper>
+            )}
           </Flex>
         ) : (
           ''

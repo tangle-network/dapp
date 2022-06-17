@@ -10,7 +10,7 @@ import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { DownIconWrapper, NetworkIndicatorWrapper } from '@webb-dapp/ui-components/NetworkManger/NetworkManager';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
-import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
+import { above, useBreakpoint } from '@webb-dapp/ui-components/utils/responsive-utils';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
@@ -63,6 +63,7 @@ export const WalletSelect: React.FC<WalletSelectProps> = ({}) => {
   }, []);
 
   const { wallets } = useWallets();
+  const { isMdOrAbove } = useBreakpoint();
 
   const [selectedWallet, setSelectedWallet] = useState<ManagedWallet | null>(null);
   const { active: selectedAccount } = useAccounts();
@@ -110,9 +111,11 @@ export const WalletSelect: React.FC<WalletSelectProps> = ({}) => {
                 {displayInfo}
               </AccountAddress>
 
-              <DownIconWrapper>
-                <ArrowDownIcon />
-              </DownIconWrapper>
+              {isMdOrAbove && (
+                <DownIconWrapper>
+                  <ArrowDownIcon />
+                </DownIconWrapper>
+              )}
             </Flex>
           </Flex>
         )}
