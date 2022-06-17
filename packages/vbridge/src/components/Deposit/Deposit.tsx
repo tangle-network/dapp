@@ -94,15 +94,6 @@ export const Deposit: React.FC<DepositProps> = () => {
 
   const { setWrappableToken, wrappableToken, wrappableTokens } = useWrapUnwrap();
   const { activeApi, activeChain, activeWallet, chains, loading, switchChain } = useWebContext();
-  const palette = useColorPallet();
-
-  const srcChain = useMemo(() => {
-    if (!activeChain) {
-      return undefined;
-    }
-
-    return activeChain;
-  }, [activeChain]);
 
   useEffect(() => {
     if (!activeChain || !activeApi) {
@@ -148,7 +139,7 @@ export const Deposit: React.FC<DepositProps> = () => {
     }
 
     if (!showWrappableAssets && selectedBridgeCurrency) {
-      return `${getRoundedAmountString(Number(wrappedTokenBalance))} ${selectedBridgeCurrency?.view.symbol}`;
+      return `${getRoundedAmountString(Number(wrappedTokenBalance))} ${selectedBridgeCurrency.view.symbol}`;
     }
 
     return '-';

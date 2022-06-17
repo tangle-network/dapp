@@ -231,7 +231,7 @@ const PageCrowdloan: FC<PageCrowdloanProps> = () => {
             leftLabel={isMdOrAbove ? 'Contribution Amount' : 'Amount'}
             rightLabel={
               <BalanceLabel
-                value={`${getRoundedAmountString(Number(tokenBalance))} ${activeToken?.view.symbol}`.trim()}
+                value={`${getRoundedAmountString(Number(tokenBalance))} ${activeToken?.view.symbol ?? ''}`.trim()}
               />
             }
           />
