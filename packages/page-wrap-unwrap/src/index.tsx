@@ -17,6 +17,8 @@ import styled, { css } from 'styled-components';
 const logger = LoggerService.get('page-wrap-unwrap');
 
 const TransferWrapper = styled.div`
+  box-sizing: border-box;
+  padding: 25px 35px;
   margin: auto;
   max-width: 500px;
 
