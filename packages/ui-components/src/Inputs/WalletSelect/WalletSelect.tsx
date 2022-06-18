@@ -28,11 +28,6 @@ const WalletSelectWrapper = styled(NetworkIndicatorWrapper)`
   }
 `;
 
-const WalletContentWrapper = styled(Flex).attrs({
-  row: true,
-  flex: 1,
-})``;
-
 const ellipsisText = css`
   white-space: nowrap;
   overflow: hidden;
@@ -104,7 +99,7 @@ export const WalletSelect: React.FC<WalletSelectProps> = ({}) => {
 
             <Flex row jc='space-between' ai='center' flex={1}>
               <AccountAddress style={{ maxWidth: '80px' }} variant='subtitle1'>
-                {displayInfo}
+                <b>{displayInfo}</b>
               </AccountAddress>
 
               {isMdOrAbove && (
