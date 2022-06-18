@@ -23,8 +23,8 @@ export class PolkadotCrowdloan extends Crowdloan<WebbPolkadot, ContributePayload
 
   async getFundInfo(parachainId: number): Promise<CrowdloanFundInfo> {
     // @ts-ignore
-    let fundInfo: FundInfo = await this.inner.api.query.crowdloan.funds(parachainId);
-    let fundInfoJSON = fundInfo.toJSON();
+    let fundInfo: FundInfo = await this.inner.api.query.crowdloan?.funds(parachainId);
+    let fundInfoJSON = fundInfo ? fundInfo.toJSON() : {};
 
     return {
       raised: BigInt(fundInfoJSON.raised?.toString() || 0),
