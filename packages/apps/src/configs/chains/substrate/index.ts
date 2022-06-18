@@ -1,9 +1,7 @@
 import { AppConfig, ChainType, InternalChainId, SubstrateChainId, WebbCurrencyId } from '@webb-dapp/api-providers';
+import KSMLogo from '@webb-dapp/apps/configs/logos/chains/KusamaLogo';
+import DOTLogo from '@webb-dapp/apps/configs/logos/chains/PolkadotLogo';
 import WEBBLogo from '@webb-dapp/apps/configs/logos/chains/WebbLogo';
-// TODO: Add logo
-import KSMLogo from '@webb-dapp/apps/configs/logos/chains/WebbLogo';
-// TODO: Add logo
-import DOTLogo from '@webb-dapp/apps/configs/logos/chains/WebbLogo';
 
 export const getSupportedCurrenciesOfChain = (chainId: InternalChainId): WebbCurrencyId[] => {
   return chainsConfig[chainId].currencies;
@@ -18,7 +16,7 @@ export const chainsConfig: AppConfig['chains'] = {
     chainId: SubstrateChainId.ProtocolSubstrateStandalone,
     logo: WEBBLogo,
     url: 'ws://127.0.0.1:9944',
-    name: 'Protocol Substrate Development',
+    name: 'Substrate',
     currencies: [WebbCurrencyId.WEBB, WebbCurrencyId.TEST],
     nativeCurrencyId: WebbCurrencyId.WEBB,
   },
@@ -30,7 +28,7 @@ export const chainsConfig: AppConfig['chains'] = {
     chainId: SubstrateChainId.EggStandalone,
     logo: WEBBLogo,
     url: 'wss://standalone.webb.tools',
-    name: 'Webb Eggnet',
+    name: 'Eggnet',
     currencies: [WebbCurrencyId.WEBB],
     nativeCurrencyId: WebbCurrencyId.WEBB,
   },
@@ -42,7 +40,7 @@ export const chainsConfig: AppConfig['chains'] = {
     chainId: SubstrateChainId.Kusama,
     logo: KSMLogo,
     url: 'wss://kusama-rpc.polkadot.io',
-    name: 'Kusama Relay Chain',
+    name: 'Kusama',
     currencies: [WebbCurrencyId.KSM],
     nativeCurrencyId: WebbCurrencyId.KSM,
   },
@@ -54,7 +52,7 @@ export const chainsConfig: AppConfig['chains'] = {
     chainId: SubstrateChainId.Polkadot,
     logo: DOTLogo,
     url: 'wss://rpc.polkadot.io',
-    name: 'Polkadot Relay Chain',
+    name: 'Polkadot',
     currencies: [WebbCurrencyId.DOT],
     nativeCurrencyId: WebbCurrencyId.DOT,
   },

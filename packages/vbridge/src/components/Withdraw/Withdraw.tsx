@@ -14,9 +14,10 @@ import { RelayerModal } from '@webb-dapp/react-components/Relayer/RelayerModal';
 import { WithdrawingModal, WithdrawSuccessModal } from '@webb-dapp/react-components/Withdraw';
 import { useAppConfig, useWebContext } from '@webb-dapp/react-environment';
 import { SpaceBox } from '@webb-dapp/ui-components';
-import { SettingsIcon } from '@webb-dapp/ui-components/assets/SettingsIcon';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
+import { InputTitle } from '@webb-dapp/ui-components/Inputs/InputTitle/InputTitle';
 import { BridgeNoteInput } from '@webb-dapp/ui-components/Inputs/NoteInput/BridgeNoteInput';
+import { RelayerButton } from '@webb-dapp/ui-components/Inputs/RelayerButton/RelayerButton';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { Note } from '@webb-tools/sdk-core';
@@ -39,29 +40,6 @@ const WithdrawWrapper = styled.div<{ wallet: WalletConfig | undefined }>`
   }}
   background: ${({ theme }) => theme.lightSelectionBackground};
   border-radius: 10px;
-
-  .titles-and-information {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-`;
-
-const RelayerSettings = styled.div`
-  box-sizing: border-box;
-
-  .wallet-logo-wrapper {
-    width: 20px;
-    height: 20px;
-    background: transparent;
-  }
-
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  padding: 5px;
-  height: 45px;
-  border-radius: 12px;
 `;
 
 const WithdrawNoteSection = styled.div`
@@ -203,24 +181,17 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
   return (
     <WithdrawWrapper wallet={activeWallet}>
       <WithdrawNoteSection>
-        <div className='titles-and-information'>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <Typography variant={'h6'}>
-              <b>ADD NOTE</b>
-            </Typography>
-          </div>
-          <RelayerSettings
-            role='button'
-            aria-disabled={!activeChain}
-            onClick={() => {
-              setShowRelayerModal(true);
-            }}
-            className='select-button'
-          >
-            <SettingsIcon />
-            <p style={{ fontSize: '14px', color: '#B6B6B6', marginLeft: '5px' }}>RELAYER</p>
-          </RelayerSettings>
-        </div>
+        <InputTitle
+          leftLabel='ADD NOTE'
+          rightLabel={
+            <RelayerButton
+              disabled={!activeChain}
+              onClick={() => {
+                setShowRelayerModal(true);
+              }}
+            />
+          }
+        />
         <div className='note-input'>
           <BridgeNoteInput error={note ? validationErrors.note : ''} value={note} onChange={setNote} />
         </div>

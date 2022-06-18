@@ -2,7 +2,6 @@ import { alpha, ButtonBase, Checkbox, InputBase, Typography } from '@material-ui
 import { Currency } from '@webb-dapp/api-providers';
 import { WalletConfig } from '@webb-dapp/api-providers/types';
 import WEBBLogo from '@webb-dapp/apps/configs/logos/chains/WebbLogo';
-import { TokenBalance } from '@webb-dapp/mixer/components';
 import { pageWithFeatures } from '@webb-dapp/react-components/utils/FeaturesGuard/pageWithFeatures';
 import { useAppConfig, useWebContext } from '@webb-dapp/react-environment/webb-context';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
@@ -10,6 +9,8 @@ import { useModal } from '@webb-dapp/react-hooks/useModal';
 import { SpaceBox } from '@webb-dapp/ui-components/Box';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
+import { BalanceLabel } from '@webb-dapp/ui-components/Inputs/BalanceLabel/BalanceLabel';
+import { InputTitle } from '@webb-dapp/ui-components/Inputs/InputTitle/InputTitle';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { getRoundedAmountString } from '@webb-dapp/ui-components/utils';
@@ -76,34 +77,12 @@ export const AmountButton = styled.button`
 
 const ContributeWrapper = styled.div<{ wallet: WalletConfig | undefined }>`
   box-sizing: border-box;
-  width: 90%;
-  border-radius: 20px;
+  border-radius: 12px;
   ${({ theme }: { theme: Pallet }) => css`
     background: ${theme.layer2Background};
     border: 1px solid ${theme.borderColor};
   `}
-
-  ${above.sm`
-    width: 60%;
-  `}
-
-  ${above.md`
-    width: 49%;
-    margin-right: 36px;
-  `}
-
-  ${({ theme, wallet }) => {
-    if (wallet) {
-      return css``;
-    } else {
-      return css`
-        padding: 25px 35px;
-        background: ${theme.layer2Background};
-        border: 1px solid ${theme.borderColor};
-        border-radius: 0 0 13px 13px;
-      `;
-    }
-  }}
+  max-width: 500px;
 
   .checkbox-wrapper {
     margin-left: -9px;
@@ -136,9 +115,6 @@ const MixerButtonWrapper = styled.div`
 `;
 
 const TitleWrapper = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 8px;
   padding: 0 1rem;
   padding-top: 1rem;
 
@@ -187,7 +163,7 @@ const PageCrowdloan: FC<PageCrowdloanProps> = () => {
   const { amount, contribute, fundInfo, getFundInfo, setAmount } = useCrowdloan();
   const palette = useColorPallet();
   const { currencies: currenciesConfig } = useAppConfig();
-  const { isXsOrAbove } = useBreakpoint();
+  const { isMdOrAbove } = useBreakpoint();
 
   /** TODO:
    * - Determine when the modal will open
@@ -261,24 +237,14 @@ const PageCrowdloan: FC<PageCrowdloanProps> = () => {
       <PageCrowdloanWrapper>
         <ContributeWrapper wallet={activeWallet}>
           <TitleWrapper>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <Typography variant='h6'>
-                <b>{isXsOrAbove ? 'Contribution Amount' : 'Amount'}</b>
-              </Typography>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <Typography
-                variant='body2'
-                style={{ color: palette.type === 'dark' ? palette.accentColor : palette.primaryText }}
-              >
-                Your Balance~
-              </Typography>
-              <TokenBalance>
-                <Typography variant='body2'>
-                  {getRoundedAmountString(Number(tokenBalance))} {activeToken?.view.symbol}
-                </Typography>
-              </TokenBalance>
-            </div>
+            <InputTitle
+              leftLabel={isMdOrAbove ? 'Contribution Amount' : 'Amount'}
+              rightLabel={
+                <BalanceLabel
+                  value={`${getRoundedAmountString(Number(tokenBalance))} ${activeToken?.view.symbol ?? ''}`.trim()}
+                />
+              }
+            />
           </TitleWrapper>
 
           <AmountInputWrapper disabled={isFundingEnded}>
