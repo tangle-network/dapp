@@ -2,23 +2,25 @@ import { alpha, ButtonBase, Checkbox, InputBase, Typography } from '@material-ui
 import { Currency } from '@webb-dapp/api-providers';
 import { WalletConfig } from '@webb-dapp/api-providers/types';
 import WEBBLogo from '@webb-dapp/apps/configs/logos/chains/WebbLogo';
-import { TokenBalance } from '@webb-dapp/mixer/components';
 import { pageWithFeatures } from '@webb-dapp/react-components/utils/FeaturesGuard/pageWithFeatures';
 import { useAppConfig, useWebContext } from '@webb-dapp/react-environment/webb-context';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
+import { useModal } from '@webb-dapp/react-hooks/useModal';
 import { SpaceBox } from '@webb-dapp/ui-components/Box';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { BalanceLabel } from '@webb-dapp/ui-components/Inputs/BalanceLabel/BalanceLabel';
 import { InputTitle } from '@webb-dapp/ui-components/Inputs/InputTitle/InputTitle';
+import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { getRoundedAmountString } from '@webb-dapp/ui-components/utils';
 import { above, useBreakpoint } from '@webb-dapp/ui-components/utils/responsive-utils';
 import { FixedPointNumber } from '@webb-tools/sdk-core';
-import { FC, useEffect, useMemo, useState } from 'react';
+import { FC, Fragment, useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
 import { useCrowdloan } from './hooks/useCrowdloan';
+import { ConfirmationModal } from './ConfirmationModal';
 
 const ALLOTTED_REWARDS_POOL = 5000000;
 
@@ -163,6 +165,13 @@ const PageCrowdloan: FC<PageCrowdloanProps> = () => {
   const { currencies: currenciesConfig } = useAppConfig();
   const { isMdOrAbove } = useBreakpoint();
 
+  /** TODO:
+   * - Determine when the modal will open
+   * - Transaction url
+   * */
+  const { close, status } = useModal(false);
+  const transactionUrl = useMemo(() => 'https://etherscan.io', []);
+
   const [displayedAmount, setDisplayedAmount] = useState<string>('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -224,122 +233,128 @@ const PageCrowdloan: FC<PageCrowdloanProps> = () => {
   }, [fundInfo, getFundInfo]);
 
   return (
-    <PageCrowdloanWrapper>
-      <ContributeWrapper wallet={activeWallet}>
-        <TitleWrapper>
-          <InputTitle
-            leftLabel={isMdOrAbove ? 'Contribution Amount' : 'Amount'}
-            rightLabel={
-              <BalanceLabel
-                value={`${getRoundedAmountString(Number(tokenBalance))} ${activeToken?.view.symbol ?? ''}`.trim()}
-              />
-            }
-          />
-        </TitleWrapper>
+    <Fragment>
+      <PageCrowdloanWrapper>
+        <ContributeWrapper wallet={activeWallet}>
+          <TitleWrapper>
+            <InputTitle
+              leftLabel={isMdOrAbove ? 'Contribution Amount' : 'Amount'}
+              rightLabel={
+                <BalanceLabel
+                  value={`${getRoundedAmountString(Number(tokenBalance))} ${activeToken?.view.symbol ?? ''}`.trim()}
+                />
+              }
+            />
+          </TitleWrapper>
 
-        <AmountInputWrapper disabled={isFundingEnded}>
-          <InputBase
-            disabled={isFundingEnded}
-            placeholder={`Enter Amount`}
-            fullWidth
-            value={displayedAmount}
-            inputProps={{ style: { fontSize: 14, cursor: isFundingEnded ? 'no-drop' : 'auto' } }}
-            onChange={(event) => {
-              setDisplayedAmount(event.target.value);
-              let maybeNumber = Number(event.target.value);
-              const decimal = activeToken?.getDecimals();
+          <AmountInputWrapper disabled={isFundingEnded}>
+            <InputBase
+              disabled={isFundingEnded}
+              placeholder={`Enter Amount`}
+              fullWidth
+              value={displayedAmount}
+              inputProps={{ style: { fontSize: 14, cursor: isFundingEnded ? 'no-drop' : 'auto' } }}
+              onChange={(event) => {
+                setDisplayedAmount(event.target.value);
+                let maybeNumber = Number(event.target.value);
+                const decimal = activeToken?.getDecimals();
 
-              if (!Number.isNaN(maybeNumber)) {
-                let fixed = new FixedPointNumber(event.target.value, decimal);
-                let cap = FixedPointNumber.fromInner(fundInfo.cap.toString(), decimal);
-                let raised = FixedPointNumber.fromInner(fundInfo.raised.toString(), decimal);
-                if (fixed.isLessThan(new FixedPointNumber(0.1, decimal))) {
-                  setError('Amount must be greater than 0.1');
-                } else if (cap.minus(raised).isGreaterThan(fixed)) {
-                  setError('');
-                  setAmount(fixed);
+                if (!Number.isNaN(maybeNumber)) {
+                  let fixed = new FixedPointNumber(event.target.value, decimal);
+                  let cap = FixedPointNumber.fromInner(fundInfo.cap.toString(), decimal);
+                  let raised = FixedPointNumber.fromInner(fundInfo.raised.toString(), decimal);
+                  if (fixed.isLessThan(new FixedPointNumber(0.1, decimal))) {
+                    setError('Amount must be greater than 0.1');
+                  } else if (cap.minus(raised).isGreaterThan(fixed)) {
+                    setError('');
+                    setAmount(fixed);
+                  } else {
+                    setError('Amount exceeds the cap');
+                  }
                 } else {
-                  setError('Amount exceeds the cap');
+                  setAmount(new FixedPointNumber(tokenBalance, decimal));
                 }
-              } else {
-                setAmount(new FixedPointNumber(tokenBalance, decimal));
-              }
-            }}
-          />
-          <AmountButton
-            disabled={isFundingEnded}
-            as={ButtonBase}
-            onClick={() => {
-              setDisplayedAmount(tokenBalance.toString());
-              setAmount(new FixedPointNumber(tokenBalance, activeToken?.getDecimals()));
-            }}
-          >
-            MAX
-          </AmountButton>
-        </AmountInputWrapper>
+              }}
+            />
+            <AmountButton
+              disabled={isFundingEnded}
+              as={ButtonBase}
+              onClick={() => {
+                setDisplayedAmount(tokenBalance.toString());
+                setAmount(new FixedPointNumber(tokenBalance, activeToken?.getDecimals()));
+              }}
+            >
+              MAX
+            </AmountButton>
+          </AmountInputWrapper>
 
-        <RewardWrapper>
-          <Flex row>
-            <WEBBLogo />
+          <RewardWrapper>
+            <Flex row>
+              <WEBBLogo />
 
-            <RewardContentWrapper>
-              <Typography variant='h6' style={{ fontWeight: '700' }}>
-                Webb Rewards
-              </Typography>
-              <Flex row jc='space-between'>
-                <div className='content'>
-                  <Typography variant='body2'>Your contribution amount:</Typography>
-                  <Typography variant='body2'>Est. Rewards:</Typography>
-                  <Typography variant='body2'>Total contribution amout:</Typography>
-                </div>
-                <div className='content'>
-                  <Typography variant='body2'>
-                    <b>{amount.toNumber().toLocaleString()}</b>
-                  </Typography>
-                  <Typography variant='body2'>
-                    <b>{isNaN(estReward.toNumber()) ? '-' : estReward.toNumber().toLocaleString()}</b>
-                  </Typography>
-                  <Typography variant='body2'>
-                    <b>{fundInfo.raised.toLocaleString()}</b>
-                  </Typography>
-                </div>
-              </Flex>
-            </RewardContentWrapper>
+              <RewardContentWrapper>
+                <Typography variant='h6' style={{ fontWeight: '700' }}>
+                  Webb Rewards
+                </Typography>
+                <Flex row jc='space-between'>
+                  <div className='content'>
+                    <Typography variant='body2'>Your contribution amount:</Typography>
+                    <Typography variant='body2'>Est. Rewards:</Typography>
+                    <Typography variant='body2'>Total contribution amout:</Typography>
+                  </div>
+                  <div className='content'>
+                    <Typography variant='body2'>
+                      <b>{amount.toNumber().toLocaleString()}</b>
+                    </Typography>
+                    <Typography variant='body2'>
+                      <b>{isNaN(estReward.toNumber()) ? '-' : estReward.toNumber().toLocaleString()}</b>
+                    </Typography>
+                    <Typography variant='body2'>
+                      <b>{fundInfo.raised.toLocaleString()}</b>
+                    </Typography>
+                  </div>
+                </Flex>
+              </RewardContentWrapper>
+            </Flex>
+          </RewardWrapper>
+
+          <Flex row ai='flex-start' style={{ opacity: isFundingEnded ? 0.4 : 1 }}>
+            <Checkbox
+              disabled={isFundingEnded}
+              size='medium'
+              checked={isConfirmed}
+              onChange={() => setIsConfirmed((p) => !p)}
+              inputProps={{ 'aria-label': 'controlled' }}
+              style={{ color: palette.accentColor, display: 'block' }}
+            />
+            <Typography display='block' variant='caption' className='checkbox-label'>
+              {confirmText}
+            </Typography>
           </Flex>
-        </RewardWrapper>
 
-        <Flex row ai='flex-start' style={{ opacity: isFundingEnded ? 0.4 : 1 }}>
-          <Checkbox
-            disabled={isFundingEnded}
-            size='medium'
-            checked={isConfirmed}
-            onChange={() => setIsConfirmed((p) => !p)}
-            inputProps={{ 'aria-label': 'controlled' }}
-            style={{ color: palette.accentColor, display: 'block' }}
-          />
-          <Typography display='block' variant='caption' className='checkbox-label'>
-            {confirmText}
-          </Typography>
-        </Flex>
+          <SpaceBox height={16} />
 
-        <SpaceBox height={16} />
+          <MixerButtonWrapper>
+            <MixerButton
+              disabled={loading || !amount || !!error || isFundingEnded || !isConfirmed}
+              label={error ? 'Amount exceeds cap' : isFundingEnded ? 'Funding ended' : 'Contribute'}
+              onClick={async () => {
+                try {
+                  setLoading(true);
+                  await contribute();
+                } finally {
+                  setLoading(false);
+                }
+              }}
+            />
+          </MixerButtonWrapper>
+        </ContributeWrapper>
+      </PageCrowdloanWrapper>
 
-        <MixerButtonWrapper>
-          <MixerButton
-            disabled={loading || !amount || !!error || isFundingEnded || !isConfirmed}
-            label={error ? 'Amount exceeds cap' : isFundingEnded ? 'Funding ended' : 'Contribute'}
-            onClick={async () => {
-              try {
-                setLoading(true);
-                await contribute();
-              } finally {
-                setLoading(false);
-              }
-            }}
-          />
-        </MixerButtonWrapper>
-      </ContributeWrapper>
-    </PageCrowdloanWrapper>
+      <Modal open={status} onClose={close}>
+        <ConfirmationModal onClose={close} amountContributed={amount} estRewards={estReward} txUrl={transactionUrl} />
+      </Modal>
+    </Fragment>
   );
 };
 
