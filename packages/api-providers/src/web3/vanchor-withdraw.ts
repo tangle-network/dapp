@@ -66,7 +66,6 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
 
         // If we were able to build the tree, set local storage and break out of the loop
         if (tree) {
-          console.log('tree valid, using relayer leaves');
           leaves = relayerLeaves.leaves;
 
           await storage.set(sourceContract.inner.address.toLowerCase(), {
@@ -84,8 +83,6 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
 
   // TODO: Implement relayer leaf fetching, relayer fee calculations
   async withdraw(notes: string[], recipient: string, amount: string): Promise<VAnchorWithdrawPayload> {
-    console.log('attempt to withdraw: ', amount);
-
     this.cancelToken.cancelled = false;
 
     const activeBridge = this.bridgeApi.activeBridge;
@@ -147,9 +144,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
     // For all notes, get any leaves
     this.emit('stateChange', WithdrawState.FetchingLeaves);
     for (const note of notes) {
-      console.log(note);
       const parsedNote = (await Note.deserialize(note)).note;
-      console.log('inside loop, parsedNote: ', parsedNote);
       sumInputNotes = ethers.utils.parseUnits(parsedNote.amount, parsedNote.denomination).add(sumInputNotes);
 
       // fetch leaves if we don't have them
@@ -172,10 +167,8 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
 
         const leavesFromChain = await sourceVAnchor.getDepositLeaves(storedContractInfo.lastQueriedBlock + 1, 0);
 
-        console.log('populating all the leaves for chain: ', parsedNote.sourceChainId);
         leavesMap[parsedNote.sourceChainId] = [...storedContractInfo.leaves, ...leavesFromChain.newLeaves].map(
           (leaf) => {
-            console.log(leaf);
             return hexToU8a(leaf);
           }
         );
@@ -187,14 +180,11 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
       if (parsedNote.sourceChainId === parsedNote.targetChainId) {
         const destRoot = await destVAnchor.inner.getLastRoot();
         destHistorySourceRoot = destRoot;
-        console.log('destRoot: ', destRoot);
       } else {
         const edgeIndex = await destVAnchor.inner.edgeIndex(parsedNote.sourceChainId);
         const edge = await destVAnchor.inner.edgeList(edgeIndex);
         destHistorySourceRoot = edge[1];
       }
-
-      leavesMap[parsedNote.sourceChainId].map((leaf) => console.log(u8aToHex(leaf)));
 
       const testMerkleTree = new MerkleTree(
         treeHeight,
@@ -213,7 +203,6 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
         console.log('fetched leaves do not match bridged anchor state');
         throw new Error('fetched leaves do not match bridged anchor state');
       }
-      provingTree.elements().map((el) => console.log(el));
       const provingLeaves = provingTree.elements().map((el) => hexToU8a(el.toHexString()));
       leavesMap[parsedNote.sourceChainId] = provingLeaves;
       const commitment = generateCircomCommitment(parsedNote);
@@ -253,12 +242,10 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
 
       const leavesFromChain = await destVAnchor.getDepositLeaves(storedContractInfo.lastQueriedBlock + 1, 0);
 
-      console.log('populating all the leaves for chain: ', destChainIdType);
       // Only populate the leaves map if there are actually leaves to populate.
       if (leavesFromChain.newLeaves.length != 0 || storedContractInfo.leaves.length != 0) {
         leavesMap[destChainIdType.toString()] = [...storedContractInfo.leaves, ...leavesFromChain.newLeaves].map(
           (leaf) => {
-            console.log(leaf);
             return hexToU8a(leaf);
           }
         );
@@ -298,8 +285,6 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
       keypair,
       originChainId: destChainIdType.toString(),
     });
-
-    console.log('change utxo: ', changeUtxo.amount);
 
     const dummyUtxo = await CircomUtxo.generateUtxo({
       curve: 'Bn254',
@@ -387,9 +372,6 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
 
     if (!insertedCommitmentEvent) {
       throw new Error("Uh oh, we didn't find our commitment in the insertions... inserted garbage");
-    } else {
-      console.log(insertedCommitmentEvent);
-      console.log(insertedCommitmentEvent.args);
     }
 
     const changeNote: Note = outputNotes.find((note: Note) => generateCircomCommitment(note.note) === hexCommitment)!;

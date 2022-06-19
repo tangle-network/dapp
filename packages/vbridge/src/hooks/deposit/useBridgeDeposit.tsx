@@ -36,7 +36,6 @@ export const useBridgeDeposit = (): VBridgeDepositApi => {
   const { activeApi } = useWebContext();
   const [loadingState, setLoadingState] = useState<AnchorDeposit<any>['loading']>('ideal');
   const [error, setError] = useState('');
-  const [mixerSizes, setMixerSizes] = useState<MixerSize[]>([]);
   const { bridgeApi, getTokensOfChain } = useBridge();
   const [selectedBridgeCurrency, setSelectedBridgeCurrency] = useState<null | Currency>(null);
   /// api
@@ -58,21 +57,7 @@ export const useBridgeDeposit = (): VBridgeDepositApi => {
     });
     setSelectedBridgeCurrency(bridgeApi.currency);
 
-    if (bridgeApi.activeBridge) {
-      depositApi.getSizes().then((mixerSizes) => {
-        mixerSizes.filter((mixerSize) => {
-          mixerSize.id === selectedBridgeCurrency?.id;
-        });
-        setMixerSizes(mixerSizes);
-      });
-    }
     const subscribe = bridgeApi.$store.subscribe((bridge) => {
-      depositApi.getSizes().then((mixerSizes) => {
-        mixerSizes.filter((mixerSize) => {
-          mixerSize.id === selectedBridgeCurrency?.id;
-        });
-        setMixerSizes(mixerSizes);
-      });
       setSelectedBridgeCurrency(bridgeApi.currency);
     });
     return () => {

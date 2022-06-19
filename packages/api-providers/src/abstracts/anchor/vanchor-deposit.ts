@@ -1,21 +1,40 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { BridgeConfig } from '../../';
-import { DepositPayload, MixerDeposit } from '../mixer/mixer-deposit';
+import { EventBus } from '@webb-tools/app-util';
+
+import { WithdrawState } from '../../abstracts/mixer/mixer-withdraw';
+import { BridgeConfig } from '../../types/bridge-config.interface';
+import { DepositPayload } from '../mixer/mixer-deposit';
 import { WebbApiProvider } from '../webb-provider.interface';
 import { AnchorApi } from './anchor-api';
 
 // Todo: should we extract the interface of MixerDeposit on another class and rename `generateBridgeNote` to generate note
+
+export type VAnchorDepositEvents = {
+  // Generic Error by the provider
+  error: string;
+  // The instance State change event to track the current status of the instance
+  stateChange: WithdrawState;
+  // the instance is ready
+  ready: void;
+  loading: boolean;
+};
 
 /**
  * Anchor deposit abstract interface as fixed anchor share similar functionality as the mixer
  * The interface looks the same but there's a different function for note Generation
  **/
 export abstract class VAnchorDeposit<
-  T extends WebbApiProvider<any>,
+  T extends WebbApiProvider<any> = WebbApiProvider<any>,
   K extends DepositPayload = DepositPayload<any>
-> extends MixerDeposit<T, K> {
+> extends EventBus<VAnchorDepositEvents> {
+  state: WithdrawState = WithdrawState.Ideal;
+
+  constructor(protected inner: T) {
+    super();
+  }
+
   protected get bridgeApi() {
     return this.inner.methods.anchorApi as AnchorApi<T, BridgeConfig>;
   }
@@ -24,9 +43,14 @@ export abstract class VAnchorDeposit<
     return this.inner.config;
   }
 
-  generateNote(anchorId: number | string): Promise<K> {
-    throw new Error('api not ready:Not mixer api for ' + anchorId);
-  }
+  /**
+   * The deposit call it should receive the payload of type `K`
+   * The implementation should
+   * - Mutate the `loading` status of the instance
+   * - Use the event bus to emit the status of the transaction
+   **/
+  // TODO: update the impls to return the TX hash instead of void
+  abstract deposit(depositPayload: K): Promise<void>;
 
   /** For the VAnchor, a bridge note represents a UTXO.
    ** @param anchorId - an address or tree id.

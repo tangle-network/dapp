@@ -4,20 +4,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { ERC20__factory as ERC20Factory } from '@webb-tools/contracts';
-import {
-  buildVariableWitnessCalculator,
-  CircomUtxo,
-  Keypair,
-  Note,
-  NoteGenInput,
-  toFixedHex,
-  Utxo,
-} from '@webb-tools/sdk-core';
-import { BigNumber, ethers } from 'ethers';
+import { CircomUtxo, Keypair, Note, NoteGenInput, toFixedHex, Utxo } from '@webb-tools/sdk-core';
+import { ethers } from 'ethers';
 
 import { hexToU8a, u8aToHex } from '@polkadot/util';
 
-import { DepositPayload as IDepositPayload, MixerSize, VAnchorDeposit } from '../abstracts';
+import { DepositPayload as IDepositPayload, MixerSize, VAnchorDeposit, WithdrawState } from '../abstracts';
 import {
   ChainType,
   chainTypeIdToInternalId,
@@ -92,8 +84,6 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
       await keypairStorage.set('keypair', { keypair: keypair.privkey });
     }
 
-    console.log('amount in generateBridgeNote: ', amount.toString());
-
     // Convert the amount to units of wei
     const depositOutputUtxo = await CircomUtxo.generateUtxo({
       curve: 'Bn254',
@@ -102,8 +92,6 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
       chainId: destination.toString(),
       keypair,
     });
-
-    console.log('amount set on the utxo: ', depositOutputUtxo.amount);
 
     const srcChainInternal = evmIdIntoInternalChainId(sourceEvmId);
     const destChainInternal = chainTypeIdToInternalId(parseChainIdType(destination));
@@ -157,12 +145,8 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
     try {
       const note = depositPayload.note.note;
       const utxo = depositPayload.params[0];
-      console.log(utxo.serialize());
 
       const amount = depositPayload.params[0].amount;
-
-      console.log('noteString in deposit: ', depositPayload.note.serialize());
-      console.log('amount in deposit: ', depositPayload.params[0].amount);
 
       const sourceEvmId = await this.inner.getChainId();
       const sourceChainId = computeChainIdType(ChainType.EVM, sourceEvmId);
@@ -201,11 +185,13 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
       const maxEdges = await srcVAnchor._contract.maxEdges();
 
       // Fetch the fixtures
+      this.emit('stateChange', WithdrawState.FetchingFixtures);
       const smallKey = await fetchVariableAnchorKeyForEdges(maxEdges, true);
       const smallWasm = await fetchVariableAnchorWasmForEdges(maxEdges, true);
       const leavesMap: Record<string, Uint8Array[]> = {};
 
       // Fetch the leaves from the source chain
+      this.emit('stateChange', WithdrawState.FetchingLeaves);
       let leafStorage = await bridgeStorageFactory(Number(sourceChainId));
 
       // check if we already cached some values.
@@ -220,7 +206,6 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
       if (leavesFromChain.newLeaves.length != 0 || storedContractInfo.leaves.length != 0) {
         leavesMap[sourceChainId.toString()] = [...storedContractInfo.leaves, ...leavesFromChain.newLeaves].map(
           (leaf) => {
-            console.log(leaf);
             return hexToU8a(leaf);
           }
         );
@@ -247,10 +232,11 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
       // Only populate the leaves map if there are actually leaves to populate.
       if (leavesFromChain.newLeaves.length != 0 || storedContractInfo.leaves.length != 0) {
         leavesMap[utxo.chainId] = [...storedContractInfo.leaves, ...leavesFromChain.newLeaves].map((leaf) => {
-          console.log(leaf);
           return hexToU8a(leaf);
         });
       }
+
+      this.emit('stateChange', WithdrawState.GeneratingZk);
 
       // If a wrappableAsset was selected, perform a wrapAndDeposit
       if (depositPayload.params[2]) {
@@ -289,8 +275,6 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
             smallKey,
             Buffer.from(smallWasm)
           );
-
-          console.log('Commitment on deposit: ', u8aToHex(depositPayload.params[0].commitment));
 
           // emit event for waiting for transaction to confirm
           await tx.wait();
@@ -351,8 +335,6 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
             smallKey,
             Buffer.from(smallWasm)
           );
-
-          console.log('Commitment on deposit: ', u8aToHex(depositPayload.params[0].commitment));
 
           // emit event for waiting for transaction to confirm
           await tx.wait();

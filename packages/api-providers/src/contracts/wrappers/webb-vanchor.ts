@@ -183,8 +183,6 @@ export class VAnchorContract {
       tokenBalance = await tokenInstance.balanceOf(userAddress);
     }
 
-    console.log(tokenBalance);
-
     if (tokenBalance.lt(BigNumber.from(depositAmount))) {
       return false;
     }
@@ -278,9 +276,6 @@ export class VAnchorContract {
     provingKey: Uint8Array,
     circuitWasm: Buffer
   ): Promise<ContractTransaction> {
-    console.log('tokenAddress: ', tokenAddress);
-    console.log('utxo: ', utxo.serialize());
-
     const sender = await this.signer.getAddress();
     const sourceChainId = computeChainIdType(ChainType.EVM, await this.signer.getChainId());
 
@@ -463,7 +458,6 @@ export class VAnchorContract {
     let sumInputNotes: BigNumberish = 0;
 
     for (const inputUtxo of inputs) {
-      console.log('inputUtxo.amount: ', inputUtxo.amount);
       sumInputNotes = BigNumber.from(sumInputNotes).add(inputUtxo.amount);
 
       // secrets should be formatted as expected in the wasm-utils for note generation
@@ -494,23 +488,16 @@ export class VAnchorContract {
         width: '5',
       };
 
-      console.log('noteInput: ', noteInput);
-
       const inputNote = await Note.generateNote(noteInput);
-      console.log('after generating the note for input');
       inputNotes.push(inputNote);
-      console.log('inputUtxo.index: ', inputUtxo.index);
       inputIndices.push(inputUtxo.index);
     }
-
-    console.log('before encrypting the output utxos');
 
     const encryptedCommitments: [Uint8Array, Uint8Array] = [
       hexToU8a(outputs[0].encrypt()),
       hexToU8a(outputs[1].encrypt()),
     ];
 
-    console.log('after encrypting the output utxos');
     console.log(inputNotes);
 
     const proofInput: ProvingManagerSetupInput<'vanchor'> = {
@@ -529,8 +516,7 @@ export class VAnchorContract {
       fee: BigNumber.from(fee).toString(),
     };
 
-    inputNotes.map((note) => console.log('note: ', note.serialize()));
-    console.log('proofInput in protocol-solidity: ', proofInput);
+    console.log('proofInput: ', proofInput);
 
     const levels = await this.inner.levels();
     const provingManager = new CircomProvingManager(wasmBuffer, levels, null);
