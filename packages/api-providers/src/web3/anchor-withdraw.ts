@@ -15,8 +15,7 @@ import { hexToU8a, u8aToHex } from '@polkadot/util';
 
 import { AnchorApi, AnchorWithdraw, WebbRelayer } from '../abstracts';
 import { chainTypeIdToInternalId, evmIdIntoInternalChainId, parseChainIdType } from '../chains';
-import { AnchorContract } from '../contracts';
-import { depositFromAnchorNote } from '../contracts/utils/make-deposit';
+import { AnchorContract, depositFromAnchorNote } from '../contracts/wrappers';
 import { Web3Provider } from '../ext-providers';
 import { fetchFixedAnchorKeyForEdges, fetchFixedAnchorWasmForEdges } from '../ipfs/evm/anchors';
 import { Storage } from '../storage';

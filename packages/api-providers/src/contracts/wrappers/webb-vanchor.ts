@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable camelcase */
+import type { JsNote } from '@webb-tools/wasm-utils';
 
 import { Log } from '@ethersproject/abstract-provider';
 import { retryPromise } from '@webb-dapp/api-providers/utils/retry-promise';
@@ -25,9 +26,10 @@ import { BigNumber, BigNumberish, Contract, ContractTransaction, ethers, provide
 
 import { hexToU8a, u8aToHex } from '@polkadot/util';
 
-import { ChainType, computeChainIdType } from '../..';
+import { ChainType, computeChainIdType, keypairStorageFactory } from '../..';
 import { zeroAddress } from '..';
 
+const { poseidon } = require('circomlibjs');
 const logger = LoggerService.get('AnchorContract');
 
 export interface IVariableAnchorPublicInputs {
@@ -38,6 +40,50 @@ export interface IVariableAnchorPublicInputs {
   publicAmount: string;
   extDataHash: string;
 }
+
+export async function utxoFromVAnchorNote(note: JsNote, leafIndex: number): Promise<Utxo> {
+  const noteSecretParts = note.secrets.split(':');
+  const chainId = note.targetChainId;
+  const amount = BigNumber.from('0x' + noteSecretParts[1]).toString();
+  const secretKey = '0x' + noteSecretParts[2];
+  const blinding = '0x' + noteSecretParts[3];
+  const originChainId = note.sourceChainId;
+
+  const keypairStorage = await keypairStorageFactory();
+  const storedKeypair = await keypairStorage.get('keypair');
+
+  if (!storedKeypair.keypair) {
+    throw new Error('Cannot withdraw without the configured keypair');
+  }
+
+  const keypair = new Keypair(storedKeypair.keypair);
+
+  return CircomUtxo.generateUtxo({
+    curve: note.curve,
+    backend: note.backend,
+    amount,
+    blinding: hexToU8a(blinding),
+    privateKey: hexToU8a(secretKey),
+    originChainId,
+    chainId,
+    index: leafIndex.toString(),
+    keypair,
+  });
+}
+
+export const generateCircomCommitment = (note: JsNote): string => {
+  const noteSecretParts = note.secrets.split(':');
+  const chainId = BigNumber.from('0x' + noteSecretParts[0]).toString();
+  const amount = BigNumber.from('0x' + noteSecretParts[1]).toString();
+  const secretKey = '0x' + noteSecretParts[2];
+  const blinding = '0x' + noteSecretParts[3];
+
+  const keypair = new Keypair(secretKey);
+
+  const hash = poseidon([chainId, amount, keypair.pubkey, blinding]);
+
+  return BigNumber.from(hash).toHexString();
+};
 
 // The AnchorContract defines useful functions over an anchor that do not depend on zero knowledge.
 export class VAnchorContract {
@@ -128,13 +174,13 @@ export class VAnchorContract {
       } else {
         const tokenInstance = ERC20Factory.connect(tokenAddress, this.signer);
 
-        tokenBalance = ethers.utils.parseEther((await tokenInstance.balanceOf(userAddress)).toString());
+        tokenBalance = await tokenInstance.balanceOf(userAddress);
       }
     } else {
       // Querying for balance of the webbToken
       const tokenInstance = await this.getWebbToken();
 
-      tokenBalance = ethers.utils.parseEther((await tokenInstance.balanceOf(userAddress)).toString());
+      tokenBalance = await tokenInstance.balanceOf(userAddress);
     }
 
     console.log(tokenBalance);
@@ -225,12 +271,73 @@ export class VAnchorContract {
     return tx;
   }
 
-  async wrapAndDeposit(utxo: Utxo, tokenAddress: string) {
+  async wrapAndDeposit(
+    tokenAddress: string,
+    utxo: CircomUtxo,
+    leavesMap: Record<string, Uint8Array[]>,
+    provingKey: Uint8Array,
+    circuitWasm: Buffer
+  ): Promise<ContractTransaction> {
+    console.log('tokenAddress: ', tokenAddress);
+    console.log('utxo: ', utxo.serialize());
+
     const sender = await this.signer.getAddress();
+    const sourceChainId = computeChainIdType(ChainType.EVM, await this.signer.getChainId());
 
-    // const tx = await this._contract.transactWrap();
+    // Build up the inputs for proving manager
+    const randomKeypair = new Keypair();
+    const dummyOutputUtxo = await CircomUtxo.generateUtxo({
+      curve: 'Bn254',
+      backend: 'Circom',
+      chainId: sourceChainId.toString(),
+      originChainId: sourceChainId.toString(),
+      amount: '0',
+      keypair: randomKeypair,
+    });
+    const inputs: Utxo[] = [];
+    const outputs: [Utxo, Utxo] = [utxo, dummyOutputUtxo];
 
-    console.log('transactWrap not implemented');
+    while (inputs.length !== 2 && inputs.length < 16) {
+      inputs.push(
+        await CircomUtxo.generateUtxo({
+          curve: 'Bn254',
+          backend: 'Circom',
+          chainId: sourceChainId.toString(),
+          originChainId: sourceChainId.toString(),
+          amount: '0',
+          blinding: hexToU8a(randomBN(31).toHexString()),
+          keypair: randomKeypair,
+        })
+      );
+    }
+
+    let extAmount = BigNumber.from(0)
+      .add(outputs.reduce((sum: BigNumber, x: Utxo) => sum.add(x.amount), BigNumber.from(0)))
+      .sub(inputs.reduce((sum: BigNumber, x: Utxo) => sum.add(x.amount), BigNumber.from(0)));
+
+    const { extData, publicInputs } = await this.setupTransaction(
+      inputs,
+      outputs,
+      extAmount,
+      0,
+      sender,
+      sender,
+      leavesMap,
+      provingKey,
+      circuitWasm
+    );
+
+    // A deposit is meant for the same recipient as signer
+    const tx = await this.inner.transactWrap(
+      {
+        ...publicInputs,
+        outputCommitments: [publicInputs.outputCommitments[0], publicInputs.outputCommitments[1]],
+      },
+      extData,
+      tokenAddress
+    );
+
+    return tx;
   }
 
   // Verify the leaf occurred at the reported block

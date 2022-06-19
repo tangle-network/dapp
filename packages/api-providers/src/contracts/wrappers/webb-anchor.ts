@@ -3,8 +3,9 @@
 
 /* eslint-disable camelcase */
 
+import type { JsNote } from '@webb-tools/wasm-utils';
+
 import { Log } from '@ethersproject/abstract-provider';
-import { Anchor } from '@webb-tools/anchors';
 import { LoggerService } from '@webb-tools/app-util';
 import {
   ERC20,
@@ -13,12 +14,13 @@ import {
   FixedDepositAnchor__factory,
 } from '@webb-tools/contracts';
 import { IAnchorDepositInfo } from '@webb-tools/interfaces';
-import { getFixedAnchorExtDataHash, MerkleTree, toFixedHex } from '@webb-tools/sdk-core';
+import { MerkleTree, toFixedHex } from '@webb-tools/sdk-core';
 import { BigNumber, Contract, providers, Signer } from 'ethers';
 
 import { retryPromise } from '../../';
 import { zeroAddress } from '..';
-import { ZKPWebbAnchorInputWithMerkle } from './types';
+
+const { poseidon } = require('circomlibjs');
 
 const logger = LoggerService.get('AnchorContract');
 
@@ -30,6 +32,26 @@ export interface IFixedAnchorPublicInputs {
   _relayer: string;
   _fee: string;
   _refund: string;
+}
+
+export function depositFromAnchorNote(note: JsNote): IAnchorDepositInfo {
+  const noteSecretParts = note.secrets.split(':');
+  const chainId = Number(note.targetChainId);
+  const nullifier = '0x' + noteSecretParts[1];
+  const secret = '0x' + noteSecretParts[2];
+  const commitmentBN = poseidon([chainId, nullifier, secret]);
+  const nullifierHash = poseidon([null, nullifier, nullifier]);
+  const commitment = toFixedHex(commitmentBN);
+
+  const deposit: IAnchorDepositInfo = {
+    chainID: BigInt(chainId),
+    commitment,
+    nullifier: BigInt(toFixedHex(nullifier)),
+    nullifierHash,
+    secret: BigInt(toFixedHex(secret)),
+  };
+
+  return deposit;
 }
 
 // The AnchorContract defines useful functions over an anchor that do not depend on zero knowledge.
@@ -262,41 +284,6 @@ export class AnchorContract {
     }
 
     return undefined;
-  }
-
-  async withdraw(proof: any, zkp: ZKPWebbAnchorInputWithMerkle, pub: any): Promise<string> {
-    const overrides = {
-      gasLimit: 6000000,
-    };
-    const proofBytes = await Anchor.generateWithdrawProofCallData(proof, pub);
-    const nullifierHash = toFixedHex(zkp.nullifierHash);
-    const roots = Anchor.createRootsBytes(pub.roots);
-    const extDataHash = getFixedAnchorExtDataHash({
-      _fee: toFixedHex(zkp.fee),
-      _recipient: zkp.recipient,
-      _refreshCommitment: toFixedHex('0'),
-      _refund: toFixedHex(zkp.refund),
-      _relayer: zkp.relayer,
-    });
-    const tx = await this._contract.withdraw(
-      {
-        _extDataHash: extDataHash.toHexString(),
-        _nullifierHash: nullifierHash,
-        _roots: roots,
-        proof: `0x${proofBytes}`,
-      },
-      {
-        _fee: toFixedHex(zkp.fee),
-        _recipient: zkp.recipient,
-        _refreshCommitment: toFixedHex('0'),
-        _refund: toFixedHex(zkp.refund),
-        _relayer: zkp.relayer,
-      },
-      overrides
-    );
-    const receipt = await tx.wait();
-
-    return receipt.transactionHash;
   }
 
   /* wrap and unwrap */

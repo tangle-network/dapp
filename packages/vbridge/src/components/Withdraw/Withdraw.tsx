@@ -144,10 +144,11 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
   const {
     canCancel,
     cancelWithdraw,
-    outputUtxos,
+    outputNotes,
+    receipt,
     relayerMethods,
     relayersState,
-    setOutputUtxos,
+    setOutputNotes,
     setRelayer,
     stage,
     validationErrors,
@@ -305,16 +306,17 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
       </Modal>
 
       {/* Modal to show on success  */}
-      <Modal open={outputUtxos.length > 0}>
+      <Modal open={outputNotes.length > 0}>
         {depositNote && (
           <WithdrawSuccessModal
-            receipt={''}
+            receipt={receipt}
             recipient={recipient}
             note={depositNote.note}
             relayer={relayersState.activeRelayer}
             exit={() => {
               setNote('');
               setRecipient('');
+              setOutputNotes([]);
               return cancelWithdraw();
             }}
           />

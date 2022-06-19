@@ -8,6 +8,7 @@ import {
   MixerDeposit,
   MixerSize,
   VAnchorDeposit,
+  WithdrawState,
 } from '@webb-dapp/api-providers';
 import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
 import { useWebContext } from '@webb-dapp/react-environment';
@@ -31,6 +32,7 @@ export interface VBridgeDepositApi {
 }
 
 export const useBridgeDeposit = (): VBridgeDepositApi => {
+  const [stage, setStage] = useState<WithdrawState>(WithdrawState.Ideal);
   const { activeApi } = useWebContext();
   const [loadingState, setLoadingState] = useState<AnchorDeposit<any>['loading']>('ideal');
   const [error, setError] = useState('');

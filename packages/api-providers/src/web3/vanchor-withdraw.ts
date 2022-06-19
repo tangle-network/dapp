@@ -5,26 +5,14 @@
 
 import type { WebbWeb3Provider } from './webb-provider';
 
-import {
-  CircomProvingManager,
-  CircomUtxo,
-  FIELD_SIZE,
-  Keypair,
-  MerkleTree,
-  Note,
-  ProvingManagerSetupInput,
-  randomBN,
-  toFixedHex,
-  Utxo,
-} from '@webb-tools/sdk-core';
-import { BigNumber, BigNumberish, ContractReceipt, ethers } from 'ethers';
+import { CircomUtxo, Keypair, MerkleTree, Note, randomBN, Utxo } from '@webb-tools/sdk-core';
+import { BigNumber, ContractReceipt, ethers } from 'ethers';
 
 import { hexToU8a, u8aToHex } from '@polkadot/util';
 
-import { AnchorApi, VAnchorWithdraw, WebbRelayer, WithdrawState } from '../abstracts';
+import { AnchorApi, VAnchorWithdraw, VAnchorWithdrawPayload, WebbRelayer, WithdrawState } from '../abstracts';
 import { ChainType, computeChainIdType, evmIdIntoInternalChainId, parseChainIdType } from '../chains';
-import { VAnchorContract } from '../contracts';
-import { generateCircomCommitment, utxoFromVAnchorNote } from '../contracts/utils/make-deposit';
+import { generateCircomCommitment, utxoFromVAnchorNote, VAnchorContract } from '../contracts/wrappers';
 import { Web3Provider } from '../ext-providers/web3/web3-provider';
 import { fetchVariableAnchorKeyForEdges, fetchVariableAnchorWasmForEdges } from '../ipfs/evm/anchors';
 import { Storage } from '../storage';
@@ -95,7 +83,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
   }
 
   // TODO: Implement relayer leaf fetching, relayer fee calculations
-  async withdraw(notes: string[], recipient: string, amount: string): Promise<string[]> {
+  async withdraw(notes: string[], recipient: string, amount: string): Promise<VAnchorWithdrawPayload> {
     console.log('attempt to withdraw: ', amount);
 
     this.cancelToken.cancelled = false;
@@ -119,8 +107,6 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
       message: `${section}:withdraw`,
       name: 'Transaction',
     });
-
-    this.emit('stateChange', WithdrawState.GeneratingZk);
 
     // set the destination contract
     const activeChain = await this.inner.getChainId();
@@ -216,8 +202,6 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
       leavesMap[parsedNote.sourceChainId] = provingLeaves;
       const commitment = generateCircomCommitment(parsedNote);
       const leafIndex = provingTree.getIndexByElement(commitment);
-      console.log('createdCommitment from note: ', commitment);
-      console.log('leafIndex in proving tree: ', leafIndex);
       leafIndices.push(leafIndex);
 
       const utxo = await utxoFromVAnchorNote(parsedNote, leafIndex);
@@ -276,7 +260,10 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
       });
       this.emit('stateChange', WithdrawState.Ideal);
 
-      return [];
+      return {
+        txHash: '',
+        changeNotes: [],
+      };
     }
 
     // Retrieve the user's keypair
@@ -311,6 +298,9 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
     // max edges as well as the number of input notes.
     let wasmBuffer: Uint8Array;
     let provingKey: Uint8Array;
+
+    this.emit('stateChange', WithdrawState.FetchingFixtures);
+
     const maxEdges = await destVAnchor.inner.maxEdges();
     if (notes.length > 2) {
       provingKey = await fetchVariableAnchorKeyForEdges(maxEdges, false);
@@ -323,6 +313,8 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
     let extAmount = BigNumber.from(0)
       .add(outputUtxos.reduce((sum: BigNumber, x: Utxo) => sum.add(x.amount), BigNumber.from(0)))
       .sub(inputUtxos.reduce((sum: BigNumber, x: Utxo) => sum.add(x.amount), BigNumber.from(0)));
+
+    this.emit('stateChange', WithdrawState.GeneratingZk);
 
     const { extData, outputNotes, publicInputs } = await destVAnchor.setupTransaction(
       inputUtxos,
@@ -347,7 +339,10 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
       });
       this.emit('stateChange', WithdrawState.Ideal);
 
-      return [];
+      return {
+        txHash: '',
+        changeNotes: [],
+      };
     }
 
     this.emit('stateChange', WithdrawState.SendingTransaction);
@@ -377,7 +372,10 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
         name: 'Transaction',
       });
 
-      return [];
+      return {
+        txHash: '',
+        changeNotes: [],
+      };
     }
 
     // Parse the events for the index of the changeUTXO
@@ -406,6 +404,9 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
       name: 'Transaction',
     });
 
-    return [changeNote.serialize()];
+    return {
+      txHash: receipt.transactionHash,
+      changeNotes: [changeNote],
+    };
   }
 }

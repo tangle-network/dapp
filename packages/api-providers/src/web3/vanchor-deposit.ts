@@ -276,10 +276,24 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
           this.inner.notificationHandler.remove('waiting-approval');
         }
 
-        const enoughBalance = await srcVAnchor.hasEnoughBalance(depositPayload.params[2]);
+        const enoughBalance = await srcVAnchor.hasEnoughBalance(
+          depositPayload.params[0].amount,
+          depositPayload.params[2]
+        );
 
         if (enoughBalance) {
-          await srcVAnchor.wrapAndDeposit(depositPayload.params[0], depositPayload.params[2]);
+          const tx = await srcVAnchor.wrapAndDeposit(
+            depositPayload.params[2],
+            depositPayload.params[0] as CircomUtxo,
+            leavesMap,
+            smallKey,
+            Buffer.from(smallWasm)
+          );
+
+          console.log('Commitment on deposit: ', u8aToHex(depositPayload.params[0].commitment));
+
+          // emit event for waiting for transaction to confirm
+          await tx.wait();
 
           this.inner.notificationHandler({
             data: {
@@ -310,9 +324,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
 
         return;
       } else {
-        console.log('in else case of vanchor deposit');
         const requiredApproval = await srcVAnchor.isWebbTokenApprovalRequired(amount);
-        console.log('required approval: ', requiredApproval);
 
         if (requiredApproval) {
           this.inner.notificationHandler({

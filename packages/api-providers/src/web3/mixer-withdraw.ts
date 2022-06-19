@@ -14,7 +14,7 @@ import { hexToU8a } from '@polkadot/util';
 
 import { WithdrawState } from '../abstracts';
 import { evmIdIntoInternalChainId } from '../chains';
-import { depositFromAnchorNote } from '../contracts/utils/make-deposit';
+import { depositFromAnchorNote } from '../contracts/wrappers';
 import { fetchFixedAnchorKeyForEdges, fetchFixedAnchorWasmForEdges } from '../ipfs/evm';
 import { BridgeStorage, bridgeStorageFactory, getAnchorDeploymentBlockNumber } from '../utils/storage';
 import { Web3AnchorWithdraw } from './anchor-withdraw';
@@ -86,10 +86,6 @@ export class Web3MixerWithdraw extends Web3AnchorWithdraw {
       allLeaves = [...storedContractInfo.leaves, ...depositLeaves.newLeaves];
     }
 
-    // Fetch the information for public inputs into the proof
-    const accounts = await this.inner.accounts.accounts();
-    const account = accounts[0];
-
     // Fetch the information for private inputs into the proof
     const deposit = depositFromAnchorNote(depositNote);
     const leafIndex = allLeaves.findIndex((commitment) => commitment === deposit.commitment);
@@ -112,7 +108,9 @@ export class Web3MixerWithdraw extends Web3AnchorWithdraw {
       roots: [],
     };
 
-    const pm = new CircomProvingManager(Buffer.from(wasmBuf), null);
+    const treeDepth = await contract.inner.levels();
+
+    const pm = new CircomProvingManager(Buffer.from(wasmBuf), treeDepth, null);
     const proof = await pm.prove('anchor', provingInput);
     const extDataHash = getFixedAnchorExtDataHash(0, recipient, 0, 0, recipient).toString();
 

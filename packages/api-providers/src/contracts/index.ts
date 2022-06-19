@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 export * from './wrappers';
-export * from './utils';
 export const zeroAddress = '0x0000000000000000000000000000000000000000';
 export const ZERO = 'ZERO';
 

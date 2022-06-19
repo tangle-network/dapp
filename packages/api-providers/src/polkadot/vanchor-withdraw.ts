@@ -3,10 +3,10 @@
 
 import type { WebbPolkadot } from './webb-provider';
 
-import { VAnchorWithdraw } from '../abstracts/anchor/vanchor-withdraw';
+import { VAnchorWithdraw, VAnchorWithdrawPayload } from '../abstracts/anchor/vanchor-withdraw';
 
 export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
-  withdraw(note: string[], recipient: string, amount: string): Promise<string[]> {
+  withdraw(note: string[], recipient: string, amount: string): Promise<VAnchorWithdrawPayload> {
     throw new Error('Method not implemented.');
   }
 }

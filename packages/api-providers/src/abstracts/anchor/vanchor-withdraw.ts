@@ -4,10 +4,16 @@
 import type { WebbApiProvider } from '../webb-provider.interface';
 
 import { EventBus } from '@webb-tools/app-util';
+import { Note } from '@webb-tools/sdk-core';
 
 import { InternalChainId } from '../../chains';
 import { CancelToken, WebbWithdrawEvents, WithdrawState } from '../mixer';
 import { Bridge } from './bridge';
+
+export type VAnchorWithdrawPayload = {
+  txHash: string;
+  changeNotes: Note[];
+};
 
 export abstract class VAnchorWithdraw<T extends WebbApiProvider<any>> extends EventBus<WebbWithdrawEvents> {
   state: WithdrawState = WithdrawState.Ideal;
@@ -32,5 +38,5 @@ export abstract class VAnchorWithdraw<T extends WebbApiProvider<any>> extends Ev
     return Promise.resolve(undefined);
   }
 
-  abstract withdraw(notes: string[], recipient: string, amount: string): Promise<string[]>;
+  abstract withdraw(notes: string[], recipient: string, amount: string): Promise<VAnchorWithdrawPayload>;
 }
