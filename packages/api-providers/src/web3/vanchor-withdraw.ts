@@ -116,6 +116,22 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
     const destVAnchor = await this.inner.getVariableAnchorByAddress(destAddress);
     const treeHeight = await destVAnchor._contract.levels();
 
+    // Create the proving manager - zk fixtures are fetched depending on the contract
+    // max edges as well as the number of input notes.
+    let wasmBuffer: Uint8Array;
+    let provingKey: Uint8Array;
+
+    this.emit('stateChange', WithdrawState.FetchingFixtures);
+
+    const maxEdges = await destVAnchor.inner.maxEdges();
+    if (notes.length > 2) {
+      provingKey = await fetchVariableAnchorKeyForEdges(maxEdges, false);
+      wasmBuffer = await fetchVariableAnchorWasmForEdges(maxEdges, false);
+    } else {
+      provingKey = await fetchVariableAnchorKeyForEdges(maxEdges, true);
+      wasmBuffer = await fetchVariableAnchorWasmForEdges(maxEdges, true);
+    }
+
     // Loop through the notes and populate the leaves map
     const leavesMap: Record<string, Uint8Array[]> = {};
 
@@ -128,8 +144,8 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
     // Create input UTXOs for convenience calculations
     let inputUtxos: Utxo[] = [];
 
-    console.log('before note loop');
-
+    // For all notes, get any leaves
+    this.emit('stateChange', WithdrawState.FetchingLeaves);
     for (const note of notes) {
       console.log(note);
       const parsedNote = (await Note.deserialize(note)).note;
@@ -293,22 +309,6 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
       keypair,
     });
     const outputUtxos = [changeUtxo, dummyUtxo];
-
-    // Create the proving manager - zk fixtures are fetched depending on the contract
-    // max edges as well as the number of input notes.
-    let wasmBuffer: Uint8Array;
-    let provingKey: Uint8Array;
-
-    this.emit('stateChange', WithdrawState.FetchingFixtures);
-
-    const maxEdges = await destVAnchor.inner.maxEdges();
-    if (notes.length > 2) {
-      provingKey = await fetchVariableAnchorKeyForEdges(maxEdges, false);
-      wasmBuffer = await fetchVariableAnchorWasmForEdges(maxEdges, false);
-    } else {
-      provingKey = await fetchVariableAnchorKeyForEdges(maxEdges, true);
-      wasmBuffer = await fetchVariableAnchorWasmForEdges(maxEdges, true);
-    }
 
     let extAmount = BigNumber.from(0)
       .add(outputUtxos.reduce((sum: BigNumber, x: Utxo) => sum.add(x.amount), BigNumber.from(0)))

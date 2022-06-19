@@ -40,7 +40,7 @@ export function depositFromAnchorNote(note: JsNote): IAnchorDepositInfo {
   const nullifier = '0x' + noteSecretParts[1];
   const secret = '0x' + noteSecretParts[2];
   const commitmentBN = poseidon([chainId, nullifier, secret]);
-  const nullifierHash = poseidon([null, nullifier, nullifier]);
+  const nullifierHash = poseidon([nullifier, nullifier]);
   const commitment = toFixedHex(commitmentBN);
 
   const deposit: IAnchorDepositInfo = {

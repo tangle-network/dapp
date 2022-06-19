@@ -59,9 +59,14 @@ export class Web3MixerWithdraw extends Web3AnchorWithdraw {
       name: 'Transaction',
     });
 
-    this.emit('stateChange', WithdrawState.GeneratingZk);
+    // Fetch the zero knowledge files required for creating witnesses and verifying.
+    this.emit('stateChange', WithdrawState.FetchingFixtures);
+    const maxEdges = await contract.inner.maxEdges();
+    const wasmBuf = await fetchFixedAnchorWasmForEdges(maxEdges);
+    const circuitKey = await fetchFixedAnchorKeyForEdges(maxEdges);
 
     // Fetch the leaves that we already have in storage
+    this.emit('stateChange', WithdrawState.FetchingLeaves);
     const bridgeStorageStorage = await bridgeStorageFactory(Number(depositNote.sourceChainId));
     const storedContractInfo: BridgeStorage[0] = (await bridgeStorageStorage.get(contractAddress.toLowerCase())) || {
       lastQueriedBlock:
@@ -90,11 +95,6 @@ export class Web3MixerWithdraw extends Web3AnchorWithdraw {
     const deposit = depositFromAnchorNote(depositNote);
     const leafIndex = allLeaves.findIndex((commitment) => commitment === deposit.commitment);
 
-    // Fetch the zero knowledge files required for creating witnesses and verifying.
-    const maxEdges = await contract.inner.maxEdges();
-    const wasmBuf = await fetchFixedAnchorWasmForEdges(maxEdges);
-    const circuitKey = await fetchFixedAnchorKeyForEdges(maxEdges);
-
     const provingInput: AnchorPMSetupInput = {
       fee: 0,
       leafIndex,
@@ -110,6 +110,7 @@ export class Web3MixerWithdraw extends Web3AnchorWithdraw {
 
     const treeDepth = await contract.inner.levels();
 
+    this.emit('stateChange', WithdrawState.GeneratingZk);
     const pm = new CircomProvingManager(Buffer.from(wasmBuf), treeDepth, null);
     const proof = await pm.prove('anchor', provingInput);
     const extDataHash = getFixedAnchorExtDataHash(0, recipient, 0, 0, recipient).toString();

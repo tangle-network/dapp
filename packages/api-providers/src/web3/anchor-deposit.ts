@@ -324,9 +324,10 @@ export class Web3AnchorDeposit extends AnchorDeposit<WebbWeb3Provider, DepositPa
       exponentiation: '5',
       hashFunction: 'Poseidon',
       protocol: 'anchor',
-      secrets: `${toFixedHex(destChainId, 6).substring(2)}:${deposit.nullifier.toString(16)}:${deposit.secret.toString(
-        16
-      )}`,
+      secrets:
+        `${toFixedHex(destChainId, 8).substring(2)}:` +
+        `${toFixedHex(deposit.nullifier.toString()).substring(2)}:` +
+        `${toFixedHex(deposit.secret.toString()).substring(2)}`,
       sourceChain: sourceChainId.toString(),
       sourceIdentifyingData: srcAddress!,
       targetChain: destChainId.toString(),

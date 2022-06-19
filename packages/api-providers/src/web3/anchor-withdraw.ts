@@ -130,7 +130,6 @@ export class Web3AnchorWithdraw extends AnchorWithdraw<WebbWeb3Provider> {
       message: `${section}:withdraw`,
       name: 'Transaction',
     });
-    this.emit('stateChange', WithdrawState.GeneratingZk);
 
     // Getting contracts data for source and dest chains
     const bridgeCurrency = this.inner.methods.anchorApi.currency;
@@ -144,6 +143,12 @@ export class Web3AnchorWithdraw extends AnchorWithdraw<WebbWeb3Provider> {
     const destAnchor = this.inner.getFixedAnchorByAddress(destContractAddress);
     const sourceContract = this.inner.getFixedAnchorByAddressAndProvider(sourceContractAddress, sourceEthers);
 
+    // Fetch the zero knowledge files required for creating witnesses and verifying.
+    this.emit('stateChange', WithdrawState.FetchingFixtures);
+    const maxEdges = await destAnchor.inner.maxEdges();
+    const wasmBuf = await fetchFixedAnchorWasmForEdges(maxEdges);
+    const circuitKey = await fetchFixedAnchorKeyForEdges(maxEdges);
+
     // get relayers for the source chain
     const sourceRelayers = this.inner.relayerManager.getRelayers({
       baseOn: 'evm',
@@ -154,12 +159,13 @@ export class Web3AnchorWithdraw extends AnchorWithdraw<WebbWeb3Provider> {
       chainId: chainTypeIdToInternalId(parseChainIdType(Number(jsNote.sourceChainId))),
     });
 
+    // Fetch the leaves
+    this.emit('stateChange', WithdrawState.FetchingLeaves);
+
     let sourceLeaves = await this.fetchLeavesFromRelayers(sourceRelayers, sourceContract, leafStorage);
 
     // Fetch leaves from the chain if the relayers couldn't give us leaves
     if (!sourceLeaves) {
-      console.log('fetching leaves from chain');
-
       // check if we already cached some values.
       const storedContractInfo: BridgeStorage[0] = (await leafStorage.get(sourceContractAddress.toLowerCase())) || {
         lastQueriedBlock: getAnchorDeploymentBlockNumber(Number(jsNote.sourceChainId), sourceContractAddress) || 0,
@@ -195,13 +201,6 @@ export class Web3AnchorWithdraw extends AnchorWithdraw<WebbWeb3Provider> {
     const provingLeaves = provingTree.elements().map((el) => hexToU8a(el.toHexString()));
     const leafIndex = provingTree.getIndexByElement(sourceDeposit.commitment);
 
-    // Fetch the zero knowledge files required for creating witnesses and verifying.
-    console.log('before fetching files');
-    const maxEdges = await destAnchor.inner.maxEdges();
-    const wasmBuf = await fetchFixedAnchorWasmForEdges(maxEdges);
-    const circuitKey = await fetchFixedAnchorKeyForEdges(maxEdges);
-    console.log('after fetching files');
-
     // After fetching the zk files, check for cancelToken - since fetching files may take a while.
     if (this.cancelToken.cancelled) {
       this.inner.notificationHandler({
@@ -216,7 +215,10 @@ export class Web3AnchorWithdraw extends AnchorWithdraw<WebbWeb3Provider> {
       return '';
     }
 
-    const pm = new CircomProvingManager(new Uint8Array(wasmBuf), await destAnchor.inner.levels(), null);
+    const treeHeight = await destAnchor.inner.levels();
+    console.log('treeHeight from contract: ', treeHeight);
+
+    const pm = new CircomProvingManager(new Uint8Array(wasmBuf), treeHeight, null);
 
     console.log('after creating the proving manager');
 
@@ -252,7 +254,7 @@ export class Web3AnchorWithdraw extends AnchorWithdraw<WebbWeb3Provider> {
       proofInput.refund,
       proofInput.relayer
     );
-    console.log('before using proving manager to prove');
+    this.emit('stateChange', WithdrawState.GeneratingZk);
 
     const proof = await pm.prove('anchor', proofInput);
 
@@ -350,8 +352,6 @@ export class Web3AnchorWithdraw extends AnchorWithdraw<WebbWeb3Provider> {
     } else {
       try {
         this.emit('stateChange', WithdrawState.SendingTransaction);
-
-        console.log('before making the call to withdraw');
 
         // Withdraw directly
         const tx = await destAnchor.inner.withdraw(
