@@ -9,6 +9,7 @@ import { WebbCurrencyId } from '../../enums';
 export abstract class ChainQuery<Provider> {
   constructor(protected inner: Provider) {}
 
+  abstract currentBlock(): Promise<number>;
   abstract tokenBalanceByCurrencyId(chainId: InternalChainId, currency: WebbCurrencyId): Promise<string>;
   abstract tokenBalanceByAddress(address: string): Promise<string>;
 }

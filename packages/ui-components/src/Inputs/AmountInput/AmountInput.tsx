@@ -12,7 +12,6 @@ export const AmountInput: React.FC<AmountInputProps> = ({ error, onChange, value
     <>
       <InputBase
         fullWidth
-        endAdornment
         placeholder={`AMOUNT`}
         value={value}
         inputProps={{ style: { fontSize: 14 } }}

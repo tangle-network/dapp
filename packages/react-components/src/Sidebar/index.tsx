@@ -24,6 +24,8 @@ const SidebarRoot = styled.div<{ collapse: boolean; isMobile: boolean }>`
   display: ${({ collapse }): string => (collapse ? 'none' : 'flex')};
   flex-direction: column;
   height: 100vh;
+  min-width: ${({ isMobile }) => (isMobile ? '100vw' : '200px')};
+  max-width: ${({ isMobile }) => (isMobile ? '100vw' : '200px')};
   width: ${({ isMobile }): string => (isMobile ? '100vw' : '200px')};
   border-right: 1px solid rgba(0, 0, 0, 0.12);
   transition: width 500ms ease;
@@ -46,8 +48,6 @@ export const Sidebar: FC<SidebarProps> = ({ collapse, config, isMobile, setSideb
     }),
     [active, setActive]
   );
-  const { setTheme, theme } = useStore('ui');
-  const isDarkTheme = theme === 'dark';
 
   return useMemo(
     () => (
@@ -62,17 +62,10 @@ export const Sidebar: FC<SidebarProps> = ({ collapse, config, isMobile, setSideb
           <IPDisplay />
           <SpaceBox height={16} />
           {config.products ? <Products collapse={collapse} data={config.products} /> : null}
-          <ThemeSwitcher
-            active={isDarkTheme ? 'dark' : 'light'}
-            onChange={(next) => {
-              setTheme(next === 'light' ? 'default' : 'dark');
-            }}
-          />
-          <div style={{ height: '10px' }}></div>
           {config.socialPlatforms ? <SocialPlatform collapse={collapse} data={config.socialPlatforms} /> : null}
         </SidebarRoot>
       </SidebarActiveContext.Provider>
     ),
-    [data, collapse, isMobile, config.products, config.socialPlatforms, isDarkTheme, setSidebarDisplay, setTheme]
+    [data, collapse, isMobile, config.products, config.socialPlatforms, setSidebarDisplay]
   );
 };

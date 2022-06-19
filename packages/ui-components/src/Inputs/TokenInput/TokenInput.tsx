@@ -1,41 +1,16 @@
-import {
-  Avatar,
-  ClickAwayListener,
-  Icon,
-  IconButton,
-  List,
-  ListItemAvatar,
-  ListItemText,
-  Popper,
-  Tooltip,
-  Typography,
-} from '@material-ui/core';
+import { Avatar, ClickAwayListener, Icon, IconButton, Tooltip, Typography } from '@material-ui/core';
 import { CurrencyContent, evmIdIntoInternalChainId, Web3Provider, WebbCurrencyId } from '@webb-dapp/api-providers';
 import { currenciesConfig } from '@webb-dapp/apps/configs';
 import { useWebContext } from '@webb-dapp/react-environment';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
+import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
-import React, { CSSProperties, useCallback, useMemo, useState } from 'react';
+import { above, useBreakpoint } from '@webb-dapp/ui-components/utils/responsive-utils';
+import React, { CSSProperties, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
-const StyledList = styled.ul`
-  background: ${({ theme }) => theme.background};
-
-  li {
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    padding: 5px;
-
-    &.selected,
-    :hover {
-      background: ${({ theme }) => (theme.type === 'dark' ? theme.layer3Background : theme.gray1)};
-    }
-
-    position: relative;
-  }
-`;
+import TokenSelection from '../TokenSelection/TokenSelection';
 
 const TokenInputWrapper = styled.div<{ open: boolean }>`
   width: 100%;
@@ -43,6 +18,7 @@ const TokenInputWrapper = styled.div<{ open: boolean }>`
   border: 1px solid ${({ theme }) => theme.heavySelectionBorderColor};
   overflow: hidden;
   background: ${({ theme }) => theme.heavySelectionBackground};
+  cursor: pointer;
 
   ${({ open, theme }) => {
     return open
@@ -57,35 +33,47 @@ const TokenInputWrapper = styled.div<{ open: boolean }>`
     display: flex;
     align-items: center;
     padding: 5px;
+
+    ${above.xs`
+      padding: 8px 12px;
+    `}
   }
+
+  .token-avatar {
+    width: 26px;
+    height: 26px;
+
+    ${above.xs`
+      width: 32px;
+      height: 32px;
+    `}
+  }
+
+  .token-text {
+    max-width: 54px;
+    margin-left: 4px;
+    font-weight: 600;
+
+    ${above.xs`
+      max-width: none;
+      margin-left: 0px;
+    `}
+
+    * {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+
+      ${above.xs`
+        overflow: auto;
+        white-space: normal;
+        text-overflow: clip;
+      `}
+    }
+  }
+
   .account-avatar {
     background: transparent;
-  }
-`;
-
-const PopperList = styled.div<{ open: boolean }>`
-  ${StyledList} {
-    overflow: hidden;
-    .account-avatar {
-      background: transparent;
-    }
-    border-radius: 0px 0px 8px 8px;
-    border: 1px solid ${({ theme }) => (theme.type === 'dark' ? 'black' : theme.gray13)};
-    background: ${({ theme }) => theme.background};
-    overflow: hidden;
-
-    ${({ open }) => {
-      return open
-        ? css`
-            max-height: 200px;
-            overflow-y: auto;
-          `
-        : css`
-            padding: 0 !important;
-            margin: 0 !important;
-            max-height: 0px !important;
-          `;
-    }}
   }
 `;
 
@@ -95,41 +83,19 @@ export type TokenInputProps = {
   onChange(next: CurrencyContent): void;
   wrapperStyles?: CSSProperties;
 };
-const TokenName = styled.span`
-  max-width: 100px;
-  display: inline-block;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
 
 export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, value, wrapperStyles }) => {
   const { activeApi } = useWebContext();
-  const selectItems = useMemo(() => {
-    const selectableItems = currencies.map((currency) => {
-      return {
-        ...currency.view,
-        self: currency,
-      };
-    });
+  const [isOpen, setIsOpen] = useState(false);
+  const theme = useColorPallet();
+  const { isXsOrAbove } = useBreakpoint();
 
-    return selectableItems;
-  }, [currencies]);
-
-  const selected = useMemo(() => {
+  const selectedToken = useMemo(() => {
     if (!value) {
       return undefined;
     }
-    const view = value.view;
-    return {
-      ...view,
-      self: value,
-    };
+    return value.view;
   }, [value]);
-
-  const [$wrapper, setWrapper] = useState<{ current: HTMLDivElement | null }>({ current: null });
-  const [isOpen, setIsOpen] = useState(false);
-  const theme = useColorPallet();
 
   const addTokenToMetaMask = async (currencyId: WebbCurrencyId) => {
     const provider: Web3Provider = activeApi?.getProvider();
@@ -149,14 +115,6 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
     });
   };
 
-  const wrapperRef = useCallback(
-    (current: HTMLDivElement | null) => {
-      setWrapper({ current });
-    },
-    [setWrapper]
-  );
-  // Generate a random id for the <Popper/> component
-  const nonce = useMemo(() => String(Math.random()) + performance.now(), []);
   return (
     <div style={wrapperStyles}>
       <ClickAwayListener
@@ -164,31 +122,27 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
           setIsOpen(false);
         }}
       >
-        <TokenInputWrapper open={isOpen} ref={wrapperRef}>
-          <div
-            onClick={(event) => {
-              setIsOpen((p) => !p);
-            }}
-            className='account-header'
-          >
-            {selected ? (
+        <TokenInputWrapper open={isOpen}>
+          <div onClick={() => setIsOpen(true)} className='account-header'>
+            {selectedToken ? (
               <Flex row ai='center' jc='flex-start' flex={1}>
-                <Tooltip title={<h2>{`Add ${selected.name} to MetaMask`}</h2>}>
+                <Tooltip title={<h2>{`Add ${selectedToken.symbol} to MetaMask`}</h2>}>
                   <Avatar
                     style={{
                       cursor: 'copy',
                       background: 'transparent',
                     }}
-                    children={selected.icon}
+                    children={selectedToken.icon}
                     className={'token-avatar'}
                     onClick={() => {
-                      addTokenToMetaMask(selected.id);
+                      addTokenToMetaMask(selectedToken.id);
                     }}
                   />
                 </Tooltip>
-                <Flex jc={'center'}>
-                  <Typography variant={'h6'} component={'span'} style={{ paddingLeft: '5px' }}>
-                    <b>{selected.symbol}</b>
+                {isXsOrAbove && <Padding x={0.5} />}
+                <Flex jc={'center'} className='token-text'>
+                  <Typography variant={'h6'} component={'span'}>
+                    {selectedToken.symbol}
                   </Typography>
                 </Flex>
               </Flex>
@@ -198,27 +152,33 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
                   style={{
                     background: theme.warning,
                   }}
+                  className='token-avatar'
                 >
                   <Icon
                     style={{
                       color: '#fff',
                     }}
-                    fontSize={'large'}
+                    fontSize={isXsOrAbove ? 'large' : 'medium'}
                   >
                     generating_tokens
                   </Icon>
                 </Avatar>
-                <Padding x={0.5} />
-                <Flex jc={'center'}>
-                  <Typography variant={'caption'} color={'textSecondary'} style={{ whiteSpace: 'nowrap' }}>
+                {isXsOrAbove && <Padding x={0.5} />}
+                <Flex jc={'center'} className='chain-text'>
+                  <Typography
+                    display='block'
+                    variant={isXsOrAbove ? 'subtitle1' : 'caption'}
+                    color={'textSecondary'}
+                    style={{ whiteSpace: 'nowrap' }}
+                  >
                     Select Token
                   </Typography>
                 </Flex>
               </Flex>
             )}
-
             <div className={'account-button-wrapper'}>
               <IconButton
+                size='small'
                 style={{
                   transform: isOpen ? 'rotate(180deg)' : 'rotate(0)',
                   transition: 'all ease .3s',
@@ -232,51 +192,15 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
               </IconButton>
             </div>
           </div>
-          <Popper
-            placement={'bottom-end'}
-            open={isOpen}
-            anchorEl={$wrapper?.current}
-            key={`currencies-${currencies.length}-${nonce}`}
-          >
-            <PopperList open={isOpen} style={{ width: $wrapper.current?.clientWidth }}>
-              <StyledList as={List} dense disablePadding>
-                {selectItems.map(({ icon: Icon, id, name, self: currency, symbol }) => {
-                  const isSelected = selected?.id === id;
-                  return (
-                    <li
-                      role={'button'}
-                      onClick={() => {
-                        setIsOpen(false);
-                        onChange(currency);
-                      }}
-                      className={isSelected ? 'selected' : ''}
-                      key={id + symbol + 'currency'}
-                    >
-                      <Flex ai='center' row>
-                        <ListItemAvatar>
-                          <Avatar
-                            onClick={() => {
-                              addTokenToMetaMask(selected?.id!);
-                            }}
-                            style={{ background: 'transparent' }}
-                            children={Icon}
-                          />
-                        </ListItemAvatar>
-                        <ListItemText>
-                          <Typography variant={'h6'} component={'span'}>
-                            <b>{symbol}</b>
-                          </Typography>
-                          <Typography variant={'body2'} color={'textSecondary'}>
-                            <TokenName>{name}</TokenName>
-                          </Typography>
-                        </ListItemText>
-                      </Flex>
-                    </li>
-                  );
-                })}
-              </StyledList>
-            </PopperList>
-          </Popper>
+          <Modal open={isOpen} hasBlur onClose={() => setIsOpen(false)}>
+            <TokenSelection
+              currencies={currencies}
+              onClose={() => setIsOpen(false)}
+              selectedToken={value}
+              onAddToMetaMask={addTokenToMetaMask}
+              onChange={onChange}
+            />
+          </Modal>
         </TokenInputWrapper>
       </ClickAwayListener>
     </div>

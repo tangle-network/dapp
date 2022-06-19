@@ -1,4 +1,5 @@
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
+import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
 import styled, { css } from 'styled-components';
 
 export const InputSection = styled.div`
@@ -7,8 +8,13 @@ export const InputSection = styled.div`
     border: 2px solid ${theme.heavySelectionBorderColor};
     color: ${theme.primaryText};
     background: ${theme.heavySelectionBackground};
-  `}
-  padding: 2px;
+  `};
+  padding: 12px;
   border-radius: 10px;
-  min-height: 80px;
+  justify-content: space-between;
+  align-items: center;
+
+  ${above.sm`
+    padding: 16px;
+  `}
 `;

@@ -3,13 +3,12 @@ import { css, FlattenSimpleInterpolation } from 'styled-components';
 
 export const size = {
   /*
-   *   Extra small: 370 px,
+   *   extra small: 390 px,
    * */
-  xs: 370,
+  xs: 390,
   /*
-	 *    small: 670 px,
-
-	 * */
+   *    small: 670 px,
+   * */
   sm: 670,
   /*
    *   mid: 990,

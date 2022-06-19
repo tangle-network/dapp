@@ -235,9 +235,9 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({ mixerSize, onClose,
             }
             setLoading(true);
             downloadNote();
-            onClose();
             await provider.deposit(depositPayload);
             setLoading(false);
+            onClose();
           }}
           disabled={!backupConfirmation || !depositPayload || loading}
           label={'Deposit'}

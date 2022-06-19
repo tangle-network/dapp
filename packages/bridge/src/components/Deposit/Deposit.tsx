@@ -1,4 +1,3 @@
-import { Checkbox, FormControlLabel, Typography } from '@material-ui/core';
 import {
   ChainTypeId,
   chainTypeIdToInternalId,
@@ -13,15 +12,18 @@ import { useBridgeDeposit } from '@webb-dapp/bridge/hooks/deposit/useBridgeDepos
 import { useWrapUnwrap } from '@webb-dapp/page-wrap-unwrap/hooks/useWrapUnwrap';
 import { RequiredWalletSelection } from '@webb-dapp/react-components/RequiredWalletSelection/RequiredWalletSelection';
 import { useAppConfig, useWebContext } from '@webb-dapp/react-environment/webb-context';
-import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { SpaceBox } from '@webb-dapp/ui-components/Box';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
+import { BalanceLabel } from '@webb-dapp/ui-components/Inputs/BalanceLabel/BalanceLabel';
 import { ChainInput } from '@webb-dapp/ui-components/Inputs/ChainInput/ChainInput';
+import { CheckBox } from '@webb-dapp/ui-components/Inputs/CheckBox/CheckBox';
+import { InputTitle } from '@webb-dapp/ui-components/Inputs/InputTitle/InputTitle';
 import { MixerGroupSelect } from '@webb-dapp/ui-components/Inputs/MixerGroupSelect/MixerGroupSelect';
 import { TokenInput } from '@webb-dapp/ui-components/Inputs/TokenInput/TokenInput';
 import CircledArrowRight from '@webb-dapp/ui-components/misc/CircledArrowRight';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { getRoundedAmountString } from '@webb-dapp/ui-components/utils';
+import { above, useBreakpoint } from '@webb-dapp/ui-components/utils/responsive-utils';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
@@ -41,42 +43,43 @@ const DepositWrapper = styled.div<{ wallet: WalletConfig | undefined }>`
 `;
 
 const ChainInputWrapper = styled.div`
-  padding: 25px 35px;
+  padding: 12px 14px;
   background: ${({ theme }) => theme.layer1Background};
-  border: 1px solid ${({ theme }) => theme.borderColor};
   border-bottom: none;
 
   .chain-dropdown-section {
     display: flex;
     justify-content: space-between;
-  }
-`;
-const TokenInputWrapper = styled.div`
-  padding: 25px 35px;
-  background: ${({ theme }) => theme.layer2Background};
-  border-radius: 0px 0px 13px 13px;
-  border: 1px solid ${({ theme }) => theme.borderColor};
-
-  .titles-and-information {
-    display: flex;
-    justify-content: space-between;
     align-items: center;
-    margin-bottom: 10px;
   }
+
+  ${above.xs`
+    padding: 25px 35px;
+  `}
+`;
+
+const TokenInputWrapper = styled.div`
+  padding: 12px 14px;
+  background: ${({ theme }) => theme.layer2Background};
+  border-radius: 8px;
+  border: 0.5px solid ${({ theme }) => theme.borderColor};
+
+  ${above.xs`
+    border-radius: 16px;
+    border-width: 1px;
+    padding: 25px 35px;
+  `}
 
   .token-dropdown-section {
     display: flex;
     width: 100%;
     justify-content: space-between;
-    margin-bottom: 20px;
+    align-items: center;
   }
 `;
 
-const TokenBalance = styled.div`
-  border: 1px solid ${({ theme }) => theme.primaryText};
-  border-radius: 5px;
-  margin-left: 5px;
-  padding: 0 5px;
+const AmountWrapper = styled.div`
+  margin-top: 20px;
 `;
 
 type DepositProps = {};
@@ -97,7 +100,7 @@ export const Deposit: React.FC<DepositProps> = () => {
 
   const { setWrappableToken, wrappableToken, wrappableTokens } = useWrapUnwrap();
   const { activeApi, activeChain, activeWallet, chains, loading, switchChain } = useWebContext();
-  const palette = useColorPallet();
+  const { isXsOrAbove } = useBreakpoint();
 
   const srcChain = useMemo(() => {
     if (!activeChain) {
@@ -145,6 +148,25 @@ export const Deposit: React.FC<DepositProps> = () => {
     return undefined;
   }, [currenciesConfig, wrappableToken]);
 
+  const balance = useMemo(() => {
+    if (showWrappableAssets && wrappableToken && wrappableCurrency) {
+      return `${getRoundedAmountString(Number(wrappableTokenBalance))} ${wrappableCurrency.view.symbol}`;
+    }
+
+    if (!showWrappableAssets && selectedBridgeCurrency) {
+      return `${getRoundedAmountString(Number(wrappedTokenBalance))} ${selectedBridgeCurrency.view.symbol}`;
+    }
+
+    return '-';
+  }, [
+    selectedBridgeCurrency,
+    showWrappableAssets,
+    wrappableCurrency,
+    wrappableToken,
+    wrappableTokenBalance,
+    wrappedTokenBalance,
+  ]);
+
   useEffect(() => {
     if (!wrappableToken || !activeApi || !activeChain || loading) {
       return;
@@ -189,9 +211,7 @@ export const Deposit: React.FC<DepositProps> = () => {
     <DepositWrapper wallet={activeWallet}>
       <RequiredWalletSelection>
         <ChainInputWrapper>
-          <Typography variant={'h6'} style={{ marginBottom: '10px' }}>
-            <b>CHAIN</b>
-          </Typography>
+          <InputTitle leftLabel='CHAIN' />
           <div className='chain-dropdown-section'>
             <ChainInput
               chains={tokenChains}
@@ -215,25 +235,19 @@ export const Deposit: React.FC<DepositProps> = () => {
           </div>
         </ChainInputWrapper>
         <TokenInputWrapper>
-          <div className='titles-and-information'>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <Typography variant='h6'>
-                <b>TOKEN</b>
-              </Typography>
-            </div>
-            <FormControlLabel
-              label={'Wrap Assets?'}
-              control={
-                <Checkbox
-                  checked={showWrappableAssets}
-                  onChange={() => {
-                    setShowWrappableAssets(!showWrappableAssets);
-                  }}
-                  style={{ color: palette.accentColor }}
-                />
-              }
-            />
-          </div>
+          <InputTitle
+            leftLabel='TOKEN'
+            rightLabel={
+              <CheckBox
+                label='Wrap Assets?'
+                size={isXsOrAbove ? 'medium' : 'small'}
+                checked={showWrappableAssets}
+                onChange={() => {
+                  setShowWrappableAssets(!showWrappableAssets);
+                }}
+              />
+            }
+          />
           <div className='token-dropdown-section'>
             {showWrappableAssets && (
               <>
@@ -267,40 +281,10 @@ export const Deposit: React.FC<DepositProps> = () => {
             />
           </div>
           {typeof destChain !== 'undefined' && (
-            <>
-              <div className='titles-and-information'>
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <Typography variant='h6'>
-                    <b>AMOUNT</b>
-                  </Typography>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <div>
-                    <Typography
-                      variant='body2'
-                      style={{ color: palette.type === 'dark' ? palette.accentColor : palette.primaryText }}
-                    >
-                      Your Balance~
-                    </Typography>
-                  </div>
-                  <TokenBalance>
-                    {showWrappableAssets && wrappableToken && wrappableCurrency && (
-                      <Typography variant='body2'>
-                        <b>
-                          {getRoundedAmountString(Number(wrappableTokenBalance))} {wrappableCurrency.view.symbol}
-                        </b>
-                      </Typography>
-                    )}
-                    {!showWrappableAssets && selectedBridgeCurrency && (
-                      <Typography variant='body2'>
-                        {getRoundedAmountString(Number(wrappedTokenBalance))} {selectedBridgeCurrency?.view.symbol}
-                      </Typography>
-                    )}
-                  </TokenBalance>
-                </div>
-              </div>
+            <AmountWrapper>
+              <InputTitle leftLabel='AMOUNT' rightLabel={balance && <BalanceLabel value={balance} />} />
               <MixerGroupSelect items={bridgeDepositApi.mixerSizes} value={item} onChange={selectBridgeAmount} />
-            </>
+            </AmountWrapper>
           )}
           <SpaceBox height={16} />
           <MixerButton

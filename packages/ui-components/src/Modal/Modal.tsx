@@ -8,6 +8,7 @@ import React from 'react';
 
 export interface ModalProps extends Omit<MuiModalProps, 'children'> {
   closeButton?: boolean;
+  hasBlur?: boolean;
   unlimitedWidth?: boolean;
   children: React.ReactNode;
 }
@@ -63,7 +64,7 @@ const useStyles = makeStyles((theme: Theme) => {
   });
 });
 
-export const Modal: React.FC<ModalProps> = ({ children, closeButton, unlimitedWidth, ...props }) => {
+export const Modal: React.FC<ModalProps> = ({ children, closeButton, hasBlur, unlimitedWidth, ...props }) => {
   const classes = useStyles({
     unlimitedWidth,
   });
@@ -77,6 +78,12 @@ export const Modal: React.FC<ModalProps> = ({ children, closeButton, unlimitedWi
       closeAfterTransition
       BackdropProps={{
         timeout: 500,
+        style: hasBlur
+          ? {
+              backdropFilter: 'blur(20px)',
+              backgroundColor: 'rgba(0,0,0,0.15)',
+            }
+          : undefined,
       }}
       {...props}
     >

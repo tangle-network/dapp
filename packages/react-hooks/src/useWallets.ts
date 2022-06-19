@@ -10,12 +10,15 @@ export const useWallets = () => {
 
   const { activeApi, activeChain, activeWallet, inactivateApi } = useWebContext();
   useEffect(() => {
+    let isSubscribed = true;
+
     const configureSelectedWallets = async () => {
       const walletsFromActiveChain = Object.values(activeChain?.wallets ?? {});
       const wallets = await Promise.all(
-        walletsFromActiveChain.map(async ({ detect, ...walletConfig }) => {
+        walletsFromActiveChain.map(async ({ detect, ...walletConfig }): Promise<ManagedWallet> => {
           const isDetected = (await detect?.()) ?? false;
-          const connected = activeWallet?.id === walletConfig.id && activeApi;
+          const connected = activeWallet?.id === walletConfig.id && !!activeApi;
+
           if (connected) {
             return {
               ...walletConfig,
@@ -29,6 +32,7 @@ export const useWallets = () => {
               canEndSession: Boolean(activeApi?.capabilities?.hasSessions),
             };
           }
+
           return {
             ...walletConfig,
             enabled: isDetected,
@@ -38,10 +42,16 @@ export const useWallets = () => {
           };
         })
       );
-      // @ts-ignore
-      setWallets(wallets);
+
+      if (isSubscribed) {
+        setWallets(wallets);
+      }
     };
     configureSelectedWallets();
+
+    return () => {
+      isSubscribed = false;
+    };
   }, [activeChain, activeWallet, activeApi, inactivateApi]);
 
   return {

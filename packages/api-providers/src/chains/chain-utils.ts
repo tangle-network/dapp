@@ -169,6 +169,10 @@ export const substrateIdIntoInternalChainId = (chainId: SubstrateChainId): Inter
       return InternalChainId.EggStandalone;
     case SubstrateChainId.ProtocolSubstrateStandalone:
       return InternalChainId.ProtocolSubstrateStandalone;
+    case SubstrateChainId.Kusama:
+      return InternalChainId.Kusama;
+    case SubstrateChainId.Polkadot:
+      return InternalChainId.Polkadot;
     default:
       throw Error(`Unsupported substrate live id: ${chainId}`);
   }
