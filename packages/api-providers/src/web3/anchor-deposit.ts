@@ -6,9 +6,8 @@ import { LoggerService } from '@webb-tools/app-util';
 // eslint-disable-next-line camelcase
 import { ERC20__factory as ERC20Factory } from '@webb-tools/contracts';
 import { IAnchorDepositInfo } from '@webb-tools/interfaces';
-import { Note, NoteGenInput } from '@webb-tools/sdk-core';
+import { Note, NoteGenInput, toFixedHex } from '@webb-tools/sdk-core';
 import { GovernedTokenWrapper } from '@webb-tools/tokens';
-import { toFixedHex } from '@webb-tools/utils';
 
 import { AnchorDeposit, Currency, DepositPayload as IDepositPayload, MixerSize } from '../abstracts';
 import {
@@ -91,7 +90,7 @@ export class Web3AnchorDeposit extends AnchorDeposit<WebbWeb3Provider, DepositPa
             this.inner.getEthersProvider().getSigner()
           );
           const webbToken = await contract.getWebbToken();
-          const tx = await tokenInstance.approve(webbToken.address, await contract.denomination);
+          const tx = await tokenInstance.approve(webbToken.address, await contract.getDenomination());
 
           await tx.wait();
           this.inner.notificationHandler.remove('waiting-approval');
@@ -143,7 +142,7 @@ export class Web3AnchorDeposit extends AnchorDeposit<WebbWeb3Provider, DepositPa
             persist: true,
           });
           const tokenInstance = await contract.getWebbToken();
-          const tx = await tokenInstance.approve(contract.inner.address, await contract.denomination);
+          const tx = await tokenInstance.approve(contract.inner.address, await contract.getDenomination());
 
           await tx.wait();
           this.inner.notificationHandler.remove('waiting-approval');
@@ -325,13 +324,15 @@ export class Web3AnchorDeposit extends AnchorDeposit<WebbWeb3Provider, DepositPa
       exponentiation: '5',
       hashFunction: 'Poseidon',
       protocol: 'anchor',
-      secrets: `${toFixedHex(destChainId, 6).substring(2)}:${deposit.nullifier.toString(16)}:${deposit.secret.toString(
-        16
-      )}`,
+      secrets: [
+        toFixedHex(destChainId, 8).substring(2),
+        toFixedHex(deposit.nullifier.toString()).substring(2),
+        toFixedHex(deposit.secret.toString()).substring(2),
+      ].join(':'),
       sourceChain: sourceChainId.toString(),
-      sourceIdentifyingData: srcAddress,
+      sourceIdentifyingData: srcAddress!,
       targetChain: destChainId.toString(),
-      targetIdentifyingData: destAddress,
+      targetIdentifyingData: destAddress!,
       tokenSymbol: tokenSymbol,
       version: 'v2',
       width: '4',

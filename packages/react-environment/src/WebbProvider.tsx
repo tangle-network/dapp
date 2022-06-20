@@ -359,10 +359,14 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
               relayerManager,
               appConfig,
               notificationHandler,
-              () => new Worker(new URL('./proving-manager.worker', import.meta.url))
+              () => new Worker(new URL('./arkworks-proving-manager.worker', import.meta.url))
             );
             await setActiveApiWithAccounts(webbPolkadot, chain, _networkStorage ?? networkStorage);
             localActiveApi = webbPolkadot;
+
+            // set a reasonable default for the active bridge
+            const defaultBridge = getDefaultBridge(chain, bridgeConfigByAsset);
+            localActiveApi.methods.anchorApi.setActiveBridge(defaultBridge);
             setLoading(false);
           }
           break;

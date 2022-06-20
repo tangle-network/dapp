@@ -31,12 +31,10 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
     const ormlAssets = await ormlCurrency.list();
     const data = await api.query.mixerBn254.mixers.entries();
     const groupItem = data
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       .filter(([_, info]) => !info.isEmpty)
       // storageKey is treeId.  Info is {depositSize, asset}
       .map(([storageKey, info]) => {
-        // TODO: Figure out why typescript complains about an `unwrap()`
-        //       while running protocol-substrate locally.
+        // @ts-ignore
         const mixerInfo: PalletMixerMixerMetadata = info.unwrap();
         const cId = Number(mixerInfo.asset);
         const amount = mixerInfo.depositSize;
@@ -46,7 +44,6 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
         // parse number from amount string
         // TODO: Get and parse native / non-native token denomination
         // TODO replace `replaceAll` or target es2021
-        // @ts-ignore
         const amountNumber = (Number(amount?.toString().replaceAll(',', '')) * 1.0) / Math.pow(10, 12);
 
         const currency = Currency.fromORMLAsset(

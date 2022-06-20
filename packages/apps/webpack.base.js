@@ -184,6 +184,7 @@ function createWebpack(env, mode = 'production') {
         os: require.resolve('os-browserify/browser'),
         path: require.resolve('path-browserify'),
         stream: require.resolve('stream-browserify'),
+        constants: false,
         fs: false,
         url: false,
       },

@@ -7,7 +7,7 @@ import { Note, NoteGenInput } from '@webb-tools/sdk-core';
 import { u8aToHex } from '@polkadot/util';
 
 import { AnchorDeposit, AnchorSize, DepositPayload as IDepositPayload } from '../abstracts';
-import { computeChainIdType, InternalChainId } from '../chains';
+import { computeChainIdType, InternalChainId, substrateIdIntoInternalChainId } from '../chains';
 import { WebbError, WebbErrorCodes } from '../webb-error';
 import { WebbPolkadot } from './webb-provider';
 
@@ -61,14 +61,11 @@ export class PolkadotAnchorDeposit extends AnchorDeposit<WebbPolkadot, DepositPa
     const chainId = await this.inner.api.consts.linkableTreeBn254.chainIdentifier;
     const chainType = await this.inner.api.consts.linkableTreeBn254.chainType;
     const sourceChainId = computeChainIdType(Number(chainType.toHex()), Number(chainId));
+    console.log('anchorId:', anchorId);
     const anchorPath = String(anchorId).replace('Bridge=', '').split('@');
     const amount = anchorPath[0];
-    const anchorIndex = anchorPath[2];
-    const anchors = await this.bridgeApi.getAnchors();
-    const anchor = anchors[Number(anchorIndex)];
+    const anchorTreeId = anchorPath[2];
 
-    // TODO: Anchor in one chain the 0 id contains the treeId
-    const treeId = anchor.neighbours[InternalChainId.ProtocolSubstrateStandalone] as number;
     // Create the note gen input
     const noteInput: NoteGenInput = {
       amount: amount,
@@ -79,9 +76,9 @@ export class PolkadotAnchorDeposit extends AnchorDeposit<WebbPolkadot, DepositPa
       hashFunction: 'Poseidon',
       protocol: 'anchor',
       sourceChain: sourceChainId.toString(),
-      sourceIdentifyingData: anchorIndex.toString(),
+      sourceIdentifyingData: anchorTreeId,
       targetChain: destChainId.toString(),
-      targetIdentifyingData: treeId.toString(),
+      targetIdentifyingData: anchorTreeId,
       tokenSymbol: tokenSymbol,
       width: '4',
     };
@@ -93,23 +90,26 @@ export class PolkadotAnchorDeposit extends AnchorDeposit<WebbPolkadot, DepositPa
     const leaf = note.getLeaf();
     const leafHex = u8aToHex(leaf);
 
-    logger.trace(`treeId ${treeId}, Leaf ${leafHex}`);
+    logger.trace(`treeId ${anchorTreeId}, Leaf ${leafHex}`);
 
     return {
       note,
-      params: [treeId, leafHex],
+      params: [Number(anchorTreeId), leafHex],
     };
   }
 
   async getSizes(): Promise<AnchorSize[]> {
     const anchors = await this.bridgeApi.getAnchors();
     const currency = this.bridgeApi.currency;
+    const substrateChainId = this.inner.api.consts.linkableTreeBn254.chainIdentifier;
 
     if (currency) {
       return anchors.map((anchor, anchorIndex) => ({
         amount: Number(anchor.amount),
         asset: currency.view.symbol,
-        id: `Bridge=${anchor.amount}@${currency.view.name}@${anchorIndex}`,
+        id: `Bridge=${anchor.amount}@${currency.view.name}@${
+          anchor.neighbours[substrateIdIntoInternalChainId(Number(substrateChainId))]
+        }`,
         title: `${anchor.amount} ${currency.view.name}`,
       }));
     }

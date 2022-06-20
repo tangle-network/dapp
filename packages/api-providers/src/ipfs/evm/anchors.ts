@@ -205,17 +205,17 @@ export const fetchVariableAnchorWasmForEdges = async (maxEdges: number, small: b
 
   try {
     if (withLocalFixtures()) {
-      const cachedKeyRequest = await fetch(cachedURI);
-      const cachedKeyArrayBuffer = await cachedKeyRequest.arrayBuffer();
-      const cachedKey = new Uint8Array(cachedKeyArrayBuffer);
+      const cachedWasmRequest = await fetch(cachedURI);
+      const cachedWasmBuffer = await cachedWasmRequest.arrayBuffer();
+      const cachedWasm = new Uint8Array(cachedWasmBuffer);
 
-      return cachedKey;
+      return cachedWasm;
     } else {
-      const ipfsKeyRequest = await fetch(`https://ipfs.io/ipfs/${ipfsHash}`);
-      const circuitKeyArrayBuffer = await ipfsKeyRequest.arrayBuffer();
-      const circuitKey = new Uint8Array(circuitKeyArrayBuffer);
+      const ipfsWasmRequest = await fetch(`https://ipfs.io/ipfs/${ipfsHash}`);
+      const circuitWasmBuffer = await ipfsWasmRequest.arrayBuffer();
+      const circuitWasm = new Uint8Array(circuitWasmBuffer);
 
-      return circuitKey;
+      return circuitWasm;
     }
   } catch (e) {
     console.log('error when fetching wasm from ipfs: ', e);
