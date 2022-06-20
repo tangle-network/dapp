@@ -22,6 +22,7 @@ import {
 import { Chain, Wallet } from '@webb-dapp/api-providers';
 import { useWebContext } from '@webb-dapp/react-environment';
 import { appEvent } from '@webb-dapp/react-environment/app-event';
+import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
@@ -434,7 +435,7 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
 
 export const NetworkIndicatorWrapper = styled.button`
   && {
-    min-height: 32px;
+    min-height: 40px;
     border-radius: 8px;
     padding: 4px;
     background: ${({ theme }: { theme: Pallet }) => theme.lightSelectionBackground};
@@ -480,6 +481,7 @@ export const NetworkManagerIndicator: React.FC<NetworkManagerIndicatorProps> = (
   onClick,
 }) => {
   const { isMdOrAbove, isXsOrAbove } = useBreakpoint();
+  const pallet = useColorPallet();
 
   const icon = useMemo(() => {
     switch (connectionStatus) {
@@ -489,15 +491,16 @@ export const NetworkManagerIndicator: React.FC<NetworkManagerIndicatorProps> = (
             ai={'center'}
             jc={'center'}
             style={{
-              width: 29,
-              height: 29,
+              width: 40,
+              height: 40,
               marginRight: '4px',
+              position: 'relative',
             }}
           >
-            <Icon style={{ position: 'absolute' }} fontSize={'small'}>
+            <Icon style={{ position: 'absolute', color: pallet.primaryText }} fontSize='medium'>
               podcasts
             </Icon>
-            <CircularProgress style={{ position: 'absolute' }} size={26.5} />
+            <CircularProgress style={{ position: 'absolute' }} size={isXsOrAbove ? 32 : 26.5} />
           </Flex>
         );
 
@@ -511,19 +514,25 @@ export const NetworkManagerIndicator: React.FC<NetworkManagerIndicatorProps> = (
       case 'error':
         return (
           <div>
-            <Icon fontSize={isXsOrAbove ? 'large' : 'medium'}>podcasts</Icon>
+            <Icon style={{ color: pallet.primaryText }} fontSize={isXsOrAbove ? 'large' : 'medium'}>
+              podcasts
+            </Icon>
           </div>
         );
 
       case 'connected':
       default:
         return connectionMetaData?.chainIcon ? (
-          <div style={{ marginRight: '4px' }}>{connectionMetaData?.chainIcon}</div>
+          <div style={{ marginRight: '4px', border: `1px solid ${pallet.borderColor}`, borderRadius: '50%' }}>
+            {connectionMetaData?.chainIcon}
+          </div>
         ) : (
-          <Icon fontSize={isXsOrAbove ? 'large' : 'medium'}>podcasts</Icon>
+          <Icon style={{ color: pallet.primaryText }} fontSize={isXsOrAbove ? 'large' : 'medium'}>
+            podcasts
+          </Icon>
         );
     }
-  }, [connectionMetaData, connectionStatus, isXsOrAbove]);
+  }, [connectionMetaData, connectionStatus, isXsOrAbove, pallet]);
 
   return (
     <NetworkIndicatorWrapper as={ButtonBase} onClick={onClick}>

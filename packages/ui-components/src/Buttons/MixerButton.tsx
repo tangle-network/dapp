@@ -34,7 +34,7 @@ const MixerButtonWrapper = styled.button`
   }
 `;
 
-type MixerButtonProps = {
+export type MixerButtonProps = {
   label?: string;
 } & ButtonBaseProps;
 

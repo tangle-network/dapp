@@ -1,13 +1,15 @@
 import { alpha, ButtonBase, Checkbox, InputBase, Typography } from '@material-ui/core';
-import { Currency } from '@webb-dapp/api-providers';
+import { Currency, InternalChainId } from '@webb-dapp/api-providers';
 import { WalletConfig } from '@webb-dapp/api-providers/types';
+import { chainsPopulated, WalletId } from '@webb-dapp/apps/configs';
 import WEBBLogo from '@webb-dapp/apps/configs/logos/chains/WebbLogo';
 import { pageWithFeatures } from '@webb-dapp/react-components/utils/FeaturesGuard/pageWithFeatures';
+import { appEvent } from '@webb-dapp/react-environment/app-event';
 import { useAppConfig, useWebContext } from '@webb-dapp/react-environment/webb-context';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { useModal } from '@webb-dapp/react-hooks/useModal';
 import { SpaceBox } from '@webb-dapp/ui-components/Box';
-import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
+import { MixerButton, MixerButtonProps } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { BalanceLabel } from '@webb-dapp/ui-components/Inputs/BalanceLabel/BalanceLabel';
 import { InputTitle } from '@webb-dapp/ui-components/Inputs/InputTitle/InputTitle';
@@ -92,16 +94,6 @@ const ContributeWrapper = styled.div<{ wallet: WalletConfig | undefined }>`
       padding: 0 2rem;
     `}
   }
-
-  .checkbox-label {
-    padding: 8px;
-    padding-left: 0;
-
-    ${above.xs`
-      padding: 8px 32px;
-      padding-left: 0;
-    `}
-  }
 `;
 
 const MixerButtonWrapper = styled.div`
@@ -156,10 +148,20 @@ const RewardContentWrapper = styled.div`
   }
 `;
 
+const CheckboxWrapper = styled.div<{ disabled: boolean }>`
+  display: flex;
+  padding: 8px 1rem 0px 1rem;
+  opacity: ${({ disabled }) => (disabled ? 0.4 : 1)};
+
+  ${above.xs`
+    padding: 8px 2rem 0px 2rem;
+  `}
+`;
+
 export type PageCrowdloanProps = {};
 
 const PageCrowdloan: FC<PageCrowdloanProps> = () => {
-  const { activeApi, activeChain, activeWallet } = useWebContext();
+  const { activeApi, activeChain, activeWallet, isConnecting } = useWebContext();
   const { amount, contribute, fundInfo, getFundInfo, setAmount } = useCrowdloan();
   const palette = useColorPallet();
   const { currencies: currenciesConfig } = useAppConfig();
@@ -190,15 +192,71 @@ const PageCrowdloan: FC<PageCrowdloanProps> = () => {
   const activeToken = useMemo<Currency | undefined>(() => allCurrencies[0], [allCurrencies]);
   const isFundingEnded = useMemo(() => BigInt(blockNumber) > fundInfo.end, [blockNumber, fundInfo]);
   const allottedRewardsPool = useMemo(() => FixedPointNumber.fromInner(ALLOTTED_REWARDS_POOL, 10), []);
+
   const estReward = useMemo(() => {
     const raised = FixedPointNumber.fromInner(fundInfo.raised.toString(), activeToken?.getDecimals());
     return amount.div(raised).times(allottedRewardsPool);
   }, [amount, fundInfo, activeToken, allottedRewardsPool]);
+
   const confirmText = useMemo(
     () =>
       "Your KSM will be contributed to the crowdloan for Webb's Kusama parachain slot lease and locked for the duration of the lease. If this crowdloan does not win an auction slot, your KSM will be returned.",
     []
   );
+
+  const isConnectedToKusama = useMemo(() => {
+    return activeChain && activeChain.id === InternalChainId.Kusama;
+  }, [activeChain]);
+
+  const buttonProps = useMemo<Pick<MixerButtonProps, 'label' | 'disabled' | 'onClick'>>(() => {
+    if (isConnecting || loading) {
+      return { label: 'Loading...', disabled: true };
+    }
+
+    if (!isConnectedToKusama) {
+      return {
+        label: 'Connect to Kusama network',
+        disabled: false,
+        onClick: async () => {
+          const chainConfig = chainsPopulated[InternalChainId.Kusama];
+          const walletConfig = Object.values(chainConfig.wallets).find((wallet) => wallet.id === WalletId.Polkadot);
+          if (!walletConfig) {
+            return;
+          }
+
+          appEvent.send('switchNetwork', [chainConfig, walletConfig]);
+        },
+      };
+    }
+
+    if (error) {
+      return { label: 'Amount exceeds cap', disabled: true };
+    }
+
+    if (isFundingEnded) {
+      return { label: 'Funding ended', disabled: true };
+    }
+
+    if (!amount || !isConfirmed) {
+      return {
+        label: 'Contribute',
+        disabled: true,
+      };
+    }
+
+    return {
+      label: 'Contribute',
+      disabled: false,
+      onClick: async () => {
+        try {
+          setLoading(true);
+          await contribute();
+        } finally {
+          setLoading(false);
+        }
+      },
+    };
+  }, [isConnecting, isConnectedToKusama, error, isFundingEnded, amount, isConfirmed, loading, contribute]);
 
   // Get balance of token
   useEffect(() => {
@@ -254,7 +312,7 @@ const PageCrowdloan: FC<PageCrowdloanProps> = () => {
               fullWidth
               value={displayedAmount}
               inputProps={{ style: { fontSize: 14, cursor: isFundingEnded ? 'no-drop' : 'auto' } }}
-              onChange={(event) => {
+              onChange={async (event) => {
                 setDisplayedAmount(event.target.value);
                 let maybeNumber = Number(event.target.value);
                 const decimal = activeToken?.getDecimals();
@@ -318,35 +376,24 @@ const PageCrowdloan: FC<PageCrowdloanProps> = () => {
             </Flex>
           </RewardWrapper>
 
-          <Flex row ai='flex-start' style={{ opacity: isFundingEnded ? 0.4 : 1 }}>
+          <CheckboxWrapper disabled={isFundingEnded}>
             <Checkbox
               disabled={isFundingEnded}
               size='medium'
               checked={isConfirmed}
               onChange={() => setIsConfirmed((p) => !p)}
               inputProps={{ 'aria-label': 'controlled' }}
-              style={{ color: palette.accentColor, display: 'block' }}
+              style={{ color: palette.accentColor, display: 'block', padding: 0, paddingRight: '8px' }}
             />
             <Typography display='block' variant='caption' className='checkbox-label'>
               {confirmText}
             </Typography>
-          </Flex>
+          </CheckboxWrapper>
 
           <SpaceBox height={16} />
 
           <MixerButtonWrapper>
-            <MixerButton
-              disabled={loading || !amount || !!error || isFundingEnded || !isConfirmed}
-              label={error ? 'Amount exceeds cap' : isFundingEnded ? 'Funding ended' : 'Contribute'}
-              onClick={async () => {
-                try {
-                  setLoading(true);
-                  await contribute();
-                } finally {
-                  setLoading(false);
-                }
-              }}
-            />
+            <MixerButton {...buttonProps} />
           </MixerButtonWrapper>
         </ContributeWrapper>
       </PageCrowdloanWrapper>

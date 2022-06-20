@@ -36,24 +36,24 @@ export function useCrowdloan() {
     return crowdloanApi;
   }, [activeApi]);
 
-  const contribute = useCallback(() => {
+  const contribute = useCallback(async () => {
     if (!amount || !crowdloanApi?.enabled) {
       return;
     }
 
-    crowdloanApi?.inner.contribute({
+    await crowdloanApi?.inner.contribute({
       // TODO: Change to proper parachain ID
       parachainId: 2121,
       amount,
     });
   }, [crowdloanApi, amount]);
 
-  const getFundInfo = useCallback(() => {
+  const getFundInfo = useCallback(async () => {
     if (!crowdloanApi?.enabled) {
       return;
     }
 
-    crowdloanApi?.inner.getFundInfo(2121).then((fundInfo) => {
+    await crowdloanApi?.inner.getFundInfo(2121).then((fundInfo) => {
       setFundInfo(fundInfo);
     });
   }, [crowdloanApi]);
