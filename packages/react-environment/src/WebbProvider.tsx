@@ -541,14 +541,33 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
 
   /// a util will store the network/wallet config before switching
   const switchChainAndStore = async (chain: Chain, wallet: Wallet) => {
-    const provider = await switchChain(chain, wallet);
-    if (provider && networkStorage) {
-      await Promise.all([
-        networkStorage.set('defaultNetwork', chain.id),
-        networkStorage.set('defaultWallet', wallet.id),
-      ]);
+    setIsConnecting(true);
+
+    try {
+      const provider = await switchChain(chain, wallet);
+      /** TODO: `networkStorage` can be `null` here.
+       * Suggestion: use `useRef` instead of `useState`
+       * for the `networkStorage` because state update asynchronous
+       * */
+      const _networkStorage = networkStorage ?? (await netStorageFactory());
+      if (provider && _networkStorage) {
+        await Promise.all([
+          _networkStorage.set('defaultNetwork', chain.id),
+          _networkStorage.set('defaultWallet', wallet.id),
+        ]);
+      }
+
+      notificationApi({
+        message: 'Web3: changed the connected network',
+        variant: 'info',
+        Icon: React.createElement(Icon, null, ['leak_add']),
+        secondaryMessage: `Connection is switched to ${chain.name} chain`,
+      });
+
+      return provider;
+    } finally {
+      setIsConnecting(false);
     }
-    return provider;
   };
 
   useEffect(() => {
