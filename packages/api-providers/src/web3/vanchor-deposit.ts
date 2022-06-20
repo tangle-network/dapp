@@ -112,11 +112,12 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
       exponentiation: '5',
       hashFunction: 'Poseidon',
       protocol: 'vanchor',
-      secrets:
-        `${toFixedHex(destination, 8).substring(2)}:` +
-        `${toFixedHex(depositOutputUtxo.amount).substring(2)}:` +
-        `${toFixedHex(keypair.privkey).substring(2)}:` +
-        `${depositOutputUtxo.blinding}`,
+      secrets: [
+        toFixedHex(destination, 8).substring(2),
+        toFixedHex(depositOutputUtxo.amount).substring(2),
+        toFixedHex(keypair.privkey).substring(2),
+        depositOutputUtxo.blinding,
+      ].join(':'),
       sourceChain: sourceChainId.toString(),
       sourceIdentifyingData: srcAddress!,
       targetChain: destination.toString(),
