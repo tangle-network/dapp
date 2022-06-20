@@ -1,5 +1,5 @@
-import { alpha, ButtonBase, Checkbox, Icon, InputBase, Typography } from '@material-ui/core';
-import { ChainType, Currency, InternalChainId } from '@webb-dapp/api-providers';
+import { alpha, ButtonBase, Checkbox, InputBase, Typography } from '@material-ui/core';
+import { Currency, InternalChainId } from '@webb-dapp/api-providers';
 import { WalletConfig } from '@webb-dapp/api-providers/types';
 import { chainsPopulated, WalletId } from '@webb-dapp/apps/configs';
 import WEBBLogo from '@webb-dapp/apps/configs/logos/chains/WebbLogo';
@@ -14,12 +14,11 @@ import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { BalanceLabel } from '@webb-dapp/ui-components/Inputs/BalanceLabel/BalanceLabel';
 import { InputTitle } from '@webb-dapp/ui-components/Inputs/InputTitle/InputTitle';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
-import { notificationApi } from '@webb-dapp/ui-components/notification';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { getRoundedAmountString } from '@webb-dapp/ui-components/utils';
 import { above, useBreakpoint } from '@webb-dapp/ui-components/utils/responsive-utils';
 import { FixedPointNumber } from '@webb-tools/sdk-core';
-import React, { FC, Fragment, useEffect, useMemo, useState } from 'react';
+import { FC, Fragment, useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
 import { useCrowdloan } from './hooks/useCrowdloan';
@@ -95,16 +94,6 @@ const ContributeWrapper = styled.div<{ wallet: WalletConfig | undefined }>`
       padding: 0 2rem;
     `}
   }
-
-  .checkbox-label {
-    padding: 8px;
-    padding-left: 0;
-
-    ${above.xs`
-      padding: 8px 32px;
-      padding-left: 0;
-    `}
-  }
 `;
 
 const MixerButtonWrapper = styled.div`
@@ -159,6 +148,16 @@ const RewardContentWrapper = styled.div`
   }
 `;
 
+const CheckboxWrapper = styled.div<{ disabled: boolean }>`
+  display: flex;
+  padding: 8px 1rem 0px 1rem;
+  opacity: ${({ disabled }) => (disabled ? 0.4 : 1)};
+
+  ${above.xs`
+    padding: 8px 2rem 0px 2rem;
+  `}
+`;
+
 export type PageCrowdloanProps = {};
 
 const PageCrowdloan: FC<PageCrowdloanProps> = () => {
@@ -181,7 +180,6 @@ const PageCrowdloan: FC<PageCrowdloanProps> = () => {
   const [blockNumber, setBlockNumber] = useState(0);
   const [tokenBalance, setTokenBalance] = useState(0);
   const [isConfirmed, setIsConfirmed] = useState(false);
-  const [isConnectingToKusama, setIsConnectingToKusama] = useState(false);
 
   const allCurrencies = useMemo(() => {
     return activeChain
@@ -211,7 +209,7 @@ const PageCrowdloan: FC<PageCrowdloanProps> = () => {
   }, [activeChain]);
 
   const buttonProps = useMemo<Pick<MixerButtonProps, 'label' | 'disabled' | 'onClick'>>(() => {
-    if (isConnecting || isConnectingToKusama || loading) {
+    if (isConnecting || loading) {
       return { label: 'Loading...', disabled: true };
     }
 
@@ -258,17 +256,7 @@ const PageCrowdloan: FC<PageCrowdloanProps> = () => {
         }
       },
     };
-  }, [
-    isConnecting,
-    isConnectingToKusama,
-    isConnectedToKusama,
-    error,
-    isFundingEnded,
-    amount,
-    isConfirmed,
-    loading,
-    contribute,
-  ]);
+  }, [isConnecting, isConnectedToKusama, error, isFundingEnded, amount, isConfirmed, loading, contribute]);
 
   // Get balance of token
   useEffect(() => {
@@ -388,19 +376,19 @@ const PageCrowdloan: FC<PageCrowdloanProps> = () => {
             </Flex>
           </RewardWrapper>
 
-          <Flex row ai='flex-start' style={{ opacity: isFundingEnded ? 0.4 : 1 }}>
+          <CheckboxWrapper disabled={isFundingEnded}>
             <Checkbox
               disabled={isFundingEnded}
               size='medium'
               checked={isConfirmed}
               onChange={() => setIsConfirmed((p) => !p)}
               inputProps={{ 'aria-label': 'controlled' }}
-              style={{ color: palette.accentColor, display: 'block' }}
+              style={{ color: palette.accentColor, display: 'block', padding: 0, paddingRight: '8px' }}
             />
             <Typography display='block' variant='caption' className='checkbox-label'>
               {confirmText}
             </Typography>
-          </Flex>
+          </CheckboxWrapper>
 
           <SpaceBox height={16} />
 
