@@ -5,18 +5,24 @@
 
 import type { WebbWeb3Provider } from './webb-provider';
 
-import { Note } from '@webb-tools/sdk-core';
-import { JsNote as DepositNote } from '@webb-tools/wasm-utils';
+import { CircomUtxo, Keypair, MerkleTree, Note, randomBN, Utxo } from '@webb-tools/sdk-core';
+import { BigNumber, ContractReceipt, ethers } from 'ethers';
 
-import { AnchorApi, VAnchorWithdraw, WithdrawState } from '../abstracts';
-import { ChainType, computeChainIdType, evmIdIntoInternalChainId } from '../chains';
-import { utxoFromVAnchorNote } from '../contracts/utils/make-deposit';
-import { BridgeConfig } from '../types';
+import { hexToU8a, u8aToHex } from '@polkadot/util';
+
+import { AnchorApi, VAnchorWithdraw, VAnchorWithdrawPayload, WebbRelayer, WithdrawState } from '../abstracts';
+import { ChainType, computeChainIdType, evmIdIntoInternalChainId, parseChainIdType } from '../chains';
+import { generateCircomCommitment, utxoFromVAnchorNote, VAnchorContract } from '../contracts/wrappers';
+import { Web3Provider } from '../ext-providers/web3/web3-provider';
+import { fetchVariableAnchorKeyForEdges, fetchVariableAnchorWasmForEdges } from '../ipfs/evm/anchors';
+import { Storage } from '../storage';
+import { BridgeConfig } from '../types/bridge-config.interface';
 import {
   BridgeStorage,
   bridgeStorageFactory,
   getAnchorDeploymentBlockNumber,
   getEVMChainNameFromInternal,
+  keypairStorageFactory,
 } from '../utils';
 
 export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
@@ -28,15 +34,55 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
     return this.inner.config;
   }
 
-  // Same chain ('mixer') withdraw flow.
-  // 1. Fetch all of the leaves (stored and new from relayer / inner provider querying)
-  // 2. Connect and update a new protocol-solidity Anchor instance with all of the leaves.
-  //
-  // If relayer is selected:
-  //    Use Anchor instance methods to generate proof and initiate relayed withdraw flow.
-  // If no relayer is selected:
-  //    Use Anchor instance 'withdraw' method.
-  async sameChainWithdraw(note: DepositNote, recipient: string): Promise<string> {
+  /**
+   * This routine queries the passed relayers for the leaves of an anchor instance on an evm chain.
+   * It validates the leaves with on-chain data, and saves to the storage once validated.
+   * An array of leaves is returned if validated, otherwise null is returned.
+   * @param relayers - A list of relayers
+   * @param sourceContract - A VAnchorContract wrapper for EVM chains.
+   */
+  async fetchLeavesFromRelayers(
+    relayers: WebbRelayer[],
+    sourceContract: VAnchorContract,
+    storage: Storage<BridgeStorage>
+  ): Promise<string[] | null> {
+    let leaves: string[] = [];
+    const sourceEvmId = await sourceContract.getEvmId();
+
+    // loop through the sourceRelayers to fetch leaves
+    for (let i = 0; i < relayers.length; i++) {
+      const relayerLeaves = await relayers[i].getLeaves(sourceEvmId, sourceContract.inner.address);
+
+      const validLatestLeaf = await sourceContract.leafCreatedAtBlock(
+        relayerLeaves.leaves[relayerLeaves.leaves.length - 1],
+        relayerLeaves.lastQueriedBlock
+      );
+
+      // leaves from relayer somewhat validated, attempt to build the tree
+      if (validLatestLeaf) {
+        // Assume the destination anchor has the same levels as source anchor
+        const levels = await sourceContract.inner.levels();
+        const tree = MerkleTree.createTreeWithRoot(levels, relayerLeaves.leaves, await sourceContract.getLastRoot());
+
+        // If we were able to build the tree, set local storage and break out of the loop
+        if (tree) {
+          leaves = relayerLeaves.leaves;
+
+          await storage.set(sourceContract.inner.address.toLowerCase(), {
+            lastQueriedBlock: relayerLeaves.lastQueriedBlock,
+            leaves: relayerLeaves.leaves,
+          });
+
+          return leaves;
+        }
+      }
+    }
+
+    return null;
+  }
+
+  // TODO: Implement relayer leaf fetching, relayer fee calculations
+  async withdraw(notes: string[], recipient: string, amount: string): Promise<VAnchorWithdrawPayload> {
     this.cancelToken.cancelled = false;
 
     const activeBridge = this.bridgeApi.activeBridge;
@@ -45,73 +91,166 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
       throw new Error('No activeBridge set on the web3 anchor api');
     }
 
-    // Parse the intended target address for the note
-    const activeChain = await this.inner.getChainId();
-    const internalId = evmIdIntoInternalChainId(activeChain);
-
     const anchorConfigsForBridge = activeBridge.anchors.find((anchor) => anchor.type === 'variable')!;
-    const contractAddress = anchorConfigsForBridge.anchorAddresses[internalId]!;
-
-    // create the Anchor instance
-    const contract = await this.inner.getVariableAnchorByAddress(contractAddress);
-
-    // initialize the VAnchor Wrapper from protocol solidity.
-    await contract.initializeWrapper();
-
-    // If something went wrong initializing the wrapper, throw an error
-    if (!contract.wrapper) {
-      throw new Error('Issue initializing wrapper');
-    }
-
-    // Fetch the leaves that we already have in storage
-    const bridgeStorageStorage = await bridgeStorageFactory(Number(note.sourceChainId));
-    const storedContractInfo: BridgeStorage[0] = (await bridgeStorageStorage.get(contractAddress.toLowerCase())) || {
-      lastQueriedBlock:
-        getAnchorDeploymentBlockNumber(computeChainIdType(ChainType.EVM, activeChain), contractAddress) || 0,
-      leaves: [] as string[],
-    };
-
-    let allLeaves: string[] = [];
-
-    // Fetch the new leaves - from a relayer or from the chain directly.
-    // TODO: Fetch the leaves from the relayer
-    // eslint-disable-next-line no-constant-condition
-    if (/* this.activeRelayer */ false) {
-      // fetch the new leaves (all leaves) from the relayer
-    } else {
-      // fetch the new leaves from on-chain
-      const depositLeaves = await contract.getDepositLeaves(
-        storedContractInfo.lastQueriedBlock,
-        await this.inner.getBlockNumber()
-      );
-
-      allLeaves = [...storedContractInfo.leaves, ...depositLeaves.newLeaves];
-    }
-
-    console.log('first entry in all leaves: ', allLeaves[0]);
-
-    // Fetch the information for public inputs into the proof
-    const accounts = await this.inner.accounts.accounts();
-    const account = accounts[0];
-
-    // Fetch the information for private inputs into the proof
-    const depositUtxo = await utxoFromVAnchorNote(note);
-    const depositCommitment = depositUtxo.getCommitment();
-    const leafIndex = allLeaves.findIndex((commitment) => commitment === depositCommitment.toHexString());
-
-    console.log('leafIndex: ', leafIndex);
-
-    depositUtxo.index = leafIndex;
-
-    // Give the anchor wrapper the fetched leaves
-    const successfulSet = await contract.wrapper.setWithLeaves(allLeaves);
-
-    console.log('After attempting to set the leaves on achor wrapper: ', successfulSet);
 
     const section = `Bridge ${Object.keys(anchorConfigsForBridge.anchorAddresses)
       .map((id) => getEVMChainNameFromInternal(this.config, Number(id)))
       .join('-')}`;
     const key = 'web3-vbridge-withdraw';
+    this.inner.notificationHandler({
+      description: 'Withdraw in progress',
+      key,
+      level: 'loading',
+      message: `${section}:withdraw`,
+      name: 'Transaction',
+    });
+
+    // set the destination contract
+    const activeChain = await this.inner.getChainId();
+    const destChainIdType = computeChainIdType(ChainType.EVM, activeChain);
+    const internalId = evmIdIntoInternalChainId(activeChain);
+    const destAddress = anchorConfigsForBridge.anchorAddresses[internalId]!;
+    const destVAnchor = await this.inner.getVariableAnchorByAddress(destAddress);
+    const treeHeight = await destVAnchor._contract.levels();
+
+    // Create the proving manager - zk fixtures are fetched depending on the contract
+    // max edges as well as the number of input notes.
+    let wasmBuffer: Uint8Array;
+    let provingKey: Uint8Array;
+
+    this.emit('stateChange', WithdrawState.FetchingFixtures);
+
+    const maxEdges = await destVAnchor.inner.maxEdges();
+    if (notes.length > 2) {
+      provingKey = await fetchVariableAnchorKeyForEdges(maxEdges, false);
+      wasmBuffer = await fetchVariableAnchorWasmForEdges(maxEdges, false);
+    } else {
+      provingKey = await fetchVariableAnchorKeyForEdges(maxEdges, true);
+      wasmBuffer = await fetchVariableAnchorWasmForEdges(maxEdges, true);
+    }
+
+    // Loop through the notes and populate the leaves map
+    const leavesMap: Record<string, Uint8Array[]> = {};
+
+    // Keep track of the leafindices for each note
+    const leafIndices: number[] = [];
+
+    // calculate the sum of input notes (for calculating the change utxo)
+    let sumInputNotes: BigNumber = BigNumber.from(0);
+
+    // Create input UTXOs for convenience calculations
+    let inputUtxos: Utxo[] = [];
+
+    // For all notes, get any leaves
+    this.emit('stateChange', WithdrawState.FetchingLeaves);
+    for (const note of notes) {
+      const parsedNote = (await Note.deserialize(note)).note;
+      sumInputNotes = ethers.utils.parseUnits(parsedNote.amount, parsedNote.denomination).add(sumInputNotes);
+
+      // fetch leaves if we don't have them
+      if (leavesMap[parsedNote.sourceChainId] === undefined) {
+        // Set up a provider for the source chain
+        const sourceAddress = parsedNote.sourceIdentifyingData;
+        const sourceChainIdType = parseChainIdType(Number(parsedNote.sourceChainId));
+        const sourceInternalId = evmIdIntoInternalChainId(sourceChainIdType.chainId);
+        const sourceChainConfig = this.config.chains[sourceInternalId];
+        const sourceHttpProvider = Web3Provider.fromUri(sourceChainConfig.url);
+        const sourceEthers = sourceHttpProvider.intoEthersProvider();
+        const sourceVAnchor = await this.inner.getVariableAnchorByAddressAndProvider(sourceAddress, sourceEthers);
+        const leafStorage = await bridgeStorageFactory(Number(parsedNote.sourceChainId));
+
+        // check if we already cached some values.
+        const storedContractInfo: BridgeStorage[0] = (await leafStorage.get(sourceAddress.toLowerCase())) || {
+          lastQueriedBlock: getAnchorDeploymentBlockNumber(Number(parsedNote.sourceChainId), sourceAddress) || 0,
+          leaves: [] as string[],
+        };
+
+        const leavesFromChain = await sourceVAnchor.getDepositLeaves(storedContractInfo.lastQueriedBlock + 1, 0);
+
+        leavesMap[parsedNote.sourceChainId] = [...storedContractInfo.leaves, ...leavesFromChain.newLeaves].map(
+          (leaf) => {
+            return hexToU8a(leaf);
+          }
+        );
+      }
+
+      let destHistorySourceRoot: string;
+
+      // Get the latest root that has been relayed from the source chain to the destination chain
+      if (parsedNote.sourceChainId === parsedNote.targetChainId) {
+        const destRoot = await destVAnchor.inner.getLastRoot();
+        destHistorySourceRoot = destRoot;
+      } else {
+        const edgeIndex = await destVAnchor.inner.edgeIndex(parsedNote.sourceChainId);
+        const edge = await destVAnchor.inner.edgeList(edgeIndex);
+        destHistorySourceRoot = edge[1];
+      }
+
+      const testMerkleTree = new MerkleTree(
+        treeHeight,
+        leavesMap[parsedNote.sourceChainId].map((leaf) => u8aToHex(leaf))
+      );
+
+      console.log('root of recreated merkle tree', testMerkleTree.root().toHexString());
+
+      // Remove leaves from the leaves map which have not yet been relayed
+      const provingTree = MerkleTree.createTreeWithRoot(
+        treeHeight,
+        leavesMap[parsedNote.sourceChainId].map((leaf) => u8aToHex(leaf)),
+        destHistorySourceRoot
+      );
+      if (!provingTree) {
+        console.log('fetched leaves do not match bridged anchor state');
+        throw new Error('fetched leaves do not match bridged anchor state');
+      }
+      const provingLeaves = provingTree.elements().map((el) => hexToU8a(el.toHexString()));
+      leavesMap[parsedNote.sourceChainId] = provingLeaves;
+      const commitment = generateCircomCommitment(parsedNote);
+      const leafIndex = provingTree.getIndexByElement(commitment);
+      leafIndices.push(leafIndex);
+
+      const utxo = await utxoFromVAnchorNote(parsedNote, leafIndex);
+      inputUtxos.push(utxo);
+    }
+
+    const randomKeypair = new Keypair();
+
+    // Add default input notes if required
+    while (inputUtxos.length !== 2 && inputUtxos.length < 16) {
+      inputUtxos.push(
+        await CircomUtxo.generateUtxo({
+          curve: 'Bn254',
+          backend: 'Circom',
+          chainId: destChainIdType.toString(),
+          originChainId: destChainIdType.toString(),
+          amount: '0',
+          blinding: hexToU8a(randomBN(31).toHexString()),
+          keypair: randomKeypair,
+        })
+      );
+    }
+
+    // Populate the leaves if not already populated.
+    if (!leavesMap[destChainIdType.toString()]) {
+      const leafStorage = await bridgeStorageFactory(destChainIdType);
+
+      // check if we already cached some values.
+      const storedContractInfo: BridgeStorage[0] = (await leafStorage.get(destAddress.toLowerCase())) || {
+        lastQueriedBlock: getAnchorDeploymentBlockNumber(destChainIdType, destAddress) || 0,
+        leaves: [] as string[],
+      };
+
+      const leavesFromChain = await destVAnchor.getDepositLeaves(storedContractInfo.lastQueriedBlock + 1, 0);
+
+      // Only populate the leaves map if there are actually leaves to populate.
+      if (leavesFromChain.newLeaves.length != 0 || storedContractInfo.leaves.length != 0) {
+        leavesMap[destChainIdType.toString()] = [...storedContractInfo.leaves, ...leavesFromChain.newLeaves].map(
+          (leaf) => {
+            return hexToU8a(leaf);
+          }
+        );
+      }
+    }
 
     // Check for cancelled here, abort if it was set.
     if (this.cancelToken.cancelled) {
@@ -124,29 +263,91 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
       });
       this.emit('stateChange', WithdrawState.Ideal);
 
-      return '';
+      return {
+        txHash: '',
+        changeNotes: [],
+      };
     }
+
+    // Retrieve the user's keypair
+    const keypairStorage = await keypairStorageFactory();
+    const storedPrivateKey = await keypairStorage.get('keypair');
+    const keypair = new Keypair(storedPrivateKey.keypair);
+
+    // Create the output UTXOs
+    const changeAmount = sumInputNotes.sub(ethers.utils.parseEther(amount));
+    const changeUtxo = await CircomUtxo.generateUtxo({
+      curve: 'Bn254',
+      backend: 'Circom',
+      amount: changeAmount.toString(),
+      chainId: destChainIdType.toString(),
+      privateKey: hexToU8a(storedPrivateKey.keypair),
+      keypair,
+      originChainId: destChainIdType.toString(),
+    });
+
+    const dummyUtxo = await CircomUtxo.generateUtxo({
+      curve: 'Bn254',
+      backend: 'Circom',
+      amount: '0',
+      chainId: destChainIdType.toString(),
+      keypair,
+    });
+    const outputUtxos = [changeUtxo, dummyUtxo];
+
+    let extAmount = BigNumber.from(0)
+      .add(outputUtxos.reduce((sum: BigNumber, x: Utxo) => sum.add(x.amount), BigNumber.from(0)))
+      .sub(inputUtxos.reduce((sum: BigNumber, x: Utxo) => sum.add(x.amount), BigNumber.from(0)));
 
     this.emit('stateChange', WithdrawState.GeneratingZk);
 
-    let txHash = '';
+    const { extData, outputNotes, publicInputs } = await destVAnchor.setupTransaction(
+      inputUtxos,
+      [changeUtxo, dummyUtxo],
+      extAmount,
+      0,
+      recipient,
+      recipient,
+      leavesMap,
+      provingKey,
+      Buffer.from(wasmBuffer)
+    );
+
+    // Check for cancelled here, abort if it was set.
+    if (this.cancelToken.cancelled) {
+      this.inner.notificationHandler({
+        description: 'Withdraw canceled',
+        key,
+        level: 'error',
+        message: `${section}:withdraw`,
+        name: 'Transaction',
+      });
+      this.emit('stateChange', WithdrawState.Ideal);
+
+      return {
+        txHash: '',
+        changeNotes: [],
+      };
+    }
 
     this.emit('stateChange', WithdrawState.SendingTransaction);
 
-    this.inner.notificationHandler({
-      description: 'Withdraw in progress',
-      key,
-      level: 'loading',
-      message: `${section}:withdraw`,
-      name: 'Transaction',
-    });
+    // Take the proof and send the transaction
+    // TODO: support relayed transaction
+    let receipt: ContractReceipt;
 
     try {
-      const receipt = await contract.wrapper.transact([depositUtxo], [], 0, account.address, account.address);
-
-      txHash = receipt.transactionHash;
+      const tx = await destVAnchor.inner.transact(
+        {
+          ...publicInputs,
+          outputCommitments: [publicInputs.outputCommitments[0], publicInputs.outputCommitments[1]],
+        },
+        extData
+      );
+      receipt = await tx.wait();
     } catch (e) {
       this.emit('stateChange', WithdrawState.Ideal);
+      console.log(e);
 
       this.inner.notificationHandler({
         description: (e as any)?.code === 4001 ? 'Withdraw rejected' : 'Withdraw failed',
@@ -156,8 +357,25 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
         name: 'Transaction',
       });
 
-      return txHash;
+      return {
+        txHash: '',
+        changeNotes: [],
+      };
     }
+
+    // Parse the events for the index of the changeUTXO
+    const hexCommitment = u8aToHex(changeUtxo.commitment);
+
+    const insertedCommitmentEvent = receipt.events?.find(
+      (event) => event.event === 'Insertion' && event.args?.includes(hexCommitment)
+    );
+
+    if (!insertedCommitmentEvent) {
+      throw new Error("Uh oh, we didn't find our commitment in the insertions... inserted garbage");
+    }
+
+    const changeNote: Note = outputNotes.find((note: Note) => generateCircomCommitment(note.note) === hexCommitment)!;
+    changeNote.mutateIndex(insertedCommitmentEvent.args![1].toString());
 
     this.emit('stateChange', WithdrawState.Ideal);
     this.inner.notificationHandler({
@@ -168,31 +386,9 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
       name: 'Transaction',
     });
 
-    return txHash;
-  }
-
-  async crossChainWithdraw(note: DepositNote, recipient: string): Promise<string> {
-    console.log('attempted cross chain withdraw flow with: ', note, recipient);
-
-    return Promise.reject('cross Chain Withdraw Unimplemented');
-  }
-
-  // withdraw determines if the withdraw flow should be cross-chain or the same chain.
-  // The merkle proof is always generated from the source anchor, therefore, a new provider
-  // needs to be constructed in the cross-chain scenario.
-  // Zero knowledge files are fetched in both withdraw flows.
-  async withdraw(notes: string[], recipient: string, amount: string): Promise<string> {
-    // TODO: Parse all input notes and pass to withdraw flows
-    const parseNote = await Note.deserialize(notes[0]);
-
-    console.log('attempt to withdraw: ', amount);
-
-    const depositNote = parseNote.note;
-
-    if (depositNote.sourceChainId === depositNote.targetChainId) {
-      return this.sameChainWithdraw(depositNote, recipient);
-    } else {
-      return this.crossChainWithdraw(depositNote, recipient);
-    }
+    return {
+      txHash: receipt.transactionHash,
+      changeNotes: [changeNote],
+    };
   }
 }

@@ -3,8 +3,7 @@
 
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
 import { LoggerService } from '@webb-tools/app-util';
-import { ArkworksProvingManager as ProvingManager, Note } from '@webb-tools/sdk-core';
-import { ProvingManagerSetupInput } from '@webb-tools/sdk-core/proving/proving-manager-thread';
+import { ArkworksProvingManager, Note, ProvingManagerSetupInput } from '@webb-tools/sdk-core';
 
 import { decodeAddress } from '@polkadot/keyring';
 import { hexToU8a, u8aToHex } from '@polkadot/util';
@@ -89,7 +88,7 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
       logger.trace(leaves.map((i) => u8aToHex(i)));
       const activeRelayer = this.inner.relayerManager.activeRelayer;
       const worker = this.inner.wasmFactory('wasm-utils');
-      const pm = new ProvingManager(worker);
+      const pm = new ArkworksProvingManager(worker);
 
       const recipientAccountHex = u8aToHex(decodeAddress(recipient));
       // ss58 format

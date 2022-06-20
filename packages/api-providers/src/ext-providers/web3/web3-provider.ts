@@ -144,9 +144,7 @@ export class Web3Provider<T = unknown> {
     return this._capabilities;
   }
 
-  enable() {
-    // @ts-ignore
-  }
+  enable() {}
 
   intoEthersProvider() {
     return new ethers.providers.Web3Provider(this.provider as any, 'any');
@@ -156,9 +154,6 @@ export class Web3Provider<T = unknown> {
     try {
       if (this.capabilities.hasSessions) {
         if (this.helperApi instanceof WalletConnectProvider) {
-          // TODO : handle the connector not found type error
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
           await this.helperApi.connector.killSession({
             message: 'Session end error',
           });

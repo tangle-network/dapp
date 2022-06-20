@@ -1,7 +1,7 @@
 import { Button, Typography } from '@material-ui/core';
 import { FeedbackEntry, InteractiveFeedback } from '@webb-dapp/api-providers';
 import { useStore } from '@webb-dapp/react-environment';
-import { CloseIcon } from '@webb-dapp/ui-components';
+import { CloseIconSvg } from '@webb-dapp/ui-components';
 // @ts-ignore
 import NetworksGlobeCircled from '@webb-dapp/ui-components/assets/NetworksGlobeCircled.png';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
@@ -30,19 +30,23 @@ const UnselectedNetworkView: React.FC<UnselectedNetworkViewProps> = ({ activeFee
       <UnselectedNetworkViewWrapper>
         <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-end' }}>
           <Button onClick={() => activeFeedback.cancel()}>
-            <CloseIcon />
+            <CloseIconSvg />
           </Button>
         </div>
         <div>
           <img src={NetworksGlobeCircled} />
         </div>
         <div style={{ maxWidth: '350px' }}>
-          {activeFeedback.feedbackBody.map((entry) => {
+          {activeFeedback.feedbackBody.map((entry, idx) => {
             const key = Object.keys(entry)[0] as keyof FeedbackEntry;
+            const commonProps = {
+              key: `${key}${idx}`,
+            };
+
             switch (key) {
               case 'content':
                 return (
-                  <Padding x={0} v={1}>
+                  <Padding x={0} v={1} {...commonProps}>
                     <Typography className={'text'} style={{ wordWrap: 'break-word' }}>
                       {entry[key]}
                     </Typography>
@@ -50,12 +54,12 @@ const UnselectedNetworkView: React.FC<UnselectedNetworkViewProps> = ({ activeFee
                 );
               case 'header':
                 return (
-                  <Typography variant={'h3'} style={{ wordWrap: 'break-word' }}>
+                  <Typography variant={'h3'} style={{ wordWrap: 'break-word' }} {...commonProps}>
                     {entry[key]}
                   </Typography>
                 );
               case 'any':
-                return entry[key]?.() ?? null;
+                return <div {...commonProps}>{entry[key]?.() ?? null}</div>;
             }
           })}
         </div>

@@ -1,12 +1,16 @@
 import { Icon, IconButton, Typography } from '@material-ui/core';
+import WEBBLogo from '@webb-dapp/apps/configs/logos/chains/WebbLogo';
 import { WebbFullNameLogo } from '@webb-dapp/react-components/assets/WebbFullNameLogo';
 import { useStore, useWebContext } from '@webb-dapp/react-environment';
 import { useDimensions } from '@webb-dapp/react-environment/layout';
 import { WalletSelect } from '@webb-dapp/ui-components/Inputs/WalletSelect/WalletSelect';
 import { NetworkManager } from '@webb-dapp/ui-components/NetworkManger/NetworkManager';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
+import { above, useBreakpoint } from '@webb-dapp/ui-components/utils/responsive-utils';
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
+
+import { ThemeSwitcher } from './ThemeSwitcher';
 
 const AppBarWrapper = styled.div`
   max-height: 65px;
@@ -21,8 +25,7 @@ const AppBarWrapper = styled.div`
 
   background: ${({ theme }) => theme.mainBackground};
   .webb-logo {
-    min-width: 75px;
-    max-width: 75px;
+    width: 75px;
     z-index: 101;
   }
   .div {
@@ -96,6 +99,12 @@ const RightNavigation = styled.div`
   display: flex;
   align-items: center;
   margin-right: 20px;
+
+  .theme-wrapper {
+    ${above.xs`
+      margin-right: 0.5rem;
+    `}
+  }
 `;
 
 type AppBarProps = {
@@ -108,35 +117,50 @@ const AppBar: React.FC<AppBarProps> = ({ toggleSidebarDisplay }) => {
   const isMobile = useMemo(() => {
     return width <= size.sm;
   }, [width, size]);
-  const { pageTitle } = useStore('ui');
+  const { pageTitle, setTheme, theme } = useStore('ui');
+  const { isMdOrAbove } = useBreakpoint();
 
   return isMobile ? (
     <>
       <AppBarWrapper>
         <div className={'webb-logo'}>
-          <WebbFullNameLogo />
+          <WEBBLogo />
         </div>
         <RightNavigation>
           <NetworkManager />
+          <div className='theme-wrapper'>
+            <ThemeSwitcher
+              active={theme === 'dark' ? 'dark' : 'light'}
+              onChange={(next) => {
+                setTheme(next === 'light' ? 'default' : 'dark');
+              }}
+            />
+          </div>
           <IconButton onClick={toggleSidebarDisplay}>
             <Icon>menu</Icon>
           </IconButton>
         </RightNavigation>
       </AppBarWrapper>
       <LowerSection>
-        <Typography variant='h2'>
+        <Typography variant='h3'>
           <b>{pageTitle?.toString()}</b>
         </Typography>
       </LowerSection>
     </>
   ) : (
     <AppBarWrapper>
-      <Typography variant='h2'>
+      <Typography variant={isMdOrAbove ? 'h2' : 'h3'}>
         <b>{pageTitle?.toString()}</b>
       </Typography>
       <RightNavigation>
         <NetworkManager />
         {activeChain && <WalletSelect />}
+        <ThemeSwitcher
+          active={theme === 'dark' ? 'dark' : 'light'}
+          onChange={(next) => {
+            setTheme(next === 'light' ? 'default' : 'dark');
+          }}
+        />
       </RightNavigation>
     </AppBarWrapper>
   );

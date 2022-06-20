@@ -14,7 +14,10 @@ import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { SpaceBox } from '@webb-dapp/ui-components/Box';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { AmountInput } from '@webb-dapp/ui-components/Inputs/AmountInput/AmountInput';
+import { BalanceLabel } from '@webb-dapp/ui-components/Inputs/BalanceLabel/BalanceLabel';
 import { ChainInput } from '@webb-dapp/ui-components/Inputs/ChainInput/ChainInput';
+import { CheckBox } from '@webb-dapp/ui-components/Inputs/CheckBox/CheckBox';
+import { InputTitle } from '@webb-dapp/ui-components/Inputs/InputTitle/InputTitle';
 import { TokenInput } from '@webb-dapp/ui-components/Inputs/TokenInput/TokenInput';
 import CircledArrowRight from '@webb-dapp/ui-components/misc/CircledArrowRight';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
@@ -70,26 +73,12 @@ const TokenInputWrapper = styled.div`
   border: 1px solid ${({ theme }) => theme.borderColor};
   border-bottom: none;
 
-  .titles-and-information {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-  }
-
   .token-dropdown-section {
     display: flex;
     width: 100%;
     justify-content: space-between;
     margin-bottom: 20px;
   }
-`;
-
-const TokenBalance = styled.div`
-  border: 1px solid ${({ theme }) => theme.primaryText};
-  border-radius: 5px;
-  margin-left: 5px;
-  padding: 0 5px;
 `;
 
 type DepositProps = {};
@@ -112,15 +101,6 @@ export const Deposit: React.FC<DepositProps> = () => {
 
   const { setWrappableToken, wrappableToken, wrappableTokens } = useWrapUnwrap();
   const { activeApi, activeChain, activeWallet, chains, loading, switchChain } = useWebContext();
-  const palette = useColorPallet();
-
-  const srcChain = useMemo(() => {
-    if (!activeChain) {
-      return undefined;
-    }
-
-    return activeChain;
-  }, [activeChain]);
 
   useEffect(() => {
     if (!activeChain || !activeApi) {
@@ -159,6 +139,25 @@ export const Deposit: React.FC<DepositProps> = () => {
     }
     return undefined;
   }, [currenciesConfig, wrappableToken]);
+
+  const balance = useMemo(() => {
+    if (showWrappableAssets && wrappableToken && wrappableCurrency) {
+      return `${getRoundedAmountString(Number(wrappableTokenBalance))} ${wrappableCurrency.view.symbol}`;
+    }
+
+    if (!showWrappableAssets && selectedBridgeCurrency) {
+      return `${getRoundedAmountString(Number(wrappedTokenBalance))} ${selectedBridgeCurrency.view.symbol}`;
+    }
+
+    return '-';
+  }, [
+    selectedBridgeCurrency,
+    showWrappableAssets,
+    wrappableCurrency,
+    wrappableToken,
+    wrappableTokenBalance,
+    wrappedTokenBalance,
+  ]);
 
   const parseAndSetAmount = (amount: string): void => {
     setUserAmountInput(amount);
@@ -202,25 +201,18 @@ export const Deposit: React.FC<DepositProps> = () => {
     <DepositWrapper wallet={activeWallet}>
       <RequiredWalletSelection>
         <TokenInputWrapper>
-          <div className='titles-and-information'>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <Typography variant='h6'>
-                <b>TOKEN</b>
-              </Typography>
-            </div>
-            <FormControlLabel
-              label={'Wrap Assets?'}
-              control={
-                <Checkbox
-                  checked={showWrappableAssets}
-                  onChange={() => {
-                    setShowWrappableAssets(!showWrappableAssets);
-                  }}
-                  style={{ color: palette.accentColor }}
-                />
-              }
-            />
-          </div>
+          <InputTitle
+            leftLabel='TOKEN'
+            rightLabel={
+              <CheckBox
+                checked={showWrappableAssets}
+                onChange={() => {
+                  setShowWrappableAssets(!showWrappableAssets);
+                }}
+                label='Wrap Assets?'
+              />
+            }
+          />
           <div className='token-dropdown-section'>
             {showWrappableAssets && (
               <>
@@ -256,37 +248,7 @@ export const Deposit: React.FC<DepositProps> = () => {
         </TokenInputWrapper>
         {selectedBridgeCurrency && (
           <ChainInputWrapper>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-              <div>
-                <Typography variant={'h6'}>
-                  <b>DESTINATION CHAIN</b>
-                </Typography>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center' }}>
-                <div>
-                  <Typography
-                    variant='body2'
-                    style={{ color: palette.type === 'dark' ? palette.accentColor : palette.primaryText }}
-                  >
-                    Your Balance~
-                  </Typography>
-                </div>
-                <TokenBalance>
-                  {showWrappableAssets && wrappableToken && wrappableCurrency && (
-                    <Typography variant='body2'>
-                      <b>
-                        {getRoundedAmountString(Number(wrappableTokenBalance))} {wrappableCurrency.view.symbol}
-                      </b>
-                    </Typography>
-                  )}
-                  {!showWrappableAssets && selectedBridgeCurrency && (
-                    <Typography variant='body2'>
-                      {getRoundedAmountString(Number(wrappedTokenBalance))} {selectedBridgeCurrency?.view.symbol}
-                    </Typography>
-                  )}
-                </TokenBalance>
-              </div>
-            </div>
+            <InputTitle leftLabel='DESTINATION' rightLabel={<BalanceLabel value={balance} />} />
             <div className='chain-dropdown-section'>
               <ChainInput
                 chains={tokenChains}

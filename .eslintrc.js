@@ -29,6 +29,8 @@ module.exports = {
     'react/jsx-closing-bracket-location': 'off',
     'import-newlines/enforce': 'off',
     'brace-style': 'off',
+    'react/jsx-props-no-multi-spaces': 'off',
+    'react/jsx-newline': 'off'
 	},
   overrides: [
     {

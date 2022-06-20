@@ -37,8 +37,15 @@ export const CNavLink = styled(NavLink)<NavLinkProps & { $hasIcon?: boolean }>`
     }
   }
 
-  &:after {
+  &.active:after {
     content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background-color: ${({ theme }) => (theme.type === 'dark' ? theme.accentColor : '#000000')};
+    border-radius: 50% 0px 0px 50%;
   }
 `;
 

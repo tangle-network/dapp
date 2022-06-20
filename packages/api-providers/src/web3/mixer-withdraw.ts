@@ -1,15 +1,22 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { Anchor } from '@webb-tools/anchors';
 import { LoggerService } from '@webb-tools/app-util';
-import { Note } from '@webb-tools/sdk-core';
+import {
+  AnchorPMSetupInput,
+  CircomProvingManager,
+  getFixedAnchorExtDataHash,
+  Note,
+  toFixedHex,
+} from '@webb-tools/sdk-core';
+
+import { hexToU8a } from '@polkadot/util';
 
 import { WithdrawState } from '../abstracts';
 import { evmIdIntoInternalChainId } from '../chains';
+import { depositFromAnchorNote } from '../contracts/wrappers';
 import { fetchFixedAnchorKeyForEdges, fetchFixedAnchorWasmForEdges } from '../ipfs/evm';
-import { getAnchorDeploymentBlockNumber } from '../utils/storage-mock';
-import { BridgeStorage, bridgeStorageFactory, buildFixedWitness, depositFromAnchorNote } from '../';
+import { BridgeStorage, bridgeStorageFactory, getAnchorDeploymentBlockNumber } from '../utils/storage';
 import { Web3AnchorWithdraw } from './anchor-withdraw';
 
 const logger = LoggerService.get('Web3MixerWithdraw');
@@ -52,7 +59,14 @@ export class Web3MixerWithdraw extends Web3AnchorWithdraw {
       name: 'Transaction',
     });
 
+    // Fetch the zero knowledge files required for creating witnesses and verifying.
+    this.emit('stateChange', WithdrawState.FetchingFixtures);
+    const maxEdges = await contract.inner.maxEdges();
+    const wasmBuf = await fetchFixedAnchorWasmForEdges(maxEdges);
+    const circuitKey = await fetchFixedAnchorKeyForEdges(maxEdges);
+
     // Fetch the leaves that we already have in storage
+    this.emit('stateChange', WithdrawState.FetchingLeaves);
     const bridgeStorageStorage = await bridgeStorageFactory(Number(depositNote.sourceChainId));
     const storedContractInfo: BridgeStorage[0] = (await bridgeStorageStorage.get(contractAddress.toLowerCase())) || {
       lastQueriedBlock:
@@ -77,40 +91,29 @@ export class Web3MixerWithdraw extends Web3AnchorWithdraw {
       allLeaves = [...storedContractInfo.leaves, ...depositLeaves.newLeaves];
     }
 
-    // Fetch the information for public inputs into the proof
-    const accounts = await this.inner.accounts.accounts();
-    const account = accounts[0];
-
     // Fetch the information for private inputs into the proof
     const deposit = depositFromAnchorNote(depositNote);
     const leafIndex = allLeaves.findIndex((commitment) => commitment === deposit.commitment);
 
-    // Fetch the zero knowledge files required for creating witnesses and verifying.
-    const maxEdges = await contract.inner.maxEdges();
-    const wasmBuf = await fetchFixedAnchorWasmForEdges(maxEdges);
-    const witnessCalculator = await buildFixedWitness(wasmBuf, {});
-    const circuitKey = await fetchFixedAnchorKeyForEdges(maxEdges);
+    const provingInput: AnchorPMSetupInput = {
+      fee: 0,
+      leafIndex,
+      leaves: allLeaves.map((leaf) => hexToU8a(leaf)),
+      note,
+      provingKey: circuitKey,
+      relayer: recipient,
+      recipient,
+      refreshCommitment: '0',
+      refund: 0,
+      roots: [],
+    };
 
-    // This anchor wrapper from protocol-solidity is used for public inputs generation
-    const anchorWrapper = await Anchor.connect(
-      contractAddress,
-      {
-        wasm: Buffer.from(wasmBuf),
-        witnessCalculator,
-        zkey: circuitKey,
-      },
-      this.inner.getEthersProvider().getSigner()
-    );
+    const treeDepth = await contract.inner.levels();
 
     this.emit('stateChange', WithdrawState.GeneratingZk);
-    const withdrawSetup = await anchorWrapper.setupWithdraw(
-      deposit,
-      leafIndex,
-      account.address,
-      account.address,
-      BigInt(0),
-      0
-    );
+    const pm = new CircomProvingManager(Buffer.from(wasmBuf), treeDepth, null);
+    const proof = await pm.prove('anchor', provingInput);
+    const extDataHash = getFixedAnchorExtDataHash(0, recipient, 0, 0, recipient).toString();
 
     // Check for cancelled here, abort if it was set.
     if (this.cancelToken.cancelled) {
@@ -131,9 +134,24 @@ export class Web3MixerWithdraw extends Web3AnchorWithdraw {
     this.emit('stateChange', WithdrawState.SendingTransaction);
 
     try {
-      const tx = await contract.inner.withdraw(withdrawSetup.publicInputs, withdrawSetup.extData, {
-        gasLimit: '0x5B8D80',
-      });
+      const tx = await contract.inner.withdraw(
+        {
+          proof: proof.proof,
+          _nullifierHash: proof.nullifierHash,
+          _roots: `0x${proof.roots.map((root) => root.slice(2)).join('')}`,
+          _extDataHash: extDataHash,
+        },
+        {
+          _fee: 0,
+          _recipient: recipient,
+          _refreshCommitment: toFixedHex(0),
+          _refund: BigInt(0),
+          _relayer: recipient,
+        },
+        {
+          gasLimit: '0x5B8D80',
+        }
+      );
       const receipt = await tx.wait();
 
       txHash = receipt.transactionHash;

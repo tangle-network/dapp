@@ -1,6 +1,8 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
+import { SignedBlock } from '@polkadot/types/interfaces';
+
 import { ChainQuery } from '../abstracts';
 import { WebbCurrencyId } from '../enums';
 import { InternalChainId } from '..';
@@ -9,6 +11,11 @@ import { WebbPolkadot } from './webb-provider';
 export class PolkadotChainQuery extends ChainQuery<WebbPolkadot> {
   constructor(protected inner: WebbPolkadot) {
     super(inner);
+  }
+
+  async currentBlock(): Promise<number> {
+    const block: SignedBlock = await this.inner.api.rpc.chain.getBlock();
+    return block.block.header.number.toNumber();
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

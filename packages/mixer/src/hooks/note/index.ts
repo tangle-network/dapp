@@ -85,8 +85,6 @@ export const useDepositNote = (value: string): null | Note => {
         const note = await mapNoteV1OrV2ToNoteV2(value);
         setDepositNote(note);
       } catch (e) {
-        console.log('passed value was: ', value);
-        console.log('Error of: ', e);
         setDepositNote(null);
       }
     };

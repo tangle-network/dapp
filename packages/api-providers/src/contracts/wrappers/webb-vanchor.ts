@@ -2,41 +2,92 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable camelcase */
+import type { JsNote } from '@webb-tools/wasm-utils';
 
 import { Log } from '@ethersproject/abstract-provider';
-import { VAnchor as VAnchorWrapper } from '@webb-tools/anchors';
+import { retryPromise } from '@webb-dapp/api-providers/utils/retry-promise';
 import { LoggerService } from '@webb-tools/app-util';
 import { ERC20, ERC20__factory as ERC20Factory, VAnchor, VAnchor__factory } from '@webb-tools/contracts';
 import { IAnchorDepositInfo } from '@webb-tools/interfaces';
-import { MerkleTree } from '@webb-tools/merkle-tree';
-import { Utxo } from '@webb-tools/utils';
-import { BigNumber, BigNumberish, Contract, providers, Signer } from 'ethers';
-
 import {
-  buildVariableWitness,
-  fetchVariableAnchorKeyForEdges,
-  fetchVariableAnchorWasmForEdges,
-  retryPromise,
-} from '../../';
-import { zeroAddress } from '..';
-import { ZKPWebbAnchorInputWithMerkle } from './types';
+  CircomProvingManager,
+  CircomUtxo,
+  FIELD_SIZE,
+  Keypair,
+  MerkleTree,
+  Note,
+  NoteGenInput,
+  ProvingManagerSetupInput,
+  randomBN,
+  toFixedHex,
+  Utxo,
+} from '@webb-tools/sdk-core';
+import { BigNumber, BigNumberish, Contract, ContractTransaction, ethers, providers, Signer } from 'ethers';
 
+import { hexToU8a, u8aToHex } from '@polkadot/util';
+
+import { ChainType, computeChainIdType, keypairStorageFactory } from '../..';
+import { zeroAddress } from '..';
+
+const { poseidon } = require('circomlibjs');
 const logger = LoggerService.get('AnchorContract');
 
 export interface IVariableAnchorPublicInputs {
-  _roots: string;
-  _nullifierHash: string;
-  _refreshCommitment: string;
-  _recipient: string;
-  _relayer: string;
-  _fee: string;
-  _refund: string;
+  proof: string;
+  roots: string;
+  inputNullifiers: string[];
+  outputCommitments: [string, string];
+  publicAmount: string;
+  extDataHash: string;
 }
+
+export async function utxoFromVAnchorNote(note: JsNote, leafIndex: number): Promise<Utxo> {
+  const noteSecretParts = note.secrets.split(':');
+  const chainId = note.targetChainId;
+  const amount = BigNumber.from('0x' + noteSecretParts[1]).toString();
+  const secretKey = '0x' + noteSecretParts[2];
+  const blinding = '0x' + noteSecretParts[3];
+  const originChainId = note.sourceChainId;
+
+  const keypairStorage = await keypairStorageFactory();
+  const storedKeypair = await keypairStorage.get('keypair');
+
+  if (!storedKeypair.keypair) {
+    throw new Error('Cannot withdraw without the configured keypair');
+  }
+
+  const keypair = new Keypair(storedKeypair.keypair);
+
+  return CircomUtxo.generateUtxo({
+    curve: note.curve,
+    backend: note.backend,
+    amount,
+    blinding: hexToU8a(blinding),
+    privateKey: hexToU8a(secretKey),
+    originChainId,
+    chainId,
+    index: leafIndex.toString(),
+    keypair,
+  });
+}
+
+export const generateCircomCommitment = (note: JsNote): string => {
+  const noteSecretParts = note.secrets.split(':');
+  const chainId = BigNumber.from('0x' + noteSecretParts[0]).toString();
+  const amount = BigNumber.from('0x' + noteSecretParts[1]).toString();
+  const secretKey = '0x' + noteSecretParts[2];
+  const blinding = '0x' + noteSecretParts[3];
+
+  const keypair = new Keypair(secretKey);
+
+  const hash = poseidon([chainId, amount, keypair.pubkey, blinding]);
+
+  return BigNumber.from(hash).toHexString();
+};
 
 // The AnchorContract defines useful functions over an anchor that do not depend on zero knowledge.
 export class VAnchorContract {
-  public wrapper: VAnchorWrapper | null = null;
-  private _contract: VAnchor;
+  public _contract: VAnchor;
   private readonly signer: Signer;
 
   constructor(private web3Provider: providers.Web3Provider, address: string, useProvider = false) {
@@ -45,46 +96,34 @@ export class VAnchorContract {
     this._contract = VAnchor__factory.connect(address, useProvider ? this.web3Provider : this.signer);
   }
 
-  get getLastRoot() {
-    return this._contract.getLastRoot();
-  }
-
-  get nextIndex() {
-    return this._contract.nextIndex();
-  }
-
   get inner() {
     return this._contract;
   }
 
-  async initializeWrapper() {
-    if (!this.wrapper) {
-      const maxEdges = await this._contract.maxEdges();
+  async getLastRoot() {
+    return this._contract.getLastRoot();
+  }
 
-      const smallKey = await fetchVariableAnchorKeyForEdges(maxEdges, true);
-      const smallWasm = await fetchVariableAnchorWasmForEdges(maxEdges, true);
-      const smallWitnessCalc = await buildVariableWitness(smallWasm, {});
+  async getNextIndex() {
+    return this._contract.nextIndex();
+  }
 
-      const largeKey = await fetchVariableAnchorKeyForEdges(maxEdges, false);
-      const largeWasm = await fetchVariableAnchorWasmForEdges(maxEdges, false);
-      const largeWitnessCalc = await buildVariableWitness(largeWasm, {});
+  async getEvmId() {
+    return this.web3Provider.getSigner().getChainId();
+  }
 
-      // Get the necessary fixtures for populating the VAnchor wrapper instance.
-      this.wrapper = await VAnchorWrapper.connect(
-        this._contract.address,
-        {
-          wasm: Buffer.from(smallWasm),
-          witnessCalculator: smallWitnessCalc,
-          zkey: smallKey,
-        },
-        {
-          wasm: Buffer.from(largeWasm),
-          witnessCalculator: largeWitnessCalc,
-          zkey: largeKey,
-        },
-        this.web3Provider.getSigner()
-      );
-    }
+  async getChainIdType() {
+    return computeChainIdType(ChainType.EVM, await this.getEvmId());
+  }
+
+  async generateDefaultUtxo(): Promise<Utxo> {
+    return await CircomUtxo.generateUtxo({
+      curve: 'Bn254',
+      backend: 'Circom',
+      amount: '0',
+      chainId: (await this.getChainIdType()).toString(),
+      originChainId: (await this.getChainIdType()).toString(),
+    });
   }
 
   async getWebbToken(): Promise<ERC20> {
@@ -166,41 +205,134 @@ export class VAnchorContract {
 
   // Make a deposit. It will create a zkp and make a tx which will result in the passed utxo
   // being registered on-chain.
-  async deposit(utxo: Utxo) {
-    await this.initializeWrapper();
+  async deposit(
+    utxo: CircomUtxo,
+    leavesMap: Record<string, Uint8Array[]>,
+    provingKey: Uint8Array,
+    circuitWasm: Buffer
+  ): Promise<ContractTransaction> {
+    const sender = await this.signer.getAddress();
+    const sourceChainId = computeChainIdType(ChainType.EVM, await this.signer.getChainId());
 
-    if (!this.wrapper) {
-      throw new Error('Wrapper failed to initialize for VAnchor');
+    // Build up the inputs for proving manager
+    const randomKeypair = new Keypair();
+    const dummyOutputUtxo = await CircomUtxo.generateUtxo({
+      curve: 'Bn254',
+      backend: 'Circom',
+      chainId: sourceChainId.toString(),
+      originChainId: sourceChainId.toString(),
+      amount: '0',
+      keypair: randomKeypair,
+    });
+    const inputs: Utxo[] = [];
+    const outputs: [Utxo, Utxo] = [utxo, dummyOutputUtxo];
+
+    while (inputs.length !== 2 && inputs.length < 16) {
+      inputs.push(
+        await CircomUtxo.generateUtxo({
+          curve: 'Bn254',
+          backend: 'Circom',
+          chainId: sourceChainId.toString(),
+          originChainId: sourceChainId.toString(),
+          amount: '0',
+          blinding: hexToU8a(randomBN(31).toHexString()),
+          keypair: randomKeypair,
+        })
+      );
     }
 
-    const tx = await this.wrapper.transact(
-      [],
-      [utxo],
+    let extAmount = BigNumber.from(0)
+      .add(outputs.reduce((sum: BigNumber, x: Utxo) => sum.add(x.amount), BigNumber.from(0)))
+      .sub(inputs.reduce((sum: BigNumber, x: Utxo) => sum.add(x.amount), BigNumber.from(0)));
+
+    const { extData, publicInputs } = await this.setupTransaction(
+      inputs,
+      outputs,
+      extAmount,
       0,
-      '0x0000000000000000000000000000000000000001',
-      '0x0000000000000000000000000000000000000001'
+      sender,
+      sender,
+      leavesMap,
+      provingKey,
+      circuitWasm
     );
 
-    console.log(tx);
+    // A deposit is meant for the same recipient as signer
+    const tx = await this.inner.transact(
+      {
+        ...publicInputs,
+        outputCommitments: [publicInputs.outputCommitments[0], publicInputs.outputCommitments[1]],
+      },
+      extData
+    );
+
+    return tx;
   }
 
-  async wrapAndDeposit(utxo: Utxo, tokenAddress: string) {
-    await this.initializeWrapper();
+  async wrapAndDeposit(
+    tokenAddress: string,
+    utxo: CircomUtxo,
+    leavesMap: Record<string, Uint8Array[]>,
+    provingKey: Uint8Array,
+    circuitWasm: Buffer
+  ): Promise<ContractTransaction> {
+    const sender = await this.signer.getAddress();
+    const sourceChainId = computeChainIdType(ChainType.EVM, await this.signer.getChainId());
 
-    if (!this.wrapper) {
-      throw new Error('Wrapper failed to initialize for VAnchor');
+    // Build up the inputs for proving manager
+    const randomKeypair = new Keypair();
+    const dummyOutputUtxo = await CircomUtxo.generateUtxo({
+      curve: 'Bn254',
+      backend: 'Circom',
+      chainId: sourceChainId.toString(),
+      originChainId: sourceChainId.toString(),
+      amount: '0',
+      keypair: randomKeypair,
+    });
+    const inputs: Utxo[] = [];
+    const outputs: [Utxo, Utxo] = [utxo, dummyOutputUtxo];
+
+    while (inputs.length !== 2 && inputs.length < 16) {
+      inputs.push(
+        await CircomUtxo.generateUtxo({
+          curve: 'Bn254',
+          backend: 'Circom',
+          chainId: sourceChainId.toString(),
+          originChainId: sourceChainId.toString(),
+          amount: '0',
+          blinding: hexToU8a(randomBN(31).toHexString()),
+          keypair: randomKeypair,
+        })
+      );
     }
 
-    const tx = await this.wrapper.transactWrap(
-      tokenAddress,
-      [],
-      [utxo],
+    let extAmount = BigNumber.from(0)
+      .add(outputs.reduce((sum: BigNumber, x: Utxo) => sum.add(x.amount), BigNumber.from(0)))
+      .sub(inputs.reduce((sum: BigNumber, x: Utxo) => sum.add(x.amount), BigNumber.from(0)));
+
+    const { extData, publicInputs } = await this.setupTransaction(
+      inputs,
+      outputs,
+      extAmount,
       0,
-      '0x0000000000000000000000000000000000000001',
-      '0x0000000000000000000000000000000000000001'
+      sender,
+      sender,
+      leavesMap,
+      provingKey,
+      circuitWasm
     );
 
-    console.log('transactWrap: ', tx);
+    // A deposit is meant for the same recipient as signer
+    const tx = await this.inner.transactWrap(
+      {
+        ...publicInputs,
+        outputCommitments: [publicInputs.outputCommitments[0], publicInputs.outputCommitments[1]],
+      },
+      extData,
+      tokenAddress
+    );
+
+    return tx;
   }
 
   // Verify the leaf occurred at the reported block
@@ -293,11 +425,150 @@ export class VAnchorContract {
     return undefined;
   }
 
-  async withdraw(proof: any, zkp: ZKPWebbAnchorInputWithMerkle, pub: any): Promise<string> {
-    console.log('withdraw not implemented', proof, zkp, pub);
-
-    return 'unimplemented';
+  async getRootsForProof(): Promise<string[]> {
+    const neighborEdges = await this._contract.getLatestNeighborEdges();
+    const neighborRoots = neighborEdges.map((rootData) => {
+      return rootData.root;
+    });
+    let thisRoot = await this._contract.getLastRoot();
+    return [thisRoot, ...neighborRoots];
   }
 
-  /* wrap and unwrap */
+  public async setupTransaction(
+    inputs: Utxo[],
+    outputs: [Utxo, Utxo],
+    extAmount: BigNumberish,
+    fee: BigNumberish,
+    recipient: string,
+    relayer: string,
+    leavesMap: Record<string, Uint8Array[]>,
+    provingKey: Uint8Array,
+    wasmBuffer: Buffer
+  ) {
+    const chainId = computeChainIdType(ChainType.EVM, await this.signer.getChainId());
+    const roots = await this.getRootsForProof();
+
+    // Start creating notes to satisfy vanchor input
+    // Only the sourceChainId and secrets (amount, nullifier, secret, blinding)
+    // is required
+    let inputNotes: Note[] = [];
+    let inputIndices: number[] = [];
+
+    // calculate the sum of input notes (for calculating the public amount)
+    let sumInputNotes: BigNumberish = 0;
+
+    for (const inputUtxo of inputs) {
+      sumInputNotes = BigNumber.from(sumInputNotes).add(inputUtxo.amount);
+
+      // secrets should be formatted as expected in the wasm-utils for note generation
+      const secrets =
+        `${toFixedHex(inputUtxo.chainId, 8).slice(2)}:` +
+        `${toFixedHex(inputUtxo.amount).slice(2)}:` +
+        `${toFixedHex(inputUtxo.secret_key).slice(2)}:` +
+        `${toFixedHex(inputUtxo.blinding).slice(2)}`;
+
+      const token = await this.getWebbToken();
+      const tokenSymbol = await token.symbol();
+
+      const noteInput: NoteGenInput = {
+        amount: inputUtxo.amount.toString(),
+        backend: 'Circom',
+        curve: 'Bn254',
+        denomination: '18', // assumed erc20
+        exponentiation: '5',
+        hashFunction: 'Poseidon',
+        index: inputUtxo.index,
+        protocol: 'vanchor',
+        secrets,
+        sourceChain: inputUtxo.originChainId ? inputUtxo.originChainId.toString() : chainId.toString(),
+        sourceIdentifyingData: '0',
+        targetChain: chainId.toString(),
+        targetIdentifyingData: this.inner.address,
+        tokenSymbol,
+        width: '5',
+      };
+
+      const inputNote = await Note.generateNote(noteInput);
+      inputNotes.push(inputNote);
+      inputIndices.push(inputUtxo.index);
+    }
+
+    const encryptedCommitments: [Uint8Array, Uint8Array] = [
+      hexToU8a(outputs[0].encrypt()),
+      hexToU8a(outputs[1].encrypt()),
+    ];
+
+    console.log(inputNotes);
+
+    const proofInput: ProvingManagerSetupInput<'vanchor'> = {
+      inputNotes,
+      leavesMap,
+      indices: inputIndices,
+      roots: roots.map((root) => hexToU8a(root)),
+      chainId: chainId.toString(),
+      output: outputs,
+      encryptedCommitments,
+      publicAmount: BigNumber.from(extAmount).sub(fee).add(FIELD_SIZE).mod(FIELD_SIZE).toString(),
+      provingKey,
+      relayer: hexToU8a(relayer),
+      recipient: hexToU8a(recipient),
+      extAmount: toFixedHex(BigNumber.from(extAmount)),
+      fee: BigNumber.from(fee).toString(),
+    };
+
+    console.log('proofInput: ', proofInput);
+
+    const levels = await this.inner.levels();
+    const provingManager = new CircomProvingManager(wasmBuffer, levels, null);
+    const proof = await provingManager.prove('vanchor', proofInput);
+
+    const publicInputs: IVariableAnchorPublicInputs = this.generatePublicInputs(
+      proof.proof,
+      roots,
+      inputs,
+      outputs,
+      proofInput.publicAmount,
+      u8aToHex(proof.extDataHash)
+    );
+
+    console.log('publicInputs: ', publicInputs);
+
+    const extData = {
+      recipient: toFixedHex(proofInput.recipient, 20),
+      extAmount: toFixedHex(proofInput.extAmount),
+      relayer: toFixedHex(proofInput.relayer, 20),
+      fee: toFixedHex(proofInput.fee),
+      encryptedOutput1: u8aToHex(proofInput.encryptedCommitments[0]),
+      encryptedOutput2: u8aToHex(proofInput.encryptedCommitments[1]),
+    };
+
+    console.log('extData: ', extData);
+
+    return {
+      extData,
+      publicInputs,
+      outputNotes: proof.outputNotes,
+    };
+  }
+
+  public generatePublicInputs(
+    proof: any,
+    roots: string[],
+    inputs: Utxo[],
+    outputs: Utxo[],
+    publicAmount: BigNumberish,
+    extDataHash: string
+  ): IVariableAnchorPublicInputs {
+    // public inputs to the contract
+    const args: IVariableAnchorPublicInputs = {
+      proof: `0x${proof}`,
+      roots: `0x${roots.map((x) => toFixedHex(x).slice(2)).join('')}`,
+      inputNullifiers: inputs.map((x) => toFixedHex(x.nullifier)),
+      outputCommitments: [toFixedHex(u8aToHex(outputs[0].commitment)), toFixedHex(u8aToHex(outputs[1].commitment))],
+      publicAmount: toFixedHex(publicAmount),
+      extDataHash: toFixedHex(extDataHash),
+    };
+
+    return args;
+  }
 }

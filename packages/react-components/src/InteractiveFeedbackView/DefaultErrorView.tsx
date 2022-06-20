@@ -20,8 +20,9 @@ type DefaultErrorViewProps = {
 
 const DefaultErrorView: React.FC<DefaultErrorViewProps> = ({ activeFeedback }) => {
   const pallet = useColorPallet();
+
   const actions = useMemo(() => {
-    return Object.keys(activeFeedback.actions).map((name) => (
+    return Object.keys(activeFeedback.actions).map((name, idx) => (
       <Button
         style={{
           fontSize: '.9rem',
@@ -31,42 +32,52 @@ const DefaultErrorView: React.FC<DefaultErrorViewProps> = ({ activeFeedback }) =
         onClick={() => {
           activeFeedback?.trigger(name);
         }}
+        key={`${name}${idx}`}
       >
         {name}
       </Button>
     ));
   }, [activeFeedback, pallet]);
+
   const elements = useMemo(() => {
-    return activeFeedback.feedbackBody.map((entry) => {
+    return activeFeedback.feedbackBody.map((entry, idx) => {
       const key = Object.keys(entry)[0] as keyof FeedbackEntry;
+      const commonProps = {
+        key: `${key}${idx}`,
+      };
+
       switch (key) {
         case 'content':
           return (
-            <Padding x={0} v={0.5}>
+            <Padding x={0} v={0.5} {...commonProps}>
               <Typography className={'text'}>{entry[key]}</Typography>
             </Padding>
           );
+
         case 'json':
           return (
-            <Typography className={'text'}>
+            <Typography className={'text'} {...commonProps}>
               <pre>{entry[key]}</pre>
             </Typography>
           );
+
         case 'header':
           return (
-            <Typography variant={'h3'}>
+            <Typography variant={'h3'} {...commonProps}>
               <pre>{entry[key]}</pre>
             </Typography>
           );
+
         case 'any':
-          return entry[key]?.() ?? null;
+          return <div {...commonProps}>{entry[key]?.() ?? null}</div>;
+
         case 'list':
           return (
-            <Padding x={2.5} v={0.25}>
+            <Padding x={2.5} v={0.25} {...commonProps}>
               <ul>
                 {entry[key]?.map((entry) => {
                   return (
-                    <li>
+                    <li key={entry}>
                       <Typography className={'text'}>{entry}</Typography>
                     </li>
                   );

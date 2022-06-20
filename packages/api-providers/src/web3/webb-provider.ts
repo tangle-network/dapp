@@ -5,6 +5,7 @@ import { EventBus } from '@webb-tools/app-util';
 import { providers } from 'ethers';
 import { Eth } from 'web3-eth';
 
+import { RelayChainMethods } from '../abstracts';
 import { AccountsAdapter } from '../account/Accounts.adapter';
 import { evmIdIntoInternalChainId } from '../chains';
 import { AnchorContract } from '../contracts/wrappers';
@@ -33,6 +34,7 @@ export class WebbWeb3Provider
   implements WebbApiProvider<WebbWeb3Provider>
 {
   readonly methods: WebbMethods<WebbWeb3Provider>;
+  readonly relayChainMethods: RelayChainMethods<WebbApiProvider<WebbWeb3Provider>> | null;
   private ethersProvider: providers.Web3Provider;
   // TODO: make the factory configurable if the web3 interface in need of this functionality
   readonly wasmFactory = () => {
@@ -49,7 +51,8 @@ export class WebbWeb3Provider
   ) {
     super();
     this.ethersProvider = web3Provider.intoEthersProvider();
-
+    // There are no relay chain methods for Web3 chains
+    this.relayChainMethods = null;
     this.methods = {
       anchorApi: new Web3AnchorApi(this, this.config.bridgeByAsset),
       chainQuery: new Web3ChainQuery(this),
@@ -110,6 +113,16 @@ export class WebbWeb3Provider
     this.ethersProvider.provider?.on?.('chainChanged', handler);
   }
 
+  async setAccountListener() {
+    const handler = async () => {
+      this.emit('newAccounts', this.accounts);
+    };
+
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    this.ethersProvider.provider?.on?.('accountsChanged', handler);
+  }
+
   async destroy(): Promise<void> {
     await this.endSession();
     this.subscriptions = {
@@ -141,6 +154,10 @@ export class WebbWeb3Provider
 
   getFixedAnchorByAddressAndProvider(address: string, provider: providers.Web3Provider): AnchorContract {
     return new AnchorContract(provider, address, true);
+  }
+
+  getVariableAnchorByAddressAndProvider(address: string, provider: providers.Web3Provider): VAnchorContract {
+    return new VAnchorContract(provider, address, true);
   }
 
   getEthersProvider(): providers.Web3Provider {

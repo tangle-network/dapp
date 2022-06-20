@@ -21,7 +21,7 @@ export const anchorsConfig: AppConfig['anchors'] = {
     {
       amount: '10',
       anchorTreeIds: {
-        [InternalChainId.ProtocolSubstrateStandalone]: '3',
+        [InternalChainId.ProtocolSubstrateStandalone]: '5',
       },
       anchorAddresses: {},
       type: 'fixed',
@@ -29,7 +29,7 @@ export const anchorsConfig: AppConfig['anchors'] = {
     {
       amount: '100',
       anchorTreeIds: {
-        [InternalChainId.ProtocolSubstrateStandalone]: '4',
+        [InternalChainId.ProtocolSubstrateStandalone]: '6',
       },
       anchorAddresses: {},
       type: 'fixed',
@@ -37,7 +37,7 @@ export const anchorsConfig: AppConfig['anchors'] = {
     {
       amount: '1000',
       anchorTreeIds: {
-        [InternalChainId.ProtocolSubstrateStandalone]: '5',
+        [InternalChainId.ProtocolSubstrateStandalone]: '7',
       },
       anchorAddresses: {},
       type: 'fixed',

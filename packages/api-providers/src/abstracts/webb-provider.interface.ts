@@ -10,8 +10,14 @@ import { WebbRelayerManager } from './relayer/webb-relayer-manager';
 import { AnchorDeposit, AnchorWithdraw, VAnchorDeposit } from './anchor';
 import { ChainQuery } from './chain-query';
 import { AppConfig } from './common';
+import { ContributePayload, Crowdloan, CrowdloanEvent } from './crowdloan';
 import { DepositPayload, MixerDeposit, MixerDepositEvents, MixerWithdraw, WebbWithdrawEvents } from './mixer';
 import { WrapUnwrap } from './wrap-unwrap';
+
+export interface RelayChainMethods<T extends WebbApiProvider<any>> {
+  // Crowdloan API
+  crowdloan: WebbMethod<Crowdloan<T, ContributePayload>, CrowdloanEvent>;
+}
 
 /// list of the apis that are available for  the provider
 export interface WebbMethods<T extends WebbApiProvider<any>> {
@@ -197,6 +203,7 @@ export type WasmFactory = (name?: string) => Worker | null;
 export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
   accounts: AccountsAdapter<any>;
   methods: WebbMethods<WebbApiProvider<T>>;
+  relayChainMethods: RelayChainMethods<WebbApiProvider<T>> | null;
 
   destroy(): Promise<void> | void;
 

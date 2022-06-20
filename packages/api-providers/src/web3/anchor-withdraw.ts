@@ -2,29 +2,27 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
-
-import { Anchor } from '@webb-tools/anchors';
-import { MerkleTree } from '@webb-tools/merkle-tree';
-import { Note } from '@webb-tools/sdk-core';
-import { toFixedHex } from '@webb-tools/utils';
-import { JsNote as DepositNote } from '@webb-tools/wasm-utils';
-
-import { AnchorApi, AnchorWithdraw } from '../abstracts';
 import {
-  ChainType,
-  chainTypeIdToInternalId,
-  computeChainIdType,
-  evmIdIntoInternalChainId,
-  parseChainIdType,
-} from '../chains';
-import { depositFromAnchorNote } from '../contracts/utils/make-deposit';
+  CircomProvingManager,
+  getFixedAnchorExtDataHash,
+  MerkleTree,
+  Note,
+  ProvingManagerSetupInput,
+  toFixedHex,
+} from '@webb-tools/sdk-core';
+
+import { hexToU8a, u8aToHex } from '@polkadot/util';
+
+import { AnchorApi, AnchorWithdraw, WebbRelayer } from '../abstracts';
+import { chainTypeIdToInternalId, evmIdIntoInternalChainId, parseChainIdType } from '../chains';
+import { AnchorContract, depositFromAnchorNote } from '../contracts/wrappers';
 import { Web3Provider } from '../ext-providers';
 import { fetchFixedAnchorKeyForEdges, fetchFixedAnchorWasmForEdges } from '../ipfs/evm/anchors';
+import { Storage } from '../storage';
 import {
   BridgeConfig,
   BridgeStorage,
   bridgeStorageFactory,
-  buildFixedWitness,
   chainIdToRelayerName,
   getAnchorDeploymentBlockNumber,
   getEVMChainNameFromInternal,
@@ -43,225 +41,24 @@ export class Web3AnchorWithdraw extends AnchorWithdraw<WebbWeb3Provider> {
     return this.inner.config;
   }
 
-  // Same chain ('mixer') withdraw flow.
-  // 1. Fetch all of the leaves (stored and new from relayer / inner provider querying)
-  // 2. Connect and update a new protocol-solidity Anchor instance with all of the leaves.
-  //
-  // If relayer is selected:
-  //    Use Anchor instance methods to generate proof and initiate relayed withdraw flow.
-  // If no relayer is selected:
-  //    Use Anchor instance 'withdraw' method.
-  async sameChainWithdraw(note: DepositNote, recipient: string): Promise<string> {
-    this.cancelToken.cancelled = false;
-
-    const activeBridge = this.bridgeApi.activeBridge;
-
-    if (!activeBridge) {
-      throw new Error('No activeBridge set on the web3 anchor api');
-    }
-
-    // Parse the intended target address for the note
-    const activeChain = await this.inner.getChainId();
-    const internalId = evmIdIntoInternalChainId(activeChain);
-
-    const anchorConfigsForBridge = activeBridge.anchors.find(
-      (anchor) => anchor.type === 'fixed' && anchor.amount === note.amount
-    )!;
-    const contractAddress = anchorConfigsForBridge.anchorAddresses[internalId]!;
-
-    // create the Anchor instance
-    const contract = this.inner.getFixedAnchorByAddress(contractAddress);
-
-    // Fetch the leaves that we already have in storage
-    const bridgeStorageStorage = await bridgeStorageFactory(Number(note.sourceChainId));
-    const storedContractInfo: BridgeStorage[0] = (await bridgeStorageStorage.get(contractAddress.toLowerCase())) || {
-      lastQueriedBlock:
-        getAnchorDeploymentBlockNumber(computeChainIdType(ChainType.EVM, activeChain), contractAddress) || 0,
-      leaves: [] as string[],
-    };
-
-    let allLeaves: string[] = [];
-
-    // Fetch the new leaves - from a relayer or from the chain directly.
-    // TODO: Fetch the leaves from the relayer
-    // eslint-disable-next-line no-constant-condition
-    if (/* this.activeRelayer */ false) {
-      // fetch the new leaves (all leaves) from the relayer
-    } else {
-      // fetch the new leaves from on-chain
-      const depositLeaves = await contract.getDepositLeaves(
-        storedContractInfo.lastQueriedBlock,
-        await this.inner.getBlockNumber()
-      );
-
-      allLeaves = [...storedContractInfo.leaves, ...depositLeaves.newLeaves];
-    }
-
-    // Fetch the information for public inputs into the proof
-    const accounts = await this.inner.accounts.accounts();
-    const account = accounts[0];
-
-    // Fetch the information for private inputs into the proof
-    const deposit = depositFromAnchorNote(note);
-    const leafIndex = allLeaves.findIndex((commitment) => commitment === deposit.commitment);
-
-    // Fetch the zero knowledge files required for creating witnesses and verifying.
-    const maxEdges = await contract.inner.maxEdges();
-    const wasmBuf = await fetchFixedAnchorWasmForEdges(maxEdges);
-
-    const witnessCalculator = await buildFixedWitness(wasmBuf, {});
-    const circuitKey = await fetchFixedAnchorKeyForEdges(maxEdges);
-
-    // This anchor wrapper from protocol-solidity is used for public inputs generation
-    const anchorWrapper = await Anchor.connect(
-      contractAddress,
-      {
-        wasm: Buffer.from(wasmBuf),
-        witnessCalculator,
-        zkey: circuitKey,
-      },
-      this.inner.getEthersProvider().getSigner()
-    );
-
-    // Give the anchor wrapper the fetched leaves
-    const successfulSet = await anchorWrapper.setWithLeaves(allLeaves);
-
-    console.log('After attempting to set the leaves on achor wrapper: ', successfulSet);
-
-    const section = `Bridge ${Object.keys(anchorConfigsForBridge.anchorAddresses)
-      .map((id) => getEVMChainNameFromInternal(this.config, Number(id)))
-      .join('-')}`;
-    const key = 'web3-bridge-withdraw';
-
-    // Check for cancelled here, abort if it was set.
-    if (this.cancelToken.cancelled) {
-      this.inner.notificationHandler({
-        description: 'Withdraw canceled',
-        key,
-        level: 'error',
-        message: `${section}:withdraw`,
-        name: 'Transaction',
-      });
-      this.emit('stateChange', WithdrawState.Ideal);
-
-      return '';
-    }
-
-    this.emit('stateChange', WithdrawState.GeneratingZk);
-    const withdrawSetup = await anchorWrapper.setupWithdraw(
-      deposit,
-      leafIndex,
-      account.address,
-      account.address,
-      BigInt(0),
-      0
-    );
-    let txHash = '';
-
-    this.emit('stateChange', WithdrawState.SendingTransaction);
-
-    this.inner.notificationHandler({
-      description: 'Withdraw in progress',
-      key,
-      level: 'loading',
-      message: `${section}:withdraw`,
-      name: 'Transaction',
-    });
-
-    try {
-      const tx = await anchorWrapper.contract.withdraw(withdrawSetup.publicInputs, withdrawSetup.extData, {
-        gasLimit: '0x5B8D80',
-      });
-      const receipt = await tx.wait();
-
-      txHash = receipt.transactionHash;
-    } catch (e) {
-      this.emit('stateChange', WithdrawState.Ideal);
-
-      this.inner.notificationHandler({
-        description: (e as any)?.code === 4001 ? 'Withdraw rejected' : 'Withdraw failed',
-        key,
-        level: 'error',
-        message: `${section}:withdraw`,
-        name: 'Transaction',
-      });
-
-      return txHash;
-    }
-
-    this.emit('stateChange', WithdrawState.Ideal);
-    this.inner.notificationHandler({
-      description: recipient,
-      key,
-      level: 'success',
-      message: `${section}:withdraw`,
-      name: 'Transaction',
-    });
-
-    return txHash;
-  }
-
-  async crossChainWithdraw(note: DepositNote, recipient: string) {
-    this.cancelToken.cancelled = false;
-    const activeBridge = this.bridgeApi.activeBridge;
-
-    if (!activeBridge) {
-      throw new Error('No activeBridge set on the web3 anchor api');
-    }
-
-    // TODO: handle provider storage
-    // const bridgeStorageStorage = await bridgeCurrencyBridgeStorageFactory();
-
-    // Set up a provider for the source chain
-    const sourceChainIdType = parseChainIdType(Number(note.sourceChainId));
-    const sourceEvmId = sourceChainIdType.chainId;
-    const sourceInternalId = evmIdIntoInternalChainId(sourceEvmId);
-    const sourceChainConfig = this.config.chains[sourceInternalId];
-    const rpc = sourceChainConfig.url;
-    const sourceHttpProvider = Web3Provider.fromUri(rpc);
-    const sourceEthers = sourceHttpProvider.intoEthersProvider();
-    const sourceBridgeStorage = await bridgeStorageFactory(Number(note.sourceChainId));
-
-    // get info from the destination chain (should be selected)
-    const destChainIdType = parseChainIdType(Number(note.targetChainId));
-    const destInternalId = chainTypeIdToInternalId(destChainIdType);
-
-    // get the deposit info
-    const sourceDeposit = depositFromAnchorNote(note);
-
-    this.emit('stateChange', WithdrawState.GeneratingZk);
-
-    // Getting contracts data for source and dest chains
-    const bridgeCurrency = this.inner.methods.anchorApi.currency;
-    // await this.inner.methods.bridgeApi.setActiveBridge()
-    const availableAnchors = await this.inner.methods.anchorApi.getAnchors();
-
-    const selectedAnchor = availableAnchors.find((anchor) => anchor.amount === note.amount);
-    const destContractAddress = selectedAnchor?.neighbours[destInternalId]! as string;
-    const sourceContractAddress = selectedAnchor?.neighbours[sourceInternalId]! as string;
-
-    // get root and neighbour root from the dest provider
-    const destAnchor = this.inner.getFixedAnchorByAddress(destContractAddress);
-
-    // Building the merkle proof
-    const sourceContract = this.inner.getFixedAnchorByAddressAndProvider(sourceContractAddress, sourceEthers);
-    const sourceLatestRoot = await sourceContract.inner.getLastRoot();
-
-    // get relayers for the source chain
-    const sourceRelayers = this.inner.relayerManager.getRelayers({
-      baseOn: 'evm',
-      bridgeSupport: {
-        amount: Number(note.amount),
-        tokenSymbol: note.tokenSymbol,
-      },
-      chainId: chainTypeIdToInternalId(parseChainIdType(Number(note.sourceChainId))),
-    });
-
+  /**
+   * This routine queries the passed relayers for the leaves of an anchor instance on an evm chain.
+   * It validates the leaves with on-chain data, and saves to the storage once validated.
+   * An array of leaves is returned if validated, otherwise null is returned.
+   * @param relayers - A list of relayers
+   * @param sourceContract - An AnchorContract wrapper for EVM chains.
+   */
+  async fetchLeavesFromRelayers(
+    relayers: WebbRelayer[],
+    sourceContract: AnchorContract,
+    storage: Storage<BridgeStorage>
+  ): Promise<string[] | null> {
     let leaves: string[] = [];
+    const sourceEvmId = await sourceContract.getEvmId();
 
     // loop through the sourceRelayers to fetch leaves
-    for (let i = 0; i < sourceRelayers.length; i++) {
-      const relayerLeaves = await sourceRelayers[i].getLeaves(sourceEvmId, sourceContractAddress);
+    for (let i = 0; i < relayers.length; i++) {
+      const relayerLeaves = await relayers[i].getLeaves(sourceEvmId, sourceContract.inner.address);
 
       const validLatestLeaf = await sourceContract.leafCreatedAtBlock(
         relayerLeaves.leaves[relayerLeaves.leaves.length - 1],
@@ -271,71 +68,140 @@ export class Web3AnchorWithdraw extends AnchorWithdraw<WebbWeb3Provider> {
       // leaves from relayer somewhat validated, attempt to build the tree
       if (validLatestLeaf) {
         // Assume the destination anchor has the same levels as source anchor
-        const levels = await destAnchor.inner.levels();
-        const tree = MerkleTree.createTreeWithRoot(levels, relayerLeaves.leaves, sourceLatestRoot);
+        const levels = await sourceContract.inner.levels();
+        const tree = MerkleTree.createTreeWithRoot(levels, relayerLeaves.leaves, await sourceContract.getLastRoot());
 
         // If we were able to build the tree, set local storage and break out of the loop
         if (tree) {
           console.log('tree valid, using relayer leaves');
           leaves = relayerLeaves.leaves;
 
-          await sourceBridgeStorage.set(sourceContract.inner.address.toLowerCase(), {
+          await storage.set(sourceContract.inner.address.toLowerCase(), {
             lastQueriedBlock: relayerLeaves.lastQueriedBlock,
             leaves: relayerLeaves.leaves,
           });
-          break;
+
+          return leaves;
         }
       }
     }
 
-    // if we weren't able to get leaves from the relayer, get them directly from chain
-    if (!leaves.length) {
-      console.log('fetching leaves from chain');
+    return null;
+  }
 
+  async withdraw(note: string, recipient: string): Promise<string> {
+    this.cancelToken.cancelled = false;
+
+    const activeBridge = this.bridgeApi.activeBridge;
+
+    if (!activeBridge) {
+      throw new Error('No activeBridge set on the web3 anchor api');
+    }
+
+    const parseNote = await Note.deserialize(note);
+    const jsNote = parseNote.note;
+
+    // Set up a provider for the source chain
+    const sourceChainIdType = parseChainIdType(Number(jsNote.sourceChainId));
+    const sourceInternalId = evmIdIntoInternalChainId(sourceChainIdType.chainId);
+    const sourceChainConfig = this.config.chains[sourceInternalId];
+    const sourceHttpProvider = Web3Provider.fromUri(sourceChainConfig.url);
+    const sourceEthers = sourceHttpProvider.intoEthersProvider();
+    const leafStorage = await bridgeStorageFactory(Number(jsNote.sourceChainId));
+
+    // get info from the destination chain (should be selected)
+    const destChainIdType = parseChainIdType(Number(jsNote.targetChainId));
+    const destInternalId = chainTypeIdToInternalId(destChainIdType);
+
+    // get the deposit info
+    const sourceDeposit = depositFromAnchorNote(jsNote);
+
+    const anchorConfigsForBridge = activeBridge.anchors.find(
+      (anchor) => anchor.type === 'fixed' && anchor.amount === jsNote.amount
+    )!;
+    const section = `Bridge ${Object.keys(anchorConfigsForBridge.anchorAddresses)
+      .map((id) => getEVMChainNameFromInternal(this.config, Number(id)))
+      .join('-')}`;
+    const key = 'web3-bridge-withdraw';
+    this.inner.notificationHandler({
+      description: 'Withdraw in progress',
+      key,
+      level: 'loading',
+      message: `${section}:withdraw`,
+      name: 'Transaction',
+    });
+
+    // Getting contracts data for source and dest chains
+    const bridgeCurrency = this.inner.methods.anchorApi.currency;
+    const availableAnchors = await this.inner.methods.anchorApi.getAnchors();
+
+    const selectedAnchor = availableAnchors.find((anchor) => anchor.amount === jsNote.amount);
+    const destContractAddress = selectedAnchor?.neighbours[destInternalId]! as string;
+    const sourceContractAddress = selectedAnchor?.neighbours[sourceInternalId]! as string;
+
+    // Get the contract wrappers
+    const destAnchor = this.inner.getFixedAnchorByAddress(destContractAddress);
+    const sourceContract = this.inner.getFixedAnchorByAddressAndProvider(sourceContractAddress, sourceEthers);
+
+    // Fetch the zero knowledge files required for creating witnesses and verifying.
+    this.emit('stateChange', WithdrawState.FetchingFixtures);
+    const maxEdges = await destAnchor.inner.maxEdges();
+    const wasmBuf = await fetchFixedAnchorWasmForEdges(maxEdges);
+    const circuitKey = await fetchFixedAnchorKeyForEdges(maxEdges);
+
+    // get relayers for the source chain
+    const sourceRelayers = this.inner.relayerManager.getRelayers({
+      baseOn: 'evm',
+      bridgeSupport: {
+        amount: Number(jsNote.amount),
+        tokenSymbol: jsNote.tokenSymbol,
+      },
+      chainId: chainTypeIdToInternalId(parseChainIdType(Number(jsNote.sourceChainId))),
+    });
+
+    // Fetch the leaves
+    this.emit('stateChange', WithdrawState.FetchingLeaves);
+
+    let sourceLeaves = await this.fetchLeavesFromRelayers(sourceRelayers, sourceContract, leafStorage);
+
+    // Fetch leaves from the chain if the relayers couldn't give us leaves
+    if (!sourceLeaves) {
       // check if we already cached some values.
-      const storedContractInfo: BridgeStorage[0] = (await sourceBridgeStorage.get(
-        sourceContractAddress.toLowerCase()
-      )) || {
-        lastQueriedBlock: getAnchorDeploymentBlockNumber(Number(note.sourceChainId), sourceContractAddress) || 0,
+      const storedContractInfo: BridgeStorage[0] = (await leafStorage.get(sourceContractAddress.toLowerCase())) || {
+        lastQueriedBlock: getAnchorDeploymentBlockNumber(Number(jsNote.sourceChainId), sourceContractAddress) || 0,
         leaves: [] as string[],
       };
 
       const leavesFromChain = await sourceContract.getDepositLeaves(storedContractInfo.lastQueriedBlock + 1, 0);
 
-      leaves = [...storedContractInfo.leaves, ...leavesFromChain.newLeaves];
+      sourceLeaves = [...storedContractInfo.leaves, ...leavesFromChain.newLeaves];
     }
 
-    // Fetch the information for public inputs into the proof
-    const accounts = await this.inner.accounts.accounts();
-    const account = accounts[0];
+    const destRoot = await destAnchor.inner.getLastRoot();
+    let destHistorySourceRoot = destRoot;
 
-    // generate the merkle proof. Called on the destAnchor because the proof should be made against
-    // the destination anchor's neighbor root (sourceAnchor root) to prevent race conditions
-    const linkedMerkleProof = await destAnchor.generateLinkedMerkleProof(sourceDeposit, leaves, sourceEvmId);
-
-    if (!linkedMerkleProof) {
-      this.emit('stateChange', WithdrawState.Ideal);
-      throw new Error('Failed to generate Merkle proof');
+    // If the deposit occurred on another chain than the withdrawal
+    // Get the merkleRoot of the source anchor from the destAnchor's neighbor root.
+    // Remove leaves after, so proofs will be made against the destAnchor's history.
+    if (jsNote.sourceChainId !== jsNote.targetChainId) {
+      const edgeIndex = await destAnchor.inner.edgeIndex(jsNote.sourceChainId);
+      const edge = await destAnchor.inner.edgeList(edgeIndex);
+      destHistorySourceRoot = edge[1];
     }
 
-    // Fetch the zero knowledge files required for creating witnesses and verifying.
-    const maxEdges = await destAnchor.inner.maxEdges();
-    const wasmBuf = await fetchFixedAnchorWasmForEdges(maxEdges);
-    const witnessCalculator = await buildFixedWitness(wasmBuf, {});
-    const circuitKey = await fetchFixedAnchorKeyForEdges(maxEdges);
-
-    // This anchor wrapper from protocol-solidity is used for public inputs generation
-    const anchorWrapper = await Anchor.connect(
-      destAnchor.inner.address,
-      {
-        wasm: Buffer.from(wasmBuf),
-        witnessCalculator,
-        zkey: circuitKey,
-      },
-      this.inner.getEthersProvider().getSigner()
+    const provingTree = MerkleTree.createTreeWithRoot(
+      await sourceContract.inner.levels(),
+      sourceLeaves,
+      destHistorySourceRoot
     );
+    if (!provingTree) {
+      console.log('fetched leaves do not match bridged anchor state');
+      throw new Error('fetched leaves do not match bridged anchor state');
+    }
+    const provingLeaves = provingTree.elements().map((el) => hexToU8a(el.toHexString()));
+    const leafIndex = provingTree.getIndexByElement(sourceDeposit.commitment);
 
-    // Check for cancelled here, abort if it was set.
+    // After fetching the zk files, check for cancelToken - since fetching files may take a while.
     if (this.cancelToken.cancelled) {
       this.inner.notificationHandler({
         description: 'Withdraw cancelled',
@@ -349,25 +215,67 @@ export class Web3AnchorWithdraw extends AnchorWithdraw<WebbWeb3Provider> {
       return '';
     }
 
-    const merkleProof = linkedMerkleProof.path;
+    const treeHeight = await destAnchor.inner.levels();
+    console.log('treeHeight from contract: ', treeHeight);
 
+    const pm = new CircomProvingManager(new Uint8Array(wasmBuf), treeHeight, null);
+
+    console.log('after creating the proving manager');
+
+    const neighborRoots = await destAnchor.inner.getLatestNeighborRoots();
+
+    let proofInput: ProvingManagerSetupInput<'anchor'> = {
+      fee: 0,
+      leaves: provingLeaves,
+      leafIndex,
+      note: jsNote.serialize(),
+      provingKey: circuitKey,
+      recipient,
+      refreshCommitment: '0',
+      refund: 0,
+      relayer: recipient,
+      roots: [destRoot, ...neighborRoots].map((root) => hexToU8a(root)),
+    };
+
+    // check for active relayer and modify proving input accordingly
     let txHash: string;
     const activeRelayer = this.inner.relayerManager.activeRelayer;
 
-    if (activeRelayer && activeRelayer !== null && activeRelayer.beneficiary) {
-      console.log('withdrawing through relayer');
+    if (activeRelayer && activeRelayer.beneficiary) {
+      proofInput.fee = Number((await activeRelayer.fees(jsNote.serialize()))?.totalFees);
+      proofInput.relayer = activeRelayer.beneficiary;
+    }
 
-      // setup the cross chain withdraw with the generated merkle proof
-      this.emit('stateChange', WithdrawState.GeneratingZk);
-      const withdrawSetup = await anchorWrapper.setupBridgedWithdraw(
-        sourceDeposit,
-        merkleProof,
-        recipient,
-        activeRelayer.beneficiary,
-        BigInt(0),
-        0
-      );
+    console.log('before getting fixed anchor extDataHash');
+    const extDataHash = getFixedAnchorExtDataHash(
+      proofInput.fee,
+      proofInput.recipient,
+      proofInput.refreshCommitment,
+      proofInput.refund,
+      proofInput.relayer
+    );
+    this.emit('stateChange', WithdrawState.GeneratingZk);
 
+    const proof = await pm.prove('anchor', proofInput);
+
+    console.log('after making the proof: ', proof);
+
+    // Check for cancelled after generating proof, as this takes a while.
+    if (this.cancelToken.cancelled) {
+      this.inner.notificationHandler({
+        description: 'Withdraw cancelled',
+        key: 'mixer-withdraw-evm',
+        level: 'error',
+        message: 'bridge:withdraw',
+        name: 'Transaction',
+      });
+      this.emit('stateChange', WithdrawState.Ideal);
+
+      return '';
+    }
+
+    // If the active relayer is selected, do a relayed withdraw
+    if (activeRelayer && activeRelayer.beneficiary) {
       this.emit('stateChange', WithdrawState.SendingTransaction);
       const relayedWithdraw = await activeRelayer.initWithdraw('anchor');
 
@@ -378,22 +286,19 @@ export class Web3AnchorWithdraw extends AnchorWithdraw<WebbWeb3Provider> {
         name: chainIdToRelayerName(destInternalId),
       };
 
-      const tx = relayedWithdraw.generateWithdrawRequest<typeof chainInfo, 'anchor'>(
-        chainInfo,
-        withdrawSetup.publicInputs.proof,
-        {
-          chain: chainInfo.name,
-          extDataHash: withdrawSetup.publicInputs._extDataHash,
-          fee: toFixedHex(withdrawSetup.extData._fee),
-          id: chainInfo.contractAddress,
-          nullifierHash: toFixedHex(withdrawSetup.publicInputs._nullifierHash),
-          recipient: withdrawSetup.extData._recipient,
-          refreshCommitment: withdrawSetup.extData._refreshCommitment,
-          refund: toFixedHex(withdrawSetup.extData._refund),
-          relayer: withdrawSetup.extData._relayer,
-          roots: withdrawSetup.publicInputs._roots,
-        }
-      );
+      const tx = relayedWithdraw.generateWithdrawRequest<typeof chainInfo, 'anchor'>(chainInfo, proof.proof, {
+        chain: chainInfo.name,
+        extDataHash: extDataHash.toHexString(),
+        fee: toFixedHex(proofInput.fee),
+        id: chainInfo.contractAddress,
+        nullifierHash: toFixedHex(proof.nullifierHash),
+        recipient: proofInput.recipient,
+        refreshCommitment: proofInput.refreshCommitment,
+        refund: toFixedHex(proofInput.refund),
+        relayer: proofInput.relayer,
+        // combine the roots to one big string
+        roots: `0x${proofInput.roots.map((root) => u8aToHex(root).slice(2)).join('')}`,
+      });
 
       relayedWithdraw.watcher.subscribe(([nextValue, message]) => {
         switch (nextValue) {
@@ -446,26 +351,32 @@ export class Web3AnchorWithdraw extends AnchorWithdraw<WebbWeb3Provider> {
       txHash = txResult?.[1] || '';
     } else {
       try {
-        // setup the cross chain withdraw with the generated merkle proof
-        this.emit('stateChange', WithdrawState.GeneratingZk);
-        const withdrawSetup = await anchorWrapper.setupBridgedWithdraw(
-          sourceDeposit,
-          merkleProof,
-          recipient,
-          account.address,
-          BigInt(0),
-          0
-        );
-
         this.emit('stateChange', WithdrawState.SendingTransaction);
-        console.log(withdrawSetup);
 
-        const tx = await destAnchor.inner.withdraw(withdrawSetup.publicInputs, withdrawSetup.extData);
+        // Withdraw directly
+        const tx = await destAnchor.inner.withdraw(
+          {
+            proof: proof.proof,
+            // combine the roots to one big string
+            _roots: `0x${proofInput.roots.map((root) => u8aToHex(root).slice(2)).join('')}`,
+            _extDataHash: extDataHash.toHexString(),
+            _nullifierHash: proof.nullifierHash,
+          },
+          {
+            _refreshCommitment: toFixedHex(proofInput.refreshCommitment),
+            _recipient: proofInput.recipient,
+            _relayer: proofInput.relayer,
+            _refund: toFixedHex(proofInput.refund),
+            _fee: toFixedHex(proofInput.fee),
+          }
+        );
         const receipt = await tx.wait();
 
         txHash = receipt.transactionHash;
       } catch (e) {
         this.emit('stateChange', WithdrawState.Ideal);
+        console.log(e);
+
         this.inner.notificationHandler({
           description: (e as any)?.code === 4001 ? 'Withdraw rejected' : 'Withdraw failed',
           key: 'bridge-withdraw-evm',
@@ -496,20 +407,5 @@ export class Web3AnchorWithdraw extends AnchorWithdraw<WebbWeb3Provider> {
     this.emit('stateChange', WithdrawState.Ideal);
 
     return txHash;
-  }
-
-  // withdraw determines if the withdraw flow should be cross-chain or the same chain.
-  // The merkle proof is always generated from the source anchor, therefore, a new provider
-  // needs to be constructed in the cross-chain scenario.
-  // Zero knowledge files are fetched in both withdraw flows.
-  async withdraw(note: string, recipient: string): Promise<string> {
-    const parseNote = await Note.deserialize(note);
-    const depositNote = parseNote.note;
-
-    if (depositNote.sourceChainId === depositNote.targetChainId) {
-      return this.sameChainWithdraw(depositNote, recipient);
-    } else {
-      return this.crossChainWithdraw(depositNote, recipient);
-    }
   }
 }
