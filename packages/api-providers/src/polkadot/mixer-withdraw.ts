@@ -3,7 +3,7 @@
 
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
 import { LoggerService } from '@webb-tools/app-util';
-import { Note, ProvingManager } from '@webb-tools/sdk-core';
+import { ArkworksProvingManager as ProvingManager, Note } from '@webb-tools/sdk-core';
 import { ProvingManagerSetupInput } from '@webb-tools/sdk-core/proving/proving-manager-thread';
 
 import { decodeAddress } from '@polkadot/keyring';

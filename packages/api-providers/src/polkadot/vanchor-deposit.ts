@@ -7,16 +7,10 @@ import '@webb-tools/api-derive/cjs/index.js';
 
 import type { WebbPolkadot } from './webb-provider';
 
-import { createUtxoBn254CT2, getCachedFixtureURI, withLocalFixtures } from '@webb-dapp/api-providers/utils';
+import { getLeafCount, getLeafIndex, validateVAnchorNoteIndex } from '@webb-dapp/api-providers/polkadot/mt-utils';
+import { getCachedFixtureURI, withLocalFixtures } from '@webb-dapp/api-providers/utils';
 import { LoggerService } from '@webb-tools/app-util';
-import {
-  ArkworksProvingManager,
-  Note,
-  NoteGenInput,
-  ProofInterface,
-  ProvingManagerSetupInput,
-  Utxo,
-} from '@webb-tools/sdk-core';
+import { ArkworksProvingManager, Note, NoteGenInput, ProvingManagerSetupInput, Utxo } from '@webb-tools/sdk-core';
 import { BigNumber } from 'ethers';
 
 import { decodeAddress } from '@polkadot/keyring';
@@ -42,7 +36,6 @@ type DepositPayload = IDepositPayload<Note, [number]>;
 /**
  * Webb Anchor API implementation for Polkadot
  **/
-
 async function fetchSubstrateVAnchorProvingKey() {
   const IPFSUrl = 'https://ipfs.io/ipfs/QmZiNuAKp2QGp281bqasNqvqccPCGp4yoxWbK8feecefML';
   const cachedURI = getCachedFixtureURI('proving_key_uncompressed_sub_vanchor_2_2_2.bin');
@@ -56,6 +49,9 @@ async function fetchSubstrateVAnchorProvingKey() {
 }
 
 export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, DepositPayload> {
+  private async getleafIndex(leaf: Uint8Array, indexBeforeInsertion: number, treeId: number): Promise<number> {
+    return getLeafIndex(this.inner.api, leaf, indexBeforeInsertion, treeId);
+  }
   async generateBridgeNote(
     _vanchorId: string | number, // always Zero as there will be only one vanchor
     destination: number,
@@ -97,36 +93,12 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
       width: '5',
       index: 0,
     };
+
     const note = await Note.generateNote(noteInput);
     return {
       note,
       params: [treeId],
     };
-  }
-
-  private async getleafIndex(leaf: Uint8Array, indexBeforeInsertion: number, treeId: number): Promise<number> {
-    const api = this.inner.api;
-    /**
-     * Ex tree has 500 leaves
-     * Before insertion index is 499
-     * Given that many insertions happened while processing a tx
-     * The tree now has 510 leaves
-     * Fetch a slice of the leaves starting from the index before insertion [index499,...index509]
-     * The leaf index will be index499 +  the index of the slice
-     * */
-    const leafCount = await api.derive.merkleTreeBn254.getLeafCountForTree(Number(treeId));
-    const leaves = await api.derive.merkleTreeBn254.getLeavesForTree(
-      Number(treeId),
-      indexBeforeInsertion,
-      leafCount - 1
-    );
-    const leafHex = u8aToHex(leaf);
-    const shiftedIndex = leaves.findIndex((leaf) => u8aToHex(leaf) === leafHex);
-
-    if (shiftedIndex === -1) {
-      throw new Error(`Leaf isn't in the tree`);
-    }
-    return Math.max(indexBeforeInsertion + shiftedIndex - 1, 0);
   }
 
   async deposit(depositPayload: DepositPayload, recipient: string): Promise<Note> {
@@ -214,9 +186,8 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
         extDataHash: data.extDataHash,
       };
       this.emit('stateChange', WithdrawState.SendingTransaction);
-      const leafsCount = await this.inner.api.derive.merkleTreeBn254.getLeafCountForTree(Number(treeId));
-      const indexBeforeInsertion = Math.max(leafsCount - 1, 0);
-      console.log({ leafsCount, indexBeforeInsertion });
+      const leafsCount = await getLeafCount(this.inner.api, treeId);
+      const predictedIndex = leafsCount;
       const tx = this.inner.txBuilder.build(
         {
           method: 'transact',
@@ -224,16 +195,24 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
         },
         [treeId, vanchorProofData, extData]
       );
+
       console.log([treeId, vanchorProofData, extData]);
       const txHash = await tx.call(account.address);
 
       const insertedLeaf = depositNote.getLeaf();
-      const leafIndex = await this.getleafIndex(insertedLeaf, indexBeforeInsertion, treeId);
+      const leafIndex = await this.getleafIndex(insertedLeaf, predictedIndex, treeId);
       await depositNote.mutateIndex(String(leafIndex));
       console.log(txHash, leafIndex);
       this.emit('stateChange', WithdrawState.Done);
       console.log(depositNote.note.index);
       console.log(depositNote.serialize());
+      console.log({
+        leafsCount,
+        indexBeforeInsertion: predictedIndex,
+        leafIndex,
+      });
+      const rs = await validateVAnchorNoteIndex(this.inner.api, treeId, depositNote.serialize());
+      console.log(rs);
       return depositNote;
     } catch (e) {
       this.emit('stateChange', WithdrawState.Failed);

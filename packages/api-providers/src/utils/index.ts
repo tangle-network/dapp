@@ -7,4 +7,3 @@ export * from './relayer-utils';
 export * from './retry-promise';
 export * from './storage-mock';
 export * from './misc';
-export * from './jsUtxo';

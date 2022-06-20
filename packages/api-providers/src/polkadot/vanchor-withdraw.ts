@@ -14,6 +14,7 @@ import {
   WithdrawState,
   withLocalFixtures,
 } from '@webb-dapp/api-providers';
+import { getLeafCount, getLeafIndex, getLeaves, rootOfLeaves } from '@webb-dapp/api-providers/polkadot/mt-utils';
 import { LoggerService } from '@webb-tools/app-util';
 import { ArkworksProvingManager, Note, ProvingManagerSetupInput, Utxo } from '@webb-tools/sdk-core';
 import { BigNumber } from 'ethers';
@@ -22,12 +23,8 @@ import { decodeAddress } from '@polkadot/keyring';
 import { hexToU8a, u8aToHex } from '@polkadot/util';
 import { naclEncrypt, randomAsU8a } from '@polkadot/util-crypto';
 
-import { VAnchorWithdraw } from '../abstracts/anchor/vanchor-withdraw';
-async function rootOfLeaves(leaves: Uint8Array[]) {
-  const wasm = await import('@webb-tools/wasm-utils');
-  const tree = new wasm.MTBn254X5(leaves, '0');
-  return hexToU8a(`0x${tree.root}`);
-}
+import { VAnchorWithdraw, VAnchorWithdrawResult } from '../abstracts/anchor/vanchor-withdraw';
+
 const logger = LoggerService.get('SubstrateVAnchorWithdraw');
 async function fetchSubstrateVAnchorProvingKey() {
   const IPFSUrl = 'https://ipfs.io/ipfs/QmZiNuAKp2QGp281bqasNqvqccPCGp4yoxWbK8feecefML';
@@ -42,7 +39,7 @@ async function fetchSubstrateVAnchorProvingKey() {
 }
 
 export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
-  async withdraw(notes: string[], recipient: string, amountUnit: string): Promise<string> {
+  async withdraw(notes: string[], recipient: string, amountUnit: string): Promise<VAnchorWithdrawResult> {
     const secret = randomAsU8a();
     const account = await this.inner.accounts.activeOrDefault;
 
@@ -62,14 +59,11 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
     const amount = currencyToUnitI128(Number(amountUnit)).toString();
 
     const reminder = inputAmounts - Number(amount);
-    console.log(`
-    input amount ${inputAmounts}
-    amount to withdraw ${amount}
-   reminder ${reminder}
-    `);
+
     if (reminder < 0) {
       throw new Error(`Input ${inputAmounts} is less than the withdrawn amount ${amount}`);
     }
+
     const targetChainId = inputNotes[0].note.targetChainId;
     const treeId = inputNotes[0].note.sourceIdentifyingData;
     const output1 = await Utxo.generateUtxo({
@@ -93,7 +87,7 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
       return index;
     }, 0);
     console.log(`last leaf index ${latestIndex}`);
-    const leaves = await this.inner.api.derive.merkleTreeBn254.getLeavesForTree(treeId, 0, latestIndex);
+    const leaves = await getLeaves(this.inner.api, Number(treeId), 0, latestIndex);
     const leavesMap: any = {};
     /// Assume same chain withdraw-deposit
     leavesMap[targetChainId] = leaves;
@@ -135,7 +129,7 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
       publicAmount: String(publicAmount),
       output: [output1, output2],
     };
-    console.log(vnachorWithdrawSetup);
+
     const data = await pm.prove('vanchor', vnachorWithdrawSetup);
     const vanchorProofData = {
       proof: `0x${data.proof}`,
@@ -148,50 +142,34 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
       extDataHash: data.extDataHash,
     };
     this.emit('stateChange', WithdrawState.SendingTransaction);
-    const leafsCount = await this.inner.api.derive.merkleTreeBn254.getLeafCountForTree(Number(treeId));
-    const indexBeforeInsertion = Math.max(leafsCount - 1, 0);
-    console.log({
-      leafsCount,
-      indexBeforeInsertion,
-    });
-    const tx = this.inner.txBuilder.build(
-      {
-        method: 'transact',
-        section: 'vAnchorBn254',
-      },
-      [treeId, vanchorProofData, extData]
-    );
+    const leafsCount = await getLeafCount(this.inner.api, Number(treeId));
+    const predictedIndex = leafsCount;
+
+    const method = {
+      method: 'transact',
+      section: 'vAnchorBn254',
+    };
+    const tx = this.inner.txBuilder.build(method, [treeId, vanchorProofData, extData]);
     console.log([treeId, vanchorProofData, extData]);
 
     const txHash = await tx.call(account.address);
-    const leafIndex = await this.getleafIndex(outputCommitment, indexBeforeInsertion, treeId);
-
-    console.log(txHash, leafIndex);
-    // to update utxo for the output note
+    const leafIndex = await this.getleafIndex(outputCommitment, predictedIndex, Number(treeId));
+    outputNote.note.update_vanchor_utxo(output1.inner);
+    await outputNote.mutateIndex(String(leafIndex));
+    console.log({
+      leafsCount,
+      indexBeforeInsertion: predictedIndex,
+      leafIndex,
+    });
+    return {
+      method,
+      outputNotes: [outputNote],
+      txHash: txHash,
+    };
   }
 
   private async getleafIndex(leaf: Uint8Array, indexBeforeInsertion: number, treeId: number): Promise<number> {
     const api = this.inner.api;
-    /**
-     * Ex tree has 500 leaves
-     * Before insertion index is 499
-     * Given that many insertions happened while processing a tx
-     * The tree now has 510 leaves
-     * Fetch a slice of the leaves starting from the index before insertion [index499,...index509]
-     * The leaf index will be index499 +  the index of the slice
-     * */
-    const leafCount = await api.derive.merkleTreeBn254.getLeafCountForTree(Number(treeId));
-    const leaves = await api.derive.merkleTreeBn254.getLeavesForTree(
-      Number(treeId),
-      indexBeforeInsertion,
-      leafCount - 1
-    );
-    const leafHex = u8aToHex(leaf);
-    const shiftedIndex = leaves.findIndex((leaf) => u8aToHex(leaf) === leafHex);
-
-    if (shiftedIndex === -1) {
-      throw new Error(`Leaf isn't in the tree`);
-    }
-    return Math.max(indexBeforeInsertion + shiftedIndex - 1, 0);
+    return getLeafIndex(api, leaf, indexBeforeInsertion, treeId);
   }
 }

@@ -86,7 +86,7 @@ export class PolkadotTx<P extends Array<any>> extends EventBus<PolkadotTXEvents>
     if (!api.tx[this.path.section] || !api.tx[this.path.section][this.path.method]) {
       txLogger.error(`can not find api.tx.${this.path.section}.${this.path.method}`);
 
-      return;
+      throw new Error(`can not find api.tx.${this.path.section}.${this.path.method}`);
     }
 
     this.notificationKey = uniqueId(`${this.path.section}-${this.path.method}`);
