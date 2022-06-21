@@ -13,7 +13,7 @@
     "eslint": "^6.6.0",
     "@polkadot/api": "8.7.1",
     "@polkadot/keyring": "9.4.1",
-    "@polkadot/networks": "8.7.1",
+    "@polkadot/networks": "9.4.1",
     "@polkadot/types": "8.1.1",
     "@polkadot/util": "9.4.1",
     "@polkadot/util-crypto": "9.4.1",
