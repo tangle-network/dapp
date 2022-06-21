@@ -152,7 +152,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
     withdraw,
   } = useWithdraw({
     amount: String(parsedAmount),
-    note: depositNotes,
+    notes: depositNotes,
     recipient,
   });
   const appConfig = useAppConfig();
@@ -296,6 +296,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
                 if (shouldSwitchChain) {
                   return switchChainFromNote(depositInfo.note);
                 }
+                console.log('withdrawing');
                 await withdraw();
               }}
               label={shouldSwitchChain ? 'Switch chains to withdraw' : 'Withdraw'}

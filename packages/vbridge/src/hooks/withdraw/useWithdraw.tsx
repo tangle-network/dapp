@@ -11,7 +11,8 @@ import { Note } from '@webb-tools/sdk-core';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 export type UseWithdrawProps = {
-  note: Note | null;
+  notes: Note[] | null;
+  amount: string;
   recipient: string;
 };
 
@@ -57,8 +58,8 @@ export const useWithdraw = (params: UseWithdrawProps) => {
 
   useEffect(() => {
     const sub = activeApi?.relayerManager.listUpdated.subscribe(() => {
-      if (params.note) {
-        activeApi?.relayerManager.getRelayersByNote(params.note).then((r: WebbRelayer[]) => {
+      if (params.notes) {
+        activeApi?.relayerManager.getRelayersByNote(params.notes).then((r: WebbRelayer[]) => {
           setRelayersState((p) => ({
             ...p,
             loading: false,
@@ -68,12 +69,12 @@ export const useWithdraw = (params: UseWithdrawProps) => {
       }
     });
     return () => sub?.unsubscribe();
-  }, [activeApi, params.note, withdrawApi]);
+  }, [activeApi, params.notes, withdrawApi]);
   const { registerInteractiveFeedback } = useWebContext();
   // hook events
   useEffect(() => {
-    if (params.note) {
-      activeApi?.relayerManager.getRelayersByNote(params.note).then((r: WebbRelayer[]) => {
+    if (params.notes) {
+      activeApi?.relayerManager.getRelayersByNote(params.notes).then((r: WebbRelayer[]) => {
         setRelayersState((p) => ({
           ...p,
           loading: false,
@@ -116,22 +117,23 @@ export const useWithdraw = (params: UseWithdrawProps) => {
       sub?.unsubscribe();
       Object.values(unsubscribe).forEach((v) => v && v());
     };
-  }, [withdrawApi, params.note, activeApi?.relayerManager]);
+  }, [withdrawApi, params.notes, activeApi?.relayerManager]);
 
   const withdraw = useCallback(async () => {
-    if (!withdrawApi || !params.note) {
+    if (!withdrawApi || !params.notes) {
       return;
     }
     if (stage === WithdrawState.Ideal) {
-      if (params.note) {
+      if (params.notes && params.notes.length > 0) {
+        console.log('WithdrawState', params);
         try {
           const withdrawPayload = await withdrawApi.withdraw(
-            [params.note?.serialize()],
+            params.notes.map((n) => n.serialize()),
             params.recipient,
-            params.note.note.amount
+            params.amount
           );
           setReceipt(withdrawPayload.txHash);
-          setOutputNotes(withdrawPayload.changeNotes);
+          setOutputNotes(withdrawPayload.outputNotes);
         } catch (e) {
           console.log('error from withdraw api', e);
 
@@ -172,6 +174,7 @@ export const useWithdraw = (params: UseWithdrawProps) => {
   return {
     stage,
     receipt,
+    setReceipt,
     setOutputNotes,
     outputNotes,
     withdraw,
