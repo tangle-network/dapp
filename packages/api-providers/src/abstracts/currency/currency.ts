@@ -65,9 +65,12 @@ export class Currency extends CurrencyContent {
   }
 
   getChainIdsAndTypes(chainsConfig: AppConfig['chains']): ChainTypeId[] {
-    return Array.from(this.data.addresses.keys()).map((internalId: any) => {
-      return { chainId: chainsConfig[internalId].chainId, chainType: chainsConfig[internalId].chainType };
-    });
+    console.log(this.data);
+    return Array.from(this.data.addresses.keys())
+      .filter((internalId) => Boolean(chainsConfig[internalId]))
+      .map((internalId: any) => {
+        return { chainId: chainsConfig[internalId].chainId, chainType: chainsConfig[internalId].chainType };
+      });
   }
 
   getDecimals(): number {

@@ -130,6 +130,11 @@ export const Deposit: React.FC<DepositProps> = () => {
   }, [chainsConfig, selectedBridgeCurrency]);
 
   const disabledDepositButton = useMemo(() => {
+    console.log({
+      amount,
+      destChain,
+      stage,
+    });
     return amount === 0 || typeof destChain === 'undefined' || stage !== WithdrawState.Ideal;
   }, [amount, destChain, stage]);
 

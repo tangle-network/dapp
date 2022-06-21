@@ -133,7 +133,7 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
         amount: '0',
       });
       let publicAmount = note.amount;
-      const inputNote = depositPayload.note.getDefaultUtxoNote();
+      const inputNote = await depositPayload.note.getDefaultUtxoNote();
 
       const leavesMap: any = {};
       leavesMap[targetChainId] = [];

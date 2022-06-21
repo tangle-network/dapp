@@ -8,18 +8,20 @@ import {
   WithdrawState,
 } from '@webb-dapp/api-providers';
 import { chainsPopulated } from '@webb-dapp/apps/configs';
-import { useDepositNote } from '@webb-dapp/mixer';
+import { useDepositNotes } from '@webb-dapp/mixer';
 import { RelayerModal } from '@webb-dapp/react-components/Relayer/RelayerModal';
-import { WithdrawingModal, WithdrawSuccessModal } from '@webb-dapp/react-components/Withdraw';
+import { WithdrawSuccessModal } from '@webb-dapp/react-components/Withdraw';
 import { useAppConfig, useWebContext } from '@webb-dapp/react-environment';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
+import { AmountInput } from '@webb-dapp/ui-components/Inputs/AmountInput/AmountInput';
 import { InputTitle } from '@webb-dapp/ui-components/Inputs/InputTitle/InputTitle';
 import { BridgeNoteInput } from '@webb-dapp/ui-components/Inputs/NoteInput/BridgeNoteInput';
 import { RelayerButton } from '@webb-dapp/ui-components/Inputs/RelayerButton/RelayerButton';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
-import { useWithdraw } from '@webb-dapp/vbridge';
+import WithdrawingModal from '@webb-dapp/vbridge/components/Withdraw/WithdrawingModal';
+import { useWithdraw } from '@webb-dapp/vbridge/hooks/withdraw/useWithdraw';
 import { Note } from '@webb-tools/sdk-core';
 import { ethers } from 'ethers';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -112,48 +114,66 @@ const AddressAndInfoSection = styled.div`
 type WithdrawProps = {};
 
 export const Withdraw: React.FC<WithdrawProps> = () => {
-  const [note, setNote] = useState('');
+  const [notes, setNotes] = useState<string[]>([]);
+  const [parsedAmount, setParsedAmount] = useState<number>(0);
+
   const [recipient, setRecipient] = useState('');
   const [showRelayerModal, setShowRelayerModal] = useState(false);
   const [fees, setFees] = useState('0');
   const { activeApi, activeChain, activeWallet, switchChain } = useWebContext();
-  const depositNote = useDepositNote(note);
-
+  const depositNotes = useDepositNotes(notes);
+  const depositInfo = useMemo(() => {
+    if (!depositNotes) {
+      return null;
+    }
+    const { note } = depositNotes[0];
+    const amount = depositNotes.reduce((available, { note }) => available + Number(note.amount), 0);
+    const sourceChainId = note.sourceChainId;
+    const targetChainId = note.targetChainId;
+    const tokenSymbol = note.tokenSymbol;
+    return {
+      note: depositNotes[0],
+      amount,
+      sourceChainId,
+      targetChainId,
+      tokenSymbol,
+    };
+  }, [depositNotes]);
   const {
     canCancel,
     cancelWithdraw,
-    outputNotes,
     receipt,
     relayerMethods,
     relayersState,
-    setOutputNotes,
+    setReceipt,
     setRelayer,
     stage,
     validationErrors,
     withdraw,
   } = useWithdraw({
+    amount: String(parsedAmount),
+    note: depositNotes,
     recipient,
-    note: depositNote,
   });
   const appConfig = useAppConfig();
 
   const shouldSwitchChain = useMemo(() => {
-    if (!depositNote || !activeChain) {
+    if (!depositInfo || !activeChain) {
       return false;
     }
-    const chainId = parseChainIdType(Number(depositNote.note.targetChainId)).chainId;
+    const chainId = parseChainIdType(Number(depositInfo.targetChainId)).chainId;
 
     return activeChain.chainId !== chainId;
-  }, [activeChain, depositNote]);
+  }, [activeChain, depositInfo]);
 
   const isDisabled = useMemo(() => {
-    if (depositNote && shouldSwitchChain) {
+    if (depositNotes && shouldSwitchChain) {
       return false;
-    } else if (depositNote && recipient) {
+    } else if (depositNotes && recipient && parsedAmount) {
       return false;
     }
     return true;
-  }, [depositNote, shouldSwitchChain, recipient]);
+  }, [depositNotes, shouldSwitchChain, recipient, parsedAmount]);
 
   const switchChainFromNote = async (note: Note | null) => {
     if (!note) {
@@ -170,15 +190,23 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
 
   // Side effect for fetching the relayer fees if applicable
   useEffect(() => {
-    if (relayersState.activeRelayer && depositNote) {
-      relayersState.activeRelayer.fees(depositNote.note.serialize()).then((feeInfo) => {
+    if (relayersState.activeRelayer && depositInfo) {
+      relayersState.activeRelayer.fees(depositInfo.note.serialize()).then((feeInfo) => {
         if (feeInfo) {
-          setFees(ethers.utils.formatUnits(feeInfo.totalFees, depositNote.note.denomination));
+          setFees(ethers.utils.formatUnits(feeInfo.totalFees, depositInfo.note.denomination));
         }
       });
     }
-  }, [relayersState, depositNote]);
+  }, [relayersState, depositInfo]);
+  const [userAmountInput, setUserAmountInput] = useState<string>('');
 
+  const parseAndSetAmount = (amount: string): void => {
+    setUserAmountInput(amount);
+    let parsedAmount = Number(amount);
+    if (!isNaN(parsedAmount)) {
+      setParsedAmount(parsedAmount);
+    }
+  };
   return (
     <WithdrawWrapper wallet={activeWallet}>
       <WithdrawNoteSection>
@@ -194,10 +222,16 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
           }
         />
         <div className='note-input'>
-          <BridgeNoteInput error={note ? validationErrors.note : ''} value={note} onChange={setNote} />
+          <BridgeNoteInput
+            error={depositNotes ? validationErrors.note : ''}
+            value={notes[0] || ''}
+            onChange={(note) => {
+              setNotes([note]);
+            }}
+          />
         </div>
       </WithdrawNoteSection>
-      {depositNote && (
+      {depositInfo && (
         <AddressAndInfoSection>
           <div style={{ padding: '10px 35px' }}>
             <Typography variant={'h6'}>
@@ -218,43 +252,51 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
               {validationErrors.recipient}
             </FormHelperText>
           </div>
+          <div style={{ padding: '10px 35px' }}>
+            <Typography variant={'h6'}>
+              <b>WITHDRAW AMOUNT</b>
+            </Typography>
+          </div>
+          <div className='address-input'>
+            <AmountInput error={''} onChange={parseAndSetAmount} value={userAmountInput} />
+          </div>
           <SpaceBox height={16} />
           <div className='information-item'>
             <p className='title'>Deposit Amount</p>
             <p className='value'>
-              {depositNote.note.amount} {depositNote.note.tokenSymbol}
+              {depositInfo.amount} {depositInfo.tokenSymbol}
             </p>
           </div>
           <div className='information-item'>
             <p className='title'>Chains</p>
             <p className='value'>
-              {getChainNameFromChainId(appConfig, parseChainIdType(Number(depositNote.note.sourceChainId)))}
+              {getChainNameFromChainId(appConfig, parseChainIdType(Number(depositInfo.sourceChainId)))}
               {` -> `}
-              {getChainNameFromChainId(appConfig, parseChainIdType(Number(depositNote.note.targetChainId)))}
+              {getChainNameFromChainId(appConfig, parseChainIdType(Number(depositInfo.targetChainId)))}
             </p>
           </div>
           <div className='information-item'>
             <p className='title'>Relayer Fee</p>
             <p className='value'>
-              {fees} {depositNote.note.tokenSymbol}
+              {fees} {depositInfo.tokenSymbol}
             </p>
           </div>
           <SpaceBox height={4} />
           <div className='total-amount'>
             <p className='title'>Total Amount</p>
             <p className='value'>
-              {Number(depositNote.note.amount) - Number(fees)} {depositNote.note.tokenSymbol}
+              {Number(parsedAmount) - Number(fees)} {depositInfo.tokenSymbol}
             </p>
           </div>
           <SpaceBox height={8} />
           <div style={{ padding: '10px 35px' }}>
             <MixerButton
               disabled={isDisabled}
-              onClick={() => {
+              onClick={async () => {
                 if (shouldSwitchChain) {
-                  return switchChainFromNote(depositNote);
+                  return switchChainFromNote(depositInfo.note);
                 }
-                withdraw();
+                await withdraw();
               }}
               label={shouldSwitchChain ? 'Switch chains to withdraw' : 'Withdraw'}
             />
@@ -263,12 +305,12 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
         </AddressAndInfoSection>
       )}
       <Modal open={stage !== WithdrawState.Ideal}>
-        {depositNote && (
+        {depositNotes && (
           <WithdrawingModal
             withdrawTxInfo={{
               account: recipient,
             }}
-            note={depositNote.note}
+            note={depositInfo?.note.note}
             cancel={cancelWithdraw}
             stage={stage}
             canCancel={canCancel}
@@ -277,17 +319,17 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
       </Modal>
 
       {/* Modal to show on success  */}
-      <Modal open={outputNotes.length > 0}>
-        {depositNote && (
+      <Modal open={receipt != ''}>
+        {depositNotes && (
           <WithdrawSuccessModal
             receipt={receipt}
             recipient={recipient}
-            note={depositNote.note}
+            note={depositNotes?.[0]}
             relayer={relayersState.activeRelayer}
             exit={() => {
-              setNote('');
+              setNotes([]);
               setRecipient('');
-              setOutputNotes([]);
+              setReceipt('');
               return cancelWithdraw();
             }}
           />
@@ -297,7 +339,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
       {/* Modal to show for relayer settings */}
       <Modal open={showRelayerModal}>
         <RelayerModal
-          note={depositNote}
+          note={depositNotes?.[0]}
           state={relayersState}
           methods={relayerMethods}
           onChange={(nextRelayer: WebbRelayer | null) => {

@@ -70,7 +70,6 @@ export abstract class AnchorApi<Api, BridgeConfigEntry> {
 
   async getVariableAnchors(): Promise<Array<Omit<AnchorBase, 'amount'> & { amount: number | string }>> {
     const allAnchors = await this.getAnchors();
-    console.log(allAnchors);
     return allAnchors.filter((a) => typeof a.amount === 'undefined') as any;
   }
 
