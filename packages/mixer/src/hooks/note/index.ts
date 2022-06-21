@@ -2,7 +2,7 @@ import { ChainType, computeChainIdType, internalChainIdIntoEVMId } from '@webb-d
 import { Note, NoteGenInput } from '@webb-tools/sdk-core';
 import { useEffect, useState } from 'react';
 
-async function mapNoteV1OrV2ToNoteV2(noteString: string): Promise<Note | null> {
+async function migrateNote(noteString: string): Promise<Note | null> {
   let d = await Note.deserialize(noteString);
   try {
     if (d.note.version === 'v1') {
@@ -37,9 +37,10 @@ async function mapNoteV1OrV2ToNoteV2(noteString: string): Promise<Note | null> {
       };
       let newNote = await Note.generateNote(newNoteInput);
       return newNote;
-    } else {
+    } else if (d.note.version === 'v2') {
       return d;
     }
+    return null;
   } catch (e) {
     console.log('passed value was: ', noteString);
     console.log('Error of: ', e);
@@ -55,7 +56,7 @@ export const useDepositNotes = (values: string[]): null | Note[] => {
         if (values.length === 0) {
           throw new Error('empty value');
         }
-        const notes = await Promise.all(values.map((value) => mapNoteV1OrV2ToNoteV2(value)));
+        const notes = await Promise.all(values.map((value) => migrateNote(value)));
         // all notes are valid
         const allNotes = notes.reduce((acc, note) => acc && note !== null, true);
         if (allNotes) {
@@ -82,7 +83,7 @@ export const useDepositNote = (value: string): null | Note => {
         if (value === '') {
           throw new Error('empty value');
         }
-        const note = await mapNoteV1OrV2ToNoteV2(value);
+        const note = await migrateNote(value);
         setDepositNote(note);
       } catch (e) {
         setDepositNote(null);

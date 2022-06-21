@@ -58,16 +58,16 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
     const inputAmounts: number = inputNotes.reduce((acc: number, { note }) => acc + Number(note.amount), 0);
     const amount = currencyToUnitI128(Number(amountUnit)).toString();
 
-    const reminder = inputAmounts - Number(amount);
+    const remainder = inputAmounts - Number(amount);
 
-    if (reminder < 0) {
+    if (remainder < 0) {
       throw new Error(`Input ${inputAmounts} is less than the withdrawn amount ${amount}`);
     }
 
     const targetChainId = inputNotes[0].note.targetChainId;
     const treeId = inputNotes[0].note.sourceIdentifyingData;
     const output1 = await Utxo.generateUtxo({
-      amount: String(reminder),
+      amount: String(remainder),
       chainId: targetChainId,
       backend: 'Arkworks',
       curve: 'Bn254',
