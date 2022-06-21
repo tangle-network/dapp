@@ -88,7 +88,6 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
       }
       return index;
     }, 0);
-    console.log(`last leaf index ${latestIndex}`);
     const leaves = await getLeaves(this.inner.api, Number(treeId), 0, latestIndex);
     const leavesMap: any = {};
     /// Assume same chain withdraw-deposit
@@ -152,8 +151,6 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
       section: 'vAnchorBn254',
     };
     const tx = this.inner.txBuilder.build(method, [treeId, vanchorProofData, extData]);
-    console.log([treeId, vanchorProofData, extData]);
-
     const txHash = await tx.call(account.address);
     const leafIndex = await this.getleafIndex(outputCommitment, predictedIndex, Number(treeId));
     outputNote.note.update_vanchor_utxo(output1.inner);

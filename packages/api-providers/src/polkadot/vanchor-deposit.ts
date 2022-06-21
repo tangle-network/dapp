@@ -196,23 +196,12 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
         [treeId, vanchorProofData, extData]
       );
 
-      console.log([treeId, vanchorProofData, extData]);
-      const txHash = await tx.call(account.address);
+      const _txHash = await tx.call(account.address);
 
       const insertedLeaf = depositNote.getLeaf();
       const leafIndex = await this.getleafIndex(insertedLeaf, predictedIndex, treeId);
       await depositNote.mutateIndex(String(leafIndex));
-      console.log(txHash, leafIndex);
       this.emit('stateChange', WithdrawState.Done);
-      console.log(depositNote.note.index);
-      console.log(depositNote.serialize());
-      console.log({
-        leafsCount,
-        indexBeforeInsertion: predictedIndex,
-        leafIndex,
-      });
-      const rs = await validateVAnchorNoteIndex(this.inner.api, treeId, depositNote.serialize());
-      console.log(rs);
       return depositNote;
     } catch (e) {
       this.emit('stateChange', WithdrawState.Failed);
