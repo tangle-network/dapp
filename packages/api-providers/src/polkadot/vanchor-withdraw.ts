@@ -61,7 +61,9 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
     const remainder = inputAmounts - Number(amount);
 
     if (remainder < 0) {
-      throw new Error(`Input ${inputAmounts} is less than the withdrawn amount ${amount}`);
+      this.emit('stateChange', WithdrawState.Failed);
+      this.emit('stateChange', WithdrawState.Ideal);
+      throw WebbError.from(WebbErrorCodes.AmountToWithdrawExceedsTheDepositedAmount);
     }
 
     const targetChainId = inputNotes[0].note.targetChainId;
@@ -155,12 +157,9 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
     const txHash = await tx.call(account.address);
     const leafIndex = await this.getleafIndex(outputCommitment, predictedIndex, Number(treeId));
     outputNote.note.update_vanchor_utxo(output1.inner);
-    await outputNote.mutateIndex(String(leafIndex));
-    console.log({
-      leafsCount,
-      indexBeforeInsertion: predictedIndex,
-      leafIndex,
-    });
+    outputNote.mutateIndex(String(leafIndex));
+    this.emit('stateChange', WithdrawState.Done);
+    this.emit('stateChange', WithdrawState.Ideal);
     return {
       method,
       outputNotes: [outputNote],

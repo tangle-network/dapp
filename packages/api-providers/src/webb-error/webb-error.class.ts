@@ -27,6 +27,8 @@ export enum WebbErrorCodes {
   RelayerMisbehaving,
   /// Failed to parse the chainId
   ChainIdTypeUnformatted,
+  /// Invalid amount to withdraw,
+  AmountToWithdrawExceedsTheDepositedAmount,
 }
 
 /// An Error message with error metadata
@@ -120,6 +122,12 @@ export class WebbError extends Error {
         return {
           code,
           message: 'Parsing of a ChainIdType failed',
+        };
+
+      case WebbErrorCodes.AmountToWithdrawExceedsTheDepositedAmount:
+        return {
+          code,
+          message: `The amount to withdraw is ore than the already deposited amount`,
         };
 
       default:
