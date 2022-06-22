@@ -10,7 +10,7 @@ import { hexToU8a, u8aToHex } from '@polkadot/util';
 
 import { MixerWithdraw } from '../abstracts';
 import { WebbError, WebbErrorCodes } from '../webb-error';
-import { fetchSubstrateMixerProvingKey, RelayedWithdrawResult, WithdrawState } from '../';
+import { fetchSubstrateMixerProvingKey, RelayedWithdrawResult, TransactionState } from '../';
 import { WebbPolkadot } from './webb-provider';
 import { PolkadotMixerDeposit } from '.';
 
@@ -70,7 +70,7 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
         throw WebbError.from(WebbErrorCodes.NoAccountAvailable);
       }
 
-      this.emit('stateChange', WithdrawState.GeneratingZk);
+      this.emit('stateChange', TransactionState.GeneratingZk);
 
       // parse the note
       const noteParsed = await Note.deserialize(note);
@@ -134,7 +134,7 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
       // withdraw through relayer
       if (isValidRelayer) {
         logger.info('withdrawing through relayer', activeRelayer);
-        this.emit('stateChange', WithdrawState.SendingTransaction);
+        this.emit('stateChange', TransactionState.SendingTransaction);
         const relayerMixerTx = await activeRelayer!.initWithdraw('mixer');
         const relayerWithdrawPayload = relayerMixerTx.generateWithdrawRequest(
           {
@@ -160,15 +160,15 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
         relayerMixerTx.watcher.subscribe(([results, message]) => {
           switch (results) {
             case RelayedWithdrawResult.PreFlight:
-              this.emit('stateChange', WithdrawState.SendingTransaction);
+              this.emit('stateChange', TransactionState.SendingTransaction);
               break;
             case RelayedWithdrawResult.OnFlight:
               break;
             case RelayedWithdrawResult.Continue:
               break;
             case RelayedWithdrawResult.CleanExit:
-              this.emit('stateChange', WithdrawState.Done);
-              this.emit('stateChange', WithdrawState.Ideal);
+              this.emit('stateChange', TransactionState.Done);
+              this.emit('stateChange', TransactionState.Ideal);
 
               this.inner.notificationHandler({
                 description: `TX hash: ${transactionString(message || '')}`,
@@ -180,8 +180,8 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
 
               break;
             case RelayedWithdrawResult.Errored:
-              this.emit('stateChange', WithdrawState.Failed);
-              this.emit('stateChange', WithdrawState.Ideal);
+              this.emit('stateChange', TransactionState.Failed);
+              this.emit('stateChange', TransactionState.Ideal);
 
               this.inner.notificationHandler({
                 description: message || 'Withdraw failed',
@@ -218,7 +218,7 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
       }
 
       logger.trace('submitting the transaction of withdraw with params', withdrawProof);
-      this.emit('stateChange', WithdrawState.SendingTransaction);
+      this.emit('stateChange', TransactionState.SendingTransaction);
 
       const tx = this.inner.txBuilder.build(
         {
@@ -238,12 +238,12 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
       );
       const hash = await tx.call(account.address);
 
-      this.emit('stateChange', WithdrawState.Done);
+      this.emit('stateChange', TransactionState.Done);
 
       return hash || '';
     } catch (e) {
       this.emit('error', 'Failed to generate zero knowledge proof');
-      this.emit('stateChange', WithdrawState.Failed);
+      this.emit('stateChange', TransactionState.Failed);
       throw e;
     }
   }

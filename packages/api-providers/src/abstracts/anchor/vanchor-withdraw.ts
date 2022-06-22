@@ -7,7 +7,7 @@ import { EventBus } from '@webb-tools/app-util';
 import { Note } from '@webb-tools/sdk-core';
 
 import { InternalChainId } from '../../chains';
-import { CancelToken, WebbWithdrawEvents, WithdrawState } from '../mixer';
+import { CancelToken, TransactionState, WebbWithdrawEvents } from '../mixer';
 import { Bridge } from './bridge';
 
 export type VAnchorWithdrawPayload = {
@@ -16,7 +16,7 @@ export type VAnchorWithdrawPayload = {
 };
 
 export abstract class VAnchorWithdraw<T extends WebbApiProvider<any>> extends EventBus<WebbWithdrawEvents> {
-  state: WithdrawState = WithdrawState.Ideal;
+  state: TransactionState = TransactionState.Ideal;
   cancelToken: CancelToken = { cancelled: false };
 
   constructor(protected inner: T) {
@@ -33,7 +33,7 @@ export abstract class VAnchorWithdraw<T extends WebbApiProvider<any>> extends Ev
 
   cancelWithdraw(): Promise<void> {
     this.cancelToken.cancelled = true;
-    this.emit('stateChange', WithdrawState.Cancelling);
+    this.emit('stateChange', TransactionState.Cancelling);
 
     return Promise.resolve(undefined);
   }
