@@ -6,7 +6,7 @@
   "author": "Webb Developers <drew@webb.tools>",
   "homepage": "https://github.com/webb-tools/webb-dapp#readme",
   "dependencies": {
-    "@polkadot/api": "8.7.1",
+    "@polkadot/api": "^8.7.1",
     "@polkadot/ui-keyring": "1.3.1",
     "@webb-dapp/react-hooks": "0.2.1-beta.1",
     "@webb-tools/api": "^0.1.4-85",
