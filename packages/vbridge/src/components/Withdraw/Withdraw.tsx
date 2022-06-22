@@ -11,7 +11,7 @@ import { chainsPopulated } from '@webb-dapp/apps/configs';
 import { useDepositNote } from '@webb-dapp/mixer';
 import { RelayerModal } from '@webb-dapp/react-components/Relayer/RelayerModal';
 import { TransactionProcessingModal } from '@webb-dapp/react-components/Transact/TransactionProcessingModal';
-import { WithdrawingModal, WithdrawSuccessModal } from '@webb-dapp/react-components/Withdraw';
+import { WithdrawSuccessModal } from '@webb-dapp/react-components/Withdraw';
 import { useAppConfig, useWebContext } from '@webb-dapp/react-environment';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';

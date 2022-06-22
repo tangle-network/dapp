@@ -1,5 +1,5 @@
 import { Button, Icon, LinearProgress, Tooltip, Typography } from '@material-ui/core';
-import { getEVMChainName, parseChainIdType } from '@webb-dapp/api-providers';
+import { getChainNameFromChainId, parseChainIdType } from '@webb-dapp/api-providers';
 import { WithdrawState } from '@webb-dapp/api-providers';
 import { useAppConfig } from '@webb-dapp/react-environment';
 import { SpaceBox } from '@webb-dapp/ui-components/Box';
@@ -187,7 +187,7 @@ export const WithdrawingModal: React.FC<WithdrawingModalProps> = ({
                 <Typography variant={'caption'}>
                   <b>
                     Receiving {note.amount + ' ' + note.tokenSymbol} on{' '}
-                    {getEVMChainName(appConfig, parseChainIdType(Number(note.targetChainId)).chainId)}
+                    {getChainNameFromChainId(appConfig, parseChainIdType(Number(note.targetChainId)))}
                   </b>
                 </Typography>
               </InfoItem>
