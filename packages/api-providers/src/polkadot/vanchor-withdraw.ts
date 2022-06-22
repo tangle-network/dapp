@@ -16,7 +16,7 @@ import {
 } from '@webb-dapp/api-providers';
 import { getLeafCount, getLeafIndex, getLeaves, rootOfLeaves } from '@webb-dapp/api-providers/polkadot/mt-utils';
 import { LoggerService } from '@webb-tools/app-util';
-import { ArkworksProvingManager, Note, ProofInterface, ProvingManagerSetupInput, Utxo } from '@webb-tools/sdk-core';
+import { ArkworksProvingManager, Note, ProvingManagerSetupInput, Utxo } from '@webb-tools/sdk-core';
 import { VAnchorProof } from '@webb-tools/sdk-core/proving/types';
 import { BigNumber } from 'ethers';
 
@@ -27,6 +27,7 @@ import { naclEncrypt, randomAsU8a } from '@polkadot/util-crypto';
 import { VAnchorWithdraw, VAnchorWithdrawResult } from '../abstracts/anchor/vanchor-withdraw';
 
 const logger = LoggerService.get('SubstrateVAnchorWithdraw');
+
 async function fetchSubstrateVAnchorProvingKey() {
   const IPFSUrl = 'https://ipfs.io/ipfs/QmZiNuAKp2QGp281bqasNqvqccPCGp4yoxWbK8feecefML';
   const cachedURI = getCachedFixtureURI('proving_key_uncompressed_sub_vanchor_2_2_2.bin');
@@ -40,8 +41,15 @@ async function fetchSubstrateVAnchorProvingKey() {
 }
 
 export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
+  /**
+   * notes - Withdraw notes that the use had already deposited , the notes should have the right index
+   * recipient - Recipient account
+   * amountUnit - amount to withdraw should be less or equal to the deposited notes amount
+   * */
   async withdraw(notes: string[], recipient: string, amountUnit: string): Promise<VAnchorWithdrawResult> {
+    // Generate random secrets which can be supplied later by the user
     const secret = randomAsU8a();
+    // Get the current active account
     const account = await this.inner.accounts.activeOrDefault;
 
     this.emit('stateChange', WithdrawState.GeneratingZk);
@@ -54,19 +62,21 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
     const relayerAccountId = account.address;
     const recipientAccountDecoded = decodeAddress(accountId);
     const relayerAccountDecoded = decodeAddress(relayerAccountId);
-
+    // Notes deserialization
     const inputNotes = await Promise.all(notes.map((note) => Note.deserialize(note)));
+    // Calculated the input amount
     const inputAmounts: number = inputNotes.reduce((acc: number, { note }) => acc + Number(note.amount), 0);
+    // TODO: Fix the function to recive the denomination
     const amount = currencyToUnitI128(Number(amountUnit)).toString();
-
+    // Calculate the remainder amount
     const remainder = inputAmounts - Number(amount);
-
+    // Ensure that remainder is more than 0
     if (remainder < 0) {
       this.emit('stateChange', WithdrawState.Failed);
       this.emit('stateChange', WithdrawState.Ideal);
       throw WebbError.from(WebbErrorCodes.AmountToWithdrawExceedsTheDepositedAmount);
     }
-
+    // Get the target chainId,treeId from the note
     const targetChainId = inputNotes[0].note.targetChainId;
     const treeId = inputNotes[0].note.sourceIdentifyingData;
     const output1 = await Utxo.generateUtxo({
@@ -82,7 +92,7 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
       curve: 'Bn254',
     });
     let publicAmount = -amount;
-
+    // Get the last leaf index to fetch the leaves
     const latestIndex = inputNotes.reduce((index, { note }) => {
       if (index < Number(note.index)) {
         return Number(note.index);
@@ -93,6 +103,7 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
     const leavesMap: any = {};
     /// Assume same chain withdraw-deposit
     leavesMap[targetChainId] = leaves;
+    // Get the root from local merkle tree build
     const root = await rootOfLeaves(leaves);
     const neighborRoots: string[] = await (this.inner.api.rpc as any).lt
       .getNeighborRoots(treeId)
@@ -116,7 +127,7 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
     const worker = this.inner.wasmFactory('wasm-utils');
     const pm = new ArkworksProvingManager(worker);
 
-    const vnachorWithdrawSetup: ProvingManagerSetupInput<'vanchor'> = {
+    const vanchorWithdrawSetup: ProvingManagerSetupInput<'vanchor'> = {
       encryptedCommitments: [comEnc1, comEnc2],
       extAmount: String(publicAmount),
       fee: '0',
@@ -132,7 +143,7 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
       output: [output1, output2],
     };
 
-    const data: VAnchorProof = await pm.prove('vanchor', vnachorWithdrawSetup);
+    const data: VAnchorProof = await pm.prove('vanchor', vanchorWithdrawSetup);
     const vanchorProofData = {
       proof: `0x${data.proof}`,
       publicAmount: data.publicAmount,
@@ -144,6 +155,7 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
       extDataHash: data.extDataHash,
     };
     this.emit('stateChange', WithdrawState.SendingTransaction);
+    // get the leaf index to get the right leaf index ofter insertion
     const leafsCount = await getLeafCount(this.inner.api, Number(treeId));
     const predictedIndex = leafsCount;
 
@@ -154,7 +166,9 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
     const tx = this.inner.txBuilder.build(method, [treeId, vanchorProofData, extData]);
     const txHash = await tx.call(account.address);
     const leafIndex = await this.getleafIndex(outputCommitment, predictedIndex, Number(treeId));
+    // update the UTXO of the remainder note
     outputNote.note.update_vanchor_utxo(output1.inner);
+    // update the leaf index of the remainder note
     outputNote.mutateIndex(String(leafIndex));
     this.emit('stateChange', WithdrawState.Done);
     this.emit('stateChange', WithdrawState.Ideal);

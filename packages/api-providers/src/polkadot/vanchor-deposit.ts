@@ -104,8 +104,8 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
   }
 
   async deposit(depositPayload: DepositPayload): Promise<VAnchorDepositResults> {
-    // Getting the  active account
     try {
+      // Getting the active account
       const account = await this.inner.accounts.activeOrDefault;
       const secret = randomAsU8a();
       this.emit('stateChange', WithdrawState.GeneratingZk);
@@ -119,10 +119,10 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
       const recipientAccountDecoded = decodeAddress(accountId);
       const relayerAccountDecoded = decodeAddress(relayerAccountId);
 
-      // output note
+      // output note (Already generated)
       const depositNote = depositPayload.note;
       const { note } = depositNote;
-
+      // VAnchor tree id
       const treeId = depositPayload.params[0];
       const targetChainId = note.targetChainId;
 
@@ -136,9 +136,10 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
       });
       let publicAmount = note.amount;
       const inputNote = await depositPayload.note.getDefaultUtxoNote();
-
+      // While depositing use an empty leaves
       const leavesMap: any = {};
       leavesMap[targetChainId] = [];
+      // fetch latest root / neighbor roots
       const tree = await this.inner.api.query.merkleTreeBn254.trees(treeId);
       const root = tree.unwrap().root.toHex();
       const neighborRoots: string[] = await (this.inner.api.rpc as any).lt
@@ -188,6 +189,7 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
         extDataHash: data.extDataHash,
       };
       this.emit('stateChange', WithdrawState.SendingTransaction);
+      // Store the next leaf index before insertion
       const leafsCount = await getLeafCount(this.inner.api, treeId);
       const predictedIndex = leafsCount;
       const tx = this.inner.txBuilder.build(
@@ -202,6 +204,7 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
 
       const insertedLeaf = depositNote.getLeaf();
       const leafIndex = await this.getleafIndex(insertedLeaf, predictedIndex, treeId);
+      // Update the leaf index
       depositNote.mutateIndex(String(leafIndex));
       this.emit('stateChange', WithdrawState.Done);
       return {
