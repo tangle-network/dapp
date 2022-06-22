@@ -149,7 +149,7 @@ const AppBar: React.FC<AppBarProps> = ({ toggleSidebarDisplay }) => {
     </>
   ) : (
     <AppBarWrapper>
-      <Typography variant={isMdOrAbove ? 'h2' : 'h3'}>
+      <Typography variant={isMdOrAbove ? 'h2' : 'h3'} style={{ marginRight: '16px' }}>
         <b>{pageTitle?.toString()}</b>
       </Typography>
       <RightNavigation>

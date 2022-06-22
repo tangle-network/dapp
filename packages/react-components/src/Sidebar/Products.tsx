@@ -1,3 +1,4 @@
+import { Collapse, Slide } from '@material-ui/core';
 import { useStore } from '@webb-dapp/react-environment';
 import { useModal } from '@webb-dapp/react-hooks';
 import { ArrowDownIcon } from '@webb-dapp/ui-components/assets/ArrowDownIcon';
@@ -78,8 +79,9 @@ const ProductList = styled.div<ProductListProps>`
   display: ${(props): string => (props.collapse ? 'none' : 'block')};
 `;
 
-const ProductArrow = styled((props) => <ArrowDownIcon {...props} />)<{ open: boolean }>`
+const ProductArrowWrapper = styled.div<{ open: boolean }>`
   transform: rotate(${(props): number => (props.open ? -180 : 0)}deg);
+  transition: 300ms linear all;
   & g {
     stroke: var(--color-primary);
   }
@@ -149,13 +151,17 @@ const ProductItem: FC<ProductItemProps> = memo(({ collapse, data }) => {
         <ProductCell $hasIcon={!!data.icon} onClick={toggle}>
           {data.icon}
           <ProductName collapse={collapse}>{data.name}</ProductName>
-          <ProductArrow open={isOpen} />
+          <ProductArrowWrapper open={isOpen}>
+            <ArrowDownIcon />
+          </ProductArrowWrapper>
         </ProductCell>
-        <ProductList collapse={!isOpen}>
-          {data.items.map((item) => (
-            <ProductSubItem collapse={collapse} data={item} key={`${data.name}_${item.name}`} />
-          ))}
-        </ProductList>
+        <Collapse in={isOpen}>
+          <ProductList collapse={!isOpen}>
+            {data.items.map((item) => (
+              <ProductSubItem collapse={collapse} data={item} key={`${data.name}_${item.name}`} />
+            ))}
+          </ProductList>
+        </Collapse>
       </>
     );
   }
