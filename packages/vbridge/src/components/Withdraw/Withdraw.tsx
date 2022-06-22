@@ -10,6 +10,7 @@ import {
 import { chainsPopulated } from '@webb-dapp/apps/configs';
 import { useDepositNote } from '@webb-dapp/mixer';
 import { RelayerModal } from '@webb-dapp/react-components/Relayer/RelayerModal';
+import { TransactionProcessingModal } from '@webb-dapp/react-components/Transact/TransactionProcessingModal';
 import { WithdrawingModal, WithdrawSuccessModal } from '@webb-dapp/react-components/Withdraw';
 import { useAppConfig, useWebContext } from '@webb-dapp/react-environment';
 import { SpaceBox } from '@webb-dapp/ui-components';
@@ -264,18 +265,17 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
       )}
       <Modal open={stage !== WithdrawState.Ideal}>
         {depositNote && (
-          <WithdrawingModal
-            withdrawTxInfo={{
-              account: recipient,
-            }}
-            note={depositNote.note}
+          <TransactionProcessingModal
+            state={stage}
+            txFlow={'Withdraw'}
+            amount={Number(depositNote.note.amount)}
+            sourceChain={getChainNameFromChainId(appConfig, parseChainIdType(Number(depositNote.note.sourceChainId)))}
+            destChain={getChainNameFromChainId(appConfig, parseChainIdType(Number(depositNote.note.targetChainId)))}
             cancel={cancelWithdraw}
-            stage={stage}
-            canCancel={canCancel}
+            hide={() => console.log("can't hide withdrawing modal")}
           />
         )}
       </Modal>
-
       {/* Modal to show on success  */}
       <Modal open={outputNotes.length > 0}>
         {depositNote && (

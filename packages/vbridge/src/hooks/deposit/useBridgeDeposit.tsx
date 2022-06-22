@@ -23,6 +23,7 @@ export interface VBridgeDepositApi {
     wrappableAsset: string | undefined
   ): Promise<DepositPayload>;
 
+  stage: WithdrawState;
   loadingState: MixerDeposit['loading'];
   error: string;
   depositApi: VAnchorDeposit<any> | null;
@@ -52,16 +53,17 @@ export const useBridgeDeposit = (): VBridgeDepositApi => {
     if (!depositApi || !bridgeApi) {
       return;
     }
-    const unSub = depositApi.on('error', (error) => {
-      setError(error);
+
+    depositApi.on('stateChange', (state) => {
+      setStage(state);
     });
+
     setSelectedBridgeCurrency(bridgeApi.currency);
 
     const subscribe = bridgeApi.$store.subscribe((bridge) => {
       setSelectedBridgeCurrency(bridgeApi.currency);
     });
     return () => {
-      unSub && unSub();
       subscribe.unsubscribe();
     };
   }, [depositApi, bridgeApi, selectedBridgeCurrency?.id, bridgeApi?.activeBridge]);
@@ -101,6 +103,7 @@ export const useBridgeDeposit = (): VBridgeDepositApi => {
   };
 
   return {
+    stage,
     depositApi,
     deposit,
     generateNote,

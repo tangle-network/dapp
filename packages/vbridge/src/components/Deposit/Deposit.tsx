@@ -1,9 +1,15 @@
-import { Checkbox, FormControlLabel, Typography } from '@material-ui/core';
-import { ChainTypeId, Currency, MixerSize, WalletConfig, WebbCurrencyId } from '@webb-dapp/api-providers';
+import {
+  ChainTypeId,
+  chainTypeIdToInternalId,
+  Currency,
+  WalletConfig,
+  WebbCurrencyId,
+  WithdrawState,
+} from '@webb-dapp/api-providers';
 import { useWrapUnwrap } from '@webb-dapp/page-wrap-unwrap/hooks/useWrapUnwrap';
 import { RequiredWalletSelection } from '@webb-dapp/react-components/RequiredWalletSelection/RequiredWalletSelection';
+import { TransactionProcessingModal } from '@webb-dapp/react-components/Transact/TransactionProcessingModal';
 import { useAppConfig, useWebContext } from '@webb-dapp/react-environment/webb-context';
-import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { SpaceBox } from '@webb-dapp/ui-components/Box';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { AmountInput } from '@webb-dapp/ui-components/Inputs/AmountInput/AmountInput';
@@ -78,7 +84,6 @@ type DepositProps = {};
 
 export const Deposit: React.FC<DepositProps> = () => {
   const [wrappedTokenBalance, setWrappedTokenBalance] = useState('');
-  const [item, setItem] = useState<MixerSize | undefined>(undefined);
   const [userAmountInput, setUserAmountInput] = useState<string>('');
   const [amount, setAmount] = useState<number>(0);
   const [destChain, setDestChain] = useState<ChainTypeId | undefined>(undefined);
@@ -90,10 +95,10 @@ export const Deposit: React.FC<DepositProps> = () => {
 
   const { tokens: bridgeCurrencies } = useBridge();
   const bridgeDepositApi = useBridgeDeposit();
-  const { selectedBridgeCurrency, setSelectedCurrency } = bridgeDepositApi;
+  const { selectedBridgeCurrency, setSelectedCurrency, stage } = bridgeDepositApi;
 
   const { setWrappableToken, wrappableToken, wrappableTokens } = useWrapUnwrap();
-  const { activeApi, activeChain, activeWallet, chains, loading, switchChain } = useWebContext();
+  const { activeApi, activeChain, activeWallet, loading } = useWebContext();
 
   useEffect(() => {
     if (!activeChain || !activeApi) {
@@ -113,7 +118,9 @@ export const Deposit: React.FC<DepositProps> = () => {
     });
   }, [activeApi, activeChain]);
 
-  const [showDepositModal, setShowDepositModal] = useState(false);
+  // boolean flags for different modal displays
+  const [showDepositConfirm, setShowDepositConfirm] = useState(false);
+  const [hideTxModal, setHideTxModal] = useState(false);
 
   const handleSuccess = useCallback((): void => {}, []);
 
@@ -123,8 +130,8 @@ export const Deposit: React.FC<DepositProps> = () => {
   }, [chainsConfig, selectedBridgeCurrency]);
 
   const disabledDepositButton = useMemo(() => {
-    return amount === 0 || typeof destChain === 'undefined';
-  }, [amount, destChain]);
+    return amount === 0 || typeof destChain === 'undefined' || stage != WithdrawState.Ideal;
+  }, [amount, destChain, stage]);
 
   const wrappableCurrency = useMemo<Currency | undefined>(() => {
     if (wrappableToken) {
@@ -257,27 +264,41 @@ export const Deposit: React.FC<DepositProps> = () => {
             <MixerButton
               disabled={disabledDepositButton}
               onClick={() => {
-                setShowDepositModal(true);
+                setShowDepositConfirm(true);
               }}
               label={showWrappableAssets ? 'Wrap and Deposit' : 'Deposit'}
             />
           </ChainInputWrapper>
         )}
-        <Modal open={showDepositModal}>
+        <Modal open={showDepositConfirm}>
           <DepositConfirm
             onSuccess={() => {
               handleSuccess();
-              setShowDepositModal(false);
+              setShowDepositConfirm(false);
             }}
-            open={showDepositModal}
+            open={showDepositConfirm}
             onClose={() => {
-              setShowDepositModal(false);
+              setShowDepositConfirm(false);
             }}
             anchorId={0}
             provider={bridgeDepositApi}
             amount={amount}
             destChain={destChain}
             wrappableAsset={showWrappableAssets ? wrappableCurrency : null}
+          />
+        </Modal>
+
+        <Modal open={!hideTxModal && stage != WithdrawState.Ideal} onClose={() => setHideTxModal(true)}>
+          <TransactionProcessingModal
+            txFlow={'Deposit'}
+            state={stage}
+            amount={amount}
+            sourceChain={activeChain ? activeChain.name : ''}
+            destChain={destChain ? chainsConfig[chainTypeIdToInternalId(destChain)].name : ''}
+            cancel={() => {
+              console.log('user tried to cancel');
+            }}
+            hide={() => setHideTxModal(true)}
           />
         </Modal>
       </RequiredWalletSelection>

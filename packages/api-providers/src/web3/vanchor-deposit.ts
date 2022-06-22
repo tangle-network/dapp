@@ -277,6 +277,8 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
             Buffer.from(smallWasm)
           );
 
+          this.emit('stateChange', WithdrawState.SendingTransaction);
+
           // emit event for waiting for transaction to confirm
           await tx.wait();
 
@@ -292,6 +294,8 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
             message: `${currency.view.name}:wrap and deposit`,
             name: 'Transaction',
           });
+
+          this.emit('stateChange', WithdrawState.Done);
         } else {
           this.inner.notificationHandler({
             data: {
@@ -305,6 +309,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
             message: `${currency.view.name}:wrap and deposit`,
             name: 'Transaction',
           });
+          this.emit('stateChange', WithdrawState.Failed);
         }
 
         return;
@@ -337,6 +342,8 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
             Buffer.from(smallWasm)
           );
 
+          this.emit('stateChange', WithdrawState.SendingTransaction);
+
           // emit event for waiting for transaction to confirm
           await tx.wait();
 
@@ -352,6 +359,8 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
             message: `${currency.view.name} deposit`,
             name: 'Transaction',
           });
+
+          this.emit('stateChange', WithdrawState.Done);
         } else {
           this.inner.notificationHandler({
             data: {
@@ -365,6 +374,8 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
             message: 'Not enough token balance',
             name: 'Transaction',
           });
+
+          this.emit('stateChange', WithdrawState.Failed);
         }
       }
     } catch (e: any) {
@@ -379,6 +390,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
           message: `${currency.view.name}:deposit`,
           name: 'Transaction',
         });
+        this.emit('stateChange', WithdrawState.Failed);
       } else {
         this.inner.notificationHandler.remove('waiting-approval');
         this.inner.notificationHandler({
@@ -388,6 +400,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
           message: `${currency.view.name}:deposit`,
           name: 'Transaction',
         });
+        this.emit('stateChange', WithdrawState.Failed);
       }
     }
   }
