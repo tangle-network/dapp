@@ -191,7 +191,12 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({
               {note}
               <Actions>
                 <Tooltip title={'Download Note'}>
-                  <IconButton className={'download-button'} onClick={downloadNote}>
+                  <IconButton
+                    className={'download-button'}
+                    onClick={() => {
+                      downloadNote();
+                    }}
+                  >
                     <Icon>download</Icon>
                   </IconButton>
                 </Tooltip>
@@ -228,8 +233,11 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({
             downloadNote();
             onClose();
             const results = await provider.deposit(depositPayload);
-            // download note with the index
-            downloadNote(results.updatedNote.serialize());
+            // TODO : Fix this once the web3 impl has the right impls
+            if (results) {
+              // download note with the index
+              downloadNote(results.updatedNote.serialize());
+            }
             setLoading(false);
           }}
           disabled={!backupConfirmation || !depositPayload || loading}

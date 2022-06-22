@@ -141,6 +141,8 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
     };
   }
 
+  // TODO instead of handling the notification inside the function body throw `WebbError`s and handle them properly in the catch block
+  //@ts-ignore
   async deposit(depositPayload: DepositPayload): Promise<VAnchorDepositResults> {
     const bridge = this.bridgeApi.activeBridge;
     const currency = this.bridgeApi.currency;
@@ -399,6 +401,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
           name: 'Transaction',
         });
       }
+      throw e;
     }
   }
 }
