@@ -95,7 +95,7 @@ export const Deposit: React.FC<DepositProps> = () => {
 
   const { tokens: bridgeCurrencies } = useBridge();
   const bridgeDepositApi = useBridgeDeposit();
-  const { selectedBridgeCurrency, setSelectedCurrency, stage, setStage } = bridgeDepositApi;
+  const { selectedBridgeCurrency, setSelectedCurrency, setStage, stage } = bridgeDepositApi;
 
   const { setWrappableToken, wrappableToken, wrappableTokens } = useWrapUnwrap();
   const { activeApi, activeChain, activeWallet, loading } = useWebContext();
