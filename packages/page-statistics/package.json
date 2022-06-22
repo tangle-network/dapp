@@ -4,5 +4,10 @@
   "description": "statistics page",
   "main": "index.js",
   "author": "Webb Developers <drew@webb.tools>",
-  "homepage": "https://github.com/webb-tools/webb-dapp#readme"
+  "homepage": "https://github.com/webb-tools/webb-dapp#readme",
+  "dependencies": {
+    "@ngneat/falso": "^5.7.0",
+    "react-content-loader": "^6.2.0",
+    "react-countup": "^6.3.0"
+  }
 }
