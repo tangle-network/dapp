@@ -9,7 +9,7 @@ import { ethers } from 'ethers';
 
 import { hexToU8a, u8aToHex } from '@polkadot/util';
 
-import { DepositPayload as IDepositPayload, MixerSize, VAnchorDeposit, WithdrawState } from '../abstracts';
+import { DepositPayload as IDepositPayload, MixerSize, TransactionState, VAnchorDeposit } from '../abstracts';
 import {
   ChainType,
   chainTypeIdToInternalId,
@@ -186,13 +186,13 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
       const maxEdges = await srcVAnchor._contract.maxEdges();
 
       // Fetch the fixtures
-      this.emit('stateChange', WithdrawState.FetchingFixtures);
+      this.emit('stateChange', TransactionState.FetchingFixtures);
       const smallKey = await fetchVariableAnchorKeyForEdges(maxEdges, true);
       const smallWasm = await fetchVariableAnchorWasmForEdges(maxEdges, true);
       const leavesMap: Record<string, Uint8Array[]> = {};
 
       // Fetch the leaves from the source chain
-      this.emit('stateChange', WithdrawState.FetchingLeaves);
+      this.emit('stateChange', TransactionState.FetchingLeaves);
       let leafStorage = await bridgeStorageFactory(Number(sourceChainId));
 
       // check if we already cached some values.
@@ -237,7 +237,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
         });
       }
 
-      this.emit('stateChange', WithdrawState.GeneratingZk);
+      this.emit('stateChange', TransactionState.GeneratingZk);
 
       // If a wrappableAsset was selected, perform a wrapAndDeposit
       if (depositPayload.params[2]) {
@@ -277,7 +277,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
             Buffer.from(smallWasm)
           );
 
-          this.emit('stateChange', WithdrawState.SendingTransaction);
+          this.emit('stateChange', TransactionState.SendingTransaction);
 
           // emit event for waiting for transaction to confirm
           await tx.wait();
@@ -295,7 +295,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
             name: 'Transaction',
           });
 
-          this.emit('stateChange', WithdrawState.Done);
+          this.emit('stateChange', TransactionState.Done);
         } else {
           this.inner.notificationHandler({
             data: {
@@ -309,7 +309,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
             message: `${currency.view.name}:wrap and deposit`,
             name: 'Transaction',
           });
-          this.emit('stateChange', WithdrawState.Failed);
+          this.emit('stateChange', TransactionState.Failed);
         }
 
         return;
@@ -342,7 +342,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
             Buffer.from(smallWasm)
           );
 
-          this.emit('stateChange', WithdrawState.SendingTransaction);
+          this.emit('stateChange', TransactionState.SendingTransaction);
 
           // emit event for waiting for transaction to confirm
           await tx.wait();
@@ -360,7 +360,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
             name: 'Transaction',
           });
 
-          this.emit('stateChange', WithdrawState.Done);
+          this.emit('stateChange', TransactionState.Done);
         } else {
           this.inner.notificationHandler({
             data: {
@@ -375,7 +375,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
             name: 'Transaction',
           });
 
-          this.emit('stateChange', WithdrawState.Failed);
+          this.emit('stateChange', TransactionState.Failed);
         }
       }
     } catch (e: any) {
@@ -390,7 +390,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
           message: `${currency.view.name}:deposit`,
           name: 'Transaction',
         });
-        this.emit('stateChange', WithdrawState.Failed);
+        this.emit('stateChange', TransactionState.Failed);
       } else {
         this.inner.notificationHandler.remove('waiting-approval');
         this.inner.notificationHandler({
@@ -400,7 +400,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
           message: `${currency.view.name}:deposit`,
           name: 'Transaction',
         });
-        this.emit('stateChange', WithdrawState.Failed);
+        this.emit('stateChange', TransactionState.Failed);
       }
     }
   }

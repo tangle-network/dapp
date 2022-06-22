@@ -28,7 +28,7 @@ import {
   getEVMChainNameFromInternal,
   RelayedWithdrawResult,
   RelayerCMDBase,
-  WithdrawState,
+  TransactionState,
 } from '../';
 import { WebbWeb3Provider } from './webb-provider';
 
@@ -144,7 +144,7 @@ export class Web3AnchorWithdraw extends AnchorWithdraw<WebbWeb3Provider> {
     const sourceContract = this.inner.getFixedAnchorByAddressAndProvider(sourceContractAddress, sourceEthers);
 
     // Fetch the zero knowledge files required for creating witnesses and verifying.
-    this.emit('stateChange', WithdrawState.FetchingFixtures);
+    this.emit('stateChange', TransactionState.FetchingFixtures);
     const maxEdges = await destAnchor.inner.maxEdges();
     const wasmBuf = await fetchFixedAnchorWasmForEdges(maxEdges);
     const circuitKey = await fetchFixedAnchorKeyForEdges(maxEdges);
@@ -160,7 +160,7 @@ export class Web3AnchorWithdraw extends AnchorWithdraw<WebbWeb3Provider> {
     });
 
     // Fetch the leaves
-    this.emit('stateChange', WithdrawState.FetchingLeaves);
+    this.emit('stateChange', TransactionState.FetchingLeaves);
 
     let sourceLeaves = await this.fetchLeavesFromRelayers(sourceRelayers, sourceContract, leafStorage);
 
@@ -210,7 +210,7 @@ export class Web3AnchorWithdraw extends AnchorWithdraw<WebbWeb3Provider> {
         message: 'bridge:withdraw',
         name: 'Transaction',
       });
-      this.emit('stateChange', WithdrawState.Ideal);
+      this.emit('stateChange', TransactionState.Ideal);
 
       return '';
     }
@@ -254,7 +254,7 @@ export class Web3AnchorWithdraw extends AnchorWithdraw<WebbWeb3Provider> {
       proofInput.refund,
       proofInput.relayer
     );
-    this.emit('stateChange', WithdrawState.GeneratingZk);
+    this.emit('stateChange', TransactionState.GeneratingZk);
 
     const proof = await pm.prove('anchor', proofInput);
 
@@ -269,14 +269,14 @@ export class Web3AnchorWithdraw extends AnchorWithdraw<WebbWeb3Provider> {
         message: 'bridge:withdraw',
         name: 'Transaction',
       });
-      this.emit('stateChange', WithdrawState.Ideal);
+      this.emit('stateChange', TransactionState.Ideal);
 
       return '';
     }
 
     // If the active relayer is selected, do a relayed withdraw
     if (activeRelayer && activeRelayer.beneficiary) {
-      this.emit('stateChange', WithdrawState.SendingTransaction);
+      this.emit('stateChange', TransactionState.SendingTransaction);
       const relayedWithdraw = await activeRelayer.initWithdraw('anchor');
 
       const chainInfo = {
@@ -304,13 +304,13 @@ export class Web3AnchorWithdraw extends AnchorWithdraw<WebbWeb3Provider> {
         switch (nextValue) {
           case RelayedWithdrawResult.PreFlight:
           case RelayedWithdrawResult.OnFlight:
-            this.emit('stateChange', WithdrawState.SendingTransaction);
+            this.emit('stateChange', TransactionState.SendingTransaction);
             break;
           case RelayedWithdrawResult.Continue:
             break;
           case RelayedWithdrawResult.CleanExit:
-            this.emit('stateChange', WithdrawState.Done);
-            this.emit('stateChange', WithdrawState.Ideal);
+            this.emit('stateChange', TransactionState.Done);
+            this.emit('stateChange', TransactionState.Ideal);
 
             this.inner.notificationHandler({
               description: 'Withdraw success',
@@ -322,8 +322,8 @@ export class Web3AnchorWithdraw extends AnchorWithdraw<WebbWeb3Provider> {
 
             break;
           case RelayedWithdrawResult.Errored:
-            this.emit('stateChange', WithdrawState.Failed);
-            this.emit('stateChange', WithdrawState.Ideal);
+            this.emit('stateChange', TransactionState.Failed);
+            this.emit('stateChange', TransactionState.Ideal);
 
             this.inner.notificationHandler({
               description: message || 'Withdraw failed',
@@ -351,7 +351,7 @@ export class Web3AnchorWithdraw extends AnchorWithdraw<WebbWeb3Provider> {
       txHash = txResult?.[1] || '';
     } else {
       try {
-        this.emit('stateChange', WithdrawState.SendingTransaction);
+        this.emit('stateChange', TransactionState.SendingTransaction);
 
         // Withdraw directly
         const tx = await destAnchor.inner.withdraw(
@@ -374,7 +374,7 @@ export class Web3AnchorWithdraw extends AnchorWithdraw<WebbWeb3Provider> {
 
         txHash = receipt.transactionHash;
       } catch (e) {
-        this.emit('stateChange', WithdrawState.Ideal);
+        this.emit('stateChange', TransactionState.Ideal);
         console.log(e);
 
         this.inner.notificationHandler({
@@ -403,8 +403,8 @@ export class Web3AnchorWithdraw extends AnchorWithdraw<WebbWeb3Provider> {
       name: 'Transaction',
     });
 
-    this.emit('stateChange', WithdrawState.Done);
-    this.emit('stateChange', WithdrawState.Ideal);
+    this.emit('stateChange', TransactionState.Done);
+    this.emit('stateChange', TransactionState.Ideal);
 
     return txHash;
   }

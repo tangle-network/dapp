@@ -12,7 +12,7 @@ import {
 
 import { hexToU8a } from '@polkadot/util';
 
-import { WithdrawState } from '../abstracts';
+import { TransactionState } from '../abstracts';
 import { evmIdIntoInternalChainId } from '../chains';
 import { depositFromAnchorNote } from '../contracts/wrappers';
 import { fetchFixedAnchorKeyForEdges, fetchFixedAnchorWasmForEdges } from '../ipfs/evm';
@@ -60,13 +60,13 @@ export class Web3MixerWithdraw extends Web3AnchorWithdraw {
     });
 
     // Fetch the zero knowledge files required for creating witnesses and verifying.
-    this.emit('stateChange', WithdrawState.FetchingFixtures);
+    this.emit('stateChange', TransactionState.FetchingFixtures);
     const maxEdges = await contract.inner.maxEdges();
     const wasmBuf = await fetchFixedAnchorWasmForEdges(maxEdges);
     const circuitKey = await fetchFixedAnchorKeyForEdges(maxEdges);
 
     // Fetch the leaves that we already have in storage
-    this.emit('stateChange', WithdrawState.FetchingLeaves);
+    this.emit('stateChange', TransactionState.FetchingLeaves);
     const bridgeStorageStorage = await bridgeStorageFactory(Number(depositNote.sourceChainId));
     const storedContractInfo: BridgeStorage[0] = (await bridgeStorageStorage.get(contractAddress.toLowerCase())) || {
       lastQueriedBlock:
@@ -110,7 +110,7 @@ export class Web3MixerWithdraw extends Web3AnchorWithdraw {
 
     const treeDepth = await contract.inner.levels();
 
-    this.emit('stateChange', WithdrawState.GeneratingZk);
+    this.emit('stateChange', TransactionState.GeneratingZk);
     const pm = new CircomProvingManager(Buffer.from(wasmBuf), treeDepth, null);
     const proof = await pm.prove('anchor', provingInput);
     const extDataHash = getFixedAnchorExtDataHash(0, recipient, 0, 0, recipient).toString();
@@ -124,14 +124,14 @@ export class Web3MixerWithdraw extends Web3AnchorWithdraw {
         message: `${section} withdraw`,
         name: 'Transaction',
       });
-      this.emit('stateChange', WithdrawState.Ideal);
+      this.emit('stateChange', TransactionState.Ideal);
 
       return '';
     }
 
     let txHash = '';
 
-    this.emit('stateChange', WithdrawState.SendingTransaction);
+    this.emit('stateChange', TransactionState.SendingTransaction);
 
     try {
       const tx = await contract.inner.withdraw(
@@ -156,7 +156,7 @@ export class Web3MixerWithdraw extends Web3AnchorWithdraw {
 
       txHash = receipt.transactionHash;
     } catch (e) {
-      this.emit('stateChange', WithdrawState.Ideal);
+      this.emit('stateChange', TransactionState.Ideal);
 
       this.inner.notificationHandler({
         description: (e as any)?.code === 4001 ? 'Withdraw rejected' : 'Withdraw failed',
@@ -169,7 +169,7 @@ export class Web3MixerWithdraw extends Web3AnchorWithdraw {
       return txHash;
     }
 
-    this.emit('stateChange', WithdrawState.Ideal);
+    this.emit('stateChange', TransactionState.Ideal);
     this.inner.notificationHandler({
       description: recipient,
       key,

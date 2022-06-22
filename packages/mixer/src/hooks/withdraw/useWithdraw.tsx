@@ -1,9 +1,9 @@
 import {
   ActiveWebbRelayer,
   InteractiveFeedback,
+  TransactionState,
   WebbErrorCodes,
   WebbRelayer,
-  WithdrawState,
 } from '@webb-dapp/api-providers';
 import { misbehavingRelayer } from '@webb-dapp/react-environment/error/interactive-errors/misbehaving-relayer';
 import { useWebContext } from '@webb-dapp/react-environment/webb-context';
@@ -32,7 +32,7 @@ const relayersInitState: RelayersState = {
   loading: true,
 };
 export const useWithdraw = (params: UseWithdrawProps) => {
-  const [stage, setStage] = useState<WithdrawState>(WithdrawState.Ideal);
+  const [stage, setStage] = useState<TransactionState>(TransactionState.Ideal);
   const { activeApi, activeChain } = useWebContext();
   const [relayersState, setRelayersState] = useState<RelayersState>(relayersInitState);
   const [receipt, setReceipt] = useState('');
@@ -89,7 +89,7 @@ export const useWithdraw = (params: UseWithdrawProps) => {
     if (!withdrawApi) {
       return;
     }
-    unsubscribe['stateChange'] = withdrawApi.on('stateChange', (stage: WithdrawState) => {
+    unsubscribe['stateChange'] = withdrawApi.on('stateChange', (stage: TransactionState) => {
       setStage(stage);
     });
 
@@ -116,7 +116,7 @@ export const useWithdraw = (params: UseWithdrawProps) => {
     if (!withdrawApi || !params.note) {
       return;
     }
-    if (stage === WithdrawState.Ideal) {
+    if (stage === TransactionState.Ideal) {
       const { note, recipient } = params;
       try {
         const txReceipt = await withdrawApi.withdraw(note.serialize(), recipient);
@@ -133,20 +133,20 @@ export const useWithdraw = (params: UseWithdrawProps) => {
   }, [withdrawApi, stage, params, registerInteractiveFeedback]);
 
   const canCancel = useMemo(() => {
-    const isBeforeSendingTX = stage < WithdrawState.SendingTransaction;
-    const actionStarted = stage > WithdrawState.Ideal;
-    const actionEnded = stage > WithdrawState.SendingTransaction;
+    const isBeforeSendingTX = stage < TransactionState.SendingTransaction;
+    const actionStarted = stage > TransactionState.Ideal;
+    const actionEnded = stage > TransactionState.SendingTransaction;
     const canCancel = isBeforeSendingTX && actionStarted;
     return canCancel || actionEnded;
   }, [stage]);
 
   const cancelWithdraw = useCallback(async () => {
     if (canCancel) {
-      if (stage !== WithdrawState.Ideal) {
+      if (stage !== TransactionState.Ideal) {
         await withdrawApi?.cancelWithdraw();
-        setStage(WithdrawState.Ideal);
+        setStage(TransactionState.Ideal);
       } else {
-        setStage(WithdrawState.Ideal);
+        setStage(TransactionState.Ideal);
       }
     }
   }, [canCancel, withdrawApi, stage, setStage]);

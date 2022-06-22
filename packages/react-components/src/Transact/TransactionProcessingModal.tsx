@@ -1,5 +1,5 @@
 import { Button, Checkbox, Typography } from '@material-ui/core';
-import { WithdrawState } from '@webb-dapp/api-providers';
+import { TransactionState } from '@webb-dapp/api-providers';
 import { SpaceBox } from '@webb-dapp/ui-components/Box';
 import { Spinner } from '@webb-dapp/ui-components/Spinner/Spinner';
 import React from 'react';
@@ -98,7 +98,7 @@ const SpinnerCheckBoxItem: React.FC<CheckedStepProps> = ({ children, currentStat
 
 type TransactionProcessingModalProps = {
   txFlow: TxFlow;
-  state: WithdrawState;
+  state: TransactionState;
   amount: number;
   sourceChain: string;
   destChain: string;
@@ -126,16 +126,16 @@ export const TransactionProcessingModal: React.FC<TransactionProcessingModalProp
         </Typography>
       </header>
       <TransactionSteps>
-        <SpinnerCheckBoxItem targetState={WithdrawState.FetchingFixtures} currentState={state}>
+        <SpinnerCheckBoxItem targetState={TransactionState.FetchingFixtures} currentState={state}>
           <Typography variant={'h6'}>Fetching Zero-Knowledge Fixtures</Typography>
         </SpinnerCheckBoxItem>
-        <SpinnerCheckBoxItem targetState={WithdrawState.FetchingLeaves} currentState={state}>
+        <SpinnerCheckBoxItem targetState={TransactionState.FetchingLeaves} currentState={state}>
           <Typography variant={'h6'}>Fetching Leaves</Typography>
         </SpinnerCheckBoxItem>
-        <SpinnerCheckBoxItem targetState={WithdrawState.GeneratingZk} currentState={state}>
+        <SpinnerCheckBoxItem targetState={TransactionState.GeneratingZk} currentState={state}>
           <Typography variant={'h6'}>Generating Zero-Knowledge Proof</Typography>
         </SpinnerCheckBoxItem>
-        <SpinnerCheckBoxItem targetState={WithdrawState.SendingTransaction} currentState={state}>
+        <SpinnerCheckBoxItem targetState={TransactionState.SendingTransaction} currentState={state}>
           <Typography variant={'h6'}>Sending Transaction</Typography>
         </SpinnerCheckBoxItem>
       </TransactionSteps>

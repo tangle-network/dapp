@@ -2,9 +2,9 @@ import {
   ChainTypeId,
   chainTypeIdToInternalId,
   Currency,
+  TransactionState,
   WalletConfig,
   WebbCurrencyId,
-  WithdrawState,
 } from '@webb-dapp/api-providers';
 import { useWrapUnwrap } from '@webb-dapp/page-wrap-unwrap/hooks/useWrapUnwrap';
 import { RequiredWalletSelection } from '@webb-dapp/react-components/RequiredWalletSelection/RequiredWalletSelection';
@@ -130,7 +130,7 @@ export const Deposit: React.FC<DepositProps> = () => {
   }, [chainsConfig, selectedBridgeCurrency]);
 
   const disabledDepositButton = useMemo(() => {
-    return amount === 0 || typeof destChain === 'undefined' || stage != WithdrawState.Ideal;
+    return amount === 0 || typeof destChain === 'undefined' || stage != TransactionState.Ideal;
   }, [amount, destChain, stage]);
 
   const wrappableCurrency = useMemo<Currency | undefined>(() => {
@@ -288,7 +288,7 @@ export const Deposit: React.FC<DepositProps> = () => {
           />
         </Modal>
 
-        <Modal open={!hideTxModal && stage != WithdrawState.Ideal} onClose={() => setHideTxModal(true)}>
+        <Modal open={!hideTxModal && stage != TransactionState.Ideal} onClose={() => setHideTxModal(true)}>
           <TransactionProcessingModal
             txFlow={'Deposit'}
             state={stage}

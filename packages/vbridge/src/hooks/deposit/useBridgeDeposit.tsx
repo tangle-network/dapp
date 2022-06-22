@@ -6,9 +6,8 @@ import {
   Currency,
   DepositPayload,
   MixerDeposit,
-  MixerSize,
+  TransactionState,
   VAnchorDeposit,
-  WithdrawState,
 } from '@webb-dapp/api-providers';
 import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
 import { useWebContext } from '@webb-dapp/react-environment';
@@ -23,7 +22,7 @@ export interface VBridgeDepositApi {
     wrappableAsset: string | undefined
   ): Promise<DepositPayload>;
 
-  stage: WithdrawState;
+  stage: TransactionState;
   loadingState: MixerDeposit['loading'];
   error: string;
   depositApi: VAnchorDeposit<any> | null;
@@ -33,7 +32,7 @@ export interface VBridgeDepositApi {
 }
 
 export const useBridgeDeposit = (): VBridgeDepositApi => {
-  const [stage, setStage] = useState<WithdrawState>(WithdrawState.Ideal);
+  const [stage, setStage] = useState<TransactionState>(TransactionState.Ideal);
   const { activeApi } = useWebContext();
   const [loadingState, setLoadingState] = useState<AnchorDeposit<any>['loading']>('ideal');
   const [error, setError] = useState('');

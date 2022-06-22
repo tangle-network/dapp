@@ -3,7 +3,7 @@
 
 import { EventBus } from '@webb-tools/app-util';
 
-import { WithdrawState } from '../../abstracts/mixer/mixer-withdraw';
+import { TransactionState } from '../../abstracts/mixer/mixer-withdraw';
 import { BridgeConfig } from '../../types/bridge-config.interface';
 import { DepositPayload } from '../mixer/mixer-deposit';
 import { WebbApiProvider } from '../webb-provider.interface';
@@ -15,7 +15,7 @@ export type VAnchorDepositEvents = {
   // Generic Error by the provider
   error: string;
   // The instance State change event to track the current status of the instance
-  stateChange: WithdrawState;
+  stateChange: TransactionState;
   // the instance is ready
   ready: void;
   loading: boolean;
@@ -29,7 +29,7 @@ export abstract class VAnchorDeposit<
   T extends WebbApiProvider<any> = WebbApiProvider<any>,
   K extends DepositPayload = DepositPayload<any>
 > extends EventBus<VAnchorDepositEvents> {
-  state: WithdrawState = WithdrawState.Ideal;
+  state: TransactionState = TransactionState.Ideal;
 
   constructor(protected inner: T) {
     super();
