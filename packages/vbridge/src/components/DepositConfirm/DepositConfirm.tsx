@@ -227,11 +227,9 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({
             setLoading(true);
             downloadNote();
             onClose();
-            const note = await provider.deposit(depositPayload);
+            const results = await provider.deposit(depositPayload);
             // download note with the index
-            if (note) {
-              downloadNote(note.serialize());
-            }
+            downloadNote(results.updatedNote.serialize());
             setLoading(false);
           }}
           disabled={!backupConfirmation || !depositPayload || loading}

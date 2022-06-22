@@ -16,7 +16,8 @@ import {
 } from '@webb-dapp/api-providers';
 import { getLeafCount, getLeafIndex, getLeaves, rootOfLeaves } from '@webb-dapp/api-providers/polkadot/mt-utils';
 import { LoggerService } from '@webb-tools/app-util';
-import { ArkworksProvingManager, Note, ProvingManagerSetupInput, Utxo } from '@webb-tools/sdk-core';
+import { ArkworksProvingManager, Note, ProofInterface, ProvingManagerSetupInput, Utxo } from '@webb-tools/sdk-core';
+import { VAnchorProof } from '@webb-tools/sdk-core/proving/types';
 import { BigNumber } from 'ethers';
 
 import { decodeAddress } from '@polkadot/keyring';
@@ -131,7 +132,7 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
       output: [output1, output2],
     };
 
-    const data = await pm.prove('vanchor', vnachorWithdrawSetup);
+    const data: VAnchorProof = await pm.prove('vanchor', vnachorWithdrawSetup);
     const vanchorProofData = {
       proof: `0x${data.proof}`,
       publicAmount: data.publicAmount,
@@ -158,7 +159,6 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
     this.emit('stateChange', WithdrawState.Done);
     this.emit('stateChange', WithdrawState.Ideal);
     return {
-      method,
       outputNotes: [outputNote],
       txHash: txHash,
     };

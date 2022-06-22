@@ -130,7 +130,7 @@ type MethodPath = {
   method: string;
 };
 export interface TXresultBase {
-  method: MethodPath;
+  // method: MethodPath;
   txHash: string;
 }
 export type TXNotificationPayload<T = undefined> = {

@@ -6,17 +6,17 @@ import {
   DepositPayload,
   MixerSize,
   VAnchorDeposit,
+  VAnchorDepositResults,
   WebbError,
   WebbErrorCodes,
   WithdrawState,
 } from '@webb-dapp/api-providers';
 import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
 import { useWebContext } from '@webb-dapp/react-environment';
-import { Note } from '@webb-tools/sdk-core';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 export interface VBridgeDepositApi {
-  deposit(payload: DepositPayload): Promise<Note>;
+  deposit(payload: DepositPayload): Promise<VAnchorDepositResults>;
 
   generateNote(
     mixerId: number | string,
@@ -37,7 +37,7 @@ export const useBridgeDeposit = (): VBridgeDepositApi => {
   const { activeApi } = useWebContext();
   const [stage, setStage] = useState<WithdrawState>(WithdrawState.Ideal);
   const [error, setError] = useState('');
-  const [_mixerSizes, setMixerSizes] = useState<MixerSize[]>([]);
+  // const [_mixerSizes, setMixerSizes] = useState<MixerSize[]>([]);
   const { bridgeApi } = useBridge();
   const [selectedBridgeCurrency, setSelectedBridgeCurrency] = useState<null | Currency>(null);
   /// api
@@ -64,7 +64,7 @@ export const useBridgeDeposit = (): VBridgeDepositApi => {
 
     setSelectedBridgeCurrency(bridgeApi.currency);
 
-    if (bridgeApi.activeBridge) {
+    /*    if (bridgeApi.activeBridge) {
       depositApi.getSizes().then((mixerSizes) => {
         mixerSizes.filter((mixerSize) => {
           mixerSize.id === selectedBridgeCurrency?.id;
@@ -80,11 +80,11 @@ export const useBridgeDeposit = (): VBridgeDepositApi => {
         setMixerSizes(mixerSizes);
       });
       setSelectedBridgeCurrency(bridgeApi.currency);
-    });
+    });*/
     return () => {
       unSub && unSub();
       stateChangeUnsub && stateChangeUnsub();
-      subscribe.unsubscribe();
+      // subscribe.unsubscribe();
     };
   }, [depositApi, bridgeApi, selectedBridgeCurrency?.id, bridgeApi?.activeBridge]);
 

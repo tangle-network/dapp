@@ -14,8 +14,12 @@ export async function getLeafIndex(api: ApiPromise, leaf: Uint8Array, indexBefor
    * Fetch a slice of the leaves starting from the index before insertion [index499,...index509]
    * The leaf index will be index499 +  the index of the slice
    * */
-  const leafCount = await api.derive.merkleTreeBn254.getLeafCountForTree(Number(treeId));
-  const leaves = await api.derive.merkleTreeBn254.getLeavesForTree(Number(treeId), indexBeforeInsertion, leafCount - 1);
+  const leafCount: number = await api.derive.merkleTreeBn254.getLeafCountForTree(Number(treeId));
+  const leaves: Uint8Array[] = await api.derive.merkleTreeBn254.getLeavesForTree(
+    Number(treeId),
+    indexBeforeInsertion,
+    leafCount - 1
+  );
   const leafHex = u8aToHex(leaf);
   const shiftedIndex = leaves.findIndex((leaf) => u8aToHex(leaf) === leafHex);
 
@@ -49,8 +53,8 @@ export async function validateVAnchorNoteIndex(api: ApiPromise, treeId: number, 
   const noteIndex = Number(note.note.index);
   const leaf = note.getLeaf();
   const leafHex = u8aToHex(leaf);
-  const leafCount = await api.derive.merkleTreeBn254.getLeafCountForTree(Number(treeId));
-  const leaves = await api.derive.merkleTreeBn254.getLeavesForTree(Number(treeId), 0, leafCount - 1);
+  const leafCount: number = await api.derive.merkleTreeBn254.getLeafCountForTree(Number(treeId));
+  const leaves: Uint8Array[] = await api.derive.merkleTreeBn254.getLeavesForTree(Number(treeId), 0, leafCount - 1);
   const onChainIndex = leaves.findIndex((leaf) => u8aToHex(leaf) === leafHex);
   return {
     noteIndex,

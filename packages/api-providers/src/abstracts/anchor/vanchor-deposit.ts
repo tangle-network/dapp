@@ -2,11 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { EventBus } from '@webb-tools/app-util';
+import { Note } from '@webb-tools/sdk-core';
 
 import { WithdrawState } from '../../abstracts/mixer/mixer-withdraw';
 import { BridgeConfig } from '../../types/bridge-config.interface';
 import { DepositPayload } from '../mixer/mixer-deposit';
-import { WebbApiProvider } from '../webb-provider.interface';
+import { TXresultBase, WebbApiProvider } from '../webb-provider.interface';
 import { AnchorApi } from './anchor-api';
 
 // Todo: should we extract the interface of MixerDeposit on another class and rename `generateBridgeNote` to generate note
@@ -21,6 +22,10 @@ export type VAnchorDepositEvents = {
   loading: boolean;
 };
 
+export interface VAnchorDepositResults extends TXresultBase {
+  // Note with the  right index in place
+  updatedNote: Note;
+}
 /**
  * Anchor deposit abstract interface as fixed anchor share similar functionality as the mixer
  * The interface looks the same but there's a different function for note Generation
@@ -50,7 +55,7 @@ export abstract class VAnchorDeposit<
    * - Use the event bus to emit the status of the transaction
    **/
   // TODO: update the impls to return the TX hash instead of void
-  abstract deposit(depositPayload: K): Promise<void>;
+  abstract deposit(depositPayload: K): Promise<VAnchorDepositResults>;
 
   /** For the VAnchor, a bridge note represents a UTXO.
    ** @param anchorId - an address or tree id.

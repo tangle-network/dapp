@@ -7,17 +7,18 @@ import '@webb-tools/api-derive/cjs/index.js';
 
 import type { WebbPolkadot } from './webb-provider';
 
-import { getLeafCount, getLeafIndex, validateVAnchorNoteIndex } from '@webb-dapp/api-providers/polkadot/mt-utils';
+import { getLeafCount, getLeafIndex } from '@webb-dapp/api-providers/polkadot/mt-utils';
 import { getCachedFixtureURI, withLocalFixtures } from '@webb-dapp/api-providers/utils';
 import { LoggerService } from '@webb-tools/app-util';
 import { ArkworksProvingManager, Note, NoteGenInput, ProvingManagerSetupInput, Utxo } from '@webb-tools/sdk-core';
+import { VAnchorProof } from '@webb-tools/sdk-core/proving/types';
 import { BigNumber } from 'ethers';
 
 import { decodeAddress } from '@polkadot/keyring';
 import { hexToU8a, u8aToHex } from '@polkadot/util';
 import { naclEncrypt, randomAsU8a } from '@polkadot/util-crypto';
 
-import { DepositPayload as IDepositPayload, VAnchorDeposit, WithdrawState } from '../abstracts';
+import { DepositPayload as IDepositPayload, VAnchorDeposit, VAnchorDepositResults, WithdrawState } from '../abstracts';
 import { computeChainIdType, InternalChainId } from '../chains';
 import { WebbError, WebbErrorCodes } from '../webb-error';
 
@@ -52,6 +53,7 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
   private async getleafIndex(leaf: Uint8Array, indexBeforeInsertion: number, treeId: number): Promise<number> {
     return getLeafIndex(this.inner.api, leaf, indexBeforeInsertion, treeId);
   }
+
   async generateBridgeNote(
     _vanchorId: string | number, // always Zero as there will be only one vanchor
     destination: number,
@@ -101,7 +103,7 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
     };
   }
 
-  async deposit(depositPayload: DepositPayload, recipient: string): Promise<Note> {
+  async deposit(depositPayload: DepositPayload): Promise<VAnchorDepositResults> {
     // Getting the  active account
     try {
       const account = await this.inner.accounts.activeOrDefault;
@@ -174,7 +176,7 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
       };
       const worker = this.inner.wasmFactory('wasm-utils');
       const pm = new ArkworksProvingManager(worker);
-      const data = await pm.prove('vanchor', vanchorDepositSetup);
+      const data: VAnchorProof = await pm.prove('vanchor', vanchorDepositSetup);
       const vanchorProofData = {
         proof: `0x${data.proof}`,
         publicAmount: data.publicAmount,
@@ -196,13 +198,16 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
         [treeId, vanchorProofData, extData]
       );
 
-      const _txHash = await tx.call(account.address);
+      const txHash = await tx.call(account.address);
 
       const insertedLeaf = depositNote.getLeaf();
       const leafIndex = await this.getleafIndex(insertedLeaf, predictedIndex, treeId);
-      await depositNote.mutateIndex(String(leafIndex));
+      depositNote.mutateIndex(String(leafIndex));
       this.emit('stateChange', WithdrawState.Done);
-      return depositNote;
+      return {
+        txHash,
+        updatedNote: depositNote,
+      };
     } catch (e) {
       this.emit('stateChange', WithdrawState.Failed);
       throw e;

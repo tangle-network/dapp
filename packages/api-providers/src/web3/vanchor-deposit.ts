@@ -7,9 +7,15 @@ import { ERC20__factory as ERC20Factory } from '@webb-tools/contracts';
 import { CircomUtxo, Keypair, Note, NoteGenInput, toFixedHex, Utxo } from '@webb-tools/sdk-core';
 import { ethers } from 'ethers';
 
-import { hexToU8a, u8aToHex } from '@polkadot/util';
+import { hexToU8a } from '@polkadot/util';
 
-import { DepositPayload as IDepositPayload, MixerSize, VAnchorDeposit, WithdrawState } from '../abstracts';
+import {
+  DepositPayload as IDepositPayload,
+  MixerSize,
+  VAnchorDeposit,
+  VAnchorDepositResults,
+  WithdrawState,
+} from '../abstracts';
 import {
   ChainType,
   chainTypeIdToInternalId,
@@ -135,7 +141,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
     };
   }
 
-  async deposit(depositPayload: DepositPayload): Promise<void> {
+  async deposit(depositPayload: DepositPayload): Promise<VAnchorDepositResults> {
     const bridge = this.bridgeApi.activeBridge;
     const currency = this.bridgeApi.currency;
 
@@ -278,7 +284,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
           );
 
           // emit event for waiting for transaction to confirm
-          await tx.wait();
+          const txReceipt = await tx.wait();
 
           this.inner.notificationHandler({
             data: {
@@ -292,6 +298,11 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
             message: `${currency.view.name}:wrap and deposit`,
             name: 'Transaction',
           });
+          // TODO: @nepoche set the right leaf index before returning
+          return {
+            txHash: txReceipt.transactionHash,
+            updatedNote: depositPayload.note,
+          };
         } else {
           this.inner.notificationHandler({
             data: {
@@ -306,8 +317,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
             name: 'Transaction',
           });
         }
-
-        return;
+        throw new Error('no enough balance');
       } else {
         const requiredApproval = await srcVAnchor.isWebbTokenApprovalRequired(amount);
 

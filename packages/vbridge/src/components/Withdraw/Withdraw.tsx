@@ -193,7 +193,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
     if (relayersState.activeRelayer && depositInfo) {
       relayersState.activeRelayer.fees(depositInfo.note.serialize()).then((feeInfo) => {
         if (feeInfo) {
-          setFees(ethers.utils.formatUnits(feeInfo.totalFees, depositInfo.note.denomination));
+          setFees(ethers.utils.formatUnits(feeInfo.totalFees, depositInfo.note.note.denomination));
         }
       });
     }
@@ -311,7 +311,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
             withdrawTxInfo={{
               account: recipient,
             }}
-            note={depositInfo?.note.note}
+            note={depositInfo?.note.note!}
             cancel={cancelWithdraw}
             stage={stage}
             canCancel={canCancel}
@@ -325,7 +325,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
           <WithdrawSuccessModal
             receipt={receipt}
             recipient={recipient}
-            note={depositNotes?.[0]}
+            note={depositNotes?.[0].note}
             relayer={relayersState.activeRelayer}
             exit={() => {
               setNotes([]);
@@ -340,7 +340,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
       {/* Modal to show for relayer settings */}
       <Modal open={showRelayerModal}>
         <RelayerModal
-          note={depositNotes?.[0]}
+          note={depositNotes?.[0] ?? null}
           state={relayersState}
           methods={relayerMethods}
           onChange={(nextRelayer: WebbRelayer | null) => {

@@ -59,7 +59,7 @@ export const useWithdraw = (params: UseWithdrawProps) => {
   useEffect(() => {
     const sub = activeApi?.relayerManager.listUpdated.subscribe(() => {
       if (params.notes) {
-        activeApi?.relayerManager.getRelayersByNote(params.notes).then((r: WebbRelayer[]) => {
+        activeApi?.relayerManager.getRelayersByNote(params.notes[0]).then((r: WebbRelayer[]) => {
           setRelayersState((p) => ({
             ...p,
             loading: false,
@@ -74,7 +74,7 @@ export const useWithdraw = (params: UseWithdrawProps) => {
   // hook events
   useEffect(() => {
     if (params.notes) {
-      activeApi?.relayerManager.getRelayersByNote(params.notes).then((r: WebbRelayer[]) => {
+      activeApi?.relayerManager.getRelayersByNote(params.notes[0]).then((r: WebbRelayer[]) => {
         setRelayersState((p) => ({
           ...p,
           loading: false,
