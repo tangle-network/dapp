@@ -95,7 +95,7 @@ export const Deposit: React.FC<DepositProps> = () => {
 
   const { tokens: bridgeCurrencies } = useBridge();
   const bridgeDepositApi = useBridgeDeposit();
-  const { selectedBridgeCurrency, setSelectedCurrency, stage } = bridgeDepositApi;
+  const { selectedBridgeCurrency, setSelectedCurrency, stage, setStage } = bridgeDepositApi;
 
   const { setWrappableToken, wrappableToken, wrappableTokens } = useWrapUnwrap();
   const { activeApi, activeChain, activeWallet, loading } = useWebContext();
@@ -121,6 +121,13 @@ export const Deposit: React.FC<DepositProps> = () => {
   // boolean flags for different modal displays
   const [showDepositConfirm, setShowDepositConfirm] = useState(false);
   const [hideTxModal, setHideTxModal] = useState(false);
+
+  useEffect(() => {
+    // If the stage is in a terminal transaction state, and the modal is hidden, reset to ideal.
+    if (stage > TransactionState.SendingTransaction && hideTxModal) {
+      setStage(TransactionState.Ideal);
+    }
+  }, [hideTxModal, setStage, stage]);
 
   const handleSuccess = useCallback((): void => {}, []);
 

@@ -23,6 +23,7 @@ export interface VBridgeDepositApi {
   ): Promise<DepositPayload>;
 
   stage: TransactionState;
+  setStage(stage: TransactionState): void;
   loadingState: MixerDeposit['loading'];
   error: string;
   depositApi: VAnchorDeposit<any> | null;
@@ -103,6 +104,7 @@ export const useBridgeDeposit = (): VBridgeDepositApi => {
 
   return {
     stage,
+    setStage,
     depositApi,
     deposit,
     generateNote,
