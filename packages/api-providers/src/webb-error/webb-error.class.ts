@@ -127,7 +127,7 @@ export class WebbError extends Error {
       case WebbErrorCodes.AmountToWithdrawExceedsTheDepositedAmount:
         return {
           code,
-          message: `The amount to withdraw is ore than the already deposited amount`,
+          message: `The amount to withdraw is more than the already deposited amount`,
         };
 
       default:
