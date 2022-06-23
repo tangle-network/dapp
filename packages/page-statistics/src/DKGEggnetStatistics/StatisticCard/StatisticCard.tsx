@@ -10,11 +10,12 @@ export type StatisticCardProps = {
   value: string | number;
   description?: string;
   width?: string;
+  labelColor?: string;
 };
 
-export const StatisticCard: React.FC<StatisticCardProps> = ({ description, title, value, width }) => {
+export const StatisticCard: React.FC<StatisticCardProps> = ({ description, labelColor, title, value, width }) => {
   return (
-    <StatisticCardWrapper width={width}>
+    <StatisticCardWrapper width={width} labelColor={labelColor}>
       <Typography variant='h6'>
         <b>
           {typeof value === 'number' ? (

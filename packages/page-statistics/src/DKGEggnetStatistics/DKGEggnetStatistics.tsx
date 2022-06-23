@@ -28,72 +28,7 @@ export const DKGEggnetStatistics: FC = () => {
     };
   }, [data]);
 
-  const chartLabels = useMemo<StatisticCardProps[]>(() => {
-    const width = '116px';
-
-    return [
-      {
-        title: 'Participants',
-        value: overviewData['authorities'],
-        width,
-      },
-      {
-        title: 'Proposers',
-        value: overviewData['proposerCount'],
-        width,
-      },
-      {
-        title: 'Signed Proposals',
-        value: overviewData['signedProposals'],
-        width,
-      },
-      {
-        title: 'Unsigned Proposals',
-        value: overviewData['unsignedProposalQueue'],
-        width,
-      },
-    ];
-  }, [overviewData]);
-
-  const chartData = useMemo(() => {
-    const { authorities, proposerCount, signedProposals, unsignedProposalQueue } = overviewData;
-
-    return {
-      labels: ['Participants', 'Proposers', 'Signed Proposals', 'Unsigned Proposals'],
-      datasets: [
-        {
-          label: 'Dataset',
-          data: [authorities, proposerCount, signedProposals, unsignedProposalQueue],
-          backgroundColor: [
-            'rgba(243, 26, 26, 1)',
-            'rgba(9, 156, 0, 1)',
-            'rgba(44, 155, 212, 1)',
-            'rgba(184, 224, 0, 1)',
-          ],
-          borderColor: ['rgba(243, 26, 26, 1)', 'rgba(9, 156, 0, 1)', 'rgba(44, 155, 212, 1)', 'rgba(184, 224, 0, 1)'],
-          borderWidth: 1,
-        },
-      ],
-    };
-  }, [overviewData]);
-
-  const chartOpts = useMemo<ChartProps['options']>(() => {
-    return {
-      responsive: true,
-      plugins: {
-        legend: {
-          display: false,
-          position: 'top',
-        },
-        title: {
-          display: false,
-          text: 'Proposals Types and Status',
-        },
-      },
-    };
-  }, []);
-
-  const displayData = useMemo<StatisticCardProps[]>(() => {
+  const displayOverviewData = useMemo<StatisticCardProps[]>(() => {
     const keys = Object.keys(overviewData) as (keyof typeof overviewData)[];
 
     return keys
@@ -155,6 +90,75 @@ export const DKGEggnetStatistics: FC = () => {
       .filter((item): item is StatisticCardProps => !!item);
   }, [overviewData]);
 
+  const chartColors = useMemo(
+    () => ['rgba(243, 26, 26, 1)', 'rgba(9, 156, 0, 1)', 'rgba(44, 155, 212, 1)', 'rgba(184, 224, 0, 1)'],
+    []
+  );
+
+  const chartOpts = useMemo<ChartProps['options']>(() => {
+    return {
+      responsive: true,
+      plugins: {
+        legend: {
+          display: false,
+          position: 'top',
+        },
+        title: {
+          display: false,
+          text: 'Proposals Types and Status',
+        },
+      },
+    };
+  }, []);
+
+  const chartLabels = useMemo<StatisticCardProps[]>(() => {
+    const width = '116px';
+
+    return [
+      {
+        title: 'Participants',
+        value: overviewData['authorities'],
+        labelColor: chartColors[0],
+        width,
+      },
+      {
+        title: 'Proposers',
+        value: overviewData['proposerCount'],
+        labelColor: chartColors[1],
+        width,
+      },
+      {
+        title: 'Signed Proposals',
+        value: overviewData['signedProposals'],
+        labelColor: chartColors[2],
+        width,
+      },
+      {
+        title: 'Unsigned Proposals',
+        value: overviewData['unsignedProposalQueue'],
+        labelColor: chartColors[3],
+        width,
+      },
+    ];
+  }, [chartColors, overviewData]);
+
+  const chartData = useMemo(() => {
+    const { authorities, proposerCount, signedProposals, unsignedProposalQueue } = overviewData;
+
+    return {
+      labels: ['Participants', 'Proposers', 'Signed Proposals', 'Unsigned Proposals'],
+      datasets: [
+        {
+          label: 'Dataset',
+          data: [authorities, proposerCount, signedProposals, unsignedProposalQueue],
+          backgroundColor: chartColors,
+          borderColor: chartColors,
+          borderWidth: 1,
+        },
+      ],
+    };
+  }, [chartColors, overviewData]);
+
   const gridStyles = useMemo<Config['style']>(
     () =>
       pallet.type !== 'dark'
@@ -186,7 +190,7 @@ export const DKGEggnetStatistics: FC = () => {
     <DKGEggnetStatisticsWrapper>
       <Flex row jc='space-evenly' ai='flex-start' wrap='wrap'>
         <StatisticCardsList>
-          {displayData.map((item) => (
+          {displayOverviewData.map((item) => (
             <StatisticCard {...item} key={item.title} />
           ))}
         </StatisticCardsList>
