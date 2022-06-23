@@ -1,4 +1,11 @@
-import { ChainTypeId, Currency, WalletConfig, WebbCurrencyId } from '@webb-dapp/api-providers';
+import {
+  ChainTypeId,
+  chainTypeIdToInternalId,
+  Currency,
+  TransactionState,
+  WalletConfig,
+  WebbCurrencyId,
+} from '@webb-dapp/api-providers';
 import { useWrapUnwrap } from '@webb-dapp/page-wrap-unwrap/hooks/useWrapUnwrap';
 import { RequiredWalletSelection } from '@webb-dapp/react-components/RequiredWalletSelection/RequiredWalletSelection';
 import { TransactionProcessingModal } from '@webb-dapp/react-components/Transact/TransactionProcessingModal';
@@ -20,20 +27,6 @@ import { useBridge } from '@webb-dapp/vbridge/hooks/bridge/use-bridge';
 import { useBridgeDeposit } from '@webb-dapp/vbridge/hooks/deposit/useBridgeDeposit';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
-import {
-  ChainTypeId,
-  chainTypeIdToInternalId,
-  Currency,
-  TransactionState,
-  WalletConfig,
-  WebbCurrencyId,
-} from '@webb-dapp/api-providers';
-import {
-  ChainTypeId,
-  Currency,
-  WalletConfig,
-  WebbCurrencyId,
-} from '@webb-dapp/api-providers';
 
 const DepositWrapper = styled.div<{ wallet: WalletConfig | undefined }>`
   ${({ theme, wallet }) => {

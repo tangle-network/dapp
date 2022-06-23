@@ -10,7 +10,7 @@ import { BigNumber, ContractReceipt, ethers } from 'ethers';
 
 import { hexToU8a, u8aToHex } from '@polkadot/util';
 
-import { AnchorApi, TransactionState, VAnchorWithdraw, VAnchorWithdrawPayload, WebbRelayer } from '../abstracts';
+import { AnchorApi, TransactionState, VAnchorWithdraw, VAnchorWithdrawResult, WebbRelayer } from '../abstracts';
 import { ChainType, computeChainIdType, evmIdIntoInternalChainId, parseChainIdType } from '../chains';
 import { generateCircomCommitment, utxoFromVAnchorNote, VAnchorContract } from '../contracts/wrappers';
 import { Web3Provider } from '../ext-providers/web3/web3-provider';
@@ -82,7 +82,8 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
   }
 
   // TODO: Implement relayer leaf fetching, relayer fee calculations
-  async withdraw(notes: string[], recipient: string, amount: string): Promise<VAnchorWithdrawPayload> {
+
+  async withdraw(notes: string[], recipient: string, amount: string): Promise<VAnchorWithdrawResult> {
     this.cancelToken.cancelled = false;
 
     const activeBridge = this.bridgeApi.activeBridge;
@@ -265,7 +266,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
 
       return {
         txHash: '',
-        changeNotes: [],
+        outputNotes: [],
       };
     }
 
@@ -326,7 +327,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
 
       return {
         txHash: '',
-        changeNotes: [],
+        outputNotes: [],
       };
     }
 
@@ -359,7 +360,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
 
       return {
         txHash: '',
-        changeNotes: [],
+        outputNotes: [],
       };
     }
 
@@ -388,7 +389,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
 
     return {
       txHash: receipt.transactionHash,
-      changeNotes: [changeNote],
+      outputNotes: [changeNote],
     };
   }
 }
