@@ -1,7 +1,7 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import '@webb-tools/types/cjs/index.js';
+import '@webb-tools/types';
 import '@webb-tools/api-derive';
 
 import type { WebbPolkadot } from './webb-provider';
