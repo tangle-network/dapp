@@ -8,12 +8,13 @@ import { StatisticCardWrapper } from './styled';
 export type StatisticCardProps = {
   title: string;
   value: string | number;
-  description: string;
+  description?: string;
+  width?: string;
 };
 
-export const StatisticCard: React.FC<StatisticCardProps> = ({ description, title, value }) => {
+export const StatisticCard: React.FC<StatisticCardProps> = ({ description, title, value, width }) => {
   return (
-    <StatisticCardWrapper>
+    <StatisticCardWrapper width={width}>
       <Typography variant='h6'>
         <b>
           {typeof value === 'number' ? (
@@ -30,7 +31,7 @@ export const StatisticCard: React.FC<StatisticCardProps> = ({ description, title
         </b>
       </Typography>
       <Typography variant='subtitle2'>
-        {title} <DescriptionIcon description={description} />
+        {title} {description && <DescriptionIcon description={description} />}
       </Typography>
     </StatisticCardWrapper>
   );

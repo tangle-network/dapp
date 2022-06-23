@@ -7,8 +7,10 @@
   "homepage": "https://github.com/webb-tools/webb-dapp#readme",
   "dependencies": {
     "@ngneat/falso": "^5.7.0",
+    "chart.js": "^3.8.0",
     "gridjs": "^5.0.2",
     "gridjs-react": "^5.0.2",
+    "react-chartjs-2": "^4.2.0",
     "react-countup": "^6.3.0"
   }
 }
