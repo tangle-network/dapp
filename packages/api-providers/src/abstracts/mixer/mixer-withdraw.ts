@@ -5,7 +5,7 @@ import { EventBus } from '@webb-tools/app-util';
 
 import { WebbApiProvider } from '../../';
 
-export enum WithdrawState {
+export enum TransactionState {
   Cancelling, // Withdraw canceled
   Ideal, // initial status where the instance is Idea and ready for a withdraw
 
@@ -29,7 +29,7 @@ export type WebbWithdrawEvents = {
     recipient: string;
   };
   // The instance State change event to track the current status of the instance
-  stateChange: WithdrawState;
+  stateChange: TransactionState;
   // the instance is ready
   ready: void;
   loading: boolean;
@@ -45,7 +45,7 @@ export type CancelToken = {
  * @param T - the provider WebbApiProvider
  */
 export abstract class MixerWithdraw<T extends WebbApiProvider<any>> extends EventBus<WebbWithdrawEvents> {
-  state: WithdrawState = WithdrawState.Ideal;
+  state: TransactionState = TransactionState.Ideal;
   cancelToken: CancelToken = { cancelled: false };
 
   constructor(protected inner: T) {
@@ -56,7 +56,7 @@ export abstract class MixerWithdraw<T extends WebbApiProvider<any>> extends Even
    *  cancel the withdraw */
   cancelWithdraw(): Promise<void> {
     this.cancelToken.cancelled = true;
-    this.emit('stateChange', WithdrawState.Cancelling);
+    this.emit('stateChange', TransactionState.Cancelling);
 
     return Promise.resolve(undefined);
   }

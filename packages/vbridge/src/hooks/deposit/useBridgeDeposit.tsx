@@ -1,22 +1,19 @@
 import {
+  AnchorDeposit,
   BridgeCurrencyIndex,
   ChainTypeId,
   computeChainIdType,
   Currency,
   DepositPayload,
-  MixerSize,
+  MixerDeposit,
+  TransactionState,
   VAnchorDeposit,
-  VAnchorDepositResults,
-  WebbError,
-  WebbErrorCodes,
-  WithdrawState,
 } from '@webb-dapp/api-providers';
 import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
 import { useWebContext } from '@webb-dapp/react-environment';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-
 export interface VBridgeDepositApi {
-  deposit(payload: DepositPayload): Promise<VAnchorDepositResults>;
+  deposit(payload: DepositPayload): Promise<void>;
 
   generateNote(
     mixerId: number | string,
@@ -25,7 +22,9 @@ export interface VBridgeDepositApi {
     wrappableAsset: string | undefined
   ): Promise<DepositPayload>;
 
-  stage: VAnchorDeposit<any>['state'];
+  stage: TransactionState;
+  setStage(stage: TransactionState): void;
+  loadingState: MixerDeposit['loading'];
   error: string;
   depositApi: VAnchorDeposit<any> | null;
   selectedBridgeCurrency: Currency | null;
@@ -34,11 +33,11 @@ export interface VBridgeDepositApi {
 }
 
 export const useBridgeDeposit = (): VBridgeDepositApi => {
+  const [stage, setStage] = useState<TransactionState>(TransactionState.Ideal);
   const { activeApi } = useWebContext();
-  const [stage, setStage] = useState<WithdrawState>(WithdrawState.Ideal);
+  const [loadingState, setLoadingState] = useState<AnchorDeposit<any>['loading']>('ideal');
   const [error, setError] = useState('');
-  // const [_mixerSizes, setMixerSizes] = useState<MixerSize[]>([]);
-  const { bridgeApi } = useBridge();
+  const { bridgeApi, getTokensOfChain } = useBridge();
   const [selectedBridgeCurrency, setSelectedBridgeCurrency] = useState<null | Currency>(null);
   /// api
   const depositApi = useMemo(() => {
@@ -54,18 +53,18 @@ export const useBridgeDeposit = (): VBridgeDepositApi => {
     if (!depositApi || !bridgeApi) {
       return;
     }
-    const unSub = depositApi.on('error', (error) => {
-      setError(error);
-    });
 
-    const stateChangeUnsub = depositApi.on('stateChange', (stage: WithdrawState) => {
-      setStage(stage);
+    depositApi.on('stateChange', (state) => {
+      setStage(state);
     });
 
     setSelectedBridgeCurrency(bridgeApi.currency);
+
+    const subscribe = bridgeApi.$store.subscribe((bridge) => {
+      setSelectedBridgeCurrency(bridgeApi.currency);
+    });
     return () => {
-      unSub && unSub();
-      stateChangeUnsub && stateChangeUnsub();
+      subscribe.unsubscribe();
     };
   }, [depositApi, bridgeApi, selectedBridgeCurrency?.id, bridgeApi?.activeBridge]);
 
@@ -87,10 +86,7 @@ export const useBridgeDeposit = (): VBridgeDepositApi => {
 
   const deposit = useCallback(
     async (depositPayload: DepositPayload) => {
-      if (!depositApi) {
-        throw WebbError.from(WebbErrorCodes.UnsupportedChain);
-      }
-      return depositApi.deposit(depositPayload);
+      return depositApi?.deposit(depositPayload);
     },
     [depositApi]
   );
@@ -107,10 +103,12 @@ export const useBridgeDeposit = (): VBridgeDepositApi => {
   };
 
   return {
+    stage,
+    setStage,
     depositApi,
     deposit,
     generateNote,
-    stage,
+    loadingState,
     error,
     selectedBridgeCurrency,
     setSelectedCurrency,

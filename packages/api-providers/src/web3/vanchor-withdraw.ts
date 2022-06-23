@@ -10,7 +10,7 @@ import { BigNumber, ContractReceipt, ethers } from 'ethers';
 
 import { hexToU8a, u8aToHex } from '@polkadot/util';
 
-import { AnchorApi, VAnchorWithdraw, VAnchorWithdrawResult, WebbRelayer, WithdrawState } from '../abstracts';
+import { AnchorApi, TransactionState, VAnchorWithdraw, VAnchorWithdrawPayload, WebbRelayer } from '../abstracts';
 import { ChainType, computeChainIdType, evmIdIntoInternalChainId, parseChainIdType } from '../chains';
 import { generateCircomCommitment, utxoFromVAnchorNote, VAnchorContract } from '../contracts/wrappers';
 import { Web3Provider } from '../ext-providers/web3/web3-provider';
@@ -82,7 +82,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
   }
 
   // TODO: Implement relayer leaf fetching, relayer fee calculations
-  async withdraw(notes: string[], recipient: string, amount: string): Promise<VAnchorWithdrawResult> {
+  async withdraw(notes: string[], recipient: string, amount: string): Promise<VAnchorWithdrawPayload> {
     this.cancelToken.cancelled = false;
 
     const activeBridge = this.bridgeApi.activeBridge;
@@ -118,7 +118,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
     let wasmBuffer: Uint8Array;
     let provingKey: Uint8Array;
 
-    this.emit('stateChange', WithdrawState.FetchingFixtures);
+    this.emit('stateChange', TransactionState.FetchingFixtures);
 
     const maxEdges = await destVAnchor.inner.maxEdges();
     if (notes.length > 2) {
@@ -142,7 +142,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
     let inputUtxos: Utxo[] = [];
 
     // For all notes, get any leaves
-    this.emit('stateChange', WithdrawState.FetchingLeaves);
+    this.emit('stateChange', TransactionState.FetchingLeaves);
     for (const note of notes) {
       const parsedNote = (await Note.deserialize(note)).note;
       sumInputNotes = ethers.utils.parseUnits(parsedNote.amount, parsedNote.denomination).add(sumInputNotes);
@@ -261,11 +261,11 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
         message: `${section}:withdraw`,
         name: 'Transaction',
       });
-      this.emit('stateChange', WithdrawState.Ideal);
+      this.emit('stateChange', TransactionState.Ideal);
 
       return {
         txHash: '',
-        outputNotes: [],
+        changeNotes: [],
       };
     }
 
@@ -299,7 +299,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
       .add(outputUtxos.reduce((sum: BigNumber, x: Utxo) => sum.add(x.amount), BigNumber.from(0)))
       .sub(inputUtxos.reduce((sum: BigNumber, x: Utxo) => sum.add(x.amount), BigNumber.from(0)));
 
-    this.emit('stateChange', WithdrawState.GeneratingZk);
+    this.emit('stateChange', TransactionState.GeneratingZk);
 
     const { extData, outputNotes, publicInputs } = await destVAnchor.setupTransaction(
       inputUtxos,
@@ -322,15 +322,15 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
         message: `${section}:withdraw`,
         name: 'Transaction',
       });
-      this.emit('stateChange', WithdrawState.Ideal);
+      this.emit('stateChange', TransactionState.Ideal);
 
       return {
         txHash: '',
-        outputNotes: [],
+        changeNotes: [],
       };
     }
 
-    this.emit('stateChange', WithdrawState.SendingTransaction);
+    this.emit('stateChange', TransactionState.SendingTransaction);
 
     // Take the proof and send the transaction
     // TODO: support relayed transaction
@@ -346,7 +346,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
       );
       receipt = await tx.wait();
     } catch (e) {
-      this.emit('stateChange', WithdrawState.Ideal);
+      this.emit('stateChange', TransactionState.Ideal);
       console.log(e);
 
       this.inner.notificationHandler({
@@ -359,7 +359,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
 
       return {
         txHash: '',
-        outputNotes: [],
+        changeNotes: [],
       };
     }
 
@@ -377,7 +377,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
     const changeNote: Note = outputNotes.find((note: Note) => generateCircomCommitment(note.note) === hexCommitment)!;
     changeNote.mutateIndex(insertedCommitmentEvent.args![1].toString());
 
-    this.emit('stateChange', WithdrawState.Ideal);
+    this.emit('stateChange', TransactionState.Ideal);
     this.inner.notificationHandler({
       description: recipient,
       key,
@@ -388,7 +388,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
 
     return {
       txHash: receipt.transactionHash,
-      outputNotes: [changeNote],
+      changeNotes: [changeNote],
     };
   }
 }

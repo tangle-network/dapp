@@ -1,6 +1,6 @@
 import { Button, Icon, LinearProgress, Tooltip, Typography } from '@material-ui/core';
-import { getEVMChainName, parseChainIdType } from '@webb-dapp/api-providers';
-import { WithdrawState } from '@webb-dapp/api-providers';
+import { getChainNameFromChainId, parseChainIdType } from '@webb-dapp/api-providers';
+import { TransactionState } from '@webb-dapp/api-providers';
 import { useAppConfig } from '@webb-dapp/react-environment';
 import { SpaceBox } from '@webb-dapp/ui-components/Box';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
@@ -10,7 +10,7 @@ import styled from 'styled-components';
 
 type WithdrawingModalProps = {
   canCancel: boolean;
-  stage: WithdrawState;
+  stage: TransactionState;
   note: DepositNote;
   cancel(): void;
   withdrawTxInfo: any | null;
@@ -124,21 +124,21 @@ export const WithdrawingModal: React.FC<WithdrawingModalProps> = ({
 }) => {
   const message = useMemo(() => {
     switch (stage) {
-      case WithdrawState.Ideal:
+      case TransactionState.Ideal:
         break;
-      case WithdrawState.Done:
+      case TransactionState.Done:
         return 'Transaction Done';
-      case WithdrawState.Failed:
+      case TransactionState.Failed:
         return 'Transaction Failed';
-      case WithdrawState.Cancelling:
+      case TransactionState.Cancelling:
         return 'Transaction canceled';
-      case WithdrawState.GeneratingZk:
+      case TransactionState.GeneratingZk:
         return 'Generating Zero Knowledge proof...';
-      case WithdrawState.SendingTransaction:
+      case TransactionState.SendingTransaction:
         return 'Transaction is being sent';
     }
   }, [stage]);
-  const isResolved = useMemo(() => stage > WithdrawState.SendingTransaction, [stage]);
+  const isResolved = useMemo(() => stage > TransactionState.SendingTransaction, [stage]);
   const transactionString = useMemo(() => {
     if (!withdrawTxInfo) {
       return '';
@@ -187,7 +187,7 @@ export const WithdrawingModal: React.FC<WithdrawingModalProps> = ({
                 <Typography variant={'caption'}>
                   <b>
                     Receiving {note.amount + ' ' + note.tokenSymbol} on{' '}
-                    {getEVMChainName(appConfig, parseChainIdType(Number(note.targetChainId)).chainId)}
+                    {getChainNameFromChainId(appConfig, parseChainIdType(Number(note.targetChainId)))}
                   </b>
                 </Typography>
               </InfoItem>
@@ -216,7 +216,7 @@ export const WithdrawingModal: React.FC<WithdrawingModalProps> = ({
           disabled={!canCancel}
           className={'cancel-button'}
         >
-          {stage > WithdrawState.SendingTransaction ? 'Close' : 'Cancel'}
+          {stage > TransactionState.SendingTransaction ? 'Close' : 'Cancel'}
         </Button>
       </div>
     </WithdrawInfoWrapper>

@@ -7,15 +7,9 @@ import { ERC20__factory as ERC20Factory } from '@webb-tools/contracts';
 import { CircomUtxo, Keypair, Note, NoteGenInput, toFixedHex, Utxo } from '@webb-tools/sdk-core';
 import { ethers } from 'ethers';
 
-import { hexToU8a } from '@polkadot/util';
+import { hexToU8a, u8aToHex } from '@polkadot/util';
 
-import {
-  DepositPayload as IDepositPayload,
-  MixerSize,
-  VAnchorDeposit,
-  VAnchorDepositResults,
-  WithdrawState,
-} from '../abstracts';
+import { DepositPayload as IDepositPayload, MixerSize, TransactionState, VAnchorDeposit } from '../abstracts';
 import {
   ChainType,
   chainTypeIdToInternalId,
@@ -141,9 +135,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
     };
   }
 
-  // TODO instead of handling the notification inside the function body throw `WebbError`s and handle them properly in the catch block
-  //@ts-ignore
-  async deposit(depositPayload: DepositPayload): Promise<VAnchorDepositResults> {
+  async deposit(depositPayload: DepositPayload): Promise<void> {
     const bridge = this.bridgeApi.activeBridge;
     const currency = this.bridgeApi.currency;
 
@@ -194,13 +186,13 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
       const maxEdges = await srcVAnchor._contract.maxEdges();
 
       // Fetch the fixtures
-      this.emit('stateChange', WithdrawState.FetchingFixtures);
+      this.emit('stateChange', TransactionState.FetchingFixtures);
       const smallKey = await fetchVariableAnchorKeyForEdges(maxEdges, true);
       const smallWasm = await fetchVariableAnchorWasmForEdges(maxEdges, true);
       const leavesMap: Record<string, Uint8Array[]> = {};
 
       // Fetch the leaves from the source chain
-      this.emit('stateChange', WithdrawState.FetchingLeaves);
+      this.emit('stateChange', TransactionState.FetchingLeaves);
       let leafStorage = await bridgeStorageFactory(Number(sourceChainId));
 
       // check if we already cached some values.
@@ -245,7 +237,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
         });
       }
 
-      this.emit('stateChange', WithdrawState.GeneratingZk);
+      this.emit('stateChange', TransactionState.GeneratingZk);
 
       // If a wrappableAsset was selected, perform a wrapAndDeposit
       if (depositPayload.params[2]) {
@@ -285,8 +277,10 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
             Buffer.from(smallWasm)
           );
 
+          this.emit('stateChange', TransactionState.SendingTransaction);
+
           // emit event for waiting for transaction to confirm
-          const txReceipt = await tx.wait();
+          await tx.wait();
 
           this.inner.notificationHandler({
             data: {
@@ -300,11 +294,8 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
             message: `${currency.view.name}:wrap and deposit`,
             name: 'Transaction',
           });
-          // TODO: @nepoche set the right leaf index before returning
-          return {
-            txHash: txReceipt.transactionHash,
-            updatedNote: depositPayload.note,
-          };
+
+          this.emit('stateChange', TransactionState.Done);
         } else {
           this.inner.notificationHandler({
             data: {
@@ -318,8 +309,10 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
             message: `${currency.view.name}:wrap and deposit`,
             name: 'Transaction',
           });
+          this.emit('stateChange', TransactionState.Failed);
         }
-        throw new Error('no enough balance');
+
+        return;
       } else {
         const requiredApproval = await srcVAnchor.isWebbTokenApprovalRequired(amount);
 
@@ -349,6 +342,8 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
             Buffer.from(smallWasm)
           );
 
+          this.emit('stateChange', TransactionState.SendingTransaction);
+
           // emit event for waiting for transaction to confirm
           await tx.wait();
 
@@ -364,6 +359,8 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
             message: `${currency.view.name} deposit`,
             name: 'Transaction',
           });
+
+          this.emit('stateChange', TransactionState.Done);
         } else {
           this.inner.notificationHandler({
             data: {
@@ -377,6 +374,8 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
             message: 'Not enough token balance',
             name: 'Transaction',
           });
+
+          this.emit('stateChange', TransactionState.Failed);
         }
       }
     } catch (e: any) {
@@ -391,6 +390,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
           message: `${currency.view.name}:deposit`,
           name: 'Transaction',
         });
+        this.emit('stateChange', TransactionState.Failed);
       } else {
         this.inner.notificationHandler.remove('waiting-approval');
         this.inner.notificationHandler({
@@ -400,8 +400,8 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
           message: `${currency.view.name}:deposit`,
           name: 'Transaction',
         });
+        this.emit('stateChange', TransactionState.Failed);
       }
-      throw e;
     }
   }
 }
