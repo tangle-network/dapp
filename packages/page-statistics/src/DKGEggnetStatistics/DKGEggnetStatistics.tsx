@@ -2,6 +2,7 @@ import { Typography } from '@material-ui/core';
 import ProgressBar from '@ramonak/react-progress-bar';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
+import { useBreakpoint } from '@webb-dapp/ui-components/utils/responsive-utils';
 import { ArcElement, Chart as ChartJS, Legend, Tooltip } from 'chart.js';
 import { Config, UserConfig } from 'gridjs';
 import { Grid } from 'gridjs-react';
@@ -20,6 +21,7 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 export const DKGEggnetStatistics: FC = () => {
   const { data, fetchData } = useDKGEggnetStats();
   const pallet = useColorPallet();
+  const { isXsOrAbove } = useBreakpoint();
 
   const { dkgSigners, overviewData } = useMemo(() => {
     const { dkgSigners, ...overviewData } = data;
@@ -32,12 +34,14 @@ export const DKGEggnetStatistics: FC = () => {
 
   const displayOverviewData = useMemo<StatisticCardProps[]>(() => {
     const keys = Object.keys(overviewData) as (keyof typeof overviewData)[];
+    const width = '150px';
 
     return keys
       .map((key): StatisticCardProps | undefined => {
         switch (key) {
           case 'authorities':
             return {
+              width,
               title: 'Participants',
               value: overviewData[key],
               description: 'Total number of participants',
@@ -45,13 +49,15 @@ export const DKGEggnetStatistics: FC = () => {
 
           case 'blockNumber':
             return {
-              title: 'Latest Blocks',
+              width,
+              title: 'Finalized Blocks',
               value: overviewData[key],
               description: 'Current block number',
             };
 
           case 'keygenThreshold':
             return {
+              width,
               title: 'Keygen Threshold',
               value: overviewData[key],
               description: 'Current keygen threshold',
@@ -59,6 +65,7 @@ export const DKGEggnetStatistics: FC = () => {
 
           case 'proposerCount':
             return {
+              width,
               title: 'Proposers',
               value: overviewData[key],
               description: 'Total number of proposers',
@@ -66,6 +73,7 @@ export const DKGEggnetStatistics: FC = () => {
 
           case 'signatureThreshold':
             return {
+              width,
               title: 'Signature Threshold',
               value: overviewData[key],
               description: 'Current signature threshold',
@@ -73,6 +81,7 @@ export const DKGEggnetStatistics: FC = () => {
 
           case 'signedProposals':
             return {
+              width,
               title: 'Signed Proposals',
               value: overviewData[key],
               description: 'Number of signed proposals',
@@ -80,6 +89,7 @@ export const DKGEggnetStatistics: FC = () => {
 
           case 'unsignedProposalQueue':
             return {
+              width,
               title: 'Unsigned Proposals',
               value: overviewData[key],
               description: 'Number of unsigned proposals in queue',
@@ -236,30 +246,34 @@ export const DKGEggnetStatistics: FC = () => {
 
   return (
     <DKGEggnetStatisticsWrapper>
-      <Flex row jc='space-evenly' ai='flex-start' wrap='wrap'>
+      <Flex row jc='space-between' ai='flex-start' wrap='wrap'>
         <StatisticCardsList>
           {displayOverviewData.map((item) => (
-            <StatisticCard {...item} key={item.title} />
+            <StatisticCard {...item} styles={{ marginLeft: '12px' }} key={item.title} />
           ))}
         </StatisticCardsList>
 
         <ChartWrapper>
-          <Typography variant='h6'>
+          <Typography variant='h5' style={{ marginBottom: '16px' }}>
             <b>Proposals Types and Status</b>
           </Typography>
 
-          <ChartLabelsWrapper>
-            {chartLabels.map((item) => (
-              <StatisticCard {...item} key={item.title} />
-            ))}
-          </ChartLabelsWrapper>
+          <Flex row={isXsOrAbove} colRev={!isXsOrAbove} ai='center' jc='flex-start' dir=''>
+            <div style={{ width: '200px', height: '200px', marginRight: '24px' }}>
+              <Doughnut data={chartData} options={chartOpts} />
+            </div>
 
-          <Doughnut data={chartData} options={chartOpts} />
+            <ChartLabelsWrapper>
+              {chartLabels.map((item) => (
+                <StatisticCard {...item} key={item.title} />
+              ))}
+            </ChartLabelsWrapper>
+          </Flex>
         </ChartWrapper>
       </Flex>
 
       <DKGSignerWrapper>
-        <Typography variant='h6'>
+        <Typography variant='h5' style={{ marginBottom: '16px' }}>
           <b>DKG Signers</b>
         </Typography>
         <GridWrapper>

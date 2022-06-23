@@ -1,3 +1,4 @@
+import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
 import styled, { css } from 'styled-components';
 
 export type StatisticCardWrapperProps = {
@@ -6,7 +7,7 @@ export type StatisticCardWrapperProps = {
 };
 
 export const StatisticCardWrapper = styled.div<StatisticCardWrapperProps>`
-  width: ${({ width }) => (width ? width : '86px')};
+  width: ${({ width }) => (width ? width : '104px')};
   display: flex;
   flex-direction: column;
   align-items: flex-start;

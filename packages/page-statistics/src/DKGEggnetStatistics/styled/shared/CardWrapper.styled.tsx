@@ -5,7 +5,6 @@ export const CardWrapper = styled.div`
   border: 1px solid ${({ theme }) => theme.borderColor};
   border-radius: 16px;
   padding: 16px 8px;
-  max-width: 380px;
 
   ${above.xs`
     padding: 16px;

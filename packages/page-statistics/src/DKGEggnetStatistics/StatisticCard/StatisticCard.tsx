@@ -11,12 +11,20 @@ export type StatisticCardProps = {
   description?: string;
   width?: string;
   labelColor?: string;
+  styles?: React.CSSProperties;
 };
 
-export const StatisticCard: React.FC<StatisticCardProps> = ({ description, labelColor, title, value, width }) => {
+export const StatisticCard: React.FC<StatisticCardProps> = ({
+  description,
+  labelColor,
+  styles,
+  title,
+  value,
+  width,
+}) => {
   return (
-    <StatisticCardWrapper width={width} labelColor={labelColor}>
-      <Typography variant='h6'>
+    <StatisticCardWrapper width={width} labelColor={labelColor} style={styles}>
+      <Typography variant='h4'>
         <b>
           {typeof value === 'number' ? (
             <CountUp start={0} end={value} delay={0} duration={1}>
@@ -31,7 +39,7 @@ export const StatisticCard: React.FC<StatisticCardProps> = ({ description, label
           )}
         </b>
       </Typography>
-      <Typography variant='subtitle2'>
+      <Typography variant='h6'>
         {title} {description && <DescriptionIcon description={description} />}
       </Typography>
     </StatisticCardWrapper>
