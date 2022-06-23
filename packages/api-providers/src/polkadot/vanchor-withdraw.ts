@@ -31,7 +31,7 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
    * amountUnit - amount to withdraw should be less or equal to the deposited notes amount
    * */
   async withdraw(notes: string[], recipient: string, amount: string): Promise<VAnchorWithdrawResult> {
-    // Generate random secrets which can be supplied later by the user
+    // TODO :Generate random secrets which can be supplied later by the user
     const secret = randomAsU8a();
     // Get the current active account
     const account = await this.inner.accounts.activeOrDefault;
@@ -39,7 +39,6 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
     if (!account) {
       throw WebbError.from(WebbErrorCodes.NoAccountAvailable);
     }
-
     const accountId = account.address;
     const relayerAccountId = account.address;
     const recipientAccountDecoded = decodeAddress(accountId);
