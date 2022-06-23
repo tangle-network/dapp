@@ -13,20 +13,27 @@ type StatisticsPageProps = {
 };
 
 const PageStatistics: FC<StatisticsPageProps> = ({ view }) => {
-  if (view === 'overview') {
-    return <StatisticsOverview />;
-  } else if (view === 'deposits') {
-    return <DepositStatistics />;
-  } else if (view === 'withdrawals') {
-    return <WithdrawalStatistics />;
-  } else if (view === 'relayers') {
-    return <RelayersStatistics />;
-  } else if (view === 'dkg') {
-    return <DKGStatistics />;
-  } else if (view === 'dkg-eggnet') {
-    return <DKGEggnetStatistics />;
-  } else {
-    return <StatisticsOverview />;
+  switch (view) {
+    case 'overview':
+      return <StatisticsOverview />;
+
+    case 'deposits':
+      return <DepositStatistics />;
+
+    case 'withdrawals':
+      return <WithdrawalStatistics />;
+
+    case 'relayers':
+      return <RelayersStatistics />;
+
+    case 'dkg':
+      return <DKGStatistics />;
+
+    case 'dkg-eggnet':
+      return <DKGEggnetStatistics />;
+
+    default:
+      return <StatisticsOverview />;
   }
 };
 
