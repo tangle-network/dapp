@@ -19,7 +19,7 @@ export interface DKGEggnetData {
   dkgSigners: DKGSigner[];
 }
 
-const initialState = {
+const initialState: DKGEggnetData = {
   blockNumber: 0,
   signatureThreshold: 0,
   keygenThreshold: 0,
@@ -27,13 +27,12 @@ const initialState = {
   proposerCount: 0,
   signedProposals: 0,
   unsignedProposalQueue: 0,
-  dkgSigners: [] as DKGSigner[],
-} as DKGEggnetData;
+  dkgSigners: [],
+};
 
 export function useDKGEggnetStats() {
   const [state, setState] = useState<DKGEggnetData>(initialState);
   const [isLoading, setIsLoading] = useState(false);
-  // const [error, setError] = useState<Error | null | boolean>(null);
 
   const fetchData = useCallback(() => {
     setIsLoading(true);

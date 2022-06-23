@@ -23,11 +23,11 @@ export const DKGEggnetStatistics: FC = () => {
   const pallet = useColorPallet();
   const { isXsOrAbove } = useBreakpoint();
 
-  const { dkgSigners, overviewData } = useMemo(() => {
+  const { dkgSignersItems, overviewData } = useMemo(() => {
     const { dkgSigners, ...overviewData } = data;
-    const _dkgSigners = dkgSigners.map((item) => Object.values(item));
+    const dkgSignersItems = dkgSigners.map((item) => Object.values(item));
     return {
-      dkgSigners: _dkgSigners,
+      dkgSignersItems,
       overviewData,
     };
   }, [data]);
@@ -284,7 +284,7 @@ export const DKGEggnetStatistics: FC = () => {
               paginationButton: 'webb-table-pagination-btn',
               paginationButtonCurrent: 'webb-table-pagination-btn-current',
             }}
-            data={dkgSigners}
+            data={dkgSignersItems}
             columns={gridColumns}
             pagination={{
               enabled: true,
