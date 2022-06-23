@@ -80,7 +80,7 @@ const ProductList = styled.div<ProductListProps>`
 `;
 
 const ProductArrowWrapper = styled.div<{ open: boolean }>`
-  transform: rotate(${(props): number => (props.open ? -180 : 0)}deg);
+  transform: rotate(${(props): number => (props.open ? 0 : -90)}deg);
   transition: 300ms linear all;
   & g {
     stroke: var(--color-primary);
@@ -114,7 +114,7 @@ const ProductSubItem: FC<ProductItemProps> = memo(({ collapse, data }) => {
       ref={ref}
       to={data.path ?? '__unset__path'}
       style={{
-        height: '30px',
+        height: '48px',
         paddingLeft: '30px',
       }}
     >

@@ -443,6 +443,13 @@ export const NetworkIndicatorWrapper = styled.button`
     width: 108px;
     margin-right: 8px;
 
+    ${({ theme }) =>
+      theme.type === 'dark'
+        ? css`
+            border: 1px solid ${theme.borderColor2};
+          `
+        : css``}
+
     ${above.xs`
       margin-right: 0.5rem;
       width: 132px;
