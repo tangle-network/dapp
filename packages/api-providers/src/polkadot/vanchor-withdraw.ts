@@ -30,7 +30,7 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
    * recipient - Recipient account
    * amountUnit - amount to withdraw should be less or equal to the deposited notes amount
    * */
-  async withdraw(notes: string[], recipient: string, amountUnit: string): Promise<VAnchorWithdrawResult> {
+  async withdraw(notes: string[], recipient: string, amount: string): Promise<VAnchorWithdrawResult> {
     // Generate random secrets which can be supplied later by the user
     const secret = randomAsU8a();
     // Get the current active account
@@ -49,7 +49,6 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
     // Calculated the input amount
     const inputAmounts: number = inputNotes.reduce((acc: number, { note }) => acc + Number(note.amount), 0);
     // TODO: Fix the function to recive the denomination
-    const amount = currencyToUnitI128(Number(amountUnit)).toString();
     // Calculate the remainder amount
     const remainder = inputAmounts - Number(amount);
     // Ensure that remainder is more than 0
