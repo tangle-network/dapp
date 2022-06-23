@@ -3,12 +3,12 @@
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import '@webb-tools/api-derive/cjs/index.js';
+import '@webb-tools/api-derive';
 
 import type { WebbPolkadot } from './webb-provider';
 
+import { fetchSubstrateVAnchorProvingKey } from '@webb-dapp/api-providers/ipfs';
 import { getLeafCount, getLeafIndex } from '@webb-dapp/api-providers/polkadot/mt-utils';
-import { getCachedFixtureURI, withLocalFixtures } from '@webb-dapp/api-providers/utils';
 import { LoggerService } from '@webb-tools/app-util';
 import { ArkworksProvingManager, Note, NoteGenInput, ProvingManagerSetupInput, Utxo } from '@webb-tools/sdk-core';
 import { VAnchorProof } from '@webb-tools/sdk-core/proving/types';
@@ -37,17 +37,6 @@ type DepositPayload = IDepositPayload<Note, [number]>;
 /**
  * Webb Anchor API implementation for Polkadot
  **/
-async function fetchSubstrateVAnchorProvingKey() {
-  const IPFSUrl = 'https://ipfs.io/ipfs/QmZiNuAKp2QGp281bqasNqvqccPCGp4yoxWbK8feecefML';
-  const cachedURI = getCachedFixtureURI('proving_key_uncompressed_sub_vanchor_2_2_2.bin');
-  const ipfsKeyRequest = await fetch(withLocalFixtures() ? cachedURI : IPFSUrl);
-  const circuitKeyArrayBuffer = await ipfsKeyRequest.arrayBuffer();
-
-  logger.info('Done Fetching key');
-  const circuitKey = new Uint8Array(circuitKeyArrayBuffer);
-
-  return circuitKey;
-}
 
 export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, DepositPayload> {
   private async getleafIndex(leaf: Uint8Array, indexBeforeInsertion: number, treeId: number): Promise<number> {
@@ -108,11 +97,12 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
       // Getting the active account
       const account = await this.inner.accounts.activeOrDefault;
       const secret = randomAsU8a();
-      this.emit('stateChange', WithdrawState.GeneratingZk);
 
       if (!account) {
         throw WebbError.from(WebbErrorCodes.NoAccountAvailable);
       }
+      this.emit('stateChange', WithdrawState.FetchingFixtures);
+      const provingKey = await fetchSubstrateVAnchorProvingKey();
 
       const accountId = account.address;
       const relayerAccountId = account.address;
@@ -136,6 +126,8 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
       });
       let publicAmount = note.amount;
       const inputNote = await depositPayload.note.getDefaultUtxoNote();
+      this.emit('stateChange', WithdrawState.FetchingLeaves);
+
       // While depositing use an empty leaves
       const leavesMap: any = {};
       leavesMap[targetChainId] = [];
@@ -146,8 +138,8 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
         .getNeighborRoots(treeId)
         .then((roots: any) => roots.toHuman());
 
+      this.emit('stateChange', WithdrawState.GeneratingZk);
       const rootsSet = [hexToU8a(root), hexToU8a(neighborRoots[0])];
-      const provingKey = await fetchSubstrateVAnchorProvingKey();
 
       const { encrypted: comEnc1 } = naclEncrypt(output1.commitment, secret);
       const { encrypted: comEnc2 } = naclEncrypt(output2.commitment, secret);

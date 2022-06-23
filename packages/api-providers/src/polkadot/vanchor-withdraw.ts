@@ -2,20 +2,18 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import '@webb-tools/types/cjs/index.js';
-import '@webb-tools/api-derive/cjs/index.js';
+import '@webb-tools/api-derive';
 
 import type { WebbPolkadot } from './webb-provider';
 
 import {
   currencyToUnitI128,
-  getCachedFixtureURI,
+  fetchSubstrateVAnchorProvingKey,
   WebbError,
   WebbErrorCodes,
   WithdrawState,
-  withLocalFixtures,
 } from '@webb-dapp/api-providers';
 import { getLeafCount, getLeafIndex, getLeaves, rootOfLeaves } from '@webb-dapp/api-providers/polkadot/mt-utils';
-import { LoggerService } from '@webb-tools/app-util';
 import { ArkworksProvingManager, Note, ProvingManagerSetupInput, Utxo } from '@webb-tools/sdk-core';
 import { VAnchorProof } from '@webb-tools/sdk-core/proving/types';
 import { BigNumber } from 'ethers';
@@ -25,20 +23,6 @@ import { hexToU8a, u8aToHex } from '@polkadot/util';
 import { naclEncrypt, randomAsU8a } from '@polkadot/util-crypto';
 
 import { VAnchorWithdraw, VAnchorWithdrawResult } from '../abstracts/anchor/vanchor-withdraw';
-
-const logger = LoggerService.get('SubstrateVAnchorWithdraw');
-
-async function fetchSubstrateVAnchorProvingKey() {
-  const IPFSUrl = 'https://ipfs.io/ipfs/QmZiNuAKp2QGp281bqasNqvqccPCGp4yoxWbK8feecefML';
-  const cachedURI = getCachedFixtureURI('proving_key_uncompressed_sub_vanchor_2_2_2.bin');
-  const ipfsKeyRequest = await fetch(withLocalFixtures() ? cachedURI : IPFSUrl);
-  const circuitKeyArrayBuffer = await ipfsKeyRequest.arrayBuffer();
-
-  logger.info('Done Fetching key');
-  const circuitKey = new Uint8Array(circuitKeyArrayBuffer);
-
-  return circuitKey;
-}
 
 export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
   /**
@@ -51,8 +35,6 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
     const secret = randomAsU8a();
     // Get the current active account
     const account = await this.inner.accounts.activeOrDefault;
-
-    this.emit('stateChange', WithdrawState.GeneratingZk);
 
     if (!account) {
       throw WebbError.from(WebbErrorCodes.NoAccountAvailable);
@@ -76,6 +58,10 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
       this.emit('stateChange', WithdrawState.Ideal);
       throw WebbError.from(WebbErrorCodes.AmountToWithdrawExceedsTheDepositedAmount);
     }
+
+    this.emit('stateChange', WithdrawState.FetchingFixtures);
+    const provingKey = await fetchSubstrateVAnchorProvingKey();
+
     // Get the target chainId,treeId from the note
     const targetChainId = inputNotes[0].note.targetChainId;
     const treeId = inputNotes[0].note.sourceIdentifyingData;
@@ -99,6 +85,7 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
       }
       return index;
     }, 0);
+    this.emit('stateChange', WithdrawState.FetchingLeaves);
     const leaves = await getLeaves(this.inner.api, Number(treeId), 0, latestIndex);
     const leavesMap: any = {};
     /// Assume same chain withdraw-deposit
@@ -113,8 +100,8 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
     const outputCommitment = output1.commitment;
     const { encrypted: comEnc1 } = naclEncrypt(output1.commitment, secret);
     const { encrypted: comEnc2 } = naclEncrypt(output2.commitment, secret);
+    this.emit('stateChange', WithdrawState.GeneratingZk);
 
-    const provingKey = await fetchSubstrateVAnchorProvingKey();
     const extData = {
       relayer: accountId,
       recipient: relayerAccountId,

@@ -65,7 +65,6 @@ export class Currency extends CurrencyContent {
   }
 
   getChainIdsAndTypes(chainsConfig: AppConfig['chains']): ChainTypeId[] {
-    console.log(this.data);
     return Array.from(this.data.addresses.keys())
       .filter((internalId) => Boolean(chainsConfig[internalId]))
       .map((internalId: any) => {

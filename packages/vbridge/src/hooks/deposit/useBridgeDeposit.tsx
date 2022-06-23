@@ -63,28 +63,9 @@ export const useBridgeDeposit = (): VBridgeDepositApi => {
     });
 
     setSelectedBridgeCurrency(bridgeApi.currency);
-
-    /*    if (bridgeApi.activeBridge) {
-      depositApi.getSizes().then((mixerSizes) => {
-        mixerSizes.filter((mixerSize) => {
-          mixerSize.id === selectedBridgeCurrency?.id;
-        });
-        setMixerSizes(mixerSizes);
-      });
-    }
-    const subscribe = bridgeApi.$store.subscribe((_bridge) => {
-      depositApi.getSizes().then((mixerSizes) => {
-        mixerSizes.filter((mixerSize) => {
-          mixerSize.id === selectedBridgeCurrency?.id;
-        });
-        setMixerSizes(mixerSizes);
-      });
-      setSelectedBridgeCurrency(bridgeApi.currency);
-    });*/
     return () => {
       unSub && unSub();
       stateChangeUnsub && stateChangeUnsub();
-      // subscribe.unsubscribe();
     };
   }, [depositApi, bridgeApi, selectedBridgeCurrency?.id, bridgeApi?.activeBridge]);
 
