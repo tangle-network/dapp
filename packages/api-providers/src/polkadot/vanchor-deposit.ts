@@ -24,7 +24,7 @@ import {
   VAnchorDeposit,
   VAnchorDepositResults,
 } from '../abstracts';
-import { computeChainIdType, InternalChainId } from '../chains';
+import { chainTypeIdToInternalId, computeChainIdType } from '../chains';
 import { WebbError, WebbErrorCodes } from '../webb-error';
 
 const logger = LoggerService.get('PolkadotVBridgeDeposit');
@@ -70,8 +70,12 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
     const sourceChainId = computeChainIdType(Number(chainType.toHex()), Number(chainId));
     const anchors = await this.bridgeApi.getVariableAnchors();
     const anchor = anchors[0];
+    const internalChainId = chainTypeIdToInternalId({
+      chainId: Number(chainId),
+      chainType: Number(chainType.toHex()),
+    });
     // Tree id for the target chain
-    const treeId = anchor.neighbours[InternalChainId.ProtocolSubstrateStandalone] as number;
+    const treeId = anchor.neighbours[internalChainId] as number;
 
     const noteInput: NoteGenInput = {
       amount: currencyToUnitI128(amount).toString(),
