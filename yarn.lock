@@ -3268,6 +3268,11 @@
     "@types/websocket" "^1.0.5"
     websocket "^1.0.34"
 
+"@ramonak/react-progress-bar@^5.0.0":
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/@ramonak/react-progress-bar/-/react-progress-bar-5.0.0.tgz#715131a76f32872b1457bdfeb95f96a60222d0fc"
+  integrity sha512-5jvpTEymdgDVPFz60Zg2qC4TZdxneimJ8xwcd6ljIlKlPg8n4RMzProlRpcfV3y0Is3a6Of70KLNoW+SBFh9mA==
+
 "@rollup/plugin-alias@^3.1.9":
   version "3.1.9"
   resolved "https://registry.yarnpkg.com/@rollup/plugin-alias/-/plugin-alias-3.1.9.tgz#a5d267548fe48441f34be8323fb64d1d4a1b3fdf"

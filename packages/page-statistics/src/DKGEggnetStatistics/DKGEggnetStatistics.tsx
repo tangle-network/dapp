@@ -1,11 +1,13 @@
 import { Typography } from '@material-ui/core';
+import ProgressBar from '@ramonak/react-progress-bar';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { ArcElement, Chart as ChartJS, Legend, Tooltip } from 'chart.js';
-import { Config } from 'gridjs';
+import { Config, UserConfig } from 'gridjs';
 import { Grid } from 'gridjs-react';
+import { _ } from 'gridjs-react';
 import { over } from 'lodash';
-import { FC, useEffect, useMemo } from 'react';
+import { FC, useCallback, useEffect, useMemo } from 'react';
 import { ChartProps, Doughnut } from 'react-chartjs-2';
 
 import { ChartLabelsWrapper } from './styled/ChartLabelsWrapper.styled';
@@ -182,6 +184,52 @@ export const DKGEggnetStatistics: FC = () => {
     [pallet]
   );
 
+  const getProgressBarColor = useCallback((percent: number) => {
+    if (percent <= 20) {
+      return '#ef4444';
+    } else if (percent <= 40) {
+      return '#f97316';
+    } else if (percent <= 60) {
+      return '#facc15';
+    } else if (percent <= 80) {
+      return '#2dd4bf';
+    } else {
+      return '#22c55e';
+    }
+  }, []);
+
+  const gridColumns = useMemo<UserConfig['columns']>(() => {
+    return [
+      {
+        name: 'DKG Voters',
+        formatter: (cell) => {
+          const cellStr = cell?.toString();
+          return cellStr ? `${cellStr.slice(2, 6)}...${cellStr.slice(-4)}` : cellStr;
+        },
+      },
+      {
+        name: 'IP',
+      },
+      {
+        name: 'Uptime',
+        formatter: (cell) => {
+          const value = parseFloat(cell?.toString() ?? '0');
+          return _(
+            <ProgressBar
+              completed={value}
+              baseBgColor={pallet.layer1Background}
+              bgColor={getProgressBarColor(value)}
+              animateOnRender={true}
+            />
+          );
+        },
+      },
+      {
+        name: 'Rewards',
+      },
+    ];
+  }, [getProgressBarColor, pallet.layer1Background]);
+
   useEffect(() => {
     fetchData();
   }, [fetchData]);
@@ -223,24 +271,7 @@ export const DKGEggnetStatistics: FC = () => {
               paginationButtonCurrent: 'webb-table-pagination-btn-current',
             }}
             data={dkgSigners}
-            columns={[
-              {
-                name: 'DKG Voters',
-                formatter: (cell) => {
-                  const cellStr = cell?.toString();
-                  return cellStr ? `${cellStr.slice(2, 6)}...${cellStr.slice(-4)}` : cellStr;
-                },
-              },
-              {
-                name: 'IP',
-              },
-              {
-                name: 'Uptime',
-              },
-              {
-                name: 'Rewards',
-              },
-            ]}
+            columns={gridColumns}
             pagination={{
               enabled: true,
               limit: 10,
