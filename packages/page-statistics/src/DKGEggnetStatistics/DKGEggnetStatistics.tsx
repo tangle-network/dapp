@@ -34,7 +34,7 @@ export const DKGEggnetStatistics: FC = () => {
 
   const displayOverviewData = useMemo<StatisticCardProps[]>(() => {
     const keys = Object.keys(overviewData) as (keyof typeof overviewData)[];
-    const width = '150px';
+    const width = '160px';
 
     return keys
       .map((key): StatisticCardProps | undefined => {

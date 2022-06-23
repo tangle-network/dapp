@@ -26,7 +26,7 @@ export const DescriptionIcon: React.FC<{ description: string }> = ({ description
         onMouseEnter={handlePopoverOpen}
         onMouseLeave={handlePopoverClose}
       >
-        <InformationIcon width={8} height={8} />
+        <InformationIcon width={12} height={12} />
       </IconButton>
       <Popover
         id='mouse-over-popover'
