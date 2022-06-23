@@ -8,12 +8,13 @@ import {
   MixerDeposit,
   TransactionState,
   VAnchorDeposit,
+  VAnchorDepositResults,
 } from '@webb-dapp/api-providers';
 import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
 import { useWebContext } from '@webb-dapp/react-environment';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 export interface VBridgeDepositApi {
-  deposit(payload: DepositPayload): Promise<void>;
+  deposit(payload: DepositPayload): Promise<VAnchorDepositResults>;
 
   generateNote(
     mixerId: number | string,
@@ -86,7 +87,10 @@ export const useBridgeDeposit = (): VBridgeDepositApi => {
 
   const deposit = useCallback(
     async (depositPayload: DepositPayload) => {
-      return depositApi?.deposit(depositPayload);
+      if (!depositApi) {
+        throw new Error('Api not ready');
+      }
+      return depositApi.deposit(depositPayload);
     },
     [depositApi]
   );

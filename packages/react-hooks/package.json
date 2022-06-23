@@ -9,9 +9,9 @@
     "@influxdata/influxdb-client": "^1.8.0",
     "@polkadot/api": "8.7.1",
     "@polkadot/extension-dapp": "0.43.1",
-    "@umijs/use-request": "^1.4.3",
-    "@webb-tools/api": "0.1.4-84",
-    "@webb-tools/types": "0.1.4-84",
+    "@umijs/use-request": "1.4.3",
+    "@webb-tools/api": "0.1.4-85",
+    "@webb-tools/types": "0.1.4-85",
     "axios": "^0.21.0",
     "copy-to-clipboard": "^3.3.1",
     "csv": "^5.3.2"

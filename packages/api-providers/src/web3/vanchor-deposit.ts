@@ -7,9 +7,15 @@ import { ERC20__factory as ERC20Factory } from '@webb-tools/contracts';
 import { CircomUtxo, Keypair, Note, NoteGenInput, toFixedHex, Utxo } from '@webb-tools/sdk-core';
 import { ethers } from 'ethers';
 
-import { hexToU8a, u8aToHex } from '@polkadot/util';
+import { hexToU8a } from '@polkadot/util';
 
-import { DepositPayload as IDepositPayload, MixerSize, TransactionState, VAnchorDeposit } from '../abstracts';
+import {
+  DepositPayload as IDepositPayload,
+  MixerSize,
+  TransactionState,
+  VAnchorDeposit,
+  VAnchorDepositResults,
+} from '../abstracts';
 import {
   ChainType,
   chainTypeIdToInternalId,
@@ -135,7 +141,9 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
     };
   }
 
-  async deposit(depositPayload: DepositPayload): Promise<void> {
+  // TODO: implement the return result
+  //@ts-ignore
+  async deposit(depositPayload: DepositPayload): Promise<VAnchorDepositResults> {
     const bridge = this.bridgeApi.activeBridge;
     const currency = this.bridgeApi.currency;
 
@@ -311,7 +319,8 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
           });
           this.emit('stateChange', TransactionState.Failed);
         }
-
+        // TODO throw an error here
+        //@ts-ignore
         return;
       } else {
         const requiredApproval = await srcVAnchor.isWebbTokenApprovalRequired(amount);

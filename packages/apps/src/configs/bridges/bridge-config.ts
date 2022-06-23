@@ -15,4 +15,8 @@ export const bridgeConfigByAsset: AppConfig['bridgeByAsset'] = {
     asset: WebbCurrencyId.webbDEV,
     anchors: anchorsConfig[WebbCurrencyId.webbDEV],
   },
+  [WebbCurrencyId.TEST]: {
+    asset: WebbCurrencyId.TEST,
+    anchors: anchorsConfig[WebbCurrencyId.TEST],
+  },
 };

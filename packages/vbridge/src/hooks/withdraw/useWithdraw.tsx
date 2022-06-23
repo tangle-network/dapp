@@ -131,7 +131,7 @@ export const useWithdraw = (params: UseWithdrawProps) => {
             params.note.note.amount
           );
           setReceipt(withdrawPayload.txHash);
-          setOutputNotes(withdrawPayload.changeNotes);
+          setOutputNotes(withdrawPayload.outputNotes);
         } catch (e) {
           console.log('error from withdraw api', e);
 
