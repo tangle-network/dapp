@@ -490,7 +490,6 @@ export class VAnchorContract {
 
       const inputNote = await Note.generateNote(noteInput);
       inputNotes.push(inputNote);
-      // TODO: @nepoche ensure index is defined
       inputIndices.push(inputUtxo.index!);
     }
 
