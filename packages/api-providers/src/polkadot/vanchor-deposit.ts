@@ -18,7 +18,12 @@ import { decodeAddress } from '@polkadot/keyring';
 import { hexToU8a, u8aToHex } from '@polkadot/util';
 import { naclEncrypt, randomAsU8a } from '@polkadot/util-crypto';
 
-import { DepositPayload as IDepositPayload, VAnchorDeposit, VAnchorDepositResults, WithdrawState } from '../abstracts';
+import {
+  DepositPayload as IDepositPayload,
+  TransactionState,
+  VAnchorDeposit,
+  VAnchorDepositResults,
+} from '../abstracts';
 import { computeChainIdType, InternalChainId } from '../chains';
 import { WebbError, WebbErrorCodes } from '../webb-error';
 
@@ -101,7 +106,7 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
       if (!account) {
         throw WebbError.from(WebbErrorCodes.NoAccountAvailable);
       }
-      this.emit('stateChange', WithdrawState.FetchingFixtures);
+      this.emit('stateChange', TransactionState.FetchingFixtures);
       const provingKey = await fetchSubstrateVAnchorProvingKey();
 
       const accountId = account.address;
@@ -126,7 +131,7 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
       });
       let publicAmount = note.amount;
       const inputNote = await depositPayload.note.getDefaultUtxoNote();
-      this.emit('stateChange', WithdrawState.FetchingLeaves);
+      this.emit('stateChange', TransactionState.FetchingLeaves);
 
       // While depositing use an empty leaves
       const leavesMap: any = {};
@@ -138,7 +143,7 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
         .getNeighborRoots(treeId)
         .then((roots: any) => roots.toHuman());
 
-      this.emit('stateChange', WithdrawState.GeneratingZk);
+      this.emit('stateChange', TransactionState.GeneratingZk);
       const rootsSet = [hexToU8a(root), hexToU8a(neighborRoots[0])];
 
       const { encrypted: comEnc1 } = naclEncrypt(output1.commitment, secret);
@@ -180,7 +185,7 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
         outputCommitments: data.outputNotes.map((note) => u8aToHex(note.getLeaf())),
         extDataHash: data.extDataHash,
       };
-      this.emit('stateChange', WithdrawState.SendingTransaction);
+      this.emit('stateChange', TransactionState.SendingTransaction);
       // Store the next leaf index before insertion
       const leafsCount = await getLeafCount(this.inner.api, treeId);
       const predictedIndex = leafsCount;
@@ -198,13 +203,13 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
       const leafIndex = await this.getleafIndex(insertedLeaf, predictedIndex, treeId);
       // Update the leaf index
       depositNote.mutateIndex(String(leafIndex));
-      this.emit('stateChange', WithdrawState.Done);
+      this.emit('stateChange', TransactionState.Done);
       return {
         txHash,
         updatedNote: depositNote,
       };
     } catch (e) {
-      this.emit('stateChange', WithdrawState.Failed);
+      this.emit('stateChange', TransactionState.Failed);
       throw e;
     }
   }

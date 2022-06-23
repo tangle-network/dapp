@@ -9,9 +9,9 @@ import type { WebbPolkadot } from './webb-provider';
 import {
   currencyToUnitI128,
   fetchSubstrateVAnchorProvingKey,
+  TransactionState,
   WebbError,
   WebbErrorCodes,
-  WithdrawState,
 } from '@webb-dapp/api-providers';
 import { getLeafCount, getLeafIndex, getLeaves, rootOfLeaves } from '@webb-dapp/api-providers/polkadot/mt-utils';
 import { ArkworksProvingManager, Note, ProvingManagerSetupInput, Utxo } from '@webb-tools/sdk-core';
@@ -54,12 +54,12 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
     const remainder = inputAmounts - Number(amount);
     // Ensure that remainder is more than 0
     if (remainder < 0) {
-      this.emit('stateChange', WithdrawState.Failed);
-      this.emit('stateChange', WithdrawState.Ideal);
+      this.emit('stateChange', TransactionState.Failed);
+      this.emit('stateChange', TransactionState.Ideal);
       throw WebbError.from(WebbErrorCodes.AmountToWithdrawExceedsTheDepositedAmount);
     }
 
-    this.emit('stateChange', WithdrawState.FetchingFixtures);
+    this.emit('stateChange', TransactionState.FetchingFixtures);
     const provingKey = await fetchSubstrateVAnchorProvingKey();
 
     // Get the target chainId,treeId from the note
@@ -85,7 +85,7 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
       }
       return index;
     }, 0);
-    this.emit('stateChange', WithdrawState.FetchingLeaves);
+    this.emit('stateChange', TransactionState.FetchingLeaves);
     const leaves = await getLeaves(this.inner.api, Number(treeId), 0, latestIndex);
     const leavesMap: any = {};
     /// Assume same chain withdraw-deposit
@@ -100,7 +100,7 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
     const outputCommitment = output1.commitment;
     const { encrypted: comEnc1 } = naclEncrypt(output1.commitment, secret);
     const { encrypted: comEnc2 } = naclEncrypt(output2.commitment, secret);
-    this.emit('stateChange', WithdrawState.GeneratingZk);
+    this.emit('stateChange', TransactionState.GeneratingZk);
 
     const extData = {
       relayer: accountId,
@@ -141,7 +141,7 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
       outputCommitments: data.outputNotes.map((note) => u8aToHex(note.getLeaf())),
       extDataHash: data.extDataHash,
     };
-    this.emit('stateChange', WithdrawState.SendingTransaction);
+    this.emit('stateChange', TransactionState.SendingTransaction);
     // get the leaf index to get the right leaf index ofter insertion
     const leafsCount = await getLeafCount(this.inner.api, Number(treeId));
     const predictedIndex = leafsCount;
@@ -157,8 +157,8 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
     outputNote.note.update_vanchor_utxo(output1.inner);
     // update the leaf index of the remainder note
     outputNote.mutateIndex(String(leafIndex));
-    this.emit('stateChange', WithdrawState.Done);
-    this.emit('stateChange', WithdrawState.Ideal);
+    this.emit('stateChange', TransactionState.Done);
+    this.emit('stateChange', TransactionState.Ideal);
     return {
       outputNotes: [outputNote],
       txHash: txHash,
