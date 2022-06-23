@@ -1,21 +1,22 @@
-import React, { FC, useEffect, useMemo } from 'react';
+import { Typography } from '@material-ui/core';
+import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
+import { Config } from 'gridjs';
+import { Grid } from 'gridjs-react';
+import { FC, useEffect, useMemo } from 'react';
 
 import { StatisticCard, StatisticCardProps } from './StatisticCard';
-import { DKGEggnetStatisticsWrapper, StatisticCardsList } from './styled';
-import { DKGEggnetData, useDKGEggnetStats } from './useDKGEggnetStats';
+import { DKGEggnetStatisticsWrapper, DKGSignerWrapper, GridWrapper, StatisticCardsList } from './styled';
+import { useDKGEggnetStats } from './useDKGEggnetStats';
 
 export const DKGEggnetStatistics: FC = () => {
   const { data, fetchData } = useDKGEggnetStats();
+  const pallet = useColorPallet();
 
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
-  const { dkgSigners: _, overviewData } = useMemo(() => {
+  const { dkgSigners, overviewData } = useMemo(() => {
     const { dkgSigners, ...overviewData } = data;
-
+    const _dkgSigners = dkgSigners.map((item) => Object.values(item));
     return {
-      dkgSigners,
+      dkgSigners: _dkgSigners,
       overviewData,
     };
   }, [data]);
@@ -82,6 +83,33 @@ export const DKGEggnetStatistics: FC = () => {
       .filter((item): item is StatisticCardProps => !!item);
   }, [overviewData]);
 
+  const gridStyles = useMemo<Config['style']>(
+    () =>
+      pallet.type !== 'dark'
+        ? {}
+        : {
+            th: {
+              color: pallet.secondaryText,
+              backgroundColor: pallet.layer1Background,
+              border: `1px solid ${pallet.borderColor2}`,
+            },
+            td: {
+              color: pallet.primaryText,
+              backgroundColor: pallet.layer2Background,
+              border: `1px solid ${pallet.borderColor2}`,
+            },
+            footer: {
+              border: `1px solid ${pallet.borderColor2}`,
+              backgroundColor: pallet.layer2Background,
+            },
+          },
+    [pallet]
+  );
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
   return (
     <DKGEggnetStatisticsWrapper>
       <StatisticCardsList>
@@ -89,6 +117,45 @@ export const DKGEggnetStatistics: FC = () => {
           <StatisticCard {...item} key={item.title} />
         ))}
       </StatisticCardsList>
+
+      <DKGSignerWrapper>
+        <Typography variant='h6'>
+          <b>DKG Signers</b>
+        </Typography>
+        <GridWrapper>
+          <Grid
+            style={gridStyles}
+            className={{
+              paginationSummary: 'webb-table-pagination-summary',
+              paginationButton: 'webb-table-pagination-btn',
+              paginationButtonCurrent: 'webb-table-pagination-btn-current',
+            }}
+            data={dkgSigners}
+            columns={[
+              {
+                name: 'DKG Voters',
+                formatter: (cell) => {
+                  const cellStr = cell?.toString();
+                  return cellStr ? `${cellStr.slice(2, 6)}...${cellStr.slice(-4)}` : cellStr;
+                },
+              },
+              {
+                name: 'IP',
+              },
+              {
+                name: 'Uptime',
+              },
+              {
+                name: 'Rewards',
+              },
+            ]}
+            pagination={{
+              enabled: true,
+              limit: 10,
+            }}
+          />
+        </GridWrapper>
+      </DKGSignerWrapper>
     </DKGEggnetStatisticsWrapper>
   );
 };

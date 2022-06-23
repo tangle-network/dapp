@@ -48,7 +48,7 @@ export function useDKGEggnetStats() {
           proposerCount: randNumber({ min: 10, max: 100, precision: 10 }),
           signedProposals: randNumber({ min: 10, max: 100, precision: 10 }),
           unsignedProposalQueue: randNumber({ min: 10, max: 100, precision: 10 }),
-          DGKSigners: Array.from(Array(randNumber({ min: 20, max: 50 }))).map(() => ({
+          dkgSigners: Array.from(Array(randNumber({ min: 20, max: 50 }))).map(() => ({
             voter: randEthereumAddress(),
             ip: randIp(),
             uptime: randNumber({ min: 80, max: 100 }),
