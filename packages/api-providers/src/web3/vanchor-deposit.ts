@@ -95,6 +95,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
       curve: 'Bn254',
       backend: 'Circom',
       amount: ethers.utils.parseEther(amount.toString()).toString(),
+      originChainId: sourceChainId.toString(),
       chainId: destination.toString(),
       keypair,
     });
@@ -122,7 +123,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
         toFixedHex(destination, 8).substring(2),
         toFixedHex(depositOutputUtxo.amount).substring(2),
         toFixedHex(keypair.privkey).substring(2),
-        depositOutputUtxo.blinding,
+        toFixedHex(depositOutputUtxo.blinding).substring(2),
       ].join(':'),
       sourceChain: sourceChainId.toString(),
       sourceIdentifyingData: srcAddress!,

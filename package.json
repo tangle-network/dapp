@@ -25,9 +25,9 @@
     "@webb-tools/app-util": "0.1.4-85",
     "@webb-tools/sdk-core": "0.1.4-85",
     "@webb-tools/wasm-utils": "0.1.4-85",
-    "@webb-tools/contracts": "0.2.0",
-    "@webb-tools/interfaces": "0.2.0",
-    "@webb-tools/anchors": "0.2.0"
+    "@webb-tools/contracts": "file:../../protocol-solidity/packages/contracts",
+    "@webb-tools/interfaces": "file:../../protocol-solidity/packages/interfaces",
+    "@webb-tools/anchors": "file:../../protocol-solidity/packages/anchors"
   },
   "scripts": {
     "bump-version": "node scripts/bump-version.js",
@@ -93,6 +93,9 @@
     "@webb-tools/app-util": "^0.1.4-85",
     "@webb-tools/sdk-core": "^0.1.4-85",
     "@webb-tools/wasm-utils": "^0.1.4-85",
+    "@webb-tools/contracts": "file:../../protocol-solidity/packages/contracts",
+    "@webb-tools/interfaces": "file:../../protocol-solidity/packages/interfaces",
+    "@webb-tools/anchors": "file:../../protocol-solidity/packages/anchors",
     "babel-plugin-bundled-import-meta": "^0.3.2",
     "cross-env": "^7.0.3",
     "enzyme": "^3.11.0",

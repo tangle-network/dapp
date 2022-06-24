@@ -32,6 +32,9 @@ export const anchorDeploymentBlock: Record<number, Record<string, number>> = {
   [computeChainIdType(ChainType.EVM, EVMChainId.AthenaLocalnet)]: {
     '0x4e3df2073bf4b43b9944b8e5a463b1e185d6448c': 1,
   },
+  [computeChainIdType(ChainType.EVM, EVMChainId.DemeterLocalnet)]: {
+    '0xdB587ef6aaA16b5719CDd3AaB316F0E70473e9Be': 1,
+  },
 };
 
 export const getAnchorDeploymentBlockNumber = (chainIdType: number, contractAddress: string): number | undefined => {
