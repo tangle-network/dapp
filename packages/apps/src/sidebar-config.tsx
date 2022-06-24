@@ -44,8 +44,8 @@ export const sideBarConfig: SidebarConfig = {
       icon: <StatisticsPageLogo />,
       items: [
         {
-          path: 'statistics/dkg-eggnet',
-          name: 'DKG/Eggnet',
+          path: 'statistics/dkg',
+          name: 'DKG',
         },
       ],
     },

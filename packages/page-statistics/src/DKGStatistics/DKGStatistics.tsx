@@ -5,9 +5,7 @@ import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { useBreakpoint } from '@webb-dapp/ui-components/utils/responsive-utils';
 import { ArcElement, Chart as ChartJS, Legend, Tooltip } from 'chart.js';
 import { Config, UserConfig } from 'gridjs';
-import { Grid } from 'gridjs-react';
-import { _ } from 'gridjs-react';
-import { over } from 'lodash';
+import { _, Grid } from 'gridjs-react';
 import { FC, useCallback, useEffect, useMemo } from 'react';
 import { ChartProps, Doughnut } from 'react-chartjs-2';
 
@@ -18,7 +16,7 @@ import { useDKGEggnetStats } from './useDKGEggnetStats';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-export const DKGEggnetStatistics: FC = () => {
+export const DKGStatistics: FC = () => {
   const { data, fetchData } = useDKGEggnetStats();
   const pallet = useColorPallet();
   const { isXsOrAbove } = useBreakpoint();

@@ -112,15 +112,6 @@ export const config: RouterConfigData[] = [
       {
         element: (
           <CSuspense>
-            <PageStatistics view={'dkg-eggnet'} />
-          </CSuspense>
-        ),
-        path: 'statistics/dkg-eggnet/*',
-        title: 'DKG/Eggnet Statistics',
-      },
-      {
-        element: (
-          <CSuspense>
             <PageStatistics view={'overview'} />
           </CSuspense>
         ),

@@ -2,7 +2,6 @@ import React, { FC } from 'react';
 import styled from 'styled-components';
 
 import { DepositStatistics } from './DepositStatistics';
-import { DKGEggnetStatistics } from './DKGEggnetStatistics';
 import { DKGStatistics } from './DKGStatistics';
 import { RelayersStatistics } from './RelayerStatistics';
 import { StatisticsOverview } from './StatisticsOverview';
@@ -28,9 +27,6 @@ const PageStatistics: FC<StatisticsPageProps> = ({ view }) => {
 
     case 'dkg':
       return <DKGStatistics />;
-
-    case 'dkg-eggnet':
-      return <DKGEggnetStatistics />;
 
     default:
       return <StatisticsOverview />;
