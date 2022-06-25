@@ -76,7 +76,14 @@ const InputWrapper = styled.div<{ open: boolean }>`
   .account-header {
     display: flex;
     align-items: center;
-    padding: 10px 20px;
+    ${({ theme }: { theme: Pallet }) => css`
+      border: 1px solid ${theme.heavySelectionBorderColor};
+      color: ${theme.primaryText};
+      background: ${theme.heavySelectionBackground};
+    `}
+    height: 50px;
+    padding: 0 12px;
+    border-radius: 10px;
   }
 
   .account-button-wrapper {
@@ -284,6 +291,7 @@ type RelayerInputProps = {
   setActiveRelayer(nextRelayer: WebbRelayer | null): void;
   feesGetter(activeRelayer: ActiveWebbRelayer): Promise<FeesInfo>;
   wrapperStyles?: CSSProperties;
+  showSummary?: boolean;
 };
 
 enum RelayerInputStatus {
@@ -298,6 +306,7 @@ export const RelayerInput: React.FC<RelayerInputProps> = ({
   relayerApi,
   relayers,
   setActiveRelayer,
+  showSummary = true,
   tokenSymbol,
   wrapperStyles,
 }) => {
@@ -421,21 +430,25 @@ export const RelayerInput: React.FC<RelayerInputProps> = ({
           setView(RelayerInputStatus.AddNewCustom);
         }}
       />
-      <SpaceBox height={16} />
-      <RelayerInputSection>
-        <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
-          <div className='information-item'>
-            <p className='title'>Withdraw fee percentage</p>
-            <p className='value'>{relayingIncentives.withdrawFeePercentage * 100}%</p>
-          </div>
-          <div className='information-item'>
-            <p className='title'>Full fees</p>
-            <p className='value'>
-              {ethers.utils.formatUnits(relayingIncentives.totalFees)} {tokenSymbol}
-            </p>
-          </div>
-        </div>
-      </RelayerInputSection>
+      {showSummary && (
+        <>
+          <SpaceBox height={16} />
+          <RelayerInputSection>
+            <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
+              <div className='information-item'>
+                <p className='title'>Withdraw fee percentage</p>
+                <p className='value'>{relayingIncentives.withdrawFeePercentage * 100}%</p>
+              </div>
+              <div className='information-item'>
+                <p className='title'>Full fees</p>
+                <p className='value'>
+                  {ethers.utils.formatUnits(relayingIncentives.totalFees)} {tokenSymbol}
+                </p>
+              </div>
+            </div>
+          </RelayerInputSection>
+        </>
+      )}
       <Modal open={view > RelayerInputStatus.SelectOfCurrent}>
         <RelayerInfoModalWrapper>
           <Typography variant={'h2'}>Add Custom relayer</Typography>

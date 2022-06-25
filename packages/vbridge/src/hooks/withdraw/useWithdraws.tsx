@@ -10,43 +10,40 @@ import { useWebContext } from '@webb-dapp/react-environment/webb-context';
 import { Note } from '@webb-tools/sdk-core';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-export type UseWithdrawProps = {
-  note: Note | null;
+import { relayersInitState, RelayersState, WithdrawErrors } from './useWithdraw';
+
+export type UseWithdrawsProps = {
+  notes: Note[] | null;
   recipient: string;
+  amount: number;
 };
 
-export type WithdrawErrors = {
+export type WithdrawsErrors = {
   error: string;
 
   validationError: {
-    note: string;
+    notes: string[];
     recipient: string;
   };
 };
-export type RelayersState = {
-  relayers: WebbRelayer[];
-  loading: boolean;
-  activeRelayer: OptionalActiveRelayer;
+
+export const withdrawsErrorsInitialState: WithdrawsErrors = {
+  error: '',
+  validationError: {
+    notes: [],
+    recipient: '',
+  },
 };
-export const relayersInitState: RelayersState = {
-  relayers: [],
-  activeRelayer: null,
-  loading: true,
-};
-export const useWithdraw = (params: UseWithdrawProps) => {
+
+export const useWithdraws = (params: UseWithdrawsProps) => {
   const [stage, setStage] = useState<TransactionState>(TransactionState.Ideal);
   const [receipt, setReceipt] = useState<string>('');
   const [outputNotes, setOutputNotes] = useState<Note[]>([]);
   const [relayersState, setRelayersState] = useState<RelayersState>(relayersInitState);
   const { activeApi, activeChain } = useWebContext();
 
-  const [error, setError] = useState<WithdrawErrors>({
-    error: '',
-    validationError: {
-      note: '',
-      recipient: '',
-    },
-  });
+  const [error, setError] = useState<WithdrawsErrors>(withdrawsErrorsInitialState);
+
   const withdrawApi = useMemo(() => {
     const withdraw = activeApi?.methods.variableAnchor.withdraw;
     if (!withdraw?.enabled) {
@@ -56,31 +53,38 @@ export const useWithdraw = (params: UseWithdrawProps) => {
   }, [activeApi]);
 
   useEffect(() => {
-    const sub = activeApi?.relayerManager.listUpdated.subscribe(() => {
-      if (params.note) {
-        activeApi?.relayerManager.getRelayersByNote(params.note).then((r: WebbRelayer[]) => {
+    const subscriptions = params.notes?.map((note) =>
+      activeApi?.relayerManager.listUpdated.subscribe(() => {
+        if (!note) {
+          return;
+        }
+
+        activeApi?.relayerManager.getRelayersByNote(note).then((r: WebbRelayer[]) => {
           setRelayersState((p) => ({
             ...p,
             loading: false,
             relayers: r,
           }));
         });
-      }
-    });
-    return () => sub?.unsubscribe();
-  }, [activeApi, params.note, withdrawApi]);
+      })
+    );
+
+    return () => subscriptions?.forEach((sub) => sub?.unsubscribe());
+  }, [activeApi, params.notes, withdrawApi]);
+
   const { registerInteractiveFeedback } = useWebContext();
+
   // hook events
   useEffect(() => {
-    if (params.note) {
-      activeApi?.relayerManager.getRelayersByNote(params.note).then((r: WebbRelayer[]) => {
+    params.notes?.map((note) =>
+      activeApi?.relayerManager.getRelayersByNote(note).then((r: WebbRelayer[]) => {
         setRelayersState((p) => ({
           ...p,
           loading: false,
           relayers: r,
         }));
-      });
-    }
+      })
+    );
 
     const sub = activeApi?.relayerManager.activeRelayerWatcher.subscribe((next: OptionalActiveRelayer) => {
       setRelayersState((p) => ({
@@ -88,10 +92,13 @@ export const useWithdraw = (params: UseWithdrawProps) => {
         activeRelayer: next,
       }));
     });
+
     const unsubscribe: Record<string, (() => void) | void> = {};
+
     if (!withdrawApi) {
       return;
     }
+
     unsubscribe['stateChange'] = withdrawApi.on('stateChange', (stage: TransactionState) => {
       setStage(stage);
     });
@@ -99,12 +106,21 @@ export const useWithdraw = (params: UseWithdrawProps) => {
     unsubscribe['validationError'] = withdrawApi.on(
       'validationError',
       (validationError: { note: string; recipient: string }) => {
-        setError((p) => ({
-          ...p,
-          validationError,
-        }));
+        setError((p) => {
+          const noteErrors = p.validationError.notes.slice();
+          noteErrors.push(validationError.note);
+
+          return {
+            ...p,
+            validationError: {
+              notes: noteErrors,
+              recipient: validationError.recipient,
+            },
+          };
+        });
       }
     );
+
     unsubscribe['error'] = withdrawApi.on('error', (withdrawError: any) => {
       setError((p) => ({
         ...p,
@@ -116,19 +132,20 @@ export const useWithdraw = (params: UseWithdrawProps) => {
       sub?.unsubscribe();
       Object.values(unsubscribe).forEach((v) => v && v());
     };
-  }, [withdrawApi, params.note, activeApi?.relayerManager]);
+  }, [withdrawApi, params.notes, activeApi?.relayerManager]);
 
   const withdraw = useCallback(async () => {
-    if (!withdrawApi || !params.note) {
+    if (!withdrawApi || !params.notes?.length) {
       return;
     }
+
     if (stage === TransactionState.Ideal) {
-      if (params.note) {
+      if (params.notes.length) {
         try {
           const withdrawPayload = await withdrawApi.withdraw(
-            [params.note?.serialize()],
+            params.notes?.map((note) => note.serialize()),
             params.recipient,
-            params.note.note.amount
+            params.amount.toString()
           );
           setReceipt(withdrawPayload.txHash);
           setOutputNotes(withdrawPayload.outputNotes);
@@ -169,6 +186,7 @@ export const useWithdraw = (params: UseWithdrawProps) => {
     },
     [activeApi?.relayerManager, activeChain]
   );
+
   return {
     stage,
     receipt,
@@ -177,8 +195,8 @@ export const useWithdraw = (params: UseWithdrawProps) => {
     withdraw,
     canCancel,
     cancelWithdraw,
-    error: error.error,
-    validationErrors: error.validationError,
+    errors: error.error,
+    validationError: error.validationError,
     relayersState,
     setRelayer,
     relayerMethods: activeApi?.relayerManager,

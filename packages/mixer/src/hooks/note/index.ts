@@ -3,6 +3,10 @@ import { Note, NoteGenInput } from '@webb-tools/sdk-core';
 import { useEffect, useState } from 'react';
 
 async function migrateNote(noteString: string): Promise<Note | null> {
+  if (!noteString.length) {
+    return null;
+  }
+
   let d = await Note.deserialize(noteString);
   try {
     if (d.note.version === 'v1') {
@@ -50,6 +54,7 @@ async function migrateNote(noteString: string): Promise<Note | null> {
 
 export const useDepositNotes = (values: string[]): null | Note[] => {
   const [depositNotes, setDepositNotes] = useState<Note[] | null>(null);
+
   useEffect(() => {
     const handler = async () => {
       try {
@@ -68,6 +73,7 @@ export const useDepositNotes = (values: string[]): null | Note[] => {
         setDepositNotes(null);
       }
     };
+
     handler();
   }, [values]);
 
@@ -89,6 +95,7 @@ export const useDepositNote = (value: string): null | Note => {
         setDepositNote(null);
       }
     };
+
     handler();
   }, [value]);
 

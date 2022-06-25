@@ -543,7 +543,7 @@ export const NetworkManagerIndicator: React.FC<NetworkManagerIndicatorProps> = (
           <Flex row jc='space-between' ai='center' flex={1}>
             <Typography
               variant='subtitle1'
-              style={{ maxWidth: '64px', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}
+              style={{ maxWidth: '88px', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}
             >
               <b>{connectionMetaData.chainName}</b>
             </Typography>
