@@ -20,6 +20,7 @@ import { InputTitle } from '@webb-dapp/ui-components/Inputs/InputTitle/InputTitl
 import { BridgeNoteInput } from '@webb-dapp/ui-components/Inputs/NoteInput/BridgeNoteInput';
 import { FeesInfo, RelayerApiAdapter, RelayerInput } from '@webb-dapp/ui-components/Inputs/RelayerInput/RelayerInput';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
+import { Alert } from '@webb-dapp/ui-components/notification/Notification';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { above, useBreakpoint } from '@webb-dapp/ui-components/utils/responsive-utils';
 import { useWithdraw, useWithdraws } from '@webb-dapp/vbridge';
@@ -53,25 +54,8 @@ const WithdrawNoteSection = styled.div`
 
   ${above.xs(css`
     padding: 24px 12px;
+    padding-right: 24px;
   `)}
-
-  .note-input {
-    display: flex;
-    ${({ theme }: { theme: Pallet }) => css`
-      border: 1px solid ${theme.heavySelectionBorderColor};
-      color: ${theme.primaryText};
-      background: ${theme.heavySelectionBackground};
-    `}
-    height: 36px;
-    min-width: 152px;
-    width: calc(100% - 88px);
-    border-radius: 10px;
-    padding: 4px 12px;
-
-    ${above.sm`
-      width: auto; 
-    `}
-  }
 `;
 
 const AddressAndInfoSection = styled.div`
@@ -186,26 +170,6 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
     await switchChain(chain, activeWallet);
   };
 
-  const feesGetter = useCallback(async (activeRelayer: ActiveWebbRelayer): Promise<FeesInfo> => {
-    const defaultFees: FeesInfo = {
-      totalFees: 0,
-      withdrawFeePercentage: 0,
-    };
-
-    /** TODO: Figure out how to calculate `withdrawFeePercentage`
-       * when we have multiple note
-      try {
-        const fees = await activeRelayer.fees(depositNote!.serialize());
-        return fees || defaultFees;
-      } catch (e) {
-        console.log(e);
-      }
-      return defaultFees;
-       */
-
-    return defaultFees;
-  }, []);
-
   const relayerApi: RelayerApiAdapter = useMemo(() => {
     return {
       getInfo: async (endpoint) => {
@@ -246,16 +210,20 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
 
   // Side effect for fetching the relayer fees if applicable
   useEffect(() => {
-    if (relayersState.activeRelayer && depositNotes?.length) {
-      /** TODO: Figure out how to calculate `withdrawFeePercentage`
-       * 
-      relayersState.activeRelayer.fees(depositNote.note.serialize()).then((feeInfo) => {
-        if (feeInfo) {
-          setFees(ethers.utils.formatUnits(feeInfo.totalFees, depositNote.note.denomination));
-        }
-      });
-       */
-    }
+    const fetchRelayerFees = async () => {
+      const activeRelayer = relayersState.activeRelayer;
+      if (!activeRelayer || !depositNotes?.length) {
+        return;
+      }
+
+      try {
+        const feesInfo = await Promise.all(
+          depositNotes.map(async (depositNote) => activeRelayer.fees(depositNote.note.serialize()))
+        );
+      } catch (error) {
+        console.log(error);
+      }
+    };
   }, [relayersState, depositNotes]);
 
   return (
@@ -307,9 +275,6 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
                   fullWidth
                   placeholder={`Please paste your address here`}
                 />
-                <FormHelperText error={Boolean(validationError.recipient && recipient)}>
-                  {validationError.recipient}
-                </FormHelperText>
               </div>
             </InputWrapper>
 
@@ -323,7 +288,6 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
                   setRelayer(nextRelayer);
                 }}
                 tokenSymbol={''}
-                feesGetter={feesGetter}
                 wrapperStyles={{ width: '100%' }}
                 showSummary={false}
               />

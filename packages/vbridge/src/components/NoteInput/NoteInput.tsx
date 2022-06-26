@@ -9,7 +9,7 @@ import { useBreakpoint } from '@webb-dapp/ui-components/utils/responsive-utils';
 
 import { InformationItem, Title, Value } from '../shared/styled';
 import { NoteInputProps } from './note-input-props.interface';
-import { NoteInputWrapper } from './styled';
+import { NoteInputContainer, NoteInputWrapper } from './styled';
 
 export const NoteInput: React.FC<NoteInputProps> = ({ error, isRemoveNote = false, note, noteAction, setNote }) => {
   const { isSmOrAbove, isXsOrAbove } = useBreakpoint();
@@ -17,15 +17,15 @@ export const NoteInput: React.FC<NoteInputProps> = ({ error, isRemoveNote = fals
   const depositNote = useDepositNote(note);
 
   return (
-    <NoteInputWrapper>
+    <NoteInputContainer>
       <Flex row ai={'center'}>
-        <Flex row ai='center' flex={!isSmOrAbove ? 1 : undefined}>
+        <Flex row ai='center' flex={1}>
           <IconButton style={{ marginRight: '4px' }} onClick={noteAction}>
             <Icon>{isRemoveNote ? 'remove_circle' : 'add_circle'}</Icon>
           </IconButton>
-          <div className='note-input'>
+          <NoteInputWrapper>
             <BridgeNoteInput error={error} value={note} onChange={setNote} />
-          </div>
+          </NoteInputWrapper>
         </Flex>
 
         {isSmOrAbove && depositNote && (
@@ -69,6 +69,6 @@ export const NoteInput: React.FC<NoteInputProps> = ({ error, isRemoveNote = fals
           </InformationItem>
         </div>
       )}
-    </NoteInputWrapper>
+    </NoteInputContainer>
   );
 };

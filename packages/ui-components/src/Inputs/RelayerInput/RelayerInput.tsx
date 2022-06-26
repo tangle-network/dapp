@@ -289,7 +289,7 @@ type RelayerInputProps = {
   relayerApi: RelayerApiAdapter;
   tokenSymbol: string;
   setActiveRelayer(nextRelayer: WebbRelayer | null): void;
-  feesGetter(activeRelayer: ActiveWebbRelayer): Promise<FeesInfo>;
+  feesGetter?(activeRelayer: ActiveWebbRelayer): Promise<FeesInfo>;
   wrapperStyles?: CSSProperties;
   showSummary?: boolean;
 };
@@ -326,7 +326,12 @@ export const RelayerInput: React.FC<RelayerInputProps> = ({
         if (!activeRelayer) {
           return;
         }
-        feesGetter(activeRelayer).then((fees) => {
+
+        if (showSummary && !feesGetter) {
+          throw Error('Relayer input require feesGetter function to show summary');
+        }
+
+        feesGetter?.(activeRelayer).then((fees) => {
           if (!fees) {
             return;
           }
@@ -341,7 +346,7 @@ export const RelayerInput: React.FC<RelayerInputProps> = ({
     }
 
     getFees();
-  }, [activeRelayer, feesGetter]);
+  }, [activeRelayer, feesGetter, showSummary]);
 
   const [checkRelayStatus, setCheckRelayStatus] = useState<{
     loading: boolean;
