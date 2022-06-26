@@ -1,6 +1,5 @@
-import { FormHelperText, Icon, IconButton, InputBase } from '@material-ui/core';
+import { InputBase } from '@material-ui/core';
 import {
-  ActiveWebbRelayer,
   chainTypeIdToInternalId,
   getChainNameFromChainId,
   parseChainIdType,
@@ -10,21 +9,19 @@ import {
 } from '@webb-dapp/api-providers';
 import { chainsPopulated } from '@webb-dapp/apps/configs';
 import { getRelayerManagerFactory } from '@webb-dapp/apps/configs/relayer-config';
-import { useDepositNote, useDepositNotes } from '@webb-dapp/mixer';
+import { useDepositNotes } from '@webb-dapp/mixer';
 import { TransactionProcessingModal } from '@webb-dapp/react-components/Transact/TransactionProcessingModal';
 import { WithdrawSuccessModal } from '@webb-dapp/react-components/Withdraw';
 import { useAppConfig, useWebContext } from '@webb-dapp/react-environment';
+import { AlertCard } from '@webb-dapp/ui-components/AlertCard';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
-import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { InputTitle } from '@webb-dapp/ui-components/Inputs/InputTitle/InputTitle';
-import { BridgeNoteInput } from '@webb-dapp/ui-components/Inputs/NoteInput/BridgeNoteInput';
-import { FeesInfo, RelayerApiAdapter, RelayerInput } from '@webb-dapp/ui-components/Inputs/RelayerInput/RelayerInput';
+import { RelayerApiAdapter, RelayerInput } from '@webb-dapp/ui-components/Inputs/RelayerInput/RelayerInput';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
-import { Alert } from '@webb-dapp/ui-components/notification/Notification';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
-import { above, useBreakpoint } from '@webb-dapp/ui-components/utils/responsive-utils';
-import { useWithdraw, useWithdraws } from '@webb-dapp/vbridge';
-import { Note } from '@webb-tools/sdk-core';
+import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
+import { useWithdraws } from '@webb-dapp/vbridge';
+import { FixedPointNumber, Note } from '@webb-tools/sdk-core';
 import { ethers } from 'ethers';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
@@ -111,10 +108,12 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
   const [recipient, setRecipient] = useState('');
   const [fees, setFees] = useState('0');
   const [withdrawAmount, setWithdrawAmount] = useState(0);
+  const [formError, setFormError] = useState<null | string>(null);
 
   const { activeApi, activeChain, activeWallet, switchChain } = useWebContext();
   const config = useAppConfig();
   const depositNotes = useDepositNotes(notes);
+  const appConfig = useAppConfig();
 
   const {
     canCancel,
@@ -134,18 +133,16 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
     amount: withdrawAmount,
   });
 
-  const appConfig = useAppConfig();
+  const firstNote = useMemo<Note | null>(() => (!depositNotes?.length ? null : depositNotes[0]), [depositNotes]);
 
   const shouldSwitchChain = useMemo(() => {
     if (!depositNotes?.length || !activeChain) {
       return false;
     }
 
-    const chainIds = depositNotes.map(
-      (depositNote) => parseChainIdType(Number(depositNote.note.targetChainId)).chainId
-    );
-
-    return !chainIds.includes(activeChain.chainId);
+    // Dest chain is the first chain in the list
+    const chainId = parseChainIdType(Number(depositNotes[0].note.targetChainId)).chainId;
+    return activeChain.chainId !== chainId;
   }, [activeChain, depositNotes]);
 
   const isDisabled = useMemo(() => {
@@ -186,8 +183,17 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
   }, [config, activeApi]);
 
   const depositAmount = useMemo(() => {
-    return depositNotes?.reduce((pre, acc) => Number(acc.note.amount) + pre, 0) ?? 0;
-  }, [depositNotes]);
+    if (!depositNotes?.length || !firstNote) {
+      return 0;
+    }
+
+    return depositNotes.reduce((acc, currentNote) => {
+      const isMatchDestChain = currentNote.note.targetChainId === firstNote.note.targetChainId;
+      const isMatchTokenSymbol = currentNote.note.tokenSymbol === firstNote.note.tokenSymbol;
+
+      return isMatchDestChain && isMatchTokenSymbol ? acc + Number(currentNote.note.amount) : acc;
+    }, 0);
+  }, [depositNotes, firstNote]);
 
   const addNewNoteInput = useCallback(() => {
     setNotes((prevNotes) => {
@@ -208,23 +214,69 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
     });
   }, []);
 
+  // Side effect for validating form inputs
+  useEffect(() => {
+    const validateFormInput = () => {
+      const set = new Set(notes);
+
+      if (set.size !== notes.length) {
+        return setFormError('All notes must have different values');
+      }
+
+      if (withdrawAmount > depositAmount) {
+        return setFormError('Not enough fund');
+      }
+
+      setFormError(null);
+    };
+
+    validateFormInput();
+  }, [depositAmount, notes, withdrawAmount]);
+
   // Side effect for fetching the relayer fees if applicable
   useEffect(() => {
+    let isSubscribe = true;
+
     const fetchRelayerFees = async () => {
       const activeRelayer = relayersState.activeRelayer;
-      if (!activeRelayer || !depositNotes?.length) {
+      if (!activeRelayer || !depositNotes?.length || !firstNote) {
         return;
       }
 
       try {
-        const feesInfo = await Promise.all(
-          depositNotes.map(async (depositNote) => activeRelayer.fees(depositNote.note.serialize()))
+        const innerNote = firstNote.note;
+        const matchedNotes = depositNotes.filter(
+          ({ note }) => note.targetChainId === innerNote.targetChainId && note.tokenSymbol === innerNote.tokenSymbol
         );
+
+        const feesInfoArr = await Promise.all(
+          matchedNotes.map(async ({ note }) => activeRelayer.fees(note.serialize()))
+        );
+
+        const fee = feesInfoArr.reduce((acc, currentFeeInfo, idx) => {
+          if (!currentFeeInfo) {
+            return acc;
+          }
+
+          const formattedFee = ethers.utils.formatUnits(currentFeeInfo.totalFees, matchedNotes[idx].note.denomination);
+
+          return acc.plus(FixedPointNumber.fromInner(formattedFee));
+        }, FixedPointNumber.fromInner(0));
+
+        if (isSubscribe) {
+          setFees(fee.toString());
+        }
       } catch (error) {
         console.log(error);
       }
     };
-  }, [relayersState, depositNotes]);
+
+    fetchRelayerFees();
+
+    return () => {
+      isSubscribe = false;
+    };
+  }, [relayersState, depositNotes, firstNote]);
 
   return (
     <WithdrawWrapper wallet={activeWallet}>
@@ -244,7 +296,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
         ))}
       </WithdrawNoteSection>
 
-      {depositNotes?.length && (
+      {firstNote && (
         <AddressAndInfoSection>
           <InputsContainer>
             <InputWrapper>
@@ -293,31 +345,62 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
               />
             </InputWrapper>
           </InputsContainer>
+
           <SummaryContainer>
+            <AlertCard
+              hasIcon
+              variant='info'
+              text='If you use multiple notes with different dest chains or different tokens, we will use info of the first note.'
+            />
+
             <InformationItem>
               <Title>Deposit Amount</Title>
-              <Value>{depositAmount}</Value>
+              <Value>
+                {depositAmount} {firstNote.note.tokenSymbol}
+              </Value>
             </InformationItem>
+
+            <InformationItem>
+              <Title>Chains</Title>
+              <Value>
+                {getChainNameFromChainId(appConfig, parseChainIdType(Number(firstNote.note.sourceChainId)))}
+                {` -> `}
+                {getChainNameFromChainId(appConfig, parseChainIdType(Number(firstNote.note.targetChainId)))}
+              </Value>
+            </InformationItem>
+
             <InformationItem>
               <Title>Relayer Fee</Title>
-              <Value>{fees}</Value>
+              <Value>
+                {fees} {firstNote.note.tokenSymbol}
+              </Value>
             </InformationItem>
+
             <InformationItem>
               <Title>Total amount</Title>
-              <Value>{depositAmount - Number(fees)}</Value>
+              <Value>
+                {depositAmount - Number(fees)} {firstNote.note.tokenSymbol}
+              </Value>
             </InformationItem>
           </SummaryContainer>
+
           <ButtonContainer>
+            {formError && <AlertCard variant='error' hasIcon text={formError} />}
             <MixerButton
-              disabled={isDisabled}
+              disabled={isDisabled || withdrawAmount > depositAmount || !withdrawAmount || !!formError}
               onClick={() => {
-                if (shouldSwitchChain && depositNotes?.length) {
-                  /** TODO: Figure out how to switch chain */
-                  return switchChainFromNote(depositNotes[0]);
+                if (shouldSwitchChain && firstNote) {
+                  return switchChainFromNote(firstNote);
                 }
                 withdraw();
               }}
-              label={shouldSwitchChain ? 'Switch chains to withdraw' : 'Withdraw'}
+              label={
+                shouldSwitchChain
+                  ? 'Switch chains to withdraw'
+                  : withdrawAmount > depositAmount
+                  ? 'Not enough fund'
+                  : 'Withdraw'
+              }
             />
           </ButtonContainer>
         </AddressAndInfoSection>
