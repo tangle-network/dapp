@@ -13,7 +13,6 @@ import styled, { css } from 'styled-components';
 import TokenSelection from '../TokenSelection/TokenSelection';
 
 const TokenInputWrapper = styled.div<{ open: boolean }>`
-  width: 100%;
   border-radius: 8px;
   border: 1px solid ${({ theme }) => theme.heavySelectionBorderColor};
   overflow: hidden;
@@ -192,7 +191,7 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
               </IconButton>
             </div>
           </div>
-          <Modal open={isOpen} hasBlur onClose={() => setIsOpen(false)}>
+          <Modal isCenterModal open={isOpen} hasBlur onClose={() => setIsOpen(false)}>
             <TokenSelection
               currencies={currencies}
               onClose={() => setIsOpen(false)}

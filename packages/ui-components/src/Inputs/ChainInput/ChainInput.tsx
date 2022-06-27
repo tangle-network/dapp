@@ -187,7 +187,7 @@ const DropdownInput: React.FC<DropdownInputProps> = ({ chains, onChange, value }
                 </IconButton>
               </div>
             </div>
-            <Modal open={isOpen} hasBlur onClose={() => setIsOpen(false)}>
+            <Modal isCenterModal open={isOpen} hasBlur onClose={() => setIsOpen(false)}>
               <ChainSelection
                 chainTypeIds={chains}
                 onClose={() => setIsOpen(false)}
