@@ -47,11 +47,10 @@ const WithdrawWrapper = styled.div<{ wallet: WalletConfig | undefined }>`
 `;
 
 const WithdrawNoteSection = styled.div`
-  padding: 12px 6px;
+  padding: 0px 6px 12px 12px;
 
   ${above.xs(css`
-    padding: 24px 12px;
-    padding-right: 24px;
+    padding: 0px 24px 24px 12px;
   `)}
 `;
 
@@ -71,6 +70,12 @@ const sharedCss = css`
 
 const InputsContainer = styled.div`
   ${sharedCss}
+`;
+
+const InputWrapper = styled.div`
+  :not(:last-child) {
+    margin-bottom: 12px;
+  }
 
   .address-input {
     display: flex;
@@ -82,12 +87,6 @@ const InputsContainer = styled.div`
     height: 50px;
     padding: 0 12px;
     border-radius: 10px;
-  }
-`;
-
-const InputWrapper = styled.div`
-  :not(:last-child) {
-    margin-bottom: 12px;
   }
 `;
 
@@ -280,6 +279,9 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
 
   return (
     <WithdrawWrapper wallet={activeWallet}>
+      <InputsContainer style={{ paddingBottom: '0px' }}>
+        <InputTitle leftLabel='Add Note(s)' />
+      </InputsContainer>
       <WithdrawNoteSection>
         {notes.map((note, idx) => (
           <NoteInput
