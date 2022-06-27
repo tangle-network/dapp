@@ -9,6 +9,7 @@ import React from 'react';
 export interface ModalProps extends Omit<MuiModalProps, 'children'> {
   closeButton?: boolean;
   hasBlur?: boolean;
+  isCenterModal?: boolean;
   unlimitedWidth?: boolean;
   children: React.ReactNode;
 }
@@ -20,7 +21,6 @@ const useStyles = makeStyles((theme: Theme) => {
       width: 'auto',
       maxWidth: '100vw',
       [theme.breakpoints.up('sm')]: {
-        minWidth: 450,
         top: 40,
         maxWidth: (props: any) => (props.unlimitedWidth ? 1200 : 750),
       },
@@ -64,7 +64,14 @@ const useStyles = makeStyles((theme: Theme) => {
   });
 });
 
-export const Modal: React.FC<ModalProps> = ({ children, closeButton, hasBlur, unlimitedWidth, ...props }) => {
+export const Modal: React.FC<ModalProps> = ({
+  children,
+  closeButton,
+  hasBlur,
+  isCenterModal,
+  unlimitedWidth,
+  ...props
+}) => {
   const classes = useStyles({
     unlimitedWidth,
   });
@@ -88,7 +95,7 @@ export const Modal: React.FC<ModalProps> = ({ children, closeButton, hasBlur, un
       {...props}
     >
       <Slide in={props.open}>
-        <div className={classes.paper}>
+        <div className={classes.paper} style={isCenterModal ? { marginBottom: '0px', top: 'auto' } : undefined}>
           <div className={classes.wrapper}>
             <>{children}</>
           </div>
