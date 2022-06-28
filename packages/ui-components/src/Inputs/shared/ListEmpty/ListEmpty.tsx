@@ -1,4 +1,5 @@
 import { Typography } from '@material-ui/core';
+import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { useBreakpoint } from '@webb-dapp/ui-components/utils/responsive-utils';
 import React from 'react';
 
@@ -6,11 +7,13 @@ import { ListEmptyWrapper } from './styled';
 
 export const ListEmpty: React.FC<{ text: string }> = ({ text }) => {
   const { isXsOrAbove } = useBreakpoint();
+  const pallet = useColorPallet();
 
   return (
     <ListEmptyWrapper>
       <div style={{ width: '48px', height: '48px', marginBottom: '8px' }}>
         <svg
+          fill={pallet.primaryText}
           version='1.1'
           id='Capa_1'
           xmlns='http://www.w3.org/2000/svg'
