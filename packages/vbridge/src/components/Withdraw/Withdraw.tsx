@@ -20,7 +20,7 @@ import { RelayerApiAdapter, RelayerInput } from '@webb-dapp/ui-components/Inputs
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
-import { useWithdraws } from '@webb-dapp/vbridge';
+import { useWithdraw, useWithdraws } from '@webb-dapp/vbridge';
 import { FixedPointNumber, Note } from '@webb-tools/sdk-core';
 import { ethers } from 'ethers';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -114,23 +114,12 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
   const depositNotes = useDepositNotes(notes);
   const appConfig = useAppConfig();
 
-  const {
-    canCancel,
-    cancelWithdraw,
-    outputNotes,
-    receipt,
-    relayerMethods,
-    relayersState,
-    setOutputNotes,
-    setRelayer,
-    stage,
-    validationError,
-    withdraw,
-  } = useWithdraws({
-    recipient,
-    notes: depositNotes,
-    amount: withdrawAmount,
-  });
+  const { cancelWithdraw, outputNotes, receipt, relayersState, setOutputNotes, setRelayer, stage, withdraw } =
+    useWithdraw({
+      recipient,
+      notes: depositNotes,
+      amount: withdrawAmount,
+    });
 
   const firstNote = useMemo<Note | null>(() => (!depositNotes?.length ? null : depositNotes[0]), [depositNotes]);
 
@@ -143,15 +132,6 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
     const chainId = parseChainIdType(Number(depositNotes[0].note.targetChainId)).chainId;
     return activeChain.chainId !== chainId;
   }, [activeChain, depositNotes]);
-
-  const isDisabled = useMemo(() => {
-    if (depositNotes?.length && shouldSwitchChain) {
-      return false;
-    } else if (depositNotes?.length && recipient) {
-      return false;
-    }
-    return true;
-  }, [depositNotes, shouldSwitchChain, recipient]);
 
   const switchChainFromNote = async (note: Note | null) => {
     if (!note) {
@@ -193,6 +173,22 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
       return isMatchDestChain && isMatchTokenSymbol ? acc + Number(currentNote.note.amount) : acc;
     }, 0);
   }, [depositNotes, firstNote]);
+
+  const isDisabled = useMemo(() => {
+    if (withdrawAmount > depositAmount || !withdrawAmount || !!formError) {
+      return true;
+    }
+
+    if (depositNotes?.length && shouldSwitchChain) {
+      return false;
+    }
+
+    if (depositNotes?.length && recipient) {
+      return false;
+    }
+
+    return true;
+  }, [withdrawAmount, depositAmount, formError, depositNotes?.length, shouldSwitchChain, recipient]);
 
   const addNewNoteInput = useCallback(() => {
     setNotes((prevNotes) => {
@@ -389,7 +385,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
           <ButtonContainer>
             {formError && <AlertCard variant='error' hasIcon text={formError} />}
             <MixerButton
-              disabled={isDisabled || withdrawAmount > depositAmount || !withdrawAmount || !!formError}
+              disabled={isDisabled}
               onClick={() => {
                 if (shouldSwitchChain && firstNote) {
                   return switchChainFromNote(firstNote);
