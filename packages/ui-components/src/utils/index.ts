@@ -38,10 +38,9 @@ export function getInputBorder(noBorder: boolean, error: boolean): string {
 
 /**
  *
- * @param num number to format
- * @param digits number of digits to display
- * @returns the formatted number with
- * abbreviations million - m, billion b, ...
+ * @param num: Represents a number to be formatted 
+ * @param digits: Represents the number of digits to display
+ * @returns: Returns an abbreviated formatted number (e.g. millions - m, billions b)
  */
 export function getRoundedAmountString(num: number | undefined, digits = 3): string {
   if (num === 0) {
