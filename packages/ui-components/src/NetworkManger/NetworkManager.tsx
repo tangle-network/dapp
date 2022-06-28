@@ -20,7 +20,7 @@ import {
 import { Chain, Wallet } from '@webb-dapp/api-providers';
 import { useWebContext } from '@webb-dapp/react-environment';
 import { appEvent } from '@webb-dapp/react-environment/app-event';
-import { SpaceBox } from '@webb-dapp/ui-components';
+import { Chip, SpaceBox } from '@webb-dapp/ui-components';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
@@ -179,10 +179,15 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
                       </Badge>
                     </ListItemAvatar>
                     <ListItemText>
-                      <Typography variant={'h6'} component={'p'}>
-                        <b>{name}</b>
-                      </Typography>
-                      <Padding>
+                      <Flex row ai='flex-end'>
+                        <Typography variant={'h6'} component={'p'}>
+                          <b>{name} </b>
+                        </Typography>
+                        {activeChain?.id === id && (
+                          <Chip label='connected' size='small' color='success' style={{ marginLeft: '8px' }} />
+                        )}
+                      </Flex>
+                      <Padding style={{ marginTop: '8px' }}>
                         <div
                           style={{
                             display: 'flex',
@@ -215,7 +220,7 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
                                   <Logo />
                                 </span>
                                 <Typography color={'textSecondary'} variant={'caption'}>
-                                  {wallet.name}
+                                  {wallet.name}{' '}
                                 </Typography>
                               </div>
                             );
@@ -223,9 +228,6 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
                         </div>
                       </Padding>
                     </ListItemText>
-                    <ListItemSecondaryAction>
-                      {activeChain?.id === id && <Typography color='secondary'>connected</Typography>}
-                    </ListItemSecondaryAction>
                   </ListItem>
                   <Divider variant={'fullWidth'} />
                 </React.Fragment>
@@ -266,17 +268,19 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
                 </Badge>
               </ListItemAvatar>
               <ListItemText>
-                <Typography variant={'h6'} component={'p'}>
-                  <b>{name}</b>
-                </Typography>
-                <Padding>
+                <Flex row ai='flex-end'>
+                  <Typography variant={'h6'} component={'p'}>
+                    <b>{name} </b>
+                  </Typography>
+                  {activeChain?.id === id && (
+                    <Chip label='connected' size='small' color='success' style={{ marginLeft: '8px' }} />
+                  )}
+                </Flex>
+                <Padding style={{ marginTop: '8px' }}>
                   <Typography color={'textSecondary'} display={'inline'}>
                     <b>URL:</b> {url || 'n/a'}
                   </Typography>
                 </Padding>
-                <ListItemSecondaryAction>
-                  {activeChain?.id === id && <Typography color='secondary'>connected</Typography>}
-                </ListItemSecondaryAction>
               </ListItemText>
             </ListItem>
             <List>
@@ -312,12 +316,12 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
                         <wallet.logo />
                       </Avatar>
                     </ListItemAvatar>
-                    <ListItemText>
-                      <span>{wallet.name}</span>
-                    </ListItemText>
-                    <ListItemSecondaryAction>
-                      {connectedWallet && <Typography color='secondary'>Active</Typography>}
-                    </ListItemSecondaryAction>
+                    <Flex row ai='center' style={{ flexGrow: '1' }}>
+                      <ListItemText>
+                        <span>{wallet.name}</span>
+                      </ListItemText>
+                      {connectedWallet && <Chip label='Active' color='success' style={{ marginLeft: '8px' }} />}
+                    </Flex>
                   </ListItem>
                 );
               })}
