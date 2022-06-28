@@ -57,6 +57,7 @@ export enum InternalChainId {
   DemeterLocalnet,
   Kusama,
   Polkadot,
+  MoonbaseAlpha,
 }
 
 export enum EVMChainId {
@@ -81,4 +82,5 @@ export enum EVMChainId {
   HermesLocalnet = 5001,
   AthenaLocalnet = 5002,
   DemeterLocalnet = 5003,
+  MoonbaseAlpha = 1287,
 }

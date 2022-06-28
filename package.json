@@ -25,9 +25,9 @@
     "@webb-tools/app-util": "0.1.4-87",
     "@webb-tools/sdk-core": "0.1.4-87",
     "@webb-tools/wasm-utils": "0.1.4-87",
-    "@webb-tools/contracts": "0.2.1",
-    "@webb-tools/interfaces": "0.2.1",
-    "@webb-tools/anchors": "0.2.1"
+    "@webb-tools/contracts": "0.2.2",
+    "@webb-tools/interfaces": "0.2.2",
+    "@webb-tools/anchors": "0.2.2"
   },
   "scripts": {
     "bump-version": "node scripts/bump-version.js",
@@ -93,9 +93,15 @@
     "@webb-tools/app-util": "^0.1.4-87",
     "@webb-tools/sdk-core": "^0.1.4-87",
     "@webb-tools/wasm-utils": "^0.1.4-87",
+<<<<<<< HEAD
     "@webb-tools/contracts": "0.2.1",
     "@webb-tools/interfaces": "0.2.1",
     "@webb-tools/anchors": "0.2.1",
+=======
+    "@webb-tools/contracts": "0.2.2",
+    "@webb-tools/interfaces": "0.2.2",
+    "@webb-tools/anchors": "0.2.2",
+>>>>>>> nathan/8side-evm-vanchor
     "babel-plugin-bundled-import-meta": "^0.3.2",
     "cross-env": "^7.0.3",
     "enzyme": "^3.11.0",
