@@ -139,7 +139,7 @@ const TokenSelection: React.FC<TokenSelectionProps> = ({
             );
           })
         ) : (
-          <ListEmpty text='Not found any available tokens' />
+          <ListEmpty text='No tokens available.' />
         )}
       </TokensList>
     </TokenSelectionWrapper>
