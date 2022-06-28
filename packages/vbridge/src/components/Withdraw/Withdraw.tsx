@@ -20,7 +20,7 @@ import { RelayerApiAdapter, RelayerInput } from '@webb-dapp/ui-components/Inputs
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
-import { useWithdraw, useWithdraws } from '@webb-dapp/vbridge';
+import { useWithdraw } from '@webb-dapp/vbridge';
 import { FixedPointNumber, Note } from '@webb-tools/sdk-core';
 import { ethers } from 'ethers';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
