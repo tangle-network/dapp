@@ -1,20 +1,19 @@
 import { Avatar, Typography } from '@material-ui/core';
 import { ManagedWallet } from '@webb-dapp/api-providers';
 import { useWebContext } from '@webb-dapp/react-environment';
-import { useNativeCurrencyBalance, useNativeCurrencySymbol } from '@webb-dapp/react-hooks/currency';
 import { useAccounts } from '@webb-dapp/react-hooks/useAccounts';
-import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { useWallets } from '@webb-dapp/react-hooks/useWallets';
 import { ArrowDownIcon } from '@webb-dapp/ui-components/assets/ArrowDownIcon';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
-import { DownIconWrapper, NetworkIndicatorWrapper } from '@webb-dapp/ui-components/NetworkManger/NetworkManager';
-import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
-import { above, useBreakpoint } from '@webb-dapp/ui-components/utils/responsive-utils';
+import {
+  DownIconWrapper,
+  NetworkIndicatorWrapper,
+} from '@webb-dapp/ui-components/NetworkManger/NetworkManagerIndicator';
+import { useBreakpoint } from '@webb-dapp/ui-components/utils/responsive-utils';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
-import { getRoundedAmountString } from '../../';
 import { WalletManager } from './WalletManager';
 
 const WalletSelectWrapper = styled(NetworkIndicatorWrapper)`

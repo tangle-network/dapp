@@ -181,7 +181,7 @@ export const WithdrawingModal: React.FC<WithdrawingModalProps> = ({
             </Typography>
             <WithdrawInfoRow>
               <InfoItemLabel>
-                <Icon className={'label-icon'}>info</Icon> Bridge info:
+                <Icon className={'label-icon'}>info</Icon> Mixer info:
               </InfoItemLabel>
               <InfoItem>
                 <Typography variant={'caption'}>

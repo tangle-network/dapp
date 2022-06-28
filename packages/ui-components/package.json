@@ -8,6 +8,7 @@
   "dependencies": {
     "clsx": "^1.1.0",
     "d3": "^5.16.0",
+    "numbro": "^2.3.6",
     "react-motion": "^0.5.2"
   },
   "devDependencies": {
