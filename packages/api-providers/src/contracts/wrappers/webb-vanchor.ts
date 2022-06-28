@@ -322,15 +322,32 @@ export class VAnchorContract {
       circuitWasm
     );
 
+    let tx: ContractTransaction;
+
     // A deposit is meant for the same recipient as signer
-    const tx = await this.inner.transactWrap(
-      {
-        ...publicInputs,
-        outputCommitments: [publicInputs.outputCommitments[0], publicInputs.outputCommitments[1]],
-      },
-      extData,
-      tokenAddress
-    );
+    // if the wrapping is native, send the amount in the overrides
+    if (tokenAddress === zeroAddress) {
+      tx = await this.inner.transactWrap(
+        {
+          ...publicInputs,
+          outputCommitments: [publicInputs.outputCommitments[0], publicInputs.outputCommitments[1]],
+        },
+        extData,
+        tokenAddress,
+        {
+          value: extAmount,
+        }
+      );
+    } else {
+      tx = await this.inner.transactWrap(
+        {
+          ...publicInputs,
+          outputCommitments: [publicInputs.outputCommitments[0], publicInputs.outputCommitments[1]],
+        },
+        extData,
+        tokenAddress
+      );
+    }
 
     return tx;
   }
@@ -361,14 +378,14 @@ export class VAnchorContract {
   ): Promise<{ lastQueriedBlock: number; newLeaves: string[] }> {
     const filter = this._contract.filters.NewCommitment(null, null, null);
 
-    logger.trace('Getting leaves with filter', filter);
+    console.log('Getting leaves with filter', filter);
     finalBlock = finalBlock || (await this.web3Provider.getBlockNumber());
-    logger.info(`finalBlock detected as: ${finalBlock}`);
+    console.log(`finalBlock detected as: ${finalBlock}`);
 
     let logs: Array<Log> = []; // Read the stored logs into this variable
     const step = 1024;
 
-    logger.info(`Fetching leaves with steps of ${step} logs/request`);
+    console.log(`Fetching leaves with steps of ${step} logs/request`);
 
     try {
       for (let i = startingBlock; i < finalBlock; i += step) {
@@ -382,7 +399,7 @@ export class VAnchorContract {
 
         logs = [...logs, ...nextLogs];
 
-        logger.log(`Getting logs for block range: ${i} through ${i + step}`);
+        console.log(`Getting logs for block range: ${i} through ${i + step}`);
       }
     } catch (e) {
       logger.error(e);

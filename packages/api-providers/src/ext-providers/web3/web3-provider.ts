@@ -78,6 +78,7 @@ export class Web3Provider<T = unknown> {
 
       // Enable the api
       await provider.enable();
+      await provider.send('eth_requestAccounts', []);
       const web3Provider = new Web3Provider(new Web3(provider), {
         description: 'MetaMask',
         icons: [],
