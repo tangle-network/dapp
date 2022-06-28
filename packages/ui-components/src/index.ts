@@ -4,6 +4,7 @@ import styled from 'styled-components';
 export { styled };
 
 export * from './Loading';
+export * from './Chip';
 
 export * from './Icon';
 export * from './Page';
