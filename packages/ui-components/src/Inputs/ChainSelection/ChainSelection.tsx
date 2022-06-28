@@ -125,7 +125,7 @@ const ChainSelection: React.FC<ChainSelectionProps> = ({ chainTypeIds, onChange,
             );
           })
         ) : (
-          <ListEmpty text='Not found available chains.' />
+          <ListEmpty text='No available chains.' />
         )}
       </ChainsList>
     </ChainSelectionWrapper>
