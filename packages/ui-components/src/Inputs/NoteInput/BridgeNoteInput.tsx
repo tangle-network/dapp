@@ -44,7 +44,7 @@ export const BridgeNoteInput: React.FC<NoteInputProps> = ({ error, onChange, val
     <>
       <InputBase
         fullWidth
-        placeholder={`Note`}
+        placeholder={`Please paste your note here`}
         value={value}
         inputProps={{ style: { fontSize: 14 } }}
         onChange={(event) => {
