@@ -208,7 +208,7 @@ export type MixerRelayTx = {
  * if it passed as zero nothing will happen unless a real value is passed thus a new note isn't generated
  * @param roots - roots bytes array
  **/
-type AnchorRelayTransaction = {
+type AnchorRelayedTransaction = {
   chain: string;
   id: string;
   extDataHash: string;
@@ -223,16 +223,70 @@ type AnchorRelayTransaction = {
 };
 
 /**
+ * Proof data object for VAnchor proofs on any chain
+ *
+ * @param proof - Encoded proof data
+ * @param publicAmount - Public amount for proof
+ * @param roots - Merkle roots for the proof
+ * @param inputNullifiers - nullifer hashes for the proof
+ * @param outputCommitments - Output commitments for the proof
+ * @param extDataHash - External data hash for the proof external data
+ * */
+type ProofData = {
+  proof: Array<number>;
+  publicAmount: Array<number>;
+  roots: Array<number>[];
+  inputNullifiers: Array<number>[];
+  outputCommitments: Array<number>[];
+  extDataHash: Array<number>;
+};
+
+/**
+ * External data for the VAnchor on any chain
+ *
+ * @param recipient -  Recipient identifier of the withdrawn funds
+ * @param relayer - Relayer identifier of the transaction
+ * @param extAmount - External amount being deposited or withdrawn withdrawn
+ * @param fee - Fee to pay the relayer
+ * @param encryptedOutput1 - First encrypted output commitment
+ * @param encryptedOutput2 - Second encrypted output commitment
+ * */
+type ExtData = {
+  recipient: string;
+  relayer: string;
+  extAmount: Array<number>[];
+  fee: number;
+  encryptedOutput1: Array<number>;
+  encryptedOutput2: Array<number>;
+};
+
+/**
+ * Contains data that is relayed to the VAnchors
+ * @param chain - One of the supported chains of this relayer
+ * @param id - The tree id of the mixer's underlying tree
+ * @param proofData - The zero-knowledge proof data structure for VAnchor transactions
+ * @param extData - The external data structure for arbitrary inputs
+ * */
+type VAnchorRelayTransaction = {
+  chain: string;
+  id: number;
+  proofData: ProofData;
+  extData: ExtData;
+};
+
+/**
  * Relayed transaction for substrate
  **/
 export type RelayerSubstrateCommands = {
   mixer: MixerRelayTx;
+  vanchor: VAnchorRelayTransaction;
 };
 /**
  * Relayed transaction for EVM
  **/
 export type RelayerEVMCommands = {
-  anchor: AnchorRelayTransaction;
+  anchor: AnchorRelayedTransaction;
+  vanchor: VAnchorRelayTransaction;
 };
 export type EVMCMDKeys = keyof RelayerEVMCommands;
 export type SubstrateCMDKeys = keyof RelayerSubstrateCommands;

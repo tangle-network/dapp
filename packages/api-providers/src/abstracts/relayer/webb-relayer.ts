@@ -43,7 +43,7 @@ export type RelayerCMDs<A extends RelayerCMDBase, C extends CMDSwitcher<A>> = A 
 
 export type WithdrawRelayerArgs<A extends RelayerCMDBase, C extends CMDSwitcher<A>> = Omit<
   RelayerCMDs<A, C>,
-  keyof RelayedChainInput | 'proof'
+  keyof RelayedChainInput
 >;
 
 export type OptionalRelayer = WebbRelayer | null;
@@ -135,15 +135,13 @@ class RelayedWithdraw {
 
   generateWithdrawRequest<T extends RelayedChainInput, C extends CMDSwitcher<T['baseOn']>>(
     chain: T,
-    proof: RelayerCMDs<T['baseOn'], C>['proof'],
-    args: WithdrawRelayerArgs<T['baseOn'], C>
+    payload: WithdrawRelayerArgs<T['baseOn'], C>
   ) {
     return {
       [chain.baseOn]: {
         [this.prefix]: {
           contract: chain.contractAddress,
-          proof,
-          ...args,
+          ...payload,
         },
       },
     };

@@ -8,7 +8,7 @@ import { ArkworksProvingManager, Note, ProvingManagerSetupInput } from '@webb-to
 import { decodeAddress } from '@polkadot/keyring';
 import { hexToU8a, u8aToHex } from '@polkadot/util';
 
-import { MixerWithdraw } from '../abstracts';
+import { MixerWithdraw, RelayedChainInput } from '../abstracts';
 import { WebbError, WebbErrorCodes } from '../webb-error';
 import { fetchSubstrateMixerProvingKey, RelayedWithdrawResult, TransactionState } from '../';
 import { WebbPolkadot } from './webb-provider';
@@ -136,26 +136,24 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
         logger.info('withdrawing through relayer', activeRelayer);
         this.emit('stateChange', TransactionState.SendingTransaction);
         const relayerMixerTx = await activeRelayer!.initWithdraw('mixer');
-        const relayerWithdrawPayload = relayerMixerTx.generateWithdrawRequest(
-          {
-            baseOn: 'substrate',
-            contractAddress: '',
-            endpoint: '',
-            // TODO change this from the config
-            name: 'localnode',
-          },
-          Array.from(hexToU8a(withdrawProof.proofBytes)),
-          {
-            chain: 'localnode',
-            fee: withdrawProof.fee,
-            id: Number(treeId),
-            nullifierHash: Array.from(hexToU8a(withdrawProof.nullifierHash)),
-            recipient: withdrawProof.recipient,
-            refund: withdrawProof.refund,
-            relayer: withdrawProof.relayer,
-            root: Array.from(hexToU8a(withdrawProof.root)),
-          }
-        );
+        const chainInput: RelayedChainInput = {
+          baseOn: 'substrate',
+          contractAddress: '',
+          endpoint: '',
+          // TODO change this from the config
+          name: 'localnode',
+        };
+        const relayerWithdrawPayload = relayerMixerTx.generateWithdrawRequest<typeof chainInput, 'mixer'>(chainInput, {
+          proof: Array.from(hexToU8a(withdrawProof.proofBytes)),
+          chain: 'localnode',
+          fee: withdrawProof.fee,
+          id: Number(treeId),
+          nullifierHash: Array.from(hexToU8a(withdrawProof.nullifierHash)),
+          recipient: withdrawProof.recipient,
+          refund: withdrawProof.refund,
+          relayer: withdrawProof.relayer,
+          root: Array.from(hexToU8a(withdrawProof.root)),
+        });
 
         relayerMixerTx.watcher.subscribe(([results, message]) => {
           switch (results) {
