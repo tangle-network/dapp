@@ -8,6 +8,7 @@ import {
 } from '@webb-dapp/api-providers';
 import GanacheLogo from '@webb-dapp/apps/configs/logos/chains/GanacheLogo';
 import HarmonyLogo from '@webb-dapp/apps/configs/logos/chains/HarmonyLogo';
+import { MoonbeamLogo } from '@webb-dapp/apps/configs/logos/chains/MoonbeamLogo';
 import PolygonLogo from '@webb-dapp/apps/configs/logos/chains/PolygonLogo';
 import ShidenLogo from '@webb-dapp/apps/configs/logos/chains/ShidenLogo';
 import WEBBLogo from '@webb-dapp/apps/configs/logos/chains/WebbLogo';
@@ -203,7 +204,7 @@ export const currenciesConfig: AppConfig['currencies'] = {
     id: WebbCurrencyId.moonDEV,
     type: CurrencyType.NATIVE,
     role: CurrencyRole.Wrappable,
-    icon: React.createElement(GanacheLogo),
+    icon: React.createElement(MoonbeamLogo),
     addresses: new Map([[InternalChainId.MoonbaseAlpha, '0']]),
   },
 };

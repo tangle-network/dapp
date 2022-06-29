@@ -1,6 +1,7 @@
 import { AppConfig, ChainType, EVMChainId, InternalChainId, WebbCurrencyId } from '@webb-dapp/api-providers';
 import ArbitrumLogo from '@webb-dapp/apps/configs/logos/chains/ArbitrumLogo';
 import GanacheLogo from '@webb-dapp/apps/configs/logos/chains/GanacheLogo';
+import { MoonbeamLogo } from '@webb-dapp/apps/configs/logos/chains/MoonbeamLogo';
 import OptimismLogo from '@webb-dapp/apps/configs/logos/chains/OptimismLogo';
 import PolygonLogo from '@webb-dapp/apps/configs/logos/chains/PolygonLogo';
 import EtherLogo from '@webb-dapp/apps/configs/logos/Eth';
@@ -156,7 +157,7 @@ export const chainsConfig: AppConfig['chains'] = {
     tag: 'test',
     url: 'https://moonbeam-alpha.api.onfinality.io/public',
     evmRpcUrls: ['https://moonbeam-alpha.api.onfinality.io/public'],
-    logo: GanacheLogo,
+    logo: MoonbeamLogo,
     currencies: [WebbCurrencyId.WETH, WebbCurrencyId.moonDEV, WebbCurrencyId.webbWETH],
     nativeCurrencyId: WebbCurrencyId.moonDEV,
   },

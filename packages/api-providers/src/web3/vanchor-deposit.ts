@@ -250,7 +250,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
 
       // If a wrappableAsset was selected, perform a wrapAndDeposit
       if (depositPayload.params[2]) {
-        const requiredApproval = await destVAnchor.isWrappableTokenApprovalRequired(depositPayload.params[2], amount);
+        const requiredApproval = await srcVAnchor.isWrappableTokenApprovalRequired(depositPayload.params[2], amount);
 
         if (requiredApproval) {
           this.inner.notificationHandler({
