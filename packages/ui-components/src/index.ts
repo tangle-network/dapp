@@ -6,6 +6,7 @@ export { styled };
 export * from './AlertCard';
 
 export * from './Loading';
+export * from './Chip';
 
 export * from './Icon';
 export * from './Page';
