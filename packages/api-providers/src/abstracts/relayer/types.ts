@@ -254,7 +254,7 @@ type ProofData = {
 type ExtData = {
   recipient: string;
   relayer: string;
-  extAmount: Array<number>[];
+  extAmount: number;
   fee: number;
   encryptedOutput1: Array<number>;
   encryptedOutput2: Array<number>;
