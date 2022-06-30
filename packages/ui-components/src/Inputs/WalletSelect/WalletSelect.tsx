@@ -36,6 +36,7 @@ const ellipsisText = css`
 const AccountAddress = styled(Typography)`
   display: block;
   color: ${({ theme }) => theme.secondaryText};
+  max-width: 88px;
   ${ellipsisText}
 `;
 
@@ -97,7 +98,7 @@ export const WalletSelect: React.FC<WalletSelectProps> = ({}) => {
             </Avatar>
 
             <Flex row jc='space-between' ai='center' flex={1}>
-              <AccountAddress style={{ maxWidth: '80px' }} variant='subtitle1'>
+              <AccountAddress variant='subtitle1'>
                 <b>{displayInfo}</b>
               </AccountAddress>
 
