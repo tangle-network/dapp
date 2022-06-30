@@ -248,9 +248,9 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
 
               this.inner.notificationHandler({
                 description: `TX hash:`,
-                key: 'mixer-withdraw-sub',
+                key: 'vanchor-deposit-sub',
                 level: 'success',
-                message: 'mixerBn254:withdraw',
+                message: 'vanchorBn254:deposit',
                 name: 'Transaction',
               });
 
@@ -261,9 +261,9 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
 
               this.inner.notificationHandler({
                 description: message || 'Withdraw failed',
-                key: 'mixer-withdraw-sub',
+                key: 'vanchor-deposit-sub',
                 level: 'success',
-                message: 'mixerBn254:withdraw',
+                message: 'vanchorBn254:deposit',
                 name: 'Transaction',
               });
               break;
@@ -272,9 +272,9 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
 
         this.inner.notificationHandler({
           description: 'Sending TX to relayer',
-          key: 'mixer-withdraw-sub',
+          key: 'vanchor-deposit-sub',
           level: 'loading',
-          message: 'mixerBn254:withdraw',
+          message: 'vanchorBn254:deposit',
 
           name: 'Transaction',
         });
