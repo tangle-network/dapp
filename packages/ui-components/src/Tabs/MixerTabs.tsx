@@ -23,20 +23,22 @@ const TabHeader = styled.header`
   max-width: 500px;
   margin: auto;
   margin-bottom: 24px;
-  border-radius: 16px;
+  border-radius: 32px;
   background-color: ${({ theme }) => theme.layer1Background};
   justify-content: space-between;
-  padding: 5px;
+  padding: 7px;
+  box-sizing: border-box;
 `;
 
 const TabButton = styled.button<{ active?: boolean }>`
-  width: 50%;
+  width: 48%;
   display: flex;
   cursor: pointer;
   align-items: center;
   justify-content: center;
   transition: all 0.4s ease-in-out;
-  padding: 8px 0px;
+  height: 40px;
+  margin: 0 2px;
 
   .mixer-tab-label {
     font-size: 16px;
@@ -46,7 +48,7 @@ const TabButton = styled.button<{ active?: boolean }>`
   }
 
   background: ${({ active, theme }) => (active ? (theme.type === 'dark' ? theme.accentColor : '#fff') : 'transparent')};
-  border-radius: 16px;
+  border-radius: 32px;
 `;
 
 export const MixerTabs: React.FC<MixerTabsProps> = ({ Deposit, Withdraw }) => {
