@@ -1,9 +1,10 @@
 import { Fade } from '@material-ui/core';
 import React, { useCallback, useMemo, useState } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import { DepositIcon } from '../assets/DepositIcon';
 import { WithdrawIcon } from '../assets/WithdrawIcon';
+import { above } from '../utils/responsive-utils';
 
 type MixerTabsProps = {
   Deposit: JSX.Element;
@@ -37,6 +38,15 @@ export const TabButton = styled.button<{ active?: boolean }>`
   transition: all 0.4s ease-in-out;
   height: 40px;
   margin: 0 2px;
+
+  .icon {
+    display: block;
+    margin-right: 4px;
+
+    ${above.xs(css`
+      margin-right: 8px;
+    `)}
+  }
 
   .mixer-tab-label {
     font-size: 16px;
@@ -73,11 +83,11 @@ export const MixerTabs: React.FC<MixerTabsProps> = ({ Deposit, Withdraw }) => {
     <div>
       <TabHeader>
         <TabButton onClick={switchToDeposit} active={activeTab === 'deposit'}>
-          <DepositIcon style={{ display: 'block', marginRight: '8px' }} />
+          <DepositIcon className='icon' />
           <span className='mixer-tab-label'>Deposit</span>
         </TabButton>
         <TabButton onClick={switchToWithdraw} active={activeTab === 'withdraw'}>
-          <WithdrawIcon style={{ display: 'block', marginRight: '8px' }} />
+          <WithdrawIcon className='icon' />
           <span className='mixer-tab-label'>Withdraw</span>
         </TabButton>
       </TabHeader>
