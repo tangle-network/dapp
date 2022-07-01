@@ -6,8 +6,8 @@ import { ArkworksProvingManager, Note, ProvingManagerSetupInput } from '@webb-to
 import { decodeAddress } from '@polkadot/keyring';
 import { u8aToHex } from '@polkadot/util';
 
-import { AnchorWithdraw, WithdrawState } from '../abstracts';
-import { chainTypeIdToInternalId, InternalChainId, parseChainIdType, substrateIdIntoInternalChainId } from '../chains';
+import { AnchorWithdraw, TransactionState } from '../abstracts';
+import { chainTypeIdToInternalId, parseChainIdType } from '../chains';
 import { WebbError, WebbErrorCodes } from '../webb-error';
 import { fetchSubstrateAnchorProvingKey } from '../';
 import { WebbPolkadot } from './webb-provider';
@@ -78,7 +78,7 @@ export class PolkadotAnchorWithdraw extends AnchorWithdraw<WebbPolkadot> {
       const accountId = account.address;
       const relayerAccountId = account.address;
 
-      this.emit('stateChange', WithdrawState.GeneratingZk);
+      this.emit('stateChange', TransactionState.GeneratingZk);
       const parseNote = await Note.deserialize(note);
       const depositNote = parseNote.note;
       const amount = parseNote.note.amount;
@@ -158,7 +158,7 @@ export class PolkadotAnchorWithdraw extends AnchorWithdraw<WebbPolkadot> {
         withdrawProof.refreshCommitment,
       ];
 
-      this.emit('stateChange', WithdrawState.SendingTransaction);
+      this.emit('stateChange', TransactionState.SendingTransaction);
       const tx = this.inner.txBuilder.build(
         {
           method: 'withdraw',
@@ -168,11 +168,11 @@ export class PolkadotAnchorWithdraw extends AnchorWithdraw<WebbPolkadot> {
       );
       const hash = await tx.call(account.address);
 
-      this.emit('stateChange', WithdrawState.Done);
+      this.emit('stateChange', TransactionState.Done);
 
       return hash || '';
     } catch (e) {
-      this.emit('stateChange', WithdrawState.Failed);
+      this.emit('stateChange', TransactionState.Failed);
       throw e;
     }
   }

@@ -2,8 +2,6 @@ import {
   Avatar,
   Badge,
   Button,
-  ButtonBase,
-  CircularProgress,
   Divider,
   FormControl,
   FormControlLabel,
@@ -22,17 +20,15 @@ import {
 import { Chain, Wallet } from '@webb-dapp/api-providers';
 import { useWebContext } from '@webb-dapp/react-environment';
 import { appEvent } from '@webb-dapp/react-environment/app-event';
-import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
-import { SpaceBox } from '@webb-dapp/ui-components';
+import { Chip, SpaceBox } from '@webb-dapp/ui-components';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
-import { above, useBreakpoint } from '@webb-dapp/ui-components/utils/responsive-utils';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
-import { ArrowDownIcon } from '../assets/ArrowDownIcon';
+import { NetworkManagerIndicator, NetworkManagerIndicatorProps } from './NetworkManagerIndicator';
 
 const NetworkManagerWrapper = styled.div`
   padding: 1rem;
@@ -42,7 +38,13 @@ const NetworkManagerWrapper = styled.div`
   `}
 `;
 
-type NetworkManagerProps = {};
+const FilterSection = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+export type ConnectingState = 'connecting' | 'connected' | 'no-connection' | 'error';
 
 enum ConnectionStep {
   SelectChain = 'Select a chain',
@@ -50,24 +52,7 @@ enum ConnectionStep {
   Connecting = 'Connecting',
 }
 
-type ConnectingState = 'connecting' | 'connected' | 'no-connection' | 'error';
-type NetworkManagerIndicatorProps = {
-  connectionStatus: ConnectingState;
-  connectionMetaData?: {
-    hoverMessage?: string;
-    chainName: string;
-    details?: string;
-    chainIcon: string | JSX.Element;
-    tag?: string;
-  };
-  onClick?: (e: any) => void;
-};
-
-const FilterSection = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
+type NetworkManagerProps = {};
 
 export const NetworkManager: React.FC<NetworkManagerProps> = () => {
   const [open, setOpen] = useState(false);
@@ -154,7 +139,7 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
     return () => off && off();
   }, []);
 
-  const content = useMemo(() => {
+  const modalContent = useMemo(() => {
     switch (connectionStep) {
       case ConnectionStep.SelectChain: {
         return (
@@ -194,10 +179,15 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
                       </Badge>
                     </ListItemAvatar>
                     <ListItemText>
-                      <Typography variant={'h6'} component={'p'}>
-                        <b>{name}</b>
-                      </Typography>
-                      <Padding>
+                      <Flex row ai='flex-end'>
+                        <Typography variant={'h6'} component={'p'}>
+                          <b>{name} </b>
+                        </Typography>
+                        {activeChain?.id === id && (
+                          <Chip label='connected' size='small' color='success' style={{ marginLeft: '8px' }} />
+                        )}
+                      </Flex>
+                      <Padding style={{ marginTop: '8px' }}>
                         <div
                           style={{
                             display: 'flex',
@@ -230,7 +220,7 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
                                   <Logo />
                                 </span>
                                 <Typography color={'textSecondary'} variant={'caption'}>
-                                  {wallet.name}
+                                  {wallet.name}{' '}
                                 </Typography>
                               </div>
                             );
@@ -238,9 +228,6 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
                         </div>
                       </Padding>
                     </ListItemText>
-                    <ListItemSecondaryAction>
-                      {activeChain?.id === id && <Typography color='secondary'>connected</Typography>}
-                    </ListItemSecondaryAction>
                   </ListItem>
                   <Divider variant={'fullWidth'} />
                 </React.Fragment>
@@ -281,17 +268,19 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
                 </Badge>
               </ListItemAvatar>
               <ListItemText>
-                <Typography variant={'h6'} component={'p'}>
-                  <b>{name}</b>
-                </Typography>
-                <Padding>
+                <Flex row ai='flex-end'>
+                  <Typography variant={'h6'} component={'p'}>
+                    <b>{name} </b>
+                  </Typography>
+                  {activeChain?.id === id && (
+                    <Chip label='connected' size='small' color='success' style={{ marginLeft: '8px' }} />
+                  )}
+                </Flex>
+                <Padding style={{ marginTop: '8px' }}>
                   <Typography color={'textSecondary'} display={'inline'}>
                     <b>URL:</b> {url || 'n/a'}
                   </Typography>
                 </Padding>
-                <ListItemSecondaryAction>
-                  {activeChain?.id === id && <Typography color='secondary'>connected</Typography>}
-                </ListItemSecondaryAction>
               </ListItemText>
             </ListItem>
             <List>
@@ -327,12 +316,12 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
                         <wallet.logo />
                       </Avatar>
                     </ListItemAvatar>
-                    <ListItemText>
-                      <span>{wallet.name}</span>
-                    </ListItemText>
-                    <ListItemSecondaryAction>
-                      {connectedWallet && <Typography color='secondary'>Active</Typography>}
-                    </ListItemSecondaryAction>
+                    <Flex row ai='center' style={{ flexGrow: '1' }}>
+                      <ListItemText>
+                        <span>{wallet.name}</span>
+                      </ListItemText>
+                      {connectedWallet && <Chip label='Active' color='success' style={{ marginLeft: '8px' }} />}
+                    </Flex>
                   </ListItem>
                 );
               })}
@@ -416,7 +405,7 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
 
           <SpaceBox height={8} />
 
-          {content}
+          {modalContent}
 
           <Padding v as={'footer'}>
             <Flex row ai={'center'} jc={'flex-end'}>
@@ -430,141 +419,5 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
         </NetworkManagerWrapper>
       </Modal>
     </>
-  );
-};
-
-export const NetworkIndicatorWrapper = styled.button`
-  && {
-    min-height: 40px;
-    border-radius: 8px;
-    padding: 4px;
-    background: ${({ theme }: { theme: Pallet }) => theme.lightSelectionBackground};
-    position: relative;
-    width: 108px;
-    margin-right: 8px;
-
-    ${({ theme }) =>
-      theme.type === 'dark'
-        ? css`
-            border: 1px solid ${theme.borderColor2};
-          `
-        : css``}
-
-    ${above.xs`
-      margin-right: 0.5rem;
-      width: 132px;
-    `}
-
-    ${above.md`
-      width: 148px; 
-    `}
-  }
-
-  cursor: pointer;
-
-  .avatar {
-    width: 28px;
-    height: 28px;
-    background: transparent;
-
-    ${above.xs`
-      width: 32px;
-      height: 32px;
-    `}
-  }
-`;
-
-export const DownIconWrapper = styled(Flex).attrs({
-  row: true,
-  jc: 'center',
-  ai: 'center',
-})`
-  padding-right: 4px;
-`;
-
-export const NetworkManagerIndicator: React.FC<NetworkManagerIndicatorProps> = ({
-  connectionMetaData,
-  connectionStatus,
-  onClick,
-}) => {
-  const { isMdOrAbove, isXsOrAbove } = useBreakpoint();
-  const pallet = useColorPallet();
-
-  const icon = useMemo(() => {
-    switch (connectionStatus) {
-      case 'connecting':
-        return (
-          <Flex
-            ai={'center'}
-            jc={'center'}
-            style={{
-              width: 40,
-              height: 40,
-              marginRight: '4px',
-              position: 'relative',
-            }}
-          >
-            <Icon style={{ position: 'absolute', color: pallet.primaryText }} fontSize='medium'>
-              podcasts
-            </Icon>
-            <CircularProgress style={{ position: 'absolute' }} size={isXsOrAbove ? 32 : 26.5} />
-          </Flex>
-        );
-
-      case 'no-connection':
-        return (
-          <div>
-            <Typography variant='subtitle1'>Select a Network</Typography>
-          </div>
-        );
-
-      case 'error':
-        return (
-          <div>
-            <Icon style={{ color: pallet.primaryText }} fontSize={isXsOrAbove ? 'large' : 'medium'}>
-              podcasts
-            </Icon>
-          </div>
-        );
-
-      case 'connected':
-      default:
-        return connectionMetaData?.chainIcon ? (
-          <div style={{ marginRight: '4px', border: `1px solid ${pallet.borderColor}`, borderRadius: '50%' }}>
-            {connectionMetaData?.chainIcon}
-          </div>
-        ) : (
-          <Icon style={{ color: pallet.primaryText }} fontSize={isXsOrAbove ? 'large' : 'medium'}>
-            podcasts
-          </Icon>
-        );
-    }
-  }, [connectionMetaData, connectionStatus, isXsOrAbove, pallet]);
-
-  return (
-    <NetworkIndicatorWrapper as={ButtonBase} onClick={onClick}>
-      <Flex flex={1} row ai='center' jc='center' style={{ width: '100%' }}>
-        <Flex>{icon}</Flex>
-
-        {connectionMetaData ? (
-          <Flex row jc='space-between' ai='center' flex={1}>
-            <Typography
-              variant='subtitle1'
-              style={{ maxWidth: '64px', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}
-            >
-              <b>{connectionMetaData.chainName}</b>
-            </Typography>
-
-            {isMdOrAbove && (
-              <DownIconWrapper>
-                <ArrowDownIcon />
-              </DownIconWrapper>
-            )}
-          </Flex>
-        ) : (
-          ''
-        )}
-      </Flex>
-    </NetworkIndicatorWrapper>
   );
 };

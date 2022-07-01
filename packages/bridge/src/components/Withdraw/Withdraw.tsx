@@ -3,9 +3,9 @@ import {
   chainTypeIdToInternalId,
   getChainNameFromChainId,
   parseChainIdType,
+  TransactionState,
   WalletConfig,
   WebbRelayer,
-  WithdrawState,
 } from '@webb-dapp/api-providers';
 import { chainsPopulated } from '@webb-dapp/apps/configs';
 import { useWithdraw } from '@webb-dapp/bridge/hooks';
@@ -292,7 +292,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
           <SpaceBox height={16} />
         </AddressAndInfoSection>
       )}
-      <Modal open={stage !== WithdrawState.Ideal}>
+      <Modal open={stage !== TransactionState.Ideal}>
         {depositNote && (
           <WithdrawingModal
             withdrawTxInfo={{

@@ -111,12 +111,16 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({
     return depositPayload?.note.serialize();
   }, [depositPayload]);
 
-  const downloadNote = useCallback(() => {
-    if (!note) {
-      return;
-    }
-    downloadString(note, note.slice(-note.length - 10) + '.txt');
-  }, [note]);
+  const downloadNote = useCallback(
+    (noteStr?: string) => {
+      let noteToDownload = noteStr || note;
+      if (!noteToDownload) {
+        return;
+      }
+      downloadString(noteToDownload, noteToDownload.slice(-noteToDownload.length - 10) + '.txt');
+    },
+    [note]
+  );
 
   const { copy, isCopied } = useCopyable();
   const handleCopy = useCallback((): void => {
@@ -187,7 +191,12 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({
               {note}
               <Actions>
                 <Tooltip title={'Download Note'}>
-                  <IconButton className={'download-button'} onClick={downloadNote}>
+                  <IconButton
+                    className={'download-button'}
+                    onClick={() => {
+                      downloadNote();
+                    }}
+                  >
                     <Icon>download</Icon>
                   </IconButton>
                 </Tooltip>
@@ -223,7 +232,12 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({
             setLoading(true);
             downloadNote();
             onClose();
-            await provider.deposit(depositPayload);
+            const results = await provider.deposit(depositPayload);
+            // TODO : Fix this once the web3 impl has the right impls
+            if (results) {
+              // download note with the index
+              downloadNote(results.updatedNote.serialize());
+            }
             setLoading(false);
           }}
           disabled={!backupConfirmation || !depositPayload || loading}

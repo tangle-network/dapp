@@ -42,6 +42,13 @@ export const anchorsConfig: AppConfig['anchors'] = {
       anchorAddresses: {},
       type: 'fixed',
     },
+    {
+      anchorTreeIds: {
+        [InternalChainId.ProtocolSubstrateStandalone]: '9',
+      },
+      anchorAddresses: {},
+      type: 'variable',
+    },
   ],
   [WebbCurrencyId.webbDEV]: [
     {
@@ -71,6 +78,15 @@ export const anchorsConfig: AppConfig['anchors'] = {
         [InternalChainId.AthenaLocalnet]: '0xFEe587E68c470DAE8147B46bB39fF230A29D4769',
         [InternalChainId.DemeterLocalnet]: '0xdB587ef6aaA16b5719CDd3AaB316F0E70473e9Be',
       },
+      type: 'variable',
+    },
+  ],
+  [WebbCurrencyId.TEST]: [
+    {
+      anchorTreeIds: {
+        [InternalChainId.ProtocolSubstrateStandalone]: '9',
+      },
+      anchorAddresses: {},
       type: 'variable',
     },
   ],

@@ -2,4 +2,5 @@
 // SPDX-License-Identifier: Apache-2.0
 
 export * from './anchor';
+export * from './vanchor';
 export * from './mixer';

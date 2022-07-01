@@ -129,7 +129,10 @@ type MethodPath = {
   // The call name
   method: string;
 };
-
+export interface TXresultBase {
+  // method: MethodPath;
+  txHash: string;
+}
 export type TXNotificationPayload<T = undefined> = {
   // Generic data for the transaction payload
   data: T;

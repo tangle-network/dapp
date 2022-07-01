@@ -1,5 +1,5 @@
 import { FormHelperText, InputBase, Typography } from '@material-ui/core';
-import { WalletConfig, WebbRelayer, WithdrawState } from '@webb-dapp/api-providers';
+import { TransactionState, WalletConfig, WebbRelayer } from '@webb-dapp/api-providers';
 import { chainsPopulated, currenciesConfig } from '@webb-dapp/apps/configs';
 import { useWithdraw } from '@webb-dapp/mixer/hooks';
 import { useDepositNote } from '@webb-dapp/mixer/hooks/note';
@@ -268,7 +268,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
       )}
 
       {/* Modal to show while in progress */}
-      <Modal open={stage !== WithdrawState.Ideal}>
+      <Modal open={stage !== TransactionState.Ideal}>
         {depositNote && (
           <WithdrawingModal
             withdrawTxInfo={{

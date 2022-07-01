@@ -6,15 +6,15 @@ import {
   Currency,
   DepositPayload,
   MixerDeposit,
-  MixerSize,
+  TransactionState,
   VAnchorDeposit,
-  WithdrawState,
+  VAnchorDepositResults,
 } from '@webb-dapp/api-providers';
 import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
 import { useWebContext } from '@webb-dapp/react-environment';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 export interface VBridgeDepositApi {
-  deposit(payload: DepositPayload): Promise<void>;
+  deposit(payload: DepositPayload): Promise<VAnchorDepositResults>;
 
   generateNote(
     mixerId: number | string,
@@ -23,6 +23,8 @@ export interface VBridgeDepositApi {
     wrappableAsset: string | undefined
   ): Promise<DepositPayload>;
 
+  stage: TransactionState;
+  setStage(stage: TransactionState): void;
   loadingState: MixerDeposit['loading'];
   error: string;
   depositApi: VAnchorDeposit<any> | null;
@@ -32,7 +34,7 @@ export interface VBridgeDepositApi {
 }
 
 export const useBridgeDeposit = (): VBridgeDepositApi => {
-  const [stage, setStage] = useState<WithdrawState>(WithdrawState.Ideal);
+  const [stage, setStage] = useState<TransactionState>(TransactionState.Ideal);
   const { activeApi } = useWebContext();
   const [loadingState, setLoadingState] = useState<AnchorDeposit<any>['loading']>('ideal');
   const [error, setError] = useState('');
@@ -52,16 +54,17 @@ export const useBridgeDeposit = (): VBridgeDepositApi => {
     if (!depositApi || !bridgeApi) {
       return;
     }
-    const unSub = depositApi.on('error', (error) => {
-      setError(error);
+
+    depositApi.on('stateChange', (state) => {
+      setStage(state);
     });
+
     setSelectedBridgeCurrency(bridgeApi.currency);
 
     const subscribe = bridgeApi.$store.subscribe((bridge) => {
       setSelectedBridgeCurrency(bridgeApi.currency);
     });
     return () => {
-      unSub && unSub();
       subscribe.unsubscribe();
     };
   }, [depositApi, bridgeApi, selectedBridgeCurrency?.id, bridgeApi?.activeBridge]);
@@ -84,7 +87,10 @@ export const useBridgeDeposit = (): VBridgeDepositApi => {
 
   const deposit = useCallback(
     async (depositPayload: DepositPayload) => {
-      return depositApi?.deposit(depositPayload);
+      if (!depositApi) {
+        throw new Error('Api not ready');
+      }
+      return depositApi.deposit(depositPayload);
     },
     [depositApi]
   );
@@ -101,6 +107,8 @@ export const useBridgeDeposit = (): VBridgeDepositApi => {
   };
 
   return {
+    stage,
+    setStage,
     depositApi,
     deposit,
     generateNote,
