@@ -4,6 +4,9 @@ import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
 import React, { useCallback, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
+import { DepositIcon } from '../assets/DepositIcon';
+import { WithdrawIcon } from '../assets/WithdrawIcon';
+
 type MixerTabsProps = {
   Deposit: JSX.Element;
   Withdraw: JSX.Element;
@@ -12,14 +15,6 @@ type MixerTabsProps = {
 const ContentWrapper = styled.div`
   max-width: 500px;
   margin: auto;
-  border-radius: 0px 0px 8px 8px;
-  ${({ theme }: { theme: Pallet }) => css`
-    background: ${theme.layer1Background};
-  `}
-
-  ${above.xs`
-    border-radius: 0px 0px 16px 16px;
-  `}
 `;
 
 const TabHeader = styled.header`
@@ -27,49 +22,31 @@ const TabHeader = styled.header`
   align-items: center;
   max-width: 500px;
   margin: auto;
-  border: 0.5px solid ${({ theme }) => theme.borderColor};
-  border-radius: 16px 16px 0px 0px;
+  margin-bottom: 24px;
+  border-radius: 16px;
+  background-color: ${({ theme }) => theme.layer1Background};
+  justify-content: space-between;
+  padding: 5px;
 `;
 
 const TabButton = styled.button<{ active?: boolean }>`
-  width: ${({ active }) => (active ? '60%' : '40%')};
+  width: 50%;
   display: flex;
-  height: 46px;
   cursor: pointer;
   align-items: center;
   justify-content: center;
   transition: all 0.4s ease-in-out;
-
-  ${above.xs`
-    width: 50%;
-  `}
+  padding: 8px 0px;
 
   .mixer-tab-label {
     font-size: 16px;
     font-weight: ${({ active }) => (active ? '800' : 'normal')};
-    color: ${({ active, theme }) => {
-      return !active ? theme.primaryText : theme.type === 'dark' ? theme.accentColor : '#000000';
-    }};
+    color: ${({ theme }) => theme.primaryText};
+    display: block;
   }
 
-  background: transparent;
-  border-radius: 16px 16px 0px 0px;
-
-  ${({ active, theme }) => {
-    if (active) {
-      if (theme.type === 'dark') {
-        return css`
-          border: 2px solid ${theme.accentColor};
-        `;
-      } else {
-        return css`
-          border: 1px solid #000;
-        `;
-      }
-    }
-  }}
-
-  border-bottom: none;
+  background: ${({ active, theme }) => (active ? (theme.type === 'dark' ? theme.accentColor : '#fff') : 'transparent')};
+  border-radius: 16px;
 `;
 
 export const MixerTabs: React.FC<MixerTabsProps> = ({ Deposit, Withdraw }) => {
@@ -77,6 +54,7 @@ export const MixerTabs: React.FC<MixerTabsProps> = ({ Deposit, Withdraw }) => {
   const switchToDeposit = useCallback(() => {
     setActiveTab('deposit');
   }, []);
+
   const switchToWithdraw = useCallback(() => {
     setActiveTab('withdraw');
   }, []);
@@ -90,13 +68,16 @@ export const MixerTabs: React.FC<MixerTabsProps> = ({ Deposit, Withdraw }) => {
         return Deposit;
     }
   }, [Deposit, Withdraw, activeTab]);
+
   return (
     <div>
       <TabHeader>
         <TabButton onClick={switchToDeposit} active={activeTab === 'deposit'}>
+          <DepositIcon style={{ display: 'block', marginRight: '8px' }} />
           <span className='mixer-tab-label'>Deposit</span>
         </TabButton>
         <TabButton onClick={switchToWithdraw} active={activeTab === 'withdraw'}>
+          <WithdrawIcon style={{ display: 'block', marginRight: '8px' }} />
           <span className='mixer-tab-label'>Withdraw</span>
         </TabButton>
       </TabHeader>
