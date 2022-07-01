@@ -24,6 +24,7 @@ const WalletSelectWrapper = styled(NetworkIndicatorWrapper)`
     overflow: hidden;
     text-align: center;
     color: ${({ theme }) => theme.primaryText};
+    justify-content: center;
   }
 `;
 
