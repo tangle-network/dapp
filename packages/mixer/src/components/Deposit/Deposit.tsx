@@ -1,10 +1,8 @@
-import { Typography } from '@material-ui/core';
 import { Currency, MixerSize, WalletConfig } from '@webb-dapp/api-providers';
 import { DepositConfirm } from '@webb-dapp/mixer/components/DepositConfirm/DepositConfirm';
 import { useDeposit } from '@webb-dapp/mixer/hooks/deposit/useDeposit';
 import { RequiredWalletSelection } from '@webb-dapp/react-components/RequiredWalletSelection/RequiredWalletSelection';
 import { useAppConfig, useWebContext } from '@webb-dapp/react-environment';
-import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { SpaceBox } from '@webb-dapp/ui-components/Box';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { BalanceLabel } from '@webb-dapp/ui-components/Inputs/BalanceLabel/BalanceLabel';
@@ -18,26 +16,13 @@ import React, { useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
 export const DepositWrapper = styled.div<{ wallet: WalletConfig | undefined }>`
-  ${({ theme, wallet }) => {
-    if (wallet) {
-      return css``;
-    } else {
-      return css`
-        padding: 25px 35px;
-        background: ${theme.layer2Background};
-        border: 1px solid ${theme.borderColor};
-        border-radius: 0 0 13px 13px;
-      `;
-    }
-  }}
+  padding: 25px 35px;
+  background: ${({ theme }) => theme.layer2Background};
+  border: 1px solid ${({ theme }) => theme.borderColor};
+  border-radius: 16px;
 `;
 
 export const TokenInputWrapper = styled.div`
-  padding: 25px 35px;
-  background: ${({ theme }) => theme.layer2Background};
-  border-radius: 0 0 13px 13px;
-  border: 1px solid ${({ theme }) => theme.borderColor};
-
   .token-dropdown-section {
     display: flex;
     width: 100%;
@@ -46,19 +31,11 @@ export const TokenInputWrapper = styled.div`
   }
 `;
 
-export const TokenBalance = styled.div`
-  border: 1px solid ${({ theme }) => theme.primaryText};
-  border-radius: 5px;
-  margin-left: 5px;
-  padding: 0 5px;
-`;
-
 type DepositProps = {};
 
 export const Deposit: React.FC<DepositProps> = () => {
   const { activeApi, activeChain, activeWallet } = useWebContext();
   const depositApi = useDeposit();
-  const palette = useColorPallet();
   const { currencies: currenciesConfig } = useAppConfig();
   const [showDepositModal, setShowDepositModal] = useState(false);
   const [selectedToken, setSelectedToken] = useState<Currency | undefined>(undefined);
@@ -72,10 +49,21 @@ export const Deposit: React.FC<DepositProps> = () => {
         })
       : [];
   }, [activeChain, currenciesConfig]);
+
   const activeToken = useMemo<Currency | undefined>(
     () => selectedToken ?? allCurrencies[0],
     [allCurrencies, selectedToken]
   );
+
+  const intendedMixers = useMemo(() => {
+    return depositApi.mixerSizes.filter((mixerSize) => {
+      // Cannot assume activeToken will have a value. If it doesn't, then automatically return false.
+      if (!activeToken) {
+        return false;
+      }
+      return mixerSize.asset === activeToken.view.symbol;
+    });
+  }, [depositApi.mixerSizes, activeToken]);
 
   // Whenever mixerSizes change (like chain switch) or token changes, set selected mixer to undefined
   useEffect(() => {
@@ -94,16 +82,6 @@ export const Deposit: React.FC<DepositProps> = () => {
         setTokenBalance(balance);
       });
   }, [activeApi, activeApi?.accounts.activeOrDefault, activeChain, activeToken]);
-
-  const intendedMixers = useMemo(() => {
-    return depositApi.mixerSizes.filter((mixerSize) => {
-      // Cannot assume activeToken will have a value. If it doesn't, then automatically return false.
-      if (!activeToken) {
-        return false;
-      }
-      return mixerSize.asset === activeToken.view.symbol;
-    });
-  }, [depositApi.mixerSizes, activeToken]);
 
   return (
     <DepositWrapper wallet={activeWallet}>
