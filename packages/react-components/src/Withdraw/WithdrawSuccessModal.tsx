@@ -189,13 +189,15 @@ export const WithdrawSuccessModal: React.FC<WithdrawingModalProps> = ({ exit, no
       </header>
       <div>
         <TransactionSummaryWrapper>
-          <ModalNoteDisplay
-            note={note.serialize()}
-            download={() => {
-              const noteString = note.serialize();
-              downloadString(noteString, noteString.slice(-noteString.length - 10) + '.txt');
-            }}
-          />
+          {note.amount !== '0' && (
+            <ModalNoteDisplay
+              note={note.serialize()}
+              download={() => {
+                const noteString = note.serialize();
+                downloadString(noteString, noteString.slice(-noteString.length - 10) + '.txt');
+              }}
+            />
+          )}
           <Typography variant={'h6'} color={'textPrimary'}>
             Transaction summary
           </Typography>

@@ -21,6 +21,7 @@ const ANY_EVM = [
   InternalChainId.HermesLocalnet,
   InternalChainId.AthenaLocalnet,
   InternalChainId.DemeterLocalnet,
+  InternalChainId.MoonbaseAlpha,
 ];
 export const walletsConfig: AppConfig['wallet'] = {
   [WalletId.Polkadot]: {

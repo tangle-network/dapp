@@ -9,34 +9,43 @@ export type KeypairStorage = Record<string, { keypair: string }>;
 
 export const anchorDeploymentBlock: Record<number, Record<string, number>> = {
   [computeChainIdType(ChainType.EVM, EVMChainId.Ropsten)]: {
-    '0x228ac202fb6ad3d3a39f59e4a578a0eafd3286cd': 12270712,
+    '0x66e04f6ae26c310e39f5bf24d873909e6d3b64c7': 12497372,
   },
   [computeChainIdType(ChainType.EVM, EVMChainId.Rinkeby)]: {
-    '0xa238c5987142af720b9232d9d72a12a3868396e0': 10688388,
+    '0x91127f21d63029eb5b2de05b4b1e9fd3497ee95b': 10943907,
   },
   [computeChainIdType(ChainType.EVM, EVMChainId.Goerli)]: {
-    '0x03b88ed9ff9be84e4bad3f55d67ae5aba610523c': 6896976,
+    '0x682faa319bf7bae7f0cb68435e857d22bf976e17': 7146565,
+  },
+  [computeChainIdType(ChainType.EVM, EVMChainId.Kovan)]: {
+    '0x148e8037ea12834117f3efd9e8990c16c1ff5653': 32476243,
   },
   [computeChainIdType(ChainType.EVM, EVMChainId.PolygonTestnet)]: {
-    '0xa8665042ea4767fa09143bd790059ce53bdf2a8f': 26340732,
+    '0x1371efed369498718bee3eb5d58e5d3dec86be85': 26974489,
   },
   [computeChainIdType(ChainType.EVM, EVMChainId.OptimismTestnet)]: {
-    '0x09d2d6520be3922549c81885477258f41c96c43f': 3040092,
+    '0x5353cede4b8fea148fb1f66f45d3ec27bff2224d': 4464058,
   },
   [computeChainIdType(ChainType.EVM, EVMChainId.ArbitrumTestnet)]: {
-    '0x2d21bc3f8cb399d3b7091309afe1986cdb9f2e39': 11938915,
+    '0x4953110789d0cb6de126f4ea88890670ccfe6906': 13335776,
+  },
+  [computeChainIdType(ChainType.EVM, EVMChainId.MoonbaseAlpha)]: {
+    '0x0c5f4951f42eec082bd1356b9b41928b4f0e7542': 2397382,
   },
   [computeChainIdType(ChainType.EVM, EVMChainId.HermesLocalnet)]: {
-    '0xbfce6b877ebff977bb6e80b24fbbb7bc4ebca4df': 1,
+    '0xbfce6b877ebff977bb6e80b24fbbb7bc4ebca4df': 100,
   },
   [computeChainIdType(ChainType.EVM, EVMChainId.AthenaLocalnet)]: {
-    '0x4e3df2073bf4b43b9944b8e5a463b1e185d6448c': 1,
+    '0x4e3df2073bf4b43b9944b8e5a463b1e185d6448c': 100,
+  },
+  [computeChainIdType(ChainType.EVM, EVMChainId.DemeterLocalnet)]: {
+    '0xdB587ef6aaA16b5719CDd3AaB316F0E70473e9Be': 100,
   },
 };
 
 export const getAnchorDeploymentBlockNumber = (chainIdType: number, contractAddress: string): number | undefined => {
   return Object.entries(anchorDeploymentBlock[chainIdType]).find(
-    (entry) => entry[0] === contractAddress.toLowerCase()
+    (entry) => entry[0].toLowerCase() === contractAddress.toLowerCase()
   )?.[1];
 };
 
