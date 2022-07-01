@@ -1,8 +1,6 @@
 import { Fade } from '@material-ui/core';
-import { Pallet } from '@webb-dapp/ui-components/styling/colors';
-import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
 import React, { useCallback, useMemo, useState } from 'react';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
 import { DepositIcon } from '../assets/DepositIcon';
 import { WithdrawIcon } from '../assets/WithdrawIcon';
@@ -17,7 +15,7 @@ const ContentWrapper = styled.div`
   margin: auto;
 `;
 
-const TabHeader = styled.header`
+export const TabHeader = styled.header`
   display: flex;
   align-items: center;
   max-width: 500px;
@@ -30,7 +28,7 @@ const TabHeader = styled.header`
   box-sizing: border-box;
 `;
 
-const TabButton = styled.button<{ active?: boolean }>`
+export const TabButton = styled.button<{ active?: boolean }>`
   width: 48%;
   display: flex;
   cursor: pointer;
