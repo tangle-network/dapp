@@ -7,10 +7,12 @@ import {
   parseChainIdType,
 } from '@webb-dapp/api-providers';
 import { chainsConfig } from '@webb-dapp/apps/configs';
+import { ModalNoteDisplay } from '@webb-dapp/react-components/NoteDisplay/ModalNoteDisplay';
 import { SpaceBox } from '@webb-dapp/ui-components/Box';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
+import { downloadString } from '@webb-dapp/utils/download';
 import { LoggerService } from '@webb-tools/app-util';
-import { JsNote as DepositNote } from '@webb-tools/wasm-utils';
+import { JsNote } from '@webb-tools/wasm-utils';
 import { ethers } from 'ethers';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
@@ -18,7 +20,7 @@ import styled from 'styled-components';
 const logger = LoggerService.get('Withdraw-Modal');
 
 type WithdrawingModalProps = {
-  note: DepositNote;
+  note: JsNote;
   recipient: string;
   receipt: string;
   relayer: ActiveWebbRelayer | null;
@@ -187,6 +189,13 @@ export const WithdrawSuccessModal: React.FC<WithdrawingModalProps> = ({ exit, no
       </header>
       <div>
         <TransactionSummaryWrapper>
+          <ModalNoteDisplay
+            note={note.serialize()}
+            download={() => {
+              const noteString = note.serialize();
+              downloadString(noteString, noteString.slice(-noteString.length - 10) + '.txt');
+            }}
+          />
           <Typography variant={'h6'} color={'textPrimary'}>
             Transaction summary
           </Typography>
