@@ -22,7 +22,7 @@ export const chainsConfig: AppConfig['chains'] = {
     blockExplorerStub: 'https://rinkeby.etherscan.io',
     logo: EtherLogo,
     tag: 'test',
-    currencies: [WebbCurrencyId.ETH, WebbCurrencyId.WETH, WebbCurrencyId.webbWETH],
+    currencies: [WebbCurrencyId.ETH, WebbCurrencyId.WETH, WebbCurrencyId.webbETH],
     nativeCurrencyId: WebbCurrencyId.ETH,
   },
   [InternalChainId.Ropsten]: {
@@ -36,7 +36,7 @@ export const chainsConfig: AppConfig['chains'] = {
     blockExplorerStub: 'https://ropsten.etherscan.io',
     logo: EtherLogo,
     tag: 'test',
-    currencies: [WebbCurrencyId.ETH, WebbCurrencyId.WETH, WebbCurrencyId.webbWETH],
+    currencies: [WebbCurrencyId.ETH, WebbCurrencyId.WETH, WebbCurrencyId.webbETH],
     nativeCurrencyId: WebbCurrencyId.ETH,
   },
   [InternalChainId.Goerli]: {
@@ -50,7 +50,7 @@ export const chainsConfig: AppConfig['chains'] = {
     blockExplorerStub: 'https://goerli.etherscan.io',
     logo: EtherLogo,
     tag: 'test',
-    currencies: [WebbCurrencyId.ETH, WebbCurrencyId.WETH, WebbCurrencyId.webbWETH],
+    currencies: [WebbCurrencyId.ETH, WebbCurrencyId.WETH, WebbCurrencyId.webbETH],
     nativeCurrencyId: WebbCurrencyId.ETH,
   },
   [InternalChainId.Kovan]: {
@@ -64,7 +64,7 @@ export const chainsConfig: AppConfig['chains'] = {
     blockExplorerStub: 'https://kovan.etherscan.io',
     logo: EtherLogo,
     tag: 'test',
-    currencies: [WebbCurrencyId.ETH, WebbCurrencyId.WETH, WebbCurrencyId.webbWETH],
+    currencies: [WebbCurrencyId.ETH, WebbCurrencyId.WETH, WebbCurrencyId.webbETH],
     nativeCurrencyId: WebbCurrencyId.ETH,
   },
   [InternalChainId.OptimismTestnet]: {
@@ -78,7 +78,7 @@ export const chainsConfig: AppConfig['chains'] = {
     blockExplorerStub: 'https://kovan-optimistic.etherscan.io',
     logo: OptimismLogo,
     tag: 'test',
-    currencies: [WebbCurrencyId.ETH, WebbCurrencyId.WETH, WebbCurrencyId.webbWETH],
+    currencies: [WebbCurrencyId.ETH, WebbCurrencyId.WETH, WebbCurrencyId.webbETH],
     nativeCurrencyId: WebbCurrencyId.ETH,
   },
   [InternalChainId.ArbitrumTestnet]: {
@@ -92,7 +92,7 @@ export const chainsConfig: AppConfig['chains'] = {
     blockExplorerStub: 'https://testnet.arbiscan.io',
     logo: ArbitrumLogo,
     tag: 'test',
-    currencies: [WebbCurrencyId.ETH, WebbCurrencyId.WETH, WebbCurrencyId.webbWETH],
+    currencies: [WebbCurrencyId.ETH, WebbCurrencyId.WETH, WebbCurrencyId.webbETH],
     nativeCurrencyId: WebbCurrencyId.ETH,
   },
   [InternalChainId.PolygonTestnet]: {
@@ -106,7 +106,7 @@ export const chainsConfig: AppConfig['chains'] = {
     evmRpcUrls: ['https://rpc-mumbai.maticvigil.com/'],
     blockExplorerStub: 'https://mumbai.polygonscan.com/',
     logo: PolygonLogo,
-    currencies: [WebbCurrencyId.MATIC, WebbCurrencyId.WETH, WebbCurrencyId.webbWETH],
+    currencies: [WebbCurrencyId.MATIC, WebbCurrencyId.WETH, WebbCurrencyId.webbETH],
     nativeCurrencyId: WebbCurrencyId.MATIC,
   },
   [InternalChainId.HermesLocalnet]: {
@@ -158,7 +158,7 @@ export const chainsConfig: AppConfig['chains'] = {
     url: 'https://moonbeam-alpha.api.onfinality.io/public',
     evmRpcUrls: ['https://moonbeam-alpha.api.onfinality.io/public'],
     logo: MoonbeamLogo,
-    currencies: [WebbCurrencyId.WETH, WebbCurrencyId.moonDEV, WebbCurrencyId.webbWETH],
+    currencies: [WebbCurrencyId.WETH, WebbCurrencyId.moonDEV, WebbCurrencyId.webbETH],
     nativeCurrencyId: WebbCurrencyId.moonDEV,
   },
 };
