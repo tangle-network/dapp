@@ -312,7 +312,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
           <WithdrawSuccessModal
             receipt={receipt}
             recipient={recipient}
-            note={depositNote.note}
+            inputNote={depositNote.note}
             relayer={relayersState.activeRelayer}
             exit={() => {
               setNote('');

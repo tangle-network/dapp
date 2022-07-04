@@ -431,11 +431,12 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
 
       {/* Modal to show on success  */}
       <Modal open={outputNotes.length > 0}>
-        {outputNotes.length && (
+        {outputNotes.length && depositNotes && (
           <WithdrawSuccessModal
             receipt={receipt}
             recipient={recipient}
-            note={outputNotes[0].note}
+            changeNote={outputNotes[0].note}
+            inputNote={depositNotes[0].note}
             relayer={relayersState.activeRelayer}
             exit={() => {
               setNotes(['']);

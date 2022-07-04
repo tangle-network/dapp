@@ -20,7 +20,8 @@ import styled from 'styled-components';
 const logger = LoggerService.get('Withdraw-Modal');
 
 type WithdrawingModalProps = {
-  note: JsNote;
+  inputNote: JsNote;
+  changeNote?: JsNote;
   recipient: string;
   receipt: string;
   relayer: ActiveWebbRelayer | null;
@@ -126,7 +127,14 @@ const InfoItem = styled.div`
   color: ${({ theme }) => (theme.type === 'dark' ? theme.accentColor : '#000000')};
 `;
 
-export const WithdrawSuccessModal: React.FC<WithdrawingModalProps> = ({ exit, note, receipt, recipient, relayer }) => {
+export const WithdrawSuccessModal: React.FC<WithdrawingModalProps> = ({
+  changeNote,
+  exit,
+  inputNote,
+  receipt,
+  recipient,
+  relayer,
+}) => {
   const transactionString = (hexString: string) => {
     return `${hexString.slice(0, 6)}...${hexString.slice(hexString.length - 4, hexString.length)}`;
   };
@@ -134,9 +142,9 @@ export const WithdrawSuccessModal: React.FC<WithdrawingModalProps> = ({ exit, no
   const getBlockExplorerTx = (txHash: string): string => {
     let chainId: InternalChainId;
     try {
-      chainId = chainTypeIdToInternalId(parseChainIdType(Number(note.targetChainId)));
+      chainId = chainTypeIdToInternalId(parseChainIdType(Number(inputNote.targetChainId)));
     } catch (e) {
-      chainId = Number(note.targetChainId);
+      chainId = Number(inputNote.targetChainId);
     }
     const url = chainsConfig[chainId]?.blockExplorerStub
       ? `${chainsConfig[chainId].blockExplorerStub}/tx/${txHash}`
@@ -147,9 +155,9 @@ export const WithdrawSuccessModal: React.FC<WithdrawingModalProps> = ({ exit, no
   const getBlockExplorerAddress = (address: string): string => {
     let chainId: InternalChainId;
     try {
-      chainId = chainTypeIdToInternalId(parseChainIdType(Number(note.targetChainId)));
+      chainId = chainTypeIdToInternalId(parseChainIdType(Number(inputNote.targetChainId)));
     } catch (e) {
-      chainId = Number(note.targetChainId);
+      chainId = Number(inputNote.targetChainId);
     }
     const url = chainsConfig[chainId]?.blockExplorerStub
       ? `${chainsConfig[chainId].blockExplorerStub}/address/${address}`
@@ -162,15 +170,17 @@ export const WithdrawSuccessModal: React.FC<WithdrawingModalProps> = ({ exit, no
   useEffect(() => {
     const calculateReceivedAmount = async () => {
       if (!relayer) {
-        setReceivedAmount(`${note.amount} ${note.tokenSymbol}`);
+        setReceivedAmount(`${inputNote.amount} ${inputNote.tokenSymbol}`);
       } else {
-        const fees = await relayer.fees(note.serialize());
+        const fees = await relayer.fees(inputNote.serialize());
         if (!fees) {
-          setReceivedAmount(`${note.amount} ${note.tokenSymbol}`);
+          setReceivedAmount(`${inputNote.amount} ${inputNote.tokenSymbol}`);
         } else {
-          const principleBig = parseUnits(note.amount, note.denomination);
+          const principleBig = parseUnits(inputNote.amount, inputNote.denomination);
           const receivedAmount = principleBig.sub(fees.totalFees);
-          setReceivedAmount(`${ethers.utils.formatUnits(receivedAmount, note.denomination)} ${note.tokenSymbol}`);
+          setReceivedAmount(
+            `${ethers.utils.formatUnits(receivedAmount, inputNote.denomination)} ${inputNote.tokenSymbol}`
+          );
         }
       }
     };
@@ -189,11 +199,11 @@ export const WithdrawSuccessModal: React.FC<WithdrawingModalProps> = ({ exit, no
       </header>
       <div>
         <TransactionSummaryWrapper>
-          {note.amount !== '0' && (
+          {changeNote && changeNote.amount !== '0' && (
             <ModalNoteDisplay
-              note={note.serialize()}
+              note={changeNote.serialize()}
               download={() => {
-                const noteString = note.serialize();
+                const noteString = changeNote.serialize();
                 downloadString(noteString, noteString.slice(-noteString.length - 10) + '.txt');
               }}
             />
