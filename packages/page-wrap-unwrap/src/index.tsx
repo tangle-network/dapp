@@ -1,20 +1,22 @@
-import { Button, Checkbox, FormControlLabel, IconButton, InputBase, Tooltip } from '@material-ui/core';
+import { Button, IconButton, InputBase, Tooltip } from '@material-ui/core';
 import Icon from '@material-ui/core/Icon';
-import Typography from '@material-ui/core/Typography';
 import { useWrapUnwrap } from '@webb-dapp/page-wrap-unwrap/hooks/useWrapUnwrap';
 import { RequiredWalletSelection } from '@webb-dapp/react-components/RequiredWalletSelection/RequiredWalletSelection';
 import { useWebContext } from '@webb-dapp/react-environment';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { getRoundedAmountString, SpaceBox } from '@webb-dapp/ui-components';
+import { DepositIcon } from '@webb-dapp/ui-components/assets/DepositIcon';
+import { WithdrawIcon } from '@webb-dapp/ui-components/assets/WithdrawIcon';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { BalanceLabel } from '@webb-dapp/ui-components/Inputs/BalanceLabel/BalanceLabel';
 import { InputTitle } from '@webb-dapp/ui-components/Inputs/InputTitle/InputTitle';
 import { TokenInput, TokenInputProps } from '@webb-dapp/ui-components/Inputs/TokenInput/TokenInput';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
+import { TabButton, TabHeader } from '@webb-dapp/ui-components/Tabs/MixerTabs';
 import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
 import { LoggerService } from '@webb-tools/app-util';
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
 const logger = LoggerService.get('page-wrap-unwrap');
@@ -33,7 +35,7 @@ const TransferWrapper = styled.div`
     return css`
       background: ${theme.layer2Background};
       border: 1px solid ${theme.borderColor};
-      border-radius: 0 0 13px 13px;
+      border-radius: 16px;
     `;
   }}
 `;
@@ -53,67 +55,6 @@ export const AmountInputWrapper = styled.div`
 `;
 
 export const AmountButton = styled.button``;
-
-const TabHeader = styled.header`
-  display: flex;
-  align-items: center;
-  max-width: 500px;
-  margin: auto;
-`;
-
-const TabButton = styled.button<{ active?: boolean }>`
-  width: 50%;
-  display: flex;
-  height: 46px;
-  cursor: pointer;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.4s ease-in-out;
-
-  .mixer-tab-label {
-    font-size: 16px;
-    color: ${({ active, theme }) => {
-      return !active ? theme.primaryText : theme.type === 'dark' ? theme.accentColor : '#000000';
-    }};
-  }
-
-  ${({ active, theme }) => {
-    if (active) {
-      if (theme.type === 'dark') {
-        return css`
-          background: #131313;
-          border-right: 1px solid ${theme.accentColor};
-          border-top: 1px solid ${theme.accentColor};
-          border-left: 1px solid ${theme.accentColor};
-        `;
-      } else {
-        return css`
-          background: #ffffff;
-          border-right: 1px solid #000000;
-          border-top: 1px solid #000000;
-          border-left: 1px solid #000000;
-        `;
-      }
-    } else {
-      return css`
-        background: transparent;
-        border-right: 1px solid ${theme.borderColor};
-        border-top: 1px solid ${theme.borderColor};
-        border-left: 1px solid ${theme.borderColor};
-      `;
-    }
-  }}
-
-  ${({ active, theme }) => {
-    if (active) {
-      return css`
-        border-right: 1px solid #${theme.accentColor};
-      `;
-    }
-  }}
-
-  border-radius: 12px 12px 0px 0px;
-`;
 
 const PageWrapUnwrap: FC = () => {
   const { activeApi, activeChain, activeWallet } = useWebContext();
@@ -221,9 +162,11 @@ const PageWrapUnwrap: FC = () => {
     <div>
       <TabHeader>
         <TabButton onClick={switchToWrap} active={context === 'wrap'}>
+          <DepositIcon style={{ display: 'block', marginRight: '8px' }} />
           <span className='mixer-tab-label'>Wrap</span>
         </TabButton>
         <TabButton onClick={switchToUnwrap} active={context === 'unwrap'}>
+          <WithdrawIcon style={{ display: 'block', marginRight: '8px' }} />
           <span className='mixer-tab-label'>Unwrap</span>
         </TabButton>
       </TabHeader>

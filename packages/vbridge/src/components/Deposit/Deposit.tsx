@@ -22,32 +22,45 @@ import CircledArrowRight from '@webb-dapp/ui-components/misc/CircledArrowRight';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { getRoundedAmountString } from '@webb-dapp/ui-components/utils';
+import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
 import { DepositConfirm } from '@webb-dapp/vbridge/components/DepositConfirm/DepositConfirm';
 import { useBridge } from '@webb-dapp/vbridge/hooks/bridge/use-bridge';
 import { useBridgeDeposit } from '@webb-dapp/vbridge/hooks/deposit/useBridgeDeposit';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
+const sharedPadding = css`
+  padding: 12px 14px;
+
+  ${above.xs(css`
+    padding: 25px 35px;
+  `)}
+`;
+
 const DepositWrapper = styled.div<{ wallet: WalletConfig | undefined }>`
+  border-radius: 16px;
+
   ${({ theme, wallet }) => {
     if (wallet) {
-      return css``;
+      return css`
+        background: ${({ theme }) => theme.layer1Background};
+      `;
     } else {
       return css`
-        padding: 25px 35px;
+        ${sharedPadding}
+
         background: ${theme.layer2Background};
         border: 1px solid ${theme.borderColor};
-        border-radius: 0 0 13px 13px;
       `;
     }
   }}
 `;
 
 const ChainInputWrapper = styled.div`
-  padding: 25px 35px;
+  ${sharedPadding}
   background: ${({ theme }) => theme.layer2Background};
-  border-radius: 0px 0px 13px 13px;
   border: 1px solid ${({ theme }) => theme.borderColor};
+  border-radius: 16px;
 
   .chain-dropdown-section {
     display: flex;
@@ -66,11 +79,9 @@ const ChainInputWrapper = styled.div`
     padding: 5px;
   }
 `;
+
 const TokenInputWrapper = styled.div`
-  padding: 25px 35px;
-  background: ${({ theme }) => theme.layer1Background};
-  border: 1px solid ${({ theme }) => theme.borderColor};
-  border-bottom: none;
+  ${sharedPadding}
 
   .token-dropdown-section {
     display: flex;

@@ -27,35 +27,41 @@ import { above, useBreakpoint } from '@webb-dapp/ui-components/utils/responsive-
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
+const sharedPadding = css`
+  padding: 12px 14px;
+
+  ${above.xs(css`
+    padding: 25px 35px;
+  `)}
+`;
+
 const DepositWrapper = styled.div<{ wallet: WalletConfig | undefined }>`
+  border-radius: 16px;
+
   ${({ theme, wallet }) => {
     if (wallet) {
-      return css``;
+      return css`
+        background: ${({ theme }) => theme.layer1Background};
+      `;
     } else {
       return css`
-        padding: 25px 35px;
+        ${sharedPadding}
+
         background: ${theme.layer2Background};
         border: 1px solid ${theme.borderColor};
-        border-radius: 0 0 13px 13px;
       `;
     }
   }}
 `;
 
 const ChainInputWrapper = styled.div`
-  padding: 12px 14px;
-  background: ${({ theme }) => theme.layer1Background};
-  border-bottom: none;
+  ${sharedPadding}
 
   .chain-dropdown-section {
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
-
-  ${above.xs`
-    padding: 25px 35px;
-  `}
 `;
 
 const TokenInputWrapper = styled.div`

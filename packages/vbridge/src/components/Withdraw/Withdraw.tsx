@@ -30,20 +30,12 @@ import { NoteInput } from '../NoteInput';
 import { InformationItem, Title, Value } from '../shared/styled';
 
 const WithdrawWrapper = styled.div<{ wallet: WalletConfig | undefined }>`
-  ${({ theme, wallet }) => {
-    if (wallet) {
-      return css``;
-    } else {
-      return css`
-        padding: 25px 35px;
-        background: ${theme.layer2Background};
-        border: 1px solid ${theme.borderColor};
-        border-radius: 0 0 13px 13px;
-      `;
-    }
-  }}
+  border-radius: 8px;
   background: ${({ theme }) => theme.layer1Background};
-  border-radius: 10px;
+
+  ${above.xs(css`
+    border-radius: 16px;
+  `)}
 `;
 
 const WithdrawNoteSection = styled.div`
