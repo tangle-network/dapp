@@ -98,6 +98,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
   const [notes, setNotes] = useState<string[]>(['']);
   const [recipient, setRecipient] = useState('');
   const [fees, setFees] = useState('0');
+  const [userAmountInput, setUserAmountInput] = useState<string>('');
   const [withdrawAmount, setWithdrawAmount] = useState(0);
   const [formError, setFormError] = useState<null | string>(null);
 
@@ -166,6 +167,14 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
     }, 0);
   }, [depositNotes, firstNote]);
 
+  const parseAndSetAmount = (amount: string): void => {
+    setUserAmountInput(amount);
+    let parsedAmount = Number(amount);
+    if (!isNaN(parsedAmount)) {
+      setWithdrawAmount(parsedAmount);
+    }
+  };
+
   const isDisabled = useMemo(() => {
     if (withdrawAmount > depositAmount || !withdrawAmount || !!formError) {
       return true;
@@ -211,7 +220,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
       }
 
       if (withdrawAmount > depositAmount) {
-        return setFormError('Not enough fund');
+        return setFormError('Not enough funds');
       }
 
       setFormError(null);
@@ -293,10 +302,9 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
               <InputTitle leftLabel='Withdraw Amount' />
               <div className='address-input'>
                 <InputBase
-                  value={withdrawAmount}
+                  value={userAmountInput}
                   onChange={(event) => {
-                    const amount = Number(event.target.value);
-                    setWithdrawAmount(amount);
+                    parseAndSetAmount(event.target.value);
                   }}
                   inputProps={{ style: { fontSize: 14 } }}
                   fullWidth

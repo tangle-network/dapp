@@ -4,17 +4,18 @@ import { AppConfig, InternalChainId, WebbCurrencyId } from '@webb-dapp/api-provi
 export const anchorsConfig: AppConfig['anchors'] = {
   [WebbCurrencyId.webbWETH]: [
     {
-      amount: '0.01',
       anchorTreeIds: {},
       anchorAddresses: {
-        [InternalChainId.Ropsten]: '0x228ac202fb6ad3d3a39f59e4a578a0eafd3286cd',
-        [InternalChainId.Rinkeby]: '0xa238c5987142af720b9232d9d72a12a3868396e0',
-        [InternalChainId.Goerli]: '0x03b88ed9ff9be84e4bad3f55d67ae5aba610523c',
-        [InternalChainId.PolygonTestnet]: '0xa8665042ea4767fa09143bd790059ce53bdf2a8f',
-        [InternalChainId.OptimismTestnet]: '0x09d2d6520be3922549c81885477258f41c96c43f',
-        [InternalChainId.ArbitrumTestnet]: '0x2d21bc3f8cb399d3b7091309afe1986cdb9f2e39',
+        [InternalChainId.Ropsten]: '0x66e04f6ae26c310e39f5bf24d873909e6d3b64c7',
+        [InternalChainId.Rinkeby]: '0x91127f21d63029eb5b2de05b4b1e9fd3497ee95b',
+        [InternalChainId.Goerli]: '0x682faa319bf7bae7f0cb68435e857d22bf976e17',
+        [InternalChainId.Kovan]: '0x148e8037ea12834117f3efd9e8990c16c1ff5653',
+        [InternalChainId.PolygonTestnet]: '0x1371efed369498718bee3eb5d58e5d3dec86be85',
+        [InternalChainId.OptimismTestnet]: '0x5353cede4b8fea148fb1f66f45d3ec27bff2224d',
+        [InternalChainId.ArbitrumTestnet]: '0x4953110789d0cb6de126f4ea88890670ccfe6906',
+        [InternalChainId.MoonbaseAlpha]: '0x0c5f4951f42eec082bd1356b9b41928b4f0e7542',
       },
-      type: 'fixed',
+      type: 'variable',
     },
   ],
   [WebbCurrencyId.WEBB]: [
@@ -74,9 +75,9 @@ export const anchorsConfig: AppConfig['anchors'] = {
     {
       anchorTreeIds: {},
       anchorAddresses: {
-        [InternalChainId.HermesLocalnet]: '0xb824C5F99339C7E486a1b452B635886BE82bc8b7',
-        [InternalChainId.AthenaLocalnet]: '0xFEe587E68c470DAE8147B46bB39fF230A29D4769',
-        [InternalChainId.DemeterLocalnet]: '0xdB587ef6aaA16b5719CDd3AaB316F0E70473e9Be',
+        [InternalChainId.HermesLocalnet]: '0x4e3df2073bf4b43b9944b8e5a463b1e185d6448c',
+        [InternalChainId.AthenaLocalnet]: '0x4e3df2073bf4b43b9944b8e5a463b1e185d6448c',
+        [InternalChainId.DemeterLocalnet]: '0x4e3df2073bf4b43b9944b8e5a463b1e185d6448c',
       },
       type: 'variable',
     },

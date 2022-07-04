@@ -390,7 +390,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
                 chainId: chain.chainId,
               });
 
-              web3Provider = await Web3Provider.fromWalletConnectProvider(provider as any);
+              web3Provider = await Web3Provider.fromWalletConnectProvider(provider);
             } else {
               /// init provider from the extension
               web3Provider = await Web3Provider.fromExtension();
