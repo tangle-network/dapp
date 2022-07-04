@@ -1,0 +1,9 @@
+{
+  "name": "@webb-dapp/page-governance",
+  "version": "0.2.1-beta.1",
+  "description": "governance page",
+  "author": "Webb Developers <drew@webb.tools>",
+  "homepage": "https://github.com/webb-tools/webb-dapp#readme",
+  "license": "Apache-2.0",
+  "main": "src/index.tsx"
+}

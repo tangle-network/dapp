@@ -11,6 +11,7 @@ const PageVBridge = lazy(() => import('@webb-dapp/vbridge'));
 const PageWrapUnwrap = lazy(() => import('@webb-dapp/page-wrap-unwrap'));
 const PageCrowdloan = lazy(() => import('@webb-dapp/page-crowdloan'));
 const PageStatistics = lazy(() => import('@webb-dapp/page-statistics'));
+const PageGovernance = lazy(() => import('@webb-dapp/page-governance'));
 
 const CSuspense: FC = ({ children }) => {
   return <Suspense fallback={<PageContentLoading />}>{children}</Suspense>;
@@ -117,6 +118,15 @@ export const config: RouterConfigData[] = [
         ),
         path: 'statistics/*',
         title: 'Statistics Overview',
+      },
+      {
+        element: (
+          <CSuspense>
+            <PageGovernance view='substrate-democracy' />
+          </CSuspense>
+        ),
+        path: 'governance/substrate-democracy',
+        title: 'Substrate Democracy',
       },
       {
         path: '*',
