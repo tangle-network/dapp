@@ -182,7 +182,10 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
   return (
     <WithdrawWrapper wallet={activeWallet}>
       <WithdrawNoteSection>
-        <InputTitle leftLabel={<TextLabel value='ADD NOTE' />} rightLabel={<RelayerButton />} />
+        <InputTitle
+          leftLabel={<TextLabel value='ADD NOTE' />}
+          rightLabel={<RelayerButton onClick={() => setShowRelayerModal(true)} />}
+        />
         <div className='note-input'>
           <MixerNoteInput error={note ? validationErrors.note : ''} value={note} onChange={setNote} />
         </div>
