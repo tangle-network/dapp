@@ -235,7 +235,7 @@ type AnchorRelayTransaction = {
 type ProofData = {
   proof: Array<number>;
   publicAmount: Array<number>;
-  roots: Array<number>[];
+  roots: Array<number>[] | number[];
   inputNullifiers: Array<number>[];
   outputCommitments: Array<number>[];
   extDataHash: Array<number>;
@@ -269,7 +269,7 @@ type ExtData = {
  * */
 type VAnchorRelayTransaction = {
   chain: string;
-  id: number;
+  id: number | string;
   proofData: ProofData;
   extData: ExtData;
 };

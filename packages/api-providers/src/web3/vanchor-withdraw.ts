@@ -5,13 +5,28 @@
 
 import type { WebbWeb3Provider } from './webb-provider';
 
+import { getLeafCount } from '@webb-dapp/api-providers/polkadot/mt-utils';
 import { CircomUtxo, Keypair, MerkleTree, Note, randomBN, Utxo } from '@webb-tools/sdk-core';
 import { BigNumber, ContractReceipt, ethers } from 'ethers';
 
 import { hexToU8a, u8aToHex } from '@polkadot/util';
 
-import { AnchorApi, TransactionState, VAnchorWithdraw, VAnchorWithdrawResult, WebbRelayer } from '../abstracts';
-import { ChainType, computeChainIdType, evmIdIntoInternalChainId, parseChainIdType } from '../chains';
+import {
+  AnchorApi,
+  RelayedChainInput,
+  RelayedWithdrawResult,
+  TransactionState,
+  VAnchorWithdraw,
+  VAnchorWithdrawResult,
+  WebbRelayer,
+} from '../abstracts';
+import {
+  ChainType,
+  chainTypeIdToInternalId,
+  computeChainIdType,
+  evmIdIntoInternalChainId,
+  parseChainIdType,
+} from '../chains';
 import { generateCircomCommitment, utxoFromVAnchorNote, VAnchorContract } from '../contracts/wrappers';
 import { Web3Provider } from '../ext-providers/web3/web3-provider';
 import { fetchVariableAnchorKeyForEdges, fetchVariableAnchorWasmForEdges } from '../ipfs/evm/anchors';
@@ -20,6 +35,7 @@ import { BridgeConfig } from '../types/bridge-config.interface';
 import {
   BridgeStorage,
   bridgeStorageFactory,
+  chainIdToRelayerName,
   getAnchorDeploymentBlockNumber,
   getEVMChainNameFromInternal,
   keypairStorageFactory,
@@ -87,7 +103,8 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
     this.cancelToken.cancelled = false;
 
     const activeBridge = this.bridgeApi.activeBridge;
-
+    const activeRelayer = this.inner.relayerManager.activeRelayer;
+    const relayerAccount = activeRelayer ? activeRelayer.beneficiary! : recipient;
     if (!activeBridge) {
       throw new Error('No activeBridge set on the web3 anchor api');
     }
@@ -307,7 +324,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
       [changeUtxo, dummyUtxo],
       extAmount,
       0,
-      recipient,
+      relayerAccount,
       recipient,
       leavesMap,
       provingKey,
@@ -335,17 +352,130 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
 
     // Take the proof and send the transaction
     // TODO: support relayed transaction
-    let receipt: ContractReceipt;
-
+    let txHash = '';
+    const changeNotes = [];
     try {
-      const tx = await destVAnchor.inner.transact(
-        {
-          ...publicInputs,
-          outputCommitments: [publicInputs.outputCommitments[0], publicInputs.outputCommitments[1]],
-        },
-        extData
-      );
-      receipt = await tx.wait();
+      if (activeRelayer) {
+        const relayedVAnchorWithdraw = await activeRelayer.initWithdraw('vAnchor');
+
+        const ParsedDestChainIdType = parseChainIdType(destChainIdType);
+        const destInternalId = chainTypeIdToInternalId(ParsedDestChainIdType);
+        const chainName = chainIdToRelayerName(destInternalId);
+
+        const chainInfo: RelayedChainInput = {
+          baseOn: 'evm',
+          contractAddress: destAddress,
+          endpoint: '',
+          name: chainName,
+        };
+
+        const relayedDepositTxPayload = relayedVAnchorWithdraw.generateWithdrawRequest<typeof chainInfo, 'vAnchor'>(
+          chainInfo,
+          {
+            chain: chainName,
+            id: destAddress,
+            extData: {
+              recipient: extData.recipient,
+              relayer: extData.relayer,
+              extAmount: Number(extData.extAmount),
+              fee: Number(extData.fee),
+              encryptedOutput1: Array.from(hexToU8a(extData.encryptedOutput1)),
+              encryptedOutput2: Array.from(hexToU8a(extData.encryptedOutput2)),
+            },
+            proofData: {
+              proof: Array.from(hexToU8a(publicInputs.proof)),
+              extDataHash: Array.from(hexToU8a(publicInputs.extDataHash)),
+              publicAmount: Array.from(hexToU8a(publicInputs.publicAmount)),
+              roots: Array.from(hexToU8a(publicInputs.roots)),
+              outputCommitments: publicInputs.outputCommitments.map((com) => Array.from(hexToU8a(com))),
+              inputNullifiers: publicInputs.inputNullifiers.map((com) => Array.from(hexToU8a(com))),
+            },
+          }
+        );
+
+        relayedVAnchorWithdraw.watcher.subscribe(([results, message]) => {
+          switch (results) {
+            case RelayedWithdrawResult.PreFlight:
+              this.emit('stateChange', TransactionState.SendingTransaction);
+              break;
+            case RelayedWithdrawResult.OnFlight:
+              break;
+            case RelayedWithdrawResult.Continue:
+              break;
+            case RelayedWithdrawResult.CleanExit:
+              this.emit('stateChange', TransactionState.Done);
+              this.emit('stateChange', TransactionState.Ideal);
+
+              this.inner.notificationHandler({
+                description: `TX hash:`,
+                key: 'vanchor-withdraw-sub',
+                level: 'success',
+                message: 'vanchor254:withdraw',
+                name: 'Transaction',
+              });
+
+              break;
+            case RelayedWithdrawResult.Errored:
+              this.emit('stateChange', TransactionState.Failed);
+              this.emit('stateChange', TransactionState.Ideal);
+
+              this.inner.notificationHandler({
+                description: message || 'Withdraw failed',
+                key: 'vanchor-withdraw-sub',
+                level: 'success',
+                message: 'vanchor254:withdraw',
+                name: 'Transaction',
+              });
+              break;
+          }
+        });
+
+        this.inner.notificationHandler({
+          description: 'Sending TX to relayer',
+          key: 'vanchor-withdraw-sub',
+          level: 'loading',
+          message: 'vanchor254:withdraw',
+
+          name: 'Transaction',
+        });
+        relayedVAnchorWithdraw.send(relayedDepositTxPayload);
+        const results = await relayedVAnchorWithdraw.await();
+        if (results) {
+          const [, message] = results;
+          txHash = message!;
+        }
+        const hexCommitment = u8aToHex(changeUtxo.commitment);
+        const changeNote: Note = outputNotes.find(
+          (note: Note) => generateCircomCommitment(note.note) === hexCommitment
+        )!;
+        changeNotes.push(changeNote);
+      } else {
+        const tx = await destVAnchor.inner.transact(
+          {
+            ...publicInputs,
+            outputCommitments: [publicInputs.outputCommitments[0], publicInputs.outputCommitments[1]],
+          },
+          extData
+        );
+        const receipt = await tx.wait();
+        // Parse the events for the index of the changeUTXO
+        const hexCommitment = u8aToHex(changeUtxo.commitment);
+
+        const insertedCommitmentEvent = receipt.events?.find(
+          (event) => event.event === 'Insertion' && event.args?.includes(hexCommitment)
+        );
+
+        if (!insertedCommitmentEvent) {
+          throw new Error("Uh oh, we didn't find our commitment in the insertions... inserted garbage");
+        }
+
+        const changeNote: Note = outputNotes.find(
+          (note: Note) => generateCircomCommitment(note.note) === hexCommitment
+        )!;
+        changeNote.mutateIndex(insertedCommitmentEvent.args![1].toString());
+        changeNotes.push(changeNote);
+        txHash = receipt.transactionHash;
+      }
     } catch (e) {
       this.emit('stateChange', TransactionState.Ideal);
       console.log(e);
@@ -364,20 +494,6 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
       };
     }
 
-    // Parse the events for the index of the changeUTXO
-    const hexCommitment = u8aToHex(changeUtxo.commitment);
-
-    const insertedCommitmentEvent = receipt.events?.find(
-      (event) => event.event === 'Insertion' && event.args?.includes(hexCommitment)
-    );
-
-    if (!insertedCommitmentEvent) {
-      throw new Error("Uh oh, we didn't find our commitment in the insertions... inserted garbage");
-    }
-
-    const changeNote: Note = outputNotes.find((note: Note) => generateCircomCommitment(note.note) === hexCommitment)!;
-    changeNote.mutateIndex(insertedCommitmentEvent.args![1].toString());
-
     this.emit('stateChange', TransactionState.Ideal);
     this.inner.notificationHandler({
       description: recipient,
@@ -388,8 +504,8 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
     });
 
     return {
-      txHash: receipt.transactionHash,
-      outputNotes: [changeNote],
+      txHash: txHash,
+      outputNotes: changeNotes,
     };
   }
 }
