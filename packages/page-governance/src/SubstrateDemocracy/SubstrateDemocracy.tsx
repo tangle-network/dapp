@@ -1,15 +1,42 @@
-import { Typography } from '@material-ui/core';
-import { randBrand, randEthereumAddress, randGitCommitMessage, randNumber, randSoonDate } from '@ngneat/falso';
+import { TablePagination, Typography } from '@material-ui/core';
 import { TabButton, TabHeader } from '@webb-dapp/ui-components/Tabs/MixerTabs';
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { ProposalCard } from '../components';
+import { ProposalCard, ProposalLoading } from '../components';
 import { ProposalsContainer } from './styled';
+import { useSubstrateDemocracy } from './useSubstrateDemocracy';
 
 export interface SubstrateDemoCracyProps {}
 
 export const SubstrateDemocracy: React.FC<SubstrateDemoCracyProps> = (props) => {
   const [tab, setTab] = useState<'all' | 'active'>('all');
+  const { fetchAllProposals, isLoading, response } = useSubstrateDemocracy();
+
+  /** Pagiantion */
+  const [currentPage, setCurrentPage] = useState(0);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+
+  const totalItems = useMemo(() => (response ? response.total : 0), [response]);
+
+  const onPageChange = useCallback(
+    async (_, nextPage: number) => {
+      if (nextPage === currentPage) {
+        return;
+      }
+
+      setCurrentPage(nextPage);
+    },
+    [currentPage]
+  );
+
+  const onItemsPerPageChange = useCallback((eve: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setItemsPerPage(parseInt(eve.target.value, 10));
+    setCurrentPage(0);
+  }, []);
+
+  useEffect(() => {
+    fetchAllProposals(currentPage, itemsPerPage);
+  }, [currentPage, fetchAllProposals, itemsPerPage]);
 
   return (
     <div>
@@ -27,15 +54,22 @@ export const SubstrateDemocracy: React.FC<SubstrateDemoCracyProps> = (props) => 
       </TabHeader>
 
       <ProposalsContainer>
-        <ProposalCard
-          address={randEthereumAddress()}
-          author={randBrand({ length: 5 })[0]}
-          endTime={randSoonDate({ days: 10 }).getTime()}
-          status={'executed'}
-          title={randGitCommitMessage({ length: randNumber({ min: 5, max: 10 }) })[0]}
-          totalVotes={randNumber({ min: 100, max: 500 })}
-          voteId={randNumber({ min: 200, max: 1000 })}
-        />
+        {isLoading || !response ? (
+          <ProposalLoading />
+        ) : (
+          response.data.map((proposal) => <ProposalCard key={proposal.voteId} {...proposal} />)
+        )}
+
+        {response && (
+          <TablePagination
+            component='div'
+            count={totalItems}
+            page={currentPage}
+            onPageChange={onPageChange}
+            rowsPerPage={itemsPerPage}
+            onRowsPerPageChange={onItemsPerPageChange}
+          />
+        )}
       </ProposalsContainer>
     </div>
   );

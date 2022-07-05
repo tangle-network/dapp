@@ -1,20 +1,12 @@
 import { Typography } from '@material-ui/core';
-import { ProposalStatus } from '@webb-dapp/page-governance/src/types';
 import { useCountdown } from '@webb-dapp/react-hooks';
+import { IProposal } from 'page-governance/src/SubstrateDemocracy/useSubstrateDemocracy';
 import React, { useCallback } from 'react';
 
 import { ChipStatus } from '../ChipStatus';
 import { BadgesGroup, BadgeWrapper, ProposalCardWrapper, TextWrapper } from './styled';
 
-export interface ProposalCardProps {
-  author: string;
-  address: string;
-  title: string;
-  voteId: number;
-  status: ProposalStatus;
-  endTime: number;
-  totalVotes: number;
-}
+export interface ProposalCardProps extends IProposal {}
 
 export const ProposalCard: React.FC<ProposalCardProps> = ({
   address,
