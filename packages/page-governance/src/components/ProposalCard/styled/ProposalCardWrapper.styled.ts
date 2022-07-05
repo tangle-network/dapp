@@ -7,7 +7,7 @@ export const ProposalCardWrapper = styled.div`
   margin: 0 auto;
   margin-bottom: 16px;
   padding: 12px 24px;
-  background-color: ${({ theme }) => theme.layer1Background};
+  background-color: transparent;
   border-radius: 12px;
   display: flex;
   flex-direction: column;

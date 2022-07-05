@@ -3,7 +3,7 @@ import styled from 'styled-components';
 export const BadgeWrapper = styled.span`
   padding: 4px 12px;
   color: ${({ theme }) => theme.primaryText};
-  background-color: ${({ theme }) => theme.heavySelectionBackground};
+  background-color: ${({ theme }) => theme.layer1Background};
   border-radius: 4px;
   display: inline-flex;
   justify-content: center;

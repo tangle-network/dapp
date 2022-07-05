@@ -17,12 +17,11 @@ export const ChipStatus: React.FC<ChipStatusProps> = ({ status }) => {
         borderRadius: '4px',
         fontWeight: '700',
         fontSize: '12px',
-        color: pallet.primaryText,
       },
-      variant: status === 'active' ? 'outlined' : undefined,
+      variant: pallet.type === 'dark' || status === 'active' ? 'outlined' : undefined,
       size: 'small',
     }),
-    [status, pallet]
+    [pallet.type, status]
   );
 
   switch (status) {
