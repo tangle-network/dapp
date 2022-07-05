@@ -1,19 +1,22 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import ContentLoader from 'react-content-loader';
 
 export const LoadingProposals = () => {
+  const totalItems = useMemo(() => 4, []);
+  const loadingItemHeight = useMemo(() => 96, []);
+
   return (
     <ContentLoader
       speed={2}
-      style={{ width: '100%', height: '450px' }}
+      style={{ width: '100%', height: (loadingItemHeight * totalItems + 100).toString() }}
       backgroundColor='#bababa'
       foregroundColor='#ecebeb'
     >
-      <rect x='16' y='14' rx='5' ry='5' width='90%' height='72' />
-      <rect x='16' y='103' rx='5' ry='5' width='90%' height='72' />
-      <rect x='16' y='192' rx='5' ry='5' width='90%' height='72' />
-      <rect x='16' y='281' rx='5' ry='5' width='90%' height='72' />
-      <rect x='16' y='370' rx='5' ry='5' width='90%' height='72' />
+      {Array(totalItems)
+        .fill(0)
+        .map((_, idx) => (
+          <rect x='16' y={14 + idx * 120} rx='12' ry='12' width='90%' height={loadingItemHeight} />
+        ))}
     </ContentLoader>
   );
 };

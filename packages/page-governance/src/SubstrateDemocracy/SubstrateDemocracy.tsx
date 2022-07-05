@@ -1,5 +1,6 @@
 import { TablePagination, Typography } from '@material-ui/core';
 import { TabButton, TabHeader } from '@webb-dapp/ui-components/Tabs/MixerTabs';
+import { useBreakpoint } from '@webb-dapp/ui-components/utils/responsive-utils';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 
 import { LoadingProposals, ProposalCard } from '../components';
@@ -12,6 +13,7 @@ const INITIAL_PAGE = 0;
 const INITIAL_ITEMS_PER_PAGE = 5;
 
 export const SubstrateDemocracy: React.FC<SubstrateDemoCracyProps> = (props) => {
+  const { isXsOrAbove } = useBreakpoint();
   const [tab, setTab] = useState<'all' | 'active'>('all');
   const { fetchActiveProposals, fetchAllProposals, isLoading, response } = useSubstrateDemocracy();
 
@@ -64,7 +66,11 @@ export const SubstrateDemocracy: React.FC<SubstrateDemoCracyProps> = (props) => 
 
   return (
     <div>
-      <Typography variant='h5' component='h2' style={{ fontWeight: 700, marginBottom: '12px' }}>
+      <Typography
+        variant={isXsOrAbove ? 'h3' : 'h4'}
+        component='h2'
+        style={{ fontWeight: 700, marginBottom: '12px', textAlign: 'center' }}
+      >
         Proposals
       </Typography>
 
