@@ -115,6 +115,8 @@ export const evmIdIntoInternalChainId = (evmId: number | string): InternalChainI
       return InternalChainId.AthenaLocalnet;
     case EVMChainId.DemeterLocalnet:
       return InternalChainId.DemeterLocalnet;
+    case EVMChainId.MoonbaseAlpha:
+      return InternalChainId.MoonbaseAlpha;
   }
 };
 
@@ -156,6 +158,8 @@ export const internalChainIdIntoEVMId = (chainId: InternalChainId | number | str
       return EVMChainId.AthenaLocalnet;
     case InternalChainId.DemeterLocalnet:
       return EVMChainId.DemeterLocalnet;
+    case InternalChainId.MoonbaseAlpha:
+      return EVMChainId.MoonbaseAlpha;
     default:
       throw Error(`unsupported evm id: ${chainId}`);
   }

@@ -1,6 +1,7 @@
 import { AppConfig, ChainType, EVMChainId, InternalChainId, WebbCurrencyId } from '@webb-dapp/api-providers';
 import ArbitrumLogo from '@webb-dapp/apps/configs/logos/chains/ArbitrumLogo';
 import GanacheLogo from '@webb-dapp/apps/configs/logos/chains/GanacheLogo';
+import { MoonbeamLogo } from '@webb-dapp/apps/configs/logos/chains/MoonbeamLogo';
 import OptimismLogo from '@webb-dapp/apps/configs/logos/chains/OptimismLogo';
 import PolygonLogo from '@webb-dapp/apps/configs/logos/chains/PolygonLogo';
 import EtherLogo from '@webb-dapp/apps/configs/logos/Eth';
@@ -47,6 +48,20 @@ export const chainsConfig: AppConfig['chains'] = {
     url: 'https://goerli.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4',
     evmRpcUrls: ['https://goerli.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4'],
     blockExplorerStub: 'https://goerli.etherscan.io',
+    logo: EtherLogo,
+    tag: 'test',
+    currencies: [WebbCurrencyId.ETH, WebbCurrencyId.WETH, WebbCurrencyId.webbWETH],
+    nativeCurrencyId: WebbCurrencyId.ETH,
+  },
+  [InternalChainId.Kovan]: {
+    chainType: ChainType.EVM,
+    group: 'eth',
+    id: InternalChainId.Kovan,
+    chainId: EVMChainId.Kovan,
+    name: 'Kovan',
+    url: 'https://kovan.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4',
+    evmRpcUrls: ['https://kovan.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4'],
+    blockExplorerStub: 'https://kovan.etherscan.io',
     logo: EtherLogo,
     tag: 'test',
     currencies: [WebbCurrencyId.ETH, WebbCurrencyId.WETH, WebbCurrencyId.webbWETH],
@@ -132,5 +147,18 @@ export const chainsConfig: AppConfig['chains'] = {
     logo: GanacheLogo,
     currencies: [WebbCurrencyId.webbDEV, WebbCurrencyId.DEV, WebbCurrencyId.ETH],
     nativeCurrencyId: WebbCurrencyId.ETH,
+  },
+  [InternalChainId.MoonbaseAlpha]: {
+    chainType: ChainType.EVM,
+    group: 'eth',
+    id: InternalChainId.MoonbaseAlpha,
+    chainId: EVMChainId.MoonbaseAlpha,
+    name: 'Moonbase Alpha',
+    tag: 'test',
+    url: 'https://moonbeam-alpha.api.onfinality.io/public',
+    evmRpcUrls: ['https://moonbeam-alpha.api.onfinality.io/public'],
+    logo: MoonbeamLogo,
+    currencies: [WebbCurrencyId.WETH, WebbCurrencyId.moonDEV, WebbCurrencyId.webbWETH],
+    nativeCurrencyId: WebbCurrencyId.moonDEV,
   },
 };

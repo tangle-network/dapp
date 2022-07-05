@@ -20,20 +20,9 @@ import React, { useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
 const WithdrawWrapper = styled.div<{ wallet: WalletConfig | undefined }>`
-  ${({ theme, wallet }) => {
-    if (wallet) {
-      return css``;
-    } else {
-      return css`
-        padding: 25px 35px;
-        background: ${theme.layer2Background};
-        border: 1px solid ${theme.borderColor};
-        border-radius: 0 0 13px 13px;
-      `;
-    }
-  }}
-  background: ${({ theme }) => theme.lightSelectionBackground};
-  border-radius: 10px;
+  background: ${({ theme }) => theme.layer1Background};
+  border-radius: 16px;
+
   .titles-and-information {
     display: flex;
     justify-content: space-between;
@@ -41,24 +30,9 @@ const WithdrawWrapper = styled.div<{ wallet: WalletConfig | undefined }>`
   }
 `;
 
-const RelayerSettings = styled.div`
-  box-sizing: border-box;
-  .wallet-logo-wrapper {
-    width: 20px;
-    height: 20px;
-    background: transparent;
-  }
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  padding: 5px;
-  height: 45px;
-  border-radius: 12px;
-`;
-
 const WithdrawNoteSection = styled.div`
   padding: 25px 35px;
-  background: ${({ theme }) => theme.layer1Background};
+
   .note-input {
     display: flex;
     ${({ theme }: { theme: Pallet }) => css`
@@ -124,7 +98,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
   const [recipient, setRecipient] = useState('');
   const [showRelayerModal, setShowRelayerModal] = useState(false);
   const [fees, setFees] = useState('0');
-  const { activeApi, activeChain, activeWallet } = useWebContext();
+  const { activeApi, activeWallet } = useWebContext();
 
   const {
     canCancel,
@@ -208,7 +182,10 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
   return (
     <WithdrawWrapper wallet={activeWallet}>
       <WithdrawNoteSection>
-        <InputTitle leftLabel={<TextLabel value='ADD NOTE' />} rightLabel={<RelayerButton />} />
+        <InputTitle
+          leftLabel={<TextLabel value='ADD NOTE' />}
+          rightLabel={<RelayerButton onClick={() => setShowRelayerModal(true)} />}
+        />
         <div className='note-input'>
           <MixerNoteInput error={note ? validationErrors.note : ''} value={note} onChange={setNote} />
         </div>

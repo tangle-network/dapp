@@ -24,6 +24,7 @@ export enum WebbCurrencyId {
   TEST,
   KSM,
   DOT,
+  moonDEV,
 }
 
 export function webbCurrencyIdToString(c: WebbCurrencyId): string {
@@ -58,6 +59,8 @@ export function webbCurrencyIdToString(c: WebbCurrencyId): string {
       return 'KSM';
     case WebbCurrencyId.DOT:
       return 'DOT';
+    case WebbCurrencyId.moonDEV:
+      return 'moonDEV';
   }
 }
 
@@ -93,6 +96,8 @@ export function webbCurrencyIdFromString(c: string): WebbCurrencyId {
       return WebbCurrencyId.KSM;
     case 'DOT':
       return WebbCurrencyId.DOT;
+    case 'moonDEV':
+      return WebbCurrencyId.moonDEV;
     default:
       throw new Error(`${c} isn't a valid WebbCurrencyId`);
   }

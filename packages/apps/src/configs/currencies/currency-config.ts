@@ -8,11 +8,11 @@ import {
 } from '@webb-dapp/api-providers';
 import GanacheLogo from '@webb-dapp/apps/configs/logos/chains/GanacheLogo';
 import HarmonyLogo from '@webb-dapp/apps/configs/logos/chains/HarmonyLogo';
+import { MoonbeamLogo } from '@webb-dapp/apps/configs/logos/chains/MoonbeamLogo';
 import PolygonLogo from '@webb-dapp/apps/configs/logos/chains/PolygonLogo';
 import ShidenLogo from '@webb-dapp/apps/configs/logos/chains/ShidenLogo';
 import WEBBLogo from '@webb-dapp/apps/configs/logos/chains/WebbLogo';
 import EtherLogo from '@webb-dapp/apps/configs/logos/Eth';
-import { PolkaLogo } from '@webb-dapp/apps/configs/logos/PolkaLogo';
 import WebbWrappedLogo from '@webb-dapp/apps/configs/logos/WebbWrappedLogo';
 import React from 'react';
 
@@ -99,6 +99,7 @@ export const currenciesConfig: AppConfig['currencies'] = {
       [InternalChainId.OptimismTestnet, '0xbC6F6b680bc61e30dB47721c6D1c5cde19C1300d'],
       [InternalChainId.ArbitrumTestnet, '0xEBbc3452Cc911591e4F18f3b36727Df45d6bd1f9'],
       [InternalChainId.PolygonTestnet, '0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889'],
+      [InternalChainId.MoonbaseAlpha, '0xD909178CC99d318e4D46e7E66a972955859670E1'],
     ]),
   },
   [WebbCurrencyId.MATIC]: {
@@ -113,7 +114,7 @@ export const currenciesConfig: AppConfig['currencies'] = {
     addresses: new Map([[InternalChainId.PolygonTestnet, zeroAddress]]),
   },
   [WebbCurrencyId.webbWETH]: {
-    name: 'webbETH-test-1',
+    name: 'webbWETH',
     symbol: 'webbWETH',
     decimals: 18,
     color: '',
@@ -122,12 +123,14 @@ export const currenciesConfig: AppConfig['currencies'] = {
     role: CurrencyRole.Governable,
     icon: WebbWrappedLogo(EtherLogo()),
     addresses: new Map([
-      [InternalChainId.Ropsten, '0xb3532c9faae4a65e63c912734512b772a102e2e9'],
-      [InternalChainId.Rinkeby, '0xb3532c9faae4a65e63c912734512b772a102e2e9'],
-      [InternalChainId.Goerli, '0xb3532c9faae4a65e63c912734512b772a102e2e9'],
-      [InternalChainId.PolygonTestnet, '0xb3532c9faae4a65e63c912734512b772a102e2e9'],
-      [InternalChainId.OptimismTestnet, '0x04392b225e273266d867055fe7a075d488d8e05e'],
-      [InternalChainId.ArbitrumTestnet, '0xb30b0bf0cd3a73f97679c962424d4ef8dfe8e13d'],
+      [InternalChainId.Ropsten, '0x91aE682aaeFE8e3c5059b170570D6fa42435C141'],
+      [InternalChainId.Rinkeby, '0x4953110789D0cB6de126f4EA88890670ccfe6906'],
+      [InternalChainId.Goerli, '0x6447F077a6cD8dadB9D3daD9f6C4B5a06183b5d7'],
+      [InternalChainId.PolygonTestnet, '0x682FaA319Bf7baE7F0cb68435e857d22Bf976e17'],
+      [InternalChainId.OptimismTestnet, '0x9898b4968fDD84b3aB0E901296F54775bA2fa6b5'],
+      [InternalChainId.ArbitrumTestnet, '0x88b7cb281650e7b161640790515fafe362c255c6'],
+      [InternalChainId.Kovan, '0x91a9a1e76fa609F6ba8fCd718a60B030678765ad'],
+      [InternalChainId.MoonbaseAlpha, '0xb30b0bf0CD3a73F97679c962424d4EF8dfe8e13D'],
     ]),
   },
   [WebbCurrencyId.DEV]: {
@@ -140,8 +143,8 @@ export const currenciesConfig: AppConfig['currencies'] = {
     role: CurrencyRole.Wrappable,
     icon: React.createElement(GanacheLogo),
     addresses: new Map([
-      [InternalChainId.HermesLocalnet, '0x2946259E0334f33A064106302415aD3391BeD384'],
-      [InternalChainId.AthenaLocalnet, '0xDe09E74d4888Bc4e65F589e8c13Bce9F71DdF4c7'],
+      [InternalChainId.HermesLocalnet, '0xF2E246BB76DF876Cef8b38ae84130F4F55De395b'],
+      [InternalChainId.AthenaLocalnet, '0xF2E246BB76DF876Cef8b38ae84130F4F55De395b'],
       [InternalChainId.DemeterLocalnet, '0xF2E246BB76DF876Cef8b38ae84130F4F55De395b'],
     ]),
   },
@@ -155,9 +158,9 @@ export const currenciesConfig: AppConfig['currencies'] = {
     role: CurrencyRole.Governable,
     icon: WebbWrappedLogo(GanacheLogo()),
     addresses: new Map([
-      [InternalChainId.HermesLocalnet, '0x510C6297cC30A058F41eb4AF1BFC9953EaD8b577'],
-      [InternalChainId.AthenaLocalnet, '0xcbD945E77ADB65651F503723aC322591f3435cC5'],
-      [InternalChainId.DemeterLocalnet, '0x7758F98C1c487E5653795470eEab6C4698bE541b'],
+      [InternalChainId.HermesLocalnet, '0xd24260c102b5d128cbefa0f655e5be3c2370677c'],
+      [InternalChainId.AthenaLocalnet, '0xd24260c102b5d128cbefa0f655e5be3c2370677c'],
+      [InternalChainId.DemeterLocalnet, '0xd24260c102b5d128cbefa0f655e5be3c2370677c'],
     ]),
   },
   [WebbCurrencyId.TEST]: {
@@ -192,6 +195,17 @@ export const currenciesConfig: AppConfig['currencies'] = {
     role: CurrencyRole.Wrappable,
     icon: React.createElement(WEBBLogo),
     addresses: new Map([[InternalChainId.Polkadot, '0']]),
+  },
+  [WebbCurrencyId.moonDEV]: {
+    name: 'moonbase Dev',
+    symbol: 'moonDEV',
+    decimals: 12,
+    color: '',
+    id: WebbCurrencyId.moonDEV,
+    type: CurrencyType.NATIVE,
+    role: CurrencyRole.Wrappable,
+    icon: React.createElement(MoonbeamLogo),
+    addresses: new Map([[InternalChainId.MoonbaseAlpha, '0']]),
   },
 };
 

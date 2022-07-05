@@ -8,22 +8,28 @@ import { StatisticsOverview } from './StatisticsOverview';
 import { WithdrawalStatistics } from './WithdrawalStatistics';
 
 type StatisticsPageProps = {
-  view: string;
+  view: 'overview' | 'deposits' | 'withdrawals' | 'relayers' | 'dkg' | 'dkg-eggnet';
 };
 
 const PageStatistics: FC<StatisticsPageProps> = ({ view }) => {
-  if (view === 'overview') {
-    return <StatisticsOverview />;
-  } else if (view === 'deposits') {
-    return <DepositStatistics />;
-  } else if (view === 'withdrawals') {
-    return <WithdrawalStatistics />;
-  } else if (view === 'relayers') {
-    return <RelayersStatistics />;
-  } else if (view === 'dkg') {
-    return <DKGStatistics />;
-  } else {
-    return <StatisticsOverview />;
+  switch (view) {
+    case 'overview':
+      return <StatisticsOverview />;
+
+    case 'deposits':
+      return <DepositStatistics />;
+
+    case 'withdrawals':
+      return <WithdrawalStatistics />;
+
+    case 'relayers':
+      return <RelayersStatistics />;
+
+    case 'dkg':
+      return <DKGStatistics />;
+
+    default:
+      return <StatisticsOverview />;
   }
 };
 
