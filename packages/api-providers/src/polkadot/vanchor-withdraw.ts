@@ -7,7 +7,10 @@ import '@webb-tools/api-derive';
 import type { WebbPolkadot } from './webb-provider';
 
 import {
+  chainIdToRelayerName,
+  chainTypeIdToInternalId,
   fetchSubstrateVAnchorProvingKey,
+  parseChainIdType,
   RelayedChainInput,
   RelayedWithdrawResult,
   TransactionState,
@@ -42,8 +45,8 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
       throw WebbError.from(WebbErrorCodes.NoAccountAvailable);
     }
     const activeRelayer = this.inner.relayerManager.activeRelayer;
-    const activeRelayerAccount = activeRelayer?.account;
-
+    const activeRelayerAccount = activeRelayer?.beneficiary;
+    console.log(activeRelayer);
     if (activeRelayer && activeRelayerAccount === undefined) {
       // Fix the error code/message
       throw WebbError.from(WebbErrorCodes.RelayerUnsupportedMixer);
@@ -56,7 +59,7 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
     const inputNotes = await Promise.all(notes.map((note) => Note.deserialize(note)));
     // Calculated the input amount
     const inputAmounts: number = inputNotes.reduce((acc: number, { note }) => acc + Number(note.amount), 0);
-    // TODO: Fix the function to recive the denomination
+    // TODO: Fix the function to contribute the denomination in the calculation
     // Calculate the remainder amount
     const remainder = inputAmounts - Number(amount);
     // Ensure that remainder is more than 0
@@ -110,8 +113,8 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
     this.emit('stateChange', TransactionState.GeneratingZk);
 
     const extData = {
-      relayer: accountId,
-      recipient: relayerAccountId,
+      relayer: relayerAccountId,
+      recipient: accountId,
       fee: 0,
       extAmount: BigNumber.from(publicAmount),
       encryptedOutput1: u8aToHex(comEnc1),
@@ -136,6 +139,8 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
       publicAmount: String(publicAmount),
       output: [output1, output2],
     };
+    const destChainIdType = parseChainIdType(Number(inputNotes[0].note.targetChainId));
+    const destInternalId = chainTypeIdToInternalId(destChainIdType);
 
     const data: VAnchorProof = await pm.prove('vanchor', vanchorWithdrawSetup);
     const vanchorProofData = {
@@ -150,18 +155,18 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
     };
 
     if (activeRelayer) {
-      const relayedVAnchorWithdraw = await activeRelayer.initWithdraw('vanchor');
+      const relayedVAnchorWithdraw = await activeRelayer.initWithdraw('vAnchor');
+      const chainName = chainIdToRelayerName(destInternalId);
       const chainInfo: RelayedChainInput = {
         baseOn: 'substrate',
         contractAddress: '',
         endpoint: '',
-        // TODO change this from the config
-        name: 'localnode',
+        name: chainName,
       };
-      const relayedDepositTxPayload = relayedVAnchorWithdraw.generateWithdrawRequest<typeof chainInfo, 'vanchor'>(
+      const relayedDepositTxPayload = relayedVAnchorWithdraw.generateWithdrawRequest<typeof chainInfo, 'vAnchor'>(
         chainInfo,
         {
-          chain: 'localnode',
+          chain: chainName,
           id: Number(treeId),
           extData: {
             recipient: extData.recipient,

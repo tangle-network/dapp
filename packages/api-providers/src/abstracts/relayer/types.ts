@@ -208,7 +208,7 @@ export type MixerRelayTx = {
  * if it passed as zero nothing will happen unless a real value is passed thus a new note isn't generated
  * @param roots - roots bytes array
  **/
-type AnchorRelayedTransaction = {
+type AnchorRelayTransaction = {
   chain: string;
   id: string;
   extDataHash: string;
@@ -279,14 +279,14 @@ type VAnchorRelayTransaction = {
  **/
 export type RelayerSubstrateCommands = {
   mixer: MixerRelayTx;
-  vanchor: VAnchorRelayTransaction;
+  vAnchor: VAnchorRelayTransaction;
 };
 /**
  * Relayed transaction for EVM
  **/
 export type RelayerEVMCommands = {
-  anchor: AnchorRelayedTransaction;
-  vanchor: VAnchorRelayTransaction;
+  anchor: AnchorRelayTransaction;
+  vAnchor: VAnchorRelayTransaction;
 };
 export type EVMCMDKeys = keyof RelayerEVMCommands;
 export type SubstrateCMDKeys = keyof RelayerSubstrateCommands;
