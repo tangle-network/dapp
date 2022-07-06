@@ -5,9 +5,8 @@
 
 import type { WebbWeb3Provider } from './webb-provider';
 
-import { getLeafCount } from '@webb-dapp/api-providers/polkadot/mt-utils';
 import { CircomUtxo, Keypair, MerkleTree, Note, randomBN, Utxo } from '@webb-tools/sdk-core';
-import { BigNumber, ContractReceipt, ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 
 import { hexToU8a, u8aToHex } from '@polkadot/util';
 

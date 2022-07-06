@@ -87,6 +87,14 @@ export class Web3RelayerManager extends WebbRelayerManager {
         }
       }
 
+      if (query.contract && baseOn === 'evm' && chainId !== undefined) {
+        return (
+          capabilities.supportedChains['evm']
+            .get(chainId)
+            ?.contracts.findIndex((contract) => contract.contract === query.contract) ?? -1 > -1
+        );
+      }
+
       if (contractAddress && baseOn && chainId) {
         if (baseOn === 'evm') {
           return Boolean(
@@ -138,7 +146,7 @@ export class Web3RelayerManager extends WebbRelayerManager {
     return relayers;
   }
 
-  async getRelayersByNote(evmNote: Note) {
+  async getRelayersByNote(evmNote: Note, queryOverrides: RelayerQuery = {}) {
     const chainTypeId = Number(evmNote.note.targetChainId);
     const internalId = chainTypeIdToInternalId(parseChainIdType(chainTypeId));
 
@@ -149,6 +157,7 @@ export class Web3RelayerManager extends WebbRelayerManager {
         tokenSymbol: evmNote.note.tokenSymbol,
       },
       chainId: internalId,
+      ...queryOverrides,
     });
   }
 
