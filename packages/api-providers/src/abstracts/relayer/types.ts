@@ -234,13 +234,43 @@ type AnchorRelayTransaction = {
  * @param outputCommitments - Output commitments for the proof
  * @param extDataHash - External data hash for the proof external data
  * */
-type ProofData = {
+
+type EVMProofData = {
+  proof: string;
+  publicAmount: string;
+  roots: string;
+  inputNullifiers: string[];
+  outputCommitments: string[];
+  extDataHash: string;
+};
+
+type SubstrateProofData = {
   proof: Array<number>;
   publicAmount: Array<number>;
   roots: Array<number>[] | number[];
   inputNullifiers: Array<number>[];
   outputCommitments: Array<number>[];
   extDataHash: Array<number>;
+};
+type ProofData = SubstrateProofData | EVMProofData;
+
+/**
+ * External data for the VAnchor on any chain
+ *
+ * @param recipient -  Recipient identifier of the withdrawn funds
+ * @param relayer - Relayer identifier of the transaction
+ * @param extAmount - External amount being deposited or withdrawn withdrawn
+ * @param fee - Fee to pay the relayer
+ * @param encryptedOutput1 - First encrypted output commitment
+ * @param encryptedOutput2 - Second encrypted output commitment
+ * */
+type SubstrateExtData = {
+  recipient: string;
+  relayer: string;
+  extAmount: number | string;
+  fee: number;
+  encryptedOutput1: Array<number>;
+  encryptedOutput2: Array<number>;
 };
 
 /**
@@ -253,15 +283,16 @@ type ProofData = {
  * @param encryptedOutput1 - First encrypted output commitment
  * @param encryptedOutput2 - Second encrypted output commitment
  * */
-type ExtData = {
+type EVMExtData = {
   recipient: string;
   relayer: string;
-  extAmount: number;
+  extAmount: string;
   fee: number;
-  encryptedOutput1: Array<number>;
-  encryptedOutput2: Array<number>;
+  encryptedOutput1: string;
+  encryptedOutput2: string;
 };
 
+type ExtData = EVMExtData | SubstrateExtData;
 /**
  * Contains data that is relayed to the VAnchors
  * @param chain - One of the supported chains of this relayer

@@ -5,7 +5,7 @@
 
 import type { WebbWeb3Provider } from './webb-provider';
 
-import { CircomUtxo, Keypair, MerkleTree, Note, randomBN, Utxo } from '@webb-tools/sdk-core';
+import { CircomUtxo, Keypair, MerkleTree, Note, randomBN, toFixedHex, Utxo } from '@webb-tools/sdk-core';
 import { BigNumber, ethers } from 'ethers';
 
 import { hexToU8a, u8aToHex } from '@polkadot/util';
@@ -376,18 +376,18 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
             extData: {
               recipient: extData.recipient,
               relayer: extData.relayer,
-              extAmount: Number(extData.extAmount),
-              fee: Number(extData.fee),
-              encryptedOutput1: Array.from(hexToU8a(extData.encryptedOutput1)),
-              encryptedOutput2: Array.from(hexToU8a(extData.encryptedOutput2)),
+              extAmount: extData.extAmount.replace('-', '') as any,
+              fee: toFixedHex(extData.fee, 32) as any,
+              encryptedOutput1: extData.encryptedOutput1,
+              encryptedOutput2: extData.encryptedOutput2,
             },
             proofData: {
-              proof: Array.from(hexToU8a(publicInputs.proof)),
-              extDataHash: Array.from(hexToU8a(publicInputs.extDataHash)),
-              publicAmount: Array.from(hexToU8a(publicInputs.publicAmount)),
-              roots: Array.from(hexToU8a(publicInputs.roots)),
-              outputCommitments: publicInputs.outputCommitments.map((com) => Array.from(hexToU8a(com))),
-              inputNullifiers: publicInputs.inputNullifiers.map((com) => Array.from(hexToU8a(com))),
+              proof: publicInputs.proof,
+              extDataHash: publicInputs.extDataHash,
+              publicAmount: publicInputs.publicAmount,
+              roots: publicInputs.roots,
+              outputCommitments: publicInputs.outputCommitments,
+              inputNullifiers: publicInputs.inputNullifiers,
             },
           }
         );
