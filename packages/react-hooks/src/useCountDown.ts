@@ -2,8 +2,9 @@ import { useEffect, useState } from 'react';
 
 /**
  *
- * @param targetDate the target date to count down from
- * @returns an object contains `days`, `hours`, `minutes`, `seconds` and `isExpired` caculate from `targetDate`
+ * @param targetDate Represents the target date to count down from
+ * @returns an object containing `days`, `hours`, `minutes`, `seconds`, `isExpired` caculated from `targetDate`
+ * and `zeroPad` function to format the number
  */
 const useCountdown = (targetDate: number) => {
   const countDownDate = new Date(targetDate).getTime();
@@ -20,8 +21,8 @@ const useCountdown = (targetDate: number) => {
 
   /**
    *
-   * @param value the value to check for add leading `0`
-   * @returns the value with leading `0` if value less than `10`
+   * @param value Represents the value to check for add leading `0`
+   * @returns the value with leading `0` if value is less than `10`
    */
   const zeroPad = (value: number) => {
     return value < 10 ? '0' + value.toString() : value.toString();
@@ -32,8 +33,8 @@ const useCountdown = (targetDate: number) => {
 
 /**
  *
- * @param countDown the count down value to calculate time left
- * @returns an object contains `days`, `hours`, `minutes`, `seconds` and `isExpired` caculate from `targetDate`
+ * @param countDown Represents the count down value to calculate time left
+ * @returns an object containing `days`, `hours`, `minutes`, `seconds` and `isExpired` caculated from `targetDate`
  */
 const getReturnValues = (countDown: number) => {
   const days = Math.floor(countDown / (1000 * 60 * 60 * 24));
