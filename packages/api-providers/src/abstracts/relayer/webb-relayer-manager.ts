@@ -47,6 +47,6 @@ export abstract class WebbRelayerManager {
    *  Accepts a 'RelayerQuery' object with optional, indexible fields.
    **/
   abstract getRelayers(query: RelayerQuery): WebbRelayer[];
-  abstract getRelayersByNote(note: Note, queryOverrides?: RelayerQuery): Promise<WebbRelayer[]>;
+  abstract getRelayersByNote(note: Note): Promise<WebbRelayer[]>;
   abstract getRelayersByChainAndAddress(chainId: InternalChainId, address: string): Promise<WebbRelayer[]>;
 }

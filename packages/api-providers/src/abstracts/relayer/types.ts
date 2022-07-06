@@ -39,7 +39,7 @@ export type Capabilities = {
  * @param withdrawFeePercentage - Relayer fee percentage used to estimate transaction costs
  * @param linkedAnchor - Linked anchors that a relayer is supporting
  **/
-type ContractName = 'Anchor' | 'VAnchor';
+export type ContractName = 'Anchor' | 'VAnchor';
 export interface Contract {
   contract: ContractName;
   address: string;
