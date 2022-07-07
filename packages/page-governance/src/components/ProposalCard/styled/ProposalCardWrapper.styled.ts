@@ -14,6 +14,12 @@ export const ProposalCardWrapper = styled.div`
   justify-content: flex-end;
   align-items: flex-start;
   border: 1px solid ${({ theme }) => theme.borderColor};
+  cursor: pointer;
+  transition: transform 100ms ease-in-out;
+
+  :hover {
+    transform: scale(1.01);
+  }
 
   ${above.md(css`
     padding: 24px;
