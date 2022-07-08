@@ -80,13 +80,10 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
       const sizes = await PolkadotMixerDeposit.getSizes(this.inner);
       const treeId = sizes.find((s) => s.amount === Number(amount))?.treeId!;
 
-      console.log('Tree Id ', treeId);
       const leaves = await this.fetchTreeLeaves(treeId);
       const leaf = u8aToHex(noteParsed.getLeaf());
       const leafIndex = leaves.findIndex((l) => u8aToHex(l) === leaf);
 
-      console.log(`leaf ${leaf} has index `, leafIndex);
-      console.log(leaves.map((i) => u8aToHex(i)));
       const activeRelayer = this.inner.relayerManager.activeRelayer;
       const worker = this.inner.wasmFactory('wasm-utils');
       const pm = new ArkworksProvingManager(worker);
