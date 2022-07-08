@@ -5,11 +5,13 @@ import {
   randGitCommitMessage,
   randNumber,
   randPastDate,
+  randProductDescription,
   randSoonDate,
 } from '@ngneat/falso';
 import { useCallback, useMemo, useState } from 'react';
 
 import { ProposalStatus } from '../types';
+import { useSeedProposals } from '../useSeedProposals';
 
 export interface IProposal {
   author: string;
@@ -19,6 +21,7 @@ export interface IProposal {
   status: ProposalStatus;
   endTime: number;
   totalVotes: number;
+  description?: string;
 }
 
 export interface IProposalResponse {
@@ -34,33 +37,8 @@ export function useSubstrateDemocracy() {
 
   /** Seeding data */
   const deplayTimeMs = useMemo(() => 1000, []);
-  const totalItems = useMemo(() => randNumber({ min: 20, max: 50 }), []);
-  const seededData = useMemo(
-    () =>
-      Array(totalItems)
-        .fill(null)
-        .map((_, idx) => {
-          const dateMin = randPastDate();
-          const dateMax = randSoonDate({ days: 10 });
-          const endTime = randBetweenDate({ from: dateMin, to: dateMax }).getTime();
-
-          const status =
-            endTime > Date.now()
-              ? ('active' as const)
-              : ['executed' as const, 'defeated' as const][randNumber({ min: 0, max: 1 })];
-
-          return {
-            address: randEthereumAddress(),
-            author: randBrand({ length: 5 })[0],
-            endTime,
-            status,
-            title: randGitCommitMessage({ length: randNumber({ min: 5, max: 10 }) })[0],
-            totalVotes: randNumber({ min: 100, max: 500 }),
-            voteId: idx + 1,
-          } as IProposal;
-        }),
-    [totalItems]
-  );
+  const seededData = useSeedProposals();
+  const totalItems = useMemo(() => seededData.length, [seededData]);
   const seededActiveData = useMemo(() => {
     return seededData.filter((proposal) => proposal.status === 'active');
   }, [seededData]);
