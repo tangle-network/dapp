@@ -1,10 +1,11 @@
 import { Icon, Typography } from '@material-ui/core';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
-import { useEffect } from 'react';
+import { Fragment, useEffect, useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 import { ProposalCard } from '../components';
 import { IProposal } from '../SubstrateDemocracy';
+import { CastVote } from './CastVote';
 import { BackButton, DetailLoader, HeadInfoWrapper, ProposalDetailWrapper } from './styled';
 import { useProposalDetail } from './useProposalDetail';
 
@@ -13,7 +14,7 @@ export const ProposalDetail = () => {
   const location = useLocation();
 
   const currentProposal = location.state as IProposal;
-  const { fetchVoters, isLoading, votersResponse } = useProposalDetail(currentProposal);
+  const { fetchVoters, isLoading, noVotesAmount, votersResponse, yesVotesAmount } = useProposalDetail(currentProposal);
 
   useEffect(() => {
     fetchVoters();
@@ -25,18 +26,25 @@ export const ProposalDetail = () => {
       {isLoading ? (
         <DetailLoader src={pallet.type === 'light' ? '/webb-loader.gif' : '/webb-loader-dark.gif'} alt='Webb loader' />
       ) : (
-        <HeadInfoWrapper>
-          <Link to='/governance/substrate-democracy'>
-            <BackButton startIcon={<Icon>arrow_back</Icon>}>All proposals</BackButton>
-          </Link>
-          {!isLoading && votersResponse?.data && currentProposal ? (
-            <ProposalCard {...currentProposal} isAlignLeftAll={true} />
-          ) : (
-            <Typography variant='h5' style={{ textTransform: 'capitalize', fontWeight: 700 }}>
-              Not found proposal
-            </Typography>
+        <Fragment>
+          <HeadInfoWrapper>
+            <Link to='/governance/substrate-democracy'>
+              <BackButton startIcon={<Icon>arrow_back</Icon>}>All proposals</BackButton>
+            </Link>
+            {!isLoading && votersResponse?.data && currentProposal ? (
+              <ProposalCard {...currentProposal} isAlignLeftAll={true} />
+            ) : (
+              <Typography variant='h5' style={{ textTransform: 'capitalize', fontWeight: 700 }}>
+                Not found proposal
+              </Typography>
+            )}
+          </HeadInfoWrapper>
+          {!isLoading && votersResponse?.data && currentProposal && (
+            <Fragment>
+              <CastVote yesVotesAmount={yesVotesAmount} noVotesAMount={noVotesAmount} />
+            </Fragment>
           )}
-        </HeadInfoWrapper>
+        </Fragment>
       )}
     </ProposalDetailWrapper>
   );

@@ -1,7 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 
 import { IProposal } from '../SubstrateDemocracy';
-import { useSeedProposals } from '../useSeedProposals';
 import { useSeedVoters } from '../useSeedVoters';
 
 export interface IProposalVoter {
@@ -27,6 +26,26 @@ export function useProposalDetail(proposal: IProposal) {
 
   /** Seeding voters data */
   const deplayTimeMs = useMemo(() => 1000, []);
+  const yesVotesAmount = useMemo(() => {
+    if (!votersResponse) {
+      return 0;
+    }
+
+    return votersResponse.data.reduce((acc, cur) => {
+      if (cur.vote) {
+        acc += 1;
+      }
+      return acc;
+    }, 0);
+  }, [votersResponse]);
+  const noVotesAmount = useMemo(() => {
+    if (!votersResponse) {
+      return 0;
+    }
+
+    return votersResponse.data.length - yesVotesAmount;
+  }, [yesVotesAmount, votersResponse]);
+
   const fetchVoters = useCallback(
     (offset: number = 0, limit: number = 5) => {
       if (!voteId) {
@@ -54,6 +73,8 @@ export function useProposalDetail(proposal: IProposal) {
 
   return {
     votersResponse,
+    yesVotesAmount,
+    noVotesAmount,
     fetchVoters,
     isLoading,
   };
