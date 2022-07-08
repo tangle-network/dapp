@@ -1,4 +1,4 @@
-import { randEthereumAddress, randNumber } from '@ngneat/falso';
+import { randEthereumAddress, randFloat, randNumber } from '@ngneat/falso';
 import { shuffle } from 'lodash';
 import { useCallback, useMemo } from 'react';
 
@@ -22,7 +22,7 @@ export function useSeedVoters() {
       }
 
       const totalVotes = matchedProposal.totalVotes;
-      const yesVotesAmount = Math.floor(totalVotes * randNumber({ min: 0.3, max: 0.7, fraction: 2 }));
+      const yesVotesAmount = Math.floor(totalVotes * randFloat({ min: 0.3, max: 0.7, fraction: 2 }));
       const noVotesAmount = totalVotes - yesVotesAmount;
 
       const yesVoters = Array(yesVotesAmount)

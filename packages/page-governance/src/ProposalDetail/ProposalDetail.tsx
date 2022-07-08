@@ -8,6 +8,7 @@ import { IProposal } from '../SubstrateDemocracy';
 import { CastVote } from './CastVote';
 import { BackButton, DetailLoader, HeadInfoWrapper, ProposalDetailWrapper } from './styled';
 import { useProposalDetail } from './useProposalDetail';
+import { VoteResult } from './VoteResult';
 
 export const ProposalDetail = () => {
   const pallet = useColorPallet();
@@ -16,13 +17,28 @@ export const ProposalDetail = () => {
   const currentProposal = location.state as IProposal;
   const { fetchVoters, isLoading, noVotesAmount, votersResponse, yesVotesAmount } = useProposalDetail(currentProposal);
 
+  const yesPercent = useMemo(() => {
+    if (!votersResponse) {
+      return 0;
+    }
+
+    return Math.round((yesVotesAmount / votersResponse.data.length) * 100);
+  }, [votersResponse, yesVotesAmount]);
+
+  const noPercent = useMemo(() => {
+    if (!votersResponse) {
+      return 0;
+    }
+
+    return 100 - yesPercent;
+  }, [votersResponse, yesPercent]);
+
   useEffect(() => {
     fetchVoters();
   }, [fetchVoters]);
 
   return (
     <ProposalDetailWrapper>
-      {/* {isLoading ? <div>Loading...</div> : !response ? <div>Not found!</div> : <pre>{JSON.stringify(response)}</pre>} */}
       {isLoading ? (
         <DetailLoader src={pallet.type === 'light' ? '/webb-loader.gif' : '/webb-loader-dark.gif'} alt='Webb loader' />
       ) : (
@@ -41,7 +57,11 @@ export const ProposalDetail = () => {
           </HeadInfoWrapper>
           {!isLoading && votersResponse?.data && currentProposal && (
             <Fragment>
-              <CastVote yesVotesAmount={yesVotesAmount} noVotesAMount={noVotesAmount} />
+              {currentProposal.status === 'active' ? (
+                <CastVote yesVotesAmount={yesVotesAmount} noVotesAMount={noVotesAmount} />
+              ) : (
+                <VoteResult yesPercent={yesPercent} noPercent={noPercent} />
+              )}
             </Fragment>
           )}
         </Fragment>
