@@ -27,20 +27,12 @@ import React, { useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
 const WithdrawWrapper = styled.div<{ wallet: WalletConfig | undefined }>`
-  ${({ theme, wallet }) => {
-    if (wallet) {
-      return css``;
-    } else {
-      return css`
-        padding: 25px 35px;
-        background: ${theme.layer2Background};
-        border: 1px solid ${theme.borderColor};
-        border-radius: 0 0 13px 13px;
-      `;
-    }
-  }}
+  border-radius: 8px;
   background: ${({ theme }) => theme.layer1Background};
-  border-radius: 10px;
+
+  ${above.xs(css`
+    border-radius: 16px;
+  `)}
 
   .titles-and-information {
     display: flex;
@@ -49,32 +41,12 @@ const WithdrawWrapper = styled.div<{ wallet: WalletConfig | undefined }>`
   }
 `;
 
-const RelayerSettings = styled.div`
-  box-sizing: border-box;
-
-  .wallet-logo-wrapper {
-    width: 20px;
-    height: 20px;
-    background: transparent;
-  }
-
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  padding: 5px;
-  height: 45px;
-  border-radius: 12px;
-`;
-
 const WithdrawNoteSection = styled.div`
   padding: 12px 14px;
   padding-bottom: 25px;
-  background: ${({ theme }) => theme.layer1Background};
-  border-radius: 8px;
 
   ${above.xs`
     padding: 25px 35px;
-    border-radius: 16px;
   `}
 
   .note-input {
