@@ -32,7 +32,7 @@ export const ProposalCard: React.FC<ProposalCardProps> = ({
   }, []);
 
   return (
-    <ProposalCardWrapper>
+    <ProposalCardWrapper to={`proposals/${voteId}`}>
       <TextWrapper>
         <Typography variant='caption' component='p'>
           By {author} ~ x{addressFormatter(address)}

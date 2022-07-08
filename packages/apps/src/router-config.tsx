@@ -122,10 +122,19 @@ export const config: RouterConfigData[] = [
       {
         element: (
           <CSuspense>
+            <PageGovernance view='proposal-detail' />
+          </CSuspense>
+        ),
+        path: 'governance/substrate-democracy/proposals/:voteId',
+        title: 'Substrate Democracy',
+      },
+      {
+        element: (
+          <CSuspense>
             <PageGovernance view='substrate-democracy' />
           </CSuspense>
         ),
-        path: 'governance/substrate-democracy',
+        path: 'governance/substrate-democracy/*',
         title: 'Substrate Democracy',
       },
       {

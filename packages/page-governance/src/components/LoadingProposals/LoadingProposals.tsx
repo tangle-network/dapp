@@ -15,7 +15,7 @@ export const LoadingProposals = () => {
       {Array(totalItems)
         .fill(0)
         .map((_, idx) => (
-          <rect x='16' y={14 + idx * 120} rx='12' ry='12' width='90%' height={loadingItemHeight} />
+          <rect key={idx} x='16' y={14 + idx * 120} rx='12' ry='12' width='90%' height={loadingItemHeight} />
         ))}
     </ContentLoader>
   );

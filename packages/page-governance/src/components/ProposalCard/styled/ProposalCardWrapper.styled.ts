@@ -1,7 +1,8 @@
 import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
+import { Link, LinkProps } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 
-export const ProposalCardWrapper = styled.div`
+export const ProposalCardWrapper = styled(Link)<LinkProps>`
   min-height: 72px;
   max-width: 980px;
   margin: 0 auto;
