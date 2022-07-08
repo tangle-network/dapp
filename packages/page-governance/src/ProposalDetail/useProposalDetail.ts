@@ -1,5 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 
+import { IProposal } from '../SubstrateDemocracy';
+import { useSeedProposals } from '../useSeedProposals';
 import { useSeedVoters } from '../useSeedVoters';
 
 export interface IProposalVoter {
@@ -16,8 +18,9 @@ export interface IProposalDetail {
   total: number;
 }
 
-export function useProposalDetail(voteId: string | undefined) {
-  const [response, setResponse] = useState<IProposalDetail | null>(null);
+export function useProposalDetail(proposal: IProposal) {
+  const { voteId } = proposal;
+  const [votersResponse, setVotersResponse] = useState<IProposalDetail | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const { getVoters } = useSeedVoters();
@@ -37,7 +40,7 @@ export function useProposalDetail(voteId: string | undefined) {
 
       setIsLoading(true);
       setTimeout(() => {
-        setResponse({
+        setVotersResponse({
           data: voters.slice(offset, offset + limit),
           limit,
           offset,
@@ -50,7 +53,7 @@ export function useProposalDetail(voteId: string | undefined) {
   );
 
   return {
-    response,
+    votersResponse,
     fetchVoters,
     isLoading,
   };

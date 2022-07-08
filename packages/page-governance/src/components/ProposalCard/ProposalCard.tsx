@@ -1,6 +1,7 @@
+import { Typography } from '@material-ui/core';
 import { useCountdown } from '@webb-dapp/react-hooks';
 import { IProposal } from 'page-governance/src/SubstrateDemocracy/useSubstrateDemocracy';
-import React from 'react';
+import React, { useCallback } from 'react';
 
 import { CardTitle } from '../CardTitle';
 import { ChipStatus } from '../ChipStatus';
@@ -8,19 +9,12 @@ import { BadgesGroup, BadgeWrapper, ProposalCardWrapper } from './styled';
 
 export interface ProposalCardProps extends IProposal {}
 
-export const ProposalCard: React.FC<ProposalCardProps> = ({
-  address,
-  author,
-  endTime,
-  status,
-  title,
-  totalVotes,
-  voteId,
-}) => {
+export const ProposalCard: React.FC<ProposalCardProps> = (props) => {
+  const { address, author, endTime, status, title, totalVotes, voteId } = props;
   const { days, hours, isExpired, minutes, seconds, zeroPad } = useCountdown(endTime);
 
   return (
-    <ProposalCardWrapper to={`proposals/${voteId}`}>
+    <ProposalCardWrapper to={`proposals/${voteId}`} state={props}>
       <CardTitle address={address} author={author} title={title} voteId={voteId} />
       <BadgesGroup>
         {!isExpired && (
