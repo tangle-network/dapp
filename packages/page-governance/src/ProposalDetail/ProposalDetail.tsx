@@ -6,6 +6,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { ProposalCard } from '../components';
 import { IProposal } from '../SubstrateDemocracy';
 import { CastVote } from './CastVote';
+import { Description } from './Description';
 import { BackButton, DetailLoader, HeadInfoWrapper, ProposalDetailWrapper } from './styled';
 import { useProposalDetail } from './useProposalDetail';
 import { VoteResult } from './VoteResult';
@@ -62,6 +63,7 @@ export const ProposalDetail = () => {
               ) : (
                 <VoteResult yesPercent={yesPercent} noPercent={noPercent} />
               )}
+              {currentProposal.description && <Description description={currentProposal.description} />}
             </Fragment>
           )}
         </Fragment>
