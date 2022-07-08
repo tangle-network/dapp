@@ -58,7 +58,7 @@ export const currenciesConfig: AppConfig['currencies'] = {
   [WebbCurrencyId.WEBB]: {
     name: 'WEBB',
     symbol: 'WEBB',
-    decimals: 18,
+    decimals: 12,
     color: '',
     id: WebbCurrencyId.WEBB,
     type: CurrencyType.NATIVE,
@@ -113,12 +113,12 @@ export const currenciesConfig: AppConfig['currencies'] = {
     icon: React.createElement(PolygonLogo),
     addresses: new Map([[InternalChainId.PolygonTestnet, zeroAddress]]),
   },
-  [WebbCurrencyId.webbWETH]: {
-    name: 'webbWETH',
-    symbol: 'webbWETH',
+  [WebbCurrencyId.webbETH]: {
+    name: 'webbETH',
+    symbol: 'webbETH',
     decimals: 18,
     color: '',
-    id: WebbCurrencyId.webbWETH,
+    id: WebbCurrencyId.webbETH,
     type: CurrencyType.ERC20,
     role: CurrencyRole.Governable,
     icon: WebbWrappedLogo(EtherLogo()),

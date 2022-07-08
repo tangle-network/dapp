@@ -1,26 +1,20 @@
-import { ButtonBase, Checkbox, FormControlLabel, Icon, IconButton, Tooltip, Typography } from '@material-ui/core';
+import { ButtonBase, Checkbox, FormControlLabel, Icon, Tooltip, Typography } from '@material-ui/core';
 import { ChainTypeId, DepositPayload, MixerSize } from '@webb-dapp/api-providers';
 import { DepositAmountDecal } from '@webb-dapp/bridge/components/DepositConfirm/DepositAmountDecal';
 import { DepositApi } from '@webb-dapp/mixer/hooks/deposit/useDeposit';
+import { ModalNoteDisplay } from '@webb-dapp/react-components/NoteDisplay/ModalNoteDisplay';
 import { useWebContext } from '@webb-dapp/react-environment/webb-context';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
-import { useCopyable } from '@webb-dapp/react-hooks/useCopyable';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { CloseButton } from '@webb-dapp/ui-components/Buttons/CloseButton';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
-import { notificationApi } from '@webb-dapp/ui-components/notification';
 import { Spinner } from '@webb-dapp/ui-components/Spinner/Spinner';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 import { downloadString } from '@webb-dapp/utils';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
-
-const DismissWrapper = styled.button``;
-const Dismiss = () => {
-  return <DismissWrapper>dismiss</DismissWrapper>;
-};
 
 const DepositInfoWrapper = styled.div`
   padding: 1rem 2rem;
@@ -55,24 +49,6 @@ type DepositInfoProps = {
   mixerSize: MixerSize | undefined;
 };
 
-const GeneratedNote = styled.div`
-  border-radius: 10px;
-  padding: 0.7rem;
-  border: 1px solid #ebeefd;
-  word-break: break-all;
-  position: relative;
-  min-height: 120px;
-  color: ${({ theme }) => theme.primaryText};
-
-  .copy-button {
-    display: block;
-  }
-
-  .download-button {
-    display: block;
-  }
-`;
-
 const CloseDepositModal = styled.button`
   &&& {
     position: absolute;
@@ -99,11 +75,6 @@ const Loading = styled.div`
   }
 `;
 
-const Actions = styled.div`
-  display: flex;
-  justify-content: flex-end;
-`;
-
 export const DepositConfirm: React.FC<DepositInfoProps> = ({ mixerSize, onClose, onSuccess, open, provider }) => {
   const palette = useColorPallet();
   const [depositPayload, setNote] = useState<DepositPayload | undefined>(undefined);
@@ -119,18 +90,6 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({ mixerSize, onClose,
     }
     downloadString(note, note.slice(-note.length - 10) + '.txt');
   }, [note]);
-
-  const { copy, isCopied } = useCopyable();
-  const handleCopy = useCallback((): void => {
-    copy(note ?? '');
-
-    notificationApi.addToQueue({
-      secondaryMessage: 'Deposit note is copied to clipboard',
-      message: 'Copied  to clipboard',
-      variant: 'success',
-      Icon: <Icon>content_copy</Icon>,
-    });
-  }, [note, copy]);
 
   useEffect(() => {
     if (!mixerSize || !activeChain) {
@@ -195,25 +154,7 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({ mixerSize, onClose,
 
         <SpaceBox height={16} />
 
-        {loading ? null : (
-          <>
-            <GeneratedNote>
-              {note}
-              <Actions>
-                <Tooltip title={'Download Note'}>
-                  <IconButton className={'download-button'} onClick={downloadNote}>
-                    <Icon>download</Icon>
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title={isCopied ? `Copied` : `Copy to clipboard`}>
-                  <IconButton onClick={handleCopy} {...({ className: 'copy-buton' } as any)}>
-                    <Icon>content_copy</Icon>
-                  </IconButton>
-                </Tooltip>
-              </Actions>
-            </GeneratedNote>
-          </>
-        )}
+        {loading ? null : <ModalNoteDisplay download={downloadNote} note={note} />}
 
         <SpaceBox height={8} />
 

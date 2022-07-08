@@ -128,8 +128,8 @@ const bridgeConfigByAsset: AppConfig['bridgeByAsset'] = {
 };
 const currenciesConfig: AppConfig['currencies'] = {
   [WebbCurrencyId.WEBB]: {
-    // IS THIS AN EVM CHAIN?
     addresses: new Map([[InternalChainId.ProtocolSubstrateStandalone, ZERO]]),
+    decimals: 12,
     color: '',
     icon: undefined,
     id: WebbCurrencyId.WEBB,
@@ -139,6 +139,7 @@ const currenciesConfig: AppConfig['currencies'] = {
     type: CurrencyType.ORML,
   },
   [WebbCurrencyId.DEV]: {
+    decimals: 18,
     addresses: new Map([
       [InternalChainId.HermesLocalnet, '0x2946259E0334f33A064106302415aD3391BeD384'],
       [InternalChainId.AthenaLocalnet, '0xDe09E74d4888Bc4e65F589e8c13Bce9F71DdF4c7'],
@@ -153,6 +154,7 @@ const currenciesConfig: AppConfig['currencies'] = {
     type: CurrencyType.ERC20,
   },
   [WebbCurrencyId.webbDEV]: {
+    decimals: 18,
     addresses: new Map([
       [InternalChainId.HermesLocalnet, '0x510C6297cC30A058F41eb4AF1BFC9953EaD8b577'],
       [InternalChainId.AthenaLocalnet, '0xcbD945E77ADB65651F503723aC322591f3435cC5'],
@@ -167,6 +169,7 @@ const currenciesConfig: AppConfig['currencies'] = {
     type: CurrencyType.ERC20,
   },
   [WebbCurrencyId.ETH]: {
+    decimals: 18,
     addresses: new Map([
       [InternalChainId.HermesLocalnet, zeroAddress],
       [InternalChainId.AthenaLocalnet, zeroAddress],

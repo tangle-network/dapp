@@ -6,13 +6,7 @@ import '@webb-tools/api-derive';
 
 import type { WebbPolkadot } from './webb-provider';
 
-import {
-  currencyToUnitI128,
-  fetchSubstrateVAnchorProvingKey,
-  TransactionState,
-  WebbError,
-  WebbErrorCodes,
-} from '@webb-dapp/api-providers';
+import { fetchSubstrateVAnchorProvingKey, TransactionState, WebbError, WebbErrorCodes } from '@webb-dapp/api-providers';
 import { getLeafCount, getLeafIndex, getLeaves, rootOfLeaves } from '@webb-dapp/api-providers/polkadot/mt-utils';
 import { ArkworksProvingManager, Note, ProvingManagerSetupInput, Utxo } from '@webb-tools/sdk-core';
 import { VAnchorProof } from '@webb-tools/sdk-core/proving/types';
@@ -28,7 +22,7 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
   /**
    * notes - Withdraw notes that the use had already deposited , the notes should have the right index
    * recipient - Recipient account
-   * amountUnit - amount to withdraw should be less or equal to the deposited notes amount
+   * amount - amount to withdraw in bnUnits (i.e. WEI instead of ETH)
    * */
   async withdraw(notes: string[], recipient: string, amount: string): Promise<VAnchorWithdrawResult> {
     // TODO :Generate random secrets which can be supplied later by the user
@@ -46,12 +40,15 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
     // Notes deserialization
     const inputNotes = await Promise.all(notes.map((note) => Note.deserialize(note)));
     // Calculated the input amount
-    const inputAmounts: number = inputNotes.reduce((acc: number, { note }) => acc + Number(note.amount), 0);
+    const inputAmount: BigNumber = inputNotes.reduce(
+      (acc: BigNumber, { note }) => acc.add(BigNumber.from(note.amount)),
+      BigNumber.from(0)
+    );
     // TODO: Fix the function to recive the denomination
     // Calculate the remainder amount
-    const remainder = inputAmounts - Number(amount);
+    const remainder = inputAmount.sub(BigNumber.from(amount));
     // Ensure that remainder is more than 0
-    if (remainder < 0) {
+    if (remainder.lt(0)) {
       this.emit('stateChange', TransactionState.Failed);
       this.emit('stateChange', TransactionState.Ideal);
       throw WebbError.from(WebbErrorCodes.AmountToWithdrawExceedsTheDepositedAmount);
@@ -64,7 +61,7 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
     const targetChainId = inputNotes[0].note.targetChainId;
     const treeId = inputNotes[0].note.sourceIdentifyingData;
     const output1 = await Utxo.generateUtxo({
-      amount: String(remainder),
+      amount: remainder.toString(),
       chainId: targetChainId,
       backend: 'Arkworks',
       curve: 'Bn254',

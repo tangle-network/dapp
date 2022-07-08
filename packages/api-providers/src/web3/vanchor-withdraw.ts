@@ -146,7 +146,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
     this.emit('stateChange', TransactionState.FetchingLeaves);
     for (const note of notes) {
       const parsedNote = (await Note.deserialize(note)).note;
-      sumInputNotes = ethers.utils.parseUnits(parsedNote.amount, parsedNote.denomination).add(sumInputNotes);
+      sumInputNotes = BigNumber.from(parsedNote.amount).add(sumInputNotes);
 
       // fetch leaves if we don't have them
       if (leavesMap[parsedNote.sourceChainId] === undefined) {
@@ -276,7 +276,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
     const keypair = new Keypair(storedPrivateKey.keypair);
 
     // Create the output UTXOs
-    const changeAmount = sumInputNotes.sub(ethers.utils.parseEther(amount));
+    const changeAmount = sumInputNotes.sub(amount);
     const changeUtxo = await CircomUtxo.generateUtxo({
       curve: 'Bn254',
       backend: 'Circom',

@@ -17,7 +17,7 @@ export enum WebbCurrencyId {
   SDN,
   WETH,
   MATIC,
-  webbWETH,
+  webbETH,
   DEV,
   webbDEV,
   EGG,
@@ -45,8 +45,8 @@ export function webbCurrencyIdToString(c: WebbCurrencyId): string {
       return 'WETH';
     case WebbCurrencyId.MATIC:
       return 'MATIC';
-    case WebbCurrencyId.webbWETH:
-      return 'webbWETH';
+    case WebbCurrencyId.webbETH:
+      return 'webbETH';
     case WebbCurrencyId.DEV:
       return 'DEV';
     case WebbCurrencyId.webbDEV:
@@ -82,8 +82,8 @@ export function webbCurrencyIdFromString(c: string): WebbCurrencyId {
       return WebbCurrencyId.WETH;
     case 'MATIC':
       return WebbCurrencyId.MATIC;
-    case 'webbWETH':
-      return WebbCurrencyId.webbWETH;
+    case 'webbETH':
+      return WebbCurrencyId.webbETH;
     case 'DEV':
       return WebbCurrencyId.DEV;
     case 'webbDEV':

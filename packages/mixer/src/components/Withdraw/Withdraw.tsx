@@ -216,7 +216,8 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
           <div className='information-item'>
             <p className='title'>Deposit Amount</p>
             <p className='value'>
-              {depositNote.note.amount} {depositNote.note.tokenSymbol}
+              {ethers.utils.formatUnits(depositNote.note.amount, depositNote.note.denomination)}{' '}
+              {depositNote.note.tokenSymbol}
             </p>
           </div>
           <div className='information-item'>
@@ -229,7 +230,8 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
           <div className='total-amount'>
             <p className='title'>Total Amount</p>
             <p className='value'>
-              {Number(depositNote.note.amount) - Number(fees)} {depositNote.note.tokenSymbol}
+              {Number(ethers.utils.formatUnits(depositNote.note.amount, depositNote.note.denomination)) - Number(fees)}{' '}
+              {depositNote.note.tokenSymbol}
             </p>
           </div>
           <SpaceBox height={8} />
@@ -264,7 +266,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
           <WithdrawSuccessModal
             receipt={receipt}
             recipient={recipient}
-            note={depositNote.note}
+            inputNote={depositNote.note}
             relayer={relayersState.activeRelayer}
             exit={() => {
               setNote('');

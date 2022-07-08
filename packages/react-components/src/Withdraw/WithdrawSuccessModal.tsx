@@ -1,4 +1,4 @@
-import { parseUnits } from '@ethersproject/units';
+import { formatUnits } from '@ethersproject/units';
 import { Button, Icon, Link, Typography } from '@material-ui/core';
 import {
   ActiveWebbRelayer,
@@ -7,18 +7,21 @@ import {
   parseChainIdType,
 } from '@webb-dapp/api-providers';
 import { chainsConfig } from '@webb-dapp/apps/configs';
+import { ModalNoteDisplay } from '@webb-dapp/react-components/NoteDisplay/ModalNoteDisplay';
 import { SpaceBox } from '@webb-dapp/ui-components/Box';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
+import { downloadString } from '@webb-dapp/utils/download';
 import { LoggerService } from '@webb-tools/app-util';
-import { JsNote as DepositNote } from '@webb-tools/wasm-utils';
-import { ethers } from 'ethers';
+import { JsNote } from '@webb-tools/wasm-utils';
+import { BigNumber, ethers } from 'ethers';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 const logger = LoggerService.get('Withdraw-Modal');
 
 type WithdrawingModalProps = {
-  note: DepositNote;
+  inputNote: JsNote;
+  changeNote?: JsNote;
   recipient: string;
   receipt: string;
   relayer: ActiveWebbRelayer | null;
@@ -124,7 +127,14 @@ const InfoItem = styled.div`
   color: ${({ theme }) => (theme.type === 'dark' ? theme.accentColor : '#000000')};
 `;
 
-export const WithdrawSuccessModal: React.FC<WithdrawingModalProps> = ({ exit, note, receipt, recipient, relayer }) => {
+export const WithdrawSuccessModal: React.FC<WithdrawingModalProps> = ({
+  changeNote,
+  exit,
+  inputNote,
+  receipt,
+  recipient,
+  relayer,
+}) => {
   const transactionString = (hexString: string) => {
     return `${hexString.slice(0, 6)}...${hexString.slice(hexString.length - 4, hexString.length)}`;
   };
@@ -132,9 +142,9 @@ export const WithdrawSuccessModal: React.FC<WithdrawingModalProps> = ({ exit, no
   const getBlockExplorerTx = (txHash: string): string => {
     let chainId: InternalChainId;
     try {
-      chainId = chainTypeIdToInternalId(parseChainIdType(Number(note.targetChainId)));
+      chainId = chainTypeIdToInternalId(parseChainIdType(Number(inputNote.targetChainId)));
     } catch (e) {
-      chainId = Number(note.targetChainId);
+      chainId = Number(inputNote.targetChainId);
     }
     const url = chainsConfig[chainId]?.blockExplorerStub
       ? `${chainsConfig[chainId].blockExplorerStub}/tx/${txHash}`
@@ -145,9 +155,9 @@ export const WithdrawSuccessModal: React.FC<WithdrawingModalProps> = ({ exit, no
   const getBlockExplorerAddress = (address: string): string => {
     let chainId: InternalChainId;
     try {
-      chainId = chainTypeIdToInternalId(parseChainIdType(Number(note.targetChainId)));
+      chainId = chainTypeIdToInternalId(parseChainIdType(Number(inputNote.targetChainId)));
     } catch (e) {
-      chainId = Number(note.targetChainId);
+      chainId = Number(inputNote.targetChainId);
     }
     const url = chainsConfig[chainId]?.blockExplorerStub
       ? `${chainsConfig[chainId].blockExplorerStub}/address/${address}`
@@ -160,15 +170,17 @@ export const WithdrawSuccessModal: React.FC<WithdrawingModalProps> = ({ exit, no
   useEffect(() => {
     const calculateReceivedAmount = async () => {
       if (!relayer) {
-        setReceivedAmount(`${note.amount} ${note.tokenSymbol}`);
+        setReceivedAmount(`${formatUnits(inputNote.amount, inputNote.denomination)} ${inputNote.tokenSymbol}`);
       } else {
-        const fees = await relayer.fees(note.serialize());
+        const fees = await relayer.fees(inputNote.serialize());
         if (!fees) {
-          setReceivedAmount(`${note.amount} ${note.tokenSymbol}`);
+          setReceivedAmount(`${formatUnits(inputNote.amount, inputNote.denomination)} ${inputNote.tokenSymbol}`);
         } else {
-          const principleBig = parseUnits(note.amount, note.denomination);
+          const principleBig = BigNumber.from(inputNote.amount);
           const receivedAmount = principleBig.sub(fees.totalFees);
-          setReceivedAmount(`${ethers.utils.formatUnits(receivedAmount, note.denomination)} ${note.tokenSymbol}`);
+          setReceivedAmount(
+            `${ethers.utils.formatUnits(receivedAmount, inputNote.denomination)} ${inputNote.tokenSymbol}`
+          );
         }
       }
     };
@@ -187,6 +199,15 @@ export const WithdrawSuccessModal: React.FC<WithdrawingModalProps> = ({ exit, no
       </header>
       <div>
         <TransactionSummaryWrapper>
+          {changeNote && changeNote.amount !== '0' && (
+            <ModalNoteDisplay
+              note={changeNote.serialize()}
+              download={() => {
+                const noteString = changeNote.serialize();
+                downloadString(noteString, noteString.slice(-noteString.length - 10) + '.txt');
+              }}
+            />
+          )}
           <Typography variant={'h6'} color={'textPrimary'}>
             Transaction summary
           </Typography>
