@@ -1,10 +1,10 @@
-import { Typography } from '@material-ui/core';
 import { useCountdown } from '@webb-dapp/react-hooks';
 import { IProposal } from 'page-governance/src/SubstrateDemocracy/useSubstrateDemocracy';
-import React, { useCallback } from 'react';
+import React from 'react';
 
+import { CardTitle } from '../CardTitle';
 import { ChipStatus } from '../ChipStatus';
-import { BadgesGroup, BadgeWrapper, ProposalCardWrapper, TextWrapper } from './styled';
+import { BadgesGroup, BadgeWrapper, ProposalCardWrapper } from './styled';
 
 export interface ProposalCardProps extends IProposal {}
 
@@ -19,28 +19,9 @@ export const ProposalCard: React.FC<ProposalCardProps> = ({
 }) => {
   const { days, hours, isExpired, minutes, seconds, zeroPad } = useCountdown(endTime);
 
-  const addressFormatter = useCallback((address: string, characters = 6) => {
-    if (address.startsWith('0x')) {
-      return address.length >= characters * 2 + 2
-        ? `${address.slice(2, 2 + characters)}...${address.slice(-characters)}`
-        : address;
-    }
-
-    return address.length >= characters * 2
-      ? `${address.slice(0, characters)}...${address.slice(-characters)}`
-      : address;
-  }, []);
-
   return (
     <ProposalCardWrapper to={`proposals/${voteId}`}>
-      <TextWrapper>
-        <Typography variant='caption' component='p'>
-          By {author} ~ x{addressFormatter(address)}
-        </Typography>
-        <Typography className='title' variant='h5' component='h6' style={{ fontWeight: 600, marginTop: '8px' }}>
-          {title} ~ Vote ID: {voteId}
-        </Typography>
-      </TextWrapper>
+      <CardTitle address={address} author={author} title={title} voteId={voteId} />
       <BadgesGroup>
         {!isExpired && (
           <BadgeWrapper>

@@ -7,7 +7,7 @@ export const ProposalCardWrapper = styled(Link)<LinkProps>`
   max-width: 980px;
   margin: 0 auto;
   margin-bottom: 16px;
-  padding: 12px 24px;
+  padding: 12px 14px;
   background-color: transparent;
   border-radius: 12px;
   display: flex;

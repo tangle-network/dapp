@@ -1,3 +1,4 @@
+export * from './CardTitle';
 export * from './ChipStatus';
-export * from './ProposalCard';
 export * from './LoadingProposals';
+export * from './ProposalCard';
