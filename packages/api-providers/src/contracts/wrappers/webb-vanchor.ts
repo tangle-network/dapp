@@ -516,7 +516,6 @@ export class VAnchorContract {
     ];
 
     console.log(inputNotes);
-
     const proofInput: ProvingManagerSetupInput<'vanchor'> = {
       inputNotes,
       leavesMap,

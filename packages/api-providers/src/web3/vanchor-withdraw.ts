@@ -318,16 +318,14 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
       let extAmount = BigNumber.from(0)
         .add(outputUtxos.reduce((sum: BigNumber, x: Utxo) => sum.add(x.amount), BigNumber.from(0)))
         .sub(inputUtxos.reduce((sum: BigNumber, x: Utxo) => sum.add(x.amount), BigNumber.from(0)));
-
       this.emit('stateChange', TransactionState.GeneratingZk);
-
       const { extData, outputNotes, publicInputs } = await destVAnchor.setupTransaction(
         inputUtxos,
         [changeUtxo, dummyUtxo],
         extAmount,
         0,
-        relayerAccount,
         recipient,
+        relayerAccount,
         leavesMap,
         provingKey,
         Buffer.from(wasmBuffer)
@@ -353,7 +351,6 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
       this.emit('stateChange', TransactionState.SendingTransaction);
 
       // Take the proof and send the transaction
-      // TODO: support relayed transaction
       if (activeRelayer) {
         const relayedVAnchorWithdraw = await activeRelayer.initWithdraw('vAnchor');
 
@@ -368,6 +365,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
           name: chainName,
         };
 
+        const extAmount = extData.extAmount.replace('0x', '');
         const relayedDepositTxPayload = relayedVAnchorWithdraw.generateWithdrawRequest<typeof chainInfo, 'vAnchor'>(
           chainInfo,
           {
@@ -376,8 +374,8 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
             extData: {
               recipient: extData.recipient,
               relayer: extData.relayer,
-              extAmount: extData.extAmount.replace('-', '') as any,
-              fee: toFixedHex(extData.fee, 32) as any,
+              extAmount: extAmount as any,
+              fee: extData.fee.toString() as any,
               encryptedOutput1: extData.encryptedOutput1,
               encryptedOutput2: extData.encryptedOutput2,
             },
