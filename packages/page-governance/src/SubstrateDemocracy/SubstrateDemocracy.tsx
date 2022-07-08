@@ -4,6 +4,7 @@ import { useBreakpoint } from '@webb-dapp/ui-components/utils/responsive-utils';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 
 import { LoadingProposals, ProposalCard } from '../components';
+import { ProposalCardWrapper } from '../components/ProposalCard/styled';
 import { ProposalsContainer } from './styled';
 import { useSubstrateDemocracy } from './useSubstrateDemocracy';
 
@@ -89,7 +90,9 @@ export const SubstrateDemocracy: React.FC<SubstrateDemoCracyProps> = (props) => 
         ) : (
           <Fragment>
             {response.data.map((proposal) => (
-              <ProposalCard key={proposal.voteId} {...proposal} />
+              <ProposalCardWrapper key={proposal.voteId} to={`proposals/${proposal.voteId}`} state={proposal}>
+                <ProposalCard {...proposal} />
+              </ProposalCardWrapper>
             ))}
 
             <TablePagination

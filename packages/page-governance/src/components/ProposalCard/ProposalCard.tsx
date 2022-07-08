@@ -1,22 +1,31 @@
-import { Typography } from '@material-ui/core';
 import { useCountdown } from '@webb-dapp/react-hooks';
 import { IProposal } from 'page-governance/src/SubstrateDemocracy/useSubstrateDemocracy';
-import React, { useCallback } from 'react';
+import React, { Fragment } from 'react';
 
 import { CardTitle } from '../CardTitle';
 import { ChipStatus } from '../ChipStatus';
-import { BadgesGroup, BadgeWrapper, ProposalCardWrapper } from './styled';
+import { BadgesGroup, BadgeWrapper } from './styled';
 
-export interface ProposalCardProps extends IProposal {}
+export interface ProposalCardProps extends IProposal {
+  isAlignLeftAll?: boolean;
+}
 
-export const ProposalCard: React.FC<ProposalCardProps> = (props) => {
-  const { address, author, endTime, status, title, totalVotes, voteId } = props;
+export const ProposalCard: React.FC<ProposalCardProps> = ({
+  address,
+  author,
+  endTime,
+  isAlignLeftAll,
+  status,
+  title,
+  totalVotes,
+  voteId,
+}) => {
   const { days, hours, isExpired, minutes, seconds, zeroPad } = useCountdown(endTime);
 
   return (
-    <ProposalCardWrapper to={`proposals/${voteId}`} state={props}>
+    <Fragment>
       <CardTitle address={address} author={author} title={title} voteId={voteId} />
-      <BadgesGroup>
+      <BadgesGroup isAlignStart={isAlignLeftAll}>
         {!isExpired && (
           <BadgeWrapper>
             Ends
@@ -30,6 +39,6 @@ export const ProposalCard: React.FC<ProposalCardProps> = (props) => {
         </BadgeWrapper>
         <ChipStatus status={status} />
       </BadgesGroup>
-    </ProposalCardWrapper>
+    </Fragment>
   );
 };

@@ -3,8 +3,8 @@ import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
+import { ProposalCard } from '../components';
 import { IProposal } from '../SubstrateDemocracy';
-import { HeadInfo } from './HeadInfo';
 import { BackButton, DetailLoader, HeadInfoWrapper, ProposalDetailWrapper } from './styled';
 import { useProposalDetail } from './useProposalDetail';
 
@@ -30,7 +30,7 @@ export const ProposalDetail = () => {
             <BackButton startIcon={<Icon>arrow_back</Icon>}>All proposals</BackButton>
           </Link>
           {!isLoading && votersResponse?.data && currentProposal ? (
-            <HeadInfo {...currentProposal} />
+            <ProposalCard {...currentProposal} isAlignLeftAll={true} />
           ) : (
             <Typography variant='h5' style={{ textTransform: 'capitalize', fontWeight: 700 }}>
               Not found proposal
