@@ -78,7 +78,7 @@ export const chainsConfig: AppConfig['chains'] = {
     blockExplorerStub: 'https://kovan.etherscan.io',
     logo: EtherLogo,
     tag: 'test',
-    currencies: [WebbCurrencyId.ETH, WebbCurrencyId.WETH, WebbCurrencyId.webbWETH],
+    currencies: [WebbCurrencyId.ETH, WebbCurrencyId.WETH, WebbCurrencyId.webbETH],
     nativeCurrencyId: WebbCurrencyId.ETH,
   },
   [InternalChainId.OptimismTestnet]: {
