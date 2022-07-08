@@ -31,7 +31,7 @@ export function useSeedVoters() {
           () =>
             ({
               address: randEthereumAddress(),
-              paymentAmount: randNumber({ min: 0.01, max: 2, fraction: 2 }),
+              paymentAmount: randFloat({ min: 0.01, max: 2, fraction: 2 }),
               paymentTokenSymbol: 'ETH',
               vote: true,
             } as IProposalVoter)

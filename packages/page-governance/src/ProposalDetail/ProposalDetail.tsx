@@ -10,13 +10,15 @@ import { Description } from './Description';
 import { BackButton, DetailLoader, HeadInfoWrapper, ProposalDetailWrapper } from './styled';
 import { useProposalDetail } from './useProposalDetail';
 import { VoteResult } from './VoteResult';
+import { VotersTable } from './VotersTable';
 
 export const ProposalDetail = () => {
   const pallet = useColorPallet();
   const location = useLocation();
 
   const currentProposal = location.state as IProposal;
-  const { fetchVoters, isLoading, noVotesAmount, votersResponse, yesVotesAmount } = useProposalDetail(currentProposal);
+  const { fetchAllVoters, isLoading, noVotesAmount, votersResponse, yesVotesAmount } =
+    useProposalDetail(currentProposal);
 
   const yesPercent = useMemo(() => {
     if (!votersResponse) {
@@ -35,8 +37,8 @@ export const ProposalDetail = () => {
   }, [votersResponse, yesPercent]);
 
   useEffect(() => {
-    fetchVoters();
-  }, [fetchVoters]);
+    fetchAllVoters();
+  }, [fetchAllVoters]);
 
   return (
     <ProposalDetailWrapper>
@@ -64,6 +66,7 @@ export const ProposalDetail = () => {
                 <VoteResult yesPercent={yesPercent} noPercent={noPercent} />
               )}
               {currentProposal.description && <Description description={currentProposal.description} />}
+              <VotersTable voters={votersResponse.data} />
             </Fragment>
           )}
         </Fragment>

@@ -46,36 +46,33 @@ export function useProposalDetail(proposal: IProposal) {
     return votersResponse.data.length - yesVotesAmount;
   }, [yesVotesAmount, votersResponse]);
 
-  const fetchVoters = useCallback(
-    (offset: number = 0, limit: number = 5) => {
-      if (!voteId) {
-        return;
-      }
+  const fetchAllVoters = useCallback(() => {
+    if (!voteId) {
+      return;
+    }
 
-      const voters = getVoters(voteId.toString());
-      if (!voters) {
-        return;
-      }
+    const voters = getVoters(voteId.toString());
+    if (!voters) {
+      return;
+    }
 
-      setIsLoading(true);
-      setTimeout(() => {
-        setVotersResponse({
-          data: voters.slice(offset, offset + limit),
-          limit,
-          offset,
-          total: voters.length,
-        });
-        setIsLoading(false);
-      }, deplayTimeMs);
-    },
-    [deplayTimeMs, getVoters, voteId]
-  );
+    setIsLoading(true);
+    setTimeout(() => {
+      setVotersResponse({
+        data: voters,
+        limit: 0,
+        offset: voters.length - 1,
+        total: voters.length,
+      });
+      setIsLoading(false);
+    }, deplayTimeMs);
+  }, [deplayTimeMs, getVoters, voteId]);
 
   return {
     votersResponse,
     yesVotesAmount,
     noVotesAmount,
-    fetchVoters,
+    fetchAllVoters,
     isLoading,
   };
 }

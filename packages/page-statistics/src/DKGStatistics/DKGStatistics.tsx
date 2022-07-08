@@ -10,8 +10,9 @@ import { FC, useCallback, useEffect, useMemo } from 'react';
 import { ChartProps, Doughnut } from 'react-chartjs-2';
 
 import { ChartLabelsWrapper } from './styled/ChartLabelsWrapper.styled';
+import { GridWrapper } from './styled/shared';
 import { StatisticCard, StatisticCardProps } from './StatisticCard';
-import { ChartWrapper, DKGEggnetStatisticsWrapper, DKGSignerWrapper, GridWrapper, StatisticCardsList } from './styled';
+import { ChartWrapper, DKGEggnetStatisticsWrapper, DKGSignerWrapper, StatisticCardsList } from './styled';
 import { useDKGEggnetStats } from './useDKGEggnetStats';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
