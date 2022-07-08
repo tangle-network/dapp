@@ -4,6 +4,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
 import { LoggerService } from '@webb-tools/app-util';
 import { ArkworksProvingManager, Note, ProvingManagerSetupInput } from '@webb-tools/sdk-core';
+import { ethers } from 'ethers';
 
 import { decodeAddress } from '@polkadot/keyring';
 import { hexToU8a, u8aToHex } from '@polkadot/util';
@@ -74,18 +75,18 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
 
       // parse the note
       const noteParsed = await Note.deserialize(note);
-      const depositAmount = noteParsed.note.amount;
-      const amount = depositAmount;
+      const bnAmount = noteParsed.note.amount;
+      const amount = ethers.utils.formatUnits(bnAmount, noteParsed.note.denomination);
       const sizes = await PolkadotMixerDeposit.getSizes(this.inner);
       const treeId = sizes.find((s) => s.amount === Number(amount))?.treeId!;
 
-      logger.trace('Tree Id ', treeId);
+      console.log('Tree Id ', treeId);
       const leaves = await this.fetchTreeLeaves(treeId);
       const leaf = u8aToHex(noteParsed.getLeaf());
       const leafIndex = leaves.findIndex((l) => u8aToHex(l) === leaf);
 
-      logger.trace(`leaf ${leaf} has index `, leafIndex);
-      logger.trace(leaves.map((i) => u8aToHex(i)));
+      console.log(`leaf ${leaf} has index `, leafIndex);
+      console.log(leaves.map((i) => u8aToHex(i)));
       const activeRelayer = this.inner.relayerManager.activeRelayer;
       const worker = this.inner.wasmFactory('wasm-utils');
       const pm = new ArkworksProvingManager(worker);
@@ -217,7 +218,7 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
         return '';
       }
 
-      logger.trace('submitting the transaction of withdraw with params', withdrawProof);
+      console.log('submitting the transaction of withdraw with params', withdrawProof);
       this.emit('stateChange', TransactionState.SendingTransaction);
 
       const tx = this.inner.txBuilder.build(

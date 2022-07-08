@@ -8,6 +8,7 @@ import {
 import { misbehavingRelayer } from '@webb-dapp/react-environment/error/interactive-errors/misbehaving-relayer';
 import { useWebContext } from '@webb-dapp/react-environment/webb-context';
 import { Note } from '@webb-tools/sdk-core';
+import { ethers } from 'ethers';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 export type WithdrawErrors = {
@@ -83,7 +84,7 @@ export const useWithdraw = (params: UseWithdrawProps) => {
           const withdrawPayload = await withdrawApi.withdraw(
             params.notes.map((note) => note.serialize()),
             params.recipient,
-            params.amount.toString()
+            ethers.utils.parseUnits(params.amount.toString(), params.notes[0].note.denomination).toString()
           );
           setReceipt(withdrawPayload.txHash);
           setOutputNotes(withdrawPayload.outputNotes);

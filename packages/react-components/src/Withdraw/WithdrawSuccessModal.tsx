@@ -1,4 +1,4 @@
-import { parseUnits } from '@ethersproject/units';
+import { formatUnits } from '@ethersproject/units';
 import { Button, Icon, Link, Typography } from '@material-ui/core';
 import {
   ActiveWebbRelayer,
@@ -13,7 +13,7 @@ import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-famili
 import { downloadString } from '@webb-dapp/utils/download';
 import { LoggerService } from '@webb-tools/app-util';
 import { JsNote } from '@webb-tools/wasm-utils';
-import { ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
@@ -170,13 +170,13 @@ export const WithdrawSuccessModal: React.FC<WithdrawingModalProps> = ({
   useEffect(() => {
     const calculateReceivedAmount = async () => {
       if (!relayer) {
-        setReceivedAmount(`${inputNote.amount} ${inputNote.tokenSymbol}`);
+        setReceivedAmount(`${formatUnits(inputNote.amount, inputNote.denomination)} ${inputNote.tokenSymbol}`);
       } else {
         const fees = await relayer.fees(inputNote.serialize());
         if (!fees) {
-          setReceivedAmount(`${inputNote.amount} ${inputNote.tokenSymbol}`);
+          setReceivedAmount(`${formatUnits(inputNote.amount, inputNote.denomination)} ${inputNote.tokenSymbol}`);
         } else {
-          const principleBig = parseUnits(inputNote.amount, inputNote.denomination);
+          const principleBig = BigNumber.from(inputNote.amount);
           const receivedAmount = principleBig.sub(fees.totalFees);
           setReceivedAmount(
             `${ethers.utils.formatUnits(receivedAmount, inputNote.denomination)} ${inputNote.tokenSymbol}`

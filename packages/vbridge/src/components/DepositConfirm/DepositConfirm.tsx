@@ -52,24 +52,6 @@ type DepositInfoProps = {
   wrappableAsset: Currency | null | undefined;
 };
 
-const GeneratedNote = styled.div`
-  border-radius: 10px;
-  padding: 0.7rem;
-  word-break: break-all;
-  position: relative;
-  min-height: 120px;
-  background: ${({ theme }) => theme.heavySelectionBackground};
-  color: ${({ theme }) => theme.primaryText};
-
-  .copy-button {
-    display: block;
-  }
-
-  .download-button {
-    display: block;
-  }
-`;
-
 const Loading = styled.div`
   position: absolute;
   top: 0;
@@ -87,11 +69,6 @@ const Loading = styled.div`
   > div {
     height: 200px;
   }
-`;
-
-const Actions = styled.div`
-  display: flex;
-  justify-content: flex-end;
 `;
 
 export const DepositConfirm: React.FC<DepositInfoProps> = ({

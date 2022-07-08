@@ -23,7 +23,7 @@ export type VAnchorDepositEvents = {
 };
 
 export interface VAnchorDepositResults extends TXresultBase {
-  // Note with the  right index in place
+  // Note with the right index in place
   updatedNote: Note;
 }
 /**
@@ -60,7 +60,7 @@ export abstract class VAnchorDeposit<
   /** For the VAnchor, a bridge note represents a UTXO.
    ** @param anchorId - an address or tree id.
    ** @param destination - the chainIdType of the destination chain
-   ** @param amount - the amount to be controlled by the generated UTXO
+   ** @param amount - the amount, formatted as user expects (i.e. ETH units instead of WEI)
    ** @param wrappableAssetAddress - identifier to determine if wrapping needs to occur in deposit flow.
    */
   abstract generateBridgeNote(
