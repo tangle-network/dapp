@@ -5,6 +5,7 @@ import styled, { css } from 'styled-components';
 export const GridWrapper = styled.div`
   .webb-table-pagination-summary {
     color: ${({ theme }) => theme.primaryText};
+    margin-bottom: 8px;
   }
 
   .webb-table-pagination-btn {
