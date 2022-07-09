@@ -1,16 +1,31 @@
 import { Typography } from '@material-ui/core';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
-import React from 'react';
+import React, { useCallback, useMemo } from 'react';
+import { CountUp, Props as CountUpProps, useCountUp } from 'use-count-up';
 
 import { Wrapper } from '../CastVote/styled';
 import { Bar, BarWrapper, PercentValueWrapper, ResultWrapper } from './styled';
 
 const PercentBar: React.FC<{ label: 'yes' | 'no'; percentValue: number }> = ({ label, percentValue }) => {
+  const countFormatter = useCallback((value: number) => `${Math.floor(value)}%`, []);
+  const commonCountUpProps = useMemo<Partial<CountUpProps>>(
+    () => ({
+      isCounting: true,
+      end: percentValue,
+      duration: 1.5,
+      decimalPlaces: 0,
+    }),
+    [percentValue]
+  );
+  const { value } = useCountUp(commonCountUpProps);
+
   return (
     <Flex row ai='center' style={{ marginBottom: '8px' }}>
-      <PercentValueWrapper>{percentValue}%</PercentValueWrapper>
+      <PercentValueWrapper>
+        <CountUp formatter={countFormatter} {...commonCountUpProps} />
+      </PercentValueWrapper>
       <BarWrapper>
-        <Bar percent={percentValue} label={label}>
+        <Bar percent={parseInt(value?.toString() ?? '', 10)} label={label}>
           {label}
         </Bar>
       </BarWrapper>

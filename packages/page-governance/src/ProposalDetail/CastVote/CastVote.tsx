@@ -2,12 +2,20 @@ import { FormControl, FormControlLabel, Icon, Radio, RadioGroup, Typography } fr
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
+import { isNumber } from 'lodash';
 import React, { useCallback, useState } from 'react';
+import { useCountUp } from 'use-count-up';
 
 import { ControlLabelWrapper, Wrapper } from './styled';
 
 const Label: React.FC<{ label: string; votesNumber: number; checked: boolean }> = ({ checked, label, votesNumber }) => {
   const pallet = useColorPallet();
+  const { value } = useCountUp({
+    isCounting: true,
+    end: votesNumber,
+    duration: 1.5,
+    decimalPlaces: 0,
+  });
 
   return (
     <Flex row jc='space-between' ai='center'>
@@ -21,7 +29,7 @@ const Label: React.FC<{ label: string; votesNumber: number; checked: boolean }> 
           color: checked ? (pallet.type === 'dark' ? pallet.accentColor : pallet.primaryText) : pallet.secondaryText,
         }}
       >
-        {isNaN(votesNumber) ? '-' : votesNumber} Votes
+        {parseInt(value?.toString() ?? '')} Votes
       </Typography>
     </Flex>
   );

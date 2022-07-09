@@ -1,7 +1,5 @@
 import styled from 'styled-components';
 
-import { iconSize } from './shared.styled';
-
 export const Bar = styled.span<{ percent: number; label: 'yes' | 'no' }>`
   display: flex;
   justify-content: center;
