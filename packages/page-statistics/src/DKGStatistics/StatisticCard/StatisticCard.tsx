@@ -1,6 +1,6 @@
 import { Typography } from '@material-ui/core';
 import React from 'react';
-import CountUp from 'react-countup';
+import { CountUp } from 'use-count-up';
 
 import { DescriptionIcon } from '../DescriptionIcon';
 import { StatisticCardWrapper } from './styled';
@@ -25,19 +25,7 @@ export const StatisticCard: React.FC<StatisticCardProps> = ({
   return (
     <StatisticCardWrapper width={width} labelColor={labelColor} style={styles}>
       <Typography variant='h4'>
-        <b>
-          {typeof value === 'number' ? (
-            <CountUp start={0} end={value} delay={0} duration={1}>
-              {({ countUpRef }) => (
-                <div>
-                  <span ref={countUpRef} />
-                </div>
-              )}
-            </CountUp>
-          ) : (
-            value
-          )}
-        </b>
+        <b>{typeof value === 'number' ? <CountUp isCounting start={0} end={value} duration={2} /> : value}</b>
       </Typography>
       <Typography variant='h6'>
         {title} {description && <DescriptionIcon description={description} />}

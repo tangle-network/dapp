@@ -16,28 +16,31 @@ const ContentWrapper = styled.div`
   margin: auto;
 `;
 
-export const TabHeader = styled.header`
+export const TabHeader = styled.header<{ size?: 'sm' }>`
   display: flex;
   align-items: center;
-  max-width: 500px;
+  max-width: ${({ size }) => (size === 'sm' ? '196px' : '500px')};
   margin: auto;
   margin-bottom: 24px;
-  border-radius: 32px;
+  border-radius: ${({ size }) => (size === 'sm' ? '12px' : '32px')};
   background-color: ${({ theme }) => theme.layer1Background};
   justify-content: space-between;
   padding: 7px;
   box-sizing: border-box;
 `;
 
-export const TabButton = styled.button<{ active?: boolean }>`
+export const TabButton = styled.button<{ active?: boolean; size?: 'sm' }>`
   width: 48%;
   display: flex;
   cursor: pointer;
   align-items: center;
   justify-content: center;
+
   transition: all 0.4s ease-in-out;
-  height: 40px;
+  height: ${({ size }) => (size === 'sm' ? '25px' : '40px')};
   margin: 0 2px;
+  background: ${({ active, theme }) => (active ? (theme.type === 'dark' ? theme.accentColor : '#fff') : 'transparent')};
+  border-radius: ${({ size }) => (size === 'sm' ? '8px' : '32px')};
 
   .icon {
     display: block;
@@ -54,9 +57,6 @@ export const TabButton = styled.button<{ active?: boolean }>`
     color: ${({ theme }) => theme.primaryText};
     display: block;
   }
-
-  background: ${({ active, theme }) => (active ? (theme.type === 'dark' ? theme.accentColor : '#fff') : 'transparent')};
-  border-radius: 32px;
 `;
 
 export const MixerTabs: React.FC<MixerTabsProps> = ({ Deposit, Withdraw }) => {

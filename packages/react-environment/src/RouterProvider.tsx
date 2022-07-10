@@ -1,6 +1,7 @@
+import { AnimatePresence } from 'framer-motion';
 import React, { cloneElement, createElement, FC, ReactElement, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router';
-import { HashRouter as Router, useRoutes } from 'react-router-dom';
+import { HashRouter as Router, useLocation, useRoutes } from 'react-router-dom';
 
 import { StoreData, usePageTitle } from './store';
 
@@ -37,6 +38,7 @@ interface Props {
 }
 
 const Routes: FC<Props> = ({ config }) => {
+  const location = useLocation();
   const _config = useMemo(() => {
     const inner = config.slice();
 
@@ -54,9 +56,9 @@ const Routes: FC<Props> = ({ config }) => {
     return inner;
   }, [config]);
 
-  const element = useRoutes(_config);
+  const element = useRoutes(_config, { ...location, key: location.pathname });
 
-  return element;
+  return <AnimatePresence exitBeforeEnter>{element};</AnimatePresence>;
 };
 
 export const RouterProvider: FC<Props> = ({ config }) => {
