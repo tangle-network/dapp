@@ -14,8 +14,6 @@
     "@webb-tools/types": "0.1.4-87",
     "dayjs": "^1.8.25",
     "i18next": "^19.7.0",
-    "react-i18next": "^11.7.1",
-    "styled": "^1.0.0",
-    "styled-components": "^5.2.1"
+    "react-i18next": "^11.7.1"
   }
 }
