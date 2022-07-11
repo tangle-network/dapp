@@ -1,9 +1,10 @@
-import { MuiThemeProvider, PaperProps } from '@material-ui/core';
+import { PaperProps } from '@mui/material';
+import { StyledEngineProvider, ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
 import InteractiveErrorView from '@webb-dapp/react-components/InteractiveFeedbackView/InteractiveErrorView';
 import { useStore, useWebContext } from '@webb-dapp/react-environment';
 import { darkPallet, lightPallet } from '@webb-dapp/ui-components/styling/colors';
 import makeTheme from '@webb-dapp/ui-components/styling/themes/makeTheme';
-import React, { FC, useMemo, useState } from 'react';
+import React, { FC, Fragment, useMemo, useState } from 'react';
 import styled, { ThemeProvider } from 'styled-components';
 
 import { GlobalStylesheet } from './styles/global';
@@ -32,12 +33,14 @@ export const UIProvider: FC<BareProps> = ({ children }) => {
     <>
       <GlobalStylesheet />
       <UIContext.Provider value={state}>
-        <ThemeProvider theme={pallet}>
-          <MuiThemeProvider theme={muiTheme}>
-            {children}
-            <InteractiveErrorView activeFeedback={activeFeedback} />
-          </MuiThemeProvider>
-        </ThemeProvider>
+        <MuiThemeProvider theme={muiTheme}>
+          <ThemeProvider theme={pallet}>
+            <Fragment>
+              {children}
+              <InteractiveErrorView activeFeedback={activeFeedback} />
+            </Fragment>
+          </ThemeProvider>
+        </MuiThemeProvider>
       </UIContext.Provider>
     </>
   );

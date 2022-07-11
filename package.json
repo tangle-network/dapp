@@ -11,7 +11,7 @@
   },
   "resolutions": {
     "eslint": "^6.6.0",
-    "@mui/styled-engine": "npm:@material-ui/styled-engine-sc@^5.0.0-beta.0",
+    "@mui/styled-engine": "npm:@mui/styled-engine-sc@latest",
     "@polkadot/api": "8.7.1",
     "@polkadot/keyring": "9.4.1",
     "@polkadot/networks": "9.4.1",
@@ -45,7 +45,7 @@
   "dependencies": {
     "@material-ui/core": "^4.11.3",
     "@mui/material": "^5.8.7",
-    "@mui/styled-engine": "npm:@material-ui/styled-engine-sc@^5.0.0-beta.0",
+    "@mui/styled-engine": "npm:@mui/styled-engine-sc@latest",
     "@mui/styles": "^5.8.7",
     "@polkadot/api": "^8.7.1",
     "@polkadot/keyring": "^9.4.1",
