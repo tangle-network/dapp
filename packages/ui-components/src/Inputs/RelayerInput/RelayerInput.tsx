@@ -2,14 +2,14 @@ import {
   Button,
   ClickAwayListener,
   Divider,
+  Icon,
   IconButton,
   InputBase,
   List,
   ListItemText,
   Popper,
-} from '@material-ui/core';
-import Icon from '@material-ui/core/Icon';
-import Typography from '@material-ui/core/Typography';
+  Typography,
+} from '@mui/material';
 import { ActiveWebbRelayer, Capabilities, WebbRelayer } from '@webb-dapp/api-providers';
 import { chainIdToRelayerName } from '@webb-dapp/apps/configs/relayer-config';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';

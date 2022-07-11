@@ -1,5 +1,4 @@
-import { Button, Typography } from '@material-ui/core';
-import Icon from '@material-ui/core/Icon';
+import { Button, Icon, Typography } from '@mui/material';
 import { InteractiveFeedback, WebbErrorCodes } from '@webb-dapp/api-providers';
 import ChromeLogo from '@webb-dapp/apps/configs/logos/ChromeLogo';
 import FireFoxLogo from '@webb-dapp/apps/configs/logos/FireFoxLogo';

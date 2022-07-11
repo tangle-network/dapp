@@ -1,4 +1,4 @@
-import { Link, Typography, TypographyProps } from '@material-ui/core';
+import { Link, Typography, TypographyProps } from '@mui/material';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { above, useBreakpoint } from '@webb-dapp/ui-components/utils/responsive-utils';

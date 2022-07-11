@@ -1,4 +1,4 @@
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 import React, { useCallback } from 'react';
 
 import { TextWrapper } from './styled';

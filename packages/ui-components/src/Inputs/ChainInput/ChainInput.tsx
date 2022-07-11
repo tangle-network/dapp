@@ -1,6 +1,4 @@
-import { Avatar, ClickAwayListener, IconButton } from '@material-ui/core';
-import Icon from '@material-ui/core/Icon';
-import Typography from '@material-ui/core/Typography';
+import { Avatar, ClickAwayListener, Icon, IconButton, Typography } from '@mui/material';
 import { ChainTypeId, chainTypeIdToInternalId } from '@webb-dapp/api-providers';
 import { chainsPopulated } from '@webb-dapp/apps/configs';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';

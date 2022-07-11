@@ -1,4 +1,4 @@
-import { alpha, ButtonBase, Checkbox, InputBase, Typography } from '@material-ui/core';
+import { alpha, ButtonBase, Checkbox, InputBase, Typography } from '@mui/material';
 import { Currency, InternalChainId } from '@webb-dapp/api-providers';
 import { WalletConfig } from '@webb-dapp/api-providers/types';
 import { chainsPopulated, WalletId } from '@webb-dapp/apps/configs';

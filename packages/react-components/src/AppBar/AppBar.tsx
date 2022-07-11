@@ -1,6 +1,5 @@
-import { Icon, IconButton, Typography } from '@material-ui/core';
+import { Icon, IconButton, Typography } from '@mui/material';
 import WEBBLogo from '@webb-dapp/apps/configs/logos/chains/WebbLogo';
-import { WebbFullNameLogo } from '@webb-dapp/react-components/assets/WebbFullNameLogo';
 import { useStore, useWebContext } from '@webb-dapp/react-environment';
 import { useDimensions } from '@webb-dapp/react-environment/layout';
 import { WalletSelect } from '@webb-dapp/ui-components/Inputs/WalletSelect/WalletSelect';

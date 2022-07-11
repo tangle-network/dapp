@@ -1,5 +1,4 @@
-import { Avatar, InputBase, ListItemAvatar, ListItemText, Tooltip } from '@material-ui/core';
-import Typography from '@material-ui/core/Typography';
+import { Avatar, InputBase, ListItemAvatar, ListItemText, Tooltip, Typography } from '@mui/material';
 import { CurrencyContent } from '@webb-dapp/api-providers/abstracts';
 import { WebbCurrencyId } from '@webb-dapp/api-providers/enums';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';

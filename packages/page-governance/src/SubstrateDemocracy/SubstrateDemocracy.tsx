@@ -1,4 +1,4 @@
-import { TablePagination, Typography } from '@material-ui/core';
+import { TablePagination, Typography } from '@mui/material';
 import { TabButton, TabHeader } from '@webb-dapp/ui-components/Tabs/MixerTabs';
 import { useBreakpoint } from '@webb-dapp/ui-components/utils/responsive-utils';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';

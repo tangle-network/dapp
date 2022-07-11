@@ -1,5 +1,5 @@
 import { PaperProps } from '@mui/material';
-import { StyledEngineProvider, ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
+import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
 import InteractiveErrorView from '@webb-dapp/react-components/InteractiveFeedbackView/InteractiveErrorView';
 import { useStore, useWebContext } from '@webb-dapp/react-environment';
 import { darkPallet, lightPallet } from '@webb-dapp/ui-components/styling/colors';

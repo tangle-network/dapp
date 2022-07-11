@@ -1,4 +1,4 @@
-import { Icon, IconButton } from '@material-ui/core';
+import { Icon, IconButton } from '@mui/material';
 import { parseChainIdType } from '@webb-dapp/api-providers/chains';
 import { getChainNameFromChainId } from '@webb-dapp/api-providers/utils';
 import { useDepositNote } from '@webb-dapp/mixer/hooks';

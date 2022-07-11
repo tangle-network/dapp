@@ -1,12 +1,10 @@
-import { FormHelperText, Icon, InputBase } from '@material-ui/core';
+import { FormHelperText, Icon, InputBase } from '@mui/material';
 import { ChainType, parseChainIdType } from '@webb-dapp/api-providers';
 import { useDepositNote } from '@webb-dapp/mixer/hooks/note';
 import { useWebContext } from '@webb-dapp/react-environment/webb-context';
 import { notificationApi } from '@webb-dapp/ui-components/notification';
-import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import styled, { css } from 'styled-components';
 
 type NoteInputProps = {
   value: string;
@@ -18,7 +16,6 @@ export const MixerNoteInput: React.FC<NoteInputProps> = ({ error, onChange, valu
   const depositNote = useDepositNote(value);
   const { activeApi } = useWebContext();
   const navigate = useNavigate();
-  const { registerInteractiveFeedback } = useWebContext();
 
   // Switch to bridge tab if note is for anchor protocol - but the target is not an EVM chain.
   // This is because the EVM mixer uses the same anchor protocol whereas other chain types

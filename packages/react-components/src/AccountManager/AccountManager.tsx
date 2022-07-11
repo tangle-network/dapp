@@ -6,8 +6,8 @@ import {
   ListItemSecondaryAction,
   ListItemText,
   Typography,
-} from '@material-ui/core';
-import Popper from '@material-ui/core/Popper';
+} from '@mui/material';
+import Popper from '@mui/material/Popper';
 import { useAccounts } from '@webb-dapp/react-hooks';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import React, { useMemo, useRef, useState } from 'react';

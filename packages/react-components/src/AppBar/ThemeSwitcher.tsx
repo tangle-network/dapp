@@ -1,4 +1,4 @@
-import { Slide } from '@material-ui/core';
+import { Slide } from '@mui/material';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import React, { useCallback, useRef } from 'react';
 import styled from 'styled-components';

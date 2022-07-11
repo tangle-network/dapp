@@ -1,4 +1,4 @@
-import { Button } from '@material-ui/core';
+import { Button } from '@mui/material';
 import { InteractiveFeedback, WebbErrorCodes } from '@webb-dapp/api-providers';
 import { TAppEvent } from '@webb-dapp/react-environment/app-event';
 import { notificationApi } from '@webb-dapp/ui-components/notification';

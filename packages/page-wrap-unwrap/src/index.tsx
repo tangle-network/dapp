@@ -1,5 +1,5 @@
-import { Button, IconButton, InputBase, Tooltip } from '@material-ui/core';
-import Icon from '@material-ui/core/Icon';
+import { Button, IconButton, InputBase, Tooltip } from '@mui/material';
+import Icon from '@mui/material/Icon';
 import { useWrapUnwrap } from '@webb-dapp/page-wrap-unwrap/hooks/useWrapUnwrap';
 import { RequiredWalletSelection } from '@webb-dapp/react-components/RequiredWalletSelection/RequiredWalletSelection';
 import { useWebContext } from '@webb-dapp/react-environment';
