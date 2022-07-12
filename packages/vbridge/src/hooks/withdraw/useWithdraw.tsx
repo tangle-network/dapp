@@ -141,17 +141,13 @@ export const useWithdraw = (params: UseWithdrawProps) => {
   // hook events
   useEffect(() => {
     params.notes?.map((note) =>
-      activeApi?.relayerManager
-        .getRelayersByNote(note, {
-          contract: 'VAnchor',
-        })
-        .then((r: WebbRelayer[]) => {
-          setRelayersState((p) => ({
-            ...p,
-            loading: false,
-            relayers: r,
-          }));
-        })
+      activeApi?.relayerManager.getRelayersByNote(note).then((r: WebbRelayer[]) => {
+        setRelayersState((p) => ({
+          ...p,
+          loading: false,
+          relayers: r,
+        }));
+      })
     );
 
     const sub = activeApi?.relayerManager.activeRelayerWatcher.subscribe((next: OptionalActiveRelayer) => {
