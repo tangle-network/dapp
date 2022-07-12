@@ -163,7 +163,9 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
       const isMatchDestChain = currentNote.note.targetChainId === firstNote.note.targetChainId;
       const isMatchTokenSymbol = currentNote.note.tokenSymbol === firstNote.note.tokenSymbol;
 
-      return isMatchDestChain && isMatchTokenSymbol ? acc + Number(currentNote.note.amount) : acc;
+      return isMatchDestChain && isMatchTokenSymbol
+        ? acc + Number(ethers.utils.formatUnits(currentNote.note.amount, currentNote.note.denomination))
+        : acc;
     }, 0);
   }, [depositNotes, firstNote]);
 
@@ -423,11 +425,12 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
 
       {/* Modal to show on success  */}
       <Modal open={outputNotes.length > 0}>
-        {depositNotes && (
+        {outputNotes.length && depositNotes && (
           <WithdrawSuccessModal
             receipt={receipt}
             recipient={recipient}
-            note={depositNotes[0].note}
+            changeNote={outputNotes[0].note}
+            inputNote={depositNotes[0].note}
             relayer={relayersState.activeRelayer}
             exit={() => {
               setNotes(['']);

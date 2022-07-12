@@ -5,6 +5,7 @@ import { useAppConfig } from '@webb-dapp/react-environment';
 import { SpaceBox } from '@webb-dapp/ui-components/Box';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 import { JsNote as DepositNote } from '@webb-tools/wasm-utils';
+import { ethers } from 'ethers';
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
 
@@ -186,7 +187,7 @@ export const WithdrawingModal: React.FC<WithdrawingModalProps> = ({
               <InfoItem>
                 <Typography variant={'caption'}>
                   <b>
-                    Receiving {note.amount + ' ' + note.tokenSymbol} on{' '}
+                    Receiving {ethers.utils.formatUnits(note.amount, note.denomination) + ' ' + note.tokenSymbol} on{' '}
                     {getChainNameFromChainId(appConfig, parseChainIdType(Number(note.targetChainId)))}
                   </b>
                 </Typography>

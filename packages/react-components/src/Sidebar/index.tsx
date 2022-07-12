@@ -24,9 +24,9 @@ const SidebarRoot = styled.div<{ collapse: boolean; isMobile: boolean }>`
   display: ${({ collapse }): string => (collapse ? 'none' : 'flex')};
   flex-direction: column;
   height: 100vh;
-  min-width: ${({ isMobile }) => (isMobile ? '100vw' : '200px')};
-  max-width: ${({ isMobile }) => (isMobile ? '100vw' : '200px')};
-  width: ${({ isMobile }): string => (isMobile ? '100vw' : '200px')};
+  min-width: ${({ isMobile }) => (isMobile ? '100vw' : '230px')};
+  max-width: ${({ isMobile }) => (isMobile ? '100vw' : '230px')};
+  width: ${({ isMobile }): string => (isMobile ? '100vw' : '230px')};
   border-right: 1px solid rgba(0, 0, 0, 0.12);
   transition: width 500ms ease;
   background: ${({ theme }) => theme.menuBackground};

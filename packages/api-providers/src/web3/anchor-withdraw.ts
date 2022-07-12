@@ -122,10 +122,9 @@ export class Web3AnchorWithdraw extends AnchorWithdraw<WebbWeb3Provider> {
     const section = `Bridge ${Object.keys(anchorConfigsForBridge.anchorAddresses)
       .map((id) => getEVMChainNameFromInternal(this.config, Number(id)))
       .join('-')}`;
-    const key = 'web3-bridge-withdraw';
     this.inner.notificationHandler({
       description: 'Withdraw in progress',
-      key,
+      key: 'bridge-withdraw-evm',
       level: 'loading',
       message: `${section}:withdraw`,
       name: 'Transaction',
@@ -205,7 +204,7 @@ export class Web3AnchorWithdraw extends AnchorWithdraw<WebbWeb3Provider> {
     if (this.cancelToken.cancelled) {
       this.inner.notificationHandler({
         description: 'Withdraw cancelled',
-        key: 'mixer-withdraw-evm',
+        key: 'bridge-withdraw-evm',
         level: 'error',
         message: 'bridge:withdraw',
         name: 'Transaction',
@@ -264,7 +263,7 @@ export class Web3AnchorWithdraw extends AnchorWithdraw<WebbWeb3Provider> {
     if (this.cancelToken.cancelled) {
       this.inner.notificationHandler({
         description: 'Withdraw cancelled',
-        key: 'mixer-withdraw-evm',
+        key: 'bridge-withdraw-evm',
         level: 'error',
         message: 'bridge:withdraw',
         name: 'Transaction',
@@ -315,7 +314,7 @@ export class Web3AnchorWithdraw extends AnchorWithdraw<WebbWeb3Provider> {
 
             this.inner.notificationHandler({
               description: 'Withdraw success',
-              key: 'mixer-withdraw-evm',
+              key: 'bridge-withdraw-evm',
               level: 'success',
               message: 'bridge:withdraw',
               name: 'Transaction',
@@ -328,7 +327,7 @@ export class Web3AnchorWithdraw extends AnchorWithdraw<WebbWeb3Provider> {
 
             this.inner.notificationHandler({
               description: message || 'Withdraw failed',
-              key: 'mixer-withdraw-evm',
+              key: 'bridge-withdraw-evm',
               level: 'error',
               message: 'bridge:withdraw',
               name: 'Transaction',

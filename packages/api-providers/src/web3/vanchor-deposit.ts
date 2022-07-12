@@ -70,7 +70,8 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
     if (!bridge || !currency) {
       throw new Error('api not ready');
     }
-
+    // Convert the amount to bn units (i.e. WEI instead of ETH)
+    const bnAmount = ethers.utils.parseUnits(amount.toString(), currency.getDecimals()).toString();
     const tokenSymbol = currency.view.symbol;
     const sourceEvmId = await this.inner.getChainId();
     const sourceChainId = computeChainIdType(ChainType.EVM, sourceEvmId);
@@ -94,7 +95,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
     const depositOutputUtxo = await CircomUtxo.generateUtxo({
       curve: 'Bn254',
       backend: 'Circom',
-      amount: ethers.utils.parseEther(amount.toString()).toString(),
+      amount: bnAmount,
       originChainId: sourceChainId.toString(),
       chainId: destination.toString(),
       keypair,
@@ -112,7 +113,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
     const destAddress = anchorConfig.anchorAddresses[destChainInternal];
 
     const noteInput: NoteGenInput = {
-      amount: amount.toString(),
+      amount: bnAmount.toString(),
       backend: 'Circom',
       curve: 'Bn254',
       denomination: '18',
@@ -164,7 +165,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
 
       this.inner.notificationHandler({
         data: {
-          amount: note.amount,
+          amount: ethers.utils.formatUnits(note.amount, note.denomination),
           chain: getEVMChainNameFromInternal(this.inner.config, Number(sourceInternalId)),
           currency: currency.view.name,
         },
@@ -293,7 +294,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
 
           this.inner.notificationHandler({
             data: {
-              amount: note.amount,
+              amount: ethers.utils.formatUnits(note.amount, note.denomination),
               chain: getEVMChainNameFromInternal(this.inner.config, Number(sourceInternalId)),
               currency: currency.view.name,
             },
@@ -308,7 +309,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
         } else {
           this.inner.notificationHandler({
             data: {
-              amount: note.amount,
+              amount: ethers.utils.formatUnits(note.amount, note.denomination),
               chain: getEVMChainNameFromInternal(this.inner.config, Number(sourceInternalId)),
               currency: currency.view.name,
             },
@@ -359,7 +360,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
 
           this.inner.notificationHandler({
             data: {
-              amount: note.amount,
+              amount: ethers.utils.formatUnits(note.amount, note.denomination),
               chain: getEVMChainNameFromInternal(this.inner.config, Number(sourceInternalId)),
               currency: currency.view.name,
             },
@@ -374,7 +375,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
         } else {
           this.inner.notificationHandler({
             data: {
-              amount: note.amount,
+              amount: ethers.utils.formatUnits(note.amount, note.denomination),
               chain: getEVMChainNameFromInternal(this.inner.config, Number(sourceInternalId)),
               currency: currency.view.name,
             },

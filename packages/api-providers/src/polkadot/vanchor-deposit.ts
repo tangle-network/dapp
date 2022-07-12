@@ -12,7 +12,7 @@ import { getLeafCount, getLeafIndex } from '@webb-dapp/api-providers/polkadot/mt
 import { LoggerService } from '@webb-tools/app-util';
 import { ArkworksProvingManager, Note, NoteGenInput, ProvingManagerSetupInput, Utxo } from '@webb-tools/sdk-core';
 import { VAnchorProof } from '@webb-tools/sdk-core/proving/types';
-import { BigNumber } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 
 import { decodeAddress } from '@polkadot/keyring';
 import { hexToU8a, u8aToHex } from '@polkadot/util';
@@ -28,11 +28,6 @@ import { chainTypeIdToInternalId, computeChainIdType } from '../chains';
 import { WebbError, WebbErrorCodes } from '../webb-error';
 
 const logger = LoggerService.get('PolkadotVBridgeDeposit');
-
-export function currencyToUnitI128(currencyAmount: number) {
-  let bn = BigNumber.from(currencyAmount);
-  return bn.mul(1_000_000_000_000);
-}
 
 // TODO: export this from webb.js
 
@@ -62,6 +57,7 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
       logger.error('Not currency/active bridge available');
       throw new Error('api not ready');
     }
+    const bnAmount = ethers.utils.parseUnits(amount.toString(), currency.getDecimals());
     const tokenSymbol = currency.view.symbol;
     const destChainId = destination;
     // Chain id of the active API
@@ -78,10 +74,10 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
     const treeId = anchor.neighbours[internalChainId] as number;
 
     const noteInput: NoteGenInput = {
-      amount: currencyToUnitI128(amount).toString(),
+      amount: bnAmount.toString(),
       backend: 'Arkworks',
       curve: 'Bn254',
-      denomination: '18',
+      denomination: currency.view.decimals.toString(),
       exponentiation: '5',
       hashFunction: 'Poseidon',
       protocol: 'vanchor',
@@ -121,6 +117,7 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
       // output note (Already generated)
       const depositNote = depositPayload.note;
       const { note } = depositNote;
+
       // VAnchor tree id
       const treeId = depositPayload.params[0];
       const targetChainId = note.targetChainId;

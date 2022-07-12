@@ -1,13 +1,12 @@
-import { Checkbox, FormControlLabel, Icon, IconButton, Tooltip, Typography } from '@material-ui/core';
+import { Checkbox, FormControlLabel, Tooltip, Typography } from '@material-ui/core';
 import { ChainTypeId, Currency, DepositPayload } from '@webb-dapp/api-providers';
+import { ModalNoteDisplay } from '@webb-dapp/react-components/NoteDisplay/ModalNoteDisplay';
 import { useWebContext } from '@webb-dapp/react-environment/webb-context';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
-import { useCopyable } from '@webb-dapp/react-hooks/useCopyable';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { CloseButton } from '@webb-dapp/ui-components/Buttons/CloseButton';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
-import { notificationApi } from '@webb-dapp/ui-components/notification';
 import { Spinner } from '@webb-dapp/ui-components/Spinner/Spinner';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 import { downloadString } from '@webb-dapp/utils';
@@ -53,24 +52,6 @@ type DepositInfoProps = {
   wrappableAsset: Currency | null | undefined;
 };
 
-const GeneratedNote = styled.div`
-  border-radius: 10px;
-  padding: 0.7rem;
-  word-break: break-all;
-  position: relative;
-  min-height: 120px;
-  background: ${({ theme }) => theme.heavySelectionBackground};
-  color: ${({ theme }) => theme.primaryText};
-
-  .copy-button {
-    display: block;
-  }
-
-  .download-button {
-    display: block;
-  }
-`;
-
 const Loading = styled.div`
   position: absolute;
   top: 0;
@@ -88,11 +69,6 @@ const Loading = styled.div`
   > div {
     height: 200px;
   }
-`;
-
-const Actions = styled.div`
-  display: flex;
-  justify-content: flex-end;
 `;
 
 export const DepositConfirm: React.FC<DepositInfoProps> = ({
@@ -121,18 +97,6 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({
     },
     [note]
   );
-
-  const { copy, isCopied } = useCopyable();
-  const handleCopy = useCallback((): void => {
-    copy(note ?? '');
-
-    notificationApi.addToQueue({
-      secondaryMessage: 'Deposit note is copied to clipboard',
-      message: 'Copied  to clipboard',
-      variant: 'success',
-      Icon: <Icon>content_copy</Icon>,
-    });
-  }, [note, copy]);
 
   useEffect(() => {
     if (typeof destChain === 'undefined' || !amount || !activeChain) {
@@ -185,30 +149,7 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({
 
         <SpaceBox height={16} />
 
-        {loading ? null : (
-          <>
-            <GeneratedNote>
-              {note}
-              <Actions>
-                <Tooltip title={'Download Note'}>
-                  <IconButton
-                    className={'download-button'}
-                    onClick={() => {
-                      downloadNote();
-                    }}
-                  >
-                    <Icon>download</Icon>
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title={isCopied ? `Copied` : `Copy to clipboard`}>
-                  <IconButton onClick={handleCopy} {...({ className: 'copy-button' } as any)}>
-                    <Icon>content_copy</Icon>
-                  </IconButton>
-                </Tooltip>
-              </Actions>
-            </GeneratedNote>
-          </>
-        )}
+        {loading ? null : <ModalNoteDisplay download={downloadNote} note={note} />}
 
         <SpaceBox height={8} />
 

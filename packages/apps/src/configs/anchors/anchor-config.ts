@@ -2,7 +2,7 @@ import { AppConfig, InternalChainId, WebbCurrencyId } from '@webb-dapp/api-provi
 
 // Anchor config is indexed by WebbCurrencyId
 export const anchorsConfig: AppConfig['anchors'] = {
-  [WebbCurrencyId.webbWETH]: [
+  [WebbCurrencyId.webbETH]: [
     {
       anchorTreeIds: {},
       anchorAddresses: {

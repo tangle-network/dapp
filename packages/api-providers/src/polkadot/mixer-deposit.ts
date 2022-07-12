@@ -7,6 +7,7 @@ import '@webb-tools/types';
 
 import { LoggerService } from '@webb-tools/app-util';
 import { Note, NoteGenInput } from '@webb-tools/sdk-core';
+import { ethers } from 'ethers';
 
 import { PalletMixerMixerMetadata } from '@polkadot/types/lookup';
 import { u8aToHex } from '@polkadot/util';
@@ -94,7 +95,7 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
 
     logger.info(`Depositing to tree id ${treeId}`);
     const noteInput: NoteGenInput = {
-      amount: String(mixer.amount),
+      amount: ethers.utils.parseUnits(mixer.amount.toString(), Number(denomination)).toString(),
       backend: 'Arkworks',
       curve: 'Bn254',
       denomination: `${denomination}`,

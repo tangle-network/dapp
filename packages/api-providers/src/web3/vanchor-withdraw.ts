@@ -165,7 +165,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
       this.emit('stateChange', TransactionState.FetchingLeaves);
       for (const note of notes) {
         const parsedNote = (await Note.deserialize(note)).note;
-        sumInputNotes = ethers.utils.parseUnits(parsedNote.amount, parsedNote.denomination).add(sumInputNotes);
+        sumInputNotes = BigNumber.from(parsedNote.amount).add(sumInputNotes);
 
         // fetch leaves if we don't have them
         if (leavesMap[parsedNote.sourceChainId] === undefined) {
@@ -249,7 +249,6 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
           })
         );
       }
-
       // Populate the leaves if not already populated.
       if (!leavesMap[destChainIdType.toString()]) {
         const leafStorage = await bridgeStorageFactory(destChainIdType);

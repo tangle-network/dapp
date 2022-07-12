@@ -24,7 +24,7 @@ export const Chip: React.FC<ChipProps> = ({ color, style: styleProp = {}, varian
       if (isOutline) {
         const color = isLight ? theme.palette.success.main : theme.palette.success.light;
         style['color'] = color;
-        style['border'] = color;
+        style['border'] = `1px solid ${color}`;
       } else {
         style['color'] = isLight ? '#fff' : '#000';
         style['backgroundColor'] = isLight ? theme.palette.success.light : theme.palette.success.main;
@@ -36,7 +36,7 @@ export const Chip: React.FC<ChipProps> = ({ color, style: styleProp = {}, varian
       if (isOutline) {
         const color = isLight ? theme.palette.error.main : theme.palette.error.light;
         style['color'] = color;
-        style['border'] = color;
+        style['border'] = `1px solid ${color}`;
       } else {
         style['color'] = isLight ? '#fff' : '#000';
         style['backgroundColor'] = isLight ? theme.palette.error.light : theme.palette.error.main;
@@ -48,7 +48,7 @@ export const Chip: React.FC<ChipProps> = ({ color, style: styleProp = {}, varian
       if (isOutline) {
         const color = isLight ? theme.palette.info.main : theme.palette.info.light;
         style['color'] = color;
-        style['border'] = color;
+        style['border'] = `1px solid ${color}`;
       } else {
         style['color'] = isLight ? '#fff' : '#000';
         style['backgroundColor'] = isLight ? theme.palette.info.light : theme.palette.info.main;
@@ -60,7 +60,7 @@ export const Chip: React.FC<ChipProps> = ({ color, style: styleProp = {}, varian
       if (isOutline) {
         const color = isLight ? theme.palette.warning.main : theme.palette.warning.light;
         style['color'] = color;
-        style['border'] = color;
+        style['border'] = `1px solid ${color}`;
       } else {
         style['color'] = isLight ? '#fff' : '#000';
         style['backgroundColor'] = isLight ? theme.palette.warning.light : theme.palette.warning.main;

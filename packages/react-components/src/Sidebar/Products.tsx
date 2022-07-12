@@ -178,6 +178,7 @@ ProductItem.displayName = 'ProductItem';
 
 const ProductsRoot = styled.div`
   flex: 1;
+  margin-bottom: 24px;
 `;
 
 interface ProductsProps {

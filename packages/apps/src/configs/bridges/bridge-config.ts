@@ -3,9 +3,9 @@ import { AppConfig, WebbCurrencyId } from '@webb-dapp/api-providers';
 import { anchorsConfig } from '../anchors/anchor-config';
 
 export const bridgeConfigByAsset: AppConfig['bridgeByAsset'] = {
-  [WebbCurrencyId.webbWETH]: {
-    asset: WebbCurrencyId.webbWETH,
-    anchors: anchorsConfig[WebbCurrencyId.webbWETH],
+  [WebbCurrencyId.webbETH]: {
+    asset: WebbCurrencyId.webbETH,
+    anchors: anchorsConfig[WebbCurrencyId.webbETH],
   },
   [WebbCurrencyId.WEBB]: {
     asset: WebbCurrencyId.WEBB,
