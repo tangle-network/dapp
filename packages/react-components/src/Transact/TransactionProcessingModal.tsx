@@ -1,4 +1,4 @@
-import { Button, Checkbox, Typography } from '@material-ui/core';
+import { Button, Checkbox, Typography } from '@mui/material';
 import { TransactionState } from '@webb-dapp/api-providers';
 import { SpaceBox } from '@webb-dapp/ui-components/Box';
 import { Spinner } from '@webb-dapp/ui-components/Spinner/Spinner';

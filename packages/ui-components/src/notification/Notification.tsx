@@ -1,5 +1,4 @@
-import { ButtonBase, Icon, Paper } from '@material-ui/core';
-import Typography from '@material-ui/core/Typography';
+import { ButtonBase, Icon, Paper, Typography } from '@mui/material';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { lightPallet } from '@webb-dapp/ui-components/styling/colors';
 import { SnackbarKey, SnackbarMessage } from 'notistack';

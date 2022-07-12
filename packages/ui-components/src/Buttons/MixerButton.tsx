@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/indent */
-import { ButtonBase, ButtonBaseProps } from '@material-ui/core';
+import { ButtonBase, ButtonBaseProps } from '@mui/material';
 import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
 import React from 'react';
 import styled, { css } from 'styled-components';

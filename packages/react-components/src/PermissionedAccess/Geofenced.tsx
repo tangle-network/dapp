@@ -1,4 +1,4 @@
-import Typography from '@material-ui/core/Typography';
+import Typography from '@mui/material/Typography';
 import { ContentWrapper } from '@webb-dapp/ui-components/ContentWrappers/ContentWrapper';
 import React from 'react';
 

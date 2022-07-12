@@ -1,4 +1,4 @@
-import { IconButton, Popover } from '@material-ui/core';
+import { IconButton, Popover } from '@mui/material';
 import { InformationIcon } from '@webb-dapp/ui-components/assets/InformationIcon';
 import React, { Fragment, useState } from 'react';
 

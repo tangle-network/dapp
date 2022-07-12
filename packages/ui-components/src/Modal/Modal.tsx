@@ -1,9 +1,8 @@
-/* eslint-disable sort-keys */
-import { createStyles, Theme } from '@material-ui/core';
-import MuiModel, { ModalProps as MuiModalProps } from '@material-ui/core/Modal';
-import Slide from '@material-ui/core/Slide';
-import { makeStyles } from '@material-ui/core/styles';
-import Tooltip from '@material-ui/core/Tooltip';
+import MuiModal, { ModalProps as MuiModalProps } from '@mui/material/Modal';
+import Slide from '@mui/material/Slide';
+import { Theme } from '@mui/material/styles';
+import Tooltip from '@mui/material/Tooltip';
+import { createStyles, makeStyles } from '@mui/styles';
 import React from 'react';
 
 export interface ModalProps extends Omit<MuiModalProps, 'children'> {
@@ -77,7 +76,7 @@ export const Modal: React.FC<ModalProps> = ({
   });
   return (
     // @ts-ignore
-    <MuiModel
+    <MuiModal
       style={{
         overflow: 'auto',
       }}
@@ -120,6 +119,6 @@ export const Modal: React.FC<ModalProps> = ({
           )}
         </div>
       </Slide>
-    </MuiModel>
+    </MuiModal>
   );
 };

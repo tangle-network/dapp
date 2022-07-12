@@ -1,4 +1,4 @@
-import { ButtonBase, Checkbox, FormControlLabel, Icon, Tooltip, Typography } from '@material-ui/core';
+import { ButtonBase, Checkbox, FormControlLabel, Tooltip, Typography } from '@mui/material';
 import { ChainTypeId, DepositPayload, MixerSize } from '@webb-dapp/api-providers';
 import { DepositAmountDecal } from '@webb-dapp/bridge/components/DepositConfirm/DepositAmountDecal';
 import { DepositApi } from '@webb-dapp/mixer/hooks/deposit/useDeposit';

@@ -1,9 +1,8 @@
-/* eslint-disable sort-keys */
-import { ThemeOptions } from '@material-ui/core';
+import { DeprecatedThemeOptions } from '@mui/material/styles';
 
 import { FontFamilies } from '../../fonts/font-families.enum';
 
-export const themeOverrides: ThemeOptions['overrides'] = {
+export const themeOverrides: DeprecatedThemeOptions['overrides'] = {
   MuiButton: {
     root: {},
   },

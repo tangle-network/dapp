@@ -1,4 +1,4 @@
-import { Fade } from '@material-ui/core';
+import { Fade } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 

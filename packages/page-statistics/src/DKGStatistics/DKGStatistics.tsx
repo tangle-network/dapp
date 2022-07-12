@@ -1,4 +1,4 @@
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 import ProgressBar from '@ramonak/react-progress-bar';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';

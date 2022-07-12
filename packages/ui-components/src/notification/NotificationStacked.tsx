@@ -20,7 +20,6 @@ export function NotificationStacked() {
     [options]
   );
   return (
-    //@ts-ignore
     <SnackbarProvider
       anchorOrigin={{
         horizontal: 'right',

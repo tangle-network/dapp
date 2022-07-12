@@ -1,4 +1,4 @@
-import { FormHelperText, InputBase, Typography } from '@material-ui/core';
+import { FormHelperText, InputBase, Typography } from '@mui/material';
 import { TransactionState, WalletConfig, WebbRelayer } from '@webb-dapp/api-providers';
 import { chainsPopulated, currenciesConfig } from '@webb-dapp/apps/configs';
 import { useWithdraw } from '@webb-dapp/mixer/hooks';

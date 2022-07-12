@@ -1,4 +1,4 @@
-import { Checkbox, FormControlLabel } from '@material-ui/core';
+import { Checkbox, FormControlLabel } from '@mui/material';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import React from 'react';
 

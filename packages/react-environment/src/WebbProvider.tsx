@@ -1,5 +1,4 @@
-import { Typography } from '@material-ui/core';
-import Icon from '@material-ui/core/Icon';
+import { Icon, Typography } from '@mui/material';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import {
   Account,

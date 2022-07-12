@@ -1,4 +1,4 @@
-import { Checkbox, FormControlLabel, Tooltip, Typography } from '@material-ui/core';
+import { Checkbox, FormControlLabel, Tooltip, Typography } from '@mui/material';
 import { ChainTypeId, Currency, DepositPayload } from '@webb-dapp/api-providers';
 import { ModalNoteDisplay } from '@webb-dapp/react-components/NoteDisplay/ModalNoteDisplay';
 import { useWebContext } from '@webb-dapp/react-environment/webb-context';

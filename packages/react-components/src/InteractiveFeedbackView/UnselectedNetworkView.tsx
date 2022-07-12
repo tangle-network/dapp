@@ -1,4 +1,4 @@
-import { Button, Typography } from '@material-ui/core';
+import { Button, Typography } from '@mui/material';
 import { FeedbackEntry, InteractiveFeedback } from '@webb-dapp/api-providers';
 import { useStore } from '@webb-dapp/react-environment';
 import { CloseIconSvg } from '@webb-dapp/ui-components';

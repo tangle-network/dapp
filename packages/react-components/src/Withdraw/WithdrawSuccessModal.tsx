@@ -1,5 +1,5 @@
 import { formatUnits } from '@ethersproject/units';
-import { Button, Icon, Link, Typography } from '@material-ui/core';
+import { Button, Icon, Link, Typography } from '@mui/material';
 import {
   ActiveWebbRelayer,
   chainTypeIdToInternalId,

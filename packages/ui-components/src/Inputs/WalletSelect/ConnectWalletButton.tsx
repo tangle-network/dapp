@@ -1,4 +1,4 @@
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 import { useWebContext } from '@webb-dapp/react-environment';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import React, { useCallback, useState } from 'react';

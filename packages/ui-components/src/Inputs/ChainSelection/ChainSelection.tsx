@@ -1,5 +1,4 @@
-import { Avatar, InputBase, ListItemAvatar, ListItemText } from '@material-ui/core';
-import Typography from '@material-ui/core/Typography';
+import { Avatar, InputBase, ListItemAvatar, ListItemText, Typography } from '@mui/material';
 import { Chain } from '@webb-dapp/api-providers/abstracts';
 import { ChainTypeId, chainTypeIdToInternalId } from '@webb-dapp/api-providers/chains';
 import { chainsPopulated } from '@webb-dapp/apps/configs';

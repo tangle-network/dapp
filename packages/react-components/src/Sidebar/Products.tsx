@@ -1,8 +1,8 @@
-import { Collapse, Slide } from '@material-ui/core';
+import { Collapse } from '@mui/material';
 import { useStore } from '@webb-dapp/react-environment';
 import { useModal } from '@webb-dapp/react-hooks';
 import { ArrowDownIcon } from '@webb-dapp/ui-components/assets/ArrowDownIcon';
-import React, { createRef, FC, memo, useCallback, useContext, useEffect } from 'react';
+import { createRef, FC, memo, useCallback, useContext, useEffect } from 'react';
 import { NavLink, NavLinkProps, useMatch } from 'react-router-dom';
 import styled from 'styled-components';
 
