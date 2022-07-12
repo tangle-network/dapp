@@ -294,7 +294,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
       const keypair = new Keypair(storedPrivateKey.keypair);
 
       // Create the output UTXOs
-      const changeAmount = sumInputNotes.sub(ethers.utils.parseEther(amount));
+      const changeAmount = sumInputNotes.sub(amount);
       const changeUtxo = await CircomUtxo.generateUtxo({
         curve: 'Bn254',
         backend: 'Circom',
