@@ -5,13 +5,27 @@
 
 import type { WebbWeb3Provider } from './webb-provider';
 
-import { CircomUtxo, Keypair, MerkleTree, Note, randomBN, Utxo } from '@webb-tools/sdk-core';
-import { BigNumber, ContractReceipt, ethers } from 'ethers';
+import { CircomUtxo, Keypair, MerkleTree, Note, randomBN, toFixedHex, Utxo } from '@webb-tools/sdk-core';
+import { BigNumber, ethers } from 'ethers';
 
 import { hexToU8a, u8aToHex } from '@polkadot/util';
 
-import { AnchorApi, TransactionState, VAnchorWithdraw, VAnchorWithdrawResult, WebbRelayer } from '../abstracts';
-import { ChainType, computeChainIdType, evmIdIntoInternalChainId, parseChainIdType } from '../chains';
+import {
+  AnchorApi,
+  RelayedChainInput,
+  RelayedWithdrawResult,
+  TransactionState,
+  VAnchorWithdraw,
+  VAnchorWithdrawResult,
+  WebbRelayer,
+} from '../abstracts';
+import {
+  ChainType,
+  chainTypeIdToInternalId,
+  computeChainIdType,
+  evmIdIntoInternalChainId,
+  parseChainIdType,
+} from '../chains';
 import { generateCircomCommitment, utxoFromVAnchorNote, VAnchorContract } from '../contracts/wrappers';
 import { Web3Provider } from '../ext-providers/web3/web3-provider';
 import { fetchVariableAnchorKeyForEdges, fetchVariableAnchorWasmForEdges } from '../ipfs/evm/anchors';
@@ -20,6 +34,7 @@ import { BridgeConfig } from '../types/bridge-config.interface';
 import {
   BridgeStorage,
   bridgeStorageFactory,
+  chainIdToRelayerName,
   getAnchorDeploymentBlockNumber,
   getEVMChainNameFromInternal,
   keypairStorageFactory,
@@ -85,267 +100,380 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
 
   async withdraw(notes: string[], recipient: string, amount: string): Promise<VAnchorWithdrawResult> {
     this.cancelToken.cancelled = false;
-
-    const activeBridge = this.bridgeApi.activeBridge;
-
-    if (!activeBridge) {
-      throw new Error('No activeBridge set on the web3 anchor api');
-    }
-
-    const anchorConfigsForBridge = activeBridge.anchors.find((anchor) => anchor.type === 'variable')!;
-
-    const section = `Bridge ${Object.keys(anchorConfigsForBridge.anchorAddresses)
-      .map((id) => getEVMChainNameFromInternal(this.config, Number(id)))
-      .join('-')}`;
     const key = 'web3-vbridge-withdraw';
-    this.inner.notificationHandler({
-      description: 'Withdraw in progress',
-      key,
-      level: 'loading',
-      message: `${section}:withdraw`,
-      name: 'Transaction',
-    });
+    let txHash = '';
+    const changeNotes = [];
 
-    // set the destination contract
-    const activeChain = await this.inner.getChainId();
-    const destChainIdType = computeChainIdType(ChainType.EVM, activeChain);
-    const internalId = evmIdIntoInternalChainId(activeChain);
-    const destAddress = anchorConfigsForBridge.anchorAddresses[internalId]!;
-    const destVAnchor = await this.inner.getVariableAnchorByAddress(destAddress);
-    const treeHeight = await destVAnchor._contract.levels();
+    try {
+      const activeBridge = this.bridgeApi.activeBridge;
+      const activeRelayer = this.inner.relayerManager.activeRelayer;
+      const relayerAccount = activeRelayer ? activeRelayer.beneficiary! : recipient;
+      if (!activeBridge) {
+        throw new Error('No activeBridge set on the web3 anchor api');
+      }
 
-    // Create the proving manager - zk fixtures are fetched depending on the contract
-    // max edges as well as the number of input notes.
-    let wasmBuffer: Uint8Array;
-    let provingKey: Uint8Array;
+      const anchorConfigsForBridge = activeBridge.anchors.find((anchor) => anchor.type === 'variable')!;
 
-    this.emit('stateChange', TransactionState.FetchingFixtures);
+      const section = `Bridge ${Object.keys(anchorConfigsForBridge.anchorAddresses)
+        .map((id) => getEVMChainNameFromInternal(this.config, Number(id)))
+        .join('-')}`;
+      this.inner.notificationHandler({
+        description: 'Withdraw in progress',
+        key,
+        level: 'loading',
+        message: `${section}:withdraw`,
+        name: 'Transaction',
+      });
 
-    const maxEdges = await destVAnchor.inner.maxEdges();
-    if (notes.length > 2) {
-      provingKey = await fetchVariableAnchorKeyForEdges(maxEdges, false);
-      wasmBuffer = await fetchVariableAnchorWasmForEdges(maxEdges, false);
-    } else {
-      provingKey = await fetchVariableAnchorKeyForEdges(maxEdges, true);
-      wasmBuffer = await fetchVariableAnchorWasmForEdges(maxEdges, true);
-    }
+      // set the destination contract
+      const activeChain = await this.inner.getChainId();
+      const destChainIdType = computeChainIdType(ChainType.EVM, activeChain);
+      const internalId = evmIdIntoInternalChainId(activeChain);
+      const destAddress = anchorConfigsForBridge.anchorAddresses[internalId]!;
+      const destVAnchor = await this.inner.getVariableAnchorByAddress(destAddress);
+      const treeHeight = await destVAnchor._contract.levels();
 
-    // Loop through the notes and populate the leaves map
-    const leavesMap: Record<string, Uint8Array[]> = {};
+      // Create the proving manager - zk fixtures are fetched depending on the contract
+      // max edges as well as the number of input notes.
+      let wasmBuffer: Uint8Array;
+      let provingKey: Uint8Array;
 
-    // Keep track of the leafindices for each note
-    const leafIndices: number[] = [];
+      this.emit('stateChange', TransactionState.FetchingFixtures);
 
-    // calculate the sum of input notes (for calculating the change utxo)
-    let sumInputNotes: BigNumber = BigNumber.from(0);
+      const maxEdges = await destVAnchor.inner.maxEdges();
+      if (notes.length > 2) {
+        provingKey = await fetchVariableAnchorKeyForEdges(maxEdges, false);
+        wasmBuffer = await fetchVariableAnchorWasmForEdges(maxEdges, false);
+      } else {
+        provingKey = await fetchVariableAnchorKeyForEdges(maxEdges, true);
+        wasmBuffer = await fetchVariableAnchorWasmForEdges(maxEdges, true);
+      }
 
-    // Create input UTXOs for convenience calculations
-    let inputUtxos: Utxo[] = [];
+      // Loop through the notes and populate the leaves map
+      const leavesMap: Record<string, Uint8Array[]> = {};
 
-    // For all notes, get any leaves
-    this.emit('stateChange', TransactionState.FetchingLeaves);
-    for (const note of notes) {
-      const parsedNote = (await Note.deserialize(note)).note;
-      sumInputNotes = BigNumber.from(parsedNote.amount).add(sumInputNotes);
+      // Keep track of the leafindices for each note
+      const leafIndices: number[] = [];
 
-      // fetch leaves if we don't have them
-      if (leavesMap[parsedNote.sourceChainId] === undefined) {
-        // Set up a provider for the source chain
-        const sourceAddress = parsedNote.sourceIdentifyingData;
-        const sourceChainIdType = parseChainIdType(Number(parsedNote.sourceChainId));
-        const sourceInternalId = evmIdIntoInternalChainId(sourceChainIdType.chainId);
-        const sourceChainConfig = this.config.chains[sourceInternalId];
-        const sourceHttpProvider = Web3Provider.fromUri(sourceChainConfig.url);
-        const sourceEthers = sourceHttpProvider.intoEthersProvider();
-        const sourceVAnchor = await this.inner.getVariableAnchorByAddressAndProvider(sourceAddress, sourceEthers);
-        const leafStorage = await bridgeStorageFactory(Number(parsedNote.sourceChainId));
+      // calculate the sum of input notes (for calculating the change utxo)
+      let sumInputNotes: BigNumber = BigNumber.from(0);
+
+      // Create input UTXOs for convenience calculations
+      let inputUtxos: Utxo[] = [];
+
+      // For all notes, get any leaves
+      this.emit('stateChange', TransactionState.FetchingLeaves);
+      for (const note of notes) {
+        const parsedNote = (await Note.deserialize(note)).note;
+        sumInputNotes = BigNumber.from(parsedNote.amount).add(sumInputNotes);
+
+        // fetch leaves if we don't have them
+        if (leavesMap[parsedNote.sourceChainId] === undefined) {
+          // Set up a provider for the source chain
+          const sourceAddress = parsedNote.sourceIdentifyingData;
+          const sourceChainIdType = parseChainIdType(Number(parsedNote.sourceChainId));
+          const sourceInternalId = evmIdIntoInternalChainId(sourceChainIdType.chainId);
+          const sourceChainConfig = this.config.chains[sourceInternalId];
+          const sourceHttpProvider = Web3Provider.fromUri(sourceChainConfig.url);
+          const sourceEthers = sourceHttpProvider.intoEthersProvider();
+          const sourceVAnchor = await this.inner.getVariableAnchorByAddressAndProvider(sourceAddress, sourceEthers);
+          const leafStorage = await bridgeStorageFactory(Number(parsedNote.sourceChainId));
+
+          // check if we already cached some values.
+          const storedContractInfo: BridgeStorage[0] = (await leafStorage.get(sourceAddress.toLowerCase())) || {
+            lastQueriedBlock: getAnchorDeploymentBlockNumber(Number(parsedNote.sourceChainId), sourceAddress) || 0,
+            leaves: [] as string[],
+          };
+
+          const leavesFromChain = await sourceVAnchor.getDepositLeaves(storedContractInfo.lastQueriedBlock + 1, 0);
+
+          leavesMap[parsedNote.sourceChainId] = [...storedContractInfo.leaves, ...leavesFromChain.newLeaves].map(
+            (leaf) => {
+              return hexToU8a(leaf);
+            }
+          );
+        }
+
+        let destHistorySourceRoot: string;
+
+        // Get the latest root that has been relayed from the source chain to the destination chain
+        if (parsedNote.sourceChainId === parsedNote.targetChainId) {
+          const destRoot = await destVAnchor.inner.getLastRoot();
+          destHistorySourceRoot = destRoot;
+        } else {
+          const edgeIndex = await destVAnchor.inner.edgeIndex(parsedNote.sourceChainId);
+          const edge = await destVAnchor.inner.edgeList(edgeIndex);
+          destHistorySourceRoot = edge[1];
+        }
+
+        const testMerkleTree = new MerkleTree(
+          treeHeight,
+          leavesMap[parsedNote.sourceChainId].map((leaf) => u8aToHex(leaf))
+        );
+
+        console.log('root of recreated merkle tree', testMerkleTree.root().toHexString());
+
+        // Remove leaves from the leaves map which have not yet been relayed
+        const provingTree = MerkleTree.createTreeWithRoot(
+          treeHeight,
+          leavesMap[parsedNote.sourceChainId].map((leaf) => u8aToHex(leaf)),
+          destHistorySourceRoot
+        );
+        if (!provingTree) {
+          console.log('fetched leaves do not match bridged anchor state');
+          throw new Error('fetched leaves do not match bridged anchor state');
+        }
+        const provingLeaves = provingTree.elements().map((el) => hexToU8a(el.toHexString()));
+        leavesMap[parsedNote.sourceChainId] = provingLeaves;
+        const commitment = generateCircomCommitment(parsedNote);
+        const leafIndex = provingTree.getIndexByElement(commitment);
+        leafIndices.push(leafIndex);
+        console.log('Create Utxo', leafIndex);
+        const utxo = await utxoFromVAnchorNote(parsedNote, leafIndex);
+        inputUtxos.push(utxo);
+      }
+
+      const randomKeypair = new Keypair();
+
+      // Add default input notes if required
+      while (inputUtxos.length !== 2 && inputUtxos.length < 16) {
+        inputUtxos.push(
+          await CircomUtxo.generateUtxo({
+            curve: 'Bn254',
+            backend: 'Circom',
+            chainId: destChainIdType.toString(),
+            originChainId: destChainIdType.toString(),
+            amount: '0',
+            blinding: hexToU8a(randomBN(31).toHexString()),
+            keypair: randomKeypair,
+          })
+        );
+      }
+      // Populate the leaves if not already populated.
+      if (!leavesMap[destChainIdType.toString()]) {
+        const leafStorage = await bridgeStorageFactory(destChainIdType);
 
         // check if we already cached some values.
-        const storedContractInfo: BridgeStorage[0] = (await leafStorage.get(sourceAddress.toLowerCase())) || {
-          lastQueriedBlock: getAnchorDeploymentBlockNumber(Number(parsedNote.sourceChainId), sourceAddress) || 0,
+        const storedContractInfo: BridgeStorage[0] = (await leafStorage.get(destAddress.toLowerCase())) || {
+          lastQueriedBlock: getAnchorDeploymentBlockNumber(destChainIdType, destAddress) || 0,
           leaves: [] as string[],
         };
 
-        const leavesFromChain = await sourceVAnchor.getDepositLeaves(storedContractInfo.lastQueriedBlock + 1, 0);
+        const leavesFromChain = await destVAnchor.getDepositLeaves(storedContractInfo.lastQueriedBlock + 1, 0);
 
-        leavesMap[parsedNote.sourceChainId] = [...storedContractInfo.leaves, ...leavesFromChain.newLeaves].map(
-          (leaf) => {
-            return hexToU8a(leaf);
-          }
-        );
+        // Only populate the leaves map if there are actually leaves to populate.
+        if (leavesFromChain.newLeaves.length != 0 || storedContractInfo.leaves.length != 0) {
+          leavesMap[destChainIdType.toString()] = [...storedContractInfo.leaves, ...leavesFromChain.newLeaves].map(
+            (leaf) => {
+              return hexToU8a(leaf);
+            }
+          );
+        }
       }
 
-      let destHistorySourceRoot: string;
+      // Check for cancelled here, abort if it was set.
+      if (this.cancelToken.cancelled) {
+        this.inner.notificationHandler({
+          description: 'Withdraw canceled',
+          key,
+          level: 'error',
+          message: `${section}:withdraw`,
+          name: 'Transaction',
+        });
+        this.emit('stateChange', TransactionState.Ideal);
 
-      // Get the latest root that has been relayed from the source chain to the destination chain
-      if (parsedNote.sourceChainId === parsedNote.targetChainId) {
-        const destRoot = await destVAnchor.inner.getLastRoot();
-        destHistorySourceRoot = destRoot;
+        return {
+          txHash: '',
+          outputNotes: [],
+        };
+      }
+
+      // Retrieve the user's keypair
+      const keypairStorage = await keypairStorageFactory();
+      const storedPrivateKey = await keypairStorage.get('keypair');
+      const keypair = new Keypair(storedPrivateKey.keypair);
+
+      // Create the output UTXOs
+      const changeAmount = sumInputNotes.sub(amount);
+      const changeUtxo = await CircomUtxo.generateUtxo({
+        curve: 'Bn254',
+        backend: 'Circom',
+        amount: changeAmount.toString(),
+        chainId: destChainIdType.toString(),
+        privateKey: hexToU8a(storedPrivateKey.keypair),
+        keypair,
+        originChainId: destChainIdType.toString(),
+      });
+
+      const dummyUtxo = await CircomUtxo.generateUtxo({
+        curve: 'Bn254',
+        backend: 'Circom',
+        amount: '0',
+        chainId: destChainIdType.toString(),
+        keypair,
+      });
+      const outputUtxos = [changeUtxo, dummyUtxo];
+
+      let extAmount = BigNumber.from(0)
+        .add(outputUtxos.reduce((sum: BigNumber, x: Utxo) => sum.add(x.amount), BigNumber.from(0)))
+        .sub(inputUtxos.reduce((sum: BigNumber, x: Utxo) => sum.add(x.amount), BigNumber.from(0)));
+      this.emit('stateChange', TransactionState.GeneratingZk);
+      const { extData, outputNotes, publicInputs } = await destVAnchor.setupTransaction(
+        inputUtxos,
+        [changeUtxo, dummyUtxo],
+        extAmount,
+        0,
+        recipient,
+        relayerAccount,
+        leavesMap,
+        provingKey,
+        Buffer.from(wasmBuffer)
+      );
+
+      // Check for cancelled here, abort if it was set.
+      if (this.cancelToken.cancelled) {
+        this.inner.notificationHandler({
+          description: 'Withdraw canceled',
+          key,
+          level: 'error',
+          message: `${section}:withdraw`,
+          name: 'Transaction',
+        });
+        this.emit('stateChange', TransactionState.Ideal);
+
+        return {
+          txHash: '',
+          outputNotes: [],
+        };
+      }
+
+      this.emit('stateChange', TransactionState.SendingTransaction);
+
+      // Take the proof and send the transaction
+      if (activeRelayer) {
+        const relayedVAnchorWithdraw = await activeRelayer.initWithdraw('vAnchor');
+
+        const ParsedDestChainIdType = parseChainIdType(destChainIdType);
+        const destInternalId = chainTypeIdToInternalId(ParsedDestChainIdType);
+        const chainName = chainIdToRelayerName(destInternalId);
+
+        const chainInfo: RelayedChainInput = {
+          baseOn: 'evm',
+          contractAddress: destAddress,
+          endpoint: '',
+          name: chainName,
+        };
+
+        const extAmount = extData.extAmount.replace('0x', '');
+        const relayedDepositTxPayload = relayedVAnchorWithdraw.generateWithdrawRequest<typeof chainInfo, 'vAnchor'>(
+          chainInfo,
+          {
+            chain: chainName,
+            id: destAddress,
+            extData: {
+              recipient: extData.recipient,
+              relayer: extData.relayer,
+              extAmount: extAmount as any,
+              fee: extData.fee.toString() as any,
+              encryptedOutput1: extData.encryptedOutput1,
+              encryptedOutput2: extData.encryptedOutput2,
+            },
+            proofData: {
+              proof: publicInputs.proof,
+              extDataHash: publicInputs.extDataHash,
+              publicAmount: publicInputs.publicAmount,
+              roots: publicInputs.roots,
+              outputCommitments: publicInputs.outputCommitments,
+              inputNullifiers: publicInputs.inputNullifiers,
+            },
+          }
+        );
+
+        relayedVAnchorWithdraw.watcher.subscribe(([results, message]) => {
+          switch (results) {
+            case RelayedWithdrawResult.PreFlight:
+              this.emit('stateChange', TransactionState.SendingTransaction);
+              break;
+            case RelayedWithdrawResult.OnFlight:
+              break;
+            case RelayedWithdrawResult.Continue:
+              break;
+            case RelayedWithdrawResult.CleanExit:
+              this.emit('stateChange', TransactionState.Done);
+              this.emit('stateChange', TransactionState.Ideal);
+
+              this.inner.notificationHandler({
+                description: `TX hash:`,
+                key: 'vanchor-withdraw-sub',
+                level: 'success',
+                message: 'vanchor254:withdraw',
+                name: 'Transaction',
+              });
+
+              break;
+            case RelayedWithdrawResult.Errored:
+              this.emit('stateChange', TransactionState.Failed);
+              this.emit('stateChange', TransactionState.Ideal);
+
+              this.inner.notificationHandler({
+                description: message || 'Withdraw failed',
+                key: 'vanchor-withdraw-sub',
+                level: 'success',
+                message: 'vanchor254:withdraw',
+                name: 'Transaction',
+              });
+              break;
+          }
+        });
+
+        this.inner.notificationHandler({
+          description: 'Sending TX to relayer',
+          key: 'vanchor-withdraw-sub',
+          level: 'loading',
+          message: 'vanchor254:withdraw',
+
+          name: 'Transaction',
+        });
+        relayedVAnchorWithdraw.send(relayedDepositTxPayload);
+        const results = await relayedVAnchorWithdraw.await();
+        if (results) {
+          const [, message] = results;
+          txHash = message!;
+        }
+        const hexCommitment = u8aToHex(changeUtxo.commitment);
+        const changeNote: Note = outputNotes.find(
+          (note: Note) => generateCircomCommitment(note.note) === hexCommitment
+        )!;
+        changeNotes.push(changeNote);
       } else {
-        const edgeIndex = await destVAnchor.inner.edgeIndex(parsedNote.sourceChainId);
-        const edge = await destVAnchor.inner.edgeList(edgeIndex);
-        destHistorySourceRoot = edge[1];
-      }
-
-      const testMerkleTree = new MerkleTree(
-        treeHeight,
-        leavesMap[parsedNote.sourceChainId].map((leaf) => u8aToHex(leaf))
-      );
-
-      console.log('root of recreated merkle tree', testMerkleTree.root().toHexString());
-
-      // Remove leaves from the leaves map which have not yet been relayed
-      const provingTree = MerkleTree.createTreeWithRoot(
-        treeHeight,
-        leavesMap[parsedNote.sourceChainId].map((leaf) => u8aToHex(leaf)),
-        destHistorySourceRoot
-      );
-      if (!provingTree) {
-        console.log('fetched leaves do not match bridged anchor state');
-        throw new Error('fetched leaves do not match bridged anchor state');
-      }
-      const provingLeaves = provingTree.elements().map((el) => hexToU8a(el.toHexString()));
-      leavesMap[parsedNote.sourceChainId] = provingLeaves;
-      const commitment = generateCircomCommitment(parsedNote);
-      const leafIndex = provingTree.getIndexByElement(commitment);
-      leafIndices.push(leafIndex);
-
-      const utxo = await utxoFromVAnchorNote(parsedNote, leafIndex);
-      inputUtxos.push(utxo);
-    }
-
-    const randomKeypair = new Keypair();
-
-    // Add default input notes if required
-    while (inputUtxos.length !== 2 && inputUtxos.length < 16) {
-      inputUtxos.push(
-        await CircomUtxo.generateUtxo({
-          curve: 'Bn254',
-          backend: 'Circom',
-          chainId: destChainIdType.toString(),
-          originChainId: destChainIdType.toString(),
-          amount: '0',
-          blinding: hexToU8a(randomBN(31).toHexString()),
-          keypair: randomKeypair,
-        })
-      );
-    }
-
-    // Populate the leaves if not already populated.
-    if (!leavesMap[destChainIdType.toString()]) {
-      const leafStorage = await bridgeStorageFactory(destChainIdType);
-
-      // check if we already cached some values.
-      const storedContractInfo: BridgeStorage[0] = (await leafStorage.get(destAddress.toLowerCase())) || {
-        lastQueriedBlock: getAnchorDeploymentBlockNumber(destChainIdType, destAddress) || 0,
-        leaves: [] as string[],
-      };
-
-      const leavesFromChain = await destVAnchor.getDepositLeaves(storedContractInfo.lastQueriedBlock + 1, 0);
-
-      // Only populate the leaves map if there are actually leaves to populate.
-      if (leavesFromChain.newLeaves.length != 0 || storedContractInfo.leaves.length != 0) {
-        leavesMap[destChainIdType.toString()] = [...storedContractInfo.leaves, ...leavesFromChain.newLeaves].map(
-          (leaf) => {
-            return hexToU8a(leaf);
-          }
+        const tx = await destVAnchor.inner.transact(
+          {
+            ...publicInputs,
+            outputCommitments: [publicInputs.outputCommitments[0], publicInputs.outputCommitments[1]],
+          },
+          extData
         );
+        const receipt = await tx.wait();
+        // Parse the events for the index of the changeUTXO
+        const hexCommitment = u8aToHex(changeUtxo.commitment);
+
+        const insertedCommitmentEvent = receipt.events?.find(
+          (event) => event.event === 'Insertion' && event.args?.includes(hexCommitment)
+        );
+
+        if (!insertedCommitmentEvent) {
+          throw new Error("Uh oh, we didn't find our commitment in the insertions... inserted garbage");
+        }
+
+        const changeNote: Note = outputNotes.find(
+          (note: Note) => generateCircomCommitment(note.note) === hexCommitment
+        )!;
+        const nextIndex = insertedCommitmentEvent.args![1].toString();
+        console.log(`NextIndex ${nextIndex}`);
+        changeNote.mutateIndex(nextIndex);
+        changeNotes.push(changeNote);
+        txHash = receipt.transactionHash;
       }
-    }
-
-    // Check for cancelled here, abort if it was set.
-    if (this.cancelToken.cancelled) {
-      this.inner.notificationHandler({
-        description: 'Withdraw canceled',
-        key,
-        level: 'error',
-        message: `${section}:withdraw`,
-        name: 'Transaction',
-      });
-      this.emit('stateChange', TransactionState.Ideal);
-
-      return {
-        txHash: '',
-        outputNotes: [],
-      };
-    }
-
-    // Retrieve the user's keypair
-    const keypairStorage = await keypairStorageFactory();
-    const storedPrivateKey = await keypairStorage.get('keypair');
-    const keypair = new Keypair(storedPrivateKey.keypair);
-
-    // Create the output UTXOs
-    const changeAmount = sumInputNotes.sub(amount);
-    const changeUtxo = await CircomUtxo.generateUtxo({
-      curve: 'Bn254',
-      backend: 'Circom',
-      amount: changeAmount.toString(),
-      chainId: destChainIdType.toString(),
-      privateKey: hexToU8a(storedPrivateKey.keypair),
-      keypair,
-      originChainId: destChainIdType.toString(),
-    });
-
-    const dummyUtxo = await CircomUtxo.generateUtxo({
-      curve: 'Bn254',
-      backend: 'Circom',
-      amount: '0',
-      chainId: destChainIdType.toString(),
-      keypair,
-    });
-    const outputUtxos = [changeUtxo, dummyUtxo];
-
-    let extAmount = BigNumber.from(0)
-      .add(outputUtxos.reduce((sum: BigNumber, x: Utxo) => sum.add(x.amount), BigNumber.from(0)))
-      .sub(inputUtxos.reduce((sum: BigNumber, x: Utxo) => sum.add(x.amount), BigNumber.from(0)));
-
-    this.emit('stateChange', TransactionState.GeneratingZk);
-
-    const { extData, outputNotes, publicInputs } = await destVAnchor.setupTransaction(
-      inputUtxos,
-      [changeUtxo, dummyUtxo],
-      extAmount,
-      0,
-      recipient,
-      recipient,
-      leavesMap,
-      provingKey,
-      Buffer.from(wasmBuffer)
-    );
-
-    // Check for cancelled here, abort if it was set.
-    if (this.cancelToken.cancelled) {
-      this.inner.notificationHandler({
-        description: 'Withdraw canceled',
-        key,
-        level: 'error',
-        message: `${section}:withdraw`,
-        name: 'Transaction',
-      });
-      this.emit('stateChange', TransactionState.Ideal);
-
-      return {
-        txHash: '',
-        outputNotes: [],
-      };
-    }
-
-    this.emit('stateChange', TransactionState.SendingTransaction);
-
-    // Take the proof and send the transaction
-    // TODO: support relayed transaction
-    let receipt: ContractReceipt;
-
-    try {
-      const tx = await destVAnchor.inner.transact(
-        {
-          ...publicInputs,
-          outputCommitments: [publicInputs.outputCommitments[0], publicInputs.outputCommitments[1]],
-        },
-        extData
-      );
-      receipt = await tx.wait();
     } catch (e) {
       this.emit('stateChange', TransactionState.Ideal);
       console.log(e);
@@ -354,7 +482,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
         description: (e as any)?.code === 4001 ? 'Withdraw rejected' : 'Withdraw failed',
         key,
         level: 'error',
-        message: `${section}:withdraw`,
+        message: `web3-vanchor:withdraw`,
         name: 'Transaction',
       });
 
@@ -364,32 +492,18 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
       };
     }
 
-    // Parse the events for the index of the changeUTXO
-    const hexCommitment = u8aToHex(changeUtxo.commitment);
-
-    const insertedCommitmentEvent = receipt.events?.find(
-      (event) => event.event === 'Insertion' && event.args?.includes(hexCommitment)
-    );
-
-    if (!insertedCommitmentEvent) {
-      throw new Error("Uh oh, we didn't find our commitment in the insertions... inserted garbage");
-    }
-
-    const changeNote: Note = outputNotes.find((note: Note) => generateCircomCommitment(note.note) === hexCommitment)!;
-    changeNote.mutateIndex(insertedCommitmentEvent.args![1].toString());
-
     this.emit('stateChange', TransactionState.Ideal);
     this.inner.notificationHandler({
       description: recipient,
       key,
       level: 'success',
-      message: `${section}:withdraw`,
+      message: 'vanchor254:withdraw',
       name: 'Transaction',
     });
 
     return {
-      txHash: receipt.transactionHash,
-      outputNotes: [changeNote],
+      txHash: txHash,
+      outputNotes: changeNotes,
     };
   }
 }

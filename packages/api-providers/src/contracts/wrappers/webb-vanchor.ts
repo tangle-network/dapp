@@ -516,7 +516,6 @@ export class VAnchorContract {
     ];
 
     console.log(inputNotes);
-
     const proofInput: ProvingManagerSetupInput<'vanchor'> = {
       inputNotes,
       leavesMap,
@@ -552,9 +551,9 @@ export class VAnchorContract {
 
     const extData = {
       recipient: toFixedHex(proofInput.recipient, 20),
-      extAmount: toFixedHex(proofInput.extAmount),
+      extAmount: toFixedHex(proofInput.extAmount, 20),
       relayer: toFixedHex(proofInput.relayer, 20),
-      fee: toFixedHex(proofInput.fee),
+      fee: toFixedHex(proofInput.fee, 20),
       encryptedOutput1: u8aToHex(proofInput.encryptedCommitments[0]),
       encryptedOutput2: u8aToHex(proofInput.encryptedCommitments[1]),
     };

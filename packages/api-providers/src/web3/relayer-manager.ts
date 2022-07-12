@@ -4,7 +4,14 @@
 import { Note } from '@webb-tools/sdk-core';
 import { ethers } from 'ethers';
 
-import { OptionalActiveRelayer, OptionalRelayer, RelayerQuery, shuffleRelayers, WebbRelayer } from '../abstracts';
+import {
+  ContractName,
+  OptionalActiveRelayer,
+  OptionalRelayer,
+  RelayerQuery,
+  shuffleRelayers,
+  WebbRelayer,
+} from '../abstracts';
 import { WebbRelayerManager } from '../abstracts/relayer/webb-relayer-manager';
 import { chainTypeIdToInternalId, InternalChainId, parseChainIdType } from '../chains';
 import { getFixedAnchorAddressForBridge, webbCurrencyIdFromString, WebbError, WebbErrorCodes } from '..';
@@ -77,7 +84,7 @@ export class Web3RelayerManager extends WebbRelayerManager {
    *  Accepts a 'RelayerQuery' object with optional, indexible fields.
    **/
   getRelayers(query: RelayerQuery): WebbRelayer[] {
-    const { baseOn, bridgeSupport, chainId, contractAddress, ipService } = query;
+    const { baseOn, bridgeSupport, chainId, contract, contractAddress, ipService } = query;
     const relayers = this.relayers.filter((relayer) => {
       const capabilities = relayer.capabilities;
 
@@ -97,6 +104,18 @@ export class Web3RelayerManager extends WebbRelayerManager {
               )
           );
         }
+      }
+
+      if (query.contract && baseOn === 'evm' && chainId !== undefined) {
+        console.log(`chainId: ${chainId}`);
+        console.log(`evm map`, capabilities.supportedChains);
+        const cap = capabilities.supportedChains['evm'].get(chainId);
+        console.log(`Query using the query.contract field ${query.contract}`, cap);
+        const relayerIndex =
+          capabilities.supportedChains['evm']
+            .get(chainId)
+            ?.contracts.findIndex((contract) => contract.contract === query.contract) ?? -1;
+        return relayerIndex > -1;
       }
 
       if (bridgeSupport && baseOn && chainId) {
@@ -141,6 +160,17 @@ export class Web3RelayerManager extends WebbRelayerManager {
   async getRelayersByNote(evmNote: Note) {
     const chainTypeId = Number(evmNote.note.targetChainId);
     const internalId = chainTypeIdToInternalId(parseChainIdType(chainTypeId));
+    let contract: ContractName;
+    switch (evmNote.note.protocol) {
+      case 'mixer':
+        contract = 'Anchor';
+        break;
+      case 'anchor':
+        contract = 'Anchor';
+        break;
+      case 'vanchor':
+        contract = 'VAnchor';
+    }
 
     return this.getRelayers({
       baseOn: 'evm',
@@ -149,6 +179,7 @@ export class Web3RelayerManager extends WebbRelayerManager {
         tokenSymbol: evmNote.note.tokenSymbol,
       },
       chainId: internalId,
+      contract,
     });
   }
 

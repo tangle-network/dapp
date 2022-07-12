@@ -285,7 +285,8 @@ export class Web3AnchorWithdraw extends AnchorWithdraw<WebbWeb3Provider> {
         name: chainIdToRelayerName(destInternalId),
       };
 
-      const tx = relayedWithdraw.generateWithdrawRequest<typeof chainInfo, 'anchor'>(chainInfo, proof.proof, {
+      const tx = relayedWithdraw.generateWithdrawRequest<typeof chainInfo, 'anchor'>(chainInfo, {
+        proof: proof.proof,
         chain: chainInfo.name,
         extDataHash: extDataHash.toHexString(),
         fee: toFixedHex(proofInput.fee),

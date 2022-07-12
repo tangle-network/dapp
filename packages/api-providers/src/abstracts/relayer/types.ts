@@ -39,8 +39,9 @@ export type Capabilities = {
  * @param withdrawFeePercentage - Relayer fee percentage used to estimate transaction costs
  * @param linkedAnchor - Linked anchors that a relayer is supporting
  **/
+export type ContractName = 'Anchor' | 'VAnchor';
 export interface Contract {
-  contract: string;
+  contract: ContractName;
   address: string;
   deployedAt: number;
   eventsWatcher: EventsWatcher;
@@ -103,6 +104,7 @@ export type RelayerQuery = {
   chainId?: InternalChainId;
   contractAddress?: string;
   bridgeSupport?: FixedSizeQuery;
+  contract?: ContractName;
 };
 
 export type ChainNameIntoChainId = (name: string, basedOn: 'evm' | 'substrate') => InternalChainId | null;
@@ -223,16 +225,101 @@ type AnchorRelayTransaction = {
 };
 
 /**
+ * Proof data object for VAnchor proofs on any chain
+ *
+ * @param proof - Encoded proof data
+ * @param publicAmount - Public amount for proof
+ * @param roots - Merkle roots for the proof
+ * @param inputNullifiers - nullifer hashes for the proof
+ * @param outputCommitments - Output commitments for the proof
+ * @param extDataHash - External data hash for the proof external data
+ * */
+
+type EVMProofData = {
+  proof: string;
+  publicAmount: string;
+  roots: string;
+  inputNullifiers: string[];
+  outputCommitments: string[];
+  extDataHash: string;
+};
+
+type SubstrateProofData = {
+  proof: Array<number>;
+  publicAmount: Array<number>;
+  roots: Array<number>[] | number[];
+  inputNullifiers: Array<number>[];
+  outputCommitments: Array<number>[];
+  extDataHash: Array<number>;
+};
+type ProofData = SubstrateProofData | EVMProofData;
+
+/**
+ * External data for the VAnchor on any chain
+ *
+ * @param recipient -  Recipient identifier of the withdrawn funds
+ * @param relayer - Relayer identifier of the transaction
+ * @param extAmount - External amount being deposited or withdrawn withdrawn
+ * @param fee - Fee to pay the relayer
+ * @param encryptedOutput1 - First encrypted output commitment
+ * @param encryptedOutput2 - Second encrypted output commitment
+ * */
+type SubstrateExtData = {
+  recipient: string;
+  relayer: string;
+  extAmount: number | string;
+  fee: number;
+  encryptedOutput1: Array<number>;
+  encryptedOutput2: Array<number>;
+};
+
+/**
+ * External data for the VAnchor on any chain
+ *
+ * @param recipient -  Recipient identifier of the withdrawn funds
+ * @param relayer - Relayer identifier of the transaction
+ * @param extAmount - External amount being deposited or withdrawn withdrawn
+ * @param fee - Fee to pay the relayer
+ * @param encryptedOutput1 - First encrypted output commitment
+ * @param encryptedOutput2 - Second encrypted output commitment
+ * */
+type EVMExtData = {
+  recipient: string;
+  relayer: string;
+  extAmount: string;
+  fee: number;
+  encryptedOutput1: string;
+  encryptedOutput2: string;
+};
+
+type ExtData = EVMExtData | SubstrateExtData;
+/**
+ * Contains data that is relayed to the VAnchors
+ * @param chain - One of the supported chains of this relayer
+ * @param id - The tree id of the mixer's underlying tree
+ * @param proofData - The zero-knowledge proof data structure for VAnchor transactions
+ * @param extData - The external data structure for arbitrary inputs
+ * */
+type VAnchorRelayTransaction = {
+  chain: string;
+  id: number | string;
+  proofData: ProofData;
+  extData: ExtData;
+};
+
+/**
  * Relayed transaction for substrate
  **/
 export type RelayerSubstrateCommands = {
   mixer: MixerRelayTx;
+  vAnchor: VAnchorRelayTransaction;
 };
 /**
  * Relayed transaction for EVM
  **/
 export type RelayerEVMCommands = {
   anchor: AnchorRelayTransaction;
+  vAnchor: VAnchorRelayTransaction;
 };
 export type EVMCMDKeys = keyof RelayerEVMCommands;
 export type SubstrateCMDKeys = keyof RelayerSubstrateCommands;

@@ -6,7 +6,17 @@ import '@webb-tools/api-derive';
 
 import type { WebbPolkadot } from './webb-provider';
 
-import { fetchSubstrateVAnchorProvingKey, TransactionState, WebbError, WebbErrorCodes } from '@webb-dapp/api-providers';
+import {
+  chainIdToRelayerName,
+  chainTypeIdToInternalId,
+  fetchSubstrateVAnchorProvingKey,
+  parseChainIdType,
+  RelayedChainInput,
+  RelayedWithdrawResult,
+  TransactionState,
+  WebbError,
+  WebbErrorCodes,
+} from '@webb-dapp/api-providers';
 import { getLeafCount, getLeafIndex, getLeaves, rootOfLeaves } from '@webb-dapp/api-providers/polkadot/mt-utils';
 import { ArkworksProvingManager, Note, ProvingManagerSetupInput, Utxo } from '@webb-tools/sdk-core';
 import { VAnchorProof } from '@webb-tools/sdk-core/proving/types';
@@ -29,12 +39,20 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
     const secret = randomAsU8a();
     // Get the current active account
     const account = await this.inner.accounts.activeOrDefault;
-
+    let txHash = '';
+    let predictedIndex = 0;
     if (!account) {
       throw WebbError.from(WebbErrorCodes.NoAccountAvailable);
     }
+    const activeRelayer = this.inner.relayerManager.activeRelayer;
+    const activeRelayerAccount = activeRelayer?.beneficiary;
+    console.log(activeRelayer);
+    if (activeRelayer && activeRelayerAccount === undefined) {
+      // Fix the error code/message
+      throw WebbError.from(WebbErrorCodes.RelayerUnsupportedMixer);
+    }
     const accountId = account.address;
-    const relayerAccountId = account.address;
+    const relayerAccountId = activeRelayer ? activeRelayerAccount! : account.address;
     const recipientAccountDecoded = decodeAddress(accountId);
     const relayerAccountDecoded = decodeAddress(relayerAccountId);
     // Notes deserialization
@@ -98,8 +116,8 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
     this.emit('stateChange', TransactionState.GeneratingZk);
 
     const extData = {
-      relayer: accountId,
-      recipient: relayerAccountId,
+      relayer: relayerAccountId,
+      recipient: accountId,
       fee: 0,
       extAmount: BigNumber.from(publicAmount),
       encryptedOutput1: u8aToHex(comEnc1),
@@ -124,6 +142,8 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
       publicAmount: String(publicAmount),
       output: [output1, output2],
     };
+    const destChainIdType = parseChainIdType(Number(inputNotes[0].note.targetChainId));
+    const destInternalId = chainTypeIdToInternalId(destChainIdType);
 
     const data: VAnchorProof = await pm.prove('vanchor', vanchorWithdrawSetup);
     const vanchorProofData = {
@@ -136,17 +156,107 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
       outputCommitments: data.outputNotes.map((note) => u8aToHex(note.getLeaf())),
       extDataHash: data.extDataHash,
     };
-    this.emit('stateChange', TransactionState.SendingTransaction);
-    // get the leaf index to get the right leaf index ofter insertion
-    const leafsCount = await getLeafCount(this.inner.api, Number(treeId));
-    const predictedIndex = leafsCount;
 
-    const method = {
-      method: 'transact',
-      section: 'vAnchorBn254',
-    };
-    const tx = this.inner.txBuilder.build(method, [treeId, vanchorProofData, extData]);
-    const txHash = await tx.call(account.address);
+    if (activeRelayer) {
+      const relayedVAnchorWithdraw = await activeRelayer.initWithdraw('vAnchor');
+      const chainName = chainIdToRelayerName(destInternalId);
+      const chainInfo: RelayedChainInput = {
+        baseOn: 'substrate',
+        contractAddress: '',
+        endpoint: '',
+        name: chainName,
+      };
+      const relayedDepositTxPayload = relayedVAnchorWithdraw.generateWithdrawRequest<typeof chainInfo, 'vAnchor'>(
+        chainInfo,
+        {
+          chain: chainName,
+          id: Number(treeId),
+          extData: {
+            recipient: extData.recipient,
+            relayer: extData.relayer,
+            extAmount: extData.extAmount.toNumber(),
+            fee: extData.fee,
+            encryptedOutput1: Array.from(hexToU8a(extData.encryptedOutput1)),
+            encryptedOutput2: Array.from(hexToU8a(extData.encryptedOutput2)),
+          },
+          proofData: {
+            proof: Array.from(hexToU8a(vanchorProofData.proof)),
+            extDataHash: Array.from(vanchorProofData.extDataHash),
+            publicAmount: Array.from(vanchorProofData.publicAmount),
+            roots: vanchorProofData.roots.map((root) => Array.from(root)),
+            outputCommitments: vanchorProofData.outputCommitments.map((com) => Array.from(hexToU8a(com))),
+            inputNullifiers: vanchorProofData.inputNullifiers.map((com) => Array.from(hexToU8a(com))),
+          },
+        }
+      );
+
+      relayedVAnchorWithdraw.watcher.subscribe(([results, message]) => {
+        switch (results) {
+          case RelayedWithdrawResult.PreFlight:
+            this.emit('stateChange', TransactionState.SendingTransaction);
+            break;
+          case RelayedWithdrawResult.OnFlight:
+            break;
+          case RelayedWithdrawResult.Continue:
+            break;
+          case RelayedWithdrawResult.CleanExit:
+            this.emit('stateChange', TransactionState.Done);
+            this.emit('stateChange', TransactionState.Ideal);
+
+            this.inner.notificationHandler({
+              description: `TX hash:`,
+              key: 'vanchor-withdraw-sub',
+              level: 'success',
+              message: 'vanchor254:withdraw',
+              name: 'Transaction',
+            });
+
+            break;
+          case RelayedWithdrawResult.Errored:
+            this.emit('stateChange', TransactionState.Failed);
+            this.emit('stateChange', TransactionState.Ideal);
+
+            this.inner.notificationHandler({
+              description: message || 'Withdraw failed',
+              key: 'vanchor-withdraw-sub',
+              level: 'success',
+              message: 'vanchor254:withdraw',
+              name: 'Transaction',
+            });
+            break;
+        }
+      });
+
+      this.inner.notificationHandler({
+        description: 'Sending TX to relayer',
+        key: 'vanchor-withdraw-sub',
+        level: 'loading',
+        message: 'vanchor254:withdraw',
+
+        name: 'Transaction',
+      });
+      predictedIndex = await getLeafCount(this.inner.api, Number(treeId));
+      relayedVAnchorWithdraw.send(relayedDepositTxPayload);
+      const results = await relayedVAnchorWithdraw.await();
+      if (results) {
+        const [, message] = results;
+        txHash = message!;
+      }
+    } else {
+      this.emit('stateChange', TransactionState.SendingTransaction);
+      const leafsCount = await getLeafCount(this.inner.api, Number(treeId));
+      predictedIndex = leafsCount;
+
+      const method = {
+        method: 'transact',
+        section: 'vAnchorBn254',
+      };
+      const tx = this.inner.txBuilder.build(method, [treeId, vanchorProofData, extData]);
+      txHash = await tx.call(account.address);
+    }
+
+    // get the leaf index to get the right leaf index ofter insertion
+
     const leafIndex = await this.getleafIndex(outputCommitment, predictedIndex, Number(treeId));
     // update the UTXO of the remainder note
     outputNote.note.update_vanchor_utxo(output1.inner);

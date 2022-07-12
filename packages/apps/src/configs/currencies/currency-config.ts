@@ -143,8 +143,8 @@ export const currenciesConfig: AppConfig['currencies'] = {
     role: CurrencyRole.Wrappable,
     icon: React.createElement(GanacheLogo),
     addresses: new Map([
-      [InternalChainId.HermesLocalnet, '0xF2E246BB76DF876Cef8b38ae84130F4F55De395b'],
-      [InternalChainId.AthenaLocalnet, '0xF2E246BB76DF876Cef8b38ae84130F4F55De395b'],
+      [InternalChainId.HermesLocalnet, '0x2946259E0334f33A064106302415aD3391BeD384'],
+      [InternalChainId.AthenaLocalnet, '0xDe09E74d4888Bc4e65F589e8c13Bce9F71DdF4c7'],
       [InternalChainId.DemeterLocalnet, '0xF2E246BB76DF876Cef8b38ae84130F4F55De395b'],
     ]),
   },
@@ -158,9 +158,9 @@ export const currenciesConfig: AppConfig['currencies'] = {
     role: CurrencyRole.Governable,
     icon: WebbWrappedLogo(GanacheLogo()),
     addresses: new Map([
-      [InternalChainId.HermesLocalnet, '0xd24260c102b5d128cbefa0f655e5be3c2370677c'],
-      [InternalChainId.AthenaLocalnet, '0xd24260c102b5d128cbefa0f655e5be3c2370677c'],
-      [InternalChainId.DemeterLocalnet, '0xd24260c102b5d128cbefa0f655e5be3c2370677c'],
+      [InternalChainId.HermesLocalnet, '0x510C6297cC30A058F41eb4AF1BFC9953EaD8b577'],
+      [InternalChainId.AthenaLocalnet, '0xcbD945E77ADB65651F503723aC322591f3435cC5'],
+      [InternalChainId.DemeterLocalnet, '0x7758F98C1c487E5653795470eEab6C4698bE541b'],
     ]),
   },
   [WebbCurrencyId.TEST]: {
