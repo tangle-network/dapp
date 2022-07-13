@@ -208,7 +208,7 @@ export class WebbRelayer {
   }
 
   async getLeaves(chainId: number, contractAddress: string): Promise<RelayerLeaves> {
-    const url = `${this.endpoint}/api/v1/leaves/${chainId.toString(16)}/${contractAddress}`;
+    const url = `${this.endpoint}/api/v1/leaves/evm/${chainId.toString(16)}/${contractAddress}`;
     const req = await fetch(url);
 
     if (req.ok) {

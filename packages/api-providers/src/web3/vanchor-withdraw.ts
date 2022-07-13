@@ -58,17 +58,17 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
    */
   async fetchLeavesFromRelayers(
     relayers: WebbRelayer[],
-    sourceContract: VAnchorContract,
+    contract: VAnchorContract,
     storage: Storage<BridgeStorage>
   ): Promise<string[] | null> {
     let leaves: string[] = [];
-    const sourceEvmId = await sourceContract.getEvmId();
+    const sourceEvmId = await contract.getEvmId();
 
     // loop through the sourceRelayers to fetch leaves
     for (let i = 0; i < relayers.length; i++) {
-      const relayerLeaves = await relayers[i].getLeaves(sourceEvmId, sourceContract.inner.address);
+      const relayerLeaves = await relayers[i].getLeaves(sourceEvmId, contract.inner.address);
 
-      const validLatestLeaf = await sourceContract.leafCreatedAtBlock(
+      const validLatestLeaf = await contract.leafCreatedAtBlock(
         relayerLeaves.leaves[relayerLeaves.leaves.length - 1],
         relayerLeaves.lastQueriedBlock
       );
@@ -76,14 +76,14 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
       // leaves from relayer somewhat validated, attempt to build the tree
       if (validLatestLeaf) {
         // Assume the destination anchor has the same levels as source anchor
-        const levels = await sourceContract.inner.levels();
-        const tree = MerkleTree.createTreeWithRoot(levels, relayerLeaves.leaves, await sourceContract.getLastRoot());
+        const levels = await contract.inner.levels();
+        const tree = MerkleTree.createTreeWithRoot(levels, relayerLeaves.leaves, await contract.getLastRoot());
 
         // If we were able to build the tree, set local storage and break out of the loop
         if (tree) {
           leaves = relayerLeaves.leaves;
 
-          await storage.set(sourceContract.inner.address.toLowerCase(), {
+          await storage.set(contract.inner.address.toLowerCase(), {
             lastQueriedBlock: relayerLeaves.lastQueriedBlock,
             leaves: relayerLeaves.leaves,
           });
@@ -179,19 +179,29 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
           const sourceVAnchor = await this.inner.getVariableAnchorByAddressAndProvider(sourceAddress, sourceEthers);
           const leafStorage = await bridgeStorageFactory(Number(parsedNote.sourceChainId));
 
-          // check if we already cached some values.
-          const storedContractInfo: BridgeStorage[0] = (await leafStorage.get(sourceAddress.toLowerCase())) || {
-            lastQueriedBlock: getAnchorDeploymentBlockNumber(Number(parsedNote.sourceChainId), sourceAddress) || 0,
-            leaves: [] as string[],
-          };
-
-          const leavesFromChain = await sourceVAnchor.getDepositLeaves(storedContractInfo.lastQueriedBlock + 1, 0);
-
-          leavesMap[parsedNote.sourceChainId] = [...storedContractInfo.leaves, ...leavesFromChain.newLeaves].map(
-            (leaf) => {
-              return hexToU8a(leaf);
-            }
+          // fetch leaves from relayers if possible
+          const relayers = await this.inner.relayerManager.getRelayersByChainAndAddress(
+            sourceInternalId,
+            sourceAddress
           );
+          let leaves = await this.fetchLeavesFromRelayers(relayers, sourceVAnchor, leafStorage);
+
+          // Fetch leaves from chain and localStorage if fetching from relayers failed
+          if (!leaves) {
+            // check if we already cached some values.
+            const storedContractInfo: BridgeStorage[0] = (await leafStorage.get(sourceAddress.toLowerCase())) || {
+              lastQueriedBlock: getAnchorDeploymentBlockNumber(Number(parsedNote.sourceChainId), sourceAddress) || 0,
+              leaves: [] as string[],
+            };
+
+            const leavesFromChain = await sourceVAnchor.getDepositLeaves(storedContractInfo.lastQueriedBlock + 1, 0);
+
+            leaves = [...storedContractInfo.leaves, ...leavesFromChain.newLeaves];
+          }
+
+          leavesMap[parsedNote.sourceChainId] = leaves.map((leaf) => {
+            return hexToU8a(leaf);
+          });
         }
 
         let destHistorySourceRoot: string;
@@ -249,26 +259,31 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
           })
         );
       }
-      // Populate the leaves if not already populated.
+
+      // Populate the leaves for the destination if not already populated
       if (!leavesMap[destChainIdType.toString()]) {
         const leafStorage = await bridgeStorageFactory(destChainIdType);
 
-        // check if we already cached some values.
-        const storedContractInfo: BridgeStorage[0] = (await leafStorage.get(destAddress.toLowerCase())) || {
-          lastQueriedBlock: getAnchorDeploymentBlockNumber(destChainIdType, destAddress) || 0,
-          leaves: [] as string[],
-        };
+        // fetch leaves from relayers if possible
+        const relayers = await this.inner.relayerManager.getRelayersByChainAndAddress(internalId, destAddress);
+        let leaves = await this.fetchLeavesFromRelayers(relayers, destVAnchor, leafStorage);
 
-        const leavesFromChain = await destVAnchor.getDepositLeaves(storedContractInfo.lastQueriedBlock + 1, 0);
+        // Fetch leaves from chain and localStorage if fetching from relayers failed
+        if (!leaves) {
+          // check if we already cached some values.
+          const storedContractInfo: BridgeStorage[0] = (await leafStorage.get(destAddress.toLowerCase())) || {
+            lastQueriedBlock: getAnchorDeploymentBlockNumber(Number(destChainIdType), destAddress) || 0,
+            leaves: [] as string[],
+          };
 
-        // Only populate the leaves map if there are actually leaves to populate.
-        if (leavesFromChain.newLeaves.length != 0 || storedContractInfo.leaves.length != 0) {
-          leavesMap[destChainIdType.toString()] = [...storedContractInfo.leaves, ...leavesFromChain.newLeaves].map(
-            (leaf) => {
-              return hexToU8a(leaf);
-            }
-          );
+          const leavesFromChain = await destVAnchor.getDepositLeaves(storedContractInfo.lastQueriedBlock + 1, 0);
+
+          leaves = [...storedContractInfo.leaves, ...leavesFromChain.newLeaves];
         }
+
+        leavesMap[destChainIdType.toString()] = leaves.map((leaf) => {
+          return hexToU8a(leaf);
+        });
       }
 
       // Check for cancelled here, abort if it was set.
