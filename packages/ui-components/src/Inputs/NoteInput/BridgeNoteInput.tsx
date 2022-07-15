@@ -1,4 +1,4 @@
-import { FormHelperText, Icon, InputBase } from '@material-ui/core';
+import { FormHelperText, Icon, InputBase } from '@mui/material';
 import { webbCurrencyIdFromString } from '@webb-dapp/api-providers';
 import { useDepositNote } from '@webb-dapp/mixer/hooks/note';
 import { useWebContext } from '@webb-dapp/react-environment/webb-context';

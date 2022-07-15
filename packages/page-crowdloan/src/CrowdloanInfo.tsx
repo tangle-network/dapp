@@ -1,7 +1,6 @@
-import { alpha, Typography } from '@material-ui/core';
+import { alpha, Typography } from '@mui/material';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
-import { over } from 'lodash';
 import React, { Fragment } from 'react';
 import styled, { css } from 'styled-components';
 

@@ -2,14 +2,14 @@ import {
   Button,
   ClickAwayListener,
   Divider,
+  Icon,
   IconButton,
   InputBase,
   List,
   ListItemText,
   Popper,
-} from '@material-ui/core';
-import Icon from '@material-ui/core/Icon';
-import Typography from '@material-ui/core/Typography';
+  Typography,
+} from '@mui/material';
 import { ActiveWebbRelayer, Capabilities, internalChainIdIntoEVMId, WebbRelayer } from '@webb-dapp/api-providers';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';

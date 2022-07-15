@@ -1,4 +1,4 @@
-import { FormHelperText, InputBase, Typography } from '@material-ui/core';
+import { FormHelperText, InputBase, Typography } from '@mui/material';
 import {
   getChainNameFromChainId,
   TransactionState,

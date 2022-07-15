@@ -1,4 +1,4 @@
-import { Chip as MuiChip, ChipProps as MuiChipProps, useTheme } from '@material-ui/core';
+import { Chip as MuiChip, ChipProps as MuiChipProps, useTheme } from '@mui/material';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import React, { useMemo } from 'react';
 

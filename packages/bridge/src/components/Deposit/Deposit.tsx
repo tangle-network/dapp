@@ -121,17 +121,27 @@ export const Deposit: React.FC<DepositProps> = () => {
       return;
     }
 
+    let isSubscribe = true;
+
     // todo: figure out what happens for polkadot - won't be depositing by address
     const tokenAddress = activeApi.methods.anchorApi.getTokenAddress({
       chainId: activeChain.chainId,
       chainType: activeChain.chainType,
     });
+
     if (!tokenAddress) {
       return;
     }
+
     activeApi.methods.chainQuery.tokenBalanceByAddress(tokenAddress).then((balance) => {
-      setWrappedTokenBalance(balance);
+      if (isSubscribe) {
+        setWrappedTokenBalance(balance);
+      }
     });
+
+    return () => {
+      isSubscribe = false;
+    };
   }, [activeApi, activeChain]);
 
   const [showDepositModal, setShowDepositModal] = useState(false);
@@ -174,6 +184,8 @@ export const Deposit: React.FC<DepositProps> = () => {
   ]);
 
   useEffect(() => {
+    let isSubscribe = true;
+
     if (!wrappableToken || !activeApi || !activeChain || loading) {
       return;
     }
@@ -181,8 +193,14 @@ export const Deposit: React.FC<DepositProps> = () => {
     activeApi.methods.chainQuery
       .tokenBalanceByCurrencyId(activeChain.id, wrappableToken.view.id as any)
       .then((balance) => {
-        setWrappableTokenBalance(balance);
+        if (isSubscribe) {
+          setWrappableTokenBalance(balance);
+        }
       });
+
+    return () => {
+      isSubscribe = false;
+    };
   }, [wrappableToken, activeApi, loading, activeChain]);
 
   // helper for automatic selection of 'wrap and deposit' if not enough bridge token

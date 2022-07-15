@@ -1,4 +1,4 @@
-import { ButtonBase, CircularProgress, Icon, Typography } from '@material-ui/core';
+import { ButtonBase, CircularProgress, Icon, Typography } from '@mui/material';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { useMemo } from 'react';
 import styled, { css } from 'styled-components';

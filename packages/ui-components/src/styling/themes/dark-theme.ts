@@ -1,5 +1,4 @@
-/* eslint-disable sort-keys */
-import { ThemeOptions } from '@material-ui/core';
+import { DeprecatedThemeOptions } from '@mui/material/styles';
 import tinycolor from 'tinycolor2';
 
 import { darkPallet } from '../colors';
@@ -8,7 +7,7 @@ import { FontFamilies } from '../fonts/font-families.enum';
 const lightenRate = 5;
 const darkenRate = 5;
 
-export const darkMainTheme: ThemeOptions = {
+export const darkMainTheme: DeprecatedThemeOptions = {
   palette: {
     primary: {
       main: darkPallet.primary,
@@ -43,14 +42,13 @@ export const darkMainTheme: ThemeOptions = {
     text: {
       primary: darkPallet.primaryText,
       secondary: darkPallet.secondaryText,
-      hint: '#B9B9B9',
       disabled: tinycolor(darkPallet.primaryText).lighten(lightenRate).toHexString(),
     },
     background: {
       default: darkPallet.componentBackground,
       paper: darkPallet.background,
     },
-    type: 'dark',
+    mode: 'dark',
   },
   typography: {
     allVariants: {

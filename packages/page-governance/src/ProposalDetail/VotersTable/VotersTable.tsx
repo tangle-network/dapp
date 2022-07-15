@@ -1,4 +1,4 @@
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 import { GridWrapper } from '@webb-dapp/page-statistics/DKGStatistics/styled/shared';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { Config, UserConfig } from 'gridjs';

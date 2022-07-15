@@ -1,4 +1,4 @@
-import { Avatar, ClickAwayListener, Icon, IconButton, Tooltip, Typography } from '@material-ui/core';
+import { Avatar, ClickAwayListener, Icon, IconButton, Tooltip, Typography } from '@mui/material';
 import { CurrencyContent, evmIdIntoInternalChainId, Web3Provider, WebbCurrencyId } from '@webb-dapp/api-providers';
 import { currenciesConfig } from '@webb-dapp/apps/configs';
 import { useWebContext } from '@webb-dapp/react-environment';

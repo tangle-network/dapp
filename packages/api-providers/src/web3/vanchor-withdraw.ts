@@ -187,7 +187,6 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
             sourceInternalId,
             sourceAddress
           );
-          console.log('relayers to fetch from: ', relayers);
           let leaves = await this.fetchLeavesFromRelayers(relayers, sourceVAnchor, leafStorage);
 
           // Fetch leaves from chain and localStorage if fetching from relayers failed
@@ -270,7 +269,6 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
 
         // fetch leaves from relayers if possible
         const relayers = await this.inner.relayerManager.getRelayersByChainAndAddress(internalId, destAddress);
-        console.log('relayers to fetch from: ', relayers);
         let leaves = await this.fetchLeavesFromRelayers(relayers, destVAnchor, leafStorage);
 
         // Fetch leaves from chain and localStorage if fetching from relayers failed
@@ -373,8 +371,8 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
       if (activeRelayer) {
         const relayedVAnchorWithdraw = await activeRelayer.initWithdraw('vAnchor');
 
-        const ParsedDestChainIdType = parseTypedChainId(destChainIdType);
-        const destInternalId = typedChainIdToInternalId(ParsedDestChainIdType);
+        const parsedDestChainIdType = parseTypedChainId(destChainIdType);
+        const destInternalId = typedChainIdToInternalId(parsedDestChainIdType);
         const chainName = internalChainIdIntoEVMId(destInternalId);
 
         const chainInfo: RelayedChainInput = {

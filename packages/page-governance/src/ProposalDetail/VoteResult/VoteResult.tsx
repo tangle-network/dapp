@@ -1,4 +1,4 @@
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import React, { useCallback, useMemo } from 'react';
 import { CountUp, Props as CountUpProps, useCountUp } from 'use-count-up';

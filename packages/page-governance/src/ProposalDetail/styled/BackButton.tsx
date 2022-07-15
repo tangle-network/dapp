@@ -1,4 +1,4 @@
-import { Button } from '@material-ui/core';
+import { Button } from '@mui/material';
 import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
 import styled, { css } from 'styled-components';
 

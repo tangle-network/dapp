@@ -1,4 +1,4 @@
-import { Button, Icon, LinearProgress, Tooltip, Typography } from '@material-ui/core';
+import { Button, Icon, LinearProgress, Tooltip, Typography } from '@mui/material';
 import { getChainNameFromChainId } from '@webb-dapp/api-providers';
 import { TransactionState } from '@webb-dapp/api-providers';
 import { useAppConfig } from '@webb-dapp/react-environment';

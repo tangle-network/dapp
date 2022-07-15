@@ -1,4 +1,4 @@
-import { Checkbox, FormControlLabel, Icon, Tooltip, Typography } from '@material-ui/core';
+import { Checkbox, FormControlLabel, Tooltip, Typography } from '@mui/material';
 import { Currency, DepositPayload, MixerSize, TypedChainId } from '@webb-dapp/api-providers';
 import { BridgeDepositApi as DepositApi } from '@webb-dapp/bridge/hooks/deposit/useBridgeDeposit';
 import { ModalNoteDisplay } from '@webb-dapp/react-components/NoteDisplay/ModalNoteDisplay';

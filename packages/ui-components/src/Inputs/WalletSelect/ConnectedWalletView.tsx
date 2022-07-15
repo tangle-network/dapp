@@ -1,4 +1,4 @@
-import { ButtonBase, Typography } from '@material-ui/core';
+import { ButtonBase, Typography } from '@mui/material';
 import { ManagedWallet } from '@webb-dapp/api-providers';
 import { WalletId } from '@webb-dapp/apps/configs';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';

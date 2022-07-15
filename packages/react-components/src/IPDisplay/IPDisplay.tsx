@@ -1,4 +1,4 @@
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 import { LocationLogo } from '@webb-dapp/apps/configs/logos/LocationLogo';
 import { useIp } from '@webb-dapp/react-environment';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';

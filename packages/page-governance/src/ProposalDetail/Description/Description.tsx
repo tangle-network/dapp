@@ -1,4 +1,4 @@
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import React from 'react';
 

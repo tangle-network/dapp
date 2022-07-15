@@ -1,8 +1,7 @@
-import { FormControl, FormControlLabel, Icon, Radio, RadioGroup, Typography } from '@material-ui/core';
+import { FormControl, FormControlLabel, Icon, Radio, RadioGroup, Typography } from '@mui/material';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
-import { isNumber } from 'lodash';
 import React, { useCallback, useState } from 'react';
 import { useCountUp } from 'use-count-up';
 

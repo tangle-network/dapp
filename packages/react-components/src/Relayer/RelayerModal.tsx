@@ -1,4 +1,4 @@
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 import { ActiveWebbRelayer, WebbRelayer, WebbRelayerManager } from '@webb-dapp/api-providers';
 import { getRelayerManagerFactory } from '@webb-dapp/apps/configs/relayer-config';
 import { RelayersState } from '@webb-dapp/mixer';

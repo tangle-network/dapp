@@ -1,4 +1,4 @@
-import { Icon, IconButton, Tooltip } from '@material-ui/core';
+import { Icon, IconButton, Tooltip } from '@mui/material';
 import { useCopyable } from '@webb-dapp/react-hooks/useCopyable';
 import { notificationApi } from '@webb-dapp/ui-components/notification';
 import { useCallback } from 'react';

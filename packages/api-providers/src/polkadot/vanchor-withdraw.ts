@@ -170,7 +170,7 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
       const relayedDepositTxPayload = relayedVAnchorWithdraw.generateWithdrawRequest<typeof chainInfo, 'vAnchor'>(
         chainInfo,
         {
-          chain_id: substrateId,
+          chainId: substrateId,
           id: Number(treeId),
           extData: {
             recipient: extData.recipient,

@@ -1,4 +1,4 @@
-import { FormHelperText, InputBase } from '@material-ui/core';
+import { FormHelperText, InputBase } from '@mui/material';
 import React from 'react';
 
 type AmountInputProps = {

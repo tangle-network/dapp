@@ -84,8 +84,6 @@ export class Web3RelayerManager extends WebbRelayerManager {
    *  Accepts a 'RelayerQuery' object with optional, indexible fields.
    **/
   getRelayers(query: RelayerQuery): WebbRelayer[] {
-    console.log('relayers: ', this.relayers);
-
     const { baseOn, bridgeSupport, chainId, contractAddress, ipService } = query;
     const relayers = this.relayers.filter((relayer) => {
       const capabilities = relayer.capabilities;

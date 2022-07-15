@@ -1,5 +1,4 @@
-import { TypographyProps } from '@material-ui/core';
-import Typography from '@material-ui/core/Typography';
+import { Typography, TypographyProps } from '@mui/material';
 import { lightPallet } from '@webb-dapp/ui-components/styling/colors';
 import { AppColor } from '@webb-dapp/ui-components/styling/colors/app-colors.type';
 import React, { useMemo } from 'react';

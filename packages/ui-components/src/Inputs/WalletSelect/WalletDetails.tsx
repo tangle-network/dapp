@@ -1,4 +1,4 @@
-import { Avatar, Tooltip, Typography } from '@material-ui/core';
+import { Avatar, Tooltip, Typography } from '@mui/material';
 import { ManagedWallet } from '@webb-dapp/api-providers';
 import { WalletId } from '@webb-dapp/apps/configs';
 import { AccountManager } from '@webb-dapp/react-components/AccountManager/AccountManager';

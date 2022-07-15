@@ -1,4 +1,4 @@
-import { Icon, Typography } from '@material-ui/core';
+import { Icon, Typography } from '@mui/material';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { Fragment, useEffect, useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
