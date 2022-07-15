@@ -1,5 +1,5 @@
 import { ButtonBase, Checkbox, FormControlLabel, Icon, Tooltip, Typography } from '@material-ui/core';
-import { ChainTypeId, DepositPayload, MixerSize } from '@webb-dapp/api-providers';
+import { DepositPayload, MixerSize, TypedChainId } from '@webb-dapp/api-providers';
 import { DepositAmountDecal } from '@webb-dapp/bridge/components/DepositConfirm/DepositAmountDecal';
 import { DepositApi } from '@webb-dapp/mixer/hooks/deposit/useDeposit';
 import { ModalNoteDisplay } from '@webb-dapp/react-components/NoteDisplay/ModalNoteDisplay';
@@ -100,7 +100,7 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({ mixerSize, onClose,
     if (typeof mixerSize.id === 'string') {
       mixerSize.id.includes('Bridge') ? (desiredMixer = mixerSize.id) : (desiredMixer = Number(mixerSize.id));
     }
-    const chainIdType: ChainTypeId = {
+    const chainIdType: TypedChainId = {
       chainType: activeChain.chainType,
       chainId: activeChain.chainId,
     };

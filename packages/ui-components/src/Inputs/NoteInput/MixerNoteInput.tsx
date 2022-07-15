@@ -1,9 +1,9 @@
 import { FormHelperText, Icon, InputBase } from '@material-ui/core';
-import { ChainType, parseChainIdType } from '@webb-dapp/api-providers';
 import { useDepositNote } from '@webb-dapp/mixer/hooks/note';
 import { useWebContext } from '@webb-dapp/react-environment/webb-context';
 import { notificationApi } from '@webb-dapp/ui-components/notification';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
+import { ChainType, parseTypedChainId } from '@webb-tools/sdk-core';
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled, { css } from 'styled-components';
@@ -27,7 +27,7 @@ export const MixerNoteInput: React.FC<NoteInputProps> = ({ error, onChange, valu
     if (
       depositNote &&
       depositNote.note.protocol === 'anchor' &&
-      parseChainIdType(Number(depositNote.note.targetChainId)).chainType != ChainType.EVM
+      parseTypedChainId(Number(depositNote.note.targetChainId)).chainType != ChainType.EVM
     ) {
       notificationApi.addToQueue({
         secondaryMessage: 'Please complete withdraw through the bridge',

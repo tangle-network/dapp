@@ -1,5 +1,5 @@
-import { ChainType, computeChainIdType, internalChainIdIntoEVMId } from '@webb-dapp/api-providers';
-import { Note, NoteGenInput } from '@webb-tools/sdk-core';
+import { internalChainIdIntoEVMId } from '@webb-dapp/api-providers';
+import { calculateTypedChainId, ChainType, Note, NoteGenInput } from '@webb-tools/sdk-core';
 import { useEffect, useState } from 'react';
 
 async function migrateNote(noteString: string): Promise<Note | null> {
@@ -13,19 +13,19 @@ async function migrateNote(noteString: string): Promise<Note | null> {
       const newNoteInput: NoteGenInput = {
         protocol: d.note.protocol,
         version: 'v2',
-        targetChain: computeChainIdType(
+        targetChain: calculateTypedChainId(
           ChainType.EVM,
           internalChainIdIntoEVMId(Number(d.note.sourceChainId))
         ).toString(),
-        sourceChain: computeChainIdType(
+        sourceChain: calculateTypedChainId(
           ChainType.EVM,
           internalChainIdIntoEVMId(Number(d.note.sourceChainId))
         ).toString(),
-        sourceIdentifyingData: computeChainIdType(
+        sourceIdentifyingData: calculateTypedChainId(
           ChainType.EVM,
           internalChainIdIntoEVMId(Number(d.note.sourceChainId))
         ).toString(),
-        targetIdentifyingData: computeChainIdType(
+        targetIdentifyingData: calculateTypedChainId(
           ChainType.EVM,
           internalChainIdIntoEVMId(Number(d.note.sourceChainId))
         ).toString(),

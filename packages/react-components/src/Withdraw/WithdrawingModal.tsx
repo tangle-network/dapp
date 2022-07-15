@@ -1,9 +1,10 @@
 import { Button, Icon, LinearProgress, Tooltip, Typography } from '@material-ui/core';
-import { getChainNameFromChainId, parseChainIdType } from '@webb-dapp/api-providers';
+import { getChainNameFromChainId } from '@webb-dapp/api-providers';
 import { TransactionState } from '@webb-dapp/api-providers';
 import { useAppConfig } from '@webb-dapp/react-environment';
 import { SpaceBox } from '@webb-dapp/ui-components/Box';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
+import { parseTypedChainId } from '@webb-tools/sdk-core';
 import { JsNote as DepositNote } from '@webb-tools/wasm-utils';
 import { ethers } from 'ethers';
 import React, { useMemo } from 'react';
@@ -188,7 +189,7 @@ export const WithdrawingModal: React.FC<WithdrawingModalProps> = ({
                 <Typography variant={'caption'}>
                   <b>
                     Receiving {ethers.utils.formatUnits(note.amount, note.denomination) + ' ' + note.tokenSymbol} on{' '}
-                    {getChainNameFromChainId(appConfig, parseChainIdType(Number(note.targetChainId)))}
+                    {getChainNameFromChainId(appConfig, parseTypedChainId(Number(note.targetChainId)))}
                   </b>
                 </Typography>
               </InfoItem>

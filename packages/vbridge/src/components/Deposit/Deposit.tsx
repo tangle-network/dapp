@@ -1,8 +1,8 @@
 import {
-  ChainTypeId,
-  chainTypeIdToInternalId,
   Currency,
   TransactionState,
+  TypedChainId,
+  typedChainIdToInternalId,
   WalletConfig,
   WebbCurrencyId,
 } from '@webb-dapp/api-providers';
@@ -97,7 +97,7 @@ export const Deposit: React.FC<DepositProps> = () => {
   const [wrappedTokenBalance, setWrappedTokenBalance] = useState('');
   const [userAmountInput, setUserAmountInput] = useState<string>('');
   const [amount, setAmount] = useState<number>(0);
-  const [destChain, setDestChain] = useState<ChainTypeId | undefined>(undefined);
+  const [destChain, setDestChain] = useState<TypedChainId | undefined>(undefined);
   const { chains: chainsConfig, currencies: currenciesConfig } = useAppConfig();
 
   const [wrappableTokenBalance, setWrappableTokenBalance] = useState<String>('');
@@ -313,7 +313,7 @@ export const Deposit: React.FC<DepositProps> = () => {
             state={stage}
             amount={amount}
             sourceChain={activeChain ? activeChain.name : ''}
-            destChain={destChain ? chainsConfig[chainTypeIdToInternalId(destChain)].name : ''}
+            destChain={destChain ? chainsConfig[typedChainIdToInternalId(destChain)].name : ''}
             cancel={() => {
               console.log('user tried to cancel');
             }}

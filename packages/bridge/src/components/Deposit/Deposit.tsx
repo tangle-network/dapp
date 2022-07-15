@@ -1,6 +1,6 @@
 import {
-  ChainTypeId,
-  chainTypeIdToInternalId,
+  TypedChainId,
+  typedChainIdToInternalId,
   Currency,
   MixerSize,
   WalletConfig,
@@ -93,7 +93,7 @@ type DepositProps = {};
 export const Deposit: React.FC<DepositProps> = () => {
   const [wrappedTokenBalance, setWrappedTokenBalance] = useState('');
   const [item, setItem] = useState<MixerSize | undefined>(undefined);
-  const [destChain, setDestChain] = useState<ChainTypeId | undefined>(undefined);
+  const [destChain, setDestChain] = useState<TypedChainId | undefined>(undefined);
   const { chains: chainsConfig, currencies: currenciesConfig } = useAppConfig();
 
   const [wrappableTokenBalance, setWrappableTokenBalance] = useState<String>('');
@@ -225,7 +225,7 @@ export const Deposit: React.FC<DepositProps> = () => {
               selectedChain={{ chainType: srcChain?.chainType || -1, chainId: srcChain?.chainId || -1 }}
               setSelectedChain={async (chainId) => {
                 if (typeof chainId !== 'undefined' && activeWallet) {
-                  const nextChain = chains[chainTypeIdToInternalId(chainId)];
+                  const nextChain = chains[typedChainIdToInternalId(chainId)];
                   await switchChain(nextChain, activeWallet);
                 }
               }}

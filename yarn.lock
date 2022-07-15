@@ -4945,7 +4945,7 @@
     "@webb-tools/api" "0.1.4-87"
     "@webb-tools/types" "0.1.4-87"
 
-"@webb-tools/api@0.1.4-87", "@webb-tools/api@^0.1.4-87":
+"@webb-tools/api@0.1.4-87", "@webb-tools/api@0.1.4-88", "@webb-tools/api@^0.1.4-87":
   version "0.1.4-87"
   resolved "https://registry.yarnpkg.com/@webb-tools/api/-/api-0.1.4-87.tgz#946a5279ade3ee7df2e21fd2e76c54bc0b2325b3"
   integrity sha512-MAQwHbV8disyxtkvaN4SNctAP8T9lqIqkK69wmvKckhuDIcGa6bP/qMA5spNLsFtpYW7aB5Rd75phan4Dg6/Bg==
@@ -4980,15 +4980,13 @@
     "@webb-tools/contracts" "^0.2.2"
     "@webb-tools/sdk-core" "0.1.4-87"
 
-"@webb-tools/sdk-core@0.1.4-87", "@webb-tools/sdk-core@^0.1.4-87":
-  version "0.1.4-87"
-  resolved "https://registry.yarnpkg.com/@webb-tools/sdk-core/-/sdk-core-0.1.4-87.tgz#edcfcf0a178643d9ff02cd352a170cf21cde2a79"
-  integrity sha512-deHGAJYUiiYa3/a7aSZ6ouSIso9zrlMbRK3/jm3FALzmiDGyw6d+b7Pba3vTuqcnq5BjmpvCm5PluE6LJ1BmSA==
+"@webb-tools/sdk-core@0.1.4-87", "@webb-tools/sdk-core@file:../webb.js/packages/sdk-core/build":
+  version "0.1.4-88"
   dependencies:
     "@polkadot/util" "9.4.1"
     "@types/events" "^3.0.0"
-    "@webb-tools/api" "0.1.4-87"
-    "@webb-tools/wasm-utils" "0.1.4-87"
+    "@webb-tools/api" "0.1.4-88"
+    "@webb-tools/wasm-utils" "0.1.4-88"
     bignumber.js "^9.0.0"
     circomlibjs "0.0.8"
     elliptic "6.5.4"
@@ -5042,7 +5040,7 @@
     "@webb-tools/sdk-core" "0.1.4-87"
     ethers "5.5.1"
 
-"@webb-tools/wasm-utils@0.1.4-87", "@webb-tools/wasm-utils@^0.1.4-87":
+"@webb-tools/wasm-utils@0.1.4-87", "@webb-tools/wasm-utils@0.1.4-88", "@webb-tools/wasm-utils@^0.1.4-87":
   version "0.1.4-87"
   resolved "https://registry.yarnpkg.com/@webb-tools/wasm-utils/-/wasm-utils-0.1.4-87.tgz#15c670428ecc8cddfaef12fae7715fa589d7b6ff"
   integrity sha512-etZsTjXG1Gr/7CyusRAAcaGZOjM9UBVblotq16ZfGo1dmBVaROK7Ne0GWmcVLqw4DBDHnYm4IHsAU0tkDuGeSw==

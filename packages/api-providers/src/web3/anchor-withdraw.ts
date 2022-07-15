@@ -7,6 +7,7 @@ import {
   getFixedAnchorExtDataHash,
   MerkleTree,
   Note,
+  parseTypedChainId,
   ProvingManagerSetupInput,
   toFixedHex,
 } from '@webb-tools/sdk-core';
@@ -14,7 +15,7 @@ import {
 import { hexToU8a, u8aToHex } from '@polkadot/util';
 
 import { AnchorApi, AnchorWithdraw, WebbRelayer } from '../abstracts';
-import { chainTypeIdToInternalId, evmIdIntoInternalChainId, parseChainIdType } from '../chains';
+import { evmIdIntoInternalChainId, internalChainIdIntoEVMId, typedChainIdToInternalId } from '../chains';
 import { AnchorContract, depositFromAnchorNote } from '../contracts/wrappers';
 import { Web3Provider } from '../ext-providers';
 import { fetchFixedAnchorKeyForEdges, fetchFixedAnchorWasmForEdges } from '../ipfs/evm/anchors';
@@ -23,7 +24,6 @@ import {
   BridgeConfig,
   BridgeStorage,
   bridgeStorageFactory,
-  chainIdToRelayerName,
   getAnchorDeploymentBlockNumber,
   getEVMChainNameFromInternal,
   RelayedWithdrawResult,
@@ -102,7 +102,7 @@ export class Web3AnchorWithdraw extends AnchorWithdraw<WebbWeb3Provider> {
     const jsNote = parseNote.note;
 
     // Set up a provider for the source chain
-    const sourceChainIdType = parseChainIdType(Number(jsNote.sourceChainId));
+    const sourceChainIdType = parseTypedChainId(Number(jsNote.sourceChainId));
     const sourceInternalId = evmIdIntoInternalChainId(sourceChainIdType.chainId);
     const sourceChainConfig = this.config.chains[sourceInternalId];
     const sourceHttpProvider = Web3Provider.fromUri(sourceChainConfig.url);
@@ -110,8 +110,8 @@ export class Web3AnchorWithdraw extends AnchorWithdraw<WebbWeb3Provider> {
     const leafStorage = await bridgeStorageFactory(Number(jsNote.sourceChainId));
 
     // get info from the destination chain (should be selected)
-    const destChainIdType = parseChainIdType(Number(jsNote.targetChainId));
-    const destInternalId = chainTypeIdToInternalId(destChainIdType);
+    const destChainIdType = parseTypedChainId(Number(jsNote.targetChainId));
+    const destInternalId = typedChainIdToInternalId(destChainIdType);
 
     // get the deposit info
     const sourceDeposit = depositFromAnchorNote(jsNote);
@@ -155,7 +155,7 @@ export class Web3AnchorWithdraw extends AnchorWithdraw<WebbWeb3Provider> {
         amount: Number(jsNote.amount),
         tokenSymbol: jsNote.tokenSymbol,
       },
-      chainId: chainTypeIdToInternalId(parseChainIdType(Number(jsNote.sourceChainId))),
+      chainId: typedChainIdToInternalId(parseTypedChainId(Number(jsNote.sourceChainId))),
     });
 
     // Fetch the leaves
@@ -282,7 +282,7 @@ export class Web3AnchorWithdraw extends AnchorWithdraw<WebbWeb3Provider> {
         baseOn: 'evm' as RelayerCMDBase,
         contractAddress: destContractAddress,
         endpoint: '',
-        name: chainIdToRelayerName(destInternalId),
+        name: internalChainIdIntoEVMId(destInternalId).toString(),
       };
 
       const tx = relayedWithdraw.generateWithdrawRequest<typeof chainInfo, 'anchor'>(chainInfo, {

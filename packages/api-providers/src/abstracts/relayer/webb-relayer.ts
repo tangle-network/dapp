@@ -137,6 +137,8 @@ class RelayedWithdraw {
     chain: T,
     payload: WithdrawRelayerArgs<T['baseOn'], C>
   ) {
+    console.log('withdraw payload: ', payload);
+
     return {
       [chain.baseOn]: {
         [this.prefix]: {
@@ -213,6 +215,7 @@ export class WebbRelayer {
 
     if (req.ok) {
       const jsonResponse = await req.json();
+      console.log('response: ', jsonResponse);
       const fetchedLeaves: string[] = jsonResponse.leaves;
       const lastQueriedBlock: string = jsonResponse.lastQueriedBlock;
       const lastQueriedBlockNumber: number = parseInt(lastQueriedBlock, 16);

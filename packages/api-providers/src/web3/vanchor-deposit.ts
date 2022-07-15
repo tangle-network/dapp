@@ -4,7 +4,17 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { ERC20__factory as ERC20Factory } from '@webb-tools/contracts';
-import { CircomUtxo, Keypair, Note, NoteGenInput, toFixedHex, Utxo } from '@webb-tools/sdk-core';
+import {
+  calculateTypedChainId,
+  ChainType,
+  CircomUtxo,
+  Keypair,
+  Note,
+  NoteGenInput,
+  parseTypedChainId,
+  toFixedHex,
+  Utxo,
+} from '@webb-tools/sdk-core';
 import { ethers } from 'ethers';
 
 import { hexToU8a } from '@polkadot/util';
@@ -16,13 +26,7 @@ import {
   VAnchorDeposit,
   VAnchorDepositResults,
 } from '../abstracts';
-import {
-  ChainType,
-  chainTypeIdToInternalId,
-  computeChainIdType,
-  evmIdIntoInternalChainId,
-  parseChainIdType,
-} from '../chains';
+import { evmIdIntoInternalChainId, typedChainIdToInternalId } from '../chains';
 import {
   BridgeStorage,
   bridgeStorageFactory,
@@ -74,7 +78,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
     const bnAmount = ethers.utils.parseUnits(amount.toString(), currency.getDecimals()).toString();
     const tokenSymbol = currency.view.symbol;
     const sourceEvmId = await this.inner.getChainId();
-    const sourceChainId = computeChainIdType(ChainType.EVM, sourceEvmId);
+    const sourceChainId = calculateTypedChainId(ChainType.EVM, sourceEvmId);
 
     // TODO: Find a better way to manage keypair
     const keypairStorage = await keypairStorageFactory();
@@ -102,7 +106,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
     });
 
     const srcChainInternal = evmIdIntoInternalChainId(sourceEvmId);
-    const destChainInternal = chainTypeIdToInternalId(parseChainIdType(destination));
+    const destChainInternal = typedChainIdToInternalId(parseTypedChainId(destination));
     const anchorConfig = bridge.anchors.find((anchorConfig) => anchorConfig.type === 'variable');
 
     if (!anchorConfig) {
@@ -160,7 +164,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
       const amount = depositPayload.params[0].amount;
 
       const sourceEvmId = await this.inner.getChainId();
-      const sourceChainId = computeChainIdType(ChainType.EVM, sourceEvmId);
+      const sourceChainId = calculateTypedChainId(ChainType.EVM, sourceEvmId);
       const sourceInternalId = evmIdIntoInternalChainId(sourceEvmId);
 
       this.inner.notificationHandler({
@@ -223,7 +227,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
       }
 
       // Set up a provider for the dest chain
-      const destChainTypeId = parseChainIdType(Number(utxo.chainId));
+      const destChainTypeId = parseTypedChainId(Number(utxo.chainId));
       const destInternalId = evmIdIntoInternalChainId(destChainTypeId.chainId);
       const destChainConfig = this.config.chains[destInternalId];
       const destHttpProvider = Web3Provider.fromUri(destChainConfig.url);

@@ -6,19 +6,23 @@ import { LoggerService } from '@webb-tools/app-util';
 // eslint-disable-next-line camelcase
 import { ERC20__factory as ERC20Factory } from '@webb-tools/contracts';
 import { IAnchorDepositInfo } from '@webb-tools/interfaces';
-import { Note, NoteGenInput, toFixedHex } from '@webb-tools/sdk-core';
+import {
+  calculateTypedChainId,
+  ChainType,
+  Note,
+  NoteGenInput,
+  parseTypedChainId,
+  toFixedHex,
+} from '@webb-tools/sdk-core';
 import { GovernedTokenWrapper } from '@webb-tools/tokens';
 
 import { AnchorDeposit, Currency, DepositPayload as IDepositPayload, MixerSize } from '../abstracts';
 import {
-  ChainType,
-  ChainTypeId,
-  chainTypeIdToInternalId,
-  computeChainIdType,
   evmIdIntoInternalChainId,
   InternalChainId,
   internalChainIdIntoEVMId,
-  parseChainIdType,
+  TypedChainId,
+  typedChainIdToInternalId,
 } from '../chains';
 import { getEVMChainNameFromInternal } from '../';
 import { WebbWeb3Provider } from './webb-provider';
@@ -226,7 +230,7 @@ export class Web3AnchorDeposit extends AnchorDeposit<WebbWeb3Provider, DepositPa
     const bridge = this.bridgeApi;
 
     logger.log('getWrappableAssets of chain: ', chainId);
-    const chainIdType: ChainTypeId = {
+    const chainIdType: TypedChainId = {
       chainId: internalChainIdIntoEVMId(chainId),
       chainType: ChainType.EVM,
     };
@@ -301,10 +305,10 @@ export class Web3AnchorDeposit extends AnchorDeposit<WebbWeb3Provider, DepositPa
     const amount = String(anchorId).replace('Bridge=', '').split('@')[0];
     const tokenSymbol = currency.view.symbol;
     const sourceEvmId = await this.inner.getChainId();
-    const sourceChainId = computeChainIdType(ChainType.EVM, sourceEvmId);
+    const sourceChainId = calculateTypedChainId(ChainType.EVM, sourceEvmId);
     const deposit = Anchor.generateDeposit(destChainId);
     const srcChainInternal = evmIdIntoInternalChainId(sourceEvmId);
-    const destChainInternal = chainTypeIdToInternalId(parseChainIdType(destChainId));
+    const destChainInternal = typedChainIdToInternalId(parseTypedChainId(destChainId));
     const anchorConfig = bridge.anchors.find(
       (anchorConfig) => anchorConfig.type === 'fixed' && anchorConfig.amount === amount
     );

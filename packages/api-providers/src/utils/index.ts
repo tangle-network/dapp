@@ -3,7 +3,6 @@
 
 export * from './anchor-utils';
 export * from './chain-utils';
-export * from './relayer-utils';
 export * from './retry-promise';
 export * from './storage';
 export * from './misc';

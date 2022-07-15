@@ -1,5 +1,5 @@
 import { Checkbox, FormControlLabel, Icon, Tooltip, Typography } from '@material-ui/core';
-import { ChainTypeId, Currency, DepositPayload, MixerSize } from '@webb-dapp/api-providers';
+import { Currency, DepositPayload, MixerSize, TypedChainId } from '@webb-dapp/api-providers';
 import { BridgeDepositApi as DepositApi } from '@webb-dapp/bridge/hooks/deposit/useBridgeDeposit';
 import { ModalNoteDisplay } from '@webb-dapp/react-components/NoteDisplay/ModalNoteDisplay';
 import { useWebContext } from '@webb-dapp/react-environment/webb-context';
@@ -47,7 +47,7 @@ type DepositInfoProps = {
   provider: DepositApi;
   onSuccess(): void;
   mixerSize: MixerSize | undefined;
-  destChain: ChainTypeId | undefined;
+  destChain: TypedChainId | undefined;
   wrappableAsset: Currency | null | undefined;
 };
 

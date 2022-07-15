@@ -5,8 +5,18 @@
 
 import type { WebbWeb3Provider } from './webb-provider';
 
-import { CircomUtxo, Keypair, MerkleTree, Note, randomBN, toFixedHex, Utxo } from '@webb-tools/sdk-core';
-import { BigNumber, ethers } from 'ethers';
+import {
+  calculateTypedChainId,
+  ChainType,
+  CircomUtxo,
+  Keypair,
+  MerkleTree,
+  Note,
+  parseTypedChainId,
+  randomBN,
+  Utxo,
+} from '@webb-tools/sdk-core';
+import { BigNumber } from 'ethers';
 
 import { hexToU8a, u8aToHex } from '@polkadot/util';
 
@@ -19,13 +29,7 @@ import {
   VAnchorWithdrawResult,
   WebbRelayer,
 } from '../abstracts';
-import {
-  ChainType,
-  chainTypeIdToInternalId,
-  computeChainIdType,
-  evmIdIntoInternalChainId,
-  parseChainIdType,
-} from '../chains';
+import { evmIdIntoInternalChainId, internalChainIdIntoEVMId, typedChainIdToInternalId } from '../chains';
 import { generateCircomCommitment, utxoFromVAnchorNote, VAnchorContract } from '../contracts/wrappers';
 import { Web3Provider } from '../ext-providers/web3/web3-provider';
 import { fetchVariableAnchorKeyForEdges, fetchVariableAnchorWasmForEdges } from '../ipfs/evm/anchors';
@@ -34,7 +38,6 @@ import { BridgeConfig } from '../types/bridge-config.interface';
 import {
   BridgeStorage,
   bridgeStorageFactory,
-  chainIdToRelayerName,
   getAnchorDeploymentBlockNumber,
   getEVMChainNameFromInternal,
   keypairStorageFactory,
@@ -127,7 +130,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
 
       // set the destination contract
       const activeChain = await this.inner.getChainId();
-      const destChainIdType = computeChainIdType(ChainType.EVM, activeChain);
+      const destChainIdType = calculateTypedChainId(ChainType.EVM, activeChain);
       const internalId = evmIdIntoInternalChainId(activeChain);
       const destAddress = anchorConfigsForBridge.anchorAddresses[internalId]!;
       const destVAnchor = await this.inner.getVariableAnchorByAddress(destAddress);
@@ -171,7 +174,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
         if (leavesMap[parsedNote.sourceChainId] === undefined) {
           // Set up a provider for the source chain
           const sourceAddress = parsedNote.sourceIdentifyingData;
-          const sourceChainIdType = parseChainIdType(Number(parsedNote.sourceChainId));
+          const sourceChainIdType = parseTypedChainId(Number(parsedNote.sourceChainId));
           const sourceInternalId = evmIdIntoInternalChainId(sourceChainIdType.chainId);
           const sourceChainConfig = this.config.chains[sourceInternalId];
           const sourceHttpProvider = Web3Provider.fromUri(sourceChainConfig.url);
@@ -184,6 +187,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
             sourceInternalId,
             sourceAddress
           );
+          console.log('relayers to fetch from: ', relayers);
           let leaves = await this.fetchLeavesFromRelayers(relayers, sourceVAnchor, leafStorage);
 
           // Fetch leaves from chain and localStorage if fetching from relayers failed
@@ -266,6 +270,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
 
         // fetch leaves from relayers if possible
         const relayers = await this.inner.relayerManager.getRelayersByChainAndAddress(internalId, destAddress);
+        console.log('relayers to fetch from: ', relayers);
         let leaves = await this.fetchLeavesFromRelayers(relayers, destVAnchor, leafStorage);
 
         // Fetch leaves from chain and localStorage if fetching from relayers failed
@@ -368,22 +373,22 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
       if (activeRelayer) {
         const relayedVAnchorWithdraw = await activeRelayer.initWithdraw('vAnchor');
 
-        const ParsedDestChainIdType = parseChainIdType(destChainIdType);
-        const destInternalId = chainTypeIdToInternalId(ParsedDestChainIdType);
-        const chainName = chainIdToRelayerName(destInternalId);
+        const ParsedDestChainIdType = parseTypedChainId(destChainIdType);
+        const destInternalId = typedChainIdToInternalId(ParsedDestChainIdType);
+        const chainName = internalChainIdIntoEVMId(destInternalId);
 
         const chainInfo: RelayedChainInput = {
           baseOn: 'evm',
           contractAddress: destAddress,
           endpoint: '',
-          name: chainName,
+          name: chainName.toString(),
         };
 
         const extAmount = extData.extAmount.replace('0x', '');
         const relayedDepositTxPayload = relayedVAnchorWithdraw.generateWithdrawRequest<typeof chainInfo, 'vAnchor'>(
           chainInfo,
           {
-            chain: chainName,
+            chainId: activeChain,
             id: destAddress,
             extData: {
               recipient: extData.recipient,

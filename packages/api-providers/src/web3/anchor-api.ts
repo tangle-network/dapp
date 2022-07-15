@@ -4,14 +4,14 @@
 import { GovernedTokenWrapper } from '@webb-tools/tokens';
 
 import { AnchorApi } from '../abstracts';
-import { ChainTypeId, chainTypeIdToInternalId, evmIdIntoInternalChainId } from '../chains';
+import { evmIdIntoInternalChainId, TypedChainId, typedChainIdToInternalId } from '../chains';
 import { AnchorBase, BridgeConfig, Currency, CurrencyRole, CurrencyType } from '../';
 import { WebbWeb3Provider } from './webb-provider';
 
 export class Web3AnchorApi extends AnchorApi<WebbWeb3Provider, BridgeConfig> {
-  getTokenAddress(chainTypeId: ChainTypeId): string | null {
+  getTokenAddress(chainTypeId: TypedChainId): string | null {
     const activeBridgeAsset = this.store.activeBridge?.asset;
-    const internalChainId = chainTypeIdToInternalId(chainTypeId);
+    const internalChainId = typedChainIdToInternalId(chainTypeId);
 
     return activeBridgeAsset ? this.config.currencies[activeBridgeAsset].addresses.get(internalChainId) ?? null : null;
   }
@@ -52,9 +52,9 @@ export class Web3AnchorApi extends AnchorApi<WebbWeb3Provider, BridgeConfig> {
     );
   }
 
-  async getWrappableAssets(chainTypeId: ChainTypeId): Promise<Currency[]> {
+  async getWrappableAssets(chainTypeId: TypedChainId): Promise<Currency[]> {
     const bridge = this.activeBridge;
-    const internalChainId = chainTypeIdToInternalId(chainTypeId);
+    const internalChainId = typedChainIdToInternalId(chainTypeId);
 
     if (!bridge) {
       return [];

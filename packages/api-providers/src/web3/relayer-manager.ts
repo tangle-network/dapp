@@ -1,7 +1,7 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { Note } from '@webb-tools/sdk-core';
+import { Note, parseTypedChainId } from '@webb-tools/sdk-core';
 import { ethers } from 'ethers';
 
 import {
@@ -13,7 +13,7 @@ import {
   WebbRelayer,
 } from '../abstracts';
 import { WebbRelayerManager } from '../abstracts/relayer/webb-relayer-manager';
-import { chainTypeIdToInternalId, InternalChainId, parseChainIdType } from '../chains';
+import { InternalChainId, typedChainIdToInternalId } from '../chains';
 import { getFixedAnchorAddressForBridge, webbCurrencyIdFromString, WebbError, WebbErrorCodes } from '..';
 
 export class Web3RelayerManager extends WebbRelayerManager {
@@ -35,7 +35,7 @@ export class Web3RelayerManager extends WebbRelayerManager {
       async (note: string) => {
         const depositNote = await Note.deserialize(note);
         const evmNote = depositNote.note;
-        const internalId = chainTypeIdToInternalId(parseChainIdType(Number(depositNote.note.targetChainId)));
+        const internalId = typedChainIdToInternalId(parseTypedChainId(Number(depositNote.note.targetChainId)));
         const contractAddress = await getFixedAnchorAddressForBridge(
           webbCurrencyIdFromString(evmNote.tokenSymbol),
           internalId,
@@ -84,7 +84,9 @@ export class Web3RelayerManager extends WebbRelayerManager {
    *  Accepts a 'RelayerQuery' object with optional, indexible fields.
    **/
   getRelayers(query: RelayerQuery): WebbRelayer[] {
-    const { baseOn, bridgeSupport, chainId, contract, contractAddress, ipService } = query;
+    console.log('relayers: ', this.relayers);
+
+    const { baseOn, bridgeSupport, chainId, contractAddress, ipService } = query;
     const relayers = this.relayers.filter((relayer) => {
       const capabilities = relayer.capabilities;
 
@@ -159,7 +161,7 @@ export class Web3RelayerManager extends WebbRelayerManager {
 
   async getRelayersByNote(evmNote: Note) {
     const chainTypeId = Number(evmNote.note.targetChainId);
-    const internalId = chainTypeIdToInternalId(parseChainIdType(chainTypeId));
+    const internalId = typedChainIdToInternalId(parseTypedChainId(chainTypeId));
     let contract: ContractName;
     switch (evmNote.note.protocol) {
       case 'mixer':

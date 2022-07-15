@@ -2,12 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { LoggerService } from '@webb-tools/app-util';
-import { Note, NoteGenInput } from '@webb-tools/sdk-core';
+import { calculateTypedChainId, Note, NoteGenInput } from '@webb-tools/sdk-core';
 
 import { u8aToHex } from '@polkadot/util';
 
 import { AnchorDeposit, AnchorSize, DepositPayload as IDepositPayload } from '../abstracts';
-import { computeChainIdType, InternalChainId, substrateIdIntoInternalChainId } from '../chains';
+import { substrateIdIntoInternalChainId } from '../chains';
 import { WebbError, WebbErrorCodes } from '../webb-error';
 import { WebbPolkadot } from './webb-provider';
 
@@ -60,7 +60,7 @@ export class PolkadotAnchorDeposit extends AnchorDeposit<WebbPolkadot, DepositPa
     // const chainId = this.inner.api.registry.chainSS58!;
     const chainId = await this.inner.api.consts.linkableTreeBn254.chainIdentifier;
     const chainType = await this.inner.api.consts.linkableTreeBn254.chainType;
-    const sourceChainId = computeChainIdType(Number(chainType.toHex()), Number(chainId));
+    const sourceChainId = calculateTypedChainId(Number(chainType.toHex()), Number(chainId));
     console.log('anchorId:', anchorId);
     const anchorPath = String(anchorId).replace('Bridge=', '').split('@');
     const amount = anchorPath[0];

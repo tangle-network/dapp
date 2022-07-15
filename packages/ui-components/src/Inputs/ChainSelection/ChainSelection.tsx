@@ -1,7 +1,7 @@
 import { Avatar, InputBase, ListItemAvatar, ListItemText } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import { Chain } from '@webb-dapp/api-providers/abstracts';
-import { ChainTypeId, chainTypeIdToInternalId } from '@webb-dapp/api-providers/chains';
+import { TypedChainId, typedChainIdToInternalId } from '@webb-dapp/api-providers/chains';
 import { chainsPopulated } from '@webb-dapp/apps/configs';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import SearchIcon from '@webb-dapp/ui-components/assets/SearchIcon';
@@ -32,8 +32,8 @@ const ChainsList = styled(ListWrapper)``;
 const ListItem = styled(ItemWrapper)``;
 
 export type ChainSelectionProps = {
-  chainTypeIds: ChainTypeId[];
-  onChange(next: ChainTypeId | undefined): void;
+  chainTypeIds: TypedChainId[];
+  onChange(next: TypedChainId | undefined): void;
   onClose?: () => void;
   selectedChain?: Chain;
 };
@@ -45,7 +45,7 @@ const ChainSelection: React.FC<ChainSelectionProps> = ({ chainTypeIds, onChange,
   const [displayChainTypeIds, setDisplayChainTypeIds] = useState(chainTypeIds);
 
   const getChainFromChainTypeId = useCallback(
-    (chainTypeId: ChainTypeId) => chainsPopulated[chainTypeIdToInternalId(chainTypeId)],
+    (chainTypeId: TypedChainId) => chainsPopulated[typedChainIdToInternalId(chainTypeId)],
     []
   );
 

@@ -10,7 +10,14 @@ import type { WebbPolkadot } from './webb-provider';
 import { fetchSubstrateVAnchorProvingKey } from '@webb-dapp/api-providers/ipfs';
 import { getLeafCount, getLeafIndex } from '@webb-dapp/api-providers/polkadot/mt-utils';
 import { LoggerService } from '@webb-tools/app-util';
-import { ArkworksProvingManager, Note, NoteGenInput, ProvingManagerSetupInput, Utxo } from '@webb-tools/sdk-core';
+import {
+  ArkworksProvingManager,
+  calculateTypedChainId,
+  Note,
+  NoteGenInput,
+  ProvingManagerSetupInput,
+  Utxo,
+} from '@webb-tools/sdk-core';
 import { VAnchorProof } from '@webb-tools/sdk-core/proving/types';
 import { BigNumber, ethers } from 'ethers';
 
@@ -24,7 +31,7 @@ import {
   VAnchorDeposit,
   VAnchorDepositResults,
 } from '../abstracts';
-import { chainTypeIdToInternalId, computeChainIdType } from '../chains';
+import { typedChainIdToInternalId } from '../chains';
 import { WebbError, WebbErrorCodes } from '../webb-error';
 
 const logger = LoggerService.get('PolkadotVBridgeDeposit');
@@ -63,10 +70,10 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
     // Chain id of the active API
     const chainId = await this.inner.api.consts.linkableTreeBn254.chainIdentifier;
     const chainType = await this.inner.api.consts.linkableTreeBn254.chainType;
-    const sourceChainId = computeChainIdType(Number(chainType.toHex()), Number(chainId));
+    const sourceChainId = calculateTypedChainId(Number(chainType.toHex()), Number(chainId));
     const anchors = await this.bridgeApi.getVariableAnchors();
     const anchor = anchors[0];
-    const internalChainId = chainTypeIdToInternalId({
+    const internalChainId = typedChainIdToInternalId({
       chainId: Number(chainId),
       chainType: Number(chainType.toHex()),
     });

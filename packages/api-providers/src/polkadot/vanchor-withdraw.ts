@@ -7,18 +7,17 @@ import '@webb-tools/api-derive';
 import type { WebbPolkadot } from './webb-provider';
 
 import {
-  chainIdToRelayerName,
-  chainTypeIdToInternalId,
   fetchSubstrateVAnchorProvingKey,
-  parseChainIdType,
   RelayedChainInput,
   RelayedWithdrawResult,
   TransactionState,
+  typedChainIdToInternalId,
   WebbError,
   WebbErrorCodes,
 } from '@webb-dapp/api-providers';
 import { getLeafCount, getLeafIndex, getLeaves, rootOfLeaves } from '@webb-dapp/api-providers/polkadot/mt-utils';
-import { ArkworksProvingManager, Note, ProvingManagerSetupInput, Utxo } from '@webb-tools/sdk-core';
+import { internalIdToSubstrateRelayerName } from '@webb-dapp/apps/configs/relayer-config';
+import { ArkworksProvingManager, Note, parseTypedChainId, ProvingManagerSetupInput, Utxo } from '@webb-tools/sdk-core';
 import { VAnchorProof } from '@webb-tools/sdk-core/proving/types';
 import { BigNumber } from 'ethers';
 
@@ -27,6 +26,7 @@ import { hexToU8a, u8aToHex } from '@polkadot/util';
 import { naclEncrypt, randomAsU8a } from '@polkadot/util-crypto';
 
 import { VAnchorWithdraw, VAnchorWithdrawResult } from '../abstracts/anchor/vanchor-withdraw';
+import { internalChainIdIntoSubstrateId } from '../chains';
 
 export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
   /**
@@ -142,8 +142,8 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
       publicAmount: String(publicAmount),
       output: [output1, output2],
     };
-    const destChainIdType = parseChainIdType(Number(inputNotes[0].note.targetChainId));
-    const destInternalId = chainTypeIdToInternalId(destChainIdType);
+    const destChainIdType = parseTypedChainId(Number(inputNotes[0].note.targetChainId));
+    const destInternalId = typedChainIdToInternalId(destChainIdType);
 
     const data: VAnchorProof = await pm.prove('vanchor', vanchorWithdrawSetup);
     const vanchorProofData = {
@@ -159,7 +159,8 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
 
     if (activeRelayer) {
       const relayedVAnchorWithdraw = await activeRelayer.initWithdraw('vAnchor');
-      const chainName = chainIdToRelayerName(destInternalId);
+      const chainName = internalIdToSubstrateRelayerName(destInternalId);
+      const substrateId = internalChainIdIntoSubstrateId(destInternalId);
       const chainInfo: RelayedChainInput = {
         baseOn: 'substrate',
         contractAddress: '',
@@ -169,7 +170,7 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
       const relayedDepositTxPayload = relayedVAnchorWithdraw.generateWithdrawRequest<typeof chainInfo, 'vAnchor'>(
         chainInfo,
         {
-          chain: chainName,
+          chain_id: substrateId,
           id: Number(treeId),
           extData: {
             recipient: extData.recipient,

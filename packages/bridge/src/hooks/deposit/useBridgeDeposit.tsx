@@ -1,15 +1,15 @@
 import {
   AnchorDeposit,
   BridgeCurrencyIndex,
-  ChainTypeId,
-  computeChainIdType,
   Currency,
   DepositPayload,
   MixerDeposit,
   MixerSize,
+  TypedChainId,
 } from '@webb-dapp/api-providers';
 import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
 import { useWebContext } from '@webb-dapp/react-environment';
+import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 export interface BridgeDepositApi {
   mixerSizes: MixerSize[];
@@ -18,7 +18,7 @@ export interface BridgeDepositApi {
 
   generateNote(
     mixerId: number | string,
-    destChain: ChainTypeId,
+    destChain: TypedChainId,
     wrappableAsset: string | undefined
   ): Promise<DepositPayload>;
 
@@ -80,11 +80,11 @@ export const useBridgeDeposit = (): BridgeDepositApi => {
   }, [depositApi, bridgeApi, selectedBridgeCurrency?.id, bridgeApi?.activeBridge]);
 
   const generateNote = useCallback(
-    async (mixerId: number | string, destChainTypeId: ChainTypeId, wrappableAsset: string | undefined) => {
+    async (mixerId: number | string, destChainTypeId: TypedChainId, wrappableAsset: string | undefined) => {
       if (!depositApi) {
         throw new Error('Not ready');
       }
-      const destChainId = computeChainIdType(destChainTypeId.chainType, destChainTypeId.chainId);
+      const destChainId = calculateTypedChainId(destChainTypeId.chainType, destChainTypeId.chainId);
       console.log('mixerId: ', mixerId);
       console.log('destChainId: ', destChainId);
       return depositApi?.generateBridgeNote(mixerId, destChainId, wrappableAsset);

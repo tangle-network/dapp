@@ -1,17 +1,13 @@
 import { formatUnits } from '@ethersproject/units';
 import { Button, Icon, Link, Typography } from '@material-ui/core';
-import {
-  ActiveWebbRelayer,
-  chainTypeIdToInternalId,
-  InternalChainId,
-  parseChainIdType,
-} from '@webb-dapp/api-providers';
+import { ActiveWebbRelayer, InternalChainId, typedChainIdToInternalId } from '@webb-dapp/api-providers';
 import { chainsConfig } from '@webb-dapp/apps/configs';
 import { ModalNoteDisplay } from '@webb-dapp/react-components/NoteDisplay/ModalNoteDisplay';
 import { SpaceBox } from '@webb-dapp/ui-components/Box';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 import { downloadString } from '@webb-dapp/utils/download';
 import { LoggerService } from '@webb-tools/app-util';
+import { parseTypedChainId } from '@webb-tools/sdk-core';
 import { JsNote } from '@webb-tools/wasm-utils';
 import { BigNumber, ethers } from 'ethers';
 import React, { useEffect, useState } from 'react';
@@ -142,7 +138,7 @@ export const WithdrawSuccessModal: React.FC<WithdrawingModalProps> = ({
   const getBlockExplorerTx = (txHash: string): string => {
     let chainId: InternalChainId;
     try {
-      chainId = chainTypeIdToInternalId(parseChainIdType(Number(inputNote.targetChainId)));
+      chainId = typedChainIdToInternalId(parseTypedChainId(Number(inputNote.targetChainId)));
     } catch (e) {
       chainId = Number(inputNote.targetChainId);
     }
@@ -155,7 +151,7 @@ export const WithdrawSuccessModal: React.FC<WithdrawingModalProps> = ({
   const getBlockExplorerAddress = (address: string): string => {
     let chainId: InternalChainId;
     try {
-      chainId = chainTypeIdToInternalId(parseChainIdType(Number(inputNote.targetChainId)));
+      chainId = typedChainIdToInternalId(parseTypedChainId(Number(inputNote.targetChainId)));
     } catch (e) {
       chainId = Number(inputNote.targetChainId);
     }

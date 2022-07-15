@@ -3,10 +3,10 @@
 
 import { ERC20__factory as ERC20Factory } from '@webb-tools/contracts';
 import { IAnchorDepositInfo } from '@webb-tools/interfaces';
-import { Note } from '@webb-tools/sdk-core';
+import { calculateTypedChainId, ChainType, Note } from '@webb-tools/sdk-core';
 
 import { DepositPayload as IDepositPayload, MixerSize } from '../abstracts';
-import { ChainType, computeChainIdType, evmIdIntoInternalChainId } from '../chains';
+import { evmIdIntoInternalChainId } from '../chains';
 import { getEVMChainName, getEVMChainNameFromInternal } from '../';
 import { Web3AnchorDeposit } from './anchor-deposit';
 
@@ -187,7 +187,7 @@ export class Web3MixerDeposit extends Web3AnchorDeposit {
 
   async generateNote(mixerId: string): Promise<DepositPayload> {
     const evmId = await this.inner.getChainId();
-    const chainIdType = computeChainIdType(ChainType.EVM, evmId);
+    const chainIdType = calculateTypedChainId(ChainType.EVM, evmId);
     const generatedNote = await this.generateBridgeNote(mixerId, chainIdType);
 
     return {

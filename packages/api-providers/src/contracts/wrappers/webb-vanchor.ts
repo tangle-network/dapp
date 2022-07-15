@@ -10,6 +10,8 @@ import { LoggerService } from '@webb-tools/app-util';
 import { ERC20, ERC20__factory as ERC20Factory, VAnchor, VAnchor__factory } from '@webb-tools/contracts';
 import { IAnchorDepositInfo } from '@webb-tools/interfaces';
 import {
+  calculateTypedChainId,
+  ChainType,
   CircomProvingManager,
   CircomUtxo,
   FIELD_SIZE,
@@ -26,7 +28,7 @@ import { BigNumber, BigNumberish, Contract, ContractTransaction, ethers, provide
 
 import { hexToU8a, u8aToHex } from '@polkadot/util';
 
-import { ChainType, computeChainIdType, keypairStorageFactory } from '../..';
+import { keypairStorageFactory } from '../..';
 import { zeroAddress } from '..';
 
 const { poseidon } = require('circomlibjs');
@@ -113,7 +115,7 @@ export class VAnchorContract {
   }
 
   async getChainIdType() {
-    return computeChainIdType(ChainType.EVM, await this.getEvmId());
+    return calculateTypedChainId(ChainType.EVM, await this.getEvmId());
   }
 
   async generateDefaultUtxo(): Promise<Utxo> {
@@ -212,7 +214,7 @@ export class VAnchorContract {
     circuitWasm: Buffer
   ): Promise<ContractTransaction> {
     const sender = await this.signer.getAddress();
-    const sourceChainId = computeChainIdType(ChainType.EVM, await this.signer.getChainId());
+    const sourceChainId = calculateTypedChainId(ChainType.EVM, await this.signer.getChainId());
 
     // Build up the inputs for proving manager
     const randomKeypair = new Keypair();
@@ -277,7 +279,7 @@ export class VAnchorContract {
     circuitWasm: Buffer
   ): Promise<ContractTransaction> {
     const sender = await this.signer.getAddress();
-    const sourceChainId = computeChainIdType(ChainType.EVM, await this.signer.getChainId());
+    const sourceChainId = calculateTypedChainId(ChainType.EVM, await this.signer.getChainId());
 
     // Build up the inputs for proving manager
     const randomKeypair = new Keypair();
@@ -462,7 +464,7 @@ export class VAnchorContract {
     provingKey: Uint8Array,
     wasmBuffer: Buffer
   ) {
-    const chainId = computeChainIdType(ChainType.EVM, await this.signer.getChainId());
+    const chainId = calculateTypedChainId(ChainType.EVM, await this.signer.getChainId());
     const roots = await this.getRootsForProof();
 
     // Start creating notes to satisfy vanchor input
