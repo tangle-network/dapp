@@ -6,6 +6,6 @@
   "author": "Webb Developers <drew@webb.tools>",
   "homepage": "https://github.com/webb-tools/webb-dapp#readme",
   "dependencies": {
-    "@webb-tools/sdk-core": "file:../../../webb.js/packages/sdk-core/build"
+    "@webb-tools/sdk-core": "0.1.4-89"
   }
 }

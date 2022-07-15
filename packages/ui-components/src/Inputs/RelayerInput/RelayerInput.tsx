@@ -250,7 +250,7 @@ const DropdownInput: React.FC<DropdownInputProps> = ({ onChange, onCustomRelayer
                   </div>
                   {options.map((option) => {
                     return (
-                      <div>
+                      <div key={`${option.endpoint}-relayer-input-container`}>
                         <li
                           role={'button'}
                           onClick={() => {

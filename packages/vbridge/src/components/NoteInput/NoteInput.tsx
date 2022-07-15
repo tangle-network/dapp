@@ -66,7 +66,8 @@ export const NoteInput: React.FC<NoteInputProps> = ({ error, isRemoveNote = fals
               <b>Amount Avail:</b>
             </Title>
             <Value>
-              {depositNote.note.amount} {depositNote.note.tokenSymbol}
+              {ethers.utils.formatUnits(depositNote.note.amount, depositNote.note.denomination)}{' '}
+              {depositNote.note.tokenSymbol}
             </Value>
           </InformationItem>
         </div>

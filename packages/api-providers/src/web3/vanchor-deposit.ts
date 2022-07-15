@@ -208,22 +208,13 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
       // Fetch the leaves from the source chain
       this.emit('stateChange', TransactionState.FetchingLeaves);
       let leafStorage = await bridgeStorageFactory(Number(sourceChainId));
-
-      // check if we already cached some values.
-      let storedContractInfo: BridgeStorage[0] = (await leafStorage.get(srcAddress.toLowerCase())) || {
-        lastQueriedBlock: getAnchorDeploymentBlockNumber(Number(sourceChainId), srcAddress) || 0,
-        leaves: [] as string[],
-      };
-
-      let leavesFromChain = await srcVAnchor.getDepositLeaves(storedContractInfo.lastQueriedBlock + 1, 0);
+      let leaves = await this.inner.getVariableAnchorLeaves(srcVAnchor, leafStorage);
 
       // Only populate the leaves map if there are actually leaves to populate.
-      if (leavesFromChain.newLeaves.length != 0 || storedContractInfo.leaves.length != 0) {
-        leavesMap[sourceChainId.toString()] = [...storedContractInfo.leaves, ...leavesFromChain.newLeaves].map(
-          (leaf) => {
-            return hexToU8a(leaf);
-          }
-        );
+      if (leaves.length) {
+        leavesMap[utxo.chainId] = leaves.map((leaf) => {
+          return hexToU8a(leaf);
+        });
       }
 
       // Set up a provider for the dest chain
@@ -235,18 +226,11 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
       const destAddress = vanchor.neighbours[destInternalId] as string;
       const destVAnchor = await this.inner.getVariableAnchorByAddressAndProvider(destAddress, destEthers);
       leafStorage = await bridgeStorageFactory(Number(utxo.chainId));
-
-      // check if we already cached some values.
-      storedContractInfo = (await leafStorage.get(destAddress.toLowerCase())) || {
-        lastQueriedBlock: getAnchorDeploymentBlockNumber(Number(utxo.chainId), destAddress) || 0,
-        leaves: [] as string[],
-      };
-
-      leavesFromChain = await destVAnchor.getDepositLeaves(storedContractInfo.lastQueriedBlock + 1, 0);
+      leaves = await this.inner.getVariableAnchorLeaves(destVAnchor, leafStorage);
 
       // Only populate the leaves map if there are actually leaves to populate.
-      if (leavesFromChain.newLeaves.length != 0 || storedContractInfo.leaves.length != 0) {
-        leavesMap[utxo.chainId] = [...storedContractInfo.leaves, ...leavesFromChain.newLeaves].map((leaf) => {
+      if (leaves.length) {
+        leavesMap[utxo.chainId] = leaves.map((leaf) => {
           return hexToU8a(leaf);
         });
       }

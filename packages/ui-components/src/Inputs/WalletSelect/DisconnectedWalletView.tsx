@@ -1,4 +1,4 @@
-import { Avatar, ButtonBase, List, ListItem, ListItemAvatar, ListItemText, Typography } from '@material-ui/core';
+import { Avatar, ButtonBase, List, ListItem, ListItemAvatar, ListItemText, Typography } from '@mui/material';
 import { ManagedWallet } from '@webb-dapp/api-providers';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { SpaceBox } from '@webb-dapp/ui-components';
@@ -11,14 +11,6 @@ const CloseButton = styled.button`
 `;
 
 const DisconnectedWalletWrapper = styled.div``;
-
-const StyledListItem = styled.li`
-  && {
-    border-radius: 8px;
-    margin-bottom: 16px;
-    background: ${({ theme }) => theme.heavySelectionBackground};
-  }
-`;
 
 type DisconnectedWalletViewProps = {
   close(): void;
@@ -60,14 +52,18 @@ export const DisconnectedWalletView: React.FC<DisconnectedWalletViewProps> = ({
       <List>
         {wallets.map((wallet) => {
           return (
-            <StyledListItem
+            <ListItem
               key={wallet.name}
               disabled={!wallet.enabled}
-              as={ListItem}
               button
               onClick={async () => {
                 setSelectedWallet(wallet);
                 close();
+              }}
+              sx={{
+                borderRadius: '8px',
+                marginBottom: '16px',
+                background: palette.heavySelectionBackground,
               }}
             >
               <ListItemAvatar>
@@ -82,7 +78,7 @@ export const DisconnectedWalletView: React.FC<DisconnectedWalletViewProps> = ({
                   </Flex>
                 </Flex>
               </ListItemText>
-            </StyledListItem>
+            </ListItem>
           );
         })}
       </List>
