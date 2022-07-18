@@ -1,8 +1,8 @@
 import {
-  TypedChainId,
-  typedChainIdToInternalId,
   Currency,
   MixerSize,
+  TypedChainId,
+  typedChainIdToInternalId,
   WalletConfig,
   WebbCurrencyId,
 } from '@webb-dapp/api-providers';
