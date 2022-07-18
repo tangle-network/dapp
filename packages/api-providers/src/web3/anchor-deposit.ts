@@ -1,6 +1,7 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
+import { getEVMChainName } from '@webb-dapp/apps/configs';
 import { Anchor } from '@webb-tools/anchors';
 import { LoggerService } from '@webb-tools/app-util';
 // eslint-disable-next-line camelcase
@@ -17,14 +18,7 @@ import {
 import { GovernedTokenWrapper } from '@webb-tools/tokens';
 
 import { AnchorDeposit, Currency, DepositPayload as IDepositPayload, MixerSize } from '../abstracts';
-import {
-  evmIdIntoInternalChainId,
-  InternalChainId,
-  internalChainIdIntoEVMId,
-  TypedChainId,
-  typedChainIdToInternalId,
-} from '../chains';
-import { getEVMChainNameFromInternal } from '../';
+import { TypedChainId } from '../chains';
 import { WebbWeb3Provider } from './webb-provider';
 
 const logger = LoggerService.get('web3-bridge-deposit');
@@ -44,12 +38,11 @@ export class Web3AnchorDeposit extends AnchorDeposit<WebbWeb3Provider, DepositPa
       const commitment = depositPayload.params[0].commitment;
       const note = depositPayload.note.note;
       const sourceEvmId = await this.inner.getChainId();
-      const sourceInternalId = evmIdIntoInternalChainId(sourceEvmId);
 
       this.inner.notificationHandler({
         data: {
           amount: note.amount,
-          chain: getEVMChainNameFromInternal(this.inner.config, Number(sourceInternalId)),
+          chain: getEVMChainName(sourceEvmId),
           currency: currency.view.name,
         },
         description: 'Depositing',
@@ -68,7 +61,7 @@ export class Web3AnchorDeposit extends AnchorDeposit<WebbWeb3Provider, DepositPa
       }
 
       // Get the contract address for the destination chain
-      const contractAddress = anchor.neighbours[sourceInternalId];
+      const contractAddress = anchor.neighbours[Number(note.sourceChainId)];
 
       if (!contractAddress) {
         throw new Error(`No Anchor for the chain ${note.targetChainId}`);
@@ -108,7 +101,7 @@ export class Web3AnchorDeposit extends AnchorDeposit<WebbWeb3Provider, DepositPa
           this.inner.notificationHandler({
             data: {
               amount: note.amount,
-              chain: getEVMChainNameFromInternal(this.inner.config, Number(sourceInternalId)),
+              chain: getEVMChainName(sourceEvmId),
               currency: currency.view.name,
             },
             description: 'Depositing',
@@ -121,7 +114,7 @@ export class Web3AnchorDeposit extends AnchorDeposit<WebbWeb3Provider, DepositPa
           this.inner.notificationHandler({
             data: {
               amount: note.amount,
-              chain: getEVMChainNameFromInternal(this.inner.config, Number(sourceInternalId)),
+              chain: getEVMChainName(sourceEvmId),
               currency: currency.view.name,
             },
             description: 'Not enough token balance',
@@ -159,7 +152,7 @@ export class Web3AnchorDeposit extends AnchorDeposit<WebbWeb3Provider, DepositPa
           this.inner.notificationHandler({
             data: {
               amount: note.amount,
-              chain: getEVMChainNameFromInternal(this.inner.config, Number(sourceInternalId)),
+              chain: getEVMChainName(sourceEvmId),
               currency: currency.view.name,
             },
             description: 'Depositing',
@@ -172,7 +165,7 @@ export class Web3AnchorDeposit extends AnchorDeposit<WebbWeb3Provider, DepositPa
           this.inner.notificationHandler({
             data: {
               amount: note.amount,
-              chain: getEVMChainNameFromInternal(this.inner.config, Number(sourceInternalId)),
+              chain: getEVMChainName(sourceEvmId),
               currency: currency.view.name,
             },
             description: 'Not enough token balance',
@@ -226,14 +219,11 @@ export class Web3AnchorDeposit extends AnchorDeposit<WebbWeb3Provider, DepositPa
     return [];
   }
 
-  async getWrappableAssets(chainId: InternalChainId): Promise<Currency[]> {
+  async getWrappableAssets(typedChainId: number): Promise<Currency[]> {
     const bridge = this.bridgeApi;
+    const chainIdType = parseTypedChainId(typedChainId);
 
-    logger.log('getWrappableAssets of chain: ', chainId);
-    const chainIdType: TypedChainId = {
-      chainId: internalChainIdIntoEVMId(chainId),
-      chainType: ChainType.EVM,
-    };
+    console.log('getWrappableAssets of chain: ', typedChainId);
 
     if (bridge) {
       const wrappedTokenAddress = bridge.getTokenAddress(chainIdType);
@@ -252,14 +242,14 @@ export class Web3AnchorDeposit extends AnchorDeposit<WebbWeb3Provider, DepositPa
       // TODO: dynamic wrappable assets - consider some Currency constructor via address & default token config.
 
       // If the tokenAddress matches one of the wrappableCurrencies, return it
-      const wrappableCurrencyIds = this.config.chains[chainId].currencies.filter((currencyId) => {
-        const wrappableTokenAddress = this.config.currencies[currencyId].addresses.get(chainId);
+      const wrappableCurrencyIds = this.config.chains[typedChainId].currencies.filter((currencyId) => {
+        const wrappableTokenAddress = this.config.currencies[currencyId].addresses.get(typedChainId);
 
         return wrappableTokenAddress && tokenAddresses.includes(wrappableTokenAddress);
       });
 
       if (await wrappedToken.contract.isNativeAllowed()) {
-        wrappableCurrencyIds.push(this.config.chains[chainId].nativeCurrencyId);
+        wrappableCurrencyIds.push(this.config.chains[typedChainId].nativeCurrencyId);
       }
 
       const wrappableCurrencies = wrappableCurrencyIds.map((currencyId) => {
@@ -292,7 +282,7 @@ export class Web3AnchorDeposit extends AnchorDeposit<WebbWeb3Provider, DepositPa
    **/
   async generateBridgeNote(
     anchorId: number | string,
-    destChainId: number,
+    destTypedChainId: number,
     wrappableAssetAddress?: string
   ): Promise<DepositPayload> {
     const bridge = this.bridgeApi.activeBridge;
@@ -305,10 +295,8 @@ export class Web3AnchorDeposit extends AnchorDeposit<WebbWeb3Provider, DepositPa
     const amount = String(anchorId).replace('Bridge=', '').split('@')[0];
     const tokenSymbol = currency.view.symbol;
     const sourceEvmId = await this.inner.getChainId();
-    const sourceChainId = calculateTypedChainId(ChainType.EVM, sourceEvmId);
-    const deposit = Anchor.generateDeposit(destChainId);
-    const srcChainInternal = evmIdIntoInternalChainId(sourceEvmId);
-    const destChainInternal = typedChainIdToInternalId(parseTypedChainId(destChainId));
+    const sourceTypedChainId = calculateTypedChainId(ChainType.EVM, sourceEvmId);
+    const deposit = Anchor.generateDeposit(destTypedChainId);
     const anchorConfig = bridge.anchors.find(
       (anchorConfig) => anchorConfig.type === 'fixed' && anchorConfig.amount === amount
     );
@@ -317,8 +305,8 @@ export class Web3AnchorDeposit extends AnchorDeposit<WebbWeb3Provider, DepositPa
       throw new Error(`cannot find anchor configuration with amount: ${amount}`);
     }
 
-    const srcAddress = anchorConfig.anchorAddresses[srcChainInternal];
-    const destAddress = anchorConfig.anchorAddresses[destChainInternal];
+    const srcAddress = anchorConfig.anchorAddresses[sourceTypedChainId];
+    const destAddress = anchorConfig.anchorAddresses[destTypedChainId];
 
     const noteInput: NoteGenInput = {
       amount: amount,
@@ -329,13 +317,13 @@ export class Web3AnchorDeposit extends AnchorDeposit<WebbWeb3Provider, DepositPa
       hashFunction: 'Poseidon',
       protocol: 'anchor',
       secrets: [
-        toFixedHex(destChainId, 8).substring(2),
+        toFixedHex(destTypedChainId, 8).substring(2),
         toFixedHex(deposit.nullifier.toString()).substring(2),
         toFixedHex(deposit.secret.toString()).substring(2),
       ].join(':'),
-      sourceChain: sourceChainId.toString(),
+      sourceChain: sourceTypedChainId.toString(),
       sourceIdentifyingData: srcAddress!,
-      targetChain: destChainId.toString(),
+      targetChain: destTypedChainId.toString(),
       targetIdentifyingData: destAddress!,
       tokenSymbol: tokenSymbol,
       version: 'v2',

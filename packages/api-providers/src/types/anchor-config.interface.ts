@@ -1,9 +1,8 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { InternalChainId } from '../chains';
-
-export type ChainAddressConfig = { [key in InternalChainId]?: string };
+// The ChainAddressConfig maps the TypedChainId to the appropriate address or treeId.
+export type ChainAddressConfig = Record<number, string>;
 
 export type FixedAnchorConfigEntry = {
   type: 'fixed';

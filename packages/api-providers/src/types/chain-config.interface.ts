@@ -7,7 +7,6 @@ import { WebbCurrencyId } from '../enums';
 import { ReactElement } from './abstracts';
 
 export interface ChainConfig {
-  id: number;
   chainType: ChainType;
   name: string;
   group: string;

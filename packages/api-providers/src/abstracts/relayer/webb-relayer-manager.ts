@@ -4,7 +4,7 @@
 import { Note } from '@webb-tools/sdk-core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 
-import { AppConfig, InternalChainId } from '../../';
+import { AppConfig } from '../../';
 import { RelayerQuery } from './types';
 import { OptionalActiveRelayer, OptionalRelayer, WebbRelayer } from './webb-relayer';
 
@@ -24,8 +24,8 @@ export abstract class WebbRelayerManager {
     this.listUpdated = this._listUpdated.asObservable();
   }
 
-  async setActiveRelayer(relayer: WebbRelayer | null, internalChainId: InternalChainId): Promise<void> {
-    const active = await this.mapRelayerIntoActive(relayer, internalChainId);
+  async setActiveRelayer(relayer: WebbRelayer | null, typedChainId: number): Promise<void> {
+    const active = await this.mapRelayerIntoActive(relayer, typedChainId);
 
     this.activeRelayer = active;
     this.activeRelayerSubject.next(active);
@@ -36,10 +36,7 @@ export abstract class WebbRelayerManager {
     this._listUpdated.next();
   }
 
-  abstract mapRelayerIntoActive(
-    relayer: OptionalRelayer,
-    internalChainId: InternalChainId
-  ): Promise<OptionalActiveRelayer>;
+  abstract mapRelayerIntoActive(relayer: OptionalRelayer, typedChainId: number): Promise<OptionalActiveRelayer>;
 
   /*
    *  get a list of the suitable relayers for a given query
@@ -48,5 +45,5 @@ export abstract class WebbRelayerManager {
    **/
   abstract getRelayers(query: RelayerQuery): WebbRelayer[];
   abstract getRelayersByNote(note: Note): Promise<WebbRelayer[]>;
-  abstract getRelayersByChainAndAddress(chainId: InternalChainId, address: string): Promise<WebbRelayer[]>;
+  abstract getRelayersByChainAndAddress(typedChainId: number, address: string): Promise<WebbRelayer[]>;
 }

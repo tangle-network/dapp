@@ -1,7 +1,7 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { InternalChainId, TypedChainId } from '../../chains';
+import { TypedChainId, WebbTypedChainId } from '../../chains';
 import { WebbCurrencyId } from '../../enums';
 import { CurrencyConfig, CurrencyRole, CurrencyView } from '../../types/currency-config.interface';
 import { AppConfig } from '../common';
@@ -37,7 +37,7 @@ export class Currency extends CurrencyContent {
   static fromORMLAsset(currenciesConfig: AppConfig['currencies'], asset: ORMLAsset): Currency {
     return new Currency({
       ...currenciesConfig[WebbCurrencyId.WEBB],
-      addresses: new Map([[InternalChainId.ProtocolSubstrateStandalone, asset.id]]),
+      addresses: new Map([[WebbTypedChainId.ProtocolSubstrateStandalone, asset.id]]),
       id: `ORML@${asset.id}`,
       name: asset.name,
       symbol: asset.name.slice(0, 4).toLocaleUpperCase(),
@@ -52,23 +52,23 @@ export class Currency extends CurrencyContent {
     return false;
   }
 
-  getAddress(chain: InternalChainId): string | undefined {
+  getAddress(chain: number): string | undefined {
     return this.data.addresses.get(chain);
   }
 
-  hasChain(chain: InternalChainId): boolean {
+  hasChain(chain: number): boolean {
     return this.data.addresses.has(chain);
   }
 
-  getChainIds(): InternalChainId[] {
+  getChainIds(): number[] {
     return Array.from(this.data.addresses.keys());
   }
 
   getChainIdsAndTypes(chainsConfig: AppConfig['chains']): TypedChainId[] {
     return Array.from(this.data.addresses.keys())
-      .filter((internalId) => Boolean(chainsConfig[internalId]))
-      .map((internalId: any) => {
-        return { chainId: chainsConfig[internalId].chainId, chainType: chainsConfig[internalId].chainType };
+      .filter((typedChainId) => Boolean(chainsConfig[typedChainId]))
+      .map((typedChainId: any) => {
+        return { chainId: chainsConfig[typedChainId].chainId, chainType: chainsConfig[typedChainId].chainType };
       });
   }
 

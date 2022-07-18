@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
-import { internalIdToSubstrateRelayerName } from '@webb-dapp/apps/configs/relayer-config';
+import { typedChainIdToSubstrateRelayerName } from '@webb-dapp/apps/configs/relayer-config';
 import { LoggerService } from '@webb-tools/app-util';
-import { ArkworksProvingManager, Note, parseTypedChainId, ProvingManagerSetupInput } from '@webb-tools/sdk-core';
+import { ArkworksProvingManager, Note, ProvingManagerSetupInput } from '@webb-tools/sdk-core';
 import { ethers } from 'ethers';
 
 import { decodeAddress } from '@polkadot/keyring';
@@ -12,7 +12,7 @@ import { hexToU8a, u8aToHex } from '@polkadot/util';
 
 import { MixerWithdraw, RelayedChainInput } from '../abstracts';
 import { WebbError, WebbErrorCodes } from '../webb-error';
-import { fetchSubstrateMixerProvingKey, RelayedWithdrawResult, TransactionState, typedChainIdToInternalId } from '../';
+import { fetchSubstrateMixerProvingKey, RelayedWithdrawResult, TransactionState } from '../';
 import { WebbPolkadot } from './webb-provider';
 import { PolkadotMixerDeposit } from '.';
 
@@ -135,10 +135,7 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
         logger.info('withdrawing through relayer', activeRelayer);
         this.emit('stateChange', TransactionState.SendingTransaction);
         const relayerMixerTx = await activeRelayer!.initWithdraw('mixer');
-
-        const destChainIdType = parseTypedChainId(Number(noteParsed.note.targetChainId));
-        const destInternalId = typedChainIdToInternalId(destChainIdType);
-        const chainName = internalIdToSubstrateRelayerName(destInternalId);
+        const chainName = typedChainIdToSubstrateRelayerName(Number(noteParsed.note.targetChainId));
 
         const chainInput: RelayedChainInput = {
           baseOn: 'substrate',

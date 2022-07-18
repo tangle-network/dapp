@@ -1,7 +1,6 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { InternalChainId } from '../../chains';
 import { CurrencyRole } from '../../types/currency-config.interface';
 import { AppConfig } from '../common';
 import { Currency } from '../currency/currency';
@@ -24,7 +23,7 @@ export class Bridge {
   /*
    *  Get all Bridge tokens for a given chain
    * */
-  static getTokensOfChain(currenciesConfig: AppConfig['currencies'], chainId: InternalChainId): Currency[] {
+  static getTokensOfChain(currenciesConfig: AppConfig['currencies'], chainId: number): Currency[] {
     const tokens = Bridge.getTokens(currenciesConfig);
 
     return tokens.filter((token) => token.hasChain(chainId));

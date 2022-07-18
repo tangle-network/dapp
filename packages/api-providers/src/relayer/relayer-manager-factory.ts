@@ -21,7 +21,7 @@ import { AppConfig, WebbRelayer } from '..';
  *
  * @param capabilities - storage for relayers capabilities
  * @param relayerConfigs - The whole relayers configuration of the project
- * @param chainNameAdapter - An adapter for getting the  InternalChainId of the chain name and the base
+ * @param chainNameAdapter - An adapter for getting the typedChainId from the chain name and the base
  * @param appConfig - App config is used for looking up configuration values for issuing queries on the relayers
  **/
 export class WebbRelayerManagerFactory {

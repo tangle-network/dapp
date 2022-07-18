@@ -1,9 +1,10 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
+import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import { BehaviorSubject, Observable } from 'rxjs';
 
-import { Currency, InternalChainId, TypedChainId, typedChainIdToInternalId, WebbCurrencyId } from '../../';
+import { Currency, TypedChainId, WebbCurrencyId, WebbTypedChainId } from '../../';
 
 export type BridgeCurrencyIndex = WebbCurrencyId;
 
@@ -13,9 +14,8 @@ type BridgeStore<BridgeConfigEntry, BridgeConfig = Record<BridgeCurrencyIndex, B
 };
 export type AnchorBase = {
   amount?: string | number;
-  neighbours: {
-    [key in InternalChainId]?: string | number;
-  };
+  // Neighbors are indexed on their TypedChainId
+  neighbours: Record<number, string | number>;
 };
 /**
  * Providers the data related to the Anchors it can be implemented over the static configurations or fetching on chain data
@@ -85,10 +85,10 @@ export abstract class AnchorApi<Api, BridgeConfigEntry> {
   /*
    *  Get all Bridge tokens for a given chain
    **/
-  async getTokensOfChain(chainId: TypedChainId): Promise<Currency[]> {
+  async getTokensOfChain(typedChainId: TypedChainId): Promise<Currency[]> {
     const tokens = await this.getCurrencies();
-    const internalChainId = typedChainIdToInternalId(chainId);
-
-    return tokens.filter((token) => token.hasChain(internalChainId));
+    return tokens.filter((token) =>
+      token.hasChain(calculateTypedChainId(typedChainId.chainType, typedChainId.chainId))
+    );
   }
 }

@@ -1,13 +1,12 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { InternalChainId } from '../chains';
 import { WebbCurrencyId } from '../enums';
 import { AppConfig } from '../';
 
 export const getFixedAnchorAddressForBridge = (
   assetId: WebbCurrencyId,
-  chainId: number,
+  typedChainId: number,
   amount: number,
   bridgeConfigByAsset: AppConfig['bridgeByAsset']
 ): string | undefined => {
@@ -19,14 +18,14 @@ export const getFixedAnchorAddressForBridge = (
     throw new Error('Unsupported configuration for bridge');
   }
 
-  const anchorAddress = linkedAnchorConfig.anchorAddresses[chainId as InternalChainId];
+  const anchorAddress = linkedAnchorConfig.anchorAddresses[typedChainId];
 
   return anchorAddress;
 };
 
 export const getVariableAnchorAddressForBridge = (
   assetId: WebbCurrencyId,
-  chainId: number,
+  typedChainId: number,
   bridgeConfigByAsset: AppConfig['bridgeByAsset']
 ): string | undefined => {
   const linkedAnchorConfig = bridgeConfigByAsset[assetId]?.anchors.find((anchor) => anchor.type === 'variable');
@@ -35,7 +34,7 @@ export const getVariableAnchorAddressForBridge = (
     throw new Error('Unsupported configuration for bridge');
   }
 
-  const anchorAddress = linkedAnchorConfig.anchorAddresses[chainId as InternalChainId];
+  const anchorAddress = linkedAnchorConfig.anchorAddresses[typedChainId];
 
   return anchorAddress;
 };

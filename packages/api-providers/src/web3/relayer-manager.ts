@@ -13,7 +13,6 @@ import {
   WebbRelayer,
 } from '../abstracts';
 import { WebbRelayerManager } from '../abstracts/relayer/webb-relayer-manager';
-import { InternalChainId, typedChainIdToInternalId } from '../chains';
 import {
   BridgeStorage,
   getFixedAnchorAddressForBridge,
@@ -25,10 +24,7 @@ import {
 } from '..';
 
 export class Web3RelayerManager extends WebbRelayerManager {
-  async mapRelayerIntoActive(
-    relayer: OptionalRelayer,
-    internalChainId: InternalChainId
-  ): Promise<OptionalActiveRelayer> {
+  async mapRelayerIntoActive(relayer: OptionalRelayer, typedChainId: number): Promise<OptionalActiveRelayer> {
     if (!relayer) {
       return null;
     }
@@ -37,16 +33,15 @@ export class Web3RelayerManager extends WebbRelayerManager {
       relayer,
       {
         basedOn: 'evm',
-        chain: internalChainId,
+        typedChainId,
       },
       // Define the function for retrieving fee information for the relayer
       async (note: string) => {
         const depositNote = await Note.deserialize(note);
         const evmNote = depositNote.note;
-        const internalId = typedChainIdToInternalId(parseTypedChainId(Number(depositNote.note.targetChainId)));
         const contractAddress = await getFixedAnchorAddressForBridge(
           webbCurrencyIdFromString(evmNote.tokenSymbol),
-          internalId,
+          typedChainId,
           Number(evmNote.amount),
           this.config.bridgeByAsset
         );
@@ -58,7 +53,7 @@ export class Web3RelayerManager extends WebbRelayerManager {
         // Given the note, iterate over the relayer's supported contracts and find the corresponding configuration
         // for the contract.
         const supportedContract = relayer.capabilities.supportedChains.evm
-          .get(internalId)
+          .get(typedChainId)
           ?.contracts.find(({ address, size }) => {
             // Match on the relayer configuration as well as note
             return address.toLowerCase() === contractAddress.toLowerCase() && size === Number(evmNote.amount);
@@ -167,7 +162,6 @@ export class Web3RelayerManager extends WebbRelayerManager {
 
   async getRelayersByNote(evmNote: Note) {
     const chainTypeId = Number(evmNote.note.targetChainId);
-    const internalId = typedChainIdToInternalId(parseTypedChainId(chainTypeId));
     let contract: ContractName;
     switch (evmNote.note.protocol) {
       case 'mixer':
@@ -186,15 +180,16 @@ export class Web3RelayerManager extends WebbRelayerManager {
         amount: Number(evmNote.note.amount),
         tokenSymbol: evmNote.note.tokenSymbol,
       },
-      chainId: internalId,
+      chainId: chainTypeId,
       contract,
     });
   }
 
-  async getRelayersByChainAndAddress(chainId: InternalChainId, address: string) {
+  async getRelayersByChainAndAddress(typedChainId: number, address: string) {
+    const parsedChainIdType = parseTypedChainId(typedChainId);
     return this.getRelayers({
       baseOn: 'evm',
-      chainId: chainId,
+      chainId: parsedChainIdType.chainId,
       contractAddress: address,
     });
   }

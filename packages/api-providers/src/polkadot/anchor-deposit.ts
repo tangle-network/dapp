@@ -2,12 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { LoggerService } from '@webb-tools/app-util';
-import { calculateTypedChainId, Note, NoteGenInput } from '@webb-tools/sdk-core';
+import { calculateTypedChainId, ChainType, Note, NoteGenInput } from '@webb-tools/sdk-core';
 
 import { u8aToHex } from '@polkadot/util';
 
 import { AnchorDeposit, AnchorSize, DepositPayload as IDepositPayload } from '../abstracts';
-import { substrateIdIntoInternalChainId } from '../chains';
 import { WebbError, WebbErrorCodes } from '../webb-error';
 import { WebbPolkadot } from './webb-provider';
 
@@ -108,7 +107,7 @@ export class PolkadotAnchorDeposit extends AnchorDeposit<WebbPolkadot, DepositPa
         amount: Number(anchor.amount),
         asset: currency.view.symbol,
         id: `Bridge=${anchor.amount}@${currency.view.name}@${
-          anchor.neighbours[substrateIdIntoInternalChainId(Number(substrateChainId))]
+          anchor.neighbours[calculateTypedChainId(ChainType.Substrate, Number(substrateChainId))]
         }`,
         title: `${anchor.amount} ${currency.view.name}`,
       }));

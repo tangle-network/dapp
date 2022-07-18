@@ -4,7 +4,6 @@
 import { Observable, Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
-import { InternalChainId } from '../../chains';
 import {
   Capabilities,
   EVMCMDKeys,
@@ -231,7 +230,7 @@ export class WebbRelayer {
 
   static intoActiveWebRelayer(
     instance: WebbRelayer,
-    query: { chain: InternalChainId; basedOn: 'evm' | 'substrate' },
+    query: { typedChainId: number; basedOn: 'evm' | 'substrate' },
     getFees: (note: string) => Promise<{ totalFees: string; withdrawFeePercentage: number } | undefined>
   ): ActiveWebbRelayer {
     return new ActiveWebbRelayer(instance.endpoint, instance.capabilities, query, getFees);
@@ -242,7 +241,7 @@ export class ActiveWebbRelayer extends WebbRelayer {
   constructor(
     endpoint: string,
     capabilities: Capabilities,
-    private query: { chain: InternalChainId; basedOn: 'evm' | 'substrate' },
+    private query: { typedChainId: number; basedOn: 'evm' | 'substrate' },
     private getFees: (note: string) => Promise<{ totalFees: string; withdrawFeePercentage: number } | undefined>
   ) {
     super(endpoint, capabilities);
@@ -251,7 +250,7 @@ export class ActiveWebbRelayer extends WebbRelayer {
   private get config() {
     const list = this.capabilities.supportedChains[this.query.basedOn];
 
-    return list.get(this.query.chain);
+    return list.get(this.query.typedChainId);
   }
 
   get gasLimit(): number | undefined {

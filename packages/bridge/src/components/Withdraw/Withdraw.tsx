@@ -1,11 +1,5 @@
 import { FormHelperText, InputBase, Typography } from '@mui/material';
-import {
-  getChainNameFromChainId,
-  TransactionState,
-  typedChainIdToInternalId,
-  WalletConfig,
-  WebbRelayer,
-} from '@webb-dapp/api-providers';
+import { getChainNameFromTypedChainId, TransactionState, WalletConfig, WebbRelayer } from '@webb-dapp/api-providers';
 import { chainsPopulated } from '@webb-dapp/apps/configs';
 import { useWithdraw } from '@webb-dapp/bridge/hooks';
 import { useDepositNote } from '@webb-dapp/mixer';
@@ -164,8 +158,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
       return;
     }
     const chainTypeId = parseTypedChainId(Number(note.note.targetChainId));
-    const internalChainId = typedChainIdToInternalId(chainTypeId);
-    const chain = chainsPopulated[internalChainId];
+    const chain = chainsPopulated[Number(note.note.targetChainId)];
     await switchChain(chain, activeWallet);
   };
 
@@ -229,9 +222,9 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
           <div className='information-item'>
             <p className='title'>Chains</p>
             <p className='value'>
-              {getChainNameFromChainId(appConfig, parseTypedChainId(Number(depositNote.note.sourceChainId)))}
+              {getChainNameFromTypedChainId(appConfig, parseTypedChainId(Number(depositNote.note.sourceChainId)))}
               {` -> `}
-              {getChainNameFromChainId(appConfig, parseTypedChainId(Number(depositNote.note.targetChainId)))}
+              {getChainNameFromTypedChainId(appConfig, parseTypedChainId(Number(depositNote.note.targetChainId)))}
             </p>
           </div>
           <div className='information-item'>

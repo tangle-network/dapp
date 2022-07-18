@@ -26,14 +26,11 @@ import {
   VAnchorDeposit,
   VAnchorDepositResults,
 } from '../abstracts';
-import { evmIdIntoInternalChainId, typedChainIdToInternalId } from '../chains';
 import {
-  BridgeStorage,
   bridgeStorageFactory,
   fetchVariableAnchorKeyForEdges,
   fetchVariableAnchorWasmForEdges,
-  getAnchorDeploymentBlockNumber,
-  getEVMChainNameFromInternal,
+  getEVMChainName,
   keypairStorageFactory,
   Web3Provider,
 } from '..';
@@ -105,16 +102,14 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
       keypair,
     });
 
-    const srcChainInternal = evmIdIntoInternalChainId(sourceEvmId);
-    const destChainInternal = typedChainIdToInternalId(parseTypedChainId(destination));
     const anchorConfig = bridge.anchors.find((anchorConfig) => anchorConfig.type === 'variable');
 
     if (!anchorConfig) {
       throw new Error(`cannot find anchor configuration with amount: ${amount}`);
     }
 
-    const srcAddress = anchorConfig.anchorAddresses[srcChainInternal];
-    const destAddress = anchorConfig.anchorAddresses[destChainInternal];
+    const srcAddress = anchorConfig.anchorAddresses[sourceChainId];
+    const destAddress = anchorConfig.anchorAddresses[destination];
 
     const noteInput: NoteGenInput = {
       amount: bnAmount.toString(),
@@ -165,12 +160,11 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
 
       const sourceEvmId = await this.inner.getChainId();
       const sourceChainId = calculateTypedChainId(ChainType.EVM, sourceEvmId);
-      const sourceInternalId = evmIdIntoInternalChainId(sourceEvmId);
 
       this.inner.notificationHandler({
         data: {
           amount: ethers.utils.formatUnits(note.amount, note.denomination),
-          chain: getEVMChainNameFromInternal(this.inner.config, Number(sourceInternalId)),
+          chain: getEVMChainName(this.inner.config, sourceChainId),
           currency: currency.view.name,
         },
         description: 'Depositing',

@@ -1,18 +1,18 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
 // eslint-disable-next-line header/header
+import { calculateTypedChainId, ChainType } from '@webb-tools/sdk-core';
+
 import { InjectedAccount, InjectedExtension } from '@polkadot/extension-inject/types';
 
 import {
   Account,
   AccountsAdapter,
-  evmIdIntoInternalChainId,
   InteractiveFeedback,
   NotificationPayload,
   PolkadotProvider,
   PromiseOrT,
   RelayerConfig,
-  substrateIdIntoInternalChainId,
   WebbPolkadot,
   WebbRelayerManagerFactory,
 } from '../../';
@@ -70,7 +70,9 @@ export async function initPolkadotProvider(): Promise<WebbPolkadot> {
     relayerConfig,
     (name, basedOn) => {
       try {
-        return basedOn === 'evm' ? evmIdIntoInternalChainId(name) : substrateIdIntoInternalChainId(Number(name));
+        return basedOn === 'evm'
+          ? calculateTypedChainId(ChainType.EVM, Number(name))
+          : calculateTypedChainId(ChainType.Substrate, Number(name));
       } catch (e) {
         return null;
       }

@@ -15,7 +15,6 @@ import {
 import { hexToU8a, u8aToHex } from '@polkadot/util';
 
 import { AnchorApi, AnchorWithdraw, WebbRelayer } from '../abstracts';
-import { evmIdIntoInternalChainId, internalChainIdIntoEVMId, typedChainIdToInternalId } from '../chains';
 import { AnchorContract, depositFromAnchorNote } from '../contracts/wrappers';
 import { Web3Provider } from '../ext-providers';
 import { fetchFixedAnchorKeyForEdges, fetchFixedAnchorWasmForEdges } from '../ipfs/evm/anchors';
@@ -25,7 +24,6 @@ import {
   BridgeStorage,
   bridgeStorageFactory,
   getAnchorDeploymentBlockNumber,
-  getEVMChainNameFromInternal,
   RelayedWithdrawResult,
   RelayerCMDBase,
   TransactionState,

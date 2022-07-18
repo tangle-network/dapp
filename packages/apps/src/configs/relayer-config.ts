@@ -1,11 +1,5 @@
-import {
-  AppConfig,
-  evmIdIntoInternalChainId,
-  InternalChainId,
-  RelayerConfig,
-  substrateIdIntoInternalChainId,
-  WebbRelayerManagerFactory,
-} from '@webb-dapp/api-providers';
+import { AppConfig, RelayerConfig, WebbRelayerManagerFactory, WebbTypedChainId } from '@webb-dapp/api-providers';
+import { calculateTypedChainId, ChainType } from '@webb-tools/sdk-core';
 
 let relayerManagerFactory: WebbRelayerManagerFactory | null = null;
 export const relayerConfig: RelayerConfig[] = [
@@ -26,22 +20,22 @@ export const relayerConfig: RelayerConfig[] = [
   },
 ];
 
-export function relayerSubstrateNameToChainId(name: string): InternalChainId {
+export function relayerSubstrateNameToTypedChainId(name: string): WebbTypedChainId {
   switch (name) {
     case 'localnode':
-      return InternalChainId.ProtocolSubstrateStandalone;
+      return WebbTypedChainId.ProtocolSubstrateStandalone;
     case 'webbeggnet':
-      return InternalChainId.EggStandalone;
+      return WebbTypedChainId.EggStandalone;
   }
 
   throw new Error('unhandled relayed chain name  ' + name);
 }
 
-export function internalIdToSubstrateRelayerName(id: InternalChainId): string {
+export function typedChainIdToSubstrateRelayerName(id: number): string {
   switch (id) {
-    case InternalChainId.ProtocolSubstrateStandalone:
+    case WebbTypedChainId.ProtocolSubstrateStandalone:
       return 'localnode';
-    case InternalChainId.EggStandalone:
+    case WebbTypedChainId.EggStandalone:
       return 'webbeggnet';
   }
 
@@ -54,7 +48,9 @@ export async function getRelayerManagerFactory(appConfig: AppConfig) {
       relayerConfig,
       (name, basedOn) => {
         try {
-          return basedOn === 'evm' ? evmIdIntoInternalChainId(name) : substrateIdIntoInternalChainId(Number(name));
+          return basedOn === 'evm'
+            ? calculateTypedChainId(ChainType.EVM, Number(name))
+            : relayerSubstrateNameToTypedChainId(name);
         } catch (e) {
           return null;
         }

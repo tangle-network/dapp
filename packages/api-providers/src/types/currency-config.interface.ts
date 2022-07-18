@@ -1,7 +1,6 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { InternalChainId } from '../chains';
 import { WebbCurrencyId } from '../enums';
 import { ReactElement } from './abstracts';
 
@@ -34,6 +33,6 @@ export interface CurrencyView {
 }
 
 export interface CurrencyConfig extends CurrencyView {
-  addresses: Map<InternalChainId, string>;
+  addresses: Map<number, string>;
   role: CurrencyRole;
 }

@@ -7,7 +7,6 @@ import { decodeAddress } from '@polkadot/keyring';
 import { u8aToHex } from '@polkadot/util';
 
 import { AnchorWithdraw, TransactionState } from '../abstracts';
-import { typedChainIdToInternalId } from '../chains';
 import { WebbError, WebbErrorCodes } from '../webb-error';
 import { fetchSubstrateAnchorProvingKey } from '../';
 import { WebbPolkadot } from './webb-provider';
@@ -87,8 +86,7 @@ export class PolkadotAnchorWithdraw extends AnchorWithdraw<WebbPolkadot> {
       // Get the anchor of the note amount
       const anchor = anchors.find((a) => a.amount === amount)!;
 
-      const treeId =
-        anchor.neighbours[typedChainIdToInternalId(parseTypedChainId(Number(parseNote.note.sourceChainId)))];
+      const treeId = anchor.neighbours[Number(parseNote.note.sourceChainId)];
 
       if (!treeId) {
         throw new Error('Could not find the treeId');
