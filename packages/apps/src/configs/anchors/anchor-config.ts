@@ -31,9 +31,9 @@ export const anchorsConfig: AppConfig['anchors'] = {
     {
       anchorTreeIds: {},
       anchorAddresses: {
-        [InternalChainId.HermesLocalnet]: '0xb824C5F99339C7E486a1b452B635886BE82bc8b7',
-        [InternalChainId.AthenaLocalnet]: '0xFEe587E68c470DAE8147B46bB39fF230A29D4769',
-        [InternalChainId.DemeterLocalnet]: '0xdB587ef6aaA16b5719CDd3AaB316F0E70473e9Be',
+        [InternalChainId.HermesLocalnet]: '0x510C6297cC30A058F41eb4AF1BFC9953EaD8b577',
+        [InternalChainId.AthenaLocalnet]: '0xcbD945E77ADB65651F503723aC322591f3435cC5',
+        [InternalChainId.DemeterLocalnet]: '0x7758F98C1c487E5653795470eEab6C4698bE541b',
       },
       type: 'variable',
     },
