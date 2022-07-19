@@ -1,17 +1,17 @@
 import {
-  AnchorDeposit,
   BridgeCurrencyIndex,
   ChainTypeId,
   computeChainIdType,
   Currency,
   DepositPayload,
+  DepositStates,
   MixerDeposit,
   TransactionState,
   VAnchorDeposit,
   VAnchorDepositResults,
 } from '@webb-dapp/api-providers';
-import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
 import { useWebContext } from '@webb-dapp/react-environment';
+import { useBridge } from '@webb-dapp/vbridge/hooks/bridge/use-bridge';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 export interface VBridgeDepositApi {
   deposit(payload: DepositPayload): Promise<VAnchorDepositResults>;
@@ -36,7 +36,7 @@ export interface VBridgeDepositApi {
 export const useBridgeDeposit = (): VBridgeDepositApi => {
   const [stage, setStage] = useState<TransactionState>(TransactionState.Ideal);
   const { activeApi } = useWebContext();
-  const [loadingState, setLoadingState] = useState<AnchorDeposit<any>['loading']>('ideal');
+  const [loadingState, setLoadingState] = useState<DepositStates>('ideal');
   const [error, setError] = useState('');
   const { bridgeApi, getTokensOfChain } = useBridge();
   const [selectedBridgeCurrency, setSelectedBridgeCurrency] = useState<null | Currency>(null);

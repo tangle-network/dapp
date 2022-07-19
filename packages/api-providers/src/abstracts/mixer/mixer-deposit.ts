@@ -14,7 +14,7 @@ export type MixerDepositEvents = {
   error: string;
   ready: undefined;
 };
-export type DespotStates = 'ideal' | 'generating-note' | 'depositing';
+export type DepositStates = 'ideal' | 'generating-note' | 'depositing';
 
 export type MixerSize = {
   id: number | string;
@@ -57,7 +57,7 @@ export abstract class MixerDeposit<
   abstract deposit(depositPayload: K): Promise<void>;
 
   // The current instance status
-  loading: DespotStates = 'ideal';
+  loading: DepositStates = 'ideal';
 
   // Get mixer sizes for display and selection
   abstract getSizes(): Promise<MixerSize[]>;

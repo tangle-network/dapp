@@ -40,16 +40,9 @@ export class PolkadotAnchorApi extends AnchorApi<WebbPolkadot, BridgeConfig> {
 
   async getAnchors(): Promise<AnchorBase[]> {
     return (
-      this.store.activeBridge?.anchors.map((anchor: AnchorConfigEntry) =>
-        anchor.type === 'fixed'
-          ? {
-              amount: anchor.amount,
-              neighbours: anchor.anchorTreeIds,
-            }
-          : {
-              neighbours: anchor.anchorTreeIds,
-            }
-      ) ?? []
+      this.store.activeBridge?.anchors.map((anchor: AnchorConfigEntry) => ({
+        neighbours: anchor.anchorTreeIds,
+      })) ?? []
     );
   }
 

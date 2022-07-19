@@ -15,43 +15,7 @@ import {
 } from '../../';
 
 const anchorsConfig: AppConfig['anchors'] = {
-  [WebbCurrencyId.WEBB]: [
-    {
-      amount: '10',
-      anchorAddresses: {},
-      anchorTreeIds: {
-        [InternalChainId.ProtocolSubstrateStandalone]: '3',
-      },
-      type: 'fixed',
-    },
-    {
-      amount: '100',
-      anchorAddresses: {},
-      anchorTreeIds: {
-        [InternalChainId.ProtocolSubstrateStandalone]: '4',
-      },
-      type: 'fixed',
-    },
-    {
-      amount: '1000',
-      anchorAddresses: {},
-      anchorTreeIds: {
-        [InternalChainId.ProtocolSubstrateStandalone]: '5',
-      },
-      type: 'fixed',
-    },
-  ],
   [WebbCurrencyId.webbDEV]: [
-    {
-      amount: '1',
-      anchorAddresses: {
-        [InternalChainId.HermesLocalnet]: '0xbfce6B877Ebff977bB6e80B24FbBb7bC4eBcA4df',
-        [InternalChainId.AthenaLocalnet]: '0xcd75Ad7AC9C9325105f798c476E84176648F391A',
-        [InternalChainId.DemeterLocalnet]: '0x4e3df2073bf4b43B9944b8e5A463b1E185D6448C',
-      },
-      anchorTreeIds: {},
-      type: 'fixed',
-    },
     {
       anchorAddresses: {
         [InternalChainId.HermesLocalnet]: '0xb824C5F99339C7E486a1b452B635886BE82bc8b7',

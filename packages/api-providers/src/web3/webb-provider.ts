@@ -8,19 +8,10 @@ import { Eth } from 'web3-eth';
 import { RelayChainMethods } from '../abstracts';
 import { AccountsAdapter } from '../account/Accounts.adapter';
 import { evmIdIntoInternalChainId } from '../chains';
-import { AnchorContract } from '../contracts/wrappers';
 import { VAnchorContract } from '../contracts/wrappers/webb-vanchor';
 import { Web3Accounts, Web3Provider } from '../ext-providers';
-import {
-  AppConfig,
-  NotificationHandler,
-  Web3AnchorDeposit,
-  WebbApiProvider,
-  WebbMethods,
-  WebbProviderEvents,
-} from '../';
+import { AppConfig, NotificationHandler, WebbApiProvider, WebbMethods, WebbProviderEvents } from '../';
 import { Web3AnchorApi } from './anchor-api';
-import { Web3AnchorWithdraw } from './anchor-withdraw';
 import { Web3ChainQuery } from './chain-query';
 import { Web3MixerDeposit } from './mixer-deposit';
 import { Web3MixerWithdraw } from './mixer-withdraw';
@@ -56,16 +47,6 @@ export class WebbWeb3Provider
     this.methods = {
       anchorApi: new Web3AnchorApi(this, this.config.bridgeByAsset),
       chainQuery: new Web3ChainQuery(this),
-      fixedAnchor: {
-        deposit: {
-          enabled: true,
-          inner: new Web3AnchorDeposit(this),
-        },
-        withdraw: {
-          enabled: true,
-          inner: new Web3AnchorWithdraw(this),
-        },
-      },
       mixer: {
         deposit: {
           enabled: true,
@@ -143,17 +124,9 @@ export class WebbWeb3Provider
     return blockNumber;
   }
 
-  getFixedAnchorByAddress(address: string): AnchorContract {
-    return new AnchorContract(this.ethersProvider, address);
-  }
-
   // VAnchors require zero knowledge proofs on deposit - Fetch the small and large circuits.
   getVariableAnchorByAddress(address: string): VAnchorContract {
     return new VAnchorContract(this.ethersProvider, address);
-  }
-
-  getFixedAnchorByAddressAndProvider(address: string, provider: providers.Web3Provider): AnchorContract {
-    return new AnchorContract(provider, address, true);
   }
 
   getVariableAnchorByAddressAndProvider(address: string, provider: providers.Web3Provider): VAnchorContract {

@@ -1,4 +1,4 @@
-import Slide from '@material-ui/core/Slide';
+import { Slide } from '@mui/material';
 import { Alert } from '@webb-dapp/ui-components/notification/Notification';
 import { SnackBarOpts } from '@webb-dapp/ui-components/notification/NotificationContext';
 import { NotificationProvider } from '@webb-dapp/ui-components/notification/NotificationProvider';

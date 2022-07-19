@@ -43,7 +43,6 @@
     "format": "prettier --write \"packages/**/*.{ts,js,jsx,tsx}\""
   },
   "dependencies": {
-    "@material-ui/core": "^4.11.3",
     "@mui/material": "^5.8.7",
     "@mui/styled-engine": "npm:@mui/styled-engine-sc@latest",
     "@mui/styles": "^5.8.7",

@@ -4,17 +4,10 @@
 import { Note } from '@webb-tools/sdk-core';
 import { ethers } from 'ethers';
 
-import {
-  ContractName,
-  OptionalActiveRelayer,
-  OptionalRelayer,
-  RelayerQuery,
-  shuffleRelayers,
-  WebbRelayer,
-} from '../abstracts';
+import { OptionalActiveRelayer, OptionalRelayer, RelayerQuery, shuffleRelayers, WebbRelayer } from '../abstracts';
 import { WebbRelayerManager } from '../abstracts/relayer/webb-relayer-manager';
 import { chainTypeIdToInternalId, InternalChainId, parseChainIdType } from '../chains';
-import { getFixedAnchorAddressForBridge, webbCurrencyIdFromString, WebbError, WebbErrorCodes } from '..';
+import { WebbError, WebbErrorCodes } from '..';
 
 export class Web3RelayerManager extends WebbRelayerManager {
   async mapRelayerIntoActive(
@@ -36,24 +29,15 @@ export class Web3RelayerManager extends WebbRelayerManager {
         const depositNote = await Note.deserialize(note);
         const evmNote = depositNote.note;
         const internalId = chainTypeIdToInternalId(parseChainIdType(Number(depositNote.note.targetChainId)));
-        const contractAddress = await getFixedAnchorAddressForBridge(
-          webbCurrencyIdFromString(evmNote.tokenSymbol),
-          internalId,
-          Number(evmNote.amount),
-          this.config.bridgeByAsset
-        );
-
-        if (!contractAddress) {
-          throw new Error('Unsupported configuration for bridge');
-        }
+        const contractAddress = depositNote.note.targetIdentifyingData;
 
         // Given the note, iterate over the relayer's supported contracts and find the corresponding configuration
         // for the contract.
         const supportedContract = relayer.capabilities.supportedChains.evm
           .get(internalId)
-          ?.contracts.find(({ address, size }) => {
+          ?.contracts.find(({ address }) => {
             // Match on the relayer configuration as well as note
-            return address.toLowerCase() === contractAddress.toLowerCase() && size === Number(evmNote.amount);
+            return address.toLowerCase() === contractAddress.toLowerCase();
           });
 
         // The user somehow selected a relayer which does not support the mixer.
@@ -84,7 +68,7 @@ export class Web3RelayerManager extends WebbRelayerManager {
    *  Accepts a 'RelayerQuery' object with optional, indexible fields.
    **/
   getRelayers(query: RelayerQuery): WebbRelayer[] {
-    const { baseOn, bridgeSupport, chainId, contract, contractAddress, ipService } = query;
+    const { baseOn, chainId, contractAddress, ipService } = query;
     const relayers = this.relayers.filter((relayer) => {
       const capabilities = relayer.capabilities;
 
@@ -118,27 +102,6 @@ export class Web3RelayerManager extends WebbRelayerManager {
         return relayerIndex > -1;
       }
 
-      if (bridgeSupport && baseOn && chainId) {
-        if (baseOn === 'evm') {
-          const anchorAddress = getFixedAnchorAddressForBridge(
-            webbCurrencyIdFromString(bridgeSupport.tokenSymbol),
-            chainId,
-            bridgeSupport.amount,
-            this.config.bridgeByAsset
-          );
-
-          if (anchorAddress) {
-            return Boolean(
-              capabilities.supportedChains[baseOn]
-                .get(chainId)
-                ?.contracts?.find((contract) => contract.address === anchorAddress.toLowerCase())
-            );
-          } else {
-            return false;
-          }
-        }
-      }
-
       if (baseOn && chainId) {
         return Boolean(capabilities.supportedChains[baseOn].get(chainId));
       }
@@ -160,26 +123,11 @@ export class Web3RelayerManager extends WebbRelayerManager {
   async getRelayersByNote(evmNote: Note) {
     const chainTypeId = Number(evmNote.note.targetChainId);
     const internalId = chainTypeIdToInternalId(parseChainIdType(chainTypeId));
-    let contract: ContractName;
-    switch (evmNote.note.protocol) {
-      case 'mixer':
-        contract = 'Anchor';
-        break;
-      case 'anchor':
-        contract = 'Anchor';
-        break;
-      case 'vanchor':
-        contract = 'VAnchor';
-    }
 
     return this.getRelayers({
       baseOn: 'evm',
-      bridgeSupport: {
-        amount: Number(evmNote.note.amount),
-        tokenSymbol: evmNote.note.tokenSymbol,
-      },
       chainId: internalId,
-      contract,
+      contract: 'VAnchor',
     });
   }
 
