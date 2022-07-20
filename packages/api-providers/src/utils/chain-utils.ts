@@ -1,7 +1,7 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { ChainTypeId, chainTypeIdToInternalId, InternalChainId } from '../chains';
+import { InternalChainId, TypedChainId, typedChainIdToInternalId } from '../chains';
 import { WebbError, WebbErrorCodes } from '../webb-error';
 import { AppConfig } from '../';
 
@@ -21,8 +21,8 @@ export const chainNameFromInternalId = (config: AppConfig, internalId: InternalC
   return chain.name;
 };
 
-export const getChainNameFromChainId = (config: AppConfig, chainIdType: ChainTypeId): string => {
-  const internalId = chainTypeIdToInternalId(chainIdType);
+export const getChainNameFromChainId = (config: AppConfig, chainIdType: TypedChainId): string => {
+  const internalId = typedChainIdToInternalId(chainIdType);
 
   return chainNameFromInternalId(config, internalId);
 };

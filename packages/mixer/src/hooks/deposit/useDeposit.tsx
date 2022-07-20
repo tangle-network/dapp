@@ -1,6 +1,7 @@
-import { ChainTypeId, computeChainIdType, DepositPayload, MixerDeposit, MixerSize } from '@webb-dapp/api-providers';
+import { DepositPayload, MixerDeposit, MixerSize, TypedChainId } from '@webb-dapp/api-providers';
 import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
 import { useWebContext } from '@webb-dapp/react-environment/webb-context';
+import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 export interface DepositApi {
@@ -8,7 +9,7 @@ export interface DepositApi {
 
   deposit(payload: DepositPayload): Promise<void>;
 
-  generateNote(mixer: number | string, chainTypeId: ChainTypeId): Promise<DepositPayload>;
+  generateNote(mixer: number | string, chainTypeId: TypedChainId): Promise<DepositPayload>;
 
   loadingState: MixerDeposit['loading'];
   error: string;
@@ -46,13 +47,13 @@ export const useDeposit = (): DepositApi => {
   }, [depositApi, bridgeApi?.activeBridge]);
 
   const generateNote = useCallback(
-    async (mixerId: number | string, chainTypeId: ChainTypeId) => {
+    async (mixerId: number | string, chainTypeId: TypedChainId) => {
       if (!depositApi) {
         // TODO: fix this to be dependent on the api state
         // disable buttons
         throw new Error('Not ready');
       } else {
-        const encodedChainIdType = computeChainIdType(chainTypeId.chainType, chainTypeId.chainId);
+        const encodedChainIdType = calculateTypedChainId(chainTypeId.chainType, chainTypeId.chainId);
         return depositApi?.generateNote(mixerId, encodedChainIdType);
       }
     },

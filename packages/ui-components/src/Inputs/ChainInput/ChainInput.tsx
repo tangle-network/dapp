@@ -1,5 +1,5 @@
 import { Avatar, ClickAwayListener, Icon, IconButton, Typography } from '@mui/material';
-import { ChainTypeId, chainTypeIdToInternalId } from '@webb-dapp/api-providers';
+import { TypedChainId, typedChainIdToInternalId } from '@webb-dapp/api-providers';
 import { chainsPopulated } from '@webb-dapp/apps/configs';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
@@ -78,9 +78,9 @@ const InputWrapper = styled.div<{ open: boolean }>`
 `;
 
 type DropdownInputProps = {
-  chains: ChainTypeId[];
-  value?: ChainTypeId;
-  onChange(next: ChainTypeId | undefined): void;
+  chains: TypedChainId[];
+  value?: TypedChainId;
+  onChange(next: TypedChainId | undefined): void;
 };
 
 const DropdownInput: React.FC<DropdownInputProps> = ({ chains, onChange, value }) => {
@@ -101,7 +101,7 @@ const DropdownInput: React.FC<DropdownInputProps> = ({ chains, onChange, value }
 
     return {
       id: value,
-      chain: chainsPopulated[chainTypeIdToInternalId(value)],
+      chain: chainsPopulated[typedChainIdToInternalId(value)],
     };
   }, [value]);
 
@@ -201,9 +201,9 @@ const DropdownInput: React.FC<DropdownInputProps> = ({ chains, onChange, value }
 };
 
 type ChainInputProps = {
-  chains: ChainTypeId[];
-  selectedChain: ChainTypeId | undefined;
-  setSelectedChain?(chain: ChainTypeId | undefined): void;
+  chains: TypedChainId[];
+  selectedChain: TypedChainId | undefined;
+  setSelectedChain?(chain: TypedChainId | undefined): void;
   wrapperStyles?: CSSProperties;
 };
 

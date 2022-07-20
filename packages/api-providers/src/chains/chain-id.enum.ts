@@ -1,20 +1,9 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-// must match u16 in rust.
-// Each ChainType has its own namespace of ChainIDs.
-export enum ChainType {
-  None = 0x0000,
-  EVM = 0x0100,
-  Substrate = 0x0200,
-  SubstrateDevelopment = 0x0250,
-  PolkadotRelayChain = 0x0301,
-  KusamaRelayChain = 0x0302,
-  PolkadotParachain = 0x0310,
-  KusamaParachain = 0x0311,
-}
+import { ChainType } from '@webb-tools/sdk-core';
 
-export interface ChainTypeId {
+export interface TypedChainId {
   chainType: ChainType;
   chainId: EVMChainId | SubstrateChainId;
 }

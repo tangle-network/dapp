@@ -5,7 +5,7 @@ import { startGanacheServer } from '@webb-tools/test-utils';
 import { getChainIdType } from '@webb-tools/utils';
 import { ethers } from 'ethers';
 
-import { WebbRelayerManagerFactory } from '..';
+import { Web3RelayerManager, WebbRelayerManagerFactory } from '..';
 import { Web3Provider, WebbCurrencyId, WebbWeb3Provider } from '../';
 import { mockAppConfig } from './utils/mock-config';
 import mockNotificationHandler from './utils/mock-notification-handler';
@@ -41,7 +41,7 @@ describe.skip('Note provider interactions', () => {
       mockAppConfig
     );
 
-    const relayerManager = await relayerFactory.getRelayerManager('evm');
+    const relayerManager = (await relayerFactory.getRelayerManager('evm')) as Web3RelayerManager;
 
     provider = await WebbWeb3Provider.init(web3Provider, 9999, relayerManager, mockAppConfig, mockNotificationHandler);
     // set an active bridge (which will set active currency) on the provider

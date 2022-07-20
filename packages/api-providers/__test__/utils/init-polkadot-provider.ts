@@ -6,13 +6,13 @@ import { InjectedAccount, InjectedExtension } from '@polkadot/extension-inject/t
 import {
   Account,
   AccountsAdapter,
+  evmIdIntoInternalChainId,
   InteractiveFeedback,
   NotificationPayload,
   PolkadotProvider,
   PromiseOrT,
   RelayerConfig,
-  relayerNameToChainId,
-  relayerSubstrateNameToChainId,
+  substrateIdIntoInternalChainId,
   WebbPolkadot,
   WebbRelayerManagerFactory,
 } from '../../';
@@ -70,7 +70,7 @@ export async function initPolkadotProvider(): Promise<WebbPolkadot> {
     relayerConfig,
     (name, basedOn) => {
       try {
-        return basedOn === 'evm' ? relayerNameToChainId(name) : relayerSubstrateNameToChainId(name);
+        return basedOn === 'evm' ? evmIdIntoInternalChainId(name) : substrateIdIntoInternalChainId(Number(name));
       } catch (e) {
         return null;
       }

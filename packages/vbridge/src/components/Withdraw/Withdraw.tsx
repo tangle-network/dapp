@@ -1,9 +1,8 @@
 import { InputBase } from '@mui/material';
 import {
-  chainTypeIdToInternalId,
   getChainNameFromChainId,
-  parseChainIdType,
   TransactionState,
+  typedChainIdToInternalId,
   WalletConfig,
   WebbRelayer,
 } from '@webb-dapp/api-providers';
@@ -21,7 +20,7 @@ import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
 import { useWithdraw } from '@webb-dapp/vbridge';
-import { FixedPointNumber, Note } from '@webb-tools/sdk-core';
+import { FixedPointNumber, Note, parseTypedChainId } from '@webb-tools/sdk-core';
 import { ethers } from 'ethers';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
@@ -122,7 +121,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
     }
 
     // Dest chain is the first chain in the list
-    const chainId = parseChainIdType(Number(depositNotes[0].note.targetChainId)).chainId;
+    const chainId = parseTypedChainId(Number(depositNotes[0].note.targetChainId)).chainId;
     return activeChain.chainId !== chainId;
   }, [activeChain, depositNotes]);
 
@@ -133,8 +132,8 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
     if (!activeApi || !activeWallet) {
       return;
     }
-    const chainTypeId = parseChainIdType(Number(note.note.targetChainId));
-    const internalChainId = chainTypeIdToInternalId(chainTypeId);
+    const chainTypeId = parseTypedChainId(Number(note.note.targetChainId));
+    const internalChainId = typedChainIdToInternalId(chainTypeId);
     const chain = chainsPopulated[internalChainId];
     await switchChain(chain, activeWallet);
   };
@@ -363,9 +362,9 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
             <InformationItem>
               <Title>Chains</Title>
               <Value>
-                {getChainNameFromChainId(appConfig, parseChainIdType(Number(firstNote.note.sourceChainId)))}
+                {getChainNameFromChainId(appConfig, parseTypedChainId(Number(firstNote.note.sourceChainId)))}
                 {` -> `}
-                {getChainNameFromChainId(appConfig, parseChainIdType(Number(firstNote.note.targetChainId)))}
+                {getChainNameFromChainId(appConfig, parseTypedChainId(Number(firstNote.note.targetChainId)))}
               </Value>
             </InformationItem>
 
@@ -414,9 +413,12 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
             amount={withdrawAmount}
             sourceChain={getChainNameFromChainId(
               appConfig,
-              parseChainIdType(Number(depositNotes[0].note.sourceChainId))
+              parseTypedChainId(Number(depositNotes[0].note.sourceChainId))
             )}
-            destChain={getChainNameFromChainId(appConfig, parseChainIdType(Number(depositNotes[0].note.targetChainId)))}
+            destChain={getChainNameFromChainId(
+              appConfig,
+              parseTypedChainId(Number(depositNotes[0].note.targetChainId))
+            )}
             cancel={cancelWithdraw}
             hide={() => console.log("can't hide withdrawing modal")}
           />

@@ -4,7 +4,17 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { ERC20__factory as ERC20Factory } from '@webb-tools/contracts';
-import { CircomUtxo, Keypair, Note, NoteGenInput, toFixedHex, Utxo } from '@webb-tools/sdk-core';
+import {
+  calculateTypedChainId,
+  ChainType,
+  CircomUtxo,
+  Keypair,
+  Note,
+  NoteGenInput,
+  parseTypedChainId,
+  toFixedHex,
+  Utxo,
+} from '@webb-tools/sdk-core';
 import { ethers } from 'ethers';
 
 import { hexToU8a } from '@polkadot/util';
@@ -16,13 +26,7 @@ import {
   VAnchorDeposit,
   VAnchorDepositResults,
 } from '../abstracts';
-import {
-  ChainType,
-  chainTypeIdToInternalId,
-  computeChainIdType,
-  evmIdIntoInternalChainId,
-  parseChainIdType,
-} from '../chains';
+import { evmIdIntoInternalChainId, typedChainIdToInternalId } from '../chains';
 import {
   BridgeStorage,
   bridgeStorageFactory,
@@ -74,7 +78,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
     const bnAmount = ethers.utils.parseUnits(amount.toString(), currency.getDecimals()).toString();
     const tokenSymbol = currency.view.symbol;
     const sourceEvmId = await this.inner.getChainId();
-    const sourceChainId = computeChainIdType(ChainType.EVM, sourceEvmId);
+    const sourceChainId = calculateTypedChainId(ChainType.EVM, sourceEvmId);
 
     // TODO: Find a better way to manage keypair
     const keypairStorage = await keypairStorageFactory();
@@ -102,7 +106,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
     });
 
     const srcChainInternal = evmIdIntoInternalChainId(sourceEvmId);
-    const destChainInternal = chainTypeIdToInternalId(parseChainIdType(destination));
+    const destChainInternal = typedChainIdToInternalId(parseTypedChainId(destination));
     const anchorConfig = bridge.anchors.find((anchorConfig) => anchorConfig.type === 'variable');
 
     if (!anchorConfig) {
@@ -160,7 +164,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
       const amount = depositPayload.params[0].amount;
 
       const sourceEvmId = await this.inner.getChainId();
-      const sourceChainId = computeChainIdType(ChainType.EVM, sourceEvmId);
+      const sourceChainId = calculateTypedChainId(ChainType.EVM, sourceEvmId);
       const sourceInternalId = evmIdIntoInternalChainId(sourceEvmId);
 
       this.inner.notificationHandler({
@@ -204,26 +208,17 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
       // Fetch the leaves from the source chain
       this.emit('stateChange', TransactionState.FetchingLeaves);
       let leafStorage = await bridgeStorageFactory(Number(sourceChainId));
-
-      // check if we already cached some values.
-      let storedContractInfo: BridgeStorage[0] = (await leafStorage.get(srcAddress.toLowerCase())) || {
-        lastQueriedBlock: getAnchorDeploymentBlockNumber(Number(sourceChainId), srcAddress) || 0,
-        leaves: [] as string[],
-      };
-
-      let leavesFromChain = await srcVAnchor.getDepositLeaves(storedContractInfo.lastQueriedBlock + 1, 0);
+      let leaves = await this.inner.getVariableAnchorLeaves(srcVAnchor, leafStorage);
 
       // Only populate the leaves map if there are actually leaves to populate.
-      if (leavesFromChain.newLeaves.length != 0 || storedContractInfo.leaves.length != 0) {
-        leavesMap[sourceChainId.toString()] = [...storedContractInfo.leaves, ...leavesFromChain.newLeaves].map(
-          (leaf) => {
-            return hexToU8a(leaf);
-          }
-        );
+      if (leaves.length) {
+        leavesMap[utxo.chainId] = leaves.map((leaf) => {
+          return hexToU8a(leaf);
+        });
       }
 
       // Set up a provider for the dest chain
-      const destChainTypeId = parseChainIdType(Number(utxo.chainId));
+      const destChainTypeId = parseTypedChainId(Number(utxo.chainId));
       const destInternalId = evmIdIntoInternalChainId(destChainTypeId.chainId);
       const destChainConfig = this.config.chains[destInternalId];
       const destHttpProvider = Web3Provider.fromUri(destChainConfig.url);
@@ -231,18 +226,11 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
       const destAddress = vanchor.neighbours[destInternalId] as string;
       const destVAnchor = await this.inner.getVariableAnchorByAddressAndProvider(destAddress, destEthers);
       leafStorage = await bridgeStorageFactory(Number(utxo.chainId));
-
-      // check if we already cached some values.
-      storedContractInfo = (await leafStorage.get(destAddress.toLowerCase())) || {
-        lastQueriedBlock: getAnchorDeploymentBlockNumber(Number(utxo.chainId), destAddress) || 0,
-        leaves: [] as string[],
-      };
-
-      leavesFromChain = await destVAnchor.getDepositLeaves(storedContractInfo.lastQueriedBlock + 1, 0);
+      leaves = await this.inner.getVariableAnchorLeaves(destVAnchor, leafStorage);
 
       // Only populate the leaves map if there are actually leaves to populate.
-      if (leavesFromChain.newLeaves.length != 0 || storedContractInfo.leaves.length != 0) {
-        leavesMap[utxo.chainId] = [...storedContractInfo.leaves, ...leavesFromChain.newLeaves].map((leaf) => {
+      if (leaves.length) {
+        leavesMap[utxo.chainId] = leaves.map((leaf) => {
           return hexToU8a(leaf);
         });
       }

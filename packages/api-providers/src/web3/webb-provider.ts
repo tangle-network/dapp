@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { EventBus } from '@webb-tools/app-util';
+import { calculateTypedChainId, ChainType } from '@webb-tools/sdk-core';
 import { providers } from 'ethers';
 import { Eth } from 'web3-eth';
 
@@ -13,7 +14,10 @@ import { VAnchorContract } from '../contracts/wrappers/webb-vanchor';
 import { Web3Accounts, Web3Provider } from '../ext-providers';
 import {
   AppConfig,
+  BridgeStorage,
+  getAnchorDeploymentBlockNumber,
   NotificationHandler,
+  Storage,
   Web3AnchorDeposit,
   WebbApiProvider,
   WebbMethods,
@@ -164,6 +168,31 @@ export class WebbWeb3Provider
     return this.ethersProvider;
   }
 
+  async getVariableAnchorLeaves(contract: VAnchorContract, storage: Storage<BridgeStorage>): Promise<string[]> {
+    const evmId = await contract.getEvmId();
+    const internalId = evmIdIntoInternalChainId(evmId);
+    const typedChainId = calculateTypedChainId(ChainType.EVM, evmId);
+
+    // First, try to fetch the leaves from the supported relayers
+    const relayers = await this.relayerManager.getRelayersByChainAndAddress(internalId, contract.inner.address);
+    let leaves = await this.relayerManager.fetchLeavesFromRelayers(relayers, contract, storage);
+
+    // If unable to fetch leaves from the relayers, get them from chain
+    if (!leaves) {
+      // check if we already cached some values.
+      const storedContractInfo: BridgeStorage[0] = (await storage.get(contract.inner.address.toLowerCase())) || {
+        lastQueriedBlock: getAnchorDeploymentBlockNumber(typedChainId, contract.inner.address) || 0,
+        leaves: [] as string[],
+      };
+
+      const leavesFromChain = await contract.getDepositLeaves(storedContractInfo.lastQueriedBlock + 1, 0);
+
+      leaves = [...storedContractInfo.leaves, ...leavesFromChain.newLeaves];
+    }
+
+    return leaves;
+  }
+
   // Init web3 provider with the `Web3Accounts` as the default account provider
   static async init(
     web3Provider: Web3Provider,
@@ -233,9 +262,5 @@ export class WebbWeb3Provider
           throw switchError;
         }
       });
-  }
-
-  public get innerProvider() {
-    return this.web3Provider;
   }
 }

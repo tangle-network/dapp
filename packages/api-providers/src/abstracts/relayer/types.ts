@@ -295,13 +295,13 @@ type EVMExtData = {
 type ExtData = EVMExtData | SubstrateExtData;
 /**
  * Contains data that is relayed to the VAnchors
- * @param chain - One of the supported chains of this relayer
+ * @param chain_id - The chain_id of a supported chain of this relayer
  * @param id - The tree id of the mixer's underlying tree
  * @param proofData - The zero-knowledge proof data structure for VAnchor transactions
  * @param extData - The external data structure for arbitrary inputs
  * */
 type VAnchorRelayTransaction = {
-  chain: string;
+  chainId: number;
   id: number | string;
   proofData: ProofData;
   extData: ExtData;

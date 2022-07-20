@@ -1,9 +1,9 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
+import { ChainType } from '@webb-tools/sdk-core';
 
 import {
   AppConfig,
-  ChainType,
   CurrencyRole,
   CurrencyType,
   EVMChainId,

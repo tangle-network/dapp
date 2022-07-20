@@ -1,9 +1,8 @@
 import { FormHelperText, InputBase, Typography } from '@mui/material';
 import {
-  chainTypeIdToInternalId,
   getChainNameFromChainId,
-  parseChainIdType,
   TransactionState,
+  typedChainIdToInternalId,
   WalletConfig,
   WebbRelayer,
 } from '@webb-dapp/api-providers';
@@ -21,7 +20,7 @@ import { RelayerButton } from '@webb-dapp/ui-components/Inputs/RelayerButton/Rel
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
-import { Note } from '@webb-tools/sdk-core';
+import { Note, parseTypedChainId } from '@webb-tools/sdk-core';
 import { ethers } from 'ethers';
 import React, { useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
@@ -143,7 +142,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
     if (!depositNote || !activeChain) {
       return false;
     }
-    const chainId = parseChainIdType(Number(depositNote.note.targetChainId)).chainId;
+    const chainId = parseTypedChainId(Number(depositNote.note.targetChainId)).chainId;
 
     return activeChain.chainId !== chainId;
   }, [activeChain, depositNote]);
@@ -164,8 +163,8 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
     if (!activeApi || !activeWallet) {
       return;
     }
-    const chainTypeId = parseChainIdType(Number(note.note.targetChainId));
-    const internalChainId = chainTypeIdToInternalId(chainTypeId);
+    const chainTypeId = parseTypedChainId(Number(note.note.targetChainId));
+    const internalChainId = typedChainIdToInternalId(chainTypeId);
     const chain = chainsPopulated[internalChainId];
     await switchChain(chain, activeWallet);
   };
@@ -230,9 +229,9 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
           <div className='information-item'>
             <p className='title'>Chains</p>
             <p className='value'>
-              {getChainNameFromChainId(appConfig, parseChainIdType(Number(depositNote.note.sourceChainId)))}
+              {getChainNameFromChainId(appConfig, parseTypedChainId(Number(depositNote.note.sourceChainId)))}
               {` -> `}
-              {getChainNameFromChainId(appConfig, parseChainIdType(Number(depositNote.note.targetChainId)))}
+              {getChainNameFromChainId(appConfig, parseTypedChainId(Number(depositNote.note.targetChainId)))}
             </p>
           </div>
           <div className='information-item'>
