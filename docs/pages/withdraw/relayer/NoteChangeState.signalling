@@ -1,8 +1,8 @@
 # Specific example use of using state in the application
 # With separation of UI state and api state via observables
 
-Title: \- VBridgeWithdraw
-       Relayer State;
+Title: \- Selectable relayers change when
+       Note changes;
 
 page,useWithdraw,api;
 ->page: \-Note Change;
@@ -21,4 +21,3 @@ useWithdraw->useWithdraw: \- setState(relayerState);
 useWithdraw>>page: \-
                      Relayer\[\];
 <-page: \- update;
----;

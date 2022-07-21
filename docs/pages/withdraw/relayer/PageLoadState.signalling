@@ -1,8 +1,8 @@
 # Specific example use of using state in the application
 # With separation of UI state and api state via observables
 
-Title: \- VBridgeWithdraw
-       Relayer State;
+Title: \- Page Load sets listeners
+       on the api state for relayer;
 
 page,useWithdraw,api;
 ->page: \-page load;

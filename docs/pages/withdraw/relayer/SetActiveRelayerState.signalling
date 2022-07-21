@@ -1,8 +1,8 @@
 # Specific example use of using state in the application
 # With separation of UI state and api state via observables
 
-Title: \- VBridgeWithdraw
-       Relayer State;
+Title: \- Selected relayer changes when
+the active relayer changes in api;
 
 page,useWithdraw,api;
 ->page: \- Active Relayer 
