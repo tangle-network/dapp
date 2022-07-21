@@ -4,7 +4,7 @@
 import { Note } from '@webb-tools/sdk-core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 
-import { AppConfig, InternalChainId } from '../../';
+import { InternalChainId } from '../../';
 import { RelayerQuery } from './types';
 import { OptionalActiveRelayer, OptionalRelayer, WebbRelayer } from './webb-relayer';
 
@@ -14,12 +14,10 @@ export abstract class WebbRelayerManager {
   private _listUpdated = new Subject<void>();
   public readonly listUpdated: Observable<void>;
   protected relayers: WebbRelayer[];
-  protected config: AppConfig;
   public activeRelayer: OptionalActiveRelayer = null;
 
-  constructor(relayers: WebbRelayer[], config: AppConfig) {
+  constructor(relayers: WebbRelayer[]) {
     this.relayers = relayers;
-    this.config = config;
     this.activeRelayerWatcher = this.activeRelayerSubject.asObservable();
     this.listUpdated = this._listUpdated.asObservable();
   }

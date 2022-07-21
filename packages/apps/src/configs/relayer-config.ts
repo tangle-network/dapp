@@ -1,5 +1,4 @@
 import {
-  AppConfig,
   evmIdIntoInternalChainId,
   InternalChainId,
   RelayerConfig,
@@ -48,19 +47,16 @@ export function internalIdToSubstrateRelayerName(id: InternalChainId): string {
   throw new Error('unhandled chain id for substrate');
 }
 
-export async function getRelayerManagerFactory(appConfig: AppConfig) {
+// TODO: Read previously saved endpoints from localStorage, and pass with relayerConfig
+export async function getRelayerManagerFactory() {
   if (!relayerManagerFactory) {
-    relayerManagerFactory = await WebbRelayerManagerFactory.init(
-      relayerConfig,
-      (name, basedOn) => {
-        try {
-          return basedOn === 'evm' ? evmIdIntoInternalChainId(name) : substrateIdIntoInternalChainId(Number(name));
-        } catch (e) {
-          return null;
-        }
-      },
-      appConfig
-    );
+    relayerManagerFactory = await WebbRelayerManagerFactory.init(relayerConfig, (name, basedOn) => {
+      try {
+        return basedOn === 'evm' ? evmIdIntoInternalChainId(name) : substrateIdIntoInternalChainId(Number(name));
+      } catch (e) {
+        return null;
+      }
+    });
   }
   return relayerManagerFactory;
 }

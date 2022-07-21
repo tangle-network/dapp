@@ -25,7 +25,7 @@ import { ContentWrapper } from '../../ContentWrappers';
 
 export interface RelayerApiAdapter {
   getInfo(endpoing: string): Promise<Capabilities>;
-  add(endPoint: string, persistent: boolean): void;
+  add(endPoint: string): Promise<void>;
 }
 
 export type FeesInfo = {
@@ -294,8 +294,7 @@ type RelayerInputProps = {
 };
 
 enum RelayerInputStatus {
-  SelectOfCurrent,
-  AddURlkNewCustom,
+  Select,
   AddNewCustom,
 }
 
@@ -309,9 +308,8 @@ export const RelayerInput: React.FC<RelayerInputProps> = ({
   tokenSymbol,
   wrapperStyles,
 }) => {
-  const [view, setView] = useState<RelayerInputStatus>(RelayerInputStatus.SelectOfCurrent);
+  const [view, setView] = useState<RelayerInputStatus>(RelayerInputStatus.Select);
   const [customRelayURl, setCustomRelayURl] = useState('');
-  const [persistentCustomRelay, setPersistentCustomRelay] = useState(false);
   const [nextRelayerURL, setNextRelayerURl] = useState('');
   const [relayingIncentives, setRelayingIncentives] = useState<FeesInfo>({
     totalFees: 0,
@@ -356,9 +354,8 @@ export const RelayerInput: React.FC<RelayerInputProps> = ({
     loading: false,
   });
   useEffect(() => {
-    if (view === RelayerInputStatus.SelectOfCurrent) {
+    if (view === RelayerInputStatus.Select) {
       setCustomRelayURl('');
-      setPersistentCustomRelay(false);
       setCheckRelayStatus({
         loading: false,
       });
@@ -367,10 +364,10 @@ export const RelayerInput: React.FC<RelayerInputProps> = ({
 
   const handleNewCustomRelayer = useCallback(async () => {
     setView(RelayerInputStatus.AddNewCustom);
-    await relayerApi.add(customRelayURl, persistentCustomRelay);
+    await relayerApi.add(customRelayURl);
     setNextRelayerURl(customRelayURl);
-    setView(RelayerInputStatus.SelectOfCurrent);
-  }, [relayerApi, customRelayURl, persistentCustomRelay]);
+    setView(RelayerInputStatus.Select);
+  }, [relayerApi, customRelayURl]);
 
   // Side effect for handleNewCustomRelayer
   useEffect(() => {
@@ -453,7 +450,7 @@ export const RelayerInput: React.FC<RelayerInputProps> = ({
           </RelayerInputSection>
         </>
       )}
-      <Modal open={view > RelayerInputStatus.SelectOfCurrent}>
+      <Modal open={view > RelayerInputStatus.Select}>
         <RelayerInfoModalWrapper>
           <Typography variant={'h2'}>Add Custom relayer</Typography>
           <br />
@@ -572,7 +569,7 @@ export const RelayerInput: React.FC<RelayerInputProps> = ({
             fullWidth
             variant={'outlined'}
             onClick={() => {
-              setView(RelayerInputStatus.SelectOfCurrent);
+              setView(RelayerInputStatus.Select);
             }}
           >
             Close

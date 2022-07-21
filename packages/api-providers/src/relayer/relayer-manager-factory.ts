@@ -1,8 +1,6 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { Observable, Subject } from 'rxjs';
-
 import {
   Capabilities,
   ChainNameIntoChainId,
@@ -13,7 +11,7 @@ import {
 import { WebbRelayerManager } from '../abstracts/relayer/webb-relayer-manager';
 import { PolkadotRelayerManager } from '../polkadot/relayer-manager';
 import { Web3RelayerManager } from '../web3/relayer-manager';
-import { AppConfig, WebbRelayer } from '..';
+import { WebbRelayer } from '..';
 
 /**
  * The WebbRelayerManagerFactory will initiate communication with relayers,
@@ -26,16 +24,11 @@ import { AppConfig, WebbRelayer } from '..';
  **/
 export class WebbRelayerManagerFactory {
   private capabilities: Record<RelayerConfig['endpoint'], Capabilities> = {};
-  private _listUpdated = new Subject<void>();
-  public readonly listUpdated: Observable<void>;
 
   private constructor(
     protected relayerConfigs: RelayerConfig[],
-    private readonly chainNameAdapter: ChainNameIntoChainId,
-    private appConfig: AppConfig
-  ) {
-    this.listUpdated = this._listUpdated.asObservable();
-  }
+    private readonly chainNameAdapter: ChainNameIntoChainId
+  ) {}
 
   /**
    * Mapping the fetched relayers info to the Capabilities store
@@ -87,8 +80,6 @@ export class WebbRelayerManagerFactory {
   public async addRelayer(endpoint: string) {
     const c = await this.fetchCapabilitiesAndInsert({ endpoint });
 
-    this._listUpdated.next();
-
     return c;
   }
 
@@ -98,10 +89,9 @@ export class WebbRelayerManagerFactory {
    **/
   static async init(
     config: RelayerConfig[],
-    chainNameAdapter: ChainNameIntoChainId,
-    appConfig: AppConfig
+    chainNameAdapter: ChainNameIntoChainId
   ): Promise<WebbRelayerManagerFactory> {
-    const relayerManagerFactory = new WebbRelayerManagerFactory(config, chainNameAdapter, appConfig);
+    const relayerManagerFactory = new WebbRelayerManagerFactory(config, chainNameAdapter);
 
     // For all relayers in the relayerConfigs, fetch the info - but timeout after 5 seconds
     // This is done to prevent issues with relayers which are not operating properly
@@ -126,9 +116,9 @@ export class WebbRelayerManagerFactory {
 
     switch (type) {
       case 'evm':
-        return new Web3RelayerManager(relayers, this.appConfig);
+        return new Web3RelayerManager(relayers);
       case 'substrate':
-        return new PolkadotRelayerManager(relayers, this.appConfig);
+        return new PolkadotRelayerManager(relayers);
     }
   }
 }
