@@ -1,6 +1,5 @@
 import { ButtonBase, Checkbox, FormControlLabel, Tooltip, Typography } from '@mui/material';
 import { DepositPayload, MixerSize, TypedChainId } from '@webb-dapp/api-providers';
-import { DepositAmountDecal } from '@webb-dapp/bridge/components/DepositConfirm/DepositAmountDecal';
 import { DepositApi } from '@webb-dapp/mixer/hooks/deposit/useDeposit';
 import { ModalNoteDisplay } from '@webb-dapp/react-components/NoteDisplay/ModalNoteDisplay';
 import { useWebContext } from '@webb-dapp/react-environment/webb-context';
@@ -13,6 +12,7 @@ import { Spinner } from '@webb-dapp/ui-components/Spinner/Spinner';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 import { downloadString } from '@webb-dapp/utils';
+import { DepositAmountDecal } from '@webb-dapp/vbridge/components/DepositConfirm/DepositAmountDecal';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 

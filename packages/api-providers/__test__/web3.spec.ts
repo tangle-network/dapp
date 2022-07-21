@@ -50,16 +50,6 @@ describe.skip('Note provider interactions', () => {
     // busy wait until it is set
   });
 
-  it('should generate a note for the fixed anchor', async () => {
-    const testGeneratedNote = await provider.methods.fixedAnchor.deposit.inner.generateBridgeNote(
-      'Bridge=1@Webb Development Token',
-      chainId
-    );
-
-    console.log(testGeneratedNote.note.serialize());
-    // const parsedNote = await testGeneratedNote.note.toDepositNote();
-  });
-
   it('should generate a note for the variable anchor', async () => {
     const testGeneratedNote = await provider.methods.variableAnchor.deposit.inner.generateBridgeNote('', chainId, 2);
 

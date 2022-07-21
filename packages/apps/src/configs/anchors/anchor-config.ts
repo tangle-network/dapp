@@ -20,30 +20,6 @@ export const anchorsConfig: AppConfig['anchors'] = {
   ],
   [WebbCurrencyId.WEBB]: [
     {
-      amount: '10',
-      anchorTreeIds: {
-        [InternalChainId.ProtocolSubstrateStandalone]: '5',
-      },
-      anchorAddresses: {},
-      type: 'fixed',
-    },
-    {
-      amount: '100',
-      anchorTreeIds: {
-        [InternalChainId.ProtocolSubstrateStandalone]: '6',
-      },
-      anchorAddresses: {},
-      type: 'fixed',
-    },
-    {
-      amount: '1000',
-      anchorTreeIds: {
-        [InternalChainId.ProtocolSubstrateStandalone]: '7',
-      },
-      anchorAddresses: {},
-      type: 'fixed',
-    },
-    {
       anchorTreeIds: {
         [InternalChainId.ProtocolSubstrateStandalone]: '9',
       },
@@ -53,31 +29,11 @@ export const anchorsConfig: AppConfig['anchors'] = {
   ],
   [WebbCurrencyId.webbDEV]: [
     {
-      amount: '1',
       anchorTreeIds: {},
       anchorAddresses: {
-        [InternalChainId.HermesLocalnet]: '0xbfce6B877Ebff977bB6e80B24FbBb7bC4eBcA4df',
-        [InternalChainId.AthenaLocalnet]: '0xcd75Ad7AC9C9325105f798c476E84176648F391A',
-        [InternalChainId.DemeterLocalnet]: '0x4e3df2073bf4b43B9944b8e5A463b1E185D6448C',
-      },
-      type: 'fixed',
-    },
-    {
-      amount: '0.01',
-      anchorTreeIds: {},
-      anchorAddresses: {
-        [InternalChainId.HermesLocalnet]: '0xaC361518Bb9535D0E3172DC45a4e56d71a7FDFc4',
-        [InternalChainId.AthenaLocalnet]: '0x3d3955aAe5Bdf9E6547A140Baad4BC57Fa4EBA17',
-        [InternalChainId.DemeterLocalnet]: '0x91eB86019FD8D7c5a9E31143D422850A13F670A3',
-      },
-      type: 'fixed',
-    },
-    {
-      anchorTreeIds: {},
-      anchorAddresses: {
-        [InternalChainId.HermesLocalnet]: '0xb824C5F99339C7E486a1b452B635886BE82bc8b7',
-        [InternalChainId.AthenaLocalnet]: '0xFEe587E68c470DAE8147B46bB39fF230A29D4769',
-        [InternalChainId.DemeterLocalnet]: '0xdB587ef6aaA16b5719CDd3AaB316F0E70473e9Be',
+        [InternalChainId.HermesLocalnet]: '0x510C6297cC30A058F41eb4AF1BFC9953EaD8b577',
+        [InternalChainId.AthenaLocalnet]: '0xcbD945E77ADB65651F503723aC322591f3435cC5',
+        [InternalChainId.DemeterLocalnet]: '0x7758F98C1c487E5653795470eEab6C4698bE541b',
       },
       type: 'variable',
     },

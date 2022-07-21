@@ -5,9 +5,8 @@ import { EventBus } from '@webb-tools/app-util';
 
 import { AccountsAdapter } from '../account/Accounts.adapter';
 import { InteractiveFeedback } from '../webb-error';
-import { AnchorApi, VAnchorWithdraw } from '../';
 import { WebbRelayerManager } from './relayer/webb-relayer-manager';
-import { AnchorDeposit, AnchorWithdraw, VAnchorDeposit } from './anchor';
+import { AnchorApi, VAnchorDeposit, VAnchorWithdraw } from './anchor';
 import { ChainQuery } from './chain-query';
 import { AppConfig } from './common';
 import { ContributePayload, Crowdloan, CrowdloanEvent } from './crowdloan';
@@ -23,8 +22,6 @@ export interface RelayChainMethods<T extends WebbApiProvider<any>> {
 export interface WebbMethods<T extends WebbApiProvider<any>> {
   // Mixer API
   mixer: WebbMixer<T>;
-  // Fixed Anchor API
-  fixedAnchor: WebbFixedAnchor<T>;
   // Variable Anchor API
   variableAnchor: WebbVariableAnchor<T>;
   // Wrap and unwrap API
@@ -50,13 +47,6 @@ export interface WebbMixer<T extends WebbApiProvider<any>> {
   deposit: WebbMethod<MixerDeposit<T, DepositPayload>, MixerDepositEvents>;
   // withdraw
   withdraw: WebbMethod<MixerWithdraw<T>, WebbWithdrawEvents>;
-}
-
-export interface WebbFixedAnchor<T extends WebbApiProvider<any>> {
-  // deposit
-  deposit: WebbMethod<AnchorDeposit<T, DepositPayload>, MixerDepositEvents>;
-  // withdraw
-  withdraw: WebbMethod<AnchorWithdraw<T>, WebbWithdrawEvents>;
 }
 
 export interface WebbVariableAnchor<T extends WebbApiProvider<any>> {

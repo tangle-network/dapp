@@ -1,6 +1,6 @@
 import { DepositPayload, MixerDeposit, MixerSize, TypedChainId } from '@webb-dapp/api-providers';
-import { useBridge } from '@webb-dapp/bridge/hooks/bridge/use-bridge';
 import { useWebContext } from '@webb-dapp/react-environment/webb-context';
+import { useBridge } from '@webb-dapp/vbridge/hooks/bridge/use-bridge';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 

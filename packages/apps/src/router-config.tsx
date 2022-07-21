@@ -7,7 +7,6 @@ import React, { FC, lazy, Suspense } from 'react';
 import { sideBarConfig } from './sidebar-config';
 
 const PageMixer = lazy(() => import('@webb-dapp/page-mixer'));
-const PageBridge = lazy(() => import('@webb-dapp/page-bridge'));
 const PageVBridge = lazy(() => import('@webb-dapp/vbridge'));
 const PageWrapUnwrap = lazy(() => import('@webb-dapp/page-wrap-unwrap'));
 const PageCrowdloan = lazy(() => import('@webb-dapp/page-crowdloan'));
@@ -39,20 +38,11 @@ export const config: RouterConfigData[] = [
       {
         element: (
           <CSuspense>
-            <PageBridge />
+            <PageVBridge />
           </CSuspense>
         ),
         path: 'bridge/*',
         title: 'Bridges',
-      },
-      {
-        element: (
-          <CSuspense>
-            <PageVBridge />
-          </CSuspense>
-        ),
-        path: 'vbridge/*',
-        title: 'VariableBridges',
       },
       {
         element: (

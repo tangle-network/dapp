@@ -158,9 +158,9 @@ export const currenciesConfig: AppConfig['currencies'] = {
     role: CurrencyRole.Governable,
     icon: WebbWrappedLogo(GanacheLogo()),
     addresses: new Map([
-      [InternalChainId.HermesLocalnet, '0x510C6297cC30A058F41eb4AF1BFC9953EaD8b577'],
-      [InternalChainId.AthenaLocalnet, '0xcbD945E77ADB65651F503723aC322591f3435cC5'],
-      [InternalChainId.DemeterLocalnet, '0x7758F98C1c487E5653795470eEab6C4698bE541b'],
+      [InternalChainId.HermesLocalnet, '0xD30C8839c1145609E564b986F667b273Ddcb8496'],
+      [InternalChainId.AthenaLocalnet, '0xD24260C102B5D128cbEFA0F655E5be3c2370677C'],
+      [InternalChainId.DemeterLocalnet, '0xe69a847CD5BC0C9480adA0b339d7F0a8caC2B667'],
     ]),
   },
   [WebbCurrencyId.TEST]: {
