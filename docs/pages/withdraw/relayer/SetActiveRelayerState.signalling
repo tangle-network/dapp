@@ -1,0 +1,19 @@
+# Specific example use of using state in the application
+# With separation of UI state and api state via observables
+
+Title: \- VBridgeWithdraw
+       Relayer State;
+
+page,useWithdraw,api;
+->page: \- Active Relayer 
+        Change;
+page->useWithdraw: \-setRelayer(WebbRelayer);
+useWithdraw->api: \- relayerManager.setActive()
+                  ;
+...;
+api>>useWithdraw: \- 
+                  ActiveRelayer;
+useWithdraw->useWithdraw: \- setState(relayerState);
+useWithdraw>>page: \- 
+                   ActiveRelayer;
+<-page: update;

@@ -1,0 +1,18 @@
+# Specific example use of using state in the application
+# With separation of UI state and api state via observables
+
+Title: \- VBridgeWithdraw
+       Relayer State;
+
+page,useWithdraw,api;
+->page: \-page load;
+page->useWithdraw: \- relayerState;
+useWithdraw->useWithdraw: \-useState(relayerState);
+box useWithdraw--useWithdraw: \-useEffect {
+    useWithdraw->api: \- sub WebbRelayerManager
+                        'listUpdated';
+    useWithdraw->api: \-async init();
+};
+useWithdraw>>page: \-
+                     relayer\[\], activeRelayer;
+<-page:\- page display;
