@@ -47,7 +47,7 @@ export function internalIdToSubstrateRelayerName(id: InternalChainId): string {
   throw new Error('unhandled chain id for substrate');
 }
 
-// TODO: Read previously saved endpoints from localStorage, and pass with relayerConfig
+// TODO: Read previously custom added endpoints from localStorage, and pass with relayerConfig
 export async function getRelayerManagerFactory() {
   if (!relayerManagerFactory) {
     relayerManagerFactory = await WebbRelayerManagerFactory.init(relayerConfig, (name, basedOn) => {

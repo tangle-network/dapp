@@ -284,7 +284,6 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
         <RelayerModal
           note={depositNote}
           state={relayersState}
-          methods={relayerMethods}
           onChange={(nextRelayer: WebbRelayer | null) => {
             setRelayer(nextRelayer);
           }}

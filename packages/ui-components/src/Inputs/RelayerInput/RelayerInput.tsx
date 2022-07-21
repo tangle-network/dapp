@@ -11,6 +11,7 @@ import {
   Typography,
 } from '@mui/material';
 import { ActiveWebbRelayer, Capabilities, internalChainIdIntoEVMId, WebbRelayer } from '@webb-dapp/api-providers';
+import { useWebContext } from '@webb-dapp/react-environment/webb-context';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
@@ -25,7 +26,7 @@ import { ContentWrapper } from '../../ContentWrappers';
 
 export interface RelayerApiAdapter {
   getInfo(endpoing: string): Promise<Capabilities>;
-  add(endPoint: string): Promise<void>;
+  add(endPoint: string): Promise<WebbRelayer>;
 }
 
 export type FeesInfo = {
@@ -310,12 +311,12 @@ export const RelayerInput: React.FC<RelayerInputProps> = ({
 }) => {
   const [view, setView] = useState<RelayerInputStatus>(RelayerInputStatus.Select);
   const [customRelayURl, setCustomRelayURl] = useState('');
-  const [nextRelayerURL, setNextRelayerURl] = useState('');
   const [relayingIncentives, setRelayingIncentives] = useState<FeesInfo>({
     totalFees: 0,
     withdrawFeePercentage: 0,
   });
   const palette = useColorPallet();
+  const { activeChain } = useWebContext();
 
   useEffect(() => {
     async function getFees() {
@@ -364,22 +365,16 @@ export const RelayerInput: React.FC<RelayerInputProps> = ({
 
   const handleNewCustomRelayer = useCallback(async () => {
     setView(RelayerInputStatus.AddNewCustom);
-    await relayerApi.add(customRelayURl);
-    setNextRelayerURl(customRelayURl);
+    const relayer = await relayerApi.add(customRelayURl);
+    if (
+      relayer.capabilities.supportedChains.evm.has(activeChain!.id) ||
+      relayer.capabilities.supportedChains.substrate.has(activeChain!.id)
+    ) {
+      setActiveRelayer(relayer);
+    }
     setView(RelayerInputStatus.Select);
-  }, [relayerApi, customRelayURl]);
+  }, [relayerApi, customRelayURl, activeChain, setActiveRelayer]);
 
-  // Side effect for handleNewCustomRelayer
-  useEffect(() => {
-    if (!nextRelayerURL) {
-      return;
-    }
-    const nextRelayer = relayers.find((r) => r.endpoint === nextRelayerURL);
-    if (nextRelayer) {
-      setActiveRelayer(nextRelayer);
-      setNextRelayerURl('');
-    }
-  }, [nextRelayerURL, relayers, setActiveRelayer]);
   const fetchRelayInfo = useCallback(async () => {
     setCheckRelayStatus({
       loading: true,

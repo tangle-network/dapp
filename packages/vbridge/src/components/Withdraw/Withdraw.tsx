@@ -1,5 +1,6 @@
 import { InputBase } from '@mui/material';
 import {
+  Capabilities,
   getChainNameFromChainId,
   TransactionState,
   typedChainIdToInternalId,
@@ -148,6 +149,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
         const relayerCapabilities = await relayerManagerFactory.addRelayer(endPoint);
         const relayer = new WebbRelayer(endPoint, relayerCapabilities[endPoint]);
         activeApi?.relayerManager.addRelayer(relayer);
+        return relayer;
       },
     };
   }, [activeApi]);
