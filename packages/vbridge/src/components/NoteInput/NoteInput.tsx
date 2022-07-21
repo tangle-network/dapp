@@ -1,11 +1,11 @@
 import { Icon, IconButton } from '@mui/material';
-import { parseChainIdType } from '@webb-dapp/api-providers/chains';
 import { getChainNameFromChainId } from '@webb-dapp/api-providers/utils';
 import { useDepositNote } from '@webb-dapp/mixer/hooks';
 import { useAppConfig } from '@webb-dapp/react-environment/webb-context';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { BridgeNoteInput } from '@webb-dapp/ui-components/Inputs/NoteInput/BridgeNoteInput';
 import { useBreakpoint } from '@webb-dapp/ui-components/utils/responsive-utils';
+import { parseTypedChainId } from '@webb-tools/sdk-core';
 import { ethers } from 'ethers';
 
 import { InformationItem, Title, Value } from '../shared/styled';
@@ -36,7 +36,7 @@ export const NoteInput: React.FC<NoteInputProps> = ({ error, isRemoveNote = fals
                 <b>Dest Chain:</b>
               </Title>
               <Value>
-                {getChainNameFromChainId(appConfig, parseChainIdType(Number(depositNote.note.targetChainId)))}
+                {getChainNameFromChainId(appConfig, parseTypedChainId(Number(depositNote.note.targetChainId)))}
               </Value>
             </InformationItem>
             <InformationItem>
@@ -58,7 +58,7 @@ export const NoteInput: React.FC<NoteInputProps> = ({ error, isRemoveNote = fals
               <b>Dest Chain:</b>
             </Title>
             <Value>
-              {getChainNameFromChainId(appConfig, parseChainIdType(Number(depositNote.note.targetChainId)))}
+              {getChainNameFromChainId(appConfig, parseTypedChainId(Number(depositNote.note.targetChainId)))}
             </Value>
           </InformationItem>
           <InformationItem>
@@ -66,7 +66,8 @@ export const NoteInput: React.FC<NoteInputProps> = ({ error, isRemoveNote = fals
               <b>Amount Avail:</b>
             </Title>
             <Value>
-              {depositNote.note.amount} {depositNote.note.tokenSymbol}
+              {ethers.utils.formatUnits(depositNote.note.amount, depositNote.note.denomination)}{' '}
+              {depositNote.note.tokenSymbol}
             </Value>
           </InformationItem>
         </div>

@@ -1,7 +1,7 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { ChainTypeId, InternalChainId } from '../../chains';
+import { InternalChainId, TypedChainId } from '../../chains';
 import { WebbCurrencyId } from '../../enums';
 import { CurrencyConfig, CurrencyRole, CurrencyView } from '../../types/currency-config.interface';
 import { AppConfig } from '../common';
@@ -64,7 +64,7 @@ export class Currency extends CurrencyContent {
     return Array.from(this.data.addresses.keys());
   }
 
-  getChainIdsAndTypes(chainsConfig: AppConfig['chains']): ChainTypeId[] {
+  getChainIdsAndTypes(chainsConfig: AppConfig['chains']): TypedChainId[] {
     return Array.from(this.data.addresses.keys())
       .filter((internalId) => Boolean(chainsConfig[internalId]))
       .map((internalId: any) => {

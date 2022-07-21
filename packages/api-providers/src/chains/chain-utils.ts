@@ -1,57 +1,10 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
+import { ChainType } from '@webb-tools/sdk-core';
+
 import { WebbError, WebbErrorCodes } from '../webb-error';
-import { ChainType, ChainTypeId, EVMChainId, InternalChainId, SubstrateChainId } from './chain-id.enum';
-
-export const byteArrayToNum = (arr: number[]): number => {
-  let n = 0;
-
-  for (const i of arr) {
-    n = n * 256 + i;
-  }
-
-  return n;
-};
-
-/**
- * @param num - the number to be converted
- * @param min - the minimum bytes the array should hold (in the case of requiring empty bytes to match rust values)
- * @returns
- */
-export const numToByteArray = (num: number, min: number): number[] => {
-  let arr = [];
-
-  while (num > 0) {
-    arr.push(num % 256);
-    num = Math.floor(num / 256);
-  }
-
-  arr.reverse();
-
-  // maintain minimum number of bytes
-  while (arr.length < min) {
-    arr = [0, ...arr];
-  }
-
-  return arr;
-};
-
-export const computeChainIdType = (chainType: ChainType, chainId: number | InternalChainId): number => {
-  const chainTypeArray = numToByteArray(chainType, 2);
-  const chainIdArray = numToByteArray(chainId, 4);
-  const fullArray = [...chainTypeArray, ...chainIdArray];
-
-  return byteArrayToNum(fullArray);
-};
-
-export const parseChainIdType = (chainIdType: number): ChainTypeId => {
-  const byteArray = numToByteArray(chainIdType, 4);
-  const chainType = byteArrayToNum(byteArray.slice(0, 2));
-  const chainId = byteArrayToNum(byteArray.slice(2));
-
-  return { chainId, chainType };
-};
+import { EVMChainId, InternalChainId, SubstrateChainId, TypedChainId } from './chain-id.enum';
 
 export const internalChainIdToChainId = (chainType: ChainType, internalId: InternalChainId) => {
   switch (chainType) {
@@ -64,7 +17,7 @@ export const internalChainIdToChainId = (chainType: ChainType, internalId: Inter
   }
 };
 
-export const chainTypeIdToInternalId = (chainTypeId: ChainTypeId): InternalChainId => {
+export const typedChainIdToInternalId = (chainTypeId: TypedChainId): InternalChainId => {
   switch (chainTypeId.chainType) {
     case ChainType.EVM:
       return evmIdIntoInternalChainId(chainTypeId.chainId);

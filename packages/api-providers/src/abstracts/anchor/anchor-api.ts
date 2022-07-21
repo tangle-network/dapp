@@ -3,7 +3,7 @@
 
 import { BehaviorSubject, Observable } from 'rxjs';
 
-import { ChainTypeId, chainTypeIdToInternalId, Currency, InternalChainId, WebbCurrencyId } from '../../';
+import { Currency, InternalChainId, TypedChainId, typedChainIdToInternalId, WebbCurrencyId } from '../../';
 
 export type BridgeCurrencyIndex = WebbCurrencyId;
 
@@ -55,7 +55,7 @@ export abstract class AnchorApi<Api, BridgeConfigEntry> {
   abstract getCurrencies(): Promise<Currency[]>;
 
   // For evm
-  abstract getTokenAddress(chainId: ChainTypeId): string | null;
+  abstract getTokenAddress(chainId: TypedChainId): string | null;
 
   get activeBridge(): BridgeConfigEntry | undefined {
     return this.store.activeBridge;
@@ -75,14 +75,14 @@ export abstract class AnchorApi<Api, BridgeConfigEntry> {
     };
   }
 
-  abstract getWrappableAssets(chainId: ChainTypeId): Promise<Currency[]>;
+  abstract getWrappableAssets(chainId: TypedChainId): Promise<Currency[]>;
 
   /*
    *  Get all Bridge tokens for a given chain
    **/
-  async getTokensOfChain(chainId: ChainTypeId): Promise<Currency[]> {
+  async getTokensOfChain(chainId: TypedChainId): Promise<Currency[]> {
     const tokens = await this.getCurrencies();
-    const internalChainId = chainTypeIdToInternalId(chainId);
+    const internalChainId = typedChainIdToInternalId(chainId);
 
     return tokens.filter((token) => token.hasChain(internalChainId));
   }

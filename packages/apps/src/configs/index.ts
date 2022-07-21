@@ -1,8 +1,8 @@
 import {
   Chain,
-  ChainTypeId,
-  chainTypeIdToInternalId,
   InternalChainId,
+  TypedChainId,
+  typedChainIdToInternalId,
   Wallet,
   WebbError,
   WebbErrorCodes,
@@ -47,8 +47,8 @@ export const chainNameFromInternalId = (internalId: InternalChainId): string => 
   return chain.name;
 };
 
-export const getChainNameFromChainId = (chainIdType: ChainTypeId): string => {
-  const internalId = chainTypeIdToInternalId(chainIdType);
+export const getChainNameFromChainId = (chainIdType: TypedChainId): string => {
+  const internalId = typedChainIdToInternalId(chainIdType);
   return chainNameFromInternalId(internalId);
 };
 

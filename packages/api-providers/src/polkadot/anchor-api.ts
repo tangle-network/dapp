@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { AnchorApi, AnchorBase } from '../abstracts';
-import { ChainTypeId } from '../chains';
+import { TypedChainId } from '../chains';
 import { AnchorConfigEntry } from '../types';
 import { BridgeConfig } from '../types/bridge-config.interface';
 import { CurrencyConfig, CurrencyRole, CurrencyType } from '../types/currency-config.interface';
@@ -15,7 +15,7 @@ export class PolkadotAnchorApi extends AnchorApi<WebbPolkadot, BridgeConfig> {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  getTokenAddress(chainId: ChainTypeId): string | null {
+  getTokenAddress(chainId: TypedChainId): string | null {
     return null;
   }
 
@@ -47,7 +47,7 @@ export class PolkadotAnchorApi extends AnchorApi<WebbPolkadot, BridgeConfig> {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async getWrappableAssets(chainId: ChainTypeId): Promise<Currency[]> {
+  async getWrappableAssets(chainId: TypedChainId): Promise<Currency[]> {
     return [];
   }
 }

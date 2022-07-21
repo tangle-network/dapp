@@ -1,5 +1,5 @@
 import { Checkbox, FormControlLabel, Tooltip, Typography } from '@mui/material';
-import { ChainTypeId, Currency, DepositPayload } from '@webb-dapp/api-providers';
+import { Currency, DepositPayload, TypedChainId } from '@webb-dapp/api-providers';
 import { ModalNoteDisplay } from '@webb-dapp/react-components/NoteDisplay/ModalNoteDisplay';
 import { useWebContext } from '@webb-dapp/react-environment/webb-context';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
@@ -48,7 +48,7 @@ type DepositInfoProps = {
   onSuccess(): void;
   anchorId: number | string;
   amount: number;
-  destChain: ChainTypeId | undefined;
+  destChain: TypedChainId | undefined;
   wrappableAsset: Currency | null | undefined;
 };
 

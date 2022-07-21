@@ -1,24 +1,24 @@
 import {
   BridgeCurrencyIndex,
-  ChainTypeId,
-  computeChainIdType,
   Currency,
   DepositPayload,
   DepositStates,
   MixerDeposit,
   TransactionState,
+  TypedChainId,
   VAnchorDeposit,
   VAnchorDepositResults,
 } from '@webb-dapp/api-providers';
 import { useWebContext } from '@webb-dapp/react-environment';
 import { useBridge } from '@webb-dapp/vbridge/hooks/bridge/use-bridge';
+import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 export interface VBridgeDepositApi {
   deposit(payload: DepositPayload): Promise<VAnchorDepositResults>;
 
   generateNote(
     mixerId: number | string,
-    destChain: ChainTypeId,
+    destChain: TypedChainId,
     amount: number,
     wrappableAsset: string | undefined
   ): Promise<DepositPayload>;
@@ -72,14 +72,14 @@ export const useBridgeDeposit = (): VBridgeDepositApi => {
   const generateNote = useCallback(
     async (
       anchorId: number | string,
-      destChainTypeId: ChainTypeId,
+      destChainTypeId: TypedChainId,
       amount: number,
       wrappableAsset: string | undefined
     ) => {
       if (!depositApi) {
         throw new Error('Not ready');
       }
-      const destChainId = computeChainIdType(destChainTypeId.chainType, destChainTypeId.chainId);
+      const destChainId = calculateTypedChainId(destChainTypeId.chainType, destChainTypeId.chainId);
       return depositApi?.generateBridgeNote(anchorId, destChainId, amount, wrappableAsset);
     },
     [depositApi]

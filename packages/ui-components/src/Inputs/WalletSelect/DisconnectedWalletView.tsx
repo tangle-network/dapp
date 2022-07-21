@@ -12,14 +12,6 @@ const CloseButton = styled.button`
 
 const DisconnectedWalletWrapper = styled.div``;
 
-const StyledListItem = styled.li`
-  && {
-    border-radius: 8px;
-    margin-bottom: 16px;
-    background: ${({ theme }) => theme.heavySelectionBackground};
-  }
-`;
-
 type DisconnectedWalletViewProps = {
   close(): void;
   setSelectedWallet(wallet: ManagedWallet): void;

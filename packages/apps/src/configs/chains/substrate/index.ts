@@ -1,7 +1,8 @@
-import { AppConfig, ChainType, InternalChainId, SubstrateChainId, WebbCurrencyId } from '@webb-dapp/api-providers';
+import { AppConfig, InternalChainId, SubstrateChainId, WebbCurrencyId } from '@webb-dapp/api-providers';
 import KSMLogo from '@webb-dapp/apps/configs/logos/chains/KusamaLogo';
 import DOTLogo from '@webb-dapp/apps/configs/logos/chains/PolkadotLogo';
 import WEBBLogo from '@webb-dapp/apps/configs/logos/chains/WebbLogo';
+import { ChainType } from '@webb-tools/sdk-core';
 
 export const getSupportedCurrenciesOfChain = (chainId: InternalChainId): WebbCurrencyId[] => {
   return chainsConfig[chainId].currencies;

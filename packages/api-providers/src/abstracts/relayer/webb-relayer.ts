@@ -137,6 +137,8 @@ class RelayedWithdraw {
     chain: T,
     payload: WithdrawRelayerArgs<T['baseOn'], C>
   ) {
+    console.log('withdraw payload: ', payload);
+
     return {
       [chain.baseOn]: {
         [this.prefix]: {
@@ -208,11 +210,12 @@ export class WebbRelayer {
   }
 
   async getLeaves(chainId: number, contractAddress: string): Promise<RelayerLeaves> {
-    const url = `${this.endpoint}/api/v1/leaves/${chainId.toString(16)}/${contractAddress}`;
+    const url = `${this.endpoint}/api/v1/leaves/evm/${chainId.toString(16)}/${contractAddress}`;
     const req = await fetch(url);
 
     if (req.ok) {
       const jsonResponse = await req.json();
+      console.log('response: ', jsonResponse);
       const fetchedLeaves: string[] = jsonResponse.leaves;
       const lastQueriedBlock: string = jsonResponse.lastQueriedBlock;
       const lastQueriedBlockNumber: number = parseInt(lastQueriedBlock, 16);

@@ -10,8 +10,7 @@ import {
   Popper,
   Typography,
 } from '@mui/material';
-import { ActiveWebbRelayer, Capabilities, WebbRelayer } from '@webb-dapp/api-providers';
-import { chainIdToRelayerName } from '@webb-dapp/apps/configs/relayer-config';
+import { ActiveWebbRelayer, Capabilities, internalChainIdIntoEVMId, WebbRelayer } from '@webb-dapp/api-providers';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
@@ -251,7 +250,7 @@ const DropdownInput: React.FC<DropdownInputProps> = ({ onChange, onCustomRelayer
                   </div>
                   {options.map((option) => {
                     return (
-                      <div>
+                      <div key={`${option.endpoint}-relayer-input-container`}>
                         <li
                           role={'button'}
                           onClick={() => {
@@ -505,7 +504,7 @@ export const RelayerInput: React.FC<RelayerInputProps> = ({
                       {relayerInfo.evm
                         .filter((i) => {
                           try {
-                            chainIdToRelayerName(Number(i.key));
+                            internalChainIdIntoEVMId(Number(i.key));
                             return true;
                           } catch (e) {
                             console.log(e, i, i.key);
@@ -515,7 +514,7 @@ export const RelayerInput: React.FC<RelayerInputProps> = ({
                         .map((i) => {
                           return (
                             <li style={{ color: palette.primaryText }}>
-                              <Typography variant={'h5'}>{chainIdToRelayerName(Number(i.key))}</Typography>
+                              <Typography variant={'h5'}>{internalChainIdIntoEVMId(Number(i.key))}</Typography>
                               <Padding v>
                                 <Typography variant={'h6'}>Account: {i.value.beneficiary?.toString()} </Typography>
                                 <Typography variant={'h6'}>Contracts:</Typography>

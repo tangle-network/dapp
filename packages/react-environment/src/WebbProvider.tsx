@@ -13,6 +13,7 @@ import {
   NotificationPayload,
   Wallet,
   Web3Provider,
+  Web3RelayerManager,
   WebbApiProvider,
   WebbError,
   WebbErrorCodes,
@@ -424,7 +425,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
             /// get the current active chain from metamask
             const chainId = await web3Provider.network; // storage based on network id
 
-            const relayerManager = await relayerManagerFactory.getRelayerManager('evm');
+            const relayerManager = (await relayerManagerFactory.getRelayerManager('evm')) as Web3RelayerManager;
 
             const webbWeb3Provider = await WebbWeb3Provider.init(
               web3Provider,
