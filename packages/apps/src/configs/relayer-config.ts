@@ -1,4 +1,10 @@
-import { AppConfig, RelayerConfig, WebbRelayerManagerFactory, WebbTypedChainId } from '@webb-dapp/api-providers';
+import {
+  AppConfig,
+  RelayerCMDBase,
+  RelayerConfig,
+  WebbRelayerManagerFactory,
+  WebbTypedChainId,
+} from '@webb-dapp/api-providers';
 import { calculateTypedChainId, ChainType } from '@webb-tools/sdk-core';
 
 let relayerManagerFactory: WebbRelayerManagerFactory | null = null;
@@ -42,21 +48,19 @@ export function typedChainIdToSubstrateRelayerName(id: number): string {
   throw new Error('unhandled chain id for substrate');
 }
 
+function chainNameAdapter(name: string, basedOn: RelayerCMDBase) {
+  try {
+    return basedOn === 'evm'
+      ? calculateTypedChainId(ChainType.EVM, Number(name))
+      : relayerSubstrateNameToTypedChainId(name);
+  } catch (e) {
+    return null;
+  }
+}
+
 export async function getRelayerManagerFactory(appConfig: AppConfig) {
   if (!relayerManagerFactory) {
-    relayerManagerFactory = await WebbRelayerManagerFactory.init(
-      relayerConfig,
-      (name, basedOn) => {
-        try {
-          return basedOn === 'evm'
-            ? calculateTypedChainId(ChainType.EVM, Number(name))
-            : relayerSubstrateNameToTypedChainId(name);
-        } catch (e) {
-          return null;
-        }
-      },
-      appConfig
-    );
+    relayerManagerFactory = await WebbRelayerManagerFactory.init(relayerConfig, chainNameAdapter, appConfig);
   }
   return relayerManagerFactory;
 }

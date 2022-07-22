@@ -1,7 +1,7 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { parseTypedChainId } from '@webb-tools/sdk-core';
+import { ChainType, parseTypedChainId } from '@webb-tools/sdk-core';
 import { Observable, Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
@@ -209,8 +209,20 @@ export class WebbRelayer {
     }
   }
 
-  async getLeaves(chainId: number, contractAddress: string): Promise<RelayerLeaves> {
-    const url = `${this.endpoint}/api/v1/leaves/evm/${chainId.toString(16)}/${contractAddress}`;
+  async getLeaves(typedChainId: number, contractAddress: string): Promise<RelayerLeaves> {
+    const { chainId, chainType } = parseTypedChainId(typedChainId);
+    let url: string = '';
+    switch (chainType) {
+      case ChainType.EVM:
+        url = `${this.endpoint}/api/v1/leaves/evm/${chainId.toString(16)}/${contractAddress}`;
+        break;
+      case ChainType.Substrate:
+        url = `${this.endpoint}/api/v1/leaves/substrate/${chainId.toString(16)}/${contractAddress}`;
+        break;
+      default:
+        url = `${this.endpoint}/api/v1/leaves/evm/${chainId.toString(16)}/${contractAddress}`;
+        break;
+    }
     const req = await fetch(url);
 
     if (req.ok) {
@@ -250,9 +262,7 @@ export class ActiveWebbRelayer extends WebbRelayer {
 
   private get config() {
     const list = this.capabilities.supportedChains[this.query.basedOn];
-    const chainId = parseTypedChainId(this.query.typedChainId).chainId;
-
-    return list.get(chainId);
+    return list.get(this.query.typedChainId);
   }
 
   get gasLimit(): number | undefined {
