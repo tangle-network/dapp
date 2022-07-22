@@ -3,7 +3,7 @@
 
 import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 
-import { WebbCurrencyId } from '../../enums';
+import { CurrencyId } from '../../enums';
 import { MixerSize } from '../mixer';
 
 /**
@@ -13,15 +13,15 @@ import { MixerSize } from '../mixer';
 export type WrappingEvent = {
   ready: null;
   stateUpdate: null;
-  wrappableTokenUpdate: WebbCurrencyId | null;
-  governedTokenUpdate: WebbCurrencyId | null;
+  wrappableTokenUpdate: CurrencyId | null;
+  governedTokenUpdate: CurrencyId | null;
 };
 export type WrappingEventNames = keyof WrappingEvent;
 export type Amount = {
   amount: number | string;
 };
 export type WrappingBalance = {
-  tokenId?: WebbCurrencyId;
+  tokenId?: CurrencyId;
   balance: string;
 };
 
@@ -34,14 +34,14 @@ export type WrappingBalance = {
  **/
 
 export abstract class WrapUnwrap<T, WrapPayload extends Amount = Amount, UnwrapPayload extends Amount = Amount> {
-  protected _wrappableToken: BehaviorSubject<WebbCurrencyId | null> = new BehaviorSubject<null | WebbCurrencyId>(null);
-  protected _governedToken: BehaviorSubject<WebbCurrencyId | null> = new BehaviorSubject<null | WebbCurrencyId>(null);
+  protected _wrappableToken: BehaviorSubject<CurrencyId | null> = new BehaviorSubject<null | CurrencyId>(null);
+  protected _governedToken: BehaviorSubject<CurrencyId | null> = new BehaviorSubject<null | CurrencyId>(null);
 
   constructor(protected inner: T) {}
 
   abstract get subscription(): Observable<Partial<WrappingEvent>>;
 
-  setGovernedToken(nextToken: WebbCurrencyId | null) {
+  setGovernedToken(nextToken: CurrencyId | null) {
     this._governedToken.next(nextToken);
   }
 
@@ -59,7 +59,7 @@ export abstract class WrapUnwrap<T, WrapPayload extends Amount = Amount, UnwrapP
     return this._governedToken.asObservable();
   }
 
-  setWrappableToken(nextToken: WebbCurrencyId | null) {
+  setWrappableToken(nextToken: CurrencyId | null) {
     this._wrappableToken.next(nextToken);
   }
 
@@ -83,12 +83,12 @@ export abstract class WrapUnwrap<T, WrapPayload extends Amount = Amount, UnwrapP
    * WrappableTokens available for display,
    * If a governedTokenId is passed in, get wrappable tokens for that governedTokenId
    *  */
-  abstract getWrappableTokens(governedTokenId?: WebbCurrencyId | null): Promise<WebbCurrencyId[]>;
+  abstract getWrappableTokens(governedTokenId?: CurrencyId | null): Promise<CurrencyId[]>;
 
   /**
    *  Get list of all the Governed tokens
    **/
-  abstract getGovernedTokens(): Promise<WebbCurrencyId[]>;
+  abstract getGovernedTokens(): Promise<CurrencyId[]>;
 
   /**
    *  For validation pre the Wrapping
@@ -132,9 +132,9 @@ export class WrappingBalanceWatcher {
   private subscription: Subscription | null = null;
 
   constructor(
-    private token1: WebbCurrencyId | null = null,
-    private token2: WebbCurrencyId | null = null,
-    private signal: Observable<[WebbCurrencyId | null, WebbCurrencyId | null]>
+    private token1: CurrencyId | null = null,
+    private token2: CurrencyId | null = null,
+    private signal: Observable<[CurrencyId | null, CurrencyId | null]>
   ) {
     this.sub();
   }

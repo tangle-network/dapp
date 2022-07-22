@@ -28,12 +28,11 @@ import {
   VAnchorWithdraw,
   VAnchorWithdrawResult,
 } from '../abstracts';
-import { evmIdIntoInternalChainId, internalChainIdIntoEVMId, typedChainIdToInternalId } from '../chains';
 import { generateCircomCommitment, utxoFromVAnchorNote } from '../contracts/wrappers';
 import { Web3Provider } from '../ext-providers/web3/web3-provider';
 import { fetchVariableAnchorKeyForEdges, fetchVariableAnchorWasmForEdges } from '../ipfs/evm/anchors';
 import { BridgeConfig } from '../types/bridge-config.interface';
-import { bridgeStorageFactory, getEVMChainNameFromInternal, keypairStorageFactory } from '../utils';
+import { bridgeStorageFactory, getEVMChainName, keypairStorageFactory } from '../utils';
 
 export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
   protected get bridgeApi() {
@@ -60,8 +59,10 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
 
       const anchorConfigsForBridge = activeBridge.anchors.find((anchor) => anchor.type === 'variable')!;
 
+      const activeChain = await this.inner.getChainId();
+
       const section = `Bridge ${Object.keys(anchorConfigsForBridge.anchorAddresses)
-        .map((id) => getEVMChainNameFromInternal(this.config, Number(id)))
+        .map((id) => getEVMChainName(this.config, activeChain))
         .join('-')}`;
       this.inner.notificationHandler({
         description: 'Withdraw in progress',
@@ -72,10 +73,8 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
       });
 
       // set the destination contract
-      const activeChain = await this.inner.getChainId();
       const destChainIdType = calculateTypedChainId(ChainType.EVM, activeChain);
-      const internalId = evmIdIntoInternalChainId(activeChain);
-      const destAddress = anchorConfigsForBridge.anchorAddresses[internalId]!;
+      const destAddress = anchorConfigsForBridge.anchorAddresses[destChainIdType]!;
       const destVAnchor = await this.inner.getVariableAnchorByAddress(destAddress);
       const treeHeight = await destVAnchor._contract.levels();
 
@@ -117,9 +116,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
         if (leavesMap[parsedNote.sourceChainId] === undefined) {
           // Set up a provider for the source chain
           const sourceAddress = parsedNote.sourceIdentifyingData;
-          const sourceChainIdType = parseTypedChainId(Number(parsedNote.sourceChainId));
-          const sourceInternalId = evmIdIntoInternalChainId(sourceChainIdType.chainId);
-          const sourceChainConfig = this.config.chains[sourceInternalId];
+          const sourceChainConfig = this.config.chains[Number(parsedNote.sourceChainId)];
           const sourceHttpProvider = Web3Provider.fromUri(sourceChainConfig.url);
           const sourceEthers = sourceHttpProvider.intoEthersProvider();
           const sourceVAnchor = await this.inner.getVariableAnchorByAddressAndProvider(sourceAddress, sourceEthers);
@@ -280,14 +277,12 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
         const relayedVAnchorWithdraw = await activeRelayer.initWithdraw('vAnchor');
 
         const parsedDestChainIdType = parseTypedChainId(destChainIdType);
-        const destInternalId = typedChainIdToInternalId(parsedDestChainIdType);
-        const chainName = internalChainIdIntoEVMId(destInternalId);
 
         const chainInfo: RelayedChainInput = {
           baseOn: 'evm',
           contractAddress: destAddress,
           endpoint: '',
-          name: chainName.toString(),
+          name: parsedDestChainIdType.chainId.toString(),
         };
 
         const extAmount = extData.extAmount.replace('0x', '');

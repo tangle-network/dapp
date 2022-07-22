@@ -3,11 +3,10 @@
 
 import { ChainType } from '@webb-tools/sdk-core';
 
-import { WebbCurrencyId } from '../enums';
+import { CurrencyId } from '../enums';
 import { ReactElement } from './abstracts';
 
 export interface ChainConfig {
-  id: number;
   chainType: ChainType;
   name: string;
   group: string;
@@ -17,6 +16,6 @@ export interface ChainConfig {
   evmRpcUrls?: string[];
   blockExplorerStub?: string;
   logo: ReactElement;
-  nativeCurrencyId: WebbCurrencyId;
-  currencies: Array<WebbCurrencyId>;
+  nativeCurrencyId: CurrencyId;
+  currencies: Array<CurrencyId>;
 }

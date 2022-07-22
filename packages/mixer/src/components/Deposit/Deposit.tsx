@@ -12,6 +12,7 @@ import { TextLabel } from '@webb-dapp/ui-components/Inputs/TextLabel/TextLabel';
 import { TokenInput } from '@webb-dapp/ui-components/Inputs/TokenInput/TokenInput';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { getRoundedAmountString } from '@webb-dapp/ui-components/utils';
+import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import React, { useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
@@ -77,7 +78,10 @@ export const Deposit: React.FC<DepositProps> = () => {
     }
 
     activeApi.methods.chainQuery
-      .tokenBalanceByCurrencyId(activeChain.id, activeToken.view.id as any)
+      .tokenBalanceByCurrencyId(
+        calculateTypedChainId(activeChain!.chainType, activeChain!.chainId),
+        activeToken.view.id as any
+      )
       .then((balance) => {
         setTokenBalance(balance);
       });

@@ -4,7 +4,7 @@
 import { Observable } from 'rxjs';
 
 import { WrapUnwrap } from '../abstracts';
-import { WebbCurrencyId } from '../enums';
+import { CurrencyId } from '../enums';
 import { Amount, MixerSize, WrappingBalance, WrappingEvent } from '../';
 import { WebbPolkadot } from './webb-provider';
 
@@ -41,15 +41,15 @@ export class PolkadotWrapUnwrap extends WrapUnwrap<WebbPolkadot> {
     return Promise.resolve(false);
   }
 
-  getGovernedTokens(): Promise<WebbCurrencyId[]> {
+  getGovernedTokens(): Promise<CurrencyId[]> {
     return Promise.resolve([]);
   }
 
-  getWrappableTokens(): Promise<WebbCurrencyId[]> {
+  getWrappableTokens(): Promise<CurrencyId[]> {
     return Promise.resolve([]);
   }
 
-  getWrappedTokens(): Promise<WebbCurrencyId[]> {
+  getWrappedTokens(): Promise<CurrencyId[]> {
     return Promise.resolve([]);
   }
 

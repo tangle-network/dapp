@@ -6,9 +6,9 @@ import { Observable, Subject } from 'rxjs';
 import {
   Capabilities,
   ChainNameIntoChainId,
+  RelayerCMDBase,
   RelayerConfig,
   RelayerInfo,
-  RelayerManagerType,
 } from '../abstracts/relayer/types';
 import { WebbRelayerManager } from '../abstracts/relayer/webb-relayer-manager';
 import { PolkadotRelayerManager } from '../polkadot/relayer-manager';
@@ -21,7 +21,7 @@ import { AppConfig, WebbRelayer } from '..';
  *
  * @param capabilities - storage for relayers capabilities
  * @param relayerConfigs - The whole relayers configuration of the project
- * @param chainNameAdapter - An adapter for getting the  InternalChainId of the chain name and the base
+ * @param chainNameAdapter - An adapter for getting the typedChainId from the chain name and the base
  * @param appConfig - App config is used for looking up configuration values for issuing queries on the relayers
  **/
 export class WebbRelayerManagerFactory {
@@ -71,6 +71,7 @@ export class WebbRelayerManagerFactory {
   /// fetch relayers
   private async fetchCapabilitiesAndInsert(config: RelayerConfig) {
     this.capabilities[config.endpoint] = await this.fetchCapabilities(config.endpoint);
+    console.log(this.capabilities[config.endpoint]);
 
     return this.capabilities;
   }
@@ -119,16 +120,16 @@ export class WebbRelayerManagerFactory {
     return relayerManagerFactory;
   }
 
-  async getRelayerManager(type: RelayerManagerType): Promise<WebbRelayerManager> {
+  async getRelayerManager(type: RelayerCMDBase): Promise<WebbRelayerManager> {
     const relayers = Object.keys(this.capabilities).map((endpoint) => {
       return new WebbRelayer(endpoint, this.capabilities[endpoint]);
     });
 
     switch (type) {
       case 'evm':
-        return new Web3RelayerManager(relayers, this.appConfig);
+        return new Web3RelayerManager(relayers);
       case 'substrate':
-        return new PolkadotRelayerManager(relayers, this.appConfig);
+        return new PolkadotRelayerManager(relayers);
     }
   }
 }

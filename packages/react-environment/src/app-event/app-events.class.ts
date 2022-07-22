@@ -1,4 +1,4 @@
-import { Chain, InternalChainId, Wallet } from '@webb-dapp/api-providers';
+import { Chain, TypedChainId, Wallet } from '@webb-dapp/api-providers';
 import { WalletId } from '@webb-dapp/apps/configs';
 // @ts-ignore
 import { Account } from '@webb-dapp/wallet/account/Accounts.adapter';
@@ -6,7 +6,7 @@ import { EventBus } from '@webb-tools/app-util';
 
 export type AppEvents = {
   changeNetworkSwitcherVisibility: boolean;
-  networkSwitched: [InternalChainId, WalletId];
+  networkSwitched: [TypedChainId, WalletId];
   switchNetwork: [Chain, Wallet];
   setActiveAccount: Account;
 };

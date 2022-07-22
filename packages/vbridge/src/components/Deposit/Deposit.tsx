@@ -1,11 +1,4 @@
-import {
-  Currency,
-  TransactionState,
-  TypedChainId,
-  typedChainIdToInternalId,
-  WalletConfig,
-  WebbCurrencyId,
-} from '@webb-dapp/api-providers';
+import { Currency, CurrencyId, TransactionState, TypedChainId, WalletConfig } from '@webb-dapp/api-providers';
 import { useWrapUnwrap } from '@webb-dapp/page-wrap-unwrap/hooks/useWrapUnwrap';
 import { RequiredWalletSelection } from '@webb-dapp/react-components/RequiredWalletSelection/RequiredWalletSelection';
 import { TransactionProcessingModal } from '@webb-dapp/react-components/Transact/TransactionProcessingModal';
@@ -26,6 +19,7 @@ import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
 import { DepositConfirm } from '@webb-dapp/vbridge/components/DepositConfirm/DepositConfirm';
 import { useBridge } from '@webb-dapp/vbridge/hooks/bridge/use-bridge';
 import { useBridgeDeposit } from '@webb-dapp/vbridge/hooks/deposit/useBridgeDeposit';
+import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
@@ -192,7 +186,10 @@ export const Deposit: React.FC<DepositProps> = () => {
     }
     // TODO: handle when the token id isn't WebbCurrencyId
     activeApi.methods.chainQuery
-      .tokenBalanceByCurrencyId(activeChain.id, wrappableToken.view.id as any)
+      .tokenBalanceByCurrencyId(
+        calculateTypedChainId(activeChain.chainType, activeChain.chainId),
+        wrappableToken.view.id as any
+      )
       .then((balance) => {
         setWrappableTokenBalance(balance);
       });
@@ -241,7 +238,7 @@ export const Deposit: React.FC<DepositProps> = () => {
                   onChange={(currencyContent) => {
                     setWrappableToken(
                       currencyContent
-                        ? Currency.fromCurrencyId(currenciesConfig, currencyContent.view.id as WebbCurrencyId)
+                        ? Currency.fromCurrencyId(currenciesConfig, currencyContent.view.id as CurrencyId)
                         : null
                     );
                   }}
@@ -313,7 +310,9 @@ export const Deposit: React.FC<DepositProps> = () => {
             state={stage}
             amount={amount}
             sourceChain={activeChain ? activeChain.name : ''}
-            destChain={destChain ? chainsConfig[typedChainIdToInternalId(destChain)].name : ''}
+            destChain={
+              destChain ? chainsConfig[calculateTypedChainId(destChain.chainType, destChain.chainId)].name : ''
+            }
             cancel={() => {
               console.log('user tried to cancel');
             }}

@@ -4,8 +4,7 @@
 import { SignedBlock } from '@polkadot/types/interfaces';
 
 import { ChainQuery } from '../abstracts';
-import { WebbCurrencyId } from '../enums';
-import { InternalChainId } from '..';
+import { CurrencyId } from '../enums';
 import { WebbPolkadot } from './webb-provider';
 
 export class PolkadotChainQuery extends ChainQuery<WebbPolkadot> {
@@ -18,9 +17,8 @@ export class PolkadotChainQuery extends ChainQuery<WebbPolkadot> {
     return block.block.header.number.toNumber();
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async tokenBalanceByCurrencyId(chainId: InternalChainId, currency: WebbCurrencyId): Promise<string> {
-    const assetId = this.inner.config.currencies[currency].addresses.get(chainId);
+  async tokenBalanceByCurrencyId(typedChainId: number, currency: CurrencyId): Promise<string> {
+    const assetId = this.inner.config.currencies[currency].addresses.get(typedChainId);
 
     const activeAccount = await this.inner.accounts.activeOrDefault;
 

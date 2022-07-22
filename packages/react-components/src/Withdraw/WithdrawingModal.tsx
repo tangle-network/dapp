@@ -1,5 +1,5 @@
 import { Button, Icon, LinearProgress, Tooltip, Typography } from '@mui/material';
-import { getChainNameFromChainId } from '@webb-dapp/api-providers';
+import { getChainNameFromTypedChainId } from '@webb-dapp/api-providers';
 import { TransactionState } from '@webb-dapp/api-providers';
 import { useAppConfig } from '@webb-dapp/react-environment';
 import { SpaceBox } from '@webb-dapp/ui-components/Box';
@@ -189,7 +189,7 @@ export const WithdrawingModal: React.FC<WithdrawingModalProps> = ({
                 <Typography variant={'caption'}>
                   <b>
                     Receiving {ethers.utils.formatUnits(note.amount, note.denomination) + ' ' + note.tokenSymbol} on{' '}
-                    {getChainNameFromChainId(appConfig, parseTypedChainId(Number(note.targetChainId)))}
+                    {getChainNameFromTypedChainId(appConfig, parseTypedChainId(Number(note.targetChainId)))}
                   </b>
                 </Typography>
               </InfoItem>

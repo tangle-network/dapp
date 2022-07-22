@@ -3,13 +3,12 @@
 
 // The chain query class returns information from the selected provider
 
-import { InternalChainId } from '../../';
-import { WebbCurrencyId } from '../../enums';
+import { CurrencyId } from '../../enums';
 
 export abstract class ChainQuery<Provider> {
   constructor(protected inner: Provider) {}
 
   abstract currentBlock(): Promise<number>;
-  abstract tokenBalanceByCurrencyId(chainId: InternalChainId, currency: WebbCurrencyId): Promise<string>;
+  abstract tokenBalanceByCurrencyId(typedChainId: number, currency: CurrencyId): Promise<string>;
   abstract tokenBalanceByAddress(address: string): Promise<string>;
 }

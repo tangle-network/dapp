@@ -3,7 +3,7 @@
 
 // Do NOT change the ordering of this enum and always add to the end. Otherwise notes may break.
 
-export enum WebbCurrencyId {
+export enum CurrencyId {
   /// Production edgeware token
   EDG,
   /// Test edgeware token
@@ -27,77 +27,77 @@ export enum WebbCurrencyId {
   moonDEV,
 }
 
-export function webbCurrencyIdToString(c: WebbCurrencyId): string {
+export function webbCurrencyIdToString(c: CurrencyId): string {
   switch (c) {
-    case WebbCurrencyId.EDG:
+    case CurrencyId.EDG:
       return 'EDG';
-    case WebbCurrencyId.TEDG:
+    case CurrencyId.TEDG:
       return 'TEDG';
-    case WebbCurrencyId.ETH:
+    case CurrencyId.ETH:
       return 'ETH';
-    case WebbCurrencyId.ONE:
+    case CurrencyId.ONE:
       return 'ONE';
-    case WebbCurrencyId.WEBB:
+    case CurrencyId.WEBB:
       return 'WEBB';
-    case WebbCurrencyId.SDN:
+    case CurrencyId.SDN:
       return 'SDN';
-    case WebbCurrencyId.WETH:
+    case CurrencyId.WETH:
       return 'WETH';
-    case WebbCurrencyId.MATIC:
+    case CurrencyId.MATIC:
       return 'MATIC';
-    case WebbCurrencyId.webbETH:
+    case CurrencyId.webbETH:
       return 'webbETH';
-    case WebbCurrencyId.DEV:
+    case CurrencyId.DEV:
       return 'DEV';
-    case WebbCurrencyId.webbDEV:
+    case CurrencyId.webbDEV:
       return 'webbDEV';
-    case WebbCurrencyId.EGG:
+    case CurrencyId.EGG:
       return 'EGG';
-    case WebbCurrencyId.TEST:
+    case CurrencyId.TEST:
       return 'TEST';
-    case WebbCurrencyId.KSM:
+    case CurrencyId.KSM:
       return 'KSM';
-    case WebbCurrencyId.DOT:
+    case CurrencyId.DOT:
       return 'DOT';
-    case WebbCurrencyId.moonDEV:
+    case CurrencyId.moonDEV:
       return 'moonDEV';
   }
 }
 
-export function webbCurrencyIdFromString(c: string): WebbCurrencyId {
+export function webbCurrencyIdFromString(c: string): CurrencyId {
   switch (c) {
     case 'EDG':
-      return WebbCurrencyId.EDG;
+      return CurrencyId.EDG;
     case 'TEDG':
-      return WebbCurrencyId.TEDG;
+      return CurrencyId.TEDG;
     case 'ETH':
-      return WebbCurrencyId.ETH;
+      return CurrencyId.ETH;
     case 'ONE':
-      return WebbCurrencyId.ONE;
+      return CurrencyId.ONE;
     case 'WEBB':
-      return WebbCurrencyId.WEBB;
+      return CurrencyId.WEBB;
     case 'SDN':
-      return WebbCurrencyId.SDN;
+      return CurrencyId.SDN;
     case 'WETH':
-      return WebbCurrencyId.WETH;
+      return CurrencyId.WETH;
     case 'MATIC':
-      return WebbCurrencyId.MATIC;
+      return CurrencyId.MATIC;
     case 'webbETH':
-      return WebbCurrencyId.webbETH;
+      return CurrencyId.webbETH;
     case 'DEV':
-      return WebbCurrencyId.DEV;
+      return CurrencyId.DEV;
     case 'webbDEV':
-      return WebbCurrencyId.webbDEV;
+      return CurrencyId.webbDEV;
     case 'EGG':
-      return WebbCurrencyId.EGG;
+      return CurrencyId.EGG;
     case 'TEST':
-      return WebbCurrencyId.TEST;
+      return CurrencyId.TEST;
     case 'KSM':
-      return WebbCurrencyId.KSM;
+      return CurrencyId.KSM;
     case 'DOT':
-      return WebbCurrencyId.DOT;
+      return CurrencyId.DOT;
     case 'moonDEV':
-      return WebbCurrencyId.moonDEV;
+      return CurrencyId.moonDEV;
     default:
       throw new Error(`${c} isn't a valid WebbCurrencyId`);
   }

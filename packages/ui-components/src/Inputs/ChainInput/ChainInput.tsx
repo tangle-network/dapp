@@ -1,13 +1,14 @@
 import { Avatar, ClickAwayListener, Icon, IconButton, Typography } from '@mui/material';
-import { TypedChainId, typedChainIdToInternalId } from '@webb-dapp/api-providers';
+import { TypedChainId } from '@webb-dapp/api-providers';
 import { chainsPopulated } from '@webb-dapp/apps/configs';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
-import { NetworkManager } from '@webb-dapp/ui-components/NetworkManger/NetworkManager';
+import { NetworkManager } from '@webb-dapp/ui-components/NetworkManager/NetworkManager';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { above, useBreakpoint } from '@webb-dapp/ui-components/utils/responsive-utils';
+import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import React, { CSSProperties, useEffect, useMemo, useRef, useState } from 'react';
 import styled, { css } from 'styled-components';
 
@@ -101,7 +102,7 @@ const DropdownInput: React.FC<DropdownInputProps> = ({ chains, onChange, value }
 
     return {
       id: value,
-      chain: chainsPopulated[typedChainIdToInternalId(value)],
+      chain: chainsPopulated[calculateTypedChainId(value.chainType, value.chainId)],
     };
   }, [value]);
 

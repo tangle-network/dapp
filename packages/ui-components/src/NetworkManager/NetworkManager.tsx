@@ -144,14 +144,14 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
         return (
           <List>
             {filteredNetworks.map((chain, inx) => {
-              const { id, logo, name, tag, url, wallets } = chain;
+              const { chainId, logo, name, tag, url, wallets } = chain;
               const viaWallets = Object.values(wallets);
               const ChainIcon = logo;
               return (
-                <React.Fragment key={`${id}${url}-group`}>
+                <React.Fragment key={`${chainId}${url}-group`}>
                   <ListItem
                     aria-label='gender'
-                    selected={userSelectedChain?.id === id}
+                    selected={userSelectedChain?.chainId === chainId}
                     button
                     onClick={() => {
                       handleChange(chain);
@@ -182,7 +182,7 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
                         <Typography variant={'h6'} component={'p'}>
                           <b>{name} </b>
                         </Typography>
-                        {activeChain?.id === id && (
+                        {activeChain?.chainId === chainId && (
                           <Chip label='connected' size='small' color='success' style={{ marginLeft: '8px' }} />
                         )}
                       </Flex>
@@ -240,12 +240,17 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
         if (!userSelectedChain) {
           return null;
         }
-        const { id, logo, name, tag, url, wallets } = userSelectedChain;
+        const { chainId, logo, name, tag, url, wallets } = userSelectedChain;
         const viaWallets = Object.values(wallets);
         const ChainIcon = logo;
         return (
           <div>
-            <ListItem key={`${id}${url}-group`} aria-label='gender' selected={activeChain?.id === id} component={'div'}>
+            <ListItem
+              key={`${chainId}${url}-group`}
+              aria-label='gender'
+              selected={activeChain?.chainId === chainId}
+              component={'div'}
+            >
               <ListItemAvatar>
                 <Badge
                   title={'dev'}
@@ -271,7 +276,7 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
                   <Typography variant={'h6'} component={'p'}>
                     <b>{name} </b>
                   </Typography>
-                  {activeChain?.id === id && (
+                  {activeChain?.chainId === chainId && (
                     <Chip label='connected' size='small' color='success' style={{ marginLeft: '8px' }} />
                   )}
                 </Flex>
@@ -288,7 +293,7 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
                 return (
                   <ListItem
                     button
-                    disabled={connectedWallet && activeChain?.id === id}
+                    disabled={connectedWallet && activeChain?.chainId === chainId}
                     onClick={async () => {
                       setConnectionStep(ConnectionStep.Connecting);
                       const next = await switchChain(userSelectedChain, wallet);

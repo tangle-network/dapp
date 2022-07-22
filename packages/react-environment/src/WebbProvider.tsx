@@ -6,7 +6,6 @@ import {
   BridgeConfig,
   Chain,
   EVMChainId,
-  evmIdIntoInternalChainId,
   getEVMChainName,
   InteractiveFeedback,
   NetworkStorage,
@@ -40,6 +39,7 @@ import { AccountSwitchNotification } from '@webb-dapp/ui-components/notification
 import { Spinner } from '@webb-dapp/ui-components/Spinner/Spinner';
 import { BareProps } from '@webb-dapp/ui-components/types';
 import { LoggerService } from '@webb-tools/app-util';
+import { calculateTypedChainId, parseTypedChainId } from '@webb-tools/sdk-core';
 import { logger } from 'ethers';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -201,11 +201,13 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
       const innerActiveApi = options.activeApi ?? activeApi;
 
       if (innerNetworkStorage && innerChain) {
+        const typedChainId = calculateTypedChainId(innerChain.chainType, innerChain.chainId);
+
         const networksConfig = await innerNetworkStorage.get('networksConfig');
         innerNetworkStorage?.set('networksConfig', {
           ...networksConfig,
-          [innerChain.id]: {
-            ...networksConfig[innerChain.id],
+          [typedChainId]: {
+            ...networksConfig[typedChainId],
             defaultAccount: account.address,
           },
         });
@@ -240,12 +242,15 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
     if (nextActiveApi) {
       let hasSetFromStorage = false;
       const accounts = await nextActiveApi.accounts.accounts();
+
+      const typedChainId = calculateTypedChainId(chain.chainType, chain.chainId);
+
       // TODO resolve the account inner type issue
       setAccounts(accounts as any);
 
       if (_networkStorage) {
         const networkDefaultConfig = await _networkStorage.get('networksConfig');
-        let defaultAccount = networkDefaultConfig?.[chain.id]?.defaultAccount;
+        let defaultAccount = networkDefaultConfig?.[typedChainId]?.defaultAccount;
         defaultAccount = defaultAccount ?? accounts[0]?.address;
         const defaultFromSettings = accounts.find((account) => account.address === defaultAccount);
         if (defaultFromSettings) {
@@ -480,11 +485,20 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
                 ?.then(async () => {
                   if (web3Provider instanceof WalletConnectProvider) {
                     appEvent.send('networkSwitched', [
-                      evmIdIntoInternalChainId(await chainId),
+                      {
+                        chainType: chain.chainType,
+                        chainId: chain.chainId,
+                      },
                       WalletId.WalletConnectV1,
                     ]);
                   } else {
-                    appEvent.send('networkSwitched', [evmIdIntoInternalChainId(await chainId), WalletId.MetaMask]);
+                    appEvent.send('networkSwitched', [
+                      {
+                        chainType: chain.chainType,
+                        chainId: chain.chainId,
+                      },
+                      WalletId.MetaMask,
+                    ]);
                   }
                 })
                 ?.catch(async (switchError) => {
@@ -556,7 +570,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
       const _networkStorage = networkStorage ?? (await netStorageFactory());
       if (provider && _networkStorage) {
         await Promise.all([
-          _networkStorage.set('defaultNetwork', chain.id),
+          _networkStorage.set('defaultNetwork', calculateTypedChainId(chain.chainType, chain.chainId)),
           _networkStorage.set('defaultWallet', wallet.id),
         ]);
       }
@@ -591,6 +605,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
       }
       /// chain config by net id
       const chainConfig = chains[net];
+
       // wallet config by chain
       const walletConfig = chainConfig.wallets[wallet] || Object.values(chainConfig)[0];
       const activeApi = await switchChain(chainConfig, walletConfig, _networkStorage);
@@ -598,7 +613,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
 
       if (activeApi) {
         const accounts = await activeApi.accounts.accounts();
-        let defaultAccount = networkDefaultConfig[chainConfig.id]?.defaultAccount;
+        let defaultAccount = networkDefaultConfig[net]?.defaultAccount;
         defaultAccount = defaultAccount ?? accounts[0]?.address;
         const defaultFromSettings = accounts.find((account) => account.address === defaultAccount);
         logger.info(`Default account from settings`, defaultFromSettings);
@@ -607,7 +622,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
           await activeApi.accounts.setActiveAccount(defaultFromSettings);
           _networkStorage?.set('networksConfig', {
             ...networkDefaultConfig,
-            [chainConfig.id]: {
+            [net]: {
               ...chainConfig,
               defaultAccount: defaultFromSettings.address,
             },
@@ -616,7 +631,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
       } else {
         // If the user did not want to switch to the previously stored chain,
         // set the previosuly stored chain in the app for display only.
-        setActiveChain(chains[chainConfig.id]);
+        setActiveChain(chains[net]);
       }
     };
     init().finally(() => {
@@ -624,7 +639,10 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
     });
     appEvent.on('networkSwitched', async ([chain, wallet]) => {
       const networkStorage = await netStorageFactory();
-      await Promise.all([networkStorage.set('defaultNetwork', chain), networkStorage.set('defaultWallet', wallet)]);
+      await Promise.all([
+        networkStorage.set('defaultNetwork', chain.chainId),
+        networkStorage.set('defaultWallet', wallet),
+      ]);
     });
     appEvent.on('switchNetwork', ([chain, wallet]) => {
       switchChainAndStore(chain, wallet);

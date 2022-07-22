@@ -16,6 +16,7 @@ import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { TabButton, TabHeader } from '@webb-dapp/ui-components/Tabs/MixerTabs';
 import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
 import { LoggerService } from '@webb-tools/app-util';
+import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
@@ -57,7 +58,7 @@ export const AmountInputWrapper = styled.div`
 export const AmountButton = styled.button``;
 
 const PageWrapUnwrap: FC = () => {
-  const { activeApi, activeChain, activeWallet } = useWebContext();
+  const { activeApi, activeChain } = useWebContext();
   const {
     amount,
     context,
@@ -71,7 +72,6 @@ const PageWrapUnwrap: FC = () => {
     wrappableToken,
     wrappableTokens,
   } = useWrapUnwrap();
-  const palette = useColorPallet();
   const [displayedAmount, setDisplayedAmount] = useState<string>('');
 
   const [isSwap, setIsSwap] = useState(false);
@@ -137,7 +137,10 @@ const PageWrapUnwrap: FC = () => {
         setGovernedToken(governedTokens[0]);
       }
       activeApi?.methods.chainQuery
-        .tokenBalanceByCurrencyId(activeChain!.id, supportedToken.view.id as any)
+        .tokenBalanceByCurrencyId(
+          calculateTypedChainId(activeChain!.chainType, activeChain!.chainId),
+          supportedToken.view.id as any
+        )
         .then((balance) => {
           setGovernedTokenBalance(Number(balance));
         });
@@ -151,7 +154,10 @@ const PageWrapUnwrap: FC = () => {
         setWrappableToken(wrappableTokens[0]);
       }
       activeApi?.methods.chainQuery
-        .tokenBalanceByCurrencyId(activeChain!.id, supportedToken.view.id as any)
+        .tokenBalanceByCurrencyId(
+          calculateTypedChainId(activeChain!.chainType, activeChain!.chainId),
+          supportedToken.view.id as any
+        )
         .then((balance) => {
           setWrappableTokenBalance(Number(balance));
         });

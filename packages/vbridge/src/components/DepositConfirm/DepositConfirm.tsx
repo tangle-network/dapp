@@ -11,6 +11,7 @@ import { Spinner } from '@webb-dapp/ui-components/Spinner/Spinner';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 import { downloadString } from '@webb-dapp/utils';
 import { VBridgeDepositApi as DepositApi } from '@webb-dapp/vbridge/hooks/deposit/useBridgeDeposit';
+import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
@@ -103,7 +104,9 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({
       return setNote(undefined);
     }
 
-    const wrappableCurrencyAddress: string | undefined = wrappableAsset?.getAddress(activeChain.id);
+    const wrappableCurrencyAddress: string | undefined = wrappableAsset?.getAddress(
+      calculateTypedChainId(activeChain.chainType, activeChain.chainId)
+    );
     provider.generateNote(anchorId, destChain, amount, wrappableCurrencyAddress).then((note) => {
       setNote(note);
     });

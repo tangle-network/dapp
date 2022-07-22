@@ -1,5 +1,4 @@
-import { internalChainIdIntoEVMId } from '@webb-dapp/api-providers';
-import { calculateTypedChainId, ChainType, Note, NoteGenInput } from '@webb-tools/sdk-core';
+import { Note, NoteGenInput } from '@webb-tools/sdk-core';
 import { useEffect, useState } from 'react';
 
 async function migrateNote(noteString: string): Promise<Note | null> {
@@ -13,22 +12,10 @@ async function migrateNote(noteString: string): Promise<Note | null> {
       const newNoteInput: NoteGenInput = {
         protocol: d.note.protocol,
         version: 'v2',
-        targetChain: calculateTypedChainId(
-          ChainType.EVM,
-          internalChainIdIntoEVMId(Number(d.note.sourceChainId))
-        ).toString(),
-        sourceChain: calculateTypedChainId(
-          ChainType.EVM,
-          internalChainIdIntoEVMId(Number(d.note.sourceChainId))
-        ).toString(),
-        sourceIdentifyingData: calculateTypedChainId(
-          ChainType.EVM,
-          internalChainIdIntoEVMId(Number(d.note.sourceChainId))
-        ).toString(),
-        targetIdentifyingData: calculateTypedChainId(
-          ChainType.EVM,
-          internalChainIdIntoEVMId(Number(d.note.sourceChainId))
-        ).toString(),
+        targetChain: Number(d.note.sourceChainId).toString(),
+        sourceChain: Number(d.note.sourceChainId).toString(),
+        sourceIdentifyingData: Number(d.note.sourceChainId).toString(),
+        targetIdentifyingData: Number(d.note.sourceChainId).toString(),
         backend: d.note.backend,
         hashFunction: 'Poseidon',
         curve: d.note.curve,

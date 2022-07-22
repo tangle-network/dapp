@@ -10,7 +10,7 @@ import {
   Popper,
   Typography,
 } from '@mui/material';
-import { ActiveWebbRelayer, Capabilities, internalChainIdIntoEVMId, WebbRelayer } from '@webb-dapp/api-providers';
+import { ActiveWebbRelayer, Capabilities, WebbRelayer } from '@webb-dapp/api-providers';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
@@ -501,35 +501,25 @@ export const RelayerInput: React.FC<RelayerInputProps> = ({
                 {relayerInfo.evm.length > 0 && (
                   <>
                     <ul>
-                      {relayerInfo.evm
-                        .filter((i) => {
-                          try {
-                            internalChainIdIntoEVMId(Number(i.key));
-                            return true;
-                          } catch (e) {
-                            console.log(e, i, i.key);
-                            return false;
-                          }
-                        })
-                        .map((i) => {
-                          return (
-                            <li style={{ color: palette.primaryText }}>
-                              <Typography variant={'h5'}>{internalChainIdIntoEVMId(Number(i.key))}</Typography>
-                              <Padding v>
-                                <Typography variant={'h6'}>Account: {i.value.beneficiary?.toString()} </Typography>
-                                <Typography variant={'h6'}>Contracts:</Typography>
-                                <Padding x={1.5}>
-                                  {i.value.contracts.map((i) => (
-                                    <div>
-                                      <Typography variant={'h6'}>Size: {i.size?.toString()}</Typography>
-                                      <Typography variant={'h6'}>Address: {i.address}</Typography>
-                                    </div>
-                                  ))}
-                                </Padding>
+                      {relayerInfo.evm.map((i) => {
+                        return (
+                          <li style={{ color: palette.primaryText }}>
+                            <Typography variant={'h5'}>{Number(i.key)}</Typography>
+                            <Padding v>
+                              <Typography variant={'h6'}>Account: {i.value.beneficiary?.toString()} </Typography>
+                              <Typography variant={'h6'}>Contracts:</Typography>
+                              <Padding x={1.5}>
+                                {i.value.contracts.map((i) => (
+                                  <div>
+                                    <Typography variant={'h6'}>Size: {i.size?.toString()}</Typography>
+                                    <Typography variant={'h6'}>Address: {i.address}</Typography>
+                                  </div>
+                                ))}
                               </Padding>
-                            </li>
-                          );
-                        })}
+                            </Padding>
+                          </li>
+                        );
+                      })}
                     </ul>
                   </>
                 )}
