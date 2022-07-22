@@ -1,7 +1,7 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { ChainType, parseTypedChainId } from '@webb-tools/sdk-core';
+import { parseTypedChainId } from '@webb-tools/sdk-core';
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 

@@ -1,5 +1,5 @@
 import { alpha, ButtonBase, Checkbox, InputBase, Typography } from '@mui/material';
-import { Currency, InternalChainId } from '@webb-dapp/api-providers';
+import { Currency, WebbTypedChainId } from '@webb-dapp/api-providers';
 import { WalletConfig } from '@webb-dapp/api-providers/types';
 import { chainsPopulated, WalletId } from '@webb-dapp/apps/configs';
 import WEBBLogo from '@webb-dapp/apps/configs/logos/chains/WebbLogo';
@@ -17,7 +17,7 @@ import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { getRoundedAmountString } from '@webb-dapp/ui-components/utils';
 import { above, useBreakpoint } from '@webb-dapp/ui-components/utils/responsive-utils';
-import { FixedPointNumber } from '@webb-tools/sdk-core';
+import { calculateTypedChainId, FixedPointNumber } from '@webb-tools/sdk-core';
 import { FC, Fragment, useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
@@ -205,7 +205,7 @@ const PageCrowdloan: FC<PageCrowdloanProps> = () => {
   );
 
   const isConnectedToKusama = useMemo(() => {
-    return activeChain && activeChain.id === InternalChainId.Kusama;
+    return activeChain && calculateTypedChainId(activeChain.chainType, activeChain.chainId) === WebbTypedChainId.Kusama;
   }, [activeChain]);
 
   const buttonProps = useMemo<Pick<MixerButtonProps, 'label' | 'disabled' | 'onClick'>>(() => {
@@ -218,7 +218,7 @@ const PageCrowdloan: FC<PageCrowdloanProps> = () => {
         label: 'Connect to Kusama network',
         disabled: false,
         onClick: async () => {
-          const chainConfig = chainsPopulated[InternalChainId.Kusama];
+          const chainConfig = chainsPopulated[WebbTypedChainId.Kusama];
           const walletConfig = Object.values(chainConfig.wallets).find((wallet) => wallet.id === WalletId.Polkadot);
           if (!walletConfig) {
             return;
@@ -265,7 +265,10 @@ const PageCrowdloan: FC<PageCrowdloanProps> = () => {
     }
 
     activeApi.methods.chainQuery
-      .tokenBalanceByCurrencyId(activeChain.id, activeToken.view.id as any)
+      .tokenBalanceByCurrencyId(
+        calculateTypedChainId(activeChain.chainType, activeChain.chainId),
+        activeToken.view.id as any
+      )
       .then((balance) => {
         setTokenBalance(Number(balance));
       });

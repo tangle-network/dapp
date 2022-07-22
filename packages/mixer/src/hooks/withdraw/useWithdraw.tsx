@@ -7,7 +7,7 @@ import {
 } from '@webb-dapp/api-providers';
 import { misbehavingRelayer } from '@webb-dapp/react-environment/error/interactive-errors/misbehaving-relayer';
 import { useWebContext } from '@webb-dapp/react-environment/webb-context';
-import { Note } from '@webb-tools/sdk-core';
+import { calculateTypedChainId, Note } from '@webb-tools/sdk-core';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 export type UseWithdrawProps = {
@@ -153,7 +153,12 @@ export const useWithdraw = (params: UseWithdrawProps) => {
 
   const setRelayer = useCallback(
     (nextRelayer: WebbRelayer | null) => {
-      activeApi?.relayerManager.setActiveRelayer(nextRelayer, activeChain?.id!);
+      if (activeChain) {
+        activeApi?.relayerManager.setActiveRelayer(
+          nextRelayer,
+          calculateTypedChainId(activeChain?.chainType, activeChain?.chainId)
+        );
+      }
     },
     [activeApi, activeChain]
   );

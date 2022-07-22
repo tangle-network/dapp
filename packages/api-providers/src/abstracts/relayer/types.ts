@@ -37,7 +37,7 @@ export type Capabilities = {
  * @param withdrawFeePercentage - Relayer fee percentage used to estimate transaction costs
  * @param linkedAnchor - Linked anchors that a relayer is supporting
  **/
-export type ContractName = 'Anchor' | 'VAnchor';
+export type ContractName = 'VAnchor';
 export interface Contract {
   contract: ContractName;
   address: string;
@@ -94,14 +94,13 @@ export type FixedSizeQuery = {
  * @param ipService - Whether relayer supports the IP service
  * @param chainId - Relayer supportedChains has a chainId
  * @param contractAddress - Relayer supports the contract address
- * @param bridgeSupport - Relayer has support a contract with the amount and symbol `FixedAnchorQuery`
+ * @param contract - Relayer has support for a
  **/
 export type RelayerQuery = {
   baseOn?: 'evm' | 'substrate';
   ipService?: true;
   chainId?: number;
   contractAddress?: string;
-  bridgeSupport?: FixedSizeQuery;
   contract?: ContractName;
 };
 

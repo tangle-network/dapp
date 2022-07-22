@@ -9,6 +9,6 @@ export abstract class ChainQuery<Provider> {
   constructor(protected inner: Provider) {}
 
   abstract currentBlock(): Promise<number>;
-  abstract tokenBalanceByCurrencyId(chainId: number, currency: WebbCurrencyId): Promise<string>;
+  abstract tokenBalanceByCurrencyId(typedChainId: number, currency: WebbCurrencyId): Promise<string>;
   abstract tokenBalanceByAddress(address: string): Promise<string>;
 }

@@ -72,7 +72,6 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
     const sourceChainId = calculateTypedChainId(Number(chainType.toHex()), Number(chainId));
     const anchors = await this.bridgeApi.getVariableAnchors();
     const anchor = anchors[0];
-
     // Tree id for the target chain
     const treeId = anchor.neighbours[sourceChainId] as number;
 

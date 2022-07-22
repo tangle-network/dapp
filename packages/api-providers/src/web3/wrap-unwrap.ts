@@ -2,12 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { ERC20__factory as ERC20Factory } from '@webb-tools/contracts';
+import { calculateTypedChainId, ChainType } from '@webb-tools/sdk-core';
 import { ContractTransaction } from 'ethers';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import Web3 from 'web3';
 
 import { Amount, Bridge, Currency, MixerSize, WrappingBalance, WrappingEvent, WrapUnwrap } from '../abstracts';
-import { evmIdIntoInternalChainId, InternalChainId } from '../chains';
 import { WebbGovernedToken, zeroAddress } from '../contracts';
 import { WebbCurrencyId, webbCurrencyIdToString } from '../enums';
 import { CurrencyType } from '../types/currency-config.interface';
@@ -23,7 +23,7 @@ const defaultBalance: WrappingBalance = {
 export class Web3WrapUnwrap extends WrapUnwrap<WebbWeb3Provider> {
   private _balances = new BehaviorSubject<[WrappingBalance, WrappingBalance]>([defaultBalance, defaultBalance]);
   private _liquidity = new BehaviorSubject<[WrappingBalance, WrappingBalance]>([defaultBalance, defaultBalance]);
-  private _currentChainId = new BehaviorSubject<InternalChainId | null>(null);
+  private _currentChainId = new BehaviorSubject<number | null>(null);
   private _event = new Subject<Partial<WrappingEvent>>();
 
   private get config() {
@@ -48,7 +48,7 @@ export class Web3WrapUnwrap extends WrapUnwrap<WebbWeb3Provider> {
     inner
       .getChainId()
       .then((evmChainId) => {
-        this._currentChainId.next(evmIdIntoInternalChainId(evmChainId));
+        this._currentChainId.next(calculateTypedChainId(ChainType.EVM, evmChainId));
         this._event.next({
           ready: null,
         });
@@ -58,7 +58,7 @@ export class Web3WrapUnwrap extends WrapUnwrap<WebbWeb3Provider> {
       });
 
     inner.on('providerUpdate', ([evmChainId]) => {
-      this._currentChainId.next(evmIdIntoInternalChainId(evmChainId));
+      this._currentChainId.next(calculateTypedChainId(ChainType.EVM, evmChainId));
       this._event.next({
         stateUpdate: null,
       });

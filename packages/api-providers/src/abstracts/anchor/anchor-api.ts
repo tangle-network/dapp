@@ -4,7 +4,7 @@
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import { BehaviorSubject, Observable } from 'rxjs';
 
-import { Currency, TypedChainId, WebbCurrencyId, WebbTypedChainId } from '../../';
+import { Currency, TypedChainId, WebbCurrencyId } from '../../';
 
 export type BridgeCurrencyIndex = WebbCurrencyId;
 
@@ -62,11 +62,6 @@ export abstract class AnchorApi<Api, BridgeConfigEntry> {
   }
 
   abstract getAnchors(): Promise<Array<AnchorBase>>;
-
-  async getFixedAnchors(): Promise<Array<Omit<AnchorBase, 'amount'> & { amount: number | string }>> {
-    const allAnchors = await this.getAnchors();
-    return allAnchors.filter((a) => typeof a.amount !== 'undefined') as any;
-  }
 
   async getVariableAnchors(): Promise<Array<Omit<AnchorBase, 'amount'> & { amount: number | string }>> {
     const allAnchors = await this.getAnchors();

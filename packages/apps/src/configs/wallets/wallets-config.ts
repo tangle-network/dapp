@@ -1,4 +1,4 @@
-import { AppConfig, InternalChainId } from '@webb-dapp/api-providers';
+import { AppConfig, WebbTypedChainId } from '@webb-dapp/api-providers';
 import { MetaMaskLogo } from '@webb-dapp/apps/configs/logos/MetaMaskLogo';
 import { PolkaLogo } from '@webb-dapp/apps/configs/logos/PolkaLogo';
 import { WalletConnectLogo } from '@webb-dapp/apps/configs/logos/WalletConnectLogo';
@@ -6,22 +6,22 @@ import { WalletConnectLogo } from '@webb-dapp/apps/configs/logos/WalletConnectLo
 import { WalletId } from '../wallets/wallet-id.enum';
 
 const ANY_EVM = [
-  InternalChainId.EthereumMainNet,
-  InternalChainId.Rinkeby,
-  InternalChainId.Kovan,
-  InternalChainId.Ropsten,
-  InternalChainId.Goerli,
-  InternalChainId.HarmonyTestnet1,
-  InternalChainId.HarmonyTestnet0,
-  InternalChainId.HarmonyMainnet0,
-  InternalChainId.Shiden,
-  InternalChainId.OptimismTestnet,
-  InternalChainId.ArbitrumTestnet,
-  InternalChainId.PolygonTestnet,
-  InternalChainId.HermesLocalnet,
-  InternalChainId.AthenaLocalnet,
-  InternalChainId.DemeterLocalnet,
-  InternalChainId.MoonbaseAlpha,
+  WebbTypedChainId.EthereumMainNet,
+  WebbTypedChainId.Rinkeby,
+  WebbTypedChainId.Kovan,
+  WebbTypedChainId.Ropsten,
+  WebbTypedChainId.Goerli,
+  WebbTypedChainId.HarmonyTestnet1,
+  WebbTypedChainId.HarmonyTestnet0,
+  WebbTypedChainId.HarmonyMainnet0,
+  WebbTypedChainId.Shiden,
+  WebbTypedChainId.OptimismTestnet,
+  WebbTypedChainId.ArbitrumTestnet,
+  WebbTypedChainId.PolygonTestnet,
+  WebbTypedChainId.HermesLocalnet,
+  WebbTypedChainId.AthenaLocalnet,
+  WebbTypedChainId.DemeterLocalnet,
+  WebbTypedChainId.MoonbaseAlpha,
 ];
 export const walletsConfig: AppConfig['wallet'] = {
   [WalletId.Polkadot]: {
@@ -35,12 +35,12 @@ export const walletsConfig: AppConfig['wallet'] = {
       return true;
     },
     supportedChainIds: [
-      InternalChainId.EggStandalone,
-      InternalChainId.EggDevelopStandalone,
-      InternalChainId.DkgSubstrateStandalone,
-      InternalChainId.ProtocolSubstrateStandalone,
-      InternalChainId.Kusama,
-      InternalChainId.Polkadot,
+      WebbTypedChainId.EggStandalone,
+      WebbTypedChainId.EggDevelopStandalone,
+      WebbTypedChainId.DkgSubstrateStandalone,
+      WebbTypedChainId.ProtocolSubstrateStandalone,
+      WebbTypedChainId.Kusama,
+      WebbTypedChainId.Polkadot,
     ],
   },
   [WalletId.MetaMask]: {

@@ -85,18 +85,6 @@
 			"@webb-dapp/page-statistics": [
 				"page-statistics/src"
 			],
-			"@webb-dapp/bridge/*": [
-				"bridge/src/*"
-			],
-			"@webb-dapp/bridge": [
-				"bridge/src"
-			],
-			"@webb-dapp/page-bridge/*": [
-				"page-bridge/src/*"
-			],
-			"@webb-dapp/page-bridge": [
-				"page-bridge/src"
-			],
 			"@webb-dapp/vbridge/*": [
 				"vbridge/src/*"
 			],

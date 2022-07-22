@@ -1,17 +1,16 @@
-import { AppConfig, InternalChainId, SubstrateChainId, WebbCurrencyId } from '@webb-dapp/api-providers';
+import { AppConfig, SubstrateChainId, WebbCurrencyId, WebbTypedChainId } from '@webb-dapp/api-providers';
 import KSMLogo from '@webb-dapp/apps/configs/logos/chains/KusamaLogo';
 import DOTLogo from '@webb-dapp/apps/configs/logos/chains/PolkadotLogo';
 import WEBBLogo from '@webb-dapp/apps/configs/logos/chains/WebbLogo';
 import { ChainType } from '@webb-tools/sdk-core';
 
-export const getSupportedCurrenciesOfChain = (chainId: InternalChainId): WebbCurrencyId[] => {
-  return chainsConfig[chainId].currencies;
+export const getSupportedCurrenciesOfChain = (typedChainId: number): WebbCurrencyId[] => {
+  return chainsConfig[typedChainId].currencies;
 };
 
 export const chainsConfig: AppConfig['chains'] = {
-  [InternalChainId.ProtocolSubstrateStandalone]: {
+  [WebbTypedChainId.ProtocolSubstrateStandalone]: {
     chainType: ChainType.Substrate,
-    id: InternalChainId.ProtocolSubstrateStandalone,
     group: 'webb',
     tag: 'dev',
     chainId: SubstrateChainId.ProtocolSubstrateStandalone,
@@ -21,9 +20,8 @@ export const chainsConfig: AppConfig['chains'] = {
     currencies: [WebbCurrencyId.WEBB, WebbCurrencyId.TEST],
     nativeCurrencyId: WebbCurrencyId.WEBB,
   },
-  [InternalChainId.EggStandalone]: {
+  [WebbTypedChainId.EggStandalone]: {
     chainType: ChainType.Substrate,
-    id: InternalChainId.EggStandalone,
     group: 'webb',
     tag: 'test',
     chainId: SubstrateChainId.EggStandalone,
@@ -33,9 +31,8 @@ export const chainsConfig: AppConfig['chains'] = {
     currencies: [WebbCurrencyId.WEBB],
     nativeCurrencyId: WebbCurrencyId.WEBB,
   },
-  [InternalChainId.Kusama]: {
+  [WebbTypedChainId.Kusama]: {
     chainType: ChainType.Substrate,
-    id: InternalChainId.Kusama,
     group: 'webb',
     tag: 'live',
     chainId: SubstrateChainId.Kusama,
@@ -45,9 +42,8 @@ export const chainsConfig: AppConfig['chains'] = {
     currencies: [WebbCurrencyId.KSM],
     nativeCurrencyId: WebbCurrencyId.KSM,
   },
-  [InternalChainId.Polkadot]: {
+  [WebbTypedChainId.Polkadot]: {
     chainType: ChainType.Substrate,
-    id: InternalChainId.Polkadot,
     group: 'webb',
     tag: 'live',
     chainId: SubstrateChainId.Polkadot,

@@ -3,7 +3,7 @@ import WEBBLogo from '@webb-dapp/apps/configs/logos/chains/WebbLogo';
 import { useStore, useWebContext } from '@webb-dapp/react-environment';
 import { useDimensions } from '@webb-dapp/react-environment/layout';
 import { WalletSelect } from '@webb-dapp/ui-components/Inputs/WalletSelect/WalletSelect';
-import { NetworkManager } from '@webb-dapp/ui-components/NetworkManger/NetworkManager';
+import { NetworkManager } from '@webb-dapp/ui-components/NetworkManager/NetworkManager';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 import { above, useBreakpoint } from '@webb-dapp/ui-components/utils/responsive-utils';
 import React, { useMemo } from 'react';

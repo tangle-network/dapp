@@ -26,11 +26,6 @@ export const sideBarConfig: SidebarConfig = {
       icon: <BridgePageLogo />,
     },
     {
-      path: 'vbridge',
-      name: 'Variable',
-      icon: <BridgePageLogo />,
-    },
-    {
       path: 'wrap-unwrap',
       name: 'Wrap/Unwrap',
       icon: <WrapPageLogo />,

@@ -1,6 +1,7 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
+import { parseTypedChainId } from '@webb-tools/sdk-core';
 import { Observable, Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
@@ -249,8 +250,9 @@ export class ActiveWebbRelayer extends WebbRelayer {
 
   private get config() {
     const list = this.capabilities.supportedChains[this.query.basedOn];
+    const chainId = parseTypedChainId(this.query.typedChainId).chainId;
 
-    return list.get(this.query.typedChainId);
+    return list.get(chainId);
   }
 
   get gasLimit(): number | undefined {

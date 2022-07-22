@@ -8,8 +8,6 @@ import { Eth } from 'web3-eth';
 
 import { RelayChainMethods } from '../abstracts';
 import { AccountsAdapter } from '../account/Accounts.adapter';
-import { evmIdIntoInternalChainId } from '../chains';
-import { AnchorContract } from '../contracts/wrappers';
 import { VAnchorContract } from '../contracts/wrappers/webb-vanchor';
 import { Web3Accounts, Web3Provider } from '../ext-providers';
 import {
@@ -18,13 +16,11 @@ import {
   getAnchorDeploymentBlockNumber,
   NotificationHandler,
   Storage,
-  Web3AnchorDeposit,
   WebbApiProvider,
   WebbMethods,
   WebbProviderEvents,
 } from '../';
 import { Web3AnchorApi } from './anchor-api';
-import { Web3AnchorWithdraw } from './anchor-withdraw';
 import { Web3ChainQuery } from './chain-query';
 import { Web3MixerDeposit } from './mixer-deposit';
 import { Web3MixerWithdraw } from './mixer-withdraw';
@@ -60,16 +56,6 @@ export class WebbWeb3Provider
     this.methods = {
       anchorApi: new Web3AnchorApi(this, this.config.bridgeByAsset),
       chainQuery: new Web3ChainQuery(this),
-      fixedAnchor: {
-        deposit: {
-          enabled: true,
-          inner: new Web3AnchorDeposit(this),
-        },
-        withdraw: {
-          enabled: true,
-          inner: new Web3AnchorWithdraw(this),
-        },
-      },
       mixer: {
         deposit: {
           enabled: true,
@@ -147,17 +133,9 @@ export class WebbWeb3Provider
     return blockNumber;
   }
 
-  getFixedAnchorByAddress(address: string): AnchorContract {
-    return new AnchorContract(this.ethersProvider, address);
-  }
-
   // VAnchors require zero knowledge proofs on deposit - Fetch the small and large circuits.
   getVariableAnchorByAddress(address: string): VAnchorContract {
     return new VAnchorContract(this.ethersProvider, address);
-  }
-
-  getFixedAnchorByAddressAndProvider(address: string, provider: providers.Web3Provider): AnchorContract {
-    return new AnchorContract(provider, address, true);
   }
 
   getVariableAnchorByAddressAndProvider(address: string, provider: providers.Web3Provider): VAnchorContract {
@@ -170,11 +148,10 @@ export class WebbWeb3Provider
 
   async getVariableAnchorLeaves(contract: VAnchorContract, storage: Storage<BridgeStorage>): Promise<string[]> {
     const evmId = await contract.getEvmId();
-    const internalId = evmIdIntoInternalChainId(evmId);
     const typedChainId = calculateTypedChainId(ChainType.EVM, evmId);
 
     // First, try to fetch the leaves from the supported relayers
-    const relayers = await this.relayerManager.getRelayersByChainAndAddress(internalId, contract.inner.address);
+    const relayers = await this.relayerManager.getRelayersByChainAndAddress(typedChainId, contract.inner.address);
     let leaves = await this.relayerManager.fetchLeavesFromRelayers(relayers, contract, storage);
 
     // If unable to fetch leaves from the relayers, get them from chain
@@ -235,7 +212,7 @@ export class WebbWeb3Provider
         console.log('inside catch for switchChain', switchError);
 
         // cannot switch because network not recognized, so fetch configuration
-        const chainId = evmIdIntoInternalChainId(evmChainId);
+        const chainId = calculateTypedChainId(ChainType.EVM, evmChainId);
         const chain = this.config.chains[chainId];
 
         // prompt to add the chain

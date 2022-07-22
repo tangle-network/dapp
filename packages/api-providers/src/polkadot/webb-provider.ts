@@ -21,8 +21,6 @@ import {
   WebbProviderEvents,
 } from '../';
 import { PolkadotAnchorApi } from './anchor-api';
-import { PolkadotAnchorDeposit } from './anchor-deposit';
-import { PolkadotAnchorWithdraw } from './anchor-withdraw';
 import { PolkadotChainQuery } from './chain-query';
 import { PolkadotCrowdloan } from './crowdloan';
 import { PolkadotMixerDeposit } from './mixer-deposit';
@@ -67,16 +65,6 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
     this.methods = {
       anchorApi: new PolkadotAnchorApi(this, this.config.bridgeByAsset),
       chainQuery: new PolkadotChainQuery(this),
-      fixedAnchor: {
-        deposit: {
-          enabled: true,
-          inner: new PolkadotAnchorDeposit(this),
-        },
-        withdraw: {
-          enabled: true,
-          inner: new PolkadotAnchorWithdraw(this),
-        },
-      },
       mixer: {
         deposit: {
           enabled: true,

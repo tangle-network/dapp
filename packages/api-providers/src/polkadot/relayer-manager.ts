@@ -5,7 +5,6 @@ import { Note } from '@webb-tools/sdk-core';
 
 import { OptionalActiveRelayer, OptionalRelayer, RelayerQuery, shuffleRelayers, WebbRelayer } from '../abstracts';
 import { WebbRelayerManager } from '../abstracts/relayer/webb-relayer-manager';
-import { getFixedAnchorAddressForBridge, webbCurrencyIdFromString } from '..';
 
 export class PolkadotRelayerManager extends WebbRelayerManager {
   async mapRelayerIntoActive(relayer: OptionalRelayer, typedChainId: number): Promise<OptionalActiveRelayer> {
@@ -34,7 +33,7 @@ export class PolkadotRelayerManager extends WebbRelayerManager {
    *  Accepts a 'RelayerQuery' object with optional, indexible fields.
    **/
   getRelayers(query: RelayerQuery): WebbRelayer[] {
-    const { baseOn, bridgeSupport, chainId, contractAddress, ipService } = query;
+    const { baseOn, chainId, contractAddress, ipService } = query;
     const relayers = this.relayers.filter((relayer) => {
       const capabilities = relayer.capabilities;
 
@@ -53,27 +52,6 @@ export class PolkadotRelayerManager extends WebbRelayerManager {
                 (contract) => contract.address === contractAddress.toLowerCase() && contract.eventsWatcher.enabled
               )
           );
-        }
-      }
-
-      if (bridgeSupport && baseOn && chainId) {
-        if (baseOn === 'evm') {
-          const anchorAddress = getFixedAnchorAddressForBridge(
-            webbCurrencyIdFromString(bridgeSupport.tokenSymbol),
-            chainId,
-            bridgeSupport.amount,
-            this.config.bridgeByAsset
-          );
-
-          if (anchorAddress) {
-            return Boolean(
-              capabilities.supportedChains[baseOn]
-                .get(chainId)
-                ?.contracts?.find((contract) => contract.address === anchorAddress.toLowerCase())
-            );
-          } else {
-            return false;
-          }
         }
       }
 

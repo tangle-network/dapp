@@ -1,5 +1,5 @@
 import { Avatar, ClickAwayListener, Icon, IconButton, Tooltip, Typography } from '@mui/material';
-import { CurrencyContent, evmIdIntoInternalChainId, Web3Provider, WebbCurrencyId } from '@webb-dapp/api-providers';
+import { CurrencyContent, Web3Provider, WebbCurrencyId } from '@webb-dapp/api-providers';
 import { currenciesConfig } from '@webb-dapp/apps/configs';
 import { useWebContext } from '@webb-dapp/react-environment';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
@@ -7,6 +7,7 @@ import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
 import { above, useBreakpoint } from '@webb-dapp/ui-components/utils/responsive-utils';
+import { calculateTypedChainId, ChainType } from '@webb-tools/sdk-core';
 import React, { CSSProperties, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
@@ -99,10 +100,10 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
   const addTokenToMetaMask = async (currencyId: WebbCurrencyId) => {
     const provider: Web3Provider = activeApi?.getProvider();
     const activeEVM = await provider.network;
-    const entryChainId = evmIdIntoInternalChainId(activeEVM);
+    const typedChainId = calculateTypedChainId(ChainType.EVM, activeEVM);
 
     const token = currenciesConfig[currencyId];
-    const tokenAddress = token.addresses.get(entryChainId);
+    const tokenAddress = token.addresses.get(typedChainId);
     if (!tokenAddress) {
       return;
     }

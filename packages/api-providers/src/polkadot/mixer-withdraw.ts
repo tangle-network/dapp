@@ -4,7 +4,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
 import { typedChainIdToSubstrateRelayerName } from '@webb-dapp/apps/configs/relayer-config';
 import { LoggerService } from '@webb-tools/app-util';
-import { ArkworksProvingManager, Note, ProvingManagerSetupInput } from '@webb-tools/sdk-core';
+import { ArkworksProvingManager, Note, parseTypedChainId, ProvingManagerSetupInput } from '@webb-tools/sdk-core';
 import { ethers } from 'ethers';
 
 import { decodeAddress } from '@polkadot/keyring';
