@@ -1,8 +1,8 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { TypedChainId, WebbTypedChainId } from '../../chains';
-import { WebbCurrencyId } from '../../enums';
+import { PresetTypedChainId, TypedChainId } from '../../chains';
+import { CurrencyId } from '../../enums';
 import { CurrencyConfig, CurrencyRole, CurrencyView } from '../../types/currency-config.interface';
 import { AppConfig } from '../common';
 import { ORMLAsset } from './orml-currency';
@@ -19,7 +19,7 @@ export abstract class CurrencyContent {
  * This currency class assumes that instances are wrappable assets.
  **/
 export class Currency extends CurrencyContent {
-  constructor(private data: Omit<CurrencyConfig, 'id'> & { id: string | WebbCurrencyId }) {
+  constructor(private data: Omit<CurrencyConfig, 'id'> & { id: string | CurrencyId }) {
     super();
   }
 
@@ -27,7 +27,7 @@ export class Currency extends CurrencyContent {
     return this.data.id;
   }
 
-  static fromCurrencyId(currenciesConfig: AppConfig['currencies'], currencyId: WebbCurrencyId) {
+  static fromCurrencyId(currenciesConfig: AppConfig['currencies'], currencyId: CurrencyId) {
     const currencyConfig = currenciesConfig[currencyId];
 
     return new Currency(currencyConfig);
@@ -36,15 +36,15 @@ export class Currency extends CurrencyContent {
   // TODO: this should be removed instead use the constructor
   static fromORMLAsset(currenciesConfig: AppConfig['currencies'], asset: ORMLAsset): Currency {
     return new Currency({
-      ...currenciesConfig[WebbCurrencyId.WEBB],
-      addresses: new Map([[WebbTypedChainId.ProtocolSubstrateStandalone, asset.id]]),
+      ...currenciesConfig[CurrencyId.WEBB],
+      addresses: new Map([[PresetTypedChainId.ProtocolSubstrateStandalone, asset.id]]),
       id: `ORML@${asset.id}`,
       name: asset.name,
       symbol: asset.name.slice(0, 4).toLocaleUpperCase(),
     });
   }
 
-  static isWrappableCurrency(currenciesConfig: AppConfig['currencies'], currencyId: WebbCurrencyId) {
+  static isWrappableCurrency(currenciesConfig: AppConfig['currencies'], currencyId: CurrencyId) {
     if (currenciesConfig[currencyId].role === CurrencyRole.Wrappable) {
       return true;
     }

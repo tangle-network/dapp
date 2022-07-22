@@ -4,9 +4,9 @@
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import { BehaviorSubject, Observable } from 'rxjs';
 
-import { Currency, TypedChainId, WebbCurrencyId } from '../../';
+import { Currency, CurrencyId, TypedChainId } from '../../';
 
-export type BridgeCurrencyIndex = WebbCurrencyId;
+export type BridgeCurrencyIndex = CurrencyId;
 
 type BridgeStore<BridgeConfigEntry, BridgeConfig = Record<BridgeCurrencyIndex, BridgeConfigEntry>> = {
   config: BridgeConfig;

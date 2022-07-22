@@ -9,7 +9,7 @@ import Web3 from 'web3';
 
 import { Amount, Bridge, Currency, MixerSize, WrappingBalance, WrappingEvent, WrapUnwrap } from '../abstracts';
 import { WebbGovernedToken, zeroAddress } from '../contracts';
-import { WebbCurrencyId, webbCurrencyIdToString } from '../enums';
+import { CurrencyId, webbCurrencyIdToString } from '../enums';
 import { CurrencyType } from '../types/currency-config.interface';
 import { WebbWeb3Provider } from './webb-provider';
 
@@ -65,14 +65,14 @@ export class Web3WrapUnwrap extends WrapUnwrap<WebbWeb3Provider> {
     });
   }
 
-  setGovernedToken(nextToken: WebbCurrencyId | null) {
+  setGovernedToken(nextToken: CurrencyId | null) {
     this._governedToken.next(nextToken);
     this._event.next({
       governedTokenUpdate: nextToken,
     });
   }
 
-  setWrappableToken(nextToken: WebbCurrencyId | null) {
+  setWrappableToken(nextToken: CurrencyId | null) {
     this._wrappableToken.next(nextToken);
     this._event.next({
       wrappableTokenUpdate: nextToken,
@@ -89,7 +89,7 @@ export class Web3WrapUnwrap extends WrapUnwrap<WebbWeb3Provider> {
 
   // TODO: Dynamic wrappable currencies
   //
-  async getWrappableTokens(governedCurrency?: WebbCurrencyId | null): Promise<WebbCurrencyId[]> {
+  async getWrappableTokens(governedCurrency?: CurrencyId | null): Promise<CurrencyId[]> {
     if (this.currentChainId) {
       const currenciesOfChain = this.config.chains[this.currentChainId].currencies;
       const wrappableCurrencies = currenciesOfChain.filter((currencyId) => {
@@ -112,7 +112,7 @@ export class Web3WrapUnwrap extends WrapUnwrap<WebbWeb3Provider> {
     return [];
   }
 
-  async getGovernedTokens(): Promise<WebbCurrencyId[]> {
+  async getGovernedTokens(): Promise<CurrencyId[]> {
     if (this.currentChainId) {
       return Bridge.getTokensOfChain(this.inner.config.currencies, this.currentChainId).map(
         (currency) => currency.view.id
@@ -274,14 +274,14 @@ export class Web3WrapUnwrap extends WrapUnwrap<WebbWeb3Provider> {
     }
   }
 
-  private getAddressFromWrapTokenId(id: WebbCurrencyId): string {
+  private getAddressFromWrapTokenId(id: CurrencyId): string {
     const currentNetwork = this.currentChainId!;
     const address = this.config.currencies[id].addresses.get(currentNetwork)!;
 
     return address;
   }
 
-  governedTokenwrapper(id: WebbCurrencyId): WebbGovernedToken {
+  governedTokenwrapper(id: CurrencyId): WebbGovernedToken {
     const contractAddress = this.getAddressFromWrapTokenId(id);
 
     return new WebbGovernedToken(this.inner.getEthersProvider(), contractAddress);

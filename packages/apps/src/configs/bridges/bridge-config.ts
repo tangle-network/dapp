@@ -1,22 +1,22 @@
-import { AppConfig, WebbCurrencyId } from '@webb-dapp/api-providers';
+import { AppConfig, CurrencyId } from '@webb-dapp/api-providers';
 
 import { anchorsConfig } from '../anchors/anchor-config';
 
 export const bridgeConfigByAsset: AppConfig['bridgeByAsset'] = {
-  [WebbCurrencyId.webbETH]: {
-    asset: WebbCurrencyId.webbETH,
-    anchors: anchorsConfig[WebbCurrencyId.webbETH],
+  [CurrencyId.webbETH]: {
+    asset: CurrencyId.webbETH,
+    anchors: anchorsConfig[CurrencyId.webbETH],
   },
-  [WebbCurrencyId.WEBB]: {
-    asset: WebbCurrencyId.WEBB,
-    anchors: anchorsConfig[WebbCurrencyId.WEBB],
+  [CurrencyId.WEBB]: {
+    asset: CurrencyId.WEBB,
+    anchors: anchorsConfig[CurrencyId.WEBB],
   },
-  [WebbCurrencyId.webbDEV]: {
-    asset: WebbCurrencyId.webbDEV,
-    anchors: anchorsConfig[WebbCurrencyId.webbDEV],
+  [CurrencyId.webbDEV]: {
+    asset: CurrencyId.webbDEV,
+    anchors: anchorsConfig[CurrencyId.webbDEV],
   },
-  [WebbCurrencyId.TEST]: {
-    asset: WebbCurrencyId.TEST,
-    anchors: anchorsConfig[WebbCurrencyId.TEST],
+  [CurrencyId.TEST]: {
+    asset: CurrencyId.TEST,
+    anchors: anchorsConfig[CurrencyId.TEST],
   },
 };

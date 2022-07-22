@@ -5,9 +5,7 @@ import { EventBus } from '@webb-tools/app-util';
 import { FixedPointNumber } from '@webb-tools/sdk-core';
 import { BehaviorSubject } from 'rxjs';
 
-import { BN } from '@polkadot/util';
-
-import { WebbCurrencyId } from '../../enums';
+import { CurrencyId } from '../../enums';
 
 export type CrowdloanEvent = {
   ready: null;
@@ -28,7 +26,7 @@ export type CrowdloanFundInfo = {
  * Webb crowdloan contributing interface
  **/
 export abstract class Crowdloan<T, CrowdloanPayload extends ContributePayload> extends EventBus<CrowdloanEvent> {
-  protected crowdloanToken: BehaviorSubject<WebbCurrencyId | null> = new BehaviorSubject<null | WebbCurrencyId>(null);
+  protected crowdloanToken: BehaviorSubject<CurrencyId | null> = new BehaviorSubject<null | CurrencyId>(null);
 
   constructor(protected inner: T) {
     super();

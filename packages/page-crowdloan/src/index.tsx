@@ -1,5 +1,5 @@
 import { alpha, ButtonBase, Checkbox, InputBase, Typography } from '@mui/material';
-import { Currency, WebbTypedChainId } from '@webb-dapp/api-providers';
+import { Currency, PresetTypedChainId } from '@webb-dapp/api-providers';
 import { WalletConfig } from '@webb-dapp/api-providers/types';
 import { chainsPopulated, WalletId } from '@webb-dapp/apps/configs';
 import WEBBLogo from '@webb-dapp/apps/configs/logos/chains/WebbLogo';
@@ -205,7 +205,9 @@ const PageCrowdloan: FC<PageCrowdloanProps> = () => {
   );
 
   const isConnectedToKusama = useMemo(() => {
-    return activeChain && calculateTypedChainId(activeChain.chainType, activeChain.chainId) === WebbTypedChainId.Kusama;
+    return (
+      activeChain && calculateTypedChainId(activeChain.chainType, activeChain.chainId) === PresetTypedChainId.Kusama
+    );
   }, [activeChain]);
 
   const buttonProps = useMemo<Pick<MixerButtonProps, 'label' | 'disabled' | 'onClick'>>(() => {
@@ -218,7 +220,7 @@ const PageCrowdloan: FC<PageCrowdloanProps> = () => {
         label: 'Connect to Kusama network',
         disabled: false,
         onClick: async () => {
-          const chainConfig = chainsPopulated[WebbTypedChainId.Kusama];
+          const chainConfig = chainsPopulated[PresetTypedChainId.Kusama];
           const walletConfig = Object.values(chainConfig.wallets).find((wallet) => wallet.id === WalletId.Polkadot);
           if (!walletConfig) {
             return;

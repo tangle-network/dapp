@@ -1,9 +1,9 @@
 import {
   AppConfig,
+  PresetTypedChainId,
   RelayerCMDBase,
   RelayerConfig,
   WebbRelayerManagerFactory,
-  WebbTypedChainId,
 } from '@webb-dapp/api-providers';
 import { calculateTypedChainId, ChainType } from '@webb-tools/sdk-core';
 
@@ -26,12 +26,12 @@ export const relayerConfig: RelayerConfig[] = [
   },
 ];
 
-export function relayerSubstrateNameToTypedChainId(name: string): WebbTypedChainId {
+export function relayerSubstrateNameToTypedChainId(name: string): PresetTypedChainId {
   switch (name) {
     case 'localnode':
-      return WebbTypedChainId.ProtocolSubstrateStandalone;
+      return PresetTypedChainId.ProtocolSubstrateStandalone;
     case 'webbeggnet':
-      return WebbTypedChainId.EggStandalone;
+      return PresetTypedChainId.EggStandalone;
   }
 
   throw new Error('unhandled relayed chain name  ' + name);
@@ -39,9 +39,9 @@ export function relayerSubstrateNameToTypedChainId(name: string): WebbTypedChain
 
 export function typedChainIdToSubstrateRelayerName(id: number): string {
   switch (id) {
-    case WebbTypedChainId.ProtocolSubstrateStandalone:
+    case PresetTypedChainId.ProtocolSubstrateStandalone:
       return 'localnode';
-    case WebbTypedChainId.EggStandalone:
+    case PresetTypedChainId.EggStandalone:
       return 'webbeggnet';
   }
 

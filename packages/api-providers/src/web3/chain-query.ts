@@ -6,7 +6,7 @@ import { ethers } from 'ethers';
 
 import { ChainQuery } from '../abstracts';
 import { zeroAddress } from '../contracts';
-import { WebbCurrencyId } from '../enums';
+import { CurrencyId } from '../enums';
 import { Currency } from '../';
 import { WebbWeb3Provider } from './webb-provider';
 
@@ -24,7 +24,7 @@ export class Web3ChainQuery extends ChainQuery<WebbWeb3Provider> {
     return provider.getBlockNumber();
   }
 
-  async tokenBalanceByCurrencyId(typedChainId: number, currencyId: WebbCurrencyId): Promise<string> {
+  async tokenBalanceByCurrencyId(typedChainId: number, currencyId: CurrencyId): Promise<string> {
     const provider = this.inner.getEthersProvider();
 
     // check if the token is the native token of this chain

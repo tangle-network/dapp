@@ -1,11 +1,11 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { WebbCurrencyId } from '../enums';
+import { CurrencyId } from '../enums';
 import { AppConfig } from '../';
 
 export const getVariableAnchorAddressForBridge = (
-  assetId: WebbCurrencyId,
+  assetId: CurrencyId,
   typedChainId: number,
   bridgeConfigByAsset: AppConfig['bridgeByAsset']
 ): string | undefined => {

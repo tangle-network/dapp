@@ -1,5 +1,5 @@
 import { Avatar, ClickAwayListener, Icon, IconButton, Tooltip, Typography } from '@mui/material';
-import { CurrencyContent, Web3Provider, WebbCurrencyId } from '@webb-dapp/api-providers';
+import { CurrencyContent, CurrencyId, Web3Provider } from '@webb-dapp/api-providers';
 import { currenciesConfig } from '@webb-dapp/apps/configs';
 import { useWebContext } from '@webb-dapp/react-environment';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
@@ -97,7 +97,7 @@ export const TokenInput: React.FC<TokenInputProps> = ({ currencies, onChange, va
     return value.view;
   }, [value]);
 
-  const addTokenToMetaMask = async (currencyId: WebbCurrencyId) => {
+  const addTokenToMetaMask = async (currencyId: CurrencyId) => {
     const provider: Web3Provider = activeApi?.getProvider();
     const activeEVM = await provider.network;
     const typedChainId = calculateTypedChainId(ChainType.EVM, activeEVM);

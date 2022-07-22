@@ -18,7 +18,7 @@ export enum SubstrateChainId {
 }
 
 // Pre-calculated TypedChainId values that are supported in the dapp
-export enum WebbTypedChainId {
+export enum PresetTypedChainId {
   EthereumMainNet = 1099511627777,
   Rinkeby = 1099511627780,
   Ropsten = 1099511627779,

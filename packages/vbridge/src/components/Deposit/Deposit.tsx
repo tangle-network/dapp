@@ -1,4 +1,4 @@
-import { Currency, TransactionState, TypedChainId, WalletConfig, WebbCurrencyId } from '@webb-dapp/api-providers';
+import { Currency, CurrencyId, TransactionState, TypedChainId, WalletConfig } from '@webb-dapp/api-providers';
 import { useWrapUnwrap } from '@webb-dapp/page-wrap-unwrap/hooks/useWrapUnwrap';
 import { RequiredWalletSelection } from '@webb-dapp/react-components/RequiredWalletSelection/RequiredWalletSelection';
 import { TransactionProcessingModal } from '@webb-dapp/react-components/Transact/TransactionProcessingModal';
@@ -238,7 +238,7 @@ export const Deposit: React.FC<DepositProps> = () => {
                   onChange={(currencyContent) => {
                     setWrappableToken(
                       currencyContent
-                        ? Currency.fromCurrencyId(currenciesConfig, currencyContent.view.id as WebbCurrencyId)
+                        ? Currency.fromCurrencyId(currenciesConfig, currencyContent.view.id as CurrencyId)
                         : null
                     );
                   }}

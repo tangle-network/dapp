@@ -1,7 +1,7 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { WebbCurrencyId } from '../enums';
+import { CurrencyId } from '../enums';
 import { ReactElement } from './abstracts';
 
 // The CurrencyType distinguishes how to interact with a particular currency in terms of
@@ -22,7 +22,7 @@ export enum CurrencyRole {
 }
 
 export interface CurrencyView {
-  id: WebbCurrencyId;
+  id: CurrencyId;
   icon: ReactElement;
   imageUrl?: string;
   type: CurrencyType;
