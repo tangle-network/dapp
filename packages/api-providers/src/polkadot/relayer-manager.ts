@@ -5,13 +5,9 @@ import { Note } from '@webb-tools/sdk-core';
 
 import { OptionalActiveRelayer, OptionalRelayer, RelayerQuery, shuffleRelayers, WebbRelayer } from '../abstracts';
 import { WebbRelayerManager } from '../abstracts/relayer/webb-relayer-manager';
-import { InternalChainId } from '../chains';
 
 export class PolkadotRelayerManager extends WebbRelayerManager {
-  async mapRelayerIntoActive(
-    relayer: OptionalRelayer,
-    internalChainId: InternalChainId
-  ): Promise<OptionalActiveRelayer> {
+  async mapRelayerIntoActive(relayer: OptionalRelayer, typedChainId: number): Promise<OptionalActiveRelayer> {
     if (!relayer) {
       return null;
     }
@@ -20,7 +16,7 @@ export class PolkadotRelayerManager extends WebbRelayerManager {
       relayer,
       {
         basedOn: 'substrate',
-        chain: internalChainId,
+        typedChainId,
       },
       async () => {
         return {
@@ -86,8 +82,7 @@ export class PolkadotRelayerManager extends WebbRelayerManager {
     );
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async getRelayersByChainAndAddress(_chainId: InternalChainId, _address: string) {
+  async getRelayersByChainAndAddress(_chainId: number, _address: string) {
     return this.getRelayers({});
   }
 }

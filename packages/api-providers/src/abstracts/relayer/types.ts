@@ -1,10 +1,6 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { InternalChainId } from '../../chains';
-
-export type RelayerManagerType = 'evm' | 'substrate';
-
 /**
  * Relayer configuration for a chain
  * @param account - Relayer account that is going to be used to sign the transaction
@@ -24,8 +20,8 @@ export type RelayedChainConfig = {
 export type Capabilities = {
   hasIpService: boolean;
   supportedChains: {
-    substrate: Map<InternalChainId, RelayedChainConfig>;
-    evm: Map<InternalChainId, RelayedChainConfig>;
+    substrate: Map<number, RelayedChainConfig>;
+    evm: Map<number, RelayedChainConfig>;
   };
 };
 
@@ -99,14 +95,15 @@ export type FixedSizeQuery = {
  * @param contract - Relayer has support for a
  **/
 export type RelayerQuery = {
-  baseOn?: 'evm' | 'substrate';
+  baseOn?: RelayerCMDBase;
   ipService?: true;
-  chainId?: InternalChainId;
+  chainId?: number;
   contractAddress?: string;
   contract?: ContractName;
+  typedChainId?: number;
 };
 
-export type ChainNameIntoChainId = (name: string, basedOn: 'evm' | 'substrate') => InternalChainId | null;
+export type ChainNameIntoChainId = (name: string, basedOn: RelayerCMDBase) => number | null;
 
 export interface RelayerInfo {
   substrate: Record<string, RelayedChainConfig | null>;

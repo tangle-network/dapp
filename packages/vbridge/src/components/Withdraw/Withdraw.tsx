@@ -1,12 +1,5 @@
 import { InputBase } from '@mui/material';
-import {
-  Capabilities,
-  getChainNameFromChainId,
-  TransactionState,
-  typedChainIdToInternalId,
-  WalletConfig,
-  WebbRelayer,
-} from '@webb-dapp/api-providers';
+import { getChainNameFromTypedChainId, TransactionState, WalletConfig, WebbRelayer } from '@webb-dapp/api-providers';
 import { chainsPopulated } from '@webb-dapp/apps/configs';
 import { getRelayerManagerFactory } from '@webb-dapp/apps/configs/relayer-config';
 import { useDepositNotes } from '@webb-dapp/mixer';
@@ -133,26 +126,25 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
       return;
     }
     const chainTypeId = parseTypedChainId(Number(note.note.targetChainId));
-    const internalChainId = typedChainIdToInternalId(chainTypeId);
-    const chain = chainsPopulated[internalChainId];
+    const chain = chainsPopulated[Number(note.note.targetChainId)];
     await switchChain(chain, activeWallet);
   };
 
   const relayerApi: RelayerApiAdapter = useMemo(() => {
     return {
       getInfo: async (endpoint) => {
-        const relayerManagerFactory = await getRelayerManagerFactory();
+        const relayerManagerFactory = await getRelayerManagerFactory(appConfig);
         return relayerManagerFactory.fetchCapabilities(endpoint) ?? ({} as any);
       },
       add: async (endPoint: string) => {
-        const relayerManagerFactory = await getRelayerManagerFactory();
+        const relayerManagerFactory = await getRelayerManagerFactory(appConfig);
         const relayerCapabilities = await relayerManagerFactory.addRelayer(endPoint);
         const relayer = new WebbRelayer(endPoint, relayerCapabilities[endPoint]);
         activeApi?.relayerManager.addRelayer(relayer);
         return relayer;
       },
     };
-  }, [activeApi]);
+  }, [activeApi, appConfig]);
 
   const depositAmount = useMemo(() => {
     if (!depositNotes?.length || !firstNote) {
@@ -363,9 +355,9 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
             <InformationItem>
               <Title>Chains</Title>
               <Value>
-                {getChainNameFromChainId(appConfig, parseTypedChainId(Number(firstNote.note.sourceChainId)))}
+                {getChainNameFromTypedChainId(appConfig, parseTypedChainId(Number(firstNote.note.sourceChainId)))}
                 {` -> `}
-                {getChainNameFromChainId(appConfig, parseTypedChainId(Number(firstNote.note.targetChainId)))}
+                {getChainNameFromTypedChainId(appConfig, parseTypedChainId(Number(firstNote.note.targetChainId)))}
               </Value>
             </InformationItem>
 
@@ -412,11 +404,11 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
             state={stage}
             txFlow={'Withdraw'}
             amount={withdrawAmount}
-            sourceChain={getChainNameFromChainId(
+            sourceChain={getChainNameFromTypedChainId(
               appConfig,
               parseTypedChainId(Number(depositNotes[0].note.sourceChainId))
             )}
-            destChain={getChainNameFromChainId(
+            destChain={getChainNameFromTypedChainId(
               appConfig,
               parseTypedChainId(Number(depositNotes[0].note.targetChainId))
             )}

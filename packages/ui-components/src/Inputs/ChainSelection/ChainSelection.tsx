@@ -1,11 +1,12 @@
 import { Avatar, InputBase, ListItemAvatar, ListItemText, Typography } from '@mui/material';
 import { Chain } from '@webb-dapp/api-providers/abstracts';
-import { TypedChainId, typedChainIdToInternalId } from '@webb-dapp/api-providers/chains';
+import { TypedChainId } from '@webb-dapp/api-providers/chains';
 import { chainsPopulated } from '@webb-dapp/apps/configs';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import SearchIcon from '@webb-dapp/ui-components/assets/SearchIcon';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { useBreakpoint } from '@webb-dapp/ui-components/utils/responsive-utils';
+import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import { debounce } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
@@ -44,7 +45,7 @@ const ChainSelection: React.FC<ChainSelectionProps> = ({ chainTypeIds, onChange,
   const [displayChainTypeIds, setDisplayChainTypeIds] = useState(chainTypeIds);
 
   const getChainFromChainTypeId = useCallback(
-    (chainTypeId: TypedChainId) => chainsPopulated[typedChainIdToInternalId(chainTypeId)],
+    (chainTypeId: TypedChainId) => chainsPopulated[calculateTypedChainId(chainTypeId.chainType, chainTypeId.chainId)],
     []
   );
 
@@ -101,7 +102,7 @@ const ChainSelection: React.FC<ChainSelectionProps> = ({ chainTypeIds, onChange,
         {displayChainTypeIds.length ? (
           displayChainTypeIds.map((chainTypeId, idx) => {
             const chain = getChainFromChainTypeId(chainTypeId);
-            const selected = selectedChain?.id === chain.id;
+            const selected = selectedChain?.chainId === chain.chainId;
             const onClick = selected
               ? undefined
               : () => {
@@ -110,7 +111,7 @@ const ChainSelection: React.FC<ChainSelectionProps> = ({ chainTypeIds, onChange,
                 };
 
             return (
-              <ListItem key={chain.id} idx={idx} selected={selected} onClick={onClick}>
+              <ListItem key={chain.chainId} idx={idx} selected={selected} onClick={onClick}>
                 <ListItemAvatar>
                   <Avatar className='list-item-avatar' children={<chain.logo />} />
                 </ListItemAvatar>

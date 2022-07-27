@@ -1,0 +1,33 @@
+#This is the default signalling chart.
+#Edit and press F2 to see the result.
+#You can change the default chart
+#with the leftmost button on the Preferences pane of the ribbon.
+
+title: \-Relayer Config;
+
+Relayer,WRMF,WRM,WR;
+comment: \- WRMF - Webb Relayer Manager Factory
+         WRM - Webb Relayer Manager
+         WR - Webb Relayer;
+->WRMF: \-init;
+WRMF->WRMF: \-fetch capabilities;
+WRMF==>Relayer: \- get config for 
+                all relayers;
+Relayer==>WRMF: \- 
+                config;
+WRMF->WRMF:\- chainNameAdapter to
+           Capabilities[side=left];
+note: Converts relayer naming
+      (indexed on chainId)
+      
+      to the naming expected
+      in the dapp.
+      (indexed on typedChainId);
+<<WRMF: \-WebbRelayerManagerFactory;
+---;
+->WRMF: \- getRelayerManager("evm");
+WRMF->WR: \- Create from capabilities;
+WR>>WRMF: \- Relayer\[\];
+WRMF->WRM: \- get "evm" manager
+           (relayers): RelayerManager;
+<<WRM: \- RelayerManager;

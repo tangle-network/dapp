@@ -1,10 +1,11 @@
 import {
-  evmIdIntoInternalChainId,
-  InternalChainId,
+  AppConfig,
+  PresetTypedChainId,
+  RelayerCMDBase,
   RelayerConfig,
-  substrateIdIntoInternalChainId,
   WebbRelayerManagerFactory,
 } from '@webb-dapp/api-providers';
+import { calculateTypedChainId, ChainType } from '@webb-tools/sdk-core';
 
 let relayerManagerFactory: WebbRelayerManagerFactory | null = null;
 export const relayerConfig: RelayerConfig[] = [
@@ -25,38 +26,41 @@ export const relayerConfig: RelayerConfig[] = [
   },
 ];
 
-export function relayerSubstrateNameToChainId(name: string): InternalChainId {
+export function relayerSubstrateNameToTypedChainId(name: string): PresetTypedChainId {
   switch (name) {
     case 'localnode':
-      return InternalChainId.ProtocolSubstrateStandalone;
+      return PresetTypedChainId.ProtocolSubstrateStandalone;
     case 'webbeggnet':
-      return InternalChainId.EggStandalone;
+      return PresetTypedChainId.EggStandalone;
   }
 
   throw new Error('unhandled relayed chain name  ' + name);
 }
 
-export function internalIdToSubstrateRelayerName(id: InternalChainId): string {
+export function typedChainIdToSubstrateRelayerName(id: number): string {
   switch (id) {
-    case InternalChainId.ProtocolSubstrateStandalone:
+    case PresetTypedChainId.ProtocolSubstrateStandalone:
       return 'localnode';
-    case InternalChainId.EggStandalone:
+    case PresetTypedChainId.EggStandalone:
       return 'webbeggnet';
   }
 
   throw new Error('unhandled chain id for substrate');
 }
 
-// TODO: Read previously custom added endpoints from localStorage, and pass with relayerConfig
-export async function getRelayerManagerFactory() {
+function chainNameAdapter(name: string, basedOn: RelayerCMDBase) {
+  try {
+    return basedOn === 'evm'
+      ? calculateTypedChainId(ChainType.EVM, Number(name))
+      : relayerSubstrateNameToTypedChainId(name);
+  } catch (e) {
+    return null;
+  }
+}
+
+export async function getRelayerManagerFactory(appConfig: AppConfig) {
   if (!relayerManagerFactory) {
-    relayerManagerFactory = await WebbRelayerManagerFactory.init(relayerConfig, (name, basedOn) => {
-      try {
-        return basedOn === 'evm' ? evmIdIntoInternalChainId(name) : substrateIdIntoInternalChainId(Number(name));
-      } catch (e) {
-        return null;
-      }
-    });
+    relayerManagerFactory = await WebbRelayerManagerFactory.init(relayerConfig, chainNameAdapter, appConfig);
   }
   return relayerManagerFactory;
 }

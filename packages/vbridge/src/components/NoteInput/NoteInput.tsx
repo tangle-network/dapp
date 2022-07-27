@@ -1,5 +1,5 @@
 import { Icon, IconButton } from '@mui/material';
-import { getChainNameFromChainId } from '@webb-dapp/api-providers/utils';
+import { getChainNameFromTypedChainId } from '@webb-dapp/api-providers/utils';
 import { useDepositNote } from '@webb-dapp/mixer/hooks';
 import { useAppConfig } from '@webb-dapp/react-environment/webb-context';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
@@ -36,7 +36,7 @@ export const NoteInput: React.FC<NoteInputProps> = ({ error, isRemoveNote = fals
                 <b>Dest Chain:</b>
               </Title>
               <Value>
-                {getChainNameFromChainId(appConfig, parseTypedChainId(Number(depositNote.note.targetChainId)))}
+                {getChainNameFromTypedChainId(appConfig, parseTypedChainId(Number(depositNote.note.targetChainId)))}
               </Value>
             </InformationItem>
             <InformationItem>
@@ -58,7 +58,7 @@ export const NoteInput: React.FC<NoteInputProps> = ({ error, isRemoveNote = fals
               <b>Dest Chain:</b>
             </Title>
             <Value>
-              {getChainNameFromChainId(appConfig, parseTypedChainId(Number(depositNote.note.targetChainId)))}
+              {getChainNameFromTypedChainId(appConfig, parseTypedChainId(Number(depositNote.note.targetChainId)))}
             </Value>
           </InformationItem>
           <InformationItem>

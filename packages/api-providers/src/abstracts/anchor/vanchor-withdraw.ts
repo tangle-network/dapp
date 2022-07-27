@@ -6,7 +6,6 @@ import type { TXresultBase, WebbApiProvider } from '../webb-provider.interface';
 import { EventBus } from '@webb-tools/app-util';
 import { Note } from '@webb-tools/sdk-core';
 
-import { InternalChainId } from '../../chains';
 import { CancelToken, TransactionState, WebbWithdrawEvents } from '../mixer';
 import { Bridge } from './bridge';
 
@@ -25,7 +24,7 @@ export abstract class VAnchorWithdraw<T extends WebbApiProvider<any>> extends Ev
     return Bridge.getTokens(this.inner.config.currencies);
   }
 
-  getTokensOfChain(chainId: InternalChainId) {
+  getTokensOfChain(chainId: number) {
     return Bridge.getTokensOfChain(this.inner.config.currencies, chainId);
   }
 

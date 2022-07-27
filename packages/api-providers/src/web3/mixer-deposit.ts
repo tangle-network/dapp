@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { IAnchorDepositInfo } from '@webb-tools/interfaces';
-import { Note } from '@webb-tools/sdk-core';
+import { calculateTypedChainId, ChainType, Note } from '@webb-tools/sdk-core';
 
 import { DepositPayload as IDepositPayload, MixerDeposit, MixerSize } from '../abstracts';
 import { WebbWeb3Provider } from '.';

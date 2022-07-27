@@ -11,12 +11,11 @@ import {
   RelayedChainInput,
   RelayedWithdrawResult,
   TransactionState,
-  typedChainIdToInternalId,
   WebbError,
   WebbErrorCodes,
 } from '@webb-dapp/api-providers';
 import { getLeafCount, getLeafIndex, getLeaves, rootOfLeaves } from '@webb-dapp/api-providers/polkadot/mt-utils';
-import { internalIdToSubstrateRelayerName } from '@webb-dapp/apps/configs/relayer-config';
+import { typedChainIdToSubstrateRelayerName } from '@webb-dapp/apps/configs/relayer-config';
 import { ArkworksProvingManager, Note, parseTypedChainId, ProvingManagerSetupInput, Utxo } from '@webb-tools/sdk-core';
 import { VAnchorProof } from '@webb-tools/sdk-core/proving/types';
 import { BigNumber } from 'ethers';
@@ -26,7 +25,6 @@ import { hexToU8a, u8aToHex } from '@polkadot/util';
 import { naclEncrypt, randomAsU8a } from '@polkadot/util-crypto';
 
 import { VAnchorWithdraw, VAnchorWithdrawResult } from '../abstracts/anchor/vanchor-withdraw';
-import { internalChainIdIntoSubstrateId } from '../chains';
 
 export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
   /**
@@ -143,7 +141,6 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
       output: [output1, output2],
     };
     const destChainIdType = parseTypedChainId(Number(inputNotes[0].note.targetChainId));
-    const destInternalId = typedChainIdToInternalId(destChainIdType);
 
     const data: VAnchorProof = await pm.prove('vanchor', vanchorWithdrawSetup);
     const vanchorProofData = {
@@ -159,8 +156,8 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
 
     if (activeRelayer) {
       const relayedVAnchorWithdraw = await activeRelayer.initWithdraw('vAnchor');
-      const chainName = internalIdToSubstrateRelayerName(destInternalId);
-      const substrateId = internalChainIdIntoSubstrateId(destInternalId);
+      const chainName = typedChainIdToSubstrateRelayerName(Number(inputNotes[0].note.targetChainId));
+      const substrateId = destChainIdType.chainId;
       const chainInfo: RelayedChainInput = {
         baseOn: 'substrate',
         contractAddress: '',

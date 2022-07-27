@@ -17,36 +17,31 @@ export enum SubstrateChainId {
   Polkadot = 0,
 }
 
-// INTERNAL CHAIN IDS
-// ONLY APPEND OR NOTES WILL BREAK
-// TODO: Modify this to use typed chain Ids for the enum values
-export enum InternalChainId {
-  Edgeware,
-  EdgewareTestNet,
-  EdgewareLocalNet,
-  EthereumMainNet,
-  Rinkeby,
-  Ropsten,
-  Kovan,
-  Goerli,
-  HarmonyTestnet1,
-  HarmonyTestnet0,
-  HarmonyMainnet0,
-  Ganache,
-  Shiden,
-  OptimismTestnet,
-  ArbitrumTestnet,
-  PolygonTestnet,
-  ProtocolSubstrateStandalone,
-  HermesLocalnet,
-  AthenaLocalnet,
-  EggStandalone,
-  EggDevelopStandalone,
+// Pre-calculated TypedChainId values that are supported in the dapp
+export enum PresetTypedChainId {
+  EthereumMainNet = 1099511627777,
+  Rinkeby = 1099511627780,
+  Ropsten = 1099511627779,
+  Kovan = 1099511627818,
+  Goerli = 1099511627781,
+  HarmonyTestnet1 = 1101178327777,
+  HarmonyTestnet0 = 1101178327776,
+  HarmonyMainnet0 = 1101178227776,
+  Ganache = 1099511629113,
+  Shiden = 1099511628112,
+  OptimismTestnet = 1099511627845,
+  ArbitrumTestnet = 1099512049387,
+  PolygonTestnet = 1099511707777,
+  ProtocolSubstrateStandalone = 2199023256632,
+  EggStandalone = 2199023256633,
+  EggDevelopStandalone = 2199023256633,
   DkgSubstrateStandalone,
-  DemeterLocalnet,
-  Kusama,
-  Polkadot,
-  MoonbaseAlpha,
+  Kusama = 3307124817922,
+  Polkadot = 3302829850624,
+  MoonbaseAlpha = 1099511629063,
+  HermesLocalnet = 1099511632777,
+  AthenaLocalnet = 1099511632778,
+  DemeterLocalnet = 1099511632779,
 }
 
 export enum EVMChainId {

@@ -9,7 +9,7 @@ import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import {
   DownIconWrapper,
   NetworkIndicatorWrapper,
-} from '@webb-dapp/ui-components/NetworkManger/NetworkManagerIndicator';
+} from '@webb-dapp/ui-components/NetworkManager/NetworkManagerIndicator';
 import { useBreakpoint } from '@webb-dapp/ui-components/utils/responsive-utils';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';

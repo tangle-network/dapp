@@ -26,14 +26,11 @@ import {
   VAnchorDeposit,
   VAnchorDepositResults,
 } from '../abstracts';
-import { evmIdIntoInternalChainId, typedChainIdToInternalId } from '../chains';
 import {
-  BridgeStorage,
   bridgeStorageFactory,
   fetchVariableAnchorKeyForEdges,
   fetchVariableAnchorWasmForEdges,
-  getAnchorDeploymentBlockNumber,
-  getEVMChainNameFromInternal,
+  getEVMChainName,
   keypairStorageFactory,
   Web3Provider,
 } from '..';
@@ -68,6 +65,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
     amount: number,
     wrappableAssetAddress?: string
   ): Promise<DepositPayload> {
+    console.log('generateBridgeNote: ', anchorId, destination, amount);
     const bridge = this.bridgeApi.activeBridge;
     const currency = this.bridgeApi.currency;
 
@@ -105,16 +103,14 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
       keypair,
     });
 
-    const srcChainInternal = evmIdIntoInternalChainId(sourceEvmId);
-    const destChainInternal = typedChainIdToInternalId(parseTypedChainId(destination));
     const anchorConfig = bridge.anchors.find((anchorConfig) => anchorConfig.type === 'variable');
 
     if (!anchorConfig) {
       throw new Error(`cannot find anchor configuration with amount: ${amount}`);
     }
 
-    const srcAddress = anchorConfig.anchorAddresses[srcChainInternal];
-    const destAddress = anchorConfig.anchorAddresses[destChainInternal];
+    const srcAddress = anchorConfig.anchorAddresses[sourceChainId];
+    const destAddress = anchorConfig.anchorAddresses[destination];
 
     const noteInput: NoteGenInput = {
       amount: bnAmount.toString(),
@@ -152,6 +148,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
   async deposit(depositPayload: DepositPayload): Promise<VAnchorDepositResults> {
     const bridge = this.bridgeApi.activeBridge;
     const currency = this.bridgeApi.currency;
+    console.log('deposit: ', depositPayload);
 
     if (!bridge || !currency) {
       throw new Error('api not ready');
@@ -165,12 +162,11 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
 
       const sourceEvmId = await this.inner.getChainId();
       const sourceChainId = calculateTypedChainId(ChainType.EVM, sourceEvmId);
-      const sourceInternalId = evmIdIntoInternalChainId(sourceEvmId);
 
       this.inner.notificationHandler({
         data: {
           amount: ethers.utils.formatUnits(note.amount, note.denomination),
-          chain: getEVMChainNameFromInternal(this.inner.config, Number(sourceInternalId)),
+          chain: getEVMChainName(this.inner.config, sourceEvmId),
           currency: currency.view.name,
         },
         description: 'Depositing',
@@ -190,7 +186,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
       }
 
       // Get the contract address for the destination chain
-      const srcAddress = vanchor.neighbours[sourceInternalId] as string;
+      const srcAddress = vanchor.neighbours[sourceChainId] as string;
 
       if (!srcAddress) {
         throw new Error(`No Anchor for the chain ${note.targetChainId}`);
@@ -218,12 +214,11 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
       }
 
       // Set up a provider for the dest chain
-      const destChainTypeId = parseTypedChainId(Number(utxo.chainId));
-      const destInternalId = evmIdIntoInternalChainId(destChainTypeId.chainId);
-      const destChainConfig = this.config.chains[destInternalId];
+      const destTypedChainId = Number(utxo.chainId);
+      const destChainConfig = this.config.chains[destTypedChainId];
       const destHttpProvider = Web3Provider.fromUri(destChainConfig.url);
       const destEthers = destHttpProvider.intoEthersProvider();
-      const destAddress = vanchor.neighbours[destInternalId] as string;
+      const destAddress = vanchor.neighbours[destTypedChainId] as string;
       const destVAnchor = await this.inner.getVariableAnchorByAddressAndProvider(destAddress, destEthers);
       leafStorage = await bridgeStorageFactory(Number(utxo.chainId));
       leaves = await this.inner.getVariableAnchorLeaves(destVAnchor, leafStorage);
@@ -283,7 +278,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
           this.inner.notificationHandler({
             data: {
               amount: ethers.utils.formatUnits(note.amount, note.denomination),
-              chain: getEVMChainNameFromInternal(this.inner.config, Number(sourceInternalId)),
+              chain: getEVMChainName(this.inner.config, sourceEvmId),
               currency: currency.view.name,
             },
             description: 'Depositing',
@@ -298,7 +293,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
           this.inner.notificationHandler({
             data: {
               amount: ethers.utils.formatUnits(note.amount, note.denomination),
-              chain: getEVMChainNameFromInternal(this.inner.config, Number(sourceInternalId)),
+              chain: getEVMChainName(this.inner.config, sourceEvmId),
               currency: currency.view.name,
             },
             description: 'Not enough token balance',
@@ -349,7 +344,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
           this.inner.notificationHandler({
             data: {
               amount: ethers.utils.formatUnits(note.amount, note.denomination),
-              chain: getEVMChainNameFromInternal(this.inner.config, Number(sourceInternalId)),
+              chain: getEVMChainName(this.inner.config, sourceEvmId),
               currency: currency.view.name,
             },
             description: 'Depositing',
@@ -364,7 +359,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
           this.inner.notificationHandler({
             data: {
               amount: ethers.utils.formatUnits(note.amount, note.denomination),
-              chain: getEVMChainNameFromInternal(this.inner.config, Number(sourceInternalId)),
+              chain: getEVMChainName(this.inner.config, sourceEvmId),
               currency: currency.view.name,
             },
             description: 'Not enough token balance',

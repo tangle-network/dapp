@@ -1,6 +1,6 @@
 import { useWebContext } from '@webb-dapp/react-environment/webb-context';
 import { WalletSelect } from '@webb-dapp/ui-components/Inputs/WalletSelect/WalletSelect';
-import { NetworkManager } from '@webb-dapp/ui-components/NetworkManger/NetworkManager';
+import { NetworkManager } from '@webb-dapp/ui-components/NetworkManager/NetworkManager';
 import React from 'react';
 
 type RequiredWalletSelectionProps = {};

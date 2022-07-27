@@ -1,18 +1,14 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { MerkleTree, Note, parseTypedChainId } from '@webb-tools/sdk-core';
+import { calculateTypedChainId, ChainType, MerkleTree, Note, parseTypedChainId } from '@webb-tools/sdk-core';
 import { ethers } from 'ethers';
 
 import { OptionalActiveRelayer, OptionalRelayer, RelayerQuery, shuffleRelayers, WebbRelayer } from '../abstracts';
 import { WebbRelayerManager } from '../abstracts/relayer/webb-relayer-manager';
-import { InternalChainId, typedChainIdToInternalId } from '../chains';
 import { BridgeStorage, Storage, VAnchorContract, WebbError, WebbErrorCodes } from '..';
 export class Web3RelayerManager extends WebbRelayerManager {
-  async mapRelayerIntoActive(
-    relayer: OptionalRelayer,
-    internalChainId: InternalChainId
-  ): Promise<OptionalActiveRelayer> {
+  async mapRelayerIntoActive(relayer: OptionalRelayer, typedChainId: number): Promise<OptionalActiveRelayer> {
     if (!relayer) {
       return null;
     }
@@ -21,19 +17,19 @@ export class Web3RelayerManager extends WebbRelayerManager {
       relayer,
       {
         basedOn: 'evm',
-        chain: internalChainId,
+        typedChainId,
       },
       // Define the function for retrieving fee information for the relayer
       async (note: string) => {
         const depositNote = await Note.deserialize(note);
         const evmNote = depositNote.note;
-        const internalId = typedChainIdToInternalId(parseTypedChainId(Number(depositNote.note.targetChainId)));
+        const typedChainId = Number(depositNote.note.targetChainId);
         const contractAddress = depositNote.note.targetIdentifyingData;
 
         // Given the note, iterate over the relayer's supported contracts and find the corresponding configuration
         // for the contract.
         const supportedContract = relayer.capabilities.supportedChains.evm
-          .get(internalId)
+          .get(typedChainId)
           ?.contracts.find(({ address }) => {
             // Match on the relayer configuration as well as note
             return address.toLowerCase() === contractAddress.toLowerCase();
@@ -67,7 +63,7 @@ export class Web3RelayerManager extends WebbRelayerManager {
    *  Accepts a 'RelayerQuery' object with optional, indexible fields.
    **/
   getRelayers(query: RelayerQuery): WebbRelayer[] {
-    const { baseOn, chainId, contractAddress, ipService } = query;
+    const { baseOn, contractAddress, ipService, typedChainId } = query;
     const relayers = this.relayers.filter((relayer) => {
       const capabilities = relayer.capabilities;
 
@@ -77,11 +73,11 @@ export class Web3RelayerManager extends WebbRelayerManager {
         }
       }
 
-      if (contractAddress && baseOn && chainId) {
+      if (contractAddress && baseOn && typedChainId) {
         if (baseOn === 'evm') {
           return Boolean(
             capabilities.supportedChains[baseOn]
-              .get(chainId)
+              .get(typedChainId)
               ?.contracts?.find(
                 (contract) => contract.address === contractAddress.toLowerCase() && contract.eventsWatcher.enabled
               )
@@ -89,23 +85,23 @@ export class Web3RelayerManager extends WebbRelayerManager {
         }
       }
 
-      if (query.contract && baseOn === 'evm' && chainId !== undefined) {
-        console.log(`chainId: ${chainId}`);
+      if (query.contract && baseOn === 'evm' && typedChainId !== undefined) {
+        console.log(`chainId: ${typedChainId}`);
         console.log(`evm map`, capabilities.supportedChains);
-        const cap = capabilities.supportedChains['evm'].get(chainId);
+        const cap = capabilities.supportedChains['evm'].get(typedChainId);
         console.log(`Query using the query.contract field ${query.contract}`, cap);
         const relayerIndex =
           capabilities.supportedChains['evm']
-            .get(chainId)
+            .get(typedChainId)
             ?.contracts.findIndex((contract) => contract.contract === query.contract) ?? -1;
         return relayerIndex > -1;
       }
 
-      if (baseOn && chainId) {
-        return Boolean(capabilities.supportedChains[baseOn].get(chainId));
+      if (baseOn && typedChainId) {
+        return Boolean(capabilities.supportedChains[baseOn].get(typedChainId));
       }
 
-      if (baseOn && !chainId) {
+      if (baseOn && !typedChainId) {
         console.log(capabilities.supportedChains, baseOn);
 
         return capabilities.supportedChains[baseOn].size > 0;
@@ -120,20 +116,23 @@ export class Web3RelayerManager extends WebbRelayerManager {
   }
 
   async getRelayersByNote(evmNote: Note) {
-    const chainTypeId = Number(evmNote.note.targetChainId);
-    const internalId = typedChainIdToInternalId(parseTypedChainId(chainTypeId));
+    const typedChainId = Number(evmNote.note.targetChainId);
+    const chainId = parseTypedChainId(typedChainId).chainId;
 
     return this.getRelayers({
       baseOn: 'evm',
-      chainId: internalId,
+      typedChainId,
+      chainId,
       contract: 'VAnchor',
     });
   }
 
-  async getRelayersByChainAndAddress(chainId: InternalChainId, address: string) {
+  async getRelayersByChainAndAddress(typedChainId: number, address: string) {
+    const chainId = parseTypedChainId(typedChainId).chainId;
     return this.getRelayers({
       baseOn: 'evm',
-      chainId: chainId,
+      typedChainId,
+      chainId,
       contractAddress: address,
     });
   }
@@ -142,7 +141,7 @@ export class Web3RelayerManager extends WebbRelayerManager {
    * This routine queries the passed relayers for the leaves of an anchor instance on an evm chain.
    * It validates the leaves with on-chain data, and saves to the storage once validated.
    * An array of leaves is returned if validated, otherwise null is returned.
-   * @param relayers - A list of relayers
+   * @param relayers - A list of relayers that support the passed contract
    * @param contract - A VAnchorContract wrapper for EVM chains.
    * @param storage - A storage to save the fetched leaves.
    */
@@ -153,10 +152,11 @@ export class Web3RelayerManager extends WebbRelayerManager {
   ): Promise<string[] | null> {
     let leaves: string[] = [];
     const sourceEvmId = await contract.getEvmId();
+    const typedChainId = calculateTypedChainId(ChainType.EVM, sourceEvmId);
 
     // loop through the sourceRelayers to fetch leaves
     for (let i = 0; i < relayers.length; i++) {
-      const relayerLeaves = await relayers[i].getLeaves(sourceEvmId, contract.inner.address);
+      const relayerLeaves = await relayers[i].getLeaves(typedChainId, contract.inner.address);
 
       const validLatestLeaf = await contract.leafCreatedAtBlock(
         relayerLeaves.leaves[relayerLeaves.leaves.length - 1],

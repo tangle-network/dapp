@@ -8,7 +8,6 @@ import { Eth } from 'web3-eth';
 
 import { RelayChainMethods } from '../abstracts';
 import { AccountsAdapter } from '../account/Accounts.adapter';
-import { evmIdIntoInternalChainId } from '../chains';
 import { VAnchorContract } from '../contracts/wrappers/webb-vanchor';
 import { Web3Accounts, Web3Provider } from '../ext-providers';
 import {
@@ -149,11 +148,10 @@ export class WebbWeb3Provider
 
   async getVariableAnchorLeaves(contract: VAnchorContract, storage: Storage<BridgeStorage>): Promise<string[]> {
     const evmId = await contract.getEvmId();
-    const internalId = evmIdIntoInternalChainId(evmId);
     const typedChainId = calculateTypedChainId(ChainType.EVM, evmId);
 
     // First, try to fetch the leaves from the supported relayers
-    const relayers = await this.relayerManager.getRelayersByChainAndAddress(internalId, contract.inner.address);
+    const relayers = await this.relayerManager.getRelayersByChainAndAddress(typedChainId, contract.inner.address);
     let leaves = await this.relayerManager.fetchLeavesFromRelayers(relayers, contract, storage);
 
     // If unable to fetch leaves from the relayers, get them from chain
@@ -214,7 +212,7 @@ export class WebbWeb3Provider
         console.log('inside catch for switchChain', switchError);
 
         // cannot switch because network not recognized, so fetch configuration
-        const chainId = evmIdIntoInternalChainId(evmChainId);
+        const chainId = calculateTypedChainId(ChainType.EVM, evmChainId);
         const chain = this.config.chains[chainId];
 
         // prompt to add the chain

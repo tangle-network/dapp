@@ -6,7 +6,7 @@ import { getChainIdType } from '@webb-tools/utils';
 import { ethers } from 'ethers';
 
 import { Web3RelayerManager, WebbRelayerManagerFactory } from '..';
-import { Web3Provider, WebbCurrencyId, WebbWeb3Provider } from '../';
+import { CurrencyId, Web3Provider, WebbWeb3Provider } from '../';
 import { mockAppConfig } from './utils/mock-config';
 import mockNotificationHandler from './utils/mock-notification-handler';
 
@@ -44,7 +44,7 @@ describe.skip('Note provider interactions', () => {
 
     provider = await WebbWeb3Provider.init(web3Provider, 9999, relayerManager, mockAppConfig, mockNotificationHandler);
     // set an active bridge (which will set active currency) on the provider
-    provider.methods.anchorApi.setActiveBridge(mockAppConfig.bridgeByAsset[WebbCurrencyId.webbDEV]);
+    provider.methods.anchorApi.setActiveBridge(mockAppConfig.bridgeByAsset[CurrencyId.webbDEV]);
 
     // busy wait until it is set
   });

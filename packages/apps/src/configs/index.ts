@@ -1,24 +1,18 @@
-import {
-  Chain,
-  InternalChainId,
-  TypedChainId,
-  typedChainIdToInternalId,
-  Wallet,
-  WebbError,
-  WebbErrorCodes,
-} from '@webb-dapp/api-providers';
+import { Chain, Wallet } from '@webb-dapp/api-providers';
+import { calculateTypedChainId } from '@webb-tools/sdk-core';
 
 import { chainsConfig } from './chains/chain-config';
 import { walletsConfig } from './wallets/wallets-config';
-import { currenciesConfig } from './currencies';
 
-export const chainsPopulated = Object.values(chainsConfig).reduce(
-  (acc, chainsConfig) => ({
+export const chainsPopulated = Object.values(chainsConfig).reduce((acc, chainsConfig) => {
+  const typedChainId = calculateTypedChainId(chainsConfig.chainType, chainsConfig.chainId);
+
+  return {
     ...acc,
-    [chainsConfig.id]: {
+    [typedChainId]: {
       ...chainsConfig,
       wallets: Object.values(walletsConfig)
-        .filter(({ supportedChainIds }) => supportedChainIds.includes(chainsConfig.id))
+        .filter(({ supportedChainIds }) => supportedChainIds.includes(typedChainId))
         .reduce(
           (acc, walletsConfig) => ({
             ...acc,
@@ -29,46 +23,8 @@ export const chainsPopulated = Object.values(chainsConfig).reduce(
           {} as Record<number, Wallet>
         ),
     },
-  }),
-  {} as Record<number, Chain>
-);
-
-export const getEVMChainName = (evmId: number): string => {
-  const chain = Object.values(chainsConfig).find((chainsConfig) => chainsConfig.chainId === evmId);
-  if (chain) {
-    return chain.name;
-  } else {
-    throw WebbError.from(WebbErrorCodes.UnsupportedChain);
-  }
-};
-
-export const chainNameFromInternalId = (internalId: InternalChainId): string => {
-  const chain = chainsConfig[internalId];
-  return chain.name;
-};
-
-export const getChainNameFromChainId = (chainIdType: TypedChainId): string => {
-  const internalId = typedChainIdToInternalId(chainIdType);
-  return chainNameFromInternalId(internalId);
-};
-
-export const getEVMChainNameFromInternal = (chainID: number): string => {
-  const chain = Object.values(chainsConfig).find((chainsConfig) => chainsConfig.id === chainID);
-  if (chain) {
-    return chain.name;
-  } else {
-    throw WebbError.from(WebbErrorCodes.UnsupportedChain);
-  }
-};
-
-export const getNativeCurrencySymbol = (evmId: number): string => {
-  const chain = Object.values(chainsConfig).find((chainsConfig) => chainsConfig.chainId === evmId);
-  if (chain) {
-    const nativeCurrency = chain.nativeCurrencyId;
-    return currenciesConfig[nativeCurrency].symbol;
-  }
-  return 'Unknown';
-};
+  };
+}, {} as Record<number, Chain>);
 
 export * from './currencies';
 export * from './chains';

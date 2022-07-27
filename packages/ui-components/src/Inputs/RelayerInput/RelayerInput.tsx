@@ -10,13 +10,14 @@ import {
   Popper,
   Typography,
 } from '@mui/material';
-import { ActiveWebbRelayer, Capabilities, internalChainIdIntoEVMId, WebbRelayer } from '@webb-dapp/api-providers';
+import { ActiveWebbRelayer, Capabilities, WebbRelayer } from '@webb-dapp/api-providers';
 import { useWebContext } from '@webb-dapp/react-environment/webb-context';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
+import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import { ethers } from 'ethers';
 import React, { CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styled, { css } from 'styled-components';
@@ -364,11 +365,15 @@ export const RelayerInput: React.FC<RelayerInputProps> = ({
   }, [view]);
 
   const handleNewCustomRelayer = useCallback(async () => {
+    if (!activeChain) {
+      return;
+    }
     setView(RelayerInputStatus.AddNewCustom);
     const relayer = await relayerApi.add(customRelayURl);
+    const activeTypedChainId = calculateTypedChainId(activeChain?.chainType, activeChain?.chainId);
     if (
-      relayer.capabilities.supportedChains.evm.has(activeChain!.id) ||
-      relayer.capabilities.supportedChains.substrate.has(activeChain!.id)
+      relayer.capabilities.supportedChains.evm.has(activeTypedChainId) ||
+      relayer.capabilities.supportedChains.substrate.has(activeTypedChainId)
     ) {
       setActiveRelayer(relayer);
     }
@@ -493,35 +498,25 @@ export const RelayerInput: React.FC<RelayerInputProps> = ({
                 {relayerInfo.evm.length > 0 && (
                   <>
                     <ul>
-                      {relayerInfo.evm
-                        .filter((i) => {
-                          try {
-                            internalChainIdIntoEVMId(Number(i.key));
-                            return true;
-                          } catch (e) {
-                            console.log(e, i, i.key);
-                            return false;
-                          }
-                        })
-                        .map((i) => {
-                          return (
-                            <li style={{ color: palette.primaryText }}>
-                              <Typography variant={'h5'}>{internalChainIdIntoEVMId(Number(i.key))}</Typography>
-                              <Padding v>
-                                <Typography variant={'h6'}>Account: {i.value.beneficiary?.toString()} </Typography>
-                                <Typography variant={'h6'}>Contracts:</Typography>
-                                <Padding x={1.5}>
-                                  {i.value.contracts.map((i) => (
-                                    <div>
-                                      <Typography variant={'h6'}>Size: {i.size?.toString()}</Typography>
-                                      <Typography variant={'h6'}>Address: {i.address}</Typography>
-                                    </div>
-                                  ))}
-                                </Padding>
+                      {relayerInfo.evm.map((i) => {
+                        return (
+                          <li style={{ color: palette.primaryText }}>
+                            <Typography variant={'h5'}>{Number(i.key)}</Typography>
+                            <Padding v>
+                              <Typography variant={'h6'}>Account: {i.value.beneficiary?.toString()} </Typography>
+                              <Typography variant={'h6'}>Contracts:</Typography>
+                              <Padding x={1.5}>
+                                {i.value.contracts.map((i) => (
+                                  <div>
+                                    <Typography variant={'h6'}>Size: {i.size?.toString()}</Typography>
+                                    <Typography variant={'h6'}>Address: {i.address}</Typography>
+                                  </div>
+                                ))}
                               </Padding>
-                            </li>
-                          );
-                        })}
+                            </Padding>
+                          </li>
+                        );
+                      })}
                     </ul>
                   </>
                 )}

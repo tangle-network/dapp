@@ -1,10 +1,10 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
+import { ChainType, parseTypedChainId } from '@webb-tools/sdk-core';
 import { Observable, Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
-import { InternalChainId } from '../../chains';
 import {
   Capabilities,
   EVMCMDKeys,
@@ -209,8 +209,20 @@ export class WebbRelayer {
     }
   }
 
-  async getLeaves(chainId: number, contractAddress: string): Promise<RelayerLeaves> {
-    const url = `${this.endpoint}/api/v1/leaves/evm/${chainId.toString(16)}/${contractAddress}`;
+  async getLeaves(typedChainId: number, contractAddress: string): Promise<RelayerLeaves> {
+    const { chainId, chainType } = parseTypedChainId(typedChainId);
+    let url: string = '';
+    switch (chainType) {
+      case ChainType.EVM:
+        url = `${this.endpoint}/api/v1/leaves/evm/${chainId.toString(16)}/${contractAddress}`;
+        break;
+      case ChainType.Substrate:
+        url = `${this.endpoint}/api/v1/leaves/substrate/${chainId.toString(16)}/${contractAddress}`;
+        break;
+      default:
+        url = `${this.endpoint}/api/v1/leaves/evm/${chainId.toString(16)}/${contractAddress}`;
+        break;
+    }
     const req = await fetch(url);
 
     if (req.ok) {
@@ -231,7 +243,7 @@ export class WebbRelayer {
 
   static intoActiveWebRelayer(
     instance: WebbRelayer,
-    query: { chain: InternalChainId; basedOn: 'evm' | 'substrate' },
+    query: { typedChainId: number; basedOn: 'evm' | 'substrate' },
     getFees: (note: string) => Promise<{ totalFees: string; withdrawFeePercentage: number } | undefined>
   ): ActiveWebbRelayer {
     return new ActiveWebbRelayer(instance.endpoint, instance.capabilities, query, getFees);
@@ -242,7 +254,7 @@ export class ActiveWebbRelayer extends WebbRelayer {
   constructor(
     endpoint: string,
     capabilities: Capabilities,
-    private query: { chain: InternalChainId; basedOn: 'evm' | 'substrate' },
+    private query: { typedChainId: number; basedOn: 'evm' | 'substrate' },
     private getFees: (note: string) => Promise<{ totalFees: string; withdrawFeePercentage: number } | undefined>
   ) {
     super(endpoint, capabilities);
@@ -250,8 +262,7 @@ export class ActiveWebbRelayer extends WebbRelayer {
 
   private get config() {
     const list = this.capabilities.supportedChains[this.query.basedOn];
-
-    return list.get(this.query.chain);
+    return list.get(this.query.typedChainId);
   }
 
   get gasLimit(): number | undefined {
