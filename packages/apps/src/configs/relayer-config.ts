@@ -1,10 +1,4 @@
-import {
-  AppConfig,
-  PresetTypedChainId,
-  RelayerCMDBase,
-  RelayerConfig,
-  WebbRelayerManagerFactory,
-} from '@webb-dapp/api-providers';
+import { PresetTypedChainId, RelayerCMDBase, RelayerConfig, WebbRelayerManagerFactory } from '@webb-dapp/api-providers';
 import { calculateTypedChainId, ChainType } from '@webb-tools/sdk-core';
 
 let relayerManagerFactory: WebbRelayerManagerFactory | null = null;
@@ -58,9 +52,9 @@ function chainNameAdapter(name: string, basedOn: RelayerCMDBase) {
   }
 }
 
-export async function getRelayerManagerFactory(appConfig: AppConfig) {
+export async function getRelayerManagerFactory() {
   if (!relayerManagerFactory) {
-    relayerManagerFactory = await WebbRelayerManagerFactory.init(relayerConfig, chainNameAdapter, appConfig);
+    relayerManagerFactory = await WebbRelayerManagerFactory.init(relayerConfig, chainNameAdapter);
   }
   return relayerManagerFactory;
 }

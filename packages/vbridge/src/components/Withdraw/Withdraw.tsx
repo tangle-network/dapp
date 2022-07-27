@@ -133,18 +133,18 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
   const relayerApi: RelayerApiAdapter = useMemo(() => {
     return {
       getInfo: async (endpoint) => {
-        const relayerManagerFactory = await getRelayerManagerFactory(appConfig);
+        const relayerManagerFactory = await getRelayerManagerFactory();
         return relayerManagerFactory.fetchCapabilities(endpoint) ?? ({} as any);
       },
       add: async (endPoint: string) => {
-        const relayerManagerFactory = await getRelayerManagerFactory(appConfig);
+        const relayerManagerFactory = await getRelayerManagerFactory();
         const relayerCapabilities = await relayerManagerFactory.addRelayer(endPoint);
         const relayer = new WebbRelayer(endPoint, relayerCapabilities[endPoint]);
         activeApi?.relayerManager.addRelayer(relayer);
         return relayer;
       },
     };
-  }, [activeApi, appConfig]);
+  }, [activeApi]);
 
   const depositAmount = useMemo(() => {
     if (!depositNotes?.length || !firstNote) {
