@@ -37,8 +37,7 @@ describe.skip('Note provider interactions', () => {
         console.log(name, basedOn);
 
         return null;
-      },
-      mockAppConfig
+      }
     );
 
     const relayerManager = (await relayerFactory.getRelayerManager('evm')) as Web3RelayerManager;

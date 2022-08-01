@@ -40,13 +40,11 @@ const RelayerModalWrapper = styled.div`
 type RelayerModalProps = {
   note: Note | null;
   state: RelayersState;
-  methods: WebbRelayerManager | undefined;
   onChange: (nextRelayer: WebbRelayer | null) => void;
   onClose: () => void;
 };
 
-export const RelayerModal: React.FC<RelayerModalProps> = ({ methods, note, onChange, onClose, state }) => {
-  const config = useAppConfig();
+export const RelayerModal: React.FC<RelayerModalProps> = ({ note, onChange, onClose, state }) => {
   const { activeApi } = useWebContext();
 
   const feesGetter = useCallback(
@@ -69,17 +67,18 @@ export const RelayerModal: React.FC<RelayerModalProps> = ({ methods, note, onCha
   const relayerApi: RelayerApiAdapter = useMemo(() => {
     return {
       getInfo: async (endpoint) => {
-        const relayerManagerFactory = await getRelayerManagerFactory(config);
+        const relayerManagerFactory = await getRelayerManagerFactory();
         return relayerManagerFactory.fetchCapabilities(endpoint) ?? ({} as any);
       },
-      add: async (endPoint: string, _persistent: boolean) => {
-        const relayerManagerFactory = await getRelayerManagerFactory(config);
+      add: async (endPoint: string) => {
+        const relayerManagerFactory = await getRelayerManagerFactory();
         const relayerCapabilities = await relayerManagerFactory.addRelayer(endPoint);
         const relayer = new WebbRelayer(endPoint, relayerCapabilities[endPoint]);
         activeApi?.relayerManager.addRelayer(relayer);
+        return relayer;
       },
     };
-  }, [config, activeApi]);
+  }, [activeApi]);
 
   return (
     <RelayerModalWrapper>

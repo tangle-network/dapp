@@ -66,19 +66,15 @@ class PolkadotAccounts extends AccountsAdapter<InjectedExtension, InjectedAccoun
 }
 
 export async function initPolkadotProvider(): Promise<WebbPolkadot> {
-  const relayerFactory = await WebbRelayerManagerFactory.init(
-    relayerConfig,
-    (name, basedOn) => {
-      try {
-        return basedOn === 'evm'
-          ? calculateTypedChainId(ChainType.EVM, Number(name))
-          : calculateTypedChainId(ChainType.Substrate, Number(name));
-      } catch (e) {
-        return null;
-      }
-    },
-    mockAppConfig
-  );
+  const relayerFactory = await WebbRelayerManagerFactory.init(relayerConfig, (name, basedOn) => {
+    try {
+      return basedOn === 'evm'
+        ? calculateTypedChainId(ChainType.EVM, Number(name))
+        : calculateTypedChainId(ChainType.Substrate, Number(name));
+    } catch (e) {
+      return null;
+    }
+  });
   const apiPromise = await PolkadotProvider.getApiPromise('Webb DApp', ['ws://127.0.0.1:9944'], {
     // @ts-ignore
     onError(error: InteractiveFeedback): any {
