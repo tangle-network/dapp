@@ -207,7 +207,7 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
         },
         () => {
           worker?.terminate();
-          return WebbError.from(WebbErrorCodes.RelayerUnsupportedMixer);
+          return WebbError.from(WebbErrorCodes.TransactionCancelled);
         }
       );
 

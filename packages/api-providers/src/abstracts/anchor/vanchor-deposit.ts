@@ -1,10 +1,9 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
+import { CancellationToken } from '@webb-dapp/api-providers/abstracts/cancelation-token';
 import { EventBus } from '@webb-tools/app-util';
 import { Note } from '@webb-tools/sdk-core';
-import { BehaviorSubject } from 'rxjs';
-import { filter } from 'rxjs/operators';
 
 import { TransactionState } from '../../abstracts/mixer/mixer-withdraw';
 import { BridgeConfig } from '../../types/bridge-config.interface';
@@ -27,44 +26,6 @@ export type VAnchorDepositEvents = {
 export interface VAnchorDepositResults extends TXresultBase {
   // Note with the right index in place
   updatedNote: Note;
-}
-
-export class CancellationToken {
-  private cancelled: BehaviorSubject<boolean> = new BehaviorSubject(false);
-
-  throwIfCancel(e: any = 'Canceled') {
-    if (this.cancelled.value) {
-      throw e;
-    }
-  }
-  isCancelled() {
-    return this.cancelled.value;
-  }
-  cancel() {
-    this.cancelled.next(true);
-  }
-  reset() {
-    this.cancelled.next(false);
-  }
-  $canceld() {
-    return this.cancelled.asObservable().pipe(filter((v) => v));
-  }
-  handleOrThrow<T = any>(resolver: () => Promise<T>, onCancel: () => any): Promise<T> {
-    return new Promise<T>((resolve, reject) => {
-      const sub = this.$canceld().subscribe(() => {
-        // terminate the webb worker on cancellation
-        const e = onCancel();
-        reject(e);
-        sub.unsubscribe();
-      });
-      resolver()
-        .then((value: T) => {
-          resolve(value);
-        })
-        .catch(reject)
-        .finally(() => sub.unsubscribe());
-    });
-  }
 }
 
 /**
