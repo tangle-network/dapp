@@ -44,7 +44,7 @@ export class CancellationToken {
         // terminate the webb worker on cancellation
         const e = onCancel();
         reject(e);
-        sub.unsubscribe();
+        sub?.unsubscribe?.();
       });
       resolver()
         .then((value: T) => {

@@ -236,11 +236,10 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
       const destAddress = vanchor.neighbours[destTypedChainId] as string;
       const destVAnchor = await this.inner.getVariableAnchorByAddressAndProvider(destAddress, destEthers);
       leafStorage = await bridgeStorageFactory(Number(utxo.chainId));
+
       leaves = await this.cancelToken.handleOrThrow(
         () => this.inner.getVariableAnchorLeaves(destVAnchor, leafStorage),
-        () => {
-          return WebbError.from(WebbErrorCodes.TransactionCancelled);
-        }
+        () => WebbError.from(WebbErrorCodes.TransactionCancelled)
       );
 
       // Only populate the leaves map if there are actually leaves to populate.
@@ -395,7 +394,6 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
         }
       }
     } catch (e: any) {
-      console.log(e);
       if (e?.code === 4001) {
         this.inner.notificationHandler.remove('waiting-approval');
         this.inner.notificationHandler({
