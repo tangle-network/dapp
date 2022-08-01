@@ -108,6 +108,7 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
   }
 
   async deposit(depositPayload: DepositPayload): Promise<VAnchorDepositResults> {
+    // Validate if the provider is ready for a new deposit
     switch (this.state) {
       case TransactionState.Cancelling:
       case TransactionState.Failed:
@@ -118,8 +119,7 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
       case TransactionState.Ideal:
         break;
       default:
-        // TODO change to a transaction is beeing proccessed
-        throw WebbError.from(WebbErrorCodes.NoAccountAvailable);
+        throw WebbError.from(WebbErrorCodes.TransactionInProgress);
     }
     try {
       const secret = randomAsU8a();
@@ -246,7 +246,9 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
         updatedNote: depositNote,
       };
     } catch (e) {
-      this.emit('stateChange', TransactionState.Cancelling);
+      if (e instanceof WebbError && e.code !== WebbErrorCodes.TransactionCancelled) {
+        this.emit('stateChange', TransactionState.Failed);
+      }
       throw e;
     }
   }
