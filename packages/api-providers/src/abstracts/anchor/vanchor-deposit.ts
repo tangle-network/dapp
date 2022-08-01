@@ -4,6 +4,7 @@
 import { EventBus } from '@webb-tools/app-util';
 import { Note } from '@webb-tools/sdk-core';
 import { BehaviorSubject } from 'rxjs';
+import { filter } from 'rxjs/operators';
 
 import { CancelToken, TransactionState } from '../../abstracts/mixer/mixer-withdraw';
 import { BridgeConfig } from '../../types/bridge-config.interface';
@@ -46,7 +47,7 @@ export class CancellationToken {
     this.cancelled.next(false);
   }
   $canceld() {
-    return this.cancelled.asObservable();
+    return this.cancelled.asObservable().pipe(filter((v) => v));
   }
 }
 
