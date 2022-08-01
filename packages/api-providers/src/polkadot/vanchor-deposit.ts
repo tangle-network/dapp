@@ -98,23 +98,43 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
       params: [treeId],
     };
   }
+  private async getAccount() {
+    const account = await this.inner.accounts.activeOrDefault;
+
+    if (!account) {
+      throw WebbError.from(WebbErrorCodes.NoAccountAvailable);
+    }
+    return account;
+  }
 
   async deposit(depositPayload: DepositPayload): Promise<VAnchorDepositResults> {
+    switch (this.state) {
+      case TransactionState.Cancelling:
+      case TransactionState.Failed:
+      case TransactionState.Done:
+        this.cancelToken.reset();
+        this.state = TransactionState.Ideal;
+        break;
+      case TransactionState.Ideal:
+        break;
+      default:
+        // TODO change to a transaction is beeing proccessed
+        throw WebbError.from(WebbErrorCodes.NoAccountAvailable);
+    }
     try {
-      // Getting the active account
-      const account = await this.inner.accounts.activeOrDefault;
       const secret = randomAsU8a();
 
-      if (!account) {
-        throw WebbError.from(WebbErrorCodes.NoAccountAvailable);
-      }
-      this.emit('stateChange', TransactionState.FetchingFixtures);
-      const provingKey = await fetchSubstrateVAnchorProvingKey();
-
+      // Getting the active account
+      const account = await this.getAccount();
       const accountId = account.address;
       const relayerAccountId = account.address;
       const recipientAccountDecoded = decodeAddress(accountId);
       const relayerAccountDecoded = decodeAddress(relayerAccountId);
+
+      this.cancelToken.throwIfCancel();
+      // Loading fixtures
+      this.emit('stateChange', TransactionState.FetchingFixtures);
+      const provingKey = await fetchSubstrateVAnchorProvingKey();
 
       // output note (Already generated)
       const depositNote = depositPayload.note;
@@ -123,9 +143,8 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
       // VAnchor tree id
       const treeId = depositPayload.params[0];
       const targetChainId = note.targetChainId;
-
+      // Output utxos
       const output1 = new Utxo(note.getUtxo());
-
       const output2 = await Utxo.generateUtxo({
         backend: 'Arkworks',
         curve: 'Bn254',
@@ -134,6 +153,8 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
       });
       let publicAmount = note.amount;
       const inputNote = await depositPayload.note.getDefaultUtxoNote();
+
+      this.cancelToken.throwIfCancel();
       this.emit('stateChange', TransactionState.FetchingLeaves);
 
       // While depositing use an empty leaves
@@ -146,6 +167,7 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
         .getNeighborRoots(treeId)
         .then((roots: any) => roots.toHuman());
 
+      this.cancelToken.throwIfCancel();
       this.emit('stateChange', TransactionState.GeneratingZk);
       const rootsSet = [hexToU8a(root), hexToU8a(neighborRoots[0])];
 
@@ -175,9 +197,16 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
         publicAmount,
         output: [output1, output2],
       };
+
+      this.cancelToken.throwIfCancel();
       const worker = this.inner.wasmFactory('wasm-utils');
       const pm = new ArkworksProvingManager(worker);
+      const sub = this.cancelToken.$canceld().subscribe(() => {
+        // terminate the webb worker on cancellation
+        worker?.terminate();
+      });
       const data: VAnchorProof = await pm.prove('vanchor', vanchorDepositSetup);
+      sub.unsubscribe();
       const vanchorProofData = {
         proof: `0x${data.proof}`,
         publicAmount: data.publicAmount,
@@ -200,6 +229,7 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
         [treeId, vanchorProofData, extData]
       );
 
+      this.cancelToken.throwIfCancel();
       const txHash = await tx.call(account.address);
 
       const insertedLeaf = depositNote.getLeaf();
@@ -212,6 +242,7 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
         updatedNote: depositNote,
       };
     } catch (e) {
+      console.log(e);
       this.emit('stateChange', TransactionState.Failed);
       throw e;
     }

@@ -3,8 +3,9 @@
 
 import { EventBus } from '@webb-tools/app-util';
 import { Note } from '@webb-tools/sdk-core';
+import { BehaviorSubject } from 'rxjs';
 
-import { TransactionState } from '../../abstracts/mixer/mixer-withdraw';
+import { CancelToken, TransactionState } from '../../abstracts/mixer/mixer-withdraw';
 import { BridgeConfig } from '../../types/bridge-config.interface';
 import { DepositPayload } from '../mixer/mixer-deposit';
 import { TXresultBase, WebbApiProvider } from '../webb-provider.interface';
@@ -26,6 +27,29 @@ export interface VAnchorDepositResults extends TXresultBase {
   // Note with the right index in place
   updatedNote: Note;
 }
+
+export class CancellationToken {
+  private cancelled: BehaviorSubject<boolean> = new BehaviorSubject(false);
+
+  throwIfCancel(e: any = 'Canceled') {
+    if (this.cancelled.value) {
+      throw e;
+    }
+  }
+  isCancelled() {
+    return this.cancelled.value;
+  }
+  cancel() {
+    this.cancelled.next(true);
+  }
+  reset() {
+    this.cancelled.next(false);
+  }
+  $canceld() {
+    return this.cancelled.asObservable();
+  }
+}
+
 /**
  * Anchor deposit abstract interface as fixed anchor share similar functionality as the mixer
  * The interface looks the same but there's a different function for note Generation
@@ -35,6 +59,7 @@ export abstract class VAnchorDeposit<
   K extends DepositPayload = DepositPayload<any>
 > extends EventBus<VAnchorDepositEvents> {
   state: TransactionState = TransactionState.Ideal;
+  cancelToken: CancellationToken = new CancellationToken();
 
   constructor(protected inner: T) {
     super();
@@ -69,4 +94,11 @@ export abstract class VAnchorDeposit<
     amount: number,
     wrappableAssetAddress?: string
   ): Promise<K>;
+
+  cancel(): Promise<void> {
+    this.cancelToken.cancel();
+    this.emit('stateChange', TransactionState.Cancelling);
+
+    return Promise.resolve(undefined);
+  }
 }
