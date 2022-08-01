@@ -17,8 +17,8 @@ import {
   NoteGenInput,
   ProvingManagerSetupInput,
   Utxo,
+  VAnchorProof,
 } from '@webb-tools/sdk-core';
-import { VAnchorProof } from '@webb-tools/sdk-core/proving/types';
 import { BigNumber, ethers } from 'ethers';
 
 import { decodeAddress } from '@polkadot/keyring';
@@ -121,7 +121,6 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
         // TODO change to a transaction is beeing proccessed
         throw WebbError.from(WebbErrorCodes.NoAccountAvailable);
     }
-    console.log('depositPayload', depositPayload);
     try {
       const secret = randomAsU8a();
 
@@ -133,7 +132,6 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
       const relayerAccountDecoded = decodeAddress(relayerAccountId);
 
       this.cancelToken.throwIfCancel();
-      console.log('fixtures');
       // Loading fixtures
       this.emit('stateChange', TransactionState.FetchingFixtures);
       const provingKey = await fetchSubstrateVAnchorProvingKey();
@@ -203,13 +201,16 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
       this.cancelToken.throwIfCancel();
       const worker = this.inner.wasmFactory('wasm-utils');
       const pm = new ArkworksProvingManager(worker);
-      const sub = this.cancelToken.$canceld().subscribe(() => {
-        // terminate the webb worker on cancellation
-        worker?.terminate();
-        throw WebbError.from(WebbErrorCodes.RelayerUnsupportedMixer);
-      });
-      const data: VAnchorProof = await pm.prove('vanchor', vanchorDepositSetup);
-      sub.unsubscribe();
+      const data = await this.cancelToken.handleOrThrow<VAnchorProof>(
+        () => {
+          return pm.prove('vanchor', vanchorDepositSetup);
+        },
+        () => {
+          worker?.terminate();
+          return WebbError.from(WebbErrorCodes.RelayerUnsupportedMixer);
+        }
+      );
+
       const vanchorProofData = {
         proof: `0x${data.proof}`,
         publicAmount: data.publicAmount,
@@ -245,8 +246,7 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
         updatedNote: depositNote,
       };
     } catch (e) {
-      console.log(e);
-      this.emit('stateChange', TransactionState.Failed);
+      this.emit('stateChange', TransactionState.Cancelling);
       throw e;
     }
   }

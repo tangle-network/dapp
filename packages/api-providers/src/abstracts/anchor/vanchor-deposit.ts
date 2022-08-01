@@ -6,7 +6,7 @@ import { Note } from '@webb-tools/sdk-core';
 import { BehaviorSubject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
-import { CancelToken, TransactionState } from '../../abstracts/mixer/mixer-withdraw';
+import { TransactionState } from '../../abstracts/mixer/mixer-withdraw';
 import { BridgeConfig } from '../../types/bridge-config.interface';
 import { DepositPayload } from '../mixer/mixer-deposit';
 import { TXresultBase, WebbApiProvider } from '../webb-provider.interface';
@@ -48,6 +48,22 @@ export class CancellationToken {
   }
   $canceld() {
     return this.cancelled.asObservable().pipe(filter((v) => v));
+  }
+  handleOrThrow<T = any>(resolver: () => Promise<T>, onCancel: () => any): Promise<T> {
+    return new Promise<T>((resolve, reject) => {
+      const sub = this.$canceld().subscribe(() => {
+        // terminate the webb worker on cancellation
+        const e = onCancel();
+        reject(e);
+        sub.unsubscribe();
+      });
+      resolver()
+        .then((value: T) => {
+          resolve(value);
+        })
+        .catch(reject)
+        .finally(() => sub.unsubscribe());
+    });
   }
 }
 
