@@ -11,11 +11,13 @@ import {
   Typography,
 } from '@mui/material';
 import { ActiveWebbRelayer, Capabilities, WebbRelayer } from '@webb-dapp/api-providers';
+import { useWebContext } from '@webb-dapp/react-environment/webb-context';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
+import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import { ethers } from 'ethers';
 import React, { CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styled, { css } from 'styled-components';
@@ -25,7 +27,7 @@ import { ContentWrapper } from '../../ContentWrappers';
 
 export interface RelayerApiAdapter {
   getInfo(endpoing: string): Promise<Capabilities>;
-  add(endPoint: string, persistent: boolean): void;
+  add(endPoint: string): Promise<WebbRelayer>;
 }
 
 export type FeesInfo = {
@@ -294,8 +296,7 @@ type RelayerInputProps = {
 };
 
 enum RelayerInputStatus {
-  SelectOfCurrent,
-  AddURlkNewCustom,
+  Select,
   AddNewCustom,
 }
 
@@ -309,15 +310,14 @@ export const RelayerInput: React.FC<RelayerInputProps> = ({
   tokenSymbol,
   wrapperStyles,
 }) => {
-  const [view, setView] = useState<RelayerInputStatus>(RelayerInputStatus.SelectOfCurrent);
+  const [view, setView] = useState<RelayerInputStatus>(RelayerInputStatus.Select);
   const [customRelayURl, setCustomRelayURl] = useState('');
-  const [persistentCustomRelay, setPersistentCustomRelay] = useState(false);
-  const [nextRelayerURL, setNextRelayerURl] = useState('');
   const [relayingIncentives, setRelayingIncentives] = useState<FeesInfo>({
     totalFees: 0,
     withdrawFeePercentage: 0,
   });
   const palette = useColorPallet();
+  const { activeChain } = useWebContext();
 
   useEffect(() => {
     async function getFees() {
@@ -356,9 +356,8 @@ export const RelayerInput: React.FC<RelayerInputProps> = ({
     loading: false,
   });
   useEffect(() => {
-    if (view === RelayerInputStatus.SelectOfCurrent) {
+    if (view === RelayerInputStatus.Select) {
       setCustomRelayURl('');
-      setPersistentCustomRelay(false);
       setCheckRelayStatus({
         loading: false,
       });
@@ -366,23 +365,21 @@ export const RelayerInput: React.FC<RelayerInputProps> = ({
   }, [view]);
 
   const handleNewCustomRelayer = useCallback(async () => {
-    setView(RelayerInputStatus.AddNewCustom);
-    await relayerApi.add(customRelayURl, persistentCustomRelay);
-    setNextRelayerURl(customRelayURl);
-    setView(RelayerInputStatus.SelectOfCurrent);
-  }, [relayerApi, customRelayURl, persistentCustomRelay]);
-
-  // Side effect for handleNewCustomRelayer
-  useEffect(() => {
-    if (!nextRelayerURL) {
+    if (!activeChain) {
       return;
     }
-    const nextRelayer = relayers.find((r) => r.endpoint === nextRelayerURL);
-    if (nextRelayer) {
-      setActiveRelayer(nextRelayer);
-      setNextRelayerURl('');
+    setView(RelayerInputStatus.AddNewCustom);
+    const relayer = await relayerApi.add(customRelayURl);
+    const activeTypedChainId = calculateTypedChainId(activeChain?.chainType, activeChain?.chainId);
+    if (
+      relayer.capabilities.supportedChains.evm.has(activeTypedChainId) ||
+      relayer.capabilities.supportedChains.substrate.has(activeTypedChainId)
+    ) {
+      setActiveRelayer(relayer);
     }
-  }, [nextRelayerURL, relayers, setActiveRelayer]);
+    setView(RelayerInputStatus.Select);
+  }, [relayerApi, customRelayURl, activeChain, setActiveRelayer]);
+
   const fetchRelayInfo = useCallback(async () => {
     setCheckRelayStatus({
       loading: true,
@@ -453,7 +450,7 @@ export const RelayerInput: React.FC<RelayerInputProps> = ({
           </RelayerInputSection>
         </>
       )}
-      <Modal open={view > RelayerInputStatus.SelectOfCurrent}>
+      <Modal open={view > RelayerInputStatus.Select}>
         <RelayerInfoModalWrapper>
           <Typography variant={'h2'}>Add Custom relayer</Typography>
           <br />
@@ -562,7 +559,7 @@ export const RelayerInput: React.FC<RelayerInputProps> = ({
             fullWidth
             variant={'outlined'}
             onClick={() => {
-              setView(RelayerInputStatus.SelectOfCurrent);
+              setView(RelayerInputStatus.Select);
             }}
           >
             Close

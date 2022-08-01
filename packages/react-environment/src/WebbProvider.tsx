@@ -336,7 +336,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
 
   /// Network switcher
   const switchChain = async (chain: Chain, _wallet: Wallet, _networkStorage?: NetworkStorage | undefined) => {
-    const relayerManagerFactory = await getRelayerManagerFactory(appConfig);
+    const relayerManagerFactory = await getRelayerManagerFactory();
 
     const wallet = _wallet || activeWallet;
     // wallet cleanup
