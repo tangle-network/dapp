@@ -84,7 +84,7 @@ const getDefaultBridge = (chain: Chain, bridgeConfig: Record<number, BridgeConfi
 
   return undefined;
 };
-
+let count = 0;
 function notificationHandler(notification: NotificationPayload) {
   switch (notification.name) {
     case 'Transaction': {
@@ -440,14 +440,15 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
               notificationHandler
             );
 
-            const providerUpdateHandler = async ([chainId]: number[]) => {
-              const nextChain = Object.values(chains).find((chain) => chain.chainId === chainId);
+            const providerUpdateHandler = async ([updatedChainId]: number[]) => {
+              const nextChain = Object.values(chains).find((chain) => chain.chainId === updatedChainId);
+
               try {
                 /// this will throw if the user switched to unsupported chain
-                const name = getEVMChainName(appConfig, chainId);
+                const name = getEVMChainName(appConfig, updatedChainId);
                 /// Alerting that the provider has changed via the extension
                 notificationApi({
-                  message: 'Web3: changed the connected network',
+                  message: 'Web3: Connected',
                   variant: 'info',
                   Icon: React.createElement(Icon, null, ['leak_add']),
                   secondaryMessage: `Connection is switched to ${name} chain`,
@@ -468,7 +469,6 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
             };
 
             webbWeb3Provider.on('providerUpdate', providerUpdateHandler);
-
             webbWeb3Provider.setChainListener();
             webbWeb3Provider.setAccountListener();
             const cantAddChain = !chain.chainId && !chain.evmRpcUrls;
@@ -574,14 +574,6 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
           _networkStorage.set('defaultWallet', wallet.id),
         ]);
       }
-
-      notificationApi({
-        message: 'Web3: changed the connected network',
-        variant: 'info',
-        Icon: React.createElement(Icon, null, ['leak_add']),
-        secondaryMessage: `Connection is switched to ${chain.name} chain`,
-      });
-
       return provider;
     } finally {
       setIsConnecting(false);
