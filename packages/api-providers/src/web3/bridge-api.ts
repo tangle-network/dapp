@@ -8,13 +8,8 @@ import { Currency, CurrencyId, CurrencyRole, CurrencyType } from '..';
 import { WebbWeb3Provider } from './webb-provider';
 
 export class Web3BridgeApi extends BridgeApi<WebbWeb3Provider> {
-  getTokenTarget(typedChainId: number): string | null {
-    const activeBridgeAsset = this.getCurrency();
-    return activeBridgeAsset ? activeBridgeAsset.getAddress(typedChainId) ?? null : null;
-  }
-
   async fetchWrappableAssets(typedChainId: number): Promise<Currency[]> {
-    const bridge = this.inner.methods.bridgeApi.getBridge();
+    const bridge = this.getBridge();
     let wrappableTokens: Currency[] = [];
 
     if (!bridge) {

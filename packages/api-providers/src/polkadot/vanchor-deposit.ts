@@ -216,8 +216,4 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
       throw e;
     }
   }
-
-  async getSizes() {
-    return [];
-  }
 }

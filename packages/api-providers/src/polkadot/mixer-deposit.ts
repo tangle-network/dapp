@@ -55,19 +55,10 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
           type: CurrencyType.ORML,
           name: asset.name,
           symbol: asset.name.slice(0, 4).toLocaleUpperCase(),
-          id: Object.entries(this.inner.state.getCurrencies()).length,
+          id: Object.entries(this.inner.state.getCurrencies()).length + 1,
           addresses: new Map(),
         });
-        // icon: currencyConfig.data.icon,
-        // role: currencyConfig.data.role,
-        // decimals: currencyConfig.data.decimals,
-        // type: currencyConfig.data.type,
-        // color: currencyConfig.data.color || undefined,
-        // imageUrl: currencyConfig.data.imageUrl || undefined,
-        // addresses: new Map([[PresetTypedChainId.ProtocolSubstrateStandalone, asset.id]]),
-        // id: Object.entries(currenciesMap).length,
-        // name: asset.name,
-        // symbol: asset.name.slice(0, 4).toLocaleUpperCase(),
+
         return {
           amount: amountNumber,
           currency: currency,

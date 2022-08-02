@@ -46,7 +46,10 @@ export abstract class BridgeApi<T extends WebbApiProvider<any> = WebbApiProvider
       }) ?? null;
   }
 
-  abstract getTokenTarget(typedChainId: number): string | null;
+  getTokenTarget(typedChainId: number): string | null {
+    const activeBridgeAsset = this.getCurrency();
+    return activeBridgeAsset ? activeBridgeAsset.getAddress(typedChainId) ?? null : null;
+  }
 
   async getAnchors(): Promise<AnchorBase[]> {
     return this.inner.state.activeBridge

@@ -7,12 +7,11 @@ import { WebbPolkadot } from './webb-provider';
 
 export class PolkadotBridgeApi extends BridgeApi<WebbPolkadot> {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  getTokenTarget(typedChainId: number): string | null {
-    return null;
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async fetchWrappableAssets(typedChainId: number): Promise<Currency[]> {
-    return [];
+    console.log('fetchWrappableAssets: ', this.inner.state.getCurrencies());
+    // All Substrate assets are assumed to be wrappable
+    return Object.values(this.inner.state.getCurrencies()).filter((currency) => {
+      currency.hasChain(typedChainId);
+    });
   }
 }

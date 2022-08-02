@@ -99,6 +99,8 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
         },
       },
     };
+    // Take the configured values in the config and create objects used in the
+    // api (e.g. Record<number, CurrencyConfig> => Currency[])
     let initialSupportedCurrencies: Record<number, Currency> = {};
     for (let currencyConfig of Object.values(config.currencies)) {
       initialSupportedCurrencies[currencyConfig.id] = new Currency(currencyConfig);
@@ -109,14 +111,18 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
     for (let bridgeConfig of Object.values(config.bridgeByAsset)) {
       if (Object.keys(bridgeConfig.anchors).includes(typedChainId.toString())) {
         const bridgeCurrency = initialSupportedCurrencies[bridgeConfig.asset];
-        const bridgeTargets = {
-          ...Object.values(bridgeConfig.anchors),
-        };
+        const bridgeTargets = bridgeConfig.anchors;
         initialSupportedBridges[bridgeConfig.asset] = new Bridge(bridgeCurrency, bridgeTargets);
       }
     }
 
     this.state = new WebbState(initialSupportedCurrencies, initialSupportedBridges);
+
+    // set the available bridges of the new chain
+    this.state.setBridgeOptions(initialSupportedBridges);
+
+    // Select a reasonable default bridge
+    this.state.activeBridge = Object.values(initialSupportedBridges)[0] ?? null;
   }
 
   capabilities?: ProvideCapabilities | undefined;

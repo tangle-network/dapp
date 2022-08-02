@@ -39,26 +39,6 @@ import { WebbWeb3Provider } from './webb-provider';
 type DepositPayload = IDepositPayload<Note, [Utxo, number | string, string?]>;
 
 export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, DepositPayload> {
-  // For VAnchor, the getSizes will describe the minimum deposit amount for the vanchor
-  async getSizes(): Promise<MixerSize[]> {
-    const anchors = await this.bridgeApi.getAnchors();
-    const currency = this.inner.methods.bridgeApi.getCurrency();
-
-    if (currency) {
-      return anchors
-        .filter((anchor) => !anchor.amount)
-        .map((anchor) => ({
-          // Hardcoded minimum size
-          amount: 0.00001,
-          asset: currency.view.symbol,
-          id: `Bridge=${anchor.amount}@${currency.view.name}`,
-          title: `${anchor.amount} ${currency.view.name}`,
-        }));
-    }
-
-    return [];
-  }
-
   async generateBridgeNote(
     anchorId: string | number,
     destination: number,

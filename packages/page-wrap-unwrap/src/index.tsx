@@ -70,7 +70,7 @@ const PageWrapUnwrap: FC = () => {
   const [displayedAmount, setDisplayedAmount] = useState<string>('');
 
   const [isSwap, setIsSwap] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const leftInputProps: TokenInputProps = useMemo(() => {
     return {

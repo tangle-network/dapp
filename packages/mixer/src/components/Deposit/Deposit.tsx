@@ -38,15 +38,17 @@ type DepositProps = {};
 export const Deposit: React.FC<DepositProps> = () => {
   const { activeApi, activeChain, activeWallet } = useWebContext();
   const depositApi = useDeposit();
-  const { wrappableCurrencies } = useCurrencies();
+  const { governedCurrencies, wrappableCurrencies } = useCurrencies();
   const [showDepositModal, setShowDepositModal] = useState(false);
   const [selectedToken, setSelectedToken] = useState<Currency | undefined>(undefined);
   const [item, setItem] = useState<MixerSize | undefined>(undefined);
   const [tokenBalance, setTokenBalance] = useState('');
 
   const activeToken = useMemo<Currency | undefined>(
-    () => selectedToken ?? wrappableCurrencies[0],
-    [wrappableCurrencies, selectedToken]
+    // Governed Currencies also populate the mixer's activeToken.
+    // TODO: Remove this workaround for substrate native token populating.
+    () => selectedToken ?? [...wrappableCurrencies, ...governedCurrencies][0],
+    [wrappableCurrencies, governedCurrencies, selectedToken]
   );
 
   const intendedMixers = useMemo(() => {
