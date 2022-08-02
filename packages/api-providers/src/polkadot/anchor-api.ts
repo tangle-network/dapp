@@ -1,6 +1,8 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
+import { calculateTypedChainId } from '@webb-tools/sdk-core';
+
 import { AnchorApi, AnchorBase } from '../abstracts';
 import { TypedChainId } from '../chains';
 import { AnchorConfigEntry } from '../types';
@@ -15,8 +17,12 @@ export class PolkadotAnchorApi extends AnchorApi<WebbPolkadot, BridgeConfig> {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  getTokenAddress(chainId: TypedChainId): string | null {
-    return null;
+  getTokenAddress(chainTypeId: TypedChainId): string | null {
+    const activeBridgeAsset = this.store.activeBridge?.asset;
+    const typedChainId = calculateTypedChainId(chainTypeId.chainType, chainTypeId.chainId);
+    return activeBridgeAsset
+      ? this.inner.config.currencies[activeBridgeAsset].addresses.get(typedChainId) ?? null
+      : null;
   }
 
   async getCurrencies(): Promise<Currency[]> {

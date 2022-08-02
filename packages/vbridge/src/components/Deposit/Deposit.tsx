@@ -115,6 +115,7 @@ export const Deposit: React.FC<DepositProps> = () => {
       chainId: activeChain.chainId,
       chainType: activeChain.chainType,
     });
+
     if (!tokenAddress) {
       return;
     }

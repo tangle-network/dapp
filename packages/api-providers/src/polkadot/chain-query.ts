@@ -17,11 +17,8 @@ export class PolkadotChainQuery extends ChainQuery<WebbPolkadot> {
     return block.block.header.number.toNumber();
   }
 
-  async tokenBalanceByCurrencyId(typedChainId: number, currency: CurrencyId): Promise<string> {
-    const assetId = this.inner.config.currencies[currency].addresses.get(typedChainId);
-
+  private async getTokenBalanceByAssetId(assetId: string): Promise<string> {
     const activeAccount = await this.inner.accounts.activeOrDefault;
-
     if (activeAccount) {
       // If the assetId is not 0, query the orml tokens
       if (assetId !== '0') {
@@ -55,8 +52,13 @@ export class PolkadotChainQuery extends ChainQuery<WebbPolkadot> {
     return '';
   }
 
+  async tokenBalanceByCurrencyId(typedChainId: number, currency: CurrencyId): Promise<string> {
+    const assetId = this.inner.config.currencies[currency].addresses.get(typedChainId);
+    return assetId ? this.getTokenBalanceByAssetId(assetId) : '';
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async tokenBalanceByAddress(address: string): Promise<string> {
-    return '';
+    return this.getTokenBalanceByAssetId(address);
   }
 }
