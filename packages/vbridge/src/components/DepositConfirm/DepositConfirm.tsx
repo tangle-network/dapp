@@ -179,7 +179,11 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({
             setLoading(true);
             downloadNote();
             onClose();
-            const results = await provider.deposit(depositPayload);
+            console.log('depositing...');
+            const results = await provider.deposit(depositPayload).catch((e) => {
+              console.log(e, 'rejected');
+            });
+            console.log('deposited');
             // TODO : Fix this once the web3 impl has the right impls
             if (results) {
               // download note with the index

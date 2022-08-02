@@ -5,6 +5,7 @@
 
 import type { WebbWeb3Provider } from './webb-provider';
 
+import { WebbError, WebbErrorCodes } from '@webb-dapp/api-providers';
 import {
   calculateTypedChainId,
   ChainType,
@@ -43,7 +44,18 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
   }
 
   async withdraw(notes: string[], recipient: string, amount: string): Promise<VAnchorWithdrawResult> {
-    this.cancelToken.cancelled = false;
+    switch (this.state) {
+      case TransactionState.Cancelling:
+      case TransactionState.Failed:
+      case TransactionState.Done:
+        this.cancelToken.reset();
+        this.state = TransactionState.Ideal;
+        break;
+      case TransactionState.Ideal:
+        break;
+      default:
+        throw WebbError.from(WebbErrorCodes.TransactionInProgress);
+    }
     const key = 'web3-vbridge-withdraw';
     let txHash = '';
     const changeNotes = [];
@@ -79,7 +91,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
       // max edges as well as the number of input notes.
       let wasmBuffer: Uint8Array;
       let provingKey: Uint8Array;
-
+      this.cancelToken.throwIfCancel();
       this.emit('stateChange', TransactionState.FetchingFixtures);
 
       const maxEdges = await destVAnchor.inner.maxEdges();
@@ -102,6 +114,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
 
       // Create input UTXOs for convenience calculations
       let inputUtxos: Utxo[] = [];
+      this.cancelToken.throwIfCancel();
 
       // For all notes, get any leaves
       this.emit('stateChange', TransactionState.FetchingLeaves);
@@ -192,7 +205,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
       }
 
       // Check for cancelled here, abort if it was set.
-      if (this.cancelToken.cancelled) {
+      if (this.cancelToken.isCancelled()) {
         this.inner.notificationHandler({
           description: 'Withdraw canceled',
           key,
@@ -207,6 +220,8 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
           outputNotes: [],
         };
       }
+
+      this.cancelToken.throwIfCancel();
 
       // Retrieve the user's keypair
       const keypairStorage = await keypairStorageFactory();
@@ -251,7 +266,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
       );
 
       // Check for cancelled here, abort if it was set.
-      if (this.cancelToken.cancelled) {
+      if (this.cancelToken.isCancelled()) {
         this.inner.notificationHandler({
           description: 'Withdraw canceled',
           key,
@@ -268,6 +283,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
       }
 
       this.emit('stateChange', TransactionState.SendingTransaction);
+      this.cancelToken.throwIfCancel();
 
       // Take the proof and send the transaction
       if (activeRelayer) {

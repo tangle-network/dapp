@@ -9,7 +9,7 @@ import { useWebContext } from '@webb-dapp/react-environment';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 export interface VBridgeDepositApi {
   deposit(payload: DepositPayload): Promise<VAnchorDepositResults>;
-
+  cancel(): Promise<void>;
   generateNote(
     mixerId: number | string,
     destChainTypeId: number,
@@ -93,6 +93,12 @@ export const useBridgeDeposit = (): VBridgeDepositApi => {
     [activeApi]
   );
 
+  const cancel = useCallback(() => {
+    if (!depositApi) {
+      throw new Error('Api not ready');
+    }
+    return depositApi.cancel().catch(console.error);
+  }, [depositApi]);
   return {
     stage,
     setStage,
@@ -102,5 +108,6 @@ export const useBridgeDeposit = (): VBridgeDepositApi => {
     deposit,
     generateNote,
     error,
+    cancel,
   };
 };

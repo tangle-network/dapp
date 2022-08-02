@@ -96,7 +96,7 @@ export const Deposit: React.FC<DepositProps> = () => {
   const [showWrappableAssets, setShowWrappableAssets] = useState(false);
 
   const bridgeDepositApi = useBridgeDeposit();
-  const { setGovernedCurrency, setStage, setWrappableCurrency, stage } = bridgeDepositApi;
+  const { cancel, setGovernedCurrency, setStage, setWrappableCurrency, stage } = bridgeDepositApi;
 
   const { governedCurrencies, governedCurrency, wrappableCurrencies, wrappableCurrency } = useCurrencies();
   const { activeApi, activeChain, activeWallet } = useWebContext();
@@ -128,10 +128,6 @@ export const Deposit: React.FC<DepositProps> = () => {
     return typedChainIds;
   }, [activeApi?.state.activeBridge]);
 
-  const disabledDepositButton = useMemo(() => {
-    return amount === 0 || typeof destChain === 'undefined' || stage != TransactionState.Ideal;
-  }, [amount, destChain, stage]);
-
   const balance = useMemo(() => {
     if (showWrappableAssets && wrappableCurrency) {
       return `${getRoundedAmountString(Number(wrappableCurrencyBalance))} ${wrappableCurrency.view.symbol}`;
@@ -143,6 +139,23 @@ export const Deposit: React.FC<DepositProps> = () => {
 
     return '-';
   }, [governedCurrency, governedCurrencyBalance, showWrappableAssets, wrappableCurrency, wrappableCurrencyBalance]);
+
+  const disabledDepositButton = useMemo(() => {
+    const insufficientInputs = amount === 0 || typeof destChain === 'undefined' || stage != TransactionState.Ideal;
+
+    let enoughBalance = false;
+    if (showWrappableAssets) {
+      if (wrappableCurrencyBalance && wrappableCurrencyBalance > amount) {
+        enoughBalance = true;
+      }
+    } else {
+      if (governedCurrencyBalance && governedCurrencyBalance > amount) {
+        enoughBalance = true;
+      }
+    }
+
+    return insufficientInputs || !enoughBalance;
+  }, [amount, destChain, stage, showWrappableAssets, wrappableCurrencyBalance, governedCurrencyBalance]);
 
   const parseAndSetAmount = (amount: string): void => {
     setUserAmountInput(amount);
@@ -241,8 +254,8 @@ export const Deposit: React.FC<DepositProps> = () => {
             amount={amount}
             sourceChain={activeChain ? activeChain.name : ''}
             destChain={destChain ? chainsConfig[destChain].name : ''}
-            cancel={() => {
-              console.log('user tried to cancel');
+            cancel={async () => {
+              await cancel();
             }}
             hide={() => setHideTxModal(true)}
           />
