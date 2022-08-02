@@ -29,6 +29,10 @@ export enum WebbErrorCodes {
   ChainIdTypeUnformatted,
   /// Invalid amount to withdraw,
   AmountToWithdrawExceedsTheDepositedAmount,
+  // Transaction is cancelled
+  TransactionCancelled,
+  // There is a transaction in progress
+  TransactionInProgress,
 }
 
 /// An Error message with error metadata
@@ -128,6 +132,18 @@ export class WebbError extends Error {
         return {
           code,
           message: `The amount to withdraw is more than the already deposited amount`,
+        };
+
+      case WebbErrorCodes.TransactionCancelled:
+        return {
+          code,
+          message: `Transaction is cancelled`,
+        };
+
+      case WebbErrorCodes.TransactionInProgress:
+        return {
+          code,
+          message: `There is a transaction in progress`,
         };
 
       default:
