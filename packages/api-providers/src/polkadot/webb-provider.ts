@@ -1,18 +1,23 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
+import '@webb-tools/types';
 
 import { EventBus } from '@webb-tools/app-util';
+import { calculateTypedChainId, ChainType } from '@webb-tools/sdk-core';
 
 import { ApiPromise } from '@polkadot/api';
 import { InjectedAccount, InjectedExtension } from '@polkadot/extension-inject/types';
 
-import { RelayChainMethods } from '../abstracts';
+import { Currency, RelayChainMethods } from '../abstracts';
+import { Bridge, WebbState } from '../abstracts/state';
 import { AccountsAdapter } from '../account/Accounts.adapter';
 import { PolkadotProvider } from '../ext-providers';
+import { BridgeConfigEntry, CurrencyType } from '../types';
 import { ActionsBuilder, InteractiveFeedback, WebbError, WebbErrorCodes } from '../webb-error';
 import {
   ApiInitHandler,
   AppConfig,
+  CurrencyRole,
   NotificationHandler,
   ProvideCapabilities,
   WasmFactory,
@@ -20,7 +25,7 @@ import {
   WebbMethods,
   WebbProviderEvents,
 } from '../';
-import { PolkadotAnchorApi } from './anchor-api';
+import { PolkadotBridgeApi } from './bridge-api';
 import { PolkadotChainQuery } from './chain-query';
 import { PolkadotCrowdloan } from './crowdloan';
 import { PolkadotMixerDeposit } from './mixer-deposit';
@@ -32,6 +37,7 @@ import { PolkadotVAnchorWithdraw } from './vanchor-withdraw';
 import { PolkadotWrapUnwrap } from './wrap-unwrap';
 
 export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbApiProvider<WebbPolkadot> {
+  state: WebbState;
   readonly methods: WebbMethods<WebbPolkadot>;
   readonly relayChainMethods: RelayChainMethods<WebbPolkadot>;
   readonly api: ApiPromise;
@@ -39,6 +45,7 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
 
   private constructor(
     apiPromise: ApiPromise,
+    readonly typedChainId: number,
     injectedExtension: InjectedExtension,
     readonly relayerManager: PolkadotRelayerManager,
     public readonly config: AppConfig,
@@ -63,7 +70,7 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
       },
     };
     this.methods = {
-      anchorApi: new PolkadotAnchorApi(this, this.config.bridgeByAsset),
+      bridgeApi: new PolkadotBridgeApi(this),
       chainQuery: new PolkadotChainQuery(this),
       mixer: {
         deposit: {
@@ -92,12 +99,39 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
         },
       },
     };
+    let initialSupportedCurrencies: Record<number, Currency> = {};
+    for (let currencyConfig of Object.values(config.currencies)) {
+      initialSupportedCurrencies[currencyConfig.id] = new Currency(currencyConfig);
+    }
+
+    // All supported bridges are supplied by the config, before passing to the state.
+    let initialSupportedBridges: Record<number, Bridge> = {};
+    for (let bridgeConfig of Object.values(config.bridgeByAsset)) {
+      if (Object.keys(bridgeConfig.anchors).includes(typedChainId.toString())) {
+        const bridgeCurrency = initialSupportedCurrencies[bridgeConfig.asset];
+        const bridgeTargets = {
+          ...Object.values(bridgeConfig.anchors),
+        };
+        initialSupportedBridges[bridgeConfig.asset] = new Bridge(bridgeCurrency, bridgeTargets);
+      }
+    }
+
+    this.state = new WebbState(initialSupportedCurrencies, initialSupportedBridges);
   }
 
   capabilities?: ProvideCapabilities | undefined;
 
   getProvider() {
     return this.provider;
+  }
+
+  // Return the typedChainId of this provider
+  // TODO: Find out how to get this value from chain
+  //       Maybe the polkadot webb-provider does not interact with a 'linkableTreeBn254' pallet
+  //       (it is for the dkg)
+  getChainId() {
+    // const chainType = await this.provider.api.consts.linkableTreeBn254.chainType;
+    return this.typedChainId;
   }
 
   async awaitMetaDataCheck() {
@@ -156,8 +190,11 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
     const [apiPromise, injectedExtension] = await PolkadotProvider.getParams(appName, endpoints, errorHandler.onError);
     const provider = new PolkadotProvider(apiPromise, injectedExtension, new PolkaTXBuilder(apiPromise, notification));
     const accounts = provider.accounts;
+    const chainId = await provider.api.consts.linkableTreeBn254.chainIdentifier;
+    const typedChainId = calculateTypedChainId(ChainType.Substrate, chainId.toNumber());
     const instance = new WebbPolkadot(
       apiPromise,
+      typedChainId,
       injectedExtension,
       relayerBuilder,
       appConfig,
@@ -186,8 +223,11 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
     wasmFactory: WasmFactory
   ): Promise<WebbPolkadot> {
     const provider = new PolkadotProvider(apiPromise, injectedExtension, new PolkaTXBuilder(apiPromise, notification));
+    const chainId = await provider.api.consts.linkableTreeBn254.chainIdentifier;
+    const typedChainId = calculateTypedChainId(ChainType.Substrate, chainId.toNumber());
     const instance = new WebbPolkadot(
       apiPromise,
+      typedChainId,
       injectedExtension,
       relayerBuilder,
       appConfig,

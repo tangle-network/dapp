@@ -42,7 +42,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
   // For VAnchor, the getSizes will describe the minimum deposit amount for the vanchor
   async getSizes(): Promise<MixerSize[]> {
     const anchors = await this.bridgeApi.getAnchors();
-    const currency = this.bridgeApi.currency;
+    const currency = this.inner.methods.bridgeApi.getCurrency();
 
     if (currency) {
       return anchors
@@ -66,10 +66,12 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
     wrappableAssetAddress?: string
   ): Promise<DepositPayload> {
     console.log('generateBridgeNote: ', anchorId, destination, amount);
-    const bridge = this.bridgeApi.activeBridge;
-    const currency = this.bridgeApi.currency;
+    const bridge = this.inner.methods.bridgeApi.getBridge();
+    const currency = bridge?.currency;
 
     if (!bridge || !currency) {
+      console.log('currency: ', currency);
+      console.log('bridge: ', bridge);
       throw new Error('api not ready');
     }
     // Convert the amount to bn units (i.e. WEI instead of ETH)
@@ -103,14 +105,8 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
       keypair,
     });
 
-    const anchorConfig = bridge.anchors.find((anchorConfig) => anchorConfig.type === 'variable');
-
-    if (!anchorConfig) {
-      throw new Error(`cannot find anchor configuration with amount: ${amount}`);
-    }
-
-    const srcAddress = anchorConfig.anchorAddresses[sourceChainId];
-    const destAddress = anchorConfig.anchorAddresses[destination];
+    const srcAddress = bridge.targets[sourceChainId];
+    const destAddress = bridge.targets[destination];
 
     const noteInput: NoteGenInput = {
       amount: bnAmount.toString(),
@@ -146,8 +142,8 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
   // TODO: implement the return result
   //@ts-ignore
   async deposit(depositPayload: DepositPayload): Promise<VAnchorDepositResults> {
-    const bridge = this.bridgeApi.activeBridge;
-    const currency = this.bridgeApi.currency;
+    const bridge = this.inner.methods.bridgeApi.getBridge();
+    const currency = bridge?.currency;
     console.log('deposit: ', depositPayload);
 
     if (!bridge || !currency) {
@@ -177,6 +173,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
       });
 
       const anchors = await this.bridgeApi.getAnchors();
+      console.log(anchors);
 
       // Find the only configurable VAnchor
       const vanchor = anchors.find((anchor) => !anchor.amount);

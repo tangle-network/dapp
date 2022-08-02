@@ -4,7 +4,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
 import { typedChainIdToSubstrateRelayerName } from '@webb-dapp/apps/configs/relayer-config';
 import { LoggerService } from '@webb-tools/app-util';
-import { ArkworksProvingManager, Note, parseTypedChainId, ProvingManagerSetupInput } from '@webb-tools/sdk-core';
+import { ArkworksProvingManager, Note, ProvingManagerSetupInput } from '@webb-tools/sdk-core';
 import { ethers } from 'ethers';
 
 import { decodeAddress } from '@polkadot/keyring';
@@ -14,7 +14,6 @@ import { MixerWithdraw, RelayedChainInput } from '../abstracts';
 import { WebbError, WebbErrorCodes } from '../webb-error';
 import { fetchSubstrateMixerProvingKey, RelayedWithdrawResult, TransactionState } from '../';
 import { WebbPolkadot } from './webb-provider';
-import { PolkadotMixerDeposit } from '.';
 
 const logger = LoggerService.get('PolkadotMixerWithdraw');
 
@@ -78,7 +77,7 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
       const noteParsed = await Note.deserialize(note);
       const bnAmount = noteParsed.note.amount;
       const amount = ethers.utils.formatUnits(bnAmount, noteParsed.note.denomination);
-      const sizes = await PolkadotMixerDeposit.getSizes(this.inner);
+      const sizes = await this.inner.methods.mixer.deposit.inner.getSizes();
       const treeId = sizes.find((s) => s.amount === Number(amount))?.treeId!;
 
       const leaves = await this.fetchTreeLeaves(treeId);

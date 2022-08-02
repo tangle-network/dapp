@@ -13,6 +13,7 @@ import { PalletMixerMixerMetadata } from '@polkadot/types/lookup';
 import { u8aToHex } from '@polkadot/util';
 
 import { MixerDeposit } from '../abstracts';
+import { CurrencyRole, CurrencyType } from '../types';
 import { WebbError, WebbErrorCodes } from '../webb-error';
 import { Currency, DepositPayload as TDepositPayload, MixerSize, ORMLCurrency } from '../';
 import { WebbPolkadot } from './webb-provider';
@@ -26,11 +27,10 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
     super(inner);
   }
 
-  static async getSizes(webbPolkadot: WebbPolkadot): Promise<MixerSize[]> {
-    const api = webbPolkadot.api;
-    const ormlCurrency = new ORMLCurrency(webbPolkadot);
+  async getSizes(): Promise<MixerSize[]> {
+    const ormlCurrency = new ORMLCurrency(this.inner);
     const ormlAssets = await ormlCurrency.list();
-    const data = await api.query.mixerBn254.mixers.entries();
+    const data = await this.inner.api.query.mixerBn254.mixers.entries();
     const groupItem = data
       .filter(([_, info]) => !info.isEmpty)
       // storageKey is treeId.  Info is {depositSize, asset}
@@ -47,11 +47,27 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
         // TODO replace `replaceAll` or target es2021
         const amountNumber = (Number(amount?.toString().replaceAll(',', '')) * 1.0) / Math.pow(10, 12);
 
-        const currency = Currency.fromORMLAsset(
-          webbPolkadot.config.currencies,
-          ormlAssets.find((asset) => Number(asset.id) === cId)!
-        );
-
+        // const chainId = await this.inner.getProvider().api.consts.linkableTreeBn254.chainIdentifier;
+        const asset = ormlAssets.find((asset) => Number(asset.id) === cId)!;
+        const currency = new Currency({
+          role: CurrencyRole.Wrappable,
+          decimals: 18,
+          type: CurrencyType.ORML,
+          name: asset.name,
+          symbol: asset.name.slice(0, 4).toLocaleUpperCase(),
+          id: Object.entries(this.inner.state.getCurrencies()).length,
+          addresses: new Map(),
+        });
+        // icon: currencyConfig.data.icon,
+        // role: currencyConfig.data.role,
+        // decimals: currencyConfig.data.decimals,
+        // type: currencyConfig.data.type,
+        // color: currencyConfig.data.color || undefined,
+        // imageUrl: currencyConfig.data.imageUrl || undefined,
+        // addresses: new Map([[PresetTypedChainId.ProtocolSubstrateStandalone, asset.id]]),
+        // id: Object.entries(currenciesMap).length,
+        // name: asset.name,
+        // symbol: asset.name.slice(0, 4).toLocaleUpperCase(),
         return {
           amount: amountNumber,
           currency: currency,
@@ -73,10 +89,6 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
       .sort((a, b) => (a.amount > b.amount ? 1 : a.amount < b.amount ? -1 : 0));
 
     return groupItem;
-  }
-
-  async getSizes() {
-    return PolkadotMixerDeposit.getSizes(this.inner);
   }
 
   // MixerId is the treeId for deposit, chainIdType is the destination (and source because this is mixer)

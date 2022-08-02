@@ -5,6 +5,7 @@
 
 import { options } from '@webb-tools/api';
 import { EventBus, LoggerService } from '@webb-tools/app-util';
+import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import lodash from 'lodash';
 
 import { ApiPromise, WsProvider } from '@polkadot/api';

@@ -6,7 +6,6 @@ export { useRequest, useTranslation };
 export * from './useFetch';
 // system
 export * from './useAccounts';
-export * from './useApi';
 export * from './useSetting';
 export * from './useConstants';
 export * from './useExtrinsicHistory';

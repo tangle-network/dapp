@@ -1,11 +1,7 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { PresetTypedChainId, TypedChainId } from '../../chains';
-import { CurrencyId } from '../../enums';
 import { CurrencyConfig, CurrencyRole, CurrencyView } from '../../types/currency-config.interface';
-import { AppConfig } from '../common';
-import { ORMLAsset } from './orml-currency';
 
 /**
  * The abstract class for representing the values need to display a Currency on the UI
@@ -18,38 +14,11 @@ export abstract class CurrencyContent {
  *
  * This currency class assumes that instances are wrappable assets.
  **/
-export class Currency extends CurrencyContent {
-  constructor(private data: Omit<CurrencyConfig, 'id'> & { id: string | CurrencyId }) {
-    super();
-  }
+export class Currency {
+  constructor(private data: CurrencyConfig) {}
 
   get id() {
     return this.data.id;
-  }
-
-  static fromCurrencyId(currenciesConfig: AppConfig['currencies'], currencyId: CurrencyId) {
-    const currencyConfig = currenciesConfig[currencyId];
-
-    return new Currency(currencyConfig);
-  }
-
-  // TODO: this should be removed instead use the constructor
-  static fromORMLAsset(currenciesConfig: AppConfig['currencies'], asset: ORMLAsset): Currency {
-    return new Currency({
-      ...currenciesConfig[CurrencyId.WEBB],
-      addresses: new Map([[PresetTypedChainId.ProtocolSubstrateStandalone, asset.id]]),
-      id: `ORML@${asset.id}`,
-      name: asset.name,
-      symbol: asset.name.slice(0, 4).toLocaleUpperCase(),
-    });
-  }
-
-  static isWrappableCurrency(currenciesConfig: AppConfig['currencies'], currencyId: CurrencyId) {
-    if (currenciesConfig[currencyId].role === CurrencyRole.Wrappable) {
-      return true;
-    }
-
-    return false;
   }
 
   getAddress(chain: number): string | undefined {
@@ -64,16 +33,16 @@ export class Currency extends CurrencyContent {
     return Array.from(this.data.addresses.keys());
   }
 
-  getChainIdsAndTypes(chainsConfig: AppConfig['chains']): TypedChainId[] {
-    return Array.from(this.data.addresses.keys())
-      .filter((typedChainId) => Boolean(chainsConfig[typedChainId]))
-      .map((typedChainId: any) => {
-        return { chainId: chainsConfig[typedChainId].chainId, chainType: chainsConfig[typedChainId].chainType };
-      });
+  getAddresses(): string[] {
+    return Array.from(this.data.addresses.values());
   }
 
   getDecimals(): number {
     return this.data.decimals || 0;
+  }
+
+  getRole(): CurrencyRole {
+    return this.data.role;
   }
 
   get view(): CurrencyView {

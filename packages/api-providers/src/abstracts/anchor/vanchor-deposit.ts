@@ -5,10 +5,10 @@ import { EventBus } from '@webb-tools/app-util';
 import { Note } from '@webb-tools/sdk-core';
 
 import { TransactionState } from '../../abstracts/mixer/mixer-withdraw';
-import { BridgeConfig } from '../../types/bridge-config.interface';
+import { BridgeConfigEntry } from '../../types/bridge-config.interface';
 import { DepositPayload } from '../mixer/mixer-deposit';
 import { TXresultBase, WebbApiProvider } from '../webb-provider.interface';
-import { AnchorApi } from './anchor-api';
+import { BridgeApi } from './bridge-api';
 
 // Todo: should we extract the interface of MixerDeposit on another class and rename `generateBridgeNote` to generate note
 
@@ -41,7 +41,7 @@ export abstract class VAnchorDeposit<
   }
 
   protected get bridgeApi() {
-    return this.inner.methods.anchorApi as AnchorApi<T, BridgeConfig>;
+    return this.inner.methods.bridgeApi as BridgeApi<T>;
   }
 
   protected get config() {

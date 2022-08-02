@@ -33,7 +33,7 @@ const ListItem = styled(ItemWrapper)``;
 
 export type ChainSelectionProps = {
   chainTypeIds: TypedChainId[];
-  onChange(next: TypedChainId | undefined): void;
+  onChange(next: number | undefined): void;
   onClose?: () => void;
   selectedChain?: Chain;
 };
@@ -107,7 +107,7 @@ const ChainSelection: React.FC<ChainSelectionProps> = ({ chainTypeIds, onChange,
               ? undefined
               : () => {
                   onClose?.();
-                  onChange(chainTypeId);
+                  onChange(calculateTypedChainId(chain.chainType, chain.chainId));
                 };
 
             return (

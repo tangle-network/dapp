@@ -21,7 +21,6 @@ export const useDeposit = (): DepositApi => {
   const [loadingState, setLoadingState] = useState<MixerDeposit['loading']>('ideal');
   const [error, setError] = useState('');
   const [mixerSizes, setMixerSizes] = useState<MixerSize[]>([]);
-  const { bridgeApi } = useBridge();
 
   /// api
   const depositApi = useMemo(() => {
@@ -44,7 +43,7 @@ export const useDeposit = (): DepositApi => {
       setMixerSizes(mixerSizes);
     });
     return () => unSub && unSub();
-  }, [depositApi, bridgeApi?.activeBridge]);
+  }, [depositApi]);
 
   const generateNote = useCallback(
     async (mixerId: number | string, chainTypeId: TypedChainId) => {

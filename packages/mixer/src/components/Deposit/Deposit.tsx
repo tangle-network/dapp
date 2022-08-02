@@ -2,7 +2,8 @@ import { Currency, MixerSize, WalletConfig } from '@webb-dapp/api-providers';
 import { DepositConfirm } from '@webb-dapp/mixer/components/DepositConfirm/DepositConfirm';
 import { useDeposit } from '@webb-dapp/mixer/hooks/deposit/useDeposit';
 import { RequiredWalletSelection } from '@webb-dapp/react-components/RequiredWalletSelection/RequiredWalletSelection';
-import { useAppConfig, useWebContext } from '@webb-dapp/react-environment';
+import { useWebContext } from '@webb-dapp/react-environment';
+import { useCurrencies } from '@webb-dapp/react-hooks/currency';
 import { SpaceBox } from '@webb-dapp/ui-components/Box';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { BalanceLabel } from '@webb-dapp/ui-components/Inputs/BalanceLabel/BalanceLabel';
@@ -37,23 +38,15 @@ type DepositProps = {};
 export const Deposit: React.FC<DepositProps> = () => {
   const { activeApi, activeChain, activeWallet } = useWebContext();
   const depositApi = useDeposit();
-  const { currencies: currenciesConfig } = useAppConfig();
+  const { wrappableCurrencies } = useCurrencies();
   const [showDepositModal, setShowDepositModal] = useState(false);
   const [selectedToken, setSelectedToken] = useState<Currency | undefined>(undefined);
   const [item, setItem] = useState<MixerSize | undefined>(undefined);
   const [tokenBalance, setTokenBalance] = useState('');
 
-  const allCurrencies = useMemo(() => {
-    return activeChain
-      ? activeChain.currencies.map((currencyId) => {
-          return Currency.fromCurrencyId(currenciesConfig, currencyId);
-        })
-      : [];
-  }, [activeChain, currenciesConfig]);
-
   const activeToken = useMemo<Currency | undefined>(
-    () => selectedToken ?? allCurrencies[0],
-    [allCurrencies, selectedToken]
+    () => selectedToken ?? wrappableCurrencies[0],
+    [wrappableCurrencies, selectedToken]
   );
 
   const intendedMixers = useMemo(() => {
@@ -94,10 +87,10 @@ export const Deposit: React.FC<DepositProps> = () => {
           <InputTitle leftLabel={<TextLabel value='TOKEN' />} />
           <div className='token-dropdown-section'>
             <TokenInput
-              currencies={allCurrencies}
+              currencies={wrappableCurrencies}
               value={activeToken}
               onChange={(token) => {
-                setSelectedToken(Currency.fromCurrencyId(currenciesConfig, token.view.id));
+                setSelectedToken(token);
               }}
               wrapperStyles={{ width: '100%' }}
             />

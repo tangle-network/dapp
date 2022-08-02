@@ -1,5 +1,4 @@
 import { Avatar, ClickAwayListener, Icon, IconButton, Typography } from '@mui/material';
-import { TypedChainId } from '@webb-dapp/api-providers';
 import { chainsPopulated } from '@webb-dapp/apps/configs';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
@@ -8,7 +7,6 @@ import { NetworkManager } from '@webb-dapp/ui-components/NetworkManager/NetworkM
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { above, useBreakpoint } from '@webb-dapp/ui-components/utils/responsive-utils';
-import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import React, { CSSProperties, useEffect, useMemo, useRef, useState } from 'react';
 import styled, { css } from 'styled-components';
 
@@ -79,9 +77,9 @@ const InputWrapper = styled.div<{ open: boolean }>`
 `;
 
 type DropdownInputProps = {
-  chains: TypedChainId[];
-  value?: TypedChainId;
-  onChange(next: TypedChainId | undefined): void;
+  chains: number[];
+  value?: number;
+  onChange(next: number | undefined): void;
 };
 
 const DropdownInput: React.FC<DropdownInputProps> = ({ chains, onChange, value }) => {
@@ -96,13 +94,13 @@ const DropdownInput: React.FC<DropdownInputProps> = ({ chains, onChange, value }
       return undefined;
     }
 
-    if (Number(value.chainType) === -1 || Number(value.chainId) === -1) {
+    if (!chainsPopulated[value]) {
       return undefined;
     }
 
     return {
       id: value,
-      chain: chainsPopulated[calculateTypedChainId(value.chainType, value.chainId)],
+      chain: chainsPopulated[value],
     };
   }, [value]);
 
@@ -188,7 +186,14 @@ const DropdownInput: React.FC<DropdownInputProps> = ({ chains, onChange, value }
             </div>
             <Modal isCenterModal open={isOpen} hasBlur onClose={() => setIsOpen(false)}>
               <ChainSelection
-                chainTypeIds={chains}
+                chainTypeIds={chains
+                  .filter((chain) => chainsPopulated[chain])
+                  .map((chain) => {
+                    return {
+                      chainId: chainsPopulated[chain].chainId,
+                      chainType: chainsPopulated[chain].chainType,
+                    };
+                  })}
                 onClose={() => setIsOpen(false)}
                 selectedChain={selected?.chain}
                 onChange={onChange}
@@ -202,9 +207,9 @@ const DropdownInput: React.FC<DropdownInputProps> = ({ chains, onChange, value }
 };
 
 type ChainInputProps = {
-  chains: TypedChainId[];
-  selectedChain: TypedChainId | undefined;
-  setSelectedChain?(chain: TypedChainId | undefined): void;
+  chains: number[];
+  selectedChain: number | undefined;
+  setSelectedChain?(chain: number | undefined): void;
   wrapperStyles?: CSSProperties;
 };
 

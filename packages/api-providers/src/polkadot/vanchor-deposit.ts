@@ -56,7 +56,7 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
     wrappableAssetAddress?: string
   ): Promise<DepositPayload> {
     // Get the currency bridge currency
-    const currency = this.bridgeApi.currency;
+    const currency = this.inner.methods.bridgeApi.getCurrency();
 
     // No currency is selected on the API
     if (!currency) {
@@ -70,7 +70,7 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
     const chainId = await this.inner.api.consts.linkableTreeBn254.chainIdentifier;
     const chainType = await this.inner.api.consts.linkableTreeBn254.chainType;
     const sourceChainId = calculateTypedChainId(Number(chainType.toHex()), Number(chainId));
-    const anchors = await this.bridgeApi.getVariableAnchors();
+    const anchors = await this.bridgeApi.getAnchors();
     const anchor = anchors[0];
     // Tree id for the target chain
     const treeId = anchor.neighbours[sourceChainId] as number;

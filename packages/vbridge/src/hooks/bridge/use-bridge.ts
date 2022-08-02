@@ -4,23 +4,9 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 export const useBridge = () => {
   const { activeApi } = useWebContext();
-  const bridgeApi = useMemo(() => activeApi?.methods.anchorApi, [activeApi]);
-  const [tokens, setTokens] = useState<Currency[]>([]);
-
-  useEffect(() => {
-    bridgeApi?.getCurrencies().then((c) => setTokens(c));
-  }, [bridgeApi]);
-
-  const getTokensOfChain = useCallback(
-    (chainId: TypedChainId): Promise<Currency[]> => {
-      return bridgeApi?.getTokensOfChain(chainId) ?? Promise.resolve([]);
-    },
-    [bridgeApi]
-  );
+  const bridgeApi = useMemo(() => activeApi?.methods.bridgeApi, [activeApi]);
 
   return {
-    tokens,
     bridgeApi,
-    getTokensOfChain,
   };
 };

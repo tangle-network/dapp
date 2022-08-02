@@ -1,45 +1,34 @@
 import {
-  BridgeCurrencyIndex,
   Currency,
   DepositPayload,
-  DepositStates,
-  MixerDeposit,
   TransactionState,
-  TypedChainId,
   VAnchorDeposit,
   VAnchorDepositResults,
 } from '@webb-dapp/api-providers';
 import { useWebContext } from '@webb-dapp/react-environment';
-import { useBridge } from '@webb-dapp/vbridge/hooks/bridge/use-bridge';
-import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 export interface VBridgeDepositApi {
   deposit(payload: DepositPayload): Promise<VAnchorDepositResults>;
 
   generateNote(
     mixerId: number | string,
-    destChain: TypedChainId,
+    destChainTypeId: number,
     amount: number,
     wrappableAsset: string | undefined
   ): Promise<DepositPayload>;
-
   stage: TransactionState;
   setStage(stage: TransactionState): void;
-  loadingState: MixerDeposit['loading'];
+  setWrappableCurrency(currency: Currency): void;
+  setGovernedCurrency(currency: Currency): void;
   error: string;
   depositApi: VAnchorDeposit<any> | null;
-  selectedBridgeCurrency: Currency | null;
-
-  setSelectedCurrency(bridgeCurrency: BridgeCurrencyIndex | undefined): void;
 }
 
 export const useBridgeDeposit = (): VBridgeDepositApi => {
   const [stage, setStage] = useState<TransactionState>(TransactionState.Ideal);
   const { activeApi } = useWebContext();
-  const [loadingState, setLoadingState] = useState<DepositStates>('ideal');
-  const [error, setError] = useState('');
-  const { bridgeApi, getTokensOfChain } = useBridge();
-  const [selectedBridgeCurrency, setSelectedBridgeCurrency] = useState<null | Currency>(null);
+  const [error] = useState('');
+
   /// api
   const depositApi = useMemo(() => {
     const depositApi = activeApi?.methods.variableAnchor.deposit;
@@ -51,7 +40,7 @@ export const useBridgeDeposit = (): VBridgeDepositApi => {
 
   // hook events
   useEffect(() => {
-    if (!depositApi || !bridgeApi) {
+    if (!depositApi) {
       return;
     }
 
@@ -59,28 +48,17 @@ export const useBridgeDeposit = (): VBridgeDepositApi => {
       setStage(state);
     });
 
-    setSelectedBridgeCurrency(bridgeApi.currency);
-
-    const subscribe = bridgeApi.$store.subscribe((bridge) => {
-      setSelectedBridgeCurrency(bridgeApi.currency);
-    });
     return () => {
-      subscribe.unsubscribe();
+      depositApi.unsubscribeAll();
     };
-  }, [depositApi, bridgeApi, selectedBridgeCurrency?.id, bridgeApi?.activeBridge]);
+  }, [depositApi]);
 
   const generateNote = useCallback(
-    async (
-      anchorId: number | string,
-      destChainTypeId: TypedChainId,
-      amount: number,
-      wrappableAsset: string | undefined
-    ) => {
+    async (anchorId: number | string, destChainTypeId: number, amount: number, wrappableAsset: string | undefined) => {
       if (!depositApi) {
         throw new Error('Not ready');
       }
-      const destChainId = calculateTypedChainId(destChainTypeId.chainType, destChainTypeId.chainId);
-      return depositApi?.generateBridgeNote(anchorId, destChainId, amount, wrappableAsset);
+      return depositApi.generateBridgeNote(anchorId, destChainTypeId, amount, wrappableAsset);
     },
     [depositApi]
   );
@@ -95,26 +73,34 @@ export const useBridgeDeposit = (): VBridgeDepositApi => {
     [depositApi]
   );
 
-  const setSelectedCurrency = (bridgeCurrency: BridgeCurrencyIndex | undefined) => {
-    if (bridgeApi) {
-      if (bridgeCurrency) {
-        const nextBridge = bridgeApi.store.config[bridgeCurrency] || undefined;
-        bridgeApi.setActiveBridge(nextBridge);
-      } else {
-        bridgeApi.setActiveBridge(undefined);
+  const setWrappableCurrency = useCallback(
+    async (currency: Currency | null) => {
+      if (activeApi) {
+        activeApi.state.wrappableCurrency = currency;
       }
-    }
-  };
+    },
+    [activeApi]
+  );
+
+  const setGovernedCurrency = useCallback(
+    (currency: Currency): void => {
+      if (!activeApi || !activeApi.state.activeBridge) {
+        return;
+      }
+
+      activeApi.methods.bridgeApi.setBridgeByCurrency(currency);
+    },
+    [activeApi]
+  );
 
   return {
     stage,
     setStage,
     depositApi,
+    setWrappableCurrency,
+    setGovernedCurrency,
     deposit,
     generateNote,
-    loadingState,
     error,
-    selectedBridgeCurrency,
-    setSelectedCurrency,
   };
 };

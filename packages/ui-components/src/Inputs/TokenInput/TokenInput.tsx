@@ -1,5 +1,5 @@
 import { Avatar, ClickAwayListener, Icon, IconButton, Tooltip, Typography } from '@mui/material';
-import { CurrencyContent, CurrencyId, Web3Provider } from '@webb-dapp/api-providers';
+import { Currency, CurrencyId, Web3Provider } from '@webb-dapp/api-providers';
 import { currenciesConfig } from '@webb-dapp/apps/configs';
 import { useWebContext } from '@webb-dapp/react-environment';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
@@ -78,9 +78,9 @@ const TokenInputWrapper = styled.div<{ open: boolean }>`
 `;
 
 export type TokenInputProps = {
-  currencies: CurrencyContent[];
-  value?: CurrencyContent | null;
-  onChange(next: CurrencyContent): void;
+  currencies: Currency[];
+  value?: Currency | null;
+  onChange(next: Currency): void;
   wrapperStyles?: CSSProperties;
 };
 

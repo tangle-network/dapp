@@ -145,16 +145,22 @@ export const useWithdraw = (params: UseWithdrawProps) => {
 
   // hook events
   useEffect(() => {
-    params.notes?.map((note) =>
-      activeApi?.relayerManager.getRelayersByNote(note).then((r: WebbRelayer[]) => {
+    if (!activeApi) {
+      return;
+    }
+
+    // When the first note is selected, we can determine the compatible relayers by the note target.
+    if (params.notes?.length) {
+      activeApi.relayerManager.getRelayersByNote(params.notes[0]).then((r: WebbRelayer[]) => {
         setRelayersState((p) => ({
           ...p,
           loading: false,
           relayers: r,
         }));
-      })
-    );
+      });
+    }
 
+    // Subscribe to updates for the active relayer
     const sub = activeApi?.relayerManager.activeRelayerWatcher.subscribe((next: OptionalActiveRelayer) => {
       setRelayersState((p) => ({
         ...p,
@@ -200,7 +206,7 @@ export const useWithdraw = (params: UseWithdrawProps) => {
       sub?.unsubscribe();
       Object.values(unsubscribe).forEach((v) => v && v());
     };
-  }, [withdrawApi, params.notes, activeApi?.relayerManager]);
+  }, [withdrawApi, params.notes, activeApi, activeApi?.relayerManager]);
 
   return {
     stage,

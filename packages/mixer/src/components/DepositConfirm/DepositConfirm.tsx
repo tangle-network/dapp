@@ -149,7 +149,7 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({ mixerSize, onClose,
             Please backup your note. If you lose this. <br /> you won't get your deposit back.
           </Typography>
           <SpaceBox height={20} />
-          <DepositAmountDecal amount={mixerSize?.amount || 0} symbol={mixerSize?.asset || 'UNKN'} />
+          <DepositAmountDecal amount={mixerSize?.amount || 0} symbol={mixerSize?.title || 'UNKN'} />
         </header>
 
         <SpaceBox height={16} />

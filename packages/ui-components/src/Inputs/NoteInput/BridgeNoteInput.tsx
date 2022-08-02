@@ -16,7 +16,7 @@ export const BridgeNoteInput: React.FC<NoteInputProps> = ({ error, onChange, val
   const depositNote = useDepositNote(value);
   const navigate = useNavigate();
   const { activeApi } = useWebContext();
-  const anchorApi = activeApi?.methods.anchorApi;
+  const bridgeApi = activeApi?.methods.bridgeApi;
 
   // Side effects on note input
   useEffect(() => {
@@ -30,15 +30,17 @@ export const BridgeNoteInput: React.FC<NoteInputProps> = ({ error, onChange, val
       });
       navigate('/mixer', { replace: true });
     }
-    if (depositNote) {
+    if (depositNote && bridgeApi) {
       // Set the appropriate active bridge
-      const bridgedCurrency = webbCurrencyIdFromString(depositNote.note.tokenSymbol);
-
-      if (anchorApi && anchorApi.bridgeIds.includes(bridgedCurrency.toString())) {
-        anchorApi.setActiveBridge(anchorApi.store.config[bridgedCurrency]);
+      const bridgedCurrencyId = webbCurrencyIdFromString(depositNote.note.tokenSymbol);
+      const bridgeEntry = bridgeApi.bridges.find((entry) => {
+        return entry.currency.id === bridgedCurrencyId;
+      });
+      if (bridgeEntry) {
+        bridgeApi.setActiveBridge(bridgeEntry);
       }
     }
-  }, [anchorApi, depositNote, navigate]);
+  }, [bridgeApi, depositNote, navigate]);
 
   return (
     <>

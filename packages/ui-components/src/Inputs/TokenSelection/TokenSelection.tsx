@@ -1,5 +1,5 @@
 import { Avatar, InputBase, ListItemAvatar, ListItemText, Tooltip, Typography } from '@mui/material';
-import { CurrencyContent } from '@webb-dapp/api-providers/abstracts';
+import { Currency } from '@webb-dapp/api-providers/abstracts';
 import { CurrencyId } from '@webb-dapp/api-providers/enums';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import SearchIcon from '@webb-dapp/ui-components/assets/SearchIcon';
@@ -30,11 +30,11 @@ const TokensList = styled(ListWrapper)``;
 const ListItem = styled(ItemWrapper)``;
 
 export type TokenSelectionProps = {
-  currencies: CurrencyContent[];
+  currencies: Currency[];
   onAddToMetaMask: (currencyId: CurrencyId) => Promise<void>;
-  onChange: (next: CurrencyContent) => void;
+  onChange: (next: Currency) => void;
   onClose: () => void;
-  selectedToken?: CurrencyContent | undefined | null;
+  selectedToken?: Currency | undefined | null;
 };
 
 const TokenSelection: React.FC<TokenSelectionProps> = ({

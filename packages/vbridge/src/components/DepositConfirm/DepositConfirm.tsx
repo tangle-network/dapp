@@ -49,7 +49,7 @@ type DepositInfoProps = {
   onSuccess(): void;
   anchorId: number | string;
   amount: number;
-  destChain: TypedChainId | undefined;
+  destChain: number | undefined;
   wrappableAsset: Currency | null | undefined;
 };
 
@@ -81,7 +81,7 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({
   wrappableAsset,
 }) => {
   const palette = useColorPallet();
-  const { activeChain } = useWebContext();
+  const { activeApi, activeChain } = useWebContext();
   const [depositPayload, setNote] = useState<DepositPayload | undefined>(undefined);
   const [loading, setLoading] = useState(false);
   const note = useMemo(() => {
@@ -147,7 +147,10 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({
             Please backup your note. If you lose this. <br /> you won't get your deposit back.
           </Typography>
           <SpaceBox height={20} />
-          <DepositAmountDecal amount={amount} symbol={provider.selectedBridgeCurrency?.view.symbol || 'UNKN'} />
+          <DepositAmountDecal
+            amount={amount}
+            symbol={activeApi?.methods.bridgeApi.getBridge()?.currency.view.symbol || 'UNKN'}
+          />
         </header>
 
         <SpaceBox height={16} />

@@ -1,8 +1,9 @@
-import { Currency, CurrencyId, TransactionState, TypedChainId, WalletConfig } from '@webb-dapp/api-providers';
-import { useWrapUnwrap } from '@webb-dapp/page-wrap-unwrap/hooks/useWrapUnwrap';
+import { TransactionState, WalletConfig } from '@webb-dapp/api-providers';
 import { RequiredWalletSelection } from '@webb-dapp/react-components/RequiredWalletSelection/RequiredWalletSelection';
 import { TransactionProcessingModal } from '@webb-dapp/react-components/Transact/TransactionProcessingModal';
 import { useAppConfig, useWebContext } from '@webb-dapp/react-environment/webb-context';
+import { useCurrencies } from '@webb-dapp/react-hooks/currency';
+import { useCurrencyBalance } from '@webb-dapp/react-hooks/currency/useCurrencyBalance';
 import { SpaceBox } from '@webb-dapp/ui-components/Box';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { AmountInput } from '@webb-dapp/ui-components/Inputs/AmountInput/AmountInput';
@@ -17,9 +18,7 @@ import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { getRoundedAmountString } from '@webb-dapp/ui-components/utils';
 import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
 import { DepositConfirm } from '@webb-dapp/vbridge/components/DepositConfirm/DepositConfirm';
-import { useBridge } from '@webb-dapp/vbridge/hooks/bridge/use-bridge';
 import { useBridgeDeposit } from '@webb-dapp/vbridge/hooks/deposit/useBridgeDeposit';
-import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
@@ -88,40 +87,22 @@ const TokenInputWrapper = styled.div`
 type DepositProps = {};
 
 export const Deposit: React.FC<DepositProps> = () => {
-  const [wrappedTokenBalance, setWrappedTokenBalance] = useState('');
   const [userAmountInput, setUserAmountInput] = useState<string>('');
   const [amount, setAmount] = useState<number>(0);
-  const [destChain, setDestChain] = useState<TypedChainId | undefined>(undefined);
-  const { chains: chainsConfig, currencies: currenciesConfig } = useAppConfig();
+  const [destChain, setDestChain] = useState<number | undefined>(undefined);
+  const { chains: chainsConfig } = useAppConfig();
 
-  const [wrappableTokenBalance, setWrappableTokenBalance] = useState<String>('');
   // boolean flag for displaying the wrapped asset input
   const [showWrappableAssets, setShowWrappableAssets] = useState(false);
 
-  const { tokens: bridgeCurrencies } = useBridge();
   const bridgeDepositApi = useBridgeDeposit();
-  const { selectedBridgeCurrency, setSelectedCurrency, setStage, stage } = bridgeDepositApi;
+  const { setGovernedCurrency, setStage, setWrappableCurrency, stage } = bridgeDepositApi;
 
-  const { setWrappableToken, wrappableToken, wrappableTokens } = useWrapUnwrap();
-  const { activeApi, activeChain, activeWallet, loading } = useWebContext();
+  const { governedCurrencies, governedCurrency, wrappableCurrencies, wrappableCurrency } = useCurrencies();
+  const { activeApi, activeChain, activeWallet } = useWebContext();
 
-  useEffect(() => {
-    if (!activeChain || !activeApi) {
-      return;
-    }
-
-    // todo: figure out what happens for polkadot - won't be depositing by address
-    const tokenAddress = activeApi.methods.anchorApi.getTokenAddress({
-      chainId: activeChain.chainId,
-      chainType: activeChain.chainType,
-    });
-    if (!tokenAddress) {
-      return;
-    }
-    activeApi.methods.chainQuery.tokenBalanceByAddress(tokenAddress).then((balance) => {
-      setWrappedTokenBalance(balance);
-    });
-  }, [activeApi, activeChain]);
+  const governedCurrencyBalance = useCurrencyBalance(governedCurrency);
+  const wrappableCurrencyBalance = useCurrencyBalance(wrappableCurrency);
 
   // boolean flags for different modal displays
   const [showDepositConfirm, setShowDepositConfirm] = useState(false);
@@ -137,40 +118,31 @@ export const Deposit: React.FC<DepositProps> = () => {
 
   const handleSuccess = useCallback((): void => {}, []);
 
-  const tokenChains = useMemo(() => {
-    const chains = selectedBridgeCurrency?.getChainIdsAndTypes(chainsConfig) ?? [];
-    return chains;
-  }, [chainsConfig, selectedBridgeCurrency]);
+  // Return an array of supported typedChainIds for the active bridge
+  const tokenChains = useMemo((): number[] => {
+    if (!activeApi?.state.activeBridge) {
+      return [];
+    }
+    const typedChainIds =
+      Object.keys(activeApi.state.activeBridge.targets).map((chainIdType) => Number(chainIdType)) ?? [];
+    return typedChainIds;
+  }, [activeApi?.state.activeBridge]);
 
   const disabledDepositButton = useMemo(() => {
     return amount === 0 || typeof destChain === 'undefined' || stage != TransactionState.Ideal;
   }, [amount, destChain, stage]);
 
-  const wrappableCurrency = useMemo<Currency | undefined>(() => {
-    if (wrappableToken) {
-      return Currency.fromCurrencyId(currenciesConfig, wrappableToken.view.id);
-    }
-    return undefined;
-  }, [currenciesConfig, wrappableToken]);
-
   const balance = useMemo(() => {
-    if (showWrappableAssets && wrappableToken && wrappableCurrency) {
-      return `${getRoundedAmountString(Number(wrappableTokenBalance))} ${wrappableCurrency.view.symbol}`;
+    if (showWrappableAssets && wrappableCurrency) {
+      return `${getRoundedAmountString(Number(wrappableCurrencyBalance))} ${wrappableCurrency.view.symbol}`;
     }
 
-    if (!showWrappableAssets && selectedBridgeCurrency) {
-      return `${getRoundedAmountString(Number(wrappedTokenBalance))} ${selectedBridgeCurrency.view.symbol}`;
+    if (!showWrappableAssets && governedCurrency) {
+      return `${getRoundedAmountString(Number(governedCurrencyBalance))} ${governedCurrency.view.symbol}`;
     }
 
     return '-';
-  }, [
-    selectedBridgeCurrency,
-    showWrappableAssets,
-    wrappableCurrency,
-    wrappableToken,
-    wrappableTokenBalance,
-    wrappedTokenBalance,
-  ]);
+  }, [governedCurrency, governedCurrencyBalance, showWrappableAssets, wrappableCurrency, wrappableCurrencyBalance]);
 
   const parseAndSetAmount = (amount: string): void => {
     setUserAmountInput(amount);
@@ -179,39 +151,6 @@ export const Deposit: React.FC<DepositProps> = () => {
       setAmount(parsedAmount);
     }
   };
-
-  useEffect(() => {
-    if (!wrappableToken || !activeApi || !activeChain || loading) {
-      return;
-    }
-    // TODO: handle when the token id isn't WebbCurrencyId
-    activeApi.methods.chainQuery
-      .tokenBalanceByCurrencyId(
-        calculateTypedChainId(activeChain.chainType, activeChain.chainId),
-        wrappableToken.view.id as any
-      )
-      .then((balance) => {
-        setWrappableTokenBalance(balance);
-      });
-  }, [wrappableToken, activeApi, loading, activeChain]);
-
-  useEffect(() => {
-    // cleanup the show wrappable assets conditional render if state changes
-    return setShowWrappableAssets(false);
-  }, [activeChain, wrappableTokens]);
-
-  useEffect(() => {
-    if (wrappableTokens && wrappableTokens.length && !wrappableToken) {
-      setWrappableToken(wrappableTokens[0]);
-      return;
-    }
-    if (wrappableToken) {
-      const isInList = wrappableTokens.findIndex((c) => c.view.id === wrappableToken?.view.id) > -1;
-      if (!isInList) {
-        setWrappableToken(wrappableTokens[0]);
-      }
-    }
-  }, [setWrappableToken, wrappableTokens, wrappableToken]);
 
   return (
     <DepositWrapper wallet={activeWallet}>
@@ -233,14 +172,10 @@ export const Deposit: React.FC<DepositProps> = () => {
             {showWrappableAssets && (
               <>
                 <TokenInput
-                  currencies={wrappableTokens}
+                  currencies={wrappableCurrencies}
                   value={wrappableCurrency}
-                  onChange={(currencyContent) => {
-                    setWrappableToken(
-                      currencyContent
-                        ? Currency.fromCurrencyId(currenciesConfig, currencyContent.view.id as CurrencyId)
-                        : null
-                    );
+                  onChange={(currency) => {
+                    setWrappableCurrency(currency);
                   }}
                   wrapperStyles={{ width: '42%' }}
                 />
@@ -248,21 +183,16 @@ export const Deposit: React.FC<DepositProps> = () => {
               </>
             )}
             <TokenInput
-              currencies={bridgeCurrencies}
-              value={selectedBridgeCurrency}
-              onChange={(currencyContent) => {
-                if (currencyContent) {
-                  // TODO validate the id is BridgeCurrency id not WebbCurrencyId
-                  setSelectedCurrency(currencyContent.view.id);
-                } else {
-                  setSelectedCurrency(undefined);
-                }
+              currencies={governedCurrencies}
+              value={governedCurrency}
+              onChange={(currency) => {
+                setGovernedCurrency(currency);
               }}
               wrapperStyles={showWrappableAssets ? { width: '42%' } : { width: '100%' }}
             />
           </div>
         </TokenInputWrapper>
-        {selectedBridgeCurrency && (
+        {activeApi?.state.activeBridge && (
           <ChainInputWrapper>
             <InputTitle leftLabel='DESTINATION' rightLabel={<BalanceLabel value={balance} />} />
             <div className='chain-dropdown-section'>
@@ -310,9 +240,7 @@ export const Deposit: React.FC<DepositProps> = () => {
             state={stage}
             amount={amount}
             sourceChain={activeChain ? activeChain.name : ''}
-            destChain={
-              destChain ? chainsConfig[calculateTypedChainId(destChain.chainType, destChain.chainId)].name : ''
-            }
+            destChain={destChain ? chainsConfig[destChain].name : ''}
             cancel={() => {
               console.log('user tried to cancel');
             }}
