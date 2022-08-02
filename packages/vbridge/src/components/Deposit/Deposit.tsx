@@ -142,10 +142,6 @@ export const Deposit: React.FC<DepositProps> = () => {
     return chains;
   }, [chainsConfig, selectedBridgeCurrency]);
 
-  const disabledDepositButton = useMemo(() => {
-    return amount === 0 || typeof destChain === 'undefined' || stage != TransactionState.Ideal;
-  }, [amount, destChain, stage]);
-
   const wrappableCurrency = useMemo<Currency | undefined>(() => {
     if (wrappableToken) {
       return Currency.fromCurrencyId(currenciesConfig, wrappableToken.view.id);
@@ -171,6 +167,32 @@ export const Deposit: React.FC<DepositProps> = () => {
     wrappableTokenBalance,
     wrappedTokenBalance,
   ]);
+
+  const haveEnoughBalance = useMemo(() => {
+    if (showWrappableAssets && wrappableToken && wrappableCurrency) {
+      console.log({ wrappableTokenBalance, amount, wrappedTokenBalance });
+      return Number(wrappableTokenBalance) >= amount;
+    }
+
+    if (!showWrappableAssets && selectedBridgeCurrency) {
+      return Number(wrappedTokenBalance) >= amount;
+    }
+
+    return '-';
+  }, [
+    amount,
+    selectedBridgeCurrency,
+    showWrappableAssets,
+    wrappableCurrency,
+    wrappableToken,
+    wrappableTokenBalance,
+    wrappedTokenBalance,
+  ]);
+
+  const disabledDepositButton = useMemo(() => {
+    const intialCondiation = amount === 0 || typeof destChain === 'undefined' || stage != TransactionState.Ideal;
+    return intialCondiation || !haveEnoughBalance;
+  }, [amount, destChain, stage, haveEnoughBalance]);
 
   const parseAndSetAmount = (amount: string): void => {
     setUserAmountInput(amount);
