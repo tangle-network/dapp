@@ -84,7 +84,7 @@ const getDefaultBridge = (chain: Chain, bridgeConfig: Record<number, BridgeConfi
 
   return undefined;
 };
-let count = 0;
+
 function notificationHandler(notification: NotificationPayload) {
   switch (notification.name) {
     case 'Transaction': {
