@@ -100,7 +100,7 @@ export const Deposit: React.FC<DepositProps> = () => {
 
   const { tokens: bridgeCurrencies } = useBridge();
   const bridgeDepositApi = useBridgeDeposit();
-  const { selectedBridgeCurrency, setSelectedCurrency, setStage, stage } = bridgeDepositApi;
+  const { cancel, selectedBridgeCurrency, setSelectedCurrency, setStage, stage } = bridgeDepositApi;
 
   const { setWrappableToken, wrappableToken, wrappableTokens } = useWrapUnwrap();
   const { activeApi, activeChain, activeWallet, loading } = useWebContext();
@@ -235,7 +235,7 @@ export const Deposit: React.FC<DepositProps> = () => {
       }
     }
   }, [setWrappableToken, wrappableTokens, wrappableToken]);
-
+  console.log(bridgeDepositApi);
   return (
     <DepositWrapper wallet={activeWallet}>
       <RequiredWalletSelection>
@@ -336,8 +336,8 @@ export const Deposit: React.FC<DepositProps> = () => {
             destChain={
               destChain ? chainsConfig[calculateTypedChainId(destChain.chainType, destChain.chainId)].name : ''
             }
-            cancel={() => {
-              console.log('user tried to cancel');
+            cancel={async () => {
+              await cancel();
             }}
             hide={() => setHideTxModal(true)}
           />

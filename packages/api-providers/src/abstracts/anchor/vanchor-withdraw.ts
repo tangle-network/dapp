@@ -3,10 +3,11 @@
 
 import type { TXresultBase, WebbApiProvider } from '../webb-provider.interface';
 
+import { CancellationToken } from '@webb-dapp/api-providers/abstracts/cancelation-token';
 import { EventBus } from '@webb-tools/app-util';
 import { Note } from '@webb-tools/sdk-core';
 
-import { CancelToken, TransactionState, WebbWithdrawEvents } from '../mixer';
+import { TransactionState, WebbWithdrawEvents } from '../mixer';
 import { Bridge } from './bridge';
 
 export interface VAnchorWithdrawResult extends TXresultBase {
@@ -14,7 +15,7 @@ export interface VAnchorWithdrawResult extends TXresultBase {
 }
 export abstract class VAnchorWithdraw<T extends WebbApiProvider<any>> extends EventBus<WebbWithdrawEvents> {
   state: TransactionState = TransactionState.Ideal;
-  cancelToken: CancelToken = { cancelled: false };
+  cancelToken: CancellationToken = new CancellationToken();
 
   constructor(protected inner: T) {
     super();
@@ -29,7 +30,7 @@ export abstract class VAnchorWithdraw<T extends WebbApiProvider<any>> extends Ev
   }
 
   cancelWithdraw(): Promise<void> {
-    this.cancelToken.cancelled = true;
+    this.cancelToken.cancel();
     this.emit('stateChange', TransactionState.Cancelling);
 
     return Promise.resolve(undefined);

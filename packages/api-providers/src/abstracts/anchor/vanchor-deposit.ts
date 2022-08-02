@@ -1,6 +1,7 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
+import { CancellationToken } from '@webb-dapp/api-providers/abstracts/cancelation-token';
 import { EventBus } from '@webb-tools/app-util';
 import { Note } from '@webb-tools/sdk-core';
 
@@ -26,6 +27,7 @@ export interface VAnchorDepositResults extends TXresultBase {
   // Note with the right index in place
   updatedNote: Note;
 }
+
 /**
  * Anchor deposit abstract interface as fixed anchor share similar functionality as the mixer
  * The interface looks the same but there's a different function for note Generation
@@ -35,6 +37,7 @@ export abstract class VAnchorDeposit<
   K extends DepositPayload = DepositPayload<any>
 > extends EventBus<VAnchorDepositEvents> {
   state: TransactionState = TransactionState.Ideal;
+  cancelToken: CancellationToken = new CancellationToken();
 
   constructor(protected inner: T) {
     super();
@@ -69,4 +72,11 @@ export abstract class VAnchorDeposit<
     amount: number,
     wrappableAssetAddress?: string
   ): Promise<K>;
+
+  cancel(): Promise<void> {
+    this.cancelToken.cancel();
+    this.emit('stateChange', TransactionState.Cancelling);
+
+    return Promise.resolve(undefined);
+  }
 }
