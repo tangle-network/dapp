@@ -54,7 +54,6 @@ export function getRoundedAmountString(num: number | undefined, digits = 3): str
   if (num < 0.001) {
     return '<0.001';
   }
-
   return numbro(num).format({
     average: num > 1000,
     totalLength: num > 1000 ? 3 : 0,
@@ -62,5 +61,6 @@ export function getRoundedAmountString(num: number | undefined, digits = 3): str
     optionalMantissa: true,
     trimMantissa: true,
     thousandSeparated: true,
+    roundingFunction: Math.floor,
   });
 }
