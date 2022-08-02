@@ -15,7 +15,7 @@ import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 export interface VBridgeDepositApi {
   deposit(payload: DepositPayload): Promise<VAnchorDepositResults>;
-
+  cancel(): Promise<void>;
   generateNote(
     mixerId: number | string,
     destChain: TypedChainId,
@@ -105,7 +105,12 @@ export const useBridgeDeposit = (): VBridgeDepositApi => {
       }
     }
   };
-
+  const cancel = useCallback(() => {
+    if (!depositApi) {
+      throw new Error('Api not ready');
+    }
+    return depositApi.cancel().catch(console.error);
+  }, [depositApi]);
   return {
     stage,
     setStage,
@@ -116,5 +121,6 @@ export const useBridgeDeposit = (): VBridgeDepositApi => {
     error,
     selectedBridgeCurrency,
     setSelectedCurrency,
+    cancel,
   };
 };
