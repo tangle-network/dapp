@@ -21,7 +21,7 @@ export class PolkadotAnchorApi extends AnchorApi<WebbPolkadot, BridgeConfig> {
 
   async getCurrencies(): Promise<Currency[]> {
     const bridgeCurrenciesConfig = Object.values(this.inner.config.currencies).filter((i: CurrencyConfig) => {
-      const isValid = i.type === CurrencyType.ORML && i.role === CurrencyRole.Governable;
+      const isValid = i.type === CurrencyType.NATIVE || i.role === CurrencyRole.Governable;
       const isSupported = Object.keys(this.store.config).includes(i.id.toString());
 
       return isValid && isSupported;
