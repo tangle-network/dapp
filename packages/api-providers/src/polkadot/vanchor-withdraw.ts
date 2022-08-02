@@ -33,6 +33,18 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
    * amount - amount to withdraw in bnUnits (i.e. WEI instead of ETH)
    * */
   async withdraw(notes: string[], recipient: string, amount: string): Promise<VAnchorWithdrawResult> {
+    switch (this.state) {
+      case TransactionState.Cancelling:
+      case TransactionState.Failed:
+      case TransactionState.Done:
+        this.cancelToken.reset();
+        this.state = TransactionState.Ideal;
+        break;
+      case TransactionState.Ideal:
+        break;
+      default:
+        throw WebbError.from(WebbErrorCodes.TransactionInProgress);
+    }
     // TODO :Generate random secrets which can be supplied later by the user
     const secret = randomAsU8a();
     // Get the current active account
@@ -44,7 +56,6 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
     }
     const activeRelayer = this.inner.relayerManager.activeRelayer;
     const activeRelayerAccount = activeRelayer?.beneficiary;
-    console.log(activeRelayer);
     if (activeRelayer && activeRelayerAccount === undefined) {
       // Fix the error code/message
       throw WebbError.from(WebbErrorCodes.RelayerUnsupportedMixer);
@@ -69,6 +80,7 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
       this.emit('stateChange', TransactionState.Ideal);
       throw WebbError.from(WebbErrorCodes.AmountToWithdrawExceedsTheDepositedAmount);
     }
+    this.cancelToken.throwIfCancel();
 
     this.emit('stateChange', TransactionState.FetchingFixtures);
     const provingKey = await fetchSubstrateVAnchorProvingKey();
@@ -96,6 +108,8 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
       }
       return index;
     }, 0);
+    this.cancelToken.throwIfCancel();
+
     this.emit('stateChange', TransactionState.FetchingLeaves);
     const leaves = await getLeaves(this.inner.api, Number(treeId), 0, latestIndex);
     const leavesMap: any = {};
@@ -121,6 +135,7 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
       encryptedOutput1: u8aToHex(comEnc1),
       encryptedOutput2: u8aToHex(comEnc2),
     };
+    this.cancelToken.throwIfCancel();
 
     const worker = this.inner.wasmFactory('wasm-utils');
     const pm = new ArkworksProvingManager(worker);
@@ -142,7 +157,16 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
     };
     const destChainIdType = parseTypedChainId(Number(inputNotes[0].note.targetChainId));
 
-    const data: VAnchorProof = await pm.prove('vanchor', vanchorWithdrawSetup);
+    const data = await this.cancelToken.handleOrThrow<VAnchorProof>(
+      () => {
+        return pm.prove('vanchor', vanchorWithdrawSetup);
+      },
+      () => {
+        worker?.terminate();
+        return WebbError.from(WebbErrorCodes.TransactionCancelled);
+      }
+    );
+
     const vanchorProofData = {
       proof: `0x${data.proof}`,
       publicAmount: data.publicAmount,
@@ -234,6 +258,9 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
         name: 'Transaction',
       });
       predictedIndex = await getLeafCount(this.inner.api, Number(treeId));
+      /// may cancel before the relayer submits the transaction
+      this.cancelToken.throwIfCancel();
+
       relayedVAnchorWithdraw.send(relayedDepositTxPayload);
       const results = await relayedVAnchorWithdraw.await();
       if (results) {
@@ -250,6 +277,8 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
         section: 'vAnchorBn254',
       };
       const tx = this.inner.txBuilder.build(method, [treeId, vanchorProofData, extData]);
+      // May cancel before transaction is submitted
+      this.cancelToken.throwIfCancel();
       txHash = await tx.call(account.address);
     }
 

@@ -122,7 +122,7 @@ export const TransactionProcessingModal: React.FC<TransactionProcessingModalProp
           {txFlow}
         </Typography>
         <Typography variant={'h6'} color={'textPrimary'}>
-          Processing...
+          {state === TransactionState.Cancelling ? 'Transaction is Canceld' : 'Processing...'}
         </Typography>
       </header>
       <TransactionSteps>
