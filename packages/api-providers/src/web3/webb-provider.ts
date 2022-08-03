@@ -6,7 +6,8 @@ import { calculateTypedChainId, ChainType } from '@webb-tools/sdk-core';
 import { providers } from 'ethers';
 import { Eth } from 'web3-eth';
 
-import { RelayChainMethods } from '../abstracts';
+import { Currency, RelayChainMethods } from '../abstracts';
+import { Bridge, WebbState } from '../abstracts/state';
 import { AccountsAdapter } from '../account/Accounts.adapter';
 import { VAnchorContract } from '../contracts/wrappers/webb-vanchor';
 import { Web3Accounts, Web3Provider } from '../ext-providers';
@@ -20,7 +21,7 @@ import {
   WebbMethods,
   WebbProviderEvents,
 } from '../';
-import { Web3AnchorApi } from './anchor-api';
+import { Web3BridgeApi } from './bridge-api';
 import { Web3ChainQuery } from './chain-query';
 import { Web3MixerDeposit } from './mixer-deposit';
 import { Web3MixerWithdraw } from './mixer-withdraw';
@@ -33,6 +34,7 @@ export class WebbWeb3Provider
   extends EventBus<WebbProviderEvents<[number]>>
   implements WebbApiProvider<WebbWeb3Provider>
 {
+  state: WebbState;
   readonly methods: WebbMethods<WebbWeb3Provider>;
   readonly relayChainMethods: RelayChainMethods<WebbApiProvider<WebbWeb3Provider>> | null;
   private ethersProvider: providers.Web3Provider;
@@ -54,7 +56,7 @@ export class WebbWeb3Provider
     // There are no relay chain methods for Web3 chains
     this.relayChainMethods = null;
     this.methods = {
-      anchorApi: new Web3AnchorApi(this, this.config.bridgeByAsset),
+      bridgeApi: new Web3BridgeApi(this),
       chainQuery: new Web3ChainQuery(this),
       mixer: {
         deposit: {
@@ -83,6 +85,28 @@ export class WebbWeb3Provider
         },
       },
     };
+
+    // Take the configured values in the config and create objects used in the
+    // api (e.g. Record<number, CurrencyConfig> => Currency[])
+    let initialSupportedCurrencies: Record<number, Currency> = {};
+    for (let currencyConfig of Object.values(config.currencies)) {
+      initialSupportedCurrencies[currencyConfig.id] = new Currency(currencyConfig);
+    }
+
+    // All supported bridges are supplied by the config, before passing to the state.
+    let initialSupportedBridges: Record<number, Bridge> = {};
+    for (let bridgeConfig of Object.values(config.bridgeByAsset)) {
+      if (Object.keys(bridgeConfig.anchors).includes(calculateTypedChainId(ChainType.EVM, chainId).toString())) {
+        const bridgeCurrency = initialSupportedCurrencies[bridgeConfig.asset];
+        const bridgeTargets = bridgeConfig.anchors;
+        initialSupportedBridges[bridgeConfig.asset] = new Bridge(bridgeCurrency, bridgeTargets);
+      }
+    }
+
+    this.state = new WebbState(initialSupportedCurrencies, initialSupportedBridges);
+
+    // Select a reasonable default bridge
+    this.state.activeBridge = Object.values(initialSupportedBridges)[0] ?? null;
   }
 
   getProvider(): Web3Provider {

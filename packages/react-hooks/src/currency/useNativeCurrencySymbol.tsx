@@ -2,11 +2,11 @@ import { Currency } from '@webb-dapp/api-providers';
 import { useWebContext } from '@webb-dapp/react-environment/webb-context';
 
 export const useNativeCurrencySymbol = () => {
-  const { activeChain, appConfig } = useWebContext();
-  if (!activeChain) {
+  const { activeApi, activeChain, appConfig } = useWebContext();
+  if (!activeChain || !activeApi) {
     return '';
   }
 
-  const currency = Currency.fromCurrencyId(appConfig.currencies, activeChain.nativeCurrencyId);
+  const currency = new Currency(appConfig.currencies[activeChain.nativeCurrencyId]);
   return currency.view.symbol;
 };

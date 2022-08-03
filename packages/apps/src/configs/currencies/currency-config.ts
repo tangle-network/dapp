@@ -1,11 +1,5 @@
-import {
-  AppConfig,
-  CurrencyId,
-  CurrencyRole,
-  CurrencyType,
-  PresetTypedChainId,
-  zeroAddress,
-} from '@webb-dapp/api-providers';
+import { AppConfig, CurrencyId, PresetTypedChainId, zeroAddress } from '@webb-dapp/api-providers';
+import { CurrencyRole, CurrencyType } from '@webb-dapp/api-providers/types';
 import GanacheLogo from '@webb-dapp/apps/configs/logos/chains/GanacheLogo';
 import HarmonyLogo from '@webb-dapp/apps/configs/logos/chains/HarmonyLogo';
 import { MoonbeamLogo } from '@webb-dapp/apps/configs/logos/chains/MoonbeamLogo';
@@ -158,9 +152,9 @@ export const currenciesConfig: AppConfig['currencies'] = {
     role: CurrencyRole.Governable,
     icon: WebbWrappedLogo(GanacheLogo()),
     addresses: new Map([
-      [PresetTypedChainId.HermesLocalnet, '0xD30C8839c1145609E564b986F667b273Ddcb8496'],
-      [PresetTypedChainId.AthenaLocalnet, '0xD24260C102B5D128cbEFA0F655E5be3c2370677C'],
-      [PresetTypedChainId.DemeterLocalnet, '0xe69a847CD5BC0C9480adA0b339d7F0a8caC2B667'],
+      [PresetTypedChainId.HermesLocalnet, '0x7758F98C1c487E5653795470eEab6C4698bE541b'],
+      [PresetTypedChainId.AthenaLocalnet, '0x510C6297cC30A058F41eb4AF1BFC9953EaD8b577'],
+      [PresetTypedChainId.DemeterLocalnet, '0xD24260C102B5D128cbEFA0F655E5be3c2370677C'],
     ]),
   },
   [CurrencyId.TEST]: {
@@ -208,19 +202,3 @@ export const currenciesConfig: AppConfig['currencies'] = {
     addresses: new Map([[PresetTypedChainId.MoonbaseAlpha, '0']]),
   },
 };
-
-// on startup build a new map
-// currency Address => currency ID
-const createReverseCurrencyMap = (): Map<string, CurrencyId> => {
-  let contractMapping = new Map<string, CurrencyId>();
-
-  Object.values(currenciesConfig).forEach((config) => {
-    config.addresses.forEach((addressEntry) => {
-      contractMapping.set(addressEntry, config.id as CurrencyId);
-    });
-  });
-
-  return contractMapping;
-};
-
-export const reverseCurrencyMap = createReverseCurrencyMap();

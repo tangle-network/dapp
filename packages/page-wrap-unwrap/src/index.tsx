@@ -2,8 +2,6 @@ import { Button, IconButton, InputBase, Tooltip } from '@mui/material';
 import Icon from '@mui/material/Icon';
 import { useWrapUnwrap } from '@webb-dapp/page-wrap-unwrap/hooks/useWrapUnwrap';
 import { RequiredWalletSelection } from '@webb-dapp/react-components/RequiredWalletSelection/RequiredWalletSelection';
-import { useWebContext } from '@webb-dapp/react-environment';
-import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { getRoundedAmountString, SpaceBox } from '@webb-dapp/ui-components';
 import { DepositIcon } from '@webb-dapp/ui-components/assets/DepositIcon';
 import { WithdrawIcon } from '@webb-dapp/ui-components/assets/WithdrawIcon';
@@ -15,12 +13,8 @@ import { TokenInput, TokenInputProps } from '@webb-dapp/ui-components/Inputs/Tok
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { TabButton, TabHeader } from '@webb-dapp/ui-components/Tabs/MixerTabs';
 import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
-import { LoggerService } from '@webb-tools/app-util';
-import { calculateTypedChainId } from '@webb-tools/sdk-core';
-import { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import { FC, useCallback, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
-
-const logger = LoggerService.get('page-wrap-unwrap');
 
 const TransferWrapper = styled.div`
   box-sizing: border-box;
@@ -58,58 +52,73 @@ export const AmountInputWrapper = styled.div`
 export const AmountButton = styled.button``;
 
 const PageWrapUnwrap: FC = () => {
-  const { activeApi, activeChain } = useWebContext();
   const {
     amount,
     context,
     execute,
-    governedToken,
-    governedTokens,
+    governedCurrencies,
+    governedCurrency,
+    governedCurrencyBalance,
     setAmount,
-    setGovernedToken,
-    setWrappableToken,
+    setGovernedCurrency,
+    setWrappableCurrency,
     swap,
-    wrappableToken,
-    wrappableTokens,
+    wrappableCurrencies,
+    wrappableCurrency,
+    wrappableCurrencyBalance,
   } = useWrapUnwrap();
   const [displayedAmount, setDisplayedAmount] = useState<string>('');
 
   const [isSwap, setIsSwap] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [wrappableTokenBalance, setWrappableTokenBalance] = useState(0);
-  const [governedTokenBalance, setGovernedTokenBalance] = useState(0);
 
   const leftInputProps: TokenInputProps = useMemo(() => {
     return {
-      currencies: context === 'wrap' ? wrappableTokens : governedTokens,
-      value: context === 'wrap' ? wrappableToken : governedToken,
-      onChange: (currencyContent) => {
-        context === 'wrap' ? setWrappableToken(currencyContent) : setGovernedToken(currencyContent);
+      currencies: context === 'wrap' ? wrappableCurrencies : governedCurrencies,
+      value: context === 'wrap' ? wrappableCurrency : governedCurrency,
+      onChange: (currency) => {
+        context === 'wrap' ? setWrappableCurrency(currency) : setGovernedCurrency(currency);
       },
     };
-  }, [context, wrappableTokens, governedTokens, wrappableToken, governedToken, setWrappableToken, setGovernedToken]);
+  }, [
+    context,
+    wrappableCurrencies,
+    governedCurrencies,
+    wrappableCurrency,
+    governedCurrency,
+    setWrappableCurrency,
+    setGovernedCurrency,
+  ]);
 
   const rightInputProps: TokenInputProps = useMemo(() => {
     return {
-      currencies: context === 'wrap' ? governedTokens : wrappableTokens,
-      value: context === 'wrap' ? governedToken : wrappableToken,
-      onChange: (currencyContent) => {
-        context === 'wrap' ? setGovernedToken(currencyContent) : setWrappableToken(currencyContent);
+      currencies: context === 'wrap' ? governedCurrencies : wrappableCurrencies,
+      value: context === 'wrap' ? governedCurrency : wrappableCurrency,
+      onChange: (currency) => {
+        context === 'wrap' ? setGovernedCurrency(currency) : setWrappableCurrency(currency);
       },
     };
-  }, [context, governedTokens, wrappableTokens, governedToken, wrappableToken, setGovernedToken, setWrappableToken]);
+  }, [
+    context,
+    governedCurrencies,
+    wrappableCurrencies,
+    governedCurrency,
+    wrappableCurrency,
+    setGovernedCurrency,
+    setWrappableCurrency,
+  ]);
 
   const balance = useMemo(() => {
-    if (wrappableToken && context === 'wrap') {
-      return `${getRoundedAmountString(wrappableTokenBalance)} ${wrappableToken.view.symbol}`;
+    if (wrappableCurrency && context === 'wrap') {
+      return `${getRoundedAmountString(Number(wrappableCurrencyBalance))} ${wrappableCurrency.view.symbol}`;
     }
 
-    if (governedToken && context === 'unwrap') {
-      return `${getRoundedAmountString(governedTokenBalance)} ${governedToken.view.symbol}`;
+    if (governedCurrency && context === 'unwrap') {
+      return `${getRoundedAmountString(Number(governedCurrencyBalance))} ${governedCurrency.view.symbol}`;
     }
 
     return '-';
-  }, [context, governedToken, governedTokenBalance, wrappableToken, wrappableTokenBalance]);
+  }, [context, governedCurrency, governedCurrencyBalance, wrappableCurrency, wrappableCurrencyBalance]);
 
   const buttonText = context;
 
@@ -123,46 +132,6 @@ const PageWrapUnwrap: FC = () => {
       swap();
     }
   }, [context, swap]);
-
-  // If the available currencies or web context change, it is possible
-  // that a token was selected which is no longer available.
-  // Make sure to clear these tokens.
-  useEffect(() => {
-    if (governedTokens.length) {
-      let supportedToken = governedTokens.find((token) => {
-        token.view.id;
-      });
-      if (!supportedToken) {
-        supportedToken = governedTokens[0];
-        setGovernedToken(governedTokens[0]);
-      }
-      activeApi?.methods.chainQuery
-        .tokenBalanceByCurrencyId(
-          calculateTypedChainId(activeChain!.chainType, activeChain!.chainId),
-          supportedToken.view.id as any
-        )
-        .then((balance) => {
-          setGovernedTokenBalance(Number(balance));
-        });
-    }
-    if (wrappableTokens.length) {
-      let supportedToken = wrappableTokens.find((token) => {
-        token.view.id;
-      });
-      if (!supportedToken) {
-        supportedToken = wrappableTokens[0];
-        setWrappableToken(wrappableTokens[0]);
-      }
-      activeApi?.methods.chainQuery
-        .tokenBalanceByCurrencyId(
-          calculateTypedChainId(activeChain!.chainType, activeChain!.chainId),
-          supportedToken.view.id as any
-        )
-        .then((balance) => {
-          setWrappableTokenBalance(Number(balance));
-        });
-    }
-  }, [activeChain, activeApi, governedTokens, wrappableTokens, setGovernedToken, setWrappableToken]);
 
   return (
     <div>
@@ -238,11 +207,11 @@ const PageWrapUnwrap: FC = () => {
                 as={Button}
                 onClick={() => {
                   if (context === 'wrap') {
-                    setDisplayedAmount(wrappableTokenBalance.toString());
-                    setAmount(wrappableTokenBalance);
+                    setDisplayedAmount(wrappableCurrencyBalance?.toString() || displayedAmount);
+                    setAmount(wrappableCurrencyBalance);
                   } else {
-                    setDisplayedAmount(governedTokenBalance.toString());
-                    setAmount(governedTokenBalance);
+                    setDisplayedAmount(governedCurrencyBalance?.toString() || displayedAmount);
+                    setAmount(governedCurrencyBalance);
                   }
                 }}
               >
@@ -253,7 +222,7 @@ const PageWrapUnwrap: FC = () => {
           <SpaceBox height={16} />
 
           <MixerButton
-            disabled={loading || !governedToken || !wrappableToken || !amount}
+            disabled={loading || !governedCurrency || !wrappableCurrency || !amount}
             label={buttonText}
             onClick={async () => {
               try {

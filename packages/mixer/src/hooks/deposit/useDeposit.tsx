@@ -1,6 +1,5 @@
 import { DepositPayload, MixerDeposit, MixerSize, TypedChainId } from '@webb-dapp/api-providers';
 import { useWebContext } from '@webb-dapp/react-environment/webb-context';
-import { useBridge } from '@webb-dapp/vbridge/hooks/bridge/use-bridge';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -21,7 +20,6 @@ export const useDeposit = (): DepositApi => {
   const [loadingState, setLoadingState] = useState<MixerDeposit['loading']>('ideal');
   const [error, setError] = useState('');
   const [mixerSizes, setMixerSizes] = useState<MixerSize[]>([]);
-  const { bridgeApi } = useBridge();
 
   /// api
   const depositApi = useMemo(() => {
@@ -44,7 +42,7 @@ export const useDeposit = (): DepositApi => {
       setMixerSizes(mixerSizes);
     });
     return () => unSub && unSub();
-  }, [depositApi, bridgeApi?.activeBridge]);
+  }, [depositApi]);
 
   const generateNote = useCallback(
     async (mixerId: number | string, chainTypeId: TypedChainId) => {

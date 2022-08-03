@@ -7,36 +7,17 @@ import { ContractTransaction } from 'ethers';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import Web3 from 'web3';
 
-import { Amount, Bridge, Currency, MixerSize, WrappingBalance, WrappingEvent, WrapUnwrap } from '../abstracts';
+import { Amount, Currency, WrappingEvent, WrapUnwrap } from '../abstracts';
 import { WebbGovernedToken, zeroAddress } from '../contracts';
-import { CurrencyId, webbCurrencyIdToString } from '../enums';
 import { CurrencyType } from '../types/currency-config.interface';
 import { WebbWeb3Provider } from './webb-provider';
 
 export type Web3WrapPayload = Amount;
 export type Web3UnwrapPayload = Amount;
-const defaultBalance: WrappingBalance = {
-  balance: '0',
-  tokenId: undefined,
-};
 
 export class Web3WrapUnwrap extends WrapUnwrap<WebbWeb3Provider> {
-  private _balances = new BehaviorSubject<[WrappingBalance, WrappingBalance]>([defaultBalance, defaultBalance]);
-  private _liquidity = new BehaviorSubject<[WrappingBalance, WrappingBalance]>([defaultBalance, defaultBalance]);
   private _currentChainId = new BehaviorSubject<number | null>(null);
   private _event = new Subject<Partial<WrappingEvent>>();
-
-  private get config() {
-    return this.inner.config;
-  }
-
-  get balances(): Observable<[WrappingBalance, WrappingBalance]> {
-    return this._balances.asObservable();
-  }
-
-  get liquidity(): Observable<[WrappingBalance, WrappingBalance]> {
-    return this._liquidity.asObservable();
-  }
 
   get subscription(): Observable<Partial<WrappingEvent>> {
     return this._event.asObservable();
@@ -65,67 +46,17 @@ export class Web3WrapUnwrap extends WrapUnwrap<WebbWeb3Provider> {
     });
   }
 
-  setGovernedToken(nextToken: CurrencyId | null) {
-    this._governedToken.next(nextToken);
-    this._event.next({
-      governedTokenUpdate: nextToken,
-    });
-  }
-
-  setWrappableToken(nextToken: CurrencyId | null) {
-    this._wrappableToken.next(nextToken);
-    this._event.next({
-      wrappableTokenUpdate: nextToken,
-    });
-  }
-
-  getSizes(): Promise<MixerSize[]> {
-    return Promise.resolve([]);
-  }
-
   private get currentChainId() {
     return this._currentChainId.value;
   }
 
-  // TODO: Dynamic wrappable currencies
-  //
-  async getWrappableTokens(governedCurrency?: CurrencyId | null): Promise<CurrencyId[]> {
-    if (this.currentChainId) {
-      const currenciesOfChain = this.config.chains[this.currentChainId].currencies;
-      const wrappableCurrencies = currenciesOfChain.filter((currencyId) => {
-        return Currency.isWrappableCurrency(this.inner.config.currencies, currencyId);
-      });
-
-      if (governedCurrency) {
-        const webbGovernedToken = this.governedTokenwrapper(governedCurrency);
-
-        return wrappableCurrencies.filter((token) => {
-          const tokenAddress = this.config.currencies[token].addresses.get(this.currentChainId!)!;
-
-          return webbGovernedToken.canwrap(tokenAddress);
-        });
-      } else {
-        return wrappableCurrencies;
-      }
-    }
-
-    return [];
-  }
-
-  async getGovernedTokens(): Promise<CurrencyId[]> {
-    if (this.currentChainId) {
-      return Bridge.getTokensOfChain(this.inner.config.currencies, this.currentChainId).map(
-        (currency) => currency.view.id
-      );
-    }
-
-    return [];
-  }
-
   async canUnwrap(unwrapPayload: Web3UnwrapPayload): Promise<boolean> {
     const { amount } = unwrapPayload;
-    const governedTokenId = this.governedToken!;
-    const webbGovernedToken = this.governedTokenwrapper(governedTokenId);
+    const governedToken = this.inner.methods.bridgeApi.getBridge()?.currency;
+    if (!governedToken) {
+      return false;
+    }
+    const webbGovernedToken = this.governedTokenwrapper(governedToken);
 
     const account = await this.inner.accounts.accounts();
     const currentAccount = account[0];
@@ -136,32 +67,35 @@ export class Web3WrapUnwrap extends WrapUnwrap<WebbWeb3Provider> {
   async unwrap(unwrapPayload: Web3UnwrapPayload): Promise<string> {
     const { amount: amountNumber } = unwrapPayload;
 
-    const governedTokenId = this.governedToken!;
-    const wrappableTokenId = this.wrappableToken!;
     const amount = Web3.utils.toWei(String(amountNumber), 'ether');
+    const governedToken = this.inner.methods.bridgeApi.getBridge()?.currency;
+    const wrappableToken = this.inner.state.wrappableCurrency;
+    if (!governedToken || !wrappableToken) {
+      return '';
+    }
 
-    const webbGovernedToken = this.governedTokenwrapper(governedTokenId);
+    const webbGovernedToken = this.governedTokenwrapper(governedToken);
 
     try {
       this.inner.notificationHandler({
-        description: `Unwrapping ${amountNumber} of ${webbCurrencyIdToString(
-          governedTokenId
-        )} to ${webbCurrencyIdToString(wrappableTokenId)}`,
+        description: `Unwrapping ${amountNumber} of ${governedToken.view.name} to
+        ${wrappableToken.view.name}`,
         key: 'unwrap-asset',
         level: 'loading',
         message: 'GovernedTokenwrapper:unwrap',
         name: 'Transaction',
       });
-      const tx = await webbGovernedToken.unwrap(
-        this.config.currencies[wrappableTokenId].addresses.get(this.currentChainId!)!,
-        amount
-      );
+      const wrappableTokenAddress = await wrappableToken.getAddress(await this.inner.getChainId());
+
+      if (!wrappableTokenAddress) {
+        throw new Error(`No wrappable token address for ${wrappableToken.view.name} on selected chain`);
+      }
+      const tx = await webbGovernedToken.unwrap(wrappableTokenAddress, amount);
 
       await tx.wait();
       this.inner.notificationHandler({
-        description: `Unwrapping ${amountNumber} of ${webbCurrencyIdToString(
-          governedTokenId
-        )} to ${webbCurrencyIdToString(wrappableTokenId)}`,
+        description: `Unwrapping ${amountNumber} of ${governedToken.view.name} to
+        ${wrappableToken.view.name}`,
         key: 'unwrap-asset',
         level: 'success',
         message: 'GovernedTokenwrapper:unwrap',
@@ -172,9 +106,8 @@ export class Web3WrapUnwrap extends WrapUnwrap<WebbWeb3Provider> {
     } catch (e) {
       console.log('error while unwrapping: ', e);
       this.inner.notificationHandler({
-        description: `Failed to unwrap ${amountNumber} of ${webbCurrencyIdToString(
-          governedTokenId
-        )} to ${webbCurrencyIdToString(wrappableTokenId)}`,
+        description: `Failed to unwrap ${amountNumber} of ${governedToken.view.name} to
+        ${wrappableToken.view.name}`,
         key: 'unwrap-asset',
         level: 'error',
         message: 'GovernedTokenwrapper:unwrap',
@@ -185,15 +118,18 @@ export class Web3WrapUnwrap extends WrapUnwrap<WebbWeb3Provider> {
     }
   }
 
-  async canwrap(): Promise<boolean> {
-    const governedToken = this.governedToken!;
-    const wrappableToken = this.wrappableToken!;
+  async canWrap(): Promise<boolean> {
+    const governedToken = this.inner.methods.bridgeApi.getBridge()?.currency;
+    const wrappableToken = this.inner.state.wrappableCurrency;
+    if (!governedToken || !wrappableToken) {
+      return false;
+    }
     const webbGovernedToken = this.governedTokenwrapper(governedToken);
 
-    if (this.config.currencies[wrappableToken].type === CurrencyType.NATIVE) {
+    if (wrappableToken.view.type === CurrencyType.NATIVE) {
       return webbGovernedToken.isNativeAllowed();
     } else {
-      const tokenAddress = this.config.currencies[governedToken].addresses.get(this.currentChainId!)!;
+      const tokenAddress = wrappableToken.getAddress(this.currentChainId!)!;
 
       return webbGovernedToken.canwrap(tokenAddress);
     }
@@ -201,17 +137,19 @@ export class Web3WrapUnwrap extends WrapUnwrap<WebbWeb3Provider> {
 
   async wrap(wrapPayload: Web3WrapPayload): Promise<string> {
     const { amount: amountNumber } = wrapPayload;
+    const governedToken = this.inner.methods.bridgeApi.getBridge()?.currency;
+    const wrappableToken = this.inner.state.wrappableCurrency;
+    if (!governedToken || !wrappableToken) {
+      return '';
+    }
 
-    const wrappableTokenId = this.wrappableToken!;
-    const governableTokenId = this.governedToken!;
-    const webbGovernedToken = this.governedTokenwrapper(governableTokenId);
+    const webbGovernedToken = this.governedTokenwrapper(governedToken);
     const amount = Web3.utils.toWei(String(amountNumber), 'ether');
 
     try {
       this.inner.notificationHandler({
-        description: `Wrapping ${String(amountNumber)} of ${webbCurrencyIdToString(
-          wrappableTokenId
-        )} to ${webbCurrencyIdToString(governableTokenId)}`,
+        description: `Wrapping ${amountNumber} of ${wrappableToken.view.name} to
+        ${governedToken.view.name}`,
         key: 'wrap-asset',
         level: 'loading',
         message: 'GovernedTokenwrapper:wrap',
@@ -220,9 +158,9 @@ export class Web3WrapUnwrap extends WrapUnwrap<WebbWeb3Provider> {
       let tx: ContractTransaction;
 
       // If wrapping an erc20, check for approvals
-      if (this.getAddressFromWrapTokenId(wrappableTokenId) !== zeroAddress) {
+      if (this.getAddressFromCurrency(wrappableToken) !== zeroAddress) {
         const wrappableTokenInstance = ERC20Factory.connect(
-          this.getAddressFromWrapTokenId(wrappableTokenId),
+          this.getAddressFromCurrency(wrappableToken),
           this.inner.getEthersProvider().getSigner()
         );
         const wrappableTokenAllowance = await wrappableTokenInstance.allowance(
@@ -245,12 +183,11 @@ export class Web3WrapUnwrap extends WrapUnwrap<WebbWeb3Provider> {
         }
       }
 
-      tx = await webbGovernedToken.wrap(this.getAddressFromWrapTokenId(wrappableTokenId), amount);
+      tx = await webbGovernedToken.wrap(this.getAddressFromCurrency(wrappableToken), amount);
       await tx.wait();
       this.inner.notificationHandler({
-        description: `Wrapping ${String(amountNumber)} of ${webbCurrencyIdToString(
-          wrappableTokenId
-        )} to ${webbCurrencyIdToString(governableTokenId)}`,
+        description: `Wrapping ${amountNumber} of ${wrappableToken.view.name} to
+        ${governedToken.view.name}`,
         key: 'wrap-asset',
         level: 'success',
         message: 'GovernedTokenwrapper:wrap',
@@ -261,9 +198,8 @@ export class Web3WrapUnwrap extends WrapUnwrap<WebbWeb3Provider> {
     } catch (e) {
       console.log('error while wrapping: ', e);
       this.inner.notificationHandler({
-        description: `Failed to wrap ${String(amountNumber)} of ${webbCurrencyIdToString(
-          wrappableTokenId
-        )} to ${webbCurrencyIdToString(governableTokenId)}`,
+        description: `Failed to wrap ${amountNumber} of ${wrappableToken.view.name} to
+        ${governedToken.view.name}`,
         key: 'wrap-asset',
         level: 'error',
         message: 'GovernedTokenwrapper:wrap',
@@ -274,15 +210,13 @@ export class Web3WrapUnwrap extends WrapUnwrap<WebbWeb3Provider> {
     }
   }
 
-  private getAddressFromWrapTokenId(id: CurrencyId): string {
+  private getAddressFromCurrency(currency: Currency): string {
     const currentNetwork = this.currentChainId!;
-    const address = this.config.currencies[id].addresses.get(currentNetwork)!;
-
-    return address;
+    return currency.getAddress(currentNetwork)!;
   }
 
-  governedTokenwrapper(id: CurrencyId): WebbGovernedToken {
-    const contractAddress = this.getAddressFromWrapTokenId(id);
+  governedTokenwrapper(currency: Currency): WebbGovernedToken {
+    const contractAddress = this.getAddressFromCurrency(currency);
 
     return new WebbGovernedToken(this.inner.getEthersProvider(), contractAddress);
   }

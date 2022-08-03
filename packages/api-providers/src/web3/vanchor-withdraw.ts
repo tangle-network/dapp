@@ -22,7 +22,7 @@ import { BigNumber } from 'ethers';
 import { hexToU8a, u8aToHex } from '@polkadot/util';
 
 import {
-  AnchorApi,
+  BridgeApi,
   RelayedChainInput,
   RelayedWithdrawResult,
   TransactionState,
@@ -32,12 +32,11 @@ import {
 import { generateCircomCommitment, utxoFromVAnchorNote } from '../contracts/wrappers';
 import { Web3Provider } from '../ext-providers/web3/web3-provider';
 import { fetchVariableAnchorKeyForEdges, fetchVariableAnchorWasmForEdges } from '../ipfs/evm/anchors';
-import { BridgeConfig } from '../types/bridge-config.interface';
 import { bridgeStorageFactory, getEVMChainName, keypairStorageFactory } from '../utils';
 
 export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
   protected get bridgeApi() {
-    return this.inner.methods.anchorApi as AnchorApi<WebbWeb3Provider, BridgeConfig>;
+    return this.inner.methods.bridgeApi as BridgeApi<WebbWeb3Provider>;
   }
 
   protected get config() {
@@ -62,19 +61,17 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
     const changeNotes = [];
 
     try {
-      const activeBridge = this.bridgeApi.activeBridge;
+      const activeBridge = this.inner.methods.bridgeApi.getBridge();
       const activeRelayer = this.inner.relayerManager.activeRelayer;
       const relayerAccount = activeRelayer ? activeRelayer.beneficiary! : recipient;
       if (!activeBridge) {
         throw new Error('No activeBridge set on the web3 anchor api');
       }
 
-      const anchorConfigsForBridge = activeBridge.anchors.find((anchor) => anchor.type === 'variable')!;
-
       const activeChain = await this.inner.getChainId();
 
-      const section = `Bridge ${Object.keys(anchorConfigsForBridge.anchorAddresses)
-        .map((id) => getEVMChainName(this.config, activeChain))
+      const section = `Bridge ${Object.keys(activeBridge.targets)
+        .map((id) => getEVMChainName(this.config, parseTypedChainId(Number(id)).chainId))
         .join('-')}`;
       this.inner.notificationHandler({
         description: 'Withdraw in progress',
@@ -86,7 +83,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
 
       // set the destination contract
       const destChainIdType = calculateTypedChainId(ChainType.EVM, activeChain);
-      const destAddress = anchorConfigsForBridge.anchorAddresses[destChainIdType]!;
+      const destAddress = activeBridge.targets[destChainIdType]!;
       const destVAnchor = await this.inner.getVariableAnchorByAddress(destAddress);
       const treeHeight = await destVAnchor._contract.levels();
 

@@ -6,8 +6,6 @@ import { ethers } from 'ethers';
 
 import { ChainQuery } from '../abstracts';
 import { zeroAddress } from '../contracts';
-import { CurrencyId } from '../enums';
-import { Currency } from '../';
 import { WebbWeb3Provider } from './webb-provider';
 
 export class Web3ChainQuery extends ChainQuery<WebbWeb3Provider> {
@@ -15,16 +13,13 @@ export class Web3ChainQuery extends ChainQuery<WebbWeb3Provider> {
     super(inner);
   }
 
-  private get config() {
-    return this.inner.config;
-  }
-
   async currentBlock(): Promise<number> {
     const provider = this.inner.getEthersProvider();
     return provider.getBlockNumber();
   }
 
-  async tokenBalanceByCurrencyId(typedChainId: number, currencyId: CurrencyId): Promise<string> {
+  // Returns the balance formatted in ETH units.
+  async tokenBalanceByCurrencyId(typedChainId: number, currencyId: number): Promise<string> {
     const provider = this.inner.getEthersProvider();
 
     // check if the token is the native token of this chain
@@ -38,16 +33,20 @@ export class Web3ChainQuery extends ChainQuery<WebbWeb3Provider> {
     }
 
     // Return the balance of the account if native currency
-    if (this.config.chains[typedChainId].nativeCurrencyId === currencyId) {
+    if (this.inner.config.chains[typedChainId].nativeCurrencyId === currencyId) {
       const tokenBalanceBig = await provider.getBalance(accounts[0].address);
       const tokenBalance = ethers.utils.formatEther(tokenBalanceBig);
 
       return tokenBalance;
     } else {
       // Find the currency address on this chain
-      const currency = Currency.fromCurrencyId(this.inner.config.currencies, currencyId);
-      const currencyOnChain = currency.getAddress(typedChainId);
+      const currency = this.inner.state.getCurrencies()[currencyId];
+      if (!currency) {
+        console.log(`could not find currencyId ${currencyId} in supportedCurrencies`);
+        return '';
+      }
 
+      const currencyOnChain = currency.getAddress(typedChainId);
       if (!currencyOnChain) {
         return '';
       }

@@ -3,11 +3,4 @@
 
 // The ChainAddressConfig maps the TypedChainId to the appropriate address or treeId.
 export type ChainAddressConfig = Record<number, string>;
-
-export type VAnchorConfigEntry = {
-  type: 'variable';
-  anchorAddresses: ChainAddressConfig;
-  anchorTreeIds: ChainAddressConfig;
-};
-
-export type AnchorConfigEntry = VAnchorConfigEntry;
+export type AnchorConfigEntry = ChainAddressConfig;

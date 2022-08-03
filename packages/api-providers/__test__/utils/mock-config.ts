@@ -15,17 +15,11 @@ import {
 } from '../../';
 
 const anchorsConfig: AppConfig['anchors'] = {
-  [CurrencyId.webbDEV]: [
-    {
-      anchorAddresses: {
-        [PresetTypedChainId.HermesLocalnet]: '0xb824C5F99339C7E486a1b452B635886BE82bc8b7',
-        [PresetTypedChainId.AthenaLocalnet]: '0xFEe587E68c470DAE8147B46bB39fF230A29D4769',
-        [PresetTypedChainId.DemeterLocalnet]: '0xdB587ef6aaA16b5719CDd3AaB316F0E70473e9Be',
-      },
-      anchorTreeIds: {},
-      type: 'variable',
-    },
-  ],
+  [CurrencyId.webbDEV]: {
+    [PresetTypedChainId.HermesLocalnet]: '0xb824C5F99339C7E486a1b452B635886BE82bc8b7',
+    [PresetTypedChainId.AthenaLocalnet]: '0xFEe587E68c470DAE8147B46bB39fF230A29D4769',
+    [PresetTypedChainId.DemeterLocalnet]: '0xdB587ef6aaA16b5719CDd3AaB316F0E70473e9Be',
+  },
 };
 const chainsConfig: AppConfig['chains'] = {
   [PresetTypedChainId.ProtocolSubstrateStandalone]: {

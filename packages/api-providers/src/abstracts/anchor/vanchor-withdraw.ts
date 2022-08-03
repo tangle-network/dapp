@@ -8,7 +8,6 @@ import { EventBus } from '@webb-tools/app-util';
 import { Note } from '@webb-tools/sdk-core';
 
 import { TransactionState, WebbWithdrawEvents } from '../mixer';
-import { Bridge } from './bridge';
 
 export interface VAnchorWithdrawResult extends TXresultBase {
   outputNotes: Note[];
@@ -19,14 +18,6 @@ export abstract class VAnchorWithdraw<T extends WebbApiProvider<any>> extends Ev
 
   constructor(protected inner: T) {
     super();
-  }
-
-  get tokens() {
-    return Bridge.getTokens(this.inner.config.currencies);
-  }
-
-  getTokensOfChain(chainId: number) {
-    return Bridge.getTokensOfChain(this.inner.config.currencies, chainId);
   }
 
   cancelWithdraw(): Promise<void> {

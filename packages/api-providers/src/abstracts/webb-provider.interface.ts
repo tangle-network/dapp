@@ -6,11 +6,12 @@ import { EventBus } from '@webb-tools/app-util';
 import { AccountsAdapter } from '../account/Accounts.adapter';
 import { InteractiveFeedback } from '../webb-error';
 import { WebbRelayerManager } from './relayer/webb-relayer-manager';
-import { AnchorApi, VAnchorDeposit, VAnchorWithdraw } from './anchor';
+import { BridgeApi, VAnchorDeposit, VAnchorWithdraw } from './anchor';
 import { ChainQuery } from './chain-query';
 import { AppConfig } from './common';
 import { ContributePayload, Crowdloan, CrowdloanEvent } from './crowdloan';
 import { DepositPayload, MixerDeposit, MixerDepositEvents, MixerWithdraw, WebbWithdrawEvents } from './mixer';
+import { WebbState } from './state';
 import { WrapUnwrap } from './wrap-unwrap';
 
 export interface RelayChainMethods<T extends WebbApiProvider<any>> {
@@ -31,9 +32,8 @@ export interface WebbMethods<T extends WebbApiProvider<any>> {
   // Anchor API developed initially for to handle the difference between
   // web3 (Chains that depend on static configs) and chains that will need to query the anchor
   //
-  // Since a bridge is just the connection between LinkableAnchors,
-  // It also contains information about the Bridge API.
-  anchorApi: AnchorApi<T, any>;
+  // Methods for querying information about the current bridge
+  bridgeApi: BridgeApi<T>;
 }
 
 export type WebbMethod<T extends EventBus<K>, K extends Record<string, unknown>> = {
@@ -192,6 +192,7 @@ export type WasmFactory = (name?: string) => Worker | null;
  **/
 export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
   accounts: AccountsAdapter<any>;
+  state: WebbState;
   methods: WebbMethods<WebbApiProvider<T>>;
   relayChainMethods: RelayChainMethods<WebbApiProvider<T>> | null;
 
@@ -205,7 +206,8 @@ export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
 
   getProvider(): any;
 
-  // Configs
+  // Configuration passed to the ApiProvider on initialization.
+  // Then, the config is used as state for the provider.
   config: AppConfig;
   // Notification handler
   notificationHandler: NotificationHandler;

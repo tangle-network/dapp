@@ -3,8 +3,8 @@ import WalletConnectProvider from '@walletconnect/web3-provider';
 import {
   Account,
   AppConfig,
-  BridgeConfig,
   Chain,
+  Currency,
   EVMChainId,
   getEVMChainName,
   InteractiveFeedback,
@@ -19,6 +19,7 @@ import {
   WebbPolkadot,
   WebbWeb3Provider,
 } from '@webb-dapp/api-providers';
+import { Bridge } from '@webb-dapp/api-providers/abstracts/state';
 import {
   anchorsConfig,
   bridgeConfigByAsset,
@@ -39,7 +40,7 @@ import { AccountSwitchNotification } from '@webb-dapp/ui-components/notification
 import { Spinner } from '@webb-dapp/ui-components/Spinner/Spinner';
 import { BareProps } from '@webb-dapp/ui-components/types';
 import { LoggerService } from '@webb-tools/app-util';
-import { calculateTypedChainId, parseTypedChainId } from '@webb-tools/sdk-core';
+import { calculateTypedChainId, ChainType } from '@webb-tools/sdk-core';
 import { logger } from 'ethers';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -70,19 +71,6 @@ const appConfig: AppConfig = {
   chains: chainsConfig,
   currencies: currenciesConfig,
   wallet: walletsConfig,
-};
-
-// Select a reasonable default bridge
-const getDefaultBridge = (chain: Chain, bridgeConfig: Record<number, BridgeConfig>): BridgeConfig | undefined => {
-  // Iterate over the supported currencies until a bridge is found
-  const supportedCurrencies = chain.currencies;
-  for (const currency of supportedCurrencies) {
-    if (Object.keys(bridgeConfig).includes(currency.toString())) {
-      return bridgeConfig[currency];
-    }
-  }
-
-  return undefined;
 };
 
 function notificationHandler(notification: NotificationPayload) {
@@ -216,22 +204,13 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
       if (!innerActiveApi) {
         return;
       }
+
       _setActiveAccount(account);
       // TODO resolve the account inner type issue
       await innerActiveApi.accounts.setActiveAccount(account as any);
     },
     [activeApi, activeChain, networkStorage]
   );
-
-  /// Forcefully tell react to rerender the application with api change
-  const forceActiveApiUpdate = (activeApi: WebbApiProvider<any>) => {
-    setActiveApi(activeApi);
-    interactiveFeedbacks.forEach((interactiveFeedback) => {
-      if (interactiveFeedback.reason === WebbErrorCodes.UnsupportedChain) {
-        interactiveFeedback.cancel();
-      }
-    });
-  };
 
   /// this will set the active api and the accounts
   const setActiveApiWithAccounts = async (
@@ -267,6 +246,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
 
       setActiveApi(nextActiveApi);
       nextActiveApi?.on('newAccounts', async (accounts) => {
+        console.log('Found some new accounts!');
         const acs = await accounts.accounts();
         const active = acs[0] || null;
         notificationApi({
@@ -368,10 +348,6 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
             );
             await setActiveApiWithAccounts(webbPolkadot, chain, _networkStorage ?? networkStorage);
             localActiveApi = webbPolkadot;
-
-            // set a reasonable default for the active bridge
-            const defaultBridge = getDefaultBridge(chain, bridgeConfigByAsset);
-            localActiveApi.methods.anchorApi.setActiveBridge(defaultBridge);
             setLoading(false);
           }
           break;
@@ -446,6 +422,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
               try {
                 /// this will throw if the user switched to unsupported chain
                 const name = getEVMChainName(appConfig, updatedChainId);
+                const newTypedChainId = calculateTypedChainId(ChainType.EVM, updatedChainId);
                 /// Alerting that the provider has changed via the extension
                 notificationApi({
                   message: 'Web3: Connected',
@@ -454,13 +431,37 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
                   secondaryMessage: `Connection is switched to ${name} chain`,
                 });
                 setActiveWallet(wallet);
-                forceActiveApiUpdate(webbWeb3Provider);
                 setActiveChain(nextChain ? nextChain : chain);
+
+                let bridgeOptions: Record<number, Bridge> = {};
+
+                // Set a reasonable default bridge and change available bridges based on the new chain
+                let defaultBridge: Bridge | null = null;
+                for (let bridgeConfig of Object.values(webbWeb3Provider.config.bridgeByAsset)) {
+                  if (Object.keys(bridgeConfig.anchors).includes(newTypedChainId.toString())) {
+                    // List the bridge as supported by the new chain
+                    const bridgeCurrencyConfig = webbWeb3Provider.config.currencies[bridgeConfig.asset];
+                    const bridgeCurrency = new Currency(bridgeCurrencyConfig);
+                    const bridgeTargets = bridgeConfig.anchors;
+                    const supportedBridge = new Bridge(bridgeCurrency, bridgeTargets);
+                    bridgeOptions[newTypedChainId] = supportedBridge;
+
+                    // Set the first compatible bridge encountered.
+                    if (!defaultBridge) {
+                      defaultBridge = supportedBridge;
+                    }
+                  }
+                }
+
+                // set the available bridges of the new chain
+                webbWeb3Provider.state.setBridgeOptions(bridgeOptions);
+                webbWeb3Provider.state.activeBridge = defaultBridge;
               } catch (e) {
                 /// set the chain to be undefined as this won't be usable
                 // TODO mark the api as not ready
                 setActiveChain(undefined);
                 setActiveWallet(wallet);
+                webbWeb3Provider.state.activeBridge = null;
                 if (e instanceof WebbError) {
                   /// Catching the errors for the switcher from the event
                   catchWebbError(e);
@@ -536,10 +537,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
             await setActiveApiWithAccounts(webbWeb3Provider, chain, _networkStorage ?? networkStorage);
             /// listen to `providerUpdate` by MetaMask
             localActiveApi = webbWeb3Provider;
-
-            // set a reasonable default for the active bridge
-            const defaultBridge = getDefaultBridge(chain, bridgeConfigByAsset);
-            localActiveApi.methods.anchorApi.setActiveBridge(defaultBridge);
+            setLoading(false);
           }
           break;
       }
@@ -631,6 +629,8 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
       setIsConnecting(false);
     });
     appEvent.on('networkSwitched', async ([chain, wallet]) => {
+      console.log('networkSwitched appEvent!');
+      // Set the default network to the last selected network
       const networkStorage = await netStorageFactory();
       await Promise.all([
         networkStorage.set('defaultNetwork', chain.chainId),

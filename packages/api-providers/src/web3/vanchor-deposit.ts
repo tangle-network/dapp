@@ -20,7 +20,6 @@ import { hexToU8a } from '@polkadot/util';
 
 import {
   DepositPayload as IDepositPayload,
-  MixerSize,
   TransactionState,
   VAnchorDeposit,
   VAnchorDepositResults,
@@ -40,26 +39,6 @@ import { WebbWeb3Provider } from './webb-provider';
 type DepositPayload = IDepositPayload<Note, [Utxo, number | string, string?]>;
 
 export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, DepositPayload> {
-  // For VAnchor, the getSizes will describe the minimum deposit amount for the vanchor
-  async getSizes(): Promise<MixerSize[]> {
-    const anchors = await this.bridgeApi.getAnchors();
-    const currency = this.bridgeApi.currency;
-
-    if (currency) {
-      return anchors
-        .filter((anchor) => !anchor.amount)
-        .map((anchor) => ({
-          // Hardcoded minimum size
-          amount: 0.00001,
-          asset: currency.view.symbol,
-          id: `Bridge=${anchor.amount}@${currency.view.name}`,
-          title: `${anchor.amount} ${currency.view.name}`,
-        }));
-    }
-
-    return [];
-  }
-
   async generateBridgeNote(
     anchorId: string | number,
     destination: number,
@@ -67,10 +46,12 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
     wrappableAssetAddress?: string
   ): Promise<DepositPayload> {
     console.log('generateBridgeNote: ', anchorId, destination, amount);
-    const bridge = this.bridgeApi.activeBridge;
-    const currency = this.bridgeApi.currency;
+    const bridge = this.inner.methods.bridgeApi.getBridge();
+    const currency = bridge?.currency;
 
     if (!bridge || !currency) {
+      console.log('currency: ', currency);
+      console.log('bridge: ', bridge);
       throw new Error('api not ready');
     }
     // Convert the amount to bn units (i.e. WEI instead of ETH)
@@ -104,14 +85,8 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
       keypair,
     });
 
-    const anchorConfig = bridge.anchors.find((anchorConfig) => anchorConfig.type === 'variable');
-
-    if (!anchorConfig) {
-      throw new Error(`cannot find anchor configuration with amount: ${amount}`);
-    }
-
-    const srcAddress = anchorConfig.anchorAddresses[sourceChainId];
-    const destAddress = anchorConfig.anchorAddresses[destination];
+    const srcAddress = bridge.targets[sourceChainId];
+    const destAddress = bridge.targets[destination];
 
     const noteInput: NoteGenInput = {
       amount: bnAmount.toString(),
@@ -160,8 +135,8 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
         throw WebbError.from(WebbErrorCodes.TransactionInProgress);
     }
 
-    const bridge = this.bridgeApi.activeBridge;
-    const currency = this.bridgeApi.currency;
+    const bridge = this.inner.methods.bridgeApi.getBridge();
+    const currency = bridge?.currency;
     console.log('deposit: ', depositPayload);
 
     if (!bridge || !currency) {
@@ -191,6 +166,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
       });
 
       const anchors = await this.bridgeApi.getAnchors();
+      console.log(anchors);
 
       // Find the only configurable VAnchor
       const vanchor = anchors.find((anchor) => !anchor.amount);

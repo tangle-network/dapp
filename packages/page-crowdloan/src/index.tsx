@@ -184,7 +184,7 @@ const PageCrowdloan: FC<PageCrowdloanProps> = () => {
   const allCurrencies = useMemo(() => {
     return activeChain
       ? activeChain.currencies.map((currencyId) => {
-          return Currency.fromCurrencyId(currenciesConfig, currencyId);
+          return new Currency(currenciesConfig[currencyId]);
         })
       : [];
   }, [activeChain, currenciesConfig]);
