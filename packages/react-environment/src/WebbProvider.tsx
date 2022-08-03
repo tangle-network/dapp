@@ -416,15 +416,16 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
               notificationHandler
             );
 
-            const providerUpdateHandler = async ([chainId]: number[]) => {
-              const nextChain = Object.values(chains).find((chain) => chain.chainId === chainId);
+            const providerUpdateHandler = async ([updatedChainId]: number[]) => {
+              const nextChain = Object.values(chains).find((chain) => chain.chainId === updatedChainId);
+
               try {
                 /// this will throw if the user switched to unsupported chain
-                const name = getEVMChainName(appConfig, chainId);
-                const newTypedChainId = calculateTypedChainId(ChainType.EVM, chainId);
+                const name = getEVMChainName(appConfig, updatedChainId);
+                const newTypedChainId = calculateTypedChainId(ChainType.EVM, updatedChainId);
                 /// Alerting that the provider has changed via the extension
                 notificationApi({
-                  message: 'Web3: changed the connected network',
+                  message: 'Web3: Connected',
                   variant: 'info',
                   Icon: React.createElement(Icon, null, ['leak_add']),
                   secondaryMessage: `Connection is switched to ${name} chain`,
@@ -572,14 +573,6 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
           _networkStorage.set('defaultWallet', wallet.id),
         ]);
       }
-
-      notificationApi({
-        message: 'Web3: changed the connected network',
-        variant: 'info',
-        Icon: React.createElement(Icon, null, ['leak_add']),
-        secondaryMessage: `Connection is switched to ${chain.name} chain`,
-      });
-
       return provider;
     } finally {
       setIsConnecting(false);

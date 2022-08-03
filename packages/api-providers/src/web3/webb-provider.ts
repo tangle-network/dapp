@@ -224,6 +224,7 @@ export class WebbWeb3Provider
   }
 
   endSession(): Promise<void> {
+    this.unsubscribeAll();
     return this.web3Provider.endSession();
   }
 
