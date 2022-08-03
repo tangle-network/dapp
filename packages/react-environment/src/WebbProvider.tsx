@@ -469,8 +469,9 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
             };
 
             webbWeb3Provider.on('providerUpdate', providerUpdateHandler);
-            webbWeb3Provider.setChainListener();
-            webbWeb3Provider.setAccountListener();
+
+            await webbWeb3Provider.setChainListener();
+            await webbWeb3Provider.setAccountListener();
             const cantAddChain = !chain.chainId && !chain.evmRpcUrls;
             const addEvmChain = async () => {
               if (cantAddChain) {

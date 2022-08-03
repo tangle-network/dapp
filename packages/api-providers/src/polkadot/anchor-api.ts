@@ -1,11 +1,13 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
+import { calculateTypedChainId } from '@webb-tools/sdk-core';
+
 import { AnchorApi, AnchorBase } from '../abstracts';
 import { TypedChainId } from '../chains';
 import { AnchorConfigEntry } from '../types';
 import { BridgeConfig } from '../types/bridge-config.interface';
-import { CurrencyConfig, CurrencyRole, CurrencyType } from '../types/currency-config.interface';
+import { CurrencyConfig, CurrencyType } from '../types/currency-config.interface';
 import { Currency } from '../';
 import { WebbPolkadot } from './webb-provider';
 
@@ -15,13 +17,18 @@ export class PolkadotAnchorApi extends AnchorApi<WebbPolkadot, BridgeConfig> {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  getTokenAddress(chainId: TypedChainId): string | null {
-    return null;
+  getTokenAddress(chainTypeId: TypedChainId): string | null {
+    const activeBridgeAsset = this.store.activeBridge?.asset;
+    const typedChainId = calculateTypedChainId(chainTypeId.chainType, chainTypeId.chainId);
+    return activeBridgeAsset
+      ? this.inner.config.currencies[activeBridgeAsset].addresses.get(typedChainId) ?? null
+      : null;
   }
 
   async getCurrencies(): Promise<Currency[]> {
     const bridgeCurrenciesConfig = Object.values(this.inner.config.currencies).filter((i: CurrencyConfig) => {
-      const isValid = i.type === CurrencyType.ORML && i.role === CurrencyRole.Governable;
+      // TODO: Add check if required to restrict the options to some type/role of tokens
+      const isValid = i.type === CurrencyType.NATIVE || i.type === CurrencyType.ORML;
       const isSupported = Object.keys(this.store.config).includes(i.id.toString());
 
       return isValid && isSupported;
