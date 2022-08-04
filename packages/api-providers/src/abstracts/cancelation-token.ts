@@ -49,7 +49,7 @@ export class CancellationToken {
         first()
       )
       .subscribe(() => {
-        abortController.abort();
+        abortController.abort('Canceled');
       });
     return abortController.signal;
   }

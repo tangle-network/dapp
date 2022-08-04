@@ -12,10 +12,7 @@ export async function retryPromise<T extends () => Promise<any>>(
   let resolved = false;
   let tries = maxReties;
   while (!resolved && tries > 0) {
-    if (abortSignal?.aborted) {
-      throw new Error('Aborted');
-    }
-    console.log(abortSignal);
+    abortSignal?.throwIfAborted();
     try {
       const val = await executor();
       resolved = true;
