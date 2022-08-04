@@ -131,7 +131,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
           const sourceEthers = sourceHttpProvider.intoEthersProvider();
           const sourceVAnchor = await this.inner.getVariableAnchorByAddressAndProvider(sourceAddress, sourceEthers);
           const leafStorage = await bridgeStorageFactory(Number(parsedNote.sourceChainId));
-          const leaves = await this.inner.getVariableAnchorLeaves(sourceVAnchor, leafStorage);
+          const leaves = await this.inner.getVariableAnchorLeaves(sourceVAnchor, leafStorage, abortSignal);
 
           leavesMap[parsedNote.sourceChainId] = leaves.map((leaf) => {
             return hexToU8a(leaf);
@@ -197,7 +197,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
       // Populate the leaves for the destination if not already populated
       if (!leavesMap[destChainIdType.toString()]) {
         const leafStorage = await bridgeStorageFactory(destChainIdType);
-        let leaves = await this.inner.getVariableAnchorLeaves(destVAnchor, leafStorage);
+        let leaves = await this.inner.getVariableAnchorLeaves(destVAnchor, leafStorage, abortSignal);
 
         leavesMap[destChainIdType.toString()] = leaves.map((leaf) => {
           return hexToU8a(leaf);

@@ -17,6 +17,18 @@ export class CancellationToken {
     }
   }
 
+  ThrowOnceCanceled(e: any = 'cancelled') {
+    this.$canceled()
+      .pipe(
+        filter((v) => v),
+        first()
+      )
+      .subscribe(() => {
+        console.log('canceled');
+        throw e;
+      });
+  }
+
   isCancelled() {
     return this.cancelled.value;
   }

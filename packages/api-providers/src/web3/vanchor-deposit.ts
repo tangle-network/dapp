@@ -195,8 +195,10 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
       this.cancelToken.throwIfCancel();
       this.emit('stateChange', TransactionState.FetchingLeaves);
       let leafStorage = await bridgeStorageFactory(Number(sourceChainId));
-      let leaves = await this.inner.getVariableAnchorLeaves(srcVAnchor, leafStorage);
-
+      let leaves = await this.cancelToken.handleOrThrow(
+        () => this.inner.getVariableAnchorLeaves(srcVAnchor, leafStorage, abortSignal),
+        () => WebbError.from(WebbErrorCodes.TransactionCancelled)
+      );
       // Only populate the leaves map if there are actually leaves to populate.
       if (leaves.length) {
         leavesMap[utxo.chainId] = leaves.map((leaf) => {
@@ -214,10 +216,9 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
       leafStorage = await bridgeStorageFactory(Number(utxo.chainId));
 
       leaves = await this.cancelToken.handleOrThrow(
-        () => this.inner.getVariableAnchorLeaves(destVAnchor, leafStorage),
+        () => this.inner.getVariableAnchorLeaves(destVAnchor, leafStorage, abortSignal),
         () => WebbError.from(WebbErrorCodes.TransactionCancelled)
       );
-
       // Only populate the leaves map if there are actually leaves to populate.
       if (leaves.length) {
         leavesMap[utxo.chainId] = leaves.map((leaf) => {
@@ -370,6 +371,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
         }
       }
     } catch (e: any) {
+      console.log(e);
       if (e?.code === 4001) {
         this.inner.notificationHandler.remove('waiting-approval');
         this.inner.notificationHandler({

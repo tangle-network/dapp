@@ -170,13 +170,16 @@ export class WebbWeb3Provider
     return this.ethersProvider;
   }
 
-  async getVariableAnchorLeaves(contract: VAnchorContract, storage: Storage<BridgeStorage>): Promise<string[]> {
+  async getVariableAnchorLeaves(
+    contract: VAnchorContract,
+    storage: Storage<BridgeStorage>,
+    abortSignal: AbortSignal
+  ): Promise<string[]> {
     const evmId = await contract.getEvmId();
     const typedChainId = calculateTypedChainId(ChainType.EVM, evmId);
-
     // First, try to fetch the leaves from the supported relayers
     const relayers = await this.relayerManager.getRelayersByChainAndAddress(typedChainId, contract.inner.address);
-    let leaves = await this.relayerManager.fetchLeavesFromRelayers(relayers, contract, storage);
+    let leaves = await this.relayerManager.fetchLeavesFromRelayers(relayers, contract, storage, abortSignal);
 
     // If unable to fetch leaves from the relayers, get them from chain
     if (!leaves) {
@@ -186,7 +189,7 @@ export class WebbWeb3Provider
         leaves: [] as string[],
       };
 
-      const leavesFromChain = await contract.getDepositLeaves(storedContractInfo.lastQueriedBlock + 1, 0);
+      const leavesFromChain = await contract.getDepositLeaves(storedContractInfo.lastQueriedBlock + 1, 0, abortSignal);
 
       leaves = [...storedContractInfo.leaves, ...leavesFromChain.newLeaves];
     }
