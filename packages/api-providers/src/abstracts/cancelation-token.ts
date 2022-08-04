@@ -1,5 +1,5 @@
 import { BehaviorSubject } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { filter, first } from 'rxjs/operators';
 
 /**
  * Cancellation token
@@ -7,6 +7,7 @@ import { filter } from 'rxjs/operators';
  * */
 export class CancellationToken {
   private cancelled: BehaviorSubject<boolean> = new BehaviorSubject(false);
+
   /**
    * Throw error if the status is canceled
    * */
@@ -19,12 +20,28 @@ export class CancellationToken {
   isCancelled() {
     return this.cancelled.value;
   }
+
   cancel() {
     this.cancelled.next(true);
   }
+
   reset() {
     this.cancelled.next(false);
   }
+
+  get abortSignal(): AbortSignal {
+    const abortController = new AbortController();
+    this.$canceled()
+      .pipe(
+        filter((v) => v),
+        first()
+      )
+      .subscribe(() => {
+        abortController.abort();
+      });
+    return abortController.signal;
+  }
+
   /**
    * Property watcher for the cancellation status
    * */

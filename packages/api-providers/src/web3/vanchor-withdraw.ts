@@ -59,7 +59,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
     const key = 'web3-vbridge-withdraw';
     let txHash = '';
     const changeNotes = [];
-
+    const abortSignal = this.cancelToken.abortSignal;
     try {
       const activeBridge = this.inner.methods.bridgeApi.getBridge();
       const activeRelayer = this.inner.relayerManager.activeRelayer;
@@ -96,11 +96,11 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
 
       const maxEdges = await destVAnchor.inner.maxEdges();
       if (notes.length > 2) {
-        provingKey = await fetchVariableAnchorKeyForEdges(maxEdges, false);
-        wasmBuffer = await fetchVariableAnchorWasmForEdges(maxEdges, false);
+        provingKey = await fetchVariableAnchorKeyForEdges(maxEdges, false, abortSignal);
+        wasmBuffer = await fetchVariableAnchorWasmForEdges(maxEdges, false, abortSignal);
       } else {
-        provingKey = await fetchVariableAnchorKeyForEdges(maxEdges, true);
-        wasmBuffer = await fetchVariableAnchorWasmForEdges(maxEdges, true);
+        provingKey = await fetchVariableAnchorKeyForEdges(maxEdges, true, abortSignal);
+        wasmBuffer = await fetchVariableAnchorWasmForEdges(maxEdges, true, abortSignal);
       }
 
       // Loop through the notes and populate the leaves map

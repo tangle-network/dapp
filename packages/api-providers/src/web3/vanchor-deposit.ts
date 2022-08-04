@@ -134,7 +134,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
       default:
         throw WebbError.from(WebbErrorCodes.TransactionInProgress);
     }
-
+    const abortSignal = this.cancelToken.abortSignal;
     const bridge = this.inner.methods.bridgeApi.getBridge();
     const currency = bridge?.currency;
     console.log('deposit: ', depositPayload);
@@ -187,8 +187,8 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
       // Fetch the fixtures
       this.cancelToken.throwIfCancel();
       this.emit('stateChange', TransactionState.FetchingFixtures);
-      const smallKey = await fetchVariableAnchorKeyForEdges(maxEdges, true);
-      const smallWasm = await fetchVariableAnchorWasmForEdges(maxEdges, true);
+      const smallKey = await fetchVariableAnchorKeyForEdges(maxEdges, true, abortSignal);
+      const smallWasm = await fetchVariableAnchorWasmForEdges(maxEdges, true, abortSignal);
       const leavesMap: Record<string, Uint8Array[]> = {};
 
       // Fetch the leaves from the source chain
