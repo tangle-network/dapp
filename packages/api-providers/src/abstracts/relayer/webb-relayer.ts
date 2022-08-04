@@ -209,7 +209,7 @@ export class WebbRelayer {
     }
   }
 
-  async getLeaves(typedChainId: number, contractAddress: string): Promise<RelayerLeaves> {
+  async getLeaves(typedChainId: number, contractAddress: string, abortSignal?: AbortSignal): Promise<RelayerLeaves> {
     const { chainId, chainType } = parseTypedChainId(typedChainId);
     let url: string = '';
     switch (chainType) {
@@ -223,7 +223,7 @@ export class WebbRelayer {
         url = `${this.endpoint}/api/v1/leaves/evm/${chainId.toString(16)}/${contractAddress}`;
         break;
     }
-    const req = await fetch(url);
+    const req = await fetch(url, { signal: abortSignal });
 
     if (req.ok) {
       const jsonResponse = await req.json();

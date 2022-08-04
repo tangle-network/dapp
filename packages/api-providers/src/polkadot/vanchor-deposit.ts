@@ -121,6 +121,7 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
       default:
         throw WebbError.from(WebbErrorCodes.TransactionInProgress);
     }
+    const abortSignal = this.cancelToken.abortSignal;
     try {
       const secret = randomAsU8a();
 
@@ -134,7 +135,7 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
       this.cancelToken.throwIfCancel();
       // Loading fixtures
       this.emit('stateChange', TransactionState.FetchingFixtures);
-      const provingKey = await fetchSubstrateVAnchorProvingKey();
+      const provingKey = await fetchSubstrateVAnchorProvingKey(2, abortSignal);
 
       // output note (Already generated)
       const depositNote = depositPayload.note;

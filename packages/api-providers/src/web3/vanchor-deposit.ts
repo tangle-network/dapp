@@ -134,7 +134,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
       default:
         throw WebbError.from(WebbErrorCodes.TransactionInProgress);
     }
-
+    const abortSignal = this.cancelToken.abortSignal;
     const bridge = this.inner.methods.bridgeApi.getBridge();
     const currency = bridge?.currency;
     console.log('deposit: ', depositPayload);
@@ -187,16 +187,18 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
       // Fetch the fixtures
       this.cancelToken.throwIfCancel();
       this.emit('stateChange', TransactionState.FetchingFixtures);
-      const smallKey = await fetchVariableAnchorKeyForEdges(maxEdges, true);
-      const smallWasm = await fetchVariableAnchorWasmForEdges(maxEdges, true);
+      const smallKey = await fetchVariableAnchorKeyForEdges(maxEdges, true, abortSignal);
+      const smallWasm = await fetchVariableAnchorWasmForEdges(maxEdges, true, abortSignal);
       const leavesMap: Record<string, Uint8Array[]> = {};
 
       // Fetch the leaves from the source chain
       this.cancelToken.throwIfCancel();
       this.emit('stateChange', TransactionState.FetchingLeaves);
       let leafStorage = await bridgeStorageFactory(Number(sourceChainId));
-      let leaves = await this.inner.getVariableAnchorLeaves(srcVAnchor, leafStorage);
-
+      let leaves = await this.cancelToken.handleOrThrow(
+        () => this.inner.getVariableAnchorLeaves(srcVAnchor, leafStorage, abortSignal),
+        () => WebbError.from(WebbErrorCodes.TransactionCancelled)
+      );
       // Only populate the leaves map if there are actually leaves to populate.
       if (leaves.length) {
         leavesMap[utxo.chainId] = leaves.map((leaf) => {
@@ -214,10 +216,9 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
       leafStorage = await bridgeStorageFactory(Number(utxo.chainId));
 
       leaves = await this.cancelToken.handleOrThrow(
-        () => this.inner.getVariableAnchorLeaves(destVAnchor, leafStorage),
+        () => this.inner.getVariableAnchorLeaves(destVAnchor, leafStorage, abortSignal),
         () => WebbError.from(WebbErrorCodes.TransactionCancelled)
       );
-
       // Only populate the leaves map if there are actually leaves to populate.
       if (leaves.length) {
         leavesMap[utxo.chainId] = leaves.map((leaf) => {

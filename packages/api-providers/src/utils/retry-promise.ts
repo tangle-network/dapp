@@ -6,15 +6,15 @@ export const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve
 export async function retryPromise<T extends () => Promise<any>>(
   executor: T,
   maxReties = 20,
-  sleepTime = 0
+  sleepTime = 0,
+  abortSignal?: AbortSignal
 ): Promise<ReturnType<T>> {
   let resolved = false;
   let tries = maxReties;
-
   while (!resolved && tries > 0) {
+    abortSignal?.throwIfAborted();
     try {
       const val = await executor();
-
       resolved = true;
 
       return val;

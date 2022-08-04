@@ -144,11 +144,13 @@ export class Web3RelayerManager extends WebbRelayerManager {
    * @param relayers - A list of relayers that support the passed contract
    * @param contract - A VAnchorContract wrapper for EVM chains.
    * @param storage - A storage to save the fetched leaves.
+   * param abortSignal - A signal to abort the fetching process.
    */
   async fetchLeavesFromRelayers(
     relayers: WebbRelayer[],
     contract: VAnchorContract,
-    storage: Storage<BridgeStorage>
+    storage: Storage<BridgeStorage>,
+    abortSignal: AbortSignal
   ): Promise<string[] | null> {
     let leaves: string[] = [];
     const sourceEvmId = await contract.getEvmId();
@@ -156,7 +158,7 @@ export class Web3RelayerManager extends WebbRelayerManager {
 
     // loop through the sourceRelayers to fetch leaves
     for (let i = 0; i < relayers.length; i++) {
-      const relayerLeaves = await relayers[i].getLeaves(typedChainId, contract.inner.address);
+      const relayerLeaves = await relayers[i].getLeaves(typedChainId, contract.inner.address, abortSignal);
 
       const validLatestLeaf = await contract.leafCreatedAtBlock(
         relayerLeaves.leaves[relayerLeaves.leaves.length - 1],

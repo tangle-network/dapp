@@ -376,7 +376,8 @@ export class VAnchorContract {
 
   async getDepositLeaves(
     startingBlock: number,
-    finalBlock: number
+    finalBlock: number,
+    abortSignal: AbortSignal
   ): Promise<{ lastQueriedBlock: number; newLeaves: string[] }> {
     const filter = this._contract.filters.NewCommitment(null, null, null);
 
@@ -386,18 +387,22 @@ export class VAnchorContract {
 
     let logs: Array<Log> = []; // Read the stored logs into this variable
     const step = 1024;
-
     console.log(`Fetching leaves with steps of ${step} logs/request`);
 
     try {
       for (let i = startingBlock; i < finalBlock; i += step) {
-        const nextLogs = await retryPromise(() => {
-          return this.web3Provider.getLogs({
-            fromBlock: i,
-            toBlock: finalBlock - i > step ? i + step : finalBlock,
-            ...filter,
-          });
-        });
+        const nextLogs = await retryPromise(
+          () => {
+            return this.web3Provider.getLogs({
+              fromBlock: i,
+              toBlock: finalBlock - i > step ? i + step : finalBlock,
+              ...filter,
+            });
+          },
+          20,
+          10,
+          abortSignal
+        );
 
         logs = [...logs, ...nextLogs];
 
@@ -413,7 +418,6 @@ export class VAnchorContract {
     const newCommitments = events
       .sort((a, b) => a.args.index - b.args.index) // Sort events in chronological order
       .map((e) => e.args.commitment);
-
     return {
       lastQueriedBlock: finalBlock,
       newLeaves: newCommitments,
