@@ -1,6 +1,6 @@
 import { getCachedFixtureURI, withLocalFixtures } from '@webb-dapp/api-providers/utils';
 
-export async function fetchSubstrateVAnchorProvingKey(edges: number = 2, abortSignal: AbortSignal) {
+export async function fetchSubstrateVAnchorProvingKey(edges: number, abortSignal: AbortSignal) {
   const IPFSUrl = 'https://ipfs.io/ipfs/QmZiNuAKp2QGp281bqasNqvqccPCGp4yoxWbK8feecefML';
   const cachedURI = getCachedFixtureURI('proving_key_uncompressed_sub_vanchor_2_2_2.bin');
   const url = withLocalFixtures() ? cachedURI : IPFSUrl;
