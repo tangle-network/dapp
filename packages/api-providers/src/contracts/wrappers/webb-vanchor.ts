@@ -377,7 +377,7 @@ export class VAnchorContract {
   async getDepositLeaves(
     startingBlock: number,
     finalBlock: number,
-    abortSingle: AbortSignal
+    abortSignal: AbortSignal
   ): Promise<{ lastQueriedBlock: number; newLeaves: string[] }> {
     const filter = this._contract.filters.NewCommitment(null, null, null);
 
@@ -401,7 +401,7 @@ export class VAnchorContract {
           },
           20,
           10,
-          abortSingle
+          abortSignal
         );
 
         logs = [...logs, ...nextLogs];
