@@ -47,6 +47,7 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
     }
     // TODO :Generate random secrets which can be supplied later by the user
     const secret = randomAsU8a();
+    const abortSignal = this.cancelToken.abortSignal;
     // Get the current active account
     const account = await this.inner.accounts.activeOrDefault;
     let txHash = '';
@@ -83,7 +84,7 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
     this.cancelToken.throwIfCancel();
 
     this.emit('stateChange', TransactionState.FetchingFixtures);
-    const provingKey = await fetchSubstrateVAnchorProvingKey();
+    const provingKey = await fetchSubstrateVAnchorProvingKey(2, abortSignal);
 
     // Get the target chainId,treeId from the note
     const targetChainId = inputNotes[0].note.targetChainId;
