@@ -401,7 +401,7 @@ export class VAnchorContract {
           },
           20,
           10,
-          abortSingle
+          abortSignal
         );
 
         logs = [...logs, ...nextLogs];
