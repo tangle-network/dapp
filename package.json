@@ -24,8 +24,8 @@
     "@webb-tools/api-derive": "0.1.4-89",
     "@webb-tools/types": "0.1.4-89",
     "@webb-tools/app-util": "0.1.4-89",
-    "@webb-tools/sdk-core": "0.1.4-89",
-    "@webb-tools/wasm-utils": "0.1.4-89",
+    "@webb-tools/sdk-core": "file:../webb.js/packages/sdk-core/build",
+    "@webb-tools/wasm-utils": "file:../webb.js/packages/wasm-utils/build",
     "@webb-tools/contracts": "0.2.2",
     "@webb-tools/interfaces": "0.2.2",
     "@webb-tools/anchors": "0.2.2"

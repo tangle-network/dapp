@@ -5,7 +5,7 @@
 import type { JsNote } from '@webb-tools/wasm-utils';
 
 import { Log } from '@ethersproject/abstract-provider';
-import { retryPromise } from '@webb-dapp/api-providers/utils/retry-promise';
+import { retryPromise, sleep } from '@webb-dapp/api-providers/utils/retry-promise';
 import { LoggerService } from '@webb-tools/app-util';
 import { ERC20, ERC20__factory as ERC20Factory, VAnchor, VAnchor__factory } from '@webb-tools/contracts';
 import { IAnchorDepositInfo } from '@webb-tools/interfaces';
@@ -24,6 +24,7 @@ import {
   toFixedHex,
   Utxo,
 } from '@webb-tools/sdk-core';
+import { worker } from 'cluster';
 import { BigNumber, BigNumberish, Contract, ContractTransaction, ethers, providers, Signer } from 'ethers';
 
 import { hexToU8a, u8aToHex } from '@polkadot/util';
@@ -211,7 +212,8 @@ export class VAnchorContract {
     utxo: CircomUtxo,
     leavesMap: Record<string, Uint8Array[]>,
     provingKey: Uint8Array,
-    circuitWasm: Buffer
+    circuitWasm: Buffer,
+    worker: Worker
   ): Promise<ContractTransaction> {
     const sender = await this.signer.getAddress();
     const sourceChainId = calculateTypedChainId(ChainType.EVM, await this.signer.getChainId());
@@ -256,7 +258,8 @@ export class VAnchorContract {
       sender,
       leavesMap,
       provingKey,
-      circuitWasm
+      circuitWasm,
+      worker
     );
 
     // A deposit is meant for the same recipient as signer
@@ -276,7 +279,8 @@ export class VAnchorContract {
     utxo: CircomUtxo,
     leavesMap: Record<string, Uint8Array[]>,
     provingKey: Uint8Array,
-    circuitWasm: Buffer
+    circuitWasm: Buffer,
+    worker: Worker
   ): Promise<ContractTransaction> {
     const sender = await this.signer.getAddress();
     const sourceChainId = calculateTypedChainId(ChainType.EVM, await this.signer.getChainId());
@@ -321,7 +325,8 @@ export class VAnchorContract {
       sender,
       leavesMap,
       provingKey,
-      circuitWasm
+      circuitWasm,
+      worker
     );
 
     let tx: ContractTransaction;
@@ -466,7 +471,8 @@ export class VAnchorContract {
     relayer: string,
     leavesMap: Record<string, Uint8Array[]>,
     provingKey: Uint8Array,
-    wasmBuffer: Buffer
+    wasmBuffer: Buffer,
+    worker: Worker
   ) {
     const chainId = calculateTypedChainId(ChainType.EVM, await this.signer.getChainId());
     const roots = await this.getRootsForProof();
@@ -541,7 +547,9 @@ export class VAnchorContract {
     console.log('proofInput: ', proofInput);
 
     const levels = await this.inner.levels();
-    const provingManager = new CircomProvingManager(wasmBuffer, levels, null);
+    const provingManager = new CircomProvingManager(wasmBuffer, levels, worker);
+    provingManager.setupWorker();
+    await sleep(1000);
     const proof = await provingManager.prove('vanchor', proofInput);
 
     const publicInputs: IVariableAnchorPublicInputs = this.generatePublicInputs(

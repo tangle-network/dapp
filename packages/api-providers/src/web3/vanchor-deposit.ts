@@ -259,12 +259,14 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
 
         if (enoughBalance) {
           this.cancelToken.throwIfCancel();
+          const worker = this.inner.wasmFactory();
           const tx = await srcVAnchor.wrapAndDeposit(
             depositPayload.params[2],
             depositPayload.params[0] as CircomUtxo,
             leavesMap,
             smallKey,
-            Buffer.from(smallWasm)
+            Buffer.from(smallWasm),
+            worker!
           );
 
           this.emit('stateChange', TransactionState.SendingTransaction);
@@ -327,11 +329,14 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
 
         if (enoughBalance) {
           this.cancelToken.throwIfCancel();
+          const worker = this.inner.wasmFactory();
+
           const tx = await srcVAnchor.deposit(
             depositPayload.params[0] as CircomUtxo,
             leavesMap,
             smallKey,
-            Buffer.from(smallWasm)
+            Buffer.from(smallWasm),
+            worker!
           );
 
           this.emit('stateChange', TransactionState.SendingTransaction);
