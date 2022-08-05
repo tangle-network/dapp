@@ -548,8 +548,6 @@ export class VAnchorContract {
 
     const levels = await this.inner.levels();
     const provingManager = new CircomProvingManager(wasmBuffer, levels, worker);
-    provingManager.setupWorker();
-    await sleep(1000);
     const proof = await provingManager.prove('vanchor', proofInput);
 
     const publicInputs: IVariableAnchorPublicInputs = this.generatePublicInputs(

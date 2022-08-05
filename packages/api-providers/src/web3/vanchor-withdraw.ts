@@ -252,7 +252,9 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
       let extAmount = BigNumber.from(0)
         .add(outputUtxos.reduce((sum: BigNumber, x: Utxo) => sum.add(x.amount), BigNumber.from(0)))
         .sub(inputUtxos.reduce((sum: BigNumber, x: Utxo) => sum.add(x.amount), BigNumber.from(0)));
+
       this.emit('stateChange', TransactionState.GeneratingZk);
+      const worker = this.inner.wasmFactory();
       const { extData, outputNotes, publicInputs } = await destVAnchor.setupTransaction(
         inputUtxos,
         [changeUtxo, dummyUtxo],
@@ -262,7 +264,8 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
         relayerAccount,
         leavesMap,
         provingKey,
-        Buffer.from(wasmBuffer)
+        Buffer.from(wasmBuffer),
+        worker!
       );
 
       // Check for cancelled here, abort if it was set.
