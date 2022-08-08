@@ -139,9 +139,7 @@ export class PolkadotTx<P extends Array<any>> extends EventBus<PolkadotTXEvents>
     if (r.dispatchError?.isModule) {
       try {
         const mod = r.dispatchError.asModule;
-        const error = this.apiPromise.registry.findMetaError(
-          new Uint8Array([mod.index.toNumber(), mod.error.toNumber()])
-        );
+        const error = this.apiPromise.registry.findMetaError(mod.error);
 
         message = `${error.section}.${error.name}`;
       } catch (error) {
