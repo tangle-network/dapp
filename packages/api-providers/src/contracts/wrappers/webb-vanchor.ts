@@ -24,7 +24,6 @@ import {
   toFixedHex,
   Utxo,
 } from '@webb-tools/sdk-core';
-import { worker } from 'cluster';
 import { BigNumber, BigNumberish, Contract, ContractTransaction, ethers, providers, Signer } from 'ethers';
 
 import { hexToU8a, u8aToHex } from '@polkadot/util';
