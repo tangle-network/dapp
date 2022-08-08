@@ -41,8 +41,18 @@ describe.skip('Note provider interactions', () => {
     );
 
     const relayerManager = (await relayerFactory.getRelayerManager('evm')) as Web3RelayerManager;
+    const workerFactory = () => {
+      return null;
+    };
 
-    provider = await WebbWeb3Provider.init(web3Provider, 9999, relayerManager, mockAppConfig, mockNotificationHandler);
+    provider = await WebbWeb3Provider.init(
+      web3Provider,
+      9999,
+      relayerManager,
+      mockAppConfig,
+      mockNotificationHandler,
+      workerFactory
+    );
   });
 
   it('should generate a note for the variable anchor', async () => {

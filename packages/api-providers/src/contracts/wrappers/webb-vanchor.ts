@@ -211,7 +211,8 @@ export class VAnchorContract {
     utxo: CircomUtxo,
     leavesMap: Record<string, Uint8Array[]>,
     provingKey: Uint8Array,
-    circuitWasm: Buffer
+    circuitWasm: Buffer,
+    worker: Worker
   ): Promise<ContractTransaction> {
     const sender = await this.signer.getAddress();
     const sourceChainId = calculateTypedChainId(ChainType.EVM, await this.signer.getChainId());
@@ -256,7 +257,8 @@ export class VAnchorContract {
       sender,
       leavesMap,
       provingKey,
-      circuitWasm
+      circuitWasm,
+      worker
     );
 
     // A deposit is meant for the same recipient as signer
@@ -276,7 +278,8 @@ export class VAnchorContract {
     utxo: CircomUtxo,
     leavesMap: Record<string, Uint8Array[]>,
     provingKey: Uint8Array,
-    circuitWasm: Buffer
+    circuitWasm: Buffer,
+    worker: Worker
   ): Promise<ContractTransaction> {
     const sender = await this.signer.getAddress();
     const sourceChainId = calculateTypedChainId(ChainType.EVM, await this.signer.getChainId());
@@ -321,7 +324,8 @@ export class VAnchorContract {
       sender,
       leavesMap,
       provingKey,
-      circuitWasm
+      circuitWasm,
+      worker
     );
 
     let tx: ContractTransaction;
@@ -466,7 +470,8 @@ export class VAnchorContract {
     relayer: string,
     leavesMap: Record<string, Uint8Array[]>,
     provingKey: Uint8Array,
-    wasmBuffer: Buffer
+    wasmBuffer: Buffer,
+    worker: Worker
   ) {
     const chainId = calculateTypedChainId(ChainType.EVM, await this.signer.getChainId());
     const roots = await this.getRootsForProof();
@@ -541,7 +546,7 @@ export class VAnchorContract {
     console.log('proofInput: ', proofInput);
 
     const levels = await this.inner.levels();
-    const provingManager = new CircomProvingManager(wasmBuffer, levels, null);
+    const provingManager = new CircomProvingManager(wasmBuffer, levels, worker);
     const proof = await provingManager.prove('vanchor', proofInput);
 
     const publicInputs: IVariableAnchorPublicInputs = this.generatePublicInputs(

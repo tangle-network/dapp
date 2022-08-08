@@ -6,7 +6,7 @@ import { calculateTypedChainId, ChainType } from '@webb-tools/sdk-core';
 import { providers } from 'ethers';
 import { Eth } from 'web3-eth';
 
-import { Currency, RelayChainMethods } from '../abstracts';
+import { Currency, RelayChainMethods, WasmFactory } from '../abstracts';
 import { Bridge, WebbState } from '../abstracts/state';
 import { AccountsAdapter } from '../account/Accounts.adapter';
 import { VAnchorContract } from '../contracts/wrappers/webb-vanchor';
@@ -38,10 +38,6 @@ export class WebbWeb3Provider
   readonly methods: WebbMethods<WebbWeb3Provider>;
   readonly relayChainMethods: RelayChainMethods<WebbApiProvider<WebbWeb3Provider>> | null;
   private ethersProvider: providers.Web3Provider;
-  // TODO: make the factory configurable if the web3 interface in need of this functionality
-  readonly wasmFactory = () => {
-    return null;
-  };
 
   private constructor(
     private web3Provider: Web3Provider,
@@ -49,7 +45,8 @@ export class WebbWeb3Provider
     readonly relayerManager: Web3RelayerManager,
     readonly config: AppConfig,
     readonly notificationHandler: NotificationHandler,
-    readonly accounts: AccountsAdapter<Eth>
+    readonly accounts: AccountsAdapter<Eth>,
+    readonly wasmFactory: WasmFactory
   ) {
     super();
     this.ethersProvider = web3Provider.intoEthersProvider();
@@ -203,11 +200,12 @@ export class WebbWeb3Provider
     chainId: number,
     relayerManager: Web3RelayerManager,
     appConfig: AppConfig,
-    notification: NotificationHandler
+    notification: NotificationHandler,
+    wasmFactory: WasmFactory // A Factory Fn that wil return wasm worker that would be supplied eventually to the `sdk-core`
   ) {
     const accounts = new Web3Accounts(web3Provider.eth);
 
-    return new WebbWeb3Provider(web3Provider, chainId, relayerManager, appConfig, notification, accounts);
+    return new WebbWeb3Provider(web3Provider, chainId, relayerManager, appConfig, notification, accounts, wasmFactory);
   }
 
   // Init web3 provider with a generic account provider
@@ -217,9 +215,18 @@ export class WebbWeb3Provider
     relayerManager: Web3RelayerManager,
     appConfig: AppConfig,
     notification: NotificationHandler,
-    web3AccountProvider: AccountsAdapter<Eth>
+    web3AccountProvider: AccountsAdapter<Eth>,
+    wasmFactory: WasmFactory // A Factory Fn that wil return wasm worker that would be supplied eventually to the `sdk-core`
   ) {
-    return new WebbWeb3Provider(web3Provider, chainId, relayerManager, appConfig, notification, web3AccountProvider);
+    return new WebbWeb3Provider(
+      web3Provider,
+      chainId,
+      relayerManager,
+      appConfig,
+      notification,
+      web3AccountProvider,
+      wasmFactory
+    );
   }
 
   get capabilities() {

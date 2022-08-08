@@ -259,12 +259,22 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
 
         if (enoughBalance) {
           this.cancelToken.throwIfCancel();
-          const tx = await srcVAnchor.wrapAndDeposit(
-            depositPayload.params[2],
-            depositPayload.params[0] as CircomUtxo,
-            leavesMap,
-            smallKey,
-            Buffer.from(smallWasm)
+          const worker = this.inner.wasmFactory();
+
+          const tx = await this.cancelToken.handleOrThrow(
+            () =>
+              srcVAnchor.wrapAndDeposit(
+                depositPayload.params[2] as string,
+                depositPayload.params[0] as CircomUtxo,
+                leavesMap,
+                smallKey,
+                Buffer.from(smallWasm),
+                worker!
+              ),
+            () => {
+              worker?.terminate();
+              return WebbError.from(WebbErrorCodes.TransactionCancelled);
+            }
           );
 
           this.emit('stateChange', TransactionState.SendingTransaction);
@@ -327,11 +337,21 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
 
         if (enoughBalance) {
           this.cancelToken.throwIfCancel();
-          const tx = await srcVAnchor.deposit(
-            depositPayload.params[0] as CircomUtxo,
-            leavesMap,
-            smallKey,
-            Buffer.from(smallWasm)
+          const worker = this.inner.wasmFactory();
+
+          const tx = await this.cancelToken.handleOrThrow(
+            () =>
+              srcVAnchor.deposit(
+                depositPayload.params[0] as CircomUtxo,
+                leavesMap,
+                smallKey,
+                Buffer.from(smallWasm),
+                worker!
+              ),
+            () => {
+              worker?.terminate();
+              return WebbError.from(WebbErrorCodes.TransactionCancelled);
+            }
           );
 
           this.emit('stateChange', TransactionState.SendingTransaction);

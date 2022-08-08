@@ -413,7 +413,8 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
               chainId,
               relayerManager,
               appConfig,
-              notificationHandler
+              notificationHandler,
+              () => new Worker(new URL('./circom-proving-manager.worker', import.meta.url))
             );
 
             const providerUpdateHandler = async ([updatedChainId]: number[]) => {

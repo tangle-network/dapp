@@ -252,17 +252,27 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
       let extAmount = BigNumber.from(0)
         .add(outputUtxos.reduce((sum: BigNumber, x: Utxo) => sum.add(x.amount), BigNumber.from(0)))
         .sub(inputUtxos.reduce((sum: BigNumber, x: Utxo) => sum.add(x.amount), BigNumber.from(0)));
+
       this.emit('stateChange', TransactionState.GeneratingZk);
-      const { extData, outputNotes, publicInputs } = await destVAnchor.setupTransaction(
-        inputUtxos,
-        [changeUtxo, dummyUtxo],
-        extAmount,
-        0,
-        recipient,
-        relayerAccount,
-        leavesMap,
-        provingKey,
-        Buffer.from(wasmBuffer)
+      const worker = this.inner.wasmFactory();
+      const { extData, outputNotes, publicInputs } = await this.cancelToken.handleOrThrow(
+        () =>
+          destVAnchor.setupTransaction(
+            inputUtxos,
+            [changeUtxo, dummyUtxo],
+            extAmount,
+            0,
+            recipient,
+            relayerAccount,
+            leavesMap,
+            provingKey,
+            Buffer.from(wasmBuffer),
+            worker!
+          ),
+        () => {
+          worker?.terminate();
+          return WebbError.from(WebbErrorCodes.TransactionCancelled);
+        }
       );
 
       // Check for cancelled here, abort if it was set.
