@@ -7,7 +7,7 @@ import { WebbPolkadot } from './webb-provider';
 
 type AssetType =
   | {
-      poolShare?: number[];
+      PoolShare?: number[];
     }
   | 'Token';
 
@@ -29,34 +29,43 @@ export class PolkadotBridgeApi extends BridgeApi<WebbPolkadot> {
     }
 
     const governedTokenAddress = this.getTokenTarget(typedChainId);
-    console.log(governedTokenAddress);
     if (!governedTokenAddress) {
       return wrappableTokens;
     }
 
     const tokens = await this.inner.api.query.assetRegistry.assets.entries();
     const assets = tokens.map(
-      ([, token], index) =>
+      ([key, token]) =>
         ({
-          id: index,
+          // @ts-ignore
+          id: Number(key.toHuman()[0]),
           ...(token.toHuman() as any),
         } as unknown as AssetMetadata)
     );
     // @ts-ignore
-    const poolShares = assets.filter((asset) => typeof asset.assetType.poolShare !== 'undefined');
+    const poolShares = assets.filter((asset) => {
+      // @ts-ignore
+      const isPoolShare = typeof asset.assetType.PoolShare !== 'undefined';
+      // @ts-ignore
+      const wrappingTheCurrentActiveGovernedToken = asset.assetType.PoolShare?.includes(governedTokenAddress);
+      return isPoolShare && wrappingTheCurrentActiveGovernedToken;
+    });
     const ORMLAssetMetaData: AssetMetadata[] = [];
 
     for (const poolshare of poolShares) {
       // @ts-ignore
-      const writableAssetsIds = poolshare.assetType.poolShare!.map((assetId) => Number(assetId));
-      for (const writableAssetsId of writableAssetsIds) {
-        if (ORMLAssetMetaData.findIndex((asset) => asset.id === writableAssetsId) === -1) {
-          ORMLAssetMetaData.push(assets[writableAssetsId]);
+      const wrappableAssetIds = poolshare.assetType.PoolShare!.map((assetId) => Number(assetId));
+      console.log({ wrappableAssetIds });
+      for (const wrappableAssetId of wrappableAssetIds) {
+        if (ORMLAssetMetaData.findIndex((asset) => asset.id === wrappableAssetId) === -1) {
+          const assetMetaData = assets.find((asset) => asset.id === wrappableAssetId);
+          ORMLAssetMetaData.push(assetMetaData!);
         }
       }
-      const configCurrencies = this.inner.state.getCurrencies();
-
-      return wrappableTokens;
     }
+    // Adding PoolShares to currencies
+    //Adding Wrappable currencies to currencies
+
+    return wrappableTokens;
   }
 }
