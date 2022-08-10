@@ -68,7 +68,21 @@ const PageWrapUnwrap: FC = () => {
     wrappableCurrencyBalance,
   } = useWrapUnwrap();
   const [displayedAmount, setDisplayedAmount] = useState<string>('');
-
+  console.log({
+    amount,
+    context,
+    execute,
+    governedCurrencies,
+    governedCurrency,
+    governedCurrencyBalance,
+    setAmount,
+    setGovernedCurrency,
+    setWrappableCurrency,
+    swap,
+    wrappableCurrencies,
+    wrappableCurrency,
+    wrappableCurrencyBalance,
+  });
   const [isSwap, setIsSwap] = useState(false);
   const [loading, setLoading] = useState(false);
 

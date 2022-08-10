@@ -36,6 +36,10 @@ export class WebbState implements WebbStateInterface {
   private wrappableTokens = new BehaviorSubject<Record<number, Currency>>({});
   private activeBridgeSubject = new BehaviorSubject<Bridge | null>(null);
 
+  //  CurrencyId => Currency
+  private wrappedTokens = new BehaviorSubject<Record<any, Currency>>({});
+  private wrappedToken = new BehaviorSubject<Currency | null>(null);
+
   constructor(
     // Currencies are indexed by their Currency IDs
     private supportedCurrencies: Record<number, Currency>,
@@ -65,6 +69,30 @@ export class WebbState implements WebbStateInterface {
 
   set wrappableCurrencies(value: Record<number, Currency>) {
     this.wrappableTokens.next(value);
+  }
+
+  get wrappedCurrency() {
+    return this.wrappedToken.value;
+  }
+
+  get $wrappedCurrency() {
+    return this.wrappedToken.asObservable();
+  }
+
+  set wrappedCurrency(value: Currency | null) {
+    this.wrappedToken.next(value);
+  }
+
+  get wrappedCurrencies() {
+    return this.wrappedTokens.value;
+  }
+
+  get $wrappedCurrencies() {
+    return this.wrappedTokens.asObservable();
+  }
+
+  set wrappedCurrencies(value: Record<number, Currency>) {
+    this.wrappedTokens.next(value);
   }
 
   get $activeBridge() {
