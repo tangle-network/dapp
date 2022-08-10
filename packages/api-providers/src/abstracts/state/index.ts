@@ -1,6 +1,6 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
-import { BridgeConfigEntry } from '@webb-dapp/api-providers/types';
+import { CurrencyRole } from '@webb-dapp/api-providers';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 import { Currency } from '../currency';
@@ -45,7 +45,17 @@ export class WebbState implements WebbStateInterface {
     private supportedCurrencies: Record<number, Currency>,
     // Bridges are indexed by their governed Currency IDs.
     private supportedBridges: Record<number, Bridge>
-  ) {}
+  ) {
+    const wrappedCurrencies: Record<number, Currency> = {};
+
+    Object.keys(this.supportedBridges).forEach((key) => {
+      const currencyId = Number(key);
+      if (this.supportedBridges[currencyId].currency.getRole() === CurrencyRole.Governable) {
+        wrappedCurrencies[currencyId] = this.supportedBridges[currencyId].currency;
+      }
+    });
+    this.wrappedCurrencies = wrappedCurrencies;
+  }
 
   get wrappableCurrency() {
     return this.wrappableToken.value;

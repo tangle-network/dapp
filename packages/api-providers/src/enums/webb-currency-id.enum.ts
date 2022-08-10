@@ -23,6 +23,7 @@ export enum CurrencyId {
   KSM,
   DOT,
   moonDEV,
+  WEBBSQR,
   // Dynamic currency IDs should start after the last 'static' CurrencyId.
   DYNAMIC_CURRENCY_STARTING_ID = 1001,
 }

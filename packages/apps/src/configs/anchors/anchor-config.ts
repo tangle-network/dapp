@@ -12,7 +12,7 @@ export const anchorsConfig: AppConfig['anchors'] = {
     [PresetTypedChainId.ArbitrumTestnet]: '0x4953110789d0cb6de126f4ea88890670ccfe6906',
     [PresetTypedChainId.MoonbaseAlpha]: '0x0c5f4951f42eec082bd1356b9b41928b4f0e7542',
   },
-  [CurrencyId.WEBB]: {
+  [CurrencyId.WEBBSQR]: {
     [PresetTypedChainId.ProtocolSubstrateStandalone]: '9',
   },
   [CurrencyId.webbDEV]: {
