@@ -12,33 +12,51 @@ type AssetType =
   | 'Token';
 
 interface AssetMetadata {
+  id: number;
   name: string;
   assetType: AssetType;
   existentialDeposit: number;
   locked: boolean;
 }
+
 export class PolkadotBridgeApi extends BridgeApi<WebbPolkadot> {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async fetchWrappableAssets(typedChainId: number): Promise<Currency[]> {
+    const wrappableTokens: Currency[] = [];
+    const bridge = this.getBridge();
+    if (!bridge) {
+      return wrappableTokens;
+    }
+
+    const governedTokenAddress = this.getTokenTarget(typedChainId);
+    console.log(governedTokenAddress);
+    if (!governedTokenAddress) {
+      return wrappableTokens;
+    }
+
     const tokens = await this.inner.api.query.assetRegistry.assets.entries();
-    const assets = tokens.map(([, token]) => token.toHuman() as unknown as AssetMetadata);
+    const assets = tokens.map(
+      ([, token], index) =>
+        ({
+          id: index,
+          ...(token.toHuman() as any),
+        } as unknown as AssetMetadata)
+    );
     // @ts-ignore
     const poolShares = assets.filter((asset) => typeof asset.assetType.poolShare !== 'undefined');
-    const ORMLAssetIds: number[] = [];
+    const ORMLAssetMetaData: AssetMetadata[] = [];
+
     for (const poolshare of poolShares) {
       // @ts-ignore
       const writableAssetsIds = poolshare.assetType.poolShare!.map((assetId) => Number(assetId));
       for (const writableAssetsId of writableAssetsIds) {
-        if (!ORMLAssetIds.includes(writableAssetsId)) {
-          ORMLAssetIds.push(writableAssetsId);
+        if (ORMLAssetMetaData.findIndex((asset) => asset.id === writableAssetsId) === -1) {
+          ORMLAssetMetaData.push(assets[writableAssetsId]);
         }
       }
+      const configCurrencies = this.inner.state.getCurrencies();
+
+      return wrappableTokens;
     }
-    const configCurrencies = this.inner.state.getCurrencies();
-    console.log('fetchWrappableAssets: ');
-    // All Substrate assets are assumed to be wrappable
-    return Object.values(this.inner.state.getCurrencies()).filter((currency) => {
-      currency.hasChain(typedChainId);
-    });
   }
 }
