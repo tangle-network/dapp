@@ -1,17 +1,18 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 
 import { WrapUnwrap } from '../abstracts';
-import { Amount, WrappingEvent } from '../';
+import { Amount, CurrencyType, WrappingEvent } from '../';
 import { WebbPolkadot } from './webb-provider';
 
 export class PolkadotWrapUnwrap extends WrapUnwrap<WebbPolkadot> {
+  private _currentChainId = new BehaviorSubject<number | null>(null);
+  private _event = new Subject<Partial<WrappingEvent>>();
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  canWrap(wrapPayload: any): Promise<boolean> {
-    return Promise.resolve(false);
-  }
+  async canWrap(wrapPayload: any): Promise<boolean> {}
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   unwrap(unwrapPayload: any): Promise<string> {
@@ -29,6 +30,6 @@ export class PolkadotWrapUnwrap extends WrapUnwrap<WebbPolkadot> {
   }
 
   get subscription(): Observable<Partial<WrappingEvent>> {
-    return new Observable();
+    return this._event.asObservable();
   }
 }
