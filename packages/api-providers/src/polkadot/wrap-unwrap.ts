@@ -21,18 +21,44 @@ export class PolkadotWrapUnwrap extends WrapUnwrap<WebbPolkadot> {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  unwrap(payload: PolkadotUnwrapPayload): Promise<string> {
-    return Promise.resolve(true);
-  }
-
-  async wrap(payload: PolkadotWrapPayload): Promise<string> {
-    console.log('wrapping');
+  async unwrap(payload: PolkadotUnwrapPayload): Promise<string> {
     const { amount: amountNumber } = payload;
     const governedToken = this.inner.methods.bridgeApi.getBridge()?.currency!;
     const wrappableToken = this.inner.state.wrappableCurrency!;
     const bnAmount = ethers.utils.parseUnits(amountNumber.toString(), wrappableToken.getDecimals());
     const chainID = this.inner.typedChainId;
     const governableATreeId = governedToken.getAddress(chainID)!;
+    const wrappableTokenId = wrappableToken.getAddress(chainID)!;
+
+    const account = await this.inner.accounts.activeOrDefault!;
+    if (!account) {
+      throw WebbError.from(WebbErrorCodes.NoAccountAvailable);
+    }
+    const address = account.address;
+
+    try {
+      const tx = this.inner.txBuilder.build(
+        {
+          method: 'unwrap',
+          section: 'tokenWrapper',
+        },
+        [governableATreeId, wrappableTokenId, bnAmount, address]
+      );
+      const txHash = await tx.call(account.address);
+      return txHash;
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+
+  async wrap(payload: PolkadotWrapPayload): Promise<string> {
+    const { amount: amountNumber } = payload;
+    const governedToken = this.inner.methods.bridgeApi.getBridge()?.currency!;
+    const wrappableToken = this.inner.state.wrappableCurrency!;
+    const bnAmount = ethers.utils.parseUnits(amountNumber.toString(), wrappableToken.getDecimals());
+    const chainID = this.inner.typedChainId;
+    const wrappableTokenId = governedToken.getAddress(chainID)!;
     const writableATTreeId = wrappableToken.getAddress(chainID)!;
 
     const account = await this.inner.accounts.activeOrDefault!;
@@ -47,7 +73,7 @@ export class PolkadotWrapUnwrap extends WrapUnwrap<WebbPolkadot> {
           method: 'wrap',
           section: 'tokenWrapper',
         },
-        [writableATTreeId, governableATreeId, bnAmount, address]
+        [writableATTreeId, wrappableTokenId, bnAmount, address]
       );
       const txHash = await tx.call(account.address);
       return txHash;
