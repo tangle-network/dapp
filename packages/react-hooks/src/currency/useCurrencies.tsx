@@ -17,8 +17,6 @@ export const useCurrencies = () => {
     }
 
     const activeBridgeSub = activeApi.state.$activeBridge.subscribe((bridge) => {
-      console.log('useCurrencies activeBridgeSub: ', bridge);
-
       setGovernedCurrencies(
         Object.values(activeApi.state.getBridgeOptions()).map((potentialBridge) => {
           return potentialBridge.currency;
@@ -27,7 +25,6 @@ export const useCurrencies = () => {
 
       if (bridge?.currency) {
         setGovernedCurrency(bridge.currency);
-        console.log('activeChain: ', calculateTypedChainId(activeChain.chainType, activeChain.chainId));
       }
 
       activeApi.methods.bridgeApi
@@ -39,7 +36,6 @@ export const useCurrencies = () => {
 
     const wrappableCurrencySub = activeApi.state.$wrappableCurrency.subscribe((token) => {
       setWrappableCurrencyState(token);
-      console.log('wrappable currency changed in useCurrencies hook');
     });
 
     return () => {
