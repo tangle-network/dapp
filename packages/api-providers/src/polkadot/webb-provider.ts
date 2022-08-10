@@ -94,7 +94,7 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
       },
       wrapUnwrap: {
         core: {
-          enabled: false,
+          enabled: true,
           inner: new PolkadotWrapUnwrap(this),
         },
       },

@@ -22,10 +22,11 @@ export class PolkadotWrapUnwrap extends WrapUnwrap<WebbPolkadot> {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   unwrap(payload: PolkadotUnwrapPayload): Promise<string> {
-    return true;
+    return Promise.resolve(true);
   }
 
   async wrap(payload: PolkadotWrapPayload): Promise<string> {
+    console.log('wrapping');
     const { amount: amountNumber } = payload;
     const governedToken = this.inner.methods.bridgeApi.getBridge()?.currency!;
     const wrappableToken = this.inner.state.wrappableCurrency!;
@@ -58,7 +59,7 @@ export class PolkadotWrapUnwrap extends WrapUnwrap<WebbPolkadot> {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   canUnwrap(unwrapPayload: Amount): Promise<boolean> {
-    return Promise.resolve(false);
+    return Promise.resolve(true);
   }
 
   get subscription(): Observable<Partial<WrappingEvent>> {
