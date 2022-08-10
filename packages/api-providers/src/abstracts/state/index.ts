@@ -1,6 +1,8 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 import { CurrencyRole } from '@webb-dapp/api-providers';
+import { calculateTypedChainId } from '@webb-tools/sdk-core';
+import { parseTypedChainId } from '@webb-tools/sdk-core/typed-chain-id';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 import { Currency } from '../currency';
@@ -128,6 +130,19 @@ export class WebbState implements WebbStateInterface {
       currency.getAddresses().forEach((addressEntry) => {
         contractMapping.set(addressEntry, currency.id);
       });
+    });
+
+    return contractMapping;
+  }
+
+  getReverseCurrencyMapWithChainId(typedChainId: number): Map<string, number> {
+    let contractMapping = new Map();
+    Object.values(this.supportedCurrencies).forEach((currency) => {
+      if (currency.getAddressOfChain(typedChainId) !== undefined) {
+        currency.getAddresses().forEach((addressEntry) => {
+          contractMapping.set(addressEntry, currency.id);
+        });
+      }
     });
 
     return contractMapping;

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { BridgeApi } from '../abstracts';
-import { Currency } from '..';
+import { Currency, CurrencyId, CurrencyRole, CurrencyType } from '..';
 import { WebbPolkadot } from './webb-provider';
 
 type AssetType =
@@ -29,6 +29,7 @@ export class PolkadotBridgeApi extends BridgeApi<WebbPolkadot> {
     }
 
     const governedTokenAddress = this.getTokenTarget(typedChainId);
+    console.log(`governedTokenAddress: ${governedTokenAddress}`);
     if (!governedTokenAddress) {
       return wrappableTokens;
     }
@@ -42,29 +43,42 @@ export class PolkadotBridgeApi extends BridgeApi<WebbPolkadot> {
           ...(token.toHuman() as any),
         } as unknown as AssetMetadata)
     );
-    // @ts-ignore
-    const poolShares = assets.filter((asset) => {
-      // @ts-ignore
-      const isPoolShare = typeof asset.assetType.PoolShare !== 'undefined';
-      // @ts-ignore
-      const wrappingTheCurrentActiveGovernedToken = asset.assetType.PoolShare?.includes(governedTokenAddress);
-      return isPoolShare && wrappingTheCurrentActiveGovernedToken;
-    });
+    const poolshare = assets.find((asset) => {
+      return asset.id === Number(governedTokenAddress);
+    })!;
     const ORMLAssetMetaData: AssetMetadata[] = [];
 
-    for (const poolshare of poolShares) {
-      // @ts-ignore
-      const wrappableAssetIds = poolshare.assetType.PoolShare!.map((assetId) => Number(assetId));
-      console.log({ wrappableAssetIds });
-      for (const wrappableAssetId of wrappableAssetIds) {
-        if (ORMLAssetMetaData.findIndex((asset) => asset.id === wrappableAssetId) === -1) {
-          const assetMetaData = assets.find((asset) => asset.id === wrappableAssetId);
-          ORMLAssetMetaData.push(assetMetaData!);
-        }
+    // @ts-ignore
+    const wrappableAssetIds = poolshare.assetType.PoolShare!.map((assetId) => Number(assetId));
+    for (const wrappableAssetId of wrappableAssetIds) {
+      if (ORMLAssetMetaData.findIndex((asset) => asset.id === wrappableAssetId) === -1) {
+        const assetMetaData = assets.find((asset) => asset.id === wrappableAssetId);
+        ORMLAssetMetaData.push(assetMetaData!);
       }
     }
-    // Adding PoolShares to currencies
-    //Adding Wrappable currencies to currencies
+    for (const currencyMetaData of ORMLAssetMetaData) {
+      console.log(this.inner.state.getReverseCurrencyMap());
+      const currencyRegistered = this.inner.state
+        .getReverseCurrencyMapWithChainId(typedChainId)
+        .get(currencyMetaData.id.toString());
+      const knownCurrencies = this.inner.state.getCurrencies();
+      if (typeof currencyRegistered === 'undefined') {
+        const wrappableTokenLength = Object.keys(knownCurrencies).length;
+        const newToken: Currency = new Currency({
+          addresses: new Map<number, string>([[typedChainId, currencyMetaData.id.toString()]]),
+          decimals: 18,
+          id: CurrencyId.DYNAMIC_CURRENCY_STARTING_ID + wrappableTokenLength,
+          name: currencyMetaData.name,
+          role: CurrencyRole.Wrappable,
+          symbol: currencyMetaData.name,
+          type: CurrencyType.ORML,
+        });
+        this.inner.state.addCurrency(newToken);
+        wrappableTokens.push(newToken);
+      } else {
+        wrappableTokens.push(knownCurrencies[currencyRegistered]);
+      }
+    }
 
     return wrappableTokens;
   }
