@@ -241,8 +241,9 @@ export class PolkaTXBuilder {
     methodParams: P | P[],
     notificationHandler?: NotificationHandler
   ): PolkadotTx<P> {
-    const path = Array.isArray(methodPath) ? methodPath : [methodPath];
-    const params = Array.isArray(methodParams) ? methodParams : [methodParams];
+    const isBatchCall = Array.isArray(methodPath);
+    const path = isBatchCall ? methodPath : [methodPath];
+    const params = isBatchCall ? methodParams : [methodParams];
     const tx = this.buildWithoutNotification(path, params);
     const handler = notificationHandler || this.notificationHandler;
 
