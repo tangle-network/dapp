@@ -1,7 +1,10 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { ethers } from 'ethers';
+import '@webb-tools/types';
+import '@webb-tools/api-derive';
+
+import { BigNumber, ethers } from 'ethers';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 
 import { WrapUnwrap } from '../abstracts';
@@ -16,8 +19,34 @@ export class PolkadotWrapUnwrap extends WrapUnwrap<WebbPolkadot> {
   private _event = new Subject<Partial<WrappingEvent>>();
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async canWrap(wrapPayload: any): Promise<boolean> {
-    return true;
+  async canWrap(wrapPayload: PolkadotWrapPayload): Promise<boolean> {
+    const { amount: amountNumber } = wrapPayload;
+    const account = await this.inner.accounts.activeOrDefault!;
+    if (!account) {
+      return false;
+    }
+    const governedToken = this.inner.methods.bridgeApi.getBridge()?.currency!;
+    const wrappableToken = this.inner.state.wrappableCurrency!;
+    const bnAmount = ethers.utils.parseUnits(amountNumber.toString(), wrappableToken.getDecimals());
+    const chainID = this.inner.typedChainId;
+    const governableTokenId = governedToken.getAddress(chainID)!;
+    const wrappableTokenId = wrappableToken.getAddress(chainID)!;
+    const poolShare = await this.inner.api.query.assetRegistry.assets(governableTokenId);
+    const poolShareExistentialBalance = poolShare.unwrap().existentialDeposit.toString();
+    const isLocked = poolShare.unwrap().locked.isTrue;
+    if (isLocked) {
+      return false;
+    }
+    const userBalance = await this.inner.methods.chainQuery.tokenBalanceByAddress(wrappableTokenId);
+    const enoughBalance = bnAmount.lte(BigNumber.from(userBalance));
+    if (!enoughBalance) {
+      return false;
+    }
+    const balance = await this.inner.methods.chainQuery.tokenBalanceByAddress(governableTokenId);
+    const validBalanceAfterDeposit = bnAmount
+      .add(BigNumber.from(balance))
+      .gt(BigNumber.from(poolShareExistentialBalance));
+    return validBalanceAfterDeposit;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
