@@ -40,6 +40,8 @@ export function webbCurrencyIdToString(c: CurrencyId): string {
       return 'EGG';
     case CurrencyId.TEST:
       return 'TEST';
+    case CurrencyId.WEBBSQR:
+      return 'WEBB^2';
     default:
       throw new Error(`CurrencyId ${c} is not an ID of a webbCurrency`);
   }
@@ -49,6 +51,8 @@ export function webbCurrencyIdFromString(c: string): CurrencyId {
   switch (c) {
     case 'WEBB':
       return CurrencyId.WEBB;
+    case 'WEBB^2':
+      return CurrencyId.WEBBSQR;
     case 'webbETH':
       return CurrencyId.webbETH;
     case 'webbDEV':
