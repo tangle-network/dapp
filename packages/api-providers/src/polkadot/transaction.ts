@@ -246,13 +246,18 @@ export class PolkaTXBuilder {
     const params = isBatchCall ? methodParams : [methodParams];
     const tx = this.buildWithoutNotification(path, params);
     const handler = notificationHandler || this.notificationHandler;
-
+    const notificationMessage = isBatchCall
+      ? path.reduce(
+          (acc, item, index, { length }) => acc + `${item.section}:${item.method}${index + 1 === length ? '' : '&'}`,
+          ''
+        )
+      : `${path[0].section}:${path[0].method}`;
     tx.on('loading', (data) => {
       handler({
         description: `${data.address.substring(0, 10)}...${data.address.substring(36)}`,
         key: data.key,
         level: 'loading',
-        message: `${data.path.section}:${data.path.method}`,
+        message: notificationMessage,
         name: 'Transaction',
         persist: true,
       });
@@ -263,7 +268,7 @@ export class PolkaTXBuilder {
         description: `${data.address.substring(0, 10)}...${data.address.substring(36)}`,
         key: data.key,
         level: 'success',
-        message: `${data.path.section}:${data.path.method}`,
+        message: notificationMessage,
         name: 'Transaction',
         persist: true,
       });
@@ -275,7 +280,7 @@ export class PolkaTXBuilder {
         description: data.data,
         key: data.key,
         level: 'error',
-        message: `${data.path.section}:${data.path.method}`,
+        message: notificationMessage,
         name: 'Transaction',
         persist: true,
       });
