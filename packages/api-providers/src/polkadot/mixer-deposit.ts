@@ -127,6 +127,12 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
   }
 
   async deposit(depositPayload: DepositPayload): Promise<void> {
+    // Add the note to the noteManager before transaction is sent.
+    // This helps to safeguard the user.
+    if (this.inner.noteManager) {
+      await this.inner.noteManager.addNote(depositPayload.note);
+    }
+
     const tx = this.inner.txBuilder.build(
       {
         method: 'deposit',
@@ -146,6 +152,9 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
     });
     tx.on('failed', (e: any) => {
       console.log('deposit failed', e);
+      if (this.inner.noteManager) {
+        this.inner.noteManager.removeNote(depositPayload.note);
+      }
     });
     tx.on('extrinsicSuccess', () => {
       console.log('deposit done');

@@ -49,6 +49,7 @@ describe.skip('Note provider interactions', () => {
       web3Provider,
       9999,
       relayerManager,
+      null,
       mockAppConfig,
       mockNotificationHandler,
       workerFactory

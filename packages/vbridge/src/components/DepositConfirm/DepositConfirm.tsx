@@ -81,7 +81,7 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({
   wrappableAsset,
 }) => {
   const palette = useColorPallet();
-  const { activeApi, activeChain } = useWebContext();
+  const { activeApi, activeChain, noteManager } = useWebContext();
   const [depositPayload, setNote] = useState<DepositPayload | undefined>(undefined);
   const [loading, setLoading] = useState(false);
   const note = useMemo(() => {
@@ -177,18 +177,14 @@ export const DepositConfirm: React.FC<DepositInfoProps> = ({
             }
             console.log('depositPayload: ', depositPayload);
             setLoading(true);
-            downloadNote();
+            // Download note for the user if no noteManager is present
+            if (!noteManager) {
+              downloadNote();
+            }
             onClose();
-            console.log('depositing...');
-            const results = await provider.deposit(depositPayload).catch((e) => {
+            await provider.deposit(depositPayload).catch((e) => {
               console.log(e, 'rejected');
             });
-            console.log('deposited');
-            // TODO : Fix this once the web3 impl has the right impls
-            if (results) {
-              // download note with the index
-              downloadNote(results.updatedNote.serialize());
-            }
             setLoading(false);
           }}
           disabled={!backupConfirmation || !depositPayload || loading}

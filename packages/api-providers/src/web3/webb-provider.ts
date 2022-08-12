@@ -11,6 +11,7 @@ import { Bridge, WebbState } from '../abstracts/state';
 import { AccountsAdapter } from '../account/Accounts.adapter';
 import { VAnchorContract } from '../contracts/wrappers/webb-vanchor';
 import { Web3Accounts, Web3Provider } from '../ext-providers';
+import { NoteManager } from '../notes/note-manager';
 import {
   AppConfig,
   BridgeStorage,
@@ -43,6 +44,7 @@ export class WebbWeb3Provider
     private web3Provider: Web3Provider,
     protected chainId: number,
     readonly relayerManager: Web3RelayerManager,
+    readonly noteManager: NoteManager | null,
     readonly config: AppConfig,
     readonly notificationHandler: NotificationHandler,
     readonly accounts: AccountsAdapter<Eth>,
@@ -199,13 +201,23 @@ export class WebbWeb3Provider
     web3Provider: Web3Provider,
     chainId: number,
     relayerManager: Web3RelayerManager,
+    noteManager: NoteManager | null,
     appConfig: AppConfig,
     notification: NotificationHandler,
     wasmFactory: WasmFactory // A Factory Fn that wil return wasm worker that would be supplied eventually to the `sdk-core`
   ) {
     const accounts = new Web3Accounts(web3Provider.eth);
 
-    return new WebbWeb3Provider(web3Provider, chainId, relayerManager, appConfig, notification, accounts, wasmFactory);
+    return new WebbWeb3Provider(
+      web3Provider,
+      chainId,
+      relayerManager,
+      noteManager,
+      appConfig,
+      notification,
+      accounts,
+      wasmFactory
+    );
   }
 
   // Init web3 provider with a generic account provider
@@ -213,6 +225,7 @@ export class WebbWeb3Provider
     web3Provider: Web3Provider,
     chainId: number,
     relayerManager: Web3RelayerManager,
+    noteManager: NoteManager | null,
     appConfig: AppConfig,
     notification: NotificationHandler,
     web3AccountProvider: AccountsAdapter<Eth>,
@@ -222,6 +235,7 @@ export class WebbWeb3Provider
       web3Provider,
       chainId,
       relayerManager,
+      noteManager,
       appConfig,
       notification,
       web3AccountProvider,

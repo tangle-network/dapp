@@ -5,6 +5,7 @@ import {
   WebbErrorCodes,
   WebbRelayer,
 } from '@webb-dapp/api-providers';
+import { NoteManager } from '@webb-dapp/api-providers/notes';
 import { misbehavingRelayer } from '@webb-dapp/react-environment/error/interactive-errors/misbehaving-relayer';
 import { useWebContext } from '@webb-dapp/react-environment/webb-context';
 import { calculateTypedChainId, Note } from '@webb-tools/sdk-core';
@@ -74,6 +75,8 @@ export const useWithdraw = (params: UseWithdrawProps) => {
   }, [stage]);
 
   const withdraw = useCallback(async () => {
+    console.log(params);
+
     if (!withdrawApi || !params.notes?.length) {
       return;
     }
@@ -81,8 +84,22 @@ export const useWithdraw = (params: UseWithdrawProps) => {
     if (stage === TransactionState.Ideal) {
       if (params.notes.length) {
         try {
+          const withdrawNotes = NoteManager.getNotesFifo(
+            params.notes,
+            ethers.utils.parseUnits(params.amount.toString(), params.notes[0].note.denomination)
+          );
+
+          // If the available notes are not sufficient for requested withdraw, return.
+          // This case shouldn't be hit because the frontend should not make a withdraw
+          // call if the form inputs are not sufficient.
+          if (!withdrawNotes) {
+            console.log('no withdrawNotes detected');
+            return;
+          }
+          const withdrawNoteStrings = withdrawNotes.map((note) => note.serialize());
+
           const withdrawPayload = await withdrawApi.withdraw(
-            params.notes.map((note) => note.serialize()),
+            withdrawNoteStrings,
             params.recipient,
             ethers.utils.parseUnits(params.amount.toString(), params.notes[0].note.denomination).toString()
           );

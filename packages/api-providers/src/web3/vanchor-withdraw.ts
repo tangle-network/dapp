@@ -13,8 +13,10 @@ import {
   Keypair,
   MerkleTree,
   Note,
+  NoteGenInput,
   parseTypedChainId,
   randomBN,
+  toFixedHex,
   Utxo,
 } from '@webb-tools/sdk-core';
 import { BigNumber } from 'ethers';
@@ -156,6 +158,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
         );
 
         console.log('root of recreated merkle tree', testMerkleTree.root().toHexString());
+        console.log('root of merkle tree on source configured on the dest chain: ', destHistorySourceRoot);
 
         // Remove leaves from the leaves map which have not yet been relayed
         const provingTree = MerkleTree.createTreeWithRoot(
@@ -164,7 +167,6 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
           destHistorySourceRoot
         );
         if (!provingTree) {
-          console.log('fetched leaves do not match bridged anchor state');
           throw new Error('fetched leaves do not match bridged anchor state');
         }
         const provingLeaves = provingTree.elements().map((el) => hexToU8a(el.toHexString()));
@@ -172,7 +174,6 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
         const commitment = generateCircomCommitment(parsedNote);
         const leafIndex = provingTree.getIndexByElement(commitment);
         leafIndices.push(leafIndex);
-        console.log('Create Utxo', leafIndex);
         const utxo = await utxoFromVAnchorNote(parsedNote, leafIndex);
         inputUtxos.push(utxo);
       }
@@ -226,7 +227,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
       // Retrieve the user's keypair
       const keypairStorage = await keypairStorageFactory();
       const storedPrivateKey = await keypairStorage.get('keypair');
-      const keypair = new Keypair(storedPrivateKey.keypair);
+      const keypair = storedPrivateKey.keypair ? new Keypair(storedPrivateKey.keypair) : new Keypair();
 
       // Create the output UTXOs
       const changeAmount = sumInputNotes.sub(amount);
@@ -294,6 +295,36 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
 
       this.emit('stateChange', TransactionState.SendingTransaction);
       this.cancelToken.throwIfCancel();
+
+      // set the changeNote to storage so it is not lost by user error
+      if (changeAmount.gt(0)) {
+        const changeNoteInput: NoteGenInput = {
+          amount: changeUtxo.amount,
+          backend: 'Circom',
+          curve: 'Bn254',
+          denomination: '18',
+          exponentiation: '5',
+          hashFunction: 'Poseidon',
+          protocol: 'vanchor',
+          secrets: [
+            toFixedHex(destChainIdType, 8).substring(2),
+            toFixedHex(changeUtxo.amount).substring(2),
+            toFixedHex(keypair.privkey).substring(2),
+            toFixedHex(changeUtxo.blinding).substring(2),
+          ].join(':'),
+          sourceChain: destChainIdType.toString(),
+          sourceIdentifyingData: destAddress!,
+          targetChain: destChainIdType.toString(),
+          targetIdentifyingData: destAddress!,
+          tokenSymbol: (await Note.deserialize(notes[0])).note.tokenSymbol,
+          version: 'v2',
+          width: '4',
+        };
+
+        const savedChangeNote = await Note.generateNote(changeNoteInput);
+        this.inner.noteManager?.addNote(savedChangeNote);
+        changeNotes.push(savedChangeNote);
+      }
 
       // Take the proof and send the transaction
       if (activeRelayer) {
@@ -384,11 +415,11 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
           const [, message] = results;
           txHash = message!;
         }
-        const hexCommitment = u8aToHex(changeUtxo.commitment);
-        const changeNote: Note = outputNotes.find(
-          (note: Note) => generateCircomCommitment(note.note) === hexCommitment
-        )!;
-        changeNotes.push(changeNote);
+        // Cleanup NoteAccount state
+        for (const note of notes) {
+          const parsedNote = await Note.deserialize(note);
+          this.inner.noteManager?.removeNote(parsedNote);
+        }
       } else {
         const tx = await destVAnchor.inner.transact(
           {
@@ -398,27 +429,20 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
           extData
         );
         const receipt = await tx.wait();
-        // Parse the events for the index of the changeUTXO
-        const hexCommitment = u8aToHex(changeUtxo.commitment);
-
-        const insertedCommitmentEvent = receipt.events?.find(
-          (event) => event.event === 'Insertion' && event.args?.includes(hexCommitment)
-        );
-
-        if (!insertedCommitmentEvent) {
-          throw new Error("Uh oh, we didn't find our commitment in the insertions... inserted garbage");
-        }
-
-        const changeNote: Note = outputNotes.find(
-          (note: Note) => generateCircomCommitment(note.note) === hexCommitment
-        )!;
-        const nextIndex = insertedCommitmentEvent.args![1].toString();
-        console.log(`NextIndex ${nextIndex}`);
-        changeNote.mutateIndex(nextIndex);
-        changeNotes.push(changeNote);
         txHash = receipt.transactionHash;
+
+        // Cleanup NoteAccount state
+        for (const note of notes) {
+          const parsedNote = await Note.deserialize(note);
+          this.inner.noteManager?.removeNote(parsedNote);
+        }
       }
     } catch (e) {
+      // Cleanup NoteAccount state for added changeNotes
+      for (const note of changeNotes) {
+        this.inner.noteManager?.removeNote(note);
+      }
+
       this.emit('stateChange', TransactionState.Ideal);
       console.log(e);
 

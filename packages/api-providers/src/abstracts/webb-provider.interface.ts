@@ -4,6 +4,7 @@
 import { EventBus } from '@webb-tools/app-util';
 
 import { AccountsAdapter } from '../account/Accounts.adapter';
+import { NoteManager } from '../notes';
 import { InteractiveFeedback } from '../webb-error';
 import { WebbRelayerManager } from './relayer/webb-relayer-manager';
 import { BridgeApi, VAnchorDeposit, VAnchorWithdraw } from './anchor';
@@ -195,6 +196,7 @@ export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
   state: WebbState;
   methods: WebbMethods<WebbApiProvider<T>>;
   relayChainMethods: RelayChainMethods<WebbApiProvider<T>> | null;
+  noteManager: NoteManager | null;
 
   destroy(): Promise<void> | void;
 

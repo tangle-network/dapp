@@ -86,10 +86,6 @@ export class Web3RelayerManager extends WebbRelayerManager {
       }
 
       if (query.contract && baseOn === 'evm' && typedChainId !== undefined) {
-        console.log(`chainId: ${typedChainId}`);
-        console.log(`evm map`, capabilities.supportedChains);
-        const cap = capabilities.supportedChains['evm'].get(typedChainId);
-        console.log(`Query using the query.contract field ${query.contract}`, cap);
         const relayerIndex =
           capabilities.supportedChains['evm']
             .get(typedChainId)
@@ -102,8 +98,6 @@ export class Web3RelayerManager extends WebbRelayerManager {
       }
 
       if (baseOn && !typedChainId) {
-        console.log(capabilities.supportedChains, baseOn);
-
         return capabilities.supportedChains[baseOn].size > 0;
       }
 

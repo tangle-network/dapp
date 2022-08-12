@@ -12,12 +12,11 @@ import { Currency, RelayChainMethods } from '../abstracts';
 import { Bridge, WebbState } from '../abstracts/state';
 import { AccountsAdapter } from '../account/Accounts.adapter';
 import { PolkadotProvider } from '../ext-providers';
-import { BridgeConfigEntry, CurrencyType } from '../types';
+import { NoteManager } from '../notes';
 import { ActionsBuilder, InteractiveFeedback, WebbError, WebbErrorCodes } from '../webb-error';
 import {
   ApiInitHandler,
   AppConfig,
-  CurrencyRole,
   NotificationHandler,
   ProvideCapabilities,
   WasmFactory,
@@ -38,6 +37,7 @@ import { PolkadotWrapUnwrap } from './wrap-unwrap';
 
 export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbApiProvider<WebbPolkadot> {
   state: WebbState;
+  noteManager: NoteManager | null = null;
   readonly methods: WebbMethods<WebbPolkadot>;
   readonly relayChainMethods: RelayChainMethods<WebbPolkadot>;
   readonly api: ApiPromise;

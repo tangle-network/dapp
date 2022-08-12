@@ -35,8 +35,8 @@ export const walletsConfig: AppConfig['wallet'] = {
       return true;
     },
     supportedChainIds: [
-      PresetTypedChainId.EggStandalone,
-      PresetTypedChainId.EggDevelopStandalone,
+      PresetTypedChainId.LocalTangleStandalone,
+      PresetTypedChainId.LocalTangleStandalone,
       PresetTypedChainId.DkgSubstrateStandalone,
       PresetTypedChainId.ProtocolSubstrateStandalone,
       PresetTypedChainId.Kusama,

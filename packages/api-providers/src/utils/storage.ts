@@ -1,13 +1,11 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { calculateTypedChainId, ChainType } from '@webb-tools/sdk-core';
+import { NetworkStore } from '@webb-dapp/api-providers/abstracts';
+import { calculateTypedChainId, ChainType, Keypair } from '@webb-tools/sdk-core';
 
 import { EVMChainId } from '../chains';
 import { Storage } from '../storage';
-
-export type BridgeStorage = Record<string, { lastQueriedBlock: number; leaves: string[] }>;
-export type KeypairStorage = Record<string, { keypair: string }>;
 
 export const anchorDeploymentBlock: Record<number, Record<string, number>> = {
   [calculateTypedChainId(ChainType.EVM, EVMChainId.Ropsten)]: {
@@ -35,13 +33,13 @@ export const anchorDeploymentBlock: Record<number, Record<string, number>> = {
     '0x0c5f4951f42eec082bd1356b9b41928b4f0e7542': 2397382,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.HermesLocalnet)]: {
-    '0xbfce6b877ebff977bb6e80b24fbbb7bc4ebca4df': 100,
+    '0xbfce6b877ebff977bb6e80b24fbbb7bc4ebca4df': 95,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.AthenaLocalnet)]: {
-    '0x4e3df2073bf4b43b9944b8e5a463b1e185d6448c': 100,
+    '0xcd75Ad7AC9C9325105f798c476E84176648F391A': 95,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.DemeterLocalnet)]: {
-    '0xdB587ef6aaA16b5719CDd3AaB316F0E70473e9Be': 100,
+    '0x4e3df2073bf4b43B9944b8e5A463b1E185D6448C': 95,
   },
 };
 
@@ -51,7 +49,7 @@ export const getAnchorDeploymentBlockNumber = (chainIdType: number, contractAddr
   )?.[1];
 };
 
-// Expects the chainIdType
+export type BridgeStorage = Record<string, { lastQueriedBlock: number; leaves: string[] }>;
 export const bridgeStorageFactory = (chainIdType: number) => {
   // localStorage will have key: <Currency name>, value: { Record<contractAddress: string, info: DynamicMixerInfoStore> }
   return Storage.newFromCache<BridgeStorage>(chainIdType.toString(), {
@@ -72,8 +70,9 @@ export const bridgeStorageFactory = (chainIdType: number) => {
   });
 };
 
+export type KeypairStorage = Record<string, { keypair: string | null }>;
 export const keypairStorageFactory = () => {
-  // localStorage will have key: 'keypair', value: privKey.toHexString()
+  // localStorage will have key: 'keypair', value: { keypair: privKey.toHexString() | null }
   return Storage.newFromCache<KeypairStorage>('keypair', {
     async commit(key: string, data: KeypairStorage): Promise<void> {
       localStorage.setItem(key, JSON.stringify(data));
@@ -88,6 +87,56 @@ export const keypairStorageFactory = () => {
       }
 
       return {};
+    },
+  });
+};
+
+// Keypair.pubkey -> targetChainId -> noteString
+export type NoteStorage = {
+  encryptedNotes: Record<string, string[]>;
+};
+
+export const noteStorageFactory = (keypair: Keypair) => {
+  // localStorage will have key: Keypair.pubkey, value: Record<targetTypedChainId, EncryptedNote[]>
+  return Storage.newFromCache<NoteStorage>(keypair.pubkey.toString(), {
+    async commit(key: string, data: NoteStorage): Promise<void> {
+      localStorage.setItem(key, JSON.stringify(data));
+    },
+    async fetch(key: string): Promise<NoteStorage> {
+      const storageCached = localStorage.getItem(key);
+
+      if (storageCached) {
+        return {
+          ...JSON.parse(storageCached),
+        };
+      }
+
+      return {
+        encryptedNotes: {},
+      };
+    },
+  });
+};
+
+export const netStorageFactory = () => {
+  return Storage.newFromCache<NetworkStore>('app', {
+    async commit(key: string, data: NetworkStore): Promise<void> {
+      localStorage.setItem(key, JSON.stringify(data));
+    },
+    async fetch(key: string): Promise<NetworkStore> {
+      const store: NetworkStore = {
+        networksConfig: {},
+        defaultNetwork: undefined,
+        defaultWallet: undefined,
+      };
+      const storageCached = localStorage.getItem(key);
+      if (storageCached) {
+        return {
+          ...store,
+          ...JSON.parse(storageCached),
+        };
+      }
+      return store;
     },
   });
 };

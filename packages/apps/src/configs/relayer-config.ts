@@ -25,7 +25,7 @@ export function relayerSubstrateNameToTypedChainId(name: string): PresetTypedCha
     case 'localnode':
       return PresetTypedChainId.ProtocolSubstrateStandalone;
     case 'webbeggnet':
-      return PresetTypedChainId.EggStandalone;
+      return PresetTypedChainId.LocalTangleStandalone;
   }
 
   throw new Error('unhandled relayed chain name  ' + name);
@@ -35,7 +35,7 @@ export function typedChainIdToSubstrateRelayerName(id: number): string {
   switch (id) {
     case PresetTypedChainId.ProtocolSubstrateStandalone:
       return 'localnode';
-    case PresetTypedChainId.EggStandalone:
+    case PresetTypedChainId.LocalTangleStandalone:
       return 'webbeggnet';
   }
 

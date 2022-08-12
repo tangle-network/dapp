@@ -28,7 +28,6 @@ import { BigNumber, BigNumberish, Contract, ContractTransaction, ethers, provide
 
 import { hexToU8a, u8aToHex } from '@polkadot/util';
 
-import { keypairStorageFactory } from '../..';
 import { zeroAddress } from '..';
 
 const { poseidon } = require('circomlibjs');
@@ -51,14 +50,7 @@ export async function utxoFromVAnchorNote(note: JsNote, leafIndex: number): Prom
   const blinding = '0x' + noteSecretParts[3];
   const originChainId = note.sourceChainId;
 
-  const keypairStorage = await keypairStorageFactory();
-  const storedKeypair = await keypairStorage.get('keypair');
-
-  if (!storedKeypair.keypair) {
-    throw new Error('Cannot withdraw without the configured keypair');
-  }
-
-  const keypair = new Keypair(storedKeypair.keypair);
+  const keypair = new Keypair(secretKey);
 
   return CircomUtxo.generateUtxo({
     curve: note.curve,
