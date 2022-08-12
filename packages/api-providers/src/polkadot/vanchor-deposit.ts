@@ -111,13 +111,6 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
     const wrappableAssetRaw = Number(depositPayload.params[1]);
     const wrapAndDepositFlow = typeof depositPayload.params[1] !== 'undefined';
 
-    const governedToken = this.inner.methods.bridgeApi.getBridge()?.currency!;
-    const chainId = this.inner.typedChainId;
-    const wrappableAssets = await this.inner.methods.bridgeApi.fetchWrappableAssets(chainId);
-    const wrappableAssetId = this.inner.state.getReverseCurrencyMapWithChainId(chainId).get(String(wrappableAssetRaw))!;
-
-    const wrappableToken = wrappableAssets.find((asset) => asset.id === wrappableAssetId)!;
-
     // Validate if the provider is ready for a new deposit
     switch (this.state) {
       case TransactionState.Cancelling:
@@ -238,6 +231,18 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
       const predictedIndex = leafsCount;
       let tx;
       if (wrapAndDepositFlow) {
+        const governedToken = this.inner.methods.bridgeApi.getBridge()?.currency!;
+        const chainId = this.inner.typedChainId;
+        const wrappableAssets = await this.inner.methods.bridgeApi.fetchWrappableAssets(chainId);
+        const wrappableAssetId = this.inner.state
+          .getReverseCurrencyMapWithChainId(chainId)
+          .get(String(wrappableAssetRaw))!;
+
+        const wrappableToken = wrappableAssets.find((asset) => asset.id === wrappableAssetId)!;
+        const wrappedTokenId = governedToken.getAddress(chainId)!;
+        const wrappableTokenId = wrappableToken.getAddress(chainId)!;
+        const address = account.address;
+        const amount = note.amount;
         tx = this.inner.txBuilder.build(
           [
             {
@@ -249,7 +254,10 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
               section: 'vAnchorBn254',
             },
           ],
-          [[], [treeId, vanchorProofData, extData]]
+          [
+            [wrappableTokenId, wrappedTokenId, amount, address],
+            [treeId, vanchorProofData, extData],
+          ]
         );
       } else {
         tx = this.inner.txBuilder.build(

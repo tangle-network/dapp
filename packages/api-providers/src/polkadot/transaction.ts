@@ -94,17 +94,20 @@ export class PolkadotTx<P extends Array<any>> extends EventBus<PolkadotTXEvents>
 
       this.notificationKey = uniqueId(`${path.section}-${path.method}`);
     }
+
+    if ((signAddress as IKeyringPair)?.address === undefined) {
+      // passed an account id or string of address
+      const { web3FromAddress } = await import('@polkadot/extension-dapp');
+      const injector = await web3FromAddress(signAddress as string);
+
+      await api.setSigner(injector.signer);
+    }
+
     let txResults: any;
     if (this.path.length === 0) {
       const path = this.path[0];
       const parms = this.parms[0];
-      if ((signAddress as IKeyringPair)?.address === undefined) {
-        // passed an account id or string of address
-        const { web3FromAddress } = await import('@polkadot/extension-dapp');
-        const injector = await web3FromAddress(signAddress as string);
 
-        await api.setSigner(injector.signer);
-      }
       txResults = await api.tx[path.section][path.method](...parms).signAsync(signAddress, {
         nonce: -1,
       });

@@ -58,8 +58,8 @@ export class PolkadotWrapUnwrap extends WrapUnwrap<WebbPolkadot> {
     const wrappableToken = this.inner.state.wrappableCurrency!;
     const bnAmount = ethers.utils.parseUnits(amountNumber.toString(), wrappableToken.getDecimals());
     const chainID = this.inner.typedChainId;
-    const wrappableTokenId = governedToken.getAddress(chainID)!;
-    const writableATTreeId = wrappableToken.getAddress(chainID)!;
+    const wrappedTokenId = governedToken.getAddress(chainID)!;
+    const wrappableTokenId = wrappableToken.getAddress(chainID)!;
 
     const account = await this.inner.accounts.activeOrDefault!;
     if (!account) {
@@ -73,7 +73,7 @@ export class PolkadotWrapUnwrap extends WrapUnwrap<WebbPolkadot> {
           method: 'wrap',
           section: 'tokenWrapper',
         },
-        [writableATTreeId, wrappableTokenId, bnAmount, address]
+        [wrappableTokenId, wrappedTokenId, bnAmount, address]
       );
       const txHash = await tx.call(account.address);
       return txHash;
