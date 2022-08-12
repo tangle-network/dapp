@@ -38,7 +38,7 @@ const logger = LoggerService.get('PolkadotVBridgeDeposit');
 // TODO: export this from webb.js
 
 // The Deposit Payload is the note and [treeId]
-type DepositPayload = IDepositPayload<Note, [number]>;
+type DepositPayload = IDepositPayload<Note, [number, string | number | undefined]>;
 
 /**
  * Webb Anchor API implementation for Polkadot
@@ -95,7 +95,7 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
     const note = await Note.generateNote(noteInput);
     return {
       note,
-      params: [treeId],
+      params: [treeId, wrappableAssetAddress],
     };
   }
   private async getAccount() {
@@ -108,6 +108,16 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
   }
 
   async deposit(depositPayload: DepositPayload): Promise<VAnchorDepositResults> {
+    const wrappableAssetRaw = Number(depositPayload.params[1]);
+    const wrapAndDepositFlow = typeof depositPayload.params[1] !== 'undefined';
+
+    const governedToken = this.inner.methods.bridgeApi.getBridge()?.currency!;
+    const chainId = this.inner.typedChainId;
+    const wrappableAssets = await this.inner.methods.bridgeApi.fetchWrappableAssets(chainId);
+    const wrappableAssetId = this.inner.state.getReverseCurrencyMapWithChainId(chainId).get(String(wrappableAssetRaw))!;
+
+    const wrappableToken = wrappableAssets.find((asset) => asset.id === wrappableAssetId)!;
+
     // Validate if the provider is ready for a new deposit
     switch (this.state) {
       case TransactionState.Cancelling:
@@ -226,13 +236,30 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
       // Store the next leaf index before insertion
       const leafsCount = await getLeafCount(this.inner.api, treeId);
       const predictedIndex = leafsCount;
-      const tx = this.inner.txBuilder.build(
-        {
-          method: 'transact',
-          section: 'vAnchorBn254',
-        },
-        [treeId, vanchorProofData, extData]
-      );
+      let tx;
+      if (wrapAndDepositFlow) {
+        tx = this.inner.txBuilder.build(
+          [
+            {
+              method: 'wrap',
+              section: 'tokenWrapper',
+            },
+            {
+              method: 'transact',
+              section: 'vAnchorBn254',
+            },
+          ],
+          [[], [treeId, vanchorProofData, extData]]
+        );
+      } else {
+        tx = this.inner.txBuilder.build(
+          {
+            method: 'transact',
+            section: 'vAnchorBn254',
+          },
+          [treeId, vanchorProofData, extData]
+        );
+      }
 
       this.cancelToken.throwIfCancel();
       const txHash = await tx.call(account.address);

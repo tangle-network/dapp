@@ -72,36 +72,51 @@ export class PolkadotTx<P extends Array<any>> extends EventBus<PolkadotTXEvents>
   private transactionAddress: AddressOrPair | null = null;
   private isWrapped = false;
 
-  constructor(private apiPromise: ApiPromise, private path: MethodPath, private parms: P) {
+  constructor(private apiPromise: ApiPromise, private path: MethodPath[], private parms: P[]) {
     super();
   }
 
   async call(signAddress: AddressOrPair) {
-    txLogger.info(`Sending ${this.path.section} ${this.path.method} transaction by`, signAddress, this.parms);
-    this.transactionAddress = signAddress;
     const api = this.apiPromise;
 
-    await api.isReady;
-    if (!api.tx[this.path.section] || !api.tx[this.path.section][this.path.method]) {
-      console.log(`can not find api.tx.${this.path.section}.${this.path.method}`);
-      txLogger.error(`can not find api.tx.${this.path.section}.${this.path.method}`);
+    for (let i = 0; i < this.path.length; i++) {
+      const path = this.path[i];
+      txLogger.info(`Sending ${path.section} ${path.method} transaction by`, signAddress, this.parms);
+      this.transactionAddress = signAddress;
 
-      throw new Error(`can not find api.tx.${this.path.section}.${this.path.method}`);
+      await api.isReady;
+      if (!api.tx[path.section] || !api.tx[path.section][path.method]) {
+        console.log(`can not find api.tx.${path.section}.${path.method}`);
+        txLogger.error(`can not find api.tx.${path.section}.${path.method}`);
+
+        throw new Error(`can not find api.tx.${path.section}.${path.method}`);
+      }
+
+      this.notificationKey = uniqueId(`${path.section}-${path.method}`);
     }
+    let txResults: any;
+    if (this.path.length === 0) {
+      const path = this.path[0];
+      const parms = this.parms[0];
+      if ((signAddress as IKeyringPair)?.address === undefined) {
+        // passed an account id or string of address
+        const { web3FromAddress } = await import('@polkadot/extension-dapp');
+        const injector = await web3FromAddress(signAddress as string);
 
-    this.notificationKey = uniqueId(`${this.path.section}-${this.path.method}`);
-
-    if ((signAddress as IKeyringPair)?.address === undefined) {
-      // passed an account id or string of address
-      const { web3FromAddress } = await import('@polkadot/extension-dapp');
-      const injector = await web3FromAddress(signAddress as string);
-
-      await api.setSigner(injector.signer);
+        await api.setSigner(injector.signer);
+      }
+      txResults = await api.tx[path.section][path.method](...parms).signAsync(signAddress, {
+        nonce: -1,
+      });
+    } else {
+      const parms = this.parms;
+      const txs = this.path.map((path, index) => {
+        return api.tx[path.section][path.method](...parms[index]);
+      });
+      txResults = await api.tx.utility.batch(txs).signAsync(signAddress, {
+        nonce: -1,
+      });
     }
-
-    const txResults = await api.tx[this.path.section][this.path.method](...this.parms).signAsync(signAddress, {
-      nonce: -1,
-    });
 
     await this.emitWithPayload('beforeSend', undefined);
     await this.emitWithPayload('loading', '');
@@ -111,7 +126,9 @@ export class PolkadotTx<P extends Array<any>> extends EventBus<PolkadotTXEvents>
 
     await this.emitWithPayload('afterSend', undefined);
     this.transactionAddress = null;
-    txLogger.info(`Tx ${this.path.section} ${this.path.method} is Done: TX hash=`, hash);
+    this.path.forEach((path) => {
+      txLogger.info(`Tx ${path.section} ${path.method} is Done: TX hash=`, hash);
+    });
 
     return hash;
   }
@@ -212,11 +229,17 @@ export class PolkadotTx<P extends Array<any>> extends EventBus<PolkadotTXEvents>
 export class PolkaTXBuilder {
   constructor(private apiPromise: ApiPromise, private notificationHandler: NotificationHandler) {}
 
-  buildWithoutNotification<P extends Array<any>>({ method, section }: MethodPath, params: P): PolkadotTx<P> {
-    return new PolkadotTx<P>(this.apiPromise.clone(), { method, section }, params);
+  buildWithoutNotification<P extends Array<any>>(paths: MethodPath[], params: P[]): PolkadotTx<P> {
+    return new PolkadotTx<P>(this.apiPromise.clone(), paths, params);
   }
 
-  build<P extends Array<any>>(path: MethodPath, params: P, notificationHandler?: NotificationHandler): PolkadotTx<P> {
+  build<P extends Array<any>>(
+    methodPath: MethodPath | MethodPath[],
+    methodParams: P | P[],
+    notificationHandler?: NotificationHandler
+  ): PolkadotTx<P> {
+    const path = Array.isArray(methodPath) ? methodPath : [methodPath];
+    const params = Array.isArray(methodParams) ? methodParams : [methodParams];
     const tx = this.buildWithoutNotification(path, params);
     const handler = notificationHandler || this.notificationHandler;
 
