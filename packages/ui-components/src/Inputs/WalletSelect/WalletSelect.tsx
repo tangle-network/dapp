@@ -62,7 +62,7 @@ export const WalletSelect: React.FC<WalletSelectProps> = ({}) => {
   const { activeChain } = useWebContext();
 
   const displayInfo = useMemo(() => {
-    if (selectedWallet?.name.toLowerCase().includes('polkadot')) {
+    if (selectedWallet?.platform.includes('Substrate')) {
       const name = selectedAccount?.name.slice(0, 12) || 'Account';
       return name.length > 12 ? name.slice(0, 12) + '..' : name;
     }

@@ -4,6 +4,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
 import { WalletId } from '@webb-dapp/apps/configs';
+import { isValidateAddress } from '@webb-dapp/react-components/utils';
 import { options } from '@webb-tools/api';
 import { EventBus, LoggerService } from '@webb-tools/app-util';
 import lodash from 'lodash';
@@ -297,7 +298,9 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
     });
 
     this.injectedExtension.accounts?.subscribe((accounts) => {
-      const polkadotAccounts = accounts.map((account) => new PolkadotAccount(account, account.address));
+      const polkadotAccounts = accounts
+        .filter((account) => isValidateAddress(account.address))
+        .map((account) => new PolkadotAccount(account, account.address));
 
       this.emit('accountsChange', polkadotAccounts);
     });
