@@ -1,9 +1,9 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
-import { CurrencyRole } from "@webb-dapp/api-providers";
-import { BehaviorSubject, Observable } from "rxjs";
+import { CurrencyRole } from '@webb-dapp/api-providers';
+import { BehaviorSubject, Observable } from 'rxjs';
 
-import { Currency } from "../currency";
+import { Currency } from '../currency';
 
 export interface WebbStateInterface {
   wrappableCurrency: Currency | null;
