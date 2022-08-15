@@ -74,7 +74,7 @@ export const currenciesConfig: AppConfig['currencies'] = {
     role: CurrencyRole.Governable,
     icon: React.createElement(WEBBLogo),
     addresses: new Map([
-      [PresetTypedChainId.EggStandalone, '2'],
+      [PresetTypedChainId.LocalTangleStandalone, '2'],
       [PresetTypedChainId.DkgSubstrateStandalone, '2'],
       [PresetTypedChainId.ProtocolSubstrateStandalone, '2'],
     ]),

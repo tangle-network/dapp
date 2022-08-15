@@ -17,6 +17,7 @@ import { ActionsBuilder, InteractiveFeedback, WebbError, WebbErrorCodes } from '
 import {
   ApiInitHandler,
   AppConfig,
+  CurrencyRole,
   NotificationHandler,
   ProvideCapabilities,
   WasmFactory,
