@@ -1,7 +1,9 @@
+import { isWalletInstalled } from '@talisman-connect/wallets';
 import { AppConfig, PresetTypedChainId } from '@webb-dapp/api-providers';
 import { MetaMaskLogo } from '@webb-dapp/apps/configs/logos/MetaMaskLogo';
 import { PolkaLogo } from '@webb-dapp/apps/configs/logos/PolkaLogo';
 import { WalletConnectLogo } from '@webb-dapp/apps/configs/logos/WalletConnectLogo';
+import { TalismanLogo } from '@webb-dapp/apps/configs/logos/wallets';
 
 import { WalletId } from '../wallets/wallet-id.enum';
 
@@ -23,6 +25,16 @@ const ANY_EVM = [
   PresetTypedChainId.DemeterLocalnet,
   PresetTypedChainId.MoonbaseAlpha,
 ];
+
+const ANY_SUBSTRATE = [
+  PresetTypedChainId.EggStandalone,
+  PresetTypedChainId.EggDevelopStandalone,
+  PresetTypedChainId.DkgSubstrateStandalone,
+  PresetTypedChainId.ProtocolSubstrateStandalone,
+  PresetTypedChainId.Kusama,
+  PresetTypedChainId.Polkadot,
+];
+
 export const walletsConfig: AppConfig['wallet'] = {
   [WalletId.Polkadot]: {
     id: WalletId.Polkadot,
@@ -34,14 +46,7 @@ export const walletsConfig: AppConfig['wallet'] = {
     async detect() {
       return true;
     },
-    supportedChainIds: [
-      PresetTypedChainId.EggStandalone,
-      PresetTypedChainId.EggDevelopStandalone,
-      PresetTypedChainId.DkgSubstrateStandalone,
-      PresetTypedChainId.ProtocolSubstrateStandalone,
-      PresetTypedChainId.Kusama,
-      PresetTypedChainId.Polkadot,
-    ],
+    supportedChainIds: [...ANY_SUBSTRATE],
   },
   [WalletId.MetaMask]: {
     id: WalletId.MetaMask,
@@ -86,4 +91,16 @@ export const walletsConfig: AppConfig['wallet'] = {
   //   },
   //   supportedChainIds: [ChainId.HarmonyTestnet1],
   // },
+  [WalletId.Talisman]: {
+    id: WalletId.Talisman,
+    logo: TalismanLogo,
+    name: 'talisman',
+    title: 'Talisman',
+    platform: 'Substrate',
+    enabled: true,
+    detect() {
+      return isWalletInstalled('talisman');
+    },
+    supportedChainIds: [...ANY_SUBSTRATE],
+  },
 };
