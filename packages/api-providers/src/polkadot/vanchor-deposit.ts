@@ -143,7 +143,6 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
       // Add the note to the noteManager before transaction is sent.
       // This helps to safeguard the user.
       if (this.inner.noteManager) {
-        console.log('noteManager addNote called');
         await this.inner.noteManager.addNote(depositPayload.note);
       }
 
@@ -191,7 +190,6 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
         encryptedOutput1: u8aToHex(comEnc1),
         encryptedOutput2: u8aToHex(comEnc2),
       };
-      console.log('extData: ', extData);
       const vanchorDepositSetup: ProvingManagerSetupInput<'vanchor'> = {
         encryptedCommitments: [comEnc1, comEnc2],
         extAmount: publicAmount,

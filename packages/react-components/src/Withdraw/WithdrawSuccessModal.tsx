@@ -17,6 +17,7 @@ const logger = LoggerService.get('Withdraw-Modal');
 type WithdrawingModalProps = {
   inputNote: JsNote;
   changeNote?: JsNote;
+  amount: number;
   recipient: string;
   receipt: string;
   relayer: ActiveWebbRelayer | null;
@@ -123,6 +124,7 @@ const InfoItem = styled.div`
 `;
 
 export const WithdrawSuccessModal: React.FC<WithdrawingModalProps> = ({
+  amount,
   changeNote,
   exit,
   inputNote,

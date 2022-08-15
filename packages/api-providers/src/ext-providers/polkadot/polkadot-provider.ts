@@ -4,12 +4,13 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import '@webb-tools/types';
 
-import { ApiPromise, WsProvider } from '@polkadot/api';
-import { InjectedExtension } from '@polkadot/extension-inject/types';
 import { options } from '@webb-tools/api';
 import { EventBus, LoggerService } from '@webb-tools/app-util';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import lodash from 'lodash';
+
+import { ApiPromise, WsProvider } from '@polkadot/api';
+import { InjectedExtension } from '@polkadot/extension-inject/types';
 
 import { ApiInitHandler } from '../../';
 import { PolkaTXBuilder } from '../../polkadot';
