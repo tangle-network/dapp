@@ -7,9 +7,9 @@ export const bridgeConfigByAsset: AppConfig['bridgeByAsset'] = {
     asset: CurrencyId.webbETH,
     anchors: anchorsConfig[CurrencyId.webbETH],
   },
-  [CurrencyId.WEBB]: {
-    asset: CurrencyId.WEBB,
-    anchors: anchorsConfig[CurrencyId.WEBB],
+  [CurrencyId.WEBBSQR]: {
+    asset: CurrencyId.WEBBSQR,
+    anchors: anchorsConfig[CurrencyId.WEBBSQR],
   },
   [CurrencyId.webbDEV]: {
     asset: CurrencyId.webbDEV,
