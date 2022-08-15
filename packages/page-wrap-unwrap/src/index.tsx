@@ -224,7 +224,6 @@ const PageWrapUnwrap: FC = () => {
             label={buttonText}
             onClick={async () => {
               try {
-                console.log('wraping');
                 setLoading(true);
                 await execute();
               } finally {

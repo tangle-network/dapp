@@ -1,5 +1,6 @@
 import { FormHelperText, InputBase } from '@mui/material';
 import { useClaims } from '@webb-dapp/page-claims/hooks/useClaims';
+import { RequiredWalletSelection } from '@webb-dapp/react-components/RequiredWalletSelection/RequiredWalletSelection';
 import { pageWithFeatures } from '@webb-dapp/react-components/utils/FeaturesGuard/pageWithFeatures';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { InputTitle } from '@webb-dapp/ui-components/Inputs/InputTitle/InputTitle';
@@ -94,34 +95,36 @@ const MixerButtonWrapper = styled.div`
 `;
 
 const PageClaims = () => {
-  const { address, error, isValidKey, ready, setAddress } = useClaims();
+  const { address, error, isValidKey, setAddress } = useClaims();
 
   return (
     <PageClaimsWrapper>
-      <ClaimWrapper>
-        <TitleWrapper>
-          <InputTitle leftLabel={'Claim address'} />
-        </TitleWrapper>
+      <RequiredWalletSelection>
+        <ClaimWrapper>
+          <TitleWrapper>
+            <InputTitle leftLabel={'Claim address'} />
+          </TitleWrapper>
 
-        <PublicKeyInputWrapper>
-          <InputBase
-            fullWidth
-            placeholder={`Enter you public key (32 bytes)`}
-            value={address}
-            inputProps={{ style: { fontSize: 14 } }}
-            onChange={(event) => {
-              setAddress(event.target.value as string);
-            }}
-          />
-        </PublicKeyInputWrapper>
-        <ErrorWrapper>
-          <FormHelperText error={Boolean(error)}>{error}</FormHelperText>
-        </ErrorWrapper>
+          <PublicKeyInputWrapper>
+            <InputBase
+              fullWidth
+              placeholder={`Enter you public key (32 bytes)`}
+              value={address}
+              inputProps={{ style: { fontSize: 14 } }}
+              onChange={(event) => {
+                setAddress(event.target.value as string);
+              }}
+            />
+          </PublicKeyInputWrapper>
+          <ErrorWrapper>
+            <FormHelperText error={Boolean(error)}>{error}</FormHelperText>
+          </ErrorWrapper>
 
-        <MixerButtonWrapper>
-          <MixerButton disabled={!isValidKey} onClick={() => {}} label={'Claim'} />
-        </MixerButtonWrapper>
-      </ClaimWrapper>
+          <MixerButtonWrapper>
+            <MixerButton disabled={!isValidKey} onClick={() => {}} label={'Claim'} />
+          </MixerButtonWrapper>
+        </ClaimWrapper>
+      </RequiredWalletSelection>
     </PageClaimsWrapper>
   );
 };
