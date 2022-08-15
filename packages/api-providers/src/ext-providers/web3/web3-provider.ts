@@ -8,6 +8,8 @@ import { ethers } from 'ethers';
 import Web3 from 'web3';
 import { AbstractProvider } from 'web3-core';
 
+import { u8aToBn, u8aToHex } from '@polkadot/util';
+
 import { ProvideCapabilities } from '../../';
 import { WebbError, WebbErrorCodes } from '../../webb-error';
 
@@ -201,7 +203,11 @@ export class Web3Provider<T = unknown> {
   }
 
   sign(payload: string, account: string): Promise<string> {
-    // TODO: use METHOD: personal_sign
-    return this._inner.eth.sign(payload, account);
+    const prefix = `Pay EGGs to the Polkadot account:`;
+    let utf8Encode = new TextEncoder();
+    let bytes = utf8Encode.encode(prefix);
+    let str = u8aToHex(bytes);
+    let message = `${str}${payload.replace('0x', '0x00')}`;
+    return this._inner.eth.sign(message, account);
   }
 }
