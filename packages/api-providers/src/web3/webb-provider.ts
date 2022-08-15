@@ -19,6 +19,8 @@ import {
   NotificationHandler,
   Storage,
   WebbApiProvider,
+  WebbError,
+  WebbErrorCodes,
   WebbMethods,
   WebbProviderEvents,
 } from '../';
@@ -277,5 +279,14 @@ export class WebbWeb3Provider
           throw switchError;
         }
       });
+  }
+
+  async sign(message: string): Promise<string> {
+    const acc = this.ethersProvider.getSigner();
+    const address = await acc.getAddress();
+    if (!acc) {
+      throw WebbError.from(WebbErrorCodes.NoAccountAvailable);
+    }
+    return this.web3Provider.sign(message, address);
   }
 }

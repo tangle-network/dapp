@@ -12,6 +12,7 @@ import { ProvideCapabilities } from '../../';
 import { WebbError, WebbErrorCodes } from '../../webb-error';
 
 export type AddToken = { address: string; symbol: string; decimals: number; image: string };
+
 export interface AddEthereumChainParameter {
   chainId: string; // A 0x-prefixed hexadecimal string
   chainName: string;
@@ -35,6 +36,7 @@ export interface ClientMetaData {
   icons: string[];
   name: string;
 }
+
 /**
  * Web3Provider a wrapper class for many views of the web3 provider
  * @param helperApi - An api used to do functionalities other than Web3 Ex: WalletConnect.
@@ -196,5 +198,10 @@ export class Web3Provider<T = unknown> {
         type: 'ERC20', // Initially only supports ERC20, but eventually more!
       },
     });
+  }
+
+  sign(payload: string, account: string): Promise<string> {
+    // TODO: use METHOD: personal_sign
+    return this._inner.eth.sign(payload, account);
   }
 }

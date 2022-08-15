@@ -6,7 +6,7 @@ import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { InputTitle } from '@webb-dapp/ui-components/Inputs/InputTitle/InputTitle';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
 import { decodeAddress } from '@polkadot/keyring';
@@ -95,8 +95,15 @@ const MixerButtonWrapper = styled.div`
 `;
 
 const PageClaims = () => {
-  const { address, error, isValidKey, setAddress } = useClaims();
-
+  const { address, error, generateSignature, isValidKey, setAddress, validProvider } = useClaims();
+  const [sig, setSig] = useState('');
+  useEffect(() => {
+    try {
+      generateSignature().then((sig) => setSig(sig));
+    } catch (e) {
+      console.log(e);
+    }
+  }, [address]);
   return (
     <PageClaimsWrapper>
       <RequiredWalletSelection>
@@ -119,7 +126,13 @@ const PageClaims = () => {
           <ErrorWrapper>
             <FormHelperText error={Boolean(error)}>{error}</FormHelperText>
           </ErrorWrapper>
-
+          <div
+            style={{
+              color: '#fff',
+            }}
+          >
+            {sig}
+          </div>
           <MixerButtonWrapper>
             <MixerButton disabled={!isValidKey} onClick={() => {}} label={'Claim'} />
           </MixerButtonWrapper>
