@@ -95,7 +95,7 @@ export const WalletSelect: React.FC<WalletSelectProps> = ({}) => {
         {selectedWallet && (
           <Flex flex={1} row ai='center' style={{ width: '100%' }}>
             <Avatar className={'avatar'} style={{ marginRight: '4px' }}>
-              <selectedWallet.logo />
+              <selectedWallet.Logo />
             </Avatar>
 
             <Flex row jc='space-between' ai='center' flex={1}>

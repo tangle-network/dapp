@@ -15,6 +15,8 @@ export enum WebbErrorCodes {
   NoteParsingFailure,
   /// PolkaDot extension not installed
   PolkaDotExtensionNotInstalled,
+  /// Talisman extension not installed
+  TalismanExtensionNotInstalled,
   /// MetaMasK extension not installed
   MetaMaskExtensionNotInstalled,
   /// Runtime Error on the provider
@@ -96,6 +98,11 @@ export class WebbError extends Error {
         return {
           code,
           message: 'PolkaDot extension no installed',
+        };
+      case WebbErrorCodes.TalismanExtensionNotInstalled:
+        return {
+          code,
+          message: 'Talisman extension no installed',
         };
       case WebbErrorCodes.MetaMaskExtensionNotInstalled:
         return {

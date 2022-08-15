@@ -68,7 +68,7 @@ export const DisconnectedWalletView: React.FC<DisconnectedWalletViewProps> = ({
             >
               <ListItemAvatar>
                 <Avatar style={{ background: 'transparent' }}>
-                  <wallet.logo />
+                  <wallet.Logo />
                 </Avatar>
               </ListItemAvatar>
               <ListItemText>

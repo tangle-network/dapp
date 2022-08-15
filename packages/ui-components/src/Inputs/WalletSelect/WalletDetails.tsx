@@ -126,7 +126,7 @@ export const WalletDetails: React.FC<WalletDetailsProps> = ({ wallet }) => {
       <AddressDetails>
         <AddressSectionWrapper>
           <Avatar className={'wallet-logo-wrapper'}>
-            <wallet.logo />
+            <wallet.Logo />
           </Avatar>
           <div style={{ display: 'flex', flexGrow: '1', paddingLeft: '10px' }}>
             {wallet.id === WalletId.Polkadot ? (
