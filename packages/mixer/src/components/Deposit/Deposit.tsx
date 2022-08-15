@@ -4,6 +4,7 @@ import { useDeposit } from '@webb-dapp/mixer/hooks/deposit/useDeposit';
 import { RequiredWalletSelection } from '@webb-dapp/react-components/RequiredWalletSelection/RequiredWalletSelection';
 import { useWebContext } from '@webb-dapp/react-environment';
 import { useCurrencies } from '@webb-dapp/react-hooks/currency';
+import { useCurrencyBalance } from '@webb-dapp/react-hooks/currency/useCurrencyBalance';
 import { SpaceBox } from '@webb-dapp/ui-components/Box';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { BalanceLabel } from '@webb-dapp/ui-components/Inputs/BalanceLabel/BalanceLabel';
@@ -13,9 +14,8 @@ import { TextLabel } from '@webb-dapp/ui-components/Inputs/TextLabel/TextLabel';
 import { TokenInput } from '@webb-dapp/ui-components/Inputs/TokenInput/TokenInput';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { getRoundedAmountString } from '@webb-dapp/ui-components/utils';
-import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import React, { useEffect, useMemo, useState } from 'react';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
 export const DepositWrapper = styled.div<{ wallet: WalletConfig | undefined }>`
   padding: 25px 35px;
@@ -42,7 +42,6 @@ export const Deposit: React.FC<DepositProps> = () => {
   const [showDepositModal, setShowDepositModal] = useState(false);
   const [selectedToken, setSelectedToken] = useState<Currency | undefined>(undefined);
   const [item, setItem] = useState<MixerSize | undefined>(undefined);
-  const [tokenBalance, setTokenBalance] = useState('');
 
   const activeToken = useMemo<Currency | undefined>(
     // Governed Currencies also populate the mixer's activeToken.
@@ -61,26 +60,12 @@ export const Deposit: React.FC<DepositProps> = () => {
     });
   }, [depositApi.mixerSizes, activeToken]);
 
+  const tokenBalance = useCurrencyBalance(activeToken);
+
   // Whenever mixerSizes change (like chain switch) or token changes, set selected mixer to undefined
   useEffect(() => {
     setItem(undefined);
   }, [depositApi.mixerSizes, activeToken]);
-
-  // Side effect for getting the balance of the token
-  useEffect(() => {
-    if (!activeToken || !activeChain || !activeApi) {
-      return;
-    }
-
-    activeApi.methods.chainQuery
-      .tokenBalanceByCurrencyId(
-        calculateTypedChainId(activeChain!.chainType, activeChain!.chainId),
-        activeToken.view.id as any
-      )
-      .then((balance) => {
-        setTokenBalance(balance);
-      });
-  }, [activeApi, activeApi?.accounts.activeOrDefault, activeChain, activeToken]);
 
   return (
     <DepositWrapper wallet={activeWallet}>
