@@ -8,6 +8,7 @@ import lodash from 'lodash';
 
 import { ApiPromise, SubmittableResult } from '@polkadot/api';
 import { SubmittableExtrinsic } from '@polkadot/api/submittable/types';
+import { InjectedExtension } from '@polkadot/extension-inject/types';
 import { IKeyringPair } from '@polkadot/types/types';
 
 import { ReactElement } from '../types/abstracts';
@@ -72,7 +73,12 @@ export class PolkadotTx<P extends Array<any>> extends EventBus<PolkadotTXEvents>
   private transactionAddress: AddressOrPair | null = null;
   private isWrapped = false;
 
-  constructor(private apiPromise: ApiPromise, private path: MethodPath, private parms: P) {
+  constructor(
+    private apiPromise: ApiPromise,
+    private path: MethodPath,
+    private parms: P,
+    private injectedExtension: InjectedExtension
+  ) {
     super();
   }
 
@@ -92,11 +98,9 @@ export class PolkadotTx<P extends Array<any>> extends EventBus<PolkadotTXEvents>
     this.notificationKey = uniqueId(`${this.path.section}-${this.path.method}`);
 
     if ((signAddress as IKeyringPair)?.address === undefined) {
-      // passed an account id or string of address
-      const { web3FromAddress } = await import('@polkadot/extension-dapp');
-      const injector = await web3FromAddress(signAddress as string);
+      const injector = this.injectedExtension;
 
-      await api.setSigner(injector.signer);
+      api.setSigner(injector.signer);
     }
 
     const txResults = await api.tx[this.path.section][this.path.method](...this.parms).signAsync(signAddress, {
@@ -210,10 +214,14 @@ export class PolkadotTx<P extends Array<any>> extends EventBus<PolkadotTXEvents>
 }
 
 export class PolkaTXBuilder {
-  constructor(private apiPromise: ApiPromise, private notificationHandler: NotificationHandler) {}
+  constructor(
+    private apiPromise: ApiPromise,
+    private notificationHandler: NotificationHandler,
+    private readonly injectedExtension: InjectedExtension
+  ) {}
 
   buildWithoutNotification<P extends Array<any>>({ method, section }: MethodPath, params: P): PolkadotTx<P> {
-    return new PolkadotTx<P>(this.apiPromise.clone(), { method, section }, params);
+    return new PolkadotTx<P>(this.apiPromise.clone(), { method, section }, params, this.injectedExtension);
   }
 
   build<P extends Array<any>>(path: MethodPath, params: P, notificationHandler?: NotificationHandler): PolkadotTx<P> {

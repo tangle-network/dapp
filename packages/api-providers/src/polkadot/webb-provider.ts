@@ -56,7 +56,7 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
     this.provider = new PolkadotProvider(
       apiPromise,
       injectedExtension,
-      new PolkaTXBuilder(apiPromise, notificationHandler)
+      new PolkaTXBuilder(apiPromise, notificationHandler, injectedExtension)
     );
     this.accounts = this.provider.accounts;
     this.api = this.provider.api;
@@ -198,7 +198,11 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
       errorHandler.onError,
       wallet
     );
-    const provider = new PolkadotProvider(apiPromise, injectedExtension, new PolkaTXBuilder(apiPromise, notification));
+    const provider = new PolkadotProvider(
+      apiPromise,
+      injectedExtension,
+      new PolkaTXBuilder(apiPromise, notification, injectedExtension)
+    );
     const accounts = provider.accounts;
     const chainId = await provider.api.consts.linkableTreeBn254.chainIdentifier;
     const typedChainId = calculateTypedChainId(ChainType.Substrate, chainId.toNumber());
@@ -232,7 +236,11 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
     injectedExtension: InjectedExtension,
     wasmFactory: WasmFactory
   ): Promise<WebbPolkadot> {
-    const provider = new PolkadotProvider(apiPromise, injectedExtension, new PolkaTXBuilder(apiPromise, notification));
+    const provider = new PolkadotProvider(
+      apiPromise,
+      injectedExtension,
+      new PolkaTXBuilder(apiPromise, notification, injectedExtension)
+    );
     const chainId = await provider.api.consts.linkableTreeBn254.chainIdentifier;
     const typedChainId = calculateTypedChainId(ChainType.Substrate, chainId.toNumber());
     const instance = new WebbPolkadot(
