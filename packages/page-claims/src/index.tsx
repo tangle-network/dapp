@@ -1,11 +1,15 @@
 import { FormHelperText, InputBase } from '@mui/material';
+import { useClaims } from '@webb-dapp/page-claims/hooks/useClaims';
 import { pageWithFeatures } from '@webb-dapp/react-components/utils/FeaturesGuard/pageWithFeatures';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { InputTitle } from '@webb-dapp/ui-components/Inputs/InputTitle/InputTitle';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
-import React from 'react';
+import React, { useEffect, useMemo } from 'react';
 import styled, { css } from 'styled-components';
+
+import { decodeAddress } from '@polkadot/keyring';
+
 const PageClaimsWrapper = styled.section`
   display: flex;
   flex-direction: column;
@@ -19,6 +23,7 @@ const PageClaimsWrapper = styled.section`
 `;
 const PublicKeyInputWrapper = styled.div<{ disabled?: boolean }>`
   display: flex;
+  flex-wrap: wrap;
   ${({ theme }: { theme: Pallet }) => css`
     border: 1px solid ${theme.heavySelectionBorderColor};
     color: ${theme.primaryText};
@@ -37,10 +42,16 @@ const PublicKeyInputWrapper = styled.div<{ disabled?: boolean }>`
     margin: 0 2rem; 
     margin-bottom: 8px;
   `}
-
   && {
     cursor: ${({ disabled }) => (disabled ? 'no-drop' : 'auto')};
   }
+`;
+const ErrorWrapper = styled.div`
+  margin: 0 1rem;
+
+  ${above.sm`
+    margin: 0 2rem;
+  `}
 `;
 
 const TitleWrapper = styled.div`
@@ -83,8 +94,7 @@ const MixerButtonWrapper = styled.div`
 `;
 
 const PageClaims = () => {
-  const [address, setAddress] = React.useState('');
-  const [error, setError] = React.useState('');
+  const { address, error, isValidKey, ready, setAddress } = useClaims();
 
   return (
     <PageClaimsWrapper>
@@ -103,11 +113,13 @@ const PageClaims = () => {
               setAddress(event.target.value as string);
             }}
           />
-          <FormHelperText error={Boolean(error)}>{error}</FormHelperText>
         </PublicKeyInputWrapper>
+        <ErrorWrapper>
+          <FormHelperText error={Boolean(error)}>{error}</FormHelperText>
+        </ErrorWrapper>
 
         <MixerButtonWrapper>
-          <MixerButton onClick={() => {}} label={'Claim'} />
+          <MixerButton disabled={!isValidKey} onClick={() => {}} label={'Claim'} />
         </MixerButtonWrapper>
       </ClaimWrapper>
     </PageClaimsWrapper>
