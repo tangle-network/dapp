@@ -104,7 +104,7 @@ export class PolkadotTx<P extends Array<any>> extends EventBus<PolkadotTXEvents>
     }
 
     let txResults: any;
-    if (this.path.length === 0) {
+    if (this.path.length === 1) {
       const path = this.path[0];
       const parms = this.parms[0];
 

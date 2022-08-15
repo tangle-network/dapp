@@ -1,4 +1,5 @@
-import { WebbWeb3Provider } from '@webb-dapp/api-providers';
+import { PresetTypedChainId, WebbWeb3Provider } from '@webb-dapp/api-providers';
+import { WalletId } from '@webb-dapp/apps/configs';
 import { useWebContext } from '@webb-dapp/react-environment';
 import React, { useCallback, useEffect, useMemo } from 'react';
 
@@ -6,7 +7,7 @@ import { decodeAddress } from '@polkadot/keyring';
 import { u8aToHex } from '@polkadot/util';
 
 export function useClaims() {
-  const { activeApi } = useWebContext();
+  const { activeApi, chains, switchChain, wallets } = useWebContext();
   const [address, setAddress] = React.useState('');
   const [error, setError] = React.useState('');
   const [validProvider, setIsValidProvider] = React.useState(true);
@@ -51,6 +52,7 @@ export function useClaims() {
       setIsValidProvider(false);
     }
   });
+
   const generateSignature = useCallback(async () => {
     if (activeApi) {
       const isWeb3 = activeApi instanceof WebbWeb3Provider;
@@ -73,8 +75,26 @@ export function useClaims() {
       throw new Error('No active api');
     }
   }, [activeApi, address]);
+
+  const switchToPolkadotWallet = async () => {
+    //EGG chainsId on dev
+    const typedChainId = PresetTypedChainId.ProtocolSubstrateStandalone;
+    const chain = chains[typedChainId];
+    const wallet = wallets[WalletId.Polkadot];
+    await switchChain(chain, wallet);
+  };
+  const submitClaim = async (address: string, claim: Uint8Array) => {
+    if (activeApi) {
+      const hash = await activeApi.methods.claim.core.claim(address, claim);
+      return hash;
+    } else {
+      throw new Error('No active api');
+    }
+  };
   return {
     generateSignature,
+    submitClaim,
+    switchToPolkadotWallet,
     address,
     setAddress,
     validProvider,

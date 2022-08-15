@@ -9,6 +9,9 @@ import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
 import React, { useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
+import { decodeAddress } from '@polkadot/keyring';
+import { u8aToString } from '@polkadot/util';
+
 const PageClaimsWrapper = styled.section`
   display: flex;
   flex-direction: column;
@@ -114,15 +117,30 @@ const GeneratedSig = styled.div`
   padding: 0.7rem;
   word-break: break-all;
   position: relative;
-  min-height: 120px;
+  min-height: 80px;
   background: ${({ theme }) => theme.heavySelectionBackground};
   color: ${({ theme }) => theme.primaryText};
 `;
 const PageClaims = () => {
-  const { address, error, generateSignature, isValidKey, setAddress, validProvider } = useClaims();
+  const {
+    address,
+    error,
+    generateSignature,
+    isValidKey,
+    setAddress,
+    submitClaim,
+    switchToPolkadotWallet,
+    validProvider,
+  } = useClaims();
   const [step, setStep] = useState<ClaimSteps>(ClaimSteps.GenerateClaim);
   const [loading, setLoading] = useState(false);
   const [sig, setSig] = useState('');
+  const ss58Address = useMemo(() => {
+    if (isValidKey) {
+      return address.startsWith('0x') ? u8aToString(decodeAddress(address)) : address;
+    }
+    return null;
+  }, [address, isValidKey]);
   const buttonProps = useMemo(() => {
     switch (step) {
       case ClaimSteps.GenerateClaim:
@@ -146,16 +164,37 @@ const PageClaims = () => {
       case ClaimSteps.ConnectToPolkadotProvider:
         return {
           label: 'Connect to Polkadot Provider',
-          onClick: () => {},
+          disabled: loading,
+          onClick: async () => {
+            setLoading(true);
+            try {
+              await switchToPolkadotWallet();
+              setStep(ClaimSteps.SubmitClaim);
+            } finally {
+              setLoading(false);
+            }
+          },
         };
       case ClaimSteps.SubmitClaim: {
         return {
           label: 'Submit claim',
-          onClick: () => {},
+          onClick: async () => {
+            try {
+              setLoading(true);
+              const hash = await submitClaim(ss58Address!, sig);
+              // TODO consume tx hash
+              console.log(hash);
+              setStep(ClaimSteps.GenerateClaim);
+            } catch (e) {
+              console.log(e);
+            } finally {
+              setLoading(false);
+            }
+          },
         };
       }
     }
-  }, [step, setSig, sig, isValidKey, generateSignature, loading]);
+  }, [step, setSig, sig, isValidKey, generateSignature, loading, ss58Address]);
 
   const showAddressButton = step === ClaimSteps.GenerateClaim;
   const showSig = step === ClaimSteps.ConnectToPolkadotProvider;
@@ -164,11 +203,12 @@ const PageClaims = () => {
     <PageClaimsWrapper>
       <RequiredWalletSelection>
         <ClaimWrapper>
-          <TitleWrapper>
-            <InputTitle leftLabel={showAddressButton ? 'Claim address' : 'Claim signature'} />
-          </TitleWrapper>
           {showAddressButton ? (
             <>
+              <TitleWrapper>
+                <InputTitle leftLabel={'Enter a valid substrate public key or ss58 address'} />
+              </TitleWrapper>
+
               <PublicKeyInputWrapper>
                 <InputBase
                   fullWidth
@@ -185,9 +225,22 @@ const PageClaims = () => {
               </ErrorWrapper>
             </>
           ) : (
-            <SigWrapper>
-              <GeneratedSig>{sig}</GeneratedSig>
-            </SigWrapper>
+            <>
+              <TitleWrapper>
+                <InputTitle leftLabel={'Account Signature'} />
+              </TitleWrapper>
+
+              <SigWrapper>
+                <GeneratedSig>{sig}</GeneratedSig>
+              </SigWrapper>
+
+              <TitleWrapper style={{ paddingTop: 0 }}>
+                <InputTitle leftLabel={'AccountId'} />
+              </TitleWrapper>
+              <SigWrapper>
+                <GeneratedSig> {ss58Address}</GeneratedSig>
+              </SigWrapper>
+            </>
           )}
 
           <MixerButtonWrapper>
