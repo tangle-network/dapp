@@ -6,10 +6,8 @@ import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { InputTitle } from '@webb-dapp/ui-components/Inputs/InputTitle/InputTitle';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
-
-import { decodeAddress } from '@polkadot/keyring';
 
 const PageClaimsWrapper = styled.section`
   display: flex;
@@ -22,6 +20,13 @@ const PageClaimsWrapper = styled.section`
     align-items: flex-start;
   `}
 `;
+
+enum ClaimSteps {
+  GenerateClaim,
+  ConnectToPolkadotProvider,
+  SubmitClaim,
+}
+
 const PublicKeyInputWrapper = styled.div<{ disabled?: boolean }>`
   display: flex;
   flex-wrap: wrap;
@@ -52,6 +57,17 @@ const ErrorWrapper = styled.div`
 
   ${above.sm`
     margin: 0 2rem;
+  `}
+`;
+
+const SigWrapper = styled.div`
+  margin: 0 1rem;
+  margin-bottom: 8px;
+
+  ${above.sm`
+    margin: 0 2rem;
+      margin-bottom: 8px;
+
   `}
 `;
 
@@ -93,48 +109,89 @@ const MixerButtonWrapper = styled.div`
     padding-bottom: 2rem;
   `}
 `;
-
+const GeneratedSig = styled.div`
+  border-radius: 10px;
+  padding: 0.7rem;
+  word-break: break-all;
+  position: relative;
+  min-height: 120px;
+  background: ${({ theme }) => theme.heavySelectionBackground};
+  color: ${({ theme }) => theme.primaryText};
+`;
 const PageClaims = () => {
   const { address, error, generateSignature, isValidKey, setAddress, validProvider } = useClaims();
+  const [step, setStep] = useState<ClaimSteps>(ClaimSteps.GenerateClaim);
+  const [loading, setLoading] = useState(false);
   const [sig, setSig] = useState('');
-  useEffect(() => {
-    try {
-      generateSignature().then((sig) => setSig(sig));
-    } catch (e) {
-      console.log(e);
+  const buttonProps = useMemo(() => {
+    switch (step) {
+      case ClaimSteps.GenerateClaim:
+        return {
+          disabled: !validProvider || loading,
+          onClick: () => {
+            try {
+              setLoading(true);
+              generateSignature().then((sig) => {
+                setSig(sig);
+                setStep(ClaimSteps.ConnectToPolkadotProvider);
+              });
+            } catch (e) {
+              console.log(e);
+            } finally {
+              setLoading(false);
+            }
+          },
+          label: 'Generate claim',
+        };
+      case ClaimSteps.ConnectToPolkadotProvider:
+        return {
+          label: 'Connect to Polkadot Provider',
+          onClick: () => {},
+        };
+      case ClaimSteps.SubmitClaim: {
+        return {
+          label: 'Submit claim',
+          onClick: () => {},
+        };
+      }
     }
-  }, [address]);
+  }, [step, setSig, sig, isValidKey, generateSignature, loading]);
+
+  const showAddressButton = step === ClaimSteps.GenerateClaim;
+  const showSig = step === ClaimSteps.ConnectToPolkadotProvider;
+
   return (
     <PageClaimsWrapper>
       <RequiredWalletSelection>
         <ClaimWrapper>
           <TitleWrapper>
-            <InputTitle leftLabel={'Claim address'} />
+            <InputTitle leftLabel={showAddressButton ? 'Claim address' : 'Claim signature'} />
           </TitleWrapper>
+          {showAddressButton ? (
+            <>
+              <PublicKeyInputWrapper>
+                <InputBase
+                  fullWidth
+                  placeholder={`Enter you public key (32 bytes)`}
+                  value={address}
+                  inputProps={{ style: { fontSize: 14 } }}
+                  onChange={(event) => {
+                    setAddress(event.target.value as string);
+                  }}
+                />
+              </PublicKeyInputWrapper>
+              <ErrorWrapper>
+                <FormHelperText error={Boolean(error)}>{error}</FormHelperText>
+              </ErrorWrapper>
+            </>
+          ) : (
+            <SigWrapper>
+              <GeneratedSig>{sig}</GeneratedSig>
+            </SigWrapper>
+          )}
 
-          <PublicKeyInputWrapper>
-            <InputBase
-              fullWidth
-              placeholder={`Enter you public key (32 bytes)`}
-              value={address}
-              inputProps={{ style: { fontSize: 14 } }}
-              onChange={(event) => {
-                setAddress(event.target.value as string);
-              }}
-            />
-          </PublicKeyInputWrapper>
-          <ErrorWrapper>
-            <FormHelperText error={Boolean(error)}>{error}</FormHelperText>
-          </ErrorWrapper>
-          <div
-            style={{
-              color: '#fff',
-            }}
-          >
-            {sig}
-          </div>
           <MixerButtonWrapper>
-            <MixerButton disabled={!isValidKey} onClick={() => {}} label={'Claim'} />
+            <MixerButton {...buttonProps} />
           </MixerButtonWrapper>
         </ClaimWrapper>
       </RequiredWalletSelection>

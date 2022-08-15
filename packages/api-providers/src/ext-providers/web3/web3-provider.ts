@@ -208,6 +208,7 @@ export class Web3Provider<T = unknown> {
     let bytes = utf8Encode.encode(prefix);
     let str = u8aToHex(bytes);
     let message = `${str}${payload.replace('0x', '0x00')}`;
-    return this._inner.eth.sign(message, account);
+    // todo overcome the 32 bytes constrain for eth_sign
+    return this._inner.eth.sign(payload, account);
   }
 }

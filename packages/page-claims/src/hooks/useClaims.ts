@@ -54,7 +54,9 @@ export function useClaims() {
   const generateSignature = useCallback(async () => {
     if (activeApi) {
       const isWeb3 = activeApi instanceof WebbWeb3Provider;
-
+      if (!isWeb3) {
+        throw new Error('Expected web3 provider to be active');
+      }
       const isHexAddress = address.startsWith('0x');
       let parsedAddress = '';
       if (isHexAddress && address.replace('0x', '').length === 64) {
@@ -65,10 +67,8 @@ export function useClaims() {
         parsedAddress = u8aToHex(decodedAddress);
       }
 
-      if (isWeb3) {
-        const signature = await activeApi.sign(parsedAddress);
-        return signature as string;
-      }
+      const signature = await activeApi.sign(parsedAddress);
+      return signature as string;
     } else {
       throw new Error('No active api');
     }
