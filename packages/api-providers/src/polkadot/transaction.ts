@@ -272,7 +272,7 @@ export class PolkaTXBuilder {
         description: `${data.address.substring(0, 10)}...${data.address.substring(36)}`,
         key: data.key,
         level: 'success',
-        message: notificationMessage,
+        message: `${data.path.section}:${data.path.method}`,
         name: 'Transaction',
         persist: true,
       });

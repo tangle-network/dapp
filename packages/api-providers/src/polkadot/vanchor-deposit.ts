@@ -35,10 +35,8 @@ import { WebbError, WebbErrorCodes } from '../webb-error';
 
 const logger = LoggerService.get('PolkadotVBridgeDeposit');
 
-// TODO: export this from webb.js
-
-// The Deposit Payload is the note and [treeId]
-type DepositPayload = IDepositPayload<Note, [number, string | number | undefined]>;
+// The Deposit Payload is the note and [treeId,WrappableAssetId]
+type DepositPayload = IDepositPayload<Note, [number, number | undefined]>;
 
 /**
  * Webb Anchor API implementation for Polkadot
@@ -95,7 +93,7 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
     const note = await Note.generateNote(noteInput);
     return {
       note,
-      params: [treeId, wrappableAssetAddress],
+      params: [treeId, Number(wrappableAssetAddress)],
     };
   }
   private async getAccount() {

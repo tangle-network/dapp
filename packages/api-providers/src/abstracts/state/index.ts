@@ -1,8 +1,6 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 import { CurrencyRole } from '@webb-dapp/api-providers';
-import { calculateTypedChainId } from '@webb-tools/sdk-core';
-import { parseTypedChainId } from '@webb-tools/sdk-core/typed-chain-id';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 import { Currency } from '../currency';
