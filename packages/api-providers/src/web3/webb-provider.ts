@@ -15,6 +15,7 @@ import { NoteManager } from '../notes/note-manager';
 import {
   AppConfig,
   BridgeStorage,
+  CurrencyRole,
   getAnchorDeploymentBlockNumber,
   NotificationHandler,
   Storage,
@@ -98,7 +99,9 @@ export class WebbWeb3Provider
       if (Object.keys(bridgeConfig.anchors).includes(calculateTypedChainId(ChainType.EVM, chainId).toString())) {
         const bridgeCurrency = initialSupportedCurrencies[bridgeConfig.asset];
         const bridgeTargets = bridgeConfig.anchors;
-        initialSupportedBridges[bridgeConfig.asset] = new Bridge(bridgeCurrency, bridgeTargets);
+        if (bridgeCurrency.getRole() === CurrencyRole.Governable) {
+          initialSupportedBridges[bridgeConfig.asset] = new Bridge(bridgeCurrency, bridgeTargets);
+        }
       }
     }
 

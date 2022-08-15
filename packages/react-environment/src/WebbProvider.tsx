@@ -5,6 +5,7 @@ import {
   AppConfig,
   Chain,
   Currency,
+  CurrencyRole,
   EVMChainId,
   getEVMChainName,
   InteractiveFeedback,
@@ -482,6 +483,9 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
                     // List the bridge as supported by the new chain
                     const bridgeCurrencyConfig = webbWeb3Provider.config.currencies[bridgeConfig.asset];
                     const bridgeCurrency = new Currency(bridgeCurrencyConfig);
+                    if (bridgeCurrency.getRole() !== CurrencyRole.Governable) {
+                      continue;
+                    }
                     const bridgeTargets = bridgeConfig.anchors;
                     const supportedBridge = new Bridge(bridgeCurrency, bridgeTargets);
                     bridgeOptions[newTypedChainId] = supportedBridge;
