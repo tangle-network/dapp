@@ -9,11 +9,11 @@ import { ethers } from 'ethers';
 import Web3 from 'web3';
 import { AbstractProvider } from 'web3-core';
 
+import { TypeRegistry, U8, Vec } from '@polkadot/types';
 import { hexToU8a } from '@polkadot/util';
 
 import { ProvideCapabilities } from '../../';
 import { WebbError, WebbErrorCodes } from '../../webb-error';
-
 export type AddToken = { address: string; symbol: string; decimals: number; image: string };
 
 export interface AddEthereumChainParameter {
@@ -248,14 +248,20 @@ export class Web3Provider<T = unknown> {
     });
     return `0x${output.toString()}`;
   }
-
+  private encode(data: `0x${string}`): `0x${string}` {
+    let prefix = 128;
+    let output = [prefix];
+    const push = (val: number) => {
+      output.push(...[val, 0, 0, 0]);
+    };
+    const bytes = Array.from(hexToU8a(data));
+    bytes.forEach((bit) => push(bit));
+    return `0x${output.toString()}`;
+  }
   sign(payload: `0x${string}`, account: string): Promise<string> {
     const prefix = `Pay RUSTs to the TEST account:`;
-    const asciiAccount = this.to_ascii_hex(payload);
-    console.log({
-      accountRaw: hexToU8a(payload),
-      asciiAccount: hexToU8a(asciiAccount),
-    });
+    const encodedPayload = this.encode(payload);
+    const asciiAccount = this.to_ascii_hex(encodedPayload);
     const message = this.get_singable_message(prefix, asciiAccount);
     return this._inner.eth.personal.sign(message, account, undefined);
   }
