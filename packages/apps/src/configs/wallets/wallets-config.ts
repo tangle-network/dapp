@@ -1,4 +1,3 @@
-import { isWalletInstalled } from '@talisman-connect/wallets';
 import { AppConfig, PresetTypedChainId } from '@webb-dapp/api-providers';
 import { MetaMaskLogo } from '@webb-dapp/apps/configs/logos/MetaMaskLogo';
 import { PolkaLogo } from '@webb-dapp/apps/configs/logos/PolkaLogo';
@@ -113,7 +112,7 @@ export const walletsConfig: AppConfig['wallet'] = {
     platform: 'Substrate',
     enabled: true,
     detect() {
-      return isWalletInstalled('talisman');
+      return true;
     },
     supportedChainIds: [...ANY_SUBSTRATE],
     homeLink: 'https://talisman.xyz/',
