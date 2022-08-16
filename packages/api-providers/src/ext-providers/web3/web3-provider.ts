@@ -9,7 +9,7 @@ import { ethers } from 'ethers';
 import Web3 from 'web3';
 import { AbstractProvider } from 'web3-core';
 
-import { hexToU8a } from '@polkadot/util';
+import { hexToU8a, u8aToHex } from '@polkadot/util';
 
 import { ProvideCapabilities } from '../../';
 import { WebbError, WebbErrorCodes } from '../../webb-error';
@@ -267,8 +267,10 @@ export class Web3Provider<T = unknown> {
     const encodedPayload = this.encode(bytes);
     const asciiAccount = this.to_ascii_hex(encodedPayload);
     const message = this.get_singable_message(prefix, asciiAccount);
-    const messageToSign = `0x${message.join('')}`;
-
-    return this._inner.eth.personal.sign(messageToSign, account, undefined);
+    const messageToSign = Uint8Array.from(message);
+    console.log({
+      messageToSign,
+    });
+    return this._inner.eth.personal.sign(u8aToHex(messageToSign), account, undefined);
   }
 }
