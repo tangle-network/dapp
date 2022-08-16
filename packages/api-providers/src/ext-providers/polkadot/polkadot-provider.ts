@@ -270,6 +270,10 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
           throw WebbError.from(WebbErrorCodes.TalismanExtensionNotInstalled);
         }
 
+        case WalletId.SubWallet: {
+          throw WebbError.from(WebbErrorCodes.SubWalletExtensionNotInstalled);
+        }
+
         default: {
           throw new Error('Unknown wallet');
         }

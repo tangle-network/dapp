@@ -4,4 +4,5 @@ export enum WalletId {
   WalletConnectV1,
   OneWallet,
   Talisman,
+  SubWallet,
 }

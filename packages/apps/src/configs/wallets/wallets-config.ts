@@ -3,7 +3,7 @@ import { AppConfig, PresetTypedChainId } from '@webb-dapp/api-providers';
 import { MetaMaskLogo } from '@webb-dapp/apps/configs/logos/MetaMaskLogo';
 import { PolkaLogo } from '@webb-dapp/apps/configs/logos/PolkaLogo';
 import { WalletConnectLogo } from '@webb-dapp/apps/configs/logos/WalletConnectLogo';
-import { TalismanLogo } from '@webb-dapp/apps/configs/logos/wallets';
+import { SubWalletLogo, TalismanLogo } from '@webb-dapp/apps/configs/logos/wallets';
 import { SupportedBrowsers } from '@webb-dapp/utils/platform';
 
 import { WalletId } from '../wallets/wallet-id.enum';
@@ -121,6 +121,24 @@ export const walletsConfig: AppConfig['wallet'] = {
       [SupportedBrowsers.FireFox]: 'https://addons.mozilla.org/firefox/addon/talisman-wallet-extension/',
       [SupportedBrowsers.Chrome]:
         'https://chrome.google.com/webstore/detail/talisman-polkadot-wallet/fijngjgcjhjmmpcmkeiomlglpeiijkld',
+    },
+  },
+  [WalletId.SubWallet]: {
+    id: WalletId.SubWallet,
+    Logo: SubWalletLogo,
+    name: 'subwallet-js',
+    title: 'SubWallet',
+    platform: 'Substrate',
+    enabled: true,
+    detect() {
+      return true;
+    },
+    supportedChainIds: [...ANY_SUBSTRATE],
+    homeLink: 'https://www.subwallet.app/',
+    installLinks: {
+      [SupportedBrowsers.Chrome]:
+        'https://chrome.google.com/webstore/detail/subwallet-polkadot-extens/onhogfjeacnfoofkfgppdlbmlmnplgbn',
+      [SupportedBrowsers.FireFox]: 'https://addons.mozilla.org/firefox/addon/subwallet/',
     },
   },
 };
