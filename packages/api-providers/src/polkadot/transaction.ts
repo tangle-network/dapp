@@ -75,8 +75,8 @@ export class PolkadotTx<P extends Array<any>> extends EventBus<PolkadotTXEvents>
 
   constructor(
     private apiPromise: ApiPromise,
-    private path: MethodPath,
-    private parms: P,
+    private paths: MethodPath[],
+    private parms: P[],
     private injectedExtension: InjectedExtension
   ) {
     super();
@@ -85,8 +85,8 @@ export class PolkadotTx<P extends Array<any>> extends EventBus<PolkadotTXEvents>
   async call(signAddress: AddressOrPair) {
     const api = this.apiPromise;
 
-    for (let i = 0; i < this.path.length; i++) {
-      const path = this.path[i];
+    for (let i = 0; i < this.paths.length; i++) {
+      const path = this.paths[i];
       txLogger.info(`Sending ${path.section} ${path.method} transaction by`, signAddress, this.parms);
       this.transactionAddress = signAddress;
 
@@ -108,8 +108,8 @@ export class PolkadotTx<P extends Array<any>> extends EventBus<PolkadotTXEvents>
     }
 
     let txResults: any;
-    if (this.path.length === 0) {
-      const path = this.path[0];
+    if (this.paths.length === 0) {
+      const path = this.paths[0];
       const parms = this.parms[0];
 
       txResults = await api.tx[path.section][path.method](...parms).signAsync(signAddress, {
@@ -117,7 +117,7 @@ export class PolkadotTx<P extends Array<any>> extends EventBus<PolkadotTXEvents>
       });
     } else {
       const parms = this.parms;
-      const txs = this.path.map((path, index) => {
+      const txs = this.paths.map((path, index) => {
         return api.tx[path.section][path.method](...parms[index]);
       });
       txResults = await api.tx.utility.batch(txs).signAsync(signAddress, {
@@ -129,11 +129,15 @@ export class PolkadotTx<P extends Array<any>> extends EventBus<PolkadotTXEvents>
     await this.emitWithPayload('loading', '');
     const hash = txResults.hash.toString();
 
-    await this.send(txResults);
+    try {
+      await this.send(txResults);
+    } catch (error) {
+      console.log(error);
+    }
 
     await this.emitWithPayload('afterSend', undefined);
     this.transactionAddress = null;
-    this.path.forEach((path) => {
+    this.paths.forEach((path) => {
       txLogger.info(`Tx ${path.section} ${path.method} is Done: TX hash=`, hash);
     });
 
@@ -152,7 +156,7 @@ export class PolkadotTx<P extends Array<any>> extends EventBus<PolkadotTXEvents>
       address: this.transactionAddress ?? '',
       data: data,
       key: this.notificationKey,
-      path: this.path,
+      path: this.paths,
     } as any);
   }
 
@@ -240,8 +244,8 @@ export class PolkaTXBuilder {
     private readonly injectedExtension: InjectedExtension
   ) {}
 
-  buildWithoutNotification<P extends Array<any>>({ method, section }: MethodPath, params: P): PolkadotTx<P> {
-    return new PolkadotTx<P>(this.apiPromise.clone(), { method, section }, params, this.injectedExtension);
+  buildWithoutNotification<P extends Array<any>>(paths: MethodPath[], params: P[]): PolkadotTx<P> {
+    return new PolkadotTx<P>(this.apiPromise.clone(), paths, params, this.injectedExtension);
   }
 
   build<P extends Array<any>>(
