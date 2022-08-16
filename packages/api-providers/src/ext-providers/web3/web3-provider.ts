@@ -213,10 +213,10 @@ export class Web3Provider<T = unknown> {
       let entry = Buffer.from(`${size % 10}`).readInt8();
       rev.push(entry);
       size /= 10;
+      size = Math.floor(size);
     }
     let eth_message = Array.from(utf8Encode.encode('\x19Ethereum Signed Message:\n'));
     const ordered = [...rev].reverse();
-
     ordered.forEach((entry) => {
       eth_message.push(entry);
     });
@@ -226,17 +226,12 @@ export class Web3Provider<T = unknown> {
     messageData.forEach((entry) => {
       eth_message.push(entry);
     });
-    return messageData.toString();
+    return eth_message.toString();
   }
 
   sign(payload: `0x${string}`, account: string): Promise<string> {
-    const prefix = `Pay EGGs to the Polkadot account:`;
+    const prefix = `Pay RUSTs to the TEST account:`;
     const message = this.get_singable_message(prefix, payload);
-    console.log({
-      message,
-      payload: hexToU8a(payload),
-      messageBytes: hexToU8a(message.startsWith('0x') ? message : `0x${message}`),
-    });
     return this._inner.eth.personal.sign(message, account, account);
   }
 }
