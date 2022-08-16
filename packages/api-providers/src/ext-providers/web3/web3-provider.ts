@@ -9,11 +9,11 @@ import { ethers } from 'ethers';
 import Web3 from 'web3';
 import { AbstractProvider } from 'web3-core';
 
-import { TypeRegistry, U8, Vec } from '@polkadot/types';
 import { hexToU8a } from '@polkadot/util';
 
 import { ProvideCapabilities } from '../../';
 import { WebbError, WebbErrorCodes } from '../../webb-error';
+
 export type AddToken = { address: string; symbol: string; decimals: number; image: string };
 
 export interface AddEthereumChainParameter {
@@ -203,10 +203,10 @@ export class Web3Provider<T = unknown> {
     });
   }
 
-  private get_singable_message(prefix: string, message: `0x${string}`): string {
+  private get_singable_message(prefix: string, bytes: number[]): number[] {
     const utf8Encode = new TextEncoder();
     const prefixBytes = Array.from(utf8Encode.encode(prefix));
-    const messageData = Array.from(hexToU8a(message));
+    const messageData = bytes;
     let size = prefixBytes.length + messageData.length;
     const rev = [];
     while (size > 0) {
@@ -226,11 +226,10 @@ export class Web3Provider<T = unknown> {
     messageData.forEach((entry) => {
       eth_message.push(entry);
     });
-    return eth_message.toString();
+    return eth_message;
   }
 
-  private to_ascii_hex(data: `0x${string}`): `0x${string}` {
-    const bytes = Array.from(hexToU8a(data));
+  private to_ascii_hex(bytes: number[]): number[] {
     const output: number[] = [];
     const pushNibble = (n: number) => {
       if (n < 10) {
@@ -238,7 +237,10 @@ export class Web3Provider<T = unknown> {
         output.push(entry);
       } else {
         const buf = Buffer.from('a');
-        output.push(buf.readInt8() - 10 + n);
+        const value = buf.readInt8() - 10 + n;
+        console.log(`value ${value} floored ${Math.floor(value)}`);
+        // output.push(Math.floor(buf.readInt8() - 10 + n));
+        output.push(Math.floor(value));
       }
     };
 
@@ -246,23 +248,27 @@ export class Web3Provider<T = unknown> {
       pushNibble(byte / 16);
       pushNibble(byte % 16);
     });
-    return `0x${output.toString()}`;
+    return output;
   }
-  private encode(data: `0x${string}`): `0x${string}` {
+
+  private encode(bytes: number[]): number[] {
     let prefix = 128;
     let output = [prefix];
     const push = (val: number) => {
       output.push(...[val, 0, 0, 0]);
     };
-    const bytes = Array.from(hexToU8a(data));
     bytes.forEach((bit) => push(bit));
-    return `0x${output.toString()}`;
+    return output;
   }
+
   sign(payload: `0x${string}`, account: string): Promise<string> {
     const prefix = `Pay RUSTs to the TEST account:`;
-    const encodedPayload = this.encode(payload);
+    const bytes = Array.from(hexToU8a(payload));
+    const encodedPayload = this.encode(bytes);
     const asciiAccount = this.to_ascii_hex(encodedPayload);
     const message = this.get_singable_message(prefix, asciiAccount);
-    return this._inner.eth.personal.sign(message, account, undefined);
+    const messageToSign = `0x${message.join('')}`;
+
+    return this._inner.eth.personal.sign(messageToSign, account, undefined);
   }
 }
