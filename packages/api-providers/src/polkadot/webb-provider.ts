@@ -92,7 +92,7 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
       },
       wrapUnwrap: {
         core: {
-          enabled: false,
+          enabled: true,
           inner: new PolkadotWrapUnwrap(this),
         },
       },
@@ -110,7 +110,9 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
       if (Object.keys(bridgeConfig.anchors).includes(typedChainId.toString())) {
         const bridgeCurrency = initialSupportedCurrencies[bridgeConfig.asset];
         const bridgeTargets = bridgeConfig.anchors;
-        initialSupportedBridges[bridgeConfig.asset] = new Bridge(bridgeCurrency, bridgeTargets);
+        if (bridgeCurrency.getRole() === CurrencyRole.Governable) {
+          initialSupportedBridges[bridgeConfig.asset] = new Bridge(bridgeCurrency, bridgeTargets);
+        }
       }
     }
 
