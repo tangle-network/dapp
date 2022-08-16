@@ -229,9 +229,34 @@ export class Web3Provider<T = unknown> {
     return eth_message.toString();
   }
 
+  private to_ascii_hex(data: `0x${string}`): `0x${string}` {
+    const bytes = Array.from(hexToU8a(data));
+    const output: number[] = [];
+    const pushNibble = (n: number) => {
+      if (n < 10) {
+        let entry = Buffer.from(`${n}`).readUInt8();
+        output.push(entry);
+      } else {
+        const buf = Buffer.from('a');
+        output.push(buf.readInt8() - 10 + n);
+      }
+    };
+
+    bytes.forEach((byte) => {
+      pushNibble(byte / 16);
+      pushNibble(byte % 16);
+    });
+    return `0x${output.toString()}`;
+  }
+
   sign(payload: `0x${string}`, account: string): Promise<string> {
     const prefix = `Pay RUSTs to the TEST account:`;
-    const message = this.get_singable_message(prefix, payload);
-    return this._inner.eth.personal.sign(message, account, account);
+    const asciiAccount = this.to_ascii_hex(payload);
+    console.log({
+      accountRaw: hexToU8a(payload),
+      asciiAccount: hexToU8a(asciiAccount),
+    });
+    const message = this.get_singable_message(prefix, asciiAccount);
+    return this._inner.eth.personal.sign(message, account, undefined);
   }
 }
