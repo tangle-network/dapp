@@ -68,10 +68,8 @@ const PageWrapUnwrap: FC = () => {
     wrappableCurrencyBalance,
   } = useWrapUnwrap();
   const [displayedAmount, setDisplayedAmount] = useState<string>('');
-
   const [isSwap, setIsSwap] = useState(false);
   const [loading, setLoading] = useState(false);
-
   const leftInputProps: TokenInputProps = useMemo(() => {
     return {
       currencies: context === 'wrap' ? wrappableCurrencies : governedCurrencies,
@@ -226,6 +224,7 @@ const PageWrapUnwrap: FC = () => {
             label={buttonText}
             onClick={async () => {
               try {
+                console.log('wraping');
                 setLoading(true);
                 await execute();
               } finally {

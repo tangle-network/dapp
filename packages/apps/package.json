@@ -8,7 +8,6 @@
     "@babel/core": "^7.17.8",
     "@babel/polyfill": "^7.12.1",
     "@babel/runtime": "^7.17.8",
-    "@talisman-connect/wallets": "^1.1.3",
     "react-router": "^6.0.0-beta.0",
     "react-router-dom": "^6.0.0-beta.0"
   },

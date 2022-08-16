@@ -1,6 +1,6 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
-import { BridgeConfigEntry } from '@webb-dapp/api-providers/types';
+import { CurrencyRole } from '@webb-dapp/api-providers';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 import { Currency } from '../currency';
@@ -36,12 +36,26 @@ export class WebbState implements WebbStateInterface {
   private wrappableTokens = new BehaviorSubject<Record<number, Currency>>({});
   private activeBridgeSubject = new BehaviorSubject<Bridge | null>(null);
 
+  //  CurrencyId => Currency
+  private wrappedTokens = new BehaviorSubject<Record<any, Currency>>({});
+  private wrappedToken = new BehaviorSubject<Currency | null>(null);
+
   constructor(
     // Currencies are indexed by their Currency IDs
     private supportedCurrencies: Record<number, Currency>,
     // Bridges are indexed by their governed Currency IDs.
     private supportedBridges: Record<number, Bridge>
-  ) {}
+  ) {
+    const wrappedCurrencies: Record<number, Currency> = {};
+
+    Object.keys(this.supportedBridges).forEach((key) => {
+      const currencyId = Number(key);
+      if (this.supportedBridges[currencyId].currency.getRole() === CurrencyRole.Governable) {
+        wrappedCurrencies[currencyId] = this.supportedBridges[currencyId].currency;
+      }
+    });
+    this.wrappedCurrencies = wrappedCurrencies;
+  }
 
   get wrappableCurrency() {
     return this.wrappableToken.value;
@@ -67,6 +81,30 @@ export class WebbState implements WebbStateInterface {
     this.wrappableTokens.next(value);
   }
 
+  get wrappedCurrency() {
+    return this.wrappedToken.value;
+  }
+
+  get $wrappedCurrency() {
+    return this.wrappedToken.asObservable();
+  }
+
+  set wrappedCurrency(value: Currency | null) {
+    this.wrappedToken.next(value);
+  }
+
+  get wrappedCurrencies() {
+    return this.wrappedTokens.value;
+  }
+
+  get $wrappedCurrencies() {
+    return this.wrappedTokens.asObservable();
+  }
+
+  set wrappedCurrencies(value: Record<number, Currency>) {
+    this.wrappedTokens.next(value);
+  }
+
   get $activeBridge() {
     return this.activeBridgeSubject.asObservable();
   }
@@ -90,6 +128,19 @@ export class WebbState implements WebbStateInterface {
       currency.getAddresses().forEach((addressEntry) => {
         contractMapping.set(addressEntry, currency.id);
       });
+    });
+
+    return contractMapping;
+  }
+
+  getReverseCurrencyMapWithChainId(typedChainId: number): Map<string, number> {
+    let contractMapping = new Map();
+    Object.values(this.supportedCurrencies).forEach((currency) => {
+      if (currency.getAddressOfChain(typedChainId) !== undefined) {
+        currency.getAddresses().forEach((addressEntry) => {
+          contractMapping.set(addressEntry, currency.id);
+        });
+      }
     });
 
     return contractMapping;

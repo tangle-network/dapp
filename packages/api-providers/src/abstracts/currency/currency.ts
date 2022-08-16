@@ -36,7 +36,9 @@ export class Currency {
   getAddresses(): string[] {
     return Array.from(this.data.addresses.values());
   }
-
+  getAddressOfChain(chain: number): string | undefined {
+    return this.data.addresses.get(chain);
+  }
   getDecimals(): number {
     return this.data.decimals || 0;
   }
