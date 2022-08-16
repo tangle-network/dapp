@@ -4,11 +4,12 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
 import WalletConnectProvider from '@walletconnect/web3-provider';
+import { Buffer } from 'buffer';
 import { ethers } from 'ethers';
 import Web3 from 'web3';
 import { AbstractProvider } from 'web3-core';
 
-import { u8aToBn, u8aToHex } from '@polkadot/util';
+import { hexToU8a } from '@polkadot/util';
 
 import { ProvideCapabilities } from '../../';
 import { WebbError, WebbErrorCodes } from '../../webb-error';
@@ -202,13 +203,40 @@ export class Web3Provider<T = unknown> {
     });
   }
 
-  sign(payload: string, account: string): Promise<string> {
+  private get_singable_message(prefix: string, message: `0x${string}`): string {
+    const utf8Encode = new TextEncoder();
+    const prefixBytes = Array.from(utf8Encode.encode(prefix));
+    const messageData = Array.from(hexToU8a(message));
+    let size = prefixBytes.length + messageData.length;
+    const rev = [];
+    while (size > 0) {
+      let entry = Buffer.from(`${size % 10}`).readInt8();
+      rev.push(entry);
+      size /= 10;
+    }
+    let eth_message = Array.from(utf8Encode.encode('\x19Ethereum Signed Message:\n'));
+    const ordered = [...rev].reverse();
+
+    ordered.forEach((entry) => {
+      eth_message.push(entry);
+    });
+    prefixBytes.forEach((entry) => {
+      eth_message.push(entry);
+    });
+    messageData.forEach((entry) => {
+      eth_message.push(entry);
+    });
+    return messageData.toString();
+  }
+
+  sign(payload: `0x${string}`, account: string): Promise<string> {
     const prefix = `Pay EGGs to the Polkadot account:`;
-    let utf8Encode = new TextEncoder();
-    let bytes = utf8Encode.encode(prefix);
-    let str = u8aToHex(bytes);
-    let message = `${str}${payload.replace('0x', '0x00')}`;
-    // todo overcome the 32 bytes constrain for eth_sign
-    return this._inner.eth.sign(payload, account);
+    const message = this.get_singable_message(prefix, payload);
+    console.log({
+      message,
+      payload: hexToU8a(payload),
+      messageBytes: hexToU8a(message.startsWith('0x') ? message : `0x${message}`),
+    });
+    return this._inner.eth.personal.sign(message, account, account);
   }
 }

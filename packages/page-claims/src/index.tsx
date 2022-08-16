@@ -9,7 +9,7 @@ import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
 import React, { useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
-import { decodeAddress } from '@polkadot/keyring';
+import { decodeAddress, encodeAddress } from '@polkadot/keyring';
 import { u8aToString } from '@polkadot/util';
 
 const PageClaimsWrapper = styled.section`
@@ -137,7 +137,13 @@ const PageClaims = () => {
   const [sig, setSig] = useState('');
   const ss58Address = useMemo(() => {
     if (isValidKey) {
-      return address.startsWith('0x') ? u8aToString(decodeAddress(address)) : address;
+      const ss58 = address.startsWith('0x') ? u8aToString(decodeAddress(address)) : address;
+      try {
+        console.log(decodeAddress(ss58));
+      } catch (e) {
+        console.log(e);
+      }
+      return ss58;
     }
     return null;
   }, [address, isValidKey]);

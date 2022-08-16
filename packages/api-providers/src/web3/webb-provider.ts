@@ -281,7 +281,7 @@ export class WebbWeb3Provider
       });
   }
 
-  async sign(message: string): Promise<string> {
+  async sign(message: `0x${string}`): Promise<string> {
     const acc = this.ethersProvider.getSigner();
     const address = await acc.getAddress();
     if (!acc) {
