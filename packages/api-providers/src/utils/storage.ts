@@ -118,6 +118,28 @@ export const noteStorageFactory = (keypair: Keypair) => {
   });
 };
 
+// account -> anchor address -> pubkeys
+export type RegistrationStorage = Record<string, string[]>;
+
+export const registrationStorageFactory = (account: string) => {
+  return Storage.newFromCache<RegistrationStorage>(account, {
+    async commit(key: string, data: RegistrationStorage): Promise<void> {
+      localStorage.setItem(key, JSON.stringify(data));
+    },
+    async fetch(key: string): Promise<RegistrationStorage> {
+      const storageCached = localStorage.getItem(key);
+
+      if (storageCached) {
+        return {
+          ...JSON.parse(storageCached),
+        };
+      }
+
+      return {};
+    },
+  });
+};
+
 export const netStorageFactory = () => {
   return Storage.newFromCache<NetworkStore>('app', {
     async commit(key: string, data: NetworkStore): Promise<void> {

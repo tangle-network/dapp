@@ -228,7 +228,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
             key: 'waiting-approval',
             level: 'info',
             message: 'Waiting for token approval',
-            name: 'Approval',
+            name: 'Transaction',
             persist: true,
           });
           const tokenInstance = await ERC20Factory.connect(
@@ -314,7 +314,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
             key: 'waiting-approval',
             level: 'info',
             message: 'Waiting for token approval',
-            name: 'Approval',
+            name: 'Transaction',
             persist: true,
           });
           const tokenInstance = await srcVAnchor.getWebbToken();

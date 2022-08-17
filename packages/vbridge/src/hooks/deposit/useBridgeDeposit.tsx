@@ -84,7 +84,7 @@ export const useBridgeDeposit = (): VBridgeDepositApi => {
 
   const setGovernedCurrency = useCallback(
     (currency: Currency): void => {
-      if (!activeApi || !activeApi.state.activeBridge) {
+      if (!activeApi) {
         return;
       }
 
