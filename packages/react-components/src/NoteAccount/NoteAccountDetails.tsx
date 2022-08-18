@@ -85,14 +85,11 @@ const DisconnectedNoteAccountView: React.FC<NoteAccountDetailsProps> = () => {
             <button
               className='create-metamask-account-button'
               onClick={async () => {
-                console.log('clicked metamask account create');
                 const metamask = await Web3Provider.fromExtension();
-                console.log(metamask);
                 const accounts = await metamask.eth.getAccounts();
                 if (accounts.length && accounts[0] != null) {
                   // @ts-ignore
                   const signedString = await metamask.eth.personal.sign('Logging into Webb', accounts[0], undefined);
-                  console.log('signedString: ', signedString);
                   loginNoteAccount(signedString.slice(0, 66));
                 }
               }}

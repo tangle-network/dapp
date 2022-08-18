@@ -190,7 +190,6 @@ export class VAnchorContract {
       publicKey,
     });
     const receipt = await tx.wait();
-    console.log(receipt);
   }
 
   async approve(depositAmount: BigNumberish, tokenInstance: Contract) {

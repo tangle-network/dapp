@@ -128,7 +128,6 @@ export const Deposit: React.FC<DepositProps> = () => {
         .isPairingRegistered(currentTarget, activeAccount.address, pubkey)
         .then((res) => {
           if (res != registered) {
-            console.log('setting registration!');
             setRegistration(res);
           }
         });

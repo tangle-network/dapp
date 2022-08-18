@@ -22,7 +22,6 @@ export class PolkadotChainQuery extends ChainQuery<WebbPolkadot> {
     if (activeAccount) {
       // If the assetId is not 0, query the orml tokens
       if (assetId !== '0') {
-        console.log('ActiveAccount address in polkadot chain query: ', activeAccount.address, assetId);
         const tokenAccountData = await this.inner.api.query.tokens.accounts(activeAccount.address, assetId);
 
         const json = tokenAccountData.toHuman();
