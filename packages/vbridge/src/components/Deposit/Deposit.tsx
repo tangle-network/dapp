@@ -261,19 +261,23 @@ export const Deposit: React.FC<DepositProps> = () => {
         </TokenInputWrapper>
         {activeApi?.state.activeBridge && (
           <ChainInputWrapper>
-            <InputTitle leftLabel='DESTINATION' rightLabel={<BalanceLabel value={balance} />} />
-            <div className='chain-dropdown-section'>
-              <ChainInput
-                chains={tokenChains}
-                selectedChain={destChain}
-                setSelectedChain={setDestChain}
-                wrapperStyles={{ width: '42%' }}
-              />
-              <div className='amount-input-section'>
-                <AmountInput error={''} onChange={parseAndSetAmount} value={userAmountInput} />
-              </div>
-            </div>
-            <SpaceBox height={16} />
+            {registered && (
+              <>
+                <InputTitle leftLabel='DESTINATION' rightLabel={<BalanceLabel value={balance} />} />
+                <div className='chain-dropdown-section'>
+                  <ChainInput
+                    chains={tokenChains}
+                    selectedChain={destChain}
+                    setSelectedChain={setDestChain}
+                    wrapperStyles={{ width: '42%' }}
+                  />
+                  <div className='amount-input-section'>
+                    <AmountInput error={''} onChange={parseAndSetAmount} value={userAmountInput} />
+                  </div>
+                </div>
+                <SpaceBox height={16} />
+              </>
+            )}
             {actionButton}
           </ChainInputWrapper>
         )}
