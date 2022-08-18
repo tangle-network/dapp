@@ -11,7 +11,7 @@ export class Web3VAnchorRegistration extends VAnchorRegistration<WebbWeb3Provide
     const registration = await registrationStorageFactory(account);
     const registeredPubkeys = await registration.get(anchorAddress);
     console.log('registered pubkeys: ', registeredPubkeys);
-    if (registeredPubkeys.find((key) => key === pubkey) != undefined) {
+    if (registeredPubkeys && registeredPubkeys.find((key) => key === pubkey) != undefined) {
       return true;
     }
     return false;

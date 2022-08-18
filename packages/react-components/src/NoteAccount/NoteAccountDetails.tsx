@@ -1,4 +1,5 @@
 import { InputBase, Typography } from '@mui/material';
+import { Web3Provider } from '@webb-dapp/api-providers/ext-providers';
 import { useDepositNote } from '@webb-dapp/mixer/hooks';
 import { useWebContext } from '@webb-dapp/react-environment/webb-context';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
@@ -56,10 +57,10 @@ enum DisconnectView {
   Create,
 }
 
-const DisconnectedNoteAccountView: React.FC<Omit<NoteAccountDetailsProps, 'allNotes'>> = () => {
+const DisconnectedNoteAccountView: React.FC<NoteAccountDetailsProps> = () => {
   const [view, setView] = useState<DisconnectView>(DisconnectView.Prompt);
   const [accountInputString, setAccountInputString] = useState('');
-  const { loginNoteAccount } = useWebContext();
+  const { loginNoteAccount, wallets } = useWebContext();
 
   return (
     <div>
@@ -72,14 +73,31 @@ const DisconnectedNoteAccountView: React.FC<Omit<NoteAccountDetailsProps, 'allNo
           </div>
           <div>
             <button
-              className='create-account-button'
+              className='create-random-account-button'
               onClick={() => {
                 const newKey = new Keypair();
                 setAccountInputString(newKey.privkey);
                 setView(DisconnectView.Create);
               }}
             >
-              Create
+              Create Random
+            </button>
+            <button
+              className='create-metamask-account-button'
+              onClick={async () => {
+                console.log('clicked metamask account create');
+                const metamask = await Web3Provider.fromExtension();
+                console.log(metamask);
+                const accounts = await metamask.eth.getAccounts();
+                if (accounts.length && accounts[0] != null) {
+                  // @ts-ignore
+                  const signedString = await metamask.eth.personal.sign('Logging into Webb', accounts[0], undefined);
+                  console.log('signedString: ', signedString);
+                  loginNoteAccount(signedString.slice(0, 66));
+                }
+              }}
+            >
+              Create with MetaMask
             </button>
           </div>
         </>
