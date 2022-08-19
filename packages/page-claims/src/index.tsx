@@ -1,9 +1,11 @@
-import { FormHelperText, InputBase } from '@mui/material';
+import { Button, FormHelperText, InputBase, Typography } from '@mui/material';
 import { useClaims } from '@webb-dapp/page-claims/hooks/useClaims';
 import { RequiredWalletSelection } from '@webb-dapp/react-components/RequiredWalletSelection/RequiredWalletSelection';
 import { pageWithFeatures } from '@webb-dapp/react-components/utils/FeaturesGuard/pageWithFeatures';
+import { SpaceBox } from '@webb-dapp/ui-components';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { InputTitle } from '@webb-dapp/ui-components/Inputs/InputTitle/InputTitle';
+import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -121,6 +123,40 @@ const GeneratedSig = styled.div`
   background: ${({ theme }) => theme.heavySelectionBackground};
   color: ${({ theme }) => theme.primaryText};
 `;
+
+type ClaimedModalProps = {
+  open: boolean;
+  ethAddress: string;
+  amount: string;
+  txHash: string;
+  close: () => void;
+};
+const ClaimSuccessModal: React.FC<ClaimedModalProps> = ({ amount, close, ethAddress, open, txHash }) => {
+  return (
+    <Modal open={open}>
+      <div>
+        <Typography variant='h3'>Claim Success</Typography>
+        <Typography>Your claim request for {ethAddress} has been successfully submitted.</Typography>
+        <Typography>You have received {amount}</Typography>
+        <Typography>TX hash :{txHash}</Typography>
+      </div>
+
+      <SpaceBox height={10} />
+
+      <div className={'cancel-button-container'}>
+        <Button
+          onClick={() => {
+            close();
+          }}
+          className={'cancel-button'}
+        >
+          Ok
+        </Button>
+      </div>
+    </Modal>
+  );
+};
+
 const PageClaims = () => {
   const {
     address,
@@ -138,6 +174,12 @@ const PageClaims = () => {
   const [sig, setSig] = useState('');
   const [amountToBeClaimed, setAmountToBeClaimed] = useState<null | string>(null);
   const [ethAddress, setEthAddress] = useState<null | string>(null);
+  const [claimedModal, setClaimedModal] = useState({
+    open: false,
+    txHash: '',
+    amount: '',
+    ethAddress: '',
+  });
   const ss58Address = useMemo(() => {
     if (isValidKey) {
       const ss58 = address.startsWith('0x') ? u8aToString(decodeAddress(address)) : address;
@@ -179,7 +221,7 @@ const PageClaims = () => {
         };
       case ClaimSteps.ConnectToPolkadotProvider:
         return {
-          label: canClaim ? 'Connect to Polkadot Provider' : 'Regenerate sig',
+          label: true ? 'Connect to Polkadot Provider' : 'Regenerate sig',
           disabled: loading,
           onClick: async () => {
             // TODO: make this work once we have multiple providers
@@ -205,17 +247,18 @@ const PageClaims = () => {
         };
       case ClaimSteps.SubmitClaim: {
         return {
-          label: `Claim ${amountToBeClaimed}`,
+          label: `Claim ${amountToBeClaimed ? `${amountToBeClaimed} WEBB` : '0'}`,
           onClick: async () => {
             try {
               setLoading(true);
-              queryClaim(ethAddress)
-                .then((am) => setAmountToBeClaimed(am))
-                .catch((e) => {
-                  console.log(e);
-                });
               const hash = await submitClaim(ss58Address!, hexToU8a(sig));
-              console.log(hash);
+              setClaimedModal((c) => ({
+                ...c,
+                open: true,
+                txHash: hash,
+                ethAddress: ethAddress,
+                amount: `${amountToBeClaimed} WEBB`,
+              }));
               setStep(ClaimSteps.GenerateClaim);
             } catch (e) {
               console.log(e);
@@ -227,6 +270,7 @@ const PageClaims = () => {
       }
     }
   }, [
+    ethAddress,
     submitClaim,
     canClaim,
     step,
@@ -297,6 +341,17 @@ const PageClaims = () => {
           <MixerButtonWrapper>
             <MixerButton {...buttonProps} />
           </MixerButtonWrapper>
+          <ClaimSuccessModal
+            onClose={() => {
+              setClaimedModal({
+                open: false,
+                ethAddress: '',
+                txHash: '',
+                amount: '',
+              });
+            }}
+            {...claimedModal}
+          />
         </ClaimWrapper>
       </RequiredWalletSelection>
     </PageClaimsWrapper>
