@@ -33,6 +33,7 @@ import { PolkadotMixerWithdraw } from './mixer-withdraw';
 import { PolkadotRelayerManager } from './relayer-manager';
 import { PolkaTXBuilder } from './transaction';
 import { PolkadotVAnchorDeposit } from './vanchor-deposit';
+import { PolkadotVAnchorRegistration } from './vanchor-registration';
 import { PolkadotVAnchorWithdraw } from './vanchor-withdraw';
 import { PolkadotWrapUnwrap } from './wrap-unwrap';
 
@@ -91,6 +92,10 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
         withdraw: {
           enabled: true,
           inner: new PolkadotVAnchorWithdraw(this),
+        },
+        registration: {
+          enabled: false,
+          inner: new PolkadotVAnchorRegistration(this),
         },
       },
       wrapUnwrap: {

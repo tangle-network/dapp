@@ -97,7 +97,6 @@ export class NoteManager {
     }
 
     const noteIndex = targetNotes.findIndex((managedNote) => managedNote.serialize() === note.serialize());
-    console.log('remove note called on noteIndex: ', noteIndex);
     targetNotes.splice(noteIndex, 1);
     if (targetNotes.length != 0) {
       this.notesMap.set(note.note.targetChainId, targetNotes);
@@ -116,7 +115,6 @@ export class NoteManager {
     for (let chainGroupedNotes of this.notesMap.entries()) {
       const encNoteStrings = chainGroupedNotes[1].map((note) => {
         const noteStr = note.serialize();
-        console.log(noteStr);
         return this.keypair.encrypt(Buffer.from(noteStr));
       });
 

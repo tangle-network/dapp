@@ -184,6 +184,14 @@ export class VAnchorContract {
     return true;
   }
 
+  async register(owner: string, publicKey: string) {
+    const tx = await this.inner.register({
+      owner,
+      publicKey,
+    });
+    const receipt = await tx.wait();
+  }
+
   async approve(depositAmount: BigNumberish, tokenInstance: Contract) {
     // check the approved spending before attempting deposit
     if (tokenInstance == null) {

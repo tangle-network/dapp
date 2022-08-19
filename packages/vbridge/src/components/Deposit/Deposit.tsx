@@ -19,6 +19,7 @@ import { getRoundedAmountString } from '@webb-dapp/ui-components/utils';
 import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
 import { DepositConfirm } from '@webb-dapp/vbridge/components/DepositConfirm/DepositConfirm';
 import { useBridgeDeposit } from '@webb-dapp/vbridge/hooks/deposit/useBridgeDeposit';
+import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
@@ -90,6 +91,7 @@ export const Deposit: React.FC<DepositProps> = () => {
   const [userAmountInput, setUserAmountInput] = useState<string>('');
   const [amount, setAmount] = useState<number>(0);
   const [destChain, setDestChain] = useState<number | undefined>(undefined);
+  const [registered, setRegistration] = useState<boolean>(false);
   const { chains: chainsConfig } = useAppConfig();
 
   // boolean flag for displaying the wrapped asset input
@@ -99,7 +101,7 @@ export const Deposit: React.FC<DepositProps> = () => {
   const { cancel, setGovernedCurrency, setStage, setWrappableCurrency, stage } = bridgeDepositApi;
 
   const { governedCurrencies, governedCurrency, wrappableCurrencies, wrappableCurrency } = useCurrencies();
-  const { activeApi, activeChain, activeWallet } = useWebContext();
+  const { activeAccount, activeApi, activeChain, activeWallet, noteManager } = useWebContext();
 
   const governedCurrencyBalance = useCurrencyBalance(governedCurrency);
   const wrappableCurrencyBalance = useCurrencyBalance(wrappableCurrency);
@@ -115,6 +117,26 @@ export const Deposit: React.FC<DepositProps> = () => {
       setHideTxModal(false);
     }
   }, [hideTxModal, setStage, stage]);
+
+  useEffect(() => {
+    // Check if the account and pubkey pairing has been registered on-chain
+    if (noteManager && activeChain && activeAccount && activeApi && activeApi.state.activeBridge) {
+      const pubkey = noteManager.getKeypair().pubkey.toHexString();
+      const currentTarget =
+        activeApi.state.activeBridge.targets[calculateTypedChainId(activeChain.chainType, activeChain.chainId)]!;
+      activeApi.methods.variableAnchor.registration.inner
+        .isPairRegistered(currentTarget, activeAccount.address, pubkey)
+        .then((res) => {
+          if (res != registered) {
+            setRegistration(res);
+          }
+        });
+    } else {
+      if (registered === true) {
+        setRegistration(false);
+      }
+    }
+  }, [registered, noteManager, activeAccount, activeApi, activeChain, activeApi?.state.activeBridge]);
 
   const handleSuccess = useCallback((): void => {}, []);
 
@@ -156,6 +178,38 @@ export const Deposit: React.FC<DepositProps> = () => {
 
     return insufficientInputs || !enoughBalance;
   }, [amount, destChain, stage, showWrappableAssets, wrappableCurrencyBalance, governedCurrencyBalance]);
+
+  const actionButton = useMemo(() => {
+    if (activeApi && activeChain && activeAccount && activeApi.state.activeBridge && noteManager && !registered) {
+      const pubkey = noteManager.getKeypair().pubkey.toHexString();
+      const currentTarget =
+        activeApi.state.activeBridge.targets[calculateTypedChainId(activeChain.chainType, activeChain.chainId)]!;
+      return (
+        <MixerButton
+          onClick={() => {
+            activeApi.methods.variableAnchor.registration.inner
+              .register(currentTarget, activeAccount.address, pubkey)
+              .then((res) => {
+                if (res) {
+                  setRegistration(true);
+                }
+              });
+          }}
+          label={'Register'}
+        />
+      );
+    }
+
+    return (
+      <MixerButton
+        disabled={disabledDepositButton}
+        onClick={() => {
+          setShowDepositConfirm(true);
+        }}
+        label={showWrappableAssets ? 'Wrap and Deposit' : 'Deposit'}
+      />
+    );
+  }, [activeAccount, activeApi, activeChain, disabledDepositButton, noteManager, registered, showWrappableAssets]);
 
   const parseAndSetAmount = (amount: string): void => {
     setUserAmountInput(amount);
@@ -207,26 +261,24 @@ export const Deposit: React.FC<DepositProps> = () => {
         </TokenInputWrapper>
         {activeApi?.state.activeBridge && (
           <ChainInputWrapper>
-            <InputTitle leftLabel='DESTINATION' rightLabel={<BalanceLabel value={balance} />} />
-            <div className='chain-dropdown-section'>
-              <ChainInput
-                chains={tokenChains}
-                selectedChain={destChain}
-                setSelectedChain={setDestChain}
-                wrapperStyles={{ width: '42%' }}
-              />
-              <div className='amount-input-section'>
-                <AmountInput error={''} onChange={parseAndSetAmount} value={userAmountInput} />
-              </div>
-            </div>
-            <SpaceBox height={16} />
-            <MixerButton
-              disabled={disabledDepositButton}
-              onClick={() => {
-                setShowDepositConfirm(true);
-              }}
-              label={showWrappableAssets ? 'Wrap and Deposit' : 'Deposit'}
-            />
+            {registered && (
+              <>
+                <InputTitle leftLabel='DESTINATION' rightLabel={<BalanceLabel value={balance} />} />
+                <div className='chain-dropdown-section'>
+                  <ChainInput
+                    chains={tokenChains}
+                    selectedChain={destChain}
+                    setSelectedChain={setDestChain}
+                    wrapperStyles={{ width: '42%' }}
+                  />
+                  <div className='amount-input-section'>
+                    <AmountInput error={''} onChange={parseAndSetAmount} value={userAmountInput} />
+                  </div>
+                </div>
+                <SpaceBox height={16} />
+              </>
+            )}
+            {actionButton}
           </ChainInputWrapper>
         )}
         <Modal open={showDepositConfirm}>

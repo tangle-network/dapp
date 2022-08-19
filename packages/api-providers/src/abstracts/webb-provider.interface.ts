@@ -6,6 +6,7 @@ import { EventBus } from '@webb-tools/app-util';
 import { AccountsAdapter } from '../account/Accounts.adapter';
 import { NoteManager } from '../notes';
 import { InteractiveFeedback } from '../webb-error';
+import { VAnchorRegistration, VAnchorRegistrationEvent } from './anchor/vanchor-registration';
 import { WebbRelayerManager } from './relayer/webb-relayer-manager';
 import { BridgeApi, VAnchorDeposit, VAnchorWithdraw } from './anchor';
 import { ChainQuery } from './chain-query';
@@ -55,6 +56,7 @@ export interface WebbVariableAnchor<T extends WebbApiProvider<any>> {
   deposit: WebbMethod<VAnchorDeposit<T, DepositPayload>, MixerDepositEvents>;
   // withdraw
   withdraw: WebbMethod<VAnchorWithdraw<T>, WebbWithdrawEvents>;
+  registration: WebbMethod<VAnchorRegistration<T>, VAnchorRegistrationEvent>;
 }
 
 export interface WrapAndUnwrap<T> {
@@ -160,7 +162,7 @@ export type NotificationLevel = 'loading' | 'error' | 'success' | 'warning' | 'i
 export type NotificationPayload = {
   message: string;
   description: string;
-  name: 'Transaction' | 'Approval';
+  name: 'Transaction';
   key: string;
   level: NotificationLevel;
   data?: Record<string, string>;

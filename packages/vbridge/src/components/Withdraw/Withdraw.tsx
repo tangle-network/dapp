@@ -439,7 +439,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
                 shouldSwitchChain
                   ? 'Switch chains to withdraw'
                   : withdrawAmount > depositAmount
-                  ? 'Not enough fund'
+                  ? 'Not enough funds'
                   : 'Withdraw'
               }
             />
