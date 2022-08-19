@@ -199,7 +199,7 @@ const PageClaims = () => {
         };
       }
     }
-  }, [step, setSig, sig, isValidKey, generateSignature, loading, ss58Address]);
+  }, [submitClaim, step, setSig, sig, generateSignature, loading, ss58Address, switchToPolkadotWallet, validProvider]);
 
   const showAddressButton = step === ClaimSteps.GenerateClaim;
 

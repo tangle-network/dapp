@@ -51,7 +51,7 @@ export function useClaims() {
     } else {
       setIsValidProvider(false);
     }
-  });
+  }, [activeApi]);
 
   const generateSignature = useCallback(async () => {
     if (activeApi) {
@@ -60,9 +60,9 @@ export function useClaims() {
         throw new Error('Expected web3 provider to be active');
       }
       const isHexAddress = address.startsWith('0x');
-      let parsedAddress = '';
+      let parsedAddress: `0x${string}`;
       if (isHexAddress && address.replace('0x', '').length === 64) {
-        parsedAddress = address;
+        parsedAddress = address as `0x${string}`;
       } else {
         // ss58 format
         const decodedAddress = decodeAddress(address);
