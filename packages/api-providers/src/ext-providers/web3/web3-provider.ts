@@ -204,10 +204,8 @@ export class Web3Provider<T = unknown> {
     });
   }
 
-  async sign(payload: `0x${string}`, account: string): Promise<string> {
-    const prefix = `Pay TNTs to the Tangle account:`;
-    const messageToSign = `${prefix}${payload.replace('0x', '')}`;
-    const sig = await this._inner.eth.personal.sign(messageToSign, account, undefined as any);
+  async sign(message: string, account: string): Promise<string> {
+    const sig = await this._inner.eth.personal.sign(message, account, undefined as any);
     return sig;
   }
 }

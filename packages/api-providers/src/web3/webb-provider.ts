@@ -285,7 +285,7 @@ export class WebbWeb3Provider
       });
   }
 
-  async sign(message: `0x${string}`): Promise<{
+  async sign(message: string): Promise<{
     sig: string;
     account: string;
   }> {

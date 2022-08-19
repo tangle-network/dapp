@@ -2,7 +2,7 @@ import { Button, FormHelperText, InputBase, Typography } from '@mui/material';
 import { useClaims } from '@webb-dapp/page-claims/hooks/useClaims';
 import { RequiredWalletSelection } from '@webb-dapp/react-components/RequiredWalletSelection/RequiredWalletSelection';
 import { pageWithFeatures } from '@webb-dapp/react-components/utils/FeaturesGuard/pageWithFeatures';
-import { SpaceBox } from '@webb-dapp/ui-components';
+import { PaddingBox, SpaceBox } from '@webb-dapp/ui-components';
 import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { InputTitle } from '@webb-dapp/ui-components/Inputs/InputTitle/InputTitle';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
@@ -136,9 +136,12 @@ const ClaimSuccessModal: React.FC<ClaimedModalProps> = ({ amount, close, ethAddr
     <Modal open={open}>
       <div>
         <Typography variant='h3'>Claim Success</Typography>
-        <Typography>Your claim request for {ethAddress} has been successfully submitted.</Typography>
-        <Typography>You have received {amount}</Typography>
-        <Typography>TX hash :{txHash}</Typography>
+        <SpaceBox height={10} />
+        <PaddingBox padding={10}>
+          <Typography>Your claim request for {ethAddress} has been successfully submitted.</Typography>
+          <Typography>You have received {amount}</Typography>
+          <Typography>TX hash :{txHash}</Typography>
+        </PaddingBox>
       </div>
 
       <SpaceBox height={10} />

@@ -68,9 +68,10 @@ export function useClaims() {
         const decodedAddress = decodeAddress(address);
         parsedAddress = u8aToHex(decodedAddress);
       }
+      const prefix = `Pay TNTs to the Tangle account:`;
+      const messageToSign = `${prefix}${parsedAddress.replace('0x', '')}`;
 
-      const signature = await activeApi.sign(parsedAddress);
-      return signature;
+      return activeApi.sign(messageToSign);
     } else {
       throw new Error('No active api');
     }
