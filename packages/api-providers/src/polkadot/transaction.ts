@@ -258,7 +258,9 @@ export class PolkaTXBuilder {
       : `${path[0].section}:${path[0].method}`;
     tx.on('loading', (data) => {
       handler({
-        description: `${data.address.substring(0, 10)}...${data.address.substring(36)}`,
+        description: data.address
+          ? `${data.address.substring(0, 10)}...${data.address.substring(36)}`
+          : 'Unsigned transaction',
         key: data.key,
         level: 'loading',
         message: notificationMessage,
@@ -269,7 +271,9 @@ export class PolkaTXBuilder {
 
     tx.on('finalize', (data) => {
       handler({
-        description: `${data.address.substring(0, 10)}...${data.address.substring(36)}`,
+        description: data.address
+          ? `${data.address.substring(0, 10)}...${data.address.substring(36)}`
+          : 'Unsigned transaction',
         key: data.key,
         level: 'success',
         message: `${data.path.section}:${data.path.method}`,
