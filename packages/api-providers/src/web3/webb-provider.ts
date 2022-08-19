@@ -285,12 +285,19 @@ export class WebbWeb3Provider
       });
   }
 
-  async sign(message: `0x${string}`): Promise<string> {
+  async sign(message: `0x${string}`): Promise<{
+    sig: string;
+    account: string;
+  }> {
     const acc = this.ethersProvider.getSigner();
     const address = await acc.getAddress();
     if (!acc) {
       throw WebbError.from(WebbErrorCodes.NoAccountAvailable);
     }
-    return this.web3Provider.sign(message, address);
+    const sig = await this.web3Provider.sign(message, address);
+    return {
+      sig,
+      account: address,
+    };
   }
 }

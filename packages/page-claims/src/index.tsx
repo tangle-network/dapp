@@ -6,10 +6,10 @@ import { MixerButton } from '@webb-dapp/ui-components/Buttons/MixerButton';
 import { InputTitle } from '@webb-dapp/ui-components/Inputs/InputTitle/InputTitle';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
-import { decodeAddress, encodeAddress } from '@polkadot/keyring';
+import { decodeAddress } from '@polkadot/keyring';
 import { hexToU8a, u8aToString } from '@polkadot/util';
 
 const PageClaimsWrapper = styled.section`
@@ -127,6 +127,7 @@ const PageClaims = () => {
     error,
     generateSignature,
     isValidKey,
+    queryClaim,
     setAddress,
     submitClaim,
     switchToPolkadotWallet,
@@ -135,6 +136,8 @@ const PageClaims = () => {
   const [step, setStep] = useState<ClaimSteps>(ClaimSteps.GenerateClaim);
   const [loading, setLoading] = useState(false);
   const [sig, setSig] = useState('');
+  const [amountToBeClaimed, setAmountToBeClaimed] = useState<null | string>(null);
+  const [ethAddress, setEthAddress] = useState<null | string>(null);
   const ss58Address = useMemo(() => {
     if (isValidKey) {
       const ss58 = address.startsWith('0x') ? u8aToString(decodeAddress(address)) : address;
@@ -147,18 +150,25 @@ const PageClaims = () => {
     }
     return null;
   }, [address, isValidKey]);
+
+  const canClaim = useMemo(() => {
+    if (step > ClaimSteps.GenerateClaim) {
+      return amountToBeClaimed !== null;
+    }
+  }, [amountToBeClaimed, step]);
+
   const buttonProps = useMemo(() => {
     switch (step) {
       case ClaimSteps.GenerateClaim:
         return {
           disabled: !validProvider || loading,
-          onClick: () => {
+          onClick: async () => {
             try {
               setLoading(true);
-              generateSignature().then((sig) => {
-                setSig(sig);
-                setStep(ClaimSteps.ConnectToPolkadotProvider);
-              });
+              const { account, sig } = await generateSignature();
+              setSig(sig);
+              setStep(ClaimSteps.ConnectToPolkadotProvider);
+              setEthAddress(account);
             } catch (e) {
               console.log(e);
             } finally {
@@ -169,12 +179,24 @@ const PageClaims = () => {
         };
       case ClaimSteps.ConnectToPolkadotProvider:
         return {
-          label: 'Connect to Polkadot Provider',
+          label: canClaim ? 'Connect to Polkadot Provider' : 'Regenerate sig',
           disabled: loading,
           onClick: async () => {
+            // TODO: make this work once we have multiple providers
+            /*if (!canClaim) {
+              setSig('');
+              setAddress('');
+              setStep(ClaimSteps.GenerateClaim);
+              return;
+            }*/
             setLoading(true);
             try {
               await switchToPolkadotWallet();
+              queryClaim(ethAddress)
+                .then((am) => setAmountToBeClaimed(am))
+                .catch((e) => {
+                  console.log(e);
+                });
               setStep(ClaimSteps.SubmitClaim);
             } finally {
               setLoading(false);
@@ -183,10 +205,15 @@ const PageClaims = () => {
         };
       case ClaimSteps.SubmitClaim: {
         return {
-          label: 'Submit claim',
+          label: `Claim ${amountToBeClaimed}`,
           onClick: async () => {
             try {
               setLoading(true);
+              queryClaim(ethAddress)
+                .then((am) => setAmountToBeClaimed(am))
+                .catch((e) => {
+                  console.log(e);
+                });
               const hash = await submitClaim(ss58Address!, hexToU8a(sig));
               console.log(hash);
               setStep(ClaimSteps.GenerateClaim);
@@ -199,8 +226,28 @@ const PageClaims = () => {
         };
       }
     }
-  }, [submitClaim, step, setSig, sig, generateSignature, loading, ss58Address, switchToPolkadotWallet, validProvider]);
-
+  }, [
+    submitClaim,
+    canClaim,
+    step,
+    setSig,
+    sig,
+    generateSignature,
+    loading,
+    ss58Address,
+    switchToPolkadotWallet,
+    validProvider,
+    amountToBeClaimed,
+  ]);
+  useEffect(() => {
+    if (ethAddress) {
+      queryClaim(ethAddress)
+        .then((am) => setAmountToBeClaimed(am))
+        .catch((e) => {
+          console.log(e);
+        });
+    }
+  }, [queryClaim, ethAddress, validProvider]);
   const showAddressButton = step === ClaimSteps.GenerateClaim;
 
   return (

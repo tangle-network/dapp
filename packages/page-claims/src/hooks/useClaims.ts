@@ -53,7 +53,7 @@ export function useClaims() {
     }
   }, [activeApi]);
 
-  const generateSignature = useCallback(async () => {
+  const generateSignature = useCallback(async (): Promise<{ sig: string; account: string }> => {
     if (activeApi) {
       const isWeb3 = activeApi instanceof WebbWeb3Provider;
       if (!isWeb3) {
@@ -70,7 +70,7 @@ export function useClaims() {
       }
 
       const signature = await activeApi.sign(parsedAddress);
-      return signature as string;
+      return signature;
     } else {
       throw new Error('No active api');
     }
@@ -83,6 +83,7 @@ export function useClaims() {
     const wallet = wallets[WalletId.Polkadot];
     await switchChain(chain, wallet);
   };
+
   const submitClaim = async (address: string, claim: Uint8Array) => {
     if (activeApi) {
       const hash = await activeApi.methods.claim.core.claim(address, claim);
@@ -91,8 +92,20 @@ export function useClaims() {
       throw new Error('No active api');
     }
   };
+
+  const queryClaim = useCallback(
+    async (address: string) => {
+      if (activeApi && activeApi.methods.claim.enabled) {
+        return activeApi.methods.claim.core.getClaim(address);
+      } else {
+        throw new Error('No active api');
+      }
+    },
+    [activeApi]
+  );
   return {
     generateSignature,
+    queryClaim,
     submitClaim,
     switchToPolkadotWallet,
     address,
