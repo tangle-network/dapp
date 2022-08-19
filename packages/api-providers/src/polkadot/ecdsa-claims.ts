@@ -14,7 +14,7 @@ export class PolkadotECDSAClaims extends ECDSAClaims<WebbPolkadot> {
       },
       [destAccount, claim]
     );
-    const txHash = await tx.call(account.address);
+    const txHash = await tx.call(null);
     return txHash;
   }
 }

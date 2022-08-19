@@ -9,6 +9,7 @@ import { ethers } from 'ethers';
 import Web3 from 'web3';
 import { AbstractProvider } from 'web3-core';
 
+import { TypeRegistry } from '@polkadot/types';
 import { hexToU8a, u8aToHex } from '@polkadot/util';
 
 import { ProvideCapabilities } from '../../';
@@ -203,74 +204,10 @@ export class Web3Provider<T = unknown> {
     });
   }
 
-  private get_singable_message(prefix: string, bytes: number[]): number[] {
-    const utf8Encode = new TextEncoder();
-    const prefixBytes = Array.from(utf8Encode.encode(prefix));
-    const messageData = bytes;
-    let size = prefixBytes.length + messageData.length;
-    const rev = [];
-    while (size > 0) {
-      let entry = Buffer.from(`${size % 10}`).readInt8();
-      rev.push(entry);
-      size /= 10;
-      size = Math.floor(size);
-    }
-    let eth_message = Array.from(utf8Encode.encode('\x19Ethereum Signed Message:\n'));
-    const ordered = [...rev].reverse();
-    ordered.forEach((entry) => {
-      eth_message.push(entry);
-    });
-    prefixBytes.forEach((entry) => {
-      eth_message.push(entry);
-    });
-    messageData.forEach((entry) => {
-      eth_message.push(entry);
-    });
-    return eth_message;
-  }
-
-  private to_ascii_hex(bytes: number[]): number[] {
-    const output: number[] = [];
-    const pushNibble = (n: number) => {
-      if (n < 10) {
-        let entry = Buffer.from(`${n}`).readUInt8();
-        output.push(entry);
-      } else {
-        const buf = Buffer.from('a');
-        const value = buf.readInt8() - 10 + n;
-        console.log(`value ${value} floored ${Math.floor(value)}`);
-        // output.push(Math.floor(buf.readInt8() - 10 + n));
-        output.push(Math.floor(value));
-      }
-    };
-
-    bytes.forEach((byte) => {
-      pushNibble(byte / 16);
-      pushNibble(byte % 16);
-    });
-    return output;
-  }
-
-  private encode(bytes: number[]): number[] {
-    let prefix = 128;
-    let output = [prefix];
-    const push = (val: number) => {
-      output.push(...[val, 0, 0, 0]);
-    };
-    bytes.forEach((bit) => push(bit));
-    return output;
-  }
-
-  sign(payload: `0x${string}`, account: string): Promise<string> {
-    const prefix = `Pay RUSTs to the TEST account:`;
-    const bytes = Array.from(hexToU8a(payload));
-    const encodedPayload = this.encode(bytes);
-    const asciiAccount = this.to_ascii_hex(encodedPayload);
-    const message = this.get_singable_message(prefix, asciiAccount);
-    const messageToSign = Uint8Array.from(message);
-    console.log({
-      messageToSign,
-    });
-    return this._inner.eth.personal.sign(u8aToHex(messageToSign), account, undefined);
+  async sign(payload: `0x${string}`, account: string): Promise<string> {
+    const prefix = `Pay TNTs to the Tangle account:`;
+    const messageToSign = `${prefix}${payload.replace('0x', '')}`;
+    const sig = await this._inner.eth.personal.sign(messageToSign, account, undefined as any);
+    return sig;
   }
 }

@@ -10,7 +10,7 @@ import React, { useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
 import { decodeAddress, encodeAddress } from '@polkadot/keyring';
-import { u8aToString } from '@polkadot/util';
+import { hexToU8a, u8aToString } from '@polkadot/util';
 
 const PageClaimsWrapper = styled.section`
   display: flex;
@@ -187,8 +187,7 @@ const PageClaims = () => {
           onClick: async () => {
             try {
               setLoading(true);
-              const hash = await submitClaim(ss58Address!, sig);
-              // TODO consume tx hash
+              const hash = await submitClaim(ss58Address!, hexToU8a(sig));
               console.log(hash);
               setStep(ClaimSteps.GenerateClaim);
             } catch (e) {
@@ -203,7 +202,6 @@ const PageClaims = () => {
   }, [step, setSig, sig, isValidKey, generateSignature, loading, ss58Address]);
 
   const showAddressButton = step === ClaimSteps.GenerateClaim;
-  const showSig = step === ClaimSteps.ConnectToPolkadotProvider;
 
   return (
     <PageClaimsWrapper>
