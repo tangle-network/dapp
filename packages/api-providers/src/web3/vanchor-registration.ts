@@ -4,7 +4,7 @@ import { WebbWeb3Provider } from './webb-provider';
 
 export class Web3VAnchorRegistration extends VAnchorRegistration<WebbWeb3Provider> {
   // Check if the evm address and public key pairing has already registered.
-  async isPairingRegistered(anchorAddress: string, account: string, pubkey: string): Promise<boolean> {
+  async isPairRegistered(anchorAddress: string, account: string, pubkey: string): Promise<boolean> {
     // Check the localStorage for now.
     // TODO: Implement a query on relayers?
     const registration = await registrationStorageFactory(account);

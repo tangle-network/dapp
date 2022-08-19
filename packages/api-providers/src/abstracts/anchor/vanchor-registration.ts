@@ -15,7 +15,7 @@ export abstract class VAnchorRegistration<T extends WebbApiProvider<any>> extend
   }
 
   // A function to check if the (account, public key) pair is registered.
-  abstract isPairingRegistered(target: string, account: string, pubkey: string): Promise<boolean>;
+  abstract isPairRegistered(target: string, account: string, pubkey: string): Promise<boolean>;
   // A function to register an account. It will return true if the account was registered, and false otherwise.
   abstract register(target: string, account: string, pubkey: string): Promise<boolean>;
 }

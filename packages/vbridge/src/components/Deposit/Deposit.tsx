@@ -125,7 +125,7 @@ export const Deposit: React.FC<DepositProps> = () => {
       const currentTarget =
         activeApi.state.activeBridge.targets[calculateTypedChainId(activeChain.chainType, activeChain.chainId)]!;
       activeApi.methods.variableAnchor.registration.inner
-        .isPairingRegistered(currentTarget, activeAccount.address, pubkey)
+        .isPairRegistered(currentTarget, activeAccount.address, pubkey)
         .then((res) => {
           if (res != registered) {
             setRegistration(res);
