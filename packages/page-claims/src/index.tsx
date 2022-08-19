@@ -134,28 +134,30 @@ type ClaimedModalProps = {
 const ClaimSuccessModal: React.FC<ClaimedModalProps> = ({ amount, ethAddress, onClose, open, txHash }) => {
   return (
     <Modal open={open}>
-      <div>
-        <Typography variant='h3'>Claim Success</Typography>
+      <PaddingBox padding={20}>
+        <div>
+          <Typography variant='h3'>Claim Success</Typography>
+          <SpaceBox height={10} />
+          <PaddingBox padding={10}>
+            <Typography>Your claim request for {ethAddress} has been successfully submitted.</Typography>
+            <Typography>You have received {amount}</Typography>
+            <Typography>TX hash :{txHash}</Typography>
+          </PaddingBox>
+        </div>
+
         <SpaceBox height={10} />
-        <PaddingBox padding={10}>
-          <Typography>Your claim request for {ethAddress} has been successfully submitted.</Typography>
-          <Typography>You have received {amount}</Typography>
-          <Typography>TX hash :{txHash}</Typography>
-        </PaddingBox>
-      </div>
 
-      <SpaceBox height={10} />
-
-      <div className={'cancel-button-container'}>
-        <Button
-          onClick={() => {
-            onClose();
-          }}
-          className={'cancel-button'}
-        >
-          Ok
-        </Button>
-      </div>
+        <div className={'cancel-button-container'}>
+          <Button
+            onClick={() => {
+              onClose();
+            }}
+            className={'cancel-button'}
+          >
+            Ok
+          </Button>
+        </div>
+      </PaddingBox>
     </Modal>
   );
 };
