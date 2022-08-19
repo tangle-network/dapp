@@ -56,6 +56,10 @@ export class WebbWeb3Provider
     // There are no relay chain methods for Web3 chains
     this.relayChainMethods = null;
     this.methods = {
+      claim: {
+        enabled: false,
+        core: {} as any,
+      },
       bridgeApi: new Web3BridgeApi(this),
       chainQuery: new Web3ChainQuery(this),
       mixer: {
