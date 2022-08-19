@@ -129,9 +129,9 @@ type ClaimedModalProps = {
   ethAddress: string;
   amount: string;
   txHash: string;
-  close: () => void;
+  onClose: () => void;
 };
-const ClaimSuccessModal: React.FC<ClaimedModalProps> = ({ amount, close, ethAddress, open, txHash }) => {
+const ClaimSuccessModal: React.FC<ClaimedModalProps> = ({ amount, ethAddress, onClose, open, txHash }) => {
   return (
     <Modal open={open}>
       <div>
@@ -149,7 +149,7 @@ const ClaimSuccessModal: React.FC<ClaimedModalProps> = ({ amount, close, ethAddr
       <div className={'cancel-button-container'}>
         <Button
           onClick={() => {
-            close();
+            onClose();
           }}
           className={'cancel-button'}
         >
@@ -224,7 +224,7 @@ const PageClaims = () => {
         };
       case ClaimSteps.ConnectToPolkadotProvider:
         return {
-          label: true ? 'Connect to Polkadot Provider' : 'Regenerate sig',
+          label: 'Connect to Polkadot Provider',
           disabled: loading,
           onClick: async () => {
             // TODO: make this work once we have multiple providers
@@ -237,7 +237,7 @@ const PageClaims = () => {
             setLoading(true);
             try {
               await switchToPolkadotWallet();
-              queryClaim(ethAddress)
+              queryClaim(ethAddress!)
                 .then((am) => setAmountToBeClaimed(am))
                 .catch((e) => {
                   console.log(e);
@@ -259,7 +259,7 @@ const PageClaims = () => {
                 ...c,
                 open: true,
                 txHash: hash,
-                ethAddress: ethAddress,
+                ethAddress: ethAddress ?? '',
                 amount: `${amountToBeClaimed} WEBB`,
               }));
               setStep(ClaimSteps.GenerateClaim);
@@ -273,9 +273,9 @@ const PageClaims = () => {
       }
     }
   }, [
+    queryClaim,
     ethAddress,
     submitClaim,
-    canClaim,
     step,
     setSig,
     sig,
