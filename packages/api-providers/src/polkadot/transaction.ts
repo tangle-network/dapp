@@ -82,7 +82,7 @@ export class PolkadotTx<P extends Array<any>> extends EventBus<PolkadotTXEvents>
     super();
   }
 
-  async call(signAddress: AddressOrPair) {
+  async call(signAddress: AddressOrPair | null) {
     const api = this.apiPromise;
 
     for (let i = 0; i < this.paths.length; i++) {
@@ -101,39 +101,39 @@ export class PolkadotTx<P extends Array<any>> extends EventBus<PolkadotTXEvents>
       this.notificationKey = uniqueId(`${path.section}-${path.method}`);
     }
 
-    if ((signAddress as IKeyringPair)?.address === undefined) {
+    if (signAddress && (signAddress as IKeyringPair)?.address === undefined) {
       const injector = this.injectedExtension;
 
       api.setSigner(injector.signer);
     }
 
     let txResults: any;
-    if (this.paths.length === 0) {
+    if (this.paths.length === 1) {
       const path = this.paths[0];
       const parms = this.parms[0];
 
-      txResults = await api.tx[path.section][path.method](...parms).signAsync(signAddress, {
-        nonce: -1,
-      });
+      txResults = signAddress
+        ? await api.tx[path.section][path.method](...parms).signAsync(signAddress, {
+            nonce: -1,
+          })
+        : api.tx[path.section][path.method](...parms);
     } else {
       const parms = this.parms;
       const txs = this.paths.map((path, index) => {
         return api.tx[path.section][path.method](...parms[index]);
       });
-      txResults = await api.tx.utility.batch(txs).signAsync(signAddress, {
-        nonce: -1,
-      });
+      txResults = signAddress
+        ? await api.tx.utility.batch(txs).signAsync(signAddress, {
+            nonce: -1,
+          })
+        : api.tx.utility.batch(txs);
     }
 
     await this.emitWithPayload('beforeSend', undefined);
     await this.emitWithPayload('loading', '');
     const hash = txResults.hash.toString();
 
-    try {
-      await this.send(txResults);
-    } catch (error) {
-      console.log(error);
-    }
+    await this.send(txResults);
 
     await this.emitWithPayload('afterSend', undefined);
     this.transactionAddress = null;
@@ -266,7 +266,9 @@ export class PolkaTXBuilder {
       : `${path[0].section}:${path[0].method}`;
     tx.on('loading', (data) => {
       handler({
-        description: `${data.address.substring(0, 10)}...${data.address.substring(36)}`,
+        description: data.address
+          ? `${data.address.substring(0, 10)}...${data.address.substring(36)}`
+          : 'Unsigned transaction',
         key: data.key,
         level: 'loading',
         message: notificationMessage,
@@ -277,10 +279,12 @@ export class PolkaTXBuilder {
 
     tx.on('finalize', (data) => {
       handler({
-        description: `${data.address.substring(0, 10)}...${data.address.substring(36)}`,
+        description: data.address
+          ? `${data.address.substring(0, 10)}...${data.address.substring(36)}`
+          : 'Unsigned transaction',
         key: data.key,
         level: 'success',
-        message: notificationMessage,
+        message: `${data.path.section}:${data.path.method}`,
         name: 'Transaction',
         persist: true,
       });

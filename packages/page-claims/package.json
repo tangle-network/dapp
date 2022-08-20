@@ -1,11 +1,11 @@
 {
-  "name": "@webb-dapp/page-mixer",
+  "name": "@webb-dapp/page-claims",
   "version": "0.2.1-beta.1",
-  "description": "mixer page",
+  "description": "Page for Webb claims",
   "main": "index.js",
   "author": "Webb Developers <drew@webb.tools>",
   "homepage": "https://github.com/webb-tools/webb-dapp#readme",
   "dependencies": {
-    "@webb-tools/sdk-core": "0.1.4-95"
+    "tinycolor2": "^1.4.2"
   }
 }

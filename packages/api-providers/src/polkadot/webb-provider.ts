@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 import '@webb-tools/types';
 
+import { PolkadotECDSAClaims } from '@webb-dapp/api-providers/polkadot/ecdsa-claims';
 import { EventBus } from '@webb-tools/app-util';
 import { calculateTypedChainId, ChainType } from '@webb-tools/sdk-core';
 
@@ -71,6 +72,10 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
     this.methods = {
       bridgeApi: new PolkadotBridgeApi(this),
       chainQuery: new PolkadotChainQuery(this),
+      claim: {
+        core: new PolkadotECDSAClaims(this),
+        enabled: true,
+      },
       mixer: {
         deposit: {
           enabled: true,
