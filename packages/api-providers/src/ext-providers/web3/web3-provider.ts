@@ -4,14 +4,19 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
 import WalletConnectProvider from '@walletconnect/web3-provider';
+import { Buffer } from 'buffer';
 import { ethers } from 'ethers';
 import Web3 from 'web3';
 import { AbstractProvider } from 'web3-core';
+
+import { TypeRegistry } from '@polkadot/types';
+import { hexToU8a, u8aToHex } from '@polkadot/util';
 
 import { ProvideCapabilities } from '../../';
 import { WebbError, WebbErrorCodes } from '../../webb-error';
 
 export type AddToken = { address: string; symbol: string; decimals: number; image: string };
+
 export interface AddEthereumChainParameter {
   chainId: string; // A 0x-prefixed hexadecimal string
   chainName: string;
@@ -35,6 +40,7 @@ export interface ClientMetaData {
   icons: string[];
   name: string;
 }
+
 /**
  * Web3Provider a wrapper class for many views of the web3 provider
  * @param helperApi - An api used to do functionalities other than Web3 Ex: WalletConnect.
@@ -196,5 +202,10 @@ export class Web3Provider<T = unknown> {
         type: 'ERC20', // Initially only supports ERC20, but eventually more!
       },
     });
+  }
+
+  async sign(message: string, account: string): Promise<string> {
+    const sig = await this._inner.eth.personal.sign(message, account, undefined as any);
+    return sig;
   }
 }
