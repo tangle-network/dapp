@@ -12,6 +12,7 @@ const PageWrapUnwrap = lazy(() => import('@webb-dapp/page-wrap-unwrap'));
 const PageCrowdloan = lazy(() => import('@webb-dapp/page-crowdloan'));
 const PageStatistics = lazy(() => import('@webb-dapp/page-statistics'));
 const PageGovernance = lazy(() => import('@webb-dapp/page-governance'));
+const PageClaims = lazy(() => import('@webb-dapp/page-claims'));
 
 const animations = {
   initial: { x: -230, opacity: 0.5 },
@@ -141,6 +142,15 @@ export const config: RouterConfigData[] = [
         ),
         path: 'governance/substrate-democracy/*',
         title: 'Substrate Democracy',
+      },
+      {
+        element: (
+          <CSuspense>
+            <PageClaims />
+          </CSuspense>
+        ),
+        path: 'claims/*',
+        title: 'ECDSA Claims',
       },
       {
         path: '*',

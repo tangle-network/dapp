@@ -76,7 +76,7 @@ export class PolkadotTx<P extends Array<any>> extends EventBus<PolkadotTXEvents>
     super();
   }
 
-  async call(signAddress: AddressOrPair) {
+  async call(signAddress: AddressOrPair | null) {
     const api = this.apiPromise;
 
     for (let i = 0; i < this.path.length; i++) {
@@ -95,7 +95,7 @@ export class PolkadotTx<P extends Array<any>> extends EventBus<PolkadotTXEvents>
       this.notificationKey = uniqueId(`${path.section}-${path.method}`);
     }
 
-    if ((signAddress as IKeyringPair)?.address === undefined) {
+    if (signAddress && (signAddress as IKeyringPair)?.address === undefined) {
       // passed an account id or string of address
       const { web3FromAddress } = await import('@polkadot/extension-dapp');
       const injector = await web3FromAddress(signAddress as string);
@@ -104,21 +104,25 @@ export class PolkadotTx<P extends Array<any>> extends EventBus<PolkadotTXEvents>
     }
 
     let txResults: any;
-    if (this.path.length === 0) {
+    if (this.path.length === 1) {
       const path = this.path[0];
       const parms = this.parms[0];
 
-      txResults = await api.tx[path.section][path.method](...parms).signAsync(signAddress, {
-        nonce: -1,
-      });
+      txResults = signAddress
+        ? await api.tx[path.section][path.method](...parms).signAsync(signAddress, {
+            nonce: -1,
+          })
+        : api.tx[path.section][path.method](...parms);
     } else {
       const parms = this.parms;
       const txs = this.path.map((path, index) => {
         return api.tx[path.section][path.method](...parms[index]);
       });
-      txResults = await api.tx.utility.batch(txs).signAsync(signAddress, {
-        nonce: -1,
-      });
+      txResults = signAddress
+        ? await api.tx.utility.batch(txs).signAsync(signAddress, {
+            nonce: -1,
+          })
+        : api.tx.utility.batch(txs);
     }
 
     await this.emitWithPayload('beforeSend', undefined);
@@ -254,7 +258,9 @@ export class PolkaTXBuilder {
       : `${path[0].section}:${path[0].method}`;
     tx.on('loading', (data) => {
       handler({
-        description: `${data.address.substring(0, 10)}...${data.address.substring(36)}`,
+        description: data.address
+          ? `${data.address.substring(0, 10)}...${data.address.substring(36)}`
+          : 'Unsigned transaction',
         key: data.key,
         level: 'loading',
         message: notificationMessage,
@@ -265,10 +271,12 @@ export class PolkaTXBuilder {
 
     tx.on('finalize', (data) => {
       handler({
-        description: `${data.address.substring(0, 10)}...${data.address.substring(36)}`,
+        description: data.address
+          ? `${data.address.substring(0, 10)}...${data.address.substring(36)}`
+          : 'Unsigned transaction',
         key: data.key,
         level: 'success',
-        message: notificationMessage,
+        message: `${data.path.section}:${data.path.method}`,
         name: 'Transaction',
         persist: true,
       });
