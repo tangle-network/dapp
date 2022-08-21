@@ -12,7 +12,7 @@ export interface TypedChainId {
 export enum SubstrateChainId {
   Edgeware = 7,
   ProtocolSubstrateStandalone = 1080,
-  LocalTangleStandalone = 1081, // Used for EggNet Standalone test deployment
+  LocalTangleStandalone = 1081, // Used for Tangle Standalone test deployment
   Kusama = 2,
   Polkadot = 0,
 }
