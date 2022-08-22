@@ -1,13 +1,13 @@
 // @ts-nocheck
 import React, { ReactNode } from 'react';
 
-import * as ArrowPixelIcon from './assets/arrow-pixel.svg';
-import * as CheckedCircleIcon from './assets/checked-circle.svg';
-import * as CloseIconSvg from './assets/close.svg';
-import * as CopyIcon from './assets/copy.svg';
-import * as EditIcon from './assets/edit.svg';
-import * as SwapIcon from './assets/swap.svg';
-import * as SwitchIcon from './assets/switch.svg';
+import ArrowPixelIcon from './assets/arrow-pixel.svg';
+import CheckedCircleIcon from './assets/checked-circle.svg';
+import CloseIconSvg from './assets/close.svg';
+import CopyIcon from './assets/copy.svg';
+import EditIcon from './assets/edit.svg';
+import SwapIcon from './assets/swap.svg';
+import SwitchIcon from './assets/switch.svg';
 
 export { CloseIconSvg, CopyIcon, CheckedCircleIcon, EditIcon, SwapIcon, SwitchIcon, ArrowPixelIcon };
 export { default as CloseIcon } from './assets/CloseIcon';
