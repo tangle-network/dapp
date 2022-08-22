@@ -55,6 +55,11 @@ export const sideBarConfig: SidebarConfig = {
         },
       ],
     },
+    {
+      name: 'ECDSA Claims',
+      icon: <GovernancePageLogo />,
+      path: 'claims',
+    },
   ],
   socialPlatforms: [
     {

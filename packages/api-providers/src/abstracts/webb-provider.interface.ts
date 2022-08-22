@@ -1,6 +1,7 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
+import { ECDSAClaims } from '@webb-dapp/api-providers/abstracts/ecdsa-claims';
 import { EventBus } from '@webb-tools/app-util';
 
 import { AccountsAdapter } from '../account/Accounts.adapter';
@@ -36,6 +37,11 @@ export interface WebbMethods<T extends WebbApiProvider<any>> {
   //
   // Methods for querying information about the current bridge
   bridgeApi: BridgeApi<T>;
+  // Calaims
+  claim: {
+    core: ECDSAClaims<T>;
+    enabled: boolean;
+  };
 }
 
 export type WebbMethod<T extends EventBus<K>, K extends Record<string, unknown>> = {

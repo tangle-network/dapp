@@ -84,6 +84,11 @@
 			],
 			"@webb-dapp/page-statistics": [
 				"page-statistics/src"
+			],"@webb-dapp/page-claims/*": [
+				"page-claims/src/*"
+			],
+			"@webb-dapp/page-claims": [
+				"page-claims/src"
 			],
 			"@webb-dapp/vbridge/*": [
 				"vbridge/src/*"

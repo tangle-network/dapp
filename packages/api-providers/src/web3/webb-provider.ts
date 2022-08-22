@@ -20,6 +20,8 @@ import {
   NotificationHandler,
   Storage,
   WebbApiProvider,
+  WebbError,
+  WebbErrorCodes,
   WebbMethods,
   WebbProviderEvents,
 } from '../';
@@ -57,6 +59,10 @@ export class WebbWeb3Provider
     // There are no relay chain methods for Web3 chains
     this.relayChainMethods = null;
     this.methods = {
+      claim: {
+        enabled: false,
+        core: {} as any,
+      },
       bridgeApi: new Web3BridgeApi(this),
       chainQuery: new Web3ChainQuery(this),
       mixer: {
@@ -296,5 +302,21 @@ export class WebbWeb3Provider
           throw switchError;
         }
       });
+  }
+
+  async sign(message: string): Promise<{
+    sig: string;
+    account: string;
+  }> {
+    const acc = this.ethersProvider.getSigner();
+    const address = await acc.getAddress();
+    if (!acc) {
+      throw WebbError.from(WebbErrorCodes.NoAccountAvailable);
+    }
+    const sig = await this.web3Provider.sign(message, address);
+    return {
+      sig,
+      account: address,
+    };
   }
 }

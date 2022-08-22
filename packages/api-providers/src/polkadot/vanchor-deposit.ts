@@ -107,7 +107,7 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
 
   async deposit(depositPayload: DepositPayload): Promise<VAnchorDepositResults> {
     const wrappableAssetRaw = Number(depositPayload.params[1]);
-    const wrapAndDepositFlow = typeof depositPayload.params[1] !== 'undefined';
+    const wrapAndDepositFlow = typeof depositPayload.params[1] !== 'undefined' && !Number.isNaN(wrappableAssetRaw);
 
     // Validate if the provider is ready for a new deposit
     switch (this.state) {

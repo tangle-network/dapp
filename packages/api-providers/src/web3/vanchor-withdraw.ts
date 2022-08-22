@@ -31,7 +31,7 @@ import {
   VAnchorWithdraw,
   VAnchorWithdrawResult,
 } from '../abstracts';
-import { generateCircomCommitment, utxoFromVAnchorNote } from '../contracts/wrappers';
+import { generateCircomCommitment, utxoFromVAnchorNote, VAnchorContract } from '../contracts/wrappers';
 import { Web3Provider } from '../ext-providers/web3/web3-provider';
 import { fetchVariableAnchorKeyForEdges, fetchVariableAnchorWasmForEdges } from '../ipfs/evm/anchors';
 import { bridgeStorageFactory, getEVMChainName, keypairStorageFactory } from '../utils';
@@ -86,7 +86,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
       // set the destination contract
       const destChainIdType = calculateTypedChainId(ChainType.EVM, activeChain);
       const destAddress = activeBridge.targets[destChainIdType]!;
-      const destVAnchor = await this.inner.getVariableAnchorByAddress(destAddress);
+      const destVAnchor = this.inner.getVariableAnchorByAddress(destAddress);
       const treeHeight = await destVAnchor._contract.levels();
 
       // Create the proving manager - zk fixtures are fetched depending on the contract
@@ -118,65 +118,17 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
       let inputUtxos: Utxo[] = [];
       this.cancelToken.throwIfCancel();
 
-      // For all notes, get any leaves
+      // For all notes, get any leaves in parallel
       this.emit('stateChange', TransactionState.FetchingLeaves);
-      for (const note of notes) {
-        const parsedNote = (await Note.deserialize(note)).note;
-        sumInputNotes = BigNumber.from(parsedNote.amount).add(sumInputNotes);
+      const notesLeaves = await Promise.all(
+        notes.map((note) => this.fetchNoteLeaves(note, leavesMap, destVAnchor, treeHeight))
+      );
 
-        // fetch leaves if we don't have them
-        if (leavesMap[parsedNote.sourceChainId] === undefined) {
-          // Set up a provider for the source chain
-          const sourceAddress = parsedNote.sourceIdentifyingData;
-          const sourceChainConfig = this.config.chains[Number(parsedNote.sourceChainId)];
-          const sourceHttpProvider = Web3Provider.fromUri(sourceChainConfig.url);
-          const sourceEthers = sourceHttpProvider.intoEthersProvider();
-          const sourceVAnchor = await this.inner.getVariableAnchorByAddressAndProvider(sourceAddress, sourceEthers);
-          const leafStorage = await bridgeStorageFactory(Number(parsedNote.sourceChainId));
-          const leaves = await this.inner.getVariableAnchorLeaves(sourceVAnchor, leafStorage, abortSignal);
-
-          leavesMap[parsedNote.sourceChainId] = leaves.map((leaf) => {
-            return hexToU8a(leaf);
-          });
-        }
-
-        let destHistorySourceRoot: string;
-
-        // Get the latest root that has been relayed from the source chain to the destination chain
-        if (parsedNote.sourceChainId === parsedNote.targetChainId) {
-          const destRoot = await destVAnchor.inner.getLastRoot();
-          destHistorySourceRoot = destRoot;
-        } else {
-          const edgeIndex = await destVAnchor.inner.edgeIndex(parsedNote.sourceChainId);
-          const edge = await destVAnchor.inner.edgeList(edgeIndex);
-          destHistorySourceRoot = edge[1];
-        }
-
-        const testMerkleTree = new MerkleTree(
-          treeHeight,
-          leavesMap[parsedNote.sourceChainId].map((leaf) => u8aToHex(leaf))
-        );
-
-        console.log('root of recreated merkle tree', testMerkleTree.root().toHexString());
-        console.log('root of merkle tree on source configured on the dest chain: ', destHistorySourceRoot);
-
-        // Remove leaves from the leaves map which have not yet been relayed
-        const provingTree = MerkleTree.createTreeWithRoot(
-          treeHeight,
-          leavesMap[parsedNote.sourceChainId].map((leaf) => u8aToHex(leaf)),
-          destHistorySourceRoot
-        );
-        if (!provingTree) {
-          throw new Error('fetched leaves do not match bridged anchor state');
-        }
-        const provingLeaves = provingTree.elements().map((el) => hexToU8a(el.toHexString()));
-        leavesMap[parsedNote.sourceChainId] = provingLeaves;
-        const commitment = generateCircomCommitment(parsedNote);
-        const leafIndex = provingTree.getIndexByElement(commitment);
+      notesLeaves.forEach(({ amount, leafIndex, utxo }) => {
+        sumInputNotes = sumInputNotes.add(amount);
         leafIndices.push(leafIndex);
-        const utxo = await utxoFromVAnchorNote(parsedNote, leafIndex);
         inputUtxos.push(utxo);
-      }
+      });
 
       const randomKeypair = new Keypair();
 
@@ -472,6 +424,70 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
     return {
       txHash: txHash,
       outputNotes: changeNotes,
+    };
+  }
+
+  private async fetchNoteLeaves(
+    note: string,
+    leavesMap: Record<string, Uint8Array[]>,
+    destVAnchor: VAnchorContract,
+    treeHeight: number
+  ): Promise<{ leafIndex: number; utxo: Utxo; amount: BigNumber }> {
+    const abortSignal = this.cancelToken.abortSignal;
+    const parsedNote = (await Note.deserialize(note)).note;
+    const amount = BigNumber.from(parsedNote.amount);
+
+    // fetch leaves if we don't have them
+    if (leavesMap[parsedNote.sourceChainId] === undefined) {
+      // Set up a provider for the source chain
+      const sourceAddress = parsedNote.sourceIdentifyingData;
+      const sourceChainConfig = this.config.chains[Number(parsedNote.sourceChainId)];
+      const sourceHttpProvider = Web3Provider.fromUri(sourceChainConfig.url);
+      const sourceEthers = sourceHttpProvider.intoEthersProvider();
+      const sourceVAnchor = this.inner.getVariableAnchorByAddressAndProvider(sourceAddress, sourceEthers);
+      const leafStorage = await bridgeStorageFactory(Number(parsedNote.sourceChainId));
+      const leaves = await this.inner.getVariableAnchorLeaves(sourceVAnchor, leafStorage, abortSignal);
+
+      leavesMap[parsedNote.sourceChainId] = leaves.map((leaf) => {
+        return hexToU8a(leaf);
+      });
+    }
+
+    let destHistorySourceRoot: string;
+
+    // Get the latest root that has been relayed from the source chain to the destination chain
+    if (parsedNote.sourceChainId === parsedNote.targetChainId) {
+      const destRoot = await destVAnchor.inner.getLastRoot();
+      destHistorySourceRoot = destRoot;
+    } else {
+      const edgeIndex = await destVAnchor.inner.edgeIndex(parsedNote.sourceChainId);
+      const edge = await destVAnchor.inner.edgeList(edgeIndex);
+      destHistorySourceRoot = edge[1];
+    }
+
+    // Remove leaves from the leaves map which have not yet been relayed
+    const provingTree = MerkleTree.createTreeWithRoot(
+      treeHeight,
+      leavesMap[parsedNote.sourceChainId].map((leaf) => u8aToHex(leaf)),
+      destHistorySourceRoot
+    );
+
+    if (!provingTree) {
+      console.log('fetched leaves do not match bridged anchor state');
+      throw new Error('fetched leaves do not match bridged anchor state');
+    }
+
+    const provingLeaves = provingTree.elements().map((el) => hexToU8a(el.toHexString()));
+    leavesMap[parsedNote.sourceChainId] = provingLeaves;
+    const commitment = generateCircomCommitment(parsedNote);
+    const leafIndex = provingTree.getIndexByElement(commitment);
+    console.log('Create Utxo', leafIndex);
+    const utxo = await utxoFromVAnchorNote(parsedNote, leafIndex);
+
+    return {
+      leafIndex,
+      utxo,
+      amount,
     };
   }
 }
