@@ -271,7 +271,7 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
         }
 
         default: {
-          throw new Error('Unknown wallet');
+          throw WebbError.from(WebbErrorCodes.UnknownWallet);
         }
       }
     }

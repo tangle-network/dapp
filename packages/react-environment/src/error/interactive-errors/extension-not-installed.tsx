@@ -1,5 +1,5 @@
 import { Button, Icon, Typography } from '@mui/material';
-import { InteractiveFeedback, Wallet, WebbErrorCodes } from '@webb-dapp/api-providers';
+import { InteractiveFeedback, Wallet, WebbError, WebbErrorCodes } from '@webb-dapp/api-providers';
 import { WalletId, walletsConfig } from '@webb-dapp/apps/configs';
 import ChromeLogo from '@webb-dapp/apps/configs/logos/ChromeLogo';
 import FireFoxLogo from '@webb-dapp/apps/configs/logos/FireFoxLogo';
@@ -18,7 +18,7 @@ export function getWalletByWebbErrorCodes(code: WebbErrorCodes): Wallet {
       return walletsConfig[WalletId.Talisman];
 
     default:
-      throw new Error('Unknown wallet');
+      throw WebbError.from(WebbErrorCodes.UnknownWallet);
   }
 }
 

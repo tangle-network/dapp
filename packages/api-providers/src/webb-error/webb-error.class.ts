@@ -19,6 +19,8 @@ export enum WebbErrorCodes {
   TalismanExtensionNotInstalled,
   /// MetaMasK extension not installed
   MetaMaskExtensionNotInstalled,
+  /// Unknown wallet
+  UnknownWallet,
   /// Runtime Error on the provider
   InsufficientProviderInterface,
   /// EVM session already ended
@@ -74,61 +76,79 @@ export class WebbError extends Error {
           code,
           message: 'you have switched to unsupported chain',
         };
+
       case WebbErrorCodes.UnselectedChain:
         return {
           code,
           message: 'User did not select the chain',
         };
+
       case WebbErrorCodes.MixerSizeNotFound:
         return {
           code,
           message: 'Mixer size not found in contract',
         };
+
       case WebbErrorCodes.NoAccountAvailable:
         return {
           code,
           message: 'No account available',
         };
+
       case WebbErrorCodes.NoteParsingFailure:
         return {
           code,
           message: 'Failed to parse deposit note',
         };
+
       case WebbErrorCodes.PolkaDotExtensionNotInstalled:
         return {
           code,
           message: 'PolkaDot extension no installed',
         };
+
       case WebbErrorCodes.TalismanExtensionNotInstalled:
         return {
           code,
           message: 'Talisman extension no installed',
         };
+
       case WebbErrorCodes.MetaMaskExtensionNotInstalled:
         return {
           code,
           message: 'MetaMask extension no installed',
         };
+
+      case WebbErrorCodes.UnknownWallet:
+        return {
+          code: WebbErrorCodes.UnknownWallet,
+          message: 'Unknown wallet',
+        };
+
       case WebbErrorCodes.InsufficientProviderInterface:
         return {
           code,
           message: 'switched to insufficient api interface',
         };
+
       case WebbErrorCodes.EVMSessionAlreadyEnded:
         return {
           code,
           message: "Attempt to end session and it' already ended or unknown error",
         };
+
       case WebbErrorCodes.RelayerUnsupportedMixer:
         return {
           code,
           message: 'Attempt to use a relayer which does not support the mixer',
         };
+
       case WebbErrorCodes.RelayerMisbehaving:
         return {
           code,
           message: 'The selected relayer is not operating properly',
         };
+
       case WebbErrorCodes.ChainIdTypeUnformatted:
         return {
           code,
