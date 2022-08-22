@@ -21,6 +21,8 @@ export enum WebbErrorCodes {
   SubWalletExtensionNotInstalled,
   /// MetaMasK extension not installed
   MetaMaskExtensionNotInstalled,
+  /// Unknown wallet
+  UnknownWallet,
   /// Runtime Error on the provider
   InsufficientProviderInterface,
   /// EVM session already ended
@@ -123,6 +125,12 @@ export class WebbError extends Error {
         return {
           code,
           message: 'MetaMask extension no installed',
+        };
+
+      case WebbErrorCodes.UnknownWallet:
+        return {
+          code: WebbErrorCodes.UnknownWallet,
+          message: 'Unknown wallet',
         };
 
       case WebbErrorCodes.InsufficientProviderInterface:
