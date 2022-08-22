@@ -83,7 +83,7 @@ const DisconnectedNoteAccountView: React.FC<NoteAccountDetailsProps> = () => {
               Create Random
             </button>
             <button
-              className='create-metamask-account-button'
+              className='login-metamask-account-button'
               onClick={async () => {
                 const metamask = await Web3Provider.fromExtension();
                 const accounts = await metamask.eth.getAccounts();
@@ -94,7 +94,7 @@ const DisconnectedNoteAccountView: React.FC<NoteAccountDetailsProps> = () => {
                 }
               }}
             >
-              Create with MetaMask
+              Login with MetaMask
             </button>
           </div>
         </>
