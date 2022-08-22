@@ -174,7 +174,7 @@ export class Web3WrapUnwrap extends WrapUnwrap<WebbWeb3Provider> {
             key: 'waiting-approval',
             level: 'info',
             message: 'Waiting for token approval',
-            name: 'Approval',
+            name: 'Transaction',
             persist: true,
           });
           tx = await wrappableTokenInstance.approve(webbGovernedToken.address, amount);

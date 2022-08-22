@@ -1,4 +1,5 @@
 import { Account, AppConfig, Chain, InteractiveFeedback, Wallet, WebbApiProvider } from '@webb-dapp/api-providers';
+import { NoteManager } from '@webb-dapp/api-providers/notes/note-manager';
 import React from 'react';
 
 export interface WebbContextState<T = unknown> {
@@ -8,6 +9,9 @@ export interface WebbContextState<T = unknown> {
   activeApi?: WebbApiProvider<T>;
   activeWallet?: Wallet;
   activeChain?: Chain;
+  noteManager: NoteManager | null;
+  loginNoteAccount(key: string): Promise<NoteManager | null>;
+  logoutNoteAccount(): Promise<void>;
   appConfig: AppConfig;
   accounts: Account[];
   activeAccount: Account | null;
@@ -24,6 +28,13 @@ export const WebbContext = React.createContext<WebbContextState>({
   accounts: [],
   loading: true,
   activeAccount: null,
+  noteManager: null,
+  loginNoteAccount(key: string) {
+    return Promise.resolve(null);
+  },
+  logoutNoteAccount() {
+    return Promise.resolve();
+  },
   isConnecting: false,
   setActiveAccount<T extends Account>(account: T): Promise<void> {
     return Promise.resolve();

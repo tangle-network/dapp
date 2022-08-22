@@ -38,7 +38,7 @@ export function getLeafCount(api: ApiPromise, treeId: number): Promise<number> {
   return api.derive.merkleTreeBn254.getLeafCountForTree(Number(treeId));
 }
 
-export async function getLeaves(api: ApiPromise, treeId: number, start: number, end: number) {
+export async function getLeaves(api: ApiPromise, treeId: number, start: number, end: number): Promise<Uint8Array[]> {
   return api.derive.merkleTreeBn254.getLeavesForTree(treeId, start, end);
 }
 

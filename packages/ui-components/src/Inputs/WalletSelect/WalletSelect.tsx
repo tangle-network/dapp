@@ -67,11 +67,10 @@ export const WalletSelect: React.FC<WalletSelectProps> = ({}) => {
       return name.length > 12 ? name.slice(0, 12) + '..' : name;
     }
 
-    const name = 'Account ';
     const address = selectedAccount?.address ?? '';
     const truncatedAddress = address.toLowerCase().startsWith('0x') ? address.slice(2) : address;
 
-    return (name + truncatedAddress.slice(0, 4)).trim();
+    return truncatedAddress.slice(0, 4).trim();
   }, [selectedAccount, selectedWallet]);
 
   useEffect(() => {

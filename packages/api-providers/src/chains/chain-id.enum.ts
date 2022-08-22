@@ -12,7 +12,7 @@ export interface TypedChainId {
 export enum SubstrateChainId {
   Edgeware = 7,
   ProtocolSubstrateStandalone = 1080,
-  EggStandalone = 1081, // Used for EggNet Standalone test deployment
+  LocalTangleStandalone = 1081, // Used for Tangle Standalone test deployment
   Kusama = 2,
   Polkadot = 0,
 }
@@ -33,8 +33,7 @@ export enum PresetTypedChainId {
   ArbitrumTestnet = 1099512049387,
   PolygonTestnet = 1099511707777,
   ProtocolSubstrateStandalone = 2199023256632,
-  EggStandalone = 2199023256633,
-  EggDevelopStandalone = 2199023256633,
+  LocalTangleStandalone = 2199023256633,
   DkgSubstrateStandalone,
   Kusama = 3307124817922,
   Polkadot = 3302829850624,

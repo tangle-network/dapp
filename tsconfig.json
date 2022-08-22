@@ -27,5 +27,6 @@
 		"jsx": "react-jsx",
 		"baseUrl": "./packages",
 		"skipDefaultLibCheck": true,
+		"downlevelIteration": true,
   }
 }

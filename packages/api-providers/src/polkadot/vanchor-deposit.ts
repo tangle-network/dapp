@@ -140,6 +140,13 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
 
       // output note (Already generated)
       const depositNote = depositPayload.note;
+
+      // Add the note to the noteManager before transaction is sent.
+      // This helps to safeguard the user.
+      if (this.inner.noteManager) {
+        await this.inner.noteManager.addNote(depositPayload.note);
+      }
+
       const { note } = depositNote;
 
       // VAnchor tree id
@@ -199,6 +206,7 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
         publicAmount,
         output: [output1, output2],
       };
+      console.log('vanchorDepositSetup: ', vanchorDepositSetup);
 
       this.cancelToken.throwIfCancel();
       const worker = this.inner.wasmFactory('wasm-utils');
@@ -223,6 +231,9 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
         outputCommitments: data.outputNotes.map((note) => u8aToHex(note.getLeaf())),
         extDataHash: data.extDataHash,
       };
+
+      console.log(vanchorProofData);
+
       this.emit('stateChange', TransactionState.SendingTransaction);
       // Store the next leaf index before insertion
       const leafsCount = await getLeafCount(this.inner.api, treeId);
@@ -274,6 +285,7 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
       const leafIndex = await this.getleafIndex(insertedLeaf, predictedIndex, treeId);
       // Update the leaf index
       depositNote.mutateIndex(String(leafIndex));
+
       this.emit('stateChange', TransactionState.Done);
       return {
         txHash,
@@ -282,6 +294,9 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
     } catch (e) {
       if (e instanceof WebbError && e.code !== WebbErrorCodes.TransactionCancelled) {
         this.emit('stateChange', TransactionState.Failed);
+        if (this.inner.noteManager) {
+          this.inner.noteManager.removeNote(depositPayload.note);
+        }
       }
       throw e;
     }

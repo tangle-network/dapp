@@ -27,8 +27,7 @@ const ANY_EVM = [
 ];
 
 const ANY_SUBSTRATE = [
-  PresetTypedChainId.EggStandalone,
-  PresetTypedChainId.EggDevelopStandalone,
+  PresetTypedChainId.LocalTangleStandalone,
   PresetTypedChainId.DkgSubstrateStandalone,
   PresetTypedChainId.ProtocolSubstrateStandalone,
   PresetTypedChainId.Kusama,

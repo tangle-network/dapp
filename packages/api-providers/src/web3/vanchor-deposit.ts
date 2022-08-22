@@ -29,7 +29,6 @@ import {
   fetchVariableAnchorKeyForEdges,
   fetchVariableAnchorWasmForEdges,
   getEVMChainName,
-  keypairStorageFactory,
   Web3Provider,
   WebbError,
   WebbErrorCodes,
@@ -50,8 +49,6 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
     const currency = bridge?.currency;
 
     if (!bridge || !currency) {
-      console.log('currency: ', currency);
-      console.log('bridge: ', bridge);
       throw new Error('api not ready');
     }
     // Convert the amount to bn units (i.e. WEI instead of ETH)
@@ -60,20 +57,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
     const sourceEvmId = await this.inner.getChainId();
     const sourceChainId = calculateTypedChainId(ChainType.EVM, sourceEvmId);
 
-    // TODO: Find a better way to manage keypair
-    const keypairStorage = await keypairStorageFactory();
-    const storedKeypair = await keypairStorage.get('keypair');
-
-    let keypair: Keypair;
-
-    if (storedKeypair) {
-      // If keypair was already in storage, use it
-      keypair = new Keypair(storedKeypair.keypair);
-    } else {
-      // Otherwise, create a new keypair and store it
-      keypair = new Keypair();
-      await keypairStorage.set('keypair', { keypair: keypair.privkey });
-    }
+    const keypair = this.inner.noteManager ? this.inner.noteManager.getKeypair() : new Keypair();
 
     // Convert the amount to units of wei
     const depositOutputUtxo = await CircomUtxo.generateUtxo({
@@ -166,7 +150,6 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
       });
 
       const anchors = await this.bridgeApi.getAnchors();
-      console.log(anchors);
 
       // Find the only configurable VAnchor
       const vanchor = anchors.find((anchor) => !anchor.amount);
@@ -226,6 +209,13 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
         });
       }
       this.cancelToken.throwIfCancel();
+
+      // Add the note to the noteManager before transaction is sent.
+      // This helps to safeguard the user.
+      if (this.inner.noteManager) {
+        await this.inner.noteManager.addNote(depositPayload.note);
+      }
+
       this.emit('stateChange', TransactionState.GeneratingZk);
 
       // If a wrappableAsset was selected, perform a wrapAndDeposit
@@ -238,7 +228,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
             key: 'waiting-approval',
             level: 'info',
             message: 'Waiting for token approval',
-            name: 'Approval',
+            name: 'Transaction',
             persist: true,
           });
           const tokenInstance = await ERC20Factory.connect(
@@ -310,10 +300,11 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
             name: 'Transaction',
           });
           this.emit('stateChange', TransactionState.Failed);
+          this.inner.noteManager?.removeNote(depositPayload.note);
+
+          //@ts-ignore
+          return;
         }
-        // TODO throw an error here
-        //@ts-ignore
-        return;
       } else {
         const requiredApproval = await srcVAnchor.isWebbTokenApprovalRequired(amount);
 
@@ -323,7 +314,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
             key: 'waiting-approval',
             level: 'info',
             message: 'Waiting for token approval',
-            name: 'Approval',
+            name: 'Transaction',
             persist: true,
           });
           const tokenInstance = await srcVAnchor.getWebbToken();
@@ -387,6 +378,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
             name: 'Transaction',
           });
 
+          this.inner.noteManager?.removeNote(depositPayload.note);
           this.emit('stateChange', TransactionState.Failed);
         }
       }
@@ -400,6 +392,8 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
           message: `${currency.view.name}:deposit`,
           name: 'Transaction',
         });
+
+        this.inner.noteManager?.removeNote(depositPayload.note);
         this.emit('stateChange', TransactionState.Failed);
       } else {
         this.inner.notificationHandler.remove('waiting-approval');
@@ -410,6 +404,8 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
           message: `${currency.view.name}:deposit`,
           name: 'Transaction',
         });
+
+        this.inner.noteManager?.removeNote(depositPayload.note);
         this.emit('stateChange', TransactionState.Failed);
       }
     }

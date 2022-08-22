@@ -21,6 +21,8 @@ import {
   WebbWeb3Provider,
 } from '@webb-dapp/api-providers';
 import { Bridge } from '@webb-dapp/api-providers/abstracts/state';
+import { NoteManager } from '@webb-dapp/api-providers/notes/note-manager';
+import { keypairStorageFactory, netStorageFactory, noteStorageFactory } from '@webb-dapp/api-providers/utils';
 import {
   anchorsConfig,
   bridgeConfigByAsset,
@@ -35,13 +37,13 @@ import { appEvent } from '@webb-dapp/react-environment/app-event';
 import { insufficientApiInterface } from '@webb-dapp/react-environment/error/interactive-errors/insufficient-api-interface';
 import { DimensionsProvider } from '@webb-dapp/react-environment/layout';
 import { StoreProvider } from '@webb-dapp/react-environment/store';
-import { netStorageFactory, WebbContext } from '@webb-dapp/react-environment/webb-context';
+import { WebbContext } from '@webb-dapp/react-environment/webb-context';
 import { notificationApi } from '@webb-dapp/ui-components/notification';
 import { AccountSwitchNotification } from '@webb-dapp/ui-components/notification/AccountSwitchNotification';
 import { Spinner } from '@webb-dapp/ui-components/Spinner/Spinner';
 import { BareProps } from '@webb-dapp/ui-components/types';
 import { LoggerService } from '@webb-tools/app-util';
-import { calculateTypedChainId, ChainType } from '@webb-tools/sdk-core';
+import { calculateTypedChainId, ChainType, Keypair, Note } from '@webb-tools/sdk-core';
 import { logger } from 'ethers';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -141,6 +143,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
   const [activeApi, setActiveApi] = useState<WebbApiProvider<any> | undefined>(undefined);
   const [loading, setLoading] = useState(true);
   const [networkStorage, setNetworkStorage] = useState<NetworkStorage | null>(null);
+  const [noteManager, setNoteManager] = useState<NoteManager | null>(null);
   // TODO resolve the account inner type issue
   const [accounts, setAccounts] = useState<Array<Account | any>>([]);
   // TODO resolve the account inner type issue
@@ -247,7 +250,6 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
 
       setActiveApi(nextActiveApi);
       nextActiveApi?.on('newAccounts', async (accounts) => {
-        console.log('Found some new accounts!');
         const acs = await accounts.accounts();
         const active = acs[0] || null;
         notificationApi({
@@ -315,6 +317,39 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
     }
   };
 
+  const loginNoteAccount = async (key: string): Promise<NoteManager> => {
+    // Set the keypair
+    const keypairStorage = await keypairStorageFactory();
+    const accountKeypair = new Keypair(key);
+    await keypairStorage.set('keypair', {
+      keypair: key,
+    });
+
+    // create a NoteManager instance
+    const noteStorage = await noteStorageFactory(accountKeypair);
+    const noteManager = await NoteManager.initAndDecryptNotes(noteStorage, accountKeypair);
+
+    // set the noteManager instance on the activeApi if it exists
+    if (activeApi) {
+      activeApi.noteManager = noteManager;
+    }
+
+    setNoteManager(noteManager);
+    return noteManager;
+  };
+
+  const logoutNoteAccount = async () => {
+    const keypairStorage = await keypairStorageFactory();
+    keypairStorage.set('keypair', {
+      keypair: null,
+    });
+    // clear the noteManager instance on the activeApi if it exists
+    if (activeApi) {
+      activeApi.noteManager = null;
+    }
+    setNoteManager(null);
+  };
+
   /// Network switcher
   const switchChain = async (chain: Chain, _wallet: Wallet, _networkStorage?: NetworkStorage | undefined) => {
     const relayerManagerFactory = await getRelayerManagerFactory();
@@ -352,6 +387,9 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
             );
             await setActiveApiWithAccounts(webbPolkadot, chain, _networkStorage ?? networkStorage);
             localActiveApi = webbPolkadot;
+            if (noteManager) {
+              localActiveApi.noteManager = noteManager;
+            }
             setLoading(false);
           }
           break;
@@ -416,6 +454,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
               web3Provider,
               chainId,
               relayerManager,
+              noteManager,
               appConfig,
               notificationHandler,
               () => new Worker(new URL('./circom-proving-manager.worker', import.meta.url))
@@ -598,10 +637,23 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
         _networkStorage.get('defaultNetwork'),
         _networkStorage.get('defaultWallet'),
       ]);
+
+      // NoteManager configuration
+      const keypairStorage = await keypairStorageFactory();
+      const storedKeypair = await keypairStorage.get('keypair');
+      let createdNoteManager: NoteManager | null = null;
+
+      // Create the NoteManager if the stored keypair exists.
+      if (storedKeypair?.keypair) {
+        createdNoteManager = await loginNoteAccount(storedKeypair.keypair);
+        setNoteManager(createdNoteManager);
+      }
+
       /// if there's no chain, return
       if (!net || !wallet) {
         return;
       }
+
       /// chain config by net id
       const chainConfig = chains[net];
 
@@ -611,6 +663,9 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
       const networkDefaultConfig = await _networkStorage.get('networksConfig');
 
       if (activeApi) {
+        if (!activeApi.noteManager) {
+          activeApi.noteManager = createdNoteManager;
+        }
         const accounts = await activeApi.accounts.accounts();
         let defaultAccount = networkDefaultConfig[net]?.defaultAccount;
         defaultAccount = defaultAccount ?? accounts[0]?.address;
@@ -637,7 +692,6 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
       setIsConnecting(false);
     });
     appEvent.on('networkSwitched', async ([chain, wallet]) => {
-      console.log('networkSwitched appEvent!');
       // Set the default network to the last selected network
       const networkStorage = await netStorageFactory();
       await Promise.all([
@@ -660,6 +714,9 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
         loading,
         wallets: walletsConfig,
         chains: chains,
+        noteManager,
+        loginNoteAccount,
+        logoutNoteAccount,
         activeWallet,
         activeChain,
         activeApi,

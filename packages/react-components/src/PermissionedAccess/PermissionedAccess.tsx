@@ -1,7 +1,7 @@
+import { Storage } from '@webb-dapp/api-providers/storage';
 import { useIp, useWebContext } from '@webb-dapp/react-environment';
 import { ContentWrapper } from '@webb-dapp/ui-components/ContentWrappers';
 import { Spinner } from '@webb-dapp/ui-components/Spinner/Spinner';
-import { Storage } from '@webb-dapp/utils';
 import React, { useEffect, useState } from 'react';
 
 import { DisableAdblock } from './DisableAdblock';

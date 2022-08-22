@@ -16,7 +16,7 @@ const InputTitleWrapper = styled(FlexBox).attrs({
 
 export type InputTitleProps = {
   leftLabel?: string | React.ReactNode;
-  rightLabel?: React.ReactNode;
+  rightLabel?: string | React.ReactNode;
 };
 
 export const InputTitle: React.FC<InputTitleProps> = ({ leftLabel, rightLabel }) => {
@@ -25,7 +25,9 @@ export const InputTitle: React.FC<InputTitleProps> = ({ leftLabel, rightLabel })
       <div style={{ marginRight: 'auto' }}>
         {typeof leftLabel === 'string' ? <TextLabel value={leftLabel} /> : leftLabel}
       </div>
-      <div style={{ marginLeft: 'auto' }}>{rightLabel}</div>
+      <div style={{ marginLeft: 'auto' }}>
+        {typeof rightLabel === 'string' ? <TextLabel value={rightLabel} /> : rightLabel}
+      </div>
     </InputTitleWrapper>
   );
 };

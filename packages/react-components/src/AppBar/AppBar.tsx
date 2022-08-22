@@ -9,6 +9,7 @@ import { above, useBreakpoint } from '@webb-dapp/ui-components/utils/responsive-
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
 
+import { NoteAccount } from '../NoteAccount/NoteAccount';
 import { ThemeSwitcher } from './ThemeSwitcher';
 
 const AppBarWrapper = styled.div`
@@ -111,7 +112,7 @@ type AppBarProps = {
 };
 
 const AppBar: React.FC<AppBarProps> = ({ toggleSidebarDisplay }) => {
-  const { activeChain } = useWebContext();
+  const { activeChain, noteManager: noteAccount } = useWebContext();
   const { size, width } = useDimensions();
   const isMobile = useMemo(() => {
     return width <= size.sm;
@@ -154,6 +155,7 @@ const AppBar: React.FC<AppBarProps> = ({ toggleSidebarDisplay }) => {
       <RightNavigation>
         <NetworkManager />
         {activeChain && <WalletSelect />}
+        <NoteAccount />
         <ThemeSwitcher
           active={theme === 'dark' ? 'dark' : 'light'}
           onChange={(next) => {

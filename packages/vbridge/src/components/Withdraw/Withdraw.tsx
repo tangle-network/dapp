@@ -1,8 +1,9 @@
-import { InputBase } from '@mui/material';
+import { InputBase, Typography } from '@mui/material';
 import { getChainNameFromTypedChainId, TransactionState, WalletConfig, WebbRelayer } from '@webb-dapp/api-providers';
 import { chainsPopulated } from '@webb-dapp/apps/configs';
 import { getRelayerManagerFactory } from '@webb-dapp/apps/configs/relayer-config';
 import { useDepositNotes } from '@webb-dapp/mixer';
+import { ChainNotesSwitcher } from '@webb-dapp/react-components/ChainNotesSwitcher/ChainNotesSwitcher';
 import { TransactionProcessingModal } from '@webb-dapp/react-components/Transact/TransactionProcessingModal';
 import { WithdrawSuccessModal } from '@webb-dapp/react-components/Withdraw';
 import { useAppConfig, useWebContext } from '@webb-dapp/react-environment';
@@ -14,7 +15,7 @@ import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
 import { useWithdraw } from '@webb-dapp/vbridge';
-import { FixedPointNumber, Note, parseTypedChainId } from '@webb-tools/sdk-core';
+import { calculateTypedChainId, FixedPointNumber, Note, parseTypedChainId } from '@webb-tools/sdk-core';
 import { ethers } from 'ethers';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
@@ -88,16 +89,29 @@ const ButtonContainer = styled.div`
 type WithdrawProps = {};
 
 export const Withdraw: React.FC<WithdrawProps> = () => {
-  const [notes, setNotes] = useState<string[]>(['']);
+  const [manualNoteSelection, setManualNoteSelection] = useState(false);
+  const [noteStrings, setNoteStrings] = useState<string[]>(['']);
   const [recipient, setRecipient] = useState('');
   const [fees, setFees] = useState('0');
   const [userAmountInput, setUserAmountInput] = useState<string>('');
   const [withdrawAmount, setWithdrawAmount] = useState(0);
   const [formError, setFormError] = useState<null | string>(null);
+  const [validInput, setValidInput] = useState(false);
 
-  const { activeApi, activeChain, activeWallet, switchChain } = useWebContext();
-  const depositNotes = useDepositNotes(notes);
+  const { activeApi, activeChain, activeWallet, noteManager, switchChain } = useWebContext();
+  const manualNotes = useDepositNotes(noteStrings);
   const appConfig = useAppConfig();
+  const depositNotes = useMemo<Note[] | null>(() => {
+    const notes =
+      noteManager && activeChain && activeApi
+        ? noteManager
+            .getAllNotes()
+            .get(calculateTypedChainId(activeChain.chainType, activeChain.chainId).toString())
+            ?.filter((note) => note.note.tokenSymbol === activeApi.state.activeBridge?.currency.view.symbol) ?? null
+        : manualNotes;
+
+    return notes;
+  }, [noteManager, activeChain, activeApi, manualNotes]);
 
   const { cancelWithdraw, outputNotes, receipt, relayersState, setOutputNotes, setRelayer, stage, withdraw } =
     useWithdraw({
@@ -125,7 +139,6 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
     if (!activeApi || !activeWallet) {
       return;
     }
-    const chainTypeId = parseTypedChainId(Number(note.note.targetChainId));
     const chain = chainsPopulated[Number(note.note.targetChainId)];
     await switchChain(chain, activeWallet);
   };
@@ -154,8 +167,9 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
     return depositNotes.reduce((acc, currentNote) => {
       const isMatchDestChain = currentNote.note.targetChainId === firstNote.note.targetChainId;
       const isMatchTokenSymbol = currentNote.note.tokenSymbol === firstNote.note.tokenSymbol;
+      const isMatchProtocol = currentNote.note.protocol === 'vanchor';
 
-      return isMatchDestChain && isMatchTokenSymbol
+      return isMatchDestChain && isMatchTokenSymbol && isMatchProtocol
         ? acc + Number(ethers.utils.formatUnits(currentNote.note.amount, currentNote.note.denomination))
         : acc;
     }, 0);
@@ -186,7 +200,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
   }, [withdrawAmount, depositAmount, formError, depositNotes?.length, shouldSwitchChain, recipient]);
 
   const addNewNoteInput = useCallback(() => {
-    setNotes((prevNotes) => {
+    setNoteStrings((prevNotes) => {
       const newNotes = prevNotes.slice();
       newNotes.push('');
       return newNotes;
@@ -194,7 +208,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
   }, []);
 
   const removeNoteInput = useCallback((idx: number) => {
-    setNotes((prevNotes) => {
+    setNoteStrings((prevNotes) => {
       if (idx < 0 || idx >= prevNotes.length) {
         throw new Error('Note index out of bound');
       }
@@ -207,9 +221,9 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
   // Side effect for validating form inputs
   useEffect(() => {
     const validateFormInput = () => {
-      const set = new Set(notes);
+      const set = new Set(noteStrings);
 
-      if (set.size !== notes.length) {
+      if (set.size !== noteStrings.length) {
         return setFormError('All notes must have different values');
       }
 
@@ -221,7 +235,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
     };
 
     validateFormInput();
-  }, [depositAmount, notes, withdrawAmount]);
+  }, [depositAmount, noteStrings, withdrawAmount]);
 
   // Side effect for fetching the relayer fees if applicable
   useEffect(() => {
@@ -268,28 +282,63 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
     };
   }, [relayersState, depositNotes, firstNote]);
 
+  // Side effect for displaying appropriate components based on noteManager selection
+  useEffect(() => {
+    if (!noteManager && manualNoteSelection === false) {
+      setManualNoteSelection(true);
+    } else if (noteManager && manualNoteSelection === true) {
+      setManualNoteSelection(false);
+    }
+
+    if (manualNoteSelection && firstNote) {
+      setValidInput(true);
+    }
+  }, [noteManager, manualNoteSelection, firstNote]);
+
   return (
     <WithdrawWrapper wallet={activeWallet}>
-      <InputsContainer style={{ paddingBottom: '0px' }}>
-        <InputTitle leftLabel='Add Note(s)' />
-      </InputsContainer>
-      <WithdrawNoteSection>
-        {notes.map((note, idx) => (
-          <NoteInput
-            noteAction={idx === notes.length - 1 ? () => addNewNoteInput() : () => removeNoteInput(idx)}
-            isRemoveNote={idx !== notes.length - 1}
-            key={idx}
-            note={note}
-            setNote={(nextNote) => {
-              const newNotes = notes.slice();
-              newNotes[idx] = nextNote;
-              setNotes(newNotes);
-            }}
-          />
-        ))}
-      </WithdrawNoteSection>
+      {manualNoteSelection && (
+        <>
+          <InputsContainer style={{ paddingBottom: '0px' }}>
+            <InputTitle leftLabel='Add Note(s)' />
+          </InputsContainer>
+          <WithdrawNoteSection>
+            {noteStrings.map((note, idx) => (
+              <NoteInput
+                noteAction={idx === noteStrings.length - 1 ? () => addNewNoteInput() : () => removeNoteInput(idx)}
+                isRemoveNote={idx !== noteStrings.length - 1}
+                key={idx}
+                note={note}
+                setNote={(nextNote) => {
+                  const newNotes = noteStrings.slice();
+                  newNotes[idx] = nextNote;
+                  setNoteStrings(newNotes);
+                }}
+              />
+            ))}
+          </WithdrawNoteSection>
+        </>
+      )}
+      {!manualNoteSelection && (
+        <>
+          <ChainNotesSwitcher setValidInput={setValidInput} protocol='vanchor' />
+          {!validInput && (
+            <>
+              <AddressAndInfoSection>
+                <InputsContainer>
+                  <Typography>No notes found for the selected protocol, chain, and currency pairing.</Typography>
+                  <br />
+                  <Typography>
+                    Select a different combination, or load notes into your note account to withdraw.
+                  </Typography>
+                </InputsContainer>
+              </AddressAndInfoSection>
+            </>
+          )}
+        </>
+      )}
 
-      {firstNote && (
+      {validInput && firstNote && (
         <AddressAndInfoSection>
           <InputsContainer>
             <InputWrapper>
@@ -346,7 +395,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
             />
 
             <InformationItem>
-              <Title>Deposit Amount</Title>
+              <Title>Available Amount</Title>
               <Value>
                 {depositAmount} {firstNote.note.tokenSymbol}
               </Value>
@@ -371,7 +420,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
             <InformationItem>
               <Title>Total amount</Title>
               <Value>
-                {depositAmount - Number(fees)} {firstNote.note.tokenSymbol}
+                {withdrawAmount - Number(fees)} {firstNote.note.tokenSymbol}
               </Value>
             </InformationItem>
           </SummaryContainer>
@@ -390,7 +439,7 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
                 shouldSwitchChain
                   ? 'Switch chains to withdraw'
                   : withdrawAmount > depositAmount
-                  ? 'Not enough fund'
+                  ? 'Not enough funds'
                   : 'Withdraw'
               }
             />
@@ -426,9 +475,10 @@ export const Withdraw: React.FC<WithdrawProps> = () => {
             recipient={recipient}
             changeNote={outputNotes[0].note}
             inputNote={depositNotes[0].note}
+            amount={withdrawAmount}
             relayer={relayersState.activeRelayer}
             exit={() => {
-              setNotes(['']);
+              setNoteStrings(['']);
               setRecipient('');
               setOutputNotes([]);
               return cancelWithdraw();

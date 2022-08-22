@@ -13,6 +13,7 @@ import { Currency, RelayChainMethods, Wallet } from '../abstracts';
 import { Bridge, WebbState } from '../abstracts/state';
 import { AccountsAdapter } from '../account/Accounts.adapter';
 import { PolkadotProvider } from '../ext-providers';
+import { NoteManager } from '../notes';
 import { ActionsBuilder, InteractiveFeedback, WebbError, WebbErrorCodes } from '../webb-error';
 import {
   ApiInitHandler,
@@ -33,11 +34,13 @@ import { PolkadotMixerWithdraw } from './mixer-withdraw';
 import { PolkadotRelayerManager } from './relayer-manager';
 import { PolkaTXBuilder } from './transaction';
 import { PolkadotVAnchorDeposit } from './vanchor-deposit';
+import { PolkadotVAnchorRegistration } from './vanchor-registration';
 import { PolkadotVAnchorWithdraw } from './vanchor-withdraw';
 import { PolkadotWrapUnwrap } from './wrap-unwrap';
 
 export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbApiProvider<WebbPolkadot> {
   state: WebbState;
+  noteManager: NoteManager | null = null;
   readonly methods: WebbMethods<WebbPolkadot>;
   readonly relayChainMethods: RelayChainMethods<WebbPolkadot>;
   readonly api: ApiPromise;
@@ -94,6 +97,10 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
         withdraw: {
           enabled: true,
           inner: new PolkadotVAnchorWithdraw(this),
+        },
+        registration: {
+          enabled: false,
+          inner: new PolkadotVAnchorRegistration(this),
         },
       },
       wrapUnwrap: {

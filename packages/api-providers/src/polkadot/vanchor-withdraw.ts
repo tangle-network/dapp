@@ -63,10 +63,13 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
     }
     const accountId = account.address;
     const relayerAccountId = activeRelayer ? activeRelayerAccount! : account.address;
-    const recipientAccountDecoded = decodeAddress(accountId);
+    const recipientAccountDecoded = decodeAddress(recipient);
     const relayerAccountDecoded = decodeAddress(relayerAccountId);
     // Notes deserialization
     const inputNotes = await Promise.all(notes.map((note) => Note.deserialize(note)));
+    if (!inputNotes.length) {
+      throw WebbError.from(WebbErrorCodes.NoteParsingFailure);
+    }
     // Calculated the input amount
     const inputAmount: BigNumber = inputNotes.reduce(
       (acc: BigNumber, { note }) => acc.add(BigNumber.from(note.amount)),
@@ -102,17 +105,31 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
       curve: 'Bn254',
     });
     let publicAmount = -amount;
-    // Get the last leaf index to fetch the leaves
-    const latestIndex = inputNotes.reduce((index, { note }) => {
-      if (index < Number(note.index)) {
-        return Number(note.index);
+
+    // When a user submits a note, it may be that the index is not correct.
+    // We should validate the index and update before proof generation.
+    const latestPredictedIndex = inputNotes.reduce((index, note) => {
+      if (index < Number(note.note.index)) {
+        return Number(note.note.index);
       }
       return index;
     }, 0);
+
+    const latestNote = inputNotes.find((note) => note.note.index === latestPredictedIndex.toString());
+    if (!latestNote) {
+      throw WebbError.from(WebbErrorCodes.NoteParsingFailure);
+    }
+
     this.cancelToken.throwIfCancel();
 
     this.emit('stateChange', TransactionState.FetchingLeaves);
-    const leaves = await getLeaves(this.inner.api, Number(treeId), 0, latestIndex);
+
+    const inputLeafIndex = await this.getleafIndex(
+      latestNote.note.getLeafCommitment(),
+      latestPredictedIndex,
+      Number(treeId)
+    );
+    const leaves = await getLeaves(this.inner.api, Number(treeId), 0, inputLeafIndex);
     const leavesMap: any = {};
     /// Assume same chain withdraw-deposit
     leavesMap[targetChainId] = leaves;
@@ -179,6 +196,12 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
       outputCommitments: data.outputNotes.map((note) => u8aToHex(note.getLeaf())),
       extDataHash: data.extDataHash,
     };
+
+    // before the transaction takes place, save the output (change) note (in case user leaves page or
+    // perhaps relayer misbehaves and doesn't respond but executes transaction)
+    if (Number(data.outputNotes[0].note.amount) != 0) {
+      await this.inner.noteManager?.addNote(data.outputNotes[0]);
+    }
 
     if (activeRelayer) {
       const relayedVAnchorWithdraw = await activeRelayer.initWithdraw('vAnchor');
@@ -284,13 +307,28 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
       txHash = await tx.call(account.address);
     }
 
-    // get the leaf index to get the right leaf index ofter insertion
+    // remove the previous "Potential Change Note" (safeguard for user)
+    await this.inner.noteManager?.removeNote(data.outputNotes[0]);
 
+    // get the leaf index to get the right leaf index after insertion
     const leafIndex = await this.getleafIndex(outputCommitment, predictedIndex, Number(treeId));
+    outputNote.note.mutateIndex(leafIndex.toString());
+
     // update the UTXO of the remainder note
     outputNote.note.update_vanchor_utxo(output1.inner);
-    // update the leaf index of the remainder note
-    outputNote.mutateIndex(String(leafIndex));
+
+    // Update the index of the change note and remove the input notes
+    if (this.inner.noteManager) {
+      if (Number(outputNote.note.amount) != 0) {
+        await this.inner.noteManager.addNote(outputNote);
+      }
+      await Promise.all(
+        inputNotes.map(async (note) => {
+          await this.inner.noteManager?.removeNote(note);
+        })
+      );
+    }
+
     this.emit('stateChange', TransactionState.Done);
     this.emit('stateChange', TransactionState.Ideal);
     return {
