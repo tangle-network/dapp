@@ -17,6 +17,9 @@ export function getWalletByWebbErrorCodes(code: WebbErrorCodes): Wallet {
     case WebbErrorCodes.TalismanExtensionNotInstalled:
       return walletsConfig[WalletId.Talisman];
 
+    case WebbErrorCodes.SubWalletExtensionNotInstalled:
+      return walletsConfig[WalletId.SubWallet];
+
     default:
       throw WebbError.from(WebbErrorCodes.UnknownWallet);
   }

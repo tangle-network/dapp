@@ -294,6 +294,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
       case WebbErrorCodes.MetaMaskExtensionNotInstalled:
       case WebbErrorCodes.PolkaDotExtensionNotInstalled:
       case WebbErrorCodes.TalismanExtensionNotInstalled:
+      case WebbErrorCodes.SubWalletExtensionNotInstalled:
         {
           const interactiveFeedback = extensionNotInstalled(getWalletByWebbErrorCodes(code));
           setActiveChain(undefined);
@@ -331,6 +332,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
       switch (wallet.id) {
         case WalletId.Polkadot:
         case WalletId.Talisman:
+        case WalletId.SubWallet:
           {
             const relayerManager = await relayerManagerFactory.getRelayerManager('substrate');
             const url = chain.url;

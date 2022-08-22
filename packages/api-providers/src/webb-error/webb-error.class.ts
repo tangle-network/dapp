@@ -17,6 +17,8 @@ export enum WebbErrorCodes {
   PolkaDotExtensionNotInstalled,
   /// Talisman extension not installed
   TalismanExtensionNotInstalled,
+  /// SubWallet extension not installed
+  SubWalletExtensionNotInstalled,
   /// MetaMasK extension not installed
   MetaMaskExtensionNotInstalled,
   /// Unknown wallet
@@ -111,6 +113,12 @@ export class WebbError extends Error {
         return {
           code,
           message: 'Talisman extension no installed',
+        };
+
+      case WebbErrorCodes.SubWalletExtensionNotInstalled:
+        return {
+          code: WebbErrorCodes.SubWalletExtensionNotInstalled,
+          message: 'SubWallet extension no installed',
         };
 
       case WebbErrorCodes.MetaMaskExtensionNotInstalled:
