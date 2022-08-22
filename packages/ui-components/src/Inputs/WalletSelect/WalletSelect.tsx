@@ -62,7 +62,7 @@ export const WalletSelect: React.FC<WalletSelectProps> = ({}) => {
   const { activeChain } = useWebContext();
 
   const displayInfo = useMemo(() => {
-    if (selectedWallet?.name.toLowerCase().includes('polkadot')) {
+    if (selectedWallet?.platform.includes('Substrate')) {
       const name = selectedAccount?.name.slice(0, 12) || 'Account';
       return name.length > 12 ? name.slice(0, 12) + '..' : name;
     }
@@ -95,7 +95,7 @@ export const WalletSelect: React.FC<WalletSelectProps> = ({}) => {
         {selectedWallet && (
           <Flex flex={1} row ai='center' style={{ width: '100%' }}>
             <Avatar className={'avatar'} style={{ marginRight: '4px' }}>
-              <selectedWallet.logo />
+              <selectedWallet.Logo />
             </Avatar>
 
             <Flex row jc='space-between' ai='center' flex={1}>

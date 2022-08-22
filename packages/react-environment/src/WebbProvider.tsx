@@ -45,7 +45,7 @@ import { calculateTypedChainId, ChainType } from '@webb-tools/sdk-core';
 import { logger } from 'ethers';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 
-import { extensionNotInstalled, unsupportedChain } from './error';
+import { extensionNotInstalled, getWalletByWebbErrorCodes, unsupportedChain } from './error';
 import { SettingProvider } from './SettingProvider';
 
 interface WebbProviderProps extends BareProps {
@@ -293,10 +293,9 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
         break;
       case WebbErrorCodes.MetaMaskExtensionNotInstalled:
       case WebbErrorCodes.PolkaDotExtensionNotInstalled:
+      case WebbErrorCodes.TalismanExtensionNotInstalled:
         {
-          const interactiveFeedback = extensionNotInstalled(
-            code === WebbErrorCodes.PolkaDotExtensionNotInstalled ? 'polkadot' : 'metamask'
-          );
+          const interactiveFeedback = extensionNotInstalled(getWalletByWebbErrorCodes(code));
           setActiveChain(undefined);
           registerInteractiveFeedback(setInteractiveFeedbacks, interactiveFeedback);
         }
@@ -331,6 +330,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
       let localActiveApi: WebbApiProvider<any> | null = null;
       switch (wallet.id) {
         case WalletId.Polkadot:
+        case WalletId.Talisman:
           {
             const relayerManager = await relayerManagerFactory.getRelayerManager('substrate');
             const url = chain.url;
@@ -345,7 +345,8 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
               relayerManager,
               appConfig,
               notificationHandler,
-              () => new Worker(new URL('./arkworks-proving-manager.worker', import.meta.url))
+              () => new Worker(new URL('./arkworks-proving-manager.worker', import.meta.url)),
+              wallet
             );
             await setActiveApiWithAccounts(webbPolkadot, chain, _networkStorage ?? networkStorage);
             localActiveApi = webbPolkadot;
@@ -400,7 +401,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
                       alignItems: 'center',
                     },
                   },
-                  [React.createElement(wallet.logo, { key: `${wallet.id}logo` })]
+                  [React.createElement(wallet.Logo, { key: `${wallet.id}logo` })]
                 ),
               });
             }

@@ -3,15 +3,16 @@
 
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
+import { WalletId } from '@webb-dapp/apps/configs';
+import { isValidateAddress } from '@webb-dapp/react-components/utils';
 import { options } from '@webb-tools/api';
 import { EventBus, LoggerService } from '@webb-tools/app-util';
-import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import lodash from 'lodash';
 
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { InjectedExtension } from '@polkadot/extension-inject/types';
 
-import { ApiInitHandler } from '../../';
+import { ApiInitHandler, Wallet } from '../../';
 import { PolkaTXBuilder } from '../../polkadot';
 import { InteractiveFeedback, WebbError, WebbErrorCodes } from '../../webb-error';
 import { PolkadotAccount, PolkadotAccounts } from './polkadot-accounts';
@@ -52,18 +53,21 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
    * @param endPoints - URLs for the substrate node
    * @param apiInitHandler - Error handler for stage of instantiating a provider
    * @param txBuilder - Transaction builder
+   * @param wallet - Wallet to connect
    **/
   static async fromExtension(
     appName: string,
     endPoints: string[],
     apiInitHandler: ApiInitHandler,
-    txBuilder: PolkaTXBuilder
+    txBuilder: PolkaTXBuilder,
+    wallet: Wallet
   ): Promise<PolkadotProvider> {
     const [endPoint, ...allEndPoints] = endPoints;
     const [apiPromise, currentExtensions] = await PolkadotProvider.getParams(
       appName,
       [endPoint, ...allEndPoints],
-      apiInitHandler.onError
+      apiInitHandler.onError,
+      wallet
     );
 
     return new PolkadotProvider(apiPromise, currentExtensions, txBuilder);
@@ -236,11 +240,13 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
    * @param appName - Name of the application
    * @param endPoints - URLs for the substrate node
    * @param onError - Error handler for stage of instantiating a provider
+   * @param wallet - Wallet to connect
    **/
   static async getParams(
     appName: string,
     endPoints: string[],
-    onError: ApiInitHandler['onError']
+    onError: ApiInitHandler['onError'],
+    wallet: Wallet
   ): Promise<[ApiPromise, InjectedExtension]> {
     const [endPoint, ...allEndPoints] = endPoints;
     // Import web3Enable for hooking with the browser extension
@@ -250,17 +256,30 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
 
     logger.info('Extensions', extensions);
 
-    // Check for extensions length to insure polkadot extension is installed
-    if (extensions.length === 0) {
-      logger.warn("Polkadot extension isn't installed");
-      throw WebbError.from(WebbErrorCodes.PolkaDotExtensionNotInstalled);
+    // Check whether the extension is existed or not
+    const currentExtension = extensions.find((ex) => ex.name === wallet.name);
+    if (!currentExtension) {
+      logger.warn(`${wallet.title} extension isn't installed`);
+
+      switch (wallet.id) {
+        case WalletId.Polkadot: {
+          throw WebbError.from(WebbErrorCodes.PolkaDotExtensionNotInstalled);
+        }
+
+        case WalletId.Talisman: {
+          throw WebbError.from(WebbErrorCodes.TalismanExtensionNotInstalled);
+        }
+
+        default: {
+          throw WebbError.from(WebbErrorCodes.UnknownWallet);
+        }
+      }
     }
 
-    const currentExtensions = extensions[0];
     // Initialize an ApiPromise
     const apiPromise = await PolkadotProvider.getApiPromise(appName, [endPoint, ...allEndPoints], onError);
 
-    return [apiPromise, currentExtensions];
+    return [apiPromise, currentExtension];
   }
 
   hookListeners() {
@@ -279,7 +298,9 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
     });
 
     this.injectedExtension.accounts?.subscribe((accounts) => {
-      const polkadotAccounts = accounts.map((account) => new PolkadotAccount(account, account.address));
+      const polkadotAccounts = accounts
+        .filter((account) => isValidateAddress(account.address))
+        .map((account) => new PolkadotAccount(account, account.address));
 
       this.emit('accountsChange', polkadotAccounts);
     });

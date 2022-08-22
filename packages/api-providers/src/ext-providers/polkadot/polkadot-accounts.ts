@@ -1,6 +1,8 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
+import { isValidateAddress } from '@webb-dapp/react-components/utils';
+
 import { InjectedAccount, InjectedExtension } from '@polkadot/extension-inject/types';
 
 import { Account, AccountsAdapter, PromiseOrT } from '../../account/Accounts.adapter';
@@ -22,7 +24,9 @@ export class PolkadotAccounts extends AccountsAdapter<InjectedExtension, Injecte
   async accounts() {
     const accounts = await this._inner.accounts.get();
 
-    return accounts.map((account) => new PolkadotAccount(account, account.address));
+    return accounts
+      .filter((account) => isValidateAddress(account.address))
+      .map((account) => new PolkadotAccount(account, account.address));
   }
 
   get activeOrDefault() {

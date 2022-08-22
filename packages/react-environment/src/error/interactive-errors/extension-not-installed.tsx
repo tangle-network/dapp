@@ -1,34 +1,30 @@
 import { Button, Icon, Typography } from '@mui/material';
-import { InteractiveFeedback, WebbErrorCodes } from '@webb-dapp/api-providers';
+import { InteractiveFeedback, Wallet, WebbError, WebbErrorCodes } from '@webb-dapp/api-providers';
+import { WalletId, walletsConfig } from '@webb-dapp/apps/configs';
 import ChromeLogo from '@webb-dapp/apps/configs/logos/ChromeLogo';
 import FireFoxLogo from '@webb-dapp/apps/configs/logos/FireFoxLogo';
-import { MetaMaskLogo } from '@webb-dapp/apps/configs/logos/MetaMaskLogo';
-import { PolkaLogo } from '@webb-dapp/apps/configs/logos/PolkaLogo';
 import { Padding } from '@webb-dapp/ui-components/Padding/Padding';
 import { getPlatformMetaData, SupportedBrowsers } from '@webb-dapp/utils/platform';
-import React from 'react';
-//TODO : move to wallet config
-const metaMaskConfig = {
-  homeLink: 'https://metamask.io/',
-  installLinks: {
-    [SupportedBrowsers.FireFox]: 'https://addons.mozilla.org/firefox/addon/ether-metamask/',
-    [SupportedBrowsers.Chrome]:
-      'https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=en',
-  },
-};
-const polkadotConfig = {
-  homeLink: 'https://polkadot.js.org/extension',
-  installLinks: {
-    [SupportedBrowsers.FireFox]: 'https://addons.mozilla.org/firefox/addon/polkadot-js-extension/',
-    [SupportedBrowsers.Chrome]:
-      'https://chrome.google.com/webstore/detail/polkadot%7Bjs%7D-extension/mopnmbcafieddcagagdcbnhejhlodfdd',
-  },
-};
 
-export function extensionNotInstalled(extension: 'metamask' | 'polkadot'): InteractiveFeedback {
+export function getWalletByWebbErrorCodes(code: WebbErrorCodes): Wallet {
+  switch (code) {
+    case WebbErrorCodes.PolkaDotExtensionNotInstalled:
+      return walletsConfig[WalletId.Polkadot];
+
+    case WebbErrorCodes.MetaMaskExtensionNotInstalled:
+      return walletsConfig[WalletId.MetaMask];
+
+    case WebbErrorCodes.TalismanExtensionNotInstalled:
+      return walletsConfig[WalletId.Talisman];
+
+    default:
+      throw WebbError.from(WebbErrorCodes.UnknownWallet);
+  }
+}
+
+export function extensionNotInstalled(extension: Wallet): InteractiveFeedback {
   const platformMetaData = getPlatformMetaData();
   let Logo: () => JSX.Element;
-  const config = extension === 'metamask' ? metaMaskConfig : polkadotConfig;
   switch (platformMetaData.id) {
     case SupportedBrowsers.Chrome:
       Logo = ChromeLogo;
@@ -37,8 +33,10 @@ export function extensionNotInstalled(extension: 'metamask' | 'polkadot'): Inter
       Logo = FireFoxLogo;
       break;
   }
+
   let interactiveFeedback: InteractiveFeedback;
-  const extensionName = extension === 'metamask' ? 'MetaMask' : 'Polkadot{.js}';
+  const extensionName = extension.title;
+
   const feedbackBody = InteractiveFeedback.feedbackEntries([
     {
       header: `${extensionName} extension isn't installed`,
@@ -56,7 +54,7 @@ export function extensionNotInstalled(extension: 'metamask' | 'polkadot'): Inter
                 variant={'text'}
                 fullWidth
                 onClick={() => {
-                  window.open(config.homeLink, '_blank');
+                  window.open(extension.homeLink, '_blank');
                 }}
               >
                 <div
@@ -65,7 +63,7 @@ export function extensionNotInstalled(extension: 'metamask' | 'polkadot'): Inter
                     height: 30,
                   }}
                 >
-                  {extension === 'metamask' ? <MetaMaskLogo /> : <PolkaLogo />}
+                  <extension.Logo />
                 </div>
                 <Padding v x={0.5} />
                 <Typography>{extensionName} official website</Typography>
@@ -80,7 +78,7 @@ export function extensionNotInstalled(extension: 'metamask' | 'polkadot'): Inter
                 variant='contained'
                 fullWidth
                 onClick={() => {
-                  const url = config.installLinks[platformMetaData.id];
+                  const url = extension.installLinks ? extension.installLinks[platformMetaData.id] : '';
                   window.open(url, '_blank');
                 }}
               >
@@ -103,6 +101,7 @@ export function extensionNotInstalled(extension: 'metamask' | 'polkadot'): Inter
       },
     },
   ]);
+
   const actions = InteractiveFeedback.actionsBuilder()
     .action(
       'Ok',

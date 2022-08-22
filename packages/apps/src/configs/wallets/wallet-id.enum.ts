@@ -3,4 +3,5 @@ export enum WalletId {
   MetaMask,
   WalletConnectV1,
   OneWallet,
+  Talisman,
 }

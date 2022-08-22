@@ -13,6 +13,7 @@ import { hexToU8a, u8aToHex } from '@polkadot/util';
 import { MixerWithdraw, RelayedChainInput } from '../abstracts';
 import { WebbError, WebbErrorCodes } from '../webb-error';
 import { fetchSubstrateMixerProvingKey, RelayedWithdrawResult, TransactionState } from '../';
+import { getLeafCount, getLeaves } from './mt-utils';
 import { WebbPolkadot } from './webb-provider';
 
 const logger = LoggerService.get('PolkadotMixerWithdraw');
@@ -41,25 +42,10 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
   }
 
   async fetchTreeLeaves(treeId: string | number): Promise<Uint8Array[]> {
-    let done = false;
-    let from = 0;
-    let to = 511;
-    const leaves: Uint8Array[] = [];
-
-    while (done === false) {
-      const treeLeaves: any[] = await (this.inner.api.rpc as any).mt.getLeaves(treeId, from, to);
-
-      if (treeLeaves.length === 0) {
-        done = true;
-        break;
-      }
-
-      leaves.push(...treeLeaves.map((i) => i.toU8a()));
-      from = to;
-      to = to + 511;
-    }
-
-    return leaves;
+    // Get all the tree leaves from chain
+    const treeLeafCount = await getLeafCount(this.inner.api, Number(treeId));
+    const treeLeaves: Uint8Array[] = await getLeaves(this.inner.api, Number(treeId), 0, treeLeafCount - 1);
+    return treeLeaves;
   }
 
   async withdraw(note: string, recipient: string): Promise<string> {

@@ -113,7 +113,7 @@ export const BottomWalletSelection: React.FC<WalletSelectProps> = ({}) => {
           <>
             <BottomSelectionWrapper>
               <Avatar className={'wallet-logo-wrapper'}>
-                <selectedWallet.logo />
+                <selectedWallet.Logo />
               </Avatar>
               <div style={{ paddingLeft: '10px' }}>
                 <AccountName>{name}</AccountName>
