@@ -3,14 +3,18 @@ import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import { useEffect, useState } from 'react';
 
 export const useNativeCurrencyBalance = () => {
-  const { activeAccount, activeApi, activeChain } = useWebContext();
+  const { activeAccount, activeApi, activeChain, isConnecting, loading } = useWebContext();
 
   const [balance, setBalance] = useState('');
 
   useEffect(() => {
     let isSubscribed = true;
 
-    if (activeChain && activeApi) {
+    const handler = async () => {
+      if (!activeChain || !activeApi || isConnecting || loading) {
+        return;
+      }
+
       activeApi.methods.chainQuery
         .tokenBalanceByCurrencyId(
           calculateTypedChainId(activeChain.chainType, activeChain.chainId),
@@ -21,12 +25,14 @@ export const useNativeCurrencyBalance = () => {
             setBalance(balance);
           }
         });
-    }
+    };
+
+    handler();
 
     return () => {
       isSubscribed = false;
     };
-  }, [activeChain, activeApi, activeAccount, activeApi?.accounts.activeOrDefault]);
+  }, [activeChain, activeApi, activeAccount, isConnecting, loading]);
 
   return balance;
 };

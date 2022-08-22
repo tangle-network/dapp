@@ -194,7 +194,7 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
                           }}
                         >
                           {viaWallets.map((wallet) => {
-                            const Logo = wallet.logo;
+                            const Logo = wallet.Logo;
                             return (
                               <div
                                 style={{
@@ -317,7 +317,7 @@ export const NetworkManager: React.FC<NetworkManagerProps> = () => {
                           background: '#fff',
                         }}
                       >
-                        <wallet.logo />
+                        <wallet.Logo />
                       </Avatar>
                     </ListItemAvatar>
                     <Flex row ai='center' style={{ flexGrow: '1' }}>

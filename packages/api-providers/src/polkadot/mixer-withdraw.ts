@@ -47,9 +47,6 @@ export class PolkadotMixerWithdraw extends MixerWithdraw<WebbPolkadot> {
     // Get all the tree leaves from chain
     const treeLeafCount = await getLeafCount(this.inner.api, Number(treeId));
     const treeLeaves: Uint8Array[] = await getLeaves(this.inner.api, Number(treeId), 0, treeLeafCount - 1);
-    // rpc.mt.getLeaves(treeId, from, to);
-    console.log(treeLeaves);
-
     return treeLeaves;
   }
 

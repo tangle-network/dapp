@@ -9,7 +9,7 @@ import { calculateTypedChainId, ChainType } from '@webb-tools/sdk-core';
 import { ApiPromise } from '@polkadot/api';
 import { InjectedAccount, InjectedExtension } from '@polkadot/extension-inject/types';
 
-import { Currency, RelayChainMethods } from '../abstracts';
+import { Currency, RelayChainMethods, Wallet } from '../abstracts';
 import { Bridge, WebbState } from '../abstracts/state';
 import { AccountsAdapter } from '../account/Accounts.adapter';
 import { PolkadotProvider } from '../ext-providers';
@@ -61,7 +61,7 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
     this.provider = new PolkadotProvider(
       apiPromise,
       injectedExtension,
-      new PolkaTXBuilder(apiPromise, notificationHandler)
+      new PolkaTXBuilder(apiPromise, notificationHandler, injectedExtension)
     );
     this.accounts = this.provider.accounts;
     this.api = this.provider.api;
@@ -204,10 +204,20 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
     relayerBuilder: PolkadotRelayerManager, // Webb Relayer builder for relaying withdraw
     appConfig: AppConfig, // The whole and current app configuration
     notification: NotificationHandler, // Notification handler that will be used for the provider
-    wasmFactory: WasmFactory // A Factory Fn that wil return wasm worker that would be supplied eventually to the `sdk-core`
+    wasmFactory: WasmFactory, // A Factory Fn that wil return wasm worker that would be supplied eventually to the `sdk-core`
+    wallet: Wallet // Current wallet to initialize
   ): Promise<WebbPolkadot> {
-    const [apiPromise, injectedExtension] = await PolkadotProvider.getParams(appName, endpoints, errorHandler.onError);
-    const provider = new PolkadotProvider(apiPromise, injectedExtension, new PolkaTXBuilder(apiPromise, notification));
+    const [apiPromise, injectedExtension] = await PolkadotProvider.getParams(
+      appName,
+      endpoints,
+      errorHandler.onError,
+      wallet
+    );
+    const provider = new PolkadotProvider(
+      apiPromise,
+      injectedExtension,
+      new PolkaTXBuilder(apiPromise, notification, injectedExtension)
+    );
     const accounts = provider.accounts;
     const chainId = await provider.api.consts.linkableTreeBn254.chainIdentifier;
     const typedChainId = calculateTypedChainId(ChainType.Substrate, chainId.toNumber());
@@ -241,7 +251,11 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
     injectedExtension: InjectedExtension,
     wasmFactory: WasmFactory
   ): Promise<WebbPolkadot> {
-    const provider = new PolkadotProvider(apiPromise, injectedExtension, new PolkaTXBuilder(apiPromise, notification));
+    const provider = new PolkadotProvider(
+      apiPromise,
+      injectedExtension,
+      new PolkaTXBuilder(apiPromise, notification, injectedExtension)
+    );
     const chainId = await provider.api.consts.linkableTreeBn254.chainIdentifier;
     const typedChainId = calculateTypedChainId(ChainType.Substrate, chainId.toNumber());
     const instance = new WebbPolkadot(

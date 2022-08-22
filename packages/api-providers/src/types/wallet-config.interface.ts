@@ -1,14 +1,22 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
+import { SupportedBrowsers } from '@webb-dapp/utils/platform';
+
 import { ReactElement } from './abstracts';
 
 export interface WalletConfig {
   id: number;
-  logo: ReactElement;
+  Logo: ReactElement;
   name: string;
   title: string;
   platform: string;
+
+  // Homepage url of the wallet
+  homeLink: string;
+
+  // Install urls of the wallet in chrome, firefox, etc...
+  installLinks?: Record<SupportedBrowsers, string> | undefined;
 
   // the wallet isn't live yet
   enabled: boolean;
