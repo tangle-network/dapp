@@ -2,7 +2,7 @@ import { Button, Checkbox, Typography } from '@mui/material';
 import { TransactionState } from '@webb-dapp/api-providers';
 import { SpaceBox } from '@webb-dapp/ui-components/Box';
 import { Spinner } from '@webb-dapp/ui-components/Spinner/Spinner';
-import React from 'react';
+import React, { useMemo } from 'react';
 import styled from 'styled-components';
 
 type TxFlow = 'Deposit' | 'Withdraw' | 'Transfer';
@@ -115,6 +115,10 @@ export const TransactionProcessingModal: React.FC<TransactionProcessingModalProp
   state,
   txFlow,
 }) => {
+  const isCancelled = useMemo(() => {
+    return state === TransactionState.Cancelling;
+  }, [state]);
+
   return (
     <TransactionProcessingWrapper>
       <header className={'modal-header'}>
@@ -122,7 +126,7 @@ export const TransactionProcessingModal: React.FC<TransactionProcessingModalProp
           {txFlow}
         </Typography>
         <Typography variant={'h6'} color={'textPrimary'}>
-          {state === TransactionState.Cancelling ? 'Transaction is Canceld' : 'Processing...'}
+          {isCancelled ? 'Transaction Cancelled' : 'Processing...'}
         </Typography>
       </header>
       <TransactionSteps>
@@ -167,11 +171,11 @@ export const TransactionProcessingModal: React.FC<TransactionProcessingModalProp
         </Button>
         <Button
           onClick={() => {
-            cancel();
+            isCancelled ? hide() : cancel();
           }}
           className={'cancel-button'}
         >
-          Cancel
+          {isCancelled ? 'Close' : 'Cancel'}
         </Button>
       </div>
     </TransactionProcessingWrapper>

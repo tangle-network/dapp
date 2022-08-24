@@ -112,7 +112,7 @@ export const Deposit: React.FC<DepositProps> = () => {
 
   useEffect(() => {
     // If the stage is in a terminal transaction state, and the modal is hidden, reset to ideal.
-    if (stage > TransactionState.SendingTransaction && hideTxModal) {
+    if ((stage > TransactionState.SendingTransaction || stage === TransactionState.Cancelling) && hideTxModal) {
       setStage(TransactionState.Ideal);
       setHideTxModal(false);
     }
