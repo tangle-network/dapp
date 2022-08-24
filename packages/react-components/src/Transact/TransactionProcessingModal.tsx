@@ -126,7 +126,7 @@ export const TransactionProcessingModal: React.FC<TransactionProcessingModalProp
           {txFlow}
         </Typography>
         <Typography variant={'h6'} color={'textPrimary'}>
-          {isCancelled ? 'Transaction is Canceld' : 'Processing...'}
+          {isCancelled ? 'Transaction Cancelled' : 'Processing...'}
         </Typography>
       </header>
       <TransactionSteps>
