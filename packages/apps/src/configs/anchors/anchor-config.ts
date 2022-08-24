@@ -14,6 +14,8 @@ export const anchorsConfig: AppConfig['anchors'] = {
   },
   [CurrencyId.WEBBSQR]: {
     [PresetTypedChainId.ProtocolSubstrateStandalone]: '6',
+    [PresetTypedChainId.LocalTangleStandalone]: '6',
+    [PresetTypedChainId.DkgSubstrateStandalone]: '6',
   },
   [CurrencyId.webbDEV]: {
     [PresetTypedChainId.HermesLocalnet]: '0xbfce6B877Ebff977bB6e80B24FbBb7bC4eBcA4df',
