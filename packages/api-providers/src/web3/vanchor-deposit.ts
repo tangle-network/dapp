@@ -121,7 +121,6 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
     const abortSignal = this.cancelToken.abortSignal;
     const bridge = this.inner.methods.bridgeApi.getBridge();
     const currency = bridge?.currency;
-    console.log('deposit: ', depositPayload);
 
     if (!bridge || !currency) {
       throw new Error('api not ready');
@@ -383,29 +382,29 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
         }
       }
     } catch (e: any) {
+      this.inner.notificationHandler.remove('waiting-approval');
+      const isUserCancel = e instanceof WebbError && e.code === WebbErrorCodes.TransactionCancelled;
+      let description = '';
+
       if (e?.code === 4001) {
-        this.inner.notificationHandler.remove('waiting-approval');
-        this.inner.notificationHandler({
-          description: 'user rejected deposit',
-          key: 'bridge-deposit',
-          level: 'error',
-          message: `${currency.view.name}:deposit`,
-          name: 'Transaction',
-        });
-
-        this.inner.noteManager?.removeNote(depositPayload.note);
-        this.emit('stateChange', TransactionState.Failed);
+        description = 'User Rejected Deposit';
+      } else if (isUserCancel) {
+        description = 'User Cancelled Transaction';
       } else {
-        this.inner.notificationHandler.remove('waiting-approval');
-        this.inner.notificationHandler({
-          description: 'Deposit Transaction Failed',
-          key: 'bridge-deposit',
-          level: 'error',
-          message: `${currency.view.name}:deposit`,
-          name: 'Transaction',
-        });
+        description = 'Deposit Transaction Failed';
+      }
 
-        this.inner.noteManager?.removeNote(depositPayload.note);
+      this.inner.notificationHandler({
+        description,
+        key: 'bridge-deposit',
+        level: 'error',
+        message: `${currency.view.name}:deposit`,
+        name: 'Transaction',
+      });
+
+      this.inner.noteManager?.removeNote(depositPayload.note);
+
+      if (!isUserCancel) {
         this.emit('stateChange', TransactionState.Failed);
       }
     }

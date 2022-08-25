@@ -75,6 +75,7 @@ export abstract class VAnchorDeposit<
 
   cancel(): Promise<void> {
     this.cancelToken.cancel();
+    this.state = TransactionState.Cancelling;
     this.emit('stateChange', TransactionState.Cancelling);
 
     return Promise.resolve(undefined);
