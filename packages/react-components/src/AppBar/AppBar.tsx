@@ -121,8 +121,6 @@ const AppBar: React.FC<AppBarProps> = ({ toggleSidebarDisplay }) => {
   const { pageTitle, setTheme, theme } = useStore('ui');
   const { isMdOrAbove } = useBreakpoint();
 
-  console.log(NewThemeSwitcher);
-
   return isMobile ? (
     <>
       <AppBarWrapper>
@@ -138,6 +136,7 @@ const AppBar: React.FC<AppBarProps> = ({ toggleSidebarDisplay }) => {
                 setTheme(next === 'light' ? 'default' : 'dark');
               }}
             />
+            <NewThemeSwitcher />
           </div>
           <IconButton onClick={toggleSidebarDisplay}>
             <Icon>menu</Icon>
@@ -165,6 +164,7 @@ const AppBar: React.FC<AppBarProps> = ({ toggleSidebarDisplay }) => {
             setTheme(next === 'light' ? 'default' : 'dark');
           }}
         />
+        <NewThemeSwitcher />
       </RightNavigation>
     </AppBarWrapper>
   );

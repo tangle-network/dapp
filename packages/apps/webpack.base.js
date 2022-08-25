@@ -27,6 +27,7 @@ function mapChunks(name, regs, inc) {
 }
 
 function createWebpack(env, mode = 'production') {
+  const isDevelopment = mode === 'development';
   const alias = findPackages().reduce((alias, { dir, name }) => {
     alias[name] = path.resolve(env.context, `../${dir}/src`);
 
@@ -62,12 +63,46 @@ function createWebpack(env, mode = 'production') {
           type: 'asset/resource',
         },
         {
-          include: /node_modules/,
-          test: /\.css$/i,
-          loader: require.resolve('css-loader'),
-          options: {
-            url: true,
-          },
+          test: /\.s?[ac]ss$/i,
+          use: [
+            isDevelopment
+              ? 'style-loader'
+              : {
+                  // save the css to external file
+                  loader: MiniCssExtractPlugin.loader,
+                  options: {
+                    esModule: false,
+                  },
+                },
+            {
+              // becombine other css files into one
+              // https://www.npmjs.com/package/css-loader
+              loader: 'css-loader',
+              options: {
+                esModule: false,
+                importLoaders: 2, // 2 other loaders used first, postcss-loader and sass-loader
+                sourceMap: isDevelopment,
+              },
+            },
+            {
+              // process tailwind stuff
+              // https://webpack.js.org/loaders/postcss-loader/
+              loader: 'postcss-loader',
+              options: {
+                sourceMap: isDevelopment,
+                postcssOptions: {
+                  plugins: [require('tailwindcss'), require('autoprefixer')],
+                },
+              },
+            },
+            {
+              // load sass files into css files
+              loader: 'sass-loader',
+              options: {
+                sourceMap: isDevelopment,
+              },
+            },
+          ],
         },
         {
           exclude: /(node_modules)/,
