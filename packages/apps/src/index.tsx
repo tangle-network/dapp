@@ -1,3 +1,5 @@
+import '@webb-dapp/webb-ui-components/dist/assets/css/styles.min.css';
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 
