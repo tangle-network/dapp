@@ -1,58 +1,38 @@
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
 import { Half2Icon, MoonIcon, SunIcon } from '@radix-ui/react-icons';
+import { useDarkMode } from '@webb-dapp/webb-ui-components/hooks';
 import cx from 'classnames';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useMemo } from 'react';
 
 export interface Props {}
 
 const themes = [
   {
-    key: 'light',
+    key: 'light' as const,
     label: 'Light',
     icon: <SunIcon />,
   },
   {
-    key: 'dark',
+    key: 'dark' as const,
     label: 'Dark',
     icon: <MoonIcon />,
   },
 ];
 
 const ThemeSwitcher = () => {
-  const [preferredTheme, setPreferredTheme] = useState<null | string>(null);
+  const [isDarkMode, toggleThemeMode] = useDarkMode();
 
-  useEffect(() => {
-    if (
-      localStorage.getItem('theme') === 'dark' ||
-      (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
-    ) {
-      document.documentElement.classList.add('dark');
-      setPreferredTheme('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-      setPreferredTheme('light');
+  const Icon = useMemo(() => {
+    const preferredTheme = isDarkMode ? 'dark' : 'light';
+    switch (preferredTheme) {
+      case 'light':
+        return <SunIcon className='h-5 w-5 text-gray-700 dark:text-gray-300' />;
+      case 'dark':
+        return <MoonIcon className='h-5 w-5 text-gray-700 dark:text-gray-300' />;
+      default:
+        return <Half2Icon className='h-5 w-5 text-gray-700 dark:text-gray-300' />;
     }
-  }, []);
-
-  const toggleTheme = useCallback((key: string) => {
-    switch (key) {
-      case 'dark': {
-        if (localStorage.getItem('theme') !== key) {
-          document.documentElement.classList.add(key);
-          localStorage.setItem('theme', key);
-        }
-        break;
-      }
-
-      case 'light': {
-        if (localStorage.getItem('theme') !== key) {
-          document.documentElement.classList.remove('dark');
-          localStorage.setItem('theme', key);
-        }
-        break;
-      }
-    }
-  }, []);
+  }, [isDarkMode]);
 
   return (
     <div className='relative inline-block text-left'>
@@ -65,17 +45,7 @@ const ThemeSwitcher = () => {
             'focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75'
           )}
         >
-          {(function () {
-            switch (preferredTheme) {
-              case 'light':
-                return <SunIcon className='h-5 w-5 text-gray-700 dark:text-gray-300' />;
-              case 'dark':
-                return <MoonIcon className='h-5 w-5 text-gray-700 dark:text-gray-300' />;
-              default:
-                return <Half2Icon className='h-5 w-5 text-gray-700 dark:text-gray-300' />;
-            }
-          })()}
-          {/* {isDark ? "dark" : "light"} */}
+          {Icon}
         </DropdownMenuPrimitive.Trigger>
 
         <DropdownMenuPrimitive.Portal>
@@ -97,7 +67,7 @@ const ThemeSwitcher = () => {
                     'text-gray-500 focus:bg-gray-200 dark:text-gray-400 dark:focus:bg-gray-800'
                   )}
                   onClick={() => {
-                    toggleTheme(key);
+                    toggleThemeMode(key);
                   }}
                 >
                   {React.cloneElement(icon, {
