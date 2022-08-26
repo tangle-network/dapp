@@ -6,7 +6,7 @@ import { getCachedFixtureURI, withLocalFixtures } from '../../';
 // Variable anchor deployments either have 1 edge, or 7 edges.
 // Each vanchor deployment corresponding to an edge has a small (2 input UTXOs)
 //    and a large circuit (16 input UTXOs)
-export const fetchVariableAnchorKeyForEdges = async (maxEdges: number, small: boolean, abortSignal: AbortSignal) => {
+export const fetchVAnchorKeyFromIpfs = async (maxEdges: number, small: boolean, abortSignal: AbortSignal) => {
   let ipfsHash: string;
   let cachedURI: string;
 
@@ -59,7 +59,7 @@ export const fetchVariableAnchorKeyForEdges = async (maxEdges: number, small: bo
 // Variable anchor deployments either have 1 edge, or 7 edges.
 // Each vanchor deployment corresponding to an edge has a small (2 input UTXOs)
 //    and a large circuit (16 input UTXOs)
-export const fetchVariableAnchorWasmForEdges = async (maxEdges: number, small: boolean, abortSignal: AbortSignal) => {
+export const fetchVAnchorWasmFromIpfs = async (maxEdges: number, small: boolean, abortSignal: AbortSignal) => {
   let ipfsHash: string;
   let cachedURI: string;
 
@@ -98,6 +98,114 @@ export const fetchVariableAnchorWasmForEdges = async (maxEdges: number, small: b
 
   try {
     const url = withLocalFixtures() ? cachedURI : `https://ipfs.io/ipfs/${ipfsHash}`;
+    const cachedWasmRequest = await fetch(url, {
+      signal: abortSignal,
+    });
+    const wasmBuffer = await cachedWasmRequest.arrayBuffer();
+    const wasm = new Uint8Array(wasmBuffer);
+
+    return wasm;
+  } catch (e) {
+    console.log('error when fetching wasm from ipfs: ', e);
+    throw e;
+  }
+};
+
+// https://protocol-solidity-fixtures.s3.amazonaws.com/fixtures/vanchor_2/2/poseidon_vanchor_2_2.wasm
+export const fetchVAnchorKeyFromAws = async (maxEdges: number, small: boolean, abortSignal: AbortSignal) => {
+  let filePath: string;
+  let cachedURI: string;
+
+  switch (maxEdges) {
+    case 1:
+      if (small) {
+        filePath = 'vanchor_2/2/circuit_final.zkey';
+        cachedURI = getCachedFixtureURI('vanchor_key_2_small.zkey');
+      } else {
+        filePath = 'vanchor_16/2/circuit_final.zkey';
+        cachedURI = getCachedFixtureURI('vanchor_key_2_large.zkey');
+      }
+
+      break;
+    case 7:
+      if (small) {
+        filePath = 'vanchor_2/8/circuit_final.zkey';
+        cachedURI = getCachedFixtureURI('vanchor_key_2_small.zkey');
+      } else {
+        filePath = 'vanchor_16/8/circuit_final.zkey';
+        cachedURI = getCachedFixtureURI('vanchor_key_2_large.zkey');
+      }
+
+      break;
+    default:
+      if (small) {
+        filePath = 'vanchor_2/2/circuit_final.zkey';
+        cachedURI = getCachedFixtureURI('vanchor_key_2_small.zkey');
+      } else {
+        filePath = 'vanchor_16/2/circuit_final.zkey';
+        cachedURI = getCachedFixtureURI('vanchor_key_2_large.zkey');
+      }
+
+      break;
+  }
+
+  try {
+    const url = withLocalFixtures()
+      ? cachedURI
+      : `https://protocol-solidity-fixtures.s3.amazonaws.com/fixtures/${filePath}`;
+    const keyRequest = await fetch(url, { signal: abortSignal });
+    const keyArrayBuffer = await keyRequest.arrayBuffer();
+    const key = new Uint8Array(keyArrayBuffer);
+
+    return key;
+  } catch (e) {
+    console.log('error when fetching circuit key from ipfs: ', e);
+    throw e;
+  }
+};
+
+// https://protocol-solidity-fixtures.s3.amazonaws.com/fixtures/vanchor_2/2/poseidon_vanchor_2_2.wasm
+export const fetchVAnchorWasmFromAws = async (maxEdges: number, small: boolean, abortSignal: AbortSignal) => {
+  let filePath: string;
+  let cachedURI: string;
+
+  switch (maxEdges) {
+    case 1:
+      if (small) {
+        filePath = 'vanchor_2/2/poseidon_vanchor_2_2.wasm';
+        cachedURI = getCachedFixtureURI('vanchor_wasm_2_small.wasm');
+      } else {
+        filePath = 'vanchor_16/2/poseidon_vanchor_16_2.wasm';
+        cachedURI = getCachedFixtureURI('vanchor_wasm_2_large.wasm');
+      }
+
+      break;
+    case 7:
+      if (small) {
+        filePath = 'vanchor_2/8/poseidon_vanchor_2_8.wasm';
+        cachedURI = getCachedFixtureURI('vanchor_wasm_8_small.wasm');
+      } else {
+        filePath = 'vanchor_16/8/poseidon_vanchor_16_8.wasm';
+        cachedURI = getCachedFixtureURI('vanchor_wasm_8_large.wasm');
+      }
+
+      break;
+    default:
+      if (small) {
+        filePath = 'vanchor_2/2/poseidon_vanchor_2_2.wasm';
+        cachedURI = getCachedFixtureURI('vanchor_wasm_2_small.wasm');
+      } else {
+        filePath = 'vanchor_16/2/poseidon_vanchor_16_2.wasm';
+        cachedURI = getCachedFixtureURI('vanchor_wasm_2_large.wasm');
+      }
+
+      break;
+  }
+
+  try {
+    const url = withLocalFixtures()
+      ? cachedURI
+      : `https://protocol-solidity-fixtures.s3.amazonaws.com/fixtures/${filePath}`;
     const cachedWasmRequest = await fetch(url, {
       signal: abortSignal,
     });
