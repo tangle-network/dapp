@@ -12,4 +12,8 @@ export interface IconBase {
    * If it's empty, the theme mode will control by `css`
    */
   darkMode?: boolean;
+  /**
+   * Class name for svg props
+   */
+  className?: string;
 }
