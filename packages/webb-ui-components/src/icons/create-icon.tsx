@@ -45,7 +45,7 @@ export function createIcon(options: CreateIconOptions) {
     colorUsingStroke = false,
   } = options;
   const _path = Children.toArray(path);
-  const _size = `${size === 'md' ? 16 : 24}px` as const;
+  const _size = `${size === 'md' ? 16 : size === 'lg' ? 24 : 48}px` as const;
 
   const _className = colorUsingStroke ? getStrokeColor(darkMode) : getFillColor(darkMode);
 
