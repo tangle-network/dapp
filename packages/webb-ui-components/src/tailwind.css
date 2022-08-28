@@ -48,10 +48,6 @@ button {
     @apply bg-mono-20 dark:bg-mono-180 min-h-screen min-w-full;
   }
 
-  .card {
-    @apply bg-mono-0 dark:bg-mono-200;
-  }
-
   h1,
   h2,
   h3,
@@ -62,5 +58,17 @@ button {
 
   p {
     @apply text-mono-120 dark:text-mono-100;
+  }
+
+  .card {
+    @apply bg-mono-0 dark:bg-mono-200;
+  }
+
+  .webb-shadow-sm {
+    @apply shadow-[0_4px_8px_0_rgba(0,0,0,0.08)] dark:shadow-[0_4px_8px_0_rgba(0,0,0,0.2)];
+  }
+
+  .webb-shadow-md {
+    @apply shadow-[0_4px_4px_0_rgba(0,0,0,0.25)] dark:shadow-[0_6px_12px_0_rgba(0,0,0,0.2)];
   }
 }
