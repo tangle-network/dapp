@@ -181,6 +181,8 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
       const storedPrivateKey = await keypairStorage.get('keypair');
       const keypair = storedPrivateKey.keypair ? new Keypair(storedPrivateKey.keypair) : new Keypair();
 
+      console.log('retrieved the stored keypair');
+
       // Create the output UTXOs
       const changeAmount = sumInputNotes.sub(amount);
       const changeUtxo = await CircomUtxo.generateUtxo({
@@ -201,6 +203,8 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
         keypair,
       });
       const outputUtxos = [changeUtxo, dummyUtxo];
+
+      console.log('output UTXOs: ');
 
       let extAmount = BigNumber.from(0)
         .add(outputUtxos.reduce((sum: BigNumber, x: Utxo) => sum.add(x.amount), BigNumber.from(0)))

@@ -9,28 +9,25 @@ import { Storage } from '../storage';
 
 export const anchorDeploymentBlock: Record<number, Record<string, number>> = {
   [calculateTypedChainId(ChainType.EVM, EVMChainId.Ropsten)]: {
-    '0x66e04f6ae26c310e39f5bf24d873909e6d3b64c7': 12497372,
+    '0x35295fbb71273b84f66e70b8e341d408150dcaf9': 12864534,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.Rinkeby)]: {
-    '0x91127f21d63029eb5b2de05b4b1e9fd3497ee95b': 10943907,
+    '0x7ae23a95881bf8ab86174e89bd79199f398d19bf': 11266630,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.Goerli)]: {
-    '0x682faa319bf7bae7f0cb68435e857d22bf976e17': 7146565,
-  },
-  [calculateTypedChainId(ChainType.EVM, EVMChainId.Kovan)]: {
-    '0x148e8037ea12834117f3efd9e8990c16c1ff5653': 32476243,
+    '0x4e22da303c403daaf4653d3d9d63ef009bae89a6': 7471990,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.PolygonTestnet)]: {
-    '0x1371efed369498718bee3eb5d58e5d3dec86be85': 26974489,
+    '0xe6b075ecc4ccbc6e66569b1a2984cc47e88ee246': 27776591,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.OptimismTestnet)]: {
-    '0x5353cede4b8fea148fb1f66f45d3ec27bff2224d': 4464058,
+    '0x12f2c4a1469b035e4459539e38ae68bc4dd5ba07': 640396,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.ArbitrumTestnet)]: {
-    '0x4953110789d0cb6de126f4ea88890670ccfe6906': 13335776,
+    '0x91a9a1e76fa609f6ba8fcd718a60b030678765ad': 171869,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.MoonbaseAlpha)]: {
-    '0x0c5f4951f42eec082bd1356b9b41928b4f0e7542': 2397382,
+    '0xc6b43568f0c39e3a68b597a3bb54a7b9e4308bf3': 2723239,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.HermesLocalnet)]: {
     '0xbfce6b877ebff977bb6e80b24fbbb7bc4ebca4df': 95,
