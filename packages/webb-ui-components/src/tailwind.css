@@ -1,0 +1,74 @@
+@tailwind base;
+
+html {
+  @apply bg-white;
+  scrollbar-color: #00000080 transparent;
+  scrollbar-width: auto;
+}
+
+html[class*='dark'] {
+  @apply bg-gray-900;
+  scrollbar-color: #ffffffb3 transparent;
+  scrollbar-width: auto;
+}
+
+::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply rounded-full bg-black/50 dark:bg-white/70;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-black/60 dark:hover:bg-white/80;
+}
+
+button {
+  /* Disables tap highlight color on Chrome */
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Input darkmode fix for checkbox / radio */
+.dark [type='checkbox']:checked,
+.dark [type='radio']:checked {
+  background-color: currentColor;
+}
+
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-mono-20 dark:bg-mono-180 min-h-screen min-w-full;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5 {
+    @apply text-mono-200 dark:text-mono-40;
+  }
+
+  p {
+    @apply text-mono-120 dark:text-mono-100;
+  }
+
+  .card {
+    @apply bg-mono-0 dark:bg-mono-200;
+  }
+
+  .webb-shadow-sm {
+    @apply shadow-[0_4px_8px_0_rgba(0,0,0,0.08)] dark:shadow-[0_4px_8px_0_rgba(0,0,0,0.2)];
+  }
+
+  .webb-shadow-md {
+    @apply shadow-[0_4px_4px_0_rgba(0,0,0,0.25)] dark:shadow-[0_6px_12px_0_rgba(0,0,0,0.2)];
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "@webb-dapp/webb-ui-components",
+  "version": "0.0.0",
+  "description": "Webb UI Kit",
+  "keywords": [
+    "webb-ui-components",
+    "react-components",
+    "ui-components",
+    "UI Kit"
+  ],
+  "author": "Webb Developers <drew@webb.tools>",
+  "devDependencies": {
+    "@radix-ui/react-dropdown-menu": "^1.0.0",
+    "@radix-ui/react-icons": "^1.1.1",
+    "classnames": "^2.3.1"
+  }
+}

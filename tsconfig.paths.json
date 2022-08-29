@@ -96,6 +96,12 @@
 			"@webb-dapp/vbridge": [
 				"vbridge/src"
 			],
+      "@webb-dapp/webb-ui-components/*": [
+        "webb-ui-components/src/*"
+      ],
+      "@webb-dapp/webb-ui-components": [
+        "webb-ui-components/src"
+      ],
     }
   }
 }
