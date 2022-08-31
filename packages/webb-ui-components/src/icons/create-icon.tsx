@@ -2,6 +2,7 @@ import cx from 'classnames';
 import React, { Children } from 'react';
 
 import { IconBase } from './types';
+import { getFillColor, getIconSizeInPixel, getStrokeColor } from './utils';
 
 interface CreateIconOptions extends IconBase {
   /**
@@ -45,7 +46,7 @@ export function createIcon(options: CreateIconOptions) {
     colorUsingStroke = false,
   } = options;
   const _path = Children.toArray(path);
-  const _size = `${size === 'md' ? 16 : size === 'lg' ? 24 : 48}px` as const;
+  const _size = getIconSizeInPixel(size);
 
   const _className = colorUsingStroke ? getStrokeColor(darkMode) : getFillColor(darkMode);
 
@@ -65,34 +66,4 @@ export function createIcon(options: CreateIconOptions) {
   Comp.displayName = displayName;
 
   return <Comp />;
-}
-
-/**
- * Get the tailwind className for stroke color
- * @param darkMode Get the className in dark mode or not,
- * use this variable to control dark mode in `js`,
- * leave it's empty if want to control dark mode in `css`
- * @returns the tailwind class for stroke color
- */
-function getStrokeColor(darkMode?: boolean) {
-  if (darkMode === undefined) {
-    return 'stroke-mono-200 dark:stroke-mono-40' as const;
-  } else {
-    return darkMode ? ('stroke-mono-40' as const) : ('stroke-mono-200' as const);
-  }
-}
-
-/**
- * Get the tailwind className for fill color
- * @param darkMode Get the className in dark mode or not
- * use this variable to control dark mode in `js`
- * leave it's empty if want to control dark mode in `css`
- * @returns the tailwind class for fill color
- */
-function getFillColor(darkMode?: boolean) {
-  if (darkMode === undefined) {
-    return 'fill-mono-200 dark:fill-mono-40' as const;
-  } else {
-    return darkMode ? ('fill-mono-40' as const) : ('fill-mono-200' as const);
-  }
 }
