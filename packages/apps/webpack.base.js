@@ -129,7 +129,7 @@ function createWebpack(env, mode = 'production') {
         },
         {
           exclude: [/semantic-ui-css/],
-          test: [/\.eot$/, /\.ttf$/, /\.svg$/, /\.woff$/, /\.woff2$/],
+          test: [/\.eot$/, /\.ttf$/, /\.woff$/, /\.woff2$/],
           type: 'asset/resource',
           generator: {
             filename: 'static/[name].[contenthash:8].[ext]',
@@ -137,12 +137,17 @@ function createWebpack(env, mode = 'production') {
         },
         {
           include: [/semantic-ui-css/],
-          test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/, /\.eot$/, /\.ttf$/, /\.svg$/, /\.woff$/, /\.woff2$/],
+          test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/, /\.eot$/, /\.ttf$/, /\.woff$/, /\.woff2$/],
           use: [
             {
               loader: require.resolve('null-loader'),
             },
           ],
+        },
+        {
+          test: /\.svg$/i,
+          issuer: /\.[jt]sx?$/,
+          use: ['@svgr/webpack', 'file-loader'],
         },
       ],
     },
