@@ -50,7 +50,7 @@ export function getIconSizeInPixel(size: IconSize) {
     }
 
     default: {
-      throw new Error('Unknow icon size');
+      throw new Error('Unknown icon size');
     }
   }
 }
