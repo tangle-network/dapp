@@ -1,15 +1,21 @@
 overwrite: true
 schema: "http://localhost:3000"
-documents: "./packages/page-statistics"
+documents: "./packages/page-statistics/**/*.graphql"
 generates:
   ./packages/page-statistics/src/generated/graphql.tsx:
     plugins:
       - "typescript"
       - "typescript-operations"
       - "typescript-react-apollo"
-      - "typescript-graphql-files-modules"
-      - "typescript-document-nodes"
-      - "fragment-matcher"
+#      - "typescript-graphql-files-modules"
+#      - "typescript-document-nodes"
+#      - "fragment-matcher"
   ./graphql.schema.json:
     plugins:
       - "introspection"
+    config:
+      withComponent: true
+      withHooks: true
+      withMutationFn: true
+      withRefetchFn: true
+      skipTypename: true

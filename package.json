@@ -44,6 +44,7 @@
     "gql:codegen": "graphql-codegen --config codegen.yml"
   },
   "dependencies": {
+    "@apollo/client": "^3.6.9",
     "@mui/material": "^5.8.7",
     "@mui/styled-engine": "npm:@mui/styled-engine-sc@latest",
     "@mui/styles": "^5.8.7",
@@ -79,6 +80,13 @@
   "devDependencies": {
     "@babel/plugin-syntax-import-meta": "^7.10.4",
     "@graphql-codegen/cli": "2.12.0",
+    "@graphql-codegen/fragment-matcher": "3.3.1",
+    "@graphql-codegen/introspection": "2.2.1",
+    "@graphql-codegen/typescript": "2.7.3",
+    "@graphql-codegen/typescript-document-nodes": "2.3.3",
+    "@graphql-codegen/typescript-graphql-files-modules": "2.2.1",
+    "@graphql-codegen/typescript-operations": "2.5.3",
+    "@graphql-codegen/typescript-react-apollo": "3.3.3",
     "@hot-loader/react-dom": "^16",
     "@open-wc/webpack-import-meta-loader": "^0.4.7",
     "@polkadot/dev": "0.67.85",
@@ -123,13 +131,6 @@
     "resolve-url-loader": "5.0.0",
     "source-map-explorer": "^2.4.2",
     "ts-mocha": "^10.0.0",
-    "typescript": "^4.4.3",
-    "@graphql-codegen/typescript-document-nodes": "2.3.3",
-    "@graphql-codegen/typescript-react-apollo": "3.3.3",
-    "@graphql-codegen/typescript-operations": "2.5.3",
-    "@graphql-codegen/typescript": "2.7.3",
-    "@graphql-codegen/fragment-matcher": "3.3.1",
-    "@graphql-codegen/typescript-graphql-files-modules": "2.2.1",
-    "@graphql-codegen/introspection": "2.2.1"
+    "typescript": "^4.4.3"
   }
 }

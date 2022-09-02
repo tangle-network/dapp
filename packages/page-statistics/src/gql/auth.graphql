@@ -1,4 +1,4 @@
-query {
+query CurrentSessionAuthorities{
   sessions(last: 1, orderBy: [BLOCK_ID_ASC]) {
     nodes {
       id
