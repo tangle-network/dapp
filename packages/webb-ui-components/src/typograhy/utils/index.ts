@@ -23,9 +23,9 @@ export function getTextAlignClassName(textAlign: TypographyAlignValues) {
 export function getFontWeightClassName(variant: WebbTypographyVariant, fontWeight: TypographyFontWeightValues) {
   // Monospace varirant do not have `semibold` for font weight, so cast it to `bold`
   if (isMonospaceVariant(variant) && fontWeight === 'semibold') {
-    return `text-bold`;
+    return `font-bold`;
   } else {
-    return `text-${fontWeight}` as const;
+    return `font-${fontWeight}` as const;
   }
 }
 

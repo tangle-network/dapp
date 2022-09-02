@@ -41,7 +41,7 @@ export const Typography: React.FC<WebbTypographyProps> = (props) => {
   const _component = component ?? defaultComponent[variant];
   const _className = cx(
     className,
-    `.${variant}` as const,
+    `${variant}` as const,
     getTextAlignClassName(ta),
     getFontWeightClassName(variant, fw),
     getTextColorClassName(variant, darkMode)
