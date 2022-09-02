@@ -156,6 +156,7 @@ export const fetchVAnchorKeyFromAws = async (maxEdges: number, small: boolean, a
 
   try {
     const url = withLocalFixtures() ? cachedURI : `https://dapp-fixtures.s3.amazonaws.com/${deployment}/${filePath}`;
+    console.log('fetching zkey from', url);
     const keyRequest = await fetch(url, { signal: abortSignal });
     const keyArrayBuffer = await keyRequest.arrayBuffer();
     const key = new Uint8Array(keyArrayBuffer);
@@ -167,7 +168,6 @@ export const fetchVAnchorKeyFromAws = async (maxEdges: number, small: boolean, a
   }
 };
 
-// https://protocol-solidity-fixtures.s3.amazonaws.com/fixtures/vanchor_2/2/poseidon_vanchor_2_2.wasm
 export const fetchVAnchorWasmFromAws = async (maxEdges: number, small: boolean, abortSignal: AbortSignal) => {
   let filePath: string;
   let cachedURI: string;
@@ -212,6 +212,7 @@ export const fetchVAnchorWasmFromAws = async (maxEdges: number, small: boolean, 
 
   try {
     const url = withLocalFixtures() ? cachedURI : `https://dapp-fixtures.s3.amazonaws.com/${deployment}/${filePath}`;
+    console.log('fetching wasm from', url);
     const cachedWasmRequest = await fetch(url, {
       signal: abortSignal,
     });

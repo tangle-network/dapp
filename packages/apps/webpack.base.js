@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable camelcase */
+require('dotenv').config();
 
 const fs = require('fs');
 const path = require('path');
-const Dotenv = require('dotenv-webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const webpack = require('webpack');
@@ -165,13 +165,11 @@ function createWebpack(env, mode = 'production') {
       new webpack.DefinePlugin({
         'process.env.NODE_ENV': JSON.stringify(mode),
         'process.env.LOCAL_FIXTURES': JSON.stringify(env.LOCAL_FIXTURES),
+        'process.env.DEPLOYMENT': JSON.stringify(process.env.DEPLOYMENT ?? 'develop'),
       }),
       new webpack.optimize.SplitChunksPlugin(),
       new MiniCssExtractPlugin({
         filename: '[name].[contenthash:8].css',
-      }),
-      new Dotenv({
-        systemvars: true,
       }),
     ].concat(plugins),
     resolve: {
