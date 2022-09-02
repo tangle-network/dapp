@@ -1,5 +1,5 @@
-import cx from 'classnames';
 import React, { createElement } from 'react';
+import { twMerge } from 'tailwind-merge';
 
 import { WebbTypographyProps } from '../types';
 import { getFontWeightClassName, getTextAlignClassName, getTextColorClassName } from '../utils';
@@ -39,12 +39,12 @@ export const Typography: React.FC<WebbTypographyProps> = (props) => {
   const { children, className, component, darkMode, fw = 'normal', ta = 'left', variant, ...restProps } = props;
 
   const _component = component ?? defaultComponent[variant];
-  const _className = cx(
-    className,
+  const _className = twMerge(
     `${variant}` as const,
     getTextAlignClassName(ta),
     getFontWeightClassName(variant, fw),
-    getTextColorClassName(variant, darkMode)
+    getTextColorClassName(variant, darkMode),
+    className
   );
 
   return createElement(_component, { ...restProps, className: _className }, children);
