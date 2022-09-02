@@ -1,0 +1,15 @@
+overwrite: true
+schema: "http://localhost:3000"
+documents: "./packages/page-statistics"
+generates:
+  ./packages/page-statistics/src/generated/graphql.tsx:
+    plugins:
+      - "typescript"
+      - "typescript-operations"
+      - "typescript-react-apollo"
+      - "typescript-graphql-files-modules"
+      - "typescript-document-nodes"
+      - "fragment-matcher"
+  ./graphql.schema.json:
+    plugins:
+      - "introspection"

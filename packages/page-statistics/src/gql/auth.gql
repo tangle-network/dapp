@@ -1,0 +1,15 @@
+query {
+  sessions(last: 1, orderBy: [BLOCK_ID_ASC]) {
+    nodes {
+      id
+      blockId
+        authorities
+        bestAuthorities
+        nextBestAuthorities
+      block {
+        id
+        timestamp
+      }
+    }
+  }
+}
