@@ -1,4 +1,4 @@
-import { Typography } from '@webb-dapp/webb-ui-components/typograhy';
+import { Typography } from '@webb-dapp/webb-ui-components/typography';
 import React, { useMemo } from 'react';
 
 import { AvatarChildElement, AvatarGroupProps } from './types';
