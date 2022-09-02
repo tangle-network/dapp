@@ -131,7 +131,7 @@ export const Logo: React.FC<LogoProps> = (props) => {
         className={fillClassName}
       />,
     ],
-    display: 'WebbLogo',
+    displayName: 'WebbLogo',
     defaultProps: {
       width,
       height,
