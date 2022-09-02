@@ -6,7 +6,7 @@ import { WalletSelect } from '@webb-dapp/ui-components/Inputs/WalletSelect/Walle
 import { NetworkManager } from '@webb-dapp/ui-components/NetworkManager/NetworkManager';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
-import { Avatar, ThemeSwitcher as NewThemeSwitcher } from '@webb-dapp/webb-ui-components';
+import { ThemeSwitcher as NewThemeSwitcher } from '@webb-dapp/webb-ui-components';
 import { Typography } from '@webb-dapp/webb-ui-components/typograhy';
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
