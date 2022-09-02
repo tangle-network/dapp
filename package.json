@@ -40,7 +40,8 @@
     "test": "ts-mocha -p packages/api-providers/__test__/tsconfig.json -r tsconfig-paths/register 'packages/api-providers/__test__/**/*.spec.ts' --exit",
     "lint": "polkadot-dev-run-lint --skip-tsc",
     "ts-check": "tsc --noEmit -p ./tsconfig.json",
-    "format": "prettier --write \"packages/**/*.{ts,js,jsx,tsx}\""
+    "format": "prettier --write \"packages/**/*.{ts,js,jsx,tsx}\"",
+    "gql:codegen": "graphql-codegen --config codegen.yml"
   },
   "dependencies": {
     "@mui/material": "^5.8.7",
@@ -62,6 +63,7 @@
     "ethers": "^5.1.4",
     "ffjavascript": "0.2.55",
     "gh-pages": "^3.1.0",
+    "graphql": "^16.6.0",
     "history": "^5.0.0",
     "notistack": "^2.0.5",
     "prop-types": "^15.7.2",
@@ -76,6 +78,7 @@
   },
   "devDependencies": {
     "@babel/plugin-syntax-import-meta": "^7.10.4",
+    "@graphql-codegen/cli": "2.12.0",
     "@hot-loader/react-dom": "^16",
     "@open-wc/webpack-import-meta-loader": "^0.4.7",
     "@polkadot/dev": "0.67.85",
@@ -95,11 +98,11 @@
     "@webb-tools/api": "0.1.4-95",
     "@webb-tools/api-derive": "0.1.4-95",
     "@webb-tools/app-util": "0.1.4-95",
-    "@webb-tools/sdk-core": "0.1.4-95",
-    "@webb-tools/wasm-utils": "0.1.4-95",
     "@webb-tools/contracts": "0.2.3",
     "@webb-tools/interfaces": "0.2.4",
+    "@webb-tools/sdk-core": "0.1.4-95",
     "@webb-tools/types": "0.1.4-95",
+    "@webb-tools/wasm-utils": "0.1.4-95",
     "babel-plugin-bundled-import-meta": "^0.3.2",
     "cross-env": "^7.0.3",
     "enzyme": "^3.11.0",
@@ -120,6 +123,13 @@
     "resolve-url-loader": "5.0.0",
     "source-map-explorer": "^2.4.2",
     "ts-mocha": "^10.0.0",
-    "typescript": "^4.4.3"
+    "typescript": "^4.4.3",
+    "@graphql-codegen/typescript-document-nodes": "2.3.3",
+    "@graphql-codegen/typescript-react-apollo": "3.3.3",
+    "@graphql-codegen/typescript-operations": "2.5.3",
+    "@graphql-codegen/typescript": "2.7.3",
+    "@graphql-codegen/fragment-matcher": "3.3.1",
+    "@graphql-codegen/typescript-graphql-files-modules": "2.2.1",
+    "@graphql-codegen/introspection": "2.2.1"
   }
 }
