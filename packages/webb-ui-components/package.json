@@ -12,7 +12,8 @@
   "devDependencies": {
     "@radix-ui/react-dropdown-menu": "^1.0.0",
     "@radix-ui/react-icons": "^1.1.1",
+    "@svgr/webpack": "^5.5.0",
     "classnames": "^2.3.1",
-    "@svgr/webpack": "^5.5.0"
+    "tailwind-merge": "^1.6.0"
   }
 }
