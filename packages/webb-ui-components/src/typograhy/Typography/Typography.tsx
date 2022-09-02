@@ -1,4 +1,4 @@
-import React, { createElement } from 'react';
+import React, { createElement, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { WebbTypographyProps } from '../types';
@@ -38,13 +38,17 @@ const defaultComponent = {
 export const Typography: React.FC<WebbTypographyProps> = (props) => {
   const { children, className, component, darkMode, fw = 'normal', ta = 'left', variant, ...restProps } = props;
 
-  const _component = component ?? defaultComponent[variant];
-  const _className = twMerge(
-    `${variant}` as const,
-    getTextAlignClassName(ta),
-    getFontWeightClassName(variant, fw),
-    getTextColorClassName(variant, darkMode),
-    className
+  const _component = useMemo(() => component ?? defaultComponent[variant], [component, variant]);
+  const _className = useMemo(
+    () =>
+      twMerge(
+        `${variant}` as const,
+        getTextAlignClassName(ta),
+        getFontWeightClassName(variant, fw),
+        getTextColorClassName(variant, darkMode),
+        className
+      ),
+    [className, darkMode, fw, ta, variant]
   );
 
   return createElement(_component, { ...restProps, className: _className }, children);
