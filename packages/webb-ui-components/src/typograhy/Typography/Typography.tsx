@@ -25,7 +25,7 @@ const defaultComponent = {
  * - `variant`: Represent diffferent variants of the component
  * - `component`: The html tag (default: same as `variant` prop)
  * - `fw`: Represent the **font weight** of the component (default: `left`)
- * - `ta`: Text align (default: `inherit`)
+ * - `ta`: Text align (default: `left`)
  * - `darkMode`: Control component dark mode display in `js`, leave it's empty if you want to control dark mode in `css`
  *
  * @example
