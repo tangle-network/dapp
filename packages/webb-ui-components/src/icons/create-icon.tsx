@@ -44,6 +44,7 @@ export function createIcon(options: CreateIconOptions) {
     size = 'md',
     darkMode,
     colorUsingStroke = false,
+    ...restOptions
   } = options;
   const _path = Children.toArray(path);
   const _size = getIconSizeInPixel(size);
@@ -56,6 +57,7 @@ export function createIcon(options: CreateIconOptions) {
       width={_size}
       height={_size}
       className={cx(_className, colorUsingStroke ? 'fill-transparent' : 'stroke-transparent', className)}
+      {...restOptions}
       {...defaultProps}
       {...props}
     >
