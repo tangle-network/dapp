@@ -1,7 +1,7 @@
 import { useCurrentSessionAuthoritiesQuery } from './generated/graphql';
 
 export const AuthoritiesData = () => {
-  const data = useCurrentSessionAuthoritiesQuery();
+  const { data } = useCurrentSessionAuthoritiesQuery();
 
-  return <></>;
+  return <>{JSON.stringify(data)}</>;
 };

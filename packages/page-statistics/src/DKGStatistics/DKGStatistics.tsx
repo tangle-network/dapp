@@ -1,5 +1,6 @@
 import { Typography } from '@mui/material';
 import ProgressBar from '@ramonak/react-progress-bar';
+import { AuthoritiesData } from '@webb-dapp/page-statistics/AuthoritiesData';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { useBreakpoint } from '@webb-dapp/ui-components/utils/responsive-utils';
@@ -245,6 +246,7 @@ export const DKGStatistics: FC = () => {
 
   return (
     <DKGEggnetStatisticsWrapper>
+      <AuthoritiesData />
       <Flex row jc='space-between' ai='flex-start' wrap='wrap'>
         <StatisticCardsList>
           {displayOverviewData.map((item) => (
