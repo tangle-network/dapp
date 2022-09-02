@@ -149,10 +149,13 @@ export const fetchVAnchorKeyFromAws = async (maxEdges: number, small: boolean, a
       break;
   }
 
+  let deployment = process.env.DEPLOYMENT;
+  if (!deployment) {
+    deployment = 'develop';
+  }
+
   try {
-    const url = withLocalFixtures()
-      ? cachedURI
-      : `https://protocol-solidity-fixtures.s3.amazonaws.com/fixtures/${filePath}`;
+    const url = withLocalFixtures() ? cachedURI : `https://dapp-fixtures.s3.amazonaws.com/${deployment}/${filePath}`;
     const keyRequest = await fetch(url, { signal: abortSignal });
     const keyArrayBuffer = await keyRequest.arrayBuffer();
     const key = new Uint8Array(keyArrayBuffer);
@@ -202,10 +205,13 @@ export const fetchVAnchorWasmFromAws = async (maxEdges: number, small: boolean, 
       break;
   }
 
+  let deployment = process.env.DEPLOYMENT;
+  if (!deployment) {
+    deployment = 'develop';
+  }
+
   try {
-    const url = withLocalFixtures()
-      ? cachedURI
-      : `https://protocol-solidity-fixtures.s3.amazonaws.com/fixtures/${filePath}`;
+    const url = withLocalFixtures() ? cachedURI : `https://dapp-fixtures.s3.amazonaws.com/${deployment}/${filePath}`;
     const cachedWasmRequest = await fetch(url, {
       signal: abortSignal,
     });

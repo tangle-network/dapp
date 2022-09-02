@@ -5,6 +5,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const Dotenv = require('dotenv-webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const webpack = require('webpack');
@@ -168,6 +169,9 @@ function createWebpack(env, mode = 'production') {
       new webpack.optimize.SplitChunksPlugin(),
       new MiniCssExtractPlugin({
         filename: '[name].[contenthash:8].css',
+      }),
+      new Dotenv({
+        systemvars: true,
       }),
     ].concat(plugins),
     resolve: {
