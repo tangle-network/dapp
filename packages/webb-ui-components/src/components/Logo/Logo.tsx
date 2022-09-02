@@ -1,6 +1,6 @@
 import { createIcon } from '@webb-dapp/webb-ui-components/icons/create-icon';
 import { IconBase } from '@webb-dapp/webb-ui-components/icons/types';
-import React from 'react';
+import React, { useMemo } from 'react';
 
 /**
  *
@@ -16,12 +16,15 @@ import React from 'react';
 export const Logo: React.FC<Omit<IconBase, 'size'>> = (props) => {
   const { darkMode } = props;
 
-  const fillClassName =
-    typeof darkMode === 'boolean'
-      ? darkMode
-        ? ('fill-mono-0' as const)
-        : ('fill-mono-200' as const)
-      : ('fill-mono-200 dark:fill-mono-0' as const);
+  const fillClassName = useMemo(
+    () =>
+      typeof darkMode === 'boolean'
+        ? darkMode
+          ? ('fill-mono-0' as const)
+          : ('fill-mono-200' as const)
+        : ('fill-mono-200 dark:fill-mono-0' as const),
+    [darkMode]
+  );
 
   return createIcon({
     ...props,
