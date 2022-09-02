@@ -13,7 +13,7 @@ import React from 'react';
  *  <Logo darkMode={true} />
  * ```
  */
-export const Logo: React.FC<IconBase> = (props) => {
+export const Logo: React.FC<Omit<IconBase, 'size'>> = (props) => {
   const { darkMode } = props;
 
   const fillClassName =
