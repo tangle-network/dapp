@@ -1,5 +1,5 @@
-import cx from 'classnames';
 import React, { Children } from 'react';
+import { twMerge } from 'tailwind-merge';
 
 import { IconBase } from './types';
 import { getFillColor, getIconSizeInPixel, getStrokeColor } from './utils';
@@ -44,6 +44,7 @@ export function createIcon(options: CreateIconOptions) {
     size = 'md',
     darkMode,
     colorUsingStroke = false,
+    ...restOptions
   } = options;
   const _path = Children.toArray(path);
   const _size = getIconSizeInPixel(size);
@@ -55,7 +56,8 @@ export function createIcon(options: CreateIconOptions) {
       viewBox={viewBox}
       width={_size}
       height={_size}
-      className={cx(_className, colorUsingStroke ? 'fill-transparent' : 'stroke-transparent', className)}
+      className={twMerge(_className, colorUsingStroke ? 'fill-transparent' : 'stroke-transparent', className)}
+      {...restOptions}
       {...defaultProps}
       {...props}
     >
