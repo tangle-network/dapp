@@ -6,7 +6,7 @@ import { WalletSelect } from '@webb-dapp/ui-components/Inputs/WalletSelect/Walle
 import { NetworkManager } from '@webb-dapp/ui-components/NetworkManager/NetworkManager';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
-import { ThemeSwitcher as NewThemeSwitcher } from '@webb-dapp/webb-ui-components';
+import { Avatar, ThemeSwitcher as NewThemeSwitcher } from '@webb-dapp/webb-ui-components';
 import { Typography } from '@webb-dapp/webb-ui-components/typograhy';
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
@@ -154,6 +154,7 @@ const AppBar: React.FC<AppBarProps> = ({ toggleSidebarDisplay }) => {
       <Typography variant='h3' fw='bold' className='mr-4'>
         {pageTitle?.toString()}
       </Typography>
+      <Avatar src='https://broken.link.com/broken-pic.jpg' alt='Haha' size='md' fallback='SA' />
       <RightNavigation>
         <NetworkManager />
         {activeChain && <WalletSelect />}
