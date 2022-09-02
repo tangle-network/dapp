@@ -1,12 +1,10 @@
 import IPDisplay from '@webb-dapp/react-components/IPDisplay/IPDisplay';
-import { useStore } from '@webb-dapp/react-environment';
 import { SpaceBox } from '@webb-dapp/ui-components';
 import { CloseButton } from '@webb-dapp/ui-components/Buttons/CloseButton';
-import React, { FC, useMemo, useState } from 'react';
+import { Logo } from '@webb-dapp/webb-ui-components';
+import { FC, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
-import { ThemeSwitcher } from '../AppBar/ThemeSwitcher';
-import { WebbFullNameLogo } from '../assets/WebbFullNameLogo';
 import { SidebarActiveContext } from './context';
 import { Products } from './Products';
 import { SocialPlatform } from './SocialPlatform';
@@ -55,7 +53,7 @@ export const Sidebar: FC<SidebarProps> = ({ collapse, config, isMobile, setSideb
         <SidebarRoot collapse={collapse} isMobile={isMobile}>
           <LogoContainer>
             <div className={'webb-logo'}>
-              <WebbFullNameLogo />
+              <Logo />
             </div>
             {isMobile && <CloseButton onClick={() => setSidebarDisplay(false)} />}
           </LogoContainer>
