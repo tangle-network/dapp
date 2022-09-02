@@ -2,32 +2,9 @@ import * as AvatarPrimitive from '@radix-ui/react-avatar';
 import { Typography } from '@webb-dapp/webb-ui-components/typograhy';
 import cx from 'classnames';
 import React, { useMemo } from 'react';
+import { twMerge } from 'tailwind-merge';
 
-/**
- * Props for `Avatar` component
- */
-export interface AvatarProps {
-  /**
-   * Size of avatar, `md`: 24px, `lg`: 48px (default: "md")
-   */
-  size?: 'md' | 'lg';
-  /**
-   * Control darkMode using `js`, leave it's empty to control dark mode using `css`
-   */
-  darkMode?: boolean;
-  /**
-   * Source for avatar
-   */
-  src: string;
-  /**
-   * Alternative text if source is unavailable
-   */
-  alt: string;
-  /**
-   * Fallback if source image is unavailable
-   */
-  fallback?: string;
-}
+import { AvatarProps } from './types';
 
 /**
  * Webb Avatar component
@@ -39,13 +16,14 @@ export interface AvatarProps {
  * - `src`: Image source for avatar
  * - `alt`: Alternative text if source is unavailable
  * - `fallback`: Optional fallback text if source image is unavailable
+ * - `className`: Outer class name
  *
  * @example
  *
  * <Avatar alt="Webb Logo" src="webblogo.png" />
  */
 export const Avatar: React.FC<AvatarProps> = (props) => {
-  const { alt, darkMode, fallback, size = 'md', src } = props;
+  const { alt, className: outerClassName, darkMode, fallback, size = 'md', src } = props;
 
   const sizeClassName = useMemo(() => (size === 'md' ? 'w-6 h-6' : 'w-12 h-12'), [size]);
 
@@ -82,11 +60,12 @@ export const Avatar: React.FC<AvatarProps> = (props) => {
 
   return (
     <AvatarPrimitive.Root
-      className={cx(
+      className={twMerge(
         'inline-flex items-center justify-center align-middle overflow-hidden rounded-full border-2 box-border',
         sizeClassName,
         classNames.borderColor,
-        classNames.bg
+        classNames.bg,
+        outerClassName
       )}
     >
       <AvatarPrimitive.Image src={src} alt={alt} className='w-full h-full object-cover' />
