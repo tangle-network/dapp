@@ -1,30 +1,75 @@
 import { createIcon } from '@webb-dapp/webb-ui-components/icons/create-icon';
-import { IconBase } from '@webb-dapp/webb-ui-components/icons/types';
-import React from 'react';
+import React, { useMemo } from 'react';
+
+import { LogoProps } from './types';
+
+const defaultLogoSize = {
+  width: 112,
+  height: 40,
+  viewBox: '0 0 112 40',
+};
 
 /**
  *
  * The Webb Logo component
  *
+ * Props:
+ *
+ * - `size`: The logo size (default `md`)
+ * - `darkMode`: Control logo dark mode using `js`, leave it's empty to control using `css`
+ *
  * @example
  *
  * ```jsx
- *  <Logo />
+ *  <Logo size="lg" />
  *  <Logo darkMode={true} />
  * ```
  */
-export const Logo: React.FC<Omit<IconBase, 'size'>> = (props) => {
-  const { darkMode } = props;
+export const Logo: React.FC<LogoProps> = (props) => {
+  const { darkMode, size = 'md', ...restProps } = props;
 
-  const fillClassName =
-    typeof darkMode === 'boolean'
-      ? darkMode
-        ? ('fill-mono-0' as const)
-        : ('fill-mono-200' as const)
-      : ('fill-mono-200 dark:fill-mono-0' as const);
+  const fillClassName = useMemo(
+    () =>
+      typeof darkMode === 'boolean'
+        ? darkMode
+          ? ('fill-mono-0' as const)
+          : ('fill-mono-200' as const)
+        : ('fill-mono-200 dark:fill-mono-0' as const),
+    [darkMode]
+  );
+
+  const { height, width } = useMemo(() => {
+    switch (size) {
+      case 'sm': {
+        return {
+          width: defaultLogoSize.width * 0.5,
+          height: defaultLogoSize.height * 0.5,
+        };
+      }
+
+      case 'md': {
+        return {
+          width: defaultLogoSize.width,
+          height: defaultLogoSize.height,
+        };
+      }
+
+      case 'lg': {
+        return {
+          width: defaultLogoSize.width * 1.5,
+          height: defaultLogoSize.height * 1.5,
+        };
+      }
+
+      default: {
+        throw new Error('Unknown Logo size');
+      }
+    }
+  }, [size]);
 
   return createIcon({
-    ...props,
+    ...restProps,
+    darkMode,
     path: [
       <path
         fillRule='evenodd'
@@ -86,13 +131,13 @@ export const Logo: React.FC<Omit<IconBase, 'size'>> = (props) => {
         className={fillClassName}
       />,
     ],
-    display: 'WebbLogo',
+    displayName: 'WebbLogo',
     defaultProps: {
-      width: 112,
-      height: 40,
+      width,
+      height,
       fill: 'none',
       stroke: 'none',
     },
-    viewBox: '0 0 112 40',
+    viewBox: defaultLogoSize.viewBox,
   });
 };
