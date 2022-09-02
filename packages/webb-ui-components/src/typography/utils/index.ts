@@ -21,7 +21,7 @@ export function getTextAlignClassName(textAlign: TypographyAlignValues) {
  * @returns tailwindcss className to style the `font-weight` attribute
  */
 export function getFontWeightClassName(variant: WebbTypographyVariant, fontWeight: TypographyFontWeightValues) {
-  // Monospace varirant do not have `semibold` for font weight, so cast it to `bold`
+  // Monospace variant do not have `semibold` for font weight, so cast it to `bold`
   if (isMonospaceVariant(variant) && fontWeight === 'semibold') {
     return `font-bold`;
   } else {
@@ -31,7 +31,7 @@ export function getFontWeightClassName(variant: WebbTypographyVariant, fontWeigh
 
 /**
  * Assert the typography variant to heading variant
- * @param variant Represent the value to check if it is the heading varirant
+ * @param variant Represent the value to check if it is the heading variant
  * @returns Whether the typography variant is heading variant
  */
 export function isHeadingVariant(variant: WebbTypographyVariant): variant is HeadingVariant {
@@ -41,7 +41,7 @@ export function isHeadingVariant(variant: WebbTypographyVariant): variant is Hea
 
 /**
  * Assert the typography variant to monospace variant
- * @param variant Represent the value to check if it is the monospace varirant
+ * @param variant Represent the value to check if it is the monospace variant
  * @returns Whether the typography variant is monospace variant
  */
 export function isMonospaceVariant(variant: WebbTypographyVariant): variant is MonospaceVariant {

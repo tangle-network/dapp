@@ -7,7 +7,7 @@ import { NetworkManager } from '@webb-dapp/ui-components/NetworkManager/NetworkM
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
 import { ThemeSwitcher as NewThemeSwitcher } from '@webb-dapp/webb-ui-components';
-import { Typography } from '@webb-dapp/webb-ui-components/typograhy';
+import { Typography } from '@webb-dapp/webb-ui-components/typography';
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
 

@@ -22,9 +22,9 @@ const defaultComponent = {
  * The Webb Typography component
  *
  * Props:
- * - `variant`: Represent diffferent variants of the component
+ * - `variant`: Represent different variants of the component
  * - `component`: The html tag (default: same as `variant` prop)
- * - `fw`: Represent the **font weight** of the component (default: `left`)
+ * - `fw`: Represent the **font weight** of the component (default: `normal`)
  * - `ta`: Text align (default: `left`)
  * - `darkMode`: Control component dark mode display in `js`, leave it's empty if you want to control dark mode in `css`
  *

@@ -16,15 +16,15 @@ export type WebbTypographyVariant = HeadingVariant | BodyVariant | MonospaceVari
 
 /**
  * Properties of typography component
- * - `variant`: Represent diffferent variants of the component
+ * - `variant`: Represent different variants of the component
  * - `component`: The html tag (default: same as `variant` prop)
- * - `fw`: Represent the **font weight** of the component (default: `left`)
+ * - `fw`: Represent the **font weight** of the component (default: `normal`)
  * - `ta`: Text align (default: `inherit`)
  * - `darkMode`: Control component dark mode display in `js`, leave it's empty if you want to control dark mode in `css`
  */
 export interface WebbTypographyProps<TypoVariant = WebbTypographyVariant> extends TypographyBaseProps {
   /**
-   * Represent diffferent variants of the component
+   * Represent different variants of the component
    */
   variant: TypoVariant;
   /**
