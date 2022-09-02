@@ -1,0 +1,236 @@
+@tailwind base;
+
+/** Radix UI */
+html {
+  @apply bg-white;
+  scrollbar-color: #00000080 transparent;
+  scrollbar-width: auto;
+}
+
+html[class*='dark'] {
+  @apply bg-gray-900;
+  scrollbar-color: #ffffffb3 transparent;
+  scrollbar-width: auto;
+}
+
+::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply rounded-full bg-black/50 dark:bg-white/70;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-black/60 dark:hover:bg-white/80;
+}
+
+button {
+  /* Disables tap highlight color on Chrome */
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Input darkmode fix for checkbox / radio */
+.dark [type='checkbox']:checked,
+.dark [type='radio']:checked {
+  background-color: currentColor;
+}
+
+/** Typography */
+/** Load fonts */
+
+/* Font Family Breeze Sans */
+
+@font-face {
+  font-family: 'BreezeSans';
+  src: url('fonts/BreezeSans-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'BreezeSans';
+  src: url('fonts/BreezeSans-Medium.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'BreezeSans';
+  src: url('fonts/BreezeSans-Bold.ttf') format('truetype');
+  font-weight: 800;
+  font-style: normal;
+}
+
+/* Cousine */
+
+@font-face {
+  font-family: 'Cousine';
+  src: url('fonts/Cousine-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Cousine';
+  src: url('fonts/Cousine-Bold.ttf') format('truetype');
+  font-weight: 800;
+  font-style: normal;
+}
+
+/** Make use fonts */
+html,
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+p,
+table,
+ol,
+ul,
+li,
+.h1,
+.h2,
+.h3,
+.h4,
+.h5,
+.body1,
+.body2,
+.body3,
+.body4 {
+  font-family: 'BreezeSans', Arial, sans-serif;
+}
+
+code,
+.mono1,
+.mono2 {
+  font-family: 'Cousine', monospace;
+  font-size: 16px;
+}
+
+@tailwind components;
+@tailwind utilities;
+
+/** Layer base */
+@layer base {
+  body {
+    @apply bg-mono-20 dark:bg-mono-180 min-h-screen min-w-full;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5 {
+    @apply text-mono-200 dark:text-mono-40;
+  }
+
+  p,
+  span {
+    @apply text-mono-120 dark:text-mono-100;
+  }
+
+  .card {
+    @apply bg-mono-0 dark:bg-mono-200;
+  }
+
+  .webb-shadow-sm {
+    @apply shadow-[0_4px_8px_0_rgba(0,0,0,0.08)] dark:shadow-[0_4px_8px_0_rgba(0,0,0,0.2)];
+  }
+
+  .webb-shadow-md {
+    @apply shadow-[0_4px_4px_0_rgba(0,0,0,0.25)] dark:shadow-[0_6px_12px_0_rgba(0,0,0,0.2)];
+  }
+}
+
+/** Layer components */
+@layer components {
+  .h1 {
+    font-size: 64px;
+    line-height: 96px;
+  }
+
+  .h2 {
+    font-size: 48px;
+    line-height: 72px;
+  }
+
+  .h3 {
+    font-size: 36px;
+    line-height: 54px;
+  }
+
+  .h4 {
+    font-size: 24px;
+    line-height: 36px;
+  }
+
+  .h5 {
+    font-size: 18px;
+    line-height: 27px;
+  }
+
+  .body1 {
+    font-size: 16px;
+    line-height: 24px;
+  }
+
+  .body2 {
+    font-size: 14px;
+    line-height: 21px;
+  }
+
+  .body3 {
+    font-size: 12px;
+    line-height: 18px;
+  }
+
+  .body4 {
+    font-size: 10px;
+    line-height: 15px;
+  }
+
+  .mono1 {
+    font-size: 16px;
+    line-height: 24px;
+  }
+
+  .mono2 {
+    font-size: 12px;
+    line-height: 18px;
+  }
+
+  @media screen and (max-width: 800px) {
+    .h1 {
+      font-size: 46px;
+      line-height: 69px;
+    }
+
+    .h2 {
+      font-size: 34px;
+      line-height: 51px;
+    }
+
+    .h3 {
+      font-size: 24px;
+      line-height: 36px;
+    }
+
+    .h4 {
+      font-size: 20px;
+      line-height: 30px;
+    }
+
+    .h5 {
+      font-size: 15px;
+      line-height: 22px;
+    }
+  }
+}
