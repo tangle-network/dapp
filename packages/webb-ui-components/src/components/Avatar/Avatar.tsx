@@ -1,7 +1,7 @@
 import * as AvatarPrimitive from '@radix-ui/react-avatar';
 import { Typography } from '@webb-dapp/webb-ui-components/typograhy';
 import cx from 'classnames';
-import React from 'react';
+import React, { useMemo } from 'react';
 
 /**
  * Props for `Avatar` component
@@ -47,32 +47,53 @@ export interface AvatarProps {
 export const Avatar: React.FC<AvatarProps> = (props) => {
   const { alt, darkMode, fallback, size = 'md', src } = props;
 
-  const sizeClassName = size === 'md' ? 'w-6 h-6' : 'w-12 h-12';
-  const borderColorClassName =
-    typeof darkMode === 'boolean'
-      ? darkMode
-        ? 'border-mono-180'
-        : 'border-mono-0'
-      : 'border-mono-0 dark:border-mono-180';
-  const backgroundClassName =
-    typeof darkMode === 'boolean' ? (darkMode ? 'bg-mono-180' : 'bg-mono-0') : 'bg-mono-0 dark:bg-mono-180';
-  const textColorClassName =
-    typeof darkMode === 'boolean' ? (darkMode ? 'text-mono-0' : 'text-mono-180') : 'text-mono-180 dark:text-mono-0';
+  const sizeClassName = useMemo(() => (size === 'md' ? 'w-6 h-6' : 'w-12 h-12'), [size]);
+
+  const classNames = useMemo(() => {
+    const borderColor =
+      typeof darkMode === 'boolean'
+        ? darkMode
+          ? ('border-mono-180' as const)
+          : ('border-mono-0' as const)
+        : ('border-mono-0 dark:border-mono-180' as const);
+
+    const bg =
+      typeof darkMode === 'boolean'
+        ? darkMode
+          ? ('bg-mono-180' as const)
+          : ('bg-mono-0' as const)
+        : ('bg-mono-0 dark:bg-mono-180' as const);
+
+    const text =
+      typeof darkMode === 'boolean'
+        ? darkMode
+          ? ('text-mono-0' as const)
+          : ('text-mono-180' as const)
+        : ('text-mono-180 dark:text-mono-0' as const);
+
+    return {
+      borderColor,
+      bg,
+      text,
+    };
+  }, [darkMode]);
+
+  const typoVariant = useMemo(() => (size === 'md' ? 'body4' : 'body1'), [size]);
 
   return (
     <AvatarPrimitive.Root
       className={cx(
         'inline-flex items-center justify-center align-middle overflow-hidden rounded-full border-2 box-border',
         sizeClassName,
-        borderColorClassName,
-        backgroundClassName
+        classNames.borderColor,
+        classNames.bg
       )}
     >
       <AvatarPrimitive.Image src={src} alt={alt} className='w-full h-full object-cover' />
       {fallback && (
-        <AvatarPrimitive.Fallback className={cx('w-full h-full flex justify-center items-center', textColorClassName)}>
-          <Typography variant='body4' component='span' className={cx(textColorClassName)}>
-            {fallback}
+        <AvatarPrimitive.Fallback className={cx('w-full h-full flex justify-center items-center', classNames.text)}>
+          <Typography variant={typoVariant} fw='semibold' component='span' className={classNames.text}>
+            {fallback.substring(0, 2)}
           </Typography>
         </AvatarPrimitive.Fallback>
       )}

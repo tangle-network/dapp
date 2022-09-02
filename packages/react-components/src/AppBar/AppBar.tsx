@@ -154,7 +154,6 @@ const AppBar: React.FC<AppBarProps> = ({ toggleSidebarDisplay }) => {
       <Typography variant='h3' fw='bold' className='mr-4'>
         {pageTitle?.toString()}
       </Typography>
-      <Avatar src='https://broken.link.com/broken-pic.jpg' alt='Haha' size='md' fallback='SA' />
       <RightNavigation>
         <NetworkManager />
         {activeChain && <WalletSelect />}
