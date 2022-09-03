@@ -1,5 +1,7 @@
 import { ReactHTML } from 'react';
 
+import { WebbComponentBase } from '../types';
+
 export type TypographyBaseProps = React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
 
 export type TypographyAlignValues = 'center' | 'justify' | 'right' | 'left';
@@ -22,7 +24,9 @@ export type WebbTypographyVariant = HeadingVariant | BodyVariant | MonospaceVari
  * - `ta`: Text align (default: `inherit`)
  * - `darkMode`: Control component dark mode display in `js`, leave it's empty if you want to control dark mode in `css`
  */
-export interface WebbTypographyProps<TypoVariant = WebbTypographyVariant> extends TypographyBaseProps {
+export interface WebbTypographyProps<TypoVariant = WebbTypographyVariant>
+  extends TypographyBaseProps,
+    WebbComponentBase {
   /**
    * Represent different variants of the component
    */
@@ -39,8 +43,4 @@ export interface WebbTypographyProps<TypoVariant = WebbTypographyVariant> extend
    * Text align
    */
   ta?: TypographyAlignValues;
-  /**
-   * Dark mode control for `js`, leave it's empty to control dark mode in `css`
-   */
-  darkMode?: boolean;
 }
