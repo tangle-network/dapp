@@ -34,6 +34,7 @@ export * from './MoonLine';
 export * from './QRCode';
 export * from './Search';
 export * from './ShuffleLine';
+export * from './Spinner';
 export * from './SunLine';
 export * from './TelegramFill';
 export * from './TokenIcon';
