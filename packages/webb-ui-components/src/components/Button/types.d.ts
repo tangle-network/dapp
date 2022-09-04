@@ -52,7 +52,7 @@ export interface ButtonProps extends WebbComponentBase {
    */
   spinnerPlacement?: ButtonSpinnerPlacement;
   /**
-   * The button sizes
+   * The button size
    * @default "md"
    */
   size?: ButtonSize;
