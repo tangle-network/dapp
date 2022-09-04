@@ -15,4 +15,8 @@ export interface WebbComponentBase {
    * Control dark mode using `js`, if it's empty, the component will control dark mode in `css`
    */
   darkMode?: boolean;
+  /**
+   * Children node
+   */
+  children?: React.ReactNode;
 }
