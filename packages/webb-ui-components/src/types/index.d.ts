@@ -20,3 +20,8 @@ export interface WebbComponentBase extends React.HTMLAttributes<HTMLElement> {
    */
   children?: React.ReactNode;
 }
+
+/**
+ * Extract the props of a React element or component
+ */
+export type PropsOf<T extends React.ElementType<any>> = React.ComponentPropsWithoutRef<T>;

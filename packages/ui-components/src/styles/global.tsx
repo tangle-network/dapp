@@ -52,8 +52,6 @@ export const GlobalStylesheet = createGlobalStyle`
     input {
         min-width: 0;
         appearance: none;
-        border: none;
-        box-shadow: none;
     }
     
     p,
