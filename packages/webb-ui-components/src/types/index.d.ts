@@ -6,7 +6,7 @@ declare module '*.svg' {
 /**
  * The base interface required all component to extends in their props
  */
-export interface WebbComponentBase {
+export interface WebbComponentBase extends React.HTMLAttributes<HTMLElement> {
   /**
    * The tailwindcss className to override the style
    */
