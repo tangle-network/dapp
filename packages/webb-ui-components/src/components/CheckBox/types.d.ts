@@ -1,5 +1,8 @@
 import { WebbComponentBase } from '@webb-dapp/webb-ui-components/types';
 
+/**
+ * CheckBox Props
+ */
 export interface CheckBoxProps extends WebbComponentBase {
   /**
    * If `true`, the checkbox will be disabled
