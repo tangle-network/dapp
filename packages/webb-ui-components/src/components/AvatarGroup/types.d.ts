@@ -1,3 +1,5 @@
+import { WebbComponentBase } from '@webb-dapp/webb-ui-components/types';
+
 import { Avatar, AvatarProps } from '../Avatar';
 
 export type AvatarChildElement = ReactElement<AvatarProps, typeof Avatar>;
@@ -5,7 +7,7 @@ export type AvatarChildElement = ReactElement<AvatarProps, typeof Avatar>;
 /**
  * Avatar stack properties
  */
-export interface AvatarGroupProps {
+export interface AvatarGroupProps extends WebbComponentBase {
   /**
    * 	Max avatars to show before +n.
    * @default 3

@@ -8,6 +8,7 @@ const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const webpack = require('webpack');
+const polkadotBabelWebpackConfig = require('@polkadot/dev/config/babel-config-webpack.cjs');
 
 const findPackages = require('../../scripts/findPackages');
 
@@ -111,7 +112,13 @@ function createWebpack(env, mode = 'production') {
             require.resolve('thread-loader'),
             {
               loader: require.resolve('babel-loader'),
-              options: require('@polkadot/dev/config/babel-config-webpack.cjs'),
+              options: {
+                ...polkadotBabelWebpackConfig,
+                plugins: [
+                  ...(polkadotBabelWebpackConfig.plugins ?? []),
+                  isDevelopment && require.resolve('react-refresh/babel'),
+                ].filter(Boolean),
+              },
             },
           ],
         },

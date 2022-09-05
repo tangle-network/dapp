@@ -1,15 +1,13 @@
+import { WebbComponentBase } from '@webb-dapp/webb-ui-components/types';
+
 /**
  * Props for `Avatar` component
  */
-export interface AvatarProps {
+export interface AvatarProps extends WebbComponentBase {
   /**
    * Size of avatar, `md`: 24px, `lg`: 48px (default: "md")
    */
   size?: 'md' | 'lg';
-  /**
-   * Control darkMode using `js`, leave it's empty to control dark mode using `css`
-   */
-  darkMode?: boolean;
   /**
    * Source for avatar
    */
@@ -22,8 +20,4 @@ export interface AvatarProps {
    * Fallback if source image is unavailable
    */
   fallback?: string;
-  /**
-   * Outer class name
-   */
-  className?: string;
 }

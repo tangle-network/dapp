@@ -1,4 +1,5 @@
 import { DynamicSVGImportOptions } from '../hooks';
+import { WebbComponentBase } from '../types';
 
 type SVGBase = Omit<React.SVGProps<SVGSVGElement>, 'path' | 'd'>;
 
@@ -7,21 +8,12 @@ export type IconSize = 'md' | 'lg' | 'xl';
 /**
  * Base interface for Webb Icon
  */
-export interface IconBase extends SVGBase {
+export interface IconBase extends SVGBase, WebbComponentBase {
   /**
    * The icon size, possible values: `md` (16px), `lg` (24px), `xl` (48px)
    * @default "md"
    */
   size?: IconSize;
-  /**
-   * Use the icon in dark mode, this prop control theme mode with `js`.
-   * If it's empty, the theme mode will control by `css`
-   */
-  darkMode?: boolean;
-  /**
-   * Class name for svg props
-   */
-  className?: string;
 }
 
 /**
