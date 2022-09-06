@@ -28,10 +28,6 @@ export interface CheckBoxProps extends WebbComponentBase {
    */
   inputProps?: React.InputHTMLAttributes<HTMLInputElement>;
   /**
-   * Input id and value for `htmlFor` attribute of `<label></label>` tag.
-   */
-  htmlFor?: string;
-  /**
    * Class name in case of overriding the tailwind class of the `<label></label>` tag
    */
   labelClassName?: string;

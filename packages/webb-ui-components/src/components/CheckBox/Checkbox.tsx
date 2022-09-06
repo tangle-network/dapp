@@ -30,7 +30,6 @@ export const CheckBox: React.FC<CheckBoxProps> = (props) => {
   const {
     children,
     className,
-    htmlFor,
     inputProps = {},
     isChecked,
     isDisabled,
@@ -58,7 +57,7 @@ export const CheckBox: React.FC<CheckBoxProps> = (props) => {
 
   return (
     <span className={wrapperClassName}>
-      <label className='inline-flex justify-center items-center min-h-[28px]' htmlFor={htmlFor}>
+      <label className='inline-flex justify-center items-center min-h-[28px]'>
         <input
           type='checkbox'
           className={mergedInputClsx}
@@ -67,11 +66,7 @@ export const CheckBox: React.FC<CheckBoxProps> = (props) => {
           disabled={isDisabled}
           {...inputProps}
         />
-        {children && (
-          <label htmlFor={htmlFor} className={mergedLabelClsx}>
-            {children}
-          </label>
-        )}
+        {children && <label className={mergedLabelClsx}>{children}</label>}
       </label>
     </span>
   );
