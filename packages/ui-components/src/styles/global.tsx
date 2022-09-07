@@ -10,7 +10,6 @@ export const GlobalStylesheet = createGlobalStyle`
         font-variant-numeric: tabular-nums;
         font-weight: 400;
         transition: all ease-in-out 0.2s;
-        font-size: 14px;
     }
     
     body {
