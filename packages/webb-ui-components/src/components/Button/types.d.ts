@@ -44,7 +44,7 @@ export interface AriaButtonProps {
 }
 
 export interface UseButtonPropsMetadata {
-  tagName: React.ElementType;
+  tagName: React.ComponentElement;
 }
 
 /************************* */
