@@ -1,11 +1,16 @@
 query CurrentSessionAuthorities {
-  sessions(last: 1, orderBy: [BLOCK_ID_ASC]) {
+  sessions(last: 1, orderBy: [BLOCK_NUMBER_DESC]) {
     nodes {
       id
       blockId
-        authorities
-        bestAuthorities
-        nextBestAuthorities
+      authorities
+      bestAuthorities
+      publicKey {
+        compressed
+      }
+      signatureThreshold
+      keyGenThreshold
+      proposerThreshold
       block {
         id
         timestamp

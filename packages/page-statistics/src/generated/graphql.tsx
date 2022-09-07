@@ -37,11 +37,12 @@ export type Account = Node & {
   creator?: Maybe<Account>;
   creatorId?: Maybe<Scalars['String']>;
   /** Reads and enables pagination through a set of `Extrinsic`. */
-  extrinsicsBySignerId: ExtrinsicsConnection;
+  extrinsics: ExtrinsicsConnection;
   id: Scalars['String'];
   /** A globally unique identifier. Can be used in various places throughout the system to identify this single value. */
   nodeId: Scalars['ID'];
 };
+
 
 export type AccountAccountsByCreatorIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -53,6 +54,7 @@ export type AccountAccountsByCreatorIdArgs = {
   orderBy?: InputMaybe<Array<AccountsOrderBy>>;
 };
 
+
 export type AccountBlocksByAccountCreatorIdAndCreateAtBlockIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -62,6 +64,7 @@ export type AccountBlocksByAccountCreatorIdAndCreateAtBlockIdArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<BlocksOrderBy>>;
 };
+
 
 export type AccountBlocksByExtrinsicSignerIdAndBlockIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -73,7 +76,8 @@ export type AccountBlocksByExtrinsicSignerIdAndBlockIdArgs = {
   orderBy?: InputMaybe<Array<BlocksOrderBy>>;
 };
 
-export type AccountExtrinsicsBySignerIdArgs = {
+
+export type AccountExtrinsicsArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
   filter?: InputMaybe<ExtrinsicFilter>;
@@ -107,6 +111,7 @@ export type AccountBlocksByAccountCreatorIdAndCreateAtBlockIdManyToManyConnectio
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Block` values, with data from `Account`. */
 export type AccountBlocksByAccountCreatorIdAndCreateAtBlockIdManyToManyConnectionGroupedAggregatesArgs = {
   groupBy: Array<BlocksGroupBy>;
@@ -123,6 +128,7 @@ export type AccountBlocksByAccountCreatorIdAndCreateAtBlockIdManyToManyEdge = {
   /** The `Block` at the end of the edge. */
   node?: Maybe<Block>;
 };
+
 
 /** A `Block` edge in the connection, with data from `Account`. */
 export type AccountBlocksByAccountCreatorIdAndCreateAtBlockIdManyToManyEdgeAccountsByCreateAtBlockIdArgs = {
@@ -152,6 +158,7 @@ export type AccountBlocksByExtrinsicSignerIdAndBlockIdManyToManyConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Block` values, with data from `Extrinsic`. */
 export type AccountBlocksByExtrinsicSignerIdAndBlockIdManyToManyConnectionGroupedAggregatesArgs = {
   groupBy: Array<BlocksGroupBy>;
@@ -168,6 +175,7 @@ export type AccountBlocksByExtrinsicSignerIdAndBlockIdManyToManyEdge = {
   /** The `Block` at the end of the edge. */
   node?: Maybe<Block>;
 };
+
 
 /** A `Block` edge in the connection, with data from `Extrinsic`. */
 export type AccountBlocksByExtrinsicSignerIdAndBlockIdManyToManyEdgeExtrinsicsArgs = {
@@ -227,6 +235,7 @@ export type AccountsConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Account` values. */
 export type AccountsConnectionGroupedAggregatesArgs = {
   groupBy: Array<AccountsGroupBy>;
@@ -246,7 +255,7 @@ export type AccountsEdge = {
 export enum AccountsGroupBy {
   CreatedAt = 'CREATED_AT',
   CreateAtBlockId = 'CREATE_AT_BLOCK_ID',
-  CreatorId = 'CREATOR_ID',
+  CreatorId = 'CREATOR_ID'
 }
 
 /** Conditions for `Account` aggregates. */
@@ -337,211 +346,211 @@ export enum AccountsOrderBy {
   CreateAtBlockIdDesc = 'CREATE_AT_BLOCK_ID_DESC',
   CreatorIdAsc = 'CREATOR_ID_ASC',
   CreatorIdDesc = 'CREATOR_ID_DESC',
-  ExtrinsicsBySignerIdAverageArgumentsAsc = 'EXTRINSICS_BY_SIGNER_ID_AVERAGE_ARGUMENTS_ASC',
-  ExtrinsicsBySignerIdAverageArgumentsDesc = 'EXTRINSICS_BY_SIGNER_ID_AVERAGE_ARGUMENTS_DESC',
-  ExtrinsicsBySignerIdAverageBlockIdAsc = 'EXTRINSICS_BY_SIGNER_ID_AVERAGE_BLOCK_ID_ASC',
-  ExtrinsicsBySignerIdAverageBlockIdDesc = 'EXTRINSICS_BY_SIGNER_ID_AVERAGE_BLOCK_ID_DESC',
-  ExtrinsicsBySignerIdAverageBlockNumberAsc = 'EXTRINSICS_BY_SIGNER_ID_AVERAGE_BLOCK_NUMBER_ASC',
-  ExtrinsicsBySignerIdAverageBlockNumberDesc = 'EXTRINSICS_BY_SIGNER_ID_AVERAGE_BLOCK_NUMBER_DESC',
-  ExtrinsicsBySignerIdAverageHashAsc = 'EXTRINSICS_BY_SIGNER_ID_AVERAGE_HASH_ASC',
-  ExtrinsicsBySignerIdAverageHashDesc = 'EXTRINSICS_BY_SIGNER_ID_AVERAGE_HASH_DESC',
-  ExtrinsicsBySignerIdAverageIdAsc = 'EXTRINSICS_BY_SIGNER_ID_AVERAGE_ID_ASC',
-  ExtrinsicsBySignerIdAverageIdDesc = 'EXTRINSICS_BY_SIGNER_ID_AVERAGE_ID_DESC',
-  ExtrinsicsBySignerIdAverageIndexAsc = 'EXTRINSICS_BY_SIGNER_ID_AVERAGE_INDEX_ASC',
-  ExtrinsicsBySignerIdAverageIndexDesc = 'EXTRINSICS_BY_SIGNER_ID_AVERAGE_INDEX_DESC',
-  ExtrinsicsBySignerIdAverageIsSignedAsc = 'EXTRINSICS_BY_SIGNER_ID_AVERAGE_IS_SIGNED_ASC',
-  ExtrinsicsBySignerIdAverageIsSignedDesc = 'EXTRINSICS_BY_SIGNER_ID_AVERAGE_IS_SIGNED_DESC',
-  ExtrinsicsBySignerIdAverageIsSuccessAsc = 'EXTRINSICS_BY_SIGNER_ID_AVERAGE_IS_SUCCESS_ASC',
-  ExtrinsicsBySignerIdAverageIsSuccessDesc = 'EXTRINSICS_BY_SIGNER_ID_AVERAGE_IS_SUCCESS_DESC',
-  ExtrinsicsBySignerIdAverageMethodAsc = 'EXTRINSICS_BY_SIGNER_ID_AVERAGE_METHOD_ASC',
-  ExtrinsicsBySignerIdAverageMethodDesc = 'EXTRINSICS_BY_SIGNER_ID_AVERAGE_METHOD_DESC',
-  ExtrinsicsBySignerIdAverageModuleAsc = 'EXTRINSICS_BY_SIGNER_ID_AVERAGE_MODULE_ASC',
-  ExtrinsicsBySignerIdAverageModuleDesc = 'EXTRINSICS_BY_SIGNER_ID_AVERAGE_MODULE_DESC',
-  ExtrinsicsBySignerIdAverageSignerIdAsc = 'EXTRINSICS_BY_SIGNER_ID_AVERAGE_SIGNER_ID_ASC',
-  ExtrinsicsBySignerIdAverageSignerIdDesc = 'EXTRINSICS_BY_SIGNER_ID_AVERAGE_SIGNER_ID_DESC',
-  ExtrinsicsBySignerIdCountAsc = 'EXTRINSICS_BY_SIGNER_ID_COUNT_ASC',
-  ExtrinsicsBySignerIdCountDesc = 'EXTRINSICS_BY_SIGNER_ID_COUNT_DESC',
-  ExtrinsicsBySignerIdDistinctCountArgumentsAsc = 'EXTRINSICS_BY_SIGNER_ID_DISTINCT_COUNT_ARGUMENTS_ASC',
-  ExtrinsicsBySignerIdDistinctCountArgumentsDesc = 'EXTRINSICS_BY_SIGNER_ID_DISTINCT_COUNT_ARGUMENTS_DESC',
-  ExtrinsicsBySignerIdDistinctCountBlockIdAsc = 'EXTRINSICS_BY_SIGNER_ID_DISTINCT_COUNT_BLOCK_ID_ASC',
-  ExtrinsicsBySignerIdDistinctCountBlockIdDesc = 'EXTRINSICS_BY_SIGNER_ID_DISTINCT_COUNT_BLOCK_ID_DESC',
-  ExtrinsicsBySignerIdDistinctCountBlockNumberAsc = 'EXTRINSICS_BY_SIGNER_ID_DISTINCT_COUNT_BLOCK_NUMBER_ASC',
-  ExtrinsicsBySignerIdDistinctCountBlockNumberDesc = 'EXTRINSICS_BY_SIGNER_ID_DISTINCT_COUNT_BLOCK_NUMBER_DESC',
-  ExtrinsicsBySignerIdDistinctCountHashAsc = 'EXTRINSICS_BY_SIGNER_ID_DISTINCT_COUNT_HASH_ASC',
-  ExtrinsicsBySignerIdDistinctCountHashDesc = 'EXTRINSICS_BY_SIGNER_ID_DISTINCT_COUNT_HASH_DESC',
-  ExtrinsicsBySignerIdDistinctCountIdAsc = 'EXTRINSICS_BY_SIGNER_ID_DISTINCT_COUNT_ID_ASC',
-  ExtrinsicsBySignerIdDistinctCountIdDesc = 'EXTRINSICS_BY_SIGNER_ID_DISTINCT_COUNT_ID_DESC',
-  ExtrinsicsBySignerIdDistinctCountIndexAsc = 'EXTRINSICS_BY_SIGNER_ID_DISTINCT_COUNT_INDEX_ASC',
-  ExtrinsicsBySignerIdDistinctCountIndexDesc = 'EXTRINSICS_BY_SIGNER_ID_DISTINCT_COUNT_INDEX_DESC',
-  ExtrinsicsBySignerIdDistinctCountIsSignedAsc = 'EXTRINSICS_BY_SIGNER_ID_DISTINCT_COUNT_IS_SIGNED_ASC',
-  ExtrinsicsBySignerIdDistinctCountIsSignedDesc = 'EXTRINSICS_BY_SIGNER_ID_DISTINCT_COUNT_IS_SIGNED_DESC',
-  ExtrinsicsBySignerIdDistinctCountIsSuccessAsc = 'EXTRINSICS_BY_SIGNER_ID_DISTINCT_COUNT_IS_SUCCESS_ASC',
-  ExtrinsicsBySignerIdDistinctCountIsSuccessDesc = 'EXTRINSICS_BY_SIGNER_ID_DISTINCT_COUNT_IS_SUCCESS_DESC',
-  ExtrinsicsBySignerIdDistinctCountMethodAsc = 'EXTRINSICS_BY_SIGNER_ID_DISTINCT_COUNT_METHOD_ASC',
-  ExtrinsicsBySignerIdDistinctCountMethodDesc = 'EXTRINSICS_BY_SIGNER_ID_DISTINCT_COUNT_METHOD_DESC',
-  ExtrinsicsBySignerIdDistinctCountModuleAsc = 'EXTRINSICS_BY_SIGNER_ID_DISTINCT_COUNT_MODULE_ASC',
-  ExtrinsicsBySignerIdDistinctCountModuleDesc = 'EXTRINSICS_BY_SIGNER_ID_DISTINCT_COUNT_MODULE_DESC',
-  ExtrinsicsBySignerIdDistinctCountSignerIdAsc = 'EXTRINSICS_BY_SIGNER_ID_DISTINCT_COUNT_SIGNER_ID_ASC',
-  ExtrinsicsBySignerIdDistinctCountSignerIdDesc = 'EXTRINSICS_BY_SIGNER_ID_DISTINCT_COUNT_SIGNER_ID_DESC',
-  ExtrinsicsBySignerIdMaxArgumentsAsc = 'EXTRINSICS_BY_SIGNER_ID_MAX_ARGUMENTS_ASC',
-  ExtrinsicsBySignerIdMaxArgumentsDesc = 'EXTRINSICS_BY_SIGNER_ID_MAX_ARGUMENTS_DESC',
-  ExtrinsicsBySignerIdMaxBlockIdAsc = 'EXTRINSICS_BY_SIGNER_ID_MAX_BLOCK_ID_ASC',
-  ExtrinsicsBySignerIdMaxBlockIdDesc = 'EXTRINSICS_BY_SIGNER_ID_MAX_BLOCK_ID_DESC',
-  ExtrinsicsBySignerIdMaxBlockNumberAsc = 'EXTRINSICS_BY_SIGNER_ID_MAX_BLOCK_NUMBER_ASC',
-  ExtrinsicsBySignerIdMaxBlockNumberDesc = 'EXTRINSICS_BY_SIGNER_ID_MAX_BLOCK_NUMBER_DESC',
-  ExtrinsicsBySignerIdMaxHashAsc = 'EXTRINSICS_BY_SIGNER_ID_MAX_HASH_ASC',
-  ExtrinsicsBySignerIdMaxHashDesc = 'EXTRINSICS_BY_SIGNER_ID_MAX_HASH_DESC',
-  ExtrinsicsBySignerIdMaxIdAsc = 'EXTRINSICS_BY_SIGNER_ID_MAX_ID_ASC',
-  ExtrinsicsBySignerIdMaxIdDesc = 'EXTRINSICS_BY_SIGNER_ID_MAX_ID_DESC',
-  ExtrinsicsBySignerIdMaxIndexAsc = 'EXTRINSICS_BY_SIGNER_ID_MAX_INDEX_ASC',
-  ExtrinsicsBySignerIdMaxIndexDesc = 'EXTRINSICS_BY_SIGNER_ID_MAX_INDEX_DESC',
-  ExtrinsicsBySignerIdMaxIsSignedAsc = 'EXTRINSICS_BY_SIGNER_ID_MAX_IS_SIGNED_ASC',
-  ExtrinsicsBySignerIdMaxIsSignedDesc = 'EXTRINSICS_BY_SIGNER_ID_MAX_IS_SIGNED_DESC',
-  ExtrinsicsBySignerIdMaxIsSuccessAsc = 'EXTRINSICS_BY_SIGNER_ID_MAX_IS_SUCCESS_ASC',
-  ExtrinsicsBySignerIdMaxIsSuccessDesc = 'EXTRINSICS_BY_SIGNER_ID_MAX_IS_SUCCESS_DESC',
-  ExtrinsicsBySignerIdMaxMethodAsc = 'EXTRINSICS_BY_SIGNER_ID_MAX_METHOD_ASC',
-  ExtrinsicsBySignerIdMaxMethodDesc = 'EXTRINSICS_BY_SIGNER_ID_MAX_METHOD_DESC',
-  ExtrinsicsBySignerIdMaxModuleAsc = 'EXTRINSICS_BY_SIGNER_ID_MAX_MODULE_ASC',
-  ExtrinsicsBySignerIdMaxModuleDesc = 'EXTRINSICS_BY_SIGNER_ID_MAX_MODULE_DESC',
-  ExtrinsicsBySignerIdMaxSignerIdAsc = 'EXTRINSICS_BY_SIGNER_ID_MAX_SIGNER_ID_ASC',
-  ExtrinsicsBySignerIdMaxSignerIdDesc = 'EXTRINSICS_BY_SIGNER_ID_MAX_SIGNER_ID_DESC',
-  ExtrinsicsBySignerIdMinArgumentsAsc = 'EXTRINSICS_BY_SIGNER_ID_MIN_ARGUMENTS_ASC',
-  ExtrinsicsBySignerIdMinArgumentsDesc = 'EXTRINSICS_BY_SIGNER_ID_MIN_ARGUMENTS_DESC',
-  ExtrinsicsBySignerIdMinBlockIdAsc = 'EXTRINSICS_BY_SIGNER_ID_MIN_BLOCK_ID_ASC',
-  ExtrinsicsBySignerIdMinBlockIdDesc = 'EXTRINSICS_BY_SIGNER_ID_MIN_BLOCK_ID_DESC',
-  ExtrinsicsBySignerIdMinBlockNumberAsc = 'EXTRINSICS_BY_SIGNER_ID_MIN_BLOCK_NUMBER_ASC',
-  ExtrinsicsBySignerIdMinBlockNumberDesc = 'EXTRINSICS_BY_SIGNER_ID_MIN_BLOCK_NUMBER_DESC',
-  ExtrinsicsBySignerIdMinHashAsc = 'EXTRINSICS_BY_SIGNER_ID_MIN_HASH_ASC',
-  ExtrinsicsBySignerIdMinHashDesc = 'EXTRINSICS_BY_SIGNER_ID_MIN_HASH_DESC',
-  ExtrinsicsBySignerIdMinIdAsc = 'EXTRINSICS_BY_SIGNER_ID_MIN_ID_ASC',
-  ExtrinsicsBySignerIdMinIdDesc = 'EXTRINSICS_BY_SIGNER_ID_MIN_ID_DESC',
-  ExtrinsicsBySignerIdMinIndexAsc = 'EXTRINSICS_BY_SIGNER_ID_MIN_INDEX_ASC',
-  ExtrinsicsBySignerIdMinIndexDesc = 'EXTRINSICS_BY_SIGNER_ID_MIN_INDEX_DESC',
-  ExtrinsicsBySignerIdMinIsSignedAsc = 'EXTRINSICS_BY_SIGNER_ID_MIN_IS_SIGNED_ASC',
-  ExtrinsicsBySignerIdMinIsSignedDesc = 'EXTRINSICS_BY_SIGNER_ID_MIN_IS_SIGNED_DESC',
-  ExtrinsicsBySignerIdMinIsSuccessAsc = 'EXTRINSICS_BY_SIGNER_ID_MIN_IS_SUCCESS_ASC',
-  ExtrinsicsBySignerIdMinIsSuccessDesc = 'EXTRINSICS_BY_SIGNER_ID_MIN_IS_SUCCESS_DESC',
-  ExtrinsicsBySignerIdMinMethodAsc = 'EXTRINSICS_BY_SIGNER_ID_MIN_METHOD_ASC',
-  ExtrinsicsBySignerIdMinMethodDesc = 'EXTRINSICS_BY_SIGNER_ID_MIN_METHOD_DESC',
-  ExtrinsicsBySignerIdMinModuleAsc = 'EXTRINSICS_BY_SIGNER_ID_MIN_MODULE_ASC',
-  ExtrinsicsBySignerIdMinModuleDesc = 'EXTRINSICS_BY_SIGNER_ID_MIN_MODULE_DESC',
-  ExtrinsicsBySignerIdMinSignerIdAsc = 'EXTRINSICS_BY_SIGNER_ID_MIN_SIGNER_ID_ASC',
-  ExtrinsicsBySignerIdMinSignerIdDesc = 'EXTRINSICS_BY_SIGNER_ID_MIN_SIGNER_ID_DESC',
-  ExtrinsicsBySignerIdStddevPopulationArgumentsAsc = 'EXTRINSICS_BY_SIGNER_ID_STDDEV_POPULATION_ARGUMENTS_ASC',
-  ExtrinsicsBySignerIdStddevPopulationArgumentsDesc = 'EXTRINSICS_BY_SIGNER_ID_STDDEV_POPULATION_ARGUMENTS_DESC',
-  ExtrinsicsBySignerIdStddevPopulationBlockIdAsc = 'EXTRINSICS_BY_SIGNER_ID_STDDEV_POPULATION_BLOCK_ID_ASC',
-  ExtrinsicsBySignerIdStddevPopulationBlockIdDesc = 'EXTRINSICS_BY_SIGNER_ID_STDDEV_POPULATION_BLOCK_ID_DESC',
-  ExtrinsicsBySignerIdStddevPopulationBlockNumberAsc = 'EXTRINSICS_BY_SIGNER_ID_STDDEV_POPULATION_BLOCK_NUMBER_ASC',
-  ExtrinsicsBySignerIdStddevPopulationBlockNumberDesc = 'EXTRINSICS_BY_SIGNER_ID_STDDEV_POPULATION_BLOCK_NUMBER_DESC',
-  ExtrinsicsBySignerIdStddevPopulationHashAsc = 'EXTRINSICS_BY_SIGNER_ID_STDDEV_POPULATION_HASH_ASC',
-  ExtrinsicsBySignerIdStddevPopulationHashDesc = 'EXTRINSICS_BY_SIGNER_ID_STDDEV_POPULATION_HASH_DESC',
-  ExtrinsicsBySignerIdStddevPopulationIdAsc = 'EXTRINSICS_BY_SIGNER_ID_STDDEV_POPULATION_ID_ASC',
-  ExtrinsicsBySignerIdStddevPopulationIdDesc = 'EXTRINSICS_BY_SIGNER_ID_STDDEV_POPULATION_ID_DESC',
-  ExtrinsicsBySignerIdStddevPopulationIndexAsc = 'EXTRINSICS_BY_SIGNER_ID_STDDEV_POPULATION_INDEX_ASC',
-  ExtrinsicsBySignerIdStddevPopulationIndexDesc = 'EXTRINSICS_BY_SIGNER_ID_STDDEV_POPULATION_INDEX_DESC',
-  ExtrinsicsBySignerIdStddevPopulationIsSignedAsc = 'EXTRINSICS_BY_SIGNER_ID_STDDEV_POPULATION_IS_SIGNED_ASC',
-  ExtrinsicsBySignerIdStddevPopulationIsSignedDesc = 'EXTRINSICS_BY_SIGNER_ID_STDDEV_POPULATION_IS_SIGNED_DESC',
-  ExtrinsicsBySignerIdStddevPopulationIsSuccessAsc = 'EXTRINSICS_BY_SIGNER_ID_STDDEV_POPULATION_IS_SUCCESS_ASC',
-  ExtrinsicsBySignerIdStddevPopulationIsSuccessDesc = 'EXTRINSICS_BY_SIGNER_ID_STDDEV_POPULATION_IS_SUCCESS_DESC',
-  ExtrinsicsBySignerIdStddevPopulationMethodAsc = 'EXTRINSICS_BY_SIGNER_ID_STDDEV_POPULATION_METHOD_ASC',
-  ExtrinsicsBySignerIdStddevPopulationMethodDesc = 'EXTRINSICS_BY_SIGNER_ID_STDDEV_POPULATION_METHOD_DESC',
-  ExtrinsicsBySignerIdStddevPopulationModuleAsc = 'EXTRINSICS_BY_SIGNER_ID_STDDEV_POPULATION_MODULE_ASC',
-  ExtrinsicsBySignerIdStddevPopulationModuleDesc = 'EXTRINSICS_BY_SIGNER_ID_STDDEV_POPULATION_MODULE_DESC',
-  ExtrinsicsBySignerIdStddevPopulationSignerIdAsc = 'EXTRINSICS_BY_SIGNER_ID_STDDEV_POPULATION_SIGNER_ID_ASC',
-  ExtrinsicsBySignerIdStddevPopulationSignerIdDesc = 'EXTRINSICS_BY_SIGNER_ID_STDDEV_POPULATION_SIGNER_ID_DESC',
-  ExtrinsicsBySignerIdStddevSampleArgumentsAsc = 'EXTRINSICS_BY_SIGNER_ID_STDDEV_SAMPLE_ARGUMENTS_ASC',
-  ExtrinsicsBySignerIdStddevSampleArgumentsDesc = 'EXTRINSICS_BY_SIGNER_ID_STDDEV_SAMPLE_ARGUMENTS_DESC',
-  ExtrinsicsBySignerIdStddevSampleBlockIdAsc = 'EXTRINSICS_BY_SIGNER_ID_STDDEV_SAMPLE_BLOCK_ID_ASC',
-  ExtrinsicsBySignerIdStddevSampleBlockIdDesc = 'EXTRINSICS_BY_SIGNER_ID_STDDEV_SAMPLE_BLOCK_ID_DESC',
-  ExtrinsicsBySignerIdStddevSampleBlockNumberAsc = 'EXTRINSICS_BY_SIGNER_ID_STDDEV_SAMPLE_BLOCK_NUMBER_ASC',
-  ExtrinsicsBySignerIdStddevSampleBlockNumberDesc = 'EXTRINSICS_BY_SIGNER_ID_STDDEV_SAMPLE_BLOCK_NUMBER_DESC',
-  ExtrinsicsBySignerIdStddevSampleHashAsc = 'EXTRINSICS_BY_SIGNER_ID_STDDEV_SAMPLE_HASH_ASC',
-  ExtrinsicsBySignerIdStddevSampleHashDesc = 'EXTRINSICS_BY_SIGNER_ID_STDDEV_SAMPLE_HASH_DESC',
-  ExtrinsicsBySignerIdStddevSampleIdAsc = 'EXTRINSICS_BY_SIGNER_ID_STDDEV_SAMPLE_ID_ASC',
-  ExtrinsicsBySignerIdStddevSampleIdDesc = 'EXTRINSICS_BY_SIGNER_ID_STDDEV_SAMPLE_ID_DESC',
-  ExtrinsicsBySignerIdStddevSampleIndexAsc = 'EXTRINSICS_BY_SIGNER_ID_STDDEV_SAMPLE_INDEX_ASC',
-  ExtrinsicsBySignerIdStddevSampleIndexDesc = 'EXTRINSICS_BY_SIGNER_ID_STDDEV_SAMPLE_INDEX_DESC',
-  ExtrinsicsBySignerIdStddevSampleIsSignedAsc = 'EXTRINSICS_BY_SIGNER_ID_STDDEV_SAMPLE_IS_SIGNED_ASC',
-  ExtrinsicsBySignerIdStddevSampleIsSignedDesc = 'EXTRINSICS_BY_SIGNER_ID_STDDEV_SAMPLE_IS_SIGNED_DESC',
-  ExtrinsicsBySignerIdStddevSampleIsSuccessAsc = 'EXTRINSICS_BY_SIGNER_ID_STDDEV_SAMPLE_IS_SUCCESS_ASC',
-  ExtrinsicsBySignerIdStddevSampleIsSuccessDesc = 'EXTRINSICS_BY_SIGNER_ID_STDDEV_SAMPLE_IS_SUCCESS_DESC',
-  ExtrinsicsBySignerIdStddevSampleMethodAsc = 'EXTRINSICS_BY_SIGNER_ID_STDDEV_SAMPLE_METHOD_ASC',
-  ExtrinsicsBySignerIdStddevSampleMethodDesc = 'EXTRINSICS_BY_SIGNER_ID_STDDEV_SAMPLE_METHOD_DESC',
-  ExtrinsicsBySignerIdStddevSampleModuleAsc = 'EXTRINSICS_BY_SIGNER_ID_STDDEV_SAMPLE_MODULE_ASC',
-  ExtrinsicsBySignerIdStddevSampleModuleDesc = 'EXTRINSICS_BY_SIGNER_ID_STDDEV_SAMPLE_MODULE_DESC',
-  ExtrinsicsBySignerIdStddevSampleSignerIdAsc = 'EXTRINSICS_BY_SIGNER_ID_STDDEV_SAMPLE_SIGNER_ID_ASC',
-  ExtrinsicsBySignerIdStddevSampleSignerIdDesc = 'EXTRINSICS_BY_SIGNER_ID_STDDEV_SAMPLE_SIGNER_ID_DESC',
-  ExtrinsicsBySignerIdSumArgumentsAsc = 'EXTRINSICS_BY_SIGNER_ID_SUM_ARGUMENTS_ASC',
-  ExtrinsicsBySignerIdSumArgumentsDesc = 'EXTRINSICS_BY_SIGNER_ID_SUM_ARGUMENTS_DESC',
-  ExtrinsicsBySignerIdSumBlockIdAsc = 'EXTRINSICS_BY_SIGNER_ID_SUM_BLOCK_ID_ASC',
-  ExtrinsicsBySignerIdSumBlockIdDesc = 'EXTRINSICS_BY_SIGNER_ID_SUM_BLOCK_ID_DESC',
-  ExtrinsicsBySignerIdSumBlockNumberAsc = 'EXTRINSICS_BY_SIGNER_ID_SUM_BLOCK_NUMBER_ASC',
-  ExtrinsicsBySignerIdSumBlockNumberDesc = 'EXTRINSICS_BY_SIGNER_ID_SUM_BLOCK_NUMBER_DESC',
-  ExtrinsicsBySignerIdSumHashAsc = 'EXTRINSICS_BY_SIGNER_ID_SUM_HASH_ASC',
-  ExtrinsicsBySignerIdSumHashDesc = 'EXTRINSICS_BY_SIGNER_ID_SUM_HASH_DESC',
-  ExtrinsicsBySignerIdSumIdAsc = 'EXTRINSICS_BY_SIGNER_ID_SUM_ID_ASC',
-  ExtrinsicsBySignerIdSumIdDesc = 'EXTRINSICS_BY_SIGNER_ID_SUM_ID_DESC',
-  ExtrinsicsBySignerIdSumIndexAsc = 'EXTRINSICS_BY_SIGNER_ID_SUM_INDEX_ASC',
-  ExtrinsicsBySignerIdSumIndexDesc = 'EXTRINSICS_BY_SIGNER_ID_SUM_INDEX_DESC',
-  ExtrinsicsBySignerIdSumIsSignedAsc = 'EXTRINSICS_BY_SIGNER_ID_SUM_IS_SIGNED_ASC',
-  ExtrinsicsBySignerIdSumIsSignedDesc = 'EXTRINSICS_BY_SIGNER_ID_SUM_IS_SIGNED_DESC',
-  ExtrinsicsBySignerIdSumIsSuccessAsc = 'EXTRINSICS_BY_SIGNER_ID_SUM_IS_SUCCESS_ASC',
-  ExtrinsicsBySignerIdSumIsSuccessDesc = 'EXTRINSICS_BY_SIGNER_ID_SUM_IS_SUCCESS_DESC',
-  ExtrinsicsBySignerIdSumMethodAsc = 'EXTRINSICS_BY_SIGNER_ID_SUM_METHOD_ASC',
-  ExtrinsicsBySignerIdSumMethodDesc = 'EXTRINSICS_BY_SIGNER_ID_SUM_METHOD_DESC',
-  ExtrinsicsBySignerIdSumModuleAsc = 'EXTRINSICS_BY_SIGNER_ID_SUM_MODULE_ASC',
-  ExtrinsicsBySignerIdSumModuleDesc = 'EXTRINSICS_BY_SIGNER_ID_SUM_MODULE_DESC',
-  ExtrinsicsBySignerIdSumSignerIdAsc = 'EXTRINSICS_BY_SIGNER_ID_SUM_SIGNER_ID_ASC',
-  ExtrinsicsBySignerIdSumSignerIdDesc = 'EXTRINSICS_BY_SIGNER_ID_SUM_SIGNER_ID_DESC',
-  ExtrinsicsBySignerIdVariancePopulationArgumentsAsc = 'EXTRINSICS_BY_SIGNER_ID_VARIANCE_POPULATION_ARGUMENTS_ASC',
-  ExtrinsicsBySignerIdVariancePopulationArgumentsDesc = 'EXTRINSICS_BY_SIGNER_ID_VARIANCE_POPULATION_ARGUMENTS_DESC',
-  ExtrinsicsBySignerIdVariancePopulationBlockIdAsc = 'EXTRINSICS_BY_SIGNER_ID_VARIANCE_POPULATION_BLOCK_ID_ASC',
-  ExtrinsicsBySignerIdVariancePopulationBlockIdDesc = 'EXTRINSICS_BY_SIGNER_ID_VARIANCE_POPULATION_BLOCK_ID_DESC',
-  ExtrinsicsBySignerIdVariancePopulationBlockNumberAsc = 'EXTRINSICS_BY_SIGNER_ID_VARIANCE_POPULATION_BLOCK_NUMBER_ASC',
-  ExtrinsicsBySignerIdVariancePopulationBlockNumberDesc = 'EXTRINSICS_BY_SIGNER_ID_VARIANCE_POPULATION_BLOCK_NUMBER_DESC',
-  ExtrinsicsBySignerIdVariancePopulationHashAsc = 'EXTRINSICS_BY_SIGNER_ID_VARIANCE_POPULATION_HASH_ASC',
-  ExtrinsicsBySignerIdVariancePopulationHashDesc = 'EXTRINSICS_BY_SIGNER_ID_VARIANCE_POPULATION_HASH_DESC',
-  ExtrinsicsBySignerIdVariancePopulationIdAsc = 'EXTRINSICS_BY_SIGNER_ID_VARIANCE_POPULATION_ID_ASC',
-  ExtrinsicsBySignerIdVariancePopulationIdDesc = 'EXTRINSICS_BY_SIGNER_ID_VARIANCE_POPULATION_ID_DESC',
-  ExtrinsicsBySignerIdVariancePopulationIndexAsc = 'EXTRINSICS_BY_SIGNER_ID_VARIANCE_POPULATION_INDEX_ASC',
-  ExtrinsicsBySignerIdVariancePopulationIndexDesc = 'EXTRINSICS_BY_SIGNER_ID_VARIANCE_POPULATION_INDEX_DESC',
-  ExtrinsicsBySignerIdVariancePopulationIsSignedAsc = 'EXTRINSICS_BY_SIGNER_ID_VARIANCE_POPULATION_IS_SIGNED_ASC',
-  ExtrinsicsBySignerIdVariancePopulationIsSignedDesc = 'EXTRINSICS_BY_SIGNER_ID_VARIANCE_POPULATION_IS_SIGNED_DESC',
-  ExtrinsicsBySignerIdVariancePopulationIsSuccessAsc = 'EXTRINSICS_BY_SIGNER_ID_VARIANCE_POPULATION_IS_SUCCESS_ASC',
-  ExtrinsicsBySignerIdVariancePopulationIsSuccessDesc = 'EXTRINSICS_BY_SIGNER_ID_VARIANCE_POPULATION_IS_SUCCESS_DESC',
-  ExtrinsicsBySignerIdVariancePopulationMethodAsc = 'EXTRINSICS_BY_SIGNER_ID_VARIANCE_POPULATION_METHOD_ASC',
-  ExtrinsicsBySignerIdVariancePopulationMethodDesc = 'EXTRINSICS_BY_SIGNER_ID_VARIANCE_POPULATION_METHOD_DESC',
-  ExtrinsicsBySignerIdVariancePopulationModuleAsc = 'EXTRINSICS_BY_SIGNER_ID_VARIANCE_POPULATION_MODULE_ASC',
-  ExtrinsicsBySignerIdVariancePopulationModuleDesc = 'EXTRINSICS_BY_SIGNER_ID_VARIANCE_POPULATION_MODULE_DESC',
-  ExtrinsicsBySignerIdVariancePopulationSignerIdAsc = 'EXTRINSICS_BY_SIGNER_ID_VARIANCE_POPULATION_SIGNER_ID_ASC',
-  ExtrinsicsBySignerIdVariancePopulationSignerIdDesc = 'EXTRINSICS_BY_SIGNER_ID_VARIANCE_POPULATION_SIGNER_ID_DESC',
-  ExtrinsicsBySignerIdVarianceSampleArgumentsAsc = 'EXTRINSICS_BY_SIGNER_ID_VARIANCE_SAMPLE_ARGUMENTS_ASC',
-  ExtrinsicsBySignerIdVarianceSampleArgumentsDesc = 'EXTRINSICS_BY_SIGNER_ID_VARIANCE_SAMPLE_ARGUMENTS_DESC',
-  ExtrinsicsBySignerIdVarianceSampleBlockIdAsc = 'EXTRINSICS_BY_SIGNER_ID_VARIANCE_SAMPLE_BLOCK_ID_ASC',
-  ExtrinsicsBySignerIdVarianceSampleBlockIdDesc = 'EXTRINSICS_BY_SIGNER_ID_VARIANCE_SAMPLE_BLOCK_ID_DESC',
-  ExtrinsicsBySignerIdVarianceSampleBlockNumberAsc = 'EXTRINSICS_BY_SIGNER_ID_VARIANCE_SAMPLE_BLOCK_NUMBER_ASC',
-  ExtrinsicsBySignerIdVarianceSampleBlockNumberDesc = 'EXTRINSICS_BY_SIGNER_ID_VARIANCE_SAMPLE_BLOCK_NUMBER_DESC',
-  ExtrinsicsBySignerIdVarianceSampleHashAsc = 'EXTRINSICS_BY_SIGNER_ID_VARIANCE_SAMPLE_HASH_ASC',
-  ExtrinsicsBySignerIdVarianceSampleHashDesc = 'EXTRINSICS_BY_SIGNER_ID_VARIANCE_SAMPLE_HASH_DESC',
-  ExtrinsicsBySignerIdVarianceSampleIdAsc = 'EXTRINSICS_BY_SIGNER_ID_VARIANCE_SAMPLE_ID_ASC',
-  ExtrinsicsBySignerIdVarianceSampleIdDesc = 'EXTRINSICS_BY_SIGNER_ID_VARIANCE_SAMPLE_ID_DESC',
-  ExtrinsicsBySignerIdVarianceSampleIndexAsc = 'EXTRINSICS_BY_SIGNER_ID_VARIANCE_SAMPLE_INDEX_ASC',
-  ExtrinsicsBySignerIdVarianceSampleIndexDesc = 'EXTRINSICS_BY_SIGNER_ID_VARIANCE_SAMPLE_INDEX_DESC',
-  ExtrinsicsBySignerIdVarianceSampleIsSignedAsc = 'EXTRINSICS_BY_SIGNER_ID_VARIANCE_SAMPLE_IS_SIGNED_ASC',
-  ExtrinsicsBySignerIdVarianceSampleIsSignedDesc = 'EXTRINSICS_BY_SIGNER_ID_VARIANCE_SAMPLE_IS_SIGNED_DESC',
-  ExtrinsicsBySignerIdVarianceSampleIsSuccessAsc = 'EXTRINSICS_BY_SIGNER_ID_VARIANCE_SAMPLE_IS_SUCCESS_ASC',
-  ExtrinsicsBySignerIdVarianceSampleIsSuccessDesc = 'EXTRINSICS_BY_SIGNER_ID_VARIANCE_SAMPLE_IS_SUCCESS_DESC',
-  ExtrinsicsBySignerIdVarianceSampleMethodAsc = 'EXTRINSICS_BY_SIGNER_ID_VARIANCE_SAMPLE_METHOD_ASC',
-  ExtrinsicsBySignerIdVarianceSampleMethodDesc = 'EXTRINSICS_BY_SIGNER_ID_VARIANCE_SAMPLE_METHOD_DESC',
-  ExtrinsicsBySignerIdVarianceSampleModuleAsc = 'EXTRINSICS_BY_SIGNER_ID_VARIANCE_SAMPLE_MODULE_ASC',
-  ExtrinsicsBySignerIdVarianceSampleModuleDesc = 'EXTRINSICS_BY_SIGNER_ID_VARIANCE_SAMPLE_MODULE_DESC',
-  ExtrinsicsBySignerIdVarianceSampleSignerIdAsc = 'EXTRINSICS_BY_SIGNER_ID_VARIANCE_SAMPLE_SIGNER_ID_ASC',
-  ExtrinsicsBySignerIdVarianceSampleSignerIdDesc = 'EXTRINSICS_BY_SIGNER_ID_VARIANCE_SAMPLE_SIGNER_ID_DESC',
+  ExtrinsicsAverageArgumentsAsc = 'EXTRINSICS_AVERAGE_ARGUMENTS_ASC',
+  ExtrinsicsAverageArgumentsDesc = 'EXTRINSICS_AVERAGE_ARGUMENTS_DESC',
+  ExtrinsicsAverageBlockIdAsc = 'EXTRINSICS_AVERAGE_BLOCK_ID_ASC',
+  ExtrinsicsAverageBlockIdDesc = 'EXTRINSICS_AVERAGE_BLOCK_ID_DESC',
+  ExtrinsicsAverageBlockNumberAsc = 'EXTRINSICS_AVERAGE_BLOCK_NUMBER_ASC',
+  ExtrinsicsAverageBlockNumberDesc = 'EXTRINSICS_AVERAGE_BLOCK_NUMBER_DESC',
+  ExtrinsicsAverageHashAsc = 'EXTRINSICS_AVERAGE_HASH_ASC',
+  ExtrinsicsAverageHashDesc = 'EXTRINSICS_AVERAGE_HASH_DESC',
+  ExtrinsicsAverageIdAsc = 'EXTRINSICS_AVERAGE_ID_ASC',
+  ExtrinsicsAverageIdDesc = 'EXTRINSICS_AVERAGE_ID_DESC',
+  ExtrinsicsAverageIndexAsc = 'EXTRINSICS_AVERAGE_INDEX_ASC',
+  ExtrinsicsAverageIndexDesc = 'EXTRINSICS_AVERAGE_INDEX_DESC',
+  ExtrinsicsAverageIsSignedAsc = 'EXTRINSICS_AVERAGE_IS_SIGNED_ASC',
+  ExtrinsicsAverageIsSignedDesc = 'EXTRINSICS_AVERAGE_IS_SIGNED_DESC',
+  ExtrinsicsAverageIsSuccessAsc = 'EXTRINSICS_AVERAGE_IS_SUCCESS_ASC',
+  ExtrinsicsAverageIsSuccessDesc = 'EXTRINSICS_AVERAGE_IS_SUCCESS_DESC',
+  ExtrinsicsAverageMethodAsc = 'EXTRINSICS_AVERAGE_METHOD_ASC',
+  ExtrinsicsAverageMethodDesc = 'EXTRINSICS_AVERAGE_METHOD_DESC',
+  ExtrinsicsAverageModuleAsc = 'EXTRINSICS_AVERAGE_MODULE_ASC',
+  ExtrinsicsAverageModuleDesc = 'EXTRINSICS_AVERAGE_MODULE_DESC',
+  ExtrinsicsAverageSignerIdAsc = 'EXTRINSICS_AVERAGE_SIGNER_ID_ASC',
+  ExtrinsicsAverageSignerIdDesc = 'EXTRINSICS_AVERAGE_SIGNER_ID_DESC',
+  ExtrinsicsCountAsc = 'EXTRINSICS_COUNT_ASC',
+  ExtrinsicsCountDesc = 'EXTRINSICS_COUNT_DESC',
+  ExtrinsicsDistinctCountArgumentsAsc = 'EXTRINSICS_DISTINCT_COUNT_ARGUMENTS_ASC',
+  ExtrinsicsDistinctCountArgumentsDesc = 'EXTRINSICS_DISTINCT_COUNT_ARGUMENTS_DESC',
+  ExtrinsicsDistinctCountBlockIdAsc = 'EXTRINSICS_DISTINCT_COUNT_BLOCK_ID_ASC',
+  ExtrinsicsDistinctCountBlockIdDesc = 'EXTRINSICS_DISTINCT_COUNT_BLOCK_ID_DESC',
+  ExtrinsicsDistinctCountBlockNumberAsc = 'EXTRINSICS_DISTINCT_COUNT_BLOCK_NUMBER_ASC',
+  ExtrinsicsDistinctCountBlockNumberDesc = 'EXTRINSICS_DISTINCT_COUNT_BLOCK_NUMBER_DESC',
+  ExtrinsicsDistinctCountHashAsc = 'EXTRINSICS_DISTINCT_COUNT_HASH_ASC',
+  ExtrinsicsDistinctCountHashDesc = 'EXTRINSICS_DISTINCT_COUNT_HASH_DESC',
+  ExtrinsicsDistinctCountIdAsc = 'EXTRINSICS_DISTINCT_COUNT_ID_ASC',
+  ExtrinsicsDistinctCountIdDesc = 'EXTRINSICS_DISTINCT_COUNT_ID_DESC',
+  ExtrinsicsDistinctCountIndexAsc = 'EXTRINSICS_DISTINCT_COUNT_INDEX_ASC',
+  ExtrinsicsDistinctCountIndexDesc = 'EXTRINSICS_DISTINCT_COUNT_INDEX_DESC',
+  ExtrinsicsDistinctCountIsSignedAsc = 'EXTRINSICS_DISTINCT_COUNT_IS_SIGNED_ASC',
+  ExtrinsicsDistinctCountIsSignedDesc = 'EXTRINSICS_DISTINCT_COUNT_IS_SIGNED_DESC',
+  ExtrinsicsDistinctCountIsSuccessAsc = 'EXTRINSICS_DISTINCT_COUNT_IS_SUCCESS_ASC',
+  ExtrinsicsDistinctCountIsSuccessDesc = 'EXTRINSICS_DISTINCT_COUNT_IS_SUCCESS_DESC',
+  ExtrinsicsDistinctCountMethodAsc = 'EXTRINSICS_DISTINCT_COUNT_METHOD_ASC',
+  ExtrinsicsDistinctCountMethodDesc = 'EXTRINSICS_DISTINCT_COUNT_METHOD_DESC',
+  ExtrinsicsDistinctCountModuleAsc = 'EXTRINSICS_DISTINCT_COUNT_MODULE_ASC',
+  ExtrinsicsDistinctCountModuleDesc = 'EXTRINSICS_DISTINCT_COUNT_MODULE_DESC',
+  ExtrinsicsDistinctCountSignerIdAsc = 'EXTRINSICS_DISTINCT_COUNT_SIGNER_ID_ASC',
+  ExtrinsicsDistinctCountSignerIdDesc = 'EXTRINSICS_DISTINCT_COUNT_SIGNER_ID_DESC',
+  ExtrinsicsMaxArgumentsAsc = 'EXTRINSICS_MAX_ARGUMENTS_ASC',
+  ExtrinsicsMaxArgumentsDesc = 'EXTRINSICS_MAX_ARGUMENTS_DESC',
+  ExtrinsicsMaxBlockIdAsc = 'EXTRINSICS_MAX_BLOCK_ID_ASC',
+  ExtrinsicsMaxBlockIdDesc = 'EXTRINSICS_MAX_BLOCK_ID_DESC',
+  ExtrinsicsMaxBlockNumberAsc = 'EXTRINSICS_MAX_BLOCK_NUMBER_ASC',
+  ExtrinsicsMaxBlockNumberDesc = 'EXTRINSICS_MAX_BLOCK_NUMBER_DESC',
+  ExtrinsicsMaxHashAsc = 'EXTRINSICS_MAX_HASH_ASC',
+  ExtrinsicsMaxHashDesc = 'EXTRINSICS_MAX_HASH_DESC',
+  ExtrinsicsMaxIdAsc = 'EXTRINSICS_MAX_ID_ASC',
+  ExtrinsicsMaxIdDesc = 'EXTRINSICS_MAX_ID_DESC',
+  ExtrinsicsMaxIndexAsc = 'EXTRINSICS_MAX_INDEX_ASC',
+  ExtrinsicsMaxIndexDesc = 'EXTRINSICS_MAX_INDEX_DESC',
+  ExtrinsicsMaxIsSignedAsc = 'EXTRINSICS_MAX_IS_SIGNED_ASC',
+  ExtrinsicsMaxIsSignedDesc = 'EXTRINSICS_MAX_IS_SIGNED_DESC',
+  ExtrinsicsMaxIsSuccessAsc = 'EXTRINSICS_MAX_IS_SUCCESS_ASC',
+  ExtrinsicsMaxIsSuccessDesc = 'EXTRINSICS_MAX_IS_SUCCESS_DESC',
+  ExtrinsicsMaxMethodAsc = 'EXTRINSICS_MAX_METHOD_ASC',
+  ExtrinsicsMaxMethodDesc = 'EXTRINSICS_MAX_METHOD_DESC',
+  ExtrinsicsMaxModuleAsc = 'EXTRINSICS_MAX_MODULE_ASC',
+  ExtrinsicsMaxModuleDesc = 'EXTRINSICS_MAX_MODULE_DESC',
+  ExtrinsicsMaxSignerIdAsc = 'EXTRINSICS_MAX_SIGNER_ID_ASC',
+  ExtrinsicsMaxSignerIdDesc = 'EXTRINSICS_MAX_SIGNER_ID_DESC',
+  ExtrinsicsMinArgumentsAsc = 'EXTRINSICS_MIN_ARGUMENTS_ASC',
+  ExtrinsicsMinArgumentsDesc = 'EXTRINSICS_MIN_ARGUMENTS_DESC',
+  ExtrinsicsMinBlockIdAsc = 'EXTRINSICS_MIN_BLOCK_ID_ASC',
+  ExtrinsicsMinBlockIdDesc = 'EXTRINSICS_MIN_BLOCK_ID_DESC',
+  ExtrinsicsMinBlockNumberAsc = 'EXTRINSICS_MIN_BLOCK_NUMBER_ASC',
+  ExtrinsicsMinBlockNumberDesc = 'EXTRINSICS_MIN_BLOCK_NUMBER_DESC',
+  ExtrinsicsMinHashAsc = 'EXTRINSICS_MIN_HASH_ASC',
+  ExtrinsicsMinHashDesc = 'EXTRINSICS_MIN_HASH_DESC',
+  ExtrinsicsMinIdAsc = 'EXTRINSICS_MIN_ID_ASC',
+  ExtrinsicsMinIdDesc = 'EXTRINSICS_MIN_ID_DESC',
+  ExtrinsicsMinIndexAsc = 'EXTRINSICS_MIN_INDEX_ASC',
+  ExtrinsicsMinIndexDesc = 'EXTRINSICS_MIN_INDEX_DESC',
+  ExtrinsicsMinIsSignedAsc = 'EXTRINSICS_MIN_IS_SIGNED_ASC',
+  ExtrinsicsMinIsSignedDesc = 'EXTRINSICS_MIN_IS_SIGNED_DESC',
+  ExtrinsicsMinIsSuccessAsc = 'EXTRINSICS_MIN_IS_SUCCESS_ASC',
+  ExtrinsicsMinIsSuccessDesc = 'EXTRINSICS_MIN_IS_SUCCESS_DESC',
+  ExtrinsicsMinMethodAsc = 'EXTRINSICS_MIN_METHOD_ASC',
+  ExtrinsicsMinMethodDesc = 'EXTRINSICS_MIN_METHOD_DESC',
+  ExtrinsicsMinModuleAsc = 'EXTRINSICS_MIN_MODULE_ASC',
+  ExtrinsicsMinModuleDesc = 'EXTRINSICS_MIN_MODULE_DESC',
+  ExtrinsicsMinSignerIdAsc = 'EXTRINSICS_MIN_SIGNER_ID_ASC',
+  ExtrinsicsMinSignerIdDesc = 'EXTRINSICS_MIN_SIGNER_ID_DESC',
+  ExtrinsicsStddevPopulationArgumentsAsc = 'EXTRINSICS_STDDEV_POPULATION_ARGUMENTS_ASC',
+  ExtrinsicsStddevPopulationArgumentsDesc = 'EXTRINSICS_STDDEV_POPULATION_ARGUMENTS_DESC',
+  ExtrinsicsStddevPopulationBlockIdAsc = 'EXTRINSICS_STDDEV_POPULATION_BLOCK_ID_ASC',
+  ExtrinsicsStddevPopulationBlockIdDesc = 'EXTRINSICS_STDDEV_POPULATION_BLOCK_ID_DESC',
+  ExtrinsicsStddevPopulationBlockNumberAsc = 'EXTRINSICS_STDDEV_POPULATION_BLOCK_NUMBER_ASC',
+  ExtrinsicsStddevPopulationBlockNumberDesc = 'EXTRINSICS_STDDEV_POPULATION_BLOCK_NUMBER_DESC',
+  ExtrinsicsStddevPopulationHashAsc = 'EXTRINSICS_STDDEV_POPULATION_HASH_ASC',
+  ExtrinsicsStddevPopulationHashDesc = 'EXTRINSICS_STDDEV_POPULATION_HASH_DESC',
+  ExtrinsicsStddevPopulationIdAsc = 'EXTRINSICS_STDDEV_POPULATION_ID_ASC',
+  ExtrinsicsStddevPopulationIdDesc = 'EXTRINSICS_STDDEV_POPULATION_ID_DESC',
+  ExtrinsicsStddevPopulationIndexAsc = 'EXTRINSICS_STDDEV_POPULATION_INDEX_ASC',
+  ExtrinsicsStddevPopulationIndexDesc = 'EXTRINSICS_STDDEV_POPULATION_INDEX_DESC',
+  ExtrinsicsStddevPopulationIsSignedAsc = 'EXTRINSICS_STDDEV_POPULATION_IS_SIGNED_ASC',
+  ExtrinsicsStddevPopulationIsSignedDesc = 'EXTRINSICS_STDDEV_POPULATION_IS_SIGNED_DESC',
+  ExtrinsicsStddevPopulationIsSuccessAsc = 'EXTRINSICS_STDDEV_POPULATION_IS_SUCCESS_ASC',
+  ExtrinsicsStddevPopulationIsSuccessDesc = 'EXTRINSICS_STDDEV_POPULATION_IS_SUCCESS_DESC',
+  ExtrinsicsStddevPopulationMethodAsc = 'EXTRINSICS_STDDEV_POPULATION_METHOD_ASC',
+  ExtrinsicsStddevPopulationMethodDesc = 'EXTRINSICS_STDDEV_POPULATION_METHOD_DESC',
+  ExtrinsicsStddevPopulationModuleAsc = 'EXTRINSICS_STDDEV_POPULATION_MODULE_ASC',
+  ExtrinsicsStddevPopulationModuleDesc = 'EXTRINSICS_STDDEV_POPULATION_MODULE_DESC',
+  ExtrinsicsStddevPopulationSignerIdAsc = 'EXTRINSICS_STDDEV_POPULATION_SIGNER_ID_ASC',
+  ExtrinsicsStddevPopulationSignerIdDesc = 'EXTRINSICS_STDDEV_POPULATION_SIGNER_ID_DESC',
+  ExtrinsicsStddevSampleArgumentsAsc = 'EXTRINSICS_STDDEV_SAMPLE_ARGUMENTS_ASC',
+  ExtrinsicsStddevSampleArgumentsDesc = 'EXTRINSICS_STDDEV_SAMPLE_ARGUMENTS_DESC',
+  ExtrinsicsStddevSampleBlockIdAsc = 'EXTRINSICS_STDDEV_SAMPLE_BLOCK_ID_ASC',
+  ExtrinsicsStddevSampleBlockIdDesc = 'EXTRINSICS_STDDEV_SAMPLE_BLOCK_ID_DESC',
+  ExtrinsicsStddevSampleBlockNumberAsc = 'EXTRINSICS_STDDEV_SAMPLE_BLOCK_NUMBER_ASC',
+  ExtrinsicsStddevSampleBlockNumberDesc = 'EXTRINSICS_STDDEV_SAMPLE_BLOCK_NUMBER_DESC',
+  ExtrinsicsStddevSampleHashAsc = 'EXTRINSICS_STDDEV_SAMPLE_HASH_ASC',
+  ExtrinsicsStddevSampleHashDesc = 'EXTRINSICS_STDDEV_SAMPLE_HASH_DESC',
+  ExtrinsicsStddevSampleIdAsc = 'EXTRINSICS_STDDEV_SAMPLE_ID_ASC',
+  ExtrinsicsStddevSampleIdDesc = 'EXTRINSICS_STDDEV_SAMPLE_ID_DESC',
+  ExtrinsicsStddevSampleIndexAsc = 'EXTRINSICS_STDDEV_SAMPLE_INDEX_ASC',
+  ExtrinsicsStddevSampleIndexDesc = 'EXTRINSICS_STDDEV_SAMPLE_INDEX_DESC',
+  ExtrinsicsStddevSampleIsSignedAsc = 'EXTRINSICS_STDDEV_SAMPLE_IS_SIGNED_ASC',
+  ExtrinsicsStddevSampleIsSignedDesc = 'EXTRINSICS_STDDEV_SAMPLE_IS_SIGNED_DESC',
+  ExtrinsicsStddevSampleIsSuccessAsc = 'EXTRINSICS_STDDEV_SAMPLE_IS_SUCCESS_ASC',
+  ExtrinsicsStddevSampleIsSuccessDesc = 'EXTRINSICS_STDDEV_SAMPLE_IS_SUCCESS_DESC',
+  ExtrinsicsStddevSampleMethodAsc = 'EXTRINSICS_STDDEV_SAMPLE_METHOD_ASC',
+  ExtrinsicsStddevSampleMethodDesc = 'EXTRINSICS_STDDEV_SAMPLE_METHOD_DESC',
+  ExtrinsicsStddevSampleModuleAsc = 'EXTRINSICS_STDDEV_SAMPLE_MODULE_ASC',
+  ExtrinsicsStddevSampleModuleDesc = 'EXTRINSICS_STDDEV_SAMPLE_MODULE_DESC',
+  ExtrinsicsStddevSampleSignerIdAsc = 'EXTRINSICS_STDDEV_SAMPLE_SIGNER_ID_ASC',
+  ExtrinsicsStddevSampleSignerIdDesc = 'EXTRINSICS_STDDEV_SAMPLE_SIGNER_ID_DESC',
+  ExtrinsicsSumArgumentsAsc = 'EXTRINSICS_SUM_ARGUMENTS_ASC',
+  ExtrinsicsSumArgumentsDesc = 'EXTRINSICS_SUM_ARGUMENTS_DESC',
+  ExtrinsicsSumBlockIdAsc = 'EXTRINSICS_SUM_BLOCK_ID_ASC',
+  ExtrinsicsSumBlockIdDesc = 'EXTRINSICS_SUM_BLOCK_ID_DESC',
+  ExtrinsicsSumBlockNumberAsc = 'EXTRINSICS_SUM_BLOCK_NUMBER_ASC',
+  ExtrinsicsSumBlockNumberDesc = 'EXTRINSICS_SUM_BLOCK_NUMBER_DESC',
+  ExtrinsicsSumHashAsc = 'EXTRINSICS_SUM_HASH_ASC',
+  ExtrinsicsSumHashDesc = 'EXTRINSICS_SUM_HASH_DESC',
+  ExtrinsicsSumIdAsc = 'EXTRINSICS_SUM_ID_ASC',
+  ExtrinsicsSumIdDesc = 'EXTRINSICS_SUM_ID_DESC',
+  ExtrinsicsSumIndexAsc = 'EXTRINSICS_SUM_INDEX_ASC',
+  ExtrinsicsSumIndexDesc = 'EXTRINSICS_SUM_INDEX_DESC',
+  ExtrinsicsSumIsSignedAsc = 'EXTRINSICS_SUM_IS_SIGNED_ASC',
+  ExtrinsicsSumIsSignedDesc = 'EXTRINSICS_SUM_IS_SIGNED_DESC',
+  ExtrinsicsSumIsSuccessAsc = 'EXTRINSICS_SUM_IS_SUCCESS_ASC',
+  ExtrinsicsSumIsSuccessDesc = 'EXTRINSICS_SUM_IS_SUCCESS_DESC',
+  ExtrinsicsSumMethodAsc = 'EXTRINSICS_SUM_METHOD_ASC',
+  ExtrinsicsSumMethodDesc = 'EXTRINSICS_SUM_METHOD_DESC',
+  ExtrinsicsSumModuleAsc = 'EXTRINSICS_SUM_MODULE_ASC',
+  ExtrinsicsSumModuleDesc = 'EXTRINSICS_SUM_MODULE_DESC',
+  ExtrinsicsSumSignerIdAsc = 'EXTRINSICS_SUM_SIGNER_ID_ASC',
+  ExtrinsicsSumSignerIdDesc = 'EXTRINSICS_SUM_SIGNER_ID_DESC',
+  ExtrinsicsVariancePopulationArgumentsAsc = 'EXTRINSICS_VARIANCE_POPULATION_ARGUMENTS_ASC',
+  ExtrinsicsVariancePopulationArgumentsDesc = 'EXTRINSICS_VARIANCE_POPULATION_ARGUMENTS_DESC',
+  ExtrinsicsVariancePopulationBlockIdAsc = 'EXTRINSICS_VARIANCE_POPULATION_BLOCK_ID_ASC',
+  ExtrinsicsVariancePopulationBlockIdDesc = 'EXTRINSICS_VARIANCE_POPULATION_BLOCK_ID_DESC',
+  ExtrinsicsVariancePopulationBlockNumberAsc = 'EXTRINSICS_VARIANCE_POPULATION_BLOCK_NUMBER_ASC',
+  ExtrinsicsVariancePopulationBlockNumberDesc = 'EXTRINSICS_VARIANCE_POPULATION_BLOCK_NUMBER_DESC',
+  ExtrinsicsVariancePopulationHashAsc = 'EXTRINSICS_VARIANCE_POPULATION_HASH_ASC',
+  ExtrinsicsVariancePopulationHashDesc = 'EXTRINSICS_VARIANCE_POPULATION_HASH_DESC',
+  ExtrinsicsVariancePopulationIdAsc = 'EXTRINSICS_VARIANCE_POPULATION_ID_ASC',
+  ExtrinsicsVariancePopulationIdDesc = 'EXTRINSICS_VARIANCE_POPULATION_ID_DESC',
+  ExtrinsicsVariancePopulationIndexAsc = 'EXTRINSICS_VARIANCE_POPULATION_INDEX_ASC',
+  ExtrinsicsVariancePopulationIndexDesc = 'EXTRINSICS_VARIANCE_POPULATION_INDEX_DESC',
+  ExtrinsicsVariancePopulationIsSignedAsc = 'EXTRINSICS_VARIANCE_POPULATION_IS_SIGNED_ASC',
+  ExtrinsicsVariancePopulationIsSignedDesc = 'EXTRINSICS_VARIANCE_POPULATION_IS_SIGNED_DESC',
+  ExtrinsicsVariancePopulationIsSuccessAsc = 'EXTRINSICS_VARIANCE_POPULATION_IS_SUCCESS_ASC',
+  ExtrinsicsVariancePopulationIsSuccessDesc = 'EXTRINSICS_VARIANCE_POPULATION_IS_SUCCESS_DESC',
+  ExtrinsicsVariancePopulationMethodAsc = 'EXTRINSICS_VARIANCE_POPULATION_METHOD_ASC',
+  ExtrinsicsVariancePopulationMethodDesc = 'EXTRINSICS_VARIANCE_POPULATION_METHOD_DESC',
+  ExtrinsicsVariancePopulationModuleAsc = 'EXTRINSICS_VARIANCE_POPULATION_MODULE_ASC',
+  ExtrinsicsVariancePopulationModuleDesc = 'EXTRINSICS_VARIANCE_POPULATION_MODULE_DESC',
+  ExtrinsicsVariancePopulationSignerIdAsc = 'EXTRINSICS_VARIANCE_POPULATION_SIGNER_ID_ASC',
+  ExtrinsicsVariancePopulationSignerIdDesc = 'EXTRINSICS_VARIANCE_POPULATION_SIGNER_ID_DESC',
+  ExtrinsicsVarianceSampleArgumentsAsc = 'EXTRINSICS_VARIANCE_SAMPLE_ARGUMENTS_ASC',
+  ExtrinsicsVarianceSampleArgumentsDesc = 'EXTRINSICS_VARIANCE_SAMPLE_ARGUMENTS_DESC',
+  ExtrinsicsVarianceSampleBlockIdAsc = 'EXTRINSICS_VARIANCE_SAMPLE_BLOCK_ID_ASC',
+  ExtrinsicsVarianceSampleBlockIdDesc = 'EXTRINSICS_VARIANCE_SAMPLE_BLOCK_ID_DESC',
+  ExtrinsicsVarianceSampleBlockNumberAsc = 'EXTRINSICS_VARIANCE_SAMPLE_BLOCK_NUMBER_ASC',
+  ExtrinsicsVarianceSampleBlockNumberDesc = 'EXTRINSICS_VARIANCE_SAMPLE_BLOCK_NUMBER_DESC',
+  ExtrinsicsVarianceSampleHashAsc = 'EXTRINSICS_VARIANCE_SAMPLE_HASH_ASC',
+  ExtrinsicsVarianceSampleHashDesc = 'EXTRINSICS_VARIANCE_SAMPLE_HASH_DESC',
+  ExtrinsicsVarianceSampleIdAsc = 'EXTRINSICS_VARIANCE_SAMPLE_ID_ASC',
+  ExtrinsicsVarianceSampleIdDesc = 'EXTRINSICS_VARIANCE_SAMPLE_ID_DESC',
+  ExtrinsicsVarianceSampleIndexAsc = 'EXTRINSICS_VARIANCE_SAMPLE_INDEX_ASC',
+  ExtrinsicsVarianceSampleIndexDesc = 'EXTRINSICS_VARIANCE_SAMPLE_INDEX_DESC',
+  ExtrinsicsVarianceSampleIsSignedAsc = 'EXTRINSICS_VARIANCE_SAMPLE_IS_SIGNED_ASC',
+  ExtrinsicsVarianceSampleIsSignedDesc = 'EXTRINSICS_VARIANCE_SAMPLE_IS_SIGNED_DESC',
+  ExtrinsicsVarianceSampleIsSuccessAsc = 'EXTRINSICS_VARIANCE_SAMPLE_IS_SUCCESS_ASC',
+  ExtrinsicsVarianceSampleIsSuccessDesc = 'EXTRINSICS_VARIANCE_SAMPLE_IS_SUCCESS_DESC',
+  ExtrinsicsVarianceSampleMethodAsc = 'EXTRINSICS_VARIANCE_SAMPLE_METHOD_ASC',
+  ExtrinsicsVarianceSampleMethodDesc = 'EXTRINSICS_VARIANCE_SAMPLE_METHOD_DESC',
+  ExtrinsicsVarianceSampleModuleAsc = 'EXTRINSICS_VARIANCE_SAMPLE_MODULE_ASC',
+  ExtrinsicsVarianceSampleModuleDesc = 'EXTRINSICS_VARIANCE_SAMPLE_MODULE_DESC',
+  ExtrinsicsVarianceSampleSignerIdAsc = 'EXTRINSICS_VARIANCE_SAMPLE_SIGNER_ID_ASC',
+  ExtrinsicsVarianceSampleSignerIdDesc = 'EXTRINSICS_VARIANCE_SAMPLE_SIGNER_ID_DESC',
   IdAsc = 'ID_ASC',
   IdDesc = 'ID_DESC',
   Natural = 'NATURAL',
   PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
-  PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
+  PrimaryKeyDesc = 'PRIMARY_KEY_DESC'
 }
 
 /** A connection to a list of `Authority` values. */
@@ -560,6 +569,7 @@ export type AuthoritiesConnection = {
   /** The count of *all* `Authority` you could get from the connection. */
   totalCount: Scalars['Int'];
 };
+
 
 /** A connection to a list of `Authority` values. */
 export type AuthoritiesConnectionGroupedAggregatesArgs = {
@@ -580,7 +590,7 @@ export type AuthoritiesEdge = {
 export enum AuthoritiesGroupBy {
   BlockId = 'BLOCK_ID',
   Current = 'CURRENT',
-  Next = 'NEXT',
+  Next = 'NEXT'
 }
 
 /** Conditions for `Authority` aggregates. */
@@ -601,7 +611,7 @@ export enum AuthoritiesOrderBy {
   NextAsc = 'NEXT_ASC',
   NextDesc = 'NEXT_DESC',
   PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
-  PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
+  PrimaryKeyDesc = 'PRIMARY_KEY_DESC'
 }
 
 export type Authority = Node & {
@@ -704,6 +714,18 @@ export type Block = Node & {
   nodeId: Scalars['ID'];
   number: Scalars['BigFloat'];
   parentHash?: Maybe<Scalars['String']>;
+  /** Reads and enables pagination through a set of `ProposalCounter`. */
+  proposalCounters: ProposalCountersConnection;
+  /** Reads and enables pagination through a set of `ProposalItem`. */
+  proposalItems: ProposalItemsConnection;
+  /** Reads and enables pagination through a set of `ProposerThreshold`. */
+  proposerThresholds: ProposerThresholdsConnection;
+  /** Reads and enables pagination through a set of `Proposer`. */
+  proposers: ProposersConnection;
+  /** Reads and enables pagination through a set of `PublicKey`. */
+  publicKeys: PublicKeysConnection;
+  /** Reads and enables pagination through a set of `PublicKey`. */
+  publicKeysBySessionBlockIdAndPublicKeyId: BlockPublicKeysBySessionBlockIdAndPublicKeyIdManyToManyConnection;
   /** Reads and enables pagination through a set of `Session`. */
   sessions: SessionsConnection;
   /** Reads and enables pagination through a set of `SignatureThreshold`. */
@@ -711,7 +733,10 @@ export type Block = Node & {
   specVersion?: Maybe<Scalars['String']>;
   stateRoot?: Maybe<Scalars['String']>;
   timestamp?: Maybe<Scalars['Datetime']>;
+  /** Reads and enables pagination through a set of `UnsignedProposalsQueue`. */
+  unsignedProposalsQueues: UnsignedProposalsQueuesConnection;
 };
+
 
 export type BlockAccountsByAccountCreateAtBlockIdAndCreatorIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -723,6 +748,7 @@ export type BlockAccountsByAccountCreateAtBlockIdAndCreatorIdArgs = {
   orderBy?: InputMaybe<Array<AccountsOrderBy>>;
 };
 
+
 export type BlockAccountsByCreateAtBlockIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -732,6 +758,7 @@ export type BlockAccountsByCreateAtBlockIdArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<AccountsOrderBy>>;
 };
+
 
 export type BlockAccountsByExtrinsicBlockIdAndSignerIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -743,6 +770,7 @@ export type BlockAccountsByExtrinsicBlockIdAndSignerIdArgs = {
   orderBy?: InputMaybe<Array<AccountsOrderBy>>;
 };
 
+
 export type BlockAuthoritiesArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -752,6 +780,7 @@ export type BlockAuthoritiesArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<AuthoritiesOrderBy>>;
 };
+
 
 export type BlockEventsArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -763,6 +792,7 @@ export type BlockEventsArgs = {
   orderBy?: InputMaybe<Array<EventsOrderBy>>;
 };
 
+
 export type BlockExtrinsicsArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -772,6 +802,7 @@ export type BlockExtrinsicsArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<ExtrinsicsOrderBy>>;
 };
+
 
 export type BlockExtrinsicsByEventBlockIdAndExtrinsicIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -783,6 +814,7 @@ export type BlockExtrinsicsByEventBlockIdAndExtrinsicIdArgs = {
   orderBy?: InputMaybe<Array<ExtrinsicsOrderBy>>;
 };
 
+
 export type BlockKeygenThresholdsArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -792,6 +824,73 @@ export type BlockKeygenThresholdsArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<KeygenThresholdsOrderBy>>;
 };
+
+
+export type BlockProposalCountersArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  filter?: InputMaybe<ProposalCounterFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<ProposalCountersOrderBy>>;
+};
+
+
+export type BlockProposalItemsArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  filter?: InputMaybe<ProposalItemFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<ProposalItemsOrderBy>>;
+};
+
+
+export type BlockProposerThresholdsArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  filter?: InputMaybe<ProposerThresholdFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<ProposerThresholdsOrderBy>>;
+};
+
+
+export type BlockProposersArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  filter?: InputMaybe<ProposerFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<ProposersOrderBy>>;
+};
+
+
+export type BlockPublicKeysArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  filter?: InputMaybe<PublicKeyFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<PublicKeysOrderBy>>;
+};
+
+
+export type BlockPublicKeysBySessionBlockIdAndPublicKeyIdArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  filter?: InputMaybe<PublicKeyFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<PublicKeysOrderBy>>;
+};
+
 
 export type BlockSessionsArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -803,6 +902,7 @@ export type BlockSessionsArgs = {
   orderBy?: InputMaybe<Array<SessionsOrderBy>>;
 };
 
+
 export type BlockSignatureThresholdsArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -811,6 +911,17 @@ export type BlockSignatureThresholdsArgs = {
   last?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<SignatureThresholdsOrderBy>>;
+};
+
+
+export type BlockUnsignedProposalsQueuesArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  filter?: InputMaybe<UnsignedProposalsQueueFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<UnsignedProposalsQueuesOrderBy>>;
 };
 
 /** A connection to a list of `Account` values, with data from `Account`. */
@@ -830,6 +941,7 @@ export type BlockAccountsByAccountCreateAtBlockIdAndCreatorIdManyToManyConnectio
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Account` values, with data from `Account`. */
 export type BlockAccountsByAccountCreateAtBlockIdAndCreatorIdManyToManyConnectionGroupedAggregatesArgs = {
   groupBy: Array<AccountsGroupBy>;
@@ -846,6 +958,7 @@ export type BlockAccountsByAccountCreateAtBlockIdAndCreatorIdManyToManyEdge = {
   /** The `Account` at the end of the edge. */
   node?: Maybe<Account>;
 };
+
 
 /** A `Account` edge in the connection, with data from `Account`. */
 export type BlockAccountsByAccountCreateAtBlockIdAndCreatorIdManyToManyEdgeAccountsByCreatorIdArgs = {
@@ -875,6 +988,7 @@ export type BlockAccountsByExtrinsicBlockIdAndSignerIdManyToManyConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Account` values, with data from `Extrinsic`. */
 export type BlockAccountsByExtrinsicBlockIdAndSignerIdManyToManyConnectionGroupedAggregatesArgs = {
   groupBy: Array<AccountsGroupBy>;
@@ -887,13 +1001,14 @@ export type BlockAccountsByExtrinsicBlockIdAndSignerIdManyToManyEdge = {
   /** A cursor for use in pagination. */
   cursor?: Maybe<Scalars['Cursor']>;
   /** Reads and enables pagination through a set of `Extrinsic`. */
-  extrinsicsBySignerId: ExtrinsicsConnection;
+  extrinsics: ExtrinsicsConnection;
   /** The `Account` at the end of the edge. */
   node?: Maybe<Account>;
 };
 
+
 /** A `Account` edge in the connection, with data from `Extrinsic`. */
-export type BlockAccountsByExtrinsicBlockIdAndSignerIdManyToManyEdgeExtrinsicsBySignerIdArgs = {
+export type BlockAccountsByExtrinsicBlockIdAndSignerIdManyToManyEdgeExtrinsicsArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
   filter?: InputMaybe<ExtrinsicFilter>;
@@ -969,6 +1084,7 @@ export type BlockExtrinsicsByEventBlockIdAndExtrinsicIdManyToManyConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Extrinsic` values, with data from `Event`. */
 export type BlockExtrinsicsByEventBlockIdAndExtrinsicIdManyToManyConnectionGroupedAggregatesArgs = {
   groupBy: Array<ExtrinsicsGroupBy>;
@@ -985,6 +1101,7 @@ export type BlockExtrinsicsByEventBlockIdAndExtrinsicIdManyToManyEdge = {
   /** The `Extrinsic` at the end of the edge. */
   node?: Maybe<Extrinsic>;
 };
+
 
 /** A `Extrinsic` edge in the connection, with data from `Event`. */
 export type BlockExtrinsicsByEventBlockIdAndExtrinsicIdManyToManyEdgeEventsArgs = {
@@ -1035,6 +1152,53 @@ export type BlockMinAggregates = {
   number?: Maybe<Scalars['BigFloat']>;
 };
 
+/** A connection to a list of `PublicKey` values, with data from `Session`. */
+export type BlockPublicKeysBySessionBlockIdAndPublicKeyIdManyToManyConnection = {
+  __typename?: 'BlockPublicKeysBySessionBlockIdAndPublicKeyIdManyToManyConnection';
+  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  aggregates?: Maybe<PublicKeyAggregates>;
+  /** A list of edges which contains the `PublicKey`, info from the `Session`, and the cursor to aid in pagination. */
+  edges: Array<BlockPublicKeysBySessionBlockIdAndPublicKeyIdManyToManyEdge>;
+  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  groupedAggregates?: Maybe<Array<PublicKeyAggregates>>;
+  /** A list of `PublicKey` objects. */
+  nodes: Array<Maybe<PublicKey>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** The count of *all* `PublicKey` you could get from the connection. */
+  totalCount: Scalars['Int'];
+};
+
+
+/** A connection to a list of `PublicKey` values, with data from `Session`. */
+export type BlockPublicKeysBySessionBlockIdAndPublicKeyIdManyToManyConnectionGroupedAggregatesArgs = {
+  groupBy: Array<PublicKeysGroupBy>;
+  having?: InputMaybe<PublicKeysHavingInput>;
+};
+
+/** A `PublicKey` edge in the connection, with data from `Session`. */
+export type BlockPublicKeysBySessionBlockIdAndPublicKeyIdManyToManyEdge = {
+  __typename?: 'BlockPublicKeysBySessionBlockIdAndPublicKeyIdManyToManyEdge';
+  /** A cursor for use in pagination. */
+  cursor?: Maybe<Scalars['Cursor']>;
+  /** The `PublicKey` at the end of the edge. */
+  node?: Maybe<PublicKey>;
+  /** Reads and enables pagination through a set of `Session`. */
+  sessions: SessionsConnection;
+};
+
+
+/** A `PublicKey` edge in the connection, with data from `Session`. */
+export type BlockPublicKeysBySessionBlockIdAndPublicKeyIdManyToManyEdgeSessionsArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  filter?: InputMaybe<SessionFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<SessionsOrderBy>>;
+};
+
 export type BlockStddevPopulationAggregates = {
   __typename?: 'BlockStddevPopulationAggregates';
   /** Population standard deviation of number across the matching connection */
@@ -1082,6 +1246,7 @@ export type BlocksConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Block` values. */
 export type BlocksConnectionGroupedAggregatesArgs = {
   groupBy: Array<BlocksGroupBy>;
@@ -1106,7 +1271,7 @@ export enum BlocksGroupBy {
   StateRoot = 'STATE_ROOT',
   Timestamp = 'TIMESTAMP',
   TimestampTruncatedToDay = 'TIMESTAMP_TRUNCATED_TO_DAY',
-  TimestampTruncatedToHour = 'TIMESTAMP_TRUNCATED_TO_HOUR',
+  TimestampTruncatedToHour = 'TIMESTAMP_TRUNCATED_TO_HOUR'
 }
 
 export type BlocksHavingAverageInput = {
@@ -1824,6 +1989,574 @@ export enum BlocksOrderBy {
   ParentHashDesc = 'PARENT_HASH_DESC',
   PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
   PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
+  ProposalCountersAverageBlockIdAsc = 'PROPOSAL_COUNTERS_AVERAGE_BLOCK_ID_ASC',
+  ProposalCountersAverageBlockIdDesc = 'PROPOSAL_COUNTERS_AVERAGE_BLOCK_ID_DESC',
+  ProposalCountersAverageBlockNumberAsc = 'PROPOSAL_COUNTERS_AVERAGE_BLOCK_NUMBER_ASC',
+  ProposalCountersAverageBlockNumberDesc = 'PROPOSAL_COUNTERS_AVERAGE_BLOCK_NUMBER_DESC',
+  ProposalCountersAverageIdAsc = 'PROPOSAL_COUNTERS_AVERAGE_ID_ASC',
+  ProposalCountersAverageIdDesc = 'PROPOSAL_COUNTERS_AVERAGE_ID_DESC',
+  ProposalCountersAverageSignedProposalsCountAsc = 'PROPOSAL_COUNTERS_AVERAGE_SIGNED_PROPOSALS_COUNT_ASC',
+  ProposalCountersAverageSignedProposalsCountDesc = 'PROPOSAL_COUNTERS_AVERAGE_SIGNED_PROPOSALS_COUNT_DESC',
+  ProposalCountersAverageSignedProposalsMapAsc = 'PROPOSAL_COUNTERS_AVERAGE_SIGNED_PROPOSALS_MAP_ASC',
+  ProposalCountersAverageSignedProposalsMapDesc = 'PROPOSAL_COUNTERS_AVERAGE_SIGNED_PROPOSALS_MAP_DESC',
+  ProposalCountersAverageStatusMapAsc = 'PROPOSAL_COUNTERS_AVERAGE_STATUS_MAP_ASC',
+  ProposalCountersAverageStatusMapDesc = 'PROPOSAL_COUNTERS_AVERAGE_STATUS_MAP_DESC',
+  ProposalCountersAverageUnSignedProposalsCountAsc = 'PROPOSAL_COUNTERS_AVERAGE_UN_SIGNED_PROPOSALS_COUNT_ASC',
+  ProposalCountersAverageUnSignedProposalsCountDesc = 'PROPOSAL_COUNTERS_AVERAGE_UN_SIGNED_PROPOSALS_COUNT_DESC',
+  ProposalCountersAverageUnSignedProposalsMapAsc = 'PROPOSAL_COUNTERS_AVERAGE_UN_SIGNED_PROPOSALS_MAP_ASC',
+  ProposalCountersAverageUnSignedProposalsMapDesc = 'PROPOSAL_COUNTERS_AVERAGE_UN_SIGNED_PROPOSALS_MAP_DESC',
+  ProposalCountersCountAsc = 'PROPOSAL_COUNTERS_COUNT_ASC',
+  ProposalCountersCountDesc = 'PROPOSAL_COUNTERS_COUNT_DESC',
+  ProposalCountersDistinctCountBlockIdAsc = 'PROPOSAL_COUNTERS_DISTINCT_COUNT_BLOCK_ID_ASC',
+  ProposalCountersDistinctCountBlockIdDesc = 'PROPOSAL_COUNTERS_DISTINCT_COUNT_BLOCK_ID_DESC',
+  ProposalCountersDistinctCountBlockNumberAsc = 'PROPOSAL_COUNTERS_DISTINCT_COUNT_BLOCK_NUMBER_ASC',
+  ProposalCountersDistinctCountBlockNumberDesc = 'PROPOSAL_COUNTERS_DISTINCT_COUNT_BLOCK_NUMBER_DESC',
+  ProposalCountersDistinctCountIdAsc = 'PROPOSAL_COUNTERS_DISTINCT_COUNT_ID_ASC',
+  ProposalCountersDistinctCountIdDesc = 'PROPOSAL_COUNTERS_DISTINCT_COUNT_ID_DESC',
+  ProposalCountersDistinctCountSignedProposalsCountAsc = 'PROPOSAL_COUNTERS_DISTINCT_COUNT_SIGNED_PROPOSALS_COUNT_ASC',
+  ProposalCountersDistinctCountSignedProposalsCountDesc = 'PROPOSAL_COUNTERS_DISTINCT_COUNT_SIGNED_PROPOSALS_COUNT_DESC',
+  ProposalCountersDistinctCountSignedProposalsMapAsc = 'PROPOSAL_COUNTERS_DISTINCT_COUNT_SIGNED_PROPOSALS_MAP_ASC',
+  ProposalCountersDistinctCountSignedProposalsMapDesc = 'PROPOSAL_COUNTERS_DISTINCT_COUNT_SIGNED_PROPOSALS_MAP_DESC',
+  ProposalCountersDistinctCountStatusMapAsc = 'PROPOSAL_COUNTERS_DISTINCT_COUNT_STATUS_MAP_ASC',
+  ProposalCountersDistinctCountStatusMapDesc = 'PROPOSAL_COUNTERS_DISTINCT_COUNT_STATUS_MAP_DESC',
+  ProposalCountersDistinctCountUnSignedProposalsCountAsc = 'PROPOSAL_COUNTERS_DISTINCT_COUNT_UN_SIGNED_PROPOSALS_COUNT_ASC',
+  ProposalCountersDistinctCountUnSignedProposalsCountDesc = 'PROPOSAL_COUNTERS_DISTINCT_COUNT_UN_SIGNED_PROPOSALS_COUNT_DESC',
+  ProposalCountersDistinctCountUnSignedProposalsMapAsc = 'PROPOSAL_COUNTERS_DISTINCT_COUNT_UN_SIGNED_PROPOSALS_MAP_ASC',
+  ProposalCountersDistinctCountUnSignedProposalsMapDesc = 'PROPOSAL_COUNTERS_DISTINCT_COUNT_UN_SIGNED_PROPOSALS_MAP_DESC',
+  ProposalCountersMaxBlockIdAsc = 'PROPOSAL_COUNTERS_MAX_BLOCK_ID_ASC',
+  ProposalCountersMaxBlockIdDesc = 'PROPOSAL_COUNTERS_MAX_BLOCK_ID_DESC',
+  ProposalCountersMaxBlockNumberAsc = 'PROPOSAL_COUNTERS_MAX_BLOCK_NUMBER_ASC',
+  ProposalCountersMaxBlockNumberDesc = 'PROPOSAL_COUNTERS_MAX_BLOCK_NUMBER_DESC',
+  ProposalCountersMaxIdAsc = 'PROPOSAL_COUNTERS_MAX_ID_ASC',
+  ProposalCountersMaxIdDesc = 'PROPOSAL_COUNTERS_MAX_ID_DESC',
+  ProposalCountersMaxSignedProposalsCountAsc = 'PROPOSAL_COUNTERS_MAX_SIGNED_PROPOSALS_COUNT_ASC',
+  ProposalCountersMaxSignedProposalsCountDesc = 'PROPOSAL_COUNTERS_MAX_SIGNED_PROPOSALS_COUNT_DESC',
+  ProposalCountersMaxSignedProposalsMapAsc = 'PROPOSAL_COUNTERS_MAX_SIGNED_PROPOSALS_MAP_ASC',
+  ProposalCountersMaxSignedProposalsMapDesc = 'PROPOSAL_COUNTERS_MAX_SIGNED_PROPOSALS_MAP_DESC',
+  ProposalCountersMaxStatusMapAsc = 'PROPOSAL_COUNTERS_MAX_STATUS_MAP_ASC',
+  ProposalCountersMaxStatusMapDesc = 'PROPOSAL_COUNTERS_MAX_STATUS_MAP_DESC',
+  ProposalCountersMaxUnSignedProposalsCountAsc = 'PROPOSAL_COUNTERS_MAX_UN_SIGNED_PROPOSALS_COUNT_ASC',
+  ProposalCountersMaxUnSignedProposalsCountDesc = 'PROPOSAL_COUNTERS_MAX_UN_SIGNED_PROPOSALS_COUNT_DESC',
+  ProposalCountersMaxUnSignedProposalsMapAsc = 'PROPOSAL_COUNTERS_MAX_UN_SIGNED_PROPOSALS_MAP_ASC',
+  ProposalCountersMaxUnSignedProposalsMapDesc = 'PROPOSAL_COUNTERS_MAX_UN_SIGNED_PROPOSALS_MAP_DESC',
+  ProposalCountersMinBlockIdAsc = 'PROPOSAL_COUNTERS_MIN_BLOCK_ID_ASC',
+  ProposalCountersMinBlockIdDesc = 'PROPOSAL_COUNTERS_MIN_BLOCK_ID_DESC',
+  ProposalCountersMinBlockNumberAsc = 'PROPOSAL_COUNTERS_MIN_BLOCK_NUMBER_ASC',
+  ProposalCountersMinBlockNumberDesc = 'PROPOSAL_COUNTERS_MIN_BLOCK_NUMBER_DESC',
+  ProposalCountersMinIdAsc = 'PROPOSAL_COUNTERS_MIN_ID_ASC',
+  ProposalCountersMinIdDesc = 'PROPOSAL_COUNTERS_MIN_ID_DESC',
+  ProposalCountersMinSignedProposalsCountAsc = 'PROPOSAL_COUNTERS_MIN_SIGNED_PROPOSALS_COUNT_ASC',
+  ProposalCountersMinSignedProposalsCountDesc = 'PROPOSAL_COUNTERS_MIN_SIGNED_PROPOSALS_COUNT_DESC',
+  ProposalCountersMinSignedProposalsMapAsc = 'PROPOSAL_COUNTERS_MIN_SIGNED_PROPOSALS_MAP_ASC',
+  ProposalCountersMinSignedProposalsMapDesc = 'PROPOSAL_COUNTERS_MIN_SIGNED_PROPOSALS_MAP_DESC',
+  ProposalCountersMinStatusMapAsc = 'PROPOSAL_COUNTERS_MIN_STATUS_MAP_ASC',
+  ProposalCountersMinStatusMapDesc = 'PROPOSAL_COUNTERS_MIN_STATUS_MAP_DESC',
+  ProposalCountersMinUnSignedProposalsCountAsc = 'PROPOSAL_COUNTERS_MIN_UN_SIGNED_PROPOSALS_COUNT_ASC',
+  ProposalCountersMinUnSignedProposalsCountDesc = 'PROPOSAL_COUNTERS_MIN_UN_SIGNED_PROPOSALS_COUNT_DESC',
+  ProposalCountersMinUnSignedProposalsMapAsc = 'PROPOSAL_COUNTERS_MIN_UN_SIGNED_PROPOSALS_MAP_ASC',
+  ProposalCountersMinUnSignedProposalsMapDesc = 'PROPOSAL_COUNTERS_MIN_UN_SIGNED_PROPOSALS_MAP_DESC',
+  ProposalCountersStddevPopulationBlockIdAsc = 'PROPOSAL_COUNTERS_STDDEV_POPULATION_BLOCK_ID_ASC',
+  ProposalCountersStddevPopulationBlockIdDesc = 'PROPOSAL_COUNTERS_STDDEV_POPULATION_BLOCK_ID_DESC',
+  ProposalCountersStddevPopulationBlockNumberAsc = 'PROPOSAL_COUNTERS_STDDEV_POPULATION_BLOCK_NUMBER_ASC',
+  ProposalCountersStddevPopulationBlockNumberDesc = 'PROPOSAL_COUNTERS_STDDEV_POPULATION_BLOCK_NUMBER_DESC',
+  ProposalCountersStddevPopulationIdAsc = 'PROPOSAL_COUNTERS_STDDEV_POPULATION_ID_ASC',
+  ProposalCountersStddevPopulationIdDesc = 'PROPOSAL_COUNTERS_STDDEV_POPULATION_ID_DESC',
+  ProposalCountersStddevPopulationSignedProposalsCountAsc = 'PROPOSAL_COUNTERS_STDDEV_POPULATION_SIGNED_PROPOSALS_COUNT_ASC',
+  ProposalCountersStddevPopulationSignedProposalsCountDesc = 'PROPOSAL_COUNTERS_STDDEV_POPULATION_SIGNED_PROPOSALS_COUNT_DESC',
+  ProposalCountersStddevPopulationSignedProposalsMapAsc = 'PROPOSAL_COUNTERS_STDDEV_POPULATION_SIGNED_PROPOSALS_MAP_ASC',
+  ProposalCountersStddevPopulationSignedProposalsMapDesc = 'PROPOSAL_COUNTERS_STDDEV_POPULATION_SIGNED_PROPOSALS_MAP_DESC',
+  ProposalCountersStddevPopulationStatusMapAsc = 'PROPOSAL_COUNTERS_STDDEV_POPULATION_STATUS_MAP_ASC',
+  ProposalCountersStddevPopulationStatusMapDesc = 'PROPOSAL_COUNTERS_STDDEV_POPULATION_STATUS_MAP_DESC',
+  ProposalCountersStddevPopulationUnSignedProposalsCountAsc = 'PROPOSAL_COUNTERS_STDDEV_POPULATION_UN_SIGNED_PROPOSALS_COUNT_ASC',
+  ProposalCountersStddevPopulationUnSignedProposalsCountDesc = 'PROPOSAL_COUNTERS_STDDEV_POPULATION_UN_SIGNED_PROPOSALS_COUNT_DESC',
+  ProposalCountersStddevPopulationUnSignedProposalsMapAsc = 'PROPOSAL_COUNTERS_STDDEV_POPULATION_UN_SIGNED_PROPOSALS_MAP_ASC',
+  ProposalCountersStddevPopulationUnSignedProposalsMapDesc = 'PROPOSAL_COUNTERS_STDDEV_POPULATION_UN_SIGNED_PROPOSALS_MAP_DESC',
+  ProposalCountersStddevSampleBlockIdAsc = 'PROPOSAL_COUNTERS_STDDEV_SAMPLE_BLOCK_ID_ASC',
+  ProposalCountersStddevSampleBlockIdDesc = 'PROPOSAL_COUNTERS_STDDEV_SAMPLE_BLOCK_ID_DESC',
+  ProposalCountersStddevSampleBlockNumberAsc = 'PROPOSAL_COUNTERS_STDDEV_SAMPLE_BLOCK_NUMBER_ASC',
+  ProposalCountersStddevSampleBlockNumberDesc = 'PROPOSAL_COUNTERS_STDDEV_SAMPLE_BLOCK_NUMBER_DESC',
+  ProposalCountersStddevSampleIdAsc = 'PROPOSAL_COUNTERS_STDDEV_SAMPLE_ID_ASC',
+  ProposalCountersStddevSampleIdDesc = 'PROPOSAL_COUNTERS_STDDEV_SAMPLE_ID_DESC',
+  ProposalCountersStddevSampleSignedProposalsCountAsc = 'PROPOSAL_COUNTERS_STDDEV_SAMPLE_SIGNED_PROPOSALS_COUNT_ASC',
+  ProposalCountersStddevSampleSignedProposalsCountDesc = 'PROPOSAL_COUNTERS_STDDEV_SAMPLE_SIGNED_PROPOSALS_COUNT_DESC',
+  ProposalCountersStddevSampleSignedProposalsMapAsc = 'PROPOSAL_COUNTERS_STDDEV_SAMPLE_SIGNED_PROPOSALS_MAP_ASC',
+  ProposalCountersStddevSampleSignedProposalsMapDesc = 'PROPOSAL_COUNTERS_STDDEV_SAMPLE_SIGNED_PROPOSALS_MAP_DESC',
+  ProposalCountersStddevSampleStatusMapAsc = 'PROPOSAL_COUNTERS_STDDEV_SAMPLE_STATUS_MAP_ASC',
+  ProposalCountersStddevSampleStatusMapDesc = 'PROPOSAL_COUNTERS_STDDEV_SAMPLE_STATUS_MAP_DESC',
+  ProposalCountersStddevSampleUnSignedProposalsCountAsc = 'PROPOSAL_COUNTERS_STDDEV_SAMPLE_UN_SIGNED_PROPOSALS_COUNT_ASC',
+  ProposalCountersStddevSampleUnSignedProposalsCountDesc = 'PROPOSAL_COUNTERS_STDDEV_SAMPLE_UN_SIGNED_PROPOSALS_COUNT_DESC',
+  ProposalCountersStddevSampleUnSignedProposalsMapAsc = 'PROPOSAL_COUNTERS_STDDEV_SAMPLE_UN_SIGNED_PROPOSALS_MAP_ASC',
+  ProposalCountersStddevSampleUnSignedProposalsMapDesc = 'PROPOSAL_COUNTERS_STDDEV_SAMPLE_UN_SIGNED_PROPOSALS_MAP_DESC',
+  ProposalCountersSumBlockIdAsc = 'PROPOSAL_COUNTERS_SUM_BLOCK_ID_ASC',
+  ProposalCountersSumBlockIdDesc = 'PROPOSAL_COUNTERS_SUM_BLOCK_ID_DESC',
+  ProposalCountersSumBlockNumberAsc = 'PROPOSAL_COUNTERS_SUM_BLOCK_NUMBER_ASC',
+  ProposalCountersSumBlockNumberDesc = 'PROPOSAL_COUNTERS_SUM_BLOCK_NUMBER_DESC',
+  ProposalCountersSumIdAsc = 'PROPOSAL_COUNTERS_SUM_ID_ASC',
+  ProposalCountersSumIdDesc = 'PROPOSAL_COUNTERS_SUM_ID_DESC',
+  ProposalCountersSumSignedProposalsCountAsc = 'PROPOSAL_COUNTERS_SUM_SIGNED_PROPOSALS_COUNT_ASC',
+  ProposalCountersSumSignedProposalsCountDesc = 'PROPOSAL_COUNTERS_SUM_SIGNED_PROPOSALS_COUNT_DESC',
+  ProposalCountersSumSignedProposalsMapAsc = 'PROPOSAL_COUNTERS_SUM_SIGNED_PROPOSALS_MAP_ASC',
+  ProposalCountersSumSignedProposalsMapDesc = 'PROPOSAL_COUNTERS_SUM_SIGNED_PROPOSALS_MAP_DESC',
+  ProposalCountersSumStatusMapAsc = 'PROPOSAL_COUNTERS_SUM_STATUS_MAP_ASC',
+  ProposalCountersSumStatusMapDesc = 'PROPOSAL_COUNTERS_SUM_STATUS_MAP_DESC',
+  ProposalCountersSumUnSignedProposalsCountAsc = 'PROPOSAL_COUNTERS_SUM_UN_SIGNED_PROPOSALS_COUNT_ASC',
+  ProposalCountersSumUnSignedProposalsCountDesc = 'PROPOSAL_COUNTERS_SUM_UN_SIGNED_PROPOSALS_COUNT_DESC',
+  ProposalCountersSumUnSignedProposalsMapAsc = 'PROPOSAL_COUNTERS_SUM_UN_SIGNED_PROPOSALS_MAP_ASC',
+  ProposalCountersSumUnSignedProposalsMapDesc = 'PROPOSAL_COUNTERS_SUM_UN_SIGNED_PROPOSALS_MAP_DESC',
+  ProposalCountersVariancePopulationBlockIdAsc = 'PROPOSAL_COUNTERS_VARIANCE_POPULATION_BLOCK_ID_ASC',
+  ProposalCountersVariancePopulationBlockIdDesc = 'PROPOSAL_COUNTERS_VARIANCE_POPULATION_BLOCK_ID_DESC',
+  ProposalCountersVariancePopulationBlockNumberAsc = 'PROPOSAL_COUNTERS_VARIANCE_POPULATION_BLOCK_NUMBER_ASC',
+  ProposalCountersVariancePopulationBlockNumberDesc = 'PROPOSAL_COUNTERS_VARIANCE_POPULATION_BLOCK_NUMBER_DESC',
+  ProposalCountersVariancePopulationIdAsc = 'PROPOSAL_COUNTERS_VARIANCE_POPULATION_ID_ASC',
+  ProposalCountersVariancePopulationIdDesc = 'PROPOSAL_COUNTERS_VARIANCE_POPULATION_ID_DESC',
+  ProposalCountersVariancePopulationSignedProposalsCountAsc = 'PROPOSAL_COUNTERS_VARIANCE_POPULATION_SIGNED_PROPOSALS_COUNT_ASC',
+  ProposalCountersVariancePopulationSignedProposalsCountDesc = 'PROPOSAL_COUNTERS_VARIANCE_POPULATION_SIGNED_PROPOSALS_COUNT_DESC',
+  ProposalCountersVariancePopulationSignedProposalsMapAsc = 'PROPOSAL_COUNTERS_VARIANCE_POPULATION_SIGNED_PROPOSALS_MAP_ASC',
+  ProposalCountersVariancePopulationSignedProposalsMapDesc = 'PROPOSAL_COUNTERS_VARIANCE_POPULATION_SIGNED_PROPOSALS_MAP_DESC',
+  ProposalCountersVariancePopulationStatusMapAsc = 'PROPOSAL_COUNTERS_VARIANCE_POPULATION_STATUS_MAP_ASC',
+  ProposalCountersVariancePopulationStatusMapDesc = 'PROPOSAL_COUNTERS_VARIANCE_POPULATION_STATUS_MAP_DESC',
+  ProposalCountersVariancePopulationUnSignedProposalsCountAsc = 'PROPOSAL_COUNTERS_VARIANCE_POPULATION_UN_SIGNED_PROPOSALS_COUNT_ASC',
+  ProposalCountersVariancePopulationUnSignedProposalsCountDesc = 'PROPOSAL_COUNTERS_VARIANCE_POPULATION_UN_SIGNED_PROPOSALS_COUNT_DESC',
+  ProposalCountersVariancePopulationUnSignedProposalsMapAsc = 'PROPOSAL_COUNTERS_VARIANCE_POPULATION_UN_SIGNED_PROPOSALS_MAP_ASC',
+  ProposalCountersVariancePopulationUnSignedProposalsMapDesc = 'PROPOSAL_COUNTERS_VARIANCE_POPULATION_UN_SIGNED_PROPOSALS_MAP_DESC',
+  ProposalCountersVarianceSampleBlockIdAsc = 'PROPOSAL_COUNTERS_VARIANCE_SAMPLE_BLOCK_ID_ASC',
+  ProposalCountersVarianceSampleBlockIdDesc = 'PROPOSAL_COUNTERS_VARIANCE_SAMPLE_BLOCK_ID_DESC',
+  ProposalCountersVarianceSampleBlockNumberAsc = 'PROPOSAL_COUNTERS_VARIANCE_SAMPLE_BLOCK_NUMBER_ASC',
+  ProposalCountersVarianceSampleBlockNumberDesc = 'PROPOSAL_COUNTERS_VARIANCE_SAMPLE_BLOCK_NUMBER_DESC',
+  ProposalCountersVarianceSampleIdAsc = 'PROPOSAL_COUNTERS_VARIANCE_SAMPLE_ID_ASC',
+  ProposalCountersVarianceSampleIdDesc = 'PROPOSAL_COUNTERS_VARIANCE_SAMPLE_ID_DESC',
+  ProposalCountersVarianceSampleSignedProposalsCountAsc = 'PROPOSAL_COUNTERS_VARIANCE_SAMPLE_SIGNED_PROPOSALS_COUNT_ASC',
+  ProposalCountersVarianceSampleSignedProposalsCountDesc = 'PROPOSAL_COUNTERS_VARIANCE_SAMPLE_SIGNED_PROPOSALS_COUNT_DESC',
+  ProposalCountersVarianceSampleSignedProposalsMapAsc = 'PROPOSAL_COUNTERS_VARIANCE_SAMPLE_SIGNED_PROPOSALS_MAP_ASC',
+  ProposalCountersVarianceSampleSignedProposalsMapDesc = 'PROPOSAL_COUNTERS_VARIANCE_SAMPLE_SIGNED_PROPOSALS_MAP_DESC',
+  ProposalCountersVarianceSampleStatusMapAsc = 'PROPOSAL_COUNTERS_VARIANCE_SAMPLE_STATUS_MAP_ASC',
+  ProposalCountersVarianceSampleStatusMapDesc = 'PROPOSAL_COUNTERS_VARIANCE_SAMPLE_STATUS_MAP_DESC',
+  ProposalCountersVarianceSampleUnSignedProposalsCountAsc = 'PROPOSAL_COUNTERS_VARIANCE_SAMPLE_UN_SIGNED_PROPOSALS_COUNT_ASC',
+  ProposalCountersVarianceSampleUnSignedProposalsCountDesc = 'PROPOSAL_COUNTERS_VARIANCE_SAMPLE_UN_SIGNED_PROPOSALS_COUNT_DESC',
+  ProposalCountersVarianceSampleUnSignedProposalsMapAsc = 'PROPOSAL_COUNTERS_VARIANCE_SAMPLE_UN_SIGNED_PROPOSALS_MAP_ASC',
+  ProposalCountersVarianceSampleUnSignedProposalsMapDesc = 'PROPOSAL_COUNTERS_VARIANCE_SAMPLE_UN_SIGNED_PROPOSALS_MAP_DESC',
+  ProposalItemsAverageBlockIdAsc = 'PROPOSAL_ITEMS_AVERAGE_BLOCK_ID_ASC',
+  ProposalItemsAverageBlockIdDesc = 'PROPOSAL_ITEMS_AVERAGE_BLOCK_ID_DESC',
+  ProposalItemsAverageCurrentStatusAsc = 'PROPOSAL_ITEMS_AVERAGE_CURRENT_STATUS_ASC',
+  ProposalItemsAverageCurrentStatusDesc = 'PROPOSAL_ITEMS_AVERAGE_CURRENT_STATUS_DESC',
+  ProposalItemsAverageDataAsc = 'PROPOSAL_ITEMS_AVERAGE_DATA_ASC',
+  ProposalItemsAverageDataDesc = 'PROPOSAL_ITEMS_AVERAGE_DATA_DESC',
+  ProposalItemsAverageIdAsc = 'PROPOSAL_ITEMS_AVERAGE_ID_ASC',
+  ProposalItemsAverageIdDesc = 'PROPOSAL_ITEMS_AVERAGE_ID_DESC',
+  ProposalItemsAverageNonceAsc = 'PROPOSAL_ITEMS_AVERAGE_NONCE_ASC',
+  ProposalItemsAverageNonceDesc = 'PROPOSAL_ITEMS_AVERAGE_NONCE_DESC',
+  ProposalItemsAverageRemovedAsc = 'PROPOSAL_ITEMS_AVERAGE_REMOVED_ASC',
+  ProposalItemsAverageRemovedDesc = 'PROPOSAL_ITEMS_AVERAGE_REMOVED_DESC',
+  ProposalItemsAverageSignatureAsc = 'PROPOSAL_ITEMS_AVERAGE_SIGNATURE_ASC',
+  ProposalItemsAverageSignatureDesc = 'PROPOSAL_ITEMS_AVERAGE_SIGNATURE_DESC',
+  ProposalItemsAverageStatusAsc = 'PROPOSAL_ITEMS_AVERAGE_STATUS_ASC',
+  ProposalItemsAverageStatusDesc = 'PROPOSAL_ITEMS_AVERAGE_STATUS_DESC',
+  ProposalItemsAverageTimelineStatusAsc = 'PROPOSAL_ITEMS_AVERAGE_TIMELINE_STATUS_ASC',
+  ProposalItemsAverageTimelineStatusDesc = 'PROPOSAL_ITEMS_AVERAGE_TIMELINE_STATUS_DESC',
+  ProposalItemsAverageTypeAsc = 'PROPOSAL_ITEMS_AVERAGE_TYPE_ASC',
+  ProposalItemsAverageTypeDesc = 'PROPOSAL_ITEMS_AVERAGE_TYPE_DESC',
+  ProposalItemsAverageVotesAsc = 'PROPOSAL_ITEMS_AVERAGE_VOTES_ASC',
+  ProposalItemsAverageVotesDesc = 'PROPOSAL_ITEMS_AVERAGE_VOTES_DESC',
+  ProposalItemsCountAsc = 'PROPOSAL_ITEMS_COUNT_ASC',
+  ProposalItemsCountDesc = 'PROPOSAL_ITEMS_COUNT_DESC',
+  ProposalItemsDistinctCountBlockIdAsc = 'PROPOSAL_ITEMS_DISTINCT_COUNT_BLOCK_ID_ASC',
+  ProposalItemsDistinctCountBlockIdDesc = 'PROPOSAL_ITEMS_DISTINCT_COUNT_BLOCK_ID_DESC',
+  ProposalItemsDistinctCountCurrentStatusAsc = 'PROPOSAL_ITEMS_DISTINCT_COUNT_CURRENT_STATUS_ASC',
+  ProposalItemsDistinctCountCurrentStatusDesc = 'PROPOSAL_ITEMS_DISTINCT_COUNT_CURRENT_STATUS_DESC',
+  ProposalItemsDistinctCountDataAsc = 'PROPOSAL_ITEMS_DISTINCT_COUNT_DATA_ASC',
+  ProposalItemsDistinctCountDataDesc = 'PROPOSAL_ITEMS_DISTINCT_COUNT_DATA_DESC',
+  ProposalItemsDistinctCountIdAsc = 'PROPOSAL_ITEMS_DISTINCT_COUNT_ID_ASC',
+  ProposalItemsDistinctCountIdDesc = 'PROPOSAL_ITEMS_DISTINCT_COUNT_ID_DESC',
+  ProposalItemsDistinctCountNonceAsc = 'PROPOSAL_ITEMS_DISTINCT_COUNT_NONCE_ASC',
+  ProposalItemsDistinctCountNonceDesc = 'PROPOSAL_ITEMS_DISTINCT_COUNT_NONCE_DESC',
+  ProposalItemsDistinctCountRemovedAsc = 'PROPOSAL_ITEMS_DISTINCT_COUNT_REMOVED_ASC',
+  ProposalItemsDistinctCountRemovedDesc = 'PROPOSAL_ITEMS_DISTINCT_COUNT_REMOVED_DESC',
+  ProposalItemsDistinctCountSignatureAsc = 'PROPOSAL_ITEMS_DISTINCT_COUNT_SIGNATURE_ASC',
+  ProposalItemsDistinctCountSignatureDesc = 'PROPOSAL_ITEMS_DISTINCT_COUNT_SIGNATURE_DESC',
+  ProposalItemsDistinctCountStatusAsc = 'PROPOSAL_ITEMS_DISTINCT_COUNT_STATUS_ASC',
+  ProposalItemsDistinctCountStatusDesc = 'PROPOSAL_ITEMS_DISTINCT_COUNT_STATUS_DESC',
+  ProposalItemsDistinctCountTimelineStatusAsc = 'PROPOSAL_ITEMS_DISTINCT_COUNT_TIMELINE_STATUS_ASC',
+  ProposalItemsDistinctCountTimelineStatusDesc = 'PROPOSAL_ITEMS_DISTINCT_COUNT_TIMELINE_STATUS_DESC',
+  ProposalItemsDistinctCountTypeAsc = 'PROPOSAL_ITEMS_DISTINCT_COUNT_TYPE_ASC',
+  ProposalItemsDistinctCountTypeDesc = 'PROPOSAL_ITEMS_DISTINCT_COUNT_TYPE_DESC',
+  ProposalItemsDistinctCountVotesAsc = 'PROPOSAL_ITEMS_DISTINCT_COUNT_VOTES_ASC',
+  ProposalItemsDistinctCountVotesDesc = 'PROPOSAL_ITEMS_DISTINCT_COUNT_VOTES_DESC',
+  ProposalItemsMaxBlockIdAsc = 'PROPOSAL_ITEMS_MAX_BLOCK_ID_ASC',
+  ProposalItemsMaxBlockIdDesc = 'PROPOSAL_ITEMS_MAX_BLOCK_ID_DESC',
+  ProposalItemsMaxCurrentStatusAsc = 'PROPOSAL_ITEMS_MAX_CURRENT_STATUS_ASC',
+  ProposalItemsMaxCurrentStatusDesc = 'PROPOSAL_ITEMS_MAX_CURRENT_STATUS_DESC',
+  ProposalItemsMaxDataAsc = 'PROPOSAL_ITEMS_MAX_DATA_ASC',
+  ProposalItemsMaxDataDesc = 'PROPOSAL_ITEMS_MAX_DATA_DESC',
+  ProposalItemsMaxIdAsc = 'PROPOSAL_ITEMS_MAX_ID_ASC',
+  ProposalItemsMaxIdDesc = 'PROPOSAL_ITEMS_MAX_ID_DESC',
+  ProposalItemsMaxNonceAsc = 'PROPOSAL_ITEMS_MAX_NONCE_ASC',
+  ProposalItemsMaxNonceDesc = 'PROPOSAL_ITEMS_MAX_NONCE_DESC',
+  ProposalItemsMaxRemovedAsc = 'PROPOSAL_ITEMS_MAX_REMOVED_ASC',
+  ProposalItemsMaxRemovedDesc = 'PROPOSAL_ITEMS_MAX_REMOVED_DESC',
+  ProposalItemsMaxSignatureAsc = 'PROPOSAL_ITEMS_MAX_SIGNATURE_ASC',
+  ProposalItemsMaxSignatureDesc = 'PROPOSAL_ITEMS_MAX_SIGNATURE_DESC',
+  ProposalItemsMaxStatusAsc = 'PROPOSAL_ITEMS_MAX_STATUS_ASC',
+  ProposalItemsMaxStatusDesc = 'PROPOSAL_ITEMS_MAX_STATUS_DESC',
+  ProposalItemsMaxTimelineStatusAsc = 'PROPOSAL_ITEMS_MAX_TIMELINE_STATUS_ASC',
+  ProposalItemsMaxTimelineStatusDesc = 'PROPOSAL_ITEMS_MAX_TIMELINE_STATUS_DESC',
+  ProposalItemsMaxTypeAsc = 'PROPOSAL_ITEMS_MAX_TYPE_ASC',
+  ProposalItemsMaxTypeDesc = 'PROPOSAL_ITEMS_MAX_TYPE_DESC',
+  ProposalItemsMaxVotesAsc = 'PROPOSAL_ITEMS_MAX_VOTES_ASC',
+  ProposalItemsMaxVotesDesc = 'PROPOSAL_ITEMS_MAX_VOTES_DESC',
+  ProposalItemsMinBlockIdAsc = 'PROPOSAL_ITEMS_MIN_BLOCK_ID_ASC',
+  ProposalItemsMinBlockIdDesc = 'PROPOSAL_ITEMS_MIN_BLOCK_ID_DESC',
+  ProposalItemsMinCurrentStatusAsc = 'PROPOSAL_ITEMS_MIN_CURRENT_STATUS_ASC',
+  ProposalItemsMinCurrentStatusDesc = 'PROPOSAL_ITEMS_MIN_CURRENT_STATUS_DESC',
+  ProposalItemsMinDataAsc = 'PROPOSAL_ITEMS_MIN_DATA_ASC',
+  ProposalItemsMinDataDesc = 'PROPOSAL_ITEMS_MIN_DATA_DESC',
+  ProposalItemsMinIdAsc = 'PROPOSAL_ITEMS_MIN_ID_ASC',
+  ProposalItemsMinIdDesc = 'PROPOSAL_ITEMS_MIN_ID_DESC',
+  ProposalItemsMinNonceAsc = 'PROPOSAL_ITEMS_MIN_NONCE_ASC',
+  ProposalItemsMinNonceDesc = 'PROPOSAL_ITEMS_MIN_NONCE_DESC',
+  ProposalItemsMinRemovedAsc = 'PROPOSAL_ITEMS_MIN_REMOVED_ASC',
+  ProposalItemsMinRemovedDesc = 'PROPOSAL_ITEMS_MIN_REMOVED_DESC',
+  ProposalItemsMinSignatureAsc = 'PROPOSAL_ITEMS_MIN_SIGNATURE_ASC',
+  ProposalItemsMinSignatureDesc = 'PROPOSAL_ITEMS_MIN_SIGNATURE_DESC',
+  ProposalItemsMinStatusAsc = 'PROPOSAL_ITEMS_MIN_STATUS_ASC',
+  ProposalItemsMinStatusDesc = 'PROPOSAL_ITEMS_MIN_STATUS_DESC',
+  ProposalItemsMinTimelineStatusAsc = 'PROPOSAL_ITEMS_MIN_TIMELINE_STATUS_ASC',
+  ProposalItemsMinTimelineStatusDesc = 'PROPOSAL_ITEMS_MIN_TIMELINE_STATUS_DESC',
+  ProposalItemsMinTypeAsc = 'PROPOSAL_ITEMS_MIN_TYPE_ASC',
+  ProposalItemsMinTypeDesc = 'PROPOSAL_ITEMS_MIN_TYPE_DESC',
+  ProposalItemsMinVotesAsc = 'PROPOSAL_ITEMS_MIN_VOTES_ASC',
+  ProposalItemsMinVotesDesc = 'PROPOSAL_ITEMS_MIN_VOTES_DESC',
+  ProposalItemsStddevPopulationBlockIdAsc = 'PROPOSAL_ITEMS_STDDEV_POPULATION_BLOCK_ID_ASC',
+  ProposalItemsStddevPopulationBlockIdDesc = 'PROPOSAL_ITEMS_STDDEV_POPULATION_BLOCK_ID_DESC',
+  ProposalItemsStddevPopulationCurrentStatusAsc = 'PROPOSAL_ITEMS_STDDEV_POPULATION_CURRENT_STATUS_ASC',
+  ProposalItemsStddevPopulationCurrentStatusDesc = 'PROPOSAL_ITEMS_STDDEV_POPULATION_CURRENT_STATUS_DESC',
+  ProposalItemsStddevPopulationDataAsc = 'PROPOSAL_ITEMS_STDDEV_POPULATION_DATA_ASC',
+  ProposalItemsStddevPopulationDataDesc = 'PROPOSAL_ITEMS_STDDEV_POPULATION_DATA_DESC',
+  ProposalItemsStddevPopulationIdAsc = 'PROPOSAL_ITEMS_STDDEV_POPULATION_ID_ASC',
+  ProposalItemsStddevPopulationIdDesc = 'PROPOSAL_ITEMS_STDDEV_POPULATION_ID_DESC',
+  ProposalItemsStddevPopulationNonceAsc = 'PROPOSAL_ITEMS_STDDEV_POPULATION_NONCE_ASC',
+  ProposalItemsStddevPopulationNonceDesc = 'PROPOSAL_ITEMS_STDDEV_POPULATION_NONCE_DESC',
+  ProposalItemsStddevPopulationRemovedAsc = 'PROPOSAL_ITEMS_STDDEV_POPULATION_REMOVED_ASC',
+  ProposalItemsStddevPopulationRemovedDesc = 'PROPOSAL_ITEMS_STDDEV_POPULATION_REMOVED_DESC',
+  ProposalItemsStddevPopulationSignatureAsc = 'PROPOSAL_ITEMS_STDDEV_POPULATION_SIGNATURE_ASC',
+  ProposalItemsStddevPopulationSignatureDesc = 'PROPOSAL_ITEMS_STDDEV_POPULATION_SIGNATURE_DESC',
+  ProposalItemsStddevPopulationStatusAsc = 'PROPOSAL_ITEMS_STDDEV_POPULATION_STATUS_ASC',
+  ProposalItemsStddevPopulationStatusDesc = 'PROPOSAL_ITEMS_STDDEV_POPULATION_STATUS_DESC',
+  ProposalItemsStddevPopulationTimelineStatusAsc = 'PROPOSAL_ITEMS_STDDEV_POPULATION_TIMELINE_STATUS_ASC',
+  ProposalItemsStddevPopulationTimelineStatusDesc = 'PROPOSAL_ITEMS_STDDEV_POPULATION_TIMELINE_STATUS_DESC',
+  ProposalItemsStddevPopulationTypeAsc = 'PROPOSAL_ITEMS_STDDEV_POPULATION_TYPE_ASC',
+  ProposalItemsStddevPopulationTypeDesc = 'PROPOSAL_ITEMS_STDDEV_POPULATION_TYPE_DESC',
+  ProposalItemsStddevPopulationVotesAsc = 'PROPOSAL_ITEMS_STDDEV_POPULATION_VOTES_ASC',
+  ProposalItemsStddevPopulationVotesDesc = 'PROPOSAL_ITEMS_STDDEV_POPULATION_VOTES_DESC',
+  ProposalItemsStddevSampleBlockIdAsc = 'PROPOSAL_ITEMS_STDDEV_SAMPLE_BLOCK_ID_ASC',
+  ProposalItemsStddevSampleBlockIdDesc = 'PROPOSAL_ITEMS_STDDEV_SAMPLE_BLOCK_ID_DESC',
+  ProposalItemsStddevSampleCurrentStatusAsc = 'PROPOSAL_ITEMS_STDDEV_SAMPLE_CURRENT_STATUS_ASC',
+  ProposalItemsStddevSampleCurrentStatusDesc = 'PROPOSAL_ITEMS_STDDEV_SAMPLE_CURRENT_STATUS_DESC',
+  ProposalItemsStddevSampleDataAsc = 'PROPOSAL_ITEMS_STDDEV_SAMPLE_DATA_ASC',
+  ProposalItemsStddevSampleDataDesc = 'PROPOSAL_ITEMS_STDDEV_SAMPLE_DATA_DESC',
+  ProposalItemsStddevSampleIdAsc = 'PROPOSAL_ITEMS_STDDEV_SAMPLE_ID_ASC',
+  ProposalItemsStddevSampleIdDesc = 'PROPOSAL_ITEMS_STDDEV_SAMPLE_ID_DESC',
+  ProposalItemsStddevSampleNonceAsc = 'PROPOSAL_ITEMS_STDDEV_SAMPLE_NONCE_ASC',
+  ProposalItemsStddevSampleNonceDesc = 'PROPOSAL_ITEMS_STDDEV_SAMPLE_NONCE_DESC',
+  ProposalItemsStddevSampleRemovedAsc = 'PROPOSAL_ITEMS_STDDEV_SAMPLE_REMOVED_ASC',
+  ProposalItemsStddevSampleRemovedDesc = 'PROPOSAL_ITEMS_STDDEV_SAMPLE_REMOVED_DESC',
+  ProposalItemsStddevSampleSignatureAsc = 'PROPOSAL_ITEMS_STDDEV_SAMPLE_SIGNATURE_ASC',
+  ProposalItemsStddevSampleSignatureDesc = 'PROPOSAL_ITEMS_STDDEV_SAMPLE_SIGNATURE_DESC',
+  ProposalItemsStddevSampleStatusAsc = 'PROPOSAL_ITEMS_STDDEV_SAMPLE_STATUS_ASC',
+  ProposalItemsStddevSampleStatusDesc = 'PROPOSAL_ITEMS_STDDEV_SAMPLE_STATUS_DESC',
+  ProposalItemsStddevSampleTimelineStatusAsc = 'PROPOSAL_ITEMS_STDDEV_SAMPLE_TIMELINE_STATUS_ASC',
+  ProposalItemsStddevSampleTimelineStatusDesc = 'PROPOSAL_ITEMS_STDDEV_SAMPLE_TIMELINE_STATUS_DESC',
+  ProposalItemsStddevSampleTypeAsc = 'PROPOSAL_ITEMS_STDDEV_SAMPLE_TYPE_ASC',
+  ProposalItemsStddevSampleTypeDesc = 'PROPOSAL_ITEMS_STDDEV_SAMPLE_TYPE_DESC',
+  ProposalItemsStddevSampleVotesAsc = 'PROPOSAL_ITEMS_STDDEV_SAMPLE_VOTES_ASC',
+  ProposalItemsStddevSampleVotesDesc = 'PROPOSAL_ITEMS_STDDEV_SAMPLE_VOTES_DESC',
+  ProposalItemsSumBlockIdAsc = 'PROPOSAL_ITEMS_SUM_BLOCK_ID_ASC',
+  ProposalItemsSumBlockIdDesc = 'PROPOSAL_ITEMS_SUM_BLOCK_ID_DESC',
+  ProposalItemsSumCurrentStatusAsc = 'PROPOSAL_ITEMS_SUM_CURRENT_STATUS_ASC',
+  ProposalItemsSumCurrentStatusDesc = 'PROPOSAL_ITEMS_SUM_CURRENT_STATUS_DESC',
+  ProposalItemsSumDataAsc = 'PROPOSAL_ITEMS_SUM_DATA_ASC',
+  ProposalItemsSumDataDesc = 'PROPOSAL_ITEMS_SUM_DATA_DESC',
+  ProposalItemsSumIdAsc = 'PROPOSAL_ITEMS_SUM_ID_ASC',
+  ProposalItemsSumIdDesc = 'PROPOSAL_ITEMS_SUM_ID_DESC',
+  ProposalItemsSumNonceAsc = 'PROPOSAL_ITEMS_SUM_NONCE_ASC',
+  ProposalItemsSumNonceDesc = 'PROPOSAL_ITEMS_SUM_NONCE_DESC',
+  ProposalItemsSumRemovedAsc = 'PROPOSAL_ITEMS_SUM_REMOVED_ASC',
+  ProposalItemsSumRemovedDesc = 'PROPOSAL_ITEMS_SUM_REMOVED_DESC',
+  ProposalItemsSumSignatureAsc = 'PROPOSAL_ITEMS_SUM_SIGNATURE_ASC',
+  ProposalItemsSumSignatureDesc = 'PROPOSAL_ITEMS_SUM_SIGNATURE_DESC',
+  ProposalItemsSumStatusAsc = 'PROPOSAL_ITEMS_SUM_STATUS_ASC',
+  ProposalItemsSumStatusDesc = 'PROPOSAL_ITEMS_SUM_STATUS_DESC',
+  ProposalItemsSumTimelineStatusAsc = 'PROPOSAL_ITEMS_SUM_TIMELINE_STATUS_ASC',
+  ProposalItemsSumTimelineStatusDesc = 'PROPOSAL_ITEMS_SUM_TIMELINE_STATUS_DESC',
+  ProposalItemsSumTypeAsc = 'PROPOSAL_ITEMS_SUM_TYPE_ASC',
+  ProposalItemsSumTypeDesc = 'PROPOSAL_ITEMS_SUM_TYPE_DESC',
+  ProposalItemsSumVotesAsc = 'PROPOSAL_ITEMS_SUM_VOTES_ASC',
+  ProposalItemsSumVotesDesc = 'PROPOSAL_ITEMS_SUM_VOTES_DESC',
+  ProposalItemsVariancePopulationBlockIdAsc = 'PROPOSAL_ITEMS_VARIANCE_POPULATION_BLOCK_ID_ASC',
+  ProposalItemsVariancePopulationBlockIdDesc = 'PROPOSAL_ITEMS_VARIANCE_POPULATION_BLOCK_ID_DESC',
+  ProposalItemsVariancePopulationCurrentStatusAsc = 'PROPOSAL_ITEMS_VARIANCE_POPULATION_CURRENT_STATUS_ASC',
+  ProposalItemsVariancePopulationCurrentStatusDesc = 'PROPOSAL_ITEMS_VARIANCE_POPULATION_CURRENT_STATUS_DESC',
+  ProposalItemsVariancePopulationDataAsc = 'PROPOSAL_ITEMS_VARIANCE_POPULATION_DATA_ASC',
+  ProposalItemsVariancePopulationDataDesc = 'PROPOSAL_ITEMS_VARIANCE_POPULATION_DATA_DESC',
+  ProposalItemsVariancePopulationIdAsc = 'PROPOSAL_ITEMS_VARIANCE_POPULATION_ID_ASC',
+  ProposalItemsVariancePopulationIdDesc = 'PROPOSAL_ITEMS_VARIANCE_POPULATION_ID_DESC',
+  ProposalItemsVariancePopulationNonceAsc = 'PROPOSAL_ITEMS_VARIANCE_POPULATION_NONCE_ASC',
+  ProposalItemsVariancePopulationNonceDesc = 'PROPOSAL_ITEMS_VARIANCE_POPULATION_NONCE_DESC',
+  ProposalItemsVariancePopulationRemovedAsc = 'PROPOSAL_ITEMS_VARIANCE_POPULATION_REMOVED_ASC',
+  ProposalItemsVariancePopulationRemovedDesc = 'PROPOSAL_ITEMS_VARIANCE_POPULATION_REMOVED_DESC',
+  ProposalItemsVariancePopulationSignatureAsc = 'PROPOSAL_ITEMS_VARIANCE_POPULATION_SIGNATURE_ASC',
+  ProposalItemsVariancePopulationSignatureDesc = 'PROPOSAL_ITEMS_VARIANCE_POPULATION_SIGNATURE_DESC',
+  ProposalItemsVariancePopulationStatusAsc = 'PROPOSAL_ITEMS_VARIANCE_POPULATION_STATUS_ASC',
+  ProposalItemsVariancePopulationStatusDesc = 'PROPOSAL_ITEMS_VARIANCE_POPULATION_STATUS_DESC',
+  ProposalItemsVariancePopulationTimelineStatusAsc = 'PROPOSAL_ITEMS_VARIANCE_POPULATION_TIMELINE_STATUS_ASC',
+  ProposalItemsVariancePopulationTimelineStatusDesc = 'PROPOSAL_ITEMS_VARIANCE_POPULATION_TIMELINE_STATUS_DESC',
+  ProposalItemsVariancePopulationTypeAsc = 'PROPOSAL_ITEMS_VARIANCE_POPULATION_TYPE_ASC',
+  ProposalItemsVariancePopulationTypeDesc = 'PROPOSAL_ITEMS_VARIANCE_POPULATION_TYPE_DESC',
+  ProposalItemsVariancePopulationVotesAsc = 'PROPOSAL_ITEMS_VARIANCE_POPULATION_VOTES_ASC',
+  ProposalItemsVariancePopulationVotesDesc = 'PROPOSAL_ITEMS_VARIANCE_POPULATION_VOTES_DESC',
+  ProposalItemsVarianceSampleBlockIdAsc = 'PROPOSAL_ITEMS_VARIANCE_SAMPLE_BLOCK_ID_ASC',
+  ProposalItemsVarianceSampleBlockIdDesc = 'PROPOSAL_ITEMS_VARIANCE_SAMPLE_BLOCK_ID_DESC',
+  ProposalItemsVarianceSampleCurrentStatusAsc = 'PROPOSAL_ITEMS_VARIANCE_SAMPLE_CURRENT_STATUS_ASC',
+  ProposalItemsVarianceSampleCurrentStatusDesc = 'PROPOSAL_ITEMS_VARIANCE_SAMPLE_CURRENT_STATUS_DESC',
+  ProposalItemsVarianceSampleDataAsc = 'PROPOSAL_ITEMS_VARIANCE_SAMPLE_DATA_ASC',
+  ProposalItemsVarianceSampleDataDesc = 'PROPOSAL_ITEMS_VARIANCE_SAMPLE_DATA_DESC',
+  ProposalItemsVarianceSampleIdAsc = 'PROPOSAL_ITEMS_VARIANCE_SAMPLE_ID_ASC',
+  ProposalItemsVarianceSampleIdDesc = 'PROPOSAL_ITEMS_VARIANCE_SAMPLE_ID_DESC',
+  ProposalItemsVarianceSampleNonceAsc = 'PROPOSAL_ITEMS_VARIANCE_SAMPLE_NONCE_ASC',
+  ProposalItemsVarianceSampleNonceDesc = 'PROPOSAL_ITEMS_VARIANCE_SAMPLE_NONCE_DESC',
+  ProposalItemsVarianceSampleRemovedAsc = 'PROPOSAL_ITEMS_VARIANCE_SAMPLE_REMOVED_ASC',
+  ProposalItemsVarianceSampleRemovedDesc = 'PROPOSAL_ITEMS_VARIANCE_SAMPLE_REMOVED_DESC',
+  ProposalItemsVarianceSampleSignatureAsc = 'PROPOSAL_ITEMS_VARIANCE_SAMPLE_SIGNATURE_ASC',
+  ProposalItemsVarianceSampleSignatureDesc = 'PROPOSAL_ITEMS_VARIANCE_SAMPLE_SIGNATURE_DESC',
+  ProposalItemsVarianceSampleStatusAsc = 'PROPOSAL_ITEMS_VARIANCE_SAMPLE_STATUS_ASC',
+  ProposalItemsVarianceSampleStatusDesc = 'PROPOSAL_ITEMS_VARIANCE_SAMPLE_STATUS_DESC',
+  ProposalItemsVarianceSampleTimelineStatusAsc = 'PROPOSAL_ITEMS_VARIANCE_SAMPLE_TIMELINE_STATUS_ASC',
+  ProposalItemsVarianceSampleTimelineStatusDesc = 'PROPOSAL_ITEMS_VARIANCE_SAMPLE_TIMELINE_STATUS_DESC',
+  ProposalItemsVarianceSampleTypeAsc = 'PROPOSAL_ITEMS_VARIANCE_SAMPLE_TYPE_ASC',
+  ProposalItemsVarianceSampleTypeDesc = 'PROPOSAL_ITEMS_VARIANCE_SAMPLE_TYPE_DESC',
+  ProposalItemsVarianceSampleVotesAsc = 'PROPOSAL_ITEMS_VARIANCE_SAMPLE_VOTES_ASC',
+  ProposalItemsVarianceSampleVotesDesc = 'PROPOSAL_ITEMS_VARIANCE_SAMPLE_VOTES_DESC',
+  ProposersAverageBlockIdAsc = 'PROPOSERS_AVERAGE_BLOCK_ID_ASC',
+  ProposersAverageBlockIdDesc = 'PROPOSERS_AVERAGE_BLOCK_ID_DESC',
+  ProposersAverageCountAsc = 'PROPOSERS_AVERAGE_COUNT_ASC',
+  ProposersAverageCountDesc = 'PROPOSERS_AVERAGE_COUNT_DESC',
+  ProposersAverageIdAsc = 'PROPOSERS_AVERAGE_ID_ASC',
+  ProposersAverageIdDesc = 'PROPOSERS_AVERAGE_ID_DESC',
+  ProposersAverageProposersAsc = 'PROPOSERS_AVERAGE_PROPOSERS_ASC',
+  ProposersAverageProposersDesc = 'PROPOSERS_AVERAGE_PROPOSERS_DESC',
+  ProposersCountAsc = 'PROPOSERS_COUNT_ASC',
+  ProposersCountDesc = 'PROPOSERS_COUNT_DESC',
+  ProposersDistinctCountBlockIdAsc = 'PROPOSERS_DISTINCT_COUNT_BLOCK_ID_ASC',
+  ProposersDistinctCountBlockIdDesc = 'PROPOSERS_DISTINCT_COUNT_BLOCK_ID_DESC',
+  ProposersDistinctCountCountAsc = 'PROPOSERS_DISTINCT_COUNT_COUNT_ASC',
+  ProposersDistinctCountCountDesc = 'PROPOSERS_DISTINCT_COUNT_COUNT_DESC',
+  ProposersDistinctCountIdAsc = 'PROPOSERS_DISTINCT_COUNT_ID_ASC',
+  ProposersDistinctCountIdDesc = 'PROPOSERS_DISTINCT_COUNT_ID_DESC',
+  ProposersDistinctCountProposersAsc = 'PROPOSERS_DISTINCT_COUNT_PROPOSERS_ASC',
+  ProposersDistinctCountProposersDesc = 'PROPOSERS_DISTINCT_COUNT_PROPOSERS_DESC',
+  ProposersMaxBlockIdAsc = 'PROPOSERS_MAX_BLOCK_ID_ASC',
+  ProposersMaxBlockIdDesc = 'PROPOSERS_MAX_BLOCK_ID_DESC',
+  ProposersMaxCountAsc = 'PROPOSERS_MAX_COUNT_ASC',
+  ProposersMaxCountDesc = 'PROPOSERS_MAX_COUNT_DESC',
+  ProposersMaxIdAsc = 'PROPOSERS_MAX_ID_ASC',
+  ProposersMaxIdDesc = 'PROPOSERS_MAX_ID_DESC',
+  ProposersMaxProposersAsc = 'PROPOSERS_MAX_PROPOSERS_ASC',
+  ProposersMaxProposersDesc = 'PROPOSERS_MAX_PROPOSERS_DESC',
+  ProposersMinBlockIdAsc = 'PROPOSERS_MIN_BLOCK_ID_ASC',
+  ProposersMinBlockIdDesc = 'PROPOSERS_MIN_BLOCK_ID_DESC',
+  ProposersMinCountAsc = 'PROPOSERS_MIN_COUNT_ASC',
+  ProposersMinCountDesc = 'PROPOSERS_MIN_COUNT_DESC',
+  ProposersMinIdAsc = 'PROPOSERS_MIN_ID_ASC',
+  ProposersMinIdDesc = 'PROPOSERS_MIN_ID_DESC',
+  ProposersMinProposersAsc = 'PROPOSERS_MIN_PROPOSERS_ASC',
+  ProposersMinProposersDesc = 'PROPOSERS_MIN_PROPOSERS_DESC',
+  ProposersStddevPopulationBlockIdAsc = 'PROPOSERS_STDDEV_POPULATION_BLOCK_ID_ASC',
+  ProposersStddevPopulationBlockIdDesc = 'PROPOSERS_STDDEV_POPULATION_BLOCK_ID_DESC',
+  ProposersStddevPopulationCountAsc = 'PROPOSERS_STDDEV_POPULATION_COUNT_ASC',
+  ProposersStddevPopulationCountDesc = 'PROPOSERS_STDDEV_POPULATION_COUNT_DESC',
+  ProposersStddevPopulationIdAsc = 'PROPOSERS_STDDEV_POPULATION_ID_ASC',
+  ProposersStddevPopulationIdDesc = 'PROPOSERS_STDDEV_POPULATION_ID_DESC',
+  ProposersStddevPopulationProposersAsc = 'PROPOSERS_STDDEV_POPULATION_PROPOSERS_ASC',
+  ProposersStddevPopulationProposersDesc = 'PROPOSERS_STDDEV_POPULATION_PROPOSERS_DESC',
+  ProposersStddevSampleBlockIdAsc = 'PROPOSERS_STDDEV_SAMPLE_BLOCK_ID_ASC',
+  ProposersStddevSampleBlockIdDesc = 'PROPOSERS_STDDEV_SAMPLE_BLOCK_ID_DESC',
+  ProposersStddevSampleCountAsc = 'PROPOSERS_STDDEV_SAMPLE_COUNT_ASC',
+  ProposersStddevSampleCountDesc = 'PROPOSERS_STDDEV_SAMPLE_COUNT_DESC',
+  ProposersStddevSampleIdAsc = 'PROPOSERS_STDDEV_SAMPLE_ID_ASC',
+  ProposersStddevSampleIdDesc = 'PROPOSERS_STDDEV_SAMPLE_ID_DESC',
+  ProposersStddevSampleProposersAsc = 'PROPOSERS_STDDEV_SAMPLE_PROPOSERS_ASC',
+  ProposersStddevSampleProposersDesc = 'PROPOSERS_STDDEV_SAMPLE_PROPOSERS_DESC',
+  ProposersSumBlockIdAsc = 'PROPOSERS_SUM_BLOCK_ID_ASC',
+  ProposersSumBlockIdDesc = 'PROPOSERS_SUM_BLOCK_ID_DESC',
+  ProposersSumCountAsc = 'PROPOSERS_SUM_COUNT_ASC',
+  ProposersSumCountDesc = 'PROPOSERS_SUM_COUNT_DESC',
+  ProposersSumIdAsc = 'PROPOSERS_SUM_ID_ASC',
+  ProposersSumIdDesc = 'PROPOSERS_SUM_ID_DESC',
+  ProposersSumProposersAsc = 'PROPOSERS_SUM_PROPOSERS_ASC',
+  ProposersSumProposersDesc = 'PROPOSERS_SUM_PROPOSERS_DESC',
+  ProposersVariancePopulationBlockIdAsc = 'PROPOSERS_VARIANCE_POPULATION_BLOCK_ID_ASC',
+  ProposersVariancePopulationBlockIdDesc = 'PROPOSERS_VARIANCE_POPULATION_BLOCK_ID_DESC',
+  ProposersVariancePopulationCountAsc = 'PROPOSERS_VARIANCE_POPULATION_COUNT_ASC',
+  ProposersVariancePopulationCountDesc = 'PROPOSERS_VARIANCE_POPULATION_COUNT_DESC',
+  ProposersVariancePopulationIdAsc = 'PROPOSERS_VARIANCE_POPULATION_ID_ASC',
+  ProposersVariancePopulationIdDesc = 'PROPOSERS_VARIANCE_POPULATION_ID_DESC',
+  ProposersVariancePopulationProposersAsc = 'PROPOSERS_VARIANCE_POPULATION_PROPOSERS_ASC',
+  ProposersVariancePopulationProposersDesc = 'PROPOSERS_VARIANCE_POPULATION_PROPOSERS_DESC',
+  ProposersVarianceSampleBlockIdAsc = 'PROPOSERS_VARIANCE_SAMPLE_BLOCK_ID_ASC',
+  ProposersVarianceSampleBlockIdDesc = 'PROPOSERS_VARIANCE_SAMPLE_BLOCK_ID_DESC',
+  ProposersVarianceSampleCountAsc = 'PROPOSERS_VARIANCE_SAMPLE_COUNT_ASC',
+  ProposersVarianceSampleCountDesc = 'PROPOSERS_VARIANCE_SAMPLE_COUNT_DESC',
+  ProposersVarianceSampleIdAsc = 'PROPOSERS_VARIANCE_SAMPLE_ID_ASC',
+  ProposersVarianceSampleIdDesc = 'PROPOSERS_VARIANCE_SAMPLE_ID_DESC',
+  ProposersVarianceSampleProposersAsc = 'PROPOSERS_VARIANCE_SAMPLE_PROPOSERS_ASC',
+  ProposersVarianceSampleProposersDesc = 'PROPOSERS_VARIANCE_SAMPLE_PROPOSERS_DESC',
+  ProposerThresholdsAverageBlockIdAsc = 'PROPOSER_THRESHOLDS_AVERAGE_BLOCK_ID_ASC',
+  ProposerThresholdsAverageBlockIdDesc = 'PROPOSER_THRESHOLDS_AVERAGE_BLOCK_ID_DESC',
+  ProposerThresholdsAverageIdAsc = 'PROPOSER_THRESHOLDS_AVERAGE_ID_ASC',
+  ProposerThresholdsAverageIdDesc = 'PROPOSER_THRESHOLDS_AVERAGE_ID_DESC',
+  ProposerThresholdsAverageValueAsc = 'PROPOSER_THRESHOLDS_AVERAGE_VALUE_ASC',
+  ProposerThresholdsAverageValueDesc = 'PROPOSER_THRESHOLDS_AVERAGE_VALUE_DESC',
+  ProposerThresholdsCountAsc = 'PROPOSER_THRESHOLDS_COUNT_ASC',
+  ProposerThresholdsCountDesc = 'PROPOSER_THRESHOLDS_COUNT_DESC',
+  ProposerThresholdsDistinctCountBlockIdAsc = 'PROPOSER_THRESHOLDS_DISTINCT_COUNT_BLOCK_ID_ASC',
+  ProposerThresholdsDistinctCountBlockIdDesc = 'PROPOSER_THRESHOLDS_DISTINCT_COUNT_BLOCK_ID_DESC',
+  ProposerThresholdsDistinctCountIdAsc = 'PROPOSER_THRESHOLDS_DISTINCT_COUNT_ID_ASC',
+  ProposerThresholdsDistinctCountIdDesc = 'PROPOSER_THRESHOLDS_DISTINCT_COUNT_ID_DESC',
+  ProposerThresholdsDistinctCountValueAsc = 'PROPOSER_THRESHOLDS_DISTINCT_COUNT_VALUE_ASC',
+  ProposerThresholdsDistinctCountValueDesc = 'PROPOSER_THRESHOLDS_DISTINCT_COUNT_VALUE_DESC',
+  ProposerThresholdsMaxBlockIdAsc = 'PROPOSER_THRESHOLDS_MAX_BLOCK_ID_ASC',
+  ProposerThresholdsMaxBlockIdDesc = 'PROPOSER_THRESHOLDS_MAX_BLOCK_ID_DESC',
+  ProposerThresholdsMaxIdAsc = 'PROPOSER_THRESHOLDS_MAX_ID_ASC',
+  ProposerThresholdsMaxIdDesc = 'PROPOSER_THRESHOLDS_MAX_ID_DESC',
+  ProposerThresholdsMaxValueAsc = 'PROPOSER_THRESHOLDS_MAX_VALUE_ASC',
+  ProposerThresholdsMaxValueDesc = 'PROPOSER_THRESHOLDS_MAX_VALUE_DESC',
+  ProposerThresholdsMinBlockIdAsc = 'PROPOSER_THRESHOLDS_MIN_BLOCK_ID_ASC',
+  ProposerThresholdsMinBlockIdDesc = 'PROPOSER_THRESHOLDS_MIN_BLOCK_ID_DESC',
+  ProposerThresholdsMinIdAsc = 'PROPOSER_THRESHOLDS_MIN_ID_ASC',
+  ProposerThresholdsMinIdDesc = 'PROPOSER_THRESHOLDS_MIN_ID_DESC',
+  ProposerThresholdsMinValueAsc = 'PROPOSER_THRESHOLDS_MIN_VALUE_ASC',
+  ProposerThresholdsMinValueDesc = 'PROPOSER_THRESHOLDS_MIN_VALUE_DESC',
+  ProposerThresholdsStddevPopulationBlockIdAsc = 'PROPOSER_THRESHOLDS_STDDEV_POPULATION_BLOCK_ID_ASC',
+  ProposerThresholdsStddevPopulationBlockIdDesc = 'PROPOSER_THRESHOLDS_STDDEV_POPULATION_BLOCK_ID_DESC',
+  ProposerThresholdsStddevPopulationIdAsc = 'PROPOSER_THRESHOLDS_STDDEV_POPULATION_ID_ASC',
+  ProposerThresholdsStddevPopulationIdDesc = 'PROPOSER_THRESHOLDS_STDDEV_POPULATION_ID_DESC',
+  ProposerThresholdsStddevPopulationValueAsc = 'PROPOSER_THRESHOLDS_STDDEV_POPULATION_VALUE_ASC',
+  ProposerThresholdsStddevPopulationValueDesc = 'PROPOSER_THRESHOLDS_STDDEV_POPULATION_VALUE_DESC',
+  ProposerThresholdsStddevSampleBlockIdAsc = 'PROPOSER_THRESHOLDS_STDDEV_SAMPLE_BLOCK_ID_ASC',
+  ProposerThresholdsStddevSampleBlockIdDesc = 'PROPOSER_THRESHOLDS_STDDEV_SAMPLE_BLOCK_ID_DESC',
+  ProposerThresholdsStddevSampleIdAsc = 'PROPOSER_THRESHOLDS_STDDEV_SAMPLE_ID_ASC',
+  ProposerThresholdsStddevSampleIdDesc = 'PROPOSER_THRESHOLDS_STDDEV_SAMPLE_ID_DESC',
+  ProposerThresholdsStddevSampleValueAsc = 'PROPOSER_THRESHOLDS_STDDEV_SAMPLE_VALUE_ASC',
+  ProposerThresholdsStddevSampleValueDesc = 'PROPOSER_THRESHOLDS_STDDEV_SAMPLE_VALUE_DESC',
+  ProposerThresholdsSumBlockIdAsc = 'PROPOSER_THRESHOLDS_SUM_BLOCK_ID_ASC',
+  ProposerThresholdsSumBlockIdDesc = 'PROPOSER_THRESHOLDS_SUM_BLOCK_ID_DESC',
+  ProposerThresholdsSumIdAsc = 'PROPOSER_THRESHOLDS_SUM_ID_ASC',
+  ProposerThresholdsSumIdDesc = 'PROPOSER_THRESHOLDS_SUM_ID_DESC',
+  ProposerThresholdsSumValueAsc = 'PROPOSER_THRESHOLDS_SUM_VALUE_ASC',
+  ProposerThresholdsSumValueDesc = 'PROPOSER_THRESHOLDS_SUM_VALUE_DESC',
+  ProposerThresholdsVariancePopulationBlockIdAsc = 'PROPOSER_THRESHOLDS_VARIANCE_POPULATION_BLOCK_ID_ASC',
+  ProposerThresholdsVariancePopulationBlockIdDesc = 'PROPOSER_THRESHOLDS_VARIANCE_POPULATION_BLOCK_ID_DESC',
+  ProposerThresholdsVariancePopulationIdAsc = 'PROPOSER_THRESHOLDS_VARIANCE_POPULATION_ID_ASC',
+  ProposerThresholdsVariancePopulationIdDesc = 'PROPOSER_THRESHOLDS_VARIANCE_POPULATION_ID_DESC',
+  ProposerThresholdsVariancePopulationValueAsc = 'PROPOSER_THRESHOLDS_VARIANCE_POPULATION_VALUE_ASC',
+  ProposerThresholdsVariancePopulationValueDesc = 'PROPOSER_THRESHOLDS_VARIANCE_POPULATION_VALUE_DESC',
+  ProposerThresholdsVarianceSampleBlockIdAsc = 'PROPOSER_THRESHOLDS_VARIANCE_SAMPLE_BLOCK_ID_ASC',
+  ProposerThresholdsVarianceSampleBlockIdDesc = 'PROPOSER_THRESHOLDS_VARIANCE_SAMPLE_BLOCK_ID_DESC',
+  ProposerThresholdsVarianceSampleIdAsc = 'PROPOSER_THRESHOLDS_VARIANCE_SAMPLE_ID_ASC',
+  ProposerThresholdsVarianceSampleIdDesc = 'PROPOSER_THRESHOLDS_VARIANCE_SAMPLE_ID_DESC',
+  ProposerThresholdsVarianceSampleValueAsc = 'PROPOSER_THRESHOLDS_VARIANCE_SAMPLE_VALUE_ASC',
+  ProposerThresholdsVarianceSampleValueDesc = 'PROPOSER_THRESHOLDS_VARIANCE_SAMPLE_VALUE_DESC',
+  PublicKeysAverageBlockIdAsc = 'PUBLIC_KEYS_AVERAGE_BLOCK_ID_ASC',
+  PublicKeysAverageBlockIdDesc = 'PUBLIC_KEYS_AVERAGE_BLOCK_ID_DESC',
+  PublicKeysAverageCompressedAsc = 'PUBLIC_KEYS_AVERAGE_COMPRESSED_ASC',
+  PublicKeysAverageCompressedDesc = 'PUBLIC_KEYS_AVERAGE_COMPRESSED_DESC',
+  PublicKeysAverageHistoryAsc = 'PUBLIC_KEYS_AVERAGE_HISTORY_ASC',
+  PublicKeysAverageHistoryDesc = 'PUBLIC_KEYS_AVERAGE_HISTORY_DESC',
+  PublicKeysAverageIdAsc = 'PUBLIC_KEYS_AVERAGE_ID_ASC',
+  PublicKeysAverageIdDesc = 'PUBLIC_KEYS_AVERAGE_ID_DESC',
+  PublicKeysAverageUncompressedAsc = 'PUBLIC_KEYS_AVERAGE_UNCOMPRESSED_ASC',
+  PublicKeysAverageUncompressedDesc = 'PUBLIC_KEYS_AVERAGE_UNCOMPRESSED_DESC',
+  PublicKeysCountAsc = 'PUBLIC_KEYS_COUNT_ASC',
+  PublicKeysCountDesc = 'PUBLIC_KEYS_COUNT_DESC',
+  PublicKeysDistinctCountBlockIdAsc = 'PUBLIC_KEYS_DISTINCT_COUNT_BLOCK_ID_ASC',
+  PublicKeysDistinctCountBlockIdDesc = 'PUBLIC_KEYS_DISTINCT_COUNT_BLOCK_ID_DESC',
+  PublicKeysDistinctCountCompressedAsc = 'PUBLIC_KEYS_DISTINCT_COUNT_COMPRESSED_ASC',
+  PublicKeysDistinctCountCompressedDesc = 'PUBLIC_KEYS_DISTINCT_COUNT_COMPRESSED_DESC',
+  PublicKeysDistinctCountHistoryAsc = 'PUBLIC_KEYS_DISTINCT_COUNT_HISTORY_ASC',
+  PublicKeysDistinctCountHistoryDesc = 'PUBLIC_KEYS_DISTINCT_COUNT_HISTORY_DESC',
+  PublicKeysDistinctCountIdAsc = 'PUBLIC_KEYS_DISTINCT_COUNT_ID_ASC',
+  PublicKeysDistinctCountIdDesc = 'PUBLIC_KEYS_DISTINCT_COUNT_ID_DESC',
+  PublicKeysDistinctCountUncompressedAsc = 'PUBLIC_KEYS_DISTINCT_COUNT_UNCOMPRESSED_ASC',
+  PublicKeysDistinctCountUncompressedDesc = 'PUBLIC_KEYS_DISTINCT_COUNT_UNCOMPRESSED_DESC',
+  PublicKeysMaxBlockIdAsc = 'PUBLIC_KEYS_MAX_BLOCK_ID_ASC',
+  PublicKeysMaxBlockIdDesc = 'PUBLIC_KEYS_MAX_BLOCK_ID_DESC',
+  PublicKeysMaxCompressedAsc = 'PUBLIC_KEYS_MAX_COMPRESSED_ASC',
+  PublicKeysMaxCompressedDesc = 'PUBLIC_KEYS_MAX_COMPRESSED_DESC',
+  PublicKeysMaxHistoryAsc = 'PUBLIC_KEYS_MAX_HISTORY_ASC',
+  PublicKeysMaxHistoryDesc = 'PUBLIC_KEYS_MAX_HISTORY_DESC',
+  PublicKeysMaxIdAsc = 'PUBLIC_KEYS_MAX_ID_ASC',
+  PublicKeysMaxIdDesc = 'PUBLIC_KEYS_MAX_ID_DESC',
+  PublicKeysMaxUncompressedAsc = 'PUBLIC_KEYS_MAX_UNCOMPRESSED_ASC',
+  PublicKeysMaxUncompressedDesc = 'PUBLIC_KEYS_MAX_UNCOMPRESSED_DESC',
+  PublicKeysMinBlockIdAsc = 'PUBLIC_KEYS_MIN_BLOCK_ID_ASC',
+  PublicKeysMinBlockIdDesc = 'PUBLIC_KEYS_MIN_BLOCK_ID_DESC',
+  PublicKeysMinCompressedAsc = 'PUBLIC_KEYS_MIN_COMPRESSED_ASC',
+  PublicKeysMinCompressedDesc = 'PUBLIC_KEYS_MIN_COMPRESSED_DESC',
+  PublicKeysMinHistoryAsc = 'PUBLIC_KEYS_MIN_HISTORY_ASC',
+  PublicKeysMinHistoryDesc = 'PUBLIC_KEYS_MIN_HISTORY_DESC',
+  PublicKeysMinIdAsc = 'PUBLIC_KEYS_MIN_ID_ASC',
+  PublicKeysMinIdDesc = 'PUBLIC_KEYS_MIN_ID_DESC',
+  PublicKeysMinUncompressedAsc = 'PUBLIC_KEYS_MIN_UNCOMPRESSED_ASC',
+  PublicKeysMinUncompressedDesc = 'PUBLIC_KEYS_MIN_UNCOMPRESSED_DESC',
+  PublicKeysStddevPopulationBlockIdAsc = 'PUBLIC_KEYS_STDDEV_POPULATION_BLOCK_ID_ASC',
+  PublicKeysStddevPopulationBlockIdDesc = 'PUBLIC_KEYS_STDDEV_POPULATION_BLOCK_ID_DESC',
+  PublicKeysStddevPopulationCompressedAsc = 'PUBLIC_KEYS_STDDEV_POPULATION_COMPRESSED_ASC',
+  PublicKeysStddevPopulationCompressedDesc = 'PUBLIC_KEYS_STDDEV_POPULATION_COMPRESSED_DESC',
+  PublicKeysStddevPopulationHistoryAsc = 'PUBLIC_KEYS_STDDEV_POPULATION_HISTORY_ASC',
+  PublicKeysStddevPopulationHistoryDesc = 'PUBLIC_KEYS_STDDEV_POPULATION_HISTORY_DESC',
+  PublicKeysStddevPopulationIdAsc = 'PUBLIC_KEYS_STDDEV_POPULATION_ID_ASC',
+  PublicKeysStddevPopulationIdDesc = 'PUBLIC_KEYS_STDDEV_POPULATION_ID_DESC',
+  PublicKeysStddevPopulationUncompressedAsc = 'PUBLIC_KEYS_STDDEV_POPULATION_UNCOMPRESSED_ASC',
+  PublicKeysStddevPopulationUncompressedDesc = 'PUBLIC_KEYS_STDDEV_POPULATION_UNCOMPRESSED_DESC',
+  PublicKeysStddevSampleBlockIdAsc = 'PUBLIC_KEYS_STDDEV_SAMPLE_BLOCK_ID_ASC',
+  PublicKeysStddevSampleBlockIdDesc = 'PUBLIC_KEYS_STDDEV_SAMPLE_BLOCK_ID_DESC',
+  PublicKeysStddevSampleCompressedAsc = 'PUBLIC_KEYS_STDDEV_SAMPLE_COMPRESSED_ASC',
+  PublicKeysStddevSampleCompressedDesc = 'PUBLIC_KEYS_STDDEV_SAMPLE_COMPRESSED_DESC',
+  PublicKeysStddevSampleHistoryAsc = 'PUBLIC_KEYS_STDDEV_SAMPLE_HISTORY_ASC',
+  PublicKeysStddevSampleHistoryDesc = 'PUBLIC_KEYS_STDDEV_SAMPLE_HISTORY_DESC',
+  PublicKeysStddevSampleIdAsc = 'PUBLIC_KEYS_STDDEV_SAMPLE_ID_ASC',
+  PublicKeysStddevSampleIdDesc = 'PUBLIC_KEYS_STDDEV_SAMPLE_ID_DESC',
+  PublicKeysStddevSampleUncompressedAsc = 'PUBLIC_KEYS_STDDEV_SAMPLE_UNCOMPRESSED_ASC',
+  PublicKeysStddevSampleUncompressedDesc = 'PUBLIC_KEYS_STDDEV_SAMPLE_UNCOMPRESSED_DESC',
+  PublicKeysSumBlockIdAsc = 'PUBLIC_KEYS_SUM_BLOCK_ID_ASC',
+  PublicKeysSumBlockIdDesc = 'PUBLIC_KEYS_SUM_BLOCK_ID_DESC',
+  PublicKeysSumCompressedAsc = 'PUBLIC_KEYS_SUM_COMPRESSED_ASC',
+  PublicKeysSumCompressedDesc = 'PUBLIC_KEYS_SUM_COMPRESSED_DESC',
+  PublicKeysSumHistoryAsc = 'PUBLIC_KEYS_SUM_HISTORY_ASC',
+  PublicKeysSumHistoryDesc = 'PUBLIC_KEYS_SUM_HISTORY_DESC',
+  PublicKeysSumIdAsc = 'PUBLIC_KEYS_SUM_ID_ASC',
+  PublicKeysSumIdDesc = 'PUBLIC_KEYS_SUM_ID_DESC',
+  PublicKeysSumUncompressedAsc = 'PUBLIC_KEYS_SUM_UNCOMPRESSED_ASC',
+  PublicKeysSumUncompressedDesc = 'PUBLIC_KEYS_SUM_UNCOMPRESSED_DESC',
+  PublicKeysVariancePopulationBlockIdAsc = 'PUBLIC_KEYS_VARIANCE_POPULATION_BLOCK_ID_ASC',
+  PublicKeysVariancePopulationBlockIdDesc = 'PUBLIC_KEYS_VARIANCE_POPULATION_BLOCK_ID_DESC',
+  PublicKeysVariancePopulationCompressedAsc = 'PUBLIC_KEYS_VARIANCE_POPULATION_COMPRESSED_ASC',
+  PublicKeysVariancePopulationCompressedDesc = 'PUBLIC_KEYS_VARIANCE_POPULATION_COMPRESSED_DESC',
+  PublicKeysVariancePopulationHistoryAsc = 'PUBLIC_KEYS_VARIANCE_POPULATION_HISTORY_ASC',
+  PublicKeysVariancePopulationHistoryDesc = 'PUBLIC_KEYS_VARIANCE_POPULATION_HISTORY_DESC',
+  PublicKeysVariancePopulationIdAsc = 'PUBLIC_KEYS_VARIANCE_POPULATION_ID_ASC',
+  PublicKeysVariancePopulationIdDesc = 'PUBLIC_KEYS_VARIANCE_POPULATION_ID_DESC',
+  PublicKeysVariancePopulationUncompressedAsc = 'PUBLIC_KEYS_VARIANCE_POPULATION_UNCOMPRESSED_ASC',
+  PublicKeysVariancePopulationUncompressedDesc = 'PUBLIC_KEYS_VARIANCE_POPULATION_UNCOMPRESSED_DESC',
+  PublicKeysVarianceSampleBlockIdAsc = 'PUBLIC_KEYS_VARIANCE_SAMPLE_BLOCK_ID_ASC',
+  PublicKeysVarianceSampleBlockIdDesc = 'PUBLIC_KEYS_VARIANCE_SAMPLE_BLOCK_ID_DESC',
+  PublicKeysVarianceSampleCompressedAsc = 'PUBLIC_KEYS_VARIANCE_SAMPLE_COMPRESSED_ASC',
+  PublicKeysVarianceSampleCompressedDesc = 'PUBLIC_KEYS_VARIANCE_SAMPLE_COMPRESSED_DESC',
+  PublicKeysVarianceSampleHistoryAsc = 'PUBLIC_KEYS_VARIANCE_SAMPLE_HISTORY_ASC',
+  PublicKeysVarianceSampleHistoryDesc = 'PUBLIC_KEYS_VARIANCE_SAMPLE_HISTORY_DESC',
+  PublicKeysVarianceSampleIdAsc = 'PUBLIC_KEYS_VARIANCE_SAMPLE_ID_ASC',
+  PublicKeysVarianceSampleIdDesc = 'PUBLIC_KEYS_VARIANCE_SAMPLE_ID_DESC',
+  PublicKeysVarianceSampleUncompressedAsc = 'PUBLIC_KEYS_VARIANCE_SAMPLE_UNCOMPRESSED_ASC',
+  PublicKeysVarianceSampleUncompressedDesc = 'PUBLIC_KEYS_VARIANCE_SAMPLE_UNCOMPRESSED_DESC',
   SessionsAverageAuthoritiesAsc = 'SESSIONS_AVERAGE_AUTHORITIES_ASC',
   SessionsAverageAuthoritiesDesc = 'SESSIONS_AVERAGE_AUTHORITIES_DESC',
   SessionsAverageBestAuthoritiesAsc = 'SESSIONS_AVERAGE_BEST_AUTHORITIES_ASC',
@@ -1846,6 +2579,8 @@ export enum BlocksOrderBy {
   SessionsAverageProposersDesc = 'SESSIONS_AVERAGE_PROPOSERS_DESC',
   SessionsAverageProposerThresholdAsc = 'SESSIONS_AVERAGE_PROPOSER_THRESHOLD_ASC',
   SessionsAverageProposerThresholdDesc = 'SESSIONS_AVERAGE_PROPOSER_THRESHOLD_DESC',
+  SessionsAveragePublicKeyIdAsc = 'SESSIONS_AVERAGE_PUBLIC_KEY_ID_ASC',
+  SessionsAveragePublicKeyIdDesc = 'SESSIONS_AVERAGE_PUBLIC_KEY_ID_DESC',
   SessionsAverageSignatureThresholdAsc = 'SESSIONS_AVERAGE_SIGNATURE_THRESHOLD_ASC',
   SessionsAverageSignatureThresholdDesc = 'SESSIONS_AVERAGE_SIGNATURE_THRESHOLD_DESC',
   SessionsCountAsc = 'SESSIONS_COUNT_ASC',
@@ -1872,6 +2607,8 @@ export enum BlocksOrderBy {
   SessionsDistinctCountProposersDesc = 'SESSIONS_DISTINCT_COUNT_PROPOSERS_DESC',
   SessionsDistinctCountProposerThresholdAsc = 'SESSIONS_DISTINCT_COUNT_PROPOSER_THRESHOLD_ASC',
   SessionsDistinctCountProposerThresholdDesc = 'SESSIONS_DISTINCT_COUNT_PROPOSER_THRESHOLD_DESC',
+  SessionsDistinctCountPublicKeyIdAsc = 'SESSIONS_DISTINCT_COUNT_PUBLIC_KEY_ID_ASC',
+  SessionsDistinctCountPublicKeyIdDesc = 'SESSIONS_DISTINCT_COUNT_PUBLIC_KEY_ID_DESC',
   SessionsDistinctCountSignatureThresholdAsc = 'SESSIONS_DISTINCT_COUNT_SIGNATURE_THRESHOLD_ASC',
   SessionsDistinctCountSignatureThresholdDesc = 'SESSIONS_DISTINCT_COUNT_SIGNATURE_THRESHOLD_DESC',
   SessionsMaxAuthoritiesAsc = 'SESSIONS_MAX_AUTHORITIES_ASC',
@@ -1896,6 +2633,8 @@ export enum BlocksOrderBy {
   SessionsMaxProposersDesc = 'SESSIONS_MAX_PROPOSERS_DESC',
   SessionsMaxProposerThresholdAsc = 'SESSIONS_MAX_PROPOSER_THRESHOLD_ASC',
   SessionsMaxProposerThresholdDesc = 'SESSIONS_MAX_PROPOSER_THRESHOLD_DESC',
+  SessionsMaxPublicKeyIdAsc = 'SESSIONS_MAX_PUBLIC_KEY_ID_ASC',
+  SessionsMaxPublicKeyIdDesc = 'SESSIONS_MAX_PUBLIC_KEY_ID_DESC',
   SessionsMaxSignatureThresholdAsc = 'SESSIONS_MAX_SIGNATURE_THRESHOLD_ASC',
   SessionsMaxSignatureThresholdDesc = 'SESSIONS_MAX_SIGNATURE_THRESHOLD_DESC',
   SessionsMinAuthoritiesAsc = 'SESSIONS_MIN_AUTHORITIES_ASC',
@@ -1920,6 +2659,8 @@ export enum BlocksOrderBy {
   SessionsMinProposersDesc = 'SESSIONS_MIN_PROPOSERS_DESC',
   SessionsMinProposerThresholdAsc = 'SESSIONS_MIN_PROPOSER_THRESHOLD_ASC',
   SessionsMinProposerThresholdDesc = 'SESSIONS_MIN_PROPOSER_THRESHOLD_DESC',
+  SessionsMinPublicKeyIdAsc = 'SESSIONS_MIN_PUBLIC_KEY_ID_ASC',
+  SessionsMinPublicKeyIdDesc = 'SESSIONS_MIN_PUBLIC_KEY_ID_DESC',
   SessionsMinSignatureThresholdAsc = 'SESSIONS_MIN_SIGNATURE_THRESHOLD_ASC',
   SessionsMinSignatureThresholdDesc = 'SESSIONS_MIN_SIGNATURE_THRESHOLD_DESC',
   SessionsStddevPopulationAuthoritiesAsc = 'SESSIONS_STDDEV_POPULATION_AUTHORITIES_ASC',
@@ -1944,6 +2685,8 @@ export enum BlocksOrderBy {
   SessionsStddevPopulationProposersDesc = 'SESSIONS_STDDEV_POPULATION_PROPOSERS_DESC',
   SessionsStddevPopulationProposerThresholdAsc = 'SESSIONS_STDDEV_POPULATION_PROPOSER_THRESHOLD_ASC',
   SessionsStddevPopulationProposerThresholdDesc = 'SESSIONS_STDDEV_POPULATION_PROPOSER_THRESHOLD_DESC',
+  SessionsStddevPopulationPublicKeyIdAsc = 'SESSIONS_STDDEV_POPULATION_PUBLIC_KEY_ID_ASC',
+  SessionsStddevPopulationPublicKeyIdDesc = 'SESSIONS_STDDEV_POPULATION_PUBLIC_KEY_ID_DESC',
   SessionsStddevPopulationSignatureThresholdAsc = 'SESSIONS_STDDEV_POPULATION_SIGNATURE_THRESHOLD_ASC',
   SessionsStddevPopulationSignatureThresholdDesc = 'SESSIONS_STDDEV_POPULATION_SIGNATURE_THRESHOLD_DESC',
   SessionsStddevSampleAuthoritiesAsc = 'SESSIONS_STDDEV_SAMPLE_AUTHORITIES_ASC',
@@ -1968,6 +2711,8 @@ export enum BlocksOrderBy {
   SessionsStddevSampleProposersDesc = 'SESSIONS_STDDEV_SAMPLE_PROPOSERS_DESC',
   SessionsStddevSampleProposerThresholdAsc = 'SESSIONS_STDDEV_SAMPLE_PROPOSER_THRESHOLD_ASC',
   SessionsStddevSampleProposerThresholdDesc = 'SESSIONS_STDDEV_SAMPLE_PROPOSER_THRESHOLD_DESC',
+  SessionsStddevSamplePublicKeyIdAsc = 'SESSIONS_STDDEV_SAMPLE_PUBLIC_KEY_ID_ASC',
+  SessionsStddevSamplePublicKeyIdDesc = 'SESSIONS_STDDEV_SAMPLE_PUBLIC_KEY_ID_DESC',
   SessionsStddevSampleSignatureThresholdAsc = 'SESSIONS_STDDEV_SAMPLE_SIGNATURE_THRESHOLD_ASC',
   SessionsStddevSampleSignatureThresholdDesc = 'SESSIONS_STDDEV_SAMPLE_SIGNATURE_THRESHOLD_DESC',
   SessionsSumAuthoritiesAsc = 'SESSIONS_SUM_AUTHORITIES_ASC',
@@ -1992,6 +2737,8 @@ export enum BlocksOrderBy {
   SessionsSumProposersDesc = 'SESSIONS_SUM_PROPOSERS_DESC',
   SessionsSumProposerThresholdAsc = 'SESSIONS_SUM_PROPOSER_THRESHOLD_ASC',
   SessionsSumProposerThresholdDesc = 'SESSIONS_SUM_PROPOSER_THRESHOLD_DESC',
+  SessionsSumPublicKeyIdAsc = 'SESSIONS_SUM_PUBLIC_KEY_ID_ASC',
+  SessionsSumPublicKeyIdDesc = 'SESSIONS_SUM_PUBLIC_KEY_ID_DESC',
   SessionsSumSignatureThresholdAsc = 'SESSIONS_SUM_SIGNATURE_THRESHOLD_ASC',
   SessionsSumSignatureThresholdDesc = 'SESSIONS_SUM_SIGNATURE_THRESHOLD_DESC',
   SessionsVariancePopulationAuthoritiesAsc = 'SESSIONS_VARIANCE_POPULATION_AUTHORITIES_ASC',
@@ -2016,6 +2763,8 @@ export enum BlocksOrderBy {
   SessionsVariancePopulationProposersDesc = 'SESSIONS_VARIANCE_POPULATION_PROPOSERS_DESC',
   SessionsVariancePopulationProposerThresholdAsc = 'SESSIONS_VARIANCE_POPULATION_PROPOSER_THRESHOLD_ASC',
   SessionsVariancePopulationProposerThresholdDesc = 'SESSIONS_VARIANCE_POPULATION_PROPOSER_THRESHOLD_DESC',
+  SessionsVariancePopulationPublicKeyIdAsc = 'SESSIONS_VARIANCE_POPULATION_PUBLIC_KEY_ID_ASC',
+  SessionsVariancePopulationPublicKeyIdDesc = 'SESSIONS_VARIANCE_POPULATION_PUBLIC_KEY_ID_DESC',
   SessionsVariancePopulationSignatureThresholdAsc = 'SESSIONS_VARIANCE_POPULATION_SIGNATURE_THRESHOLD_ASC',
   SessionsVariancePopulationSignatureThresholdDesc = 'SESSIONS_VARIANCE_POPULATION_SIGNATURE_THRESHOLD_DESC',
   SessionsVarianceSampleAuthoritiesAsc = 'SESSIONS_VARIANCE_SAMPLE_AUTHORITIES_ASC',
@@ -2040,6 +2789,8 @@ export enum BlocksOrderBy {
   SessionsVarianceSampleProposersDesc = 'SESSIONS_VARIANCE_SAMPLE_PROPOSERS_DESC',
   SessionsVarianceSampleProposerThresholdAsc = 'SESSIONS_VARIANCE_SAMPLE_PROPOSER_THRESHOLD_ASC',
   SessionsVarianceSampleProposerThresholdDesc = 'SESSIONS_VARIANCE_SAMPLE_PROPOSER_THRESHOLD_DESC',
+  SessionsVarianceSamplePublicKeyIdAsc = 'SESSIONS_VARIANCE_SAMPLE_PUBLIC_KEY_ID_ASC',
+  SessionsVarianceSamplePublicKeyIdDesc = 'SESSIONS_VARIANCE_SAMPLE_PUBLIC_KEY_ID_DESC',
   SessionsVarianceSampleSignatureThresholdAsc = 'SESSIONS_VARIANCE_SAMPLE_SIGNATURE_THRESHOLD_ASC',
   SessionsVarianceSampleSignatureThresholdDesc = 'SESSIONS_VARIANCE_SAMPLE_SIGNATURE_THRESHOLD_DESC',
   SignatureThresholdsAverageBlockIdAsc = 'SIGNATURE_THRESHOLDS_AVERAGE_BLOCK_ID_ASC',
@@ -2140,6 +2891,44 @@ export enum BlocksOrderBy {
   StateRootDesc = 'STATE_ROOT_DESC',
   TimestampAsc = 'TIMESTAMP_ASC',
   TimestampDesc = 'TIMESTAMP_DESC',
+  UnsignedProposalsQueuesAverageBlockIdAsc = 'UNSIGNED_PROPOSALS_QUEUES_AVERAGE_BLOCK_ID_ASC',
+  UnsignedProposalsQueuesAverageBlockIdDesc = 'UNSIGNED_PROPOSALS_QUEUES_AVERAGE_BLOCK_ID_DESC',
+  UnsignedProposalsQueuesAverageIdAsc = 'UNSIGNED_PROPOSALS_QUEUES_AVERAGE_ID_ASC',
+  UnsignedProposalsQueuesAverageIdDesc = 'UNSIGNED_PROPOSALS_QUEUES_AVERAGE_ID_DESC',
+  UnsignedProposalsQueuesCountAsc = 'UNSIGNED_PROPOSALS_QUEUES_COUNT_ASC',
+  UnsignedProposalsQueuesCountDesc = 'UNSIGNED_PROPOSALS_QUEUES_COUNT_DESC',
+  UnsignedProposalsQueuesDistinctCountBlockIdAsc = 'UNSIGNED_PROPOSALS_QUEUES_DISTINCT_COUNT_BLOCK_ID_ASC',
+  UnsignedProposalsQueuesDistinctCountBlockIdDesc = 'UNSIGNED_PROPOSALS_QUEUES_DISTINCT_COUNT_BLOCK_ID_DESC',
+  UnsignedProposalsQueuesDistinctCountIdAsc = 'UNSIGNED_PROPOSALS_QUEUES_DISTINCT_COUNT_ID_ASC',
+  UnsignedProposalsQueuesDistinctCountIdDesc = 'UNSIGNED_PROPOSALS_QUEUES_DISTINCT_COUNT_ID_DESC',
+  UnsignedProposalsQueuesMaxBlockIdAsc = 'UNSIGNED_PROPOSALS_QUEUES_MAX_BLOCK_ID_ASC',
+  UnsignedProposalsQueuesMaxBlockIdDesc = 'UNSIGNED_PROPOSALS_QUEUES_MAX_BLOCK_ID_DESC',
+  UnsignedProposalsQueuesMaxIdAsc = 'UNSIGNED_PROPOSALS_QUEUES_MAX_ID_ASC',
+  UnsignedProposalsQueuesMaxIdDesc = 'UNSIGNED_PROPOSALS_QUEUES_MAX_ID_DESC',
+  UnsignedProposalsQueuesMinBlockIdAsc = 'UNSIGNED_PROPOSALS_QUEUES_MIN_BLOCK_ID_ASC',
+  UnsignedProposalsQueuesMinBlockIdDesc = 'UNSIGNED_PROPOSALS_QUEUES_MIN_BLOCK_ID_DESC',
+  UnsignedProposalsQueuesMinIdAsc = 'UNSIGNED_PROPOSALS_QUEUES_MIN_ID_ASC',
+  UnsignedProposalsQueuesMinIdDesc = 'UNSIGNED_PROPOSALS_QUEUES_MIN_ID_DESC',
+  UnsignedProposalsQueuesStddevPopulationBlockIdAsc = 'UNSIGNED_PROPOSALS_QUEUES_STDDEV_POPULATION_BLOCK_ID_ASC',
+  UnsignedProposalsQueuesStddevPopulationBlockIdDesc = 'UNSIGNED_PROPOSALS_QUEUES_STDDEV_POPULATION_BLOCK_ID_DESC',
+  UnsignedProposalsQueuesStddevPopulationIdAsc = 'UNSIGNED_PROPOSALS_QUEUES_STDDEV_POPULATION_ID_ASC',
+  UnsignedProposalsQueuesStddevPopulationIdDesc = 'UNSIGNED_PROPOSALS_QUEUES_STDDEV_POPULATION_ID_DESC',
+  UnsignedProposalsQueuesStddevSampleBlockIdAsc = 'UNSIGNED_PROPOSALS_QUEUES_STDDEV_SAMPLE_BLOCK_ID_ASC',
+  UnsignedProposalsQueuesStddevSampleBlockIdDesc = 'UNSIGNED_PROPOSALS_QUEUES_STDDEV_SAMPLE_BLOCK_ID_DESC',
+  UnsignedProposalsQueuesStddevSampleIdAsc = 'UNSIGNED_PROPOSALS_QUEUES_STDDEV_SAMPLE_ID_ASC',
+  UnsignedProposalsQueuesStddevSampleIdDesc = 'UNSIGNED_PROPOSALS_QUEUES_STDDEV_SAMPLE_ID_DESC',
+  UnsignedProposalsQueuesSumBlockIdAsc = 'UNSIGNED_PROPOSALS_QUEUES_SUM_BLOCK_ID_ASC',
+  UnsignedProposalsQueuesSumBlockIdDesc = 'UNSIGNED_PROPOSALS_QUEUES_SUM_BLOCK_ID_DESC',
+  UnsignedProposalsQueuesSumIdAsc = 'UNSIGNED_PROPOSALS_QUEUES_SUM_ID_ASC',
+  UnsignedProposalsQueuesSumIdDesc = 'UNSIGNED_PROPOSALS_QUEUES_SUM_ID_DESC',
+  UnsignedProposalsQueuesVariancePopulationBlockIdAsc = 'UNSIGNED_PROPOSALS_QUEUES_VARIANCE_POPULATION_BLOCK_ID_ASC',
+  UnsignedProposalsQueuesVariancePopulationBlockIdDesc = 'UNSIGNED_PROPOSALS_QUEUES_VARIANCE_POPULATION_BLOCK_ID_DESC',
+  UnsignedProposalsQueuesVariancePopulationIdAsc = 'UNSIGNED_PROPOSALS_QUEUES_VARIANCE_POPULATION_ID_ASC',
+  UnsignedProposalsQueuesVariancePopulationIdDesc = 'UNSIGNED_PROPOSALS_QUEUES_VARIANCE_POPULATION_ID_DESC',
+  UnsignedProposalsQueuesVarianceSampleBlockIdAsc = 'UNSIGNED_PROPOSALS_QUEUES_VARIANCE_SAMPLE_BLOCK_ID_ASC',
+  UnsignedProposalsQueuesVarianceSampleBlockIdDesc = 'UNSIGNED_PROPOSALS_QUEUES_VARIANCE_SAMPLE_BLOCK_ID_DESC',
+  UnsignedProposalsQueuesVarianceSampleIdAsc = 'UNSIGNED_PROPOSALS_QUEUES_VARIANCE_SAMPLE_ID_ASC',
+  UnsignedProposalsQueuesVarianceSampleIdDesc = 'UNSIGNED_PROPOSALS_QUEUES_VARIANCE_SAMPLE_ID_DESC'
 }
 
 /** A filter to be used against Boolean fields. All fields are combined with a logical ‘and.’ */
@@ -2377,6 +3166,7 @@ export type EventsConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Event` values. */
 export type EventsConnectionGroupedAggregatesArgs = {
   groupBy: Array<EventsGroupBy>;
@@ -2405,7 +3195,7 @@ export enum EventsGroupBy {
   Module = 'MODULE',
   Timestamp = 'TIMESTAMP',
   TimestampTruncatedToDay = 'TIMESTAMP_TRUNCATED_TO_DAY',
-  TimestampTruncatedToHour = 'TIMESTAMP_TRUNCATED_TO_HOUR',
+  TimestampTruncatedToHour = 'TIMESTAMP_TRUNCATED_TO_HOUR'
 }
 
 export type EventsHavingAverageInput = {
@@ -2503,7 +3293,7 @@ export enum EventsOrderBy {
   PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
   PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
   TimestampAsc = 'TIMESTAMP_ASC',
-  TimestampDesc = 'TIMESTAMP_DESC',
+  TimestampDesc = 'TIMESTAMP_DESC'
 }
 
 export type Extrinsic = Node & {
@@ -2531,6 +3321,7 @@ export type Extrinsic = Node & {
   signerId?: Maybe<Scalars['String']>;
 };
 
+
 export type ExtrinsicBlocksByEventExtrinsicIdAndBlockIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -2540,6 +3331,7 @@ export type ExtrinsicBlocksByEventExtrinsicIdAndBlockIdArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<BlocksOrderBy>>;
 };
+
 
 export type ExtrinsicEventsArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -2599,6 +3391,7 @@ export type ExtrinsicBlocksByEventExtrinsicIdAndBlockIdManyToManyConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Block` values, with data from `Event`. */
 export type ExtrinsicBlocksByEventExtrinsicIdAndBlockIdManyToManyConnectionGroupedAggregatesArgs = {
   groupBy: Array<BlocksGroupBy>;
@@ -2615,6 +3408,7 @@ export type ExtrinsicBlocksByEventExtrinsicIdAndBlockIdManyToManyEdge = {
   /** The `Block` at the end of the edge. */
   node?: Maybe<Block>;
 };
+
 
 /** A `Block` edge in the connection, with data from `Event`. */
 export type ExtrinsicBlocksByEventExtrinsicIdAndBlockIdManyToManyEdgeEventsArgs = {
@@ -2758,6 +3552,7 @@ export type ExtrinsicsConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Extrinsic` values. */
 export type ExtrinsicsConnectionGroupedAggregatesArgs = {
   groupBy: Array<ExtrinsicsGroupBy>;
@@ -2784,7 +3579,7 @@ export enum ExtrinsicsGroupBy {
   IsSuccess = 'IS_SUCCESS',
   Method = 'METHOD',
   Module = 'MODULE',
-  SignerId = 'SIGNER_ID',
+  SignerId = 'SIGNER_ID'
 }
 
 export type ExtrinsicsHavingAverageInput = {
@@ -3073,7 +3868,7 @@ export enum ExtrinsicsOrderBy {
   PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
   PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
   SignerIdAsc = 'SIGNER_ID_ASC',
-  SignerIdDesc = 'SIGNER_ID_DESC',
+  SignerIdDesc = 'SIGNER_ID_DESC'
 }
 
 export type HavingBigfloatFilter = {
@@ -3332,6 +4127,7 @@ export type KeygenThresholdsConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `KeygenThreshold` values. */
 export type KeygenThresholdsConnectionGroupedAggregatesArgs = {
   groupBy: Array<KeygenThresholdsGroupBy>;
@@ -3352,7 +4148,7 @@ export enum KeygenThresholdsGroupBy {
   BlockId = 'BLOCK_ID',
   Current = 'CURRENT',
   Next = 'NEXT',
-  Pending = 'PENDING',
+  Pending = 'PENDING'
 }
 
 export type KeygenThresholdsHavingAverageInput = {
@@ -3438,7 +4234,7 @@ export enum KeygenThresholdsOrderBy {
   PendingAsc = 'PENDING_ASC',
   PendingDesc = 'PENDING_DESC',
   PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
-  PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
+  PrimaryKeyDesc = 'PRIMARY_KEY_DESC'
 }
 
 /** An object with a globally unique `ID`. */
@@ -3459,6 +4255,1612 @@ export type PageInfo = {
   /** When paginating backwards, the cursor to continue. */
   startCursor?: Maybe<Scalars['Cursor']>;
 };
+
+export type ProposalCounter = Node & {
+  __typename?: 'ProposalCounter';
+  /** Reads a single `Block` that is related to this `ProposalCounter`. */
+  block?: Maybe<Block>;
+  blockId: Scalars['String'];
+  blockNumber: Scalars['Int'];
+  id: Scalars['String'];
+  /** A globally unique identifier. Can be used in various places throughout the system to identify this single value. */
+  nodeId: Scalars['ID'];
+  signedProposalsCount: Scalars['Int'];
+  signedProposalsMap?: Maybe<Scalars['JSON']>;
+  statusMap?: Maybe<Scalars['JSON']>;
+  unSignedProposalsCount: Scalars['Int'];
+  unSignedProposalsMap?: Maybe<Scalars['JSON']>;
+};
+
+export type ProposalCounterAggregates = {
+  __typename?: 'ProposalCounterAggregates';
+  /** Mean average aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  average?: Maybe<ProposalCounterAverageAggregates>;
+  /** Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  distinctCount?: Maybe<ProposalCounterDistinctCountAggregates>;
+  keys?: Maybe<Array<Scalars['String']>>;
+  /** Maximum aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  max?: Maybe<ProposalCounterMaxAggregates>;
+  /** Minimum aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  min?: Maybe<ProposalCounterMinAggregates>;
+  /** Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  stddevPopulation?: Maybe<ProposalCounterStddevPopulationAggregates>;
+  /** Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  stddevSample?: Maybe<ProposalCounterStddevSampleAggregates>;
+  /** Sum aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  sum?: Maybe<ProposalCounterSumAggregates>;
+  /** Population variance aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  variancePopulation?: Maybe<ProposalCounterVariancePopulationAggregates>;
+  /** Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  varianceSample?: Maybe<ProposalCounterVarianceSampleAggregates>;
+};
+
+export type ProposalCounterAverageAggregates = {
+  __typename?: 'ProposalCounterAverageAggregates';
+  /** Mean average of blockNumber across the matching connection */
+  blockNumber?: Maybe<Scalars['BigFloat']>;
+  /** Mean average of signedProposalsCount across the matching connection */
+  signedProposalsCount?: Maybe<Scalars['BigFloat']>;
+  /** Mean average of unSignedProposalsCount across the matching connection */
+  unSignedProposalsCount?: Maybe<Scalars['BigFloat']>;
+};
+
+export type ProposalCounterDistinctCountAggregates = {
+  __typename?: 'ProposalCounterDistinctCountAggregates';
+  /** Distinct count of blockId across the matching connection */
+  blockId?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of blockNumber across the matching connection */
+  blockNumber?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of id across the matching connection */
+  id?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of signedProposalsCount across the matching connection */
+  signedProposalsCount?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of signedProposalsMap across the matching connection */
+  signedProposalsMap?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of statusMap across the matching connection */
+  statusMap?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of unSignedProposalsCount across the matching connection */
+  unSignedProposalsCount?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of unSignedProposalsMap across the matching connection */
+  unSignedProposalsMap?: Maybe<Scalars['BigInt']>;
+};
+
+/** A filter to be used against `ProposalCounter` object types. All fields are combined with a logical ‘and.’ */
+export type ProposalCounterFilter = {
+  /** Checks for all expressions in this list. */
+  and?: InputMaybe<Array<ProposalCounterFilter>>;
+  /** Filter by the object’s `blockId` field. */
+  blockId?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `blockNumber` field. */
+  blockNumber?: InputMaybe<IntFilter>;
+  /** Filter by the object’s `id` field. */
+  id?: InputMaybe<StringFilter>;
+  /** Negates the expression. */
+  not?: InputMaybe<ProposalCounterFilter>;
+  /** Checks for any expressions in this list. */
+  or?: InputMaybe<Array<ProposalCounterFilter>>;
+  /** Filter by the object’s `signedProposalsCount` field. */
+  signedProposalsCount?: InputMaybe<IntFilter>;
+  /** Filter by the object’s `signedProposalsMap` field. */
+  signedProposalsMap?: InputMaybe<JsonFilter>;
+  /** Filter by the object’s `statusMap` field. */
+  statusMap?: InputMaybe<JsonFilter>;
+  /** Filter by the object’s `unSignedProposalsCount` field. */
+  unSignedProposalsCount?: InputMaybe<IntFilter>;
+  /** Filter by the object’s `unSignedProposalsMap` field. */
+  unSignedProposalsMap?: InputMaybe<JsonFilter>;
+};
+
+export type ProposalCounterMaxAggregates = {
+  __typename?: 'ProposalCounterMaxAggregates';
+  /** Maximum of blockNumber across the matching connection */
+  blockNumber?: Maybe<Scalars['Int']>;
+  /** Maximum of signedProposalsCount across the matching connection */
+  signedProposalsCount?: Maybe<Scalars['Int']>;
+  /** Maximum of unSignedProposalsCount across the matching connection */
+  unSignedProposalsCount?: Maybe<Scalars['Int']>;
+};
+
+export type ProposalCounterMinAggregates = {
+  __typename?: 'ProposalCounterMinAggregates';
+  /** Minimum of blockNumber across the matching connection */
+  blockNumber?: Maybe<Scalars['Int']>;
+  /** Minimum of signedProposalsCount across the matching connection */
+  signedProposalsCount?: Maybe<Scalars['Int']>;
+  /** Minimum of unSignedProposalsCount across the matching connection */
+  unSignedProposalsCount?: Maybe<Scalars['Int']>;
+};
+
+export type ProposalCounterStddevPopulationAggregates = {
+  __typename?: 'ProposalCounterStddevPopulationAggregates';
+  /** Population standard deviation of blockNumber across the matching connection */
+  blockNumber?: Maybe<Scalars['BigFloat']>;
+  /** Population standard deviation of signedProposalsCount across the matching connection */
+  signedProposalsCount?: Maybe<Scalars['BigFloat']>;
+  /** Population standard deviation of unSignedProposalsCount across the matching connection */
+  unSignedProposalsCount?: Maybe<Scalars['BigFloat']>;
+};
+
+export type ProposalCounterStddevSampleAggregates = {
+  __typename?: 'ProposalCounterStddevSampleAggregates';
+  /** Sample standard deviation of blockNumber across the matching connection */
+  blockNumber?: Maybe<Scalars['BigFloat']>;
+  /** Sample standard deviation of signedProposalsCount across the matching connection */
+  signedProposalsCount?: Maybe<Scalars['BigFloat']>;
+  /** Sample standard deviation of unSignedProposalsCount across the matching connection */
+  unSignedProposalsCount?: Maybe<Scalars['BigFloat']>;
+};
+
+export type ProposalCounterSumAggregates = {
+  __typename?: 'ProposalCounterSumAggregates';
+  /** Sum of blockNumber across the matching connection */
+  blockNumber: Scalars['BigInt'];
+  /** Sum of signedProposalsCount across the matching connection */
+  signedProposalsCount: Scalars['BigInt'];
+  /** Sum of unSignedProposalsCount across the matching connection */
+  unSignedProposalsCount: Scalars['BigInt'];
+};
+
+export type ProposalCounterVariancePopulationAggregates = {
+  __typename?: 'ProposalCounterVariancePopulationAggregates';
+  /** Population variance of blockNumber across the matching connection */
+  blockNumber?: Maybe<Scalars['BigFloat']>;
+  /** Population variance of signedProposalsCount across the matching connection */
+  signedProposalsCount?: Maybe<Scalars['BigFloat']>;
+  /** Population variance of unSignedProposalsCount across the matching connection */
+  unSignedProposalsCount?: Maybe<Scalars['BigFloat']>;
+};
+
+export type ProposalCounterVarianceSampleAggregates = {
+  __typename?: 'ProposalCounterVarianceSampleAggregates';
+  /** Sample variance of blockNumber across the matching connection */
+  blockNumber?: Maybe<Scalars['BigFloat']>;
+  /** Sample variance of signedProposalsCount across the matching connection */
+  signedProposalsCount?: Maybe<Scalars['BigFloat']>;
+  /** Sample variance of unSignedProposalsCount across the matching connection */
+  unSignedProposalsCount?: Maybe<Scalars['BigFloat']>;
+};
+
+/** A connection to a list of `ProposalCounter` values. */
+export type ProposalCountersConnection = {
+  __typename?: 'ProposalCountersConnection';
+  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  aggregates?: Maybe<ProposalCounterAggregates>;
+  /** A list of edges which contains the `ProposalCounter` and cursor to aid in pagination. */
+  edges: Array<ProposalCountersEdge>;
+  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  groupedAggregates?: Maybe<Array<ProposalCounterAggregates>>;
+  /** A list of `ProposalCounter` objects. */
+  nodes: Array<Maybe<ProposalCounter>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** The count of *all* `ProposalCounter` you could get from the connection. */
+  totalCount: Scalars['Int'];
+};
+
+
+/** A connection to a list of `ProposalCounter` values. */
+export type ProposalCountersConnectionGroupedAggregatesArgs = {
+  groupBy: Array<ProposalCountersGroupBy>;
+  having?: InputMaybe<ProposalCountersHavingInput>;
+};
+
+/** A `ProposalCounter` edge in the connection. */
+export type ProposalCountersEdge = {
+  __typename?: 'ProposalCountersEdge';
+  /** A cursor for use in pagination. */
+  cursor?: Maybe<Scalars['Cursor']>;
+  /** The `ProposalCounter` at the end of the edge. */
+  node?: Maybe<ProposalCounter>;
+};
+
+/** Grouping methods for `ProposalCounter` for usage during aggregation. */
+export enum ProposalCountersGroupBy {
+  BlockId = 'BLOCK_ID',
+  BlockNumber = 'BLOCK_NUMBER',
+  SignedProposalsCount = 'SIGNED_PROPOSALS_COUNT',
+  SignedProposalsMap = 'SIGNED_PROPOSALS_MAP',
+  StatusMap = 'STATUS_MAP',
+  UnSignedProposalsCount = 'UN_SIGNED_PROPOSALS_COUNT',
+  UnSignedProposalsMap = 'UN_SIGNED_PROPOSALS_MAP'
+}
+
+export type ProposalCountersHavingAverageInput = {
+  blockNumber?: InputMaybe<HavingIntFilter>;
+  signedProposalsCount?: InputMaybe<HavingIntFilter>;
+  unSignedProposalsCount?: InputMaybe<HavingIntFilter>;
+};
+
+export type ProposalCountersHavingDistinctCountInput = {
+  blockNumber?: InputMaybe<HavingIntFilter>;
+  signedProposalsCount?: InputMaybe<HavingIntFilter>;
+  unSignedProposalsCount?: InputMaybe<HavingIntFilter>;
+};
+
+/** Conditions for `ProposalCounter` aggregates. */
+export type ProposalCountersHavingInput = {
+  AND?: InputMaybe<Array<ProposalCountersHavingInput>>;
+  OR?: InputMaybe<Array<ProposalCountersHavingInput>>;
+  average?: InputMaybe<ProposalCountersHavingAverageInput>;
+  distinctCount?: InputMaybe<ProposalCountersHavingDistinctCountInput>;
+  max?: InputMaybe<ProposalCountersHavingMaxInput>;
+  min?: InputMaybe<ProposalCountersHavingMinInput>;
+  stddevPopulation?: InputMaybe<ProposalCountersHavingStddevPopulationInput>;
+  stddevSample?: InputMaybe<ProposalCountersHavingStddevSampleInput>;
+  sum?: InputMaybe<ProposalCountersHavingSumInput>;
+  variancePopulation?: InputMaybe<ProposalCountersHavingVariancePopulationInput>;
+  varianceSample?: InputMaybe<ProposalCountersHavingVarianceSampleInput>;
+};
+
+export type ProposalCountersHavingMaxInput = {
+  blockNumber?: InputMaybe<HavingIntFilter>;
+  signedProposalsCount?: InputMaybe<HavingIntFilter>;
+  unSignedProposalsCount?: InputMaybe<HavingIntFilter>;
+};
+
+export type ProposalCountersHavingMinInput = {
+  blockNumber?: InputMaybe<HavingIntFilter>;
+  signedProposalsCount?: InputMaybe<HavingIntFilter>;
+  unSignedProposalsCount?: InputMaybe<HavingIntFilter>;
+};
+
+export type ProposalCountersHavingStddevPopulationInput = {
+  blockNumber?: InputMaybe<HavingIntFilter>;
+  signedProposalsCount?: InputMaybe<HavingIntFilter>;
+  unSignedProposalsCount?: InputMaybe<HavingIntFilter>;
+};
+
+export type ProposalCountersHavingStddevSampleInput = {
+  blockNumber?: InputMaybe<HavingIntFilter>;
+  signedProposalsCount?: InputMaybe<HavingIntFilter>;
+  unSignedProposalsCount?: InputMaybe<HavingIntFilter>;
+};
+
+export type ProposalCountersHavingSumInput = {
+  blockNumber?: InputMaybe<HavingIntFilter>;
+  signedProposalsCount?: InputMaybe<HavingIntFilter>;
+  unSignedProposalsCount?: InputMaybe<HavingIntFilter>;
+};
+
+export type ProposalCountersHavingVariancePopulationInput = {
+  blockNumber?: InputMaybe<HavingIntFilter>;
+  signedProposalsCount?: InputMaybe<HavingIntFilter>;
+  unSignedProposalsCount?: InputMaybe<HavingIntFilter>;
+};
+
+export type ProposalCountersHavingVarianceSampleInput = {
+  blockNumber?: InputMaybe<HavingIntFilter>;
+  signedProposalsCount?: InputMaybe<HavingIntFilter>;
+  unSignedProposalsCount?: InputMaybe<HavingIntFilter>;
+};
+
+/** Methods to use when ordering `ProposalCounter`. */
+export enum ProposalCountersOrderBy {
+  BlockIdAsc = 'BLOCK_ID_ASC',
+  BlockIdDesc = 'BLOCK_ID_DESC',
+  BlockNumberAsc = 'BLOCK_NUMBER_ASC',
+  BlockNumberDesc = 'BLOCK_NUMBER_DESC',
+  IdAsc = 'ID_ASC',
+  IdDesc = 'ID_DESC',
+  Natural = 'NATURAL',
+  PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
+  PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
+  SignedProposalsCountAsc = 'SIGNED_PROPOSALS_COUNT_ASC',
+  SignedProposalsCountDesc = 'SIGNED_PROPOSALS_COUNT_DESC',
+  SignedProposalsMapAsc = 'SIGNED_PROPOSALS_MAP_ASC',
+  SignedProposalsMapDesc = 'SIGNED_PROPOSALS_MAP_DESC',
+  StatusMapAsc = 'STATUS_MAP_ASC',
+  StatusMapDesc = 'STATUS_MAP_DESC',
+  UnSignedProposalsCountAsc = 'UN_SIGNED_PROPOSALS_COUNT_ASC',
+  UnSignedProposalsCountDesc = 'UN_SIGNED_PROPOSALS_COUNT_DESC',
+  UnSignedProposalsMapAsc = 'UN_SIGNED_PROPOSALS_MAP_ASC',
+  UnSignedProposalsMapDesc = 'UN_SIGNED_PROPOSALS_MAP_DESC'
+}
+
+export type ProposalItem = Node & {
+  __typename?: 'ProposalItem';
+  /** Reads a single `Block` that is related to this `ProposalItem`. */
+  block?: Maybe<Block>;
+  blockId: Scalars['String'];
+  currentStatus: Scalars['JSON'];
+  data: Scalars['String'];
+  id: Scalars['String'];
+  /** A globally unique identifier. Can be used in various places throughout the system to identify this single value. */
+  nodeId: Scalars['ID'];
+  nonce: Scalars['Int'];
+  removed?: Maybe<Scalars['Boolean']>;
+  signature?: Maybe<Scalars['String']>;
+  status: Scalars['String'];
+  timelineStatus: Scalars['JSON'];
+  type: ProposalType;
+  /** Reads and enables pagination through a set of `UnsignedProposalsQueueItem`. */
+  unsignedProposalsQueueItemsByProposalId: UnsignedProposalsQueueItemsConnection;
+  /** Reads and enables pagination through a set of `UnsignedProposalsQueue`. */
+  unsignedProposalsQueuesByUnsignedProposalsQueueItemProposalIdAndQueueId: ProposalItemUnsignedProposalsQueuesByUnsignedProposalsQueueItemProposalIdAndQueueIdManyToManyConnection;
+  votes: Scalars['JSON'];
+};
+
+
+export type ProposalItemUnsignedProposalsQueueItemsByProposalIdArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  filter?: InputMaybe<UnsignedProposalsQueueItemFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<UnsignedProposalsQueueItemsOrderBy>>;
+};
+
+
+export type ProposalItemUnsignedProposalsQueuesByUnsignedProposalsQueueItemProposalIdAndQueueIdArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  filter?: InputMaybe<UnsignedProposalsQueueFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<UnsignedProposalsQueuesOrderBy>>;
+};
+
+export type ProposalItemAggregates = {
+  __typename?: 'ProposalItemAggregates';
+  /** Mean average aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  average?: Maybe<ProposalItemAverageAggregates>;
+  /** Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  distinctCount?: Maybe<ProposalItemDistinctCountAggregates>;
+  keys?: Maybe<Array<Scalars['String']>>;
+  /** Maximum aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  max?: Maybe<ProposalItemMaxAggregates>;
+  /** Minimum aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  min?: Maybe<ProposalItemMinAggregates>;
+  /** Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  stddevPopulation?: Maybe<ProposalItemStddevPopulationAggregates>;
+  /** Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  stddevSample?: Maybe<ProposalItemStddevSampleAggregates>;
+  /** Sum aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  sum?: Maybe<ProposalItemSumAggregates>;
+  /** Population variance aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  variancePopulation?: Maybe<ProposalItemVariancePopulationAggregates>;
+  /** Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  varianceSample?: Maybe<ProposalItemVarianceSampleAggregates>;
+};
+
+export type ProposalItemAverageAggregates = {
+  __typename?: 'ProposalItemAverageAggregates';
+  /** Mean average of nonce across the matching connection */
+  nonce?: Maybe<Scalars['BigFloat']>;
+};
+
+export type ProposalItemDistinctCountAggregates = {
+  __typename?: 'ProposalItemDistinctCountAggregates';
+  /** Distinct count of blockId across the matching connection */
+  blockId?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of currentStatus across the matching connection */
+  currentStatus?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of data across the matching connection */
+  data?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of id across the matching connection */
+  id?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of nonce across the matching connection */
+  nonce?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of removed across the matching connection */
+  removed?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of signature across the matching connection */
+  signature?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of status across the matching connection */
+  status?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of timelineStatus across the matching connection */
+  timelineStatus?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of type across the matching connection */
+  type?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of votes across the matching connection */
+  votes?: Maybe<Scalars['BigInt']>;
+};
+
+/** A filter to be used against `ProposalItem` object types. All fields are combined with a logical ‘and.’ */
+export type ProposalItemFilter = {
+  /** Checks for all expressions in this list. */
+  and?: InputMaybe<Array<ProposalItemFilter>>;
+  /** Filter by the object’s `blockId` field. */
+  blockId?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `currentStatus` field. */
+  currentStatus?: InputMaybe<JsonFilter>;
+  /** Filter by the object’s `data` field. */
+  data?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `id` field. */
+  id?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `nonce` field. */
+  nonce?: InputMaybe<IntFilter>;
+  /** Negates the expression. */
+  not?: InputMaybe<ProposalItemFilter>;
+  /** Checks for any expressions in this list. */
+  or?: InputMaybe<Array<ProposalItemFilter>>;
+  /** Filter by the object’s `removed` field. */
+  removed?: InputMaybe<BooleanFilter>;
+  /** Filter by the object’s `signature` field. */
+  signature?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `status` field. */
+  status?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `timelineStatus` field. */
+  timelineStatus?: InputMaybe<JsonFilter>;
+  /** Filter by the object’s `type` field. */
+  type?: InputMaybe<ProposalTypeFilter>;
+  /** Filter by the object’s `votes` field. */
+  votes?: InputMaybe<JsonFilter>;
+};
+
+export type ProposalItemMaxAggregates = {
+  __typename?: 'ProposalItemMaxAggregates';
+  /** Maximum of nonce across the matching connection */
+  nonce?: Maybe<Scalars['Int']>;
+};
+
+export type ProposalItemMinAggregates = {
+  __typename?: 'ProposalItemMinAggregates';
+  /** Minimum of nonce across the matching connection */
+  nonce?: Maybe<Scalars['Int']>;
+};
+
+export type ProposalItemStddevPopulationAggregates = {
+  __typename?: 'ProposalItemStddevPopulationAggregates';
+  /** Population standard deviation of nonce across the matching connection */
+  nonce?: Maybe<Scalars['BigFloat']>;
+};
+
+export type ProposalItemStddevSampleAggregates = {
+  __typename?: 'ProposalItemStddevSampleAggregates';
+  /** Sample standard deviation of nonce across the matching connection */
+  nonce?: Maybe<Scalars['BigFloat']>;
+};
+
+export type ProposalItemSumAggregates = {
+  __typename?: 'ProposalItemSumAggregates';
+  /** Sum of nonce across the matching connection */
+  nonce: Scalars['BigInt'];
+};
+
+/** A connection to a list of `UnsignedProposalsQueue` values, with data from `UnsignedProposalsQueueItem`. */
+export type ProposalItemUnsignedProposalsQueuesByUnsignedProposalsQueueItemProposalIdAndQueueIdManyToManyConnection = {
+  __typename?: 'ProposalItemUnsignedProposalsQueuesByUnsignedProposalsQueueItemProposalIdAndQueueIdManyToManyConnection';
+  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  aggregates?: Maybe<UnsignedProposalsQueueAggregates>;
+  /** A list of edges which contains the `UnsignedProposalsQueue`, info from the `UnsignedProposalsQueueItem`, and the cursor to aid in pagination. */
+  edges: Array<ProposalItemUnsignedProposalsQueuesByUnsignedProposalsQueueItemProposalIdAndQueueIdManyToManyEdge>;
+  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  groupedAggregates?: Maybe<Array<UnsignedProposalsQueueAggregates>>;
+  /** A list of `UnsignedProposalsQueue` objects. */
+  nodes: Array<Maybe<UnsignedProposalsQueue>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** The count of *all* `UnsignedProposalsQueue` you could get from the connection. */
+  totalCount: Scalars['Int'];
+};
+
+
+/** A connection to a list of `UnsignedProposalsQueue` values, with data from `UnsignedProposalsQueueItem`. */
+export type ProposalItemUnsignedProposalsQueuesByUnsignedProposalsQueueItemProposalIdAndQueueIdManyToManyConnectionGroupedAggregatesArgs = {
+  groupBy: Array<UnsignedProposalsQueuesGroupBy>;
+  having?: InputMaybe<UnsignedProposalsQueuesHavingInput>;
+};
+
+/** A `UnsignedProposalsQueue` edge in the connection, with data from `UnsignedProposalsQueueItem`. */
+export type ProposalItemUnsignedProposalsQueuesByUnsignedProposalsQueueItemProposalIdAndQueueIdManyToManyEdge = {
+  __typename?: 'ProposalItemUnsignedProposalsQueuesByUnsignedProposalsQueueItemProposalIdAndQueueIdManyToManyEdge';
+  /** A cursor for use in pagination. */
+  cursor?: Maybe<Scalars['Cursor']>;
+  /** The `UnsignedProposalsQueue` at the end of the edge. */
+  node?: Maybe<UnsignedProposalsQueue>;
+  /** Reads and enables pagination through a set of `UnsignedProposalsQueueItem`. */
+  unsignedProposalsQueueItemsByQueueId: UnsignedProposalsQueueItemsConnection;
+};
+
+
+/** A `UnsignedProposalsQueue` edge in the connection, with data from `UnsignedProposalsQueueItem`. */
+export type ProposalItemUnsignedProposalsQueuesByUnsignedProposalsQueueItemProposalIdAndQueueIdManyToManyEdgeUnsignedProposalsQueueItemsByQueueIdArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  filter?: InputMaybe<UnsignedProposalsQueueItemFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<UnsignedProposalsQueueItemsOrderBy>>;
+};
+
+export type ProposalItemVariancePopulationAggregates = {
+  __typename?: 'ProposalItemVariancePopulationAggregates';
+  /** Population variance of nonce across the matching connection */
+  nonce?: Maybe<Scalars['BigFloat']>;
+};
+
+export type ProposalItemVarianceSampleAggregates = {
+  __typename?: 'ProposalItemVarianceSampleAggregates';
+  /** Sample variance of nonce across the matching connection */
+  nonce?: Maybe<Scalars['BigFloat']>;
+};
+
+/** A connection to a list of `ProposalItem` values. */
+export type ProposalItemsConnection = {
+  __typename?: 'ProposalItemsConnection';
+  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  aggregates?: Maybe<ProposalItemAggregates>;
+  /** A list of edges which contains the `ProposalItem` and cursor to aid in pagination. */
+  edges: Array<ProposalItemsEdge>;
+  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  groupedAggregates?: Maybe<Array<ProposalItemAggregates>>;
+  /** A list of `ProposalItem` objects. */
+  nodes: Array<Maybe<ProposalItem>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** The count of *all* `ProposalItem` you could get from the connection. */
+  totalCount: Scalars['Int'];
+};
+
+
+/** A connection to a list of `ProposalItem` values. */
+export type ProposalItemsConnectionGroupedAggregatesArgs = {
+  groupBy: Array<ProposalItemsGroupBy>;
+  having?: InputMaybe<ProposalItemsHavingInput>;
+};
+
+/** A `ProposalItem` edge in the connection. */
+export type ProposalItemsEdge = {
+  __typename?: 'ProposalItemsEdge';
+  /** A cursor for use in pagination. */
+  cursor?: Maybe<Scalars['Cursor']>;
+  /** The `ProposalItem` at the end of the edge. */
+  node?: Maybe<ProposalItem>;
+};
+
+/** Grouping methods for `ProposalItem` for usage during aggregation. */
+export enum ProposalItemsGroupBy {
+  BlockId = 'BLOCK_ID',
+  CurrentStatus = 'CURRENT_STATUS',
+  Data = 'DATA',
+  Nonce = 'NONCE',
+  Removed = 'REMOVED',
+  Signature = 'SIGNATURE',
+  Status = 'STATUS',
+  TimelineStatus = 'TIMELINE_STATUS',
+  Type = 'TYPE',
+  Votes = 'VOTES'
+}
+
+export type ProposalItemsHavingAverageInput = {
+  nonce?: InputMaybe<HavingIntFilter>;
+};
+
+export type ProposalItemsHavingDistinctCountInput = {
+  nonce?: InputMaybe<HavingIntFilter>;
+};
+
+/** Conditions for `ProposalItem` aggregates. */
+export type ProposalItemsHavingInput = {
+  AND?: InputMaybe<Array<ProposalItemsHavingInput>>;
+  OR?: InputMaybe<Array<ProposalItemsHavingInput>>;
+  average?: InputMaybe<ProposalItemsHavingAverageInput>;
+  distinctCount?: InputMaybe<ProposalItemsHavingDistinctCountInput>;
+  max?: InputMaybe<ProposalItemsHavingMaxInput>;
+  min?: InputMaybe<ProposalItemsHavingMinInput>;
+  stddevPopulation?: InputMaybe<ProposalItemsHavingStddevPopulationInput>;
+  stddevSample?: InputMaybe<ProposalItemsHavingStddevSampleInput>;
+  sum?: InputMaybe<ProposalItemsHavingSumInput>;
+  variancePopulation?: InputMaybe<ProposalItemsHavingVariancePopulationInput>;
+  varianceSample?: InputMaybe<ProposalItemsHavingVarianceSampleInput>;
+};
+
+export type ProposalItemsHavingMaxInput = {
+  nonce?: InputMaybe<HavingIntFilter>;
+};
+
+export type ProposalItemsHavingMinInput = {
+  nonce?: InputMaybe<HavingIntFilter>;
+};
+
+export type ProposalItemsHavingStddevPopulationInput = {
+  nonce?: InputMaybe<HavingIntFilter>;
+};
+
+export type ProposalItemsHavingStddevSampleInput = {
+  nonce?: InputMaybe<HavingIntFilter>;
+};
+
+export type ProposalItemsHavingSumInput = {
+  nonce?: InputMaybe<HavingIntFilter>;
+};
+
+export type ProposalItemsHavingVariancePopulationInput = {
+  nonce?: InputMaybe<HavingIntFilter>;
+};
+
+export type ProposalItemsHavingVarianceSampleInput = {
+  nonce?: InputMaybe<HavingIntFilter>;
+};
+
+/** Methods to use when ordering `ProposalItem`. */
+export enum ProposalItemsOrderBy {
+  BlockIdAsc = 'BLOCK_ID_ASC',
+  BlockIdDesc = 'BLOCK_ID_DESC',
+  CurrentStatusAsc = 'CURRENT_STATUS_ASC',
+  CurrentStatusDesc = 'CURRENT_STATUS_DESC',
+  DataAsc = 'DATA_ASC',
+  DataDesc = 'DATA_DESC',
+  IdAsc = 'ID_ASC',
+  IdDesc = 'ID_DESC',
+  Natural = 'NATURAL',
+  NonceAsc = 'NONCE_ASC',
+  NonceDesc = 'NONCE_DESC',
+  PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
+  PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
+  RemovedAsc = 'REMOVED_ASC',
+  RemovedDesc = 'REMOVED_DESC',
+  SignatureAsc = 'SIGNATURE_ASC',
+  SignatureDesc = 'SIGNATURE_DESC',
+  StatusAsc = 'STATUS_ASC',
+  StatusDesc = 'STATUS_DESC',
+  TimelineStatusAsc = 'TIMELINE_STATUS_ASC',
+  TimelineStatusDesc = 'TIMELINE_STATUS_DESC',
+  TypeAsc = 'TYPE_ASC',
+  TypeDesc = 'TYPE_DESC',
+  UnsignedProposalsQueueItemsByProposalIdAverageIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_AVERAGE_ID_ASC',
+  UnsignedProposalsQueueItemsByProposalIdAverageIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_AVERAGE_ID_DESC',
+  UnsignedProposalsQueueItemsByProposalIdAverageProposalIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_AVERAGE_PROPOSAL_ID_ASC',
+  UnsignedProposalsQueueItemsByProposalIdAverageProposalIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_AVERAGE_PROPOSAL_ID_DESC',
+  UnsignedProposalsQueueItemsByProposalIdAverageQueueIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_AVERAGE_QUEUE_ID_ASC',
+  UnsignedProposalsQueueItemsByProposalIdAverageQueueIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_AVERAGE_QUEUE_ID_DESC',
+  UnsignedProposalsQueueItemsByProposalIdCountAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_COUNT_ASC',
+  UnsignedProposalsQueueItemsByProposalIdCountDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_COUNT_DESC',
+  UnsignedProposalsQueueItemsByProposalIdDistinctCountIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_DISTINCT_COUNT_ID_ASC',
+  UnsignedProposalsQueueItemsByProposalIdDistinctCountIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_DISTINCT_COUNT_ID_DESC',
+  UnsignedProposalsQueueItemsByProposalIdDistinctCountProposalIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_DISTINCT_COUNT_PROPOSAL_ID_ASC',
+  UnsignedProposalsQueueItemsByProposalIdDistinctCountProposalIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_DISTINCT_COUNT_PROPOSAL_ID_DESC',
+  UnsignedProposalsQueueItemsByProposalIdDistinctCountQueueIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_DISTINCT_COUNT_QUEUE_ID_ASC',
+  UnsignedProposalsQueueItemsByProposalIdDistinctCountQueueIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_DISTINCT_COUNT_QUEUE_ID_DESC',
+  UnsignedProposalsQueueItemsByProposalIdMaxIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_MAX_ID_ASC',
+  UnsignedProposalsQueueItemsByProposalIdMaxIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_MAX_ID_DESC',
+  UnsignedProposalsQueueItemsByProposalIdMaxProposalIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_MAX_PROPOSAL_ID_ASC',
+  UnsignedProposalsQueueItemsByProposalIdMaxProposalIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_MAX_PROPOSAL_ID_DESC',
+  UnsignedProposalsQueueItemsByProposalIdMaxQueueIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_MAX_QUEUE_ID_ASC',
+  UnsignedProposalsQueueItemsByProposalIdMaxQueueIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_MAX_QUEUE_ID_DESC',
+  UnsignedProposalsQueueItemsByProposalIdMinIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_MIN_ID_ASC',
+  UnsignedProposalsQueueItemsByProposalIdMinIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_MIN_ID_DESC',
+  UnsignedProposalsQueueItemsByProposalIdMinProposalIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_MIN_PROPOSAL_ID_ASC',
+  UnsignedProposalsQueueItemsByProposalIdMinProposalIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_MIN_PROPOSAL_ID_DESC',
+  UnsignedProposalsQueueItemsByProposalIdMinQueueIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_MIN_QUEUE_ID_ASC',
+  UnsignedProposalsQueueItemsByProposalIdMinQueueIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_MIN_QUEUE_ID_DESC',
+  UnsignedProposalsQueueItemsByProposalIdStddevPopulationIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_STDDEV_POPULATION_ID_ASC',
+  UnsignedProposalsQueueItemsByProposalIdStddevPopulationIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_STDDEV_POPULATION_ID_DESC',
+  UnsignedProposalsQueueItemsByProposalIdStddevPopulationProposalIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_STDDEV_POPULATION_PROPOSAL_ID_ASC',
+  UnsignedProposalsQueueItemsByProposalIdStddevPopulationProposalIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_STDDEV_POPULATION_PROPOSAL_ID_DESC',
+  UnsignedProposalsQueueItemsByProposalIdStddevPopulationQueueIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_STDDEV_POPULATION_QUEUE_ID_ASC',
+  UnsignedProposalsQueueItemsByProposalIdStddevPopulationQueueIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_STDDEV_POPULATION_QUEUE_ID_DESC',
+  UnsignedProposalsQueueItemsByProposalIdStddevSampleIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_STDDEV_SAMPLE_ID_ASC',
+  UnsignedProposalsQueueItemsByProposalIdStddevSampleIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_STDDEV_SAMPLE_ID_DESC',
+  UnsignedProposalsQueueItemsByProposalIdStddevSampleProposalIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_STDDEV_SAMPLE_PROPOSAL_ID_ASC',
+  UnsignedProposalsQueueItemsByProposalIdStddevSampleProposalIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_STDDEV_SAMPLE_PROPOSAL_ID_DESC',
+  UnsignedProposalsQueueItemsByProposalIdStddevSampleQueueIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_STDDEV_SAMPLE_QUEUE_ID_ASC',
+  UnsignedProposalsQueueItemsByProposalIdStddevSampleQueueIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_STDDEV_SAMPLE_QUEUE_ID_DESC',
+  UnsignedProposalsQueueItemsByProposalIdSumIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_SUM_ID_ASC',
+  UnsignedProposalsQueueItemsByProposalIdSumIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_SUM_ID_DESC',
+  UnsignedProposalsQueueItemsByProposalIdSumProposalIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_SUM_PROPOSAL_ID_ASC',
+  UnsignedProposalsQueueItemsByProposalIdSumProposalIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_SUM_PROPOSAL_ID_DESC',
+  UnsignedProposalsQueueItemsByProposalIdSumQueueIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_SUM_QUEUE_ID_ASC',
+  UnsignedProposalsQueueItemsByProposalIdSumQueueIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_SUM_QUEUE_ID_DESC',
+  UnsignedProposalsQueueItemsByProposalIdVariancePopulationIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_VARIANCE_POPULATION_ID_ASC',
+  UnsignedProposalsQueueItemsByProposalIdVariancePopulationIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_VARIANCE_POPULATION_ID_DESC',
+  UnsignedProposalsQueueItemsByProposalIdVariancePopulationProposalIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_VARIANCE_POPULATION_PROPOSAL_ID_ASC',
+  UnsignedProposalsQueueItemsByProposalIdVariancePopulationProposalIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_VARIANCE_POPULATION_PROPOSAL_ID_DESC',
+  UnsignedProposalsQueueItemsByProposalIdVariancePopulationQueueIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_VARIANCE_POPULATION_QUEUE_ID_ASC',
+  UnsignedProposalsQueueItemsByProposalIdVariancePopulationQueueIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_VARIANCE_POPULATION_QUEUE_ID_DESC',
+  UnsignedProposalsQueueItemsByProposalIdVarianceSampleIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_VARIANCE_SAMPLE_ID_ASC',
+  UnsignedProposalsQueueItemsByProposalIdVarianceSampleIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_VARIANCE_SAMPLE_ID_DESC',
+  UnsignedProposalsQueueItemsByProposalIdVarianceSampleProposalIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_VARIANCE_SAMPLE_PROPOSAL_ID_ASC',
+  UnsignedProposalsQueueItemsByProposalIdVarianceSampleProposalIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_VARIANCE_SAMPLE_PROPOSAL_ID_DESC',
+  UnsignedProposalsQueueItemsByProposalIdVarianceSampleQueueIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_VARIANCE_SAMPLE_QUEUE_ID_ASC',
+  UnsignedProposalsQueueItemsByProposalIdVarianceSampleQueueIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_VARIANCE_SAMPLE_QUEUE_ID_DESC',
+  VotesAsc = 'VOTES_ASC',
+  VotesDesc = 'VOTES_DESC'
+}
+
+export enum ProposalType {
+  AnchorCreateProposal = 'AnchorCreateProposal',
+  AnchorUpdateProposal = 'AnchorUpdateProposal',
+  EvmProposal = 'EvmProposal',
+  FeeRecipientUpdateProposal = 'FeeRecipientUpdateProposal',
+  MaxDepositLimitUpdateProposal = 'MaxDepositLimitUpdateProposal',
+  MinWithdrawalLimitUpdateProposal = 'MinWithdrawalLimitUpdateProposal',
+  ProposerSetUpdateProposal = 'ProposerSetUpdateProposal',
+  RefreshVote = 'RefreshVote',
+  RescueTokensProposal = 'RescueTokensProposal',
+  ResourceIdUpdateProposal = 'ResourceIdUpdateProposal',
+  SetTreasuryHandlerProposal = 'SetTreasuryHandlerProposal',
+  SetVerifierProposal = 'SetVerifierProposal',
+  TokenAddProposal = 'TokenAddProposal',
+  TokenRemoveProposal = 'TokenRemoveProposal',
+  Unknown = 'Unknown',
+  WrappingFeeUpdateProposal = 'WrappingFeeUpdateProposal'
+}
+
+/** A filter to be used against ProposalType fields. All fields are combined with a logical ‘and.’ */
+export type ProposalTypeFilter = {
+  /** Not equal to the specified value, treating null like an ordinary value. */
+  distinctFrom?: InputMaybe<ProposalType>;
+  /** Equal to the specified value. */
+  equalTo?: InputMaybe<ProposalType>;
+  /** Greater than the specified value. */
+  greaterThan?: InputMaybe<ProposalType>;
+  /** Greater than or equal to the specified value. */
+  greaterThanOrEqualTo?: InputMaybe<ProposalType>;
+  /** Included in the specified list. */
+  in?: InputMaybe<Array<ProposalType>>;
+  /** Is null (if `true` is specified) or is not null (if `false` is specified). */
+  isNull?: InputMaybe<Scalars['Boolean']>;
+  /** Less than the specified value. */
+  lessThan?: InputMaybe<ProposalType>;
+  /** Less than or equal to the specified value. */
+  lessThanOrEqualTo?: InputMaybe<ProposalType>;
+  /** Equal to the specified value, treating null like an ordinary value. */
+  notDistinctFrom?: InputMaybe<ProposalType>;
+  /** Not equal to the specified value. */
+  notEqualTo?: InputMaybe<ProposalType>;
+  /** Not included in the specified list. */
+  notIn?: InputMaybe<Array<ProposalType>>;
+};
+
+export type Proposer = Node & {
+  __typename?: 'Proposer';
+  /** Reads a single `Block` that is related to this `Proposer`. */
+  block?: Maybe<Block>;
+  blockId: Scalars['String'];
+  count: Scalars['Int'];
+  id: Scalars['String'];
+  /** A globally unique identifier. Can be used in various places throughout the system to identify this single value. */
+  nodeId: Scalars['ID'];
+  proposers: Scalars['JSON'];
+};
+
+export type ProposerAggregates = {
+  __typename?: 'ProposerAggregates';
+  /** Mean average aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  average?: Maybe<ProposerAverageAggregates>;
+  /** Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  distinctCount?: Maybe<ProposerDistinctCountAggregates>;
+  keys?: Maybe<Array<Scalars['String']>>;
+  /** Maximum aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  max?: Maybe<ProposerMaxAggregates>;
+  /** Minimum aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  min?: Maybe<ProposerMinAggregates>;
+  /** Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  stddevPopulation?: Maybe<ProposerStddevPopulationAggregates>;
+  /** Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  stddevSample?: Maybe<ProposerStddevSampleAggregates>;
+  /** Sum aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  sum?: Maybe<ProposerSumAggregates>;
+  /** Population variance aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  variancePopulation?: Maybe<ProposerVariancePopulationAggregates>;
+  /** Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  varianceSample?: Maybe<ProposerVarianceSampleAggregates>;
+};
+
+export type ProposerAverageAggregates = {
+  __typename?: 'ProposerAverageAggregates';
+  /** Mean average of count across the matching connection */
+  count?: Maybe<Scalars['BigFloat']>;
+};
+
+export type ProposerDistinctCountAggregates = {
+  __typename?: 'ProposerDistinctCountAggregates';
+  /** Distinct count of blockId across the matching connection */
+  blockId?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of count across the matching connection */
+  count?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of id across the matching connection */
+  id?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of proposers across the matching connection */
+  proposers?: Maybe<Scalars['BigInt']>;
+};
+
+/** A filter to be used against `Proposer` object types. All fields are combined with a logical ‘and.’ */
+export type ProposerFilter = {
+  /** Checks for all expressions in this list. */
+  and?: InputMaybe<Array<ProposerFilter>>;
+  /** Filter by the object’s `blockId` field. */
+  blockId?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `count` field. */
+  count?: InputMaybe<IntFilter>;
+  /** Filter by the object’s `id` field. */
+  id?: InputMaybe<StringFilter>;
+  /** Negates the expression. */
+  not?: InputMaybe<ProposerFilter>;
+  /** Checks for any expressions in this list. */
+  or?: InputMaybe<Array<ProposerFilter>>;
+  /** Filter by the object’s `proposers` field. */
+  proposers?: InputMaybe<JsonFilter>;
+};
+
+export type ProposerMaxAggregates = {
+  __typename?: 'ProposerMaxAggregates';
+  /** Maximum of count across the matching connection */
+  count?: Maybe<Scalars['Int']>;
+};
+
+export type ProposerMinAggregates = {
+  __typename?: 'ProposerMinAggregates';
+  /** Minimum of count across the matching connection */
+  count?: Maybe<Scalars['Int']>;
+};
+
+export type ProposerStddevPopulationAggregates = {
+  __typename?: 'ProposerStddevPopulationAggregates';
+  /** Population standard deviation of count across the matching connection */
+  count?: Maybe<Scalars['BigFloat']>;
+};
+
+export type ProposerStddevSampleAggregates = {
+  __typename?: 'ProposerStddevSampleAggregates';
+  /** Sample standard deviation of count across the matching connection */
+  count?: Maybe<Scalars['BigFloat']>;
+};
+
+export type ProposerSumAggregates = {
+  __typename?: 'ProposerSumAggregates';
+  /** Sum of count across the matching connection */
+  count: Scalars['BigInt'];
+};
+
+export type ProposerThreshold = Node & {
+  __typename?: 'ProposerThreshold';
+  /** Reads a single `Block` that is related to this `ProposerThreshold`. */
+  block?: Maybe<Block>;
+  blockId: Scalars['String'];
+  id: Scalars['String'];
+  /** A globally unique identifier. Can be used in various places throughout the system to identify this single value. */
+  nodeId: Scalars['ID'];
+  value?: Maybe<Scalars['Int']>;
+};
+
+export type ProposerThresholdAggregates = {
+  __typename?: 'ProposerThresholdAggregates';
+  /** Mean average aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  average?: Maybe<ProposerThresholdAverageAggregates>;
+  /** Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  distinctCount?: Maybe<ProposerThresholdDistinctCountAggregates>;
+  keys?: Maybe<Array<Scalars['String']>>;
+  /** Maximum aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  max?: Maybe<ProposerThresholdMaxAggregates>;
+  /** Minimum aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  min?: Maybe<ProposerThresholdMinAggregates>;
+  /** Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  stddevPopulation?: Maybe<ProposerThresholdStddevPopulationAggregates>;
+  /** Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  stddevSample?: Maybe<ProposerThresholdStddevSampleAggregates>;
+  /** Sum aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  sum?: Maybe<ProposerThresholdSumAggregates>;
+  /** Population variance aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  variancePopulation?: Maybe<ProposerThresholdVariancePopulationAggregates>;
+  /** Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  varianceSample?: Maybe<ProposerThresholdVarianceSampleAggregates>;
+};
+
+export type ProposerThresholdAverageAggregates = {
+  __typename?: 'ProposerThresholdAverageAggregates';
+  /** Mean average of value across the matching connection */
+  value?: Maybe<Scalars['BigFloat']>;
+};
+
+export type ProposerThresholdDistinctCountAggregates = {
+  __typename?: 'ProposerThresholdDistinctCountAggregates';
+  /** Distinct count of blockId across the matching connection */
+  blockId?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of id across the matching connection */
+  id?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of value across the matching connection */
+  value?: Maybe<Scalars['BigInt']>;
+};
+
+/** A filter to be used against `ProposerThreshold` object types. All fields are combined with a logical ‘and.’ */
+export type ProposerThresholdFilter = {
+  /** Checks for all expressions in this list. */
+  and?: InputMaybe<Array<ProposerThresholdFilter>>;
+  /** Filter by the object’s `blockId` field. */
+  blockId?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `id` field. */
+  id?: InputMaybe<StringFilter>;
+  /** Negates the expression. */
+  not?: InputMaybe<ProposerThresholdFilter>;
+  /** Checks for any expressions in this list. */
+  or?: InputMaybe<Array<ProposerThresholdFilter>>;
+  /** Filter by the object’s `value` field. */
+  value?: InputMaybe<IntFilter>;
+};
+
+export type ProposerThresholdMaxAggregates = {
+  __typename?: 'ProposerThresholdMaxAggregates';
+  /** Maximum of value across the matching connection */
+  value?: Maybe<Scalars['Int']>;
+};
+
+export type ProposerThresholdMinAggregates = {
+  __typename?: 'ProposerThresholdMinAggregates';
+  /** Minimum of value across the matching connection */
+  value?: Maybe<Scalars['Int']>;
+};
+
+export type ProposerThresholdStddevPopulationAggregates = {
+  __typename?: 'ProposerThresholdStddevPopulationAggregates';
+  /** Population standard deviation of value across the matching connection */
+  value?: Maybe<Scalars['BigFloat']>;
+};
+
+export type ProposerThresholdStddevSampleAggregates = {
+  __typename?: 'ProposerThresholdStddevSampleAggregates';
+  /** Sample standard deviation of value across the matching connection */
+  value?: Maybe<Scalars['BigFloat']>;
+};
+
+export type ProposerThresholdSumAggregates = {
+  __typename?: 'ProposerThresholdSumAggregates';
+  /** Sum of value across the matching connection */
+  value: Scalars['BigInt'];
+};
+
+export type ProposerThresholdVariancePopulationAggregates = {
+  __typename?: 'ProposerThresholdVariancePopulationAggregates';
+  /** Population variance of value across the matching connection */
+  value?: Maybe<Scalars['BigFloat']>;
+};
+
+export type ProposerThresholdVarianceSampleAggregates = {
+  __typename?: 'ProposerThresholdVarianceSampleAggregates';
+  /** Sample variance of value across the matching connection */
+  value?: Maybe<Scalars['BigFloat']>;
+};
+
+/** A connection to a list of `ProposerThreshold` values. */
+export type ProposerThresholdsConnection = {
+  __typename?: 'ProposerThresholdsConnection';
+  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  aggregates?: Maybe<ProposerThresholdAggregates>;
+  /** A list of edges which contains the `ProposerThreshold` and cursor to aid in pagination. */
+  edges: Array<ProposerThresholdsEdge>;
+  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  groupedAggregates?: Maybe<Array<ProposerThresholdAggregates>>;
+  /** A list of `ProposerThreshold` objects. */
+  nodes: Array<Maybe<ProposerThreshold>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** The count of *all* `ProposerThreshold` you could get from the connection. */
+  totalCount: Scalars['Int'];
+};
+
+
+/** A connection to a list of `ProposerThreshold` values. */
+export type ProposerThresholdsConnectionGroupedAggregatesArgs = {
+  groupBy: Array<ProposerThresholdsGroupBy>;
+  having?: InputMaybe<ProposerThresholdsHavingInput>;
+};
+
+/** A `ProposerThreshold` edge in the connection. */
+export type ProposerThresholdsEdge = {
+  __typename?: 'ProposerThresholdsEdge';
+  /** A cursor for use in pagination. */
+  cursor?: Maybe<Scalars['Cursor']>;
+  /** The `ProposerThreshold` at the end of the edge. */
+  node?: Maybe<ProposerThreshold>;
+};
+
+/** Grouping methods for `ProposerThreshold` for usage during aggregation. */
+export enum ProposerThresholdsGroupBy {
+  BlockId = 'BLOCK_ID',
+  Value = 'VALUE'
+}
+
+export type ProposerThresholdsHavingAverageInput = {
+  value?: InputMaybe<HavingIntFilter>;
+};
+
+export type ProposerThresholdsHavingDistinctCountInput = {
+  value?: InputMaybe<HavingIntFilter>;
+};
+
+/** Conditions for `ProposerThreshold` aggregates. */
+export type ProposerThresholdsHavingInput = {
+  AND?: InputMaybe<Array<ProposerThresholdsHavingInput>>;
+  OR?: InputMaybe<Array<ProposerThresholdsHavingInput>>;
+  average?: InputMaybe<ProposerThresholdsHavingAverageInput>;
+  distinctCount?: InputMaybe<ProposerThresholdsHavingDistinctCountInput>;
+  max?: InputMaybe<ProposerThresholdsHavingMaxInput>;
+  min?: InputMaybe<ProposerThresholdsHavingMinInput>;
+  stddevPopulation?: InputMaybe<ProposerThresholdsHavingStddevPopulationInput>;
+  stddevSample?: InputMaybe<ProposerThresholdsHavingStddevSampleInput>;
+  sum?: InputMaybe<ProposerThresholdsHavingSumInput>;
+  variancePopulation?: InputMaybe<ProposerThresholdsHavingVariancePopulationInput>;
+  varianceSample?: InputMaybe<ProposerThresholdsHavingVarianceSampleInput>;
+};
+
+export type ProposerThresholdsHavingMaxInput = {
+  value?: InputMaybe<HavingIntFilter>;
+};
+
+export type ProposerThresholdsHavingMinInput = {
+  value?: InputMaybe<HavingIntFilter>;
+};
+
+export type ProposerThresholdsHavingStddevPopulationInput = {
+  value?: InputMaybe<HavingIntFilter>;
+};
+
+export type ProposerThresholdsHavingStddevSampleInput = {
+  value?: InputMaybe<HavingIntFilter>;
+};
+
+export type ProposerThresholdsHavingSumInput = {
+  value?: InputMaybe<HavingIntFilter>;
+};
+
+export type ProposerThresholdsHavingVariancePopulationInput = {
+  value?: InputMaybe<HavingIntFilter>;
+};
+
+export type ProposerThresholdsHavingVarianceSampleInput = {
+  value?: InputMaybe<HavingIntFilter>;
+};
+
+/** Methods to use when ordering `ProposerThreshold`. */
+export enum ProposerThresholdsOrderBy {
+  BlockIdAsc = 'BLOCK_ID_ASC',
+  BlockIdDesc = 'BLOCK_ID_DESC',
+  IdAsc = 'ID_ASC',
+  IdDesc = 'ID_DESC',
+  Natural = 'NATURAL',
+  PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
+  PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
+  ValueAsc = 'VALUE_ASC',
+  ValueDesc = 'VALUE_DESC'
+}
+
+export type ProposerVariancePopulationAggregates = {
+  __typename?: 'ProposerVariancePopulationAggregates';
+  /** Population variance of count across the matching connection */
+  count?: Maybe<Scalars['BigFloat']>;
+};
+
+export type ProposerVarianceSampleAggregates = {
+  __typename?: 'ProposerVarianceSampleAggregates';
+  /** Sample variance of count across the matching connection */
+  count?: Maybe<Scalars['BigFloat']>;
+};
+
+/** A connection to a list of `Proposer` values. */
+export type ProposersConnection = {
+  __typename?: 'ProposersConnection';
+  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  aggregates?: Maybe<ProposerAggregates>;
+  /** A list of edges which contains the `Proposer` and cursor to aid in pagination. */
+  edges: Array<ProposersEdge>;
+  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  groupedAggregates?: Maybe<Array<ProposerAggregates>>;
+  /** A list of `Proposer` objects. */
+  nodes: Array<Maybe<Proposer>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** The count of *all* `Proposer` you could get from the connection. */
+  totalCount: Scalars['Int'];
+};
+
+
+/** A connection to a list of `Proposer` values. */
+export type ProposersConnectionGroupedAggregatesArgs = {
+  groupBy: Array<ProposersGroupBy>;
+  having?: InputMaybe<ProposersHavingInput>;
+};
+
+/** A `Proposer` edge in the connection. */
+export type ProposersEdge = {
+  __typename?: 'ProposersEdge';
+  /** A cursor for use in pagination. */
+  cursor?: Maybe<Scalars['Cursor']>;
+  /** The `Proposer` at the end of the edge. */
+  node?: Maybe<Proposer>;
+};
+
+/** Grouping methods for `Proposer` for usage during aggregation. */
+export enum ProposersGroupBy {
+  BlockId = 'BLOCK_ID',
+  Count = 'COUNT',
+  Proposers = 'PROPOSERS'
+}
+
+export type ProposersHavingAverageInput = {
+  count?: InputMaybe<HavingIntFilter>;
+};
+
+export type ProposersHavingDistinctCountInput = {
+  count?: InputMaybe<HavingIntFilter>;
+};
+
+/** Conditions for `Proposer` aggregates. */
+export type ProposersHavingInput = {
+  AND?: InputMaybe<Array<ProposersHavingInput>>;
+  OR?: InputMaybe<Array<ProposersHavingInput>>;
+  average?: InputMaybe<ProposersHavingAverageInput>;
+  distinctCount?: InputMaybe<ProposersHavingDistinctCountInput>;
+  max?: InputMaybe<ProposersHavingMaxInput>;
+  min?: InputMaybe<ProposersHavingMinInput>;
+  stddevPopulation?: InputMaybe<ProposersHavingStddevPopulationInput>;
+  stddevSample?: InputMaybe<ProposersHavingStddevSampleInput>;
+  sum?: InputMaybe<ProposersHavingSumInput>;
+  variancePopulation?: InputMaybe<ProposersHavingVariancePopulationInput>;
+  varianceSample?: InputMaybe<ProposersHavingVarianceSampleInput>;
+};
+
+export type ProposersHavingMaxInput = {
+  count?: InputMaybe<HavingIntFilter>;
+};
+
+export type ProposersHavingMinInput = {
+  count?: InputMaybe<HavingIntFilter>;
+};
+
+export type ProposersHavingStddevPopulationInput = {
+  count?: InputMaybe<HavingIntFilter>;
+};
+
+export type ProposersHavingStddevSampleInput = {
+  count?: InputMaybe<HavingIntFilter>;
+};
+
+export type ProposersHavingSumInput = {
+  count?: InputMaybe<HavingIntFilter>;
+};
+
+export type ProposersHavingVariancePopulationInput = {
+  count?: InputMaybe<HavingIntFilter>;
+};
+
+export type ProposersHavingVarianceSampleInput = {
+  count?: InputMaybe<HavingIntFilter>;
+};
+
+/** Methods to use when ordering `Proposer`. */
+export enum ProposersOrderBy {
+  BlockIdAsc = 'BLOCK_ID_ASC',
+  BlockIdDesc = 'BLOCK_ID_DESC',
+  CountAsc = 'COUNT_ASC',
+  CountDesc = 'COUNT_DESC',
+  IdAsc = 'ID_ASC',
+  IdDesc = 'ID_DESC',
+  Natural = 'NATURAL',
+  PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
+  PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
+  ProposersAsc = 'PROPOSERS_ASC',
+  ProposersDesc = 'PROPOSERS_DESC'
+}
+
+export type PublicKey = Node & {
+  __typename?: 'PublicKey';
+  /** Reads a single `Block` that is related to this `PublicKey`. */
+  block?: Maybe<Block>;
+  blockId: Scalars['String'];
+  /** Reads and enables pagination through a set of `Block`. */
+  blocksBySessionPublicKeyIdAndBlockId: PublicKeyBlocksBySessionPublicKeyIdAndBlockIdManyToManyConnection;
+  compressed?: Maybe<Scalars['String']>;
+  history: Scalars['JSON'];
+  id: Scalars['String'];
+  /** A globally unique identifier. Can be used in various places throughout the system to identify this single value. */
+  nodeId: Scalars['ID'];
+  /** Reads and enables pagination through a set of `Session`. */
+  sessions: SessionsConnection;
+  uncompressed?: Maybe<Scalars['String']>;
+};
+
+
+export type PublicKeyBlocksBySessionPublicKeyIdAndBlockIdArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  filter?: InputMaybe<BlockFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<BlocksOrderBy>>;
+};
+
+
+export type PublicKeySessionsArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  filter?: InputMaybe<SessionFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<SessionsOrderBy>>;
+};
+
+export type PublicKeyAggregates = {
+  __typename?: 'PublicKeyAggregates';
+  /** Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  distinctCount?: Maybe<PublicKeyDistinctCountAggregates>;
+  keys?: Maybe<Array<Scalars['String']>>;
+};
+
+/** A connection to a list of `Block` values, with data from `Session`. */
+export type PublicKeyBlocksBySessionPublicKeyIdAndBlockIdManyToManyConnection = {
+  __typename?: 'PublicKeyBlocksBySessionPublicKeyIdAndBlockIdManyToManyConnection';
+  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  aggregates?: Maybe<BlockAggregates>;
+  /** A list of edges which contains the `Block`, info from the `Session`, and the cursor to aid in pagination. */
+  edges: Array<PublicKeyBlocksBySessionPublicKeyIdAndBlockIdManyToManyEdge>;
+  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  groupedAggregates?: Maybe<Array<BlockAggregates>>;
+  /** A list of `Block` objects. */
+  nodes: Array<Maybe<Block>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** The count of *all* `Block` you could get from the connection. */
+  totalCount: Scalars['Int'];
+};
+
+
+/** A connection to a list of `Block` values, with data from `Session`. */
+export type PublicKeyBlocksBySessionPublicKeyIdAndBlockIdManyToManyConnectionGroupedAggregatesArgs = {
+  groupBy: Array<BlocksGroupBy>;
+  having?: InputMaybe<BlocksHavingInput>;
+};
+
+/** A `Block` edge in the connection, with data from `Session`. */
+export type PublicKeyBlocksBySessionPublicKeyIdAndBlockIdManyToManyEdge = {
+  __typename?: 'PublicKeyBlocksBySessionPublicKeyIdAndBlockIdManyToManyEdge';
+  /** A cursor for use in pagination. */
+  cursor?: Maybe<Scalars['Cursor']>;
+  /** The `Block` at the end of the edge. */
+  node?: Maybe<Block>;
+  /** Reads and enables pagination through a set of `Session`. */
+  sessions: SessionsConnection;
+};
+
+
+/** A `Block` edge in the connection, with data from `Session`. */
+export type PublicKeyBlocksBySessionPublicKeyIdAndBlockIdManyToManyEdgeSessionsArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  filter?: InputMaybe<SessionFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<SessionsOrderBy>>;
+};
+
+export type PublicKeyDistinctCountAggregates = {
+  __typename?: 'PublicKeyDistinctCountAggregates';
+  /** Distinct count of blockId across the matching connection */
+  blockId?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of compressed across the matching connection */
+  compressed?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of history across the matching connection */
+  history?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of id across the matching connection */
+  id?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of uncompressed across the matching connection */
+  uncompressed?: Maybe<Scalars['BigInt']>;
+};
+
+/** A filter to be used against `PublicKey` object types. All fields are combined with a logical ‘and.’ */
+export type PublicKeyFilter = {
+  /** Checks for all expressions in this list. */
+  and?: InputMaybe<Array<PublicKeyFilter>>;
+  /** Filter by the object’s `blockId` field. */
+  blockId?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `compressed` field. */
+  compressed?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `history` field. */
+  history?: InputMaybe<JsonFilter>;
+  /** Filter by the object’s `id` field. */
+  id?: InputMaybe<StringFilter>;
+  /** Negates the expression. */
+  not?: InputMaybe<PublicKeyFilter>;
+  /** Checks for any expressions in this list. */
+  or?: InputMaybe<Array<PublicKeyFilter>>;
+  /** Filter by the object’s `uncompressed` field. */
+  uncompressed?: InputMaybe<StringFilter>;
+};
+
+/** A connection to a list of `PublicKey` values. */
+export type PublicKeysConnection = {
+  __typename?: 'PublicKeysConnection';
+  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  aggregates?: Maybe<PublicKeyAggregates>;
+  /** A list of edges which contains the `PublicKey` and cursor to aid in pagination. */
+  edges: Array<PublicKeysEdge>;
+  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  groupedAggregates?: Maybe<Array<PublicKeyAggregates>>;
+  /** A list of `PublicKey` objects. */
+  nodes: Array<Maybe<PublicKey>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** The count of *all* `PublicKey` you could get from the connection. */
+  totalCount: Scalars['Int'];
+};
+
+
+/** A connection to a list of `PublicKey` values. */
+export type PublicKeysConnectionGroupedAggregatesArgs = {
+  groupBy: Array<PublicKeysGroupBy>;
+  having?: InputMaybe<PublicKeysHavingInput>;
+};
+
+/** A `PublicKey` edge in the connection. */
+export type PublicKeysEdge = {
+  __typename?: 'PublicKeysEdge';
+  /** A cursor for use in pagination. */
+  cursor?: Maybe<Scalars['Cursor']>;
+  /** The `PublicKey` at the end of the edge. */
+  node?: Maybe<PublicKey>;
+};
+
+/** Grouping methods for `PublicKey` for usage during aggregation. */
+export enum PublicKeysGroupBy {
+  BlockId = 'BLOCK_ID',
+  Compressed = 'COMPRESSED',
+  History = 'HISTORY'
+}
+
+/** Conditions for `PublicKey` aggregates. */
+export type PublicKeysHavingInput = {
+  AND?: InputMaybe<Array<PublicKeysHavingInput>>;
+  OR?: InputMaybe<Array<PublicKeysHavingInput>>;
+};
+
+/** Methods to use when ordering `PublicKey`. */
+export enum PublicKeysOrderBy {
+  BlockIdAsc = 'BLOCK_ID_ASC',
+  BlockIdDesc = 'BLOCK_ID_DESC',
+  CompressedAsc = 'COMPRESSED_ASC',
+  CompressedDesc = 'COMPRESSED_DESC',
+  HistoryAsc = 'HISTORY_ASC',
+  HistoryDesc = 'HISTORY_DESC',
+  IdAsc = 'ID_ASC',
+  IdDesc = 'ID_DESC',
+  Natural = 'NATURAL',
+  PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
+  PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
+  SessionsAverageAuthoritiesAsc = 'SESSIONS_AVERAGE_AUTHORITIES_ASC',
+  SessionsAverageAuthoritiesDesc = 'SESSIONS_AVERAGE_AUTHORITIES_DESC',
+  SessionsAverageBestAuthoritiesAsc = 'SESSIONS_AVERAGE_BEST_AUTHORITIES_ASC',
+  SessionsAverageBestAuthoritiesDesc = 'SESSIONS_AVERAGE_BEST_AUTHORITIES_DESC',
+  SessionsAverageBlockIdAsc = 'SESSIONS_AVERAGE_BLOCK_ID_ASC',
+  SessionsAverageBlockIdDesc = 'SESSIONS_AVERAGE_BLOCK_ID_DESC',
+  SessionsAverageBlockNumberAsc = 'SESSIONS_AVERAGE_BLOCK_NUMBER_ASC',
+  SessionsAverageBlockNumberDesc = 'SESSIONS_AVERAGE_BLOCK_NUMBER_DESC',
+  SessionsAverageIdAsc = 'SESSIONS_AVERAGE_ID_ASC',
+  SessionsAverageIdDesc = 'SESSIONS_AVERAGE_ID_DESC',
+  SessionsAverageKeyGenThresholdAsc = 'SESSIONS_AVERAGE_KEY_GEN_THRESHOLD_ASC',
+  SessionsAverageKeyGenThresholdDesc = 'SESSIONS_AVERAGE_KEY_GEN_THRESHOLD_DESC',
+  SessionsAverageNextAuthoritiesAsc = 'SESSIONS_AVERAGE_NEXT_AUTHORITIES_ASC',
+  SessionsAverageNextAuthoritiesDesc = 'SESSIONS_AVERAGE_NEXT_AUTHORITIES_DESC',
+  SessionsAverageNextBestAuthoritiesAsc = 'SESSIONS_AVERAGE_NEXT_BEST_AUTHORITIES_ASC',
+  SessionsAverageNextBestAuthoritiesDesc = 'SESSIONS_AVERAGE_NEXT_BEST_AUTHORITIES_DESC',
+  SessionsAverageProposersAsc = 'SESSIONS_AVERAGE_PROPOSERS_ASC',
+  SessionsAverageProposersCountAsc = 'SESSIONS_AVERAGE_PROPOSERS_COUNT_ASC',
+  SessionsAverageProposersCountDesc = 'SESSIONS_AVERAGE_PROPOSERS_COUNT_DESC',
+  SessionsAverageProposersDesc = 'SESSIONS_AVERAGE_PROPOSERS_DESC',
+  SessionsAverageProposerThresholdAsc = 'SESSIONS_AVERAGE_PROPOSER_THRESHOLD_ASC',
+  SessionsAverageProposerThresholdDesc = 'SESSIONS_AVERAGE_PROPOSER_THRESHOLD_DESC',
+  SessionsAveragePublicKeyIdAsc = 'SESSIONS_AVERAGE_PUBLIC_KEY_ID_ASC',
+  SessionsAveragePublicKeyIdDesc = 'SESSIONS_AVERAGE_PUBLIC_KEY_ID_DESC',
+  SessionsAverageSignatureThresholdAsc = 'SESSIONS_AVERAGE_SIGNATURE_THRESHOLD_ASC',
+  SessionsAverageSignatureThresholdDesc = 'SESSIONS_AVERAGE_SIGNATURE_THRESHOLD_DESC',
+  SessionsCountAsc = 'SESSIONS_COUNT_ASC',
+  SessionsCountDesc = 'SESSIONS_COUNT_DESC',
+  SessionsDistinctCountAuthoritiesAsc = 'SESSIONS_DISTINCT_COUNT_AUTHORITIES_ASC',
+  SessionsDistinctCountAuthoritiesDesc = 'SESSIONS_DISTINCT_COUNT_AUTHORITIES_DESC',
+  SessionsDistinctCountBestAuthoritiesAsc = 'SESSIONS_DISTINCT_COUNT_BEST_AUTHORITIES_ASC',
+  SessionsDistinctCountBestAuthoritiesDesc = 'SESSIONS_DISTINCT_COUNT_BEST_AUTHORITIES_DESC',
+  SessionsDistinctCountBlockIdAsc = 'SESSIONS_DISTINCT_COUNT_BLOCK_ID_ASC',
+  SessionsDistinctCountBlockIdDesc = 'SESSIONS_DISTINCT_COUNT_BLOCK_ID_DESC',
+  SessionsDistinctCountBlockNumberAsc = 'SESSIONS_DISTINCT_COUNT_BLOCK_NUMBER_ASC',
+  SessionsDistinctCountBlockNumberDesc = 'SESSIONS_DISTINCT_COUNT_BLOCK_NUMBER_DESC',
+  SessionsDistinctCountIdAsc = 'SESSIONS_DISTINCT_COUNT_ID_ASC',
+  SessionsDistinctCountIdDesc = 'SESSIONS_DISTINCT_COUNT_ID_DESC',
+  SessionsDistinctCountKeyGenThresholdAsc = 'SESSIONS_DISTINCT_COUNT_KEY_GEN_THRESHOLD_ASC',
+  SessionsDistinctCountKeyGenThresholdDesc = 'SESSIONS_DISTINCT_COUNT_KEY_GEN_THRESHOLD_DESC',
+  SessionsDistinctCountNextAuthoritiesAsc = 'SESSIONS_DISTINCT_COUNT_NEXT_AUTHORITIES_ASC',
+  SessionsDistinctCountNextAuthoritiesDesc = 'SESSIONS_DISTINCT_COUNT_NEXT_AUTHORITIES_DESC',
+  SessionsDistinctCountNextBestAuthoritiesAsc = 'SESSIONS_DISTINCT_COUNT_NEXT_BEST_AUTHORITIES_ASC',
+  SessionsDistinctCountNextBestAuthoritiesDesc = 'SESSIONS_DISTINCT_COUNT_NEXT_BEST_AUTHORITIES_DESC',
+  SessionsDistinctCountProposersAsc = 'SESSIONS_DISTINCT_COUNT_PROPOSERS_ASC',
+  SessionsDistinctCountProposersCountAsc = 'SESSIONS_DISTINCT_COUNT_PROPOSERS_COUNT_ASC',
+  SessionsDistinctCountProposersCountDesc = 'SESSIONS_DISTINCT_COUNT_PROPOSERS_COUNT_DESC',
+  SessionsDistinctCountProposersDesc = 'SESSIONS_DISTINCT_COUNT_PROPOSERS_DESC',
+  SessionsDistinctCountProposerThresholdAsc = 'SESSIONS_DISTINCT_COUNT_PROPOSER_THRESHOLD_ASC',
+  SessionsDistinctCountProposerThresholdDesc = 'SESSIONS_DISTINCT_COUNT_PROPOSER_THRESHOLD_DESC',
+  SessionsDistinctCountPublicKeyIdAsc = 'SESSIONS_DISTINCT_COUNT_PUBLIC_KEY_ID_ASC',
+  SessionsDistinctCountPublicKeyIdDesc = 'SESSIONS_DISTINCT_COUNT_PUBLIC_KEY_ID_DESC',
+  SessionsDistinctCountSignatureThresholdAsc = 'SESSIONS_DISTINCT_COUNT_SIGNATURE_THRESHOLD_ASC',
+  SessionsDistinctCountSignatureThresholdDesc = 'SESSIONS_DISTINCT_COUNT_SIGNATURE_THRESHOLD_DESC',
+  SessionsMaxAuthoritiesAsc = 'SESSIONS_MAX_AUTHORITIES_ASC',
+  SessionsMaxAuthoritiesDesc = 'SESSIONS_MAX_AUTHORITIES_DESC',
+  SessionsMaxBestAuthoritiesAsc = 'SESSIONS_MAX_BEST_AUTHORITIES_ASC',
+  SessionsMaxBestAuthoritiesDesc = 'SESSIONS_MAX_BEST_AUTHORITIES_DESC',
+  SessionsMaxBlockIdAsc = 'SESSIONS_MAX_BLOCK_ID_ASC',
+  SessionsMaxBlockIdDesc = 'SESSIONS_MAX_BLOCK_ID_DESC',
+  SessionsMaxBlockNumberAsc = 'SESSIONS_MAX_BLOCK_NUMBER_ASC',
+  SessionsMaxBlockNumberDesc = 'SESSIONS_MAX_BLOCK_NUMBER_DESC',
+  SessionsMaxIdAsc = 'SESSIONS_MAX_ID_ASC',
+  SessionsMaxIdDesc = 'SESSIONS_MAX_ID_DESC',
+  SessionsMaxKeyGenThresholdAsc = 'SESSIONS_MAX_KEY_GEN_THRESHOLD_ASC',
+  SessionsMaxKeyGenThresholdDesc = 'SESSIONS_MAX_KEY_GEN_THRESHOLD_DESC',
+  SessionsMaxNextAuthoritiesAsc = 'SESSIONS_MAX_NEXT_AUTHORITIES_ASC',
+  SessionsMaxNextAuthoritiesDesc = 'SESSIONS_MAX_NEXT_AUTHORITIES_DESC',
+  SessionsMaxNextBestAuthoritiesAsc = 'SESSIONS_MAX_NEXT_BEST_AUTHORITIES_ASC',
+  SessionsMaxNextBestAuthoritiesDesc = 'SESSIONS_MAX_NEXT_BEST_AUTHORITIES_DESC',
+  SessionsMaxProposersAsc = 'SESSIONS_MAX_PROPOSERS_ASC',
+  SessionsMaxProposersCountAsc = 'SESSIONS_MAX_PROPOSERS_COUNT_ASC',
+  SessionsMaxProposersCountDesc = 'SESSIONS_MAX_PROPOSERS_COUNT_DESC',
+  SessionsMaxProposersDesc = 'SESSIONS_MAX_PROPOSERS_DESC',
+  SessionsMaxProposerThresholdAsc = 'SESSIONS_MAX_PROPOSER_THRESHOLD_ASC',
+  SessionsMaxProposerThresholdDesc = 'SESSIONS_MAX_PROPOSER_THRESHOLD_DESC',
+  SessionsMaxPublicKeyIdAsc = 'SESSIONS_MAX_PUBLIC_KEY_ID_ASC',
+  SessionsMaxPublicKeyIdDesc = 'SESSIONS_MAX_PUBLIC_KEY_ID_DESC',
+  SessionsMaxSignatureThresholdAsc = 'SESSIONS_MAX_SIGNATURE_THRESHOLD_ASC',
+  SessionsMaxSignatureThresholdDesc = 'SESSIONS_MAX_SIGNATURE_THRESHOLD_DESC',
+  SessionsMinAuthoritiesAsc = 'SESSIONS_MIN_AUTHORITIES_ASC',
+  SessionsMinAuthoritiesDesc = 'SESSIONS_MIN_AUTHORITIES_DESC',
+  SessionsMinBestAuthoritiesAsc = 'SESSIONS_MIN_BEST_AUTHORITIES_ASC',
+  SessionsMinBestAuthoritiesDesc = 'SESSIONS_MIN_BEST_AUTHORITIES_DESC',
+  SessionsMinBlockIdAsc = 'SESSIONS_MIN_BLOCK_ID_ASC',
+  SessionsMinBlockIdDesc = 'SESSIONS_MIN_BLOCK_ID_DESC',
+  SessionsMinBlockNumberAsc = 'SESSIONS_MIN_BLOCK_NUMBER_ASC',
+  SessionsMinBlockNumberDesc = 'SESSIONS_MIN_BLOCK_NUMBER_DESC',
+  SessionsMinIdAsc = 'SESSIONS_MIN_ID_ASC',
+  SessionsMinIdDesc = 'SESSIONS_MIN_ID_DESC',
+  SessionsMinKeyGenThresholdAsc = 'SESSIONS_MIN_KEY_GEN_THRESHOLD_ASC',
+  SessionsMinKeyGenThresholdDesc = 'SESSIONS_MIN_KEY_GEN_THRESHOLD_DESC',
+  SessionsMinNextAuthoritiesAsc = 'SESSIONS_MIN_NEXT_AUTHORITIES_ASC',
+  SessionsMinNextAuthoritiesDesc = 'SESSIONS_MIN_NEXT_AUTHORITIES_DESC',
+  SessionsMinNextBestAuthoritiesAsc = 'SESSIONS_MIN_NEXT_BEST_AUTHORITIES_ASC',
+  SessionsMinNextBestAuthoritiesDesc = 'SESSIONS_MIN_NEXT_BEST_AUTHORITIES_DESC',
+  SessionsMinProposersAsc = 'SESSIONS_MIN_PROPOSERS_ASC',
+  SessionsMinProposersCountAsc = 'SESSIONS_MIN_PROPOSERS_COUNT_ASC',
+  SessionsMinProposersCountDesc = 'SESSIONS_MIN_PROPOSERS_COUNT_DESC',
+  SessionsMinProposersDesc = 'SESSIONS_MIN_PROPOSERS_DESC',
+  SessionsMinProposerThresholdAsc = 'SESSIONS_MIN_PROPOSER_THRESHOLD_ASC',
+  SessionsMinProposerThresholdDesc = 'SESSIONS_MIN_PROPOSER_THRESHOLD_DESC',
+  SessionsMinPublicKeyIdAsc = 'SESSIONS_MIN_PUBLIC_KEY_ID_ASC',
+  SessionsMinPublicKeyIdDesc = 'SESSIONS_MIN_PUBLIC_KEY_ID_DESC',
+  SessionsMinSignatureThresholdAsc = 'SESSIONS_MIN_SIGNATURE_THRESHOLD_ASC',
+  SessionsMinSignatureThresholdDesc = 'SESSIONS_MIN_SIGNATURE_THRESHOLD_DESC',
+  SessionsStddevPopulationAuthoritiesAsc = 'SESSIONS_STDDEV_POPULATION_AUTHORITIES_ASC',
+  SessionsStddevPopulationAuthoritiesDesc = 'SESSIONS_STDDEV_POPULATION_AUTHORITIES_DESC',
+  SessionsStddevPopulationBestAuthoritiesAsc = 'SESSIONS_STDDEV_POPULATION_BEST_AUTHORITIES_ASC',
+  SessionsStddevPopulationBestAuthoritiesDesc = 'SESSIONS_STDDEV_POPULATION_BEST_AUTHORITIES_DESC',
+  SessionsStddevPopulationBlockIdAsc = 'SESSIONS_STDDEV_POPULATION_BLOCK_ID_ASC',
+  SessionsStddevPopulationBlockIdDesc = 'SESSIONS_STDDEV_POPULATION_BLOCK_ID_DESC',
+  SessionsStddevPopulationBlockNumberAsc = 'SESSIONS_STDDEV_POPULATION_BLOCK_NUMBER_ASC',
+  SessionsStddevPopulationBlockNumberDesc = 'SESSIONS_STDDEV_POPULATION_BLOCK_NUMBER_DESC',
+  SessionsStddevPopulationIdAsc = 'SESSIONS_STDDEV_POPULATION_ID_ASC',
+  SessionsStddevPopulationIdDesc = 'SESSIONS_STDDEV_POPULATION_ID_DESC',
+  SessionsStddevPopulationKeyGenThresholdAsc = 'SESSIONS_STDDEV_POPULATION_KEY_GEN_THRESHOLD_ASC',
+  SessionsStddevPopulationKeyGenThresholdDesc = 'SESSIONS_STDDEV_POPULATION_KEY_GEN_THRESHOLD_DESC',
+  SessionsStddevPopulationNextAuthoritiesAsc = 'SESSIONS_STDDEV_POPULATION_NEXT_AUTHORITIES_ASC',
+  SessionsStddevPopulationNextAuthoritiesDesc = 'SESSIONS_STDDEV_POPULATION_NEXT_AUTHORITIES_DESC',
+  SessionsStddevPopulationNextBestAuthoritiesAsc = 'SESSIONS_STDDEV_POPULATION_NEXT_BEST_AUTHORITIES_ASC',
+  SessionsStddevPopulationNextBestAuthoritiesDesc = 'SESSIONS_STDDEV_POPULATION_NEXT_BEST_AUTHORITIES_DESC',
+  SessionsStddevPopulationProposersAsc = 'SESSIONS_STDDEV_POPULATION_PROPOSERS_ASC',
+  SessionsStddevPopulationProposersCountAsc = 'SESSIONS_STDDEV_POPULATION_PROPOSERS_COUNT_ASC',
+  SessionsStddevPopulationProposersCountDesc = 'SESSIONS_STDDEV_POPULATION_PROPOSERS_COUNT_DESC',
+  SessionsStddevPopulationProposersDesc = 'SESSIONS_STDDEV_POPULATION_PROPOSERS_DESC',
+  SessionsStddevPopulationProposerThresholdAsc = 'SESSIONS_STDDEV_POPULATION_PROPOSER_THRESHOLD_ASC',
+  SessionsStddevPopulationProposerThresholdDesc = 'SESSIONS_STDDEV_POPULATION_PROPOSER_THRESHOLD_DESC',
+  SessionsStddevPopulationPublicKeyIdAsc = 'SESSIONS_STDDEV_POPULATION_PUBLIC_KEY_ID_ASC',
+  SessionsStddevPopulationPublicKeyIdDesc = 'SESSIONS_STDDEV_POPULATION_PUBLIC_KEY_ID_DESC',
+  SessionsStddevPopulationSignatureThresholdAsc = 'SESSIONS_STDDEV_POPULATION_SIGNATURE_THRESHOLD_ASC',
+  SessionsStddevPopulationSignatureThresholdDesc = 'SESSIONS_STDDEV_POPULATION_SIGNATURE_THRESHOLD_DESC',
+  SessionsStddevSampleAuthoritiesAsc = 'SESSIONS_STDDEV_SAMPLE_AUTHORITIES_ASC',
+  SessionsStddevSampleAuthoritiesDesc = 'SESSIONS_STDDEV_SAMPLE_AUTHORITIES_DESC',
+  SessionsStddevSampleBestAuthoritiesAsc = 'SESSIONS_STDDEV_SAMPLE_BEST_AUTHORITIES_ASC',
+  SessionsStddevSampleBestAuthoritiesDesc = 'SESSIONS_STDDEV_SAMPLE_BEST_AUTHORITIES_DESC',
+  SessionsStddevSampleBlockIdAsc = 'SESSIONS_STDDEV_SAMPLE_BLOCK_ID_ASC',
+  SessionsStddevSampleBlockIdDesc = 'SESSIONS_STDDEV_SAMPLE_BLOCK_ID_DESC',
+  SessionsStddevSampleBlockNumberAsc = 'SESSIONS_STDDEV_SAMPLE_BLOCK_NUMBER_ASC',
+  SessionsStddevSampleBlockNumberDesc = 'SESSIONS_STDDEV_SAMPLE_BLOCK_NUMBER_DESC',
+  SessionsStddevSampleIdAsc = 'SESSIONS_STDDEV_SAMPLE_ID_ASC',
+  SessionsStddevSampleIdDesc = 'SESSIONS_STDDEV_SAMPLE_ID_DESC',
+  SessionsStddevSampleKeyGenThresholdAsc = 'SESSIONS_STDDEV_SAMPLE_KEY_GEN_THRESHOLD_ASC',
+  SessionsStddevSampleKeyGenThresholdDesc = 'SESSIONS_STDDEV_SAMPLE_KEY_GEN_THRESHOLD_DESC',
+  SessionsStddevSampleNextAuthoritiesAsc = 'SESSIONS_STDDEV_SAMPLE_NEXT_AUTHORITIES_ASC',
+  SessionsStddevSampleNextAuthoritiesDesc = 'SESSIONS_STDDEV_SAMPLE_NEXT_AUTHORITIES_DESC',
+  SessionsStddevSampleNextBestAuthoritiesAsc = 'SESSIONS_STDDEV_SAMPLE_NEXT_BEST_AUTHORITIES_ASC',
+  SessionsStddevSampleNextBestAuthoritiesDesc = 'SESSIONS_STDDEV_SAMPLE_NEXT_BEST_AUTHORITIES_DESC',
+  SessionsStddevSampleProposersAsc = 'SESSIONS_STDDEV_SAMPLE_PROPOSERS_ASC',
+  SessionsStddevSampleProposersCountAsc = 'SESSIONS_STDDEV_SAMPLE_PROPOSERS_COUNT_ASC',
+  SessionsStddevSampleProposersCountDesc = 'SESSIONS_STDDEV_SAMPLE_PROPOSERS_COUNT_DESC',
+  SessionsStddevSampleProposersDesc = 'SESSIONS_STDDEV_SAMPLE_PROPOSERS_DESC',
+  SessionsStddevSampleProposerThresholdAsc = 'SESSIONS_STDDEV_SAMPLE_PROPOSER_THRESHOLD_ASC',
+  SessionsStddevSampleProposerThresholdDesc = 'SESSIONS_STDDEV_SAMPLE_PROPOSER_THRESHOLD_DESC',
+  SessionsStddevSamplePublicKeyIdAsc = 'SESSIONS_STDDEV_SAMPLE_PUBLIC_KEY_ID_ASC',
+  SessionsStddevSamplePublicKeyIdDesc = 'SESSIONS_STDDEV_SAMPLE_PUBLIC_KEY_ID_DESC',
+  SessionsStddevSampleSignatureThresholdAsc = 'SESSIONS_STDDEV_SAMPLE_SIGNATURE_THRESHOLD_ASC',
+  SessionsStddevSampleSignatureThresholdDesc = 'SESSIONS_STDDEV_SAMPLE_SIGNATURE_THRESHOLD_DESC',
+  SessionsSumAuthoritiesAsc = 'SESSIONS_SUM_AUTHORITIES_ASC',
+  SessionsSumAuthoritiesDesc = 'SESSIONS_SUM_AUTHORITIES_DESC',
+  SessionsSumBestAuthoritiesAsc = 'SESSIONS_SUM_BEST_AUTHORITIES_ASC',
+  SessionsSumBestAuthoritiesDesc = 'SESSIONS_SUM_BEST_AUTHORITIES_DESC',
+  SessionsSumBlockIdAsc = 'SESSIONS_SUM_BLOCK_ID_ASC',
+  SessionsSumBlockIdDesc = 'SESSIONS_SUM_BLOCK_ID_DESC',
+  SessionsSumBlockNumberAsc = 'SESSIONS_SUM_BLOCK_NUMBER_ASC',
+  SessionsSumBlockNumberDesc = 'SESSIONS_SUM_BLOCK_NUMBER_DESC',
+  SessionsSumIdAsc = 'SESSIONS_SUM_ID_ASC',
+  SessionsSumIdDesc = 'SESSIONS_SUM_ID_DESC',
+  SessionsSumKeyGenThresholdAsc = 'SESSIONS_SUM_KEY_GEN_THRESHOLD_ASC',
+  SessionsSumKeyGenThresholdDesc = 'SESSIONS_SUM_KEY_GEN_THRESHOLD_DESC',
+  SessionsSumNextAuthoritiesAsc = 'SESSIONS_SUM_NEXT_AUTHORITIES_ASC',
+  SessionsSumNextAuthoritiesDesc = 'SESSIONS_SUM_NEXT_AUTHORITIES_DESC',
+  SessionsSumNextBestAuthoritiesAsc = 'SESSIONS_SUM_NEXT_BEST_AUTHORITIES_ASC',
+  SessionsSumNextBestAuthoritiesDesc = 'SESSIONS_SUM_NEXT_BEST_AUTHORITIES_DESC',
+  SessionsSumProposersAsc = 'SESSIONS_SUM_PROPOSERS_ASC',
+  SessionsSumProposersCountAsc = 'SESSIONS_SUM_PROPOSERS_COUNT_ASC',
+  SessionsSumProposersCountDesc = 'SESSIONS_SUM_PROPOSERS_COUNT_DESC',
+  SessionsSumProposersDesc = 'SESSIONS_SUM_PROPOSERS_DESC',
+  SessionsSumProposerThresholdAsc = 'SESSIONS_SUM_PROPOSER_THRESHOLD_ASC',
+  SessionsSumProposerThresholdDesc = 'SESSIONS_SUM_PROPOSER_THRESHOLD_DESC',
+  SessionsSumPublicKeyIdAsc = 'SESSIONS_SUM_PUBLIC_KEY_ID_ASC',
+  SessionsSumPublicKeyIdDesc = 'SESSIONS_SUM_PUBLIC_KEY_ID_DESC',
+  SessionsSumSignatureThresholdAsc = 'SESSIONS_SUM_SIGNATURE_THRESHOLD_ASC',
+  SessionsSumSignatureThresholdDesc = 'SESSIONS_SUM_SIGNATURE_THRESHOLD_DESC',
+  SessionsVariancePopulationAuthoritiesAsc = 'SESSIONS_VARIANCE_POPULATION_AUTHORITIES_ASC',
+  SessionsVariancePopulationAuthoritiesDesc = 'SESSIONS_VARIANCE_POPULATION_AUTHORITIES_DESC',
+  SessionsVariancePopulationBestAuthoritiesAsc = 'SESSIONS_VARIANCE_POPULATION_BEST_AUTHORITIES_ASC',
+  SessionsVariancePopulationBestAuthoritiesDesc = 'SESSIONS_VARIANCE_POPULATION_BEST_AUTHORITIES_DESC',
+  SessionsVariancePopulationBlockIdAsc = 'SESSIONS_VARIANCE_POPULATION_BLOCK_ID_ASC',
+  SessionsVariancePopulationBlockIdDesc = 'SESSIONS_VARIANCE_POPULATION_BLOCK_ID_DESC',
+  SessionsVariancePopulationBlockNumberAsc = 'SESSIONS_VARIANCE_POPULATION_BLOCK_NUMBER_ASC',
+  SessionsVariancePopulationBlockNumberDesc = 'SESSIONS_VARIANCE_POPULATION_BLOCK_NUMBER_DESC',
+  SessionsVariancePopulationIdAsc = 'SESSIONS_VARIANCE_POPULATION_ID_ASC',
+  SessionsVariancePopulationIdDesc = 'SESSIONS_VARIANCE_POPULATION_ID_DESC',
+  SessionsVariancePopulationKeyGenThresholdAsc = 'SESSIONS_VARIANCE_POPULATION_KEY_GEN_THRESHOLD_ASC',
+  SessionsVariancePopulationKeyGenThresholdDesc = 'SESSIONS_VARIANCE_POPULATION_KEY_GEN_THRESHOLD_DESC',
+  SessionsVariancePopulationNextAuthoritiesAsc = 'SESSIONS_VARIANCE_POPULATION_NEXT_AUTHORITIES_ASC',
+  SessionsVariancePopulationNextAuthoritiesDesc = 'SESSIONS_VARIANCE_POPULATION_NEXT_AUTHORITIES_DESC',
+  SessionsVariancePopulationNextBestAuthoritiesAsc = 'SESSIONS_VARIANCE_POPULATION_NEXT_BEST_AUTHORITIES_ASC',
+  SessionsVariancePopulationNextBestAuthoritiesDesc = 'SESSIONS_VARIANCE_POPULATION_NEXT_BEST_AUTHORITIES_DESC',
+  SessionsVariancePopulationProposersAsc = 'SESSIONS_VARIANCE_POPULATION_PROPOSERS_ASC',
+  SessionsVariancePopulationProposersCountAsc = 'SESSIONS_VARIANCE_POPULATION_PROPOSERS_COUNT_ASC',
+  SessionsVariancePopulationProposersCountDesc = 'SESSIONS_VARIANCE_POPULATION_PROPOSERS_COUNT_DESC',
+  SessionsVariancePopulationProposersDesc = 'SESSIONS_VARIANCE_POPULATION_PROPOSERS_DESC',
+  SessionsVariancePopulationProposerThresholdAsc = 'SESSIONS_VARIANCE_POPULATION_PROPOSER_THRESHOLD_ASC',
+  SessionsVariancePopulationProposerThresholdDesc = 'SESSIONS_VARIANCE_POPULATION_PROPOSER_THRESHOLD_DESC',
+  SessionsVariancePopulationPublicKeyIdAsc = 'SESSIONS_VARIANCE_POPULATION_PUBLIC_KEY_ID_ASC',
+  SessionsVariancePopulationPublicKeyIdDesc = 'SESSIONS_VARIANCE_POPULATION_PUBLIC_KEY_ID_DESC',
+  SessionsVariancePopulationSignatureThresholdAsc = 'SESSIONS_VARIANCE_POPULATION_SIGNATURE_THRESHOLD_ASC',
+  SessionsVariancePopulationSignatureThresholdDesc = 'SESSIONS_VARIANCE_POPULATION_SIGNATURE_THRESHOLD_DESC',
+  SessionsVarianceSampleAuthoritiesAsc = 'SESSIONS_VARIANCE_SAMPLE_AUTHORITIES_ASC',
+  SessionsVarianceSampleAuthoritiesDesc = 'SESSIONS_VARIANCE_SAMPLE_AUTHORITIES_DESC',
+  SessionsVarianceSampleBestAuthoritiesAsc = 'SESSIONS_VARIANCE_SAMPLE_BEST_AUTHORITIES_ASC',
+  SessionsVarianceSampleBestAuthoritiesDesc = 'SESSIONS_VARIANCE_SAMPLE_BEST_AUTHORITIES_DESC',
+  SessionsVarianceSampleBlockIdAsc = 'SESSIONS_VARIANCE_SAMPLE_BLOCK_ID_ASC',
+  SessionsVarianceSampleBlockIdDesc = 'SESSIONS_VARIANCE_SAMPLE_BLOCK_ID_DESC',
+  SessionsVarianceSampleBlockNumberAsc = 'SESSIONS_VARIANCE_SAMPLE_BLOCK_NUMBER_ASC',
+  SessionsVarianceSampleBlockNumberDesc = 'SESSIONS_VARIANCE_SAMPLE_BLOCK_NUMBER_DESC',
+  SessionsVarianceSampleIdAsc = 'SESSIONS_VARIANCE_SAMPLE_ID_ASC',
+  SessionsVarianceSampleIdDesc = 'SESSIONS_VARIANCE_SAMPLE_ID_DESC',
+  SessionsVarianceSampleKeyGenThresholdAsc = 'SESSIONS_VARIANCE_SAMPLE_KEY_GEN_THRESHOLD_ASC',
+  SessionsVarianceSampleKeyGenThresholdDesc = 'SESSIONS_VARIANCE_SAMPLE_KEY_GEN_THRESHOLD_DESC',
+  SessionsVarianceSampleNextAuthoritiesAsc = 'SESSIONS_VARIANCE_SAMPLE_NEXT_AUTHORITIES_ASC',
+  SessionsVarianceSampleNextAuthoritiesDesc = 'SESSIONS_VARIANCE_SAMPLE_NEXT_AUTHORITIES_DESC',
+  SessionsVarianceSampleNextBestAuthoritiesAsc = 'SESSIONS_VARIANCE_SAMPLE_NEXT_BEST_AUTHORITIES_ASC',
+  SessionsVarianceSampleNextBestAuthoritiesDesc = 'SESSIONS_VARIANCE_SAMPLE_NEXT_BEST_AUTHORITIES_DESC',
+  SessionsVarianceSampleProposersAsc = 'SESSIONS_VARIANCE_SAMPLE_PROPOSERS_ASC',
+  SessionsVarianceSampleProposersCountAsc = 'SESSIONS_VARIANCE_SAMPLE_PROPOSERS_COUNT_ASC',
+  SessionsVarianceSampleProposersCountDesc = 'SESSIONS_VARIANCE_SAMPLE_PROPOSERS_COUNT_DESC',
+  SessionsVarianceSampleProposersDesc = 'SESSIONS_VARIANCE_SAMPLE_PROPOSERS_DESC',
+  SessionsVarianceSampleProposerThresholdAsc = 'SESSIONS_VARIANCE_SAMPLE_PROPOSER_THRESHOLD_ASC',
+  SessionsVarianceSampleProposerThresholdDesc = 'SESSIONS_VARIANCE_SAMPLE_PROPOSER_THRESHOLD_DESC',
+  SessionsVarianceSamplePublicKeyIdAsc = 'SESSIONS_VARIANCE_SAMPLE_PUBLIC_KEY_ID_ASC',
+  SessionsVarianceSamplePublicKeyIdDesc = 'SESSIONS_VARIANCE_SAMPLE_PUBLIC_KEY_ID_DESC',
+  SessionsVarianceSampleSignatureThresholdAsc = 'SESSIONS_VARIANCE_SAMPLE_SIGNATURE_THRESHOLD_ASC',
+  SessionsVarianceSampleSignatureThresholdDesc = 'SESSIONS_VARIANCE_SAMPLE_SIGNATURE_THRESHOLD_DESC',
+  UncompressedAsc = 'UNCOMPRESSED_ASC',
+  UncompressedDesc = 'UNCOMPRESSED_DESC'
+}
 
 /** The root query type which gives access points into the data universe. */
 export type Query = Node & {
@@ -3498,6 +5900,31 @@ export type Query = Node & {
   node?: Maybe<Node>;
   /** The root query type must be a `Node` to work well with Relay 1 mutations. This just resolves to `query`. */
   nodeId: Scalars['ID'];
+  proposalCounter?: Maybe<ProposalCounter>;
+  /** Reads a single `ProposalCounter` using its globally unique `ID`. */
+  proposalCounterByNodeId?: Maybe<ProposalCounter>;
+  /** Reads and enables pagination through a set of `ProposalCounter`. */
+  proposalCounters?: Maybe<ProposalCountersConnection>;
+  proposalItem?: Maybe<ProposalItem>;
+  /** Reads a single `ProposalItem` using its globally unique `ID`. */
+  proposalItemByNodeId?: Maybe<ProposalItem>;
+  /** Reads and enables pagination through a set of `ProposalItem`. */
+  proposalItems?: Maybe<ProposalItemsConnection>;
+  proposer?: Maybe<Proposer>;
+  /** Reads a single `Proposer` using its globally unique `ID`. */
+  proposerByNodeId?: Maybe<Proposer>;
+  proposerThreshold?: Maybe<ProposerThreshold>;
+  /** Reads a single `ProposerThreshold` using its globally unique `ID`. */
+  proposerThresholdByNodeId?: Maybe<ProposerThreshold>;
+  /** Reads and enables pagination through a set of `ProposerThreshold`. */
+  proposerThresholds?: Maybe<ProposerThresholdsConnection>;
+  /** Reads and enables pagination through a set of `Proposer`. */
+  proposers?: Maybe<ProposersConnection>;
+  publicKey?: Maybe<PublicKey>;
+  /** Reads a single `PublicKey` using its globally unique `ID`. */
+  publicKeyByNodeId?: Maybe<PublicKey>;
+  /** Reads and enables pagination through a set of `PublicKey`. */
+  publicKeys?: Maybe<PublicKeysConnection>;
   /**
    * Exposes the root query type nested one level down. This is helpful for Relay 1
    * which can only query top level fields if they are in a particular form.
@@ -3513,17 +5940,30 @@ export type Query = Node & {
   signatureThresholdByNodeId?: Maybe<SignatureThreshold>;
   /** Reads and enables pagination through a set of `SignatureThreshold`. */
   signatureThresholds?: Maybe<SignatureThresholdsConnection>;
+  unsignedProposalsQueue?: Maybe<UnsignedProposalsQueue>;
+  /** Reads a single `UnsignedProposalsQueue` using its globally unique `ID`. */
+  unsignedProposalsQueueByNodeId?: Maybe<UnsignedProposalsQueue>;
+  unsignedProposalsQueueItem?: Maybe<UnsignedProposalsQueueItem>;
+  /** Reads a single `UnsignedProposalsQueueItem` using its globally unique `ID`. */
+  unsignedProposalsQueueItemByNodeId?: Maybe<UnsignedProposalsQueueItem>;
+  /** Reads and enables pagination through a set of `UnsignedProposalsQueueItem`. */
+  unsignedProposalsQueueItems?: Maybe<UnsignedProposalsQueueItemsConnection>;
+  /** Reads and enables pagination through a set of `UnsignedProposalsQueue`. */
+  unsignedProposalsQueues?: Maybe<UnsignedProposalsQueuesConnection>;
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QueryAccountArgs = {
   id: Scalars['String'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryAccountByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QueryAccountsArgs = {
@@ -3536,6 +5976,7 @@ export type QueryAccountsArgs = {
   orderBy?: InputMaybe<Array<AccountsOrderBy>>;
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryAuthoritiesArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -3547,25 +5988,30 @@ export type QueryAuthoritiesArgs = {
   orderBy?: InputMaybe<Array<AuthoritiesOrderBy>>;
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryAuthorityArgs = {
   id: Scalars['String'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QueryAuthorityByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryBlockArgs = {
   id: Scalars['String'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryBlockByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QueryBlocksArgs = {
@@ -3578,15 +6024,18 @@ export type QueryBlocksArgs = {
   orderBy?: InputMaybe<Array<BlocksOrderBy>>;
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryEventArgs = {
   id: Scalars['String'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryEventByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QueryEventsArgs = {
@@ -3599,15 +6048,18 @@ export type QueryEventsArgs = {
   orderBy?: InputMaybe<Array<EventsOrderBy>>;
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryExtrinsicArgs = {
   id: Scalars['String'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryExtrinsicByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QueryExtrinsicsArgs = {
@@ -3620,15 +6072,18 @@ export type QueryExtrinsicsArgs = {
   orderBy?: InputMaybe<Array<ExtrinsicsOrderBy>>;
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryKeygenThresholdArgs = {
   id: Scalars['String'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryKeygenThresholdByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QueryKeygenThresholdsArgs = {
@@ -3641,20 +6096,144 @@ export type QueryKeygenThresholdsArgs = {
   orderBy?: InputMaybe<Array<KeygenThresholdsOrderBy>>;
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryNodeArgs = {
   nodeId: Scalars['ID'];
 };
+
+
+/** The root query type which gives access points into the data universe. */
+export type QueryProposalCounterArgs = {
+  id: Scalars['String'];
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QueryProposalCounterByNodeIdArgs = {
+  nodeId: Scalars['ID'];
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QueryProposalCountersArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  filter?: InputMaybe<ProposalCounterFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<ProposalCountersOrderBy>>;
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QueryProposalItemArgs = {
+  id: Scalars['String'];
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QueryProposalItemByNodeIdArgs = {
+  nodeId: Scalars['ID'];
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QueryProposalItemsArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  filter?: InputMaybe<ProposalItemFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<ProposalItemsOrderBy>>;
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QueryProposerArgs = {
+  id: Scalars['String'];
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QueryProposerByNodeIdArgs = {
+  nodeId: Scalars['ID'];
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QueryProposerThresholdArgs = {
+  id: Scalars['String'];
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QueryProposerThresholdByNodeIdArgs = {
+  nodeId: Scalars['ID'];
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QueryProposerThresholdsArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  filter?: InputMaybe<ProposerThresholdFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<ProposerThresholdsOrderBy>>;
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QueryProposersArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  filter?: InputMaybe<ProposerFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<ProposersOrderBy>>;
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QueryPublicKeyArgs = {
+  id: Scalars['String'];
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QueryPublicKeyByNodeIdArgs = {
+  nodeId: Scalars['ID'];
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QueryPublicKeysArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  filter?: InputMaybe<PublicKeyFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<PublicKeysOrderBy>>;
+};
+
 
 /** The root query type which gives access points into the data universe. */
 export type QuerySessionArgs = {
   id: Scalars['String'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QuerySessionByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QuerySessionsArgs = {
@@ -3667,15 +6246,18 @@ export type QuerySessionsArgs = {
   orderBy?: InputMaybe<Array<SessionsOrderBy>>;
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QuerySignatureThresholdArgs = {
   id: Scalars['String'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QuerySignatureThresholdByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QuerySignatureThresholdsArgs = {
@@ -3686,6 +6268,54 @@ export type QuerySignatureThresholdsArgs = {
   last?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<SignatureThresholdsOrderBy>>;
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QueryUnsignedProposalsQueueArgs = {
+  id: Scalars['String'];
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QueryUnsignedProposalsQueueByNodeIdArgs = {
+  nodeId: Scalars['ID'];
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QueryUnsignedProposalsQueueItemArgs = {
+  id: Scalars['String'];
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QueryUnsignedProposalsQueueItemByNodeIdArgs = {
+  nodeId: Scalars['ID'];
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QueryUnsignedProposalsQueueItemsArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  filter?: InputMaybe<UnsignedProposalsQueueItemFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<UnsignedProposalsQueueItemsOrderBy>>;
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QueryUnsignedProposalsQueuesArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  filter?: InputMaybe<UnsignedProposalsQueueFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<UnsignedProposalsQueuesOrderBy>>;
 };
 
 export type Session = Node & {
@@ -3705,6 +6335,9 @@ export type Session = Node & {
   proposerThreshold?: Maybe<Scalars['JSON']>;
   proposers: Scalars['JSON'];
   proposersCount?: Maybe<Scalars['Int']>;
+  /** Reads a single `PublicKey` that is related to this `Session`. */
+  publicKey?: Maybe<PublicKey>;
+  publicKeyId?: Maybe<Scalars['String']>;
   signatureThreshold?: Maybe<Scalars['JSON']>;
 };
 
@@ -3763,6 +6396,8 @@ export type SessionDistinctCountAggregates = {
   proposers?: Maybe<Scalars['BigInt']>;
   /** Distinct count of proposersCount across the matching connection */
   proposersCount?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of publicKeyId across the matching connection */
+  publicKeyId?: Maybe<Scalars['BigInt']>;
   /** Distinct count of signatureThreshold across the matching connection */
   signatureThreshold?: Maybe<Scalars['BigInt']>;
 };
@@ -3797,6 +6432,8 @@ export type SessionFilter = {
   proposers?: InputMaybe<JsonFilter>;
   /** Filter by the object’s `proposersCount` field. */
   proposersCount?: InputMaybe<IntFilter>;
+  /** Filter by the object’s `publicKeyId` field. */
+  publicKeyId?: InputMaybe<StringFilter>;
   /** Filter by the object’s `signatureThreshold` field. */
   signatureThreshold?: InputMaybe<JsonFilter>;
 };
@@ -3874,6 +6511,7 @@ export type SessionsConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Session` values. */
 export type SessionsConnectionGroupedAggregatesArgs = {
   groupBy: Array<SessionsGroupBy>;
@@ -3901,7 +6539,8 @@ export enum SessionsGroupBy {
   Proposers = 'PROPOSERS',
   ProposersCount = 'PROPOSERS_COUNT',
   ProposerThreshold = 'PROPOSER_THRESHOLD',
-  SignatureThreshold = 'SIGNATURE_THRESHOLD',
+  PublicKeyId = 'PUBLIC_KEY_ID',
+  SignatureThreshold = 'SIGNATURE_THRESHOLD'
 }
 
 export type SessionsHavingAverageInput = {
@@ -3991,8 +6630,10 @@ export enum SessionsOrderBy {
   ProposersDesc = 'PROPOSERS_DESC',
   ProposerThresholdAsc = 'PROPOSER_THRESHOLD_ASC',
   ProposerThresholdDesc = 'PROPOSER_THRESHOLD_DESC',
+  PublicKeyIdAsc = 'PUBLIC_KEY_ID_ASC',
+  PublicKeyIdDesc = 'PUBLIC_KEY_ID_DESC',
   SignatureThresholdAsc = 'SIGNATURE_THRESHOLD_ASC',
-  SignatureThresholdDesc = 'SIGNATURE_THRESHOLD_DESC',
+  SignatureThresholdDesc = 'SIGNATURE_THRESHOLD_DESC'
 }
 
 export type SignatureThreshold = Node & {
@@ -4162,6 +6803,7 @@ export type SignatureThresholdsConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `SignatureThreshold` values. */
 export type SignatureThresholdsConnectionGroupedAggregatesArgs = {
   groupBy: Array<SignatureThresholdsGroupBy>;
@@ -4182,7 +6824,7 @@ export enum SignatureThresholdsGroupBy {
   BlockId = 'BLOCK_ID',
   Current = 'CURRENT',
   Next = 'NEXT',
-  Pending = 'PENDING',
+  Pending = 'PENDING'
 }
 
 export type SignatureThresholdsHavingAverageInput = {
@@ -4268,7 +6910,7 @@ export enum SignatureThresholdsOrderBy {
   PendingAsc = 'PENDING_ASC',
   PendingDesc = 'PENDING_DESC',
   PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
-  PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
+  PrimaryKeyDesc = 'PRIMARY_KEY_DESC'
 }
 
 /** A filter to be used against String fields. All fields are combined with a logical ‘and.’ */
@@ -4355,6 +6997,333 @@ export type TableEstimate = {
   table?: Maybe<Scalars['String']>;
 };
 
+export type UnsignedProposalsQueue = Node & {
+  __typename?: 'UnsignedProposalsQueue';
+  /** Reads a single `Block` that is related to this `UnsignedProposalsQueue`. */
+  block?: Maybe<Block>;
+  blockId: Scalars['String'];
+  id: Scalars['String'];
+  /** A globally unique identifier. Can be used in various places throughout the system to identify this single value. */
+  nodeId: Scalars['ID'];
+  /** Reads and enables pagination through a set of `ProposalItem`. */
+  proposalItemsByUnsignedProposalsQueueItemQueueIdAndProposalId: UnsignedProposalsQueueProposalItemsByUnsignedProposalsQueueItemQueueIdAndProposalIdManyToManyConnection;
+  /** Reads and enables pagination through a set of `UnsignedProposalsQueueItem`. */
+  unsignedProposalsQueueItemsByQueueId: UnsignedProposalsQueueItemsConnection;
+};
+
+
+export type UnsignedProposalsQueueProposalItemsByUnsignedProposalsQueueItemQueueIdAndProposalIdArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  filter?: InputMaybe<ProposalItemFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<ProposalItemsOrderBy>>;
+};
+
+
+export type UnsignedProposalsQueueUnsignedProposalsQueueItemsByQueueIdArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  filter?: InputMaybe<UnsignedProposalsQueueItemFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<UnsignedProposalsQueueItemsOrderBy>>;
+};
+
+export type UnsignedProposalsQueueAggregates = {
+  __typename?: 'UnsignedProposalsQueueAggregates';
+  /** Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  distinctCount?: Maybe<UnsignedProposalsQueueDistinctCountAggregates>;
+  keys?: Maybe<Array<Scalars['String']>>;
+};
+
+export type UnsignedProposalsQueueDistinctCountAggregates = {
+  __typename?: 'UnsignedProposalsQueueDistinctCountAggregates';
+  /** Distinct count of blockId across the matching connection */
+  blockId?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of id across the matching connection */
+  id?: Maybe<Scalars['BigInt']>;
+};
+
+/** A filter to be used against `UnsignedProposalsQueue` object types. All fields are combined with a logical ‘and.’ */
+export type UnsignedProposalsQueueFilter = {
+  /** Checks for all expressions in this list. */
+  and?: InputMaybe<Array<UnsignedProposalsQueueFilter>>;
+  /** Filter by the object’s `blockId` field. */
+  blockId?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `id` field. */
+  id?: InputMaybe<StringFilter>;
+  /** Negates the expression. */
+  not?: InputMaybe<UnsignedProposalsQueueFilter>;
+  /** Checks for any expressions in this list. */
+  or?: InputMaybe<Array<UnsignedProposalsQueueFilter>>;
+};
+
+export type UnsignedProposalsQueueItem = Node & {
+  __typename?: 'UnsignedProposalsQueueItem';
+  id: Scalars['String'];
+  /** A globally unique identifier. Can be used in various places throughout the system to identify this single value. */
+  nodeId: Scalars['ID'];
+  /** Reads a single `ProposalItem` that is related to this `UnsignedProposalsQueueItem`. */
+  proposal?: Maybe<ProposalItem>;
+  proposalId: Scalars['String'];
+  /** Reads a single `UnsignedProposalsQueue` that is related to this `UnsignedProposalsQueueItem`. */
+  queue?: Maybe<UnsignedProposalsQueue>;
+  queueId: Scalars['String'];
+};
+
+export type UnsignedProposalsQueueItemAggregates = {
+  __typename?: 'UnsignedProposalsQueueItemAggregates';
+  /** Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  distinctCount?: Maybe<UnsignedProposalsQueueItemDistinctCountAggregates>;
+  keys?: Maybe<Array<Scalars['String']>>;
+};
+
+export type UnsignedProposalsQueueItemDistinctCountAggregates = {
+  __typename?: 'UnsignedProposalsQueueItemDistinctCountAggregates';
+  /** Distinct count of id across the matching connection */
+  id?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of proposalId across the matching connection */
+  proposalId?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of queueId across the matching connection */
+  queueId?: Maybe<Scalars['BigInt']>;
+};
+
+/** A filter to be used against `UnsignedProposalsQueueItem` object types. All fields are combined with a logical ‘and.’ */
+export type UnsignedProposalsQueueItemFilter = {
+  /** Checks for all expressions in this list. */
+  and?: InputMaybe<Array<UnsignedProposalsQueueItemFilter>>;
+  /** Filter by the object’s `id` field. */
+  id?: InputMaybe<StringFilter>;
+  /** Negates the expression. */
+  not?: InputMaybe<UnsignedProposalsQueueItemFilter>;
+  /** Checks for any expressions in this list. */
+  or?: InputMaybe<Array<UnsignedProposalsQueueItemFilter>>;
+  /** Filter by the object’s `proposalId` field. */
+  proposalId?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `queueId` field. */
+  queueId?: InputMaybe<StringFilter>;
+};
+
+/** A connection to a list of `UnsignedProposalsQueueItem` values. */
+export type UnsignedProposalsQueueItemsConnection = {
+  __typename?: 'UnsignedProposalsQueueItemsConnection';
+  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  aggregates?: Maybe<UnsignedProposalsQueueItemAggregates>;
+  /** A list of edges which contains the `UnsignedProposalsQueueItem` and cursor to aid in pagination. */
+  edges: Array<UnsignedProposalsQueueItemsEdge>;
+  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  groupedAggregates?: Maybe<Array<UnsignedProposalsQueueItemAggregates>>;
+  /** A list of `UnsignedProposalsQueueItem` objects. */
+  nodes: Array<Maybe<UnsignedProposalsQueueItem>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** The count of *all* `UnsignedProposalsQueueItem` you could get from the connection. */
+  totalCount: Scalars['Int'];
+};
+
+
+/** A connection to a list of `UnsignedProposalsQueueItem` values. */
+export type UnsignedProposalsQueueItemsConnectionGroupedAggregatesArgs = {
+  groupBy: Array<UnsignedProposalsQueueItemsGroupBy>;
+  having?: InputMaybe<UnsignedProposalsQueueItemsHavingInput>;
+};
+
+/** A `UnsignedProposalsQueueItem` edge in the connection. */
+export type UnsignedProposalsQueueItemsEdge = {
+  __typename?: 'UnsignedProposalsQueueItemsEdge';
+  /** A cursor for use in pagination. */
+  cursor?: Maybe<Scalars['Cursor']>;
+  /** The `UnsignedProposalsQueueItem` at the end of the edge. */
+  node?: Maybe<UnsignedProposalsQueueItem>;
+};
+
+/** Grouping methods for `UnsignedProposalsQueueItem` for usage during aggregation. */
+export enum UnsignedProposalsQueueItemsGroupBy {
+  ProposalId = 'PROPOSAL_ID',
+  QueueId = 'QUEUE_ID'
+}
+
+/** Conditions for `UnsignedProposalsQueueItem` aggregates. */
+export type UnsignedProposalsQueueItemsHavingInput = {
+  AND?: InputMaybe<Array<UnsignedProposalsQueueItemsHavingInput>>;
+  OR?: InputMaybe<Array<UnsignedProposalsQueueItemsHavingInput>>;
+};
+
+/** Methods to use when ordering `UnsignedProposalsQueueItem`. */
+export enum UnsignedProposalsQueueItemsOrderBy {
+  IdAsc = 'ID_ASC',
+  IdDesc = 'ID_DESC',
+  Natural = 'NATURAL',
+  PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
+  PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
+  ProposalIdAsc = 'PROPOSAL_ID_ASC',
+  ProposalIdDesc = 'PROPOSAL_ID_DESC',
+  QueueIdAsc = 'QUEUE_ID_ASC',
+  QueueIdDesc = 'QUEUE_ID_DESC'
+}
+
+/** A connection to a list of `ProposalItem` values, with data from `UnsignedProposalsQueueItem`. */
+export type UnsignedProposalsQueueProposalItemsByUnsignedProposalsQueueItemQueueIdAndProposalIdManyToManyConnection = {
+  __typename?: 'UnsignedProposalsQueueProposalItemsByUnsignedProposalsQueueItemQueueIdAndProposalIdManyToManyConnection';
+  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  aggregates?: Maybe<ProposalItemAggregates>;
+  /** A list of edges which contains the `ProposalItem`, info from the `UnsignedProposalsQueueItem`, and the cursor to aid in pagination. */
+  edges: Array<UnsignedProposalsQueueProposalItemsByUnsignedProposalsQueueItemQueueIdAndProposalIdManyToManyEdge>;
+  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  groupedAggregates?: Maybe<Array<ProposalItemAggregates>>;
+  /** A list of `ProposalItem` objects. */
+  nodes: Array<Maybe<ProposalItem>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** The count of *all* `ProposalItem` you could get from the connection. */
+  totalCount: Scalars['Int'];
+};
+
+
+/** A connection to a list of `ProposalItem` values, with data from `UnsignedProposalsQueueItem`. */
+export type UnsignedProposalsQueueProposalItemsByUnsignedProposalsQueueItemQueueIdAndProposalIdManyToManyConnectionGroupedAggregatesArgs = {
+  groupBy: Array<ProposalItemsGroupBy>;
+  having?: InputMaybe<ProposalItemsHavingInput>;
+};
+
+/** A `ProposalItem` edge in the connection, with data from `UnsignedProposalsQueueItem`. */
+export type UnsignedProposalsQueueProposalItemsByUnsignedProposalsQueueItemQueueIdAndProposalIdManyToManyEdge = {
+  __typename?: 'UnsignedProposalsQueueProposalItemsByUnsignedProposalsQueueItemQueueIdAndProposalIdManyToManyEdge';
+  /** A cursor for use in pagination. */
+  cursor?: Maybe<Scalars['Cursor']>;
+  /** The `ProposalItem` at the end of the edge. */
+  node?: Maybe<ProposalItem>;
+  /** Reads and enables pagination through a set of `UnsignedProposalsQueueItem`. */
+  unsignedProposalsQueueItemsByProposalId: UnsignedProposalsQueueItemsConnection;
+};
+
+
+/** A `ProposalItem` edge in the connection, with data from `UnsignedProposalsQueueItem`. */
+export type UnsignedProposalsQueueProposalItemsByUnsignedProposalsQueueItemQueueIdAndProposalIdManyToManyEdgeUnsignedProposalsQueueItemsByProposalIdArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  filter?: InputMaybe<UnsignedProposalsQueueItemFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<UnsignedProposalsQueueItemsOrderBy>>;
+};
+
+/** A connection to a list of `UnsignedProposalsQueue` values. */
+export type UnsignedProposalsQueuesConnection = {
+  __typename?: 'UnsignedProposalsQueuesConnection';
+  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  aggregates?: Maybe<UnsignedProposalsQueueAggregates>;
+  /** A list of edges which contains the `UnsignedProposalsQueue` and cursor to aid in pagination. */
+  edges: Array<UnsignedProposalsQueuesEdge>;
+  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  groupedAggregates?: Maybe<Array<UnsignedProposalsQueueAggregates>>;
+  /** A list of `UnsignedProposalsQueue` objects. */
+  nodes: Array<Maybe<UnsignedProposalsQueue>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** The count of *all* `UnsignedProposalsQueue` you could get from the connection. */
+  totalCount: Scalars['Int'];
+};
+
+
+/** A connection to a list of `UnsignedProposalsQueue` values. */
+export type UnsignedProposalsQueuesConnectionGroupedAggregatesArgs = {
+  groupBy: Array<UnsignedProposalsQueuesGroupBy>;
+  having?: InputMaybe<UnsignedProposalsQueuesHavingInput>;
+};
+
+/** A `UnsignedProposalsQueue` edge in the connection. */
+export type UnsignedProposalsQueuesEdge = {
+  __typename?: 'UnsignedProposalsQueuesEdge';
+  /** A cursor for use in pagination. */
+  cursor?: Maybe<Scalars['Cursor']>;
+  /** The `UnsignedProposalsQueue` at the end of the edge. */
+  node?: Maybe<UnsignedProposalsQueue>;
+};
+
+/** Grouping methods for `UnsignedProposalsQueue` for usage during aggregation. */
+export enum UnsignedProposalsQueuesGroupBy {
+  BlockId = 'BLOCK_ID'
+}
+
+/** Conditions for `UnsignedProposalsQueue` aggregates. */
+export type UnsignedProposalsQueuesHavingInput = {
+  AND?: InputMaybe<Array<UnsignedProposalsQueuesHavingInput>>;
+  OR?: InputMaybe<Array<UnsignedProposalsQueuesHavingInput>>;
+};
+
+/** Methods to use when ordering `UnsignedProposalsQueue`. */
+export enum UnsignedProposalsQueuesOrderBy {
+  BlockIdAsc = 'BLOCK_ID_ASC',
+  BlockIdDesc = 'BLOCK_ID_DESC',
+  IdAsc = 'ID_ASC',
+  IdDesc = 'ID_DESC',
+  Natural = 'NATURAL',
+  PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
+  PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
+  UnsignedProposalsQueueItemsByQueueIdAverageIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_AVERAGE_ID_ASC',
+  UnsignedProposalsQueueItemsByQueueIdAverageIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_AVERAGE_ID_DESC',
+  UnsignedProposalsQueueItemsByQueueIdAverageProposalIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_AVERAGE_PROPOSAL_ID_ASC',
+  UnsignedProposalsQueueItemsByQueueIdAverageProposalIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_AVERAGE_PROPOSAL_ID_DESC',
+  UnsignedProposalsQueueItemsByQueueIdAverageQueueIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_AVERAGE_QUEUE_ID_ASC',
+  UnsignedProposalsQueueItemsByQueueIdAverageQueueIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_AVERAGE_QUEUE_ID_DESC',
+  UnsignedProposalsQueueItemsByQueueIdCountAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_COUNT_ASC',
+  UnsignedProposalsQueueItemsByQueueIdCountDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_COUNT_DESC',
+  UnsignedProposalsQueueItemsByQueueIdDistinctCountIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_DISTINCT_COUNT_ID_ASC',
+  UnsignedProposalsQueueItemsByQueueIdDistinctCountIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_DISTINCT_COUNT_ID_DESC',
+  UnsignedProposalsQueueItemsByQueueIdDistinctCountProposalIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_DISTINCT_COUNT_PROPOSAL_ID_ASC',
+  UnsignedProposalsQueueItemsByQueueIdDistinctCountProposalIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_DISTINCT_COUNT_PROPOSAL_ID_DESC',
+  UnsignedProposalsQueueItemsByQueueIdDistinctCountQueueIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_DISTINCT_COUNT_QUEUE_ID_ASC',
+  UnsignedProposalsQueueItemsByQueueIdDistinctCountQueueIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_DISTINCT_COUNT_QUEUE_ID_DESC',
+  UnsignedProposalsQueueItemsByQueueIdMaxIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_MAX_ID_ASC',
+  UnsignedProposalsQueueItemsByQueueIdMaxIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_MAX_ID_DESC',
+  UnsignedProposalsQueueItemsByQueueIdMaxProposalIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_MAX_PROPOSAL_ID_ASC',
+  UnsignedProposalsQueueItemsByQueueIdMaxProposalIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_MAX_PROPOSAL_ID_DESC',
+  UnsignedProposalsQueueItemsByQueueIdMaxQueueIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_MAX_QUEUE_ID_ASC',
+  UnsignedProposalsQueueItemsByQueueIdMaxQueueIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_MAX_QUEUE_ID_DESC',
+  UnsignedProposalsQueueItemsByQueueIdMinIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_MIN_ID_ASC',
+  UnsignedProposalsQueueItemsByQueueIdMinIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_MIN_ID_DESC',
+  UnsignedProposalsQueueItemsByQueueIdMinProposalIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_MIN_PROPOSAL_ID_ASC',
+  UnsignedProposalsQueueItemsByQueueIdMinProposalIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_MIN_PROPOSAL_ID_DESC',
+  UnsignedProposalsQueueItemsByQueueIdMinQueueIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_MIN_QUEUE_ID_ASC',
+  UnsignedProposalsQueueItemsByQueueIdMinQueueIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_MIN_QUEUE_ID_DESC',
+  UnsignedProposalsQueueItemsByQueueIdStddevPopulationIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_STDDEV_POPULATION_ID_ASC',
+  UnsignedProposalsQueueItemsByQueueIdStddevPopulationIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_STDDEV_POPULATION_ID_DESC',
+  UnsignedProposalsQueueItemsByQueueIdStddevPopulationProposalIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_STDDEV_POPULATION_PROPOSAL_ID_ASC',
+  UnsignedProposalsQueueItemsByQueueIdStddevPopulationProposalIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_STDDEV_POPULATION_PROPOSAL_ID_DESC',
+  UnsignedProposalsQueueItemsByQueueIdStddevPopulationQueueIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_STDDEV_POPULATION_QUEUE_ID_ASC',
+  UnsignedProposalsQueueItemsByQueueIdStddevPopulationQueueIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_STDDEV_POPULATION_QUEUE_ID_DESC',
+  UnsignedProposalsQueueItemsByQueueIdStddevSampleIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_STDDEV_SAMPLE_ID_ASC',
+  UnsignedProposalsQueueItemsByQueueIdStddevSampleIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_STDDEV_SAMPLE_ID_DESC',
+  UnsignedProposalsQueueItemsByQueueIdStddevSampleProposalIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_STDDEV_SAMPLE_PROPOSAL_ID_ASC',
+  UnsignedProposalsQueueItemsByQueueIdStddevSampleProposalIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_STDDEV_SAMPLE_PROPOSAL_ID_DESC',
+  UnsignedProposalsQueueItemsByQueueIdStddevSampleQueueIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_STDDEV_SAMPLE_QUEUE_ID_ASC',
+  UnsignedProposalsQueueItemsByQueueIdStddevSampleQueueIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_STDDEV_SAMPLE_QUEUE_ID_DESC',
+  UnsignedProposalsQueueItemsByQueueIdSumIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_SUM_ID_ASC',
+  UnsignedProposalsQueueItemsByQueueIdSumIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_SUM_ID_DESC',
+  UnsignedProposalsQueueItemsByQueueIdSumProposalIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_SUM_PROPOSAL_ID_ASC',
+  UnsignedProposalsQueueItemsByQueueIdSumProposalIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_SUM_PROPOSAL_ID_DESC',
+  UnsignedProposalsQueueItemsByQueueIdSumQueueIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_SUM_QUEUE_ID_ASC',
+  UnsignedProposalsQueueItemsByQueueIdSumQueueIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_SUM_QUEUE_ID_DESC',
+  UnsignedProposalsQueueItemsByQueueIdVariancePopulationIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_VARIANCE_POPULATION_ID_ASC',
+  UnsignedProposalsQueueItemsByQueueIdVariancePopulationIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_VARIANCE_POPULATION_ID_DESC',
+  UnsignedProposalsQueueItemsByQueueIdVariancePopulationProposalIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_VARIANCE_POPULATION_PROPOSAL_ID_ASC',
+  UnsignedProposalsQueueItemsByQueueIdVariancePopulationProposalIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_VARIANCE_POPULATION_PROPOSAL_ID_DESC',
+  UnsignedProposalsQueueItemsByQueueIdVariancePopulationQueueIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_VARIANCE_POPULATION_QUEUE_ID_ASC',
+  UnsignedProposalsQueueItemsByQueueIdVariancePopulationQueueIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_VARIANCE_POPULATION_QUEUE_ID_DESC',
+  UnsignedProposalsQueueItemsByQueueIdVarianceSampleIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_VARIANCE_SAMPLE_ID_ASC',
+  UnsignedProposalsQueueItemsByQueueIdVarianceSampleIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_VARIANCE_SAMPLE_ID_DESC',
+  UnsignedProposalsQueueItemsByQueueIdVarianceSampleProposalIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_VARIANCE_SAMPLE_PROPOSAL_ID_ASC',
+  UnsignedProposalsQueueItemsByQueueIdVarianceSampleProposalIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_VARIANCE_SAMPLE_PROPOSAL_ID_DESC',
+  UnsignedProposalsQueueItemsByQueueIdVarianceSampleQueueIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_VARIANCE_SAMPLE_QUEUE_ID_ASC',
+  UnsignedProposalsQueueItemsByQueueIdVarianceSampleQueueIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_VARIANCE_SAMPLE_QUEUE_ID_DESC'
+}
+
 export type _Metadata = {
   __typename?: '_Metadata';
   chain?: Maybe<Scalars['String']>;
@@ -4370,41 +7339,34 @@ export type _Metadata = {
   targetHeight?: Maybe<Scalars['Int']>;
 };
 
-export type CurrentSessionAuthoritiesQueryVariables = Exact<{ [key: string]: never }>;
+export type CurrentSessionAuthoritiesQueryVariables = Exact<{ [key: string]: never; }>;
 
-export type CurrentSessionAuthoritiesQuery = {
-  __typename?: 'Query';
-  sessions?: {
-    __typename?: 'SessionsConnection';
-    nodes: Array<{
-      __typename?: 'Session';
-      id: string;
-      blockId: string;
-      authorities: any;
-      bestAuthorities: any;
-      nextBestAuthorities: any;
-      block?: { __typename?: 'Block'; id: string; timestamp?: any | null } | null;
-    } | null>;
-  } | null;
-};
+
+export type CurrentSessionAuthoritiesQuery = { __typename?: 'Query', sessions?: { __typename?: 'SessionsConnection', nodes: Array<{ __typename?: 'Session', id: string, blockId: string, authorities: any, bestAuthorities: any, signatureThreshold?: any | null, keyGenThreshold?: any | null, proposerThreshold?: any | null, publicKey?: { __typename?: 'PublicKey', compressed?: string | null } | null, block?: { __typename?: 'Block', id: string, timestamp?: any | null } | null } | null> } | null };
+
 
 export const CurrentSessionAuthoritiesDocument = gql`
-  query CurrentSessionAuthorities {
-    sessions(last: 1, orderBy: [BLOCK_ID_ASC]) {
-      nodes {
+    query CurrentSessionAuthorities {
+  sessions(last: 1, orderBy: [BLOCK_NUMBER_DESC]) {
+    nodes {
+      id
+      blockId
+      authorities
+      bestAuthorities
+      publicKey {
+        compressed
+      }
+      signatureThreshold
+      keyGenThreshold
+      proposerThreshold
+      block {
         id
-        blockId
-        authorities
-        bestAuthorities
-        nextBestAuthorities
-        block {
-          id
-          timestamp
-        }
+        timestamp
       }
     }
   }
-`;
+}
+    `;
 
 /**
  * __useCurrentSessionAuthoritiesQuery__
@@ -4421,27 +7383,14 @@ export const CurrentSessionAuthoritiesDocument = gql`
  *   },
  * });
  */
-export function useCurrentSessionAuthoritiesQuery(
-  baseOptions?: Apollo.QueryHookOptions<CurrentSessionAuthoritiesQuery, CurrentSessionAuthoritiesQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<CurrentSessionAuthoritiesQuery, CurrentSessionAuthoritiesQueryVariables>(
-    CurrentSessionAuthoritiesDocument,
-    options
-  );
-}
-export function useCurrentSessionAuthoritiesLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<CurrentSessionAuthoritiesQuery, CurrentSessionAuthoritiesQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<CurrentSessionAuthoritiesQuery, CurrentSessionAuthoritiesQueryVariables>(
-    CurrentSessionAuthoritiesDocument,
-    options
-  );
-}
+export function useCurrentSessionAuthoritiesQuery(baseOptions?: Apollo.QueryHookOptions<CurrentSessionAuthoritiesQuery, CurrentSessionAuthoritiesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<CurrentSessionAuthoritiesQuery, CurrentSessionAuthoritiesQueryVariables>(CurrentSessionAuthoritiesDocument, options);
+      }
+export function useCurrentSessionAuthoritiesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CurrentSessionAuthoritiesQuery, CurrentSessionAuthoritiesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<CurrentSessionAuthoritiesQuery, CurrentSessionAuthoritiesQueryVariables>(CurrentSessionAuthoritiesDocument, options);
+        }
 export type CurrentSessionAuthoritiesQueryHookResult = ReturnType<typeof useCurrentSessionAuthoritiesQuery>;
 export type CurrentSessionAuthoritiesLazyQueryHookResult = ReturnType<typeof useCurrentSessionAuthoritiesLazyQuery>;
-export type CurrentSessionAuthoritiesQueryResult = Apollo.QueryResult<
-  CurrentSessionAuthoritiesQuery,
-  CurrentSessionAuthoritiesQueryVariables
->;
+export type CurrentSessionAuthoritiesQueryResult = Apollo.QueryResult<CurrentSessionAuthoritiesQuery, CurrentSessionAuthoritiesQueryVariables>;
