@@ -16,12 +16,13 @@ import styled from 'styled-components';
 const MixerWrapper = styled.div``;
 type MixerProps = {};
 
+const dropdownOptions = [
+  { value: 'Github', icon: <GithubFill /> },
+  { value: 'Telegram', icon: <TelegramFill /> },
+  { value: 'Twitter', icon: <TwitterFill /> },
+];
+
 export const Mixer: React.FC<MixerProps> = () => {
-  const dropdownOptions = [
-    { value: 'Github', icon: <GithubFill /> },
-    { value: 'Telegram', icon: <TelegramFill /> },
-    { value: 'Twitter', icon: <TwitterFill /> },
-  ];
   const [value, setValue] = useState<undefined | string>();
 
   return (
