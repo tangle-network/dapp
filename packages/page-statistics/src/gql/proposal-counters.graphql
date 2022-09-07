@@ -1,0 +1,14 @@
+query ProposalCounter {
+  proposalCounters(first: 2 ,offset: 1, orderBy: [BLOCK_NUMBER_DESC]) {
+    nodes {
+      id
+      blockNumber
+      unSignedProposalsCount
+      signedProposalsCount
+
+      statusMap
+      unSignedProposalsMap
+      signedProposalsMap
+    }
+  }
+}
