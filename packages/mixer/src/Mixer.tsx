@@ -1,6 +1,6 @@
 import { Deposit, Withdraw } from '@webb-dapp/mixer/components';
 import { MixerTabs } from '@webb-dapp/ui-components/Tabs/MixerTabs';
-import { CheckBox, DropdownMenu, Input } from '@webb-dapp/webb-ui-components';
+import { CheckBox, DropdownMenu, Input, Slider } from '@webb-dapp/webb-ui-components';
 import {
   Coin,
   Filter,
@@ -24,6 +24,8 @@ const dropdownOptions = [
 
 export const Mixer: React.FC<MixerProps> = () => {
   const [value, setValue] = useState<undefined | string>();
+
+  const [sliderVal, setSliderVal] = useState([12, 24]);
 
   return (
     <MixerWrapper>
@@ -61,14 +63,22 @@ export const Mixer: React.FC<MixerProps> = () => {
           <Input id='iconRight' value='Icon right' isReadOnly rightIcon={<Search size='xl' />} className='mt-3' />
         </div>
         <div>
-          <DropdownMenu className='mr-3' size='sm' label='Filter' icon={<Filter />} menuOptions={dropdownOptions} />
+          <div>
+            <DropdownMenu className='mr-3' size='sm' label='Filter' icon={<Filter />} menuOptions={dropdownOptions} />
 
-          <DropdownMenu
-            label='Brand'
-            menuOptions={dropdownOptions}
-            value={value}
-            onChange={(nextVal) => setValue(nextVal)}
-          />
+            <DropdownMenu
+              label='Brand'
+              menuOptions={dropdownOptions}
+              value={value}
+              onChange={(nextVal) => setValue(nextVal)}
+            />
+          </div>
+          <div>
+            <Slider className='mt-4' defaultValue={[25]} />
+            <Slider className='mt-4' hasLabel defaultValue={[25]} />
+            <Slider className='mt-4' value={sliderVal} onChange={setSliderVal} />
+            <Slider className='mt-4' hasLabel defaultValue={[25, 75]} />
+          </div>
         </div>
       </div>
     </MixerWrapper>
