@@ -32,12 +32,6 @@ export const GlobalStylesheet = createGlobalStyle`
     *:focus {
         outline: none;
     }
-    button {
-        border: none;
-        box-shadow: none;
-        outline: none;
-        appearance: none;
-    }
     
     p,
     ul {

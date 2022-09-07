@@ -3,6 +3,7 @@ import { twMerge } from 'tailwind-merge';
 
 import { ButtonSpinner } from './ButtonSpinner';
 import { ButtonContentProps, ButtonProps } from './types';
+import { useButtonProps } from './use-button-props';
 import { getButtonClassNameByVariant } from './utils';
 
 /**
@@ -28,8 +29,9 @@ import { getButtonClassNameByVariant } from './utils';
  *  <Button variant="utility" isLoading>Button</Button>
  * ```
  */
-export const Button: React.FC<ButtonProps> = (props) => {
+export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
   const {
+    as: asProps,
     children,
     className,
     iconSpacing = 2,
@@ -42,14 +44,23 @@ export const Button: React.FC<ButtonProps> = (props) => {
     spinner,
     spinnerPlacement = 'start',
     varirant = 'primary',
+    ...restProps
   } = props;
+
+  const [buttonProps, { tagName: Component }] = useButtonProps({ tagName: asProps, isDisabled, ...restProps });
 
   const mergedClassName = twMerge(getButtonClassNameByVariant(varirant, size), className);
 
   const contentProps = { children, iconSpacing, leftIcon, rightIcon };
 
   return (
-    <button disabled={isDisabled || isLoading} data-loading={isLoading} className={mergedClassName}>
+    <Component
+      {...restProps}
+      {...buttonProps}
+      disabled={buttonProps.disabled || isLoading}
+      className={mergedClassName}
+      ref={ref}
+    >
       {isLoading && spinnerPlacement === 'start' && (
         <ButtonSpinner label={loadingText} spacing={iconSpacing}>
           {spinner}
@@ -71,9 +82,9 @@ export const Button: React.FC<ButtonProps> = (props) => {
           {spinner}
         </ButtonSpinner>
       )}
-    </button>
+    </Component>
   );
-};
+});
 
 /***** Internal components */
 
