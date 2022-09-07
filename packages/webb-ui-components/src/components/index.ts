@@ -6,4 +6,5 @@ export * from './Chip';
 export * from './DropdownMenu';
 export * from './Input';
 export * from './Logo';
+export * from './MenuItem';
 export * from './ThemeSwitcher';
