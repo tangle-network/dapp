@@ -3,6 +3,7 @@ import cx from 'classnames';
 import React, { useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
+import { MenuItem } from '../MenuItem';
 import { DropdownMenuProps } from './types';
 
 /**
@@ -25,7 +26,7 @@ import { DropdownMenuProps } from './types';
  *  />
  * ```
  */
-export const DropdownMenu: React.FC<DropdownMenuProps> = (props) => {
+export const DropdownMenu = React.forwardRef<HTMLDivElement, DropdownMenuProps>((props, ref) => {
   const { className, icon: iconProp, label, menuOptions, onChange, size = 'md', value } = props;
 
   const icon = useMemo(() => {
@@ -58,7 +59,7 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = (props) => {
   }, [label, menuOptions, value]);
 
   return (
-    <div className={twMerge('relative inline-block text-left', className)}>
+    <div className={twMerge('relative inline-block text-left', className)} ref={ref}>
       <DropdownMenuPrimitive.Root>
         <DropdownMenuPrimitive.Trigger asChild>
           <button
@@ -96,18 +97,8 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = (props) => {
           >
             <DropdownMenuPrimitive.RadioGroup value={value} onValueChange={onChange}>
               {menuOptions.map(({ icon, value }, i) => (
-                <DropdownMenuPrimitive.RadioItem
-                  key={`${value}-${i}`}
-                  className={cx(
-                    'flex cursor-pointer items-center px-4 py-2 text-base outline-none',
-                    'text-mono-140 dark:text-mono-80',
-                    'hover:bg-blue-0 dark:hover:bg-blue-120',
-                    'radix-state-checked:text-blue dark:radix-state-checked:text-blue-50'
-                  )}
-                  value={value}
-                >
-                  <span className='flex-grow text-inherit dark:text-inherit'>{value}</span>
-                  {icon}
+                <DropdownMenuPrimitive.RadioItem key={`${value}-${i}`} value={value} asChild>
+                  <MenuItem icon={icon}>{value}</MenuItem>
                 </DropdownMenuPrimitive.RadioItem>
               ))}
             </DropdownMenuPrimitive.RadioGroup>
@@ -116,4 +107,4 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = (props) => {
       </DropdownMenuPrimitive.Root>
     </div>
   );
-};
+});
