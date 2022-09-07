@@ -25,10 +25,6 @@ export const GlobalStylesheet = createGlobalStyle`
         font-size: 14px;
     }
     
-    * {
-        font-family: Bitum, serif;
-        transition: color, background-color 0.5s ease-in-out;
-    }
     *:focus {
         outline: none;
     }
