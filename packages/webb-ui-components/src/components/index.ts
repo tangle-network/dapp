@@ -3,6 +3,8 @@ export * from './AvatarGroup';
 export * from './Button';
 export * from './CheckBox';
 export * from './Chip';
+export * from './DropdownMenu';
 export * from './Input';
 export * from './Logo';
+export * from './MenuItem';
 export * from './ThemeSwitcher';
