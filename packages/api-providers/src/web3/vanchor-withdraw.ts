@@ -33,7 +33,7 @@ import {
 } from '../abstracts';
 import { generateCircomCommitment, utxoFromVAnchorNote, VAnchorContract } from '../contracts/wrappers';
 import { Web3Provider } from '../ext-providers/web3/web3-provider';
-import { fetchVariableAnchorKeyForEdges, fetchVariableAnchorWasmForEdges } from '../ipfs/evm/anchors';
+import { fetchVAnchorKeyFromAws, fetchVAnchorWasmFromAws } from '../ipfs/evm/anchors';
 import { bridgeStorageFactory, getEVMChainName, keypairStorageFactory } from '../utils';
 
 export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
@@ -98,11 +98,11 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
 
       const maxEdges = await destVAnchor.inner.maxEdges();
       if (notes.length > 2) {
-        provingKey = await fetchVariableAnchorKeyForEdges(maxEdges, false, abortSignal);
-        wasmBuffer = await fetchVariableAnchorWasmForEdges(maxEdges, false, abortSignal);
+        provingKey = await fetchVAnchorKeyFromAws(maxEdges, false, abortSignal);
+        wasmBuffer = await fetchVAnchorWasmFromAws(maxEdges, false, abortSignal);
       } else {
-        provingKey = await fetchVariableAnchorKeyForEdges(maxEdges, true, abortSignal);
-        wasmBuffer = await fetchVariableAnchorWasmForEdges(maxEdges, true, abortSignal);
+        provingKey = await fetchVAnchorKeyFromAws(maxEdges, true, abortSignal);
+        wasmBuffer = await fetchVAnchorWasmFromAws(maxEdges, true, abortSignal);
       }
 
       // Loop through the notes and populate the leaves map

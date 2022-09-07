@@ -11,7 +11,6 @@ import React, { FC } from 'react';
 
 import { config as routerConfig } from './router-config';
 const appLogger = LoggerService.new('App');
-appLogger.log('process.env: ', process.env);
 
 const App: FC = () => {
   return (
