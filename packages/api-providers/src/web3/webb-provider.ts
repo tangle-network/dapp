@@ -2,9 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { EventBus } from '@webb-tools/app-util';
-import { calculateTypedChainId, ChainType } from '@webb-tools/sdk-core';
+import { calculateTypedChainId, ChainType, Keypair, Note, toFixedHex } from '@webb-tools/sdk-core';
 import { providers } from 'ethers';
 import { Eth } from 'web3-eth';
+
+import { hexToU8a } from '@polkadot/util';
 
 import { Currency, RelayChainMethods, WasmFactory } from '../abstracts';
 import { Bridge, WebbState } from '../abstracts/state';
@@ -30,8 +32,8 @@ import { Web3ChainQuery } from './chain-query';
 import { Web3MixerDeposit } from './mixer-deposit';
 import { Web3MixerWithdraw } from './mixer-withdraw';
 import { Web3RelayerManager } from './relayer-manager';
+import { Web3VAnchorActions } from './vanchor-actions';
 import { Web3VAnchorDeposit } from './vanchor-deposit';
-import { Web3VAnchorRegistration } from './vanchor-registration';
 import { Web3VAnchorWithdraw } from './vanchor-withdraw';
 import { Web3WrapUnwrap } from './wrap-unwrap';
 
@@ -84,9 +86,9 @@ export class WebbWeb3Provider
           enabled: true,
           inner: new Web3VAnchorWithdraw(this),
         },
-        registration: {
+        actions: {
           enabled: true,
-          inner: new Web3VAnchorRegistration(this),
+          inner: new Web3VAnchorActions(this),
         },
       },
       wrapUnwrap: {
@@ -208,6 +210,50 @@ export class WebbWeb3Provider
     }
 
     return leaves;
+  }
+
+  async getVAnchorNotesFromChain(contract: VAnchorContract, owner: Keypair, abortSignal: AbortSignal): Promise<Note[]> {
+    const evmId = await contract.getEvmId();
+    const typedChainId = calculateTypedChainId(ChainType.EVM, evmId);
+    const utxos = await contract.getUtxosFromChain(
+      owner,
+      getAnchorDeploymentBlockNumber(typedChainId, contract.inner.address) || 1,
+      0,
+      abortSignal
+    );
+
+    const notes = Promise.all(
+      utxos.map(async (utxo) => {
+        console.log(utxo.serialize());
+        const secrets = [toFixedHex(utxo.chainId, 8), toFixedHex(utxo.amount), utxo.secret_key, utxo.blinding].join(
+          ':'
+        );
+
+        const note: Note = await Note.generateNote({
+          amount: utxo.amount,
+          backend: 'Circom',
+          curve: 'Bn254',
+          denomination: '18',
+          exponentiation: '5',
+          hashFunction: 'Poseidon',
+          index: utxo.index,
+          privateKey: hexToU8a(utxo.secret_key),
+          protocol: 'vanchor',
+          secrets,
+          sourceChain: typedChainId.toString(),
+          sourceIdentifyingData: contract.inner.address,
+          targetChain: utxo.chainId,
+          targetIdentifyingData: contract.inner.address,
+          tokenSymbol: await contract.inner.token(),
+          version: 'v1',
+          width: '5',
+        });
+
+        return note;
+      })
+    );
+
+    return notes;
   }
 
   // Init web3 provider with the `Web3Accounts` as the default account provider

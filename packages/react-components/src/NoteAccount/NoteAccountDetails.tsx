@@ -1,10 +1,16 @@
 import { InputBase, Typography } from '@mui/material';
+import { Currency } from '@webb-dapp/api-providers/abstracts';
 import { Web3Provider } from '@webb-dapp/api-providers/ext-providers';
 import { useDepositNote } from '@webb-dapp/mixer/hooks';
 import { useWebContext } from '@webb-dapp/react-environment/webb-context';
+import { useCurrencies } from '@webb-dapp/react-hooks/currency';
+import { TokenInput } from '@webb-dapp/ui-components/Inputs/TokenInput/TokenInput';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
-import { Keypair, Note } from '@webb-tools/sdk-core';
-import React, { useEffect, useState } from 'react';
+import { getRoundedAmountString } from '@webb-dapp/ui-components/utils';
+import { DepositAmountDecal } from '@webb-dapp/vbridge/components/DepositConfirm/DepositAmountDecal';
+import { calculateTypedChainId, Keypair, Note } from '@webb-tools/sdk-core';
+import { ethers } from 'ethers';
+import React, { useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
 import { ModalNoteDisplay } from '../NoteDisplay/ModalNoteDisplay';
@@ -33,6 +39,30 @@ const NoteAccountDetailsWrapper = styled.div`
     height: 50px;
     padding: 0 12px;
     border-radius: 10px;
+  }
+`;
+
+const TokenAmountChip = styled.div`
+  display: flex;
+  flex-direction: column;
+  border-radius: 50%;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  background: ${({ theme }) => (theme.type === 'dark' ? 'transparent' : '#242424')};
+  border: ${({ theme }) => `1px solid ${theme.accentColor}`};
+
+  .resized-amount {
+    font-weight: 600;
+    letter-spacing: -1px;
+    font-size: 20px;
+    color: ${({ theme }) => theme.accentColor};
+  }
+
+  .resized-symbol {
+    font-size: 8px;
+    color: ${({ theme }) => theme.accentColor};
   }
 `;
 
@@ -150,7 +180,8 @@ const DisconnectedNoteAccountView: React.FC<NoteAccountDetailsProps> = () => {
 };
 
 const ConnectedNoteAccountView: React.FC<NoteAccountDetailsProps> = () => {
-  const { logoutNoteAccount, noteManager } = useWebContext();
+  const { activeApi, activeChain, logoutNoteAccount, noteManager } = useWebContext();
+  const { governedCurrencies, governedCurrency } = useCurrencies();
   const [allNotes, setAllNotes] = useState<Map<string, Note[]>>(new Map());
   const [loadNoteText, setLoadNoteText] = useState('');
   const enteredNote = useDepositNote(loadNoteText);
@@ -173,11 +204,76 @@ const ConnectedNoteAccountView: React.FC<NoteAccountDetailsProps> = () => {
     return sub.unsubscribe();
   }, [enteredNote, noteManager]);
 
+  const balances: Map<string, number> = useMemo(() => {
+    const tokenBalanceMap = new Map<string, number>();
+
+    allNotes.forEach((chainGroupedNotes) => {
+      chainGroupedNotes.map((note) => {
+        const assetBalance = tokenBalanceMap.get(note.note.tokenSymbol);
+        if (!assetBalance) {
+          tokenBalanceMap.set(
+            note.note.tokenSymbol,
+            Number(ethers.utils.formatUnits(note.note.amount, note.note.denomination))
+          );
+        } else {
+          tokenBalanceMap.set(
+            note.note.tokenSymbol,
+            assetBalance + Number(ethers.utils.formatUnits(note.note.amount, note.note.denomination))
+          );
+        }
+      });
+    });
+
+    return tokenBalanceMap;
+  }, [allNotes]);
+
   if (noteManager) {
     return (
       <div>
         <div className='account-details'>
           <Typography>Public Key: {noteManager.getKeypair().pubkey.toHexString()}</Typography>
+        </div>
+        <div className='sync-notes' style={{ display: 'flex' }}>
+          <button
+            onClick={() => {
+              if (activeApi && activeApi.state.activeBridge && activeChain) {
+                activeApi.methods.variableAnchor.actions.inner.syncNotesForKeypair(
+                  activeApi.state.activeBridge.targets[
+                    calculateTypedChainId(activeChain.chainType, activeChain.chainId)
+                  ],
+                  noteManager.getKeypair()
+                );
+              }
+            }}
+            disabled={activeApi ? false : true}
+          >
+            Sync notes for
+          </button>
+          <TokenInput
+            currencies={governedCurrencies}
+            value={governedCurrency}
+            onChange={(currency: Currency) => {
+              if (!activeApi) {
+                return;
+              }
+
+              activeApi.methods.bridgeApi.setBridgeByCurrency(currency);
+            }}
+            wrapperStyles={{ display: 'flex' }}
+          />
+        </div>
+        <div className='asset-balances' style={{ display: 'flex', justifyContent: 'space-around' }}>
+          {[...balances.entries()].map((entry) => {
+            return (
+              <div key={`${entry[0]}`}>
+                {/* Amount chip */}
+                <TokenAmountChip>
+                  <p className='resized-amount'>{getRoundedAmountString(entry[1])}</p>
+                  <p className='resized-symbol'>{entry[0]}</p>
+                </TokenAmountChip>
+              </div>
+            );
+          })}
         </div>
         <div className='notes-list'>
           {[...allNotes.entries()].map((entry) => {

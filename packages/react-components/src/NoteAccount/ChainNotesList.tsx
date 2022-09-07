@@ -32,7 +32,11 @@ export const ChainNotesList: React.FC<ChainNotesListProps> = ({ chain, notes }) 
       <Typography variant='h4'>{chainConfig.name}</Typography>
       <List>
         {listNotes.map((note, index) => {
-          return <ItemNoteDisplay note={note} key={`${chain}-${index}`} removeNote={async () => removeNote(note)} />;
+          return (
+            <div>
+              <ItemNoteDisplay note={note} key={`${chain}-${index}`} removeNote={async () => removeNote(note)} />
+            </div>
+          );
         })}
       </List>
     </ChainNotesListWrapper>

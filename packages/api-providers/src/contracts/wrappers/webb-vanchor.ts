@@ -253,6 +253,8 @@ export class VAnchorContract {
       outputs,
       extAmount,
       0,
+      0,
+      await this.inner.token(),
       sender,
       sender,
       leavesMap,
@@ -320,6 +322,8 @@ export class VAnchorContract {
       outputs,
       extAmount,
       0,
+      0,
+      tokenAddress,
       sender,
       sender,
       leavesMap,
@@ -428,6 +432,69 @@ export class VAnchorContract {
     };
   }
 
+  // This function will query the chain for notes that are spendable by a keypair in a block range
+  async getUtxosFromChain(
+    owner: Keypair,
+    startingBlock: number,
+    finalBlock: number,
+    abortSignal: AbortSignal
+  ): Promise<Utxo[]> {
+    const filter = this._contract.filters.NewCommitment(null, null, null);
+    let logs: Array<Log> = []; // Read the stored logs into this variable
+
+    finalBlock = finalBlock || (await this.web3Provider.getBlockNumber());
+    console.log(`Getting notes from chain`);
+    // number of blocks to query at a time
+    const step = 1024;
+    console.log(`Fetching notes with steps of ${step} logs/request`);
+
+    try {
+      for (let i = startingBlock; i < finalBlock; i += step) {
+        const nextLogs = await retryPromise(
+          () => {
+            return this.web3Provider.getLogs({
+              fromBlock: i,
+              toBlock: finalBlock - i > step ? i + step : finalBlock,
+              ...filter,
+            });
+          },
+          20,
+          10,
+          abortSignal
+        );
+
+        logs = [...logs, ...nextLogs];
+
+        console.log(`Getting logs for block range: ${i} through ${i + step}`);
+      }
+    } catch (e) {
+      logger.error(e);
+      throw e;
+    }
+
+    const events = logs.map((log) => this._contract.interface.parseLog(log));
+    console.log(events[0]);
+
+    const encryptedCommitments: string[] = events.map((e) => e.args.encryptedOutput);
+
+    // Attempt to decrypt with the owner's keypair
+    const utxos = await Promise.all(
+      encryptedCommitments.map((enc) => {
+        try {
+          return CircomUtxo.decrypt(owner, enc);
+        } catch (e) {
+          // eslint-disable-next-line no-empty
+        }
+      })
+    );
+
+    // Unsure why the following filter statement does not change type from (Utxo | undefined)[] to Utxo[]
+    // @ts-ignore
+    const decryptedUtxos: Utxo[] = utxos.filter((value) => value !== undefined);
+
+    return decryptedUtxos;
+  }
+
   async generateLinkedMerkleProof(sourceDeposit: IAnchorDepositInfo, sourceLeaves: string[], sourceChainId: number) {
     // Grab the root of the source chain to prove against
     const edgeIndex = await this._contract.edgeIndex(sourceChainId);
@@ -466,6 +533,8 @@ export class VAnchorContract {
     outputs: [Utxo, Utxo],
     extAmount: BigNumberish,
     fee: BigNumberish,
+    refund: BigNumberish,
+    token: string,
     recipient: string,
     relayer: string,
     leavesMap: Record<string, Uint8Array[]>,
@@ -541,6 +610,8 @@ export class VAnchorContract {
       recipient: hexToU8a(recipient),
       extAmount: toFixedHex(BigNumber.from(extAmount)),
       fee: BigNumber.from(fee).toString(),
+      refund: BigNumber.from(refund).toString(),
+      token: hexToU8a(token),
     };
 
     console.log('proofInput: ', proofInput);
@@ -562,9 +633,11 @@ export class VAnchorContract {
 
     const extData = {
       recipient: toFixedHex(proofInput.recipient, 20),
-      extAmount: toFixedHex(proofInput.extAmount, 20),
+      extAmount: toFixedHex(proofInput.extAmount),
       relayer: toFixedHex(proofInput.relayer, 20),
       fee: toFixedHex(proofInput.fee, 20),
+      refund: toFixedHex(proofInput.refund),
+      token: toFixedHex(proofInput.token, 20),
       encryptedOutput1: u8aToHex(proofInput.encryptedCommitments[0]),
       encryptedOutput2: u8aToHex(proofInput.encryptedCommitments[1]),
     };

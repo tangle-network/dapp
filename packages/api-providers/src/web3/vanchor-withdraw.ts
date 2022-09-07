@@ -215,6 +215,8 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
             [changeUtxo, dummyUtxo],
             extAmount,
             0,
+            0,
+            activeBridge.currency.getAddress(destChainIdType)!,
             recipient,
             relayerAccount,
             leavesMap,

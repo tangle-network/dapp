@@ -1,12 +1,18 @@
-import { VAnchorRegistration } from '../abstracts/anchor/vanchor-registration';
+import { Keypair, Note } from '@webb-tools/sdk-core';
+
+import { VAnchorActions } from '../abstracts/anchor/vanchor-actions';
 import { WebbPolkadot } from './webb-provider';
 
-export class PolkadotVAnchorRegistration extends VAnchorRegistration<WebbPolkadot> {
+export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
   async isPairRegistered(treeId: string, account: string, pubkey: string): Promise<boolean> {
     throw new Error('Attempted to check registration with Polkadot');
   }
 
   async register(treeId: string, account: string, pubkey: string): Promise<boolean> {
     throw new Error('Attempted to register with Polkadot');
+  }
+
+  async syncNotesForKeypair(anchorAddress: string, owner: Keypair): Promise<Note[]> {
+    throw new Error('Attempted to sync notes for keypair with Polkadot');
   }
 }

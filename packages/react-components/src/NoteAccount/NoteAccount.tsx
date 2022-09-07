@@ -3,8 +3,7 @@ import { useWebContext } from '@webb-dapp/react-environment/webb-context';
 import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { Modal } from '@webb-dapp/ui-components/Modal/Modal';
 import { NetworkIndicatorWrapper } from '@webb-dapp/ui-components/NetworkManager/NetworkManagerIndicator';
-import { Note } from '@webb-tools/sdk-core';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import { NoteAccountDetails } from './NoteAccountDetails';
@@ -23,7 +22,6 @@ const NoteAccountWrapper = styled(NetworkIndicatorWrapper)`
 
 export const NoteAccount: React.FC = () => {
   const { noteManager } = useWebContext();
-  const [allNotes, setAllNotes] = useState<Map<string, Note[]>>(new Map());
   const [open, setOpen] = useState(false);
 
   const closeModal = useCallback(() => {
@@ -33,16 +31,6 @@ export const NoteAccount: React.FC = () => {
   const openModal = useCallback(() => {
     setOpen(true);
   }, []);
-
-  useEffect(() => {
-    // Clear the notes if the noteManager is logged out
-    if (!noteManager) {
-      setAllNotes(new Map());
-      return;
-    }
-    // Populate the notes if the noteManager is logged in
-    setAllNotes(noteManager.getAllNotes());
-  }, [noteManager]);
 
   return (
     <>

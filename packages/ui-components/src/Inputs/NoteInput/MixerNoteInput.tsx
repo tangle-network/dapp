@@ -23,7 +23,7 @@ export const MixerNoteInput: React.FC<NoteInputProps> = ({ error, onChange, valu
   useEffect(() => {
     if (
       depositNote &&
-      depositNote.note.protocol === 'anchor' &&
+      depositNote.note.protocol !== 'mixer' &&
       parseTypedChainId(Number(depositNote.note.targetChainId)).chainType != ChainType.EVM
     ) {
       notificationApi.addToQueue({

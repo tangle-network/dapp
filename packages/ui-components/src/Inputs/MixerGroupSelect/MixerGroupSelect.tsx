@@ -25,7 +25,7 @@ type MixerGroupSelectProps = {
   onChange?(item: MixerSize): void;
 };
 
-const AmountChipWrapper = styled.div<{ selected?: boolean }>`
+export const AmountChipWrapper = styled.div<{ selected?: boolean }>`
   cursor: pointer;
   transition: all ease 0.3s;
   text-transform: capitalize;
