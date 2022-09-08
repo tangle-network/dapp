@@ -19,7 +19,7 @@ import { getChipClassName } from './utils';
  *  <Chip color="red" isDisabled>Disabled</Chip>
  * ```
  */
-export const Chip: React.FC<ChipProps> = (props) => {
+export const Chip = React.forwardRef<HTMLSpanElement, ChipProps>((props, ref) => {
   const { children, className: classNameProp, color = 'green', isDisabled } = props;
 
   const baseClsx = useMemo(() => 'box-border inline-block px-3 py-1 rounded-full font-bold body4', []);
@@ -29,5 +29,9 @@ export const Chip: React.FC<ChipProps> = (props) => {
     [baseClsx, color, isDisabled, classNameProp]
   );
 
-  return <span className={className}>{children}</span>;
-};
+  return (
+    <span className={className} ref={ref}>
+      {children}
+    </span>
+  );
+});
