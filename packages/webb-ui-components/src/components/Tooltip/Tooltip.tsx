@@ -9,6 +9,14 @@ import { TooltipBodyProps, TooltipProps, TooltipTriggerProps } from './types';
  * The `ToolTipBody` component, use after the `TooltipTrigger`.
  * Reresents the popup content of the tooltip.
  * Must use inside the `Tooltip` component.
+ *
+ * @example
+ *
+ * ```jsx
+ *    <ToolTipBody className='max-w-[185px] w-auto'>
+ *      <span>A report of a DKG authority misbehaving. (Body xs Regular)</span>
+ *    </ToolTipBody>
+ * ```
  */
 export const ToolTipBody: React.FC<TooltipBodyProps> = ({ button, children, className, title }) => {
   return (
@@ -37,6 +45,14 @@ export const ToolTipBody: React.FC<TooltipBodyProps> = ({ button, children, clas
 /**
  * The `TooltipTrigger` component, wrap around a trigger component like `Button` or `Chip` or a html tag.
  * Must use inside the `Tooltip` component.
+ *
+ * @example
+ *
+ * ```jsx
+ *    <ToolTipTrigger>
+ *      <Chip color='blue'>Text only</Chip>
+ *    </ToolTipTrigger>
+ * ```
  */
 export const ToolTipTrigger: React.FC<TooltipTriggerProps> = ({ children, className }) => {
   return <TooltipPrimitive.Trigger className={className}>{children}</TooltipPrimitive.Trigger>;
@@ -44,6 +60,19 @@ export const ToolTipTrigger: React.FC<TooltipTriggerProps> = ({ children, classN
 
 /**
  * The `Tooltip` component.
+ *
+ * @example
+ *
+ * ```jsx
+ *    <Tooltip isDefaultOpen>
+ *      <ToolTipTrigger>
+ *        <Chip color='blue'>Text only</Chip>
+ *      </ToolTipTrigger>
+ *      <ToolTipBody className='max-w-[185px] w-auto'>
+ *        <span>A report of a DKG authority misbehaving. (Body xs Regular)</span>
+ *      </ToolTipBody>
+ *    </Tooltip>
+ * ```
  */
 export const Tooltip: React.FC<TooltipProps> = ({
   children,
