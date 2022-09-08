@@ -6,7 +6,7 @@ import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { useBreakpoint } from '@webb-dapp/ui-components/utils/responsive-utils';
 import { ArcElement, Chart as ChartJS, Legend, Tooltip } from 'chart.js';
 import { Config, UserConfig } from 'gridjs';
-import { _, Grid } from 'gridjs-react';
+import { _, Grid as _Grid } from 'gridjs-react';
 import { FC, useCallback, useEffect, useMemo } from 'react';
 import { ChartProps, Doughnut } from 'react-chartjs-2';
 
@@ -15,9 +15,9 @@ import { GridWrapper } from './styled/shared';
 import { StatisticCard, StatisticCardProps } from './StatisticCard';
 import { ChartWrapper, DKGEggnetStatisticsWrapper, DKGSignerWrapper, StatisticCardsList } from './styled';
 import { useDKGEggnetStats } from './useDKGEggnetStats';
+const Grid = _Grid as any;
 
 ChartJS.register(ArcElement, Tooltip, Legend);
-
 export const DKGStatistics: FC = () => {
   const { data, fetchData } = useDKGEggnetStats();
   const pallet = useColorPallet();
@@ -244,6 +244,7 @@ export const DKGStatistics: FC = () => {
     fetchData();
   }, [fetchData]);
 
+  // @ts-ignore
   return (
     <DKGEggnetStatisticsWrapper>
       <AuthoritiesData />

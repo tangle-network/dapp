@@ -2,12 +2,13 @@ import { Typography } from '@mui/material';
 import { GridWrapper } from '@webb-dapp/page-statistics/DKGStatistics/styled/shared';
 import { useColorPallet } from '@webb-dapp/react-hooks/useColorPallet';
 import { Config, UserConfig } from 'gridjs';
-import { Grid } from 'gridjs-react';
+import { Grid as _Grid } from 'gridjs-react';
 import React, { useMemo } from 'react';
 
 import { Wrapper } from '../CastVote/styled';
 import { IProposalVoter } from '../useProposalDetail';
 import { ChipWrapper } from './styled';
+const Grid = _Grid as any;
 
 export const VotersTable: React.FC<{ voters: IProposalVoter[] }> = ({ voters }) => {
   const pallet = useColorPallet();
