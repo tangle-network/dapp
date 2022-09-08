@@ -8,8 +8,8 @@ import {
   Input,
   Slider,
   Tooltip,
-  ToolTipBody,
-  ToolTipTrigger,
+  TooltipBody,
+  TooltipTrigger,
 } from '@webb-dapp/webb-ui-components';
 import {
   Coin,
@@ -42,28 +42,28 @@ export const Mixer: React.FC<MixerProps> = () => {
       <MixerTabs Withdraw={<Withdraw />} Deposit={<Deposit />} />
       <div className='flex justify-around my-36'>
         <Tooltip isDefaultOpen>
-          <ToolTipTrigger>
+          <TooltipTrigger>
             <Chip color='blue'>Text only</Chip>
-          </ToolTipTrigger>
-          <ToolTipBody className='max-w-[185px] w-auto'>
+          </TooltipTrigger>
+          <TooltipBody className='max-w-[185px] w-auto'>
             <span>A report of a DKG authority misbehaving. (Body xs Regular)</span>
-          </ToolTipBody>
+          </TooltipBody>
         </Tooltip>
 
         <Tooltip isDefaultOpen>
-          <ToolTipTrigger>
+          <TooltipTrigger>
             <Chip color='blue'>Title + text</Chip>
-          </ToolTipTrigger>
-          <ToolTipBody className='max-w-[185px] w-auto' title='Misbehavior Report (Title)'>
+          </TooltipTrigger>
+          <TooltipBody className='max-w-[185px] w-auto' title='Misbehavior Report (Title)'>
             <span>A report of a DKG authority misbehaving. (Body xs Regular)</span>
-          </ToolTipBody>
+          </TooltipBody>
         </Tooltip>
 
         <Tooltip isDefaultOpen>
-          <ToolTipTrigger>
+          <TooltipTrigger>
             <Chip color='blue'>Title + text + button</Chip>
-          </ToolTipTrigger>
-          <ToolTipBody
+          </TooltipTrigger>
+          <TooltipBody
             className='max-w-[185px] w-auto'
             title='Misbehavior Report (Title)'
             button={
@@ -73,7 +73,7 @@ export const Mixer: React.FC<MixerProps> = () => {
             }
           >
             <span className='inline-block'>A report of a DKG authority misbehaving. (Body xs Regular)</span>
-          </ToolTipBody>
+          </TooltipBody>
         </Tooltip>
       </div>
       <div className='flex mt-3 space-x-5'>
