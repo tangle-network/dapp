@@ -5,12 +5,13 @@ import { chainsConfig } from '@webb-dapp/apps/configs';
 import { useDepositNote } from '@webb-dapp/mixer/hooks';
 import { useWebContext } from '@webb-dapp/react-environment/webb-context';
 import { useCurrencies } from '@webb-dapp/react-hooks/currency';
+import { useNoteAccount } from '@webb-dapp/react-hooks/useNoteAccount';
 import { TokenInput } from '@webb-dapp/ui-components/Inputs/TokenInput/TokenInput';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { getRoundedAmountString } from '@webb-dapp/ui-components/utils';
 import { calculateTypedChainId, Keypair, Note } from '@webb-tools/sdk-core';
 import { ethers } from 'ethers';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
 import { ItemNoteDisplay } from '../NoteDisplay/ItemNoteDisplay';
@@ -44,25 +45,10 @@ const NoteAccountDetailsWrapper = styled.div`
 const TokenAmountChip = styled.div`
   display: flex;
   flex-direction: column;
-  border-radius: 50%;
   align-items: center;
   justify-content: center;
-  width: 60px;
-  height: 60px;
   background: ${({ theme }) => (theme.type === 'dark' ? 'transparent' : '#242424')};
   border: ${({ theme }) => `1px solid ${theme.accentColor}`};
-
-  .resized-amount {
-    font-weight: 600;
-    letter-spacing: -1px;
-    font-size: 20px;
-    color: ${({ theme }) => theme.accentColor};
-  }
-
-  .resized-symbol {
-    font-size: 8px;
-    color: ${({ theme }) => theme.accentColor};
-  }
 `;
 
 export const NoteAccountDetails: React.FC = () => {
@@ -176,38 +162,30 @@ const DisconnectedNoteAccountView: React.FC = () => {
 
 const ConnectedNoteAccountView: React.FC = () => {
   const { activeApi, activeChain, logoutNoteAccount, noteManager, purgeNoteAccount } = useWebContext();
+  const { allNotes } = useNoteAccount();
   const { governedCurrencies, governedCurrency } = useCurrencies();
-  const [allNotes, setAllNotes] = useState<Map<string, Note[]>>(new Map());
   const [loadNoteText, setLoadNoteText] = useState('');
   const enteredNote = useDepositNote(loadNoteText);
 
-  const syncNotes = () => {
+  const syncNotes = useCallback(async () => {
     if (activeApi && activeApi.state.activeBridge && activeChain && noteManager) {
-      activeApi.methods.variableAnchor.actions.inner
-        .syncNotesForKeypair(
-          activeApi.state.activeBridge.targets[calculateTypedChainId(activeChain.chainType, activeChain.chainId)],
-          noteManager.getKeypair()
-        )
-        .then((notes) => {
-          notes
-            .filter((note) => note.note.amount !== '0')
-            .map((note) => {
-              console.log(note.serialize());
-              noteManager.addNote(note);
-            });
-        });
-    }
-  };
+      const chainNotes = await activeApi.methods.variableAnchor.actions.inner.syncNotesForKeypair(
+        activeApi.state.activeBridge.targets[calculateTypedChainId(activeChain.chainType, activeChain.chainId)],
+        noteManager.getKeypair()
+      );
 
-  const removeNote = (chain: string, note: Note) => {
-    const chainNotes = allNotes.get(chain);
-    if (!chainNotes) {
-      return;
+      await Promise.all(
+        chainNotes
+          // Do not display notes that have zero value.
+          .filter((note) => note.note.amount !== '0')
+          .map(async (note) => {
+            console.log(note.serialize());
+            await noteManager.addNote(note);
+            return note;
+          })
+      );
     }
-    const updatedNotes = chainNotes.filter((chainNote) => chainNote.serialize() != note.serialize());
-    allNotes.set(chain, updatedNotes);
-    noteManager?.removeNote(note);
-  };
+  }, [activeApi, activeChain, noteManager]);
 
   // On note input change, if the text is successfully parsed as a note, give it to the NoteManager
   // and clear the input.
@@ -220,35 +198,61 @@ const ConnectedNoteAccountView: React.FC = () => {
         setLoadNoteText('');
       });
     }
-    const sub = noteManager.$notesUpdated.subscribe(() => {
-      setAllNotes(noteManager.getAllNotes());
-    });
+  }, [enteredNote, noteManager]);
 
-    return sub.unsubscribe();
-  }, [enteredNote, noteManager, noteManager?.notesUpdated]);
+  const getBalancesForChain = useCallback(
+    (typedChainId: string): Map<string, number> => {
+      let chainBalances: Map<string, number> = new Map();
+      const chainGroupedNotes = allNotes.get(typedChainId);
 
-  const balances: Map<string, number> = useMemo(() => {
-    const tokenBalanceMap = new Map<string, number>();
+      if (!chainGroupedNotes) {
+        return new Map();
+      }
 
-    allNotes.forEach((chainGroupedNotes) => {
       chainGroupedNotes.map((note) => {
-        const assetBalance = tokenBalanceMap.get(note.note.tokenSymbol);
+        const assetBalance = chainBalances.get(note.note.tokenSymbol);
         if (!assetBalance) {
-          tokenBalanceMap.set(
+          chainBalances.set(
             note.note.tokenSymbol,
             Number(ethers.utils.formatUnits(note.note.amount, note.note.denomination))
           );
         } else {
-          tokenBalanceMap.set(
+          chainBalances.set(
             note.note.tokenSymbol,
             assetBalance + Number(ethers.utils.formatUnits(note.note.amount, note.note.denomination))
           );
         }
       });
+
+      return chainBalances;
+    },
+    [allNotes]
+  );
+
+  const cumulativeBalances: Map<string, number> = useMemo(() => {
+    if (!noteManager) {
+      return new Map();
+    }
+
+    const tokenBalanceMap = new Map<string, number>();
+
+    const chainGroupedBalances = [...allNotes.keys()].map((typedChainId) => {
+      return getBalancesForChain(typedChainId);
     });
 
+    for (const chainBalance of chainGroupedBalances) {
+      for (const assetBalanceEntry of chainBalance) {
+        const previousAssetBalance = tokenBalanceMap.get(assetBalanceEntry[0]);
+        if (!previousAssetBalance) {
+          tokenBalanceMap.set(assetBalanceEntry[0], assetBalanceEntry[1]);
+        } else {
+          tokenBalanceMap.set(assetBalanceEntry[0], assetBalanceEntry[1] + previousAssetBalance);
+        }
+      }
+    }
+
     return tokenBalanceMap;
-  }, [allNotes]);
+  }, [allNotes, getBalancesForChain, noteManager]);
 
   if (noteManager) {
     return (
@@ -277,14 +281,15 @@ const ConnectedNoteAccountView: React.FC = () => {
             wrapperStyles={{ display: 'flex' }}
           />
         </div>
-        <div className='asset-balances' style={{ display: 'flex', justifyContent: 'space-around' }}>
-          {[...balances.entries()].map((entry) => {
+        <Typography variant='h3'>Total Asset Balances:</Typography>
+        <div className='cumulative-asset-balances' style={{ display: 'flex', justifyContent: 'space-around' }}>
+          {[...cumulativeBalances.entries()].map((entry) => {
             return (
               <div key={`${entry[0]}`}>
                 {/* Amount chip */}
                 <TokenAmountChip>
-                  <p className='resized-amount'>{getRoundedAmountString(entry[1])}</p>
-                  <p className='resized-symbol'>{entry[0]}</p>
+                  <Typography variant='h6'>{getRoundedAmountString(entry[1])}</Typography>
+                  <Typography variant='h6'>{entry[0]}</Typography>
                 </TokenAmountChip>
               </div>
             );
@@ -293,17 +298,34 @@ const ConnectedNoteAccountView: React.FC = () => {
         <div className='notes-list'>
           {[...allNotes.entries()].map((entry) => {
             // return <ChainNotesList key={`${entry[0]}`} chain={entry[0]} notes={entry[1]} />;
+            const assetBalancesMap = getBalancesForChain(entry[0]);
             return (
               <>
                 <Typography variant='h4'>{chainsConfig[Number(entry[0])].name}</Typography>
+                <Typography variant='h5' style={{ paddingLeft: '40px' }}>
+                  Balances:
+                </Typography>
+                <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+                  {[...assetBalancesMap.entries()].map((entry) => {
+                    return (
+                      <TokenAmountChip>
+                        <Typography variant='h6'>{getRoundedAmountString(entry[1])}</Typography>
+                        <Typography variant='h6'>{entry[0]}</Typography>
+                      </TokenAmountChip>
+                    );
+                  })}
+                </div>
+                <Typography variant='h5' style={{ paddingLeft: '40px' }}>
+                  Notes:
+                </Typography>
                 <List>
                   {entry[1].map((note, index) => {
                     return (
-                      <div>
+                      <div style={{ display: 'flex' }}>
                         <ItemNoteDisplay
                           note={note}
                           key={`${entry[0]}-${index}`}
-                          removeNote={async () => removeNote(entry[0], note)}
+                          removeNote={() => noteManager?.removeNote(note)}
                         />
                       </div>
                     );
