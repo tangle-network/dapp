@@ -433,7 +433,7 @@ export class VAnchorContract {
   }
 
   // This function will query the chain for notes that are spendable by a keypair in a block range
-  async getUtxosFromChain(
+  async getSpendableUtxosFromChain(
     owner: Keypair,
     startingBlock: number,
     finalBlock: number,
@@ -493,7 +493,12 @@ export class VAnchorContract {
     // @ts-ignore
     const decryptedUtxos: Utxo[] = utxos.filter((value) => value !== undefined);
 
-    return decryptedUtxos;
+    // filter utxos that have already been spent
+    const spendableUtxos = await Promise.all(
+      decryptedUtxos.filter(async (utxo) => (await this._contract.nullifierHashes(utxo.nullifier)) === false)
+    );
+
+    return spendableUtxos;
   }
 
   async generateLinkedMerkleProof(sourceDeposit: IAnchorDepositInfo, sourceLeaves: string[], sourceChainId: number) {

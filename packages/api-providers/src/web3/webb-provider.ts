@@ -216,7 +216,7 @@ export class WebbWeb3Provider
     const evmId = await contract.getEvmId();
     const typedChainId = calculateTypedChainId(ChainType.EVM, evmId);
     const tokenSymbol = await this.methods.bridgeApi.getCurrency()!;
-    const utxos = await contract.getUtxosFromChain(
+    const utxos = await contract.getSpendableUtxosFromChain(
       owner,
       getAnchorDeploymentBlockNumber(typedChainId, contract.inner.address) || 1,
       0,
