@@ -6,6 +6,7 @@ import {
   Chip,
   DropdownMenu,
   Input,
+  Progress,
   Slider,
   Tooltip,
   ToolTipBody,
@@ -40,6 +41,16 @@ export const Mixer: React.FC<MixerProps> = () => {
   return (
     <MixerWrapper>
       <MixerTabs Withdraw={<Withdraw />} Deposit={<Deposit />} />
+
+      <div className='mt-8'>
+        <h6 className='mt-5'>Small</h6>
+        <Progress size='sm' value={60} className='w-[100px]' />
+        <h6 className='mt-5'>Medium (default)</h6>
+        <Progress value={60} className='w-[495px]' />
+        <h6 className='mt-5'>Large</h6>
+        <Progress size='lg' className='w-[666px]' value={60} />
+      </div>
+
       <div className='flex justify-around my-36'>
         <Tooltip isDefaultOpen>
           <ToolTipTrigger>
