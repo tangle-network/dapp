@@ -11,8 +11,8 @@ const classNames: ButtonClassNames = {
       active: 'active:border-mono-200 dark:active:bg-mono-20 dark:active:border-mono-160 dark:active:text-mono-180',
       disabled: 'disabled:bg-mono-80 dark:disabled:bg-mono-80 dark:disabled:border-transparent',
     },
-    sm: 'body1',
-    md: 'body3',
+    md: 'body1',
+    sm: 'body3',
   },
   secondary: {
     base: {
@@ -23,8 +23,8 @@ const classNames: ButtonClassNames = {
       disabled:
         'disabled:border-mono-100 disabled:text-mono-100 disabled:bg-mono-20 dark:disabled:border-mono-100 dark:disabled:text-mono-100 dark:disabled:bg-mono-20',
     },
-    sm: 'body1',
-    md: 'body3',
+    md: 'body1',
+    sm: 'body3',
   },
   utility: {
     base: {
@@ -35,8 +35,8 @@ const classNames: ButtonClassNames = {
       disabled:
         'disabled:border-none disabled:bg-mono-40 disabled:text-mono-120 disabled:border-transparent dark:disabled:bg-mono-140 dark:disabled:text-mono-100',
     },
-    sm: 'body1 font-semibold',
-    md: 'body4 font-bold',
+    md: 'body1 font-semibold',
+    sm: 'body4 font-bold',
   },
   link: {
     base: {
@@ -45,8 +45,8 @@ const classNames: ButtonClassNames = {
       active: 'active:text-blue-90 active:border-blue-90 dark:active:text-blue dark:active:border-blue',
       disabled: '',
     },
-    sm: 'body1 font-semibold',
-    md: 'body4 bold',
+    md: 'body1 font-semibold',
+    sm: 'body4 bold',
   },
 };
 
