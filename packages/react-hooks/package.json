@@ -7,11 +7,11 @@
   "homepage": "https://github.com/webb-tools/webb-dapp#readme",
   "dependencies": {
     "@influxdata/influxdb-client": "^1.8.0",
-    "@polkadot/api": "9.2.3",
+    "@polkadot/api": "9.2.4",
     "@polkadot/extension-dapp": "0.43.1",
     "@umijs/use-request": "1.4.3",
-    "@webb-tools/api": "0.1.4-101",
-    "@webb-tools/types": "0.1.4-101",
+    "@webb-tools/api": "0.1.4-102",
+    "@webb-tools/types": "0.1.4-102",
     "axios": "^0.21.0",
     "copy-to-clipboard": "^3.3.1",
     "csv": "^5.3.2"

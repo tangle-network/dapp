@@ -1,15 +1,27 @@
 const fs = require('fs');
 const path = require('path');
-const webJsPackages = [
+const webbJsPackages = [
   '@webb-tools/api',
   '@webb-tools/api-derive',
   '@webb-tools/types',
   '@webb-tools/app-util',
   '@webb-tools/sdk-core',
   '@webb-tools/wasm-utils',
+  '@webb-tools/test-utils',
 ];
 
-function updateWebbToolsPackages(next) {
+const proposalSolidityPackages = [
+  '@webb-tools/protocol-solidity',
+
+  '@webb-tools/anchors',
+  '@webb-tools/bridges',
+  '@webb-tools/contracts',
+  '@webb-tools/interfaces',
+  '@webb-tools/tokens',
+  '@webb-tools/utils',
+  '@webb-tools/vbridge',
+];
+function updateWebbToolsPackages(filter, next) {
   const root = process.cwd();
   // Loading the root package.json
   const rootJsonPath = path.join(root, 'package.json');
@@ -17,7 +29,7 @@ function updateWebbToolsPackages(next) {
   const rootsPackage = JSON.parse(rootsJSON);
   // update resolutions
   Object.keys(rootsPackage.resolutions).forEach((key) => {
-    if (webJsPackages.includes(key)) {
+    if (filter.includes(key)) {
       rootsPackage.resolutions[key] = next;
     }
   });
@@ -32,7 +44,7 @@ function updateWebbToolsPackages(next) {
     const pkg = JSON.parse(json);
     if (pkg.dependencies) {
       Object.keys(pkg.dependencies).forEach((key) => {
-        if (webJsPackages.includes(key)) {
+        if (filter.includes(key)) {
           pkg.dependencies[key] = next;
         }
       });
@@ -40,7 +52,7 @@ function updateWebbToolsPackages(next) {
 
     if (pkg.devDependencies) {
       Object.keys(pkg.devDependencies).forEach((key) => {
-        if (webJsPackages.includes(key)) {
+        if (filter.includes(key)) {
           pkg.devDependencies[key] = next;
         }
       });
@@ -50,8 +62,11 @@ function updateWebbToolsPackages(next) {
     }
   });
 }
-const verison = process.argv[2];
+const verison = process.argv[3];
+const target = process.argv[2];
+const filter = target === 'webb.js' ? webbJsPackages : target === 'sol' ? proposalSolidityPackages : [target];
+
 if (!verison) {
   throw new Error('Please provide a version');
 }
-updateWebbToolsPackages(verison);
+updateWebbToolsPackages(filter, verison);
