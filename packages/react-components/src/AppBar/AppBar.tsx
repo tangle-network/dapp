@@ -9,7 +9,7 @@ import { above, useBreakpoint } from '@webb-dapp/ui-components/utils/responsive-
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
 
-import { NoteAccount } from '../NoteAccount/NoteAccount';
+import { NoteAccountButton } from '../NoteAccount/NoteAccountButton';
 import { ThemeSwitcher } from './ThemeSwitcher';
 
 const AppBarWrapper = styled.div`
@@ -155,7 +155,7 @@ const AppBar: React.FC<AppBarProps> = ({ toggleSidebarDisplay }) => {
       <RightNavigation>
         <NetworkManager />
         {activeChain && <WalletSelect />}
-        <NoteAccount />
+        <NoteAccountButton />
         <ThemeSwitcher
           active={theme === 'dark' ? 'dark' : 'light'}
           onChange={(next) => {

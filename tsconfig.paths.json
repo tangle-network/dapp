@@ -96,6 +96,12 @@
 			"@webb-dapp/vbridge": [
 				"vbridge/src"
 			],
+			"@webb-dapp/page-note-account/*": [
+				"page-note-account/src/*"
+			],
+			"@webb-dapp/page-note-account": [
+				"page-note-account/src"
+			],
     }
   }
 }

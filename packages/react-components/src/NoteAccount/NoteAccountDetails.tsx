@@ -1,6 +1,7 @@
-import { InputBase, Typography } from '@mui/material';
+import { InputBase, List, Typography } from '@mui/material';
 import { Currency } from '@webb-dapp/api-providers/abstracts';
 import { Web3Provider } from '@webb-dapp/api-providers/ext-providers';
+import { chainsConfig } from '@webb-dapp/apps/configs';
 import { useDepositNote } from '@webb-dapp/mixer/hooks';
 import { useWebContext } from '@webb-dapp/react-environment/webb-context';
 import { useCurrencies } from '@webb-dapp/react-hooks/currency';
@@ -12,11 +13,10 @@ import { ethers } from 'ethers';
 import React, { useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
+import { ItemNoteDisplay } from '../NoteDisplay/ItemNoteDisplay';
 import { ModalNoteDisplay } from '../NoteDisplay/ModalNoteDisplay';
-import { ChainNotesList } from './ChainNotesList';
 
 const NoteAccountDetailsWrapper = styled.div`
-  width: 440px;
   padding: 20px;
 
   .account-details {
@@ -65,17 +65,13 @@ const TokenAmountChip = styled.div`
   }
 `;
 
-type NoteAccountDetailsProps = {
-  close(): void;
-};
-
-export const NoteAccountDetails: React.FC<NoteAccountDetailsProps> = ({ close }) => {
+export const NoteAccountDetails: React.FC = () => {
   const { noteManager } = useWebContext();
 
   return (
     <NoteAccountDetailsWrapper>
-      {!noteManager && <DisconnectedNoteAccountView close={close} />}
-      {noteManager && <ConnectedNoteAccountView close={close} />}
+      {!noteManager && <DisconnectedNoteAccountView />}
+      {noteManager && <ConnectedNoteAccountView />}
     </NoteAccountDetailsWrapper>
   );
 };
@@ -86,7 +82,7 @@ enum DisconnectView {
   Create,
 }
 
-const DisconnectedNoteAccountView: React.FC<NoteAccountDetailsProps> = () => {
+const DisconnectedNoteAccountView: React.FC = () => {
   const [view, setView] = useState<DisconnectView>(DisconnectView.Prompt);
   const [accountInputString, setAccountInputString] = useState('');
   const { loginNoteAccount, wallets } = useWebContext();
@@ -178,8 +174,8 @@ const DisconnectedNoteAccountView: React.FC<NoteAccountDetailsProps> = () => {
   );
 };
 
-const ConnectedNoteAccountView: React.FC<NoteAccountDetailsProps> = () => {
-  const { activeApi, activeChain, logoutNoteAccount, noteManager } = useWebContext();
+const ConnectedNoteAccountView: React.FC = () => {
+  const { activeApi, activeChain, logoutNoteAccount, noteManager, purgeNoteAccount } = useWebContext();
   const { governedCurrencies, governedCurrency } = useCurrencies();
   const [allNotes, setAllNotes] = useState<Map<string, Note[]>>(new Map());
   const [loadNoteText, setLoadNoteText] = useState('');
@@ -193,12 +189,24 @@ const ConnectedNoteAccountView: React.FC<NoteAccountDetailsProps> = () => {
           noteManager.getKeypair()
         )
         .then((notes) => {
-          notes.map((note) => {
-            console.log(note.serialize());
-            noteManager.addNote(note);
-          });
+          notes
+            .filter((note) => note.note.amount !== '0')
+            .map((note) => {
+              console.log(note.serialize());
+              noteManager.addNote(note);
+            });
         });
     }
+  };
+
+  const removeNote = (chain: string, note: Note) => {
+    const chainNotes = allNotes.get(chain);
+    if (!chainNotes) {
+      return;
+    }
+    const updatedNotes = chainNotes.filter((chainNote) => chainNote.serialize() != note.serialize());
+    allNotes.set(chain, updatedNotes);
+    noteManager?.removeNote(note);
   };
 
   // On note input change, if the text is successfully parsed as a note, give it to the NoteManager
@@ -217,7 +225,7 @@ const ConnectedNoteAccountView: React.FC<NoteAccountDetailsProps> = () => {
     });
 
     return sub.unsubscribe();
-  }, [enteredNote, noteManager]);
+  }, [enteredNote, noteManager, noteManager?.notesUpdated]);
 
   const balances: Map<string, number> = useMemo(() => {
     const tokenBalanceMap = new Map<string, number>();
@@ -284,7 +292,25 @@ const ConnectedNoteAccountView: React.FC<NoteAccountDetailsProps> = () => {
         </div>
         <div className='notes-list'>
           {[...allNotes.entries()].map((entry) => {
-            return <ChainNotesList key={`${entry[0]}`} chain={entry[0]} notes={entry[1]} />;
+            // return <ChainNotesList key={`${entry[0]}`} chain={entry[0]} notes={entry[1]} />;
+            return (
+              <>
+                <Typography variant='h4'>{chainsConfig[Number(entry[0])].name}</Typography>
+                <List>
+                  {entry[1].map((note, index) => {
+                    return (
+                      <div>
+                        <ItemNoteDisplay
+                          note={note}
+                          key={`${entry[0]}-${index}`}
+                          removeNote={async () => removeNote(entry[0], note)}
+                        />
+                      </div>
+                    );
+                  })}
+                </List>
+              </>
+            );
           })}
         </div>
         <div className='load-notes'>
@@ -306,6 +332,15 @@ const ConnectedNoteAccountView: React.FC<NoteAccountDetailsProps> = () => {
               }}
             >
               Logout
+            </button>
+          </div>
+          <div className='purge-account-button'>
+            <button
+              onClick={() => {
+                purgeNoteAccount();
+              }}
+            >
+              Purge account
             </button>
           </div>
         </div>
