@@ -20,5 +20,5 @@ export abstract class VAnchorActions<T extends WebbApiProvider<any>> extends Eve
   // A function to register an account. It will return true if the account was registered, and false otherwise.
   abstract register(target: string, account: string, pubkey: string): Promise<boolean>;
   // A function to retrieve notes from chain that are spendable by a keypair
-  abstract syncNotesForKeypair(anchorAddress: string, owner: Keypair): Promise<Note[]>;
+  abstract syncNotesForKeypair(target: string, owner: Keypair): Promise<Note[]>;
 }

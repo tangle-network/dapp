@@ -215,6 +215,7 @@ export class WebbWeb3Provider
   async getVAnchorNotesFromChain(contract: VAnchorContract, owner: Keypair, abortSignal: AbortSignal): Promise<Note[]> {
     const evmId = await contract.getEvmId();
     const typedChainId = calculateTypedChainId(ChainType.EVM, evmId);
+    const tokenSymbol = await this.methods.bridgeApi.getCurrency()!;
     const utxos = await contract.getUtxosFromChain(
       owner,
       getAnchorDeploymentBlockNumber(typedChainId, contract.inner.address) || 1,
@@ -244,7 +245,7 @@ export class WebbWeb3Provider
           sourceIdentifyingData: contract.inner.address,
           targetChain: utxo.chainId,
           targetIdentifyingData: contract.inner.address,
-          tokenSymbol: await contract.inner.token(),
+          tokenSymbol: tokenSymbol.view.symbol,
           version: 'v1',
           width: '5',
         });

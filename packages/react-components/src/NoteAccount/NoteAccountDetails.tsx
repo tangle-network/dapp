@@ -7,7 +7,6 @@ import { useCurrencies } from '@webb-dapp/react-hooks/currency';
 import { TokenInput } from '@webb-dapp/ui-components/Inputs/TokenInput/TokenInput';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { getRoundedAmountString } from '@webb-dapp/ui-components/utils';
-import { DepositAmountDecal } from '@webb-dapp/vbridge/components/DepositConfirm/DepositAmountDecal';
 import { calculateTypedChainId, Keypair, Note } from '@webb-tools/sdk-core';
 import { ethers } from 'ethers';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -186,6 +185,22 @@ const ConnectedNoteAccountView: React.FC<NoteAccountDetailsProps> = () => {
   const [loadNoteText, setLoadNoteText] = useState('');
   const enteredNote = useDepositNote(loadNoteText);
 
+  const syncNotes = () => {
+    if (activeApi && activeApi.state.activeBridge && activeChain && noteManager) {
+      activeApi.methods.variableAnchor.actions.inner
+        .syncNotesForKeypair(
+          activeApi.state.activeBridge.targets[calculateTypedChainId(activeChain.chainType, activeChain.chainId)],
+          noteManager.getKeypair()
+        )
+        .then((notes) => {
+          notes.map((note) => {
+            console.log(note.serialize());
+            noteManager.addNote(note);
+          });
+        });
+    }
+  };
+
   // On note input change, if the text is successfully parsed as a note, give it to the NoteManager
   // and clear the input.
   useEffect(() => {
@@ -235,17 +250,9 @@ const ConnectedNoteAccountView: React.FC<NoteAccountDetailsProps> = () => {
         </div>
         <div className='sync-notes' style={{ display: 'flex' }}>
           <button
-            onClick={() => {
-              if (activeApi && activeApi.state.activeBridge && activeChain) {
-                activeApi.methods.variableAnchor.actions.inner.syncNotesForKeypair(
-                  activeApi.state.activeBridge.targets[
-                    calculateTypedChainId(activeChain.chainType, activeChain.chainId)
-                  ],
-                  noteManager.getKeypair()
-                );
-              }
-            }}
+            onClick={syncNotes}
             disabled={activeApi ? false : true}
+            style={{ paddingRight: '20px', height: '20px' }}
           >
             Sync notes for
           </button>

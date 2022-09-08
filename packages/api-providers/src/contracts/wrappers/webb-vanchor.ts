@@ -394,7 +394,7 @@ export class VAnchorContract {
     console.log(`finalBlock detected as: ${finalBlock}`);
 
     let logs: Array<Log> = []; // Read the stored logs into this variable
-    const step = 1024;
+    const step = 1000; // Metamask infura caps requests at 1000 blocks
     console.log(`Fetching leaves with steps of ${step} logs/request`);
 
     try {
@@ -479,9 +479,10 @@ export class VAnchorContract {
 
     // Attempt to decrypt with the owner's keypair
     const utxos = await Promise.all(
-      encryptedCommitments.map((enc) => {
+      encryptedCommitments.map(async (enc) => {
         try {
-          return CircomUtxo.decrypt(owner, enc);
+          const utxo = await CircomUtxo.decrypt(owner, enc);
+          return utxo;
         } catch (e) {
           // eslint-disable-next-line no-empty
         }

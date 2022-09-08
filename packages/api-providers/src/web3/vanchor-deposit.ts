@@ -91,7 +91,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
       targetChain: destination.toString(),
       targetIdentifyingData: destAddress!,
       tokenSymbol: tokenSymbol,
-      version: 'v2',
+      version: 'v1',
       width: '4',
     };
 

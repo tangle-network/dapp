@@ -271,7 +271,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
           targetChain: destChainIdType.toString(),
           targetIdentifyingData: destAddress!,
           tokenSymbol: (await Note.deserialize(notes[0])).note.tokenSymbol,
-          version: 'v2',
+          version: 'v1',
           width: '4',
         };
 
