@@ -1,0 +1,70 @@
+import * as TooltipPrimitive from '@radix-ui/react-tooltip';
+import cx from 'classnames';
+import { cloneElement, useMemo } from 'react';
+import { twMerge } from 'tailwind-merge';
+
+import { TooltipBodyProps, TooltipProps, TooltipTriggerProps } from './types';
+
+/**
+ * The `ToolTipBody` component, use after the `TooltipTrigger`.
+ * Reresents the popup content of the tooltip.
+ * Must use inside the `Tooltip` component.
+ */
+export const ToolTipBody: React.FC<TooltipBodyProps> = ({ button, children, className, title }) => {
+  return (
+    <TooltipPrimitive.Content
+      sideOffset={4}
+      className={cx(
+        'radix-side-top:animate-slide-down-fade',
+        'radix-side-right:animate-slide-left-fade',
+        'radix-side-bottom:animate-slide-up-fade',
+        'radix-side-left:animate-slide-right-fade',
+        'inline-flex items-center rounded p-2 min-w-max max-w-[300px]',
+        'bg-mono-20 dark:bg-mono-160',
+        'webb-shadow-sm'
+      )}
+    >
+      <TooltipPrimitive.Arrow className='fill-current text-mono-20 dark:text-mono-160 webb-shadow-sm' />
+      <div className={twMerge('body4 text-mono-140 dark:text-mono-80', className)}>
+        {title && <h6 className='mb-2 font-bold body4'>{title}</h6>}
+        {children}
+        {button && <div className='flex justify-end mt-4'>{button}</div>}
+      </div>
+    </TooltipPrimitive.Content>
+  );
+};
+
+/**
+ * The `TooltipTrigger` component, wrap around a trigger component like `Button` or `Chip` or a html tag.
+ * Must use inside the `Tooltip` component.
+ */
+export const ToolTipTrigger: React.FC<TooltipTriggerProps> = ({ children, className }) => {
+  return <TooltipPrimitive.Trigger className={className}>{children}</TooltipPrimitive.Trigger>;
+};
+
+/**
+ * The `Tooltip` component.
+ */
+export const Tooltip: React.FC<TooltipProps> = ({
+  children,
+  className,
+  isDefaultOpen,
+  isDisableHoverableContent,
+  isOpen,
+  onChange,
+  ...props
+}) => {
+  return (
+    <TooltipPrimitive.Provider>
+      <TooltipPrimitive.Root
+        {...props}
+        defaultOpen={isDefaultOpen}
+        open={isOpen}
+        onOpenChange={onChange}
+        disableHoverableContent={isDisableHoverableContent}
+      >
+        {children}
+      </TooltipPrimitive.Root>
+    </TooltipPrimitive.Provider>
+  );
+};
