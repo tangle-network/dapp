@@ -36,7 +36,16 @@ function updateWebbToolsPackages(next) {
           pkg.dependencies[key] = next;
         }
       });
+    }
 
+    if (pkg.devDependencies) {
+      Object.keys(pkg.devDependencies).forEach((key) => {
+        if (webJsPackages.includes(key)) {
+          pkg.devDependencies[key] = next;
+        }
+      });
+    }
+    if (pkg.devDependencies || pkg.dependencies) {
       fs.writeFileSync(path, JSON.stringify(pkg, null, 2));
     }
   });
