@@ -5,7 +5,6 @@
   "main": "index.js",
   "author": "Webb Developers <drew@webb.tools>",
   "homepage": "https://github.com/webb-tools/webb-dapp#readme",
-
   "dependencies": {
     "@ngneat/falso": "^5.7.0",
     "@ramonak/react-progress-bar": "^5.0.0",
