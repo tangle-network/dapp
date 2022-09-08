@@ -1,5 +1,5 @@
 import * as ProgressPrimitive from '@radix-ui/react-progress';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { ProgressClassName, ProgressProps } from './types';
@@ -25,6 +25,17 @@ const classNames: ProgressClassName = {
   },
 };
 
+/**
+ * The `Progress` component
+ *
+ * @example
+ *
+ * ```jsx
+ *    <Progress size='sm' value={60} />
+ *    <Progress value={60} />
+ *    <Progress size='lg' value={60} />
+ * ```
+ */
 export const Progress: React.FC<ProgressProps> = ({ className, max, prefixLabel, size = 'md', suffixLabel, value }) => {
   return (
     <ProgressPrimitive.Root value={value} className={twMerge(classNames[size]['root'], className)} max={max}>
