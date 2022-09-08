@@ -1,6 +1,5 @@
 import * as TooltipPrimitive from '@radix-ui/react-tooltip';
 import cx from 'classnames';
-import { cloneElement, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { TooltipBodyProps, TooltipProps, TooltipTriggerProps } from './types';
@@ -18,7 +17,7 @@ import { TooltipBodyProps, TooltipProps, TooltipTriggerProps } from './types';
  *    </ToolTipBody>
  * ```
  */
-export const ToolTipBody: React.FC<TooltipBodyProps> = ({ button, children, className, title }) => {
+export const TooltipBody: React.FC<TooltipBodyProps> = ({ button, children, className, title }) => {
   return (
     <TooltipPrimitive.Content
       sideOffset={4}
@@ -54,7 +53,7 @@ export const ToolTipBody: React.FC<TooltipBodyProps> = ({ button, children, clas
  *    </ToolTipTrigger>
  * ```
  */
-export const ToolTipTrigger: React.FC<TooltipTriggerProps> = ({ children, className }) => {
+export const TooltipTrigger: React.FC<TooltipTriggerProps> = ({ children, className }) => {
   return <TooltipPrimitive.Trigger className={className}>{children}</TooltipPrimitive.Trigger>;
 };
 
