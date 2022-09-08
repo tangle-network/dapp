@@ -1,6 +1,16 @@
 import { Deposit, Withdraw } from '@webb-dapp/mixer/components';
 import { MixerTabs } from '@webb-dapp/ui-components/Tabs/MixerTabs';
-import { CheckBox, DropdownMenu, Input, Slider } from '@webb-dapp/webb-ui-components';
+import {
+  Button,
+  CheckBox,
+  Chip,
+  DropdownMenu,
+  Input,
+  Slider,
+  Tooltip,
+  ToolTipBody,
+  ToolTipTrigger,
+} from '@webb-dapp/webb-ui-components';
 import {
   Coin,
   Filter,
@@ -30,6 +40,42 @@ export const Mixer: React.FC<MixerProps> = () => {
   return (
     <MixerWrapper>
       <MixerTabs Withdraw={<Withdraw />} Deposit={<Deposit />} />
+      <div className='flex justify-around my-36'>
+        <Tooltip isDefaultOpen>
+          <ToolTipTrigger>
+            <Chip color='blue'>Text only</Chip>
+          </ToolTipTrigger>
+          <ToolTipBody className='max-w-[185px] w-auto'>
+            <span>A report of a DKG authority misbehaving. (Body xs Regular)</span>
+          </ToolTipBody>
+        </Tooltip>
+
+        <Tooltip isDefaultOpen>
+          <ToolTipTrigger>
+            <Chip color='blue'>Title + text</Chip>
+          </ToolTipTrigger>
+          <ToolTipBody className='max-w-[185px] w-auto' title='Misbehavior Report (Title)'>
+            <span>A report of a DKG authority misbehaving. (Body xs Regular)</span>
+          </ToolTipBody>
+        </Tooltip>
+
+        <Tooltip isDefaultOpen>
+          <ToolTipTrigger>
+            <Chip color='blue'>Title + text + button</Chip>
+          </ToolTipTrigger>
+          <ToolTipBody
+            className='max-w-[185px] w-auto'
+            title='Misbehavior Report (Title)'
+            button={
+              <Button size='sm' varirant='utility'>
+                Learn more
+              </Button>
+            }
+          >
+            <span className='inline-block'>A report of a DKG authority misbehaving. (Body xs Regular)</span>
+          </ToolTipBody>
+        </Tooltip>
+      </div>
       <div className='flex mt-3 space-x-5'>
         <div>
           <CheckBox wrapperClassName='block' />
@@ -73,13 +119,13 @@ export const Mixer: React.FC<MixerProps> = () => {
               onChange={(nextVal) => setValue(nextVal)}
             />
           </div>
-          <div>
-            <Slider className='mt-4' defaultValue={[25]} />
-            <Slider className='mt-4' hasLabel defaultValue={[25]} />
-            <Slider className='mt-4' value={sliderVal} onChange={setSliderVal} />
-            <Slider className='mt-4' hasLabel defaultValue={[25, 75]} />
-          </div>
         </div>
+      </div>
+      <div>
+        <Slider className='mt-4' defaultValue={[25]} />
+        <Slider className='mt-4' hasLabel defaultValue={[25]} />
+        <Slider className='mt-4' value={sliderVal} onChange={setSliderVal} />
+        <Slider className='mt-4' hasLabel defaultValue={[25, 75]} />
       </div>
     </MixerWrapper>
   );
