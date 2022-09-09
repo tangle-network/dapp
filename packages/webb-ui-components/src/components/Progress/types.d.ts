@@ -6,7 +6,7 @@ export interface ProgressProps extends WebbComponentBase {
   /**
    * The progress value.
    */
-  value: number;
+  value: number | null;
   /**
    * The maximum progress value.
    */
