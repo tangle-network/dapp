@@ -473,16 +473,34 @@ export class VAnchorContract {
     }
 
     const events = logs.map((log) => this._contract.interface.parseLog(log));
-    console.log(events[0]);
-
-    const encryptedCommitments: string[] = events.map((e) => e.args.encryptedOutput);
+    const encryptedCommitments: string[] = events
+      .sort((a, b) => a.args.index - b.args.index) // Sort events in chronological order
+      .map((e) => e.args.encryptedOutput);
 
     // Attempt to decrypt with the owner's keypair
     const utxos = await Promise.all(
-      encryptedCommitments.map(async (enc) => {
+      encryptedCommitments.map(async (enc, index) => {
         try {
-          const utxo = await CircomUtxo.decrypt(owner, enc);
-          return utxo;
+          const decryptedUtxo = await CircomUtxo.decrypt(owner, enc);
+          // In order to properly calculate the nullifier, an index is required.
+          // The decrypt function generates a utxo without an index, and the index is a readonly property.
+          // So, regenerate the utxo with the proper index.
+          const regeneratedUtxo = await CircomUtxo.generateUtxo({
+            amount: decryptedUtxo.amount,
+            backend: 'Circom',
+            blinding: hexToU8a(decryptedUtxo.blinding),
+            chainId: decryptedUtxo.chainId,
+            curve: 'Bn254',
+            keypair: owner,
+            privateKey: hexToU8a(owner.privkey),
+            index: index.toString(),
+          });
+          const alreadySpent = await this._contract.isSpent(toFixedHex(regeneratedUtxo.nullifier, 32));
+          if (!alreadySpent) {
+            return regeneratedUtxo;
+          } else {
+            return undefined;
+          }
         } catch (e) {
           // eslint-disable-next-line no-empty
         }
@@ -493,12 +511,7 @@ export class VAnchorContract {
     // @ts-ignore
     const decryptedUtxos: Utxo[] = utxos.filter((value) => value !== undefined);
 
-    // filter utxos that have already been spent
-    const spendableUtxos = await Promise.all(
-      decryptedUtxos.filter(async (utxo) => (await this._contract.nullifierHashes(utxo.nullifier)) === false)
-    );
-
-    return spendableUtxos;
+    return decryptedUtxos;
   }
 
   async generateLinkedMerkleProof(sourceDeposit: IAnchorDepositInfo, sourceLeaves: string[], sourceChainId: number) {
