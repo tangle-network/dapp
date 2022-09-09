@@ -1,43 +1,5 @@
-import { Note, NoteGenInput } from '@webb-tools/sdk-core';
+import { Note } from '@webb-tools/sdk-core';
 import { useEffect, useState } from 'react';
-
-async function migrateNote(noteString: string): Promise<Note | null> {
-  if (!noteString.length) {
-    return null;
-  }
-
-  let d = await Note.deserialize(noteString);
-  try {
-    if (d.note.version === 'v1') {
-      const newNoteInput: NoteGenInput = {
-        protocol: d.note.protocol,
-        version: 'v2',
-        targetChain: Number(d.note.sourceChainId).toString(),
-        sourceChain: Number(d.note.sourceChainId).toString(),
-        sourceIdentifyingData: Number(d.note.sourceChainId).toString(),
-        targetIdentifyingData: Number(d.note.sourceChainId).toString(),
-        backend: d.note.backend,
-        hashFunction: 'Poseidon',
-        curve: d.note.curve,
-        tokenSymbol: d.note.tokenSymbol,
-        amount: d.note.amount,
-        denomination: d.note.denomination,
-        width: d.note.width,
-        exponentiation: d.note.exponentiation,
-        secrets: d.note.secrets,
-      };
-      let newNote = await Note.generateNote(newNoteInput);
-      return newNote;
-    } else if (d.note.version === 'v2') {
-      return d;
-    }
-    return null;
-  } catch (e) {
-    console.log('passed value was: ', noteString);
-    console.log('Error of: ', e);
-    return null;
-  }
-}
 
 export const useDepositNotes = (values: string[]): null | Note[] => {
   const [depositNotes, setDepositNotes] = useState<Note[] | null>(null);
@@ -48,7 +10,7 @@ export const useDepositNotes = (values: string[]): null | Note[] => {
         if (values.length === 0) {
           throw new Error('empty value');
         }
-        const notes = await Promise.all(values.map((value) => migrateNote(value)));
+        const notes = await Promise.all(values.map((value) => Note.deserialize(value)));
         // all notes are valid
         const allNotes = notes.reduce((acc, note) => acc && note !== null, true);
         if (allNotes) {
@@ -76,7 +38,7 @@ export const useDepositNote = (value: string): null | Note => {
         if (value === '') {
           throw new Error('empty value');
         }
-        const note = await migrateNote(value);
+        const note = await Note.deserialize(value);
         setDepositNote(note);
       } catch (e) {
         setDepositNote(null);

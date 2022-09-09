@@ -350,6 +350,30 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
     setNoteManager(null);
   };
 
+  const purgeNoteAccount = async () => {
+    const keypairStorage = await keypairStorageFactory();
+    const currentKeypairPrivateKey = await keypairStorage.get('keypair');
+
+    if (!currentKeypairPrivateKey.keypair) {
+      return;
+    }
+
+    const currentKeypair = new Keypair(currentKeypairPrivateKey.keypair);
+
+    const noteStorage = await noteStorageFactory(currentKeypair);
+    noteStorage.set('encryptedNotes', {});
+
+    keypairStorage.set('keypair', {
+      keypair: null,
+    });
+
+    // clear the noteManager instance on the activeApi if it exists
+    if (activeApi) {
+      activeApi.noteManager = null;
+    }
+    setNoteManager(null);
+  };
+
   /// Network switcher
   const switchChain = async (chain: Chain, _wallet: Wallet, _networkStorage?: NetworkStorage | undefined) => {
     const relayerManagerFactory = await getRelayerManagerFactory();
@@ -717,6 +741,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
         noteManager,
         loginNoteAccount,
         logoutNoteAccount,
+        purgeNoteAccount,
         activeWallet,
         activeChain,
         activeApi,

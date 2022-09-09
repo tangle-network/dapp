@@ -188,11 +188,11 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
         relayer: accountId,
         recipient: relayerAccountId,
         fee: 0,
+        refund: String(refund),
+        token: String(asset),
         extAmount: BigNumber.from(publicAmount),
         encryptedOutput1: u8aToHex(comEnc1),
         encryptedOutput2: u8aToHex(comEnc2),
-        refund: String(refund),
-        token: String(asset),
       };
       const vanchorDepositSetup: ProvingManagerSetupInput<'vanchor'> = {
         encryptedCommitments: [comEnc1, comEnc2],

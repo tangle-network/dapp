@@ -111,7 +111,6 @@ export const fetchVAnchorWasmFromIpfs = async (maxEdges: number, small: boolean,
   }
 };
 
-// https://protocol-solidity-fixtures.s3.amazonaws.com/fixtures/vanchor_2/2/poseidon_vanchor_2_2.wasm
 export const fetchVAnchorKeyFromAws = async (maxEdges: number, small: boolean, abortSignal: AbortSignal) => {
   let filePath: string;
   let cachedURI: string;
@@ -130,10 +129,10 @@ export const fetchVAnchorKeyFromAws = async (maxEdges: number, small: boolean, a
     case 7:
       if (small) {
         filePath = 'vanchor_2/8/circuit_final.zkey';
-        cachedURI = getCachedFixtureURI('vanchor_key_2_small.zkey');
+        cachedURI = getCachedFixtureURI('vanchor_key_8_small.zkey');
       } else {
         filePath = 'vanchor_16/8/circuit_final.zkey';
-        cachedURI = getCachedFixtureURI('vanchor_key_2_large.zkey');
+        cachedURI = getCachedFixtureURI('vanchor_key_8_large.zkey');
       }
 
       break;

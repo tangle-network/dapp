@@ -149,6 +149,8 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
       relayer: relayerAccountId,
       recipient: accountId,
       fee: 0,
+      refund: 0,
+      token: '0',
       // Convert to string for value safety Ref: https://docs.ethers.io/v5/troubleshooting/errors/#help-NUMERIC_FAULT-overflow
       extAmount: BigNumber.from(String(publicAmount)),
       encryptedOutput1: u8aToHex(comEnc1),

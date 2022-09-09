@@ -12,6 +12,7 @@ export interface WebbContextState<T = unknown> {
   noteManager: NoteManager | null;
   loginNoteAccount(key: string): Promise<NoteManager | null>;
   logoutNoteAccount(): Promise<void>;
+  purgeNoteAccount(): Promise<void>;
   appConfig: AppConfig;
   accounts: Account[];
   activeAccount: Account | null;
@@ -33,6 +34,9 @@ export const WebbContext = React.createContext<WebbContextState>({
     return Promise.resolve(null);
   },
   logoutNoteAccount() {
+    return Promise.resolve();
+  },
+  purgeNoteAccount() {
     return Promise.resolve();
   },
   isConnecting: false,
