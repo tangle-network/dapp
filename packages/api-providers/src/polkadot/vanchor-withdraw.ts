@@ -228,7 +228,7 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
             encryptedOutput1: Array.from(hexToU8a(extData.encryptedOutput1)),
             encryptedOutput2: Array.from(hexToU8a(extData.encryptedOutput2)),
             refund: '0',
-            token: u8aToHex(Uint8Array.from([0])),
+            token: '0',
           },
           proofData: {
             proof: Array.from(hexToU8a(vanchorProofData.proof)),
