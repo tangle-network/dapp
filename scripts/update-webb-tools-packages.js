@@ -1,5 +1,12 @@
 const fs = require('fs');
 const path = require('path');
+/**
+ * Examples for usage:
+ * 1. With webb.js `node ./scripts/update-webb-tools-packages.js webb.js 0.1.0`
+ * 2. Update protocol-solidity `node ./scripts/update-webb-tools-packages.js sol 0.1.0`
+ * 3. Update any package `node ./scripts/update-webb-tools-packages.js <Package_name> 0.1.0`
+ * */
+// All packages related to `webb.js`
 const webbJsPackages = [
   '@webb-tools/api',
   '@webb-tools/api-derive',
@@ -9,10 +16,9 @@ const webbJsPackages = [
   '@webb-tools/wasm-utils',
   '@webb-tools/test-utils',
 ];
-
+// All packages related to `protocol-solidity`
 const proposalSolidityPackages = [
   '@webb-tools/protocol-solidity',
-
   '@webb-tools/anchors',
   '@webb-tools/bridges',
   '@webb-tools/contracts',
