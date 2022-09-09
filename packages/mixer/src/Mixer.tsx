@@ -7,12 +7,14 @@ import {
   DropdownMenu,
   Input,
   KeyStatusCard,
+  NetworkThresholdsCard,
   Progress,
   Slider,
   Tooltip,
   TooltipBody,
   TooltipTrigger,
   useKeyStatusSeedData,
+  useNetworkThresholdsSeedData,
 } from '@webb-dapp/webb-ui-components';
 import {
   Coin,
@@ -41,10 +43,13 @@ export const Mixer: React.FC<MixerProps> = () => {
   const [sliderVal, setSliderVal] = useState([12, 24]);
 
   const statusCardData = useKeyStatusSeedData();
+  const networkThresholdsData = useNetworkThresholdsSeedData();
 
   return (
     <MixerWrapper>
       <MixerTabs Withdraw={<Withdraw />} Deposit={<Deposit />} />
+
+      <NetworkThresholdsCard {...networkThresholdsData} className='max-w-[1376px] mt-6' />
 
       <KeyStatusCard className='max-w-[680px] mt-6' {...statusCardData} />
 

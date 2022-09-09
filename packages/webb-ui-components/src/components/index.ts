@@ -12,6 +12,7 @@ export * from './Label';
 export * from './LabelWithValue';
 export * from './Logo';
 export * from './MenuItem';
+export * from './NetworkThresholdsCard';
 export * from './Progress';
 export * from './Slider';
 export * from './ThemeSwitcher';
