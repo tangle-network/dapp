@@ -1,4 +1,8 @@
-import { TooltipProps as RdxTooltipPropsBase } from '@radix-ui/react-tooltip';
+import {
+  TooltipContentProps as RdxTooltipContentProps,
+  TooltipProps as RdxTooltipPropsBase,
+  TooltipTriggerProps as RdxTooltipTriggerProps,
+} from '@radix-ui/react-tooltip';
 import { WebbComponentBase } from '@webb-dapp/webb-ui-components/types';
 
 type OmittedKeys = 'open' | 'defaultOpen' | 'disableHoverableContent' | 'onOpenChange';
@@ -27,7 +31,7 @@ export interface TooltipProps extends WebbComponentBase, TooltipPropsBase {
 /**
  * The `TooltipBody` props
  */
-export interface TooltipBodyProps extends WebbComponentBase {
+export interface TooltipBodyProps extends WebbComponentBase, RdxTooltipContentProps {
   /**
    * The `title` of the tooltip content
    */
@@ -41,4 +45,4 @@ export interface TooltipBodyProps extends WebbComponentBase {
 /**
  * The `TooltipTrigger` props
  */
-export interface TooltipTriggerProps extends WebbComponentBase {}
+export interface TooltipTriggerProps extends WebbComponentBase, RdxTooltipTriggerProps {}

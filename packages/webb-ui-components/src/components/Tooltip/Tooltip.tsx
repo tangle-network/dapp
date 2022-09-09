@@ -18,7 +18,7 @@ import { TooltipBodyProps, TooltipProps, TooltipTriggerProps } from './types';
  *    </ToolTipBody>
  * ```
  */
-export const TooltipBody: React.FC<TooltipBodyProps> = ({ button, children, className, title }) => {
+export const TooltipBody: React.FC<TooltipBodyProps> = ({ button, children, className, title, ...props }) => {
   return (
     <TooltipPrimitive.Content
       sideOffset={4}
@@ -31,6 +31,7 @@ export const TooltipBody: React.FC<TooltipBodyProps> = ({ button, children, clas
         'bg-mono-20 dark:bg-mono-160',
         'webb-shadow-sm'
       )}
+      {...props}
     >
       <TooltipPrimitive.Arrow className='fill-current text-mono-20 dark:text-mono-160 webb-shadow-sm' />
       <div className={twMerge('body4 text-mono-140 dark:text-mono-80', className)}>
@@ -54,8 +55,12 @@ export const TooltipBody: React.FC<TooltipBodyProps> = ({ button, children, clas
  *    </ToolTipTrigger>
  * ```
  */
-export const TooltipTrigger: React.FC<TooltipTriggerProps> = ({ children, className }) => {
-  return <TooltipPrimitive.Trigger className={className}>{children}</TooltipPrimitive.Trigger>;
+export const TooltipTrigger: React.FC<TooltipTriggerProps> = ({ children, className, ...props }) => {
+  return (
+    <TooltipPrimitive.Trigger className={className} {...props}>
+      {children}
+    </TooltipPrimitive.Trigger>
+  );
 };
 
 /**
