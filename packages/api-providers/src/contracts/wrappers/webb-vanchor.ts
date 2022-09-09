@@ -5,7 +5,6 @@
 import type { JsNote } from '@webb-tools/wasm-utils';
 
 import { Log } from '@ethersproject/abstract-provider';
-import { BytesLike } from '@ethersproject/bytes';
 import { retryPromise } from '@webb-dapp/api-providers/utils/retry-promise';
 import { LoggerService } from '@webb-tools/app-util';
 import { ERC20, ERC20__factory as ERC20Factory, VAnchor, VAnchor__factory } from '@webb-tools/contracts';
