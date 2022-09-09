@@ -48,25 +48,3 @@ export function isMonospaceVariant(variant: WebbTypographyVariant): variant is M
   const monoKeys = ['mono1', 'mono2'];
   return monoKeys.indexOf(variant) !== -1;
 }
-
-/**
- * Get the tailwind className for text color based on `variant` and `darkMode` props
- * @param variant Represent the typography variant to get a tailwind className
- * @param darkMode Value to control dark mode, leave it's empty to control dark mode in `css`
- * @returns tailwind className for text color
- */
-export function getTextColorClassName(variant: WebbTypographyVariant, darkMode?: boolean) {
-  if (isHeadingVariant(variant)) {
-    return typeof darkMode === 'boolean'
-      ? darkMode
-        ? ('text-mono-40' as const)
-        : ('text-mono-200' as const)
-      : 'text-mono-200 dark:text-mono-40';
-  } else {
-    return typeof darkMode === 'boolean'
-      ? darkMode
-        ? ('text-mono-100' as const)
-        : ('text-mono-120' as const)
-      : 'text-mono-120 dark:text-mono-100';
-  }
-}

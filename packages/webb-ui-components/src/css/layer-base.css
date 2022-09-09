@@ -25,7 +25,7 @@ label,
 .body4,
 .mono1,
 .mono2 {
-  @apply text-mono-120 dark:text-mono-100;
+  @apply text-mono-160 dark:text-mono-60;
 }
 
 .card {
