@@ -1,5 +1,6 @@
 import * as TooltipPrimitive from '@radix-ui/react-tooltip';
 import cx from 'classnames';
+import { cloneElement, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { TooltipBodyProps, TooltipProps, TooltipTriggerProps } from './types';

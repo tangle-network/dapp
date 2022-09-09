@@ -7,6 +7,7 @@ export * from './DropdownMenu';
 export * from './Input';
 export * from './Logo';
 export * from './MenuItem';
+export * from './Progress';
 export * from './Slider';
 export * from './ThemeSwitcher';
 export * from './Tooltip';
