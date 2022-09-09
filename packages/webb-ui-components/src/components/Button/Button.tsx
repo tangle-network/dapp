@@ -1,3 +1,4 @@
+import cx from 'classnames';
 import React from 'react';
 import { twMerge } from 'tailwind-merge';
 
@@ -54,35 +55,37 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>((props, r
   const contentProps = { children, iconSpacing, leftIcon, rightIcon };
 
   return (
-    <Component
-      {...restProps}
-      {...buttonProps}
-      disabled={buttonProps.disabled || isLoading}
-      className={mergedClassName}
-      ref={ref}
-    >
-      {isLoading && spinnerPlacement === 'start' && (
-        <ButtonSpinner label={loadingText} spacing={iconSpacing}>
-          {spinner}
-        </ButtonSpinner>
-      )}
+    <div className={cx('inline-block', isDisabled ? 'cursor-not-allowed' : '')}>
+      <Component
+        {...restProps}
+        {...buttonProps}
+        disabled={buttonProps.disabled || isLoading}
+        className={mergedClassName}
+        ref={ref}
+      >
+        {isLoading && spinnerPlacement === 'start' && (
+          <ButtonSpinner label={loadingText} spacing={iconSpacing}>
+            {spinner}
+          </ButtonSpinner>
+        )}
 
-      {isLoading ? (
-        loadingText || (
-          <span className='opacity-0'>
-            <ButtonContent {...contentProps} />
-          </span>
-        )
-      ) : (
-        <ButtonContent {...contentProps} />
-      )}
+        {isLoading ? (
+          loadingText || (
+            <span className='opacity-0'>
+              <ButtonContent {...contentProps} />
+            </span>
+          )
+        ) : (
+          <ButtonContent {...contentProps} />
+        )}
 
-      {isLoading && spinnerPlacement === 'end' && (
-        <ButtonSpinner label={loadingText} spacing={iconSpacing} placement='end'>
-          {spinner}
-        </ButtonSpinner>
-      )}
-    </Component>
+        {isLoading && spinnerPlacement === 'end' && (
+          <ButtonSpinner label={loadingText} spacing={iconSpacing} placement='end'>
+            {spinner}
+          </ButtonSpinner>
+        )}
+      </Component>
+    </div>
   );
 });
 
