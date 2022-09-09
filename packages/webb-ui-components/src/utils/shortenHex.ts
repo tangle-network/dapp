@@ -6,11 +6,19 @@
  */
 export const shortenHex = (hexStr: string, chars = 4): string => {
   const hexLower = hexStr.toLowerCase();
-  const hasOx = hexLower.startsWith('0x');
+  const isStartWith0x = hexLower.startsWith('0x');
   let startStr = '',
     endStr = '';
 
-  if (hasOx) {
+  if (isStartWith0x && hexLower.length <= chars * 2 + 2) {
+    return hexLower;
+  }
+
+  if (!isStartWith0x && hexLower.length <= chars * 2) {
+    return `0x${hexLower}`;
+  }
+
+  if (isStartWith0x) {
     startStr = hexLower
       .split('')
       .slice(0, chars + 2)
@@ -20,5 +28,5 @@ export const shortenHex = (hexStr: string, chars = 4): string => {
     startStr = hexLower.split('').slice(0, chars).join('');
     endStr = hexLower.split('').slice(-chars).join('');
   }
-  return hasOx ? `${startStr}...${endStr}` : `0x${startStr}...${endStr}`;
+  return isStartWith0x ? `${startStr}...${endStr}` : `0x${startStr}...${endStr}`;
 };
