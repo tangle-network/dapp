@@ -513,7 +513,7 @@ export class VAnchorContract {
             return undefined;
           }
         } catch (e) {
-          // eslint-disable-next-line no-empty
+          return undefined;
         }
       })
     );

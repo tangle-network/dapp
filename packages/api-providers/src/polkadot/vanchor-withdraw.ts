@@ -165,8 +165,6 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
       encryptedCommitments: [comEnc1, comEnc2],
       extAmount: String(publicAmount),
       fee: '0',
-      refund: '0',
-      token: Uint8Array.from([0]),
       leavesMap,
       provingKey,
       recipient: recipientAccountDecoded,
