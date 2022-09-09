@@ -1,5 +1,8 @@
 import { WebbComponentBase } from '@webb-dapp/webb-ui-components/types';
 
+/**
+ * The `CopyWithTooltip` props
+ */
 export interface CopyWithTooltipProps extends WebbComponentBase {
   /**
    * Represents the text to copy to clipboard

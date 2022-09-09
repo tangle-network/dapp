@@ -7,6 +7,16 @@ import { twMerge } from 'tailwind-merge';
 import { Tooltip, TooltipBody, TooltipTrigger } from '../Tooltip';
 import { CopyWithTooltipProps } from './types';
 
+/**
+ * The `CopyWithTooltip` component
+ *
+ * @example
+ *
+ * ```jsx
+ *  <CopyWithTooltip textToCopy="0x026d513cf4e5f0e605a6584322382bd5896d4f0dfdd1e9a7" />
+ *  <CopyWithTooltip isUseSpan textToCopy="0x026d513cf4e5f0e605a6584322382bd5896d4f0dfdd1e9a7" />
+ * ```
+ */
 export const CopyWithTooltip: React.FC<CopyWithTooltipProps> = ({ className, isUseSpan, textToCopy }) => {
   const { copy, isCopied } = useCopyable();
 
