@@ -6,11 +6,13 @@ import {
   Chip,
   DropdownMenu,
   Input,
+  KeyStatusCard,
   Progress,
   Slider,
   Tooltip,
   TooltipBody,
   TooltipTrigger,
+  useKeyStatusSeedData,
 } from '@webb-dapp/webb-ui-components';
 import {
   Coin,
@@ -38,9 +40,13 @@ export const Mixer: React.FC<MixerProps> = () => {
 
   const [sliderVal, setSliderVal] = useState([12, 24]);
 
+  const statusCardData = useKeyStatusSeedData();
+
   return (
     <MixerWrapper>
       <MixerTabs Withdraw={<Withdraw />} Deposit={<Deposit />} />
+
+      <KeyStatusCard className='max-w-[680px] mt-6' {...statusCardData} />
 
       <div className='mt-8'>
         <Button varirant='link' isDisabled size='sm'>
