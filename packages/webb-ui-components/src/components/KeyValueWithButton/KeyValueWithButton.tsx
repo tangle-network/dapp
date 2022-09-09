@@ -19,7 +19,7 @@ import { KeyValueWithButtonProps } from './types';
  * ```
  */
 export const KeyValueWithButton = forwardRef<HTMLDivElement, KeyValueWithButtonProps>(
-  ({ className, keyValue, ...props }, ref) => {
+  ({ className, keyValue, size = 'md', ...props }, ref) => {
     const { copy, isCopied } = useCopyable();
 
     const onCopy = useCallback(() => {
@@ -31,13 +31,13 @@ export const KeyValueWithButton = forwardRef<HTMLDivElement, KeyValueWithButtonP
     }, [copy, isCopied, keyValue]);
 
     const mergedClsx = useMemo(() => {
-      return twMerge('overflow-hidden rounded-lg bg-mono-20 dark:bg-mono-180', className);
-    }, [className]);
+      return twMerge('overflow-hidden rounded-lg', size === 'md' ? 'bg-mono-20 dark:bg-mono-180' : '', className);
+    }, [className, size]);
 
     return (
       <div {...props} className={mergedClsx} ref={ref}>
-        <div className='flex items-center space-x-2'>
-          <div className='py-1 pl-3'>
+        <div className={cx('flex items-center', size === 'md' ? 'space-x-2' : 'space-x-1')}>
+          <div className={size === 'md' ? 'py-1 pl-3' : ''}>
             <Tooltip>
               <TooltipTrigger onClick={() => copy(keyValue)} asChild>
                 <LabelWithValue
@@ -52,12 +52,12 @@ export const KeyValueWithButton = forwardRef<HTMLDivElement, KeyValueWithButtonP
           <Tooltip>
             <TooltipTrigger
               className={cx(
-                'p-2 bg-blue-10 dark:bg-blue-120 text-blue-70 dark:text-blue-30',
+                size === 'md' ? 'p-2 bg-blue-10 dark:bg-blue-120 text-blue-70 dark:text-blue-30' : '',
                 isCopied ? 'cursor-not-allowed' : ''
               )}
               onClick={onCopy}
             >
-              <FileCopyLine className='!fill-current' />
+              <FileCopyLine className={size === 'md' ? '!fill-current' : ''} />
             </TooltipTrigger>
             <TooltipBody>{isCopied ? 'Copied' : 'Copy'}</TooltipBody>
           </Tooltip>
