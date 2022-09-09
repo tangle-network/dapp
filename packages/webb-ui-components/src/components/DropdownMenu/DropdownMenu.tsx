@@ -86,7 +86,7 @@ export const DropdownMenu = React.forwardRef<HTMLDivElement, DropdownMenuProps>(
 
         <DropdownMenuPrimitive.Portal>
           <DropdownMenuPrimitive.Content
-            align='center'
+            align='start'
             className={cx(
               'radix-side-top:animate-slide-up radix-side-bottom:animate-slide-down',
               'min-w-[176px] shadow-md overflow-hidden webb-shadow-md',

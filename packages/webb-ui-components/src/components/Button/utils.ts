@@ -43,10 +43,10 @@ const classNames: ButtonClassNames = {
       common: 'text-blue border-b-[1.6px] border-transparent dark:text-blue-20',
       hover: 'hover:border-blue dark:hover:text-blue-40 dark:hover:border-blue-40',
       active: 'active:text-blue-90 active:border-blue-90 dark:active:text-blue dark:active:border-blue',
-      disabled: '',
+      disabled: 'disabled:text-blue-30 disabled:dark:text-blue-110',
     },
     md: 'body1 font-semibold',
-    sm: 'body4 bold',
+    sm: 'body4 font-bold',
   },
 };
 
