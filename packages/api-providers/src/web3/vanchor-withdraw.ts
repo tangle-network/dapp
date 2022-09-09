@@ -293,7 +293,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
           name: parsedDestChainIdType.chainId.toString(),
         };
 
-        const extAmount = extData.extAmount.replace('0x', '');
+        const extAmount = extData.extAmount.toString().replace('0x', '');
         const relayedDepositTxPayload = relayedVAnchorWithdraw.generateWithdrawRequest<typeof chainInfo, 'vAnchor'>(
           chainInfo,
           {
@@ -306,6 +306,8 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
               fee: extData.fee.toString() as any,
               encryptedOutput1: extData.encryptedOutput1,
               encryptedOutput2: extData.encryptedOutput2,
+              refund: extData.refund.toString(),
+              token: extData.token,
             },
             proofData: {
               proof: publicInputs.proof,

@@ -1,5 +1,6 @@
+import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
+import { AuthoritiesData } from '@webb-dapp/page-statistics/AuthoritiesData';
 import React, { FC } from 'react';
-import styled from 'styled-components';
 
 import { DepositStatistics } from './DepositStatistics';
 import { DKGStatistics } from './DKGStatistics';
@@ -32,5 +33,17 @@ const PageStatistics: FC<StatisticsPageProps> = ({ view }) => {
       return <StatisticsOverview />;
   }
 };
+const apolloClient = new ApolloClient({
+  cache: new InMemoryCache(),
+  uri: 'http://localhost:4000',
+});
 
-export default PageStatistics;
+const Page: FC<StatisticsPageProps> = (props) => {
+  return (
+    <ApolloProvider client={apolloClient}>
+      <AuthoritiesData />
+    </ApolloProvider>
+  );
+};
+
+export default Page;

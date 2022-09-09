@@ -42,6 +42,17 @@ export interface IVariableAnchorPublicInputs {
   extDataHash: string;
 }
 
+export type ExtData = {
+  recipient: string;
+  extAmount: BigNumberish;
+  relayer: string;
+  fee: BigNumberish;
+  refund: BigNumberish;
+  token: string;
+  encryptedOutput1: string;
+  encryptedOutput2: string;
+};
+
 export async function utxoFromVAnchorNote(note: JsNote, leafIndex: number): Promise<Utxo> {
   const noteSecretParts = note.secrets.split(':');
   const chainId = note.targetChainId;
@@ -614,7 +625,6 @@ export class VAnchorContract {
       hexToU8a(outputs[1].encrypt()),
     ];
 
-    console.log(inputNotes);
     const proofInput: ProvingManagerSetupInput<'vanchor'> = {
       inputNotes,
       leavesMap,
@@ -630,7 +640,7 @@ export class VAnchorContract {
       extAmount: toFixedHex(BigNumber.from(extAmount)),
       fee: BigNumber.from(fee).toString(),
       refund: BigNumber.from(refund).toString(),
-      token: hexToU8a(token),
+      token: hexToU8a(toFixedHex(token, 20)),
     };
 
     console.log('proofInput: ', proofInput);
@@ -649,8 +659,7 @@ export class VAnchorContract {
     );
 
     console.log('publicInputs: ', publicInputs);
-
-    const extData = {
+    const extData: ExtData = {
       recipient: toFixedHex(proofInput.recipient, 20),
       extAmount: toFixedHex(proofInput.extAmount),
       relayer: toFixedHex(proofInput.relayer, 20),
