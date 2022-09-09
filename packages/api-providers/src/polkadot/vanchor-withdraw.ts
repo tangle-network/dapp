@@ -173,6 +173,8 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
       inputNotes: inputNotes,
       publicAmount: String(publicAmount),
       output: [output1, output2],
+      refund: '0',
+      token: Uint8Array.from([0]),
     };
     const destChainIdType = parseTypedChainId(Number(inputNotes[0].note.targetChainId));
 
@@ -225,6 +227,8 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
             fee: extData.fee,
             encryptedOutput1: Array.from(hexToU8a(extData.encryptedOutput1)),
             encryptedOutput2: Array.from(hexToU8a(extData.encryptedOutput2)),
+            refund: '0',
+            token: '0',
           },
           proofData: {
             proof: Array.from(hexToU8a(vanchorProofData.proof)),

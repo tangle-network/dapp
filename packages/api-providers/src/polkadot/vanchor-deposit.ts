@@ -182,7 +182,8 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
 
       const { encrypted: comEnc1 } = naclEncrypt(output1.commitment, secret);
       const { encrypted: comEnc2 } = naclEncrypt(output2.commitment, secret);
-
+      const asset = wrapAndDepositFlow ? wrappableAssetRaw : 0;
+      const refund = 0;
       const extData = {
         relayer: accountId,
         recipient: relayerAccountId,
@@ -190,6 +191,8 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
         extAmount: BigNumber.from(publicAmount),
         encryptedOutput1: u8aToHex(comEnc1),
         encryptedOutput2: u8aToHex(comEnc2),
+        refund: String(refund),
+        token: String(asset),
       };
       const vanchorDepositSetup: ProvingManagerSetupInput<'vanchor'> = {
         encryptedCommitments: [comEnc1, comEnc2],
@@ -205,6 +208,8 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
         inputNotes: [inputNote],
         publicAmount,
         output: [output1, output2],
+        refund: String(refund),
+        token: Uint8Array.from([asset]),
       };
       console.log('vanchorDepositSetup: ', vanchorDepositSetup);
 

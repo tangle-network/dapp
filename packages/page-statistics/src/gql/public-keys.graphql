@@ -1,0 +1,19 @@
+query PublicKeys {
+  publicKeys {
+    nodes {
+      id
+      compressed
+      uncompressed
+      history
+      block {
+        timestamp
+        number
+      }
+      sessions {
+        nodes {
+          id
+        }
+      }
+    }
+  }
+}
