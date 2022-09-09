@@ -41,7 +41,7 @@ export const Mixer: React.FC<MixerProps> = () => {
   return (
     <MixerWrapper>
       <MixerTabs Withdraw={<Withdraw />} Deposit={<Deposit />} />
-      
+
       <div className='mt-8'>
         <h6 className='mt-5'>Small</h6>
         <Progress size='sm' value={60} className='w-[100px]' />
