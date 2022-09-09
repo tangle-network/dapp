@@ -267,6 +267,8 @@ type SubstrateExtData = {
   fee: number;
   encryptedOutput1: Array<number>;
   encryptedOutput2: Array<number>;
+  refund: string;
+  token: string;
 };
 
 /**
@@ -286,6 +288,8 @@ type EVMExtData = {
   fee: number;
   encryptedOutput1: string;
   encryptedOutput2: string;
+  refund: string;
+  token: string;
 };
 
 type ExtData = EVMExtData | SubstrateExtData;

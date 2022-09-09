@@ -190,6 +190,8 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
         extAmount: BigNumber.from(publicAmount),
         encryptedOutput1: u8aToHex(comEnc1),
         encryptedOutput2: u8aToHex(comEnc2),
+        refund: '0',
+        token: '1',
       };
       const vanchorDepositSetup: ProvingManagerSetupInput<'vanchor'> = {
         encryptedCommitments: [comEnc1, comEnc2],
@@ -205,6 +207,8 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
         inputNotes: [inputNote],
         publicAmount,
         output: [output1, output2],
+        refund: '0',
+        token: Uint8Array.from([0]),
       };
       console.log('vanchorDepositSetup: ', vanchorDepositSetup);
 

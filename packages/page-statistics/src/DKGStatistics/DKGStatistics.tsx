@@ -6,8 +6,8 @@ import { Flex } from '@webb-dapp/ui-components/Flex/Flex';
 import { useBreakpoint } from '@webb-dapp/ui-components/utils/responsive-utils';
 import { ArcElement, Chart as ChartJS, Legend, Tooltip } from 'chart.js';
 import { Config, UserConfig } from 'gridjs';
-import { _, Grid as _Grid } from 'gridjs-react';
-import { FC, useCallback, useEffect, useMemo } from 'react';
+import { _, Grid } from 'gridjs-react';
+import React, { FC, useCallback, useEffect, useMemo } from 'react';
 import { ChartProps, Doughnut } from 'react-chartjs-2';
 
 import { ChartLabelsWrapper } from './styled/ChartLabelsWrapper.styled';
@@ -15,9 +15,9 @@ import { GridWrapper } from './styled/shared';
 import { StatisticCard, StatisticCardProps } from './StatisticCard';
 import { ChartWrapper, DKGEggnetStatisticsWrapper, DKGSignerWrapper, StatisticCardsList } from './styled';
 import { useDKGEggnetStats } from './useDKGEggnetStats';
-const Grid = _Grid as any;
 
 ChartJS.register(ArcElement, Tooltip, Legend);
+
 export const DKGStatistics: FC = () => {
   const { data, fetchData } = useDKGEggnetStats();
   const pallet = useColorPallet();
@@ -244,7 +244,23 @@ export const DKGStatistics: FC = () => {
     fetchData();
   }, [fetchData]);
 
-  // @ts-ignore
+  const DKGSignersGrid = useMemo(() => {
+    return React.createElement(Grid, {
+      style: gridStyles,
+      className: {
+        paginationSummary: 'webb-table-pagination-summary',
+        paginationButton: 'webb-table-pagination-btn',
+        paginationButtonCurrent: 'webb-table-pagination-btn-current',
+      },
+      data: dkgSignersItems,
+      columns: gridColumns,
+      pagination: {
+        enabled: true,
+        limit: 10,
+      },
+    });
+  }, [dkgSignersItems, gridColumns, gridStyles]);
+
   return (
     <DKGEggnetStatisticsWrapper>
       <AuthoritiesData />
@@ -278,22 +294,7 @@ export const DKGStatistics: FC = () => {
         <Typography variant='h5' style={{ marginBottom: '16px' }}>
           <b>DKG Signers</b>
         </Typography>
-        <GridWrapper>
-          <Grid
-            style={gridStyles}
-            className={{
-              paginationSummary: 'webb-table-pagination-summary',
-              paginationButton: 'webb-table-pagination-btn',
-              paginationButtonCurrent: 'webb-table-pagination-btn-current',
-            }}
-            data={dkgSignersItems}
-            columns={gridColumns}
-            pagination={{
-              enabled: true,
-              limit: 10,
-            }}
-          />
-        </GridWrapper>
+        <GridWrapper>{DKGSignersGrid}</GridWrapper>
       </DKGSignerWrapper>
     </DKGEggnetStatisticsWrapper>
   );

@@ -63,28 +63,29 @@ export const VotersTable: React.FC<{ voters: IProposalVoter[] }> = ({ voters }) 
     return voters.map((voter) => Object.values(voter));
   }, [voters]);
 
+  const GridElement = useMemo(() => {
+    return React.createElement(Grid, {
+      style: gridStyles,
+      className: {
+        paginationSummary: 'webb-table-pagination-summary',
+        paginationButton: 'webb-table-pagination-btn',
+        paginationButtonCurrent: 'webb-table-pagination-btn-current',
+      },
+      data: gridData,
+      columns: gridColumns,
+      pagination: {
+        enabled: true,
+        limit: 5,
+      },
+    });
+  }, [gridColumns, gridData, gridStyles]);
   return (
     <Wrapper hasBorderBottom={false}>
       <Typography variant='h5' component='h6' style={{ fontWeight: 600 }}>
         Voters <ChipWrapper label={voters.length.toString()} />
       </Typography>
 
-      <GridWrapper style={{ marginTop: '12px' }}>
-        <Grid
-          style={gridStyles}
-          className={{
-            paginationSummary: 'webb-table-pagination-summary',
-            paginationButton: 'webb-table-pagination-btn',
-            paginationButtonCurrent: 'webb-table-pagination-btn-current',
-          }}
-          data={gridData}
-          columns={gridColumns}
-          pagination={{
-            enabled: true,
-            limit: 5,
-          }}
-        />
-      </GridWrapper>
+      <GridWrapper style={{ marginTop: '12px' }}>{GridElement}</GridWrapper>
     </Wrapper>
   );
 };
