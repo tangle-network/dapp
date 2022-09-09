@@ -6,6 +6,7 @@ import {
   Chip,
   DropdownMenu,
   Input,
+  KeyCard,
   KeyStatusCard,
   NetworkThresholdsCard,
   Progress,
@@ -48,6 +49,15 @@ export const Mixer: React.FC<MixerProps> = () => {
   return (
     <MixerWrapper>
       <MixerTabs Withdraw={<Withdraw />} Deposit={<Deposit />} />
+
+      <div className='flex mt-6 justify-evenly'>
+        <KeyCard
+          title='Uncompressed Key:'
+          keyValue='0x6d513cf4e5f0e605a6584322382bd5896d4f0dfdd1e9a7921287d116022e85df468c095cef8e9b7ac8b6f01e5b46b33c39b21287d116022e85d'
+        />
+
+        <KeyCard title='Compressed Key:' keyValue='0x026d513cf4e5f0e605a6584322382bd5896d4f0dfdd1e9a7' />
+      </div>
 
       <NetworkThresholdsCard {...networkThresholdsData} className='max-w-[1376px] mt-6' />
 
