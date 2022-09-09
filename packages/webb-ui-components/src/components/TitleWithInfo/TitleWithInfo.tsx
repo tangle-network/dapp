@@ -15,15 +15,15 @@ import { TitleWithInfoProps } from './types';
  *  <TitleWithInfo title='Active key' info='This is the active key card' />
  * ```
  */
-export const TitleWithInfo = forwardRef<HTMLHeadingElement, TitleWithInfoProps>(
-  ({ className, info, title, ...props }, ref) => {
+export const TitleWithInfo = forwardRef<HTMLDivElement, TitleWithInfoProps>(
+  ({ className, info, title, titleComponent = 'span', variant = 'body1', ...props }, ref) => {
     const mergedClsx = useMemo(() => {
       return twMerge('flex items-center space-x-1', className);
     }, [className]);
 
     return (
-      <h6 {...props} className={mergedClsx} ref={ref}>
-        <Typography component='span' variant='body1' fw='bold'>
+      <div {...props} className={mergedClsx} ref={ref}>
+        <Typography component={titleComponent} variant={variant} fw='bold'>
           {title}
         </Typography>
         {info && (
@@ -36,7 +36,7 @@ export const TitleWithInfo = forwardRef<HTMLHeadingElement, TitleWithInfoProps>(
             <TooltipBody>{info}</TooltipBody>
           </Tooltip>
         )}
-      </h6>
+      </div>
     );
   }
 );
