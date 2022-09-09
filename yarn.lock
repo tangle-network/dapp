@@ -1724,14 +1724,6 @@
     "@graphql-tools/utils" "^8.8.0"
     tslib "~2.4.0"
 
-"@graphql-codegen/fragment-matcher@3.3.1":
-  version "3.3.1"
-  resolved "https://registry.yarnpkg.com/@graphql-codegen/fragment-matcher/-/fragment-matcher-3.3.1.tgz#6ab4a9813fdaf9fb93bef8e13286ef3781228466"
-  integrity sha512-FpIDBmnbWYS50f0FdB1l8qPNi1i+IKkp3bhzT14rnLMjll+dzn1Lux5evuth+3USkS9dn2zGrzGh44j6svrpgQ==
-  dependencies:
-    "@graphql-codegen/plugin-helpers" "^2.6.2"
-    tslib "~2.4.0"
-
 "@graphql-codegen/introspection@2.2.1":
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/@graphql-codegen/introspection/-/introspection-2.2.1.tgz#2fb52f7989142d0dde15858c40b543652d9e7b4e"
@@ -1760,24 +1752,6 @@
   dependencies:
     "@graphql-codegen/plugin-helpers" "^2.6.2"
     "@graphql-tools/utils" "^8.8.0"
-    tslib "~2.4.0"
-
-"@graphql-codegen/typescript-document-nodes@2.3.3":
-  version "2.3.3"
-  resolved "https://registry.yarnpkg.com/@graphql-codegen/typescript-document-nodes/-/typescript-document-nodes-2.3.3.tgz#fc206db3c273c97bd2104e7b78da82e253bf9e4d"
-  integrity sha512-yEKEgfYleKVOlYj8We+0rjC0xAhosV82nFVUxHD3xVPVYrTxFti0BhoYImNPW7bV3wih/EmNXiUMlSPoeveYhQ==
-  dependencies:
-    "@graphql-codegen/plugin-helpers" "^2.6.2"
-    "@graphql-codegen/visitor-plugin-common" "2.12.1"
-    auto-bind "~4.0.0"
-    tslib "~2.4.0"
-
-"@graphql-codegen/typescript-graphql-files-modules@2.2.1":
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/@graphql-codegen/typescript-graphql-files-modules/-/typescript-graphql-files-modules-2.2.1.tgz#9fd1cc6f488b33316bcae9f5fe75186ca71c8eef"
-  integrity sha512-E9k7AOZx4w4Qxll6tDbQKLJnriATowhrKobALaTcOG73SWtcZDDDitHjrm2DcV99XxlAFBV0J2ua/2r+nrvfvg==
-  dependencies:
-    "@graphql-codegen/plugin-helpers" "^2.6.2"
     tslib "~2.4.0"
 
 "@graphql-codegen/typescript-operations@2.5.3":
