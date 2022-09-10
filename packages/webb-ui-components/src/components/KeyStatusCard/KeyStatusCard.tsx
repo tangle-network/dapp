@@ -39,7 +39,7 @@ export const KeyStatusCard: React.FC<KeyStatusCardProps> = ({
         <div className='flex items-center space-x-2'>
           <TitleWithInfo title={title} info={titleInfo} />
           <LabelWithValue label='session: ' value={sessionNumber} />
-          <Chip color='green' className='inline-block capitalize'>
+          <Chip color='green' className='inline-block uppercase'>
             {keyType}
           </Chip>
         </div>

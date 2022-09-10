@@ -6,13 +6,16 @@ import {
   Chip,
   DropdownMenu,
   Input,
+  KeyCard,
   KeyStatusCard,
+  NetworkThresholdsCard,
   Progress,
   Slider,
   Tooltip,
   TooltipBody,
   TooltipTrigger,
   useKeyStatusSeedData,
+  useNetworkThresholdsSeedData,
 } from '@webb-dapp/webb-ui-components';
 import {
   Coin,
@@ -41,10 +44,22 @@ export const Mixer: React.FC<MixerProps> = () => {
   const [sliderVal, setSliderVal] = useState([12, 24]);
 
   const statusCardData = useKeyStatusSeedData();
+  const networkThresholdsData = useNetworkThresholdsSeedData();
 
   return (
     <MixerWrapper>
       <MixerTabs Withdraw={<Withdraw />} Deposit={<Deposit />} />
+
+      <div className='flex mt-6 justify-evenly'>
+        <KeyCard
+          title='Uncompressed Key:'
+          keyValue='0x6d513cf4e5f0e605a6584322382bd5896d4f0dfdd1e9a7921287d116022e85df468c095cef8e9b7ac8b6f01e5b46b33c39b21287d116022e85d'
+        />
+
+        <KeyCard title='Compressed Key:' keyValue='0x026d513cf4e5f0e605a6584322382bd5896d4f0dfdd1e9a7' />
+      </div>
+
+      <NetworkThresholdsCard {...networkThresholdsData} className='max-w-[1376px] mt-6' />
 
       <KeyStatusCard className='max-w-[680px] mt-6' {...statusCardData} />
 
