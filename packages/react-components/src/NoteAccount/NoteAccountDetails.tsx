@@ -1,17 +1,23 @@
-import { InputBase, Typography } from '@mui/material';
+import { InputBase, List, Typography } from '@mui/material';
+import { Currency } from '@webb-dapp/api-providers/abstracts';
 import { Web3Provider } from '@webb-dapp/api-providers/ext-providers';
+import { chainsConfig } from '@webb-dapp/apps/configs';
 import { useDepositNote } from '@webb-dapp/mixer/hooks';
 import { useWebContext } from '@webb-dapp/react-environment/webb-context';
+import { useCurrencies } from '@webb-dapp/react-hooks/currency';
+import { useNoteAccount } from '@webb-dapp/react-hooks/useNoteAccount';
+import { TokenInput } from '@webb-dapp/ui-components/Inputs/TokenInput/TokenInput';
 import { Pallet } from '@webb-dapp/ui-components/styling/colors';
-import { Keypair, Note } from '@webb-tools/sdk-core';
-import React, { useEffect, useState } from 'react';
+import { getRoundedAmountString } from '@webb-dapp/ui-components/utils';
+import { calculateTypedChainId, Keypair, Note } from '@webb-tools/sdk-core';
+import { ethers } from 'ethers';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
+import { ItemNoteDisplay } from '../NoteDisplay/ItemNoteDisplay';
 import { ModalNoteDisplay } from '../NoteDisplay/ModalNoteDisplay';
-import { ChainNotesList } from './ChainNotesList';
 
 const NoteAccountDetailsWrapper = styled.div`
-  width: 440px;
   padding: 20px;
 
   .account-details {
@@ -36,17 +42,22 @@ const NoteAccountDetailsWrapper = styled.div`
   }
 `;
 
-type NoteAccountDetailsProps = {
-  close(): void;
-};
+const TokenAmountChip = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: ${({ theme }) => (theme.type === 'dark' ? 'transparent' : '#242424')};
+  border: ${({ theme }) => `1px solid ${theme.accentColor}`};
+`;
 
-export const NoteAccountDetails: React.FC<NoteAccountDetailsProps> = ({ close }) => {
+export const NoteAccountDetails: React.FC = () => {
   const { noteManager } = useWebContext();
 
   return (
     <NoteAccountDetailsWrapper>
-      {!noteManager && <DisconnectedNoteAccountView close={close} />}
-      {noteManager && <ConnectedNoteAccountView close={close} />}
+      {!noteManager && <DisconnectedNoteAccountView />}
+      {noteManager && <ConnectedNoteAccountView />}
     </NoteAccountDetailsWrapper>
   );
 };
@@ -57,7 +68,7 @@ enum DisconnectView {
   Create,
 }
 
-const DisconnectedNoteAccountView: React.FC<NoteAccountDetailsProps> = () => {
+const DisconnectedNoteAccountView: React.FC = () => {
   const [view, setView] = useState<DisconnectView>(DisconnectView.Prompt);
   const [accountInputString, setAccountInputString] = useState('');
   const { loginNoteAccount, wallets } = useWebContext();
@@ -149,11 +160,32 @@ const DisconnectedNoteAccountView: React.FC<NoteAccountDetailsProps> = () => {
   );
 };
 
-const ConnectedNoteAccountView: React.FC<NoteAccountDetailsProps> = () => {
-  const { logoutNoteAccount, noteManager } = useWebContext();
-  const [allNotes, setAllNotes] = useState<Map<string, Note[]>>(new Map());
+const ConnectedNoteAccountView: React.FC = () => {
+  const { activeApi, activeChain, logoutNoteAccount, noteManager, purgeNoteAccount } = useWebContext();
+  const { allNotes } = useNoteAccount();
+  const { governedCurrencies, governedCurrency } = useCurrencies();
   const [loadNoteText, setLoadNoteText] = useState('');
   const enteredNote = useDepositNote(loadNoteText);
+
+  const syncNotes = useCallback(async () => {
+    if (activeApi && activeApi.state.activeBridge && activeChain && noteManager) {
+      const chainNotes = await activeApi.methods.variableAnchor.actions.inner.syncNotesForKeypair(
+        activeApi.state.activeBridge.targets[calculateTypedChainId(activeChain.chainType, activeChain.chainId)],
+        noteManager.getKeypair()
+      );
+
+      await Promise.all(
+        chainNotes
+          // Do not display notes that have zero value.
+          .filter((note) => note.note.amount !== '0')
+          .map(async (note) => {
+            console.log(note.serialize());
+            await noteManager.addNote(note);
+            return note;
+          })
+      );
+    }
+  }, [activeApi, activeChain, noteManager]);
 
   // On note input change, if the text is successfully parsed as a note, give it to the NoteManager
   // and clear the input.
@@ -166,12 +198,61 @@ const ConnectedNoteAccountView: React.FC<NoteAccountDetailsProps> = () => {
         setLoadNoteText('');
       });
     }
-    const sub = noteManager.$notesUpdated.subscribe(() => {
-      setAllNotes(noteManager.getAllNotes());
+  }, [enteredNote, noteManager]);
+
+  const getBalancesForChain = useCallback(
+    (typedChainId: string): Map<string, number> => {
+      let chainBalances: Map<string, number> = new Map();
+      const chainGroupedNotes = allNotes.get(typedChainId);
+
+      if (!chainGroupedNotes) {
+        return new Map();
+      }
+
+      chainGroupedNotes.map((note) => {
+        const assetBalance = chainBalances.get(note.note.tokenSymbol);
+        if (!assetBalance) {
+          chainBalances.set(
+            note.note.tokenSymbol,
+            Number(ethers.utils.formatUnits(note.note.amount, note.note.denomination))
+          );
+        } else {
+          chainBalances.set(
+            note.note.tokenSymbol,
+            assetBalance + Number(ethers.utils.formatUnits(note.note.amount, note.note.denomination))
+          );
+        }
+      });
+
+      return chainBalances;
+    },
+    [allNotes]
+  );
+
+  const cumulativeBalances: Map<string, number> = useMemo(() => {
+    if (!noteManager) {
+      return new Map();
+    }
+
+    const tokenBalanceMap = new Map<string, number>();
+
+    const chainGroupedBalances = [...allNotes.keys()].map((typedChainId) => {
+      return getBalancesForChain(typedChainId);
     });
 
-    return sub.unsubscribe();
-  }, [enteredNote, noteManager]);
+    for (const chainBalance of chainGroupedBalances) {
+      for (const assetBalanceEntry of chainBalance) {
+        const previousAssetBalance = tokenBalanceMap.get(assetBalanceEntry[0]);
+        if (!previousAssetBalance) {
+          tokenBalanceMap.set(assetBalanceEntry[0], assetBalanceEntry[1]);
+        } else {
+          tokenBalanceMap.set(assetBalanceEntry[0], assetBalanceEntry[1] + previousAssetBalance);
+        }
+      }
+    }
+
+    return tokenBalanceMap;
+  }, [allNotes, getBalancesForChain, noteManager]);
 
   if (noteManager) {
     return (
@@ -179,9 +260,79 @@ const ConnectedNoteAccountView: React.FC<NoteAccountDetailsProps> = () => {
         <div className='account-details'>
           <Typography>Public Key: {noteManager.getKeypair().pubkey.toHexString()}</Typography>
         </div>
+        <div className='sync-notes' style={{ display: 'flex' }}>
+          <button
+            onClick={syncNotes}
+            disabled={activeApi ? false : true}
+            style={{ paddingRight: '20px', height: '20px' }}
+          >
+            Sync notes for
+          </button>
+          <TokenInput
+            currencies={governedCurrencies}
+            value={governedCurrency}
+            onChange={(currency: Currency) => {
+              if (!activeApi) {
+                return;
+              }
+
+              activeApi.methods.bridgeApi.setBridgeByCurrency(currency);
+            }}
+            wrapperStyles={{ display: 'flex' }}
+          />
+        </div>
+        <Typography variant='h3'>Total Asset Balances:</Typography>
+        <div className='cumulative-asset-balances' style={{ display: 'flex', justifyContent: 'space-around' }}>
+          {[...cumulativeBalances.entries()].map((entry) => {
+            return (
+              <div key={`${entry[0]}`}>
+                {/* Amount chip */}
+                <TokenAmountChip>
+                  <Typography variant='h6'>{getRoundedAmountString(entry[1])}</Typography>
+                  <Typography variant='h6'>{entry[0]}</Typography>
+                </TokenAmountChip>
+              </div>
+            );
+          })}
+        </div>
         <div className='notes-list'>
           {[...allNotes.entries()].map((entry) => {
-            return <ChainNotesList key={`${entry[0]}`} chain={entry[0]} notes={entry[1]} />;
+            // return <ChainNotesList key={`${entry[0]}`} chain={entry[0]} notes={entry[1]} />;
+            const assetBalancesMap = getBalancesForChain(entry[0]);
+            return (
+              <>
+                <Typography variant='h4'>{chainsConfig[Number(entry[0])].name}</Typography>
+                <Typography variant='h5' style={{ paddingLeft: '40px' }}>
+                  Balances:
+                </Typography>
+                <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+                  {[...assetBalancesMap.entries()].map((entry) => {
+                    return (
+                      <TokenAmountChip>
+                        <Typography variant='h6'>{getRoundedAmountString(entry[1])}</Typography>
+                        <Typography variant='h6'>{entry[0]}</Typography>
+                      </TokenAmountChip>
+                    );
+                  })}
+                </div>
+                <Typography variant='h5' style={{ paddingLeft: '40px' }}>
+                  Notes:
+                </Typography>
+                <List>
+                  {entry[1].map((note, index) => {
+                    return (
+                      <div style={{ display: 'flex' }}>
+                        <ItemNoteDisplay
+                          note={note}
+                          key={`${entry[0]}-${index}`}
+                          removeNote={() => noteManager?.removeNote(note)}
+                        />
+                      </div>
+                    );
+                  })}
+                </List>
+              </>
+            );
           })}
         </div>
         <div className='load-notes'>
@@ -203,6 +354,15 @@ const ConnectedNoteAccountView: React.FC<NoteAccountDetailsProps> = () => {
               }}
             >
               Logout
+            </button>
+          </div>
+          <div className='purge-account-button'>
+            <button
+              onClick={() => {
+                purgeNoteAccount();
+              }}
+            >
+              Purge account
             </button>
           </div>
         </div>

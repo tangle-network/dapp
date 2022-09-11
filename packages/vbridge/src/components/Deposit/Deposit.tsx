@@ -124,7 +124,7 @@ export const Deposit: React.FC<DepositProps> = () => {
       const pubkey = noteManager.getKeypair().pubkey.toHexString();
       const currentTarget =
         activeApi.state.activeBridge.targets[calculateTypedChainId(activeChain.chainType, activeChain.chainId)]!;
-      activeApi.methods.variableAnchor.registration.inner
+      activeApi.methods.variableAnchor.actions.inner
         .isPairRegistered(currentTarget, activeAccount.address, pubkey)
         .then((res) => {
           if (res != registered) {
@@ -187,7 +187,7 @@ export const Deposit: React.FC<DepositProps> = () => {
       return (
         <MixerButton
           onClick={() => {
-            activeApi.methods.variableAnchor.registration.inner
+            activeApi.methods.variableAnchor.actions.inner
               .register(currentTarget, activeAccount.address, pubkey)
               .then((res) => {
                 if (res) {

@@ -13,25 +13,28 @@
   "dependencies": {
     "@babel/runtime": "^7.10.2",
     "@polkadot/extension-dapp": "0.44.1",
+    "@polkadot/keyring": "10.1.6",
+    "@polkadot/util": "10.1.6",
+    "@polkadot/util-crypto": "10.1.6",
     "@walletconnect/web3-provider": "^1.7.5",
-    "@webb-tools/sdk-core": "0.1.4-95",
-    "@webb-tools/app-util": "0.1.4-95",
-    "@webb-tools/api": "0.1.4-95",
-    "@webb-tools/api-derive": "0.1.4-95",
-    "@webb-tools/test-utils": "0.1.4-95",
-    "@webb-tools/types": "0.1.4-95",
-    "@webb-tools/wasm-utils": "0.1.4-95",
-    "@webb-tools/anchors": "0.2.2",
-    "@webb-tools/contracts": "0.2.2",
-    "@webb-tools/interfaces": "0.2.2",
-    "@webb-tools/tokens": "0.2.2",
+    "@webb-tools/sdk-core": "0.1.4-102",
+    "@webb-tools/app-util": "0.1.4-102",
+    "@webb-tools/api": "0.1.4-102",
+    "@webb-tools/api-derive": "0.1.4-102",
+    "@webb-tools/test-utils": "0.1.4-102",
+    "@webb-tools/types": "0.1.4-102",
+    "@webb-tools/wasm-utils": "0.1.4-102",
+    "@webb-tools/anchors": "0.2.6",
+    "@webb-tools/contracts": "0.2.6",
+    "@webb-tools/interfaces": "0.2.6",
+    "@webb-tools/tokens": "0.2.6",
     "bignumber.js": "^9.0.0",
-    "snarkjs": "0.4.16"
+    "snarkjs": "0.4.22"
   },
   "devDependencies": {
     "@types/chai": "^4.3.0",
     "@types/mocha": "^9.1.1",
     "chai": "^4.3.6",
-    "ganache": "7.1.0"
+    "ganache": "7.4.1"
   }
 }

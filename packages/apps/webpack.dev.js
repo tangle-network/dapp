@@ -12,7 +12,6 @@ const baseConfig = require('./webpack.base.js');
 module.exports = (env) => {
   env.context = __dirname;
   const hasPublic = fs.existsSync(path.join(env.context, 'public'));
-
   console.log('environment in dev', env);
   return merge(baseConfig(env, 'development'), {
     devtool: 'eval-source-map',

@@ -110,7 +110,7 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
       targetChain: chainIdType.toString(),
       targetIdentifyingData: treeId.toString(),
       tokenSymbol: mixer.asset,
-      version: 'v2',
+      version: 'v1',
       width: '3',
     };
 

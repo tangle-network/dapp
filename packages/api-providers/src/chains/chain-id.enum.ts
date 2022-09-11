@@ -1,7 +1,7 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { ChainType } from '@webb-tools/sdk-core';
+import { calculateTypedChainId, ChainType } from '@webb-tools/sdk-core';
 
 export interface TypedChainId {
   chainType: ChainType;
@@ -15,32 +15,6 @@ export enum SubstrateChainId {
   LocalTangleStandalone = 1081, // Used for Tangle Standalone test deployment
   Kusama = 2,
   Polkadot = 0,
-}
-
-// Pre-calculated TypedChainId values that are supported in the dapp
-export enum PresetTypedChainId {
-  EthereumMainNet = 1099511627777,
-  Rinkeby = 1099511627780,
-  Ropsten = 1099511627779,
-  Kovan = 1099511627818,
-  Goerli = 1099511627781,
-  HarmonyTestnet1 = 1101178327777,
-  HarmonyTestnet0 = 1101178327776,
-  HarmonyMainnet0 = 1101178227776,
-  Ganache = 1099511629113,
-  Shiden = 1099511628112,
-  OptimismTestnet = 1099511627845,
-  ArbitrumTestnet = 1099512049387,
-  PolygonTestnet = 1099511707777,
-  ProtocolSubstrateStandalone = 2199023256632,
-  LocalTangleStandalone = 2199023256633,
-  DkgSubstrateStandalone,
-  Kusama = 3307124817922,
-  Polkadot = 3302829850624,
-  MoonbaseAlpha = 1099511629063,
-  HermesLocalnet = 1099511632777,
-  AthenaLocalnet = 1099511632778,
-  DemeterLocalnet = 1099511632779,
 }
 
 export enum EVMChainId {
@@ -59,11 +33,40 @@ export enum EVMChainId {
   HarmonyTestnet1 = 1666700001,
   HarmonyMainnet0 = 1666600000,
   Shiden = 336,
-  OptimismTestnet = 69,
-  ArbitrumTestnet = 421611,
+  OptimismTestnet = 420,
+  ArbitrumTestnet = 421613,
   PolygonTestnet = 80001,
   HermesLocalnet = 5001,
   AthenaLocalnet = 5002,
   DemeterLocalnet = 5003,
   MoonbaseAlpha = 1287,
+}
+
+// Pre-calculated TypedChainId values that are supported in the dapp
+export enum PresetTypedChainId {
+  EthereumMainNet = calculateTypedChainId(ChainType.EVM, EVMChainId.EthereumMainNet),
+  Rinkeby = calculateTypedChainId(ChainType.EVM, EVMChainId.Rinkeby),
+  Ropsten = calculateTypedChainId(ChainType.EVM, EVMChainId.Ropsten),
+  Kovan = calculateTypedChainId(ChainType.EVM, EVMChainId.Kovan),
+  Goerli = calculateTypedChainId(ChainType.EVM, EVMChainId.Goerli),
+  HarmonyTestnet1 = calculateTypedChainId(ChainType.EVM, EVMChainId.HarmonyTestnet1),
+  HarmonyTestnet0 = calculateTypedChainId(ChainType.EVM, EVMChainId.HarmonyTestnet0),
+  HarmonyMainnet0 = calculateTypedChainId(ChainType.EVM, EVMChainId.HarmonyMainnet0),
+  Ganache = calculateTypedChainId(ChainType.EVM, EVMChainId.Ganache),
+  Shiden = calculateTypedChainId(ChainType.EVM, EVMChainId.Shiden),
+  OptimismTestnet = calculateTypedChainId(ChainType.EVM, EVMChainId.OptimismTestnet),
+  ArbitrumTestnet = calculateTypedChainId(ChainType.EVM, EVMChainId.ArbitrumTestnet),
+  PolygonTestnet = calculateTypedChainId(ChainType.EVM, EVMChainId.PolygonTestnet),
+  ProtocolSubstrateStandalone = calculateTypedChainId(
+    ChainType.Substrate,
+    SubstrateChainId.ProtocolSubstrateStandalone
+  ),
+  LocalTangleStandalone = calculateTypedChainId(ChainType.Substrate, SubstrateChainId.LocalTangleStandalone),
+  DkgSubstrateStandalone = calculateTypedChainId(ChainType.Substrate, SubstrateChainId.ProtocolSubstrateStandalone),
+  Kusama = calculateTypedChainId(ChainType.KusamaRelayChain, SubstrateChainId.Kusama),
+  Polkadot = calculateTypedChainId(ChainType.PolkadotRelayChain, SubstrateChainId.Polkadot),
+  MoonbaseAlpha = calculateTypedChainId(ChainType.EVM, EVMChainId.MoonbaseAlpha),
+  HermesLocalnet = calculateTypedChainId(ChainType.EVM, EVMChainId.HermesLocalnet),
+  AthenaLocalnet = calculateTypedChainId(ChainType.EVM, EVMChainId.AthenaLocalnet),
+  DemeterLocalnet = calculateTypedChainId(ChainType.EVM, EVMChainId.DemeterLocalnet),
 }

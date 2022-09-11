@@ -26,8 +26,8 @@ import {
 } from '../abstracts';
 import {
   bridgeStorageFactory,
-  fetchVariableAnchorKeyForEdges,
-  fetchVariableAnchorWasmForEdges,
+  fetchVAnchorKeyFromAws,
+  fetchVAnchorWasmFromAws,
   getEVMChainName,
   Web3Provider,
   WebbError,
@@ -91,7 +91,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
       targetChain: destination.toString(),
       targetIdentifyingData: destAddress!,
       tokenSymbol: tokenSymbol,
-      version: 'v2',
+      version: 'v1',
       width: '4',
     };
 
@@ -169,8 +169,8 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
       // Fetch the fixtures
       this.cancelToken.throwIfCancel();
       this.emit('stateChange', TransactionState.FetchingFixtures);
-      const smallKey = await fetchVariableAnchorKeyForEdges(maxEdges, true, abortSignal);
-      const smallWasm = await fetchVariableAnchorWasmForEdges(maxEdges, true, abortSignal);
+      const smallKey = await fetchVAnchorKeyFromAws(maxEdges, true, abortSignal);
+      const smallWasm = await fetchVAnchorWasmFromAws(maxEdges, true, abortSignal);
       const leavesMap: Record<string, Uint8Array[]> = {};
 
       // Fetch the leaves from the source chain
