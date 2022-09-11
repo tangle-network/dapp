@@ -4197,6 +4197,18 @@
     postcss-selector-parser "^6.0.4"
     quick-lru "^5.1.1"
 
+"@tanstack/react-table@^8.5.13":
+  version "8.5.13"
+  resolved "https://registry.yarnpkg.com/@tanstack/react-table/-/react-table-8.5.13.tgz#a394c4db1cbcd63eb0c5fa2244a963da28f246c4"
+  integrity sha512-k52HsnonKwDZMCIy59HfehTnkJYlqkqyvC+BAV0DyWdN9WmSbVq+Kf+luJVENQnXcnEX47dBHiHAjqZu592ZLQ==
+  dependencies:
+    "@tanstack/table-core" "8.5.13"
+
+"@tanstack/table-core@8.5.13":
+  version "8.5.13"
+  resolved "https://registry.yarnpkg.com/@tanstack/table-core/-/table-core-8.5.13.tgz#7ad94fcc9db72f3eb0ed7dbb9c511a6bd7ff9a06"
+  integrity sha512-kvDRjC7LrLNNNgUMfsBz3nHOwbBLFdosWQ16dfbD9D/OJrvFHRXoUIPzF0MNqqSPghaj7/18fnwXHGypvzoh9Q==
+
 "@testing-library/dom@*":
   version "8.17.1"
   resolved "https://registry.yarnpkg.com/@testing-library/dom/-/dom-8.17.1.tgz#2d7af4ff6dad8d837630fecd08835aee08320ad7"
@@ -15850,11 +15862,6 @@ react-style-singleton@^2.2.1:
     get-nonce "^1.0.0"
     invariant "^2.2.4"
     tslib "^2.0.0"
-
-react-table@^7.8.0:
-  version "7.8.0"
-  resolved "https://registry.yarnpkg.com/react-table/-/react-table-7.8.0.tgz#07858c01c1718c09f7f1aed7034fcfd7bda907d2"
-  integrity sha512-hNaz4ygkZO4bESeFfnfOft73iBUj8K5oKi1EcSHPAibEydfsX2MyU6Z8KCr3mv3C9Kqqh71U+DhZkFvibbnPbA==
 
 react-test-renderer@^16.0.0-0:
   version "16.14.0"
