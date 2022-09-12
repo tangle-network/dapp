@@ -49,7 +49,7 @@ type PolkadotTXEventsPayload<T = undefined> = {
   data: T;
   key: string;
   address: string;
-  path: MethodPath;
+  path: MethodPath | MethodPath[];
 };
 type PolkadotTXEvents = {
   beforeSend: PolkadotTXEventsPayload;
@@ -284,7 +284,7 @@ export class PolkaTXBuilder {
           : 'Unsigned transaction',
         key: data.key,
         level: 'success',
-        message: `${data.path.section}:${data.path.method}`,
+        message: notificationMessage,
         name: 'Transaction',
         persist: true,
       });

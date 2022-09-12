@@ -42,6 +42,17 @@ export interface IVariableAnchorPublicInputs {
   extDataHash: string;
 }
 
+export type ExtData = {
+  recipient: string;
+  extAmount: BigNumberish;
+  relayer: string;
+  fee: BigNumberish;
+  refund: BigNumberish;
+  token: string;
+  encryptedOutput1: string;
+  encryptedOutput2: string;
+};
+
 export async function utxoFromVAnchorNote(note: JsNote, leafIndex: number): Promise<Utxo> {
   const noteSecretParts = note.secrets.split(':');
   const chainId = note.targetChainId;
@@ -253,6 +264,8 @@ export class VAnchorContract {
       outputs,
       extAmount,
       0,
+      0,
+      await this.inner.token(),
       sender,
       sender,
       leavesMap,
@@ -320,6 +333,8 @@ export class VAnchorContract {
       outputs,
       extAmount,
       0,
+      0,
+      tokenAddress,
       sender,
       sender,
       leavesMap,
@@ -390,7 +405,7 @@ export class VAnchorContract {
     console.log(`finalBlock detected as: ${finalBlock}`);
 
     let logs: Array<Log> = []; // Read the stored logs into this variable
-    const step = 1024;
+    const step = 1000; // Metamask infura caps requests at 1000 blocks
     console.log(`Fetching leaves with steps of ${step} logs/request`);
 
     try {
@@ -426,6 +441,88 @@ export class VAnchorContract {
       lastQueriedBlock: finalBlock,
       newLeaves: newCommitments,
     };
+  }
+
+  // This function will query the chain for notes that are spendable by a keypair in a block range
+  async getSpendableUtxosFromChain(
+    owner: Keypair,
+    startingBlock: number,
+    finalBlock: number,
+    abortSignal: AbortSignal
+  ): Promise<Utxo[]> {
+    const filter = this._contract.filters.NewCommitment(null, null, null);
+    let logs: Array<Log> = []; // Read the stored logs into this variable
+
+    finalBlock = finalBlock || (await this.web3Provider.getBlockNumber());
+    console.log(`Getting notes from chain`);
+    // number of blocks to query at a time
+    const step = 1024;
+    console.log(`Fetching notes with steps of ${step} logs/request`);
+
+    try {
+      for (let i = startingBlock; i < finalBlock; i += step) {
+        const nextLogs = await retryPromise(
+          () => {
+            return this.web3Provider.getLogs({
+              fromBlock: i,
+              toBlock: finalBlock - i > step ? i + step : finalBlock,
+              ...filter,
+            });
+          },
+          20,
+          10,
+          abortSignal
+        );
+
+        logs = [...logs, ...nextLogs];
+
+        console.log(`Getting logs for block range: ${i} through ${i + step}`);
+      }
+    } catch (e) {
+      logger.error(e);
+      throw e;
+    }
+
+    const events = logs.map((log) => this._contract.interface.parseLog(log));
+    const encryptedCommitments: string[] = events
+      .sort((a, b) => a.args.index - b.args.index) // Sort events in chronological order
+      .map((e) => e.args.encryptedOutput);
+
+    // Attempt to decrypt with the owner's keypair
+    const utxos = await Promise.all(
+      encryptedCommitments.map(async (enc, index) => {
+        try {
+          const decryptedUtxo = await CircomUtxo.decrypt(owner, enc);
+          // In order to properly calculate the nullifier, an index is required.
+          // The decrypt function generates a utxo without an index, and the index is a readonly property.
+          // So, regenerate the utxo with the proper index.
+          const regeneratedUtxo = await CircomUtxo.generateUtxo({
+            amount: decryptedUtxo.amount,
+            backend: 'Circom',
+            blinding: hexToU8a(decryptedUtxo.blinding),
+            chainId: decryptedUtxo.chainId,
+            curve: 'Bn254',
+            keypair: owner,
+            privateKey: hexToU8a(owner.privkey),
+            index: index.toString(),
+          });
+          const alreadySpent = await this._contract.isSpent(toFixedHex(regeneratedUtxo.nullifier, 32));
+          if (!alreadySpent) {
+            return regeneratedUtxo;
+          } else {
+            return undefined;
+          }
+        } catch (e) {
+          return undefined;
+        }
+      })
+    );
+
+    // Unsure why the following filter statement does not change type from (Utxo | undefined)[] to Utxo[]
+    // @ts-ignore
+    const decryptedUtxos: Utxo[] = utxos.filter((value) => value !== undefined);
+
+    return decryptedUtxos;
   }
 
   async generateLinkedMerkleProof(sourceDeposit: IAnchorDepositInfo, sourceLeaves: string[], sourceChainId: number) {
@@ -466,6 +563,8 @@ export class VAnchorContract {
     outputs: [Utxo, Utxo],
     extAmount: BigNumberish,
     fee: BigNumberish,
+    refund: BigNumberish,
+    token: string,
     recipient: string,
     relayer: string,
     leavesMap: Record<string, Uint8Array[]>,
@@ -526,7 +625,6 @@ export class VAnchorContract {
       hexToU8a(outputs[1].encrypt()),
     ];
 
-    console.log(inputNotes);
     const proofInput: ProvingManagerSetupInput<'vanchor'> = {
       inputNotes,
       leavesMap,
@@ -541,6 +639,8 @@ export class VAnchorContract {
       recipient: hexToU8a(recipient),
       extAmount: toFixedHex(BigNumber.from(extAmount)),
       fee: BigNumber.from(fee).toString(),
+      refund: BigNumber.from(refund).toString(),
+      token: hexToU8a(toFixedHex(token, 20)),
     };
 
     console.log('proofInput: ', proofInput);
@@ -559,12 +659,13 @@ export class VAnchorContract {
     );
 
     console.log('publicInputs: ', publicInputs);
-
-    const extData = {
+    const extData: ExtData = {
       recipient: toFixedHex(proofInput.recipient, 20),
-      extAmount: toFixedHex(proofInput.extAmount, 20),
+      extAmount: toFixedHex(proofInput.extAmount),
       relayer: toFixedHex(proofInput.relayer, 20),
       fee: toFixedHex(proofInput.fee, 20),
+      refund: toFixedHex(proofInput.refund),
+      token: toFixedHex(proofInput.token, 20),
       encryptedOutput1: u8aToHex(proofInput.encryptedCommitments[0]),
       encryptedOutput2: u8aToHex(proofInput.encryptedCommitments[1]),
     };

@@ -1,8 +1,11 @@
-import { VAnchorRegistration } from '../abstracts/anchor/vanchor-registration';
+import { Keypair, Note } from '@webb-tools/sdk-core';
+
+import { VAnchorActions } from '../abstracts/anchor/vanchor-actions';
+import { CancellationToken } from '../abstracts/cancelation-token';
 import { registrationStorageFactory } from '../utils';
 import { WebbWeb3Provider } from './webb-provider';
 
-export class Web3VAnchorRegistration extends VAnchorRegistration<WebbWeb3Provider> {
+export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
   // Check if the evm address and public key pairing has already registered.
   async isPairRegistered(anchorAddress: string, account: string, pubkey: string): Promise<boolean> {
     // Check the localStorage for now.
@@ -60,5 +63,12 @@ export class Web3VAnchorRegistration extends VAnchorRegistration<WebbWeb3Provide
     await registration.set(anchorAddress, registeredPubkeys);
 
     return true;
+  }
+
+  async syncNotesForKeypair(anchorAddress: string, owner: Keypair): Promise<Note[]> {
+    const cancelToken = new CancellationToken();
+    const vanchor = this.inner.getVariableAnchorByAddress(anchorAddress);
+    const notes = await this.inner.getVAnchorNotesFromChain(vanchor, owner, cancelToken.abortSignal);
+    return notes;
   }
 }

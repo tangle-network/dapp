@@ -1,0 +1,18 @@
+query Proposals {
+  proposalItems {
+    nodes {
+      id
+      data
+      signature
+      type
+      status
+      votes
+      timelineStatus
+      currentStatus
+      block {
+      timestamp
+        number
+      }
+    }
+  }
+}

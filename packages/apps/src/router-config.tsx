@@ -13,6 +13,7 @@ const PageCrowdloan = lazy(() => import('@webb-dapp/page-crowdloan'));
 const PageStatistics = lazy(() => import('@webb-dapp/page-statistics'));
 const PageGovernance = lazy(() => import('@webb-dapp/page-governance'));
 const PageClaims = lazy(() => import('@webb-dapp/page-claims'));
+const PageNoteAccount = lazy(() => import('@webb-dapp/page-note-account'));
 
 const animations = {
   initial: { x: -230, opacity: 0.5 },
@@ -151,6 +152,15 @@ export const config: RouterConfigData[] = [
         ),
         path: 'claims/*',
         title: 'ECDSA Claims',
+      },
+      {
+        element: (
+          <CSuspense>
+            <PageNoteAccount />
+          </CSuspense>
+        ),
+        path: 'note-account/*',
+        title: 'Note Account',
       },
       {
         path: '*',

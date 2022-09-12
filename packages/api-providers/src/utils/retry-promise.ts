@@ -5,12 +5,12 @@ export const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve
 
 export async function retryPromise<T extends () => Promise<any>>(
   executor: T,
-  maxReties = 20,
+  maxRetries = 20,
   sleepTime = 0,
   abortSignal?: AbortSignal
 ): Promise<ReturnType<T>> {
   let resolved = false;
-  let tries = maxReties;
+  let tries = maxRetries;
   while (!resolved && tries > 0) {
     abortSignal?.throwIfAborted();
     try {
@@ -24,4 +24,5 @@ export async function retryPromise<T extends () => Promise<any>>(
       console.error(e);
     }
   }
+  throw new Error('Mix retries reached');
 }

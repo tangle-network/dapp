@@ -1,0 +1,20 @@
+query CurrentSessionAuthorities {
+  sessions(last: 1, orderBy: [BLOCK_NUMBER_DESC]) {
+    nodes {
+      id
+      blockId
+      authorities
+      bestAuthorities
+      publicKey {
+        compressed
+      }
+      signatureThreshold
+      keyGenThreshold
+      proposerThreshold
+      block {
+        id
+        timestamp
+      }
+    }
+  }
+}

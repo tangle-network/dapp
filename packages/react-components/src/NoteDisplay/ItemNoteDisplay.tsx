@@ -1,5 +1,4 @@
 import { Icon, IconButton, Tooltip, Typography } from '@mui/material';
-import { useWebContext } from '@webb-dapp/react-environment/webb-context';
 import { useCopyable } from '@webb-dapp/react-hooks/useCopyable';
 import { downloadString } from '@webb-dapp/utils/download';
 import { Note } from '@webb-tools/sdk-core';
