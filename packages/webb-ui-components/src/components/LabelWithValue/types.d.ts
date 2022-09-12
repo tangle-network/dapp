@@ -23,4 +23,9 @@ export interface LabelWithValueProps extends WebbComponentBase {
    * @default "body2"
    */
   valueVariant?: WebbTypographyVariant;
+  /**
+   * The value will have the tooltip that contains the `valueTooltip` string to describe for the value.
+   * Usually use for shorten hex string
+   */
+  valueTooltip?: string;
 }
