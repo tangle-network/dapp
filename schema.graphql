@@ -1707,6 +1707,7 @@ type ProposalItem implements Node {
     "Reads a single `Block` that is related to this `ProposalItem`."
     block: Block
     blockId: String!
+    blockNumber: Int!
     currentStatus: JSON!
     data: String!
     id: String!
@@ -1786,6 +1787,8 @@ type ProposalItemAggregates {
 }
 
 type ProposalItemAverageAggregates {
+    "Mean average of blockNumber across the matching connection"
+    blockNumber: BigFloat
     "Mean average of nonce across the matching connection"
     nonce: BigFloat
 }
@@ -1793,6 +1796,8 @@ type ProposalItemAverageAggregates {
 type ProposalItemDistinctCountAggregates {
     "Distinct count of blockId across the matching connection"
     blockId: BigInt
+    "Distinct count of blockNumber across the matching connection"
+    blockNumber: BigInt
     "Distinct count of currentStatus across the matching connection"
     currentStatus: BigInt
     "Distinct count of data across the matching connection"
@@ -1816,26 +1821,36 @@ type ProposalItemDistinctCountAggregates {
 }
 
 type ProposalItemMaxAggregates {
+    "Maximum of blockNumber across the matching connection"
+    blockNumber: Int
     "Maximum of nonce across the matching connection"
     nonce: Int
 }
 
 type ProposalItemMinAggregates {
+    "Minimum of blockNumber across the matching connection"
+    blockNumber: Int
     "Minimum of nonce across the matching connection"
     nonce: Int
 }
 
 type ProposalItemStddevPopulationAggregates {
+    "Population standard deviation of blockNumber across the matching connection"
+    blockNumber: BigFloat
     "Population standard deviation of nonce across the matching connection"
     nonce: BigFloat
 }
 
 type ProposalItemStddevSampleAggregates {
+    "Sample standard deviation of blockNumber across the matching connection"
+    blockNumber: BigFloat
     "Sample standard deviation of nonce across the matching connection"
     nonce: BigFloat
 }
 
 type ProposalItemSumAggregates {
+    "Sum of blockNumber across the matching connection"
+    blockNumber: BigInt!
     "Sum of nonce across the matching connection"
     nonce: BigInt!
 }
@@ -1891,11 +1906,15 @@ type ProposalItemUnsignedProposalsQueuesByUnsignedProposalsQueueItemProposalIdAn
 }
 
 type ProposalItemVariancePopulationAggregates {
+    "Population variance of blockNumber across the matching connection"
+    blockNumber: BigFloat
     "Population variance of nonce across the matching connection"
     nonce: BigFloat
 }
 
 type ProposalItemVarianceSampleAggregates {
+    "Sample variance of blockNumber across the matching connection"
+    blockNumber: BigFloat
     "Sample variance of nonce across the matching connection"
     nonce: BigFloat
 }
@@ -3042,6 +3061,7 @@ type UnsignedProposalsQueue implements Node {
     "Reads a single `Block` that is related to this `UnsignedProposalsQueue`."
     block: Block
     blockId: String!
+    blockNumber: Int!
     id: String!
     "A globally unique identifier. Can be used in various places throughout the system to identify this single value."
     nodeId: ID!
@@ -3090,19 +3110,43 @@ type UnsignedProposalsQueue implements Node {
 }
 
 type UnsignedProposalsQueueAggregates {
+    "Mean average aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    average: UnsignedProposalsQueueAverageAggregates
     "Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset)"
     distinctCount: UnsignedProposalsQueueDistinctCountAggregates
     keys: [String!]
+    "Maximum aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    max: UnsignedProposalsQueueMaxAggregates
+    "Minimum aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    min: UnsignedProposalsQueueMinAggregates
+    "Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    stddevPopulation: UnsignedProposalsQueueStddevPopulationAggregates
+    "Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    stddevSample: UnsignedProposalsQueueStddevSampleAggregates
+    "Sum aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    sum: UnsignedProposalsQueueSumAggregates
+    "Population variance aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    variancePopulation: UnsignedProposalsQueueVariancePopulationAggregates
+    "Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    varianceSample: UnsignedProposalsQueueVarianceSampleAggregates
+}
+
+type UnsignedProposalsQueueAverageAggregates {
+    "Mean average of blockNumber across the matching connection"
+    blockNumber: BigFloat
 }
 
 type UnsignedProposalsQueueDistinctCountAggregates {
     "Distinct count of blockId across the matching connection"
     blockId: BigInt
+    "Distinct count of blockNumber across the matching connection"
+    blockNumber: BigInt
     "Distinct count of id across the matching connection"
     id: BigInt
 }
 
 type UnsignedProposalsQueueItem implements Node {
+    blockNumber: Int!
     id: String!
     "A globally unique identifier. Can be used in various places throughout the system to identify this single value."
     nodeId: ID!
@@ -3115,18 +3159,76 @@ type UnsignedProposalsQueueItem implements Node {
 }
 
 type UnsignedProposalsQueueItemAggregates {
+    "Mean average aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    average: UnsignedProposalsQueueItemAverageAggregates
     "Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset)"
     distinctCount: UnsignedProposalsQueueItemDistinctCountAggregates
     keys: [String!]
+    "Maximum aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    max: UnsignedProposalsQueueItemMaxAggregates
+    "Minimum aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    min: UnsignedProposalsQueueItemMinAggregates
+    "Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    stddevPopulation: UnsignedProposalsQueueItemStddevPopulationAggregates
+    "Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    stddevSample: UnsignedProposalsQueueItemStddevSampleAggregates
+    "Sum aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    sum: UnsignedProposalsQueueItemSumAggregates
+    "Population variance aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    variancePopulation: UnsignedProposalsQueueItemVariancePopulationAggregates
+    "Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    varianceSample: UnsignedProposalsQueueItemVarianceSampleAggregates
+}
+
+type UnsignedProposalsQueueItemAverageAggregates {
+    "Mean average of blockNumber across the matching connection"
+    blockNumber: BigFloat
 }
 
 type UnsignedProposalsQueueItemDistinctCountAggregates {
+    "Distinct count of blockNumber across the matching connection"
+    blockNumber: BigInt
     "Distinct count of id across the matching connection"
     id: BigInt
     "Distinct count of proposalId across the matching connection"
     proposalId: BigInt
     "Distinct count of queueId across the matching connection"
     queueId: BigInt
+}
+
+type UnsignedProposalsQueueItemMaxAggregates {
+    "Maximum of blockNumber across the matching connection"
+    blockNumber: Int
+}
+
+type UnsignedProposalsQueueItemMinAggregates {
+    "Minimum of blockNumber across the matching connection"
+    blockNumber: Int
+}
+
+type UnsignedProposalsQueueItemStddevPopulationAggregates {
+    "Population standard deviation of blockNumber across the matching connection"
+    blockNumber: BigFloat
+}
+
+type UnsignedProposalsQueueItemStddevSampleAggregates {
+    "Sample standard deviation of blockNumber across the matching connection"
+    blockNumber: BigFloat
+}
+
+type UnsignedProposalsQueueItemSumAggregates {
+    "Sum of blockNumber across the matching connection"
+    blockNumber: BigInt!
+}
+
+type UnsignedProposalsQueueItemVariancePopulationAggregates {
+    "Population variance of blockNumber across the matching connection"
+    blockNumber: BigFloat
+}
+
+type UnsignedProposalsQueueItemVarianceSampleAggregates {
+    "Sample variance of blockNumber across the matching connection"
+    blockNumber: BigFloat
 }
 
 "A connection to a list of `UnsignedProposalsQueueItem` values."
@@ -3156,6 +3258,16 @@ type UnsignedProposalsQueueItemsEdge {
     cursor: Cursor
     "The `UnsignedProposalsQueueItem` at the end of the edge."
     node: UnsignedProposalsQueueItem
+}
+
+type UnsignedProposalsQueueMaxAggregates {
+    "Maximum of blockNumber across the matching connection"
+    blockNumber: Int
+}
+
+type UnsignedProposalsQueueMinAggregates {
+    "Minimum of blockNumber across the matching connection"
+    blockNumber: Int
 }
 
 "A connection to a list of `ProposalItem` values, with data from `UnsignedProposalsQueueItem`."
@@ -3206,6 +3318,31 @@ type UnsignedProposalsQueueProposalItemsByUnsignedProposalsQueueItemQueueIdAndPr
         "The method to use when ordering `UnsignedProposalsQueueItem`."
         orderBy: [UnsignedProposalsQueueItemsOrderBy!] = [PRIMARY_KEY_ASC]
     ): UnsignedProposalsQueueItemsConnection!
+}
+
+type UnsignedProposalsQueueStddevPopulationAggregates {
+    "Population standard deviation of blockNumber across the matching connection"
+    blockNumber: BigFloat
+}
+
+type UnsignedProposalsQueueStddevSampleAggregates {
+    "Sample standard deviation of blockNumber across the matching connection"
+    blockNumber: BigFloat
+}
+
+type UnsignedProposalsQueueSumAggregates {
+    "Sum of blockNumber across the matching connection"
+    blockNumber: BigInt!
+}
+
+type UnsignedProposalsQueueVariancePopulationAggregates {
+    "Population variance of blockNumber across the matching connection"
+    blockNumber: BigFloat
+}
+
+type UnsignedProposalsQueueVarianceSampleAggregates {
+    "Sample variance of blockNumber across the matching connection"
+    blockNumber: BigFloat
 }
 
 "A connection to a list of `UnsignedProposalsQueue` values."
@@ -4384,6 +4521,8 @@ enum BlocksOrderBy {
     PROPOSAL_COUNTERS_VARIANCE_SAMPLE_UN_SIGNED_PROPOSALS_MAP_DESC
     PROPOSAL_ITEMS_AVERAGE_BLOCK_ID_ASC
     PROPOSAL_ITEMS_AVERAGE_BLOCK_ID_DESC
+    PROPOSAL_ITEMS_AVERAGE_BLOCK_NUMBER_ASC
+    PROPOSAL_ITEMS_AVERAGE_BLOCK_NUMBER_DESC
     PROPOSAL_ITEMS_AVERAGE_CURRENT_STATUS_ASC
     PROPOSAL_ITEMS_AVERAGE_CURRENT_STATUS_DESC
     PROPOSAL_ITEMS_AVERAGE_DATA_ASC
@@ -4408,6 +4547,8 @@ enum BlocksOrderBy {
     PROPOSAL_ITEMS_COUNT_DESC
     PROPOSAL_ITEMS_DISTINCT_COUNT_BLOCK_ID_ASC
     PROPOSAL_ITEMS_DISTINCT_COUNT_BLOCK_ID_DESC
+    PROPOSAL_ITEMS_DISTINCT_COUNT_BLOCK_NUMBER_ASC
+    PROPOSAL_ITEMS_DISTINCT_COUNT_BLOCK_NUMBER_DESC
     PROPOSAL_ITEMS_DISTINCT_COUNT_CURRENT_STATUS_ASC
     PROPOSAL_ITEMS_DISTINCT_COUNT_CURRENT_STATUS_DESC
     PROPOSAL_ITEMS_DISTINCT_COUNT_DATA_ASC
@@ -4430,6 +4571,8 @@ enum BlocksOrderBy {
     PROPOSAL_ITEMS_DISTINCT_COUNT_VOTES_DESC
     PROPOSAL_ITEMS_MAX_BLOCK_ID_ASC
     PROPOSAL_ITEMS_MAX_BLOCK_ID_DESC
+    PROPOSAL_ITEMS_MAX_BLOCK_NUMBER_ASC
+    PROPOSAL_ITEMS_MAX_BLOCK_NUMBER_DESC
     PROPOSAL_ITEMS_MAX_CURRENT_STATUS_ASC
     PROPOSAL_ITEMS_MAX_CURRENT_STATUS_DESC
     PROPOSAL_ITEMS_MAX_DATA_ASC
@@ -4452,6 +4595,8 @@ enum BlocksOrderBy {
     PROPOSAL_ITEMS_MAX_VOTES_DESC
     PROPOSAL_ITEMS_MIN_BLOCK_ID_ASC
     PROPOSAL_ITEMS_MIN_BLOCK_ID_DESC
+    PROPOSAL_ITEMS_MIN_BLOCK_NUMBER_ASC
+    PROPOSAL_ITEMS_MIN_BLOCK_NUMBER_DESC
     PROPOSAL_ITEMS_MIN_CURRENT_STATUS_ASC
     PROPOSAL_ITEMS_MIN_CURRENT_STATUS_DESC
     PROPOSAL_ITEMS_MIN_DATA_ASC
@@ -4474,6 +4619,8 @@ enum BlocksOrderBy {
     PROPOSAL_ITEMS_MIN_VOTES_DESC
     PROPOSAL_ITEMS_STDDEV_POPULATION_BLOCK_ID_ASC
     PROPOSAL_ITEMS_STDDEV_POPULATION_BLOCK_ID_DESC
+    PROPOSAL_ITEMS_STDDEV_POPULATION_BLOCK_NUMBER_ASC
+    PROPOSAL_ITEMS_STDDEV_POPULATION_BLOCK_NUMBER_DESC
     PROPOSAL_ITEMS_STDDEV_POPULATION_CURRENT_STATUS_ASC
     PROPOSAL_ITEMS_STDDEV_POPULATION_CURRENT_STATUS_DESC
     PROPOSAL_ITEMS_STDDEV_POPULATION_DATA_ASC
@@ -4496,6 +4643,8 @@ enum BlocksOrderBy {
     PROPOSAL_ITEMS_STDDEV_POPULATION_VOTES_DESC
     PROPOSAL_ITEMS_STDDEV_SAMPLE_BLOCK_ID_ASC
     PROPOSAL_ITEMS_STDDEV_SAMPLE_BLOCK_ID_DESC
+    PROPOSAL_ITEMS_STDDEV_SAMPLE_BLOCK_NUMBER_ASC
+    PROPOSAL_ITEMS_STDDEV_SAMPLE_BLOCK_NUMBER_DESC
     PROPOSAL_ITEMS_STDDEV_SAMPLE_CURRENT_STATUS_ASC
     PROPOSAL_ITEMS_STDDEV_SAMPLE_CURRENT_STATUS_DESC
     PROPOSAL_ITEMS_STDDEV_SAMPLE_DATA_ASC
@@ -4518,6 +4667,8 @@ enum BlocksOrderBy {
     PROPOSAL_ITEMS_STDDEV_SAMPLE_VOTES_DESC
     PROPOSAL_ITEMS_SUM_BLOCK_ID_ASC
     PROPOSAL_ITEMS_SUM_BLOCK_ID_DESC
+    PROPOSAL_ITEMS_SUM_BLOCK_NUMBER_ASC
+    PROPOSAL_ITEMS_SUM_BLOCK_NUMBER_DESC
     PROPOSAL_ITEMS_SUM_CURRENT_STATUS_ASC
     PROPOSAL_ITEMS_SUM_CURRENT_STATUS_DESC
     PROPOSAL_ITEMS_SUM_DATA_ASC
@@ -4540,6 +4691,8 @@ enum BlocksOrderBy {
     PROPOSAL_ITEMS_SUM_VOTES_DESC
     PROPOSAL_ITEMS_VARIANCE_POPULATION_BLOCK_ID_ASC
     PROPOSAL_ITEMS_VARIANCE_POPULATION_BLOCK_ID_DESC
+    PROPOSAL_ITEMS_VARIANCE_POPULATION_BLOCK_NUMBER_ASC
+    PROPOSAL_ITEMS_VARIANCE_POPULATION_BLOCK_NUMBER_DESC
     PROPOSAL_ITEMS_VARIANCE_POPULATION_CURRENT_STATUS_ASC
     PROPOSAL_ITEMS_VARIANCE_POPULATION_CURRENT_STATUS_DESC
     PROPOSAL_ITEMS_VARIANCE_POPULATION_DATA_ASC
@@ -4562,6 +4715,8 @@ enum BlocksOrderBy {
     PROPOSAL_ITEMS_VARIANCE_POPULATION_VOTES_DESC
     PROPOSAL_ITEMS_VARIANCE_SAMPLE_BLOCK_ID_ASC
     PROPOSAL_ITEMS_VARIANCE_SAMPLE_BLOCK_ID_DESC
+    PROPOSAL_ITEMS_VARIANCE_SAMPLE_BLOCK_NUMBER_ASC
+    PROPOSAL_ITEMS_VARIANCE_SAMPLE_BLOCK_NUMBER_DESC
     PROPOSAL_ITEMS_VARIANCE_SAMPLE_CURRENT_STATUS_ASC
     PROPOSAL_ITEMS_VARIANCE_SAMPLE_CURRENT_STATUS_DESC
     PROPOSAL_ITEMS_VARIANCE_SAMPLE_DATA_ASC
@@ -5140,40 +5295,58 @@ enum BlocksOrderBy {
     TIMESTAMP_DESC
     UNSIGNED_PROPOSALS_QUEUES_AVERAGE_BLOCK_ID_ASC
     UNSIGNED_PROPOSALS_QUEUES_AVERAGE_BLOCK_ID_DESC
+    UNSIGNED_PROPOSALS_QUEUES_AVERAGE_BLOCK_NUMBER_ASC
+    UNSIGNED_PROPOSALS_QUEUES_AVERAGE_BLOCK_NUMBER_DESC
     UNSIGNED_PROPOSALS_QUEUES_AVERAGE_ID_ASC
     UNSIGNED_PROPOSALS_QUEUES_AVERAGE_ID_DESC
     UNSIGNED_PROPOSALS_QUEUES_COUNT_ASC
     UNSIGNED_PROPOSALS_QUEUES_COUNT_DESC
     UNSIGNED_PROPOSALS_QUEUES_DISTINCT_COUNT_BLOCK_ID_ASC
     UNSIGNED_PROPOSALS_QUEUES_DISTINCT_COUNT_BLOCK_ID_DESC
+    UNSIGNED_PROPOSALS_QUEUES_DISTINCT_COUNT_BLOCK_NUMBER_ASC
+    UNSIGNED_PROPOSALS_QUEUES_DISTINCT_COUNT_BLOCK_NUMBER_DESC
     UNSIGNED_PROPOSALS_QUEUES_DISTINCT_COUNT_ID_ASC
     UNSIGNED_PROPOSALS_QUEUES_DISTINCT_COUNT_ID_DESC
     UNSIGNED_PROPOSALS_QUEUES_MAX_BLOCK_ID_ASC
     UNSIGNED_PROPOSALS_QUEUES_MAX_BLOCK_ID_DESC
+    UNSIGNED_PROPOSALS_QUEUES_MAX_BLOCK_NUMBER_ASC
+    UNSIGNED_PROPOSALS_QUEUES_MAX_BLOCK_NUMBER_DESC
     UNSIGNED_PROPOSALS_QUEUES_MAX_ID_ASC
     UNSIGNED_PROPOSALS_QUEUES_MAX_ID_DESC
     UNSIGNED_PROPOSALS_QUEUES_MIN_BLOCK_ID_ASC
     UNSIGNED_PROPOSALS_QUEUES_MIN_BLOCK_ID_DESC
+    UNSIGNED_PROPOSALS_QUEUES_MIN_BLOCK_NUMBER_ASC
+    UNSIGNED_PROPOSALS_QUEUES_MIN_BLOCK_NUMBER_DESC
     UNSIGNED_PROPOSALS_QUEUES_MIN_ID_ASC
     UNSIGNED_PROPOSALS_QUEUES_MIN_ID_DESC
     UNSIGNED_PROPOSALS_QUEUES_STDDEV_POPULATION_BLOCK_ID_ASC
     UNSIGNED_PROPOSALS_QUEUES_STDDEV_POPULATION_BLOCK_ID_DESC
+    UNSIGNED_PROPOSALS_QUEUES_STDDEV_POPULATION_BLOCK_NUMBER_ASC
+    UNSIGNED_PROPOSALS_QUEUES_STDDEV_POPULATION_BLOCK_NUMBER_DESC
     UNSIGNED_PROPOSALS_QUEUES_STDDEV_POPULATION_ID_ASC
     UNSIGNED_PROPOSALS_QUEUES_STDDEV_POPULATION_ID_DESC
     UNSIGNED_PROPOSALS_QUEUES_STDDEV_SAMPLE_BLOCK_ID_ASC
     UNSIGNED_PROPOSALS_QUEUES_STDDEV_SAMPLE_BLOCK_ID_DESC
+    UNSIGNED_PROPOSALS_QUEUES_STDDEV_SAMPLE_BLOCK_NUMBER_ASC
+    UNSIGNED_PROPOSALS_QUEUES_STDDEV_SAMPLE_BLOCK_NUMBER_DESC
     UNSIGNED_PROPOSALS_QUEUES_STDDEV_SAMPLE_ID_ASC
     UNSIGNED_PROPOSALS_QUEUES_STDDEV_SAMPLE_ID_DESC
     UNSIGNED_PROPOSALS_QUEUES_SUM_BLOCK_ID_ASC
     UNSIGNED_PROPOSALS_QUEUES_SUM_BLOCK_ID_DESC
+    UNSIGNED_PROPOSALS_QUEUES_SUM_BLOCK_NUMBER_ASC
+    UNSIGNED_PROPOSALS_QUEUES_SUM_BLOCK_NUMBER_DESC
     UNSIGNED_PROPOSALS_QUEUES_SUM_ID_ASC
     UNSIGNED_PROPOSALS_QUEUES_SUM_ID_DESC
     UNSIGNED_PROPOSALS_QUEUES_VARIANCE_POPULATION_BLOCK_ID_ASC
     UNSIGNED_PROPOSALS_QUEUES_VARIANCE_POPULATION_BLOCK_ID_DESC
+    UNSIGNED_PROPOSALS_QUEUES_VARIANCE_POPULATION_BLOCK_NUMBER_ASC
+    UNSIGNED_PROPOSALS_QUEUES_VARIANCE_POPULATION_BLOCK_NUMBER_DESC
     UNSIGNED_PROPOSALS_QUEUES_VARIANCE_POPULATION_ID_ASC
     UNSIGNED_PROPOSALS_QUEUES_VARIANCE_POPULATION_ID_DESC
     UNSIGNED_PROPOSALS_QUEUES_VARIANCE_SAMPLE_BLOCK_ID_ASC
     UNSIGNED_PROPOSALS_QUEUES_VARIANCE_SAMPLE_BLOCK_ID_DESC
+    UNSIGNED_PROPOSALS_QUEUES_VARIANCE_SAMPLE_BLOCK_NUMBER_ASC
+    UNSIGNED_PROPOSALS_QUEUES_VARIANCE_SAMPLE_BLOCK_NUMBER_DESC
     UNSIGNED_PROPOSALS_QUEUES_VARIANCE_SAMPLE_ID_ASC
     UNSIGNED_PROPOSALS_QUEUES_VARIANCE_SAMPLE_ID_DESC
 }
@@ -5528,6 +5701,7 @@ enum ProposalCountersOrderBy {
 "Grouping methods for `ProposalItem` for usage during aggregation."
 enum ProposalItemsGroupBy {
     BLOCK_ID
+    BLOCK_NUMBER
     CURRENT_STATUS
     DATA
     NONCE
@@ -5543,6 +5717,8 @@ enum ProposalItemsGroupBy {
 enum ProposalItemsOrderBy {
     BLOCK_ID_ASC
     BLOCK_ID_DESC
+    BLOCK_NUMBER_ASC
+    BLOCK_NUMBER_DESC
     CURRENT_STATUS_ASC
     CURRENT_STATUS_DESC
     DATA_ASC
@@ -5564,6 +5740,8 @@ enum ProposalItemsOrderBy {
     TIMELINE_STATUS_DESC
     TYPE_ASC
     TYPE_DESC
+    UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_AVERAGE_BLOCK_NUMBER_ASC
+    UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_AVERAGE_BLOCK_NUMBER_DESC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_AVERAGE_ID_ASC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_AVERAGE_ID_DESC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_AVERAGE_PROPOSAL_ID_ASC
@@ -5572,48 +5750,64 @@ enum ProposalItemsOrderBy {
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_AVERAGE_QUEUE_ID_DESC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_COUNT_ASC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_COUNT_DESC
+    UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_DISTINCT_COUNT_BLOCK_NUMBER_ASC
+    UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_DISTINCT_COUNT_BLOCK_NUMBER_DESC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_DISTINCT_COUNT_ID_ASC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_DISTINCT_COUNT_ID_DESC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_DISTINCT_COUNT_PROPOSAL_ID_ASC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_DISTINCT_COUNT_PROPOSAL_ID_DESC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_DISTINCT_COUNT_QUEUE_ID_ASC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_DISTINCT_COUNT_QUEUE_ID_DESC
+    UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_MAX_BLOCK_NUMBER_ASC
+    UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_MAX_BLOCK_NUMBER_DESC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_MAX_ID_ASC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_MAX_ID_DESC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_MAX_PROPOSAL_ID_ASC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_MAX_PROPOSAL_ID_DESC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_MAX_QUEUE_ID_ASC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_MAX_QUEUE_ID_DESC
+    UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_MIN_BLOCK_NUMBER_ASC
+    UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_MIN_BLOCK_NUMBER_DESC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_MIN_ID_ASC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_MIN_ID_DESC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_MIN_PROPOSAL_ID_ASC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_MIN_PROPOSAL_ID_DESC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_MIN_QUEUE_ID_ASC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_MIN_QUEUE_ID_DESC
+    UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_STDDEV_POPULATION_BLOCK_NUMBER_ASC
+    UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_STDDEV_POPULATION_BLOCK_NUMBER_DESC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_STDDEV_POPULATION_ID_ASC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_STDDEV_POPULATION_ID_DESC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_STDDEV_POPULATION_PROPOSAL_ID_ASC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_STDDEV_POPULATION_PROPOSAL_ID_DESC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_STDDEV_POPULATION_QUEUE_ID_ASC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_STDDEV_POPULATION_QUEUE_ID_DESC
+    UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_STDDEV_SAMPLE_BLOCK_NUMBER_ASC
+    UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_STDDEV_SAMPLE_BLOCK_NUMBER_DESC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_STDDEV_SAMPLE_ID_ASC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_STDDEV_SAMPLE_ID_DESC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_STDDEV_SAMPLE_PROPOSAL_ID_ASC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_STDDEV_SAMPLE_PROPOSAL_ID_DESC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_STDDEV_SAMPLE_QUEUE_ID_ASC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_STDDEV_SAMPLE_QUEUE_ID_DESC
+    UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_SUM_BLOCK_NUMBER_ASC
+    UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_SUM_BLOCK_NUMBER_DESC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_SUM_ID_ASC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_SUM_ID_DESC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_SUM_PROPOSAL_ID_ASC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_SUM_PROPOSAL_ID_DESC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_SUM_QUEUE_ID_ASC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_SUM_QUEUE_ID_DESC
+    UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_VARIANCE_POPULATION_BLOCK_NUMBER_ASC
+    UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_VARIANCE_POPULATION_BLOCK_NUMBER_DESC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_VARIANCE_POPULATION_ID_ASC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_VARIANCE_POPULATION_ID_DESC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_VARIANCE_POPULATION_PROPOSAL_ID_ASC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_VARIANCE_POPULATION_PROPOSAL_ID_DESC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_VARIANCE_POPULATION_QUEUE_ID_ASC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_VARIANCE_POPULATION_QUEUE_ID_DESC
+    UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_VARIANCE_SAMPLE_BLOCK_NUMBER_ASC
+    UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_VARIANCE_SAMPLE_BLOCK_NUMBER_DESC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_VARIANCE_SAMPLE_ID_ASC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_VARIANCE_SAMPLE_ID_DESC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_VARIANCE_SAMPLE_PROPOSAL_ID_ASC
@@ -6020,12 +6214,15 @@ enum SignatureThresholdsOrderBy {
 
 "Grouping methods for `UnsignedProposalsQueueItem` for usage during aggregation."
 enum UnsignedProposalsQueueItemsGroupBy {
+    BLOCK_NUMBER
     PROPOSAL_ID
     QUEUE_ID
 }
 
 "Methods to use when ordering `UnsignedProposalsQueueItem`."
 enum UnsignedProposalsQueueItemsOrderBy {
+    BLOCK_NUMBER_ASC
+    BLOCK_NUMBER_DESC
     ID_ASC
     ID_DESC
     NATURAL
@@ -6040,17 +6237,22 @@ enum UnsignedProposalsQueueItemsOrderBy {
 "Grouping methods for `UnsignedProposalsQueue` for usage during aggregation."
 enum UnsignedProposalsQueuesGroupBy {
     BLOCK_ID
+    BLOCK_NUMBER
 }
 
 "Methods to use when ordering `UnsignedProposalsQueue`."
 enum UnsignedProposalsQueuesOrderBy {
     BLOCK_ID_ASC
     BLOCK_ID_DESC
+    BLOCK_NUMBER_ASC
+    BLOCK_NUMBER_DESC
     ID_ASC
     ID_DESC
     NATURAL
     PRIMARY_KEY_ASC
     PRIMARY_KEY_DESC
+    UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_AVERAGE_BLOCK_NUMBER_ASC
+    UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_AVERAGE_BLOCK_NUMBER_DESC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_AVERAGE_ID_ASC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_AVERAGE_ID_DESC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_AVERAGE_PROPOSAL_ID_ASC
@@ -6059,48 +6261,64 @@ enum UnsignedProposalsQueuesOrderBy {
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_AVERAGE_QUEUE_ID_DESC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_COUNT_ASC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_COUNT_DESC
+    UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_DISTINCT_COUNT_BLOCK_NUMBER_ASC
+    UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_DISTINCT_COUNT_BLOCK_NUMBER_DESC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_DISTINCT_COUNT_ID_ASC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_DISTINCT_COUNT_ID_DESC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_DISTINCT_COUNT_PROPOSAL_ID_ASC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_DISTINCT_COUNT_PROPOSAL_ID_DESC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_DISTINCT_COUNT_QUEUE_ID_ASC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_DISTINCT_COUNT_QUEUE_ID_DESC
+    UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_MAX_BLOCK_NUMBER_ASC
+    UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_MAX_BLOCK_NUMBER_DESC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_MAX_ID_ASC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_MAX_ID_DESC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_MAX_PROPOSAL_ID_ASC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_MAX_PROPOSAL_ID_DESC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_MAX_QUEUE_ID_ASC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_MAX_QUEUE_ID_DESC
+    UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_MIN_BLOCK_NUMBER_ASC
+    UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_MIN_BLOCK_NUMBER_DESC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_MIN_ID_ASC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_MIN_ID_DESC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_MIN_PROPOSAL_ID_ASC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_MIN_PROPOSAL_ID_DESC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_MIN_QUEUE_ID_ASC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_MIN_QUEUE_ID_DESC
+    UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_STDDEV_POPULATION_BLOCK_NUMBER_ASC
+    UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_STDDEV_POPULATION_BLOCK_NUMBER_DESC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_STDDEV_POPULATION_ID_ASC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_STDDEV_POPULATION_ID_DESC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_STDDEV_POPULATION_PROPOSAL_ID_ASC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_STDDEV_POPULATION_PROPOSAL_ID_DESC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_STDDEV_POPULATION_QUEUE_ID_ASC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_STDDEV_POPULATION_QUEUE_ID_DESC
+    UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_STDDEV_SAMPLE_BLOCK_NUMBER_ASC
+    UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_STDDEV_SAMPLE_BLOCK_NUMBER_DESC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_STDDEV_SAMPLE_ID_ASC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_STDDEV_SAMPLE_ID_DESC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_STDDEV_SAMPLE_PROPOSAL_ID_ASC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_STDDEV_SAMPLE_PROPOSAL_ID_DESC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_STDDEV_SAMPLE_QUEUE_ID_ASC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_STDDEV_SAMPLE_QUEUE_ID_DESC
+    UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_SUM_BLOCK_NUMBER_ASC
+    UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_SUM_BLOCK_NUMBER_DESC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_SUM_ID_ASC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_SUM_ID_DESC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_SUM_PROPOSAL_ID_ASC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_SUM_PROPOSAL_ID_DESC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_SUM_QUEUE_ID_ASC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_SUM_QUEUE_ID_DESC
+    UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_VARIANCE_POPULATION_BLOCK_NUMBER_ASC
+    UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_VARIANCE_POPULATION_BLOCK_NUMBER_DESC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_VARIANCE_POPULATION_ID_ASC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_VARIANCE_POPULATION_ID_DESC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_VARIANCE_POPULATION_PROPOSAL_ID_ASC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_VARIANCE_POPULATION_PROPOSAL_ID_DESC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_VARIANCE_POPULATION_QUEUE_ID_ASC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_VARIANCE_POPULATION_QUEUE_ID_DESC
+    UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_VARIANCE_SAMPLE_BLOCK_NUMBER_ASC
+    UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_VARIANCE_SAMPLE_BLOCK_NUMBER_DESC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_VARIANCE_SAMPLE_ID_ASC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_VARIANCE_SAMPLE_ID_DESC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_VARIANCE_SAMPLE_PROPOSAL_ID_ASC
@@ -6820,6 +7038,8 @@ input ProposalItemFilter {
     and: [ProposalItemFilter!]
     "Filter by the object’s `blockId` field."
     blockId: StringFilter
+    "Filter by the object’s `blockNumber` field."
+    blockNumber: IntFilter
     "Filter by the object’s `currentStatus` field."
     currentStatus: JSONFilter
     "Filter by the object’s `data` field."
@@ -6847,10 +7067,12 @@ input ProposalItemFilter {
 }
 
 input ProposalItemsHavingAverageInput {
+    blockNumber: HavingIntFilter
     nonce: HavingIntFilter
 }
 
 input ProposalItemsHavingDistinctCountInput {
+    blockNumber: HavingIntFilter
     nonce: HavingIntFilter
 }
 
@@ -6870,30 +7092,37 @@ input ProposalItemsHavingInput {
 }
 
 input ProposalItemsHavingMaxInput {
+    blockNumber: HavingIntFilter
     nonce: HavingIntFilter
 }
 
 input ProposalItemsHavingMinInput {
+    blockNumber: HavingIntFilter
     nonce: HavingIntFilter
 }
 
 input ProposalItemsHavingStddevPopulationInput {
+    blockNumber: HavingIntFilter
     nonce: HavingIntFilter
 }
 
 input ProposalItemsHavingStddevSampleInput {
+    blockNumber: HavingIntFilter
     nonce: HavingIntFilter
 }
 
 input ProposalItemsHavingSumInput {
+    blockNumber: HavingIntFilter
     nonce: HavingIntFilter
 }
 
 input ProposalItemsHavingVariancePopulationInput {
+    blockNumber: HavingIntFilter
     nonce: HavingIntFilter
 }
 
 input ProposalItemsHavingVarianceSampleInput {
+    blockNumber: HavingIntFilter
     nonce: HavingIntFilter
 }
 
@@ -7354,6 +7583,8 @@ input UnsignedProposalsQueueFilter {
     and: [UnsignedProposalsQueueFilter!]
     "Filter by the object’s `blockId` field."
     blockId: StringFilter
+    "Filter by the object’s `blockNumber` field."
+    blockNumber: IntFilter
     "Filter by the object’s `id` field."
     id: StringFilter
     "Negates the expression."
@@ -7366,6 +7597,8 @@ input UnsignedProposalsQueueFilter {
 input UnsignedProposalsQueueItemFilter {
     "Checks for all expressions in this list."
     and: [UnsignedProposalsQueueItemFilter!]
+    "Filter by the object’s `blockNumber` field."
+    blockNumber: IntFilter
     "Filter by the object’s `id` field."
     id: StringFilter
     "Negates the expression."
@@ -7378,14 +7611,104 @@ input UnsignedProposalsQueueItemFilter {
     queueId: StringFilter
 }
 
+input UnsignedProposalsQueueItemsHavingAverageInput {
+    blockNumber: HavingIntFilter
+}
+
+input UnsignedProposalsQueueItemsHavingDistinctCountInput {
+    blockNumber: HavingIntFilter
+}
+
 "Conditions for `UnsignedProposalsQueueItem` aggregates."
 input UnsignedProposalsQueueItemsHavingInput {
     AND: [UnsignedProposalsQueueItemsHavingInput!]
     OR: [UnsignedProposalsQueueItemsHavingInput!]
+    average: UnsignedProposalsQueueItemsHavingAverageInput
+    distinctCount: UnsignedProposalsQueueItemsHavingDistinctCountInput
+    max: UnsignedProposalsQueueItemsHavingMaxInput
+    min: UnsignedProposalsQueueItemsHavingMinInput
+    stddevPopulation: UnsignedProposalsQueueItemsHavingStddevPopulationInput
+    stddevSample: UnsignedProposalsQueueItemsHavingStddevSampleInput
+    sum: UnsignedProposalsQueueItemsHavingSumInput
+    variancePopulation: UnsignedProposalsQueueItemsHavingVariancePopulationInput
+    varianceSample: UnsignedProposalsQueueItemsHavingVarianceSampleInput
+}
+
+input UnsignedProposalsQueueItemsHavingMaxInput {
+    blockNumber: HavingIntFilter
+}
+
+input UnsignedProposalsQueueItemsHavingMinInput {
+    blockNumber: HavingIntFilter
+}
+
+input UnsignedProposalsQueueItemsHavingStddevPopulationInput {
+    blockNumber: HavingIntFilter
+}
+
+input UnsignedProposalsQueueItemsHavingStddevSampleInput {
+    blockNumber: HavingIntFilter
+}
+
+input UnsignedProposalsQueueItemsHavingSumInput {
+    blockNumber: HavingIntFilter
+}
+
+input UnsignedProposalsQueueItemsHavingVariancePopulationInput {
+    blockNumber: HavingIntFilter
+}
+
+input UnsignedProposalsQueueItemsHavingVarianceSampleInput {
+    blockNumber: HavingIntFilter
+}
+
+input UnsignedProposalsQueuesHavingAverageInput {
+    blockNumber: HavingIntFilter
+}
+
+input UnsignedProposalsQueuesHavingDistinctCountInput {
+    blockNumber: HavingIntFilter
 }
 
 "Conditions for `UnsignedProposalsQueue` aggregates."
 input UnsignedProposalsQueuesHavingInput {
     AND: [UnsignedProposalsQueuesHavingInput!]
     OR: [UnsignedProposalsQueuesHavingInput!]
+    average: UnsignedProposalsQueuesHavingAverageInput
+    distinctCount: UnsignedProposalsQueuesHavingDistinctCountInput
+    max: UnsignedProposalsQueuesHavingMaxInput
+    min: UnsignedProposalsQueuesHavingMinInput
+    stddevPopulation: UnsignedProposalsQueuesHavingStddevPopulationInput
+    stddevSample: UnsignedProposalsQueuesHavingStddevSampleInput
+    sum: UnsignedProposalsQueuesHavingSumInput
+    variancePopulation: UnsignedProposalsQueuesHavingVariancePopulationInput
+    varianceSample: UnsignedProposalsQueuesHavingVarianceSampleInput
+}
+
+input UnsignedProposalsQueuesHavingMaxInput {
+    blockNumber: HavingIntFilter
+}
+
+input UnsignedProposalsQueuesHavingMinInput {
+    blockNumber: HavingIntFilter
+}
+
+input UnsignedProposalsQueuesHavingStddevPopulationInput {
+    blockNumber: HavingIntFilter
+}
+
+input UnsignedProposalsQueuesHavingStddevSampleInput {
+    blockNumber: HavingIntFilter
+}
+
+input UnsignedProposalsQueuesHavingSumInput {
+    blockNumber: HavingIntFilter
+}
+
+input UnsignedProposalsQueuesHavingVariancePopulationInput {
+    blockNumber: HavingIntFilter
+}
+
+input UnsignedProposalsQueuesHavingVarianceSampleInput {
+    blockNumber: HavingIntFilter
 }

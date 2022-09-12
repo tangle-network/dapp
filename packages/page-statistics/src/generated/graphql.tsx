@@ -43,6 +43,7 @@ export type Account = Node & {
   nodeId: Scalars['ID'];
 };
 
+
 export type AccountAccountsByCreatorIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -52,6 +53,7 @@ export type AccountAccountsByCreatorIdArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<AccountsOrderBy>>;
 };
+
 
 export type AccountBlocksByAccountCreatorIdAndCreateAtBlockIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -63,6 +65,7 @@ export type AccountBlocksByAccountCreatorIdAndCreateAtBlockIdArgs = {
   orderBy?: InputMaybe<Array<BlocksOrderBy>>;
 };
 
+
 export type AccountBlocksByExtrinsicSignerIdAndBlockIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -72,6 +75,7 @@ export type AccountBlocksByExtrinsicSignerIdAndBlockIdArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<BlocksOrderBy>>;
 };
+
 
 export type AccountExtrinsicsArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -107,6 +111,7 @@ export type AccountBlocksByAccountCreatorIdAndCreateAtBlockIdManyToManyConnectio
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Block` values, with data from `Account`. */
 export type AccountBlocksByAccountCreatorIdAndCreateAtBlockIdManyToManyConnectionGroupedAggregatesArgs = {
   groupBy: Array<BlocksGroupBy>;
@@ -123,6 +128,7 @@ export type AccountBlocksByAccountCreatorIdAndCreateAtBlockIdManyToManyEdge = {
   /** The `Block` at the end of the edge. */
   node?: Maybe<Block>;
 };
+
 
 /** A `Block` edge in the connection, with data from `Account`. */
 export type AccountBlocksByAccountCreatorIdAndCreateAtBlockIdManyToManyEdgeAccountsByCreateAtBlockIdArgs = {
@@ -152,6 +158,7 @@ export type AccountBlocksByExtrinsicSignerIdAndBlockIdManyToManyConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Block` values, with data from `Extrinsic`. */
 export type AccountBlocksByExtrinsicSignerIdAndBlockIdManyToManyConnectionGroupedAggregatesArgs = {
   groupBy: Array<BlocksGroupBy>;
@@ -168,6 +175,7 @@ export type AccountBlocksByExtrinsicSignerIdAndBlockIdManyToManyEdge = {
   /** The `Block` at the end of the edge. */
   node?: Maybe<Block>;
 };
+
 
 /** A `Block` edge in the connection, with data from `Extrinsic`. */
 export type AccountBlocksByExtrinsicSignerIdAndBlockIdManyToManyEdgeExtrinsicsArgs = {
@@ -227,6 +235,7 @@ export type AccountsConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Account` values. */
 export type AccountsConnectionGroupedAggregatesArgs = {
   groupBy: Array<AccountsGroupBy>;
@@ -246,7 +255,7 @@ export type AccountsEdge = {
 export enum AccountsGroupBy {
   CreatedAt = 'CREATED_AT',
   CreateAtBlockId = 'CREATE_AT_BLOCK_ID',
-  CreatorId = 'CREATOR_ID',
+  CreatorId = 'CREATOR_ID'
 }
 
 /** Conditions for `Account` aggregates. */
@@ -541,7 +550,7 @@ export enum AccountsOrderBy {
   IdDesc = 'ID_DESC',
   Natural = 'NATURAL',
   PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
-  PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
+  PrimaryKeyDesc = 'PRIMARY_KEY_DESC'
 }
 
 /** A connection to a list of `Authority` values. */
@@ -560,6 +569,7 @@ export type AuthoritiesConnection = {
   /** The count of *all* `Authority` you could get from the connection. */
   totalCount: Scalars['Int'];
 };
+
 
 /** A connection to a list of `Authority` values. */
 export type AuthoritiesConnectionGroupedAggregatesArgs = {
@@ -580,7 +590,7 @@ export type AuthoritiesEdge = {
 export enum AuthoritiesGroupBy {
   BlockId = 'BLOCK_ID',
   Current = 'CURRENT',
-  Next = 'NEXT',
+  Next = 'NEXT'
 }
 
 /** Conditions for `Authority` aggregates. */
@@ -601,7 +611,7 @@ export enum AuthoritiesOrderBy {
   NextAsc = 'NEXT_ASC',
   NextDesc = 'NEXT_DESC',
   PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
-  PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
+  PrimaryKeyDesc = 'PRIMARY_KEY_DESC'
 }
 
 export type Authority = Node & {
@@ -727,6 +737,7 @@ export type Block = Node & {
   unsignedProposalsQueues: UnsignedProposalsQueuesConnection;
 };
 
+
 export type BlockAccountsByAccountCreateAtBlockIdAndCreatorIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -736,6 +747,7 @@ export type BlockAccountsByAccountCreateAtBlockIdAndCreatorIdArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<AccountsOrderBy>>;
 };
+
 
 export type BlockAccountsByCreateAtBlockIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -747,6 +759,7 @@ export type BlockAccountsByCreateAtBlockIdArgs = {
   orderBy?: InputMaybe<Array<AccountsOrderBy>>;
 };
 
+
 export type BlockAccountsByExtrinsicBlockIdAndSignerIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -756,6 +769,7 @@ export type BlockAccountsByExtrinsicBlockIdAndSignerIdArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<AccountsOrderBy>>;
 };
+
 
 export type BlockAuthoritiesArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -767,6 +781,7 @@ export type BlockAuthoritiesArgs = {
   orderBy?: InputMaybe<Array<AuthoritiesOrderBy>>;
 };
 
+
 export type BlockEventsArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -776,6 +791,7 @@ export type BlockEventsArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<EventsOrderBy>>;
 };
+
 
 export type BlockExtrinsicsArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -787,6 +803,7 @@ export type BlockExtrinsicsArgs = {
   orderBy?: InputMaybe<Array<ExtrinsicsOrderBy>>;
 };
 
+
 export type BlockExtrinsicsByEventBlockIdAndExtrinsicIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -796,6 +813,7 @@ export type BlockExtrinsicsByEventBlockIdAndExtrinsicIdArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<ExtrinsicsOrderBy>>;
 };
+
 
 export type BlockKeygenThresholdsArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -807,6 +825,7 @@ export type BlockKeygenThresholdsArgs = {
   orderBy?: InputMaybe<Array<KeygenThresholdsOrderBy>>;
 };
 
+
 export type BlockProposalCountersArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -816,6 +835,7 @@ export type BlockProposalCountersArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<ProposalCountersOrderBy>>;
 };
+
 
 export type BlockProposalItemsArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -827,6 +847,7 @@ export type BlockProposalItemsArgs = {
   orderBy?: InputMaybe<Array<ProposalItemsOrderBy>>;
 };
 
+
 export type BlockProposerThresholdsArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -836,6 +857,7 @@ export type BlockProposerThresholdsArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<ProposerThresholdsOrderBy>>;
 };
+
 
 export type BlockProposersArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -847,6 +869,7 @@ export type BlockProposersArgs = {
   orderBy?: InputMaybe<Array<ProposersOrderBy>>;
 };
 
+
 export type BlockPublicKeysArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -856,6 +879,7 @@ export type BlockPublicKeysArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<PublicKeysOrderBy>>;
 };
+
 
 export type BlockPublicKeysBySessionBlockIdAndPublicKeyIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -867,6 +891,7 @@ export type BlockPublicKeysBySessionBlockIdAndPublicKeyIdArgs = {
   orderBy?: InputMaybe<Array<PublicKeysOrderBy>>;
 };
 
+
 export type BlockSessionsArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -877,6 +902,7 @@ export type BlockSessionsArgs = {
   orderBy?: InputMaybe<Array<SessionsOrderBy>>;
 };
 
+
 export type BlockSignatureThresholdsArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -886,6 +912,7 @@ export type BlockSignatureThresholdsArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<SignatureThresholdsOrderBy>>;
 };
+
 
 export type BlockUnsignedProposalsQueuesArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -914,6 +941,7 @@ export type BlockAccountsByAccountCreateAtBlockIdAndCreatorIdManyToManyConnectio
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Account` values, with data from `Account`. */
 export type BlockAccountsByAccountCreateAtBlockIdAndCreatorIdManyToManyConnectionGroupedAggregatesArgs = {
   groupBy: Array<AccountsGroupBy>;
@@ -930,6 +958,7 @@ export type BlockAccountsByAccountCreateAtBlockIdAndCreatorIdManyToManyEdge = {
   /** The `Account` at the end of the edge. */
   node?: Maybe<Account>;
 };
+
 
 /** A `Account` edge in the connection, with data from `Account`. */
 export type BlockAccountsByAccountCreateAtBlockIdAndCreatorIdManyToManyEdgeAccountsByCreatorIdArgs = {
@@ -959,6 +988,7 @@ export type BlockAccountsByExtrinsicBlockIdAndSignerIdManyToManyConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Account` values, with data from `Extrinsic`. */
 export type BlockAccountsByExtrinsicBlockIdAndSignerIdManyToManyConnectionGroupedAggregatesArgs = {
   groupBy: Array<AccountsGroupBy>;
@@ -975,6 +1005,7 @@ export type BlockAccountsByExtrinsicBlockIdAndSignerIdManyToManyEdge = {
   /** The `Account` at the end of the edge. */
   node?: Maybe<Account>;
 };
+
 
 /** A `Account` edge in the connection, with data from `Extrinsic`. */
 export type BlockAccountsByExtrinsicBlockIdAndSignerIdManyToManyEdgeExtrinsicsArgs = {
@@ -1053,6 +1084,7 @@ export type BlockExtrinsicsByEventBlockIdAndExtrinsicIdManyToManyConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Extrinsic` values, with data from `Event`. */
 export type BlockExtrinsicsByEventBlockIdAndExtrinsicIdManyToManyConnectionGroupedAggregatesArgs = {
   groupBy: Array<ExtrinsicsGroupBy>;
@@ -1069,6 +1101,7 @@ export type BlockExtrinsicsByEventBlockIdAndExtrinsicIdManyToManyEdge = {
   /** The `Extrinsic` at the end of the edge. */
   node?: Maybe<Extrinsic>;
 };
+
 
 /** A `Extrinsic` edge in the connection, with data from `Event`. */
 export type BlockExtrinsicsByEventBlockIdAndExtrinsicIdManyToManyEdgeEventsArgs = {
@@ -1136,6 +1169,7 @@ export type BlockPublicKeysBySessionBlockIdAndPublicKeyIdManyToManyConnection = 
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `PublicKey` values, with data from `Session`. */
 export type BlockPublicKeysBySessionBlockIdAndPublicKeyIdManyToManyConnectionGroupedAggregatesArgs = {
   groupBy: Array<PublicKeysGroupBy>;
@@ -1152,6 +1186,7 @@ export type BlockPublicKeysBySessionBlockIdAndPublicKeyIdManyToManyEdge = {
   /** Reads and enables pagination through a set of `Session`. */
   sessions: SessionsConnection;
 };
+
 
 /** A `PublicKey` edge in the connection, with data from `Session`. */
 export type BlockPublicKeysBySessionBlockIdAndPublicKeyIdManyToManyEdgeSessionsArgs = {
@@ -1211,6 +1246,7 @@ export type BlocksConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Block` values. */
 export type BlocksConnectionGroupedAggregatesArgs = {
   groupBy: Array<BlocksGroupBy>;
@@ -1235,7 +1271,7 @@ export enum BlocksGroupBy {
   StateRoot = 'STATE_ROOT',
   Timestamp = 'TIMESTAMP',
   TimestampTruncatedToDay = 'TIMESTAMP_TRUNCATED_TO_DAY',
-  TimestampTruncatedToHour = 'TIMESTAMP_TRUNCATED_TO_HOUR',
+  TimestampTruncatedToHour = 'TIMESTAMP_TRUNCATED_TO_HOUR'
 }
 
 export type BlocksHavingAverageInput = {
@@ -2101,6 +2137,8 @@ export enum BlocksOrderBy {
   ProposalCountersVarianceSampleUnSignedProposalsMapDesc = 'PROPOSAL_COUNTERS_VARIANCE_SAMPLE_UN_SIGNED_PROPOSALS_MAP_DESC',
   ProposalItemsAverageBlockIdAsc = 'PROPOSAL_ITEMS_AVERAGE_BLOCK_ID_ASC',
   ProposalItemsAverageBlockIdDesc = 'PROPOSAL_ITEMS_AVERAGE_BLOCK_ID_DESC',
+  ProposalItemsAverageBlockNumberAsc = 'PROPOSAL_ITEMS_AVERAGE_BLOCK_NUMBER_ASC',
+  ProposalItemsAverageBlockNumberDesc = 'PROPOSAL_ITEMS_AVERAGE_BLOCK_NUMBER_DESC',
   ProposalItemsAverageCurrentStatusAsc = 'PROPOSAL_ITEMS_AVERAGE_CURRENT_STATUS_ASC',
   ProposalItemsAverageCurrentStatusDesc = 'PROPOSAL_ITEMS_AVERAGE_CURRENT_STATUS_DESC',
   ProposalItemsAverageDataAsc = 'PROPOSAL_ITEMS_AVERAGE_DATA_ASC',
@@ -2125,6 +2163,8 @@ export enum BlocksOrderBy {
   ProposalItemsCountDesc = 'PROPOSAL_ITEMS_COUNT_DESC',
   ProposalItemsDistinctCountBlockIdAsc = 'PROPOSAL_ITEMS_DISTINCT_COUNT_BLOCK_ID_ASC',
   ProposalItemsDistinctCountBlockIdDesc = 'PROPOSAL_ITEMS_DISTINCT_COUNT_BLOCK_ID_DESC',
+  ProposalItemsDistinctCountBlockNumberAsc = 'PROPOSAL_ITEMS_DISTINCT_COUNT_BLOCK_NUMBER_ASC',
+  ProposalItemsDistinctCountBlockNumberDesc = 'PROPOSAL_ITEMS_DISTINCT_COUNT_BLOCK_NUMBER_DESC',
   ProposalItemsDistinctCountCurrentStatusAsc = 'PROPOSAL_ITEMS_DISTINCT_COUNT_CURRENT_STATUS_ASC',
   ProposalItemsDistinctCountCurrentStatusDesc = 'PROPOSAL_ITEMS_DISTINCT_COUNT_CURRENT_STATUS_DESC',
   ProposalItemsDistinctCountDataAsc = 'PROPOSAL_ITEMS_DISTINCT_COUNT_DATA_ASC',
@@ -2147,6 +2187,8 @@ export enum BlocksOrderBy {
   ProposalItemsDistinctCountVotesDesc = 'PROPOSAL_ITEMS_DISTINCT_COUNT_VOTES_DESC',
   ProposalItemsMaxBlockIdAsc = 'PROPOSAL_ITEMS_MAX_BLOCK_ID_ASC',
   ProposalItemsMaxBlockIdDesc = 'PROPOSAL_ITEMS_MAX_BLOCK_ID_DESC',
+  ProposalItemsMaxBlockNumberAsc = 'PROPOSAL_ITEMS_MAX_BLOCK_NUMBER_ASC',
+  ProposalItemsMaxBlockNumberDesc = 'PROPOSAL_ITEMS_MAX_BLOCK_NUMBER_DESC',
   ProposalItemsMaxCurrentStatusAsc = 'PROPOSAL_ITEMS_MAX_CURRENT_STATUS_ASC',
   ProposalItemsMaxCurrentStatusDesc = 'PROPOSAL_ITEMS_MAX_CURRENT_STATUS_DESC',
   ProposalItemsMaxDataAsc = 'PROPOSAL_ITEMS_MAX_DATA_ASC',
@@ -2169,6 +2211,8 @@ export enum BlocksOrderBy {
   ProposalItemsMaxVotesDesc = 'PROPOSAL_ITEMS_MAX_VOTES_DESC',
   ProposalItemsMinBlockIdAsc = 'PROPOSAL_ITEMS_MIN_BLOCK_ID_ASC',
   ProposalItemsMinBlockIdDesc = 'PROPOSAL_ITEMS_MIN_BLOCK_ID_DESC',
+  ProposalItemsMinBlockNumberAsc = 'PROPOSAL_ITEMS_MIN_BLOCK_NUMBER_ASC',
+  ProposalItemsMinBlockNumberDesc = 'PROPOSAL_ITEMS_MIN_BLOCK_NUMBER_DESC',
   ProposalItemsMinCurrentStatusAsc = 'PROPOSAL_ITEMS_MIN_CURRENT_STATUS_ASC',
   ProposalItemsMinCurrentStatusDesc = 'PROPOSAL_ITEMS_MIN_CURRENT_STATUS_DESC',
   ProposalItemsMinDataAsc = 'PROPOSAL_ITEMS_MIN_DATA_ASC',
@@ -2191,6 +2235,8 @@ export enum BlocksOrderBy {
   ProposalItemsMinVotesDesc = 'PROPOSAL_ITEMS_MIN_VOTES_DESC',
   ProposalItemsStddevPopulationBlockIdAsc = 'PROPOSAL_ITEMS_STDDEV_POPULATION_BLOCK_ID_ASC',
   ProposalItemsStddevPopulationBlockIdDesc = 'PROPOSAL_ITEMS_STDDEV_POPULATION_BLOCK_ID_DESC',
+  ProposalItemsStddevPopulationBlockNumberAsc = 'PROPOSAL_ITEMS_STDDEV_POPULATION_BLOCK_NUMBER_ASC',
+  ProposalItemsStddevPopulationBlockNumberDesc = 'PROPOSAL_ITEMS_STDDEV_POPULATION_BLOCK_NUMBER_DESC',
   ProposalItemsStddevPopulationCurrentStatusAsc = 'PROPOSAL_ITEMS_STDDEV_POPULATION_CURRENT_STATUS_ASC',
   ProposalItemsStddevPopulationCurrentStatusDesc = 'PROPOSAL_ITEMS_STDDEV_POPULATION_CURRENT_STATUS_DESC',
   ProposalItemsStddevPopulationDataAsc = 'PROPOSAL_ITEMS_STDDEV_POPULATION_DATA_ASC',
@@ -2213,6 +2259,8 @@ export enum BlocksOrderBy {
   ProposalItemsStddevPopulationVotesDesc = 'PROPOSAL_ITEMS_STDDEV_POPULATION_VOTES_DESC',
   ProposalItemsStddevSampleBlockIdAsc = 'PROPOSAL_ITEMS_STDDEV_SAMPLE_BLOCK_ID_ASC',
   ProposalItemsStddevSampleBlockIdDesc = 'PROPOSAL_ITEMS_STDDEV_SAMPLE_BLOCK_ID_DESC',
+  ProposalItemsStddevSampleBlockNumberAsc = 'PROPOSAL_ITEMS_STDDEV_SAMPLE_BLOCK_NUMBER_ASC',
+  ProposalItemsStddevSampleBlockNumberDesc = 'PROPOSAL_ITEMS_STDDEV_SAMPLE_BLOCK_NUMBER_DESC',
   ProposalItemsStddevSampleCurrentStatusAsc = 'PROPOSAL_ITEMS_STDDEV_SAMPLE_CURRENT_STATUS_ASC',
   ProposalItemsStddevSampleCurrentStatusDesc = 'PROPOSAL_ITEMS_STDDEV_SAMPLE_CURRENT_STATUS_DESC',
   ProposalItemsStddevSampleDataAsc = 'PROPOSAL_ITEMS_STDDEV_SAMPLE_DATA_ASC',
@@ -2235,6 +2283,8 @@ export enum BlocksOrderBy {
   ProposalItemsStddevSampleVotesDesc = 'PROPOSAL_ITEMS_STDDEV_SAMPLE_VOTES_DESC',
   ProposalItemsSumBlockIdAsc = 'PROPOSAL_ITEMS_SUM_BLOCK_ID_ASC',
   ProposalItemsSumBlockIdDesc = 'PROPOSAL_ITEMS_SUM_BLOCK_ID_DESC',
+  ProposalItemsSumBlockNumberAsc = 'PROPOSAL_ITEMS_SUM_BLOCK_NUMBER_ASC',
+  ProposalItemsSumBlockNumberDesc = 'PROPOSAL_ITEMS_SUM_BLOCK_NUMBER_DESC',
   ProposalItemsSumCurrentStatusAsc = 'PROPOSAL_ITEMS_SUM_CURRENT_STATUS_ASC',
   ProposalItemsSumCurrentStatusDesc = 'PROPOSAL_ITEMS_SUM_CURRENT_STATUS_DESC',
   ProposalItemsSumDataAsc = 'PROPOSAL_ITEMS_SUM_DATA_ASC',
@@ -2257,6 +2307,8 @@ export enum BlocksOrderBy {
   ProposalItemsSumVotesDesc = 'PROPOSAL_ITEMS_SUM_VOTES_DESC',
   ProposalItemsVariancePopulationBlockIdAsc = 'PROPOSAL_ITEMS_VARIANCE_POPULATION_BLOCK_ID_ASC',
   ProposalItemsVariancePopulationBlockIdDesc = 'PROPOSAL_ITEMS_VARIANCE_POPULATION_BLOCK_ID_DESC',
+  ProposalItemsVariancePopulationBlockNumberAsc = 'PROPOSAL_ITEMS_VARIANCE_POPULATION_BLOCK_NUMBER_ASC',
+  ProposalItemsVariancePopulationBlockNumberDesc = 'PROPOSAL_ITEMS_VARIANCE_POPULATION_BLOCK_NUMBER_DESC',
   ProposalItemsVariancePopulationCurrentStatusAsc = 'PROPOSAL_ITEMS_VARIANCE_POPULATION_CURRENT_STATUS_ASC',
   ProposalItemsVariancePopulationCurrentStatusDesc = 'PROPOSAL_ITEMS_VARIANCE_POPULATION_CURRENT_STATUS_DESC',
   ProposalItemsVariancePopulationDataAsc = 'PROPOSAL_ITEMS_VARIANCE_POPULATION_DATA_ASC',
@@ -2279,6 +2331,8 @@ export enum BlocksOrderBy {
   ProposalItemsVariancePopulationVotesDesc = 'PROPOSAL_ITEMS_VARIANCE_POPULATION_VOTES_DESC',
   ProposalItemsVarianceSampleBlockIdAsc = 'PROPOSAL_ITEMS_VARIANCE_SAMPLE_BLOCK_ID_ASC',
   ProposalItemsVarianceSampleBlockIdDesc = 'PROPOSAL_ITEMS_VARIANCE_SAMPLE_BLOCK_ID_DESC',
+  ProposalItemsVarianceSampleBlockNumberAsc = 'PROPOSAL_ITEMS_VARIANCE_SAMPLE_BLOCK_NUMBER_ASC',
+  ProposalItemsVarianceSampleBlockNumberDesc = 'PROPOSAL_ITEMS_VARIANCE_SAMPLE_BLOCK_NUMBER_DESC',
   ProposalItemsVarianceSampleCurrentStatusAsc = 'PROPOSAL_ITEMS_VARIANCE_SAMPLE_CURRENT_STATUS_ASC',
   ProposalItemsVarianceSampleCurrentStatusDesc = 'PROPOSAL_ITEMS_VARIANCE_SAMPLE_CURRENT_STATUS_DESC',
   ProposalItemsVarianceSampleDataAsc = 'PROPOSAL_ITEMS_VARIANCE_SAMPLE_DATA_ASC',
@@ -2910,7 +2964,7 @@ export enum BlocksOrderBy {
   UnsignedProposalsQueuesVarianceSampleBlockNumberAsc = 'UNSIGNED_PROPOSALS_QUEUES_VARIANCE_SAMPLE_BLOCK_NUMBER_ASC',
   UnsignedProposalsQueuesVarianceSampleBlockNumberDesc = 'UNSIGNED_PROPOSALS_QUEUES_VARIANCE_SAMPLE_BLOCK_NUMBER_DESC',
   UnsignedProposalsQueuesVarianceSampleIdAsc = 'UNSIGNED_PROPOSALS_QUEUES_VARIANCE_SAMPLE_ID_ASC',
-  UnsignedProposalsQueuesVarianceSampleIdDesc = 'UNSIGNED_PROPOSALS_QUEUES_VARIANCE_SAMPLE_ID_DESC',
+  UnsignedProposalsQueuesVarianceSampleIdDesc = 'UNSIGNED_PROPOSALS_QUEUES_VARIANCE_SAMPLE_ID_DESC'
 }
 
 /** A filter to be used against Boolean fields. All fields are combined with a logical ‘and.’ */
@@ -3148,6 +3202,7 @@ export type EventsConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Event` values. */
 export type EventsConnectionGroupedAggregatesArgs = {
   groupBy: Array<EventsGroupBy>;
@@ -3176,7 +3231,7 @@ export enum EventsGroupBy {
   Module = 'MODULE',
   Timestamp = 'TIMESTAMP',
   TimestampTruncatedToDay = 'TIMESTAMP_TRUNCATED_TO_DAY',
-  TimestampTruncatedToHour = 'TIMESTAMP_TRUNCATED_TO_HOUR',
+  TimestampTruncatedToHour = 'TIMESTAMP_TRUNCATED_TO_HOUR'
 }
 
 export type EventsHavingAverageInput = {
@@ -3274,7 +3329,7 @@ export enum EventsOrderBy {
   PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
   PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
   TimestampAsc = 'TIMESTAMP_ASC',
-  TimestampDesc = 'TIMESTAMP_DESC',
+  TimestampDesc = 'TIMESTAMP_DESC'
 }
 
 export type Extrinsic = Node & {
@@ -3302,6 +3357,7 @@ export type Extrinsic = Node & {
   signerId?: Maybe<Scalars['String']>;
 };
 
+
 export type ExtrinsicBlocksByEventExtrinsicIdAndBlockIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -3311,6 +3367,7 @@ export type ExtrinsicBlocksByEventExtrinsicIdAndBlockIdArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<BlocksOrderBy>>;
 };
+
 
 export type ExtrinsicEventsArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -3370,6 +3427,7 @@ export type ExtrinsicBlocksByEventExtrinsicIdAndBlockIdManyToManyConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Block` values, with data from `Event`. */
 export type ExtrinsicBlocksByEventExtrinsicIdAndBlockIdManyToManyConnectionGroupedAggregatesArgs = {
   groupBy: Array<BlocksGroupBy>;
@@ -3386,6 +3444,7 @@ export type ExtrinsicBlocksByEventExtrinsicIdAndBlockIdManyToManyEdge = {
   /** The `Block` at the end of the edge. */
   node?: Maybe<Block>;
 };
+
 
 /** A `Block` edge in the connection, with data from `Event`. */
 export type ExtrinsicBlocksByEventExtrinsicIdAndBlockIdManyToManyEdgeEventsArgs = {
@@ -3529,6 +3588,7 @@ export type ExtrinsicsConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Extrinsic` values. */
 export type ExtrinsicsConnectionGroupedAggregatesArgs = {
   groupBy: Array<ExtrinsicsGroupBy>;
@@ -3555,7 +3615,7 @@ export enum ExtrinsicsGroupBy {
   IsSuccess = 'IS_SUCCESS',
   Method = 'METHOD',
   Module = 'MODULE',
-  SignerId = 'SIGNER_ID',
+  SignerId = 'SIGNER_ID'
 }
 
 export type ExtrinsicsHavingAverageInput = {
@@ -3844,7 +3904,7 @@ export enum ExtrinsicsOrderBy {
   PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
   PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
   SignerIdAsc = 'SIGNER_ID_ASC',
-  SignerIdDesc = 'SIGNER_ID_DESC',
+  SignerIdDesc = 'SIGNER_ID_DESC'
 }
 
 export type HavingBigfloatFilter = {
@@ -4103,6 +4163,7 @@ export type KeygenThresholdsConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `KeygenThreshold` values. */
 export type KeygenThresholdsConnectionGroupedAggregatesArgs = {
   groupBy: Array<KeygenThresholdsGroupBy>;
@@ -4123,7 +4184,7 @@ export enum KeygenThresholdsGroupBy {
   BlockId = 'BLOCK_ID',
   Current = 'CURRENT',
   Next = 'NEXT',
-  Pending = 'PENDING',
+  Pending = 'PENDING'
 }
 
 export type KeygenThresholdsHavingAverageInput = {
@@ -4209,7 +4270,7 @@ export enum KeygenThresholdsOrderBy {
   PendingAsc = 'PENDING_ASC',
   PendingDesc = 'PENDING_DESC',
   PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
-  PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
+  PrimaryKeyDesc = 'PRIMARY_KEY_DESC'
 }
 
 /** An object with a globally unique `ID`. */
@@ -4413,6 +4474,7 @@ export type ProposalCountersConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `ProposalCounter` values. */
 export type ProposalCountersConnectionGroupedAggregatesArgs = {
   groupBy: Array<ProposalCountersGroupBy>;
@@ -4436,7 +4498,7 @@ export enum ProposalCountersGroupBy {
   SignedProposalsMap = 'SIGNED_PROPOSALS_MAP',
   StatusMap = 'STATUS_MAP',
   UnSignedProposalsCount = 'UN_SIGNED_PROPOSALS_COUNT',
-  UnSignedProposalsMap = 'UN_SIGNED_PROPOSALS_MAP',
+  UnSignedProposalsMap = 'UN_SIGNED_PROPOSALS_MAP'
 }
 
 export type ProposalCountersHavingAverageInput = {
@@ -4528,7 +4590,7 @@ export enum ProposalCountersOrderBy {
   UnSignedProposalsCountAsc = 'UN_SIGNED_PROPOSALS_COUNT_ASC',
   UnSignedProposalsCountDesc = 'UN_SIGNED_PROPOSALS_COUNT_DESC',
   UnSignedProposalsMapAsc = 'UN_SIGNED_PROPOSALS_MAP_ASC',
-  UnSignedProposalsMapDesc = 'UN_SIGNED_PROPOSALS_MAP_DESC',
+  UnSignedProposalsMapDesc = 'UN_SIGNED_PROPOSALS_MAP_DESC'
 }
 
 export type ProposalItem = Node & {
@@ -4536,6 +4598,7 @@ export type ProposalItem = Node & {
   /** Reads a single `Block` that is related to this `ProposalItem`. */
   block?: Maybe<Block>;
   blockId: Scalars['String'];
+  blockNumber: Scalars['Int'];
   currentStatus: Scalars['JSON'];
   data: Scalars['String'];
   id: Scalars['String'];
@@ -4554,6 +4617,7 @@ export type ProposalItem = Node & {
   votes: Scalars['JSON'];
 };
 
+
 export type ProposalItemUnsignedProposalsQueueItemsByProposalIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -4563,6 +4627,7 @@ export type ProposalItemUnsignedProposalsQueueItemsByProposalIdArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<UnsignedProposalsQueueItemsOrderBy>>;
 };
+
 
 export type ProposalItemUnsignedProposalsQueuesByUnsignedProposalsQueueItemProposalIdAndQueueIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -4599,6 +4664,8 @@ export type ProposalItemAggregates = {
 
 export type ProposalItemAverageAggregates = {
   __typename?: 'ProposalItemAverageAggregates';
+  /** Mean average of blockNumber across the matching connection */
+  blockNumber?: Maybe<Scalars['BigFloat']>;
   /** Mean average of nonce across the matching connection */
   nonce?: Maybe<Scalars['BigFloat']>;
 };
@@ -4607,6 +4674,8 @@ export type ProposalItemDistinctCountAggregates = {
   __typename?: 'ProposalItemDistinctCountAggregates';
   /** Distinct count of blockId across the matching connection */
   blockId?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of blockNumber across the matching connection */
+  blockNumber?: Maybe<Scalars['BigInt']>;
   /** Distinct count of currentStatus across the matching connection */
   currentStatus?: Maybe<Scalars['BigInt']>;
   /** Distinct count of data across the matching connection */
@@ -4635,6 +4704,8 @@ export type ProposalItemFilter = {
   and?: InputMaybe<Array<ProposalItemFilter>>;
   /** Filter by the object’s `blockId` field. */
   blockId?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `blockNumber` field. */
+  blockNumber?: InputMaybe<IntFilter>;
   /** Filter by the object’s `currentStatus` field. */
   currentStatus?: InputMaybe<JsonFilter>;
   /** Filter by the object’s `data` field. */
@@ -4663,30 +4734,40 @@ export type ProposalItemFilter = {
 
 export type ProposalItemMaxAggregates = {
   __typename?: 'ProposalItemMaxAggregates';
+  /** Maximum of blockNumber across the matching connection */
+  blockNumber?: Maybe<Scalars['Int']>;
   /** Maximum of nonce across the matching connection */
   nonce?: Maybe<Scalars['Int']>;
 };
 
 export type ProposalItemMinAggregates = {
   __typename?: 'ProposalItemMinAggregates';
+  /** Minimum of blockNumber across the matching connection */
+  blockNumber?: Maybe<Scalars['Int']>;
   /** Minimum of nonce across the matching connection */
   nonce?: Maybe<Scalars['Int']>;
 };
 
 export type ProposalItemStddevPopulationAggregates = {
   __typename?: 'ProposalItemStddevPopulationAggregates';
+  /** Population standard deviation of blockNumber across the matching connection */
+  blockNumber?: Maybe<Scalars['BigFloat']>;
   /** Population standard deviation of nonce across the matching connection */
   nonce?: Maybe<Scalars['BigFloat']>;
 };
 
 export type ProposalItemStddevSampleAggregates = {
   __typename?: 'ProposalItemStddevSampleAggregates';
+  /** Sample standard deviation of blockNumber across the matching connection */
+  blockNumber?: Maybe<Scalars['BigFloat']>;
   /** Sample standard deviation of nonce across the matching connection */
   nonce?: Maybe<Scalars['BigFloat']>;
 };
 
 export type ProposalItemSumAggregates = {
   __typename?: 'ProposalItemSumAggregates';
+  /** Sum of blockNumber across the matching connection */
+  blockNumber: Scalars['BigInt'];
   /** Sum of nonce across the matching connection */
   nonce: Scalars['BigInt'];
 };
@@ -4708,12 +4789,12 @@ export type ProposalItemUnsignedProposalsQueuesByUnsignedProposalsQueueItemPropo
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `UnsignedProposalsQueue` values, with data from `UnsignedProposalsQueueItem`. */
-export type ProposalItemUnsignedProposalsQueuesByUnsignedProposalsQueueItemProposalIdAndQueueIdManyToManyConnectionGroupedAggregatesArgs =
-  {
-    groupBy: Array<UnsignedProposalsQueuesGroupBy>;
-    having?: InputMaybe<UnsignedProposalsQueuesHavingInput>;
-  };
+export type ProposalItemUnsignedProposalsQueuesByUnsignedProposalsQueueItemProposalIdAndQueueIdManyToManyConnectionGroupedAggregatesArgs = {
+  groupBy: Array<UnsignedProposalsQueuesGroupBy>;
+  having?: InputMaybe<UnsignedProposalsQueuesHavingInput>;
+};
 
 /** A `UnsignedProposalsQueue` edge in the connection, with data from `UnsignedProposalsQueueItem`. */
 export type ProposalItemUnsignedProposalsQueuesByUnsignedProposalsQueueItemProposalIdAndQueueIdManyToManyEdge = {
@@ -4726,26 +4807,30 @@ export type ProposalItemUnsignedProposalsQueuesByUnsignedProposalsQueueItemPropo
   unsignedProposalsQueueItemsByQueueId: UnsignedProposalsQueueItemsConnection;
 };
 
+
 /** A `UnsignedProposalsQueue` edge in the connection, with data from `UnsignedProposalsQueueItem`. */
-export type ProposalItemUnsignedProposalsQueuesByUnsignedProposalsQueueItemProposalIdAndQueueIdManyToManyEdgeUnsignedProposalsQueueItemsByQueueIdArgs =
-  {
-    after?: InputMaybe<Scalars['Cursor']>;
-    before?: InputMaybe<Scalars['Cursor']>;
-    filter?: InputMaybe<UnsignedProposalsQueueItemFilter>;
-    first?: InputMaybe<Scalars['Int']>;
-    last?: InputMaybe<Scalars['Int']>;
-    offset?: InputMaybe<Scalars['Int']>;
-    orderBy?: InputMaybe<Array<UnsignedProposalsQueueItemsOrderBy>>;
-  };
+export type ProposalItemUnsignedProposalsQueuesByUnsignedProposalsQueueItemProposalIdAndQueueIdManyToManyEdgeUnsignedProposalsQueueItemsByQueueIdArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  filter?: InputMaybe<UnsignedProposalsQueueItemFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<UnsignedProposalsQueueItemsOrderBy>>;
+};
 
 export type ProposalItemVariancePopulationAggregates = {
   __typename?: 'ProposalItemVariancePopulationAggregates';
+  /** Population variance of blockNumber across the matching connection */
+  blockNumber?: Maybe<Scalars['BigFloat']>;
   /** Population variance of nonce across the matching connection */
   nonce?: Maybe<Scalars['BigFloat']>;
 };
 
 export type ProposalItemVarianceSampleAggregates = {
   __typename?: 'ProposalItemVarianceSampleAggregates';
+  /** Sample variance of blockNumber across the matching connection */
+  blockNumber?: Maybe<Scalars['BigFloat']>;
   /** Sample variance of nonce across the matching connection */
   nonce?: Maybe<Scalars['BigFloat']>;
 };
@@ -4767,6 +4852,7 @@ export type ProposalItemsConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `ProposalItem` values. */
 export type ProposalItemsConnectionGroupedAggregatesArgs = {
   groupBy: Array<ProposalItemsGroupBy>;
@@ -4785,6 +4871,7 @@ export type ProposalItemsEdge = {
 /** Grouping methods for `ProposalItem` for usage during aggregation. */
 export enum ProposalItemsGroupBy {
   BlockId = 'BLOCK_ID',
+  BlockNumber = 'BLOCK_NUMBER',
   CurrentStatus = 'CURRENT_STATUS',
   Data = 'DATA',
   Nonce = 'NONCE',
@@ -4793,14 +4880,16 @@ export enum ProposalItemsGroupBy {
   Status = 'STATUS',
   TimelineStatus = 'TIMELINE_STATUS',
   Type = 'TYPE',
-  Votes = 'VOTES',
+  Votes = 'VOTES'
 }
 
 export type ProposalItemsHavingAverageInput = {
+  blockNumber?: InputMaybe<HavingIntFilter>;
   nonce?: InputMaybe<HavingIntFilter>;
 };
 
 export type ProposalItemsHavingDistinctCountInput = {
+  blockNumber?: InputMaybe<HavingIntFilter>;
   nonce?: InputMaybe<HavingIntFilter>;
 };
 
@@ -4820,30 +4909,37 @@ export type ProposalItemsHavingInput = {
 };
 
 export type ProposalItemsHavingMaxInput = {
+  blockNumber?: InputMaybe<HavingIntFilter>;
   nonce?: InputMaybe<HavingIntFilter>;
 };
 
 export type ProposalItemsHavingMinInput = {
+  blockNumber?: InputMaybe<HavingIntFilter>;
   nonce?: InputMaybe<HavingIntFilter>;
 };
 
 export type ProposalItemsHavingStddevPopulationInput = {
+  blockNumber?: InputMaybe<HavingIntFilter>;
   nonce?: InputMaybe<HavingIntFilter>;
 };
 
 export type ProposalItemsHavingStddevSampleInput = {
+  blockNumber?: InputMaybe<HavingIntFilter>;
   nonce?: InputMaybe<HavingIntFilter>;
 };
 
 export type ProposalItemsHavingSumInput = {
+  blockNumber?: InputMaybe<HavingIntFilter>;
   nonce?: InputMaybe<HavingIntFilter>;
 };
 
 export type ProposalItemsHavingVariancePopulationInput = {
+  blockNumber?: InputMaybe<HavingIntFilter>;
   nonce?: InputMaybe<HavingIntFilter>;
 };
 
 export type ProposalItemsHavingVarianceSampleInput = {
+  blockNumber?: InputMaybe<HavingIntFilter>;
   nonce?: InputMaybe<HavingIntFilter>;
 };
 
@@ -4851,6 +4947,8 @@ export type ProposalItemsHavingVarianceSampleInput = {
 export enum ProposalItemsOrderBy {
   BlockIdAsc = 'BLOCK_ID_ASC',
   BlockIdDesc = 'BLOCK_ID_DESC',
+  BlockNumberAsc = 'BLOCK_NUMBER_ASC',
+  BlockNumberDesc = 'BLOCK_NUMBER_DESC',
   CurrentStatusAsc = 'CURRENT_STATUS_ASC',
   CurrentStatusDesc = 'CURRENT_STATUS_DESC',
   DataAsc = 'DATA_ASC',
@@ -4872,6 +4970,8 @@ export enum ProposalItemsOrderBy {
   TimelineStatusDesc = 'TIMELINE_STATUS_DESC',
   TypeAsc = 'TYPE_ASC',
   TypeDesc = 'TYPE_DESC',
+  UnsignedProposalsQueueItemsByProposalIdAverageBlockNumberAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_AVERAGE_BLOCK_NUMBER_ASC',
+  UnsignedProposalsQueueItemsByProposalIdAverageBlockNumberDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_AVERAGE_BLOCK_NUMBER_DESC',
   UnsignedProposalsQueueItemsByProposalIdAverageIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_AVERAGE_ID_ASC',
   UnsignedProposalsQueueItemsByProposalIdAverageIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_AVERAGE_ID_DESC',
   UnsignedProposalsQueueItemsByProposalIdAverageProposalIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_AVERAGE_PROPOSAL_ID_ASC',
@@ -4880,48 +4980,64 @@ export enum ProposalItemsOrderBy {
   UnsignedProposalsQueueItemsByProposalIdAverageQueueIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_AVERAGE_QUEUE_ID_DESC',
   UnsignedProposalsQueueItemsByProposalIdCountAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_COUNT_ASC',
   UnsignedProposalsQueueItemsByProposalIdCountDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_COUNT_DESC',
+  UnsignedProposalsQueueItemsByProposalIdDistinctCountBlockNumberAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_DISTINCT_COUNT_BLOCK_NUMBER_ASC',
+  UnsignedProposalsQueueItemsByProposalIdDistinctCountBlockNumberDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_DISTINCT_COUNT_BLOCK_NUMBER_DESC',
   UnsignedProposalsQueueItemsByProposalIdDistinctCountIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_DISTINCT_COUNT_ID_ASC',
   UnsignedProposalsQueueItemsByProposalIdDistinctCountIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_DISTINCT_COUNT_ID_DESC',
   UnsignedProposalsQueueItemsByProposalIdDistinctCountProposalIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_DISTINCT_COUNT_PROPOSAL_ID_ASC',
   UnsignedProposalsQueueItemsByProposalIdDistinctCountProposalIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_DISTINCT_COUNT_PROPOSAL_ID_DESC',
   UnsignedProposalsQueueItemsByProposalIdDistinctCountQueueIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_DISTINCT_COUNT_QUEUE_ID_ASC',
   UnsignedProposalsQueueItemsByProposalIdDistinctCountQueueIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_DISTINCT_COUNT_QUEUE_ID_DESC',
+  UnsignedProposalsQueueItemsByProposalIdMaxBlockNumberAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_MAX_BLOCK_NUMBER_ASC',
+  UnsignedProposalsQueueItemsByProposalIdMaxBlockNumberDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_MAX_BLOCK_NUMBER_DESC',
   UnsignedProposalsQueueItemsByProposalIdMaxIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_MAX_ID_ASC',
   UnsignedProposalsQueueItemsByProposalIdMaxIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_MAX_ID_DESC',
   UnsignedProposalsQueueItemsByProposalIdMaxProposalIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_MAX_PROPOSAL_ID_ASC',
   UnsignedProposalsQueueItemsByProposalIdMaxProposalIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_MAX_PROPOSAL_ID_DESC',
   UnsignedProposalsQueueItemsByProposalIdMaxQueueIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_MAX_QUEUE_ID_ASC',
   UnsignedProposalsQueueItemsByProposalIdMaxQueueIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_MAX_QUEUE_ID_DESC',
+  UnsignedProposalsQueueItemsByProposalIdMinBlockNumberAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_MIN_BLOCK_NUMBER_ASC',
+  UnsignedProposalsQueueItemsByProposalIdMinBlockNumberDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_MIN_BLOCK_NUMBER_DESC',
   UnsignedProposalsQueueItemsByProposalIdMinIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_MIN_ID_ASC',
   UnsignedProposalsQueueItemsByProposalIdMinIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_MIN_ID_DESC',
   UnsignedProposalsQueueItemsByProposalIdMinProposalIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_MIN_PROPOSAL_ID_ASC',
   UnsignedProposalsQueueItemsByProposalIdMinProposalIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_MIN_PROPOSAL_ID_DESC',
   UnsignedProposalsQueueItemsByProposalIdMinQueueIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_MIN_QUEUE_ID_ASC',
   UnsignedProposalsQueueItemsByProposalIdMinQueueIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_MIN_QUEUE_ID_DESC',
+  UnsignedProposalsQueueItemsByProposalIdStddevPopulationBlockNumberAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_STDDEV_POPULATION_BLOCK_NUMBER_ASC',
+  UnsignedProposalsQueueItemsByProposalIdStddevPopulationBlockNumberDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_STDDEV_POPULATION_BLOCK_NUMBER_DESC',
   UnsignedProposalsQueueItemsByProposalIdStddevPopulationIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_STDDEV_POPULATION_ID_ASC',
   UnsignedProposalsQueueItemsByProposalIdStddevPopulationIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_STDDEV_POPULATION_ID_DESC',
   UnsignedProposalsQueueItemsByProposalIdStddevPopulationProposalIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_STDDEV_POPULATION_PROPOSAL_ID_ASC',
   UnsignedProposalsQueueItemsByProposalIdStddevPopulationProposalIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_STDDEV_POPULATION_PROPOSAL_ID_DESC',
   UnsignedProposalsQueueItemsByProposalIdStddevPopulationQueueIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_STDDEV_POPULATION_QUEUE_ID_ASC',
   UnsignedProposalsQueueItemsByProposalIdStddevPopulationQueueIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_STDDEV_POPULATION_QUEUE_ID_DESC',
+  UnsignedProposalsQueueItemsByProposalIdStddevSampleBlockNumberAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_STDDEV_SAMPLE_BLOCK_NUMBER_ASC',
+  UnsignedProposalsQueueItemsByProposalIdStddevSampleBlockNumberDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_STDDEV_SAMPLE_BLOCK_NUMBER_DESC',
   UnsignedProposalsQueueItemsByProposalIdStddevSampleIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_STDDEV_SAMPLE_ID_ASC',
   UnsignedProposalsQueueItemsByProposalIdStddevSampleIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_STDDEV_SAMPLE_ID_DESC',
   UnsignedProposalsQueueItemsByProposalIdStddevSampleProposalIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_STDDEV_SAMPLE_PROPOSAL_ID_ASC',
   UnsignedProposalsQueueItemsByProposalIdStddevSampleProposalIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_STDDEV_SAMPLE_PROPOSAL_ID_DESC',
   UnsignedProposalsQueueItemsByProposalIdStddevSampleQueueIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_STDDEV_SAMPLE_QUEUE_ID_ASC',
   UnsignedProposalsQueueItemsByProposalIdStddevSampleQueueIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_STDDEV_SAMPLE_QUEUE_ID_DESC',
+  UnsignedProposalsQueueItemsByProposalIdSumBlockNumberAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_SUM_BLOCK_NUMBER_ASC',
+  UnsignedProposalsQueueItemsByProposalIdSumBlockNumberDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_SUM_BLOCK_NUMBER_DESC',
   UnsignedProposalsQueueItemsByProposalIdSumIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_SUM_ID_ASC',
   UnsignedProposalsQueueItemsByProposalIdSumIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_SUM_ID_DESC',
   UnsignedProposalsQueueItemsByProposalIdSumProposalIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_SUM_PROPOSAL_ID_ASC',
   UnsignedProposalsQueueItemsByProposalIdSumProposalIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_SUM_PROPOSAL_ID_DESC',
   UnsignedProposalsQueueItemsByProposalIdSumQueueIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_SUM_QUEUE_ID_ASC',
   UnsignedProposalsQueueItemsByProposalIdSumQueueIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_SUM_QUEUE_ID_DESC',
+  UnsignedProposalsQueueItemsByProposalIdVariancePopulationBlockNumberAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_VARIANCE_POPULATION_BLOCK_NUMBER_ASC',
+  UnsignedProposalsQueueItemsByProposalIdVariancePopulationBlockNumberDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_VARIANCE_POPULATION_BLOCK_NUMBER_DESC',
   UnsignedProposalsQueueItemsByProposalIdVariancePopulationIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_VARIANCE_POPULATION_ID_ASC',
   UnsignedProposalsQueueItemsByProposalIdVariancePopulationIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_VARIANCE_POPULATION_ID_DESC',
   UnsignedProposalsQueueItemsByProposalIdVariancePopulationProposalIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_VARIANCE_POPULATION_PROPOSAL_ID_ASC',
   UnsignedProposalsQueueItemsByProposalIdVariancePopulationProposalIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_VARIANCE_POPULATION_PROPOSAL_ID_DESC',
   UnsignedProposalsQueueItemsByProposalIdVariancePopulationQueueIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_VARIANCE_POPULATION_QUEUE_ID_ASC',
   UnsignedProposalsQueueItemsByProposalIdVariancePopulationQueueIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_VARIANCE_POPULATION_QUEUE_ID_DESC',
+  UnsignedProposalsQueueItemsByProposalIdVarianceSampleBlockNumberAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_VARIANCE_SAMPLE_BLOCK_NUMBER_ASC',
+  UnsignedProposalsQueueItemsByProposalIdVarianceSampleBlockNumberDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_VARIANCE_SAMPLE_BLOCK_NUMBER_DESC',
   UnsignedProposalsQueueItemsByProposalIdVarianceSampleIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_VARIANCE_SAMPLE_ID_ASC',
   UnsignedProposalsQueueItemsByProposalIdVarianceSampleIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_VARIANCE_SAMPLE_ID_DESC',
   UnsignedProposalsQueueItemsByProposalIdVarianceSampleProposalIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_VARIANCE_SAMPLE_PROPOSAL_ID_ASC',
@@ -4929,7 +5045,7 @@ export enum ProposalItemsOrderBy {
   UnsignedProposalsQueueItemsByProposalIdVarianceSampleQueueIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_VARIANCE_SAMPLE_QUEUE_ID_ASC',
   UnsignedProposalsQueueItemsByProposalIdVarianceSampleQueueIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_VARIANCE_SAMPLE_QUEUE_ID_DESC',
   VotesAsc = 'VOTES_ASC',
-  VotesDesc = 'VOTES_DESC',
+  VotesDesc = 'VOTES_DESC'
 }
 
 export enum ProposalType {
@@ -4948,7 +5064,7 @@ export enum ProposalType {
   TokenAddProposal = 'TokenAddProposal',
   TokenRemoveProposal = 'TokenRemoveProposal',
   Unknown = 'Unknown',
-  WrappingFeeUpdateProposal = 'WrappingFeeUpdateProposal',
+  WrappingFeeUpdateProposal = 'WrappingFeeUpdateProposal'
 }
 
 /** A filter to be used against ProposalType fields. All fields are combined with a logical ‘and.’ */
@@ -5203,6 +5319,7 @@ export type ProposerThresholdsConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `ProposerThreshold` values. */
 export type ProposerThresholdsConnectionGroupedAggregatesArgs = {
   groupBy: Array<ProposerThresholdsGroupBy>;
@@ -5221,7 +5338,7 @@ export type ProposerThresholdsEdge = {
 /** Grouping methods for `ProposerThreshold` for usage during aggregation. */
 export enum ProposerThresholdsGroupBy {
   BlockId = 'BLOCK_ID',
-  Value = 'VALUE',
+  Value = 'VALUE'
 }
 
 export type ProposerThresholdsHavingAverageInput = {
@@ -5285,7 +5402,7 @@ export enum ProposerThresholdsOrderBy {
   PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
   PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
   ValueAsc = 'VALUE_ASC',
-  ValueDesc = 'VALUE_DESC',
+  ValueDesc = 'VALUE_DESC'
 }
 
 export type ProposerVariancePopulationAggregates = {
@@ -5317,6 +5434,7 @@ export type ProposersConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Proposer` values. */
 export type ProposersConnectionGroupedAggregatesArgs = {
   groupBy: Array<ProposersGroupBy>;
@@ -5336,7 +5454,7 @@ export type ProposersEdge = {
 export enum ProposersGroupBy {
   BlockId = 'BLOCK_ID',
   Count = 'COUNT',
-  Proposers = 'PROPOSERS',
+  Proposers = 'PROPOSERS'
 }
 
 export type ProposersHavingAverageInput = {
@@ -5402,7 +5520,7 @@ export enum ProposersOrderBy {
   PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
   PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
   ProposersAsc = 'PROPOSERS_ASC',
-  ProposersDesc = 'PROPOSERS_DESC',
+  ProposersDesc = 'PROPOSERS_DESC'
 }
 
 export type PublicKey = Node & {
@@ -5422,6 +5540,7 @@ export type PublicKey = Node & {
   uncompressed?: Maybe<Scalars['String']>;
 };
 
+
 export type PublicKeyBlocksBySessionPublicKeyIdAndBlockIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -5431,6 +5550,7 @@ export type PublicKeyBlocksBySessionPublicKeyIdAndBlockIdArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<BlocksOrderBy>>;
 };
+
 
 export type PublicKeySessionsArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -5466,6 +5586,7 @@ export type PublicKeyBlocksBySessionPublicKeyIdAndBlockIdManyToManyConnection = 
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Block` values, with data from `Session`. */
 export type PublicKeyBlocksBySessionPublicKeyIdAndBlockIdManyToManyConnectionGroupedAggregatesArgs = {
   groupBy: Array<BlocksGroupBy>;
@@ -5482,6 +5603,7 @@ export type PublicKeyBlocksBySessionPublicKeyIdAndBlockIdManyToManyEdge = {
   /** Reads and enables pagination through a set of `Session`. */
   sessions: SessionsConnection;
 };
+
 
 /** A `Block` edge in the connection, with data from `Session`. */
 export type PublicKeyBlocksBySessionPublicKeyIdAndBlockIdManyToManyEdgeSessionsArgs = {
@@ -5545,6 +5667,7 @@ export type PublicKeysConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `PublicKey` values. */
 export type PublicKeysConnectionGroupedAggregatesArgs = {
   groupBy: Array<PublicKeysGroupBy>;
@@ -5564,7 +5687,7 @@ export type PublicKeysEdge = {
 export enum PublicKeysGroupBy {
   BlockId = 'BLOCK_ID',
   Compressed = 'COMPRESSED',
-  History = 'HISTORY',
+  History = 'HISTORY'
 }
 
 /** Conditions for `PublicKey` aggregates. */
@@ -5823,7 +5946,7 @@ export enum PublicKeysOrderBy {
   SessionsVarianceSampleSignatureThresholdAsc = 'SESSIONS_VARIANCE_SAMPLE_SIGNATURE_THRESHOLD_ASC',
   SessionsVarianceSampleSignatureThresholdDesc = 'SESSIONS_VARIANCE_SAMPLE_SIGNATURE_THRESHOLD_DESC',
   UncompressedAsc = 'UNCOMPRESSED_ASC',
-  UncompressedDesc = 'UNCOMPRESSED_DESC',
+  UncompressedDesc = 'UNCOMPRESSED_DESC'
 }
 
 /** The root query type which gives access points into the data universe. */
@@ -5916,15 +6039,18 @@ export type Query = Node & {
   unsignedProposalsQueues?: Maybe<UnsignedProposalsQueuesConnection>;
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryAccountArgs = {
   id: Scalars['String'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryAccountByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QueryAccountsArgs = {
@@ -5937,6 +6063,7 @@ export type QueryAccountsArgs = {
   orderBy?: InputMaybe<Array<AccountsOrderBy>>;
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryAuthoritiesArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -5948,25 +6075,30 @@ export type QueryAuthoritiesArgs = {
   orderBy?: InputMaybe<Array<AuthoritiesOrderBy>>;
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryAuthorityArgs = {
   id: Scalars['String'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QueryAuthorityByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryBlockArgs = {
   id: Scalars['String'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryBlockByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QueryBlocksArgs = {
@@ -5979,15 +6111,18 @@ export type QueryBlocksArgs = {
   orderBy?: InputMaybe<Array<BlocksOrderBy>>;
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryEventArgs = {
   id: Scalars['String'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryEventByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QueryEventsArgs = {
@@ -6000,15 +6135,18 @@ export type QueryEventsArgs = {
   orderBy?: InputMaybe<Array<EventsOrderBy>>;
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryExtrinsicArgs = {
   id: Scalars['String'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryExtrinsicByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QueryExtrinsicsArgs = {
@@ -6021,15 +6159,18 @@ export type QueryExtrinsicsArgs = {
   orderBy?: InputMaybe<Array<ExtrinsicsOrderBy>>;
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryKeygenThresholdArgs = {
   id: Scalars['String'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryKeygenThresholdByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QueryKeygenThresholdsArgs = {
@@ -6042,20 +6183,24 @@ export type QueryKeygenThresholdsArgs = {
   orderBy?: InputMaybe<Array<KeygenThresholdsOrderBy>>;
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryNodeArgs = {
   nodeId: Scalars['ID'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QueryProposalCounterArgs = {
   id: Scalars['String'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryProposalCounterByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QueryProposalCountersArgs = {
@@ -6068,15 +6213,18 @@ export type QueryProposalCountersArgs = {
   orderBy?: InputMaybe<Array<ProposalCountersOrderBy>>;
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryProposalItemArgs = {
   id: Scalars['String'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryProposalItemByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QueryProposalItemsArgs = {
@@ -6089,25 +6237,30 @@ export type QueryProposalItemsArgs = {
   orderBy?: InputMaybe<Array<ProposalItemsOrderBy>>;
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryProposerArgs = {
   id: Scalars['String'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QueryProposerByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryProposerThresholdArgs = {
   id: Scalars['String'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryProposerThresholdByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QueryProposerThresholdsArgs = {
@@ -6120,6 +6273,7 @@ export type QueryProposerThresholdsArgs = {
   orderBy?: InputMaybe<Array<ProposerThresholdsOrderBy>>;
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryProposersArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -6131,15 +6285,18 @@ export type QueryProposersArgs = {
   orderBy?: InputMaybe<Array<ProposersOrderBy>>;
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryPublicKeyArgs = {
   id: Scalars['String'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryPublicKeyByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QueryPublicKeysArgs = {
@@ -6152,15 +6309,18 @@ export type QueryPublicKeysArgs = {
   orderBy?: InputMaybe<Array<PublicKeysOrderBy>>;
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QuerySessionArgs = {
   id: Scalars['String'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QuerySessionByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QuerySessionsArgs = {
@@ -6173,15 +6333,18 @@ export type QuerySessionsArgs = {
   orderBy?: InputMaybe<Array<SessionsOrderBy>>;
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QuerySignatureThresholdArgs = {
   id: Scalars['String'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QuerySignatureThresholdByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QuerySignatureThresholdsArgs = {
@@ -6194,25 +6357,30 @@ export type QuerySignatureThresholdsArgs = {
   orderBy?: InputMaybe<Array<SignatureThresholdsOrderBy>>;
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryUnsignedProposalsQueueArgs = {
   id: Scalars['String'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QueryUnsignedProposalsQueueByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryUnsignedProposalsQueueItemArgs = {
   id: Scalars['String'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryUnsignedProposalsQueueItemByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QueryUnsignedProposalsQueueItemsArgs = {
@@ -6224,6 +6392,7 @@ export type QueryUnsignedProposalsQueueItemsArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<UnsignedProposalsQueueItemsOrderBy>>;
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QueryUnsignedProposalsQueuesArgs = {
@@ -6429,6 +6598,7 @@ export type SessionsConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Session` values. */
 export type SessionsConnectionGroupedAggregatesArgs = {
   groupBy: Array<SessionsGroupBy>;
@@ -6457,7 +6627,7 @@ export enum SessionsGroupBy {
   ProposersCount = 'PROPOSERS_COUNT',
   ProposerThreshold = 'PROPOSER_THRESHOLD',
   PublicKeyId = 'PUBLIC_KEY_ID',
-  SignatureThreshold = 'SIGNATURE_THRESHOLD',
+  SignatureThreshold = 'SIGNATURE_THRESHOLD'
 }
 
 export type SessionsHavingAverageInput = {
@@ -6550,7 +6720,7 @@ export enum SessionsOrderBy {
   PublicKeyIdAsc = 'PUBLIC_KEY_ID_ASC',
   PublicKeyIdDesc = 'PUBLIC_KEY_ID_DESC',
   SignatureThresholdAsc = 'SIGNATURE_THRESHOLD_ASC',
-  SignatureThresholdDesc = 'SIGNATURE_THRESHOLD_DESC',
+  SignatureThresholdDesc = 'SIGNATURE_THRESHOLD_DESC'
 }
 
 export type SignatureThreshold = Node & {
@@ -6720,6 +6890,7 @@ export type SignatureThresholdsConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `SignatureThreshold` values. */
 export type SignatureThresholdsConnectionGroupedAggregatesArgs = {
   groupBy: Array<SignatureThresholdsGroupBy>;
@@ -6740,7 +6911,7 @@ export enum SignatureThresholdsGroupBy {
   BlockId = 'BLOCK_ID',
   Current = 'CURRENT',
   Next = 'NEXT',
-  Pending = 'PENDING',
+  Pending = 'PENDING'
 }
 
 export type SignatureThresholdsHavingAverageInput = {
@@ -6826,7 +6997,7 @@ export enum SignatureThresholdsOrderBy {
   PendingAsc = 'PENDING_ASC',
   PendingDesc = 'PENDING_DESC',
   PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
-  PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
+  PrimaryKeyDesc = 'PRIMARY_KEY_DESC'
 }
 
 /** A filter to be used against String fields. All fields are combined with a logical ‘and.’ */
@@ -6928,6 +7099,7 @@ export type UnsignedProposalsQueue = Node & {
   unsignedProposalsQueueItemsByQueueId: UnsignedProposalsQueueItemsConnection;
 };
 
+
 export type UnsignedProposalsQueueProposalItemsByUnsignedProposalsQueueItemQueueIdAndProposalIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -6937,6 +7109,7 @@ export type UnsignedProposalsQueueProposalItemsByUnsignedProposalsQueueItemQueue
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<ProposalItemsOrderBy>>;
 };
+
 
 export type UnsignedProposalsQueueUnsignedProposalsQueueItemsByQueueIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -7005,6 +7178,7 @@ export type UnsignedProposalsQueueFilter = {
 
 export type UnsignedProposalsQueueItem = Node & {
   __typename?: 'UnsignedProposalsQueueItem';
+  blockNumber: Scalars['Int'];
   id: Scalars['String'];
   /** A globally unique identifier. Can be used in various places throughout the system to identify this single value. */
   nodeId: Scalars['ID'];
@@ -7018,13 +7192,37 @@ export type UnsignedProposalsQueueItem = Node & {
 
 export type UnsignedProposalsQueueItemAggregates = {
   __typename?: 'UnsignedProposalsQueueItemAggregates';
+  /** Mean average aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  average?: Maybe<UnsignedProposalsQueueItemAverageAggregates>;
   /** Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset) */
   distinctCount?: Maybe<UnsignedProposalsQueueItemDistinctCountAggregates>;
   keys?: Maybe<Array<Scalars['String']>>;
+  /** Maximum aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  max?: Maybe<UnsignedProposalsQueueItemMaxAggregates>;
+  /** Minimum aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  min?: Maybe<UnsignedProposalsQueueItemMinAggregates>;
+  /** Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  stddevPopulation?: Maybe<UnsignedProposalsQueueItemStddevPopulationAggregates>;
+  /** Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  stddevSample?: Maybe<UnsignedProposalsQueueItemStddevSampleAggregates>;
+  /** Sum aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  sum?: Maybe<UnsignedProposalsQueueItemSumAggregates>;
+  /** Population variance aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  variancePopulation?: Maybe<UnsignedProposalsQueueItemVariancePopulationAggregates>;
+  /** Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  varianceSample?: Maybe<UnsignedProposalsQueueItemVarianceSampleAggregates>;
+};
+
+export type UnsignedProposalsQueueItemAverageAggregates = {
+  __typename?: 'UnsignedProposalsQueueItemAverageAggregates';
+  /** Mean average of blockNumber across the matching connection */
+  blockNumber?: Maybe<Scalars['BigFloat']>;
 };
 
 export type UnsignedProposalsQueueItemDistinctCountAggregates = {
   __typename?: 'UnsignedProposalsQueueItemDistinctCountAggregates';
+  /** Distinct count of blockNumber across the matching connection */
+  blockNumber?: Maybe<Scalars['BigInt']>;
   /** Distinct count of id across the matching connection */
   id?: Maybe<Scalars['BigInt']>;
   /** Distinct count of proposalId across the matching connection */
@@ -7037,6 +7235,8 @@ export type UnsignedProposalsQueueItemDistinctCountAggregates = {
 export type UnsignedProposalsQueueItemFilter = {
   /** Checks for all expressions in this list. */
   and?: InputMaybe<Array<UnsignedProposalsQueueItemFilter>>;
+  /** Filter by the object’s `blockNumber` field. */
+  blockNumber?: InputMaybe<IntFilter>;
   /** Filter by the object’s `id` field. */
   id?: InputMaybe<StringFilter>;
   /** Negates the expression. */
@@ -7047,6 +7247,48 @@ export type UnsignedProposalsQueueItemFilter = {
   proposalId?: InputMaybe<StringFilter>;
   /** Filter by the object’s `queueId` field. */
   queueId?: InputMaybe<StringFilter>;
+};
+
+export type UnsignedProposalsQueueItemMaxAggregates = {
+  __typename?: 'UnsignedProposalsQueueItemMaxAggregates';
+  /** Maximum of blockNumber across the matching connection */
+  blockNumber?: Maybe<Scalars['Int']>;
+};
+
+export type UnsignedProposalsQueueItemMinAggregates = {
+  __typename?: 'UnsignedProposalsQueueItemMinAggregates';
+  /** Minimum of blockNumber across the matching connection */
+  blockNumber?: Maybe<Scalars['Int']>;
+};
+
+export type UnsignedProposalsQueueItemStddevPopulationAggregates = {
+  __typename?: 'UnsignedProposalsQueueItemStddevPopulationAggregates';
+  /** Population standard deviation of blockNumber across the matching connection */
+  blockNumber?: Maybe<Scalars['BigFloat']>;
+};
+
+export type UnsignedProposalsQueueItemStddevSampleAggregates = {
+  __typename?: 'UnsignedProposalsQueueItemStddevSampleAggregates';
+  /** Sample standard deviation of blockNumber across the matching connection */
+  blockNumber?: Maybe<Scalars['BigFloat']>;
+};
+
+export type UnsignedProposalsQueueItemSumAggregates = {
+  __typename?: 'UnsignedProposalsQueueItemSumAggregates';
+  /** Sum of blockNumber across the matching connection */
+  blockNumber: Scalars['BigInt'];
+};
+
+export type UnsignedProposalsQueueItemVariancePopulationAggregates = {
+  __typename?: 'UnsignedProposalsQueueItemVariancePopulationAggregates';
+  /** Population variance of blockNumber across the matching connection */
+  blockNumber?: Maybe<Scalars['BigFloat']>;
+};
+
+export type UnsignedProposalsQueueItemVarianceSampleAggregates = {
+  __typename?: 'UnsignedProposalsQueueItemVarianceSampleAggregates';
+  /** Sample variance of blockNumber across the matching connection */
+  blockNumber?: Maybe<Scalars['BigFloat']>;
 };
 
 /** A connection to a list of `UnsignedProposalsQueueItem` values. */
@@ -7066,6 +7308,7 @@ export type UnsignedProposalsQueueItemsConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `UnsignedProposalsQueueItem` values. */
 export type UnsignedProposalsQueueItemsConnectionGroupedAggregatesArgs = {
   groupBy: Array<UnsignedProposalsQueueItemsGroupBy>;
@@ -7083,18 +7326,66 @@ export type UnsignedProposalsQueueItemsEdge = {
 
 /** Grouping methods for `UnsignedProposalsQueueItem` for usage during aggregation. */
 export enum UnsignedProposalsQueueItemsGroupBy {
+  BlockNumber = 'BLOCK_NUMBER',
   ProposalId = 'PROPOSAL_ID',
-  QueueId = 'QUEUE_ID',
+  QueueId = 'QUEUE_ID'
 }
+
+export type UnsignedProposalsQueueItemsHavingAverageInput = {
+  blockNumber?: InputMaybe<HavingIntFilter>;
+};
+
+export type UnsignedProposalsQueueItemsHavingDistinctCountInput = {
+  blockNumber?: InputMaybe<HavingIntFilter>;
+};
 
 /** Conditions for `UnsignedProposalsQueueItem` aggregates. */
 export type UnsignedProposalsQueueItemsHavingInput = {
   AND?: InputMaybe<Array<UnsignedProposalsQueueItemsHavingInput>>;
   OR?: InputMaybe<Array<UnsignedProposalsQueueItemsHavingInput>>;
+  average?: InputMaybe<UnsignedProposalsQueueItemsHavingAverageInput>;
+  distinctCount?: InputMaybe<UnsignedProposalsQueueItemsHavingDistinctCountInput>;
+  max?: InputMaybe<UnsignedProposalsQueueItemsHavingMaxInput>;
+  min?: InputMaybe<UnsignedProposalsQueueItemsHavingMinInput>;
+  stddevPopulation?: InputMaybe<UnsignedProposalsQueueItemsHavingStddevPopulationInput>;
+  stddevSample?: InputMaybe<UnsignedProposalsQueueItemsHavingStddevSampleInput>;
+  sum?: InputMaybe<UnsignedProposalsQueueItemsHavingSumInput>;
+  variancePopulation?: InputMaybe<UnsignedProposalsQueueItemsHavingVariancePopulationInput>;
+  varianceSample?: InputMaybe<UnsignedProposalsQueueItemsHavingVarianceSampleInput>;
+};
+
+export type UnsignedProposalsQueueItemsHavingMaxInput = {
+  blockNumber?: InputMaybe<HavingIntFilter>;
+};
+
+export type UnsignedProposalsQueueItemsHavingMinInput = {
+  blockNumber?: InputMaybe<HavingIntFilter>;
+};
+
+export type UnsignedProposalsQueueItemsHavingStddevPopulationInput = {
+  blockNumber?: InputMaybe<HavingIntFilter>;
+};
+
+export type UnsignedProposalsQueueItemsHavingStddevSampleInput = {
+  blockNumber?: InputMaybe<HavingIntFilter>;
+};
+
+export type UnsignedProposalsQueueItemsHavingSumInput = {
+  blockNumber?: InputMaybe<HavingIntFilter>;
+};
+
+export type UnsignedProposalsQueueItemsHavingVariancePopulationInput = {
+  blockNumber?: InputMaybe<HavingIntFilter>;
+};
+
+export type UnsignedProposalsQueueItemsHavingVarianceSampleInput = {
+  blockNumber?: InputMaybe<HavingIntFilter>;
 };
 
 /** Methods to use when ordering `UnsignedProposalsQueueItem`. */
 export enum UnsignedProposalsQueueItemsOrderBy {
+  BlockNumberAsc = 'BLOCK_NUMBER_ASC',
+  BlockNumberDesc = 'BLOCK_NUMBER_DESC',
   IdAsc = 'ID_ASC',
   IdDesc = 'ID_DESC',
   Natural = 'NATURAL',
@@ -7103,7 +7394,7 @@ export enum UnsignedProposalsQueueItemsOrderBy {
   ProposalIdAsc = 'PROPOSAL_ID_ASC',
   ProposalIdDesc = 'PROPOSAL_ID_DESC',
   QueueIdAsc = 'QUEUE_ID_ASC',
-  QueueIdDesc = 'QUEUE_ID_DESC',
+  QueueIdDesc = 'QUEUE_ID_DESC'
 }
 
 export type UnsignedProposalsQueueMaxAggregates = {
@@ -7135,12 +7426,12 @@ export type UnsignedProposalsQueueProposalItemsByUnsignedProposalsQueueItemQueue
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `ProposalItem` values, with data from `UnsignedProposalsQueueItem`. */
-export type UnsignedProposalsQueueProposalItemsByUnsignedProposalsQueueItemQueueIdAndProposalIdManyToManyConnectionGroupedAggregatesArgs =
-  {
-    groupBy: Array<ProposalItemsGroupBy>;
-    having?: InputMaybe<ProposalItemsHavingInput>;
-  };
+export type UnsignedProposalsQueueProposalItemsByUnsignedProposalsQueueItemQueueIdAndProposalIdManyToManyConnectionGroupedAggregatesArgs = {
+  groupBy: Array<ProposalItemsGroupBy>;
+  having?: InputMaybe<ProposalItemsHavingInput>;
+};
 
 /** A `ProposalItem` edge in the connection, with data from `UnsignedProposalsQueueItem`. */
 export type UnsignedProposalsQueueProposalItemsByUnsignedProposalsQueueItemQueueIdAndProposalIdManyToManyEdge = {
@@ -7153,17 +7444,17 @@ export type UnsignedProposalsQueueProposalItemsByUnsignedProposalsQueueItemQueue
   unsignedProposalsQueueItemsByProposalId: UnsignedProposalsQueueItemsConnection;
 };
 
+
 /** A `ProposalItem` edge in the connection, with data from `UnsignedProposalsQueueItem`. */
-export type UnsignedProposalsQueueProposalItemsByUnsignedProposalsQueueItemQueueIdAndProposalIdManyToManyEdgeUnsignedProposalsQueueItemsByProposalIdArgs =
-  {
-    after?: InputMaybe<Scalars['Cursor']>;
-    before?: InputMaybe<Scalars['Cursor']>;
-    filter?: InputMaybe<UnsignedProposalsQueueItemFilter>;
-    first?: InputMaybe<Scalars['Int']>;
-    last?: InputMaybe<Scalars['Int']>;
-    offset?: InputMaybe<Scalars['Int']>;
-    orderBy?: InputMaybe<Array<UnsignedProposalsQueueItemsOrderBy>>;
-  };
+export type UnsignedProposalsQueueProposalItemsByUnsignedProposalsQueueItemQueueIdAndProposalIdManyToManyEdgeUnsignedProposalsQueueItemsByProposalIdArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  filter?: InputMaybe<UnsignedProposalsQueueItemFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<UnsignedProposalsQueueItemsOrderBy>>;
+};
 
 export type UnsignedProposalsQueueStddevPopulationAggregates = {
   __typename?: 'UnsignedProposalsQueueStddevPopulationAggregates';
@@ -7212,6 +7503,7 @@ export type UnsignedProposalsQueuesConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `UnsignedProposalsQueue` values. */
 export type UnsignedProposalsQueuesConnectionGroupedAggregatesArgs = {
   groupBy: Array<UnsignedProposalsQueuesGroupBy>;
@@ -7230,7 +7522,7 @@ export type UnsignedProposalsQueuesEdge = {
 /** Grouping methods for `UnsignedProposalsQueue` for usage during aggregation. */
 export enum UnsignedProposalsQueuesGroupBy {
   BlockId = 'BLOCK_ID',
-  BlockNumber = 'BLOCK_NUMBER',
+  BlockNumber = 'BLOCK_NUMBER'
 }
 
 export type UnsignedProposalsQueuesHavingAverageInput = {
@@ -7295,6 +7587,8 @@ export enum UnsignedProposalsQueuesOrderBy {
   Natural = 'NATURAL',
   PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
   PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
+  UnsignedProposalsQueueItemsByQueueIdAverageBlockNumberAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_AVERAGE_BLOCK_NUMBER_ASC',
+  UnsignedProposalsQueueItemsByQueueIdAverageBlockNumberDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_AVERAGE_BLOCK_NUMBER_DESC',
   UnsignedProposalsQueueItemsByQueueIdAverageIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_AVERAGE_ID_ASC',
   UnsignedProposalsQueueItemsByQueueIdAverageIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_AVERAGE_ID_DESC',
   UnsignedProposalsQueueItemsByQueueIdAverageProposalIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_AVERAGE_PROPOSAL_ID_ASC',
@@ -7303,54 +7597,70 @@ export enum UnsignedProposalsQueuesOrderBy {
   UnsignedProposalsQueueItemsByQueueIdAverageQueueIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_AVERAGE_QUEUE_ID_DESC',
   UnsignedProposalsQueueItemsByQueueIdCountAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_COUNT_ASC',
   UnsignedProposalsQueueItemsByQueueIdCountDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_COUNT_DESC',
+  UnsignedProposalsQueueItemsByQueueIdDistinctCountBlockNumberAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_DISTINCT_COUNT_BLOCK_NUMBER_ASC',
+  UnsignedProposalsQueueItemsByQueueIdDistinctCountBlockNumberDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_DISTINCT_COUNT_BLOCK_NUMBER_DESC',
   UnsignedProposalsQueueItemsByQueueIdDistinctCountIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_DISTINCT_COUNT_ID_ASC',
   UnsignedProposalsQueueItemsByQueueIdDistinctCountIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_DISTINCT_COUNT_ID_DESC',
   UnsignedProposalsQueueItemsByQueueIdDistinctCountProposalIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_DISTINCT_COUNT_PROPOSAL_ID_ASC',
   UnsignedProposalsQueueItemsByQueueIdDistinctCountProposalIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_DISTINCT_COUNT_PROPOSAL_ID_DESC',
   UnsignedProposalsQueueItemsByQueueIdDistinctCountQueueIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_DISTINCT_COUNT_QUEUE_ID_ASC',
   UnsignedProposalsQueueItemsByQueueIdDistinctCountQueueIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_DISTINCT_COUNT_QUEUE_ID_DESC',
+  UnsignedProposalsQueueItemsByQueueIdMaxBlockNumberAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_MAX_BLOCK_NUMBER_ASC',
+  UnsignedProposalsQueueItemsByQueueIdMaxBlockNumberDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_MAX_BLOCK_NUMBER_DESC',
   UnsignedProposalsQueueItemsByQueueIdMaxIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_MAX_ID_ASC',
   UnsignedProposalsQueueItemsByQueueIdMaxIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_MAX_ID_DESC',
   UnsignedProposalsQueueItemsByQueueIdMaxProposalIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_MAX_PROPOSAL_ID_ASC',
   UnsignedProposalsQueueItemsByQueueIdMaxProposalIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_MAX_PROPOSAL_ID_DESC',
   UnsignedProposalsQueueItemsByQueueIdMaxQueueIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_MAX_QUEUE_ID_ASC',
   UnsignedProposalsQueueItemsByQueueIdMaxQueueIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_MAX_QUEUE_ID_DESC',
+  UnsignedProposalsQueueItemsByQueueIdMinBlockNumberAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_MIN_BLOCK_NUMBER_ASC',
+  UnsignedProposalsQueueItemsByQueueIdMinBlockNumberDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_MIN_BLOCK_NUMBER_DESC',
   UnsignedProposalsQueueItemsByQueueIdMinIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_MIN_ID_ASC',
   UnsignedProposalsQueueItemsByQueueIdMinIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_MIN_ID_DESC',
   UnsignedProposalsQueueItemsByQueueIdMinProposalIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_MIN_PROPOSAL_ID_ASC',
   UnsignedProposalsQueueItemsByQueueIdMinProposalIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_MIN_PROPOSAL_ID_DESC',
   UnsignedProposalsQueueItemsByQueueIdMinQueueIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_MIN_QUEUE_ID_ASC',
   UnsignedProposalsQueueItemsByQueueIdMinQueueIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_MIN_QUEUE_ID_DESC',
+  UnsignedProposalsQueueItemsByQueueIdStddevPopulationBlockNumberAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_STDDEV_POPULATION_BLOCK_NUMBER_ASC',
+  UnsignedProposalsQueueItemsByQueueIdStddevPopulationBlockNumberDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_STDDEV_POPULATION_BLOCK_NUMBER_DESC',
   UnsignedProposalsQueueItemsByQueueIdStddevPopulationIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_STDDEV_POPULATION_ID_ASC',
   UnsignedProposalsQueueItemsByQueueIdStddevPopulationIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_STDDEV_POPULATION_ID_DESC',
   UnsignedProposalsQueueItemsByQueueIdStddevPopulationProposalIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_STDDEV_POPULATION_PROPOSAL_ID_ASC',
   UnsignedProposalsQueueItemsByQueueIdStddevPopulationProposalIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_STDDEV_POPULATION_PROPOSAL_ID_DESC',
   UnsignedProposalsQueueItemsByQueueIdStddevPopulationQueueIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_STDDEV_POPULATION_QUEUE_ID_ASC',
   UnsignedProposalsQueueItemsByQueueIdStddevPopulationQueueIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_STDDEV_POPULATION_QUEUE_ID_DESC',
+  UnsignedProposalsQueueItemsByQueueIdStddevSampleBlockNumberAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_STDDEV_SAMPLE_BLOCK_NUMBER_ASC',
+  UnsignedProposalsQueueItemsByQueueIdStddevSampleBlockNumberDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_STDDEV_SAMPLE_BLOCK_NUMBER_DESC',
   UnsignedProposalsQueueItemsByQueueIdStddevSampleIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_STDDEV_SAMPLE_ID_ASC',
   UnsignedProposalsQueueItemsByQueueIdStddevSampleIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_STDDEV_SAMPLE_ID_DESC',
   UnsignedProposalsQueueItemsByQueueIdStddevSampleProposalIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_STDDEV_SAMPLE_PROPOSAL_ID_ASC',
   UnsignedProposalsQueueItemsByQueueIdStddevSampleProposalIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_STDDEV_SAMPLE_PROPOSAL_ID_DESC',
   UnsignedProposalsQueueItemsByQueueIdStddevSampleQueueIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_STDDEV_SAMPLE_QUEUE_ID_ASC',
   UnsignedProposalsQueueItemsByQueueIdStddevSampleQueueIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_STDDEV_SAMPLE_QUEUE_ID_DESC',
+  UnsignedProposalsQueueItemsByQueueIdSumBlockNumberAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_SUM_BLOCK_NUMBER_ASC',
+  UnsignedProposalsQueueItemsByQueueIdSumBlockNumberDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_SUM_BLOCK_NUMBER_DESC',
   UnsignedProposalsQueueItemsByQueueIdSumIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_SUM_ID_ASC',
   UnsignedProposalsQueueItemsByQueueIdSumIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_SUM_ID_DESC',
   UnsignedProposalsQueueItemsByQueueIdSumProposalIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_SUM_PROPOSAL_ID_ASC',
   UnsignedProposalsQueueItemsByQueueIdSumProposalIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_SUM_PROPOSAL_ID_DESC',
   UnsignedProposalsQueueItemsByQueueIdSumQueueIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_SUM_QUEUE_ID_ASC',
   UnsignedProposalsQueueItemsByQueueIdSumQueueIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_SUM_QUEUE_ID_DESC',
+  UnsignedProposalsQueueItemsByQueueIdVariancePopulationBlockNumberAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_VARIANCE_POPULATION_BLOCK_NUMBER_ASC',
+  UnsignedProposalsQueueItemsByQueueIdVariancePopulationBlockNumberDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_VARIANCE_POPULATION_BLOCK_NUMBER_DESC',
   UnsignedProposalsQueueItemsByQueueIdVariancePopulationIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_VARIANCE_POPULATION_ID_ASC',
   UnsignedProposalsQueueItemsByQueueIdVariancePopulationIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_VARIANCE_POPULATION_ID_DESC',
   UnsignedProposalsQueueItemsByQueueIdVariancePopulationProposalIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_VARIANCE_POPULATION_PROPOSAL_ID_ASC',
   UnsignedProposalsQueueItemsByQueueIdVariancePopulationProposalIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_VARIANCE_POPULATION_PROPOSAL_ID_DESC',
   UnsignedProposalsQueueItemsByQueueIdVariancePopulationQueueIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_VARIANCE_POPULATION_QUEUE_ID_ASC',
   UnsignedProposalsQueueItemsByQueueIdVariancePopulationQueueIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_VARIANCE_POPULATION_QUEUE_ID_DESC',
+  UnsignedProposalsQueueItemsByQueueIdVarianceSampleBlockNumberAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_VARIANCE_SAMPLE_BLOCK_NUMBER_ASC',
+  UnsignedProposalsQueueItemsByQueueIdVarianceSampleBlockNumberDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_VARIANCE_SAMPLE_BLOCK_NUMBER_DESC',
   UnsignedProposalsQueueItemsByQueueIdVarianceSampleIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_VARIANCE_SAMPLE_ID_ASC',
   UnsignedProposalsQueueItemsByQueueIdVarianceSampleIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_VARIANCE_SAMPLE_ID_DESC',
   UnsignedProposalsQueueItemsByQueueIdVarianceSampleProposalIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_VARIANCE_SAMPLE_PROPOSAL_ID_ASC',
   UnsignedProposalsQueueItemsByQueueIdVarianceSampleProposalIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_VARIANCE_SAMPLE_PROPOSAL_ID_DESC',
   UnsignedProposalsQueueItemsByQueueIdVarianceSampleQueueIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_VARIANCE_SAMPLE_QUEUE_ID_ASC',
-  UnsignedProposalsQueueItemsByQueueIdVarianceSampleQueueIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_VARIANCE_SAMPLE_QUEUE_ID_DESC',
+  UnsignedProposalsQueueItemsByQueueIdVarianceSampleQueueIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_VARIANCE_SAMPLE_QUEUE_ID_DESC'
 }
 
 export type _Metadata = {
@@ -7368,191 +7678,67 @@ export type _Metadata = {
   targetHeight?: Maybe<Scalars['Int']>;
 };
 
-export type MetaDataQueryVariables = Exact<{ [key: string]: never }>;
+export type MetaDataQueryVariables = Exact<{ [key: string]: never; }>;
 
-export type MetaDataQuery = {
-  __typename?: 'Query';
-  _metadata?: { __typename?: '_Metadata'; targetHeight?: number | null; lastProcessedHeight?: number | null } | null;
-};
 
-export type ProposalCounterQueryVariables = Exact<{ [key: string]: never }>;
+export type MetaDataQuery = { __typename?: 'Query', _metadata?: { __typename?: '_Metadata', targetHeight?: number | null, lastProcessedHeight?: number | null } | null };
 
-export type ProposalCounterQuery = {
-  __typename?: 'Query';
-  proposalCounters?: {
-    __typename?: 'ProposalCountersConnection';
-    nodes: Array<{
-      __typename?: 'ProposalCounter';
-      id: string;
-      blockNumber: number;
-      unSignedProposalsCount: number;
-      signedProposalsCount: number;
-      statusMap?: any | null;
-      unSignedProposalsMap?: any | null;
-      signedProposalsMap?: any | null;
-    } | null>;
-  } | null;
-};
+export type ProposalCounterQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ProposalCounterQuery = { __typename?: 'Query', proposalCounters?: { __typename?: 'ProposalCountersConnection', nodes: Array<{ __typename?: 'ProposalCounter', id: string, blockNumber: number, unSignedProposalsCount: number, signedProposalsCount: number, statusMap?: any | null, unSignedProposalsMap?: any | null, signedProposalsMap?: any | null } | null> } | null };
 
 export type ProposalsQueryVariables = Exact<{
   PerPage: Scalars['Int'];
   Offset: Scalars['Int'];
 }>;
 
-export type ProposalsQuery = {
-  __typename?: 'Query';
-  proposalItems?: {
-    __typename?: 'ProposalItemsConnection';
-    nodes: Array<{
-      __typename?: 'ProposalItem';
-      id: string;
-      data: string;
-      signature?: string | null;
-      type: ProposalType;
-      status: string;
-      votes: any;
-      timelineStatus: any;
-      currentStatus: any;
-      block?: { __typename?: 'Block'; timestamp?: any | null; number: any } | null;
-    } | null>;
-  } | null;
-};
+
+export type ProposalsQuery = { __typename?: 'Query', proposalItems?: { __typename?: 'ProposalItemsConnection', nodes: Array<{ __typename?: 'ProposalItem', id: string, data: string, signature?: string | null, type: ProposalType, status: string, votes: any, timelineStatus: any, currentStatus: any, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null } | null> } | null };
 
 export type ProposalsCounterQueryVariables = Exact<{
   id: Scalars['String'];
 }>;
 
-export type ProposalsCounterQuery = {
-  __typename?: 'Query';
-  proposalCounter?: {
-    __typename?: 'ProposalCounter';
-    id: string;
-    signedProposalsMap?: any | null;
-    unSignedProposalsMap?: any | null;
-    signedProposalsCount: number;
-    unSignedProposalsCount: number;
-    statusMap?: any | null;
-    block?: { __typename?: 'Block'; number: any; timestamp?: any | null } | null;
-  } | null;
-};
+
+export type ProposalsCounterQuery = { __typename?: 'Query', proposalCounter?: { __typename?: 'ProposalCounter', id: string, signedProposalsMap?: any | null, unSignedProposalsMap?: any | null, signedProposalsCount: number, unSignedProposalsCount: number, statusMap?: any | null, block?: { __typename?: 'Block', number: any, timestamp?: any | null } | null } | null };
 
 export type PublicKeysQueryVariables = Exact<{
   PerPage?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
 }>;
 
-export type PublicKeysQuery = {
-  __typename?: 'Query';
-  publicKeys?: {
-    __typename?: 'PublicKeysConnection';
-    totalCount: number;
-    nodes: Array<{
-      __typename?: 'PublicKey';
-      id: string;
-      compressed?: string | null;
-      uncompressed?: string | null;
-      history: any;
-      block?: { __typename?: 'Block'; timestamp?: any | null; number: any } | null;
-      sessions: {
-        __typename?: 'SessionsConnection';
-        nodes: Array<{
-          __typename?: 'Session';
-          id: string;
-          bestAuthorities: any;
-          keyGenThreshold?: any | null;
-          signatureThreshold?: any | null;
-        } | null>;
-      };
-    } | null>;
-    pageInfo: {
-      __typename?: 'PageInfo';
-      hasNextPage: boolean;
-      hasPreviousPage: boolean;
-      startCursor?: any | null;
-      endCursor?: any | null;
-    };
-  } | null;
-};
+
+export type PublicKeysQuery = { __typename?: 'Query', publicKeys?: { __typename?: 'PublicKeysConnection', totalCount: number, nodes: Array<{ __typename?: 'PublicKey', id: string, compressed?: string | null, uncompressed?: string | null, history: any, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null, sessions: { __typename?: 'SessionsConnection', nodes: Array<{ __typename?: 'Session', id: string, bestAuthorities: any, keyGenThreshold?: any | null, signatureThreshold?: any | null } | null> } } | null>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: any | null, endCursor?: any | null } } | null };
 
 export type PublicKeyQueryVariables = Exact<{
   id: Scalars['String'];
 }>;
 
-export type PublicKeyQuery = {
-  __typename?: 'Query';
-  publicKey?: {
-    __typename?: 'PublicKey';
-    id: string;
-    compressed?: string | null;
-    uncompressed?: string | null;
-    history: any;
-    block?: { __typename?: 'Block'; timestamp?: any | null; number: any } | null;
-    sessions: {
-      __typename?: 'SessionsConnection';
-      nodes: Array<{
-        __typename?: 'Session';
-        id: string;
-        authorities: any;
-        bestAuthorities: any;
-        keyGenThreshold?: any | null;
-        signatureThreshold?: any | null;
-      } | null>;
-    };
-  } | null;
-};
 
-export type CurrentSessionAuthoritiesQueryVariables = Exact<{ [key: string]: never }>;
+export type PublicKeyQuery = { __typename?: 'Query', publicKey?: { __typename?: 'PublicKey', id: string, compressed?: string | null, uncompressed?: string | null, history: any, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null, sessions: { __typename?: 'SessionsConnection', nodes: Array<{ __typename?: 'Session', id: string, authorities: any, bestAuthorities: any, keyGenThreshold?: any | null, signatureThreshold?: any | null } | null> } } | null };
 
-export type CurrentSessionAuthoritiesQuery = {
-  __typename?: 'Query';
-  sessions?: {
-    __typename?: 'SessionsConnection';
-    nodes: Array<{
-      __typename?: 'Session';
-      id: string;
-      blockId: string;
-      authorities: any;
-      bestAuthorities: any;
-      signatureThreshold?: any | null;
-      keyGenThreshold?: any | null;
-      proposerThreshold?: any | null;
-      publicKey?: { __typename?: 'PublicKey'; compressed?: string | null } | null;
-      block?: { __typename?: 'Block'; id: string; timestamp?: any | null } | null;
-    } | null>;
-  } | null;
-};
+export type CurrentSessionAuthoritiesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type CurrentSessionAuthoritiesQuery = { __typename?: 'Query', sessions?: { __typename?: 'SessionsConnection', nodes: Array<{ __typename?: 'Session', id: string, blockId: string, authorities: any, bestAuthorities: any, signatureThreshold?: any | null, keyGenThreshold?: any | null, proposerThreshold?: any | null, publicKey?: { __typename?: 'PublicKey', compressed?: string | null } | null, block?: { __typename?: 'Block', id: string, timestamp?: any | null } | null } | null> } | null };
 
 export type SessionKeysQueryVariables = Exact<{
   SessionId: Array<Scalars['String']> | Scalars['String'];
 }>;
 
-export type SessionKeysQuery = {
-  __typename?: 'Query';
-  sessions?: {
-    __typename?: 'SessionsConnection';
-    nodes: Array<{
-      __typename?: 'Session';
-      id: string;
-      bestAuthorities: any;
-      publicKey?: {
-        __typename?: 'PublicKey';
-        id: string;
-        compressed?: string | null;
-        uncompressed?: string | null;
-        block?: { __typename?: 'Block'; timestamp?: any | null; number: any } | null;
-      } | null;
-    } | null>;
-  } | null;
-};
+
+export type SessionKeysQuery = { __typename?: 'Query', sessions?: { __typename?: 'SessionsConnection', nodes: Array<{ __typename?: 'Session', id: string, bestAuthorities: any, publicKey?: { __typename?: 'PublicKey', id: string, compressed?: string | null, uncompressed?: string | null, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null } | null } | null> } | null };
+
 
 export const MetaDataDocument = gql`
-  query MetaData {
-    _metadata {
-      targetHeight
-      lastProcessedHeight
-    }
+    query MetaData {
+  _metadata {
+    targetHeight
+    lastProcessedHeight
   }
-`;
+}
+    `;
 
 /**
  * __useMetaDataQuery__
@@ -7570,31 +7756,31 @@ export const MetaDataDocument = gql`
  * });
  */
 export function useMetaDataQuery(baseOptions?: Apollo.QueryHookOptions<MetaDataQuery, MetaDataQueryVariables>) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<MetaDataQuery, MetaDataQueryVariables>(MetaDataDocument, options);
-}
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<MetaDataQuery, MetaDataQueryVariables>(MetaDataDocument, options);
+      }
 export function useMetaDataLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MetaDataQuery, MetaDataQueryVariables>) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<MetaDataQuery, MetaDataQueryVariables>(MetaDataDocument, options);
-}
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<MetaDataQuery, MetaDataQueryVariables>(MetaDataDocument, options);
+        }
 export type MetaDataQueryHookResult = ReturnType<typeof useMetaDataQuery>;
 export type MetaDataLazyQueryHookResult = ReturnType<typeof useMetaDataLazyQuery>;
 export type MetaDataQueryResult = Apollo.QueryResult<MetaDataQuery, MetaDataQueryVariables>;
 export const ProposalCounterDocument = gql`
-  query ProposalCounter {
-    proposalCounters(first: 2, offset: 1, orderBy: [BLOCK_NUMBER_DESC]) {
-      nodes {
-        id
-        blockNumber
-        unSignedProposalsCount
-        signedProposalsCount
-        statusMap
-        unSignedProposalsMap
-        signedProposalsMap
-      }
+    query ProposalCounter {
+  proposalCounters(first: 2, offset: 1, orderBy: [BLOCK_NUMBER_DESC]) {
+    nodes {
+      id
+      blockNumber
+      unSignedProposalsCount
+      signedProposalsCount
+      statusMap
+      unSignedProposalsMap
+      signedProposalsMap
     }
   }
-`;
+}
+    `;
 
 /**
  * __useProposalCounterQuery__
@@ -7611,41 +7797,37 @@ export const ProposalCounterDocument = gql`
  *   },
  * });
  */
-export function useProposalCounterQuery(
-  baseOptions?: Apollo.QueryHookOptions<ProposalCounterQuery, ProposalCounterQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<ProposalCounterQuery, ProposalCounterQueryVariables>(ProposalCounterDocument, options);
-}
-export function useProposalCounterLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<ProposalCounterQuery, ProposalCounterQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<ProposalCounterQuery, ProposalCounterQueryVariables>(ProposalCounterDocument, options);
-}
+export function useProposalCounterQuery(baseOptions?: Apollo.QueryHookOptions<ProposalCounterQuery, ProposalCounterQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ProposalCounterQuery, ProposalCounterQueryVariables>(ProposalCounterDocument, options);
+      }
+export function useProposalCounterLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ProposalCounterQuery, ProposalCounterQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ProposalCounterQuery, ProposalCounterQueryVariables>(ProposalCounterDocument, options);
+        }
 export type ProposalCounterQueryHookResult = ReturnType<typeof useProposalCounterQuery>;
 export type ProposalCounterLazyQueryHookResult = ReturnType<typeof useProposalCounterLazyQuery>;
 export type ProposalCounterQueryResult = Apollo.QueryResult<ProposalCounterQuery, ProposalCounterQueryVariables>;
 export const ProposalsDocument = gql`
-  query Proposals($PerPage: Int!, $Offset: Int!) {
-    proposalItems(first: $PerPage, offset: $Offset) {
-      nodes {
-        id
-        data
-        signature
-        type
-        status
-        votes
-        timelineStatus
-        currentStatus
-        block {
-          timestamp
-          number
-        }
+    query Proposals($PerPage: Int!, $Offset: Int!) {
+  proposalItems(first: $PerPage, offset: $Offset) {
+    nodes {
+      id
+      data
+      signature
+      type
+      status
+      votes
+      timelineStatus
+      currentStatus
+      block {
+        timestamp
+        number
       }
     }
   }
-`;
+}
+    `;
 
 /**
  * __useProposalsQuery__
@@ -7665,34 +7847,32 @@ export const ProposalsDocument = gql`
  * });
  */
 export function useProposalsQuery(baseOptions: Apollo.QueryHookOptions<ProposalsQuery, ProposalsQueryVariables>) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<ProposalsQuery, ProposalsQueryVariables>(ProposalsDocument, options);
-}
-export function useProposalsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<ProposalsQuery, ProposalsQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<ProposalsQuery, ProposalsQueryVariables>(ProposalsDocument, options);
-}
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ProposalsQuery, ProposalsQueryVariables>(ProposalsDocument, options);
+      }
+export function useProposalsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ProposalsQuery, ProposalsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ProposalsQuery, ProposalsQueryVariables>(ProposalsDocument, options);
+        }
 export type ProposalsQueryHookResult = ReturnType<typeof useProposalsQuery>;
 export type ProposalsLazyQueryHookResult = ReturnType<typeof useProposalsLazyQuery>;
 export type ProposalsQueryResult = Apollo.QueryResult<ProposalsQuery, ProposalsQueryVariables>;
 export const ProposalsCounterDocument = gql`
-  query ProposalsCounter($id: String!) {
-    proposalCounter(id: $id) {
-      id
-      signedProposalsMap
-      unSignedProposalsMap
-      signedProposalsCount
-      unSignedProposalsCount
-      statusMap
-      block {
-        number
-        timestamp
-      }
+    query ProposalsCounter($id: String!) {
+  proposalCounter(id: $id) {
+    id
+    signedProposalsMap
+    unSignedProposalsMap
+    signedProposalsCount
+    unSignedProposalsCount
+    statusMap
+    block {
+      number
+      timestamp
     }
   }
-`;
+}
+    `;
 
 /**
  * __useProposalsCounterQuery__
@@ -7710,52 +7890,52 @@ export const ProposalsCounterDocument = gql`
  *   },
  * });
  */
-export function useProposalsCounterQuery(
-  baseOptions: Apollo.QueryHookOptions<ProposalsCounterQuery, ProposalsCounterQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<ProposalsCounterQuery, ProposalsCounterQueryVariables>(ProposalsCounterDocument, options);
-}
-export function useProposalsCounterLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<ProposalsCounterQuery, ProposalsCounterQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<ProposalsCounterQuery, ProposalsCounterQueryVariables>(ProposalsCounterDocument, options);
-}
+export function useProposalsCounterQuery(baseOptions: Apollo.QueryHookOptions<ProposalsCounterQuery, ProposalsCounterQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ProposalsCounterQuery, ProposalsCounterQueryVariables>(ProposalsCounterDocument, options);
+      }
+export function useProposalsCounterLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ProposalsCounterQuery, ProposalsCounterQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ProposalsCounterQuery, ProposalsCounterQueryVariables>(ProposalsCounterDocument, options);
+        }
 export type ProposalsCounterQueryHookResult = ReturnType<typeof useProposalsCounterQuery>;
 export type ProposalsCounterLazyQueryHookResult = ReturnType<typeof useProposalsCounterLazyQuery>;
 export type ProposalsCounterQueryResult = Apollo.QueryResult<ProposalsCounterQuery, ProposalsCounterQueryVariables>;
 export const PublicKeysDocument = gql`
-  query PublicKeys($PerPage: Int, $offset: Int) {
-    publicKeys(first: $PerPage, offset: $offset, orderBy: [SESSIONS_SUM_BLOCK_NUMBER_ASC]) {
-      nodes {
-        id
-        compressed
-        uncompressed
-        history
-        block {
-          timestamp
-          number
-        }
-        sessions(first: 1) {
-          nodes {
-            id
-            bestAuthorities
-            keyGenThreshold
-            signatureThreshold
-          }
+    query PublicKeys($PerPage: Int, $offset: Int) {
+  publicKeys(
+    first: $PerPage
+    offset: $offset
+    orderBy: [SESSIONS_SUM_BLOCK_NUMBER_ASC]
+  ) {
+    nodes {
+      id
+      compressed
+      uncompressed
+      history
+      block {
+        timestamp
+        number
+      }
+      sessions(first: 1) {
+        nodes {
+          id
+          bestAuthorities
+          keyGenThreshold
+          signatureThreshold
         }
       }
-      pageInfo {
-        hasNextPage
-        hasPreviousPage
-        startCursor
-        endCursor
-      }
-      totalCount
     }
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+    totalCount
   }
-`;
+}
+    `;
 
 /**
  * __usePublicKeysQuery__
@@ -7775,41 +7955,39 @@ export const PublicKeysDocument = gql`
  * });
  */
 export function usePublicKeysQuery(baseOptions?: Apollo.QueryHookOptions<PublicKeysQuery, PublicKeysQueryVariables>) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<PublicKeysQuery, PublicKeysQueryVariables>(PublicKeysDocument, options);
-}
-export function usePublicKeysLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<PublicKeysQuery, PublicKeysQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<PublicKeysQuery, PublicKeysQueryVariables>(PublicKeysDocument, options);
-}
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<PublicKeysQuery, PublicKeysQueryVariables>(PublicKeysDocument, options);
+      }
+export function usePublicKeysLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PublicKeysQuery, PublicKeysQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<PublicKeysQuery, PublicKeysQueryVariables>(PublicKeysDocument, options);
+        }
 export type PublicKeysQueryHookResult = ReturnType<typeof usePublicKeysQuery>;
 export type PublicKeysLazyQueryHookResult = ReturnType<typeof usePublicKeysLazyQuery>;
 export type PublicKeysQueryResult = Apollo.QueryResult<PublicKeysQuery, PublicKeysQueryVariables>;
 export const PublicKeyDocument = gql`
-  query PublicKey($id: String!) {
-    publicKey(id: $id) {
-      id
-      compressed
-      uncompressed
-      history
-      block {
-        timestamp
-        number
-      }
-      sessions(first: 1) {
-        nodes {
-          id
-          authorities
-          bestAuthorities
-          keyGenThreshold
-          signatureThreshold
-        }
+    query PublicKey($id: String!) {
+  publicKey(id: $id) {
+    id
+    compressed
+    uncompressed
+    history
+    block {
+      timestamp
+      number
+    }
+    sessions(first: 1) {
+      nodes {
+        id
+        authorities
+        bestAuthorities
+        keyGenThreshold
+        signatureThreshold
       }
     }
   }
-`;
+}
+    `;
 
 /**
  * __usePublicKeyQuery__
@@ -7828,40 +8006,38 @@ export const PublicKeyDocument = gql`
  * });
  */
 export function usePublicKeyQuery(baseOptions: Apollo.QueryHookOptions<PublicKeyQuery, PublicKeyQueryVariables>) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<PublicKeyQuery, PublicKeyQueryVariables>(PublicKeyDocument, options);
-}
-export function usePublicKeyLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<PublicKeyQuery, PublicKeyQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<PublicKeyQuery, PublicKeyQueryVariables>(PublicKeyDocument, options);
-}
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<PublicKeyQuery, PublicKeyQueryVariables>(PublicKeyDocument, options);
+      }
+export function usePublicKeyLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PublicKeyQuery, PublicKeyQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<PublicKeyQuery, PublicKeyQueryVariables>(PublicKeyDocument, options);
+        }
 export type PublicKeyQueryHookResult = ReturnType<typeof usePublicKeyQuery>;
 export type PublicKeyLazyQueryHookResult = ReturnType<typeof usePublicKeyLazyQuery>;
 export type PublicKeyQueryResult = Apollo.QueryResult<PublicKeyQuery, PublicKeyQueryVariables>;
 export const CurrentSessionAuthoritiesDocument = gql`
-  query CurrentSessionAuthorities {
-    sessions(last: 1, orderBy: [BLOCK_NUMBER_DESC]) {
-      nodes {
+    query CurrentSessionAuthorities {
+  sessions(last: 1, orderBy: [BLOCK_NUMBER_DESC]) {
+    nodes {
+      id
+      blockId
+      authorities
+      bestAuthorities
+      publicKey {
+        compressed
+      }
+      signatureThreshold
+      keyGenThreshold
+      proposerThreshold
+      block {
         id
-        blockId
-        authorities
-        bestAuthorities
-        publicKey {
-          compressed
-        }
-        signatureThreshold
-        keyGenThreshold
-        proposerThreshold
-        block {
-          id
-          timestamp
-        }
+        timestamp
       }
     }
   }
-`;
+}
+    `;
 
 /**
  * __useCurrentSessionAuthoritiesQuery__
@@ -7878,49 +8054,36 @@ export const CurrentSessionAuthoritiesDocument = gql`
  *   },
  * });
  */
-export function useCurrentSessionAuthoritiesQuery(
-  baseOptions?: Apollo.QueryHookOptions<CurrentSessionAuthoritiesQuery, CurrentSessionAuthoritiesQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<CurrentSessionAuthoritiesQuery, CurrentSessionAuthoritiesQueryVariables>(
-    CurrentSessionAuthoritiesDocument,
-    options
-  );
-}
-export function useCurrentSessionAuthoritiesLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<CurrentSessionAuthoritiesQuery, CurrentSessionAuthoritiesQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<CurrentSessionAuthoritiesQuery, CurrentSessionAuthoritiesQueryVariables>(
-    CurrentSessionAuthoritiesDocument,
-    options
-  );
-}
+export function useCurrentSessionAuthoritiesQuery(baseOptions?: Apollo.QueryHookOptions<CurrentSessionAuthoritiesQuery, CurrentSessionAuthoritiesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<CurrentSessionAuthoritiesQuery, CurrentSessionAuthoritiesQueryVariables>(CurrentSessionAuthoritiesDocument, options);
+      }
+export function useCurrentSessionAuthoritiesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CurrentSessionAuthoritiesQuery, CurrentSessionAuthoritiesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<CurrentSessionAuthoritiesQuery, CurrentSessionAuthoritiesQueryVariables>(CurrentSessionAuthoritiesDocument, options);
+        }
 export type CurrentSessionAuthoritiesQueryHookResult = ReturnType<typeof useCurrentSessionAuthoritiesQuery>;
 export type CurrentSessionAuthoritiesLazyQueryHookResult = ReturnType<typeof useCurrentSessionAuthoritiesLazyQuery>;
-export type CurrentSessionAuthoritiesQueryResult = Apollo.QueryResult<
-  CurrentSessionAuthoritiesQuery,
-  CurrentSessionAuthoritiesQueryVariables
->;
+export type CurrentSessionAuthoritiesQueryResult = Apollo.QueryResult<CurrentSessionAuthoritiesQuery, CurrentSessionAuthoritiesQueryVariables>;
 export const SessionKeysDocument = gql`
-  query SessionKeys($SessionId: [String!]!) {
-    sessions(filter: { id: { in: $SessionId } }) {
-      nodes {
+    query SessionKeys($SessionId: [String!]!) {
+  sessions(filter: {id: {in: $SessionId}}) {
+    nodes {
+      id
+      bestAuthorities
+      publicKey {
         id
-        bestAuthorities
-        publicKey {
-          id
-          compressed
-          uncompressed
-          block {
-            timestamp
-            number
-          }
+        compressed
+        uncompressed
+        block {
+          timestamp
+          number
         }
       }
     }
   }
-`;
+}
+    `;
 
 /**
  * __useSessionKeysQuery__
@@ -7939,15 +8102,13 @@ export const SessionKeysDocument = gql`
  * });
  */
 export function useSessionKeysQuery(baseOptions: Apollo.QueryHookOptions<SessionKeysQuery, SessionKeysQueryVariables>) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<SessionKeysQuery, SessionKeysQueryVariables>(SessionKeysDocument, options);
-}
-export function useSessionKeysLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<SessionKeysQuery, SessionKeysQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<SessionKeysQuery, SessionKeysQueryVariables>(SessionKeysDocument, options);
-}
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SessionKeysQuery, SessionKeysQueryVariables>(SessionKeysDocument, options);
+      }
+export function useSessionKeysLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SessionKeysQuery, SessionKeysQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SessionKeysQuery, SessionKeysQueryVariables>(SessionKeysDocument, options);
+        }
 export type SessionKeysQueryHookResult = ReturnType<typeof useSessionKeysQuery>;
 export type SessionKeysLazyQueryHookResult = ReturnType<typeof useSessionKeysLazyQuery>;
 export type SessionKeysQueryResult = Apollo.QueryResult<SessionKeysQuery, SessionKeysQueryVariables>;
