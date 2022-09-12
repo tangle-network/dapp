@@ -1,25 +1,43 @@
-import { MetaDataQuery, useMetaDataQuery } from '@webb-dapp/page-statistics/generated/graphql';
+import { useMetaDataQuery } from '@webb-dapp/page-statistics/generated/graphql';
 import { Loadable } from '@webb-dapp/page-statistics/provider/hooks/types';
 import { useEffect, useState } from 'react';
 
+/**
+ * Chain metadata
+ * @param currentBlock - the current block number
+ * @param lastProcessBlock - The block number where the data syncing is done
+ * @param activeSession - the current active session
+ * @param lastSession - the last created session
+ *
+ * */
 type Metadata = {
   currentBlock: string;
   lastProcessBlock: string;
   lastSession: string;
   activeSession: string;
 };
+/**
+ *
+ * Get the current session from metadata
+ * */
 export function session(height: string) {
   const blockNumber = Number(height);
   const sessionNumber = Math.floor(blockNumber / 10) * 10;
 
   return String(sessionNumber - 10);
 }
+
+/**
+ *
+ * Get the next session from metadata
+ * */
 export function nextSession(height: string): string {
   const blockNumber = Number(height);
   const sessionNumber = Math.floor(blockNumber / 10) * 10;
 
   return String(sessionNumber);
 }
+
 export function useCurrentMetaData(): Loadable<Metadata> {
   const query = useMetaDataQuery({
     fetchPolicy: 'cache-and-network',
