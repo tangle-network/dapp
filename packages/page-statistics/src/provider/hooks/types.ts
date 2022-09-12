@@ -61,6 +61,8 @@ export interface SessionKeyHistory {
   txHash: string;
 
   blockNumber: string;
+
+  timestamp: string;
 }
 export interface DKGAuthority {
   authorityId: string;

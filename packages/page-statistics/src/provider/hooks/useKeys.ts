@@ -288,8 +288,7 @@ export function useKey(id: string): Loadable<PublicKeyDetails> {
           const session = publicKey.sessions?.nodes[0]!;
           const history: PublicKeyHistoryEntry[] = (publicKey.history as SessionKeyHistory[]).map((val) => {
             return {
-              // TODO fix date
-              at: new Date(Date.now()),
+              at: new Date(val.timestamp),
               status: val.stage,
               hash: val.txHash,
             };
