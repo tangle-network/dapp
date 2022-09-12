@@ -49,6 +49,7 @@ interface PublicKeyDetails extends PublicKeyContent {
   history: PublicKeyHistoryEntry[];
   keyGenThreshold: string;
   signatureThreshold: string;
+  numberOfValidators: number;
   authorities: Array<KeyGenAuthority>;
 }
 /**
@@ -217,6 +218,7 @@ export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
  * */
 export function useKey(id: string): Loadable<PublicKeyDetails> {
   const [call, query] = usePublicKeyLazyQuery();
+
   const [key, setKey] = useState<Loadable<PublicKeyDetails>>({
     val: null,
     isFailed: false,
@@ -260,6 +262,7 @@ export function useKey(id: string): Loadable<PublicKeyDetails> {
               uptime: 100,
             };
           });
+          const validators = (session.authorities as []).length;
           return {
             isFailed: false,
             isLoading: false,
@@ -271,6 +274,7 @@ export function useKey(id: string): Loadable<PublicKeyDetails> {
               end: new Date(publicKey.block!.timestamp),
               start: new Date(publicKey.block!.timestamp),
               history,
+              numberOfValidators: validators,
               isCurrent: true,
               authorities,
               keyGenThreshold: String((session.keyGenThreshold as Threshold).current),

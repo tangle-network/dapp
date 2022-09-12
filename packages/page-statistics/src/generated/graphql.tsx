@@ -7484,10 +7484,20 @@ export type ProposalCounterQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type ProposalCounterQuery = { __typename?: 'Query', proposalCounters?: { __typename?: 'ProposalCountersConnection', nodes: Array<{ __typename?: 'ProposalCounter', id: string, blockNumber: number, unSignedProposalsCount: number, signedProposalsCount: number, statusMap?: any | null, unSignedProposalsMap?: any | null, signedProposalsMap?: any | null } | null> } | null };
 
-export type ProposalsQueryVariables = Exact<{ [key: string]: never; }>;
+export type ProposalsQueryVariables = Exact<{
+  PerPage: Scalars['Int'];
+  Offset: Scalars['Int'];
+}>;
 
 
 export type ProposalsQuery = { __typename?: 'Query', proposalItems?: { __typename?: 'ProposalItemsConnection', nodes: Array<{ __typename?: 'ProposalItem', id: string, data: string, signature?: string | null, type: ProposalType, status: string, votes: any, timelineStatus: any, currentStatus: any, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null } | null> } | null };
+
+export type ProposalsCounterQueryVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type ProposalsCounterQuery = { __typename?: 'Query', proposalCounter?: { __typename?: 'ProposalCounter', id: string, signedProposalsMap?: any | null, unSignedProposalsMap?: any | null, signedProposalsCount: number, unSignedProposalsCount: number, statusMap?: any | null, block?: { __typename?: 'Block', number: any, timestamp?: any | null } | null } | null };
 
 export type PublicKeysQueryVariables = Exact<{
   PerPage?: InputMaybe<Scalars['Int']>;
@@ -7502,7 +7512,7 @@ export type PublicKeyQueryVariables = Exact<{
 }>;
 
 
-export type PublicKeyQuery = { __typename?: 'Query', publicKey?: { __typename?: 'PublicKey', id: string, compressed?: string | null, uncompressed?: string | null, history: any, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null, sessions: { __typename?: 'SessionsConnection', nodes: Array<{ __typename?: 'Session', id: string, bestAuthorities: any, keyGenThreshold?: any | null, signatureThreshold?: any | null } | null> } } | null };
+export type PublicKeyQuery = { __typename?: 'Query', publicKey?: { __typename?: 'PublicKey', id: string, compressed?: string | null, uncompressed?: string | null, history: any, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null, sessions: { __typename?: 'SessionsConnection', nodes: Array<{ __typename?: 'Session', id: string, authorities: any, bestAuthorities: any, keyGenThreshold?: any | null, signatureThreshold?: any | null } | null> } } | null };
 
 export type CurrentSessionAuthoritiesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -7595,8 +7605,8 @@ export type ProposalCounterQueryHookResult = ReturnType<typeof useProposalCounte
 export type ProposalCounterLazyQueryHookResult = ReturnType<typeof useProposalCounterLazyQuery>;
 export type ProposalCounterQueryResult = Apollo.QueryResult<ProposalCounterQuery, ProposalCounterQueryVariables>;
 export const ProposalsDocument = gql`
-    query Proposals {
-  proposalItems {
+    query Proposals($PerPage: Int!, $Offset: Int!) {
+  proposalItems(first: $PerPage, offset: $Offset) {
     nodes {
       id
       data
@@ -7627,10 +7637,12 @@ export const ProposalsDocument = gql`
  * @example
  * const { data, loading, error } = useProposalsQuery({
  *   variables: {
+ *      PerPage: // value for 'PerPage'
+ *      Offset: // value for 'Offset'
  *   },
  * });
  */
-export function useProposalsQuery(baseOptions?: Apollo.QueryHookOptions<ProposalsQuery, ProposalsQueryVariables>) {
+export function useProposalsQuery(baseOptions: Apollo.QueryHookOptions<ProposalsQuery, ProposalsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<ProposalsQuery, ProposalsQueryVariables>(ProposalsDocument, options);
       }
@@ -7641,6 +7653,50 @@ export function useProposalsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<
 export type ProposalsQueryHookResult = ReturnType<typeof useProposalsQuery>;
 export type ProposalsLazyQueryHookResult = ReturnType<typeof useProposalsLazyQuery>;
 export type ProposalsQueryResult = Apollo.QueryResult<ProposalsQuery, ProposalsQueryVariables>;
+export const ProposalsCounterDocument = gql`
+    query ProposalsCounter($id: String!) {
+  proposalCounter(id: $id) {
+    id
+    signedProposalsMap
+    unSignedProposalsMap
+    signedProposalsCount
+    unSignedProposalsCount
+    statusMap
+    block {
+      number
+      timestamp
+    }
+  }
+}
+    `;
+
+/**
+ * __useProposalsCounterQuery__
+ *
+ * To run a query within a React component, call `useProposalsCounterQuery` and pass it any options that fit your needs.
+ * When your component renders, `useProposalsCounterQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useProposalsCounterQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useProposalsCounterQuery(baseOptions: Apollo.QueryHookOptions<ProposalsCounterQuery, ProposalsCounterQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ProposalsCounterQuery, ProposalsCounterQueryVariables>(ProposalsCounterDocument, options);
+      }
+export function useProposalsCounterLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ProposalsCounterQuery, ProposalsCounterQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ProposalsCounterQuery, ProposalsCounterQueryVariables>(ProposalsCounterDocument, options);
+        }
+export type ProposalsCounterQueryHookResult = ReturnType<typeof useProposalsCounterQuery>;
+export type ProposalsCounterLazyQueryHookResult = ReturnType<typeof useProposalsCounterLazyQuery>;
+export type ProposalsCounterQueryResult = Apollo.QueryResult<ProposalsCounterQuery, ProposalsCounterQueryVariables>;
 export const PublicKeysDocument = gql`
     query PublicKeys($PerPage: Int, $offset: Int) {
   publicKeys(
@@ -7719,6 +7775,7 @@ export const PublicKeyDocument = gql`
     sessions(first: 1) {
       nodes {
         id
+        authorities
         bestAuthorities
         keyGenThreshold
         signatureThreshold
