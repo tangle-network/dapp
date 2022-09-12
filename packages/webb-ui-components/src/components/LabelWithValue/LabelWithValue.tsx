@@ -1,4 +1,5 @@
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
+import cx from 'classnames';
 import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
@@ -15,11 +16,11 @@ import { LabelWithValueProps } from './types';
  * ```
  */
 export const LabelWithValue = forwardRef<HTMLSpanElement, LabelWithValueProps>(
-  ({ className, label, value, ...props }, ref) => {
+  ({ className, isHiddenLabel, label, value, ...props }, ref) => {
     const mergedClsx = useMemo(() => twMerge('flex items-center space-x-1', className), [className]);
     return (
       <span {...props} className={mergedClsx} ref={ref}>
-        <Label className='font-bold uppercase body4' htmlFor={label}>
+        <Label className={cx('font-bold uppercase body4', isHiddenLabel && 'hidden')} htmlFor={label}>
           {label}
         </Label>
         <Typography component='span' variant='body2'>

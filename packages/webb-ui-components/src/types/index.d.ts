@@ -1,11 +1,20 @@
+/******************
+ * DECLARE GLOBAL *
+ ******************/
+
 declare module '*.svg' {
   const content: any;
   export default content;
 }
 
+/****************
+ * SYSTEM TYPES *
+ ****************/
+
 /**
  * The base interface required all component to extends in their props
  */
+
 export interface WebbComponentBase extends React.HTMLAttributes<HTMLElement> {
   /**
    * The tailwindcss className to override the style
@@ -20,6 +29,48 @@ export interface WebbComponentBase extends React.HTMLAttributes<HTMLElement> {
    */
   children?: React.ReactNode;
 }
+
+/**
+ * The `Keygen` type
+ */
+export interface KeygenType {
+  /**
+   * Block height
+   */
+  height: number;
+  /**
+   * The session number
+   */
+  session: number;
+  /**
+   * The actual key, a hex string
+   */
+  key: string;
+  /**
+   * The keygen threshold
+   */
+  keygenThreshold: number;
+  /**
+   * The signatures threshold
+   */
+  signatureThreshold: number;
+  /**
+   * The authorities attend to the process
+   */
+  authorities: AuthoritiesType;
+  /**
+   * Size of the authorities set
+   */
+  totalAuthorities: number;
+  /**
+   * The detail url link to the detail of and keygen
+   */
+  detailUrl: string;
+}
+
+/*****************
+ * UTILITY TYPES *
+ *****************/
 
 /**
  * Extract the props of a React element or component

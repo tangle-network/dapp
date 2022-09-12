@@ -7,6 +7,7 @@ import {
   DropdownMenu,
   Input,
   KeyCard,
+  KeygenTable,
   KeyStatusCard,
   NetworkThresholdsCard,
   Progress,
@@ -43,12 +44,17 @@ export const Mixer: React.FC<MixerProps> = () => {
 
   const [sliderVal, setSliderVal] = useState([12, 24]);
 
+  // Status card data
   const statusCardData = useKeyStatusSeedData();
+
+  // Network threshold data
   const networkThresholdsData = useNetworkThresholdsSeedData();
 
   return (
     <MixerWrapper>
       <MixerTabs Withdraw={<Withdraw />} Deposit={<Deposit />} />
+
+      <KeygenTable />
 
       <div className='flex mt-6 justify-evenly'>
         <KeyCard
