@@ -10,7 +10,7 @@ export type Loadable<T> = {
   val: T | null;
   isLoading: boolean;
   isFailed: boolean;
-  failed?: string;
+  error?: string;
 };
 // SPDX-License-Identifier: Apache-2.0
 

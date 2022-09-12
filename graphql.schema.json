@@ -18055,6 +18055,18 @@
             "deprecationReason": null
           },
           {
+            "name": "UNSIGNED_PROPOSALS_QUEUES_AVERAGE_BLOCK_NUMBER_ASC",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "UNSIGNED_PROPOSALS_QUEUES_AVERAGE_BLOCK_NUMBER_DESC",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "UNSIGNED_PROPOSALS_QUEUES_AVERAGE_ID_ASC",
             "description": null,
             "isDeprecated": false,
@@ -18091,6 +18103,18 @@
             "deprecationReason": null
           },
           {
+            "name": "UNSIGNED_PROPOSALS_QUEUES_DISTINCT_COUNT_BLOCK_NUMBER_ASC",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "UNSIGNED_PROPOSALS_QUEUES_DISTINCT_COUNT_BLOCK_NUMBER_DESC",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "UNSIGNED_PROPOSALS_QUEUES_DISTINCT_COUNT_ID_ASC",
             "description": null,
             "isDeprecated": false,
@@ -18110,6 +18134,18 @@
           },
           {
             "name": "UNSIGNED_PROPOSALS_QUEUES_MAX_BLOCK_ID_DESC",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "UNSIGNED_PROPOSALS_QUEUES_MAX_BLOCK_NUMBER_ASC",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "UNSIGNED_PROPOSALS_QUEUES_MAX_BLOCK_NUMBER_DESC",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -18139,6 +18175,18 @@
             "deprecationReason": null
           },
           {
+            "name": "UNSIGNED_PROPOSALS_QUEUES_MIN_BLOCK_NUMBER_ASC",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "UNSIGNED_PROPOSALS_QUEUES_MIN_BLOCK_NUMBER_DESC",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "UNSIGNED_PROPOSALS_QUEUES_MIN_ID_ASC",
             "description": null,
             "isDeprecated": false,
@@ -18158,6 +18206,18 @@
           },
           {
             "name": "UNSIGNED_PROPOSALS_QUEUES_STDDEV_POPULATION_BLOCK_ID_DESC",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "UNSIGNED_PROPOSALS_QUEUES_STDDEV_POPULATION_BLOCK_NUMBER_ASC",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "UNSIGNED_PROPOSALS_QUEUES_STDDEV_POPULATION_BLOCK_NUMBER_DESC",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -18187,6 +18247,18 @@
             "deprecationReason": null
           },
           {
+            "name": "UNSIGNED_PROPOSALS_QUEUES_STDDEV_SAMPLE_BLOCK_NUMBER_ASC",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "UNSIGNED_PROPOSALS_QUEUES_STDDEV_SAMPLE_BLOCK_NUMBER_DESC",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "UNSIGNED_PROPOSALS_QUEUES_STDDEV_SAMPLE_ID_ASC",
             "description": null,
             "isDeprecated": false,
@@ -18206,6 +18278,18 @@
           },
           {
             "name": "UNSIGNED_PROPOSALS_QUEUES_SUM_BLOCK_ID_DESC",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "UNSIGNED_PROPOSALS_QUEUES_SUM_BLOCK_NUMBER_ASC",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "UNSIGNED_PROPOSALS_QUEUES_SUM_BLOCK_NUMBER_DESC",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -18235,6 +18319,18 @@
             "deprecationReason": null
           },
           {
+            "name": "UNSIGNED_PROPOSALS_QUEUES_VARIANCE_POPULATION_BLOCK_NUMBER_ASC",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "UNSIGNED_PROPOSALS_QUEUES_VARIANCE_POPULATION_BLOCK_NUMBER_DESC",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "UNSIGNED_PROPOSALS_QUEUES_VARIANCE_POPULATION_ID_ASC",
             "description": null,
             "isDeprecated": false,
@@ -18254,6 +18350,18 @@
           },
           {
             "name": "UNSIGNED_PROPOSALS_QUEUES_VARIANCE_SAMPLE_BLOCK_ID_DESC",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "UNSIGNED_PROPOSALS_QUEUES_VARIANCE_SAMPLE_BLOCK_NUMBER_ASC",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "UNSIGNED_PROPOSALS_QUEUES_VARIANCE_SAMPLE_BLOCK_NUMBER_DESC",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -43425,6 +43533,22 @@
             "deprecationReason": null
           },
           {
+            "name": "blockNumber",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "id",
             "description": null,
             "args": [],
@@ -43692,6 +43816,18 @@
         "description": null,
         "fields": [
           {
+            "name": "average",
+            "description": "Mean average aggregates across the matching connection (ignoring before/after/first/last/offset)",
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "UnsignedProposalsQueueAverageAggregates",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "distinctCount",
             "description": "Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset)",
             "args": [],
@@ -43722,6 +43858,113 @@
             },
             "isDeprecated": false,
             "deprecationReason": null
+          },
+          {
+            "name": "max",
+            "description": "Maximum aggregates across the matching connection (ignoring before/after/first/last/offset)",
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "UnsignedProposalsQueueMaxAggregates",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "min",
+            "description": "Minimum aggregates across the matching connection (ignoring before/after/first/last/offset)",
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "UnsignedProposalsQueueMinAggregates",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "stddevPopulation",
+            "description": "Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)",
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "UnsignedProposalsQueueStddevPopulationAggregates",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "stddevSample",
+            "description": "Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)",
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "UnsignedProposalsQueueStddevSampleAggregates",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "sum",
+            "description": "Sum aggregates across the matching connection (ignoring before/after/first/last/offset)",
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "UnsignedProposalsQueueSumAggregates",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "variancePopulation",
+            "description": "Population variance aggregates across the matching connection (ignoring before/after/first/last/offset)",
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "UnsignedProposalsQueueVariancePopulationAggregates",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "varianceSample",
+            "description": "Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset)",
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "UnsignedProposalsQueueVarianceSampleAggregates",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "UnsignedProposalsQueueAverageAggregates",
+        "description": null,
+        "fields": [
+          {
+            "name": "blockNumber",
+            "description": "Mean average of blockNumber across the matching connection",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigFloat",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
           }
         ],
         "inputFields": null,
@@ -43737,6 +43980,18 @@
           {
             "name": "blockId",
             "description": "Distinct count of blockId across the matching connection",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "blockNumber",
+            "description": "Distinct count of blockNumber across the matching connection",
             "args": [],
             "type": {
               "kind": "SCALAR",
@@ -43796,6 +44051,18 @@
             "type": {
               "kind": "INPUT_OBJECT",
               "name": "StringFilter",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "blockNumber",
+            "description": "Filter by the object’s `blockNumber` field.",
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "IntFilter",
               "ofType": null
             },
             "defaultValue": null,
@@ -44477,6 +44744,52 @@
       },
       {
         "kind": "OBJECT",
+        "name": "UnsignedProposalsQueueMaxAggregates",
+        "description": null,
+        "fields": [
+          {
+            "name": "blockNumber",
+            "description": "Maximum of blockNumber across the matching connection",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "UnsignedProposalsQueueMinAggregates",
+        "description": null,
+        "fields": [
+          {
+            "name": "blockNumber",
+            "description": "Minimum of blockNumber across the matching connection",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
         "name": "UnsignedProposalsQueueProposalItemsByUnsignedProposalsQueueItemQueueIdAndProposalIdManyToManyConnection",
         "description": "A connection to a list of `ProposalItem` values, with data from `UnsignedProposalsQueueItem`.",
         "fields": [
@@ -44777,6 +45090,125 @@
       },
       {
         "kind": "OBJECT",
+        "name": "UnsignedProposalsQueueStddevPopulationAggregates",
+        "description": null,
+        "fields": [
+          {
+            "name": "blockNumber",
+            "description": "Population standard deviation of blockNumber across the matching connection",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigFloat",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "UnsignedProposalsQueueStddevSampleAggregates",
+        "description": null,
+        "fields": [
+          {
+            "name": "blockNumber",
+            "description": "Sample standard deviation of blockNumber across the matching connection",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigFloat",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "UnsignedProposalsQueueSumAggregates",
+        "description": null,
+        "fields": [
+          {
+            "name": "blockNumber",
+            "description": "Sum of blockNumber across the matching connection",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "BigInt",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "UnsignedProposalsQueueVariancePopulationAggregates",
+        "description": null,
+        "fields": [
+          {
+            "name": "blockNumber",
+            "description": "Population variance of blockNumber across the matching connection",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigFloat",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "UnsignedProposalsQueueVarianceSampleAggregates",
+        "description": null,
+        "fields": [
+          {
+            "name": "blockNumber",
+            "description": "Sample variance of blockNumber across the matching connection",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigFloat",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
         "name": "UnsignedProposalsQueuesConnection",
         "description": "A connection to a list of `UnsignedProposalsQueue` values.",
         "fields": [
@@ -44979,8 +45411,60 @@
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
+          },
+          {
+            "name": "BLOCK_NUMBER",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
           }
         ],
+        "possibleTypes": null
+      },
+      {
+        "kind": "INPUT_OBJECT",
+        "name": "UnsignedProposalsQueuesHavingAverageInput",
+        "description": null,
+        "fields": null,
+        "inputFields": [
+          {
+            "name": "blockNumber",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "HavingIntFilter",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "INPUT_OBJECT",
+        "name": "UnsignedProposalsQueuesHavingDistinctCountInput",
+        "description": null,
+        "fields": null,
+        "inputFields": [
+          {
+            "name": "blockNumber",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "HavingIntFilter",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "interfaces": null,
+        "enumValues": null,
         "possibleTypes": null
       },
       {
@@ -45028,6 +45512,275 @@
             "defaultValue": null,
             "isDeprecated": false,
             "deprecationReason": null
+          },
+          {
+            "name": "average",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "UnsignedProposalsQueuesHavingAverageInput",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "distinctCount",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "UnsignedProposalsQueuesHavingDistinctCountInput",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "max",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "UnsignedProposalsQueuesHavingMaxInput",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "min",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "UnsignedProposalsQueuesHavingMinInput",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "stddevPopulation",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "UnsignedProposalsQueuesHavingStddevPopulationInput",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "stddevSample",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "UnsignedProposalsQueuesHavingStddevSampleInput",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "sum",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "UnsignedProposalsQueuesHavingSumInput",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "variancePopulation",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "UnsignedProposalsQueuesHavingVariancePopulationInput",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "varianceSample",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "UnsignedProposalsQueuesHavingVarianceSampleInput",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "INPUT_OBJECT",
+        "name": "UnsignedProposalsQueuesHavingMaxInput",
+        "description": null,
+        "fields": null,
+        "inputFields": [
+          {
+            "name": "blockNumber",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "HavingIntFilter",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "INPUT_OBJECT",
+        "name": "UnsignedProposalsQueuesHavingMinInput",
+        "description": null,
+        "fields": null,
+        "inputFields": [
+          {
+            "name": "blockNumber",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "HavingIntFilter",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "INPUT_OBJECT",
+        "name": "UnsignedProposalsQueuesHavingStddevPopulationInput",
+        "description": null,
+        "fields": null,
+        "inputFields": [
+          {
+            "name": "blockNumber",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "HavingIntFilter",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "INPUT_OBJECT",
+        "name": "UnsignedProposalsQueuesHavingStddevSampleInput",
+        "description": null,
+        "fields": null,
+        "inputFields": [
+          {
+            "name": "blockNumber",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "HavingIntFilter",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "INPUT_OBJECT",
+        "name": "UnsignedProposalsQueuesHavingSumInput",
+        "description": null,
+        "fields": null,
+        "inputFields": [
+          {
+            "name": "blockNumber",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "HavingIntFilter",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "INPUT_OBJECT",
+        "name": "UnsignedProposalsQueuesHavingVariancePopulationInput",
+        "description": null,
+        "fields": null,
+        "inputFields": [
+          {
+            "name": "blockNumber",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "HavingIntFilter",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "INPUT_OBJECT",
+        "name": "UnsignedProposalsQueuesHavingVarianceSampleInput",
+        "description": null,
+        "fields": null,
+        "inputFields": [
+          {
+            "name": "blockNumber",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "HavingIntFilter",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
           }
         ],
         "interfaces": null,
@@ -45050,6 +45803,18 @@
           },
           {
             "name": "BLOCK_ID_DESC",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "BLOCK_NUMBER_ASC",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "BLOCK_NUMBER_DESC",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
