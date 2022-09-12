@@ -18,6 +18,7 @@ export * from './NetworkThresholdsCard';
 export * from './Progress';
 export * from './Slider';
 export * from './ThemeSwitcher';
+export * from './TimeLine';
 export * from './TimeProgress';
 export * from './TitleWithInfo';
 export * from './Tooltip';
