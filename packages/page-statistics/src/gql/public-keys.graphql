@@ -27,3 +27,23 @@ query PublicKeys($PerPage: Int, $offset: Int) {
     totalCount
   }
 }
+query PublicKey($id: String!) {
+  publicKey(id: $id) {
+    id
+    compressed
+    uncompressed
+    history
+    block {
+      timestamp
+      number
+    }
+    sessions(first: 1) {
+      nodes {
+        id
+        bestAuthorities
+        keyGenThreshold
+        signatureThreshold
+      }
+    }
+  }
+}

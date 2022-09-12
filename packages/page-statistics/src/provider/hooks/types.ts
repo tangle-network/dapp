@@ -39,3 +39,24 @@ export enum ProposalStatus {
 
   FailedToExecute = 'FailedToExecute',
 }
+export interface SessionKeyHistory {
+  stage: SessionKeyStatus;
+
+  txHash: string;
+
+  blockNumber: string;
+}
+export interface DKGAuthority {
+  authorityId: string;
+
+  accountId: string;
+
+  reputation?: string;
+}
+export interface Threshold {
+  next: number;
+
+  current: number;
+
+  pending: number;
+}

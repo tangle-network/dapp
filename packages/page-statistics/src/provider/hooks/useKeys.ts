@@ -1,8 +1,12 @@
-import { usePublicKeysQuery, useSessionKeysLazyQuery } from '@webb-dapp/page-statistics/generated/graphql';
+import {
+  usePublicKeyLazyQuery,
+  usePublicKeysQuery,
+  useSessionKeysLazyQuery,
+} from '@webb-dapp/page-statistics/generated/graphql';
 import { useCurrentMetaData } from '@webb-dapp/page-statistics/provider/hooks/useCurrentMetaData';
 import { useEffect, useState } from 'react';
 
-import { Loadable, Page } from './types';
+import { DKGAuthority, Loadable, Page, SessionKeyHistory, SessionKeyStatus, Threshold } from './types';
 
 type PublicKeyContent = {
   id: string;
@@ -31,12 +35,21 @@ export interface PublicKeyListView extends PublicKeyContent {
 type PublicKeyHistoryEntry = {
   at: Date;
   hash: string;
-  status: 'Generated' | 'Signed' | 'Rotated';
+  status: SessionKeyStatus;
 };
-
+type KeyGenAuthority = {
+  id: string;
+  account: string;
+  location: string;
+  uptime: number;
+  reputation: number;
+};
 interface PublicKeyDetails extends PublicKeyContent {
-  isCurrent: string;
+  isCurrent: boolean;
   history: PublicKeyHistoryEntry[];
+  keyGenThreshold: string;
+  signatureThreshold: string;
+  authorities: Array<KeyGenAuthority>;
 }
 /**
  * List keys for table view
@@ -129,6 +142,13 @@ export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
         variables: {
           SessionId: [metaData.val.activeSession, metaData.val.lastSession],
         },
+      }).catch((e) => {
+        setKeys({
+          val: null,
+          isFailed: true,
+          isLoading: false,
+          error: e.message,
+        });
       });
     }
   }, [metaData, call]);
@@ -176,4 +196,78 @@ export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
   return keys;
 }
 
-export function useKey(id: string): Loadable<PublicKeyDetails> {}
+export function useKey(id: string): Loadable<PublicKeyDetails> {
+  const [call, query] = usePublicKeyLazyQuery();
+  const [key, setKey] = useState<Loadable<PublicKeyDetails>>({
+    val: null,
+    isFailed: false,
+    isLoading: true,
+  });
+  useEffect(() => {
+    call({
+      variables: {
+        id,
+      },
+    }).catch((e) => {
+      setKey({
+        val: null,
+        isFailed: true,
+        isLoading: false,
+        error: e.message,
+      });
+    });
+  }, [id, call]);
+
+  useEffect(() => {
+    const subscription = query.observable
+      .map((res): Loadable<PublicKeyDetails> => {
+        if (res.data) {
+          const publicKey = res.data.publicKey!;
+          const session = publicKey.sessions?.nodes[0]!;
+          const history: PublicKeyHistoryEntry[] = (publicKey.history as SessionKeyHistory[]).map((val) => {
+            return {
+              // TODO fix date
+              at: new Date(Date.now()),
+              status: val.stage,
+              hash: val.txHash,
+            };
+          });
+          const authorities = session.bestAuthorities.map((auth: DKGAuthority): KeyGenAuthority => {
+            return {
+              account: auth.accountId,
+              id: auth.authorityId,
+              location: 'any',
+              reputation: Number(auth.reputation),
+              uptime: 100,
+            };
+          });
+          return {
+            isFailed: false,
+            isLoading: false,
+            val: {
+              compressed: publicKey.compressed!,
+              uncompressed: publicKey.uncompressed!,
+              id: publicKey.id,
+              session: session.id,
+              end: new Date(publicKey.block!.timestamp),
+              start: new Date(publicKey.block!.timestamp),
+              history,
+              isCurrent: true,
+              authorities,
+              keyGenThreshold: String((session.keyGenThreshold as Threshold).current),
+              signatureThreshold: String((session.signatureThreshold as Threshold).current),
+            },
+          };
+        }
+        return {
+          val: null,
+          isFailed: Boolean(res.error),
+          isLoading: false,
+          error: res.error?.message,
+        };
+      })
+      .subscribe(setKey);
+    return () => subscription.unsubscribe();
+  }, [query]);
+  return key;
+}

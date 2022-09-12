@@ -7497,6 +7497,13 @@ export type PublicKeysQueryVariables = Exact<{
 
 export type PublicKeysQuery = { __typename?: 'Query', publicKeys?: { __typename?: 'PublicKeysConnection', totalCount: number, nodes: Array<{ __typename?: 'PublicKey', id: string, compressed?: string | null, uncompressed?: string | null, history: any, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null, sessions: { __typename?: 'SessionsConnection', nodes: Array<{ __typename?: 'Session', id: string, bestAuthorities: any, keyGenThreshold?: any | null, signatureThreshold?: any | null } | null> } } | null>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: any | null, endCursor?: any | null } } | null };
 
+export type PublicKeyQueryVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type PublicKeyQuery = { __typename?: 'Query', publicKey?: { __typename?: 'PublicKey', id: string, compressed?: string | null, uncompressed?: string | null, history: any, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null, sessions: { __typename?: 'SessionsConnection', nodes: Array<{ __typename?: 'Session', id: string, bestAuthorities: any, keyGenThreshold?: any | null, signatureThreshold?: any | null } | null> } } | null };
+
 export type CurrentSessionAuthoritiesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -7698,6 +7705,56 @@ export function usePublicKeysLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type PublicKeysQueryHookResult = ReturnType<typeof usePublicKeysQuery>;
 export type PublicKeysLazyQueryHookResult = ReturnType<typeof usePublicKeysLazyQuery>;
 export type PublicKeysQueryResult = Apollo.QueryResult<PublicKeysQuery, PublicKeysQueryVariables>;
+export const PublicKeyDocument = gql`
+    query PublicKey($id: String!) {
+  publicKey(id: $id) {
+    id
+    compressed
+    uncompressed
+    history
+    block {
+      timestamp
+      number
+    }
+    sessions(first: 1) {
+      nodes {
+        id
+        bestAuthorities
+        keyGenThreshold
+        signatureThreshold
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __usePublicKeyQuery__
+ *
+ * To run a query within a React component, call `usePublicKeyQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePublicKeyQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePublicKeyQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function usePublicKeyQuery(baseOptions: Apollo.QueryHookOptions<PublicKeyQuery, PublicKeyQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<PublicKeyQuery, PublicKeyQueryVariables>(PublicKeyDocument, options);
+      }
+export function usePublicKeyLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PublicKeyQuery, PublicKeyQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<PublicKeyQuery, PublicKeyQueryVariables>(PublicKeyDocument, options);
+        }
+export type PublicKeyQueryHookResult = ReturnType<typeof usePublicKeyQuery>;
+export type PublicKeyLazyQueryHookResult = ReturnType<typeof usePublicKeyLazyQuery>;
+export type PublicKeyQueryResult = Apollo.QueryResult<PublicKeyQuery, PublicKeyQueryVariables>;
 export const CurrentSessionAuthoritiesDocument = gql`
     query CurrentSessionAuthorities {
   sessions(last: 1, orderBy: [BLOCK_NUMBER_DESC]) {
