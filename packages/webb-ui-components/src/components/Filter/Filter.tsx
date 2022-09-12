@@ -7,6 +7,10 @@ import { Dropdown, DropdownBody, DropdownButton } from '../Dropdown';
 import { Input } from '../Input';
 import { FilterProps } from './types';
 
+/**
+ * The `Filter` wrapper component, contains title, clear function, and the global search.
+ * The children will be the specific table filter. Usually is the collapsible filter
+ */
 export const Filter = forwardRef<HTMLDivElement, FilterProps>(
   ({ children, onSearchChange, searchText, ...props }, ref) => {
     return (

@@ -7,6 +7,9 @@ import { twMerge } from 'tailwind-merge';
 
 import { CollapsibleButtonProps } from './types';
 
+/**
+ * The style wrapper around Radix Collapsible Trigger, must use inside `<Collapsible></Collapsible>` tag
+ */
 export const CollapsibleButton = forwardRef<HTMLButtonElement, CollapsibleButtonProps>(
   ({ children, className, ...props }, ref) => {
     return (
