@@ -7,7 +7,15 @@ import { useCurrentMetaData } from '@webb-dapp/page-statistics/provider/hooks/us
 import { useEffect, useState } from 'react';
 
 import { DKGAuthority, Loadable, Page, PageInfoQuery, SessionKeyHistory, SessionKeyStatus, Threshold } from './types';
-
+/**
+ *  Public key shared content
+ *  @param id - public key id
+ *  @param uncompressed - Uncompressed public key value
+ *  @param compressed - Compressed public key value
+ *  @params start - The time when the public key started taking effect and be the active key
+ *  @params end - The time when the public key stopped taking effect and be the active key
+ *  @param session - The session id for that key (Life time of the key)
+ * */
 type PublicKeyContent = {
   id: string;
 
@@ -19,11 +27,22 @@ type PublicKeyContent = {
   session: string;
 };
 
+/**
+ * Public key with keygen authorities
+ * @param isCurrent - The key is the current active key
+ * @param keyGenAuthorities - Authorities set  that signed the key
+ * */
 export interface PublicKey extends PublicKeyContent {
   isCurrent: boolean;
   keyGenAuthorities: string[];
 }
-
+/**
+ * @param height  - Block number when the key was generated
+ * @param keyGenAuthorities - Authorities set  that signed the key
+ * @param keyGenThreshold - keyGenThreshold Active session of that key
+ * @param SignatureThreshold - SignatureThreshold Active session of that key
+ * @param session - The session id for that key (Lifetime of the key)
+ * */
 export interface PublicKeyListView extends PublicKeyContent {
   height: string;
   keyGenAuthorities: string[];
@@ -31,12 +50,25 @@ export interface PublicKeyListView extends PublicKeyContent {
   signatureThreshold: string;
   session: string;
 }
-
+/**
+ * Public key progress history item
+ * @param at - The ate when the history item took place
+ * @param hash - Transaction hash of that history item
+ * @param status - The status of the history item
+ * */
 type PublicKeyHistoryEntry = {
   at: Date;
   hash: string;
   status: SessionKeyStatus;
 };
+/**
+ * @param id - Authority id
+ * @param account - account 32 for that authority
+ * @param location - The location of that authority
+ * @param uptime - Authority validator uptime
+ * @params reputation - The P2P reputation of that authority
+ *
+ * */
 type KeyGenAuthority = {
   id: string;
   account: string;
@@ -44,6 +76,15 @@ type KeyGenAuthority = {
   uptime: number;
   reputation: number;
 };
+/**
+ * The full date of that public key
+ * @param isCurrent - The key is the current active key
+ * @param history - The progress of that key
+ * @param keyGenThreshold - keyGenThreshold Active session of that key
+ * @param signatureThreshold - signatureThreshold Active session of that key
+ * @param numberOfValidators - The number of the validator running at the key being active
+ * @param authorities - keygen authorities (Best Authorities) that signed the key
+ * */
 interface PublicKeyDetails extends PublicKeyContent {
   isCurrent: boolean;
   history: PublicKeyHistoryEntry[];
