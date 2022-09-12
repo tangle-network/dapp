@@ -48,6 +48,11 @@ type ProposalDetails = {
   };
 };
 
-export function useProposals(): ProposalsOverview {}
+export function useProposals(): ProposalsOverview {
+  // TODO: implement the proposals hooks
+  throw new Error('Not implemented');
+}
 
-export function useProposal(): Loadable<ProposalDetails> {}
+export function useProposal(): Loadable<ProposalDetails> {
+  throw new Error('Not implemented');
+}

@@ -22,10 +22,12 @@ type AuthorityListItem = {
   uptime: string;
   reputation: string;
 };
+
 type AuthorityThresholdStatus = {
   val: string;
   inTheSet: boolean;
 };
+
 type AuthorityStats = {
   numberOfKeys: string;
   uptime: string;
@@ -35,13 +37,19 @@ type AuthorityStats = {
   pendingKeyGenThreshold: AuthorityThresholdStatus;
 };
 
-export function useThresholds(): Loadable<[Thresholds, UpcomingThreshold]> {}
+export function useThresholds(): Loadable<[Thresholds, UpcomingThreshold]> {
+  throw new Error('Not implemented');
+}
 
-export function useAuthorities(): Loadable<AuthorityListItem> {}
+export function useAuthorities(): Loadable<AuthorityListItem> {
+  throw new Error('Not implemented');
+}
 
 type AuthorityDetails = {
   stats: Loadable<AuthorityStats>;
   geyKens: Loadable<Page<PublicKeyListView>>;
 };
 
-export function useAuthority(): AuthorityDetails {}
+export function useAuthority(): AuthorityDetails {
+  throw new Error('Not implemented');
+}
