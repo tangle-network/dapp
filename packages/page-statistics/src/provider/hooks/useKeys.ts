@@ -1,4 +1,5 @@
-import { usePublicKeysQuery } from '@webb-dapp/page-statistics/generated/graphql';
+import { usePublicKeysQuery, useSessionKeysLazyQuery } from '@webb-dapp/page-statistics/generated/graphql';
+import { useCurrentMetaData } from '@webb-dapp/page-statistics/provider/hooks/useCurrentMetaData';
 import { useEffect, useState } from 'react';
 
 import { Loadable, Page } from './types';
@@ -37,7 +38,9 @@ interface PublicKeyDetails extends PublicKeyContent {
   isCurrent: string;
   history: PublicKeyHistoryEntry[];
 }
-
+/**
+ * List keys for table view
+ * */
 export function useKeys(): Loadable<Page<PublicKeyListView>> {
   const query = usePublicKeysQuery({
     variables: {
@@ -80,16 +83,16 @@ export function useKeys(): Loadable<Page<PublicKeyListView>> {
                   const session = node!.sessions?.nodes[0]!;
                   const authorities = session.bestAuthorities.map((auth: any) => auth.accountId);
                   return {
+                    height: String(node!.block?.number),
+                    session: session.id,
+                    signatureThreshold: String(session.signatureThreshold.current),
+                    keyGenThreshold: String(session.keyGenThreshold.current),
+                    compressed: node!.compressed!,
+                    uncompressed: node!.uncompressed!,
+                    keyGenAuthorities: authorities,
                     end: new Date(node!.block?.timestamp),
                     start: new Date(node!.block?.timestamp),
-                    compressed: node!.compressed!,
-                    uncompressed: node!.compressed!,
                     id: node!.id,
-                    height: String(node!.block?.number),
-                    keyGenAuthorities: authorities,
-                    session: session.id,
-                    keyGenThreshold: String(session.keyGenThreshold.current),
-                    signatureThreshold: String(session.signatureThreshold.current),
                   };
                 }),
               pageInfo: {
@@ -112,6 +115,65 @@ export function useKeys(): Loadable<Page<PublicKeyListView>> {
   return page;
 }
 
-export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {}
+export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
+  const metaData = useCurrentMetaData();
+  const [call, query] = useSessionKeysLazyQuery();
+  const [keys, setKeys] = useState<Loadable<[PublicKey, PublicKey]>>({
+    val: null,
+    isFailed: false,
+    isLoading: true,
+  });
+  useEffect(() => {
+    if (metaData.val) {
+      call({
+        variables: {
+          SessionId: [metaData.val.activeSession, metaData.val.lastSession],
+        },
+      });
+    }
+  }, [metaData, call]);
+  useEffect(() => {
+    const subscription = query.observable
+      .map((res): Loadable<[PublicKey, PublicKey]> => {
+        if (res.data) {
+          const val: PublicKey[] =
+            res.data.sessions?.nodes.map((i) => {
+              const publicKey = i!.publicKey!;
+              return {
+                id: publicKey.id,
+                end: new Date(publicKey.block!.timestamp),
+                start: new Date(publicKey.block!.timestamp),
+                compressed: publicKey.compressed!,
+                uncompressed: publicKey.uncompressed!,
+                keyGenAuthorities: i!.bestAuthorities.map((auth: any) => auth.accountId),
+                session: i!.id,
+                isCurrent: true,
+              };
+            }) || [];
+          return {
+            val: [val[0], val[1]],
+            isFailed: false,
+            isLoading: false,
+          };
+        }
+        if (res.error) {
+          return {
+            val: null,
+            isFailed: true,
+            isLoading: false,
+            error: res.error.message,
+          };
+        }
+        return {
+          val: null,
+          isFailed: true,
+          isLoading: false,
+        };
+      })
+      .subscribe(setKeys);
+    return () => subscription.unsubscribe();
+  }, [query]);
+  return keys;
+}
 
 export function useKey(id: string): Loadable<PublicKeyDetails> {}

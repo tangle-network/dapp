@@ -1,5 +1,5 @@
-import { useKeys } from '@webb-dapp/page-statistics/provider/hooks/useKeys';
-import { useMemo } from 'react';
+import { DemoTable } from '@webb-dapp/page-statistics/provider/DemoTable';
+import { useActiveKeys, useKeys } from '@webb-dapp/page-statistics/provider/hooks/useKeys';
 import styled from 'styled-components';
 
 export interface DKGAuthority {
@@ -17,16 +17,11 @@ const AuthoritiesDataWrapper = styled.div`
 
 export const AuthoritiesData = () => {
   const data = useKeys();
-
-  if (!data.val || data.isLoading) {
-    return <AuthoritiesDataWrapper>...</AuthoritiesDataWrapper>;
-  }
-  if (data.isFailed) {
-    return <AuthoritiesDataWrapper>FAILED:{data.error}</AuthoritiesDataWrapper>;
-  }
+  const activeKeys = useActiveKeys();
+  console.log(activeKeys);
   return (
     <AuthoritiesDataWrapper>
-      <pre>{JSON.stringify(data.val, null, 2)}</pre>
+      <DemoTable page={data} />
     </AuthoritiesDataWrapper>
   );
 };
