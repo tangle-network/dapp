@@ -1,12 +1,12 @@
 import {
   usePublicKeyLazyQuery,
-  usePublicKeysQuery,
+  usePublicKeysLazyQuery,
   useSessionKeysLazyQuery,
 } from '@webb-dapp/page-statistics/generated/graphql';
 import { useCurrentMetaData } from '@webb-dapp/page-statistics/provider/hooks/useCurrentMetaData';
 import { useEffect, useState } from 'react';
 
-import { DKGAuthority, Loadable, Page, SessionKeyHistory, SessionKeyStatus, Threshold } from './types';
+import { DKGAuthority, Loadable, Page, PageInfoQuery, SessionKeyHistory, SessionKeyStatus, Threshold } from './types';
 
 type PublicKeyContent = {
   id: string;
@@ -54,18 +54,31 @@ interface PublicKeyDetails extends PublicKeyContent {
 /**
  * List keys for table view
  * */
-export function useKeys(): Loadable<Page<PublicKeyListView>> {
-  const query = usePublicKeysQuery({
-    variables: {
-      offset: 0,
-      PerPage: 30,
-    },
-  });
+export function useKeys(reqQuery: PageInfoQuery): Loadable<Page<PublicKeyListView>> {
+  const [call, query] = usePublicKeysLazyQuery();
   const [page, setPage] = useState<Loadable<Page<PublicKeyListView>>>({
     val: null,
     isFailed: false,
     isLoading: true,
   });
+
+  // fetch the data once the filter has changed
+  useEffect(() => {
+    call({
+      variables: {
+        offset: reqQuery.offset,
+        PerPage: reqQuery.perPage,
+      },
+    }).catch((e) => {
+      setPage({
+        val: null,
+        isFailed: true,
+        isLoading: false,
+        error: e.message,
+      });
+    });
+  }, [reqQuery, call]);
+  // Handle the GraphQl call response
   useEffect(() => {
     const subscription = query.observable
       .map((res): Loadable<Page<PublicKeyListView>> => {
@@ -127,7 +140,9 @@ export function useKeys(): Loadable<Page<PublicKeyListView>> {
   }, [query]);
   return page;
 }
-
+/**
+ * Get the current Public key (Current session active) and the next public key (Next session active)
+ * */
 export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
   const metaData = useCurrentMetaData();
   const [call, query] = useSessionKeysLazyQuery();
@@ -195,7 +210,11 @@ export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
   }, [query]);
   return keys;
 }
-
+/**
+ * Graphql query to get the public key details
+ * @param id : public key id
+ *
+ * */
 export function useKey(id: string): Loadable<PublicKeyDetails> {
   const [call, query] = usePublicKeyLazyQuery();
   const [key, setKey] = useState<Loadable<PublicKeyDetails>>({
