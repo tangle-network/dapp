@@ -27,7 +27,6 @@ type AuthorityThresholdStatus = {
   inTheSet: boolean;
 };
 type AuthorityStats = {
-  3;
   numberOfKeys: string;
   uptime: string;
   reputation: string;

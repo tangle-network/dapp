@@ -1,7 +1,6 @@
+import { useKeys } from '@webb-dapp/page-statistics/provider/hooks/useKeys';
 import { useMemo } from 'react';
 import styled from 'styled-components';
-
-import { useCurrentSessionAuthoritiesQuery } from './generated/graphql';
 
 export interface DKGAuthority {
   authorityId: string;
@@ -17,22 +16,17 @@ const AuthoritiesDataWrapper = styled.div`
 `;
 
 export const AuthoritiesData = () => {
-  const { data, error, loading } = useCurrentSessionAuthoritiesQuery();
-  console.log(data, error, loading);
-  const currentSession = useMemo(() => {
-    return data?.sessions?.nodes[0];
-  }, [data]);
+  const data = useKeys();
 
-  if (loading || !currentSession) {
-    return <div>Loading...</div>;
+  if (!data.val || data.isLoading) {
+    return <AuthoritiesDataWrapper>...</AuthoritiesDataWrapper>;
   }
-  if (error) {
-    return <div>Something went wrong</div>;
+  if (data.isFailed) {
+    return <AuthoritiesDataWrapper>FAILED:{data.error}</AuthoritiesDataWrapper>;
   }
-
   return (
     <AuthoritiesDataWrapper>
-      <pre>{JSON.stringify(currentSession, null, 2)}</pre>
+      <pre>{JSON.stringify(data.val, null, 2)}</pre>
     </AuthoritiesDataWrapper>
   );
 };

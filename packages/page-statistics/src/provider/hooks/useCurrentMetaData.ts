@@ -2,10 +2,28 @@ import { MetaDataQuery, useMetaDataQuery } from '@webb-dapp/page-statistics/gene
 import { Loadable } from '@webb-dapp/page-statistics/provider/hooks/types';
 import { useEffect, useState } from 'react';
 
-type Metadata = MetaDataQuery['_metadata'];
+type Metadata = {
+  currentBlock: string;
+  lastProcessBlock: string;
+  lastSession: string;
+  activeSession: string;
+};
+export function session(height: string) {
+  const blockNumber = Number(height);
+  const sessionNumber = Math.floor(blockNumber / 10) * 10;
 
+  return String(sessionNumber - 10);
+}
+export function nextSession(height: string): string {
+  const blockNumber = Number(height);
+  const sessionNumber = Math.floor(blockNumber / 10) * 10;
+
+  return String(sessionNumber);
+}
 export function useCurrentMetaData(): Loadable<Metadata> {
-  const query = useMetaDataQuery();
+  const query = useMetaDataQuery({
+    fetchPolicy: 'cache-and-network',
+  });
   const [metaData, setMetaData] = useState<Loadable<Metadata>>({
     isLoading: true,
     isFailed: false,
@@ -29,10 +47,23 @@ export function useCurrentMetaData(): Loadable<Metadata> {
             val: null,
           };
         }
+        if (r.data?._metadata) {
+          const data = r.data._metadata;
+          return {
+            isLoading: false,
+            isFailed: false,
+            val: {
+              currentBlock: String(data.lastProcessedHeight),
+              lastProcessBlock: String(data.targetHeight),
+              activeSession: session(String(data.targetHeight)),
+              lastSession: nextSession(String(data.targetHeight)),
+            },
+          };
+        }
         return {
           isLoading: false,
           isFailed: false,
-          val: r.data?._metadata || null,
+          val: null,
         };
       })
       .subscribe(setMetaData);
