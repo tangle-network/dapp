@@ -10,12 +10,12 @@ type PublicKeyContent = {
   end: Date;
   session: string;
 };
-interface PublicKey extends PublicKeyContent {
+export interface PublicKey extends PublicKeyContent {
   isCurrent: boolean;
   keyGenAuthorities: string[];
 }
 
-interface PublicKeyListView extends PublicKeyContent {
+export interface PublicKeyListView extends PublicKeyContent {
   height: string;
   keyGenAuthorities: string[];
   keyGenThreshold: string;
