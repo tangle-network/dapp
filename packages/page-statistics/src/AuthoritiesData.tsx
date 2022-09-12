@@ -16,7 +16,10 @@ const AuthoritiesDataWrapper = styled.div`
 `;
 
 export const AuthoritiesData = () => {
-  const data = useKeys();
+  const data = useKeys({
+    offset: 0,
+    perPage: 30,
+  });
   const activeKeys = useActiveKeys();
   console.log(activeKeys);
   return (
