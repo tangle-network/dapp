@@ -148,6 +148,10 @@ export const KeygenTable = () => {
       className='mt-6'
       leftTitle={
         <Filter
+          clearAllFilters={() => {
+            table.setColumnFilters([]);
+            table.setGlobalFilter('');
+          }}
           searchText={globalFilter}
           onSearchChange={(nextValue: string | number) => {
             setGlobalFilter(nextValue.toString());

@@ -12,7 +12,7 @@ import { FilterProps } from './types';
  * The children will be the specific table filter. Usually is the collapsible filter
  */
 export const Filter = forwardRef<HTMLDivElement, FilterProps>(
-  ({ children, onSearchChange, searchText, ...props }, ref) => {
+  ({ children, clearAllFilters, onSearchChange, searchText, ...props }, ref) => {
     return (
       <Dropdown {...props} ref={ref}>
         <DropdownButton label='Filters' icon={<FilterIcon />} size='sm' />
@@ -23,7 +23,7 @@ export const Filter = forwardRef<HTMLDivElement, FilterProps>(
             <Typography variant='h5' fw='bold'>
               Filters
             </Typography>
-            <Button varirant='link' size='sm' className='uppercase'>
+            <Button varirant='link' size='sm' className='uppercase' onClick={clearAllFilters}>
               Clear all
             </Button>
           </div>

@@ -9,4 +9,8 @@ export interface FilterProps extends WebbComponentBase, PropsOf<'div'> {
    * Callback to control the search text
    */
   onSearchChange?: (nextValue: string | number) => void;
+  /**
+   * Clear all filters function
+   */
+  clearAllFilters?: () => void;
 }
