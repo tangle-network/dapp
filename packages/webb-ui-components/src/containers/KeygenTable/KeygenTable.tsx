@@ -187,21 +187,7 @@ export const KeygenTable = () => {
         </Filter>
       }
     >
-      <Table
-        tableProps={table as RTTable<unknown>}
-        isPaginated
-        paginationProps={{
-          itemsPerPage: pageSize,
-          totalItems: dataQuery?.totalItems,
-          page: pageIndex + 1,
-          totalPages: dataQuery?.pageCount,
-          canPreviousPage: table.getCanPreviousPage(),
-          previousPage: table.previousPage,
-          canNextPage: table.getCanNextPage(),
-          nextPage: table.nextPage,
-          setPageIndex: table.setPageIndex,
-        }}
-      />
+      <Table tableProps={table as RTTable<unknown>} isPaginated />
     </CardTable>
   );
 };
