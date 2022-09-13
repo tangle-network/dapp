@@ -113,6 +113,8 @@ export const Mixer: React.FC<MixerProps> = () => {
         </TimeLine>
       </div>
 
+      <KeygenTable />
+
       <div className='flex mt-6 justify-evenly'>
         <KeyCard
           title='Uncompressed Key:'
