@@ -36,3 +36,25 @@ query SessionKeys($SessionId: [String!]!) {
     }
   }
 }
+
+query SessionThresholds($sessionId: String!) {
+  session(id: $sessionId) {
+    id
+    signatureThreshold
+    keyGenThreshold
+    proposersCount
+    authorities
+    nextAuthorities
+    publicKey {
+      id
+      compressed
+      uncompressed
+
+      block {
+        timestamp
+        number
+      }
+    }
+  }
+
+}
