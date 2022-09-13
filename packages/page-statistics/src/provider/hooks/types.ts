@@ -1,5 +1,5 @@
 /**
- * A Type that wrappers an API call value for a list view
+ * A Type that wraps an API call value for a list view
  * @param T The type of the value
  * @param items - list of the items for the page
  * @param pageInfo - information about the page
