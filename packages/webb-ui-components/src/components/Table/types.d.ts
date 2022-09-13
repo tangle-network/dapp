@@ -17,10 +17,6 @@ export interface TableProps<T extends RowData> extends WebbComponentBase {
    */
   isPaginated?: boolean;
   /**
-   * The pagination props for `Pagination` component to display
-   */
-  paginationProps?: PaginationProps;
-  /**
    * If `true`, the table footer will be displayed
    */
   isDisplayFooter?: boolean;
