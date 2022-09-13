@@ -1,7 +1,7 @@
 import { PropsOf, WebbComponentBase } from '@webb-dapp/webb-ui-components/types';
 import { EventHandler } from 'react';
 
-type OmittedKeys = 'disabled' | 'required' | 'readOnly' | 'size';
+type OmittedKeys = 'disabled' | 'required' | 'readOnly' | 'size' | 'onChange';
 
 /**
  * The `Input` component props
@@ -38,7 +38,7 @@ export interface InputProps extends WebbComponentBase, Omit<PropsOf<'input'>, Om
   /**
    * The `onChange` function to control the value of the input
    */
-  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange?: (nextValue: string | number) => void;
   /**
    * The error message to be displayed if the input is invalid
    */
@@ -53,4 +53,9 @@ export interface InputProps extends WebbComponentBase, Omit<PropsOf<'input'>, Om
    * @type React.ReactElement
    */
   rightIcon?: React.ReactElement;
+  /**
+   * If provided, the input will have an debounce time in `ms`
+   * @default 0
+   */
+  debounceTime?: number;
 }

@@ -1,16 +1,19 @@
 import { WebbComponentBase } from '@webb-dapp/webb-ui-components/types';
-import { WebbTypographyVariant } from '@webb-dapp/webb-ui-components/typography/types';
 
 import { LabelWithValueProps } from '../LabelWithValue/types';
 
 export type KeyValueWithButtonSize = 'sm' | 'md';
 
+type KeyValueWithButtonBasePickedKeys = 'isHiddenLabel' | 'valueVariant' | 'labelVariant';
+
+export interface KeyValueWithButtonBaseProps extends Pick<LabelWithValueProps, KeyValueWithButtonBasePickedKeys> {}
+
 /**
  * The `KeyValueWithButton` props
  */
 export interface KeyValueWithButtonProps
-  extends WebbComponentBase,
-    Pick<LabelWithValueProps, 'valueVariant' | 'labelVariant'> {
+  extends Omit<WebbComponentBase, keyof KeyValueWithButtonBaseProps>,
+    KeyValueWithButtonBaseProps {
   /**
    * The `key` hash value
    */

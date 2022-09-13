@@ -19,6 +19,10 @@ export interface LabelWithValueProps extends WebbComponentBase {
    */
   value: string | number;
   /**
+   * If `true`, it will displays only value
+   */
+  isHiddenLabel?: boolean;
+  /**
    * The label variant
    * @default "body2"
    */

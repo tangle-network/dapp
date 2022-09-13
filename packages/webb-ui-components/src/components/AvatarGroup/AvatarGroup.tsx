@@ -32,7 +32,7 @@ export const AvatarGroup: React.FC<AvatarGroupProps> = ({ children: childrenProp
   const extraAvatars = useMemo(() => totalAvatars - max, [totalAvatars, max]);
 
   return (
-    <div className='flex justify-center items-center space-x-1'>
+    <div className='flex items-center space-x-1'>
       <div>
         {children.slice(0, max).map((child, index) => {
           return React.cloneElement(child, {
