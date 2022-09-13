@@ -8,6 +8,7 @@
   "main": "src/index.tsx",
   "dependencies": {
     "@ngneat/falso": "^5.7.0",
+    "gridjs-react": "^5.1.0",
     "react-content-loader": "^6.2.0",
     "use-count-up": "^3.0.1"
   }
