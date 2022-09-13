@@ -21,7 +21,6 @@ export const AuthoritiesData = () => {
     perPage: 30,
   });
   const activeKeys = useActiveKeys();
-  console.log(activeKeys);
   return (
     <AuthoritiesDataWrapper>
       <DemoTable page={data} />
