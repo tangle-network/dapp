@@ -1,5 +1,5 @@
-query PublicKeys {
-  publicKeys {
+query PublicKeys($PerPage: Int, $offset: Int) {
+  publicKeys(first: $PerPage, offset: $offset, orderBy: [SESSIONS_SUM_BLOCK_NUMBER_ASC]) {
     nodes {
       id
       compressed
@@ -9,10 +9,41 @@ query PublicKeys {
         timestamp
         number
       }
-      sessions {
+      sessions(first: 1) {
         nodes {
           id
+          bestAuthorities
+          keyGenThreshold
+          signatureThreshold
         }
+      }
+    }
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+    totalCount
+  }
+}
+query PublicKey($id: String!) {
+  publicKey(id: $id) {
+    id
+    compressed
+    uncompressed
+    history
+    block {
+      timestamp
+      number
+    }
+    sessions(first: 1) {
+      nodes {
+        id
+        authorities
+        bestAuthorities
+        keyGenThreshold
+        signatureThreshold
       }
     }
   }
