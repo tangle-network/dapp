@@ -1,5 +1,5 @@
 import cx from 'classnames';
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { InputProps } from './types';
@@ -43,6 +43,7 @@ import { InputProps } from './types';
 export const Input: React.FC<InputProps> = (props) => {
   const {
     className,
+    debounceTime = 0,
     errorMessage,
     htmlSize,
     id,
@@ -54,9 +55,23 @@ export const Input: React.FC<InputProps> = (props) => {
     onChange,
     rightIcon: rightIconProp,
     type = 'text',
-    value,
+    value: initialValue,
     ...restProps
   } = props;
+
+  const [value, setValue] = useState(initialValue);
+
+  useEffect(() => {
+    setValue(initialValue);
+  }, [initialValue]);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      onChange?.(value ?? '');
+    }, debounceTime);
+
+    return () => clearTimeout(timeout);
+  }, [debounceTime, onChange, value]);
 
   // Override the size of left icon prop to 'md'
   const leftIcon = useMemo(() => {
@@ -123,7 +138,7 @@ export const Input: React.FC<InputProps> = (props) => {
     <div className={className}>
       <div className='relative shadow-sm'>
         {leftIcon && (
-          <div className='pointer-events-none absolute inset-y-0 left-0 flex items-center pl-2'>
+          <div className='absolute inset-y-0 left-0 flex items-center pl-2 pointer-events-none'>
             <span className={iconClsx}>{leftIcon}</span>
           </div>
         )}
@@ -138,19 +153,19 @@ export const Input: React.FC<InputProps> = (props) => {
           required={isRequired}
           className={mergedInputClsx}
           value={value}
-          onChange={onChange}
+          onChange={(eve) => setValue(eve.target.value)}
           {...restProps}
         />
 
         {rightIcon && (
-          <div className='pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2'>
+          <div className='absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none'>
             <span className={iconClsx}>{rightIcon}</span>
           </div>
         )}
       </div>
 
       {errorMessage && (
-        <span className='block mt-2 ml-4 body4 font-bold text-red dark:text-red-50'>{errorMessage}</span>
+        <span className='block mt-2 ml-4 font-bold body4 text-red dark:text-red-50'>{errorMessage}</span>
       )}
     </div>
   );

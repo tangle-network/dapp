@@ -76,5 +76,5 @@ export const getPaginationItems = (options: PaginationItemsOptions): (number | s
       : []),
 
     ...endPages,
-  ];
+  ].filter((val) => (typeof val !== 'number' ? true : val > 0));
 };

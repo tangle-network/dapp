@@ -7,7 +7,7 @@ import { THeader } from './THeader';
 import { TableProps } from './types';
 
 const TableComp = <T extends RowData>(
-  { isDisplayFooter, isPaginated, paginationProps, tableProps: table, ...props }: TableProps<T>,
+  { isDisplayFooter, isPaginated, tableProps: table, ...props }: TableProps<T>,
   ref: React.ForwardedRef<HTMLDivElement>
 ) => {
   return (
@@ -49,7 +49,19 @@ const TableComp = <T extends RowData>(
       </table>
 
       {/** Pagination */}
-      {isPaginated && <Pagination {...paginationProps} />}
+      {isPaginated && (
+        <Pagination
+          itemsPerPage={table.getState().pagination.pageSize}
+          totalItems={table.getPrePaginationRowModel().rows.length}
+          page={table.getState().pagination.pageIndex + 1}
+          totalPages={table.getPageCount()}
+          canPreviousPage={table.getCanPreviousPage()}
+          previousPage={table.previousPage}
+          canNextPage={table.getCanNextPage()}
+          nextPage={table.nextPage}
+          setPageIndex={table.setPageIndex}
+        />
+      )}
     </div>
   );
 };

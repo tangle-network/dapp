@@ -19,7 +19,7 @@ import { KeyValueWithButtonProps } from './types';
  * ```
  */
 export const KeyValueWithButton = forwardRef<HTMLDivElement, KeyValueWithButtonProps>(
-  ({ className, keyValue, labelVariant, size = 'md', valueVariant, ...props }, ref) => {
+  ({ className, isHiddenLabel, keyValue, labelVariant, size = 'md', valueVariant, ...props }, ref) => {
     const { copy, isCopied } = useCopyable();
 
     const onCopy = useCallback(() => {
@@ -43,6 +43,7 @@ export const KeyValueWithButton = forwardRef<HTMLDivElement, KeyValueWithButtonP
                 <LabelWithValue
                   labelVariant={labelVariant}
                   valueVariant={valueVariant}
+                  isHiddenLabel={isHiddenLabel}
                   label='Key'
                   value={shortenHex(keyValue, 3)}
                   className='cursor-default pointer-events-auto'
