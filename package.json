@@ -37,7 +37,7 @@
     "start:stats": "cd packages/page-statistics && webpack serve --hot",
     "build:dapp:production": "cd packages/apps && npx webpack --config webpack.prod.js --mode production",
     "build:dapp:development": "cd packages/apps && npx webpack --config webpack.dev.js --mode development",
-    "build:stats": "NODE_ENV=production webpack",
+    "build:stats": "cd packages/page-statistics && NODE_ENV=production webpack",
     "analyze": "source-map-explorer 'packages/apps/build/static/js/*.js'",
     "test": "ts-mocha -p packages/api-providers/__test__/tsconfig.json -r tsconfig-paths/register 'packages/api-providers/__test__/**/*.spec.ts' --exit",
     "lint": "polkadot-dev-run-lint --skip-tsc",

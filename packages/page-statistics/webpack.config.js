@@ -16,7 +16,7 @@ const findPackages = require('../../scripts/findPackages');
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
-const includedPackages = ['@webb-dapp/webb-ui-component', '@webb-dapp/page-statistics'];
+const includedPackages = ['@webb-dapp/webb-ui-components', '@webb-dapp/page-statistics'];
 
 const alias = findPackages().reduce((alias, { dir, name }) => {
   if (includedPackages.includes(name)) {
@@ -83,11 +83,25 @@ function createWebpack(env, mode = 'production') {
             loader: 'babel-loader',
             options: {
               presets: [
-                '@babel/preset-env',
+                [
+                  '@babel/preset-env',
+                  {
+                    useBuiltIns: 'entry',
+                    corejs: '3',
+                    targets: {
+                      browsers: ['last 2 versions', 'not ie <= 8'],
+                      node: 'current',
+                    },
+                  },
+                ],
                 '@babel/preset-typescript',
                 ['@babel/preset-react', { development: isDevelopment }],
               ],
-              plugins: [isDevelopment && require.resolve('react-refresh/babel')].filter(Boolean),
+              plugins: [
+                isDevelopment && require.resolve('react-refresh/babel'),
+                '@babel/plugin-transform-runtime',
+                '@babel/plugin-proposal-class-properties',
+              ].filter(Boolean),
             },
           },
         },
@@ -144,26 +158,24 @@ function createWebpack(env, mode = 'production') {
         {
           test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
           exclude: [/semantic-ui-css/],
-          loader: 'file-loader',
           type: 'asset/resource',
           generator: {
-            filename: 'static/[name].[contenthash:8].[ext]',
+            filename: 'static/[name].[contenthash:8][ext]',
           },
         },
         {
           test: /\.(ttf|eot|otf|woff)$/,
           exclude: [/semantic-ui-css/],
-          loader: 'file-loader',
           type: 'asset/resource',
           generator: {
-            filename: 'static/[name].[contenthash:8].[ext]',
+            filename: 'static/[name].[contenthash:8][ext]',
           },
         },
         {
           test: /\.(ico)$/,
           loader: 'file-loader',
           options: {
-            name: '[name].[ext]',
+            name: '[name][ext]',
             esModule: false,
           },
         },
