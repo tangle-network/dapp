@@ -1,3 +1,4 @@
+import { randEthereumAddress, randRecentDate } from '@ngneat/falso';
 import { Deposit, Withdraw } from '@webb-dapp/mixer/components';
 import { MixerTabs } from '@webb-dapp/ui-components/Tabs/MixerTabs';
 import {
@@ -9,9 +10,12 @@ import {
   KeyCard,
   KeygenTable,
   KeyStatusCard,
+  KeyValueWithButton,
   NetworkThresholdsCard,
   Progress,
   Slider,
+  TimeLine,
+  TimeLineItem,
   Tooltip,
   TooltipBody,
   TooltipTrigger,
@@ -53,6 +57,61 @@ export const Mixer: React.FC<MixerProps> = () => {
   return (
     <MixerWrapper>
       <MixerTabs Withdraw={<Withdraw />} Deposit={<Deposit />} />
+
+      <div className='mt-6 ml-3'>
+        <TimeLine>
+          <TimeLineItem
+            title='Proposed'
+            time={randRecentDate()}
+            txHash={randEthereumAddress()}
+            externalUrl='https://webb.tools'
+          />
+
+          <TimeLineItem
+            title='Accepted'
+            time={randRecentDate()}
+            txHash={randEthereumAddress()}
+            externalUrl='https://webb.tools'
+            extraContent={
+              <div className='flex items-center space-x-2'>
+                <KeyValueWithButton
+                  labelVariant='body3'
+                  keyValue={randEthereumAddress()}
+                  size='sm'
+                  className='inline-block'
+                />
+                <Button varirant='link' size='sm' className='uppercase'>
+                  Details
+                </Button>
+              </div>
+            }
+          />
+
+          <TimeLineItem
+            title='Signing'
+            time={new Date()}
+            txHash={randEthereumAddress()}
+            externalUrl='https://webb.tools'
+            isLoading
+            extraContent={
+              <div className='flex items-center space-x-2'>
+                <KeyValueWithButton
+                  labelVariant='body3'
+                  keyValue={randEthereumAddress()}
+                  size='sm'
+                  className='inline-block'
+                />
+                <Chip color='green' className='uppercase'>
+                  Active
+                </Chip>
+                <Button varirant='link' size='sm' className='uppercase'>
+                  Details
+                </Button>
+              </div>
+            }
+          />
+        </TimeLine>
+      </div>
 
       <KeygenTable />
 

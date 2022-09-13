@@ -4,7 +4,9 @@ import { LabelWithValueProps } from '../LabelWithValue/types';
 
 export type KeyValueWithButtonSize = 'sm' | 'md';
 
-export interface KeyValueWithButtonBaseProps extends Pick<LabelWithValueProps, 'isHiddenLabel'> {}
+type KeyValueWithButtonBasePickedKeys = 'isHiddenLabel' | 'valueVariant' | 'labelVariant';
+
+export interface KeyValueWithButtonBaseProps extends Pick<LabelWithValueProps, KeyValueWithButtonBasePickedKeys> {}
 
 /**
  * The `KeyValueWithButton` props

@@ -24,6 +24,7 @@ export * from './Progress';
 export * from './Slider';
 export * from './Table';
 export * from './ThemeSwitcher';
+export * from './TimeLine';
 export * from './TimeProgress';
 export * from './TitleWithInfo';
 export * from './Tooltip';
