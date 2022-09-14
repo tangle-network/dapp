@@ -10,7 +10,6 @@ const PageMixer = lazy(() => import('@webb-dapp/page-mixer'));
 const PageVBridge = lazy(() => import('@webb-dapp/vbridge'));
 const PageWrapUnwrap = lazy(() => import('@webb-dapp/page-wrap-unwrap'));
 const PageCrowdloan = lazy(() => import('@webb-dapp/page-crowdloan'));
-const PageStatistics = lazy(() => import('@webb-dapp/page-statistics'));
 const PageGovernance = lazy(() => import('@webb-dapp/page-governance'));
 const PageClaims = lazy(() => import('@webb-dapp/page-claims'));
 const PageNoteAccount = lazy(() => import('@webb-dapp/page-note-account'));
@@ -63,60 +62,6 @@ export const config: RouterConfigData[] = [
         ),
         path: 'crowdloan/*',
         title: 'Crowdloan',
-      },
-      {
-        element: (
-          <CSuspense>
-            <PageStatistics view={'overview'} />
-          </CSuspense>
-        ),
-        path: 'statistics/overview/*',
-        title: 'Statistics Overview',
-      },
-      {
-        element: (
-          <CSuspense>
-            <PageStatistics view={'deposits'} />
-          </CSuspense>
-        ),
-        path: 'statistics/deposits/*',
-        title: 'Deposit Statistics',
-      },
-      {
-        element: (
-          <CSuspense>
-            <PageStatistics view={'withdrawals'} />
-          </CSuspense>
-        ),
-        path: 'statistics/withdrawals/*',
-        title: 'Withdrawal Statistics',
-      },
-      {
-        element: (
-          <CSuspense>
-            <PageStatistics view={'relayers'} />
-          </CSuspense>
-        ),
-        path: 'statistics/relayers/*',
-        title: 'Relayer Statistics',
-      },
-      {
-        element: (
-          <CSuspense>
-            <PageStatistics view={'dkg'} />
-          </CSuspense>
-        ),
-        path: 'statistics/dkg/*',
-        title: 'DKG Statistics',
-      },
-      {
-        element: (
-          <CSuspense>
-            <PageStatistics view={'overview'} />
-          </CSuspense>
-        ),
-        path: 'statistics/*',
-        title: 'Statistics Overview',
       },
       {
         element: (
