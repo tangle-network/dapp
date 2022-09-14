@@ -1,12 +1,11 @@
-import { Icon, IconButton } from '@mui/material';
+import { Icon, IconButton, Typography } from '@mui/material';
 import WEBBLogo from '@webb-dapp/apps/configs/logos/chains/WebbLogo';
 import { useStore, useWebContext } from '@webb-dapp/react-environment';
 import { useDimensions } from '@webb-dapp/react-environment/layout';
 import { WalletSelect } from '@webb-dapp/ui-components/Inputs/WalletSelect/WalletSelect';
 import { NetworkManager } from '@webb-dapp/ui-components/NetworkManager/NetworkManager';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
-import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
-import { Typography } from '@webb-dapp/webb-ui-components/typography';
+import { above, useBreakpoint } from '@webb-dapp/ui-components/utils/responsive-utils';
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
 
@@ -119,6 +118,7 @@ const AppBar: React.FC<AppBarProps> = ({ toggleSidebarDisplay }) => {
     return width <= size.sm;
   }, [width, size]);
   const { pageTitle, setTheme, theme } = useStore('ui');
+  const { isMdOrAbove } = useBreakpoint();
 
   return isMobile ? (
     <>
@@ -142,15 +142,15 @@ const AppBar: React.FC<AppBarProps> = ({ toggleSidebarDisplay }) => {
         </RightNavigation>
       </AppBarWrapper>
       <LowerSection>
-        <Typography variant='h3' fw='bold'>
-          {pageTitle?.toString()}
+        <Typography variant='h3'>
+          <b>{pageTitle?.toString()}</b>
         </Typography>
       </LowerSection>
     </>
   ) : (
     <AppBarWrapper>
-      <Typography variant='h3' fw='bold' className='mr-4'>
-        {pageTitle?.toString()}
+      <Typography variant={isMdOrAbove ? 'h2' : 'h3'} style={{ marginRight: '16px' }}>
+        <b>{pageTitle?.toString()}</b>
       </Typography>
       <RightNavigation>
         <NetworkManager />
