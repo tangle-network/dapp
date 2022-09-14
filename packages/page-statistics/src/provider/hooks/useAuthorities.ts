@@ -4,7 +4,7 @@ import {
   useValidatorOfSessionLazyQuery,
   useValidatorSessionsLazyQuery,
 } from '@webb-dapp/page-statistics/generated/graphql';
-import { mapAuthorities } from '@webb-dapp/page-statistics/provider/hooks/mappers';
+import { mapAuthorities, mapSessionAuthValidatorNode } from '@webb-dapp/page-statistics/provider/hooks/mappers';
 import { Loadable, Page, PageInfoQuery } from '@webb-dapp/page-statistics/provider/hooks/types';
 import { useCurrentMetaData } from '@webb-dapp/page-statistics/provider/hooks/useCurrentMetaData';
 import { PublicKey } from '@webb-dapp/page-statistics/provider/hooks/useKeys';
@@ -269,6 +269,7 @@ export function useAuthority(pageQuery: PageInfoQuery, authorityId: string): Aut
       callValidatorOfSession({
         variables: {
           sessionValidatorId: `${metaData.val.activeSession}-${authorityId}`,
+          validatorId: authorityId,
         },
       }).catch((e) => {
         setStats({
@@ -320,17 +321,47 @@ export function useAuthority(pageQuery: PageInfoQuery, authorityId: string): Aut
     return () => subscription.unsubscribe();
   }, [queryKeyGen]);
   useEffect(() => {
-    const subscription = queryValidatorOfSession.observable.map((res): AuthorityDetails['stats'] => {
-      if (res.data && res.data.sessionValidator) {
-        const data = res.data.sessionValidator;
+    const subscription = queryValidatorOfSession.observable
+      .map((res): AuthorityDetails['stats'] => {
+        if (res.data && res.data.sessionValidator) {
+          const sessionValidator = res.data.sessionValidator;
+          const sessionValidators = res.data.sessionValidators;
+          const counter = sessionValidators?.aggregates?.distinctCount?.id as number;
+          const threshold = sessionValidator.session?.keyGenThreshold! as QueryThreshold;
+          const auth = mapSessionAuthValidatorNode(sessionValidator);
+          const stats: AuthorityStats = {
+            numberOfKeys: String(counter),
+            keyGenThreshold: {
+              val: String(threshold.current),
+              inTheSet: auth.isBest,
+            },
+            nextKeyGenThreshold: {
+              val: String(threshold.next),
+              inTheSet: auth.isNextBest,
+            },
+            pendingKeyGenThreshold: {
+              val: String(threshold.pending),
+              inTheSet: auth.isBest,
+            },
+            reputation: auth.reputation,
+            uptime: '100',
+          };
+          return {
+            error: '',
+            isFailed: false,
+            isLoading: false,
+            val: stats,
+          };
+        }
         return {
-          error: '',
-          isFailed: false,
-          isLoading: false,
-          val: undefined,
+          isLoading: res.loading,
+          isFailed: Boolean(res.error),
+          error: res.error?.message ?? undefined,
+          val: null,
         };
-      }
-    });
+      })
+      .subscribe(setStats);
+    return () => subscription.unsubscribe();
   }, [queryValidatorOfSession]);
   return useMemo(() => ({ stats, keyGens }), [stats, keyGens]);
 }

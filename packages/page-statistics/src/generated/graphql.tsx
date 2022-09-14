@@ -8410,11 +8410,12 @@ export type ValidatorSessionsQueryVariables = Exact<{
 export type ValidatorSessionsQuery = { __typename?: 'Query', sessionValidators?: { __typename?: 'SessionValidatorsConnection', totalCount: number, nodes: Array<{ __typename?: 'SessionValidator', validator?: { __typename?: 'Validator', authorityId: string, id: string } | null, session?: { __typename?: 'Session', id: string, publicKey?: { __typename?: 'PublicKey', id: string, compressed?: string | null, uncompressed?: string | null } | null, sessionValidators: { __typename?: 'SessionValidatorsConnection', totalCount: number, edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: string, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string } | null } | null }> } } | null } | null>, pageInfo: { __typename?: 'PageInfo', endCursor?: any | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: any | null } } | null };
 
 export type ValidatorOfSessionQueryVariables = Exact<{
+  validatorId: Scalars['String'];
   sessionValidatorId: Scalars['String'];
 }>;
 
 
-export type ValidatorOfSessionQuery = { __typename?: 'Query', sessionValidator?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: string, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, session?: { __typename?: 'Session', keyGenThreshold?: any | null } | null, validator?: { __typename?: 'Validator', authorityId: string, id: string } | null } | null };
+export type ValidatorOfSessionQuery = { __typename?: 'Query', sessionValidator?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: string, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, session?: { __typename?: 'Session', keyGenThreshold?: any | null } | null, validator?: { __typename?: 'Validator', authorityId: string, id: string } | null } | null, sessionValidators?: { __typename?: 'SessionValidatorsConnection', aggregates?: { __typename?: 'SessionValidatorAggregates', distinctCount?: { __typename?: 'SessionValidatorDistinctCountAggregates', id?: any | null } | null } | null } | null };
 
 export type ValidatorMetaFragment = { __typename?: 'Validator', authorityId: string, id: string };
 
@@ -8643,11 +8644,20 @@ export type ValidatorSessionsQueryHookResult = ReturnType<typeof useValidatorSes
 export type ValidatorSessionsLazyQueryHookResult = ReturnType<typeof useValidatorSessionsLazyQuery>;
 export type ValidatorSessionsQueryResult = Apollo.QueryResult<ValidatorSessionsQuery, ValidatorSessionsQueryVariables>;
 export const ValidatorOfSessionDocument = gql`
-    query ValidatorOfSession($sessionValidatorId: String!) {
+    query ValidatorOfSession($validatorId: String!, $sessionValidatorId: String!) {
   sessionValidator(id: $sessionValidatorId) {
     ...SessionAuthValidatorNode
     session {
       keyGenThreshold
+    }
+  }
+  sessionValidators(
+    filter: {validatorId: {equalTo: $validatorId}, isBest: {equalTo: true}}
+  ) {
+    aggregates {
+      distinctCount {
+        id
+      }
     }
   }
 }
@@ -8665,6 +8675,7 @@ export const ValidatorOfSessionDocument = gql`
  * @example
  * const { data, loading, error } = useValidatorOfSessionQuery({
  *   variables: {
+ *      validatorId: // value for 'validatorId'
  *      sessionValidatorId: // value for 'sessionValidatorId'
  *   },
  * });
