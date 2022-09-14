@@ -1,20 +1,32 @@
-fragment SessionAuth on Session {
-    sessionValidators {
-        edges {
-            node {
-                id
-                sessionId
-                validator {
-                    authorityId
-                    id
-                }
-                reputation
-                isBest
-                isNext
-                isNextBest
-                bestOrder
-                nextBestOrder
-            }
-        }
+fragment ValidatorMeta on Validator {
+  authorityId
+  id
+}
+fragment PageInfoMeta on PageInfo {
+  endCursor
+  hasNextPage
+  hasPreviousPage
+  startCursor
+}
+fragment SessionAuthValidator on SessionValidatorsConnection {
+  edges {
+    node {
+      id
+      sessionId
+      validator {
+        ...ValidatorMeta
+      }
+      reputation
+      isBest
+      isNext
+      isNextBest
+      bestOrder
+      nextBestOrder
     }
+  }
+}
+fragment SessionAuth on Session {
+  sessionValidators {
+    ...SessionAuthValidator
+  }
 }

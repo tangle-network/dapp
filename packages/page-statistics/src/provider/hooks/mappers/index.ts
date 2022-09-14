@@ -1,4 +1,4 @@
-import { SessionAuthFragment } from '@webb-dapp/page-statistics/generated/graphql';
+import { SessionAuthFragment, ValidatorMetaFragment } from '@webb-dapp/page-statistics/generated/graphql';
 
 export type Authority = {
   id: string;

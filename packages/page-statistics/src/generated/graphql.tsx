@@ -8390,6 +8390,30 @@ export type _Metadata = {
   targetHeight?: Maybe<Scalars['Int']>;
 };
 
+export type ValidatorListingQueryVariables = Exact<{
+  perPage: Scalars['Int'];
+  offset: Scalars['Int'];
+}>;
+
+
+export type ValidatorListingQuery = { __typename?: 'Query', validators?: { __typename?: 'ValidatorsConnection', totalCount: number, nodes: Array<{ __typename?: 'Validator', authorityId: string, id: string } | null>, pageInfo: { __typename?: 'PageInfo', endCursor?: any | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: any | null } } | null };
+
+export type ValidatorSessionsQueryVariables = Exact<{
+  keyGen?: InputMaybe<Scalars['Boolean']>;
+  validatorId: Scalars['String'];
+  perPage: Scalars['Int'];
+  offset: Scalars['Int'];
+}>;
+
+
+export type ValidatorSessionsQuery = { __typename?: 'Query', sessionValidators?: { __typename?: 'SessionValidatorsConnection', totalCount: number, nodes: Array<{ __typename?: 'SessionValidator', validator?: { __typename?: 'Validator', authorityId: string, id: string } | null, session?: { __typename?: 'Session', id: string, sessionValidators: { __typename?: 'SessionValidatorsConnection', edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: string, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string } | null } | null }> } } | null } | null>, pageInfo: { __typename?: 'PageInfo', endCursor?: any | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: any | null } } | null };
+
+export type ValidatorMetaFragment = { __typename?: 'Validator', authorityId: string, id: string };
+
+export type PageInfoMetaFragment = { __typename?: 'PageInfo', endCursor?: any | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: any | null };
+
+export type SessionAuthValidatorFragment = { __typename?: 'SessionValidatorsConnection', edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: string, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string } | null } | null }> };
+
 export type SessionAuthFragment = { __typename?: 'Session', sessionValidators: { __typename?: 'SessionValidatorsConnection', edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: string, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string } | null } | null }> } };
 
 export type MetaDataQueryVariables = Exact<{ [key: string]: never; }>;
@@ -8451,28 +8475,147 @@ export type SessionThresholdsQueryVariables = Exact<{
 
 export type SessionThresholdsQuery = { __typename?: 'Query', session?: { __typename?: 'Session', id: string, signatureThreshold?: any | null, keyGenThreshold?: any | null, proposersCount?: number | null, publicKey?: { __typename?: 'PublicKey', id: string, compressed?: string | null, uncompressed?: string | null, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null } | null, sessionValidators: { __typename?: 'SessionValidatorsConnection', edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: string, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string } | null } | null }> } } | null };
 
-export const SessionAuthFragmentDoc = gql`
-    fragment SessionAuth on Session {
-  sessionValidators {
-    edges {
-      node {
-        id
-        sessionId
-        validator {
-          authorityId
-          id
-        }
-        reputation
-        isBest
-        isNext
-        isNextBest
-        bestOrder
-        nextBestOrder
+export const PageInfoMetaFragmentDoc = gql`
+    fragment PageInfoMeta on PageInfo {
+  endCursor
+  hasNextPage
+  hasPreviousPage
+  startCursor
+}
+    `;
+export const ValidatorMetaFragmentDoc = gql`
+    fragment ValidatorMeta on Validator {
+  authorityId
+  id
+}
+    `;
+export const SessionAuthValidatorFragmentDoc = gql`
+    fragment SessionAuthValidator on SessionValidatorsConnection {
+  edges {
+    node {
+      id
+      sessionId
+      validator {
+        ...ValidatorMeta
       }
+      reputation
+      isBest
+      isNext
+      isNextBest
+      bestOrder
+      nextBestOrder
     }
   }
 }
-    `;
+    ${ValidatorMetaFragmentDoc}`;
+export const SessionAuthFragmentDoc = gql`
+    fragment SessionAuth on Session {
+  sessionValidators {
+    ...SessionAuthValidator
+  }
+}
+    ${SessionAuthValidatorFragmentDoc}`;
+export const ValidatorListingDocument = gql`
+    query ValidatorListing($perPage: Int!, $offset: Int!) {
+  validators(offset: $offset, first: $perPage) {
+    nodes {
+      ...ValidatorMeta
+    }
+    totalCount
+    pageInfo {
+      ...PageInfoMeta
+    }
+  }
+}
+    ${ValidatorMetaFragmentDoc}
+${PageInfoMetaFragmentDoc}`;
+
+/**
+ * __useValidatorListingQuery__
+ *
+ * To run a query within a React component, call `useValidatorListingQuery` and pass it any options that fit your needs.
+ * When your component renders, `useValidatorListingQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useValidatorListingQuery({
+ *   variables: {
+ *      perPage: // value for 'perPage'
+ *      offset: // value for 'offset'
+ *   },
+ * });
+ */
+export function useValidatorListingQuery(baseOptions: Apollo.QueryHookOptions<ValidatorListingQuery, ValidatorListingQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ValidatorListingQuery, ValidatorListingQueryVariables>(ValidatorListingDocument, options);
+      }
+export function useValidatorListingLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ValidatorListingQuery, ValidatorListingQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ValidatorListingQuery, ValidatorListingQueryVariables>(ValidatorListingDocument, options);
+        }
+export type ValidatorListingQueryHookResult = ReturnType<typeof useValidatorListingQuery>;
+export type ValidatorListingLazyQueryHookResult = ReturnType<typeof useValidatorListingLazyQuery>;
+export type ValidatorListingQueryResult = Apollo.QueryResult<ValidatorListingQuery, ValidatorListingQueryVariables>;
+export const ValidatorSessionsDocument = gql`
+    query ValidatorSessions($keyGen: Boolean, $validatorId: String!, $perPage: Int!, $offset: Int!) {
+  sessionValidators(
+    filter: {isBest: {equalTo: $keyGen}, validatorId: {equalTo: $validatorId}}
+    offset: $offset
+    first: $perPage
+  ) {
+    nodes {
+      validator {
+        ...ValidatorMeta
+      }
+      session {
+        id
+        sessionValidators(first: 3) {
+          ...SessionAuthValidator
+        }
+      }
+    }
+    totalCount
+    pageInfo {
+      ...PageInfoMeta
+    }
+  }
+}
+    ${ValidatorMetaFragmentDoc}
+${SessionAuthValidatorFragmentDoc}
+${PageInfoMetaFragmentDoc}`;
+
+/**
+ * __useValidatorSessionsQuery__
+ *
+ * To run a query within a React component, call `useValidatorSessionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useValidatorSessionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useValidatorSessionsQuery({
+ *   variables: {
+ *      keyGen: // value for 'keyGen'
+ *      validatorId: // value for 'validatorId'
+ *      perPage: // value for 'perPage'
+ *      offset: // value for 'offset'
+ *   },
+ * });
+ */
+export function useValidatorSessionsQuery(baseOptions: Apollo.QueryHookOptions<ValidatorSessionsQuery, ValidatorSessionsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ValidatorSessionsQuery, ValidatorSessionsQueryVariables>(ValidatorSessionsDocument, options);
+      }
+export function useValidatorSessionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ValidatorSessionsQuery, ValidatorSessionsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ValidatorSessionsQuery, ValidatorSessionsQueryVariables>(ValidatorSessionsDocument, options);
+        }
+export type ValidatorSessionsQueryHookResult = ReturnType<typeof useValidatorSessionsQuery>;
+export type ValidatorSessionsLazyQueryHookResult = ReturnType<typeof useValidatorSessionsLazyQuery>;
+export type ValidatorSessionsQueryResult = Apollo.QueryResult<ValidatorSessionsQuery, ValidatorSessionsQueryVariables>;
 export const MetaDataDocument = gql`
     query MetaData {
   _metadata {

@@ -1,0 +1,36 @@
+query ValidatorListing($perPage: Int!, $offset: Int!) {
+  validators(offset: $offset, first: $perPage) {
+    nodes {
+      ...ValidatorMeta
+    }
+    totalCount
+    pageInfo {
+      ...PageInfoMeta
+    }
+  }
+}
+
+query ValidatorSessions($keyGen: Boolean, $validatorId: String!, $perPage: Int!, $offset: Int!) {
+  sessionValidators(
+    filter: { isBest: { equalTo: $keyGen }, validatorId: { equalTo: $validatorId } }
+    offset: $offset
+    first: $perPage
+  ) {
+    nodes {
+      validator {
+        ...ValidatorMeta
+      }
+      session {
+        id
+        sessionValidators(first: 3) {
+          ...SessionAuthValidator
+
+        }
+      }
+    }
+    totalCount
+    pageInfo {
+      ...PageInfoMeta
+    }
+  }
+}
