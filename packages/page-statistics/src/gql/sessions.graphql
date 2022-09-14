@@ -1,10 +1,10 @@
+
 query CurrentSessionAuthorities {
   sessions(last: 1, orderBy: [BLOCK_NUMBER_DESC]) {
     nodes {
       id
       blockId
-      authorities
-      bestAuthorities
+      ...SessionAuth
       publicKey {
         compressed
       }
@@ -23,7 +23,7 @@ query SessionKeys($SessionId: [String!]!) {
   sessions(filter: { id: { in: $SessionId } }) {
     nodes {
       id
-      bestAuthorities
+      ...SessionAuth
       publicKey {
         id
         compressed
@@ -43,8 +43,8 @@ query SessionThresholds($sessionId: String!) {
     signatureThreshold
     keyGenThreshold
     proposersCount
-    authorities
-    nextAuthorities
+    ...SessionAuth
+
     publicKey {
       id
       compressed
@@ -56,5 +56,4 @@ query SessionThresholds($sessionId: String!) {
       }
     }
   }
-
 }

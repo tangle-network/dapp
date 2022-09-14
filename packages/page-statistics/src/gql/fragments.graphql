@@ -1,0 +1,20 @@
+fragment SessionAuth on Session {
+    sessionValidators {
+        edges {
+            node {
+                id
+                sessionId
+                validator {
+                    authorityId
+                    id
+                }
+                reputation
+                isBest
+                isNext
+                isNextBest
+                bestOrder
+                nextBestOrder
+            }
+        }
+    }
+}
