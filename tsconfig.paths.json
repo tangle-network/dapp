@@ -102,12 +102,6 @@
 			"@webb-dapp/page-note-account": [
 				"page-note-account/src"
 			],
-      "@webb-dapp/webb-ui-components/*": [
-        "webb-ui-components/src/*"
-      ],
-      "@webb-dapp/webb-ui-components": [
-        "webb-ui-components/src"
-      ],
     }
   }
 }

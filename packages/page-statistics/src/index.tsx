@@ -1,13 +1,49 @@
-import '@webb-dapp/webb-ui-components/tailwind.css';
+import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
+import { AuthoritiesData } from '@webb-dapp/page-statistics/AuthoritiesData';
+import React, { FC } from 'react';
 
-import React from 'react';
-import ReactDOM from 'react-dom';
+import { DepositStatistics } from './DepositStatistics';
+import { DKGStatistics } from './DKGStatistics';
+import { RelayersStatistics } from './RelayerStatistics';
+import { StatisticsOverview } from './StatisticsOverview';
+import { WithdrawalStatistics } from './WithdrawalStatistics';
 
-import App from './App';
+type StatisticsPageProps = {
+  view: 'overview' | 'deposits' | 'withdrawals' | 'relayers' | 'dkg' | 'dkg-eggnet';
+};
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-);
+const PageStatistics: FC<StatisticsPageProps> = ({ view }) => {
+  switch (view) {
+    case 'overview':
+      return <StatisticsOverview />;
+
+    case 'deposits':
+      return <DepositStatistics />;
+
+    case 'withdrawals':
+      return <WithdrawalStatistics />;
+
+    case 'relayers':
+      return <RelayersStatistics />;
+
+    case 'dkg':
+      return <DKGStatistics />;
+
+    default:
+      return <StatisticsOverview />;
+  }
+};
+const apolloClient = new ApolloClient({
+  cache: new InMemoryCache(),
+  uri: 'http://localhost:4000',
+});
+
+const Page: FC<StatisticsPageProps> = (props) => {
+  return (
+    <ApolloProvider client={apolloClient}>
+      <AuthoritiesData />
+    </ApolloProvider>
+  );
+};
+
+export default Page;

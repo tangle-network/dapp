@@ -1,5 +1,10 @@
-query Proposals {
-  proposalItems {
+query Proposals(
+  # The number of proposals to return
+  $PerPage: Int!
+  # The number of proposals to skip
+  $Offset: Int!
+) {
+  proposalItems(first: $PerPage, offset: $Offset) {
     nodes {
       id
       data
@@ -10,9 +15,30 @@ query Proposals {
       timelineStatus
       currentStatus
       block {
-      timestamp
+        timestamp
         number
       }
+    }
+  }
+}
+
+query ProposalsCounter(
+  #  Proposal counter id
+  $id: String!
+) {
+  proposalCounter(id: $id) {
+    id
+    signedProposalsMap
+    unSignedProposalsMap
+
+    signedProposalsCount
+    unSignedProposalsCount
+
+    statusMap
+
+    block {
+      number
+      timestamp
     }
   }
 }
