@@ -6,7 +6,6 @@ import { WalletSelect } from '@webb-dapp/ui-components/Inputs/WalletSelect/Walle
 import { NetworkManager } from '@webb-dapp/ui-components/NetworkManager/NetworkManager';
 import { FontFamilies } from '@webb-dapp/ui-components/styling/fonts/font-families.enum';
 import { above } from '@webb-dapp/ui-components/utils/responsive-utils';
-import { ThemeSwitcher as NewThemeSwitcher } from '@webb-dapp/webb-ui-components';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
@@ -136,7 +135,6 @@ const AppBar: React.FC<AppBarProps> = ({ toggleSidebarDisplay }) => {
                 setTheme(next === 'light' ? 'default' : 'dark');
               }}
             />
-            <NewThemeSwitcher />
           </div>
           <IconButton onClick={toggleSidebarDisplay}>
             <Icon>menu</Icon>
@@ -164,7 +162,6 @@ const AppBar: React.FC<AppBarProps> = ({ toggleSidebarDisplay }) => {
             setTheme(next === 'light' ? 'default' : 'dark');
           }}
         />
-        <NewThemeSwitcher />
       </RightNavigation>
     </AppBarWrapper>
   );

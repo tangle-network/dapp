@@ -10,7 +10,7 @@ export type ToggleThemeModeFunc = (nextThemeMode?: 'light' | 'dark' | undefined)
  * @returns `[isDarkMode, toggleThemeMode]`
  */
 export function useDarkMode(): [boolean, ToggleThemeModeFunc] {
-  const [preferredTheme, setPreferredTheme] = useState<null | string>(null);
+  const [preferredTheme, setPreferredTheme] = useState<null | 'dark' | 'light'>(null);
 
   useEffect(() => {
     if (
@@ -51,6 +51,8 @@ export function useDarkMode(): [boolean, ToggleThemeModeFunc] {
           break;
         }
       }
+
+      setPreferredTheme(_nextThemeMode);
     },
     [preferredTheme]
   );

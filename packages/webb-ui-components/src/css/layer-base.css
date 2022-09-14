@@ -1,6 +1,6 @@
 /** Layer base */
 body {
-  @apply bg-mono-20 dark:bg-mono-180 min-h-screen min-w-full;
+  @apply bg-mono-20 dark:bg-mono-200 min-h-screen min-w-full;
 }
 
 h1,

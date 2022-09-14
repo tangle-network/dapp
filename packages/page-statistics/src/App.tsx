@@ -1,6 +1,7 @@
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 import { randNumber, randRecentDate, randSoonDate } from '@ngneat/falso';
-import { KeygenTable, KeyStatusCard, ThemeSwitcher } from '@webb-dapp/webb-ui-components';
+import { KeygenTable, KeyStatusCard, Logo, ThemeSwitcher } from '@webb-dapp/webb-ui-components';
+import { WebbUIProvider } from '@webb-dapp/webb-ui-components/provider';
 import { FC } from 'react';
 
 const apolloClient = new ApolloClient({
@@ -10,11 +11,13 @@ const apolloClient = new ApolloClient({
 
 const App: FC = () => {
   return (
-    <>
-      <div className='min-h-[72px] bg-mono-0 dark:bg-mono-180 mb-8 flex items-center justify-end p-4'>
+    <WebbUIProvider>
+      <div className='min-h-[72px] bg-mono-0 dark:bg-mono-180 mb-8 flex justify-between items-center p-4'>
+        <Logo />
         <ThemeSwitcher />
       </div>
-      <div className='px-8 py-8 bg-mono-20 dark:bg-mono-200'>
+
+      <div className='px-8 py-8'>
         <div className='flex space-x-4'>
           <KeyStatusCard
             title='Active Key'
@@ -72,7 +75,7 @@ const App: FC = () => {
           <KeygenTable />
         </div>
       </div>
-    </>
+    </WebbUIProvider>
   );
 };
 
