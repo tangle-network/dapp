@@ -16,7 +16,7 @@ const findPackages = require('../../scripts/findPackages');
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
-const includedPackages = ['@webb-dapp/webb-ui-components', '@webb-dapp/page-statistics'];
+const includedPackages = ['@webb-dapp/react-hooks', '@webb-dapp/webb-ui-components', '@webb-dapp/page-statistics'];
 
 const alias = findPackages().reduce((alias, { dir, name }) => {
   if (includedPackages.includes(name)) {

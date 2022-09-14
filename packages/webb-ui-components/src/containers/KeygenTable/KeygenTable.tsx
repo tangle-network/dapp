@@ -13,6 +13,7 @@ import {
   Table as RTTable,
   useReactTable,
 } from '@tanstack/react-table';
+import { PageInfoQuery, useKeys } from '@webb-dapp/page-statistics/provider/hooks';
 import {
   Avatar,
   AvatarGroup,
@@ -28,10 +29,10 @@ import {
 } from '@webb-dapp/webb-ui-components/components';
 import { fuzzyFilter } from '@webb-dapp/webb-ui-components/components/Filter/utils';
 import { Authority } from '@webb-dapp/webb-ui-components/components/KeyStatusCard/types';
-import { fetchKeygenData } from '@webb-dapp/webb-ui-components/hooks';
 import { KeygenType } from '@webb-dapp/webb-ui-components/types';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 
+import Identicon from '@polkadot/react-identicon';
 const columnHelper = createColumnHelper<KeygenType>();
 
 const columns: ColumnDef<KeygenType, any>[] = [
@@ -57,9 +58,18 @@ const columns: ColumnDef<KeygenType, any>[] = [
   columnHelper.accessor('authorities', {
     header: 'Authority Set',
     cell: (props) => (
-      <AvatarGroup total={props.row.original.totalAuthorities}>
+      <AvatarGroup total={props.getValue().length}>
         {Object.values<Authority>(props.getValue()).map((au) => (
-          <Avatar src={au.avatarUrl} alt={au.id} key={au.id} />
+          <Identicon
+            style={{
+              maxWidth: '30px',
+              display: 'inline-block',
+              padding: 5,
+            }}
+            theme='polkadot'
+            value={`0x${au.id}`}
+            size={5}
+          />
         ))}
       </AvatarGroup>
     ),
@@ -95,22 +105,39 @@ export const KeygenTable = () => {
     [pageIndex, pageSize]
   );
 
-  const [dataQuery, setDataQuery] = useState<undefined | Awaited<ReturnType<typeof fetchKeygenData>>>();
+  const pageQuery: PageInfoQuery = useMemo(
+    () => ({
+      offset: pageIndex * pageSize,
+      perPage: pagination.pageSize,
+    }),
+    [pagination]
+  );
 
-  useEffect(() => {
-    const updateData = async () => {
-      const dataQuery = await fetchKeygenData({ pageIndex, pageSize });
-
-      setDataQuery(dataQuery);
-    };
-
-    updateData();
-  }, [pageIndex, pageSize]);
+  const keysStats = useKeys(pageQuery);
+  const data = useMemo(() => {
+    if (keysStats.val) {
+      return keysStats.val.items.map(
+        (item): KeygenType => ({
+          height: Number(item.height),
+          session: Number(item.session),
+          key: item.uncompressed,
+          authorities: item.keyGenAuthorities.map((auth) => ({
+            id: auth,
+          })),
+          keygenThreshold: Number(item.keyGenThreshold),
+          detailUrl: '#',
+          totalAuthorities: item.keyGenAuthorities.length,
+          signatureThreshold: Number(item.signatureThreshold),
+        })
+      );
+    }
+    return [] as KeygenType[];
+  }, [keysStats]);
 
   const table = useReactTable<KeygenType>({
-    data: dataQuery?.rows ?? ([] as KeygenType[]),
+    data,
     columns,
-    pageCount: dataQuery?.pageCount ?? -1,
+    pageCount: pageQuery.perPage,
     getCoreRowModel: getCoreRowModel(),
     state: {
       pagination,

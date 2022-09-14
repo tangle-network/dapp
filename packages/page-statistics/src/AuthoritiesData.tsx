@@ -1,7 +1,4 @@
 import styled from 'styled-components';
-import { DemoTable } from '@webb-dapp/page-statistics/provider/DemoTable';
-import { useKeys } from '@webb-dapp/page-statistics/provider/hooks/useKeys';
-æ;
 
 export interface DKGAuthority {
   authorityId: string;
@@ -17,14 +14,5 @@ const AuthoritiesDataWrapper = styled.div`
 `;
 
 export const AuthoritiesData = () => {
-  const data = useKeys({
-    offset: 0,
-    perPage: 30,
-  });
-
-  return (
-    <AuthoritiesDataWrapper>
-      <DemoTable page={data} />
-    </AuthoritiesDataWrapper>
-  );
+  return <AuthoritiesDataWrapper></AuthoritiesDataWrapper>;
 };

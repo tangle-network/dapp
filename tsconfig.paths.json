@@ -1,107 +1,42 @@
 {
   "compilerOptions": {
     "paths": {
-      "@webb-dapp/api-providers/*": [
-				"api-providers/src/*"
-			],
-			"@webb-dapp/api-providers": [
-				"api-providers/src"
-			],
-			"@webb-dapp/apps/*": [
-				"apps/src/*"
-			],
-			"@webb-dapp/apps": [
-				"apps/src"
-			],
-			"@webb-dapp/page-mixer": [
-				"page-mixer/src"
-			],
-			"@webb-dapp/page-mixer/*": [
-				"page-mixer/src/*"
-			],
-			"@webb-dapp/page-mixer-charts": [
-				"page-mixer-charts/src"
-			],
-			"@webb-dapp/page-mixer-charts/*": [
-				"page-mixer-charts/src/*"
-			],
-			"@webb-dapp/react-hooks/*": [
-				"react-hooks/src/*"
-			],
-			"@webb-dapp/react-hooks": [
-				"react-hooks/src"
-			],
-			"@webb-dapp/react-environment/*": [
-				"react-environment/src/*"
-			],
-			"@webb-dapp/react-environment": [
-				"react-environment/src"
-			],
-			"@webb-dapp/react-components/*": [
-				"react-components/src/*"
-			],
-			"@webb-dapp/react-components": [
-				"react-components/src"
-			],
-			"@webb-dapp/ui-components/*": [
-				"ui-components/src/*"
-			],
-			"@webb-dapp/ui-components": [
-				"ui-components/src"
-			],
-			"@webb-dapp/utils/*": [
-				"utils/src/*"
-			],
-			"@webb-dapp/utils": [
-				"utils/src"
-			],
-			"@webb-dapp/mixer/*": [
-				"mixer/src/*"
-			],
-			"@webb-dapp/mixer": [
-				"mixer/src"
-			],
-			"@webb-dapp/wallet/*": [
-				"wallet/src/*"
-			],
-			"@webb-dapp/wallet": [
-				"wallet/src"
-			],
-			"@webb-dapp/page-wrap-unwrap/*": [
-				"page-wrap-unwrap/src/*"
-			],
-			"@webb-dapp/page-wrap-unwrap": [
-				"page-wrap-unwrap/src"
-			],
-			"@webb-dapp/page-crowdloan/*": [
-				"page-crowdloan/src/*"
-			],
-			"@webb-dapp/page-crowdloan": [
-				"page-crowdloan/src"
-			],
-			"@webb-dapp/page-statistics/*": [
-				"page-statistics/src/*"
-			],
-			"@webb-dapp/page-statistics": [
-				"page-statistics/src"
-			],"@webb-dapp/page-claims/*": [
-				"page-claims/src/*"
-			],
-			"@webb-dapp/page-claims": [
-				"page-claims/src"
-			],
-			"@webb-dapp/vbridge/*": [
-				"vbridge/src/*"
-			],
-			"@webb-dapp/vbridge": [
-				"vbridge/src"
-			],
-			"@webb-dapp/page-note-account/*": [
-				"page-note-account/src/*"
-			],
-			"@webb-dapp/page-note-account": [
-				"page-note-account/src"
-			],
+      "@webb-dapp/api-providers/*": ["api-providers/src/*"],
+      "@webb-dapp/api-providers": ["api-providers/src"],
+      "@webb-dapp/apps/*": ["apps/src/*"],
+      "@webb-dapp/apps": ["apps/src"],
+      "@webb-dapp/page-mixer": ["page-mixer/src"],
+      "@webb-dapp/page-mixer/*": ["page-mixer/src/*"],
+      "@webb-dapp/page-mixer-charts": ["page-mixer-charts/src"],
+      "@webb-dapp/page-mixer-charts/*": ["page-mixer-charts/src/*"],
+      "@webb-dapp/react-hooks/*": ["react-hooks/src/*"],
+      "@webb-dapp/react-hooks": ["react-hooks/src"],
+      "@webb-dapp/react-environment/*": ["react-environment/src/*"],
+      "@webb-dapp/react-environment": ["react-environment/src"],
+      "@webb-dapp/react-components/*": ["react-components/src/*"],
+      "@webb-dapp/react-components": ["react-components/src"],
+      "@webb-dapp/ui-components/*": ["ui-components/src/*"],
+      "@webb-dapp/webb-ui-components": ["webb-ui-components/src"],
+      "@webb-dapp/webb-ui-components/*": ["webb-ui-components/src/*"],
+      "@webb-dapp/ui-components": ["ui-components/src"],
+      "@webb-dapp/utils/*": ["utils/src/*"],
+      "@webb-dapp/utils": ["utils/src"],
+      "@webb-dapp/mixer/*": ["mixer/src/*"],
+      "@webb-dapp/mixer": ["mixer/src"],
+      "@webb-dapp/wallet/*": ["wallet/src/*"],
+      "@webb-dapp/wallet": ["wallet/src"],
+      "@webb-dapp/page-wrap-unwrap/*": ["page-wrap-unwrap/src/*"],
+      "@webb-dapp/page-wrap-unwrap": ["page-wrap-unwrap/src"],
+      "@webb-dapp/page-crowdloan/*": ["page-crowdloan/src/*"],
+      "@webb-dapp/page-crowdloan": ["page-crowdloan/src"],
+      "@webb-dapp/page-statistics/*": ["page-statistics/src/*"],
+      "@webb-dapp/page-statistics": ["page-statistics/src"],
+      "@webb-dapp/page-claims/*": ["page-claims/src/*"],
+      "@webb-dapp/page-claims": ["page-claims/src"],
+      "@webb-dapp/vbridge/*": ["vbridge/src/*"],
+      "@webb-dapp/vbridge": ["vbridge/src"],
+      "@webb-dapp/page-note-account/*": ["page-note-account/src/*"],
+      "@webb-dapp/page-note-account": ["page-note-account/src"]
     }
   }
 }

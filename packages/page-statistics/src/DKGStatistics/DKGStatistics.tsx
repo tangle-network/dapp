@@ -263,7 +263,6 @@ export const DKGStatistics: FC = () => {
 
   return (
     <DKGEggnetStatisticsWrapper>
-      <AuthoritiesData />
       <Flex row jc='space-between' ai='flex-start' wrap='wrap'>
         <StatisticCardsList>
           {displayOverviewData.map((item) => (

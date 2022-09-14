@@ -7,6 +7,7 @@
   "homepage": "https://github.com/webb-tools/webb-dapp#readme",
   "dependencies": {
     "@ngneat/falso": "^5.7.0",
+    "@polkadot/react-identicon": "^2.9.8",
     "@ramonak/react-progress-bar": "^5.0.0",
     "chart.js": "^3.8.0",
     "gridjs": "^5.0.2",

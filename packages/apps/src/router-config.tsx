@@ -13,6 +13,7 @@ const PageCrowdloan = lazy(() => import('@webb-dapp/page-crowdloan'));
 const PageGovernance = lazy(() => import('@webb-dapp/page-governance'));
 const PageClaims = lazy(() => import('@webb-dapp/page-claims'));
 const PageNoteAccount = lazy(() => import('@webb-dapp/page-note-account'));
+const PageStats = lazy(() => import('@webb-dapp/page-statistics'));
 
 const animations = {
   initial: { x: -230, opacity: 0.5 },
@@ -106,6 +107,15 @@ export const config: RouterConfigData[] = [
         ),
         path: 'note-account/*',
         title: 'Note Account',
+      },
+      {
+        element: (
+          <CSuspense>
+            <PageStats />
+          </CSuspense>
+        ),
+        path: 'statistics/dkg',
+        title: 'DKG stats',
       },
       {
         path: '*',
