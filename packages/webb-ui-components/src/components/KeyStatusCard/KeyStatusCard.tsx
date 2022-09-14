@@ -1,5 +1,7 @@
 import { Avatar, AvatarGroup, Button, Card, Chip } from '@webb-dapp/webb-ui-components';
 
+import Identicon from '@polkadot/react-identicon';
+
 import { KeyValueWithButton } from '../KeyValueWithButton';
 import { LabelWithValue } from '../LabelWithValue';
 import { TimeProgress } from '../TimeProgress';
@@ -46,12 +48,21 @@ export const KeyStatusCard: React.FC<KeyStatusCardProps> = ({
         <KeyValueWithButton keyValue={keyVal} />
       </div>
       {/* * Content */}
-      <TimeProgress startTime={startTime} endTime={endTime} />
+      <TimeProgress startTime={startTime} endTime={endTime ?? 'TBD'} />
       {/** Bottom */}
       <div className='flex items-center justify-between'>
         <AvatarGroup total={totalAuthorities}>
           {Object.values(authorities).map((au) => (
-            <Avatar key={au.id} src={au.avatarUrl} alt={au.id} />
+            <Identicon
+              style={{
+                maxWidth: '30px',
+                display: 'inline-block',
+                padding: 5,
+              }}
+              theme='polkadot'
+              value={`0x${au.id}`}
+              size={5}
+            />
           ))}
         </AvatarGroup>
         <Button href={fullDetailUrl} target='_blank' varirant='link' className='uppercase' size='sm'>

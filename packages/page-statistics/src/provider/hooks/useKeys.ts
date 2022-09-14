@@ -240,7 +240,13 @@ export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
               };
             }) || [];
           return {
-            val: [val[0], val[1]],
+            val: [
+              {
+                ...val[0],
+                end: val[1].start,
+              },
+              val[1],
+            ],
             isFailed: false,
             isLoading: false,
           };

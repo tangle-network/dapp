@@ -58,7 +58,7 @@ export interface KeyStatusCardDataProps {
   /**
    * The end time of the `key`
    */
-  endTime: Date;
+  endTime?: Date;
   /**
    * The `Authority` represents authorities attended in the key gen process
    * @type {AuthoritiesType}

@@ -48,6 +48,7 @@ export function useCurrentMetaData(): Loadable<Metadata> {
     val: null,
   });
   useEffect(() => {
+    query.startPolling(30_000);
     const unSub = query.observable
       .map((r): Loadable<Metadata> => {
         if (r.loading) {
@@ -85,7 +86,10 @@ export function useCurrentMetaData(): Loadable<Metadata> {
         };
       })
       .subscribe(setMetaData);
-    return () => unSub.unsubscribe();
+    return () => {
+      unSub.unsubscribe();
+      query.stopPolling();
+    };
   }, [query]);
   return metaData;
 }

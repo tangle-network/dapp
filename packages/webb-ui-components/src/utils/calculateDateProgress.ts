@@ -8,6 +8,9 @@ import { differenceInMilliseconds, isValid } from 'date-fns';
  * otherwise returns the percentage of the current date have passed since the start date
  */
 export const calculateDateProgress = (startDateStr: string | Date, endDateStr: string | Date): number | null => {
+  if (endDateStr === 'TBD') {
+    return 0;
+  }
   // If one of two date is invalid -> Return `null`
   if (!isValid(startDateStr) || !isValid(endDateStr)) {
     return null;

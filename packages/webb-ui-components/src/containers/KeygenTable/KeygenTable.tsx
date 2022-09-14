@@ -15,7 +15,6 @@ import {
 } from '@tanstack/react-table';
 import { PageInfoQuery, useKeys } from '@webb-dapp/page-statistics/provider/hooks';
 import {
-  Avatar,
   AvatarGroup,
   Button,
   CardTable,
@@ -30,9 +29,10 @@ import {
 import { fuzzyFilter } from '@webb-dapp/webb-ui-components/components/Filter/utils';
 import { Authority } from '@webb-dapp/webb-ui-components/components/KeyStatusCard/types';
 import { KeygenType } from '@webb-dapp/webb-ui-components/types';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import Identicon from '@polkadot/react-identicon';
+
 const columnHelper = createColumnHelper<KeygenType>();
 
 const columns: ColumnDef<KeygenType, any>[] = [
@@ -96,6 +96,7 @@ export const KeygenTable = () => {
     pageIndex: 0,
     pageSize: 10,
   });
+  const [totalItems, setTotalItems] = useState(0);
 
   const pagination = useMemo(
     () => ({
@@ -107,13 +108,20 @@ export const KeygenTable = () => {
 
   const pageQuery: PageInfoQuery = useMemo(
     () => ({
-      offset: pageIndex * pageSize,
+      offset: pagination.pageIndex * pageSize,
       perPage: pagination.pageSize,
     }),
     [pagination]
   );
 
   const keysStats = useKeys(pageQuery);
+
+  useEffect(() => {
+    if (keysStats.val) {
+      setTotalItems(keysStats.val.pageInfo.count);
+    }
+  }, [keysStats]);
+
   const data = useMemo(() => {
     if (keysStats.val) {
       return keysStats.val.items.map(
@@ -137,7 +145,7 @@ export const KeygenTable = () => {
   const table = useReactTable<KeygenType>({
     data,
     columns,
-    pageCount: pageQuery.perPage,
+    pageCount: Math.round(totalItems / pageSize),
     getCoreRowModel: getCoreRowModel(),
     state: {
       pagination,

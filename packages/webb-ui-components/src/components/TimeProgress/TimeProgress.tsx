@@ -40,7 +40,7 @@ export const TimeProgress = React.forwardRef<HTMLDivElement, TimeProgressProps>(
         <Progress value={dateProgress} className='w-full' />
         <div className='flex items-center justify-between mt-3'>
           <LabelWithValue label='start:' value={formatDateToUtc(startTime)} />
-          <LabelWithValue label='end:' value={formatDateToUtc(endTime)} />
+          <LabelWithValue label='end:' value={endTime === 'TBD' ? 'TBD' : formatDateToUtc(endTime)} />
         </div>
       </div>
     );
