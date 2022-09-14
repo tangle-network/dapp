@@ -8391,12 +8391,13 @@ export type _Metadata = {
 };
 
 export type ValidatorListingQueryVariables = Exact<{
+  sessionId: Scalars['String'];
   perPage: Scalars['Int'];
   offset: Scalars['Int'];
 }>;
 
 
-export type ValidatorListingQuery = { __typename?: 'Query', validators?: { __typename?: 'ValidatorsConnection', totalCount: number, nodes: Array<{ __typename?: 'Validator', authorityId: string, id: string } | null>, pageInfo: { __typename?: 'PageInfo', endCursor?: any | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: any | null } } | null };
+export type ValidatorListingQuery = { __typename?: 'Query', validators?: { __typename?: 'ValidatorsConnection', totalCount: number, nodes: Array<{ __typename?: 'Validator', authorityId: string, id: string, sessionValidators: { __typename?: 'SessionValidatorsConnection', edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: string, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string } | null } | null }> } } | null>, pageInfo: { __typename?: 'PageInfo', endCursor?: any | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: any | null } } | null };
 
 export type ValidatorSessionsQueryVariables = Exact<{
   keyGen?: InputMaybe<Scalars['Boolean']>;
@@ -8516,10 +8517,13 @@ export const SessionAuthFragmentDoc = gql`
 }
     ${SessionAuthValidatorFragmentDoc}`;
 export const ValidatorListingDocument = gql`
-    query ValidatorListing($perPage: Int!, $offset: Int!) {
+    query ValidatorListing($sessionId: String!, $perPage: Int!, $offset: Int!) {
   validators(offset: $offset, first: $perPage) {
     nodes {
       ...ValidatorMeta
+      sessionValidators(first: 1, filter: {sessionId: {equalTo: $sessionId}}) {
+        ...SessionAuthValidator
+      }
     }
     totalCount
     pageInfo {
@@ -8528,6 +8532,7 @@ export const ValidatorListingDocument = gql`
   }
 }
     ${ValidatorMetaFragmentDoc}
+${SessionAuthValidatorFragmentDoc}
 ${PageInfoMetaFragmentDoc}`;
 
 /**
@@ -8542,6 +8547,7 @@ ${PageInfoMetaFragmentDoc}`;
  * @example
  * const { data, loading, error } = useValidatorListingQuery({
  *   variables: {
+ *      sessionId: // value for 'sessionId'
  *      perPage: // value for 'perPage'
  *      offset: // value for 'offset'
  *   },

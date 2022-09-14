@@ -1,5 +1,9 @@
-import { useSessionThresholdsLazyQuery } from '@webb-dapp/page-statistics/generated/graphql';
-import { DKGAuthority, Loadable, Page } from '@webb-dapp/page-statistics/provider/hooks/types';
+import {
+  useSessionThresholdsLazyQuery,
+  useValidatorListingLazyQuery,
+} from '@webb-dapp/page-statistics/generated/graphql';
+import { mapAuthorities } from '@webb-dapp/page-statistics/provider/hooks/mappers';
+import { Loadable, Page, PageInfoQuery } from '@webb-dapp/page-statistics/provider/hooks/types';
 import { useCurrentMetaData } from '@webb-dapp/page-statistics/provider/hooks/useCurrentMetaData';
 import { PublicKey, PublicKeyListView } from '@webb-dapp/page-statistics/provider/hooks/useKeys';
 import { useEffect, useState } from 'react';
@@ -70,8 +74,9 @@ export function useThresholds(): Loadable<[Thresholds, UpcomingThresholds]> {
         if (res.data) {
           const session = res.data.session!;
           const publicKey = session.publicKey!;
-          const authSet = session.authorities.map((auth: DKGAuthority) => auth.accountId);
-          const nextAuthSet = session.nextAuthorities.map((auth: DKGAuthority) => auth.accountId);
+          const allAuth = mapAuthorities(session?.sessionValidators);
+          const authSet = allAuth.map((auth) => auth.id);
+          const nextAuthSet = allAuth.filter((auth) => auth.isNext).map((auth) => auth.id);
           const keyGenThreshold = session.keyGenThreshold as QueryThreshold;
           const signatureThreshold = session.signatureThreshold as QueryThreshold;
           const threshold: Thresholds = {
@@ -144,8 +149,73 @@ export function useThresholds(): Loadable<[Thresholds, UpcomingThresholds]> {
   return data;
 }
 
-export function useAuthorities(): Loadable<AuthorityListItem> {
-  throw new Error('Not implemented');
+export function useAuthorities(reqQuery: PageInfoQuery): Loadable<Page<AuthorityListItem>> {
+  const [authorities, setAuthorities] = useState<Loadable<Page<AuthorityListItem>>>({
+    val: null,
+    isLoading: true,
+    isFailed: false,
+  });
+  const metaData = useCurrentMetaData();
+  const [call, query] = useValidatorListingLazyQuery();
+  // fetch the data once the filter has changed
+  useEffect(() => {
+    if (metaData.val) {
+      call({
+        variables: {
+          offset: reqQuery.offset,
+          perPage: reqQuery.perPage,
+          sessionId: metaData.val.activeSession,
+        },
+      }).catch((e) => {
+        setAuthorities({
+          val: null,
+          isFailed: true,
+          isLoading: false,
+          error: e.message,
+        });
+      });
+    }
+  }, [reqQuery, call, metaData]);
+
+  useEffect(() => {
+    const subscription = query.observable
+      .map((res): Loadable<Page<AuthorityListItem>> => {
+        if (res.data && res.data.validators) {
+          const validators = res.data.validators;
+          const items = validators.nodes.map((validator): AuthorityListItem => {
+            const auth = mapAuthorities(validator?.sessionValidators!);
+            return {
+              id: validator?.id!,
+              location: 'any',
+              uptime: '50',
+              reputation: auth[0].reputation ?? '0',
+            };
+          });
+          return {
+            isLoading: false,
+            isFailed: false,
+            val: {
+              items,
+              pageInfo: {
+                count: validators.totalCount,
+                hasPrevious: validators.pageInfo.hasPreviousPage,
+                hasNext: validators.pageInfo.hasNextPage,
+              },
+            },
+          };
+        }
+        return {
+          isLoading: res.loading,
+          isFailed: Boolean(res.error),
+          error: res.error?.message ?? undefined,
+          val: null,
+        };
+      })
+      .subscribe(setAuthorities);
+    return () => subscription.unsubscribe();
+  }, [query]);
+
+  return authorities;
 }
 
 type AuthorityDetails = {

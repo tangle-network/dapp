@@ -155,7 +155,7 @@ export function useKeys(reqQuery: PageInfoQuery): Loadable<Page<PublicKeyListVie
                 .filter((n) => n)
                 .map((node) => {
                   const session = node!.sessions?.nodes[0]!;
-                  const authorities = mapAuthorities(session)
+                  const authorities = mapAuthorities(session.sessionValidators)
                     .filter((auth) => auth.isBest)
                     .map((auth) => auth.id);
                   return {
@@ -224,7 +224,7 @@ export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
         if (res.data) {
           const val: PublicKey[] =
             res.data.sessions?.nodes.map((i) => {
-              const keyGenAuthorities = mapAuthorities(i!)
+              const keyGenAuthorities = mapAuthorities(i?.sessionValidators!)
                 .filter((auth) => auth.isBest)
                 .map((auth) => auth.id);
               const publicKey = i!.publicKey!;
@@ -306,7 +306,7 @@ export function useKey(id: string): Loadable<PublicKeyDetails> {
               hash: val.txHash,
             };
           });
-          const sessionAuthorities = mapAuthorities(session);
+          const sessionAuthorities = mapAuthorities(session.sessionValidators);
           const authorities = sessionAuthorities
             .filter((auth) => auth.isBest)
             .map((auth): KeyGenAuthority => {

@@ -1,4 +1,4 @@
-import { SessionAuthFragment, ValidatorMetaFragment } from '@webb-dapp/page-statistics/generated/graphql';
+import { SessionAuthValidatorFragment } from '@webb-dapp/page-statistics/generated/graphql';
 
 export type Authority = {
   id: string;
@@ -11,8 +11,8 @@ export type Authority = {
   nextBestOrder: number;
   authorityId: string;
 };
-export function mapAuthorities(data: SessionAuthFragment): Authority[] {
-  return data.sessionValidators.edges.map(
+export function mapAuthorities(data: SessionAuthValidatorFragment): Authority[] {
+  return data.edges.map(
     (item): Authority => ({
       id: item.node?.validator?.id!,
       sessionId: item.node?.sessionId!,

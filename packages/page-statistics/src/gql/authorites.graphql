@@ -1,8 +1,12 @@
-query ValidatorListing($perPage: Int!, $offset: Int!) {
+query ValidatorListing($sessionId: String!, $perPage: Int!, $offset: Int!) {
   validators(offset: $offset, first: $perPage) {
     nodes {
       ...ValidatorMeta
+      sessionValidators(first: 1, filter: { sessionId: { equalTo: $sessionId } }) {
+        ...SessionAuthValidator
+      }
     }
+
     totalCount
     pageInfo {
       ...PageInfoMeta
@@ -24,7 +28,6 @@ query ValidatorSessions($keyGen: Boolean, $validatorId: String!, $perPage: Int!,
         id
         sessionValidators(first: 3) {
           ...SessionAuthValidator
-
         }
       }
     }
