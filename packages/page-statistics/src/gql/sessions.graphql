@@ -18,3 +18,21 @@ query CurrentSessionAuthorities {
     }
   }
 }
+
+query SessionKeys($SessionId: [String!]!) {
+  sessions(filter: { id: { in: $SessionId } }) {
+    nodes {
+      id
+      bestAuthorities
+      publicKey {
+        id
+        compressed
+        uncompressed
+        block {
+          timestamp
+          number
+        }
+      }
+    }
+  }
+}

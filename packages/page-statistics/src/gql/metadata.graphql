@@ -1,0 +1,6 @@
+query MetaData {
+    _metadata {
+        targetHeight
+        lastProcessedHeight
+    }
+}
