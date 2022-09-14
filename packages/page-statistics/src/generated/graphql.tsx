@@ -8479,6 +8479,14 @@ export type SessionKeysQueryVariables = Exact<{
 
 export type SessionKeysQuery = { __typename?: 'Query', sessions?: { __typename?: 'SessionsConnection', nodes: Array<{ __typename?: 'Session', id: string, publicKey?: { __typename?: 'PublicKey', id: string, compressed?: string | null, uncompressed?: string | null, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null } | null, sessionValidators: { __typename?: 'SessionValidatorsConnection', edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: string, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string } | null } | null }> } } | null> } | null };
 
+export type SessionThresholdHistoryQueryVariables = Exact<{
+  offset: Scalars['Int'];
+  perPage: Scalars['Int'];
+}>;
+
+
+export type SessionThresholdHistoryQuery = { __typename?: 'Query', sessions?: { __typename?: 'SessionsConnection', totalCount: number, nodes: Array<{ __typename?: 'Session', id: string, signatureThreshold?: any | null, keyGenThreshold?: any | null, block?: { __typename?: 'Block', id: string, timestamp?: any | null } | null } | null>, pageInfo: { __typename?: 'PageInfo', endCursor?: any | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: any | null } } | null };
+
 export type SessionThresholdsQueryVariables = Exact<{
   sessionId: Scalars['String'];
 }>;
@@ -9070,6 +9078,54 @@ export function useSessionKeysLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type SessionKeysQueryHookResult = ReturnType<typeof useSessionKeysQuery>;
 export type SessionKeysLazyQueryHookResult = ReturnType<typeof useSessionKeysLazyQuery>;
 export type SessionKeysQueryResult = Apollo.QueryResult<SessionKeysQuery, SessionKeysQueryVariables>;
+export const SessionThresholdHistoryDocument = gql`
+    query SessionThresholdHistory($offset: Int!, $perPage: Int!) {
+  sessions(first: $perPage, offset: $offset, orderBy: [BLOCK_NUMBER_DESC]) {
+    nodes {
+      id
+      signatureThreshold
+      keyGenThreshold
+      block {
+        id
+        timestamp
+      }
+    }
+    pageInfo {
+      ...PageInfoMeta
+    }
+    totalCount
+  }
+}
+    ${PageInfoMetaFragmentDoc}`;
+
+/**
+ * __useSessionThresholdHistoryQuery__
+ *
+ * To run a query within a React component, call `useSessionThresholdHistoryQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSessionThresholdHistoryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSessionThresholdHistoryQuery({
+ *   variables: {
+ *      offset: // value for 'offset'
+ *      perPage: // value for 'perPage'
+ *   },
+ * });
+ */
+export function useSessionThresholdHistoryQuery(baseOptions: Apollo.QueryHookOptions<SessionThresholdHistoryQuery, SessionThresholdHistoryQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SessionThresholdHistoryQuery, SessionThresholdHistoryQueryVariables>(SessionThresholdHistoryDocument, options);
+      }
+export function useSessionThresholdHistoryLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SessionThresholdHistoryQuery, SessionThresholdHistoryQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SessionThresholdHistoryQuery, SessionThresholdHistoryQueryVariables>(SessionThresholdHistoryDocument, options);
+        }
+export type SessionThresholdHistoryQueryHookResult = ReturnType<typeof useSessionThresholdHistoryQuery>;
+export type SessionThresholdHistoryLazyQueryHookResult = ReturnType<typeof useSessionThresholdHistoryLazyQuery>;
+export type SessionThresholdHistoryQueryResult = Apollo.QueryResult<SessionThresholdHistoryQuery, SessionThresholdHistoryQueryVariables>;
 export const SessionThresholdsDocument = gql`
     query SessionThresholds($sessionId: String!) {
   session(id: $sessionId) {

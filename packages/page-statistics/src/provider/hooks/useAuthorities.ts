@@ -1,4 +1,5 @@
 import {
+  useSessionThresholdHistoryLazyQuery,
   useSessionThresholdsLazyQuery,
   useValidatorListingLazyQuery,
   useValidatorOfSessionLazyQuery,
@@ -364,4 +365,75 @@ export function useAuthority(pageQuery: PageInfoQuery, authorityId: string): Aut
     return () => subscription.unsubscribe();
   }, [queryValidatorOfSession]);
   return useMemo(() => ({ stats, keyGens }), [stats, keyGens]);
+}
+
+type SessionThresholdEntry = {
+  sessionId: string;
+  signatureThreshold: string;
+  keyGenThreshold: string;
+};
+
+export function useSessionHistory(pageQuery: PageInfoQuery): Loadable<Page<SessionThresholdEntry>> {
+  const [sessionHistory, setSessionHistory] = useState<Loadable<Page<SessionThresholdEntry>>>({
+    isFailed: false,
+    isLoading: false,
+    val: null,
+  });
+
+  const [call, query] = useSessionThresholdHistoryLazyQuery();
+
+  useEffect(() => {
+    call({
+      variables: {
+        offset: pageQuery.offset,
+        perPage: pageQuery.perPage,
+      },
+    }).catch((e) => {
+      setSessionHistory({
+        val: null,
+        isFailed: true,
+        isLoading: false,
+        error: e.message,
+      });
+    });
+  }, [pageQuery]);
+
+  useEffect(() => {
+    const subscription = query.observable
+      .map((res): Loadable<Page<SessionThresholdEntry>> => {
+        if (res.data.sessions) {
+          const items: SessionThresholdEntry[] = res.data.sessions.nodes.map((node) => {
+            return {
+              sessionId: node?.id!,
+              keyGenThreshold: String((node?.keyGenThreshold! as QueryThreshold).current!),
+              signatureThreshold: String((node?.signatureThreshold! as QueryThreshold).current!),
+            };
+          });
+          return {
+            error: '',
+            isFailed: false,
+            isLoading: false,
+            val: {
+              items,
+              pageInfo: {
+                count: res.data.sessions.totalCount,
+                hasPrevious: res.data.sessions.pageInfo.hasPreviousPage,
+                hasNext: res.data.sessions.pageInfo.hasNextPage,
+              },
+            },
+          };
+        }
+
+        return {
+          isLoading: res.loading,
+          isFailed: Boolean(res.error),
+          error: res.error?.message ?? undefined,
+          val: null,
+        };
+      })
+      .subscribe(setSessionHistory);
+    return () => subscription.unsubscribe();
+  }, [query]);
+
+  return sessionHistory;
 }

@@ -36,7 +36,30 @@ query SessionKeys($SessionId: [String!]!) {
     }
   }
 }
-
+query SessionThresholdHistory(
+  $offset: Int!
+  $perPage:Int!
+){
+  sessions(
+    first: $perPage
+    offset: $offset
+    orderBy: [BLOCK_NUMBER_DESC]
+  ) {
+    nodes {
+      id
+      signatureThreshold
+      keyGenThreshold
+      block {
+        id
+        timestamp
+      }
+    }
+    pageInfo {
+    ...PageInfoMeta
+    }
+    totalCount
+  }
+}
 query SessionThresholds($sessionId: String!) {
   session(id: $sessionId) {
     id
