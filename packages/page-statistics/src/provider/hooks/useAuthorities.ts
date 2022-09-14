@@ -1,12 +1,14 @@
 import {
   useSessionThresholdsLazyQuery,
   useValidatorListingLazyQuery,
+  useValidatorOfSessionLazyQuery,
+  useValidatorSessionsLazyQuery,
 } from '@webb-dapp/page-statistics/generated/graphql';
 import { mapAuthorities } from '@webb-dapp/page-statistics/provider/hooks/mappers';
 import { Loadable, Page, PageInfoQuery } from '@webb-dapp/page-statistics/provider/hooks/types';
 import { useCurrentMetaData } from '@webb-dapp/page-statistics/provider/hooks/useCurrentMetaData';
-import { PublicKey, PublicKeyListView } from '@webb-dapp/page-statistics/provider/hooks/useKeys';
-import { useEffect, useState } from 'react';
+import { PublicKey } from '@webb-dapp/page-statistics/provider/hooks/useKeys';
+import { useEffect, useMemo, useState } from 'react';
 
 import { Threshold as QueryThreshold } from './types';
 
@@ -218,11 +220,117 @@ export function useAuthorities(reqQuery: PageInfoQuery): Loadable<Page<Authority
   return authorities;
 }
 
+type KeGenKeyListItem = {
+  id: string;
+  height: string;
+  session: string;
+  publicKey: string;
+  authority: string;
+};
 type AuthorityDetails = {
   stats: Loadable<AuthorityStats>;
-  geyKens: Loadable<Page<PublicKeyListView>>;
+  keyGens: Loadable<Page<KeGenKeyListItem>>;
 };
 
-export function useAuthority(): AuthorityDetails {
-  throw new Error('Not implemented');
+export function useAuthority(pageQuery: PageInfoQuery, authorityId: string): AuthorityDetails {
+  const [stats, setStats] = useState<AuthorityDetails['stats']>({
+    isFailed: false,
+    isLoading: true,
+    val: null,
+  });
+  const [keyGens, setKeyGens] = useState<AuthorityDetails['keyGens']>({
+    isFailed: false,
+    isLoading: true,
+    val: null,
+  });
+  const metaData = useCurrentMetaData();
+
+  const [callKeyGen, queryKeyGen] = useValidatorSessionsLazyQuery();
+  const [callValidatorOfSession, queryValidatorOfSession] = useValidatorOfSessionLazyQuery();
+  useEffect(() => {
+    callKeyGen({
+      variables: {
+        offset: pageQuery.offset,
+        perPage: pageQuery.perPage,
+        keyGen: true,
+        validatorId: authorityId,
+      },
+    }).catch((e) => {
+      setKeyGens({
+        val: null,
+        isFailed: true,
+        isLoading: false,
+        error: e.message,
+      });
+    });
+  }, [authorityId, callKeyGen, setKeyGens, pageQuery]);
+  useEffect(() => {
+    if (metaData.val) {
+      callValidatorOfSession({
+        variables: {
+          sessionValidatorId: `${metaData.val.activeSession}-${authorityId}`,
+        },
+      }).catch((e) => {
+        setStats({
+          val: null,
+          isFailed: true,
+          isLoading: false,
+          error: e.message,
+        });
+      });
+    }
+  }, [metaData, callValidatorOfSession, authorityId]);
+  useEffect(() => {
+    const subscription = queryKeyGen.observable
+      .map((res): AuthorityDetails['keyGens'] => {
+        if (res.data && res.data.sessionValidators) {
+          const sessionValidators = res.data.sessionValidators;
+          const items = sessionValidators.nodes.map((node): KeGenKeyListItem => {
+            const session = node?.session!;
+            const publicKey = session.publicKey!;
+            return {
+              id: publicKey.id,
+              session: session.id,
+              publicKey: publicKey.uncompressed!,
+              height: '0',
+              authority: String(session.sessionValidators.totalCount),
+            };
+          });
+          return {
+            isLoading: false,
+            isFailed: false,
+            val: {
+              items,
+              pageInfo: {
+                count: sessionValidators.totalCount,
+                hasPrevious: sessionValidators.pageInfo.hasPreviousPage,
+                hasNext: sessionValidators.pageInfo.hasNextPage,
+              },
+            },
+          };
+        }
+        return {
+          isLoading: res.loading,
+          isFailed: Boolean(res.error),
+          error: res.error?.message ?? undefined,
+          val: null,
+        };
+      })
+      .subscribe(setKeyGens);
+    return () => subscription.unsubscribe();
+  }, [queryKeyGen]);
+  useEffect(() => {
+    const subscription = queryValidatorOfSession.observable.map((res): AuthorityDetails['stats'] => {
+      if (res.data && res.data.sessionValidator) {
+        const data = res.data.sessionValidator;
+        return {
+          error: '',
+          isFailed: false,
+          isLoading: false,
+          val: undefined,
+        };
+      }
+    });
+  }, [queryValidatorOfSession]);
+  return useMemo(() => ({ stats, keyGens }), [stats, keyGens]);
 }

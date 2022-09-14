@@ -26,14 +26,29 @@ query ValidatorSessions($keyGen: Boolean, $validatorId: String!, $perPage: Int!,
       }
       session {
         id
+        publicKey {
+          id
+          compressed
+          uncompressed
+        }
         sessionValidators(first: 3) {
           ...SessionAuthValidator
+          totalCount
         }
       }
     }
     totalCount
     pageInfo {
       ...PageInfoMeta
+    }
+  }
+}
+
+query ValidatorOfSession($sessionValidatorId: String!) {
+  sessionValidator(id: $sessionValidatorId) {
+    ...SessionAuthValidatorNode
+    session {
+      keyGenThreshold
     }
   }
 }
