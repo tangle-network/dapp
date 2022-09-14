@@ -1,5 +1,5 @@
 /**
- * A Type that wrappers an API call value for a list view
+ * A Type that wraps an API call value for a list view
  * @param T The type of the value
  * @param items - list of the items for the page
  * @param pageInfo - information about the page
@@ -13,7 +13,7 @@ export type Page<T> = {
   };
 };
 /**
- * A Type that wrappers an API call value
+ * A Type that wraps an API call value
  * @param T - The type of the value should be null if the call is not yet complete
  * @param isLoading - A boolean that indicates if the call is still loading
  * @param isFailed - A boolean that indicates if the call has failed

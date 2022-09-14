@@ -1,6 +1,6 @@
-import { DemoTable } from '@webb-dapp/page-statistics/provider/DemoTable';
-import { useActiveKeys, useKeys } from '@webb-dapp/page-statistics/provider/hooks/useKeys';
 import styled from 'styled-components';
+import { DemoTable } from '@webb-dapp/page-statistics/provider/DemoTable';
+import { useKeys } from '@webb-dapp/page-statistics/provider/hooks/useKeys';æ
 
 export interface DKGAuthority {
   authorityId: string;
@@ -20,8 +20,7 @@ export const AuthoritiesData = () => {
     offset: 0,
     perPage: 30,
   });
-  const activeKeys = useActiveKeys();
-  console.log(activeKeys);
+
   return (
     <AuthoritiesDataWrapper>
       <DemoTable page={data} />

@@ -52,7 +52,7 @@ export interface PublicKeyListView extends PublicKeyContent {
 }
 /**
  * Public key progress history item
- * @param at - The ate when the history item took place
+ * @param at - The date when the history item took place
  * @param hash - Transaction hash of that history item
  * @param status - The status of the history item
  * */
