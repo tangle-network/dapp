@@ -396,7 +396,7 @@ export function useSessionHistory(pageQuery: PageInfoQuery): Loadable<Page<Sessi
         error: e.message,
       });
     });
-  }, [pageQuery]);
+  }, [pageQuery, setSessionHistory, call]);
 
   useEffect(() => {
     const subscription = query.observable
