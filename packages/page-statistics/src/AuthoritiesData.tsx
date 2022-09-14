@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { DemoTable } from '@webb-dapp/page-statistics/provider/DemoTable';
-import { useKeys } from '@webb-dapp/page-statistics/provider/hooks/useKeys';æ
+import { useKeys } from '@webb-dapp/page-statistics/provider/hooks/useKeys';
+æ;
 
 export interface DKGAuthority {
   authorityId: string;
