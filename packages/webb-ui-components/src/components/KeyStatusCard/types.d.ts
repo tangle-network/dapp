@@ -54,11 +54,11 @@ export interface KeyStatusCardDataProps {
   /**
    * The start time of the `key`
    */
-  startTime: Date;
+  startTime: Date | null;
   /**
    * The end time of the `key`
    */
-  endTime: Date;
+  endTime: Date | null;
   /**
    * The `Authority` represents authorities attended in the key gen process
    * @type {AuthoritiesType}

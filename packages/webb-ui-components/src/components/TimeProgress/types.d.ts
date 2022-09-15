@@ -7,9 +7,9 @@ export interface TimeProgressProps extends WebbComponentBase {
   /**
    * The start time
    */
-  startTime: Date | string;
+  startTime: Date | string | null;
   /**
    * The end time
    */
-  endTime: Date | string;
+  endTime: Date | string | null;
 }

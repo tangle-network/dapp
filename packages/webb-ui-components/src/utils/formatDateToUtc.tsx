@@ -6,7 +6,11 @@ import { format, utcToZonedTime } from 'date-fns-tz';
  * @param dateArg Represents the `value` to parse to UTC format
  * @returns the string represents the utc format of the given date
  */
-export const formatDateToUtc = (dateArg: string | Date): string => {
+export const formatDateToUtc = (dateArg: string | Date | null): string => {
+  if (!dateArg) {
+    return 'TBD';
+  }
+
   if (!isValid(dateArg)) {
     throw new Error('Please provide valid date object');
   }
