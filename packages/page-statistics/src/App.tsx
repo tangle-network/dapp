@@ -11,7 +11,7 @@ const apolloClient = new ApolloClient({
 
 const App: FC = () => {
   return (
-    <WebbUIProvider>
+    <WebbUIProvider hasErrorBoudary>
       <div className='min-h-[72px] bg-mono-0 dark:bg-mono-180 mb-8 flex justify-between items-center p-4'>
         <Logo />
         <ThemeSwitcher />
