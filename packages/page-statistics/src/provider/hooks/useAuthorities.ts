@@ -348,7 +348,7 @@ export function useAuthority(pageQuery: PageInfoQuery, authorityId: string): Aut
             uptime: '100',
           };
           return {
-            error: '',
+            error: undefined,
             isFailed: false,
             isLoading: false,
             val: stats,
