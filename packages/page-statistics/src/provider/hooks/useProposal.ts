@@ -1,5 +1,6 @@
 import { ProposalType } from '@webb-dapp/page-statistics/generated/graphql';
-import { Loadable, Page, ProposalStatus } from '@webb-dapp/page-statistics/provider/hooks/types';
+import { Loadable, Page, PageInfoQuery, ProposalStatus } from '@webb-dapp/page-statistics/provider/hooks/types';
+import { useThresholds } from '@webb-dapp/page-statistics/provider/hooks/useAuthorities';
 
 type Thresholds = {
   proposal: string;
@@ -47,8 +48,8 @@ type ProposalDetails = {
     data: string;
   };
 };
-
-export function useProposals(): ProposalsOverview {
+export function useProposals(pageQuery: PageInfoQuery): ProposalsOverview {
+  const data = useThresholds();
   // TODO: implement the proposals hooks
   throw new Error('Not implemented');
 }

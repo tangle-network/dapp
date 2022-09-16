@@ -11,9 +11,7 @@ query Proposals(
       signature
       type
       status
-      votes
-      timelineStatus
-      currentStatus
+
       block {
         timestamp
         number
@@ -41,4 +39,74 @@ query ProposalsCounter(
       timestamp
     }
   }
+}
+
+query ProposalsOverview($startRange: BigFloatFilter!, $endRange: BigFloatFilter!, $sessionId: String!) {
+  session(id: $sessionId) {
+    id
+    proposerThreshold
+    sessionValidators {
+      totalCount
+    }
+  }
+
+
+  open:  proposalTimelineStatuses(filter: {
+    status: { equalTo: Open }
+    and:[
+      {
+        blockNumber: $startRange
+      }
+      {
+        blockNumber: $endRange
+      }
+    ]
+  }) {
+    totalCount
+  }
+
+  signed:  proposalTimelineStatuses(filter: {
+    status: { equalTo: Signed }
+    and:[
+      {
+        blockNumber: $startRange
+      }
+      {
+        blockNumber: $endRange
+      }
+    ]
+  }) {
+    totalCount
+  }
+
+
+
+  reject:  proposalTimelineStatuses(filter: {
+    status: { equalTo: Rejected }
+    and:[
+      {
+        blockNumber: $startRange
+      }
+      {
+        blockNumber: $endRange
+      }
+    ]
+  }) {
+    totalCount
+  }
+
+  accepted:  proposalTimelineStatuses(filter: {
+    status: { equalTo: Accepted }
+    and:[
+      {
+        blockNumber: $startRange
+      }
+      {
+        blockNumber: $endRange
+      }
+    ]
+  }) {
+    totalCount
+  }
+
 }
