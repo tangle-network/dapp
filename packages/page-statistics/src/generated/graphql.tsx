@@ -2539,10 +2539,6 @@ export enum BlocksOrderBy {
   PublicKeysVarianceSampleIdDesc = 'PUBLIC_KEYS_VARIANCE_SAMPLE_ID_DESC',
   PublicKeysVarianceSampleUncompressedAsc = 'PUBLIC_KEYS_VARIANCE_SAMPLE_UNCOMPRESSED_ASC',
   PublicKeysVarianceSampleUncompressedDesc = 'PUBLIC_KEYS_VARIANCE_SAMPLE_UNCOMPRESSED_DESC',
-  SessionsAverageAuthoritiesAsc = 'SESSIONS_AVERAGE_AUTHORITIES_ASC',
-  SessionsAverageAuthoritiesDesc = 'SESSIONS_AVERAGE_AUTHORITIES_DESC',
-  SessionsAverageBestAuthoritiesAsc = 'SESSIONS_AVERAGE_BEST_AUTHORITIES_ASC',
-  SessionsAverageBestAuthoritiesDesc = 'SESSIONS_AVERAGE_BEST_AUTHORITIES_DESC',
   SessionsAverageBlockIdAsc = 'SESSIONS_AVERAGE_BLOCK_ID_ASC',
   SessionsAverageBlockIdDesc = 'SESSIONS_AVERAGE_BLOCK_ID_DESC',
   SessionsAverageBlockNumberAsc = 'SESSIONS_AVERAGE_BLOCK_NUMBER_ASC',
@@ -2551,10 +2547,6 @@ export enum BlocksOrderBy {
   SessionsAverageIdDesc = 'SESSIONS_AVERAGE_ID_DESC',
   SessionsAverageKeyGenThresholdAsc = 'SESSIONS_AVERAGE_KEY_GEN_THRESHOLD_ASC',
   SessionsAverageKeyGenThresholdDesc = 'SESSIONS_AVERAGE_KEY_GEN_THRESHOLD_DESC',
-  SessionsAverageNextAuthoritiesAsc = 'SESSIONS_AVERAGE_NEXT_AUTHORITIES_ASC',
-  SessionsAverageNextAuthoritiesDesc = 'SESSIONS_AVERAGE_NEXT_AUTHORITIES_DESC',
-  SessionsAverageNextBestAuthoritiesAsc = 'SESSIONS_AVERAGE_NEXT_BEST_AUTHORITIES_ASC',
-  SessionsAverageNextBestAuthoritiesDesc = 'SESSIONS_AVERAGE_NEXT_BEST_AUTHORITIES_DESC',
   SessionsAverageProposersAsc = 'SESSIONS_AVERAGE_PROPOSERS_ASC',
   SessionsAverageProposersCountAsc = 'SESSIONS_AVERAGE_PROPOSERS_COUNT_ASC',
   SessionsAverageProposersCountDesc = 'SESSIONS_AVERAGE_PROPOSERS_COUNT_DESC',
@@ -2567,10 +2559,6 @@ export enum BlocksOrderBy {
   SessionsAverageSignatureThresholdDesc = 'SESSIONS_AVERAGE_SIGNATURE_THRESHOLD_DESC',
   SessionsCountAsc = 'SESSIONS_COUNT_ASC',
   SessionsCountDesc = 'SESSIONS_COUNT_DESC',
-  SessionsDistinctCountAuthoritiesAsc = 'SESSIONS_DISTINCT_COUNT_AUTHORITIES_ASC',
-  SessionsDistinctCountAuthoritiesDesc = 'SESSIONS_DISTINCT_COUNT_AUTHORITIES_DESC',
-  SessionsDistinctCountBestAuthoritiesAsc = 'SESSIONS_DISTINCT_COUNT_BEST_AUTHORITIES_ASC',
-  SessionsDistinctCountBestAuthoritiesDesc = 'SESSIONS_DISTINCT_COUNT_BEST_AUTHORITIES_DESC',
   SessionsDistinctCountBlockIdAsc = 'SESSIONS_DISTINCT_COUNT_BLOCK_ID_ASC',
   SessionsDistinctCountBlockIdDesc = 'SESSIONS_DISTINCT_COUNT_BLOCK_ID_DESC',
   SessionsDistinctCountBlockNumberAsc = 'SESSIONS_DISTINCT_COUNT_BLOCK_NUMBER_ASC',
@@ -2579,10 +2567,6 @@ export enum BlocksOrderBy {
   SessionsDistinctCountIdDesc = 'SESSIONS_DISTINCT_COUNT_ID_DESC',
   SessionsDistinctCountKeyGenThresholdAsc = 'SESSIONS_DISTINCT_COUNT_KEY_GEN_THRESHOLD_ASC',
   SessionsDistinctCountKeyGenThresholdDesc = 'SESSIONS_DISTINCT_COUNT_KEY_GEN_THRESHOLD_DESC',
-  SessionsDistinctCountNextAuthoritiesAsc = 'SESSIONS_DISTINCT_COUNT_NEXT_AUTHORITIES_ASC',
-  SessionsDistinctCountNextAuthoritiesDesc = 'SESSIONS_DISTINCT_COUNT_NEXT_AUTHORITIES_DESC',
-  SessionsDistinctCountNextBestAuthoritiesAsc = 'SESSIONS_DISTINCT_COUNT_NEXT_BEST_AUTHORITIES_ASC',
-  SessionsDistinctCountNextBestAuthoritiesDesc = 'SESSIONS_DISTINCT_COUNT_NEXT_BEST_AUTHORITIES_DESC',
   SessionsDistinctCountProposersAsc = 'SESSIONS_DISTINCT_COUNT_PROPOSERS_ASC',
   SessionsDistinctCountProposersCountAsc = 'SESSIONS_DISTINCT_COUNT_PROPOSERS_COUNT_ASC',
   SessionsDistinctCountProposersCountDesc = 'SESSIONS_DISTINCT_COUNT_PROPOSERS_COUNT_DESC',
@@ -2593,10 +2577,6 @@ export enum BlocksOrderBy {
   SessionsDistinctCountPublicKeyIdDesc = 'SESSIONS_DISTINCT_COUNT_PUBLIC_KEY_ID_DESC',
   SessionsDistinctCountSignatureThresholdAsc = 'SESSIONS_DISTINCT_COUNT_SIGNATURE_THRESHOLD_ASC',
   SessionsDistinctCountSignatureThresholdDesc = 'SESSIONS_DISTINCT_COUNT_SIGNATURE_THRESHOLD_DESC',
-  SessionsMaxAuthoritiesAsc = 'SESSIONS_MAX_AUTHORITIES_ASC',
-  SessionsMaxAuthoritiesDesc = 'SESSIONS_MAX_AUTHORITIES_DESC',
-  SessionsMaxBestAuthoritiesAsc = 'SESSIONS_MAX_BEST_AUTHORITIES_ASC',
-  SessionsMaxBestAuthoritiesDesc = 'SESSIONS_MAX_BEST_AUTHORITIES_DESC',
   SessionsMaxBlockIdAsc = 'SESSIONS_MAX_BLOCK_ID_ASC',
   SessionsMaxBlockIdDesc = 'SESSIONS_MAX_BLOCK_ID_DESC',
   SessionsMaxBlockNumberAsc = 'SESSIONS_MAX_BLOCK_NUMBER_ASC',
@@ -2605,10 +2585,6 @@ export enum BlocksOrderBy {
   SessionsMaxIdDesc = 'SESSIONS_MAX_ID_DESC',
   SessionsMaxKeyGenThresholdAsc = 'SESSIONS_MAX_KEY_GEN_THRESHOLD_ASC',
   SessionsMaxKeyGenThresholdDesc = 'SESSIONS_MAX_KEY_GEN_THRESHOLD_DESC',
-  SessionsMaxNextAuthoritiesAsc = 'SESSIONS_MAX_NEXT_AUTHORITIES_ASC',
-  SessionsMaxNextAuthoritiesDesc = 'SESSIONS_MAX_NEXT_AUTHORITIES_DESC',
-  SessionsMaxNextBestAuthoritiesAsc = 'SESSIONS_MAX_NEXT_BEST_AUTHORITIES_ASC',
-  SessionsMaxNextBestAuthoritiesDesc = 'SESSIONS_MAX_NEXT_BEST_AUTHORITIES_DESC',
   SessionsMaxProposersAsc = 'SESSIONS_MAX_PROPOSERS_ASC',
   SessionsMaxProposersCountAsc = 'SESSIONS_MAX_PROPOSERS_COUNT_ASC',
   SessionsMaxProposersCountDesc = 'SESSIONS_MAX_PROPOSERS_COUNT_DESC',
@@ -2619,10 +2595,6 @@ export enum BlocksOrderBy {
   SessionsMaxPublicKeyIdDesc = 'SESSIONS_MAX_PUBLIC_KEY_ID_DESC',
   SessionsMaxSignatureThresholdAsc = 'SESSIONS_MAX_SIGNATURE_THRESHOLD_ASC',
   SessionsMaxSignatureThresholdDesc = 'SESSIONS_MAX_SIGNATURE_THRESHOLD_DESC',
-  SessionsMinAuthoritiesAsc = 'SESSIONS_MIN_AUTHORITIES_ASC',
-  SessionsMinAuthoritiesDesc = 'SESSIONS_MIN_AUTHORITIES_DESC',
-  SessionsMinBestAuthoritiesAsc = 'SESSIONS_MIN_BEST_AUTHORITIES_ASC',
-  SessionsMinBestAuthoritiesDesc = 'SESSIONS_MIN_BEST_AUTHORITIES_DESC',
   SessionsMinBlockIdAsc = 'SESSIONS_MIN_BLOCK_ID_ASC',
   SessionsMinBlockIdDesc = 'SESSIONS_MIN_BLOCK_ID_DESC',
   SessionsMinBlockNumberAsc = 'SESSIONS_MIN_BLOCK_NUMBER_ASC',
@@ -2631,10 +2603,6 @@ export enum BlocksOrderBy {
   SessionsMinIdDesc = 'SESSIONS_MIN_ID_DESC',
   SessionsMinKeyGenThresholdAsc = 'SESSIONS_MIN_KEY_GEN_THRESHOLD_ASC',
   SessionsMinKeyGenThresholdDesc = 'SESSIONS_MIN_KEY_GEN_THRESHOLD_DESC',
-  SessionsMinNextAuthoritiesAsc = 'SESSIONS_MIN_NEXT_AUTHORITIES_ASC',
-  SessionsMinNextAuthoritiesDesc = 'SESSIONS_MIN_NEXT_AUTHORITIES_DESC',
-  SessionsMinNextBestAuthoritiesAsc = 'SESSIONS_MIN_NEXT_BEST_AUTHORITIES_ASC',
-  SessionsMinNextBestAuthoritiesDesc = 'SESSIONS_MIN_NEXT_BEST_AUTHORITIES_DESC',
   SessionsMinProposersAsc = 'SESSIONS_MIN_PROPOSERS_ASC',
   SessionsMinProposersCountAsc = 'SESSIONS_MIN_PROPOSERS_COUNT_ASC',
   SessionsMinProposersCountDesc = 'SESSIONS_MIN_PROPOSERS_COUNT_DESC',
@@ -2645,10 +2613,6 @@ export enum BlocksOrderBy {
   SessionsMinPublicKeyIdDesc = 'SESSIONS_MIN_PUBLIC_KEY_ID_DESC',
   SessionsMinSignatureThresholdAsc = 'SESSIONS_MIN_SIGNATURE_THRESHOLD_ASC',
   SessionsMinSignatureThresholdDesc = 'SESSIONS_MIN_SIGNATURE_THRESHOLD_DESC',
-  SessionsStddevPopulationAuthoritiesAsc = 'SESSIONS_STDDEV_POPULATION_AUTHORITIES_ASC',
-  SessionsStddevPopulationAuthoritiesDesc = 'SESSIONS_STDDEV_POPULATION_AUTHORITIES_DESC',
-  SessionsStddevPopulationBestAuthoritiesAsc = 'SESSIONS_STDDEV_POPULATION_BEST_AUTHORITIES_ASC',
-  SessionsStddevPopulationBestAuthoritiesDesc = 'SESSIONS_STDDEV_POPULATION_BEST_AUTHORITIES_DESC',
   SessionsStddevPopulationBlockIdAsc = 'SESSIONS_STDDEV_POPULATION_BLOCK_ID_ASC',
   SessionsStddevPopulationBlockIdDesc = 'SESSIONS_STDDEV_POPULATION_BLOCK_ID_DESC',
   SessionsStddevPopulationBlockNumberAsc = 'SESSIONS_STDDEV_POPULATION_BLOCK_NUMBER_ASC',
@@ -2657,10 +2621,6 @@ export enum BlocksOrderBy {
   SessionsStddevPopulationIdDesc = 'SESSIONS_STDDEV_POPULATION_ID_DESC',
   SessionsStddevPopulationKeyGenThresholdAsc = 'SESSIONS_STDDEV_POPULATION_KEY_GEN_THRESHOLD_ASC',
   SessionsStddevPopulationKeyGenThresholdDesc = 'SESSIONS_STDDEV_POPULATION_KEY_GEN_THRESHOLD_DESC',
-  SessionsStddevPopulationNextAuthoritiesAsc = 'SESSIONS_STDDEV_POPULATION_NEXT_AUTHORITIES_ASC',
-  SessionsStddevPopulationNextAuthoritiesDesc = 'SESSIONS_STDDEV_POPULATION_NEXT_AUTHORITIES_DESC',
-  SessionsStddevPopulationNextBestAuthoritiesAsc = 'SESSIONS_STDDEV_POPULATION_NEXT_BEST_AUTHORITIES_ASC',
-  SessionsStddevPopulationNextBestAuthoritiesDesc = 'SESSIONS_STDDEV_POPULATION_NEXT_BEST_AUTHORITIES_DESC',
   SessionsStddevPopulationProposersAsc = 'SESSIONS_STDDEV_POPULATION_PROPOSERS_ASC',
   SessionsStddevPopulationProposersCountAsc = 'SESSIONS_STDDEV_POPULATION_PROPOSERS_COUNT_ASC',
   SessionsStddevPopulationProposersCountDesc = 'SESSIONS_STDDEV_POPULATION_PROPOSERS_COUNT_DESC',
@@ -2671,10 +2631,6 @@ export enum BlocksOrderBy {
   SessionsStddevPopulationPublicKeyIdDesc = 'SESSIONS_STDDEV_POPULATION_PUBLIC_KEY_ID_DESC',
   SessionsStddevPopulationSignatureThresholdAsc = 'SESSIONS_STDDEV_POPULATION_SIGNATURE_THRESHOLD_ASC',
   SessionsStddevPopulationSignatureThresholdDesc = 'SESSIONS_STDDEV_POPULATION_SIGNATURE_THRESHOLD_DESC',
-  SessionsStddevSampleAuthoritiesAsc = 'SESSIONS_STDDEV_SAMPLE_AUTHORITIES_ASC',
-  SessionsStddevSampleAuthoritiesDesc = 'SESSIONS_STDDEV_SAMPLE_AUTHORITIES_DESC',
-  SessionsStddevSampleBestAuthoritiesAsc = 'SESSIONS_STDDEV_SAMPLE_BEST_AUTHORITIES_ASC',
-  SessionsStddevSampleBestAuthoritiesDesc = 'SESSIONS_STDDEV_SAMPLE_BEST_AUTHORITIES_DESC',
   SessionsStddevSampleBlockIdAsc = 'SESSIONS_STDDEV_SAMPLE_BLOCK_ID_ASC',
   SessionsStddevSampleBlockIdDesc = 'SESSIONS_STDDEV_SAMPLE_BLOCK_ID_DESC',
   SessionsStddevSampleBlockNumberAsc = 'SESSIONS_STDDEV_SAMPLE_BLOCK_NUMBER_ASC',
@@ -2683,10 +2639,6 @@ export enum BlocksOrderBy {
   SessionsStddevSampleIdDesc = 'SESSIONS_STDDEV_SAMPLE_ID_DESC',
   SessionsStddevSampleKeyGenThresholdAsc = 'SESSIONS_STDDEV_SAMPLE_KEY_GEN_THRESHOLD_ASC',
   SessionsStddevSampleKeyGenThresholdDesc = 'SESSIONS_STDDEV_SAMPLE_KEY_GEN_THRESHOLD_DESC',
-  SessionsStddevSampleNextAuthoritiesAsc = 'SESSIONS_STDDEV_SAMPLE_NEXT_AUTHORITIES_ASC',
-  SessionsStddevSampleNextAuthoritiesDesc = 'SESSIONS_STDDEV_SAMPLE_NEXT_AUTHORITIES_DESC',
-  SessionsStddevSampleNextBestAuthoritiesAsc = 'SESSIONS_STDDEV_SAMPLE_NEXT_BEST_AUTHORITIES_ASC',
-  SessionsStddevSampleNextBestAuthoritiesDesc = 'SESSIONS_STDDEV_SAMPLE_NEXT_BEST_AUTHORITIES_DESC',
   SessionsStddevSampleProposersAsc = 'SESSIONS_STDDEV_SAMPLE_PROPOSERS_ASC',
   SessionsStddevSampleProposersCountAsc = 'SESSIONS_STDDEV_SAMPLE_PROPOSERS_COUNT_ASC',
   SessionsStddevSampleProposersCountDesc = 'SESSIONS_STDDEV_SAMPLE_PROPOSERS_COUNT_DESC',
@@ -2697,10 +2649,6 @@ export enum BlocksOrderBy {
   SessionsStddevSamplePublicKeyIdDesc = 'SESSIONS_STDDEV_SAMPLE_PUBLIC_KEY_ID_DESC',
   SessionsStddevSampleSignatureThresholdAsc = 'SESSIONS_STDDEV_SAMPLE_SIGNATURE_THRESHOLD_ASC',
   SessionsStddevSampleSignatureThresholdDesc = 'SESSIONS_STDDEV_SAMPLE_SIGNATURE_THRESHOLD_DESC',
-  SessionsSumAuthoritiesAsc = 'SESSIONS_SUM_AUTHORITIES_ASC',
-  SessionsSumAuthoritiesDesc = 'SESSIONS_SUM_AUTHORITIES_DESC',
-  SessionsSumBestAuthoritiesAsc = 'SESSIONS_SUM_BEST_AUTHORITIES_ASC',
-  SessionsSumBestAuthoritiesDesc = 'SESSIONS_SUM_BEST_AUTHORITIES_DESC',
   SessionsSumBlockIdAsc = 'SESSIONS_SUM_BLOCK_ID_ASC',
   SessionsSumBlockIdDesc = 'SESSIONS_SUM_BLOCK_ID_DESC',
   SessionsSumBlockNumberAsc = 'SESSIONS_SUM_BLOCK_NUMBER_ASC',
@@ -2709,10 +2657,6 @@ export enum BlocksOrderBy {
   SessionsSumIdDesc = 'SESSIONS_SUM_ID_DESC',
   SessionsSumKeyGenThresholdAsc = 'SESSIONS_SUM_KEY_GEN_THRESHOLD_ASC',
   SessionsSumKeyGenThresholdDesc = 'SESSIONS_SUM_KEY_GEN_THRESHOLD_DESC',
-  SessionsSumNextAuthoritiesAsc = 'SESSIONS_SUM_NEXT_AUTHORITIES_ASC',
-  SessionsSumNextAuthoritiesDesc = 'SESSIONS_SUM_NEXT_AUTHORITIES_DESC',
-  SessionsSumNextBestAuthoritiesAsc = 'SESSIONS_SUM_NEXT_BEST_AUTHORITIES_ASC',
-  SessionsSumNextBestAuthoritiesDesc = 'SESSIONS_SUM_NEXT_BEST_AUTHORITIES_DESC',
   SessionsSumProposersAsc = 'SESSIONS_SUM_PROPOSERS_ASC',
   SessionsSumProposersCountAsc = 'SESSIONS_SUM_PROPOSERS_COUNT_ASC',
   SessionsSumProposersCountDesc = 'SESSIONS_SUM_PROPOSERS_COUNT_DESC',
@@ -2723,10 +2667,6 @@ export enum BlocksOrderBy {
   SessionsSumPublicKeyIdDesc = 'SESSIONS_SUM_PUBLIC_KEY_ID_DESC',
   SessionsSumSignatureThresholdAsc = 'SESSIONS_SUM_SIGNATURE_THRESHOLD_ASC',
   SessionsSumSignatureThresholdDesc = 'SESSIONS_SUM_SIGNATURE_THRESHOLD_DESC',
-  SessionsVariancePopulationAuthoritiesAsc = 'SESSIONS_VARIANCE_POPULATION_AUTHORITIES_ASC',
-  SessionsVariancePopulationAuthoritiesDesc = 'SESSIONS_VARIANCE_POPULATION_AUTHORITIES_DESC',
-  SessionsVariancePopulationBestAuthoritiesAsc = 'SESSIONS_VARIANCE_POPULATION_BEST_AUTHORITIES_ASC',
-  SessionsVariancePopulationBestAuthoritiesDesc = 'SESSIONS_VARIANCE_POPULATION_BEST_AUTHORITIES_DESC',
   SessionsVariancePopulationBlockIdAsc = 'SESSIONS_VARIANCE_POPULATION_BLOCK_ID_ASC',
   SessionsVariancePopulationBlockIdDesc = 'SESSIONS_VARIANCE_POPULATION_BLOCK_ID_DESC',
   SessionsVariancePopulationBlockNumberAsc = 'SESSIONS_VARIANCE_POPULATION_BLOCK_NUMBER_ASC',
@@ -2735,10 +2675,6 @@ export enum BlocksOrderBy {
   SessionsVariancePopulationIdDesc = 'SESSIONS_VARIANCE_POPULATION_ID_DESC',
   SessionsVariancePopulationKeyGenThresholdAsc = 'SESSIONS_VARIANCE_POPULATION_KEY_GEN_THRESHOLD_ASC',
   SessionsVariancePopulationKeyGenThresholdDesc = 'SESSIONS_VARIANCE_POPULATION_KEY_GEN_THRESHOLD_DESC',
-  SessionsVariancePopulationNextAuthoritiesAsc = 'SESSIONS_VARIANCE_POPULATION_NEXT_AUTHORITIES_ASC',
-  SessionsVariancePopulationNextAuthoritiesDesc = 'SESSIONS_VARIANCE_POPULATION_NEXT_AUTHORITIES_DESC',
-  SessionsVariancePopulationNextBestAuthoritiesAsc = 'SESSIONS_VARIANCE_POPULATION_NEXT_BEST_AUTHORITIES_ASC',
-  SessionsVariancePopulationNextBestAuthoritiesDesc = 'SESSIONS_VARIANCE_POPULATION_NEXT_BEST_AUTHORITIES_DESC',
   SessionsVariancePopulationProposersAsc = 'SESSIONS_VARIANCE_POPULATION_PROPOSERS_ASC',
   SessionsVariancePopulationProposersCountAsc = 'SESSIONS_VARIANCE_POPULATION_PROPOSERS_COUNT_ASC',
   SessionsVariancePopulationProposersCountDesc = 'SESSIONS_VARIANCE_POPULATION_PROPOSERS_COUNT_DESC',
@@ -2749,10 +2685,6 @@ export enum BlocksOrderBy {
   SessionsVariancePopulationPublicKeyIdDesc = 'SESSIONS_VARIANCE_POPULATION_PUBLIC_KEY_ID_DESC',
   SessionsVariancePopulationSignatureThresholdAsc = 'SESSIONS_VARIANCE_POPULATION_SIGNATURE_THRESHOLD_ASC',
   SessionsVariancePopulationSignatureThresholdDesc = 'SESSIONS_VARIANCE_POPULATION_SIGNATURE_THRESHOLD_DESC',
-  SessionsVarianceSampleAuthoritiesAsc = 'SESSIONS_VARIANCE_SAMPLE_AUTHORITIES_ASC',
-  SessionsVarianceSampleAuthoritiesDesc = 'SESSIONS_VARIANCE_SAMPLE_AUTHORITIES_DESC',
-  SessionsVarianceSampleBestAuthoritiesAsc = 'SESSIONS_VARIANCE_SAMPLE_BEST_AUTHORITIES_ASC',
-  SessionsVarianceSampleBestAuthoritiesDesc = 'SESSIONS_VARIANCE_SAMPLE_BEST_AUTHORITIES_DESC',
   SessionsVarianceSampleBlockIdAsc = 'SESSIONS_VARIANCE_SAMPLE_BLOCK_ID_ASC',
   SessionsVarianceSampleBlockIdDesc = 'SESSIONS_VARIANCE_SAMPLE_BLOCK_ID_DESC',
   SessionsVarianceSampleBlockNumberAsc = 'SESSIONS_VARIANCE_SAMPLE_BLOCK_NUMBER_ASC',
@@ -2761,10 +2693,6 @@ export enum BlocksOrderBy {
   SessionsVarianceSampleIdDesc = 'SESSIONS_VARIANCE_SAMPLE_ID_DESC',
   SessionsVarianceSampleKeyGenThresholdAsc = 'SESSIONS_VARIANCE_SAMPLE_KEY_GEN_THRESHOLD_ASC',
   SessionsVarianceSampleKeyGenThresholdDesc = 'SESSIONS_VARIANCE_SAMPLE_KEY_GEN_THRESHOLD_DESC',
-  SessionsVarianceSampleNextAuthoritiesAsc = 'SESSIONS_VARIANCE_SAMPLE_NEXT_AUTHORITIES_ASC',
-  SessionsVarianceSampleNextAuthoritiesDesc = 'SESSIONS_VARIANCE_SAMPLE_NEXT_AUTHORITIES_DESC',
-  SessionsVarianceSampleNextBestAuthoritiesAsc = 'SESSIONS_VARIANCE_SAMPLE_NEXT_BEST_AUTHORITIES_ASC',
-  SessionsVarianceSampleNextBestAuthoritiesDesc = 'SESSIONS_VARIANCE_SAMPLE_NEXT_BEST_AUTHORITIES_DESC',
   SessionsVarianceSampleProposersAsc = 'SESSIONS_VARIANCE_SAMPLE_PROPOSERS_ASC',
   SessionsVarianceSampleProposersCountAsc = 'SESSIONS_VARIANCE_SAMPLE_PROPOSERS_COUNT_ASC',
   SessionsVarianceSampleProposersCountDesc = 'SESSIONS_VARIANCE_SAMPLE_PROPOSERS_COUNT_DESC',
@@ -5655,10 +5583,6 @@ export enum PublicKeysOrderBy {
   Natural = 'NATURAL',
   PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
   PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
-  SessionsAverageAuthoritiesAsc = 'SESSIONS_AVERAGE_AUTHORITIES_ASC',
-  SessionsAverageAuthoritiesDesc = 'SESSIONS_AVERAGE_AUTHORITIES_DESC',
-  SessionsAverageBestAuthoritiesAsc = 'SESSIONS_AVERAGE_BEST_AUTHORITIES_ASC',
-  SessionsAverageBestAuthoritiesDesc = 'SESSIONS_AVERAGE_BEST_AUTHORITIES_DESC',
   SessionsAverageBlockIdAsc = 'SESSIONS_AVERAGE_BLOCK_ID_ASC',
   SessionsAverageBlockIdDesc = 'SESSIONS_AVERAGE_BLOCK_ID_DESC',
   SessionsAverageBlockNumberAsc = 'SESSIONS_AVERAGE_BLOCK_NUMBER_ASC',
@@ -5667,10 +5591,6 @@ export enum PublicKeysOrderBy {
   SessionsAverageIdDesc = 'SESSIONS_AVERAGE_ID_DESC',
   SessionsAverageKeyGenThresholdAsc = 'SESSIONS_AVERAGE_KEY_GEN_THRESHOLD_ASC',
   SessionsAverageKeyGenThresholdDesc = 'SESSIONS_AVERAGE_KEY_GEN_THRESHOLD_DESC',
-  SessionsAverageNextAuthoritiesAsc = 'SESSIONS_AVERAGE_NEXT_AUTHORITIES_ASC',
-  SessionsAverageNextAuthoritiesDesc = 'SESSIONS_AVERAGE_NEXT_AUTHORITIES_DESC',
-  SessionsAverageNextBestAuthoritiesAsc = 'SESSIONS_AVERAGE_NEXT_BEST_AUTHORITIES_ASC',
-  SessionsAverageNextBestAuthoritiesDesc = 'SESSIONS_AVERAGE_NEXT_BEST_AUTHORITIES_DESC',
   SessionsAverageProposersAsc = 'SESSIONS_AVERAGE_PROPOSERS_ASC',
   SessionsAverageProposersCountAsc = 'SESSIONS_AVERAGE_PROPOSERS_COUNT_ASC',
   SessionsAverageProposersCountDesc = 'SESSIONS_AVERAGE_PROPOSERS_COUNT_DESC',
@@ -5683,10 +5603,6 @@ export enum PublicKeysOrderBy {
   SessionsAverageSignatureThresholdDesc = 'SESSIONS_AVERAGE_SIGNATURE_THRESHOLD_DESC',
   SessionsCountAsc = 'SESSIONS_COUNT_ASC',
   SessionsCountDesc = 'SESSIONS_COUNT_DESC',
-  SessionsDistinctCountAuthoritiesAsc = 'SESSIONS_DISTINCT_COUNT_AUTHORITIES_ASC',
-  SessionsDistinctCountAuthoritiesDesc = 'SESSIONS_DISTINCT_COUNT_AUTHORITIES_DESC',
-  SessionsDistinctCountBestAuthoritiesAsc = 'SESSIONS_DISTINCT_COUNT_BEST_AUTHORITIES_ASC',
-  SessionsDistinctCountBestAuthoritiesDesc = 'SESSIONS_DISTINCT_COUNT_BEST_AUTHORITIES_DESC',
   SessionsDistinctCountBlockIdAsc = 'SESSIONS_DISTINCT_COUNT_BLOCK_ID_ASC',
   SessionsDistinctCountBlockIdDesc = 'SESSIONS_DISTINCT_COUNT_BLOCK_ID_DESC',
   SessionsDistinctCountBlockNumberAsc = 'SESSIONS_DISTINCT_COUNT_BLOCK_NUMBER_ASC',
@@ -5695,10 +5611,6 @@ export enum PublicKeysOrderBy {
   SessionsDistinctCountIdDesc = 'SESSIONS_DISTINCT_COUNT_ID_DESC',
   SessionsDistinctCountKeyGenThresholdAsc = 'SESSIONS_DISTINCT_COUNT_KEY_GEN_THRESHOLD_ASC',
   SessionsDistinctCountKeyGenThresholdDesc = 'SESSIONS_DISTINCT_COUNT_KEY_GEN_THRESHOLD_DESC',
-  SessionsDistinctCountNextAuthoritiesAsc = 'SESSIONS_DISTINCT_COUNT_NEXT_AUTHORITIES_ASC',
-  SessionsDistinctCountNextAuthoritiesDesc = 'SESSIONS_DISTINCT_COUNT_NEXT_AUTHORITIES_DESC',
-  SessionsDistinctCountNextBestAuthoritiesAsc = 'SESSIONS_DISTINCT_COUNT_NEXT_BEST_AUTHORITIES_ASC',
-  SessionsDistinctCountNextBestAuthoritiesDesc = 'SESSIONS_DISTINCT_COUNT_NEXT_BEST_AUTHORITIES_DESC',
   SessionsDistinctCountProposersAsc = 'SESSIONS_DISTINCT_COUNT_PROPOSERS_ASC',
   SessionsDistinctCountProposersCountAsc = 'SESSIONS_DISTINCT_COUNT_PROPOSERS_COUNT_ASC',
   SessionsDistinctCountProposersCountDesc = 'SESSIONS_DISTINCT_COUNT_PROPOSERS_COUNT_DESC',
@@ -5709,10 +5621,6 @@ export enum PublicKeysOrderBy {
   SessionsDistinctCountPublicKeyIdDesc = 'SESSIONS_DISTINCT_COUNT_PUBLIC_KEY_ID_DESC',
   SessionsDistinctCountSignatureThresholdAsc = 'SESSIONS_DISTINCT_COUNT_SIGNATURE_THRESHOLD_ASC',
   SessionsDistinctCountSignatureThresholdDesc = 'SESSIONS_DISTINCT_COUNT_SIGNATURE_THRESHOLD_DESC',
-  SessionsMaxAuthoritiesAsc = 'SESSIONS_MAX_AUTHORITIES_ASC',
-  SessionsMaxAuthoritiesDesc = 'SESSIONS_MAX_AUTHORITIES_DESC',
-  SessionsMaxBestAuthoritiesAsc = 'SESSIONS_MAX_BEST_AUTHORITIES_ASC',
-  SessionsMaxBestAuthoritiesDesc = 'SESSIONS_MAX_BEST_AUTHORITIES_DESC',
   SessionsMaxBlockIdAsc = 'SESSIONS_MAX_BLOCK_ID_ASC',
   SessionsMaxBlockIdDesc = 'SESSIONS_MAX_BLOCK_ID_DESC',
   SessionsMaxBlockNumberAsc = 'SESSIONS_MAX_BLOCK_NUMBER_ASC',
@@ -5721,10 +5629,6 @@ export enum PublicKeysOrderBy {
   SessionsMaxIdDesc = 'SESSIONS_MAX_ID_DESC',
   SessionsMaxKeyGenThresholdAsc = 'SESSIONS_MAX_KEY_GEN_THRESHOLD_ASC',
   SessionsMaxKeyGenThresholdDesc = 'SESSIONS_MAX_KEY_GEN_THRESHOLD_DESC',
-  SessionsMaxNextAuthoritiesAsc = 'SESSIONS_MAX_NEXT_AUTHORITIES_ASC',
-  SessionsMaxNextAuthoritiesDesc = 'SESSIONS_MAX_NEXT_AUTHORITIES_DESC',
-  SessionsMaxNextBestAuthoritiesAsc = 'SESSIONS_MAX_NEXT_BEST_AUTHORITIES_ASC',
-  SessionsMaxNextBestAuthoritiesDesc = 'SESSIONS_MAX_NEXT_BEST_AUTHORITIES_DESC',
   SessionsMaxProposersAsc = 'SESSIONS_MAX_PROPOSERS_ASC',
   SessionsMaxProposersCountAsc = 'SESSIONS_MAX_PROPOSERS_COUNT_ASC',
   SessionsMaxProposersCountDesc = 'SESSIONS_MAX_PROPOSERS_COUNT_DESC',
@@ -5735,10 +5639,6 @@ export enum PublicKeysOrderBy {
   SessionsMaxPublicKeyIdDesc = 'SESSIONS_MAX_PUBLIC_KEY_ID_DESC',
   SessionsMaxSignatureThresholdAsc = 'SESSIONS_MAX_SIGNATURE_THRESHOLD_ASC',
   SessionsMaxSignatureThresholdDesc = 'SESSIONS_MAX_SIGNATURE_THRESHOLD_DESC',
-  SessionsMinAuthoritiesAsc = 'SESSIONS_MIN_AUTHORITIES_ASC',
-  SessionsMinAuthoritiesDesc = 'SESSIONS_MIN_AUTHORITIES_DESC',
-  SessionsMinBestAuthoritiesAsc = 'SESSIONS_MIN_BEST_AUTHORITIES_ASC',
-  SessionsMinBestAuthoritiesDesc = 'SESSIONS_MIN_BEST_AUTHORITIES_DESC',
   SessionsMinBlockIdAsc = 'SESSIONS_MIN_BLOCK_ID_ASC',
   SessionsMinBlockIdDesc = 'SESSIONS_MIN_BLOCK_ID_DESC',
   SessionsMinBlockNumberAsc = 'SESSIONS_MIN_BLOCK_NUMBER_ASC',
@@ -5747,10 +5647,6 @@ export enum PublicKeysOrderBy {
   SessionsMinIdDesc = 'SESSIONS_MIN_ID_DESC',
   SessionsMinKeyGenThresholdAsc = 'SESSIONS_MIN_KEY_GEN_THRESHOLD_ASC',
   SessionsMinKeyGenThresholdDesc = 'SESSIONS_MIN_KEY_GEN_THRESHOLD_DESC',
-  SessionsMinNextAuthoritiesAsc = 'SESSIONS_MIN_NEXT_AUTHORITIES_ASC',
-  SessionsMinNextAuthoritiesDesc = 'SESSIONS_MIN_NEXT_AUTHORITIES_DESC',
-  SessionsMinNextBestAuthoritiesAsc = 'SESSIONS_MIN_NEXT_BEST_AUTHORITIES_ASC',
-  SessionsMinNextBestAuthoritiesDesc = 'SESSIONS_MIN_NEXT_BEST_AUTHORITIES_DESC',
   SessionsMinProposersAsc = 'SESSIONS_MIN_PROPOSERS_ASC',
   SessionsMinProposersCountAsc = 'SESSIONS_MIN_PROPOSERS_COUNT_ASC',
   SessionsMinProposersCountDesc = 'SESSIONS_MIN_PROPOSERS_COUNT_DESC',
@@ -5761,10 +5657,6 @@ export enum PublicKeysOrderBy {
   SessionsMinPublicKeyIdDesc = 'SESSIONS_MIN_PUBLIC_KEY_ID_DESC',
   SessionsMinSignatureThresholdAsc = 'SESSIONS_MIN_SIGNATURE_THRESHOLD_ASC',
   SessionsMinSignatureThresholdDesc = 'SESSIONS_MIN_SIGNATURE_THRESHOLD_DESC',
-  SessionsStddevPopulationAuthoritiesAsc = 'SESSIONS_STDDEV_POPULATION_AUTHORITIES_ASC',
-  SessionsStddevPopulationAuthoritiesDesc = 'SESSIONS_STDDEV_POPULATION_AUTHORITIES_DESC',
-  SessionsStddevPopulationBestAuthoritiesAsc = 'SESSIONS_STDDEV_POPULATION_BEST_AUTHORITIES_ASC',
-  SessionsStddevPopulationBestAuthoritiesDesc = 'SESSIONS_STDDEV_POPULATION_BEST_AUTHORITIES_DESC',
   SessionsStddevPopulationBlockIdAsc = 'SESSIONS_STDDEV_POPULATION_BLOCK_ID_ASC',
   SessionsStddevPopulationBlockIdDesc = 'SESSIONS_STDDEV_POPULATION_BLOCK_ID_DESC',
   SessionsStddevPopulationBlockNumberAsc = 'SESSIONS_STDDEV_POPULATION_BLOCK_NUMBER_ASC',
@@ -5773,10 +5665,6 @@ export enum PublicKeysOrderBy {
   SessionsStddevPopulationIdDesc = 'SESSIONS_STDDEV_POPULATION_ID_DESC',
   SessionsStddevPopulationKeyGenThresholdAsc = 'SESSIONS_STDDEV_POPULATION_KEY_GEN_THRESHOLD_ASC',
   SessionsStddevPopulationKeyGenThresholdDesc = 'SESSIONS_STDDEV_POPULATION_KEY_GEN_THRESHOLD_DESC',
-  SessionsStddevPopulationNextAuthoritiesAsc = 'SESSIONS_STDDEV_POPULATION_NEXT_AUTHORITIES_ASC',
-  SessionsStddevPopulationNextAuthoritiesDesc = 'SESSIONS_STDDEV_POPULATION_NEXT_AUTHORITIES_DESC',
-  SessionsStddevPopulationNextBestAuthoritiesAsc = 'SESSIONS_STDDEV_POPULATION_NEXT_BEST_AUTHORITIES_ASC',
-  SessionsStddevPopulationNextBestAuthoritiesDesc = 'SESSIONS_STDDEV_POPULATION_NEXT_BEST_AUTHORITIES_DESC',
   SessionsStddevPopulationProposersAsc = 'SESSIONS_STDDEV_POPULATION_PROPOSERS_ASC',
   SessionsStddevPopulationProposersCountAsc = 'SESSIONS_STDDEV_POPULATION_PROPOSERS_COUNT_ASC',
   SessionsStddevPopulationProposersCountDesc = 'SESSIONS_STDDEV_POPULATION_PROPOSERS_COUNT_DESC',
@@ -5787,10 +5675,6 @@ export enum PublicKeysOrderBy {
   SessionsStddevPopulationPublicKeyIdDesc = 'SESSIONS_STDDEV_POPULATION_PUBLIC_KEY_ID_DESC',
   SessionsStddevPopulationSignatureThresholdAsc = 'SESSIONS_STDDEV_POPULATION_SIGNATURE_THRESHOLD_ASC',
   SessionsStddevPopulationSignatureThresholdDesc = 'SESSIONS_STDDEV_POPULATION_SIGNATURE_THRESHOLD_DESC',
-  SessionsStddevSampleAuthoritiesAsc = 'SESSIONS_STDDEV_SAMPLE_AUTHORITIES_ASC',
-  SessionsStddevSampleAuthoritiesDesc = 'SESSIONS_STDDEV_SAMPLE_AUTHORITIES_DESC',
-  SessionsStddevSampleBestAuthoritiesAsc = 'SESSIONS_STDDEV_SAMPLE_BEST_AUTHORITIES_ASC',
-  SessionsStddevSampleBestAuthoritiesDesc = 'SESSIONS_STDDEV_SAMPLE_BEST_AUTHORITIES_DESC',
   SessionsStddevSampleBlockIdAsc = 'SESSIONS_STDDEV_SAMPLE_BLOCK_ID_ASC',
   SessionsStddevSampleBlockIdDesc = 'SESSIONS_STDDEV_SAMPLE_BLOCK_ID_DESC',
   SessionsStddevSampleBlockNumberAsc = 'SESSIONS_STDDEV_SAMPLE_BLOCK_NUMBER_ASC',
@@ -5799,10 +5683,6 @@ export enum PublicKeysOrderBy {
   SessionsStddevSampleIdDesc = 'SESSIONS_STDDEV_SAMPLE_ID_DESC',
   SessionsStddevSampleKeyGenThresholdAsc = 'SESSIONS_STDDEV_SAMPLE_KEY_GEN_THRESHOLD_ASC',
   SessionsStddevSampleKeyGenThresholdDesc = 'SESSIONS_STDDEV_SAMPLE_KEY_GEN_THRESHOLD_DESC',
-  SessionsStddevSampleNextAuthoritiesAsc = 'SESSIONS_STDDEV_SAMPLE_NEXT_AUTHORITIES_ASC',
-  SessionsStddevSampleNextAuthoritiesDesc = 'SESSIONS_STDDEV_SAMPLE_NEXT_AUTHORITIES_DESC',
-  SessionsStddevSampleNextBestAuthoritiesAsc = 'SESSIONS_STDDEV_SAMPLE_NEXT_BEST_AUTHORITIES_ASC',
-  SessionsStddevSampleNextBestAuthoritiesDesc = 'SESSIONS_STDDEV_SAMPLE_NEXT_BEST_AUTHORITIES_DESC',
   SessionsStddevSampleProposersAsc = 'SESSIONS_STDDEV_SAMPLE_PROPOSERS_ASC',
   SessionsStddevSampleProposersCountAsc = 'SESSIONS_STDDEV_SAMPLE_PROPOSERS_COUNT_ASC',
   SessionsStddevSampleProposersCountDesc = 'SESSIONS_STDDEV_SAMPLE_PROPOSERS_COUNT_DESC',
@@ -5813,10 +5693,6 @@ export enum PublicKeysOrderBy {
   SessionsStddevSamplePublicKeyIdDesc = 'SESSIONS_STDDEV_SAMPLE_PUBLIC_KEY_ID_DESC',
   SessionsStddevSampleSignatureThresholdAsc = 'SESSIONS_STDDEV_SAMPLE_SIGNATURE_THRESHOLD_ASC',
   SessionsStddevSampleSignatureThresholdDesc = 'SESSIONS_STDDEV_SAMPLE_SIGNATURE_THRESHOLD_DESC',
-  SessionsSumAuthoritiesAsc = 'SESSIONS_SUM_AUTHORITIES_ASC',
-  SessionsSumAuthoritiesDesc = 'SESSIONS_SUM_AUTHORITIES_DESC',
-  SessionsSumBestAuthoritiesAsc = 'SESSIONS_SUM_BEST_AUTHORITIES_ASC',
-  SessionsSumBestAuthoritiesDesc = 'SESSIONS_SUM_BEST_AUTHORITIES_DESC',
   SessionsSumBlockIdAsc = 'SESSIONS_SUM_BLOCK_ID_ASC',
   SessionsSumBlockIdDesc = 'SESSIONS_SUM_BLOCK_ID_DESC',
   SessionsSumBlockNumberAsc = 'SESSIONS_SUM_BLOCK_NUMBER_ASC',
@@ -5825,10 +5701,6 @@ export enum PublicKeysOrderBy {
   SessionsSumIdDesc = 'SESSIONS_SUM_ID_DESC',
   SessionsSumKeyGenThresholdAsc = 'SESSIONS_SUM_KEY_GEN_THRESHOLD_ASC',
   SessionsSumKeyGenThresholdDesc = 'SESSIONS_SUM_KEY_GEN_THRESHOLD_DESC',
-  SessionsSumNextAuthoritiesAsc = 'SESSIONS_SUM_NEXT_AUTHORITIES_ASC',
-  SessionsSumNextAuthoritiesDesc = 'SESSIONS_SUM_NEXT_AUTHORITIES_DESC',
-  SessionsSumNextBestAuthoritiesAsc = 'SESSIONS_SUM_NEXT_BEST_AUTHORITIES_ASC',
-  SessionsSumNextBestAuthoritiesDesc = 'SESSIONS_SUM_NEXT_BEST_AUTHORITIES_DESC',
   SessionsSumProposersAsc = 'SESSIONS_SUM_PROPOSERS_ASC',
   SessionsSumProposersCountAsc = 'SESSIONS_SUM_PROPOSERS_COUNT_ASC',
   SessionsSumProposersCountDesc = 'SESSIONS_SUM_PROPOSERS_COUNT_DESC',
@@ -5839,10 +5711,6 @@ export enum PublicKeysOrderBy {
   SessionsSumPublicKeyIdDesc = 'SESSIONS_SUM_PUBLIC_KEY_ID_DESC',
   SessionsSumSignatureThresholdAsc = 'SESSIONS_SUM_SIGNATURE_THRESHOLD_ASC',
   SessionsSumSignatureThresholdDesc = 'SESSIONS_SUM_SIGNATURE_THRESHOLD_DESC',
-  SessionsVariancePopulationAuthoritiesAsc = 'SESSIONS_VARIANCE_POPULATION_AUTHORITIES_ASC',
-  SessionsVariancePopulationAuthoritiesDesc = 'SESSIONS_VARIANCE_POPULATION_AUTHORITIES_DESC',
-  SessionsVariancePopulationBestAuthoritiesAsc = 'SESSIONS_VARIANCE_POPULATION_BEST_AUTHORITIES_ASC',
-  SessionsVariancePopulationBestAuthoritiesDesc = 'SESSIONS_VARIANCE_POPULATION_BEST_AUTHORITIES_DESC',
   SessionsVariancePopulationBlockIdAsc = 'SESSIONS_VARIANCE_POPULATION_BLOCK_ID_ASC',
   SessionsVariancePopulationBlockIdDesc = 'SESSIONS_VARIANCE_POPULATION_BLOCK_ID_DESC',
   SessionsVariancePopulationBlockNumberAsc = 'SESSIONS_VARIANCE_POPULATION_BLOCK_NUMBER_ASC',
@@ -5851,10 +5719,6 @@ export enum PublicKeysOrderBy {
   SessionsVariancePopulationIdDesc = 'SESSIONS_VARIANCE_POPULATION_ID_DESC',
   SessionsVariancePopulationKeyGenThresholdAsc = 'SESSIONS_VARIANCE_POPULATION_KEY_GEN_THRESHOLD_ASC',
   SessionsVariancePopulationKeyGenThresholdDesc = 'SESSIONS_VARIANCE_POPULATION_KEY_GEN_THRESHOLD_DESC',
-  SessionsVariancePopulationNextAuthoritiesAsc = 'SESSIONS_VARIANCE_POPULATION_NEXT_AUTHORITIES_ASC',
-  SessionsVariancePopulationNextAuthoritiesDesc = 'SESSIONS_VARIANCE_POPULATION_NEXT_AUTHORITIES_DESC',
-  SessionsVariancePopulationNextBestAuthoritiesAsc = 'SESSIONS_VARIANCE_POPULATION_NEXT_BEST_AUTHORITIES_ASC',
-  SessionsVariancePopulationNextBestAuthoritiesDesc = 'SESSIONS_VARIANCE_POPULATION_NEXT_BEST_AUTHORITIES_DESC',
   SessionsVariancePopulationProposersAsc = 'SESSIONS_VARIANCE_POPULATION_PROPOSERS_ASC',
   SessionsVariancePopulationProposersCountAsc = 'SESSIONS_VARIANCE_POPULATION_PROPOSERS_COUNT_ASC',
   SessionsVariancePopulationProposersCountDesc = 'SESSIONS_VARIANCE_POPULATION_PROPOSERS_COUNT_DESC',
@@ -5865,10 +5729,6 @@ export enum PublicKeysOrderBy {
   SessionsVariancePopulationPublicKeyIdDesc = 'SESSIONS_VARIANCE_POPULATION_PUBLIC_KEY_ID_DESC',
   SessionsVariancePopulationSignatureThresholdAsc = 'SESSIONS_VARIANCE_POPULATION_SIGNATURE_THRESHOLD_ASC',
   SessionsVariancePopulationSignatureThresholdDesc = 'SESSIONS_VARIANCE_POPULATION_SIGNATURE_THRESHOLD_DESC',
-  SessionsVarianceSampleAuthoritiesAsc = 'SESSIONS_VARIANCE_SAMPLE_AUTHORITIES_ASC',
-  SessionsVarianceSampleAuthoritiesDesc = 'SESSIONS_VARIANCE_SAMPLE_AUTHORITIES_DESC',
-  SessionsVarianceSampleBestAuthoritiesAsc = 'SESSIONS_VARIANCE_SAMPLE_BEST_AUTHORITIES_ASC',
-  SessionsVarianceSampleBestAuthoritiesDesc = 'SESSIONS_VARIANCE_SAMPLE_BEST_AUTHORITIES_DESC',
   SessionsVarianceSampleBlockIdAsc = 'SESSIONS_VARIANCE_SAMPLE_BLOCK_ID_ASC',
   SessionsVarianceSampleBlockIdDesc = 'SESSIONS_VARIANCE_SAMPLE_BLOCK_ID_DESC',
   SessionsVarianceSampleBlockNumberAsc = 'SESSIONS_VARIANCE_SAMPLE_BLOCK_NUMBER_ASC',
@@ -5877,10 +5737,6 @@ export enum PublicKeysOrderBy {
   SessionsVarianceSampleIdDesc = 'SESSIONS_VARIANCE_SAMPLE_ID_DESC',
   SessionsVarianceSampleKeyGenThresholdAsc = 'SESSIONS_VARIANCE_SAMPLE_KEY_GEN_THRESHOLD_ASC',
   SessionsVarianceSampleKeyGenThresholdDesc = 'SESSIONS_VARIANCE_SAMPLE_KEY_GEN_THRESHOLD_DESC',
-  SessionsVarianceSampleNextAuthoritiesAsc = 'SESSIONS_VARIANCE_SAMPLE_NEXT_AUTHORITIES_ASC',
-  SessionsVarianceSampleNextAuthoritiesDesc = 'SESSIONS_VARIANCE_SAMPLE_NEXT_AUTHORITIES_DESC',
-  SessionsVarianceSampleNextBestAuthoritiesAsc = 'SESSIONS_VARIANCE_SAMPLE_NEXT_BEST_AUTHORITIES_ASC',
-  SessionsVarianceSampleNextBestAuthoritiesDesc = 'SESSIONS_VARIANCE_SAMPLE_NEXT_BEST_AUTHORITIES_DESC',
   SessionsVarianceSampleProposersAsc = 'SESSIONS_VARIANCE_SAMPLE_PROPOSERS_ASC',
   SessionsVarianceSampleProposersCountAsc = 'SESSIONS_VARIANCE_SAMPLE_PROPOSERS_COUNT_ASC',
   SessionsVarianceSampleProposersCountDesc = 'SESSIONS_VARIANCE_SAMPLE_PROPOSERS_COUNT_DESC',
@@ -5966,6 +5822,11 @@ export type Query = Node & {
   session?: Maybe<Session>;
   /** Reads a single `Session` using its globally unique `ID`. */
   sessionByNodeId?: Maybe<Session>;
+  sessionValidator?: Maybe<SessionValidator>;
+  /** Reads a single `SessionValidator` using its globally unique `ID`. */
+  sessionValidatorByNodeId?: Maybe<SessionValidator>;
+  /** Reads and enables pagination through a set of `SessionValidator`. */
+  sessionValidators?: Maybe<SessionValidatorsConnection>;
   /** Reads and enables pagination through a set of `Session`. */
   sessions?: Maybe<SessionsConnection>;
   signatureThreshold?: Maybe<SignatureThreshold>;
@@ -5983,6 +5844,11 @@ export type Query = Node & {
   unsignedProposalsQueueItems?: Maybe<UnsignedProposalsQueueItemsConnection>;
   /** Reads and enables pagination through a set of `UnsignedProposalsQueue`. */
   unsignedProposalsQueues?: Maybe<UnsignedProposalsQueuesConnection>;
+  validator?: Maybe<Validator>;
+  /** Reads a single `Validator` using its globally unique `ID`. */
+  validatorByNodeId?: Maybe<Validator>;
+  /** Reads and enables pagination through a set of `Validator`. */
+  validators?: Maybe<ValidatorsConnection>;
 };
 
 /** The root query type which gives access points into the data universe. */
@@ -6232,6 +6098,27 @@ export type QuerySessionByNodeIdArgs = {
 };
 
 /** The root query type which gives access points into the data universe. */
+export type QuerySessionValidatorArgs = {
+  id: Scalars['String'];
+};
+
+/** The root query type which gives access points into the data universe. */
+export type QuerySessionValidatorByNodeIdArgs = {
+  nodeId: Scalars['ID'];
+};
+
+/** The root query type which gives access points into the data universe. */
+export type QuerySessionValidatorsArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  filter?: InputMaybe<SessionValidatorFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<SessionValidatorsOrderBy>>;
+};
+
+/** The root query type which gives access points into the data universe. */
 export type QuerySessionsArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -6305,18 +6192,35 @@ export type QueryUnsignedProposalsQueuesArgs = {
   orderBy?: InputMaybe<Array<UnsignedProposalsQueuesOrderBy>>;
 };
 
+/** The root query type which gives access points into the data universe. */
+export type QueryValidatorArgs = {
+  id: Scalars['String'];
+};
+
+/** The root query type which gives access points into the data universe. */
+export type QueryValidatorByNodeIdArgs = {
+  nodeId: Scalars['ID'];
+};
+
+/** The root query type which gives access points into the data universe. */
+export type QueryValidatorsArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  filter?: InputMaybe<ValidatorFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<ValidatorsOrderBy>>;
+};
+
 export type Session = Node & {
   __typename?: 'Session';
-  authorities: Scalars['JSON'];
-  bestAuthorities: Scalars['JSON'];
   /** Reads a single `Block` that is related to this `Session`. */
   block?: Maybe<Block>;
   blockId: Scalars['String'];
   blockNumber: Scalars['Int'];
   id: Scalars['String'];
   keyGenThreshold?: Maybe<Scalars['JSON']>;
-  nextAuthorities: Scalars['JSON'];
-  nextBestAuthorities: Scalars['JSON'];
   /** A globally unique identifier. Can be used in various places throughout the system to identify this single value. */
   nodeId: Scalars['ID'];
   proposerThreshold?: Maybe<Scalars['JSON']>;
@@ -6325,7 +6229,31 @@ export type Session = Node & {
   /** Reads a single `PublicKey` that is related to this `Session`. */
   publicKey?: Maybe<PublicKey>;
   publicKeyId?: Maybe<Scalars['String']>;
+  /** Reads and enables pagination through a set of `SessionValidator`. */
+  sessionValidators: SessionValidatorsConnection;
   signatureThreshold?: Maybe<Scalars['JSON']>;
+  /** Reads and enables pagination through a set of `Validator`. */
+  validatorsBySessionValidatorSessionIdAndValidatorId: SessionValidatorsBySessionValidatorSessionIdAndValidatorIdManyToManyConnection;
+};
+
+export type SessionSessionValidatorsArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  filter?: InputMaybe<SessionValidatorFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<SessionValidatorsOrderBy>>;
+};
+
+export type SessionValidatorsBySessionValidatorSessionIdAndValidatorIdArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  filter?: InputMaybe<ValidatorFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<ValidatorsOrderBy>>;
 };
 
 export type SessionAggregates = {
@@ -6361,10 +6289,6 @@ export type SessionAverageAggregates = {
 
 export type SessionDistinctCountAggregates = {
   __typename?: 'SessionDistinctCountAggregates';
-  /** Distinct count of authorities across the matching connection */
-  authorities?: Maybe<Scalars['BigInt']>;
-  /** Distinct count of bestAuthorities across the matching connection */
-  bestAuthorities?: Maybe<Scalars['BigInt']>;
   /** Distinct count of blockId across the matching connection */
   blockId?: Maybe<Scalars['BigInt']>;
   /** Distinct count of blockNumber across the matching connection */
@@ -6373,10 +6297,6 @@ export type SessionDistinctCountAggregates = {
   id?: Maybe<Scalars['BigInt']>;
   /** Distinct count of keyGenThreshold across the matching connection */
   keyGenThreshold?: Maybe<Scalars['BigInt']>;
-  /** Distinct count of nextAuthorities across the matching connection */
-  nextAuthorities?: Maybe<Scalars['BigInt']>;
-  /** Distinct count of nextBestAuthorities across the matching connection */
-  nextBestAuthorities?: Maybe<Scalars['BigInt']>;
   /** Distinct count of proposerThreshold across the matching connection */
   proposerThreshold?: Maybe<Scalars['BigInt']>;
   /** Distinct count of proposers across the matching connection */
@@ -6393,10 +6313,6 @@ export type SessionDistinctCountAggregates = {
 export type SessionFilter = {
   /** Checks for all expressions in this list. */
   and?: InputMaybe<Array<SessionFilter>>;
-  /** Filter by the object’s `authorities` field. */
-  authorities?: InputMaybe<JsonFilter>;
-  /** Filter by the object’s `bestAuthorities` field. */
-  bestAuthorities?: InputMaybe<JsonFilter>;
   /** Filter by the object’s `blockId` field. */
   blockId?: InputMaybe<StringFilter>;
   /** Filter by the object’s `blockNumber` field. */
@@ -6405,10 +6321,6 @@ export type SessionFilter = {
   id?: InputMaybe<StringFilter>;
   /** Filter by the object’s `keyGenThreshold` field. */
   keyGenThreshold?: InputMaybe<JsonFilter>;
-  /** Filter by the object’s `nextAuthorities` field. */
-  nextAuthorities?: InputMaybe<JsonFilter>;
-  /** Filter by the object’s `nextBestAuthorities` field. */
-  nextBestAuthorities?: InputMaybe<JsonFilter>;
   /** Negates the expression. */
   not?: InputMaybe<SessionFilter>;
   /** Checks for any expressions in this list. */
@@ -6465,6 +6377,328 @@ export type SessionSumAggregates = {
   proposersCount: Scalars['BigInt'];
 };
 
+export type SessionValidator = Node & {
+  __typename?: 'SessionValidator';
+  bestOrder: Scalars['Int'];
+  id: Scalars['String'];
+  isBest: Scalars['Boolean'];
+  isNext: Scalars['Boolean'];
+  isNextBest: Scalars['Boolean'];
+  nextBestOrder: Scalars['Int'];
+  /** A globally unique identifier. Can be used in various places throughout the system to identify this single value. */
+  nodeId: Scalars['ID'];
+  reputation: Scalars['String'];
+  /** Reads a single `Session` that is related to this `SessionValidator`. */
+  session?: Maybe<Session>;
+  sessionId: Scalars['String'];
+  /** Reads a single `Validator` that is related to this `SessionValidator`. */
+  validator?: Maybe<Validator>;
+  validatorId: Scalars['String'];
+};
+
+export type SessionValidatorAggregates = {
+  __typename?: 'SessionValidatorAggregates';
+  /** Mean average aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  average?: Maybe<SessionValidatorAverageAggregates>;
+  /** Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  distinctCount?: Maybe<SessionValidatorDistinctCountAggregates>;
+  keys?: Maybe<Array<Scalars['String']>>;
+  /** Maximum aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  max?: Maybe<SessionValidatorMaxAggregates>;
+  /** Minimum aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  min?: Maybe<SessionValidatorMinAggregates>;
+  /** Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  stddevPopulation?: Maybe<SessionValidatorStddevPopulationAggregates>;
+  /** Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  stddevSample?: Maybe<SessionValidatorStddevSampleAggregates>;
+  /** Sum aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  sum?: Maybe<SessionValidatorSumAggregates>;
+  /** Population variance aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  variancePopulation?: Maybe<SessionValidatorVariancePopulationAggregates>;
+  /** Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  varianceSample?: Maybe<SessionValidatorVarianceSampleAggregates>;
+};
+
+export type SessionValidatorAverageAggregates = {
+  __typename?: 'SessionValidatorAverageAggregates';
+  /** Mean average of bestOrder across the matching connection */
+  bestOrder?: Maybe<Scalars['BigFloat']>;
+  /** Mean average of nextBestOrder across the matching connection */
+  nextBestOrder?: Maybe<Scalars['BigFloat']>;
+};
+
+export type SessionValidatorDistinctCountAggregates = {
+  __typename?: 'SessionValidatorDistinctCountAggregates';
+  /** Distinct count of bestOrder across the matching connection */
+  bestOrder?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of id across the matching connection */
+  id?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of isBest across the matching connection */
+  isBest?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of isNext across the matching connection */
+  isNext?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of isNextBest across the matching connection */
+  isNextBest?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of nextBestOrder across the matching connection */
+  nextBestOrder?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of reputation across the matching connection */
+  reputation?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of sessionId across the matching connection */
+  sessionId?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of validatorId across the matching connection */
+  validatorId?: Maybe<Scalars['BigInt']>;
+};
+
+/** A filter to be used against `SessionValidator` object types. All fields are combined with a logical ‘and.’ */
+export type SessionValidatorFilter = {
+  /** Checks for all expressions in this list. */
+  and?: InputMaybe<Array<SessionValidatorFilter>>;
+  /** Filter by the object’s `bestOrder` field. */
+  bestOrder?: InputMaybe<IntFilter>;
+  /** Filter by the object’s `id` field. */
+  id?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `isBest` field. */
+  isBest?: InputMaybe<BooleanFilter>;
+  /** Filter by the object’s `isNext` field. */
+  isNext?: InputMaybe<BooleanFilter>;
+  /** Filter by the object’s `isNextBest` field. */
+  isNextBest?: InputMaybe<BooleanFilter>;
+  /** Filter by the object’s `nextBestOrder` field. */
+  nextBestOrder?: InputMaybe<IntFilter>;
+  /** Negates the expression. */
+  not?: InputMaybe<SessionValidatorFilter>;
+  /** Checks for any expressions in this list. */
+  or?: InputMaybe<Array<SessionValidatorFilter>>;
+  /** Filter by the object’s `reputation` field. */
+  reputation?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `sessionId` field. */
+  sessionId?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `validatorId` field. */
+  validatorId?: InputMaybe<StringFilter>;
+};
+
+export type SessionValidatorMaxAggregates = {
+  __typename?: 'SessionValidatorMaxAggregates';
+  /** Maximum of bestOrder across the matching connection */
+  bestOrder?: Maybe<Scalars['Int']>;
+  /** Maximum of nextBestOrder across the matching connection */
+  nextBestOrder?: Maybe<Scalars['Int']>;
+};
+
+export type SessionValidatorMinAggregates = {
+  __typename?: 'SessionValidatorMinAggregates';
+  /** Minimum of bestOrder across the matching connection */
+  bestOrder?: Maybe<Scalars['Int']>;
+  /** Minimum of nextBestOrder across the matching connection */
+  nextBestOrder?: Maybe<Scalars['Int']>;
+};
+
+export type SessionValidatorStddevPopulationAggregates = {
+  __typename?: 'SessionValidatorStddevPopulationAggregates';
+  /** Population standard deviation of bestOrder across the matching connection */
+  bestOrder?: Maybe<Scalars['BigFloat']>;
+  /** Population standard deviation of nextBestOrder across the matching connection */
+  nextBestOrder?: Maybe<Scalars['BigFloat']>;
+};
+
+export type SessionValidatorStddevSampleAggregates = {
+  __typename?: 'SessionValidatorStddevSampleAggregates';
+  /** Sample standard deviation of bestOrder across the matching connection */
+  bestOrder?: Maybe<Scalars['BigFloat']>;
+  /** Sample standard deviation of nextBestOrder across the matching connection */
+  nextBestOrder?: Maybe<Scalars['BigFloat']>;
+};
+
+export type SessionValidatorSumAggregates = {
+  __typename?: 'SessionValidatorSumAggregates';
+  /** Sum of bestOrder across the matching connection */
+  bestOrder: Scalars['BigInt'];
+  /** Sum of nextBestOrder across the matching connection */
+  nextBestOrder: Scalars['BigInt'];
+};
+
+export type SessionValidatorVariancePopulationAggregates = {
+  __typename?: 'SessionValidatorVariancePopulationAggregates';
+  /** Population variance of bestOrder across the matching connection */
+  bestOrder?: Maybe<Scalars['BigFloat']>;
+  /** Population variance of nextBestOrder across the matching connection */
+  nextBestOrder?: Maybe<Scalars['BigFloat']>;
+};
+
+export type SessionValidatorVarianceSampleAggregates = {
+  __typename?: 'SessionValidatorVarianceSampleAggregates';
+  /** Sample variance of bestOrder across the matching connection */
+  bestOrder?: Maybe<Scalars['BigFloat']>;
+  /** Sample variance of nextBestOrder across the matching connection */
+  nextBestOrder?: Maybe<Scalars['BigFloat']>;
+};
+
+/** A connection to a list of `Validator` values, with data from `SessionValidator`. */
+export type SessionValidatorsBySessionValidatorSessionIdAndValidatorIdManyToManyConnection = {
+  __typename?: 'SessionValidatorsBySessionValidatorSessionIdAndValidatorIdManyToManyConnection';
+  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  aggregates?: Maybe<ValidatorAggregates>;
+  /** A list of edges which contains the `Validator`, info from the `SessionValidator`, and the cursor to aid in pagination. */
+  edges: Array<SessionValidatorsBySessionValidatorSessionIdAndValidatorIdManyToManyEdge>;
+  /** A list of `Validator` objects. */
+  nodes: Array<Maybe<Validator>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** The count of *all* `Validator` you could get from the connection. */
+  totalCount: Scalars['Int'];
+};
+
+/** A `Validator` edge in the connection, with data from `SessionValidator`. */
+export type SessionValidatorsBySessionValidatorSessionIdAndValidatorIdManyToManyEdge = {
+  __typename?: 'SessionValidatorsBySessionValidatorSessionIdAndValidatorIdManyToManyEdge';
+  /** A cursor for use in pagination. */
+  cursor?: Maybe<Scalars['Cursor']>;
+  /** The `Validator` at the end of the edge. */
+  node?: Maybe<Validator>;
+  /** Reads and enables pagination through a set of `SessionValidator`. */
+  sessionValidators: SessionValidatorsConnection;
+};
+
+/** A `Validator` edge in the connection, with data from `SessionValidator`. */
+export type SessionValidatorsBySessionValidatorSessionIdAndValidatorIdManyToManyEdgeSessionValidatorsArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  filter?: InputMaybe<SessionValidatorFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<SessionValidatorsOrderBy>>;
+};
+
+/** A connection to a list of `SessionValidator` values. */
+export type SessionValidatorsConnection = {
+  __typename?: 'SessionValidatorsConnection';
+  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  aggregates?: Maybe<SessionValidatorAggregates>;
+  /** A list of edges which contains the `SessionValidator` and cursor to aid in pagination. */
+  edges: Array<SessionValidatorsEdge>;
+  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  groupedAggregates?: Maybe<Array<SessionValidatorAggregates>>;
+  /** A list of `SessionValidator` objects. */
+  nodes: Array<Maybe<SessionValidator>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** The count of *all* `SessionValidator` you could get from the connection. */
+  totalCount: Scalars['Int'];
+};
+
+/** A connection to a list of `SessionValidator` values. */
+export type SessionValidatorsConnectionGroupedAggregatesArgs = {
+  groupBy: Array<SessionValidatorsGroupBy>;
+  having?: InputMaybe<SessionValidatorsHavingInput>;
+};
+
+/** A `SessionValidator` edge in the connection. */
+export type SessionValidatorsEdge = {
+  __typename?: 'SessionValidatorsEdge';
+  /** A cursor for use in pagination. */
+  cursor?: Maybe<Scalars['Cursor']>;
+  /** The `SessionValidator` at the end of the edge. */
+  node?: Maybe<SessionValidator>;
+};
+
+/** Grouping methods for `SessionValidator` for usage during aggregation. */
+export enum SessionValidatorsGroupBy {
+  BestOrder = 'BEST_ORDER',
+  IsBest = 'IS_BEST',
+  IsNext = 'IS_NEXT',
+  IsNextBest = 'IS_NEXT_BEST',
+  NextBestOrder = 'NEXT_BEST_ORDER',
+  Reputation = 'REPUTATION',
+  SessionId = 'SESSION_ID',
+  ValidatorId = 'VALIDATOR_ID',
+}
+
+export type SessionValidatorsHavingAverageInput = {
+  bestOrder?: InputMaybe<HavingIntFilter>;
+  nextBestOrder?: InputMaybe<HavingIntFilter>;
+};
+
+export type SessionValidatorsHavingDistinctCountInput = {
+  bestOrder?: InputMaybe<HavingIntFilter>;
+  nextBestOrder?: InputMaybe<HavingIntFilter>;
+};
+
+/** Conditions for `SessionValidator` aggregates. */
+export type SessionValidatorsHavingInput = {
+  AND?: InputMaybe<Array<SessionValidatorsHavingInput>>;
+  OR?: InputMaybe<Array<SessionValidatorsHavingInput>>;
+  average?: InputMaybe<SessionValidatorsHavingAverageInput>;
+  distinctCount?: InputMaybe<SessionValidatorsHavingDistinctCountInput>;
+  max?: InputMaybe<SessionValidatorsHavingMaxInput>;
+  min?: InputMaybe<SessionValidatorsHavingMinInput>;
+  stddevPopulation?: InputMaybe<SessionValidatorsHavingStddevPopulationInput>;
+  stddevSample?: InputMaybe<SessionValidatorsHavingStddevSampleInput>;
+  sum?: InputMaybe<SessionValidatorsHavingSumInput>;
+  variancePopulation?: InputMaybe<SessionValidatorsHavingVariancePopulationInput>;
+  varianceSample?: InputMaybe<SessionValidatorsHavingVarianceSampleInput>;
+};
+
+export type SessionValidatorsHavingMaxInput = {
+  bestOrder?: InputMaybe<HavingIntFilter>;
+  nextBestOrder?: InputMaybe<HavingIntFilter>;
+};
+
+export type SessionValidatorsHavingMinInput = {
+  bestOrder?: InputMaybe<HavingIntFilter>;
+  nextBestOrder?: InputMaybe<HavingIntFilter>;
+};
+
+export type SessionValidatorsHavingStddevPopulationInput = {
+  bestOrder?: InputMaybe<HavingIntFilter>;
+  nextBestOrder?: InputMaybe<HavingIntFilter>;
+};
+
+export type SessionValidatorsHavingStddevSampleInput = {
+  bestOrder?: InputMaybe<HavingIntFilter>;
+  nextBestOrder?: InputMaybe<HavingIntFilter>;
+};
+
+export type SessionValidatorsHavingSumInput = {
+  bestOrder?: InputMaybe<HavingIntFilter>;
+  nextBestOrder?: InputMaybe<HavingIntFilter>;
+};
+
+export type SessionValidatorsHavingVariancePopulationInput = {
+  bestOrder?: InputMaybe<HavingIntFilter>;
+  nextBestOrder?: InputMaybe<HavingIntFilter>;
+};
+
+export type SessionValidatorsHavingVarianceSampleInput = {
+  bestOrder?: InputMaybe<HavingIntFilter>;
+  nextBestOrder?: InputMaybe<HavingIntFilter>;
+};
+
+/** Methods to use when ordering `SessionValidator`. */
+export enum SessionValidatorsOrderBy {
+  BestOrderAsc = 'BEST_ORDER_ASC',
+  BestOrderDesc = 'BEST_ORDER_DESC',
+  IdAsc = 'ID_ASC',
+  IdDesc = 'ID_DESC',
+  IsBestAsc = 'IS_BEST_ASC',
+  IsBestDesc = 'IS_BEST_DESC',
+  IsNextAsc = 'IS_NEXT_ASC',
+  IsNextBestAsc = 'IS_NEXT_BEST_ASC',
+  IsNextBestDesc = 'IS_NEXT_BEST_DESC',
+  IsNextDesc = 'IS_NEXT_DESC',
+  Natural = 'NATURAL',
+  NextBestOrderAsc = 'NEXT_BEST_ORDER_ASC',
+  NextBestOrderDesc = 'NEXT_BEST_ORDER_DESC',
+  PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
+  PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
+  ReputationAsc = 'REPUTATION_ASC',
+  ReputationDesc = 'REPUTATION_DESC',
+  SessionIdAsc = 'SESSION_ID_ASC',
+  SessionIdDesc = 'SESSION_ID_DESC',
+  ValidatorIdAsc = 'VALIDATOR_ID_ASC',
+  ValidatorIdDesc = 'VALIDATOR_ID_DESC',
+}
+
 export type SessionVariancePopulationAggregates = {
   __typename?: 'SessionVariancePopulationAggregates';
   /** Population variance of blockNumber across the matching connection */
@@ -6515,13 +6749,9 @@ export type SessionsEdge = {
 
 /** Grouping methods for `Session` for usage during aggregation. */
 export enum SessionsGroupBy {
-  Authorities = 'AUTHORITIES',
-  BestAuthorities = 'BEST_AUTHORITIES',
   BlockId = 'BLOCK_ID',
   BlockNumber = 'BLOCK_NUMBER',
   KeyGenThreshold = 'KEY_GEN_THRESHOLD',
-  NextAuthorities = 'NEXT_AUTHORITIES',
-  NextBestAuthorities = 'NEXT_BEST_AUTHORITIES',
   Proposers = 'PROPOSERS',
   ProposersCount = 'PROPOSERS_COUNT',
   ProposerThreshold = 'PROPOSER_THRESHOLD',
@@ -6591,10 +6821,6 @@ export type SessionsHavingVarianceSampleInput = {
 
 /** Methods to use when ordering `Session`. */
 export enum SessionsOrderBy {
-  AuthoritiesAsc = 'AUTHORITIES_ASC',
-  AuthoritiesDesc = 'AUTHORITIES_DESC',
-  BestAuthoritiesAsc = 'BEST_AUTHORITIES_ASC',
-  BestAuthoritiesDesc = 'BEST_AUTHORITIES_DESC',
   BlockIdAsc = 'BLOCK_ID_ASC',
   BlockIdDesc = 'BLOCK_ID_DESC',
   BlockNumberAsc = 'BLOCK_NUMBER_ASC',
@@ -6604,10 +6830,6 @@ export enum SessionsOrderBy {
   KeyGenThresholdAsc = 'KEY_GEN_THRESHOLD_ASC',
   KeyGenThresholdDesc = 'KEY_GEN_THRESHOLD_DESC',
   Natural = 'NATURAL',
-  NextAuthoritiesAsc = 'NEXT_AUTHORITIES_ASC',
-  NextAuthoritiesDesc = 'NEXT_AUTHORITIES_DESC',
-  NextBestAuthoritiesAsc = 'NEXT_BEST_AUTHORITIES_ASC',
-  NextBestAuthoritiesDesc = 'NEXT_BEST_AUTHORITIES_DESC',
   PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
   PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
   ProposersAsc = 'PROPOSERS_ASC',
@@ -6618,6 +6840,170 @@ export enum SessionsOrderBy {
   ProposerThresholdDesc = 'PROPOSER_THRESHOLD_DESC',
   PublicKeyIdAsc = 'PUBLIC_KEY_ID_ASC',
   PublicKeyIdDesc = 'PUBLIC_KEY_ID_DESC',
+  SessionValidatorsAverageBestOrderAsc = 'SESSION_VALIDATORS_AVERAGE_BEST_ORDER_ASC',
+  SessionValidatorsAverageBestOrderDesc = 'SESSION_VALIDATORS_AVERAGE_BEST_ORDER_DESC',
+  SessionValidatorsAverageIdAsc = 'SESSION_VALIDATORS_AVERAGE_ID_ASC',
+  SessionValidatorsAverageIdDesc = 'SESSION_VALIDATORS_AVERAGE_ID_DESC',
+  SessionValidatorsAverageIsBestAsc = 'SESSION_VALIDATORS_AVERAGE_IS_BEST_ASC',
+  SessionValidatorsAverageIsBestDesc = 'SESSION_VALIDATORS_AVERAGE_IS_BEST_DESC',
+  SessionValidatorsAverageIsNextAsc = 'SESSION_VALIDATORS_AVERAGE_IS_NEXT_ASC',
+  SessionValidatorsAverageIsNextBestAsc = 'SESSION_VALIDATORS_AVERAGE_IS_NEXT_BEST_ASC',
+  SessionValidatorsAverageIsNextBestDesc = 'SESSION_VALIDATORS_AVERAGE_IS_NEXT_BEST_DESC',
+  SessionValidatorsAverageIsNextDesc = 'SESSION_VALIDATORS_AVERAGE_IS_NEXT_DESC',
+  SessionValidatorsAverageNextBestOrderAsc = 'SESSION_VALIDATORS_AVERAGE_NEXT_BEST_ORDER_ASC',
+  SessionValidatorsAverageNextBestOrderDesc = 'SESSION_VALIDATORS_AVERAGE_NEXT_BEST_ORDER_DESC',
+  SessionValidatorsAverageReputationAsc = 'SESSION_VALIDATORS_AVERAGE_REPUTATION_ASC',
+  SessionValidatorsAverageReputationDesc = 'SESSION_VALIDATORS_AVERAGE_REPUTATION_DESC',
+  SessionValidatorsAverageSessionIdAsc = 'SESSION_VALIDATORS_AVERAGE_SESSION_ID_ASC',
+  SessionValidatorsAverageSessionIdDesc = 'SESSION_VALIDATORS_AVERAGE_SESSION_ID_DESC',
+  SessionValidatorsAverageValidatorIdAsc = 'SESSION_VALIDATORS_AVERAGE_VALIDATOR_ID_ASC',
+  SessionValidatorsAverageValidatorIdDesc = 'SESSION_VALIDATORS_AVERAGE_VALIDATOR_ID_DESC',
+  SessionValidatorsCountAsc = 'SESSION_VALIDATORS_COUNT_ASC',
+  SessionValidatorsCountDesc = 'SESSION_VALIDATORS_COUNT_DESC',
+  SessionValidatorsDistinctCountBestOrderAsc = 'SESSION_VALIDATORS_DISTINCT_COUNT_BEST_ORDER_ASC',
+  SessionValidatorsDistinctCountBestOrderDesc = 'SESSION_VALIDATORS_DISTINCT_COUNT_BEST_ORDER_DESC',
+  SessionValidatorsDistinctCountIdAsc = 'SESSION_VALIDATORS_DISTINCT_COUNT_ID_ASC',
+  SessionValidatorsDistinctCountIdDesc = 'SESSION_VALIDATORS_DISTINCT_COUNT_ID_DESC',
+  SessionValidatorsDistinctCountIsBestAsc = 'SESSION_VALIDATORS_DISTINCT_COUNT_IS_BEST_ASC',
+  SessionValidatorsDistinctCountIsBestDesc = 'SESSION_VALIDATORS_DISTINCT_COUNT_IS_BEST_DESC',
+  SessionValidatorsDistinctCountIsNextAsc = 'SESSION_VALIDATORS_DISTINCT_COUNT_IS_NEXT_ASC',
+  SessionValidatorsDistinctCountIsNextBestAsc = 'SESSION_VALIDATORS_DISTINCT_COUNT_IS_NEXT_BEST_ASC',
+  SessionValidatorsDistinctCountIsNextBestDesc = 'SESSION_VALIDATORS_DISTINCT_COUNT_IS_NEXT_BEST_DESC',
+  SessionValidatorsDistinctCountIsNextDesc = 'SESSION_VALIDATORS_DISTINCT_COUNT_IS_NEXT_DESC',
+  SessionValidatorsDistinctCountNextBestOrderAsc = 'SESSION_VALIDATORS_DISTINCT_COUNT_NEXT_BEST_ORDER_ASC',
+  SessionValidatorsDistinctCountNextBestOrderDesc = 'SESSION_VALIDATORS_DISTINCT_COUNT_NEXT_BEST_ORDER_DESC',
+  SessionValidatorsDistinctCountReputationAsc = 'SESSION_VALIDATORS_DISTINCT_COUNT_REPUTATION_ASC',
+  SessionValidatorsDistinctCountReputationDesc = 'SESSION_VALIDATORS_DISTINCT_COUNT_REPUTATION_DESC',
+  SessionValidatorsDistinctCountSessionIdAsc = 'SESSION_VALIDATORS_DISTINCT_COUNT_SESSION_ID_ASC',
+  SessionValidatorsDistinctCountSessionIdDesc = 'SESSION_VALIDATORS_DISTINCT_COUNT_SESSION_ID_DESC',
+  SessionValidatorsDistinctCountValidatorIdAsc = 'SESSION_VALIDATORS_DISTINCT_COUNT_VALIDATOR_ID_ASC',
+  SessionValidatorsDistinctCountValidatorIdDesc = 'SESSION_VALIDATORS_DISTINCT_COUNT_VALIDATOR_ID_DESC',
+  SessionValidatorsMaxBestOrderAsc = 'SESSION_VALIDATORS_MAX_BEST_ORDER_ASC',
+  SessionValidatorsMaxBestOrderDesc = 'SESSION_VALIDATORS_MAX_BEST_ORDER_DESC',
+  SessionValidatorsMaxIdAsc = 'SESSION_VALIDATORS_MAX_ID_ASC',
+  SessionValidatorsMaxIdDesc = 'SESSION_VALIDATORS_MAX_ID_DESC',
+  SessionValidatorsMaxIsBestAsc = 'SESSION_VALIDATORS_MAX_IS_BEST_ASC',
+  SessionValidatorsMaxIsBestDesc = 'SESSION_VALIDATORS_MAX_IS_BEST_DESC',
+  SessionValidatorsMaxIsNextAsc = 'SESSION_VALIDATORS_MAX_IS_NEXT_ASC',
+  SessionValidatorsMaxIsNextBestAsc = 'SESSION_VALIDATORS_MAX_IS_NEXT_BEST_ASC',
+  SessionValidatorsMaxIsNextBestDesc = 'SESSION_VALIDATORS_MAX_IS_NEXT_BEST_DESC',
+  SessionValidatorsMaxIsNextDesc = 'SESSION_VALIDATORS_MAX_IS_NEXT_DESC',
+  SessionValidatorsMaxNextBestOrderAsc = 'SESSION_VALIDATORS_MAX_NEXT_BEST_ORDER_ASC',
+  SessionValidatorsMaxNextBestOrderDesc = 'SESSION_VALIDATORS_MAX_NEXT_BEST_ORDER_DESC',
+  SessionValidatorsMaxReputationAsc = 'SESSION_VALIDATORS_MAX_REPUTATION_ASC',
+  SessionValidatorsMaxReputationDesc = 'SESSION_VALIDATORS_MAX_REPUTATION_DESC',
+  SessionValidatorsMaxSessionIdAsc = 'SESSION_VALIDATORS_MAX_SESSION_ID_ASC',
+  SessionValidatorsMaxSessionIdDesc = 'SESSION_VALIDATORS_MAX_SESSION_ID_DESC',
+  SessionValidatorsMaxValidatorIdAsc = 'SESSION_VALIDATORS_MAX_VALIDATOR_ID_ASC',
+  SessionValidatorsMaxValidatorIdDesc = 'SESSION_VALIDATORS_MAX_VALIDATOR_ID_DESC',
+  SessionValidatorsMinBestOrderAsc = 'SESSION_VALIDATORS_MIN_BEST_ORDER_ASC',
+  SessionValidatorsMinBestOrderDesc = 'SESSION_VALIDATORS_MIN_BEST_ORDER_DESC',
+  SessionValidatorsMinIdAsc = 'SESSION_VALIDATORS_MIN_ID_ASC',
+  SessionValidatorsMinIdDesc = 'SESSION_VALIDATORS_MIN_ID_DESC',
+  SessionValidatorsMinIsBestAsc = 'SESSION_VALIDATORS_MIN_IS_BEST_ASC',
+  SessionValidatorsMinIsBestDesc = 'SESSION_VALIDATORS_MIN_IS_BEST_DESC',
+  SessionValidatorsMinIsNextAsc = 'SESSION_VALIDATORS_MIN_IS_NEXT_ASC',
+  SessionValidatorsMinIsNextBestAsc = 'SESSION_VALIDATORS_MIN_IS_NEXT_BEST_ASC',
+  SessionValidatorsMinIsNextBestDesc = 'SESSION_VALIDATORS_MIN_IS_NEXT_BEST_DESC',
+  SessionValidatorsMinIsNextDesc = 'SESSION_VALIDATORS_MIN_IS_NEXT_DESC',
+  SessionValidatorsMinNextBestOrderAsc = 'SESSION_VALIDATORS_MIN_NEXT_BEST_ORDER_ASC',
+  SessionValidatorsMinNextBestOrderDesc = 'SESSION_VALIDATORS_MIN_NEXT_BEST_ORDER_DESC',
+  SessionValidatorsMinReputationAsc = 'SESSION_VALIDATORS_MIN_REPUTATION_ASC',
+  SessionValidatorsMinReputationDesc = 'SESSION_VALIDATORS_MIN_REPUTATION_DESC',
+  SessionValidatorsMinSessionIdAsc = 'SESSION_VALIDATORS_MIN_SESSION_ID_ASC',
+  SessionValidatorsMinSessionIdDesc = 'SESSION_VALIDATORS_MIN_SESSION_ID_DESC',
+  SessionValidatorsMinValidatorIdAsc = 'SESSION_VALIDATORS_MIN_VALIDATOR_ID_ASC',
+  SessionValidatorsMinValidatorIdDesc = 'SESSION_VALIDATORS_MIN_VALIDATOR_ID_DESC',
+  SessionValidatorsStddevPopulationBestOrderAsc = 'SESSION_VALIDATORS_STDDEV_POPULATION_BEST_ORDER_ASC',
+  SessionValidatorsStddevPopulationBestOrderDesc = 'SESSION_VALIDATORS_STDDEV_POPULATION_BEST_ORDER_DESC',
+  SessionValidatorsStddevPopulationIdAsc = 'SESSION_VALIDATORS_STDDEV_POPULATION_ID_ASC',
+  SessionValidatorsStddevPopulationIdDesc = 'SESSION_VALIDATORS_STDDEV_POPULATION_ID_DESC',
+  SessionValidatorsStddevPopulationIsBestAsc = 'SESSION_VALIDATORS_STDDEV_POPULATION_IS_BEST_ASC',
+  SessionValidatorsStddevPopulationIsBestDesc = 'SESSION_VALIDATORS_STDDEV_POPULATION_IS_BEST_DESC',
+  SessionValidatorsStddevPopulationIsNextAsc = 'SESSION_VALIDATORS_STDDEV_POPULATION_IS_NEXT_ASC',
+  SessionValidatorsStddevPopulationIsNextBestAsc = 'SESSION_VALIDATORS_STDDEV_POPULATION_IS_NEXT_BEST_ASC',
+  SessionValidatorsStddevPopulationIsNextBestDesc = 'SESSION_VALIDATORS_STDDEV_POPULATION_IS_NEXT_BEST_DESC',
+  SessionValidatorsStddevPopulationIsNextDesc = 'SESSION_VALIDATORS_STDDEV_POPULATION_IS_NEXT_DESC',
+  SessionValidatorsStddevPopulationNextBestOrderAsc = 'SESSION_VALIDATORS_STDDEV_POPULATION_NEXT_BEST_ORDER_ASC',
+  SessionValidatorsStddevPopulationNextBestOrderDesc = 'SESSION_VALIDATORS_STDDEV_POPULATION_NEXT_BEST_ORDER_DESC',
+  SessionValidatorsStddevPopulationReputationAsc = 'SESSION_VALIDATORS_STDDEV_POPULATION_REPUTATION_ASC',
+  SessionValidatorsStddevPopulationReputationDesc = 'SESSION_VALIDATORS_STDDEV_POPULATION_REPUTATION_DESC',
+  SessionValidatorsStddevPopulationSessionIdAsc = 'SESSION_VALIDATORS_STDDEV_POPULATION_SESSION_ID_ASC',
+  SessionValidatorsStddevPopulationSessionIdDesc = 'SESSION_VALIDATORS_STDDEV_POPULATION_SESSION_ID_DESC',
+  SessionValidatorsStddevPopulationValidatorIdAsc = 'SESSION_VALIDATORS_STDDEV_POPULATION_VALIDATOR_ID_ASC',
+  SessionValidatorsStddevPopulationValidatorIdDesc = 'SESSION_VALIDATORS_STDDEV_POPULATION_VALIDATOR_ID_DESC',
+  SessionValidatorsStddevSampleBestOrderAsc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_BEST_ORDER_ASC',
+  SessionValidatorsStddevSampleBestOrderDesc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_BEST_ORDER_DESC',
+  SessionValidatorsStddevSampleIdAsc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_ID_ASC',
+  SessionValidatorsStddevSampleIdDesc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_ID_DESC',
+  SessionValidatorsStddevSampleIsBestAsc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_IS_BEST_ASC',
+  SessionValidatorsStddevSampleIsBestDesc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_IS_BEST_DESC',
+  SessionValidatorsStddevSampleIsNextAsc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_IS_NEXT_ASC',
+  SessionValidatorsStddevSampleIsNextBestAsc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_IS_NEXT_BEST_ASC',
+  SessionValidatorsStddevSampleIsNextBestDesc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_IS_NEXT_BEST_DESC',
+  SessionValidatorsStddevSampleIsNextDesc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_IS_NEXT_DESC',
+  SessionValidatorsStddevSampleNextBestOrderAsc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_NEXT_BEST_ORDER_ASC',
+  SessionValidatorsStddevSampleNextBestOrderDesc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_NEXT_BEST_ORDER_DESC',
+  SessionValidatorsStddevSampleReputationAsc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_REPUTATION_ASC',
+  SessionValidatorsStddevSampleReputationDesc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_REPUTATION_DESC',
+  SessionValidatorsStddevSampleSessionIdAsc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_SESSION_ID_ASC',
+  SessionValidatorsStddevSampleSessionIdDesc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_SESSION_ID_DESC',
+  SessionValidatorsStddevSampleValidatorIdAsc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_VALIDATOR_ID_ASC',
+  SessionValidatorsStddevSampleValidatorIdDesc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_VALIDATOR_ID_DESC',
+  SessionValidatorsSumBestOrderAsc = 'SESSION_VALIDATORS_SUM_BEST_ORDER_ASC',
+  SessionValidatorsSumBestOrderDesc = 'SESSION_VALIDATORS_SUM_BEST_ORDER_DESC',
+  SessionValidatorsSumIdAsc = 'SESSION_VALIDATORS_SUM_ID_ASC',
+  SessionValidatorsSumIdDesc = 'SESSION_VALIDATORS_SUM_ID_DESC',
+  SessionValidatorsSumIsBestAsc = 'SESSION_VALIDATORS_SUM_IS_BEST_ASC',
+  SessionValidatorsSumIsBestDesc = 'SESSION_VALIDATORS_SUM_IS_BEST_DESC',
+  SessionValidatorsSumIsNextAsc = 'SESSION_VALIDATORS_SUM_IS_NEXT_ASC',
+  SessionValidatorsSumIsNextBestAsc = 'SESSION_VALIDATORS_SUM_IS_NEXT_BEST_ASC',
+  SessionValidatorsSumIsNextBestDesc = 'SESSION_VALIDATORS_SUM_IS_NEXT_BEST_DESC',
+  SessionValidatorsSumIsNextDesc = 'SESSION_VALIDATORS_SUM_IS_NEXT_DESC',
+  SessionValidatorsSumNextBestOrderAsc = 'SESSION_VALIDATORS_SUM_NEXT_BEST_ORDER_ASC',
+  SessionValidatorsSumNextBestOrderDesc = 'SESSION_VALIDATORS_SUM_NEXT_BEST_ORDER_DESC',
+  SessionValidatorsSumReputationAsc = 'SESSION_VALIDATORS_SUM_REPUTATION_ASC',
+  SessionValidatorsSumReputationDesc = 'SESSION_VALIDATORS_SUM_REPUTATION_DESC',
+  SessionValidatorsSumSessionIdAsc = 'SESSION_VALIDATORS_SUM_SESSION_ID_ASC',
+  SessionValidatorsSumSessionIdDesc = 'SESSION_VALIDATORS_SUM_SESSION_ID_DESC',
+  SessionValidatorsSumValidatorIdAsc = 'SESSION_VALIDATORS_SUM_VALIDATOR_ID_ASC',
+  SessionValidatorsSumValidatorIdDesc = 'SESSION_VALIDATORS_SUM_VALIDATOR_ID_DESC',
+  SessionValidatorsVariancePopulationBestOrderAsc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_BEST_ORDER_ASC',
+  SessionValidatorsVariancePopulationBestOrderDesc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_BEST_ORDER_DESC',
+  SessionValidatorsVariancePopulationIdAsc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_ID_ASC',
+  SessionValidatorsVariancePopulationIdDesc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_ID_DESC',
+  SessionValidatorsVariancePopulationIsBestAsc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_IS_BEST_ASC',
+  SessionValidatorsVariancePopulationIsBestDesc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_IS_BEST_DESC',
+  SessionValidatorsVariancePopulationIsNextAsc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_IS_NEXT_ASC',
+  SessionValidatorsVariancePopulationIsNextBestAsc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_IS_NEXT_BEST_ASC',
+  SessionValidatorsVariancePopulationIsNextBestDesc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_IS_NEXT_BEST_DESC',
+  SessionValidatorsVariancePopulationIsNextDesc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_IS_NEXT_DESC',
+  SessionValidatorsVariancePopulationNextBestOrderAsc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_NEXT_BEST_ORDER_ASC',
+  SessionValidatorsVariancePopulationNextBestOrderDesc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_NEXT_BEST_ORDER_DESC',
+  SessionValidatorsVariancePopulationReputationAsc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_REPUTATION_ASC',
+  SessionValidatorsVariancePopulationReputationDesc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_REPUTATION_DESC',
+  SessionValidatorsVariancePopulationSessionIdAsc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_SESSION_ID_ASC',
+  SessionValidatorsVariancePopulationSessionIdDesc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_SESSION_ID_DESC',
+  SessionValidatorsVariancePopulationValidatorIdAsc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_VALIDATOR_ID_ASC',
+  SessionValidatorsVariancePopulationValidatorIdDesc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_VALIDATOR_ID_DESC',
+  SessionValidatorsVarianceSampleBestOrderAsc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_BEST_ORDER_ASC',
+  SessionValidatorsVarianceSampleBestOrderDesc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_BEST_ORDER_DESC',
+  SessionValidatorsVarianceSampleIdAsc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_ID_ASC',
+  SessionValidatorsVarianceSampleIdDesc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_ID_DESC',
+  SessionValidatorsVarianceSampleIsBestAsc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_IS_BEST_ASC',
+  SessionValidatorsVarianceSampleIsBestDesc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_IS_BEST_DESC',
+  SessionValidatorsVarianceSampleIsNextAsc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_IS_NEXT_ASC',
+  SessionValidatorsVarianceSampleIsNextBestAsc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_IS_NEXT_BEST_ASC',
+  SessionValidatorsVarianceSampleIsNextBestDesc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_IS_NEXT_BEST_DESC',
+  SessionValidatorsVarianceSampleIsNextDesc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_IS_NEXT_DESC',
+  SessionValidatorsVarianceSampleNextBestOrderAsc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_NEXT_BEST_ORDER_ASC',
+  SessionValidatorsVarianceSampleNextBestOrderDesc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_NEXT_BEST_ORDER_DESC',
+  SessionValidatorsVarianceSampleReputationAsc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_REPUTATION_ASC',
+  SessionValidatorsVarianceSampleReputationDesc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_REPUTATION_DESC',
+  SessionValidatorsVarianceSampleSessionIdAsc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_SESSION_ID_ASC',
+  SessionValidatorsVarianceSampleSessionIdDesc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_SESSION_ID_DESC',
+  SessionValidatorsVarianceSampleValidatorIdAsc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_VALIDATOR_ID_ASC',
+  SessionValidatorsVarianceSampleValidatorIdDesc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_VALIDATOR_ID_DESC',
   SignatureThresholdAsc = 'SIGNATURE_THRESHOLD_ASC',
   SignatureThresholdDesc = 'SIGNATURE_THRESHOLD_DESC',
 }
@@ -7557,6 +7943,318 @@ export enum UnsignedProposalsQueuesOrderBy {
   UnsignedProposalsQueueItemsByQueueIdVarianceSampleQueueIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_VARIANCE_SAMPLE_QUEUE_ID_DESC',
 }
 
+export type Validator = Node & {
+  __typename?: 'Validator';
+  accountId: Scalars['String'];
+  authorityId: Scalars['String'];
+  id: Scalars['String'];
+  /** A globally unique identifier. Can be used in various places throughout the system to identify this single value. */
+  nodeId: Scalars['ID'];
+  /** Reads and enables pagination through a set of `SessionValidator`. */
+  sessionValidators: SessionValidatorsConnection;
+  /** Reads and enables pagination through a set of `Session`. */
+  sessionsBySessionValidatorValidatorIdAndSessionId: ValidatorSessionsBySessionValidatorValidatorIdAndSessionIdManyToManyConnection;
+};
+
+export type ValidatorSessionValidatorsArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  filter?: InputMaybe<SessionValidatorFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<SessionValidatorsOrderBy>>;
+};
+
+export type ValidatorSessionsBySessionValidatorValidatorIdAndSessionIdArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  filter?: InputMaybe<SessionFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<SessionsOrderBy>>;
+};
+
+export type ValidatorAggregates = {
+  __typename?: 'ValidatorAggregates';
+  /** Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  distinctCount?: Maybe<ValidatorDistinctCountAggregates>;
+  keys?: Maybe<Array<Scalars['String']>>;
+};
+
+export type ValidatorDistinctCountAggregates = {
+  __typename?: 'ValidatorDistinctCountAggregates';
+  /** Distinct count of accountId across the matching connection */
+  accountId?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of authorityId across the matching connection */
+  authorityId?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of id across the matching connection */
+  id?: Maybe<Scalars['BigInt']>;
+};
+
+/** A filter to be used against `Validator` object types. All fields are combined with a logical ‘and.’ */
+export type ValidatorFilter = {
+  /** Filter by the object’s `accountId` field. */
+  accountId?: InputMaybe<StringFilter>;
+  /** Checks for all expressions in this list. */
+  and?: InputMaybe<Array<ValidatorFilter>>;
+  /** Filter by the object’s `authorityId` field. */
+  authorityId?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `id` field. */
+  id?: InputMaybe<StringFilter>;
+  /** Negates the expression. */
+  not?: InputMaybe<ValidatorFilter>;
+  /** Checks for any expressions in this list. */
+  or?: InputMaybe<Array<ValidatorFilter>>;
+};
+
+/** A connection to a list of `Session` values, with data from `SessionValidator`. */
+export type ValidatorSessionsBySessionValidatorValidatorIdAndSessionIdManyToManyConnection = {
+  __typename?: 'ValidatorSessionsBySessionValidatorValidatorIdAndSessionIdManyToManyConnection';
+  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  aggregates?: Maybe<SessionAggregates>;
+  /** A list of edges which contains the `Session`, info from the `SessionValidator`, and the cursor to aid in pagination. */
+  edges: Array<ValidatorSessionsBySessionValidatorValidatorIdAndSessionIdManyToManyEdge>;
+  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  groupedAggregates?: Maybe<Array<SessionAggregates>>;
+  /** A list of `Session` objects. */
+  nodes: Array<Maybe<Session>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** The count of *all* `Session` you could get from the connection. */
+  totalCount: Scalars['Int'];
+};
+
+/** A connection to a list of `Session` values, with data from `SessionValidator`. */
+export type ValidatorSessionsBySessionValidatorValidatorIdAndSessionIdManyToManyConnectionGroupedAggregatesArgs = {
+  groupBy: Array<SessionsGroupBy>;
+  having?: InputMaybe<SessionsHavingInput>;
+};
+
+/** A `Session` edge in the connection, with data from `SessionValidator`. */
+export type ValidatorSessionsBySessionValidatorValidatorIdAndSessionIdManyToManyEdge = {
+  __typename?: 'ValidatorSessionsBySessionValidatorValidatorIdAndSessionIdManyToManyEdge';
+  /** A cursor for use in pagination. */
+  cursor?: Maybe<Scalars['Cursor']>;
+  /** The `Session` at the end of the edge. */
+  node?: Maybe<Session>;
+  /** Reads and enables pagination through a set of `SessionValidator`. */
+  sessionValidators: SessionValidatorsConnection;
+};
+
+/** A `Session` edge in the connection, with data from `SessionValidator`. */
+export type ValidatorSessionsBySessionValidatorValidatorIdAndSessionIdManyToManyEdgeSessionValidatorsArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  filter?: InputMaybe<SessionValidatorFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<SessionValidatorsOrderBy>>;
+};
+
+/** A connection to a list of `Validator` values. */
+export type ValidatorsConnection = {
+  __typename?: 'ValidatorsConnection';
+  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  aggregates?: Maybe<ValidatorAggregates>;
+  /** A list of edges which contains the `Validator` and cursor to aid in pagination. */
+  edges: Array<ValidatorsEdge>;
+  /** A list of `Validator` objects. */
+  nodes: Array<Maybe<Validator>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** The count of *all* `Validator` you could get from the connection. */
+  totalCount: Scalars['Int'];
+};
+
+/** A `Validator` edge in the connection. */
+export type ValidatorsEdge = {
+  __typename?: 'ValidatorsEdge';
+  /** A cursor for use in pagination. */
+  cursor?: Maybe<Scalars['Cursor']>;
+  /** The `Validator` at the end of the edge. */
+  node?: Maybe<Validator>;
+};
+
+/** Methods to use when ordering `Validator`. */
+export enum ValidatorsOrderBy {
+  AccountIdAsc = 'ACCOUNT_ID_ASC',
+  AccountIdDesc = 'ACCOUNT_ID_DESC',
+  AuthorityIdAsc = 'AUTHORITY_ID_ASC',
+  AuthorityIdDesc = 'AUTHORITY_ID_DESC',
+  IdAsc = 'ID_ASC',
+  IdDesc = 'ID_DESC',
+  Natural = 'NATURAL',
+  PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
+  PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
+  SessionValidatorsAverageBestOrderAsc = 'SESSION_VALIDATORS_AVERAGE_BEST_ORDER_ASC',
+  SessionValidatorsAverageBestOrderDesc = 'SESSION_VALIDATORS_AVERAGE_BEST_ORDER_DESC',
+  SessionValidatorsAverageIdAsc = 'SESSION_VALIDATORS_AVERAGE_ID_ASC',
+  SessionValidatorsAverageIdDesc = 'SESSION_VALIDATORS_AVERAGE_ID_DESC',
+  SessionValidatorsAverageIsBestAsc = 'SESSION_VALIDATORS_AVERAGE_IS_BEST_ASC',
+  SessionValidatorsAverageIsBestDesc = 'SESSION_VALIDATORS_AVERAGE_IS_BEST_DESC',
+  SessionValidatorsAverageIsNextAsc = 'SESSION_VALIDATORS_AVERAGE_IS_NEXT_ASC',
+  SessionValidatorsAverageIsNextBestAsc = 'SESSION_VALIDATORS_AVERAGE_IS_NEXT_BEST_ASC',
+  SessionValidatorsAverageIsNextBestDesc = 'SESSION_VALIDATORS_AVERAGE_IS_NEXT_BEST_DESC',
+  SessionValidatorsAverageIsNextDesc = 'SESSION_VALIDATORS_AVERAGE_IS_NEXT_DESC',
+  SessionValidatorsAverageNextBestOrderAsc = 'SESSION_VALIDATORS_AVERAGE_NEXT_BEST_ORDER_ASC',
+  SessionValidatorsAverageNextBestOrderDesc = 'SESSION_VALIDATORS_AVERAGE_NEXT_BEST_ORDER_DESC',
+  SessionValidatorsAverageReputationAsc = 'SESSION_VALIDATORS_AVERAGE_REPUTATION_ASC',
+  SessionValidatorsAverageReputationDesc = 'SESSION_VALIDATORS_AVERAGE_REPUTATION_DESC',
+  SessionValidatorsAverageSessionIdAsc = 'SESSION_VALIDATORS_AVERAGE_SESSION_ID_ASC',
+  SessionValidatorsAverageSessionIdDesc = 'SESSION_VALIDATORS_AVERAGE_SESSION_ID_DESC',
+  SessionValidatorsAverageValidatorIdAsc = 'SESSION_VALIDATORS_AVERAGE_VALIDATOR_ID_ASC',
+  SessionValidatorsAverageValidatorIdDesc = 'SESSION_VALIDATORS_AVERAGE_VALIDATOR_ID_DESC',
+  SessionValidatorsCountAsc = 'SESSION_VALIDATORS_COUNT_ASC',
+  SessionValidatorsCountDesc = 'SESSION_VALIDATORS_COUNT_DESC',
+  SessionValidatorsDistinctCountBestOrderAsc = 'SESSION_VALIDATORS_DISTINCT_COUNT_BEST_ORDER_ASC',
+  SessionValidatorsDistinctCountBestOrderDesc = 'SESSION_VALIDATORS_DISTINCT_COUNT_BEST_ORDER_DESC',
+  SessionValidatorsDistinctCountIdAsc = 'SESSION_VALIDATORS_DISTINCT_COUNT_ID_ASC',
+  SessionValidatorsDistinctCountIdDesc = 'SESSION_VALIDATORS_DISTINCT_COUNT_ID_DESC',
+  SessionValidatorsDistinctCountIsBestAsc = 'SESSION_VALIDATORS_DISTINCT_COUNT_IS_BEST_ASC',
+  SessionValidatorsDistinctCountIsBestDesc = 'SESSION_VALIDATORS_DISTINCT_COUNT_IS_BEST_DESC',
+  SessionValidatorsDistinctCountIsNextAsc = 'SESSION_VALIDATORS_DISTINCT_COUNT_IS_NEXT_ASC',
+  SessionValidatorsDistinctCountIsNextBestAsc = 'SESSION_VALIDATORS_DISTINCT_COUNT_IS_NEXT_BEST_ASC',
+  SessionValidatorsDistinctCountIsNextBestDesc = 'SESSION_VALIDATORS_DISTINCT_COUNT_IS_NEXT_BEST_DESC',
+  SessionValidatorsDistinctCountIsNextDesc = 'SESSION_VALIDATORS_DISTINCT_COUNT_IS_NEXT_DESC',
+  SessionValidatorsDistinctCountNextBestOrderAsc = 'SESSION_VALIDATORS_DISTINCT_COUNT_NEXT_BEST_ORDER_ASC',
+  SessionValidatorsDistinctCountNextBestOrderDesc = 'SESSION_VALIDATORS_DISTINCT_COUNT_NEXT_BEST_ORDER_DESC',
+  SessionValidatorsDistinctCountReputationAsc = 'SESSION_VALIDATORS_DISTINCT_COUNT_REPUTATION_ASC',
+  SessionValidatorsDistinctCountReputationDesc = 'SESSION_VALIDATORS_DISTINCT_COUNT_REPUTATION_DESC',
+  SessionValidatorsDistinctCountSessionIdAsc = 'SESSION_VALIDATORS_DISTINCT_COUNT_SESSION_ID_ASC',
+  SessionValidatorsDistinctCountSessionIdDesc = 'SESSION_VALIDATORS_DISTINCT_COUNT_SESSION_ID_DESC',
+  SessionValidatorsDistinctCountValidatorIdAsc = 'SESSION_VALIDATORS_DISTINCT_COUNT_VALIDATOR_ID_ASC',
+  SessionValidatorsDistinctCountValidatorIdDesc = 'SESSION_VALIDATORS_DISTINCT_COUNT_VALIDATOR_ID_DESC',
+  SessionValidatorsMaxBestOrderAsc = 'SESSION_VALIDATORS_MAX_BEST_ORDER_ASC',
+  SessionValidatorsMaxBestOrderDesc = 'SESSION_VALIDATORS_MAX_BEST_ORDER_DESC',
+  SessionValidatorsMaxIdAsc = 'SESSION_VALIDATORS_MAX_ID_ASC',
+  SessionValidatorsMaxIdDesc = 'SESSION_VALIDATORS_MAX_ID_DESC',
+  SessionValidatorsMaxIsBestAsc = 'SESSION_VALIDATORS_MAX_IS_BEST_ASC',
+  SessionValidatorsMaxIsBestDesc = 'SESSION_VALIDATORS_MAX_IS_BEST_DESC',
+  SessionValidatorsMaxIsNextAsc = 'SESSION_VALIDATORS_MAX_IS_NEXT_ASC',
+  SessionValidatorsMaxIsNextBestAsc = 'SESSION_VALIDATORS_MAX_IS_NEXT_BEST_ASC',
+  SessionValidatorsMaxIsNextBestDesc = 'SESSION_VALIDATORS_MAX_IS_NEXT_BEST_DESC',
+  SessionValidatorsMaxIsNextDesc = 'SESSION_VALIDATORS_MAX_IS_NEXT_DESC',
+  SessionValidatorsMaxNextBestOrderAsc = 'SESSION_VALIDATORS_MAX_NEXT_BEST_ORDER_ASC',
+  SessionValidatorsMaxNextBestOrderDesc = 'SESSION_VALIDATORS_MAX_NEXT_BEST_ORDER_DESC',
+  SessionValidatorsMaxReputationAsc = 'SESSION_VALIDATORS_MAX_REPUTATION_ASC',
+  SessionValidatorsMaxReputationDesc = 'SESSION_VALIDATORS_MAX_REPUTATION_DESC',
+  SessionValidatorsMaxSessionIdAsc = 'SESSION_VALIDATORS_MAX_SESSION_ID_ASC',
+  SessionValidatorsMaxSessionIdDesc = 'SESSION_VALIDATORS_MAX_SESSION_ID_DESC',
+  SessionValidatorsMaxValidatorIdAsc = 'SESSION_VALIDATORS_MAX_VALIDATOR_ID_ASC',
+  SessionValidatorsMaxValidatorIdDesc = 'SESSION_VALIDATORS_MAX_VALIDATOR_ID_DESC',
+  SessionValidatorsMinBestOrderAsc = 'SESSION_VALIDATORS_MIN_BEST_ORDER_ASC',
+  SessionValidatorsMinBestOrderDesc = 'SESSION_VALIDATORS_MIN_BEST_ORDER_DESC',
+  SessionValidatorsMinIdAsc = 'SESSION_VALIDATORS_MIN_ID_ASC',
+  SessionValidatorsMinIdDesc = 'SESSION_VALIDATORS_MIN_ID_DESC',
+  SessionValidatorsMinIsBestAsc = 'SESSION_VALIDATORS_MIN_IS_BEST_ASC',
+  SessionValidatorsMinIsBestDesc = 'SESSION_VALIDATORS_MIN_IS_BEST_DESC',
+  SessionValidatorsMinIsNextAsc = 'SESSION_VALIDATORS_MIN_IS_NEXT_ASC',
+  SessionValidatorsMinIsNextBestAsc = 'SESSION_VALIDATORS_MIN_IS_NEXT_BEST_ASC',
+  SessionValidatorsMinIsNextBestDesc = 'SESSION_VALIDATORS_MIN_IS_NEXT_BEST_DESC',
+  SessionValidatorsMinIsNextDesc = 'SESSION_VALIDATORS_MIN_IS_NEXT_DESC',
+  SessionValidatorsMinNextBestOrderAsc = 'SESSION_VALIDATORS_MIN_NEXT_BEST_ORDER_ASC',
+  SessionValidatorsMinNextBestOrderDesc = 'SESSION_VALIDATORS_MIN_NEXT_BEST_ORDER_DESC',
+  SessionValidatorsMinReputationAsc = 'SESSION_VALIDATORS_MIN_REPUTATION_ASC',
+  SessionValidatorsMinReputationDesc = 'SESSION_VALIDATORS_MIN_REPUTATION_DESC',
+  SessionValidatorsMinSessionIdAsc = 'SESSION_VALIDATORS_MIN_SESSION_ID_ASC',
+  SessionValidatorsMinSessionIdDesc = 'SESSION_VALIDATORS_MIN_SESSION_ID_DESC',
+  SessionValidatorsMinValidatorIdAsc = 'SESSION_VALIDATORS_MIN_VALIDATOR_ID_ASC',
+  SessionValidatorsMinValidatorIdDesc = 'SESSION_VALIDATORS_MIN_VALIDATOR_ID_DESC',
+  SessionValidatorsStddevPopulationBestOrderAsc = 'SESSION_VALIDATORS_STDDEV_POPULATION_BEST_ORDER_ASC',
+  SessionValidatorsStddevPopulationBestOrderDesc = 'SESSION_VALIDATORS_STDDEV_POPULATION_BEST_ORDER_DESC',
+  SessionValidatorsStddevPopulationIdAsc = 'SESSION_VALIDATORS_STDDEV_POPULATION_ID_ASC',
+  SessionValidatorsStddevPopulationIdDesc = 'SESSION_VALIDATORS_STDDEV_POPULATION_ID_DESC',
+  SessionValidatorsStddevPopulationIsBestAsc = 'SESSION_VALIDATORS_STDDEV_POPULATION_IS_BEST_ASC',
+  SessionValidatorsStddevPopulationIsBestDesc = 'SESSION_VALIDATORS_STDDEV_POPULATION_IS_BEST_DESC',
+  SessionValidatorsStddevPopulationIsNextAsc = 'SESSION_VALIDATORS_STDDEV_POPULATION_IS_NEXT_ASC',
+  SessionValidatorsStddevPopulationIsNextBestAsc = 'SESSION_VALIDATORS_STDDEV_POPULATION_IS_NEXT_BEST_ASC',
+  SessionValidatorsStddevPopulationIsNextBestDesc = 'SESSION_VALIDATORS_STDDEV_POPULATION_IS_NEXT_BEST_DESC',
+  SessionValidatorsStddevPopulationIsNextDesc = 'SESSION_VALIDATORS_STDDEV_POPULATION_IS_NEXT_DESC',
+  SessionValidatorsStddevPopulationNextBestOrderAsc = 'SESSION_VALIDATORS_STDDEV_POPULATION_NEXT_BEST_ORDER_ASC',
+  SessionValidatorsStddevPopulationNextBestOrderDesc = 'SESSION_VALIDATORS_STDDEV_POPULATION_NEXT_BEST_ORDER_DESC',
+  SessionValidatorsStddevPopulationReputationAsc = 'SESSION_VALIDATORS_STDDEV_POPULATION_REPUTATION_ASC',
+  SessionValidatorsStddevPopulationReputationDesc = 'SESSION_VALIDATORS_STDDEV_POPULATION_REPUTATION_DESC',
+  SessionValidatorsStddevPopulationSessionIdAsc = 'SESSION_VALIDATORS_STDDEV_POPULATION_SESSION_ID_ASC',
+  SessionValidatorsStddevPopulationSessionIdDesc = 'SESSION_VALIDATORS_STDDEV_POPULATION_SESSION_ID_DESC',
+  SessionValidatorsStddevPopulationValidatorIdAsc = 'SESSION_VALIDATORS_STDDEV_POPULATION_VALIDATOR_ID_ASC',
+  SessionValidatorsStddevPopulationValidatorIdDesc = 'SESSION_VALIDATORS_STDDEV_POPULATION_VALIDATOR_ID_DESC',
+  SessionValidatorsStddevSampleBestOrderAsc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_BEST_ORDER_ASC',
+  SessionValidatorsStddevSampleBestOrderDesc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_BEST_ORDER_DESC',
+  SessionValidatorsStddevSampleIdAsc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_ID_ASC',
+  SessionValidatorsStddevSampleIdDesc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_ID_DESC',
+  SessionValidatorsStddevSampleIsBestAsc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_IS_BEST_ASC',
+  SessionValidatorsStddevSampleIsBestDesc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_IS_BEST_DESC',
+  SessionValidatorsStddevSampleIsNextAsc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_IS_NEXT_ASC',
+  SessionValidatorsStddevSampleIsNextBestAsc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_IS_NEXT_BEST_ASC',
+  SessionValidatorsStddevSampleIsNextBestDesc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_IS_NEXT_BEST_DESC',
+  SessionValidatorsStddevSampleIsNextDesc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_IS_NEXT_DESC',
+  SessionValidatorsStddevSampleNextBestOrderAsc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_NEXT_BEST_ORDER_ASC',
+  SessionValidatorsStddevSampleNextBestOrderDesc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_NEXT_BEST_ORDER_DESC',
+  SessionValidatorsStddevSampleReputationAsc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_REPUTATION_ASC',
+  SessionValidatorsStddevSampleReputationDesc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_REPUTATION_DESC',
+  SessionValidatorsStddevSampleSessionIdAsc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_SESSION_ID_ASC',
+  SessionValidatorsStddevSampleSessionIdDesc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_SESSION_ID_DESC',
+  SessionValidatorsStddevSampleValidatorIdAsc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_VALIDATOR_ID_ASC',
+  SessionValidatorsStddevSampleValidatorIdDesc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_VALIDATOR_ID_DESC',
+  SessionValidatorsSumBestOrderAsc = 'SESSION_VALIDATORS_SUM_BEST_ORDER_ASC',
+  SessionValidatorsSumBestOrderDesc = 'SESSION_VALIDATORS_SUM_BEST_ORDER_DESC',
+  SessionValidatorsSumIdAsc = 'SESSION_VALIDATORS_SUM_ID_ASC',
+  SessionValidatorsSumIdDesc = 'SESSION_VALIDATORS_SUM_ID_DESC',
+  SessionValidatorsSumIsBestAsc = 'SESSION_VALIDATORS_SUM_IS_BEST_ASC',
+  SessionValidatorsSumIsBestDesc = 'SESSION_VALIDATORS_SUM_IS_BEST_DESC',
+  SessionValidatorsSumIsNextAsc = 'SESSION_VALIDATORS_SUM_IS_NEXT_ASC',
+  SessionValidatorsSumIsNextBestAsc = 'SESSION_VALIDATORS_SUM_IS_NEXT_BEST_ASC',
+  SessionValidatorsSumIsNextBestDesc = 'SESSION_VALIDATORS_SUM_IS_NEXT_BEST_DESC',
+  SessionValidatorsSumIsNextDesc = 'SESSION_VALIDATORS_SUM_IS_NEXT_DESC',
+  SessionValidatorsSumNextBestOrderAsc = 'SESSION_VALIDATORS_SUM_NEXT_BEST_ORDER_ASC',
+  SessionValidatorsSumNextBestOrderDesc = 'SESSION_VALIDATORS_SUM_NEXT_BEST_ORDER_DESC',
+  SessionValidatorsSumReputationAsc = 'SESSION_VALIDATORS_SUM_REPUTATION_ASC',
+  SessionValidatorsSumReputationDesc = 'SESSION_VALIDATORS_SUM_REPUTATION_DESC',
+  SessionValidatorsSumSessionIdAsc = 'SESSION_VALIDATORS_SUM_SESSION_ID_ASC',
+  SessionValidatorsSumSessionIdDesc = 'SESSION_VALIDATORS_SUM_SESSION_ID_DESC',
+  SessionValidatorsSumValidatorIdAsc = 'SESSION_VALIDATORS_SUM_VALIDATOR_ID_ASC',
+  SessionValidatorsSumValidatorIdDesc = 'SESSION_VALIDATORS_SUM_VALIDATOR_ID_DESC',
+  SessionValidatorsVariancePopulationBestOrderAsc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_BEST_ORDER_ASC',
+  SessionValidatorsVariancePopulationBestOrderDesc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_BEST_ORDER_DESC',
+  SessionValidatorsVariancePopulationIdAsc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_ID_ASC',
+  SessionValidatorsVariancePopulationIdDesc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_ID_DESC',
+  SessionValidatorsVariancePopulationIsBestAsc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_IS_BEST_ASC',
+  SessionValidatorsVariancePopulationIsBestDesc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_IS_BEST_DESC',
+  SessionValidatorsVariancePopulationIsNextAsc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_IS_NEXT_ASC',
+  SessionValidatorsVariancePopulationIsNextBestAsc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_IS_NEXT_BEST_ASC',
+  SessionValidatorsVariancePopulationIsNextBestDesc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_IS_NEXT_BEST_DESC',
+  SessionValidatorsVariancePopulationIsNextDesc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_IS_NEXT_DESC',
+  SessionValidatorsVariancePopulationNextBestOrderAsc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_NEXT_BEST_ORDER_ASC',
+  SessionValidatorsVariancePopulationNextBestOrderDesc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_NEXT_BEST_ORDER_DESC',
+  SessionValidatorsVariancePopulationReputationAsc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_REPUTATION_ASC',
+  SessionValidatorsVariancePopulationReputationDesc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_REPUTATION_DESC',
+  SessionValidatorsVariancePopulationSessionIdAsc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_SESSION_ID_ASC',
+  SessionValidatorsVariancePopulationSessionIdDesc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_SESSION_ID_DESC',
+  SessionValidatorsVariancePopulationValidatorIdAsc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_VALIDATOR_ID_ASC',
+  SessionValidatorsVariancePopulationValidatorIdDesc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_VALIDATOR_ID_DESC',
+  SessionValidatorsVarianceSampleBestOrderAsc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_BEST_ORDER_ASC',
+  SessionValidatorsVarianceSampleBestOrderDesc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_BEST_ORDER_DESC',
+  SessionValidatorsVarianceSampleIdAsc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_ID_ASC',
+  SessionValidatorsVarianceSampleIdDesc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_ID_DESC',
+  SessionValidatorsVarianceSampleIsBestAsc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_IS_BEST_ASC',
+  SessionValidatorsVarianceSampleIsBestDesc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_IS_BEST_DESC',
+  SessionValidatorsVarianceSampleIsNextAsc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_IS_NEXT_ASC',
+  SessionValidatorsVarianceSampleIsNextBestAsc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_IS_NEXT_BEST_ASC',
+  SessionValidatorsVarianceSampleIsNextBestDesc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_IS_NEXT_BEST_DESC',
+  SessionValidatorsVarianceSampleIsNextDesc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_IS_NEXT_DESC',
+  SessionValidatorsVarianceSampleNextBestOrderAsc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_NEXT_BEST_ORDER_ASC',
+  SessionValidatorsVarianceSampleNextBestOrderDesc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_NEXT_BEST_ORDER_DESC',
+  SessionValidatorsVarianceSampleReputationAsc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_REPUTATION_ASC',
+  SessionValidatorsVarianceSampleReputationDesc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_REPUTATION_DESC',
+  SessionValidatorsVarianceSampleSessionIdAsc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_SESSION_ID_ASC',
+  SessionValidatorsVarianceSampleSessionIdDesc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_SESSION_ID_DESC',
+  SessionValidatorsVarianceSampleValidatorIdAsc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_VALIDATOR_ID_ASC',
+  SessionValidatorsVarianceSampleValidatorIdDesc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_VALIDATOR_ID_DESC',
+}
+
 export type _Metadata = {
   __typename?: '_Metadata';
   chain?: Maybe<Scalars['String']>;
@@ -7570,6 +8268,198 @@ export type _Metadata = {
   rowCountEstimate?: Maybe<Array<Maybe<TableEstimate>>>;
   specName?: Maybe<Scalars['String']>;
   targetHeight?: Maybe<Scalars['Int']>;
+};
+
+export type ValidatorListingQueryVariables = Exact<{
+  sessionId: Scalars['String'];
+  perPage: Scalars['Int'];
+  offset: Scalars['Int'];
+}>;
+
+export type ValidatorListingQuery = {
+  __typename?: 'Query';
+  validators?: {
+    __typename?: 'ValidatorsConnection';
+    totalCount: number;
+    nodes: Array<{
+      __typename?: 'Validator';
+      authorityId: string;
+      id: string;
+      sessionValidators: {
+        __typename?: 'SessionValidatorsConnection';
+        edges: Array<{
+          __typename?: 'SessionValidatorsEdge';
+          node?: {
+            __typename?: 'SessionValidator';
+            id: string;
+            sessionId: string;
+            reputation: string;
+            isBest: boolean;
+            isNext: boolean;
+            isNextBest: boolean;
+            bestOrder: number;
+            nextBestOrder: number;
+            validator?: { __typename?: 'Validator'; authorityId: string; id: string } | null;
+          } | null;
+        }>;
+      };
+    } | null>;
+    pageInfo: {
+      __typename?: 'PageInfo';
+      endCursor?: any | null;
+      hasNextPage: boolean;
+      hasPreviousPage: boolean;
+      startCursor?: any | null;
+    };
+  } | null;
+};
+
+export type ValidatorSessionsQueryVariables = Exact<{
+  keyGen?: InputMaybe<Scalars['Boolean']>;
+  validatorId: Scalars['String'];
+  perPage: Scalars['Int'];
+  offset: Scalars['Int'];
+}>;
+
+export type ValidatorSessionsQuery = {
+  __typename?: 'Query';
+  sessionValidators?: {
+    __typename?: 'SessionValidatorsConnection';
+    totalCount: number;
+    nodes: Array<{
+      __typename?: 'SessionValidator';
+      validator?: { __typename?: 'Validator'; authorityId: string; id: string } | null;
+      session?: {
+        __typename?: 'Session';
+        id: string;
+        publicKey?: {
+          __typename?: 'PublicKey';
+          id: string;
+          compressed?: string | null;
+          uncompressed?: string | null;
+        } | null;
+        sessionValidators: {
+          __typename?: 'SessionValidatorsConnection';
+          totalCount: number;
+          edges: Array<{
+            __typename?: 'SessionValidatorsEdge';
+            node?: {
+              __typename?: 'SessionValidator';
+              id: string;
+              sessionId: string;
+              reputation: string;
+              isBest: boolean;
+              isNext: boolean;
+              isNextBest: boolean;
+              bestOrder: number;
+              nextBestOrder: number;
+              validator?: { __typename?: 'Validator'; authorityId: string; id: string } | null;
+            } | null;
+          }>;
+        };
+      } | null;
+    } | null>;
+    pageInfo: {
+      __typename?: 'PageInfo';
+      endCursor?: any | null;
+      hasNextPage: boolean;
+      hasPreviousPage: boolean;
+      startCursor?: any | null;
+    };
+  } | null;
+};
+
+export type ValidatorOfSessionQueryVariables = Exact<{
+  validatorId: Scalars['String'];
+  sessionValidatorId: Scalars['String'];
+}>;
+
+export type ValidatorOfSessionQuery = {
+  __typename?: 'Query';
+  sessionValidator?: {
+    __typename?: 'SessionValidator';
+    id: string;
+    sessionId: string;
+    reputation: string;
+    isBest: boolean;
+    isNext: boolean;
+    isNextBest: boolean;
+    bestOrder: number;
+    nextBestOrder: number;
+    session?: { __typename?: 'Session'; keyGenThreshold?: any | null } | null;
+    validator?: { __typename?: 'Validator'; authorityId: string; id: string } | null;
+  } | null;
+  sessionValidators?: {
+    __typename?: 'SessionValidatorsConnection';
+    aggregates?: {
+      __typename?: 'SessionValidatorAggregates';
+      distinctCount?: { __typename?: 'SessionValidatorDistinctCountAggregates'; id?: any | null } | null;
+    } | null;
+  } | null;
+};
+
+export type ValidatorMetaFragment = { __typename?: 'Validator'; authorityId: string; id: string };
+
+export type PageInfoMetaFragment = {
+  __typename?: 'PageInfo';
+  endCursor?: any | null;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+  startCursor?: any | null;
+};
+
+export type SessionAuthValidatorNodeFragment = {
+  __typename?: 'SessionValidator';
+  id: string;
+  sessionId: string;
+  reputation: string;
+  isBest: boolean;
+  isNext: boolean;
+  isNextBest: boolean;
+  bestOrder: number;
+  nextBestOrder: number;
+  validator?: { __typename?: 'Validator'; authorityId: string; id: string } | null;
+};
+
+export type SessionAuthValidatorFragment = {
+  __typename?: 'SessionValidatorsConnection';
+  edges: Array<{
+    __typename?: 'SessionValidatorsEdge';
+    node?: {
+      __typename?: 'SessionValidator';
+      id: string;
+      sessionId: string;
+      reputation: string;
+      isBest: boolean;
+      isNext: boolean;
+      isNextBest: boolean;
+      bestOrder: number;
+      nextBestOrder: number;
+      validator?: { __typename?: 'Validator'; authorityId: string; id: string } | null;
+    } | null;
+  }>;
+};
+
+export type SessionAuthFragment = {
+  __typename?: 'Session';
+  sessionValidators: {
+    __typename?: 'SessionValidatorsConnection';
+    edges: Array<{
+      __typename?: 'SessionValidatorsEdge';
+      node?: {
+        __typename?: 'SessionValidator';
+        id: string;
+        sessionId: string;
+        reputation: string;
+        isBest: boolean;
+        isNext: boolean;
+        isNextBest: boolean;
+        bestOrder: number;
+        nextBestOrder: number;
+        validator?: { __typename?: 'Validator'; authorityId: string; id: string } | null;
+      } | null;
+    }>;
+  };
 };
 
 export type MetaDataQueryVariables = Exact<{ [key: string]: never }>;
@@ -7662,9 +8552,26 @@ export type PublicKeysQuery = {
         nodes: Array<{
           __typename?: 'Session';
           id: string;
-          bestAuthorities: any;
           keyGenThreshold?: any | null;
           signatureThreshold?: any | null;
+          sessionValidators: {
+            __typename?: 'SessionValidatorsConnection';
+            edges: Array<{
+              __typename?: 'SessionValidatorsEdge';
+              node?: {
+                __typename?: 'SessionValidator';
+                id: string;
+                sessionId: string;
+                reputation: string;
+                isBest: boolean;
+                isNext: boolean;
+                isNextBest: boolean;
+                bestOrder: number;
+                nextBestOrder: number;
+                validator?: { __typename?: 'Validator'; authorityId: string; id: string } | null;
+              } | null;
+            }>;
+          };
         } | null>;
       };
     } | null>;
@@ -7696,10 +8603,26 @@ export type PublicKeyQuery = {
       nodes: Array<{
         __typename?: 'Session';
         id: string;
-        authorities: any;
-        bestAuthorities: any;
         keyGenThreshold?: any | null;
         signatureThreshold?: any | null;
+        sessionValidators: {
+          __typename?: 'SessionValidatorsConnection';
+          edges: Array<{
+            __typename?: 'SessionValidatorsEdge';
+            node?: {
+              __typename?: 'SessionValidator';
+              id: string;
+              sessionId: string;
+              reputation: string;
+              isBest: boolean;
+              isNext: boolean;
+              isNextBest: boolean;
+              bestOrder: number;
+              nextBestOrder: number;
+              validator?: { __typename?: 'Validator'; authorityId: string; id: string } | null;
+            } | null;
+          }>;
+        };
       } | null>;
     };
   } | null;
@@ -7715,13 +8638,29 @@ export type CurrentSessionAuthoritiesQuery = {
       __typename?: 'Session';
       id: string;
       blockId: string;
-      authorities: any;
-      bestAuthorities: any;
       signatureThreshold?: any | null;
       keyGenThreshold?: any | null;
       proposerThreshold?: any | null;
       publicKey?: { __typename?: 'PublicKey'; compressed?: string | null } | null;
       block?: { __typename?: 'Block'; id: string; timestamp?: any | null } | null;
+      sessionValidators: {
+        __typename?: 'SessionValidatorsConnection';
+        edges: Array<{
+          __typename?: 'SessionValidatorsEdge';
+          node?: {
+            __typename?: 'SessionValidator';
+            id: string;
+            sessionId: string;
+            reputation: string;
+            isBest: boolean;
+            isNext: boolean;
+            isNextBest: boolean;
+            bestOrder: number;
+            nextBestOrder: number;
+            validator?: { __typename?: 'Validator'; authorityId: string; id: string } | null;
+          } | null;
+        }>;
+      };
     } | null>;
   } | null;
 };
@@ -7737,7 +8676,6 @@ export type SessionKeysQuery = {
     nodes: Array<{
       __typename?: 'Session';
       id: string;
-      bestAuthorities: any;
       publicKey?: {
         __typename?: 'PublicKey';
         id: string;
@@ -7745,10 +8683,328 @@ export type SessionKeysQuery = {
         uncompressed?: string | null;
         block?: { __typename?: 'Block'; timestamp?: any | null; number: any } | null;
       } | null;
+      sessionValidators: {
+        __typename?: 'SessionValidatorsConnection';
+        edges: Array<{
+          __typename?: 'SessionValidatorsEdge';
+          node?: {
+            __typename?: 'SessionValidator';
+            id: string;
+            sessionId: string;
+            reputation: string;
+            isBest: boolean;
+            isNext: boolean;
+            isNextBest: boolean;
+            bestOrder: number;
+            nextBestOrder: number;
+            validator?: { __typename?: 'Validator'; authorityId: string; id: string } | null;
+          } | null;
+        }>;
+      };
     } | null>;
   } | null;
 };
 
+export type SessionThresholdHistoryQueryVariables = Exact<{
+  offset: Scalars['Int'];
+  perPage: Scalars['Int'];
+}>;
+
+export type SessionThresholdHistoryQuery = {
+  __typename?: 'Query';
+  sessions?: {
+    __typename?: 'SessionsConnection';
+    totalCount: number;
+    nodes: Array<{
+      __typename?: 'Session';
+      id: string;
+      signatureThreshold?: any | null;
+      keyGenThreshold?: any | null;
+      block?: { __typename?: 'Block'; id: string; timestamp?: any | null } | null;
+    } | null>;
+    pageInfo: {
+      __typename?: 'PageInfo';
+      endCursor?: any | null;
+      hasNextPage: boolean;
+      hasPreviousPage: boolean;
+      startCursor?: any | null;
+    };
+  } | null;
+};
+
+export type SessionThresholdsQueryVariables = Exact<{
+  sessionId: Scalars['String'];
+}>;
+
+export type SessionThresholdsQuery = {
+  __typename?: 'Query';
+  session?: {
+    __typename?: 'Session';
+    id: string;
+    signatureThreshold?: any | null;
+    keyGenThreshold?: any | null;
+    proposersCount?: number | null;
+    publicKey?: {
+      __typename?: 'PublicKey';
+      id: string;
+      compressed?: string | null;
+      uncompressed?: string | null;
+      block?: { __typename?: 'Block'; timestamp?: any | null; number: any } | null;
+    } | null;
+    sessionValidators: {
+      __typename?: 'SessionValidatorsConnection';
+      edges: Array<{
+        __typename?: 'SessionValidatorsEdge';
+        node?: {
+          __typename?: 'SessionValidator';
+          id: string;
+          sessionId: string;
+          reputation: string;
+          isBest: boolean;
+          isNext: boolean;
+          isNextBest: boolean;
+          bestOrder: number;
+          nextBestOrder: number;
+          validator?: { __typename?: 'Validator'; authorityId: string; id: string } | null;
+        } | null;
+      }>;
+    };
+  } | null;
+};
+
+export const PageInfoMetaFragmentDoc = gql`
+  fragment PageInfoMeta on PageInfo {
+    endCursor
+    hasNextPage
+    hasPreviousPage
+    startCursor
+  }
+`;
+export const ValidatorMetaFragmentDoc = gql`
+  fragment ValidatorMeta on Validator {
+    authorityId
+    id
+  }
+`;
+export const SessionAuthValidatorNodeFragmentDoc = gql`
+  fragment SessionAuthValidatorNode on SessionValidator {
+    id
+    sessionId
+    validator {
+      ...ValidatorMeta
+    }
+    reputation
+    isBest
+    isNext
+    isNextBest
+    bestOrder
+    nextBestOrder
+  }
+  ${ValidatorMetaFragmentDoc}
+`;
+export const SessionAuthValidatorFragmentDoc = gql`
+  fragment SessionAuthValidator on SessionValidatorsConnection {
+    edges {
+      node {
+        ...SessionAuthValidatorNode
+      }
+    }
+  }
+  ${SessionAuthValidatorNodeFragmentDoc}
+`;
+export const SessionAuthFragmentDoc = gql`
+  fragment SessionAuth on Session {
+    sessionValidators {
+      ...SessionAuthValidator
+    }
+  }
+  ${SessionAuthValidatorFragmentDoc}
+`;
+export const ValidatorListingDocument = gql`
+  query ValidatorListing($sessionId: String!, $perPage: Int!, $offset: Int!) {
+    validators(offset: $offset, first: $perPage) {
+      nodes {
+        ...ValidatorMeta
+        sessionValidators(first: 1, filter: { sessionId: { equalTo: $sessionId } }) {
+          ...SessionAuthValidator
+        }
+      }
+      totalCount
+      pageInfo {
+        ...PageInfoMeta
+      }
+    }
+  }
+  ${ValidatorMetaFragmentDoc}
+  ${SessionAuthValidatorFragmentDoc}
+  ${PageInfoMetaFragmentDoc}
+`;
+
+/**
+ * __useValidatorListingQuery__
+ *
+ * To run a query within a React component, call `useValidatorListingQuery` and pass it any options that fit your needs.
+ * When your component renders, `useValidatorListingQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useValidatorListingQuery({
+ *   variables: {
+ *      sessionId: // value for 'sessionId'
+ *      perPage: // value for 'perPage'
+ *      offset: // value for 'offset'
+ *   },
+ * });
+ */
+export function useValidatorListingQuery(
+  baseOptions: Apollo.QueryHookOptions<ValidatorListingQuery, ValidatorListingQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<ValidatorListingQuery, ValidatorListingQueryVariables>(ValidatorListingDocument, options);
+}
+export function useValidatorListingLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<ValidatorListingQuery, ValidatorListingQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<ValidatorListingQuery, ValidatorListingQueryVariables>(ValidatorListingDocument, options);
+}
+export type ValidatorListingQueryHookResult = ReturnType<typeof useValidatorListingQuery>;
+export type ValidatorListingLazyQueryHookResult = ReturnType<typeof useValidatorListingLazyQuery>;
+export type ValidatorListingQueryResult = Apollo.QueryResult<ValidatorListingQuery, ValidatorListingQueryVariables>;
+export const ValidatorSessionsDocument = gql`
+  query ValidatorSessions($keyGen: Boolean, $validatorId: String!, $perPage: Int!, $offset: Int!) {
+    sessionValidators(
+      filter: { isBest: { equalTo: $keyGen }, validatorId: { equalTo: $validatorId } }
+      offset: $offset
+      first: $perPage
+    ) {
+      nodes {
+        validator {
+          ...ValidatorMeta
+        }
+        session {
+          id
+          publicKey {
+            id
+            compressed
+            uncompressed
+          }
+          sessionValidators(first: 3) {
+            ...SessionAuthValidator
+            totalCount
+          }
+        }
+      }
+      totalCount
+      pageInfo {
+        ...PageInfoMeta
+      }
+    }
+  }
+  ${ValidatorMetaFragmentDoc}
+  ${SessionAuthValidatorFragmentDoc}
+  ${PageInfoMetaFragmentDoc}
+`;
+
+/**
+ * __useValidatorSessionsQuery__
+ *
+ * To run a query within a React component, call `useValidatorSessionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useValidatorSessionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useValidatorSessionsQuery({
+ *   variables: {
+ *      keyGen: // value for 'keyGen'
+ *      validatorId: // value for 'validatorId'
+ *      perPage: // value for 'perPage'
+ *      offset: // value for 'offset'
+ *   },
+ * });
+ */
+export function useValidatorSessionsQuery(
+  baseOptions: Apollo.QueryHookOptions<ValidatorSessionsQuery, ValidatorSessionsQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<ValidatorSessionsQuery, ValidatorSessionsQueryVariables>(ValidatorSessionsDocument, options);
+}
+export function useValidatorSessionsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<ValidatorSessionsQuery, ValidatorSessionsQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<ValidatorSessionsQuery, ValidatorSessionsQueryVariables>(
+    ValidatorSessionsDocument,
+    options
+  );
+}
+export type ValidatorSessionsQueryHookResult = ReturnType<typeof useValidatorSessionsQuery>;
+export type ValidatorSessionsLazyQueryHookResult = ReturnType<typeof useValidatorSessionsLazyQuery>;
+export type ValidatorSessionsQueryResult = Apollo.QueryResult<ValidatorSessionsQuery, ValidatorSessionsQueryVariables>;
+export const ValidatorOfSessionDocument = gql`
+  query ValidatorOfSession($validatorId: String!, $sessionValidatorId: String!) {
+    sessionValidator(id: $sessionValidatorId) {
+      ...SessionAuthValidatorNode
+      session {
+        keyGenThreshold
+      }
+    }
+    sessionValidators(filter: { validatorId: { equalTo: $validatorId }, isBest: { equalTo: true } }) {
+      aggregates {
+        distinctCount {
+          id
+        }
+      }
+    }
+  }
+  ${SessionAuthValidatorNodeFragmentDoc}
+`;
+
+/**
+ * __useValidatorOfSessionQuery__
+ *
+ * To run a query within a React component, call `useValidatorOfSessionQuery` and pass it any options that fit your needs.
+ * When your component renders, `useValidatorOfSessionQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useValidatorOfSessionQuery({
+ *   variables: {
+ *      validatorId: // value for 'validatorId'
+ *      sessionValidatorId: // value for 'sessionValidatorId'
+ *   },
+ * });
+ */
+export function useValidatorOfSessionQuery(
+  baseOptions: Apollo.QueryHookOptions<ValidatorOfSessionQuery, ValidatorOfSessionQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<ValidatorOfSessionQuery, ValidatorOfSessionQueryVariables>(
+    ValidatorOfSessionDocument,
+    options
+  );
+}
+export function useValidatorOfSessionLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<ValidatorOfSessionQuery, ValidatorOfSessionQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<ValidatorOfSessionQuery, ValidatorOfSessionQueryVariables>(
+    ValidatorOfSessionDocument,
+    options
+  );
+}
+export type ValidatorOfSessionQueryHookResult = ReturnType<typeof useValidatorOfSessionQuery>;
+export type ValidatorOfSessionLazyQueryHookResult = ReturnType<typeof useValidatorOfSessionLazyQuery>;
+export type ValidatorOfSessionQueryResult = Apollo.QueryResult<
+  ValidatorOfSessionQuery,
+  ValidatorOfSessionQueryVariables
+>;
 export const MetaDataDocument = gql`
   query MetaData {
     _metadata {
@@ -7944,7 +9200,7 @@ export const PublicKeysDocument = gql`
         sessions(first: 1) {
           nodes {
             id
-            bestAuthorities
+            ...SessionAuth
             keyGenThreshold
             signatureThreshold
           }
@@ -7959,6 +9215,7 @@ export const PublicKeysDocument = gql`
       totalCount
     }
   }
+  ${SessionAuthFragmentDoc}
 `;
 
 /**
@@ -8005,14 +9262,14 @@ export const PublicKeyDocument = gql`
       sessions(first: 1) {
         nodes {
           id
-          authorities
-          bestAuthorities
+          ...SessionAuth
           keyGenThreshold
           signatureThreshold
         }
       }
     }
   }
+  ${SessionAuthFragmentDoc}
 `;
 
 /**
@@ -8050,8 +9307,7 @@ export const CurrentSessionAuthoritiesDocument = gql`
       nodes {
         id
         blockId
-        authorities
-        bestAuthorities
+        ...SessionAuth
         publicKey {
           compressed
         }
@@ -8065,6 +9321,7 @@ export const CurrentSessionAuthoritiesDocument = gql`
       }
     }
   }
+  ${SessionAuthFragmentDoc}
 `;
 
 /**
@@ -8111,7 +9368,7 @@ export const SessionKeysDocument = gql`
     sessions(filter: { id: { in: $SessionId } }) {
       nodes {
         id
-        bestAuthorities
+        ...SessionAuth
         publicKey {
           id
           compressed
@@ -8124,6 +9381,7 @@ export const SessionKeysDocument = gql`
       }
     }
   }
+  ${SessionAuthFragmentDoc}
 `;
 
 /**
@@ -8155,3 +9413,121 @@ export function useSessionKeysLazyQuery(
 export type SessionKeysQueryHookResult = ReturnType<typeof useSessionKeysQuery>;
 export type SessionKeysLazyQueryHookResult = ReturnType<typeof useSessionKeysLazyQuery>;
 export type SessionKeysQueryResult = Apollo.QueryResult<SessionKeysQuery, SessionKeysQueryVariables>;
+export const SessionThresholdHistoryDocument = gql`
+  query SessionThresholdHistory($offset: Int!, $perPage: Int!) {
+    sessions(first: $perPage, offset: $offset, orderBy: [BLOCK_NUMBER_DESC]) {
+      nodes {
+        id
+        signatureThreshold
+        keyGenThreshold
+        block {
+          id
+          timestamp
+        }
+      }
+      pageInfo {
+        ...PageInfoMeta
+      }
+      totalCount
+    }
+  }
+  ${PageInfoMetaFragmentDoc}
+`;
+
+/**
+ * __useSessionThresholdHistoryQuery__
+ *
+ * To run a query within a React component, call `useSessionThresholdHistoryQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSessionThresholdHistoryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSessionThresholdHistoryQuery({
+ *   variables: {
+ *      offset: // value for 'offset'
+ *      perPage: // value for 'perPage'
+ *   },
+ * });
+ */
+export function useSessionThresholdHistoryQuery(
+  baseOptions: Apollo.QueryHookOptions<SessionThresholdHistoryQuery, SessionThresholdHistoryQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<SessionThresholdHistoryQuery, SessionThresholdHistoryQueryVariables>(
+    SessionThresholdHistoryDocument,
+    options
+  );
+}
+export function useSessionThresholdHistoryLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<SessionThresholdHistoryQuery, SessionThresholdHistoryQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<SessionThresholdHistoryQuery, SessionThresholdHistoryQueryVariables>(
+    SessionThresholdHistoryDocument,
+    options
+  );
+}
+export type SessionThresholdHistoryQueryHookResult = ReturnType<typeof useSessionThresholdHistoryQuery>;
+export type SessionThresholdHistoryLazyQueryHookResult = ReturnType<typeof useSessionThresholdHistoryLazyQuery>;
+export type SessionThresholdHistoryQueryResult = Apollo.QueryResult<
+  SessionThresholdHistoryQuery,
+  SessionThresholdHistoryQueryVariables
+>;
+export const SessionThresholdsDocument = gql`
+  query SessionThresholds($sessionId: String!) {
+    session(id: $sessionId) {
+      id
+      signatureThreshold
+      keyGenThreshold
+      proposersCount
+      ...SessionAuth
+      publicKey {
+        id
+        compressed
+        uncompressed
+        block {
+          timestamp
+          number
+        }
+      }
+    }
+  }
+  ${SessionAuthFragmentDoc}
+`;
+
+/**
+ * __useSessionThresholdsQuery__
+ *
+ * To run a query within a React component, call `useSessionThresholdsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSessionThresholdsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSessionThresholdsQuery({
+ *   variables: {
+ *      sessionId: // value for 'sessionId'
+ *   },
+ * });
+ */
+export function useSessionThresholdsQuery(
+  baseOptions: Apollo.QueryHookOptions<SessionThresholdsQuery, SessionThresholdsQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<SessionThresholdsQuery, SessionThresholdsQueryVariables>(SessionThresholdsDocument, options);
+}
+export function useSessionThresholdsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<SessionThresholdsQuery, SessionThresholdsQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<SessionThresholdsQuery, SessionThresholdsQueryVariables>(
+    SessionThresholdsDocument,
+    options
+  );
+}
+export type SessionThresholdsQueryHookResult = ReturnType<typeof useSessionThresholdsQuery>;
+export type SessionThresholdsLazyQueryHookResult = ReturnType<typeof useSessionThresholdsLazyQuery>;
+export type SessionThresholdsQueryResult = Apollo.QueryResult<SessionThresholdsQuery, SessionThresholdsQueryVariables>;
