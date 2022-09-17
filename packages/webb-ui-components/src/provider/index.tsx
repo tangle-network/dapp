@@ -22,7 +22,12 @@ export const WebbUIProvider: React.FC<WebbUIProviderProps> = ({ children, hasErr
 
   return (
     <WebbUIContext.Provider value={{ theme }}>
-      {hasErrorBoudary ? <WebbUIErrorBoudary logger={appLogger}>{children}</WebbUIErrorBoudary> : children}
+      {hasErrorBoudary ? (
+        // @ts-ignore
+        <WebbUIErrorBoudary logger={appLogger}>{children}</WebbUIErrorBoudary>
+      ) : (
+        children
+      )}
     </WebbUIContext.Provider>
   );
 };
