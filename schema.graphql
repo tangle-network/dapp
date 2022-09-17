@@ -2642,6 +2642,33 @@ type Query implements Node {
         "The globally unique `ID` to be used in selecting a single `Session`."
         nodeId: ID!
     ): Session
+    sessionValidator(id: String!): SessionValidator
+    "Reads a single `SessionValidator` using its globally unique `ID`."
+    sessionValidatorByNodeId(
+        "The globally unique `ID` to be used in selecting a single `SessionValidator`."
+        nodeId: ID!
+    ): SessionValidator
+    "Reads and enables pagination through a set of `SessionValidator`."
+    sessionValidators(
+        "Read all values in the set after (below) this cursor."
+        after: Cursor,
+        "Read all values in the set before (above) this cursor."
+        before: Cursor,
+        "A filter to be used in determining which values should be returned by the collection."
+        filter: SessionValidatorFilter,
+        "Only read the first `n` values of the set."
+        first: Int,
+        "Only read the last `n` values of the set."
+        last: Int,
+        """
+
+        Skip the first `n` values from our `after` cursor, an alternative to cursor
+        based pagination. May not be used with `last`.
+        """
+        offset: Int,
+        "The method to use when ordering `SessionValidator`."
+        orderBy: [SessionValidatorsOrderBy!] = [PRIMARY_KEY_ASC]
+    ): SessionValidatorsConnection
     "Reads and enables pagination through a set of `Session`."
     sessions(
         "Read all values in the set after (below) this cursor."
@@ -2744,19 +2771,42 @@ type Query implements Node {
         "The method to use when ordering `UnsignedProposalsQueue`."
         orderBy: [UnsignedProposalsQueuesOrderBy!] = [PRIMARY_KEY_ASC]
     ): UnsignedProposalsQueuesConnection
+    validator(id: String!): Validator
+    "Reads a single `Validator` using its globally unique `ID`."
+    validatorByNodeId(
+        "The globally unique `ID` to be used in selecting a single `Validator`."
+        nodeId: ID!
+    ): Validator
+    "Reads and enables pagination through a set of `Validator`."
+    validators(
+        "Read all values in the set after (below) this cursor."
+        after: Cursor,
+        "Read all values in the set before (above) this cursor."
+        before: Cursor,
+        "A filter to be used in determining which values should be returned by the collection."
+        filter: ValidatorFilter,
+        "Only read the first `n` values of the set."
+        first: Int,
+        "Only read the last `n` values of the set."
+        last: Int,
+        """
+
+        Skip the first `n` values from our `after` cursor, an alternative to cursor
+        based pagination. May not be used with `last`.
+        """
+        offset: Int,
+        "The method to use when ordering `Validator`."
+        orderBy: [ValidatorsOrderBy!] = [PRIMARY_KEY_ASC]
+    ): ValidatorsConnection
 }
 
 type Session implements Node {
-    authorities: JSON!
-    bestAuthorities: JSON!
     "Reads a single `Block` that is related to this `Session`."
     block: Block
     blockId: String!
     blockNumber: Int!
     id: String!
     keyGenThreshold: JSON
-    nextAuthorities: JSON!
-    nextBestAuthorities: JSON!
     "A globally unique identifier. Can be used in various places throughout the system to identify this single value."
     nodeId: ID!
     proposerThreshold: JSON
@@ -2765,7 +2815,49 @@ type Session implements Node {
     "Reads a single `PublicKey` that is related to this `Session`."
     publicKey: PublicKey
     publicKeyId: String
+    "Reads and enables pagination through a set of `SessionValidator`."
+    sessionValidators(
+        "Read all values in the set after (below) this cursor."
+        after: Cursor,
+        "Read all values in the set before (above) this cursor."
+        before: Cursor,
+        "A filter to be used in determining which values should be returned by the collection."
+        filter: SessionValidatorFilter,
+        "Only read the first `n` values of the set."
+        first: Int,
+        "Only read the last `n` values of the set."
+        last: Int,
+        """
+
+        Skip the first `n` values from our `after` cursor, an alternative to cursor
+        based pagination. May not be used with `last`.
+        """
+        offset: Int,
+        "The method to use when ordering `SessionValidator`."
+        orderBy: [SessionValidatorsOrderBy!] = [PRIMARY_KEY_ASC]
+    ): SessionValidatorsConnection!
     signatureThreshold: JSON
+    "Reads and enables pagination through a set of `Validator`."
+    validatorsBySessionValidatorSessionIdAndValidatorId(
+        "Read all values in the set after (below) this cursor."
+        after: Cursor,
+        "Read all values in the set before (above) this cursor."
+        before: Cursor,
+        "A filter to be used in determining which values should be returned by the collection."
+        filter: ValidatorFilter,
+        "Only read the first `n` values of the set."
+        first: Int,
+        "Only read the last `n` values of the set."
+        last: Int,
+        """
+
+        Skip the first `n` values from our `after` cursor, an alternative to cursor
+        based pagination. May not be used with `last`.
+        """
+        offset: Int,
+        "The method to use when ordering `Validator`."
+        orderBy: [ValidatorsOrderBy!] = [PRIMARY_KEY_ASC]
+    ): SessionValidatorsBySessionValidatorSessionIdAndValidatorIdManyToManyConnection!
 }
 
 type SessionAggregates {
@@ -2798,10 +2890,6 @@ type SessionAverageAggregates {
 }
 
 type SessionDistinctCountAggregates {
-    "Distinct count of authorities across the matching connection"
-    authorities: BigInt
-    "Distinct count of bestAuthorities across the matching connection"
-    bestAuthorities: BigInt
     "Distinct count of blockId across the matching connection"
     blockId: BigInt
     "Distinct count of blockNumber across the matching connection"
@@ -2810,10 +2898,6 @@ type SessionDistinctCountAggregates {
     id: BigInt
     "Distinct count of keyGenThreshold across the matching connection"
     keyGenThreshold: BigInt
-    "Distinct count of nextAuthorities across the matching connection"
-    nextAuthorities: BigInt
-    "Distinct count of nextBestAuthorities across the matching connection"
-    nextBestAuthorities: BigInt
     "Distinct count of proposerThreshold across the matching connection"
     proposerThreshold: BigInt
     "Distinct count of proposers across the matching connection"
@@ -2859,6 +2943,195 @@ type SessionSumAggregates {
     blockNumber: BigInt!
     "Sum of proposersCount across the matching connection"
     proposersCount: BigInt!
+}
+
+type SessionValidator implements Node {
+    bestOrder: Int!
+    id: String!
+    isBest: Boolean!
+    isNext: Boolean!
+    isNextBest: Boolean!
+    nextBestOrder: Int!
+    "A globally unique identifier. Can be used in various places throughout the system to identify this single value."
+    nodeId: ID!
+    reputation: String!
+    "Reads a single `Session` that is related to this `SessionValidator`."
+    session: Session
+    sessionId: String!
+    "Reads a single `Validator` that is related to this `SessionValidator`."
+    validator: Validator
+    validatorId: String!
+}
+
+type SessionValidatorAggregates {
+    "Mean average aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    average: SessionValidatorAverageAggregates
+    "Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    distinctCount: SessionValidatorDistinctCountAggregates
+    keys: [String!]
+    "Maximum aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    max: SessionValidatorMaxAggregates
+    "Minimum aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    min: SessionValidatorMinAggregates
+    "Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    stddevPopulation: SessionValidatorStddevPopulationAggregates
+    "Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    stddevSample: SessionValidatorStddevSampleAggregates
+    "Sum aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    sum: SessionValidatorSumAggregates
+    "Population variance aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    variancePopulation: SessionValidatorVariancePopulationAggregates
+    "Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    varianceSample: SessionValidatorVarianceSampleAggregates
+}
+
+type SessionValidatorAverageAggregates {
+    "Mean average of bestOrder across the matching connection"
+    bestOrder: BigFloat
+    "Mean average of nextBestOrder across the matching connection"
+    nextBestOrder: BigFloat
+}
+
+type SessionValidatorDistinctCountAggregates {
+    "Distinct count of bestOrder across the matching connection"
+    bestOrder: BigInt
+    "Distinct count of id across the matching connection"
+    id: BigInt
+    "Distinct count of isBest across the matching connection"
+    isBest: BigInt
+    "Distinct count of isNext across the matching connection"
+    isNext: BigInt
+    "Distinct count of isNextBest across the matching connection"
+    isNextBest: BigInt
+    "Distinct count of nextBestOrder across the matching connection"
+    nextBestOrder: BigInt
+    "Distinct count of reputation across the matching connection"
+    reputation: BigInt
+    "Distinct count of sessionId across the matching connection"
+    sessionId: BigInt
+    "Distinct count of validatorId across the matching connection"
+    validatorId: BigInt
+}
+
+type SessionValidatorMaxAggregates {
+    "Maximum of bestOrder across the matching connection"
+    bestOrder: Int
+    "Maximum of nextBestOrder across the matching connection"
+    nextBestOrder: Int
+}
+
+type SessionValidatorMinAggregates {
+    "Minimum of bestOrder across the matching connection"
+    bestOrder: Int
+    "Minimum of nextBestOrder across the matching connection"
+    nextBestOrder: Int
+}
+
+type SessionValidatorStddevPopulationAggregates {
+    "Population standard deviation of bestOrder across the matching connection"
+    bestOrder: BigFloat
+    "Population standard deviation of nextBestOrder across the matching connection"
+    nextBestOrder: BigFloat
+}
+
+type SessionValidatorStddevSampleAggregates {
+    "Sample standard deviation of bestOrder across the matching connection"
+    bestOrder: BigFloat
+    "Sample standard deviation of nextBestOrder across the matching connection"
+    nextBestOrder: BigFloat
+}
+
+type SessionValidatorSumAggregates {
+    "Sum of bestOrder across the matching connection"
+    bestOrder: BigInt!
+    "Sum of nextBestOrder across the matching connection"
+    nextBestOrder: BigInt!
+}
+
+type SessionValidatorVariancePopulationAggregates {
+    "Population variance of bestOrder across the matching connection"
+    bestOrder: BigFloat
+    "Population variance of nextBestOrder across the matching connection"
+    nextBestOrder: BigFloat
+}
+
+type SessionValidatorVarianceSampleAggregates {
+    "Sample variance of bestOrder across the matching connection"
+    bestOrder: BigFloat
+    "Sample variance of nextBestOrder across the matching connection"
+    nextBestOrder: BigFloat
+}
+
+"A connection to a list of `Validator` values, with data from `SessionValidator`."
+type SessionValidatorsBySessionValidatorSessionIdAndValidatorIdManyToManyConnection {
+    "Aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    aggregates: ValidatorAggregates
+    "A list of edges which contains the `Validator`, info from the `SessionValidator`, and the cursor to aid in pagination."
+    edges: [SessionValidatorsBySessionValidatorSessionIdAndValidatorIdManyToManyEdge!]!
+    "A list of `Validator` objects."
+    nodes: [Validator]!
+    "Information to aid in pagination."
+    pageInfo: PageInfo!
+    "The count of *all* `Validator` you could get from the connection."
+    totalCount: Int!
+}
+
+"A `Validator` edge in the connection, with data from `SessionValidator`."
+type SessionValidatorsBySessionValidatorSessionIdAndValidatorIdManyToManyEdge {
+    "A cursor for use in pagination."
+    cursor: Cursor
+    "The `Validator` at the end of the edge."
+    node: Validator
+    "Reads and enables pagination through a set of `SessionValidator`."
+    sessionValidators(
+        "Read all values in the set after (below) this cursor."
+        after: Cursor,
+        "Read all values in the set before (above) this cursor."
+        before: Cursor,
+        "A filter to be used in determining which values should be returned by the collection."
+        filter: SessionValidatorFilter,
+        "Only read the first `n` values of the set."
+        first: Int,
+        "Only read the last `n` values of the set."
+        last: Int,
+        """
+
+        Skip the first `n` values from our `after` cursor, an alternative to cursor
+        based pagination. May not be used with `last`.
+        """
+        offset: Int,
+        "The method to use when ordering `SessionValidator`."
+        orderBy: [SessionValidatorsOrderBy!] = [PRIMARY_KEY_ASC]
+    ): SessionValidatorsConnection!
+}
+
+"A connection to a list of `SessionValidator` values."
+type SessionValidatorsConnection {
+    "Aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    aggregates: SessionValidatorAggregates
+    "A list of edges which contains the `SessionValidator` and cursor to aid in pagination."
+    edges: [SessionValidatorsEdge!]!
+    "Grouped aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    groupedAggregates(
+        "The method to use when grouping `SessionValidator` for these aggregates."
+        groupBy: [SessionValidatorsGroupBy!]!,
+        "Conditions on the grouped aggregates."
+        having: SessionValidatorsHavingInput
+    ): [SessionValidatorAggregates!]
+    "A list of `SessionValidator` objects."
+    nodes: [SessionValidator]!
+    "Information to aid in pagination."
+    pageInfo: PageInfo!
+    "The count of *all* `SessionValidator` you could get from the connection."
+    totalCount: Int!
+}
+
+"A `SessionValidator` edge in the connection."
+type SessionValidatorsEdge {
+    "A cursor for use in pagination."
+    cursor: Cursor
+    "The `SessionValidator` at the end of the edge."
+    node: SessionValidator
 }
 
 type SessionVariancePopulationAggregates {
@@ -3372,6 +3645,143 @@ type UnsignedProposalsQueuesEdge {
     cursor: Cursor
     "The `UnsignedProposalsQueue` at the end of the edge."
     node: UnsignedProposalsQueue
+}
+
+type Validator implements Node {
+    accountId: String!
+    authorityId: String!
+    id: String!
+    "A globally unique identifier. Can be used in various places throughout the system to identify this single value."
+    nodeId: ID!
+    "Reads and enables pagination through a set of `SessionValidator`."
+    sessionValidators(
+        "Read all values in the set after (below) this cursor."
+        after: Cursor,
+        "Read all values in the set before (above) this cursor."
+        before: Cursor,
+        "A filter to be used in determining which values should be returned by the collection."
+        filter: SessionValidatorFilter,
+        "Only read the first `n` values of the set."
+        first: Int,
+        "Only read the last `n` values of the set."
+        last: Int,
+        """
+
+        Skip the first `n` values from our `after` cursor, an alternative to cursor
+        based pagination. May not be used with `last`.
+        """
+        offset: Int,
+        "The method to use when ordering `SessionValidator`."
+        orderBy: [SessionValidatorsOrderBy!] = [PRIMARY_KEY_ASC]
+    ): SessionValidatorsConnection!
+    "Reads and enables pagination through a set of `Session`."
+    sessionsBySessionValidatorValidatorIdAndSessionId(
+        "Read all values in the set after (below) this cursor."
+        after: Cursor,
+        "Read all values in the set before (above) this cursor."
+        before: Cursor,
+        "A filter to be used in determining which values should be returned by the collection."
+        filter: SessionFilter,
+        "Only read the first `n` values of the set."
+        first: Int,
+        "Only read the last `n` values of the set."
+        last: Int,
+        """
+
+        Skip the first `n` values from our `after` cursor, an alternative to cursor
+        based pagination. May not be used with `last`.
+        """
+        offset: Int,
+        "The method to use when ordering `Session`."
+        orderBy: [SessionsOrderBy!] = [PRIMARY_KEY_ASC]
+    ): ValidatorSessionsBySessionValidatorValidatorIdAndSessionIdManyToManyConnection!
+}
+
+type ValidatorAggregates {
+    "Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    distinctCount: ValidatorDistinctCountAggregates
+    keys: [String!]
+}
+
+type ValidatorDistinctCountAggregates {
+    "Distinct count of accountId across the matching connection"
+    accountId: BigInt
+    "Distinct count of authorityId across the matching connection"
+    authorityId: BigInt
+    "Distinct count of id across the matching connection"
+    id: BigInt
+}
+
+"A connection to a list of `Session` values, with data from `SessionValidator`."
+type ValidatorSessionsBySessionValidatorValidatorIdAndSessionIdManyToManyConnection {
+    "Aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    aggregates: SessionAggregates
+    "A list of edges which contains the `Session`, info from the `SessionValidator`, and the cursor to aid in pagination."
+    edges: [ValidatorSessionsBySessionValidatorValidatorIdAndSessionIdManyToManyEdge!]!
+    "Grouped aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    groupedAggregates(
+        "The method to use when grouping `Session` for these aggregates."
+        groupBy: [SessionsGroupBy!]!,
+        "Conditions on the grouped aggregates."
+        having: SessionsHavingInput
+    ): [SessionAggregates!]
+    "A list of `Session` objects."
+    nodes: [Session]!
+    "Information to aid in pagination."
+    pageInfo: PageInfo!
+    "The count of *all* `Session` you could get from the connection."
+    totalCount: Int!
+}
+
+"A `Session` edge in the connection, with data from `SessionValidator`."
+type ValidatorSessionsBySessionValidatorValidatorIdAndSessionIdManyToManyEdge {
+    "A cursor for use in pagination."
+    cursor: Cursor
+    "The `Session` at the end of the edge."
+    node: Session
+    "Reads and enables pagination through a set of `SessionValidator`."
+    sessionValidators(
+        "Read all values in the set after (below) this cursor."
+        after: Cursor,
+        "Read all values in the set before (above) this cursor."
+        before: Cursor,
+        "A filter to be used in determining which values should be returned by the collection."
+        filter: SessionValidatorFilter,
+        "Only read the first `n` values of the set."
+        first: Int,
+        "Only read the last `n` values of the set."
+        last: Int,
+        """
+
+        Skip the first `n` values from our `after` cursor, an alternative to cursor
+        based pagination. May not be used with `last`.
+        """
+        offset: Int,
+        "The method to use when ordering `SessionValidator`."
+        orderBy: [SessionValidatorsOrderBy!] = [PRIMARY_KEY_ASC]
+    ): SessionValidatorsConnection!
+}
+
+"A connection to a list of `Validator` values."
+type ValidatorsConnection {
+    "Aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    aggregates: ValidatorAggregates
+    "A list of edges which contains the `Validator` and cursor to aid in pagination."
+    edges: [ValidatorsEdge!]!
+    "A list of `Validator` objects."
+    nodes: [Validator]!
+    "Information to aid in pagination."
+    pageInfo: PageInfo!
+    "The count of *all* `Validator` you could get from the connection."
+    totalCount: Int!
+}
+
+"A `Validator` edge in the connection."
+type ValidatorsEdge {
+    "A cursor for use in pagination."
+    cursor: Cursor
+    "The `Validator` at the end of the edge."
+    node: Validator
 }
 
 type _Metadata {
@@ -4959,10 +5369,6 @@ enum BlocksOrderBy {
     PUBLIC_KEYS_VARIANCE_SAMPLE_ID_DESC
     PUBLIC_KEYS_VARIANCE_SAMPLE_UNCOMPRESSED_ASC
     PUBLIC_KEYS_VARIANCE_SAMPLE_UNCOMPRESSED_DESC
-    SESSIONS_AVERAGE_AUTHORITIES_ASC
-    SESSIONS_AVERAGE_AUTHORITIES_DESC
-    SESSIONS_AVERAGE_BEST_AUTHORITIES_ASC
-    SESSIONS_AVERAGE_BEST_AUTHORITIES_DESC
     SESSIONS_AVERAGE_BLOCK_ID_ASC
     SESSIONS_AVERAGE_BLOCK_ID_DESC
     SESSIONS_AVERAGE_BLOCK_NUMBER_ASC
@@ -4971,10 +5377,6 @@ enum BlocksOrderBy {
     SESSIONS_AVERAGE_ID_DESC
     SESSIONS_AVERAGE_KEY_GEN_THRESHOLD_ASC
     SESSIONS_AVERAGE_KEY_GEN_THRESHOLD_DESC
-    SESSIONS_AVERAGE_NEXT_AUTHORITIES_ASC
-    SESSIONS_AVERAGE_NEXT_AUTHORITIES_DESC
-    SESSIONS_AVERAGE_NEXT_BEST_AUTHORITIES_ASC
-    SESSIONS_AVERAGE_NEXT_BEST_AUTHORITIES_DESC
     SESSIONS_AVERAGE_PROPOSERS_ASC
     SESSIONS_AVERAGE_PROPOSERS_COUNT_ASC
     SESSIONS_AVERAGE_PROPOSERS_COUNT_DESC
@@ -4987,10 +5389,6 @@ enum BlocksOrderBy {
     SESSIONS_AVERAGE_SIGNATURE_THRESHOLD_DESC
     SESSIONS_COUNT_ASC
     SESSIONS_COUNT_DESC
-    SESSIONS_DISTINCT_COUNT_AUTHORITIES_ASC
-    SESSIONS_DISTINCT_COUNT_AUTHORITIES_DESC
-    SESSIONS_DISTINCT_COUNT_BEST_AUTHORITIES_ASC
-    SESSIONS_DISTINCT_COUNT_BEST_AUTHORITIES_DESC
     SESSIONS_DISTINCT_COUNT_BLOCK_ID_ASC
     SESSIONS_DISTINCT_COUNT_BLOCK_ID_DESC
     SESSIONS_DISTINCT_COUNT_BLOCK_NUMBER_ASC
@@ -4999,10 +5397,6 @@ enum BlocksOrderBy {
     SESSIONS_DISTINCT_COUNT_ID_DESC
     SESSIONS_DISTINCT_COUNT_KEY_GEN_THRESHOLD_ASC
     SESSIONS_DISTINCT_COUNT_KEY_GEN_THRESHOLD_DESC
-    SESSIONS_DISTINCT_COUNT_NEXT_AUTHORITIES_ASC
-    SESSIONS_DISTINCT_COUNT_NEXT_AUTHORITIES_DESC
-    SESSIONS_DISTINCT_COUNT_NEXT_BEST_AUTHORITIES_ASC
-    SESSIONS_DISTINCT_COUNT_NEXT_BEST_AUTHORITIES_DESC
     SESSIONS_DISTINCT_COUNT_PROPOSERS_ASC
     SESSIONS_DISTINCT_COUNT_PROPOSERS_COUNT_ASC
     SESSIONS_DISTINCT_COUNT_PROPOSERS_COUNT_DESC
@@ -5013,10 +5407,6 @@ enum BlocksOrderBy {
     SESSIONS_DISTINCT_COUNT_PUBLIC_KEY_ID_DESC
     SESSIONS_DISTINCT_COUNT_SIGNATURE_THRESHOLD_ASC
     SESSIONS_DISTINCT_COUNT_SIGNATURE_THRESHOLD_DESC
-    SESSIONS_MAX_AUTHORITIES_ASC
-    SESSIONS_MAX_AUTHORITIES_DESC
-    SESSIONS_MAX_BEST_AUTHORITIES_ASC
-    SESSIONS_MAX_BEST_AUTHORITIES_DESC
     SESSIONS_MAX_BLOCK_ID_ASC
     SESSIONS_MAX_BLOCK_ID_DESC
     SESSIONS_MAX_BLOCK_NUMBER_ASC
@@ -5025,10 +5415,6 @@ enum BlocksOrderBy {
     SESSIONS_MAX_ID_DESC
     SESSIONS_MAX_KEY_GEN_THRESHOLD_ASC
     SESSIONS_MAX_KEY_GEN_THRESHOLD_DESC
-    SESSIONS_MAX_NEXT_AUTHORITIES_ASC
-    SESSIONS_MAX_NEXT_AUTHORITIES_DESC
-    SESSIONS_MAX_NEXT_BEST_AUTHORITIES_ASC
-    SESSIONS_MAX_NEXT_BEST_AUTHORITIES_DESC
     SESSIONS_MAX_PROPOSERS_ASC
     SESSIONS_MAX_PROPOSERS_COUNT_ASC
     SESSIONS_MAX_PROPOSERS_COUNT_DESC
@@ -5039,10 +5425,6 @@ enum BlocksOrderBy {
     SESSIONS_MAX_PUBLIC_KEY_ID_DESC
     SESSIONS_MAX_SIGNATURE_THRESHOLD_ASC
     SESSIONS_MAX_SIGNATURE_THRESHOLD_DESC
-    SESSIONS_MIN_AUTHORITIES_ASC
-    SESSIONS_MIN_AUTHORITIES_DESC
-    SESSIONS_MIN_BEST_AUTHORITIES_ASC
-    SESSIONS_MIN_BEST_AUTHORITIES_DESC
     SESSIONS_MIN_BLOCK_ID_ASC
     SESSIONS_MIN_BLOCK_ID_DESC
     SESSIONS_MIN_BLOCK_NUMBER_ASC
@@ -5051,10 +5433,6 @@ enum BlocksOrderBy {
     SESSIONS_MIN_ID_DESC
     SESSIONS_MIN_KEY_GEN_THRESHOLD_ASC
     SESSIONS_MIN_KEY_GEN_THRESHOLD_DESC
-    SESSIONS_MIN_NEXT_AUTHORITIES_ASC
-    SESSIONS_MIN_NEXT_AUTHORITIES_DESC
-    SESSIONS_MIN_NEXT_BEST_AUTHORITIES_ASC
-    SESSIONS_MIN_NEXT_BEST_AUTHORITIES_DESC
     SESSIONS_MIN_PROPOSERS_ASC
     SESSIONS_MIN_PROPOSERS_COUNT_ASC
     SESSIONS_MIN_PROPOSERS_COUNT_DESC
@@ -5065,10 +5443,6 @@ enum BlocksOrderBy {
     SESSIONS_MIN_PUBLIC_KEY_ID_DESC
     SESSIONS_MIN_SIGNATURE_THRESHOLD_ASC
     SESSIONS_MIN_SIGNATURE_THRESHOLD_DESC
-    SESSIONS_STDDEV_POPULATION_AUTHORITIES_ASC
-    SESSIONS_STDDEV_POPULATION_AUTHORITIES_DESC
-    SESSIONS_STDDEV_POPULATION_BEST_AUTHORITIES_ASC
-    SESSIONS_STDDEV_POPULATION_BEST_AUTHORITIES_DESC
     SESSIONS_STDDEV_POPULATION_BLOCK_ID_ASC
     SESSIONS_STDDEV_POPULATION_BLOCK_ID_DESC
     SESSIONS_STDDEV_POPULATION_BLOCK_NUMBER_ASC
@@ -5077,10 +5451,6 @@ enum BlocksOrderBy {
     SESSIONS_STDDEV_POPULATION_ID_DESC
     SESSIONS_STDDEV_POPULATION_KEY_GEN_THRESHOLD_ASC
     SESSIONS_STDDEV_POPULATION_KEY_GEN_THRESHOLD_DESC
-    SESSIONS_STDDEV_POPULATION_NEXT_AUTHORITIES_ASC
-    SESSIONS_STDDEV_POPULATION_NEXT_AUTHORITIES_DESC
-    SESSIONS_STDDEV_POPULATION_NEXT_BEST_AUTHORITIES_ASC
-    SESSIONS_STDDEV_POPULATION_NEXT_BEST_AUTHORITIES_DESC
     SESSIONS_STDDEV_POPULATION_PROPOSERS_ASC
     SESSIONS_STDDEV_POPULATION_PROPOSERS_COUNT_ASC
     SESSIONS_STDDEV_POPULATION_PROPOSERS_COUNT_DESC
@@ -5091,10 +5461,6 @@ enum BlocksOrderBy {
     SESSIONS_STDDEV_POPULATION_PUBLIC_KEY_ID_DESC
     SESSIONS_STDDEV_POPULATION_SIGNATURE_THRESHOLD_ASC
     SESSIONS_STDDEV_POPULATION_SIGNATURE_THRESHOLD_DESC
-    SESSIONS_STDDEV_SAMPLE_AUTHORITIES_ASC
-    SESSIONS_STDDEV_SAMPLE_AUTHORITIES_DESC
-    SESSIONS_STDDEV_SAMPLE_BEST_AUTHORITIES_ASC
-    SESSIONS_STDDEV_SAMPLE_BEST_AUTHORITIES_DESC
     SESSIONS_STDDEV_SAMPLE_BLOCK_ID_ASC
     SESSIONS_STDDEV_SAMPLE_BLOCK_ID_DESC
     SESSIONS_STDDEV_SAMPLE_BLOCK_NUMBER_ASC
@@ -5103,10 +5469,6 @@ enum BlocksOrderBy {
     SESSIONS_STDDEV_SAMPLE_ID_DESC
     SESSIONS_STDDEV_SAMPLE_KEY_GEN_THRESHOLD_ASC
     SESSIONS_STDDEV_SAMPLE_KEY_GEN_THRESHOLD_DESC
-    SESSIONS_STDDEV_SAMPLE_NEXT_AUTHORITIES_ASC
-    SESSIONS_STDDEV_SAMPLE_NEXT_AUTHORITIES_DESC
-    SESSIONS_STDDEV_SAMPLE_NEXT_BEST_AUTHORITIES_ASC
-    SESSIONS_STDDEV_SAMPLE_NEXT_BEST_AUTHORITIES_DESC
     SESSIONS_STDDEV_SAMPLE_PROPOSERS_ASC
     SESSIONS_STDDEV_SAMPLE_PROPOSERS_COUNT_ASC
     SESSIONS_STDDEV_SAMPLE_PROPOSERS_COUNT_DESC
@@ -5117,10 +5479,6 @@ enum BlocksOrderBy {
     SESSIONS_STDDEV_SAMPLE_PUBLIC_KEY_ID_DESC
     SESSIONS_STDDEV_SAMPLE_SIGNATURE_THRESHOLD_ASC
     SESSIONS_STDDEV_SAMPLE_SIGNATURE_THRESHOLD_DESC
-    SESSIONS_SUM_AUTHORITIES_ASC
-    SESSIONS_SUM_AUTHORITIES_DESC
-    SESSIONS_SUM_BEST_AUTHORITIES_ASC
-    SESSIONS_SUM_BEST_AUTHORITIES_DESC
     SESSIONS_SUM_BLOCK_ID_ASC
     SESSIONS_SUM_BLOCK_ID_DESC
     SESSIONS_SUM_BLOCK_NUMBER_ASC
@@ -5129,10 +5487,6 @@ enum BlocksOrderBy {
     SESSIONS_SUM_ID_DESC
     SESSIONS_SUM_KEY_GEN_THRESHOLD_ASC
     SESSIONS_SUM_KEY_GEN_THRESHOLD_DESC
-    SESSIONS_SUM_NEXT_AUTHORITIES_ASC
-    SESSIONS_SUM_NEXT_AUTHORITIES_DESC
-    SESSIONS_SUM_NEXT_BEST_AUTHORITIES_ASC
-    SESSIONS_SUM_NEXT_BEST_AUTHORITIES_DESC
     SESSIONS_SUM_PROPOSERS_ASC
     SESSIONS_SUM_PROPOSERS_COUNT_ASC
     SESSIONS_SUM_PROPOSERS_COUNT_DESC
@@ -5143,10 +5497,6 @@ enum BlocksOrderBy {
     SESSIONS_SUM_PUBLIC_KEY_ID_DESC
     SESSIONS_SUM_SIGNATURE_THRESHOLD_ASC
     SESSIONS_SUM_SIGNATURE_THRESHOLD_DESC
-    SESSIONS_VARIANCE_POPULATION_AUTHORITIES_ASC
-    SESSIONS_VARIANCE_POPULATION_AUTHORITIES_DESC
-    SESSIONS_VARIANCE_POPULATION_BEST_AUTHORITIES_ASC
-    SESSIONS_VARIANCE_POPULATION_BEST_AUTHORITIES_DESC
     SESSIONS_VARIANCE_POPULATION_BLOCK_ID_ASC
     SESSIONS_VARIANCE_POPULATION_BLOCK_ID_DESC
     SESSIONS_VARIANCE_POPULATION_BLOCK_NUMBER_ASC
@@ -5155,10 +5505,6 @@ enum BlocksOrderBy {
     SESSIONS_VARIANCE_POPULATION_ID_DESC
     SESSIONS_VARIANCE_POPULATION_KEY_GEN_THRESHOLD_ASC
     SESSIONS_VARIANCE_POPULATION_KEY_GEN_THRESHOLD_DESC
-    SESSIONS_VARIANCE_POPULATION_NEXT_AUTHORITIES_ASC
-    SESSIONS_VARIANCE_POPULATION_NEXT_AUTHORITIES_DESC
-    SESSIONS_VARIANCE_POPULATION_NEXT_BEST_AUTHORITIES_ASC
-    SESSIONS_VARIANCE_POPULATION_NEXT_BEST_AUTHORITIES_DESC
     SESSIONS_VARIANCE_POPULATION_PROPOSERS_ASC
     SESSIONS_VARIANCE_POPULATION_PROPOSERS_COUNT_ASC
     SESSIONS_VARIANCE_POPULATION_PROPOSERS_COUNT_DESC
@@ -5169,10 +5515,6 @@ enum BlocksOrderBy {
     SESSIONS_VARIANCE_POPULATION_PUBLIC_KEY_ID_DESC
     SESSIONS_VARIANCE_POPULATION_SIGNATURE_THRESHOLD_ASC
     SESSIONS_VARIANCE_POPULATION_SIGNATURE_THRESHOLD_DESC
-    SESSIONS_VARIANCE_SAMPLE_AUTHORITIES_ASC
-    SESSIONS_VARIANCE_SAMPLE_AUTHORITIES_DESC
-    SESSIONS_VARIANCE_SAMPLE_BEST_AUTHORITIES_ASC
-    SESSIONS_VARIANCE_SAMPLE_BEST_AUTHORITIES_DESC
     SESSIONS_VARIANCE_SAMPLE_BLOCK_ID_ASC
     SESSIONS_VARIANCE_SAMPLE_BLOCK_ID_DESC
     SESSIONS_VARIANCE_SAMPLE_BLOCK_NUMBER_ASC
@@ -5181,10 +5523,6 @@ enum BlocksOrderBy {
     SESSIONS_VARIANCE_SAMPLE_ID_DESC
     SESSIONS_VARIANCE_SAMPLE_KEY_GEN_THRESHOLD_ASC
     SESSIONS_VARIANCE_SAMPLE_KEY_GEN_THRESHOLD_DESC
-    SESSIONS_VARIANCE_SAMPLE_NEXT_AUTHORITIES_ASC
-    SESSIONS_VARIANCE_SAMPLE_NEXT_AUTHORITIES_DESC
-    SESSIONS_VARIANCE_SAMPLE_NEXT_BEST_AUTHORITIES_ASC
-    SESSIONS_VARIANCE_SAMPLE_NEXT_BEST_AUTHORITIES_DESC
     SESSIONS_VARIANCE_SAMPLE_PROPOSERS_ASC
     SESSIONS_VARIANCE_SAMPLE_PROPOSERS_COUNT_ASC
     SESSIONS_VARIANCE_SAMPLE_PROPOSERS_COUNT_DESC
@@ -5898,10 +6236,6 @@ enum PublicKeysOrderBy {
     NATURAL
     PRIMARY_KEY_ASC
     PRIMARY_KEY_DESC
-    SESSIONS_AVERAGE_AUTHORITIES_ASC
-    SESSIONS_AVERAGE_AUTHORITIES_DESC
-    SESSIONS_AVERAGE_BEST_AUTHORITIES_ASC
-    SESSIONS_AVERAGE_BEST_AUTHORITIES_DESC
     SESSIONS_AVERAGE_BLOCK_ID_ASC
     SESSIONS_AVERAGE_BLOCK_ID_DESC
     SESSIONS_AVERAGE_BLOCK_NUMBER_ASC
@@ -5910,10 +6244,6 @@ enum PublicKeysOrderBy {
     SESSIONS_AVERAGE_ID_DESC
     SESSIONS_AVERAGE_KEY_GEN_THRESHOLD_ASC
     SESSIONS_AVERAGE_KEY_GEN_THRESHOLD_DESC
-    SESSIONS_AVERAGE_NEXT_AUTHORITIES_ASC
-    SESSIONS_AVERAGE_NEXT_AUTHORITIES_DESC
-    SESSIONS_AVERAGE_NEXT_BEST_AUTHORITIES_ASC
-    SESSIONS_AVERAGE_NEXT_BEST_AUTHORITIES_DESC
     SESSIONS_AVERAGE_PROPOSERS_ASC
     SESSIONS_AVERAGE_PROPOSERS_COUNT_ASC
     SESSIONS_AVERAGE_PROPOSERS_COUNT_DESC
@@ -5926,10 +6256,6 @@ enum PublicKeysOrderBy {
     SESSIONS_AVERAGE_SIGNATURE_THRESHOLD_DESC
     SESSIONS_COUNT_ASC
     SESSIONS_COUNT_DESC
-    SESSIONS_DISTINCT_COUNT_AUTHORITIES_ASC
-    SESSIONS_DISTINCT_COUNT_AUTHORITIES_DESC
-    SESSIONS_DISTINCT_COUNT_BEST_AUTHORITIES_ASC
-    SESSIONS_DISTINCT_COUNT_BEST_AUTHORITIES_DESC
     SESSIONS_DISTINCT_COUNT_BLOCK_ID_ASC
     SESSIONS_DISTINCT_COUNT_BLOCK_ID_DESC
     SESSIONS_DISTINCT_COUNT_BLOCK_NUMBER_ASC
@@ -5938,10 +6264,6 @@ enum PublicKeysOrderBy {
     SESSIONS_DISTINCT_COUNT_ID_DESC
     SESSIONS_DISTINCT_COUNT_KEY_GEN_THRESHOLD_ASC
     SESSIONS_DISTINCT_COUNT_KEY_GEN_THRESHOLD_DESC
-    SESSIONS_DISTINCT_COUNT_NEXT_AUTHORITIES_ASC
-    SESSIONS_DISTINCT_COUNT_NEXT_AUTHORITIES_DESC
-    SESSIONS_DISTINCT_COUNT_NEXT_BEST_AUTHORITIES_ASC
-    SESSIONS_DISTINCT_COUNT_NEXT_BEST_AUTHORITIES_DESC
     SESSIONS_DISTINCT_COUNT_PROPOSERS_ASC
     SESSIONS_DISTINCT_COUNT_PROPOSERS_COUNT_ASC
     SESSIONS_DISTINCT_COUNT_PROPOSERS_COUNT_DESC
@@ -5952,10 +6274,6 @@ enum PublicKeysOrderBy {
     SESSIONS_DISTINCT_COUNT_PUBLIC_KEY_ID_DESC
     SESSIONS_DISTINCT_COUNT_SIGNATURE_THRESHOLD_ASC
     SESSIONS_DISTINCT_COUNT_SIGNATURE_THRESHOLD_DESC
-    SESSIONS_MAX_AUTHORITIES_ASC
-    SESSIONS_MAX_AUTHORITIES_DESC
-    SESSIONS_MAX_BEST_AUTHORITIES_ASC
-    SESSIONS_MAX_BEST_AUTHORITIES_DESC
     SESSIONS_MAX_BLOCK_ID_ASC
     SESSIONS_MAX_BLOCK_ID_DESC
     SESSIONS_MAX_BLOCK_NUMBER_ASC
@@ -5964,10 +6282,6 @@ enum PublicKeysOrderBy {
     SESSIONS_MAX_ID_DESC
     SESSIONS_MAX_KEY_GEN_THRESHOLD_ASC
     SESSIONS_MAX_KEY_GEN_THRESHOLD_DESC
-    SESSIONS_MAX_NEXT_AUTHORITIES_ASC
-    SESSIONS_MAX_NEXT_AUTHORITIES_DESC
-    SESSIONS_MAX_NEXT_BEST_AUTHORITIES_ASC
-    SESSIONS_MAX_NEXT_BEST_AUTHORITIES_DESC
     SESSIONS_MAX_PROPOSERS_ASC
     SESSIONS_MAX_PROPOSERS_COUNT_ASC
     SESSIONS_MAX_PROPOSERS_COUNT_DESC
@@ -5978,10 +6292,6 @@ enum PublicKeysOrderBy {
     SESSIONS_MAX_PUBLIC_KEY_ID_DESC
     SESSIONS_MAX_SIGNATURE_THRESHOLD_ASC
     SESSIONS_MAX_SIGNATURE_THRESHOLD_DESC
-    SESSIONS_MIN_AUTHORITIES_ASC
-    SESSIONS_MIN_AUTHORITIES_DESC
-    SESSIONS_MIN_BEST_AUTHORITIES_ASC
-    SESSIONS_MIN_BEST_AUTHORITIES_DESC
     SESSIONS_MIN_BLOCK_ID_ASC
     SESSIONS_MIN_BLOCK_ID_DESC
     SESSIONS_MIN_BLOCK_NUMBER_ASC
@@ -5990,10 +6300,6 @@ enum PublicKeysOrderBy {
     SESSIONS_MIN_ID_DESC
     SESSIONS_MIN_KEY_GEN_THRESHOLD_ASC
     SESSIONS_MIN_KEY_GEN_THRESHOLD_DESC
-    SESSIONS_MIN_NEXT_AUTHORITIES_ASC
-    SESSIONS_MIN_NEXT_AUTHORITIES_DESC
-    SESSIONS_MIN_NEXT_BEST_AUTHORITIES_ASC
-    SESSIONS_MIN_NEXT_BEST_AUTHORITIES_DESC
     SESSIONS_MIN_PROPOSERS_ASC
     SESSIONS_MIN_PROPOSERS_COUNT_ASC
     SESSIONS_MIN_PROPOSERS_COUNT_DESC
@@ -6004,10 +6310,6 @@ enum PublicKeysOrderBy {
     SESSIONS_MIN_PUBLIC_KEY_ID_DESC
     SESSIONS_MIN_SIGNATURE_THRESHOLD_ASC
     SESSIONS_MIN_SIGNATURE_THRESHOLD_DESC
-    SESSIONS_STDDEV_POPULATION_AUTHORITIES_ASC
-    SESSIONS_STDDEV_POPULATION_AUTHORITIES_DESC
-    SESSIONS_STDDEV_POPULATION_BEST_AUTHORITIES_ASC
-    SESSIONS_STDDEV_POPULATION_BEST_AUTHORITIES_DESC
     SESSIONS_STDDEV_POPULATION_BLOCK_ID_ASC
     SESSIONS_STDDEV_POPULATION_BLOCK_ID_DESC
     SESSIONS_STDDEV_POPULATION_BLOCK_NUMBER_ASC
@@ -6016,10 +6318,6 @@ enum PublicKeysOrderBy {
     SESSIONS_STDDEV_POPULATION_ID_DESC
     SESSIONS_STDDEV_POPULATION_KEY_GEN_THRESHOLD_ASC
     SESSIONS_STDDEV_POPULATION_KEY_GEN_THRESHOLD_DESC
-    SESSIONS_STDDEV_POPULATION_NEXT_AUTHORITIES_ASC
-    SESSIONS_STDDEV_POPULATION_NEXT_AUTHORITIES_DESC
-    SESSIONS_STDDEV_POPULATION_NEXT_BEST_AUTHORITIES_ASC
-    SESSIONS_STDDEV_POPULATION_NEXT_BEST_AUTHORITIES_DESC
     SESSIONS_STDDEV_POPULATION_PROPOSERS_ASC
     SESSIONS_STDDEV_POPULATION_PROPOSERS_COUNT_ASC
     SESSIONS_STDDEV_POPULATION_PROPOSERS_COUNT_DESC
@@ -6030,10 +6328,6 @@ enum PublicKeysOrderBy {
     SESSIONS_STDDEV_POPULATION_PUBLIC_KEY_ID_DESC
     SESSIONS_STDDEV_POPULATION_SIGNATURE_THRESHOLD_ASC
     SESSIONS_STDDEV_POPULATION_SIGNATURE_THRESHOLD_DESC
-    SESSIONS_STDDEV_SAMPLE_AUTHORITIES_ASC
-    SESSIONS_STDDEV_SAMPLE_AUTHORITIES_DESC
-    SESSIONS_STDDEV_SAMPLE_BEST_AUTHORITIES_ASC
-    SESSIONS_STDDEV_SAMPLE_BEST_AUTHORITIES_DESC
     SESSIONS_STDDEV_SAMPLE_BLOCK_ID_ASC
     SESSIONS_STDDEV_SAMPLE_BLOCK_ID_DESC
     SESSIONS_STDDEV_SAMPLE_BLOCK_NUMBER_ASC
@@ -6042,10 +6336,6 @@ enum PublicKeysOrderBy {
     SESSIONS_STDDEV_SAMPLE_ID_DESC
     SESSIONS_STDDEV_SAMPLE_KEY_GEN_THRESHOLD_ASC
     SESSIONS_STDDEV_SAMPLE_KEY_GEN_THRESHOLD_DESC
-    SESSIONS_STDDEV_SAMPLE_NEXT_AUTHORITIES_ASC
-    SESSIONS_STDDEV_SAMPLE_NEXT_AUTHORITIES_DESC
-    SESSIONS_STDDEV_SAMPLE_NEXT_BEST_AUTHORITIES_ASC
-    SESSIONS_STDDEV_SAMPLE_NEXT_BEST_AUTHORITIES_DESC
     SESSIONS_STDDEV_SAMPLE_PROPOSERS_ASC
     SESSIONS_STDDEV_SAMPLE_PROPOSERS_COUNT_ASC
     SESSIONS_STDDEV_SAMPLE_PROPOSERS_COUNT_DESC
@@ -6056,10 +6346,6 @@ enum PublicKeysOrderBy {
     SESSIONS_STDDEV_SAMPLE_PUBLIC_KEY_ID_DESC
     SESSIONS_STDDEV_SAMPLE_SIGNATURE_THRESHOLD_ASC
     SESSIONS_STDDEV_SAMPLE_SIGNATURE_THRESHOLD_DESC
-    SESSIONS_SUM_AUTHORITIES_ASC
-    SESSIONS_SUM_AUTHORITIES_DESC
-    SESSIONS_SUM_BEST_AUTHORITIES_ASC
-    SESSIONS_SUM_BEST_AUTHORITIES_DESC
     SESSIONS_SUM_BLOCK_ID_ASC
     SESSIONS_SUM_BLOCK_ID_DESC
     SESSIONS_SUM_BLOCK_NUMBER_ASC
@@ -6068,10 +6354,6 @@ enum PublicKeysOrderBy {
     SESSIONS_SUM_ID_DESC
     SESSIONS_SUM_KEY_GEN_THRESHOLD_ASC
     SESSIONS_SUM_KEY_GEN_THRESHOLD_DESC
-    SESSIONS_SUM_NEXT_AUTHORITIES_ASC
-    SESSIONS_SUM_NEXT_AUTHORITIES_DESC
-    SESSIONS_SUM_NEXT_BEST_AUTHORITIES_ASC
-    SESSIONS_SUM_NEXT_BEST_AUTHORITIES_DESC
     SESSIONS_SUM_PROPOSERS_ASC
     SESSIONS_SUM_PROPOSERS_COUNT_ASC
     SESSIONS_SUM_PROPOSERS_COUNT_DESC
@@ -6082,10 +6364,6 @@ enum PublicKeysOrderBy {
     SESSIONS_SUM_PUBLIC_KEY_ID_DESC
     SESSIONS_SUM_SIGNATURE_THRESHOLD_ASC
     SESSIONS_SUM_SIGNATURE_THRESHOLD_DESC
-    SESSIONS_VARIANCE_POPULATION_AUTHORITIES_ASC
-    SESSIONS_VARIANCE_POPULATION_AUTHORITIES_DESC
-    SESSIONS_VARIANCE_POPULATION_BEST_AUTHORITIES_ASC
-    SESSIONS_VARIANCE_POPULATION_BEST_AUTHORITIES_DESC
     SESSIONS_VARIANCE_POPULATION_BLOCK_ID_ASC
     SESSIONS_VARIANCE_POPULATION_BLOCK_ID_DESC
     SESSIONS_VARIANCE_POPULATION_BLOCK_NUMBER_ASC
@@ -6094,10 +6372,6 @@ enum PublicKeysOrderBy {
     SESSIONS_VARIANCE_POPULATION_ID_DESC
     SESSIONS_VARIANCE_POPULATION_KEY_GEN_THRESHOLD_ASC
     SESSIONS_VARIANCE_POPULATION_KEY_GEN_THRESHOLD_DESC
-    SESSIONS_VARIANCE_POPULATION_NEXT_AUTHORITIES_ASC
-    SESSIONS_VARIANCE_POPULATION_NEXT_AUTHORITIES_DESC
-    SESSIONS_VARIANCE_POPULATION_NEXT_BEST_AUTHORITIES_ASC
-    SESSIONS_VARIANCE_POPULATION_NEXT_BEST_AUTHORITIES_DESC
     SESSIONS_VARIANCE_POPULATION_PROPOSERS_ASC
     SESSIONS_VARIANCE_POPULATION_PROPOSERS_COUNT_ASC
     SESSIONS_VARIANCE_POPULATION_PROPOSERS_COUNT_DESC
@@ -6108,10 +6382,6 @@ enum PublicKeysOrderBy {
     SESSIONS_VARIANCE_POPULATION_PUBLIC_KEY_ID_DESC
     SESSIONS_VARIANCE_POPULATION_SIGNATURE_THRESHOLD_ASC
     SESSIONS_VARIANCE_POPULATION_SIGNATURE_THRESHOLD_DESC
-    SESSIONS_VARIANCE_SAMPLE_AUTHORITIES_ASC
-    SESSIONS_VARIANCE_SAMPLE_AUTHORITIES_DESC
-    SESSIONS_VARIANCE_SAMPLE_BEST_AUTHORITIES_ASC
-    SESSIONS_VARIANCE_SAMPLE_BEST_AUTHORITIES_DESC
     SESSIONS_VARIANCE_SAMPLE_BLOCK_ID_ASC
     SESSIONS_VARIANCE_SAMPLE_BLOCK_ID_DESC
     SESSIONS_VARIANCE_SAMPLE_BLOCK_NUMBER_ASC
@@ -6120,10 +6390,6 @@ enum PublicKeysOrderBy {
     SESSIONS_VARIANCE_SAMPLE_ID_DESC
     SESSIONS_VARIANCE_SAMPLE_KEY_GEN_THRESHOLD_ASC
     SESSIONS_VARIANCE_SAMPLE_KEY_GEN_THRESHOLD_DESC
-    SESSIONS_VARIANCE_SAMPLE_NEXT_AUTHORITIES_ASC
-    SESSIONS_VARIANCE_SAMPLE_NEXT_AUTHORITIES_DESC
-    SESSIONS_VARIANCE_SAMPLE_NEXT_BEST_AUTHORITIES_ASC
-    SESSIONS_VARIANCE_SAMPLE_NEXT_BEST_AUTHORITIES_DESC
     SESSIONS_VARIANCE_SAMPLE_PROPOSERS_ASC
     SESSIONS_VARIANCE_SAMPLE_PROPOSERS_COUNT_ASC
     SESSIONS_VARIANCE_SAMPLE_PROPOSERS_COUNT_DESC
@@ -6138,15 +6404,48 @@ enum PublicKeysOrderBy {
     UNCOMPRESSED_DESC
 }
 
+"Grouping methods for `SessionValidator` for usage during aggregation."
+enum SessionValidatorsGroupBy {
+    BEST_ORDER
+    IS_BEST
+    IS_NEXT
+    IS_NEXT_BEST
+    NEXT_BEST_ORDER
+    REPUTATION
+    SESSION_ID
+    VALIDATOR_ID
+}
+
+"Methods to use when ordering `SessionValidator`."
+enum SessionValidatorsOrderBy {
+    BEST_ORDER_ASC
+    BEST_ORDER_DESC
+    ID_ASC
+    ID_DESC
+    IS_BEST_ASC
+    IS_BEST_DESC
+    IS_NEXT_ASC
+    IS_NEXT_BEST_ASC
+    IS_NEXT_BEST_DESC
+    IS_NEXT_DESC
+    NATURAL
+    NEXT_BEST_ORDER_ASC
+    NEXT_BEST_ORDER_DESC
+    PRIMARY_KEY_ASC
+    PRIMARY_KEY_DESC
+    REPUTATION_ASC
+    REPUTATION_DESC
+    SESSION_ID_ASC
+    SESSION_ID_DESC
+    VALIDATOR_ID_ASC
+    VALIDATOR_ID_DESC
+}
+
 "Grouping methods for `Session` for usage during aggregation."
 enum SessionsGroupBy {
-    AUTHORITIES
-    BEST_AUTHORITIES
     BLOCK_ID
     BLOCK_NUMBER
     KEY_GEN_THRESHOLD
-    NEXT_AUTHORITIES
-    NEXT_BEST_AUTHORITIES
     PROPOSERS
     PROPOSERS_COUNT
     PROPOSER_THRESHOLD
@@ -6156,10 +6455,6 @@ enum SessionsGroupBy {
 
 "Methods to use when ordering `Session`."
 enum SessionsOrderBy {
-    AUTHORITIES_ASC
-    AUTHORITIES_DESC
-    BEST_AUTHORITIES_ASC
-    BEST_AUTHORITIES_DESC
     BLOCK_ID_ASC
     BLOCK_ID_DESC
     BLOCK_NUMBER_ASC
@@ -6169,10 +6464,6 @@ enum SessionsOrderBy {
     KEY_GEN_THRESHOLD_ASC
     KEY_GEN_THRESHOLD_DESC
     NATURAL
-    NEXT_AUTHORITIES_ASC
-    NEXT_AUTHORITIES_DESC
-    NEXT_BEST_AUTHORITIES_ASC
-    NEXT_BEST_AUTHORITIES_DESC
     PRIMARY_KEY_ASC
     PRIMARY_KEY_DESC
     PROPOSERS_ASC
@@ -6183,6 +6474,170 @@ enum SessionsOrderBy {
     PROPOSER_THRESHOLD_DESC
     PUBLIC_KEY_ID_ASC
     PUBLIC_KEY_ID_DESC
+    SESSION_VALIDATORS_AVERAGE_BEST_ORDER_ASC
+    SESSION_VALIDATORS_AVERAGE_BEST_ORDER_DESC
+    SESSION_VALIDATORS_AVERAGE_ID_ASC
+    SESSION_VALIDATORS_AVERAGE_ID_DESC
+    SESSION_VALIDATORS_AVERAGE_IS_BEST_ASC
+    SESSION_VALIDATORS_AVERAGE_IS_BEST_DESC
+    SESSION_VALIDATORS_AVERAGE_IS_NEXT_ASC
+    SESSION_VALIDATORS_AVERAGE_IS_NEXT_BEST_ASC
+    SESSION_VALIDATORS_AVERAGE_IS_NEXT_BEST_DESC
+    SESSION_VALIDATORS_AVERAGE_IS_NEXT_DESC
+    SESSION_VALIDATORS_AVERAGE_NEXT_BEST_ORDER_ASC
+    SESSION_VALIDATORS_AVERAGE_NEXT_BEST_ORDER_DESC
+    SESSION_VALIDATORS_AVERAGE_REPUTATION_ASC
+    SESSION_VALIDATORS_AVERAGE_REPUTATION_DESC
+    SESSION_VALIDATORS_AVERAGE_SESSION_ID_ASC
+    SESSION_VALIDATORS_AVERAGE_SESSION_ID_DESC
+    SESSION_VALIDATORS_AVERAGE_VALIDATOR_ID_ASC
+    SESSION_VALIDATORS_AVERAGE_VALIDATOR_ID_DESC
+    SESSION_VALIDATORS_COUNT_ASC
+    SESSION_VALIDATORS_COUNT_DESC
+    SESSION_VALIDATORS_DISTINCT_COUNT_BEST_ORDER_ASC
+    SESSION_VALIDATORS_DISTINCT_COUNT_BEST_ORDER_DESC
+    SESSION_VALIDATORS_DISTINCT_COUNT_ID_ASC
+    SESSION_VALIDATORS_DISTINCT_COUNT_ID_DESC
+    SESSION_VALIDATORS_DISTINCT_COUNT_IS_BEST_ASC
+    SESSION_VALIDATORS_DISTINCT_COUNT_IS_BEST_DESC
+    SESSION_VALIDATORS_DISTINCT_COUNT_IS_NEXT_ASC
+    SESSION_VALIDATORS_DISTINCT_COUNT_IS_NEXT_BEST_ASC
+    SESSION_VALIDATORS_DISTINCT_COUNT_IS_NEXT_BEST_DESC
+    SESSION_VALIDATORS_DISTINCT_COUNT_IS_NEXT_DESC
+    SESSION_VALIDATORS_DISTINCT_COUNT_NEXT_BEST_ORDER_ASC
+    SESSION_VALIDATORS_DISTINCT_COUNT_NEXT_BEST_ORDER_DESC
+    SESSION_VALIDATORS_DISTINCT_COUNT_REPUTATION_ASC
+    SESSION_VALIDATORS_DISTINCT_COUNT_REPUTATION_DESC
+    SESSION_VALIDATORS_DISTINCT_COUNT_SESSION_ID_ASC
+    SESSION_VALIDATORS_DISTINCT_COUNT_SESSION_ID_DESC
+    SESSION_VALIDATORS_DISTINCT_COUNT_VALIDATOR_ID_ASC
+    SESSION_VALIDATORS_DISTINCT_COUNT_VALIDATOR_ID_DESC
+    SESSION_VALIDATORS_MAX_BEST_ORDER_ASC
+    SESSION_VALIDATORS_MAX_BEST_ORDER_DESC
+    SESSION_VALIDATORS_MAX_ID_ASC
+    SESSION_VALIDATORS_MAX_ID_DESC
+    SESSION_VALIDATORS_MAX_IS_BEST_ASC
+    SESSION_VALIDATORS_MAX_IS_BEST_DESC
+    SESSION_VALIDATORS_MAX_IS_NEXT_ASC
+    SESSION_VALIDATORS_MAX_IS_NEXT_BEST_ASC
+    SESSION_VALIDATORS_MAX_IS_NEXT_BEST_DESC
+    SESSION_VALIDATORS_MAX_IS_NEXT_DESC
+    SESSION_VALIDATORS_MAX_NEXT_BEST_ORDER_ASC
+    SESSION_VALIDATORS_MAX_NEXT_BEST_ORDER_DESC
+    SESSION_VALIDATORS_MAX_REPUTATION_ASC
+    SESSION_VALIDATORS_MAX_REPUTATION_DESC
+    SESSION_VALIDATORS_MAX_SESSION_ID_ASC
+    SESSION_VALIDATORS_MAX_SESSION_ID_DESC
+    SESSION_VALIDATORS_MAX_VALIDATOR_ID_ASC
+    SESSION_VALIDATORS_MAX_VALIDATOR_ID_DESC
+    SESSION_VALIDATORS_MIN_BEST_ORDER_ASC
+    SESSION_VALIDATORS_MIN_BEST_ORDER_DESC
+    SESSION_VALIDATORS_MIN_ID_ASC
+    SESSION_VALIDATORS_MIN_ID_DESC
+    SESSION_VALIDATORS_MIN_IS_BEST_ASC
+    SESSION_VALIDATORS_MIN_IS_BEST_DESC
+    SESSION_VALIDATORS_MIN_IS_NEXT_ASC
+    SESSION_VALIDATORS_MIN_IS_NEXT_BEST_ASC
+    SESSION_VALIDATORS_MIN_IS_NEXT_BEST_DESC
+    SESSION_VALIDATORS_MIN_IS_NEXT_DESC
+    SESSION_VALIDATORS_MIN_NEXT_BEST_ORDER_ASC
+    SESSION_VALIDATORS_MIN_NEXT_BEST_ORDER_DESC
+    SESSION_VALIDATORS_MIN_REPUTATION_ASC
+    SESSION_VALIDATORS_MIN_REPUTATION_DESC
+    SESSION_VALIDATORS_MIN_SESSION_ID_ASC
+    SESSION_VALIDATORS_MIN_SESSION_ID_DESC
+    SESSION_VALIDATORS_MIN_VALIDATOR_ID_ASC
+    SESSION_VALIDATORS_MIN_VALIDATOR_ID_DESC
+    SESSION_VALIDATORS_STDDEV_POPULATION_BEST_ORDER_ASC
+    SESSION_VALIDATORS_STDDEV_POPULATION_BEST_ORDER_DESC
+    SESSION_VALIDATORS_STDDEV_POPULATION_ID_ASC
+    SESSION_VALIDATORS_STDDEV_POPULATION_ID_DESC
+    SESSION_VALIDATORS_STDDEV_POPULATION_IS_BEST_ASC
+    SESSION_VALIDATORS_STDDEV_POPULATION_IS_BEST_DESC
+    SESSION_VALIDATORS_STDDEV_POPULATION_IS_NEXT_ASC
+    SESSION_VALIDATORS_STDDEV_POPULATION_IS_NEXT_BEST_ASC
+    SESSION_VALIDATORS_STDDEV_POPULATION_IS_NEXT_BEST_DESC
+    SESSION_VALIDATORS_STDDEV_POPULATION_IS_NEXT_DESC
+    SESSION_VALIDATORS_STDDEV_POPULATION_NEXT_BEST_ORDER_ASC
+    SESSION_VALIDATORS_STDDEV_POPULATION_NEXT_BEST_ORDER_DESC
+    SESSION_VALIDATORS_STDDEV_POPULATION_REPUTATION_ASC
+    SESSION_VALIDATORS_STDDEV_POPULATION_REPUTATION_DESC
+    SESSION_VALIDATORS_STDDEV_POPULATION_SESSION_ID_ASC
+    SESSION_VALIDATORS_STDDEV_POPULATION_SESSION_ID_DESC
+    SESSION_VALIDATORS_STDDEV_POPULATION_VALIDATOR_ID_ASC
+    SESSION_VALIDATORS_STDDEV_POPULATION_VALIDATOR_ID_DESC
+    SESSION_VALIDATORS_STDDEV_SAMPLE_BEST_ORDER_ASC
+    SESSION_VALIDATORS_STDDEV_SAMPLE_BEST_ORDER_DESC
+    SESSION_VALIDATORS_STDDEV_SAMPLE_ID_ASC
+    SESSION_VALIDATORS_STDDEV_SAMPLE_ID_DESC
+    SESSION_VALIDATORS_STDDEV_SAMPLE_IS_BEST_ASC
+    SESSION_VALIDATORS_STDDEV_SAMPLE_IS_BEST_DESC
+    SESSION_VALIDATORS_STDDEV_SAMPLE_IS_NEXT_ASC
+    SESSION_VALIDATORS_STDDEV_SAMPLE_IS_NEXT_BEST_ASC
+    SESSION_VALIDATORS_STDDEV_SAMPLE_IS_NEXT_BEST_DESC
+    SESSION_VALIDATORS_STDDEV_SAMPLE_IS_NEXT_DESC
+    SESSION_VALIDATORS_STDDEV_SAMPLE_NEXT_BEST_ORDER_ASC
+    SESSION_VALIDATORS_STDDEV_SAMPLE_NEXT_BEST_ORDER_DESC
+    SESSION_VALIDATORS_STDDEV_SAMPLE_REPUTATION_ASC
+    SESSION_VALIDATORS_STDDEV_SAMPLE_REPUTATION_DESC
+    SESSION_VALIDATORS_STDDEV_SAMPLE_SESSION_ID_ASC
+    SESSION_VALIDATORS_STDDEV_SAMPLE_SESSION_ID_DESC
+    SESSION_VALIDATORS_STDDEV_SAMPLE_VALIDATOR_ID_ASC
+    SESSION_VALIDATORS_STDDEV_SAMPLE_VALIDATOR_ID_DESC
+    SESSION_VALIDATORS_SUM_BEST_ORDER_ASC
+    SESSION_VALIDATORS_SUM_BEST_ORDER_DESC
+    SESSION_VALIDATORS_SUM_ID_ASC
+    SESSION_VALIDATORS_SUM_ID_DESC
+    SESSION_VALIDATORS_SUM_IS_BEST_ASC
+    SESSION_VALIDATORS_SUM_IS_BEST_DESC
+    SESSION_VALIDATORS_SUM_IS_NEXT_ASC
+    SESSION_VALIDATORS_SUM_IS_NEXT_BEST_ASC
+    SESSION_VALIDATORS_SUM_IS_NEXT_BEST_DESC
+    SESSION_VALIDATORS_SUM_IS_NEXT_DESC
+    SESSION_VALIDATORS_SUM_NEXT_BEST_ORDER_ASC
+    SESSION_VALIDATORS_SUM_NEXT_BEST_ORDER_DESC
+    SESSION_VALIDATORS_SUM_REPUTATION_ASC
+    SESSION_VALIDATORS_SUM_REPUTATION_DESC
+    SESSION_VALIDATORS_SUM_SESSION_ID_ASC
+    SESSION_VALIDATORS_SUM_SESSION_ID_DESC
+    SESSION_VALIDATORS_SUM_VALIDATOR_ID_ASC
+    SESSION_VALIDATORS_SUM_VALIDATOR_ID_DESC
+    SESSION_VALIDATORS_VARIANCE_POPULATION_BEST_ORDER_ASC
+    SESSION_VALIDATORS_VARIANCE_POPULATION_BEST_ORDER_DESC
+    SESSION_VALIDATORS_VARIANCE_POPULATION_ID_ASC
+    SESSION_VALIDATORS_VARIANCE_POPULATION_ID_DESC
+    SESSION_VALIDATORS_VARIANCE_POPULATION_IS_BEST_ASC
+    SESSION_VALIDATORS_VARIANCE_POPULATION_IS_BEST_DESC
+    SESSION_VALIDATORS_VARIANCE_POPULATION_IS_NEXT_ASC
+    SESSION_VALIDATORS_VARIANCE_POPULATION_IS_NEXT_BEST_ASC
+    SESSION_VALIDATORS_VARIANCE_POPULATION_IS_NEXT_BEST_DESC
+    SESSION_VALIDATORS_VARIANCE_POPULATION_IS_NEXT_DESC
+    SESSION_VALIDATORS_VARIANCE_POPULATION_NEXT_BEST_ORDER_ASC
+    SESSION_VALIDATORS_VARIANCE_POPULATION_NEXT_BEST_ORDER_DESC
+    SESSION_VALIDATORS_VARIANCE_POPULATION_REPUTATION_ASC
+    SESSION_VALIDATORS_VARIANCE_POPULATION_REPUTATION_DESC
+    SESSION_VALIDATORS_VARIANCE_POPULATION_SESSION_ID_ASC
+    SESSION_VALIDATORS_VARIANCE_POPULATION_SESSION_ID_DESC
+    SESSION_VALIDATORS_VARIANCE_POPULATION_VALIDATOR_ID_ASC
+    SESSION_VALIDATORS_VARIANCE_POPULATION_VALIDATOR_ID_DESC
+    SESSION_VALIDATORS_VARIANCE_SAMPLE_BEST_ORDER_ASC
+    SESSION_VALIDATORS_VARIANCE_SAMPLE_BEST_ORDER_DESC
+    SESSION_VALIDATORS_VARIANCE_SAMPLE_ID_ASC
+    SESSION_VALIDATORS_VARIANCE_SAMPLE_ID_DESC
+    SESSION_VALIDATORS_VARIANCE_SAMPLE_IS_BEST_ASC
+    SESSION_VALIDATORS_VARIANCE_SAMPLE_IS_BEST_DESC
+    SESSION_VALIDATORS_VARIANCE_SAMPLE_IS_NEXT_ASC
+    SESSION_VALIDATORS_VARIANCE_SAMPLE_IS_NEXT_BEST_ASC
+    SESSION_VALIDATORS_VARIANCE_SAMPLE_IS_NEXT_BEST_DESC
+    SESSION_VALIDATORS_VARIANCE_SAMPLE_IS_NEXT_DESC
+    SESSION_VALIDATORS_VARIANCE_SAMPLE_NEXT_BEST_ORDER_ASC
+    SESSION_VALIDATORS_VARIANCE_SAMPLE_NEXT_BEST_ORDER_DESC
+    SESSION_VALIDATORS_VARIANCE_SAMPLE_REPUTATION_ASC
+    SESSION_VALIDATORS_VARIANCE_SAMPLE_REPUTATION_DESC
+    SESSION_VALIDATORS_VARIANCE_SAMPLE_SESSION_ID_ASC
+    SESSION_VALIDATORS_VARIANCE_SAMPLE_SESSION_ID_DESC
+    SESSION_VALIDATORS_VARIANCE_SAMPLE_VALIDATOR_ID_ASC
+    SESSION_VALIDATORS_VARIANCE_SAMPLE_VALIDATOR_ID_DESC
     SIGNATURE_THRESHOLD_ASC
     SIGNATURE_THRESHOLD_DESC
 }
@@ -6325,6 +6780,183 @@ enum UnsignedProposalsQueuesOrderBy {
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_VARIANCE_SAMPLE_PROPOSAL_ID_DESC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_VARIANCE_SAMPLE_QUEUE_ID_ASC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_VARIANCE_SAMPLE_QUEUE_ID_DESC
+}
+
+"Methods to use when ordering `Validator`."
+enum ValidatorsOrderBy {
+    ACCOUNT_ID_ASC
+    ACCOUNT_ID_DESC
+    AUTHORITY_ID_ASC
+    AUTHORITY_ID_DESC
+    ID_ASC
+    ID_DESC
+    NATURAL
+    PRIMARY_KEY_ASC
+    PRIMARY_KEY_DESC
+    SESSION_VALIDATORS_AVERAGE_BEST_ORDER_ASC
+    SESSION_VALIDATORS_AVERAGE_BEST_ORDER_DESC
+    SESSION_VALIDATORS_AVERAGE_ID_ASC
+    SESSION_VALIDATORS_AVERAGE_ID_DESC
+    SESSION_VALIDATORS_AVERAGE_IS_BEST_ASC
+    SESSION_VALIDATORS_AVERAGE_IS_BEST_DESC
+    SESSION_VALIDATORS_AVERAGE_IS_NEXT_ASC
+    SESSION_VALIDATORS_AVERAGE_IS_NEXT_BEST_ASC
+    SESSION_VALIDATORS_AVERAGE_IS_NEXT_BEST_DESC
+    SESSION_VALIDATORS_AVERAGE_IS_NEXT_DESC
+    SESSION_VALIDATORS_AVERAGE_NEXT_BEST_ORDER_ASC
+    SESSION_VALIDATORS_AVERAGE_NEXT_BEST_ORDER_DESC
+    SESSION_VALIDATORS_AVERAGE_REPUTATION_ASC
+    SESSION_VALIDATORS_AVERAGE_REPUTATION_DESC
+    SESSION_VALIDATORS_AVERAGE_SESSION_ID_ASC
+    SESSION_VALIDATORS_AVERAGE_SESSION_ID_DESC
+    SESSION_VALIDATORS_AVERAGE_VALIDATOR_ID_ASC
+    SESSION_VALIDATORS_AVERAGE_VALIDATOR_ID_DESC
+    SESSION_VALIDATORS_COUNT_ASC
+    SESSION_VALIDATORS_COUNT_DESC
+    SESSION_VALIDATORS_DISTINCT_COUNT_BEST_ORDER_ASC
+    SESSION_VALIDATORS_DISTINCT_COUNT_BEST_ORDER_DESC
+    SESSION_VALIDATORS_DISTINCT_COUNT_ID_ASC
+    SESSION_VALIDATORS_DISTINCT_COUNT_ID_DESC
+    SESSION_VALIDATORS_DISTINCT_COUNT_IS_BEST_ASC
+    SESSION_VALIDATORS_DISTINCT_COUNT_IS_BEST_DESC
+    SESSION_VALIDATORS_DISTINCT_COUNT_IS_NEXT_ASC
+    SESSION_VALIDATORS_DISTINCT_COUNT_IS_NEXT_BEST_ASC
+    SESSION_VALIDATORS_DISTINCT_COUNT_IS_NEXT_BEST_DESC
+    SESSION_VALIDATORS_DISTINCT_COUNT_IS_NEXT_DESC
+    SESSION_VALIDATORS_DISTINCT_COUNT_NEXT_BEST_ORDER_ASC
+    SESSION_VALIDATORS_DISTINCT_COUNT_NEXT_BEST_ORDER_DESC
+    SESSION_VALIDATORS_DISTINCT_COUNT_REPUTATION_ASC
+    SESSION_VALIDATORS_DISTINCT_COUNT_REPUTATION_DESC
+    SESSION_VALIDATORS_DISTINCT_COUNT_SESSION_ID_ASC
+    SESSION_VALIDATORS_DISTINCT_COUNT_SESSION_ID_DESC
+    SESSION_VALIDATORS_DISTINCT_COUNT_VALIDATOR_ID_ASC
+    SESSION_VALIDATORS_DISTINCT_COUNT_VALIDATOR_ID_DESC
+    SESSION_VALIDATORS_MAX_BEST_ORDER_ASC
+    SESSION_VALIDATORS_MAX_BEST_ORDER_DESC
+    SESSION_VALIDATORS_MAX_ID_ASC
+    SESSION_VALIDATORS_MAX_ID_DESC
+    SESSION_VALIDATORS_MAX_IS_BEST_ASC
+    SESSION_VALIDATORS_MAX_IS_BEST_DESC
+    SESSION_VALIDATORS_MAX_IS_NEXT_ASC
+    SESSION_VALIDATORS_MAX_IS_NEXT_BEST_ASC
+    SESSION_VALIDATORS_MAX_IS_NEXT_BEST_DESC
+    SESSION_VALIDATORS_MAX_IS_NEXT_DESC
+    SESSION_VALIDATORS_MAX_NEXT_BEST_ORDER_ASC
+    SESSION_VALIDATORS_MAX_NEXT_BEST_ORDER_DESC
+    SESSION_VALIDATORS_MAX_REPUTATION_ASC
+    SESSION_VALIDATORS_MAX_REPUTATION_DESC
+    SESSION_VALIDATORS_MAX_SESSION_ID_ASC
+    SESSION_VALIDATORS_MAX_SESSION_ID_DESC
+    SESSION_VALIDATORS_MAX_VALIDATOR_ID_ASC
+    SESSION_VALIDATORS_MAX_VALIDATOR_ID_DESC
+    SESSION_VALIDATORS_MIN_BEST_ORDER_ASC
+    SESSION_VALIDATORS_MIN_BEST_ORDER_DESC
+    SESSION_VALIDATORS_MIN_ID_ASC
+    SESSION_VALIDATORS_MIN_ID_DESC
+    SESSION_VALIDATORS_MIN_IS_BEST_ASC
+    SESSION_VALIDATORS_MIN_IS_BEST_DESC
+    SESSION_VALIDATORS_MIN_IS_NEXT_ASC
+    SESSION_VALIDATORS_MIN_IS_NEXT_BEST_ASC
+    SESSION_VALIDATORS_MIN_IS_NEXT_BEST_DESC
+    SESSION_VALIDATORS_MIN_IS_NEXT_DESC
+    SESSION_VALIDATORS_MIN_NEXT_BEST_ORDER_ASC
+    SESSION_VALIDATORS_MIN_NEXT_BEST_ORDER_DESC
+    SESSION_VALIDATORS_MIN_REPUTATION_ASC
+    SESSION_VALIDATORS_MIN_REPUTATION_DESC
+    SESSION_VALIDATORS_MIN_SESSION_ID_ASC
+    SESSION_VALIDATORS_MIN_SESSION_ID_DESC
+    SESSION_VALIDATORS_MIN_VALIDATOR_ID_ASC
+    SESSION_VALIDATORS_MIN_VALIDATOR_ID_DESC
+    SESSION_VALIDATORS_STDDEV_POPULATION_BEST_ORDER_ASC
+    SESSION_VALIDATORS_STDDEV_POPULATION_BEST_ORDER_DESC
+    SESSION_VALIDATORS_STDDEV_POPULATION_ID_ASC
+    SESSION_VALIDATORS_STDDEV_POPULATION_ID_DESC
+    SESSION_VALIDATORS_STDDEV_POPULATION_IS_BEST_ASC
+    SESSION_VALIDATORS_STDDEV_POPULATION_IS_BEST_DESC
+    SESSION_VALIDATORS_STDDEV_POPULATION_IS_NEXT_ASC
+    SESSION_VALIDATORS_STDDEV_POPULATION_IS_NEXT_BEST_ASC
+    SESSION_VALIDATORS_STDDEV_POPULATION_IS_NEXT_BEST_DESC
+    SESSION_VALIDATORS_STDDEV_POPULATION_IS_NEXT_DESC
+    SESSION_VALIDATORS_STDDEV_POPULATION_NEXT_BEST_ORDER_ASC
+    SESSION_VALIDATORS_STDDEV_POPULATION_NEXT_BEST_ORDER_DESC
+    SESSION_VALIDATORS_STDDEV_POPULATION_REPUTATION_ASC
+    SESSION_VALIDATORS_STDDEV_POPULATION_REPUTATION_DESC
+    SESSION_VALIDATORS_STDDEV_POPULATION_SESSION_ID_ASC
+    SESSION_VALIDATORS_STDDEV_POPULATION_SESSION_ID_DESC
+    SESSION_VALIDATORS_STDDEV_POPULATION_VALIDATOR_ID_ASC
+    SESSION_VALIDATORS_STDDEV_POPULATION_VALIDATOR_ID_DESC
+    SESSION_VALIDATORS_STDDEV_SAMPLE_BEST_ORDER_ASC
+    SESSION_VALIDATORS_STDDEV_SAMPLE_BEST_ORDER_DESC
+    SESSION_VALIDATORS_STDDEV_SAMPLE_ID_ASC
+    SESSION_VALIDATORS_STDDEV_SAMPLE_ID_DESC
+    SESSION_VALIDATORS_STDDEV_SAMPLE_IS_BEST_ASC
+    SESSION_VALIDATORS_STDDEV_SAMPLE_IS_BEST_DESC
+    SESSION_VALIDATORS_STDDEV_SAMPLE_IS_NEXT_ASC
+    SESSION_VALIDATORS_STDDEV_SAMPLE_IS_NEXT_BEST_ASC
+    SESSION_VALIDATORS_STDDEV_SAMPLE_IS_NEXT_BEST_DESC
+    SESSION_VALIDATORS_STDDEV_SAMPLE_IS_NEXT_DESC
+    SESSION_VALIDATORS_STDDEV_SAMPLE_NEXT_BEST_ORDER_ASC
+    SESSION_VALIDATORS_STDDEV_SAMPLE_NEXT_BEST_ORDER_DESC
+    SESSION_VALIDATORS_STDDEV_SAMPLE_REPUTATION_ASC
+    SESSION_VALIDATORS_STDDEV_SAMPLE_REPUTATION_DESC
+    SESSION_VALIDATORS_STDDEV_SAMPLE_SESSION_ID_ASC
+    SESSION_VALIDATORS_STDDEV_SAMPLE_SESSION_ID_DESC
+    SESSION_VALIDATORS_STDDEV_SAMPLE_VALIDATOR_ID_ASC
+    SESSION_VALIDATORS_STDDEV_SAMPLE_VALIDATOR_ID_DESC
+    SESSION_VALIDATORS_SUM_BEST_ORDER_ASC
+    SESSION_VALIDATORS_SUM_BEST_ORDER_DESC
+    SESSION_VALIDATORS_SUM_ID_ASC
+    SESSION_VALIDATORS_SUM_ID_DESC
+    SESSION_VALIDATORS_SUM_IS_BEST_ASC
+    SESSION_VALIDATORS_SUM_IS_BEST_DESC
+    SESSION_VALIDATORS_SUM_IS_NEXT_ASC
+    SESSION_VALIDATORS_SUM_IS_NEXT_BEST_ASC
+    SESSION_VALIDATORS_SUM_IS_NEXT_BEST_DESC
+    SESSION_VALIDATORS_SUM_IS_NEXT_DESC
+    SESSION_VALIDATORS_SUM_NEXT_BEST_ORDER_ASC
+    SESSION_VALIDATORS_SUM_NEXT_BEST_ORDER_DESC
+    SESSION_VALIDATORS_SUM_REPUTATION_ASC
+    SESSION_VALIDATORS_SUM_REPUTATION_DESC
+    SESSION_VALIDATORS_SUM_SESSION_ID_ASC
+    SESSION_VALIDATORS_SUM_SESSION_ID_DESC
+    SESSION_VALIDATORS_SUM_VALIDATOR_ID_ASC
+    SESSION_VALIDATORS_SUM_VALIDATOR_ID_DESC
+    SESSION_VALIDATORS_VARIANCE_POPULATION_BEST_ORDER_ASC
+    SESSION_VALIDATORS_VARIANCE_POPULATION_BEST_ORDER_DESC
+    SESSION_VALIDATORS_VARIANCE_POPULATION_ID_ASC
+    SESSION_VALIDATORS_VARIANCE_POPULATION_ID_DESC
+    SESSION_VALIDATORS_VARIANCE_POPULATION_IS_BEST_ASC
+    SESSION_VALIDATORS_VARIANCE_POPULATION_IS_BEST_DESC
+    SESSION_VALIDATORS_VARIANCE_POPULATION_IS_NEXT_ASC
+    SESSION_VALIDATORS_VARIANCE_POPULATION_IS_NEXT_BEST_ASC
+    SESSION_VALIDATORS_VARIANCE_POPULATION_IS_NEXT_BEST_DESC
+    SESSION_VALIDATORS_VARIANCE_POPULATION_IS_NEXT_DESC
+    SESSION_VALIDATORS_VARIANCE_POPULATION_NEXT_BEST_ORDER_ASC
+    SESSION_VALIDATORS_VARIANCE_POPULATION_NEXT_BEST_ORDER_DESC
+    SESSION_VALIDATORS_VARIANCE_POPULATION_REPUTATION_ASC
+    SESSION_VALIDATORS_VARIANCE_POPULATION_REPUTATION_DESC
+    SESSION_VALIDATORS_VARIANCE_POPULATION_SESSION_ID_ASC
+    SESSION_VALIDATORS_VARIANCE_POPULATION_SESSION_ID_DESC
+    SESSION_VALIDATORS_VARIANCE_POPULATION_VALIDATOR_ID_ASC
+    SESSION_VALIDATORS_VARIANCE_POPULATION_VALIDATOR_ID_DESC
+    SESSION_VALIDATORS_VARIANCE_SAMPLE_BEST_ORDER_ASC
+    SESSION_VALIDATORS_VARIANCE_SAMPLE_BEST_ORDER_DESC
+    SESSION_VALIDATORS_VARIANCE_SAMPLE_ID_ASC
+    SESSION_VALIDATORS_VARIANCE_SAMPLE_ID_DESC
+    SESSION_VALIDATORS_VARIANCE_SAMPLE_IS_BEST_ASC
+    SESSION_VALIDATORS_VARIANCE_SAMPLE_IS_BEST_DESC
+    SESSION_VALIDATORS_VARIANCE_SAMPLE_IS_NEXT_ASC
+    SESSION_VALIDATORS_VARIANCE_SAMPLE_IS_NEXT_BEST_ASC
+    SESSION_VALIDATORS_VARIANCE_SAMPLE_IS_NEXT_BEST_DESC
+    SESSION_VALIDATORS_VARIANCE_SAMPLE_IS_NEXT_DESC
+    SESSION_VALIDATORS_VARIANCE_SAMPLE_NEXT_BEST_ORDER_ASC
+    SESSION_VALIDATORS_VARIANCE_SAMPLE_NEXT_BEST_ORDER_DESC
+    SESSION_VALIDATORS_VARIANCE_SAMPLE_REPUTATION_ASC
+    SESSION_VALIDATORS_VARIANCE_SAMPLE_REPUTATION_DESC
+    SESSION_VALIDATORS_VARIANCE_SAMPLE_SESSION_ID_ASC
+    SESSION_VALIDATORS_VARIANCE_SAMPLE_SESSION_ID_DESC
+    SESSION_VALIDATORS_VARIANCE_SAMPLE_VALIDATOR_ID_ASC
+    SESSION_VALIDATORS_VARIANCE_SAMPLE_VALIDATOR_ID_DESC
 }
 
 "A floating point number that requires more precision than IEEE 754 binary 64"
@@ -7318,10 +7950,6 @@ input PublicKeysHavingInput {
 input SessionFilter {
     "Checks for all expressions in this list."
     and: [SessionFilter!]
-    "Filter by the object’s `authorities` field."
-    authorities: JSONFilter
-    "Filter by the object’s `bestAuthorities` field."
-    bestAuthorities: JSONFilter
     "Filter by the object’s `blockId` field."
     blockId: StringFilter
     "Filter by the object’s `blockNumber` field."
@@ -7330,10 +7958,6 @@ input SessionFilter {
     id: StringFilter
     "Filter by the object’s `keyGenThreshold` field."
     keyGenThreshold: JSONFilter
-    "Filter by the object’s `nextAuthorities` field."
-    nextAuthorities: JSONFilter
-    "Filter by the object’s `nextBestAuthorities` field."
-    nextBestAuthorities: JSONFilter
     "Negates the expression."
     not: SessionFilter
     "Checks for any expressions in this list."
@@ -7348,6 +7972,94 @@ input SessionFilter {
     publicKeyId: StringFilter
     "Filter by the object’s `signatureThreshold` field."
     signatureThreshold: JSONFilter
+}
+
+"A filter to be used against `SessionValidator` object types. All fields are combined with a logical ‘and.’"
+input SessionValidatorFilter {
+    "Checks for all expressions in this list."
+    and: [SessionValidatorFilter!]
+    "Filter by the object’s `bestOrder` field."
+    bestOrder: IntFilter
+    "Filter by the object’s `id` field."
+    id: StringFilter
+    "Filter by the object’s `isBest` field."
+    isBest: BooleanFilter
+    "Filter by the object’s `isNext` field."
+    isNext: BooleanFilter
+    "Filter by the object’s `isNextBest` field."
+    isNextBest: BooleanFilter
+    "Filter by the object’s `nextBestOrder` field."
+    nextBestOrder: IntFilter
+    "Negates the expression."
+    not: SessionValidatorFilter
+    "Checks for any expressions in this list."
+    or: [SessionValidatorFilter!]
+    "Filter by the object’s `reputation` field."
+    reputation: StringFilter
+    "Filter by the object’s `sessionId` field."
+    sessionId: StringFilter
+    "Filter by the object’s `validatorId` field."
+    validatorId: StringFilter
+}
+
+input SessionValidatorsHavingAverageInput {
+    bestOrder: HavingIntFilter
+    nextBestOrder: HavingIntFilter
+}
+
+input SessionValidatorsHavingDistinctCountInput {
+    bestOrder: HavingIntFilter
+    nextBestOrder: HavingIntFilter
+}
+
+"Conditions for `SessionValidator` aggregates."
+input SessionValidatorsHavingInput {
+    AND: [SessionValidatorsHavingInput!]
+    OR: [SessionValidatorsHavingInput!]
+    average: SessionValidatorsHavingAverageInput
+    distinctCount: SessionValidatorsHavingDistinctCountInput
+    max: SessionValidatorsHavingMaxInput
+    min: SessionValidatorsHavingMinInput
+    stddevPopulation: SessionValidatorsHavingStddevPopulationInput
+    stddevSample: SessionValidatorsHavingStddevSampleInput
+    sum: SessionValidatorsHavingSumInput
+    variancePopulation: SessionValidatorsHavingVariancePopulationInput
+    varianceSample: SessionValidatorsHavingVarianceSampleInput
+}
+
+input SessionValidatorsHavingMaxInput {
+    bestOrder: HavingIntFilter
+    nextBestOrder: HavingIntFilter
+}
+
+input SessionValidatorsHavingMinInput {
+    bestOrder: HavingIntFilter
+    nextBestOrder: HavingIntFilter
+}
+
+input SessionValidatorsHavingStddevPopulationInput {
+    bestOrder: HavingIntFilter
+    nextBestOrder: HavingIntFilter
+}
+
+input SessionValidatorsHavingStddevSampleInput {
+    bestOrder: HavingIntFilter
+    nextBestOrder: HavingIntFilter
+}
+
+input SessionValidatorsHavingSumInput {
+    bestOrder: HavingIntFilter
+    nextBestOrder: HavingIntFilter
+}
+
+input SessionValidatorsHavingVariancePopulationInput {
+    bestOrder: HavingIntFilter
+    nextBestOrder: HavingIntFilter
+}
+
+input SessionValidatorsHavingVarianceSampleInput {
+    bestOrder: HavingIntFilter
+    nextBestOrder: HavingIntFilter
 }
 
 input SessionsHavingAverageInput {
@@ -7711,4 +8423,20 @@ input UnsignedProposalsQueuesHavingVariancePopulationInput {
 
 input UnsignedProposalsQueuesHavingVarianceSampleInput {
     blockNumber: HavingIntFilter
+}
+
+"A filter to be used against `Validator` object types. All fields are combined with a logical ‘and.’"
+input ValidatorFilter {
+    "Filter by the object’s `accountId` field."
+    accountId: StringFilter
+    "Checks for all expressions in this list."
+    and: [ValidatorFilter!]
+    "Filter by the object’s `authorityId` field."
+    authorityId: StringFilter
+    "Filter by the object’s `id` field."
+    id: StringFilter
+    "Negates the expression."
+    not: ValidatorFilter
+    "Checks for any expressions in this list."
+    or: [ValidatorFilter!]
 }
