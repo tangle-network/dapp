@@ -12,7 +12,7 @@ query PublicKeys($PerPage: Int, $offset: Int) {
       sessions(first: 1) {
         nodes {
           id
-          bestAuthorities
+          ...SessionAuth
           keyGenThreshold
           signatureThreshold
         }
@@ -40,8 +40,7 @@ query PublicKey($id: String!) {
     sessions(first: 1) {
       nodes {
         id
-        authorities
-        bestAuthorities
+        ...SessionAuth
         keyGenThreshold
         signatureThreshold
       }

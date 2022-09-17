@@ -3,10 +3,12 @@ import {
   usePublicKeysLazyQuery,
   useSessionKeysLazyQuery,
 } from '@webb-dapp/page-statistics/generated/graphql';
+import { mapAuthorities } from '@webb-dapp/page-statistics/provider/hooks/mappers';
 import { useCurrentMetaData } from '@webb-dapp/page-statistics/provider/hooks/useCurrentMetaData';
 import { useEffect, useState } from 'react';
 
-import { DKGAuthority, Loadable, Page, PageInfoQuery, SessionKeyHistory, SessionKeyStatus, Threshold } from './types';
+import { Loadable, Page, PageInfoQuery, SessionKeyHistory, SessionKeyStatus, Threshold } from './types';
+
 /**
  *  Public key shared content
  *  @param id - public key id
@@ -36,6 +38,7 @@ export interface PublicKey extends PublicKeyContent {
   isCurrent: boolean;
   keyGenAuthorities: string[];
 }
+
 /**
  * @param height  - Block number when the key was generated
  * @param keyGenAuthorities - Authorities set  that signed the key
@@ -50,6 +53,7 @@ export interface PublicKeyListView extends PublicKeyContent {
   signatureThreshold: string;
   session: string;
 }
+
 /**
  * Public key progress history item
  * @param at - The date when the history item took place
@@ -76,6 +80,7 @@ type KeyGenAuthority = {
   uptime: number;
   reputation: number;
 };
+
 /**
  * The full date of that public key
  * @param isCurrent - The key is the current active key
@@ -93,6 +98,7 @@ interface PublicKeyDetails extends PublicKeyContent {
   numberOfValidators: number;
   authorities: Array<KeyGenAuthority>;
 }
+
 /**
  * List keys for table view
  * */
@@ -149,7 +155,9 @@ export function useKeys(reqQuery: PageInfoQuery): Loadable<Page<PublicKeyListVie
                 .filter((n) => n)
                 .map((node) => {
                   const session = node!.sessions?.nodes[0]!;
-                  const authorities = session.bestAuthorities.map((auth: any) => auth.accountId);
+                  const authorities = mapAuthorities(session.sessionValidators)
+                    .filter((auth) => auth.isBest)
+                    .map((auth) => auth.id);
                   return {
                     height: String(node!.block?.number),
                     session: session.id,
@@ -182,6 +190,7 @@ export function useKeys(reqQuery: PageInfoQuery): Loadable<Page<PublicKeyListVie
   }, [query]);
   return page;
 }
+
 /**
  * Get the current Public key (Current session active) and the next public key (Next session active)
  * */
@@ -215,15 +224,18 @@ export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
         if (res.data) {
           const val: PublicKey[] =
             res.data.sessions?.nodes.map((i) => {
+              const keyGenAuthorities = mapAuthorities(i?.sessionValidators!)
+                .filter((auth) => auth.isBest)
+                .map((auth) => auth.id);
               const publicKey = i!.publicKey!;
               return {
                 id: publicKey.id,
+                session: i!.id,
                 end: new Date(publicKey.block!.timestamp),
                 start: new Date(publicKey.block!.timestamp),
                 compressed: publicKey.compressed!,
                 uncompressed: publicKey.uncompressed!,
-                keyGenAuthorities: i!.bestAuthorities.map((auth: any) => auth.accountId),
-                session: i!.id,
+                keyGenAuthorities,
                 isCurrent: true,
               };
             }) || [];
@@ -252,6 +264,7 @@ export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
   }, [query]);
   return keys;
 }
+
 /**
  * Graphql query to get the public key details
  * @param id : public key id
@@ -293,16 +306,19 @@ export function useKey(id: string): Loadable<PublicKeyDetails> {
               hash: val.txHash,
             };
           });
-          const authorities = session.bestAuthorities.map((auth: DKGAuthority): KeyGenAuthority => {
-            return {
-              account: auth.accountId,
-              id: auth.authorityId,
-              location: 'any',
-              reputation: Number(auth.reputation),
-              uptime: 100,
-            };
-          });
-          const validators = (session.authorities as []).length;
+          const sessionAuthorities = mapAuthorities(session.sessionValidators);
+          const authorities = sessionAuthorities
+            .filter((auth) => auth.isBest)
+            .map((auth): KeyGenAuthority => {
+              return {
+                account: auth.id,
+                id: auth.authorityId,
+                location: 'any',
+                reputation: Number(auth.reputation),
+                uptime: 100,
+              };
+            });
+          const validators = sessionAuthorities.length;
           return {
             isFailed: false,
             isLoading: false,
