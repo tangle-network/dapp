@@ -27,14 +27,14 @@ export const TooltipBody: React.FC<TooltipBodyProps> = ({ button, children, clas
         'radix-side-right:animate-slide-left-fade',
         'radix-side-bottom:animate-slide-up-fade',
         'radix-side-left:animate-slide-right-fade',
-        'inline-flex items-center rounded p-2 min-w-max max-w-[300px]',
+        'inline-flex items-center rounded p-2 min-w-0 max-w-[300px]',
         'bg-mono-20 dark:bg-mono-160',
         'webb-shadow-sm'
       )}
       {...props}
     >
       <TooltipPrimitive.Arrow className='fill-current text-mono-20 dark:text-mono-160 webb-shadow-sm' />
-      <div className={twMerge('body4 text-mono-140 dark:text-mono-80', className)}>
+      <div className={twMerge('body4 text-mono-140 dark:text-mono-80 font-normal', className)}>
         {title && <h6 className='mb-2 font-bold body4'>{title}</h6>}
         {children}
         {button && <div className='flex justify-end mt-4'>{button}</div>}

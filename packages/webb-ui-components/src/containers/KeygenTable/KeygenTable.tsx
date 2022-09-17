@@ -25,6 +25,7 @@ import {
   KeyValueWithButton,
   Slider,
   Table,
+  TitleWithInfo,
 } from '@webb-dapp/webb-ui-components/components';
 import { fuzzyFilter } from '@webb-dapp/webb-ui-components/components/Filter/utils';
 import { Authority } from '@webb-dapp/webb-ui-components/components/KeyStatusCard/types';
@@ -34,28 +35,59 @@ import { useEffect, useMemo, useState } from 'react';
 
 const columnHelper = createColumnHelper<KeygenType>();
 
+const headerConfig = {
+  common: {
+    titleComponent: 'span' as const,
+  },
+  height: {
+    title: 'Height',
+    info: 'Number of blocks',
+  },
+  session: {
+    title: 'Session',
+    info: 'A session is a period that has a constant set of validators. Validators can only join or exit the validator set at a session change.',
+  },
+  key: {
+    title: 'Key',
+    info: 'The public key of the DKG protocol that is currently active.',
+  },
+  signatureThreshold: {
+    title: 'Signature Threshold',
+    info: "The 't' in (t-out-of-n) threshold signatures used in the DKG signing system. Required of DKG authorities to generate signatures.",
+  },
+  authorities: {
+    title: 'Authority Set',
+    info: 'A set of DKG authorities',
+  },
+};
+
 const columns: ColumnDef<KeygenType, any>[] = [
   columnHelper.accessor('height', {
-    header: 'Height',
+    header: () => <TitleWithInfo {...headerConfig['common']} {...headerConfig['height']} />,
     enableColumnFilter: false,
   }),
+
   columnHelper.accessor('session', {
-    header: 'Sesssion',
+    header: () => <TitleWithInfo {...headerConfig['common']} {...headerConfig['session']} />,
     enableColumnFilter: false,
   }),
+
   columnHelper.accessor('key', {
-    header: 'Key',
+    header: () => <TitleWithInfo {...headerConfig['common']} {...headerConfig['key']} />,
     cell: (props) => <KeyValueWithButton isHiddenLabel keyValue={props.getValue<string>()} size='sm' />,
     enableColumnFilter: false,
   }),
+
   columnHelper.accessor('keygenThreshold', {
     header: 'Keygen Threshold',
   }),
+
   columnHelper.accessor('signatureThreshold', {
-    header: 'Signature Threshold',
+    header: () => <TitleWithInfo {...headerConfig['common']} {...headerConfig['signatureThreshold']} />,
   }),
+
   columnHelper.accessor('authorities', {
-    header: 'Authority Set',
+    header: () => <TitleWithInfo {...headerConfig['common']} {...headerConfig['authorities']} />,
     cell: (props) => (
       <AvatarGroup total={props.row.original.totalAuthorities}>
         {Object.values<Authority>(props.getValue()).map((au) => (
@@ -65,10 +97,11 @@ const columns: ColumnDef<KeygenType, any>[] = [
     ),
     enableColumnFilter: false,
   }),
+
   columnHelper.accessor('detailUrl', {
     header: '',
     cell: (props) => (
-      <Button varirant='link' href={props.getValue<string>()} target='_blank' size='sm'>
+      <Button className='uppercase' varirant='link' href={props.getValue<string>()} target='_blank' size='sm'>
         Details
       </Button>
     ),
@@ -145,7 +178,6 @@ export const KeygenTable = () => {
 
   return (
     <CardTable
-      className='mt-6'
       leftTitle={
         <Filter
           clearAllFilters={() => {

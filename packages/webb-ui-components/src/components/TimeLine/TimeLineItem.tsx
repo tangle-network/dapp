@@ -45,7 +45,7 @@ export const TimeLineItem = forwardRef<HTMLDivElement, TimeLineItemProps>(
 
         <div className='flex items-center ml-8 space-x-1'>
           <LabelWithValue labelVariant='body3' label='tx hash:' value={shortenHex(txHash, 3)} valueTooltip={txHash} />
-          <a href={externalUrl} target='_blank'>
+          <a href={externalUrl} target='_blank' rel='nonoopener noreferrer'>
             <ExternalLinkLine />
           </a>
         </div>

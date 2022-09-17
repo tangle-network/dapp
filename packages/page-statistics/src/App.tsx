@@ -12,16 +12,18 @@ const apolloClient = new ApolloClient({
 const App: FC = () => {
   return (
     <WebbUIProvider>
-      <div className='min-h-[72px] bg-mono-0 dark:bg-mono-180 mb-8 flex justify-between items-center p-4'>
-        <Logo />
-        <ThemeSwitcher />
+      <div className='min-h-[72px] bg-mono-0 dark:bg-mono-180 py-4'>
+        <div className='flex justify-between items-center max-w-[1160px] mx-auto'>
+          <Logo />
+          <ThemeSwitcher />
+        </div>
       </div>
 
-      <div className='px-8 py-8'>
+      <div className='max-w-[1160px] mx-auto mt-6'>
         <div className='flex space-x-4'>
           <KeyStatusCard
             title='Active Key'
-            titleInfo='Active Key'
+            titleInfo='The public key of the DKG protocol that is currently active.'
             sessionNumber={3456}
             keyType='current'
             keyVal='0x1234567890abcdef'
@@ -46,7 +48,7 @@ const App: FC = () => {
           />
           <KeyStatusCard
             title='Next Key'
-            titleInfo='Next Key'
+            titleInfo='The public key of the DKG protocol that will be active after the next authority set change.'
             sessionNumber={3456}
             keyType='next'
             keyVal='0x1234567890abcdef'
