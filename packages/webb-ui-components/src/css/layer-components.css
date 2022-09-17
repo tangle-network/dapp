@@ -80,3 +80,17 @@
     line-height: 22px;
   }
 }
+
+.drawer-content {
+  @apply bg-mono-0 dark:bg-mono-180 shadow-[-12px_0px_12px_0px_rgba(0,0,0,0.25)] dark:shadow-[-12px_0px_12px_0px_rgba(0,0,0,0.25)];
+
+  @apply fixed top-0 bottom-0 right-0 w-[750px];
+
+  &[data-state='open'] {
+    @apply animate-drawer-content-right-open;
+  }
+
+  &[data-state='closed'] {
+    @apply animate-drawer-content-right-close;
+  }
+}

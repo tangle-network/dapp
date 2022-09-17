@@ -8,6 +8,7 @@ export * from './Chip';
 export * from './Collapsible';
 export * from './CopyWithTooltip';
 export * from './Divider';
+export * from './Drawer';
 export * from './Dropdown';
 export * from './DropdownMenu';
 export * from './Filter';

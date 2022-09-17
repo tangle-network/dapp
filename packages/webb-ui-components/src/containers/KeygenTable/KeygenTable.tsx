@@ -21,6 +21,9 @@ import {
   Collapsible,
   CollapsibleButton,
   CollapsibleContent,
+  Drawer,
+  DrawerContent,
+  DrawerTrigger,
   Filter,
   KeyValueWithButton,
   Slider,
@@ -31,6 +34,7 @@ import { fuzzyFilter } from '@webb-dapp/webb-ui-components/components/Filter/uti
 import { Authority } from '@webb-dapp/webb-ui-components/components/KeyStatusCard/types';
 import { fetchKeygenData } from '@webb-dapp/webb-ui-components/hooks';
 import { KeygenType } from '@webb-dapp/webb-ui-components/types';
+import { Typography } from '@webb-dapp/webb-ui-components/typography';
 import { useEffect, useMemo, useState } from 'react';
 
 const columnHelper = createColumnHelper<KeygenType>();
@@ -101,9 +105,16 @@ const columns: ColumnDef<KeygenType, any>[] = [
   columnHelper.accessor('detailUrl', {
     header: '',
     cell: (props) => (
-      <Button className='uppercase' varirant='link' href={props.getValue<string>()} target='_blank' size='sm'>
-        Details
-      </Button>
+      <Drawer>
+        <DrawerTrigger>
+          <Button className='uppercase' varirant='link' as='span' size='sm'>
+            Details
+          </Button>
+        </DrawerTrigger>
+        <DrawerContent>
+          <Typography variant='h1'>Hello Drawer</Typography>
+        </DrawerContent>
+      </Drawer>
     ),
     enableColumnFilter: false,
   }),
