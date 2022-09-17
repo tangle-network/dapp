@@ -14,6 +14,7 @@ export * from './ChevronRight';
 export * from './ChevronUp';
 export * from './Close';
 export * from './Coin';
+export * from './CommonWealth';
 export * from './Copyright';
 export * from './DiscordFill';
 export * from './EditLine';
