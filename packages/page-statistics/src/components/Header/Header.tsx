@@ -12,29 +12,31 @@ export const Header: FC = () => {
   const { name, ...webbAppConfig } = constants.webbAppConfig;
 
   return (
-    <div className='relative flex items-center justify-between p-4 mb-8 bg-mono-0 dark:bg-mono-180'>
-      <NavLink to={constants.logoConfig.path}>
-        <Logo />
-      </NavLink>
+    <div className='bg-mono-0 dark:bg-mono-180'>
+      <div className='relative flex items-center justify-between py-4 mb-6 max-w-[1160px] mx-auto'>
+        <NavLink to={constants.logoConfig.path}>
+          <Logo />
+        </NavLink>
 
-      {/** Center the nav */}
-      <nav className='absolute -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2'>
-        <ul className='flex items-center space-x-9'>
-          {constants.headerNavs.map(({ name, path }) => (
-            <NavButton key={`${name}-${path}`} path={path}>
+        {/** Center the nav */}
+        <nav className='absolute -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2'>
+          <ul className='flex items-center space-x-9'>
+            {constants.headerNavs.map(({ name, path }) => (
+              <NavButton key={`${name}-${path}`} path={path}>
+                {name}
+              </NavButton>
+            ))}
+          </ul>
+        </nav>
+
+        <div className='flex items-center space-x-4'>
+          <Button size='sm' className='block' {...webbAppConfig}>
+            <Typography variant='body1' fw='bold' className='!text-inherit' component='span'>
               {name}
-            </NavButton>
-          ))}
-        </ul>
-      </nav>
-
-      <div className='flex items-center space-x-4'>
-        <Button size='sm' className='block' {...webbAppConfig}>
-          <Typography variant='body1' fw='bold' className='!text-inherit' component='span'>
-            {name}
-          </Typography>
-        </Button>
-        <ThemeSwitcher />
+            </Typography>
+          </Button>
+          <ThemeSwitcher />
+        </div>
       </div>
     </div>
   );

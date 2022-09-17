@@ -4,7 +4,7 @@ import { KeyStatusCard } from '@webb-dapp/webb-ui-components/components/KeyStatu
 
 const Keys = () => {
   return (
-    <div className='px-8 py-8'>
+    <div>
       <div className='flex space-x-4'>
         <KeyStatusCard
           title='Active Key'
