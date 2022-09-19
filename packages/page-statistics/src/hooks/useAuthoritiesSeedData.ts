@@ -1,4 +1,4 @@
-import { randBic, randBrand, randCountry, randNumber } from '@ngneat/falso';
+import { randBic, randBrand, randCountryCode, randNumber } from '@ngneat/falso';
 import { arrayFrom } from '@webb-dapp/webb-ui-components/utils';
 
 import { AuthorityRowType } from '../containers/KeyDetail/types';
@@ -10,7 +10,7 @@ import { AuthorityRowType } from '../containers/KeyDetail/types';
 const getNewAuthority = (): AuthorityRowType => {
   return {
     id: randBrand() + randBic(),
-    location: randCountry(),
+    location: randCountryCode(),
     uptime: randNumber({ min: 90, max: 100 }).toString(),
     reputation: randNumber({ min: 90, max: 100 }).toString(),
     detaillUrl: 'https://webb.tools',

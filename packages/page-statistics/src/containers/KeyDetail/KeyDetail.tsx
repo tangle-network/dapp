@@ -18,6 +18,7 @@ import {
   KeyCard,
   KeyValueWithButton,
   LabelWithValue,
+  Progress,
   Table,
   TimeLine,
   TimeLineItem,
@@ -28,6 +29,8 @@ import { fuzzyFilter } from '@webb-dapp/webb-ui-components/components/Filter/uti
 import { useKeygenSeedData } from '@webb-dapp/webb-ui-components/hooks';
 import { ArrowLeft, ArrowRight, Close, Expand } from '@webb-dapp/webb-ui-components/icons';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
+import { shortenString } from '@webb-dapp/webb-ui-components/utils';
+import getUnicodeFlagIcon from 'country-flag-icons/unicode';
 import { forwardRef, useEffect, useMemo, useState } from 'react';
 
 import { AuthorityRowType, KeyDetailProps } from './types';
@@ -37,22 +40,46 @@ const columnHelper = createColumnHelper<AuthorityRowType>();
 const columns: ColumnDef<AuthorityRowType, any>[] = [
   columnHelper.accessor('id', {
     header: 'Participant',
+    cell: (props) => (
+      <Typography variant='body2' component='span' className='!text-inherit'>
+        {shortenString(props.getValue(), 10)}
+      </Typography>
+    ),
   }),
 
   columnHelper.accessor('location', {
     header: 'Location',
+    cell: (props) => (
+      <Typography variant='h5' fw='bold' component='span' className='!text-inherit'>
+        {getUnicodeFlagIcon(props.getValue())}
+      </Typography>
+    ),
   }),
 
   columnHelper.accessor('uptime', {
     header: 'Uptime',
+    cell: (props) => <Progress size='sm' value={parseInt(props.getValue())} className='w-[100px]' suffixLabel='%' />,
   }),
 
   columnHelper.accessor('reputation', {
     header: 'Reputation',
+    cell: (props) => <Progress size='sm' value={parseInt(props.getValue())} className='w-[100px]' suffixLabel='%' />,
   }),
 
   columnHelper.accessor('detaillUrl', {
     header: '',
+    cell: (props) => (
+      <Button
+        varirant='link'
+        href={props.getValue()}
+        target='_blank'
+        rel='noopener noreferrer'
+        size='sm'
+        className='uppercase'
+      >
+        Details
+      </Button>
+    ),
   }),
 ];
 

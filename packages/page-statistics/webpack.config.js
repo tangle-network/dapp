@@ -90,6 +90,7 @@ function createWebpack(env, mode = 'production') {
 
     module: {
       rules: [
+        // js stuffs
         {
           test: /\.(t|j)sx?$/,
           exclude: /node_modules/,
@@ -119,6 +120,8 @@ function createWebpack(env, mode = 'production') {
             },
           },
         },
+
+        // css stuffs
         {
           test: /\.s?[ac]ss$/i,
           use: [
@@ -165,10 +168,14 @@ function createWebpack(env, mode = 'production') {
             },
           ],
         },
+
+        // markdown
         {
           test: /\.md$/,
           use: [require.resolve('html-loader'), require.resolve('markdown-loader')],
         },
+
+        // assets
         {
           test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
           exclude: [/semantic-ui-css/],
@@ -177,6 +184,8 @@ function createWebpack(env, mode = 'production') {
             filename: 'static/[name].[contenthash:8][ext]',
           },
         },
+
+        // fonts
         {
           test: /\.(ttf|eot|otf|woff)$/,
           exclude: [/semantic-ui-css/],
@@ -185,6 +194,8 @@ function createWebpack(env, mode = 'production') {
             filename: 'static/[name].[contenthash:8][ext]',
           },
         },
+
+        // icon
         {
           test: /\.(ico)$/,
           loader: 'file-loader',
@@ -193,6 +204,8 @@ function createWebpack(env, mode = 'production') {
             esModule: false,
           },
         },
+
+        // assets
         {
           test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/, /\.eot$/, /\.ttf$/, /\.woff$/, /\.woff2$/],
           include: [/semantic-ui-css/],
@@ -202,6 +215,8 @@ function createWebpack(env, mode = 'production') {
             },
           ],
         },
+
+        // svg react generator
         {
           test: /\.svg$/i,
           issuer: /\.[jt]sx?$/,
@@ -244,6 +259,7 @@ function createWebpack(env, mode = 'production') {
 
     optimization: {
       minimize: mode === 'production',
+
       minimizer: [
         new TerserPlugin({
           terserOptions: {
@@ -287,6 +303,10 @@ function createWebpack(env, mode = 'production') {
           },
         }),
       ],
+
+      splitChunks: {
+        chunks: 'all',
+      },
     },
 
     // https://webpack.js.org/configuration/dev-server/
