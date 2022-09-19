@@ -103,11 +103,6 @@ export interface ButtonProps extends ButtonBase, WebbComponentBase {
   rightIcon?: React.ReactElement;
 
   /**
-   * The space between the button icon and label, the spacing number will match the spacing in design sytem
-   */
-  iconSpacing?: number;
-
-  /**
    * Replace the spinner component when `isLoading` is set to `true`
    * @type React.ReactElement
    */
@@ -132,16 +127,12 @@ export interface ButtonSpinnerProps extends WebbComponentBase {
    */
   label?: string;
   /**
-   * The space between icon and label, the spacing number will match the spacing in design sytem
-   */
-  spacing?: number;
-  /**
    * It determines the placement of the spinner when `isLoading` is `true`
    */
   placement?: ButtonSpinnerPlacement;
 }
 
-type ButtonContentPickKeys = 'leftIcon' | 'rightIcon' | 'iconSpacing' | 'children';
+type ButtonContentPickKeys = 'leftIcon' | 'rightIcon' | 'children';
 type ButtonContentProps = Pick<ButtonProps, ButtonContentPickKeys>;
 
 type ButtonTextPickKeys = 'size' | 'variant' | 'darkMode' | 'children' | 'isLoading';
