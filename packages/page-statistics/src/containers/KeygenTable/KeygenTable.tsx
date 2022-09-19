@@ -190,6 +190,11 @@ export const KeygenTable = () => {
 
   return (
     <CardTable
+      titleProps={{
+        title: 'List of Keygens',
+        info: 'List of Keygens',
+        variant: 'h5',
+      }}
       leftTitle={
         <Filter
           clearAllFilters={() => {
