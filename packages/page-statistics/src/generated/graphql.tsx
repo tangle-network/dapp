@@ -10022,6 +10022,8 @@ export type ProposalsCounterQueryVariables = Exact<{
 
 export type ProposalsCounterQuery = { __typename?: 'Query', proposalCounter?: { __typename?: 'ProposalCounter', id: string, signedProposalsMap?: any | null, unSignedProposalsMap?: any | null, signedProposalsCount: number, unSignedProposalsCount: number, statusMap?: any | null, block?: { __typename?: 'Block', number: any, timestamp?: any | null } | null } | null };
 
+export type ProposalListViewFragment = { __typename?: 'ProposalItem', id: string, data: string, signature?: string | null, type: ProposalType, status: string, proposalVotesByProposalId: { __typename?: 'ProposalVotesConnection', totalCount: number, nodes: Array<{ __typename?: 'ProposalVote', id: string, voterId: string, voter?: { __typename?: 'Proposer', id: string } | null } | null> }, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null };
+
 export type ProposalsOverviewQueryVariables = Exact<{
   startRange: BigFloatFilter;
   endRange: BigFloatFilter;
@@ -10029,7 +10031,7 @@ export type ProposalsOverviewQueryVariables = Exact<{
 }>;
 
 
-export type ProposalsOverviewQuery = { __typename?: 'Query', session?: { __typename?: 'Session', id: string, proposerThreshold?: any | null, sessionValidators: { __typename?: 'SessionValidatorsConnection', totalCount: number } } | null, open?: { __typename?: 'ProposalTimelineStatusesConnection', totalCount: number } | null, signed?: { __typename?: 'ProposalTimelineStatusesConnection', totalCount: number } | null, reject?: { __typename?: 'ProposalTimelineStatusesConnection', totalCount: number } | null, accepted?: { __typename?: 'ProposalTimelineStatusesConnection', totalCount: number } | null };
+export type ProposalsOverviewQuery = { __typename?: 'Query', session?: { __typename?: 'Session', id: string, proposerThreshold?: any | null, sessionProposers: { __typename?: 'SessionProposersConnection', totalCount: number }, sessionValidators: { __typename?: 'SessionValidatorsConnection', totalCount: number } } | null, openProposals?: { __typename?: 'ProposalItemsConnection', totalCount: number, nodes: Array<{ __typename?: 'ProposalItem', id: string, data: string, signature?: string | null, type: ProposalType, status: string, proposalVotesByProposalId: { __typename?: 'ProposalVotesConnection', totalCount: number, nodes: Array<{ __typename?: 'ProposalVote', id: string, voterId: string, voter?: { __typename?: 'Proposer', id: string } | null } | null> }, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null } | null>, pageInfo: { __typename?: 'PageInfo', endCursor?: any | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: any | null } } | null, open?: { __typename?: 'ProposalTimelineStatusesConnection', totalCount: number } | null, signed?: { __typename?: 'ProposalTimelineStatusesConnection', totalCount: number } | null, reject?: { __typename?: 'ProposalTimelineStatusesConnection', totalCount: number } | null, accepted?: { __typename?: 'ProposalTimelineStatusesConnection', totalCount: number } | null };
 
 export type PublicKeysQueryVariables = Exact<{
   PerPage?: InputMaybe<Scalars['Int']>;
@@ -10118,6 +10120,29 @@ export const SessionAuthFragmentDoc = gql`
   }
 }
     ${SessionAuthValidatorFragmentDoc}`;
+export const ProposalListViewFragmentDoc = gql`
+    fragment ProposalListView on ProposalItem {
+  id
+  data
+  signature
+  type
+  status
+  proposalVotesByProposalId {
+    nodes {
+      id
+      voterId
+      voter {
+        id
+      }
+    }
+    totalCount
+  }
+  block {
+    timestamp
+    number
+  }
+}
+    `;
 export const ValidatorListingDocument = gql`
     query ValidatorListing($sessionId: String!, $perPage: Int!, $offset: Int!) {
   validators(offset: $offset, first: $perPage) {
@@ -10450,9 +10475,25 @@ export const ProposalsOverviewDocument = gql`
   session(id: $sessionId) {
     id
     proposerThreshold
+    sessionProposers {
+      totalCount
+    }
     sessionValidators {
       totalCount
     }
+  }
+  openProposals: proposalItems(
+    filter: {status: {equalTo: "Open"}}
+    orderBy: [BLOCK_NUMBER_DESC]
+    first: 10
+  ) {
+    nodes {
+      ...ProposalListView
+    }
+    pageInfo {
+      ...PageInfoMeta
+    }
+    totalCount
   }
   open: proposalTimelineStatuses(
     filter: {status: {equalTo: Open}, and: [{blockNumber: $startRange}, {blockNumber: $endRange}]}
@@ -10475,7 +10516,8 @@ export const ProposalsOverviewDocument = gql`
     totalCount
   }
 }
-    `;
+    ${ProposalListViewFragmentDoc}
+${PageInfoMetaFragmentDoc}`;
 
 /**
  * __useProposalsOverviewQuery__
