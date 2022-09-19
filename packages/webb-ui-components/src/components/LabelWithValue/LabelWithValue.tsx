@@ -27,11 +27,14 @@ export const LabelWithValue = forwardRef<HTMLSpanElement, LabelWithValueProps>(
         <Label className={cx('font-bold uppercase body4', isHiddenLabel && 'hidden')} htmlFor={label}>
           {label}
         </Label>
-        {!valueTooltip && (
-          <Typography component='span' variant={valueVariant}>
-            {value}
-          </Typography>
-        )}
+        {!valueTooltip &&
+          (typeof value === 'string' || typeof value === 'number' ? (
+            <Typography component='span' variant={valueVariant}>
+              {value}
+            </Typography>
+          ) : (
+            value
+          ))}
 
         {valueTooltip && (
           <Tooltip>
