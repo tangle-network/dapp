@@ -8,6 +8,7 @@
   "dependencies": {
     "@ngneat/falso": "^5.7.0",
     "@ramonak/react-progress-bar": "^5.0.0",
+    "@tanstack/react-table": "^8.5.13",
     "chart.js": "^3.8.0",
     "gridjs": "^5.0.2",
     "gridjs-react": "^5.0.2",

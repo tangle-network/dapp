@@ -13,14 +13,16 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { Threshold as QueryThreshold } from './types';
 
-type Thresholds = {
+export type Thresholds = {
   keyGen: string;
   signature: string;
   proposer: string;
   publicKey: PublicKey;
 };
-type UpcomingThresholdStats = 'Pending' | 'Next' | 'Current';
-type UpcomingThreshold = {
+
+export type UpcomingThresholdStats = 'Pending' | 'Next' | 'Current';
+
+export type UpcomingThreshold = {
   stats: 'Pending' | 'Next' | 'Current';
   session: string;
   keyGen: string;
@@ -28,20 +30,22 @@ type UpcomingThreshold = {
   proposer: string;
   authoritySet: string[];
 };
-type UpcomingThresholds = Record<Lowercase<UpcomingThresholdStats>, UpcomingThreshold>;
-type AuthorityListItem = {
+
+export type UpcomingThresholds = Record<Lowercase<UpcomingThresholdStats>, UpcomingThreshold>;
+
+export type AuthorityListItem = {
   id: string;
   location: string;
   uptime: string;
   reputation: string;
 };
 
-type AuthorityThresholdStatus = {
+export type AuthorityThresholdStatus = {
   val: string;
   inTheSet: boolean;
 };
 
-type AuthorityStats = {
+export type AuthorityStats = {
   numberOfKeys: string;
   uptime: string;
   reputation: string;
@@ -221,14 +225,15 @@ export function useAuthorities(reqQuery: PageInfoQuery): Loadable<Page<Authority
   return authorities;
 }
 
-type KeGenKeyListItem = {
+export type KeGenKeyListItem = {
   id: string;
   height: string;
   session: string;
   publicKey: string;
   authority: string;
 };
-type AuthorityDetails = {
+
+export type AuthorityDetails = {
   stats: Loadable<AuthorityStats>;
   keyGens: Loadable<Page<KeGenKeyListItem>>;
 };
@@ -367,7 +372,7 @@ export function useAuthority(pageQuery: PageInfoQuery, authorityId: string): Aut
   return useMemo(() => ({ stats, keyGens }), [stats, keyGens]);
 }
 
-type SessionThresholdEntry = {
+export type SessionThresholdEntry = {
   sessionId: string;
   signatureThreshold: string;
   keyGenThreshold: string;

@@ -34,8 +34,9 @@ import { fuzzyFilter } from '@webb-dapp/webb-ui-components/components/Filter/uti
 import { Authority } from '@webb-dapp/webb-ui-components/components/KeyStatusCard/types';
 import { fetchKeygenData } from '@webb-dapp/webb-ui-components/hooks';
 import { KeygenType } from '@webb-dapp/webb-ui-components/types';
-import { Typography } from '@webb-dapp/webb-ui-components/typography';
 import { useEffect, useMemo, useState } from 'react';
+
+import { KeyDetail } from '../KeyDetail';
 
 const columnHelper = createColumnHelper<KeygenType>();
 
@@ -112,7 +113,7 @@ const columns: ColumnDef<KeygenType, any>[] = [
           </Button>
         </DrawerTrigger>
         <DrawerContent>
-          <Typography variant='h1'>Hello Drawer</Typography>
+          <KeyDetail />
         </DrawerContent>
       </Drawer>
     ),
