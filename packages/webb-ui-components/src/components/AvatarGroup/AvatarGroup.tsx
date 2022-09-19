@@ -33,7 +33,7 @@ export const AvatarGroup: React.FC<AvatarGroupProps> = ({ children: childrenProp
 
   return (
     <div className='flex items-center space-x-1'>
-      <div>
+      <div className='translate-x-1'>
         {children.slice(0, max).map((child, index) => {
           return React.cloneElement(child, {
             ...child.props,
