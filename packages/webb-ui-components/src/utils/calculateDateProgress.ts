@@ -1,0 +1,28 @@
+import { differenceInMilliseconds, isValid } from 'date-fns';
+
+/**
+ * Calculated the percentage of the current date have passed since the start date
+ * @param startDateStr The start date string
+ * @param endDateStr The end date string
+ * @returns `null` when one of the provided string is invalid or the start date is in the future,
+ * otherwise returns the percentage of the current date have passed since the start date
+ */
+export const calculateDateProgress = (startDateStr: string | Date, endDateStr: string | Date): number | null => {
+  // If one of two date is invalid -> Return `null`
+  if (!isValid(startDateStr) || !isValid(endDateStr)) {
+    return null;
+  }
+
+  const startDate = new Date(startDateStr);
+  const endDate = new Date(endDateStr);
+
+  // If the start date in to future -> Return `null`
+  if (differenceInMilliseconds(Date.now(), startDate) < 0) {
+    return null;
+  }
+
+  const diffBetweenStartAndEnd = Math.abs(startDate.getTime() - endDate.getTime());
+  const diffBetweenStartAndNow = Math.abs(startDate.getTime() - Date.now());
+
+  return parseFloat(((diffBetweenStartAndNow / diffBetweenStartAndEnd) * 100).toFixed(2));
+};

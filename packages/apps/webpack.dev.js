@@ -3,6 +3,7 @@
 
 const fs = require('fs');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const path = require('path');
 const { merge } = require('webpack-merge');
 
@@ -32,6 +33,7 @@ module.exports = (env) => {
         inject: true,
         template: path.join(env.context, `${hasPublic ? 'public/' : ''}index.html`),
       }),
+      new ReactRefreshWebpackPlugin(),
     ],
     watchOptions: {
       // 5.66.0 work-around (was reduced to 20, then started failing)
