@@ -12,6 +12,7 @@ import {
   Avatar,
   AvatarGroup,
   Button,
+  CardTable,
   Chip,
   DrawerCloseButton,
   KeyCard,
@@ -243,7 +244,15 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage, .
       </div>
 
       {/** Authorities Table */}
-      <Table tableProps={table as RTTable<unknown>} isPaginated />
+      <CardTable
+        titleProps={{
+          title: 'DKG Authorities',
+          info: 'DKG Authorities',
+          variant: 'h5',
+        }}
+      >
+        <Table tableProps={table as RTTable<unknown>} isPaginated />
+      </CardTable>
     </div>
   );
 });
