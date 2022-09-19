@@ -104,7 +104,7 @@ const columns: ColumnDef<KeygenType, any>[] = [
 
   columnHelper.accessor('detailUrl', {
     header: '',
-    cell: (props) => (
+    cell: () => (
       <Drawer>
         <DrawerTrigger>
           <Button className='uppercase' varirant='link' as='span' size='sm'>

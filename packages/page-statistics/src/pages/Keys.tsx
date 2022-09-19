@@ -1,6 +1,7 @@
 import { randNumber, randRecentDate, randSoonDate } from '@ngneat/falso';
-import { KeygenTable } from '@webb-dapp/webb-ui-components';
 import { KeyStatusCard } from '@webb-dapp/webb-ui-components/components/KeyStatusCard';
+
+import { KeygenTable } from '../containers';
 
 const Keys = () => {
   return (
