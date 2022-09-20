@@ -7,7 +7,6 @@ import {
 } from '@webb-dapp/page-statistics/generated/graphql';
 import { mapProposalListItem } from '@webb-dapp/page-statistics/provider/hooks/mappers';
 import { Loadable, Page, PageInfoQuery, ProposalStatus } from '@webb-dapp/page-statistics/provider/hooks/types';
-import { useCurrentMetaData } from '@webb-dapp/page-statistics/provider/hooks/useCurrentMetaData';
 import { useEffect, useMemo, useState } from 'react';
 
 import { Threshold as QueryThreshold } from './types';
@@ -164,38 +163,38 @@ type ProposalDetails = {
  * Proposals overview
  * @return ProposalsOverview - Proposal overview data
  * */
-export function useProposalsOverview(): Loadable<ProposalsOverview> {
+export function useProposalsOverview(
+  sessionId: string,
+  startBlockNumber: number,
+  endBlockNumber: number
+): Loadable<ProposalsOverview> {
   const [proposalsOverview, setProposalsOverview] = useState<Loadable<ProposalsOverview>>({
     isLoading: true,
     val: null,
     isFailed: false,
   });
   const [call, query] = useProposalsOverviewLazyQuery();
-  const metaData = useCurrentMetaData();
 
   useEffect(() => {
-    if (metaData.val) {
-      const currentSession = metaData.val.activeSession;
-      call({
-        variables: {
-          endRange: {
-            lessThanOrEqualTo: 300,
-          },
-          startRange: {
-            greaterThanOrEqualTo: 0,
-          },
-          sessionId: currentSession,
+    call({
+      variables: {
+        endRange: {
+          lessThanOrEqualTo: endBlockNumber,
         },
-      }).catch((e) => {
-        setProposalsOverview({
-          isLoading: false,
-          isFailed: true,
-          val: null,
-          error: e.message,
-        });
+        startRange: {
+          greaterThanOrEqualTo: startBlockNumber,
+        },
+        sessionId: sessionId,
+      },
+    }).catch((e) => {
+      setProposalsOverview({
+        isLoading: false,
+        isFailed: true,
+        val: null,
+        error: e.message,
       });
-    }
-  }, [metaData, call]);
+    });
+  }, [endBlockNumber, startBlockNumber, sessionId, call]);
   useEffect(() => {
     const subscription = query.observable
       .map((res): Loadable<ProposalsOverview> => {
