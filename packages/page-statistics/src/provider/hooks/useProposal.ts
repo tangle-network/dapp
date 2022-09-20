@@ -58,7 +58,7 @@ export type ProposalListItem = {
   status: ProposalStatus;
   type: ProposalType;
   txHash: string;
-  proposers: ListOverView;
+  proposers: DiscreteList;
   chain: string;
 };
 
