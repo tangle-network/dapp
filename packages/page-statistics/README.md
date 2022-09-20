@@ -2,8 +2,8 @@
 <div align="center">
    <a href="https://www.webb.tools/">
       <picture>
-         <source media="(prefers-color-scheme: dark)" srcset="../../.github/assets/new-webb-icon-light.svg">
-         <img alt="Webb Logo" src="../../.github/assets/new-webb-icon-dark.svg">
+         <source media="(prefers-color-scheme: dark)" srcset="../../.github/assets/new-webb-icon-dark.svg">
+         <img alt="Webb Logo" src="../../.github/assets/new-webb-icon-light.svg">
       </picture>
    </a>
 </div>
