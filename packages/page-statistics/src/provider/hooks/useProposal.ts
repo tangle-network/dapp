@@ -62,18 +62,65 @@ export type ProposalListItem = {
   proposers: ListOverView;
   chain: string;
 };
+
+/**
+ * Proposal page
+ * */
 type ProposalsPage = Loadable<Page<ProposalListItem>>;
+/**
+ * Proposals overview
+ * @params totalProposals - total number of proposers and proposal the current threshold
+ * @param status -  Proposal status counter `ProposalTypeStats`
+ * @param openProposals -  list of recent open proposals
+ **/
 type ProposalsOverview = {
   thresholds: Thresholds;
   stats: ProposalTypeStats;
   openProposals: ProposalListItem[];
 };
+/**
+ * Proposal timeline item
+ *  @param status - Proposals status at that timeline item
+ *  @param at - The data the timeline item took place
+ *  @param blockNumber - the block number the timeline item took place
+ *  @param hash - Transaction hash of the timeline item
+ *
+ * */
 type ProposalTimeLine = {
   status: ProposalStatus;
   at: Date;
   blockNumber: number;
   hash: string;
 };
+/**
+ * Vote listing item
+ *
+ * @param id - Vote identifier
+ * @param voterId - The voter id (account 32)
+ * @param for - Boolean value indicate if the vote is against or for the proposal
+ * @param timestamp - The date the vote took place
+ * */
+type VoteListItem = {
+  id: string;
+  voterId: string;
+  for: boolean;
+  timestamp: Date;
+};
+/**
+ * Votes page type
+ * */
+type VotesPage = Loadable<Page<VoteListItem>>;
+
+/**
+ * Votes query
+ * @param proposalId -  Proposal id to filter votes by proposal
+ * @param isFor - Optional boolean value to filter votes by for or against if absent will return all votes
+ * */
+type VotesQuery = PageInfoQuery<{
+  proposalId: string;
+  isFor?: boolean;
+}>;
+
 /**
  * Proposal data
  * @params data - Proposal encoded proposal data
@@ -113,7 +160,10 @@ type ProposalDetails = {
   timeline: ProposalTimeLine[];
   data: ProposalData;
 };
-
+/**
+ * Proposals overview
+ * @return ProposalsOverview - Proposal overview data
+ * */
 export function useProposalsOverview(): Loadable<ProposalsOverview> {
   const [proposalsOverview, setProposalsOverview] = useState<Loadable<ProposalsOverview>>({
     isLoading: true,
@@ -191,7 +241,9 @@ export function useProposalsOverview(): Loadable<ProposalsOverview> {
   }, [query]);
   return proposalsOverview;
 }
-
+/**
+ * Listing query for proposals
+ * */
 export function useProposals(reqQuery: PageInfoQuery): ProposalsPage {
   const [proposalsPage, setProposalsPage] = useState<ProposalsPage>({
     isLoading: false,
@@ -251,7 +303,9 @@ type ProposalDetailsPage = {
   proposal: Loadable<ProposalDetails>;
   votes: VotesPage;
 };
-
+/**
+ * Load a proposal with paginated votes and status at a given session
+ * */
 export function useProposal(targetSessionId: string, votesReqQuery: VotesQuery): ProposalDetailsPage {
   const [proposalDetails, setProposalDetails] = useState<Loadable<ProposalDetails>>({
     isLoading: false,
@@ -331,18 +385,6 @@ export function useProposal(targetSessionId: string, votesReqQuery: VotesQuery):
     [proposalDetails, votes]
   );
 }
-
-type VoteListItem = {
-  id: string;
-  voterId: string;
-  for: boolean;
-  timestamp: Date;
-};
-type VotesPage = Loadable<Page<VoteListItem>>;
-type VotesQuery = PageInfoQuery<{
-  proposalId: string;
-  isFor?: boolean;
-}>;
 
 export function useVotes(votesReqQuery: VotesQuery): VotesPage {
   const [votes, setVotes] = useState<VotesPage>({
