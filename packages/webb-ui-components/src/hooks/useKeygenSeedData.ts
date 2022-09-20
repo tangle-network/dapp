@@ -18,7 +18,7 @@ const getNewKeygen = (): KeygenType => {
       arrayFrom(randNumber({ min: 10, max: 20 }), () => '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY')
     ),
     totalAuthorities: randNumber({ min: 50, max: 100 }),
-    detailUrl: 'https://webb.tools',
+    keyId: 'https://webb.tools',
   };
 };
 

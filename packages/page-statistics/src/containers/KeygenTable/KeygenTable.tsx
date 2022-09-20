@@ -102,9 +102,9 @@ const columns: ColumnDef<KeygenType, any>[] = [
     enableColumnFilter: false,
   }),
 
-  columnHelper.accessor('detailUrl', {
+  columnHelper.accessor('keyId', {
     header: '',
-    cell: () => (
+    cell: (props) => (
       <Drawer>
         <DrawerTrigger>
           <Button className='uppercase' varirant='link' as='span' size='sm'>
@@ -112,7 +112,7 @@ const columns: ColumnDef<KeygenType, any>[] = [
           </Button>
         </DrawerTrigger>
         <DrawerContent>
-          <KeyDetail />
+          <KeyDetail keyId={props.getValue<string>()} />
         </DrawerContent>
       </Drawer>
     ),
@@ -161,7 +161,7 @@ export const KeygenTable: FC = () => {
           key: item.uncompressed,
           authorities: new Set(item.keyGenAuthorities),
           keygenThreshold: Number(item.keyGenThreshold),
-          detailUrl: '#',
+          keyId: item.uncompressed,
           totalAuthorities: item.keyGenAuthorities.length,
           signatureThreshold: Number(item.signatureThreshold),
         })

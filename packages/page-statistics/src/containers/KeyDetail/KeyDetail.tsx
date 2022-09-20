@@ -1,13 +1,12 @@
-import { randEthereumAddress, randNumber, randRecentDate, randSoonDate } from '@ngneat/falso';
 import {
   ColumnDef,
   createColumnHelper,
   getCoreRowModel,
-  PaginationState,
+  getPaginationRowModel,
   Table as RTTable,
   useReactTable,
 } from '@tanstack/react-table';
-import { fetchAuthoritiesData } from '@webb-dapp/page-statistics/hooks';
+import { SessionKeyStatus, useKey } from '@webb-dapp/page-statistics/provider/hooks';
 import {
   Avatar,
   AvatarGroup,
@@ -26,19 +25,18 @@ import {
   TitleWithInfo,
 } from '@webb-dapp/webb-ui-components/components';
 import { fuzzyFilter } from '@webb-dapp/webb-ui-components/components/Filter/utils';
-import { useKeygenSeedData } from '@webb-dapp/webb-ui-components/hooks';
-import { ArrowLeft, ArrowRight, Close, Expand } from '@webb-dapp/webb-ui-components/icons';
+import { ArrowLeft, ArrowRight, Close, Expand, Spinner } from '@webb-dapp/webb-ui-components/icons';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
 import { shortenString } from '@webb-dapp/webb-ui-components/utils';
 import getUnicodeFlagIcon from 'country-flag-icons/unicode';
-import { forwardRef, useEffect, useMemo, useState } from 'react';
+import { forwardRef, useMemo } from 'react';
 
 import { AuthorityRowType, KeyDetailProps } from './types';
 
 const columnHelper = createColumnHelper<AuthorityRowType>();
 
 const columns: ColumnDef<AuthorityRowType, any>[] = [
-  columnHelper.accessor('id', {
+  columnHelper.accessor('account', {
     header: 'Participant',
     cell: (props) => (
       <Typography variant='body2' component='span' className='!text-inherit'>
@@ -83,49 +81,49 @@ const columns: ColumnDef<AuthorityRowType, any>[] = [
   }),
 ];
 
-export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage, ...props }, ref) => {
-  const [keygen] = useKeygenSeedData();
+export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage, keyId }, ref) => {
+  const { error, isFailed, isLoading, val: keyDetail } = useKey(keyId);
 
-  // Pagination state
-  const [{ pageIndex, pageSize }, setPagination] = useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: 10,
-  });
+  const authoritiesTblData = useMemo<AuthorityRowType[]>(() => {
+    return keyDetail
+      ? keyDetail.authorities.map((aut) => ({ ...aut, detaillUrl: 'https://webb.tools' })) // TODO: Determine the detail url
+      : ([] as AuthorityRowType[]);
+  }, [keyDetail]);
 
   const pagination = useMemo(
     () => ({
-      pageIndex,
-      pageSize,
+      pageIndex: 0,
+      pageSize: 10,
     }),
-    [pageIndex, pageSize]
+    []
   );
 
-  const [dataQuery, setDataQuery] = useState<undefined | Awaited<ReturnType<typeof fetchAuthoritiesData>>>();
-
-  useEffect(() => {
-    const updateData = async () => {
-      const dataQuery = await fetchAuthoritiesData({ pageIndex, pageSize });
-
-      setDataQuery(dataQuery);
-    };
-
-    updateData();
-  }, [pageIndex, pageSize]);
-
   const table = useReactTable<AuthorityRowType>({
-    data: dataQuery?.rows ?? ([] as AuthorityRowType[]),
+    data: authoritiesTblData,
     columns,
-    pageCount: dataQuery?.pageCount ?? -1,
     getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
     state: {
       pagination,
     },
-    onPaginationChange: setPagination,
-    manualPagination: true,
     filterFns: {
       fuzzy: fuzzyFilter,
     },
   });
+
+  if (isLoading) {
+    return <Spinner size='xl' />;
+  }
+
+  if (isFailed || !keyDetail) {
+    return (
+      <div>
+        <Typography variant='body1' className='text-red-100 dark:text-red-10'>
+          {error ?? 'Unexpected error'}
+        </Typography>
+      </div>
+    );
+  }
 
   return (
     <div className='flex flex-col p-6 space-y-4' ref={ref}>
@@ -175,22 +173,22 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage, .
         {/** Session number */}
         <div className='flex items-center space-x-2'>
           <Chip color='green' className='uppercase'>
-            Next
+            {keyDetail.isCurrent ? 'Current' : 'Next'}
           </Chip>
-          <LabelWithValue label='Session: ' value={3456} />
+          <LabelWithValue label='Session: ' value={keyDetail.session} />
         </div>
 
         {/** Active Period */}
         <div className='flex flex-col space-y-3'>
           <TitleWithInfo title='Active Period' variant='body1' titleComponent='h6' info='Active period' />
 
-          <TimeProgress startTime={randRecentDate()} endTime={randSoonDate()} />
+          <TimeProgress startTime={keyDetail.start} endTime={keyDetail.end} />
         </div>
 
         {/** Compressed/Uncompressed Keys */}
         <div className='flex space-x-4'>
-          <KeyCard title='Compressed key' keyValue={randEthereumAddress()} />
-          <KeyCard title='Uncompressed key' keyValue={randEthereumAddress() + randEthereumAddress().substring(2)} />
+          <KeyCard title='Compressed key' keyValue={keyDetail.compressed} />
+          <KeyCard title='Uncompressed key' keyValue={keyDetail.uncompressed} />
         </div>
       </div>
 
@@ -199,53 +197,79 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage, .
         <TitleWithInfo title='Key History' variant='h5' info='Key history' />
 
         <TimeLine>
-          <TimeLineItem
-            title='Generated'
-            time={randRecentDate()}
-            txHash={randEthereumAddress()}
-            externalUrl='https://webb.tools'
-          />
+          {keyDetail.history.map((hist, idx) => {
+            const { at, hash, status } = hist;
 
-          <TimeLineItem
-            title='Signed'
-            time={randRecentDate()}
-            txHash={randEthereumAddress()}
-            externalUrl='https://webb.tools'
-            extraContent={
-              <div className='flex items-center space-x-2'>
-                <KeyValueWithButton keyValue={randEthereumAddress()} size='sm' />
-                <Button varirant='link' size='sm' className='uppercase'>
-                  Detail
-                </Button>
-              </div>
-            }
-          />
+            switch (status) {
+              case SessionKeyStatus.Generated: {
+                return (
+                  <TimeLineItem
+                    key={`${at.toString()}-${idx}`}
+                    title={status}
+                    time={at}
+                    txHash={hash}
+                    externalUrl='https://webb.tools' // TODO: Determine the external url
+                  />
+                );
+              }
 
-          <TimeLineItem
-            title='Key Rotated'
-            time={randRecentDate()}
-            txHash={randEthereumAddress()}
-            externalUrl='https://webb.tools'
-            extraContent={
-              <div className='flex items-center space-x-4'>
-                <LabelWithValue label='Height' value={1000654} />
-                <LabelWithValue label='Proposal' value='KeyRotation' />
-                <LabelWithValue
-                  label='Proposers'
-                  value={
-                    <AvatarGroup total={randNumber({ min: 10, max: 20 })}>
-                      {Object.values(keygen.authorities).map((au) => (
-                        <Avatar key={au.id} src={au.avatarUrl} alt={au.id} />
-                      ))}
-                    </AvatarGroup>
-                  }
-                />
-                <Button size='sm' varirant='link' className='uppercase'>
-                  Details
-                </Button>
-              </div>
+              case SessionKeyStatus.Signed: {
+                return (
+                  <TimeLineItem
+                    key={`${at.toString()}-${idx}`}
+                    title={status}
+                    time={at}
+                    txHash={hash}
+                    externalUrl='https://webb.tools' // TODO: Determine the external url
+                    extraContent={
+                      <div className='flex items-center space-x-2'>
+                        <KeyValueWithButton keyValue={keyDetail.uncompressed} size='sm' />
+                        <Button varirant='link' size='sm' className='uppercase'>
+                          Detail
+                        </Button>
+                      </div>
+                    }
+                  />
+                );
+              }
+
+              case SessionKeyStatus.Rotated: {
+                return (
+                  <TimeLineItem
+                    key={`${at.toString()}-${idx}`}
+                    title={status}
+                    time={at}
+                    txHash={hash}
+                    externalUrl='https://webb.tools'
+                    extraContent={
+                      <div className='flex items-center space-x-4'>
+                        <LabelWithValue label='Height' value={keyDetail.height} />
+                        {/** TODO: Proposal type */}
+                        <LabelWithValue label='Proposal' value='KeyRotation' />
+                        <LabelWithValue
+                          label='Proposers'
+                          value={
+                            <AvatarGroup total={keyDetail.authorities.length}>
+                              {Object.values(keyDetail.authorities).map((author) => (
+                                <Avatar key={author.id} value={author.account} />
+                              ))}
+                            </AvatarGroup>
+                          }
+                        />
+                        <Button size='sm' varirant='link' className='uppercase'>
+                          Details
+                        </Button>
+                      </div>
+                    }
+                  />
+                );
+              }
+
+              default: {
+                throw new Error('Unknown SessionKeyStatus in KeyDetail component');
+              }
             }
-          />
+          })}
         </TimeLine>
       </div>
 
@@ -253,7 +277,7 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage, .
       <div className='flex space-x-4'>
         <div className='flex flex-col items-center justify-center py-3 space-y-1 rounded-lg grow bg-mono-20 dark:bg-mono-160'>
           <Typography variant='h4' fw='bold' className='block'>
-            42
+            {keyDetail.keyGenThreshold}
           </Typography>
           <Typography variant='body1' fw='bold' className='block'>
             Threshold
@@ -262,7 +286,7 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage, .
 
         <div className='flex flex-col items-center justify-center py-3 space-y-1 rounded-lg grow bg-mono-20 dark:bg-mono-160'>
           <Typography variant='h4' fw='bold' className='block'>
-            102
+            {keyDetail.numberOfValidators}
           </Typography>
           <Typography variant='body1' fw='bold' className='block'>
             Validator

@@ -20,6 +20,47 @@ import { TimeLineItemProps } from './types';
  *      txHash={randEthereumAddress()}
  *      externalUrl='https://webb.tools'
  *    />
+ *
+ *    <TimeLineItem
+ *      title='Signed'
+ *      time={randRecentDate()}
+ *      txHash={randEthereumAddress()}
+ *      externalUrl='https://webb.tools'
+ *      extraContent={
+ *        <div className='flex items-center space-x-2'>
+ *          <KeyValueWithButton keyValue={randEthereumAddress()} size='sm' />
+ *          <Button varirant='link' size='sm' className='uppercase'>
+ *            Detail
+ *          </Button>
+ *        </div>
+ *       }
+ *     />
+ *
+ *    <TimeLineItem
+ *      title='Key Rotated'
+ *      time={randRecentDate()}
+ *      txHash={randEthereumAddress()}
+ *      externalUrl='https://webb.tools'
+ *      extraContent={
+ *        <div className='flex items-center space-x-4'>
+ *          <LabelWithValue label='Height' value={1000654} />
+ *          <LabelWithValue label='Proposal' value='KeyRotation' />
+ *          <LabelWithValue
+ *            label='Proposers'
+ *            value={
+ *              <AvatarGroup total={randNumber({ min: 10, max: 20 })}>
+ *                {Object.values(keygen.authorities).map((au) => (
+ *                   <Avatar key={au.id} src={au.avatarUrl} alt={au.id} />
+ *                ))}
+ *              </AvatarGroup>
+ *            }
+ *          />
+ *          <Button size='sm' varirant='link' className='uppercase'>
+ *            Details
+ *          </Button>
+ *        </div>
+ *      }
+ *    />
  * ```
  */
 export const TimeLineItem = forwardRef<HTMLDivElement, TimeLineItemProps>(
@@ -43,12 +84,14 @@ export const TimeLineItem = forwardRef<HTMLDivElement, TimeLineItemProps>(
           </Typography>
         </div>
 
-        <div className='flex items-center ml-8 space-x-1'>
-          <LabelWithValue labelVariant='body3' label='tx hash:' value={shortenHex(txHash, 3)} valueTooltip={txHash} />
-          <a href={externalUrl} target='_blank' rel='noopener noreferrer'>
-            <ExternalLinkLine />
-          </a>
-        </div>
+        {txHash && (
+          <div className='flex items-center ml-8 space-x-1'>
+            <LabelWithValue labelVariant='body3' label='tx hash:' value={shortenHex(txHash, 3)} valueTooltip={txHash} />
+            <a href={externalUrl} target='_blank' rel='noopener noreferrer'>
+              <ExternalLinkLine />
+            </a>
+          </div>
+        )}
 
         <div className='ml-8'>{extraContent}</div>
       </div>

@@ -75,9 +75,9 @@ export interface KeygenType {
    */
   totalAuthorities: number;
   /**
-   * The detail url link to the detail of and keygen
+   * The key id (uncompressed key) to get detail info
    */
-  detailUrl: string;
+  keyId: string;
 }
 
 /*****************

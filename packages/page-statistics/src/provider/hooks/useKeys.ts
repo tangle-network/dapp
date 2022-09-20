@@ -73,7 +73,7 @@ type PublicKeyHistoryEntry = {
  * @params reputation - The P2P reputation of that authority
  *
  * */
-type KeyGenAuthority = {
+export type KeyGenAuthority = {
   id: string;
   account: string;
   location: string;
@@ -83,6 +83,7 @@ type KeyGenAuthority = {
 
 /**
  * The full date of that public key
+ * @param height  - Block number when the key was generated
  * @param isCurrent - The key is the current active key
  * @param history - The progress of that key
  * @param keyGenThreshold - keyGenThreshold Active session of that key
@@ -91,6 +92,7 @@ type KeyGenAuthority = {
  * @param authorities - keygen authorities (Best Authorities) that signed the key
  * */
 interface PublicKeyDetails extends PublicKeyContent {
+  height: string;
   isCurrent: boolean;
   history: PublicKeyHistoryEntry[];
   keyGenThreshold: string;
@@ -323,6 +325,7 @@ export function useKey(id: string): Loadable<PublicKeyDetails> {
             isFailed: false,
             isLoading: false,
             val: {
+              height: publicKey.block?.number,
               compressed: publicKey.compressed!,
               uncompressed: publicKey.uncompressed!,
               id: publicKey.id,
