@@ -69,7 +69,7 @@ export const Progress: React.FC<ProgressProps> = ({
         style={{ width: `${valueProp}%` }}
         className={cx(
           classNames[size]['indicator'],
-          ' radix-state-indeterminate:bg-transparent dark:radix-state-indeterminate:bg-transparent'
+          'radix-state-indeterminate:bg-transparent dark:radix-state-indeterminate:bg-transparent'
         )}
       >
         {displayValue}

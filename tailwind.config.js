@@ -179,6 +179,15 @@ const keyframes = {
       transform: `translateX(calc(100% + 1rem))`,
     },
   },
+  // Drawer Content
+  'drawer-content-right-slide-in': {
+    from: { transform: 'translate3d(100%,0,0)' },
+    to: { transform: 'translate3d(0,0,0)' },
+  },
+  'drawer-content-right-slide-out': {
+    from: { transform: 'translate3d(0,0,0)' },
+    to: { transform: 'translate3d(100%,0,0)' },
+  },
 };
 
 const animation = {
@@ -205,6 +214,11 @@ const animation = {
   'toast-slide-in-right': 'toast-slide-in-right 150ms cubic-bezier(0.16, 1, 0.3, 1)',
   'toast-slide-in-bottom': 'toast-slide-in-bottom 150ms cubic-bezier(0.16, 1, 0.3, 1)',
   'toast-swipe-out': 'toast-swipe-out 100ms ease-out forwards',
+  // Drawer
+  'drawer-overlay-open': 'fade-in 150ms cubic-bezier(0.22, 1, 0.36, 1)',
+  'drawer-overlay-close': 'fade-out 150ms cubic-bezier(0.22, 1, 0.36, 1)',
+  'drawer-content-right-open': 'drawer-content-right-slide-in 150ms cubic-bezier(0.22, 1, 0.36, 1)',
+  'drawer-content-right-close': 'drawer-content-right-slide-out 150ms cubic-bezier(0.22, 1, 0.36, 1)',
 };
 
 module.exports = {
