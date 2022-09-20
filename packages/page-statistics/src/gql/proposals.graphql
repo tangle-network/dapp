@@ -36,27 +36,7 @@ query ProposalsCounter(
   }
 }
 
-fragment ProposalListView on ProposalItem {
-  id
-  data
-  signature
-  type
-  status
-  proposalVotesByProposalId(orderBy: [BLOCK_NUMBER_DESC], first: 3) {
-    nodes {
-      id
-      voterId
-      voter {
-        id
-      }
-    }
-    totalCount
-  }
-  block {
-    timestamp
-    number
-  }
-}
+
 
 query ProposalsOverview($startRange: BigFloatFilter!, $endRange: BigFloatFilter!, $sessionId: String!) {
   session(id: $sessionId) {
@@ -104,16 +84,7 @@ query ProposalsOverview($startRange: BigFloatFilter!, $endRange: BigFloatFilter!
     totalCount
   }
 }
-fragment ProposalsVoteListView on ProposalVote {
-  id
-  voterId
-  for
-  txHash: voterId
-  block {
-    timestamp
-    number
-  }
-}
+
 
 query ProposalVotes(
   # The number of votes to return
