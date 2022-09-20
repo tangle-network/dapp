@@ -8,7 +8,7 @@ const Keys = () => {
       <div className='flex space-x-4'>
         <KeyStatusCard
           title='Active Key'
-          titleInfo='Active Key'
+          titleInfo='The public key of the DKG protocol that is currently active.'
           sessionNumber={3456}
           keyType='current'
           keyVal='0x1234567890abcdef'
@@ -33,7 +33,7 @@ const Keys = () => {
         />
         <KeyStatusCard
           title='Next Key'
-          titleInfo='Next Key'
+          titleInfo='The public key of the DKG protocol that will be active after the next authority set change.'
           sessionNumber={3456}
           keyType='next'
           keyVal='0x1234567890abcdef'
