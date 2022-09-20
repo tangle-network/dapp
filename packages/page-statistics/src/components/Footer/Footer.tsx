@@ -10,7 +10,7 @@ import { NavLink } from 'react-router-dom';
  */
 export const Footer: FC = () => {
   return (
-    <div className='flex flex-col max-w-[1160px] mx-auto mt-6 pt-8 pb-16 space-y-4 bg-mono-20 dark:bg-mono-200'>
+    <footer className='flex flex-col max-w-[1160px] mx-auto mt-6 pt-8 pb-16 space-y-4 bg-mono-20 dark:bg-mono-200'>
       <div className='flex justify-between'>
         <NavLink className='block' to={constants.logoConfig.path}>
           <Logo />
@@ -45,7 +45,7 @@ export const Footer: FC = () => {
           ))}
         </div>
       </div>
-    </div>
+    </footer>
   );
 };
 

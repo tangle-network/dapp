@@ -12,7 +12,7 @@ export const Header: FC = () => {
   const { name, ...webbAppConfig } = constants.webbAppConfig;
 
   return (
-    <div className='bg-mono-0 dark:bg-mono-180'>
+    <header className='bg-mono-0 dark:bg-mono-180'>
       <div className='relative flex items-center justify-between py-4 mb-6 max-w-[1160px] mx-auto'>
         <NavLink to={constants.logoConfig.path}>
           <Logo />
@@ -38,7 +38,7 @@ export const Header: FC = () => {
           <ThemeSwitcher />
         </div>
       </div>
-    </div>
+    </header>
   );
 };
 
