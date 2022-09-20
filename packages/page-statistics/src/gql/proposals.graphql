@@ -114,6 +114,35 @@ fragment ProposalsVoteListView on ProposalVote {
     number
   }
 }
+
+query ProposalVotes(
+  # The number of votes to return
+  $perPage: Int!
+  # The number of votes to skip
+  $offset: Int!
+  # The proposal id
+  $proposalId: String!
+
+  $for: Boolean!
+) {
+  proposalVotes(filter: {
+    proposalId: { equalTo: $proposalId }
+    for: {equalTo: $for}
+  }
+    orderBy: [BLOCK_NUMBER_DESC]
+    first: $perPage
+    offset: $offset
+  ){
+    nodes {
+      ...ProposalsVoteListView
+    }
+    totalCount
+    pageInfo {
+      ...PageInfoMeta
+    }
+  }
+}
+
 query ProposalDetails(
   $id: String!
   # The number of proposals votes to return
