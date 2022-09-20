@@ -123,11 +123,11 @@ query ProposalVotes(
   # The proposal id
   $proposalId: String!
 
-  $for: Boolean!
+  $for: BooleanFilter
 ) {
   proposalVotes(filter: {
     proposalId: { equalTo: $proposalId }
-    for: {equalTo: $for}
+    for: $for
   }
     orderBy: [BLOCK_NUMBER_DESC]
     first: $perPage
@@ -178,9 +178,6 @@ query ProposalDetails(
       totalCount
     }
     totalVotes: proposalVotesByProposalId(first: $VotesPerPage, offset: $VotesOffset) {
-      nodes {
-        ...ProposalsVoteListView
-      }
       pageInfo {
         ...PageInfoMeta
       }

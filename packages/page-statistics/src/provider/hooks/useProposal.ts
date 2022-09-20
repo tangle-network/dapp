@@ -3,6 +3,7 @@ import {
   useProposalDetailsLazyQuery,
   useProposalsLazyQuery,
   useProposalsOverviewLazyQuery,
+  useProposalVotesLazyQuery,
 } from '@webb-dapp/page-statistics/generated/graphql';
 import { mapProposalListItem } from '@webb-dapp/page-statistics/provider/hooks/mappers';
 import { Loadable, Page, PageInfoQuery, ProposalStatus } from '@webb-dapp/page-statistics/provider/hooks/types';
@@ -62,11 +63,6 @@ type ProposalDetails = {
     type: ProposalType;
     data: string;
   };
-  votes: Page<{
-    id: string;
-    for: boolean;
-    hash: string;
-  }>;
 };
 
 export function useProposalsOverview(): Loadable<ProposalsOverview> {
@@ -261,14 +257,6 @@ export function useProposal(
               height: proposal.block?.timestamp!,
               timeline: [],
               tsHash: '',
-              votes: {
-                items: [],
-                pageInfo: {
-                  hasNext: false,
-                  hasPrevious: false,
-                  count: 0,
-                },
-              },
             },
           };
         }
@@ -285,4 +273,90 @@ export function useProposal(
   }, [query]);
 
   return proposalDetails;
+}
+
+type VoteListItem = {
+  id: string;
+  voterId: string;
+  for: boolean;
+  timestamp: Date;
+};
+type VotesPage = Loadable<Page<VoteListItem>>;
+
+export function useVotes(
+  votesReqQuery: PageInfoQuery<{
+    proposalId: string;
+    isFor?: boolean;
+  }>
+): VotesPage {
+  const [votes, setVotes] = useState<VotesPage>({
+    isLoading: true,
+    isFailed: false,
+    val: null,
+  });
+  const [call, query] = useProposalVotesLazyQuery();
+  const {
+    filter: { isFor, proposalId },
+    offset,
+    perPage,
+  } = votesReqQuery;
+  useEffect(() => {
+    call({
+      variables: {
+        proposalId,
+        offset,
+        perPage,
+        for: isFor ? { equalTo: isFor } : undefined,
+      },
+    }).catch((e) => {
+      setVotes({
+        isLoading: false,
+        isFailed: true,
+        val: null,
+        error: e.message,
+      });
+    });
+  }, [call, proposalId]);
+
+  useEffect(() => {
+    const subscription = query.observable
+      .map((res): VotesPage => {
+        if (res.data && res.data.proposalVotes) {
+          const votes = res.data.proposalVotes;
+          const data = votes.nodes
+            .filter((p) => p !== null)
+            .map((p): VoteListItem => {
+              const vote = p!;
+              return {
+                for: vote.for,
+                id: vote.id,
+                voterId: vote.voterId,
+                timestamp: new Date(vote.block?.timestamp!),
+              };
+            });
+          return {
+            isFailed: false,
+            isLoading: false,
+            val: {
+              items: data,
+              pageInfo: {
+                count: votes.totalCount,
+                hasPrevious: votes.pageInfo.hasPreviousPage,
+                hasNext: votes.pageInfo.hasNextPage,
+              },
+            },
+          };
+        }
+        return {
+          isLoading: res.loading,
+          isFailed: Boolean(res.error),
+          error: res.error?.message ?? undefined,
+          val: null,
+        };
+      })
+      .subscribe(setVotes);
+    return () => subscription.unsubscribe();
+  }, [query, setVotes]);
+
+  return votes;
 }

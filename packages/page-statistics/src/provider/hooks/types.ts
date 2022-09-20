@@ -29,7 +29,7 @@ export type Loadable<T> = {
 export type PageInfoQuery<Filter = null> = {
   offset: number;
   perPage: number;
-  filter?: Filter;
+  filter: Filter extends null ? never : Filter;
 };
 
 export enum SessionKeyStatus {
