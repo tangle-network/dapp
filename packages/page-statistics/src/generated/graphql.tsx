@@ -10039,10 +10039,11 @@ export type ProposalDetailsQueryVariables = Exact<{
   id: Scalars['String'];
   VotesPerPage: Scalars['Int'];
   VotesOffset: Scalars['Int'];
+  targetSessionId: Scalars['String'];
 }>;
 
 
-export type ProposalDetailsQuery = { __typename?: 'Query', proposalItem?: { __typename?: 'ProposalItem', id: string, data: string, signature?: string | null, type: ProposalType, status: string, proposalTimelineStatuses: { __typename?: 'ProposalTimelineStatusesConnection', nodes: Array<{ __typename?: 'ProposalTimelineStatus', id: string, status: ProposalStatus, blockNumber: any, timestamp: any } | null> }, votesFor: { __typename?: 'ProposalVotesConnection', totalCount: number }, totalVotes: { __typename?: 'ProposalVotesConnection', totalCount: number, nodes: Array<{ __typename?: 'ProposalVote', id: string, voterId: string, for: boolean, txHash: string, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null } | null>, pageInfo: { __typename?: 'PageInfo', endCursor?: any | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: any | null } }, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null } | null };
+export type ProposalDetailsQuery = { __typename?: 'Query', session?: { __typename?: 'Session', id: string, sessionProposers: { __typename?: 'SessionProposersConnection', totalCount: number } } | null, proposalItem?: { __typename?: 'ProposalItem', id: string, data: string, signature?: string | null, type: ProposalType, status: string, proposalTimelineStatuses: { __typename?: 'ProposalTimelineStatusesConnection', nodes: Array<{ __typename?: 'ProposalTimelineStatus', id: string, status: ProposalStatus, blockNumber: any, timestamp: any } | null> }, votesFor: { __typename?: 'ProposalVotesConnection', totalCount: number }, totalVotes: { __typename?: 'ProposalVotesConnection', totalCount: number, nodes: Array<{ __typename?: 'ProposalVote', id: string, voterId: string, for: boolean, txHash: string, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null } | null>, pageInfo: { __typename?: 'PageInfo', endCursor?: any | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: any | null } }, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null } | null };
 
 export type PublicKeysQueryVariables = Exact<{
   PerPage?: InputMaybe<Scalars['Int']>;
@@ -10569,7 +10570,13 @@ export type ProposalsOverviewQueryHookResult = ReturnType<typeof useProposalsOve
 export type ProposalsOverviewLazyQueryHookResult = ReturnType<typeof useProposalsOverviewLazyQuery>;
 export type ProposalsOverviewQueryResult = Apollo.QueryResult<ProposalsOverviewQuery, ProposalsOverviewQueryVariables>;
 export const ProposalDetailsDocument = gql`
-    query ProposalDetails($id: String!, $VotesPerPage: Int!, $VotesOffset: Int!) {
+    query ProposalDetails($id: String!, $VotesPerPage: Int!, $VotesOffset: Int!, $targetSessionId: String!) {
+  session(id: $targetSessionId) {
+    id
+    sessionProposers {
+      totalCount
+    }
+  }
   proposalItem(id: $id) {
     id
     data
@@ -10623,6 +10630,7 @@ ${PageInfoMetaFragmentDoc}`;
  *      id: // value for 'id'
  *      VotesPerPage: // value for 'VotesPerPage'
  *      VotesOffset: // value for 'VotesOffset'
+ *      targetSessionId: // value for 'targetSessionId'
  *   },
  * });
  */

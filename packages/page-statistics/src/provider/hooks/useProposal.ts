@@ -202,7 +202,11 @@ export function useProposals(reqQuery: PageInfoQuery): ProposalsPage {
   return proposalsPage;
 }
 
-export function useProposal(proposalId: string, votesReqQuery: PageInfoQuery): Loadable<ProposalDetails> {
+export function useProposal(
+  targetSessionId: string,
+  proposalId: string,
+  votesReqQuery: PageInfoQuery
+): Loadable<ProposalDetails> {
   const [proposalDetails, setProposalDetails] = useState<Loadable<ProposalDetails>>({
     isLoading: false,
     val: null,
@@ -216,6 +220,7 @@ export function useProposal(proposalId: string, votesReqQuery: PageInfoQuery): L
         id: proposalId,
         VotesOffset: offset,
         VotesPerPage: perPage,
+        targetSessionId,
       },
     }).catch((e) => {
       setProposalDetails({
@@ -225,16 +230,47 @@ export function useProposal(proposalId: string, votesReqQuery: PageInfoQuery): L
         error: e.message,
       });
     });
-  }, [proposalId, offset, perPage, call]);
+  }, [proposalId, offset, perPage, targetSessionId, call]);
 
   useEffect(() => {
     const subscription = query.observable
       .map((res): Loadable<ProposalDetails> => {
-        if (res.data && res.data.proposalItem) {
+        if (res.data && res.data.proposalItem && res.data.session) {
           const proposal = res.data.proposalItem;
-          const forVotes = proposal.votesFor.totalCount;
+          const forCount = proposal.votesFor.totalCount;
           const allVotes = proposal.totalVotes.totalCount;
-          const;
+          const expectedVotesCount = res.data.session.sessionProposers.totalCount;
+          const abstainCount = expectedVotesCount - allVotes;
+          const againstCount = allVotes - forCount;
+          return {
+            isLoading: false,
+            isFailed: false,
+            val: {
+              id: proposal.id,
+              data: {
+                data: proposal.data,
+                type: proposal.type,
+              },
+              abstainCount,
+              forCount,
+              againstCount,
+              abstainPercentage: (abstainCount / expectedVotesCount) * 100,
+              forPercentage: (forCount / expectedVotesCount) * 100,
+              againstPercentage: (againstCount / expectedVotesCount) * 100,
+              chain: '',
+              height: proposal.block?.timestamp!,
+              timeline: [],
+              tsHash: '',
+              votes: {
+                items: [],
+                pageInfo: {
+                  hasNext: false,
+                  hasPrevious: false,
+                  count: 0,
+                },
+              },
+            },
+          };
         }
         return {
           isLoading: res.loading,

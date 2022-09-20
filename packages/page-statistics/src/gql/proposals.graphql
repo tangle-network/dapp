@@ -120,7 +120,15 @@ query ProposalDetails(
   $VotesPerPage: Int!
   # The number of proposals votes to skip
   $VotesOffset: Int!
+  # Session for votes status
+  $targetSessionId: String!
 ) {
+  session(id: $targetSessionId) {
+    id
+    sessionProposers {
+      totalCount
+    }
+  }
 
   proposalItem(id: $id) {
     id
