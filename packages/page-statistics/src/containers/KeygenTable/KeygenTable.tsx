@@ -30,11 +30,13 @@ import {
   Table,
   TitleWithInfo,
 } from '@webb-dapp/webb-ui-components/components';
+import { getAvatarSizeInPx } from '@webb-dapp/webb-ui-components/components/Avatar/utils';
 import { fuzzyFilter } from '@webb-dapp/webb-ui-components/components/Filter/utils';
-import { Authority } from '@webb-dapp/webb-ui-components/components/KeyStatusCard/types';
 import { fetchKeygenData } from '@webb-dapp/webb-ui-components/hooks';
 import { KeygenType } from '@webb-dapp/webb-ui-components/types';
 import { useEffect, useMemo, useState } from 'react';
+
+import Identicon from '@polkadot/react-identicon';
 
 import { KeyDetail } from '../KeyDetail';
 
@@ -95,8 +97,8 @@ const columns: ColumnDef<KeygenType, any>[] = [
     header: () => <TitleWithInfo {...headerConfig['common']} {...headerConfig['authorities']} />,
     cell: (props) => (
       <AvatarGroup total={props.row.original.totalAuthorities}>
-        {Object.values<Authority>(props.getValue()).map((au) => (
-          <Avatar src={au.avatarUrl} alt={au.id} key={au.id} />
+        {Array.from(props.getValue<Set<string>>()).map((au, idx) => (
+          <Avatar key={`${au}${idx}`} value={au} />
         ))}
       </AvatarGroup>
     ),

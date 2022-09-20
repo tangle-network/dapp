@@ -1,9 +1,6 @@
 import { RowData, useReactTable } from '@tanstack/react-table';
 import { PropsOf, WebbComponentBase } from '@webb-dapp/webb-ui-components/types';
 
-import { AuthoritiesType } from '../KeyStatusCard/types';
-import { PaginationProps } from '../Pagination/types';
-
 /**
  * The `Table` props
  */

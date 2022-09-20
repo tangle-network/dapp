@@ -1,8 +1,6 @@
 import { RankingInfo } from '@tanstack/match-sorter-utils';
 import { FilterFn } from '@tanstack/react-table';
 
-import { AuthoritiesType } from '../components/KeyStatusCard/types';
-
 /******************
  * DECLARE GLOBAL *
  ******************/
@@ -71,7 +69,7 @@ export interface KeygenType {
   /**
    * The authorities attend to the process
    */
-  authorities: AuthoritiesType;
+  authorities: Set<string>;
   /**
    * Size of the authorities set
    */

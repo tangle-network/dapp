@@ -1,62 +1,47 @@
-import { randNumber, randRecentDate, randSoonDate } from '@ngneat/falso';
-import { KeyStatusCard } from '@webb-dapp/webb-ui-components/components/KeyStatusCard';
+import { Spinner } from '@webb-dapp/webb-ui-components/icons';
+import { Typography } from '@webb-dapp/webb-ui-components/typography';
+import { useMemo } from 'react';
 
-import { KeygenTable } from '../containers';
+import { KeygenTable, KeyStatusCardContainer } from '../containers';
+import { useKeys } from '../provider/hooks';
 
 const Keys = () => {
+  const pagination = useMemo(
+    () => ({
+      offset: 0,
+      perPage: 30,
+    }),
+    []
+  );
+
+  const { error, isFailed, isLoading, val: data } = useKeys(pagination);
+
+  const { currentKey, nextKey } = useMemo(() => {
+    return {
+      currentKey: data ? data.items[0] : null,
+      nextKey: data ? data.items[1] : null,
+    };
+  }, [data]);
+
+  if (isLoading) {
+    return <Spinner size='xl' />;
+  }
+
+  if (isFailed || !nextKey || !currentKey) {
+    return (
+      <div>
+        <Typography variant='body1' className='text-red-100 dark:text-red-10'>
+          {error ?? 'Unexpected error'}
+        </Typography>
+      </div>
+    );
+  }
+
   return (
     <div>
       <div className='flex space-x-4'>
-        <KeyStatusCard
-          title='Active Key'
-          titleInfo='Active Key'
-          sessionNumber={3456}
-          keyType='current'
-          keyVal='0x1234567890abcdef'
-          startTime={randRecentDate()}
-          endTime={randSoonDate()}
-          authorities={{
-            nepoche: {
-              id: 'nepoche',
-              avatarUrl: 'https://github.com/nepoche.png',
-            },
-            AhmedKorim: {
-              id: 'AhmedKorim',
-              avatarUrl: 'https://github.com/AhmedKorim.png',
-            },
-            AtelyPham: {
-              id: 'AtelyPham',
-              avatarUrl: 'https://github.com/AtelyPham.png',
-            },
-          }}
-          totalAuthorities={randNumber({ min: 10, max: 20 })}
-          fullDetailUrl='https://webb.tools'
-        />
-        <KeyStatusCard
-          title='Next Key'
-          titleInfo='Next Key'
-          sessionNumber={3456}
-          keyType='next'
-          keyVal='0x1234567890abcdef'
-          startTime={randRecentDate()}
-          endTime={randSoonDate()}
-          authorities={{
-            nepoche: {
-              id: 'nepoche',
-              avatarUrl: 'https://github.com/nepoche.png',
-            },
-            AhmedKorim: {
-              id: 'AhmedKorim',
-              avatarUrl: 'https://github.com/AhmedKorim.png',
-            },
-            AtelyPham: {
-              id: 'AtelyPham',
-              avatarUrl: 'https://github.com/AtelyPham.png',
-            },
-          }}
-          totalAuthorities={randNumber({ min: 10, max: 20 })}
-          fullDetailUrl='https://webb.tools'
-        />
+        <KeyStatusCardContainer keyType='current' data={currentKey} />
+        <KeyStatusCardContainer keyType='next' data={nextKey} />
       </div>
 
       <div className='mt-4'>
