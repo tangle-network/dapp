@@ -8,7 +8,7 @@ import {
 import { mapProposalListItem } from '@webb-dapp/page-statistics/provider/hooks/mappers';
 import { Loadable, Page, PageInfoQuery, ProposalStatus } from '@webb-dapp/page-statistics/provider/hooks/types';
 import { useCurrentMetaData } from '@webb-dapp/page-statistics/provider/hooks/useCurrentMetaData';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { Threshold as QueryThreshold } from './types';
 
@@ -198,11 +198,12 @@ export function useProposals(reqQuery: PageInfoQuery): ProposalsPage {
   return proposalsPage;
 }
 
-export function useProposal(
-  targetSessionId: string,
-  proposalId: string,
-  votesReqQuery: PageInfoQuery
-): Loadable<ProposalDetails> {
+type ProposalDetailsPage = {
+  proposal: Loadable<ProposalDetails>;
+  votes: VotesPage;
+};
+
+export function useProposal(targetSessionId: string, votesReqQuery: VotesQuery): ProposalDetailsPage {
   const [proposalDetails, setProposalDetails] = useState<Loadable<ProposalDetails>>({
     isLoading: false,
     val: null,
@@ -210,12 +211,13 @@ export function useProposal(
   });
   const [call, query] = useProposalDetailsLazyQuery();
   const { offset, perPage } = votesReqQuery;
+  const proposalId = votesReqQuery.filter.proposalId;
+  const votes = useVotes(votesReqQuery);
+
   useEffect(() => {
     call({
       variables: {
         id: proposalId,
-        VotesOffset: offset,
-        VotesPerPage: perPage,
         targetSessionId,
       },
     }).catch((e) => {
@@ -272,7 +274,13 @@ export function useProposal(
     return () => subscription.unsubscribe();
   }, [query]);
 
-  return proposalDetails;
+  return useMemo(
+    () => ({
+      proposal: proposalDetails,
+      votes,
+    }),
+    [proposalDetails, votes]
+  );
 }
 
 type VoteListItem = {
@@ -282,13 +290,12 @@ type VoteListItem = {
   timestamp: Date;
 };
 type VotesPage = Loadable<Page<VoteListItem>>;
+type VotesQuery = PageInfoQuery<{
+  proposalId: string;
+  isFor?: boolean;
+}>;
 
-export function useVotes(
-  votesReqQuery: PageInfoQuery<{
-    proposalId: string;
-    isFor?: boolean;
-  }>
-): VotesPage {
+export function useVotes(votesReqQuery: VotesQuery): VotesPage {
   const [votes, setVotes] = useState<VotesPage>({
     isLoading: true,
     isFailed: false,

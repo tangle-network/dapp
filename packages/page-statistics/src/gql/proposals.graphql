@@ -145,10 +145,6 @@ query ProposalVotes(
 
 query ProposalDetails(
   $id: String!
-  # The number of proposals votes to return
-  $VotesPerPage: Int!
-  # The number of proposals votes to skip
-  $VotesOffset: Int!
   # Session for votes status
   $targetSessionId: String!
 ) {
@@ -177,10 +173,8 @@ query ProposalDetails(
     votesFor: proposalVotesByProposalId(filter: { for: { equalTo: true } }) {
       totalCount
     }
-    totalVotes: proposalVotesByProposalId(first: $VotesPerPage, offset: $VotesOffset) {
-      pageInfo {
-        ...PageInfoMeta
-      }
+    totalVotes: proposalVotesByProposalId {
+
       totalCount
     }
 
