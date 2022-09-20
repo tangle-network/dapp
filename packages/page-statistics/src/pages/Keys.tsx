@@ -1,10 +1,24 @@
 import { randNumber, randRecentDate, randSoonDate } from '@ngneat/falso';
+import { useSubQLtime } from '@webb-dapp/page-statistics/provider/stats-provider';
 import { KeygenTable } from '@webb-dapp/webb-ui-components';
 import { KeyStatusCard } from '@webb-dapp/webb-ui-components/components/KeyStatusCard';
+import { useEffect, useState } from 'react';
 
 const Keys = () => {
+  const [time] = useSubQLtime();
+  const [clock, setClock] = useState('');
+  useEffect(() => {
+    const i = () => {
+      setClock(time.current.toTimeString());
+    };
+    const t = setInterval(i, 1000);
+    return () => clearInterval(t);
+  }, [time]);
   return (
     <div>
+      <div>
+        <b>{clock}</b>
+      </div>
       <div className='flex space-x-4'>
         <KeyStatusCard
           title='Active Key'

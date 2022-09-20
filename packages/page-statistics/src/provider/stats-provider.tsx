@@ -97,7 +97,7 @@ const statsContext: React.Context<StatsProvidervalue> = React.createContext<Stat
 export function useStatsContext() {
   return useContext(statsContext);
 }
-export function useSubQLtime() {
+export const useSubQLtime = (): [SubQlTime, (time: Date) => void] => {
   const ctx = useContext(statsContext);
   const updateTime = useCallback(
     (newTime: Date) => {
@@ -107,7 +107,7 @@ export function useSubQLtime() {
     [ctx]
   );
   return [ctx.time, updateTime];
-}
+};
 
 export const StatsProvider: React.FC<Omit<StatsProvidervalue, 'isReady' | 'metaData' | 'updateTime' | 'time'>> = (
   props
@@ -144,10 +144,14 @@ export const StatsProvider: React.FC<Omit<StatsProvidervalue, 'isReady' | 'metaD
   useEffect(() => {
     const subscription = query.observable
       .map((res): SubQlTime | null => {
-        if (res.data.blocks) {
-          const lastBlock = res.data.blocks.nodes[0]!;
+        if (res.data?.blocks) {
+          const lastBlock = res.data.blocks.nodes[0];
+          if (!lastBlock || !lastBlock.timestamp) {
+            return null;
+          }
           const lastBlockTimestamp = lastBlock.timestamp;
-          return new SubQlTime(lastBlockTimestamp);
+          console.log({ lastBlockTimestamp });
+          return new SubQlTime(new Date(lastBlockTimestamp));
         }
         return null;
       })
@@ -164,6 +168,7 @@ export const StatsProvider: React.FC<Omit<StatsProvidervalue, 'isReady' | 'metaD
   useEffect(() => {
     const unSub = metaDataQuery.observable
       .map((r): Metadata | null => {
+        console.log(query);
         if (r.data?._metadata) {
           const data = r.data._metadata;
           return {
@@ -187,7 +192,9 @@ export const StatsProvider: React.FC<Omit<StatsProvidervalue, 'isReady' | 'metaD
   useEffect(() => {
     query.startPolling(staticConfig.blockTime * 1000);
     metaDataQuery.startPolling(staticConfig.blockTime * 1000);
+    console.log('starting polling');
     return () => {
+      console.log('Stop polling');
       query.stopPolling();
       metaDataQuery.stopPolling();
     };

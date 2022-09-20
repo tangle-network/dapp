@@ -19,6 +19,23 @@ query CurrentSessionAuthorities {
   }
 }
 
+query CurrentSessionAuthorities {
+  sessions(last: 1, orderBy: [BLOCK_NUMBER_DESC]) {
+    nodes {
+      id
+      blockId
+      publicKey {
+        compressed
+      }
+      signatureThreshold
+      keyGenThreshold
+      proposerThreshold
+      block {
+        id
+        timestamp
+      }
+    }
+  }}
 query SessionKeys($SessionId: [String!]!) {
   sessions(filter: { id: { in: $SessionId } }) {
     nodes {
