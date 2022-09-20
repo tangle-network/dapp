@@ -37,6 +37,8 @@ import { KeygenType } from '@webb-dapp/webb-ui-components/types';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
 import { useEffect, useMemo, useState } from 'react';
 
+import { KeyDetail } from '../KeyDetail';
+
 const columnHelper = createColumnHelper<KeygenType>();
 
 const headerConfig = {
@@ -104,7 +106,7 @@ const columns: ColumnDef<KeygenType, any>[] = [
 
   columnHelper.accessor('detailUrl', {
     header: '',
-    cell: (props) => (
+    cell: () => (
       <Drawer>
         <DrawerTrigger>
           <Button className='uppercase' varirant='link' as='span' size='sm'>
@@ -112,7 +114,7 @@ const columns: ColumnDef<KeygenType, any>[] = [
           </Button>
         </DrawerTrigger>
         <DrawerContent>
-          <Typography variant='h1'>Hello Drawer</Typography>
+          <KeyDetail />
         </DrawerContent>
       </Drawer>
     ),
@@ -189,6 +191,11 @@ export const KeygenTable = () => {
 
   return (
     <CardTable
+      titleProps={{
+        title: 'List of Keygens',
+        info: 'List of Keygens',
+        variant: 'h5',
+      }}
       leftTitle={
         <Filter
           clearAllFilters={() => {

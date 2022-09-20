@@ -30,19 +30,24 @@ export const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
       [boundaryCount, currentPage, siblingCount, totalPages]
     );
 
+    const showingItemsCount = useMemo(
+      () => (itemsPerPage && totalItems ? Math.min(itemsPerPage, totalItems) : '-'),
+      [itemsPerPage, totalItems]
+    );
+
     const mergedClsx = useMemo(() => twMerge('flex items-center justify-between px-3 py-4', className), [className]);
 
     return (
       <div {...props} className={mergedClsx} ref={ref}>
         {/** Left label */}
         <p className='font-semibold body3 text-mono-160 dark:text-mono-100'>
-          Showing {itemsPerPage ?? '-'} Keys out of {totalItems ?? '-'}
+          Showing {showingItemsCount} Keys out of {totalItems ?? '-'}
         </p>
 
         {/** Right buttons */}
         <div className='flex items-center space-x-2'>
           <ChevronLeft
-            className={cx(canPreviousPage ? 'cursor-not-allowed' : 'cursor-pointer')}
+            className={cx(canPreviousPage ? 'cursor-pointer' : 'cursor-not-allowed')}
             onClick={() => {
               if (canPreviousPage && previousPage) {
                 previousPage();
@@ -73,7 +78,7 @@ export const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
           )}
 
           <ChevronRight
-            className={cx(canNextPage ? 'cursor-not-allowed' : 'cursor-pointer')}
+            className={cx(canNextPage ? 'cursor-pointer' : 'cursor-not-allowed')}
             onClick={() => {
               if (canNextPage && nextPage) {
                 nextPage();

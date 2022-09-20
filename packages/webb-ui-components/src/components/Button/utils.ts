@@ -57,7 +57,7 @@ const classNames: ButtonClassNames = {
  * @returns tailwind className to style to button based on variant
  */
 export function getButtonClassNameByVariant(variant: ButtonVariant, size: ButtonSize) {
-  const commonClsx = 'box-border disabled:pointer-events-none text-center';
+  const commonClsx = 'box-border flex items-center disabled:pointer-events-none text-center';
   const { active, common, disabled, hover } = classNames[variant]['base'];
   return twMerge(commonClsx, common, hover, active, disabled, classNames[variant][size]);
 }

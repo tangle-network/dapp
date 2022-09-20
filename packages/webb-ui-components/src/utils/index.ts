@@ -4,3 +4,4 @@ export * from './formatDateToUtc';
 export * from './getPaginationItems';
 export * from './range';
 export * from './shortenHex';
+export * from './shorttenString';

@@ -18,7 +18,6 @@ import { getButtonClassNameByVariant } from './utils';
  * - `variant`: The button variant (default `primary`)
  * - `leftIcon`: If added, the button will show an icon before the button's label
  * - `rightIcon`:If added, the button will show an icon after the button's label
- * - `iconSpacing`: The space between the button icon and label, the spacing number will match the spacing in design sytem
  * - `spinner`: Replace the spinner component when `isLoading` is set to `true`
  * - `spinnerPlacement`: It determines the placement of the spinner when `isLoading` is `true`
  * - `size`: The button size
@@ -35,7 +34,6 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>((props, r
     as: asProps,
     children,
     className,
-    iconSpacing = 2,
     isDisabled,
     isLoading,
     leftIcon,
@@ -52,7 +50,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>((props, r
 
   const mergedClassName = twMerge(getButtonClassNameByVariant(varirant, size), className);
 
-  const contentProps = { children, iconSpacing, leftIcon, rightIcon };
+  const contentProps = { children, leftIcon, rightIcon };
 
   return (
     <div className={cx('inline-block', isDisabled ? 'cursor-not-allowed' : '')}>
@@ -63,11 +61,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>((props, r
         className={mergedClassName}
         ref={ref}
       >
-        {isLoading && spinnerPlacement === 'start' && (
-          <ButtonSpinner label={loadingText} spacing={iconSpacing}>
-            {spinner}
-          </ButtonSpinner>
-        )}
+        {isLoading && spinnerPlacement === 'start' && <ButtonSpinner label={loadingText}>{spinner}</ButtonSpinner>}
 
         {isLoading ? (
           loadingText || (
@@ -80,7 +74,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>((props, r
         )}
 
         {isLoading && spinnerPlacement === 'end' && (
-          <ButtonSpinner label={loadingText} spacing={iconSpacing} placement='end'>
+          <ButtonSpinner label={loadingText} placement='end'>
             {spinner}
           </ButtonSpinner>
         )}
@@ -92,13 +86,13 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>((props, r
 /***** Internal components */
 
 function ButtonContent(props: ButtonContentProps) {
-  const { children, iconSpacing = 2, leftIcon, rightIcon } = props;
+  const { children, leftIcon, rightIcon } = props;
 
   return (
     <>
-      {leftIcon && <span className={`mr-${iconSpacing}`}>{leftIcon}</span>}
-      {children}
-      {rightIcon && <span className={`mt-${iconSpacing}`}>{rightIcon}</span>}
+      {leftIcon && <span className={cx(`mr-2`, 'block !text-inherit')}>{leftIcon}</span>}
+      <span className='block !text-inherit'>{children}</span>
+      {rightIcon && <span className={cx(`ml-2`, 'block !text-inherit')}>{rightIcon}</span>}
     </>
   );
 }

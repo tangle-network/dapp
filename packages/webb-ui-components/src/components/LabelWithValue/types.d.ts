@@ -1,5 +1,6 @@
 import { WebbComponentBase } from '@webb-dapp/webb-ui-components/types';
 import { WebbTypographyVariant } from '@webb-dapp/webb-ui-components/typography/types';
+import { ReactElement } from 'react';
 
 /**
  * The `LabelWithValue` props
@@ -17,7 +18,7 @@ export interface LabelWithValueProps extends WebbComponentBase {
   /**
    * The value to display
    */
-  value: string | number;
+  value: string | number | ReactElement;
   /**
    * If `true`, it will displays only value
    */
@@ -31,5 +32,5 @@ export interface LabelWithValueProps extends WebbComponentBase {
    * The value will have the tooltip that contains the `valueTooltip` string to describe for the value.
    * Usually use for shorten hex string
    */
-  valueTooltip?: string;
+  valueTooltip?: string | ReactElement;
 }
