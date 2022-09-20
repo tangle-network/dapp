@@ -1,9 +1,11 @@
+# Proposals listing query
 query Proposals(
   # The number of proposals to return
   $perPage: Int!
   # The number of proposals to skip
   $offset: Int!
 ) {
+  # Listing proposals items
   proposalItems(first: $perPage, offset: $offset) {
     nodes {
       ...ProposalListView
@@ -36,9 +38,15 @@ query ProposalsCounter(
   }
 }
 
-
-
-query ProposalsOverview($startRange: BigFloatFilter!, $endRange: BigFloatFilter!, $sessionId: String!) {
+# Proposals over view query
+query ProposalsOverview(
+  # Starting block number value for the stats start
+  $startRange: BigFloatFilter!
+  # Ending block number value for the stats start
+  $endRange: BigFloatFilter!
+  # Session id for threshold and proposers stats
+  $sessionId: String!
+) {
   session(id: $sessionId) {
     id
     proposerThreshold
@@ -50,6 +58,7 @@ query ProposalsOverview($startRange: BigFloatFilter!, $endRange: BigFloatFilter!
       totalCount
     }
   }
+  # Opn Proposals fetching only the recent 10 elements
   openProposals: proposalItems(filter: { status: { equalTo: "Open" } }, orderBy: [BLOCK_NUMBER_DESC], first: 10) {
     nodes {
       ...ProposalListView
@@ -59,25 +68,25 @@ query ProposalsOverview($startRange: BigFloatFilter!, $endRange: BigFloatFilter!
     }
     totalCount
   }
-
+  # Open proposals count for a range for block numbers
   open: proposalTimelineStatuses(
     filter: { status: { equalTo: Open }, and: [{ blockNumber: $startRange }, { blockNumber: $endRange }] }
   ) {
     totalCount
   }
-
+  # Signed proposals count for a range for block numbers
   signed: proposalTimelineStatuses(
     filter: { status: { equalTo: Signed }, and: [{ blockNumber: $startRange }, { blockNumber: $endRange }] }
   ) {
     totalCount
   }
-
+  # Rejected proposals count for a range for block numbers
   reject: proposalTimelineStatuses(
     filter: { status: { equalTo: Rejected }, and: [{ blockNumber: $startRange }, { blockNumber: $endRange }] }
   ) {
     totalCount
   }
-
+  # Accepted proposals count for a range for block numbers
   accepted: proposalTimelineStatuses(
     filter: { status: { equalTo: Accepted }, and: [{ blockNumber: $startRange }, { blockNumber: $endRange }] }
   ) {
@@ -85,7 +94,7 @@ query ProposalsOverview($startRange: BigFloatFilter!, $endRange: BigFloatFilter!
   }
 }
 
-
+# Query votes for a prooser
 query ProposalVotes(
   # The number of votes to return
   $perPage: Int!
@@ -93,17 +102,14 @@ query ProposalVotes(
   $offset: Int!
   # The proposal id
   $proposalId: String!
-
   $for: BooleanFilter
 ) {
-  proposalVotes(filter: {
-    proposalId: { equalTo: $proposalId }
-    for: $for
-  }
+  proposalVotes(
+    filter: { proposalId: { equalTo: $proposalId }, for: $for }
     orderBy: [BLOCK_NUMBER_DESC]
     first: $perPage
     offset: $offset
-  ){
+  ) {
     nodes {
       ...ProposalsVoteListView
     }
@@ -113,8 +119,9 @@ query ProposalVotes(
     }
   }
 }
-
+# Proposals details query
 query ProposalDetails(
+  # Proposal id
   $id: String!
   # Session for votes status
   $targetSessionId: String!
@@ -144,8 +151,8 @@ query ProposalDetails(
     votesFor: proposalVotesByProposalId(filter: { for: { equalTo: true } }) {
       totalCount
     }
-    totalVotes: proposalVotesByProposalId {
 
+    totalVotes: proposalVotesByProposalId {
       totalCount
     }
 
