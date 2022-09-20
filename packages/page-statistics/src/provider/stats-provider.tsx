@@ -142,11 +142,6 @@ export const StatsProvider: React.FC<Omit<StatsProvidervalue, 'isReady' | 'metaD
   const query = useLastBlockQuery();
 
   useEffect(() => {
-    query.startPolling(staticConfig.blockTime * 1000);
-    return () => query.stopPolling();
-  }, [query, staticConfig]);
-
-  useEffect(() => {
     const subscription = query.observable
       .map((res): SubQlTime | null => {
         if (res.data.blocks) {
@@ -188,6 +183,15 @@ export const StatsProvider: React.FC<Omit<StatsProvidervalue, 'isReady' | 'metaD
       });
     return () => unSub.unsubscribe();
   }, [metaDataQuery, isReady]);
+
+  useEffect(() => {
+    query.startPolling(staticConfig.blockTime * 1000);
+    metaDataQuery.startPolling(staticConfig.blockTime * 1000);
+    return () => {
+      query.stopPolling();
+      metaDataQuery.stopPolling();
+    };
+  }, [query, metaDataQuery, staticConfig]);
 
   return <statsContext.Provider value={value}>{props.children}</statsContext.Provider>;
 };
