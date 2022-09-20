@@ -1,10 +1,12 @@
 import { RouterConfigData } from '@webb-dapp/react-environment';
+import { Drawer, DrawerContent } from '@webb-dapp/webb-ui-components/components';
 import React, { FC, lazy, Suspense } from 'react';
 
-import { Layout } from '../containers';
+import { KeyDetail, Layout } from '../containers';
 
 const PageAuthorities = lazy(() => import('@webb-dapp/page-statistics/pages/Authorities'));
 const PageKeys = lazy(() => import('@webb-dapp/page-statistics/pages/Keys'));
+const PageKeyDetailDrawer = lazy(() => import('@webb-dapp/page-statistics/pages/KeyDetailDrawer'));
 const PageProposals = lazy(() => import('@webb-dapp/page-statistics/pages/Proposals'));
 
 const CSuspense: FC = ({ children }) => {
@@ -28,6 +30,16 @@ export const routes: RouterConfigData[] = [
             <PageKeys />
           </CSuspense>
         ),
+        children: [
+          {
+            path: 'drawer/:keyId',
+            element: (
+              <CSuspense>
+                <PageKeyDetailDrawer />
+              </CSuspense>
+            ),
+          },
+        ],
         path: 'keys/*',
       },
       {

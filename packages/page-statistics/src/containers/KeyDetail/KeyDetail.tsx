@@ -29,9 +29,10 @@ import { ArrowLeft, ArrowRight, Close, Expand, Spinner } from '@webb-dapp/webb-u
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
 import { shortenString } from '@webb-dapp/webb-ui-components/utils';
 import getUnicodeFlagIcon from 'country-flag-icons/unicode';
-import { forwardRef, useMemo } from 'react';
+import { forwardRef, useCallback, useMemo } from 'react';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
-import { AuthorityRowType, KeyDetailProps } from './types';
+import { AuthorityRowType, KeyDetailLocationState, KeyDetailProps } from './types';
 
 const columnHelper = createColumnHelper<AuthorityRowType>();
 
@@ -81,7 +82,11 @@ const columns: ColumnDef<AuthorityRowType, any>[] = [
   }),
 ];
 
-export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage, keyId }, ref) => {
+export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage }, ref) => {
+  const { keyId = '' } = useParams<{ keyId: string }>();
+  const state: KeyDetailLocationState = useLocation().state;
+  const navigate = useNavigate();
+
   const { error, isFailed, isLoading, val: keyDetail } = useKey(keyId);
 
   const authoritiesTblData = useMemo<AuthorityRowType[]>(() => {
@@ -97,6 +102,18 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage, k
     }),
     []
   );
+
+  const onNextKey = useCallback(() => {
+    if (state && state.nextKeyId) {
+      navigate(`/keys/drawer/${state.nextKeyId}`);
+    }
+  }, [navigate, state]);
+
+  const onPreviousKey = useCallback(() => {
+    if (state && state.previousKeyId) {
+      navigate(`/keys/drawer/${state.previousKeyId}`);
+    }
+  }, [navigate, state]);
 
   const table = useReactTable<AuthorityRowType>({
     data: authoritiesTblData,
@@ -147,6 +164,8 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage, k
                   leftIcon={<ArrowLeft className='!fill-current' />}
                   varirant='utility'
                   className='uppercase'
+                  isDisabled={!state || !state.previousKeyId}
+                  onClick={onPreviousKey}
                 >
                   Prev Key
                 </Button>
@@ -155,6 +174,8 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage, k
                   rightIcon={<ArrowRight className='!fill-current' />}
                   varirant='utility'
                   className='uppercase'
+                  isDisabled={!state || !state.nextKeyId}
+                  onClick={onNextKey}
                 >
                   Next Key
                 </Button>

@@ -1,6 +1,7 @@
 import { Spinner } from '@webb-dapp/webb-ui-components/icons';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
 import { useMemo } from 'react';
+import { Outlet } from 'react-router-dom';
 
 import { KeygenTable, KeyStatusCardContainer } from '../containers';
 import { useKeys } from '../provider/hooks';
@@ -50,6 +51,8 @@ const Keys = () => {
       <div className='mt-4'>
         <KeygenTable />
       </div>
+
+      <Outlet />
     </div>
   );
 };

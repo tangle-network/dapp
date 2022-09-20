@@ -80,6 +80,14 @@ export interface KeygenType {
    * The key id (uncompressed key) to get detail info
    */
   keyId: string;
+  /**
+   * The previous key id for nagivation
+   */
+  previousKeyId?: string;
+  /**
+   * The next key id for navigation
+   */
+  nextKeyId?: string;
 }
 
 /*****************

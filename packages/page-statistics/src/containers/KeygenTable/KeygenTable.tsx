@@ -24,7 +24,6 @@ import {
   CollapsibleContent,
   Drawer,
   DrawerContent,
-  DrawerTrigger,
   Filter,
   KeyValueWithButton,
   Slider,
@@ -34,6 +33,7 @@ import {
 import { fuzzyFilter } from '@webb-dapp/webb-ui-components/components/Filter/utils';
 import { KeygenType } from '@webb-dapp/webb-ui-components/types';
 import { FC, useEffect, useMemo, useState } from 'react';
+import { Link, Route, Routes } from 'react-router-dom';
 
 import { KeyDetail } from '../KeyDetail';
 
@@ -105,16 +105,14 @@ const columns: ColumnDef<KeygenType, any>[] = [
   columnHelper.accessor('keyId', {
     header: '',
     cell: (props) => (
-      <Drawer>
-        <DrawerTrigger>
-          <Button className='uppercase' varirant='link' as='span' size='sm'>
-            Details
-          </Button>
-        </DrawerTrigger>
-        <DrawerContent>
-          <KeyDetail keyId={props.getValue<string>()} />
-        </DrawerContent>
-      </Drawer>
+      <Button className='uppercase' varirant='link' as='span' size='sm'>
+        <Link
+          to={`drawer/${props.getValue()}`}
+          state={{ nextKeyId: props.row.original.nextKeyId, previousKeyId: props.row.original.previousKeyId }}
+        >
+          Details
+        </Link>
+      </Button>
     ),
     enableColumnFilter: false,
   }),
@@ -144,6 +142,7 @@ export const KeygenTable: FC = () => {
     () => ({
       offset: pagination.pageIndex * pageSize,
       perPage: pagination.pageSize,
+      filter: null,
     }),
     [pageSize, pagination.pageIndex, pagination.pageSize]
   );
@@ -164,6 +163,8 @@ export const KeygenTable: FC = () => {
           keyId: item.uncompressed,
           totalAuthorities: item.keyGenAuthorities.length,
           signatureThreshold: Number(item.signatureThreshold),
+          previousKeyId: item.previousKeyId,
+          nextKeyId: item.nextKeyId,
         })
       );
     }
@@ -243,7 +244,6 @@ export const KeygenTable: FC = () => {
               />
             </CollapsibleContent>
           </Collapsible>
-
           <Collapsible>
             <CollapsibleButton>Signature Threshold</CollapsibleButton>
             <CollapsibleContent>
