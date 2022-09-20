@@ -13,6 +13,7 @@ import {
   Table as RTTable,
   useReactTable,
 } from '@tanstack/react-table';
+import { PageInfoQuery, useKeys } from '@webb-dapp/page-statistics/provider/hooks';
 import {
   Avatar,
   AvatarGroup,
@@ -30,13 +31,9 @@ import {
   Table,
   TitleWithInfo,
 } from '@webb-dapp/webb-ui-components/components';
-import { getAvatarSizeInPx } from '@webb-dapp/webb-ui-components/components/Avatar/utils';
 import { fuzzyFilter } from '@webb-dapp/webb-ui-components/components/Filter/utils';
-import { fetchKeygenData } from '@webb-dapp/webb-ui-components/hooks';
 import { KeygenType } from '@webb-dapp/webb-ui-components/types';
-import { useEffect, useMemo, useState } from 'react';
-
-import Identicon from '@polkadot/react-identicon';
+import { FC, useEffect, useMemo, useState } from 'react';
 
 import { KeyDetail } from '../KeyDetail';
 
@@ -123,7 +120,7 @@ const columns: ColumnDef<KeygenType, any>[] = [
   }),
 ];
 
-export const KeygenTable = () => {
+export const KeygenTable: FC = () => {
   // Filters
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState('');
@@ -133,6 +130,7 @@ export const KeygenTable = () => {
     pageIndex: 0,
     pageSize: 10,
   });
+  const [totalItems, setTotalItems] = useState(0);
 
   const pagination = useMemo(
     () => ({
@@ -142,22 +140,46 @@ export const KeygenTable = () => {
     [pageIndex, pageSize]
   );
 
-  const [dataQuery, setDataQuery] = useState<undefined | Awaited<ReturnType<typeof fetchKeygenData>>>();
+  const pageQuery: PageInfoQuery = useMemo(
+    () => ({
+      offset: pagination.pageIndex * pageSize,
+      perPage: pagination.pageSize,
+    }),
+    [pageSize, pagination.pageIndex, pagination.pageSize]
+  );
+
+  const pageCount = useMemo(() => Math.floor(totalItems / pageSize), [pageSize, totalItems]);
+
+  const keysStats = useKeys(pageQuery);
+
+  const data = useMemo(() => {
+    if (keysStats.val) {
+      return keysStats.val.items.map(
+        (item): KeygenType => ({
+          height: Number(item.height),
+          session: Number(item.session),
+          key: item.uncompressed,
+          authorities: new Set(item.keyGenAuthorities),
+          keygenThreshold: Number(item.keyGenThreshold),
+          detailUrl: '#',
+          totalAuthorities: item.keyGenAuthorities.length,
+          signatureThreshold: Number(item.signatureThreshold),
+        })
+      );
+    }
+    return [] as KeygenType[];
+  }, [keysStats]);
 
   useEffect(() => {
-    const updateData = async () => {
-      const dataQuery = await fetchKeygenData({ pageIndex, pageSize });
-
-      setDataQuery(dataQuery);
-    };
-
-    updateData();
-  }, [pageIndex, pageSize]);
+    if (keysStats.val) {
+      setTotalItems(keysStats.val.pageInfo.count);
+    }
+  }, [keysStats]);
 
   const table = useReactTable<KeygenType>({
-    data: dataQuery?.rows ?? ([] as KeygenType[]),
+    data,
     columns,
-    pageCount: dataQuery?.pageCount ?? -1,
+    pageCount,
     getCoreRowModel: getCoreRowModel(),
     state: {
       pagination,
@@ -238,7 +260,7 @@ export const KeygenTable = () => {
         </Filter>
       }
     >
-      <Table tableProps={table as RTTable<unknown>} isPaginated />
+      <Table tableProps={table as RTTable<unknown>} totalRecords={totalItems} isPaginated />
     </CardTable>
   );
 };

@@ -9,17 +9,19 @@ const Keys = () => {
   const pagination = useMemo(
     () => ({
       offset: 0,
-      perPage: 30,
+      perPage: 10,
     }),
     []
   );
 
   const { error, isFailed, isLoading, val: data } = useKeys(pagination);
 
-  const { currentKey, nextKey } = useMemo(() => {
+  const { currentKey, nextKey, pageInfo, tableData } = useMemo(() => {
     return {
       currentKey: data ? data.items[0] : null,
       nextKey: data ? data.items[1] : null,
+      tableData: data ? data.items : null,
+      pageInfo: data ? data.pageInfo : null,
     };
   }, [data]);
 

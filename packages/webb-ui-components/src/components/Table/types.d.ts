@@ -17,6 +17,12 @@ export interface TableProps<T extends RowData> extends WebbComponentBase {
    * If `true`, the table footer will be displayed
    */
   isDisplayFooter?: boolean;
+  /**
+   * The total number of records in the table.
+   * This usually will be the number return from backend
+   * @default 0
+   */
+  totalRecords?: number;
 }
 
 /**
