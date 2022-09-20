@@ -9,6 +9,7 @@ const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const webpack = require('webpack');
+const polkadotBabelWebpackConfig = require('@polkadot/dev/config/babel-config-webpack.cjs');
 
 const findPackages = require('../../scripts/findPackages');
 
@@ -28,6 +29,7 @@ function mapChunks(name, regs, inc) {
 }
 
 function createWebpack(env, mode = 'production') {
+  const isDevelopment = mode === 'development';
   const alias = findPackages().reduce((alias, { dir, name }) => {
     alias[name] = path.resolve(env.context, `../${dir}/src`);
 
@@ -63,12 +65,46 @@ function createWebpack(env, mode = 'production') {
           type: 'asset/resource',
         },
         {
-          include: /node_modules/,
-          test: /\.css$/i,
-          loader: require.resolve('css-loader'),
-          options: {
-            url: true,
-          },
+          test: /\.s?[ac]ss$/i,
+          use: [
+            isDevelopment
+              ? 'style-loader'
+              : {
+                  // save the css to external file
+                  loader: MiniCssExtractPlugin.loader,
+                  options: {
+                    esModule: false,
+                  },
+                },
+            {
+              // becombine other css files into one
+              // https://www.npmjs.com/package/css-loader
+              loader: 'css-loader',
+              options: {
+                esModule: false,
+                importLoaders: 2, // 2 other loaders used first, postcss-loader and sass-loader
+                sourceMap: isDevelopment,
+              },
+            },
+            {
+              // process tailwind stuff
+              // https://webpack.js.org/loaders/postcss-loader/
+              loader: 'postcss-loader',
+              options: {
+                sourceMap: isDevelopment,
+                postcssOptions: {
+                  plugins: [require('tailwindcss'), require('autoprefixer')],
+                },
+              },
+            },
+            {
+              // load sass files into css files
+              loader: 'sass-loader',
+              options: {
+                sourceMap: isDevelopment,
+              },
+            },
+          ],
         },
         {
           exclude: /(node_modules)/,
@@ -77,7 +113,13 @@ function createWebpack(env, mode = 'production') {
             require.resolve('thread-loader'),
             {
               loader: require.resolve('babel-loader'),
-              options: require('@polkadot/dev/config/babel-config-webpack.cjs'),
+              options: {
+                ...polkadotBabelWebpackConfig,
+                plugins: [
+                  ...(polkadotBabelWebpackConfig.plugins ?? []),
+                  isDevelopment && require.resolve('react-refresh/babel'),
+                ].filter(Boolean),
+              },
             },
           ],
         },
@@ -95,7 +137,7 @@ function createWebpack(env, mode = 'production') {
         },
         {
           exclude: [/semantic-ui-css/],
-          test: [/\.eot$/, /\.ttf$/, /\.svg$/, /\.woff$/, /\.woff2$/],
+          test: [/\.eot$/, /\.ttf$/, /\.woff$/, /\.woff2$/],
           type: 'asset/resource',
           generator: {
             filename: 'static/[name].[contenthash:8].[ext]',
@@ -103,12 +145,17 @@ function createWebpack(env, mode = 'production') {
         },
         {
           include: [/semantic-ui-css/],
-          test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/, /\.eot$/, /\.ttf$/, /\.svg$/, /\.woff$/, /\.woff2$/],
+          test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/, /\.eot$/, /\.ttf$/, /\.woff$/, /\.woff2$/],
           use: [
             {
               loader: require.resolve('null-loader'),
             },
           ],
+        },
+        {
+          test: /\.svg$/i,
+          issuer: /\.[jt]sx?$/,
+          use: ['@svgr/webpack', 'file-loader'],
         },
       ],
     },

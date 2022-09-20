@@ -5,7 +5,9 @@ import { MoonbeamLogo } from '@webb-dapp/apps/configs/logos/chains/MoonbeamLogo'
 import OptimismLogo from '@webb-dapp/apps/configs/logos/chains/OptimismLogo';
 import PolygonLogo from '@webb-dapp/apps/configs/logos/chains/PolygonLogo';
 import EtherLogo from '@webb-dapp/apps/configs/logos/Eth';
+import { TokenIcon } from '@webb-dapp/webb-ui-components/icons';
 import { calculateTypedChainId, ChainType } from '@webb-tools/sdk-core';
+import React from 'react';
 
 export const getSupportedCurrenciesOfChain = (typedChainId: number): CurrencyId[] => {
   return chainsConfig[typedChainId].currencies;
@@ -20,7 +22,7 @@ export const chainsConfig: AppConfig['chains'] = {
     url: 'https://rinkeby.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4',
     evmRpcUrls: ['https://rinkeby.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4'],
     blockExplorerStub: 'https://rinkeby.etherscan.io',
-    logo: EtherLogo,
+    logo: () => <TokenIcon name='eth' size='lg' />,
     tag: 'test',
     currencies: [CurrencyId.ETH, CurrencyId.WETH, CurrencyId.webbETH],
     nativeCurrencyId: CurrencyId.ETH,
@@ -33,7 +35,7 @@ export const chainsConfig: AppConfig['chains'] = {
     url: 'https://ropsten.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4',
     evmRpcUrls: ['https://ropsten.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4'],
     blockExplorerStub: 'https://ropsten.etherscan.io',
-    logo: EtherLogo,
+    logo: () => <TokenIcon name='eth' size='lg' />,
     tag: 'test',
     currencies: [CurrencyId.ETH, CurrencyId.WETH, CurrencyId.webbETH],
     nativeCurrencyId: CurrencyId.ETH,
@@ -46,7 +48,7 @@ export const chainsConfig: AppConfig['chains'] = {
     url: 'https://goerli.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4',
     evmRpcUrls: ['https://goerli.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4'],
     blockExplorerStub: 'https://goerli.etherscan.io',
-    logo: EtherLogo,
+    logo: () => <TokenIcon name='eth' size='lg' />,
     tag: 'test',
     currencies: [CurrencyId.ETH, CurrencyId.WETH, CurrencyId.webbETH],
     nativeCurrencyId: CurrencyId.ETH,
@@ -59,7 +61,7 @@ export const chainsConfig: AppConfig['chains'] = {
     url: 'https://kovan.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4',
     evmRpcUrls: ['https://kovan.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4'],
     blockExplorerStub: 'https://kovan.etherscan.io',
-    logo: EtherLogo,
+    logo: () => <TokenIcon name='eth' size='lg' />,
     tag: 'test',
     currencies: [CurrencyId.ETH, CurrencyId.WETH, CurrencyId.webbETH],
     nativeCurrencyId: CurrencyId.ETH,

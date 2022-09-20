@@ -1,0 +1,18 @@
+{
+  "short_name": "webb statistic",
+  "name": "Webb Statistic",
+  "icons": [
+    {
+      "src": "favicon.png",
+      "sizes": "128x128",
+      "type": "image/png"
+    },
+    {
+      "src": "logo.png",
+      "type": "image/png",
+      "sizes": "521x512"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone"
+}

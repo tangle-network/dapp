@@ -10,7 +10,6 @@ export const GlobalStylesheet = createGlobalStyle`
         font-variant-numeric: tabular-nums;
         font-weight: 400;
         transition: all ease-in-out 0.2s;
-        font-size: 14px;
     }
     
     body {
@@ -25,18 +24,8 @@ export const GlobalStylesheet = createGlobalStyle`
         font-size: 14px;
     }
     
-    * {
-        font-family: Bitum, serif;
-        transition: color, background-color 0.5s ease-in-out;
-    }
     *:focus {
         outline: none;
-    }
-    button {
-        border: none;
-        box-shadow: none;
-        outline: none;
-        appearance: none;
     }
     
     p,
@@ -52,8 +41,6 @@ export const GlobalStylesheet = createGlobalStyle`
     input {
         min-width: 0;
         appearance: none;
-        border: none;
-        box-shadow: none;
     }
     
     p,

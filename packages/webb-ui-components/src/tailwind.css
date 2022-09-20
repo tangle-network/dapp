@@ -1,0 +1,15 @@
+@import 'tailwindcss/base';
+
+@import './css/radix-ui.css';
+@import './css/typography.css';
+
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+@layer base {
+  @import './css/layer-base.css';
+}
+
+@layer components {
+  @import './css/layer-components.css';
+}
