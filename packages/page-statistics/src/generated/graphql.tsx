@@ -1,5 +1,6 @@
-import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
+import { gql } from '@apollo/client';
+
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -9987,11 +9988,50 @@ export type SessionAuthFragment = {
   };
 };
 
+export type ProposalListViewFragment = {
+  __typename?: 'ProposalItem';
+  id: string;
+  data: string;
+  signature?: string | null;
+  type: ProposalType;
+  status: string;
+  proposalVotesByProposalId: {
+    __typename?: 'ProposalVotesConnection';
+    totalCount: number;
+    nodes: Array<{
+      __typename?: 'ProposalVote';
+      id: string;
+      voterId: string;
+      voter?: { __typename?: 'Proposer'; id: string } | null;
+    } | null>;
+  };
+  block?: { __typename?: 'Block'; timestamp?: any | null; number: any } | null;
+};
+
+export type ProposalsVoteListViewFragment = {
+  __typename?: 'ProposalVote';
+  id: string;
+  voterId: string;
+  for: boolean;
+  txHash: string;
+  block?: { __typename?: 'Block'; timestamp?: any | null; number: any } | null;
+};
+
 export type MetaDataQueryVariables = Exact<{ [key: string]: never }>;
 
 export type MetaDataQuery = {
   __typename?: 'Query';
   _metadata?: { __typename?: '_Metadata'; targetHeight?: number | null; lastProcessedHeight?: number | null } | null;
+};
+
+export type LastBlockQueryVariables = Exact<{ [key: string]: never }>;
+
+export type LastBlockQuery = {
+  __typename?: 'Query';
+  blocks?: {
+    __typename?: 'BlocksConnection';
+    nodes: Array<{ __typename?: 'Block'; timestamp?: any | null; number: any } | null>;
+  } | null;
 };
 
 export type ProposalCounterQueryVariables = Exact<{ [key: string]: never }>;
@@ -10070,26 +10110,6 @@ export type ProposalsCounterQuery = {
   } | null;
 };
 
-export type ProposalListViewFragment = {
-  __typename?: 'ProposalItem';
-  id: string;
-  data: string;
-  signature?: string | null;
-  type: ProposalType;
-  status: string;
-  proposalVotesByProposalId: {
-    __typename?: 'ProposalVotesConnection';
-    totalCount: number;
-    nodes: Array<{
-      __typename?: 'ProposalVote';
-      id: string;
-      voterId: string;
-      voter?: { __typename?: 'Proposer'; id: string } | null;
-    } | null>;
-  };
-  block?: { __typename?: 'Block'; timestamp?: any | null; number: any } | null;
-};
-
 export type ProposalsOverviewQueryVariables = Exact<{
   startRange: BigFloatFilter;
   endRange: BigFloatFilter;
@@ -10139,15 +10159,6 @@ export type ProposalsOverviewQuery = {
   signed?: { __typename?: 'ProposalTimelineStatusesConnection'; totalCount: number } | null;
   reject?: { __typename?: 'ProposalTimelineStatusesConnection'; totalCount: number } | null;
   accepted?: { __typename?: 'ProposalTimelineStatusesConnection'; totalCount: number } | null;
-};
-
-export type ProposalsVoteListViewFragment = {
-  __typename?: 'ProposalVote';
-  id: string;
-  voterId: string;
-  for: boolean;
-  txHash: string;
-  block?: { __typename?: 'Block'; timestamp?: any | null; number: any } | null;
 };
 
 export type ProposalVotesQueryVariables = Exact<{
@@ -10584,12 +10595,14 @@ export function useValidatorListingQuery(
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useQuery<ValidatorListingQuery, ValidatorListingQueryVariables>(ValidatorListingDocument, options);
 }
+
 export function useValidatorListingLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<ValidatorListingQuery, ValidatorListingQueryVariables>
 ) {
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useLazyQuery<ValidatorListingQuery, ValidatorListingQueryVariables>(ValidatorListingDocument, options);
 }
+
 export type ValidatorListingQueryHookResult = ReturnType<typeof useValidatorListingQuery>;
 export type ValidatorListingLazyQueryHookResult = ReturnType<typeof useValidatorListingLazyQuery>;
 export type ValidatorListingQueryResult = Apollo.QueryResult<ValidatorListingQuery, ValidatorListingQueryVariables>;
@@ -10653,6 +10666,7 @@ export function useValidatorSessionsQuery(
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useQuery<ValidatorSessionsQuery, ValidatorSessionsQueryVariables>(ValidatorSessionsDocument, options);
 }
+
 export function useValidatorSessionsLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<ValidatorSessionsQuery, ValidatorSessionsQueryVariables>
 ) {
@@ -10662,6 +10676,7 @@ export function useValidatorSessionsLazyQuery(
     options
   );
 }
+
 export type ValidatorSessionsQueryHookResult = ReturnType<typeof useValidatorSessionsQuery>;
 export type ValidatorSessionsLazyQueryHookResult = ReturnType<typeof useValidatorSessionsLazyQuery>;
 export type ValidatorSessionsQueryResult = Apollo.QueryResult<ValidatorSessionsQuery, ValidatorSessionsQueryVariables>;
@@ -10710,6 +10725,7 @@ export function useValidatorOfSessionQuery(
     options
   );
 }
+
 export function useValidatorOfSessionLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<ValidatorOfSessionQuery, ValidatorOfSessionQueryVariables>
 ) {
@@ -10719,6 +10735,7 @@ export function useValidatorOfSessionLazyQuery(
     options
   );
 }
+
 export type ValidatorOfSessionQueryHookResult = ReturnType<typeof useValidatorOfSessionQuery>;
 export type ValidatorOfSessionLazyQueryHookResult = ReturnType<typeof useValidatorOfSessionLazyQuery>;
 export type ValidatorOfSessionQueryResult = Apollo.QueryResult<
@@ -10753,13 +10770,56 @@ export function useMetaDataQuery(baseOptions?: Apollo.QueryHookOptions<MetaDataQ
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useQuery<MetaDataQuery, MetaDataQueryVariables>(MetaDataDocument, options);
 }
+
 export function useMetaDataLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MetaDataQuery, MetaDataQueryVariables>) {
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useLazyQuery<MetaDataQuery, MetaDataQueryVariables>(MetaDataDocument, options);
 }
+
 export type MetaDataQueryHookResult = ReturnType<typeof useMetaDataQuery>;
 export type MetaDataLazyQueryHookResult = ReturnType<typeof useMetaDataLazyQuery>;
 export type MetaDataQueryResult = Apollo.QueryResult<MetaDataQuery, MetaDataQueryVariables>;
+export const LastBlockDocument = gql`
+  query LastBlock {
+    blocks(first: 1, orderBy: [NUMBER_DESC]) {
+      nodes {
+        timestamp
+        number
+      }
+    }
+  }
+`;
+
+/**
+ * __useLastBlockQuery__
+ *
+ * To run a query within a React component, call `useLastBlockQuery` and pass it any options that fit your needs.
+ * When your component renders, `useLastBlockQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useLastBlockQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useLastBlockQuery(baseOptions?: Apollo.QueryHookOptions<LastBlockQuery, LastBlockQueryVariables>) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<LastBlockQuery, LastBlockQueryVariables>(LastBlockDocument, options);
+}
+
+export function useLastBlockLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<LastBlockQuery, LastBlockQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<LastBlockQuery, LastBlockQueryVariables>(LastBlockDocument, options);
+}
+
+export type LastBlockQueryHookResult = ReturnType<typeof useLastBlockQuery>;
+export type LastBlockLazyQueryHookResult = ReturnType<typeof useLastBlockLazyQuery>;
+export type LastBlockQueryResult = Apollo.QueryResult<LastBlockQuery, LastBlockQueryVariables>;
 export const ProposalCounterDocument = gql`
   query ProposalCounter {
     proposalCounters(first: 2, offset: 1, orderBy: [BLOCK_NUMBER_DESC]) {
@@ -10797,12 +10857,14 @@ export function useProposalCounterQuery(
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useQuery<ProposalCounterQuery, ProposalCounterQueryVariables>(ProposalCounterDocument, options);
 }
+
 export function useProposalCounterLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<ProposalCounterQuery, ProposalCounterQueryVariables>
 ) {
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useLazyQuery<ProposalCounterQuery, ProposalCounterQueryVariables>(ProposalCounterDocument, options);
 }
+
 export type ProposalCounterQueryHookResult = ReturnType<typeof useProposalCounterQuery>;
 export type ProposalCounterLazyQueryHookResult = ReturnType<typeof useProposalCounterLazyQuery>;
 export type ProposalCounterQueryResult = Apollo.QueryResult<ProposalCounterQuery, ProposalCounterQueryVariables>;
@@ -10843,12 +10905,14 @@ export function useProposalsQuery(baseOptions: Apollo.QueryHookOptions<Proposals
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useQuery<ProposalsQuery, ProposalsQueryVariables>(ProposalsDocument, options);
 }
+
 export function useProposalsLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<ProposalsQuery, ProposalsQueryVariables>
 ) {
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useLazyQuery<ProposalsQuery, ProposalsQueryVariables>(ProposalsDocument, options);
 }
+
 export type ProposalsQueryHookResult = ReturnType<typeof useProposalsQuery>;
 export type ProposalsLazyQueryHookResult = ReturnType<typeof useProposalsLazyQuery>;
 export type ProposalsQueryResult = Apollo.QueryResult<ProposalsQuery, ProposalsQueryVariables>;
@@ -10891,12 +10955,14 @@ export function useProposalsCounterQuery(
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useQuery<ProposalsCounterQuery, ProposalsCounterQueryVariables>(ProposalsCounterDocument, options);
 }
+
 export function useProposalsCounterLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<ProposalsCounterQuery, ProposalsCounterQueryVariables>
 ) {
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useLazyQuery<ProposalsCounterQuery, ProposalsCounterQueryVariables>(ProposalsCounterDocument, options);
 }
+
 export type ProposalsCounterQueryHookResult = ReturnType<typeof useProposalsCounterQuery>;
 export type ProposalsCounterLazyQueryHookResult = ReturnType<typeof useProposalsCounterLazyQuery>;
 export type ProposalsCounterQueryResult = Apollo.QueryResult<ProposalsCounterQuery, ProposalsCounterQueryVariables>;
@@ -10970,6 +11036,7 @@ export function useProposalsOverviewQuery(
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useQuery<ProposalsOverviewQuery, ProposalsOverviewQueryVariables>(ProposalsOverviewDocument, options);
 }
+
 export function useProposalsOverviewLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<ProposalsOverviewQuery, ProposalsOverviewQueryVariables>
 ) {
@@ -10979,6 +11046,7 @@ export function useProposalsOverviewLazyQuery(
     options
   );
 }
+
 export type ProposalsOverviewQueryHookResult = ReturnType<typeof useProposalsOverviewQuery>;
 export type ProposalsOverviewLazyQueryHookResult = ReturnType<typeof useProposalsOverviewLazyQuery>;
 export type ProposalsOverviewQueryResult = Apollo.QueryResult<ProposalsOverviewQuery, ProposalsOverviewQueryVariables>;
@@ -11028,12 +11096,14 @@ export function useProposalVotesQuery(
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useQuery<ProposalVotesQuery, ProposalVotesQueryVariables>(ProposalVotesDocument, options);
 }
+
 export function useProposalVotesLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<ProposalVotesQuery, ProposalVotesQueryVariables>
 ) {
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useLazyQuery<ProposalVotesQuery, ProposalVotesQueryVariables>(ProposalVotesDocument, options);
 }
+
 export type ProposalVotesQueryHookResult = ReturnType<typeof useProposalVotesQuery>;
 export type ProposalVotesLazyQueryHookResult = ReturnType<typeof useProposalVotesLazyQuery>;
 export type ProposalVotesQueryResult = Apollo.QueryResult<ProposalVotesQuery, ProposalVotesQueryVariables>;
@@ -11096,12 +11166,14 @@ export function useProposalDetailsQuery(
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useQuery<ProposalDetailsQuery, ProposalDetailsQueryVariables>(ProposalDetailsDocument, options);
 }
+
 export function useProposalDetailsLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<ProposalDetailsQuery, ProposalDetailsQueryVariables>
 ) {
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useLazyQuery<ProposalDetailsQuery, ProposalDetailsQueryVariables>(ProposalDetailsDocument, options);
 }
+
 export type ProposalDetailsQueryHookResult = ReturnType<typeof useProposalDetailsQuery>;
 export type ProposalDetailsLazyQueryHookResult = ReturnType<typeof useProposalDetailsLazyQuery>;
 export type ProposalDetailsQueryResult = Apollo.QueryResult<ProposalDetailsQuery, ProposalDetailsQueryVariables>;
@@ -11159,12 +11231,14 @@ export function usePublicKeysQuery(baseOptions?: Apollo.QueryHookOptions<PublicK
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useQuery<PublicKeysQuery, PublicKeysQueryVariables>(PublicKeysDocument, options);
 }
+
 export function usePublicKeysLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<PublicKeysQuery, PublicKeysQueryVariables>
 ) {
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useLazyQuery<PublicKeysQuery, PublicKeysQueryVariables>(PublicKeysDocument, options);
 }
+
 export type PublicKeysQueryHookResult = ReturnType<typeof usePublicKeysQuery>;
 export type PublicKeysLazyQueryHookResult = ReturnType<typeof usePublicKeysLazyQuery>;
 export type PublicKeysQueryResult = Apollo.QueryResult<PublicKeysQuery, PublicKeysQueryVariables>;
@@ -11212,12 +11286,14 @@ export function usePublicKeyQuery(baseOptions: Apollo.QueryHookOptions<PublicKey
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useQuery<PublicKeyQuery, PublicKeyQueryVariables>(PublicKeyDocument, options);
 }
+
 export function usePublicKeyLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<PublicKeyQuery, PublicKeyQueryVariables>
 ) {
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useLazyQuery<PublicKeyQuery, PublicKeyQueryVariables>(PublicKeyDocument, options);
 }
+
 export type PublicKeyQueryHookResult = ReturnType<typeof usePublicKeyQuery>;
 export type PublicKeyLazyQueryHookResult = ReturnType<typeof usePublicKeyLazyQuery>;
 export type PublicKeyQueryResult = Apollo.QueryResult<PublicKeyQuery, PublicKeyQueryVariables>;
@@ -11268,6 +11344,7 @@ export function useCurrentSessionAuthoritiesQuery(
     options
   );
 }
+
 export function useCurrentSessionAuthoritiesLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<CurrentSessionAuthoritiesQuery, CurrentSessionAuthoritiesQueryVariables>
 ) {
@@ -11277,6 +11354,7 @@ export function useCurrentSessionAuthoritiesLazyQuery(
     options
   );
 }
+
 export type CurrentSessionAuthoritiesQueryHookResult = ReturnType<typeof useCurrentSessionAuthoritiesQuery>;
 export type CurrentSessionAuthoritiesLazyQueryHookResult = ReturnType<typeof useCurrentSessionAuthoritiesLazyQuery>;
 export type CurrentSessionAuthoritiesQueryResult = Apollo.QueryResult<
@@ -11324,12 +11402,14 @@ export function useSessionKeysQuery(baseOptions: Apollo.QueryHookOptions<Session
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useQuery<SessionKeysQuery, SessionKeysQueryVariables>(SessionKeysDocument, options);
 }
+
 export function useSessionKeysLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<SessionKeysQuery, SessionKeysQueryVariables>
 ) {
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useLazyQuery<SessionKeysQuery, SessionKeysQueryVariables>(SessionKeysDocument, options);
 }
+
 export type SessionKeysQueryHookResult = ReturnType<typeof useSessionKeysQuery>;
 export type SessionKeysLazyQueryHookResult = ReturnType<typeof useSessionKeysLazyQuery>;
 export type SessionKeysQueryResult = Apollo.QueryResult<SessionKeysQuery, SessionKeysQueryVariables>;
@@ -11380,6 +11460,7 @@ export function useSessionThresholdHistoryQuery(
     options
   );
 }
+
 export function useSessionThresholdHistoryLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<SessionThresholdHistoryQuery, SessionThresholdHistoryQueryVariables>
 ) {
@@ -11389,6 +11470,7 @@ export function useSessionThresholdHistoryLazyQuery(
     options
   );
 }
+
 export type SessionThresholdHistoryQueryHookResult = ReturnType<typeof useSessionThresholdHistoryQuery>;
 export type SessionThresholdHistoryLazyQueryHookResult = ReturnType<typeof useSessionThresholdHistoryLazyQuery>;
 export type SessionThresholdHistoryQueryResult = Apollo.QueryResult<
@@ -11441,6 +11523,7 @@ export function useSessionThresholdsQuery(
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useQuery<SessionThresholdsQuery, SessionThresholdsQueryVariables>(SessionThresholdsDocument, options);
 }
+
 export function useSessionThresholdsLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<SessionThresholdsQuery, SessionThresholdsQueryVariables>
 ) {
@@ -11450,6 +11533,7 @@ export function useSessionThresholdsLazyQuery(
     options
   );
 }
+
 export type SessionThresholdsQueryHookResult = ReturnType<typeof useSessionThresholdsQuery>;
 export type SessionThresholdsLazyQueryHookResult = ReturnType<typeof useSessionThresholdsLazyQuery>;
 export type SessionThresholdsQueryResult = Apollo.QueryResult<SessionThresholdsQuery, SessionThresholdsQueryVariables>;
