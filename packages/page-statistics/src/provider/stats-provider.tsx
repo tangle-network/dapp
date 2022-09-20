@@ -1,5 +1,42 @@
-import { useLastBlockQuery } from '@webb-dapp/page-statistics/generated/graphql';
+import { useLastBlockQuery, useMetaDataQuery } from '@webb-dapp/page-statistics/generated/graphql';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+
+/**
+ * Chain metadata
+ * @param currentBlock - the current block number
+ * @param lastProcessBlock - The block number where the data syncing is done
+ * @param activeSession - the current active session
+ * @param lastSession - the last created session
+ *
+ * */
+export type Metadata = {
+  currentBlock: string;
+  lastProcessBlock: string;
+  lastSession: string;
+  activeSession: string;
+};
+
+/**
+ *
+ * Get the current session from metadata
+ * */
+export function session(height: string) {
+  const blockNumber = Number(height);
+  const sessionNumber = Math.floor(blockNumber / 10) * 10;
+
+  return String(sessionNumber - 10);
+}
+
+/**
+ *
+ * Get the next session from metadata
+ * */
+export function nextSession(height: string): string {
+  const blockNumber = Number(height);
+  const sessionNumber = Math.floor(blockNumber / 10) * 10;
+
+  return String(sessionNumber);
+}
 
 type StatsProvidervalue = {
   // Number of seconds for a block to be generated
@@ -10,6 +47,8 @@ type StatsProvidervalue = {
   time: SubQlTime;
   // update time
   updateTime(time: SubQlTime): void;
+  metaData: Metadata;
+  isReady: boolean;
 };
 
 /**
@@ -42,13 +81,22 @@ class SubQlTime {
   }
 }
 
-const statsContext: React.Context<StatsProvidervalue> = React.createContext({
+const statsContext: React.Context<StatsProvidervalue> = React.createContext<StatsProvidervalue>({
   blockTime: 6,
   sessionHeight: 10,
   time: new SubQlTime(new Date()),
   updateTime(_time: SubQlTime): void {},
+  metaData: {
+    activeSession: '0',
+    currentBlock: '0',
+    lastSession: '0',
+    lastProcessBlock: '0',
+  },
+  isReady: false,
 });
-
+export function useStatsContext() {
+  return useContext(statsContext);
+}
 export function useSubQLtime() {
   const ctx = useContext(statsContext);
   const updateTime = useCallback(
@@ -61,8 +109,17 @@ export function useSubQLtime() {
   return [ctx.time, updateTime];
 }
 
-export const StatsProvider: React.FC<Omit<StatsProvidervalue, 'updateTime' | 'time'>> = (props) => {
+export const StatsProvider: React.FC<Omit<StatsProvidervalue, 'isReady' | 'metaData' | 'updateTime' | 'time'>> = (
+  props
+) => {
   const [time, setTime] = useState<SubQlTime>(new SubQlTime(new Date()));
+
+  const [metaData, setMetaData] = useState<Metadata>({
+    activeSession: '0',
+    currentBlock: '',
+    lastProcessBlock: '',
+    lastSession: '',
+  });
   const [staticConfig] = useState<{
     blockTime: number;
     sessionHeight: number;
@@ -70,15 +127,18 @@ export const StatsProvider: React.FC<Omit<StatsProvidervalue, 'updateTime' | 'ti
     sessionHeight: props.sessionHeight,
     blockTime: props.blockTime,
   });
-  const value = useMemo(() => {
+  const [isReady, setIsReady] = useState(false);
+  const value = useMemo<StatsProvidervalue>(() => {
     return {
       time,
       ...staticConfig,
       updateTime: (time: SubQlTime) => {
         setTime(time);
       },
+      isReady,
+      metaData,
     };
-  }, [staticConfig, time]);
+  }, [staticConfig, metaData, isReady, time]);
   const query = useLastBlockQuery();
 
   useEffect(() => {
@@ -103,6 +163,31 @@ export const StatsProvider: React.FC<Omit<StatsProvidervalue, 'updateTime' | 'ti
       });
     return () => subscription.unsubscribe();
   }, [query]);
+  const metaDataQuery = useMetaDataQuery({
+    fetchPolicy: 'cache-and-network',
+  });
+  useEffect(() => {
+    const unSub = metaDataQuery.observable
+      .map((r): Metadata | null => {
+        if (r.data?._metadata) {
+          const data = r.data._metadata;
+          return {
+            currentBlock: String(data.lastProcessedHeight),
+            lastProcessBlock: String(data.targetHeight),
+            activeSession: session(String(data.targetHeight)),
+            lastSession: nextSession(String(data.targetHeight)),
+          };
+        }
+        return null;
+      })
+      .subscribe((val) => {
+        if (val) {
+          setIsReady(true);
+          setMetaData(val);
+        }
+      });
+    return () => unSub.unsubscribe();
+  }, [metaDataQuery, isReady]);
 
   return <statsContext.Provider value={value}>{props.children}</statsContext.Provider>;
 };
