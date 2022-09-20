@@ -34,6 +34,7 @@ import { fuzzyFilter } from '@webb-dapp/webb-ui-components/components/Filter/uti
 import { Authority } from '@webb-dapp/webb-ui-components/components/KeyStatusCard/types';
 import { fetchKeygenData } from '@webb-dapp/webb-ui-components/hooks';
 import { KeygenType } from '@webb-dapp/webb-ui-components/types';
+import { Typography } from '@webb-dapp/webb-ui-components/typography';
 import { useEffect, useMemo, useState } from 'react';
 
 import { KeyDetail } from '../KeyDetail';

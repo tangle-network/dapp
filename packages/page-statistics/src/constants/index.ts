@@ -3,7 +3,6 @@ import { CommonWealth, DiscordFill, GithubFill, TelegramFill, TwitterFill } from
 
 const commonExternalProps = {
   target: '_blank' as const,
-  rel: 'noopener noreferrer',
 };
 
 export const logoConfig: Link = {

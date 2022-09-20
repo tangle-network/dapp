@@ -33,3 +33,37 @@ fragment SessionAuth on Session {
     ...SessionAuthValidator
   }
 }
+
+
+fragment ProposalListView on ProposalItem {
+  id
+  data
+  signature
+  type
+  status
+  proposalVotesByProposalId(orderBy: [BLOCK_NUMBER_DESC], first: 3) {
+    nodes {
+      id
+      voterId
+      voter {
+        id
+      }
+    }
+    totalCount
+  }
+  block {
+    timestamp
+    number
+  }
+}
+
+fragment ProposalsVoteListView on ProposalVote {
+  id
+  voterId
+  for
+  txHash: voterId
+  block {
+    timestamp
+    number
+  }
+}
