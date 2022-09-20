@@ -16,12 +16,8 @@ const findPackages = require('../../scripts/findPackages');
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
-const includedPackages = ['@webb-dapp/webb-ui-components', '@webb-dapp/page-statistics'];
-
 const alias = findPackages().reduce((alias, { dir, name }) => {
-  if (includedPackages.includes(name)) {
-    alias[name] = path.resolve(__dirname, `../${dir}/src`);
-  }
+  alias[name] = path.resolve(__dirname, `../${dir}/src`);
 
   return alias;
 }, {});
@@ -48,6 +44,10 @@ function createWebpack(env, mode = 'production') {
     devtool: isDevelopment ? 'source-map' : false,
     context: __dirname,
 
+    experiments: {
+      asyncWebAssembly: true,
+    },
+
     watchOptions: {
       poll: 1000,
       aggregateTimeout: 1000,
@@ -70,8 +70,22 @@ function createWebpack(env, mode = 'production') {
         ...alias,
         'react/jsx-runtime': require.resolve('react/jsx-runtime'),
       },
+
       extensions: ['.tsx', '.ts', '.jsx', '.js', '.scss', '.css'],
       modules: ['node_modules'],
+
+      fallback: {
+        assert: require.resolve('assert/'),
+        crypto: require.resolve('crypto-browserify'),
+        http: require.resolve('stream-http'),
+        https: require.resolve('https-browserify'),
+        os: require.resolve('os-browserify/browser'),
+        path: require.resolve('path-browserify'),
+        stream: require.resolve('stream-browserify'),
+        constants: false,
+        fs: false,
+        url: false,
+      },
     },
 
     module: {
@@ -198,6 +212,11 @@ function createWebpack(env, mode = 'production') {
 
     plugins: [
       new webpack.ProvidePlugin({
+        Buffer: ['buffer', 'Buffer'],
+        process: 'process/browser.js',
+      }),
+
+      new webpack.ProvidePlugin({
         React: 'react',
       }),
 
@@ -277,6 +296,16 @@ function createWebpack(env, mode = 'production') {
       compress: true,
       allowedHosts: 'all',
       hot: true,
+      ...(isDevelopment
+        ? {
+            client: {
+              overlay: {
+                errors: true,
+                warnings: false, // Hide warnings as they present on the terminal
+              },
+            },
+          }
+        : {}),
     },
 
     performance: {

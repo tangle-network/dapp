@@ -7,7 +7,14 @@ import { differenceInMilliseconds, isValid } from 'date-fns';
  * @returns `null` when one of the provided string is invalid or the start date is in the future,
  * otherwise returns the percentage of the current date have passed since the start date
  */
-export const calculateDateProgress = (startDateStr: string | Date, endDateStr: string | Date): number | null => {
+export const calculateDateProgress = (
+  startDateStr: string | Date | null,
+  endDateStr: string | Date | null
+): number | null => {
+  if (startDateStr === null || endDateStr === null) {
+    return null;
+  }
+
   // If one of two date is invalid -> Return `null`
   if (!isValid(startDateStr) || !isValid(endDateStr)) {
     return null;

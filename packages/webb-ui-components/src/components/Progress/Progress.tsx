@@ -1,5 +1,6 @@
 import * as ProgressPrimitive from '@radix-ui/react-progress';
-import React from 'react';
+import cx from 'classnames';
+import React, { useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { ProgressClassName, ProgressProps } from './types';
@@ -12,7 +13,7 @@ const classNames: ProgressClassName = {
     label: 'font-semibold body3 text-green dark:text-blue-40',
   },
   md: {
-    root: 'h-2 overflow-hidden rounded-full bg-mono-80 dark:bg-mono-140',
+    root: 'h-2 overflow-hidden rounded-full bg-mono-40 dark:bg-mono-140',
     indicator:
       'flex items-center justify-center h-full duration-300 ease-in-out rounded-l-full bg-blue dark:bg-blue-50',
     label: '',
@@ -36,17 +37,42 @@ const classNames: ProgressClassName = {
  *    <Progress size='lg' value={60} />
  * ```
  */
-export const Progress: React.FC<ProgressProps> = ({ className, max, prefixLabel, size = 'md', suffixLabel, value }) => {
+export const Progress: React.FC<ProgressProps> = ({
+  className,
+  max,
+  prefixLabel = '',
+  size = 'md',
+  suffixLabel = '',
+  value: valueProp,
+}) => {
+  const displayValue = useMemo(() => {
+    // Not display the value if the size is "md"
+    if (size === 'md') {
+      return '';
+    }
+
+    // If the valueProp has value or the progress size not equal to 'lg' => Displays the `prefixLabel` if it has value
+    const prefix = typeof valueProp === 'number' || size !== 'lg' ? prefixLabel : '';
+
+    // Display the value if it is not null, otherwise if the size is equal to "sm" display '0', otherwise displays "Unavailable"
+    const value = typeof valueProp === 'number' ? valueProp : size === 'sm' ? '0' : 'Unavailable';
+
+    // If the valueProp has value or the progress size not equal to 'lg' => Display the `suffixLabel` if it has value
+    const suffix = typeof valueProp === 'number' || size !== 'lg' ? suffixLabel : '';
+
+    return `${prefix}${value}${suffix}`;
+  }, [prefixLabel, size, suffixLabel, valueProp]);
+
   return (
-    <ProgressPrimitive.Root value={value} className={twMerge(classNames[size]['root'], className)} max={max}>
-      <ProgressPrimitive.Indicator style={{ width: `${value}%` }} className={classNames[size]['indicator']}>
-        {size !== 'md' && (
-          <span className={classNames[size]['label']}>
-            {prefixLabel}
-            {value}
-            {suffixLabel}
-          </span>
+    <ProgressPrimitive.Root value={valueProp} className={twMerge(classNames[size]['root'], className)} max={max}>
+      <ProgressPrimitive.Indicator
+        style={{ width: `${valueProp}%` }}
+        className={cx(
+          classNames[size]['indicator'],
+          ' radix-state-indeterminate:bg-transparent dark:radix-state-indeterminate:bg-transparent'
         )}
+      >
+        {displayValue}
       </ProgressPrimitive.Indicator>
     </ProgressPrimitive.Root>
   );

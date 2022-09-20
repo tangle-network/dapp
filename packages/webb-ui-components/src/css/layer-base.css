@@ -1,6 +1,11 @@
 /** Layer base */
-body {
-  @apply bg-mono-20 dark:bg-mono-200 min-h-screen min-w-full;
+body,
+html {
+  @apply bg-mono-20 dark:bg-mono-200 min-h-full min-w-full #{!important};
+}
+
+html[class*='dark'] {
+  @apply bg-mono-200 #{!important};
 }
 
 h1,
