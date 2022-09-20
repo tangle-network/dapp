@@ -20,14 +20,19 @@ export const WebbUIProvider: React.FC<WebbUIProviderProps> = ({ children, hasErr
     [isDarkMode, toggleMode]
   );
 
+  const WebbUIEErrorBoundaryElement = useMemo(() => {
+    return React.createElement(
+      WebbUIErrorBoudary,
+      {
+        logger: appLogger,
+      },
+      children
+    );
+  }, [children]);
+
   return (
     <WebbUIContext.Provider value={{ theme }}>
-      {hasErrorBoudary ? (
-        // @ts-ignore
-        <WebbUIErrorBoudary logger={appLogger}>{children}</WebbUIErrorBoudary>
-      ) : (
-        children
-      )}
+      {hasErrorBoudary ? WebbUIEErrorBoundaryElement : children}
     </WebbUIContext.Provider>
   );
 };

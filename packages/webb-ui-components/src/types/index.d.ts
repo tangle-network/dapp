@@ -1,6 +1,8 @@
 import { RankingInfo } from '@tanstack/match-sorter-utils';
 import { FilterFn } from '@tanstack/react-table';
 
+import { AuthoritiesType } from '../components/KeyStatusCard/types';
+
 /******************
  * DECLARE GLOBAL *
  ******************/

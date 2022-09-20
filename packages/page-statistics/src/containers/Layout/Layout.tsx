@@ -6,7 +6,7 @@ export const Layout: FC = ({ children }) => {
     <div className='min-w-full min-h-full'>
       <Header />
 
-      <div className='max-w-[1160px] mx-auto'>{children}</div>
+      <main className='max-w-[1160px] mx-auto'>{children}</main>
 
       <Footer />
     </div>

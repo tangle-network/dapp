@@ -19,6 +19,7 @@ export const AuthoritiesData = () => {
   const data = useKeys({
     offset: 0,
     perPage: 30,
+    filter: null,
   });
 
   return (

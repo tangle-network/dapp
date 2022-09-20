@@ -65,7 +65,9 @@ query SessionThresholds($sessionId: String!) {
     id
     signatureThreshold
     keyGenThreshold
-    proposersCount
+    proposersCount: sessionProposers{
+      totalCount
+    }
     ...SessionAuth
 
     publicKey {
