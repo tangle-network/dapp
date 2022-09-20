@@ -33,9 +33,8 @@ export interface ExternalLink extends ExternalType {
   target: '_blank' | '_self';
   /**
    * The rel attribute specifies the relationship between the current document and the linked document.
-   * @default "noopener noreferrer"
    */
-  rel: string;
+  rel?: string;
 }
 
 export interface FooterNavsType extends Record<string, Array<Link | ExternalLink>> {}
