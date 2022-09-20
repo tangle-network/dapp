@@ -12,21 +12,48 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { Threshold as QueryThreshold } from './types';
 
+/**
+ * Threshold values
+ * @param proposal - The proposer threshold value a session
+ * @param proposers -The number of proposers of a session
+ *
+ * */
 type Thresholds = {
   proposal: number;
   proposers: number;
 };
-
+/**
+ * Proposal type Status counter map for proposal statuses
+ * @params accepted - number of accepted proposals
+ * @params rejected - number of rejected proposals
+ * @params open - number of open proposals
+ * @params signed - number of signed proposals
+ * */
 type ProposalTypeStats = {
   accepted: number;
   rejected: number;
   open: number;
   signed: number;
 };
+/** List over view
+ *
+ * A type for infinite number of list will show a defined number of items and will have the count for the full list
+ * @param T - The underlying list item type
+ * @param count - Total number of the list of `T`
+ * */
 type ListOverView<T = string> = {
   firstElements: T[];
   count: number;
 };
+/**
+ * Proposal list item
+ * @params id - proposal identifier
+ * @params status - proposal status
+ * @params type - proposal type
+ * @params txHash -  Proposal submission transaction hash
+ * @params proposers - proposers list view
+ * @params chain - Proposal chain
+ * */
 export type ProposalListItem = {
   id: string;
   status: ProposalStatus;
@@ -47,6 +74,31 @@ type ProposalTimeLine = {
   blockNumber: number;
   hash: string;
 };
+/**
+ * Proposal data
+ * @params data - Proposal encoded proposal data
+ * @params type - Proposal type
+ * */
+type ProposalData = {
+  type: ProposalType;
+  data: string;
+};
+/**
+ * Proposal detail
+ *
+ * @params id - Proposal identifier
+ * @params height - Proposal submission block number
+ * @params tsHash - Proposal submission transaction hash
+ * @params chain - Proposal chain
+ * @params forPercentage - Percentage of votes for the proposal
+ * @params againstPercentage - Percentage of votes against the proposal
+ * @params abstainPercentage - Number of proposers that didn't submit a vote yet
+ * @params forCount - Number of proposers that voted for the proposer
+ * @params againstCount - Number of proposers that voted against the proposal
+ * @params abstainCount - Number of proposals without any votes for the proposal
+ * @params timeline - Progress of the proposal status
+ * @param data - proposal data
+ * */
 type ProposalDetails = {
   id: string;
   height: string;
@@ -59,10 +111,7 @@ type ProposalDetails = {
   againstCount: number;
   abstainCount: number;
   timeline: ProposalTimeLine[];
-  data: {
-    type: ProposalType;
-    data: string;
-  };
+  data: ProposalData;
 };
 
 export function useProposalsOverview(): Loadable<ProposalsOverview> {
