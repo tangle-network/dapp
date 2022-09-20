@@ -316,7 +316,7 @@ export function useVotes(
         error: e.message,
       });
     });
-  }, [call, proposalId]);
+  }, [perPage, offset, isFor, call, proposalId]);
 
   useEffect(() => {
     const subscription = query.observable
