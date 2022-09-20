@@ -12,23 +12,49 @@ import { PublicKey } from '@webb-dapp/page-statistics/provider/hooks/useKeys';
 import { useEffect, useMemo, useState } from 'react';
 
 import { Threshold as QueryThreshold } from './types';
-
+/**
+ * Threshold values
+ * @param keyGen - KeyGen threshold
+ * @param signature - Signature threshold
+ * @param proposer - Proposer threshold
+ * @param publicKey - Public key for a session
+ *
+ * */
 type Thresholds = {
   keyGen: string;
   signature: string;
   proposer: string;
   publicKey: PublicKey;
 };
+
 type UpcomingThresholdStats = 'Pending' | 'Next' | 'Current';
+/**
+ * Upcoming threshold stats
+ * @param stats - Indicate the status of upcoming threshold
+ * @param session - Stats session id
+ * @param keyGen - KeyGen threshold
+ * @param signature - Signature threshold
+ * @param proposer - Proposer threshold
+ * @param authoritySet - list of the authorities
+ *
+ * */
 type UpcomingThreshold = {
   stats: 'Pending' | 'Next' | 'Current';
   session: string;
   keyGen: string;
   signature: string;
   proposer: string;
+  // TODO use the type `DiscreteList`
   authoritySet: string[];
 };
+
 type UpcomingThresholds = Record<Lowercase<UpcomingThresholdStats>, UpcomingThreshold>;
+/**
+ * Authority list item
+ * @param id - Authority id
+ * @param location - Authority location
+ * @param uptime - Validator uptime
+ * */
 type AuthorityListItem = {
   id: string;
   location: string;
@@ -36,11 +62,26 @@ type AuthorityListItem = {
   reputation: string;
 };
 
+/**
+ *  Proposer threshold and wither an authority is in the set
+ *  val: proposer threshold
+ *  inSet: whether an authority is in the set
+ *
+ * */
 type AuthorityThresholdStatus = {
   val: string;
   inTheSet: boolean;
 };
 
+/**
+ * Authority  statistics
+ * @param numberOfKeys - Number of keys the authority had participated in
+ * @param uptime - The authority validator uptime
+ * @param reputation - The authority validator reputation
+ * @param keyGenThreshold - KeyGen threshold and wither the authority is in the set
+ * @param signatureThreshold - Signature threshold and wither the authority is in the set
+ * @param pendingKeyGenThreshold - Pending KeyGen threshold
+ * */
 type AuthorityStats = {
   numberOfKeys: string;
   uptime: string;
@@ -48,6 +89,35 @@ type AuthorityStats = {
   keyGenThreshold: AuthorityThresholdStatus;
   nextKeyGenThreshold: AuthorityThresholdStatus;
   pendingKeyGenThreshold: AuthorityThresholdStatus;
+};
+/**
+ * Keygen list items
+ * @param id - Keygen id
+ * @param height - Keygen block number
+ * @param session - Keygen session id
+ * @param publicKey - Keygen public key
+ * */
+type KeGenKeyListItem = {
+  id: string;
+  height: string;
+  session: string;
+  publicKey: string;
+  authority: string;
+};
+type AuthorityDetails = {
+  stats: Loadable<AuthorityStats>;
+  keyGens: Loadable<Page<KeGenKeyListItem>>;
+};
+/**
+ * Session threshold
+ * @param sessionId - Session identifier
+ * @param keyGenThreshold - KeyGen threshold value
+ * @param signatureThreshold - Signature threshold value
+ * */
+type SessionThresholdEntry = {
+  sessionId: string;
+  signatureThreshold: string;
+  keyGenThreshold: string;
 };
 
 export function useThresholds(): Loadable<[Thresholds, UpcomingThresholds]> {
@@ -221,18 +291,6 @@ export function useAuthorities(reqQuery: PageInfoQuery): Loadable<Page<Authority
   return authorities;
 }
 
-type KeGenKeyListItem = {
-  id: string;
-  height: string;
-  session: string;
-  publicKey: string;
-  authority: string;
-};
-type AuthorityDetails = {
-  stats: Loadable<AuthorityStats>;
-  keyGens: Loadable<Page<KeGenKeyListItem>>;
-};
-
 export function useAuthority(pageQuery: PageInfoQuery, authorityId: string): AuthorityDetails {
   const [stats, setStats] = useState<AuthorityDetails['stats']>({
     isFailed: false,
@@ -348,7 +406,7 @@ export function useAuthority(pageQuery: PageInfoQuery, authorityId: string): Aut
             uptime: '100',
           };
           return {
-            error: undefined,
+            error: '',
             isFailed: false,
             isLoading: false,
             val: stats,
@@ -366,12 +424,6 @@ export function useAuthority(pageQuery: PageInfoQuery, authorityId: string): Aut
   }, [queryValidatorOfSession]);
   return useMemo(() => ({ stats, keyGens }), [stats, keyGens]);
 }
-
-type SessionThresholdEntry = {
-  sessionId: string;
-  signatureThreshold: string;
-  keyGenThreshold: string;
-};
 
 export function useSessionHistory(pageQuery: PageInfoQuery): Loadable<Page<SessionThresholdEntry>> {
   const [sessionHistory, setSessionHistory] = useState<Loadable<Page<SessionThresholdEntry>>>({

@@ -105,6 +105,48 @@ type Account implements Node {
     id: String!
     "A globally unique identifier. Can be used in various places throughout the system to identify this single value."
     nodeId: ID!
+    "Reads and enables pagination through a set of `Proposer`."
+    proposers(
+        "Read all values in the set after (below) this cursor."
+        after: Cursor,
+        "Read all values in the set before (above) this cursor."
+        before: Cursor,
+        "A filter to be used in determining which values should be returned by the collection."
+        filter: ProposerFilter,
+        "Only read the first `n` values of the set."
+        first: Int,
+        "Only read the last `n` values of the set."
+        last: Int,
+        """
+
+        Skip the first `n` values from our `after` cursor, an alternative to cursor
+        based pagination. May not be used with `last`.
+        """
+        offset: Int,
+        "The method to use when ordering `Proposer`."
+        orderBy: [ProposersOrderBy!] = [PRIMARY_KEY_ASC]
+    ): ProposersConnection!
+    "Reads and enables pagination through a set of `Validator`."
+    validators(
+        "Read all values in the set after (below) this cursor."
+        after: Cursor,
+        "Read all values in the set before (above) this cursor."
+        before: Cursor,
+        "A filter to be used in determining which values should be returned by the collection."
+        filter: ValidatorFilter,
+        "Only read the first `n` values of the set."
+        first: Int,
+        "Only read the last `n` values of the set."
+        last: Int,
+        """
+
+        Skip the first `n` values from our `after` cursor, an alternative to cursor
+        based pagination. May not be used with `last`.
+        """
+        offset: Int,
+        "The method to use when ordering `Validator`."
+        orderBy: [ValidatorsOrderBy!] = [PRIMARY_KEY_ASC]
+    ): ValidatorsConnection!
 }
 
 type AccountAggregates {
@@ -528,6 +570,48 @@ type Block implements Node {
         "The method to use when ordering `ProposalItem`."
         orderBy: [ProposalItemsOrderBy!] = [PRIMARY_KEY_ASC]
     ): ProposalItemsConnection!
+    "Reads and enables pagination through a set of `ProposalItem`."
+    proposalItemsByProposalVoteBlockIdAndProposalId(
+        "Read all values in the set after (below) this cursor."
+        after: Cursor,
+        "Read all values in the set before (above) this cursor."
+        before: Cursor,
+        "A filter to be used in determining which values should be returned by the collection."
+        filter: ProposalItemFilter,
+        "Only read the first `n` values of the set."
+        first: Int,
+        "Only read the last `n` values of the set."
+        last: Int,
+        """
+
+        Skip the first `n` values from our `after` cursor, an alternative to cursor
+        based pagination. May not be used with `last`.
+        """
+        offset: Int,
+        "The method to use when ordering `ProposalItem`."
+        orderBy: [ProposalItemsOrderBy!] = [PRIMARY_KEY_ASC]
+    ): BlockProposalItemsByProposalVoteBlockIdAndProposalIdManyToManyConnection!
+    "Reads and enables pagination through a set of `ProposalVote`."
+    proposalVotes(
+        "Read all values in the set after (below) this cursor."
+        after: Cursor,
+        "Read all values in the set before (above) this cursor."
+        before: Cursor,
+        "A filter to be used in determining which values should be returned by the collection."
+        filter: ProposalVoteFilter,
+        "Only read the first `n` values of the set."
+        first: Int,
+        "Only read the last `n` values of the set."
+        last: Int,
+        """
+
+        Skip the first `n` values from our `after` cursor, an alternative to cursor
+        based pagination. May not be used with `last`.
+        """
+        offset: Int,
+        "The method to use when ordering `ProposalVote`."
+        orderBy: [ProposalVotesOrderBy!] = [PRIMARY_KEY_ASC]
+    ): ProposalVotesConnection!
     "Reads and enables pagination through a set of `ProposerThreshold`."
     proposerThresholds(
         "Read all values in the set after (below) this cursor."
@@ -550,7 +634,7 @@ type Block implements Node {
         orderBy: [ProposerThresholdsOrderBy!] = [PRIMARY_KEY_ASC]
     ): ProposerThresholdsConnection!
     "Reads and enables pagination through a set of `Proposer`."
-    proposers(
+    proposersByProposalVoteBlockIdAndVoterId(
         "Read all values in the set after (below) this cursor."
         after: Cursor,
         "Read all values in the set before (above) this cursor."
@@ -569,7 +653,7 @@ type Block implements Node {
         offset: Int,
         "The method to use when ordering `Proposer`."
         orderBy: [ProposersOrderBy!] = [PRIMARY_KEY_ASC]
-    ): ProposersConnection!
+    ): BlockProposersByProposalVoteBlockIdAndVoterIdManyToManyConnection!
     "Reads and enables pagination through a set of `PublicKey`."
     publicKeys(
         "Read all values in the set after (below) this cursor."
@@ -884,6 +968,106 @@ type BlockMaxAggregates {
 type BlockMinAggregates {
     "Minimum of number across the matching connection"
     number: BigFloat
+}
+
+"A connection to a list of `ProposalItem` values, with data from `ProposalVote`."
+type BlockProposalItemsByProposalVoteBlockIdAndProposalIdManyToManyConnection {
+    "Aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    aggregates: ProposalItemAggregates
+    "A list of edges which contains the `ProposalItem`, info from the `ProposalVote`, and the cursor to aid in pagination."
+    edges: [BlockProposalItemsByProposalVoteBlockIdAndProposalIdManyToManyEdge!]!
+    "Grouped aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    groupedAggregates(
+        "The method to use when grouping `ProposalItem` for these aggregates."
+        groupBy: [ProposalItemsGroupBy!]!,
+        "Conditions on the grouped aggregates."
+        having: ProposalItemsHavingInput
+    ): [ProposalItemAggregates!]
+    "A list of `ProposalItem` objects."
+    nodes: [ProposalItem]!
+    "Information to aid in pagination."
+    pageInfo: PageInfo!
+    "The count of *all* `ProposalItem` you could get from the connection."
+    totalCount: Int!
+}
+
+"A `ProposalItem` edge in the connection, with data from `ProposalVote`."
+type BlockProposalItemsByProposalVoteBlockIdAndProposalIdManyToManyEdge {
+    "A cursor for use in pagination."
+    cursor: Cursor
+    "The `ProposalItem` at the end of the edge."
+    node: ProposalItem
+    "Reads and enables pagination through a set of `ProposalVote`."
+    proposalVotesByProposalId(
+        "Read all values in the set after (below) this cursor."
+        after: Cursor,
+        "Read all values in the set before (above) this cursor."
+        before: Cursor,
+        "A filter to be used in determining which values should be returned by the collection."
+        filter: ProposalVoteFilter,
+        "Only read the first `n` values of the set."
+        first: Int,
+        "Only read the last `n` values of the set."
+        last: Int,
+        """
+
+        Skip the first `n` values from our `after` cursor, an alternative to cursor
+        based pagination. May not be used with `last`.
+        """
+        offset: Int,
+        "The method to use when ordering `ProposalVote`."
+        orderBy: [ProposalVotesOrderBy!] = [PRIMARY_KEY_ASC]
+    ): ProposalVotesConnection!
+}
+
+"A connection to a list of `Proposer` values, with data from `ProposalVote`."
+type BlockProposersByProposalVoteBlockIdAndVoterIdManyToManyConnection {
+    "Aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    aggregates: ProposerAggregates
+    "A list of edges which contains the `Proposer`, info from the `ProposalVote`, and the cursor to aid in pagination."
+    edges: [BlockProposersByProposalVoteBlockIdAndVoterIdManyToManyEdge!]!
+    "Grouped aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    groupedAggregates(
+        "The method to use when grouping `Proposer` for these aggregates."
+        groupBy: [ProposersGroupBy!]!,
+        "Conditions on the grouped aggregates."
+        having: ProposersHavingInput
+    ): [ProposerAggregates!]
+    "A list of `Proposer` objects."
+    nodes: [Proposer]!
+    "Information to aid in pagination."
+    pageInfo: PageInfo!
+    "The count of *all* `Proposer` you could get from the connection."
+    totalCount: Int!
+}
+
+"A `Proposer` edge in the connection, with data from `ProposalVote`."
+type BlockProposersByProposalVoteBlockIdAndVoterIdManyToManyEdge {
+    "A cursor for use in pagination."
+    cursor: Cursor
+    "The `Proposer` at the end of the edge."
+    node: Proposer
+    "Reads and enables pagination through a set of `ProposalVote`."
+    proposalVotesByVoterId(
+        "Read all values in the set after (below) this cursor."
+        after: Cursor,
+        "Read all values in the set before (above) this cursor."
+        before: Cursor,
+        "A filter to be used in determining which values should be returned by the collection."
+        filter: ProposalVoteFilter,
+        "Only read the first `n` values of the set."
+        first: Int,
+        "Only read the last `n` values of the set."
+        last: Int,
+        """
+
+        Skip the first `n` values from our `after` cursor, an alternative to cursor
+        based pagination. May not be used with `last`.
+        """
+        offset: Int,
+        "The method to use when ordering `ProposalVote`."
+        orderBy: [ProposalVotesOrderBy!] = [PRIMARY_KEY_ASC]
+    ): ProposalVotesConnection!
 }
 
 "A connection to a list of `PublicKey` values, with data from `Session`."
@@ -1708,16 +1892,98 @@ type ProposalItem implements Node {
     block: Block
     blockId: String!
     blockNumber: Int!
-    currentStatus: JSON!
+    "Reads and enables pagination through a set of `Block`."
+    blocksByProposalVoteProposalIdAndBlockId(
+        "Read all values in the set after (below) this cursor."
+        after: Cursor,
+        "Read all values in the set before (above) this cursor."
+        before: Cursor,
+        "A filter to be used in determining which values should be returned by the collection."
+        filter: BlockFilter,
+        "Only read the first `n` values of the set."
+        first: Int,
+        "Only read the last `n` values of the set."
+        last: Int,
+        """
+
+        Skip the first `n` values from our `after` cursor, an alternative to cursor
+        based pagination. May not be used with `last`.
+        """
+        offset: Int,
+        "The method to use when ordering `Block`."
+        orderBy: [BlocksOrderBy!] = [PRIMARY_KEY_ASC]
+    ): ProposalItemBlocksByProposalVoteProposalIdAndBlockIdManyToManyConnection!
     data: String!
     id: String!
     "A globally unique identifier. Can be used in various places throughout the system to identify this single value."
     nodeId: ID!
     nonce: Int!
+    "Reads and enables pagination through a set of `ProposalTimelineStatus`."
+    proposalTimelineStatuses(
+        "Read all values in the set after (below) this cursor."
+        after: Cursor,
+        "Read all values in the set before (above) this cursor."
+        before: Cursor,
+        "A filter to be used in determining which values should be returned by the collection."
+        filter: ProposalTimelineStatusFilter,
+        "Only read the first `n` values of the set."
+        first: Int,
+        "Only read the last `n` values of the set."
+        last: Int,
+        """
+
+        Skip the first `n` values from our `after` cursor, an alternative to cursor
+        based pagination. May not be used with `last`.
+        """
+        offset: Int,
+        "The method to use when ordering `ProposalTimelineStatus`."
+        orderBy: [ProposalTimelineStatusesOrderBy!] = [PRIMARY_KEY_ASC]
+    ): ProposalTimelineStatusesConnection!
+    "Reads and enables pagination through a set of `ProposalVote`."
+    proposalVotesByProposalId(
+        "Read all values in the set after (below) this cursor."
+        after: Cursor,
+        "Read all values in the set before (above) this cursor."
+        before: Cursor,
+        "A filter to be used in determining which values should be returned by the collection."
+        filter: ProposalVoteFilter,
+        "Only read the first `n` values of the set."
+        first: Int,
+        "Only read the last `n` values of the set."
+        last: Int,
+        """
+
+        Skip the first `n` values from our `after` cursor, an alternative to cursor
+        based pagination. May not be used with `last`.
+        """
+        offset: Int,
+        "The method to use when ordering `ProposalVote`."
+        orderBy: [ProposalVotesOrderBy!] = [PRIMARY_KEY_ASC]
+    ): ProposalVotesConnection!
+    "Reads and enables pagination through a set of `Proposer`."
+    proposersByProposalVoteProposalIdAndVoterId(
+        "Read all values in the set after (below) this cursor."
+        after: Cursor,
+        "Read all values in the set before (above) this cursor."
+        before: Cursor,
+        "A filter to be used in determining which values should be returned by the collection."
+        filter: ProposerFilter,
+        "Only read the first `n` values of the set."
+        first: Int,
+        "Only read the last `n` values of the set."
+        last: Int,
+        """
+
+        Skip the first `n` values from our `after` cursor, an alternative to cursor
+        based pagination. May not be used with `last`.
+        """
+        offset: Int,
+        "The method to use when ordering `Proposer`."
+        orderBy: [ProposersOrderBy!] = [PRIMARY_KEY_ASC]
+    ): ProposalItemProposersByProposalVoteProposalIdAndVoterIdManyToManyConnection!
     removed: Boolean
     signature: String
     status: String!
-    timelineStatus: JSON!
     type: ProposalType!
     "Reads and enables pagination through a set of `UnsignedProposalsQueueItem`."
     unsignedProposalsQueueItemsByProposalId(
@@ -1761,7 +2027,6 @@ type ProposalItem implements Node {
         "The method to use when ordering `UnsignedProposalsQueue`."
         orderBy: [UnsignedProposalsQueuesOrderBy!] = [PRIMARY_KEY_ASC]
     ): ProposalItemUnsignedProposalsQueuesByUnsignedProposalsQueueItemProposalIdAndQueueIdManyToManyConnection!
-    votes: JSON!
 }
 
 type ProposalItemAggregates {
@@ -1793,13 +2058,61 @@ type ProposalItemAverageAggregates {
     nonce: BigFloat
 }
 
+"A connection to a list of `Block` values, with data from `ProposalVote`."
+type ProposalItemBlocksByProposalVoteProposalIdAndBlockIdManyToManyConnection {
+    "Aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    aggregates: BlockAggregates
+    "A list of edges which contains the `Block`, info from the `ProposalVote`, and the cursor to aid in pagination."
+    edges: [ProposalItemBlocksByProposalVoteProposalIdAndBlockIdManyToManyEdge!]!
+    "Grouped aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    groupedAggregates(
+        "The method to use when grouping `Block` for these aggregates."
+        groupBy: [BlocksGroupBy!]!,
+        "Conditions on the grouped aggregates."
+        having: BlocksHavingInput
+    ): [BlockAggregates!]
+    "A list of `Block` objects."
+    nodes: [Block]!
+    "Information to aid in pagination."
+    pageInfo: PageInfo!
+    "The count of *all* `Block` you could get from the connection."
+    totalCount: Int!
+}
+
+"A `Block` edge in the connection, with data from `ProposalVote`."
+type ProposalItemBlocksByProposalVoteProposalIdAndBlockIdManyToManyEdge {
+    "A cursor for use in pagination."
+    cursor: Cursor
+    "The `Block` at the end of the edge."
+    node: Block
+    "Reads and enables pagination through a set of `ProposalVote`."
+    proposalVotes(
+        "Read all values in the set after (below) this cursor."
+        after: Cursor,
+        "Read all values in the set before (above) this cursor."
+        before: Cursor,
+        "A filter to be used in determining which values should be returned by the collection."
+        filter: ProposalVoteFilter,
+        "Only read the first `n` values of the set."
+        first: Int,
+        "Only read the last `n` values of the set."
+        last: Int,
+        """
+
+        Skip the first `n` values from our `after` cursor, an alternative to cursor
+        based pagination. May not be used with `last`.
+        """
+        offset: Int,
+        "The method to use when ordering `ProposalVote`."
+        orderBy: [ProposalVotesOrderBy!] = [PRIMARY_KEY_ASC]
+    ): ProposalVotesConnection!
+}
+
 type ProposalItemDistinctCountAggregates {
     "Distinct count of blockId across the matching connection"
     blockId: BigInt
     "Distinct count of blockNumber across the matching connection"
     blockNumber: BigInt
-    "Distinct count of currentStatus across the matching connection"
-    currentStatus: BigInt
     "Distinct count of data across the matching connection"
     data: BigInt
     "Distinct count of id across the matching connection"
@@ -1812,12 +2125,8 @@ type ProposalItemDistinctCountAggregates {
     signature: BigInt
     "Distinct count of status across the matching connection"
     status: BigInt
-    "Distinct count of timelineStatus across the matching connection"
-    timelineStatus: BigInt
     "Distinct count of type across the matching connection"
     type: BigInt
-    "Distinct count of votes across the matching connection"
-    votes: BigInt
 }
 
 type ProposalItemMaxAggregates {
@@ -1832,6 +2141,56 @@ type ProposalItemMinAggregates {
     blockNumber: Int
     "Minimum of nonce across the matching connection"
     nonce: Int
+}
+
+"A connection to a list of `Proposer` values, with data from `ProposalVote`."
+type ProposalItemProposersByProposalVoteProposalIdAndVoterIdManyToManyConnection {
+    "Aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    aggregates: ProposerAggregates
+    "A list of edges which contains the `Proposer`, info from the `ProposalVote`, and the cursor to aid in pagination."
+    edges: [ProposalItemProposersByProposalVoteProposalIdAndVoterIdManyToManyEdge!]!
+    "Grouped aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    groupedAggregates(
+        "The method to use when grouping `Proposer` for these aggregates."
+        groupBy: [ProposersGroupBy!]!,
+        "Conditions on the grouped aggregates."
+        having: ProposersHavingInput
+    ): [ProposerAggregates!]
+    "A list of `Proposer` objects."
+    nodes: [Proposer]!
+    "Information to aid in pagination."
+    pageInfo: PageInfo!
+    "The count of *all* `Proposer` you could get from the connection."
+    totalCount: Int!
+}
+
+"A `Proposer` edge in the connection, with data from `ProposalVote`."
+type ProposalItemProposersByProposalVoteProposalIdAndVoterIdManyToManyEdge {
+    "A cursor for use in pagination."
+    cursor: Cursor
+    "The `Proposer` at the end of the edge."
+    node: Proposer
+    "Reads and enables pagination through a set of `ProposalVote`."
+    proposalVotesByVoterId(
+        "Read all values in the set after (below) this cursor."
+        after: Cursor,
+        "Read all values in the set before (above) this cursor."
+        before: Cursor,
+        "A filter to be used in determining which values should be returned by the collection."
+        filter: ProposalVoteFilter,
+        "Only read the first `n` values of the set."
+        first: Int,
+        "Only read the last `n` values of the set."
+        last: Int,
+        """
+
+        Skip the first `n` values from our `after` cursor, an alternative to cursor
+        based pagination. May not be used with `last`.
+        """
+        offset: Int,
+        "The method to use when ordering `ProposalVote`."
+        orderBy: [ProposalVotesOrderBy!] = [PRIMARY_KEY_ASC]
+    ): ProposalVotesConnection!
 }
 
 type ProposalItemStddevPopulationAggregates {
@@ -1948,78 +2307,523 @@ type ProposalItemsEdge {
     node: ProposalItem
 }
 
-type Proposer implements Node {
-    "Reads a single `Block` that is related to this `Proposer`."
-    block: Block
-    blockId: String!
-    count: Int!
+type ProposalTimelineStatus implements Node {
+    blockNumber: BigFloat!
     id: String!
     "A globally unique identifier. Can be used in various places throughout the system to identify this single value."
     nodeId: ID!
-    proposers: JSON!
+    "Reads a single `ProposalItem` that is related to this `ProposalTimelineStatus`."
+    proposalItem: ProposalItem
+    proposalItemId: String!
+    status: ProposalStatus!
+    timestamp: Datetime!
+    txHash: String
+}
+
+type ProposalTimelineStatusAggregates {
+    "Mean average aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    average: ProposalTimelineStatusAverageAggregates
+    "Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    distinctCount: ProposalTimelineStatusDistinctCountAggregates
+    keys: [String!]
+    "Maximum aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    max: ProposalTimelineStatusMaxAggregates
+    "Minimum aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    min: ProposalTimelineStatusMinAggregates
+    "Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    stddevPopulation: ProposalTimelineStatusStddevPopulationAggregates
+    "Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    stddevSample: ProposalTimelineStatusStddevSampleAggregates
+    "Sum aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    sum: ProposalTimelineStatusSumAggregates
+    "Population variance aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    variancePopulation: ProposalTimelineStatusVariancePopulationAggregates
+    "Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    varianceSample: ProposalTimelineStatusVarianceSampleAggregates
+}
+
+type ProposalTimelineStatusAverageAggregates {
+    "Mean average of blockNumber across the matching connection"
+    blockNumber: BigFloat
+}
+
+type ProposalTimelineStatusDistinctCountAggregates {
+    "Distinct count of blockNumber across the matching connection"
+    blockNumber: BigInt
+    "Distinct count of id across the matching connection"
+    id: BigInt
+    "Distinct count of proposalItemId across the matching connection"
+    proposalItemId: BigInt
+    "Distinct count of status across the matching connection"
+    status: BigInt
+    "Distinct count of timestamp across the matching connection"
+    timestamp: BigInt
+    "Distinct count of txHash across the matching connection"
+    txHash: BigInt
+}
+
+type ProposalTimelineStatusMaxAggregates {
+    "Maximum of blockNumber across the matching connection"
+    blockNumber: BigFloat
+}
+
+type ProposalTimelineStatusMinAggregates {
+    "Minimum of blockNumber across the matching connection"
+    blockNumber: BigFloat
+}
+
+type ProposalTimelineStatusStddevPopulationAggregates {
+    "Population standard deviation of blockNumber across the matching connection"
+    blockNumber: BigFloat
+}
+
+type ProposalTimelineStatusStddevSampleAggregates {
+    "Sample standard deviation of blockNumber across the matching connection"
+    blockNumber: BigFloat
+}
+
+type ProposalTimelineStatusSumAggregates {
+    "Sum of blockNumber across the matching connection"
+    blockNumber: BigFloat!
+}
+
+type ProposalTimelineStatusVariancePopulationAggregates {
+    "Population variance of blockNumber across the matching connection"
+    blockNumber: BigFloat
+}
+
+type ProposalTimelineStatusVarianceSampleAggregates {
+    "Sample variance of blockNumber across the matching connection"
+    blockNumber: BigFloat
+}
+
+"A connection to a list of `ProposalTimelineStatus` values."
+type ProposalTimelineStatusesConnection {
+    "Aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    aggregates: ProposalTimelineStatusAggregates
+    "A list of edges which contains the `ProposalTimelineStatus` and cursor to aid in pagination."
+    edges: [ProposalTimelineStatusesEdge!]!
+    "Grouped aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    groupedAggregates(
+        "The method to use when grouping `ProposalTimelineStatus` for these aggregates."
+        groupBy: [ProposalTimelineStatusesGroupBy!]!,
+        "Conditions on the grouped aggregates."
+        having: ProposalTimelineStatusesHavingInput
+    ): [ProposalTimelineStatusAggregates!]
+    "A list of `ProposalTimelineStatus` objects."
+    nodes: [ProposalTimelineStatus]!
+    "Information to aid in pagination."
+    pageInfo: PageInfo!
+    "The count of *all* `ProposalTimelineStatus` you could get from the connection."
+    totalCount: Int!
+}
+
+"A `ProposalTimelineStatus` edge in the connection."
+type ProposalTimelineStatusesEdge {
+    "A cursor for use in pagination."
+    cursor: Cursor
+    "The `ProposalTimelineStatus` at the end of the edge."
+    node: ProposalTimelineStatus
+}
+
+type ProposalVote implements Node {
+    "Reads a single `Block` that is related to this `ProposalVote`."
+    block: Block
+    blockId: String!
+    blockNumber: BigFloat!
+    for: Boolean!
+    id: String!
+    "A globally unique identifier. Can be used in various places throughout the system to identify this single value."
+    nodeId: ID!
+    "Reads a single `ProposalItem` that is related to this `ProposalVote`."
+    proposal: ProposalItem
+    proposalId: String!
+    "Reads a single `Proposer` that is related to this `ProposalVote`."
+    voter: Proposer
+    voterId: String!
+}
+
+type ProposalVoteAggregates {
+    "Mean average aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    average: ProposalVoteAverageAggregates
+    "Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    distinctCount: ProposalVoteDistinctCountAggregates
+    keys: [String!]
+    "Maximum aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    max: ProposalVoteMaxAggregates
+    "Minimum aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    min: ProposalVoteMinAggregates
+    "Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    stddevPopulation: ProposalVoteStddevPopulationAggregates
+    "Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    stddevSample: ProposalVoteStddevSampleAggregates
+    "Sum aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    sum: ProposalVoteSumAggregates
+    "Population variance aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    variancePopulation: ProposalVoteVariancePopulationAggregates
+    "Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    varianceSample: ProposalVoteVarianceSampleAggregates
+}
+
+type ProposalVoteAverageAggregates {
+    "Mean average of blockNumber across the matching connection"
+    blockNumber: BigFloat
+}
+
+type ProposalVoteDistinctCountAggregates {
+    "Distinct count of blockId across the matching connection"
+    blockId: BigInt
+    "Distinct count of blockNumber across the matching connection"
+    blockNumber: BigInt
+    "Distinct count of for across the matching connection"
+    for: BigInt
+    "Distinct count of id across the matching connection"
+    id: BigInt
+    "Distinct count of proposalId across the matching connection"
+    proposalId: BigInt
+    "Distinct count of voterId across the matching connection"
+    voterId: BigInt
+}
+
+type ProposalVoteMaxAggregates {
+    "Maximum of blockNumber across the matching connection"
+    blockNumber: BigFloat
+}
+
+type ProposalVoteMinAggregates {
+    "Minimum of blockNumber across the matching connection"
+    blockNumber: BigFloat
+}
+
+type ProposalVoteStddevPopulationAggregates {
+    "Population standard deviation of blockNumber across the matching connection"
+    blockNumber: BigFloat
+}
+
+type ProposalVoteStddevSampleAggregates {
+    "Sample standard deviation of blockNumber across the matching connection"
+    blockNumber: BigFloat
+}
+
+type ProposalVoteSumAggregates {
+    "Sum of blockNumber across the matching connection"
+    blockNumber: BigFloat!
+}
+
+type ProposalVoteVariancePopulationAggregates {
+    "Population variance of blockNumber across the matching connection"
+    blockNumber: BigFloat
+}
+
+type ProposalVoteVarianceSampleAggregates {
+    "Sample variance of blockNumber across the matching connection"
+    blockNumber: BigFloat
+}
+
+"A connection to a list of `ProposalVote` values."
+type ProposalVotesConnection {
+    "Aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    aggregates: ProposalVoteAggregates
+    "A list of edges which contains the `ProposalVote` and cursor to aid in pagination."
+    edges: [ProposalVotesEdge!]!
+    "Grouped aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    groupedAggregates(
+        "The method to use when grouping `ProposalVote` for these aggregates."
+        groupBy: [ProposalVotesGroupBy!]!,
+        "Conditions on the grouped aggregates."
+        having: ProposalVotesHavingInput
+    ): [ProposalVoteAggregates!]
+    "A list of `ProposalVote` objects."
+    nodes: [ProposalVote]!
+    "Information to aid in pagination."
+    pageInfo: PageInfo!
+    "The count of *all* `ProposalVote` you could get from the connection."
+    totalCount: Int!
+}
+
+"A `ProposalVote` edge in the connection."
+type ProposalVotesEdge {
+    "A cursor for use in pagination."
+    cursor: Cursor
+    "The `ProposalVote` at the end of the edge."
+    node: ProposalVote
+}
+
+type Proposer implements Node {
+    "Reads a single `Account` that is related to this `Proposer`."
+    account: Account
+    accountId: String!
+    "Reads and enables pagination through a set of `Block`."
+    blocksByProposalVoteVoterIdAndBlockId(
+        "Read all values in the set after (below) this cursor."
+        after: Cursor,
+        "Read all values in the set before (above) this cursor."
+        before: Cursor,
+        "A filter to be used in determining which values should be returned by the collection."
+        filter: BlockFilter,
+        "Only read the first `n` values of the set."
+        first: Int,
+        "Only read the last `n` values of the set."
+        last: Int,
+        """
+
+        Skip the first `n` values from our `after` cursor, an alternative to cursor
+        based pagination. May not be used with `last`.
+        """
+        offset: Int,
+        "The method to use when ordering `Block`."
+        orderBy: [BlocksOrderBy!] = [PRIMARY_KEY_ASC]
+    ): ProposerBlocksByProposalVoteVoterIdAndBlockIdManyToManyConnection!
+    id: String!
+    "A globally unique identifier. Can be used in various places throughout the system to identify this single value."
+    nodeId: ID!
+    "Reads and enables pagination through a set of `ProposalItem`."
+    proposalItemsByProposalVoteVoterIdAndProposalId(
+        "Read all values in the set after (below) this cursor."
+        after: Cursor,
+        "Read all values in the set before (above) this cursor."
+        before: Cursor,
+        "A filter to be used in determining which values should be returned by the collection."
+        filter: ProposalItemFilter,
+        "Only read the first `n` values of the set."
+        first: Int,
+        "Only read the last `n` values of the set."
+        last: Int,
+        """
+
+        Skip the first `n` values from our `after` cursor, an alternative to cursor
+        based pagination. May not be used with `last`.
+        """
+        offset: Int,
+        "The method to use when ordering `ProposalItem`."
+        orderBy: [ProposalItemsOrderBy!] = [PRIMARY_KEY_ASC]
+    ): ProposerProposalItemsByProposalVoteVoterIdAndProposalIdManyToManyConnection!
+    "Reads and enables pagination through a set of `ProposalVote`."
+    proposalVotesByVoterId(
+        "Read all values in the set after (below) this cursor."
+        after: Cursor,
+        "Read all values in the set before (above) this cursor."
+        before: Cursor,
+        "A filter to be used in determining which values should be returned by the collection."
+        filter: ProposalVoteFilter,
+        "Only read the first `n` values of the set."
+        first: Int,
+        "Only read the last `n` values of the set."
+        last: Int,
+        """
+
+        Skip the first `n` values from our `after` cursor, an alternative to cursor
+        based pagination. May not be used with `last`.
+        """
+        offset: Int,
+        "The method to use when ordering `ProposalVote`."
+        orderBy: [ProposalVotesOrderBy!] = [PRIMARY_KEY_ASC]
+    ): ProposalVotesConnection!
+    "Reads and enables pagination through a set of `SessionProposer`."
+    sessionProposers(
+        "Read all values in the set after (below) this cursor."
+        after: Cursor,
+        "Read all values in the set before (above) this cursor."
+        before: Cursor,
+        "A filter to be used in determining which values should be returned by the collection."
+        filter: SessionProposerFilter,
+        "Only read the first `n` values of the set."
+        first: Int,
+        "Only read the last `n` values of the set."
+        last: Int,
+        """
+
+        Skip the first `n` values from our `after` cursor, an alternative to cursor
+        based pagination. May not be used with `last`.
+        """
+        offset: Int,
+        "The method to use when ordering `SessionProposer`."
+        orderBy: [SessionProposersOrderBy!] = [PRIMARY_KEY_ASC]
+    ): SessionProposersConnection!
+    "Reads and enables pagination through a set of `Session`."
+    sessionsBySessionProposerProposerIdAndSessionId(
+        "Read all values in the set after (below) this cursor."
+        after: Cursor,
+        "Read all values in the set before (above) this cursor."
+        before: Cursor,
+        "A filter to be used in determining which values should be returned by the collection."
+        filter: SessionFilter,
+        "Only read the first `n` values of the set."
+        first: Int,
+        "Only read the last `n` values of the set."
+        last: Int,
+        """
+
+        Skip the first `n` values from our `after` cursor, an alternative to cursor
+        based pagination. May not be used with `last`.
+        """
+        offset: Int,
+        "The method to use when ordering `Session`."
+        orderBy: [SessionsOrderBy!] = [PRIMARY_KEY_ASC]
+    ): ProposerSessionsBySessionProposerProposerIdAndSessionIdManyToManyConnection!
 }
 
 type ProposerAggregates {
-    "Mean average aggregates across the matching connection (ignoring before/after/first/last/offset)"
-    average: ProposerAverageAggregates
     "Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset)"
     distinctCount: ProposerDistinctCountAggregates
     keys: [String!]
-    "Maximum aggregates across the matching connection (ignoring before/after/first/last/offset)"
-    max: ProposerMaxAggregates
-    "Minimum aggregates across the matching connection (ignoring before/after/first/last/offset)"
-    min: ProposerMinAggregates
-    "Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)"
-    stddevPopulation: ProposerStddevPopulationAggregates
-    "Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)"
-    stddevSample: ProposerStddevSampleAggregates
-    "Sum aggregates across the matching connection (ignoring before/after/first/last/offset)"
-    sum: ProposerSumAggregates
-    "Population variance aggregates across the matching connection (ignoring before/after/first/last/offset)"
-    variancePopulation: ProposerVariancePopulationAggregates
-    "Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset)"
-    varianceSample: ProposerVarianceSampleAggregates
 }
 
-type ProposerAverageAggregates {
-    "Mean average of count across the matching connection"
-    count: BigFloat
+"A connection to a list of `Block` values, with data from `ProposalVote`."
+type ProposerBlocksByProposalVoteVoterIdAndBlockIdManyToManyConnection {
+    "Aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    aggregates: BlockAggregates
+    "A list of edges which contains the `Block`, info from the `ProposalVote`, and the cursor to aid in pagination."
+    edges: [ProposerBlocksByProposalVoteVoterIdAndBlockIdManyToManyEdge!]!
+    "Grouped aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    groupedAggregates(
+        "The method to use when grouping `Block` for these aggregates."
+        groupBy: [BlocksGroupBy!]!,
+        "Conditions on the grouped aggregates."
+        having: BlocksHavingInput
+    ): [BlockAggregates!]
+    "A list of `Block` objects."
+    nodes: [Block]!
+    "Information to aid in pagination."
+    pageInfo: PageInfo!
+    "The count of *all* `Block` you could get from the connection."
+    totalCount: Int!
+}
+
+"A `Block` edge in the connection, with data from `ProposalVote`."
+type ProposerBlocksByProposalVoteVoterIdAndBlockIdManyToManyEdge {
+    "A cursor for use in pagination."
+    cursor: Cursor
+    "The `Block` at the end of the edge."
+    node: Block
+    "Reads and enables pagination through a set of `ProposalVote`."
+    proposalVotes(
+        "Read all values in the set after (below) this cursor."
+        after: Cursor,
+        "Read all values in the set before (above) this cursor."
+        before: Cursor,
+        "A filter to be used in determining which values should be returned by the collection."
+        filter: ProposalVoteFilter,
+        "Only read the first `n` values of the set."
+        first: Int,
+        "Only read the last `n` values of the set."
+        last: Int,
+        """
+
+        Skip the first `n` values from our `after` cursor, an alternative to cursor
+        based pagination. May not be used with `last`.
+        """
+        offset: Int,
+        "The method to use when ordering `ProposalVote`."
+        orderBy: [ProposalVotesOrderBy!] = [PRIMARY_KEY_ASC]
+    ): ProposalVotesConnection!
 }
 
 type ProposerDistinctCountAggregates {
-    "Distinct count of blockId across the matching connection"
-    blockId: BigInt
-    "Distinct count of count across the matching connection"
-    count: BigInt
+    "Distinct count of accountId across the matching connection"
+    accountId: BigInt
     "Distinct count of id across the matching connection"
     id: BigInt
-    "Distinct count of proposers across the matching connection"
-    proposers: BigInt
 }
 
-type ProposerMaxAggregates {
-    "Maximum of count across the matching connection"
-    count: Int
+"A connection to a list of `ProposalItem` values, with data from `ProposalVote`."
+type ProposerProposalItemsByProposalVoteVoterIdAndProposalIdManyToManyConnection {
+    "Aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    aggregates: ProposalItemAggregates
+    "A list of edges which contains the `ProposalItem`, info from the `ProposalVote`, and the cursor to aid in pagination."
+    edges: [ProposerProposalItemsByProposalVoteVoterIdAndProposalIdManyToManyEdge!]!
+    "Grouped aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    groupedAggregates(
+        "The method to use when grouping `ProposalItem` for these aggregates."
+        groupBy: [ProposalItemsGroupBy!]!,
+        "Conditions on the grouped aggregates."
+        having: ProposalItemsHavingInput
+    ): [ProposalItemAggregates!]
+    "A list of `ProposalItem` objects."
+    nodes: [ProposalItem]!
+    "Information to aid in pagination."
+    pageInfo: PageInfo!
+    "The count of *all* `ProposalItem` you could get from the connection."
+    totalCount: Int!
 }
 
-type ProposerMinAggregates {
-    "Minimum of count across the matching connection"
-    count: Int
+"A `ProposalItem` edge in the connection, with data from `ProposalVote`."
+type ProposerProposalItemsByProposalVoteVoterIdAndProposalIdManyToManyEdge {
+    "A cursor for use in pagination."
+    cursor: Cursor
+    "The `ProposalItem` at the end of the edge."
+    node: ProposalItem
+    "Reads and enables pagination through a set of `ProposalVote`."
+    proposalVotesByProposalId(
+        "Read all values in the set after (below) this cursor."
+        after: Cursor,
+        "Read all values in the set before (above) this cursor."
+        before: Cursor,
+        "A filter to be used in determining which values should be returned by the collection."
+        filter: ProposalVoteFilter,
+        "Only read the first `n` values of the set."
+        first: Int,
+        "Only read the last `n` values of the set."
+        last: Int,
+        """
+
+        Skip the first `n` values from our `after` cursor, an alternative to cursor
+        based pagination. May not be used with `last`.
+        """
+        offset: Int,
+        "The method to use when ordering `ProposalVote`."
+        orderBy: [ProposalVotesOrderBy!] = [PRIMARY_KEY_ASC]
+    ): ProposalVotesConnection!
 }
 
-type ProposerStddevPopulationAggregates {
-    "Population standard deviation of count across the matching connection"
-    count: BigFloat
+"A connection to a list of `Session` values, with data from `SessionProposer`."
+type ProposerSessionsBySessionProposerProposerIdAndSessionIdManyToManyConnection {
+    "Aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    aggregates: SessionAggregates
+    "A list of edges which contains the `Session`, info from the `SessionProposer`, and the cursor to aid in pagination."
+    edges: [ProposerSessionsBySessionProposerProposerIdAndSessionIdManyToManyEdge!]!
+    "Grouped aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    groupedAggregates(
+        "The method to use when grouping `Session` for these aggregates."
+        groupBy: [SessionsGroupBy!]!,
+        "Conditions on the grouped aggregates."
+        having: SessionsHavingInput
+    ): [SessionAggregates!]
+    "A list of `Session` objects."
+    nodes: [Session]!
+    "Information to aid in pagination."
+    pageInfo: PageInfo!
+    "The count of *all* `Session` you could get from the connection."
+    totalCount: Int!
 }
 
-type ProposerStddevSampleAggregates {
-    "Sample standard deviation of count across the matching connection"
-    count: BigFloat
-}
+"A `Session` edge in the connection, with data from `SessionProposer`."
+type ProposerSessionsBySessionProposerProposerIdAndSessionIdManyToManyEdge {
+    "A cursor for use in pagination."
+    cursor: Cursor
+    "The `Session` at the end of the edge."
+    node: Session
+    "Reads and enables pagination through a set of `SessionProposer`."
+    sessionProposers(
+        "Read all values in the set after (below) this cursor."
+        after: Cursor,
+        "Read all values in the set before (above) this cursor."
+        before: Cursor,
+        "A filter to be used in determining which values should be returned by the collection."
+        filter: SessionProposerFilter,
+        "Only read the first `n` values of the set."
+        first: Int,
+        "Only read the last `n` values of the set."
+        last: Int,
+        """
 
-type ProposerSumAggregates {
-    "Sum of count across the matching connection"
-    count: BigInt!
+        Skip the first `n` values from our `after` cursor, an alternative to cursor
+        based pagination. May not be used with `last`.
+        """
+        offset: Int,
+        "The method to use when ordering `SessionProposer`."
+        orderBy: [SessionProposersOrderBy!] = [PRIMARY_KEY_ASC]
+    ): SessionProposersConnection!
 }
 
 type ProposerThreshold implements Node {
@@ -2130,16 +2934,6 @@ type ProposerThresholdsEdge {
     cursor: Cursor
     "The `ProposerThreshold` at the end of the edge."
     node: ProposerThreshold
-}
-
-type ProposerVariancePopulationAggregates {
-    "Population variance of count across the matching connection"
-    count: BigFloat
-}
-
-type ProposerVarianceSampleAggregates {
-    "Sample variance of count across the matching connection"
-    count: BigFloat
 }
 
 "A connection to a list of `Proposer` values."
@@ -2549,6 +3343,60 @@ type Query implements Node {
         "The method to use when ordering `ProposalItem`."
         orderBy: [ProposalItemsOrderBy!] = [PRIMARY_KEY_ASC]
     ): ProposalItemsConnection
+    proposalTimelineStatus(id: String!): ProposalTimelineStatus
+    "Reads a single `ProposalTimelineStatus` using its globally unique `ID`."
+    proposalTimelineStatusByNodeId(
+        "The globally unique `ID` to be used in selecting a single `ProposalTimelineStatus`."
+        nodeId: ID!
+    ): ProposalTimelineStatus
+    "Reads and enables pagination through a set of `ProposalTimelineStatus`."
+    proposalTimelineStatuses(
+        "Read all values in the set after (below) this cursor."
+        after: Cursor,
+        "Read all values in the set before (above) this cursor."
+        before: Cursor,
+        "A filter to be used in determining which values should be returned by the collection."
+        filter: ProposalTimelineStatusFilter,
+        "Only read the first `n` values of the set."
+        first: Int,
+        "Only read the last `n` values of the set."
+        last: Int,
+        """
+
+        Skip the first `n` values from our `after` cursor, an alternative to cursor
+        based pagination. May not be used with `last`.
+        """
+        offset: Int,
+        "The method to use when ordering `ProposalTimelineStatus`."
+        orderBy: [ProposalTimelineStatusesOrderBy!] = [PRIMARY_KEY_ASC]
+    ): ProposalTimelineStatusesConnection
+    proposalVote(id: String!): ProposalVote
+    "Reads a single `ProposalVote` using its globally unique `ID`."
+    proposalVoteByNodeId(
+        "The globally unique `ID` to be used in selecting a single `ProposalVote`."
+        nodeId: ID!
+    ): ProposalVote
+    "Reads and enables pagination through a set of `ProposalVote`."
+    proposalVotes(
+        "Read all values in the set after (below) this cursor."
+        after: Cursor,
+        "Read all values in the set before (above) this cursor."
+        before: Cursor,
+        "A filter to be used in determining which values should be returned by the collection."
+        filter: ProposalVoteFilter,
+        "Only read the first `n` values of the set."
+        first: Int,
+        "Only read the last `n` values of the set."
+        last: Int,
+        """
+
+        Skip the first `n` values from our `after` cursor, an alternative to cursor
+        based pagination. May not be used with `last`.
+        """
+        offset: Int,
+        "The method to use when ordering `ProposalVote`."
+        orderBy: [ProposalVotesOrderBy!] = [PRIMARY_KEY_ASC]
+    ): ProposalVotesConnection
     proposer(id: String!): Proposer
     "Reads a single `Proposer` using its globally unique `ID`."
     proposerByNodeId(
@@ -2642,6 +3490,33 @@ type Query implements Node {
         "The globally unique `ID` to be used in selecting a single `Session`."
         nodeId: ID!
     ): Session
+    sessionProposer(id: String!): SessionProposer
+    "Reads a single `SessionProposer` using its globally unique `ID`."
+    sessionProposerByNodeId(
+        "The globally unique `ID` to be used in selecting a single `SessionProposer`."
+        nodeId: ID!
+    ): SessionProposer
+    "Reads and enables pagination through a set of `SessionProposer`."
+    sessionProposers(
+        "Read all values in the set after (below) this cursor."
+        after: Cursor,
+        "Read all values in the set before (above) this cursor."
+        before: Cursor,
+        "A filter to be used in determining which values should be returned by the collection."
+        filter: SessionProposerFilter,
+        "Only read the first `n` values of the set."
+        first: Int,
+        "Only read the last `n` values of the set."
+        last: Int,
+        """
+
+        Skip the first `n` values from our `after` cursor, an alternative to cursor
+        based pagination. May not be used with `last`.
+        """
+        offset: Int,
+        "The method to use when ordering `SessionProposer`."
+        orderBy: [SessionProposersOrderBy!] = [PRIMARY_KEY_ASC]
+    ): SessionProposersConnection
     sessionValidator(id: String!): SessionValidator
     "Reads a single `SessionValidator` using its globally unique `ID`."
     sessionValidatorByNodeId(
@@ -2810,11 +3685,51 @@ type Session implements Node {
     "A globally unique identifier. Can be used in various places throughout the system to identify this single value."
     nodeId: ID!
     proposerThreshold: JSON
-    proposers: JSON!
-    proposersCount: Int
+    "Reads and enables pagination through a set of `Proposer`."
+    proposersBySessionProposerSessionIdAndProposerId(
+        "Read all values in the set after (below) this cursor."
+        after: Cursor,
+        "Read all values in the set before (above) this cursor."
+        before: Cursor,
+        "A filter to be used in determining which values should be returned by the collection."
+        filter: ProposerFilter,
+        "Only read the first `n` values of the set."
+        first: Int,
+        "Only read the last `n` values of the set."
+        last: Int,
+        """
+
+        Skip the first `n` values from our `after` cursor, an alternative to cursor
+        based pagination. May not be used with `last`.
+        """
+        offset: Int,
+        "The method to use when ordering `Proposer`."
+        orderBy: [ProposersOrderBy!] = [PRIMARY_KEY_ASC]
+    ): SessionProposersBySessionProposerSessionIdAndProposerIdManyToManyConnection!
     "Reads a single `PublicKey` that is related to this `Session`."
     publicKey: PublicKey
     publicKeyId: String
+    "Reads and enables pagination through a set of `SessionProposer`."
+    sessionProposers(
+        "Read all values in the set after (below) this cursor."
+        after: Cursor,
+        "Read all values in the set before (above) this cursor."
+        before: Cursor,
+        "A filter to be used in determining which values should be returned by the collection."
+        filter: SessionProposerFilter,
+        "Only read the first `n` values of the set."
+        first: Int,
+        "Only read the last `n` values of the set."
+        last: Int,
+        """
+
+        Skip the first `n` values from our `after` cursor, an alternative to cursor
+        based pagination. May not be used with `last`.
+        """
+        offset: Int,
+        "The method to use when ordering `SessionProposer`."
+        orderBy: [SessionProposersOrderBy!] = [PRIMARY_KEY_ASC]
+    ): SessionProposersConnection!
     "Reads and enables pagination through a set of `SessionValidator`."
     sessionValidators(
         "Read all values in the set after (below) this cursor."
@@ -2885,8 +3800,6 @@ type SessionAggregates {
 type SessionAverageAggregates {
     "Mean average of blockNumber across the matching connection"
     blockNumber: BigFloat
-    "Mean average of proposersCount across the matching connection"
-    proposersCount: BigFloat
 }
 
 type SessionDistinctCountAggregates {
@@ -2900,10 +3813,6 @@ type SessionDistinctCountAggregates {
     keyGenThreshold: BigInt
     "Distinct count of proposerThreshold across the matching connection"
     proposerThreshold: BigInt
-    "Distinct count of proposers across the matching connection"
-    proposers: BigInt
-    "Distinct count of proposersCount across the matching connection"
-    proposersCount: BigInt
     "Distinct count of publicKeyId across the matching connection"
     publicKeyId: BigInt
     "Distinct count of signatureThreshold across the matching connection"
@@ -2913,36 +3822,132 @@ type SessionDistinctCountAggregates {
 type SessionMaxAggregates {
     "Maximum of blockNumber across the matching connection"
     blockNumber: Int
-    "Maximum of proposersCount across the matching connection"
-    proposersCount: Int
 }
 
 type SessionMinAggregates {
     "Minimum of blockNumber across the matching connection"
     blockNumber: Int
-    "Minimum of proposersCount across the matching connection"
-    proposersCount: Int
+}
+
+type SessionProposer implements Node {
+    id: String!
+    "A globally unique identifier. Can be used in various places throughout the system to identify this single value."
+    nodeId: ID!
+    "Reads a single `Proposer` that is related to this `SessionProposer`."
+    proposer: Proposer
+    proposerId: String!
+    "Reads a single `Session` that is related to this `SessionProposer`."
+    session: Session
+    sessionId: String!
+}
+
+type SessionProposerAggregates {
+    "Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    distinctCount: SessionProposerDistinctCountAggregates
+    keys: [String!]
+}
+
+type SessionProposerDistinctCountAggregates {
+    "Distinct count of id across the matching connection"
+    id: BigInt
+    "Distinct count of proposerId across the matching connection"
+    proposerId: BigInt
+    "Distinct count of sessionId across the matching connection"
+    sessionId: BigInt
+}
+
+"A connection to a list of `Proposer` values, with data from `SessionProposer`."
+type SessionProposersBySessionProposerSessionIdAndProposerIdManyToManyConnection {
+    "Aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    aggregates: ProposerAggregates
+    "A list of edges which contains the `Proposer`, info from the `SessionProposer`, and the cursor to aid in pagination."
+    edges: [SessionProposersBySessionProposerSessionIdAndProposerIdManyToManyEdge!]!
+    "Grouped aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    groupedAggregates(
+        "The method to use when grouping `Proposer` for these aggregates."
+        groupBy: [ProposersGroupBy!]!,
+        "Conditions on the grouped aggregates."
+        having: ProposersHavingInput
+    ): [ProposerAggregates!]
+    "A list of `Proposer` objects."
+    nodes: [Proposer]!
+    "Information to aid in pagination."
+    pageInfo: PageInfo!
+    "The count of *all* `Proposer` you could get from the connection."
+    totalCount: Int!
+}
+
+"A `Proposer` edge in the connection, with data from `SessionProposer`."
+type SessionProposersBySessionProposerSessionIdAndProposerIdManyToManyEdge {
+    "A cursor for use in pagination."
+    cursor: Cursor
+    "The `Proposer` at the end of the edge."
+    node: Proposer
+    "Reads and enables pagination through a set of `SessionProposer`."
+    sessionProposers(
+        "Read all values in the set after (below) this cursor."
+        after: Cursor,
+        "Read all values in the set before (above) this cursor."
+        before: Cursor,
+        "A filter to be used in determining which values should be returned by the collection."
+        filter: SessionProposerFilter,
+        "Only read the first `n` values of the set."
+        first: Int,
+        "Only read the last `n` values of the set."
+        last: Int,
+        """
+
+        Skip the first `n` values from our `after` cursor, an alternative to cursor
+        based pagination. May not be used with `last`.
+        """
+        offset: Int,
+        "The method to use when ordering `SessionProposer`."
+        orderBy: [SessionProposersOrderBy!] = [PRIMARY_KEY_ASC]
+    ): SessionProposersConnection!
+}
+
+"A connection to a list of `SessionProposer` values."
+type SessionProposersConnection {
+    "Aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    aggregates: SessionProposerAggregates
+    "A list of edges which contains the `SessionProposer` and cursor to aid in pagination."
+    edges: [SessionProposersEdge!]!
+    "Grouped aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    groupedAggregates(
+        "The method to use when grouping `SessionProposer` for these aggregates."
+        groupBy: [SessionProposersGroupBy!]!,
+        "Conditions on the grouped aggregates."
+        having: SessionProposersHavingInput
+    ): [SessionProposerAggregates!]
+    "A list of `SessionProposer` objects."
+    nodes: [SessionProposer]!
+    "Information to aid in pagination."
+    pageInfo: PageInfo!
+    "The count of *all* `SessionProposer` you could get from the connection."
+    totalCount: Int!
+}
+
+"A `SessionProposer` edge in the connection."
+type SessionProposersEdge {
+    "A cursor for use in pagination."
+    cursor: Cursor
+    "The `SessionProposer` at the end of the edge."
+    node: SessionProposer
 }
 
 type SessionStddevPopulationAggregates {
     "Population standard deviation of blockNumber across the matching connection"
     blockNumber: BigFloat
-    "Population standard deviation of proposersCount across the matching connection"
-    proposersCount: BigFloat
 }
 
 type SessionStddevSampleAggregates {
     "Sample standard deviation of blockNumber across the matching connection"
     blockNumber: BigFloat
-    "Sample standard deviation of proposersCount across the matching connection"
-    proposersCount: BigFloat
 }
 
 type SessionSumAggregates {
     "Sum of blockNumber across the matching connection"
     blockNumber: BigInt!
-    "Sum of proposersCount across the matching connection"
-    proposersCount: BigInt!
 }
 
 type SessionValidator implements Node {
@@ -3068,6 +4073,13 @@ type SessionValidatorsBySessionValidatorSessionIdAndValidatorIdManyToManyConnect
     aggregates: ValidatorAggregates
     "A list of edges which contains the `Validator`, info from the `SessionValidator`, and the cursor to aid in pagination."
     edges: [SessionValidatorsBySessionValidatorSessionIdAndValidatorIdManyToManyEdge!]!
+    "Grouped aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    groupedAggregates(
+        "The method to use when grouping `Validator` for these aggregates."
+        groupBy: [ValidatorsGroupBy!]!,
+        "Conditions on the grouped aggregates."
+        having: ValidatorsHavingInput
+    ): [ValidatorAggregates!]
     "A list of `Validator` objects."
     nodes: [Validator]!
     "Information to aid in pagination."
@@ -3137,15 +4149,11 @@ type SessionValidatorsEdge {
 type SessionVariancePopulationAggregates {
     "Population variance of blockNumber across the matching connection"
     blockNumber: BigFloat
-    "Population variance of proposersCount across the matching connection"
-    proposersCount: BigFloat
 }
 
 type SessionVarianceSampleAggregates {
     "Sample variance of blockNumber across the matching connection"
     blockNumber: BigFloat
-    "Sample variance of proposersCount across the matching connection"
-    proposersCount: BigFloat
 }
 
 "A connection to a list of `Session` values."
@@ -3648,6 +4656,8 @@ type UnsignedProposalsQueuesEdge {
 }
 
 type Validator implements Node {
+    "Reads a single `Account` that is related to this `Validator`."
+    account: Account
     accountId: String!
     authorityId: String!
     id: String!
@@ -3768,6 +4778,13 @@ type ValidatorsConnection {
     aggregates: ValidatorAggregates
     "A list of edges which contains the `Validator` and cursor to aid in pagination."
     edges: [ValidatorsEdge!]!
+    "Grouped aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    groupedAggregates(
+        "The method to use when grouping `Validator` for these aggregates."
+        groupBy: [ValidatorsGroupBy!]!,
+        "Conditions on the grouped aggregates."
+        having: ValidatorsHavingInput
+    ): [ValidatorAggregates!]
     "A list of `Validator` objects."
     nodes: [Validator]!
     "Information to aid in pagination."
@@ -4092,6 +5109,100 @@ enum AccountsOrderBy {
     NATURAL
     PRIMARY_KEY_ASC
     PRIMARY_KEY_DESC
+    PROPOSERS_AVERAGE_ACCOUNT_ID_ASC
+    PROPOSERS_AVERAGE_ACCOUNT_ID_DESC
+    PROPOSERS_AVERAGE_ID_ASC
+    PROPOSERS_AVERAGE_ID_DESC
+    PROPOSERS_COUNT_ASC
+    PROPOSERS_COUNT_DESC
+    PROPOSERS_DISTINCT_COUNT_ACCOUNT_ID_ASC
+    PROPOSERS_DISTINCT_COUNT_ACCOUNT_ID_DESC
+    PROPOSERS_DISTINCT_COUNT_ID_ASC
+    PROPOSERS_DISTINCT_COUNT_ID_DESC
+    PROPOSERS_MAX_ACCOUNT_ID_ASC
+    PROPOSERS_MAX_ACCOUNT_ID_DESC
+    PROPOSERS_MAX_ID_ASC
+    PROPOSERS_MAX_ID_DESC
+    PROPOSERS_MIN_ACCOUNT_ID_ASC
+    PROPOSERS_MIN_ACCOUNT_ID_DESC
+    PROPOSERS_MIN_ID_ASC
+    PROPOSERS_MIN_ID_DESC
+    PROPOSERS_STDDEV_POPULATION_ACCOUNT_ID_ASC
+    PROPOSERS_STDDEV_POPULATION_ACCOUNT_ID_DESC
+    PROPOSERS_STDDEV_POPULATION_ID_ASC
+    PROPOSERS_STDDEV_POPULATION_ID_DESC
+    PROPOSERS_STDDEV_SAMPLE_ACCOUNT_ID_ASC
+    PROPOSERS_STDDEV_SAMPLE_ACCOUNT_ID_DESC
+    PROPOSERS_STDDEV_SAMPLE_ID_ASC
+    PROPOSERS_STDDEV_SAMPLE_ID_DESC
+    PROPOSERS_SUM_ACCOUNT_ID_ASC
+    PROPOSERS_SUM_ACCOUNT_ID_DESC
+    PROPOSERS_SUM_ID_ASC
+    PROPOSERS_SUM_ID_DESC
+    PROPOSERS_VARIANCE_POPULATION_ACCOUNT_ID_ASC
+    PROPOSERS_VARIANCE_POPULATION_ACCOUNT_ID_DESC
+    PROPOSERS_VARIANCE_POPULATION_ID_ASC
+    PROPOSERS_VARIANCE_POPULATION_ID_DESC
+    PROPOSERS_VARIANCE_SAMPLE_ACCOUNT_ID_ASC
+    PROPOSERS_VARIANCE_SAMPLE_ACCOUNT_ID_DESC
+    PROPOSERS_VARIANCE_SAMPLE_ID_ASC
+    PROPOSERS_VARIANCE_SAMPLE_ID_DESC
+    VALIDATORS_AVERAGE_ACCOUNT_ID_ASC
+    VALIDATORS_AVERAGE_ACCOUNT_ID_DESC
+    VALIDATORS_AVERAGE_AUTHORITY_ID_ASC
+    VALIDATORS_AVERAGE_AUTHORITY_ID_DESC
+    VALIDATORS_AVERAGE_ID_ASC
+    VALIDATORS_AVERAGE_ID_DESC
+    VALIDATORS_COUNT_ASC
+    VALIDATORS_COUNT_DESC
+    VALIDATORS_DISTINCT_COUNT_ACCOUNT_ID_ASC
+    VALIDATORS_DISTINCT_COUNT_ACCOUNT_ID_DESC
+    VALIDATORS_DISTINCT_COUNT_AUTHORITY_ID_ASC
+    VALIDATORS_DISTINCT_COUNT_AUTHORITY_ID_DESC
+    VALIDATORS_DISTINCT_COUNT_ID_ASC
+    VALIDATORS_DISTINCT_COUNT_ID_DESC
+    VALIDATORS_MAX_ACCOUNT_ID_ASC
+    VALIDATORS_MAX_ACCOUNT_ID_DESC
+    VALIDATORS_MAX_AUTHORITY_ID_ASC
+    VALIDATORS_MAX_AUTHORITY_ID_DESC
+    VALIDATORS_MAX_ID_ASC
+    VALIDATORS_MAX_ID_DESC
+    VALIDATORS_MIN_ACCOUNT_ID_ASC
+    VALIDATORS_MIN_ACCOUNT_ID_DESC
+    VALIDATORS_MIN_AUTHORITY_ID_ASC
+    VALIDATORS_MIN_AUTHORITY_ID_DESC
+    VALIDATORS_MIN_ID_ASC
+    VALIDATORS_MIN_ID_DESC
+    VALIDATORS_STDDEV_POPULATION_ACCOUNT_ID_ASC
+    VALIDATORS_STDDEV_POPULATION_ACCOUNT_ID_DESC
+    VALIDATORS_STDDEV_POPULATION_AUTHORITY_ID_ASC
+    VALIDATORS_STDDEV_POPULATION_AUTHORITY_ID_DESC
+    VALIDATORS_STDDEV_POPULATION_ID_ASC
+    VALIDATORS_STDDEV_POPULATION_ID_DESC
+    VALIDATORS_STDDEV_SAMPLE_ACCOUNT_ID_ASC
+    VALIDATORS_STDDEV_SAMPLE_ACCOUNT_ID_DESC
+    VALIDATORS_STDDEV_SAMPLE_AUTHORITY_ID_ASC
+    VALIDATORS_STDDEV_SAMPLE_AUTHORITY_ID_DESC
+    VALIDATORS_STDDEV_SAMPLE_ID_ASC
+    VALIDATORS_STDDEV_SAMPLE_ID_DESC
+    VALIDATORS_SUM_ACCOUNT_ID_ASC
+    VALIDATORS_SUM_ACCOUNT_ID_DESC
+    VALIDATORS_SUM_AUTHORITY_ID_ASC
+    VALIDATORS_SUM_AUTHORITY_ID_DESC
+    VALIDATORS_SUM_ID_ASC
+    VALIDATORS_SUM_ID_DESC
+    VALIDATORS_VARIANCE_POPULATION_ACCOUNT_ID_ASC
+    VALIDATORS_VARIANCE_POPULATION_ACCOUNT_ID_DESC
+    VALIDATORS_VARIANCE_POPULATION_AUTHORITY_ID_ASC
+    VALIDATORS_VARIANCE_POPULATION_AUTHORITY_ID_DESC
+    VALIDATORS_VARIANCE_POPULATION_ID_ASC
+    VALIDATORS_VARIANCE_POPULATION_ID_DESC
+    VALIDATORS_VARIANCE_SAMPLE_ACCOUNT_ID_ASC
+    VALIDATORS_VARIANCE_SAMPLE_ACCOUNT_ID_DESC
+    VALIDATORS_VARIANCE_SAMPLE_AUTHORITY_ID_ASC
+    VALIDATORS_VARIANCE_SAMPLE_AUTHORITY_ID_DESC
+    VALIDATORS_VARIANCE_SAMPLE_ID_ASC
+    VALIDATORS_VARIANCE_SAMPLE_ID_DESC
 }
 
 "Grouping methods for `Authority` for usage during aggregation."
@@ -4933,8 +6044,6 @@ enum BlocksOrderBy {
     PROPOSAL_ITEMS_AVERAGE_BLOCK_ID_DESC
     PROPOSAL_ITEMS_AVERAGE_BLOCK_NUMBER_ASC
     PROPOSAL_ITEMS_AVERAGE_BLOCK_NUMBER_DESC
-    PROPOSAL_ITEMS_AVERAGE_CURRENT_STATUS_ASC
-    PROPOSAL_ITEMS_AVERAGE_CURRENT_STATUS_DESC
     PROPOSAL_ITEMS_AVERAGE_DATA_ASC
     PROPOSAL_ITEMS_AVERAGE_DATA_DESC
     PROPOSAL_ITEMS_AVERAGE_ID_ASC
@@ -4947,20 +6056,14 @@ enum BlocksOrderBy {
     PROPOSAL_ITEMS_AVERAGE_SIGNATURE_DESC
     PROPOSAL_ITEMS_AVERAGE_STATUS_ASC
     PROPOSAL_ITEMS_AVERAGE_STATUS_DESC
-    PROPOSAL_ITEMS_AVERAGE_TIMELINE_STATUS_ASC
-    PROPOSAL_ITEMS_AVERAGE_TIMELINE_STATUS_DESC
     PROPOSAL_ITEMS_AVERAGE_TYPE_ASC
     PROPOSAL_ITEMS_AVERAGE_TYPE_DESC
-    PROPOSAL_ITEMS_AVERAGE_VOTES_ASC
-    PROPOSAL_ITEMS_AVERAGE_VOTES_DESC
     PROPOSAL_ITEMS_COUNT_ASC
     PROPOSAL_ITEMS_COUNT_DESC
     PROPOSAL_ITEMS_DISTINCT_COUNT_BLOCK_ID_ASC
     PROPOSAL_ITEMS_DISTINCT_COUNT_BLOCK_ID_DESC
     PROPOSAL_ITEMS_DISTINCT_COUNT_BLOCK_NUMBER_ASC
     PROPOSAL_ITEMS_DISTINCT_COUNT_BLOCK_NUMBER_DESC
-    PROPOSAL_ITEMS_DISTINCT_COUNT_CURRENT_STATUS_ASC
-    PROPOSAL_ITEMS_DISTINCT_COUNT_CURRENT_STATUS_DESC
     PROPOSAL_ITEMS_DISTINCT_COUNT_DATA_ASC
     PROPOSAL_ITEMS_DISTINCT_COUNT_DATA_DESC
     PROPOSAL_ITEMS_DISTINCT_COUNT_ID_ASC
@@ -4973,18 +6076,12 @@ enum BlocksOrderBy {
     PROPOSAL_ITEMS_DISTINCT_COUNT_SIGNATURE_DESC
     PROPOSAL_ITEMS_DISTINCT_COUNT_STATUS_ASC
     PROPOSAL_ITEMS_DISTINCT_COUNT_STATUS_DESC
-    PROPOSAL_ITEMS_DISTINCT_COUNT_TIMELINE_STATUS_ASC
-    PROPOSAL_ITEMS_DISTINCT_COUNT_TIMELINE_STATUS_DESC
     PROPOSAL_ITEMS_DISTINCT_COUNT_TYPE_ASC
     PROPOSAL_ITEMS_DISTINCT_COUNT_TYPE_DESC
-    PROPOSAL_ITEMS_DISTINCT_COUNT_VOTES_ASC
-    PROPOSAL_ITEMS_DISTINCT_COUNT_VOTES_DESC
     PROPOSAL_ITEMS_MAX_BLOCK_ID_ASC
     PROPOSAL_ITEMS_MAX_BLOCK_ID_DESC
     PROPOSAL_ITEMS_MAX_BLOCK_NUMBER_ASC
     PROPOSAL_ITEMS_MAX_BLOCK_NUMBER_DESC
-    PROPOSAL_ITEMS_MAX_CURRENT_STATUS_ASC
-    PROPOSAL_ITEMS_MAX_CURRENT_STATUS_DESC
     PROPOSAL_ITEMS_MAX_DATA_ASC
     PROPOSAL_ITEMS_MAX_DATA_DESC
     PROPOSAL_ITEMS_MAX_ID_ASC
@@ -4997,18 +6094,12 @@ enum BlocksOrderBy {
     PROPOSAL_ITEMS_MAX_SIGNATURE_DESC
     PROPOSAL_ITEMS_MAX_STATUS_ASC
     PROPOSAL_ITEMS_MAX_STATUS_DESC
-    PROPOSAL_ITEMS_MAX_TIMELINE_STATUS_ASC
-    PROPOSAL_ITEMS_MAX_TIMELINE_STATUS_DESC
     PROPOSAL_ITEMS_MAX_TYPE_ASC
     PROPOSAL_ITEMS_MAX_TYPE_DESC
-    PROPOSAL_ITEMS_MAX_VOTES_ASC
-    PROPOSAL_ITEMS_MAX_VOTES_DESC
     PROPOSAL_ITEMS_MIN_BLOCK_ID_ASC
     PROPOSAL_ITEMS_MIN_BLOCK_ID_DESC
     PROPOSAL_ITEMS_MIN_BLOCK_NUMBER_ASC
     PROPOSAL_ITEMS_MIN_BLOCK_NUMBER_DESC
-    PROPOSAL_ITEMS_MIN_CURRENT_STATUS_ASC
-    PROPOSAL_ITEMS_MIN_CURRENT_STATUS_DESC
     PROPOSAL_ITEMS_MIN_DATA_ASC
     PROPOSAL_ITEMS_MIN_DATA_DESC
     PROPOSAL_ITEMS_MIN_ID_ASC
@@ -5021,18 +6112,12 @@ enum BlocksOrderBy {
     PROPOSAL_ITEMS_MIN_SIGNATURE_DESC
     PROPOSAL_ITEMS_MIN_STATUS_ASC
     PROPOSAL_ITEMS_MIN_STATUS_DESC
-    PROPOSAL_ITEMS_MIN_TIMELINE_STATUS_ASC
-    PROPOSAL_ITEMS_MIN_TIMELINE_STATUS_DESC
     PROPOSAL_ITEMS_MIN_TYPE_ASC
     PROPOSAL_ITEMS_MIN_TYPE_DESC
-    PROPOSAL_ITEMS_MIN_VOTES_ASC
-    PROPOSAL_ITEMS_MIN_VOTES_DESC
     PROPOSAL_ITEMS_STDDEV_POPULATION_BLOCK_ID_ASC
     PROPOSAL_ITEMS_STDDEV_POPULATION_BLOCK_ID_DESC
     PROPOSAL_ITEMS_STDDEV_POPULATION_BLOCK_NUMBER_ASC
     PROPOSAL_ITEMS_STDDEV_POPULATION_BLOCK_NUMBER_DESC
-    PROPOSAL_ITEMS_STDDEV_POPULATION_CURRENT_STATUS_ASC
-    PROPOSAL_ITEMS_STDDEV_POPULATION_CURRENT_STATUS_DESC
     PROPOSAL_ITEMS_STDDEV_POPULATION_DATA_ASC
     PROPOSAL_ITEMS_STDDEV_POPULATION_DATA_DESC
     PROPOSAL_ITEMS_STDDEV_POPULATION_ID_ASC
@@ -5045,18 +6130,12 @@ enum BlocksOrderBy {
     PROPOSAL_ITEMS_STDDEV_POPULATION_SIGNATURE_DESC
     PROPOSAL_ITEMS_STDDEV_POPULATION_STATUS_ASC
     PROPOSAL_ITEMS_STDDEV_POPULATION_STATUS_DESC
-    PROPOSAL_ITEMS_STDDEV_POPULATION_TIMELINE_STATUS_ASC
-    PROPOSAL_ITEMS_STDDEV_POPULATION_TIMELINE_STATUS_DESC
     PROPOSAL_ITEMS_STDDEV_POPULATION_TYPE_ASC
     PROPOSAL_ITEMS_STDDEV_POPULATION_TYPE_DESC
-    PROPOSAL_ITEMS_STDDEV_POPULATION_VOTES_ASC
-    PROPOSAL_ITEMS_STDDEV_POPULATION_VOTES_DESC
     PROPOSAL_ITEMS_STDDEV_SAMPLE_BLOCK_ID_ASC
     PROPOSAL_ITEMS_STDDEV_SAMPLE_BLOCK_ID_DESC
     PROPOSAL_ITEMS_STDDEV_SAMPLE_BLOCK_NUMBER_ASC
     PROPOSAL_ITEMS_STDDEV_SAMPLE_BLOCK_NUMBER_DESC
-    PROPOSAL_ITEMS_STDDEV_SAMPLE_CURRENT_STATUS_ASC
-    PROPOSAL_ITEMS_STDDEV_SAMPLE_CURRENT_STATUS_DESC
     PROPOSAL_ITEMS_STDDEV_SAMPLE_DATA_ASC
     PROPOSAL_ITEMS_STDDEV_SAMPLE_DATA_DESC
     PROPOSAL_ITEMS_STDDEV_SAMPLE_ID_ASC
@@ -5069,18 +6148,12 @@ enum BlocksOrderBy {
     PROPOSAL_ITEMS_STDDEV_SAMPLE_SIGNATURE_DESC
     PROPOSAL_ITEMS_STDDEV_SAMPLE_STATUS_ASC
     PROPOSAL_ITEMS_STDDEV_SAMPLE_STATUS_DESC
-    PROPOSAL_ITEMS_STDDEV_SAMPLE_TIMELINE_STATUS_ASC
-    PROPOSAL_ITEMS_STDDEV_SAMPLE_TIMELINE_STATUS_DESC
     PROPOSAL_ITEMS_STDDEV_SAMPLE_TYPE_ASC
     PROPOSAL_ITEMS_STDDEV_SAMPLE_TYPE_DESC
-    PROPOSAL_ITEMS_STDDEV_SAMPLE_VOTES_ASC
-    PROPOSAL_ITEMS_STDDEV_SAMPLE_VOTES_DESC
     PROPOSAL_ITEMS_SUM_BLOCK_ID_ASC
     PROPOSAL_ITEMS_SUM_BLOCK_ID_DESC
     PROPOSAL_ITEMS_SUM_BLOCK_NUMBER_ASC
     PROPOSAL_ITEMS_SUM_BLOCK_NUMBER_DESC
-    PROPOSAL_ITEMS_SUM_CURRENT_STATUS_ASC
-    PROPOSAL_ITEMS_SUM_CURRENT_STATUS_DESC
     PROPOSAL_ITEMS_SUM_DATA_ASC
     PROPOSAL_ITEMS_SUM_DATA_DESC
     PROPOSAL_ITEMS_SUM_ID_ASC
@@ -5093,18 +6166,12 @@ enum BlocksOrderBy {
     PROPOSAL_ITEMS_SUM_SIGNATURE_DESC
     PROPOSAL_ITEMS_SUM_STATUS_ASC
     PROPOSAL_ITEMS_SUM_STATUS_DESC
-    PROPOSAL_ITEMS_SUM_TIMELINE_STATUS_ASC
-    PROPOSAL_ITEMS_SUM_TIMELINE_STATUS_DESC
     PROPOSAL_ITEMS_SUM_TYPE_ASC
     PROPOSAL_ITEMS_SUM_TYPE_DESC
-    PROPOSAL_ITEMS_SUM_VOTES_ASC
-    PROPOSAL_ITEMS_SUM_VOTES_DESC
     PROPOSAL_ITEMS_VARIANCE_POPULATION_BLOCK_ID_ASC
     PROPOSAL_ITEMS_VARIANCE_POPULATION_BLOCK_ID_DESC
     PROPOSAL_ITEMS_VARIANCE_POPULATION_BLOCK_NUMBER_ASC
     PROPOSAL_ITEMS_VARIANCE_POPULATION_BLOCK_NUMBER_DESC
-    PROPOSAL_ITEMS_VARIANCE_POPULATION_CURRENT_STATUS_ASC
-    PROPOSAL_ITEMS_VARIANCE_POPULATION_CURRENT_STATUS_DESC
     PROPOSAL_ITEMS_VARIANCE_POPULATION_DATA_ASC
     PROPOSAL_ITEMS_VARIANCE_POPULATION_DATA_DESC
     PROPOSAL_ITEMS_VARIANCE_POPULATION_ID_ASC
@@ -5117,18 +6184,12 @@ enum BlocksOrderBy {
     PROPOSAL_ITEMS_VARIANCE_POPULATION_SIGNATURE_DESC
     PROPOSAL_ITEMS_VARIANCE_POPULATION_STATUS_ASC
     PROPOSAL_ITEMS_VARIANCE_POPULATION_STATUS_DESC
-    PROPOSAL_ITEMS_VARIANCE_POPULATION_TIMELINE_STATUS_ASC
-    PROPOSAL_ITEMS_VARIANCE_POPULATION_TIMELINE_STATUS_DESC
     PROPOSAL_ITEMS_VARIANCE_POPULATION_TYPE_ASC
     PROPOSAL_ITEMS_VARIANCE_POPULATION_TYPE_DESC
-    PROPOSAL_ITEMS_VARIANCE_POPULATION_VOTES_ASC
-    PROPOSAL_ITEMS_VARIANCE_POPULATION_VOTES_DESC
     PROPOSAL_ITEMS_VARIANCE_SAMPLE_BLOCK_ID_ASC
     PROPOSAL_ITEMS_VARIANCE_SAMPLE_BLOCK_ID_DESC
     PROPOSAL_ITEMS_VARIANCE_SAMPLE_BLOCK_NUMBER_ASC
     PROPOSAL_ITEMS_VARIANCE_SAMPLE_BLOCK_NUMBER_DESC
-    PROPOSAL_ITEMS_VARIANCE_SAMPLE_CURRENT_STATUS_ASC
-    PROPOSAL_ITEMS_VARIANCE_SAMPLE_CURRENT_STATUS_DESC
     PROPOSAL_ITEMS_VARIANCE_SAMPLE_DATA_ASC
     PROPOSAL_ITEMS_VARIANCE_SAMPLE_DATA_DESC
     PROPOSAL_ITEMS_VARIANCE_SAMPLE_ID_ASC
@@ -5141,86 +6202,118 @@ enum BlocksOrderBy {
     PROPOSAL_ITEMS_VARIANCE_SAMPLE_SIGNATURE_DESC
     PROPOSAL_ITEMS_VARIANCE_SAMPLE_STATUS_ASC
     PROPOSAL_ITEMS_VARIANCE_SAMPLE_STATUS_DESC
-    PROPOSAL_ITEMS_VARIANCE_SAMPLE_TIMELINE_STATUS_ASC
-    PROPOSAL_ITEMS_VARIANCE_SAMPLE_TIMELINE_STATUS_DESC
     PROPOSAL_ITEMS_VARIANCE_SAMPLE_TYPE_ASC
     PROPOSAL_ITEMS_VARIANCE_SAMPLE_TYPE_DESC
-    PROPOSAL_ITEMS_VARIANCE_SAMPLE_VOTES_ASC
-    PROPOSAL_ITEMS_VARIANCE_SAMPLE_VOTES_DESC
-    PROPOSERS_AVERAGE_BLOCK_ID_ASC
-    PROPOSERS_AVERAGE_BLOCK_ID_DESC
-    PROPOSERS_AVERAGE_COUNT_ASC
-    PROPOSERS_AVERAGE_COUNT_DESC
-    PROPOSERS_AVERAGE_ID_ASC
-    PROPOSERS_AVERAGE_ID_DESC
-    PROPOSERS_AVERAGE_PROPOSERS_ASC
-    PROPOSERS_AVERAGE_PROPOSERS_DESC
-    PROPOSERS_COUNT_ASC
-    PROPOSERS_COUNT_DESC
-    PROPOSERS_DISTINCT_COUNT_BLOCK_ID_ASC
-    PROPOSERS_DISTINCT_COUNT_BLOCK_ID_DESC
-    PROPOSERS_DISTINCT_COUNT_COUNT_ASC
-    PROPOSERS_DISTINCT_COUNT_COUNT_DESC
-    PROPOSERS_DISTINCT_COUNT_ID_ASC
-    PROPOSERS_DISTINCT_COUNT_ID_DESC
-    PROPOSERS_DISTINCT_COUNT_PROPOSERS_ASC
-    PROPOSERS_DISTINCT_COUNT_PROPOSERS_DESC
-    PROPOSERS_MAX_BLOCK_ID_ASC
-    PROPOSERS_MAX_BLOCK_ID_DESC
-    PROPOSERS_MAX_COUNT_ASC
-    PROPOSERS_MAX_COUNT_DESC
-    PROPOSERS_MAX_ID_ASC
-    PROPOSERS_MAX_ID_DESC
-    PROPOSERS_MAX_PROPOSERS_ASC
-    PROPOSERS_MAX_PROPOSERS_DESC
-    PROPOSERS_MIN_BLOCK_ID_ASC
-    PROPOSERS_MIN_BLOCK_ID_DESC
-    PROPOSERS_MIN_COUNT_ASC
-    PROPOSERS_MIN_COUNT_DESC
-    PROPOSERS_MIN_ID_ASC
-    PROPOSERS_MIN_ID_DESC
-    PROPOSERS_MIN_PROPOSERS_ASC
-    PROPOSERS_MIN_PROPOSERS_DESC
-    PROPOSERS_STDDEV_POPULATION_BLOCK_ID_ASC
-    PROPOSERS_STDDEV_POPULATION_BLOCK_ID_DESC
-    PROPOSERS_STDDEV_POPULATION_COUNT_ASC
-    PROPOSERS_STDDEV_POPULATION_COUNT_DESC
-    PROPOSERS_STDDEV_POPULATION_ID_ASC
-    PROPOSERS_STDDEV_POPULATION_ID_DESC
-    PROPOSERS_STDDEV_POPULATION_PROPOSERS_ASC
-    PROPOSERS_STDDEV_POPULATION_PROPOSERS_DESC
-    PROPOSERS_STDDEV_SAMPLE_BLOCK_ID_ASC
-    PROPOSERS_STDDEV_SAMPLE_BLOCK_ID_DESC
-    PROPOSERS_STDDEV_SAMPLE_COUNT_ASC
-    PROPOSERS_STDDEV_SAMPLE_COUNT_DESC
-    PROPOSERS_STDDEV_SAMPLE_ID_ASC
-    PROPOSERS_STDDEV_SAMPLE_ID_DESC
-    PROPOSERS_STDDEV_SAMPLE_PROPOSERS_ASC
-    PROPOSERS_STDDEV_SAMPLE_PROPOSERS_DESC
-    PROPOSERS_SUM_BLOCK_ID_ASC
-    PROPOSERS_SUM_BLOCK_ID_DESC
-    PROPOSERS_SUM_COUNT_ASC
-    PROPOSERS_SUM_COUNT_DESC
-    PROPOSERS_SUM_ID_ASC
-    PROPOSERS_SUM_ID_DESC
-    PROPOSERS_SUM_PROPOSERS_ASC
-    PROPOSERS_SUM_PROPOSERS_DESC
-    PROPOSERS_VARIANCE_POPULATION_BLOCK_ID_ASC
-    PROPOSERS_VARIANCE_POPULATION_BLOCK_ID_DESC
-    PROPOSERS_VARIANCE_POPULATION_COUNT_ASC
-    PROPOSERS_VARIANCE_POPULATION_COUNT_DESC
-    PROPOSERS_VARIANCE_POPULATION_ID_ASC
-    PROPOSERS_VARIANCE_POPULATION_ID_DESC
-    PROPOSERS_VARIANCE_POPULATION_PROPOSERS_ASC
-    PROPOSERS_VARIANCE_POPULATION_PROPOSERS_DESC
-    PROPOSERS_VARIANCE_SAMPLE_BLOCK_ID_ASC
-    PROPOSERS_VARIANCE_SAMPLE_BLOCK_ID_DESC
-    PROPOSERS_VARIANCE_SAMPLE_COUNT_ASC
-    PROPOSERS_VARIANCE_SAMPLE_COUNT_DESC
-    PROPOSERS_VARIANCE_SAMPLE_ID_ASC
-    PROPOSERS_VARIANCE_SAMPLE_ID_DESC
-    PROPOSERS_VARIANCE_SAMPLE_PROPOSERS_ASC
-    PROPOSERS_VARIANCE_SAMPLE_PROPOSERS_DESC
+    PROPOSAL_VOTES_AVERAGE_BLOCK_ID_ASC
+    PROPOSAL_VOTES_AVERAGE_BLOCK_ID_DESC
+    PROPOSAL_VOTES_AVERAGE_BLOCK_NUMBER_ASC
+    PROPOSAL_VOTES_AVERAGE_BLOCK_NUMBER_DESC
+    PROPOSAL_VOTES_AVERAGE_FOR_ASC
+    PROPOSAL_VOTES_AVERAGE_FOR_DESC
+    PROPOSAL_VOTES_AVERAGE_ID_ASC
+    PROPOSAL_VOTES_AVERAGE_ID_DESC
+    PROPOSAL_VOTES_AVERAGE_PROPOSAL_ID_ASC
+    PROPOSAL_VOTES_AVERAGE_PROPOSAL_ID_DESC
+    PROPOSAL_VOTES_AVERAGE_VOTER_ID_ASC
+    PROPOSAL_VOTES_AVERAGE_VOTER_ID_DESC
+    PROPOSAL_VOTES_COUNT_ASC
+    PROPOSAL_VOTES_COUNT_DESC
+    PROPOSAL_VOTES_DISTINCT_COUNT_BLOCK_ID_ASC
+    PROPOSAL_VOTES_DISTINCT_COUNT_BLOCK_ID_DESC
+    PROPOSAL_VOTES_DISTINCT_COUNT_BLOCK_NUMBER_ASC
+    PROPOSAL_VOTES_DISTINCT_COUNT_BLOCK_NUMBER_DESC
+    PROPOSAL_VOTES_DISTINCT_COUNT_FOR_ASC
+    PROPOSAL_VOTES_DISTINCT_COUNT_FOR_DESC
+    PROPOSAL_VOTES_DISTINCT_COUNT_ID_ASC
+    PROPOSAL_VOTES_DISTINCT_COUNT_ID_DESC
+    PROPOSAL_VOTES_DISTINCT_COUNT_PROPOSAL_ID_ASC
+    PROPOSAL_VOTES_DISTINCT_COUNT_PROPOSAL_ID_DESC
+    PROPOSAL_VOTES_DISTINCT_COUNT_VOTER_ID_ASC
+    PROPOSAL_VOTES_DISTINCT_COUNT_VOTER_ID_DESC
+    PROPOSAL_VOTES_MAX_BLOCK_ID_ASC
+    PROPOSAL_VOTES_MAX_BLOCK_ID_DESC
+    PROPOSAL_VOTES_MAX_BLOCK_NUMBER_ASC
+    PROPOSAL_VOTES_MAX_BLOCK_NUMBER_DESC
+    PROPOSAL_VOTES_MAX_FOR_ASC
+    PROPOSAL_VOTES_MAX_FOR_DESC
+    PROPOSAL_VOTES_MAX_ID_ASC
+    PROPOSAL_VOTES_MAX_ID_DESC
+    PROPOSAL_VOTES_MAX_PROPOSAL_ID_ASC
+    PROPOSAL_VOTES_MAX_PROPOSAL_ID_DESC
+    PROPOSAL_VOTES_MAX_VOTER_ID_ASC
+    PROPOSAL_VOTES_MAX_VOTER_ID_DESC
+    PROPOSAL_VOTES_MIN_BLOCK_ID_ASC
+    PROPOSAL_VOTES_MIN_BLOCK_ID_DESC
+    PROPOSAL_VOTES_MIN_BLOCK_NUMBER_ASC
+    PROPOSAL_VOTES_MIN_BLOCK_NUMBER_DESC
+    PROPOSAL_VOTES_MIN_FOR_ASC
+    PROPOSAL_VOTES_MIN_FOR_DESC
+    PROPOSAL_VOTES_MIN_ID_ASC
+    PROPOSAL_VOTES_MIN_ID_DESC
+    PROPOSAL_VOTES_MIN_PROPOSAL_ID_ASC
+    PROPOSAL_VOTES_MIN_PROPOSAL_ID_DESC
+    PROPOSAL_VOTES_MIN_VOTER_ID_ASC
+    PROPOSAL_VOTES_MIN_VOTER_ID_DESC
+    PROPOSAL_VOTES_STDDEV_POPULATION_BLOCK_ID_ASC
+    PROPOSAL_VOTES_STDDEV_POPULATION_BLOCK_ID_DESC
+    PROPOSAL_VOTES_STDDEV_POPULATION_BLOCK_NUMBER_ASC
+    PROPOSAL_VOTES_STDDEV_POPULATION_BLOCK_NUMBER_DESC
+    PROPOSAL_VOTES_STDDEV_POPULATION_FOR_ASC
+    PROPOSAL_VOTES_STDDEV_POPULATION_FOR_DESC
+    PROPOSAL_VOTES_STDDEV_POPULATION_ID_ASC
+    PROPOSAL_VOTES_STDDEV_POPULATION_ID_DESC
+    PROPOSAL_VOTES_STDDEV_POPULATION_PROPOSAL_ID_ASC
+    PROPOSAL_VOTES_STDDEV_POPULATION_PROPOSAL_ID_DESC
+    PROPOSAL_VOTES_STDDEV_POPULATION_VOTER_ID_ASC
+    PROPOSAL_VOTES_STDDEV_POPULATION_VOTER_ID_DESC
+    PROPOSAL_VOTES_STDDEV_SAMPLE_BLOCK_ID_ASC
+    PROPOSAL_VOTES_STDDEV_SAMPLE_BLOCK_ID_DESC
+    PROPOSAL_VOTES_STDDEV_SAMPLE_BLOCK_NUMBER_ASC
+    PROPOSAL_VOTES_STDDEV_SAMPLE_BLOCK_NUMBER_DESC
+    PROPOSAL_VOTES_STDDEV_SAMPLE_FOR_ASC
+    PROPOSAL_VOTES_STDDEV_SAMPLE_FOR_DESC
+    PROPOSAL_VOTES_STDDEV_SAMPLE_ID_ASC
+    PROPOSAL_VOTES_STDDEV_SAMPLE_ID_DESC
+    PROPOSAL_VOTES_STDDEV_SAMPLE_PROPOSAL_ID_ASC
+    PROPOSAL_VOTES_STDDEV_SAMPLE_PROPOSAL_ID_DESC
+    PROPOSAL_VOTES_STDDEV_SAMPLE_VOTER_ID_ASC
+    PROPOSAL_VOTES_STDDEV_SAMPLE_VOTER_ID_DESC
+    PROPOSAL_VOTES_SUM_BLOCK_ID_ASC
+    PROPOSAL_VOTES_SUM_BLOCK_ID_DESC
+    PROPOSAL_VOTES_SUM_BLOCK_NUMBER_ASC
+    PROPOSAL_VOTES_SUM_BLOCK_NUMBER_DESC
+    PROPOSAL_VOTES_SUM_FOR_ASC
+    PROPOSAL_VOTES_SUM_FOR_DESC
+    PROPOSAL_VOTES_SUM_ID_ASC
+    PROPOSAL_VOTES_SUM_ID_DESC
+    PROPOSAL_VOTES_SUM_PROPOSAL_ID_ASC
+    PROPOSAL_VOTES_SUM_PROPOSAL_ID_DESC
+    PROPOSAL_VOTES_SUM_VOTER_ID_ASC
+    PROPOSAL_VOTES_SUM_VOTER_ID_DESC
+    PROPOSAL_VOTES_VARIANCE_POPULATION_BLOCK_ID_ASC
+    PROPOSAL_VOTES_VARIANCE_POPULATION_BLOCK_ID_DESC
+    PROPOSAL_VOTES_VARIANCE_POPULATION_BLOCK_NUMBER_ASC
+    PROPOSAL_VOTES_VARIANCE_POPULATION_BLOCK_NUMBER_DESC
+    PROPOSAL_VOTES_VARIANCE_POPULATION_FOR_ASC
+    PROPOSAL_VOTES_VARIANCE_POPULATION_FOR_DESC
+    PROPOSAL_VOTES_VARIANCE_POPULATION_ID_ASC
+    PROPOSAL_VOTES_VARIANCE_POPULATION_ID_DESC
+    PROPOSAL_VOTES_VARIANCE_POPULATION_PROPOSAL_ID_ASC
+    PROPOSAL_VOTES_VARIANCE_POPULATION_PROPOSAL_ID_DESC
+    PROPOSAL_VOTES_VARIANCE_POPULATION_VOTER_ID_ASC
+    PROPOSAL_VOTES_VARIANCE_POPULATION_VOTER_ID_DESC
+    PROPOSAL_VOTES_VARIANCE_SAMPLE_BLOCK_ID_ASC
+    PROPOSAL_VOTES_VARIANCE_SAMPLE_BLOCK_ID_DESC
+    PROPOSAL_VOTES_VARIANCE_SAMPLE_BLOCK_NUMBER_ASC
+    PROPOSAL_VOTES_VARIANCE_SAMPLE_BLOCK_NUMBER_DESC
+    PROPOSAL_VOTES_VARIANCE_SAMPLE_FOR_ASC
+    PROPOSAL_VOTES_VARIANCE_SAMPLE_FOR_DESC
+    PROPOSAL_VOTES_VARIANCE_SAMPLE_ID_ASC
+    PROPOSAL_VOTES_VARIANCE_SAMPLE_ID_DESC
+    PROPOSAL_VOTES_VARIANCE_SAMPLE_PROPOSAL_ID_ASC
+    PROPOSAL_VOTES_VARIANCE_SAMPLE_PROPOSAL_ID_DESC
+    PROPOSAL_VOTES_VARIANCE_SAMPLE_VOTER_ID_ASC
+    PROPOSAL_VOTES_VARIANCE_SAMPLE_VOTER_ID_DESC
     PROPOSER_THRESHOLDS_AVERAGE_BLOCK_ID_ASC
     PROPOSER_THRESHOLDS_AVERAGE_BLOCK_ID_DESC
     PROPOSER_THRESHOLDS_AVERAGE_ID_ASC
@@ -5377,10 +6470,6 @@ enum BlocksOrderBy {
     SESSIONS_AVERAGE_ID_DESC
     SESSIONS_AVERAGE_KEY_GEN_THRESHOLD_ASC
     SESSIONS_AVERAGE_KEY_GEN_THRESHOLD_DESC
-    SESSIONS_AVERAGE_PROPOSERS_ASC
-    SESSIONS_AVERAGE_PROPOSERS_COUNT_ASC
-    SESSIONS_AVERAGE_PROPOSERS_COUNT_DESC
-    SESSIONS_AVERAGE_PROPOSERS_DESC
     SESSIONS_AVERAGE_PROPOSER_THRESHOLD_ASC
     SESSIONS_AVERAGE_PROPOSER_THRESHOLD_DESC
     SESSIONS_AVERAGE_PUBLIC_KEY_ID_ASC
@@ -5397,10 +6486,6 @@ enum BlocksOrderBy {
     SESSIONS_DISTINCT_COUNT_ID_DESC
     SESSIONS_DISTINCT_COUNT_KEY_GEN_THRESHOLD_ASC
     SESSIONS_DISTINCT_COUNT_KEY_GEN_THRESHOLD_DESC
-    SESSIONS_DISTINCT_COUNT_PROPOSERS_ASC
-    SESSIONS_DISTINCT_COUNT_PROPOSERS_COUNT_ASC
-    SESSIONS_DISTINCT_COUNT_PROPOSERS_COUNT_DESC
-    SESSIONS_DISTINCT_COUNT_PROPOSERS_DESC
     SESSIONS_DISTINCT_COUNT_PROPOSER_THRESHOLD_ASC
     SESSIONS_DISTINCT_COUNT_PROPOSER_THRESHOLD_DESC
     SESSIONS_DISTINCT_COUNT_PUBLIC_KEY_ID_ASC
@@ -5415,10 +6500,6 @@ enum BlocksOrderBy {
     SESSIONS_MAX_ID_DESC
     SESSIONS_MAX_KEY_GEN_THRESHOLD_ASC
     SESSIONS_MAX_KEY_GEN_THRESHOLD_DESC
-    SESSIONS_MAX_PROPOSERS_ASC
-    SESSIONS_MAX_PROPOSERS_COUNT_ASC
-    SESSIONS_MAX_PROPOSERS_COUNT_DESC
-    SESSIONS_MAX_PROPOSERS_DESC
     SESSIONS_MAX_PROPOSER_THRESHOLD_ASC
     SESSIONS_MAX_PROPOSER_THRESHOLD_DESC
     SESSIONS_MAX_PUBLIC_KEY_ID_ASC
@@ -5433,10 +6514,6 @@ enum BlocksOrderBy {
     SESSIONS_MIN_ID_DESC
     SESSIONS_MIN_KEY_GEN_THRESHOLD_ASC
     SESSIONS_MIN_KEY_GEN_THRESHOLD_DESC
-    SESSIONS_MIN_PROPOSERS_ASC
-    SESSIONS_MIN_PROPOSERS_COUNT_ASC
-    SESSIONS_MIN_PROPOSERS_COUNT_DESC
-    SESSIONS_MIN_PROPOSERS_DESC
     SESSIONS_MIN_PROPOSER_THRESHOLD_ASC
     SESSIONS_MIN_PROPOSER_THRESHOLD_DESC
     SESSIONS_MIN_PUBLIC_KEY_ID_ASC
@@ -5451,10 +6528,6 @@ enum BlocksOrderBy {
     SESSIONS_STDDEV_POPULATION_ID_DESC
     SESSIONS_STDDEV_POPULATION_KEY_GEN_THRESHOLD_ASC
     SESSIONS_STDDEV_POPULATION_KEY_GEN_THRESHOLD_DESC
-    SESSIONS_STDDEV_POPULATION_PROPOSERS_ASC
-    SESSIONS_STDDEV_POPULATION_PROPOSERS_COUNT_ASC
-    SESSIONS_STDDEV_POPULATION_PROPOSERS_COUNT_DESC
-    SESSIONS_STDDEV_POPULATION_PROPOSERS_DESC
     SESSIONS_STDDEV_POPULATION_PROPOSER_THRESHOLD_ASC
     SESSIONS_STDDEV_POPULATION_PROPOSER_THRESHOLD_DESC
     SESSIONS_STDDEV_POPULATION_PUBLIC_KEY_ID_ASC
@@ -5469,10 +6542,6 @@ enum BlocksOrderBy {
     SESSIONS_STDDEV_SAMPLE_ID_DESC
     SESSIONS_STDDEV_SAMPLE_KEY_GEN_THRESHOLD_ASC
     SESSIONS_STDDEV_SAMPLE_KEY_GEN_THRESHOLD_DESC
-    SESSIONS_STDDEV_SAMPLE_PROPOSERS_ASC
-    SESSIONS_STDDEV_SAMPLE_PROPOSERS_COUNT_ASC
-    SESSIONS_STDDEV_SAMPLE_PROPOSERS_COUNT_DESC
-    SESSIONS_STDDEV_SAMPLE_PROPOSERS_DESC
     SESSIONS_STDDEV_SAMPLE_PROPOSER_THRESHOLD_ASC
     SESSIONS_STDDEV_SAMPLE_PROPOSER_THRESHOLD_DESC
     SESSIONS_STDDEV_SAMPLE_PUBLIC_KEY_ID_ASC
@@ -5487,10 +6556,6 @@ enum BlocksOrderBy {
     SESSIONS_SUM_ID_DESC
     SESSIONS_SUM_KEY_GEN_THRESHOLD_ASC
     SESSIONS_SUM_KEY_GEN_THRESHOLD_DESC
-    SESSIONS_SUM_PROPOSERS_ASC
-    SESSIONS_SUM_PROPOSERS_COUNT_ASC
-    SESSIONS_SUM_PROPOSERS_COUNT_DESC
-    SESSIONS_SUM_PROPOSERS_DESC
     SESSIONS_SUM_PROPOSER_THRESHOLD_ASC
     SESSIONS_SUM_PROPOSER_THRESHOLD_DESC
     SESSIONS_SUM_PUBLIC_KEY_ID_ASC
@@ -5505,10 +6570,6 @@ enum BlocksOrderBy {
     SESSIONS_VARIANCE_POPULATION_ID_DESC
     SESSIONS_VARIANCE_POPULATION_KEY_GEN_THRESHOLD_ASC
     SESSIONS_VARIANCE_POPULATION_KEY_GEN_THRESHOLD_DESC
-    SESSIONS_VARIANCE_POPULATION_PROPOSERS_ASC
-    SESSIONS_VARIANCE_POPULATION_PROPOSERS_COUNT_ASC
-    SESSIONS_VARIANCE_POPULATION_PROPOSERS_COUNT_DESC
-    SESSIONS_VARIANCE_POPULATION_PROPOSERS_DESC
     SESSIONS_VARIANCE_POPULATION_PROPOSER_THRESHOLD_ASC
     SESSIONS_VARIANCE_POPULATION_PROPOSER_THRESHOLD_DESC
     SESSIONS_VARIANCE_POPULATION_PUBLIC_KEY_ID_ASC
@@ -5523,10 +6584,6 @@ enum BlocksOrderBy {
     SESSIONS_VARIANCE_SAMPLE_ID_DESC
     SESSIONS_VARIANCE_SAMPLE_KEY_GEN_THRESHOLD_ASC
     SESSIONS_VARIANCE_SAMPLE_KEY_GEN_THRESHOLD_DESC
-    SESSIONS_VARIANCE_SAMPLE_PROPOSERS_ASC
-    SESSIONS_VARIANCE_SAMPLE_PROPOSERS_COUNT_ASC
-    SESSIONS_VARIANCE_SAMPLE_PROPOSERS_COUNT_DESC
-    SESSIONS_VARIANCE_SAMPLE_PROPOSERS_DESC
     SESSIONS_VARIANCE_SAMPLE_PROPOSER_THRESHOLD_ASC
     SESSIONS_VARIANCE_SAMPLE_PROPOSER_THRESHOLD_DESC
     SESSIONS_VARIANCE_SAMPLE_PUBLIC_KEY_ID_ASC
@@ -6040,15 +7097,12 @@ enum ProposalCountersOrderBy {
 enum ProposalItemsGroupBy {
     BLOCK_ID
     BLOCK_NUMBER
-    CURRENT_STATUS
     DATA
     NONCE
     REMOVED
     SIGNATURE
     STATUS
-    TIMELINE_STATUS
     TYPE
-    VOTES
 }
 
 "Methods to use when ordering `ProposalItem`."
@@ -6057,8 +7111,6 @@ enum ProposalItemsOrderBy {
     BLOCK_ID_DESC
     BLOCK_NUMBER_ASC
     BLOCK_NUMBER_DESC
-    CURRENT_STATUS_ASC
-    CURRENT_STATUS_DESC
     DATA_ASC
     DATA_DESC
     ID_ASC
@@ -6068,14 +7120,232 @@ enum ProposalItemsOrderBy {
     NONCE_DESC
     PRIMARY_KEY_ASC
     PRIMARY_KEY_DESC
+    PROPOSAL_TIMELINE_STATUSES_AVERAGE_BLOCK_NUMBER_ASC
+    PROPOSAL_TIMELINE_STATUSES_AVERAGE_BLOCK_NUMBER_DESC
+    PROPOSAL_TIMELINE_STATUSES_AVERAGE_ID_ASC
+    PROPOSAL_TIMELINE_STATUSES_AVERAGE_ID_DESC
+    PROPOSAL_TIMELINE_STATUSES_AVERAGE_PROPOSAL_ITEM_ID_ASC
+    PROPOSAL_TIMELINE_STATUSES_AVERAGE_PROPOSAL_ITEM_ID_DESC
+    PROPOSAL_TIMELINE_STATUSES_AVERAGE_STATUS_ASC
+    PROPOSAL_TIMELINE_STATUSES_AVERAGE_STATUS_DESC
+    PROPOSAL_TIMELINE_STATUSES_AVERAGE_TIMESTAMP_ASC
+    PROPOSAL_TIMELINE_STATUSES_AVERAGE_TIMESTAMP_DESC
+    PROPOSAL_TIMELINE_STATUSES_AVERAGE_TX_HASH_ASC
+    PROPOSAL_TIMELINE_STATUSES_AVERAGE_TX_HASH_DESC
+    PROPOSAL_TIMELINE_STATUSES_COUNT_ASC
+    PROPOSAL_TIMELINE_STATUSES_COUNT_DESC
+    PROPOSAL_TIMELINE_STATUSES_DISTINCT_COUNT_BLOCK_NUMBER_ASC
+    PROPOSAL_TIMELINE_STATUSES_DISTINCT_COUNT_BLOCK_NUMBER_DESC
+    PROPOSAL_TIMELINE_STATUSES_DISTINCT_COUNT_ID_ASC
+    PROPOSAL_TIMELINE_STATUSES_DISTINCT_COUNT_ID_DESC
+    PROPOSAL_TIMELINE_STATUSES_DISTINCT_COUNT_PROPOSAL_ITEM_ID_ASC
+    PROPOSAL_TIMELINE_STATUSES_DISTINCT_COUNT_PROPOSAL_ITEM_ID_DESC
+    PROPOSAL_TIMELINE_STATUSES_DISTINCT_COUNT_STATUS_ASC
+    PROPOSAL_TIMELINE_STATUSES_DISTINCT_COUNT_STATUS_DESC
+    PROPOSAL_TIMELINE_STATUSES_DISTINCT_COUNT_TIMESTAMP_ASC
+    PROPOSAL_TIMELINE_STATUSES_DISTINCT_COUNT_TIMESTAMP_DESC
+    PROPOSAL_TIMELINE_STATUSES_DISTINCT_COUNT_TX_HASH_ASC
+    PROPOSAL_TIMELINE_STATUSES_DISTINCT_COUNT_TX_HASH_DESC
+    PROPOSAL_TIMELINE_STATUSES_MAX_BLOCK_NUMBER_ASC
+    PROPOSAL_TIMELINE_STATUSES_MAX_BLOCK_NUMBER_DESC
+    PROPOSAL_TIMELINE_STATUSES_MAX_ID_ASC
+    PROPOSAL_TIMELINE_STATUSES_MAX_ID_DESC
+    PROPOSAL_TIMELINE_STATUSES_MAX_PROPOSAL_ITEM_ID_ASC
+    PROPOSAL_TIMELINE_STATUSES_MAX_PROPOSAL_ITEM_ID_DESC
+    PROPOSAL_TIMELINE_STATUSES_MAX_STATUS_ASC
+    PROPOSAL_TIMELINE_STATUSES_MAX_STATUS_DESC
+    PROPOSAL_TIMELINE_STATUSES_MAX_TIMESTAMP_ASC
+    PROPOSAL_TIMELINE_STATUSES_MAX_TIMESTAMP_DESC
+    PROPOSAL_TIMELINE_STATUSES_MAX_TX_HASH_ASC
+    PROPOSAL_TIMELINE_STATUSES_MAX_TX_HASH_DESC
+    PROPOSAL_TIMELINE_STATUSES_MIN_BLOCK_NUMBER_ASC
+    PROPOSAL_TIMELINE_STATUSES_MIN_BLOCK_NUMBER_DESC
+    PROPOSAL_TIMELINE_STATUSES_MIN_ID_ASC
+    PROPOSAL_TIMELINE_STATUSES_MIN_ID_DESC
+    PROPOSAL_TIMELINE_STATUSES_MIN_PROPOSAL_ITEM_ID_ASC
+    PROPOSAL_TIMELINE_STATUSES_MIN_PROPOSAL_ITEM_ID_DESC
+    PROPOSAL_TIMELINE_STATUSES_MIN_STATUS_ASC
+    PROPOSAL_TIMELINE_STATUSES_MIN_STATUS_DESC
+    PROPOSAL_TIMELINE_STATUSES_MIN_TIMESTAMP_ASC
+    PROPOSAL_TIMELINE_STATUSES_MIN_TIMESTAMP_DESC
+    PROPOSAL_TIMELINE_STATUSES_MIN_TX_HASH_ASC
+    PROPOSAL_TIMELINE_STATUSES_MIN_TX_HASH_DESC
+    PROPOSAL_TIMELINE_STATUSES_STDDEV_POPULATION_BLOCK_NUMBER_ASC
+    PROPOSAL_TIMELINE_STATUSES_STDDEV_POPULATION_BLOCK_NUMBER_DESC
+    PROPOSAL_TIMELINE_STATUSES_STDDEV_POPULATION_ID_ASC
+    PROPOSAL_TIMELINE_STATUSES_STDDEV_POPULATION_ID_DESC
+    PROPOSAL_TIMELINE_STATUSES_STDDEV_POPULATION_PROPOSAL_ITEM_ID_ASC
+    PROPOSAL_TIMELINE_STATUSES_STDDEV_POPULATION_PROPOSAL_ITEM_ID_DESC
+    PROPOSAL_TIMELINE_STATUSES_STDDEV_POPULATION_STATUS_ASC
+    PROPOSAL_TIMELINE_STATUSES_STDDEV_POPULATION_STATUS_DESC
+    PROPOSAL_TIMELINE_STATUSES_STDDEV_POPULATION_TIMESTAMP_ASC
+    PROPOSAL_TIMELINE_STATUSES_STDDEV_POPULATION_TIMESTAMP_DESC
+    PROPOSAL_TIMELINE_STATUSES_STDDEV_POPULATION_TX_HASH_ASC
+    PROPOSAL_TIMELINE_STATUSES_STDDEV_POPULATION_TX_HASH_DESC
+    PROPOSAL_TIMELINE_STATUSES_STDDEV_SAMPLE_BLOCK_NUMBER_ASC
+    PROPOSAL_TIMELINE_STATUSES_STDDEV_SAMPLE_BLOCK_NUMBER_DESC
+    PROPOSAL_TIMELINE_STATUSES_STDDEV_SAMPLE_ID_ASC
+    PROPOSAL_TIMELINE_STATUSES_STDDEV_SAMPLE_ID_DESC
+    PROPOSAL_TIMELINE_STATUSES_STDDEV_SAMPLE_PROPOSAL_ITEM_ID_ASC
+    PROPOSAL_TIMELINE_STATUSES_STDDEV_SAMPLE_PROPOSAL_ITEM_ID_DESC
+    PROPOSAL_TIMELINE_STATUSES_STDDEV_SAMPLE_STATUS_ASC
+    PROPOSAL_TIMELINE_STATUSES_STDDEV_SAMPLE_STATUS_DESC
+    PROPOSAL_TIMELINE_STATUSES_STDDEV_SAMPLE_TIMESTAMP_ASC
+    PROPOSAL_TIMELINE_STATUSES_STDDEV_SAMPLE_TIMESTAMP_DESC
+    PROPOSAL_TIMELINE_STATUSES_STDDEV_SAMPLE_TX_HASH_ASC
+    PROPOSAL_TIMELINE_STATUSES_STDDEV_SAMPLE_TX_HASH_DESC
+    PROPOSAL_TIMELINE_STATUSES_SUM_BLOCK_NUMBER_ASC
+    PROPOSAL_TIMELINE_STATUSES_SUM_BLOCK_NUMBER_DESC
+    PROPOSAL_TIMELINE_STATUSES_SUM_ID_ASC
+    PROPOSAL_TIMELINE_STATUSES_SUM_ID_DESC
+    PROPOSAL_TIMELINE_STATUSES_SUM_PROPOSAL_ITEM_ID_ASC
+    PROPOSAL_TIMELINE_STATUSES_SUM_PROPOSAL_ITEM_ID_DESC
+    PROPOSAL_TIMELINE_STATUSES_SUM_STATUS_ASC
+    PROPOSAL_TIMELINE_STATUSES_SUM_STATUS_DESC
+    PROPOSAL_TIMELINE_STATUSES_SUM_TIMESTAMP_ASC
+    PROPOSAL_TIMELINE_STATUSES_SUM_TIMESTAMP_DESC
+    PROPOSAL_TIMELINE_STATUSES_SUM_TX_HASH_ASC
+    PROPOSAL_TIMELINE_STATUSES_SUM_TX_HASH_DESC
+    PROPOSAL_TIMELINE_STATUSES_VARIANCE_POPULATION_BLOCK_NUMBER_ASC
+    PROPOSAL_TIMELINE_STATUSES_VARIANCE_POPULATION_BLOCK_NUMBER_DESC
+    PROPOSAL_TIMELINE_STATUSES_VARIANCE_POPULATION_ID_ASC
+    PROPOSAL_TIMELINE_STATUSES_VARIANCE_POPULATION_ID_DESC
+    PROPOSAL_TIMELINE_STATUSES_VARIANCE_POPULATION_PROPOSAL_ITEM_ID_ASC
+    PROPOSAL_TIMELINE_STATUSES_VARIANCE_POPULATION_PROPOSAL_ITEM_ID_DESC
+    PROPOSAL_TIMELINE_STATUSES_VARIANCE_POPULATION_STATUS_ASC
+    PROPOSAL_TIMELINE_STATUSES_VARIANCE_POPULATION_STATUS_DESC
+    PROPOSAL_TIMELINE_STATUSES_VARIANCE_POPULATION_TIMESTAMP_ASC
+    PROPOSAL_TIMELINE_STATUSES_VARIANCE_POPULATION_TIMESTAMP_DESC
+    PROPOSAL_TIMELINE_STATUSES_VARIANCE_POPULATION_TX_HASH_ASC
+    PROPOSAL_TIMELINE_STATUSES_VARIANCE_POPULATION_TX_HASH_DESC
+    PROPOSAL_TIMELINE_STATUSES_VARIANCE_SAMPLE_BLOCK_NUMBER_ASC
+    PROPOSAL_TIMELINE_STATUSES_VARIANCE_SAMPLE_BLOCK_NUMBER_DESC
+    PROPOSAL_TIMELINE_STATUSES_VARIANCE_SAMPLE_ID_ASC
+    PROPOSAL_TIMELINE_STATUSES_VARIANCE_SAMPLE_ID_DESC
+    PROPOSAL_TIMELINE_STATUSES_VARIANCE_SAMPLE_PROPOSAL_ITEM_ID_ASC
+    PROPOSAL_TIMELINE_STATUSES_VARIANCE_SAMPLE_PROPOSAL_ITEM_ID_DESC
+    PROPOSAL_TIMELINE_STATUSES_VARIANCE_SAMPLE_STATUS_ASC
+    PROPOSAL_TIMELINE_STATUSES_VARIANCE_SAMPLE_STATUS_DESC
+    PROPOSAL_TIMELINE_STATUSES_VARIANCE_SAMPLE_TIMESTAMP_ASC
+    PROPOSAL_TIMELINE_STATUSES_VARIANCE_SAMPLE_TIMESTAMP_DESC
+    PROPOSAL_TIMELINE_STATUSES_VARIANCE_SAMPLE_TX_HASH_ASC
+    PROPOSAL_TIMELINE_STATUSES_VARIANCE_SAMPLE_TX_HASH_DESC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_AVERAGE_BLOCK_ID_ASC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_AVERAGE_BLOCK_ID_DESC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_AVERAGE_BLOCK_NUMBER_ASC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_AVERAGE_BLOCK_NUMBER_DESC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_AVERAGE_FOR_ASC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_AVERAGE_FOR_DESC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_AVERAGE_ID_ASC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_AVERAGE_ID_DESC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_AVERAGE_PROPOSAL_ID_ASC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_AVERAGE_PROPOSAL_ID_DESC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_AVERAGE_VOTER_ID_ASC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_AVERAGE_VOTER_ID_DESC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_COUNT_ASC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_COUNT_DESC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_DISTINCT_COUNT_BLOCK_ID_ASC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_DISTINCT_COUNT_BLOCK_ID_DESC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_DISTINCT_COUNT_BLOCK_NUMBER_ASC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_DISTINCT_COUNT_BLOCK_NUMBER_DESC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_DISTINCT_COUNT_FOR_ASC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_DISTINCT_COUNT_FOR_DESC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_DISTINCT_COUNT_ID_ASC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_DISTINCT_COUNT_ID_DESC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_DISTINCT_COUNT_PROPOSAL_ID_ASC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_DISTINCT_COUNT_PROPOSAL_ID_DESC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_DISTINCT_COUNT_VOTER_ID_ASC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_DISTINCT_COUNT_VOTER_ID_DESC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_MAX_BLOCK_ID_ASC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_MAX_BLOCK_ID_DESC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_MAX_BLOCK_NUMBER_ASC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_MAX_BLOCK_NUMBER_DESC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_MAX_FOR_ASC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_MAX_FOR_DESC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_MAX_ID_ASC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_MAX_ID_DESC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_MAX_PROPOSAL_ID_ASC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_MAX_PROPOSAL_ID_DESC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_MAX_VOTER_ID_ASC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_MAX_VOTER_ID_DESC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_MIN_BLOCK_ID_ASC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_MIN_BLOCK_ID_DESC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_MIN_BLOCK_NUMBER_ASC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_MIN_BLOCK_NUMBER_DESC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_MIN_FOR_ASC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_MIN_FOR_DESC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_MIN_ID_ASC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_MIN_ID_DESC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_MIN_PROPOSAL_ID_ASC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_MIN_PROPOSAL_ID_DESC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_MIN_VOTER_ID_ASC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_MIN_VOTER_ID_DESC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_POPULATION_BLOCK_ID_ASC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_POPULATION_BLOCK_ID_DESC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_POPULATION_BLOCK_NUMBER_ASC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_POPULATION_BLOCK_NUMBER_DESC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_POPULATION_FOR_ASC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_POPULATION_FOR_DESC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_POPULATION_ID_ASC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_POPULATION_ID_DESC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_POPULATION_PROPOSAL_ID_ASC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_POPULATION_PROPOSAL_ID_DESC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_POPULATION_VOTER_ID_ASC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_POPULATION_VOTER_ID_DESC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_SAMPLE_BLOCK_ID_ASC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_SAMPLE_BLOCK_ID_DESC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_SAMPLE_BLOCK_NUMBER_ASC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_SAMPLE_BLOCK_NUMBER_DESC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_SAMPLE_FOR_ASC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_SAMPLE_FOR_DESC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_SAMPLE_ID_ASC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_SAMPLE_ID_DESC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_SAMPLE_PROPOSAL_ID_ASC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_SAMPLE_PROPOSAL_ID_DESC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_SAMPLE_VOTER_ID_ASC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_SAMPLE_VOTER_ID_DESC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_SUM_BLOCK_ID_ASC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_SUM_BLOCK_ID_DESC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_SUM_BLOCK_NUMBER_ASC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_SUM_BLOCK_NUMBER_DESC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_SUM_FOR_ASC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_SUM_FOR_DESC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_SUM_ID_ASC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_SUM_ID_DESC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_SUM_PROPOSAL_ID_ASC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_SUM_PROPOSAL_ID_DESC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_SUM_VOTER_ID_ASC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_SUM_VOTER_ID_DESC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_POPULATION_BLOCK_ID_ASC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_POPULATION_BLOCK_ID_DESC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_POPULATION_BLOCK_NUMBER_ASC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_POPULATION_BLOCK_NUMBER_DESC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_POPULATION_FOR_ASC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_POPULATION_FOR_DESC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_POPULATION_ID_ASC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_POPULATION_ID_DESC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_POPULATION_PROPOSAL_ID_ASC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_POPULATION_PROPOSAL_ID_DESC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_POPULATION_VOTER_ID_ASC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_POPULATION_VOTER_ID_DESC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_SAMPLE_BLOCK_ID_ASC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_SAMPLE_BLOCK_ID_DESC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_SAMPLE_BLOCK_NUMBER_ASC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_SAMPLE_BLOCK_NUMBER_DESC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_SAMPLE_FOR_ASC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_SAMPLE_FOR_DESC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_SAMPLE_ID_ASC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_SAMPLE_ID_DESC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_SAMPLE_PROPOSAL_ID_ASC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_SAMPLE_PROPOSAL_ID_DESC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_SAMPLE_VOTER_ID_ASC
+    PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_SAMPLE_VOTER_ID_DESC
     REMOVED_ASC
     REMOVED_DESC
     SIGNATURE_ASC
     SIGNATURE_DESC
     STATUS_ASC
     STATUS_DESC
-    TIMELINE_STATUS_ASC
-    TIMELINE_STATUS_DESC
     TYPE_ASC
     TYPE_DESC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_AVERAGE_BLOCK_NUMBER_ASC
@@ -6152,8 +7422,46 @@ enum ProposalItemsOrderBy {
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_VARIANCE_SAMPLE_PROPOSAL_ID_DESC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_VARIANCE_SAMPLE_QUEUE_ID_ASC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_VARIANCE_SAMPLE_QUEUE_ID_DESC
-    VOTES_ASC
-    VOTES_DESC
+}
+
+enum ProposalStatus {
+    Accepted
+    Executed
+    FailedToExecute
+    Open
+    Rejected
+    Removed
+    Signed
+}
+
+"Grouping methods for `ProposalTimelineStatus` for usage during aggregation."
+enum ProposalTimelineStatusesGroupBy {
+    BLOCK_NUMBER
+    PROPOSAL_ITEM_ID
+    STATUS
+    TIMESTAMP
+    TIMESTAMP_TRUNCATED_TO_DAY
+    TIMESTAMP_TRUNCATED_TO_HOUR
+    TX_HASH
+}
+
+"Methods to use when ordering `ProposalTimelineStatus`."
+enum ProposalTimelineStatusesOrderBy {
+    BLOCK_NUMBER_ASC
+    BLOCK_NUMBER_DESC
+    ID_ASC
+    ID_DESC
+    NATURAL
+    PRIMARY_KEY_ASC
+    PRIMARY_KEY_DESC
+    PROPOSAL_ITEM_ID_ASC
+    PROPOSAL_ITEM_ID_DESC
+    STATUS_ASC
+    STATUS_DESC
+    TIMESTAMP_ASC
+    TIMESTAMP_DESC
+    TX_HASH_ASC
+    TX_HASH_DESC
 }
 
 enum ProposalType {
@@ -6173,6 +7481,34 @@ enum ProposalType {
     TokenRemoveProposal
     Unknown
     WrappingFeeUpdateProposal
+}
+
+"Grouping methods for `ProposalVote` for usage during aggregation."
+enum ProposalVotesGroupBy {
+    BLOCK_ID
+    BLOCK_NUMBER
+    FOR
+    PROPOSAL_ID
+    VOTER_ID
+}
+
+"Methods to use when ordering `ProposalVote`."
+enum ProposalVotesOrderBy {
+    BLOCK_ID_ASC
+    BLOCK_ID_DESC
+    BLOCK_NUMBER_ASC
+    BLOCK_NUMBER_DESC
+    FOR_ASC
+    FOR_DESC
+    ID_ASC
+    ID_DESC
+    NATURAL
+    PRIMARY_KEY_ASC
+    PRIMARY_KEY_DESC
+    PROPOSAL_ID_ASC
+    PROPOSAL_ID_DESC
+    VOTER_ID_ASC
+    VOTER_ID_DESC
 }
 
 "Grouping methods for `ProposerThreshold` for usage during aggregation."
@@ -6196,24 +7532,184 @@ enum ProposerThresholdsOrderBy {
 
 "Grouping methods for `Proposer` for usage during aggregation."
 enum ProposersGroupBy {
-    BLOCK_ID
-    COUNT
-    PROPOSERS
+    ACCOUNT_ID
 }
 
 "Methods to use when ordering `Proposer`."
 enum ProposersOrderBy {
-    BLOCK_ID_ASC
-    BLOCK_ID_DESC
-    COUNT_ASC
-    COUNT_DESC
+    ACCOUNT_ID_ASC
+    ACCOUNT_ID_DESC
     ID_ASC
     ID_DESC
     NATURAL
     PRIMARY_KEY_ASC
     PRIMARY_KEY_DESC
-    PROPOSERS_ASC
-    PROPOSERS_DESC
+    PROPOSAL_VOTES_BY_VOTER_ID_AVERAGE_BLOCK_ID_ASC
+    PROPOSAL_VOTES_BY_VOTER_ID_AVERAGE_BLOCK_ID_DESC
+    PROPOSAL_VOTES_BY_VOTER_ID_AVERAGE_BLOCK_NUMBER_ASC
+    PROPOSAL_VOTES_BY_VOTER_ID_AVERAGE_BLOCK_NUMBER_DESC
+    PROPOSAL_VOTES_BY_VOTER_ID_AVERAGE_FOR_ASC
+    PROPOSAL_VOTES_BY_VOTER_ID_AVERAGE_FOR_DESC
+    PROPOSAL_VOTES_BY_VOTER_ID_AVERAGE_ID_ASC
+    PROPOSAL_VOTES_BY_VOTER_ID_AVERAGE_ID_DESC
+    PROPOSAL_VOTES_BY_VOTER_ID_AVERAGE_PROPOSAL_ID_ASC
+    PROPOSAL_VOTES_BY_VOTER_ID_AVERAGE_PROPOSAL_ID_DESC
+    PROPOSAL_VOTES_BY_VOTER_ID_AVERAGE_VOTER_ID_ASC
+    PROPOSAL_VOTES_BY_VOTER_ID_AVERAGE_VOTER_ID_DESC
+    PROPOSAL_VOTES_BY_VOTER_ID_COUNT_ASC
+    PROPOSAL_VOTES_BY_VOTER_ID_COUNT_DESC
+    PROPOSAL_VOTES_BY_VOTER_ID_DISTINCT_COUNT_BLOCK_ID_ASC
+    PROPOSAL_VOTES_BY_VOTER_ID_DISTINCT_COUNT_BLOCK_ID_DESC
+    PROPOSAL_VOTES_BY_VOTER_ID_DISTINCT_COUNT_BLOCK_NUMBER_ASC
+    PROPOSAL_VOTES_BY_VOTER_ID_DISTINCT_COUNT_BLOCK_NUMBER_DESC
+    PROPOSAL_VOTES_BY_VOTER_ID_DISTINCT_COUNT_FOR_ASC
+    PROPOSAL_VOTES_BY_VOTER_ID_DISTINCT_COUNT_FOR_DESC
+    PROPOSAL_VOTES_BY_VOTER_ID_DISTINCT_COUNT_ID_ASC
+    PROPOSAL_VOTES_BY_VOTER_ID_DISTINCT_COUNT_ID_DESC
+    PROPOSAL_VOTES_BY_VOTER_ID_DISTINCT_COUNT_PROPOSAL_ID_ASC
+    PROPOSAL_VOTES_BY_VOTER_ID_DISTINCT_COUNT_PROPOSAL_ID_DESC
+    PROPOSAL_VOTES_BY_VOTER_ID_DISTINCT_COUNT_VOTER_ID_ASC
+    PROPOSAL_VOTES_BY_VOTER_ID_DISTINCT_COUNT_VOTER_ID_DESC
+    PROPOSAL_VOTES_BY_VOTER_ID_MAX_BLOCK_ID_ASC
+    PROPOSAL_VOTES_BY_VOTER_ID_MAX_BLOCK_ID_DESC
+    PROPOSAL_VOTES_BY_VOTER_ID_MAX_BLOCK_NUMBER_ASC
+    PROPOSAL_VOTES_BY_VOTER_ID_MAX_BLOCK_NUMBER_DESC
+    PROPOSAL_VOTES_BY_VOTER_ID_MAX_FOR_ASC
+    PROPOSAL_VOTES_BY_VOTER_ID_MAX_FOR_DESC
+    PROPOSAL_VOTES_BY_VOTER_ID_MAX_ID_ASC
+    PROPOSAL_VOTES_BY_VOTER_ID_MAX_ID_DESC
+    PROPOSAL_VOTES_BY_VOTER_ID_MAX_PROPOSAL_ID_ASC
+    PROPOSAL_VOTES_BY_VOTER_ID_MAX_PROPOSAL_ID_DESC
+    PROPOSAL_VOTES_BY_VOTER_ID_MAX_VOTER_ID_ASC
+    PROPOSAL_VOTES_BY_VOTER_ID_MAX_VOTER_ID_DESC
+    PROPOSAL_VOTES_BY_VOTER_ID_MIN_BLOCK_ID_ASC
+    PROPOSAL_VOTES_BY_VOTER_ID_MIN_BLOCK_ID_DESC
+    PROPOSAL_VOTES_BY_VOTER_ID_MIN_BLOCK_NUMBER_ASC
+    PROPOSAL_VOTES_BY_VOTER_ID_MIN_BLOCK_NUMBER_DESC
+    PROPOSAL_VOTES_BY_VOTER_ID_MIN_FOR_ASC
+    PROPOSAL_VOTES_BY_VOTER_ID_MIN_FOR_DESC
+    PROPOSAL_VOTES_BY_VOTER_ID_MIN_ID_ASC
+    PROPOSAL_VOTES_BY_VOTER_ID_MIN_ID_DESC
+    PROPOSAL_VOTES_BY_VOTER_ID_MIN_PROPOSAL_ID_ASC
+    PROPOSAL_VOTES_BY_VOTER_ID_MIN_PROPOSAL_ID_DESC
+    PROPOSAL_VOTES_BY_VOTER_ID_MIN_VOTER_ID_ASC
+    PROPOSAL_VOTES_BY_VOTER_ID_MIN_VOTER_ID_DESC
+    PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_POPULATION_BLOCK_ID_ASC
+    PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_POPULATION_BLOCK_ID_DESC
+    PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_POPULATION_BLOCK_NUMBER_ASC
+    PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_POPULATION_BLOCK_NUMBER_DESC
+    PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_POPULATION_FOR_ASC
+    PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_POPULATION_FOR_DESC
+    PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_POPULATION_ID_ASC
+    PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_POPULATION_ID_DESC
+    PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_POPULATION_PROPOSAL_ID_ASC
+    PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_POPULATION_PROPOSAL_ID_DESC
+    PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_POPULATION_VOTER_ID_ASC
+    PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_POPULATION_VOTER_ID_DESC
+    PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_SAMPLE_BLOCK_ID_ASC
+    PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_SAMPLE_BLOCK_ID_DESC
+    PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_SAMPLE_BLOCK_NUMBER_ASC
+    PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_SAMPLE_BLOCK_NUMBER_DESC
+    PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_SAMPLE_FOR_ASC
+    PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_SAMPLE_FOR_DESC
+    PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_SAMPLE_ID_ASC
+    PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_SAMPLE_ID_DESC
+    PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_SAMPLE_PROPOSAL_ID_ASC
+    PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_SAMPLE_PROPOSAL_ID_DESC
+    PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_SAMPLE_VOTER_ID_ASC
+    PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_SAMPLE_VOTER_ID_DESC
+    PROPOSAL_VOTES_BY_VOTER_ID_SUM_BLOCK_ID_ASC
+    PROPOSAL_VOTES_BY_VOTER_ID_SUM_BLOCK_ID_DESC
+    PROPOSAL_VOTES_BY_VOTER_ID_SUM_BLOCK_NUMBER_ASC
+    PROPOSAL_VOTES_BY_VOTER_ID_SUM_BLOCK_NUMBER_DESC
+    PROPOSAL_VOTES_BY_VOTER_ID_SUM_FOR_ASC
+    PROPOSAL_VOTES_BY_VOTER_ID_SUM_FOR_DESC
+    PROPOSAL_VOTES_BY_VOTER_ID_SUM_ID_ASC
+    PROPOSAL_VOTES_BY_VOTER_ID_SUM_ID_DESC
+    PROPOSAL_VOTES_BY_VOTER_ID_SUM_PROPOSAL_ID_ASC
+    PROPOSAL_VOTES_BY_VOTER_ID_SUM_PROPOSAL_ID_DESC
+    PROPOSAL_VOTES_BY_VOTER_ID_SUM_VOTER_ID_ASC
+    PROPOSAL_VOTES_BY_VOTER_ID_SUM_VOTER_ID_DESC
+    PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_POPULATION_BLOCK_ID_ASC
+    PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_POPULATION_BLOCK_ID_DESC
+    PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_POPULATION_BLOCK_NUMBER_ASC
+    PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_POPULATION_BLOCK_NUMBER_DESC
+    PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_POPULATION_FOR_ASC
+    PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_POPULATION_FOR_DESC
+    PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_POPULATION_ID_ASC
+    PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_POPULATION_ID_DESC
+    PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_POPULATION_PROPOSAL_ID_ASC
+    PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_POPULATION_PROPOSAL_ID_DESC
+    PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_POPULATION_VOTER_ID_ASC
+    PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_POPULATION_VOTER_ID_DESC
+    PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_SAMPLE_BLOCK_ID_ASC
+    PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_SAMPLE_BLOCK_ID_DESC
+    PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_SAMPLE_BLOCK_NUMBER_ASC
+    PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_SAMPLE_BLOCK_NUMBER_DESC
+    PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_SAMPLE_FOR_ASC
+    PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_SAMPLE_FOR_DESC
+    PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_SAMPLE_ID_ASC
+    PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_SAMPLE_ID_DESC
+    PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_SAMPLE_PROPOSAL_ID_ASC
+    PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_SAMPLE_PROPOSAL_ID_DESC
+    PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_SAMPLE_VOTER_ID_ASC
+    PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_SAMPLE_VOTER_ID_DESC
+    SESSION_PROPOSERS_AVERAGE_ID_ASC
+    SESSION_PROPOSERS_AVERAGE_ID_DESC
+    SESSION_PROPOSERS_AVERAGE_PROPOSER_ID_ASC
+    SESSION_PROPOSERS_AVERAGE_PROPOSER_ID_DESC
+    SESSION_PROPOSERS_AVERAGE_SESSION_ID_ASC
+    SESSION_PROPOSERS_AVERAGE_SESSION_ID_DESC
+    SESSION_PROPOSERS_COUNT_ASC
+    SESSION_PROPOSERS_COUNT_DESC
+    SESSION_PROPOSERS_DISTINCT_COUNT_ID_ASC
+    SESSION_PROPOSERS_DISTINCT_COUNT_ID_DESC
+    SESSION_PROPOSERS_DISTINCT_COUNT_PROPOSER_ID_ASC
+    SESSION_PROPOSERS_DISTINCT_COUNT_PROPOSER_ID_DESC
+    SESSION_PROPOSERS_DISTINCT_COUNT_SESSION_ID_ASC
+    SESSION_PROPOSERS_DISTINCT_COUNT_SESSION_ID_DESC
+    SESSION_PROPOSERS_MAX_ID_ASC
+    SESSION_PROPOSERS_MAX_ID_DESC
+    SESSION_PROPOSERS_MAX_PROPOSER_ID_ASC
+    SESSION_PROPOSERS_MAX_PROPOSER_ID_DESC
+    SESSION_PROPOSERS_MAX_SESSION_ID_ASC
+    SESSION_PROPOSERS_MAX_SESSION_ID_DESC
+    SESSION_PROPOSERS_MIN_ID_ASC
+    SESSION_PROPOSERS_MIN_ID_DESC
+    SESSION_PROPOSERS_MIN_PROPOSER_ID_ASC
+    SESSION_PROPOSERS_MIN_PROPOSER_ID_DESC
+    SESSION_PROPOSERS_MIN_SESSION_ID_ASC
+    SESSION_PROPOSERS_MIN_SESSION_ID_DESC
+    SESSION_PROPOSERS_STDDEV_POPULATION_ID_ASC
+    SESSION_PROPOSERS_STDDEV_POPULATION_ID_DESC
+    SESSION_PROPOSERS_STDDEV_POPULATION_PROPOSER_ID_ASC
+    SESSION_PROPOSERS_STDDEV_POPULATION_PROPOSER_ID_DESC
+    SESSION_PROPOSERS_STDDEV_POPULATION_SESSION_ID_ASC
+    SESSION_PROPOSERS_STDDEV_POPULATION_SESSION_ID_DESC
+    SESSION_PROPOSERS_STDDEV_SAMPLE_ID_ASC
+    SESSION_PROPOSERS_STDDEV_SAMPLE_ID_DESC
+    SESSION_PROPOSERS_STDDEV_SAMPLE_PROPOSER_ID_ASC
+    SESSION_PROPOSERS_STDDEV_SAMPLE_PROPOSER_ID_DESC
+    SESSION_PROPOSERS_STDDEV_SAMPLE_SESSION_ID_ASC
+    SESSION_PROPOSERS_STDDEV_SAMPLE_SESSION_ID_DESC
+    SESSION_PROPOSERS_SUM_ID_ASC
+    SESSION_PROPOSERS_SUM_ID_DESC
+    SESSION_PROPOSERS_SUM_PROPOSER_ID_ASC
+    SESSION_PROPOSERS_SUM_PROPOSER_ID_DESC
+    SESSION_PROPOSERS_SUM_SESSION_ID_ASC
+    SESSION_PROPOSERS_SUM_SESSION_ID_DESC
+    SESSION_PROPOSERS_VARIANCE_POPULATION_ID_ASC
+    SESSION_PROPOSERS_VARIANCE_POPULATION_ID_DESC
+    SESSION_PROPOSERS_VARIANCE_POPULATION_PROPOSER_ID_ASC
+    SESSION_PROPOSERS_VARIANCE_POPULATION_PROPOSER_ID_DESC
+    SESSION_PROPOSERS_VARIANCE_POPULATION_SESSION_ID_ASC
+    SESSION_PROPOSERS_VARIANCE_POPULATION_SESSION_ID_DESC
+    SESSION_PROPOSERS_VARIANCE_SAMPLE_ID_ASC
+    SESSION_PROPOSERS_VARIANCE_SAMPLE_ID_DESC
+    SESSION_PROPOSERS_VARIANCE_SAMPLE_PROPOSER_ID_ASC
+    SESSION_PROPOSERS_VARIANCE_SAMPLE_PROPOSER_ID_DESC
+    SESSION_PROPOSERS_VARIANCE_SAMPLE_SESSION_ID_ASC
+    SESSION_PROPOSERS_VARIANCE_SAMPLE_SESSION_ID_DESC
 }
 
 "Grouping methods for `PublicKey` for usage during aggregation."
@@ -6244,10 +7740,6 @@ enum PublicKeysOrderBy {
     SESSIONS_AVERAGE_ID_DESC
     SESSIONS_AVERAGE_KEY_GEN_THRESHOLD_ASC
     SESSIONS_AVERAGE_KEY_GEN_THRESHOLD_DESC
-    SESSIONS_AVERAGE_PROPOSERS_ASC
-    SESSIONS_AVERAGE_PROPOSERS_COUNT_ASC
-    SESSIONS_AVERAGE_PROPOSERS_COUNT_DESC
-    SESSIONS_AVERAGE_PROPOSERS_DESC
     SESSIONS_AVERAGE_PROPOSER_THRESHOLD_ASC
     SESSIONS_AVERAGE_PROPOSER_THRESHOLD_DESC
     SESSIONS_AVERAGE_PUBLIC_KEY_ID_ASC
@@ -6264,10 +7756,6 @@ enum PublicKeysOrderBy {
     SESSIONS_DISTINCT_COUNT_ID_DESC
     SESSIONS_DISTINCT_COUNT_KEY_GEN_THRESHOLD_ASC
     SESSIONS_DISTINCT_COUNT_KEY_GEN_THRESHOLD_DESC
-    SESSIONS_DISTINCT_COUNT_PROPOSERS_ASC
-    SESSIONS_DISTINCT_COUNT_PROPOSERS_COUNT_ASC
-    SESSIONS_DISTINCT_COUNT_PROPOSERS_COUNT_DESC
-    SESSIONS_DISTINCT_COUNT_PROPOSERS_DESC
     SESSIONS_DISTINCT_COUNT_PROPOSER_THRESHOLD_ASC
     SESSIONS_DISTINCT_COUNT_PROPOSER_THRESHOLD_DESC
     SESSIONS_DISTINCT_COUNT_PUBLIC_KEY_ID_ASC
@@ -6282,10 +7770,6 @@ enum PublicKeysOrderBy {
     SESSIONS_MAX_ID_DESC
     SESSIONS_MAX_KEY_GEN_THRESHOLD_ASC
     SESSIONS_MAX_KEY_GEN_THRESHOLD_DESC
-    SESSIONS_MAX_PROPOSERS_ASC
-    SESSIONS_MAX_PROPOSERS_COUNT_ASC
-    SESSIONS_MAX_PROPOSERS_COUNT_DESC
-    SESSIONS_MAX_PROPOSERS_DESC
     SESSIONS_MAX_PROPOSER_THRESHOLD_ASC
     SESSIONS_MAX_PROPOSER_THRESHOLD_DESC
     SESSIONS_MAX_PUBLIC_KEY_ID_ASC
@@ -6300,10 +7784,6 @@ enum PublicKeysOrderBy {
     SESSIONS_MIN_ID_DESC
     SESSIONS_MIN_KEY_GEN_THRESHOLD_ASC
     SESSIONS_MIN_KEY_GEN_THRESHOLD_DESC
-    SESSIONS_MIN_PROPOSERS_ASC
-    SESSIONS_MIN_PROPOSERS_COUNT_ASC
-    SESSIONS_MIN_PROPOSERS_COUNT_DESC
-    SESSIONS_MIN_PROPOSERS_DESC
     SESSIONS_MIN_PROPOSER_THRESHOLD_ASC
     SESSIONS_MIN_PROPOSER_THRESHOLD_DESC
     SESSIONS_MIN_PUBLIC_KEY_ID_ASC
@@ -6318,10 +7798,6 @@ enum PublicKeysOrderBy {
     SESSIONS_STDDEV_POPULATION_ID_DESC
     SESSIONS_STDDEV_POPULATION_KEY_GEN_THRESHOLD_ASC
     SESSIONS_STDDEV_POPULATION_KEY_GEN_THRESHOLD_DESC
-    SESSIONS_STDDEV_POPULATION_PROPOSERS_ASC
-    SESSIONS_STDDEV_POPULATION_PROPOSERS_COUNT_ASC
-    SESSIONS_STDDEV_POPULATION_PROPOSERS_COUNT_DESC
-    SESSIONS_STDDEV_POPULATION_PROPOSERS_DESC
     SESSIONS_STDDEV_POPULATION_PROPOSER_THRESHOLD_ASC
     SESSIONS_STDDEV_POPULATION_PROPOSER_THRESHOLD_DESC
     SESSIONS_STDDEV_POPULATION_PUBLIC_KEY_ID_ASC
@@ -6336,10 +7812,6 @@ enum PublicKeysOrderBy {
     SESSIONS_STDDEV_SAMPLE_ID_DESC
     SESSIONS_STDDEV_SAMPLE_KEY_GEN_THRESHOLD_ASC
     SESSIONS_STDDEV_SAMPLE_KEY_GEN_THRESHOLD_DESC
-    SESSIONS_STDDEV_SAMPLE_PROPOSERS_ASC
-    SESSIONS_STDDEV_SAMPLE_PROPOSERS_COUNT_ASC
-    SESSIONS_STDDEV_SAMPLE_PROPOSERS_COUNT_DESC
-    SESSIONS_STDDEV_SAMPLE_PROPOSERS_DESC
     SESSIONS_STDDEV_SAMPLE_PROPOSER_THRESHOLD_ASC
     SESSIONS_STDDEV_SAMPLE_PROPOSER_THRESHOLD_DESC
     SESSIONS_STDDEV_SAMPLE_PUBLIC_KEY_ID_ASC
@@ -6354,10 +7826,6 @@ enum PublicKeysOrderBy {
     SESSIONS_SUM_ID_DESC
     SESSIONS_SUM_KEY_GEN_THRESHOLD_ASC
     SESSIONS_SUM_KEY_GEN_THRESHOLD_DESC
-    SESSIONS_SUM_PROPOSERS_ASC
-    SESSIONS_SUM_PROPOSERS_COUNT_ASC
-    SESSIONS_SUM_PROPOSERS_COUNT_DESC
-    SESSIONS_SUM_PROPOSERS_DESC
     SESSIONS_SUM_PROPOSER_THRESHOLD_ASC
     SESSIONS_SUM_PROPOSER_THRESHOLD_DESC
     SESSIONS_SUM_PUBLIC_KEY_ID_ASC
@@ -6372,10 +7840,6 @@ enum PublicKeysOrderBy {
     SESSIONS_VARIANCE_POPULATION_ID_DESC
     SESSIONS_VARIANCE_POPULATION_KEY_GEN_THRESHOLD_ASC
     SESSIONS_VARIANCE_POPULATION_KEY_GEN_THRESHOLD_DESC
-    SESSIONS_VARIANCE_POPULATION_PROPOSERS_ASC
-    SESSIONS_VARIANCE_POPULATION_PROPOSERS_COUNT_ASC
-    SESSIONS_VARIANCE_POPULATION_PROPOSERS_COUNT_DESC
-    SESSIONS_VARIANCE_POPULATION_PROPOSERS_DESC
     SESSIONS_VARIANCE_POPULATION_PROPOSER_THRESHOLD_ASC
     SESSIONS_VARIANCE_POPULATION_PROPOSER_THRESHOLD_DESC
     SESSIONS_VARIANCE_POPULATION_PUBLIC_KEY_ID_ASC
@@ -6390,10 +7854,6 @@ enum PublicKeysOrderBy {
     SESSIONS_VARIANCE_SAMPLE_ID_DESC
     SESSIONS_VARIANCE_SAMPLE_KEY_GEN_THRESHOLD_ASC
     SESSIONS_VARIANCE_SAMPLE_KEY_GEN_THRESHOLD_DESC
-    SESSIONS_VARIANCE_SAMPLE_PROPOSERS_ASC
-    SESSIONS_VARIANCE_SAMPLE_PROPOSERS_COUNT_ASC
-    SESSIONS_VARIANCE_SAMPLE_PROPOSERS_COUNT_DESC
-    SESSIONS_VARIANCE_SAMPLE_PROPOSERS_DESC
     SESSIONS_VARIANCE_SAMPLE_PROPOSER_THRESHOLD_ASC
     SESSIONS_VARIANCE_SAMPLE_PROPOSER_THRESHOLD_DESC
     SESSIONS_VARIANCE_SAMPLE_PUBLIC_KEY_ID_ASC
@@ -6402,6 +7862,25 @@ enum PublicKeysOrderBy {
     SESSIONS_VARIANCE_SAMPLE_SIGNATURE_THRESHOLD_DESC
     UNCOMPRESSED_ASC
     UNCOMPRESSED_DESC
+}
+
+"Grouping methods for `SessionProposer` for usage during aggregation."
+enum SessionProposersGroupBy {
+    PROPOSER_ID
+    SESSION_ID
+}
+
+"Methods to use when ordering `SessionProposer`."
+enum SessionProposersOrderBy {
+    ID_ASC
+    ID_DESC
+    NATURAL
+    PRIMARY_KEY_ASC
+    PRIMARY_KEY_DESC
+    PROPOSER_ID_ASC
+    PROPOSER_ID_DESC
+    SESSION_ID_ASC
+    SESSION_ID_DESC
 }
 
 "Grouping methods for `SessionValidator` for usage during aggregation."
@@ -6446,8 +7925,6 @@ enum SessionsGroupBy {
     BLOCK_ID
     BLOCK_NUMBER
     KEY_GEN_THRESHOLD
-    PROPOSERS
-    PROPOSERS_COUNT
     PROPOSER_THRESHOLD
     PUBLIC_KEY_ID
     SIGNATURE_THRESHOLD
@@ -6466,14 +7943,66 @@ enum SessionsOrderBy {
     NATURAL
     PRIMARY_KEY_ASC
     PRIMARY_KEY_DESC
-    PROPOSERS_ASC
-    PROPOSERS_COUNT_ASC
-    PROPOSERS_COUNT_DESC
-    PROPOSERS_DESC
     PROPOSER_THRESHOLD_ASC
     PROPOSER_THRESHOLD_DESC
     PUBLIC_KEY_ID_ASC
     PUBLIC_KEY_ID_DESC
+    SESSION_PROPOSERS_AVERAGE_ID_ASC
+    SESSION_PROPOSERS_AVERAGE_ID_DESC
+    SESSION_PROPOSERS_AVERAGE_PROPOSER_ID_ASC
+    SESSION_PROPOSERS_AVERAGE_PROPOSER_ID_DESC
+    SESSION_PROPOSERS_AVERAGE_SESSION_ID_ASC
+    SESSION_PROPOSERS_AVERAGE_SESSION_ID_DESC
+    SESSION_PROPOSERS_COUNT_ASC
+    SESSION_PROPOSERS_COUNT_DESC
+    SESSION_PROPOSERS_DISTINCT_COUNT_ID_ASC
+    SESSION_PROPOSERS_DISTINCT_COUNT_ID_DESC
+    SESSION_PROPOSERS_DISTINCT_COUNT_PROPOSER_ID_ASC
+    SESSION_PROPOSERS_DISTINCT_COUNT_PROPOSER_ID_DESC
+    SESSION_PROPOSERS_DISTINCT_COUNT_SESSION_ID_ASC
+    SESSION_PROPOSERS_DISTINCT_COUNT_SESSION_ID_DESC
+    SESSION_PROPOSERS_MAX_ID_ASC
+    SESSION_PROPOSERS_MAX_ID_DESC
+    SESSION_PROPOSERS_MAX_PROPOSER_ID_ASC
+    SESSION_PROPOSERS_MAX_PROPOSER_ID_DESC
+    SESSION_PROPOSERS_MAX_SESSION_ID_ASC
+    SESSION_PROPOSERS_MAX_SESSION_ID_DESC
+    SESSION_PROPOSERS_MIN_ID_ASC
+    SESSION_PROPOSERS_MIN_ID_DESC
+    SESSION_PROPOSERS_MIN_PROPOSER_ID_ASC
+    SESSION_PROPOSERS_MIN_PROPOSER_ID_DESC
+    SESSION_PROPOSERS_MIN_SESSION_ID_ASC
+    SESSION_PROPOSERS_MIN_SESSION_ID_DESC
+    SESSION_PROPOSERS_STDDEV_POPULATION_ID_ASC
+    SESSION_PROPOSERS_STDDEV_POPULATION_ID_DESC
+    SESSION_PROPOSERS_STDDEV_POPULATION_PROPOSER_ID_ASC
+    SESSION_PROPOSERS_STDDEV_POPULATION_PROPOSER_ID_DESC
+    SESSION_PROPOSERS_STDDEV_POPULATION_SESSION_ID_ASC
+    SESSION_PROPOSERS_STDDEV_POPULATION_SESSION_ID_DESC
+    SESSION_PROPOSERS_STDDEV_SAMPLE_ID_ASC
+    SESSION_PROPOSERS_STDDEV_SAMPLE_ID_DESC
+    SESSION_PROPOSERS_STDDEV_SAMPLE_PROPOSER_ID_ASC
+    SESSION_PROPOSERS_STDDEV_SAMPLE_PROPOSER_ID_DESC
+    SESSION_PROPOSERS_STDDEV_SAMPLE_SESSION_ID_ASC
+    SESSION_PROPOSERS_STDDEV_SAMPLE_SESSION_ID_DESC
+    SESSION_PROPOSERS_SUM_ID_ASC
+    SESSION_PROPOSERS_SUM_ID_DESC
+    SESSION_PROPOSERS_SUM_PROPOSER_ID_ASC
+    SESSION_PROPOSERS_SUM_PROPOSER_ID_DESC
+    SESSION_PROPOSERS_SUM_SESSION_ID_ASC
+    SESSION_PROPOSERS_SUM_SESSION_ID_DESC
+    SESSION_PROPOSERS_VARIANCE_POPULATION_ID_ASC
+    SESSION_PROPOSERS_VARIANCE_POPULATION_ID_DESC
+    SESSION_PROPOSERS_VARIANCE_POPULATION_PROPOSER_ID_ASC
+    SESSION_PROPOSERS_VARIANCE_POPULATION_PROPOSER_ID_DESC
+    SESSION_PROPOSERS_VARIANCE_POPULATION_SESSION_ID_ASC
+    SESSION_PROPOSERS_VARIANCE_POPULATION_SESSION_ID_DESC
+    SESSION_PROPOSERS_VARIANCE_SAMPLE_ID_ASC
+    SESSION_PROPOSERS_VARIANCE_SAMPLE_ID_DESC
+    SESSION_PROPOSERS_VARIANCE_SAMPLE_PROPOSER_ID_ASC
+    SESSION_PROPOSERS_VARIANCE_SAMPLE_PROPOSER_ID_DESC
+    SESSION_PROPOSERS_VARIANCE_SAMPLE_SESSION_ID_ASC
+    SESSION_PROPOSERS_VARIANCE_SAMPLE_SESSION_ID_DESC
     SESSION_VALIDATORS_AVERAGE_BEST_ORDER_ASC
     SESSION_VALIDATORS_AVERAGE_BEST_ORDER_DESC
     SESSION_VALIDATORS_AVERAGE_ID_ASC
@@ -6780,6 +8309,11 @@ enum UnsignedProposalsQueuesOrderBy {
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_VARIANCE_SAMPLE_PROPOSAL_ID_DESC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_VARIANCE_SAMPLE_QUEUE_ID_ASC
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_VARIANCE_SAMPLE_QUEUE_ID_DESC
+}
+
+"Grouping methods for `Validator` for usage during aggregation."
+enum ValidatorsGroupBy {
+    ACCOUNT_ID
 }
 
 "Methods to use when ordering `Validator`."
@@ -7672,8 +9206,6 @@ input ProposalItemFilter {
     blockId: StringFilter
     "Filter by the object’s `blockNumber` field."
     blockNumber: IntFilter
-    "Filter by the object’s `currentStatus` field."
-    currentStatus: JSONFilter
     "Filter by the object’s `data` field."
     data: StringFilter
     "Filter by the object’s `id` field."
@@ -7690,12 +9222,8 @@ input ProposalItemFilter {
     signature: StringFilter
     "Filter by the object’s `status` field."
     status: StringFilter
-    "Filter by the object’s `timelineStatus` field."
-    timelineStatus: JSONFilter
     "Filter by the object’s `type` field."
     type: ProposalTypeFilter
-    "Filter by the object’s `votes` field."
-    votes: JSONFilter
 }
 
 input ProposalItemsHavingAverageInput {
@@ -7758,6 +9286,114 @@ input ProposalItemsHavingVarianceSampleInput {
     nonce: HavingIntFilter
 }
 
+"A filter to be used against ProposalStatus fields. All fields are combined with a logical ‘and.’"
+input ProposalStatusFilter {
+    "Not equal to the specified value, treating null like an ordinary value."
+    distinctFrom: ProposalStatus
+    "Equal to the specified value."
+    equalTo: ProposalStatus
+    "Greater than the specified value."
+    greaterThan: ProposalStatus
+    "Greater than or equal to the specified value."
+    greaterThanOrEqualTo: ProposalStatus
+    "Included in the specified list."
+    in: [ProposalStatus!]
+    "Is null (if `true` is specified) or is not null (if `false` is specified)."
+    isNull: Boolean
+    "Less than the specified value."
+    lessThan: ProposalStatus
+    "Less than or equal to the specified value."
+    lessThanOrEqualTo: ProposalStatus
+    "Equal to the specified value, treating null like an ordinary value."
+    notDistinctFrom: ProposalStatus
+    "Not equal to the specified value."
+    notEqualTo: ProposalStatus
+    "Not included in the specified list."
+    notIn: [ProposalStatus!]
+}
+
+"A filter to be used against `ProposalTimelineStatus` object types. All fields are combined with a logical ‘and.’"
+input ProposalTimelineStatusFilter {
+    "Checks for all expressions in this list."
+    and: [ProposalTimelineStatusFilter!]
+    "Filter by the object’s `blockNumber` field."
+    blockNumber: BigFloatFilter
+    "Filter by the object’s `id` field."
+    id: StringFilter
+    "Negates the expression."
+    not: ProposalTimelineStatusFilter
+    "Checks for any expressions in this list."
+    or: [ProposalTimelineStatusFilter!]
+    "Filter by the object’s `proposalItemId` field."
+    proposalItemId: StringFilter
+    "Filter by the object’s `status` field."
+    status: ProposalStatusFilter
+    "Filter by the object’s `timestamp` field."
+    timestamp: DatetimeFilter
+    "Filter by the object’s `txHash` field."
+    txHash: StringFilter
+}
+
+input ProposalTimelineStatusesHavingAverageInput {
+    blockNumber: HavingBigfloatFilter
+    timestamp: HavingDatetimeFilter
+}
+
+input ProposalTimelineStatusesHavingDistinctCountInput {
+    blockNumber: HavingBigfloatFilter
+    timestamp: HavingDatetimeFilter
+}
+
+"Conditions for `ProposalTimelineStatus` aggregates."
+input ProposalTimelineStatusesHavingInput {
+    AND: [ProposalTimelineStatusesHavingInput!]
+    OR: [ProposalTimelineStatusesHavingInput!]
+    average: ProposalTimelineStatusesHavingAverageInput
+    distinctCount: ProposalTimelineStatusesHavingDistinctCountInput
+    max: ProposalTimelineStatusesHavingMaxInput
+    min: ProposalTimelineStatusesHavingMinInput
+    stddevPopulation: ProposalTimelineStatusesHavingStddevPopulationInput
+    stddevSample: ProposalTimelineStatusesHavingStddevSampleInput
+    sum: ProposalTimelineStatusesHavingSumInput
+    variancePopulation: ProposalTimelineStatusesHavingVariancePopulationInput
+    varianceSample: ProposalTimelineStatusesHavingVarianceSampleInput
+}
+
+input ProposalTimelineStatusesHavingMaxInput {
+    blockNumber: HavingBigfloatFilter
+    timestamp: HavingDatetimeFilter
+}
+
+input ProposalTimelineStatusesHavingMinInput {
+    blockNumber: HavingBigfloatFilter
+    timestamp: HavingDatetimeFilter
+}
+
+input ProposalTimelineStatusesHavingStddevPopulationInput {
+    blockNumber: HavingBigfloatFilter
+    timestamp: HavingDatetimeFilter
+}
+
+input ProposalTimelineStatusesHavingStddevSampleInput {
+    blockNumber: HavingBigfloatFilter
+    timestamp: HavingDatetimeFilter
+}
+
+input ProposalTimelineStatusesHavingSumInput {
+    blockNumber: HavingBigfloatFilter
+    timestamp: HavingDatetimeFilter
+}
+
+input ProposalTimelineStatusesHavingVariancePopulationInput {
+    blockNumber: HavingBigfloatFilter
+    timestamp: HavingDatetimeFilter
+}
+
+input ProposalTimelineStatusesHavingVarianceSampleInput {
+    blockNumber: HavingBigfloatFilter
+    timestamp: HavingDatetimeFilter
+}
+
 "A filter to be used against ProposalType fields. All fields are combined with a logical ‘and.’"
 input ProposalTypeFilter {
     "Not equal to the specified value, treating null like an ordinary value."
@@ -7784,22 +9420,91 @@ input ProposalTypeFilter {
     notIn: [ProposalType!]
 }
 
-"A filter to be used against `Proposer` object types. All fields are combined with a logical ‘and.’"
-input ProposerFilter {
+"A filter to be used against `ProposalVote` object types. All fields are combined with a logical ‘and.’"
+input ProposalVoteFilter {
     "Checks for all expressions in this list."
-    and: [ProposerFilter!]
+    and: [ProposalVoteFilter!]
     "Filter by the object’s `blockId` field."
     blockId: StringFilter
-    "Filter by the object’s `count` field."
-    count: IntFilter
+    "Filter by the object’s `blockNumber` field."
+    blockNumber: BigFloatFilter
+    "Filter by the object’s `for` field."
+    for: BooleanFilter
+    "Filter by the object’s `id` field."
+    id: StringFilter
+    "Negates the expression."
+    not: ProposalVoteFilter
+    "Checks for any expressions in this list."
+    or: [ProposalVoteFilter!]
+    "Filter by the object’s `proposalId` field."
+    proposalId: StringFilter
+    "Filter by the object’s `voterId` field."
+    voterId: StringFilter
+}
+
+input ProposalVotesHavingAverageInput {
+    blockNumber: HavingBigfloatFilter
+}
+
+input ProposalVotesHavingDistinctCountInput {
+    blockNumber: HavingBigfloatFilter
+}
+
+"Conditions for `ProposalVote` aggregates."
+input ProposalVotesHavingInput {
+    AND: [ProposalVotesHavingInput!]
+    OR: [ProposalVotesHavingInput!]
+    average: ProposalVotesHavingAverageInput
+    distinctCount: ProposalVotesHavingDistinctCountInput
+    max: ProposalVotesHavingMaxInput
+    min: ProposalVotesHavingMinInput
+    stddevPopulation: ProposalVotesHavingStddevPopulationInput
+    stddevSample: ProposalVotesHavingStddevSampleInput
+    sum: ProposalVotesHavingSumInput
+    variancePopulation: ProposalVotesHavingVariancePopulationInput
+    varianceSample: ProposalVotesHavingVarianceSampleInput
+}
+
+input ProposalVotesHavingMaxInput {
+    blockNumber: HavingBigfloatFilter
+}
+
+input ProposalVotesHavingMinInput {
+    blockNumber: HavingBigfloatFilter
+}
+
+input ProposalVotesHavingStddevPopulationInput {
+    blockNumber: HavingBigfloatFilter
+}
+
+input ProposalVotesHavingStddevSampleInput {
+    blockNumber: HavingBigfloatFilter
+}
+
+input ProposalVotesHavingSumInput {
+    blockNumber: HavingBigfloatFilter
+}
+
+input ProposalVotesHavingVariancePopulationInput {
+    blockNumber: HavingBigfloatFilter
+}
+
+input ProposalVotesHavingVarianceSampleInput {
+    blockNumber: HavingBigfloatFilter
+}
+
+"A filter to be used against `Proposer` object types. All fields are combined with a logical ‘and.’"
+input ProposerFilter {
+    "Filter by the object’s `accountId` field."
+    accountId: StringFilter
+    "Checks for all expressions in this list."
+    and: [ProposerFilter!]
     "Filter by the object’s `id` field."
     id: StringFilter
     "Negates the expression."
     not: ProposerFilter
     "Checks for any expressions in this list."
     or: [ProposerFilter!]
-    "Filter by the object’s `proposers` field."
-    proposers: JSONFilter
 }
 
 "A filter to be used against `ProposerThreshold` object types. All fields are combined with a logical ‘and.’"
@@ -7869,55 +9574,10 @@ input ProposerThresholdsHavingVarianceSampleInput {
     value: HavingIntFilter
 }
 
-input ProposersHavingAverageInput {
-    count: HavingIntFilter
-}
-
-input ProposersHavingDistinctCountInput {
-    count: HavingIntFilter
-}
-
 "Conditions for `Proposer` aggregates."
 input ProposersHavingInput {
     AND: [ProposersHavingInput!]
     OR: [ProposersHavingInput!]
-    average: ProposersHavingAverageInput
-    distinctCount: ProposersHavingDistinctCountInput
-    max: ProposersHavingMaxInput
-    min: ProposersHavingMinInput
-    stddevPopulation: ProposersHavingStddevPopulationInput
-    stddevSample: ProposersHavingStddevSampleInput
-    sum: ProposersHavingSumInput
-    variancePopulation: ProposersHavingVariancePopulationInput
-    varianceSample: ProposersHavingVarianceSampleInput
-}
-
-input ProposersHavingMaxInput {
-    count: HavingIntFilter
-}
-
-input ProposersHavingMinInput {
-    count: HavingIntFilter
-}
-
-input ProposersHavingStddevPopulationInput {
-    count: HavingIntFilter
-}
-
-input ProposersHavingStddevSampleInput {
-    count: HavingIntFilter
-}
-
-input ProposersHavingSumInput {
-    count: HavingIntFilter
-}
-
-input ProposersHavingVariancePopulationInput {
-    count: HavingIntFilter
-}
-
-input ProposersHavingVarianceSampleInput {
-    count: HavingIntFilter
 }
 
 "A filter to be used against `PublicKey` object types. All fields are combined with a logical ‘and.’"
@@ -7964,14 +9624,32 @@ input SessionFilter {
     or: [SessionFilter!]
     "Filter by the object’s `proposerThreshold` field."
     proposerThreshold: JSONFilter
-    "Filter by the object’s `proposers` field."
-    proposers: JSONFilter
-    "Filter by the object’s `proposersCount` field."
-    proposersCount: IntFilter
     "Filter by the object’s `publicKeyId` field."
     publicKeyId: StringFilter
     "Filter by the object’s `signatureThreshold` field."
     signatureThreshold: JSONFilter
+}
+
+"A filter to be used against `SessionProposer` object types. All fields are combined with a logical ‘and.’"
+input SessionProposerFilter {
+    "Checks for all expressions in this list."
+    and: [SessionProposerFilter!]
+    "Filter by the object’s `id` field."
+    id: StringFilter
+    "Negates the expression."
+    not: SessionProposerFilter
+    "Checks for any expressions in this list."
+    or: [SessionProposerFilter!]
+    "Filter by the object’s `proposerId` field."
+    proposerId: StringFilter
+    "Filter by the object’s `sessionId` field."
+    sessionId: StringFilter
+}
+
+"Conditions for `SessionProposer` aggregates."
+input SessionProposersHavingInput {
+    AND: [SessionProposersHavingInput!]
+    OR: [SessionProposersHavingInput!]
 }
 
 "A filter to be used against `SessionValidator` object types. All fields are combined with a logical ‘and.’"
@@ -8064,12 +9742,10 @@ input SessionValidatorsHavingVarianceSampleInput {
 
 input SessionsHavingAverageInput {
     blockNumber: HavingIntFilter
-    proposersCount: HavingIntFilter
 }
 
 input SessionsHavingDistinctCountInput {
     blockNumber: HavingIntFilter
-    proposersCount: HavingIntFilter
 }
 
 "Conditions for `Session` aggregates."
@@ -8089,37 +9765,30 @@ input SessionsHavingInput {
 
 input SessionsHavingMaxInput {
     blockNumber: HavingIntFilter
-    proposersCount: HavingIntFilter
 }
 
 input SessionsHavingMinInput {
     blockNumber: HavingIntFilter
-    proposersCount: HavingIntFilter
 }
 
 input SessionsHavingStddevPopulationInput {
     blockNumber: HavingIntFilter
-    proposersCount: HavingIntFilter
 }
 
 input SessionsHavingStddevSampleInput {
     blockNumber: HavingIntFilter
-    proposersCount: HavingIntFilter
 }
 
 input SessionsHavingSumInput {
     blockNumber: HavingIntFilter
-    proposersCount: HavingIntFilter
 }
 
 input SessionsHavingVariancePopulationInput {
     blockNumber: HavingIntFilter
-    proposersCount: HavingIntFilter
 }
 
 input SessionsHavingVarianceSampleInput {
     blockNumber: HavingIntFilter
-    proposersCount: HavingIntFilter
 }
 
 "A filter to be used against `SignatureThreshold` object types. All fields are combined with a logical ‘and.’"
@@ -8439,4 +10108,10 @@ input ValidatorFilter {
     not: ValidatorFilter
     "Checks for any expressions in this list."
     or: [ValidatorFilter!]
+}
+
+"Conditions for `Validator` aggregates."
+input ValidatorsHavingInput {
+    AND: [ValidatorsHavingInput!]
+    OR: [ValidatorsHavingInput!]
 }
