@@ -11,6 +11,7 @@
   "author": "Webb Developers <drew@webb.tools>",
   "devDependencies": {
     "@ngneat/falso": "^6.1.0",
+    "@polkadot/react-identicon": "^2.9.9",
     "@radix-ui/react-avatar": "^1.0.0",
     "@radix-ui/react-collapsible": "^1.0.0",
     "@radix-ui/react-dialog": "^1.0.0",
