@@ -10,13 +10,14 @@ const Keys = () => {
     () => ({
       offset: 0,
       perPage: 10,
+      filter: null,
     }),
     []
   );
 
   const { error, isFailed, isLoading, val: data } = useKeys(pagination);
 
-  const { currentKey, nextKey, pageInfo, tableData } = useMemo(() => {
+  const { currentKey, nextKey } = useMemo(() => {
     return {
       currentKey: data ? data.items[0] : null,
       nextKey: data ? data.items[1] : null,
