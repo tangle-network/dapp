@@ -10008,12 +10008,12 @@ export type ProposalCounterQueryVariables = Exact<{ [key: string]: never; }>;
 export type ProposalCounterQuery = { __typename?: 'Query', proposalCounters?: { __typename?: 'ProposalCountersConnection', nodes: Array<{ __typename?: 'ProposalCounter', id: string, blockNumber: number, unSignedProposalsCount: number, signedProposalsCount: number, statusMap?: any | null, unSignedProposalsMap?: any | null, signedProposalsMap?: any | null } | null> } | null };
 
 export type ProposalsQueryVariables = Exact<{
-  PerPage: Scalars['Int'];
-  Offset: Scalars['Int'];
+  perPage: Scalars['Int'];
+  offset: Scalars['Int'];
 }>;
 
 
-export type ProposalsQuery = { __typename?: 'Query', proposalItems?: { __typename?: 'ProposalItemsConnection', nodes: Array<{ __typename?: 'ProposalItem', id: string, data: string, signature?: string | null, type: ProposalType, status: string, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null } | null> } | null };
+export type ProposalsQuery = { __typename?: 'Query', proposalItems?: { __typename?: 'ProposalItemsConnection', totalCount: number, nodes: Array<{ __typename?: 'ProposalItem', id: string, data: string, signature?: string | null, type: ProposalType, status: string, proposalVotesByProposalId: { __typename?: 'ProposalVotesConnection', totalCount: number, nodes: Array<{ __typename?: 'ProposalVote', id: string, voterId: string, voter?: { __typename?: 'Proposer', id: string } | null } | null> }, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null } | null>, pageInfo: { __typename?: 'PageInfo', endCursor?: any | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: any | null } } | null };
 
 export type ProposalsCounterQueryVariables = Exact<{
   id: Scalars['String'];
@@ -10032,6 +10032,17 @@ export type ProposalsOverviewQueryVariables = Exact<{
 
 
 export type ProposalsOverviewQuery = { __typename?: 'Query', session?: { __typename?: 'Session', id: string, proposerThreshold?: any | null, sessionProposers: { __typename?: 'SessionProposersConnection', totalCount: number }, sessionValidators: { __typename?: 'SessionValidatorsConnection', totalCount: number } } | null, openProposals?: { __typename?: 'ProposalItemsConnection', totalCount: number, nodes: Array<{ __typename?: 'ProposalItem', id: string, data: string, signature?: string | null, type: ProposalType, status: string, proposalVotesByProposalId: { __typename?: 'ProposalVotesConnection', totalCount: number, nodes: Array<{ __typename?: 'ProposalVote', id: string, voterId: string, voter?: { __typename?: 'Proposer', id: string } | null } | null> }, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null } | null>, pageInfo: { __typename?: 'PageInfo', endCursor?: any | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: any | null } } | null, open?: { __typename?: 'ProposalTimelineStatusesConnection', totalCount: number } | null, signed?: { __typename?: 'ProposalTimelineStatusesConnection', totalCount: number } | null, reject?: { __typename?: 'ProposalTimelineStatusesConnection', totalCount: number } | null, accepted?: { __typename?: 'ProposalTimelineStatusesConnection', totalCount: number } | null };
+
+export type ProposalsVoteListViewFragment = { __typename?: 'ProposalVote', id: string, voterId: string, for: boolean, txHash: string, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null };
+
+export type ProposalDetailsQueryVariables = Exact<{
+  id: Scalars['String'];
+  VotesPerPage: Scalars['Int'];
+  VotesOffset: Scalars['Int'];
+}>;
+
+
+export type ProposalDetailsQuery = { __typename?: 'Query', proposalItem?: { __typename?: 'ProposalItem', id: string, data: string, signature?: string | null, type: ProposalType, status: string, proposalTimelineStatuses: { __typename?: 'ProposalTimelineStatusesConnection', nodes: Array<{ __typename?: 'ProposalTimelineStatus', id: string, status: ProposalStatus, blockNumber: any, timestamp: any } | null> }, votesFor: { __typename?: 'ProposalVotesConnection', totalCount: number }, totalVotes: { __typename?: 'ProposalVotesConnection', totalCount: number, nodes: Array<{ __typename?: 'ProposalVote', id: string, voterId: string, for: boolean, txHash: string, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null } | null>, pageInfo: { __typename?: 'PageInfo', endCursor?: any | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: any | null } }, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null } | null };
 
 export type PublicKeysQueryVariables = Exact<{
   PerPage?: InputMaybe<Scalars['Int']>;
@@ -10127,7 +10138,7 @@ export const ProposalListViewFragmentDoc = gql`
   signature
   type
   status
-  proposalVotesByProposalId {
+  proposalVotesByProposalId(orderBy: [BLOCK_NUMBER_DESC], first: 3) {
     nodes {
       id
       voterId
@@ -10137,6 +10148,18 @@ export const ProposalListViewFragmentDoc = gql`
     }
     totalCount
   }
+  block {
+    timestamp
+    number
+  }
+}
+    `;
+export const ProposalsVoteListViewFragmentDoc = gql`
+    fragment ProposalsVoteListView on ProposalVote {
+  id
+  voterId
+  for
+  txHash: voterId
   block {
     timestamp
     number
@@ -10381,22 +10404,19 @@ export type ProposalCounterQueryHookResult = ReturnType<typeof useProposalCounte
 export type ProposalCounterLazyQueryHookResult = ReturnType<typeof useProposalCounterLazyQuery>;
 export type ProposalCounterQueryResult = Apollo.QueryResult<ProposalCounterQuery, ProposalCounterQueryVariables>;
 export const ProposalsDocument = gql`
-    query Proposals($PerPage: Int!, $Offset: Int!) {
-  proposalItems(first: $PerPage, offset: $Offset) {
+    query Proposals($perPage: Int!, $offset: Int!) {
+  proposalItems(first: $perPage, offset: $offset) {
     nodes {
-      id
-      data
-      signature
-      type
-      status
-      block {
-        timestamp
-        number
-      }
+      ...ProposalListView
+    }
+    totalCount
+    pageInfo {
+      ...PageInfoMeta
     }
   }
 }
-    `;
+    ${ProposalListViewFragmentDoc}
+${PageInfoMetaFragmentDoc}`;
 
 /**
  * __useProposalsQuery__
@@ -10410,8 +10430,8 @@ export const ProposalsDocument = gql`
  * @example
  * const { data, loading, error } = useProposalsQuery({
  *   variables: {
- *      PerPage: // value for 'PerPage'
- *      Offset: // value for 'Offset'
+ *      perPage: // value for 'perPage'
+ *      offset: // value for 'offset'
  *   },
  * });
  */
@@ -10548,6 +10568,75 @@ export function useProposalsOverviewLazyQuery(baseOptions?: Apollo.LazyQueryHook
 export type ProposalsOverviewQueryHookResult = ReturnType<typeof useProposalsOverviewQuery>;
 export type ProposalsOverviewLazyQueryHookResult = ReturnType<typeof useProposalsOverviewLazyQuery>;
 export type ProposalsOverviewQueryResult = Apollo.QueryResult<ProposalsOverviewQuery, ProposalsOverviewQueryVariables>;
+export const ProposalDetailsDocument = gql`
+    query ProposalDetails($id: String!, $VotesPerPage: Int!, $VotesOffset: Int!) {
+  proposalItem(id: $id) {
+    id
+    data
+    signature
+    type
+    status
+    proposalTimelineStatuses {
+      nodes {
+        id
+        status
+        blockNumber
+        timestamp
+      }
+    }
+    votesFor: proposalVotesByProposalId(filter: {for: {equalTo: true}}) {
+      totalCount
+    }
+    totalVotes: proposalVotesByProposalId(
+      first: $VotesPerPage
+      offset: $VotesOffset
+    ) {
+      nodes {
+        ...ProposalsVoteListView
+      }
+      pageInfo {
+        ...PageInfoMeta
+      }
+      totalCount
+    }
+    block {
+      timestamp
+      number
+    }
+  }
+}
+    ${ProposalsVoteListViewFragmentDoc}
+${PageInfoMetaFragmentDoc}`;
+
+/**
+ * __useProposalDetailsQuery__
+ *
+ * To run a query within a React component, call `useProposalDetailsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useProposalDetailsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useProposalDetailsQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *      VotesPerPage: // value for 'VotesPerPage'
+ *      VotesOffset: // value for 'VotesOffset'
+ *   },
+ * });
+ */
+export function useProposalDetailsQuery(baseOptions: Apollo.QueryHookOptions<ProposalDetailsQuery, ProposalDetailsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ProposalDetailsQuery, ProposalDetailsQueryVariables>(ProposalDetailsDocument, options);
+      }
+export function useProposalDetailsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ProposalDetailsQuery, ProposalDetailsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ProposalDetailsQuery, ProposalDetailsQueryVariables>(ProposalDetailsDocument, options);
+        }
+export type ProposalDetailsQueryHookResult = ReturnType<typeof useProposalDetailsQuery>;
+export type ProposalDetailsLazyQueryHookResult = ReturnType<typeof useProposalDetailsLazyQuery>;
+export type ProposalDetailsQueryResult = Apollo.QueryResult<ProposalDetailsQuery, ProposalDetailsQueryVariables>;
 export const PublicKeysDocument = gql`
     query PublicKeys($PerPage: Int, $offset: Int) {
   publicKeys(

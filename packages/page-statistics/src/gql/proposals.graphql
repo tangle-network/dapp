@@ -1,21 +1,16 @@
 query Proposals(
   # The number of proposals to return
-  $PerPage: Int!
+  $perPage: Int!
   # The number of proposals to skip
-  $Offset: Int!
+  $offset: Int!
 ) {
-  proposalItems(first: $PerPage, offset: $Offset) {
+  proposalItems(first: $perPage, offset: $offset) {
     nodes {
-      id
-      data
-      signature
-      type
-      status
-
-      block {
-        timestamp
-        number
-      }
+      ...ProposalListView
+    }
+    totalCount
+    pageInfo {
+      ...PageInfoMeta
     }
   }
 }
@@ -47,7 +42,7 @@ fragment ProposalListView on ProposalItem {
   signature
   type
   status
-  proposalVotesByProposalId(orderBy: [BLOCK_NUMBER_DESC] first: 3) {
+  proposalVotesByProposalId(orderBy: [BLOCK_NUMBER_DESC], first: 3) {
     nodes {
       id
       voterId
@@ -107,5 +102,57 @@ query ProposalsOverview($startRange: BigFloatFilter!, $endRange: BigFloatFilter!
     filter: { status: { equalTo: Accepted }, and: [{ blockNumber: $startRange }, { blockNumber: $endRange }] }
   ) {
     totalCount
+  }
+}
+fragment ProposalsVoteListView on ProposalVote {
+  id
+  voterId
+  for
+  txHash: voterId
+  block {
+    timestamp
+    number
+  }
+}
+query ProposalDetails(
+  $id: String!
+  # The number of proposals votes to return
+  $VotesPerPage: Int!
+  # The number of proposals votes to skip
+  $VotesOffset: Int!
+) {
+
+  proposalItem(id: $id) {
+    id
+    data
+    signature
+    type
+    status
+    proposalTimelineStatuses {
+      nodes {
+        id
+        status
+        blockNumber
+        timestamp
+      }
+    }
+
+    votesFor: proposalVotesByProposalId(filter: { for: { equalTo: true } }) {
+      totalCount
+    }
+    totalVotes: proposalVotesByProposalId(first: $VotesPerPage, offset: $VotesOffset) {
+      nodes {
+        ...ProposalsVoteListView
+      }
+      pageInfo {
+        ...PageInfoMeta
+      }
+      totalCount
+    }
+
+    block {
+      timestamp
+      number
+    }
   }
 }

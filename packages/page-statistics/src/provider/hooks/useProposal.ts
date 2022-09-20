@@ -1,4 +1,9 @@
-import { ProposalType, useProposalsOverviewLazyQuery } from '@webb-dapp/page-statistics/generated/graphql';
+import {
+  ProposalType,
+  useProposalDetailsLazyQuery,
+  useProposalsLazyQuery,
+  useProposalsOverviewLazyQuery,
+} from '@webb-dapp/page-statistics/generated/graphql';
 import { mapProposalListItem } from '@webb-dapp/page-statistics/provider/hooks/mappers';
 import { Loadable, Page, PageInfoQuery, ProposalStatus } from '@webb-dapp/page-statistics/provider/hooks/types';
 import { useCurrentMetaData } from '@webb-dapp/page-statistics/provider/hooks/useCurrentMetaData';
@@ -29,7 +34,7 @@ export type ProposalListItem = {
   proposers: ListOverView;
   chain: string;
 };
-type ProposalPage = Loadable<Page<ProposalListItem>>;
+type ProposalsPage = Loadable<Page<ProposalListItem>>;
 type ProposalsOverview = {
   thresholds: Thresholds;
   stats: ProposalTypeStats;
@@ -46,17 +51,25 @@ type ProposalDetails = {
   height: string;
   tsHash: string;
   chain: string;
-  for: [number, string[]];
-  against: [number, string[]];
-  abstain: [number, string[]];
+  forPercentage: number;
+  againstPercentage: number;
+  abstainPercentage: number;
+  forCount: number;
+  againstCount: number;
+  abstainCount: number;
   timeline: ProposalTimeLine[];
   data: {
     type: ProposalType;
     data: string;
   };
+  votes: Page<{
+    id: string;
+    for: boolean;
+    hash: string;
+  }>;
 };
 
-export function useProposals(): Loadable<ProposalsOverview> {
+export function useProposalsOverview(): Loadable<ProposalsOverview> {
   const [proposalsOverview, setProposalsOverview] = useState<Loadable<ProposalsOverview>>({
     isLoading: true,
     val: null,
@@ -110,7 +123,7 @@ export function useProposals(): Loadable<ProposalsOverview> {
 
           const openProposals = res.data.openProposals.nodes
             .filter((p) => p !== null)
-            .map((p) => mapProposalListItem(p));
+            .map((p) => mapProposalListItem(p!));
           return {
             val: {
               openProposals,
@@ -134,6 +147,106 @@ export function useProposals(): Loadable<ProposalsOverview> {
   return proposalsOverview;
 }
 
-export function useProposal(): Loadable<ProposalDetails> {
-  throw new Error('Not implemented');
+export function useProposals(reqQuery: PageInfoQuery): ProposalsPage {
+  const [proposalsPage, setProposalsPage] = useState<ProposalsPage>({
+    isLoading: false,
+    val: null,
+    isFailed: false,
+  });
+  const [call, query] = useProposalsLazyQuery();
+  useEffect(() => {
+    call({
+      variables: {
+        offset: reqQuery.offset,
+        perPage: reqQuery.perPage,
+      },
+    }).catch((e) => {
+      setProposalsPage({
+        isLoading: false,
+        isFailed: true,
+        val: null,
+        error: e.message,
+      });
+    });
+  }, [reqQuery, call]);
+
+  useEffect(() => {
+    const subscription = query.observable
+      .map((res): ProposalsPage => {
+        if (res.data && res.data.proposalItems) {
+          const data = res.data.proposalItems.nodes.filter((p) => p !== null).map((p) => mapProposalListItem(p!));
+          return {
+            isFailed: false,
+            isLoading: false,
+            val: {
+              items: data,
+              pageInfo: {
+                count: res.data.proposalItems.totalCount,
+                hasPrevious: res.data.proposalItems.pageInfo.hasPreviousPage,
+                hasNext: res.data.proposalItems.pageInfo.hasNextPage,
+              },
+            },
+          };
+        }
+        return {
+          isLoading: res.loading,
+          isFailed: Boolean(res.error),
+          error: res.error?.message ?? undefined,
+          val: null,
+        };
+      })
+      .subscribe(setProposalsPage);
+    return () => subscription.unsubscribe();
+  }, [query]);
+
+  return proposalsPage;
+}
+
+export function useProposal(proposalId: string, votesReqQuery: PageInfoQuery): Loadable<ProposalDetails> {
+  const [proposalDetails, setProposalDetails] = useState<Loadable<ProposalDetails>>({
+    isLoading: false,
+    val: null,
+    isFailed: false,
+  });
+  const [call, query] = useProposalDetailsLazyQuery();
+  const { offset, perPage } = votesReqQuery;
+  useEffect(() => {
+    call({
+      variables: {
+        id: proposalId,
+        VotesOffset: offset,
+        VotesPerPage: perPage,
+      },
+    }).catch((e) => {
+      setProposalDetails({
+        isLoading: false,
+        isFailed: true,
+        val: null,
+        error: e.message,
+      });
+    });
+  }, [proposalId, offset, perPage, call]);
+
+  useEffect(() => {
+    const subscription = query.observable
+      .map((res): Loadable<ProposalDetails> => {
+        if (res.data && res.data.proposalItem) {
+          const proposal = res.data.proposalItem;
+          const forVotes = proposal.votesFor.totalCount;
+          const allVotes = proposal.totalVotes.totalCount;
+          const;
+        }
+        return {
+          isLoading: res.loading,
+          isFailed: Boolean(res.error),
+          error: res.error?.message ?? undefined,
+          val: null,
+        };
+      })
+      .subscribe(setProposalDetails);
+
+    return () => subscription.unsubscribe();
+  }, [query]);
+
+  return proposalDetails;
 }
