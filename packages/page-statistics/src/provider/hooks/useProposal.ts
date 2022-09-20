@@ -40,7 +40,7 @@ type ProposalTypeStats = {
  * @param T - The underlying list item type
  * @param count - Total number of the list of `T`
  * */
-type ListOverView<T = string> = {
+type DiscreteList<T = string> = {
   firstElements: T[];
   count: number;
 };
