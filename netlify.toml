@@ -1,0 +1,7 @@
+[context.deploy-preview]
+  command = "yarn build:stats"
+  publish = "packages/page-statistics/build/"
+
+[context.develop]
+  command = "yarn build:stats"
+  publish = "packages/page-statistics/build/"
