@@ -31,9 +31,9 @@ import { shortenString } from '@webb-dapp/webb-ui-components/utils';
 import cx from 'classnames';
 import getUnicodeFlagIcon from 'country-flag-icons/unicode';
 import { forwardRef, useCallback, useMemo } from 'react';
-import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 
-import { AuthorityRowType, KeyDetailLocationState, KeyDetailProps } from './types';
+import { AuthorityRowType, KeyDetailProps } from './types';
 
 const columnHelper = createColumnHelper<AuthorityRowType>();
 
@@ -137,7 +137,7 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage },
     return <Spinner size='xl' />;
   }
 
-  if (isFailed || !keyDetail) {
+  if (isFailed) {
     return (
       <div>
         <Typography variant='body1' className='text-red-100 dark:text-red-10'>
@@ -145,6 +145,10 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage },
         </Typography>
       </div>
     );
+  }
+
+  if (!keyDetail) {
+    return null; // Not display anything
   }
 
   return (
@@ -282,7 +286,7 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage },
                           label='Proposers'
                           value={
                             <AvatarGroup total={keyDetail.authorities.length}>
-                              {Object.values(keyDetail.authorities).map((author) => (
+                              {keyDetail.authorities.map((author) => (
                                 <Avatar key={author.id} value={author.account} />
                               ))}
                             </AvatarGroup>

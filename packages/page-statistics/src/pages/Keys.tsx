@@ -29,7 +29,7 @@ const Keys = () => {
     return <Spinner size='xl' />;
   }
 
-  if (isFailed || !nextKey || !currentKey) {
+  if (isFailed) {
     return (
       <div>
         <Typography variant='body1' className='text-red-100 dark:text-red-10'>
@@ -37,6 +37,10 @@ const Keys = () => {
         </Typography>
       </div>
     );
+  }
+
+  if (!currentKey || !nextKey) {
+    return null; // Not display anything
   }
 
   return (
