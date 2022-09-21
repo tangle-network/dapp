@@ -1,4 +1,5 @@
 import { Avatar, AvatarGroup, Button, Card, Chip } from '@webb-dapp/webb-ui-components';
+import { Link } from 'react-router-dom';
 
 import { KeyValueWithButton } from '../KeyValueWithButton';
 import { LabelWithValue } from '../LabelWithValue';
@@ -25,6 +26,8 @@ export const KeyStatusCard: React.FC<KeyStatusCardProps> = ({
   fullDetailUrl,
   keyType,
   keyVal,
+  nextKeyId,
+  previousKeyId,
   sessionNumber,
   startTime,
   title,
@@ -54,9 +57,11 @@ export const KeyStatusCard: React.FC<KeyStatusCardProps> = ({
             <Avatar key={`${aut}${idx}`} value={aut} />
           ))}
         </AvatarGroup>
-        <Button href={fullDetailUrl} target='_blank' varirant='link' className='uppercase' size='sm'>
-          See full details
-        </Button>
+        <Link to={fullDetailUrl} state={{ nextKeyId, previousKeyId }}>
+          <Button className='uppercase' varirant='link' as='span' size='sm'>
+            See full details
+          </Button>
+        </Link>
       </div>
     </Card>
   );

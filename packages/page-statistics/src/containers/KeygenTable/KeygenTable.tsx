@@ -105,14 +105,14 @@ const columns: ColumnDef<KeygenType, any>[] = [
   columnHelper.accessor('keyId', {
     header: '',
     cell: (props) => (
-      <Button className='uppercase' varirant='link' as='span' size='sm'>
-        <Link
-          to={`drawer/${props.getValue()}`}
-          state={{ nextKeyId: props.row.original.nextKeyId, previousKeyId: props.row.original.previousKeyId }}
-        >
+      <Link
+        to={`drawer/${props.getValue()}`}
+        state={{ nextKeyId: props.row.original.nextKeyId, previousKeyId: props.row.original.previousKeyId }}
+      >
+        <Button className='uppercase' varirant='link' as='span' size='sm'>
           Details
-        </Link>
-      </Button>
+        </Button>
+      </Link>
     ),
     enableColumnFilter: false,
   }),

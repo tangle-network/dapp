@@ -47,6 +47,14 @@ export interface KeyStatusCardDataProps {
    * The `url` to the detail page of the key
    */
   fullDetailUrl: string;
+  /**
+   * The previous key id for nagivation
+   */
+  previousKeyId?: string;
+  /**
+   * The next key id for navigation
+   */
+  nextKeyId?: string;
 }
 
 /**

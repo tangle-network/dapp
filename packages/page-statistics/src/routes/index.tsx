@@ -8,6 +8,7 @@ const PageAuthorities = lazy(() => import('@webb-dapp/page-statistics/pages/Auth
 const PageKeys = lazy(() => import('@webb-dapp/page-statistics/pages/Keys'));
 const PageKeyDetailDrawer = lazy(() => import('@webb-dapp/page-statistics/pages/KeyDetailDrawer'));
 const PageProposals = lazy(() => import('@webb-dapp/page-statistics/pages/Proposals'));
+const PageKeyDetail = lazy(() => import('@webb-dapp/page-statistics/pages/KeyDetailPage'));
 
 const CSuspense: FC = ({ children }) => {
   return <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>;
@@ -23,6 +24,14 @@ export const routes: RouterConfigData[] = [
           </CSuspense>
         ),
         path: 'authorities/*',
+      },
+      {
+        element: (
+          <CSuspense>
+            <PageKeyDetail />
+          </CSuspense>
+        ),
+        path: 'keys/:keyId',
       },
       {
         element: (

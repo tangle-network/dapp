@@ -39,7 +39,9 @@ export const KeyStatusCardContainer: FC<KeyStatusCardContainerProps> = ({ data, 
       endTime={data.end}
       authorities={authorities}
       totalAuthorities={data.keyGenAuthorities.length}
-      fullDetailUrl='https://webb.tools' // This url will update in PR for Key Detail Integration
+      fullDetailUrl={`drawer/${data.id}`}
+      nextKeyId={data.nextKeyId}
+      previousKeyId={data.previousKeyId}
     />
   );
 };
