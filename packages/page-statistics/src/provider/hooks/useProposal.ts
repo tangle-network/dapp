@@ -1,5 +1,6 @@
 import {
   ProposalType,
+  useEnsureProposalsLazyQuery,
   useProposalDetailsLazyQuery,
   useProposalsLazyQuery,
   useProposalsOverviewLazyQuery,
@@ -159,6 +160,7 @@ type ProposalDetails = {
   timeline: ProposalTimeLine[];
   data: ProposalData;
 };
+
 /**
  * Proposals overview
  * @return ProposalsOverview - Proposal overview data
@@ -240,6 +242,7 @@ export function useProposalsOverview(
   }, [query]);
   return proposalsOverview;
 }
+
 /**
  * Listing query for proposals
  * */
@@ -298,12 +301,38 @@ export function useProposals(reqQuery: PageInfoQuery): ProposalsPage {
   return proposalsPage;
 }
 
+type NextAndPrevStatus = {
+  nextProposalId: string | null;
+  previousProposalId: string | null;
+};
 type ProposalDetailsPage = {
   proposal: Loadable<ProposalDetails>;
   votes: VotesPage;
+  nextAndPrevStatus: Loadable<NextAndPrevStatus>;
 };
+
 /**
  * Load a proposal with paginated votes and status at a given session
+ * @example
+ * An example of using previous and next values
+ * ```jsx
+ *  const ProposalDetailsPage = ({id,targetSessionId}:{id:string ,targetSessionId:string}) => {
+ *    const proposalDetailsPage = useProposal(targetSessionId , {
+ *      offset: 0,
+ *      perPage: 10,
+ *      filter:{
+ *        proposalId:id
+ *      }
+ *    });
+ *    const nextAndPrevStatus = proposalDetailsPage.nextAndPrevStatus
+ *    const hasNext = useMemo( () => nextAndPrevStatus.val?.nextProposalId !== null, [nextAndPrevStatus])
+ *    const hasPrev = useMemo( () => nextAndPrevStatus.val?.previousProposalId !== null, [nextAndPrevStatus])
+ *    return <div>
+ *      <button  disabled={!hasPrev}>Next</button> <button disabled={!hasNext}>Prev</button>
+ *    </div>
+ *  }
+ * ```
+ *
  * */
 export function useProposal(targetSessionId: string, votesReqQuery: VotesQuery): ProposalDetailsPage {
   const [proposalDetails, setProposalDetails] = useState<Loadable<ProposalDetails>>({
@@ -311,10 +340,33 @@ export function useProposal(targetSessionId: string, votesReqQuery: VotesQuery):
     val: null,
     isFailed: false,
   });
+
+  const [nextAndPrevStatus, setNextAndPrevStatus] = useState<Loadable<NextAndPrevStatus>>({
+    isLoading: false,
+    val: null,
+    isFailed: false,
+  });
+  const [ensureProposals, ensureProposalsQuery] = useEnsureProposalsLazyQuery();
+
   const [call, query] = useProposalDetailsLazyQuery();
   const { offset, perPage } = votesReqQuery;
   const proposalId = votesReqQuery.filter.proposalId;
   const votes = useVotes(votesReqQuery);
+
+  useEffect(() => {
+    ensureProposals({
+      variables: {
+        ids: [Number(proposalId) - 1, Number(proposalId) + 1].map((i) => String(i)),
+      },
+    }).catch((e) => {
+      setNextAndPrevStatus({
+        val: null,
+        error: e.message,
+        isLoading: false,
+        isFailed: true,
+      });
+    });
+  }, [proposalId, ensureProposals]);
 
   useEffect(() => {
     call({
@@ -331,7 +383,32 @@ export function useProposal(targetSessionId: string, votesReqQuery: VotesQuery):
       });
     });
   }, [proposalId, offset, perPage, targetSessionId, call]);
-
+  useEffect(() => {
+    const subscription = ensureProposalsQuery.observable
+      .map((res): Loadable<NextAndPrevStatus> => {
+        if (res.data && res.data.proposalItems) {
+          const proposals = res.data.proposalItems.nodes.filter((p) => p !== null);
+          const nextProposalId = proposals.find((p) => Number(p!.id) === Number(proposalId) + 1)?.id ?? null;
+          const previousProposalId = proposals.find((p) => Number(p!.id) === Number(proposalId) - 1)?.id ?? null;
+          return {
+            val: {
+              nextProposalId,
+              previousProposalId,
+            },
+            isFailed: false,
+            isLoading: false,
+          };
+        }
+        return {
+          isLoading: res.loading,
+          isFailed: Boolean(res.error),
+          error: res.error?.message ?? undefined,
+          val: null,
+        };
+      })
+      .subscribe(setNextAndPrevStatus);
+    return () => subscription.unsubscribe();
+  }, [ensureProposalsQuery, setNextAndPrevStatus, proposalId]);
   useEffect(() => {
     const subscription = query.observable
       .map((res): Loadable<ProposalDetails> => {
@@ -380,8 +457,9 @@ export function useProposal(targetSessionId: string, votesReqQuery: VotesQuery):
     () => ({
       proposal: proposalDetails,
       votes,
+      nextAndPrevStatus,
     }),
-    [proposalDetails, votes]
+    [nextAndPrevStatus, proposalDetails, votes]
   );
 }
 

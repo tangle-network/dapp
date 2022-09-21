@@ -1,6 +1,7 @@
 import {
   usePublicKeyLazyQuery,
   usePublicKeysLazyQuery,
+  useSessionKeyIdsLazyQuery,
   useSessionKeysLazyQuery,
 } from '@webb-dapp/page-statistics/generated/graphql';
 import { mapAuthorities } from '@webb-dapp/page-statistics/provider/hooks/mappers';
@@ -14,8 +15,8 @@ import { Loadable, Page, PageInfoQuery, SessionKeyHistory, SessionKeyStatus, Thr
  *  @param id - public key id
  *  @param uncompressed - Uncompressed public key value
  *  @param compressed - Compressed public key value
- *  @params start - The time when the public key started taking effect and be the active key
- *  @params end - The time when the public key stopped taking effect and be the active key
+ *  @param start - The time when the public key started taking effect and be the active key
+ *  @param end - The time when the public key stopped taking effect and be the active key
  *  @param session - The session id for that key (Life time of the key)
  * */
 type PublicKeyContent = {
@@ -89,6 +90,8 @@ type KeyGenAuthority = {
  * @param signatureThreshold - signatureThreshold Active session of that key
  * @param numberOfValidators - The number of the validator running at the key being active
  * @param authorities - keygen authorities (Best Authorities) that signed the key
+ * @param nextKeyId - The id of the next key if any
+ * @param previousKeyId - the id of the previous key if any
  * */
 interface PublicKeyDetails extends PublicKeyContent {
   isCurrent: boolean;
@@ -98,9 +101,43 @@ interface PublicKeyDetails extends PublicKeyContent {
   numberOfValidators: number;
   authorities: Array<KeyGenAuthority>;
 }
+/**
+ *
+ * Next and previous key ids
+ * @param nextKeyId - The id of the next key if any
+ * @param previousKeyId - The id of the next key if any
+ *
+ * */
+type NextAndPrevKeyStatus = {
+  nextKeyId: string | null;
+  previousKeyId: string | null;
+};
+/**
+ *  Public key details page
+ *  @param key - Public key details
+ *  @param prevAndNextKey - Information about the next and previous key existence
+ * */
+type PublicKeyDetailsPage = {
+  key: Loadable<PublicKeyDetails>;
+  prevAndNextKey: Loadable<NextAndPrevKeyStatus>;
+};
 
 /**
  * List keys for table view
+ *
+ * @example
+ * An example of using previous and next values
+ * ```jsx
+ *  const KeyDetailsPage = ({key}:{key:string}) => {
+ *    const proposalDetailsPage = useKey(key);
+ *    const nextAndPrevStatus = proposalDetailsPage.nextAndPrevStatus
+ *    const hasNext = useMemo( () => prevAndNextKey.val?.nextKeyId !== null, [nextAndPrevStatus])
+ *    const hasPrev = useMemo( () => prevAndNextKey.val?.previousKeyId !== null, [nextAndPrevStatus])
+ *    return <div>
+ *      <button  disabled={!hasPrev}>Next</button> <button disabled={!hasNext}>Prev</button>
+ *    </div>
+ *  }
+ * ```
  * */
 export function useKeys(reqQuery: PageInfoQuery): Loadable<Page<PublicKeyListView>> {
   const [call, query] = usePublicKeysLazyQuery();
@@ -270,10 +307,16 @@ export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
  * @param id : public key id
  *
  * */
-export function useKey(id: string): Loadable<PublicKeyDetails> {
+export function useKey(id: string): PublicKeyDetailsPage {
   const [call, query] = usePublicKeyLazyQuery();
-
+  const [callSessionKeys, sessionKeysQuery] = useSessionKeyIdsLazyQuery();
   const [key, setKey] = useState<Loadable<PublicKeyDetails>>({
+    val: null,
+    isFailed: false,
+    isLoading: true,
+  });
+
+  const [prevAndNextKey, setPrevAndNextKey] = useState<Loadable<NextAndPrevKeyStatus>>({
     val: null,
     isFailed: false,
     isLoading: true,
@@ -295,6 +338,7 @@ export function useKey(id: string): Loadable<PublicKeyDetails> {
 
   useEffect(() => {
     const subscription = query.observable
+
       .map((res): Loadable<PublicKeyDetails> => {
         if (res.data) {
           const publicKey = res.data.publicKey!;
@@ -345,8 +389,48 @@ export function useKey(id: string): Loadable<PublicKeyDetails> {
           error: res.error?.message,
         };
       })
-      .subscribe(setKey);
+      .subscribe((val) => {
+        if (val.val) {
+          const sessionId = Number(val.val.session);
+          const sessionIds = [Math.max(sessionId - 10, 0), sessionId + 10].map((v) => String(v));
+          callSessionKeys({
+            variables: {
+              keys: sessionIds,
+            },
+          }).catch((e) => {
+            console.log(e);
+          });
+        }
+        setKey(val);
+      });
     return () => subscription.unsubscribe();
-  }, [query]);
-  return key;
+  }, [callSessionKeys, query]);
+
+  useEffect(() => {
+    const subscription = sessionKeysQuery.observable
+      .map((res): Loadable<NextAndPrevKeyStatus> => {
+        if (res.data && res.data.sessions) {
+          const sessions = res.data.sessions.nodes!;
+          const map = sessions.filter((s) => s && s.publicKey).map((s) => [s!.id, s!.publicKey!.id]);
+          const [prev, next] = sessionKeysQuery.variables!.keys as string[];
+          return {
+            isLoading: false,
+            val: {
+              nextKeyId: map.find((i) => i[0] === next)?.[1] || null,
+              previousKeyId: map.find((i) => i[0] === prev)?.[1] || null,
+            },
+            isFailed: false,
+          };
+        }
+        return {
+          val: null,
+          isFailed: Boolean(res.error),
+          isLoading: false,
+          error: res.error?.message,
+        };
+      })
+      .subscribe(setPrevAndNextKey);
+    return () => subscription.unsubscribe();
+  }, [sessionKeysQuery, setPrevAndNextKey]);
+  return { key, prevAndNextKey };
 }
