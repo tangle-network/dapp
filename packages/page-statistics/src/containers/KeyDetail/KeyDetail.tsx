@@ -28,9 +28,10 @@ import { fuzzyFilter } from '@webb-dapp/webb-ui-components/components/Filter/uti
 import { ArrowLeft, ArrowRight, Close, Expand, Spinner } from '@webb-dapp/webb-ui-components/icons';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
 import { shortenString } from '@webb-dapp/webb-ui-components/utils';
+import cx from 'classnames';
 import getUnicodeFlagIcon from 'country-flag-icons/unicode';
 import { forwardRef, useCallback, useMemo } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { AuthorityRowType, KeyDetailLocationState, KeyDetailProps } from './types';
 
@@ -89,6 +90,8 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage },
 
   const { error, isFailed, isLoading, val: keyDetail } = useKey(keyId);
 
+  const commonCardClsx = useMemo(() => 'rounded-lg bg-mono-0 dark:bg-mono-180', []);
+
   const authoritiesTblData = useMemo<AuthorityRowType[]>(() => {
     return keyDetail
       ? keyDetail.authorities.map((aut) => ({ ...aut, detaillUrl: 'https://webb.tools' })) // TODO: Determine the detail url
@@ -143,14 +146,16 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage },
   }
 
   return (
-    <div className='flex flex-col p-6 space-y-4' ref={ref}>
+    <div className={cx('flex flex-col space-y-4', isPage ? '' : 'p-6 ')} ref={ref}>
       {/** Key detail */}
-      <div className='flex flex-col p-4 space-y-4'>
+      <div className={cx('flex flex-col p-4 space-y-4', commonCardClsx)}>
         {/** Title */}
         <div className='flex items-center justify-between'>
           {/** Title with info and expand button */}
           <div className='flex items-center space-x-3'>
-            {isPage ? <ArrowLeft size='lg' /> : <Expand size='lg' />}
+            <Link to={isPage ? `/keys` : `/keys/${keyDetail.id}`} state={state}>
+              {isPage ? <ArrowLeft size='lg' /> : <Expand size='lg' />}
+            </Link>
             <TitleWithInfo title='Key Details' variant='h4' info='Key Details' />
           </div>
 
@@ -208,13 +213,17 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage },
 
         {/** Compressed/Uncompressed Keys */}
         <div className='flex space-x-4'>
-          <KeyCard title='Compressed key' keyValue={keyDetail.compressed} />
-          <KeyCard title='Uncompressed key' keyValue={keyDetail.uncompressed} />
+          <KeyCard title='Compressed key' keyValue={keyDetail.compressed} className='grow shrink basis-0 max-w-none' />
+          <KeyCard
+            title='Uncompressed key'
+            keyValue={keyDetail.uncompressed}
+            className='grow shrink basis-0 max-w-none'
+          />
         </div>
       </div>
 
       {/** Key history */}
-      <div className='flex flex-col p-4 space-y-4'>
+      <div className={cx('flex flex-col p-4 space-y-4', commonCardClsx)}>
         <TitleWithInfo title='Key History' variant='h5' info='Key history' />
 
         <TimeLine>
@@ -295,8 +304,13 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage },
       </div>
 
       {/** Stats */}
-      <div className='flex space-x-4'>
-        <div className='flex flex-col items-center justify-center py-3 space-y-1 rounded-lg grow bg-mono-20 dark:bg-mono-160'>
+      <div className={cx('flex space-x-4 rounded-')}>
+        <div
+          className={cx(
+            'flex flex-col items-center justify-center py-3 space-y-1 rounded-lg grow',
+            isPage ? 'bg-mono-0 dark:bg-mono-180' : 'bg-mono-20 dark:bg-mono-160'
+          )}
+        >
           <Typography variant='h4' fw='bold' className='block'>
             {keyDetail.keyGenThreshold}
           </Typography>
@@ -305,7 +319,12 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage },
           </Typography>
         </div>
 
-        <div className='flex flex-col items-center justify-center py-3 space-y-1 rounded-lg grow bg-mono-20 dark:bg-mono-160'>
+        <div
+          className={cx(
+            'flex flex-col items-center justify-center py-3 space-y-1 rounded-lg grow',
+            isPage ? 'bg-mono-0 dark:bg-mono-180' : 'bg-mono-20 dark:bg-mono-160'
+          )}
+        >
           <Typography variant='h4' fw='bold' className='block'>
             {keyDetail.numberOfValidators}
           </Typography>
