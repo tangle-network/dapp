@@ -40,8 +40,6 @@ export const KeyStatusCardContainer: FC<KeyStatusCardContainerProps> = ({ data, 
       authorities={authorities}
       totalAuthorities={data.keyGenAuthorities.length}
       fullDetailUrl={`drawer/${data.id}`}
-      nextKeyId={data.nextKeyId}
-      previousKeyId={data.previousKeyId}
     />
   );
 };
