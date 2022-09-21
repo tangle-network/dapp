@@ -369,6 +369,7 @@ export function useKey(id: string): Loadable<PublicKeyDetails> {
       });
     return () => subscription.unsubscribe();
   }, [callSessionKeys, query]);
+
   useEffect(() => {
     const subscription = sessionKeysQuery.observable
       .filter((res) => Boolean(res.data && res.data.sessions))
