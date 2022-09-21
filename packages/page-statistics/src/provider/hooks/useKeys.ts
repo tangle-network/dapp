@@ -100,12 +100,31 @@ interface PublicKeyDetails extends PublicKeyContent {
   signatureThreshold: string;
   numberOfValidators: number;
   authorities: Array<KeyGenAuthority>;
+}
+/**
+ *
+ * Next and previous key ids
+ * @param nextKeyId - The id of the next key if any
+ * @param previousKeyId - The id of the next key if any
+ *
+ * */
+type NextAndPrevKeyStatus = {
   nextKeyId: string | null;
   previousKeyId: string | null;
-}
+};
+/**
+ *  Public key details page
+ *  @param key - Public key details
+ *  @param prevAndNextKey - Information about the next and previous key existence
+ * */
+type PublicKeyDetailsPage = {
+  key: Loadable<PublicKeyDetails>;
+  prevAndNextKey: Loadable<NextAndPrevKeyStatus>;
+};
 
 /**
  * List keys for table view
+ *
  * */
 export function useKeys(reqQuery: PageInfoQuery): Loadable<Page<PublicKeyListView>> {
   const [call, query] = usePublicKeysLazyQuery();
@@ -275,10 +294,16 @@ export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
  * @param id : public key id
  *
  * */
-export function useKey(id: string): Loadable<PublicKeyDetails> {
+export function useKey(id: string): PublicKeyDetailsPage {
   const [call, query] = usePublicKeyLazyQuery();
   const [callSessionKeys, sessionKeysQuery] = useSessionKeyIdsLazyQuery();
   const [key, setKey] = useState<Loadable<PublicKeyDetails>>({
+    val: null,
+    isFailed: false,
+    isLoading: true,
+  });
+
+  const [prevAndNextKey, setPrevAndNextKey] = useState<Loadable<NextAndPrevKeyStatus>>({
     val: null,
     isFailed: false,
     isLoading: true,
@@ -341,8 +366,6 @@ export function useKey(id: string): Loadable<PublicKeyDetails> {
               authorities,
               keyGenThreshold: String((session.keyGenThreshold as Threshold).current),
               signatureThreshold: String((session.signatureThreshold as Threshold).current),
-              nextKeyId: null,
-              previousKeyId: null,
             },
           };
         }
@@ -372,30 +395,29 @@ export function useKey(id: string): Loadable<PublicKeyDetails> {
 
   useEffect(() => {
     const subscription = sessionKeysQuery.observable
-      .filter((res) => Boolean(res.data && res.data.sessions))
-      .map(
-        (
-          res
-        ): {
-          nextKeyId: string | null;
-          previousKeyId: string | null;
-        } => {
-          const sessions = res.data?.sessions?.nodes!;
+      .map((res): Loadable<NextAndPrevKeyStatus> => {
+        if (res.data && res.data.sessions) {
+          const sessions = res.data.sessions.nodes!;
           const map = sessions.filter((s) => s && s.publicKey).map((s) => [s!.id, s!.publicKey!.id]);
           const [prev, next] = sessionKeysQuery.variables!.keys as string[];
           return {
-            nextKeyId: map.find((i) => i[0] === next)?.[1] || null,
-            previousKeyId: map.find((i) => i[0] === prev)?.[1] || null,
+            isLoading: false,
+            val: {
+              nextKeyId: map.find((i) => i[0] === next)?.[1] || null,
+              previousKeyId: map.find((i) => i[0] === prev)?.[1] || null,
+            },
+            isFailed: false,
           };
         }
-      )
-      .subscribe((re) =>
-        setKey((prev) => ({
-          ...prev,
-          ...re,
-        }))
-      );
+        return {
+          val: null,
+          isFailed: Boolean(res.error),
+          isLoading: false,
+          error: res.error?.message,
+        };
+      })
+      .subscribe(setPrevAndNextKey);
     return () => subscription.unsubscribe();
-  }, [sessionKeysQuery]);
-  return key;
+  }, [sessionKeysQuery, setPrevAndNextKey]);
+  return { key, prevAndNextKey };
 }
