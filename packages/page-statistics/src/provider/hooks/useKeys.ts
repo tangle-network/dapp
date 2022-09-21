@@ -15,8 +15,8 @@ import { Loadable, Page, PageInfoQuery, SessionKeyHistory, SessionKeyStatus, Thr
  *  @param id - public key id
  *  @param uncompressed - Uncompressed public key value
  *  @param compressed - Compressed public key value
- *  @params start - The time when the public key started taking effect and be the active key
- *  @params end - The time when the public key stopped taking effect and be the active key
+ *  @param start - The time when the public key started taking effect and be the active key
+ *  @param end - The time when the public key stopped taking effect and be the active key
  *  @param session - The session id for that key (Life time of the key)
  * */
 type PublicKeyContent = {
