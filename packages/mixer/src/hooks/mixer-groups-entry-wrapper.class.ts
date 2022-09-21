@@ -1,7 +1,7 @@
+// @ts-ignore
+import { Balance, PalletMixerMixerMetadata as MixerInfo } from '@webb-tools/protocol-substrate-types/interfaces';
 import { Currency } from '@webb-dapp/api-providers';
 import { Token } from '@webb-tools/sdk-core';
-// @ts-ignore
-import { Balance, PalletMixerMixerMetadata as MixerInfo } from '@webb-tools/types/interfaces';
 
 import { StorageKey } from '@polkadot/types';
 

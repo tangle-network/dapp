@@ -1,5 +1,5 @@
 // @ts-ignore
-import { CurrencyId } from '@webb-tools/types/interfaces';
+import { CurrencyId } from '@webb-tools/protocol-substrate-types/interfaces';
 import { useMemo } from 'react';
 
 export type HooksReturnType = {

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import '@webb-tools/types';
+import '@webb-tools/protocol-substrate-types';
 
 import { WalletId } from '@webb-dapp/apps/configs';
 import { isValidateAddress } from '@webb-dapp/react-components/utils';

@@ -1,7 +1,7 @@
 import { RequiredNoteAccount } from '@webb-dapp/react-components/PermissionedAccess/RequiredNoteAccount';
 import { pageWithFeatures } from '@webb-dapp/react-components/utils/FeaturesGuard/pageWithFeatures';
 import { MixerTabs } from '@webb-dapp/ui-components/Tabs/MixerTabs';
-import { Deposit, Withdraw } from '@webb-dapp/vbridge/components';
+import { Deposit, Transfer, Withdraw } from '@webb-dapp/vbridge/components';
 import React, { FC } from 'react';
 import styled from 'styled-components';
 
@@ -13,6 +13,11 @@ export const VBridge: React.FC<MixerProps> = () => {
     <MixerWrapper>
       <MixerTabs
         Withdraw={<Withdraw />}
+        Transfer={
+          <RequiredNoteAccount>
+            <Transfer />
+          </RequiredNoteAccount>
+        }
         Deposit={
           <RequiredNoteAccount>
             <Deposit />

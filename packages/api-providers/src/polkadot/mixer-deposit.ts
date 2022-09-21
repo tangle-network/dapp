@@ -3,7 +3,7 @@
 
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
-import '@webb-tools/types';
+import '@webb-tools/protocol-substrate-types';
 
 import { LoggerService } from '@webb-tools/app-util';
 import { Note, NoteGenInput } from '@webb-tools/sdk-core';

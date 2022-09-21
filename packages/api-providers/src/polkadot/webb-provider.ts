@@ -1,6 +1,6 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
-import '@webb-tools/types';
+import '@webb-tools/protocol-substrate-types';
 
 import { PolkadotECDSAClaims } from '@webb-dapp/api-providers/polkadot/ecdsa-claims';
 import { EventBus } from '@webb-tools/app-util';
@@ -20,6 +20,7 @@ import {
   AppConfig,
   CurrencyRole,
   NotificationHandler,
+  PolkadotVAnchorTransfer,
   ProvideCapabilities,
   WasmFactory,
   WebbApiProvider,
@@ -101,6 +102,10 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
         actions: {
           enabled: false,
           inner: new PolkadotVAnchorActions(this),
+        },
+        transfer: {
+          enabled: true,
+          inner: new PolkadotVAnchorTransfer(this),
         },
       },
       wrapUnwrap: {

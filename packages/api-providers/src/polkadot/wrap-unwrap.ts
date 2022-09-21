@@ -1,7 +1,7 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import '@webb-tools/types';
+import '@webb-tools/protocol-substrate-types';
 import '@webb-tools/api-derive';
 
 import { BigNumber, ethers } from 'ethers';

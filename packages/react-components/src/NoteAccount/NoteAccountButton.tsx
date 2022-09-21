@@ -27,7 +27,7 @@ export const NoteAccountButton: React.FC = () => {
         {!noteManager && <span className='select-wallet-button'>Create a Note Account</span>}
         {noteManager && (
           <Flex flex={1} row ai='center' style={{ width: '100%' }}>
-            <Typography>{noteManager.getKeypair().pubkey.toHexString().slice(0, 6).trim()}</Typography>
+            <Typography>{noteManager.getKeypair().toString().slice(0, 8).trim()}</Typography>
           </Flex>
         )}
       </NoteAccountButtonWrapper>

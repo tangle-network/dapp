@@ -21,24 +21,10 @@ export type WithdrawErrors = {
   };
 };
 
-export const withdrawsErrorsInitialState: WithdrawErrors = {
-  error: '',
-  validationError: {
-    notes: [],
-    recipient: '',
-  },
-};
-
 export type RelayersState = {
   relayers: WebbRelayer[];
   loading: boolean;
   activeRelayer: OptionalActiveRelayer;
-};
-
-export const relayersInitState: RelayersState = {
-  relayers: [],
-  activeRelayer: null,
-  loading: true,
 };
 
 export type UseWithdrawProps = {
@@ -52,8 +38,18 @@ export const useWithdraw = (params: UseWithdrawProps) => {
   const [receipt, setReceipt] = useState<string>('');
 
   const [outputNotes, setOutputNotes] = useState<Note[]>([]);
-  const [relayersState, setRelayersState] = useState<RelayersState>(relayersInitState);
-  const [error, setError] = useState<WithdrawErrors>(withdrawsErrorsInitialState);
+  const [relayersState, setRelayersState] = useState<RelayersState>({
+    relayers: [],
+    activeRelayer: null,
+    loading: true,
+  });
+  const [error, setError] = useState<WithdrawErrors>({
+    error: '',
+    validationError: {
+      notes: [],
+      recipient: '',
+    },
+  });
 
   const { activeApi, activeChain } = useWebContext();
   const { registerInteractiveFeedback } = useWebContext();
@@ -166,7 +162,7 @@ export const useWithdraw = (params: UseWithdrawProps) => {
       return;
     }
 
-    // When the first note is selected, we can determine the compatible relayers by the note target.
+    // We can determine the compatible relayers by the selected target.
     if (params.notes?.length) {
       activeApi.relayerManager.getRelayersByNote(params.notes[0]).then((r: WebbRelayer[]) => {
         setRelayersState((p) => ({
