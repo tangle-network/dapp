@@ -187,7 +187,7 @@ export const StatsProvider: React.FC<Omit<StatsProvidervalue, 'isReady' | 'metaD
         }
       });
     return () => unSub.unsubscribe();
-  }, [metaDataQuery, isReady]);
+  }, [query, metaDataQuery, isReady]);
 
   useEffect(() => {
     query.startPolling(staticConfig.blockTime * 1000);
