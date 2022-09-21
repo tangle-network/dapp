@@ -313,6 +313,23 @@ type ProposalDetailsPage = {
 
 /**
  * Load a proposal with paginated votes and status at a given session
+ * @example
+ * An example of using previous and next values
+ * ```jsx
+ *  const ProposalDetailsPage = ({id,targetSessionId}:{id:string ,targetSessionId:string}) => {
+ *    const proposalDetailsPage = useProposal(targetSessionId , {
+ *      offset: 0,
+ *      perPage: 10,
+ *      filter:{
+ *        proposalId:id
+ *      }
+ *    });
+ *    const nextAndPrevStatus = proposalDetailsPage.nextAndPrevStatus
+ *    const hasNext = useMemo( () => nextAndPrevStatus.val?.nextProposalId !== null, [nextAndPrevStatus])
+ *    const hasPrev = useMemo( () => nextAndPrevStatus.val?.previousProposalId !== null, [nextAndPrevStatus])
+ *  }
+ * ```
+ *
  * */
 export function useProposal(targetSessionId: string, votesReqQuery: VotesQuery): ProposalDetailsPage {
   const [proposalDetails, setProposalDetails] = useState<Loadable<ProposalDetails>>({
