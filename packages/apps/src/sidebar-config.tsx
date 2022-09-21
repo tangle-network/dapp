@@ -8,7 +8,6 @@ import { BridgePageLogo } from './configs/logos/pages/BridgePageLogo';
 import { CrowdloanPageLogo } from './configs/logos/pages/CrowdloanPageLogo';
 import { GovernancePageLogo } from './configs/logos/pages/GovernancePageLogo';
 import { MixerPageLogo } from './configs/logos/pages/MixerPageLogo';
-import { StatisticsPageLogo } from './configs/logos/pages/StatisticsPageLogo';
 import { WrapPageLogo } from './configs/logos/pages/WrapPageLogo';
 import { TelegramLogo } from './configs/logos/TelegramLogo';
 import { TwitterLogo } from './configs/logos/TwitterLogo';
@@ -34,16 +33,6 @@ export const sideBarConfig: SidebarConfig = {
       path: 'crowdloan',
       name: 'Crowdloan',
       icon: <CrowdloanPageLogo />,
-    },
-    {
-      name: 'Statistics',
-      icon: <StatisticsPageLogo />,
-      items: [
-        {
-          path: 'statistics/dkg',
-          name: 'DKG',
-        },
-      ],
     },
     {
       name: 'Governance',
