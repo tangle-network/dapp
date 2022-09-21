@@ -9987,6 +9987,35 @@ export type SessionAuthFragment = {
   };
 };
 
+export type ProposalListViewFragment = {
+  __typename?: 'ProposalItem';
+  id: string;
+  data: string;
+  signature?: string | null;
+  type: ProposalType;
+  status: string;
+  proposalVotesByProposalId: {
+    __typename?: 'ProposalVotesConnection';
+    totalCount: number;
+    nodes: Array<{
+      __typename?: 'ProposalVote';
+      id: string;
+      voterId: string;
+      voter?: { __typename?: 'Proposer'; id: string } | null;
+    } | null>;
+  };
+  block?: { __typename?: 'Block'; timestamp?: any | null; number: any } | null;
+};
+
+export type ProposalsVoteListViewFragment = {
+  __typename?: 'ProposalVote';
+  id: string;
+  voterId: string;
+  for: boolean;
+  txHash: string;
+  block?: { __typename?: 'Block'; timestamp?: any | null; number: any } | null;
+};
+
 export type MetaDataQueryVariables = Exact<{ [key: string]: never }>;
 
 export type MetaDataQuery = {
@@ -10070,26 +10099,6 @@ export type ProposalsCounterQuery = {
   } | null;
 };
 
-export type ProposalListViewFragment = {
-  __typename?: 'ProposalItem';
-  id: string;
-  data: string;
-  signature?: string | null;
-  type: ProposalType;
-  status: string;
-  proposalVotesByProposalId: {
-    __typename?: 'ProposalVotesConnection';
-    totalCount: number;
-    nodes: Array<{
-      __typename?: 'ProposalVote';
-      id: string;
-      voterId: string;
-      voter?: { __typename?: 'Proposer'; id: string } | null;
-    } | null>;
-  };
-  block?: { __typename?: 'Block'; timestamp?: any | null; number: any } | null;
-};
-
 export type ProposalsOverviewQueryVariables = Exact<{
   startRange: BigFloatFilter;
   endRange: BigFloatFilter;
@@ -10139,15 +10148,6 @@ export type ProposalsOverviewQuery = {
   signed?: { __typename?: 'ProposalTimelineStatusesConnection'; totalCount: number } | null;
   reject?: { __typename?: 'ProposalTimelineStatusesConnection'; totalCount: number } | null;
   accepted?: { __typename?: 'ProposalTimelineStatusesConnection'; totalCount: number } | null;
-};
-
-export type ProposalsVoteListViewFragment = {
-  __typename?: 'ProposalVote';
-  id: string;
-  voterId: string;
-  for: boolean;
-  txHash: string;
-  block?: { __typename?: 'Block'; timestamp?: any | null; number: any } | null;
 };
 
 export type ProposalVotesQueryVariables = Exact<{
@@ -10212,6 +10212,18 @@ export type ProposalDetailsQuery = {
     votesFor: { __typename?: 'ProposalVotesConnection'; totalCount: number };
     totalVotes: { __typename?: 'ProposalVotesConnection'; totalCount: number };
     block?: { __typename?: 'Block'; timestamp?: any | null; number: any } | null;
+  } | null;
+};
+
+export type EnsureProposalsQueryVariables = Exact<{
+  ids: Array<Scalars['String']> | Scalars['String'];
+}>;
+
+export type EnsureProposalsQuery = {
+  __typename?: 'Query';
+  proposalItems?: {
+    __typename?: 'ProposalItemsConnection';
+    nodes: Array<{ __typename?: 'ProposalItem'; id: string } | null>;
   } | null;
 };
 
@@ -10310,6 +10322,22 @@ export type PublicKeyQuery = {
         };
       } | null>;
     };
+  } | null;
+};
+
+export type SessionKeyIdsQueryVariables = Exact<{
+  keys: Array<Scalars['String']> | Scalars['String'];
+}>;
+
+export type SessionKeyIdsQuery = {
+  __typename?: 'Query';
+  sessions?: {
+    __typename?: 'SessionsConnection';
+    nodes: Array<{
+      __typename?: 'Session';
+      id: string;
+      publicKey?: { __typename?: 'PublicKey'; id: string } | null;
+    } | null>;
   } | null;
 };
 
@@ -11105,6 +11133,47 @@ export function useProposalDetailsLazyQuery(
 export type ProposalDetailsQueryHookResult = ReturnType<typeof useProposalDetailsQuery>;
 export type ProposalDetailsLazyQueryHookResult = ReturnType<typeof useProposalDetailsLazyQuery>;
 export type ProposalDetailsQueryResult = Apollo.QueryResult<ProposalDetailsQuery, ProposalDetailsQueryVariables>;
+export const EnsureProposalsDocument = gql`
+  query ensureProposals($ids: [String!]!) {
+    proposalItems(filter: { id: { in: $ids } }) {
+      nodes {
+        id
+      }
+    }
+  }
+`;
+
+/**
+ * __useEnsureProposalsQuery__
+ *
+ * To run a query within a React component, call `useEnsureProposalsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useEnsureProposalsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useEnsureProposalsQuery({
+ *   variables: {
+ *      ids: // value for 'ids'
+ *   },
+ * });
+ */
+export function useEnsureProposalsQuery(
+  baseOptions: Apollo.QueryHookOptions<EnsureProposalsQuery, EnsureProposalsQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<EnsureProposalsQuery, EnsureProposalsQueryVariables>(EnsureProposalsDocument, options);
+}
+export function useEnsureProposalsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<EnsureProposalsQuery, EnsureProposalsQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<EnsureProposalsQuery, EnsureProposalsQueryVariables>(EnsureProposalsDocument, options);
+}
+export type EnsureProposalsQueryHookResult = ReturnType<typeof useEnsureProposalsQuery>;
+export type EnsureProposalsLazyQueryHookResult = ReturnType<typeof useEnsureProposalsLazyQuery>;
+export type EnsureProposalsQueryResult = Apollo.QueryResult<EnsureProposalsQuery, EnsureProposalsQueryVariables>;
 export const PublicKeysDocument = gql`
   query PublicKeys($PerPage: Int, $offset: Int) {
     publicKeys(first: $PerPage, offset: $offset, orderBy: [SESSIONS_SUM_BLOCK_NUMBER_ASC]) {
@@ -11221,6 +11290,50 @@ export function usePublicKeyLazyQuery(
 export type PublicKeyQueryHookResult = ReturnType<typeof usePublicKeyQuery>;
 export type PublicKeyLazyQueryHookResult = ReturnType<typeof usePublicKeyLazyQuery>;
 export type PublicKeyQueryResult = Apollo.QueryResult<PublicKeyQuery, PublicKeyQueryVariables>;
+export const SessionKeyIdsDocument = gql`
+  query SessionKeyIds($keys: [String!]!) {
+    sessions(filter: { id: { in: $keys } }) {
+      nodes {
+        id
+        publicKey {
+          id
+        }
+      }
+    }
+  }
+`;
+
+/**
+ * __useSessionKeyIdsQuery__
+ *
+ * To run a query within a React component, call `useSessionKeyIdsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSessionKeyIdsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSessionKeyIdsQuery({
+ *   variables: {
+ *      keys: // value for 'keys'
+ *   },
+ * });
+ */
+export function useSessionKeyIdsQuery(
+  baseOptions: Apollo.QueryHookOptions<SessionKeyIdsQuery, SessionKeyIdsQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<SessionKeyIdsQuery, SessionKeyIdsQueryVariables>(SessionKeyIdsDocument, options);
+}
+export function useSessionKeyIdsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<SessionKeyIdsQuery, SessionKeyIdsQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<SessionKeyIdsQuery, SessionKeyIdsQueryVariables>(SessionKeyIdsDocument, options);
+}
+export type SessionKeyIdsQueryHookResult = ReturnType<typeof useSessionKeyIdsQuery>;
+export type SessionKeyIdsLazyQueryHookResult = ReturnType<typeof useSessionKeyIdsLazyQuery>;
+export type SessionKeyIdsQueryResult = Apollo.QueryResult<SessionKeyIdsQuery, SessionKeyIdsQueryVariables>;
 export const CurrentSessionAuthoritiesDocument = gql`
   query CurrentSessionAuthorities {
     sessions(last: 1, orderBy: [BLOCK_NUMBER_DESC]) {
