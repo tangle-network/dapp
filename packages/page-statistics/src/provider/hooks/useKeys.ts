@@ -125,6 +125,19 @@ type PublicKeyDetailsPage = {
 /**
  * List keys for table view
  *
+ * @example
+ * An example of using previous and next values
+ * ```jsx
+ *  const KeyDetailsPage = ({key}:{key:string}) => {
+ *    const proposalDetailsPage = useKey(key);
+ *    const nextAndPrevStatus = proposalDetailsPage.nextAndPrevStatus
+ *    const hasNext = useMemo( () => prevAndNextKey.val?.nextKeyId !== null, [nextAndPrevStatus])
+ *    const hasPrev = useMemo( () => prevAndNextKey.val?.previousKeyId !== null, [nextAndPrevStatus])
+ *    return <div>
+ *      <button  disabled={!hasPrev}>Next</button> <button disabled={!hasNext}>Prev</button>
+ *    </div>
+ *  }
+ * ```
  * */
 export function useKeys(reqQuery: PageInfoQuery): Loadable<Page<PublicKeyListView>> {
   const [call, query] = usePublicKeysLazyQuery();
