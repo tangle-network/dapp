@@ -22,8 +22,6 @@ const Keys = () => {
     return {
       currentKey: data ? data.items[0] : null,
       nextKey: data ? data.items[1] : null,
-      tableData: data ? data.items : null,
-      pageInfo: data ? data.pageInfo : null,
     };
   }, [data]);
 

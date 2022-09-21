@@ -26,8 +26,6 @@ export const KeyStatusCard: React.FC<KeyStatusCardProps> = ({
   fullDetailUrl,
   keyType,
   keyVal,
-  nextKeyId,
-  previousKeyId,
   sessionNumber,
   startTime,
   title,
@@ -57,7 +55,7 @@ export const KeyStatusCard: React.FC<KeyStatusCardProps> = ({
             <Avatar key={`${aut}${idx}`} value={aut} />
           ))}
         </AvatarGroup>
-        <Link to={fullDetailUrl} state={{ nextKeyId, previousKeyId }}>
+        <Link to={fullDetailUrl}>
           <Button className='uppercase' varirant='link' as='span' size='sm'>
             See full details
           </Button>

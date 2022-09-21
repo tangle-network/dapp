@@ -85,10 +85,12 @@ const columns: ColumnDef<AuthorityRowType, any>[] = [
 
 export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage }, ref) => {
   const { keyId = '' } = useParams<{ keyId: string }>();
-  const state: KeyDetailLocationState = useLocation().state;
   const navigate = useNavigate();
 
-  const { error, isFailed, isLoading, val: keyDetail } = useKey(keyId);
+  const { key, prevAndNextKey: prevAndNextKeyResp } = useKey(keyId);
+
+  const { error, isFailed, isLoading, val: keyDetail } = key;
+  const { val: prevAndNextKey } = prevAndNextKeyResp;
 
   const commonCardClsx = useMemo(() => 'rounded-lg bg-mono-0 dark:bg-mono-180', []);
 
@@ -107,16 +109,16 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage },
   );
 
   const onNextKey = useCallback(() => {
-    if (state && state.nextKeyId) {
-      navigate(`/keys/drawer/${state.nextKeyId}`);
+    if (prevAndNextKey?.nextKeyId) {
+      navigate(`/keys${isPage ? '' : '/drawer'}/${prevAndNextKey.nextKeyId}`);
     }
-  }, [navigate, state]);
+  }, [isPage, navigate, prevAndNextKey]);
 
   const onPreviousKey = useCallback(() => {
-    if (state && state.previousKeyId) {
-      navigate(`/keys/drawer/${state.previousKeyId}`);
+    if (prevAndNextKey?.previousKeyId) {
+      navigate(`/keys${isPage ? '' : '/drawer'}/${prevAndNextKey.previousKeyId}`);
     }
-  }, [navigate, state]);
+  }, [isPage, navigate, prevAndNextKey]);
 
   const table = useReactTable<AuthorityRowType>({
     data: authoritiesTblData,
@@ -153,7 +155,7 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage },
         <div className='flex items-center justify-between'>
           {/** Title with info and expand button */}
           <div className='flex items-center space-x-3'>
-            <Link to={isPage ? `/keys` : `/keys/${keyDetail.id}`} state={state}>
+            <Link to={isPage ? `/keys` : `/keys/${keyDetail.id}`}>
               {isPage ? <ArrowLeft size='lg' /> : <Expand size='lg' />}
             </Link>
             <TitleWithInfo title='Key Details' variant='h4' info='Key Details' />
@@ -169,7 +171,7 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage },
                   leftIcon={<ArrowLeft className='!fill-current' />}
                   varirant='utility'
                   className='uppercase'
-                  isDisabled={!state || !state.previousKeyId}
+                  isDisabled={!prevAndNextKey || !prevAndNextKey.previousKeyId}
                   onClick={onPreviousKey}
                 >
                   Prev Key
@@ -179,7 +181,7 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage },
                   rightIcon={<ArrowRight className='!fill-current' />}
                   varirant='utility'
                   className='uppercase'
-                  isDisabled={!state || !state.nextKeyId}
+                  isDisabled={!prevAndNextKey || !prevAndNextKey.nextKeyId}
                   onClick={onNextKey}
                 >
                   Next Key

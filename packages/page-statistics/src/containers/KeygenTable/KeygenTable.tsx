@@ -22,8 +22,6 @@ import {
   Collapsible,
   CollapsibleButton,
   CollapsibleContent,
-  Drawer,
-  DrawerContent,
   Filter,
   KeyValueWithButton,
   Slider,
@@ -33,9 +31,7 @@ import {
 import { fuzzyFilter } from '@webb-dapp/webb-ui-components/components/Filter/utils';
 import { KeygenType } from '@webb-dapp/webb-ui-components/types';
 import { FC, useEffect, useMemo, useState } from 'react';
-import { Link, Route, Routes } from 'react-router-dom';
-
-import { KeyDetail } from '../KeyDetail';
+import { Link } from 'react-router-dom';
 
 const columnHelper = createColumnHelper<KeygenType>();
 
@@ -105,10 +101,7 @@ const columns: ColumnDef<KeygenType, any>[] = [
   columnHelper.accessor('keyId', {
     header: '',
     cell: (props) => (
-      <Link
-        to={`drawer/${props.getValue()}`}
-        state={{ nextKeyId: props.row.original.nextKeyId, previousKeyId: props.row.original.previousKeyId }}
-      >
+      <Link to={`drawer/${props.getValue()}`}>
         <Button className='uppercase' varirant='link' as='span' size='sm'>
           Details
         </Button>
