@@ -1,6 +1,7 @@
 import {
   usePublicKeyLazyQuery,
   usePublicKeysLazyQuery,
+  useSessionKeyIdsLazyQuery,
   useSessionKeysLazyQuery,
 } from '@webb-dapp/page-statistics/generated/graphql';
 import { mapAuthorities } from '@webb-dapp/page-statistics/provider/hooks/mappers';
@@ -89,6 +90,8 @@ type KeyGenAuthority = {
  * @param signatureThreshold - signatureThreshold Active session of that key
  * @param numberOfValidators - The number of the validator running at the key being active
  * @param authorities - keygen authorities (Best Authorities) that signed the key
+ * @param nextKeyId - The id of the next key if any
+ * @param previousKeyId - the id of the previous key if any
  * */
 interface PublicKeyDetails extends PublicKeyContent {
   isCurrent: boolean;
@@ -97,6 +100,8 @@ interface PublicKeyDetails extends PublicKeyContent {
   signatureThreshold: string;
   numberOfValidators: number;
   authorities: Array<KeyGenAuthority>;
+  nextKeyId: string | null;
+  previousKeyId: string | null;
 }
 
 /**
@@ -272,7 +277,7 @@ export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
  * */
 export function useKey(id: string): Loadable<PublicKeyDetails> {
   const [call, query] = usePublicKeyLazyQuery();
-
+  const [callSessionKeys, sessionKeysQuery] = useSessionKeyIdsLazyQuery();
   const [key, setKey] = useState<Loadable<PublicKeyDetails>>({
     val: null,
     isFailed: false,
@@ -295,6 +300,7 @@ export function useKey(id: string): Loadable<PublicKeyDetails> {
 
   useEffect(() => {
     const subscription = query.observable
+
       .map((res): Loadable<PublicKeyDetails> => {
         if (res.data) {
           const publicKey = res.data.publicKey!;
@@ -335,6 +341,8 @@ export function useKey(id: string): Loadable<PublicKeyDetails> {
               authorities,
               keyGenThreshold: String((session.keyGenThreshold as Threshold).current),
               signatureThreshold: String((session.signatureThreshold as Threshold).current),
+              nextKeyId: null,
+              previousKeyId: null,
             },
           };
         }
@@ -345,8 +353,48 @@ export function useKey(id: string): Loadable<PublicKeyDetails> {
           error: res.error?.message,
         };
       })
-      .subscribe(setKey);
+      .subscribe((val) => {
+        if (val.val) {
+          const sessionId = Number(val.val.session);
+          const sessionIds = [Math.max(sessionId - 10, 0), sessionId + 10].map((v) => String(v));
+          callSessionKeys({
+            variables: {
+              keys: sessionIds,
+            },
+          }).catch((e) => {
+            console.log(e);
+          });
+        }
+        setKey(val);
+      });
     return () => subscription.unsubscribe();
-  }, [query]);
+  }, [callSessionKeys, query]);
+  useEffect(() => {
+    const subscription = sessionKeysQuery.observable
+      .filter((res) => Boolean(res.data && res.data.sessions))
+      .map(
+        (
+          res
+        ): {
+          nextKeyId: string | null;
+          previousKeyId: string | null;
+        } => {
+          const sessions = res.data?.sessions?.nodes!;
+          const map = sessions.filter((s) => s && s.publicKey).map((s) => [s!.id, s!.publicKey!.id]);
+          const [prev, next] = sessionKeysQuery.variables!.keys as string[];
+          return {
+            nextKeyId: map.find((i) => i[0] === next)?.[1] || null,
+            previousKeyId: map.find((i) => i[0] === prev)?.[1] || null,
+          };
+        }
+      )
+      .subscribe((re) =>
+        setKey((prev) => ({
+          ...prev,
+          ...re,
+        }))
+      );
+    return () => subscription.unsubscribe();
+  }, [sessionKeysQuery]);
   return key;
 }

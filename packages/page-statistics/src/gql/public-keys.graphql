@@ -47,3 +47,14 @@ query PublicKey($id: String!) {
     }
   }
 }
+
+query SessionKeyIds($keys: [String!]!) {
+  sessions(filter: { id: { in: $keys } }) {
+    nodes {
+      id
+      publicKey {
+        id
+      }
+    }
+  }
+}
