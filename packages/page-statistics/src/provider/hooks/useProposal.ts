@@ -327,6 +327,9 @@ type ProposalDetailsPage = {
  *    const nextAndPrevStatus = proposalDetailsPage.nextAndPrevStatus
  *    const hasNext = useMemo( () => nextAndPrevStatus.val?.nextProposalId !== null, [nextAndPrevStatus])
  *    const hasPrev = useMemo( () => nextAndPrevStatus.val?.previousProposalId !== null, [nextAndPrevStatus])
+ *    return <div>
+ *      <button  disabled={!hasPrev}>Next</button> <button disabled={!hasNext}>Prev</button>
+ *    </div>
  *  }
  * ```
  *
