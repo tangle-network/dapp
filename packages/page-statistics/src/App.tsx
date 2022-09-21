@@ -1,4 +1,5 @@
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
+import { StatsProvider } from '@webb-dapp/page-statistics/provider/stats-provider';
 import { RouterProvider } from '@webb-dapp/react-environment/RouterProvider';
 import { WebbUIProvider } from '@webb-dapp/webb-ui-components/provider';
 import { FC } from 'react';
@@ -12,11 +13,13 @@ const apolloClient = new ApolloClient({
 
 const App: FC = () => {
   return (
-    <ApolloProvider client={apolloClient}>
-      <WebbUIProvider hasErrorBoudary>
-        <RouterProvider config={routes} />
-      </WebbUIProvider>
-    </ApolloProvider>
+    <WebbUIProvider hasErrorBoudary>
+      <ApolloProvider client={apolloClient}>
+        <StatsProvider blockTime={6} sessionHeight={10}>
+          <RouterProvider config={routes} />
+        </StatsProvider>
+      </ApolloProvider>
+    </WebbUIProvider>
   );
 };
 
