@@ -6,7 +6,7 @@ import { IconBase } from './types';
 
 export const Spinner: React.FC<IconBase> = (props) => {
   // Spin animation attach to className
-  const className = twMerge(props.className, 'animate-spin !fill-none !stroke-none');
+  const className = twMerge(props.className, 'animate-spin !fill-transparent !stroke-none');
 
   return createIcon({
     ...props,

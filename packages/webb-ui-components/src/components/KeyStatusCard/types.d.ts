@@ -3,31 +3,6 @@ import { WebbComponentBase } from '@webb-dapp/webb-ui-components/types';
 export type KeyType = 'current' | 'next';
 
 /**
- * Properties of an authority
- */
-export type Authority = {
-  /**
-   * The authority id
-   */
-  id: string;
-  /**
-   * The authority avatar url
-   */
-  avatarUrl: string;
-};
-
-/**
- * Authorities object
- */
-export type AuthoritiesType = {
-  /**
-   * Key will be the authority id and the value if `Authority` type
-   * @type {Authority}
-   */
-  [id: string]: Authority;
-};
-
-/**
  * The data props for display
  */
 export interface KeyStatusCardDataProps {
@@ -61,9 +36,9 @@ export interface KeyStatusCardDataProps {
   endTime: Date | null;
   /**
    * The `Authority` represents authorities attended in the key gen process
-   * @type {AuthoritiesType}
+   * @type {Set<string>}
    */
-  authorities: AuthoritiesType;
+  authorities: Set<string>;
   /**
    * Total number of authorities
    */
@@ -72,6 +47,14 @@ export interface KeyStatusCardDataProps {
    * The `url` to the detail page of the key
    */
   fullDetailUrl: string;
+  /**
+   * The previous key id for nagivation
+   */
+  previousKeyId?: string;
+  /**
+   * The next key id for navigation
+   */
+  nextKeyId?: string;
 }
 
 /**

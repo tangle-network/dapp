@@ -1,4 +1,5 @@
 import { randEthereumAddress, randNumber, randRecentDate, randSoonDate } from '@ngneat/falso';
+import { arrayFrom } from '@webb-dapp/webb-ui-components/utils';
 
 import { KeyStatusCardDataProps } from './types.d';
 
@@ -11,20 +12,7 @@ export const useKeyStatusSeedData = (): KeyStatusCardDataProps => {
     keyVal: randEthereumAddress(),
     startTime: randRecentDate(),
     endTime: randSoonDate(),
-    authorities: {
-      nepoche: {
-        id: 'nepoche',
-        avatarUrl: 'https://github.com/nepoche.png',
-      },
-      AhmedKorim: {
-        id: 'AhmedKorim',
-        avatarUrl: 'https://github.com/AhmedKorim.png',
-      },
-      AtelyPham: {
-        id: 'AtelyPham',
-        avatarUrl: 'https://github.com/AtelyPham.png',
-      },
-    },
+    authorities: new Set(arrayFrom(randNumber({ min: 10, max: 20 }), () => randEthereumAddress())),
     totalAuthorities: randNumber({ min: 1, max: 30 }),
     fullDetailUrl: 'https://webb.tools',
   };

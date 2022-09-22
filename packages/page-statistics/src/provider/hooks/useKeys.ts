@@ -46,6 +46,8 @@ export interface PublicKey extends PublicKeyContent {
  * @param keyGenThreshold - keyGenThreshold Active session of that key
  * @param SignatureThreshold - SignatureThreshold Active session of that key
  * @param session - The session id for that key (Lifetime of the key)
+ * @param previousKeyId - The previous key id for nagivation on the drawer
+ * @param nextKeyId - The next key id for nagivation on the drawer
  * */
 export interface PublicKeyListView extends PublicKeyContent {
   height: string;
@@ -53,6 +55,9 @@ export interface PublicKeyListView extends PublicKeyContent {
   keyGenThreshold: string;
   signatureThreshold: string;
   session: string;
+
+  previousKeyId?: string;
+  nextKeyId?: string;
 }
 
 /**
@@ -74,7 +79,7 @@ type PublicKeyHistoryEntry = {
  * @params reputation - The P2P reputation of that authority
  *
  * */
-type KeyGenAuthority = {
+export type KeyGenAuthority = {
   id: string;
   account: string;
   location: string;
@@ -84,6 +89,7 @@ type KeyGenAuthority = {
 
 /**
  * The full date of that public key
+ * @param height  - Block number when the key was generated
  * @param isCurrent - The key is the current active key
  * @param history - The progress of that key
  * @param keyGenThreshold - keyGenThreshold Active session of that key
@@ -94,6 +100,7 @@ type KeyGenAuthority = {
  * @param previousKeyId - the id of the previous key if any
  * */
 interface PublicKeyDetails extends PublicKeyContent {
+  height: string;
   isCurrent: boolean;
   history: PublicKeyHistoryEntry[];
   keyGenThreshold: string;
@@ -184,30 +191,37 @@ export function useKeys(reqQuery: PageInfoQuery): Loadable<Page<PublicKeyListVie
         }
         if (res.data.publicKeys) {
           const data = res.data.publicKeys;
+
+          const filteredData = data.nodes.filter((n) => !!n);
+
           return {
             isLoading: false,
             isFailed: false,
             val: {
-              items: data.nodes
-                .filter((n) => n)
-                .map((node) => {
-                  const session = node!.sessions?.nodes[0]!;
-                  const authorities = mapAuthorities(session.sessionValidators)
-                    .filter((auth) => auth.isBest)
-                    .map((auth) => auth.id);
-                  return {
-                    height: String(node!.block?.number),
-                    session: session.id,
-                    signatureThreshold: String(session.signatureThreshold.current),
-                    keyGenThreshold: String(session.keyGenThreshold.current),
-                    compressed: node!.compressed!,
-                    uncompressed: node!.uncompressed!,
-                    keyGenAuthorities: authorities,
-                    end: new Date(node!.block?.timestamp),
-                    start: new Date(node!.block?.timestamp),
-                    id: node!.id,
-                  };
-                }),
+              items: filteredData.map((node, idx) => {
+                const session = node!.sessions?.nodes[0]!;
+                const authorities = mapAuthorities(session.sessionValidators)
+                  .filter((auth) => auth.isBest)
+                  .map((auth) => auth.id);
+
+                const previousKeyId = idx ? filteredData[idx - 1]?.id : undefined;
+                const nextKeyId = idx < filteredData.length - 1 ? filteredData[idx + 1]?.id : undefined;
+
+                return {
+                  height: String(node!.block?.number),
+                  session: session.id,
+                  signatureThreshold: String(session.signatureThreshold?.current ?? '-'),
+                  keyGenThreshold: String(session.keyGenThreshold?.current ?? '-'),
+                  compressed: node!.compressed!,
+                  uncompressed: node!.uncompressed!,
+                  keyGenAuthorities: authorities,
+                  end: new Date(node!.block?.timestamp),
+                  start: new Date(node!.block?.timestamp),
+                  id: node!.id,
+                  previousKeyId,
+                  nextKeyId,
+                };
+              }),
               pageInfo: {
                 count: data.totalCount,
                 hasNext: data.pageInfo.hasNextPage,
@@ -367,6 +381,7 @@ export function useKey(id: string): PublicKeyDetailsPage {
             isFailed: false,
             isLoading: false,
             val: {
+              height: publicKey.block?.number,
               compressed: publicKey.compressed!,
               uncompressed: publicKey.uncompressed!,
               id: publicKey.id,

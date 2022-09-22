@@ -71,15 +71,23 @@ export interface KeygenType {
   /**
    * The authorities attend to the process
    */
-  authorities: AuthoritiesType;
+  authorities: Set<string>;
   /**
    * Size of the authorities set
    */
   totalAuthorities: number;
   /**
-   * The detail url link to the detail of and keygen
+   * The key id (uncompressed key) to get detail info
    */
-  detailUrl: string;
+  keyId: string;
+  /**
+   * The previous key id for nagivation
+   */
+  previousKeyId?: string;
+  /**
+   * The next key id for navigation
+   */
+  nextKeyId?: string;
 }
 
 /*****************

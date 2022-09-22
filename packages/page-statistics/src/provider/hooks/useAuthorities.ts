@@ -81,7 +81,7 @@ type AuthorityThresholdStatus = {
  * @param keyGenThreshold - KeyGen threshold and wither the authority is in the set
  * @param signatureThreshold - Signature threshold and wither the authority is in the set
  * @param pendingKeyGenThreshold - Pending KeyGen threshold
- * */
+ **/
 type AuthorityStats = {
   numberOfKeys: string;
   uptime: string;
@@ -97,7 +97,7 @@ type AuthorityStats = {
  * @param session - Keygen session id
  * @param publicKey - Keygen public key
  * */
-type KeGenKeyListItem = {
+type KeyGenKeyListItem = {
   id: string;
   height: string;
   session: string;
@@ -106,7 +106,7 @@ type KeGenKeyListItem = {
 };
 type AuthorityDetails = {
   stats: Loadable<AuthorityStats>;
-  keyGens: Loadable<Page<KeGenKeyListItem>>;
+  keyGens: Loadable<Page<KeyGenKeyListItem>>;
 };
 /**
  * Session threshold
@@ -345,7 +345,7 @@ export function useAuthority(pageQuery: PageInfoQuery, authorityId: string): Aut
       .map((res): AuthorityDetails['keyGens'] => {
         if (res.data && res.data.sessionValidators) {
           const sessionValidators = res.data.sessionValidators;
-          const items = sessionValidators.nodes.map((node): KeGenKeyListItem => {
+          const items = sessionValidators.nodes.map((node): KeyGenKeyListItem => {
             const session = node?.session!;
             const publicKey = session.publicKey!;
             return {

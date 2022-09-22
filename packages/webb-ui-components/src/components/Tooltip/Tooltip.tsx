@@ -27,7 +27,7 @@ export const TooltipBody: React.FC<TooltipBodyProps> = ({ button, children, clas
         'radix-side-right:animate-slide-left-fade',
         'radix-side-bottom:animate-slide-up-fade',
         'radix-side-left:animate-slide-right-fade',
-        'inline-flex items-center rounded p-2 min-w-0 max-w-[300px]',
+        'inline-flex items-center break-all rounded p-2 min-w-0 max-w-[300px]',
         'bg-mono-20 dark:bg-mono-160',
         'webb-shadow-sm'
       )}

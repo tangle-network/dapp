@@ -14,22 +14,11 @@ const getNewKeygen = (): KeygenType => {
     key: randEthereumAddress(),
     keygenThreshold: randNumber({ min: 1, max: 50 }),
     signatureThreshold: randNumber({ min: 1, max: 50 }),
-    authorities: {
-      nepoche: {
-        id: 'nepoche',
-        avatarUrl: 'https://github.com/nepoche.png',
-      },
-      AhmedKorim: {
-        id: 'AhmedKorim',
-        avatarUrl: 'https://github.com/AhmedKorim.png',
-      },
-      AtelyPham: {
-        id: 'AtelyPham',
-        avatarUrl: 'https://github.com/AtelyPham.png',
-      },
-    },
+    authorities: new Set(
+      arrayFrom(randNumber({ min: 10, max: 20 }), () => '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY')
+    ),
     totalAuthorities: randNumber({ min: 50, max: 100 }),
-    detailUrl: 'https://webb.tools',
+    keyId: 'https://webb.tools',
   };
 };
 
