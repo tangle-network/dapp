@@ -15,6 +15,10 @@
     "gridjs-react": "^5.0.2",
     "react-chartjs-2": "^4.2.0"
   },
+  "scripts": {
+    "build:stats": "NODE_ENV=production webpack",
+    "analyze:stats": "cd packages/page-statistics && ANALYZE=true webpack"
+  },
   "devDependencies": {
     "@babel/cli": "^7.18.10",
     "@babel/core": "^7.19.0",
