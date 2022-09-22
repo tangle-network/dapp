@@ -45,6 +45,8 @@ export const Progress: React.FC<ProgressProps> = ({
   suffixLabel = '',
   value: valueProp,
 }) => {
+  const hasValue = useMemo(() => !!valueProp, [valueProp]);
+
   const displayValue = useMemo(() => {
     // Not display the value if the size is "md"
     if (size === 'md') {
@@ -65,15 +67,23 @@ export const Progress: React.FC<ProgressProps> = ({
 
   return (
     <ProgressPrimitive.Root value={valueProp} className={twMerge(classNames[size]['root'], className)} max={max}>
-      <ProgressPrimitive.Indicator
-        style={{ width: `${valueProp}%` }}
-        className={cx(
-          classNames[size]['indicator'],
-          'radix-state-indeterminate:bg-transparent dark:radix-state-indeterminate:bg-transparent'
-        )}
-      >
-        {displayValue}
-      </ProgressPrimitive.Indicator>
+      {hasValue && (
+        <ProgressPrimitive.Indicator
+          style={{ width: `${valueProp}%` }}
+          className={cx(
+            classNames[size]['indicator'],
+            'radix-state-indeterminate:bg-transparent dark:radix-state-indeterminate:bg-transparent'
+          )}
+        >
+          <span className={classNames[size]['label']}>{displayValue}</span>
+        </ProgressPrimitive.Indicator>
+      )}
+
+      {!hasValue && (
+        <span className={cx(classNames[size]['label'], 'w-full h-full flex justify-center items-center')}>
+          {displayValue}
+        </span>
+      )}
     </ProgressPrimitive.Root>
   );
 };

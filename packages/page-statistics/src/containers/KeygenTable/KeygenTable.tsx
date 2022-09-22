@@ -13,6 +13,7 @@ import {
   Table as RTTable,
   useReactTable,
 } from '@tanstack/react-table';
+import { PageInfoQuery, useKeys } from '@webb-dapp/page-statistics/provider/hooks';
 import {
   Avatar,
   AvatarGroup,
@@ -21,9 +22,6 @@ import {
   Collapsible,
   CollapsibleButton,
   CollapsibleContent,
-  Drawer,
-  DrawerContent,
-  DrawerTrigger,
   Filter,
   KeyValueWithButton,
   Slider,
@@ -31,13 +29,9 @@ import {
   TitleWithInfo,
 } from '@webb-dapp/webb-ui-components/components';
 import { fuzzyFilter } from '@webb-dapp/webb-ui-components/components/Filter/utils';
-import { Authority } from '@webb-dapp/webb-ui-components/components/KeyStatusCard/types';
-import { fetchKeygenData } from '@webb-dapp/webb-ui-components/hooks';
 import { KeygenType } from '@webb-dapp/webb-ui-components/types';
-import { Typography } from '@webb-dapp/webb-ui-components/typography';
-import { useEffect, useMemo, useState } from 'react';
-
-import { KeyDetail } from '../KeyDetail';
+import { FC, useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const columnHelper = createColumnHelper<KeygenType>();
 
@@ -96,33 +90,28 @@ const columns: ColumnDef<KeygenType, any>[] = [
     header: () => <TitleWithInfo {...headerConfig['common']} {...headerConfig['authorities']} />,
     cell: (props) => (
       <AvatarGroup total={props.row.original.totalAuthorities}>
-        {Object.values<Authority>(props.getValue()).map((au) => (
-          <Avatar src={au.avatarUrl} alt={au.id} key={au.id} />
+        {Array.from(props.getValue<Set<string>>()).map((au, idx) => (
+          <Avatar key={`${au}${idx}`} value={au} />
         ))}
       </AvatarGroup>
     ),
     enableColumnFilter: false,
   }),
 
-  columnHelper.accessor('detailUrl', {
+  columnHelper.accessor('keyId', {
     header: '',
-    cell: () => (
-      <Drawer>
-        <DrawerTrigger>
-          <Button className='uppercase' varirant='link' as='span' size='sm'>
-            Details
-          </Button>
-        </DrawerTrigger>
-        <DrawerContent>
-          <KeyDetail />
-        </DrawerContent>
-      </Drawer>
+    cell: (props) => (
+      <Link to={`drawer/${props.getValue()}`}>
+        <Button className='uppercase' varirant='link' as='span' size='sm'>
+          Details
+        </Button>
+      </Link>
     ),
     enableColumnFilter: false,
   }),
 ];
 
-export const KeygenTable = () => {
+export const KeygenTable: FC = () => {
   // Filters
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState('');
@@ -132,6 +121,7 @@ export const KeygenTable = () => {
     pageIndex: 0,
     pageSize: 10,
   });
+  const [totalItems, setTotalItems] = useState(0);
 
   const pagination = useMemo(
     () => ({
@@ -141,22 +131,49 @@ export const KeygenTable = () => {
     [pageIndex, pageSize]
   );
 
-  const [dataQuery, setDataQuery] = useState<undefined | Awaited<ReturnType<typeof fetchKeygenData>>>();
+  const pageQuery: PageInfoQuery = useMemo(
+    () => ({
+      offset: pagination.pageIndex * pageSize,
+      perPage: pagination.pageSize,
+      filter: null,
+    }),
+    [pageSize, pagination.pageIndex, pagination.pageSize]
+  );
+
+  const pageCount = useMemo(() => Math.floor(totalItems / pageSize), [pageSize, totalItems]);
+
+  const keysStats = useKeys(pageQuery);
+
+  const data = useMemo(() => {
+    if (keysStats.val) {
+      return keysStats.val.items.map(
+        (item): KeygenType => ({
+          height: Number(item.height),
+          session: Number(item.session),
+          key: item.uncompressed,
+          authorities: new Set(item.keyGenAuthorities),
+          keygenThreshold: Number(item.keyGenThreshold),
+          keyId: item.uncompressed,
+          totalAuthorities: item.keyGenAuthorities.length,
+          signatureThreshold: Number(item.signatureThreshold),
+          previousKeyId: item.previousKeyId,
+          nextKeyId: item.nextKeyId,
+        })
+      );
+    }
+    return [] as KeygenType[];
+  }, [keysStats]);
 
   useEffect(() => {
-    const updateData = async () => {
-      const dataQuery = await fetchKeygenData({ pageIndex, pageSize });
-
-      setDataQuery(dataQuery);
-    };
-
-    updateData();
-  }, [pageIndex, pageSize]);
+    if (keysStats.val) {
+      setTotalItems(keysStats.val.pageInfo.count);
+    }
+  }, [keysStats]);
 
   const table = useReactTable<KeygenType>({
-    data: dataQuery?.rows ?? ([] as KeygenType[]),
+    data,
     columns,
-    pageCount: dataQuery?.pageCount ?? -1,
+    pageCount,
     getCoreRowModel: getCoreRowModel(),
     state: {
       pagination,
@@ -220,7 +237,6 @@ export const KeygenTable = () => {
               />
             </CollapsibleContent>
           </Collapsible>
-
           <Collapsible>
             <CollapsibleButton>Signature Threshold</CollapsibleButton>
             <CollapsibleContent>
@@ -237,7 +253,7 @@ export const KeygenTable = () => {
         </Filter>
       }
     >
-      <Table tableProps={table as RTTable<unknown>} isPaginated />
+      <Table tableProps={table as RTTable<unknown>} totalRecords={totalItems} isPaginated />
     </CardTable>
   );
 };

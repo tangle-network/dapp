@@ -42,7 +42,11 @@ export const AvatarGroup: React.FC<AvatarGroupProps> = ({ children: childrenProp
           });
         })}
       </div>
-      {extraAvatars > 0 && <Typography variant='body3'>+{extraAvatars} others</Typography>}
+      {extraAvatars > 0 && (
+        <Typography className='inline-block translate-x-1' variant='body3'>
+          +{extraAvatars} others
+        </Typography>
+      )}
     </div>
   );
 };

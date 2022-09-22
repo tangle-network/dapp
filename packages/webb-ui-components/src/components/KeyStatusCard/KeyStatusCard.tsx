@@ -1,4 +1,5 @@
 import { Avatar, AvatarGroup, Button, Card, Chip } from '@webb-dapp/webb-ui-components';
+import { Link } from 'react-router-dom';
 
 import { KeyValueWithButton } from '../KeyValueWithButton';
 import { LabelWithValue } from '../LabelWithValue';
@@ -50,13 +51,15 @@ export const KeyStatusCard: React.FC<KeyStatusCardProps> = ({
       {/** Bottom */}
       <div className='flex items-center justify-between'>
         <AvatarGroup total={totalAuthorities}>
-          {Object.values(authorities).map((au) => (
-            <Avatar key={au.id} src={au.avatarUrl} alt={au.id} />
+          {Array.from(authorities).map((aut, idx) => (
+            <Avatar key={`${aut}${idx}`} value={aut} />
           ))}
         </AvatarGroup>
-        <Button href={fullDetailUrl} target='_blank' varirant='link' className='uppercase' size='sm'>
-          See full details
-        </Button>
+        <Link to={fullDetailUrl}>
+          <Button className='uppercase' varirant='link' as='span' size='sm'>
+            See full details
+          </Button>
+        </Link>
       </div>
     </Card>
   );

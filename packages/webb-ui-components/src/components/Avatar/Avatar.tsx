@@ -1,10 +1,13 @@
 import * as AvatarPrimitive from '@radix-ui/react-avatar';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
 import cx from 'classnames';
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
+import Identicon from '@polkadot/react-identicon';
+
 import { AvatarProps } from './types';
+import { getAvatarSizeInPx } from './utils';
 
 /**
  * Webb Avatar component
@@ -23,7 +26,16 @@ import { AvatarProps } from './types';
  * <Avatar alt="Webb Logo" src="webblogo.png" />
  */
 export const Avatar: React.FC<AvatarProps> = (props) => {
-  const { alt, className: outerClassName, darkMode, fallback, size = 'md', src } = props;
+  const {
+    alt,
+    className: outerClassName,
+    darkMode,
+    fallback,
+    size = 'md',
+    src,
+    theme = 'polkadot',
+    value: valueProp,
+  } = props;
 
   const sizeClassName = useMemo(() => (size === 'md' ? 'w-6 h-6' : 'w-12 h-12'), [size]);
 
@@ -58,6 +70,17 @@ export const Avatar: React.FC<AvatarProps> = (props) => {
 
   const typoVariant = useMemo(() => (size === 'md' ? 'body4' : 'body1'), [size]);
 
+  const valueAddress = useMemo(
+    () => (valueProp?.toString().toLowerCase().startsWith('0x') ? valueProp?.toString() : `0x${valueProp?.toString()}`),
+    [valueProp]
+  );
+
+  useEffect(() => {
+    if (!valueProp && !src) {
+      throw new Error('Must provide `src` or `value` for Avatar component');
+    }
+  }, [src, valueProp]);
+
   return (
     <AvatarPrimitive.Root
       className={twMerge(
@@ -68,13 +91,19 @@ export const Avatar: React.FC<AvatarProps> = (props) => {
         outerClassName
       )}
     >
-      <AvatarPrimitive.Image src={src} alt={alt} className='w-full h-full object-cover' />
-      {fallback && (
-        <AvatarPrimitive.Fallback className={cx('w-full h-full flex justify-center items-center', classNames.text)}>
-          <Typography variant={typoVariant} fw='semibold' component='span' className={classNames.text}>
-            {fallback.substring(0, 2)}
-          </Typography>
-        </AvatarPrimitive.Fallback>
+      {valueAddress && <Identicon size={getAvatarSizeInPx(size)} value={valueAddress} theme={theme} />}
+
+      {!valueAddress && (
+        <>
+          <AvatarPrimitive.Image src={src} alt={alt} className='object-cover w-full h-full' />
+          {fallback && (
+            <AvatarPrimitive.Fallback className={cx('w-full h-full flex justify-center items-center', classNames.text)}>
+              <Typography variant={typoVariant} fw='semibold' component='span' className={classNames.text}>
+                {fallback.substring(0, 2)}
+              </Typography>
+            </AvatarPrimitive.Fallback>
+          )}
+        </>
       )}
     </AvatarPrimitive.Root>
   );

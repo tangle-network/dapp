@@ -10,9 +10,10 @@ import { AuthorityRowType } from '../containers/KeyDetail/types';
 const getNewAuthority = (): AuthorityRowType => {
   return {
     id: randBrand() + randBic(),
+    account: randBrand() + randBic(),
     location: randCountryCode(),
-    uptime: randNumber({ min: 90, max: 100 }).toString(),
-    reputation: randNumber({ min: 90, max: 100 }).toString(),
+    uptime: randNumber({ min: 90, max: 100 }),
+    reputation: randNumber({ min: 90, max: 100 }),
     detaillUrl: 'https://webb.tools',
   };
 };

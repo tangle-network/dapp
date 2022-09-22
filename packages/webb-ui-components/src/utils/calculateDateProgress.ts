@@ -1,4 +1,4 @@
-import { differenceInMilliseconds, isValid } from 'date-fns';
+import { compareAsc, differenceInMilliseconds, isValid } from 'date-fns';
 
 /**
  * Calculated the percentage of the current date have passed since the start date
@@ -30,6 +30,10 @@ export const calculateDateProgress = (
 
   const diffBetweenStartAndEnd = Math.abs(startDate.getTime() - endDate.getTime());
   const diffBetweenStartAndNow = Math.abs(startDate.getTime() - Date.now());
+
+  if (diffBetweenStartAndEnd === 0) {
+    return null;
+  }
 
   return parseFloat(((diffBetweenStartAndNow / diffBetweenStartAndEnd) * 100).toFixed(2));
 };
