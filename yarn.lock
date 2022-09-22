@@ -6347,10 +6347,10 @@
     "@webb-tools/contracts" "^0.2.7"
     "@webb-tools/sdk-core" "0.1.4-105"
 
-"@webb-tools/protocol-substrate-types@^0.0.1":
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/@webb-tools/protocol-substrate-types/-/protocol-substrate-types-0.0.1.tgz#69e082bd34a638350c1a43e43d0837507133f225"
-  integrity sha512-dyqJp2CU2GihQBSw0xrxTQT9Il81oOCdpTMGVemAE76XaZI6RTba4FPyOqZ9+0CAhcmCTGE83PMIxcaSgb7CTw==
+"@webb-tools/protocol-substrate-types@^0.0.2":
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/@webb-tools/protocol-substrate-types/-/protocol-substrate-types-0.0.2.tgz#27953ee61a248430cee3fc2bbfc6b2260ecc8b16"
+  integrity sha512-tFJWGJQz9czS0Zkdn6C2fPRMUCa6eWlzIAEjshOBowharqodfSKwvdZCaXJCrs9VCUxGDFMj/7HKk9oe4lh/5A==
   dependencies:
     "@babel/runtime" "^7.19.0"
     "@open-web3/orml-types" "^1.1.3"
