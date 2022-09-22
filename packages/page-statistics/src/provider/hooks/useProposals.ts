@@ -57,6 +57,7 @@ type DiscreteList<T = string> = {
 export type ProposalListItem = {
   id: string;
   status: ProposalStatus;
+  height?: string;
   type: ProposalType;
   txHash: string;
   proposers: DiscreteList;

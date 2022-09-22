@@ -48,5 +48,6 @@ export function mapProposalListItem(data: ProposalListViewFragment): ProposalLis
     status: data.status as ProposalStatus,
     txHash: '',
     type: data.type as ProposalType,
+    height: data.block?.timestamp,
   };
 }
