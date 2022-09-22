@@ -173,7 +173,7 @@ yarn start
 Great! Now you have a local EVM node running! Now let's setup a local relayer. 🚀
 
 #### Relayer
-1. Clone the relayer:
+1. Clone the relayer: 
 ```bash
 git clone https://github.com/webb-tools/relayer.git
 ```
