@@ -210,8 +210,8 @@ export function useKeys(reqQuery: PageInfoQuery): Loadable<Page<PublicKeyListVie
                 return {
                   height: String(node!.block?.number),
                   session: session.id,
-                  signatureThreshold: String(session.signatureThreshold.current),
-                  keyGenThreshold: String(session.keyGenThreshold.current),
+                  signatureThreshold: String(session.signatureThreshold?.current ?? '-'),
+                  keyGenThreshold: String(session.keyGenThreshold?.current ?? '-'),
                   compressed: node!.compressed!,
                   uncompressed: node!.uncompressed!,
                   keyGenAuthorities: authorities,
