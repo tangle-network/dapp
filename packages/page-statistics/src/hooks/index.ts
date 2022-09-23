@@ -2,4 +2,5 @@
 // SPDX-License-Identifier: Apache-2.0
 
 export * from './useAuthoritiesSeedData';
-export * from './useOpenProposalsSeedData';
+export * from './useDonutColor';
+export * from './useProposalsSeedData';

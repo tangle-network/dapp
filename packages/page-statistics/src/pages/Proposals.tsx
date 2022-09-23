@@ -3,7 +3,6 @@ import {
   Button,
   Card,
   CardTable,
-  DropdownMenu,
   LabelWithValue,
   Table,
   TitleWithInfo,
@@ -12,10 +11,11 @@ import { fuzzyFilter } from '@webb-dapp/webb-ui-components/components/Filter/uti
 import { ExternalLinkLine, TokenIcon } from '@webb-dapp/webb-ui-components/icons';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
 import { shortenHex } from '@webb-dapp/webb-ui-components/utils';
+import { ArcElement, Chart as ChartJS, Legend } from 'chart.js';
 import { BigNumber } from 'ethers';
-import { useMemo, useState } from 'react';
 
-import { useOpenProposalsSeedData } from '../hooks';
+import { DonutChartContainer, ProposalsTable } from '../containers';
+import { useProposalsSeedData } from '../hooks';
 import { ProposalListItem } from '../provider/hooks';
 
 const columnHelper = createColumnHelper<ProposalListItem>();
@@ -63,17 +63,16 @@ const columns: ColumnDef<ProposalListItem, any>[] = [
   }),
 ];
 
+ChartJS.register(ArcElement, Legend);
+
 const Proposals = () => {
   const proposalsThreshold = 49;
   const proposers = 24;
 
-  const menuOptions = useMemo(() => ['Day', 'Week', 'Year', 'All Time'], []);
-  const [selectIndex, setSelectIndex] = useState(0);
-
-  const data = useOpenProposalsSeedData(5);
+  const data = useProposalsSeedData(4);
 
   const table = useReactTable<ProposalListItem>({
-    columns,
+    columns: columns,
     data,
     getCoreRowModel: getCoreRowModel(),
     filterFns: {
@@ -106,24 +105,18 @@ const Proposals = () => {
         </div>
       </Card>
 
-      {/* * Proposal Types */}
-      {/* <Card>
-        <div className='flex items-center justify-between'>
-          <TitleWithInfo title='Proposal Types' variant='h5' />
+      <div className='flex space-x-4'>
+        {/* * Proposal Types */}
+        <DonutChartContainer />
 
-          <DropdownMenu
-            size='sm'
-            menuOptions={menuOptions.map((opt) => ({ value: opt }))}
-            value={menuOptions[selectIndex]}
-            onChange={(nextVal) => setSelectIndex(menuOptions.indexOf(nextVal))}
-          />
-        </div>
-      </Card> */}
+        {/** Open Proposals */}
+        <CardTable titleProps={{ title: 'Open Proposals' }} className='grow'>
+          <Table tableProps={table as RTTable<unknown>} />
+        </CardTable>
+      </div>
 
-      {/** Open Proposals */}
-      <CardTable titleProps={{ title: 'Open Proposals' }}>
-        <Table tableProps={table as RTTable<unknown>} />
-      </CardTable>
+      {/** All Proposals */}
+      <ProposalsTable />
     </div>
   );
 };

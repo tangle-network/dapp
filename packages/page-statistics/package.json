@@ -32,6 +32,7 @@
     "@types/tailwindcss": "3.0.10",
     "autoprefixer": "^10.4.8",
     "babel-loader": "^8.2.5",
+    "babel-plugin-preval": "^5.1.0",
     "css-loader": "^6.7.1",
     "css-minimizer-webpack-plugin": "^4.0.0",
     "file-loader": "^6.2.0",
