@@ -1,4 +1,4 @@
-import '@webb-tools/types';
+import '@webb-tools/protocol-substrate-types';
 
 import { Note } from '@webb-tools/sdk-core';
 

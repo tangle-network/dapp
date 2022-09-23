@@ -18,12 +18,7 @@ import { ethers } from 'ethers';
 
 import { hexToU8a } from '@polkadot/util';
 
-import {
-  DepositPayload as IDepositPayload,
-  TransactionState,
-  VAnchorDeposit,
-  VAnchorDepositResults,
-} from '../abstracts';
+import { DepositPayload as IDepositPayload, NewNotesTxResult, TransactionState, VAnchorDeposit } from '../abstracts';
 import {
   bridgeStorageFactory,
   fetchVAnchorKeyFromAws,
@@ -83,7 +78,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
       secrets: [
         toFixedHex(destination, 8).substring(2),
         toFixedHex(depositOutputUtxo.amount).substring(2),
-        toFixedHex(keypair.privkey).substring(2),
+        toFixedHex(keypair.privkey!).substring(2),
         toFixedHex(depositOutputUtxo.blinding).substring(2),
       ].join(':'),
       sourceChain: sourceChainId.toString(),
@@ -104,8 +99,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
   }
 
   // TODO: implement the return result
-  //@ts-ignore
-  async deposit(depositPayload: DepositPayload): Promise<VAnchorDepositResults> {
+  async deposit(depositPayload: DepositPayload): Promise<NewNotesTxResult> {
     switch (this.state) {
       case TransactionState.Cancelling:
       case TransactionState.Failed:
@@ -269,7 +263,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
           this.emit('stateChange', TransactionState.SendingTransaction);
 
           // emit event for waiting for transaction to confirm
-          await tx.wait();
+          const receipt = await tx.wait();
 
           this.inner.notificationHandler({
             data: {
@@ -285,6 +279,10 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
           });
 
           this.emit('stateChange', TransactionState.Done);
+          return {
+            txHash: receipt.transactionHash,
+            outputNotes: [depositPayload.note],
+          };
         } else {
           this.inner.notificationHandler({
             data: {
@@ -301,8 +299,10 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
           this.emit('stateChange', TransactionState.Failed);
           this.inner.noteManager?.removeNote(depositPayload.note);
 
-          //@ts-ignore
-          return;
+          return {
+            txHash: '',
+            outputNotes: [],
+          };
         }
       } else {
         const requiredApproval = await srcVAnchor.isWebbTokenApprovalRequired(amount);
@@ -347,7 +347,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
           this.emit('stateChange', TransactionState.SendingTransaction);
 
           // emit event for waiting for transaction to confirm
-          await tx.wait();
+          const receipt = await tx.wait();
 
           this.inner.notificationHandler({
             data: {
@@ -363,6 +363,10 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
           });
 
           this.emit('stateChange', TransactionState.Done);
+          return {
+            txHash: receipt.transactionHash,
+            outputNotes: [depositPayload.note],
+          };
         } else {
           this.inner.notificationHandler({
             data: {
@@ -379,6 +383,11 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
 
           this.inner.noteManager?.removeNote(depositPayload.note);
           this.emit('stateChange', TransactionState.Failed);
+
+          return {
+            txHash: '',
+            outputNotes: [],
+          };
         }
       }
     } catch (e: any) {
@@ -407,6 +416,11 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
       if (!isUserCancel) {
         this.emit('stateChange', TransactionState.Failed);
       }
+
+      return {
+        txHash: '',
+        outputNotes: [],
+      };
     }
   }
 }

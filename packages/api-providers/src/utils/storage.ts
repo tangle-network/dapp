@@ -95,7 +95,7 @@ export type NoteStorage = {
 
 export const noteStorageFactory = (keypair: Keypair) => {
   // localStorage will have key: Keypair.pubkey, value: Record<targetTypedChainId, EncryptedNote[]>
-  return Storage.newFromCache<NoteStorage>(keypair.pubkey.toString(), {
+  return Storage.newFromCache<NoteStorage>(keypair.toString(), {
     async commit(key: string, data: NoteStorage): Promise<void> {
       localStorage.setItem(key, JSON.stringify(data));
     },

@@ -34,6 +34,7 @@ import { Web3MixerWithdraw } from './mixer-withdraw';
 import { Web3RelayerManager } from './relayer-manager';
 import { Web3VAnchorActions } from './vanchor-actions';
 import { Web3VAnchorDeposit } from './vanchor-deposit';
+import { Web3VAnchorTransfer } from './vanchor-transfer';
 import { Web3VAnchorWithdraw } from './vanchor-withdraw';
 import { Web3WrapUnwrap } from './wrap-unwrap';
 
@@ -85,6 +86,10 @@ export class WebbWeb3Provider
         withdraw: {
           enabled: true,
           inner: new Web3VAnchorWithdraw(this),
+        },
+        transfer: {
+          enabled: true,
+          inner: new Web3VAnchorTransfer(this),
         },
         actions: {
           enabled: true,

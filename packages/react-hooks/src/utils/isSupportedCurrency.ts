@@ -1,5 +1,5 @@
 // @ts-ignore
-import { CurrencyId } from '@webb-tools/types/interfaces/types';
+import { CurrencyId } from '@webb-tools/protocol-substrate-types/interfaces';
 
 export const isSupportedCurrency = (currency: CurrencyId): boolean => {
   // @ts-ignore
