@@ -13,7 +13,9 @@
     "country-flag-icons": "^1.5.5",
     "gridjs": "^5.0.2",
     "gridjs-react": "^5.0.2",
-    "react-chartjs-2": "^4.2.0"
+    "react-chartjs-2": "^4.2.0",
+    "tailwind-merge": "^1.6.0",
+    "date-fns": "^2.29.2"
   },
   "devDependencies": {
     "@babel/cli": "^7.18.10",

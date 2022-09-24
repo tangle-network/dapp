@@ -61,7 +61,7 @@ export const routes: RouterConfigData[] = [
       },
       {
         path: '*',
-        redirectTo: 'keys',
+        redirectTo: 'proposals',
       },
     ],
     element: <Layout />,

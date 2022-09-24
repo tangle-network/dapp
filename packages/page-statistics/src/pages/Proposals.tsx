@@ -3,6 +3,8 @@ import {
   Button,
   Card,
   CardTable,
+  Drawer,
+  DrawerContent,
   LabelWithValue,
   Table,
   TitleWithInfo,
@@ -14,7 +16,7 @@ import { shortenHex } from '@webb-dapp/webb-ui-components/utils';
 import { ArcElement, Chart as ChartJS, Legend } from 'chart.js';
 import { BigNumber } from 'ethers';
 
-import { DonutChartContainer, ProposalsTable } from '../containers';
+import { DonutChartContainer, ProposalDetail, ProposalsTable } from '../containers';
 import { useProposalsSeedData } from '../hooks';
 import { ProposalListItem } from '../provider/hooks';
 
@@ -117,6 +119,12 @@ const Proposals = () => {
 
       {/** All Proposals */}
       <ProposalsTable />
+
+      <Drawer defaultOpen>
+        <DrawerContent>
+          <ProposalDetail />
+        </DrawerContent>
+      </Drawer>
     </div>
   );
 };
