@@ -1,8 +1,8 @@
 import { Note } from '@webb-tools/sdk-core';
 import { useEffect, useState } from 'react';
 
-export const useDepositNotes = (values: string[]): null | Note[] => {
-  const [depositNotes, setDepositNotes] = useState<Note[] | null>(null);
+export const useDepositNotes = (values: string[]): Note[] => {
+  const [depositNotes, setDepositNotes] = useState<Note[]>([]);
 
   useEffect(() => {
     const handler = async () => {
@@ -19,7 +19,7 @@ export const useDepositNotes = (values: string[]): null | Note[] => {
       } catch (e) {
         console.log('passed value was: ', values);
         console.log('Error of: ', e);
-        setDepositNotes(null);
+        setDepositNotes([]);
       }
     };
 

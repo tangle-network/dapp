@@ -1,7 +1,7 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import '@webb-tools/types';
+import '@webb-tools/protocol-substrate-types';
 import '@webb-tools/api-derive';
 
 import type { WebbPolkadot } from './webb-provider';
@@ -24,7 +24,8 @@ import { decodeAddress } from '@polkadot/keyring';
 import { hexToU8a, u8aToHex } from '@polkadot/util';
 import { naclEncrypt, randomAsU8a } from '@polkadot/util-crypto';
 
-import { VAnchorWithdraw, VAnchorWithdrawResult } from '../abstracts/anchor/vanchor-withdraw';
+import { NewNotesTxResult } from '../abstracts';
+import { VAnchorWithdraw } from '../abstracts/anchor/vanchor-withdraw';
 
 export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
   /**
@@ -32,7 +33,7 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
    * recipient - Recipient account
    * amount - amount to withdraw in bnUnits (i.e. WEI instead of ETH)
    * */
-  async withdraw(notes: string[], recipient: string, amount: string): Promise<VAnchorWithdrawResult> {
+  async withdraw(notes: string[], recipient: string, amount: string): Promise<NewNotesTxResult> {
     switch (this.state) {
       case TransactionState.Cancelling:
       case TransactionState.Failed:
@@ -129,6 +130,7 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
       latestPredictedIndex,
       Number(treeId)
     );
+
     const leaves = await getLeaves(this.inner.api, Number(treeId), 0, inputLeafIndex);
     const leavesMap: any = {};
     /// Assume same chain withdraw-deposit

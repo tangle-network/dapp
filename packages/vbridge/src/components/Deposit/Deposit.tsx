@@ -121,7 +121,7 @@ export const Deposit: React.FC<DepositProps> = () => {
   useEffect(() => {
     // Check if the account and pubkey pairing has been registered on-chain
     if (noteManager && activeChain && activeAccount && activeApi && activeApi.state.activeBridge) {
-      const pubkey = noteManager.getKeypair().pubkey.toHexString();
+      const pubkey = noteManager.getKeypair().toString();
       const currentTarget =
         activeApi.state.activeBridge.targets[calculateTypedChainId(activeChain.chainType, activeChain.chainId)]!;
       activeApi.methods.variableAnchor.actions.inner
@@ -181,14 +181,14 @@ export const Deposit: React.FC<DepositProps> = () => {
 
   const actionButton = useMemo(() => {
     if (activeApi && activeChain && activeAccount && activeApi.state.activeBridge && noteManager && !registered) {
-      const pubkey = noteManager.getKeypair().pubkey.toHexString();
+      const keyData = noteManager.getKeypair().toString();
       const currentTarget =
         activeApi.state.activeBridge.targets[calculateTypedChainId(activeChain.chainType, activeChain.chainId)]!;
       return (
         <MixerButton
           onClick={() => {
             activeApi.methods.variableAnchor.actions.inner
-              .register(currentTarget, activeAccount.address, pubkey)
+              .register(currentTarget, activeAccount.address, keyData)
               .then((res) => {
                 if (res) {
                   setRegistration(true);

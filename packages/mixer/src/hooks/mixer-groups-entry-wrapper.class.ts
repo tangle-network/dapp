@@ -1,9 +1,12 @@
+import '@webb-tools/protocol-substrate-types';
+
+import type { PalletMixerMixerMetadata as MixerInfo } from '@polkadot/types/lookup';
+
 import { Currency } from '@webb-dapp/api-providers';
 import { Token } from '@webb-tools/sdk-core';
-// @ts-ignore
-import { Balance, PalletMixerMixerMetadata as MixerInfo } from '@webb-tools/types/interfaces';
 
 import { StorageKey } from '@polkadot/types';
+import { Balance } from '@polkadot/types/interfaces';
 
 export type NativeTokenProperties = {
   ss58Format: number | null;
