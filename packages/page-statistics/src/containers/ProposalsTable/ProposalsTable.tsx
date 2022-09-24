@@ -25,6 +25,7 @@ import { ExternalLinkLine, TokenIcon } from '@webb-dapp/webb-ui-components/icons
 import { shortenHex } from '@webb-dapp/webb-ui-components/utils';
 import { BigNumber } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const columnHelper = createColumnHelper<ProposalListItem>();
 
@@ -85,9 +86,9 @@ const columns: ColumnDef<ProposalListItem, any>[] = [
 
   columnHelper.accessor('id', {
     header: '',
-    cell: () => (
+    cell: (props) => (
       <Button varirant='link' size='sm' className='uppercase'>
-        Details
+        <Link to={`drawer/${props.getValue<string>()}`}>Details</Link>
       </Button>
     ),
   }),

@@ -3,8 +3,6 @@ import {
   Button,
   Card,
   CardTable,
-  Drawer,
-  DrawerContent,
   LabelWithValue,
   Table,
   TitleWithInfo,
@@ -15,8 +13,9 @@ import { Typography } from '@webb-dapp/webb-ui-components/typography';
 import { shortenHex } from '@webb-dapp/webb-ui-components/utils';
 import { ArcElement, Chart as ChartJS, Legend } from 'chart.js';
 import { BigNumber } from 'ethers';
+import { Link, Outlet } from 'react-router-dom';
 
-import { DonutChartContainer, ProposalDetail, ProposalsTable } from '../containers';
+import { DonutChartContainer, ProposalsTable } from '../containers';
 import { useProposalsSeedData } from '../hooks';
 import { ProposalListItem } from '../provider/hooks';
 
@@ -57,9 +56,9 @@ const columns: ColumnDef<ProposalListItem, any>[] = [
 
   columnHelper.accessor('id', {
     header: '',
-    cell: () => (
+    cell: (props) => (
       <Button varirant='link' size='sm' className='uppercase'>
-        Details
+        <Link to={`drawer/${props.getValue<string>()}`}>Details</Link>
       </Button>
     ),
   }),
@@ -120,11 +119,7 @@ const Proposals = () => {
       {/** All Proposals */}
       <ProposalsTable />
 
-      <Drawer defaultOpen>
-        <DrawerContent>
-          <ProposalDetail />
-        </DrawerContent>
-      </Drawer>
+      <Outlet />
     </div>
   );
 };

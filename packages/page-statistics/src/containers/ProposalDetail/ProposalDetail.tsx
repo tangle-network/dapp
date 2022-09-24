@@ -26,6 +26,7 @@ import { randomEnum, shortenHex } from '@webb-dapp/webb-ui-components/utils';
 import cx from 'classnames';
 import { BigNumber } from 'ethers';
 import { FC, useMemo } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 
 import { ProposersTable } from '../ProposersTable';
 
@@ -71,6 +72,7 @@ const getProposalDetail: () => ProposalDetails & { status: ProposalStatus } = ()
 
 export const ProposalDetail = () => {
   const { seedItems } = useSeedData(getProposalDetail, 1);
+  const { pathname } = useLocation();
 
   const {
     abstainCount,
@@ -82,10 +84,15 @@ export const ProposalDetail = () => {
     forCount,
     forPercentage,
     height: heightProp,
+    id,
     status,
     timeline,
     txHash,
   } = seedItems[0];
+
+  const isPage = useMemo(() => {
+    return !pathname.includes('drawer');
+  }, [pathname]);
 
   // Format display height value
   const height = useMemo(
@@ -97,15 +104,20 @@ export const ProposalDetail = () => {
   const passThreshold = useMemo(() => randNumber({ min: 0, max: 100 }), []);
 
   return (
-    <div className='flex flex-col p-6 space-y-6'>
+    <div className='flex flex-col p-6 space-y-6 rounded-lg bg-mono-0 dark:bg-mono-180'>
       {/** The title */}
       <div className='flex items-center justify-between'>
         <div className='flex items-center space-x-2'>
-          <Expand size='lg' />
+          <Link to={isPage ? '/proposals' : `/proposals/${id}`}>
+            {isPage ? <ArrowLeft size='lg' /> : <Expand size='lg' />}
+          </Link>
+
           <Chip className='uppercase'>{status}</Chip>
+
           <Typography variant='h4' fw='bold'>
             Proposal Details
           </Typography>
+
           <Button varirant='utility' size='sm' className='uppercase'>
             Open Governance
           </Button>
@@ -126,9 +138,11 @@ export const ProposalDetail = () => {
           </Button>
 
           {/** Close modal */}
-          <DrawerCloseButton>
-            <Close size='lg' />
-          </DrawerCloseButton>
+          {!isPage && (
+            <DrawerCloseButton>
+              <Close size='lg' />
+            </DrawerCloseButton>
+          )}
         </div>
       </div>
 

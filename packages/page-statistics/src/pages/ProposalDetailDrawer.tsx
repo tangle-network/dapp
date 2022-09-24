@@ -1,18 +1,18 @@
 import { Drawer, DrawerContent } from '@webb-dapp/webb-ui-components/components';
 import { useNavigate } from 'react-router-dom';
 
-import { KeyDetail } from '../containers';
+import { ProposalDetail } from '../containers';
 
-const KeyDetailDrawer = () => {
+const ProposalDetailDrawer = () => {
   const nagivate = useNavigate();
 
   return (
-    <Drawer defaultOpen onOpenChange={(isOpen) => !isOpen && nagivate('/keys')}>
+    <Drawer defaultOpen onOpenChange={(isOpen) => !isOpen && nagivate('/proposals')}>
       <DrawerContent>
-        <KeyDetail />
+        <ProposalDetail />
       </DrawerContent>
     </Drawer>
   );
 };
 
-export default KeyDetailDrawer;
+export default ProposalDetailDrawer;
