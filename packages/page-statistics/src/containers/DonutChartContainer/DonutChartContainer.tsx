@@ -67,7 +67,12 @@ export const DonutChartContainer = () => {
 
       <div className='flex items-center justify-between'>
         {labels.map((label, idx) => (
-          <ChartLabel label={label} value={data[idx].toString()} color={donutColors[label].textColor} />
+          <ChartLabel
+            key={`${label}-${idx}`}
+            label={label}
+            value={data[idx].toString()}
+            color={donutColors[label].textColor}
+          />
         ))}
       </div>
     </Card>
