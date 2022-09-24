@@ -13,7 +13,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { VoteListItem } from '@webb-dapp/page-statistics/provider/hooks';
-import { Avatar, Chip, Table } from '@webb-dapp/webb-ui-components/components';
+import { Avatar, Chip, Table, Tabs } from '@webb-dapp/webb-ui-components/components';
 import { fuzzyFilter } from '@webb-dapp/webb-ui-components/components/Filter/utils';
 import { useSeedData } from '@webb-dapp/webb-ui-components/hooks';
 import { PropsOf } from '@webb-dapp/webb-ui-components/types';
@@ -83,8 +83,6 @@ const columns: ColumnDef<VoteListItem, any>[] = [
 ];
 
 export const ProposersTable: FC = () => {
-  const [voteType, setVoteType] = useState<'all' | VoteType>('all');
-
   const { fetchData } = useSeedData(getVoteItem);
 
   const [dataQuery, setDataQuery] = useState<Awaited<ReturnType<typeof fetchData>> | undefined>(undefined);
@@ -117,6 +115,10 @@ export const ProposersTable: FC = () => {
       return acc;
     }, defaultCount);
   }, [dataQuery]);
+
+  const tabsValue = useMemo(() => {
+    return ['All', `For (${forCount})`, `Against (${againstCount})`, `Abstain (${abstainCount})`];
+  }, [abstainCount, againstCount, forCount]);
 
   const pageCount = useMemo(() => dataQuery?.pageCount ?? 0, [dataQuery]);
   const totalItems = useMemo(() => dataQuery?.totalItems ?? 0, [dataQuery]);
@@ -158,46 +160,9 @@ export const ProposersTable: FC = () => {
         All Proposers
       </Typography>
 
-      <div className='flex items-center space-x-2'>
-        <Tab isActive={voteType === 'all'} onClick={() => setVoteType('all')}>
-          All ({forCount + againstCount + abstainCount})
-        </Tab>
-        <Tab isActive={voteType === 'for'} onClick={() => setVoteType('for')}>
-          For ({forCount})
-        </Tab>
-        <Tab isActive={voteType === 'against'} onClick={() => setVoteType('against')}>
-          Against ({againstCount})
-        </Tab>
-        <Tab isActive={voteType === 'abstain'} onClick={() => setVoteType('abstain')}>
-          Abstain ({abstainCount})
-        </Tab>
-      </div>
+      <Tabs value={tabsValue} />
 
       <Table tableProps={table as RTTable<unknown>} isPaginated totalRecords={totalItems} className='mt-2' />
     </div>
-  );
-};
-
-/***********************
- * Internal components *
- ***********************/
-
-const Tab: FC<PropsOf<'button'> & { isActive?: boolean }> = ({ children, className, isActive, ...props }) => {
-  return (
-    <button
-      {...props}
-      disabled={isActive}
-      className={twMerge(
-        cx(
-          'flex items-center justify-center grow shrink basis-0',
-          'py-2 font-bold rounded-lg body2 group disabled:cursor-not-allowed',
-          'text-mono-120 dark:text-mono-80 bg-mono-0 dark:bg-mono-180',
-          'disabled:bg-blue-0 dark:disabled:bg-blue-120 disabled:text-blue-70 dark:disabled:text-blue-50'
-        ),
-        className
-      )}
-    >
-      <span className='inline-block !text-inherit group-disabled:pointer-events-none'>{children}</span>
-    </button>
   );
 };

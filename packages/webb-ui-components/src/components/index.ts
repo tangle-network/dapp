@@ -29,3 +29,4 @@ export * from './TimeLine';
 export * from './TimeProgress';
 export * from './TitleWithInfo';
 export * from './Tooltip';
+export * from './Tabs';
