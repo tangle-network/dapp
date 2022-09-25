@@ -395,6 +395,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
           {
             const relayerManager = await relayerManagerFactory.getRelayerManager('substrate');
             const url = chain.url;
+            const typedChainId = calculateTypedChainId(chain.chainType, chain.chainId);
             const webbPolkadot = await WebbPolkadot.init(
               'Webb DApp',
               [url],
@@ -407,6 +408,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
               appConfig,
               notificationHandler,
               () => new Worker(new URL('./arkworks-proving-manager.worker', import.meta.url)),
+              typedChainId,
               wallet
             );
             await setActiveApiWithAccounts(webbPolkadot, chain, _networkStorage ?? networkStorage);
@@ -622,6 +624,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
         /// Catch the errors for the switcher while switching
         catchWebbError(e);
       }
+      console.log(e);
       LoggerService.get('App').error(e);
       return null;
     }

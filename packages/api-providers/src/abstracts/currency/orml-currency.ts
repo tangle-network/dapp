@@ -18,7 +18,14 @@ export class ORMLCurrency {
   constructor(private api: WebbPolkadot) {}
 
   async list() {
-    const assets = await this.api.api.query.assetRegistry.assets.entries();
+    let assets;
+
+    try {
+      assets = await this.api.api.query.assetRegistry.assets.entries();
+    } catch (ex) {
+      console.log('tried to get assets from a chain without support');
+      return [];
+    }
 
     return assets.map(([storageKey, i]) => ({
       // @ts-ignore

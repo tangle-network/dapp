@@ -38,9 +38,15 @@ export const useDeposit = (): DepositApi => {
     const unSub = depositApi.on('error', (error) => {
       setError(error);
     });
-    depositApi.getSizes().then((mixerSizes) => {
-      setMixerSizes(mixerSizes);
-    });
+    depositApi
+      .getSizes()
+      .then((mixerSizes) => {
+        setMixerSizes(mixerSizes);
+      })
+      .catch((error) => {
+        console.log('Error in useDeposit onload: ', error);
+        setMixerSizes([]);
+      });
     return () => unSub && unSub();
   }, [depositApi]);
 
@@ -52,7 +58,7 @@ export const useDeposit = (): DepositApi => {
         throw new Error('Not ready');
       } else {
         const encodedChainIdType = calculateTypedChainId(chainTypeId.chainType, chainTypeId.chainId);
-        return depositApi?.generateNote(mixerId, encodedChainIdType);
+        return depositApi.generateNote(mixerId, encodedChainIdType);
       }
     },
     [depositApi]

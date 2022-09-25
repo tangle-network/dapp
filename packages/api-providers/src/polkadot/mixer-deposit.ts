@@ -85,7 +85,8 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
   // MixerId is the treeId for deposit, chainIdType is the destination (and source because this is mixer)
   async generateNote(mixerId: number, chainIdType: number): Promise<DepositPayload> {
     logger.info(`Depositing to mixer id ${mixerId}`);
-    const sizes = await this.getSizes();
+    let sizes: MixerSize[];
+    sizes = await this.getSizes();
     const mixer = sizes.find((size) => Number(size.id) === mixerId);
     const properties = await this.inner.api.rpc.system.properties();
     const denomination = properties.tokenDecimals.toHuman() || 12;

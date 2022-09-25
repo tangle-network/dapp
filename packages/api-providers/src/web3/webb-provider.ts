@@ -133,6 +133,11 @@ export class WebbWeb3Provider
     return this.web3Provider;
   }
 
+  // Web3 has the evm, so the "api interface" should always be available.
+  async ensureApiInterface(): Promise<boolean> {
+    return Promise.resolve(true);
+  }
+
   async setChainListener() {
     this.ethersProvider = this.web3Provider.intoEthersProvider();
 

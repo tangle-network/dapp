@@ -77,7 +77,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
       protocol: 'vanchor',
       secrets: [
         toFixedHex(destination, 8).substring(2),
-        toFixedHex(depositOutputUtxo.amount).substring(2),
+        toFixedHex(depositOutputUtxo.amount, 16).substring(2),
         toFixedHex(keypair.privkey!).substring(2),
         toFixedHex(depositOutputUtxo.blinding).substring(2),
       ].join(':'),
