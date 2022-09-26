@@ -1,3 +1,4 @@
+export * from './AuthoritiesTable';
 export * from './DonutChartContainer';
 export * from './KeyDetail';
 export * from './KeygenTable';
