@@ -84,7 +84,7 @@ type AuthorityThresholdStatus = {
  * @param signatureThreshold - Signature threshold and wither the authority is in the set
  * @param pendingKeyGenThreshold - Pending KeyGen threshold
  **/
-type AuthorityStats = {
+export type AuthorityStats = {
   numberOfKeys: string;
   uptime: string;
   reputation: string;
@@ -100,7 +100,7 @@ type AuthorityStats = {
  * @param session - Keygen session id
  * @param publicKey - Keygen public key
  * */
-type KeyGenKeyListItem = {
+export type KeyGenKeyListItem = {
   id: string;
   height: string;
   session: string;
