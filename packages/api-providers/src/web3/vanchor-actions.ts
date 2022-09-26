@@ -6,19 +6,19 @@ import { registrationStorageFactory } from '../utils';
 import { WebbWeb3Provider } from './webb-provider';
 
 export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
-  // Check if the evm address and public key pairing has already registered.
-  async isPairRegistered(anchorAddress: string, account: string, pubkey: string): Promise<boolean> {
+  // Check if the evm address and keyData pairing has already registered.
+  async isPairRegistered(anchorAddress: string, account: string, keyData: string): Promise<boolean> {
     // Check the localStorage for now.
     // TODO: Implement a query on relayers?
     const registration = await registrationStorageFactory(account);
-    const registeredPubkeys = await registration.get(anchorAddress);
-    if (registeredPubkeys && registeredPubkeys.find((key) => key === pubkey) != undefined) {
+    const registeredKeydatas = await registration.get(anchorAddress);
+    if (registeredKeydatas && registeredKeydatas.find((entry) => entry === keyData) != undefined) {
       return true;
     }
     return false;
   }
 
-  async register(anchorAddress: string, account: string, pubkey: string): Promise<boolean> {
+  async register(anchorAddress: string, account: string, keyData: string): Promise<boolean> {
     const vanchor = await this.inner.getVariableAnchorByAddress(anchorAddress);
     this.inner.notificationHandler({
       description: 'Registering Account',
@@ -30,7 +30,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
 
     try {
       // The user may reject on-chain registration
-      await vanchor.register(account, pubkey);
+      await vanchor.register(account, keyData);
     } catch (ex) {
       console.log('Registration failed: ', ex);
       this.inner.notificationHandler({
@@ -56,9 +56,9 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
 
     // If there is already a registration localstorage, append.
     if (registeredPubkeys) {
-      registeredPubkeys.push(pubkey);
+      registeredPubkeys.push(keyData);
     } else {
-      registeredPubkeys = [pubkey];
+      registeredPubkeys = [keyData];
     }
     await registration.set(anchorAddress, registeredPubkeys);
 

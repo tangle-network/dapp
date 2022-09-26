@@ -87,7 +87,7 @@ const DisconnectedNoteAccountView: React.FC = () => {
               className='create-random-account-button'
               onClick={() => {
                 const newKey = new Keypair();
-                setAccountInputString(newKey.privkey);
+                setAccountInputString(newKey.privkey!);
                 setView(DisconnectView.Create);
               }}
             >
@@ -258,7 +258,42 @@ const ConnectedNoteAccountView: React.FC = () => {
     return (
       <div>
         <div className='account-details'>
-          <Typography>Public Key: {noteManager.getKeypair().pubkey.toHexString()}</Typography>
+          <Typography>Public Key: {noteManager.getKeypair().toString()}</Typography>
+        </div>
+        <div className='sync-notes' style={{ display: 'flex' }}>
+          <button
+            onClick={syncNotes}
+            disabled={activeApi ? false : true}
+            style={{ paddingRight: '20px', height: '20px' }}
+          >
+            Sync notes for
+          </button>
+          <TokenInput
+            currencies={governedCurrencies}
+            value={governedCurrency}
+            onChange={(currency: Currency) => {
+              if (!activeApi) {
+                return;
+              }
+
+              activeApi.methods.bridgeApi.setBridgeByCurrency(currency);
+            }}
+            wrapperStyles={{ display: 'flex' }}
+          />
+        </div>
+        <Typography variant='h3'>Total Asset Balances:</Typography>
+        <div className='cumulative-asset-balances' style={{ display: 'flex', justifyContent: 'space-around' }}>
+          {[...cumulativeBalances.entries()].map((entry) => {
+            return (
+              <div key={`${entry[0]}`}>
+                {/* Amount chip */}
+                <TokenAmountChip>
+                  <Typography variant='h6'>{getRoundedAmountString(entry[1])}</Typography>
+                  <Typography variant='h6'>{entry[0]}</Typography>
+                </TokenAmountChip>
+              </div>
+            );
+          })}
         </div>
         <div className='sync-notes' style={{ display: 'flex' }}>
           <button

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
-import '@webb-tools/types';
+import '@webb-tools/protocol-substrate-types';
 
 import { typedChainIdToSubstrateRelayerName } from '@webb-dapp/apps/configs/relayer-config';
 import { LoggerService } from '@webb-tools/app-util';

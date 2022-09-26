@@ -1,5 +1,4 @@
 import { Drawer, DrawerContent } from '@webb-dapp/webb-ui-components/components';
-import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { KeyDetail } from '../containers';

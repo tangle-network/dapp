@@ -3,7 +3,7 @@
 
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
-import '@webb-tools/types';
+import '@webb-tools/protocol-substrate-types';
 
 import { LoggerService } from '@webb-tools/app-util';
 
@@ -13,7 +13,6 @@ import { ContributePayload, Crowdloan, CrowdloanFundInfo } from '../abstracts/cr
 import { WebbError, WebbErrorCodes } from '../webb-error';
 import { WebbPolkadot } from './webb-provider';
 
-// The DepositPayload is the Note and [treeId, leafhex]
 const logger = LoggerService.get('PolkadotTx');
 
 export class PolkadotCrowdloan extends Crowdloan<WebbPolkadot, ContributePayload> {

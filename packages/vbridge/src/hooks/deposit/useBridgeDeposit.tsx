@@ -1,14 +1,8 @@
-import {
-  Currency,
-  DepositPayload,
-  TransactionState,
-  VAnchorDeposit,
-  VAnchorDepositResults,
-} from '@webb-dapp/api-providers';
+import { Currency, DepositPayload, NewNotesTxResult, TransactionState, VAnchorDeposit } from '@webb-dapp/api-providers';
 import { useWebContext } from '@webb-dapp/react-environment';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 export interface VBridgeDepositApi {
-  deposit(payload: DepositPayload): Promise<VAnchorDepositResults>;
+  deposit(payload: DepositPayload): Promise<NewNotesTxResult>;
   cancel(): Promise<void>;
   generateNote(
     mixerId: number | string,
