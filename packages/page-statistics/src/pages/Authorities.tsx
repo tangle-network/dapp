@@ -18,6 +18,7 @@ import { fuzzyFilter } from '@webb-dapp/webb-ui-components/components/Filter/uti
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
 import { arrayFrom, randAccount32 } from '@webb-dapp/webb-ui-components/utils';
 import { ComponentProps, useMemo } from 'react';
+import { Outlet } from 'react-router-dom';
 
 import { AuthoritiesTable } from '../containers';
 import { Thresholds, UpcomingThreshold, UpcomingThresholds } from '../provider/hooks';
@@ -201,6 +202,8 @@ const Authorities = () => {
       </CardTable>
 
       <AuthoritiesTable />
+
+      <Outlet />
     </div>
   );
 };

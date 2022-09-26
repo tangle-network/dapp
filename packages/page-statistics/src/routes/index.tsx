@@ -4,6 +4,8 @@ import { FC, lazy, Suspense } from 'react';
 import { Layout } from '../containers';
 
 const PageAuthorities = lazy(() => import('@webb-dapp/page-statistics/pages/Authorities'));
+const PageAuthorityDetailDrawer = lazy(() => import('@webb-dapp/page-statistics/pages/AuthorityDetailDrawer'));
+const PageAuthorityDetail = lazy(() => import('@webb-dapp/page-statistics/pages/AuthorityDetailPage'));
 
 const PageKeys = lazy(() => import('@webb-dapp/page-statistics/pages/Keys'));
 const PageKeyDetailDrawer = lazy(() => import('@webb-dapp/page-statistics/pages/KeyDetailDrawer'));
@@ -23,9 +25,27 @@ export const routes: RouterConfigData[] = [
       {
         element: (
           <CSuspense>
+            <PageAuthorityDetail />
+          </CSuspense>
+        ),
+        path: 'authorities/:authorityId',
+      },
+      {
+        element: (
+          <CSuspense>
             <PageAuthorities />
           </CSuspense>
         ),
+        children: [
+          {
+            path: 'drawer/:authorityId',
+            element: (
+              <CSuspense>
+                <PageAuthorityDetailDrawer />
+              </CSuspense>
+            ),
+          },
+        ],
         path: 'authorities/*',
       },
       {
