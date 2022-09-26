@@ -19,15 +19,7 @@ export const TokenIcon: React.FC<TokenIconBase> = (props) => {
 
   if (SvgIcon) {
     const sizeInPx = getIconSizeInPixel(size);
-    return (
-      <SvgIcon
-        className={className}
-        width={parseInt(sizeInPx)}
-        height={parseInt(sizeInPx)}
-        viewBox={`0 0 ${parseInt(sizeInPx)} ${parseInt(sizeInPx)}`}
-        {...restProps}
-      />
-    );
+    return <SvgIcon className={className} width={parseInt(sizeInPx)} height={parseInt(sizeInPx)} {...restProps} />;
   }
 
   return null;
