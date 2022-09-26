@@ -32,6 +32,7 @@ export const Avatar: React.FC<AvatarProps> = (props) => {
     darkMode,
     fallback,
     size = 'md',
+    sourceVariant,
     src,
     theme = 'polkadot',
     value: valueProp,
@@ -70,10 +71,7 @@ export const Avatar: React.FC<AvatarProps> = (props) => {
 
   const typoVariant = useMemo(() => (size === 'md' ? 'body4' : 'body1'), [size]);
 
-  const valueAddress = useMemo(
-    () => (valueProp?.toString().toLowerCase().startsWith('0x') ? valueProp?.toString() : `0x${valueProp?.toString()}`),
-    [valueProp]
-  );
+  const valueAddress = useMemo(() => (sourceVariant === 'address' ? valueProp : undefined), [valueProp, sourceVariant]);
 
   useEffect(() => {
     if (!valueProp && !src) {

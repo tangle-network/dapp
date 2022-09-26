@@ -1,3 +1,4 @@
+import { unsupportedProp } from '@mui/material';
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -88,13 +89,19 @@ const columns: ColumnDef<KeygenType, any>[] = [
 
   columnHelper.accessor('authorities', {
     header: () => <TitleWithInfo {...headerConfig['common']} {...headerConfig['authorities']} />,
-    cell: (props) => (
-      <AvatarGroup total={props.row.original.totalAuthorities}>
-        {Array.from(props.getValue<Set<string>>()).map((au, idx) => (
-          <Avatar key={`${au}${idx}`} value={au} />
-        ))}
-      </AvatarGroup>
-    ),
+    cell: (props) => {
+      const auth = Array.from(props.getValue<Set<string>>());
+      if (auth.length === 0) {
+        return '-';
+      }
+      return (
+        <AvatarGroup total={props.row.original.totalAuthorities}>
+          {auth.map((au, idx) => (
+            <Avatar sourceVariant={'address'} key={`${au}${idx}`} value={au} />
+          ))}
+        </AvatarGroup>
+      );
+    },
     enableColumnFilter: false,
   }),
 
@@ -140,10 +147,9 @@ export const KeygenTable: FC = () => {
     [pageSize, pagination.pageIndex, pagination.pageSize]
   );
 
-  const pageCount = useMemo(() => Math.floor(totalItems / pageSize), [pageSize, totalItems]);
+  const pageCount = useMemo(() => Math.round(totalItems / pageSize), [pageSize, totalItems]);
 
   const keysStats = useKeys(pageQuery);
-
   const data = useMemo(() => {
     if (keysStats.val) {
       return keysStats.val.items.map(
