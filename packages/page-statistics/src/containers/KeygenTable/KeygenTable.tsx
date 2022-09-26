@@ -35,7 +35,7 @@ import { Link } from 'react-router-dom';
 
 const columnHelper = createColumnHelper<KeygenType>();
 
-const headerConfig = {
+export const headerConfig = {
   common: {
     titleComponent: 'span' as const,
   },
