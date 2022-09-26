@@ -52,3 +52,15 @@ export interface SocialConfigsType {
    */
   Icon: (props: IconBase) => JSX.Element;
 }
+
+/**
+ * The Webb color type
+ */
+export interface WebbColorsType {
+  mono: Record<string | number, string>;
+  purple: Record<string | number, string>;
+  blue: Record<string | number, string>;
+  green: Record<string | number, string>;
+  yellow: Record<string | number, string>;
+  red: Record<string | number, string>;
+}

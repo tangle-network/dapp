@@ -1,14 +1,17 @@
 import { RouterConfigData } from '@webb-dapp/react-environment';
-import { Drawer, DrawerContent } from '@webb-dapp/webb-ui-components/components';
-import React, { FC, lazy, Suspense } from 'react';
+import { FC, lazy, Suspense } from 'react';
 
-import { KeyDetail, Layout } from '../containers';
+import { Layout } from '../containers';
 
 const PageAuthorities = lazy(() => import('@webb-dapp/page-statistics/pages/Authorities'));
+
 const PageKeys = lazy(() => import('@webb-dapp/page-statistics/pages/Keys'));
 const PageKeyDetailDrawer = lazy(() => import('@webb-dapp/page-statistics/pages/KeyDetailDrawer'));
-const PageProposals = lazy(() => import('@webb-dapp/page-statistics/pages/Proposals'));
 const PageKeyDetail = lazy(() => import('@webb-dapp/page-statistics/pages/KeyDetailPage'));
+
+const PageProposals = lazy(() => import('@webb-dapp/page-statistics/pages/Proposals'));
+const PageProposalDetailDrawer = lazy(() => import('@webb-dapp/page-statistics/pages/ProposalDetailDrawer'));
+const PageProposalDetail = lazy(() => import('@webb-dapp/page-statistics/pages/ProposalDetailPage'));
 
 const CSuspense: FC = ({ children }) => {
   return <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>;
@@ -54,14 +57,32 @@ export const routes: RouterConfigData[] = [
       {
         element: (
           <CSuspense>
+            <PageProposalDetail />
+          </CSuspense>
+        ),
+        path: 'proposals/:proposalId',
+      },
+      {
+        element: (
+          <CSuspense>
             <PageProposals />
           </CSuspense>
         ),
+        children: [
+          {
+            path: 'drawer/:proposalId',
+            element: (
+              <CSuspense>
+                <PageProposalDetailDrawer />
+              </CSuspense>
+            ),
+          },
+        ],
         path: 'proposals/*',
       },
       {
         path: '*',
-        redirectTo: 'keys',
+        redirectTo: 'proposals',
       },
     ],
     element: <Layout />,
