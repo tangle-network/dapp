@@ -20,14 +20,15 @@ import { Threshold as QueryThreshold } from './types';
  * @param publicKey - Public key for a session
  *
  * */
-type Thresholds = {
+export type Thresholds = {
   keyGen: string;
   signature: string;
   proposer: string;
   publicKey: PublicKey;
 };
 
-type UpcomingThresholdStats = 'Pending' | 'Next' | 'Current';
+export type UpcomingThresholdStats = 'Pending' | 'Next' | 'Current';
+
 /**
  * Upcoming threshold stats
  * @param stats - Indicate the status of upcoming threshold
@@ -38,7 +39,7 @@ type UpcomingThresholdStats = 'Pending' | 'Next' | 'Current';
  * @param authoritySet - list of the authorities
  *
  * */
-type UpcomingThreshold = {
+export type UpcomingThreshold = {
   stats: 'Pending' | 'Next' | 'Current';
   session: string;
   keyGen: string;
@@ -48,7 +49,8 @@ type UpcomingThreshold = {
   authoritySet: string[];
 };
 
-type UpcomingThresholds = Record<Lowercase<UpcomingThresholdStats>, UpcomingThreshold>;
+export type UpcomingThresholds = Record<Lowercase<UpcomingThresholdStats>, UpcomingThreshold>;
+
 /**
  * Authority list item
  * @param id - Authority id
@@ -90,6 +92,7 @@ type AuthorityStats = {
   nextKeyGenThreshold: AuthorityThresholdStatus;
   pendingKeyGenThreshold: AuthorityThresholdStatus;
 };
+
 /**
  * Keygen list items
  * @param id - Keygen id
@@ -104,10 +107,12 @@ type KeyGenKeyListItem = {
   publicKey: string;
   authority: string;
 };
+
 type AuthorityDetails = {
   stats: Loadable<AuthorityStats>;
   keyGens: Loadable<Page<KeyGenKeyListItem>>;
 };
+
 /**
  * Session threshold
  * @param sessionId - Session identifier
