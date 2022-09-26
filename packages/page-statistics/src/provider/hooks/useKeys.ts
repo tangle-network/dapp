@@ -407,7 +407,7 @@ export function useKey(id: string): PublicKeyDetailsPage {
       .subscribe((val) => {
         if (val.val) {
           const sessionId = Number(val.val.session);
-          const sessionIds = [Math.max(sessionId - 10, 0), sessionId + 10].map((v) => String(v));
+          const sessionIds = [Math.max(sessionId - 1, 0), sessionId + 1].map((v) => String(v));
           callSessionKeys({
             variables: {
               keys: sessionIds,
