@@ -32,7 +32,7 @@ export function session(height: string, sessionHeight: number) {
  * */
 export function nextSession(height: string, sessionHeight: number): string {
   const blockNumber = Number(height);
-  const sessionNumber = Math.round(blockNumber / sessionHeight) + 1;
+  const sessionNumber = Math.ceil(blockNumber / sessionHeight);
   return sessionNumber.toString();
 }
 
