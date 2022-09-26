@@ -4,15 +4,16 @@ import {
   Card,
   CardTable,
   LabelWithValue,
+  Stats,
   Table,
   TitleWithInfo,
 } from '@webb-dapp/webb-ui-components/components';
 import { fuzzyFilter } from '@webb-dapp/webb-ui-components/components/Filter/utils';
 import { ExternalLinkLine, TokenIcon } from '@webb-dapp/webb-ui-components/icons';
-import { Typography } from '@webb-dapp/webb-ui-components/typography';
 import { shortenHex } from '@webb-dapp/webb-ui-components/utils';
 import { ArcElement, Chart as ChartJS, Legend } from 'chart.js';
 import { BigNumber } from 'ethers';
+import React, { useMemo } from 'react';
 import { Link, Outlet } from 'react-router-dom';
 
 import { DonutChartContainer, ProposalsTable } from '../containers';
@@ -66,11 +67,30 @@ const columns: ColumnDef<ProposalListItem, any>[] = [
 
 ChartJS.register(ArcElement, Legend);
 
-const Proposals = () => {
-  const proposalsThreshold = 49;
-  const proposers = 24;
+const proposalsThreshold = 49;
+const proposers = 24;
 
+const Proposals = () => {
   const data = useProposalsSeedData(4);
+
+  const statsItems = useMemo<React.ComponentProps<typeof Stats>['items']>(() => {
+    return [
+      {
+        titleProps: {
+          title: 'Proposal Threshold',
+          info: 'Proposal Threshold',
+        },
+        value: proposalsThreshold,
+      },
+      {
+        titleProps: {
+          title: 'Proposers',
+          info: 'Proposers',
+        },
+        value: proposers,
+      },
+    ];
+  }, []);
 
   const table = useReactTable<ProposalListItem>({
     columns: columns,
@@ -87,23 +107,7 @@ const Proposals = () => {
       <Card>
         <TitleWithInfo title='Proposals Status' variant='h5' info='Proposals Status' />
 
-        <div className='flex items-center pb-12 justify-evenly'>
-          <div className='flex flex-col items-center space-y-2'>
-            <TitleWithInfo title='Proposal Threshold' info='Proposal Threshold' />
-
-            <Typography variant='h4' fw='bold'>
-              {proposalsThreshold}
-            </Typography>
-          </div>
-
-          <div className='flex flex-col items-center space-y-2'>
-            <TitleWithInfo title='Proposers' info='Proposers' />
-
-            <Typography variant='h4' fw='bold'>
-              {proposers}
-            </Typography>
-          </div>
-        </div>
+        <Stats items={statsItems} />
       </Card>
 
       <div className='flex space-x-4'>

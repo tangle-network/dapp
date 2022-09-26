@@ -1,5 +1,6 @@
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
-import React, { useMemo } from 'react';
+import React, { forwardRef, useMemo } from 'react';
+import { twMerge } from 'tailwind-merge';
 
 import { AvatarChildElement, AvatarGroupProps } from './types';
 
@@ -22,31 +23,35 @@ import { AvatarChildElement, AvatarGroupProps } from './types';
  *  </AvatarGroup>
  * ```
  */
-export const AvatarGroup: React.FC<AvatarGroupProps> = ({ children: childrenProp, max = 3, total }) => {
-  const children: AvatarChildElement[] = useMemo(() => {
-    return React.Children.toArray(childrenProp).filter((child) => React.isValidElement(child));
-  }, [childrenProp]);
+export const AvatarGroup = forwardRef<HTMLDivElement, AvatarGroupProps>(
+  ({ children: childrenProp, className, max = 3, total, ...props }, ref) => {
+    const children: AvatarChildElement[] = useMemo(() => {
+      return React.Children.toArray(childrenProp).filter((child) => React.isValidElement(child));
+    }, [childrenProp]);
 
-  const totalAvatars = useMemo(() => total || children.length, [children.length, total]);
+    const totalAvatars = useMemo(() => total || children.length, [children.length, total]);
 
-  const extraAvatars = useMemo(() => totalAvatars - max, [totalAvatars, max]);
+    const extraAvatars = useMemo(() => totalAvatars - max, [totalAvatars, max]);
 
-  return (
-    <div className='flex items-center space-x-1'>
-      <div className='translate-x-1'>
-        {children.slice(0, max).map((child, index) => {
-          return React.cloneElement(child, {
-            ...child.props,
-            size: 'md',
-            className: 'mx-[-4px] last:mx-0',
-          });
-        })}
+    const mergedClsx = useMemo(() => twMerge('flex items-center space-x-1', className), [className]);
+
+    return (
+      <div {...props} className={mergedClsx} ref={ref}>
+        <div className='translate-x-1'>
+          {children.slice(0, max).map((child, index) => {
+            return React.cloneElement(child, {
+              ...child.props,
+              size: 'md',
+              className: 'mx-[-4px] last:mx-0',
+            });
+          })}
+        </div>
+        {extraAvatars > 0 && (
+          <Typography className='inline-block translate-x-1' variant='body3'>
+            +{extraAvatars} others
+          </Typography>
+        )}
       </div>
-      {extraAvatars > 0 && (
-        <Typography className='inline-block translate-x-1' variant='body3'>
-          +{extraAvatars} others
-        </Typography>
-      )}
-    </div>
-  );
-};
+    );
+  }
+);
