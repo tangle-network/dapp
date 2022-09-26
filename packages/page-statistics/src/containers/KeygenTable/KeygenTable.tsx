@@ -147,7 +147,7 @@ export const KeygenTable: FC = () => {
     [pageSize, pagination.pageIndex, pagination.pageSize]
   );
 
-  const pageCount = useMemo(() => Math.round(totalItems / pageSize), [pageSize, totalItems]);
+  const pageCount = useMemo(() => Math.ceil(totalItems / pageSize), [pageSize, totalItems]);
 
   const keysStats = useKeys(pageQuery);
   const data = useMemo(() => {
