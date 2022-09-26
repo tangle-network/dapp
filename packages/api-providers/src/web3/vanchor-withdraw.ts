@@ -25,11 +25,11 @@ import { hexToU8a, u8aToHex } from '@polkadot/util';
 
 import {
   BridgeApi,
+  NewNotesTxResult,
   RelayedChainInput,
   RelayedWithdrawResult,
   TransactionState,
   VAnchorWithdraw,
-  VAnchorWithdrawResult,
 } from '../abstracts';
 import { generateCircomCommitment, utxoFromVAnchorNote, VAnchorContract } from '../contracts/wrappers';
 import { Web3Provider } from '../ext-providers/web3/web3-provider';
@@ -45,7 +45,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
     return this.inner.config;
   }
 
-  async withdraw(notes: string[], recipient: string, amount: string): Promise<VAnchorWithdrawResult> {
+  async withdraw(notes: string[], recipient: string, amount: string): Promise<NewNotesTxResult> {
     switch (this.state) {
       case TransactionState.Cancelling:
       case TransactionState.Failed:
@@ -188,7 +188,6 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
         backend: 'Circom',
         amount: changeAmount.toString(),
         chainId: destChainIdType.toString(),
-        privateKey: hexToU8a(storedPrivateKey.keypair),
         keypair,
         originChainId: destChainIdType.toString(),
       });
@@ -263,7 +262,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
           secrets: [
             toFixedHex(destChainIdType, 8).substring(2),
             toFixedHex(changeUtxo.amount).substring(2),
-            toFixedHex(keypair.privkey).substring(2),
+            toFixedHex(keypair.privkey!).substring(2),
             toFixedHex(changeUtxo.blinding).substring(2),
           ].join(':'),
           sourceChain: destChainIdType.toString(),

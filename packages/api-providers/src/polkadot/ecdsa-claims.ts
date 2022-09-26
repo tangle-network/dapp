@@ -1,4 +1,4 @@
-import '@webb-tools/types';
+import '@webb-tools/protocol-substrate-types';
 
 import { WebbError, WebbErrorCodes, WebbPolkadot } from '@webb-dapp/api-providers';
 import { ECDSAClaims } from '@webb-dapp/api-providers/abstracts/ecdsa-claims';

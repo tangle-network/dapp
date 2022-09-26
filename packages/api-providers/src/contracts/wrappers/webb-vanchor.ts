@@ -68,7 +68,6 @@ export async function utxoFromVAnchorNote(note: JsNote, leafIndex: number): Prom
     backend: note.backend,
     amount,
     blinding: hexToU8a(blinding),
-    privateKey: hexToU8a(secretKey),
     originChainId,
     chainId,
     index: leafIndex.toString(),
@@ -85,7 +84,7 @@ export const generateCircomCommitment = (note: JsNote): string => {
 
   const keypair = new Keypair(secretKey);
 
-  const hash = poseidon([chainId, amount, keypair.pubkey, blinding]);
+  const hash = poseidon([chainId, amount, keypair.getPubKey(), blinding]);
 
   return BigNumber.from(hash).toHexString();
 };
@@ -195,10 +194,10 @@ export class VAnchorContract {
     return true;
   }
 
-  async register(owner: string, publicKey: string) {
+  async register(owner: string, keyData: string) {
     const tx = await this.inner.register({
       owner,
-      publicKey,
+      keyData,
     });
     const receipt = await tx.wait();
   }
@@ -503,7 +502,6 @@ export class VAnchorContract {
             chainId: decryptedUtxo.chainId,
             curve: 'Bn254',
             keypair: owner,
-            privateKey: hexToU8a(owner.privkey),
             index: index.toString(),
           });
           const alreadySpent = await this._contract.isSpent(toFixedHex(regeneratedUtxo.nullifier, 32));

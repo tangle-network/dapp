@@ -3,11 +3,13 @@
 
 import { ECDSAClaims } from '@webb-dapp/api-providers/abstracts/ecdsa-claims';
 import { EventBus } from '@webb-tools/app-util';
+import { Note } from '@webb-tools/sdk-core';
 
 import { AccountsAdapter } from '../account/Accounts.adapter';
 import { NoteManager } from '../notes';
 import { InteractiveFeedback } from '../webb-error';
 import { VAnchorActionEvent, VAnchorActions } from './anchor/vanchor-actions';
+import { VAnchorTransfer } from './anchor/vanchor-transfer';
 import { WebbRelayerManager } from './relayer/webb-relayer-manager';
 import { BridgeApi, VAnchorDeposit, VAnchorWithdraw } from './anchor';
 import { ChainQuery } from './chain-query';
@@ -58,10 +60,9 @@ export interface WebbMixer<T extends WebbApiProvider<any>> {
 }
 
 export interface WebbVariableAnchor<T extends WebbApiProvider<any>> {
-  // deposit
   deposit: WebbMethod<VAnchorDeposit<T, DepositPayload>, MixerDepositEvents>;
-  // withdraw
   withdraw: WebbMethod<VAnchorWithdraw<T>, WebbWithdrawEvents>;
+  transfer: WebbMethod<VAnchorTransfer<T>, WebbWithdrawEvents>;
   actions: WebbMethod<VAnchorActions<T>, VAnchorActionEvent>;
 }
 
@@ -132,6 +133,11 @@ export interface TXresultBase {
   // method: MethodPath;
   txHash: string;
 }
+
+export interface NewNotesTxResult extends TXresultBase {
+  outputNotes: Note[];
+}
+
 export type TXNotificationPayload<T = undefined> = {
   // Generic data for the transaction payload
   data: T;

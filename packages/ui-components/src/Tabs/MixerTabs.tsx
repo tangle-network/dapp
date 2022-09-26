@@ -3,11 +3,13 @@ import React, { useCallback, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
 import { DepositIcon } from '../assets/DepositIcon';
+import { RightArrowIcon } from '../assets/RightArrow';
 import { WithdrawIcon } from '../assets/WithdrawIcon';
 import { above } from '../utils/responsive-utils';
 
 type MixerTabsProps = {
   Deposit: JSX.Element;
+  Transfer?: JSX.Element;
   Withdraw: JSX.Element;
 };
 
@@ -59,12 +61,14 @@ export const TabButton = styled.button<{ active?: boolean; size?: 'sm' }>`
   }
 `;
 
-export const MixerTabs: React.FC<MixerTabsProps> = ({ Deposit, Withdraw }) => {
-  const [activeTab, setActiveTab] = useState<'deposit' | 'withdraw'>('deposit');
+export const MixerTabs: React.FC<MixerTabsProps> = ({ Deposit, Transfer, Withdraw }) => {
+  const [activeTab, setActiveTab] = useState<'deposit' | 'transfer' | 'withdraw'>('deposit');
   const switchToDeposit = useCallback(() => {
     setActiveTab('deposit');
   }, []);
-
+  const switchToTransfer = useCallback(() => {
+    setActiveTab('transfer');
+  }, []);
   const switchToWithdraw = useCallback(() => {
     setActiveTab('withdraw');
   }, []);
@@ -72,12 +76,14 @@ export const MixerTabs: React.FC<MixerTabsProps> = ({ Deposit, Withdraw }) => {
     switch (activeTab) {
       case 'deposit':
         return Deposit;
+      case 'transfer':
+        return Transfer;
       case 'withdraw':
         return Withdraw;
       default:
         return Deposit;
     }
-  }, [Deposit, Withdraw, activeTab]);
+  }, [Deposit, Transfer, Withdraw, activeTab]);
 
   return (
     <div>
@@ -86,6 +92,12 @@ export const MixerTabs: React.FC<MixerTabsProps> = ({ Deposit, Withdraw }) => {
           <DepositIcon className='icon' />
           <span className='mixer-tab-label'>Deposit</span>
         </TabButton>
+        {Transfer && (
+          <TabButton onClick={switchToTransfer} active={activeTab === 'transfer'}>
+            <RightArrowIcon />
+            <span className='mixer-tab-label'>Transfer</span>
+          </TabButton>
+        )}
         <TabButton onClick={switchToWithdraw} active={activeTab === 'withdraw'}>
           <WithdrawIcon className='icon' />
           <span className='mixer-tab-label'>Withdraw</span>

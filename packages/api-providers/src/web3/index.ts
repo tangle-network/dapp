@@ -7,5 +7,6 @@ export * from './mixer-deposit';
 export * from './mixer-withdraw';
 export * from './relayer-manager';
 export * from './vanchor-deposit';
+export * from './vanchor-transfer';
 export * from './webb-provider';
 export * from './wrap-unwrap';

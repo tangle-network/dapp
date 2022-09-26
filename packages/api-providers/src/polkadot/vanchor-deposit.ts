@@ -25,12 +25,7 @@ import { decodeAddress } from '@polkadot/keyring';
 import { hexToU8a, u8aToHex } from '@polkadot/util';
 import { naclEncrypt, randomAsU8a } from '@polkadot/util-crypto';
 
-import {
-  DepositPayload as IDepositPayload,
-  TransactionState,
-  VAnchorDeposit,
-  VAnchorDepositResults,
-} from '../abstracts';
+import { DepositPayload as IDepositPayload, NewNotesTxResult, TransactionState, VAnchorDeposit } from '../abstracts';
 import { WebbError, WebbErrorCodes } from '../webb-error';
 
 const logger = LoggerService.get('PolkadotVBridgeDeposit');
@@ -49,7 +44,7 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
 
   async generateBridgeNote(
     _vanchorId: string | number, // always Zero as there will be only one vanchor
-    destination: number,
+    destinationChainId: number,
     amount: number,
     wrappableAssetAddress?: string
   ): Promise<DepositPayload> {
@@ -63,7 +58,7 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
     }
     const bnAmount = ethers.utils.parseUnits(amount.toString(), currency.getDecimals());
     const tokenSymbol = currency.view.symbol;
-    const destChainId = destination;
+    const destChainId = destinationChainId;
     // Chain id of the active API
     const chainId = await this.inner.api.consts.linkableTreeBn254.chainIdentifier;
     const chainType = await this.inner.api.consts.linkableTreeBn254.chainType;
@@ -105,7 +100,7 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
     return account;
   }
 
-  async deposit(depositPayload: DepositPayload): Promise<VAnchorDepositResults> {
+  async deposit(depositPayload: DepositPayload): Promise<NewNotesTxResult> {
     const wrappableAssetRaw = Number(depositPayload.params[1]);
     const wrapAndDepositFlow = typeof depositPayload.params[1] !== 'undefined' && !Number.isNaN(wrappableAssetRaw);
 
@@ -294,7 +289,7 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
       this.emit('stateChange', TransactionState.Done);
       return {
         txHash,
-        updatedNote: depositNote,
+        outputNotes: [depositNote],
       };
     } catch (e) {
       if (e instanceof WebbError && e.code !== WebbErrorCodes.TransactionCancelled) {

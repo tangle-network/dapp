@@ -57,6 +57,7 @@ type DiscreteList<T = string> = {
 export type ProposalListItem = {
   id: string;
   status: ProposalStatus;
+  height?: string;
   type: ProposalType;
   txHash: string;
   proposers: DiscreteList;
@@ -97,13 +98,13 @@ type ProposalTimeLine = {
  *
  * @param id - Vote identifier
  * @param voterId - The voter id (account 32)
- * @param for - Boolean value indicate if the vote is against or for the proposal
+ * @param for - Boolean value indicate if the vote is against or for the proposal, absent indicate abstain vote
  * @param timestamp - The date the vote took place
  * */
-type VoteListItem = {
+export type VoteListItem = {
   id: string;
   voterId: string;
-  for: boolean;
+  for?: boolean;
   timestamp: Date;
 };
 /**
@@ -146,10 +147,10 @@ type ProposalData = {
  * @params timeline - Progress of the proposal status
  * @param data - proposal data
  * */
-type ProposalDetails = {
+export type ProposalDetails = {
   id: string;
   height: string;
-  tsHash: string;
+  txHash: string;
   chain: string;
   forPercentage: number;
   againstPercentage: number;
@@ -437,7 +438,7 @@ export function useProposal(targetSessionId: string, votesReqQuery: VotesQuery):
               chain: '',
               height: proposal.block?.timestamp!,
               timeline: [],
-              tsHash: '',
+              txHash: '',
             },
           };
         }
