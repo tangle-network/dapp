@@ -15,7 +15,7 @@ const App: FC = () => {
   return (
     <WebbUIProvider hasErrorBoudary>
       <ApolloProvider client={apolloClient}>
-        <StatsProvider blockTime={6} sessionHeight={600}>
+        <StatsProvider blockTime={6} sessionHeight={10}>
           <RouterProvider config={routes} />
         </StatsProvider>
       </ApolloProvider>

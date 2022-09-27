@@ -18,7 +18,6 @@ import React, { useMemo, useState } from 'react';
 import { Link, Outlet } from 'react-router-dom';
 
 import { DonutChartContainer, ProposalsTable, TimeRange } from '../containers';
-import { useProposalsSeedData } from '../hooks';
 import { ProposalListItem, ProposalStatus, useProposalsOverview } from '../provider/hooks';
 
 const columnHelper = createColumnHelper<ProposalListItem>();
@@ -68,13 +67,19 @@ const columns: ColumnDef<ProposalListItem, any>[] = [
 
 ChartJS.register(ArcElement, Legend);
 
-
 const Proposals = () => {
-  const data = useProposalsSeedData(4);
   const {
     metaData: { activeSession },
   } = useStatsContext();
   const overview = useProposalsOverview(activeSession, 0, 300);
+  console.log(`active session ${activeSession}`);
+  const data = useMemo(() => {
+    if (overview.val) {
+      return overview.val.openProposals;
+    }
+    return [] as ProposalListItem[];
+  }, [overview]);
+
   const statsMap: Record<ProposalStatus, number> = useMemo(() => {
     if (overview.val) {
       const { accepted, open, rejected, signed } = overview.val.stats;

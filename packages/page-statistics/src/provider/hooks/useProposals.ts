@@ -161,6 +161,7 @@ export type ProposalDetails = {
   abstainCount: number;
   timeline: ProposalTimeLine[];
   data: ProposalData;
+  status: ProposalStatus;
 };
 
 /**
@@ -430,6 +431,7 @@ export function useProposal(targetSessionId: string, votesReqQuery: VotesQuery):
                 data: proposal.data,
                 type: proposal.type,
               },
+              status: proposal.status as any,
               abstainCount,
               forCount,
               againstCount,
