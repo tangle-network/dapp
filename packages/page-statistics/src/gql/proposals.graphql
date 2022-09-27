@@ -139,6 +139,8 @@ query ProposalDetails(
         signature
         type
         status
+        chainId
+
         proposalTimelineStatuses {
             nodes {
                 id
@@ -149,6 +151,9 @@ query ProposalDetails(
         }
 
         votesFor: proposalVotesByProposalId(filter: { voteStatus: { equalTo: FOR } }) {
+            totalCount
+        }
+        against: proposalVotesByProposalId(filter: { voteStatus: { equalTo: AGAINST } }) {
             totalCount
         }
         abstain: proposalVotesByProposalId(filter: { voteStatus: { equalTo: ABSTAIN } }) {

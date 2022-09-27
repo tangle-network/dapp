@@ -10535,7 +10535,7 @@ export type ProposalDetailsQueryVariables = Exact<{
 }>;
 
 
-export type ProposalDetailsQuery = { __typename?: 'Query', session?: { __typename?: 'Session', id: string, sessionProposers: { __typename?: 'SessionProposersConnection', totalCount: number } } | null, proposalItem?: { __typename?: 'ProposalItem', id: string, data: string, signature?: string | null, type: ProposalType, status: string, proposalTimelineStatuses: { __typename?: 'ProposalTimelineStatusesConnection', nodes: Array<{ __typename?: 'ProposalTimelineStatus', id: string, status: ProposalStatus, blockNumber: any, timestamp: any } | null> }, votesFor: { __typename?: 'ProposalVotesConnection', totalCount: number }, abstain: { __typename?: 'ProposalVotesConnection', totalCount: number }, totalVotes: { __typename?: 'ProposalVotesConnection', totalCount: number }, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null } | null };
+export type ProposalDetailsQuery = { __typename?: 'Query', session?: { __typename?: 'Session', id: string, sessionProposers: { __typename?: 'SessionProposersConnection', totalCount: number } } | null, proposalItem?: { __typename?: 'ProposalItem', id: string, data: string, signature?: string | null, type: ProposalType, status: string, chainId: number, proposalTimelineStatuses: { __typename?: 'ProposalTimelineStatusesConnection', nodes: Array<{ __typename?: 'ProposalTimelineStatus', id: string, status: ProposalStatus, blockNumber: any, timestamp: any } | null> }, votesFor: { __typename?: 'ProposalVotesConnection', totalCount: number }, against: { __typename?: 'ProposalVotesConnection', totalCount: number }, abstain: { __typename?: 'ProposalVotesConnection', totalCount: number }, totalVotes: { __typename?: 'ProposalVotesConnection', totalCount: number }, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null } | null };
 
 export type EnsureProposalsQueryVariables = Exact<{
   ids: Array<Scalars['String']> | Scalars['String'];
@@ -11177,6 +11177,7 @@ export const ProposalDetailsDocument = gql`
     signature
     type
     status
+    chainId
     proposalTimelineStatuses {
       nodes {
         id
@@ -11186,6 +11187,9 @@ export const ProposalDetailsDocument = gql`
       }
     }
     votesFor: proposalVotesByProposalId(filter: {voteStatus: {equalTo: FOR}}) {
+      totalCount
+    }
+    against: proposalVotesByProposalId(filter: {voteStatus: {equalTo: AGAINST}}) {
       totalCount
     }
     abstain: proposalVotesByProposalId(filter: {voteStatus: {equalTo: ABSTAIN}}) {

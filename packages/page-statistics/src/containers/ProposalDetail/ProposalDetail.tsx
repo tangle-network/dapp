@@ -72,7 +72,6 @@ const getProposalDetail: () => ProposalDetails & { status: ProposalStatus } = ()
 };
 
 export const ProposalDetail = () => {
-  const { seedItems } = useSeedData(getProposalDetail, 1);
   const { pathname } = useLocation();
   const { proposalId = '' } = useParams<{ proposalId: string }>();
   const {
@@ -100,6 +99,24 @@ export const ProposalDetail = () => {
   const passThreshold = useMemo(() => randNumber({ min: 0, max: 100 }), []);
   const status = useMemo(() => {
     return proposalDetails.proposal.val?.status ?? null;
+  }, [proposalDetails]);
+  const counters = useMemo(() => {
+    if (proposalDetails.proposal.val) {
+      const details = proposalDetails.proposal.val;
+
+      return {
+        for: details.forCount,
+        abstain: details.abstainCount,
+        against: details.againstCount,
+        all: details.allCount,
+      };
+    }
+    return {
+      for: 0,
+      abstain: 0,
+      against: 0,
+      all: 0,
+    };
   }, [proposalDetails]);
   const Overview = useMemo(() => {
     if (proposalDetails.proposal.val) {
@@ -262,7 +279,7 @@ export const ProposalDetail = () => {
       </div>
       {Overview}
       {/** All proposers */}
-      <ProposersTable />
+      <ProposersTable counters={counters} proposalId={proposalId} />
     </div>
   );
 };
