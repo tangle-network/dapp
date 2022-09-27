@@ -26,4 +26,9 @@ export interface AvatarProps extends WebbComponentBase, IdenticonBaseProps {
    * Fallback if source image is unavailable
    */
   fallback?: string;
+  /**
+   * Source type for the Avatar
+   * @default "uri"
+   * */
+  sourceVariant?: 'address' | 'uri';
 }

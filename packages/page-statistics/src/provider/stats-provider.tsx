@@ -20,22 +20,20 @@ export type Metadata = {
  *
  * Get the current session from metadata
  * */
-export function session(height: string) {
+export function session(height: string, sessionHeight: number) {
   const blockNumber = Number(height);
-  const sessionNumber = Math.floor(blockNumber / 10) * 10;
-
-  return String(sessionNumber - 10);
+  const sessionNumber = Math.floor(blockNumber / sessionHeight);
+  return sessionNumber.toString();
 }
 
 /**
  *
  * Get the next session from metadata
  * */
-export function nextSession(height: string): string {
+export function nextSession(height: string, sessionHeight: number): string {
   const blockNumber = Number(height);
-  const sessionNumber = Math.floor(blockNumber / 10) * 10;
-
-  return String(sessionNumber);
+  const sessionNumber = Math.ceil(blockNumber / sessionHeight);
+  return sessionNumber.toString();
 }
 
 type StatsProvidervalue = {
@@ -113,7 +111,6 @@ export const StatsProvider: React.FC<Omit<StatsProvidervalue, 'isReady' | 'metaD
   props
 ) => {
   const [time, setTime] = useState<SubQlTime>(new SubQlTime(new Date()));
-
   const [metaData, setMetaData] = useState<Metadata>({
     activeSession: '0',
     currentBlock: '',
@@ -174,8 +171,8 @@ export const StatsProvider: React.FC<Omit<StatsProvidervalue, 'isReady' | 'metaD
           return {
             currentBlock: String(data.lastProcessedHeight),
             lastProcessBlock: String(data.targetHeight),
-            activeSession: session(String(data.targetHeight)),
-            lastSession: nextSession(String(data.targetHeight)),
+            activeSession: session(String(data.targetHeight), staticConfig.sessionHeight),
+            lastSession: nextSession(String(data.targetHeight), staticConfig.sessionHeight),
           };
         }
         return null;
@@ -187,7 +184,7 @@ export const StatsProvider: React.FC<Omit<StatsProvidervalue, 'isReady' | 'metaD
         }
       });
     return () => unSub.unsubscribe();
-  }, [query, metaDataQuery, isReady]);
+  }, [query, metaDataQuery, isReady, staticConfig]);
 
   useEffect(() => {
     query.startPolling(staticConfig.blockTime * 1000);
