@@ -70,7 +70,7 @@ ChartJS.register(ArcElement, Legend);
 const Proposals = () => {
   const {
     blockTime,
-    metaData: { activeSession, currentBlock },
+    metaData: { activeSession, lastProcessBlock },
   } = useStatsContext();
   const [timeRange, setTimeRange] = useState<TimeRange>('Day');
   const range = useMemo(() => {
@@ -89,15 +89,15 @@ const Proposals = () => {
         rangeTimeSec = undefined;
     }
     if (!rangeTimeSec) {
-      return { start: 0, end: Number(currentBlock) };
+      return { start: 0, end: Number(lastProcessBlock) };
     }
-    const end = Number(currentBlock);
-    const start = Math.floor(Math.max(Number(currentBlock) - rangeTimeSec / blockTime, 0));
+    const end = Number(lastProcessBlock);
+    const start = Math.floor(Math.max(Number(lastProcessBlock) - rangeTimeSec / blockTime, 0));
     return {
       end,
       start,
     };
-  }, [timeRange, currentBlock, blockTime]);
+  }, [timeRange, lastProcessBlock, blockTime]);
   const overview = useProposalsOverview(activeSession, range);
   console.log(`active session ${activeSession}`);
   const data = useMemo(() => {

@@ -4,8 +4,8 @@ import { useMemo } from 'react';
 import { Outlet } from 'react-router-dom';
 
 import { KeygenTable, KeyStatusCardContainer } from '../containers';
-import { useKeys } from '../provider/hooks';
 
+import { PublicKey, PublicKeyListView, useActiveKeys } from '../provider/hooks';
 const Keys = () => {
   const pagination = useMemo(
     () => ({
@@ -16,12 +16,16 @@ const Keys = () => {
     []
   );
 
-  const { error, isFailed, isLoading, val: data } = useKeys(pagination);
+  const { error, isFailed, isLoading, val: data } = useActiveKeys();
 
-  const { currentKey, nextKey } = useMemo(() => {
+  console.log('Active keys data', data);
+  const { currentKey, nextKey } = useMemo<{
+    currentKey: PublicKey | null;
+    nextKey: PublicKey | null;
+  }>(() => {
     return {
-      currentKey: data ? data.items[0] : null,
-      nextKey: data ? data.items[1] : null,
+      currentKey: data ? data[0] : null,
+      nextKey: data ? data[1] : null,
     };
   }, [data]);
 
