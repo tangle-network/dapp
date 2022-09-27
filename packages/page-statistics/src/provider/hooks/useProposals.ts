@@ -89,6 +89,7 @@ type ProposalsOverview = {
  *
  * */
 type ProposalTimeLine = {
+  id: string;
   status: ProposalStatus;
   at: Date;
   blockNumber: number;
@@ -442,8 +443,17 @@ export function useProposal(targetSessionId: string, votesReqQuery: VotesQuery):
               againstPercentage: (againstCount / expectedVotesCount) * 100,
               chain: String(res.data.proposalItem.chainId),
               height: proposal.block?.timestamp!,
-              timeline: [],
-              txHash: '',
+              timeline: proposal.proposalTimelineStatuses.nodes.map((item) => {
+                const statusItem = item!;
+                return {
+                  at: new Date(statusItem.timestamp),
+                  blockNumber: statusItem.blockNumber,
+                  hash: '0x000',
+                  status: statusItem.status,
+                  id: statusItem.id,
+                };
+              }),
+              txHash: '0x000',
             },
           };
         }

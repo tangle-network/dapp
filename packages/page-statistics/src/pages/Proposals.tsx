@@ -98,7 +98,6 @@ const Proposals = () => {
       start,
     };
   }, [timeRange, currentBlock, blockTime]);
-  console.log('range ', range);
   const overview = useProposalsOverview(activeSession, range);
   console.log(`active session ${activeSession}`);
   const data = useMemo(() => {

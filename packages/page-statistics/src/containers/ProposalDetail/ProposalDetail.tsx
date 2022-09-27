@@ -90,6 +90,7 @@ export const ProposalDetail = () => {
         timeline,
         txHash,
       } = proposalDetails.proposal.val;
+      console.log(timeline, 'timeline`');
       return (
         <>
           {/** Height, tx hash and chain data */}
