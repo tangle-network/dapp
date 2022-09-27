@@ -31,46 +31,6 @@ import { Link, useLocation, useParams } from 'react-router-dom';
 
 import { ProposersTable } from '../ProposersTable';
 
-const getProposalDetail: () => ProposalDetails & { status: ProposalStatus } = () => {
-  return {
-    id: `0x${randHexaDecimal({ length: 64 }).join('').toLowerCase()}`,
-    height: randRecentDate().getTime().toString(),
-    txHash: `0x${randHexaDecimal({ length: 64 }).join('').toLowerCase()}`,
-    chain: 'eth' as const,
-    forPercentage: 60,
-    againstPercentage: 30,
-    abstainPercentage: 10,
-    forCount: 62,
-    againstCount: 38,
-    abstainCount: 12,
-    status: randomEnum(ProposalStatus),
-    timeline: [
-      {
-        status: ProposalStatus.Open,
-        at: randRecentDate(),
-        blockNumber: randNumber({ min: 1000, max: 2000 }),
-        hash: `0x${randHexaDecimal({ length: 64 }).join('').toLowerCase()}`,
-      },
-      {
-        status: ProposalStatus.Signed,
-        at: randRecentDate(),
-        blockNumber: randNumber({ min: 1000, max: 2000 }),
-        hash: `0x${randHexaDecimal({ length: 64 }).join('').toLowerCase()}`,
-      },
-      {
-        status: ProposalStatus.Accepted,
-        at: randRecentDate(),
-        blockNumber: randNumber({ min: 1000, max: 2000 }),
-        hash: `0x${randHexaDecimal({ length: 64 }).join('').toLowerCase()}`,
-      },
-    ],
-    data: {
-      type: randomEnum(ProposalType),
-      data: `0x${randHexaDecimal({ length: 96 }).join('').toLowerCase()}`,
-    },
-  };
-};
-
 export const ProposalDetail = () => {
   const { pathname } = useLocation();
   const { proposalId = '' } = useParams<{ proposalId: string }>();

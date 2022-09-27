@@ -6,7 +6,9 @@ query Proposals(
     $offset: Int!
 ) {
     # Listing proposals items
-    proposalItems(first: $perPage, offset: $offset) {
+    proposalItems(
+        orderBy: [BLOCK_NUMBER_DESC],
+        first: $perPage, offset: $offset) {
         nodes {
             ...ProposalListView
         }
@@ -41,9 +43,9 @@ query ProposalsCounter(
 # Proposals over view query
 query ProposalsOverview(
     # Starting block number value for the stats start
-    $startRange: BigFloatFilter!
+    $startRange: BigFloatFilter
     # Ending block number value for the stats start
-    $endRange: BigFloatFilter!
+    $endRange: BigFloatFilter
     # Session id for threshold and proposers stats
     $sessionId: String!
 ) {

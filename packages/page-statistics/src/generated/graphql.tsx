@@ -10511,8 +10511,8 @@ export type ProposalsCounterQueryVariables = Exact<{
 export type ProposalsCounterQuery = { __typename?: 'Query', proposalCounter?: { __typename?: 'ProposalCounter', id: string, signedProposalsMap?: any | null, unSignedProposalsMap?: any | null, signedProposalsCount: number, unSignedProposalsCount: number, statusMap?: any | null, block?: { __typename?: 'Block', number: any, timestamp?: any | null } | null } | null };
 
 export type ProposalsOverviewQueryVariables = Exact<{
-  startRange: BigFloatFilter;
-  endRange: BigFloatFilter;
+  startRange?: InputMaybe<BigFloatFilter>;
+  endRange?: InputMaybe<BigFloatFilter>;
   sessionId: Scalars['String'];
 }>;
 
@@ -10950,7 +10950,7 @@ export type ProposalCounterLazyQueryHookResult = ReturnType<typeof useProposalCo
 export type ProposalCounterQueryResult = Apollo.QueryResult<ProposalCounterQuery, ProposalCounterQueryVariables>;
 export const ProposalsDocument = gql`
     query Proposals($perPage: Int!, $offset: Int!) {
-  proposalItems(first: $perPage, offset: $offset) {
+  proposalItems(orderBy: [BLOCK_NUMBER_DESC], first: $perPage, offset: $offset) {
     nodes {
       ...ProposalListView
     }
@@ -11036,7 +11036,7 @@ export type ProposalsCounterQueryHookResult = ReturnType<typeof useProposalsCoun
 export type ProposalsCounterLazyQueryHookResult = ReturnType<typeof useProposalsCounterLazyQuery>;
 export type ProposalsCounterQueryResult = Apollo.QueryResult<ProposalsCounterQuery, ProposalsCounterQueryVariables>;
 export const ProposalsOverviewDocument = gql`
-    query ProposalsOverview($startRange: BigFloatFilter!, $endRange: BigFloatFilter!, $sessionId: String!) {
+    query ProposalsOverview($startRange: BigFloatFilter, $endRange: BigFloatFilter, $sessionId: String!) {
   session(id: $sessionId) {
     id
     proposerThreshold

@@ -164,16 +164,12 @@ export type ProposalDetails = {
   data: ProposalData;
   status: ProposalStatus;
 };
-
+type BlockRange = { start: number; end: number };
 /**
  * Proposals overview
  * @return ProposalsOverview - Proposal overview data
  * */
-export function useProposalsOverview(
-  sessionId: string,
-  startBlockNumber: number,
-  endBlockNumber: number
-): Loadable<ProposalsOverview> {
+export function useProposalsOverview(sessionId: string, range?: BlockRange): Loadable<ProposalsOverview> {
   const [proposalsOverview, setProposalsOverview] = useState<Loadable<ProposalsOverview>>({
     isLoading: true,
     val: null,
@@ -184,12 +180,16 @@ export function useProposalsOverview(
   useEffect(() => {
     call({
       variables: {
-        endRange: {
-          lessThanOrEqualTo: endBlockNumber,
-        },
-        startRange: {
-          greaterThanOrEqualTo: startBlockNumber,
-        },
+        endRange: range
+          ? {
+              lessThanOrEqualTo: range.end,
+            }
+          : undefined,
+        startRange: range
+          ? {
+              greaterThanOrEqualTo: range.start,
+            }
+          : undefined,
         sessionId: sessionId,
       },
     }).catch((e) => {
@@ -200,7 +200,7 @@ export function useProposalsOverview(
         error: e.message,
       });
     });
-  }, [endBlockNumber, startBlockNumber, sessionId, call]);
+  }, [range, sessionId, call]);
   useEffect(() => {
     const subscription = query.observable
       .map((res): Loadable<ProposalsOverview> => {

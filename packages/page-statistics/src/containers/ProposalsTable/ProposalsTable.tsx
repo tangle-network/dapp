@@ -94,8 +94,6 @@ const columns: ColumnDef<ProposalListItem, any>[] = [
 ];
 
 export const ProposalsTable = () => {
-  const [dataQuery, setDataQuery] = useState<Awaited<ReturnType<typeof fetchProposalsData> | undefined>>();
-
   // Pagination state
   const [{ pageIndex, pageSize }, setPagination] = useState<PaginationState>({
     pageIndex: 0,
@@ -120,16 +118,6 @@ export const ProposalsTable = () => {
   );
   const pageCount = useMemo(() => Math.ceil(totalItems / pageSize), [pageSize, totalItems]);
 
-  useEffect(() => {
-    const updateData = async () => {
-      const data = await fetchProposalsData({ pageIndex, pageSize });
-
-      setDataQuery(data);
-      setTotalItems(data.totalItems);
-    };
-
-    updateData();
-  }, [pageIndex, pageSize]);
   const proposalsStats = useProposals(pageQuery);
   const data = useMemo(() => {
     if (proposalsStats.val) {

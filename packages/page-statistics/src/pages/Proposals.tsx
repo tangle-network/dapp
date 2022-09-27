@@ -69,9 +69,37 @@ ChartJS.register(ArcElement, Legend);
 
 const Proposals = () => {
   const {
-    metaData: { activeSession },
+    blockTime,
+    metaData: { activeSession, currentBlock },
   } = useStatsContext();
-  const overview = useProposalsOverview(activeSession, 0, 300);
+  const [timeRange, setTimeRange] = useState<TimeRange>('Day');
+  const range = useMemo(() => {
+    let rangeTimeSec = undefined;
+    switch (timeRange) {
+      case 'Day':
+        rangeTimeSec = 24 * 60 * 60;
+        break;
+      case 'Week':
+        rangeTimeSec = 24 * 60 * 60 * 7;
+        break;
+      case 'Year':
+        rangeTimeSec = 24 * 60 * 60 * 365;
+        break;
+      case 'All Time':
+        rangeTimeSec = undefined;
+    }
+    if (!rangeTimeSec) {
+      return { start: 0, end: Number(currentBlock) };
+    }
+    const end = Number(currentBlock);
+    const start = Math.floor(Math.max(Number(currentBlock) - rangeTimeSec / blockTime, 0));
+    return {
+      end,
+      start,
+    };
+  }, [timeRange, currentBlock, blockTime]);
+  console.log('range ', range);
+  const overview = useProposalsOverview(activeSession, range);
   console.log(`active session ${activeSession}`);
   const data = useMemo(() => {
     if (overview.val) {
@@ -132,7 +160,6 @@ const Proposals = () => {
       fuzzy: fuzzyFilter,
     },
   });
-  const [timeRange, setTimeRange] = useState<TimeRange>('Day');
   return (
     <div className='flex flex-col space-y-4'>
       {/** Proposals Status */}
