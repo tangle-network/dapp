@@ -29,6 +29,7 @@ export type Account = Node & {
   blocksByAccountCreatorIdAndCreateAtBlockId: AccountBlocksByAccountCreatorIdAndCreateAtBlockIdManyToManyConnection;
   /** Reads and enables pagination through a set of `Block`. */
   blocksByExtrinsicSignerIdAndBlockId: AccountBlocksByExtrinsicSignerIdAndBlockIdManyToManyConnection;
+  countryCode?: Maybe<Scalars['String']>;
   /** Reads a single `Block` that is related to this `Account`. */
   createAtBlock?: Maybe<Block>;
   createAtBlockId?: Maybe<Scalars['String']>;
@@ -36,16 +37,25 @@ export type Account = Node & {
   /** Reads a single `Account` that is related to this `Account`. */
   creator?: Maybe<Account>;
   creatorId?: Maybe<Scalars['String']>;
+  display?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['String']>;
   /** Reads and enables pagination through a set of `Extrinsic`. */
   extrinsics: ExtrinsicsConnection;
   id: Scalars['String'];
+  image?: Maybe<Scalars['String']>;
+  legal?: Maybe<Scalars['String']>;
   /** A globally unique identifier. Can be used in various places throughout the system to identify this single value. */
   nodeId: Scalars['ID'];
+  pgpFingerprint?: Maybe<Scalars['String']>;
   /** Reads and enables pagination through a set of `Proposer`. */
   proposers: ProposersConnection;
+  riot?: Maybe<Scalars['String']>;
+  twitter?: Maybe<Scalars['String']>;
   /** Reads and enables pagination through a set of `Validator`. */
   validators: ValidatorsConnection;
+  web?: Maybe<Scalars['String']>;
 };
+
 
 export type AccountAccountsByCreatorIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -57,6 +67,7 @@ export type AccountAccountsByCreatorIdArgs = {
   orderBy?: InputMaybe<Array<AccountsOrderBy>>;
 };
 
+
 export type AccountBlocksByAccountCreatorIdAndCreateAtBlockIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -66,6 +77,7 @@ export type AccountBlocksByAccountCreatorIdAndCreateAtBlockIdArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<BlocksOrderBy>>;
 };
+
 
 export type AccountBlocksByExtrinsicSignerIdAndBlockIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -77,6 +89,7 @@ export type AccountBlocksByExtrinsicSignerIdAndBlockIdArgs = {
   orderBy?: InputMaybe<Array<BlocksOrderBy>>;
 };
 
+
 export type AccountExtrinsicsArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -87,6 +100,7 @@ export type AccountExtrinsicsArgs = {
   orderBy?: InputMaybe<Array<ExtrinsicsOrderBy>>;
 };
 
+
 export type AccountProposersArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -96,6 +110,7 @@ export type AccountProposersArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<ProposersOrderBy>>;
 };
+
 
 export type AccountValidatorsArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -131,6 +146,7 @@ export type AccountBlocksByAccountCreatorIdAndCreateAtBlockIdManyToManyConnectio
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Block` values, with data from `Account`. */
 export type AccountBlocksByAccountCreatorIdAndCreateAtBlockIdManyToManyConnectionGroupedAggregatesArgs = {
   groupBy: Array<BlocksGroupBy>;
@@ -147,6 +163,7 @@ export type AccountBlocksByAccountCreatorIdAndCreateAtBlockIdManyToManyEdge = {
   /** The `Block` at the end of the edge. */
   node?: Maybe<Block>;
 };
+
 
 /** A `Block` edge in the connection, with data from `Account`. */
 export type AccountBlocksByAccountCreatorIdAndCreateAtBlockIdManyToManyEdgeAccountsByCreateAtBlockIdArgs = {
@@ -176,6 +193,7 @@ export type AccountBlocksByExtrinsicSignerIdAndBlockIdManyToManyConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Block` values, with data from `Extrinsic`. */
 export type AccountBlocksByExtrinsicSignerIdAndBlockIdManyToManyConnectionGroupedAggregatesArgs = {
   groupBy: Array<BlocksGroupBy>;
@@ -193,6 +211,7 @@ export type AccountBlocksByExtrinsicSignerIdAndBlockIdManyToManyEdge = {
   node?: Maybe<Block>;
 };
 
+
 /** A `Block` edge in the connection, with data from `Extrinsic`. */
 export type AccountBlocksByExtrinsicSignerIdAndBlockIdManyToManyEdgeExtrinsicsArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -206,32 +225,68 @@ export type AccountBlocksByExtrinsicSignerIdAndBlockIdManyToManyEdgeExtrinsicsAr
 
 export type AccountDistinctCountAggregates = {
   __typename?: 'AccountDistinctCountAggregates';
+  /** Distinct count of countryCode across the matching connection */
+  countryCode?: Maybe<Scalars['BigInt']>;
   /** Distinct count of createAtBlockId across the matching connection */
   createAtBlockId?: Maybe<Scalars['BigInt']>;
   /** Distinct count of createdAt across the matching connection */
   createdAt?: Maybe<Scalars['BigInt']>;
   /** Distinct count of creatorId across the matching connection */
   creatorId?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of display across the matching connection */
+  display?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of email across the matching connection */
+  email?: Maybe<Scalars['BigInt']>;
   /** Distinct count of id across the matching connection */
   id?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of image across the matching connection */
+  image?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of legal across the matching connection */
+  legal?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of pgpFingerprint across the matching connection */
+  pgpFingerprint?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of riot across the matching connection */
+  riot?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of twitter across the matching connection */
+  twitter?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of web across the matching connection */
+  web?: Maybe<Scalars['BigInt']>;
 };
 
 /** A filter to be used against `Account` object types. All fields are combined with a logical ‘and.’ */
 export type AccountFilter = {
   /** Checks for all expressions in this list. */
   and?: InputMaybe<Array<AccountFilter>>;
+  /** Filter by the object’s `countryCode` field. */
+  countryCode?: InputMaybe<StringFilter>;
   /** Filter by the object’s `createAtBlockId` field. */
   createAtBlockId?: InputMaybe<StringFilter>;
   /** Filter by the object’s `createdAt` field. */
   createdAt?: InputMaybe<StringFilter>;
   /** Filter by the object’s `creatorId` field. */
   creatorId?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `display` field. */
+  display?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `email` field. */
+  email?: InputMaybe<StringFilter>;
   /** Filter by the object’s `id` field. */
   id?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `image` field. */
+  image?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `legal` field. */
+  legal?: InputMaybe<StringFilter>;
   /** Negates the expression. */
   not?: InputMaybe<AccountFilter>;
   /** Checks for any expressions in this list. */
   or?: InputMaybe<Array<AccountFilter>>;
+  /** Filter by the object’s `pgpFingerprint` field. */
+  pgpFingerprint?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `riot` field. */
+  riot?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `twitter` field. */
+  twitter?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `web` field. */
+  web?: InputMaybe<StringFilter>;
 };
 
 /** A connection to a list of `Account` values. */
@@ -251,6 +306,7 @@ export type AccountsConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Account` values. */
 export type AccountsConnectionGroupedAggregatesArgs = {
   groupBy: Array<AccountsGroupBy>;
@@ -268,9 +324,18 @@ export type AccountsEdge = {
 
 /** Grouping methods for `Account` for usage during aggregation. */
 export enum AccountsGroupBy {
+  CountryCode = 'COUNTRY_CODE',
   CreatedAt = 'CREATED_AT',
   CreateAtBlockId = 'CREATE_AT_BLOCK_ID',
   CreatorId = 'CREATOR_ID',
+  Display = 'DISPLAY',
+  Email = 'EMAIL',
+  Image = 'IMAGE',
+  Legal = 'LEGAL',
+  PgpFingerprint = 'PGP_FINGERPRINT',
+  Riot = 'RIOT',
+  Twitter = 'TWITTER',
+  Web = 'WEB'
 }
 
 /** Conditions for `Account` aggregates. */
@@ -281,86 +346,254 @@ export type AccountsHavingInput = {
 
 /** Methods to use when ordering `Account`. */
 export enum AccountsOrderBy {
+  AccountsByCreatorIdAverageCountryCodeAsc = 'ACCOUNTS_BY_CREATOR_ID_AVERAGE_COUNTRY_CODE_ASC',
+  AccountsByCreatorIdAverageCountryCodeDesc = 'ACCOUNTS_BY_CREATOR_ID_AVERAGE_COUNTRY_CODE_DESC',
   AccountsByCreatorIdAverageCreatedAtAsc = 'ACCOUNTS_BY_CREATOR_ID_AVERAGE_CREATED_AT_ASC',
   AccountsByCreatorIdAverageCreatedAtDesc = 'ACCOUNTS_BY_CREATOR_ID_AVERAGE_CREATED_AT_DESC',
   AccountsByCreatorIdAverageCreateAtBlockIdAsc = 'ACCOUNTS_BY_CREATOR_ID_AVERAGE_CREATE_AT_BLOCK_ID_ASC',
   AccountsByCreatorIdAverageCreateAtBlockIdDesc = 'ACCOUNTS_BY_CREATOR_ID_AVERAGE_CREATE_AT_BLOCK_ID_DESC',
   AccountsByCreatorIdAverageCreatorIdAsc = 'ACCOUNTS_BY_CREATOR_ID_AVERAGE_CREATOR_ID_ASC',
   AccountsByCreatorIdAverageCreatorIdDesc = 'ACCOUNTS_BY_CREATOR_ID_AVERAGE_CREATOR_ID_DESC',
+  AccountsByCreatorIdAverageDisplayAsc = 'ACCOUNTS_BY_CREATOR_ID_AVERAGE_DISPLAY_ASC',
+  AccountsByCreatorIdAverageDisplayDesc = 'ACCOUNTS_BY_CREATOR_ID_AVERAGE_DISPLAY_DESC',
+  AccountsByCreatorIdAverageEmailAsc = 'ACCOUNTS_BY_CREATOR_ID_AVERAGE_EMAIL_ASC',
+  AccountsByCreatorIdAverageEmailDesc = 'ACCOUNTS_BY_CREATOR_ID_AVERAGE_EMAIL_DESC',
   AccountsByCreatorIdAverageIdAsc = 'ACCOUNTS_BY_CREATOR_ID_AVERAGE_ID_ASC',
   AccountsByCreatorIdAverageIdDesc = 'ACCOUNTS_BY_CREATOR_ID_AVERAGE_ID_DESC',
+  AccountsByCreatorIdAverageImageAsc = 'ACCOUNTS_BY_CREATOR_ID_AVERAGE_IMAGE_ASC',
+  AccountsByCreatorIdAverageImageDesc = 'ACCOUNTS_BY_CREATOR_ID_AVERAGE_IMAGE_DESC',
+  AccountsByCreatorIdAverageLegalAsc = 'ACCOUNTS_BY_CREATOR_ID_AVERAGE_LEGAL_ASC',
+  AccountsByCreatorIdAverageLegalDesc = 'ACCOUNTS_BY_CREATOR_ID_AVERAGE_LEGAL_DESC',
+  AccountsByCreatorIdAveragePgpFingerprintAsc = 'ACCOUNTS_BY_CREATOR_ID_AVERAGE_PGP_FINGERPRINT_ASC',
+  AccountsByCreatorIdAveragePgpFingerprintDesc = 'ACCOUNTS_BY_CREATOR_ID_AVERAGE_PGP_FINGERPRINT_DESC',
+  AccountsByCreatorIdAverageRiotAsc = 'ACCOUNTS_BY_CREATOR_ID_AVERAGE_RIOT_ASC',
+  AccountsByCreatorIdAverageRiotDesc = 'ACCOUNTS_BY_CREATOR_ID_AVERAGE_RIOT_DESC',
+  AccountsByCreatorIdAverageTwitterAsc = 'ACCOUNTS_BY_CREATOR_ID_AVERAGE_TWITTER_ASC',
+  AccountsByCreatorIdAverageTwitterDesc = 'ACCOUNTS_BY_CREATOR_ID_AVERAGE_TWITTER_DESC',
+  AccountsByCreatorIdAverageWebAsc = 'ACCOUNTS_BY_CREATOR_ID_AVERAGE_WEB_ASC',
+  AccountsByCreatorIdAverageWebDesc = 'ACCOUNTS_BY_CREATOR_ID_AVERAGE_WEB_DESC',
   AccountsByCreatorIdCountAsc = 'ACCOUNTS_BY_CREATOR_ID_COUNT_ASC',
   AccountsByCreatorIdCountDesc = 'ACCOUNTS_BY_CREATOR_ID_COUNT_DESC',
+  AccountsByCreatorIdDistinctCountCountryCodeAsc = 'ACCOUNTS_BY_CREATOR_ID_DISTINCT_COUNT_COUNTRY_CODE_ASC',
+  AccountsByCreatorIdDistinctCountCountryCodeDesc = 'ACCOUNTS_BY_CREATOR_ID_DISTINCT_COUNT_COUNTRY_CODE_DESC',
   AccountsByCreatorIdDistinctCountCreatedAtAsc = 'ACCOUNTS_BY_CREATOR_ID_DISTINCT_COUNT_CREATED_AT_ASC',
   AccountsByCreatorIdDistinctCountCreatedAtDesc = 'ACCOUNTS_BY_CREATOR_ID_DISTINCT_COUNT_CREATED_AT_DESC',
   AccountsByCreatorIdDistinctCountCreateAtBlockIdAsc = 'ACCOUNTS_BY_CREATOR_ID_DISTINCT_COUNT_CREATE_AT_BLOCK_ID_ASC',
   AccountsByCreatorIdDistinctCountCreateAtBlockIdDesc = 'ACCOUNTS_BY_CREATOR_ID_DISTINCT_COUNT_CREATE_AT_BLOCK_ID_DESC',
   AccountsByCreatorIdDistinctCountCreatorIdAsc = 'ACCOUNTS_BY_CREATOR_ID_DISTINCT_COUNT_CREATOR_ID_ASC',
   AccountsByCreatorIdDistinctCountCreatorIdDesc = 'ACCOUNTS_BY_CREATOR_ID_DISTINCT_COUNT_CREATOR_ID_DESC',
+  AccountsByCreatorIdDistinctCountDisplayAsc = 'ACCOUNTS_BY_CREATOR_ID_DISTINCT_COUNT_DISPLAY_ASC',
+  AccountsByCreatorIdDistinctCountDisplayDesc = 'ACCOUNTS_BY_CREATOR_ID_DISTINCT_COUNT_DISPLAY_DESC',
+  AccountsByCreatorIdDistinctCountEmailAsc = 'ACCOUNTS_BY_CREATOR_ID_DISTINCT_COUNT_EMAIL_ASC',
+  AccountsByCreatorIdDistinctCountEmailDesc = 'ACCOUNTS_BY_CREATOR_ID_DISTINCT_COUNT_EMAIL_DESC',
   AccountsByCreatorIdDistinctCountIdAsc = 'ACCOUNTS_BY_CREATOR_ID_DISTINCT_COUNT_ID_ASC',
   AccountsByCreatorIdDistinctCountIdDesc = 'ACCOUNTS_BY_CREATOR_ID_DISTINCT_COUNT_ID_DESC',
+  AccountsByCreatorIdDistinctCountImageAsc = 'ACCOUNTS_BY_CREATOR_ID_DISTINCT_COUNT_IMAGE_ASC',
+  AccountsByCreatorIdDistinctCountImageDesc = 'ACCOUNTS_BY_CREATOR_ID_DISTINCT_COUNT_IMAGE_DESC',
+  AccountsByCreatorIdDistinctCountLegalAsc = 'ACCOUNTS_BY_CREATOR_ID_DISTINCT_COUNT_LEGAL_ASC',
+  AccountsByCreatorIdDistinctCountLegalDesc = 'ACCOUNTS_BY_CREATOR_ID_DISTINCT_COUNT_LEGAL_DESC',
+  AccountsByCreatorIdDistinctCountPgpFingerprintAsc = 'ACCOUNTS_BY_CREATOR_ID_DISTINCT_COUNT_PGP_FINGERPRINT_ASC',
+  AccountsByCreatorIdDistinctCountPgpFingerprintDesc = 'ACCOUNTS_BY_CREATOR_ID_DISTINCT_COUNT_PGP_FINGERPRINT_DESC',
+  AccountsByCreatorIdDistinctCountRiotAsc = 'ACCOUNTS_BY_CREATOR_ID_DISTINCT_COUNT_RIOT_ASC',
+  AccountsByCreatorIdDistinctCountRiotDesc = 'ACCOUNTS_BY_CREATOR_ID_DISTINCT_COUNT_RIOT_DESC',
+  AccountsByCreatorIdDistinctCountTwitterAsc = 'ACCOUNTS_BY_CREATOR_ID_DISTINCT_COUNT_TWITTER_ASC',
+  AccountsByCreatorIdDistinctCountTwitterDesc = 'ACCOUNTS_BY_CREATOR_ID_DISTINCT_COUNT_TWITTER_DESC',
+  AccountsByCreatorIdDistinctCountWebAsc = 'ACCOUNTS_BY_CREATOR_ID_DISTINCT_COUNT_WEB_ASC',
+  AccountsByCreatorIdDistinctCountWebDesc = 'ACCOUNTS_BY_CREATOR_ID_DISTINCT_COUNT_WEB_DESC',
+  AccountsByCreatorIdMaxCountryCodeAsc = 'ACCOUNTS_BY_CREATOR_ID_MAX_COUNTRY_CODE_ASC',
+  AccountsByCreatorIdMaxCountryCodeDesc = 'ACCOUNTS_BY_CREATOR_ID_MAX_COUNTRY_CODE_DESC',
   AccountsByCreatorIdMaxCreatedAtAsc = 'ACCOUNTS_BY_CREATOR_ID_MAX_CREATED_AT_ASC',
   AccountsByCreatorIdMaxCreatedAtDesc = 'ACCOUNTS_BY_CREATOR_ID_MAX_CREATED_AT_DESC',
   AccountsByCreatorIdMaxCreateAtBlockIdAsc = 'ACCOUNTS_BY_CREATOR_ID_MAX_CREATE_AT_BLOCK_ID_ASC',
   AccountsByCreatorIdMaxCreateAtBlockIdDesc = 'ACCOUNTS_BY_CREATOR_ID_MAX_CREATE_AT_BLOCK_ID_DESC',
   AccountsByCreatorIdMaxCreatorIdAsc = 'ACCOUNTS_BY_CREATOR_ID_MAX_CREATOR_ID_ASC',
   AccountsByCreatorIdMaxCreatorIdDesc = 'ACCOUNTS_BY_CREATOR_ID_MAX_CREATOR_ID_DESC',
+  AccountsByCreatorIdMaxDisplayAsc = 'ACCOUNTS_BY_CREATOR_ID_MAX_DISPLAY_ASC',
+  AccountsByCreatorIdMaxDisplayDesc = 'ACCOUNTS_BY_CREATOR_ID_MAX_DISPLAY_DESC',
+  AccountsByCreatorIdMaxEmailAsc = 'ACCOUNTS_BY_CREATOR_ID_MAX_EMAIL_ASC',
+  AccountsByCreatorIdMaxEmailDesc = 'ACCOUNTS_BY_CREATOR_ID_MAX_EMAIL_DESC',
   AccountsByCreatorIdMaxIdAsc = 'ACCOUNTS_BY_CREATOR_ID_MAX_ID_ASC',
   AccountsByCreatorIdMaxIdDesc = 'ACCOUNTS_BY_CREATOR_ID_MAX_ID_DESC',
+  AccountsByCreatorIdMaxImageAsc = 'ACCOUNTS_BY_CREATOR_ID_MAX_IMAGE_ASC',
+  AccountsByCreatorIdMaxImageDesc = 'ACCOUNTS_BY_CREATOR_ID_MAX_IMAGE_DESC',
+  AccountsByCreatorIdMaxLegalAsc = 'ACCOUNTS_BY_CREATOR_ID_MAX_LEGAL_ASC',
+  AccountsByCreatorIdMaxLegalDesc = 'ACCOUNTS_BY_CREATOR_ID_MAX_LEGAL_DESC',
+  AccountsByCreatorIdMaxPgpFingerprintAsc = 'ACCOUNTS_BY_CREATOR_ID_MAX_PGP_FINGERPRINT_ASC',
+  AccountsByCreatorIdMaxPgpFingerprintDesc = 'ACCOUNTS_BY_CREATOR_ID_MAX_PGP_FINGERPRINT_DESC',
+  AccountsByCreatorIdMaxRiotAsc = 'ACCOUNTS_BY_CREATOR_ID_MAX_RIOT_ASC',
+  AccountsByCreatorIdMaxRiotDesc = 'ACCOUNTS_BY_CREATOR_ID_MAX_RIOT_DESC',
+  AccountsByCreatorIdMaxTwitterAsc = 'ACCOUNTS_BY_CREATOR_ID_MAX_TWITTER_ASC',
+  AccountsByCreatorIdMaxTwitterDesc = 'ACCOUNTS_BY_CREATOR_ID_MAX_TWITTER_DESC',
+  AccountsByCreatorIdMaxWebAsc = 'ACCOUNTS_BY_CREATOR_ID_MAX_WEB_ASC',
+  AccountsByCreatorIdMaxWebDesc = 'ACCOUNTS_BY_CREATOR_ID_MAX_WEB_DESC',
+  AccountsByCreatorIdMinCountryCodeAsc = 'ACCOUNTS_BY_CREATOR_ID_MIN_COUNTRY_CODE_ASC',
+  AccountsByCreatorIdMinCountryCodeDesc = 'ACCOUNTS_BY_CREATOR_ID_MIN_COUNTRY_CODE_DESC',
   AccountsByCreatorIdMinCreatedAtAsc = 'ACCOUNTS_BY_CREATOR_ID_MIN_CREATED_AT_ASC',
   AccountsByCreatorIdMinCreatedAtDesc = 'ACCOUNTS_BY_CREATOR_ID_MIN_CREATED_AT_DESC',
   AccountsByCreatorIdMinCreateAtBlockIdAsc = 'ACCOUNTS_BY_CREATOR_ID_MIN_CREATE_AT_BLOCK_ID_ASC',
   AccountsByCreatorIdMinCreateAtBlockIdDesc = 'ACCOUNTS_BY_CREATOR_ID_MIN_CREATE_AT_BLOCK_ID_DESC',
   AccountsByCreatorIdMinCreatorIdAsc = 'ACCOUNTS_BY_CREATOR_ID_MIN_CREATOR_ID_ASC',
   AccountsByCreatorIdMinCreatorIdDesc = 'ACCOUNTS_BY_CREATOR_ID_MIN_CREATOR_ID_DESC',
+  AccountsByCreatorIdMinDisplayAsc = 'ACCOUNTS_BY_CREATOR_ID_MIN_DISPLAY_ASC',
+  AccountsByCreatorIdMinDisplayDesc = 'ACCOUNTS_BY_CREATOR_ID_MIN_DISPLAY_DESC',
+  AccountsByCreatorIdMinEmailAsc = 'ACCOUNTS_BY_CREATOR_ID_MIN_EMAIL_ASC',
+  AccountsByCreatorIdMinEmailDesc = 'ACCOUNTS_BY_CREATOR_ID_MIN_EMAIL_DESC',
   AccountsByCreatorIdMinIdAsc = 'ACCOUNTS_BY_CREATOR_ID_MIN_ID_ASC',
   AccountsByCreatorIdMinIdDesc = 'ACCOUNTS_BY_CREATOR_ID_MIN_ID_DESC',
+  AccountsByCreatorIdMinImageAsc = 'ACCOUNTS_BY_CREATOR_ID_MIN_IMAGE_ASC',
+  AccountsByCreatorIdMinImageDesc = 'ACCOUNTS_BY_CREATOR_ID_MIN_IMAGE_DESC',
+  AccountsByCreatorIdMinLegalAsc = 'ACCOUNTS_BY_CREATOR_ID_MIN_LEGAL_ASC',
+  AccountsByCreatorIdMinLegalDesc = 'ACCOUNTS_BY_CREATOR_ID_MIN_LEGAL_DESC',
+  AccountsByCreatorIdMinPgpFingerprintAsc = 'ACCOUNTS_BY_CREATOR_ID_MIN_PGP_FINGERPRINT_ASC',
+  AccountsByCreatorIdMinPgpFingerprintDesc = 'ACCOUNTS_BY_CREATOR_ID_MIN_PGP_FINGERPRINT_DESC',
+  AccountsByCreatorIdMinRiotAsc = 'ACCOUNTS_BY_CREATOR_ID_MIN_RIOT_ASC',
+  AccountsByCreatorIdMinRiotDesc = 'ACCOUNTS_BY_CREATOR_ID_MIN_RIOT_DESC',
+  AccountsByCreatorIdMinTwitterAsc = 'ACCOUNTS_BY_CREATOR_ID_MIN_TWITTER_ASC',
+  AccountsByCreatorIdMinTwitterDesc = 'ACCOUNTS_BY_CREATOR_ID_MIN_TWITTER_DESC',
+  AccountsByCreatorIdMinWebAsc = 'ACCOUNTS_BY_CREATOR_ID_MIN_WEB_ASC',
+  AccountsByCreatorIdMinWebDesc = 'ACCOUNTS_BY_CREATOR_ID_MIN_WEB_DESC',
+  AccountsByCreatorIdStddevPopulationCountryCodeAsc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_POPULATION_COUNTRY_CODE_ASC',
+  AccountsByCreatorIdStddevPopulationCountryCodeDesc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_POPULATION_COUNTRY_CODE_DESC',
   AccountsByCreatorIdStddevPopulationCreatedAtAsc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_POPULATION_CREATED_AT_ASC',
   AccountsByCreatorIdStddevPopulationCreatedAtDesc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_POPULATION_CREATED_AT_DESC',
   AccountsByCreatorIdStddevPopulationCreateAtBlockIdAsc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_POPULATION_CREATE_AT_BLOCK_ID_ASC',
   AccountsByCreatorIdStddevPopulationCreateAtBlockIdDesc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_POPULATION_CREATE_AT_BLOCK_ID_DESC',
   AccountsByCreatorIdStddevPopulationCreatorIdAsc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_POPULATION_CREATOR_ID_ASC',
   AccountsByCreatorIdStddevPopulationCreatorIdDesc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_POPULATION_CREATOR_ID_DESC',
+  AccountsByCreatorIdStddevPopulationDisplayAsc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_POPULATION_DISPLAY_ASC',
+  AccountsByCreatorIdStddevPopulationDisplayDesc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_POPULATION_DISPLAY_DESC',
+  AccountsByCreatorIdStddevPopulationEmailAsc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_POPULATION_EMAIL_ASC',
+  AccountsByCreatorIdStddevPopulationEmailDesc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_POPULATION_EMAIL_DESC',
   AccountsByCreatorIdStddevPopulationIdAsc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_POPULATION_ID_ASC',
   AccountsByCreatorIdStddevPopulationIdDesc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_POPULATION_ID_DESC',
+  AccountsByCreatorIdStddevPopulationImageAsc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_POPULATION_IMAGE_ASC',
+  AccountsByCreatorIdStddevPopulationImageDesc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_POPULATION_IMAGE_DESC',
+  AccountsByCreatorIdStddevPopulationLegalAsc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_POPULATION_LEGAL_ASC',
+  AccountsByCreatorIdStddevPopulationLegalDesc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_POPULATION_LEGAL_DESC',
+  AccountsByCreatorIdStddevPopulationPgpFingerprintAsc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_POPULATION_PGP_FINGERPRINT_ASC',
+  AccountsByCreatorIdStddevPopulationPgpFingerprintDesc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_POPULATION_PGP_FINGERPRINT_DESC',
+  AccountsByCreatorIdStddevPopulationRiotAsc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_POPULATION_RIOT_ASC',
+  AccountsByCreatorIdStddevPopulationRiotDesc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_POPULATION_RIOT_DESC',
+  AccountsByCreatorIdStddevPopulationTwitterAsc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_POPULATION_TWITTER_ASC',
+  AccountsByCreatorIdStddevPopulationTwitterDesc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_POPULATION_TWITTER_DESC',
+  AccountsByCreatorIdStddevPopulationWebAsc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_POPULATION_WEB_ASC',
+  AccountsByCreatorIdStddevPopulationWebDesc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_POPULATION_WEB_DESC',
+  AccountsByCreatorIdStddevSampleCountryCodeAsc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_SAMPLE_COUNTRY_CODE_ASC',
+  AccountsByCreatorIdStddevSampleCountryCodeDesc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_SAMPLE_COUNTRY_CODE_DESC',
   AccountsByCreatorIdStddevSampleCreatedAtAsc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_SAMPLE_CREATED_AT_ASC',
   AccountsByCreatorIdStddevSampleCreatedAtDesc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_SAMPLE_CREATED_AT_DESC',
   AccountsByCreatorIdStddevSampleCreateAtBlockIdAsc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_SAMPLE_CREATE_AT_BLOCK_ID_ASC',
   AccountsByCreatorIdStddevSampleCreateAtBlockIdDesc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_SAMPLE_CREATE_AT_BLOCK_ID_DESC',
   AccountsByCreatorIdStddevSampleCreatorIdAsc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_SAMPLE_CREATOR_ID_ASC',
   AccountsByCreatorIdStddevSampleCreatorIdDesc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_SAMPLE_CREATOR_ID_DESC',
+  AccountsByCreatorIdStddevSampleDisplayAsc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_SAMPLE_DISPLAY_ASC',
+  AccountsByCreatorIdStddevSampleDisplayDesc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_SAMPLE_DISPLAY_DESC',
+  AccountsByCreatorIdStddevSampleEmailAsc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_SAMPLE_EMAIL_ASC',
+  AccountsByCreatorIdStddevSampleEmailDesc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_SAMPLE_EMAIL_DESC',
   AccountsByCreatorIdStddevSampleIdAsc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_SAMPLE_ID_ASC',
   AccountsByCreatorIdStddevSampleIdDesc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_SAMPLE_ID_DESC',
+  AccountsByCreatorIdStddevSampleImageAsc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_SAMPLE_IMAGE_ASC',
+  AccountsByCreatorIdStddevSampleImageDesc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_SAMPLE_IMAGE_DESC',
+  AccountsByCreatorIdStddevSampleLegalAsc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_SAMPLE_LEGAL_ASC',
+  AccountsByCreatorIdStddevSampleLegalDesc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_SAMPLE_LEGAL_DESC',
+  AccountsByCreatorIdStddevSamplePgpFingerprintAsc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_SAMPLE_PGP_FINGERPRINT_ASC',
+  AccountsByCreatorIdStddevSamplePgpFingerprintDesc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_SAMPLE_PGP_FINGERPRINT_DESC',
+  AccountsByCreatorIdStddevSampleRiotAsc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_SAMPLE_RIOT_ASC',
+  AccountsByCreatorIdStddevSampleRiotDesc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_SAMPLE_RIOT_DESC',
+  AccountsByCreatorIdStddevSampleTwitterAsc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_SAMPLE_TWITTER_ASC',
+  AccountsByCreatorIdStddevSampleTwitterDesc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_SAMPLE_TWITTER_DESC',
+  AccountsByCreatorIdStddevSampleWebAsc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_SAMPLE_WEB_ASC',
+  AccountsByCreatorIdStddevSampleWebDesc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_SAMPLE_WEB_DESC',
+  AccountsByCreatorIdSumCountryCodeAsc = 'ACCOUNTS_BY_CREATOR_ID_SUM_COUNTRY_CODE_ASC',
+  AccountsByCreatorIdSumCountryCodeDesc = 'ACCOUNTS_BY_CREATOR_ID_SUM_COUNTRY_CODE_DESC',
   AccountsByCreatorIdSumCreatedAtAsc = 'ACCOUNTS_BY_CREATOR_ID_SUM_CREATED_AT_ASC',
   AccountsByCreatorIdSumCreatedAtDesc = 'ACCOUNTS_BY_CREATOR_ID_SUM_CREATED_AT_DESC',
   AccountsByCreatorIdSumCreateAtBlockIdAsc = 'ACCOUNTS_BY_CREATOR_ID_SUM_CREATE_AT_BLOCK_ID_ASC',
   AccountsByCreatorIdSumCreateAtBlockIdDesc = 'ACCOUNTS_BY_CREATOR_ID_SUM_CREATE_AT_BLOCK_ID_DESC',
   AccountsByCreatorIdSumCreatorIdAsc = 'ACCOUNTS_BY_CREATOR_ID_SUM_CREATOR_ID_ASC',
   AccountsByCreatorIdSumCreatorIdDesc = 'ACCOUNTS_BY_CREATOR_ID_SUM_CREATOR_ID_DESC',
+  AccountsByCreatorIdSumDisplayAsc = 'ACCOUNTS_BY_CREATOR_ID_SUM_DISPLAY_ASC',
+  AccountsByCreatorIdSumDisplayDesc = 'ACCOUNTS_BY_CREATOR_ID_SUM_DISPLAY_DESC',
+  AccountsByCreatorIdSumEmailAsc = 'ACCOUNTS_BY_CREATOR_ID_SUM_EMAIL_ASC',
+  AccountsByCreatorIdSumEmailDesc = 'ACCOUNTS_BY_CREATOR_ID_SUM_EMAIL_DESC',
   AccountsByCreatorIdSumIdAsc = 'ACCOUNTS_BY_CREATOR_ID_SUM_ID_ASC',
   AccountsByCreatorIdSumIdDesc = 'ACCOUNTS_BY_CREATOR_ID_SUM_ID_DESC',
+  AccountsByCreatorIdSumImageAsc = 'ACCOUNTS_BY_CREATOR_ID_SUM_IMAGE_ASC',
+  AccountsByCreatorIdSumImageDesc = 'ACCOUNTS_BY_CREATOR_ID_SUM_IMAGE_DESC',
+  AccountsByCreatorIdSumLegalAsc = 'ACCOUNTS_BY_CREATOR_ID_SUM_LEGAL_ASC',
+  AccountsByCreatorIdSumLegalDesc = 'ACCOUNTS_BY_CREATOR_ID_SUM_LEGAL_DESC',
+  AccountsByCreatorIdSumPgpFingerprintAsc = 'ACCOUNTS_BY_CREATOR_ID_SUM_PGP_FINGERPRINT_ASC',
+  AccountsByCreatorIdSumPgpFingerprintDesc = 'ACCOUNTS_BY_CREATOR_ID_SUM_PGP_FINGERPRINT_DESC',
+  AccountsByCreatorIdSumRiotAsc = 'ACCOUNTS_BY_CREATOR_ID_SUM_RIOT_ASC',
+  AccountsByCreatorIdSumRiotDesc = 'ACCOUNTS_BY_CREATOR_ID_SUM_RIOT_DESC',
+  AccountsByCreatorIdSumTwitterAsc = 'ACCOUNTS_BY_CREATOR_ID_SUM_TWITTER_ASC',
+  AccountsByCreatorIdSumTwitterDesc = 'ACCOUNTS_BY_CREATOR_ID_SUM_TWITTER_DESC',
+  AccountsByCreatorIdSumWebAsc = 'ACCOUNTS_BY_CREATOR_ID_SUM_WEB_ASC',
+  AccountsByCreatorIdSumWebDesc = 'ACCOUNTS_BY_CREATOR_ID_SUM_WEB_DESC',
+  AccountsByCreatorIdVariancePopulationCountryCodeAsc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_POPULATION_COUNTRY_CODE_ASC',
+  AccountsByCreatorIdVariancePopulationCountryCodeDesc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_POPULATION_COUNTRY_CODE_DESC',
   AccountsByCreatorIdVariancePopulationCreatedAtAsc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_POPULATION_CREATED_AT_ASC',
   AccountsByCreatorIdVariancePopulationCreatedAtDesc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_POPULATION_CREATED_AT_DESC',
   AccountsByCreatorIdVariancePopulationCreateAtBlockIdAsc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_POPULATION_CREATE_AT_BLOCK_ID_ASC',
   AccountsByCreatorIdVariancePopulationCreateAtBlockIdDesc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_POPULATION_CREATE_AT_BLOCK_ID_DESC',
   AccountsByCreatorIdVariancePopulationCreatorIdAsc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_POPULATION_CREATOR_ID_ASC',
   AccountsByCreatorIdVariancePopulationCreatorIdDesc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_POPULATION_CREATOR_ID_DESC',
+  AccountsByCreatorIdVariancePopulationDisplayAsc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_POPULATION_DISPLAY_ASC',
+  AccountsByCreatorIdVariancePopulationDisplayDesc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_POPULATION_DISPLAY_DESC',
+  AccountsByCreatorIdVariancePopulationEmailAsc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_POPULATION_EMAIL_ASC',
+  AccountsByCreatorIdVariancePopulationEmailDesc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_POPULATION_EMAIL_DESC',
   AccountsByCreatorIdVariancePopulationIdAsc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_POPULATION_ID_ASC',
   AccountsByCreatorIdVariancePopulationIdDesc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_POPULATION_ID_DESC',
+  AccountsByCreatorIdVariancePopulationImageAsc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_POPULATION_IMAGE_ASC',
+  AccountsByCreatorIdVariancePopulationImageDesc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_POPULATION_IMAGE_DESC',
+  AccountsByCreatorIdVariancePopulationLegalAsc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_POPULATION_LEGAL_ASC',
+  AccountsByCreatorIdVariancePopulationLegalDesc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_POPULATION_LEGAL_DESC',
+  AccountsByCreatorIdVariancePopulationPgpFingerprintAsc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_POPULATION_PGP_FINGERPRINT_ASC',
+  AccountsByCreatorIdVariancePopulationPgpFingerprintDesc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_POPULATION_PGP_FINGERPRINT_DESC',
+  AccountsByCreatorIdVariancePopulationRiotAsc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_POPULATION_RIOT_ASC',
+  AccountsByCreatorIdVariancePopulationRiotDesc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_POPULATION_RIOT_DESC',
+  AccountsByCreatorIdVariancePopulationTwitterAsc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_POPULATION_TWITTER_ASC',
+  AccountsByCreatorIdVariancePopulationTwitterDesc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_POPULATION_TWITTER_DESC',
+  AccountsByCreatorIdVariancePopulationWebAsc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_POPULATION_WEB_ASC',
+  AccountsByCreatorIdVariancePopulationWebDesc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_POPULATION_WEB_DESC',
+  AccountsByCreatorIdVarianceSampleCountryCodeAsc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_SAMPLE_COUNTRY_CODE_ASC',
+  AccountsByCreatorIdVarianceSampleCountryCodeDesc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_SAMPLE_COUNTRY_CODE_DESC',
   AccountsByCreatorIdVarianceSampleCreatedAtAsc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_SAMPLE_CREATED_AT_ASC',
   AccountsByCreatorIdVarianceSampleCreatedAtDesc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_SAMPLE_CREATED_AT_DESC',
   AccountsByCreatorIdVarianceSampleCreateAtBlockIdAsc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_SAMPLE_CREATE_AT_BLOCK_ID_ASC',
   AccountsByCreatorIdVarianceSampleCreateAtBlockIdDesc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_SAMPLE_CREATE_AT_BLOCK_ID_DESC',
   AccountsByCreatorIdVarianceSampleCreatorIdAsc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_SAMPLE_CREATOR_ID_ASC',
   AccountsByCreatorIdVarianceSampleCreatorIdDesc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_SAMPLE_CREATOR_ID_DESC',
+  AccountsByCreatorIdVarianceSampleDisplayAsc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_SAMPLE_DISPLAY_ASC',
+  AccountsByCreatorIdVarianceSampleDisplayDesc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_SAMPLE_DISPLAY_DESC',
+  AccountsByCreatorIdVarianceSampleEmailAsc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_SAMPLE_EMAIL_ASC',
+  AccountsByCreatorIdVarianceSampleEmailDesc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_SAMPLE_EMAIL_DESC',
   AccountsByCreatorIdVarianceSampleIdAsc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_SAMPLE_ID_ASC',
   AccountsByCreatorIdVarianceSampleIdDesc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_SAMPLE_ID_DESC',
+  AccountsByCreatorIdVarianceSampleImageAsc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_SAMPLE_IMAGE_ASC',
+  AccountsByCreatorIdVarianceSampleImageDesc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_SAMPLE_IMAGE_DESC',
+  AccountsByCreatorIdVarianceSampleLegalAsc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_SAMPLE_LEGAL_ASC',
+  AccountsByCreatorIdVarianceSampleLegalDesc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_SAMPLE_LEGAL_DESC',
+  AccountsByCreatorIdVarianceSamplePgpFingerprintAsc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_SAMPLE_PGP_FINGERPRINT_ASC',
+  AccountsByCreatorIdVarianceSamplePgpFingerprintDesc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_SAMPLE_PGP_FINGERPRINT_DESC',
+  AccountsByCreatorIdVarianceSampleRiotAsc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_SAMPLE_RIOT_ASC',
+  AccountsByCreatorIdVarianceSampleRiotDesc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_SAMPLE_RIOT_DESC',
+  AccountsByCreatorIdVarianceSampleTwitterAsc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_SAMPLE_TWITTER_ASC',
+  AccountsByCreatorIdVarianceSampleTwitterDesc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_SAMPLE_TWITTER_DESC',
+  AccountsByCreatorIdVarianceSampleWebAsc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_SAMPLE_WEB_ASC',
+  AccountsByCreatorIdVarianceSampleWebDesc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_SAMPLE_WEB_DESC',
+  CountryCodeAsc = 'COUNTRY_CODE_ASC',
+  CountryCodeDesc = 'COUNTRY_CODE_DESC',
   CreatedAtAsc = 'CREATED_AT_ASC',
   CreatedAtDesc = 'CREATED_AT_DESC',
   CreateAtBlockIdAsc = 'CREATE_AT_BLOCK_ID_ASC',
   CreateAtBlockIdDesc = 'CREATE_AT_BLOCK_ID_DESC',
   CreatorIdAsc = 'CREATOR_ID_ASC',
   CreatorIdDesc = 'CREATOR_ID_DESC',
+  DisplayAsc = 'DISPLAY_ASC',
+  DisplayDesc = 'DISPLAY_DESC',
+  EmailAsc = 'EMAIL_ASC',
+  EmailDesc = 'EMAIL_DESC',
   ExtrinsicsAverageArgumentsAsc = 'EXTRINSICS_AVERAGE_ARGUMENTS_ASC',
   ExtrinsicsAverageArgumentsDesc = 'EXTRINSICS_AVERAGE_ARGUMENTS_DESC',
   ExtrinsicsAverageBlockIdAsc = 'EXTRINSICS_AVERAGE_BLOCK_ID_ASC',
@@ -563,7 +796,13 @@ export enum AccountsOrderBy {
   ExtrinsicsVarianceSampleSignerIdDesc = 'EXTRINSICS_VARIANCE_SAMPLE_SIGNER_ID_DESC',
   IdAsc = 'ID_ASC',
   IdDesc = 'ID_DESC',
+  ImageAsc = 'IMAGE_ASC',
+  ImageDesc = 'IMAGE_DESC',
+  LegalAsc = 'LEGAL_ASC',
+  LegalDesc = 'LEGAL_DESC',
   Natural = 'NATURAL',
+  PgpFingerprintAsc = 'PGP_FINGERPRINT_ASC',
+  PgpFingerprintDesc = 'PGP_FINGERPRINT_DESC',
   PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
   PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
   ProposersAverageAccountIdAsc = 'PROPOSERS_AVERAGE_ACCOUNT_ID_ASC',
@@ -604,6 +843,10 @@ export enum AccountsOrderBy {
   ProposersVarianceSampleAccountIdDesc = 'PROPOSERS_VARIANCE_SAMPLE_ACCOUNT_ID_DESC',
   ProposersVarianceSampleIdAsc = 'PROPOSERS_VARIANCE_SAMPLE_ID_ASC',
   ProposersVarianceSampleIdDesc = 'PROPOSERS_VARIANCE_SAMPLE_ID_DESC',
+  RiotAsc = 'RIOT_ASC',
+  RiotDesc = 'RIOT_DESC',
+  TwitterAsc = 'TWITTER_ASC',
+  TwitterDesc = 'TWITTER_DESC',
   ValidatorsAverageAccountIdAsc = 'VALIDATORS_AVERAGE_ACCOUNT_ID_ASC',
   ValidatorsAverageAccountIdDesc = 'VALIDATORS_AVERAGE_ACCOUNT_ID_DESC',
   ValidatorsAverageAuthorityIdAsc = 'VALIDATORS_AVERAGE_AUTHORITY_ID_ASC',
@@ -660,6 +903,8 @@ export enum AccountsOrderBy {
   ValidatorsVarianceSampleAuthorityIdDesc = 'VALIDATORS_VARIANCE_SAMPLE_AUTHORITY_ID_DESC',
   ValidatorsVarianceSampleIdAsc = 'VALIDATORS_VARIANCE_SAMPLE_ID_ASC',
   ValidatorsVarianceSampleIdDesc = 'VALIDATORS_VARIANCE_SAMPLE_ID_DESC',
+  WebAsc = 'WEB_ASC',
+  WebDesc = 'WEB_DESC'
 }
 
 /** A connection to a list of `Authority` values. */
@@ -678,6 +923,7 @@ export type AuthoritiesConnection = {
   /** The count of *all* `Authority` you could get from the connection. */
   totalCount: Scalars['Int'];
 };
+
 
 /** A connection to a list of `Authority` values. */
 export type AuthoritiesConnectionGroupedAggregatesArgs = {
@@ -698,7 +944,7 @@ export type AuthoritiesEdge = {
 export enum AuthoritiesGroupBy {
   BlockId = 'BLOCK_ID',
   Current = 'CURRENT',
-  Next = 'NEXT',
+  Next = 'NEXT'
 }
 
 /** Conditions for `Authority` aggregates. */
@@ -719,7 +965,7 @@ export enum AuthoritiesOrderBy {
   NextAsc = 'NEXT_ASC',
   NextDesc = 'NEXT_DESC',
   PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
-  PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
+  PrimaryKeyDesc = 'PRIMARY_KEY_DESC'
 }
 
 export type Authority = Node & {
@@ -849,6 +1095,7 @@ export type Block = Node & {
   unsignedProposalsQueues: UnsignedProposalsQueuesConnection;
 };
 
+
 export type BlockAccountsByAccountCreateAtBlockIdAndCreatorIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -858,6 +1105,7 @@ export type BlockAccountsByAccountCreateAtBlockIdAndCreatorIdArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<AccountsOrderBy>>;
 };
+
 
 export type BlockAccountsByCreateAtBlockIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -869,6 +1117,7 @@ export type BlockAccountsByCreateAtBlockIdArgs = {
   orderBy?: InputMaybe<Array<AccountsOrderBy>>;
 };
 
+
 export type BlockAccountsByExtrinsicBlockIdAndSignerIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -878,6 +1127,7 @@ export type BlockAccountsByExtrinsicBlockIdAndSignerIdArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<AccountsOrderBy>>;
 };
+
 
 export type BlockAuthoritiesArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -889,6 +1139,7 @@ export type BlockAuthoritiesArgs = {
   orderBy?: InputMaybe<Array<AuthoritiesOrderBy>>;
 };
 
+
 export type BlockEventsArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -898,6 +1149,7 @@ export type BlockEventsArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<EventsOrderBy>>;
 };
+
 
 export type BlockExtrinsicsArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -909,6 +1161,7 @@ export type BlockExtrinsicsArgs = {
   orderBy?: InputMaybe<Array<ExtrinsicsOrderBy>>;
 };
 
+
 export type BlockExtrinsicsByEventBlockIdAndExtrinsicIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -918,6 +1171,7 @@ export type BlockExtrinsicsByEventBlockIdAndExtrinsicIdArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<ExtrinsicsOrderBy>>;
 };
+
 
 export type BlockKeygenThresholdsArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -929,6 +1183,7 @@ export type BlockKeygenThresholdsArgs = {
   orderBy?: InputMaybe<Array<KeygenThresholdsOrderBy>>;
 };
 
+
 export type BlockProposalCountersArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -938,6 +1193,7 @@ export type BlockProposalCountersArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<ProposalCountersOrderBy>>;
 };
+
 
 export type BlockProposalItemsArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -949,6 +1205,7 @@ export type BlockProposalItemsArgs = {
   orderBy?: InputMaybe<Array<ProposalItemsOrderBy>>;
 };
 
+
 export type BlockProposalItemsByProposalVoteBlockIdAndProposalIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -958,6 +1215,7 @@ export type BlockProposalItemsByProposalVoteBlockIdAndProposalIdArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<ProposalItemsOrderBy>>;
 };
+
 
 export type BlockProposalVotesArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -969,6 +1227,7 @@ export type BlockProposalVotesArgs = {
   orderBy?: InputMaybe<Array<ProposalVotesOrderBy>>;
 };
 
+
 export type BlockProposerThresholdsArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -978,6 +1237,7 @@ export type BlockProposerThresholdsArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<ProposerThresholdsOrderBy>>;
 };
+
 
 export type BlockProposersByProposalVoteBlockIdAndVoterIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -989,6 +1249,7 @@ export type BlockProposersByProposalVoteBlockIdAndVoterIdArgs = {
   orderBy?: InputMaybe<Array<ProposersOrderBy>>;
 };
 
+
 export type BlockPublicKeysArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -998,6 +1259,7 @@ export type BlockPublicKeysArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<PublicKeysOrderBy>>;
 };
+
 
 export type BlockPublicKeysBySessionBlockIdAndPublicKeyIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -1009,6 +1271,7 @@ export type BlockPublicKeysBySessionBlockIdAndPublicKeyIdArgs = {
   orderBy?: InputMaybe<Array<PublicKeysOrderBy>>;
 };
 
+
 export type BlockSessionsArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -1019,6 +1282,7 @@ export type BlockSessionsArgs = {
   orderBy?: InputMaybe<Array<SessionsOrderBy>>;
 };
 
+
 export type BlockSignatureThresholdsArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -1028,6 +1292,7 @@ export type BlockSignatureThresholdsArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<SignatureThresholdsOrderBy>>;
 };
+
 
 export type BlockUnsignedProposalsQueuesArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -1056,6 +1321,7 @@ export type BlockAccountsByAccountCreateAtBlockIdAndCreatorIdManyToManyConnectio
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Account` values, with data from `Account`. */
 export type BlockAccountsByAccountCreateAtBlockIdAndCreatorIdManyToManyConnectionGroupedAggregatesArgs = {
   groupBy: Array<AccountsGroupBy>;
@@ -1072,6 +1338,7 @@ export type BlockAccountsByAccountCreateAtBlockIdAndCreatorIdManyToManyEdge = {
   /** The `Account` at the end of the edge. */
   node?: Maybe<Account>;
 };
+
 
 /** A `Account` edge in the connection, with data from `Account`. */
 export type BlockAccountsByAccountCreateAtBlockIdAndCreatorIdManyToManyEdgeAccountsByCreatorIdArgs = {
@@ -1101,6 +1368,7 @@ export type BlockAccountsByExtrinsicBlockIdAndSignerIdManyToManyConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Account` values, with data from `Extrinsic`. */
 export type BlockAccountsByExtrinsicBlockIdAndSignerIdManyToManyConnectionGroupedAggregatesArgs = {
   groupBy: Array<AccountsGroupBy>;
@@ -1117,6 +1385,7 @@ export type BlockAccountsByExtrinsicBlockIdAndSignerIdManyToManyEdge = {
   /** The `Account` at the end of the edge. */
   node?: Maybe<Account>;
 };
+
 
 /** A `Account` edge in the connection, with data from `Extrinsic`. */
 export type BlockAccountsByExtrinsicBlockIdAndSignerIdManyToManyEdgeExtrinsicsArgs = {
@@ -1195,6 +1464,7 @@ export type BlockExtrinsicsByEventBlockIdAndExtrinsicIdManyToManyConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Extrinsic` values, with data from `Event`. */
 export type BlockExtrinsicsByEventBlockIdAndExtrinsicIdManyToManyConnectionGroupedAggregatesArgs = {
   groupBy: Array<ExtrinsicsGroupBy>;
@@ -1211,6 +1481,7 @@ export type BlockExtrinsicsByEventBlockIdAndExtrinsicIdManyToManyEdge = {
   /** The `Extrinsic` at the end of the edge. */
   node?: Maybe<Extrinsic>;
 };
+
 
 /** A `Extrinsic` edge in the connection, with data from `Event`. */
 export type BlockExtrinsicsByEventBlockIdAndExtrinsicIdManyToManyEdgeEventsArgs = {
@@ -1278,6 +1549,7 @@ export type BlockProposalItemsByProposalVoteBlockIdAndProposalIdManyToManyConnec
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `ProposalItem` values, with data from `ProposalVote`. */
 export type BlockProposalItemsByProposalVoteBlockIdAndProposalIdManyToManyConnectionGroupedAggregatesArgs = {
   groupBy: Array<ProposalItemsGroupBy>;
@@ -1294,6 +1566,7 @@ export type BlockProposalItemsByProposalVoteBlockIdAndProposalIdManyToManyEdge =
   /** Reads and enables pagination through a set of `ProposalVote`. */
   proposalVotesByProposalId: ProposalVotesConnection;
 };
+
 
 /** A `ProposalItem` edge in the connection, with data from `ProposalVote`. */
 export type BlockProposalItemsByProposalVoteBlockIdAndProposalIdManyToManyEdgeProposalVotesByProposalIdArgs = {
@@ -1323,6 +1596,7 @@ export type BlockProposersByProposalVoteBlockIdAndVoterIdManyToManyConnection = 
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Proposer` values, with data from `ProposalVote`. */
 export type BlockProposersByProposalVoteBlockIdAndVoterIdManyToManyConnectionGroupedAggregatesArgs = {
   groupBy: Array<ProposersGroupBy>;
@@ -1337,11 +1611,12 @@ export type BlockProposersByProposalVoteBlockIdAndVoterIdManyToManyEdge = {
   /** The `Proposer` at the end of the edge. */
   node?: Maybe<Proposer>;
   /** Reads and enables pagination through a set of `ProposalVote`. */
-  proposalVotesByVoterId: ProposalVotesConnection;
+  votes: ProposalVotesConnection;
 };
 
+
 /** A `Proposer` edge in the connection, with data from `ProposalVote`. */
-export type BlockProposersByProposalVoteBlockIdAndVoterIdManyToManyEdgeProposalVotesByVoterIdArgs = {
+export type BlockProposersByProposalVoteBlockIdAndVoterIdManyToManyEdgeVotesArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
   filter?: InputMaybe<ProposalVoteFilter>;
@@ -1368,6 +1643,7 @@ export type BlockPublicKeysBySessionBlockIdAndPublicKeyIdManyToManyConnection = 
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `PublicKey` values, with data from `Session`. */
 export type BlockPublicKeysBySessionBlockIdAndPublicKeyIdManyToManyConnectionGroupedAggregatesArgs = {
   groupBy: Array<PublicKeysGroupBy>;
@@ -1384,6 +1660,7 @@ export type BlockPublicKeysBySessionBlockIdAndPublicKeyIdManyToManyEdge = {
   /** Reads and enables pagination through a set of `Session`. */
   sessions: SessionsConnection;
 };
+
 
 /** A `PublicKey` edge in the connection, with data from `Session`. */
 export type BlockPublicKeysBySessionBlockIdAndPublicKeyIdManyToManyEdgeSessionsArgs = {
@@ -1443,6 +1720,7 @@ export type BlocksConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Block` values. */
 export type BlocksConnectionGroupedAggregatesArgs = {
   groupBy: Array<BlocksGroupBy>;
@@ -1467,7 +1745,7 @@ export enum BlocksGroupBy {
   StateRoot = 'STATE_ROOT',
   Timestamp = 'TIMESTAMP',
   TimestampTruncatedToDay = 'TIMESTAMP_TRUNCATED_TO_DAY',
-  TimestampTruncatedToHour = 'TIMESTAMP_TRUNCATED_TO_HOUR',
+  TimestampTruncatedToHour = 'TIMESTAMP_TRUNCATED_TO_HOUR'
 }
 
 export type BlocksHavingAverageInput = {
@@ -1532,80 +1810,242 @@ export type BlocksHavingVarianceSampleInput = {
 
 /** Methods to use when ordering `Block`. */
 export enum BlocksOrderBy {
+  AccountsByCreateAtBlockIdAverageCountryCodeAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_AVERAGE_COUNTRY_CODE_ASC',
+  AccountsByCreateAtBlockIdAverageCountryCodeDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_AVERAGE_COUNTRY_CODE_DESC',
   AccountsByCreateAtBlockIdAverageCreatedAtAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_AVERAGE_CREATED_AT_ASC',
   AccountsByCreateAtBlockIdAverageCreatedAtDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_AVERAGE_CREATED_AT_DESC',
   AccountsByCreateAtBlockIdAverageCreateAtBlockIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_AVERAGE_CREATE_AT_BLOCK_ID_ASC',
   AccountsByCreateAtBlockIdAverageCreateAtBlockIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_AVERAGE_CREATE_AT_BLOCK_ID_DESC',
   AccountsByCreateAtBlockIdAverageCreatorIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_AVERAGE_CREATOR_ID_ASC',
   AccountsByCreateAtBlockIdAverageCreatorIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_AVERAGE_CREATOR_ID_DESC',
+  AccountsByCreateAtBlockIdAverageDisplayAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_AVERAGE_DISPLAY_ASC',
+  AccountsByCreateAtBlockIdAverageDisplayDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_AVERAGE_DISPLAY_DESC',
+  AccountsByCreateAtBlockIdAverageEmailAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_AVERAGE_EMAIL_ASC',
+  AccountsByCreateAtBlockIdAverageEmailDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_AVERAGE_EMAIL_DESC',
   AccountsByCreateAtBlockIdAverageIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_AVERAGE_ID_ASC',
   AccountsByCreateAtBlockIdAverageIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_AVERAGE_ID_DESC',
+  AccountsByCreateAtBlockIdAverageImageAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_AVERAGE_IMAGE_ASC',
+  AccountsByCreateAtBlockIdAverageImageDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_AVERAGE_IMAGE_DESC',
+  AccountsByCreateAtBlockIdAverageLegalAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_AVERAGE_LEGAL_ASC',
+  AccountsByCreateAtBlockIdAverageLegalDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_AVERAGE_LEGAL_DESC',
+  AccountsByCreateAtBlockIdAveragePgpFingerprintAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_AVERAGE_PGP_FINGERPRINT_ASC',
+  AccountsByCreateAtBlockIdAveragePgpFingerprintDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_AVERAGE_PGP_FINGERPRINT_DESC',
+  AccountsByCreateAtBlockIdAverageRiotAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_AVERAGE_RIOT_ASC',
+  AccountsByCreateAtBlockIdAverageRiotDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_AVERAGE_RIOT_DESC',
+  AccountsByCreateAtBlockIdAverageTwitterAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_AVERAGE_TWITTER_ASC',
+  AccountsByCreateAtBlockIdAverageTwitterDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_AVERAGE_TWITTER_DESC',
+  AccountsByCreateAtBlockIdAverageWebAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_AVERAGE_WEB_ASC',
+  AccountsByCreateAtBlockIdAverageWebDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_AVERAGE_WEB_DESC',
   AccountsByCreateAtBlockIdCountAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_COUNT_ASC',
   AccountsByCreateAtBlockIdCountDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_COUNT_DESC',
+  AccountsByCreateAtBlockIdDistinctCountCountryCodeAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_DISTINCT_COUNT_COUNTRY_CODE_ASC',
+  AccountsByCreateAtBlockIdDistinctCountCountryCodeDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_DISTINCT_COUNT_COUNTRY_CODE_DESC',
   AccountsByCreateAtBlockIdDistinctCountCreatedAtAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_DISTINCT_COUNT_CREATED_AT_ASC',
   AccountsByCreateAtBlockIdDistinctCountCreatedAtDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_DISTINCT_COUNT_CREATED_AT_DESC',
   AccountsByCreateAtBlockIdDistinctCountCreateAtBlockIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_DISTINCT_COUNT_CREATE_AT_BLOCK_ID_ASC',
   AccountsByCreateAtBlockIdDistinctCountCreateAtBlockIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_DISTINCT_COUNT_CREATE_AT_BLOCK_ID_DESC',
   AccountsByCreateAtBlockIdDistinctCountCreatorIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_DISTINCT_COUNT_CREATOR_ID_ASC',
   AccountsByCreateAtBlockIdDistinctCountCreatorIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_DISTINCT_COUNT_CREATOR_ID_DESC',
+  AccountsByCreateAtBlockIdDistinctCountDisplayAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_DISTINCT_COUNT_DISPLAY_ASC',
+  AccountsByCreateAtBlockIdDistinctCountDisplayDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_DISTINCT_COUNT_DISPLAY_DESC',
+  AccountsByCreateAtBlockIdDistinctCountEmailAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_DISTINCT_COUNT_EMAIL_ASC',
+  AccountsByCreateAtBlockIdDistinctCountEmailDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_DISTINCT_COUNT_EMAIL_DESC',
   AccountsByCreateAtBlockIdDistinctCountIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_DISTINCT_COUNT_ID_ASC',
   AccountsByCreateAtBlockIdDistinctCountIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_DISTINCT_COUNT_ID_DESC',
+  AccountsByCreateAtBlockIdDistinctCountImageAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_DISTINCT_COUNT_IMAGE_ASC',
+  AccountsByCreateAtBlockIdDistinctCountImageDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_DISTINCT_COUNT_IMAGE_DESC',
+  AccountsByCreateAtBlockIdDistinctCountLegalAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_DISTINCT_COUNT_LEGAL_ASC',
+  AccountsByCreateAtBlockIdDistinctCountLegalDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_DISTINCT_COUNT_LEGAL_DESC',
+  AccountsByCreateAtBlockIdDistinctCountPgpFingerprintAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_DISTINCT_COUNT_PGP_FINGERPRINT_ASC',
+  AccountsByCreateAtBlockIdDistinctCountPgpFingerprintDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_DISTINCT_COUNT_PGP_FINGERPRINT_DESC',
+  AccountsByCreateAtBlockIdDistinctCountRiotAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_DISTINCT_COUNT_RIOT_ASC',
+  AccountsByCreateAtBlockIdDistinctCountRiotDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_DISTINCT_COUNT_RIOT_DESC',
+  AccountsByCreateAtBlockIdDistinctCountTwitterAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_DISTINCT_COUNT_TWITTER_ASC',
+  AccountsByCreateAtBlockIdDistinctCountTwitterDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_DISTINCT_COUNT_TWITTER_DESC',
+  AccountsByCreateAtBlockIdDistinctCountWebAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_DISTINCT_COUNT_WEB_ASC',
+  AccountsByCreateAtBlockIdDistinctCountWebDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_DISTINCT_COUNT_WEB_DESC',
+  AccountsByCreateAtBlockIdMaxCountryCodeAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MAX_COUNTRY_CODE_ASC',
+  AccountsByCreateAtBlockIdMaxCountryCodeDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MAX_COUNTRY_CODE_DESC',
   AccountsByCreateAtBlockIdMaxCreatedAtAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MAX_CREATED_AT_ASC',
   AccountsByCreateAtBlockIdMaxCreatedAtDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MAX_CREATED_AT_DESC',
   AccountsByCreateAtBlockIdMaxCreateAtBlockIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MAX_CREATE_AT_BLOCK_ID_ASC',
   AccountsByCreateAtBlockIdMaxCreateAtBlockIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MAX_CREATE_AT_BLOCK_ID_DESC',
   AccountsByCreateAtBlockIdMaxCreatorIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MAX_CREATOR_ID_ASC',
   AccountsByCreateAtBlockIdMaxCreatorIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MAX_CREATOR_ID_DESC',
+  AccountsByCreateAtBlockIdMaxDisplayAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MAX_DISPLAY_ASC',
+  AccountsByCreateAtBlockIdMaxDisplayDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MAX_DISPLAY_DESC',
+  AccountsByCreateAtBlockIdMaxEmailAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MAX_EMAIL_ASC',
+  AccountsByCreateAtBlockIdMaxEmailDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MAX_EMAIL_DESC',
   AccountsByCreateAtBlockIdMaxIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MAX_ID_ASC',
   AccountsByCreateAtBlockIdMaxIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MAX_ID_DESC',
+  AccountsByCreateAtBlockIdMaxImageAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MAX_IMAGE_ASC',
+  AccountsByCreateAtBlockIdMaxImageDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MAX_IMAGE_DESC',
+  AccountsByCreateAtBlockIdMaxLegalAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MAX_LEGAL_ASC',
+  AccountsByCreateAtBlockIdMaxLegalDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MAX_LEGAL_DESC',
+  AccountsByCreateAtBlockIdMaxPgpFingerprintAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MAX_PGP_FINGERPRINT_ASC',
+  AccountsByCreateAtBlockIdMaxPgpFingerprintDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MAX_PGP_FINGERPRINT_DESC',
+  AccountsByCreateAtBlockIdMaxRiotAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MAX_RIOT_ASC',
+  AccountsByCreateAtBlockIdMaxRiotDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MAX_RIOT_DESC',
+  AccountsByCreateAtBlockIdMaxTwitterAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MAX_TWITTER_ASC',
+  AccountsByCreateAtBlockIdMaxTwitterDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MAX_TWITTER_DESC',
+  AccountsByCreateAtBlockIdMaxWebAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MAX_WEB_ASC',
+  AccountsByCreateAtBlockIdMaxWebDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MAX_WEB_DESC',
+  AccountsByCreateAtBlockIdMinCountryCodeAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MIN_COUNTRY_CODE_ASC',
+  AccountsByCreateAtBlockIdMinCountryCodeDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MIN_COUNTRY_CODE_DESC',
   AccountsByCreateAtBlockIdMinCreatedAtAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MIN_CREATED_AT_ASC',
   AccountsByCreateAtBlockIdMinCreatedAtDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MIN_CREATED_AT_DESC',
   AccountsByCreateAtBlockIdMinCreateAtBlockIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MIN_CREATE_AT_BLOCK_ID_ASC',
   AccountsByCreateAtBlockIdMinCreateAtBlockIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MIN_CREATE_AT_BLOCK_ID_DESC',
   AccountsByCreateAtBlockIdMinCreatorIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MIN_CREATOR_ID_ASC',
   AccountsByCreateAtBlockIdMinCreatorIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MIN_CREATOR_ID_DESC',
+  AccountsByCreateAtBlockIdMinDisplayAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MIN_DISPLAY_ASC',
+  AccountsByCreateAtBlockIdMinDisplayDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MIN_DISPLAY_DESC',
+  AccountsByCreateAtBlockIdMinEmailAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MIN_EMAIL_ASC',
+  AccountsByCreateAtBlockIdMinEmailDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MIN_EMAIL_DESC',
   AccountsByCreateAtBlockIdMinIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MIN_ID_ASC',
   AccountsByCreateAtBlockIdMinIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MIN_ID_DESC',
+  AccountsByCreateAtBlockIdMinImageAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MIN_IMAGE_ASC',
+  AccountsByCreateAtBlockIdMinImageDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MIN_IMAGE_DESC',
+  AccountsByCreateAtBlockIdMinLegalAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MIN_LEGAL_ASC',
+  AccountsByCreateAtBlockIdMinLegalDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MIN_LEGAL_DESC',
+  AccountsByCreateAtBlockIdMinPgpFingerprintAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MIN_PGP_FINGERPRINT_ASC',
+  AccountsByCreateAtBlockIdMinPgpFingerprintDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MIN_PGP_FINGERPRINT_DESC',
+  AccountsByCreateAtBlockIdMinRiotAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MIN_RIOT_ASC',
+  AccountsByCreateAtBlockIdMinRiotDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MIN_RIOT_DESC',
+  AccountsByCreateAtBlockIdMinTwitterAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MIN_TWITTER_ASC',
+  AccountsByCreateAtBlockIdMinTwitterDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MIN_TWITTER_DESC',
+  AccountsByCreateAtBlockIdMinWebAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MIN_WEB_ASC',
+  AccountsByCreateAtBlockIdMinWebDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MIN_WEB_DESC',
+  AccountsByCreateAtBlockIdStddevPopulationCountryCodeAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_POPULATION_COUNTRY_CODE_ASC',
+  AccountsByCreateAtBlockIdStddevPopulationCountryCodeDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_POPULATION_COUNTRY_CODE_DESC',
   AccountsByCreateAtBlockIdStddevPopulationCreatedAtAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_POPULATION_CREATED_AT_ASC',
   AccountsByCreateAtBlockIdStddevPopulationCreatedAtDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_POPULATION_CREATED_AT_DESC',
   AccountsByCreateAtBlockIdStddevPopulationCreateAtBlockIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_POPULATION_CREATE_AT_BLOCK_ID_ASC',
   AccountsByCreateAtBlockIdStddevPopulationCreateAtBlockIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_POPULATION_CREATE_AT_BLOCK_ID_DESC',
   AccountsByCreateAtBlockIdStddevPopulationCreatorIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_POPULATION_CREATOR_ID_ASC',
   AccountsByCreateAtBlockIdStddevPopulationCreatorIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_POPULATION_CREATOR_ID_DESC',
+  AccountsByCreateAtBlockIdStddevPopulationDisplayAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_POPULATION_DISPLAY_ASC',
+  AccountsByCreateAtBlockIdStddevPopulationDisplayDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_POPULATION_DISPLAY_DESC',
+  AccountsByCreateAtBlockIdStddevPopulationEmailAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_POPULATION_EMAIL_ASC',
+  AccountsByCreateAtBlockIdStddevPopulationEmailDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_POPULATION_EMAIL_DESC',
   AccountsByCreateAtBlockIdStddevPopulationIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_POPULATION_ID_ASC',
   AccountsByCreateAtBlockIdStddevPopulationIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_POPULATION_ID_DESC',
+  AccountsByCreateAtBlockIdStddevPopulationImageAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_POPULATION_IMAGE_ASC',
+  AccountsByCreateAtBlockIdStddevPopulationImageDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_POPULATION_IMAGE_DESC',
+  AccountsByCreateAtBlockIdStddevPopulationLegalAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_POPULATION_LEGAL_ASC',
+  AccountsByCreateAtBlockIdStddevPopulationLegalDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_POPULATION_LEGAL_DESC',
+  AccountsByCreateAtBlockIdStddevPopulationPgpFingerprintAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_POPULATION_PGP_FINGERPRINT_ASC',
+  AccountsByCreateAtBlockIdStddevPopulationPgpFingerprintDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_POPULATION_PGP_FINGERPRINT_DESC',
+  AccountsByCreateAtBlockIdStddevPopulationRiotAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_POPULATION_RIOT_ASC',
+  AccountsByCreateAtBlockIdStddevPopulationRiotDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_POPULATION_RIOT_DESC',
+  AccountsByCreateAtBlockIdStddevPopulationTwitterAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_POPULATION_TWITTER_ASC',
+  AccountsByCreateAtBlockIdStddevPopulationTwitterDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_POPULATION_TWITTER_DESC',
+  AccountsByCreateAtBlockIdStddevPopulationWebAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_POPULATION_WEB_ASC',
+  AccountsByCreateAtBlockIdStddevPopulationWebDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_POPULATION_WEB_DESC',
+  AccountsByCreateAtBlockIdStddevSampleCountryCodeAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_SAMPLE_COUNTRY_CODE_ASC',
+  AccountsByCreateAtBlockIdStddevSampleCountryCodeDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_SAMPLE_COUNTRY_CODE_DESC',
   AccountsByCreateAtBlockIdStddevSampleCreatedAtAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_SAMPLE_CREATED_AT_ASC',
   AccountsByCreateAtBlockIdStddevSampleCreatedAtDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_SAMPLE_CREATED_AT_DESC',
   AccountsByCreateAtBlockIdStddevSampleCreateAtBlockIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_SAMPLE_CREATE_AT_BLOCK_ID_ASC',
   AccountsByCreateAtBlockIdStddevSampleCreateAtBlockIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_SAMPLE_CREATE_AT_BLOCK_ID_DESC',
   AccountsByCreateAtBlockIdStddevSampleCreatorIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_SAMPLE_CREATOR_ID_ASC',
   AccountsByCreateAtBlockIdStddevSampleCreatorIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_SAMPLE_CREATOR_ID_DESC',
+  AccountsByCreateAtBlockIdStddevSampleDisplayAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_SAMPLE_DISPLAY_ASC',
+  AccountsByCreateAtBlockIdStddevSampleDisplayDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_SAMPLE_DISPLAY_DESC',
+  AccountsByCreateAtBlockIdStddevSampleEmailAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_SAMPLE_EMAIL_ASC',
+  AccountsByCreateAtBlockIdStddevSampleEmailDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_SAMPLE_EMAIL_DESC',
   AccountsByCreateAtBlockIdStddevSampleIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_SAMPLE_ID_ASC',
   AccountsByCreateAtBlockIdStddevSampleIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_SAMPLE_ID_DESC',
+  AccountsByCreateAtBlockIdStddevSampleImageAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_SAMPLE_IMAGE_ASC',
+  AccountsByCreateAtBlockIdStddevSampleImageDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_SAMPLE_IMAGE_DESC',
+  AccountsByCreateAtBlockIdStddevSampleLegalAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_SAMPLE_LEGAL_ASC',
+  AccountsByCreateAtBlockIdStddevSampleLegalDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_SAMPLE_LEGAL_DESC',
+  AccountsByCreateAtBlockIdStddevSamplePgpFingerprintAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_SAMPLE_PGP_FINGERPRINT_ASC',
+  AccountsByCreateAtBlockIdStddevSamplePgpFingerprintDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_SAMPLE_PGP_FINGERPRINT_DESC',
+  AccountsByCreateAtBlockIdStddevSampleRiotAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_SAMPLE_RIOT_ASC',
+  AccountsByCreateAtBlockIdStddevSampleRiotDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_SAMPLE_RIOT_DESC',
+  AccountsByCreateAtBlockIdStddevSampleTwitterAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_SAMPLE_TWITTER_ASC',
+  AccountsByCreateAtBlockIdStddevSampleTwitterDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_SAMPLE_TWITTER_DESC',
+  AccountsByCreateAtBlockIdStddevSampleWebAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_SAMPLE_WEB_ASC',
+  AccountsByCreateAtBlockIdStddevSampleWebDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_SAMPLE_WEB_DESC',
+  AccountsByCreateAtBlockIdSumCountryCodeAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_SUM_COUNTRY_CODE_ASC',
+  AccountsByCreateAtBlockIdSumCountryCodeDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_SUM_COUNTRY_CODE_DESC',
   AccountsByCreateAtBlockIdSumCreatedAtAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_SUM_CREATED_AT_ASC',
   AccountsByCreateAtBlockIdSumCreatedAtDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_SUM_CREATED_AT_DESC',
   AccountsByCreateAtBlockIdSumCreateAtBlockIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_SUM_CREATE_AT_BLOCK_ID_ASC',
   AccountsByCreateAtBlockIdSumCreateAtBlockIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_SUM_CREATE_AT_BLOCK_ID_DESC',
   AccountsByCreateAtBlockIdSumCreatorIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_SUM_CREATOR_ID_ASC',
   AccountsByCreateAtBlockIdSumCreatorIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_SUM_CREATOR_ID_DESC',
+  AccountsByCreateAtBlockIdSumDisplayAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_SUM_DISPLAY_ASC',
+  AccountsByCreateAtBlockIdSumDisplayDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_SUM_DISPLAY_DESC',
+  AccountsByCreateAtBlockIdSumEmailAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_SUM_EMAIL_ASC',
+  AccountsByCreateAtBlockIdSumEmailDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_SUM_EMAIL_DESC',
   AccountsByCreateAtBlockIdSumIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_SUM_ID_ASC',
   AccountsByCreateAtBlockIdSumIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_SUM_ID_DESC',
+  AccountsByCreateAtBlockIdSumImageAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_SUM_IMAGE_ASC',
+  AccountsByCreateAtBlockIdSumImageDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_SUM_IMAGE_DESC',
+  AccountsByCreateAtBlockIdSumLegalAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_SUM_LEGAL_ASC',
+  AccountsByCreateAtBlockIdSumLegalDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_SUM_LEGAL_DESC',
+  AccountsByCreateAtBlockIdSumPgpFingerprintAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_SUM_PGP_FINGERPRINT_ASC',
+  AccountsByCreateAtBlockIdSumPgpFingerprintDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_SUM_PGP_FINGERPRINT_DESC',
+  AccountsByCreateAtBlockIdSumRiotAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_SUM_RIOT_ASC',
+  AccountsByCreateAtBlockIdSumRiotDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_SUM_RIOT_DESC',
+  AccountsByCreateAtBlockIdSumTwitterAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_SUM_TWITTER_ASC',
+  AccountsByCreateAtBlockIdSumTwitterDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_SUM_TWITTER_DESC',
+  AccountsByCreateAtBlockIdSumWebAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_SUM_WEB_ASC',
+  AccountsByCreateAtBlockIdSumWebDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_SUM_WEB_DESC',
+  AccountsByCreateAtBlockIdVariancePopulationCountryCodeAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_POPULATION_COUNTRY_CODE_ASC',
+  AccountsByCreateAtBlockIdVariancePopulationCountryCodeDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_POPULATION_COUNTRY_CODE_DESC',
   AccountsByCreateAtBlockIdVariancePopulationCreatedAtAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_POPULATION_CREATED_AT_ASC',
   AccountsByCreateAtBlockIdVariancePopulationCreatedAtDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_POPULATION_CREATED_AT_DESC',
   AccountsByCreateAtBlockIdVariancePopulationCreateAtBlockIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_POPULATION_CREATE_AT_BLOCK_ID_ASC',
   AccountsByCreateAtBlockIdVariancePopulationCreateAtBlockIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_POPULATION_CREATE_AT_BLOCK_ID_DESC',
   AccountsByCreateAtBlockIdVariancePopulationCreatorIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_POPULATION_CREATOR_ID_ASC',
   AccountsByCreateAtBlockIdVariancePopulationCreatorIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_POPULATION_CREATOR_ID_DESC',
+  AccountsByCreateAtBlockIdVariancePopulationDisplayAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_POPULATION_DISPLAY_ASC',
+  AccountsByCreateAtBlockIdVariancePopulationDisplayDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_POPULATION_DISPLAY_DESC',
+  AccountsByCreateAtBlockIdVariancePopulationEmailAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_POPULATION_EMAIL_ASC',
+  AccountsByCreateAtBlockIdVariancePopulationEmailDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_POPULATION_EMAIL_DESC',
   AccountsByCreateAtBlockIdVariancePopulationIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_POPULATION_ID_ASC',
   AccountsByCreateAtBlockIdVariancePopulationIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_POPULATION_ID_DESC',
+  AccountsByCreateAtBlockIdVariancePopulationImageAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_POPULATION_IMAGE_ASC',
+  AccountsByCreateAtBlockIdVariancePopulationImageDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_POPULATION_IMAGE_DESC',
+  AccountsByCreateAtBlockIdVariancePopulationLegalAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_POPULATION_LEGAL_ASC',
+  AccountsByCreateAtBlockIdVariancePopulationLegalDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_POPULATION_LEGAL_DESC',
+  AccountsByCreateAtBlockIdVariancePopulationPgpFingerprintAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_POPULATION_PGP_FINGERPRINT_ASC',
+  AccountsByCreateAtBlockIdVariancePopulationPgpFingerprintDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_POPULATION_PGP_FINGERPRINT_DESC',
+  AccountsByCreateAtBlockIdVariancePopulationRiotAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_POPULATION_RIOT_ASC',
+  AccountsByCreateAtBlockIdVariancePopulationRiotDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_POPULATION_RIOT_DESC',
+  AccountsByCreateAtBlockIdVariancePopulationTwitterAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_POPULATION_TWITTER_ASC',
+  AccountsByCreateAtBlockIdVariancePopulationTwitterDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_POPULATION_TWITTER_DESC',
+  AccountsByCreateAtBlockIdVariancePopulationWebAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_POPULATION_WEB_ASC',
+  AccountsByCreateAtBlockIdVariancePopulationWebDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_POPULATION_WEB_DESC',
+  AccountsByCreateAtBlockIdVarianceSampleCountryCodeAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_SAMPLE_COUNTRY_CODE_ASC',
+  AccountsByCreateAtBlockIdVarianceSampleCountryCodeDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_SAMPLE_COUNTRY_CODE_DESC',
   AccountsByCreateAtBlockIdVarianceSampleCreatedAtAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_SAMPLE_CREATED_AT_ASC',
   AccountsByCreateAtBlockIdVarianceSampleCreatedAtDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_SAMPLE_CREATED_AT_DESC',
   AccountsByCreateAtBlockIdVarianceSampleCreateAtBlockIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_SAMPLE_CREATE_AT_BLOCK_ID_ASC',
   AccountsByCreateAtBlockIdVarianceSampleCreateAtBlockIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_SAMPLE_CREATE_AT_BLOCK_ID_DESC',
   AccountsByCreateAtBlockIdVarianceSampleCreatorIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_SAMPLE_CREATOR_ID_ASC',
   AccountsByCreateAtBlockIdVarianceSampleCreatorIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_SAMPLE_CREATOR_ID_DESC',
+  AccountsByCreateAtBlockIdVarianceSampleDisplayAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_SAMPLE_DISPLAY_ASC',
+  AccountsByCreateAtBlockIdVarianceSampleDisplayDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_SAMPLE_DISPLAY_DESC',
+  AccountsByCreateAtBlockIdVarianceSampleEmailAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_SAMPLE_EMAIL_ASC',
+  AccountsByCreateAtBlockIdVarianceSampleEmailDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_SAMPLE_EMAIL_DESC',
   AccountsByCreateAtBlockIdVarianceSampleIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_SAMPLE_ID_ASC',
   AccountsByCreateAtBlockIdVarianceSampleIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_SAMPLE_ID_DESC',
+  AccountsByCreateAtBlockIdVarianceSampleImageAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_SAMPLE_IMAGE_ASC',
+  AccountsByCreateAtBlockIdVarianceSampleImageDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_SAMPLE_IMAGE_DESC',
+  AccountsByCreateAtBlockIdVarianceSampleLegalAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_SAMPLE_LEGAL_ASC',
+  AccountsByCreateAtBlockIdVarianceSampleLegalDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_SAMPLE_LEGAL_DESC',
+  AccountsByCreateAtBlockIdVarianceSamplePgpFingerprintAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_SAMPLE_PGP_FINGERPRINT_ASC',
+  AccountsByCreateAtBlockIdVarianceSamplePgpFingerprintDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_SAMPLE_PGP_FINGERPRINT_DESC',
+  AccountsByCreateAtBlockIdVarianceSampleRiotAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_SAMPLE_RIOT_ASC',
+  AccountsByCreateAtBlockIdVarianceSampleRiotDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_SAMPLE_RIOT_DESC',
+  AccountsByCreateAtBlockIdVarianceSampleTwitterAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_SAMPLE_TWITTER_ASC',
+  AccountsByCreateAtBlockIdVarianceSampleTwitterDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_SAMPLE_TWITTER_DESC',
+  AccountsByCreateAtBlockIdVarianceSampleWebAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_SAMPLE_WEB_ASC',
+  AccountsByCreateAtBlockIdVarianceSampleWebDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_SAMPLE_WEB_DESC',
   AuthoritiesAverageBlockIdAsc = 'AUTHORITIES_AVERAGE_BLOCK_ID_ASC',
   AuthoritiesAverageBlockIdDesc = 'AUTHORITIES_AVERAGE_BLOCK_ID_DESC',
   AuthoritiesAverageCurrentAsc = 'AUTHORITIES_AVERAGE_CURRENT_ASC',
@@ -2335,6 +2775,8 @@ export enum BlocksOrderBy {
   ProposalItemsAverageBlockIdDesc = 'PROPOSAL_ITEMS_AVERAGE_BLOCK_ID_DESC',
   ProposalItemsAverageBlockNumberAsc = 'PROPOSAL_ITEMS_AVERAGE_BLOCK_NUMBER_ASC',
   ProposalItemsAverageBlockNumberDesc = 'PROPOSAL_ITEMS_AVERAGE_BLOCK_NUMBER_DESC',
+  ProposalItemsAverageChainIdAsc = 'PROPOSAL_ITEMS_AVERAGE_CHAIN_ID_ASC',
+  ProposalItemsAverageChainIdDesc = 'PROPOSAL_ITEMS_AVERAGE_CHAIN_ID_DESC',
   ProposalItemsAverageDataAsc = 'PROPOSAL_ITEMS_AVERAGE_DATA_ASC',
   ProposalItemsAverageDataDesc = 'PROPOSAL_ITEMS_AVERAGE_DATA_DESC',
   ProposalItemsAverageIdAsc = 'PROPOSAL_ITEMS_AVERAGE_ID_ASC',
@@ -2355,6 +2797,8 @@ export enum BlocksOrderBy {
   ProposalItemsDistinctCountBlockIdDesc = 'PROPOSAL_ITEMS_DISTINCT_COUNT_BLOCK_ID_DESC',
   ProposalItemsDistinctCountBlockNumberAsc = 'PROPOSAL_ITEMS_DISTINCT_COUNT_BLOCK_NUMBER_ASC',
   ProposalItemsDistinctCountBlockNumberDesc = 'PROPOSAL_ITEMS_DISTINCT_COUNT_BLOCK_NUMBER_DESC',
+  ProposalItemsDistinctCountChainIdAsc = 'PROPOSAL_ITEMS_DISTINCT_COUNT_CHAIN_ID_ASC',
+  ProposalItemsDistinctCountChainIdDesc = 'PROPOSAL_ITEMS_DISTINCT_COUNT_CHAIN_ID_DESC',
   ProposalItemsDistinctCountDataAsc = 'PROPOSAL_ITEMS_DISTINCT_COUNT_DATA_ASC',
   ProposalItemsDistinctCountDataDesc = 'PROPOSAL_ITEMS_DISTINCT_COUNT_DATA_DESC',
   ProposalItemsDistinctCountIdAsc = 'PROPOSAL_ITEMS_DISTINCT_COUNT_ID_ASC',
@@ -2373,6 +2817,8 @@ export enum BlocksOrderBy {
   ProposalItemsMaxBlockIdDesc = 'PROPOSAL_ITEMS_MAX_BLOCK_ID_DESC',
   ProposalItemsMaxBlockNumberAsc = 'PROPOSAL_ITEMS_MAX_BLOCK_NUMBER_ASC',
   ProposalItemsMaxBlockNumberDesc = 'PROPOSAL_ITEMS_MAX_BLOCK_NUMBER_DESC',
+  ProposalItemsMaxChainIdAsc = 'PROPOSAL_ITEMS_MAX_CHAIN_ID_ASC',
+  ProposalItemsMaxChainIdDesc = 'PROPOSAL_ITEMS_MAX_CHAIN_ID_DESC',
   ProposalItemsMaxDataAsc = 'PROPOSAL_ITEMS_MAX_DATA_ASC',
   ProposalItemsMaxDataDesc = 'PROPOSAL_ITEMS_MAX_DATA_DESC',
   ProposalItemsMaxIdAsc = 'PROPOSAL_ITEMS_MAX_ID_ASC',
@@ -2391,6 +2837,8 @@ export enum BlocksOrderBy {
   ProposalItemsMinBlockIdDesc = 'PROPOSAL_ITEMS_MIN_BLOCK_ID_DESC',
   ProposalItemsMinBlockNumberAsc = 'PROPOSAL_ITEMS_MIN_BLOCK_NUMBER_ASC',
   ProposalItemsMinBlockNumberDesc = 'PROPOSAL_ITEMS_MIN_BLOCK_NUMBER_DESC',
+  ProposalItemsMinChainIdAsc = 'PROPOSAL_ITEMS_MIN_CHAIN_ID_ASC',
+  ProposalItemsMinChainIdDesc = 'PROPOSAL_ITEMS_MIN_CHAIN_ID_DESC',
   ProposalItemsMinDataAsc = 'PROPOSAL_ITEMS_MIN_DATA_ASC',
   ProposalItemsMinDataDesc = 'PROPOSAL_ITEMS_MIN_DATA_DESC',
   ProposalItemsMinIdAsc = 'PROPOSAL_ITEMS_MIN_ID_ASC',
@@ -2409,6 +2857,8 @@ export enum BlocksOrderBy {
   ProposalItemsStddevPopulationBlockIdDesc = 'PROPOSAL_ITEMS_STDDEV_POPULATION_BLOCK_ID_DESC',
   ProposalItemsStddevPopulationBlockNumberAsc = 'PROPOSAL_ITEMS_STDDEV_POPULATION_BLOCK_NUMBER_ASC',
   ProposalItemsStddevPopulationBlockNumberDesc = 'PROPOSAL_ITEMS_STDDEV_POPULATION_BLOCK_NUMBER_DESC',
+  ProposalItemsStddevPopulationChainIdAsc = 'PROPOSAL_ITEMS_STDDEV_POPULATION_CHAIN_ID_ASC',
+  ProposalItemsStddevPopulationChainIdDesc = 'PROPOSAL_ITEMS_STDDEV_POPULATION_CHAIN_ID_DESC',
   ProposalItemsStddevPopulationDataAsc = 'PROPOSAL_ITEMS_STDDEV_POPULATION_DATA_ASC',
   ProposalItemsStddevPopulationDataDesc = 'PROPOSAL_ITEMS_STDDEV_POPULATION_DATA_DESC',
   ProposalItemsStddevPopulationIdAsc = 'PROPOSAL_ITEMS_STDDEV_POPULATION_ID_ASC',
@@ -2427,6 +2877,8 @@ export enum BlocksOrderBy {
   ProposalItemsStddevSampleBlockIdDesc = 'PROPOSAL_ITEMS_STDDEV_SAMPLE_BLOCK_ID_DESC',
   ProposalItemsStddevSampleBlockNumberAsc = 'PROPOSAL_ITEMS_STDDEV_SAMPLE_BLOCK_NUMBER_ASC',
   ProposalItemsStddevSampleBlockNumberDesc = 'PROPOSAL_ITEMS_STDDEV_SAMPLE_BLOCK_NUMBER_DESC',
+  ProposalItemsStddevSampleChainIdAsc = 'PROPOSAL_ITEMS_STDDEV_SAMPLE_CHAIN_ID_ASC',
+  ProposalItemsStddevSampleChainIdDesc = 'PROPOSAL_ITEMS_STDDEV_SAMPLE_CHAIN_ID_DESC',
   ProposalItemsStddevSampleDataAsc = 'PROPOSAL_ITEMS_STDDEV_SAMPLE_DATA_ASC',
   ProposalItemsStddevSampleDataDesc = 'PROPOSAL_ITEMS_STDDEV_SAMPLE_DATA_DESC',
   ProposalItemsStddevSampleIdAsc = 'PROPOSAL_ITEMS_STDDEV_SAMPLE_ID_ASC',
@@ -2445,6 +2897,8 @@ export enum BlocksOrderBy {
   ProposalItemsSumBlockIdDesc = 'PROPOSAL_ITEMS_SUM_BLOCK_ID_DESC',
   ProposalItemsSumBlockNumberAsc = 'PROPOSAL_ITEMS_SUM_BLOCK_NUMBER_ASC',
   ProposalItemsSumBlockNumberDesc = 'PROPOSAL_ITEMS_SUM_BLOCK_NUMBER_DESC',
+  ProposalItemsSumChainIdAsc = 'PROPOSAL_ITEMS_SUM_CHAIN_ID_ASC',
+  ProposalItemsSumChainIdDesc = 'PROPOSAL_ITEMS_SUM_CHAIN_ID_DESC',
   ProposalItemsSumDataAsc = 'PROPOSAL_ITEMS_SUM_DATA_ASC',
   ProposalItemsSumDataDesc = 'PROPOSAL_ITEMS_SUM_DATA_DESC',
   ProposalItemsSumIdAsc = 'PROPOSAL_ITEMS_SUM_ID_ASC',
@@ -2463,6 +2917,8 @@ export enum BlocksOrderBy {
   ProposalItemsVariancePopulationBlockIdDesc = 'PROPOSAL_ITEMS_VARIANCE_POPULATION_BLOCK_ID_DESC',
   ProposalItemsVariancePopulationBlockNumberAsc = 'PROPOSAL_ITEMS_VARIANCE_POPULATION_BLOCK_NUMBER_ASC',
   ProposalItemsVariancePopulationBlockNumberDesc = 'PROPOSAL_ITEMS_VARIANCE_POPULATION_BLOCK_NUMBER_DESC',
+  ProposalItemsVariancePopulationChainIdAsc = 'PROPOSAL_ITEMS_VARIANCE_POPULATION_CHAIN_ID_ASC',
+  ProposalItemsVariancePopulationChainIdDesc = 'PROPOSAL_ITEMS_VARIANCE_POPULATION_CHAIN_ID_DESC',
   ProposalItemsVariancePopulationDataAsc = 'PROPOSAL_ITEMS_VARIANCE_POPULATION_DATA_ASC',
   ProposalItemsVariancePopulationDataDesc = 'PROPOSAL_ITEMS_VARIANCE_POPULATION_DATA_DESC',
   ProposalItemsVariancePopulationIdAsc = 'PROPOSAL_ITEMS_VARIANCE_POPULATION_ID_ASC',
@@ -2481,6 +2937,8 @@ export enum BlocksOrderBy {
   ProposalItemsVarianceSampleBlockIdDesc = 'PROPOSAL_ITEMS_VARIANCE_SAMPLE_BLOCK_ID_DESC',
   ProposalItemsVarianceSampleBlockNumberAsc = 'PROPOSAL_ITEMS_VARIANCE_SAMPLE_BLOCK_NUMBER_ASC',
   ProposalItemsVarianceSampleBlockNumberDesc = 'PROPOSAL_ITEMS_VARIANCE_SAMPLE_BLOCK_NUMBER_DESC',
+  ProposalItemsVarianceSampleChainIdAsc = 'PROPOSAL_ITEMS_VARIANCE_SAMPLE_CHAIN_ID_ASC',
+  ProposalItemsVarianceSampleChainIdDesc = 'PROPOSAL_ITEMS_VARIANCE_SAMPLE_CHAIN_ID_DESC',
   ProposalItemsVarianceSampleDataAsc = 'PROPOSAL_ITEMS_VARIANCE_SAMPLE_DATA_ASC',
   ProposalItemsVarianceSampleDataDesc = 'PROPOSAL_ITEMS_VARIANCE_SAMPLE_DATA_DESC',
   ProposalItemsVarianceSampleIdAsc = 'PROPOSAL_ITEMS_VARIANCE_SAMPLE_ID_ASC',
@@ -2499,112 +2957,112 @@ export enum BlocksOrderBy {
   ProposalVotesAverageBlockIdDesc = 'PROPOSAL_VOTES_AVERAGE_BLOCK_ID_DESC',
   ProposalVotesAverageBlockNumberAsc = 'PROPOSAL_VOTES_AVERAGE_BLOCK_NUMBER_ASC',
   ProposalVotesAverageBlockNumberDesc = 'PROPOSAL_VOTES_AVERAGE_BLOCK_NUMBER_DESC',
-  ProposalVotesAverageForAsc = 'PROPOSAL_VOTES_AVERAGE_FOR_ASC',
-  ProposalVotesAverageForDesc = 'PROPOSAL_VOTES_AVERAGE_FOR_DESC',
   ProposalVotesAverageIdAsc = 'PROPOSAL_VOTES_AVERAGE_ID_ASC',
   ProposalVotesAverageIdDesc = 'PROPOSAL_VOTES_AVERAGE_ID_DESC',
   ProposalVotesAverageProposalIdAsc = 'PROPOSAL_VOTES_AVERAGE_PROPOSAL_ID_ASC',
   ProposalVotesAverageProposalIdDesc = 'PROPOSAL_VOTES_AVERAGE_PROPOSAL_ID_DESC',
   ProposalVotesAverageVoterIdAsc = 'PROPOSAL_VOTES_AVERAGE_VOTER_ID_ASC',
   ProposalVotesAverageVoterIdDesc = 'PROPOSAL_VOTES_AVERAGE_VOTER_ID_DESC',
+  ProposalVotesAverageVoteStatusAsc = 'PROPOSAL_VOTES_AVERAGE_VOTE_STATUS_ASC',
+  ProposalVotesAverageVoteStatusDesc = 'PROPOSAL_VOTES_AVERAGE_VOTE_STATUS_DESC',
   ProposalVotesCountAsc = 'PROPOSAL_VOTES_COUNT_ASC',
   ProposalVotesCountDesc = 'PROPOSAL_VOTES_COUNT_DESC',
   ProposalVotesDistinctCountBlockIdAsc = 'PROPOSAL_VOTES_DISTINCT_COUNT_BLOCK_ID_ASC',
   ProposalVotesDistinctCountBlockIdDesc = 'PROPOSAL_VOTES_DISTINCT_COUNT_BLOCK_ID_DESC',
   ProposalVotesDistinctCountBlockNumberAsc = 'PROPOSAL_VOTES_DISTINCT_COUNT_BLOCK_NUMBER_ASC',
   ProposalVotesDistinctCountBlockNumberDesc = 'PROPOSAL_VOTES_DISTINCT_COUNT_BLOCK_NUMBER_DESC',
-  ProposalVotesDistinctCountForAsc = 'PROPOSAL_VOTES_DISTINCT_COUNT_FOR_ASC',
-  ProposalVotesDistinctCountForDesc = 'PROPOSAL_VOTES_DISTINCT_COUNT_FOR_DESC',
   ProposalVotesDistinctCountIdAsc = 'PROPOSAL_VOTES_DISTINCT_COUNT_ID_ASC',
   ProposalVotesDistinctCountIdDesc = 'PROPOSAL_VOTES_DISTINCT_COUNT_ID_DESC',
   ProposalVotesDistinctCountProposalIdAsc = 'PROPOSAL_VOTES_DISTINCT_COUNT_PROPOSAL_ID_ASC',
   ProposalVotesDistinctCountProposalIdDesc = 'PROPOSAL_VOTES_DISTINCT_COUNT_PROPOSAL_ID_DESC',
   ProposalVotesDistinctCountVoterIdAsc = 'PROPOSAL_VOTES_DISTINCT_COUNT_VOTER_ID_ASC',
   ProposalVotesDistinctCountVoterIdDesc = 'PROPOSAL_VOTES_DISTINCT_COUNT_VOTER_ID_DESC',
+  ProposalVotesDistinctCountVoteStatusAsc = 'PROPOSAL_VOTES_DISTINCT_COUNT_VOTE_STATUS_ASC',
+  ProposalVotesDistinctCountVoteStatusDesc = 'PROPOSAL_VOTES_DISTINCT_COUNT_VOTE_STATUS_DESC',
   ProposalVotesMaxBlockIdAsc = 'PROPOSAL_VOTES_MAX_BLOCK_ID_ASC',
   ProposalVotesMaxBlockIdDesc = 'PROPOSAL_VOTES_MAX_BLOCK_ID_DESC',
   ProposalVotesMaxBlockNumberAsc = 'PROPOSAL_VOTES_MAX_BLOCK_NUMBER_ASC',
   ProposalVotesMaxBlockNumberDesc = 'PROPOSAL_VOTES_MAX_BLOCK_NUMBER_DESC',
-  ProposalVotesMaxForAsc = 'PROPOSAL_VOTES_MAX_FOR_ASC',
-  ProposalVotesMaxForDesc = 'PROPOSAL_VOTES_MAX_FOR_DESC',
   ProposalVotesMaxIdAsc = 'PROPOSAL_VOTES_MAX_ID_ASC',
   ProposalVotesMaxIdDesc = 'PROPOSAL_VOTES_MAX_ID_DESC',
   ProposalVotesMaxProposalIdAsc = 'PROPOSAL_VOTES_MAX_PROPOSAL_ID_ASC',
   ProposalVotesMaxProposalIdDesc = 'PROPOSAL_VOTES_MAX_PROPOSAL_ID_DESC',
   ProposalVotesMaxVoterIdAsc = 'PROPOSAL_VOTES_MAX_VOTER_ID_ASC',
   ProposalVotesMaxVoterIdDesc = 'PROPOSAL_VOTES_MAX_VOTER_ID_DESC',
+  ProposalVotesMaxVoteStatusAsc = 'PROPOSAL_VOTES_MAX_VOTE_STATUS_ASC',
+  ProposalVotesMaxVoteStatusDesc = 'PROPOSAL_VOTES_MAX_VOTE_STATUS_DESC',
   ProposalVotesMinBlockIdAsc = 'PROPOSAL_VOTES_MIN_BLOCK_ID_ASC',
   ProposalVotesMinBlockIdDesc = 'PROPOSAL_VOTES_MIN_BLOCK_ID_DESC',
   ProposalVotesMinBlockNumberAsc = 'PROPOSAL_VOTES_MIN_BLOCK_NUMBER_ASC',
   ProposalVotesMinBlockNumberDesc = 'PROPOSAL_VOTES_MIN_BLOCK_NUMBER_DESC',
-  ProposalVotesMinForAsc = 'PROPOSAL_VOTES_MIN_FOR_ASC',
-  ProposalVotesMinForDesc = 'PROPOSAL_VOTES_MIN_FOR_DESC',
   ProposalVotesMinIdAsc = 'PROPOSAL_VOTES_MIN_ID_ASC',
   ProposalVotesMinIdDesc = 'PROPOSAL_VOTES_MIN_ID_DESC',
   ProposalVotesMinProposalIdAsc = 'PROPOSAL_VOTES_MIN_PROPOSAL_ID_ASC',
   ProposalVotesMinProposalIdDesc = 'PROPOSAL_VOTES_MIN_PROPOSAL_ID_DESC',
   ProposalVotesMinVoterIdAsc = 'PROPOSAL_VOTES_MIN_VOTER_ID_ASC',
   ProposalVotesMinVoterIdDesc = 'PROPOSAL_VOTES_MIN_VOTER_ID_DESC',
+  ProposalVotesMinVoteStatusAsc = 'PROPOSAL_VOTES_MIN_VOTE_STATUS_ASC',
+  ProposalVotesMinVoteStatusDesc = 'PROPOSAL_VOTES_MIN_VOTE_STATUS_DESC',
   ProposalVotesStddevPopulationBlockIdAsc = 'PROPOSAL_VOTES_STDDEV_POPULATION_BLOCK_ID_ASC',
   ProposalVotesStddevPopulationBlockIdDesc = 'PROPOSAL_VOTES_STDDEV_POPULATION_BLOCK_ID_DESC',
   ProposalVotesStddevPopulationBlockNumberAsc = 'PROPOSAL_VOTES_STDDEV_POPULATION_BLOCK_NUMBER_ASC',
   ProposalVotesStddevPopulationBlockNumberDesc = 'PROPOSAL_VOTES_STDDEV_POPULATION_BLOCK_NUMBER_DESC',
-  ProposalVotesStddevPopulationForAsc = 'PROPOSAL_VOTES_STDDEV_POPULATION_FOR_ASC',
-  ProposalVotesStddevPopulationForDesc = 'PROPOSAL_VOTES_STDDEV_POPULATION_FOR_DESC',
   ProposalVotesStddevPopulationIdAsc = 'PROPOSAL_VOTES_STDDEV_POPULATION_ID_ASC',
   ProposalVotesStddevPopulationIdDesc = 'PROPOSAL_VOTES_STDDEV_POPULATION_ID_DESC',
   ProposalVotesStddevPopulationProposalIdAsc = 'PROPOSAL_VOTES_STDDEV_POPULATION_PROPOSAL_ID_ASC',
   ProposalVotesStddevPopulationProposalIdDesc = 'PROPOSAL_VOTES_STDDEV_POPULATION_PROPOSAL_ID_DESC',
   ProposalVotesStddevPopulationVoterIdAsc = 'PROPOSAL_VOTES_STDDEV_POPULATION_VOTER_ID_ASC',
   ProposalVotesStddevPopulationVoterIdDesc = 'PROPOSAL_VOTES_STDDEV_POPULATION_VOTER_ID_DESC',
+  ProposalVotesStddevPopulationVoteStatusAsc = 'PROPOSAL_VOTES_STDDEV_POPULATION_VOTE_STATUS_ASC',
+  ProposalVotesStddevPopulationVoteStatusDesc = 'PROPOSAL_VOTES_STDDEV_POPULATION_VOTE_STATUS_DESC',
   ProposalVotesStddevSampleBlockIdAsc = 'PROPOSAL_VOTES_STDDEV_SAMPLE_BLOCK_ID_ASC',
   ProposalVotesStddevSampleBlockIdDesc = 'PROPOSAL_VOTES_STDDEV_SAMPLE_BLOCK_ID_DESC',
   ProposalVotesStddevSampleBlockNumberAsc = 'PROPOSAL_VOTES_STDDEV_SAMPLE_BLOCK_NUMBER_ASC',
   ProposalVotesStddevSampleBlockNumberDesc = 'PROPOSAL_VOTES_STDDEV_SAMPLE_BLOCK_NUMBER_DESC',
-  ProposalVotesStddevSampleForAsc = 'PROPOSAL_VOTES_STDDEV_SAMPLE_FOR_ASC',
-  ProposalVotesStddevSampleForDesc = 'PROPOSAL_VOTES_STDDEV_SAMPLE_FOR_DESC',
   ProposalVotesStddevSampleIdAsc = 'PROPOSAL_VOTES_STDDEV_SAMPLE_ID_ASC',
   ProposalVotesStddevSampleIdDesc = 'PROPOSAL_VOTES_STDDEV_SAMPLE_ID_DESC',
   ProposalVotesStddevSampleProposalIdAsc = 'PROPOSAL_VOTES_STDDEV_SAMPLE_PROPOSAL_ID_ASC',
   ProposalVotesStddevSampleProposalIdDesc = 'PROPOSAL_VOTES_STDDEV_SAMPLE_PROPOSAL_ID_DESC',
   ProposalVotesStddevSampleVoterIdAsc = 'PROPOSAL_VOTES_STDDEV_SAMPLE_VOTER_ID_ASC',
   ProposalVotesStddevSampleVoterIdDesc = 'PROPOSAL_VOTES_STDDEV_SAMPLE_VOTER_ID_DESC',
+  ProposalVotesStddevSampleVoteStatusAsc = 'PROPOSAL_VOTES_STDDEV_SAMPLE_VOTE_STATUS_ASC',
+  ProposalVotesStddevSampleVoteStatusDesc = 'PROPOSAL_VOTES_STDDEV_SAMPLE_VOTE_STATUS_DESC',
   ProposalVotesSumBlockIdAsc = 'PROPOSAL_VOTES_SUM_BLOCK_ID_ASC',
   ProposalVotesSumBlockIdDesc = 'PROPOSAL_VOTES_SUM_BLOCK_ID_DESC',
   ProposalVotesSumBlockNumberAsc = 'PROPOSAL_VOTES_SUM_BLOCK_NUMBER_ASC',
   ProposalVotesSumBlockNumberDesc = 'PROPOSAL_VOTES_SUM_BLOCK_NUMBER_DESC',
-  ProposalVotesSumForAsc = 'PROPOSAL_VOTES_SUM_FOR_ASC',
-  ProposalVotesSumForDesc = 'PROPOSAL_VOTES_SUM_FOR_DESC',
   ProposalVotesSumIdAsc = 'PROPOSAL_VOTES_SUM_ID_ASC',
   ProposalVotesSumIdDesc = 'PROPOSAL_VOTES_SUM_ID_DESC',
   ProposalVotesSumProposalIdAsc = 'PROPOSAL_VOTES_SUM_PROPOSAL_ID_ASC',
   ProposalVotesSumProposalIdDesc = 'PROPOSAL_VOTES_SUM_PROPOSAL_ID_DESC',
   ProposalVotesSumVoterIdAsc = 'PROPOSAL_VOTES_SUM_VOTER_ID_ASC',
   ProposalVotesSumVoterIdDesc = 'PROPOSAL_VOTES_SUM_VOTER_ID_DESC',
+  ProposalVotesSumVoteStatusAsc = 'PROPOSAL_VOTES_SUM_VOTE_STATUS_ASC',
+  ProposalVotesSumVoteStatusDesc = 'PROPOSAL_VOTES_SUM_VOTE_STATUS_DESC',
   ProposalVotesVariancePopulationBlockIdAsc = 'PROPOSAL_VOTES_VARIANCE_POPULATION_BLOCK_ID_ASC',
   ProposalVotesVariancePopulationBlockIdDesc = 'PROPOSAL_VOTES_VARIANCE_POPULATION_BLOCK_ID_DESC',
   ProposalVotesVariancePopulationBlockNumberAsc = 'PROPOSAL_VOTES_VARIANCE_POPULATION_BLOCK_NUMBER_ASC',
   ProposalVotesVariancePopulationBlockNumberDesc = 'PROPOSAL_VOTES_VARIANCE_POPULATION_BLOCK_NUMBER_DESC',
-  ProposalVotesVariancePopulationForAsc = 'PROPOSAL_VOTES_VARIANCE_POPULATION_FOR_ASC',
-  ProposalVotesVariancePopulationForDesc = 'PROPOSAL_VOTES_VARIANCE_POPULATION_FOR_DESC',
   ProposalVotesVariancePopulationIdAsc = 'PROPOSAL_VOTES_VARIANCE_POPULATION_ID_ASC',
   ProposalVotesVariancePopulationIdDesc = 'PROPOSAL_VOTES_VARIANCE_POPULATION_ID_DESC',
   ProposalVotesVariancePopulationProposalIdAsc = 'PROPOSAL_VOTES_VARIANCE_POPULATION_PROPOSAL_ID_ASC',
   ProposalVotesVariancePopulationProposalIdDesc = 'PROPOSAL_VOTES_VARIANCE_POPULATION_PROPOSAL_ID_DESC',
   ProposalVotesVariancePopulationVoterIdAsc = 'PROPOSAL_VOTES_VARIANCE_POPULATION_VOTER_ID_ASC',
   ProposalVotesVariancePopulationVoterIdDesc = 'PROPOSAL_VOTES_VARIANCE_POPULATION_VOTER_ID_DESC',
+  ProposalVotesVariancePopulationVoteStatusAsc = 'PROPOSAL_VOTES_VARIANCE_POPULATION_VOTE_STATUS_ASC',
+  ProposalVotesVariancePopulationVoteStatusDesc = 'PROPOSAL_VOTES_VARIANCE_POPULATION_VOTE_STATUS_DESC',
   ProposalVotesVarianceSampleBlockIdAsc = 'PROPOSAL_VOTES_VARIANCE_SAMPLE_BLOCK_ID_ASC',
   ProposalVotesVarianceSampleBlockIdDesc = 'PROPOSAL_VOTES_VARIANCE_SAMPLE_BLOCK_ID_DESC',
   ProposalVotesVarianceSampleBlockNumberAsc = 'PROPOSAL_VOTES_VARIANCE_SAMPLE_BLOCK_NUMBER_ASC',
   ProposalVotesVarianceSampleBlockNumberDesc = 'PROPOSAL_VOTES_VARIANCE_SAMPLE_BLOCK_NUMBER_DESC',
-  ProposalVotesVarianceSampleForAsc = 'PROPOSAL_VOTES_VARIANCE_SAMPLE_FOR_ASC',
-  ProposalVotesVarianceSampleForDesc = 'PROPOSAL_VOTES_VARIANCE_SAMPLE_FOR_DESC',
   ProposalVotesVarianceSampleIdAsc = 'PROPOSAL_VOTES_VARIANCE_SAMPLE_ID_ASC',
   ProposalVotesVarianceSampleIdDesc = 'PROPOSAL_VOTES_VARIANCE_SAMPLE_ID_DESC',
   ProposalVotesVarianceSampleProposalIdAsc = 'PROPOSAL_VOTES_VARIANCE_SAMPLE_PROPOSAL_ID_ASC',
   ProposalVotesVarianceSampleProposalIdDesc = 'PROPOSAL_VOTES_VARIANCE_SAMPLE_PROPOSAL_ID_DESC',
   ProposalVotesVarianceSampleVoterIdAsc = 'PROPOSAL_VOTES_VARIANCE_SAMPLE_VOTER_ID_ASC',
   ProposalVotesVarianceSampleVoterIdDesc = 'PROPOSAL_VOTES_VARIANCE_SAMPLE_VOTER_ID_DESC',
+  ProposalVotesVarianceSampleVoteStatusAsc = 'PROPOSAL_VOTES_VARIANCE_SAMPLE_VOTE_STATUS_ASC',
+  ProposalVotesVarianceSampleVoteStatusDesc = 'PROPOSAL_VOTES_VARIANCE_SAMPLE_VOTE_STATUS_DESC',
   ProposerThresholdsAverageBlockIdAsc = 'PROPOSER_THRESHOLDS_AVERAGE_BLOCK_ID_ASC',
   ProposerThresholdsAverageBlockIdDesc = 'PROPOSER_THRESHOLDS_AVERAGE_BLOCK_ID_DESC',
   ProposerThresholdsAverageIdAsc = 'PROPOSER_THRESHOLDS_AVERAGE_ID_ASC',
@@ -3034,7 +3492,7 @@ export enum BlocksOrderBy {
   UnsignedProposalsQueuesVarianceSampleBlockNumberAsc = 'UNSIGNED_PROPOSALS_QUEUES_VARIANCE_SAMPLE_BLOCK_NUMBER_ASC',
   UnsignedProposalsQueuesVarianceSampleBlockNumberDesc = 'UNSIGNED_PROPOSALS_QUEUES_VARIANCE_SAMPLE_BLOCK_NUMBER_DESC',
   UnsignedProposalsQueuesVarianceSampleIdAsc = 'UNSIGNED_PROPOSALS_QUEUES_VARIANCE_SAMPLE_ID_ASC',
-  UnsignedProposalsQueuesVarianceSampleIdDesc = 'UNSIGNED_PROPOSALS_QUEUES_VARIANCE_SAMPLE_ID_DESC',
+  UnsignedProposalsQueuesVarianceSampleIdDesc = 'UNSIGNED_PROPOSALS_QUEUES_VARIANCE_SAMPLE_ID_DESC'
 }
 
 /** A filter to be used against Boolean fields. All fields are combined with a logical ‘and.’ */
@@ -3272,6 +3730,7 @@ export type EventsConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Event` values. */
 export type EventsConnectionGroupedAggregatesArgs = {
   groupBy: Array<EventsGroupBy>;
@@ -3300,7 +3759,7 @@ export enum EventsGroupBy {
   Module = 'MODULE',
   Timestamp = 'TIMESTAMP',
   TimestampTruncatedToDay = 'TIMESTAMP_TRUNCATED_TO_DAY',
-  TimestampTruncatedToHour = 'TIMESTAMP_TRUNCATED_TO_HOUR',
+  TimestampTruncatedToHour = 'TIMESTAMP_TRUNCATED_TO_HOUR'
 }
 
 export type EventsHavingAverageInput = {
@@ -3398,7 +3857,7 @@ export enum EventsOrderBy {
   PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
   PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
   TimestampAsc = 'TIMESTAMP_ASC',
-  TimestampDesc = 'TIMESTAMP_DESC',
+  TimestampDesc = 'TIMESTAMP_DESC'
 }
 
 export type Extrinsic = Node & {
@@ -3426,6 +3885,7 @@ export type Extrinsic = Node & {
   signerId?: Maybe<Scalars['String']>;
 };
 
+
 export type ExtrinsicBlocksByEventExtrinsicIdAndBlockIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -3435,6 +3895,7 @@ export type ExtrinsicBlocksByEventExtrinsicIdAndBlockIdArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<BlocksOrderBy>>;
 };
+
 
 export type ExtrinsicEventsArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -3494,6 +3955,7 @@ export type ExtrinsicBlocksByEventExtrinsicIdAndBlockIdManyToManyConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Block` values, with data from `Event`. */
 export type ExtrinsicBlocksByEventExtrinsicIdAndBlockIdManyToManyConnectionGroupedAggregatesArgs = {
   groupBy: Array<BlocksGroupBy>;
@@ -3510,6 +3972,7 @@ export type ExtrinsicBlocksByEventExtrinsicIdAndBlockIdManyToManyEdge = {
   /** The `Block` at the end of the edge. */
   node?: Maybe<Block>;
 };
+
 
 /** A `Block` edge in the connection, with data from `Event`. */
 export type ExtrinsicBlocksByEventExtrinsicIdAndBlockIdManyToManyEdgeEventsArgs = {
@@ -3653,6 +4116,7 @@ export type ExtrinsicsConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Extrinsic` values. */
 export type ExtrinsicsConnectionGroupedAggregatesArgs = {
   groupBy: Array<ExtrinsicsGroupBy>;
@@ -3679,7 +4143,7 @@ export enum ExtrinsicsGroupBy {
   IsSuccess = 'IS_SUCCESS',
   Method = 'METHOD',
   Module = 'MODULE',
-  SignerId = 'SIGNER_ID',
+  SignerId = 'SIGNER_ID'
 }
 
 export type ExtrinsicsHavingAverageInput = {
@@ -3968,7 +4432,7 @@ export enum ExtrinsicsOrderBy {
   PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
   PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
   SignerIdAsc = 'SIGNER_ID_ASC',
-  SignerIdDesc = 'SIGNER_ID_DESC',
+  SignerIdDesc = 'SIGNER_ID_DESC'
 }
 
 export type HavingBigfloatFilter = {
@@ -4227,6 +4691,7 @@ export type KeygenThresholdsConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `KeygenThreshold` values. */
 export type KeygenThresholdsConnectionGroupedAggregatesArgs = {
   groupBy: Array<KeygenThresholdsGroupBy>;
@@ -4247,7 +4712,7 @@ export enum KeygenThresholdsGroupBy {
   BlockId = 'BLOCK_ID',
   Current = 'CURRENT',
   Next = 'NEXT',
-  Pending = 'PENDING',
+  Pending = 'PENDING'
 }
 
 export type KeygenThresholdsHavingAverageInput = {
@@ -4333,7 +4798,7 @@ export enum KeygenThresholdsOrderBy {
   PendingAsc = 'PENDING_ASC',
   PendingDesc = 'PENDING_DESC',
   PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
-  PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
+  PrimaryKeyDesc = 'PRIMARY_KEY_DESC'
 }
 
 /** An object with a globally unique `ID`. */
@@ -4537,6 +5002,7 @@ export type ProposalCountersConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `ProposalCounter` values. */
 export type ProposalCountersConnectionGroupedAggregatesArgs = {
   groupBy: Array<ProposalCountersGroupBy>;
@@ -4560,7 +5026,7 @@ export enum ProposalCountersGroupBy {
   SignedProposalsMap = 'SIGNED_PROPOSALS_MAP',
   StatusMap = 'STATUS_MAP',
   UnSignedProposalsCount = 'UN_SIGNED_PROPOSALS_COUNT',
-  UnSignedProposalsMap = 'UN_SIGNED_PROPOSALS_MAP',
+  UnSignedProposalsMap = 'UN_SIGNED_PROPOSALS_MAP'
 }
 
 export type ProposalCountersHavingAverageInput = {
@@ -4652,7 +5118,7 @@ export enum ProposalCountersOrderBy {
   UnSignedProposalsCountAsc = 'UN_SIGNED_PROPOSALS_COUNT_ASC',
   UnSignedProposalsCountDesc = 'UN_SIGNED_PROPOSALS_COUNT_DESC',
   UnSignedProposalsMapAsc = 'UN_SIGNED_PROPOSALS_MAP_ASC',
-  UnSignedProposalsMapDesc = 'UN_SIGNED_PROPOSALS_MAP_DESC',
+  UnSignedProposalsMapDesc = 'UN_SIGNED_PROPOSALS_MAP_DESC'
 }
 
 export type ProposalItem = Node & {
@@ -4663,6 +5129,7 @@ export type ProposalItem = Node & {
   blockNumber: Scalars['Int'];
   /** Reads and enables pagination through a set of `Block`. */
   blocksByProposalVoteProposalIdAndBlockId: ProposalItemBlocksByProposalVoteProposalIdAndBlockIdManyToManyConnection;
+  chainId: Scalars['Int'];
   data: Scalars['String'];
   id: Scalars['String'];
   /** A globally unique identifier. Can be used in various places throughout the system to identify this single value. */
@@ -4684,6 +5151,7 @@ export type ProposalItem = Node & {
   unsignedProposalsQueuesByUnsignedProposalsQueueItemProposalIdAndQueueId: ProposalItemUnsignedProposalsQueuesByUnsignedProposalsQueueItemProposalIdAndQueueIdManyToManyConnection;
 };
 
+
 export type ProposalItemBlocksByProposalVoteProposalIdAndBlockIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -4693,6 +5161,7 @@ export type ProposalItemBlocksByProposalVoteProposalIdAndBlockIdArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<BlocksOrderBy>>;
 };
+
 
 export type ProposalItemProposalTimelineStatusesArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -4704,6 +5173,7 @@ export type ProposalItemProposalTimelineStatusesArgs = {
   orderBy?: InputMaybe<Array<ProposalTimelineStatusesOrderBy>>;
 };
 
+
 export type ProposalItemProposalVotesByProposalIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -4713,6 +5183,7 @@ export type ProposalItemProposalVotesByProposalIdArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<ProposalVotesOrderBy>>;
 };
+
 
 export type ProposalItemProposersByProposalVoteProposalIdAndVoterIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -4724,6 +5195,7 @@ export type ProposalItemProposersByProposalVoteProposalIdAndVoterIdArgs = {
   orderBy?: InputMaybe<Array<ProposersOrderBy>>;
 };
 
+
 export type ProposalItemUnsignedProposalsQueueItemsByProposalIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -4733,6 +5205,7 @@ export type ProposalItemUnsignedProposalsQueueItemsByProposalIdArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<UnsignedProposalsQueueItemsOrderBy>>;
 };
+
 
 export type ProposalItemUnsignedProposalsQueuesByUnsignedProposalsQueueItemProposalIdAndQueueIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -4771,6 +5244,8 @@ export type ProposalItemAverageAggregates = {
   __typename?: 'ProposalItemAverageAggregates';
   /** Mean average of blockNumber across the matching connection */
   blockNumber?: Maybe<Scalars['BigFloat']>;
+  /** Mean average of chainId across the matching connection */
+  chainId?: Maybe<Scalars['BigFloat']>;
   /** Mean average of nonce across the matching connection */
   nonce?: Maybe<Scalars['BigFloat']>;
 };
@@ -4792,6 +5267,7 @@ export type ProposalItemBlocksByProposalVoteProposalIdAndBlockIdManyToManyConnec
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Block` values, with data from `ProposalVote`. */
 export type ProposalItemBlocksByProposalVoteProposalIdAndBlockIdManyToManyConnectionGroupedAggregatesArgs = {
   groupBy: Array<BlocksGroupBy>;
@@ -4808,6 +5284,7 @@ export type ProposalItemBlocksByProposalVoteProposalIdAndBlockIdManyToManyEdge =
   /** Reads and enables pagination through a set of `ProposalVote`. */
   proposalVotes: ProposalVotesConnection;
 };
+
 
 /** A `Block` edge in the connection, with data from `ProposalVote`. */
 export type ProposalItemBlocksByProposalVoteProposalIdAndBlockIdManyToManyEdgeProposalVotesArgs = {
@@ -4826,6 +5303,8 @@ export type ProposalItemDistinctCountAggregates = {
   blockId?: Maybe<Scalars['BigInt']>;
   /** Distinct count of blockNumber across the matching connection */
   blockNumber?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of chainId across the matching connection */
+  chainId?: Maybe<Scalars['BigInt']>;
   /** Distinct count of data across the matching connection */
   data?: Maybe<Scalars['BigInt']>;
   /** Distinct count of id across the matching connection */
@@ -4850,6 +5329,8 @@ export type ProposalItemFilter = {
   blockId?: InputMaybe<StringFilter>;
   /** Filter by the object’s `blockNumber` field. */
   blockNumber?: InputMaybe<IntFilter>;
+  /** Filter by the object’s `chainId` field. */
+  chainId?: InputMaybe<IntFilter>;
   /** Filter by the object’s `data` field. */
   data?: InputMaybe<StringFilter>;
   /** Filter by the object’s `id` field. */
@@ -4874,6 +5355,8 @@ export type ProposalItemMaxAggregates = {
   __typename?: 'ProposalItemMaxAggregates';
   /** Maximum of blockNumber across the matching connection */
   blockNumber?: Maybe<Scalars['Int']>;
+  /** Maximum of chainId across the matching connection */
+  chainId?: Maybe<Scalars['Int']>;
   /** Maximum of nonce across the matching connection */
   nonce?: Maybe<Scalars['Int']>;
 };
@@ -4882,6 +5365,8 @@ export type ProposalItemMinAggregates = {
   __typename?: 'ProposalItemMinAggregates';
   /** Minimum of blockNumber across the matching connection */
   blockNumber?: Maybe<Scalars['Int']>;
+  /** Minimum of chainId across the matching connection */
+  chainId?: Maybe<Scalars['Int']>;
   /** Minimum of nonce across the matching connection */
   nonce?: Maybe<Scalars['Int']>;
 };
@@ -4903,6 +5388,7 @@ export type ProposalItemProposersByProposalVoteProposalIdAndVoterIdManyToManyCon
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Proposer` values, with data from `ProposalVote`. */
 export type ProposalItemProposersByProposalVoteProposalIdAndVoterIdManyToManyConnectionGroupedAggregatesArgs = {
   groupBy: Array<ProposersGroupBy>;
@@ -4917,11 +5403,12 @@ export type ProposalItemProposersByProposalVoteProposalIdAndVoterIdManyToManyEdg
   /** The `Proposer` at the end of the edge. */
   node?: Maybe<Proposer>;
   /** Reads and enables pagination through a set of `ProposalVote`. */
-  proposalVotesByVoterId: ProposalVotesConnection;
+  votes: ProposalVotesConnection;
 };
 
+
 /** A `Proposer` edge in the connection, with data from `ProposalVote`. */
-export type ProposalItemProposersByProposalVoteProposalIdAndVoterIdManyToManyEdgeProposalVotesByVoterIdArgs = {
+export type ProposalItemProposersByProposalVoteProposalIdAndVoterIdManyToManyEdgeVotesArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
   filter?: InputMaybe<ProposalVoteFilter>;
@@ -4935,6 +5422,8 @@ export type ProposalItemStddevPopulationAggregates = {
   __typename?: 'ProposalItemStddevPopulationAggregates';
   /** Population standard deviation of blockNumber across the matching connection */
   blockNumber?: Maybe<Scalars['BigFloat']>;
+  /** Population standard deviation of chainId across the matching connection */
+  chainId?: Maybe<Scalars['BigFloat']>;
   /** Population standard deviation of nonce across the matching connection */
   nonce?: Maybe<Scalars['BigFloat']>;
 };
@@ -4943,6 +5432,8 @@ export type ProposalItemStddevSampleAggregates = {
   __typename?: 'ProposalItemStddevSampleAggregates';
   /** Sample standard deviation of blockNumber across the matching connection */
   blockNumber?: Maybe<Scalars['BigFloat']>;
+  /** Sample standard deviation of chainId across the matching connection */
+  chainId?: Maybe<Scalars['BigFloat']>;
   /** Sample standard deviation of nonce across the matching connection */
   nonce?: Maybe<Scalars['BigFloat']>;
 };
@@ -4951,6 +5442,8 @@ export type ProposalItemSumAggregates = {
   __typename?: 'ProposalItemSumAggregates';
   /** Sum of blockNumber across the matching connection */
   blockNumber: Scalars['BigInt'];
+  /** Sum of chainId across the matching connection */
+  chainId: Scalars['BigInt'];
   /** Sum of nonce across the matching connection */
   nonce: Scalars['BigInt'];
 };
@@ -4972,12 +5465,12 @@ export type ProposalItemUnsignedProposalsQueuesByUnsignedProposalsQueueItemPropo
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `UnsignedProposalsQueue` values, with data from `UnsignedProposalsQueueItem`. */
-export type ProposalItemUnsignedProposalsQueuesByUnsignedProposalsQueueItemProposalIdAndQueueIdManyToManyConnectionGroupedAggregatesArgs =
-  {
-    groupBy: Array<UnsignedProposalsQueuesGroupBy>;
-    having?: InputMaybe<UnsignedProposalsQueuesHavingInput>;
-  };
+export type ProposalItemUnsignedProposalsQueuesByUnsignedProposalsQueueItemProposalIdAndQueueIdManyToManyConnectionGroupedAggregatesArgs = {
+  groupBy: Array<UnsignedProposalsQueuesGroupBy>;
+  having?: InputMaybe<UnsignedProposalsQueuesHavingInput>;
+};
 
 /** A `UnsignedProposalsQueue` edge in the connection, with data from `UnsignedProposalsQueueItem`. */
 export type ProposalItemUnsignedProposalsQueuesByUnsignedProposalsQueueItemProposalIdAndQueueIdManyToManyEdge = {
@@ -4990,22 +5483,24 @@ export type ProposalItemUnsignedProposalsQueuesByUnsignedProposalsQueueItemPropo
   unsignedProposalsQueueItemsByQueueId: UnsignedProposalsQueueItemsConnection;
 };
 
+
 /** A `UnsignedProposalsQueue` edge in the connection, with data from `UnsignedProposalsQueueItem`. */
-export type ProposalItemUnsignedProposalsQueuesByUnsignedProposalsQueueItemProposalIdAndQueueIdManyToManyEdgeUnsignedProposalsQueueItemsByQueueIdArgs =
-  {
-    after?: InputMaybe<Scalars['Cursor']>;
-    before?: InputMaybe<Scalars['Cursor']>;
-    filter?: InputMaybe<UnsignedProposalsQueueItemFilter>;
-    first?: InputMaybe<Scalars['Int']>;
-    last?: InputMaybe<Scalars['Int']>;
-    offset?: InputMaybe<Scalars['Int']>;
-    orderBy?: InputMaybe<Array<UnsignedProposalsQueueItemsOrderBy>>;
-  };
+export type ProposalItemUnsignedProposalsQueuesByUnsignedProposalsQueueItemProposalIdAndQueueIdManyToManyEdgeUnsignedProposalsQueueItemsByQueueIdArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  filter?: InputMaybe<UnsignedProposalsQueueItemFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<UnsignedProposalsQueueItemsOrderBy>>;
+};
 
 export type ProposalItemVariancePopulationAggregates = {
   __typename?: 'ProposalItemVariancePopulationAggregates';
   /** Population variance of blockNumber across the matching connection */
   blockNumber?: Maybe<Scalars['BigFloat']>;
+  /** Population variance of chainId across the matching connection */
+  chainId?: Maybe<Scalars['BigFloat']>;
   /** Population variance of nonce across the matching connection */
   nonce?: Maybe<Scalars['BigFloat']>;
 };
@@ -5014,6 +5509,8 @@ export type ProposalItemVarianceSampleAggregates = {
   __typename?: 'ProposalItemVarianceSampleAggregates';
   /** Sample variance of blockNumber across the matching connection */
   blockNumber?: Maybe<Scalars['BigFloat']>;
+  /** Sample variance of chainId across the matching connection */
+  chainId?: Maybe<Scalars['BigFloat']>;
   /** Sample variance of nonce across the matching connection */
   nonce?: Maybe<Scalars['BigFloat']>;
 };
@@ -5035,6 +5532,7 @@ export type ProposalItemsConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `ProposalItem` values. */
 export type ProposalItemsConnectionGroupedAggregatesArgs = {
   groupBy: Array<ProposalItemsGroupBy>;
@@ -5054,21 +5552,24 @@ export type ProposalItemsEdge = {
 export enum ProposalItemsGroupBy {
   BlockId = 'BLOCK_ID',
   BlockNumber = 'BLOCK_NUMBER',
+  ChainId = 'CHAIN_ID',
   Data = 'DATA',
   Nonce = 'NONCE',
   Removed = 'REMOVED',
   Signature = 'SIGNATURE',
   Status = 'STATUS',
-  Type = 'TYPE',
+  Type = 'TYPE'
 }
 
 export type ProposalItemsHavingAverageInput = {
   blockNumber?: InputMaybe<HavingIntFilter>;
+  chainId?: InputMaybe<HavingIntFilter>;
   nonce?: InputMaybe<HavingIntFilter>;
 };
 
 export type ProposalItemsHavingDistinctCountInput = {
   blockNumber?: InputMaybe<HavingIntFilter>;
+  chainId?: InputMaybe<HavingIntFilter>;
   nonce?: InputMaybe<HavingIntFilter>;
 };
 
@@ -5089,36 +5590,43 @@ export type ProposalItemsHavingInput = {
 
 export type ProposalItemsHavingMaxInput = {
   blockNumber?: InputMaybe<HavingIntFilter>;
+  chainId?: InputMaybe<HavingIntFilter>;
   nonce?: InputMaybe<HavingIntFilter>;
 };
 
 export type ProposalItemsHavingMinInput = {
   blockNumber?: InputMaybe<HavingIntFilter>;
+  chainId?: InputMaybe<HavingIntFilter>;
   nonce?: InputMaybe<HavingIntFilter>;
 };
 
 export type ProposalItemsHavingStddevPopulationInput = {
   blockNumber?: InputMaybe<HavingIntFilter>;
+  chainId?: InputMaybe<HavingIntFilter>;
   nonce?: InputMaybe<HavingIntFilter>;
 };
 
 export type ProposalItemsHavingStddevSampleInput = {
   blockNumber?: InputMaybe<HavingIntFilter>;
+  chainId?: InputMaybe<HavingIntFilter>;
   nonce?: InputMaybe<HavingIntFilter>;
 };
 
 export type ProposalItemsHavingSumInput = {
   blockNumber?: InputMaybe<HavingIntFilter>;
+  chainId?: InputMaybe<HavingIntFilter>;
   nonce?: InputMaybe<HavingIntFilter>;
 };
 
 export type ProposalItemsHavingVariancePopulationInput = {
   blockNumber?: InputMaybe<HavingIntFilter>;
+  chainId?: InputMaybe<HavingIntFilter>;
   nonce?: InputMaybe<HavingIntFilter>;
 };
 
 export type ProposalItemsHavingVarianceSampleInput = {
   blockNumber?: InputMaybe<HavingIntFilter>;
+  chainId?: InputMaybe<HavingIntFilter>;
   nonce?: InputMaybe<HavingIntFilter>;
 };
 
@@ -5128,6 +5636,8 @@ export enum ProposalItemsOrderBy {
   BlockIdDesc = 'BLOCK_ID_DESC',
   BlockNumberAsc = 'BLOCK_NUMBER_ASC',
   BlockNumberDesc = 'BLOCK_NUMBER_DESC',
+  ChainIdAsc = 'CHAIN_ID_ASC',
+  ChainIdDesc = 'CHAIN_ID_DESC',
   DataAsc = 'DATA_ASC',
   DataDesc = 'DATA_DESC',
   IdAsc = 'ID_ASC',
@@ -5251,112 +5761,112 @@ export enum ProposalItemsOrderBy {
   ProposalVotesByProposalIdAverageBlockIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_AVERAGE_BLOCK_ID_DESC',
   ProposalVotesByProposalIdAverageBlockNumberAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_AVERAGE_BLOCK_NUMBER_ASC',
   ProposalVotesByProposalIdAverageBlockNumberDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_AVERAGE_BLOCK_NUMBER_DESC',
-  ProposalVotesByProposalIdAverageForAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_AVERAGE_FOR_ASC',
-  ProposalVotesByProposalIdAverageForDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_AVERAGE_FOR_DESC',
   ProposalVotesByProposalIdAverageIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_AVERAGE_ID_ASC',
   ProposalVotesByProposalIdAverageIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_AVERAGE_ID_DESC',
   ProposalVotesByProposalIdAverageProposalIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_AVERAGE_PROPOSAL_ID_ASC',
   ProposalVotesByProposalIdAverageProposalIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_AVERAGE_PROPOSAL_ID_DESC',
   ProposalVotesByProposalIdAverageVoterIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_AVERAGE_VOTER_ID_ASC',
   ProposalVotesByProposalIdAverageVoterIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_AVERAGE_VOTER_ID_DESC',
+  ProposalVotesByProposalIdAverageVoteStatusAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_AVERAGE_VOTE_STATUS_ASC',
+  ProposalVotesByProposalIdAverageVoteStatusDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_AVERAGE_VOTE_STATUS_DESC',
   ProposalVotesByProposalIdCountAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_COUNT_ASC',
   ProposalVotesByProposalIdCountDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_COUNT_DESC',
   ProposalVotesByProposalIdDistinctCountBlockIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_DISTINCT_COUNT_BLOCK_ID_ASC',
   ProposalVotesByProposalIdDistinctCountBlockIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_DISTINCT_COUNT_BLOCK_ID_DESC',
   ProposalVotesByProposalIdDistinctCountBlockNumberAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_DISTINCT_COUNT_BLOCK_NUMBER_ASC',
   ProposalVotesByProposalIdDistinctCountBlockNumberDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_DISTINCT_COUNT_BLOCK_NUMBER_DESC',
-  ProposalVotesByProposalIdDistinctCountForAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_DISTINCT_COUNT_FOR_ASC',
-  ProposalVotesByProposalIdDistinctCountForDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_DISTINCT_COUNT_FOR_DESC',
   ProposalVotesByProposalIdDistinctCountIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_DISTINCT_COUNT_ID_ASC',
   ProposalVotesByProposalIdDistinctCountIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_DISTINCT_COUNT_ID_DESC',
   ProposalVotesByProposalIdDistinctCountProposalIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_DISTINCT_COUNT_PROPOSAL_ID_ASC',
   ProposalVotesByProposalIdDistinctCountProposalIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_DISTINCT_COUNT_PROPOSAL_ID_DESC',
   ProposalVotesByProposalIdDistinctCountVoterIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_DISTINCT_COUNT_VOTER_ID_ASC',
   ProposalVotesByProposalIdDistinctCountVoterIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_DISTINCT_COUNT_VOTER_ID_DESC',
+  ProposalVotesByProposalIdDistinctCountVoteStatusAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_DISTINCT_COUNT_VOTE_STATUS_ASC',
+  ProposalVotesByProposalIdDistinctCountVoteStatusDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_DISTINCT_COUNT_VOTE_STATUS_DESC',
   ProposalVotesByProposalIdMaxBlockIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_MAX_BLOCK_ID_ASC',
   ProposalVotesByProposalIdMaxBlockIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_MAX_BLOCK_ID_DESC',
   ProposalVotesByProposalIdMaxBlockNumberAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_MAX_BLOCK_NUMBER_ASC',
   ProposalVotesByProposalIdMaxBlockNumberDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_MAX_BLOCK_NUMBER_DESC',
-  ProposalVotesByProposalIdMaxForAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_MAX_FOR_ASC',
-  ProposalVotesByProposalIdMaxForDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_MAX_FOR_DESC',
   ProposalVotesByProposalIdMaxIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_MAX_ID_ASC',
   ProposalVotesByProposalIdMaxIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_MAX_ID_DESC',
   ProposalVotesByProposalIdMaxProposalIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_MAX_PROPOSAL_ID_ASC',
   ProposalVotesByProposalIdMaxProposalIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_MAX_PROPOSAL_ID_DESC',
   ProposalVotesByProposalIdMaxVoterIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_MAX_VOTER_ID_ASC',
   ProposalVotesByProposalIdMaxVoterIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_MAX_VOTER_ID_DESC',
+  ProposalVotesByProposalIdMaxVoteStatusAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_MAX_VOTE_STATUS_ASC',
+  ProposalVotesByProposalIdMaxVoteStatusDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_MAX_VOTE_STATUS_DESC',
   ProposalVotesByProposalIdMinBlockIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_MIN_BLOCK_ID_ASC',
   ProposalVotesByProposalIdMinBlockIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_MIN_BLOCK_ID_DESC',
   ProposalVotesByProposalIdMinBlockNumberAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_MIN_BLOCK_NUMBER_ASC',
   ProposalVotesByProposalIdMinBlockNumberDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_MIN_BLOCK_NUMBER_DESC',
-  ProposalVotesByProposalIdMinForAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_MIN_FOR_ASC',
-  ProposalVotesByProposalIdMinForDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_MIN_FOR_DESC',
   ProposalVotesByProposalIdMinIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_MIN_ID_ASC',
   ProposalVotesByProposalIdMinIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_MIN_ID_DESC',
   ProposalVotesByProposalIdMinProposalIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_MIN_PROPOSAL_ID_ASC',
   ProposalVotesByProposalIdMinProposalIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_MIN_PROPOSAL_ID_DESC',
   ProposalVotesByProposalIdMinVoterIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_MIN_VOTER_ID_ASC',
   ProposalVotesByProposalIdMinVoterIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_MIN_VOTER_ID_DESC',
+  ProposalVotesByProposalIdMinVoteStatusAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_MIN_VOTE_STATUS_ASC',
+  ProposalVotesByProposalIdMinVoteStatusDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_MIN_VOTE_STATUS_DESC',
   ProposalVotesByProposalIdStddevPopulationBlockIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_POPULATION_BLOCK_ID_ASC',
   ProposalVotesByProposalIdStddevPopulationBlockIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_POPULATION_BLOCK_ID_DESC',
   ProposalVotesByProposalIdStddevPopulationBlockNumberAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_POPULATION_BLOCK_NUMBER_ASC',
   ProposalVotesByProposalIdStddevPopulationBlockNumberDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_POPULATION_BLOCK_NUMBER_DESC',
-  ProposalVotesByProposalIdStddevPopulationForAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_POPULATION_FOR_ASC',
-  ProposalVotesByProposalIdStddevPopulationForDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_POPULATION_FOR_DESC',
   ProposalVotesByProposalIdStddevPopulationIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_POPULATION_ID_ASC',
   ProposalVotesByProposalIdStddevPopulationIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_POPULATION_ID_DESC',
   ProposalVotesByProposalIdStddevPopulationProposalIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_POPULATION_PROPOSAL_ID_ASC',
   ProposalVotesByProposalIdStddevPopulationProposalIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_POPULATION_PROPOSAL_ID_DESC',
   ProposalVotesByProposalIdStddevPopulationVoterIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_POPULATION_VOTER_ID_ASC',
   ProposalVotesByProposalIdStddevPopulationVoterIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_POPULATION_VOTER_ID_DESC',
+  ProposalVotesByProposalIdStddevPopulationVoteStatusAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_POPULATION_VOTE_STATUS_ASC',
+  ProposalVotesByProposalIdStddevPopulationVoteStatusDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_POPULATION_VOTE_STATUS_DESC',
   ProposalVotesByProposalIdStddevSampleBlockIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_SAMPLE_BLOCK_ID_ASC',
   ProposalVotesByProposalIdStddevSampleBlockIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_SAMPLE_BLOCK_ID_DESC',
   ProposalVotesByProposalIdStddevSampleBlockNumberAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_SAMPLE_BLOCK_NUMBER_ASC',
   ProposalVotesByProposalIdStddevSampleBlockNumberDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_SAMPLE_BLOCK_NUMBER_DESC',
-  ProposalVotesByProposalIdStddevSampleForAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_SAMPLE_FOR_ASC',
-  ProposalVotesByProposalIdStddevSampleForDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_SAMPLE_FOR_DESC',
   ProposalVotesByProposalIdStddevSampleIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_SAMPLE_ID_ASC',
   ProposalVotesByProposalIdStddevSampleIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_SAMPLE_ID_DESC',
   ProposalVotesByProposalIdStddevSampleProposalIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_SAMPLE_PROPOSAL_ID_ASC',
   ProposalVotesByProposalIdStddevSampleProposalIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_SAMPLE_PROPOSAL_ID_DESC',
   ProposalVotesByProposalIdStddevSampleVoterIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_SAMPLE_VOTER_ID_ASC',
   ProposalVotesByProposalIdStddevSampleVoterIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_SAMPLE_VOTER_ID_DESC',
+  ProposalVotesByProposalIdStddevSampleVoteStatusAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_SAMPLE_VOTE_STATUS_ASC',
+  ProposalVotesByProposalIdStddevSampleVoteStatusDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_SAMPLE_VOTE_STATUS_DESC',
   ProposalVotesByProposalIdSumBlockIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_SUM_BLOCK_ID_ASC',
   ProposalVotesByProposalIdSumBlockIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_SUM_BLOCK_ID_DESC',
   ProposalVotesByProposalIdSumBlockNumberAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_SUM_BLOCK_NUMBER_ASC',
   ProposalVotesByProposalIdSumBlockNumberDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_SUM_BLOCK_NUMBER_DESC',
-  ProposalVotesByProposalIdSumForAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_SUM_FOR_ASC',
-  ProposalVotesByProposalIdSumForDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_SUM_FOR_DESC',
   ProposalVotesByProposalIdSumIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_SUM_ID_ASC',
   ProposalVotesByProposalIdSumIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_SUM_ID_DESC',
   ProposalVotesByProposalIdSumProposalIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_SUM_PROPOSAL_ID_ASC',
   ProposalVotesByProposalIdSumProposalIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_SUM_PROPOSAL_ID_DESC',
   ProposalVotesByProposalIdSumVoterIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_SUM_VOTER_ID_ASC',
   ProposalVotesByProposalIdSumVoterIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_SUM_VOTER_ID_DESC',
+  ProposalVotesByProposalIdSumVoteStatusAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_SUM_VOTE_STATUS_ASC',
+  ProposalVotesByProposalIdSumVoteStatusDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_SUM_VOTE_STATUS_DESC',
   ProposalVotesByProposalIdVariancePopulationBlockIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_POPULATION_BLOCK_ID_ASC',
   ProposalVotesByProposalIdVariancePopulationBlockIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_POPULATION_BLOCK_ID_DESC',
   ProposalVotesByProposalIdVariancePopulationBlockNumberAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_POPULATION_BLOCK_NUMBER_ASC',
   ProposalVotesByProposalIdVariancePopulationBlockNumberDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_POPULATION_BLOCK_NUMBER_DESC',
-  ProposalVotesByProposalIdVariancePopulationForAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_POPULATION_FOR_ASC',
-  ProposalVotesByProposalIdVariancePopulationForDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_POPULATION_FOR_DESC',
   ProposalVotesByProposalIdVariancePopulationIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_POPULATION_ID_ASC',
   ProposalVotesByProposalIdVariancePopulationIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_POPULATION_ID_DESC',
   ProposalVotesByProposalIdVariancePopulationProposalIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_POPULATION_PROPOSAL_ID_ASC',
   ProposalVotesByProposalIdVariancePopulationProposalIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_POPULATION_PROPOSAL_ID_DESC',
   ProposalVotesByProposalIdVariancePopulationVoterIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_POPULATION_VOTER_ID_ASC',
   ProposalVotesByProposalIdVariancePopulationVoterIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_POPULATION_VOTER_ID_DESC',
+  ProposalVotesByProposalIdVariancePopulationVoteStatusAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_POPULATION_VOTE_STATUS_ASC',
+  ProposalVotesByProposalIdVariancePopulationVoteStatusDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_POPULATION_VOTE_STATUS_DESC',
   ProposalVotesByProposalIdVarianceSampleBlockIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_SAMPLE_BLOCK_ID_ASC',
   ProposalVotesByProposalIdVarianceSampleBlockIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_SAMPLE_BLOCK_ID_DESC',
   ProposalVotesByProposalIdVarianceSampleBlockNumberAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_SAMPLE_BLOCK_NUMBER_ASC',
   ProposalVotesByProposalIdVarianceSampleBlockNumberDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_SAMPLE_BLOCK_NUMBER_DESC',
-  ProposalVotesByProposalIdVarianceSampleForAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_SAMPLE_FOR_ASC',
-  ProposalVotesByProposalIdVarianceSampleForDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_SAMPLE_FOR_DESC',
   ProposalVotesByProposalIdVarianceSampleIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_SAMPLE_ID_ASC',
   ProposalVotesByProposalIdVarianceSampleIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_SAMPLE_ID_DESC',
   ProposalVotesByProposalIdVarianceSampleProposalIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_SAMPLE_PROPOSAL_ID_ASC',
   ProposalVotesByProposalIdVarianceSampleProposalIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_SAMPLE_PROPOSAL_ID_DESC',
   ProposalVotesByProposalIdVarianceSampleVoterIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_SAMPLE_VOTER_ID_ASC',
   ProposalVotesByProposalIdVarianceSampleVoterIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_SAMPLE_VOTER_ID_DESC',
+  ProposalVotesByProposalIdVarianceSampleVoteStatusAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_SAMPLE_VOTE_STATUS_ASC',
+  ProposalVotesByProposalIdVarianceSampleVoteStatusDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_SAMPLE_VOTE_STATUS_DESC',
   RemovedAsc = 'REMOVED_ASC',
   RemovedDesc = 'REMOVED_DESC',
   SignatureAsc = 'SIGNATURE_ASC',
@@ -5438,7 +5948,7 @@ export enum ProposalItemsOrderBy {
   UnsignedProposalsQueueItemsByProposalIdVarianceSampleProposalIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_VARIANCE_SAMPLE_PROPOSAL_ID_ASC',
   UnsignedProposalsQueueItemsByProposalIdVarianceSampleProposalIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_VARIANCE_SAMPLE_PROPOSAL_ID_DESC',
   UnsignedProposalsQueueItemsByProposalIdVarianceSampleQueueIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_VARIANCE_SAMPLE_QUEUE_ID_ASC',
-  UnsignedProposalsQueueItemsByProposalIdVarianceSampleQueueIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_VARIANCE_SAMPLE_QUEUE_ID_DESC',
+  UnsignedProposalsQueueItemsByProposalIdVarianceSampleQueueIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_VARIANCE_SAMPLE_QUEUE_ID_DESC'
 }
 
 export enum ProposalStatus {
@@ -5448,7 +5958,7 @@ export enum ProposalStatus {
   Open = 'Open',
   Rejected = 'Rejected',
   Removed = 'Removed',
-  Signed = 'Signed',
+  Signed = 'Signed'
 }
 
 /** A filter to be used against ProposalStatus fields. All fields are combined with a logical ‘and.’ */
@@ -5617,6 +6127,7 @@ export type ProposalTimelineStatusesConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `ProposalTimelineStatus` values. */
 export type ProposalTimelineStatusesConnectionGroupedAggregatesArgs = {
   groupBy: Array<ProposalTimelineStatusesGroupBy>;
@@ -5640,7 +6151,7 @@ export enum ProposalTimelineStatusesGroupBy {
   Timestamp = 'TIMESTAMP',
   TimestampTruncatedToDay = 'TIMESTAMP_TRUNCATED_TO_DAY',
   TimestampTruncatedToHour = 'TIMESTAMP_TRUNCATED_TO_HOUR',
-  TxHash = 'TX_HASH',
+  TxHash = 'TX_HASH'
 }
 
 export type ProposalTimelineStatusesHavingAverageInput = {
@@ -5719,7 +6230,7 @@ export enum ProposalTimelineStatusesOrderBy {
   TimestampAsc = 'TIMESTAMP_ASC',
   TimestampDesc = 'TIMESTAMP_DESC',
   TxHashAsc = 'TX_HASH_ASC',
-  TxHashDesc = 'TX_HASH_DESC',
+  TxHashDesc = 'TX_HASH_DESC'
 }
 
 export enum ProposalType {
@@ -5738,7 +6249,7 @@ export enum ProposalType {
   TokenAddProposal = 'TokenAddProposal',
   TokenRemoveProposal = 'TokenRemoveProposal',
   Unknown = 'Unknown',
-  WrappingFeeUpdateProposal = 'WrappingFeeUpdateProposal',
+  WrappingFeeUpdateProposal = 'WrappingFeeUpdateProposal'
 }
 
 /** A filter to be used against ProposalType fields. All fields are combined with a logical ‘and.’ */
@@ -5773,13 +6284,13 @@ export type ProposalVote = Node & {
   block?: Maybe<Block>;
   blockId: Scalars['String'];
   blockNumber: Scalars['BigFloat'];
-  for: Scalars['Boolean'];
   id: Scalars['String'];
   /** A globally unique identifier. Can be used in various places throughout the system to identify this single value. */
   nodeId: Scalars['ID'];
   /** Reads a single `ProposalItem` that is related to this `ProposalVote`. */
   proposal?: Maybe<ProposalItem>;
   proposalId: Scalars['String'];
+  voteStatus: VoteStatus;
   /** Reads a single `Proposer` that is related to this `ProposalVote`. */
   voter?: Maybe<Proposer>;
   voterId: Scalars['String'];
@@ -5820,12 +6331,12 @@ export type ProposalVoteDistinctCountAggregates = {
   blockId?: Maybe<Scalars['BigInt']>;
   /** Distinct count of blockNumber across the matching connection */
   blockNumber?: Maybe<Scalars['BigInt']>;
-  /** Distinct count of for across the matching connection */
-  for?: Maybe<Scalars['BigInt']>;
   /** Distinct count of id across the matching connection */
   id?: Maybe<Scalars['BigInt']>;
   /** Distinct count of proposalId across the matching connection */
   proposalId?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of voteStatus across the matching connection */
+  voteStatus?: Maybe<Scalars['BigInt']>;
   /** Distinct count of voterId across the matching connection */
   voterId?: Maybe<Scalars['BigInt']>;
 };
@@ -5838,8 +6349,6 @@ export type ProposalVoteFilter = {
   blockId?: InputMaybe<StringFilter>;
   /** Filter by the object’s `blockNumber` field. */
   blockNumber?: InputMaybe<BigFloatFilter>;
-  /** Filter by the object’s `for` field. */
-  for?: InputMaybe<BooleanFilter>;
   /** Filter by the object’s `id` field. */
   id?: InputMaybe<StringFilter>;
   /** Negates the expression. */
@@ -5848,6 +6357,8 @@ export type ProposalVoteFilter = {
   or?: InputMaybe<Array<ProposalVoteFilter>>;
   /** Filter by the object’s `proposalId` field. */
   proposalId?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `voteStatus` field. */
+  voteStatus?: InputMaybe<VoteStatusFilter>;
   /** Filter by the object’s `voterId` field. */
   voterId?: InputMaybe<StringFilter>;
 };
@@ -5911,6 +6422,7 @@ export type ProposalVotesConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `ProposalVote` values. */
 export type ProposalVotesConnectionGroupedAggregatesArgs = {
   groupBy: Array<ProposalVotesGroupBy>;
@@ -5930,9 +6442,9 @@ export type ProposalVotesEdge = {
 export enum ProposalVotesGroupBy {
   BlockId = 'BLOCK_ID',
   BlockNumber = 'BLOCK_NUMBER',
-  For = 'FOR',
   ProposalId = 'PROPOSAL_ID',
   VoterId = 'VOTER_ID',
+  VoteStatus = 'VOTE_STATUS'
 }
 
 export type ProposalVotesHavingAverageInput = {
@@ -5992,8 +6504,6 @@ export enum ProposalVotesOrderBy {
   BlockIdDesc = 'BLOCK_ID_DESC',
   BlockNumberAsc = 'BLOCK_NUMBER_ASC',
   BlockNumberDesc = 'BLOCK_NUMBER_DESC',
-  ForAsc = 'FOR_ASC',
-  ForDesc = 'FOR_DESC',
   IdAsc = 'ID_ASC',
   IdDesc = 'ID_DESC',
   Natural = 'NATURAL',
@@ -6003,6 +6513,8 @@ export enum ProposalVotesOrderBy {
   ProposalIdDesc = 'PROPOSAL_ID_DESC',
   VoterIdAsc = 'VOTER_ID_ASC',
   VoterIdDesc = 'VOTER_ID_DESC',
+  VoteStatusAsc = 'VOTE_STATUS_ASC',
+  VoteStatusDesc = 'VOTE_STATUS_DESC'
 }
 
 export type Proposer = Node & {
@@ -6017,13 +6529,14 @@ export type Proposer = Node & {
   nodeId: Scalars['ID'];
   /** Reads and enables pagination through a set of `ProposalItem`. */
   proposalItemsByProposalVoteVoterIdAndProposalId: ProposerProposalItemsByProposalVoteVoterIdAndProposalIdManyToManyConnection;
-  /** Reads and enables pagination through a set of `ProposalVote`. */
-  proposalVotesByVoterId: ProposalVotesConnection;
   /** Reads and enables pagination through a set of `SessionProposer`. */
   sessionProposers: SessionProposersConnection;
   /** Reads and enables pagination through a set of `Session`. */
   sessionsBySessionProposerProposerIdAndSessionId: ProposerSessionsBySessionProposerProposerIdAndSessionIdManyToManyConnection;
+  /** Reads and enables pagination through a set of `ProposalVote`. */
+  votes: ProposalVotesConnection;
 };
+
 
 export type ProposerBlocksByProposalVoteVoterIdAndBlockIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -6035,6 +6548,7 @@ export type ProposerBlocksByProposalVoteVoterIdAndBlockIdArgs = {
   orderBy?: InputMaybe<Array<BlocksOrderBy>>;
 };
 
+
 export type ProposerProposalItemsByProposalVoteVoterIdAndProposalIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -6045,15 +6559,6 @@ export type ProposerProposalItemsByProposalVoteVoterIdAndProposalIdArgs = {
   orderBy?: InputMaybe<Array<ProposalItemsOrderBy>>;
 };
 
-export type ProposerProposalVotesByVoterIdArgs = {
-  after?: InputMaybe<Scalars['Cursor']>;
-  before?: InputMaybe<Scalars['Cursor']>;
-  filter?: InputMaybe<ProposalVoteFilter>;
-  first?: InputMaybe<Scalars['Int']>;
-  last?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<Array<ProposalVotesOrderBy>>;
-};
 
 export type ProposerSessionProposersArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -6065,6 +6570,7 @@ export type ProposerSessionProposersArgs = {
   orderBy?: InputMaybe<Array<SessionProposersOrderBy>>;
 };
 
+
 export type ProposerSessionsBySessionProposerProposerIdAndSessionIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -6073,6 +6579,17 @@ export type ProposerSessionsBySessionProposerProposerIdAndSessionIdArgs = {
   last?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<SessionsOrderBy>>;
+};
+
+
+export type ProposerVotesArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  filter?: InputMaybe<ProposalVoteFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<ProposalVotesOrderBy>>;
 };
 
 export type ProposerAggregates = {
@@ -6099,6 +6616,7 @@ export type ProposerBlocksByProposalVoteVoterIdAndBlockIdManyToManyConnection = 
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Block` values, with data from `ProposalVote`. */
 export type ProposerBlocksByProposalVoteVoterIdAndBlockIdManyToManyConnectionGroupedAggregatesArgs = {
   groupBy: Array<BlocksGroupBy>;
@@ -6115,6 +6633,7 @@ export type ProposerBlocksByProposalVoteVoterIdAndBlockIdManyToManyEdge = {
   /** Reads and enables pagination through a set of `ProposalVote`. */
   proposalVotes: ProposalVotesConnection;
 };
+
 
 /** A `Block` edge in the connection, with data from `ProposalVote`. */
 export type ProposerBlocksByProposalVoteVoterIdAndBlockIdManyToManyEdgeProposalVotesArgs = {
@@ -6166,6 +6685,7 @@ export type ProposerProposalItemsByProposalVoteVoterIdAndProposalIdManyToManyCon
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `ProposalItem` values, with data from `ProposalVote`. */
 export type ProposerProposalItemsByProposalVoteVoterIdAndProposalIdManyToManyConnectionGroupedAggregatesArgs = {
   groupBy: Array<ProposalItemsGroupBy>;
@@ -6182,6 +6702,7 @@ export type ProposerProposalItemsByProposalVoteVoterIdAndProposalIdManyToManyEdg
   /** Reads and enables pagination through a set of `ProposalVote`. */
   proposalVotesByProposalId: ProposalVotesConnection;
 };
+
 
 /** A `ProposalItem` edge in the connection, with data from `ProposalVote`. */
 export type ProposerProposalItemsByProposalVoteVoterIdAndProposalIdManyToManyEdgeProposalVotesByProposalIdArgs = {
@@ -6211,6 +6732,7 @@ export type ProposerSessionsBySessionProposerProposerIdAndSessionIdManyToManyCon
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Session` values, with data from `SessionProposer`. */
 export type ProposerSessionsBySessionProposerProposerIdAndSessionIdManyToManyConnectionGroupedAggregatesArgs = {
   groupBy: Array<SessionsGroupBy>;
@@ -6227,6 +6749,7 @@ export type ProposerSessionsBySessionProposerProposerIdAndSessionIdManyToManyEdg
   /** Reads and enables pagination through a set of `SessionProposer`. */
   sessionProposers: SessionProposersConnection;
 };
+
 
 /** A `Session` edge in the connection, with data from `SessionProposer`. */
 export type ProposerSessionsBySessionProposerProposerIdAndSessionIdManyToManyEdgeSessionProposersArgs = {
@@ -6364,6 +6887,7 @@ export type ProposerThresholdsConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `ProposerThreshold` values. */
 export type ProposerThresholdsConnectionGroupedAggregatesArgs = {
   groupBy: Array<ProposerThresholdsGroupBy>;
@@ -6382,7 +6906,7 @@ export type ProposerThresholdsEdge = {
 /** Grouping methods for `ProposerThreshold` for usage during aggregation. */
 export enum ProposerThresholdsGroupBy {
   BlockId = 'BLOCK_ID',
-  Value = 'VALUE',
+  Value = 'VALUE'
 }
 
 export type ProposerThresholdsHavingAverageInput = {
@@ -6446,7 +6970,7 @@ export enum ProposerThresholdsOrderBy {
   PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
   PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
   ValueAsc = 'VALUE_ASC',
-  ValueDesc = 'VALUE_DESC',
+  ValueDesc = 'VALUE_DESC'
 }
 
 /** A connection to a list of `Proposer` values. */
@@ -6466,6 +6990,7 @@ export type ProposersConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Proposer` values. */
 export type ProposersConnectionGroupedAggregatesArgs = {
   groupBy: Array<ProposersGroupBy>;
@@ -6483,7 +7008,7 @@ export type ProposersEdge = {
 
 /** Grouping methods for `Proposer` for usage during aggregation. */
 export enum ProposersGroupBy {
-  AccountId = 'ACCOUNT_ID',
+  AccountId = 'ACCOUNT_ID'
 }
 
 /** Conditions for `Proposer` aggregates. */
@@ -6501,116 +7026,6 @@ export enum ProposersOrderBy {
   Natural = 'NATURAL',
   PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
   PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
-  ProposalVotesByVoterIdAverageBlockIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_AVERAGE_BLOCK_ID_ASC',
-  ProposalVotesByVoterIdAverageBlockIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_AVERAGE_BLOCK_ID_DESC',
-  ProposalVotesByVoterIdAverageBlockNumberAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_AVERAGE_BLOCK_NUMBER_ASC',
-  ProposalVotesByVoterIdAverageBlockNumberDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_AVERAGE_BLOCK_NUMBER_DESC',
-  ProposalVotesByVoterIdAverageForAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_AVERAGE_FOR_ASC',
-  ProposalVotesByVoterIdAverageForDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_AVERAGE_FOR_DESC',
-  ProposalVotesByVoterIdAverageIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_AVERAGE_ID_ASC',
-  ProposalVotesByVoterIdAverageIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_AVERAGE_ID_DESC',
-  ProposalVotesByVoterIdAverageProposalIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_AVERAGE_PROPOSAL_ID_ASC',
-  ProposalVotesByVoterIdAverageProposalIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_AVERAGE_PROPOSAL_ID_DESC',
-  ProposalVotesByVoterIdAverageVoterIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_AVERAGE_VOTER_ID_ASC',
-  ProposalVotesByVoterIdAverageVoterIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_AVERAGE_VOTER_ID_DESC',
-  ProposalVotesByVoterIdCountAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_COUNT_ASC',
-  ProposalVotesByVoterIdCountDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_COUNT_DESC',
-  ProposalVotesByVoterIdDistinctCountBlockIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_DISTINCT_COUNT_BLOCK_ID_ASC',
-  ProposalVotesByVoterIdDistinctCountBlockIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_DISTINCT_COUNT_BLOCK_ID_DESC',
-  ProposalVotesByVoterIdDistinctCountBlockNumberAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_DISTINCT_COUNT_BLOCK_NUMBER_ASC',
-  ProposalVotesByVoterIdDistinctCountBlockNumberDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_DISTINCT_COUNT_BLOCK_NUMBER_DESC',
-  ProposalVotesByVoterIdDistinctCountForAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_DISTINCT_COUNT_FOR_ASC',
-  ProposalVotesByVoterIdDistinctCountForDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_DISTINCT_COUNT_FOR_DESC',
-  ProposalVotesByVoterIdDistinctCountIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_DISTINCT_COUNT_ID_ASC',
-  ProposalVotesByVoterIdDistinctCountIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_DISTINCT_COUNT_ID_DESC',
-  ProposalVotesByVoterIdDistinctCountProposalIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_DISTINCT_COUNT_PROPOSAL_ID_ASC',
-  ProposalVotesByVoterIdDistinctCountProposalIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_DISTINCT_COUNT_PROPOSAL_ID_DESC',
-  ProposalVotesByVoterIdDistinctCountVoterIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_DISTINCT_COUNT_VOTER_ID_ASC',
-  ProposalVotesByVoterIdDistinctCountVoterIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_DISTINCT_COUNT_VOTER_ID_DESC',
-  ProposalVotesByVoterIdMaxBlockIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_MAX_BLOCK_ID_ASC',
-  ProposalVotesByVoterIdMaxBlockIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_MAX_BLOCK_ID_DESC',
-  ProposalVotesByVoterIdMaxBlockNumberAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_MAX_BLOCK_NUMBER_ASC',
-  ProposalVotesByVoterIdMaxBlockNumberDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_MAX_BLOCK_NUMBER_DESC',
-  ProposalVotesByVoterIdMaxForAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_MAX_FOR_ASC',
-  ProposalVotesByVoterIdMaxForDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_MAX_FOR_DESC',
-  ProposalVotesByVoterIdMaxIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_MAX_ID_ASC',
-  ProposalVotesByVoterIdMaxIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_MAX_ID_DESC',
-  ProposalVotesByVoterIdMaxProposalIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_MAX_PROPOSAL_ID_ASC',
-  ProposalVotesByVoterIdMaxProposalIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_MAX_PROPOSAL_ID_DESC',
-  ProposalVotesByVoterIdMaxVoterIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_MAX_VOTER_ID_ASC',
-  ProposalVotesByVoterIdMaxVoterIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_MAX_VOTER_ID_DESC',
-  ProposalVotesByVoterIdMinBlockIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_MIN_BLOCK_ID_ASC',
-  ProposalVotesByVoterIdMinBlockIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_MIN_BLOCK_ID_DESC',
-  ProposalVotesByVoterIdMinBlockNumberAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_MIN_BLOCK_NUMBER_ASC',
-  ProposalVotesByVoterIdMinBlockNumberDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_MIN_BLOCK_NUMBER_DESC',
-  ProposalVotesByVoterIdMinForAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_MIN_FOR_ASC',
-  ProposalVotesByVoterIdMinForDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_MIN_FOR_DESC',
-  ProposalVotesByVoterIdMinIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_MIN_ID_ASC',
-  ProposalVotesByVoterIdMinIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_MIN_ID_DESC',
-  ProposalVotesByVoterIdMinProposalIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_MIN_PROPOSAL_ID_ASC',
-  ProposalVotesByVoterIdMinProposalIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_MIN_PROPOSAL_ID_DESC',
-  ProposalVotesByVoterIdMinVoterIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_MIN_VOTER_ID_ASC',
-  ProposalVotesByVoterIdMinVoterIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_MIN_VOTER_ID_DESC',
-  ProposalVotesByVoterIdStddevPopulationBlockIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_POPULATION_BLOCK_ID_ASC',
-  ProposalVotesByVoterIdStddevPopulationBlockIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_POPULATION_BLOCK_ID_DESC',
-  ProposalVotesByVoterIdStddevPopulationBlockNumberAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_POPULATION_BLOCK_NUMBER_ASC',
-  ProposalVotesByVoterIdStddevPopulationBlockNumberDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_POPULATION_BLOCK_NUMBER_DESC',
-  ProposalVotesByVoterIdStddevPopulationForAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_POPULATION_FOR_ASC',
-  ProposalVotesByVoterIdStddevPopulationForDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_POPULATION_FOR_DESC',
-  ProposalVotesByVoterIdStddevPopulationIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_POPULATION_ID_ASC',
-  ProposalVotesByVoterIdStddevPopulationIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_POPULATION_ID_DESC',
-  ProposalVotesByVoterIdStddevPopulationProposalIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_POPULATION_PROPOSAL_ID_ASC',
-  ProposalVotesByVoterIdStddevPopulationProposalIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_POPULATION_PROPOSAL_ID_DESC',
-  ProposalVotesByVoterIdStddevPopulationVoterIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_POPULATION_VOTER_ID_ASC',
-  ProposalVotesByVoterIdStddevPopulationVoterIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_POPULATION_VOTER_ID_DESC',
-  ProposalVotesByVoterIdStddevSampleBlockIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_SAMPLE_BLOCK_ID_ASC',
-  ProposalVotesByVoterIdStddevSampleBlockIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_SAMPLE_BLOCK_ID_DESC',
-  ProposalVotesByVoterIdStddevSampleBlockNumberAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_SAMPLE_BLOCK_NUMBER_ASC',
-  ProposalVotesByVoterIdStddevSampleBlockNumberDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_SAMPLE_BLOCK_NUMBER_DESC',
-  ProposalVotesByVoterIdStddevSampleForAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_SAMPLE_FOR_ASC',
-  ProposalVotesByVoterIdStddevSampleForDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_SAMPLE_FOR_DESC',
-  ProposalVotesByVoterIdStddevSampleIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_SAMPLE_ID_ASC',
-  ProposalVotesByVoterIdStddevSampleIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_SAMPLE_ID_DESC',
-  ProposalVotesByVoterIdStddevSampleProposalIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_SAMPLE_PROPOSAL_ID_ASC',
-  ProposalVotesByVoterIdStddevSampleProposalIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_SAMPLE_PROPOSAL_ID_DESC',
-  ProposalVotesByVoterIdStddevSampleVoterIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_SAMPLE_VOTER_ID_ASC',
-  ProposalVotesByVoterIdStddevSampleVoterIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_SAMPLE_VOTER_ID_DESC',
-  ProposalVotesByVoterIdSumBlockIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_SUM_BLOCK_ID_ASC',
-  ProposalVotesByVoterIdSumBlockIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_SUM_BLOCK_ID_DESC',
-  ProposalVotesByVoterIdSumBlockNumberAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_SUM_BLOCK_NUMBER_ASC',
-  ProposalVotesByVoterIdSumBlockNumberDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_SUM_BLOCK_NUMBER_DESC',
-  ProposalVotesByVoterIdSumForAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_SUM_FOR_ASC',
-  ProposalVotesByVoterIdSumForDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_SUM_FOR_DESC',
-  ProposalVotesByVoterIdSumIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_SUM_ID_ASC',
-  ProposalVotesByVoterIdSumIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_SUM_ID_DESC',
-  ProposalVotesByVoterIdSumProposalIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_SUM_PROPOSAL_ID_ASC',
-  ProposalVotesByVoterIdSumProposalIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_SUM_PROPOSAL_ID_DESC',
-  ProposalVotesByVoterIdSumVoterIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_SUM_VOTER_ID_ASC',
-  ProposalVotesByVoterIdSumVoterIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_SUM_VOTER_ID_DESC',
-  ProposalVotesByVoterIdVariancePopulationBlockIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_POPULATION_BLOCK_ID_ASC',
-  ProposalVotesByVoterIdVariancePopulationBlockIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_POPULATION_BLOCK_ID_DESC',
-  ProposalVotesByVoterIdVariancePopulationBlockNumberAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_POPULATION_BLOCK_NUMBER_ASC',
-  ProposalVotesByVoterIdVariancePopulationBlockNumberDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_POPULATION_BLOCK_NUMBER_DESC',
-  ProposalVotesByVoterIdVariancePopulationForAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_POPULATION_FOR_ASC',
-  ProposalVotesByVoterIdVariancePopulationForDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_POPULATION_FOR_DESC',
-  ProposalVotesByVoterIdVariancePopulationIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_POPULATION_ID_ASC',
-  ProposalVotesByVoterIdVariancePopulationIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_POPULATION_ID_DESC',
-  ProposalVotesByVoterIdVariancePopulationProposalIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_POPULATION_PROPOSAL_ID_ASC',
-  ProposalVotesByVoterIdVariancePopulationProposalIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_POPULATION_PROPOSAL_ID_DESC',
-  ProposalVotesByVoterIdVariancePopulationVoterIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_POPULATION_VOTER_ID_ASC',
-  ProposalVotesByVoterIdVariancePopulationVoterIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_POPULATION_VOTER_ID_DESC',
-  ProposalVotesByVoterIdVarianceSampleBlockIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_SAMPLE_BLOCK_ID_ASC',
-  ProposalVotesByVoterIdVarianceSampleBlockIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_SAMPLE_BLOCK_ID_DESC',
-  ProposalVotesByVoterIdVarianceSampleBlockNumberAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_SAMPLE_BLOCK_NUMBER_ASC',
-  ProposalVotesByVoterIdVarianceSampleBlockNumberDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_SAMPLE_BLOCK_NUMBER_DESC',
-  ProposalVotesByVoterIdVarianceSampleForAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_SAMPLE_FOR_ASC',
-  ProposalVotesByVoterIdVarianceSampleForDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_SAMPLE_FOR_DESC',
-  ProposalVotesByVoterIdVarianceSampleIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_SAMPLE_ID_ASC',
-  ProposalVotesByVoterIdVarianceSampleIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_SAMPLE_ID_DESC',
-  ProposalVotesByVoterIdVarianceSampleProposalIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_SAMPLE_PROPOSAL_ID_ASC',
-  ProposalVotesByVoterIdVarianceSampleProposalIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_SAMPLE_PROPOSAL_ID_DESC',
-  ProposalVotesByVoterIdVarianceSampleVoterIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_SAMPLE_VOTER_ID_ASC',
-  ProposalVotesByVoterIdVarianceSampleVoterIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_SAMPLE_VOTER_ID_DESC',
   SessionProposersAverageIdAsc = 'SESSION_PROPOSERS_AVERAGE_ID_ASC',
   SessionProposersAverageIdDesc = 'SESSION_PROPOSERS_AVERAGE_ID_DESC',
   SessionProposersAverageProposerIdAsc = 'SESSION_PROPOSERS_AVERAGE_PROPOSER_ID_ASC',
@@ -6667,6 +7082,116 @@ export enum ProposersOrderBy {
   SessionProposersVarianceSampleProposerIdDesc = 'SESSION_PROPOSERS_VARIANCE_SAMPLE_PROPOSER_ID_DESC',
   SessionProposersVarianceSampleSessionIdAsc = 'SESSION_PROPOSERS_VARIANCE_SAMPLE_SESSION_ID_ASC',
   SessionProposersVarianceSampleSessionIdDesc = 'SESSION_PROPOSERS_VARIANCE_SAMPLE_SESSION_ID_DESC',
+  VotesAverageBlockIdAsc = 'VOTES_AVERAGE_BLOCK_ID_ASC',
+  VotesAverageBlockIdDesc = 'VOTES_AVERAGE_BLOCK_ID_DESC',
+  VotesAverageBlockNumberAsc = 'VOTES_AVERAGE_BLOCK_NUMBER_ASC',
+  VotesAverageBlockNumberDesc = 'VOTES_AVERAGE_BLOCK_NUMBER_DESC',
+  VotesAverageIdAsc = 'VOTES_AVERAGE_ID_ASC',
+  VotesAverageIdDesc = 'VOTES_AVERAGE_ID_DESC',
+  VotesAverageProposalIdAsc = 'VOTES_AVERAGE_PROPOSAL_ID_ASC',
+  VotesAverageProposalIdDesc = 'VOTES_AVERAGE_PROPOSAL_ID_DESC',
+  VotesAverageVoterIdAsc = 'VOTES_AVERAGE_VOTER_ID_ASC',
+  VotesAverageVoterIdDesc = 'VOTES_AVERAGE_VOTER_ID_DESC',
+  VotesAverageVoteStatusAsc = 'VOTES_AVERAGE_VOTE_STATUS_ASC',
+  VotesAverageVoteStatusDesc = 'VOTES_AVERAGE_VOTE_STATUS_DESC',
+  VotesCountAsc = 'VOTES_COUNT_ASC',
+  VotesCountDesc = 'VOTES_COUNT_DESC',
+  VotesDistinctCountBlockIdAsc = 'VOTES_DISTINCT_COUNT_BLOCK_ID_ASC',
+  VotesDistinctCountBlockIdDesc = 'VOTES_DISTINCT_COUNT_BLOCK_ID_DESC',
+  VotesDistinctCountBlockNumberAsc = 'VOTES_DISTINCT_COUNT_BLOCK_NUMBER_ASC',
+  VotesDistinctCountBlockNumberDesc = 'VOTES_DISTINCT_COUNT_BLOCK_NUMBER_DESC',
+  VotesDistinctCountIdAsc = 'VOTES_DISTINCT_COUNT_ID_ASC',
+  VotesDistinctCountIdDesc = 'VOTES_DISTINCT_COUNT_ID_DESC',
+  VotesDistinctCountProposalIdAsc = 'VOTES_DISTINCT_COUNT_PROPOSAL_ID_ASC',
+  VotesDistinctCountProposalIdDesc = 'VOTES_DISTINCT_COUNT_PROPOSAL_ID_DESC',
+  VotesDistinctCountVoterIdAsc = 'VOTES_DISTINCT_COUNT_VOTER_ID_ASC',
+  VotesDistinctCountVoterIdDesc = 'VOTES_DISTINCT_COUNT_VOTER_ID_DESC',
+  VotesDistinctCountVoteStatusAsc = 'VOTES_DISTINCT_COUNT_VOTE_STATUS_ASC',
+  VotesDistinctCountVoteStatusDesc = 'VOTES_DISTINCT_COUNT_VOTE_STATUS_DESC',
+  VotesMaxBlockIdAsc = 'VOTES_MAX_BLOCK_ID_ASC',
+  VotesMaxBlockIdDesc = 'VOTES_MAX_BLOCK_ID_DESC',
+  VotesMaxBlockNumberAsc = 'VOTES_MAX_BLOCK_NUMBER_ASC',
+  VotesMaxBlockNumberDesc = 'VOTES_MAX_BLOCK_NUMBER_DESC',
+  VotesMaxIdAsc = 'VOTES_MAX_ID_ASC',
+  VotesMaxIdDesc = 'VOTES_MAX_ID_DESC',
+  VotesMaxProposalIdAsc = 'VOTES_MAX_PROPOSAL_ID_ASC',
+  VotesMaxProposalIdDesc = 'VOTES_MAX_PROPOSAL_ID_DESC',
+  VotesMaxVoterIdAsc = 'VOTES_MAX_VOTER_ID_ASC',
+  VotesMaxVoterIdDesc = 'VOTES_MAX_VOTER_ID_DESC',
+  VotesMaxVoteStatusAsc = 'VOTES_MAX_VOTE_STATUS_ASC',
+  VotesMaxVoteStatusDesc = 'VOTES_MAX_VOTE_STATUS_DESC',
+  VotesMinBlockIdAsc = 'VOTES_MIN_BLOCK_ID_ASC',
+  VotesMinBlockIdDesc = 'VOTES_MIN_BLOCK_ID_DESC',
+  VotesMinBlockNumberAsc = 'VOTES_MIN_BLOCK_NUMBER_ASC',
+  VotesMinBlockNumberDesc = 'VOTES_MIN_BLOCK_NUMBER_DESC',
+  VotesMinIdAsc = 'VOTES_MIN_ID_ASC',
+  VotesMinIdDesc = 'VOTES_MIN_ID_DESC',
+  VotesMinProposalIdAsc = 'VOTES_MIN_PROPOSAL_ID_ASC',
+  VotesMinProposalIdDesc = 'VOTES_MIN_PROPOSAL_ID_DESC',
+  VotesMinVoterIdAsc = 'VOTES_MIN_VOTER_ID_ASC',
+  VotesMinVoterIdDesc = 'VOTES_MIN_VOTER_ID_DESC',
+  VotesMinVoteStatusAsc = 'VOTES_MIN_VOTE_STATUS_ASC',
+  VotesMinVoteStatusDesc = 'VOTES_MIN_VOTE_STATUS_DESC',
+  VotesStddevPopulationBlockIdAsc = 'VOTES_STDDEV_POPULATION_BLOCK_ID_ASC',
+  VotesStddevPopulationBlockIdDesc = 'VOTES_STDDEV_POPULATION_BLOCK_ID_DESC',
+  VotesStddevPopulationBlockNumberAsc = 'VOTES_STDDEV_POPULATION_BLOCK_NUMBER_ASC',
+  VotesStddevPopulationBlockNumberDesc = 'VOTES_STDDEV_POPULATION_BLOCK_NUMBER_DESC',
+  VotesStddevPopulationIdAsc = 'VOTES_STDDEV_POPULATION_ID_ASC',
+  VotesStddevPopulationIdDesc = 'VOTES_STDDEV_POPULATION_ID_DESC',
+  VotesStddevPopulationProposalIdAsc = 'VOTES_STDDEV_POPULATION_PROPOSAL_ID_ASC',
+  VotesStddevPopulationProposalIdDesc = 'VOTES_STDDEV_POPULATION_PROPOSAL_ID_DESC',
+  VotesStddevPopulationVoterIdAsc = 'VOTES_STDDEV_POPULATION_VOTER_ID_ASC',
+  VotesStddevPopulationVoterIdDesc = 'VOTES_STDDEV_POPULATION_VOTER_ID_DESC',
+  VotesStddevPopulationVoteStatusAsc = 'VOTES_STDDEV_POPULATION_VOTE_STATUS_ASC',
+  VotesStddevPopulationVoteStatusDesc = 'VOTES_STDDEV_POPULATION_VOTE_STATUS_DESC',
+  VotesStddevSampleBlockIdAsc = 'VOTES_STDDEV_SAMPLE_BLOCK_ID_ASC',
+  VotesStddevSampleBlockIdDesc = 'VOTES_STDDEV_SAMPLE_BLOCK_ID_DESC',
+  VotesStddevSampleBlockNumberAsc = 'VOTES_STDDEV_SAMPLE_BLOCK_NUMBER_ASC',
+  VotesStddevSampleBlockNumberDesc = 'VOTES_STDDEV_SAMPLE_BLOCK_NUMBER_DESC',
+  VotesStddevSampleIdAsc = 'VOTES_STDDEV_SAMPLE_ID_ASC',
+  VotesStddevSampleIdDesc = 'VOTES_STDDEV_SAMPLE_ID_DESC',
+  VotesStddevSampleProposalIdAsc = 'VOTES_STDDEV_SAMPLE_PROPOSAL_ID_ASC',
+  VotesStddevSampleProposalIdDesc = 'VOTES_STDDEV_SAMPLE_PROPOSAL_ID_DESC',
+  VotesStddevSampleVoterIdAsc = 'VOTES_STDDEV_SAMPLE_VOTER_ID_ASC',
+  VotesStddevSampleVoterIdDesc = 'VOTES_STDDEV_SAMPLE_VOTER_ID_DESC',
+  VotesStddevSampleVoteStatusAsc = 'VOTES_STDDEV_SAMPLE_VOTE_STATUS_ASC',
+  VotesStddevSampleVoteStatusDesc = 'VOTES_STDDEV_SAMPLE_VOTE_STATUS_DESC',
+  VotesSumBlockIdAsc = 'VOTES_SUM_BLOCK_ID_ASC',
+  VotesSumBlockIdDesc = 'VOTES_SUM_BLOCK_ID_DESC',
+  VotesSumBlockNumberAsc = 'VOTES_SUM_BLOCK_NUMBER_ASC',
+  VotesSumBlockNumberDesc = 'VOTES_SUM_BLOCK_NUMBER_DESC',
+  VotesSumIdAsc = 'VOTES_SUM_ID_ASC',
+  VotesSumIdDesc = 'VOTES_SUM_ID_DESC',
+  VotesSumProposalIdAsc = 'VOTES_SUM_PROPOSAL_ID_ASC',
+  VotesSumProposalIdDesc = 'VOTES_SUM_PROPOSAL_ID_DESC',
+  VotesSumVoterIdAsc = 'VOTES_SUM_VOTER_ID_ASC',
+  VotesSumVoterIdDesc = 'VOTES_SUM_VOTER_ID_DESC',
+  VotesSumVoteStatusAsc = 'VOTES_SUM_VOTE_STATUS_ASC',
+  VotesSumVoteStatusDesc = 'VOTES_SUM_VOTE_STATUS_DESC',
+  VotesVariancePopulationBlockIdAsc = 'VOTES_VARIANCE_POPULATION_BLOCK_ID_ASC',
+  VotesVariancePopulationBlockIdDesc = 'VOTES_VARIANCE_POPULATION_BLOCK_ID_DESC',
+  VotesVariancePopulationBlockNumberAsc = 'VOTES_VARIANCE_POPULATION_BLOCK_NUMBER_ASC',
+  VotesVariancePopulationBlockNumberDesc = 'VOTES_VARIANCE_POPULATION_BLOCK_NUMBER_DESC',
+  VotesVariancePopulationIdAsc = 'VOTES_VARIANCE_POPULATION_ID_ASC',
+  VotesVariancePopulationIdDesc = 'VOTES_VARIANCE_POPULATION_ID_DESC',
+  VotesVariancePopulationProposalIdAsc = 'VOTES_VARIANCE_POPULATION_PROPOSAL_ID_ASC',
+  VotesVariancePopulationProposalIdDesc = 'VOTES_VARIANCE_POPULATION_PROPOSAL_ID_DESC',
+  VotesVariancePopulationVoterIdAsc = 'VOTES_VARIANCE_POPULATION_VOTER_ID_ASC',
+  VotesVariancePopulationVoterIdDesc = 'VOTES_VARIANCE_POPULATION_VOTER_ID_DESC',
+  VotesVariancePopulationVoteStatusAsc = 'VOTES_VARIANCE_POPULATION_VOTE_STATUS_ASC',
+  VotesVariancePopulationVoteStatusDesc = 'VOTES_VARIANCE_POPULATION_VOTE_STATUS_DESC',
+  VotesVarianceSampleBlockIdAsc = 'VOTES_VARIANCE_SAMPLE_BLOCK_ID_ASC',
+  VotesVarianceSampleBlockIdDesc = 'VOTES_VARIANCE_SAMPLE_BLOCK_ID_DESC',
+  VotesVarianceSampleBlockNumberAsc = 'VOTES_VARIANCE_SAMPLE_BLOCK_NUMBER_ASC',
+  VotesVarianceSampleBlockNumberDesc = 'VOTES_VARIANCE_SAMPLE_BLOCK_NUMBER_DESC',
+  VotesVarianceSampleIdAsc = 'VOTES_VARIANCE_SAMPLE_ID_ASC',
+  VotesVarianceSampleIdDesc = 'VOTES_VARIANCE_SAMPLE_ID_DESC',
+  VotesVarianceSampleProposalIdAsc = 'VOTES_VARIANCE_SAMPLE_PROPOSAL_ID_ASC',
+  VotesVarianceSampleProposalIdDesc = 'VOTES_VARIANCE_SAMPLE_PROPOSAL_ID_DESC',
+  VotesVarianceSampleVoterIdAsc = 'VOTES_VARIANCE_SAMPLE_VOTER_ID_ASC',
+  VotesVarianceSampleVoterIdDesc = 'VOTES_VARIANCE_SAMPLE_VOTER_ID_DESC',
+  VotesVarianceSampleVoteStatusAsc = 'VOTES_VARIANCE_SAMPLE_VOTE_STATUS_ASC',
+  VotesVarianceSampleVoteStatusDesc = 'VOTES_VARIANCE_SAMPLE_VOTE_STATUS_DESC'
 }
 
 export type PublicKey = Node & {
@@ -6686,6 +7211,7 @@ export type PublicKey = Node & {
   uncompressed?: Maybe<Scalars['String']>;
 };
 
+
 export type PublicKeyBlocksBySessionPublicKeyIdAndBlockIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -6695,6 +7221,7 @@ export type PublicKeyBlocksBySessionPublicKeyIdAndBlockIdArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<BlocksOrderBy>>;
 };
+
 
 export type PublicKeySessionsArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -6730,6 +7257,7 @@ export type PublicKeyBlocksBySessionPublicKeyIdAndBlockIdManyToManyConnection = 
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Block` values, with data from `Session`. */
 export type PublicKeyBlocksBySessionPublicKeyIdAndBlockIdManyToManyConnectionGroupedAggregatesArgs = {
   groupBy: Array<BlocksGroupBy>;
@@ -6746,6 +7274,7 @@ export type PublicKeyBlocksBySessionPublicKeyIdAndBlockIdManyToManyEdge = {
   /** Reads and enables pagination through a set of `Session`. */
   sessions: SessionsConnection;
 };
+
 
 /** A `Block` edge in the connection, with data from `Session`. */
 export type PublicKeyBlocksBySessionPublicKeyIdAndBlockIdManyToManyEdgeSessionsArgs = {
@@ -6809,6 +7338,7 @@ export type PublicKeysConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `PublicKey` values. */
 export type PublicKeysConnectionGroupedAggregatesArgs = {
   groupBy: Array<PublicKeysGroupBy>;
@@ -6828,7 +7358,7 @@ export type PublicKeysEdge = {
 export enum PublicKeysGroupBy {
   BlockId = 'BLOCK_ID',
   Compressed = 'COMPRESSED',
-  History = 'HISTORY',
+  History = 'HISTORY'
 }
 
 /** Conditions for `PublicKey` aggregates. */
@@ -6979,7 +7509,7 @@ export enum PublicKeysOrderBy {
   SessionsVarianceSampleSignatureThresholdAsc = 'SESSIONS_VARIANCE_SAMPLE_SIGNATURE_THRESHOLD_ASC',
   SessionsVarianceSampleSignatureThresholdDesc = 'SESSIONS_VARIANCE_SAMPLE_SIGNATURE_THRESHOLD_DESC',
   UncompressedAsc = 'UNCOMPRESSED_ASC',
-  UncompressedDesc = 'UNCOMPRESSED_DESC',
+  UncompressedDesc = 'UNCOMPRESSED_DESC'
 }
 
 /** The root query type which gives access points into the data universe. */
@@ -7097,15 +7627,18 @@ export type Query = Node & {
   validators?: Maybe<ValidatorsConnection>;
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryAccountArgs = {
   id: Scalars['String'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryAccountByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QueryAccountsArgs = {
@@ -7118,6 +7651,7 @@ export type QueryAccountsArgs = {
   orderBy?: InputMaybe<Array<AccountsOrderBy>>;
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryAuthoritiesArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -7129,25 +7663,30 @@ export type QueryAuthoritiesArgs = {
   orderBy?: InputMaybe<Array<AuthoritiesOrderBy>>;
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryAuthorityArgs = {
   id: Scalars['String'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QueryAuthorityByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryBlockArgs = {
   id: Scalars['String'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryBlockByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QueryBlocksArgs = {
@@ -7160,15 +7699,18 @@ export type QueryBlocksArgs = {
   orderBy?: InputMaybe<Array<BlocksOrderBy>>;
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryEventArgs = {
   id: Scalars['String'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryEventByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QueryEventsArgs = {
@@ -7181,15 +7723,18 @@ export type QueryEventsArgs = {
   orderBy?: InputMaybe<Array<EventsOrderBy>>;
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryExtrinsicArgs = {
   id: Scalars['String'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryExtrinsicByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QueryExtrinsicsArgs = {
@@ -7202,15 +7747,18 @@ export type QueryExtrinsicsArgs = {
   orderBy?: InputMaybe<Array<ExtrinsicsOrderBy>>;
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryKeygenThresholdArgs = {
   id: Scalars['String'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryKeygenThresholdByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QueryKeygenThresholdsArgs = {
@@ -7223,20 +7771,24 @@ export type QueryKeygenThresholdsArgs = {
   orderBy?: InputMaybe<Array<KeygenThresholdsOrderBy>>;
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryNodeArgs = {
   nodeId: Scalars['ID'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QueryProposalCounterArgs = {
   id: Scalars['String'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryProposalCounterByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QueryProposalCountersArgs = {
@@ -7249,15 +7801,18 @@ export type QueryProposalCountersArgs = {
   orderBy?: InputMaybe<Array<ProposalCountersOrderBy>>;
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryProposalItemArgs = {
   id: Scalars['String'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryProposalItemByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QueryProposalItemsArgs = {
@@ -7270,15 +7825,18 @@ export type QueryProposalItemsArgs = {
   orderBy?: InputMaybe<Array<ProposalItemsOrderBy>>;
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryProposalTimelineStatusArgs = {
   id: Scalars['String'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryProposalTimelineStatusByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QueryProposalTimelineStatusesArgs = {
@@ -7291,15 +7849,18 @@ export type QueryProposalTimelineStatusesArgs = {
   orderBy?: InputMaybe<Array<ProposalTimelineStatusesOrderBy>>;
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryProposalVoteArgs = {
   id: Scalars['String'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryProposalVoteByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QueryProposalVotesArgs = {
@@ -7312,25 +7873,30 @@ export type QueryProposalVotesArgs = {
   orderBy?: InputMaybe<Array<ProposalVotesOrderBy>>;
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryProposerArgs = {
   id: Scalars['String'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QueryProposerByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryProposerThresholdArgs = {
   id: Scalars['String'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryProposerThresholdByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QueryProposerThresholdsArgs = {
@@ -7343,6 +7909,7 @@ export type QueryProposerThresholdsArgs = {
   orderBy?: InputMaybe<Array<ProposerThresholdsOrderBy>>;
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryProposersArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -7354,15 +7921,18 @@ export type QueryProposersArgs = {
   orderBy?: InputMaybe<Array<ProposersOrderBy>>;
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryPublicKeyArgs = {
   id: Scalars['String'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryPublicKeyByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QueryPublicKeysArgs = {
@@ -7375,25 +7945,30 @@ export type QueryPublicKeysArgs = {
   orderBy?: InputMaybe<Array<PublicKeysOrderBy>>;
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QuerySessionArgs = {
   id: Scalars['String'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QuerySessionByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QuerySessionProposerArgs = {
   id: Scalars['String'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QuerySessionProposerByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QuerySessionProposersArgs = {
@@ -7406,15 +7981,18 @@ export type QuerySessionProposersArgs = {
   orderBy?: InputMaybe<Array<SessionProposersOrderBy>>;
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QuerySessionValidatorArgs = {
   id: Scalars['String'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QuerySessionValidatorByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QuerySessionValidatorsArgs = {
@@ -7427,6 +8005,7 @@ export type QuerySessionValidatorsArgs = {
   orderBy?: InputMaybe<Array<SessionValidatorsOrderBy>>;
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QuerySessionsArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -7438,15 +8017,18 @@ export type QuerySessionsArgs = {
   orderBy?: InputMaybe<Array<SessionsOrderBy>>;
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QuerySignatureThresholdArgs = {
   id: Scalars['String'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QuerySignatureThresholdByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QuerySignatureThresholdsArgs = {
@@ -7459,25 +8041,30 @@ export type QuerySignatureThresholdsArgs = {
   orderBy?: InputMaybe<Array<SignatureThresholdsOrderBy>>;
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryUnsignedProposalsQueueArgs = {
   id: Scalars['String'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QueryUnsignedProposalsQueueByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryUnsignedProposalsQueueItemArgs = {
   id: Scalars['String'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryUnsignedProposalsQueueItemByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QueryUnsignedProposalsQueueItemsArgs = {
@@ -7490,6 +8077,7 @@ export type QueryUnsignedProposalsQueueItemsArgs = {
   orderBy?: InputMaybe<Array<UnsignedProposalsQueueItemsOrderBy>>;
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryUnsignedProposalsQueuesArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -7501,15 +8089,18 @@ export type QueryUnsignedProposalsQueuesArgs = {
   orderBy?: InputMaybe<Array<UnsignedProposalsQueuesOrderBy>>;
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryValidatorArgs = {
   id: Scalars['String'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryValidatorByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QueryValidatorsArgs = {
@@ -7547,6 +8138,7 @@ export type Session = Node & {
   validatorsBySessionValidatorSessionIdAndValidatorId: SessionValidatorsBySessionValidatorSessionIdAndValidatorIdManyToManyConnection;
 };
 
+
 export type SessionProposersBySessionProposerSessionIdAndProposerIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -7556,6 +8148,7 @@ export type SessionProposersBySessionProposerSessionIdAndProposerIdArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<ProposersOrderBy>>;
 };
+
 
 export type SessionSessionProposersArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -7567,6 +8160,7 @@ export type SessionSessionProposersArgs = {
   orderBy?: InputMaybe<Array<SessionProposersOrderBy>>;
 };
 
+
 export type SessionSessionValidatorsArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -7576,6 +8170,7 @@ export type SessionSessionValidatorsArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<SessionValidatorsOrderBy>>;
 };
+
 
 export type SessionValidatorsBySessionValidatorSessionIdAndValidatorIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -7733,6 +8328,7 @@ export type SessionProposersBySessionProposerSessionIdAndProposerIdManyToManyCon
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Proposer` values, with data from `SessionProposer`. */
 export type SessionProposersBySessionProposerSessionIdAndProposerIdManyToManyConnectionGroupedAggregatesArgs = {
   groupBy: Array<ProposersGroupBy>;
@@ -7749,6 +8345,7 @@ export type SessionProposersBySessionProposerSessionIdAndProposerIdManyToManyEdg
   /** Reads and enables pagination through a set of `SessionProposer`. */
   sessionProposers: SessionProposersConnection;
 };
+
 
 /** A `Proposer` edge in the connection, with data from `SessionProposer`. */
 export type SessionProposersBySessionProposerSessionIdAndProposerIdManyToManyEdgeSessionProposersArgs = {
@@ -7778,6 +8375,7 @@ export type SessionProposersConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `SessionProposer` values. */
 export type SessionProposersConnectionGroupedAggregatesArgs = {
   groupBy: Array<SessionProposersGroupBy>;
@@ -7796,7 +8394,7 @@ export type SessionProposersEdge = {
 /** Grouping methods for `SessionProposer` for usage during aggregation. */
 export enum SessionProposersGroupBy {
   ProposerId = 'PROPOSER_ID',
-  SessionId = 'SESSION_ID',
+  SessionId = 'SESSION_ID'
 }
 
 /** Conditions for `SessionProposer` aggregates. */
@@ -7815,7 +8413,7 @@ export enum SessionProposersOrderBy {
   ProposerIdAsc = 'PROPOSER_ID_ASC',
   ProposerIdDesc = 'PROPOSER_ID_DESC',
   SessionIdAsc = 'SESSION_ID_ASC',
-  SessionIdDesc = 'SESSION_ID_DESC',
+  SessionIdDesc = 'SESSION_ID_DESC'
 }
 
 export type SessionStddevPopulationAggregates = {
@@ -8009,6 +8607,7 @@ export type SessionValidatorsBySessionValidatorSessionIdAndValidatorIdManyToMany
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Validator` values, with data from `SessionValidator`. */
 export type SessionValidatorsBySessionValidatorSessionIdAndValidatorIdManyToManyConnectionGroupedAggregatesArgs = {
   groupBy: Array<ValidatorsGroupBy>;
@@ -8025,6 +8624,7 @@ export type SessionValidatorsBySessionValidatorSessionIdAndValidatorIdManyToMany
   /** Reads and enables pagination through a set of `SessionValidator`. */
   sessionValidators: SessionValidatorsConnection;
 };
+
 
 /** A `Validator` edge in the connection, with data from `SessionValidator`. */
 export type SessionValidatorsBySessionValidatorSessionIdAndValidatorIdManyToManyEdgeSessionValidatorsArgs = {
@@ -8054,6 +8654,7 @@ export type SessionValidatorsConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `SessionValidator` values. */
 export type SessionValidatorsConnectionGroupedAggregatesArgs = {
   groupBy: Array<SessionValidatorsGroupBy>;
@@ -8078,7 +8679,7 @@ export enum SessionValidatorsGroupBy {
   NextBestOrder = 'NEXT_BEST_ORDER',
   Reputation = 'REPUTATION',
   SessionId = 'SESSION_ID',
-  ValidatorId = 'VALIDATOR_ID',
+  ValidatorId = 'VALIDATOR_ID'
 }
 
 export type SessionValidatorsHavingAverageInput = {
@@ -8163,7 +8764,7 @@ export enum SessionValidatorsOrderBy {
   SessionIdAsc = 'SESSION_ID_ASC',
   SessionIdDesc = 'SESSION_ID_DESC',
   ValidatorIdAsc = 'VALIDATOR_ID_ASC',
-  ValidatorIdDesc = 'VALIDATOR_ID_DESC',
+  ValidatorIdDesc = 'VALIDATOR_ID_DESC'
 }
 
 export type SessionVariancePopulationAggregates = {
@@ -8195,6 +8796,7 @@ export type SessionsConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Session` values. */
 export type SessionsConnectionGroupedAggregatesArgs = {
   groupBy: Array<SessionsGroupBy>;
@@ -8217,7 +8819,7 @@ export enum SessionsGroupBy {
   KeyGenThreshold = 'KEY_GEN_THRESHOLD',
   ProposerThreshold = 'PROPOSER_THRESHOLD',
   PublicKeyId = 'PUBLIC_KEY_ID',
-  SignatureThreshold = 'SIGNATURE_THRESHOLD',
+  SignatureThreshold = 'SIGNATURE_THRESHOLD'
 }
 
 export type SessionsHavingAverageInput = {
@@ -8509,7 +9111,7 @@ export enum SessionsOrderBy {
   SessionValidatorsVarianceSampleValidatorIdAsc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_VALIDATOR_ID_ASC',
   SessionValidatorsVarianceSampleValidatorIdDesc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_VALIDATOR_ID_DESC',
   SignatureThresholdAsc = 'SIGNATURE_THRESHOLD_ASC',
-  SignatureThresholdDesc = 'SIGNATURE_THRESHOLD_DESC',
+  SignatureThresholdDesc = 'SIGNATURE_THRESHOLD_DESC'
 }
 
 export type SignatureThreshold = Node & {
@@ -8679,6 +9281,7 @@ export type SignatureThresholdsConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `SignatureThreshold` values. */
 export type SignatureThresholdsConnectionGroupedAggregatesArgs = {
   groupBy: Array<SignatureThresholdsGroupBy>;
@@ -8699,7 +9302,7 @@ export enum SignatureThresholdsGroupBy {
   BlockId = 'BLOCK_ID',
   Current = 'CURRENT',
   Next = 'NEXT',
-  Pending = 'PENDING',
+  Pending = 'PENDING'
 }
 
 export type SignatureThresholdsHavingAverageInput = {
@@ -8785,7 +9388,7 @@ export enum SignatureThresholdsOrderBy {
   PendingAsc = 'PENDING_ASC',
   PendingDesc = 'PENDING_DESC',
   PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
-  PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
+  PrimaryKeyDesc = 'PRIMARY_KEY_DESC'
 }
 
 /** A filter to be used against String fields. All fields are combined with a logical ‘and.’ */
@@ -8887,6 +9490,7 @@ export type UnsignedProposalsQueue = Node & {
   unsignedProposalsQueueItemsByQueueId: UnsignedProposalsQueueItemsConnection;
 };
 
+
 export type UnsignedProposalsQueueProposalItemsByUnsignedProposalsQueueItemQueueIdAndProposalIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -8896,6 +9500,7 @@ export type UnsignedProposalsQueueProposalItemsByUnsignedProposalsQueueItemQueue
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<ProposalItemsOrderBy>>;
 };
+
 
 export type UnsignedProposalsQueueUnsignedProposalsQueueItemsByQueueIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -9094,6 +9699,7 @@ export type UnsignedProposalsQueueItemsConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `UnsignedProposalsQueueItem` values. */
 export type UnsignedProposalsQueueItemsConnectionGroupedAggregatesArgs = {
   groupBy: Array<UnsignedProposalsQueueItemsGroupBy>;
@@ -9113,7 +9719,7 @@ export type UnsignedProposalsQueueItemsEdge = {
 export enum UnsignedProposalsQueueItemsGroupBy {
   BlockNumber = 'BLOCK_NUMBER',
   ProposalId = 'PROPOSAL_ID',
-  QueueId = 'QUEUE_ID',
+  QueueId = 'QUEUE_ID'
 }
 
 export type UnsignedProposalsQueueItemsHavingAverageInput = {
@@ -9179,7 +9785,7 @@ export enum UnsignedProposalsQueueItemsOrderBy {
   ProposalIdAsc = 'PROPOSAL_ID_ASC',
   ProposalIdDesc = 'PROPOSAL_ID_DESC',
   QueueIdAsc = 'QUEUE_ID_ASC',
-  QueueIdDesc = 'QUEUE_ID_DESC',
+  QueueIdDesc = 'QUEUE_ID_DESC'
 }
 
 export type UnsignedProposalsQueueMaxAggregates = {
@@ -9211,12 +9817,12 @@ export type UnsignedProposalsQueueProposalItemsByUnsignedProposalsQueueItemQueue
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `ProposalItem` values, with data from `UnsignedProposalsQueueItem`. */
-export type UnsignedProposalsQueueProposalItemsByUnsignedProposalsQueueItemQueueIdAndProposalIdManyToManyConnectionGroupedAggregatesArgs =
-  {
-    groupBy: Array<ProposalItemsGroupBy>;
-    having?: InputMaybe<ProposalItemsHavingInput>;
-  };
+export type UnsignedProposalsQueueProposalItemsByUnsignedProposalsQueueItemQueueIdAndProposalIdManyToManyConnectionGroupedAggregatesArgs = {
+  groupBy: Array<ProposalItemsGroupBy>;
+  having?: InputMaybe<ProposalItemsHavingInput>;
+};
 
 /** A `ProposalItem` edge in the connection, with data from `UnsignedProposalsQueueItem`. */
 export type UnsignedProposalsQueueProposalItemsByUnsignedProposalsQueueItemQueueIdAndProposalIdManyToManyEdge = {
@@ -9229,17 +9835,17 @@ export type UnsignedProposalsQueueProposalItemsByUnsignedProposalsQueueItemQueue
   unsignedProposalsQueueItemsByProposalId: UnsignedProposalsQueueItemsConnection;
 };
 
+
 /** A `ProposalItem` edge in the connection, with data from `UnsignedProposalsQueueItem`. */
-export type UnsignedProposalsQueueProposalItemsByUnsignedProposalsQueueItemQueueIdAndProposalIdManyToManyEdgeUnsignedProposalsQueueItemsByProposalIdArgs =
-  {
-    after?: InputMaybe<Scalars['Cursor']>;
-    before?: InputMaybe<Scalars['Cursor']>;
-    filter?: InputMaybe<UnsignedProposalsQueueItemFilter>;
-    first?: InputMaybe<Scalars['Int']>;
-    last?: InputMaybe<Scalars['Int']>;
-    offset?: InputMaybe<Scalars['Int']>;
-    orderBy?: InputMaybe<Array<UnsignedProposalsQueueItemsOrderBy>>;
-  };
+export type UnsignedProposalsQueueProposalItemsByUnsignedProposalsQueueItemQueueIdAndProposalIdManyToManyEdgeUnsignedProposalsQueueItemsByProposalIdArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  filter?: InputMaybe<UnsignedProposalsQueueItemFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<UnsignedProposalsQueueItemsOrderBy>>;
+};
 
 export type UnsignedProposalsQueueStddevPopulationAggregates = {
   __typename?: 'UnsignedProposalsQueueStddevPopulationAggregates';
@@ -9288,6 +9894,7 @@ export type UnsignedProposalsQueuesConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `UnsignedProposalsQueue` values. */
 export type UnsignedProposalsQueuesConnectionGroupedAggregatesArgs = {
   groupBy: Array<UnsignedProposalsQueuesGroupBy>;
@@ -9306,7 +9913,7 @@ export type UnsignedProposalsQueuesEdge = {
 /** Grouping methods for `UnsignedProposalsQueue` for usage during aggregation. */
 export enum UnsignedProposalsQueuesGroupBy {
   BlockId = 'BLOCK_ID',
-  BlockNumber = 'BLOCK_NUMBER',
+  BlockNumber = 'BLOCK_NUMBER'
 }
 
 export type UnsignedProposalsQueuesHavingAverageInput = {
@@ -9444,7 +10051,7 @@ export enum UnsignedProposalsQueuesOrderBy {
   UnsignedProposalsQueueItemsByQueueIdVarianceSampleProposalIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_VARIANCE_SAMPLE_PROPOSAL_ID_ASC',
   UnsignedProposalsQueueItemsByQueueIdVarianceSampleProposalIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_VARIANCE_SAMPLE_PROPOSAL_ID_DESC',
   UnsignedProposalsQueueItemsByQueueIdVarianceSampleQueueIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_VARIANCE_SAMPLE_QUEUE_ID_ASC',
-  UnsignedProposalsQueueItemsByQueueIdVarianceSampleQueueIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_VARIANCE_SAMPLE_QUEUE_ID_DESC',
+  UnsignedProposalsQueueItemsByQueueIdVarianceSampleQueueIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_VARIANCE_SAMPLE_QUEUE_ID_DESC'
 }
 
 export type Validator = Node & {
@@ -9462,6 +10069,7 @@ export type Validator = Node & {
   sessionsBySessionValidatorValidatorIdAndSessionId: ValidatorSessionsBySessionValidatorValidatorIdAndSessionIdManyToManyConnection;
 };
 
+
 export type ValidatorSessionValidatorsArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -9471,6 +10079,7 @@ export type ValidatorSessionValidatorsArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<SessionValidatorsOrderBy>>;
 };
+
 
 export type ValidatorSessionsBySessionValidatorValidatorIdAndSessionIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -9532,6 +10141,7 @@ export type ValidatorSessionsBySessionValidatorValidatorIdAndSessionIdManyToMany
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Session` values, with data from `SessionValidator`. */
 export type ValidatorSessionsBySessionValidatorValidatorIdAndSessionIdManyToManyConnectionGroupedAggregatesArgs = {
   groupBy: Array<SessionsGroupBy>;
@@ -9548,6 +10158,7 @@ export type ValidatorSessionsBySessionValidatorValidatorIdAndSessionIdManyToMany
   /** Reads and enables pagination through a set of `SessionValidator`. */
   sessionValidators: SessionValidatorsConnection;
 };
+
 
 /** A `Session` edge in the connection, with data from `SessionValidator`. */
 export type ValidatorSessionsBySessionValidatorValidatorIdAndSessionIdManyToManyEdgeSessionValidatorsArgs = {
@@ -9577,6 +10188,7 @@ export type ValidatorsConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Validator` values. */
 export type ValidatorsConnectionGroupedAggregatesArgs = {
   groupBy: Array<ValidatorsGroupBy>;
@@ -9594,7 +10206,7 @@ export type ValidatorsEdge = {
 
 /** Grouping methods for `Validator` for usage during aggregation. */
 export enum ValidatorsGroupBy {
-  AccountId = 'ACCOUNT_ID',
+  AccountId = 'ACCOUNT_ID'
 }
 
 /** Conditions for `Validator` aggregates. */
@@ -9777,8 +10389,40 @@ export enum ValidatorsOrderBy {
   SessionValidatorsVarianceSampleSessionIdAsc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_SESSION_ID_ASC',
   SessionValidatorsVarianceSampleSessionIdDesc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_SESSION_ID_DESC',
   SessionValidatorsVarianceSampleValidatorIdAsc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_VALIDATOR_ID_ASC',
-  SessionValidatorsVarianceSampleValidatorIdDesc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_VALIDATOR_ID_DESC',
+  SessionValidatorsVarianceSampleValidatorIdDesc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_VALIDATOR_ID_DESC'
 }
+
+export enum VoteStatus {
+  Abstain = 'ABSTAIN',
+  Against = 'AGAINST',
+  For = 'FOR'
+}
+
+/** A filter to be used against VoteStatus fields. All fields are combined with a logical ‘and.’ */
+export type VoteStatusFilter = {
+  /** Not equal to the specified value, treating null like an ordinary value. */
+  distinctFrom?: InputMaybe<VoteStatus>;
+  /** Equal to the specified value. */
+  equalTo?: InputMaybe<VoteStatus>;
+  /** Greater than the specified value. */
+  greaterThan?: InputMaybe<VoteStatus>;
+  /** Greater than or equal to the specified value. */
+  greaterThanOrEqualTo?: InputMaybe<VoteStatus>;
+  /** Included in the specified list. */
+  in?: InputMaybe<Array<VoteStatus>>;
+  /** Is null (if `true` is specified) or is not null (if `false` is specified). */
+  isNull?: InputMaybe<Scalars['Boolean']>;
+  /** Less than the specified value. */
+  lessThan?: InputMaybe<VoteStatus>;
+  /** Less than or equal to the specified value. */
+  lessThanOrEqualTo?: InputMaybe<VoteStatus>;
+  /** Equal to the specified value, treating null like an ordinary value. */
+  notDistinctFrom?: InputMaybe<VoteStatus>;
+  /** Not equal to the specified value. */
+  notEqualTo?: InputMaybe<VoteStatus>;
+  /** Not included in the specified list. */
+  notIn?: InputMaybe<Array<VoteStatus>>;
+};
 
 export type _Metadata = {
   __typename?: '_Metadata';
@@ -9801,43 +10445,8 @@ export type ValidatorListingQueryVariables = Exact<{
   offset: Scalars['Int'];
 }>;
 
-export type ValidatorListingQuery = {
-  __typename?: 'Query';
-  validators?: {
-    __typename?: 'ValidatorsConnection';
-    totalCount: number;
-    nodes: Array<{
-      __typename?: 'Validator';
-      authorityId: string;
-      id: string;
-      sessionValidators: {
-        __typename?: 'SessionValidatorsConnection';
-        edges: Array<{
-          __typename?: 'SessionValidatorsEdge';
-          node?: {
-            __typename?: 'SessionValidator';
-            id: string;
-            sessionId: string;
-            reputation: string;
-            isBest: boolean;
-            isNext: boolean;
-            isNextBest: boolean;
-            bestOrder: number;
-            nextBestOrder: number;
-            validator?: { __typename?: 'Validator'; authorityId: string; id: string } | null;
-          } | null;
-        }>;
-      };
-    } | null>;
-    pageInfo: {
-      __typename?: 'PageInfo';
-      endCursor?: any | null;
-      hasNextPage: boolean;
-      hasPreviousPage: boolean;
-      startCursor?: any | null;
-    };
-  } | null;
-};
+
+export type ValidatorListingQuery = { __typename?: 'Query', validators?: { __typename?: 'ValidatorsConnection', totalCount: number, nodes: Array<{ __typename?: 'Validator', authorityId: string, id: string, sessionValidators: { __typename?: 'SessionValidatorsConnection', edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: string, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string } | null } | null }> } } | null>, pageInfo: { __typename?: 'PageInfo', endCursor?: any | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: any | null } } | null };
 
 export type ValidatorSessionsQueryVariables = Exact<{
   keyGen?: InputMaybe<Scalars['Boolean']>;
@@ -9846,268 +10455,60 @@ export type ValidatorSessionsQueryVariables = Exact<{
   offset: Scalars['Int'];
 }>;
 
-export type ValidatorSessionsQuery = {
-  __typename?: 'Query';
-  sessionValidators?: {
-    __typename?: 'SessionValidatorsConnection';
-    totalCount: number;
-    nodes: Array<{
-      __typename?: 'SessionValidator';
-      validator?: { __typename?: 'Validator'; authorityId: string; id: string } | null;
-      session?: {
-        __typename?: 'Session';
-        id: string;
-        publicKey?: {
-          __typename?: 'PublicKey';
-          id: string;
-          compressed?: string | null;
-          uncompressed?: string | null;
-        } | null;
-        sessionValidators: {
-          __typename?: 'SessionValidatorsConnection';
-          totalCount: number;
-          edges: Array<{
-            __typename?: 'SessionValidatorsEdge';
-            node?: {
-              __typename?: 'SessionValidator';
-              id: string;
-              sessionId: string;
-              reputation: string;
-              isBest: boolean;
-              isNext: boolean;
-              isNextBest: boolean;
-              bestOrder: number;
-              nextBestOrder: number;
-              validator?: { __typename?: 'Validator'; authorityId: string; id: string } | null;
-            } | null;
-          }>;
-        };
-      } | null;
-    } | null>;
-    pageInfo: {
-      __typename?: 'PageInfo';
-      endCursor?: any | null;
-      hasNextPage: boolean;
-      hasPreviousPage: boolean;
-      startCursor?: any | null;
-    };
-  } | null;
-};
+
+export type ValidatorSessionsQuery = { __typename?: 'Query', sessionValidators?: { __typename?: 'SessionValidatorsConnection', totalCount: number, nodes: Array<{ __typename?: 'SessionValidator', validator?: { __typename?: 'Validator', authorityId: string, id: string } | null, session?: { __typename?: 'Session', id: string, publicKey?: { __typename?: 'PublicKey', id: string, compressed?: string | null, uncompressed?: string | null } | null, sessionValidators: { __typename?: 'SessionValidatorsConnection', totalCount: number, edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: string, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string } | null } | null }> } } | null } | null>, pageInfo: { __typename?: 'PageInfo', endCursor?: any | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: any | null } } | null };
 
 export type ValidatorOfSessionQueryVariables = Exact<{
   validatorId: Scalars['String'];
   sessionValidatorId: Scalars['String'];
 }>;
 
-export type ValidatorOfSessionQuery = {
-  __typename?: 'Query';
-  sessionValidator?: {
-    __typename?: 'SessionValidator';
-    id: string;
-    sessionId: string;
-    reputation: string;
-    isBest: boolean;
-    isNext: boolean;
-    isNextBest: boolean;
-    bestOrder: number;
-    nextBestOrder: number;
-    session?: { __typename?: 'Session'; keyGenThreshold?: any | null } | null;
-    validator?: { __typename?: 'Validator'; authorityId: string; id: string } | null;
-  } | null;
-  sessionValidators?: {
-    __typename?: 'SessionValidatorsConnection';
-    aggregates?: {
-      __typename?: 'SessionValidatorAggregates';
-      distinctCount?: { __typename?: 'SessionValidatorDistinctCountAggregates'; id?: any | null } | null;
-    } | null;
-  } | null;
-};
 
-export type ValidatorMetaFragment = { __typename?: 'Validator'; authorityId: string; id: string };
+export type ValidatorOfSessionQuery = { __typename?: 'Query', sessionValidator?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: string, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, session?: { __typename?: 'Session', keyGenThreshold?: any | null } | null, validator?: { __typename?: 'Validator', authorityId: string, id: string } | null } | null, sessionValidators?: { __typename?: 'SessionValidatorsConnection', aggregates?: { __typename?: 'SessionValidatorAggregates', distinctCount?: { __typename?: 'SessionValidatorDistinctCountAggregates', id?: any | null } | null } | null } | null };
 
-export type PageInfoMetaFragment = {
-  __typename?: 'PageInfo';
-  endCursor?: any | null;
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
-  startCursor?: any | null;
-};
+export type ValidatorMetaFragment = { __typename?: 'Validator', authorityId: string, id: string };
 
-export type SessionAuthValidatorNodeFragment = {
-  __typename?: 'SessionValidator';
-  id: string;
-  sessionId: string;
-  reputation: string;
-  isBest: boolean;
-  isNext: boolean;
-  isNextBest: boolean;
-  bestOrder: number;
-  nextBestOrder: number;
-  validator?: { __typename?: 'Validator'; authorityId: string; id: string } | null;
-};
+export type PageInfoMetaFragment = { __typename?: 'PageInfo', endCursor?: any | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: any | null };
 
-export type SessionAuthValidatorFragment = {
-  __typename?: 'SessionValidatorsConnection';
-  edges: Array<{
-    __typename?: 'SessionValidatorsEdge';
-    node?: {
-      __typename?: 'SessionValidator';
-      id: string;
-      sessionId: string;
-      reputation: string;
-      isBest: boolean;
-      isNext: boolean;
-      isNextBest: boolean;
-      bestOrder: number;
-      nextBestOrder: number;
-      validator?: { __typename?: 'Validator'; authorityId: string; id: string } | null;
-    } | null;
-  }>;
-};
+export type SessionAuthValidatorNodeFragment = { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: string, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string } | null };
 
-export type SessionAuthFragment = {
-  __typename?: 'Session';
-  sessionValidators: {
-    __typename?: 'SessionValidatorsConnection';
-    edges: Array<{
-      __typename?: 'SessionValidatorsEdge';
-      node?: {
-        __typename?: 'SessionValidator';
-        id: string;
-        sessionId: string;
-        reputation: string;
-        isBest: boolean;
-        isNext: boolean;
-        isNextBest: boolean;
-        bestOrder: number;
-        nextBestOrder: number;
-        validator?: { __typename?: 'Validator'; authorityId: string; id: string } | null;
-      } | null;
-    }>;
-  };
-};
+export type SessionAuthValidatorFragment = { __typename?: 'SessionValidatorsConnection', edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: string, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string } | null } | null }> };
 
-export type ProposalListViewFragment = {
-  __typename?: 'ProposalItem';
-  id: string;
-  data: string;
-  signature?: string | null;
-  type: ProposalType;
-  status: string;
-  proposalVotesByProposalId: {
-    __typename?: 'ProposalVotesConnection';
-    totalCount: number;
-    nodes: Array<{
-      __typename?: 'ProposalVote';
-      id: string;
-      voterId: string;
-      voter?: { __typename?: 'Proposer'; id: string } | null;
-    } | null>;
-  };
-  block?: { __typename?: 'Block'; timestamp?: any | null; number: any } | null;
-};
+export type SessionAuthFragment = { __typename?: 'Session', sessionValidators: { __typename?: 'SessionValidatorsConnection', edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: string, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string } | null } | null }> } };
 
-export type ProposalsVoteListViewFragment = {
-  __typename?: 'ProposalVote';
-  id: string;
-  voterId: string;
-  for: boolean;
-  txHash: string;
-  block?: { __typename?: 'Block'; timestamp?: any | null; number: any } | null;
-};
+export type ProposalListViewFragment = { __typename?: 'ProposalItem', id: string, data: string, signature?: string | null, type: ProposalType, status: string, chainId: number, proposalVotesByProposalId: { __typename?: 'ProposalVotesConnection', totalCount: number, nodes: Array<{ __typename?: 'ProposalVote', id: string, voterId: string, voter?: { __typename?: 'Proposer', id: string } | null } | null> }, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null };
 
-export type MetaDataQueryVariables = Exact<{ [key: string]: never }>;
+export type ProposalsVoteListViewFragment = { __typename?: 'ProposalVote', id: string, voterId: string, voteStatus: VoteStatus, txHash: string, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null };
 
-export type MetaDataQuery = {
-  __typename?: 'Query';
-  _metadata?: { __typename?: '_Metadata'; targetHeight?: number | null; lastProcessedHeight?: number | null } | null;
-};
+export type MetaDataQueryVariables = Exact<{ [key: string]: never; }>;
 
-export type LastBlockQueryVariables = Exact<{ [key: string]: never }>;
 
-export type LastBlockQuery = {
-  __typename?: 'Query';
-  blocks?: {
-    __typename?: 'BlocksConnection';
-    nodes: Array<{ __typename?: 'Block'; timestamp?: any | null; number: any } | null>;
-  } | null;
-};
+export type MetaDataQuery = { __typename?: 'Query', _metadata?: { __typename?: '_Metadata', targetHeight?: number | null, lastProcessedHeight?: number | null } | null };
 
-export type ProposalCounterQueryVariables = Exact<{ [key: string]: never }>;
+export type LastBlockQueryVariables = Exact<{ [key: string]: never; }>;
 
-export type ProposalCounterQuery = {
-  __typename?: 'Query';
-  proposalCounters?: {
-    __typename?: 'ProposalCountersConnection';
-    nodes: Array<{
-      __typename?: 'ProposalCounter';
-      id: string;
-      blockNumber: number;
-      unSignedProposalsCount: number;
-      signedProposalsCount: number;
-      statusMap?: any | null;
-      unSignedProposalsMap?: any | null;
-      signedProposalsMap?: any | null;
-    } | null>;
-  } | null;
-};
+
+export type LastBlockQuery = { __typename?: 'Query', blocks?: { __typename?: 'BlocksConnection', nodes: Array<{ __typename?: 'Block', timestamp?: any | null, number: any } | null> } | null };
+
+export type ProposalCounterQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ProposalCounterQuery = { __typename?: 'Query', proposalCounters?: { __typename?: 'ProposalCountersConnection', nodes: Array<{ __typename?: 'ProposalCounter', id: string, blockNumber: number, unSignedProposalsCount: number, signedProposalsCount: number, statusMap?: any | null, unSignedProposalsMap?: any | null, signedProposalsMap?: any | null } | null> } | null };
 
 export type ProposalsQueryVariables = Exact<{
   perPage: Scalars['Int'];
   offset: Scalars['Int'];
 }>;
 
-export type ProposalsQuery = {
-  __typename?: 'Query';
-  proposalItems?: {
-    __typename?: 'ProposalItemsConnection';
-    totalCount: number;
-    nodes: Array<{
-      __typename?: 'ProposalItem';
-      id: string;
-      data: string;
-      signature?: string | null;
-      type: ProposalType;
-      status: string;
-      proposalVotesByProposalId: {
-        __typename?: 'ProposalVotesConnection';
-        totalCount: number;
-        nodes: Array<{
-          __typename?: 'ProposalVote';
-          id: string;
-          voterId: string;
-          voter?: { __typename?: 'Proposer'; id: string } | null;
-        } | null>;
-      };
-      block?: { __typename?: 'Block'; timestamp?: any | null; number: any } | null;
-    } | null>;
-    pageInfo: {
-      __typename?: 'PageInfo';
-      endCursor?: any | null;
-      hasNextPage: boolean;
-      hasPreviousPage: boolean;
-      startCursor?: any | null;
-    };
-  } | null;
-};
+
+export type ProposalsQuery = { __typename?: 'Query', proposalItems?: { __typename?: 'ProposalItemsConnection', totalCount: number, nodes: Array<{ __typename?: 'ProposalItem', id: string, data: string, signature?: string | null, type: ProposalType, status: string, chainId: number, proposalVotesByProposalId: { __typename?: 'ProposalVotesConnection', totalCount: number, nodes: Array<{ __typename?: 'ProposalVote', id: string, voterId: string, voter?: { __typename?: 'Proposer', id: string } | null } | null> }, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null } | null>, pageInfo: { __typename?: 'PageInfo', endCursor?: any | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: any | null } } | null };
 
 export type ProposalsCounterQueryVariables = Exact<{
   id: Scalars['String'];
 }>;
 
-export type ProposalsCounterQuery = {
-  __typename?: 'Query';
-  proposalCounter?: {
-    __typename?: 'ProposalCounter';
-    id: string;
-    signedProposalsMap?: any | null;
-    unSignedProposalsMap?: any | null;
-    signedProposalsCount: number;
-    unSignedProposalsCount: number;
-    statusMap?: any | null;
-    block?: { __typename?: 'Block'; number: any; timestamp?: any | null } | null;
-  } | null;
-};
+
+export type ProposalsCounterQuery = { __typename?: 'Query', proposalCounter?: { __typename?: 'ProposalCounter', id: string, signedProposalsMap?: any | null, unSignedProposalsMap?: any | null, signedProposalsCount: number, unSignedProposalsCount: number, statusMap?: any | null, block?: { __typename?: 'Block', number: any, timestamp?: any | null } | null } | null };
 
 export type ProposalsOverviewQueryVariables = Exact<{
   startRange: BigFloatFilter;
@@ -10115,488 +10516,182 @@ export type ProposalsOverviewQueryVariables = Exact<{
   sessionId: Scalars['String'];
 }>;
 
-export type ProposalsOverviewQuery = {
-  __typename?: 'Query';
-  session?: {
-    __typename?: 'Session';
-    id: string;
-    proposerThreshold?: any | null;
-    sessionProposers: { __typename?: 'SessionProposersConnection'; totalCount: number };
-    sessionValidators: { __typename?: 'SessionValidatorsConnection'; totalCount: number };
-  } | null;
-  openProposals?: {
-    __typename?: 'ProposalItemsConnection';
-    totalCount: number;
-    nodes: Array<{
-      __typename?: 'ProposalItem';
-      id: string;
-      data: string;
-      signature?: string | null;
-      type: ProposalType;
-      status: string;
-      proposalVotesByProposalId: {
-        __typename?: 'ProposalVotesConnection';
-        totalCount: number;
-        nodes: Array<{
-          __typename?: 'ProposalVote';
-          id: string;
-          voterId: string;
-          voter?: { __typename?: 'Proposer'; id: string } | null;
-        } | null>;
-      };
-      block?: { __typename?: 'Block'; timestamp?: any | null; number: any } | null;
-    } | null>;
-    pageInfo: {
-      __typename?: 'PageInfo';
-      endCursor?: any | null;
-      hasNextPage: boolean;
-      hasPreviousPage: boolean;
-      startCursor?: any | null;
-    };
-  } | null;
-  open?: { __typename?: 'ProposalTimelineStatusesConnection'; totalCount: number } | null;
-  signed?: { __typename?: 'ProposalTimelineStatusesConnection'; totalCount: number } | null;
-  reject?: { __typename?: 'ProposalTimelineStatusesConnection'; totalCount: number } | null;
-  accepted?: { __typename?: 'ProposalTimelineStatusesConnection'; totalCount: number } | null;
-};
+
+export type ProposalsOverviewQuery = { __typename?: 'Query', session?: { __typename?: 'Session', id: string, proposerThreshold?: any | null, sessionProposers: { __typename?: 'SessionProposersConnection', totalCount: number }, sessionValidators: { __typename?: 'SessionValidatorsConnection', totalCount: number } } | null, openProposals?: { __typename?: 'ProposalItemsConnection', totalCount: number, nodes: Array<{ __typename?: 'ProposalItem', id: string, data: string, signature?: string | null, type: ProposalType, status: string, chainId: number, proposalVotesByProposalId: { __typename?: 'ProposalVotesConnection', totalCount: number, nodes: Array<{ __typename?: 'ProposalVote', id: string, voterId: string, voter?: { __typename?: 'Proposer', id: string } | null } | null> }, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null } | null>, pageInfo: { __typename?: 'PageInfo', endCursor?: any | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: any | null } } | null, open?: { __typename?: 'ProposalTimelineStatusesConnection', totalCount: number } | null, signed?: { __typename?: 'ProposalTimelineStatusesConnection', totalCount: number } | null, reject?: { __typename?: 'ProposalTimelineStatusesConnection', totalCount: number } | null, accepted?: { __typename?: 'ProposalTimelineStatusesConnection', totalCount: number } | null };
 
 export type ProposalVotesQueryVariables = Exact<{
   perPage: Scalars['Int'];
   offset: Scalars['Int'];
   proposalId: Scalars['String'];
-  for?: InputMaybe<BooleanFilter>;
+  for?: InputMaybe<VoteStatusFilter>;
 }>;
 
-export type ProposalVotesQuery = {
-  __typename?: 'Query';
-  proposalVotes?: {
-    __typename?: 'ProposalVotesConnection';
-    totalCount: number;
-    nodes: Array<{
-      __typename?: 'ProposalVote';
-      id: string;
-      voterId: string;
-      for: boolean;
-      txHash: string;
-      block?: { __typename?: 'Block'; timestamp?: any | null; number: any } | null;
-    } | null>;
-    pageInfo: {
-      __typename?: 'PageInfo';
-      endCursor?: any | null;
-      hasNextPage: boolean;
-      hasPreviousPage: boolean;
-      startCursor?: any | null;
-    };
-  } | null;
-};
+
+export type ProposalVotesQuery = { __typename?: 'Query', proposalVotes?: { __typename?: 'ProposalVotesConnection', totalCount: number, nodes: Array<{ __typename?: 'ProposalVote', id: string, voterId: string, voteStatus: VoteStatus, txHash: string, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null } | null>, pageInfo: { __typename?: 'PageInfo', endCursor?: any | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: any | null } } | null };
 
 export type ProposalDetailsQueryVariables = Exact<{
   id: Scalars['String'];
   targetSessionId: Scalars['String'];
 }>;
 
-export type ProposalDetailsQuery = {
-  __typename?: 'Query';
-  session?: {
-    __typename?: 'Session';
-    id: string;
-    sessionProposers: { __typename?: 'SessionProposersConnection'; totalCount: number };
-  } | null;
-  proposalItem?: {
-    __typename?: 'ProposalItem';
-    id: string;
-    data: string;
-    signature?: string | null;
-    type: ProposalType;
-    status: string;
-    proposalTimelineStatuses: {
-      __typename?: 'ProposalTimelineStatusesConnection';
-      nodes: Array<{
-        __typename?: 'ProposalTimelineStatus';
-        id: string;
-        status: ProposalStatus;
-        blockNumber: any;
-        timestamp: any;
-      } | null>;
-    };
-    votesFor: { __typename?: 'ProposalVotesConnection'; totalCount: number };
-    totalVotes: { __typename?: 'ProposalVotesConnection'; totalCount: number };
-    block?: { __typename?: 'Block'; timestamp?: any | null; number: any } | null;
-  } | null;
-};
+
+export type ProposalDetailsQuery = { __typename?: 'Query', session?: { __typename?: 'Session', id: string, sessionProposers: { __typename?: 'SessionProposersConnection', totalCount: number } } | null, proposalItem?: { __typename?: 'ProposalItem', id: string, data: string, signature?: string | null, type: ProposalType, status: string, proposalTimelineStatuses: { __typename?: 'ProposalTimelineStatusesConnection', nodes: Array<{ __typename?: 'ProposalTimelineStatus', id: string, status: ProposalStatus, blockNumber: any, timestamp: any } | null> }, votesFor: { __typename?: 'ProposalVotesConnection', totalCount: number }, abstain: { __typename?: 'ProposalVotesConnection', totalCount: number }, totalVotes: { __typename?: 'ProposalVotesConnection', totalCount: number }, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null } | null };
 
 export type EnsureProposalsQueryVariables = Exact<{
   ids: Array<Scalars['String']> | Scalars['String'];
 }>;
 
-export type EnsureProposalsQuery = {
-  __typename?: 'Query';
-  proposalItems?: {
-    __typename?: 'ProposalItemsConnection';
-    nodes: Array<{ __typename?: 'ProposalItem'; id: string } | null>;
-  } | null;
-};
+
+export type EnsureProposalsQuery = { __typename?: 'Query', proposalItems?: { __typename?: 'ProposalItemsConnection', nodes: Array<{ __typename?: 'ProposalItem', id: string } | null> } | null };
 
 export type PublicKeysQueryVariables = Exact<{
   PerPage?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
 }>;
 
-export type PublicKeysQuery = {
-  __typename?: 'Query';
-  publicKeys?: {
-    __typename?: 'PublicKeysConnection';
-    totalCount: number;
-    nodes: Array<{
-      __typename?: 'PublicKey';
-      id: string;
-      compressed?: string | null;
-      uncompressed?: string | null;
-      history: any;
-      block?: { __typename?: 'Block'; timestamp?: any | null; number: any } | null;
-      sessions: {
-        __typename?: 'SessionsConnection';
-        nodes: Array<{
-          __typename?: 'Session';
-          id: string;
-          keyGenThreshold?: any | null;
-          signatureThreshold?: any | null;
-          sessionValidators: {
-            __typename?: 'SessionValidatorsConnection';
-            edges: Array<{
-              __typename?: 'SessionValidatorsEdge';
-              node?: {
-                __typename?: 'SessionValidator';
-                id: string;
-                sessionId: string;
-                reputation: string;
-                isBest: boolean;
-                isNext: boolean;
-                isNextBest: boolean;
-                bestOrder: number;
-                nextBestOrder: number;
-                validator?: { __typename?: 'Validator'; authorityId: string; id: string } | null;
-              } | null;
-            }>;
-          };
-        } | null>;
-      };
-    } | null>;
-    pageInfo: {
-      __typename?: 'PageInfo';
-      hasNextPage: boolean;
-      hasPreviousPage: boolean;
-      startCursor?: any | null;
-      endCursor?: any | null;
-    };
-  } | null;
-};
+
+export type PublicKeysQuery = { __typename?: 'Query', publicKeys?: { __typename?: 'PublicKeysConnection', totalCount: number, nodes: Array<{ __typename?: 'PublicKey', id: string, compressed?: string | null, uncompressed?: string | null, history: any, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null, sessions: { __typename?: 'SessionsConnection', nodes: Array<{ __typename?: 'Session', id: string, keyGenThreshold?: any | null, signatureThreshold?: any | null, sessionValidators: { __typename?: 'SessionValidatorsConnection', edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: string, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string } | null } | null }> } } | null> } } | null>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: any | null, endCursor?: any | null } } | null };
 
 export type PublicKeyQueryVariables = Exact<{
   id: Scalars['String'];
 }>;
 
-export type PublicKeyQuery = {
-  __typename?: 'Query';
-  publicKey?: {
-    __typename?: 'PublicKey';
-    id: string;
-    compressed?: string | null;
-    uncompressed?: string | null;
-    history: any;
-    block?: { __typename?: 'Block'; timestamp?: any | null; number: any } | null;
-    sessions: {
-      __typename?: 'SessionsConnection';
-      nodes: Array<{
-        __typename?: 'Session';
-        id: string;
-        keyGenThreshold?: any | null;
-        signatureThreshold?: any | null;
-        sessionValidators: {
-          __typename?: 'SessionValidatorsConnection';
-          edges: Array<{
-            __typename?: 'SessionValidatorsEdge';
-            node?: {
-              __typename?: 'SessionValidator';
-              id: string;
-              sessionId: string;
-              reputation: string;
-              isBest: boolean;
-              isNext: boolean;
-              isNextBest: boolean;
-              bestOrder: number;
-              nextBestOrder: number;
-              validator?: { __typename?: 'Validator'; authorityId: string; id: string } | null;
-            } | null;
-          }>;
-        };
-      } | null>;
-    };
-  } | null;
-};
+
+export type PublicKeyQuery = { __typename?: 'Query', publicKey?: { __typename?: 'PublicKey', id: string, compressed?: string | null, uncompressed?: string | null, history: any, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null, sessions: { __typename?: 'SessionsConnection', nodes: Array<{ __typename?: 'Session', id: string, keyGenThreshold?: any | null, signatureThreshold?: any | null, sessionValidators: { __typename?: 'SessionValidatorsConnection', edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: string, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string } | null } | null }> } } | null> } } | null };
 
 export type SessionKeyIdsQueryVariables = Exact<{
   keys: Array<Scalars['String']> | Scalars['String'];
 }>;
 
-export type SessionKeyIdsQuery = {
-  __typename?: 'Query';
-  sessions?: {
-    __typename?: 'SessionsConnection';
-    nodes: Array<{
-      __typename?: 'Session';
-      id: string;
-      publicKey?: { __typename?: 'PublicKey'; id: string } | null;
-    } | null>;
-  } | null;
-};
 
-export type CurrentSessionAuthoritiesQueryVariables = Exact<{ [key: string]: never }>;
+export type SessionKeyIdsQuery = { __typename?: 'Query', sessions?: { __typename?: 'SessionsConnection', nodes: Array<{ __typename?: 'Session', id: string, publicKey?: { __typename?: 'PublicKey', id: string } | null } | null> } | null };
 
-export type CurrentSessionAuthoritiesQuery = {
-  __typename?: 'Query';
-  sessions?: {
-    __typename?: 'SessionsConnection';
-    nodes: Array<{
-      __typename?: 'Session';
-      id: string;
-      blockId: string;
-      signatureThreshold?: any | null;
-      keyGenThreshold?: any | null;
-      proposerThreshold?: any | null;
-      publicKey?: { __typename?: 'PublicKey'; compressed?: string | null } | null;
-      block?: { __typename?: 'Block'; id: string; timestamp?: any | null } | null;
-      sessionValidators: {
-        __typename?: 'SessionValidatorsConnection';
-        edges: Array<{
-          __typename?: 'SessionValidatorsEdge';
-          node?: {
-            __typename?: 'SessionValidator';
-            id: string;
-            sessionId: string;
-            reputation: string;
-            isBest: boolean;
-            isNext: boolean;
-            isNextBest: boolean;
-            bestOrder: number;
-            nextBestOrder: number;
-            validator?: { __typename?: 'Validator'; authorityId: string; id: string } | null;
-          } | null;
-        }>;
-      };
-    } | null>;
-  } | null;
-};
+export type CurrentSessionAuthoritiesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type CurrentSessionAuthoritiesQuery = { __typename?: 'Query', sessions?: { __typename?: 'SessionsConnection', nodes: Array<{ __typename?: 'Session', id: string, blockId: string, signatureThreshold?: any | null, keyGenThreshold?: any | null, proposerThreshold?: any | null, publicKey?: { __typename?: 'PublicKey', compressed?: string | null } | null, block?: { __typename?: 'Block', id: string, timestamp?: any | null } | null, sessionValidators: { __typename?: 'SessionValidatorsConnection', edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: string, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string } | null } | null }> } } | null> } | null };
 
 export type SessionKeysQueryVariables = Exact<{
   SessionId: Array<Scalars['String']> | Scalars['String'];
 }>;
 
-export type SessionKeysQuery = {
-  __typename?: 'Query';
-  sessions?: {
-    __typename?: 'SessionsConnection';
-    nodes: Array<{
-      __typename?: 'Session';
-      id: string;
-      publicKey?: {
-        __typename?: 'PublicKey';
-        id: string;
-        compressed?: string | null;
-        uncompressed?: string | null;
-        block?: { __typename?: 'Block'; timestamp?: any | null; number: any } | null;
-      } | null;
-      sessionValidators: {
-        __typename?: 'SessionValidatorsConnection';
-        edges: Array<{
-          __typename?: 'SessionValidatorsEdge';
-          node?: {
-            __typename?: 'SessionValidator';
-            id: string;
-            sessionId: string;
-            reputation: string;
-            isBest: boolean;
-            isNext: boolean;
-            isNextBest: boolean;
-            bestOrder: number;
-            nextBestOrder: number;
-            validator?: { __typename?: 'Validator'; authorityId: string; id: string } | null;
-          } | null;
-        }>;
-      };
-    } | null>;
-  } | null;
-};
+
+export type SessionKeysQuery = { __typename?: 'Query', sessions?: { __typename?: 'SessionsConnection', nodes: Array<{ __typename?: 'Session', id: string, publicKey?: { __typename?: 'PublicKey', id: string, compressed?: string | null, uncompressed?: string | null, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null } | null, sessionValidators: { __typename?: 'SessionValidatorsConnection', edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: string, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string } | null } | null }> } } | null> } | null };
 
 export type SessionThresholdHistoryQueryVariables = Exact<{
   offset: Scalars['Int'];
   perPage: Scalars['Int'];
 }>;
 
-export type SessionThresholdHistoryQuery = {
-  __typename?: 'Query';
-  sessions?: {
-    __typename?: 'SessionsConnection';
-    totalCount: number;
-    nodes: Array<{
-      __typename?: 'Session';
-      id: string;
-      signatureThreshold?: any | null;
-      keyGenThreshold?: any | null;
-      block?: { __typename?: 'Block'; id: string; timestamp?: any | null } | null;
-    } | null>;
-    pageInfo: {
-      __typename?: 'PageInfo';
-      endCursor?: any | null;
-      hasNextPage: boolean;
-      hasPreviousPage: boolean;
-      startCursor?: any | null;
-    };
-  } | null;
-};
+
+export type SessionThresholdHistoryQuery = { __typename?: 'Query', sessions?: { __typename?: 'SessionsConnection', totalCount: number, nodes: Array<{ __typename?: 'Session', id: string, signatureThreshold?: any | null, keyGenThreshold?: any | null, block?: { __typename?: 'Block', id: string, timestamp?: any | null } | null } | null>, pageInfo: { __typename?: 'PageInfo', endCursor?: any | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: any | null } } | null };
 
 export type SessionThresholdsQueryVariables = Exact<{
   sessionId: Scalars['String'];
 }>;
 
-export type SessionThresholdsQuery = {
-  __typename?: 'Query';
-  session?: {
-    __typename?: 'Session';
-    id: string;
-    signatureThreshold?: any | null;
-    keyGenThreshold?: any | null;
-    proposersCount: { __typename?: 'SessionProposersConnection'; totalCount: number };
-    publicKey?: {
-      __typename?: 'PublicKey';
-      id: string;
-      compressed?: string | null;
-      uncompressed?: string | null;
-      block?: { __typename?: 'Block'; timestamp?: any | null; number: any } | null;
-    } | null;
-    sessionValidators: {
-      __typename?: 'SessionValidatorsConnection';
-      edges: Array<{
-        __typename?: 'SessionValidatorsEdge';
-        node?: {
-          __typename?: 'SessionValidator';
-          id: string;
-          sessionId: string;
-          reputation: string;
-          isBest: boolean;
-          isNext: boolean;
-          isNextBest: boolean;
-          bestOrder: number;
-          nextBestOrder: number;
-          validator?: { __typename?: 'Validator'; authorityId: string; id: string } | null;
-        } | null;
-      }>;
-    };
-  } | null;
-};
+
+export type SessionThresholdsQuery = { __typename?: 'Query', session?: { __typename?: 'Session', id: string, signatureThreshold?: any | null, keyGenThreshold?: any | null, proposersCount: { __typename?: 'SessionProposersConnection', totalCount: number }, publicKey?: { __typename?: 'PublicKey', id: string, compressed?: string | null, uncompressed?: string | null, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null } | null, sessionValidators: { __typename?: 'SessionValidatorsConnection', edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: string, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string } | null } | null }> } } | null };
 
 export const PageInfoMetaFragmentDoc = gql`
-  fragment PageInfoMeta on PageInfo {
-    endCursor
-    hasNextPage
-    hasPreviousPage
-    startCursor
-  }
-`;
+    fragment PageInfoMeta on PageInfo {
+  endCursor
+  hasNextPage
+  hasPreviousPage
+  startCursor
+}
+    `;
 export const ValidatorMetaFragmentDoc = gql`
-  fragment ValidatorMeta on Validator {
-    authorityId
-    id
-  }
-`;
+    fragment ValidatorMeta on Validator {
+  authorityId
+  id
+}
+    `;
 export const SessionAuthValidatorNodeFragmentDoc = gql`
-  fragment SessionAuthValidatorNode on SessionValidator {
-    id
-    sessionId
-    validator {
-      ...ValidatorMeta
-    }
-    reputation
-    isBest
-    isNext
-    isNextBest
-    bestOrder
-    nextBestOrder
+    fragment SessionAuthValidatorNode on SessionValidator {
+  id
+  sessionId
+  validator {
+    ...ValidatorMeta
   }
-  ${ValidatorMetaFragmentDoc}
-`;
+  reputation
+  isBest
+  isNext
+  isNextBest
+  bestOrder
+  nextBestOrder
+}
+    ${ValidatorMetaFragmentDoc}`;
 export const SessionAuthValidatorFragmentDoc = gql`
-  fragment SessionAuthValidator on SessionValidatorsConnection {
-    edges {
-      node {
-        ...SessionAuthValidatorNode
-      }
+    fragment SessionAuthValidator on SessionValidatorsConnection {
+  edges {
+    node {
+      ...SessionAuthValidatorNode
     }
   }
-  ${SessionAuthValidatorNodeFragmentDoc}
-`;
+}
+    ${SessionAuthValidatorNodeFragmentDoc}`;
 export const SessionAuthFragmentDoc = gql`
-  fragment SessionAuth on Session {
-    sessionValidators {
-      ...SessionAuthValidator
-    }
+    fragment SessionAuth on Session {
+  sessionValidators {
+    ...SessionAuthValidator
   }
-  ${SessionAuthValidatorFragmentDoc}
-`;
+}
+    ${SessionAuthValidatorFragmentDoc}`;
 export const ProposalListViewFragmentDoc = gql`
-  fragment ProposalListView on ProposalItem {
-    id
-    data
-    signature
-    type
-    status
-    proposalVotesByProposalId(orderBy: [BLOCK_NUMBER_DESC], first: 3) {
-      nodes {
+    fragment ProposalListView on ProposalItem {
+  id
+  data
+  signature
+  type
+  status
+  chainId
+  proposalVotesByProposalId(orderBy: [BLOCK_NUMBER_DESC], first: 3) {
+    nodes {
+      id
+      voterId
+      voter {
         id
-        voterId
-        voter {
-          id
-        }
       }
-      totalCount
     }
-    block {
-      timestamp
-      number
-    }
+    totalCount
   }
-`;
+  block {
+    timestamp
+    number
+  }
+}
+    `;
 export const ProposalsVoteListViewFragmentDoc = gql`
-  fragment ProposalsVoteListView on ProposalVote {
-    id
-    voterId
-    for
-    txHash: voterId
-    block {
-      timestamp
-      number
-    }
+    fragment ProposalsVoteListView on ProposalVote {
+  id
+  voterId
+  voteStatus
+  txHash: voterId
+  block {
+    timestamp
+    number
   }
-`;
+}
+    `;
 export const ValidatorListingDocument = gql`
-  query ValidatorListing($sessionId: String!, $perPage: Int!, $offset: Int!) {
-    validators(offset: $offset, first: $perPage) {
-      nodes {
-        ...ValidatorMeta
-        sessionValidators(first: 1, filter: { sessionId: { equalTo: $sessionId } }) {
-          ...SessionAuthValidator
-        }
-      }
-      totalCount
-      pageInfo {
-        ...PageInfoMeta
+    query ValidatorListing($sessionId: String!, $perPage: Int!, $offset: Int!) {
+  validators(offset: $offset, first: $perPage) {
+    nodes {
+      ...ValidatorMeta
+      sessionValidators(first: 1, filter: {sessionId: {equalTo: $sessionId}}) {
+        ...SessionAuthValidator
       }
     }
+    totalCount
+    pageInfo {
+      ...PageInfoMeta
+    }
   }
-  ${ValidatorMetaFragmentDoc}
-  ${SessionAuthValidatorFragmentDoc}
-  ${PageInfoMetaFragmentDoc}
-`;
+}
+    ${ValidatorMetaFragmentDoc}
+${SessionAuthValidatorFragmentDoc}
+${PageInfoMetaFragmentDoc}`;
 
 /**
  * __useValidatorListingQuery__
@@ -10616,55 +10711,50 @@ export const ValidatorListingDocument = gql`
  *   },
  * });
  */
-export function useValidatorListingQuery(
-  baseOptions: Apollo.QueryHookOptions<ValidatorListingQuery, ValidatorListingQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<ValidatorListingQuery, ValidatorListingQueryVariables>(ValidatorListingDocument, options);
-}
-export function useValidatorListingLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<ValidatorListingQuery, ValidatorListingQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<ValidatorListingQuery, ValidatorListingQueryVariables>(ValidatorListingDocument, options);
-}
+export function useValidatorListingQuery(baseOptions: Apollo.QueryHookOptions<ValidatorListingQuery, ValidatorListingQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ValidatorListingQuery, ValidatorListingQueryVariables>(ValidatorListingDocument, options);
+      }
+export function useValidatorListingLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ValidatorListingQuery, ValidatorListingQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ValidatorListingQuery, ValidatorListingQueryVariables>(ValidatorListingDocument, options);
+        }
 export type ValidatorListingQueryHookResult = ReturnType<typeof useValidatorListingQuery>;
 export type ValidatorListingLazyQueryHookResult = ReturnType<typeof useValidatorListingLazyQuery>;
 export type ValidatorListingQueryResult = Apollo.QueryResult<ValidatorListingQuery, ValidatorListingQueryVariables>;
 export const ValidatorSessionsDocument = gql`
-  query ValidatorSessions($keyGen: Boolean, $validatorId: String!, $perPage: Int!, $offset: Int!) {
-    sessionValidators(
-      filter: { isBest: { equalTo: $keyGen }, validatorId: { equalTo: $validatorId } }
-      offset: $offset
-      first: $perPage
-    ) {
-      nodes {
-        validator {
-          ...ValidatorMeta
-        }
-        session {
-          id
-          publicKey {
-            id
-            compressed
-            uncompressed
-          }
-          sessionValidators(first: 3) {
-            ...SessionAuthValidator
-            totalCount
-          }
-        }
+    query ValidatorSessions($keyGen: Boolean, $validatorId: String!, $perPage: Int!, $offset: Int!) {
+  sessionValidators(
+    filter: {isBest: {equalTo: $keyGen}, validatorId: {equalTo: $validatorId}}
+    offset: $offset
+    first: $perPage
+  ) {
+    nodes {
+      validator {
+        ...ValidatorMeta
       }
-      totalCount
-      pageInfo {
-        ...PageInfoMeta
+      session {
+        id
+        publicKey {
+          id
+          compressed
+          uncompressed
+        }
+        sessionValidators(first: 3) {
+          ...SessionAuthValidator
+          totalCount
+        }
       }
     }
+    totalCount
+    pageInfo {
+      ...PageInfoMeta
+    }
   }
-  ${ValidatorMetaFragmentDoc}
-  ${SessionAuthValidatorFragmentDoc}
-  ${PageInfoMetaFragmentDoc}
-`;
+}
+    ${ValidatorMetaFragmentDoc}
+${SessionAuthValidatorFragmentDoc}
+${PageInfoMetaFragmentDoc}`;
 
 /**
  * __useValidatorSessionsQuery__
@@ -10685,42 +10775,36 @@ export const ValidatorSessionsDocument = gql`
  *   },
  * });
  */
-export function useValidatorSessionsQuery(
-  baseOptions: Apollo.QueryHookOptions<ValidatorSessionsQuery, ValidatorSessionsQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<ValidatorSessionsQuery, ValidatorSessionsQueryVariables>(ValidatorSessionsDocument, options);
-}
-export function useValidatorSessionsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<ValidatorSessionsQuery, ValidatorSessionsQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<ValidatorSessionsQuery, ValidatorSessionsQueryVariables>(
-    ValidatorSessionsDocument,
-    options
-  );
-}
+export function useValidatorSessionsQuery(baseOptions: Apollo.QueryHookOptions<ValidatorSessionsQuery, ValidatorSessionsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ValidatorSessionsQuery, ValidatorSessionsQueryVariables>(ValidatorSessionsDocument, options);
+      }
+export function useValidatorSessionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ValidatorSessionsQuery, ValidatorSessionsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ValidatorSessionsQuery, ValidatorSessionsQueryVariables>(ValidatorSessionsDocument, options);
+        }
 export type ValidatorSessionsQueryHookResult = ReturnType<typeof useValidatorSessionsQuery>;
 export type ValidatorSessionsLazyQueryHookResult = ReturnType<typeof useValidatorSessionsLazyQuery>;
 export type ValidatorSessionsQueryResult = Apollo.QueryResult<ValidatorSessionsQuery, ValidatorSessionsQueryVariables>;
 export const ValidatorOfSessionDocument = gql`
-  query ValidatorOfSession($validatorId: String!, $sessionValidatorId: String!) {
-    sessionValidator(id: $sessionValidatorId) {
-      ...SessionAuthValidatorNode
-      session {
-        keyGenThreshold
-      }
+    query ValidatorOfSession($validatorId: String!, $sessionValidatorId: String!) {
+  sessionValidator(id: $sessionValidatorId) {
+    ...SessionAuthValidatorNode
+    session {
+      keyGenThreshold
     }
-    sessionValidators(filter: { validatorId: { equalTo: $validatorId }, isBest: { equalTo: true } }) {
-      aggregates {
-        distinctCount {
-          id
-        }
+  }
+  sessionValidators(
+    filter: {validatorId: {equalTo: $validatorId}, isBest: {equalTo: true}}
+  ) {
+    aggregates {
+      distinctCount {
+        id
       }
     }
   }
-  ${SessionAuthValidatorNodeFragmentDoc}
-`;
+}
+    ${SessionAuthValidatorNodeFragmentDoc}`;
 
 /**
  * __useValidatorOfSessionQuery__
@@ -10739,38 +10823,25 @@ export const ValidatorOfSessionDocument = gql`
  *   },
  * });
  */
-export function useValidatorOfSessionQuery(
-  baseOptions: Apollo.QueryHookOptions<ValidatorOfSessionQuery, ValidatorOfSessionQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<ValidatorOfSessionQuery, ValidatorOfSessionQueryVariables>(
-    ValidatorOfSessionDocument,
-    options
-  );
-}
-export function useValidatorOfSessionLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<ValidatorOfSessionQuery, ValidatorOfSessionQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<ValidatorOfSessionQuery, ValidatorOfSessionQueryVariables>(
-    ValidatorOfSessionDocument,
-    options
-  );
-}
+export function useValidatorOfSessionQuery(baseOptions: Apollo.QueryHookOptions<ValidatorOfSessionQuery, ValidatorOfSessionQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ValidatorOfSessionQuery, ValidatorOfSessionQueryVariables>(ValidatorOfSessionDocument, options);
+      }
+export function useValidatorOfSessionLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ValidatorOfSessionQuery, ValidatorOfSessionQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ValidatorOfSessionQuery, ValidatorOfSessionQueryVariables>(ValidatorOfSessionDocument, options);
+        }
 export type ValidatorOfSessionQueryHookResult = ReturnType<typeof useValidatorOfSessionQuery>;
 export type ValidatorOfSessionLazyQueryHookResult = ReturnType<typeof useValidatorOfSessionLazyQuery>;
-export type ValidatorOfSessionQueryResult = Apollo.QueryResult<
-  ValidatorOfSessionQuery,
-  ValidatorOfSessionQueryVariables
->;
+export type ValidatorOfSessionQueryResult = Apollo.QueryResult<ValidatorOfSessionQuery, ValidatorOfSessionQueryVariables>;
 export const MetaDataDocument = gql`
-  query MetaData {
-    _metadata {
-      targetHeight
-      lastProcessedHeight
-    }
+    query MetaData {
+  _metadata {
+    targetHeight
+    lastProcessedHeight
   }
-`;
+}
+    `;
 
 /**
  * __useMetaDataQuery__
@@ -10788,26 +10859,26 @@ export const MetaDataDocument = gql`
  * });
  */
 export function useMetaDataQuery(baseOptions?: Apollo.QueryHookOptions<MetaDataQuery, MetaDataQueryVariables>) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<MetaDataQuery, MetaDataQueryVariables>(MetaDataDocument, options);
-}
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<MetaDataQuery, MetaDataQueryVariables>(MetaDataDocument, options);
+      }
 export function useMetaDataLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MetaDataQuery, MetaDataQueryVariables>) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<MetaDataQuery, MetaDataQueryVariables>(MetaDataDocument, options);
-}
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<MetaDataQuery, MetaDataQueryVariables>(MetaDataDocument, options);
+        }
 export type MetaDataQueryHookResult = ReturnType<typeof useMetaDataQuery>;
 export type MetaDataLazyQueryHookResult = ReturnType<typeof useMetaDataLazyQuery>;
 export type MetaDataQueryResult = Apollo.QueryResult<MetaDataQuery, MetaDataQueryVariables>;
 export const LastBlockDocument = gql`
-  query LastBlock {
-    blocks(first: 1, filter: { timestamp: { isNull: false } }, orderBy: [NUMBER_DESC]) {
-      nodes {
-        timestamp
-        number
-      }
+    query LastBlock {
+  blocks(first: 1, filter: {timestamp: {isNull: false}}, orderBy: [NUMBER_DESC]) {
+    nodes {
+      timestamp
+      number
     }
   }
-`;
+}
+    `;
 
 /**
  * __useLastBlockQuery__
@@ -10825,33 +10896,31 @@ export const LastBlockDocument = gql`
  * });
  */
 export function useLastBlockQuery(baseOptions?: Apollo.QueryHookOptions<LastBlockQuery, LastBlockQueryVariables>) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<LastBlockQuery, LastBlockQueryVariables>(LastBlockDocument, options);
-}
-export function useLastBlockLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<LastBlockQuery, LastBlockQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<LastBlockQuery, LastBlockQueryVariables>(LastBlockDocument, options);
-}
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<LastBlockQuery, LastBlockQueryVariables>(LastBlockDocument, options);
+      }
+export function useLastBlockLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<LastBlockQuery, LastBlockQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<LastBlockQuery, LastBlockQueryVariables>(LastBlockDocument, options);
+        }
 export type LastBlockQueryHookResult = ReturnType<typeof useLastBlockQuery>;
 export type LastBlockLazyQueryHookResult = ReturnType<typeof useLastBlockLazyQuery>;
 export type LastBlockQueryResult = Apollo.QueryResult<LastBlockQuery, LastBlockQueryVariables>;
 export const ProposalCounterDocument = gql`
-  query ProposalCounter {
-    proposalCounters(first: 2, offset: 1, orderBy: [BLOCK_NUMBER_DESC]) {
-      nodes {
-        id
-        blockNumber
-        unSignedProposalsCount
-        signedProposalsCount
-        statusMap
-        unSignedProposalsMap
-        signedProposalsMap
-      }
+    query ProposalCounter {
+  proposalCounters(first: 2, offset: 1, orderBy: [BLOCK_NUMBER_DESC]) {
+    nodes {
+      id
+      blockNumber
+      unSignedProposalsCount
+      signedProposalsCount
+      statusMap
+      unSignedProposalsMap
+      signedProposalsMap
     }
   }
-`;
+}
+    `;
 
 /**
  * __useProposalCounterQuery__
@@ -10868,36 +10937,31 @@ export const ProposalCounterDocument = gql`
  *   },
  * });
  */
-export function useProposalCounterQuery(
-  baseOptions?: Apollo.QueryHookOptions<ProposalCounterQuery, ProposalCounterQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<ProposalCounterQuery, ProposalCounterQueryVariables>(ProposalCounterDocument, options);
-}
-export function useProposalCounterLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<ProposalCounterQuery, ProposalCounterQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<ProposalCounterQuery, ProposalCounterQueryVariables>(ProposalCounterDocument, options);
-}
+export function useProposalCounterQuery(baseOptions?: Apollo.QueryHookOptions<ProposalCounterQuery, ProposalCounterQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ProposalCounterQuery, ProposalCounterQueryVariables>(ProposalCounterDocument, options);
+      }
+export function useProposalCounterLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ProposalCounterQuery, ProposalCounterQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ProposalCounterQuery, ProposalCounterQueryVariables>(ProposalCounterDocument, options);
+        }
 export type ProposalCounterQueryHookResult = ReturnType<typeof useProposalCounterQuery>;
 export type ProposalCounterLazyQueryHookResult = ReturnType<typeof useProposalCounterLazyQuery>;
 export type ProposalCounterQueryResult = Apollo.QueryResult<ProposalCounterQuery, ProposalCounterQueryVariables>;
 export const ProposalsDocument = gql`
-  query Proposals($perPage: Int!, $offset: Int!) {
-    proposalItems(first: $perPage, offset: $offset) {
-      nodes {
-        ...ProposalListView
-      }
-      totalCount
-      pageInfo {
-        ...PageInfoMeta
-      }
+    query Proposals($perPage: Int!, $offset: Int!) {
+  proposalItems(first: $perPage, offset: $offset) {
+    nodes {
+      ...ProposalListView
+    }
+    totalCount
+    pageInfo {
+      ...PageInfoMeta
     }
   }
-  ${ProposalListViewFragmentDoc}
-  ${PageInfoMetaFragmentDoc}
-`;
+}
+    ${ProposalListViewFragmentDoc}
+${PageInfoMetaFragmentDoc}`;
 
 /**
  * __useProposalsQuery__
@@ -10917,34 +10981,32 @@ export const ProposalsDocument = gql`
  * });
  */
 export function useProposalsQuery(baseOptions: Apollo.QueryHookOptions<ProposalsQuery, ProposalsQueryVariables>) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<ProposalsQuery, ProposalsQueryVariables>(ProposalsDocument, options);
-}
-export function useProposalsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<ProposalsQuery, ProposalsQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<ProposalsQuery, ProposalsQueryVariables>(ProposalsDocument, options);
-}
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ProposalsQuery, ProposalsQueryVariables>(ProposalsDocument, options);
+      }
+export function useProposalsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ProposalsQuery, ProposalsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ProposalsQuery, ProposalsQueryVariables>(ProposalsDocument, options);
+        }
 export type ProposalsQueryHookResult = ReturnType<typeof useProposalsQuery>;
 export type ProposalsLazyQueryHookResult = ReturnType<typeof useProposalsLazyQuery>;
 export type ProposalsQueryResult = Apollo.QueryResult<ProposalsQuery, ProposalsQueryVariables>;
 export const ProposalsCounterDocument = gql`
-  query ProposalsCounter($id: String!) {
-    proposalCounter(id: $id) {
-      id
-      signedProposalsMap
-      unSignedProposalsMap
-      signedProposalsCount
-      unSignedProposalsCount
-      statusMap
-      block {
-        number
-        timestamp
-      }
+    query ProposalsCounter($id: String!) {
+  proposalCounter(id: $id) {
+    id
+    signedProposalsMap
+    unSignedProposalsMap
+    signedProposalsCount
+    unSignedProposalsCount
+    statusMap
+    block {
+      number
+      timestamp
     }
   }
-`;
+}
+    `;
 
 /**
  * __useProposalsCounterQuery__
@@ -10962,66 +11024,65 @@ export const ProposalsCounterDocument = gql`
  *   },
  * });
  */
-export function useProposalsCounterQuery(
-  baseOptions: Apollo.QueryHookOptions<ProposalsCounterQuery, ProposalsCounterQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<ProposalsCounterQuery, ProposalsCounterQueryVariables>(ProposalsCounterDocument, options);
-}
-export function useProposalsCounterLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<ProposalsCounterQuery, ProposalsCounterQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<ProposalsCounterQuery, ProposalsCounterQueryVariables>(ProposalsCounterDocument, options);
-}
+export function useProposalsCounterQuery(baseOptions: Apollo.QueryHookOptions<ProposalsCounterQuery, ProposalsCounterQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ProposalsCounterQuery, ProposalsCounterQueryVariables>(ProposalsCounterDocument, options);
+      }
+export function useProposalsCounterLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ProposalsCounterQuery, ProposalsCounterQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ProposalsCounterQuery, ProposalsCounterQueryVariables>(ProposalsCounterDocument, options);
+        }
 export type ProposalsCounterQueryHookResult = ReturnType<typeof useProposalsCounterQuery>;
 export type ProposalsCounterLazyQueryHookResult = ReturnType<typeof useProposalsCounterLazyQuery>;
 export type ProposalsCounterQueryResult = Apollo.QueryResult<ProposalsCounterQuery, ProposalsCounterQueryVariables>;
 export const ProposalsOverviewDocument = gql`
-  query ProposalsOverview($startRange: BigFloatFilter!, $endRange: BigFloatFilter!, $sessionId: String!) {
-    session(id: $sessionId) {
-      id
-      proposerThreshold
-      sessionProposers {
-        totalCount
-      }
-      sessionValidators {
-        totalCount
-      }
-    }
-    openProposals: proposalItems(filter: { status: { equalTo: "Open" } }, orderBy: [BLOCK_NUMBER_DESC], first: 10) {
-      nodes {
-        ...ProposalListView
-      }
-      pageInfo {
-        ...PageInfoMeta
-      }
+    query ProposalsOverview($startRange: BigFloatFilter!, $endRange: BigFloatFilter!, $sessionId: String!) {
+  session(id: $sessionId) {
+    id
+    proposerThreshold
+    sessionProposers {
       totalCount
     }
-    open: proposalTimelineStatuses(
-      filter: { status: { equalTo: Open }, and: [{ blockNumber: $startRange }, { blockNumber: $endRange }] }
-    ) {
-      totalCount
-    }
-    signed: proposalTimelineStatuses(
-      filter: { status: { equalTo: Signed }, and: [{ blockNumber: $startRange }, { blockNumber: $endRange }] }
-    ) {
-      totalCount
-    }
-    reject: proposalTimelineStatuses(
-      filter: { status: { equalTo: Rejected }, and: [{ blockNumber: $startRange }, { blockNumber: $endRange }] }
-    ) {
-      totalCount
-    }
-    accepted: proposalTimelineStatuses(
-      filter: { status: { equalTo: Accepted }, and: [{ blockNumber: $startRange }, { blockNumber: $endRange }] }
-    ) {
+    sessionValidators {
       totalCount
     }
   }
-  ${ProposalListViewFragmentDoc}
-  ${PageInfoMetaFragmentDoc}
-`;
+  openProposals: proposalItems(
+    filter: {status: {equalTo: "Open"}}
+    orderBy: [BLOCK_NUMBER_DESC]
+    first: 10
+  ) {
+    nodes {
+      ...ProposalListView
+    }
+    pageInfo {
+      ...PageInfoMeta
+    }
+    totalCount
+  }
+  open: proposalTimelineStatuses(
+    filter: {status: {equalTo: Open}, and: [{blockNumber: $startRange}, {blockNumber: $endRange}]}
+  ) {
+    totalCount
+  }
+  signed: proposalTimelineStatuses(
+    filter: {status: {equalTo: Signed}, and: [{blockNumber: $startRange}, {blockNumber: $endRange}]}
+  ) {
+    totalCount
+  }
+  reject: proposalTimelineStatuses(
+    filter: {status: {equalTo: Rejected}, and: [{blockNumber: $startRange}, {blockNumber: $endRange}]}
+  ) {
+    totalCount
+  }
+  accepted: proposalTimelineStatuses(
+    filter: {status: {equalTo: Accepted}, and: [{blockNumber: $startRange}, {blockNumber: $endRange}]}
+  ) {
+    totalCount
+  }
+}
+    ${ProposalListViewFragmentDoc}
+${PageInfoMetaFragmentDoc}`;
 
 /**
  * __useProposalsOverviewQuery__
@@ -11041,44 +11102,36 @@ export const ProposalsOverviewDocument = gql`
  *   },
  * });
  */
-export function useProposalsOverviewQuery(
-  baseOptions: Apollo.QueryHookOptions<ProposalsOverviewQuery, ProposalsOverviewQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<ProposalsOverviewQuery, ProposalsOverviewQueryVariables>(ProposalsOverviewDocument, options);
-}
-export function useProposalsOverviewLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<ProposalsOverviewQuery, ProposalsOverviewQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<ProposalsOverviewQuery, ProposalsOverviewQueryVariables>(
-    ProposalsOverviewDocument,
-    options
-  );
-}
+export function useProposalsOverviewQuery(baseOptions: Apollo.QueryHookOptions<ProposalsOverviewQuery, ProposalsOverviewQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ProposalsOverviewQuery, ProposalsOverviewQueryVariables>(ProposalsOverviewDocument, options);
+      }
+export function useProposalsOverviewLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ProposalsOverviewQuery, ProposalsOverviewQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ProposalsOverviewQuery, ProposalsOverviewQueryVariables>(ProposalsOverviewDocument, options);
+        }
 export type ProposalsOverviewQueryHookResult = ReturnType<typeof useProposalsOverviewQuery>;
 export type ProposalsOverviewLazyQueryHookResult = ReturnType<typeof useProposalsOverviewLazyQuery>;
 export type ProposalsOverviewQueryResult = Apollo.QueryResult<ProposalsOverviewQuery, ProposalsOverviewQueryVariables>;
 export const ProposalVotesDocument = gql`
-  query ProposalVotes($perPage: Int!, $offset: Int!, $proposalId: String!, $for: BooleanFilter) {
-    proposalVotes(
-      filter: { proposalId: { equalTo: $proposalId }, for: $for }
-      orderBy: [BLOCK_NUMBER_DESC]
-      first: $perPage
-      offset: $offset
-    ) {
-      nodes {
-        ...ProposalsVoteListView
-      }
-      totalCount
-      pageInfo {
-        ...PageInfoMeta
-      }
+    query ProposalVotes($perPage: Int!, $offset: Int!, $proposalId: String!, $for: VoteStatusFilter) {
+  proposalVotes(
+    filter: {proposalId: {equalTo: $proposalId}, voteStatus: $for}
+    orderBy: [BLOCK_NUMBER_DESC]
+    first: $perPage
+    offset: $offset
+  ) {
+    nodes {
+      ...ProposalsVoteListView
+    }
+    totalCount
+    pageInfo {
+      ...PageInfoMeta
     }
   }
-  ${ProposalsVoteListViewFragmentDoc}
-  ${PageInfoMetaFragmentDoc}
-`;
+}
+    ${ProposalsVoteListViewFragmentDoc}
+${PageInfoMetaFragmentDoc}`;
 
 /**
  * __useProposalVotesQuery__
@@ -11099,56 +11152,55 @@ export const ProposalVotesDocument = gql`
  *   },
  * });
  */
-export function useProposalVotesQuery(
-  baseOptions: Apollo.QueryHookOptions<ProposalVotesQuery, ProposalVotesQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<ProposalVotesQuery, ProposalVotesQueryVariables>(ProposalVotesDocument, options);
-}
-export function useProposalVotesLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<ProposalVotesQuery, ProposalVotesQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<ProposalVotesQuery, ProposalVotesQueryVariables>(ProposalVotesDocument, options);
-}
+export function useProposalVotesQuery(baseOptions: Apollo.QueryHookOptions<ProposalVotesQuery, ProposalVotesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ProposalVotesQuery, ProposalVotesQueryVariables>(ProposalVotesDocument, options);
+      }
+export function useProposalVotesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ProposalVotesQuery, ProposalVotesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ProposalVotesQuery, ProposalVotesQueryVariables>(ProposalVotesDocument, options);
+        }
 export type ProposalVotesQueryHookResult = ReturnType<typeof useProposalVotesQuery>;
 export type ProposalVotesLazyQueryHookResult = ReturnType<typeof useProposalVotesLazyQuery>;
 export type ProposalVotesQueryResult = Apollo.QueryResult<ProposalVotesQuery, ProposalVotesQueryVariables>;
 export const ProposalDetailsDocument = gql`
-  query ProposalDetails($id: String!, $targetSessionId: String!) {
-    session(id: $targetSessionId) {
-      id
-      sessionProposers {
-        totalCount
-      }
-    }
-    proposalItem(id: $id) {
-      id
-      data
-      signature
-      type
-      status
-      proposalTimelineStatuses {
-        nodes {
-          id
-          status
-          blockNumber
-          timestamp
-        }
-      }
-      votesFor: proposalVotesByProposalId(filter: { for: { equalTo: true } }) {
-        totalCount
-      }
-      totalVotes: proposalVotesByProposalId {
-        totalCount
-      }
-      block {
-        timestamp
-        number
-      }
+    query ProposalDetails($id: String!, $targetSessionId: String!) {
+  session(id: $targetSessionId) {
+    id
+    sessionProposers {
+      totalCount
     }
   }
-`;
+  proposalItem(id: $id) {
+    id
+    data
+    signature
+    type
+    status
+    proposalTimelineStatuses {
+      nodes {
+        id
+        status
+        blockNumber
+        timestamp
+      }
+    }
+    votesFor: proposalVotesByProposalId(filter: {voteStatus: {equalTo: FOR}}) {
+      totalCount
+    }
+    abstain: proposalVotesByProposalId(filter: {voteStatus: {equalTo: ABSTAIN}}) {
+      totalCount
+    }
+    totalVotes: proposalVotesByProposalId {
+      totalCount
+    }
+    block {
+      timestamp
+      number
+    }
+  }
+}
+    `;
 
 /**
  * __useProposalDetailsQuery__
@@ -11167,30 +11219,26 @@ export const ProposalDetailsDocument = gql`
  *   },
  * });
  */
-export function useProposalDetailsQuery(
-  baseOptions: Apollo.QueryHookOptions<ProposalDetailsQuery, ProposalDetailsQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<ProposalDetailsQuery, ProposalDetailsQueryVariables>(ProposalDetailsDocument, options);
-}
-export function useProposalDetailsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<ProposalDetailsQuery, ProposalDetailsQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<ProposalDetailsQuery, ProposalDetailsQueryVariables>(ProposalDetailsDocument, options);
-}
+export function useProposalDetailsQuery(baseOptions: Apollo.QueryHookOptions<ProposalDetailsQuery, ProposalDetailsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ProposalDetailsQuery, ProposalDetailsQueryVariables>(ProposalDetailsDocument, options);
+      }
+export function useProposalDetailsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ProposalDetailsQuery, ProposalDetailsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ProposalDetailsQuery, ProposalDetailsQueryVariables>(ProposalDetailsDocument, options);
+        }
 export type ProposalDetailsQueryHookResult = ReturnType<typeof useProposalDetailsQuery>;
 export type ProposalDetailsLazyQueryHookResult = ReturnType<typeof useProposalDetailsLazyQuery>;
 export type ProposalDetailsQueryResult = Apollo.QueryResult<ProposalDetailsQuery, ProposalDetailsQueryVariables>;
 export const EnsureProposalsDocument = gql`
-  query ensureProposals($ids: [String!]!) {
-    proposalItems(filter: { id: { in: $ids } }) {
-      nodes {
-        id
-      }
+    query ensureProposals($ids: [String!]!) {
+  proposalItems(filter: {id: {in: $ids}}) {
+    nodes {
+      id
     }
   }
-`;
+}
+    `;
 
 /**
  * __useEnsureProposalsQuery__
@@ -11208,53 +11256,52 @@ export const EnsureProposalsDocument = gql`
  *   },
  * });
  */
-export function useEnsureProposalsQuery(
-  baseOptions: Apollo.QueryHookOptions<EnsureProposalsQuery, EnsureProposalsQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<EnsureProposalsQuery, EnsureProposalsQueryVariables>(EnsureProposalsDocument, options);
-}
-export function useEnsureProposalsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<EnsureProposalsQuery, EnsureProposalsQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<EnsureProposalsQuery, EnsureProposalsQueryVariables>(EnsureProposalsDocument, options);
-}
+export function useEnsureProposalsQuery(baseOptions: Apollo.QueryHookOptions<EnsureProposalsQuery, EnsureProposalsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<EnsureProposalsQuery, EnsureProposalsQueryVariables>(EnsureProposalsDocument, options);
+      }
+export function useEnsureProposalsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<EnsureProposalsQuery, EnsureProposalsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<EnsureProposalsQuery, EnsureProposalsQueryVariables>(EnsureProposalsDocument, options);
+        }
 export type EnsureProposalsQueryHookResult = ReturnType<typeof useEnsureProposalsQuery>;
 export type EnsureProposalsLazyQueryHookResult = ReturnType<typeof useEnsureProposalsLazyQuery>;
 export type EnsureProposalsQueryResult = Apollo.QueryResult<EnsureProposalsQuery, EnsureProposalsQueryVariables>;
 export const PublicKeysDocument = gql`
-  query PublicKeys($PerPage: Int, $offset: Int) {
-    publicKeys(first: $PerPage, offset: $offset, orderBy: [SESSIONS_SUM_BLOCK_NUMBER_ASC]) {
-      nodes {
-        id
-        compressed
-        uncompressed
-        history
-        block {
-          timestamp
-          number
-        }
-        sessions(first: 1) {
-          nodes {
-            id
-            ...SessionAuth
-            keyGenThreshold
-            signatureThreshold
-          }
+    query PublicKeys($PerPage: Int, $offset: Int) {
+  publicKeys(
+    first: $PerPage
+    offset: $offset
+    orderBy: [SESSIONS_SUM_BLOCK_NUMBER_ASC]
+  ) {
+    nodes {
+      id
+      compressed
+      uncompressed
+      history
+      block {
+        timestamp
+        number
+      }
+      sessions(first: 1) {
+        nodes {
+          id
+          ...SessionAuth
+          keyGenThreshold
+          signatureThreshold
         }
       }
-      pageInfo {
-        hasNextPage
-        hasPreviousPage
-        startCursor
-        endCursor
-      }
-      totalCount
     }
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+    totalCount
   }
-  ${SessionAuthFragmentDoc}
-`;
+}
+    ${SessionAuthFragmentDoc}`;
 
 /**
  * __usePublicKeysQuery__
@@ -11274,41 +11321,38 @@ export const PublicKeysDocument = gql`
  * });
  */
 export function usePublicKeysQuery(baseOptions?: Apollo.QueryHookOptions<PublicKeysQuery, PublicKeysQueryVariables>) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<PublicKeysQuery, PublicKeysQueryVariables>(PublicKeysDocument, options);
-}
-export function usePublicKeysLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<PublicKeysQuery, PublicKeysQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<PublicKeysQuery, PublicKeysQueryVariables>(PublicKeysDocument, options);
-}
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<PublicKeysQuery, PublicKeysQueryVariables>(PublicKeysDocument, options);
+      }
+export function usePublicKeysLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PublicKeysQuery, PublicKeysQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<PublicKeysQuery, PublicKeysQueryVariables>(PublicKeysDocument, options);
+        }
 export type PublicKeysQueryHookResult = ReturnType<typeof usePublicKeysQuery>;
 export type PublicKeysLazyQueryHookResult = ReturnType<typeof usePublicKeysLazyQuery>;
 export type PublicKeysQueryResult = Apollo.QueryResult<PublicKeysQuery, PublicKeysQueryVariables>;
 export const PublicKeyDocument = gql`
-  query PublicKey($id: String!) {
-    publicKey(id: $id) {
-      id
-      compressed
-      uncompressed
-      history
-      block {
-        timestamp
-        number
-      }
-      sessions(first: 1) {
-        nodes {
-          id
-          ...SessionAuth
-          keyGenThreshold
-          signatureThreshold
-        }
+    query PublicKey($id: String!) {
+  publicKey(id: $id) {
+    id
+    compressed
+    uncompressed
+    history
+    block {
+      timestamp
+      number
+    }
+    sessions(first: 1) {
+      nodes {
+        id
+        ...SessionAuth
+        keyGenThreshold
+        signatureThreshold
       }
     }
   }
-  ${SessionAuthFragmentDoc}
-`;
+}
+    ${SessionAuthFragmentDoc}`;
 
 /**
  * __usePublicKeyQuery__
@@ -11327,30 +11371,28 @@ export const PublicKeyDocument = gql`
  * });
  */
 export function usePublicKeyQuery(baseOptions: Apollo.QueryHookOptions<PublicKeyQuery, PublicKeyQueryVariables>) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<PublicKeyQuery, PublicKeyQueryVariables>(PublicKeyDocument, options);
-}
-export function usePublicKeyLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<PublicKeyQuery, PublicKeyQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<PublicKeyQuery, PublicKeyQueryVariables>(PublicKeyDocument, options);
-}
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<PublicKeyQuery, PublicKeyQueryVariables>(PublicKeyDocument, options);
+      }
+export function usePublicKeyLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PublicKeyQuery, PublicKeyQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<PublicKeyQuery, PublicKeyQueryVariables>(PublicKeyDocument, options);
+        }
 export type PublicKeyQueryHookResult = ReturnType<typeof usePublicKeyQuery>;
 export type PublicKeyLazyQueryHookResult = ReturnType<typeof usePublicKeyLazyQuery>;
 export type PublicKeyQueryResult = Apollo.QueryResult<PublicKeyQuery, PublicKeyQueryVariables>;
 export const SessionKeyIdsDocument = gql`
-  query SessionKeyIds($keys: [String!]!) {
-    sessions(filter: { id: { in: $keys } }) {
-      nodes {
+    query SessionKeyIds($keys: [String!]!) {
+  sessions(filter: {id: {in: $keys}}) {
+    nodes {
+      id
+      publicKey {
         id
-        publicKey {
-          id
-        }
       }
     }
   }
-`;
+}
+    `;
 
 /**
  * __useSessionKeyIdsQuery__
@@ -11368,43 +11410,38 @@ export const SessionKeyIdsDocument = gql`
  *   },
  * });
  */
-export function useSessionKeyIdsQuery(
-  baseOptions: Apollo.QueryHookOptions<SessionKeyIdsQuery, SessionKeyIdsQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<SessionKeyIdsQuery, SessionKeyIdsQueryVariables>(SessionKeyIdsDocument, options);
-}
-export function useSessionKeyIdsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<SessionKeyIdsQuery, SessionKeyIdsQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<SessionKeyIdsQuery, SessionKeyIdsQueryVariables>(SessionKeyIdsDocument, options);
-}
+export function useSessionKeyIdsQuery(baseOptions: Apollo.QueryHookOptions<SessionKeyIdsQuery, SessionKeyIdsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SessionKeyIdsQuery, SessionKeyIdsQueryVariables>(SessionKeyIdsDocument, options);
+      }
+export function useSessionKeyIdsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SessionKeyIdsQuery, SessionKeyIdsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SessionKeyIdsQuery, SessionKeyIdsQueryVariables>(SessionKeyIdsDocument, options);
+        }
 export type SessionKeyIdsQueryHookResult = ReturnType<typeof useSessionKeyIdsQuery>;
 export type SessionKeyIdsLazyQueryHookResult = ReturnType<typeof useSessionKeyIdsLazyQuery>;
 export type SessionKeyIdsQueryResult = Apollo.QueryResult<SessionKeyIdsQuery, SessionKeyIdsQueryVariables>;
 export const CurrentSessionAuthoritiesDocument = gql`
-  query CurrentSessionAuthorities {
-    sessions(first: 1, orderBy: [BLOCK_NUMBER_DESC]) {
-      nodes {
+    query CurrentSessionAuthorities {
+  sessions(first: 1, orderBy: [BLOCK_NUMBER_DESC]) {
+    nodes {
+      id
+      blockId
+      ...SessionAuth
+      publicKey {
+        compressed
+      }
+      signatureThreshold
+      keyGenThreshold
+      proposerThreshold
+      block {
         id
-        blockId
-        ...SessionAuth
-        publicKey {
-          compressed
-        }
-        signatureThreshold
-        keyGenThreshold
-        proposerThreshold
-        block {
-          id
-          timestamp
-        }
+        timestamp
       }
     }
   }
-  ${SessionAuthFragmentDoc}
-`;
+}
+    ${SessionAuthFragmentDoc}`;
 
 /**
  * __useCurrentSessionAuthoritiesQuery__
@@ -11421,50 +11458,36 @@ export const CurrentSessionAuthoritiesDocument = gql`
  *   },
  * });
  */
-export function useCurrentSessionAuthoritiesQuery(
-  baseOptions?: Apollo.QueryHookOptions<CurrentSessionAuthoritiesQuery, CurrentSessionAuthoritiesQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<CurrentSessionAuthoritiesQuery, CurrentSessionAuthoritiesQueryVariables>(
-    CurrentSessionAuthoritiesDocument,
-    options
-  );
-}
-export function useCurrentSessionAuthoritiesLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<CurrentSessionAuthoritiesQuery, CurrentSessionAuthoritiesQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<CurrentSessionAuthoritiesQuery, CurrentSessionAuthoritiesQueryVariables>(
-    CurrentSessionAuthoritiesDocument,
-    options
-  );
-}
+export function useCurrentSessionAuthoritiesQuery(baseOptions?: Apollo.QueryHookOptions<CurrentSessionAuthoritiesQuery, CurrentSessionAuthoritiesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<CurrentSessionAuthoritiesQuery, CurrentSessionAuthoritiesQueryVariables>(CurrentSessionAuthoritiesDocument, options);
+      }
+export function useCurrentSessionAuthoritiesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CurrentSessionAuthoritiesQuery, CurrentSessionAuthoritiesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<CurrentSessionAuthoritiesQuery, CurrentSessionAuthoritiesQueryVariables>(CurrentSessionAuthoritiesDocument, options);
+        }
 export type CurrentSessionAuthoritiesQueryHookResult = ReturnType<typeof useCurrentSessionAuthoritiesQuery>;
 export type CurrentSessionAuthoritiesLazyQueryHookResult = ReturnType<typeof useCurrentSessionAuthoritiesLazyQuery>;
-export type CurrentSessionAuthoritiesQueryResult = Apollo.QueryResult<
-  CurrentSessionAuthoritiesQuery,
-  CurrentSessionAuthoritiesQueryVariables
->;
+export type CurrentSessionAuthoritiesQueryResult = Apollo.QueryResult<CurrentSessionAuthoritiesQuery, CurrentSessionAuthoritiesQueryVariables>;
 export const SessionKeysDocument = gql`
-  query SessionKeys($SessionId: [String!]!) {
-    sessions(filter: { id: { in: $SessionId } }) {
-      nodes {
+    query SessionKeys($SessionId: [String!]!) {
+  sessions(filter: {id: {in: $SessionId}}) {
+    nodes {
+      id
+      ...SessionAuth
+      publicKey {
         id
-        ...SessionAuth
-        publicKey {
-          id
-          compressed
-          uncompressed
-          block {
-            timestamp
-            number
-          }
+        compressed
+        uncompressed
+        block {
+          timestamp
+          number
         }
       }
     }
   }
-  ${SessionAuthFragmentDoc}
-`;
+}
+    ${SessionAuthFragmentDoc}`;
 
 /**
  * __useSessionKeysQuery__
@@ -11483,38 +11506,35 @@ export const SessionKeysDocument = gql`
  * });
  */
 export function useSessionKeysQuery(baseOptions: Apollo.QueryHookOptions<SessionKeysQuery, SessionKeysQueryVariables>) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<SessionKeysQuery, SessionKeysQueryVariables>(SessionKeysDocument, options);
-}
-export function useSessionKeysLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<SessionKeysQuery, SessionKeysQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<SessionKeysQuery, SessionKeysQueryVariables>(SessionKeysDocument, options);
-}
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SessionKeysQuery, SessionKeysQueryVariables>(SessionKeysDocument, options);
+      }
+export function useSessionKeysLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SessionKeysQuery, SessionKeysQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SessionKeysQuery, SessionKeysQueryVariables>(SessionKeysDocument, options);
+        }
 export type SessionKeysQueryHookResult = ReturnType<typeof useSessionKeysQuery>;
 export type SessionKeysLazyQueryHookResult = ReturnType<typeof useSessionKeysLazyQuery>;
 export type SessionKeysQueryResult = Apollo.QueryResult<SessionKeysQuery, SessionKeysQueryVariables>;
 export const SessionThresholdHistoryDocument = gql`
-  query SessionThresholdHistory($offset: Int!, $perPage: Int!) {
-    sessions(first: $perPage, offset: $offset, orderBy: [BLOCK_NUMBER_DESC]) {
-      nodes {
+    query SessionThresholdHistory($offset: Int!, $perPage: Int!) {
+  sessions(first: $perPage, offset: $offset, orderBy: [BLOCK_NUMBER_DESC]) {
+    nodes {
+      id
+      signatureThreshold
+      keyGenThreshold
+      block {
         id
-        signatureThreshold
-        keyGenThreshold
-        block {
-          id
-          timestamp
-        }
+        timestamp
       }
-      pageInfo {
-        ...PageInfoMeta
-      }
-      totalCount
     }
+    pageInfo {
+      ...PageInfoMeta
+    }
+    totalCount
   }
-  ${PageInfoMetaFragmentDoc}
-`;
+}
+    ${PageInfoMetaFragmentDoc}`;
 
 /**
  * __useSessionThresholdHistoryQuery__
@@ -11533,53 +11553,39 @@ export const SessionThresholdHistoryDocument = gql`
  *   },
  * });
  */
-export function useSessionThresholdHistoryQuery(
-  baseOptions: Apollo.QueryHookOptions<SessionThresholdHistoryQuery, SessionThresholdHistoryQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<SessionThresholdHistoryQuery, SessionThresholdHistoryQueryVariables>(
-    SessionThresholdHistoryDocument,
-    options
-  );
-}
-export function useSessionThresholdHistoryLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<SessionThresholdHistoryQuery, SessionThresholdHistoryQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<SessionThresholdHistoryQuery, SessionThresholdHistoryQueryVariables>(
-    SessionThresholdHistoryDocument,
-    options
-  );
-}
+export function useSessionThresholdHistoryQuery(baseOptions: Apollo.QueryHookOptions<SessionThresholdHistoryQuery, SessionThresholdHistoryQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SessionThresholdHistoryQuery, SessionThresholdHistoryQueryVariables>(SessionThresholdHistoryDocument, options);
+      }
+export function useSessionThresholdHistoryLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SessionThresholdHistoryQuery, SessionThresholdHistoryQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SessionThresholdHistoryQuery, SessionThresholdHistoryQueryVariables>(SessionThresholdHistoryDocument, options);
+        }
 export type SessionThresholdHistoryQueryHookResult = ReturnType<typeof useSessionThresholdHistoryQuery>;
 export type SessionThresholdHistoryLazyQueryHookResult = ReturnType<typeof useSessionThresholdHistoryLazyQuery>;
-export type SessionThresholdHistoryQueryResult = Apollo.QueryResult<
-  SessionThresholdHistoryQuery,
-  SessionThresholdHistoryQueryVariables
->;
+export type SessionThresholdHistoryQueryResult = Apollo.QueryResult<SessionThresholdHistoryQuery, SessionThresholdHistoryQueryVariables>;
 export const SessionThresholdsDocument = gql`
-  query SessionThresholds($sessionId: String!) {
-    session(id: $sessionId) {
+    query SessionThresholds($sessionId: String!) {
+  session(id: $sessionId) {
+    id
+    signatureThreshold
+    keyGenThreshold
+    proposersCount: sessionProposers {
+      totalCount
+    }
+    ...SessionAuth
+    publicKey {
       id
-      signatureThreshold
-      keyGenThreshold
-      proposersCount: sessionProposers {
-        totalCount
-      }
-      ...SessionAuth
-      publicKey {
-        id
-        compressed
-        uncompressed
-        block {
-          timestamp
-          number
-        }
+      compressed
+      uncompressed
+      block {
+        timestamp
+        number
       }
     }
   }
-  ${SessionAuthFragmentDoc}
-`;
+}
+    ${SessionAuthFragmentDoc}`;
 
 /**
  * __useSessionThresholdsQuery__
@@ -11597,21 +11603,14 @@ export const SessionThresholdsDocument = gql`
  *   },
  * });
  */
-export function useSessionThresholdsQuery(
-  baseOptions: Apollo.QueryHookOptions<SessionThresholdsQuery, SessionThresholdsQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<SessionThresholdsQuery, SessionThresholdsQueryVariables>(SessionThresholdsDocument, options);
-}
-export function useSessionThresholdsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<SessionThresholdsQuery, SessionThresholdsQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<SessionThresholdsQuery, SessionThresholdsQueryVariables>(
-    SessionThresholdsDocument,
-    options
-  );
-}
+export function useSessionThresholdsQuery(baseOptions: Apollo.QueryHookOptions<SessionThresholdsQuery, SessionThresholdsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SessionThresholdsQuery, SessionThresholdsQueryVariables>(SessionThresholdsDocument, options);
+      }
+export function useSessionThresholdsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SessionThresholdsQuery, SessionThresholdsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SessionThresholdsQuery, SessionThresholdsQueryVariables>(SessionThresholdsDocument, options);
+        }
 export type SessionThresholdsQueryHookResult = ReturnType<typeof useSessionThresholdsQuery>;
 export type SessionThresholdsLazyQueryHookResult = ReturnType<typeof useSessionThresholdsLazyQuery>;
 export type SessionThresholdsQueryResult = Apollo.QueryResult<SessionThresholdsQuery, SessionThresholdsQueryVariables>;
