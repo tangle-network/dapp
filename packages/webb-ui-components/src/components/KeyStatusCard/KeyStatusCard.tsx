@@ -52,7 +52,7 @@ export const KeyStatusCard: React.FC<KeyStatusCardProps> = ({
       <div className='flex items-center justify-between'>
         <AvatarGroup total={totalAuthorities}>
           {Array.from(authorities).map((aut, idx) => (
-            <Avatar key={`${aut}${idx}`} value={aut} />
+            <Avatar sourceVariant='address' key={`${aut}${idx}`} value={aut} />
           ))}
         </AvatarGroup>
         <Link to={fullDetailUrl}>
