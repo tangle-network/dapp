@@ -74,14 +74,6 @@ const columns: ColumnDef<AuthorityListItem, any>[] = [
   }),
 ];
 
-const getNewAuthority = (): KeyGenAuthority => ({
-  id: randEthereumAddress() + randEthereumAddress().substring(2),
-  account: randAccount32(),
-  location: randCountryCode(),
-  uptime: randNumber({ min: 90, max: 100 }),
-  reputation: randNumber({ min: 90, max: 100 }),
-});
-
 export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({ data: dataProp }) => {
   const [{ pageIndex, pageSize }, setPagination] = useState<PaginationState>({
     pageIndex: 0,

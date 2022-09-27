@@ -1,5 +1,6 @@
 import { randBoolean, randEthereumAddress, randNumber, randRecentDate, randSoonDate } from '@ngneat/falso';
 import { ColumnDef, createColumnHelper, getCoreRowModel, Table as RTTable, useReactTable } from '@tanstack/react-table';
+import { Spinner } from '@webb-dapp/ui-components/Spinner/Spinner';
 import {
   Avatar,
   AvatarGroup,
@@ -21,7 +22,7 @@ import { ComponentProps, useMemo } from 'react';
 import { Outlet } from 'react-router-dom';
 
 import { AuthoritiesTable } from '../containers';
-import { Thresholds, UpcomingThreshold, UpcomingThresholds } from '../provider/hooks';
+import { Thresholds, UpcomingThreshold, UpcomingThresholds, useThresholds } from '../provider/hooks';
 import { getChipColorByKeyType } from '../utils';
 
 const getNewThresholds = (): [Thresholds, UpcomingThresholds] => {
@@ -132,29 +133,34 @@ const columns: ColumnDef<UpcomingThreshold, any>[] = [
 ];
 
 const Authorities = () => {
-  const [{ keyGen, publicKey, signature }, upComingThresholds] = useMemo(() => getNewThresholds(), []);
-
-  const statsItems = useMemo<ComponentProps<typeof Stats>['items']>(
-    () => [
+  const thresholds = useThresholds();
+  const [threshold, upComingThresholds] = useMemo(() => {
+    if (thresholds.val) {
+      return thresholds.val;
+    }
+    return [null, null];
+  }, [thresholds]);
+  const statsItems = useMemo<ComponentProps<typeof Stats>['items']>(() => {
+    const threshold = thresholds.val?.[0];
+    return [
       {
         titleProps: {
           title: 'Keygen',
           info: 'Keygen',
         },
-        value: keyGen,
+        value: threshold?.keyGen ?? 'loading..',
       },
       {
         titleProps: {
           title: 'Signature',
           info: 'Signature',
         },
-        value: signature,
+        value: threshold?.signature ?? 'loading..',
       },
-    ],
-    [keyGen, signature]
-  );
+    ];
+  }, [thresholds]);
 
-  const data = useMemo(() => Object.values(upComingThresholds), [upComingThresholds]);
+  const data = useMemo(() => (upComingThresholds ? Object.values(upComingThresholds) : []), [upComingThresholds]);
 
   const table = useReactTable<UpcomingThreshold>({
     columns: columns,
@@ -164,31 +170,38 @@ const Authorities = () => {
       fuzzy: fuzzyFilter,
     },
   });
-
+  const { keyGen, publicKey, signature } = threshold! ?? {};
+  const isLoading = !thresholds || thresholds?.isLoading || !keyGen || !signature || !publicKey;
   return (
     <div className='flex flex-col space-y-4'>
       <Card>
-        <TitleWithInfo title='Network Thresholds' info='Network Thresholds' variant='h5' />
+        {isLoading ? (
+          <Spinner />
+        ) : (
+          <>
+            <TitleWithInfo title='Network Thresholds' info='Network Thresholds' variant='h5' />
 
-        <Stats items={statsItems} className='pb-0' />
+            <Stats items={statsItems} className='pb-0' />
 
-        <TimeProgress startTime={publicKey.start} endTime={publicKey.end} />
+            <TimeProgress startTime={publicKey.start} endTime={publicKey.end} />
 
-        <div className='flex items-center justify-between'>
-          <div className='flex items-center space-x-2'>
-            <Chip color='green' className='uppercase'>
-              {publicKey.isCurrent ? 'Current' : 'Next'}
-            </Chip>
-            <LabelWithValue label='session:' value={publicKey.session} />
-            <Typography variant='body2' fw='semibold'>
-              /
-            </Typography>
-            <KeyValueWithButton size='sm' keyValue={publicKey.compressed} />
-          </div>
-          <Button varirant='link' size='sm' className='uppercase'>
-            View history
-          </Button>
-        </div>
+            <div className='flex items-center justify-between'>
+              <div className='flex items-center space-x-2'>
+                <Chip color='green' className='uppercase'>
+                  {publicKey.isCurrent ? 'Current' : 'Next'}
+                </Chip>
+                <LabelWithValue label='session:' value={publicKey.session} />
+                <Typography variant='body2' fw='semibold'>
+                  /
+                </Typography>
+                <KeyValueWithButton size='sm' keyValue={publicKey.compressed} />
+              </div>
+              <Button varirant='link' size='sm' className='uppercase'>
+                View history
+              </Button>
+            </div>
+          </>
+        )}
       </Card>
 
       <CardTable
@@ -198,7 +211,7 @@ const Authorities = () => {
           variant: 'h5',
         }}
       >
-        <Table tableProps={table as RTTable<unknown>} />
+        {thresholds.isLoading ? <Spinner /> : <Table tableProps={table as RTTable<unknown>} />}
       </CardTable>
 
       <AuthoritiesTable />
