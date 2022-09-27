@@ -22,60 +22,8 @@ import { ComponentProps, useMemo } from 'react';
 import { Outlet } from 'react-router-dom';
 
 import { AuthoritiesTable } from '../containers';
-import { Thresholds, UpcomingThreshold, UpcomingThresholds, useThresholds } from '../provider/hooks';
+import { DiscreteList, Thresholds, UpcomingThreshold, UpcomingThresholds, useThresholds } from '../provider/hooks';
 import { getChipColorByKeyType } from '../utils';
-
-const getNewThresholds = (): [Thresholds, UpcomingThresholds] => {
-  const thresholds: Thresholds = {
-    keyGen: randNumber({ min: 10, max: 20 }).toString(),
-    signature: randNumber({ min: 10, max: 20 }).toString(),
-    proposer: randAccount32(),
-    publicKey: {
-      isCurrent: randBoolean(),
-      keyGenAuthorities: arrayFrom(randNumber({ min: 5, max: 10 }), () => randAccount32()),
-      id: randEthereumAddress(),
-      compressed: randEthereumAddress(),
-      uncompressed: randEthereumAddress + randEthereumAddress().substring(2),
-      start: randRecentDate(),
-      end: randSoonDate(),
-      session: randNumber({ min: 2, max: 50 }).toString(),
-    },
-  };
-
-  const upcomingThreshold: UpcomingThresholds = {
-    pending: {
-      stats: 'Pending',
-      session: randNumber({ min: 2, max: 50 }).toString(),
-      keyGen: randNumber({ min: 10, max: 20 }).toString(),
-      signature: randNumber({ min: 10, max: 20 }).toString(),
-      proposer: randAccount32(),
-      // TODO use the type `DiscreteList`
-      authoritySet: arrayFrom(randNumber({ min: 5, max: 10 }), () => randAccount32()),
-    },
-
-    current: {
-      stats: 'Current',
-      session: randNumber({ min: 2, max: 50 }).toString(),
-      keyGen: randNumber({ min: 10, max: 20 }).toString(),
-      signature: randNumber({ min: 10, max: 20 }).toString(),
-      proposer: randAccount32(),
-      // TODO use the type `DiscreteList`
-      authoritySet: arrayFrom(randNumber({ min: 5, max: 10 }), () => randAccount32()),
-    },
-
-    next: {
-      stats: 'Next',
-      session: randNumber({ min: 2, max: 50 }).toString(),
-      keyGen: randNumber({ min: 10, max: 20 }).toString(),
-      signature: randNumber({ min: 10, max: 20 }).toString(),
-      proposer: randAccount32(),
-      // TODO use the type `DiscreteList`
-      authoritySet: arrayFrom(randNumber({ min: 5, max: 10 }), () => randAccount32()),
-    },
-  };
-
-  return [thresholds, upcomingThreshold];
-};
 
 const columnHelper = createColumnHelper<UpcomingThreshold>();
 
@@ -121,10 +69,12 @@ const columns: ColumnDef<UpcomingThreshold, any>[] = [
     ),
 
     cell: (props) => {
+      const authorities = props.getValue<DiscreteList>();
+      console.log('authorities', authorities);
       return (
-        <AvatarGroup total={props.getValue<string[]>().length} className='justify-end'>
-          {props.getValue<string[]>().map((aut, idx) => (
-            <Avatar key={`${aut}-${idx}`} value={aut} />
+        <AvatarGroup total={authorities.count}>
+          {authorities.firstElements.map((au, idx) => (
+            <Avatar sourceVariant={'address'} key={`${au}${idx}`} value={au} />
           ))}
         </AvatarGroup>
       );

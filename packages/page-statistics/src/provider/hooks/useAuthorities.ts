@@ -12,6 +12,7 @@ import { PublicKey } from '@webb-dapp/page-statistics/provider/hooks/useKeys';
 import { useEffect, useMemo, useState } from 'react';
 
 import { Threshold as QueryThreshold } from './types';
+import { DiscreteList } from '@webb-dapp/page-statistics/provider/hooks/useProposals';
 /**
  * Threshold values
  * @param keyGen - KeyGen threshold
@@ -46,7 +47,7 @@ export type UpcomingThreshold = {
   signature: string;
   proposer: string;
   // TODO use the type `DiscreteList`
-  authoritySet: string[];
+  authoritySet: DiscreteList;
 };
 
 export type UpcomingThresholds = Record<Lowercase<UpcomingThresholdStats>, UpcomingThreshold>;
@@ -173,7 +174,10 @@ export function useThresholds(): Loadable<[Thresholds, UpcomingThresholds]> {
             signature: String(signatureThreshold.current),
           };
           const current: UpcomingThreshold = {
-            authoritySet: authSet,
+            authoritySet: {
+              count: authSet.length,
+              firstElements: authSet.slice(0, 3),
+            },
             keyGen: String(keyGenThreshold.current),
             signature: String(signatureThreshold.current),
             proposer: '',
@@ -182,7 +186,10 @@ export function useThresholds(): Loadable<[Thresholds, UpcomingThresholds]> {
           };
 
           const pending: UpcomingThreshold = {
-            authoritySet: nextAuthSet,
+            authoritySet: {
+              count: nextAuthSet.length,
+              firstElements: nextAuthSet.slice(0, 3),
+            },
             keyGen: String(keyGenThreshold.pending),
             signature: String(signatureThreshold.pending),
             proposer: '',
@@ -191,7 +198,10 @@ export function useThresholds(): Loadable<[Thresholds, UpcomingThresholds]> {
           };
 
           const next: UpcomingThreshold = {
-            authoritySet: nextAuthSet,
+            authoritySet: {
+              count: nextAuthSet.length,
+              firstElements: nextAuthSet.slice(0, 3),
+            },
             keyGen: String(keyGenThreshold.next),
             signature: String(signatureThreshold.next),
             proposer: '',
