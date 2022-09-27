@@ -1,5 +1,6 @@
 import { randNumber } from '@ngneat/falso';
 import { Button, DropdownMenu, TitleWithInfo } from '@webb-dapp/webb-ui-components/components';
+import { useDarkMode } from '@webb-dapp/webb-ui-components/hooks';
 import { ArrowLeft } from '@webb-dapp/webb-ui-components/icons';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
 import { range } from '@webb-dapp/webb-ui-components/utils';
@@ -59,6 +60,8 @@ const AuthoritiesHistory = () => {
   const historyOpts = useMemo(() => ['lastest session', 'all time'], []);
   const [selectedIdx, setSelectedIdx] = useState(0);
 
+  const [isDarkMode, _] = useDarkMode();
+
   const menuOptions = useMemo<ComponentProps<typeof DropdownMenu>['menuOptions']>(
     () =>
       historyOpts.reduce((acc, cur) => {
@@ -81,12 +84,20 @@ const AuthoritiesHistory = () => {
           stacked: !!selectedIdx,
           grid: {
             display: false,
+            borderColor: webbColors.mono['80'],
+          },
+          ticks: {
+            color: isDarkMode ? webbColors.mono['60'] : webbColors.mono['200'],
           },
         },
         y: {
           stacked: !!selectedIdx,
           grid: {
             display: false,
+            borderColor: webbColors.mono['80'],
+          },
+          ticks: {
+            color: isDarkMode ? webbColors.mono['60'] : webbColors.mono['200'],
           },
         },
       },
@@ -103,7 +114,7 @@ const AuthoritiesHistory = () => {
         },
       },
     }),
-    [selectedIdx]
+    [isDarkMode, selectedIdx]
   );
 
   return (
