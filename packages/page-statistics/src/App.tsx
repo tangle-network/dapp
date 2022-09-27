@@ -8,14 +8,14 @@ import { routes } from './routes';
 const isDev = process.env.NODE_ENV === 'development';
 const apolloClient = new ApolloClient({
   cache: new InMemoryCache(),
-  uri: isDev ? 'http://localhost:4000' : 'https://api.subquery.network/sq/nepoche/webb-subql',
+  uri: isDev ? 'http://localhost:4000' : 'https://api.subquery.network/sq/AtelyPham/webb-subql',
 });
 
 const App: FC = () => {
   return (
     <WebbUIProvider hasErrorBoudary>
       <ApolloProvider client={apolloClient}>
-        <StatsProvider blockTime={6} sessionHeight={10}>
+        <StatsProvider blockTime={6} sessionHeight={600}>
           <RouterProvider config={routes} />
         </StatsProvider>
       </ApolloProvider>
