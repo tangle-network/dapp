@@ -1,6 +1,6 @@
 
 query CurrentSessionAuthorities {
-  sessions(last: 1, orderBy: [BLOCK_NUMBER_DESC]) {
+  sessions(first: 1, orderBy: [BLOCK_NUMBER_DESC]) {
     nodes {
       id
       blockId

@@ -1,87 +1,26 @@
-import {
-  ColumnDef,
-  createColumnHelper,
-  getCoreRowModel,
-  getPaginationRowModel,
-  Table as RTTable,
-  useReactTable,
-} from '@tanstack/react-table';
 import { SessionKeyStatus, useKey } from '@webb-dapp/page-statistics/provider/hooks';
 import {
   Avatar,
   AvatarGroup,
   Button,
-  CardTable,
   Chip,
   DrawerCloseButton,
   KeyCard,
   KeyValueWithButton,
   LabelWithValue,
-  Progress,
-  Table,
   TimeLine,
   TimeLineItem,
   TimeProgress,
   TitleWithInfo,
 } from '@webb-dapp/webb-ui-components/components';
-import { fuzzyFilter } from '@webb-dapp/webb-ui-components/components/Filter/utils';
 import { ArrowLeft, ArrowRight, Close, Expand, Spinner } from '@webb-dapp/webb-ui-components/icons';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
-import { shortenString } from '@webb-dapp/webb-ui-components/utils';
 import cx from 'classnames';
-import getUnicodeFlagIcon from 'country-flag-icons/unicode';
 import { forwardRef, useCallback, useMemo } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
+import { AuthoritiesTable } from '../AuthoritiesTable';
 import { AuthorityRowType, KeyDetailProps } from './types';
-
-const columnHelper = createColumnHelper<AuthorityRowType>();
-
-const columns: ColumnDef<AuthorityRowType, any>[] = [
-  columnHelper.accessor('account', {
-    header: 'Participant',
-    cell: (props) => (
-      <Typography variant='body2' component='span' className='!text-inherit'>
-        {shortenString(props.getValue(), 10)}
-      </Typography>
-    ),
-  }),
-
-  columnHelper.accessor('location', {
-    header: 'Location',
-    cell: (props) => (
-      <Typography variant='h5' fw='bold' component='span' className='!text-inherit'>
-        {getUnicodeFlagIcon(props.getValue())}
-      </Typography>
-    ),
-  }),
-
-  columnHelper.accessor('uptime', {
-    header: 'Uptime',
-    cell: (props) => <Progress size='sm' value={parseInt(props.getValue())} className='w-[100px]' suffixLabel='%' />,
-  }),
-
-  columnHelper.accessor('reputation', {
-    header: 'Reputation',
-    cell: (props) => <Progress size='sm' value={parseInt(props.getValue())} className='w-[100px]' suffixLabel='%' />,
-  }),
-
-  columnHelper.accessor('detaillUrl', {
-    header: '',
-    cell: (props) => (
-      <Button
-        varirant='link'
-        href={props.getValue()}
-        target='_blank'
-        rel='noopener noreferrer'
-        size='sm'
-        className='uppercase'
-      >
-        Details
-      </Button>
-    ),
-  }),
-];
 
 export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage }, ref) => {
   const { keyId = '' } = useParams<{ keyId: string }>();
@@ -100,14 +39,6 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage },
       : ([] as AuthorityRowType[]);
   }, [keyDetail]);
 
-  const pagination = useMemo(
-    () => ({
-      pageIndex: 0,
-      pageSize: 10,
-    }),
-    []
-  );
-
   const onNextKey = useCallback(() => {
     if (prevAndNextKey?.nextKeyId) {
       navigate(`/keys${isPage ? '' : '/drawer'}/${prevAndNextKey.nextKeyId}`);
@@ -119,19 +50,6 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage },
       navigate(`/keys${isPage ? '' : '/drawer'}/${prevAndNextKey.previousKeyId}`);
     }
   }, [isPage, navigate, prevAndNextKey]);
-
-  const table = useReactTable<AuthorityRowType>({
-    data: authoritiesTblData,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    state: {
-      pagination,
-    },
-    filterFns: {
-      fuzzy: fuzzyFilter,
-    },
-  });
 
   if (isLoading) {
     return <Spinner size='xl' />;
@@ -341,15 +259,7 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage },
       </div>
 
       {/** Authorities Table */}
-      <CardTable
-        titleProps={{
-          title: 'DKG Authorities',
-          info: 'DKG Authorities',
-          variant: 'h5',
-        }}
-      >
-        <Table tableProps={table as RTTable<unknown>} isPaginated />
-      </CardTable>
+      <AuthoritiesTable data={authoritiesTblData} />
     </div>
   );
 });
