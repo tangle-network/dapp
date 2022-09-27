@@ -18,21 +18,23 @@ export class ORMLCurrency {
   constructor(private api: WebbPolkadot) {}
 
   async list() {
-    let assets;
-
-    try {
-      assets = await this.api.api.query.assetRegistry.assets.entries();
-    } catch (ex) {
+    if (!this.api.api.query.assetRegistry) {
       console.log('tried to get assets from a chain without support');
       return [];
     }
+    let assets = await this.api.api.query.assetRegistry.assets.entries();
 
-    return assets.map(([storageKey, i]) => ({
-      // @ts-ignore
-      ...i.toHuman(),
-      // @ts-ignore
-      id: storageKey.toHuman()[0] as string,
-    })) as ORMLAsset[];
+    return assets.map(([storageKey, i]) => {
+      if (i) {
+        let assetRegistryValues = i.unwrap();
+        return {
+          name: assetRegistryValues.name.toString(),
+          existentialDeposit: assetRegistryValues.existentialDeposit.toString(),
+          locked: assetRegistryValues.locked.toJSON(),
+          id: storageKey[0].toString(),
+        } as ORMLAsset;
+      }
+    });
   }
 
   async getBalance() {
