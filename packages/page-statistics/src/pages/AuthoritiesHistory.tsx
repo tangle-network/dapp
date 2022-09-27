@@ -1,0 +1,166 @@
+import { randNumber } from '@ngneat/falso';
+import { Button, DropdownMenu, TitleWithInfo } from '@webb-dapp/webb-ui-components/components';
+import { ArrowLeft } from '@webb-dapp/webb-ui-components/icons';
+import { Typography } from '@webb-dapp/webb-ui-components/typography';
+import { range } from '@webb-dapp/webb-ui-components/utils';
+import {
+  BarElement,
+  CategoryScale,
+  Chart as ChartJS,
+  ChartData,
+  ChartOptions,
+  Legend as CLegend,
+  LinearScale,
+  Title,
+  Tooltip,
+} from 'chart.js';
+import cx from 'classnames';
+import { WebbColorsType } from 'page-statistics/types';
+import { ComponentProps, FC, useCallback, useMemo, useState } from 'react';
+import { Bar } from 'react-chartjs-2';
+import { Link } from 'react-router-dom';
+import resolveConfig from 'tailwindcss/resolveConfig';
+
+import tailwindConfig from /* preval */ '../../tailwind.config.js';
+
+const fullConfig = resolveConfig(tailwindConfig);
+
+const webbColors = fullConfig.theme?.colors as unknown as WebbColorsType;
+
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, CLegend);
+
+const labels = range(3453, 3465);
+let keygenThreshold = randNumber({ min: 2, max: 10 });
+let signatureThreshold = randNumber({ min: 2, max: 10 });
+
+const data: ChartData<'bar'> = {
+  labels,
+  datasets: [
+    {
+      label: 'Keygen Threshold',
+      data: labels.map(() => {
+        keygenThreshold += 8;
+        return keygenThreshold;
+      }),
+      backgroundColor: webbColors.purple['100'],
+    },
+    {
+      label: 'Signature Threshold',
+      data: labels.map(() => {
+        signatureThreshold += 10;
+        return signatureThreshold;
+      }),
+      backgroundColor: webbColors.purple['60'],
+    },
+  ],
+};
+
+const AuthoritiesHistory = () => {
+  const historyOpts = useMemo(() => ['lastest session', 'all time'], []);
+  const [selectedIdx, setSelectedIdx] = useState(0);
+
+  const menuOptions = useMemo<ComponentProps<typeof DropdownMenu>['menuOptions']>(
+    () =>
+      historyOpts.reduce((acc, cur) => {
+        return [...acc, { value: cur }];
+      }, [] as ComponentProps<typeof DropdownMenu>['menuOptions']),
+    [historyOpts]
+  );
+
+  const onChange = useCallback(
+    (nextVal: string) => {
+      setSelectedIdx(historyOpts.indexOf(nextVal));
+    },
+    [historyOpts]
+  );
+
+  const options = useMemo<ChartOptions<'bar'>>(
+    () => ({
+      scales: {
+        x: {
+          stacked: !!selectedIdx,
+          grid: {
+            display: false,
+          },
+        },
+        y: {
+          stacked: !!selectedIdx,
+          grid: {
+            display: false,
+          },
+        },
+      },
+      responsive: true,
+      plugins: {
+        legend: {
+          display: false,
+          position: 'bottom' as const,
+        },
+        title: {
+          display: false,
+          position: 'bottom' as const,
+          text: 'Session',
+        },
+      },
+    }),
+    [selectedIdx]
+  );
+
+  return (
+    <div className='flex flex-col p-8 space-y-4 rounded-lg bg-mono-0 dark:bg-mono-180'>
+      <Link to='/authorities'>
+        <Button varirant='utility' size='sm' className='uppercase' leftIcon={<ArrowLeft className='!fill-current' />}>
+          Back
+        </Button>
+      </Link>
+
+      {/** Graph */}
+      <div className='flex flex-col space-y-4'>
+        {/** Title */}
+        <div className='flex items-center justify-between px-8'>
+          <TitleWithInfo title='Network Thresholds History' info='Network Thresholds History' variant='h5' />
+
+          <DropdownMenu
+            menuOptions={menuOptions}
+            size='sm'
+            value={menuOptions[selectedIdx].value}
+            onChange={onChange}
+          />
+        </div>
+
+        <div className='px-4 pt-4'>
+          <Bar options={options} data={data} />
+        </div>
+
+        <TitleWithInfo
+          title={selectedIdx ? 'Month' : 'Session'}
+          info={selectedIdx ? 'Month' : 'Session'}
+          className='justify-center'
+        />
+
+        <div className='flex items-center justify-center space-x-2'>
+          <Legend bgColorClsx='bg-purple-100'>{selectedIdx ? 'Avarage ' : ''}Keygen Threshold</Legend>
+          <Legend bgColorClsx='bg-purple'>{selectedIdx ? 'Avarage ' : ''}Signature Threshold</Legend>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/***********************
+ * Internal components *
+ ***********************/
+
+const Legend: FC<{ bgColorClsx: string }> = ({ bgColorClsx, children }) => {
+  return (
+    <div className='flex items-center space-x-2'>
+      <div className={cx('w-1 h-1', bgColorClsx)} />
+
+      <Typography variant='body3' component='span' className='inline-block'>
+        {children}
+      </Typography>
+    </div>
+  );
+};
+
+export default AuthoritiesHistory;
