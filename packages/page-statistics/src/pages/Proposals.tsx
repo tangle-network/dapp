@@ -18,7 +18,7 @@ import { Link, Outlet } from 'react-router-dom';
 
 import { DonutChartContainer, ProposalsTable } from '../containers';
 import { useProposalsSeedData } from '../hooks';
-import { ProposalListItem } from '../provider/hooks';
+import { ProposalListItem, useProposals } from '../provider/hooks';
 
 const columnHelper = createColumnHelper<ProposalListItem>();
 
