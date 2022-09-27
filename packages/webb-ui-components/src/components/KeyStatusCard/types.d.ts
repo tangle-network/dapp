@@ -1,4 +1,5 @@
 import { WebbComponentBase } from '@webb-dapp/webb-ui-components/types';
+import { ISubQlTime } from '@webb-dapp/page-statistics/provider/stats-provider';
 
 export type KeyType = 'current' | 'next';
 
@@ -58,7 +59,7 @@ export interface KeyStatusCardDataProps {
   /**
    * Time instance
    * */
-  instance: Date;
+  instance: ISubQlTime;
 }
 
 /**

@@ -1,4 +1,5 @@
 import { WebbComponentBase } from '@webb-dapp/webb-ui-components/types';
+import { ISubQlTime } from '@webb-dapp/page-statistics/provider/stats-provider';
 
 /**
  * The `TimeProgress` props
@@ -16,5 +17,5 @@ export interface TimeProgressProps extends WebbComponentBase {
   /**
    * Coustome time object
    * */
-  now?: Date;
+  now?: ISubQlTime;
 }

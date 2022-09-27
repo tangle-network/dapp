@@ -48,7 +48,6 @@ export const KeyStatusCard: React.FC<KeyStatusCardProps> = ({
         </div>
         <KeyValueWithButton keyValue={keyVal} />
       </div>
-      {instance ? formatDateToUtc(instance) : '--'}
 
       {/* * Content */}
       <TimeProgress now={instance} startTime={startTime} endTime={endTime} />

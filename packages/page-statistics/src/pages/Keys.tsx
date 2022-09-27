@@ -31,9 +31,6 @@ const Keys = () => {
     };
   }, [data]);
   const { time } = useStatsContext();
-  const now = useMemo(() => {
-    return time.current;
-  }, [time]);
 
   if (isLoading) {
     return <Spinner size='xl' />;
@@ -56,8 +53,8 @@ const Keys = () => {
   return (
     <div>
       <div className='flex space-x-4'>
-        <KeyStatusCardContainer now={now} keyType='current' data={currentKey} />
-        <KeyStatusCardContainer now={now} keyType='next' data={nextKey} />
+        <KeyStatusCardContainer now={time} keyType='current' data={currentKey} />
+        <KeyStatusCardContainer now={time} keyType='next' data={nextKey} />
       </div>
 
       <div className='mt-4'>

@@ -48,7 +48,9 @@ type StatsProvidervalue = {
   metaData: Metadata;
   isReady: boolean;
 };
-
+export type ISubQlTime = {
+  current: Date;
+};
 /**
  * Wrapper date object that consumes the SubQuery node blocks fetching as a time source
  * */
@@ -187,8 +189,8 @@ export const StatsProvider: React.FC<Omit<StatsProvidervalue, 'isReady' | 'metaD
   }, [query, metaDataQuery, isReady, staticConfig]);
 
   useEffect(() => {
-    query.startPolling(staticConfig.blockTime * 1000 * 10);
-    metaDataQuery.startPolling(staticConfig.blockTime * 1000 * 10);
+    query.startPolling(staticConfig.blockTime * 1000);
+    metaDataQuery.startPolling(staticConfig.blockTime * 1000);
     console.log('starting polling');
     return () => {
       console.log('Stop polling');

@@ -16,15 +16,13 @@ import { TimeProgressProps } from './types';
  */
 export const TimeProgress = React.forwardRef<HTMLDivElement, TimeProgressProps>(
   ({ endTime, startTime, now, ...props }, ref) => {
-    const [dateProgress, setDateProgress] = useState<number | null>(
-      calculateDateProgress(startTime, endTime, now ?? new Date())
-    );
+    const [dateProgress, setDateProgress] = useState<number | null>(calculateDateProgress(startTime, endTime, now));
     const timerRef = useRef<NodeJS.Timeout>();
 
     // Re-calculate progress each 1s
     useEffect(() => {
       const timer = setInterval(() => {
-        const progress = calculateDateProgress(startTime, endTime, now ?? new Date());
+        const progress = calculateDateProgress(startTime, endTime, now);
         setDateProgress(progress);
       }, 1000);
 
