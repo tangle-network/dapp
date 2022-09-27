@@ -32,7 +32,7 @@ export const Avatar: React.FC<AvatarProps> = (props) => {
     darkMode,
     fallback,
     size = 'md',
-    sourceVariant,
+    sourceVariant = 'uri',
     src,
     theme = 'polkadot',
     value: valueProp,
