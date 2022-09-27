@@ -159,7 +159,7 @@ export function useThresholds(): Loadable<[Thresholds, UpcomingThresholds]> {
           const keyGenThreshold = session.keyGenThreshold as QueryThreshold;
           const signatureThreshold = session.signatureThreshold as QueryThreshold;
           const threshold: Thresholds = {
-            keyGen: String(keyGenThreshold.current),
+            keyGen: keyGenThreshold ? String(keyGenThreshold.current) : '-',
             publicKey: {
               id: publicKey.id,
               session: session.id,
@@ -171,7 +171,7 @@ export function useThresholds(): Loadable<[Thresholds, UpcomingThresholds]> {
               isCurrent: false,
             },
             proposer: '',
-            signature: String(signatureThreshold.current),
+            signature: signatureThreshold ? String(signatureThreshold.current) : '-',
           };
           const current: UpcomingThreshold = {
             authoritySet: {
@@ -270,15 +270,17 @@ export function useAuthorities(reqQuery: PageInfoQuery): Loadable<Page<Authority
       .map((res): Loadable<Page<AuthorityListItem>> => {
         if (res.data && res.data.validators) {
           const validators = res.data.validators;
-          const items = validators.nodes.map((validator): AuthorityListItem => {
-            const auth = mapAuthorities(validator?.sessionValidators!);
-            return {
-              id: validator?.id!,
-              location: 'any',
-              uptime: '50',
-              reputation: auth[0].reputation ?? '0',
-            };
-          });
+          const items = validators.nodes
+            .filter((v) => v !== null && v.sessionValidators.edges[0])
+            .map((validator): AuthorityListItem => {
+              const auth = mapAuthorities(validator?.sessionValidators!);
+              return {
+                id: validator?.id!,
+                location: 'any',
+                uptime: '50',
+                reputation: auth[0].reputation ?? '0',
+              };
+            });
           return {
             isLoading: false,
             isFailed: false,
@@ -305,8 +307,10 @@ export function useAuthorities(reqQuery: PageInfoQuery): Loadable<Page<Authority
 
   return authorities;
 }
-
-export function useAuthority(pageQuery: PageInfoQuery, authorityId: string): AuthorityDetails {
+export type AuthorityQuery = PageInfoQuery<{
+  authorityId: string;
+}>;
+export function useAuthority(pageQuery: AuthorityQuery): AuthorityDetails {
   const [stats, setStats] = useState<AuthorityDetails['stats']>({
     isFailed: false,
     isLoading: true,
@@ -318,7 +322,7 @@ export function useAuthority(pageQuery: PageInfoQuery, authorityId: string): Aut
     val: null,
   });
   const metaData = useCurrentMetaData();
-
+  const { authorityId } = pageQuery.filter;
   const [callKeyGen, queryKeyGen] = useValidatorSessionsLazyQuery();
   const [callValidatorOfSession, queryValidatorOfSession] = useValidatorOfSessionLazyQuery();
   useEffect(() => {
