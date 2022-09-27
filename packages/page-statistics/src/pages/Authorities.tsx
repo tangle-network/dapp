@@ -70,7 +70,6 @@ const columns: ColumnDef<UpcomingThreshold, any>[] = [
 
     cell: (props) => {
       const authorities = props.getValue<DiscreteList>();
-      console.log('authorities', authorities);
       return (
         <AvatarGroup total={authorities.count}>
           {authorities.firstElements.map((au, idx) => (

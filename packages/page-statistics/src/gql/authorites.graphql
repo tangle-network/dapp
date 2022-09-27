@@ -32,6 +32,7 @@ query ValidatorSessions($keyGen: Boolean, $validatorId: String!, $perPage: Int!,
           uncompressed
           block {
             id
+            number
           }
         }
         sessionValidators(first: 3) {

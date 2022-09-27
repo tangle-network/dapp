@@ -87,8 +87,8 @@ type AuthorityThresholdStatus = {
  **/
 export type AuthorityStats = {
   numberOfKeys: string;
-  uptime: string;
-  reputation: string;
+  uptime: number;
+  reputation: number;
   keyGenThreshold: AuthorityThresholdStatus;
   nextKeyGenThreshold: AuthorityThresholdStatus;
   pendingKeyGenThreshold: AuthorityThresholdStatus;
@@ -106,7 +106,7 @@ export type KeyGenKeyListItem = {
   height: string;
   session: string;
   publicKey: string;
-  authority: string;
+  authority: DiscreteList;
 };
 
 type AuthorityDetails = {
@@ -345,6 +345,13 @@ export function useAuthority(pageQuery: AuthorityQuery): AuthorityDetails {
   }, [authorityId, callKeyGen, setKeyGens, pageQuery]);
   useEffect(() => {
     if (metaData.val) {
+      console.log(
+        {
+          sessionValidatorId: `${metaData.val.activeSession}-${authorityId}`,
+          validatorId: authorityId,
+        },
+        'session validator query'
+      );
       callValidatorOfSession({
         variables: {
           sessionValidatorId: `${metaData.val.activeSession}-${authorityId}`,
@@ -372,8 +379,13 @@ export function useAuthority(pageQuery: AuthorityQuery): AuthorityDetails {
               id: publicKey.id,
               session: session.id,
               publicKey: publicKey.uncompressed!,
-              height: publicKey.block.number,
-              authority: String(session.sessionValidators.totalCount),
+              height: `${publicKey.block?.number ?? '-'}`,
+              authority: {
+                count: session.sessionValidators.totalCount,
+                firstElements: session.sessionValidators.edges
+                  .map((i) => i.node?.validator?.id)
+                  .filter((i) => i! === undefined),
+              },
             };
           });
           return {
@@ -422,8 +434,8 @@ export function useAuthority(pageQuery: AuthorityQuery): AuthorityDetails {
               val: String(threshold.pending),
               inTheSet: auth.isBest,
             },
-            reputation: auth.reputation,
-            uptime: '100',
+            reputation: Number(auth.reputation),
+            uptime: 100,
           };
           return {
             error: '',

@@ -11,12 +11,14 @@ import {
 import {
   AuthorityQuery,
   AuthorityStats,
+  DiscreteList,
   KeyGenAuthority,
   KeyGenKeyListItem,
   useAuthority,
 } from '@webb-dapp/page-statistics/provider/hooks';
 import {
   Avatar,
+  AvatarGroup,
   Button,
   CardTable,
   Divider,
@@ -43,14 +45,12 @@ import { Typography } from '@webb-dapp/webb-ui-components/typography';
 import { randAccount32, shortenString } from '@webb-dapp/webb-ui-components/utils';
 import cx from 'classnames';
 import getUnicodeFlagIcon from 'country-flag-icons/unicode';
-import { FC, useEffect, useMemo, useState } from 'react';
+import { FC, useMemo, useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { twMerge } from 'tailwind-merge';
 
 import { headerConfig } from '../KeygenTable';
 import { useStatsContext } from '@webb-dapp/page-statistics/provider/stats-provider';
-import { DetailLoader } from '../../../../page-governance/src/ProposalDetail/styled';
-import { Spinner } from '@webb-dapp/ui-components/Spinner/Spinner';
 
 const getNewKeygenAuthority = (): KeyGenAuthority => ({
   account: randAccount32(),
@@ -108,7 +108,16 @@ const columns: ColumnDef<KeyGenKeyListItem, any>[] = [
 
   columnHelper.accessor('authority', {
     header: () => <TitleWithInfo {...headerConfig['common']} {...headerConfig['authorities']} />,
-    cell: (props) => <Avatar value={props.getValue<string>()} />,
+    cell: (props) => {
+      const authorities = props.getValue<DiscreteList>();
+      return (
+        <AvatarGroup total={authorities.count}>
+          {authorities.firstElements.map((au, idx) => (
+            <Avatar sourceVariant={'address'} key={`${au}${idx}`} value={au} />
+          ))}
+        </AvatarGroup>
+      );
+    },
     enableColumnFilter: false,
   }),
 
@@ -148,10 +157,8 @@ export const AuthorityDetail = () => {
   }, [authorityId, pageSize, pageIndex]);
   const authority = useAuthority(authorityQuery);
 
-  const { fetchData } = useSeedData(getNewKeygenKey);
-
-  const [dataQuery, setDataQuery] = useState<Awaited<ReturnType<typeof fetchData>> | undefined>();
   const stats = useMemo(() => authority.stats.val, [authority]);
+
   const pagination = useMemo(
     () => ({
       pageIndex,
@@ -160,7 +167,7 @@ export const AuthorityDetail = () => {
     [pageIndex, pageSize]
   );
 
-  const totalItems = useMemo(() => authority.keyGens.val?.pageInfo.count ?? 0, [dataQuery]);
+  const totalItems = useMemo(() => authority.keyGens.val?.pageInfo.count ?? 0, [authority]);
   const pageCount = useMemo(() => Math.ceil(totalItems / pageSize), [pageSize, totalItems]);
 
   const keyGens = useMemo(() => authority.keyGens.val?.items ?? [], [authority]);
@@ -182,7 +189,7 @@ export const AuthorityDetail = () => {
 
   return (
     <div className='flex flex-col p-6 space-y-6'>
-      {stats ? <DetailLoader isPage={isPage} stats={stats} /> : <div>loading..</div>}
+      {stats ? <DetailsView id={authorityId} isPage={isPage} stats={stats} /> : <div>loading..</div>}
       {/** Keygen table */}
       <CardTable
         titleProps={{
@@ -197,10 +204,10 @@ export const AuthorityDetail = () => {
   );
 };
 
-const DetailsView: FC<{ stats: AuthorityStats; isPage: boolean }> = ({ stats, isPage }) => {
-  const { keyGenThreshold, nextKeyGenThreshold, numberOfKeys, pendingKeyGenThreshold, id } = stats;
-  const location = '';
-  const account = '';
+const DetailsView: FC<{ stats: AuthorityStats; isPage: boolean }> = ({ id, stats, isPage }) => {
+  const { keyGenThreshold, nextKeyGenThreshold, numberOfKeys, pendingKeyGenThreshold, uptime, reputation } = stats;
+  const location = 'EG';
+  const account = id;
   return (
     <div className={cx('overflow-hidden rounded-lg bg-mono-0 dark:bg-mono-180', { 'p-4': isPage })}>
       {/** Title */}
@@ -283,9 +290,9 @@ const DetailsView: FC<{ stats: AuthorityStats; isPage: boolean }> = ({ stats, is
             </Typography>
           </div>
 
-          <Progress value={authority.uptime} size='lg' prefixLabel='UPTIME ' suffixLabel='%' />
+          <Progress value={uptime} size='lg' prefixLabel='UPTIME ' suffixLabel='%' />
 
-          <Progress value={authority.reputation} size='lg' prefixLabel='REPUTATION ' suffixLabel='%' />
+          <Progress value={reputation} size='lg' prefixLabel='REPUTATION ' suffixLabel='%' />
         </div>
       </div>
     </div>
