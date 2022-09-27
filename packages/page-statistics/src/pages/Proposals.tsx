@@ -1,4 +1,5 @@
 import { ColumnDef, createColumnHelper, getCoreRowModel, Table as RTTable, useReactTable } from '@tanstack/react-table';
+import { useStatsContext } from '@webb-dapp/page-statistics/provider/stats-provider';
 import {
   Button,
   Card,
@@ -13,12 +14,12 @@ import { ExternalLinkLine, TokenIcon } from '@webb-dapp/webb-ui-components/icons
 import { shortenHex } from '@webb-dapp/webb-ui-components/utils';
 import { ArcElement, Chart as ChartJS, Legend } from 'chart.js';
 import { BigNumber } from 'ethers';
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Link, Outlet } from 'react-router-dom';
 
-import { DonutChartContainer, ProposalsTable } from '../containers';
+import { DonutChartContainer, ProposalsTable, TimeRange } from '../containers';
 import { useProposalsSeedData } from '../hooks';
-import { ProposalListItem, useProposals } from '../provider/hooks';
+import { ProposalListItem, ProposalStatus, useProposalsOverview } from '../provider/hooks';
 
 const columnHelper = createColumnHelper<ProposalListItem>();
 
@@ -67,13 +68,39 @@ const columns: ColumnDef<ProposalListItem, any>[] = [
 
 ChartJS.register(ArcElement, Legend);
 
-const proposalsThreshold = 49;
-const proposers = 24;
 
 const Proposals = () => {
   const data = useProposalsSeedData(4);
-
+  const {
+    metaData: { activeSession },
+  } = useStatsContext();
+  const overview = useProposalsOverview(activeSession, 0, 300);
+  const statsMap: Record<ProposalStatus, number> = useMemo(() => {
+    if (overview.val) {
+      const { accepted, open, rejected, signed } = overview.val.stats;
+      return {
+        [ProposalStatus.Signed]: signed,
+        [ProposalStatus.Rejected]: rejected,
+        [ProposalStatus.Open]: open,
+        [ProposalStatus.Accepted]: accepted,
+        [ProposalStatus.FailedToExecute]: 0,
+        [ProposalStatus.Executed]: 0,
+        [ProposalStatus.Removed]: 0,
+      };
+    }
+    return {
+      [ProposalStatus.Signed]: 0,
+      [ProposalStatus.Rejected]: 0,
+      [ProposalStatus.Open]: 0,
+      [ProposalStatus.Accepted]: 0,
+      [ProposalStatus.FailedToExecute]: 0,
+      [ProposalStatus.Executed]: 0,
+      [ProposalStatus.Removed]: 0,
+    };
+  }, [overview]);
   const statsItems = useMemo<React.ComponentProps<typeof Stats>['items']>(() => {
+    const proposalsThreshold = overview.val ? overview.val.thresholds.proposal : 'loading...';
+    const proposers = overview.val ? overview.val.thresholds.proposers : 'loading...';
     return [
       {
         titleProps: {
@@ -90,7 +117,7 @@ const Proposals = () => {
         value: proposers,
       },
     ];
-  }, []);
+  }, [overview]);
 
   const table = useReactTable<ProposalListItem>({
     columns: columns,
@@ -100,7 +127,7 @@ const Proposals = () => {
       fuzzy: fuzzyFilter,
     },
   });
-
+  const [timeRange, setTimeRange] = useState<TimeRange>('Day');
   return (
     <div className='flex flex-col space-y-4'>
       {/** Proposals Status */}
@@ -112,7 +139,12 @@ const Proposals = () => {
 
       <div className='flex space-x-4'>
         {/* * Proposal Types */}
-        <DonutChartContainer />
+        <DonutChartContainer
+          timeRange={timeRange}
+          setTimeRange={setTimeRange}
+          isLoading={overview.isLoading}
+          statsMap={statsMap}
+        />
 
         {/** Open Proposals */}
         <CardTable titleProps={{ title: 'Open Proposals' }} className='grow'>

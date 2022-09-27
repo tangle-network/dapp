@@ -5,6 +5,7 @@ import {
   useProposalsLazyQuery,
   useProposalsOverviewLazyQuery,
   useProposalVotesLazyQuery,
+  VoteStatus,
 } from '@webb-dapp/page-statistics/generated/graphql';
 import { mapProposalListItem } from '@webb-dapp/page-statistics/provider/hooks/mappers';
 import { Loadable, Page, PageInfoQuery, ProposalStatus } from '@webb-dapp/page-statistics/provider/hooks/types';
@@ -104,7 +105,7 @@ type ProposalTimeLine = {
 export type VoteListItem = {
   id: string;
   voterId: string;
-  for?: boolean;
+  status: VoteStatus;
   timestamp: Date;
 };
 /**
@@ -482,7 +483,11 @@ export function useVotes(votesReqQuery: VotesQuery): VotesPage {
         proposalId,
         offset,
         perPage,
-        for: isFor ? { equalTo: isFor } : undefined,
+        for: isFor
+          ? { equalTo: VoteStatus.For }
+          : typeof isFor === 'boolean'
+          ? { equalTo: VoteStatus.Against }
+          : { equalTo: VoteStatus.Abstain },
       },
     }).catch((e) => {
       setVotes({
@@ -504,7 +509,7 @@ export function useVotes(votesReqQuery: VotesQuery): VotesPage {
             .map((p): VoteListItem => {
               const vote = p!;
               return {
-                for: vote.for,
+                status: vote.voteStatus,
                 id: vote.id,
                 voterId: vote.voterId,
                 timestamp: new Date(vote.block?.timestamp!),

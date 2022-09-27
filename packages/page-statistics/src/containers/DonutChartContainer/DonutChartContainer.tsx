@@ -1,27 +1,37 @@
 import { useDonutColor } from '@webb-dapp/page-statistics/hooks';
+import { ProposalStatus } from '@webb-dapp/page-statistics/provider/hooks';
 import { Card, DropdownMenu, Label, TitleWithInfo } from '@webb-dapp/webb-ui-components/components';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
-import { FC, useMemo, useState } from 'react';
+import { FC, useMemo } from 'react';
 import { ChartProps, Doughnut } from 'react-chartjs-2';
 
 import { DonutDataType } from './types';
 
-const labels = [DonutDataType.Open, DonutDataType.Rejected, DonutDataType.Signed, DonutDataType.Accepted];
 const data = [9, 2, 3, 5];
+export type TimeRange = 'Day' | 'Week' | 'Year' | 'All Time';
 
-export const DonutChartContainer = () => {
-  const menuOptions = useMemo(() => ['Day', 'Week', 'Year', 'All Time'], []);
-  const [selectIndex, setSelectIndex] = useState(0);
+type ProposalsOverviewProps = {
+  statsMap: Record<ProposalStatus, number>;
+  isLoading: boolean;
+  timeRange: TimeRange;
+  setTimeRange: (timeRange: TimeRange) => void;
+};
+export const DonutChartContainer: FC<ProposalsOverviewProps> = ({ isLoading, setTimeRange, statsMap, timeRange }) => {
+  const menuOptions = useMemo<TimeRange[]>(() => ['Day', 'Week', 'Year', 'All Time'], []);
+  const selectIndex = useMemo(() => menuOptions.indexOf(timeRange), [menuOptions, timeRange]);
 
   const donutColors = useDonutColor();
-
+  const labels = useMemo(
+    () => Object.keys(statsMap).filter((i: any) => DonutDataType[i as DonutDataType]) as DonutDataType[],
+    [statsMap]
+  );
   const chartData = useMemo(() => {
     return {
       labels,
       datasets: [
         {
           label: 'Dataset',
-          data,
+          data: labels.map((label) => statsMap[label]),
           backgroundColor: labels.map((label) => donutColors[label].bg),
           borderColor: labels.map((label) => donutColors[label].borderColor),
           borderWidth: 1,
@@ -55,26 +65,31 @@ export const DonutChartContainer = () => {
           size='sm'
           menuOptions={menuOptions.map((opt) => ({ value: opt }))}
           value={menuOptions[selectIndex]}
-          onChange={(nextVal) => setSelectIndex(menuOptions.indexOf(nextVal))}
+          onChange={(nextVal) => setTimeRange(nextVal as TimeRange)}
         />
       </div>
+      {isLoading ? (
+        <>Loading</>
+      ) : (
+        <>
+          <div className='flex justify-center'>
+            <div className='w-[196px] h-[196px]'>
+              <Doughnut data={chartData} options={chartOpts} />
+            </div>
+          </div>
 
-      <div className='flex justify-center'>
-        <div className='w-[196px] h-[196px]'>
-          <Doughnut data={chartData} options={chartOpts} />
-        </div>
-      </div>
-
-      <div className='flex items-center justify-between'>
-        {labels.map((label, idx) => (
-          <ChartLabel
-            key={`${label}-${idx}`}
-            label={label}
-            value={data[idx].toString()}
-            color={donutColors[label].textColor}
-          />
-        ))}
-      </div>
+          <div className='flex items-center justify-between'>
+            {labels.map((label, idx) => (
+              <ChartLabel
+                key={`${label}-${idx}`}
+                label={label}
+                value={statsMap[label].toString()}
+                color={donutColors[label].textColor}
+              />
+            ))}
+          </div>
+        </>
+      )}
     </Card>
   );
 };
