@@ -1,6 +1,5 @@
-import { randHexaDecimal, randNumber, randRecentDate } from '@ngneat/falso';
-import { ProposalType } from '@webb-dapp/page-statistics/generated/graphql';
-import { ProposalDetails, ProposalStatus, useProposal } from '@webb-dapp/page-statistics/provider/hooks';
+import { randNumber } from '@ngneat/falso';
+import { useProposal } from '@webb-dapp/page-statistics/provider/hooks';
 import { useStatsContext } from '@webb-dapp/page-statistics/provider/stats-provider';
 import {
   Button,
@@ -11,7 +10,6 @@ import {
   TimeLine,
   TimeLineItem,
 } from '@webb-dapp/webb-ui-components/components';
-import { useSeedData } from '@webb-dapp/webb-ui-components/hooks';
 import {
   ArrowLeft,
   ArrowRight,
@@ -23,9 +21,8 @@ import {
   TokenIcon,
 } from '@webb-dapp/webb-ui-components/icons';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
-import { randomEnum, shortenHex } from '@webb-dapp/webb-ui-components/utils';
+import { shortenHex } from '@webb-dapp/webb-ui-components/utils';
 import cx from 'classnames';
-import { BigNumber } from 'ethers';
 import { FC, useMemo } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 
