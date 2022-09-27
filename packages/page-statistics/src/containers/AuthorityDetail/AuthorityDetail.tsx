@@ -29,7 +29,6 @@ import {
   TitleWithInfo,
 } from '@webb-dapp/webb-ui-components/components';
 import { fuzzyFilter } from '@webb-dapp/webb-ui-components/components/Filter/utils';
-import { useSeedData } from '@webb-dapp/webb-ui-components/hooks';
 import {
   ArrowLeft,
   CheckboxBlankCircleLine,
@@ -51,41 +50,6 @@ import { twMerge } from 'tailwind-merge';
 
 import { headerConfig } from '../KeygenTable';
 import { useStatsContext } from '@webb-dapp/page-statistics/provider/stats-provider';
-
-const getNewKeygenAuthority = (): KeyGenAuthority => ({
-  account: randAccount32(),
-  id: randEthereumAddress() + randEthereumAddress().substring(2),
-  location: randCountryCode(),
-  reputation: randNumber({ min: 95, max: 100 }),
-  uptime: randNumber({ min: 95, max: 100 }),
-});
-
-const getNewAuthorityStats = (): Pick<
-  AuthorityStats,
-  'numberOfKeys' | 'keyGenThreshold' | 'nextKeyGenThreshold' | 'pendingKeyGenThreshold'
-> => ({
-  numberOfKeys: randNumber({ max: 10 }).toString(),
-  keyGenThreshold: {
-    val: randNumber({ min: 10, max: 20 }).toString(),
-    inTheSet: randBoolean(),
-  },
-  nextKeyGenThreshold: {
-    val: randNumber({ min: 10, max: 20 }).toString(),
-    inTheSet: randBoolean(),
-  },
-  pendingKeyGenThreshold: {
-    val: randNumber({ min: 10, max: 20 }).toString(),
-    inTheSet: randBoolean(),
-  },
-});
-
-const getNewKeygenKey = (): KeyGenKeyListItem => ({
-  authority: randAccount32(),
-  height: (randRecentDate().getTime() / 1000).toString(),
-  id: randEthereumAddress() + randEthereumAddress().substring(2),
-  publicKey: randEthereumAddress(),
-  session: randNumber({ min: 10, max: 50 }).toString(),
-});
 
 const columnHelper = createColumnHelper<KeyGenKeyListItem>();
 
@@ -204,7 +168,7 @@ export const AuthorityDetail = () => {
   );
 };
 
-const DetailsView: FC<{ stats: AuthorityStats; isPage: boolean }> = ({ id, stats, isPage }) => {
+const DetailsView: FC<{ stats: AuthorityStats; isPage: boolean; id: string }> = ({ id, stats, isPage }) => {
   const { keyGenThreshold, nextKeyGenThreshold, numberOfKeys, pendingKeyGenThreshold, uptime, reputation } = stats;
   const location = 'EG';
   const account = id;
