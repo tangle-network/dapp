@@ -10576,7 +10576,7 @@ export type SessionKeysQueryVariables = Exact<{
 }>;
 
 
-export type SessionKeysQuery = { __typename?: 'Query', sessions?: { __typename?: 'SessionsConnection', nodes: Array<{ __typename?: 'Session', id: string, publicKey?: { __typename?: 'PublicKey', id: string, compressed?: string | null, uncompressed?: string | null, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null } | null, sessionValidators: { __typename?: 'SessionValidatorsConnection', edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: string, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string } | null } | null }> } } | null> } | null };
+export type SessionKeysQuery = { __typename?: 'Query', sessions?: { __typename?: 'SessionsConnection', nodes: Array<{ __typename?: 'Session', id: string, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null, publicKey?: { __typename?: 'PublicKey', id: string, compressed?: string | null, uncompressed?: string | null, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null } | null, sessionValidators: { __typename?: 'SessionValidatorsConnection', edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: string, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string } | null } | null }> } } | null> } | null };
 
 export type SessionThresholdHistoryQueryVariables = Exact<{
   offset: Scalars['Int'];
@@ -10875,11 +10875,7 @@ export type MetaDataLazyQueryHookResult = ReturnType<typeof useMetaDataLazyQuery
 export type MetaDataQueryResult = Apollo.QueryResult<MetaDataQuery, MetaDataQueryVariables>;
 export const LastBlockDocument = gql`
     query LastBlock {
-  blocks(
-    first: 1
-    filter: {timestamp: {isNull: false}}
-    orderBy: [NUMBER_DESC, SESSIONS_AVERAGE_ID_ASC]
-  ) {
+  blocks(first: 1, filter: {timestamp: {isNull: false}}, orderBy: [NUMBER_DESC]) {
     nodes {
       timestamp
       number
@@ -11487,6 +11483,10 @@ export const SessionKeysDocument = gql`
     nodes {
       id
       ...SessionAuth
+      block {
+        timestamp
+        number
+      }
       publicKey {
         id
         compressed

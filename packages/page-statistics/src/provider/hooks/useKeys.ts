@@ -279,11 +279,13 @@ export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
                 .filter((auth) => auth.isBest)
                 .map((auth) => auth.id);
               const publicKey = i!.publicKey!;
+              const session = i!;
+              const sessionTimeStamp = session.block?.timestamp;
               return {
                 id: publicKey.id,
-                session: i!.id,
-                end: undefined,
-                start: new Date(publicKey.block!.timestamp),
+                session: session.id,
+                end: sessionTimeStamp ? new Date(new Date(sessionTimeStamp).getTime() + 60 * 60 * 1000) : undefined,
+                start: sessionTimeStamp ? new Date(sessionTimeStamp) : undefined,
                 compressed: publicKey.compressed!,
                 uncompressed: publicKey.uncompressed!,
                 keyGenAuthorities,
@@ -294,11 +296,11 @@ export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
           const nextKey = val[1];
           return {
             val: [
+              activeKey,
               {
-                ...activeKey,
-                end: nextKey.start,
+                ...val[1],
+                start: activeKey.end!,
               },
-              val[1],
             ],
             isFailed: false,
             isLoading: false,

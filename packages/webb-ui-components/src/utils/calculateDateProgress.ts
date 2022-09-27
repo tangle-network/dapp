@@ -23,14 +23,13 @@ export const calculateDateProgress = (
 
   const startDate = new Date(startDateStr);
   const endDate = new Date(endDateStr);
-  console.log('dif', differenceInMilliseconds(now.getMilliseconds(), startDate));
   // If the start date in to future -> Return `null`
-  if (differenceInMilliseconds(now.getMilliseconds(), startDate) < 0) {
+  if (differenceInMilliseconds(now.getTime(), startDate) < 0) {
     return null;
   }
 
   const diffBetweenStartAndEnd = Math.abs(startDate.getTime() - endDate.getTime());
-  const diffBetweenStartAndNow = Math.abs(startDate.getTime() - Date.now());
+  const diffBetweenStartAndNow = Math.abs(startDate.getTime() - now.getTime());
 
   if (diffBetweenStartAndEnd === 0) {
     return null;

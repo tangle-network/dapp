@@ -24,6 +24,10 @@ query SessionKeys($SessionId: [String!]!) {
     nodes {
       id
       ...SessionAuth
+      block {
+        timestamp
+        number
+      }
       publicKey {
         id
         compressed
