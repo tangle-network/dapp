@@ -12,7 +12,7 @@ query LastBlock{
             }
 
         }
-        orderBy:[NUMBER_DESC , SESSIONS_AVERAGE_ID_ASC]) {
+        orderBy:[NUMBER_DESC]) {
         nodes {
             timestamp
             number
