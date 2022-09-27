@@ -57,7 +57,7 @@ export type UpcomingThresholds = Record<Lowercase<UpcomingThresholdStats>, Upcom
  * @param location - Authority location
  * @param uptime - Validator uptime
  * */
-type AuthorityListItem = {
+export type AuthorityListItem = {
   id: string;
   location: string;
   uptime: string;

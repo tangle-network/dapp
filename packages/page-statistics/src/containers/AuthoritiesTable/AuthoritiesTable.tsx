@@ -8,7 +8,12 @@ import {
   Table as RTTable,
   useReactTable,
 } from '@tanstack/react-table';
-import { KeyGenAuthority } from '@webb-dapp/page-statistics/provider/hooks';
+import {
+  AuthorityListItem,
+  KeyGenAuthority,
+  PageInfoQuery,
+  useAuthorities,
+} from '@webb-dapp/page-statistics/provider/hooks';
 import {
   Avatar,
   Button,
@@ -20,21 +25,21 @@ import {
 import { fuzzyFilter } from '@webb-dapp/webb-ui-components/components/Filter/utils';
 import { useSeedData } from '@webb-dapp/webb-ui-components/hooks';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
-import { randAccount32, shortenString } from '@webb-dapp/webb-ui-components/utils';
+import { randAccount32 } from '@webb-dapp/webb-ui-components/utils';
 import getUnicodeFlagIcon from 'country-flag-icons/unicode';
-import { FC, useEffect, useMemo, useState } from 'react';
+import { FC, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import { AuthoritiesTableProps } from './types';
 
-const columnHelper = createColumnHelper<KeyGenAuthority>();
+const columnHelper = createColumnHelper<AuthorityListItem>();
 
-const columns: ColumnDef<KeyGenAuthority, any>[] = [
-  columnHelper.accessor('account', {
+const columns: ColumnDef<AuthorityListItem, any>[] = [
+  columnHelper.accessor('id', {
     header: 'Participant',
     cell: (props) => (
       <div className='flex items-center space-x-2'>
-        <Avatar value={props.getValue<string>()} />
+        <Avatar sourceVariant={'address'} value={props.getValue<string>()} />
         <KeyValueWithButton keyValue={props.getValue<string>()} size='sm' isHiddenLabel />
       </div>
     ),
@@ -78,16 +83,10 @@ const getNewAuthority = (): KeyGenAuthority => ({
 });
 
 export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({ data: dataProp }) => {
-  const [data, setData] = useState(dataProp);
-
   const [{ pageIndex, pageSize }, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
   });
-
-  const { fetchData } = useSeedData(getNewAuthority);
-
-  const [dataQuery, setDataQuery] = useState<Awaited<ReturnType<typeof fetchData>> | undefined>();
 
   const pagination = useMemo(
     () => ({
@@ -96,39 +95,21 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({ data: dataProp }) 
     }),
     [pageIndex, pageSize]
   );
+  const query = useMemo<PageInfoQuery>(
+    () => ({
+      offset: pageIndex * pageSize,
+      perPage: pageSize,
+      filter: null,
+    }),
+    [pageIndex, pageSize]
+  );
 
-  const pageCount = useMemo(() => {
-    if (dataProp !== undefined) {
-      return Math.ceil(dataProp.length / pageSize);
-    }
-
-    return dataQuery?.pageCount ?? 0;
-  }, [dataProp, dataQuery, pageSize]);
-
-  const totalItems = useMemo(() => {
-    if (dataProp !== undefined) {
-      return dataProp.length;
-    }
-
-    return dataQuery?.totalItems ?? 0;
-  }, [dataProp, dataQuery?.totalItems]);
-
-  useEffect(() => {
-    const updateData = async () => {
-      if (dataProp !== undefined) {
-        return;
-      }
-
-      const fetchedData = await fetchData(pagination);
-      setDataQuery(fetchedData);
-      setData(fetchedData.rows);
-    };
-
-    updateData();
-  }, [dataProp, fetchData, pagination]);
-
-  const table = useReactTable<KeyGenAuthority>({
-    data: data ?? ([] as KeyGenAuthority[]),
+  const authorities = useAuthorities(query);
+  const totalItems = useMemo(() => authorities.val?.pageInfo.count ?? 0, [authorities]);
+  const pageCount = useMemo(() => Math.ceil(totalItems / pageSize), [pageSize, totalItems]);
+  const data = useMemo(() => authorities.val?.items ?? [], [authorities]);
+  const table = useReactTable<AuthorityListItem>({
+    data: data ?? ([] as AuthorityListItem[]),
     columns,
     pageCount,
     getCoreRowModel: getCoreRowModel(),
