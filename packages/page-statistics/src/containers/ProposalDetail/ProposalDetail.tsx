@@ -23,8 +23,8 @@ import {
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
 import { shortenHex } from '@webb-dapp/webb-ui-components/utils';
 import cx from 'classnames';
-import { FC, useMemo } from 'react';
-import { Link, useLocation, useParams } from 'react-router-dom';
+import { FC, useCallback, useMemo } from 'react';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { ProposersTable } from '../ProposersTable';
 
@@ -75,6 +75,24 @@ export const ProposalDetail = () => {
       all: 0,
     };
   }, [proposalDetails]);
+  const nextProposalId = proposalDetails.nextAndPrevStatus.val?.nextProposalId;
+  const previousProposalId = proposalDetails.nextAndPrevStatus.val?.previousProposalId;
+  const navigate = useNavigate();
+
+  const handleNextProposal = useCallback(() => {
+    if (nextProposalId) {
+      navigate(`/proposals${isPage ? '' : '/drawer'}/${nextProposalId}`);
+    }
+  }, [isPage, navigate, nextProposalId]);
+
+  const handlePrevProposal = useCallback(() => {
+    if (previousProposalId) {
+      navigate(`/proposals${isPage ? '' : '/drawer'}/${previousProposalId}`);
+    }
+  }, [isPage, navigate, previousProposalId]);
+
+  console.log(proposalDetails.nextAndPrevStatus.val, 'next prev value');
+
   const Overview = useMemo(() => {
     if (proposalDetails.proposal.val) {
       const {
@@ -215,11 +233,20 @@ export const ProposalDetail = () => {
 
         <div className='flex items-center space-x-2'>
           {/** Previous/Next Buttons */}
-          <Button size='sm' leftIcon={<ArrowLeft className='!fill-current' />} varirant='utility' className='uppercase'>
+          <Button
+            size='sm'
+            onClick={handlePrevProposal}
+            isDisabled={previousProposalId === null || previousProposalId === undefined}
+            leftIcon={<ArrowLeft className='!fill-current' />}
+            varirant='utility'
+            className='uppercase'
+          >
             Prev
           </Button>
           <Button
             size='sm'
+            isDisabled={nextProposalId === null || nextProposalId === undefined}
+            onClick={handleNextProposal}
             rightIcon={<ArrowRight className='!fill-current' />}
             varirant='utility'
             className='uppercase'
