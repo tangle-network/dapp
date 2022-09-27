@@ -87,13 +87,16 @@ const columns: ColumnDef<KeyGenKeyListItem, any>[] = [
 
   columnHelper.accessor('id', {
     header: '',
-    cell: (props) => (
-      <Link to={`#`}>
-        <Button className='uppercase' varirant='link' as='span' size='sm'>
-          Details
-        </Button>
-      </Link>
-    ),
+    cell: (props) => {
+      const id = props.row.original.publicKey;
+      return (
+        <Link to={`/keys/drawer/${id}`}>
+          <Button className='uppercase' varirant='link' as='span' size='sm'>
+            Details
+          </Button>
+        </Link>
+      );
+    },
     enableColumnFilter: false,
   }),
 ];

@@ -259,7 +259,7 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage },
       </div>
 
       {/** Authorities Table */}
-      <AuthoritiesTable data={authoritiesTblData} />
+      {/*<AuthoritiesTable data={authoritiesTblData} />*/}
     </div>
   );
 });

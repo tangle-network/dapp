@@ -1,4 +1,3 @@
-import { randCountryCode, randEthereumAddress, randNumber } from '@ngneat/falso';
 import {
   ColumnDef,
   createColumnHelper,
@@ -8,12 +7,7 @@ import {
   Table as RTTable,
   useReactTable,
 } from '@tanstack/react-table';
-import {
-  AuthorityListItem,
-  KeyGenAuthority,
-  PageInfoQuery,
-  useAuthorities,
-} from '@webb-dapp/page-statistics/provider/hooks';
+import { AuthorityListItem, PageInfoQuery, useAuthorities } from '@webb-dapp/page-statistics/provider/hooks';
 import {
   Avatar,
   Button,
@@ -23,9 +17,7 @@ import {
   Table,
 } from '@webb-dapp/webb-ui-components/components';
 import { fuzzyFilter } from '@webb-dapp/webb-ui-components/components/Filter/utils';
-import { useSeedData } from '@webb-dapp/webb-ui-components/hooks';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
-import { randAccount32 } from '@webb-dapp/webb-ui-components/utils';
 import getUnicodeFlagIcon from 'country-flag-icons/unicode';
 import { FC, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';

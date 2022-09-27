@@ -384,7 +384,7 @@ export function useAuthority(pageQuery: AuthorityQuery): AuthorityDetails {
                 count: session.sessionValidators.totalCount,
                 firstElements: session.sessionValidators.edges
                   .map((i) => i.node?.validator?.id)
-                  .filter((i) => i! === undefined),
+                  .filter((i) => i !== undefined) as string[],
               },
             };
           });
