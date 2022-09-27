@@ -102,10 +102,10 @@ query ProposalVotes(
     $offset: Int!
     # The proposal id
     $proposalId: String!
-    $for: BooleanFilter
+    $for: VoteStatusFilter
 ) {
     proposalVotes(
-        filter: { proposalId: { equalTo: $proposalId }, for: $for }
+        filter: { proposalId: { equalTo: $proposalId }, voteStatus: $for }
         orderBy: [BLOCK_NUMBER_DESC]
         first: $perPage
         offset: $offset
@@ -148,10 +148,12 @@ query ProposalDetails(
             }
         }
 
-        votesFor: proposalVotesByProposalId(filter: { for: { equalTo: true } }) {
+        votesFor: proposalVotesByProposalId(filter: { voteStatus: { equalTo: FOR } }) {
             totalCount
         }
-
+        abstain: proposalVotesByProposalId(filter: { voteStatus: { equalTo: ABSTAIN } }) {
+            totalCount
+        }
         totalVotes: proposalVotesByProposalId {
             totalCount
         }
