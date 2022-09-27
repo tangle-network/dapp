@@ -9,7 +9,8 @@ import { compareAsc, differenceInMilliseconds, isValid } from 'date-fns';
  */
 export const calculateDateProgress = (
   startDateStr: string | Date | null,
-  endDateStr: string | Date | null
+  endDateStr: string | Date | null,
+  now: Date
 ): number | null => {
   if (startDateStr === null || endDateStr === null) {
     return null;
@@ -22,9 +23,9 @@ export const calculateDateProgress = (
 
   const startDate = new Date(startDateStr);
   const endDate = new Date(endDateStr);
-
+  console.log('dif', differenceInMilliseconds(now.getMilliseconds(), startDate));
   // If the start date in to future -> Return `null`
-  if (differenceInMilliseconds(Date.now(), startDate) < 0) {
+  if (differenceInMilliseconds(now.getMilliseconds(), startDate) < 0) {
     return null;
   }
 

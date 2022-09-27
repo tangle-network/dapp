@@ -55,6 +55,10 @@ export interface KeyStatusCardDataProps {
    * The next key id for navigation
    */
   nextKeyId?: string;
+  /**
+   * Time instance
+   * */
+  instance: Date;
 }
 
 /**

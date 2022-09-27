@@ -10875,7 +10875,11 @@ export type MetaDataLazyQueryHookResult = ReturnType<typeof useMetaDataLazyQuery
 export type MetaDataQueryResult = Apollo.QueryResult<MetaDataQuery, MetaDataQueryVariables>;
 export const LastBlockDocument = gql`
     query LastBlock {
-  blocks(first: 1, filter: {timestamp: {isNull: false}}, orderBy: [NUMBER_DESC]) {
+  blocks(
+    first: 1
+    filter: {timestamp: {isNull: false}}
+    orderBy: [NUMBER_DESC, SESSIONS_AVERAGE_ID_ASC]
+  ) {
     nodes {
       timestamp
       number

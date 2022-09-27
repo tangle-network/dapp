@@ -26,7 +26,7 @@ type PublicKeyContent = {
   compressed: string;
 
   start: Date;
-  end: Date;
+  end?: Date;
   session: string;
 };
 
@@ -272,7 +272,6 @@ export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
   useEffect(() => {
     const subscription = query.observable
       .map((res): Loadable<[PublicKey, PublicKey]> => {
-        console.log(`Active sesion keys res`, res);
         if (res.data) {
           const val: PublicKey[] =
             res.data.sessions?.nodes.map((i) => {
@@ -283,7 +282,7 @@ export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
               return {
                 id: publicKey.id,
                 session: i!.id,
-                end: new Date(publicKey.block!.timestamp),
+                end: undefined,
                 start: new Date(publicKey.block!.timestamp),
                 compressed: publicKey.compressed!,
                 uncompressed: publicKey.uncompressed!,
@@ -291,8 +290,16 @@ export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
                 isCurrent: true,
               };
             }) || [];
+          const activeKey = val[0];
+          const nextKey = val[1];
           return {
-            val: [val[0], val[1]],
+            val: [
+              {
+                ...activeKey,
+                end: nextKey.start,
+              },
+              val[1],
+            ],
             isFailed: false,
             isLoading: false,
           };

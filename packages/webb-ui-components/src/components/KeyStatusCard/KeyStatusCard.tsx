@@ -6,6 +6,7 @@ import { LabelWithValue } from '../LabelWithValue';
 import { TimeProgress } from '../TimeProgress';
 import { TitleWithInfo } from '../TitleWithInfo';
 import { KeyStatusCardProps } from './types';
+import { formatDateToUtc } from '@webb-dapp/webb-ui-components/utils';
 
 /**
  * The `KeyStatusCard` component displays the current key and next key data
@@ -31,6 +32,7 @@ export const KeyStatusCard: React.FC<KeyStatusCardProps> = ({
   title,
   titleInfo,
   totalAuthorities,
+  instance,
   ...props
 }) => {
   return (
@@ -46,8 +48,10 @@ export const KeyStatusCard: React.FC<KeyStatusCardProps> = ({
         </div>
         <KeyValueWithButton keyValue={keyVal} />
       </div>
+      {instance ? formatDateToUtc(instance) : '--'}
+
       {/* * Content */}
-      <TimeProgress startTime={startTime} endTime={endTime} />
+      <TimeProgress now={instance} startTime={startTime} endTime={endTime} />
       {/** Bottom */}
       <div className='flex items-center justify-between'>
         <AvatarGroup total={totalAuthorities}>

@@ -12,4 +12,9 @@ export interface TimeProgressProps extends WebbComponentBase {
    * The end time
    */
   endTime: Date | string | null;
+
+  /**
+   * Coustome time object
+   * */
+  now?: Date;
 }

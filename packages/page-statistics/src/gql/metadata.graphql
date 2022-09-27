@@ -10,8 +10,9 @@ query LastBlock{
             timestamp: {
                 isNull: false
             }
+
         }
-        orderBy:[NUMBER_DESC]) {
+        orderBy:[NUMBER_DESC , SESSIONS_AVERAGE_ID_ASC]) {
         nodes {
             timestamp
             number

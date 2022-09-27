@@ -6,6 +6,8 @@ import { Outlet } from 'react-router-dom';
 import { KeygenTable, KeyStatusCardContainer } from '../containers';
 
 import { PublicKey, PublicKeyListView, useActiveKeys } from '../provider/hooks';
+import { useStatsContext } from '@webb-dapp/page-statistics/provider/stats-provider';
+import { formatDateToUtc } from '@webb-dapp/webb-ui-components/utils';
 const Keys = () => {
   const pagination = useMemo(
     () => ({
@@ -28,6 +30,10 @@ const Keys = () => {
       nextKey: data ? data[1] : null,
     };
   }, [data]);
+  const { time } = useStatsContext();
+  const now = useMemo(() => {
+    return time.current;
+  }, [time]);
 
   if (isLoading) {
     return <Spinner size='xl' />;
@@ -50,8 +56,8 @@ const Keys = () => {
   return (
     <div>
       <div className='flex space-x-4'>
-        <KeyStatusCardContainer keyType='current' data={currentKey} />
-        <KeyStatusCardContainer keyType='next' data={nextKey} />
+        <KeyStatusCardContainer now={now} keyType='current' data={currentKey} />
+        <KeyStatusCardContainer now={now} keyType='next' data={nextKey} />
       </div>
 
       <div className='mt-4'>
