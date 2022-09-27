@@ -24,6 +24,7 @@ import { Outlet } from 'react-router-dom';
 import { AuthoritiesTable } from '../containers';
 import { DiscreteList, Thresholds, UpcomingThreshold, UpcomingThresholds, useThresholds } from '../provider/hooks';
 import { getChipColorByKeyType } from '../utils';
+import { useStatsContext } from '@webb-dapp/page-statistics/provider/stats-provider';
 
 const columnHelper = createColumnHelper<UpcomingThreshold>();
 
@@ -121,6 +122,7 @@ const Authorities = () => {
   });
   const { keyGen, publicKey, signature } = threshold! ?? {};
   const isLoading = !thresholds || thresholds?.isLoading || !keyGen || !signature || !publicKey;
+  const { time } = useStatsContext();
   return (
     <div className='flex flex-col space-y-4'>
       <Card>
@@ -132,7 +134,7 @@ const Authorities = () => {
 
             <Stats items={statsItems} className='pb-0' />
 
-            <TimeProgress startTime={publicKey.start} endTime={publicKey.end} />
+            <TimeProgress startTime={publicKey.start} endTime={publicKey.end ?? null} now={time} />
 
             <div className='flex items-center justify-between'>
               <div className='flex items-center space-x-2'>

@@ -10591,7 +10591,7 @@ export type SessionThresholdsQueryVariables = Exact<{
 }>;
 
 
-export type SessionThresholdsQuery = { __typename?: 'Query', session?: { __typename?: 'Session', id: string, signatureThreshold?: any | null, keyGenThreshold?: any | null, proposersCount: { __typename?: 'SessionProposersConnection', totalCount: number }, publicKey?: { __typename?: 'PublicKey', id: string, compressed?: string | null, uncompressed?: string | null, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null } | null, sessionValidators: { __typename?: 'SessionValidatorsConnection', edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: string, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string } | null } | null }> } } | null };
+export type SessionThresholdsQuery = { __typename?: 'Query', session?: { __typename?: 'Session', id: string, signatureThreshold?: any | null, keyGenThreshold?: any | null, proposersCount: { __typename?: 'SessionProposersConnection', totalCount: number }, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null, publicKey?: { __typename?: 'PublicKey', id: string, compressed?: string | null, uncompressed?: string | null, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null } | null, sessionValidators: { __typename?: 'SessionValidatorsConnection', edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: string, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string } | null } | null }> } } | null };
 
 export const PageInfoMetaFragmentDoc = gql`
     fragment PageInfoMeta on PageInfo {
@@ -11586,6 +11586,10 @@ export const SessionThresholdsDocument = gql`
       totalCount
     }
     ...SessionAuth
+    block {
+      timestamp
+      number
+    }
     publicKey {
       id
       compressed

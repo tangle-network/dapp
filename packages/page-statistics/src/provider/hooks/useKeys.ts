@@ -25,7 +25,7 @@ type PublicKeyContent = {
   uncompressed: string;
   compressed: string;
 
-  start: Date;
+  start?: Date;
   end?: Date;
   session: string;
 };

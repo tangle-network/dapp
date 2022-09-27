@@ -159,13 +159,14 @@ export function useThresholds(): Loadable<[Thresholds, UpcomingThresholds]> {
           const nextAuthSet = allAuth.filter((auth) => auth.isNext).map((auth) => auth.id);
           const keyGenThreshold = session.keyGenThreshold as QueryThreshold;
           const signatureThreshold = session.signatureThreshold as QueryThreshold;
+          const sessionTimeStamp = session.block?.timestamp;
           const threshold: Thresholds = {
             keyGen: keyGenThreshold ? String(keyGenThreshold.current) : '-',
             publicKey: {
               id: publicKey.id,
               session: session.id,
-              start: new Date(publicKey.block?.timestamp),
-              end: new Date(publicKey.block?.timestamp),
+              end: sessionTimeStamp ? new Date(new Date(sessionTimeStamp).getTime() + 60 * 60 * 1000) : undefined,
+              start: sessionTimeStamp ? new Date(sessionTimeStamp) : undefined,
               compressed: publicKey.compressed!,
               uncompressed: publicKey.uncompressed!,
               keyGenAuthorities: authSet,
