@@ -30,6 +30,9 @@ query ValidatorSessions($keyGen: Boolean, $validatorId: String!, $perPage: Int!,
           id
           compressed
           uncompressed
+          block {
+            id
+          }
         }
         sessionValidators(first: 3) {
           ...SessionAuthValidator
@@ -44,19 +47,14 @@ query ValidatorSessions($keyGen: Boolean, $validatorId: String!, $perPage: Int!,
   }
 }
 
-query ValidatorOfSession(
-  $validatorId: String!
-  $sessionValidatorId: String!) {
+query ValidatorOfSession($validatorId: String!, $sessionValidatorId: String!) {
   sessionValidator(id: $sessionValidatorId) {
     ...SessionAuthValidatorNode
     session {
       keyGenThreshold
     }
   }
-  sessionValidators(filter: {
-    validatorId: {equalTo: $validatorId}
-    isBest: {equalTo: true}
-  }){
+  sessionValidators(filter: { validatorId: { equalTo: $validatorId }, isBest: { equalTo: true } }) {
     aggregates {
       distinctCount {
         id

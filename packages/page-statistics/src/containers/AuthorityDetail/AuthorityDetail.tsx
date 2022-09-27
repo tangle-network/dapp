@@ -182,7 +182,7 @@ export const AuthorityDetail = () => {
 
   return (
     <div className='flex flex-col p-6 space-y-6'>
-      {stats ? <DetailLoader isPage={isPage} stats={stats} /> : <Spinner />}
+      {stats ? <DetailLoader isPage={isPage} stats={stats} /> : <div>loading..</div>}
       {/** Keygen table */}
       <CardTable
         titleProps={{

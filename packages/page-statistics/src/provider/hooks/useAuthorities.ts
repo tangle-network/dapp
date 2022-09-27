@@ -137,6 +137,7 @@ export function useThresholds(): Loadable<[Thresholds, UpcomingThresholds]> {
   const [call, query] = useSessionThresholdsLazyQuery();
   useEffect(() => {
     if (session.val) {
+      console.log(`use auth active session`, session.val.activeSession);
       call({ variables: { sessionId: session.val.activeSession } }).catch((e) => {
         setData({
           val: null,
@@ -371,7 +372,7 @@ export function useAuthority(pageQuery: AuthorityQuery): AuthorityDetails {
               id: publicKey.id,
               session: session.id,
               publicKey: publicKey.uncompressed!,
-              height: '0',
+              height: publicKey.block.number,
               authority: String(session.sessionValidators.totalCount),
             };
           });

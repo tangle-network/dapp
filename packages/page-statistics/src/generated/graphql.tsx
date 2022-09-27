@@ -10456,7 +10456,7 @@ export type ValidatorSessionsQueryVariables = Exact<{
 }>;
 
 
-export type ValidatorSessionsQuery = { __typename?: 'Query', sessionValidators?: { __typename?: 'SessionValidatorsConnection', totalCount: number, nodes: Array<{ __typename?: 'SessionValidator', validator?: { __typename?: 'Validator', authorityId: string, id: string } | null, session?: { __typename?: 'Session', id: string, publicKey?: { __typename?: 'PublicKey', id: string, compressed?: string | null, uncompressed?: string | null } | null, sessionValidators: { __typename?: 'SessionValidatorsConnection', totalCount: number, edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: string, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string } | null } | null }> } } | null } | null>, pageInfo: { __typename?: 'PageInfo', endCursor?: any | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: any | null } } | null };
+export type ValidatorSessionsQuery = { __typename?: 'Query', sessionValidators?: { __typename?: 'SessionValidatorsConnection', totalCount: number, nodes: Array<{ __typename?: 'SessionValidator', validator?: { __typename?: 'Validator', authorityId: string, id: string } | null, session?: { __typename?: 'Session', id: string, publicKey?: { __typename?: 'PublicKey', id: string, compressed?: string | null, uncompressed?: string | null, block?: { __typename?: 'Block', id: string } | null } | null, sessionValidators: { __typename?: 'SessionValidatorsConnection', totalCount: number, edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: string, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string } | null } | null }> } } | null } | null>, pageInfo: { __typename?: 'PageInfo', endCursor?: any | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: any | null } } | null };
 
 export type ValidatorOfSessionQueryVariables = Exact<{
   validatorId: Scalars['String'];
@@ -10739,6 +10739,9 @@ export const ValidatorSessionsDocument = gql`
           id
           compressed
           uncompressed
+          block {
+            id
+          }
         }
         sessionValidators(first: 3) {
           ...SessionAuthValidator
