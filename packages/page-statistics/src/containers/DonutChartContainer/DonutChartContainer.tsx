@@ -38,7 +38,7 @@ export const DonutChartContainer: FC<ProposalsOverviewProps> = ({ isLoading, set
         },
       ],
     };
-  }, [donutColors]);
+  }, [donutColors, labels, statsMap]);
 
   const chartOpts = useMemo<ChartProps['options']>(() => {
     return {
