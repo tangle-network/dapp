@@ -1,4 +1,3 @@
-import { randBoolean, randEthereumAddress, randRecentDate } from '@ngneat/falso';
 import {
   ColumnDef,
   createColumnHelper,
@@ -16,20 +15,10 @@ import { VoteStatus } from '@webb-dapp/page-statistics/generated/graphql';
 import { useVotes, VoteListItem, VotesQuery } from '@webb-dapp/page-statistics/provider/hooks';
 import { Avatar, Chip, Table, Tabs } from '@webb-dapp/webb-ui-components/components';
 import { fuzzyFilter } from '@webb-dapp/webb-ui-components/components/Filter/utils';
-import { useSeedData } from '@webb-dapp/webb-ui-components/hooks';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
-import { randAccount32, shortenString } from '@webb-dapp/webb-ui-components/utils';
+import { shortenString } from '@webb-dapp/webb-ui-components/utils';
 import { formatDistanceToNow } from 'date-fns';
-import { FC, useEffect, useMemo, useState } from 'react';
-
-const getVoteItem: () => VoteListItem = () => {
-  return {
-    id: randEthereumAddress() + randEthereumAddress().substring(2),
-    voterId: randAccount32(),
-    timestamp: randRecentDate(),
-    for: randBoolean() ? undefined : randBoolean(), // Dummy random. Please don't judge :)
-  };
-};
+import { FC, useMemo, useState } from 'react';
 
 const columnHelper = createColumnHelper<VoteListItem>();
 
@@ -89,10 +78,6 @@ type ProposersTableProps = {
   proposalId: string;
 };
 export const ProposersTable: FC<ProposersTableProps> = ({ counters, proposalId }) => {
-  const { fetchData } = useSeedData(getVoteItem);
-
-  const [dataQuery, setDataQuery] = useState<Awaited<ReturnType<typeof fetchData>> | undefined>(undefined);
-
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 10,
@@ -102,7 +87,7 @@ export const ProposersTable: FC<ProposersTableProps> = ({ counters, proposalId }
     return {
       filter: {
         proposalId,
-        isFor: true,
+        status: voteStatus,
       },
       offset: pagination.pageSize * pagination.pageIndex,
       perPage: pagination.pageSize,
@@ -119,18 +104,10 @@ export const ProposersTable: FC<ProposersTableProps> = ({ counters, proposalId }
     ];
   }, [counters]);
   const tabsLabels = useMemo(() => tabsValue.map((i) => i[1]), [tabsValue]);
-  const pageCount = useMemo(() => dataQuery?.pageCount ?? 0, [dataQuery]);
-  const totalItems = useMemo(() => dataQuery?.totalItems ?? 0, [dataQuery]);
-  const data = useMemo(() => dataQuery?.rows ?? ([] as VoteListItem[]), [dataQuery?.rows]);
+  const totalItems = useMemo(() => votes.val?.pageInfo.count ?? 0, [votes]);
+  const pageCount = useMemo(() => Math.ceil(totalItems / pagination.pageSize), [pagination, totalItems]);
 
-  useEffect(() => {
-    const updateData = async () => {
-      const fetchedData = await fetchData({ ...pagination });
-      setDataQuery(fetchedData);
-    };
-
-    updateData();
-  }, [fetchData, pagination]);
+  const data = useMemo(() => votes.val?.items ?? [], [votes]);
 
   const table = useReactTable<VoteListItem>({
     data,
