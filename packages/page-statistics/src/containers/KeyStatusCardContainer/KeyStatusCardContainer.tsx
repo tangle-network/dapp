@@ -25,7 +25,7 @@ export const KeyStatusCardContainer: FC<KeyStatusCardContainerProps> = ({ data, 
       data.keyGenAuthorities?.reduce((acc, cur) => {
         acc.add(cur);
         return acc;
-      }, new Set() as KeyStatusCardProps['authorities']),
+      }, new Set() as KeyStatusCardProps['authorities']) ?? new Set(),
     [data.keyGenAuthorities]
   );
 
