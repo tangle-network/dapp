@@ -9,6 +9,7 @@ import { useCurrentMetaData } from '@webb-dapp/page-statistics/provider/hooks/us
 import { useEffect, useState } from 'react';
 
 import { Loadable, Page, PageInfoQuery, SessionKeyHistory, SessionKeyStatus, Threshold } from './types';
+import { useStaticConfig } from '@webb-dapp/page-statistics/provider/stats-provider';
 
 /**
  *  Public key shared content
@@ -129,6 +130,18 @@ type PublicKeyDetailsPage = {
   prevAndNextKey: Loadable<NextAndPrevKeyStatus>;
 };
 
+export function sessionFrame(
+  timestamp: string | undefined = undefined,
+  sessionHeight: number,
+  blockTime: number
+): [Date, Date] | [] {
+  if (!timestamp) {
+    return [];
+  }
+  const startDateTime = new Date(timestamp);
+  const endTime = startDateTime.getTime() + blockTime * sessionHeight * 1000;
+  return [startDateTime, new Date(endTime)];
+}
 /**
  * List keys for table view
  *
@@ -148,6 +161,7 @@ type PublicKeyDetailsPage = {
  * */
 export function useKeys(reqQuery: PageInfoQuery): Loadable<Page<PublicKeyListView>> {
   const [call, query] = usePublicKeysLazyQuery();
+  const { blockTime, sessionHeight } = useStaticConfig();
   const [page, setPage] = useState<Loadable<Page<PublicKeyListView>>>({
     val: null,
     isFailed: false,
@@ -206,7 +220,7 @@ export function useKeys(reqQuery: PageInfoQuery): Loadable<Page<PublicKeyListVie
 
                 const previousKeyId = idx ? filteredData[idx - 1]?.id : undefined;
                 const nextKeyId = idx < filteredData.length - 1 ? filteredData[idx + 1]?.id : undefined;
-
+                const [start, end] = sessionFrame(session.block?.timestamp, sessionHeight, blockTime);
                 return {
                   height: String(node!.block?.number),
                   session: session.id,
@@ -215,8 +229,8 @@ export function useKeys(reqQuery: PageInfoQuery): Loadable<Page<PublicKeyListVie
                   compressed: node!.compressed!,
                   uncompressed: node!.uncompressed!,
                   keyGenAuthorities: authorities,
-                  end: new Date(node!.block?.timestamp),
-                  start: new Date(node!.block?.timestamp),
+                  end,
+                  start,
                   id: node!.id,
                   previousKeyId,
                   nextKeyId,
@@ -238,7 +252,7 @@ export function useKeys(reqQuery: PageInfoQuery): Loadable<Page<PublicKeyListVie
       })
       .subscribe(setPage);
     return () => subscription.unsubscribe();
-  }, [query]);
+  }, [query, blockTime, sessionHeight]);
   return page;
 }
 
@@ -248,6 +262,7 @@ export function useKeys(reqQuery: PageInfoQuery): Loadable<Page<PublicKeyListVie
 export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
   const metaData = useCurrentMetaData();
   const [call, query] = useSessionKeysLazyQuery();
+  const { blockTime, sessionHeight } = useStaticConfig();
   const [keys, setKeys] = useState<Loadable<[PublicKey, PublicKey]>>({
     val: null,
     isFailed: false,
@@ -281,11 +296,13 @@ export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
               const publicKey = i!.publicKey!;
               const session = i!;
               const sessionTimeStamp = session.block?.timestamp;
+              const [start, end] = sessionFrame(sessionTimeStamp, sessionHeight, blockTime);
+
               return {
                 id: publicKey.id,
                 session: session.id,
-                end: sessionTimeStamp ? new Date(new Date(sessionTimeStamp).getTime() + 60 * 60 * 1000) : undefined,
-                start: sessionTimeStamp ? new Date(sessionTimeStamp) : undefined,
+                end,
+                start,
                 compressed: publicKey.compressed!,
                 uncompressed: publicKey.uncompressed!,
                 keyGenAuthorities,
@@ -298,7 +315,7 @@ export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
             val: [
               activeKey,
               {
-                ...val[1],
+                ...nextKey,
                 start: activeKey.end!,
               },
             ],
@@ -339,7 +356,7 @@ export function useKey(id: string): PublicKeyDetailsPage {
     isFailed: false,
     isLoading: true,
   });
-
+  const { blockTime, sessionHeight } = useStaticConfig();
   const [prevAndNextKey, setPrevAndNextKey] = useState<Loadable<NextAndPrevKeyStatus>>({
     val: null,
     isFailed: false,
@@ -387,6 +404,7 @@ export function useKey(id: string): PublicKeyDetailsPage {
               };
             });
           const validators = sessionAuthorities.length;
+          const [start, end] = sessionFrame(session.block?.timestamp, sessionHeight, blockTime);
           return {
             isFailed: false,
             isLoading: false,
@@ -396,8 +414,8 @@ export function useKey(id: string): PublicKeyDetailsPage {
               uncompressed: publicKey.uncompressed!,
               id: publicKey.id,
               session: session.id,
-              end: new Date(publicKey.block!.timestamp),
-              start: new Date(publicKey.block!.timestamp),
+              end,
+              start,
               history,
               numberOfValidators: validators,
               isCurrent: true,

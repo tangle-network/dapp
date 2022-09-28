@@ -21,6 +21,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import { AuthoritiesTable } from '../AuthoritiesTable';
 import { AuthorityRowType, KeyDetailProps } from './types';
+import { useSubQLtime } from '@webb-dapp/page-statistics/provider/stats-provider';
 
 export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage }, ref) => {
   const { keyId = '' } = useParams<{ keyId: string }>();
@@ -32,7 +33,7 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage },
   const { val: prevAndNextKey } = prevAndNextKeyResp;
 
   const commonCardClsx = useMemo(() => 'rounded-lg bg-mono-0 dark:bg-mono-180', []);
-
+  const time = useSubQLtime();
   const authoritiesTblData = useMemo<AuthorityRowType[]>(() => {
     return keyDetail
       ? keyDetail.authorities.map((aut) => ({ ...aut, detaillUrl: 'https://webb.tools' })) // TODO: Determine the detail url
@@ -132,7 +133,7 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage },
         <div className='flex flex-col space-y-3'>
           <TitleWithInfo title='Active Period' variant='body1' titleComponent='h6' info='Active period' />
 
-          <TimeProgress startTime={keyDetail.start} endTime={keyDetail.end} />
+          <TimeProgress now={time} startTime={keyDetail.start ?? null} endTime={keyDetail.end ?? null} />
         </div>
 
         {/** Compressed/Uncompressed Keys */}

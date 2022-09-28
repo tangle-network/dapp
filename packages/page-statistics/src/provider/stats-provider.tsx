@@ -97,18 +97,21 @@ const statsContext: React.Context<StatsProvidervalue> = React.createContext<Stat
 export function useStatsContext() {
   return useContext(statsContext);
 }
-export const useSubQLtime = (): [SubQlTime, (time: Date) => void] => {
+export const useSubQLtime = (): SubQlTime => {
   const ctx = useContext(statsContext);
-  const updateTime = useCallback(
-    (newTime: Date) => {
-      const time = ctx.time.sync(newTime);
-      ctx.updateTime(time);
-    },
-    [ctx]
-  );
-  return [ctx.time, updateTime];
+
+  return ctx.time;
 };
 
+export const useStaticConfig = () => {
+  const { blockTime, sessionHeight } = useStatsContext();
+  return useMemo(() => {
+    return {
+      blockTime,
+      sessionHeight,
+    };
+  }, [blockTime, sessionHeight]);
+};
 export const StatsProvider: React.FC<Omit<StatsProvidervalue, 'isReady' | 'metaData' | 'updateTime' | 'time'>> = (
   props
 ) => {
