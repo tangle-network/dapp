@@ -11280,7 +11280,7 @@ export const PublicKeysDocument = gql`
   publicKeys(
     first: $PerPage
     offset: $offset
-    orderBy: [SESSIONS_SUM_BLOCK_NUMBER_ASC]
+    orderBy: [SESSIONS_SUM_BLOCK_NUMBER_DESC]
   ) {
     nodes {
       id

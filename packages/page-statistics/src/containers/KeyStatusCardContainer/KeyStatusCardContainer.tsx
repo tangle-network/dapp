@@ -1,5 +1,6 @@
 import { KeyStatusCard } from '@webb-dapp/webb-ui-components/components/KeyStatusCard';
 import { KeyStatusCardProps } from '@webb-dapp/webb-ui-components/components/KeyStatusCard/types';
+import { Spinner } from '@webb-dapp/webb-ui-components/icons';
 import React, { FC, forwardRef, useMemo } from 'react';
 
 import { KeyStatusCardContainerProps } from './types';
@@ -21,7 +22,7 @@ export const KeyStatusCardContainer: FC<KeyStatusCardContainerProps> = ({ data, 
 
   const authorities = useMemo(
     () =>
-      data.keyGenAuthorities.reduce((acc, cur) => {
+      data.keyGenAuthorities?.reduce((acc, cur) => {
         acc.add(cur);
         return acc;
       }, new Set() as KeyStatusCardProps['authorities']),
@@ -35,11 +36,11 @@ export const KeyStatusCardContainer: FC<KeyStatusCardContainerProps> = ({ data, 
       instance={now}
       sessionNumber={Number(data.session)}
       keyType={keyType}
-      keyVal={data.uncompressed}
-      startTime={data.start}
+      keyVal={data.compressed}
+      startTime={data.start ?? null}
       endTime={data.end ?? null}
       authorities={authorities}
-      totalAuthorities={data.keyGenAuthorities.length}
+      totalAuthorities={data.keyGenAuthorities?.length}
       fullDetailUrl={`drawer/${data.id}`}
     />
   );

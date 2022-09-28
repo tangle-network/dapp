@@ -156,7 +156,7 @@ export const KeygenTable: FC = () => {
         (item): KeygenType => ({
           height: Number(item.height),
           session: Number(item.session),
-          key: item.uncompressed,
+          key: item.compressed,
           authorities: new Set(item.keyGenAuthorities),
           keygenThreshold: Number(item.keyGenThreshold),
           keyId: item.uncompressed,

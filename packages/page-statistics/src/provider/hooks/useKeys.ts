@@ -292,27 +292,29 @@ export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
       .map((res): Loadable<[PublicKey, PublicKey]> => {
         if (res.data) {
           const val: PublicKey[] =
-            res.data.sessions?.nodes.map((i) => {
-              const keyGenAuthorities = mapAuthorities(i?.sessionValidators!)
-                .filter((auth) => auth.isBest)
-                .map((auth) => auth.id);
-              const publicKey = i!.publicKey!;
-              const session = i!;
-              const sessionTimeStamp = session.block?.timestamp;
-              const [start, end] = sessionFrame(sessionTimeStamp, sessionHeight, blockTime);
+            res.data.sessions?.nodes
+              .filter((i) => i?.publicKey)
+              .map((i) => {
+                const keyGenAuthorities = mapAuthorities(i?.sessionValidators!)
+                  .filter((auth) => auth.isBest)
+                  .map((auth) => auth.id);
+                const publicKey = i!.publicKey!;
+                const session = i!;
+                const sessionTimeStamp = session.block?.timestamp;
+                const [start, end] = sessionFrame(sessionTimeStamp, sessionHeight, blockTime);
 
-              return {
-                id: publicKey.id,
-                session: session.id,
-                end,
-                start,
-                compressed: publicKey.compressed!,
-                uncompressed: publicKey.uncompressed!,
-                keyGenAuthorities,
-                isCurrent: activeSession === session.id,
-                isDone: Number(activeSession) > Number(session.id),
-              };
-            }) || [];
+                return {
+                  id: publicKey.id,
+                  session: session.id,
+                  end,
+                  start,
+                  compressed: publicKey.compressed!,
+                  uncompressed: publicKey.uncompressed!,
+                  keyGenAuthorities,
+                  isCurrent: activeSession === session.id,
+                  isDone: Number(activeSession) > Number(session.id),
+                };
+              }) || [];
           const activeKey = val[0];
           const nextKey = val[1];
           return {
