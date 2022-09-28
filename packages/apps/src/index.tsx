@@ -1,5 +1,3 @@
-import '@webb-dapp/webb-ui-components/tailwind.css';
-
 import React from 'react';
 import ReactDOM from 'react-dom';
 

@@ -16,7 +16,7 @@ export const DropdownButton = forwardRef<HTMLButtonElement, DropdownButtonProps>
           {...props}
           className={twMerge(
             cx(
-              'form-select border rounded-lg',
+              'form-select border rounded-lg uppercase',
               'transition-none transition-[border-radius]',
               'px-4 py-2',
               size === 'md' ? 'min-w-[176px]' : 'min-w-[96px]',

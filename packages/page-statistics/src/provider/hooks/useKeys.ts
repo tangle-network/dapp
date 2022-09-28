@@ -290,6 +290,7 @@ export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
   useEffect(() => {
     const subscription = query.observable
       .map((res): Loadable<[PublicKey, PublicKey]> => {
+        console.log(`Active sesion keys res`, res);
         if (res.data) {
           const val: PublicKey[] =
             res.data.sessions?.nodes

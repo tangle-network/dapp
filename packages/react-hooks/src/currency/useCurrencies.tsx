@@ -25,13 +25,16 @@ export const useCurrencies = () => {
 
       if (bridge?.currency) {
         setGovernedCurrency(bridge.currency);
-      }
 
-      activeApi.methods.bridgeApi
-        .fetchWrappableAssets(calculateTypedChainId(activeChain.chainType, activeChain.chainId))
-        .then((assets) => {
-          setWrappableCurrencies(assets);
-        });
+        activeApi.methods.bridgeApi
+          .fetchWrappableAssets(calculateTypedChainId(activeChain.chainType, activeChain.chainId))
+          .then((assets) => {
+            setWrappableCurrencies(assets);
+          })
+          .catch((error) => {
+            console.log('error: ', error);
+          });
+      }
     });
 
     const wrappableCurrencySub = activeApi.state.$wrappableCurrency.subscribe((token) => {
