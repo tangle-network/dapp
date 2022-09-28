@@ -1,8 +1,8 @@
 {
   "extensions": {
     "endpoints": {
-      "url": "https://api.subquery.network/sq/nepoche/webb-subql",
-      "subscription": " https://api.subquery.network/sq/nepoche/webb-subql"
+      "url": "https://api.subquery.network/sq/AtelyPham/webb-subql",
+      "subscription": " https://api.subquery.network/sq/AtelyPham/webb-subql"
     },
     "schemaPath": "./schema.graphql"
   }

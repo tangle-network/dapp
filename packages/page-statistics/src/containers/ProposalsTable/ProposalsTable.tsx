@@ -9,7 +9,7 @@ import {
 } from '@tanstack/react-table';
 import { ProposalStatus } from '@webb-dapp/page-statistics/generated/graphql';
 import { fetchProposalsData } from '@webb-dapp/page-statistics/hooks';
-import { ProposalListItem } from '@webb-dapp/page-statistics/provider/hooks';
+import { PageInfoQuery, ProposalListItem, useProposals } from '@webb-dapp/page-statistics/provider/hooks';
 import { getChipColorByProposalType } from '@webb-dapp/page-statistics/utils';
 import {
   Avatar,
@@ -39,7 +39,7 @@ const columns: ColumnDef<ProposalListItem, any>[] = [
 
   columnHelper.accessor('height', {
     header: 'Height',
-    cell: (props) => BigNumber.from(props.getValue<string>()).div(1000).toBigInt().toLocaleString(),
+    cell: (props) => props.getValue<string>(),
   }),
 
   columnHelper.accessor('type', {
@@ -68,11 +68,10 @@ const columns: ColumnDef<ProposalListItem, any>[] = [
     header: 'Proposers',
     cell: (props) => {
       const proposers = props.getValue<ProposalListItem['proposers']>();
-
       return (
         <AvatarGroup total={proposers.count}>
           {proposers.firstElements.map((item, idx) => (
-            <Avatar value={item} key={`${idx}-${item}`} />
+            <Avatar sourceVariant={'address'} value={item} key={`${idx}-${item}`} />
           ))}
         </AvatarGroup>
       );
@@ -95,8 +94,6 @@ const columns: ColumnDef<ProposalListItem, any>[] = [
 ];
 
 export const ProposalsTable = () => {
-  const [dataQuery, setDataQuery] = useState<Awaited<ReturnType<typeof fetchProposalsData> | undefined>>();
-
   // Pagination state
   const [{ pageIndex, pageSize }, setPagination] = useState<PaginationState>({
     pageIndex: 0,
@@ -111,22 +108,33 @@ export const ProposalsTable = () => {
     }),
     [pageIndex, pageSize]
   );
+  const pageQuery: PageInfoQuery = useMemo(
+    () => ({
+      offset: pagination.pageIndex * pageSize,
+      perPage: pagination.pageSize,
+      filter: null,
+    }),
+    [pageSize, pagination.pageIndex, pagination.pageSize]
+  );
+  const pageCount = useMemo(() => Math.ceil(totalItems / pageSize), [pageSize, totalItems]);
 
+  const proposalsStats = useProposals(pageQuery);
+  const data = useMemo(() => {
+    if (proposalsStats.val) {
+      return proposalsStats.val.items;
+    }
+    return [] as ProposalListItem[];
+  }, [proposalsStats]);
   useEffect(() => {
-    const updateData = async () => {
-      const data = await fetchProposalsData({ pageIndex, pageSize });
-
-      setDataQuery(data);
-      setTotalItems(data.totalItems);
-    };
-
-    updateData();
-  }, [pageIndex, pageSize]);
+    if (proposalsStats.val) {
+      setTotalItems(proposalsStats.val.pageInfo.count);
+    }
+  }, [proposalsStats]);
 
   const table = useReactTable<ProposalListItem>({
     columns,
-    data: dataQuery?.rows ?? ([] as ProposalListItem[]),
-    pageCount: dataQuery?.pageCount ?? 0,
+    data: data,
+    pageCount: pageCount,
     getCoreRowModel: getCoreRowModel(),
     state: {
       pagination,

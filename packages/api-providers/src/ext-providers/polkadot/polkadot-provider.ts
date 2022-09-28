@@ -81,7 +81,6 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
    * @param onError - Error handler for stage of instantiating a provider
    **/
   static async getApiPromise(appName: string, endPoints: string[], onError: ApiInitHandler['onError']) {
-    const [endPoint, ...allEndPoints] = endPoints;
     // eslint-disable-next-line no-async-promise-executor
     const wsProvider = await new Promise<WsProvider>(async (resolve, reject) => {
       let wsProvider: WsProvider;
@@ -113,10 +112,10 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
       // global interActiveFeedback for access on multiple scopes
       let interActiveFeedback: InteractiveFeedback;
 
-      logger.trace('Trying to connect to ', [endPoint, ...allEndPoints], `Try: ${tryNumber}`);
+      logger.trace('Trying to connect to ', endPoints, `Try: ${tryNumber}`);
 
       while (keepRetrying) {
-        wsProvider = new WsProvider([endPoint, ...allEndPoints], false);
+        wsProvider = new WsProvider(endPoints, false);
 
         /// don't wait for sleep time on the first attempt
         if (tryNumber !== 0) {
@@ -129,13 +128,13 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
           logger.trace('Performing the ping connection');
           await connectWs(wsProvider);
           /// disconnect the pin connection
-          logger.info(`Ping connection Ok try: ${tryNumber}  for `, [endPoint, ...allEndPoints]);
+          logger.info(`Ping connection Ok try: ${tryNumber}  for `, [endPoints]);
           await wsProvider.disconnect();
           logger.trace('Killed the ping connection');
 
           /// create a new WS Provider that is failure friendly and will retry to connect
           /// no need to call `.connect` the Promise api will handle this
-          resolve(new WsProvider([endPoint, ...allEndPoints]));
+          resolve(new WsProvider(endPoints));
 
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
@@ -249,7 +248,6 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
     onError: ApiInitHandler['onError'],
     wallet: Wallet
   ): Promise<[ApiPromise, InjectedExtension]> {
-    const [endPoint, ...allEndPoints] = endPoints;
     // Import web3Enable for hooking with the browser extension
     const { web3Enable } = await import('@polkadot/extension-dapp');
     // Enable the app
@@ -282,7 +280,7 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
     }
 
     // Initialize an ApiPromise
-    const apiPromise = await PolkadotProvider.getApiPromise(appName, [endPoint, ...allEndPoints], onError);
+    const apiPromise = await PolkadotProvider.getApiPromise(appName, endPoints, onError);
 
     return [apiPromise, currentExtension];
   }

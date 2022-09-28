@@ -29,6 +29,7 @@ export type Account = Node & {
   blocksByAccountCreatorIdAndCreateAtBlockId: AccountBlocksByAccountCreatorIdAndCreateAtBlockIdManyToManyConnection;
   /** Reads and enables pagination through a set of `Block`. */
   blocksByExtrinsicSignerIdAndBlockId: AccountBlocksByExtrinsicSignerIdAndBlockIdManyToManyConnection;
+  countryCode?: Maybe<Scalars['String']>;
   /** Reads a single `Block` that is related to this `Account`. */
   createAtBlock?: Maybe<Block>;
   createAtBlockId?: Maybe<Scalars['String']>;
@@ -36,15 +37,23 @@ export type Account = Node & {
   /** Reads a single `Account` that is related to this `Account`. */
   creator?: Maybe<Account>;
   creatorId?: Maybe<Scalars['String']>;
+  display?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['String']>;
   /** Reads and enables pagination through a set of `Extrinsic`. */
   extrinsics: ExtrinsicsConnection;
   id: Scalars['String'];
+  image?: Maybe<Scalars['String']>;
+  legal?: Maybe<Scalars['String']>;
   /** A globally unique identifier. Can be used in various places throughout the system to identify this single value. */
   nodeId: Scalars['ID'];
+  pgpFingerprint?: Maybe<Scalars['String']>;
   /** Reads and enables pagination through a set of `Proposer`. */
   proposers: ProposersConnection;
+  riot?: Maybe<Scalars['String']>;
+  twitter?: Maybe<Scalars['String']>;
   /** Reads and enables pagination through a set of `Validator`. */
   validators: ValidatorsConnection;
+  web?: Maybe<Scalars['String']>;
 };
 
 export type AccountAccountsByCreatorIdArgs = {
@@ -206,32 +215,68 @@ export type AccountBlocksByExtrinsicSignerIdAndBlockIdManyToManyEdgeExtrinsicsAr
 
 export type AccountDistinctCountAggregates = {
   __typename?: 'AccountDistinctCountAggregates';
+  /** Distinct count of countryCode across the matching connection */
+  countryCode?: Maybe<Scalars['BigInt']>;
   /** Distinct count of createAtBlockId across the matching connection */
   createAtBlockId?: Maybe<Scalars['BigInt']>;
   /** Distinct count of createdAt across the matching connection */
   createdAt?: Maybe<Scalars['BigInt']>;
   /** Distinct count of creatorId across the matching connection */
   creatorId?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of display across the matching connection */
+  display?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of email across the matching connection */
+  email?: Maybe<Scalars['BigInt']>;
   /** Distinct count of id across the matching connection */
   id?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of image across the matching connection */
+  image?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of legal across the matching connection */
+  legal?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of pgpFingerprint across the matching connection */
+  pgpFingerprint?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of riot across the matching connection */
+  riot?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of twitter across the matching connection */
+  twitter?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of web across the matching connection */
+  web?: Maybe<Scalars['BigInt']>;
 };
 
 /** A filter to be used against `Account` object types. All fields are combined with a logical ‘and.’ */
 export type AccountFilter = {
   /** Checks for all expressions in this list. */
   and?: InputMaybe<Array<AccountFilter>>;
+  /** Filter by the object’s `countryCode` field. */
+  countryCode?: InputMaybe<StringFilter>;
   /** Filter by the object’s `createAtBlockId` field. */
   createAtBlockId?: InputMaybe<StringFilter>;
   /** Filter by the object’s `createdAt` field. */
   createdAt?: InputMaybe<StringFilter>;
   /** Filter by the object’s `creatorId` field. */
   creatorId?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `display` field. */
+  display?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `email` field. */
+  email?: InputMaybe<StringFilter>;
   /** Filter by the object’s `id` field. */
   id?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `image` field. */
+  image?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `legal` field. */
+  legal?: InputMaybe<StringFilter>;
   /** Negates the expression. */
   not?: InputMaybe<AccountFilter>;
   /** Checks for any expressions in this list. */
   or?: InputMaybe<Array<AccountFilter>>;
+  /** Filter by the object’s `pgpFingerprint` field. */
+  pgpFingerprint?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `riot` field. */
+  riot?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `twitter` field. */
+  twitter?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `web` field. */
+  web?: InputMaybe<StringFilter>;
 };
 
 /** A connection to a list of `Account` values. */
@@ -268,9 +313,18 @@ export type AccountsEdge = {
 
 /** Grouping methods for `Account` for usage during aggregation. */
 export enum AccountsGroupBy {
+  CountryCode = 'COUNTRY_CODE',
   CreatedAt = 'CREATED_AT',
   CreateAtBlockId = 'CREATE_AT_BLOCK_ID',
   CreatorId = 'CREATOR_ID',
+  Display = 'DISPLAY',
+  Email = 'EMAIL',
+  Image = 'IMAGE',
+  Legal = 'LEGAL',
+  PgpFingerprint = 'PGP_FINGERPRINT',
+  Riot = 'RIOT',
+  Twitter = 'TWITTER',
+  Web = 'WEB',
 }
 
 /** Conditions for `Account` aggregates. */
@@ -281,86 +335,254 @@ export type AccountsHavingInput = {
 
 /** Methods to use when ordering `Account`. */
 export enum AccountsOrderBy {
+  AccountsByCreatorIdAverageCountryCodeAsc = 'ACCOUNTS_BY_CREATOR_ID_AVERAGE_COUNTRY_CODE_ASC',
+  AccountsByCreatorIdAverageCountryCodeDesc = 'ACCOUNTS_BY_CREATOR_ID_AVERAGE_COUNTRY_CODE_DESC',
   AccountsByCreatorIdAverageCreatedAtAsc = 'ACCOUNTS_BY_CREATOR_ID_AVERAGE_CREATED_AT_ASC',
   AccountsByCreatorIdAverageCreatedAtDesc = 'ACCOUNTS_BY_CREATOR_ID_AVERAGE_CREATED_AT_DESC',
   AccountsByCreatorIdAverageCreateAtBlockIdAsc = 'ACCOUNTS_BY_CREATOR_ID_AVERAGE_CREATE_AT_BLOCK_ID_ASC',
   AccountsByCreatorIdAverageCreateAtBlockIdDesc = 'ACCOUNTS_BY_CREATOR_ID_AVERAGE_CREATE_AT_BLOCK_ID_DESC',
   AccountsByCreatorIdAverageCreatorIdAsc = 'ACCOUNTS_BY_CREATOR_ID_AVERAGE_CREATOR_ID_ASC',
   AccountsByCreatorIdAverageCreatorIdDesc = 'ACCOUNTS_BY_CREATOR_ID_AVERAGE_CREATOR_ID_DESC',
+  AccountsByCreatorIdAverageDisplayAsc = 'ACCOUNTS_BY_CREATOR_ID_AVERAGE_DISPLAY_ASC',
+  AccountsByCreatorIdAverageDisplayDesc = 'ACCOUNTS_BY_CREATOR_ID_AVERAGE_DISPLAY_DESC',
+  AccountsByCreatorIdAverageEmailAsc = 'ACCOUNTS_BY_CREATOR_ID_AVERAGE_EMAIL_ASC',
+  AccountsByCreatorIdAverageEmailDesc = 'ACCOUNTS_BY_CREATOR_ID_AVERAGE_EMAIL_DESC',
   AccountsByCreatorIdAverageIdAsc = 'ACCOUNTS_BY_CREATOR_ID_AVERAGE_ID_ASC',
   AccountsByCreatorIdAverageIdDesc = 'ACCOUNTS_BY_CREATOR_ID_AVERAGE_ID_DESC',
+  AccountsByCreatorIdAverageImageAsc = 'ACCOUNTS_BY_CREATOR_ID_AVERAGE_IMAGE_ASC',
+  AccountsByCreatorIdAverageImageDesc = 'ACCOUNTS_BY_CREATOR_ID_AVERAGE_IMAGE_DESC',
+  AccountsByCreatorIdAverageLegalAsc = 'ACCOUNTS_BY_CREATOR_ID_AVERAGE_LEGAL_ASC',
+  AccountsByCreatorIdAverageLegalDesc = 'ACCOUNTS_BY_CREATOR_ID_AVERAGE_LEGAL_DESC',
+  AccountsByCreatorIdAveragePgpFingerprintAsc = 'ACCOUNTS_BY_CREATOR_ID_AVERAGE_PGP_FINGERPRINT_ASC',
+  AccountsByCreatorIdAveragePgpFingerprintDesc = 'ACCOUNTS_BY_CREATOR_ID_AVERAGE_PGP_FINGERPRINT_DESC',
+  AccountsByCreatorIdAverageRiotAsc = 'ACCOUNTS_BY_CREATOR_ID_AVERAGE_RIOT_ASC',
+  AccountsByCreatorIdAverageRiotDesc = 'ACCOUNTS_BY_CREATOR_ID_AVERAGE_RIOT_DESC',
+  AccountsByCreatorIdAverageTwitterAsc = 'ACCOUNTS_BY_CREATOR_ID_AVERAGE_TWITTER_ASC',
+  AccountsByCreatorIdAverageTwitterDesc = 'ACCOUNTS_BY_CREATOR_ID_AVERAGE_TWITTER_DESC',
+  AccountsByCreatorIdAverageWebAsc = 'ACCOUNTS_BY_CREATOR_ID_AVERAGE_WEB_ASC',
+  AccountsByCreatorIdAverageWebDesc = 'ACCOUNTS_BY_CREATOR_ID_AVERAGE_WEB_DESC',
   AccountsByCreatorIdCountAsc = 'ACCOUNTS_BY_CREATOR_ID_COUNT_ASC',
   AccountsByCreatorIdCountDesc = 'ACCOUNTS_BY_CREATOR_ID_COUNT_DESC',
+  AccountsByCreatorIdDistinctCountCountryCodeAsc = 'ACCOUNTS_BY_CREATOR_ID_DISTINCT_COUNT_COUNTRY_CODE_ASC',
+  AccountsByCreatorIdDistinctCountCountryCodeDesc = 'ACCOUNTS_BY_CREATOR_ID_DISTINCT_COUNT_COUNTRY_CODE_DESC',
   AccountsByCreatorIdDistinctCountCreatedAtAsc = 'ACCOUNTS_BY_CREATOR_ID_DISTINCT_COUNT_CREATED_AT_ASC',
   AccountsByCreatorIdDistinctCountCreatedAtDesc = 'ACCOUNTS_BY_CREATOR_ID_DISTINCT_COUNT_CREATED_AT_DESC',
   AccountsByCreatorIdDistinctCountCreateAtBlockIdAsc = 'ACCOUNTS_BY_CREATOR_ID_DISTINCT_COUNT_CREATE_AT_BLOCK_ID_ASC',
   AccountsByCreatorIdDistinctCountCreateAtBlockIdDesc = 'ACCOUNTS_BY_CREATOR_ID_DISTINCT_COUNT_CREATE_AT_BLOCK_ID_DESC',
   AccountsByCreatorIdDistinctCountCreatorIdAsc = 'ACCOUNTS_BY_CREATOR_ID_DISTINCT_COUNT_CREATOR_ID_ASC',
   AccountsByCreatorIdDistinctCountCreatorIdDesc = 'ACCOUNTS_BY_CREATOR_ID_DISTINCT_COUNT_CREATOR_ID_DESC',
+  AccountsByCreatorIdDistinctCountDisplayAsc = 'ACCOUNTS_BY_CREATOR_ID_DISTINCT_COUNT_DISPLAY_ASC',
+  AccountsByCreatorIdDistinctCountDisplayDesc = 'ACCOUNTS_BY_CREATOR_ID_DISTINCT_COUNT_DISPLAY_DESC',
+  AccountsByCreatorIdDistinctCountEmailAsc = 'ACCOUNTS_BY_CREATOR_ID_DISTINCT_COUNT_EMAIL_ASC',
+  AccountsByCreatorIdDistinctCountEmailDesc = 'ACCOUNTS_BY_CREATOR_ID_DISTINCT_COUNT_EMAIL_DESC',
   AccountsByCreatorIdDistinctCountIdAsc = 'ACCOUNTS_BY_CREATOR_ID_DISTINCT_COUNT_ID_ASC',
   AccountsByCreatorIdDistinctCountIdDesc = 'ACCOUNTS_BY_CREATOR_ID_DISTINCT_COUNT_ID_DESC',
+  AccountsByCreatorIdDistinctCountImageAsc = 'ACCOUNTS_BY_CREATOR_ID_DISTINCT_COUNT_IMAGE_ASC',
+  AccountsByCreatorIdDistinctCountImageDesc = 'ACCOUNTS_BY_CREATOR_ID_DISTINCT_COUNT_IMAGE_DESC',
+  AccountsByCreatorIdDistinctCountLegalAsc = 'ACCOUNTS_BY_CREATOR_ID_DISTINCT_COUNT_LEGAL_ASC',
+  AccountsByCreatorIdDistinctCountLegalDesc = 'ACCOUNTS_BY_CREATOR_ID_DISTINCT_COUNT_LEGAL_DESC',
+  AccountsByCreatorIdDistinctCountPgpFingerprintAsc = 'ACCOUNTS_BY_CREATOR_ID_DISTINCT_COUNT_PGP_FINGERPRINT_ASC',
+  AccountsByCreatorIdDistinctCountPgpFingerprintDesc = 'ACCOUNTS_BY_CREATOR_ID_DISTINCT_COUNT_PGP_FINGERPRINT_DESC',
+  AccountsByCreatorIdDistinctCountRiotAsc = 'ACCOUNTS_BY_CREATOR_ID_DISTINCT_COUNT_RIOT_ASC',
+  AccountsByCreatorIdDistinctCountRiotDesc = 'ACCOUNTS_BY_CREATOR_ID_DISTINCT_COUNT_RIOT_DESC',
+  AccountsByCreatorIdDistinctCountTwitterAsc = 'ACCOUNTS_BY_CREATOR_ID_DISTINCT_COUNT_TWITTER_ASC',
+  AccountsByCreatorIdDistinctCountTwitterDesc = 'ACCOUNTS_BY_CREATOR_ID_DISTINCT_COUNT_TWITTER_DESC',
+  AccountsByCreatorIdDistinctCountWebAsc = 'ACCOUNTS_BY_CREATOR_ID_DISTINCT_COUNT_WEB_ASC',
+  AccountsByCreatorIdDistinctCountWebDesc = 'ACCOUNTS_BY_CREATOR_ID_DISTINCT_COUNT_WEB_DESC',
+  AccountsByCreatorIdMaxCountryCodeAsc = 'ACCOUNTS_BY_CREATOR_ID_MAX_COUNTRY_CODE_ASC',
+  AccountsByCreatorIdMaxCountryCodeDesc = 'ACCOUNTS_BY_CREATOR_ID_MAX_COUNTRY_CODE_DESC',
   AccountsByCreatorIdMaxCreatedAtAsc = 'ACCOUNTS_BY_CREATOR_ID_MAX_CREATED_AT_ASC',
   AccountsByCreatorIdMaxCreatedAtDesc = 'ACCOUNTS_BY_CREATOR_ID_MAX_CREATED_AT_DESC',
   AccountsByCreatorIdMaxCreateAtBlockIdAsc = 'ACCOUNTS_BY_CREATOR_ID_MAX_CREATE_AT_BLOCK_ID_ASC',
   AccountsByCreatorIdMaxCreateAtBlockIdDesc = 'ACCOUNTS_BY_CREATOR_ID_MAX_CREATE_AT_BLOCK_ID_DESC',
   AccountsByCreatorIdMaxCreatorIdAsc = 'ACCOUNTS_BY_CREATOR_ID_MAX_CREATOR_ID_ASC',
   AccountsByCreatorIdMaxCreatorIdDesc = 'ACCOUNTS_BY_CREATOR_ID_MAX_CREATOR_ID_DESC',
+  AccountsByCreatorIdMaxDisplayAsc = 'ACCOUNTS_BY_CREATOR_ID_MAX_DISPLAY_ASC',
+  AccountsByCreatorIdMaxDisplayDesc = 'ACCOUNTS_BY_CREATOR_ID_MAX_DISPLAY_DESC',
+  AccountsByCreatorIdMaxEmailAsc = 'ACCOUNTS_BY_CREATOR_ID_MAX_EMAIL_ASC',
+  AccountsByCreatorIdMaxEmailDesc = 'ACCOUNTS_BY_CREATOR_ID_MAX_EMAIL_DESC',
   AccountsByCreatorIdMaxIdAsc = 'ACCOUNTS_BY_CREATOR_ID_MAX_ID_ASC',
   AccountsByCreatorIdMaxIdDesc = 'ACCOUNTS_BY_CREATOR_ID_MAX_ID_DESC',
+  AccountsByCreatorIdMaxImageAsc = 'ACCOUNTS_BY_CREATOR_ID_MAX_IMAGE_ASC',
+  AccountsByCreatorIdMaxImageDesc = 'ACCOUNTS_BY_CREATOR_ID_MAX_IMAGE_DESC',
+  AccountsByCreatorIdMaxLegalAsc = 'ACCOUNTS_BY_CREATOR_ID_MAX_LEGAL_ASC',
+  AccountsByCreatorIdMaxLegalDesc = 'ACCOUNTS_BY_CREATOR_ID_MAX_LEGAL_DESC',
+  AccountsByCreatorIdMaxPgpFingerprintAsc = 'ACCOUNTS_BY_CREATOR_ID_MAX_PGP_FINGERPRINT_ASC',
+  AccountsByCreatorIdMaxPgpFingerprintDesc = 'ACCOUNTS_BY_CREATOR_ID_MAX_PGP_FINGERPRINT_DESC',
+  AccountsByCreatorIdMaxRiotAsc = 'ACCOUNTS_BY_CREATOR_ID_MAX_RIOT_ASC',
+  AccountsByCreatorIdMaxRiotDesc = 'ACCOUNTS_BY_CREATOR_ID_MAX_RIOT_DESC',
+  AccountsByCreatorIdMaxTwitterAsc = 'ACCOUNTS_BY_CREATOR_ID_MAX_TWITTER_ASC',
+  AccountsByCreatorIdMaxTwitterDesc = 'ACCOUNTS_BY_CREATOR_ID_MAX_TWITTER_DESC',
+  AccountsByCreatorIdMaxWebAsc = 'ACCOUNTS_BY_CREATOR_ID_MAX_WEB_ASC',
+  AccountsByCreatorIdMaxWebDesc = 'ACCOUNTS_BY_CREATOR_ID_MAX_WEB_DESC',
+  AccountsByCreatorIdMinCountryCodeAsc = 'ACCOUNTS_BY_CREATOR_ID_MIN_COUNTRY_CODE_ASC',
+  AccountsByCreatorIdMinCountryCodeDesc = 'ACCOUNTS_BY_CREATOR_ID_MIN_COUNTRY_CODE_DESC',
   AccountsByCreatorIdMinCreatedAtAsc = 'ACCOUNTS_BY_CREATOR_ID_MIN_CREATED_AT_ASC',
   AccountsByCreatorIdMinCreatedAtDesc = 'ACCOUNTS_BY_CREATOR_ID_MIN_CREATED_AT_DESC',
   AccountsByCreatorIdMinCreateAtBlockIdAsc = 'ACCOUNTS_BY_CREATOR_ID_MIN_CREATE_AT_BLOCK_ID_ASC',
   AccountsByCreatorIdMinCreateAtBlockIdDesc = 'ACCOUNTS_BY_CREATOR_ID_MIN_CREATE_AT_BLOCK_ID_DESC',
   AccountsByCreatorIdMinCreatorIdAsc = 'ACCOUNTS_BY_CREATOR_ID_MIN_CREATOR_ID_ASC',
   AccountsByCreatorIdMinCreatorIdDesc = 'ACCOUNTS_BY_CREATOR_ID_MIN_CREATOR_ID_DESC',
+  AccountsByCreatorIdMinDisplayAsc = 'ACCOUNTS_BY_CREATOR_ID_MIN_DISPLAY_ASC',
+  AccountsByCreatorIdMinDisplayDesc = 'ACCOUNTS_BY_CREATOR_ID_MIN_DISPLAY_DESC',
+  AccountsByCreatorIdMinEmailAsc = 'ACCOUNTS_BY_CREATOR_ID_MIN_EMAIL_ASC',
+  AccountsByCreatorIdMinEmailDesc = 'ACCOUNTS_BY_CREATOR_ID_MIN_EMAIL_DESC',
   AccountsByCreatorIdMinIdAsc = 'ACCOUNTS_BY_CREATOR_ID_MIN_ID_ASC',
   AccountsByCreatorIdMinIdDesc = 'ACCOUNTS_BY_CREATOR_ID_MIN_ID_DESC',
+  AccountsByCreatorIdMinImageAsc = 'ACCOUNTS_BY_CREATOR_ID_MIN_IMAGE_ASC',
+  AccountsByCreatorIdMinImageDesc = 'ACCOUNTS_BY_CREATOR_ID_MIN_IMAGE_DESC',
+  AccountsByCreatorIdMinLegalAsc = 'ACCOUNTS_BY_CREATOR_ID_MIN_LEGAL_ASC',
+  AccountsByCreatorIdMinLegalDesc = 'ACCOUNTS_BY_CREATOR_ID_MIN_LEGAL_DESC',
+  AccountsByCreatorIdMinPgpFingerprintAsc = 'ACCOUNTS_BY_CREATOR_ID_MIN_PGP_FINGERPRINT_ASC',
+  AccountsByCreatorIdMinPgpFingerprintDesc = 'ACCOUNTS_BY_CREATOR_ID_MIN_PGP_FINGERPRINT_DESC',
+  AccountsByCreatorIdMinRiotAsc = 'ACCOUNTS_BY_CREATOR_ID_MIN_RIOT_ASC',
+  AccountsByCreatorIdMinRiotDesc = 'ACCOUNTS_BY_CREATOR_ID_MIN_RIOT_DESC',
+  AccountsByCreatorIdMinTwitterAsc = 'ACCOUNTS_BY_CREATOR_ID_MIN_TWITTER_ASC',
+  AccountsByCreatorIdMinTwitterDesc = 'ACCOUNTS_BY_CREATOR_ID_MIN_TWITTER_DESC',
+  AccountsByCreatorIdMinWebAsc = 'ACCOUNTS_BY_CREATOR_ID_MIN_WEB_ASC',
+  AccountsByCreatorIdMinWebDesc = 'ACCOUNTS_BY_CREATOR_ID_MIN_WEB_DESC',
+  AccountsByCreatorIdStddevPopulationCountryCodeAsc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_POPULATION_COUNTRY_CODE_ASC',
+  AccountsByCreatorIdStddevPopulationCountryCodeDesc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_POPULATION_COUNTRY_CODE_DESC',
   AccountsByCreatorIdStddevPopulationCreatedAtAsc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_POPULATION_CREATED_AT_ASC',
   AccountsByCreatorIdStddevPopulationCreatedAtDesc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_POPULATION_CREATED_AT_DESC',
   AccountsByCreatorIdStddevPopulationCreateAtBlockIdAsc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_POPULATION_CREATE_AT_BLOCK_ID_ASC',
   AccountsByCreatorIdStddevPopulationCreateAtBlockIdDesc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_POPULATION_CREATE_AT_BLOCK_ID_DESC',
   AccountsByCreatorIdStddevPopulationCreatorIdAsc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_POPULATION_CREATOR_ID_ASC',
   AccountsByCreatorIdStddevPopulationCreatorIdDesc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_POPULATION_CREATOR_ID_DESC',
+  AccountsByCreatorIdStddevPopulationDisplayAsc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_POPULATION_DISPLAY_ASC',
+  AccountsByCreatorIdStddevPopulationDisplayDesc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_POPULATION_DISPLAY_DESC',
+  AccountsByCreatorIdStddevPopulationEmailAsc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_POPULATION_EMAIL_ASC',
+  AccountsByCreatorIdStddevPopulationEmailDesc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_POPULATION_EMAIL_DESC',
   AccountsByCreatorIdStddevPopulationIdAsc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_POPULATION_ID_ASC',
   AccountsByCreatorIdStddevPopulationIdDesc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_POPULATION_ID_DESC',
+  AccountsByCreatorIdStddevPopulationImageAsc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_POPULATION_IMAGE_ASC',
+  AccountsByCreatorIdStddevPopulationImageDesc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_POPULATION_IMAGE_DESC',
+  AccountsByCreatorIdStddevPopulationLegalAsc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_POPULATION_LEGAL_ASC',
+  AccountsByCreatorIdStddevPopulationLegalDesc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_POPULATION_LEGAL_DESC',
+  AccountsByCreatorIdStddevPopulationPgpFingerprintAsc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_POPULATION_PGP_FINGERPRINT_ASC',
+  AccountsByCreatorIdStddevPopulationPgpFingerprintDesc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_POPULATION_PGP_FINGERPRINT_DESC',
+  AccountsByCreatorIdStddevPopulationRiotAsc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_POPULATION_RIOT_ASC',
+  AccountsByCreatorIdStddevPopulationRiotDesc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_POPULATION_RIOT_DESC',
+  AccountsByCreatorIdStddevPopulationTwitterAsc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_POPULATION_TWITTER_ASC',
+  AccountsByCreatorIdStddevPopulationTwitterDesc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_POPULATION_TWITTER_DESC',
+  AccountsByCreatorIdStddevPopulationWebAsc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_POPULATION_WEB_ASC',
+  AccountsByCreatorIdStddevPopulationWebDesc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_POPULATION_WEB_DESC',
+  AccountsByCreatorIdStddevSampleCountryCodeAsc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_SAMPLE_COUNTRY_CODE_ASC',
+  AccountsByCreatorIdStddevSampleCountryCodeDesc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_SAMPLE_COUNTRY_CODE_DESC',
   AccountsByCreatorIdStddevSampleCreatedAtAsc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_SAMPLE_CREATED_AT_ASC',
   AccountsByCreatorIdStddevSampleCreatedAtDesc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_SAMPLE_CREATED_AT_DESC',
   AccountsByCreatorIdStddevSampleCreateAtBlockIdAsc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_SAMPLE_CREATE_AT_BLOCK_ID_ASC',
   AccountsByCreatorIdStddevSampleCreateAtBlockIdDesc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_SAMPLE_CREATE_AT_BLOCK_ID_DESC',
   AccountsByCreatorIdStddevSampleCreatorIdAsc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_SAMPLE_CREATOR_ID_ASC',
   AccountsByCreatorIdStddevSampleCreatorIdDesc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_SAMPLE_CREATOR_ID_DESC',
+  AccountsByCreatorIdStddevSampleDisplayAsc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_SAMPLE_DISPLAY_ASC',
+  AccountsByCreatorIdStddevSampleDisplayDesc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_SAMPLE_DISPLAY_DESC',
+  AccountsByCreatorIdStddevSampleEmailAsc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_SAMPLE_EMAIL_ASC',
+  AccountsByCreatorIdStddevSampleEmailDesc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_SAMPLE_EMAIL_DESC',
   AccountsByCreatorIdStddevSampleIdAsc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_SAMPLE_ID_ASC',
   AccountsByCreatorIdStddevSampleIdDesc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_SAMPLE_ID_DESC',
+  AccountsByCreatorIdStddevSampleImageAsc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_SAMPLE_IMAGE_ASC',
+  AccountsByCreatorIdStddevSampleImageDesc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_SAMPLE_IMAGE_DESC',
+  AccountsByCreatorIdStddevSampleLegalAsc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_SAMPLE_LEGAL_ASC',
+  AccountsByCreatorIdStddevSampleLegalDesc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_SAMPLE_LEGAL_DESC',
+  AccountsByCreatorIdStddevSamplePgpFingerprintAsc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_SAMPLE_PGP_FINGERPRINT_ASC',
+  AccountsByCreatorIdStddevSamplePgpFingerprintDesc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_SAMPLE_PGP_FINGERPRINT_DESC',
+  AccountsByCreatorIdStddevSampleRiotAsc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_SAMPLE_RIOT_ASC',
+  AccountsByCreatorIdStddevSampleRiotDesc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_SAMPLE_RIOT_DESC',
+  AccountsByCreatorIdStddevSampleTwitterAsc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_SAMPLE_TWITTER_ASC',
+  AccountsByCreatorIdStddevSampleTwitterDesc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_SAMPLE_TWITTER_DESC',
+  AccountsByCreatorIdStddevSampleWebAsc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_SAMPLE_WEB_ASC',
+  AccountsByCreatorIdStddevSampleWebDesc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_SAMPLE_WEB_DESC',
+  AccountsByCreatorIdSumCountryCodeAsc = 'ACCOUNTS_BY_CREATOR_ID_SUM_COUNTRY_CODE_ASC',
+  AccountsByCreatorIdSumCountryCodeDesc = 'ACCOUNTS_BY_CREATOR_ID_SUM_COUNTRY_CODE_DESC',
   AccountsByCreatorIdSumCreatedAtAsc = 'ACCOUNTS_BY_CREATOR_ID_SUM_CREATED_AT_ASC',
   AccountsByCreatorIdSumCreatedAtDesc = 'ACCOUNTS_BY_CREATOR_ID_SUM_CREATED_AT_DESC',
   AccountsByCreatorIdSumCreateAtBlockIdAsc = 'ACCOUNTS_BY_CREATOR_ID_SUM_CREATE_AT_BLOCK_ID_ASC',
   AccountsByCreatorIdSumCreateAtBlockIdDesc = 'ACCOUNTS_BY_CREATOR_ID_SUM_CREATE_AT_BLOCK_ID_DESC',
   AccountsByCreatorIdSumCreatorIdAsc = 'ACCOUNTS_BY_CREATOR_ID_SUM_CREATOR_ID_ASC',
   AccountsByCreatorIdSumCreatorIdDesc = 'ACCOUNTS_BY_CREATOR_ID_SUM_CREATOR_ID_DESC',
+  AccountsByCreatorIdSumDisplayAsc = 'ACCOUNTS_BY_CREATOR_ID_SUM_DISPLAY_ASC',
+  AccountsByCreatorIdSumDisplayDesc = 'ACCOUNTS_BY_CREATOR_ID_SUM_DISPLAY_DESC',
+  AccountsByCreatorIdSumEmailAsc = 'ACCOUNTS_BY_CREATOR_ID_SUM_EMAIL_ASC',
+  AccountsByCreatorIdSumEmailDesc = 'ACCOUNTS_BY_CREATOR_ID_SUM_EMAIL_DESC',
   AccountsByCreatorIdSumIdAsc = 'ACCOUNTS_BY_CREATOR_ID_SUM_ID_ASC',
   AccountsByCreatorIdSumIdDesc = 'ACCOUNTS_BY_CREATOR_ID_SUM_ID_DESC',
+  AccountsByCreatorIdSumImageAsc = 'ACCOUNTS_BY_CREATOR_ID_SUM_IMAGE_ASC',
+  AccountsByCreatorIdSumImageDesc = 'ACCOUNTS_BY_CREATOR_ID_SUM_IMAGE_DESC',
+  AccountsByCreatorIdSumLegalAsc = 'ACCOUNTS_BY_CREATOR_ID_SUM_LEGAL_ASC',
+  AccountsByCreatorIdSumLegalDesc = 'ACCOUNTS_BY_CREATOR_ID_SUM_LEGAL_DESC',
+  AccountsByCreatorIdSumPgpFingerprintAsc = 'ACCOUNTS_BY_CREATOR_ID_SUM_PGP_FINGERPRINT_ASC',
+  AccountsByCreatorIdSumPgpFingerprintDesc = 'ACCOUNTS_BY_CREATOR_ID_SUM_PGP_FINGERPRINT_DESC',
+  AccountsByCreatorIdSumRiotAsc = 'ACCOUNTS_BY_CREATOR_ID_SUM_RIOT_ASC',
+  AccountsByCreatorIdSumRiotDesc = 'ACCOUNTS_BY_CREATOR_ID_SUM_RIOT_DESC',
+  AccountsByCreatorIdSumTwitterAsc = 'ACCOUNTS_BY_CREATOR_ID_SUM_TWITTER_ASC',
+  AccountsByCreatorIdSumTwitterDesc = 'ACCOUNTS_BY_CREATOR_ID_SUM_TWITTER_DESC',
+  AccountsByCreatorIdSumWebAsc = 'ACCOUNTS_BY_CREATOR_ID_SUM_WEB_ASC',
+  AccountsByCreatorIdSumWebDesc = 'ACCOUNTS_BY_CREATOR_ID_SUM_WEB_DESC',
+  AccountsByCreatorIdVariancePopulationCountryCodeAsc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_POPULATION_COUNTRY_CODE_ASC',
+  AccountsByCreatorIdVariancePopulationCountryCodeDesc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_POPULATION_COUNTRY_CODE_DESC',
   AccountsByCreatorIdVariancePopulationCreatedAtAsc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_POPULATION_CREATED_AT_ASC',
   AccountsByCreatorIdVariancePopulationCreatedAtDesc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_POPULATION_CREATED_AT_DESC',
   AccountsByCreatorIdVariancePopulationCreateAtBlockIdAsc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_POPULATION_CREATE_AT_BLOCK_ID_ASC',
   AccountsByCreatorIdVariancePopulationCreateAtBlockIdDesc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_POPULATION_CREATE_AT_BLOCK_ID_DESC',
   AccountsByCreatorIdVariancePopulationCreatorIdAsc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_POPULATION_CREATOR_ID_ASC',
   AccountsByCreatorIdVariancePopulationCreatorIdDesc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_POPULATION_CREATOR_ID_DESC',
+  AccountsByCreatorIdVariancePopulationDisplayAsc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_POPULATION_DISPLAY_ASC',
+  AccountsByCreatorIdVariancePopulationDisplayDesc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_POPULATION_DISPLAY_DESC',
+  AccountsByCreatorIdVariancePopulationEmailAsc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_POPULATION_EMAIL_ASC',
+  AccountsByCreatorIdVariancePopulationEmailDesc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_POPULATION_EMAIL_DESC',
   AccountsByCreatorIdVariancePopulationIdAsc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_POPULATION_ID_ASC',
   AccountsByCreatorIdVariancePopulationIdDesc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_POPULATION_ID_DESC',
+  AccountsByCreatorIdVariancePopulationImageAsc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_POPULATION_IMAGE_ASC',
+  AccountsByCreatorIdVariancePopulationImageDesc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_POPULATION_IMAGE_DESC',
+  AccountsByCreatorIdVariancePopulationLegalAsc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_POPULATION_LEGAL_ASC',
+  AccountsByCreatorIdVariancePopulationLegalDesc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_POPULATION_LEGAL_DESC',
+  AccountsByCreatorIdVariancePopulationPgpFingerprintAsc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_POPULATION_PGP_FINGERPRINT_ASC',
+  AccountsByCreatorIdVariancePopulationPgpFingerprintDesc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_POPULATION_PGP_FINGERPRINT_DESC',
+  AccountsByCreatorIdVariancePopulationRiotAsc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_POPULATION_RIOT_ASC',
+  AccountsByCreatorIdVariancePopulationRiotDesc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_POPULATION_RIOT_DESC',
+  AccountsByCreatorIdVariancePopulationTwitterAsc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_POPULATION_TWITTER_ASC',
+  AccountsByCreatorIdVariancePopulationTwitterDesc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_POPULATION_TWITTER_DESC',
+  AccountsByCreatorIdVariancePopulationWebAsc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_POPULATION_WEB_ASC',
+  AccountsByCreatorIdVariancePopulationWebDesc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_POPULATION_WEB_DESC',
+  AccountsByCreatorIdVarianceSampleCountryCodeAsc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_SAMPLE_COUNTRY_CODE_ASC',
+  AccountsByCreatorIdVarianceSampleCountryCodeDesc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_SAMPLE_COUNTRY_CODE_DESC',
   AccountsByCreatorIdVarianceSampleCreatedAtAsc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_SAMPLE_CREATED_AT_ASC',
   AccountsByCreatorIdVarianceSampleCreatedAtDesc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_SAMPLE_CREATED_AT_DESC',
   AccountsByCreatorIdVarianceSampleCreateAtBlockIdAsc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_SAMPLE_CREATE_AT_BLOCK_ID_ASC',
   AccountsByCreatorIdVarianceSampleCreateAtBlockIdDesc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_SAMPLE_CREATE_AT_BLOCK_ID_DESC',
   AccountsByCreatorIdVarianceSampleCreatorIdAsc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_SAMPLE_CREATOR_ID_ASC',
   AccountsByCreatorIdVarianceSampleCreatorIdDesc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_SAMPLE_CREATOR_ID_DESC',
+  AccountsByCreatorIdVarianceSampleDisplayAsc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_SAMPLE_DISPLAY_ASC',
+  AccountsByCreatorIdVarianceSampleDisplayDesc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_SAMPLE_DISPLAY_DESC',
+  AccountsByCreatorIdVarianceSampleEmailAsc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_SAMPLE_EMAIL_ASC',
+  AccountsByCreatorIdVarianceSampleEmailDesc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_SAMPLE_EMAIL_DESC',
   AccountsByCreatorIdVarianceSampleIdAsc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_SAMPLE_ID_ASC',
   AccountsByCreatorIdVarianceSampleIdDesc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_SAMPLE_ID_DESC',
+  AccountsByCreatorIdVarianceSampleImageAsc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_SAMPLE_IMAGE_ASC',
+  AccountsByCreatorIdVarianceSampleImageDesc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_SAMPLE_IMAGE_DESC',
+  AccountsByCreatorIdVarianceSampleLegalAsc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_SAMPLE_LEGAL_ASC',
+  AccountsByCreatorIdVarianceSampleLegalDesc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_SAMPLE_LEGAL_DESC',
+  AccountsByCreatorIdVarianceSamplePgpFingerprintAsc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_SAMPLE_PGP_FINGERPRINT_ASC',
+  AccountsByCreatorIdVarianceSamplePgpFingerprintDesc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_SAMPLE_PGP_FINGERPRINT_DESC',
+  AccountsByCreatorIdVarianceSampleRiotAsc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_SAMPLE_RIOT_ASC',
+  AccountsByCreatorIdVarianceSampleRiotDesc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_SAMPLE_RIOT_DESC',
+  AccountsByCreatorIdVarianceSampleTwitterAsc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_SAMPLE_TWITTER_ASC',
+  AccountsByCreatorIdVarianceSampleTwitterDesc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_SAMPLE_TWITTER_DESC',
+  AccountsByCreatorIdVarianceSampleWebAsc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_SAMPLE_WEB_ASC',
+  AccountsByCreatorIdVarianceSampleWebDesc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_SAMPLE_WEB_DESC',
+  CountryCodeAsc = 'COUNTRY_CODE_ASC',
+  CountryCodeDesc = 'COUNTRY_CODE_DESC',
   CreatedAtAsc = 'CREATED_AT_ASC',
   CreatedAtDesc = 'CREATED_AT_DESC',
   CreateAtBlockIdAsc = 'CREATE_AT_BLOCK_ID_ASC',
   CreateAtBlockIdDesc = 'CREATE_AT_BLOCK_ID_DESC',
   CreatorIdAsc = 'CREATOR_ID_ASC',
   CreatorIdDesc = 'CREATOR_ID_DESC',
+  DisplayAsc = 'DISPLAY_ASC',
+  DisplayDesc = 'DISPLAY_DESC',
+  EmailAsc = 'EMAIL_ASC',
+  EmailDesc = 'EMAIL_DESC',
   ExtrinsicsAverageArgumentsAsc = 'EXTRINSICS_AVERAGE_ARGUMENTS_ASC',
   ExtrinsicsAverageArgumentsDesc = 'EXTRINSICS_AVERAGE_ARGUMENTS_DESC',
   ExtrinsicsAverageBlockIdAsc = 'EXTRINSICS_AVERAGE_BLOCK_ID_ASC',
@@ -563,7 +785,13 @@ export enum AccountsOrderBy {
   ExtrinsicsVarianceSampleSignerIdDesc = 'EXTRINSICS_VARIANCE_SAMPLE_SIGNER_ID_DESC',
   IdAsc = 'ID_ASC',
   IdDesc = 'ID_DESC',
+  ImageAsc = 'IMAGE_ASC',
+  ImageDesc = 'IMAGE_DESC',
+  LegalAsc = 'LEGAL_ASC',
+  LegalDesc = 'LEGAL_DESC',
   Natural = 'NATURAL',
+  PgpFingerprintAsc = 'PGP_FINGERPRINT_ASC',
+  PgpFingerprintDesc = 'PGP_FINGERPRINT_DESC',
   PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
   PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
   ProposersAverageAccountIdAsc = 'PROPOSERS_AVERAGE_ACCOUNT_ID_ASC',
@@ -604,6 +832,10 @@ export enum AccountsOrderBy {
   ProposersVarianceSampleAccountIdDesc = 'PROPOSERS_VARIANCE_SAMPLE_ACCOUNT_ID_DESC',
   ProposersVarianceSampleIdAsc = 'PROPOSERS_VARIANCE_SAMPLE_ID_ASC',
   ProposersVarianceSampleIdDesc = 'PROPOSERS_VARIANCE_SAMPLE_ID_DESC',
+  RiotAsc = 'RIOT_ASC',
+  RiotDesc = 'RIOT_DESC',
+  TwitterAsc = 'TWITTER_ASC',
+  TwitterDesc = 'TWITTER_DESC',
   ValidatorsAverageAccountIdAsc = 'VALIDATORS_AVERAGE_ACCOUNT_ID_ASC',
   ValidatorsAverageAccountIdDesc = 'VALIDATORS_AVERAGE_ACCOUNT_ID_DESC',
   ValidatorsAverageAuthorityIdAsc = 'VALIDATORS_AVERAGE_AUTHORITY_ID_ASC',
@@ -660,6 +892,8 @@ export enum AccountsOrderBy {
   ValidatorsVarianceSampleAuthorityIdDesc = 'VALIDATORS_VARIANCE_SAMPLE_AUTHORITY_ID_DESC',
   ValidatorsVarianceSampleIdAsc = 'VALIDATORS_VARIANCE_SAMPLE_ID_ASC',
   ValidatorsVarianceSampleIdDesc = 'VALIDATORS_VARIANCE_SAMPLE_ID_DESC',
+  WebAsc = 'WEB_ASC',
+  WebDesc = 'WEB_DESC',
 }
 
 /** A connection to a list of `Authority` values. */
@@ -1337,11 +1571,11 @@ export type BlockProposersByProposalVoteBlockIdAndVoterIdManyToManyEdge = {
   /** The `Proposer` at the end of the edge. */
   node?: Maybe<Proposer>;
   /** Reads and enables pagination through a set of `ProposalVote`. */
-  proposalVotesByVoterId: ProposalVotesConnection;
+  votes: ProposalVotesConnection;
 };
 
 /** A `Proposer` edge in the connection, with data from `ProposalVote`. */
-export type BlockProposersByProposalVoteBlockIdAndVoterIdManyToManyEdgeProposalVotesByVoterIdArgs = {
+export type BlockProposersByProposalVoteBlockIdAndVoterIdManyToManyEdgeVotesArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
   filter?: InputMaybe<ProposalVoteFilter>;
@@ -1532,80 +1766,242 @@ export type BlocksHavingVarianceSampleInput = {
 
 /** Methods to use when ordering `Block`. */
 export enum BlocksOrderBy {
+  AccountsByCreateAtBlockIdAverageCountryCodeAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_AVERAGE_COUNTRY_CODE_ASC',
+  AccountsByCreateAtBlockIdAverageCountryCodeDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_AVERAGE_COUNTRY_CODE_DESC',
   AccountsByCreateAtBlockIdAverageCreatedAtAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_AVERAGE_CREATED_AT_ASC',
   AccountsByCreateAtBlockIdAverageCreatedAtDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_AVERAGE_CREATED_AT_DESC',
   AccountsByCreateAtBlockIdAverageCreateAtBlockIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_AVERAGE_CREATE_AT_BLOCK_ID_ASC',
   AccountsByCreateAtBlockIdAverageCreateAtBlockIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_AVERAGE_CREATE_AT_BLOCK_ID_DESC',
   AccountsByCreateAtBlockIdAverageCreatorIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_AVERAGE_CREATOR_ID_ASC',
   AccountsByCreateAtBlockIdAverageCreatorIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_AVERAGE_CREATOR_ID_DESC',
+  AccountsByCreateAtBlockIdAverageDisplayAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_AVERAGE_DISPLAY_ASC',
+  AccountsByCreateAtBlockIdAverageDisplayDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_AVERAGE_DISPLAY_DESC',
+  AccountsByCreateAtBlockIdAverageEmailAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_AVERAGE_EMAIL_ASC',
+  AccountsByCreateAtBlockIdAverageEmailDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_AVERAGE_EMAIL_DESC',
   AccountsByCreateAtBlockIdAverageIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_AVERAGE_ID_ASC',
   AccountsByCreateAtBlockIdAverageIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_AVERAGE_ID_DESC',
+  AccountsByCreateAtBlockIdAverageImageAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_AVERAGE_IMAGE_ASC',
+  AccountsByCreateAtBlockIdAverageImageDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_AVERAGE_IMAGE_DESC',
+  AccountsByCreateAtBlockIdAverageLegalAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_AVERAGE_LEGAL_ASC',
+  AccountsByCreateAtBlockIdAverageLegalDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_AVERAGE_LEGAL_DESC',
+  AccountsByCreateAtBlockIdAveragePgpFingerprintAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_AVERAGE_PGP_FINGERPRINT_ASC',
+  AccountsByCreateAtBlockIdAveragePgpFingerprintDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_AVERAGE_PGP_FINGERPRINT_DESC',
+  AccountsByCreateAtBlockIdAverageRiotAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_AVERAGE_RIOT_ASC',
+  AccountsByCreateAtBlockIdAverageRiotDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_AVERAGE_RIOT_DESC',
+  AccountsByCreateAtBlockIdAverageTwitterAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_AVERAGE_TWITTER_ASC',
+  AccountsByCreateAtBlockIdAverageTwitterDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_AVERAGE_TWITTER_DESC',
+  AccountsByCreateAtBlockIdAverageWebAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_AVERAGE_WEB_ASC',
+  AccountsByCreateAtBlockIdAverageWebDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_AVERAGE_WEB_DESC',
   AccountsByCreateAtBlockIdCountAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_COUNT_ASC',
   AccountsByCreateAtBlockIdCountDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_COUNT_DESC',
+  AccountsByCreateAtBlockIdDistinctCountCountryCodeAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_DISTINCT_COUNT_COUNTRY_CODE_ASC',
+  AccountsByCreateAtBlockIdDistinctCountCountryCodeDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_DISTINCT_COUNT_COUNTRY_CODE_DESC',
   AccountsByCreateAtBlockIdDistinctCountCreatedAtAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_DISTINCT_COUNT_CREATED_AT_ASC',
   AccountsByCreateAtBlockIdDistinctCountCreatedAtDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_DISTINCT_COUNT_CREATED_AT_DESC',
   AccountsByCreateAtBlockIdDistinctCountCreateAtBlockIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_DISTINCT_COUNT_CREATE_AT_BLOCK_ID_ASC',
   AccountsByCreateAtBlockIdDistinctCountCreateAtBlockIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_DISTINCT_COUNT_CREATE_AT_BLOCK_ID_DESC',
   AccountsByCreateAtBlockIdDistinctCountCreatorIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_DISTINCT_COUNT_CREATOR_ID_ASC',
   AccountsByCreateAtBlockIdDistinctCountCreatorIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_DISTINCT_COUNT_CREATOR_ID_DESC',
+  AccountsByCreateAtBlockIdDistinctCountDisplayAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_DISTINCT_COUNT_DISPLAY_ASC',
+  AccountsByCreateAtBlockIdDistinctCountDisplayDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_DISTINCT_COUNT_DISPLAY_DESC',
+  AccountsByCreateAtBlockIdDistinctCountEmailAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_DISTINCT_COUNT_EMAIL_ASC',
+  AccountsByCreateAtBlockIdDistinctCountEmailDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_DISTINCT_COUNT_EMAIL_DESC',
   AccountsByCreateAtBlockIdDistinctCountIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_DISTINCT_COUNT_ID_ASC',
   AccountsByCreateAtBlockIdDistinctCountIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_DISTINCT_COUNT_ID_DESC',
+  AccountsByCreateAtBlockIdDistinctCountImageAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_DISTINCT_COUNT_IMAGE_ASC',
+  AccountsByCreateAtBlockIdDistinctCountImageDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_DISTINCT_COUNT_IMAGE_DESC',
+  AccountsByCreateAtBlockIdDistinctCountLegalAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_DISTINCT_COUNT_LEGAL_ASC',
+  AccountsByCreateAtBlockIdDistinctCountLegalDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_DISTINCT_COUNT_LEGAL_DESC',
+  AccountsByCreateAtBlockIdDistinctCountPgpFingerprintAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_DISTINCT_COUNT_PGP_FINGERPRINT_ASC',
+  AccountsByCreateAtBlockIdDistinctCountPgpFingerprintDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_DISTINCT_COUNT_PGP_FINGERPRINT_DESC',
+  AccountsByCreateAtBlockIdDistinctCountRiotAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_DISTINCT_COUNT_RIOT_ASC',
+  AccountsByCreateAtBlockIdDistinctCountRiotDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_DISTINCT_COUNT_RIOT_DESC',
+  AccountsByCreateAtBlockIdDistinctCountTwitterAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_DISTINCT_COUNT_TWITTER_ASC',
+  AccountsByCreateAtBlockIdDistinctCountTwitterDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_DISTINCT_COUNT_TWITTER_DESC',
+  AccountsByCreateAtBlockIdDistinctCountWebAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_DISTINCT_COUNT_WEB_ASC',
+  AccountsByCreateAtBlockIdDistinctCountWebDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_DISTINCT_COUNT_WEB_DESC',
+  AccountsByCreateAtBlockIdMaxCountryCodeAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MAX_COUNTRY_CODE_ASC',
+  AccountsByCreateAtBlockIdMaxCountryCodeDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MAX_COUNTRY_CODE_DESC',
   AccountsByCreateAtBlockIdMaxCreatedAtAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MAX_CREATED_AT_ASC',
   AccountsByCreateAtBlockIdMaxCreatedAtDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MAX_CREATED_AT_DESC',
   AccountsByCreateAtBlockIdMaxCreateAtBlockIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MAX_CREATE_AT_BLOCK_ID_ASC',
   AccountsByCreateAtBlockIdMaxCreateAtBlockIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MAX_CREATE_AT_BLOCK_ID_DESC',
   AccountsByCreateAtBlockIdMaxCreatorIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MAX_CREATOR_ID_ASC',
   AccountsByCreateAtBlockIdMaxCreatorIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MAX_CREATOR_ID_DESC',
+  AccountsByCreateAtBlockIdMaxDisplayAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MAX_DISPLAY_ASC',
+  AccountsByCreateAtBlockIdMaxDisplayDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MAX_DISPLAY_DESC',
+  AccountsByCreateAtBlockIdMaxEmailAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MAX_EMAIL_ASC',
+  AccountsByCreateAtBlockIdMaxEmailDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MAX_EMAIL_DESC',
   AccountsByCreateAtBlockIdMaxIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MAX_ID_ASC',
   AccountsByCreateAtBlockIdMaxIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MAX_ID_DESC',
+  AccountsByCreateAtBlockIdMaxImageAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MAX_IMAGE_ASC',
+  AccountsByCreateAtBlockIdMaxImageDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MAX_IMAGE_DESC',
+  AccountsByCreateAtBlockIdMaxLegalAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MAX_LEGAL_ASC',
+  AccountsByCreateAtBlockIdMaxLegalDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MAX_LEGAL_DESC',
+  AccountsByCreateAtBlockIdMaxPgpFingerprintAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MAX_PGP_FINGERPRINT_ASC',
+  AccountsByCreateAtBlockIdMaxPgpFingerprintDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MAX_PGP_FINGERPRINT_DESC',
+  AccountsByCreateAtBlockIdMaxRiotAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MAX_RIOT_ASC',
+  AccountsByCreateAtBlockIdMaxRiotDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MAX_RIOT_DESC',
+  AccountsByCreateAtBlockIdMaxTwitterAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MAX_TWITTER_ASC',
+  AccountsByCreateAtBlockIdMaxTwitterDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MAX_TWITTER_DESC',
+  AccountsByCreateAtBlockIdMaxWebAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MAX_WEB_ASC',
+  AccountsByCreateAtBlockIdMaxWebDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MAX_WEB_DESC',
+  AccountsByCreateAtBlockIdMinCountryCodeAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MIN_COUNTRY_CODE_ASC',
+  AccountsByCreateAtBlockIdMinCountryCodeDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MIN_COUNTRY_CODE_DESC',
   AccountsByCreateAtBlockIdMinCreatedAtAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MIN_CREATED_AT_ASC',
   AccountsByCreateAtBlockIdMinCreatedAtDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MIN_CREATED_AT_DESC',
   AccountsByCreateAtBlockIdMinCreateAtBlockIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MIN_CREATE_AT_BLOCK_ID_ASC',
   AccountsByCreateAtBlockIdMinCreateAtBlockIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MIN_CREATE_AT_BLOCK_ID_DESC',
   AccountsByCreateAtBlockIdMinCreatorIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MIN_CREATOR_ID_ASC',
   AccountsByCreateAtBlockIdMinCreatorIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MIN_CREATOR_ID_DESC',
+  AccountsByCreateAtBlockIdMinDisplayAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MIN_DISPLAY_ASC',
+  AccountsByCreateAtBlockIdMinDisplayDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MIN_DISPLAY_DESC',
+  AccountsByCreateAtBlockIdMinEmailAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MIN_EMAIL_ASC',
+  AccountsByCreateAtBlockIdMinEmailDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MIN_EMAIL_DESC',
   AccountsByCreateAtBlockIdMinIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MIN_ID_ASC',
   AccountsByCreateAtBlockIdMinIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MIN_ID_DESC',
+  AccountsByCreateAtBlockIdMinImageAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MIN_IMAGE_ASC',
+  AccountsByCreateAtBlockIdMinImageDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MIN_IMAGE_DESC',
+  AccountsByCreateAtBlockIdMinLegalAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MIN_LEGAL_ASC',
+  AccountsByCreateAtBlockIdMinLegalDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MIN_LEGAL_DESC',
+  AccountsByCreateAtBlockIdMinPgpFingerprintAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MIN_PGP_FINGERPRINT_ASC',
+  AccountsByCreateAtBlockIdMinPgpFingerprintDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MIN_PGP_FINGERPRINT_DESC',
+  AccountsByCreateAtBlockIdMinRiotAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MIN_RIOT_ASC',
+  AccountsByCreateAtBlockIdMinRiotDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MIN_RIOT_DESC',
+  AccountsByCreateAtBlockIdMinTwitterAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MIN_TWITTER_ASC',
+  AccountsByCreateAtBlockIdMinTwitterDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MIN_TWITTER_DESC',
+  AccountsByCreateAtBlockIdMinWebAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MIN_WEB_ASC',
+  AccountsByCreateAtBlockIdMinWebDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MIN_WEB_DESC',
+  AccountsByCreateAtBlockIdStddevPopulationCountryCodeAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_POPULATION_COUNTRY_CODE_ASC',
+  AccountsByCreateAtBlockIdStddevPopulationCountryCodeDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_POPULATION_COUNTRY_CODE_DESC',
   AccountsByCreateAtBlockIdStddevPopulationCreatedAtAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_POPULATION_CREATED_AT_ASC',
   AccountsByCreateAtBlockIdStddevPopulationCreatedAtDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_POPULATION_CREATED_AT_DESC',
   AccountsByCreateAtBlockIdStddevPopulationCreateAtBlockIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_POPULATION_CREATE_AT_BLOCK_ID_ASC',
   AccountsByCreateAtBlockIdStddevPopulationCreateAtBlockIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_POPULATION_CREATE_AT_BLOCK_ID_DESC',
   AccountsByCreateAtBlockIdStddevPopulationCreatorIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_POPULATION_CREATOR_ID_ASC',
   AccountsByCreateAtBlockIdStddevPopulationCreatorIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_POPULATION_CREATOR_ID_DESC',
+  AccountsByCreateAtBlockIdStddevPopulationDisplayAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_POPULATION_DISPLAY_ASC',
+  AccountsByCreateAtBlockIdStddevPopulationDisplayDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_POPULATION_DISPLAY_DESC',
+  AccountsByCreateAtBlockIdStddevPopulationEmailAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_POPULATION_EMAIL_ASC',
+  AccountsByCreateAtBlockIdStddevPopulationEmailDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_POPULATION_EMAIL_DESC',
   AccountsByCreateAtBlockIdStddevPopulationIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_POPULATION_ID_ASC',
   AccountsByCreateAtBlockIdStddevPopulationIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_POPULATION_ID_DESC',
+  AccountsByCreateAtBlockIdStddevPopulationImageAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_POPULATION_IMAGE_ASC',
+  AccountsByCreateAtBlockIdStddevPopulationImageDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_POPULATION_IMAGE_DESC',
+  AccountsByCreateAtBlockIdStddevPopulationLegalAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_POPULATION_LEGAL_ASC',
+  AccountsByCreateAtBlockIdStddevPopulationLegalDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_POPULATION_LEGAL_DESC',
+  AccountsByCreateAtBlockIdStddevPopulationPgpFingerprintAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_POPULATION_PGP_FINGERPRINT_ASC',
+  AccountsByCreateAtBlockIdStddevPopulationPgpFingerprintDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_POPULATION_PGP_FINGERPRINT_DESC',
+  AccountsByCreateAtBlockIdStddevPopulationRiotAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_POPULATION_RIOT_ASC',
+  AccountsByCreateAtBlockIdStddevPopulationRiotDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_POPULATION_RIOT_DESC',
+  AccountsByCreateAtBlockIdStddevPopulationTwitterAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_POPULATION_TWITTER_ASC',
+  AccountsByCreateAtBlockIdStddevPopulationTwitterDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_POPULATION_TWITTER_DESC',
+  AccountsByCreateAtBlockIdStddevPopulationWebAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_POPULATION_WEB_ASC',
+  AccountsByCreateAtBlockIdStddevPopulationWebDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_POPULATION_WEB_DESC',
+  AccountsByCreateAtBlockIdStddevSampleCountryCodeAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_SAMPLE_COUNTRY_CODE_ASC',
+  AccountsByCreateAtBlockIdStddevSampleCountryCodeDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_SAMPLE_COUNTRY_CODE_DESC',
   AccountsByCreateAtBlockIdStddevSampleCreatedAtAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_SAMPLE_CREATED_AT_ASC',
   AccountsByCreateAtBlockIdStddevSampleCreatedAtDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_SAMPLE_CREATED_AT_DESC',
   AccountsByCreateAtBlockIdStddevSampleCreateAtBlockIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_SAMPLE_CREATE_AT_BLOCK_ID_ASC',
   AccountsByCreateAtBlockIdStddevSampleCreateAtBlockIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_SAMPLE_CREATE_AT_BLOCK_ID_DESC',
   AccountsByCreateAtBlockIdStddevSampleCreatorIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_SAMPLE_CREATOR_ID_ASC',
   AccountsByCreateAtBlockIdStddevSampleCreatorIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_SAMPLE_CREATOR_ID_DESC',
+  AccountsByCreateAtBlockIdStddevSampleDisplayAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_SAMPLE_DISPLAY_ASC',
+  AccountsByCreateAtBlockIdStddevSampleDisplayDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_SAMPLE_DISPLAY_DESC',
+  AccountsByCreateAtBlockIdStddevSampleEmailAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_SAMPLE_EMAIL_ASC',
+  AccountsByCreateAtBlockIdStddevSampleEmailDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_SAMPLE_EMAIL_DESC',
   AccountsByCreateAtBlockIdStddevSampleIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_SAMPLE_ID_ASC',
   AccountsByCreateAtBlockIdStddevSampleIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_SAMPLE_ID_DESC',
+  AccountsByCreateAtBlockIdStddevSampleImageAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_SAMPLE_IMAGE_ASC',
+  AccountsByCreateAtBlockIdStddevSampleImageDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_SAMPLE_IMAGE_DESC',
+  AccountsByCreateAtBlockIdStddevSampleLegalAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_SAMPLE_LEGAL_ASC',
+  AccountsByCreateAtBlockIdStddevSampleLegalDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_SAMPLE_LEGAL_DESC',
+  AccountsByCreateAtBlockIdStddevSamplePgpFingerprintAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_SAMPLE_PGP_FINGERPRINT_ASC',
+  AccountsByCreateAtBlockIdStddevSamplePgpFingerprintDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_SAMPLE_PGP_FINGERPRINT_DESC',
+  AccountsByCreateAtBlockIdStddevSampleRiotAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_SAMPLE_RIOT_ASC',
+  AccountsByCreateAtBlockIdStddevSampleRiotDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_SAMPLE_RIOT_DESC',
+  AccountsByCreateAtBlockIdStddevSampleTwitterAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_SAMPLE_TWITTER_ASC',
+  AccountsByCreateAtBlockIdStddevSampleTwitterDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_SAMPLE_TWITTER_DESC',
+  AccountsByCreateAtBlockIdStddevSampleWebAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_SAMPLE_WEB_ASC',
+  AccountsByCreateAtBlockIdStddevSampleWebDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_SAMPLE_WEB_DESC',
+  AccountsByCreateAtBlockIdSumCountryCodeAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_SUM_COUNTRY_CODE_ASC',
+  AccountsByCreateAtBlockIdSumCountryCodeDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_SUM_COUNTRY_CODE_DESC',
   AccountsByCreateAtBlockIdSumCreatedAtAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_SUM_CREATED_AT_ASC',
   AccountsByCreateAtBlockIdSumCreatedAtDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_SUM_CREATED_AT_DESC',
   AccountsByCreateAtBlockIdSumCreateAtBlockIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_SUM_CREATE_AT_BLOCK_ID_ASC',
   AccountsByCreateAtBlockIdSumCreateAtBlockIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_SUM_CREATE_AT_BLOCK_ID_DESC',
   AccountsByCreateAtBlockIdSumCreatorIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_SUM_CREATOR_ID_ASC',
   AccountsByCreateAtBlockIdSumCreatorIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_SUM_CREATOR_ID_DESC',
+  AccountsByCreateAtBlockIdSumDisplayAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_SUM_DISPLAY_ASC',
+  AccountsByCreateAtBlockIdSumDisplayDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_SUM_DISPLAY_DESC',
+  AccountsByCreateAtBlockIdSumEmailAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_SUM_EMAIL_ASC',
+  AccountsByCreateAtBlockIdSumEmailDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_SUM_EMAIL_DESC',
   AccountsByCreateAtBlockIdSumIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_SUM_ID_ASC',
   AccountsByCreateAtBlockIdSumIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_SUM_ID_DESC',
+  AccountsByCreateAtBlockIdSumImageAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_SUM_IMAGE_ASC',
+  AccountsByCreateAtBlockIdSumImageDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_SUM_IMAGE_DESC',
+  AccountsByCreateAtBlockIdSumLegalAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_SUM_LEGAL_ASC',
+  AccountsByCreateAtBlockIdSumLegalDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_SUM_LEGAL_DESC',
+  AccountsByCreateAtBlockIdSumPgpFingerprintAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_SUM_PGP_FINGERPRINT_ASC',
+  AccountsByCreateAtBlockIdSumPgpFingerprintDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_SUM_PGP_FINGERPRINT_DESC',
+  AccountsByCreateAtBlockIdSumRiotAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_SUM_RIOT_ASC',
+  AccountsByCreateAtBlockIdSumRiotDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_SUM_RIOT_DESC',
+  AccountsByCreateAtBlockIdSumTwitterAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_SUM_TWITTER_ASC',
+  AccountsByCreateAtBlockIdSumTwitterDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_SUM_TWITTER_DESC',
+  AccountsByCreateAtBlockIdSumWebAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_SUM_WEB_ASC',
+  AccountsByCreateAtBlockIdSumWebDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_SUM_WEB_DESC',
+  AccountsByCreateAtBlockIdVariancePopulationCountryCodeAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_POPULATION_COUNTRY_CODE_ASC',
+  AccountsByCreateAtBlockIdVariancePopulationCountryCodeDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_POPULATION_COUNTRY_CODE_DESC',
   AccountsByCreateAtBlockIdVariancePopulationCreatedAtAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_POPULATION_CREATED_AT_ASC',
   AccountsByCreateAtBlockIdVariancePopulationCreatedAtDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_POPULATION_CREATED_AT_DESC',
   AccountsByCreateAtBlockIdVariancePopulationCreateAtBlockIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_POPULATION_CREATE_AT_BLOCK_ID_ASC',
   AccountsByCreateAtBlockIdVariancePopulationCreateAtBlockIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_POPULATION_CREATE_AT_BLOCK_ID_DESC',
   AccountsByCreateAtBlockIdVariancePopulationCreatorIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_POPULATION_CREATOR_ID_ASC',
   AccountsByCreateAtBlockIdVariancePopulationCreatorIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_POPULATION_CREATOR_ID_DESC',
+  AccountsByCreateAtBlockIdVariancePopulationDisplayAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_POPULATION_DISPLAY_ASC',
+  AccountsByCreateAtBlockIdVariancePopulationDisplayDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_POPULATION_DISPLAY_DESC',
+  AccountsByCreateAtBlockIdVariancePopulationEmailAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_POPULATION_EMAIL_ASC',
+  AccountsByCreateAtBlockIdVariancePopulationEmailDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_POPULATION_EMAIL_DESC',
   AccountsByCreateAtBlockIdVariancePopulationIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_POPULATION_ID_ASC',
   AccountsByCreateAtBlockIdVariancePopulationIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_POPULATION_ID_DESC',
+  AccountsByCreateAtBlockIdVariancePopulationImageAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_POPULATION_IMAGE_ASC',
+  AccountsByCreateAtBlockIdVariancePopulationImageDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_POPULATION_IMAGE_DESC',
+  AccountsByCreateAtBlockIdVariancePopulationLegalAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_POPULATION_LEGAL_ASC',
+  AccountsByCreateAtBlockIdVariancePopulationLegalDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_POPULATION_LEGAL_DESC',
+  AccountsByCreateAtBlockIdVariancePopulationPgpFingerprintAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_POPULATION_PGP_FINGERPRINT_ASC',
+  AccountsByCreateAtBlockIdVariancePopulationPgpFingerprintDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_POPULATION_PGP_FINGERPRINT_DESC',
+  AccountsByCreateAtBlockIdVariancePopulationRiotAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_POPULATION_RIOT_ASC',
+  AccountsByCreateAtBlockIdVariancePopulationRiotDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_POPULATION_RIOT_DESC',
+  AccountsByCreateAtBlockIdVariancePopulationTwitterAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_POPULATION_TWITTER_ASC',
+  AccountsByCreateAtBlockIdVariancePopulationTwitterDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_POPULATION_TWITTER_DESC',
+  AccountsByCreateAtBlockIdVariancePopulationWebAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_POPULATION_WEB_ASC',
+  AccountsByCreateAtBlockIdVariancePopulationWebDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_POPULATION_WEB_DESC',
+  AccountsByCreateAtBlockIdVarianceSampleCountryCodeAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_SAMPLE_COUNTRY_CODE_ASC',
+  AccountsByCreateAtBlockIdVarianceSampleCountryCodeDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_SAMPLE_COUNTRY_CODE_DESC',
   AccountsByCreateAtBlockIdVarianceSampleCreatedAtAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_SAMPLE_CREATED_AT_ASC',
   AccountsByCreateAtBlockIdVarianceSampleCreatedAtDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_SAMPLE_CREATED_AT_DESC',
   AccountsByCreateAtBlockIdVarianceSampleCreateAtBlockIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_SAMPLE_CREATE_AT_BLOCK_ID_ASC',
   AccountsByCreateAtBlockIdVarianceSampleCreateAtBlockIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_SAMPLE_CREATE_AT_BLOCK_ID_DESC',
   AccountsByCreateAtBlockIdVarianceSampleCreatorIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_SAMPLE_CREATOR_ID_ASC',
   AccountsByCreateAtBlockIdVarianceSampleCreatorIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_SAMPLE_CREATOR_ID_DESC',
+  AccountsByCreateAtBlockIdVarianceSampleDisplayAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_SAMPLE_DISPLAY_ASC',
+  AccountsByCreateAtBlockIdVarianceSampleDisplayDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_SAMPLE_DISPLAY_DESC',
+  AccountsByCreateAtBlockIdVarianceSampleEmailAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_SAMPLE_EMAIL_ASC',
+  AccountsByCreateAtBlockIdVarianceSampleEmailDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_SAMPLE_EMAIL_DESC',
   AccountsByCreateAtBlockIdVarianceSampleIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_SAMPLE_ID_ASC',
   AccountsByCreateAtBlockIdVarianceSampleIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_SAMPLE_ID_DESC',
+  AccountsByCreateAtBlockIdVarianceSampleImageAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_SAMPLE_IMAGE_ASC',
+  AccountsByCreateAtBlockIdVarianceSampleImageDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_SAMPLE_IMAGE_DESC',
+  AccountsByCreateAtBlockIdVarianceSampleLegalAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_SAMPLE_LEGAL_ASC',
+  AccountsByCreateAtBlockIdVarianceSampleLegalDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_SAMPLE_LEGAL_DESC',
+  AccountsByCreateAtBlockIdVarianceSamplePgpFingerprintAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_SAMPLE_PGP_FINGERPRINT_ASC',
+  AccountsByCreateAtBlockIdVarianceSamplePgpFingerprintDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_SAMPLE_PGP_FINGERPRINT_DESC',
+  AccountsByCreateAtBlockIdVarianceSampleRiotAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_SAMPLE_RIOT_ASC',
+  AccountsByCreateAtBlockIdVarianceSampleRiotDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_SAMPLE_RIOT_DESC',
+  AccountsByCreateAtBlockIdVarianceSampleTwitterAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_SAMPLE_TWITTER_ASC',
+  AccountsByCreateAtBlockIdVarianceSampleTwitterDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_SAMPLE_TWITTER_DESC',
+  AccountsByCreateAtBlockIdVarianceSampleWebAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_SAMPLE_WEB_ASC',
+  AccountsByCreateAtBlockIdVarianceSampleWebDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_SAMPLE_WEB_DESC',
   AuthoritiesAverageBlockIdAsc = 'AUTHORITIES_AVERAGE_BLOCK_ID_ASC',
   AuthoritiesAverageBlockIdDesc = 'AUTHORITIES_AVERAGE_BLOCK_ID_DESC',
   AuthoritiesAverageCurrentAsc = 'AUTHORITIES_AVERAGE_CURRENT_ASC',
@@ -2335,6 +2731,8 @@ export enum BlocksOrderBy {
   ProposalItemsAverageBlockIdDesc = 'PROPOSAL_ITEMS_AVERAGE_BLOCK_ID_DESC',
   ProposalItemsAverageBlockNumberAsc = 'PROPOSAL_ITEMS_AVERAGE_BLOCK_NUMBER_ASC',
   ProposalItemsAverageBlockNumberDesc = 'PROPOSAL_ITEMS_AVERAGE_BLOCK_NUMBER_DESC',
+  ProposalItemsAverageChainIdAsc = 'PROPOSAL_ITEMS_AVERAGE_CHAIN_ID_ASC',
+  ProposalItemsAverageChainIdDesc = 'PROPOSAL_ITEMS_AVERAGE_CHAIN_ID_DESC',
   ProposalItemsAverageDataAsc = 'PROPOSAL_ITEMS_AVERAGE_DATA_ASC',
   ProposalItemsAverageDataDesc = 'PROPOSAL_ITEMS_AVERAGE_DATA_DESC',
   ProposalItemsAverageIdAsc = 'PROPOSAL_ITEMS_AVERAGE_ID_ASC',
@@ -2355,6 +2753,8 @@ export enum BlocksOrderBy {
   ProposalItemsDistinctCountBlockIdDesc = 'PROPOSAL_ITEMS_DISTINCT_COUNT_BLOCK_ID_DESC',
   ProposalItemsDistinctCountBlockNumberAsc = 'PROPOSAL_ITEMS_DISTINCT_COUNT_BLOCK_NUMBER_ASC',
   ProposalItemsDistinctCountBlockNumberDesc = 'PROPOSAL_ITEMS_DISTINCT_COUNT_BLOCK_NUMBER_DESC',
+  ProposalItemsDistinctCountChainIdAsc = 'PROPOSAL_ITEMS_DISTINCT_COUNT_CHAIN_ID_ASC',
+  ProposalItemsDistinctCountChainIdDesc = 'PROPOSAL_ITEMS_DISTINCT_COUNT_CHAIN_ID_DESC',
   ProposalItemsDistinctCountDataAsc = 'PROPOSAL_ITEMS_DISTINCT_COUNT_DATA_ASC',
   ProposalItemsDistinctCountDataDesc = 'PROPOSAL_ITEMS_DISTINCT_COUNT_DATA_DESC',
   ProposalItemsDistinctCountIdAsc = 'PROPOSAL_ITEMS_DISTINCT_COUNT_ID_ASC',
@@ -2373,6 +2773,8 @@ export enum BlocksOrderBy {
   ProposalItemsMaxBlockIdDesc = 'PROPOSAL_ITEMS_MAX_BLOCK_ID_DESC',
   ProposalItemsMaxBlockNumberAsc = 'PROPOSAL_ITEMS_MAX_BLOCK_NUMBER_ASC',
   ProposalItemsMaxBlockNumberDesc = 'PROPOSAL_ITEMS_MAX_BLOCK_NUMBER_DESC',
+  ProposalItemsMaxChainIdAsc = 'PROPOSAL_ITEMS_MAX_CHAIN_ID_ASC',
+  ProposalItemsMaxChainIdDesc = 'PROPOSAL_ITEMS_MAX_CHAIN_ID_DESC',
   ProposalItemsMaxDataAsc = 'PROPOSAL_ITEMS_MAX_DATA_ASC',
   ProposalItemsMaxDataDesc = 'PROPOSAL_ITEMS_MAX_DATA_DESC',
   ProposalItemsMaxIdAsc = 'PROPOSAL_ITEMS_MAX_ID_ASC',
@@ -2391,6 +2793,8 @@ export enum BlocksOrderBy {
   ProposalItemsMinBlockIdDesc = 'PROPOSAL_ITEMS_MIN_BLOCK_ID_DESC',
   ProposalItemsMinBlockNumberAsc = 'PROPOSAL_ITEMS_MIN_BLOCK_NUMBER_ASC',
   ProposalItemsMinBlockNumberDesc = 'PROPOSAL_ITEMS_MIN_BLOCK_NUMBER_DESC',
+  ProposalItemsMinChainIdAsc = 'PROPOSAL_ITEMS_MIN_CHAIN_ID_ASC',
+  ProposalItemsMinChainIdDesc = 'PROPOSAL_ITEMS_MIN_CHAIN_ID_DESC',
   ProposalItemsMinDataAsc = 'PROPOSAL_ITEMS_MIN_DATA_ASC',
   ProposalItemsMinDataDesc = 'PROPOSAL_ITEMS_MIN_DATA_DESC',
   ProposalItemsMinIdAsc = 'PROPOSAL_ITEMS_MIN_ID_ASC',
@@ -2409,6 +2813,8 @@ export enum BlocksOrderBy {
   ProposalItemsStddevPopulationBlockIdDesc = 'PROPOSAL_ITEMS_STDDEV_POPULATION_BLOCK_ID_DESC',
   ProposalItemsStddevPopulationBlockNumberAsc = 'PROPOSAL_ITEMS_STDDEV_POPULATION_BLOCK_NUMBER_ASC',
   ProposalItemsStddevPopulationBlockNumberDesc = 'PROPOSAL_ITEMS_STDDEV_POPULATION_BLOCK_NUMBER_DESC',
+  ProposalItemsStddevPopulationChainIdAsc = 'PROPOSAL_ITEMS_STDDEV_POPULATION_CHAIN_ID_ASC',
+  ProposalItemsStddevPopulationChainIdDesc = 'PROPOSAL_ITEMS_STDDEV_POPULATION_CHAIN_ID_DESC',
   ProposalItemsStddevPopulationDataAsc = 'PROPOSAL_ITEMS_STDDEV_POPULATION_DATA_ASC',
   ProposalItemsStddevPopulationDataDesc = 'PROPOSAL_ITEMS_STDDEV_POPULATION_DATA_DESC',
   ProposalItemsStddevPopulationIdAsc = 'PROPOSAL_ITEMS_STDDEV_POPULATION_ID_ASC',
@@ -2427,6 +2833,8 @@ export enum BlocksOrderBy {
   ProposalItemsStddevSampleBlockIdDesc = 'PROPOSAL_ITEMS_STDDEV_SAMPLE_BLOCK_ID_DESC',
   ProposalItemsStddevSampleBlockNumberAsc = 'PROPOSAL_ITEMS_STDDEV_SAMPLE_BLOCK_NUMBER_ASC',
   ProposalItemsStddevSampleBlockNumberDesc = 'PROPOSAL_ITEMS_STDDEV_SAMPLE_BLOCK_NUMBER_DESC',
+  ProposalItemsStddevSampleChainIdAsc = 'PROPOSAL_ITEMS_STDDEV_SAMPLE_CHAIN_ID_ASC',
+  ProposalItemsStddevSampleChainIdDesc = 'PROPOSAL_ITEMS_STDDEV_SAMPLE_CHAIN_ID_DESC',
   ProposalItemsStddevSampleDataAsc = 'PROPOSAL_ITEMS_STDDEV_SAMPLE_DATA_ASC',
   ProposalItemsStddevSampleDataDesc = 'PROPOSAL_ITEMS_STDDEV_SAMPLE_DATA_DESC',
   ProposalItemsStddevSampleIdAsc = 'PROPOSAL_ITEMS_STDDEV_SAMPLE_ID_ASC',
@@ -2445,6 +2853,8 @@ export enum BlocksOrderBy {
   ProposalItemsSumBlockIdDesc = 'PROPOSAL_ITEMS_SUM_BLOCK_ID_DESC',
   ProposalItemsSumBlockNumberAsc = 'PROPOSAL_ITEMS_SUM_BLOCK_NUMBER_ASC',
   ProposalItemsSumBlockNumberDesc = 'PROPOSAL_ITEMS_SUM_BLOCK_NUMBER_DESC',
+  ProposalItemsSumChainIdAsc = 'PROPOSAL_ITEMS_SUM_CHAIN_ID_ASC',
+  ProposalItemsSumChainIdDesc = 'PROPOSAL_ITEMS_SUM_CHAIN_ID_DESC',
   ProposalItemsSumDataAsc = 'PROPOSAL_ITEMS_SUM_DATA_ASC',
   ProposalItemsSumDataDesc = 'PROPOSAL_ITEMS_SUM_DATA_DESC',
   ProposalItemsSumIdAsc = 'PROPOSAL_ITEMS_SUM_ID_ASC',
@@ -2463,6 +2873,8 @@ export enum BlocksOrderBy {
   ProposalItemsVariancePopulationBlockIdDesc = 'PROPOSAL_ITEMS_VARIANCE_POPULATION_BLOCK_ID_DESC',
   ProposalItemsVariancePopulationBlockNumberAsc = 'PROPOSAL_ITEMS_VARIANCE_POPULATION_BLOCK_NUMBER_ASC',
   ProposalItemsVariancePopulationBlockNumberDesc = 'PROPOSAL_ITEMS_VARIANCE_POPULATION_BLOCK_NUMBER_DESC',
+  ProposalItemsVariancePopulationChainIdAsc = 'PROPOSAL_ITEMS_VARIANCE_POPULATION_CHAIN_ID_ASC',
+  ProposalItemsVariancePopulationChainIdDesc = 'PROPOSAL_ITEMS_VARIANCE_POPULATION_CHAIN_ID_DESC',
   ProposalItemsVariancePopulationDataAsc = 'PROPOSAL_ITEMS_VARIANCE_POPULATION_DATA_ASC',
   ProposalItemsVariancePopulationDataDesc = 'PROPOSAL_ITEMS_VARIANCE_POPULATION_DATA_DESC',
   ProposalItemsVariancePopulationIdAsc = 'PROPOSAL_ITEMS_VARIANCE_POPULATION_ID_ASC',
@@ -2481,6 +2893,8 @@ export enum BlocksOrderBy {
   ProposalItemsVarianceSampleBlockIdDesc = 'PROPOSAL_ITEMS_VARIANCE_SAMPLE_BLOCK_ID_DESC',
   ProposalItemsVarianceSampleBlockNumberAsc = 'PROPOSAL_ITEMS_VARIANCE_SAMPLE_BLOCK_NUMBER_ASC',
   ProposalItemsVarianceSampleBlockNumberDesc = 'PROPOSAL_ITEMS_VARIANCE_SAMPLE_BLOCK_NUMBER_DESC',
+  ProposalItemsVarianceSampleChainIdAsc = 'PROPOSAL_ITEMS_VARIANCE_SAMPLE_CHAIN_ID_ASC',
+  ProposalItemsVarianceSampleChainIdDesc = 'PROPOSAL_ITEMS_VARIANCE_SAMPLE_CHAIN_ID_DESC',
   ProposalItemsVarianceSampleDataAsc = 'PROPOSAL_ITEMS_VARIANCE_SAMPLE_DATA_ASC',
   ProposalItemsVarianceSampleDataDesc = 'PROPOSAL_ITEMS_VARIANCE_SAMPLE_DATA_DESC',
   ProposalItemsVarianceSampleIdAsc = 'PROPOSAL_ITEMS_VARIANCE_SAMPLE_ID_ASC',
@@ -2499,112 +2913,112 @@ export enum BlocksOrderBy {
   ProposalVotesAverageBlockIdDesc = 'PROPOSAL_VOTES_AVERAGE_BLOCK_ID_DESC',
   ProposalVotesAverageBlockNumberAsc = 'PROPOSAL_VOTES_AVERAGE_BLOCK_NUMBER_ASC',
   ProposalVotesAverageBlockNumberDesc = 'PROPOSAL_VOTES_AVERAGE_BLOCK_NUMBER_DESC',
-  ProposalVotesAverageForAsc = 'PROPOSAL_VOTES_AVERAGE_FOR_ASC',
-  ProposalVotesAverageForDesc = 'PROPOSAL_VOTES_AVERAGE_FOR_DESC',
   ProposalVotesAverageIdAsc = 'PROPOSAL_VOTES_AVERAGE_ID_ASC',
   ProposalVotesAverageIdDesc = 'PROPOSAL_VOTES_AVERAGE_ID_DESC',
   ProposalVotesAverageProposalIdAsc = 'PROPOSAL_VOTES_AVERAGE_PROPOSAL_ID_ASC',
   ProposalVotesAverageProposalIdDesc = 'PROPOSAL_VOTES_AVERAGE_PROPOSAL_ID_DESC',
   ProposalVotesAverageVoterIdAsc = 'PROPOSAL_VOTES_AVERAGE_VOTER_ID_ASC',
   ProposalVotesAverageVoterIdDesc = 'PROPOSAL_VOTES_AVERAGE_VOTER_ID_DESC',
+  ProposalVotesAverageVoteStatusAsc = 'PROPOSAL_VOTES_AVERAGE_VOTE_STATUS_ASC',
+  ProposalVotesAverageVoteStatusDesc = 'PROPOSAL_VOTES_AVERAGE_VOTE_STATUS_DESC',
   ProposalVotesCountAsc = 'PROPOSAL_VOTES_COUNT_ASC',
   ProposalVotesCountDesc = 'PROPOSAL_VOTES_COUNT_DESC',
   ProposalVotesDistinctCountBlockIdAsc = 'PROPOSAL_VOTES_DISTINCT_COUNT_BLOCK_ID_ASC',
   ProposalVotesDistinctCountBlockIdDesc = 'PROPOSAL_VOTES_DISTINCT_COUNT_BLOCK_ID_DESC',
   ProposalVotesDistinctCountBlockNumberAsc = 'PROPOSAL_VOTES_DISTINCT_COUNT_BLOCK_NUMBER_ASC',
   ProposalVotesDistinctCountBlockNumberDesc = 'PROPOSAL_VOTES_DISTINCT_COUNT_BLOCK_NUMBER_DESC',
-  ProposalVotesDistinctCountForAsc = 'PROPOSAL_VOTES_DISTINCT_COUNT_FOR_ASC',
-  ProposalVotesDistinctCountForDesc = 'PROPOSAL_VOTES_DISTINCT_COUNT_FOR_DESC',
   ProposalVotesDistinctCountIdAsc = 'PROPOSAL_VOTES_DISTINCT_COUNT_ID_ASC',
   ProposalVotesDistinctCountIdDesc = 'PROPOSAL_VOTES_DISTINCT_COUNT_ID_DESC',
   ProposalVotesDistinctCountProposalIdAsc = 'PROPOSAL_VOTES_DISTINCT_COUNT_PROPOSAL_ID_ASC',
   ProposalVotesDistinctCountProposalIdDesc = 'PROPOSAL_VOTES_DISTINCT_COUNT_PROPOSAL_ID_DESC',
   ProposalVotesDistinctCountVoterIdAsc = 'PROPOSAL_VOTES_DISTINCT_COUNT_VOTER_ID_ASC',
   ProposalVotesDistinctCountVoterIdDesc = 'PROPOSAL_VOTES_DISTINCT_COUNT_VOTER_ID_DESC',
+  ProposalVotesDistinctCountVoteStatusAsc = 'PROPOSAL_VOTES_DISTINCT_COUNT_VOTE_STATUS_ASC',
+  ProposalVotesDistinctCountVoteStatusDesc = 'PROPOSAL_VOTES_DISTINCT_COUNT_VOTE_STATUS_DESC',
   ProposalVotesMaxBlockIdAsc = 'PROPOSAL_VOTES_MAX_BLOCK_ID_ASC',
   ProposalVotesMaxBlockIdDesc = 'PROPOSAL_VOTES_MAX_BLOCK_ID_DESC',
   ProposalVotesMaxBlockNumberAsc = 'PROPOSAL_VOTES_MAX_BLOCK_NUMBER_ASC',
   ProposalVotesMaxBlockNumberDesc = 'PROPOSAL_VOTES_MAX_BLOCK_NUMBER_DESC',
-  ProposalVotesMaxForAsc = 'PROPOSAL_VOTES_MAX_FOR_ASC',
-  ProposalVotesMaxForDesc = 'PROPOSAL_VOTES_MAX_FOR_DESC',
   ProposalVotesMaxIdAsc = 'PROPOSAL_VOTES_MAX_ID_ASC',
   ProposalVotesMaxIdDesc = 'PROPOSAL_VOTES_MAX_ID_DESC',
   ProposalVotesMaxProposalIdAsc = 'PROPOSAL_VOTES_MAX_PROPOSAL_ID_ASC',
   ProposalVotesMaxProposalIdDesc = 'PROPOSAL_VOTES_MAX_PROPOSAL_ID_DESC',
   ProposalVotesMaxVoterIdAsc = 'PROPOSAL_VOTES_MAX_VOTER_ID_ASC',
   ProposalVotesMaxVoterIdDesc = 'PROPOSAL_VOTES_MAX_VOTER_ID_DESC',
+  ProposalVotesMaxVoteStatusAsc = 'PROPOSAL_VOTES_MAX_VOTE_STATUS_ASC',
+  ProposalVotesMaxVoteStatusDesc = 'PROPOSAL_VOTES_MAX_VOTE_STATUS_DESC',
   ProposalVotesMinBlockIdAsc = 'PROPOSAL_VOTES_MIN_BLOCK_ID_ASC',
   ProposalVotesMinBlockIdDesc = 'PROPOSAL_VOTES_MIN_BLOCK_ID_DESC',
   ProposalVotesMinBlockNumberAsc = 'PROPOSAL_VOTES_MIN_BLOCK_NUMBER_ASC',
   ProposalVotesMinBlockNumberDesc = 'PROPOSAL_VOTES_MIN_BLOCK_NUMBER_DESC',
-  ProposalVotesMinForAsc = 'PROPOSAL_VOTES_MIN_FOR_ASC',
-  ProposalVotesMinForDesc = 'PROPOSAL_VOTES_MIN_FOR_DESC',
   ProposalVotesMinIdAsc = 'PROPOSAL_VOTES_MIN_ID_ASC',
   ProposalVotesMinIdDesc = 'PROPOSAL_VOTES_MIN_ID_DESC',
   ProposalVotesMinProposalIdAsc = 'PROPOSAL_VOTES_MIN_PROPOSAL_ID_ASC',
   ProposalVotesMinProposalIdDesc = 'PROPOSAL_VOTES_MIN_PROPOSAL_ID_DESC',
   ProposalVotesMinVoterIdAsc = 'PROPOSAL_VOTES_MIN_VOTER_ID_ASC',
   ProposalVotesMinVoterIdDesc = 'PROPOSAL_VOTES_MIN_VOTER_ID_DESC',
+  ProposalVotesMinVoteStatusAsc = 'PROPOSAL_VOTES_MIN_VOTE_STATUS_ASC',
+  ProposalVotesMinVoteStatusDesc = 'PROPOSAL_VOTES_MIN_VOTE_STATUS_DESC',
   ProposalVotesStddevPopulationBlockIdAsc = 'PROPOSAL_VOTES_STDDEV_POPULATION_BLOCK_ID_ASC',
   ProposalVotesStddevPopulationBlockIdDesc = 'PROPOSAL_VOTES_STDDEV_POPULATION_BLOCK_ID_DESC',
   ProposalVotesStddevPopulationBlockNumberAsc = 'PROPOSAL_VOTES_STDDEV_POPULATION_BLOCK_NUMBER_ASC',
   ProposalVotesStddevPopulationBlockNumberDesc = 'PROPOSAL_VOTES_STDDEV_POPULATION_BLOCK_NUMBER_DESC',
-  ProposalVotesStddevPopulationForAsc = 'PROPOSAL_VOTES_STDDEV_POPULATION_FOR_ASC',
-  ProposalVotesStddevPopulationForDesc = 'PROPOSAL_VOTES_STDDEV_POPULATION_FOR_DESC',
   ProposalVotesStddevPopulationIdAsc = 'PROPOSAL_VOTES_STDDEV_POPULATION_ID_ASC',
   ProposalVotesStddevPopulationIdDesc = 'PROPOSAL_VOTES_STDDEV_POPULATION_ID_DESC',
   ProposalVotesStddevPopulationProposalIdAsc = 'PROPOSAL_VOTES_STDDEV_POPULATION_PROPOSAL_ID_ASC',
   ProposalVotesStddevPopulationProposalIdDesc = 'PROPOSAL_VOTES_STDDEV_POPULATION_PROPOSAL_ID_DESC',
   ProposalVotesStddevPopulationVoterIdAsc = 'PROPOSAL_VOTES_STDDEV_POPULATION_VOTER_ID_ASC',
   ProposalVotesStddevPopulationVoterIdDesc = 'PROPOSAL_VOTES_STDDEV_POPULATION_VOTER_ID_DESC',
+  ProposalVotesStddevPopulationVoteStatusAsc = 'PROPOSAL_VOTES_STDDEV_POPULATION_VOTE_STATUS_ASC',
+  ProposalVotesStddevPopulationVoteStatusDesc = 'PROPOSAL_VOTES_STDDEV_POPULATION_VOTE_STATUS_DESC',
   ProposalVotesStddevSampleBlockIdAsc = 'PROPOSAL_VOTES_STDDEV_SAMPLE_BLOCK_ID_ASC',
   ProposalVotesStddevSampleBlockIdDesc = 'PROPOSAL_VOTES_STDDEV_SAMPLE_BLOCK_ID_DESC',
   ProposalVotesStddevSampleBlockNumberAsc = 'PROPOSAL_VOTES_STDDEV_SAMPLE_BLOCK_NUMBER_ASC',
   ProposalVotesStddevSampleBlockNumberDesc = 'PROPOSAL_VOTES_STDDEV_SAMPLE_BLOCK_NUMBER_DESC',
-  ProposalVotesStddevSampleForAsc = 'PROPOSAL_VOTES_STDDEV_SAMPLE_FOR_ASC',
-  ProposalVotesStddevSampleForDesc = 'PROPOSAL_VOTES_STDDEV_SAMPLE_FOR_DESC',
   ProposalVotesStddevSampleIdAsc = 'PROPOSAL_VOTES_STDDEV_SAMPLE_ID_ASC',
   ProposalVotesStddevSampleIdDesc = 'PROPOSAL_VOTES_STDDEV_SAMPLE_ID_DESC',
   ProposalVotesStddevSampleProposalIdAsc = 'PROPOSAL_VOTES_STDDEV_SAMPLE_PROPOSAL_ID_ASC',
   ProposalVotesStddevSampleProposalIdDesc = 'PROPOSAL_VOTES_STDDEV_SAMPLE_PROPOSAL_ID_DESC',
   ProposalVotesStddevSampleVoterIdAsc = 'PROPOSAL_VOTES_STDDEV_SAMPLE_VOTER_ID_ASC',
   ProposalVotesStddevSampleVoterIdDesc = 'PROPOSAL_VOTES_STDDEV_SAMPLE_VOTER_ID_DESC',
+  ProposalVotesStddevSampleVoteStatusAsc = 'PROPOSAL_VOTES_STDDEV_SAMPLE_VOTE_STATUS_ASC',
+  ProposalVotesStddevSampleVoteStatusDesc = 'PROPOSAL_VOTES_STDDEV_SAMPLE_VOTE_STATUS_DESC',
   ProposalVotesSumBlockIdAsc = 'PROPOSAL_VOTES_SUM_BLOCK_ID_ASC',
   ProposalVotesSumBlockIdDesc = 'PROPOSAL_VOTES_SUM_BLOCK_ID_DESC',
   ProposalVotesSumBlockNumberAsc = 'PROPOSAL_VOTES_SUM_BLOCK_NUMBER_ASC',
   ProposalVotesSumBlockNumberDesc = 'PROPOSAL_VOTES_SUM_BLOCK_NUMBER_DESC',
-  ProposalVotesSumForAsc = 'PROPOSAL_VOTES_SUM_FOR_ASC',
-  ProposalVotesSumForDesc = 'PROPOSAL_VOTES_SUM_FOR_DESC',
   ProposalVotesSumIdAsc = 'PROPOSAL_VOTES_SUM_ID_ASC',
   ProposalVotesSumIdDesc = 'PROPOSAL_VOTES_SUM_ID_DESC',
   ProposalVotesSumProposalIdAsc = 'PROPOSAL_VOTES_SUM_PROPOSAL_ID_ASC',
   ProposalVotesSumProposalIdDesc = 'PROPOSAL_VOTES_SUM_PROPOSAL_ID_DESC',
   ProposalVotesSumVoterIdAsc = 'PROPOSAL_VOTES_SUM_VOTER_ID_ASC',
   ProposalVotesSumVoterIdDesc = 'PROPOSAL_VOTES_SUM_VOTER_ID_DESC',
+  ProposalVotesSumVoteStatusAsc = 'PROPOSAL_VOTES_SUM_VOTE_STATUS_ASC',
+  ProposalVotesSumVoteStatusDesc = 'PROPOSAL_VOTES_SUM_VOTE_STATUS_DESC',
   ProposalVotesVariancePopulationBlockIdAsc = 'PROPOSAL_VOTES_VARIANCE_POPULATION_BLOCK_ID_ASC',
   ProposalVotesVariancePopulationBlockIdDesc = 'PROPOSAL_VOTES_VARIANCE_POPULATION_BLOCK_ID_DESC',
   ProposalVotesVariancePopulationBlockNumberAsc = 'PROPOSAL_VOTES_VARIANCE_POPULATION_BLOCK_NUMBER_ASC',
   ProposalVotesVariancePopulationBlockNumberDesc = 'PROPOSAL_VOTES_VARIANCE_POPULATION_BLOCK_NUMBER_DESC',
-  ProposalVotesVariancePopulationForAsc = 'PROPOSAL_VOTES_VARIANCE_POPULATION_FOR_ASC',
-  ProposalVotesVariancePopulationForDesc = 'PROPOSAL_VOTES_VARIANCE_POPULATION_FOR_DESC',
   ProposalVotesVariancePopulationIdAsc = 'PROPOSAL_VOTES_VARIANCE_POPULATION_ID_ASC',
   ProposalVotesVariancePopulationIdDesc = 'PROPOSAL_VOTES_VARIANCE_POPULATION_ID_DESC',
   ProposalVotesVariancePopulationProposalIdAsc = 'PROPOSAL_VOTES_VARIANCE_POPULATION_PROPOSAL_ID_ASC',
   ProposalVotesVariancePopulationProposalIdDesc = 'PROPOSAL_VOTES_VARIANCE_POPULATION_PROPOSAL_ID_DESC',
   ProposalVotesVariancePopulationVoterIdAsc = 'PROPOSAL_VOTES_VARIANCE_POPULATION_VOTER_ID_ASC',
   ProposalVotesVariancePopulationVoterIdDesc = 'PROPOSAL_VOTES_VARIANCE_POPULATION_VOTER_ID_DESC',
+  ProposalVotesVariancePopulationVoteStatusAsc = 'PROPOSAL_VOTES_VARIANCE_POPULATION_VOTE_STATUS_ASC',
+  ProposalVotesVariancePopulationVoteStatusDesc = 'PROPOSAL_VOTES_VARIANCE_POPULATION_VOTE_STATUS_DESC',
   ProposalVotesVarianceSampleBlockIdAsc = 'PROPOSAL_VOTES_VARIANCE_SAMPLE_BLOCK_ID_ASC',
   ProposalVotesVarianceSampleBlockIdDesc = 'PROPOSAL_VOTES_VARIANCE_SAMPLE_BLOCK_ID_DESC',
   ProposalVotesVarianceSampleBlockNumberAsc = 'PROPOSAL_VOTES_VARIANCE_SAMPLE_BLOCK_NUMBER_ASC',
   ProposalVotesVarianceSampleBlockNumberDesc = 'PROPOSAL_VOTES_VARIANCE_SAMPLE_BLOCK_NUMBER_DESC',
-  ProposalVotesVarianceSampleForAsc = 'PROPOSAL_VOTES_VARIANCE_SAMPLE_FOR_ASC',
-  ProposalVotesVarianceSampleForDesc = 'PROPOSAL_VOTES_VARIANCE_SAMPLE_FOR_DESC',
   ProposalVotesVarianceSampleIdAsc = 'PROPOSAL_VOTES_VARIANCE_SAMPLE_ID_ASC',
   ProposalVotesVarianceSampleIdDesc = 'PROPOSAL_VOTES_VARIANCE_SAMPLE_ID_DESC',
   ProposalVotesVarianceSampleProposalIdAsc = 'PROPOSAL_VOTES_VARIANCE_SAMPLE_PROPOSAL_ID_ASC',
   ProposalVotesVarianceSampleProposalIdDesc = 'PROPOSAL_VOTES_VARIANCE_SAMPLE_PROPOSAL_ID_DESC',
   ProposalVotesVarianceSampleVoterIdAsc = 'PROPOSAL_VOTES_VARIANCE_SAMPLE_VOTER_ID_ASC',
   ProposalVotesVarianceSampleVoterIdDesc = 'PROPOSAL_VOTES_VARIANCE_SAMPLE_VOTER_ID_DESC',
+  ProposalVotesVarianceSampleVoteStatusAsc = 'PROPOSAL_VOTES_VARIANCE_SAMPLE_VOTE_STATUS_ASC',
+  ProposalVotesVarianceSampleVoteStatusDesc = 'PROPOSAL_VOTES_VARIANCE_SAMPLE_VOTE_STATUS_DESC',
   ProposerThresholdsAverageBlockIdAsc = 'PROPOSER_THRESHOLDS_AVERAGE_BLOCK_ID_ASC',
   ProposerThresholdsAverageBlockIdDesc = 'PROPOSER_THRESHOLDS_AVERAGE_BLOCK_ID_DESC',
   ProposerThresholdsAverageIdAsc = 'PROPOSER_THRESHOLDS_AVERAGE_ID_ASC',
@@ -4663,6 +5077,7 @@ export type ProposalItem = Node & {
   blockNumber: Scalars['Int'];
   /** Reads and enables pagination through a set of `Block`. */
   blocksByProposalVoteProposalIdAndBlockId: ProposalItemBlocksByProposalVoteProposalIdAndBlockIdManyToManyConnection;
+  chainId?: Maybe<Scalars['Int']>;
   data: Scalars['String'];
   id: Scalars['String'];
   /** A globally unique identifier. Can be used in various places throughout the system to identify this single value. */
@@ -4771,6 +5186,8 @@ export type ProposalItemAverageAggregates = {
   __typename?: 'ProposalItemAverageAggregates';
   /** Mean average of blockNumber across the matching connection */
   blockNumber?: Maybe<Scalars['BigFloat']>;
+  /** Mean average of chainId across the matching connection */
+  chainId?: Maybe<Scalars['BigFloat']>;
   /** Mean average of nonce across the matching connection */
   nonce?: Maybe<Scalars['BigFloat']>;
 };
@@ -4826,6 +5243,8 @@ export type ProposalItemDistinctCountAggregates = {
   blockId?: Maybe<Scalars['BigInt']>;
   /** Distinct count of blockNumber across the matching connection */
   blockNumber?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of chainId across the matching connection */
+  chainId?: Maybe<Scalars['BigInt']>;
   /** Distinct count of data across the matching connection */
   data?: Maybe<Scalars['BigInt']>;
   /** Distinct count of id across the matching connection */
@@ -4850,6 +5269,8 @@ export type ProposalItemFilter = {
   blockId?: InputMaybe<StringFilter>;
   /** Filter by the object’s `blockNumber` field. */
   blockNumber?: InputMaybe<IntFilter>;
+  /** Filter by the object’s `chainId` field. */
+  chainId?: InputMaybe<IntFilter>;
   /** Filter by the object’s `data` field. */
   data?: InputMaybe<StringFilter>;
   /** Filter by the object’s `id` field. */
@@ -4874,6 +5295,8 @@ export type ProposalItemMaxAggregates = {
   __typename?: 'ProposalItemMaxAggregates';
   /** Maximum of blockNumber across the matching connection */
   blockNumber?: Maybe<Scalars['Int']>;
+  /** Maximum of chainId across the matching connection */
+  chainId?: Maybe<Scalars['Int']>;
   /** Maximum of nonce across the matching connection */
   nonce?: Maybe<Scalars['Int']>;
 };
@@ -4882,6 +5305,8 @@ export type ProposalItemMinAggregates = {
   __typename?: 'ProposalItemMinAggregates';
   /** Minimum of blockNumber across the matching connection */
   blockNumber?: Maybe<Scalars['Int']>;
+  /** Minimum of chainId across the matching connection */
+  chainId?: Maybe<Scalars['Int']>;
   /** Minimum of nonce across the matching connection */
   nonce?: Maybe<Scalars['Int']>;
 };
@@ -4917,11 +5342,11 @@ export type ProposalItemProposersByProposalVoteProposalIdAndVoterIdManyToManyEdg
   /** The `Proposer` at the end of the edge. */
   node?: Maybe<Proposer>;
   /** Reads and enables pagination through a set of `ProposalVote`. */
-  proposalVotesByVoterId: ProposalVotesConnection;
+  votes: ProposalVotesConnection;
 };
 
 /** A `Proposer` edge in the connection, with data from `ProposalVote`. */
-export type ProposalItemProposersByProposalVoteProposalIdAndVoterIdManyToManyEdgeProposalVotesByVoterIdArgs = {
+export type ProposalItemProposersByProposalVoteProposalIdAndVoterIdManyToManyEdgeVotesArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
   filter?: InputMaybe<ProposalVoteFilter>;
@@ -4935,6 +5360,8 @@ export type ProposalItemStddevPopulationAggregates = {
   __typename?: 'ProposalItemStddevPopulationAggregates';
   /** Population standard deviation of blockNumber across the matching connection */
   blockNumber?: Maybe<Scalars['BigFloat']>;
+  /** Population standard deviation of chainId across the matching connection */
+  chainId?: Maybe<Scalars['BigFloat']>;
   /** Population standard deviation of nonce across the matching connection */
   nonce?: Maybe<Scalars['BigFloat']>;
 };
@@ -4943,6 +5370,8 @@ export type ProposalItemStddevSampleAggregates = {
   __typename?: 'ProposalItemStddevSampleAggregates';
   /** Sample standard deviation of blockNumber across the matching connection */
   blockNumber?: Maybe<Scalars['BigFloat']>;
+  /** Sample standard deviation of chainId across the matching connection */
+  chainId?: Maybe<Scalars['BigFloat']>;
   /** Sample standard deviation of nonce across the matching connection */
   nonce?: Maybe<Scalars['BigFloat']>;
 };
@@ -4951,6 +5380,8 @@ export type ProposalItemSumAggregates = {
   __typename?: 'ProposalItemSumAggregates';
   /** Sum of blockNumber across the matching connection */
   blockNumber: Scalars['BigInt'];
+  /** Sum of chainId across the matching connection */
+  chainId: Scalars['BigInt'];
   /** Sum of nonce across the matching connection */
   nonce: Scalars['BigInt'];
 };
@@ -5006,6 +5437,8 @@ export type ProposalItemVariancePopulationAggregates = {
   __typename?: 'ProposalItemVariancePopulationAggregates';
   /** Population variance of blockNumber across the matching connection */
   blockNumber?: Maybe<Scalars['BigFloat']>;
+  /** Population variance of chainId across the matching connection */
+  chainId?: Maybe<Scalars['BigFloat']>;
   /** Population variance of nonce across the matching connection */
   nonce?: Maybe<Scalars['BigFloat']>;
 };
@@ -5014,6 +5447,8 @@ export type ProposalItemVarianceSampleAggregates = {
   __typename?: 'ProposalItemVarianceSampleAggregates';
   /** Sample variance of blockNumber across the matching connection */
   blockNumber?: Maybe<Scalars['BigFloat']>;
+  /** Sample variance of chainId across the matching connection */
+  chainId?: Maybe<Scalars['BigFloat']>;
   /** Sample variance of nonce across the matching connection */
   nonce?: Maybe<Scalars['BigFloat']>;
 };
@@ -5054,6 +5489,7 @@ export type ProposalItemsEdge = {
 export enum ProposalItemsGroupBy {
   BlockId = 'BLOCK_ID',
   BlockNumber = 'BLOCK_NUMBER',
+  ChainId = 'CHAIN_ID',
   Data = 'DATA',
   Nonce = 'NONCE',
   Removed = 'REMOVED',
@@ -5064,11 +5500,13 @@ export enum ProposalItemsGroupBy {
 
 export type ProposalItemsHavingAverageInput = {
   blockNumber?: InputMaybe<HavingIntFilter>;
+  chainId?: InputMaybe<HavingIntFilter>;
   nonce?: InputMaybe<HavingIntFilter>;
 };
 
 export type ProposalItemsHavingDistinctCountInput = {
   blockNumber?: InputMaybe<HavingIntFilter>;
+  chainId?: InputMaybe<HavingIntFilter>;
   nonce?: InputMaybe<HavingIntFilter>;
 };
 
@@ -5089,36 +5527,43 @@ export type ProposalItemsHavingInput = {
 
 export type ProposalItemsHavingMaxInput = {
   blockNumber?: InputMaybe<HavingIntFilter>;
+  chainId?: InputMaybe<HavingIntFilter>;
   nonce?: InputMaybe<HavingIntFilter>;
 };
 
 export type ProposalItemsHavingMinInput = {
   blockNumber?: InputMaybe<HavingIntFilter>;
+  chainId?: InputMaybe<HavingIntFilter>;
   nonce?: InputMaybe<HavingIntFilter>;
 };
 
 export type ProposalItemsHavingStddevPopulationInput = {
   blockNumber?: InputMaybe<HavingIntFilter>;
+  chainId?: InputMaybe<HavingIntFilter>;
   nonce?: InputMaybe<HavingIntFilter>;
 };
 
 export type ProposalItemsHavingStddevSampleInput = {
   blockNumber?: InputMaybe<HavingIntFilter>;
+  chainId?: InputMaybe<HavingIntFilter>;
   nonce?: InputMaybe<HavingIntFilter>;
 };
 
 export type ProposalItemsHavingSumInput = {
   blockNumber?: InputMaybe<HavingIntFilter>;
+  chainId?: InputMaybe<HavingIntFilter>;
   nonce?: InputMaybe<HavingIntFilter>;
 };
 
 export type ProposalItemsHavingVariancePopulationInput = {
   blockNumber?: InputMaybe<HavingIntFilter>;
+  chainId?: InputMaybe<HavingIntFilter>;
   nonce?: InputMaybe<HavingIntFilter>;
 };
 
 export type ProposalItemsHavingVarianceSampleInput = {
   blockNumber?: InputMaybe<HavingIntFilter>;
+  chainId?: InputMaybe<HavingIntFilter>;
   nonce?: InputMaybe<HavingIntFilter>;
 };
 
@@ -5128,6 +5573,8 @@ export enum ProposalItemsOrderBy {
   BlockIdDesc = 'BLOCK_ID_DESC',
   BlockNumberAsc = 'BLOCK_NUMBER_ASC',
   BlockNumberDesc = 'BLOCK_NUMBER_DESC',
+  ChainIdAsc = 'CHAIN_ID_ASC',
+  ChainIdDesc = 'CHAIN_ID_DESC',
   DataAsc = 'DATA_ASC',
   DataDesc = 'DATA_DESC',
   IdAsc = 'ID_ASC',
@@ -5251,112 +5698,112 @@ export enum ProposalItemsOrderBy {
   ProposalVotesByProposalIdAverageBlockIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_AVERAGE_BLOCK_ID_DESC',
   ProposalVotesByProposalIdAverageBlockNumberAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_AVERAGE_BLOCK_NUMBER_ASC',
   ProposalVotesByProposalIdAverageBlockNumberDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_AVERAGE_BLOCK_NUMBER_DESC',
-  ProposalVotesByProposalIdAverageForAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_AVERAGE_FOR_ASC',
-  ProposalVotesByProposalIdAverageForDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_AVERAGE_FOR_DESC',
   ProposalVotesByProposalIdAverageIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_AVERAGE_ID_ASC',
   ProposalVotesByProposalIdAverageIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_AVERAGE_ID_DESC',
   ProposalVotesByProposalIdAverageProposalIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_AVERAGE_PROPOSAL_ID_ASC',
   ProposalVotesByProposalIdAverageProposalIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_AVERAGE_PROPOSAL_ID_DESC',
   ProposalVotesByProposalIdAverageVoterIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_AVERAGE_VOTER_ID_ASC',
   ProposalVotesByProposalIdAverageVoterIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_AVERAGE_VOTER_ID_DESC',
+  ProposalVotesByProposalIdAverageVoteStatusAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_AVERAGE_VOTE_STATUS_ASC',
+  ProposalVotesByProposalIdAverageVoteStatusDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_AVERAGE_VOTE_STATUS_DESC',
   ProposalVotesByProposalIdCountAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_COUNT_ASC',
   ProposalVotesByProposalIdCountDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_COUNT_DESC',
   ProposalVotesByProposalIdDistinctCountBlockIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_DISTINCT_COUNT_BLOCK_ID_ASC',
   ProposalVotesByProposalIdDistinctCountBlockIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_DISTINCT_COUNT_BLOCK_ID_DESC',
   ProposalVotesByProposalIdDistinctCountBlockNumberAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_DISTINCT_COUNT_BLOCK_NUMBER_ASC',
   ProposalVotesByProposalIdDistinctCountBlockNumberDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_DISTINCT_COUNT_BLOCK_NUMBER_DESC',
-  ProposalVotesByProposalIdDistinctCountForAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_DISTINCT_COUNT_FOR_ASC',
-  ProposalVotesByProposalIdDistinctCountForDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_DISTINCT_COUNT_FOR_DESC',
   ProposalVotesByProposalIdDistinctCountIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_DISTINCT_COUNT_ID_ASC',
   ProposalVotesByProposalIdDistinctCountIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_DISTINCT_COUNT_ID_DESC',
   ProposalVotesByProposalIdDistinctCountProposalIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_DISTINCT_COUNT_PROPOSAL_ID_ASC',
   ProposalVotesByProposalIdDistinctCountProposalIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_DISTINCT_COUNT_PROPOSAL_ID_DESC',
   ProposalVotesByProposalIdDistinctCountVoterIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_DISTINCT_COUNT_VOTER_ID_ASC',
   ProposalVotesByProposalIdDistinctCountVoterIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_DISTINCT_COUNT_VOTER_ID_DESC',
+  ProposalVotesByProposalIdDistinctCountVoteStatusAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_DISTINCT_COUNT_VOTE_STATUS_ASC',
+  ProposalVotesByProposalIdDistinctCountVoteStatusDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_DISTINCT_COUNT_VOTE_STATUS_DESC',
   ProposalVotesByProposalIdMaxBlockIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_MAX_BLOCK_ID_ASC',
   ProposalVotesByProposalIdMaxBlockIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_MAX_BLOCK_ID_DESC',
   ProposalVotesByProposalIdMaxBlockNumberAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_MAX_BLOCK_NUMBER_ASC',
   ProposalVotesByProposalIdMaxBlockNumberDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_MAX_BLOCK_NUMBER_DESC',
-  ProposalVotesByProposalIdMaxForAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_MAX_FOR_ASC',
-  ProposalVotesByProposalIdMaxForDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_MAX_FOR_DESC',
   ProposalVotesByProposalIdMaxIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_MAX_ID_ASC',
   ProposalVotesByProposalIdMaxIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_MAX_ID_DESC',
   ProposalVotesByProposalIdMaxProposalIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_MAX_PROPOSAL_ID_ASC',
   ProposalVotesByProposalIdMaxProposalIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_MAX_PROPOSAL_ID_DESC',
   ProposalVotesByProposalIdMaxVoterIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_MAX_VOTER_ID_ASC',
   ProposalVotesByProposalIdMaxVoterIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_MAX_VOTER_ID_DESC',
+  ProposalVotesByProposalIdMaxVoteStatusAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_MAX_VOTE_STATUS_ASC',
+  ProposalVotesByProposalIdMaxVoteStatusDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_MAX_VOTE_STATUS_DESC',
   ProposalVotesByProposalIdMinBlockIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_MIN_BLOCK_ID_ASC',
   ProposalVotesByProposalIdMinBlockIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_MIN_BLOCK_ID_DESC',
   ProposalVotesByProposalIdMinBlockNumberAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_MIN_BLOCK_NUMBER_ASC',
   ProposalVotesByProposalIdMinBlockNumberDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_MIN_BLOCK_NUMBER_DESC',
-  ProposalVotesByProposalIdMinForAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_MIN_FOR_ASC',
-  ProposalVotesByProposalIdMinForDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_MIN_FOR_DESC',
   ProposalVotesByProposalIdMinIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_MIN_ID_ASC',
   ProposalVotesByProposalIdMinIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_MIN_ID_DESC',
   ProposalVotesByProposalIdMinProposalIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_MIN_PROPOSAL_ID_ASC',
   ProposalVotesByProposalIdMinProposalIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_MIN_PROPOSAL_ID_DESC',
   ProposalVotesByProposalIdMinVoterIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_MIN_VOTER_ID_ASC',
   ProposalVotesByProposalIdMinVoterIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_MIN_VOTER_ID_DESC',
+  ProposalVotesByProposalIdMinVoteStatusAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_MIN_VOTE_STATUS_ASC',
+  ProposalVotesByProposalIdMinVoteStatusDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_MIN_VOTE_STATUS_DESC',
   ProposalVotesByProposalIdStddevPopulationBlockIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_POPULATION_BLOCK_ID_ASC',
   ProposalVotesByProposalIdStddevPopulationBlockIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_POPULATION_BLOCK_ID_DESC',
   ProposalVotesByProposalIdStddevPopulationBlockNumberAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_POPULATION_BLOCK_NUMBER_ASC',
   ProposalVotesByProposalIdStddevPopulationBlockNumberDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_POPULATION_BLOCK_NUMBER_DESC',
-  ProposalVotesByProposalIdStddevPopulationForAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_POPULATION_FOR_ASC',
-  ProposalVotesByProposalIdStddevPopulationForDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_POPULATION_FOR_DESC',
   ProposalVotesByProposalIdStddevPopulationIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_POPULATION_ID_ASC',
   ProposalVotesByProposalIdStddevPopulationIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_POPULATION_ID_DESC',
   ProposalVotesByProposalIdStddevPopulationProposalIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_POPULATION_PROPOSAL_ID_ASC',
   ProposalVotesByProposalIdStddevPopulationProposalIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_POPULATION_PROPOSAL_ID_DESC',
   ProposalVotesByProposalIdStddevPopulationVoterIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_POPULATION_VOTER_ID_ASC',
   ProposalVotesByProposalIdStddevPopulationVoterIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_POPULATION_VOTER_ID_DESC',
+  ProposalVotesByProposalIdStddevPopulationVoteStatusAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_POPULATION_VOTE_STATUS_ASC',
+  ProposalVotesByProposalIdStddevPopulationVoteStatusDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_POPULATION_VOTE_STATUS_DESC',
   ProposalVotesByProposalIdStddevSampleBlockIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_SAMPLE_BLOCK_ID_ASC',
   ProposalVotesByProposalIdStddevSampleBlockIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_SAMPLE_BLOCK_ID_DESC',
   ProposalVotesByProposalIdStddevSampleBlockNumberAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_SAMPLE_BLOCK_NUMBER_ASC',
   ProposalVotesByProposalIdStddevSampleBlockNumberDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_SAMPLE_BLOCK_NUMBER_DESC',
-  ProposalVotesByProposalIdStddevSampleForAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_SAMPLE_FOR_ASC',
-  ProposalVotesByProposalIdStddevSampleForDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_SAMPLE_FOR_DESC',
   ProposalVotesByProposalIdStddevSampleIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_SAMPLE_ID_ASC',
   ProposalVotesByProposalIdStddevSampleIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_SAMPLE_ID_DESC',
   ProposalVotesByProposalIdStddevSampleProposalIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_SAMPLE_PROPOSAL_ID_ASC',
   ProposalVotesByProposalIdStddevSampleProposalIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_SAMPLE_PROPOSAL_ID_DESC',
   ProposalVotesByProposalIdStddevSampleVoterIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_SAMPLE_VOTER_ID_ASC',
   ProposalVotesByProposalIdStddevSampleVoterIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_SAMPLE_VOTER_ID_DESC',
+  ProposalVotesByProposalIdStddevSampleVoteStatusAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_SAMPLE_VOTE_STATUS_ASC',
+  ProposalVotesByProposalIdStddevSampleVoteStatusDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_STDDEV_SAMPLE_VOTE_STATUS_DESC',
   ProposalVotesByProposalIdSumBlockIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_SUM_BLOCK_ID_ASC',
   ProposalVotesByProposalIdSumBlockIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_SUM_BLOCK_ID_DESC',
   ProposalVotesByProposalIdSumBlockNumberAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_SUM_BLOCK_NUMBER_ASC',
   ProposalVotesByProposalIdSumBlockNumberDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_SUM_BLOCK_NUMBER_DESC',
-  ProposalVotesByProposalIdSumForAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_SUM_FOR_ASC',
-  ProposalVotesByProposalIdSumForDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_SUM_FOR_DESC',
   ProposalVotesByProposalIdSumIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_SUM_ID_ASC',
   ProposalVotesByProposalIdSumIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_SUM_ID_DESC',
   ProposalVotesByProposalIdSumProposalIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_SUM_PROPOSAL_ID_ASC',
   ProposalVotesByProposalIdSumProposalIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_SUM_PROPOSAL_ID_DESC',
   ProposalVotesByProposalIdSumVoterIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_SUM_VOTER_ID_ASC',
   ProposalVotesByProposalIdSumVoterIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_SUM_VOTER_ID_DESC',
+  ProposalVotesByProposalIdSumVoteStatusAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_SUM_VOTE_STATUS_ASC',
+  ProposalVotesByProposalIdSumVoteStatusDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_SUM_VOTE_STATUS_DESC',
   ProposalVotesByProposalIdVariancePopulationBlockIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_POPULATION_BLOCK_ID_ASC',
   ProposalVotesByProposalIdVariancePopulationBlockIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_POPULATION_BLOCK_ID_DESC',
   ProposalVotesByProposalIdVariancePopulationBlockNumberAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_POPULATION_BLOCK_NUMBER_ASC',
   ProposalVotesByProposalIdVariancePopulationBlockNumberDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_POPULATION_BLOCK_NUMBER_DESC',
-  ProposalVotesByProposalIdVariancePopulationForAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_POPULATION_FOR_ASC',
-  ProposalVotesByProposalIdVariancePopulationForDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_POPULATION_FOR_DESC',
   ProposalVotesByProposalIdVariancePopulationIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_POPULATION_ID_ASC',
   ProposalVotesByProposalIdVariancePopulationIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_POPULATION_ID_DESC',
   ProposalVotesByProposalIdVariancePopulationProposalIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_POPULATION_PROPOSAL_ID_ASC',
   ProposalVotesByProposalIdVariancePopulationProposalIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_POPULATION_PROPOSAL_ID_DESC',
   ProposalVotesByProposalIdVariancePopulationVoterIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_POPULATION_VOTER_ID_ASC',
   ProposalVotesByProposalIdVariancePopulationVoterIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_POPULATION_VOTER_ID_DESC',
+  ProposalVotesByProposalIdVariancePopulationVoteStatusAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_POPULATION_VOTE_STATUS_ASC',
+  ProposalVotesByProposalIdVariancePopulationVoteStatusDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_POPULATION_VOTE_STATUS_DESC',
   ProposalVotesByProposalIdVarianceSampleBlockIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_SAMPLE_BLOCK_ID_ASC',
   ProposalVotesByProposalIdVarianceSampleBlockIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_SAMPLE_BLOCK_ID_DESC',
   ProposalVotesByProposalIdVarianceSampleBlockNumberAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_SAMPLE_BLOCK_NUMBER_ASC',
   ProposalVotesByProposalIdVarianceSampleBlockNumberDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_SAMPLE_BLOCK_NUMBER_DESC',
-  ProposalVotesByProposalIdVarianceSampleForAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_SAMPLE_FOR_ASC',
-  ProposalVotesByProposalIdVarianceSampleForDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_SAMPLE_FOR_DESC',
   ProposalVotesByProposalIdVarianceSampleIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_SAMPLE_ID_ASC',
   ProposalVotesByProposalIdVarianceSampleIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_SAMPLE_ID_DESC',
   ProposalVotesByProposalIdVarianceSampleProposalIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_SAMPLE_PROPOSAL_ID_ASC',
   ProposalVotesByProposalIdVarianceSampleProposalIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_SAMPLE_PROPOSAL_ID_DESC',
   ProposalVotesByProposalIdVarianceSampleVoterIdAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_SAMPLE_VOTER_ID_ASC',
   ProposalVotesByProposalIdVarianceSampleVoterIdDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_SAMPLE_VOTER_ID_DESC',
+  ProposalVotesByProposalIdVarianceSampleVoteStatusAsc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_SAMPLE_VOTE_STATUS_ASC',
+  ProposalVotesByProposalIdVarianceSampleVoteStatusDesc = 'PROPOSAL_VOTES_BY_PROPOSAL_ID_VARIANCE_SAMPLE_VOTE_STATUS_DESC',
   RemovedAsc = 'REMOVED_ASC',
   RemovedDesc = 'REMOVED_DESC',
   SignatureAsc = 'SIGNATURE_ASC',
@@ -5773,13 +6220,13 @@ export type ProposalVote = Node & {
   block?: Maybe<Block>;
   blockId: Scalars['String'];
   blockNumber: Scalars['BigFloat'];
-  for: Scalars['Boolean'];
   id: Scalars['String'];
   /** A globally unique identifier. Can be used in various places throughout the system to identify this single value. */
   nodeId: Scalars['ID'];
   /** Reads a single `ProposalItem` that is related to this `ProposalVote`. */
   proposal?: Maybe<ProposalItem>;
   proposalId: Scalars['String'];
+  voteStatus: VoteStatus;
   /** Reads a single `Proposer` that is related to this `ProposalVote`. */
   voter?: Maybe<Proposer>;
   voterId: Scalars['String'];
@@ -5820,12 +6267,12 @@ export type ProposalVoteDistinctCountAggregates = {
   blockId?: Maybe<Scalars['BigInt']>;
   /** Distinct count of blockNumber across the matching connection */
   blockNumber?: Maybe<Scalars['BigInt']>;
-  /** Distinct count of for across the matching connection */
-  for?: Maybe<Scalars['BigInt']>;
   /** Distinct count of id across the matching connection */
   id?: Maybe<Scalars['BigInt']>;
   /** Distinct count of proposalId across the matching connection */
   proposalId?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of voteStatus across the matching connection */
+  voteStatus?: Maybe<Scalars['BigInt']>;
   /** Distinct count of voterId across the matching connection */
   voterId?: Maybe<Scalars['BigInt']>;
 };
@@ -5838,8 +6285,6 @@ export type ProposalVoteFilter = {
   blockId?: InputMaybe<StringFilter>;
   /** Filter by the object’s `blockNumber` field. */
   blockNumber?: InputMaybe<BigFloatFilter>;
-  /** Filter by the object’s `for` field. */
-  for?: InputMaybe<BooleanFilter>;
   /** Filter by the object’s `id` field. */
   id?: InputMaybe<StringFilter>;
   /** Negates the expression. */
@@ -5848,6 +6293,8 @@ export type ProposalVoteFilter = {
   or?: InputMaybe<Array<ProposalVoteFilter>>;
   /** Filter by the object’s `proposalId` field. */
   proposalId?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `voteStatus` field. */
+  voteStatus?: InputMaybe<VoteStatusFilter>;
   /** Filter by the object’s `voterId` field. */
   voterId?: InputMaybe<StringFilter>;
 };
@@ -5930,9 +6377,9 @@ export type ProposalVotesEdge = {
 export enum ProposalVotesGroupBy {
   BlockId = 'BLOCK_ID',
   BlockNumber = 'BLOCK_NUMBER',
-  For = 'FOR',
   ProposalId = 'PROPOSAL_ID',
   VoterId = 'VOTER_ID',
+  VoteStatus = 'VOTE_STATUS',
 }
 
 export type ProposalVotesHavingAverageInput = {
@@ -5992,8 +6439,6 @@ export enum ProposalVotesOrderBy {
   BlockIdDesc = 'BLOCK_ID_DESC',
   BlockNumberAsc = 'BLOCK_NUMBER_ASC',
   BlockNumberDesc = 'BLOCK_NUMBER_DESC',
-  ForAsc = 'FOR_ASC',
-  ForDesc = 'FOR_DESC',
   IdAsc = 'ID_ASC',
   IdDesc = 'ID_DESC',
   Natural = 'NATURAL',
@@ -6003,6 +6448,8 @@ export enum ProposalVotesOrderBy {
   ProposalIdDesc = 'PROPOSAL_ID_DESC',
   VoterIdAsc = 'VOTER_ID_ASC',
   VoterIdDesc = 'VOTER_ID_DESC',
+  VoteStatusAsc = 'VOTE_STATUS_ASC',
+  VoteStatusDesc = 'VOTE_STATUS_DESC',
 }
 
 export type Proposer = Node & {
@@ -6017,12 +6464,12 @@ export type Proposer = Node & {
   nodeId: Scalars['ID'];
   /** Reads and enables pagination through a set of `ProposalItem`. */
   proposalItemsByProposalVoteVoterIdAndProposalId: ProposerProposalItemsByProposalVoteVoterIdAndProposalIdManyToManyConnection;
-  /** Reads and enables pagination through a set of `ProposalVote`. */
-  proposalVotesByVoterId: ProposalVotesConnection;
   /** Reads and enables pagination through a set of `SessionProposer`. */
   sessionProposers: SessionProposersConnection;
   /** Reads and enables pagination through a set of `Session`. */
   sessionsBySessionProposerProposerIdAndSessionId: ProposerSessionsBySessionProposerProposerIdAndSessionIdManyToManyConnection;
+  /** Reads and enables pagination through a set of `ProposalVote`. */
+  votes: ProposalVotesConnection;
 };
 
 export type ProposerBlocksByProposalVoteVoterIdAndBlockIdArgs = {
@@ -6045,16 +6492,6 @@ export type ProposerProposalItemsByProposalVoteVoterIdAndProposalIdArgs = {
   orderBy?: InputMaybe<Array<ProposalItemsOrderBy>>;
 };
 
-export type ProposerProposalVotesByVoterIdArgs = {
-  after?: InputMaybe<Scalars['Cursor']>;
-  before?: InputMaybe<Scalars['Cursor']>;
-  filter?: InputMaybe<ProposalVoteFilter>;
-  first?: InputMaybe<Scalars['Int']>;
-  last?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<Array<ProposalVotesOrderBy>>;
-};
-
 export type ProposerSessionProposersArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -6073,6 +6510,16 @@ export type ProposerSessionsBySessionProposerProposerIdAndSessionIdArgs = {
   last?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<SessionsOrderBy>>;
+};
+
+export type ProposerVotesArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  filter?: InputMaybe<ProposalVoteFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<ProposalVotesOrderBy>>;
 };
 
 export type ProposerAggregates = {
@@ -6501,116 +6948,6 @@ export enum ProposersOrderBy {
   Natural = 'NATURAL',
   PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
   PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
-  ProposalVotesByVoterIdAverageBlockIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_AVERAGE_BLOCK_ID_ASC',
-  ProposalVotesByVoterIdAverageBlockIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_AVERAGE_BLOCK_ID_DESC',
-  ProposalVotesByVoterIdAverageBlockNumberAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_AVERAGE_BLOCK_NUMBER_ASC',
-  ProposalVotesByVoterIdAverageBlockNumberDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_AVERAGE_BLOCK_NUMBER_DESC',
-  ProposalVotesByVoterIdAverageForAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_AVERAGE_FOR_ASC',
-  ProposalVotesByVoterIdAverageForDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_AVERAGE_FOR_DESC',
-  ProposalVotesByVoterIdAverageIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_AVERAGE_ID_ASC',
-  ProposalVotesByVoterIdAverageIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_AVERAGE_ID_DESC',
-  ProposalVotesByVoterIdAverageProposalIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_AVERAGE_PROPOSAL_ID_ASC',
-  ProposalVotesByVoterIdAverageProposalIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_AVERAGE_PROPOSAL_ID_DESC',
-  ProposalVotesByVoterIdAverageVoterIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_AVERAGE_VOTER_ID_ASC',
-  ProposalVotesByVoterIdAverageVoterIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_AVERAGE_VOTER_ID_DESC',
-  ProposalVotesByVoterIdCountAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_COUNT_ASC',
-  ProposalVotesByVoterIdCountDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_COUNT_DESC',
-  ProposalVotesByVoterIdDistinctCountBlockIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_DISTINCT_COUNT_BLOCK_ID_ASC',
-  ProposalVotesByVoterIdDistinctCountBlockIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_DISTINCT_COUNT_BLOCK_ID_DESC',
-  ProposalVotesByVoterIdDistinctCountBlockNumberAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_DISTINCT_COUNT_BLOCK_NUMBER_ASC',
-  ProposalVotesByVoterIdDistinctCountBlockNumberDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_DISTINCT_COUNT_BLOCK_NUMBER_DESC',
-  ProposalVotesByVoterIdDistinctCountForAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_DISTINCT_COUNT_FOR_ASC',
-  ProposalVotesByVoterIdDistinctCountForDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_DISTINCT_COUNT_FOR_DESC',
-  ProposalVotesByVoterIdDistinctCountIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_DISTINCT_COUNT_ID_ASC',
-  ProposalVotesByVoterIdDistinctCountIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_DISTINCT_COUNT_ID_DESC',
-  ProposalVotesByVoterIdDistinctCountProposalIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_DISTINCT_COUNT_PROPOSAL_ID_ASC',
-  ProposalVotesByVoterIdDistinctCountProposalIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_DISTINCT_COUNT_PROPOSAL_ID_DESC',
-  ProposalVotesByVoterIdDistinctCountVoterIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_DISTINCT_COUNT_VOTER_ID_ASC',
-  ProposalVotesByVoterIdDistinctCountVoterIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_DISTINCT_COUNT_VOTER_ID_DESC',
-  ProposalVotesByVoterIdMaxBlockIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_MAX_BLOCK_ID_ASC',
-  ProposalVotesByVoterIdMaxBlockIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_MAX_BLOCK_ID_DESC',
-  ProposalVotesByVoterIdMaxBlockNumberAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_MAX_BLOCK_NUMBER_ASC',
-  ProposalVotesByVoterIdMaxBlockNumberDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_MAX_BLOCK_NUMBER_DESC',
-  ProposalVotesByVoterIdMaxForAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_MAX_FOR_ASC',
-  ProposalVotesByVoterIdMaxForDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_MAX_FOR_DESC',
-  ProposalVotesByVoterIdMaxIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_MAX_ID_ASC',
-  ProposalVotesByVoterIdMaxIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_MAX_ID_DESC',
-  ProposalVotesByVoterIdMaxProposalIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_MAX_PROPOSAL_ID_ASC',
-  ProposalVotesByVoterIdMaxProposalIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_MAX_PROPOSAL_ID_DESC',
-  ProposalVotesByVoterIdMaxVoterIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_MAX_VOTER_ID_ASC',
-  ProposalVotesByVoterIdMaxVoterIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_MAX_VOTER_ID_DESC',
-  ProposalVotesByVoterIdMinBlockIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_MIN_BLOCK_ID_ASC',
-  ProposalVotesByVoterIdMinBlockIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_MIN_BLOCK_ID_DESC',
-  ProposalVotesByVoterIdMinBlockNumberAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_MIN_BLOCK_NUMBER_ASC',
-  ProposalVotesByVoterIdMinBlockNumberDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_MIN_BLOCK_NUMBER_DESC',
-  ProposalVotesByVoterIdMinForAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_MIN_FOR_ASC',
-  ProposalVotesByVoterIdMinForDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_MIN_FOR_DESC',
-  ProposalVotesByVoterIdMinIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_MIN_ID_ASC',
-  ProposalVotesByVoterIdMinIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_MIN_ID_DESC',
-  ProposalVotesByVoterIdMinProposalIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_MIN_PROPOSAL_ID_ASC',
-  ProposalVotesByVoterIdMinProposalIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_MIN_PROPOSAL_ID_DESC',
-  ProposalVotesByVoterIdMinVoterIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_MIN_VOTER_ID_ASC',
-  ProposalVotesByVoterIdMinVoterIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_MIN_VOTER_ID_DESC',
-  ProposalVotesByVoterIdStddevPopulationBlockIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_POPULATION_BLOCK_ID_ASC',
-  ProposalVotesByVoterIdStddevPopulationBlockIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_POPULATION_BLOCK_ID_DESC',
-  ProposalVotesByVoterIdStddevPopulationBlockNumberAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_POPULATION_BLOCK_NUMBER_ASC',
-  ProposalVotesByVoterIdStddevPopulationBlockNumberDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_POPULATION_BLOCK_NUMBER_DESC',
-  ProposalVotesByVoterIdStddevPopulationForAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_POPULATION_FOR_ASC',
-  ProposalVotesByVoterIdStddevPopulationForDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_POPULATION_FOR_DESC',
-  ProposalVotesByVoterIdStddevPopulationIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_POPULATION_ID_ASC',
-  ProposalVotesByVoterIdStddevPopulationIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_POPULATION_ID_DESC',
-  ProposalVotesByVoterIdStddevPopulationProposalIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_POPULATION_PROPOSAL_ID_ASC',
-  ProposalVotesByVoterIdStddevPopulationProposalIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_POPULATION_PROPOSAL_ID_DESC',
-  ProposalVotesByVoterIdStddevPopulationVoterIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_POPULATION_VOTER_ID_ASC',
-  ProposalVotesByVoterIdStddevPopulationVoterIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_POPULATION_VOTER_ID_DESC',
-  ProposalVotesByVoterIdStddevSampleBlockIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_SAMPLE_BLOCK_ID_ASC',
-  ProposalVotesByVoterIdStddevSampleBlockIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_SAMPLE_BLOCK_ID_DESC',
-  ProposalVotesByVoterIdStddevSampleBlockNumberAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_SAMPLE_BLOCK_NUMBER_ASC',
-  ProposalVotesByVoterIdStddevSampleBlockNumberDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_SAMPLE_BLOCK_NUMBER_DESC',
-  ProposalVotesByVoterIdStddevSampleForAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_SAMPLE_FOR_ASC',
-  ProposalVotesByVoterIdStddevSampleForDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_SAMPLE_FOR_DESC',
-  ProposalVotesByVoterIdStddevSampleIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_SAMPLE_ID_ASC',
-  ProposalVotesByVoterIdStddevSampleIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_SAMPLE_ID_DESC',
-  ProposalVotesByVoterIdStddevSampleProposalIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_SAMPLE_PROPOSAL_ID_ASC',
-  ProposalVotesByVoterIdStddevSampleProposalIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_SAMPLE_PROPOSAL_ID_DESC',
-  ProposalVotesByVoterIdStddevSampleVoterIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_SAMPLE_VOTER_ID_ASC',
-  ProposalVotesByVoterIdStddevSampleVoterIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_STDDEV_SAMPLE_VOTER_ID_DESC',
-  ProposalVotesByVoterIdSumBlockIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_SUM_BLOCK_ID_ASC',
-  ProposalVotesByVoterIdSumBlockIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_SUM_BLOCK_ID_DESC',
-  ProposalVotesByVoterIdSumBlockNumberAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_SUM_BLOCK_NUMBER_ASC',
-  ProposalVotesByVoterIdSumBlockNumberDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_SUM_BLOCK_NUMBER_DESC',
-  ProposalVotesByVoterIdSumForAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_SUM_FOR_ASC',
-  ProposalVotesByVoterIdSumForDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_SUM_FOR_DESC',
-  ProposalVotesByVoterIdSumIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_SUM_ID_ASC',
-  ProposalVotesByVoterIdSumIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_SUM_ID_DESC',
-  ProposalVotesByVoterIdSumProposalIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_SUM_PROPOSAL_ID_ASC',
-  ProposalVotesByVoterIdSumProposalIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_SUM_PROPOSAL_ID_DESC',
-  ProposalVotesByVoterIdSumVoterIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_SUM_VOTER_ID_ASC',
-  ProposalVotesByVoterIdSumVoterIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_SUM_VOTER_ID_DESC',
-  ProposalVotesByVoterIdVariancePopulationBlockIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_POPULATION_BLOCK_ID_ASC',
-  ProposalVotesByVoterIdVariancePopulationBlockIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_POPULATION_BLOCK_ID_DESC',
-  ProposalVotesByVoterIdVariancePopulationBlockNumberAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_POPULATION_BLOCK_NUMBER_ASC',
-  ProposalVotesByVoterIdVariancePopulationBlockNumberDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_POPULATION_BLOCK_NUMBER_DESC',
-  ProposalVotesByVoterIdVariancePopulationForAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_POPULATION_FOR_ASC',
-  ProposalVotesByVoterIdVariancePopulationForDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_POPULATION_FOR_DESC',
-  ProposalVotesByVoterIdVariancePopulationIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_POPULATION_ID_ASC',
-  ProposalVotesByVoterIdVariancePopulationIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_POPULATION_ID_DESC',
-  ProposalVotesByVoterIdVariancePopulationProposalIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_POPULATION_PROPOSAL_ID_ASC',
-  ProposalVotesByVoterIdVariancePopulationProposalIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_POPULATION_PROPOSAL_ID_DESC',
-  ProposalVotesByVoterIdVariancePopulationVoterIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_POPULATION_VOTER_ID_ASC',
-  ProposalVotesByVoterIdVariancePopulationVoterIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_POPULATION_VOTER_ID_DESC',
-  ProposalVotesByVoterIdVarianceSampleBlockIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_SAMPLE_BLOCK_ID_ASC',
-  ProposalVotesByVoterIdVarianceSampleBlockIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_SAMPLE_BLOCK_ID_DESC',
-  ProposalVotesByVoterIdVarianceSampleBlockNumberAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_SAMPLE_BLOCK_NUMBER_ASC',
-  ProposalVotesByVoterIdVarianceSampleBlockNumberDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_SAMPLE_BLOCK_NUMBER_DESC',
-  ProposalVotesByVoterIdVarianceSampleForAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_SAMPLE_FOR_ASC',
-  ProposalVotesByVoterIdVarianceSampleForDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_SAMPLE_FOR_DESC',
-  ProposalVotesByVoterIdVarianceSampleIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_SAMPLE_ID_ASC',
-  ProposalVotesByVoterIdVarianceSampleIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_SAMPLE_ID_DESC',
-  ProposalVotesByVoterIdVarianceSampleProposalIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_SAMPLE_PROPOSAL_ID_ASC',
-  ProposalVotesByVoterIdVarianceSampleProposalIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_SAMPLE_PROPOSAL_ID_DESC',
-  ProposalVotesByVoterIdVarianceSampleVoterIdAsc = 'PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_SAMPLE_VOTER_ID_ASC',
-  ProposalVotesByVoterIdVarianceSampleVoterIdDesc = 'PROPOSAL_VOTES_BY_VOTER_ID_VARIANCE_SAMPLE_VOTER_ID_DESC',
   SessionProposersAverageIdAsc = 'SESSION_PROPOSERS_AVERAGE_ID_ASC',
   SessionProposersAverageIdDesc = 'SESSION_PROPOSERS_AVERAGE_ID_DESC',
   SessionProposersAverageProposerIdAsc = 'SESSION_PROPOSERS_AVERAGE_PROPOSER_ID_ASC',
@@ -6667,6 +7004,116 @@ export enum ProposersOrderBy {
   SessionProposersVarianceSampleProposerIdDesc = 'SESSION_PROPOSERS_VARIANCE_SAMPLE_PROPOSER_ID_DESC',
   SessionProposersVarianceSampleSessionIdAsc = 'SESSION_PROPOSERS_VARIANCE_SAMPLE_SESSION_ID_ASC',
   SessionProposersVarianceSampleSessionIdDesc = 'SESSION_PROPOSERS_VARIANCE_SAMPLE_SESSION_ID_DESC',
+  VotesAverageBlockIdAsc = 'VOTES_AVERAGE_BLOCK_ID_ASC',
+  VotesAverageBlockIdDesc = 'VOTES_AVERAGE_BLOCK_ID_DESC',
+  VotesAverageBlockNumberAsc = 'VOTES_AVERAGE_BLOCK_NUMBER_ASC',
+  VotesAverageBlockNumberDesc = 'VOTES_AVERAGE_BLOCK_NUMBER_DESC',
+  VotesAverageIdAsc = 'VOTES_AVERAGE_ID_ASC',
+  VotesAverageIdDesc = 'VOTES_AVERAGE_ID_DESC',
+  VotesAverageProposalIdAsc = 'VOTES_AVERAGE_PROPOSAL_ID_ASC',
+  VotesAverageProposalIdDesc = 'VOTES_AVERAGE_PROPOSAL_ID_DESC',
+  VotesAverageVoterIdAsc = 'VOTES_AVERAGE_VOTER_ID_ASC',
+  VotesAverageVoterIdDesc = 'VOTES_AVERAGE_VOTER_ID_DESC',
+  VotesAverageVoteStatusAsc = 'VOTES_AVERAGE_VOTE_STATUS_ASC',
+  VotesAverageVoteStatusDesc = 'VOTES_AVERAGE_VOTE_STATUS_DESC',
+  VotesCountAsc = 'VOTES_COUNT_ASC',
+  VotesCountDesc = 'VOTES_COUNT_DESC',
+  VotesDistinctCountBlockIdAsc = 'VOTES_DISTINCT_COUNT_BLOCK_ID_ASC',
+  VotesDistinctCountBlockIdDesc = 'VOTES_DISTINCT_COUNT_BLOCK_ID_DESC',
+  VotesDistinctCountBlockNumberAsc = 'VOTES_DISTINCT_COUNT_BLOCK_NUMBER_ASC',
+  VotesDistinctCountBlockNumberDesc = 'VOTES_DISTINCT_COUNT_BLOCK_NUMBER_DESC',
+  VotesDistinctCountIdAsc = 'VOTES_DISTINCT_COUNT_ID_ASC',
+  VotesDistinctCountIdDesc = 'VOTES_DISTINCT_COUNT_ID_DESC',
+  VotesDistinctCountProposalIdAsc = 'VOTES_DISTINCT_COUNT_PROPOSAL_ID_ASC',
+  VotesDistinctCountProposalIdDesc = 'VOTES_DISTINCT_COUNT_PROPOSAL_ID_DESC',
+  VotesDistinctCountVoterIdAsc = 'VOTES_DISTINCT_COUNT_VOTER_ID_ASC',
+  VotesDistinctCountVoterIdDesc = 'VOTES_DISTINCT_COUNT_VOTER_ID_DESC',
+  VotesDistinctCountVoteStatusAsc = 'VOTES_DISTINCT_COUNT_VOTE_STATUS_ASC',
+  VotesDistinctCountVoteStatusDesc = 'VOTES_DISTINCT_COUNT_VOTE_STATUS_DESC',
+  VotesMaxBlockIdAsc = 'VOTES_MAX_BLOCK_ID_ASC',
+  VotesMaxBlockIdDesc = 'VOTES_MAX_BLOCK_ID_DESC',
+  VotesMaxBlockNumberAsc = 'VOTES_MAX_BLOCK_NUMBER_ASC',
+  VotesMaxBlockNumberDesc = 'VOTES_MAX_BLOCK_NUMBER_DESC',
+  VotesMaxIdAsc = 'VOTES_MAX_ID_ASC',
+  VotesMaxIdDesc = 'VOTES_MAX_ID_DESC',
+  VotesMaxProposalIdAsc = 'VOTES_MAX_PROPOSAL_ID_ASC',
+  VotesMaxProposalIdDesc = 'VOTES_MAX_PROPOSAL_ID_DESC',
+  VotesMaxVoterIdAsc = 'VOTES_MAX_VOTER_ID_ASC',
+  VotesMaxVoterIdDesc = 'VOTES_MAX_VOTER_ID_DESC',
+  VotesMaxVoteStatusAsc = 'VOTES_MAX_VOTE_STATUS_ASC',
+  VotesMaxVoteStatusDesc = 'VOTES_MAX_VOTE_STATUS_DESC',
+  VotesMinBlockIdAsc = 'VOTES_MIN_BLOCK_ID_ASC',
+  VotesMinBlockIdDesc = 'VOTES_MIN_BLOCK_ID_DESC',
+  VotesMinBlockNumberAsc = 'VOTES_MIN_BLOCK_NUMBER_ASC',
+  VotesMinBlockNumberDesc = 'VOTES_MIN_BLOCK_NUMBER_DESC',
+  VotesMinIdAsc = 'VOTES_MIN_ID_ASC',
+  VotesMinIdDesc = 'VOTES_MIN_ID_DESC',
+  VotesMinProposalIdAsc = 'VOTES_MIN_PROPOSAL_ID_ASC',
+  VotesMinProposalIdDesc = 'VOTES_MIN_PROPOSAL_ID_DESC',
+  VotesMinVoterIdAsc = 'VOTES_MIN_VOTER_ID_ASC',
+  VotesMinVoterIdDesc = 'VOTES_MIN_VOTER_ID_DESC',
+  VotesMinVoteStatusAsc = 'VOTES_MIN_VOTE_STATUS_ASC',
+  VotesMinVoteStatusDesc = 'VOTES_MIN_VOTE_STATUS_DESC',
+  VotesStddevPopulationBlockIdAsc = 'VOTES_STDDEV_POPULATION_BLOCK_ID_ASC',
+  VotesStddevPopulationBlockIdDesc = 'VOTES_STDDEV_POPULATION_BLOCK_ID_DESC',
+  VotesStddevPopulationBlockNumberAsc = 'VOTES_STDDEV_POPULATION_BLOCK_NUMBER_ASC',
+  VotesStddevPopulationBlockNumberDesc = 'VOTES_STDDEV_POPULATION_BLOCK_NUMBER_DESC',
+  VotesStddevPopulationIdAsc = 'VOTES_STDDEV_POPULATION_ID_ASC',
+  VotesStddevPopulationIdDesc = 'VOTES_STDDEV_POPULATION_ID_DESC',
+  VotesStddevPopulationProposalIdAsc = 'VOTES_STDDEV_POPULATION_PROPOSAL_ID_ASC',
+  VotesStddevPopulationProposalIdDesc = 'VOTES_STDDEV_POPULATION_PROPOSAL_ID_DESC',
+  VotesStddevPopulationVoterIdAsc = 'VOTES_STDDEV_POPULATION_VOTER_ID_ASC',
+  VotesStddevPopulationVoterIdDesc = 'VOTES_STDDEV_POPULATION_VOTER_ID_DESC',
+  VotesStddevPopulationVoteStatusAsc = 'VOTES_STDDEV_POPULATION_VOTE_STATUS_ASC',
+  VotesStddevPopulationVoteStatusDesc = 'VOTES_STDDEV_POPULATION_VOTE_STATUS_DESC',
+  VotesStddevSampleBlockIdAsc = 'VOTES_STDDEV_SAMPLE_BLOCK_ID_ASC',
+  VotesStddevSampleBlockIdDesc = 'VOTES_STDDEV_SAMPLE_BLOCK_ID_DESC',
+  VotesStddevSampleBlockNumberAsc = 'VOTES_STDDEV_SAMPLE_BLOCK_NUMBER_ASC',
+  VotesStddevSampleBlockNumberDesc = 'VOTES_STDDEV_SAMPLE_BLOCK_NUMBER_DESC',
+  VotesStddevSampleIdAsc = 'VOTES_STDDEV_SAMPLE_ID_ASC',
+  VotesStddevSampleIdDesc = 'VOTES_STDDEV_SAMPLE_ID_DESC',
+  VotesStddevSampleProposalIdAsc = 'VOTES_STDDEV_SAMPLE_PROPOSAL_ID_ASC',
+  VotesStddevSampleProposalIdDesc = 'VOTES_STDDEV_SAMPLE_PROPOSAL_ID_DESC',
+  VotesStddevSampleVoterIdAsc = 'VOTES_STDDEV_SAMPLE_VOTER_ID_ASC',
+  VotesStddevSampleVoterIdDesc = 'VOTES_STDDEV_SAMPLE_VOTER_ID_DESC',
+  VotesStddevSampleVoteStatusAsc = 'VOTES_STDDEV_SAMPLE_VOTE_STATUS_ASC',
+  VotesStddevSampleVoteStatusDesc = 'VOTES_STDDEV_SAMPLE_VOTE_STATUS_DESC',
+  VotesSumBlockIdAsc = 'VOTES_SUM_BLOCK_ID_ASC',
+  VotesSumBlockIdDesc = 'VOTES_SUM_BLOCK_ID_DESC',
+  VotesSumBlockNumberAsc = 'VOTES_SUM_BLOCK_NUMBER_ASC',
+  VotesSumBlockNumberDesc = 'VOTES_SUM_BLOCK_NUMBER_DESC',
+  VotesSumIdAsc = 'VOTES_SUM_ID_ASC',
+  VotesSumIdDesc = 'VOTES_SUM_ID_DESC',
+  VotesSumProposalIdAsc = 'VOTES_SUM_PROPOSAL_ID_ASC',
+  VotesSumProposalIdDesc = 'VOTES_SUM_PROPOSAL_ID_DESC',
+  VotesSumVoterIdAsc = 'VOTES_SUM_VOTER_ID_ASC',
+  VotesSumVoterIdDesc = 'VOTES_SUM_VOTER_ID_DESC',
+  VotesSumVoteStatusAsc = 'VOTES_SUM_VOTE_STATUS_ASC',
+  VotesSumVoteStatusDesc = 'VOTES_SUM_VOTE_STATUS_DESC',
+  VotesVariancePopulationBlockIdAsc = 'VOTES_VARIANCE_POPULATION_BLOCK_ID_ASC',
+  VotesVariancePopulationBlockIdDesc = 'VOTES_VARIANCE_POPULATION_BLOCK_ID_DESC',
+  VotesVariancePopulationBlockNumberAsc = 'VOTES_VARIANCE_POPULATION_BLOCK_NUMBER_ASC',
+  VotesVariancePopulationBlockNumberDesc = 'VOTES_VARIANCE_POPULATION_BLOCK_NUMBER_DESC',
+  VotesVariancePopulationIdAsc = 'VOTES_VARIANCE_POPULATION_ID_ASC',
+  VotesVariancePopulationIdDesc = 'VOTES_VARIANCE_POPULATION_ID_DESC',
+  VotesVariancePopulationProposalIdAsc = 'VOTES_VARIANCE_POPULATION_PROPOSAL_ID_ASC',
+  VotesVariancePopulationProposalIdDesc = 'VOTES_VARIANCE_POPULATION_PROPOSAL_ID_DESC',
+  VotesVariancePopulationVoterIdAsc = 'VOTES_VARIANCE_POPULATION_VOTER_ID_ASC',
+  VotesVariancePopulationVoterIdDesc = 'VOTES_VARIANCE_POPULATION_VOTER_ID_DESC',
+  VotesVariancePopulationVoteStatusAsc = 'VOTES_VARIANCE_POPULATION_VOTE_STATUS_ASC',
+  VotesVariancePopulationVoteStatusDesc = 'VOTES_VARIANCE_POPULATION_VOTE_STATUS_DESC',
+  VotesVarianceSampleBlockIdAsc = 'VOTES_VARIANCE_SAMPLE_BLOCK_ID_ASC',
+  VotesVarianceSampleBlockIdDesc = 'VOTES_VARIANCE_SAMPLE_BLOCK_ID_DESC',
+  VotesVarianceSampleBlockNumberAsc = 'VOTES_VARIANCE_SAMPLE_BLOCK_NUMBER_ASC',
+  VotesVarianceSampleBlockNumberDesc = 'VOTES_VARIANCE_SAMPLE_BLOCK_NUMBER_DESC',
+  VotesVarianceSampleIdAsc = 'VOTES_VARIANCE_SAMPLE_ID_ASC',
+  VotesVarianceSampleIdDesc = 'VOTES_VARIANCE_SAMPLE_ID_DESC',
+  VotesVarianceSampleProposalIdAsc = 'VOTES_VARIANCE_SAMPLE_PROPOSAL_ID_ASC',
+  VotesVarianceSampleProposalIdDesc = 'VOTES_VARIANCE_SAMPLE_PROPOSAL_ID_DESC',
+  VotesVarianceSampleVoterIdAsc = 'VOTES_VARIANCE_SAMPLE_VOTER_ID_ASC',
+  VotesVarianceSampleVoterIdDesc = 'VOTES_VARIANCE_SAMPLE_VOTER_ID_DESC',
+  VotesVarianceSampleVoteStatusAsc = 'VOTES_VARIANCE_SAMPLE_VOTE_STATUS_ASC',
+  VotesVarianceSampleVoteStatusDesc = 'VOTES_VARIANCE_SAMPLE_VOTE_STATUS_DESC',
 }
 
 export type PublicKey = Node & {
@@ -9780,6 +10227,38 @@ export enum ValidatorsOrderBy {
   SessionValidatorsVarianceSampleValidatorIdDesc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_VALIDATOR_ID_DESC',
 }
 
+export enum VoteStatus {
+  Abstain = 'ABSTAIN',
+  Against = 'AGAINST',
+  For = 'FOR',
+}
+
+/** A filter to be used against VoteStatus fields. All fields are combined with a logical ‘and.’ */
+export type VoteStatusFilter = {
+  /** Not equal to the specified value, treating null like an ordinary value. */
+  distinctFrom?: InputMaybe<VoteStatus>;
+  /** Equal to the specified value. */
+  equalTo?: InputMaybe<VoteStatus>;
+  /** Greater than the specified value. */
+  greaterThan?: InputMaybe<VoteStatus>;
+  /** Greater than or equal to the specified value. */
+  greaterThanOrEqualTo?: InputMaybe<VoteStatus>;
+  /** Included in the specified list. */
+  in?: InputMaybe<Array<VoteStatus>>;
+  /** Is null (if `true` is specified) or is not null (if `false` is specified). */
+  isNull?: InputMaybe<Scalars['Boolean']>;
+  /** Less than the specified value. */
+  lessThan?: InputMaybe<VoteStatus>;
+  /** Less than or equal to the specified value. */
+  lessThanOrEqualTo?: InputMaybe<VoteStatus>;
+  /** Equal to the specified value, treating null like an ordinary value. */
+  notDistinctFrom?: InputMaybe<VoteStatus>;
+  /** Not equal to the specified value. */
+  notEqualTo?: InputMaybe<VoteStatus>;
+  /** Not included in the specified list. */
+  notIn?: InputMaybe<Array<VoteStatus>>;
+};
+
 export type _Metadata = {
   __typename?: '_Metadata';
   chain?: Maybe<Scalars['String']>;
@@ -9994,6 +10473,7 @@ export type ProposalListViewFragment = {
   signature?: string | null;
   type: ProposalType;
   status: string;
+  chainId?: number | null;
   proposalVotesByProposalId: {
     __typename?: 'ProposalVotesConnection';
     totalCount: number;
@@ -10011,7 +10491,7 @@ export type ProposalsVoteListViewFragment = {
   __typename?: 'ProposalVote';
   id: string;
   voterId: string;
-  for: boolean;
+  voteStatus: VoteStatus;
   txHash: string;
   block?: { __typename?: 'Block'; timestamp?: any | null; number: any } | null;
 };
@@ -10069,6 +10549,7 @@ export type ProposalsQuery = {
       signature?: string | null;
       type: ProposalType;
       status: string;
+      chainId?: number | null;
       proposalVotesByProposalId: {
         __typename?: 'ProposalVotesConnection';
         totalCount: number;
@@ -10110,8 +10591,8 @@ export type ProposalsCounterQuery = {
 };
 
 export type ProposalsOverviewQueryVariables = Exact<{
-  startRange: BigFloatFilter;
-  endRange: BigFloatFilter;
+  startRange?: InputMaybe<BigFloatFilter>;
+  endRange?: InputMaybe<BigFloatFilter>;
   sessionId: Scalars['String'];
 }>;
 
@@ -10134,6 +10615,7 @@ export type ProposalsOverviewQuery = {
       signature?: string | null;
       type: ProposalType;
       status: string;
+      chainId?: number | null;
       proposalVotesByProposalId: {
         __typename?: 'ProposalVotesConnection';
         totalCount: number;
@@ -10164,7 +10646,7 @@ export type ProposalVotesQueryVariables = Exact<{
   perPage: Scalars['Int'];
   offset: Scalars['Int'];
   proposalId: Scalars['String'];
-  for?: InputMaybe<BooleanFilter>;
+  for?: InputMaybe<VoteStatusFilter>;
 }>;
 
 export type ProposalVotesQuery = {
@@ -10176,7 +10658,7 @@ export type ProposalVotesQuery = {
       __typename?: 'ProposalVote';
       id: string;
       voterId: string;
-      for: boolean;
+      voteStatus: VoteStatus;
       txHash: string;
       block?: { __typename?: 'Block'; timestamp?: any | null; number: any } | null;
     } | null>;
@@ -10209,6 +10691,7 @@ export type ProposalDetailsQuery = {
     signature?: string | null;
     type: ProposalType;
     status: string;
+    chainId?: number | null;
     proposalTimelineStatuses: {
       __typename?: 'ProposalTimelineStatusesConnection';
       nodes: Array<{
@@ -10220,6 +10703,8 @@ export type ProposalDetailsQuery = {
       } | null>;
     };
     votesFor: { __typename?: 'ProposalVotesConnection'; totalCount: number };
+    against: { __typename?: 'ProposalVotesConnection'; totalCount: number };
+    abstain: { __typename?: 'ProposalVotesConnection'; totalCount: number };
     totalVotes: { __typename?: 'ProposalVotesConnection'; totalCount: number };
     block?: { __typename?: 'Block'; timestamp?: any | null; number: any } | null;
   } | null;
@@ -10550,6 +11035,7 @@ export const ProposalListViewFragmentDoc = gql`
     signature
     type
     status
+    chainId
     proposalVotesByProposalId(orderBy: [BLOCK_NUMBER_DESC], first: 3) {
       nodes {
         id
@@ -10570,7 +11056,7 @@ export const ProposalsVoteListViewFragmentDoc = gql`
   fragment ProposalsVoteListView on ProposalVote {
     id
     voterId
-    for
+    voteStatus
     txHash: voterId
     block {
       timestamp
@@ -10885,7 +11371,7 @@ export type ProposalCounterLazyQueryHookResult = ReturnType<typeof useProposalCo
 export type ProposalCounterQueryResult = Apollo.QueryResult<ProposalCounterQuery, ProposalCounterQueryVariables>;
 export const ProposalsDocument = gql`
   query Proposals($perPage: Int!, $offset: Int!) {
-    proposalItems(first: $perPage, offset: $offset) {
+    proposalItems(orderBy: [BLOCK_NUMBER_DESC], first: $perPage, offset: $offset) {
       nodes {
         ...ProposalListView
       }
@@ -10978,7 +11464,7 @@ export type ProposalsCounterQueryHookResult = ReturnType<typeof useProposalsCoun
 export type ProposalsCounterLazyQueryHookResult = ReturnType<typeof useProposalsCounterLazyQuery>;
 export type ProposalsCounterQueryResult = Apollo.QueryResult<ProposalsCounterQuery, ProposalsCounterQueryVariables>;
 export const ProposalsOverviewDocument = gql`
-  query ProposalsOverview($startRange: BigFloatFilter!, $endRange: BigFloatFilter!, $sessionId: String!) {
+  query ProposalsOverview($startRange: BigFloatFilter, $endRange: BigFloatFilter, $sessionId: String!) {
     session(id: $sessionId) {
       id
       proposerThreshold
@@ -11060,9 +11546,9 @@ export type ProposalsOverviewQueryHookResult = ReturnType<typeof useProposalsOve
 export type ProposalsOverviewLazyQueryHookResult = ReturnType<typeof useProposalsOverviewLazyQuery>;
 export type ProposalsOverviewQueryResult = Apollo.QueryResult<ProposalsOverviewQuery, ProposalsOverviewQueryVariables>;
 export const ProposalVotesDocument = gql`
-  query ProposalVotes($perPage: Int!, $offset: Int!, $proposalId: String!, $for: BooleanFilter) {
+  query ProposalVotes($perPage: Int!, $offset: Int!, $proposalId: String!, $for: VoteStatusFilter) {
     proposalVotes(
-      filter: { proposalId: { equalTo: $proposalId }, for: $for }
+      filter: { proposalId: { equalTo: $proposalId }, voteStatus: $for }
       orderBy: [BLOCK_NUMBER_DESC]
       first: $perPage
       offset: $offset
@@ -11128,6 +11614,7 @@ export const ProposalDetailsDocument = gql`
       signature
       type
       status
+      chainId
       proposalTimelineStatuses {
         nodes {
           id
@@ -11136,7 +11623,13 @@ export const ProposalDetailsDocument = gql`
           timestamp
         }
       }
-      votesFor: proposalVotesByProposalId(filter: { for: { equalTo: true } }) {
+      votesFor: proposalVotesByProposalId(filter: { voteStatus: { equalTo: FOR } }) {
+        totalCount
+      }
+      against: proposalVotesByProposalId(filter: { voteStatus: { equalTo: AGAINST } }) {
+        totalCount
+      }
+      abstain: proposalVotesByProposalId(filter: { voteStatus: { equalTo: ABSTAIN } }) {
         totalCount
       }
       totalVotes: proposalVotesByProposalId {

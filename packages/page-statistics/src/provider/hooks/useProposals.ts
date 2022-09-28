@@ -5,6 +5,7 @@ import {
   useProposalsLazyQuery,
   useProposalsOverviewLazyQuery,
   useProposalVotesLazyQuery,
+  VoteStatus,
 } from '@webb-dapp/page-statistics/generated/graphql';
 import { mapProposalListItem } from '@webb-dapp/page-statistics/provider/hooks/mappers';
 import { Loadable, Page, PageInfoQuery, ProposalStatus } from '@webb-dapp/page-statistics/provider/hooks/types';
@@ -88,6 +89,7 @@ type ProposalsOverview = {
  *
  * */
 type ProposalTimeLine = {
+  id: string;
   status: ProposalStatus;
   at: Date;
   blockNumber: number;
@@ -104,7 +106,7 @@ type ProposalTimeLine = {
 export type VoteListItem = {
   id: string;
   voterId: string;
-  for?: boolean;
+  status: VoteStatus;
   timestamp: Date;
 };
 /**
@@ -117,9 +119,9 @@ type VotesPage = Loadable<Page<VoteListItem>>;
  * @param proposalId -  Proposal id to filter votes by proposal
  * @param isFor - Optional boolean value to filter votes by for or against if absent will return all votes
  * */
-type VotesQuery = PageInfoQuery<{
+export type VotesQuery = PageInfoQuery<{
   proposalId: string;
-  isFor?: boolean;
+  status?: VoteStatus;
 }>;
 
 /**
@@ -158,19 +160,17 @@ export type ProposalDetails = {
   forCount: number;
   againstCount: number;
   abstainCount: number;
+  allCount: number;
   timeline: ProposalTimeLine[];
   data: ProposalData;
+  status: ProposalStatus;
 };
-
+type BlockRange = { start: number; end: number };
 /**
  * Proposals overview
  * @return ProposalsOverview - Proposal overview data
  * */
-export function useProposalsOverview(
-  sessionId: string,
-  startBlockNumber: number,
-  endBlockNumber: number
-): Loadable<ProposalsOverview> {
+export function useProposalsOverview(sessionId: string, range?: BlockRange): Loadable<ProposalsOverview> {
   const [proposalsOverview, setProposalsOverview] = useState<Loadable<ProposalsOverview>>({
     isLoading: true,
     val: null,
@@ -181,12 +181,16 @@ export function useProposalsOverview(
   useEffect(() => {
     call({
       variables: {
-        endRange: {
-          lessThanOrEqualTo: endBlockNumber,
-        },
-        startRange: {
-          greaterThanOrEqualTo: startBlockNumber,
-        },
+        endRange: range
+          ? {
+              lessThanOrEqualTo: range.end,
+            }
+          : undefined,
+        startRange: range
+          ? {
+              greaterThanOrEqualTo: range.start,
+            }
+          : undefined,
         sessionId: sessionId,
       },
     }).catch((e) => {
@@ -197,7 +201,7 @@ export function useProposalsOverview(
         error: e.message,
       });
     });
-  }, [endBlockNumber, startBlockNumber, sessionId, call]);
+  }, [range, sessionId, call]);
   useEffect(() => {
     const subscription = query.observable
       .map((res): Loadable<ProposalsOverview> => {
@@ -418,8 +422,8 @@ export function useProposal(targetSessionId: string, votesReqQuery: VotesQuery):
           const forCount = proposal.votesFor.totalCount;
           const allVotes = proposal.totalVotes.totalCount;
           const expectedVotesCount = res.data.session.sessionProposers.totalCount;
-          const abstainCount = expectedVotesCount - allVotes;
-          const againstCount = allVotes - forCount;
+          const abstainCount = res.data.proposalItem.abstain.totalCount;
+          const againstCount = res.data.proposalItem.against.totalCount;
           return {
             isLoading: false,
             isFailed: false,
@@ -429,16 +433,27 @@ export function useProposal(targetSessionId: string, votesReqQuery: VotesQuery):
                 data: proposal.data,
                 type: proposal.type,
               },
+              status: proposal.status as any,
               abstainCount,
               forCount,
               againstCount,
+              allCount: allVotes,
               abstainPercentage: (abstainCount / expectedVotesCount) * 100,
               forPercentage: (forCount / expectedVotesCount) * 100,
               againstPercentage: (againstCount / expectedVotesCount) * 100,
-              chain: '',
+              chain: String(res.data.proposalItem.chainId),
               height: proposal.block?.timestamp!,
-              timeline: [],
-              txHash: '',
+              timeline: proposal.proposalTimelineStatuses.nodes.map((item) => {
+                const statusItem = item!;
+                return {
+                  at: new Date(statusItem.timestamp),
+                  blockNumber: statusItem.blockNumber,
+                  hash: '0x000',
+                  status: statusItem.status,
+                  id: statusItem.id,
+                };
+              }),
+              txHash: '0x000',
             },
           };
         }
@@ -472,7 +487,7 @@ export function useVotes(votesReqQuery: VotesQuery): VotesPage {
   });
   const [call, query] = useProposalVotesLazyQuery();
   const {
-    filter: { isFor, proposalId },
+    filter: { proposalId, status },
     offset,
     perPage,
   } = votesReqQuery;
@@ -482,7 +497,7 @@ export function useVotes(votesReqQuery: VotesQuery): VotesPage {
         proposalId,
         offset,
         perPage,
-        for: isFor ? { equalTo: isFor } : undefined,
+        for: status ? { equalTo: status } : undefined,
       },
     }).catch((e) => {
       setVotes({
@@ -492,7 +507,7 @@ export function useVotes(votesReqQuery: VotesQuery): VotesPage {
         error: e.message,
       });
     });
-  }, [perPage, offset, isFor, call, proposalId]);
+  }, [perPage, offset, status, call, proposalId]);
 
   useEffect(() => {
     const subscription = query.observable
@@ -504,7 +519,7 @@ export function useVotes(votesReqQuery: VotesQuery): VotesPage {
             .map((p): VoteListItem => {
               const vote = p!;
               return {
-                for: vote.for,
+                status: vote.voteStatus,
                 id: vote.id,
                 voterId: vote.voterId,
                 timestamp: new Date(vote.block?.timestamp!),
