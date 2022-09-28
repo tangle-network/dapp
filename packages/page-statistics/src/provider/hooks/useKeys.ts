@@ -9,7 +9,7 @@ import { useCurrentMetaData } from '@webb-dapp/page-statistics/provider/hooks/us
 import { useEffect, useState } from 'react';
 
 import { Loadable, Page, PageInfoQuery, SessionKeyHistory, SessionKeyStatus, Threshold } from './types';
-import { useStaticConfig } from '@webb-dapp/page-statistics/provider/stats-provider';
+import { useActiveSession, useStaticConfig } from '@webb-dapp/page-statistics/provider/stats-provider';
 
 /**
  *  Public key shared content
@@ -38,6 +38,7 @@ type PublicKeyContent = {
  * */
 export interface PublicKey extends PublicKeyContent {
   isCurrent: boolean;
+  isDone: boolean;
   keyGenAuthorities: string[];
 }
 
@@ -103,6 +104,7 @@ export type KeyGenAuthority = {
 interface PublicKeyDetails extends PublicKeyContent {
   height: string;
   isCurrent: boolean;
+  isDone: boolean;
   history: PublicKeyHistoryEntry[];
   keyGenThreshold: string;
   signatureThreshold: string;
@@ -263,6 +265,7 @@ export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
   const metaData = useCurrentMetaData();
   const [call, query] = useSessionKeysLazyQuery();
   const { blockTime, sessionHeight } = useStaticConfig();
+  const activeSession = useActiveSession();
   const [keys, setKeys] = useState<Loadable<[PublicKey, PublicKey]>>({
     val: null,
     isFailed: false,
@@ -306,7 +309,8 @@ export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
                 compressed: publicKey.compressed!,
                 uncompressed: publicKey.uncompressed!,
                 keyGenAuthorities,
-                isCurrent: true,
+                isCurrent: activeSession === session.id,
+                isDone: Number(activeSession) > Number(session.id),
               };
             }) || [];
           const activeKey = val[0];
@@ -339,7 +343,7 @@ export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
       })
       .subscribe(setKeys);
     return () => subscription.unsubscribe();
-  }, [query]);
+  }, [query, activeSession]);
   return keys;
 }
 
@@ -357,6 +361,7 @@ export function useKey(id: string): PublicKeyDetailsPage {
     isLoading: true,
   });
   const { blockTime, sessionHeight } = useStaticConfig();
+  const activeSession = useActiveSession();
   const [prevAndNextKey, setPrevAndNextKey] = useState<Loadable<NextAndPrevKeyStatus>>({
     val: null,
     isFailed: false,
@@ -418,7 +423,8 @@ export function useKey(id: string): PublicKeyDetailsPage {
               start,
               history,
               numberOfValidators: validators,
-              isCurrent: true,
+              isCurrent: activeSession === session.id,
+              isDone: Number(activeSession) > Number(session.id),
               authorities,
               keyGenThreshold: session.keyGenThreshold ? String((session.keyGenThreshold as Threshold).current) : '-',
               signatureThreshold: session.keyGenThreshold
@@ -449,7 +455,7 @@ export function useKey(id: string): PublicKeyDetailsPage {
         setKey(val);
       });
     return () => subscription.unsubscribe();
-  }, [callSessionKeys, query]);
+  }, [callSessionKeys, query, activeSession]);
 
   useEffect(() => {
     const subscription = sessionKeysQuery.observable

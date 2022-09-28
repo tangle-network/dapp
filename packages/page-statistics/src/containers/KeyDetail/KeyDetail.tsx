@@ -124,7 +124,7 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage },
         {/** Session number */}
         <div className='flex items-center space-x-2'>
           <Chip color='green' className='uppercase'>
-            {keyDetail.isCurrent ? 'Current' : 'Next'}
+            {keyDetail.isDone ? 'History' : keyDetail.isCurrent ? 'Current' : 'Next'}
           </Chip>
           <LabelWithValue label='Session: ' value={keyDetail.session} />
         </div>

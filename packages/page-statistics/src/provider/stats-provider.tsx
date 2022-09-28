@@ -112,6 +112,12 @@ export const useStaticConfig = () => {
     };
   }, [blockTime, sessionHeight]);
 };
+export const useActiveSession = () => {
+  const {
+    metaData: { activeSession },
+  } = useStatsContext();
+  return activeSession;
+};
 export const StatsProvider: React.FC<Omit<StatsProvidervalue, 'isReady' | 'metaData' | 'updateTime' | 'time'>> = (
   props
 ) => {
