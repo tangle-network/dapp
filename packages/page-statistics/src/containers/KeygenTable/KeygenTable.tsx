@@ -158,10 +158,10 @@ export const KeygenTable: FC = () => {
           session: Number(item.session),
           key: item.compressed,
           authorities: new Set(item.keyGenAuthorities),
-          keygenThreshold: Number(item.keyGenThreshold),
+          keygenThreshold: item.keyGenThreshold,
           keyId: item.uncompressed,
           totalAuthorities: item.keyGenAuthorities.length,
-          signatureThreshold: Number(item.signatureThreshold),
+          signatureThreshold: item.signatureThreshold,
           previousKeyId: item.previousKeyId,
           nextKeyId: item.nextKeyId,
         })
