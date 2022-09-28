@@ -7,6 +7,8 @@ const PageAuthorities = lazy(() => import('@webb-dapp/page-statistics/pages/Auth
 const PageAuthorityDetailDrawer = lazy(() => import('@webb-dapp/page-statistics/pages/AuthorityDetailDrawer'));
 const PageAuthorityDetail = lazy(() => import('@webb-dapp/page-statistics/pages/AuthorityDetailPage'));
 
+const PageAuthoritiesHistory = lazy(() => import('@webb-dapp/page-statistics/pages/AuthoritiesHistory'));
+
 const PageKeys = lazy(() => import('@webb-dapp/page-statistics/pages/Keys'));
 const PageKeyDetailDrawer = lazy(() => import('@webb-dapp/page-statistics/pages/KeyDetailDrawer'));
 const PageKeyDetail = lazy(() => import('@webb-dapp/page-statistics/pages/KeyDetailPage'));
@@ -22,6 +24,14 @@ const CSuspense: FC = ({ children }) => {
 export const routes: RouterConfigData[] = [
   {
     children: [
+      {
+        element: (
+          <CSuspense>
+            <PageAuthoritiesHistory />
+          </CSuspense>
+        ),
+        path: 'authorities/history',
+      },
       {
         element: (
           <CSuspense>
