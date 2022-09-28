@@ -13,6 +13,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { Threshold as QueryThreshold } from './types';
 import { DiscreteList } from '@webb-dapp/page-statistics/provider/hooks/useProposals';
+import { useActiveSession } from '@webb-dapp/page-statistics/provider/stats-provider';
 /**
  * Threshold values
  * @param keyGen - KeyGen threshold
@@ -134,6 +135,7 @@ export function useThresholds(): Loadable<[Thresholds, UpcomingThresholds]> {
   });
 
   const session = useCurrentMetaData();
+  const activeSession = useActiveSession();
   const [call, query] = useSessionThresholdsLazyQuery();
   useEffect(() => {
     if (session.val) {
@@ -159,6 +161,7 @@ export function useThresholds(): Loadable<[Thresholds, UpcomingThresholds]> {
           const nextAuthSet = allAuth.filter((auth) => auth.isNext).map((auth) => auth.id);
           const keyGenThreshold = session.keyGenThreshold as QueryThreshold;
           const signatureThreshold = session.signatureThreshold as QueryThreshold;
+          const proposersCount = session.proposersCount.totalCount;
           const sessionTimeStamp = session.block?.timestamp;
           const threshold: Thresholds = {
             keyGen: keyGenThreshold ? String(keyGenThreshold.current) : '-',
@@ -170,7 +173,8 @@ export function useThresholds(): Loadable<[Thresholds, UpcomingThresholds]> {
               compressed: publicKey.compressed!,
               uncompressed: publicKey.uncompressed!,
               keyGenAuthorities: authSet,
-              isCurrent: false,
+              isCurrent: activeSession === session.id,
+              isDone: Number(activeSession) > Number(session.id),
             },
             proposer: '',
             signature: signatureThreshold ? String(signatureThreshold.current) : '-',
@@ -182,7 +186,7 @@ export function useThresholds(): Loadable<[Thresholds, UpcomingThresholds]> {
             },
             keyGen: String(keyGenThreshold.current),
             signature: String(signatureThreshold.current),
-            proposer: '',
+            proposer: String(proposersCount),
             session: session.id,
             stats: 'Current',
           };
@@ -194,7 +198,7 @@ export function useThresholds(): Loadable<[Thresholds, UpcomingThresholds]> {
             },
             keyGen: String(keyGenThreshold.pending),
             signature: String(signatureThreshold.pending),
-            proposer: '',
+            proposer: String(proposersCount),
             session: session.id,
             stats: 'Pending',
           };
@@ -206,8 +210,8 @@ export function useThresholds(): Loadable<[Thresholds, UpcomingThresholds]> {
             },
             keyGen: String(keyGenThreshold.next),
             signature: String(signatureThreshold.next),
-            proposer: '',
-            session: session.id,
+            proposer: String(proposersCount),
+            session: String(Number(session.id) + 1),
             stats: 'Next',
           };
 
@@ -235,7 +239,7 @@ export function useThresholds(): Loadable<[Thresholds, UpcomingThresholds]> {
       .subscribe(setData);
 
     return () => subscription.unsubscribe();
-  }, [query]);
+  }, [query, activeSession]);
   return data;
 }
 

@@ -134,7 +134,7 @@ const Authorities = () => {
 
             <Stats items={statsItems} className='pb-0' />
 
-            <TimeProgress startTime={publicKey.start} endTime={publicKey.end ?? null} now={time} />
+            <TimeProgress startTime={publicKey.start ?? null} endTime={publicKey.end ?? null} now={time} />
 
             <div className='flex items-center justify-between'>
               <div className='flex items-center space-x-2'>

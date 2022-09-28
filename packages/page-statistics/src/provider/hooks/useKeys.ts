@@ -402,7 +402,7 @@ export function useKey(id: string): PublicKeyDetailsPage {
             .map((auth): KeyGenAuthority => {
               return {
                 account: auth.id,
-                id: auth.authorityId,
+                id: auth.id,
                 location: 'any',
                 reputation: Number(auth.reputation),
                 uptime: 100,
