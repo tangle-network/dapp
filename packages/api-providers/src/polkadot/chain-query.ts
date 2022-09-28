@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { SignedBlock } from '@polkadot/types/interfaces';
+import { OrmlTokensAccountData } from '@polkadot/types/lookup';
 
 import { ChainQuery } from '../abstracts';
 import { CurrencyId } from '../enums';
@@ -22,12 +23,18 @@ export class PolkadotChainQuery extends ChainQuery<WebbPolkadot> {
     if (activeAccount) {
       // If the assetId is not 0, query the orml tokens
       if (assetId !== '0') {
-        const tokenAccountData = await this.inner.api.query.tokens.accounts(activeAccount.address, assetId);
+        let tokenAccountData: OrmlTokensAccountData;
 
-        const json = tokenAccountData.toHuman();
+        try {
+          tokenAccountData = await this.inner.api.query.tokens.accounts(activeAccount.address, assetId);
+        } catch (e) {
+          // It is possible that we have connected to a chain that is not setup with orml tokens.
+          return '';
+        }
 
-        // @ts-ignore
-        let tokenBalance: string = json.free;
+        const json = tokenAccountData;
+
+        let tokenBalance: string = json.free.toString();
 
         tokenBalance = tokenBalance.replaceAll(',', '');
         const denominatedTokenBalance = Number(tokenBalance) / 10 ** 12;
@@ -36,10 +43,7 @@ export class PolkadotChainQuery extends ChainQuery<WebbPolkadot> {
       } else {
         const systemAccountData = await this.inner.api.query.system.account(activeAccount.address);
 
-        const json = systemAccountData.toHuman();
-
-        // @ts-ignore
-        let tokenBalance: string = json.data.free;
+        let tokenBalance: string = systemAccountData.data.free.toString();
 
         tokenBalance = tokenBalance.replaceAll(',', '');
         const denominatedTokenBalance = Number(tokenBalance) / 10 ** 12;

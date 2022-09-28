@@ -222,6 +222,10 @@ export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
 
   getProvider(): any;
 
+  // Used by frontend to prevent unsupported actions
+  // e.g. attempting to fetch available tokens from a DKG chain.
+  ensureApiInterface(): Promise<boolean>;
+
   // Configuration passed to the ApiProvider on initialization.
   // Then, the config is used as state for the provider.
   config: AppConfig;

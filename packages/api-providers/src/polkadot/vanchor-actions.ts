@@ -5,7 +5,7 @@ import { WebbPolkadot } from './webb-provider';
 
 export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
   async isPairRegistered(treeId: string, account: string, pubkey: string): Promise<boolean> {
-    throw new Error('Attempted to check registration with Polkadot');
+    return true;
   }
 
   async register(treeId: string, account: string, pubkey: string): Promise<boolean> {

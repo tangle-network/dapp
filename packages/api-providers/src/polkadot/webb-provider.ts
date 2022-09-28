@@ -189,7 +189,7 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
     }
   }
 
-  private async ensureApiInterface() {
+  async ensureApiInterface() {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     const merkleRPC = Boolean(this.api.rpc.mt.getLeaves);
@@ -200,6 +200,8 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
     if (!merklePallet || !merkleRPC || !mixerPallet) {
       throw WebbError.from(WebbErrorCodes.InsufficientProviderInterface);
     }
+
+    return true;
   }
 
   static async init(
@@ -210,6 +212,7 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
     appConfig: AppConfig, // The whole and current app configuration
     notification: NotificationHandler, // Notification handler that will be used for the provider
     wasmFactory: WasmFactory, // A Factory Fn that wil return wasm worker that would be supplied eventually to the `sdk-core`
+    typedChainId: number,
     wallet: Wallet // Current wallet to initialize
   ): Promise<WebbPolkadot> {
     const [apiPromise, injectedExtension] = await PolkadotProvider.getParams(
@@ -224,8 +227,6 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
       new PolkaTXBuilder(apiPromise, notification, injectedExtension)
     );
     const accounts = provider.accounts;
-    const chainId = await provider.api.consts.linkableTreeBn254.chainIdentifier;
-    const typedChainId = calculateTypedChainId(ChainType.Substrate, chainId.toNumber());
     const instance = new WebbPolkadot(
       apiPromise,
       typedChainId,
