@@ -169,9 +169,9 @@ export const StatsProvider: React.FC<Omit<StatsProvidervalue, 'isReady' | 'metaD
         if (r.data?._metadata) {
           const data = r.data._metadata;
           return {
-            currentBlock: String(data.lastProcessedHeight),
-            lastProcessBlock: String(data.targetHeight),
-            activeSession: session(String(data.targetHeight), staticConfig.sessionHeight),
+            currentBlock: String(data.targetHeight),
+            lastProcessBlock: String(data.lastProcessedHeight),
+            activeSession: session(String(data.lastProcessedHeight), staticConfig.sessionHeight),
             lastSession: nextSession(String(data.targetHeight), staticConfig.sessionHeight),
           };
         }

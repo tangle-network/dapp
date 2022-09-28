@@ -257,7 +257,7 @@ export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
     if (metaData.val) {
       call({
         variables: {
-          SessionId: [metaData.val.activeSession, metaData.val.lastSession],
+          SessionId: [metaData.val.activeSession, String(Number(metaData.val.activeSession) + 1)],
         },
       }).catch((e) => {
         setKeys({
@@ -272,6 +272,7 @@ export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
   useEffect(() => {
     const subscription = query.observable
       .map((res): Loadable<[PublicKey, PublicKey]> => {
+        console.log(`Active sesion keys res`, res);
         if (res.data) {
           const val: PublicKey[] =
             res.data.sessions?.nodes.map((i) => {
@@ -392,8 +393,10 @@ export function useKey(id: string): PublicKeyDetailsPage {
               numberOfValidators: validators,
               isCurrent: true,
               authorities,
-              keyGenThreshold: String((session.keyGenThreshold as Threshold).current),
-              signatureThreshold: String((session.signatureThreshold as Threshold).current),
+              keyGenThreshold: session.keyGenThreshold ? String((session.keyGenThreshold as Threshold).current) : '-',
+              signatureThreshold: session.keyGenThreshold
+                ? String((session.signatureThreshold as Threshold).current)
+                : '-',
             },
           };
         }

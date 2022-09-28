@@ -40,14 +40,14 @@ export function mapAuthorities(data: SessionAuthValidatorFragment): Authority[] 
 export function mapProposalListItem(data: ProposalListViewFragment): ProposalListItem {
   return {
     id: data.id,
-    chain: '',
+    chain: String(data.chainId),
     proposers: {
       count: data.proposalVotesByProposalId.totalCount,
-      firstElements: data.proposalVotesByProposalId.nodes.map((node) => node!.id),
+      firstElements: data.proposalVotesByProposalId.nodes.map((node) => node!.voterId),
     },
     status: data.status as ProposalStatus,
     txHash: '',
     type: data.type as ProposalType,
-    height: data.block?.timestamp,
+    height: data.block?.number,
   };
 }
