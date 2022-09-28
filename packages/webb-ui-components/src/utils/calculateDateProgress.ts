@@ -35,6 +35,8 @@ export const calculateDateProgress = (
   if (diffBetweenStartAndEnd === 0) {
     return null;
   }
-
+  if (diffBetweenStartAndNow > diffBetweenStartAndEnd) {
+    return 100;
+  }
   return parseFloat(((diffBetweenStartAndNow / diffBetweenStartAndEnd) * 100).toFixed(2));
 };
