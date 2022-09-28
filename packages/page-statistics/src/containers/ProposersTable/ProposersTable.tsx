@@ -1,4 +1,3 @@
-import { randBoolean, randEthereumAddress, randRecentDate } from '@ngneat/falso';
 import {
   ColumnDef,
   createColumnHelper,
@@ -12,28 +11,14 @@ import {
   Table as RTTable,
   useReactTable,
 } from '@tanstack/react-table';
-import { VoteListItem } from '@webb-dapp/page-statistics/provider/hooks';
+import { VoteStatus } from '@webb-dapp/page-statistics/generated/graphql';
+import { useVotes, VoteListItem, VotesQuery } from '@webb-dapp/page-statistics/provider/hooks';
 import { Avatar, Chip, Table, Tabs } from '@webb-dapp/webb-ui-components/components';
 import { fuzzyFilter } from '@webb-dapp/webb-ui-components/components/Filter/utils';
-import { useSeedData } from '@webb-dapp/webb-ui-components/hooks';
-import { PropsOf } from '@webb-dapp/webb-ui-components/types';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
-import { randAccount32, shortenString } from '@webb-dapp/webb-ui-components/utils';
-import cx from 'classnames';
+import { shortenString } from '@webb-dapp/webb-ui-components/utils';
 import { formatDistanceToNow } from 'date-fns';
-import { FC, useEffect, useMemo, useState } from 'react';
-import { twMerge } from 'tailwind-merge';
-
-import { VoteType } from '../ProposalDetail';
-
-const getVoteItem: () => VoteListItem = () => {
-  return {
-    id: randEthereumAddress() + randEthereumAddress().substring(2),
-    voterId: randAccount32(),
-    timestamp: randRecentDate(),
-    for: randBoolean() ? undefined : randBoolean(), // Dummy random. Please don't judge :)
-  };
-};
+import { FC, useMemo, useState } from 'react';
 
 const columnHelper = createColumnHelper<VoteListItem>();
 
@@ -49,29 +34,31 @@ const columns: ColumnDef<VoteListItem, any>[] = [
     ),
   }),
 
-  columnHelper.accessor('for', {
+  columnHelper.accessor('status', {
     header: 'Vote',
     cell: (props) => {
-      const vote = props.getValue<boolean | undefined>();
-
-      if (vote === undefined) {
-        return (
-          <Chip color='blue' className='uppercase'>
-            abstain
-          </Chip>
-        );
-      } else if (vote) {
-        return (
-          <Chip color='green' className='uppercase'>
-            for
-          </Chip>
-        );
-      } else {
-        return (
-          <Chip color='red' className='uppercase'>
-            Against
-          </Chip>
-        );
+      const vote = props.getValue<VoteStatus | undefined>();
+      switch (vote) {
+        case VoteStatus.Abstain:
+          return (
+            <Chip color='red' className='uppercase'>
+              Abstain
+            </Chip>
+          );
+        case VoteStatus.Against:
+          return (
+            <Chip color='blue' className='uppercase'>
+              Against
+            </Chip>
+          );
+        case VoteStatus.For:
+          return (
+            <Chip color='green' className='uppercase'>
+              for
+            </Chip>
+          );
+        default:
+          return '-';
       }
     },
   }),
@@ -81,57 +68,46 @@ const columns: ColumnDef<VoteListItem, any>[] = [
     cell: (props) => formatDistanceToNow(props.getValue<Date>(), { addSuffix: true }),
   }),
 ];
-
-export const ProposersTable: FC = () => {
-  const { fetchData } = useSeedData(getVoteItem);
-
-  const [dataQuery, setDataQuery] = useState<Awaited<ReturnType<typeof fetchData>> | undefined>(undefined);
-
+type ProposersTableProps = {
+  counters: {
+    for: number;
+    against: number;
+    all: number;
+    abstain: number;
+  };
+  proposalId: string;
+};
+export const ProposersTable: FC<ProposersTableProps> = ({ counters, proposalId }) => {
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 10,
   });
-
-  const { abstainCount, againstCount, forCount } = useMemo(() => {
-    const defaultCount = {
-      forCount: 0,
-      againstCount: 0,
-      abstainCount: 0,
+  const [voteStatus, setVoteStatus] = useState<VoteStatus | undefined>(undefined);
+  const query = useMemo<VotesQuery>(() => {
+    return {
+      filter: {
+        proposalId,
+        status: voteStatus,
+      },
+      offset: pagination.pageSize * pagination.pageIndex,
+      perPage: pagination.pageSize,
     };
+  }, [pagination, proposalId, voteStatus]);
+  const votes = useVotes(query);
 
-    if (!dataQuery) {
-      return defaultCount;
-    }
+  const tabsValue = useMemo<Array<[VoteStatus | undefined, string]>>(() => {
+    return [
+      [undefined, `All (${counters.all})`],
+      [VoteStatus.For, `For (${counters.for})`],
+      [VoteStatus.Against, `Against (${counters.against})`],
+      [VoteStatus.Abstain, `Abstain (${counters.abstain})`],
+    ];
+  }, [counters]);
+  const tabsLabels = useMemo(() => tabsValue.map((i) => i[1]), [tabsValue]);
+  const totalItems = useMemo(() => votes.val?.pageInfo.count ?? 0, [votes]);
+  const pageCount = useMemo(() => Math.ceil(totalItems / pagination.pageSize), [pagination, totalItems]);
 
-    return dataQuery.rows.reduce((acc, cur) => {
-      if (cur.for === undefined) {
-        acc.abstainCount += 1;
-      } else if (cur.for) {
-        acc.forCount += 1;
-      } else {
-        acc.againstCount += 1;
-      }
-
-      return acc;
-    }, defaultCount);
-  }, [dataQuery]);
-
-  const tabsValue = useMemo(() => {
-    return ['All', `For (${forCount})`, `Against (${againstCount})`, `Abstain (${abstainCount})`];
-  }, [abstainCount, againstCount, forCount]);
-
-  const pageCount = useMemo(() => dataQuery?.pageCount ?? 0, [dataQuery]);
-  const totalItems = useMemo(() => dataQuery?.totalItems ?? 0, [dataQuery]);
-  const data = useMemo(() => dataQuery?.rows ?? ([] as VoteListItem[]), [dataQuery?.rows]);
-
-  useEffect(() => {
-    const updateData = async () => {
-      const fetchedData = await fetchData({ ...pagination });
-      setDataQuery(fetchedData);
-    };
-
-    updateData();
-  }, [fetchData, pagination]);
+  const data = useMemo(() => votes.val?.items ?? [], [votes]);
 
   const table = useReactTable<VoteListItem>({
     data,
@@ -160,7 +136,13 @@ export const ProposersTable: FC = () => {
         All Proposers
       </Typography>
 
-      <Tabs value={tabsValue} />
+      <Tabs
+        onChange={(tab) => {
+          const selectedTab = tabsValue.find((item) => item[1] === tab);
+          setVoteStatus(selectedTab?.[0] ?? undefined);
+        }}
+        value={tabsLabels}
+      />
 
       <Table tableProps={table as RTTable<unknown>} isPaginated totalRecords={totalItems} className='mt-2' />
     </div>

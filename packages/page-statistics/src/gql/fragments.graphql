@@ -41,6 +41,7 @@ fragment ProposalListView on ProposalItem {
   signature
   type
   status
+  chainId
   proposalVotesByProposalId(orderBy: [BLOCK_NUMBER_DESC], first: 3) {
     nodes {
       id
@@ -60,7 +61,7 @@ fragment ProposalListView on ProposalItem {
 fragment ProposalsVoteListView on ProposalVote {
   id
   voterId
-  for
+  voteStatus
   txHash: voterId
   block {
     timestamp

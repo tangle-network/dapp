@@ -1,7 +1,6 @@
-import { PublicKeyListView } from '@webb-dapp/page-statistics/provider/hooks';
-import { PropsOf } from '@webb-dapp/webb-ui-components/types';
+import { PublicKey } from '@webb-dapp/page-statistics/provider/hooks';
 
 export interface KeyStatusCardContainerProps {
   keyType: 'current' | 'next';
-  data: PublicKeyListView;
+  data: PublicKey;
 }

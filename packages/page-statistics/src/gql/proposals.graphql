@@ -6,7 +6,9 @@ query Proposals(
     $offset: Int!
 ) {
     # Listing proposals items
-    proposalItems(first: $perPage, offset: $offset) {
+    proposalItems(
+        orderBy: [BLOCK_NUMBER_DESC],
+        first: $perPage, offset: $offset) {
         nodes {
             ...ProposalListView
         }
@@ -41,9 +43,9 @@ query ProposalsCounter(
 # Proposals over view query
 query ProposalsOverview(
     # Starting block number value for the stats start
-    $startRange: BigFloatFilter!
+    $startRange: BigFloatFilter
     # Ending block number value for the stats start
-    $endRange: BigFloatFilter!
+    $endRange: BigFloatFilter
     # Session id for threshold and proposers stats
     $sessionId: String!
 ) {
@@ -102,10 +104,10 @@ query ProposalVotes(
     $offset: Int!
     # The proposal id
     $proposalId: String!
-    $for: BooleanFilter
+    $for: VoteStatusFilter
 ) {
     proposalVotes(
-        filter: { proposalId: { equalTo: $proposalId }, for: $for }
+        filter: { proposalId: { equalTo: $proposalId }, voteStatus: $for }
         orderBy: [BLOCK_NUMBER_DESC]
         first: $perPage
         offset: $offset
@@ -139,6 +141,8 @@ query ProposalDetails(
         signature
         type
         status
+        chainId
+
         proposalTimelineStatuses {
             nodes {
                 id
@@ -148,10 +152,15 @@ query ProposalDetails(
             }
         }
 
-        votesFor: proposalVotesByProposalId(filter: { for: { equalTo: true } }) {
+        votesFor: proposalVotesByProposalId(filter: { voteStatus: { equalTo: FOR } }) {
             totalCount
         }
-
+        against: proposalVotesByProposalId(filter: { voteStatus: { equalTo: AGAINST } }) {
+            totalCount
+        }
+        abstain: proposalVotesByProposalId(filter: { voteStatus: { equalTo: ABSTAIN } }) {
+            totalCount
+        }
         totalVotes: proposalVotesByProposalId {
             totalCount
         }
