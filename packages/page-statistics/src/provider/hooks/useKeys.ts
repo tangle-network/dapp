@@ -458,7 +458,7 @@ export function useKey(id: string): PublicKeyDetailsPage {
         setKey(val);
       });
     return () => subscription.unsubscribe();
-  }, [callSessionKeys, query, activeSession ,blockTime]);
+  }, [callSessionKeys, query, activeSession, blockTime]);
 
   useEffect(() => {
     const subscription = sessionKeysQuery.observable
