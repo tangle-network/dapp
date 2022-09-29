@@ -15,6 +15,7 @@ export const DropdownBody = forwardRef<HTMLDivElement, DropdownBodyProps>(
         <DropdownMenuPrimitive.Content
           {...props}
           align='end'
+          sideOffset={size === 'sm' ? 8 : 0}
           className={twMerge(
             cx(
               'radix-side-top:animate-slide-up radix-side-bottom:animate-slide-down',
