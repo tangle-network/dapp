@@ -47,7 +47,6 @@ export type UpcomingThreshold = {
   keyGen: string;
   signature: string;
   proposer: string;
-  // TODO use the type `DiscreteList`
   authoritySet: DiscreteList;
 };
 
