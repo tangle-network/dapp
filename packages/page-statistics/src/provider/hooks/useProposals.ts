@@ -42,7 +42,7 @@ type ProposalTypeStats = {
  * @param T - The underlying list item type
  * @param count - Total number of the list of `T`
  * */
-type DiscreteList<T = string> = {
+export type DiscreteList<T = string> = {
   firstElements: T[];
   count: number;
 };

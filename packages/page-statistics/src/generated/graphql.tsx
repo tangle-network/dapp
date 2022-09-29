@@ -10341,6 +10341,7 @@ export type ValidatorSessionsQuery = {
           id: string;
           compressed?: string | null;
           uncompressed?: string | null;
+          block?: { __typename?: 'Block'; id: string; number: any } | null;
         } | null;
         sessionValidators: {
           __typename?: 'SessionValidatorsConnection';
@@ -10746,6 +10747,7 @@ export type PublicKeysQuery = {
           id: string;
           keyGenThreshold?: any | null;
           signatureThreshold?: any | null;
+          block?: { __typename?: 'Block'; timestamp?: any | null; number: any } | null;
           sessionValidators: {
             __typename?: 'SessionValidatorsConnection';
             edges: Array<{
@@ -10797,6 +10799,7 @@ export type PublicKeyQuery = {
         id: string;
         keyGenThreshold?: any | null;
         signatureThreshold?: any | null;
+        block?: { __typename?: 'Block'; timestamp?: any | null; number: any } | null;
         sessionValidators: {
           __typename?: 'SessionValidatorsConnection';
           edges: Array<{
@@ -10884,6 +10887,7 @@ export type SessionKeysQuery = {
     nodes: Array<{
       __typename?: 'Session';
       id: string;
+      block?: { __typename?: 'Block'; timestamp?: any | null; number: any } | null;
       publicKey?: {
         __typename?: 'PublicKey';
         id: string;
@@ -10952,6 +10956,7 @@ export type SessionThresholdsQuery = {
     signatureThreshold?: any | null;
     keyGenThreshold?: any | null;
     proposersCount: { __typename?: 'SessionProposersConnection'; totalCount: number };
+    block?: { __typename?: 'Block'; timestamp?: any | null; number: any } | null;
     publicKey?: {
       __typename?: 'PublicKey';
       id: string;
@@ -11134,6 +11139,10 @@ export const ValidatorSessionsDocument = gql`
             id
             compressed
             uncompressed
+            block {
+              id
+              number
+            }
           }
           sessionValidators(first: 3) {
             ...SessionAuthValidator
@@ -11718,7 +11727,7 @@ export type EnsureProposalsLazyQueryHookResult = ReturnType<typeof useEnsureProp
 export type EnsureProposalsQueryResult = Apollo.QueryResult<EnsureProposalsQuery, EnsureProposalsQueryVariables>;
 export const PublicKeysDocument = gql`
   query PublicKeys($PerPage: Int, $offset: Int) {
-    publicKeys(first: $PerPage, offset: $offset, orderBy: [SESSIONS_SUM_BLOCK_NUMBER_ASC]) {
+    publicKeys(first: $PerPage, offset: $offset, orderBy: [SESSIONS_SUM_BLOCK_NUMBER_DESC]) {
       nodes {
         id
         compressed
@@ -11734,6 +11743,10 @@ export const PublicKeysDocument = gql`
             ...SessionAuth
             keyGenThreshold
             signatureThreshold
+            block {
+              timestamp
+              number
+            }
           }
         }
       }
@@ -11796,6 +11809,10 @@ export const PublicKeyDocument = gql`
           ...SessionAuth
           keyGenThreshold
           signatureThreshold
+          block {
+            timestamp
+            number
+          }
         }
       }
     }
@@ -11944,6 +11961,10 @@ export const SessionKeysDocument = gql`
       nodes {
         id
         ...SessionAuth
+        block {
+          timestamp
+          number
+        }
         publicKey {
           id
           compressed
@@ -12060,6 +12081,10 @@ export const SessionThresholdsDocument = gql`
         totalCount
       }
       ...SessionAuth
+      block {
+        timestamp
+        number
+      }
       publicKey {
         id
         compressed

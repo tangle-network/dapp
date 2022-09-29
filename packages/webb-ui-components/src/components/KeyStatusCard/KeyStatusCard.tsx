@@ -1,4 +1,5 @@
 import { Avatar, AvatarGroup, Button, Card, Chip } from '@webb-dapp/webb-ui-components';
+import { formatDateToUtc } from '@webb-dapp/webb-ui-components/utils';
 import { Link } from 'react-router-dom';
 
 import { KeyValueWithButton } from '../KeyValueWithButton';
@@ -24,6 +25,7 @@ export const KeyStatusCard: React.FC<KeyStatusCardProps> = ({
   authorities,
   endTime,
   fullDetailUrl,
+  instance,
   keyType,
   keyVal,
   sessionNumber,
@@ -46,8 +48,9 @@ export const KeyStatusCard: React.FC<KeyStatusCardProps> = ({
         </div>
         <KeyValueWithButton keyValue={keyVal} />
       </div>
+
       {/* * Content */}
-      <TimeProgress startTime={startTime} endTime={endTime} />
+      <TimeProgress now={instance} startTime={startTime} endTime={endTime} />
       {/** Bottom */}
       <div className='flex items-center justify-between'>
         <AvatarGroup total={totalAuthorities}>
