@@ -346,7 +346,7 @@ export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
       })
       .subscribe(setKeys);
     return () => subscription.unsubscribe();
-  }, [query, activeSession, blockTime]);
+  }, [query, activeSession, blockTime, sessionHeight]);
   return keys;
 }
 
@@ -458,7 +458,7 @@ export function useKey(id: string): PublicKeyDetailsPage {
         setKey(val);
       });
     return () => subscription.unsubscribe();
-  }, [callSessionKeys, query, activeSession, blockTime]);
+  }, [callSessionKeys, query, activeSession, sessionHeight, blockTime]);
 
   useEffect(() => {
     const subscription = sessionKeysQuery.observable
