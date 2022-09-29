@@ -15,7 +15,7 @@ import { TimeProgressProps } from './types';
  * ```
  */
 export const TimeProgress = React.forwardRef<HTMLDivElement, TimeProgressProps>(
-  ({ endTime, startTime, now, ...props }, ref) => {
+  ({ endTime, now, startTime, ...props }, ref) => {
     const [dateProgress, setDateProgress] = useState<number | null>(calculateDateProgress(startTime, endTime, now));
     const timerRef = useRef<NodeJS.Timeout>();
 

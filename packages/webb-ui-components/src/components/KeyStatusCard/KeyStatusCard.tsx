@@ -1,4 +1,5 @@
 import { Avatar, AvatarGroup, Button, Card, Chip } from '@webb-dapp/webb-ui-components';
+import { formatDateToUtc } from '@webb-dapp/webb-ui-components/utils';
 import { Link } from 'react-router-dom';
 
 import { KeyValueWithButton } from '../KeyValueWithButton';
@@ -6,7 +7,6 @@ import { LabelWithValue } from '../LabelWithValue';
 import { TimeProgress } from '../TimeProgress';
 import { TitleWithInfo } from '../TitleWithInfo';
 import { KeyStatusCardProps } from './types';
-import { formatDateToUtc } from '@webb-dapp/webb-ui-components/utils';
 
 /**
  * The `KeyStatusCard` component displays the current key and next key data
@@ -25,6 +25,7 @@ export const KeyStatusCard: React.FC<KeyStatusCardProps> = ({
   authorities,
   endTime,
   fullDetailUrl,
+  instance,
   keyType,
   keyVal,
   sessionNumber,
@@ -32,7 +33,6 @@ export const KeyStatusCard: React.FC<KeyStatusCardProps> = ({
   title,
   titleInfo,
   totalAuthorities,
-  instance,
   ...props
 }) => {
   return (

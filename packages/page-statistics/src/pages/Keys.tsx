@@ -1,13 +1,12 @@
+import { useStatsContext } from '@webb-dapp/page-statistics/provider/stats-provider';
 import { Spinner } from '@webb-dapp/webb-ui-components/icons';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
+import { formatDateToUtc } from '@webb-dapp/webb-ui-components/utils';
 import { useMemo } from 'react';
 import { Outlet } from 'react-router-dom';
 
 import { KeygenTable, KeyStatusCardContainer } from '../containers';
-
 import { PublicKey, PublicKeyListView, useActiveKeys } from '../provider/hooks';
-import { useStatsContext } from '@webb-dapp/page-statistics/provider/stats-provider';
-import { formatDateToUtc } from '@webb-dapp/webb-ui-components/utils';
 const Keys = () => {
   const pagination = useMemo(
     () => ({

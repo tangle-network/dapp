@@ -6,10 +6,10 @@ import {
 } from '@webb-dapp/page-statistics/generated/graphql';
 import { mapAuthorities } from '@webb-dapp/page-statistics/provider/hooks/mappers';
 import { useCurrentMetaData } from '@webb-dapp/page-statistics/provider/hooks/useCurrentMetaData';
+import { useActiveSession, useStaticConfig } from '@webb-dapp/page-statistics/provider/stats-provider';
 import { useEffect, useState } from 'react';
 
 import { Loadable, Page, PageInfoQuery, SessionKeyHistory, SessionKeyStatus, Threshold } from './types';
-import { useActiveSession, useStaticConfig } from '@webb-dapp/page-statistics/provider/stats-provider';
 
 /**
  *  Public key shared content
@@ -346,7 +346,7 @@ export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
       })
       .subscribe(setKeys);
     return () => subscription.unsubscribe();
-  }, [query, activeSession]);
+  }, [query, activeSession, blockTime]);
   return keys;
 }
 
@@ -458,7 +458,7 @@ export function useKey(id: string): PublicKeyDetailsPage {
         setKey(val);
       });
     return () => subscription.unsubscribe();
-  }, [callSessionKeys, query, activeSession]);
+  }, [callSessionKeys, query, activeSession ,blockTime]);
 
   useEffect(() => {
     const subscription = sessionKeysQuery.observable

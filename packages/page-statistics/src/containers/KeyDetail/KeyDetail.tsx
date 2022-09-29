@@ -1,9 +1,18 @@
 import {
+  ColumnDef,
+  createColumnHelper,
+  getCoreRowModel,
+  getPaginationRowModel,
+  useReactTable,
+} from '@tanstack/react-table';
+import { Table as RTTable } from '@tanstack/table-core';
+import {
   AuthorityListItem,
   KeyGenAuthority,
   SessionKeyStatus,
   useKey,
 } from '@webb-dapp/page-statistics/provider/hooks';
+import { useSubQLtime } from '@webb-dapp/page-statistics/provider/stats-provider';
 import {
   Avatar,
   AvatarGroup,
@@ -21,25 +30,16 @@ import {
   TimeProgress,
   TitleWithInfo,
 } from '@webb-dapp/webb-ui-components/components';
+import { fuzzyFilter } from '@webb-dapp/webb-ui-components/components/Filter/utils';
 import { ArrowLeft, ArrowRight, Close, Expand, Spinner } from '@webb-dapp/webb-ui-components/icons';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
 import cx from 'classnames';
+import getUnicodeFlagIcon from 'country-flag-icons/unicode';
 import { forwardRef, useCallback, useMemo } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import { AuthoritiesTable } from '../AuthoritiesTable';
 import { AuthorityRowType, KeyDetailProps } from './types';
-import { useSubQLtime } from '@webb-dapp/page-statistics/provider/stats-provider';
-import {
-  ColumnDef,
-  createColumnHelper,
-  getCoreRowModel,
-  getPaginationRowModel,
-  useReactTable,
-} from '@tanstack/react-table';
-import { fuzzyFilter } from '@webb-dapp/webb-ui-components/components/Filter/utils';
-import getUnicodeFlagIcon from 'country-flag-icons/unicode';
-import { Table as RTTable } from '@tanstack/table-core';
 
 export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage }, ref) => {
   const { keyId = '' } = useParams<{ keyId: string }>();

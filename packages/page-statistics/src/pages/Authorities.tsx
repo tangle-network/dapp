@@ -1,5 +1,6 @@
 import { randBoolean, randEthereumAddress, randNumber, randRecentDate, randSoonDate } from '@ngneat/falso';
 import { ColumnDef, createColumnHelper, getCoreRowModel, Table as RTTable, useReactTable } from '@tanstack/react-table';
+import { useStatsContext } from '@webb-dapp/page-statistics/provider/stats-provider';
 import { Spinner } from '@webb-dapp/ui-components/Spinner/Spinner';
 import {
   Avatar,
@@ -24,7 +25,6 @@ import { Outlet } from 'react-router-dom';
 import { AuthoritiesTable } from '../containers';
 import { DiscreteList, Thresholds, UpcomingThreshold, UpcomingThresholds, useThresholds } from '../provider/hooks';
 import { getChipColorByKeyType } from '../utils';
-import { useStatsContext } from '@webb-dapp/page-statistics/provider/stats-provider';
 
 const columnHelper = createColumnHelper<UpcomingThreshold>();
 

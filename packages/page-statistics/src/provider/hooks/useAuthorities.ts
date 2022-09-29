@@ -9,11 +9,11 @@ import { mapAuthorities, mapSessionAuthValidatorNode } from '@webb-dapp/page-sta
 import { Loadable, Page, PageInfoQuery } from '@webb-dapp/page-statistics/provider/hooks/types';
 import { useCurrentMetaData } from '@webb-dapp/page-statistics/provider/hooks/useCurrentMetaData';
 import { PublicKey } from '@webb-dapp/page-statistics/provider/hooks/useKeys';
+import { DiscreteList } from '@webb-dapp/page-statistics/provider/hooks/useProposals';
+import { useActiveSession } from '@webb-dapp/page-statistics/provider/stats-provider';
 import { useEffect, useMemo, useState } from 'react';
 
 import { Threshold as QueryThreshold } from './types';
-import { DiscreteList } from '@webb-dapp/page-statistics/provider/hooks/useProposals';
-import { useActiveSession } from '@webb-dapp/page-statistics/provider/stats-provider';
 /**
  * Threshold values
  * @param keyGen - KeyGen threshold

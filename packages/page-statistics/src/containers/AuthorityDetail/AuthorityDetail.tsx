@@ -16,6 +16,7 @@ import {
   KeyGenKeyListItem,
   useAuthority,
 } from '@webb-dapp/page-statistics/provider/hooks';
+import { useStatsContext } from '@webb-dapp/page-statistics/provider/stats-provider';
 import {
   Avatar,
   AvatarGroup,
@@ -49,7 +50,6 @@ import { Link, useLocation, useParams } from 'react-router-dom';
 import { twMerge } from 'tailwind-merge';
 
 import { headerConfig } from '../KeygenTable';
-import { useStatsContext } from '@webb-dapp/page-statistics/provider/stats-provider';
 
 const columnHelper = createColumnHelper<KeyGenKeyListItem>();
 
@@ -171,8 +171,8 @@ export const AuthorityDetail = () => {
   );
 };
 
-const DetailsView: FC<{ stats: AuthorityStats; isPage: boolean; id: string }> = ({ id, stats, isPage }) => {
-  const { keyGenThreshold, nextKeyGenThreshold, numberOfKeys, pendingKeyGenThreshold, uptime, reputation } = stats;
+const DetailsView: FC<{ stats: AuthorityStats; isPage: boolean; id: string }> = ({ id, isPage, stats }) => {
+  const { keyGenThreshold, nextKeyGenThreshold, numberOfKeys, pendingKeyGenThreshold, reputation, uptime } = stats;
   const location = 'EG';
   const account = id;
   return (

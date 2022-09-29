@@ -1,5 +1,5 @@
-import { compareAsc, differenceInMilliseconds, isValid } from 'date-fns';
 import { ISubQlTime } from '@webb-dapp/page-statistics/provider/stats-provider';
+import { compareAsc, differenceInMilliseconds, isValid } from 'date-fns';
 
 /**
  * Calculated the percentage of the current date have passed since the start date
