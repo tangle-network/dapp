@@ -6,12 +6,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { Table as RTTable } from '@tanstack/table-core';
-import {
-  AuthorityListItem,
-  KeyGenAuthority,
-  SessionKeyStatus,
-  useKey,
-} from '@webb-dapp/page-statistics/provider/hooks';
+import { KeyGenAuthority, SessionKeyStatus, useKey } from '@webb-dapp/page-statistics/provider/hooks';
 import { useSubQLtime } from '@webb-dapp/page-statistics/provider/stats-provider';
 import {
   Avatar,
@@ -38,8 +33,7 @@ import getUnicodeFlagIcon from 'country-flag-icons/unicode';
 import { forwardRef, useCallback, useMemo } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
-import { AuthoritiesTable } from '../AuthoritiesTable';
-import { AuthorityRowType, KeyDetailProps } from './types';
+import { KeyDetailProps } from './types';
 
 export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage }, ref) => {
   const { keyId = '' } = useParams<{ keyId: string }>();
@@ -52,11 +46,6 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage },
 
   const commonCardClsx = useMemo(() => 'rounded-lg bg-mono-0 dark:bg-mono-180', []);
   const time = useSubQLtime();
-  const authoritiesTblData = useMemo<AuthorityRowType[]>(() => {
-    return keyDetail
-      ? keyDetail.authorities.map((aut) => ({ ...aut, detaillUrl: 'https://webb.tools' })) // TODO: Determine the detail url
-      : ([] as AuthorityRowType[]);
-  }, [keyDetail]);
 
   const onNextKey = useCallback(() => {
     if (prevAndNextKey?.nextKeyId) {
@@ -87,6 +76,8 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage },
   if (!keyDetail) {
     return null; // Not display anything
   }
+
+  console.log(keyDetail);
 
   return (
     <div className={cx('flex flex-col space-y-4', isPage ? '' : 'p-6 ')} ref={ref}>
@@ -219,16 +210,18 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage },
                         <LabelWithValue label='Height' value={keyDetail.height} />
                         {/** TODO: Proposal type */}
                         <LabelWithValue label='Proposal' value='KeyRotation' />
-                        <LabelWithValue
-                          label='Proposers'
-                          value={
-                            <AvatarGroup total={keyDetail.authorities.length}>
-                              {keyDetail.authorities.map((author) => (
-                                <Avatar key={author.id} value={author.account} />
-                              ))}
-                            </AvatarGroup>
-                          }
-                        />
+                        {keyDetail.authorities.length && (
+                          <LabelWithValue
+                            label='Proposers'
+                            value={
+                              <AvatarGroup total={keyDetail.authorities.length}>
+                                {keyDetail.authorities.map((author, idx) => (
+                                  <Avatar key={author.id} value={author.account} sourceVariant='address' />
+                                ))}
+                              </AvatarGroup>
+                            }
+                          />
+                        )}
                         <Button size='sm' varirant='link' className='uppercase'>
                           Details
                         </Button>
@@ -327,6 +320,7 @@ const columns: ColumnDef<KeyGenAuthority, any>[] = [
 
   columnHelper.accessor('id', {
     header: '',
+    id: 'detail',
     cell: (props) => (
       <Button varirant='link' size='sm' className='uppercase'>
         <Link to={`/authorities/drawer/${props.getValue<string>()}`}>Details</Link>

@@ -19,7 +19,6 @@ const Keys = () => {
 
   const { error, isFailed, isLoading, val: data } = useActiveKeys();
 
-  console.log('Active keys data', data);
   const { currentKey, nextKey } = useMemo<{
     currentKey: PublicKey | null;
     nextKey: PublicKey | null;
