@@ -99,7 +99,7 @@ const Proposals = () => {
     };
   }, [timeRange, lastProcessBlock, blockTime]);
   const overview = useProposalsOverview(activeSession, range);
-  console.log(`active session ${activeSession}`);
+
   const data = useMemo(() => {
     if (overview.val) {
       return overview.val.openProposals;
