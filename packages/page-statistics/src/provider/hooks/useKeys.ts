@@ -6,6 +6,7 @@ import {
 } from '@webb-dapp/page-statistics/generated/graphql';
 import { mapAuthorities } from '@webb-dapp/page-statistics/provider/hooks/mappers';
 import { useCurrentMetaData } from '@webb-dapp/page-statistics/provider/hooks/useCurrentMetaData';
+import { useActiveSession, useStaticConfig } from '@webb-dapp/page-statistics/provider/stats-provider';
 import { useEffect, useState } from 'react';
 
 import { Loadable, Page, PageInfoQuery, SessionKeyHistory, SessionKeyStatus, Threshold } from './types';
@@ -25,8 +26,8 @@ type PublicKeyContent = {
   uncompressed: string;
   compressed: string;
 
-  start: Date;
-  end: Date;
+  start?: Date;
+  end?: Date;
   session: string;
 };
 
@@ -37,6 +38,7 @@ type PublicKeyContent = {
  * */
 export interface PublicKey extends PublicKeyContent {
   isCurrent: boolean;
+  isDone: boolean;
   keyGenAuthorities: string[];
 }
 
@@ -102,6 +104,7 @@ export type KeyGenAuthority = {
 interface PublicKeyDetails extends PublicKeyContent {
   height: string;
   isCurrent: boolean;
+  isDone: boolean;
   history: PublicKeyHistoryEntry[];
   keyGenThreshold: string;
   signatureThreshold: string;
@@ -129,6 +132,18 @@ type PublicKeyDetailsPage = {
   prevAndNextKey: Loadable<NextAndPrevKeyStatus>;
 };
 
+export function sessionFrame(
+  timestamp: string | undefined = undefined,
+  sessionHeight: number,
+  blockTime: number
+): [Date, Date] | [] {
+  if (!timestamp) {
+    return [];
+  }
+  const startDateTime = new Date(timestamp);
+  const endTime = startDateTime.getTime() + blockTime * sessionHeight * 1000;
+  return [startDateTime, new Date(endTime)];
+}
 /**
  * List keys for table view
  *
@@ -148,6 +163,7 @@ type PublicKeyDetailsPage = {
  * */
 export function useKeys(reqQuery: PageInfoQuery): Loadable<Page<PublicKeyListView>> {
   const [call, query] = usePublicKeysLazyQuery();
+  const { blockTime, sessionHeight } = useStaticConfig();
   const [page, setPage] = useState<Loadable<Page<PublicKeyListView>>>({
     val: null,
     isFailed: false,
@@ -206,7 +222,7 @@ export function useKeys(reqQuery: PageInfoQuery): Loadable<Page<PublicKeyListVie
 
                 const previousKeyId = idx ? filteredData[idx - 1]?.id : undefined;
                 const nextKeyId = idx < filteredData.length - 1 ? filteredData[idx + 1]?.id : undefined;
-
+                const [start, end] = sessionFrame(session.block?.timestamp, sessionHeight, blockTime);
                 return {
                   height: String(node!.block?.number),
                   session: session.id,
@@ -215,8 +231,8 @@ export function useKeys(reqQuery: PageInfoQuery): Loadable<Page<PublicKeyListVie
                   compressed: node!.compressed!,
                   uncompressed: node!.uncompressed!,
                   keyGenAuthorities: authorities,
-                  end: new Date(node!.block?.timestamp),
-                  start: new Date(node!.block?.timestamp),
+                  end,
+                  start,
                   id: node!.id,
                   previousKeyId,
                   nextKeyId,
@@ -238,7 +254,7 @@ export function useKeys(reqQuery: PageInfoQuery): Loadable<Page<PublicKeyListVie
       })
       .subscribe(setPage);
     return () => subscription.unsubscribe();
-  }, [query]);
+  }, [query, blockTime, sessionHeight]);
   return page;
 }
 
@@ -248,6 +264,8 @@ export function useKeys(reqQuery: PageInfoQuery): Loadable<Page<PublicKeyListVie
 export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
   const metaData = useCurrentMetaData();
   const [call, query] = useSessionKeysLazyQuery();
+  const { blockTime, sessionHeight } = useStaticConfig();
+  const activeSession = useActiveSession();
   const [keys, setKeys] = useState<Loadable<[PublicKey, PublicKey]>>({
     val: null,
     isFailed: false,
@@ -275,24 +293,39 @@ export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
         console.log(`Active sesion keys res`, res);
         if (res.data) {
           const val: PublicKey[] =
-            res.data.sessions?.nodes.map((i) => {
-              const keyGenAuthorities = mapAuthorities(i?.sessionValidators!)
-                .filter((auth) => auth.isBest)
-                .map((auth) => auth.id);
-              const publicKey = i!.publicKey!;
-              return {
-                id: publicKey.id,
-                session: i!.id,
-                end: new Date(publicKey.block!.timestamp),
-                start: new Date(publicKey.block!.timestamp),
-                compressed: publicKey.compressed!,
-                uncompressed: publicKey.uncompressed!,
-                keyGenAuthorities,
-                isCurrent: true,
-              };
-            }) || [];
+            res.data.sessions?.nodes
+              .filter((i) => i?.publicKey)
+              .map((i) => {
+                const keyGenAuthorities = mapAuthorities(i?.sessionValidators!)
+                  .filter((auth) => auth.isBest)
+                  .map((auth) => auth.id);
+                const publicKey = i!.publicKey!;
+                const session = i!;
+                const sessionTimeStamp = session.block?.timestamp;
+                const [start, end] = sessionFrame(sessionTimeStamp, sessionHeight, blockTime);
+
+                return {
+                  id: publicKey.id,
+                  session: session.id,
+                  end,
+                  start,
+                  compressed: publicKey.compressed!,
+                  uncompressed: publicKey.uncompressed!,
+                  keyGenAuthorities,
+                  isCurrent: activeSession === session.id,
+                  isDone: Number(activeSession) > Number(session.id),
+                };
+              }) || [];
+          const activeKey = val[0];
+          const nextKey = val[1];
           return {
-            val: [val[0], val[1]],
+            val: [
+              activeKey,
+              {
+                ...nextKey,
+                start: activeKey.end!,
+              },
+            ],
             isFailed: false,
             isLoading: false,
           };
@@ -313,7 +346,7 @@ export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
       })
       .subscribe(setKeys);
     return () => subscription.unsubscribe();
-  }, [query]);
+  }, [query, activeSession, blockTime, sessionHeight]);
   return keys;
 }
 
@@ -330,7 +363,8 @@ export function useKey(id: string): PublicKeyDetailsPage {
     isFailed: false,
     isLoading: true,
   });
-
+  const { blockTime, sessionHeight } = useStaticConfig();
+  const activeSession = useActiveSession();
   const [prevAndNextKey, setPrevAndNextKey] = useState<Loadable<NextAndPrevKeyStatus>>({
     val: null,
     isFailed: false,
@@ -371,13 +405,14 @@ export function useKey(id: string): PublicKeyDetailsPage {
             .map((auth): KeyGenAuthority => {
               return {
                 account: auth.id,
-                id: auth.authorityId,
+                id: auth.id,
                 location: 'any',
                 reputation: Number(auth.reputation),
                 uptime: 100,
               };
             });
           const validators = sessionAuthorities.length;
+          const [start, end] = sessionFrame(session.block?.timestamp, sessionHeight, blockTime);
           return {
             isFailed: false,
             isLoading: false,
@@ -387,11 +422,12 @@ export function useKey(id: string): PublicKeyDetailsPage {
               uncompressed: publicKey.uncompressed!,
               id: publicKey.id,
               session: session.id,
-              end: new Date(publicKey.block!.timestamp),
-              start: new Date(publicKey.block!.timestamp),
+              end,
+              start,
               history,
               numberOfValidators: validators,
-              isCurrent: true,
+              isCurrent: activeSession === session.id,
+              isDone: Number(activeSession) > Number(session.id),
               authorities,
               keyGenThreshold: session.keyGenThreshold ? String((session.keyGenThreshold as Threshold).current) : '-',
               signatureThreshold: session.keyGenThreshold
@@ -422,7 +458,7 @@ export function useKey(id: string): PublicKeyDetailsPage {
         setKey(val);
       });
     return () => subscription.unsubscribe();
-  }, [callSessionKeys, query]);
+  }, [callSessionKeys, query, activeSession, sessionHeight, blockTime]);
 
   useEffect(() => {
     const subscription = sessionKeysQuery.observable

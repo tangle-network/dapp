@@ -1,21 +1,40 @@
-import { SessionKeyStatus, useKey } from '@webb-dapp/page-statistics/provider/hooks';
+import {
+  ColumnDef,
+  createColumnHelper,
+  getCoreRowModel,
+  getPaginationRowModel,
+  useReactTable,
+} from '@tanstack/react-table';
+import { Table as RTTable } from '@tanstack/table-core';
+import {
+  AuthorityListItem,
+  KeyGenAuthority,
+  SessionKeyStatus,
+  useKey,
+} from '@webb-dapp/page-statistics/provider/hooks';
+import { useSubQLtime } from '@webb-dapp/page-statistics/provider/stats-provider';
 import {
   Avatar,
   AvatarGroup,
   Button,
+  CardTable,
   Chip,
   DrawerCloseButton,
   KeyCard,
   KeyValueWithButton,
   LabelWithValue,
+  Progress,
+  Table,
   TimeLine,
   TimeLineItem,
   TimeProgress,
   TitleWithInfo,
 } from '@webb-dapp/webb-ui-components/components';
+import { fuzzyFilter } from '@webb-dapp/webb-ui-components/components/Filter/utils';
 import { ArrowLeft, ArrowRight, Close, Expand, Spinner } from '@webb-dapp/webb-ui-components/icons';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
 import cx from 'classnames';
+import getUnicodeFlagIcon from 'country-flag-icons/unicode';
 import { forwardRef, useCallback, useMemo } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
@@ -32,7 +51,7 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage },
   const { val: prevAndNextKey } = prevAndNextKeyResp;
 
   const commonCardClsx = useMemo(() => 'rounded-lg bg-mono-0 dark:bg-mono-180', []);
-
+  const time = useSubQLtime();
   const authoritiesTblData = useMemo<AuthorityRowType[]>(() => {
     return keyDetail
       ? keyDetail.authorities.map((aut) => ({ ...aut, detaillUrl: 'https://webb.tools' })) // TODO: Determine the detail url
@@ -123,7 +142,7 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage },
         {/** Session number */}
         <div className='flex items-center space-x-2'>
           <Chip color='green' className='uppercase'>
-            {keyDetail.isCurrent ? 'Current' : 'Next'}
+            {keyDetail.isDone ? 'History' : keyDetail.isCurrent ? 'Current' : 'Next'}
           </Chip>
           <LabelWithValue label='Session: ' value={keyDetail.session} />
         </div>
@@ -132,7 +151,7 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage },
         <div className='flex flex-col space-y-3'>
           <TitleWithInfo title='Active Period' variant='body1' titleComponent='h6' info='Active period' />
 
-          <TimeProgress startTime={keyDetail.start} endTime={keyDetail.end} />
+          <TimeProgress now={time} startTime={keyDetail.start ?? null} endTime={keyDetail.end ?? null} />
         </div>
 
         {/** Compressed/Uncompressed Keys */}
@@ -259,7 +278,75 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage },
       </div>
 
       {/** Authorities Table */}
-      <AuthoritiesTable data={authoritiesTblData} />
+      <CardTable
+        titleProps={{
+          title: 'DKG Authorities',
+          info: 'DKG Authorities',
+          variant: 'h5',
+        }}
+      >
+        <KeyGenAuthoredTable data={keyDetail.authorities} />
+      </CardTable>
     </div>
   );
 });
+type KeyGenAuthoredTableProps = {
+  data: KeyGenAuthority[];
+};
+const columnHelper = createColumnHelper<KeyGenAuthority>();
+
+const columns: ColumnDef<KeyGenAuthority, any>[] = [
+  columnHelper.accessor('id', {
+    header: 'Participant',
+    cell: (props) => (
+      <div className='flex items-center space-x-2'>
+        <Avatar sourceVariant={'address'} value={props.getValue<string>()} />
+        <KeyValueWithButton keyValue={props.getValue<string>()} size='sm' isHiddenLabel />
+      </div>
+    ),
+  }),
+
+  columnHelper.accessor('location', {
+    header: 'Location',
+    cell: (props) => (
+      <Typography variant='h5' fw='bold' component='span' className='!text-inherit'>
+        {getUnicodeFlagIcon(props.getValue())}
+      </Typography>
+    ),
+  }),
+
+  columnHelper.accessor('uptime', {
+    header: 'Uptime',
+    cell: (props) => <Progress size='sm' value={parseInt(props.getValue())} className='w-[100px]' suffixLabel='%' />,
+  }),
+
+  columnHelper.accessor('reputation', {
+    header: 'Reputation',
+    cell: (props) => <Progress size='sm' value={parseInt(props.getValue())} className='w-[100px]' suffixLabel='%' />,
+  }),
+
+  columnHelper.accessor('id', {
+    header: '',
+    cell: (props) => (
+      <Button varirant='link' size='sm' className='uppercase'>
+        <Link to={`/authorities/drawer/${props.getValue<string>()}`}>Details</Link>
+      </Button>
+    ),
+  }),
+];
+
+const KeyGenAuthoredTable: React.FC<KeyGenAuthoredTableProps> = ({ data }) => {
+  const table = useReactTable<KeyGenAuthority>({
+    data: data,
+    columns,
+    pageCount: data.length,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+
+    filterFns: {
+      fuzzy: fuzzyFilter,
+    },
+    manualPagination: false,
+  });
+  return <Table tableProps={table as RTTable<unknown>} totalRecords={data.length} />;
+};

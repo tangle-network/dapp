@@ -1,3 +1,4 @@
+import { ISubQlTime } from '@webb-dapp/page-statistics/provider/stats-provider';
 import { compareAsc, differenceInMilliseconds, isValid } from 'date-fns';
 
 /**
@@ -9,7 +10,8 @@ import { compareAsc, differenceInMilliseconds, isValid } from 'date-fns';
  */
 export const calculateDateProgress = (
   startDateStr: string | Date | null,
-  endDateStr: string | Date | null
+  endDateStr: string | Date | null,
+  now?: ISubQlTime
 ): number | null => {
   if (startDateStr === null || endDateStr === null) {
     return null;
@@ -19,21 +21,22 @@ export const calculateDateProgress = (
   if (!isValid(startDateStr) || !isValid(endDateStr)) {
     return null;
   }
-
+  const currentTime = now?.current.getTime() ?? Date.now();
   const startDate = new Date(startDateStr);
   const endDate = new Date(endDateStr);
-
   // If the start date in to future -> Return `null`
-  if (differenceInMilliseconds(Date.now(), startDate) < 0) {
+  if (differenceInMilliseconds(currentTime, startDate) < 0) {
     return null;
   }
 
   const diffBetweenStartAndEnd = Math.abs(startDate.getTime() - endDate.getTime());
-  const diffBetweenStartAndNow = Math.abs(startDate.getTime() - Date.now());
+  const diffBetweenStartAndNow = Math.abs(startDate.getTime() - currentTime);
 
   if (diffBetweenStartAndEnd === 0) {
     return null;
   }
-
+  if (diffBetweenStartAndNow > diffBetweenStartAndEnd) {
+    return 100;
+  }
   return parseFloat(((diffBetweenStartAndNow / diffBetweenStartAndEnd) * 100).toFixed(2));
 };

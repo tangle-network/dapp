@@ -1,5 +1,7 @@
+import { useStatsContext } from '@webb-dapp/page-statistics/provider/stats-provider';
 import { Spinner } from '@webb-dapp/webb-ui-components/icons';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
+import { formatDateToUtc } from '@webb-dapp/webb-ui-components/utils';
 import { useMemo } from 'react';
 import { Outlet } from 'react-router-dom';
 
@@ -27,6 +29,7 @@ const Keys = () => {
       nextKey: data ? data[1] : null,
     };
   }, [data]);
+  const { time } = useStatsContext();
 
   if (isLoading) {
     return <Spinner size='xl' />;
@@ -49,8 +52,8 @@ const Keys = () => {
   return (
     <div>
       <div className='flex space-x-4'>
-        <KeyStatusCardContainer keyType='current' data={currentKey} />
-        <KeyStatusCardContainer keyType='next' data={nextKey} />
+        <KeyStatusCardContainer now={time} keyType='current' data={currentKey} />
+        <KeyStatusCardContainer now={time} keyType='next' data={nextKey} />
       </div>
 
       <div className='mt-4'>

@@ -1,5 +1,7 @@
 import { randBoolean, randEthereumAddress, randNumber, randRecentDate, randSoonDate } from '@ngneat/falso';
 import { ColumnDef, createColumnHelper, getCoreRowModel, Table as RTTable, useReactTable } from '@tanstack/react-table';
+import { useStatsContext } from '@webb-dapp/page-statistics/provider/stats-provider';
+import { Spinner } from '@webb-dapp/ui-components/Spinner/Spinner';
 import {
   Avatar,
   AvatarGroup,
@@ -18,63 +20,11 @@ import { fuzzyFilter } from '@webb-dapp/webb-ui-components/components/Filter/uti
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
 import { arrayFrom, randAccount32 } from '@webb-dapp/webb-ui-components/utils';
 import { ComponentProps, useMemo } from 'react';
-import { Link, Outlet } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 
 import { AuthoritiesTable } from '../containers';
-import { Thresholds, UpcomingThreshold, UpcomingThresholds } from '../provider/hooks';
+import { DiscreteList, Thresholds, UpcomingThreshold, UpcomingThresholds, useThresholds } from '../provider/hooks';
 import { getChipColorByKeyType } from '../utils';
-
-const getNewThresholds = (): [Thresholds, UpcomingThresholds] => {
-  const thresholds: Thresholds = {
-    keyGen: randNumber({ min: 10, max: 20 }).toString(),
-    signature: randNumber({ min: 10, max: 20 }).toString(),
-    proposer: randAccount32(),
-    publicKey: {
-      isCurrent: randBoolean(),
-      keyGenAuthorities: arrayFrom(randNumber({ min: 5, max: 10 }), () => randAccount32()),
-      id: randEthereumAddress(),
-      compressed: randEthereumAddress(),
-      uncompressed: randEthereumAddress + randEthereumAddress().substring(2),
-      start: randRecentDate(),
-      end: randSoonDate(),
-      session: randNumber({ min: 2, max: 50 }).toString(),
-    },
-  };
-
-  const upcomingThreshold: UpcomingThresholds = {
-    pending: {
-      stats: 'Pending',
-      session: randNumber({ min: 2, max: 50 }).toString(),
-      keyGen: randNumber({ min: 10, max: 20 }).toString(),
-      signature: randNumber({ min: 10, max: 20 }).toString(),
-      proposer: randAccount32(),
-      // TODO use the type `DiscreteList`
-      authoritySet: arrayFrom(randNumber({ min: 5, max: 10 }), () => randAccount32()),
-    },
-
-    current: {
-      stats: 'Current',
-      session: randNumber({ min: 2, max: 50 }).toString(),
-      keyGen: randNumber({ min: 10, max: 20 }).toString(),
-      signature: randNumber({ min: 10, max: 20 }).toString(),
-      proposer: randAccount32(),
-      // TODO use the type `DiscreteList`
-      authoritySet: arrayFrom(randNumber({ min: 5, max: 10 }), () => randAccount32()),
-    },
-
-    next: {
-      stats: 'Next',
-      session: randNumber({ min: 2, max: 50 }).toString(),
-      keyGen: randNumber({ min: 10, max: 20 }).toString(),
-      signature: randNumber({ min: 10, max: 20 }).toString(),
-      proposer: randAccount32(),
-      // TODO use the type `DiscreteList`
-      authoritySet: arrayFrom(randNumber({ min: 5, max: 10 }), () => randAccount32()),
-    },
-  };
-
-  return [thresholds, upcomingThreshold];
-};
 
 const columnHelper = createColumnHelper<UpcomingThreshold>();
 
@@ -120,10 +70,11 @@ const columns: ColumnDef<UpcomingThreshold, any>[] = [
     ),
 
     cell: (props) => {
+      const authorities = props.getValue<DiscreteList>();
       return (
-        <AvatarGroup total={props.getValue<string[]>().length} className='justify-end'>
-          {props.getValue<string[]>().map((aut, idx) => (
-            <Avatar key={`${aut}-${idx}`} value={aut} />
+        <AvatarGroup total={authorities.count}>
+          {authorities.firstElements.map((au, idx) => (
+            <Avatar sourceVariant={'address'} key={`${au}${idx}`} value={au} />
           ))}
         </AvatarGroup>
       );
@@ -132,29 +83,34 @@ const columns: ColumnDef<UpcomingThreshold, any>[] = [
 ];
 
 const Authorities = () => {
-  const [{ keyGen, publicKey, signature }, upComingThresholds] = useMemo(() => getNewThresholds(), []);
-
-  const statsItems = useMemo<ComponentProps<typeof Stats>['items']>(
-    () => [
+  const thresholds = useThresholds();
+  const [threshold, upComingThresholds] = useMemo(() => {
+    if (thresholds.val) {
+      return thresholds.val;
+    }
+    return [null, null];
+  }, [thresholds]);
+  const statsItems = useMemo<ComponentProps<typeof Stats>['items']>(() => {
+    const threshold = thresholds.val?.[0];
+    return [
       {
         titleProps: {
           title: 'Keygen',
           info: 'Keygen',
         },
-        value: keyGen,
+        value: threshold?.keyGen ?? 'loading..',
       },
       {
         titleProps: {
           title: 'Signature',
           info: 'Signature',
         },
-        value: signature,
+        value: threshold?.signature ?? 'loading..',
       },
-    ],
-    [keyGen, signature]
-  );
+    ];
+  }, [thresholds]);
 
-  const data = useMemo(() => Object.values(upComingThresholds), [upComingThresholds]);
+  const data = useMemo(() => (upComingThresholds ? Object.values(upComingThresholds) : []), [upComingThresholds]);
 
   const table = useReactTable<UpcomingThreshold>({
     columns: columns,
@@ -164,31 +120,39 @@ const Authorities = () => {
       fuzzy: fuzzyFilter,
     },
   });
-
+  const { keyGen, publicKey, signature } = threshold! ?? {};
+  const isLoading = !thresholds || thresholds?.isLoading || !keyGen || !signature || !publicKey;
+  const { time } = useStatsContext();
   return (
     <div className='flex flex-col space-y-4'>
       <Card>
-        <TitleWithInfo title='Network Thresholds' info='Network Thresholds' variant='h5' />
+        {isLoading ? (
+          <Spinner />
+        ) : (
+          <>
+            <TitleWithInfo title='Network Thresholds' info='Network Thresholds' variant='h5' />
 
-        <Stats items={statsItems} className='pb-0' />
+            <Stats items={statsItems} className='pb-0' />
 
-        <TimeProgress startTime={publicKey.start} endTime={publicKey.end} />
+            <TimeProgress startTime={publicKey.start ?? null} endTime={publicKey.end ?? null} now={time} />
 
-        <div className='flex items-center justify-between'>
-          <div className='flex items-center space-x-2'>
-            <Chip color='green' className='uppercase'>
-              {publicKey.isCurrent ? 'Current' : 'Next'}
-            </Chip>
-            <LabelWithValue label='session:' value={publicKey.session} />
-            <Typography variant='body2' fw='semibold'>
-              /
-            </Typography>
-            <KeyValueWithButton size='sm' keyValue={publicKey.compressed} />
-          </div>
-          <Button varirant='link' size='sm' className='uppercase'>
-            <Link to='history'>View history</Link>
-          </Button>
-        </div>
+            <div className='flex items-center justify-between'>
+              <div className='flex items-center space-x-2'>
+                <Chip color='green' className='uppercase'>
+                  {publicKey.isCurrent ? 'Current' : 'Next'}
+                </Chip>
+                <LabelWithValue label='session:' value={publicKey.session} />
+                <Typography variant='body2' fw='semibold'>
+                  /
+                </Typography>
+                <KeyValueWithButton size='sm' keyValue={publicKey.compressed} />
+              </div>
+              <Button varirant='link' size='sm' className='uppercase'>
+                View history
+              </Button>
+            </div>
+          </>
+        )}
       </Card>
 
       <CardTable
@@ -198,7 +162,7 @@ const Authorities = () => {
           variant: 'h5',
         }}
       >
-        <Table tableProps={table as RTTable<unknown>} />
+        {thresholds.isLoading ? <Spinner /> : <Table tableProps={table as RTTable<unknown>} />}
       </CardTable>
 
       <AuthoritiesTable />

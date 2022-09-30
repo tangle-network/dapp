@@ -11,6 +11,7 @@ import {
 } from '@webb-dapp/webb-ui-components/components';
 import { fuzzyFilter } from '@webb-dapp/webb-ui-components/components/Filter/utils';
 import { ExternalLinkLine, TokenIcon } from '@webb-dapp/webb-ui-components/icons';
+import { Typography } from '@webb-dapp/webb-ui-components/typography';
 import { shortenHex } from '@webb-dapp/webb-ui-components/utils';
 import { ArcElement, Chart as ChartJS, Legend } from 'chart.js';
 import { BigNumber } from 'ethers';
@@ -99,7 +100,6 @@ const Proposals = () => {
     };
   }, [timeRange, lastProcessBlock, blockTime]);
   const overview = useProposalsOverview(activeSession, range);
-
   const data = useMemo(() => {
     if (overview.val) {
       return overview.val.openProposals;
@@ -159,6 +159,7 @@ const Proposals = () => {
       fuzzy: fuzzyFilter,
     },
   });
+  const noOpenProposals = useMemo(() => data.length === 0, [data]);
   return (
     <div className='flex flex-col space-y-4'>
       {/** Proposals Status */}
@@ -179,7 +180,13 @@ const Proposals = () => {
 
         {/** Open Proposals */}
         <CardTable titleProps={{ title: 'Open Proposals' }} className='grow'>
-          <Table tableProps={table as RTTable<unknown>} />
+          {noOpenProposals ? (
+            <Typography ta={'center'} variant={'h4'}>
+              No open proposals
+            </Typography>
+          ) : (
+            <Table tableProps={table as RTTable<unknown>} />
+          )}
         </CardTable>
       </div>
 

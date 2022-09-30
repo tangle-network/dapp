@@ -1,4 +1,3 @@
-
 query CurrentSessionAuthorities {
   sessions(first: 1, orderBy: [BLOCK_NUMBER_DESC]) {
     nodes {
@@ -24,6 +23,10 @@ query SessionKeys($SessionId: [String!]!) {
     nodes {
       id
       ...SessionAuth
+      block {
+        timestamp
+        number
+      }
       publicKey {
         id
         compressed
@@ -36,15 +39,8 @@ query SessionKeys($SessionId: [String!]!) {
     }
   }
 }
-query SessionThresholdHistory(
-  $offset: Int!
-  $perPage:Int!
-){
-  sessions(
-    first: $perPage
-    offset: $offset
-    orderBy: [BLOCK_NUMBER_DESC]
-  ) {
+query SessionThresholdHistory($offset: Int!, $perPage: Int!) {
+  sessions(first: $perPage, offset: $offset, orderBy: [BLOCK_NUMBER_DESC]) {
     nodes {
       id
       signatureThreshold
@@ -55,7 +51,7 @@ query SessionThresholdHistory(
       }
     }
     pageInfo {
-    ...PageInfoMeta
+      ...PageInfoMeta
     }
     totalCount
   }
@@ -65,11 +61,14 @@ query SessionThresholds($sessionId: String!) {
     id
     signatureThreshold
     keyGenThreshold
-    proposersCount: sessionProposers{
+    proposersCount: sessionProposers {
       totalCount
     }
     ...SessionAuth
-
+    block {
+      timestamp
+      number
+    }
     publicKey {
       id
       compressed

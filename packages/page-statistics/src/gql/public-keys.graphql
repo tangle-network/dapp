@@ -1,5 +1,5 @@
 query PublicKeys($PerPage: Int, $offset: Int) {
-  publicKeys(first: $PerPage, offset: $offset, orderBy: [SESSIONS_SUM_BLOCK_NUMBER_ASC]) {
+  publicKeys(first: $PerPage, offset: $offset, orderBy: [SESSIONS_SUM_BLOCK_NUMBER_DESC]) {
     nodes {
       id
       compressed
@@ -15,6 +15,10 @@ query PublicKeys($PerPage: Int, $offset: Int) {
           ...SessionAuth
           keyGenThreshold
           signatureThreshold
+          block {
+          timestamp
+            number
+          }
         }
       }
     }
@@ -43,6 +47,10 @@ query PublicKey($id: String!) {
         ...SessionAuth
         keyGenThreshold
         signatureThreshold
+        block {
+          timestamp
+          number
+        }
       }
     }
   }

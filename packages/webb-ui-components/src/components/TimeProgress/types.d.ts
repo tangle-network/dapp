@@ -1,3 +1,4 @@
+import { ISubQlTime } from '@webb-dapp/page-statistics/provider/stats-provider';
 import { WebbComponentBase } from '@webb-dapp/webb-ui-components/types';
 
 /**
@@ -12,4 +13,9 @@ export interface TimeProgressProps extends WebbComponentBase {
    * The end time
    */
   endTime: Date | string | null;
+
+  /**
+   * Coustome time object
+   * */
+  now?: ISubQlTime;
 }

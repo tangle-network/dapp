@@ -5,12 +5,12 @@ import { WebbUIProvider } from '@webb-dapp/webb-ui-components/provider';
 import { FC } from 'react';
 
 import { routes } from './routes';
+
 const isDev = process.env.NODE_ENV === 'development';
 const apolloClient = new ApolloClient({
   cache: new InMemoryCache(),
-  uri: isDev ? 'http://localhost:4000' : 'https://api.subquery.network/sq/AtelyPham/webb-subql',
+  uri: isDev ? 'http://localhost:4000' : 'https://subquery-dev.webb.tools/graphql',
 });
-
 const App: FC = () => {
   return (
     <WebbUIProvider hasErrorBoudary>
