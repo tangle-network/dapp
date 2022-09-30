@@ -1,6 +1,5 @@
 import * as constants from '@webb-dapp/page-statistics/constants';
-import { Button, DropdownMenu, Logo, ThemeSwitcher } from '@webb-dapp/webb-ui-components';
-import { Typography } from '@webb-dapp/webb-ui-components/typography';
+import { DropdownMenu, Logo, ThemeSwitcher } from '@webb-dapp/webb-ui-components';
 import cx from 'classnames';
 import { ComponentProps, FC, useCallback, useMemo, useState } from 'react';
 import { NavLink } from 'react-router-dom';

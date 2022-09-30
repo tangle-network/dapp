@@ -1,18 +1,14 @@
 // The ApolloClient and Stats Provider surround the
-import { ApolloClient, ApolloLink, ApolloProvider, InMemoryCache } from '@apollo/client';
+import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
 import { Footer, Header } from '@webb-dapp/page-statistics/components';
 import { StatsProvider } from '@webb-dapp/page-statistics/provider/stats-provider';
 import { FC, useMemo, useState } from 'react';
 
 const availableEndpoints = ['http://localhost:4000', 'https://subquery-dev.webb.tools/graphql'];
 
-const isDev = process.env.NODE_ENV === 'development';
-
-localStorage.getItem('stats-endpoint');
-
 export const Layout: FC = ({ children }) => {
   const [connectedEndpoint, setConnectedEndpoint] = useState(
-    localStorage.getItem('stats-endpoint') ?? 'http://localhost:4000'
+    localStorage.getItem('stats-endpoint') ?? 'https://subquery-dev.webb.tools/graphql'
   );
 
   const apolloClient = useMemo(() => {
@@ -25,7 +21,7 @@ export const Layout: FC = ({ children }) => {
   return (
     <div className='min-w-full min-h-full'>
       <Header
-        initialEndpoint={connectedEndpoint}
+        connectedEndpoint={connectedEndpoint}
         availableEndpoints={availableEndpoints}
         setConnectedEndpoint={setConnectedEndpoint}
       />
