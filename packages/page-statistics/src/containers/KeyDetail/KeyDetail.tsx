@@ -77,8 +77,6 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage },
     return null; // Not display anything
   }
 
-  console.log(keyDetail);
-
   return (
     <div className={cx('flex flex-col space-y-4', isPage ? '' : 'p-6 ')} ref={ref}>
       {/** Key detail */}

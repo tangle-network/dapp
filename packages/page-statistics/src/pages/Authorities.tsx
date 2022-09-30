@@ -1,7 +1,6 @@
 import { randBoolean, randEthereumAddress, randNumber, randRecentDate, randSoonDate } from '@ngneat/falso';
 import { ColumnDef, createColumnHelper, getCoreRowModel, Table as RTTable, useReactTable } from '@tanstack/react-table';
 import { useStatsContext } from '@webb-dapp/page-statistics/provider/stats-provider';
-import { Spinner } from '@webb-dapp/ui-components/Spinner/Spinner';
 import {
   Avatar,
   AvatarGroup,
@@ -17,6 +16,7 @@ import {
   TitleWithInfo,
 } from '@webb-dapp/webb-ui-components/components';
 import { fuzzyFilter } from '@webb-dapp/webb-ui-components/components/Filter/utils';
+import { Spinner } from '@webb-dapp/webb-ui-components/icons';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
 import { arrayFrom, randAccount32 } from '@webb-dapp/webb-ui-components/utils';
 import { ComponentProps, useMemo } from 'react';
@@ -72,7 +72,7 @@ const columns: ColumnDef<UpcomingThreshold, any>[] = [
     cell: (props) => {
       const authorities = props.getValue<DiscreteList>();
       return (
-        <AvatarGroup total={authorities.count}>
+        <AvatarGroup total={authorities.count} className='justify-end'>
           {authorities.firstElements.map((au, idx) => (
             <Avatar sourceVariant={'address'} key={`${au}${idx}`} value={au} />
           ))}
@@ -113,7 +113,7 @@ const Authorities = () => {
   const data = useMemo(() => (upComingThresholds ? Object.values(upComingThresholds) : []), [upComingThresholds]);
 
   const table = useReactTable<UpcomingThreshold>({
-    columns: columns,
+    columns,
     data,
     getCoreRowModel: getCoreRowModel(),
     filterFns: {
