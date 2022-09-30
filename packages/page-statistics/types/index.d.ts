@@ -42,7 +42,7 @@ export interface FooterNavsType extends Record<string, Array<Link | ExternalLink
 /**
  * The bottom social platforms config type
  */
-export interface SocialConfigsType {
+export interface SocialConfigsType extends Omit<ExternalLink, 'name'> {
   /**
    * Platform name
    */
