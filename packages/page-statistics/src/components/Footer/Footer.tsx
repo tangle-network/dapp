@@ -25,8 +25,10 @@ export const Footer: FC = () => {
 
       {/** Social platforms */}
       <div className='flex items-center justify-end space-x-8'>
-        {constants.socialConfigs.map(({ Icon, name }) => (
-          <Icon key={name} size='lg' className='!fill-mono-100' />
+        {constants.socialConfigs.map(({ Icon, name, ...linkProps }) => (
+          <a key={name} {...linkProps} className='text-mono-100 hover:text-mono-200 dark:hover:text-mono-40'>
+            <Icon size='lg' className='!fill-current' />
+          </a>
         ))}
       </div>
 

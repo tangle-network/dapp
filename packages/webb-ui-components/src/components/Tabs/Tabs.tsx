@@ -33,8 +33,8 @@ export const Tabs = forwardRef<HTMLDivElement, TabsProps>(({ className, onChange
 
   return (
     <div {...props} className={mergedClsx} ref={ref}>
-      {tabs.map((tab) => (
-        <Tab isActive={selectedTab === tab} onClick={() => onTabChange(tab)}>
+      {tabs.map((tab, idx) => (
+        <Tab key={`${tab}-${idx}`} isActive={selectedTab === tab} onClick={() => onTabChange(tab)}>
           {tab}
         </Tab>
       ))}

@@ -35,52 +35,43 @@ export const footerNavs: FooterNavsType = {
   dapp: [
     {
       name: 'bridge',
-      href: '#',
+      href: 'https://app.webb.tools/#/bridge',
       ...commonExternalProps,
     },
     {
       name: 'wrap',
-      href: '#',
-      ...commonExternalProps,
-    },
-    {
-      name: 'crowdloan',
-      href: '#',
+      href: 'https://app.webb.tools/#/wrap-unwrap',
       ...commonExternalProps,
     },
   ],
   network: [
     {
       name: 'statistics',
-      path: '/',
+      href: 'https://www.stats-dev.webb.tools/',
+      ...commonExternalProps,
     },
     {
-      name: 'governance',
-      href: '#',
+      name: 'tangle',
+      href: 'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fstandalone.webb.tools#/explorer',
       ...commonExternalProps,
     },
   ],
   developer: [
     {
       name: 'documentation',
-      href: 'https://docs.webb.tools',
+      href: 'https://docs.webb.tools/v1/getting-started/overview/',
       ...commonExternalProps,
     },
     {
       name: 'source code',
-      href: 'https://github.com/webb-tools/webb-dapp',
-      ...commonExternalProps,
-    },
-    {
-      name: 'whitepaper',
-      href: '#',
+      href: 'https://github.com/webb-tools',
       ...commonExternalProps,
     },
   ],
   resources: [
     {
       name: 'community',
-      href: '#',
+      href: 'https://docs.webb.tools/v1/getting-started/overview/#join-the-community',
       ...commonExternalProps,
     },
     {
@@ -92,12 +83,12 @@ export const footerNavs: FooterNavsType = {
   company: [
     {
       name: 'about us',
-      href: '#',
+      href: 'https://www.webb.tools/',
       ...commonExternalProps,
     },
     {
       name: 'jobs',
-      href: '#',
+      href: 'https://angel.co/company/webb-4/jobs',
       ...commonExternalProps,
     },
   ],
@@ -125,21 +116,31 @@ export const socialConfigs: Array<SocialConfigsType> = [
   {
     name: 'telagram',
     Icon: TelegramFill,
+    href: 'https://t.me/webbprotocol',
+    ...commonExternalProps,
   },
   {
     name: 'discord',
     Icon: DiscordFill,
+    href: 'https://discord.com/invite/cv8EfJu3Tn',
+    ...commonExternalProps,
   },
   {
     name: 'twitter',
     Icon: TwitterFill,
+    href: 'https://twitter.com/webbprotocol',
+    ...commonExternalProps,
   },
   {
     name: 'github',
     Icon: GithubFill,
+    href: 'https://github.com/webb-tools',
+    ...commonExternalProps,
   },
   {
     name: 'commonwealth',
     Icon: CommonWealth,
+    href: 'https://commonwealth.im/webb',
+    ...commonExternalProps,
   },
 ];

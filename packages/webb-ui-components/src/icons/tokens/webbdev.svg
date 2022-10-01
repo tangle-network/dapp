@@ -1,4 +1,4 @@
-<svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+<svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
   <path fill-rule="evenodd" clip-rule="evenodd" d="M19.9999 15.9988C17.7912 15.9988 15.9991 17.7891 15.9991 19.9996C15.9991 22.2084 17.7912 23.9986 19.9999 23.9986C22.2086 23.9986 24.0007 22.2084 24.0007 19.9996C24.0007 17.7891 22.2086 15.9988 19.9999 15.9988" fill="#DD4800" />
   <mask id="mask0_225_2193" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="23" y="15" width="17" height="18">
     <path fill-rule="evenodd" clip-rule="evenodd" d="M23.9998 15.9988H40V32.0003H23.9998V15.9988Z" fill="white" />
