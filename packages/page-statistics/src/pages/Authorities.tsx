@@ -1,4 +1,3 @@
-import { randBoolean, randEthereumAddress, randNumber, randRecentDate, randSoonDate } from '@ngneat/falso';
 import { ColumnDef, createColumnHelper, getCoreRowModel, Table as RTTable, useReactTable } from '@tanstack/react-table';
 import { useStatsContext } from '@webb-dapp/page-statistics/provider/stats-provider';
 import {
@@ -18,12 +17,10 @@ import {
 import { fuzzyFilter } from '@webb-dapp/webb-ui-components/components/Filter/utils';
 import { Spinner } from '@webb-dapp/webb-ui-components/icons';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
-import { arrayFrom, randAccount32 } from '@webb-dapp/webb-ui-components/utils';
 import { ComponentProps, useMemo } from 'react';
-import { Outlet } from 'react-router-dom';
-
+import { Link, Outlet } from 'react-router-dom';
 import { AuthoritiesTable } from '../containers';
-import { DiscreteList, Thresholds, UpcomingThreshold, UpcomingThresholds, useThresholds } from '../provider/hooks';
+import { DiscreteList, UpcomingThreshold, useThresholds } from '../provider/hooks';
 import { getChipColorByKeyType } from '../utils';
 
 const columnHelper = createColumnHelper<UpcomingThreshold>();
@@ -148,7 +145,7 @@ const Authorities = () => {
                 <KeyValueWithButton size='sm' keyValue={publicKey.compressed} />
               </div>
               <Button varirant='link' size='sm' className='uppercase'>
-                View history
+                <Link to='history'>View history</Link>
               </Button>
             </div>
           </>
