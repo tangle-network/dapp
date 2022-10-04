@@ -24,6 +24,8 @@ export function getFontWeightClassName(variant: WebbTypographyVariant, fontWeigh
   // Monospace variant do not have `semibold` for font weight, so cast it to `bold`
   if (isMonospaceVariant(variant) && fontWeight === 'semibold') {
     return `font-bold`;
+  } else if (variant === 'label' || variant === 'utility') {
+    return '';
   } else {
     return `font-${fontWeight}` as const;
   }
