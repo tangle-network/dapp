@@ -95,7 +95,7 @@ function SliderThumb({ hasLabel, value }: SliderThumbProps) {
         'focus:ring-opacity-75 dark:focus:ring-opacity-50'
       )}
     >
-      {hasLabel && <span className='absolute left-0 font-bold translate-x-1/4 -top-5 body4'>{value}</span>}
+      {hasLabel && <span className='absolute left-0 translate-x-1/4 -top-5 utility'>{value}</span>}
     </SliderPrimitive.Thumb>
   );
 }

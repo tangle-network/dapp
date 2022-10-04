@@ -1,5 +1,5 @@
 import cx from 'classnames';
-import { forwardRef, useCallback, useMemo, useState } from 'react';
+import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { TabProps, TabsProps } from './types';
@@ -31,13 +31,20 @@ export const Tabs = forwardRef<HTMLDivElement, TabsProps>(({ className, onChange
 
   const mergedClsx = useMemo(() => twMerge('flex items-center space-x-2', className), [className]);
 
+  // Update the default selected tab when `value` prop change
+  useEffect(() => {
+    setSelectedTab(value[0]);
+  }, [value]);
+
   return (
     <div {...props} className={mergedClsx} ref={ref}>
-      {tabs.map((tab, idx) => (
-        <Tab key={`${tab}-${idx}`} isActive={selectedTab === tab} onClick={() => onTabChange(tab)}>
-          {tab}
-        </Tab>
-      ))}
+      {tabs.map((tab, idx) => {
+        return (
+          <Tab key={`${tab}-${idx}`} isActive={selectedTab === tab} onClick={() => onTabChange(tab)}>
+            {tab}
+          </Tab>
+        );
+      })}
     </div>
   );
 });
@@ -53,7 +60,7 @@ const Tab = forwardRef<HTMLButtonElement, TabProps>(({ children, className, isAc
       className={twMerge(
         cx(
           'flex items-center justify-center grow shrink basis-0',
-          'py-2 font-bold rounded-lg body2 group disabled:cursor-not-allowed',
+          'py-2 font-bold rounded-lg body2',
           'text-mono-120 dark:text-mono-80 bg-mono-0 dark:bg-mono-180',
           'disabled:bg-blue-0 dark:disabled:bg-blue-120 disabled:text-blue-70 dark:disabled:text-blue-50'
         ),
@@ -61,7 +68,7 @@ const Tab = forwardRef<HTMLButtonElement, TabProps>(({ children, className, isAc
       )}
       ref={ref}
     >
-      <span className='inline-block !text-inherit group-disabled:pointer-events-none'>{children}</span>
+      <span className='inline-block !text-inherit'>{children}</span>
     </button>
   );
 });

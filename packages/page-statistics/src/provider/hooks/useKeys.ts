@@ -1,4 +1,5 @@
 import {
+  PublicKeysQuery,
   usePublicKeyLazyQuery,
   usePublicKeysLazyQuery,
   useSessionKeyIdsLazyQuery,
@@ -7,6 +8,7 @@ import {
 import { mapAuthorities } from '@webb-dapp/page-statistics/provider/hooks/mappers';
 import { useCurrentMetaData } from '@webb-dapp/page-statistics/provider/hooks/useCurrentMetaData';
 import { useActiveSession, useStaticConfig } from '@webb-dapp/page-statistics/provider/stats-provider';
+import { NonNullableArrayItem } from '@webb-dapp/webb-ui-components/types';
 import { useEffect, useState } from 'react';
 
 import { Loadable, Page, PageInfoQuery, SessionKeyHistory, SessionKeyStatus, Threshold } from './types';
@@ -144,6 +146,9 @@ export function sessionFrame(
   const endTime = startDateTime.getTime() + blockTime * sessionHeight * 1000;
   return [startDateTime, new Date(endTime)];
 }
+
+type PublicKeyResponse = NonNullableArrayItem<NonNullable<PublicKeysQuery['publicKeys']>['nodes']>;
+
 /**
  * List keys for table view
  *
@@ -187,6 +192,7 @@ export function useKeys(reqQuery: PageInfoQuery): Loadable<Page<PublicKeyListVie
     });
   }, [reqQuery, call]);
   // Handle the GraphQl call response
+
   useEffect(() => {
     const subscription = query.observable
       .map((res): Loadable<Page<PublicKeyListView>> => {
@@ -208,7 +214,7 @@ export function useKeys(reqQuery: PageInfoQuery): Loadable<Page<PublicKeyListVie
         if (res.data.publicKeys) {
           const data = res.data.publicKeys;
 
-          const filteredData = data.nodes.filter((n) => !!n);
+          const filteredData = data.nodes.filter((n): n is PublicKeyResponse => !!n);
 
           return {
             isLoading: false,
@@ -253,24 +259,29 @@ export function useKeys(reqQuery: PageInfoQuery): Loadable<Page<PublicKeyListVie
         };
       })
       .subscribe(setPage);
+
     return () => subscription.unsubscribe();
   }, [query, blockTime, sessionHeight]);
+
   return page;
 }
+
+export type UseActiveKeysReturnType = Loadable<[PublicKey | undefined, PublicKey | undefined]>;
 
 /**
  * Get the current Public key (Current session active) and the next public key (Next session active)
  * */
-export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
+export function useActiveKeys(): UseActiveKeysReturnType {
   const metaData = useCurrentMetaData();
   const [call, query] = useSessionKeysLazyQuery();
   const { blockTime, sessionHeight } = useStaticConfig();
   const activeSession = useActiveSession();
-  const [keys, setKeys] = useState<Loadable<[PublicKey, PublicKey]>>({
+  const [keys, setKeys] = useState<UseActiveKeysReturnType>({
     val: null,
     isFailed: false,
     isLoading: true,
   });
+
   useEffect(() => {
     if (metaData.val) {
       call({
@@ -287,9 +298,10 @@ export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
       });
     }
   }, [metaData, call]);
+
   useEffect(() => {
     const subscription = query.observable
-      .map((res): Loadable<[PublicKey, PublicKey]> => {
+      .map((res): UseActiveKeysReturnType => {
         if (res.data) {
           const val: PublicKey[] =
             res.data.sessions?.nodes
@@ -315,20 +327,25 @@ export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
                   isDone: Number(activeSession) > Number(session.id),
                 };
               }) || [];
-          const activeKey = val[0];
-          const nextKey = val[1];
+
+          const activeKey = val[0] as PublicKey | undefined;
+          const nextKey = val[1] as PublicKey | undefined;
+
           return {
             val: [
               activeKey,
-              {
-                ...nextKey,
-                start: activeKey.end!,
-              },
+              nextKey
+                ? {
+                    ...nextKey,
+                    start: activeKey?.end,
+                  }
+                : undefined,
             ],
             isFailed: false,
             isLoading: false,
           };
         }
+
         if (res.error) {
           return {
             val: null,
@@ -337,6 +354,7 @@ export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
             error: res.error.message,
           };
         }
+
         return {
           val: null,
           isFailed: true,
@@ -344,8 +362,10 @@ export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
         };
       })
       .subscribe(setKeys);
+
     return () => subscription.unsubscribe();
   }, [query, activeSession, blockTime, sessionHeight]);
+
   return keys;
 }
 

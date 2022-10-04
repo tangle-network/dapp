@@ -98,3 +98,11 @@ export interface KeygenType {
  * Extract the props of a React element or component
  */
 export type PropsOf<T extends React.ElementType<any>> = React.ComponentPropsWithoutRef<T>;
+
+export type NullableUnknownType = unknown | null | undefined;
+
+export type ArrayElement<ArrayType extends readonly unknown[]> = ArrayType extends readonly (infer ElementType)[]
+  ? ElementType
+  : never;
+
+export type NonNullableArrayItem<T extends Array<NullableUnknownType>> = NonNullable<ArrayElement<T>>;

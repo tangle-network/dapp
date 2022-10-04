@@ -164,9 +164,7 @@ export const Input: React.FC<InputProps> = (props) => {
         )}
       </div>
 
-      {errorMessage && (
-        <span className='block mt-2 ml-4 font-bold body4 text-red dark:text-red-50'>{errorMessage}</span>
-      )}
+      {errorMessage && <span className='block mt-2 ml-4 utility text-red dark:text-red-50'>{errorMessage}</span>}
     </div>
   );
 };
