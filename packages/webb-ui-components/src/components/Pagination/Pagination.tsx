@@ -47,7 +47,7 @@ export const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
         {/** Right buttons */}
         <div className='flex items-center space-x-2'>
           <ChevronLeft
-            className={cx(canPreviousPage ? 'cursor-pointer' : 'cursor-not-allowed')}
+            className={cx('cursor-pointer')}
             onClick={() => {
               if (canPreviousPage && previousPage) {
                 previousPage();
@@ -63,7 +63,7 @@ export const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
                 className={cx(
                   'p-2 font-semibold text-center body3 rounded-md',
                   currentPage === page
-                    ? 'bg-blue-0 text-blue dark:bg-blue-120 dark:text-blue-0 cursor-not-allowed' // Active
+                    ? 'bg-blue-0 text-blue dark:bg-blue-120 dark:text-blue-0' // Active
                     : 'bg-mono-0 dark:bg-mono-180 text-mono-200 dark:text-mono-40 hover:bg-mono-20 hover:dark:bg-mono-160'
                 )}
                 onClick={() => setPageIndex?.(page - 1)}
@@ -78,7 +78,7 @@ export const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
           )}
 
           <ChevronRight
-            className={cx(canNextPage ? 'cursor-pointer' : 'cursor-not-allowed')}
+            className={cx('cursor-pointer')}
             onClick={() => {
               if (canNextPage && nextPage) {
                 nextPage();

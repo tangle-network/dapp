@@ -53,7 +53,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>((props, r
   const contentProps = { children, leftIcon, rightIcon };
 
   return (
-    <div className={cx('inline-block', isDisabled ? 'cursor-not-allowed' : '')}>
+    <div className={cx('inline-block')}>
       <Component
         {...restProps}
         {...buttonProps}
