@@ -24,7 +24,11 @@ export const LabelWithValue = forwardRef<HTMLSpanElement, LabelWithValueProps>(
     const mergedClsx = useMemo(() => twMerge('flex items-center space-x-1', className), [className]);
     return (
       <span {...props} className={mergedClsx} ref={ref}>
-        <Label className={cx('font-bold uppercase body4', isHiddenLabel && 'hidden')} htmlFor={label}>
+        <Label
+          hidden={isHiddenLabel}
+          className={cx('font-bold uppercase body4', isHiddenLabel && 'hidden')}
+          htmlFor={label}
+        >
           {label}
         </Label>
         {!valueTooltip &&

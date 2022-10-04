@@ -1,4 +1,3 @@
-import { randBoolean, randCountryCode, randEthereumAddress, randNumber, randRecentDate } from '@ngneat/falso';
 import {
   ColumnDef,
   createColumnHelper,
@@ -12,7 +11,6 @@ import {
   AuthorityQuery,
   AuthorityStats,
   DiscreteList,
-  KeyGenAuthority,
   KeyGenKeyListItem,
   useAuthority,
 } from '@webb-dapp/page-statistics/provider/hooks';
@@ -42,7 +40,7 @@ import {
   TwitterFill,
 } from '@webb-dapp/webb-ui-components/icons';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
-import { randAccount32, shortenString } from '@webb-dapp/webb-ui-components/utils';
+import { shortenString } from '@webb-dapp/webb-ui-components/utils';
 import cx from 'classnames';
 import getUnicodeFlagIcon from 'country-flag-icons/unicode';
 import { FC, useMemo, useState } from 'react';
@@ -66,7 +64,9 @@ const columns: ColumnDef<KeyGenKeyListItem, any>[] = [
 
   columnHelper.accessor('publicKey', {
     header: () => <TitleWithInfo {...headerConfig['common']} {...headerConfig['key']} />,
-    cell: (props) => <KeyValueWithButton isHiddenLabel keyValue={props.getValue<string>()} size='sm' />,
+    cell: (props) => (
+      <KeyValueWithButton valueVariant='body1' isHiddenLabel keyValue={props.getValue<string>()} size='sm' />
+    ),
     enableColumnFilter: false,
   }),
 
@@ -171,33 +171,49 @@ export const AuthorityDetail = () => {
   );
 };
 
+/***********************
+ * Internal components *
+ ***********************/
+
 const DetailsView: FC<{ stats: AuthorityStats; isPage: boolean; id: string }> = ({ id, isPage, stats }) => {
-  const { keyGenThreshold, nextKeyGenThreshold, numberOfKeys, pendingKeyGenThreshold, reputation, uptime } = stats;
+  const { keyGenThreshold, nextKeyGenThreshold, numberOfKeys, reputation, uptime } = stats;
   const location = 'EG';
   const account = id;
   return (
-    <div className={cx('overflow-hidden rounded-lg bg-mono-0 dark:bg-mono-180', { 'p-4': isPage })}>
+    <div
+      className={cx('overflow-hidden rounded-lg bg-mono-0 dark:bg-mono-180', 'flex flex-col space-y-6', {
+        'px-4 py-6': isPage,
+      })}
+    >
+      <div className={cx('flex items-center justify-between', { hidden: isPage })} hidden={isPage}>
+        <Link to={`/authorities/${id}`} className='inline-block'>
+          <Expand size='lg' />
+        </Link>
+
+        {!isPage && (
+          <DrawerCloseButton>
+            <Close size='lg' />
+          </DrawerCloseButton>
+        )}
+      </div>
+
       {/** Title */}
       <div className='flex'>
-        <div className='flex items-center space-x-3 grow'>
-          <Link to={isPage ? '/authorities' : `/authorities/${id}`}>
-            {isPage ? <ArrowLeft size='lg' /> : <Expand size='lg' />}
+        <div className='flex items-start grow'>
+          <Link to={'/authorities'} className={cx('mr-4 inline-block', { hidden: !isPage })} hidden={!isPage}>
+            <ArrowLeft size='lg' />
           </Link>
+          <div className='flex items-center space-x-2'>
+            <Avatar value={id} size='lg' />
+            <div className='flex flex-col space-y-1'>
+              <Typography variant='h5' fw='bold'>
+                {`${shortenString(id, 4)} ${getUnicodeFlagIcon(location)}`}
+              </Typography>
+              <KeyValueWithButton hasShortenValue={false} keyValue={account} size='sm' isHiddenLabel />
+            </div>
+          </div>
 
-          <Avatar value={id} size='lg' />
-
-          <Typography variant='h5' fw='bold'>
-            {`${shortenString(id, 4)} ${getUnicodeFlagIcon(location)}`}
-          </Typography>
-
-          <KeyValueWithButton keyValue={account} size='sm' isHiddenLabel />
-
-          <div
-            className={cx('flex items-center p-1 space-x-2 text-mono-120 dark:text-mono-80 grow', {
-              'justify-start': !isPage,
-              'justify-end': isPage,
-            })}
-          >
+          <div className={cx('flex items-center p-1 space-x-2 text-mono-120 dark:text-mono-80 grow justify-end')}>
             <Key className='!fill-current' />
             <TwitterFill className='!fill-current' />
             <LinkIcon className='!fill-current' />
@@ -205,12 +221,6 @@ const DetailsView: FC<{ stats: AuthorityStats; isPage: boolean; id: string }> = 
             <QRCode className='!fill-current' />
           </div>
         </div>
-
-        {!isPage && (
-          <DrawerCloseButton>
-            <Close size='lg' />
-          </DrawerCloseButton>
-        )}
       </div>
 
       {/** Content */}
@@ -221,28 +231,18 @@ const DetailsView: FC<{ stats: AuthorityStats; isPage: boolean; id: string }> = 
             <Col className='text-center'>Keygen Threshold</Col>
             <Col className='text-center'>Keygen Authority</Col>
           </Row>
-          <Divider />
-          <Row>
+          <Row hasDivider>
             <Col className='justify-start'>Current</Col>
             <Col className='text-center'>{keyGenThreshold.val}</Col>
             <Col className='text-center'>
               {keyGenThreshold.inTheSet ? <CheckboxBlankCircleLine size='lg' className='!fill-green-60' /> : '-'}
             </Col>
           </Row>
-          <Divider />
-          <Row>
+          <Row hasDivider>
             <Col className='justify-start'>Next</Col>
             <Col className='text-center'>{nextKeyGenThreshold.val}</Col>
             <Col className='text-center'>
               {nextKeyGenThreshold.inTheSet ? <CheckboxBlankCircleLine size='lg' className='!fill-green-60' /> : '-'}
-            </Col>
-          </Row>
-          <Divider />
-          <Row>
-            <Col className='justify-start'>Pending</Col>
-            <Col className='text-center'>{pendingKeyGenThreshold.val}</Col>
-            <Col className='text-center'>
-              {pendingKeyGenThreshold.inTheSet ? <CheckboxBlankCircleLine size='lg' className='!fill-green-60' /> : '-'}
             </Col>
           </Row>
         </div>
@@ -266,11 +266,12 @@ const DetailsView: FC<{ stats: AuthorityStats; isPage: boolean; id: string }> = 
   );
 };
 
-/***********************
- * Internal components *
- ***********************/
-
-const Row: FC = ({ children }) => <div className='flex justify-end px-3 space-x-2'>{children}</div>;
+const Row: FC<{ hasDivider?: boolean }> = ({ children, hasDivider }) => (
+  <div className='flex flex-col grow shrink basis-0'>
+    {hasDivider && <Divider />}
+    <div className='flex justify-end px-3 space-x-2 grow'>{children}</div>
+  </div>
+);
 
 const Col: FC<{ className?: string }> = ({ children, className }) => (
   <Typography

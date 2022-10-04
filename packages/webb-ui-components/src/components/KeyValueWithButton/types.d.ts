@@ -23,4 +23,9 @@ export interface KeyValueWithButtonProps
    * @default "md"
    */
   size?: 'sm' | 'md';
+  /**
+   * Whether format the value in the short form.
+   * @default true
+   */
+  hasShortenValue?: boolean;
 }
