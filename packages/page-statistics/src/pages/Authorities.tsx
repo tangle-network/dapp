@@ -130,7 +130,7 @@ const Authorities = () => {
               </div>
 
               <Link to='history'>
-                <Button varirant='link' size='sm'>
+                <Button variant='link' size='sm'>
                   View history
                 </Button>
               </Link>

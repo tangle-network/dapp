@@ -25,7 +25,7 @@ export const KeyCard = forwardRef<HTMLDivElement, KeyCardProps>(({ className, ke
           {title}
         </Typography>
 
-        <Button varirant='utility' size='sm'>
+        <Button variant='utility' size='sm'>
           <CopyWithTooltip textToCopy={keyValue} isUseSpan />
         </Button>
       </div>

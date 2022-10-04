@@ -224,7 +224,7 @@ export const ProposalDetail = () => {
             Proposal Details
           </Typography>
 
-          <Button varirant='utility' size='sm'>
+          <Button variant='utility' size='sm'>
             Open Governance
           </Button>
         </div>
@@ -236,7 +236,7 @@ export const ProposalDetail = () => {
             onClick={handlePrevProposal}
             isDisabled={previousProposalId === null || previousProposalId === undefined}
             leftIcon={<ArrowLeft className='!fill-current' />}
-            varirant='utility'
+            variant='utility'
           >
             Prev
           </Button>
@@ -245,7 +245,7 @@ export const ProposalDetail = () => {
             isDisabled={nextProposalId === null || nextProposalId === undefined}
             onClick={handleNextProposal}
             rightIcon={<ArrowRight className='!fill-current' />}
-            varirant='utility'
+            variant='utility'
           >
             Next
           </Button>

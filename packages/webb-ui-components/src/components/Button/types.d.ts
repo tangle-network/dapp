@@ -89,7 +89,7 @@ export interface ButtonProps extends ButtonBase, WebbComponentBase {
    * The button variant
    * @default "primary"
    */
-  varirant?: ButtonVariant;
+  variant?: ButtonVariant;
 
   /**
    * If added, the button will show an icon before the button's label

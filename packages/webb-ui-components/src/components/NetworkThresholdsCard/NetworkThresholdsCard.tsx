@@ -75,7 +75,7 @@ export const NetworkThresholdsCard = forwardRef<HTMLDivElement, NetworkThreshold
             <span className='inline-block font-semibold body2'>/</span>
             <KeyValueWithButton size='sm' keyValue={keyValue} />
           </div>
-          <Button className='block' varirant='link' href={viewHistoryUrl} target='_blank' size='sm'>
+          <Button className='block' variant='link' href={viewHistoryUrl} target='_blank' size='sm'>
             View history
           </Button>
         </div>

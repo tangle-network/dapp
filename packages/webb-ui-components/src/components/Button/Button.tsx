@@ -42,13 +42,13 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>((props, r
     size = 'md',
     spinner,
     spinnerPlacement = 'start',
-    varirant = 'primary',
+    variant = 'primary',
     ...restProps
   } = props;
 
   const [buttonProps, { tagName: Component }] = useButtonProps({ tagName: asProps, isDisabled, ...restProps });
 
-  const mergedClassName = twMerge(getButtonClassNameByVariant(varirant, size), className);
+  const mergedClassName = twMerge(getButtonClassNameByVariant(variant, size), className);
 
   const contentProps = { children, leftIcon, rightIcon };
 

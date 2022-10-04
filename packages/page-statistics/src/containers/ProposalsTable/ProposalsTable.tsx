@@ -86,7 +86,7 @@ const columns: ColumnDef<ProposalListItem, any>[] = [
   columnHelper.accessor('id', {
     header: '',
     cell: (props) => (
-      <Button varirant='link' size='sm'>
+      <Button variant='link' size='sm'>
         <Link to={`drawer/${props.getValue<string>()}`}>Details</Link>
       </Button>
     ),

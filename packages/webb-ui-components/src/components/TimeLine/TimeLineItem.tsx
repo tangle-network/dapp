@@ -29,7 +29,7 @@ import { TimeLineItemProps } from './types';
  *      extraContent={
  *        <div className='flex items-center space-x-2'>
  *          <KeyValueWithButton keyValue={randEthereumAddress()} size='sm' />
- *          <Button varirant='link' size='sm' className='uppercase'>
+ *          <Button variant='link' size='sm' className='uppercase'>
  *            Detail
  *          </Button>
  *        </div>
@@ -55,7 +55,7 @@ import { TimeLineItemProps } from './types';
  *              </AvatarGroup>
  *            }
  *          />
- *          <Button size='sm' varirant='link' className='uppercase'>
+ *          <Button size='sm' variant='link' className='uppercase'>
  *            Details
  *          </Button>
  *        </div>

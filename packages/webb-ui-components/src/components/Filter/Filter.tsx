@@ -23,7 +23,7 @@ export const Filter = forwardRef<HTMLDivElement, FilterProps>(
             <Typography variant='h5' fw='bold'>
               Filters
             </Typography>
-            <Button varirant='link' size='sm' className='uppercase' onClick={clearAllFilters}>
+            <Button variant='link' size='sm' className='uppercase' onClick={clearAllFilters}>
               Clear all
             </Button>
           </div>

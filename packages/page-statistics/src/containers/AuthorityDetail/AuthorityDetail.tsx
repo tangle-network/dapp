@@ -91,7 +91,7 @@ const columns: ColumnDef<KeyGenKeyListItem, any>[] = [
       const id = props.row.original.publicKey;
       return (
         <Link to={`/keys/drawer/${id}`}>
-          <Button varirant='link' as='span' size='sm'>
+          <Button variant='link' as='span' size='sm'>
             Details
           </Button>
         </Link>

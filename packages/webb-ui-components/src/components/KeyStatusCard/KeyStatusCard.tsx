@@ -59,7 +59,7 @@ export const KeyStatusCard: React.FC<KeyStatusCardProps> = ({
           ))}
         </AvatarGroup>
         <Link to={fullDetailUrl}>
-          <Button varirant='link' as='span' size='sm'>
+          <Button variant='link' as='span' size='sm'>
             See full details
           </Button>
         </Link>
