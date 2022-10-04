@@ -40,23 +40,11 @@ const columns: ColumnDef<VoteListItem, any>[] = [
       const vote = props.getValue<VoteStatus | undefined>();
       switch (vote) {
         case VoteStatus.Abstain:
-          return (
-            <Chip color='red' className='uppercase'>
-              Abstain
-            </Chip>
-          );
+          return <Chip color='blue'>Abstain</Chip>;
         case VoteStatus.Against:
-          return (
-            <Chip color='blue' className='uppercase'>
-              Against
-            </Chip>
-          );
+          return <Chip color='red'>Against</Chip>;
         case VoteStatus.For:
-          return (
-            <Chip color='green' className='uppercase'>
-              for
-            </Chip>
-          );
+          return <Chip color='green'>For</Chip>;
         default:
           return '-';
       }

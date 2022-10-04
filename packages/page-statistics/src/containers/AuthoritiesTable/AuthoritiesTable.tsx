@@ -60,7 +60,7 @@ const columns: ColumnDef<AuthorityListItem, any>[] = [
     header: '',
     id: 'details',
     cell: (props) => (
-      <Button varirant='link' size='sm' className='uppercase'>
+      <Button varirant='link' size='sm'>
         <Link to={`/authorities/drawer/${props.getValue<string>()}`}>Details</Link>
       </Button>
     ),

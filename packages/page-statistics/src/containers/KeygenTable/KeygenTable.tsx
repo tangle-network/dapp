@@ -109,7 +109,7 @@ const columns: ColumnDef<KeygenType, any>[] = [
     header: '',
     cell: (props) => (
       <Link to={`drawer/${props.getValue()}`}>
-        <Button className='uppercase' varirant='link' as='span' size='sm'>
+        <Button varirant='link' as='span' size='sm'>
           Details
         </Button>
       </Link>

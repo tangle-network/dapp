@@ -121,9 +121,7 @@ const Authorities = () => {
 
             <div className='flex items-center justify-between'>
               <div className='flex items-center space-x-2'>
-                <Chip color='green' className='uppercase'>
-                  {publicKey.isCurrent ? 'Current' : 'Next'}
-                </Chip>
+                <Chip color='green'>{publicKey.isCurrent ? 'Current' : 'Next'}</Chip>
                 <LabelWithValue label='session:' value={publicKey.session} />
                 <Typography variant='body2' fw='semibold'>
                   /
@@ -132,7 +130,7 @@ const Authorities = () => {
               </div>
 
               <Link to='history'>
-                <Button varirant='link' size='sm' className='uppercase'>
+                <Button varirant='link' size='sm'>
                   View history
                 </Button>
               </Link>

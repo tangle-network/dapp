@@ -217,13 +217,13 @@ export const ProposalDetail = () => {
             {isPage ? <ArrowLeft size='lg' /> : <Expand size='lg' />}
           </Link>
 
-          <Chip className='uppercase'>{status || 'Loading...'}</Chip>
+          <Chip>{status || 'Loading...'}</Chip>
 
           <Typography variant='h4' fw='bold'>
             Proposal Details
           </Typography>
 
-          <Button varirant='utility' size='sm' className='uppercase'>
+          <Button varirant='utility' size='sm'>
             Open Governance
           </Button>
         </div>
@@ -236,7 +236,6 @@ export const ProposalDetail = () => {
             isDisabled={previousProposalId === null || previousProposalId === undefined}
             leftIcon={<ArrowLeft className='!fill-current' />}
             varirant='utility'
-            className='uppercase'
           >
             Prev
           </Button>
@@ -246,7 +245,6 @@ export const ProposalDetail = () => {
             onClick={handleNextProposal}
             rightIcon={<ArrowRight className='!fill-current' />}
             varirant='utility'
-            className='uppercase'
           >
             Next
           </Button>

@@ -100,7 +100,6 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage },
                   size='sm'
                   leftIcon={<ArrowLeft className='!fill-current' />}
                   varirant='utility'
-                  className='uppercase'
                   isDisabled={!prevAndNextKey || !prevAndNextKey.previousKeyId}
                   onClick={onPreviousKey}
                 >
@@ -110,7 +109,6 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage },
                   size='sm'
                   rightIcon={<ArrowRight className='!fill-current' />}
                   varirant='utility'
-                  className='uppercase'
                   isDisabled={!prevAndNextKey || !prevAndNextKey.nextKeyId}
                   onClick={onNextKey}
                 >
@@ -130,9 +128,7 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage },
 
         {/** Session number */}
         <div className='flex items-center space-x-2'>
-          <Chip color='green' className='uppercase'>
-            {keyDetail.isDone ? 'History' : keyDetail.isCurrent ? 'Current' : 'Next'}
-          </Chip>
+          <Chip color='green'>{keyDetail.isDone ? 'History' : keyDetail.isCurrent ? 'Current' : 'Next'}</Chip>
           <LabelWithValue label='Session: ' value={keyDetail.session} />
         </div>
 
@@ -186,7 +182,7 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage },
                     extraContent={
                       <div className='flex items-center space-x-2'>
                         <KeyValueWithButton keyValue={keyDetail.uncompressed} size='sm' />
-                        <Button varirant='link' size='sm' className='uppercase'>
+                        <Button varirant='link' size='sm'>
                           Detail
                         </Button>
                       </div>
@@ -220,7 +216,7 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage },
                             }
                           />
                         )}
-                        <Button size='sm' varirant='link' className='uppercase'>
+                        <Button size='sm' varirant='link'>
                           Details
                         </Button>
                       </div>
@@ -320,7 +316,7 @@ const columns: ColumnDef<KeyGenAuthority, any>[] = [
     header: '',
     id: 'detail',
     cell: (props) => (
-      <Button varirant='link' size='sm' className='uppercase'>
+      <Button varirant='link' size='sm'>
         <Link to={`/authorities/drawer/${props.getValue<string>()}`}>Details</Link>
       </Button>
     ),
