@@ -1,4 +1,3 @@
-import { unsupportedProp } from '@mui/material';
 import {
   ColumnDef,
   ColumnFiltersState,

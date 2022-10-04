@@ -163,7 +163,7 @@ export const ProposalDetail = () => {
             <div className='flex justify-center mt-1'>
               <div className='flex flex-col items-center justify-center'>
                 <div className='border-[1px] h-2 border-[#ccc] bg-[#ccc]' />
-                <Typography variant='body4' fw='bold' className='block uppercase'>
+                <Typography variant='utility' className='block uppercase'>
                   Pass threshold
                 </Typography>
               </div>
@@ -285,7 +285,7 @@ const PercentageCard: FC<{ type: VoteType; percentValue: number; count: number }
       <Typography variant='h5' fw='bold' className='!text-inherit'>
         {percentValue}%
       </Typography>
-      <Typography variant='body4' fw='bold' className='!text-inherit uppercase'>
+      <Typography variant='utility' className='!text-inherit uppercase'>
         {type} {count}
       </Typography>
     </div>

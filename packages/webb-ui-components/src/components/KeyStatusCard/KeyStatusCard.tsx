@@ -40,7 +40,7 @@ export const KeyStatusCard: React.FC<KeyStatusCardProps> = ({
       {/** Top */}
       <div className='flex justify-between w-full'>
         <div className='flex items-center space-x-2'>
-          <TitleWithInfo title={title} info={titleInfo} />
+          <TitleWithInfo title={title} info={titleInfo} variant='h5' />
           <LabelWithValue label='session: ' value={sessionNumber} />
           <Chip color='green' className='inline-block'>
             {keyType}

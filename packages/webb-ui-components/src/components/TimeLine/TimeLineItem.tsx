@@ -79,7 +79,7 @@ export const TimeLineItem = forwardRef<HTMLDivElement, TimeLineItemProps>(
           <Typography component='span' variant='body1' fw='bold' className='inline-block text-blue dark:text-blue-30'>
             {title}
           </Typography>
-          <Typography variant='body4' fw='bold' className='inline-block uppercase'>
+          <Typography variant='utility' className='inline-block uppercase'>
             {formatDistanceToNow(time, { addSuffix: true })}
           </Typography>
         </div>

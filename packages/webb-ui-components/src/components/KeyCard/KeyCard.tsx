@@ -21,7 +21,7 @@ export const KeyCard = forwardRef<HTMLDivElement, KeyCardProps>(({ className, ke
     <div {...props} className={mergedClsx} ref={ref}>
       {/** Top */}
       <div className='flex items-center justify-between'>
-        <Typography variant='body4' fw='bold' className='uppercase'>
+        <Typography variant='utility' className='uppercase'>
           {title}
         </Typography>
 

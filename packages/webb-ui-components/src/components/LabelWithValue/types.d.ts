@@ -12,7 +12,7 @@ export interface LabelWithValueProps extends WebbComponentBase {
   label: string;
   /**
    * The label variant
-   * @default "body4"
+   * @default "utility"
    */
   labelVariant?: WebbTypographyVariant;
   /**

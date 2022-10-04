@@ -21,5 +21,5 @@ export const formatDateToUtc = (dateArg: string | Date | null): string => {
   } else {
     dateISO = parseISO(dateArg.toISOString());
   }
-  return format(utcToZonedTime(dateISO, 'UTC'), "MMM dd yyyy (HH:mm:ss a 'UTC')", { timeZone: 'UTC' });
+  return format(utcToZonedTime(dateISO, 'UTC'), "MMM dd (HH:mm:ss a 'UTC')", { timeZone: 'UTC' });
 };
