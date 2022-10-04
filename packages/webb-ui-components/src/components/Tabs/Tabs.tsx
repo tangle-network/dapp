@@ -1,5 +1,5 @@
 import cx from 'classnames';
-import { forwardRef, useCallback, useMemo, useState } from 'react';
+import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { TabProps, TabsProps } from './types';
@@ -31,13 +31,20 @@ export const Tabs = forwardRef<HTMLDivElement, TabsProps>(({ className, onChange
 
   const mergedClsx = useMemo(() => twMerge('flex items-center space-x-2', className), [className]);
 
+  // Update the default selected tab when `value` prop change
+  useEffect(() => {
+    setSelectedTab(value[0]);
+  }, [value]);
+
   return (
     <div {...props} className={mergedClsx} ref={ref}>
-      {tabs.map((tab, idx) => (
-        <Tab key={`${tab}-${idx}`} isActive={selectedTab === tab} onClick={() => onTabChange(tab)}>
-          {tab}
-        </Tab>
-      ))}
+      {tabs.map((tab, idx) => {
+        return (
+          <Tab key={`${tab}-${idx}`} isActive={selectedTab === tab} onClick={() => onTabChange(tab)}>
+            {tab}
+          </Tab>
+        );
+      })}
     </div>
   );
 });

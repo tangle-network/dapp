@@ -101,7 +101,7 @@ export const ProposersTable: FC<ProposersTableProps> = ({ counters, proposalId }
   const data = useMemo(() => votes.val?.items ?? [], [votes]);
 
   const onChange = useCallback(
-    (tab) => {
+    (tab: string) => {
       const selectedTab = tabsValue.find((item) => item[1] === tab);
       setVoteStatus(selectedTab?.[0] ?? undefined);
     },
