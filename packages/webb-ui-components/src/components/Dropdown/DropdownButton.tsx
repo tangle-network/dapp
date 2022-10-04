@@ -39,7 +39,7 @@ export const DropdownButton = forwardRef<HTMLButtonElement, DropdownButtonProps>
             {icon && <span className='text-inherit'>{icon}</span>}
             <span className={cx('text-inherit', size === 'md' ? 'body1' : 'font-bold body4')}>{label}</span>
           </div>
-          <ChevronDown className='mx-2 transition-transform duration-300 ease-in-out group-radix-state-closed:rotate-180' />
+          <ChevronDown className='mx-2 transition-transform duration-300 ease-in-out group-radix-state-open:rotate-180' />
         </button>
       </DropdownMenuPrimitive.Trigger>
     );

@@ -12,7 +12,27 @@ import {
  * @returns tailwindcss className to style the `text-align` attribute
  */
 export function getTextAlignClassName(textAlign: TypographyAlignValues) {
-  return `text-${textAlign}` as const;
+  switch (textAlign) {
+    case 'center': {
+      return 'text-center';
+    }
+
+    case 'justify': {
+      return 'text-justify';
+    }
+
+    case 'left': {
+      return 'text-left';
+    }
+
+    case 'right': {
+      return 'text-right';
+    }
+
+    default: {
+      throw new Error('Unknown text align value');
+    }
+  }
 }
 
 /**
