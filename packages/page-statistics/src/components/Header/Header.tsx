@@ -10,8 +10,8 @@ import {
   Input,
   Logo,
   MenuItem,
+  ThemeSwitcherMenuItem,
 } from '@webb-dapp/webb-ui-components';
-import { MoonLine } from '@webb-dapp/webb-ui-components/icons';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
 import cx from 'classnames';
 import { FC, useCallback, useState } from 'react';
@@ -103,7 +103,7 @@ export const Header: FC<HeaderProps> = ({ connectedEndpoint, setConnectedEndpoin
                   </Typography>
                 </SettingItem>
 
-                <MenuItem icon={<MoonLine size='lg' />}>Dark Theme</MenuItem>
+                <ThemeSwitcherMenuItem />
 
                 <MenuItem
                   icon={
@@ -111,6 +111,9 @@ export const Header: FC<HeaderProps> = ({ connectedEndpoint, setConnectedEndpoin
                       <path d='M13 21v2h-2v-2H3a1 1 0 01-1-1V4a1 1 0 011-1h6a3.99 3.99 0 013 1.354A3.99 3.99 0 0115 3h6a1 1 0 011 1v16a1 1 0 01-1 1h-8zm7-2V5h-5a2 2 0 00-2 2v12h7zm-9 0V7a2 2 0 00-2-2H4v14h7z' />
                     </svg>
                   }
+                  onClick={() => {
+                    window.open('https://docs.webb.tools', '_blank');
+                  }}
                 >
                   Docs
                 </MenuItem>
