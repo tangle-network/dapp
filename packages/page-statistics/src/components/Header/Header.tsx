@@ -1,5 +1,17 @@
 import * as constants from '@webb-dapp/page-statistics/constants';
-import { Button, Logo, ThemeSwitcher } from '@webb-dapp/webb-ui-components';
+import {
+  Button,
+  Collapsible,
+  CollapsibleButton,
+  CollapsibleContent,
+  Dropdown,
+  DropdownBasicButton,
+  DropdownBody,
+  Input,
+  Logo,
+  MenuItem,
+} from '@webb-dapp/webb-ui-components';
+import { MoonLine } from '@webb-dapp/webb-ui-components/icons';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
 import cx from 'classnames';
 import { FC } from 'react';
@@ -35,12 +47,65 @@ export const Header: FC = () => {
               {name}
             </Typography>
           </Button>
-          <ThemeSwitcher />
+
+          <div>
+            <Dropdown className='flex items-center justify-center'>
+              <DropdownBasicButton>
+                <svg
+                  width={24}
+                  height={24}
+                  className='fill-mono-180 dark:fill-mono-0'
+                  xmlns='http://www.w3.org/2000/svg'
+                >
+                  <path d='M12 3c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 14c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0-7c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z' />
+                </svg>
+              </DropdownBasicButton>
+
+              <DropdownBody className='pt-2 pb-4 mt-6'>
+                <SettingItem>
+                  <Typography variant='h5' fw='bold'>
+                    Settings
+                  </Typography>
+                </SettingItem>
+
+                <MenuItem icon={<MoonLine size='lg' />}>Dark Theme</MenuItem>
+
+                <MenuItem
+                  icon={
+                    <svg width={24} height={24} className='fill-current' xmlns='http://www.w3.org/2000/svg'>
+                      <path d='M13 21v2h-2v-2H3a1 1 0 01-1-1V4a1 1 0 011-1h6a3.99 3.99 0 013 1.354A3.99 3.99 0 0115 3h6a1 1 0 011 1v16a1 1 0 01-1 1h-8zm7-2V5h-5a2 2 0 00-2 2v12h7zm-9 0V7a2 2 0 00-2-2H4v14h7z' />
+                    </svg>
+                  }
+                >
+                  Docs
+                </MenuItem>
+
+                <Collapsible>
+                  <CollapsibleButton>Keygen Threshold</CollapsibleButton>
+                  <CollapsibleContent className='p-0'>
+                    <div className='flex items-center justify-between px-4 py-2'>
+                      <Typography variant='body1'>Custom Data Source</Typography>
+
+                      <Button size='sm' variant='link'>
+                        Reset
+                      </Button>
+                    </div>
+
+                    <Input id='endpoint' className='px-4 py-2' />
+                  </CollapsibleContent>
+                </Collapsible>
+              </DropdownBody>
+            </Dropdown>
+          </div>
         </div>
       </div>
     </header>
   );
 };
+
+const SettingItem: FC = ({ children }) => (
+  <div className='px-4 py-2 w-[298px] flex items-center justify-between text-mono-180 dark:text-mono-0'>{children}</div>
+);
 
 /***********************
  * Internal components *
