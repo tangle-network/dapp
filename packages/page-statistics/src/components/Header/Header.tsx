@@ -14,14 +14,46 @@ import {
 import { MoonLine } from '@webb-dapp/webb-ui-components/icons';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
 import cx from 'classnames';
-import { FC } from 'react';
+import { FC, useCallback, useState } from 'react';
 import { NavLink } from 'react-router-dom';
+
+type HeaderProps = {
+  connectedEndpoint: string;
+  setConnectedEndpoint: (endpoint: string) => Promise<void>;
+};
 
 /**
  * The statistic `Header` for `Layout` container
  */
-export const Header: FC = () => {
+export const Header: FC<HeaderProps> = ({ connectedEndpoint, setConnectedEndpoint }) => {
   const { name, ...webbAppConfig } = constants.webbAppConfig;
+
+  // This state variable tracks the user input of the 'Custom Data Source'
+  const [endpointUserInput, setEndpointUserInput] = useState(connectedEndpoint);
+
+  // A function to verify the user input before setting the connection.
+  const verifyEndpoint = async (maybeEndpoint: string) => {
+    // verify graphql service at endpoint:
+    const req = await fetch(`${maybeEndpoint}?query=%7B__typename%7D`);
+    if (req.ok) {
+      return true;
+    } else {
+      throw false;
+    }
+  };
+
+  const setEndpoint = useCallback(
+    async (endpoint: string) => {
+      const verified = await verifyEndpoint(endpoint);
+      if (verified) {
+        localStorage.setItem('statsEndpoint', endpoint);
+        await setConnectedEndpoint(endpoint);
+      } else {
+        setEndpointUserInput(connectedEndpoint);
+      }
+    },
+    [connectedEndpoint, setConnectedEndpoint]
+  );
 
   return (
     <header className='bg-mono-0 dark:bg-mono-180'>
@@ -61,7 +93,10 @@ export const Header: FC = () => {
                 </svg>
               </DropdownBasicButton>
 
-              <DropdownBody className='pt-2 pb-4 mt-6'>
+              <DropdownBody
+                className='pt-2 pb-4 mt-6'
+                onInteractOutside={async () => await setEndpoint(endpointUserInput)}
+              >
                 <SettingItem>
                   <Typography variant='h5' fw='bold'>
                     Settings
@@ -86,12 +121,23 @@ export const Header: FC = () => {
                     <div className='flex items-center justify-between px-4 py-2'>
                       <Typography variant='body1'>Custom Data Source</Typography>
 
-                      <Button size='sm' variant='link'>
+                      <Button
+                        size='sm'
+                        variant='link'
+                        onClick={() => {
+                          setEndpointUserInput(connectedEndpoint);
+                        }}
+                      >
                         Reset
                       </Button>
                     </div>
 
-                    <Input id='endpoint' className='px-4 py-2' />
+                    <Input
+                      id='endpoint'
+                      className='px-4 py-2'
+                      onChange={(val) => setEndpointUserInput(val.toString())}
+                      value={endpointUserInput}
+                    />
                   </CollapsibleContent>
                 </Collapsible>
               </DropdownBody>

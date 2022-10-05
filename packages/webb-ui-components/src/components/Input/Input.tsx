@@ -55,10 +55,9 @@ export const Input: React.FC<InputProps> = (props) => {
     onChange,
     rightIcon: rightIconProp,
     type = 'text',
-    value: initialValue,
+    value: initialValue = '',
     ...restProps
   } = props;
-
   const [value, setValue] = useState(initialValue);
 
   useEffect(() => {
