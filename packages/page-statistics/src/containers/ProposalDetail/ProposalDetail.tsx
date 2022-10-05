@@ -18,6 +18,7 @@ import {
   ExchangeLine,
   Expand,
   ExternalLinkLine,
+  Spinner,
   TokenIcon,
 } from '@webb-dapp/webb-ui-components/icons';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
@@ -206,7 +207,12 @@ export const ProposalDetail = () => {
         </>
       );
     }
-    return <div>Loading...</div>;
+
+    return (
+      <div className='flex items-center justify-center min-w-full min-h-[384px]'>
+        <Spinner size='xl' />
+      </div>
+    );
   }, [proposalDetails, passThreshold]);
 
   return (
@@ -218,7 +224,7 @@ export const ProposalDetail = () => {
             {isPage ? <ArrowLeft size='lg' /> : <Expand size='lg' />}
           </Link>
 
-          <Chip>{status || 'Loading...'}</Chip>
+          {status && <Chip>{status}</Chip>}
 
           <Typography variant='h4' fw='bold'>
             Proposal Details

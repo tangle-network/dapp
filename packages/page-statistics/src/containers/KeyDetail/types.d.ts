@@ -25,3 +25,7 @@ export interface KeyDetailProps extends PropsOf<'div'>, WebbComponentBase {
 export type AuthorityRowType = KeyGenAuthority & { detaillUrl: string };
 
 export type KeyDetailLocationState = Pick<KeyDetailProps, 'previousKeyId' | 'nextKeyId'> | null;
+
+export type KeyGenAuthoredTableProps = {
+  data: KeyGenAuthority[];
+};
