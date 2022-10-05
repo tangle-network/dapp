@@ -218,6 +218,8 @@ export const KeygenTable: FC = () => {
         info: 'List of Keygens',
         variant: 'h5',
       }}
+      /* Temporarily disable filter functionality and will support it in the near future
+
       leftTitle={
         <Filter
           clearAllFilters={() => {
@@ -257,6 +259,8 @@ export const KeygenTable: FC = () => {
           </Collapsible>
         </Filter>
       }
+
+      */
     >
       <Table tableProps={table as RTTable<unknown>} totalRecords={totalItems} isPaginated />
     </CardTable>
