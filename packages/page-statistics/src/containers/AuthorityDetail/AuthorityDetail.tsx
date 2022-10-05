@@ -185,7 +185,6 @@ const DetailsView: FC<{ stats: AuthorityStats | null; isLoading?: boolean; isPag
   isPage,
   stats,
 }) => {
-  // const { keyGenThreshold, nextKeyGenThreshold, numberOfKeys, reputation, uptime } = stats;
   const location = 'EG';
   const account = id;
 
