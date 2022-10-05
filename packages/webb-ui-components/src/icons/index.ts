@@ -32,6 +32,7 @@ export * from './Link';
 export * from './Mail';
 export * from './Memu';
 export * from './MoonLine';
+export * from './OpenBook';
 export * from './QRCode';
 export * from './Search';
 export * from './ShuffleLine';

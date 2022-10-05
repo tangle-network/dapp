@@ -1,46 +1,25 @@
 import * as constants from '@webb-dapp/page-statistics/constants';
-import { DropdownMenu, Logo, ThemeSwitcher } from '@webb-dapp/webb-ui-components';
+import { Button, DropdownMenu, Logo, ThemeSwitcherButton } from '@webb-dapp/webb-ui-components';
+import { Typography } from '@webb-dapp/webb-ui-components/typography';
 import cx from 'classnames';
 import { ComponentProps, FC, useCallback, useMemo, useState } from 'react';
 import { NavLink } from 'react-router-dom';
+
+import MenuIcon from './MenuIcon';
+import { SettingsDropdown } from './SettingsDropdown';
+import { SettingsPopover } from './SettingsPopover';
 
 /**
  * The statistic `Header` for `Layout` container
  */
 
-// type AppBarProps = {
-//   toggleSidebarDisplay: () => void;
-// };
-
-// const AppBar: React.FC<AppBarProps> = ({ toggleSidebarDisplay })
-
 type HeaderProps = {
   connectedEndpoint: string;
-  availableEndpoints: string[];
   setConnectedEndpoint: (endpoint: string) => void;
 };
 
-export const Header: FC<HeaderProps> = ({ availableEndpoints, connectedEndpoint, setConnectedEndpoint }) => {
+export const Header: FC<HeaderProps> = ({ connectedEndpoint, setConnectedEndpoint }) => {
   const { name, ...webbAppConfig } = constants.webbAppConfig;
-  const index = availableEndpoints.indexOf(localStorage.getItem('stats-endpoint') ?? connectedEndpoint);
-  const [selectedIdx, setSelectedIdx] = useState(index);
-
-  const endpointMenuOptions = useMemo<ComponentProps<typeof DropdownMenu>['menuOptions']>(
-    () =>
-      availableEndpoints.reduce((acc, cur) => {
-        return [...acc, { value: cur }];
-      }, [] as ComponentProps<typeof DropdownMenu>['menuOptions']),
-    [availableEndpoints]
-  );
-
-  const changeEndpoint = useCallback(
-    (nextVal: string) => {
-      localStorage.setItem('stats-endpoint', nextVal);
-      setSelectedIdx(availableEndpoints.indexOf(nextVal));
-      setConnectedEndpoint(nextVal);
-    },
-    [availableEndpoints, setConnectedEndpoint]
-  );
 
   return (
     <header className='bg-mono-0 dark:bg-mono-180'>
@@ -61,13 +40,16 @@ export const Header: FC<HeaderProps> = ({ availableEndpoints, connectedEndpoint,
         </nav>
 
         <div className='flex items-center space-x-4'>
-          <DropdownMenu
-            menuOptions={endpointMenuOptions}
-            size='sm'
-            value={endpointMenuOptions[selectedIdx].value}
-            onChange={changeEndpoint}
+          <Button size='sm' className='block' {...webbAppConfig}>
+            <Typography variant='body1' fw='bold' className='!text-inherit' component='span'>
+              {name}
+            </Typography>
+          </Button>
+          <SettingsDropdown
+            connectedEndpoint={connectedEndpoint}
+            setConnectedEndpoint={setConnectedEndpoint}
+            buttonIcon={<MenuIcon />}
           />
-          <ThemeSwitcher />
         </div>
       </div>
     </header>

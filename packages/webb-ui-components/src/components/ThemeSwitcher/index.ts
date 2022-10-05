@@ -1,2 +1,3 @@
-export * from './ThemeSwitcher';
-export { default as ThemeSwitcher } from './ThemeSwitcher';
+export * from './ThemeSwitcherButton';
+export { default as ThemeSwitcherButton } from './ThemeSwitcherButton';
+export { default as ThemeSwitcherItem } from './ThemeSwitcherItem';
