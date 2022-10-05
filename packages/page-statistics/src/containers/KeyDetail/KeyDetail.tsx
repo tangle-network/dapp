@@ -33,7 +33,7 @@ import getUnicodeFlagIcon from 'country-flag-icons/unicode';
 import { forwardRef, useCallback, useMemo } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
-import { KeyDetailProps } from './types';
+import { KeyDetailProps, KeyGenAuthoredTableProps } from './types';
 
 export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage }, ref) => {
   const { keyId = '' } = useParams<{ keyId: string }>();
@@ -59,8 +59,12 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage },
     }
   }, [isPage, navigate, prevAndNextKey]);
 
-  if (isLoading) {
-    return <Spinner size='xl' />;
+  if (isLoading || keyDetail === null) {
+    return (
+      <div className='flex items-center justify-center min-w-full min-h-full'>
+        <Spinner size='xl' />
+      </div>
+    );
   }
 
   if (isFailed) {
@@ -277,9 +281,7 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage },
     </div>
   );
 });
-type KeyGenAuthoredTableProps = {
-  data: KeyGenAuthority[];
-};
+
 const columnHelper = createColumnHelper<KeyGenAuthority>();
 
 const columns: ColumnDef<KeyGenAuthority, any>[] = [
