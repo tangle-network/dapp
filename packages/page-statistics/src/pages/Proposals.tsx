@@ -73,7 +73,9 @@ const Proposals = () => {
     blockTime,
     metaData: { activeSession, lastProcessBlock },
   } = useStatsContext();
+
   const [timeRange, setTimeRange] = useState<TimeRange>('Day');
+
   const range = useMemo(() => {
     let rangeTimeSec = undefined;
     switch (timeRange) {
@@ -99,7 +101,9 @@ const Proposals = () => {
       start,
     };
   }, [timeRange, lastProcessBlock, blockTime]);
+
   const overview = useProposalsOverview(activeSession, range);
+
   const data = useMemo(() => {
     if (overview.val) {
       return overview.val.openProposals;
@@ -130,9 +134,10 @@ const Proposals = () => {
       [ProposalStatus.Removed]: 0,
     };
   }, [overview]);
+
   const statsItems = useMemo<React.ComponentProps<typeof Stats>['items']>(() => {
-    const proposalsThreshold = overview.val ? overview.val.thresholds.proposal : 'loading...';
-    const proposers = overview.val ? overview.val.thresholds.proposers : 'loading...';
+    const proposalsThreshold = overview.val ? overview.val.thresholds.proposal : 'NaN';
+    const proposers = overview.val ? overview.val.thresholds.proposers : 'NaN';
     return [
       {
         titleProps: {
@@ -159,7 +164,9 @@ const Proposals = () => {
       fuzzy: fuzzyFilter,
     },
   });
+
   const noOpenProposals = useMemo(() => data.length === 0, [data]);
+
   return (
     <div className='flex flex-col space-y-4'>
       {/** Proposals Status */}
@@ -179,11 +186,13 @@ const Proposals = () => {
         />
 
         {/** Open Proposals */}
-        <CardTable titleProps={{ title: 'Open Proposals' }} className='grow'>
+        <CardTable titleProps={{ title: 'Open Proposals' }} className='flex flex-col grow'>
           {noOpenProposals ? (
-            <Typography ta={'center'} variant={'h4'}>
-              No open proposals
-            </Typography>
+            <div className='flex items-center justify-center min-w-full grow'>
+              <Typography ta={'center'} variant={'h4'}>
+                No open proposals
+              </Typography>
+            </div>
           ) : (
             <Table tableProps={table as RTTable<unknown>} />
           )}

@@ -67,12 +67,14 @@ const columns: ColumnDef<UpcomingThreshold, any>[] = [
 
 const Authorities = () => {
   const thresholds = useThresholds();
+
   const [threshold, upComingThresholds] = useMemo(() => {
     if (thresholds.val) {
       return thresholds.val;
     }
     return [null, null];
   }, [thresholds]);
+
   const statsItems = useMemo<ComponentProps<typeof Stats>['items']>(() => {
     const threshold = thresholds.val?.[0];
     return [
@@ -103,18 +105,22 @@ const Authorities = () => {
       fuzzy: fuzzyFilter,
     },
   });
-  const { keyGen, publicKey, signature } = threshold! ?? {};
-  const isLoading = !thresholds || thresholds?.isLoading || !keyGen || !signature || !publicKey;
+
+  const { keyGen, publicKey, signature } = threshold ?? {};
+  const isLoading = thresholds.isLoading || keyGen === undefined || signature === undefined || publicKey === undefined;
   const { time } = useStatsContext();
+
   return (
     <div className='flex flex-col space-y-4'>
       <Card>
+        <TitleWithInfo title='Network Thresholds' info='Network Thresholds' variant='h5' />
+
         {isLoading ? (
-          <Spinner />
+          <div className='flex items-center justify-center min-w-full min-h-[235px]'>
+            <Spinner size='xl' />
+          </div>
         ) : (
           <>
-            <TitleWithInfo title='Network Thresholds' info='Network Thresholds' variant='h5' />
-
             <Stats items={statsItems} className='pb-0' />
 
             <TimeProgress startTime={publicKey.start ?? null} endTime={publicKey.end ?? null} now={time} />
@@ -146,7 +152,13 @@ const Authorities = () => {
           variant: 'h5',
         }}
       >
-        {thresholds.isLoading ? <Spinner /> : <Table tableProps={table as RTTable<unknown>} />}
+        {isLoading ? (
+          <div className='flex items-center justify-center min-w-full min-h-[235px]'>
+            <Spinner size='xl' />
+          </div>
+        ) : (
+          <Table tableProps={table as RTTable<unknown>} />
+        )}
       </CardTable>
 
       <AuthoritiesTable />
