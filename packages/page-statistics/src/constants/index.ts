@@ -144,3 +144,8 @@ export const socialConfigs: Array<SocialConfigsType> = [
     ...commonExternalProps,
   },
 ];
+
+const isDev = process.env.NODE_ENV === 'development';
+
+export const defaultEndpoint =
+  localStorage.getItem('stats-endpoint') ?? isDev ? 'http://localhost:4000' : 'https://subquery-dev.webb.tools/graphql';

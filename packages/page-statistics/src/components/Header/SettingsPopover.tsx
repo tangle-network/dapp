@@ -1,5 +1,6 @@
 import {
   Collapsible,
+  CollapsibleButton,
   MenuItem,
   Popover,
   PopoverBody,
@@ -70,6 +71,9 @@ export const SettingsPopover = React.forwardRef<HTMLDivElement, SettingsPopoverP
           <Typography variant={'h4'}>Settings</Typography>
           <ThemeSwitcherItem />
           <MenuItem icon={<OpenBook size='lg' />}>Docs</MenuItem>
+          <Collapsible>
+            <CollapsibleButton>Keygen Threshold</CollapsibleButton>
+          </Collapsible>
         </div>
       </PopoverBody>
     </Popover>

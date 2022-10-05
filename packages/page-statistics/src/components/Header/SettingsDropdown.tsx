@@ -1,14 +1,21 @@
+import { defaultEndpoint } from '@webb-dapp/page-statistics/constants';
 import {
+  Button,
   Collapsible,
+  CollapsibleButton,
+  CollapsibleContent,
   Dropdown,
+  DropdownBasicButton,
   DropdownBody,
   DropdownButton,
+  Input,
+  Label,
   MenuItem,
   ThemeSwitcherItem,
 } from '@webb-dapp/webb-ui-components/components';
 import { OpenBook } from '@webb-dapp/webb-ui-components/icons';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
-import React from 'react';
+import React, { useCallback } from 'react';
 import { FC, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
@@ -19,8 +26,6 @@ type SettingsDropdownProps = {
   connectedEndpoint: string;
   setConnectedEndpoint: (endpoint: string) => void;
 };
-
-// React.forwardRef<HTMLDivElement, SettingsDropdownProps>((props, ref)
 
 export const SettingsDropdown = React.forwardRef<HTMLDivElement, SettingsDropdownProps>((props, ref) => {
   const { buttonIcon, connectedEndpoint, setConnectedEndpoint } = props;
@@ -41,14 +46,23 @@ export const SettingsDropdown = React.forwardRef<HTMLDivElement, SettingsDropdow
   };
 
   // function to run after a user has finshed inputting a potential endpoint.
-  const setEndpoint = async (endpoint: string) => {
-    verifyEndpoint(endpoint).then((verified) => {
-      if (verified) {
-        localStorage.setItem('stats-endpoint', endpoint);
-        setConnectedEndpoint(endpoint);
-      }
-    });
-  };
+  const setEndpoint = useCallback(
+    async (endpoint: string) => {
+      console.log('setEndpoint called');
+
+      verifyEndpoint(endpoint)
+        .then((verified) => {
+          if (verified) {
+            localStorage.setItem('stats-endpoint', endpoint);
+            setConnectedEndpoint(endpoint);
+          }
+        })
+        .catch((e) => {
+          setEndpointUserInput(connectedEndpoint);
+        });
+    },
+    [connectedEndpoint, setConnectedEndpoint]
+  );
 
   const icon = useMemo(() => {
     if (!buttonIcon) {
@@ -64,12 +78,39 @@ export const SettingsDropdown = React.forwardRef<HTMLDivElement, SettingsDropdow
 
   return (
     <Dropdown ref={ref}>
-      <DropdownButton icon={icon} size='sm' />
-      <DropdownBody className='mt-5 p-2' size='sm'>
-        <div>
+      <DropdownBasicButton icon={icon} size='sm' dropdownButton={false} />
+      <DropdownBody className='mt-5' size='sm' onFocusOutside={async () => await setEndpoint(endpointUserInput)}>
+        <div className='px-4 py-2'>
           <Typography variant={'h4'}>Settings</Typography>
-          <ThemeSwitcherItem />
-          <MenuItem icon={<OpenBook size='lg' />}>Docs</MenuItem>
+          <ThemeSwitcherItem className='px-0' />
+          <MenuItem icon={<OpenBook size='lg' />} className='px-0'>
+            Docs
+          </MenuItem>
+          <Collapsible>
+            <CollapsibleButton className='px-0'>Advanced</CollapsibleButton>
+            <CollapsibleContent className='p-1'>
+              <div className='flex justify-between pb-2'>
+                <Label className='body2' htmlFor='endpoint-switcher-input'>
+                  Custom Data Source
+                </Label>
+                <Button
+                  variant='link'
+                  size='sm'
+                  onClick={() => {
+                    setEndpointUserInput(defaultEndpoint);
+                    setConnectedEndpoint(defaultEndpoint);
+                  }}
+                >
+                  Reset
+                </Button>
+              </div>
+              <Input
+                id={'endpoint-switcher-input'}
+                value={endpointUserInput}
+                onChange={(val) => setEndpointUserInput(val.toString())}
+              />
+            </CollapsibleContent>
+          </Collapsible>
         </div>
       </DropdownBody>
     </Dropdown>

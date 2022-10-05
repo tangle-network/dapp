@@ -16,7 +16,9 @@ type DropdownButtonPickedKeys = 'label' | 'icon' | 'size';
 export interface DropdownButtonProps
   extends PropsOf<'button'>,
     WebbComponentBase,
-    Pick<DropdownMenuProps, DropdownButtonPickedKeys> {}
+    Pick<DropdownMenuProps, DropdownButtonPickedKeys> {
+  dropdownButton?: boolean = true;
+}
 
 type DropdownBodyPickedKeys = 'size';
 
@@ -26,4 +28,6 @@ type DropdownBodyPickedKeys = 'size';
 export interface DropdownBodyProps
   extends PropsOf<'div'>,
     WebbComponentBase,
-    Pick<DropdownMenuProps, DropdownBodyPickedKeys> {}
+    Pick<DropdownMenuProps, DropdownBodyPickedKeys> {
+  onFocusOutside?: () => Promise<void>;
+}

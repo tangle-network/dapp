@@ -5,7 +5,11 @@ import { useMemo } from 'react';
 
 import { MenuItem } from '../MenuItem';
 
-const ThemeSwitcherItem = () => {
+type ThemeSwitcherItemProps = {
+  className?: string;
+};
+
+const ThemeSwitcherItem = (props: ThemeSwitcherItemProps) => {
   const [isDarkMode, toggleThemeMode] = useDarkMode();
 
   const Icon = useMemo(() => {
@@ -21,11 +25,7 @@ const ThemeSwitcherItem = () => {
   }, [isDarkMode]);
 
   return (
-    <MenuItem
-      onClick={() => toggleThemeMode(isDarkMode ? 'light' : 'dark')}
-      icon={Icon}
-      className='justify-items-center'
-    >
+    <MenuItem onClick={() => toggleThemeMode(isDarkMode ? 'light' : 'dark')} icon={Icon} className={props.className}>
       {isDarkMode ? 'Light Theme' : 'Dark Theme'}
     </MenuItem>
   );

@@ -9,7 +9,7 @@ import { DropdownButtonProps } from './types';
 /**
  * The `DropdownMenu` trigger function, must use inside the `Dropdown` component
  */
-export const DropdownButton = forwardRef<HTMLButtonElement, DropdownButtonProps>(
+export const DropdownBasicButton = forwardRef<HTMLButtonElement, DropdownButtonProps>(
   ({ className, dropdownButton, icon, label, size, ...props }, ref) => {
     return (
       <DropdownMenuPrimitive.Trigger asChild>
@@ -17,11 +17,9 @@ export const DropdownButton = forwardRef<HTMLButtonElement, DropdownButtonProps>
           {...props}
           className={twMerge(
             cx(
-              'border rounded-lg uppercase group',
               'transition-none transition-[border-radius]',
-              'pl-4 py-2',
-              size === 'md' ? 'min-w-[176px]' : 'min-w-[96px]',
-              'flex items-center justify-between',
+              'px-4 py-2',
+              'flex items-center',
               'bg-mono-0 dark:bg-mono-200',
               'border-mono-80 dark:border-mono-120',
               'text-mono-140 dark:text-mono-80',
