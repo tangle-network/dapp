@@ -68,14 +68,14 @@ export const NetworkThresholdsCard = forwardRef<HTMLDivElement, NetworkThreshold
         {/** Bottom */}
         <div className='flex justify-between'>
           <div className='flex items-center space-x-2'>
-            <Chip color='green' className='inline-block uppercase'>
+            <Chip color='green' className='inline-block'>
               {thresholdType}
             </Chip>
             <LabelWithValue label='session:' value={sessionNumber} />
             <span className='inline-block font-semibold body2'>/</span>
             <KeyValueWithButton size='sm' keyValue={keyValue} />
           </div>
-          <Button className='block uppercase' varirant='link' href={viewHistoryUrl} target='_blank' size='sm'>
+          <Button className='block' variant='link' href={viewHistoryUrl} target='_blank' size='sm'>
             View history
           </Button>
         </div>

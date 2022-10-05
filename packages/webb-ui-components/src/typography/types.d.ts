@@ -12,9 +12,13 @@ export type HeadingVariant = 'h1' | 'h2' | 'h3' | 'h4' | 'h5';
 
 export type BodyVariant = 'body1' | 'body2' | 'body3' | 'body4';
 
+export type ParagraphVariant = 'para1' | 'para2';
+
+export type LabelVariant = 'label' | 'utility';
+
 export type MonospaceVariant = 'mono1' | 'mono2';
 
-export type WebbTypographyVariant = HeadingVariant | BodyVariant | MonospaceVariant;
+export type WebbTypographyVariant = HeadingVariant | BodyVariant | MonospaceVariant | ParagraphVariant | LabelVariant;
 
 /**
  * Properties of typography component

@@ -1,7 +1,5 @@
-import { randBoolean, randEthereumAddress, randNumber, randRecentDate, randSoonDate } from '@ngneat/falso';
 import { ColumnDef, createColumnHelper, getCoreRowModel, Table as RTTable, useReactTable } from '@tanstack/react-table';
 import { useStatsContext } from '@webb-dapp/page-statistics/provider/stats-provider';
-import { Spinner } from '@webb-dapp/ui-components/Spinner/Spinner';
 import {
   Avatar,
   AvatarGroup,
@@ -17,54 +15,39 @@ import {
   TitleWithInfo,
 } from '@webb-dapp/webb-ui-components/components';
 import { fuzzyFilter } from '@webb-dapp/webb-ui-components/components/Filter/utils';
+import { Spinner } from '@webb-dapp/webb-ui-components/icons';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
-import { arrayFrom, randAccount32 } from '@webb-dapp/webb-ui-components/utils';
 import { ComponentProps, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import { Outlet } from 'react-router-dom';
 
 import { AuthoritiesTable } from '../containers';
-import { DiscreteList, Thresholds, UpcomingThreshold, UpcomingThresholds, useThresholds } from '../provider/hooks';
+import { DiscreteList, UpcomingThreshold, useThresholds } from '../provider/hooks';
 import { getChipColorByKeyType } from '../utils';
 
 const columnHelper = createColumnHelper<UpcomingThreshold>();
 
 const columns: ColumnDef<UpcomingThreshold, any>[] = [
   columnHelper.accessor('stats', {
-    header: () => (
-      <Typography variant='body4' fw='bold' className='!text-inherit'>
-        Status
-      </Typography>
-    ),
+    header: 'Status',
     cell: (props) => <Chip color={getChipColorByKeyType(props.getValue())}>{props.getValue<string>()}</Chip>,
   }),
 
   columnHelper.accessor('session', {
-    header: () => (
-      <Typography variant='body4' fw='bold' className='!text-inherit'>
-        Session
-      </Typography>
-    ),
+    header: 'Session',
   }),
 
   columnHelper.accessor('keyGen', {
-    header: () => (
-      <Typography variant='body4' fw='bold' className='!text-inherit'>
-        Keygen
-      </Typography>
-    ),
+    header: 'Keygen',
   }),
 
   columnHelper.accessor('signature', {
-    header: () => (
-      <Typography variant='body4' fw='bold' className='!text-inherit'>
-        Signature
-      </Typography>
-    ),
+    header: 'Signature',
   }),
 
   columnHelper.accessor('authoritySet', {
     header: () => (
-      <Typography variant='body4' fw='bold' className='!text-inherit !text-right'>
+      <Typography variant='body1' fw='bold' ta='right' className='!text-inherit'>
         Authority Set
       </Typography>
     ),
@@ -72,7 +55,7 @@ const columns: ColumnDef<UpcomingThreshold, any>[] = [
     cell: (props) => {
       const authorities = props.getValue<DiscreteList>();
       return (
-        <AvatarGroup total={authorities.count}>
+        <AvatarGroup total={authorities.count} className='justify-end'>
           {authorities.firstElements.map((au, idx) => (
             <Avatar sourceVariant={'address'} key={`${au}${idx}`} value={au} />
           ))}
@@ -113,7 +96,7 @@ const Authorities = () => {
   const data = useMemo(() => (upComingThresholds ? Object.values(upComingThresholds) : []), [upComingThresholds]);
 
   const table = useReactTable<UpcomingThreshold>({
-    columns: columns,
+    columns,
     data,
     getCoreRowModel: getCoreRowModel(),
     filterFns: {
@@ -138,18 +121,19 @@ const Authorities = () => {
 
             <div className='flex items-center justify-between'>
               <div className='flex items-center space-x-2'>
-                <Chip color='green' className='uppercase'>
-                  {publicKey.isCurrent ? 'Current' : 'Next'}
-                </Chip>
+                <Chip color='green'>{publicKey.isCurrent ? 'Current' : 'Next'}</Chip>
                 <LabelWithValue label='session:' value={publicKey.session} />
                 <Typography variant='body2' fw='semibold'>
                   /
                 </Typography>
                 <KeyValueWithButton size='sm' keyValue={publicKey.compressed} />
               </div>
-              <Button varirant='link' size='sm' className='uppercase'>
-                View history
-              </Button>
+
+              <Link to='history'>
+                <Button variant='link' size='sm'>
+                  View history
+                </Button>
+              </Link>
             </div>
           </>
         )}

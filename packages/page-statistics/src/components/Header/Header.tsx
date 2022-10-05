@@ -62,7 +62,7 @@ export const Header: FC<HeaderProps> = ({ connectedEndpoint, setConnectedEndpoin
 
 const NavButton: FC<{ path: string }> = ({ children, path }) => (
   <li>
-    <NavLink to={path} className={({ isActive }) => cx(isActive && 'cursor-not-allowed')}>
+    <NavLink to={path}>
       {({ isActive }) => (
         <span
           className={cx(

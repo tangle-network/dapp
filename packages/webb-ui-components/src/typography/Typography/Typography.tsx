@@ -16,6 +16,10 @@ const defaultComponent = {
   body4: 'p' as const,
   mono1: 'span' as const,
   mono2: 'span' as const,
+  para1: 'p' as const,
+  para2: 'p' as const,
+  label: 'span' as const,
+  utility: 'span' as const,
 };
 
 /**
@@ -39,6 +43,7 @@ export const Typography: React.FC<WebbTypographyProps> = (props) => {
   const { children, className, component, darkMode, fw = 'normal', ta = 'left', variant, ...restProps } = props;
 
   const _component = useMemo(() => component ?? defaultComponent[variant], [component, variant]);
+
   const _className = useMemo(
     () => twMerge(`${variant}` as const, getTextAlignClassName(ta), getFontWeightClassName(variant, fw), className),
     [className, fw, ta, variant]

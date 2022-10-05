@@ -62,7 +62,7 @@ export const DropdownMenu = React.forwardRef<HTMLDivElement, DropdownMenuProps>(
     <Dropdown className={className} ref={ref}>
       <DropdownButton label={triggerText} icon={icon} size={size} />
 
-      <DropdownBody>
+      <DropdownBody size={size}>
         <DropdownMenuPrimitive.RadioGroup value={value} onValueChange={onChange}>
           {menuOptions.map(({ icon, value }, i) => (
             <DropdownMenuPrimitive.RadioItem key={`${value}-${i}`} value={value} asChild>

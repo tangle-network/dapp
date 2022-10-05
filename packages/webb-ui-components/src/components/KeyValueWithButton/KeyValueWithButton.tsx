@@ -19,7 +19,10 @@ import { KeyValueWithButtonProps } from './types';
  * ```
  */
 export const KeyValueWithButton = forwardRef<HTMLDivElement, KeyValueWithButtonProps>(
-  ({ className, isHiddenLabel, keyValue, labelVariant, size = 'md', valueVariant, ...props }, ref) => {
+  (
+    { className, hasShortenValue = true, isHiddenLabel, keyValue, labelVariant, size = 'md', valueVariant, ...props },
+    ref
+  ) => {
     const { copy, isCopied } = useCopyable();
 
     const onCopy = useCallback(() => {
@@ -34,6 +37,8 @@ export const KeyValueWithButton = forwardRef<HTMLDivElement, KeyValueWithButtonP
       return twMerge('overflow-hidden rounded-lg', size === 'md' ? 'bg-mono-20 dark:bg-mono-180' : '', className);
     }, [className, size]);
 
+    const value = useMemo(() => (hasShortenValue ? shortenHex(keyValue, 3) : keyValue), [hasShortenValue, keyValue]);
+
     return (
       <div {...props} className={mergedClsx} ref={ref}>
         <div className={cx('flex items-center', size === 'md' ? 'space-x-2' : 'space-x-1')}>
@@ -45,7 +50,7 @@ export const KeyValueWithButton = forwardRef<HTMLDivElement, KeyValueWithButtonP
                   valueVariant={valueVariant}
                   isHiddenLabel={isHiddenLabel}
                   label='Key'
-                  value={shortenHex(keyValue, 3)}
+                  value={value}
                   className='cursor-default pointer-events-auto'
                 />
               </TooltipTrigger>

@@ -22,7 +22,7 @@ import { getChipClassName } from './utils';
 export const Chip = React.forwardRef<HTMLSpanElement, ChipProps>((props, ref) => {
   const { children, className: classNameProp, color = 'green', isDisabled } = props;
 
-  const baseClsx = useMemo(() => 'box-border inline-block px-3 py-1 rounded-full font-bold body4', []);
+  const baseClsx = useMemo(() => 'box-border inline-block px-3 py-1 rounded-full utility uppercase', []);
 
   const className = useMemo(
     () => twMerge(baseClsx, getChipClassName(color, isDisabled), classNameProp),

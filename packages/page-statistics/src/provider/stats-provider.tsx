@@ -158,7 +158,6 @@ export const StatsProvider: React.FC<Omit<StatsProvidervalue, 'isReady' | 'metaD
             return null;
           }
           const lastBlockTimestamp = lastBlock.timestamp;
-          console.log({ lastBlockTimestamp });
           return new SubQlTime(new Date(lastBlockTimestamp));
         }
         return null;
@@ -176,7 +175,6 @@ export const StatsProvider: React.FC<Omit<StatsProvidervalue, 'isReady' | 'metaD
   useEffect(() => {
     const unSub = metaDataQuery.observable
       .map((r): Metadata | null => {
-        console.log(query);
         if (r.data?._metadata) {
           const data = r.data._metadata;
           return {
@@ -200,9 +198,8 @@ export const StatsProvider: React.FC<Omit<StatsProvidervalue, 'isReady' | 'metaD
   useEffect(() => {
     query.startPolling(staticConfig.blockTime * 1000);
     metaDataQuery.startPolling(staticConfig.blockTime * 1000);
-    console.log('starting polling');
+
     return () => {
-      console.log('Stop polling');
       query.stopPolling();
       metaDataQuery.stopPolling();
     };

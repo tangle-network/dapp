@@ -6,12 +6,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { Table as RTTable } from '@tanstack/table-core';
-import {
-  AuthorityListItem,
-  KeyGenAuthority,
-  SessionKeyStatus,
-  useKey,
-} from '@webb-dapp/page-statistics/provider/hooks';
+import { KeyGenAuthority, SessionKeyStatus, useKey } from '@webb-dapp/page-statistics/provider/hooks';
 import { useSubQLtime } from '@webb-dapp/page-statistics/provider/stats-provider';
 import {
   Avatar,
@@ -38,8 +33,7 @@ import getUnicodeFlagIcon from 'country-flag-icons/unicode';
 import { forwardRef, useCallback, useMemo } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
-import { AuthoritiesTable } from '../AuthoritiesTable';
-import { AuthorityRowType, KeyDetailProps } from './types';
+import { KeyDetailProps } from './types';
 
 export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage }, ref) => {
   const { keyId = '' } = useParams<{ keyId: string }>();
@@ -52,11 +46,6 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage },
 
   const commonCardClsx = useMemo(() => 'rounded-lg bg-mono-0 dark:bg-mono-180', []);
   const time = useSubQLtime();
-  const authoritiesTblData = useMemo<AuthorityRowType[]>(() => {
-    return keyDetail
-      ? keyDetail.authorities.map((aut) => ({ ...aut, detaillUrl: 'https://webb.tools' })) // TODO: Determine the detail url
-      : ([] as AuthorityRowType[]);
-  }, [keyDetail]);
 
   const onNextKey = useCallback(() => {
     if (prevAndNextKey?.nextKeyId) {
@@ -110,8 +99,7 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage },
                 <Button
                   size='sm'
                   leftIcon={<ArrowLeft className='!fill-current' />}
-                  varirant='utility'
-                  className='uppercase'
+                  variant='utility'
                   isDisabled={!prevAndNextKey || !prevAndNextKey.previousKeyId}
                   onClick={onPreviousKey}
                 >
@@ -120,8 +108,7 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage },
                 <Button
                   size='sm'
                   rightIcon={<ArrowRight className='!fill-current' />}
-                  varirant='utility'
-                  className='uppercase'
+                  variant='utility'
                   isDisabled={!prevAndNextKey || !prevAndNextKey.nextKeyId}
                   onClick={onNextKey}
                 >
@@ -141,9 +128,7 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage },
 
         {/** Session number */}
         <div className='flex items-center space-x-2'>
-          <Chip color='green' className='uppercase'>
-            {keyDetail.isDone ? 'History' : keyDetail.isCurrent ? 'Current' : 'Next'}
-          </Chip>
+          <Chip color='green'>{keyDetail.isDone ? 'History' : keyDetail.isCurrent ? 'Current' : 'Next'}</Chip>
           <LabelWithValue label='Session: ' value={keyDetail.session} />
         </div>
 
@@ -197,7 +182,7 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage },
                     extraContent={
                       <div className='flex items-center space-x-2'>
                         <KeyValueWithButton keyValue={keyDetail.uncompressed} size='sm' />
-                        <Button varirant='link' size='sm' className='uppercase'>
+                        <Button variant='link' size='sm'>
                           Detail
                         </Button>
                       </div>
@@ -219,17 +204,19 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage },
                         <LabelWithValue label='Height' value={keyDetail.height} />
                         {/** TODO: Proposal type */}
                         <LabelWithValue label='Proposal' value='KeyRotation' />
-                        <LabelWithValue
-                          label='Proposers'
-                          value={
-                            <AvatarGroup total={keyDetail.authorities.length}>
-                              {keyDetail.authorities.map((author) => (
-                                <Avatar key={author.id} value={author.account} />
-                              ))}
-                            </AvatarGroup>
-                          }
-                        />
-                        <Button size='sm' varirant='link' className='uppercase'>
+                        {keyDetail.authorities.length && (
+                          <LabelWithValue
+                            label='Proposers'
+                            value={
+                              <AvatarGroup total={keyDetail.authorities.length}>
+                                {keyDetail.authorities.map((author, idx) => (
+                                  <Avatar key={author.id} value={author.account} sourceVariant='address' />
+                                ))}
+                              </AvatarGroup>
+                            }
+                          />
+                        )}
+                        <Button size='sm' variant='link'>
                           Details
                         </Button>
                       </div>
@@ -327,8 +314,9 @@ const columns: ColumnDef<KeyGenAuthority, any>[] = [
 
   columnHelper.accessor('id', {
     header: '',
+    id: 'detail',
     cell: (props) => (
-      <Button varirant='link' size='sm' className='uppercase'>
+      <Button variant='link' size='sm'>
         <Link to={`/authorities/drawer/${props.getValue<string>()}`}>Details</Link>
       </Button>
     ),

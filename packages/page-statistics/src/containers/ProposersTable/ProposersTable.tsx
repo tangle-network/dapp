@@ -18,7 +18,7 @@ import { fuzzyFilter } from '@webb-dapp/webb-ui-components/components/Filter/uti
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
 import { shortenString } from '@webb-dapp/webb-ui-components/utils';
 import { formatDistanceToNow } from 'date-fns';
-import { FC, useMemo, useState } from 'react';
+import { FC, useCallback, useMemo, useState } from 'react';
 
 const columnHelper = createColumnHelper<VoteListItem>();
 
@@ -40,23 +40,11 @@ const columns: ColumnDef<VoteListItem, any>[] = [
       const vote = props.getValue<VoteStatus | undefined>();
       switch (vote) {
         case VoteStatus.Abstain:
-          return (
-            <Chip color='red' className='uppercase'>
-              Abstain
-            </Chip>
-          );
+          return <Chip color='blue'>Abstain</Chip>;
         case VoteStatus.Against:
-          return (
-            <Chip color='blue' className='uppercase'>
-              Against
-            </Chip>
-          );
+          return <Chip color='red'>Against</Chip>;
         case VoteStatus.For:
-          return (
-            <Chip color='green' className='uppercase'>
-              for
-            </Chip>
-          );
+          return <Chip color='green'>For</Chip>;
         default:
           return '-';
       }
@@ -68,6 +56,7 @@ const columns: ColumnDef<VoteListItem, any>[] = [
     cell: (props) => formatDistanceToNow(props.getValue<Date>(), { addSuffix: true }),
   }),
 ];
+
 type ProposersTableProps = {
   counters: {
     for: number;
@@ -77,6 +66,7 @@ type ProposersTableProps = {
   };
   proposalId: string;
 };
+
 export const ProposersTable: FC<ProposersTableProps> = ({ counters, proposalId }) => {
   const [pagination, setPagination] = useState({
     pageIndex: 0,
@@ -103,11 +93,20 @@ export const ProposersTable: FC<ProposersTableProps> = ({ counters, proposalId }
       [VoteStatus.Abstain, `Abstain (${counters.abstain})`],
     ];
   }, [counters]);
+
   const tabsLabels = useMemo(() => tabsValue.map((i) => i[1]), [tabsValue]);
   const totalItems = useMemo(() => votes.val?.pageInfo.count ?? 0, [votes]);
   const pageCount = useMemo(() => Math.ceil(totalItems / pagination.pageSize), [pagination, totalItems]);
 
   const data = useMemo(() => votes.val?.items ?? [], [votes]);
+
+  const onChange = useCallback(
+    (tab: string) => {
+      const selectedTab = tabsValue.find((item) => item[1] === tab);
+      setVoteStatus(selectedTab?.[0] ?? undefined);
+    },
+    [tabsValue]
+  );
 
   const table = useReactTable<VoteListItem>({
     data,
@@ -136,13 +135,7 @@ export const ProposersTable: FC<ProposersTableProps> = ({ counters, proposalId }
         All Proposers
       </Typography>
 
-      <Tabs
-        onChange={(tab) => {
-          const selectedTab = tabsValue.find((item) => item[1] === tab);
-          setVoteStatus(selectedTab?.[0] ?? undefined);
-        }}
-        value={tabsLabels}
-      />
+      <Tabs onChange={onChange} value={tabsLabels} />
 
       <Table tableProps={table as RTTable<unknown>} isPaginated totalRecords={totalItems} className='mt-2' />
     </div>

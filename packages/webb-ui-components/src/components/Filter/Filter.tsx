@@ -17,13 +17,13 @@ export const Filter = forwardRef<HTMLDivElement, FilterProps>(
       <Dropdown {...props} ref={ref}>
         <DropdownButton label='Filters' icon={<FilterIcon />} size='sm' />
 
-        <DropdownBody className='py-2 min-w-[300px]'>
+        <DropdownBody className='py-2 min-w-[300px]' size='sm'>
           {/** Title */}
           <div className='flex items-center justify-between px-4 py-2'>
             <Typography variant='h5' fw='bold'>
               Filters
             </Typography>
-            <Button varirant='link' size='sm' className='uppercase' onClick={clearAllFilters}>
+            <Button variant='link' size='sm' className='uppercase' onClick={clearAllFilters}>
               Clear all
             </Button>
           </div>
