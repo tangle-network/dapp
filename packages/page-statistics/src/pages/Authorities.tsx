@@ -54,6 +54,14 @@ const columns: ColumnDef<UpcomingThreshold, any>[] = [
 
     cell: (props) => {
       const authorities = props.getValue<DiscreteList>();
+      if (!authorities.count) {
+        return (
+          <Typography variant='body1' ta='right'>
+            -
+          </Typography>
+        );
+      }
+
       return (
         <AvatarGroup total={authorities.count} className='justify-end'>
           {authorities.firstElements.map((au, idx) => (

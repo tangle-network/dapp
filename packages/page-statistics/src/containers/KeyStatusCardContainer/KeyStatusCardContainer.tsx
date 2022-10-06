@@ -22,11 +22,11 @@ export const KeyStatusCardContainer: FC<KeyStatusCardContainerProps> = ({ data, 
 
   const authorities = useMemo(
     () =>
-      data.keyGenAuthorities?.reduce((acc, cur) => {
+      (data?.keyGenAuthorities ?? []).reduce((acc, cur) => {
         acc.add(cur);
         return acc;
       }, new Set() as KeyStatusCardProps['authorities']) ?? new Set(),
-    [data.keyGenAuthorities]
+    [data]
   );
 
   return (
@@ -34,14 +34,14 @@ export const KeyStatusCardContainer: FC<KeyStatusCardContainerProps> = ({ data, 
       title={title}
       titleInfo={titleInfo}
       instance={now}
-      sessionNumber={Number(data.session)}
+      sessionNumber={Number(data?.session)}
       keyType={keyType}
-      keyVal={data.compressed}
-      startTime={data.start ?? null}
-      endTime={data.end ?? null}
+      keyVal={data?.compressed ?? ''}
+      startTime={data?.start ?? null}
+      endTime={data?.end ?? null}
       authorities={authorities}
-      totalAuthorities={data.keyGenAuthorities?.length}
-      fullDetailUrl={`drawer/${data.id}`}
+      totalAuthorities={authorities.size}
+      fullDetailUrl={data ? `drawer/${data.id}` : ''}
     />
   );
 };

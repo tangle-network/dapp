@@ -75,7 +75,7 @@ export const DonutChartContainer: FC<ProposalsOverviewProps> = ({ isLoading, set
         </div>
       ) : (
         <>
-          <div className='flex justify-center'>
+          <div className='flex items-center justify-center grow'>
             <div className='w-[196px] h-[196px]'>
               <Doughnut data={chartData} options={chartOpts} />
             </div>

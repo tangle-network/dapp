@@ -3,6 +3,6 @@ import { ISubQlTime } from '@webb-dapp/page-statistics/provider/stats-provider';
 
 export interface KeyStatusCardContainerProps {
   keyType: 'current' | 'next';
-  data: PublicKey;
+  data?: PublicKey;
   now: ISubQlTime;
 }

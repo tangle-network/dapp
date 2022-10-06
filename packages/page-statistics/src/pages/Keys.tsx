@@ -39,11 +39,6 @@ const Keys = () => {
     );
   }
 
-  // For the type assertion
-  if (!currentKey || !nextKey) {
-    return null; // Not display anything
-  }
-
   return (
     <div>
       <div className='flex space-x-4'>
