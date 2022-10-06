@@ -43,7 +43,7 @@ export const LabelWithValue = forwardRef<HTMLSpanElement, LabelWithValueProps>(
         {!valueTooltip &&
           (typeof value === 'string' || typeof value === 'number' ? (
             <Typography component='span' variant={valueVariant}>
-              {value}
+              {value.toString()}
             </Typography>
           ) : (
             value
