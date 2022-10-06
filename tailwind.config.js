@@ -237,5 +237,9 @@ module.exports = {
   variants: {
     extends: {},
   },
-  plugins: [require('@tailwindcss/forms'), require('tailwindcss-radix')()],
+  plugins: [
+    require('@tailwindcss/forms'),
+    require('tailwindcss-radix')(),
+    require('tailwind-scrollbar')({ nocompatible: true }),
+  ],
 };
