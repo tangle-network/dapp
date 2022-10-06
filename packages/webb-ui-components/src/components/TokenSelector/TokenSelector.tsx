@@ -29,7 +29,7 @@ export const TokenSelector = forwardRef<HTMLButtonElement, TokenSelectorProps>(
       <button {...props} disabled={isDisabled} className={mergedClsx} ref={ref}>
         <TokenIcon name={children.toLowerCase()} size='lg' />
 
-        <span className='inline-block'>{children}</span>
+        <span className='inline-block text-inherit'>{children}</span>
       </button>
     );
   }
