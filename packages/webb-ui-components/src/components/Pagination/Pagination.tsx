@@ -35,7 +35,15 @@ export const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
       [itemsPerPage, totalItems]
     );
 
-    const mergedClsx = useMemo(() => twMerge('flex items-center justify-between px-3 py-4', className), [className]);
+    const mergedClsx = useMemo(
+      () =>
+        twMerge(
+          'flex items-center justify-between px-3 py-4',
+          'border-mono-40 dark:border-mono-140 border-t',
+          className
+        ),
+      [className]
+    );
 
     return (
       <div {...props} className={mergedClsx} ref={ref}>
