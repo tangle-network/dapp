@@ -208,7 +208,7 @@ export function useProposalsOverview(sessionId: string, range?: BlockRange): Loa
         if (res.data && res.data.session && res.data.openProposals) {
           const session = res.data.session!;
           const thresholds: Thresholds = {
-            proposal: (session.proposerThreshold as QueryThreshold).current,
+            proposal: (session.proposerThreshold as QueryThreshold | null)?.current ?? NaN,
             proposers: session.sessionProposers.totalCount,
           };
           const openProposalsCount = res.data.open?.totalCount ?? 0;

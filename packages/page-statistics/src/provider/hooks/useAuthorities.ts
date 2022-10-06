@@ -136,6 +136,7 @@ export function useThresholds(): Loadable<[Thresholds, UpcomingThresholds]> {
   const session = useCurrentMetaData();
   const activeSession = useActiveSession();
   const [call, query] = useSessionThresholdsLazyQuery();
+
   useEffect(() => {
     if (session.val) {
       call({ variables: { sessionId: session.val.activeSession } }).catch((e) => {
@@ -148,28 +149,32 @@ export function useThresholds(): Loadable<[Thresholds, UpcomingThresholds]> {
       });
     }
   }, [session, call]);
+
   useEffect(() => {
     const subscription = query.observable
       .map((res): Loadable<[Thresholds, UpcomingThresholds]> => {
         if (res.data) {
           const session = res.data.session!;
-          const publicKey = session.publicKey!;
+          const publicKey = session.publicKey;
+
           const allAuth = mapAuthorities(session?.sessionValidators);
           const authSet = allAuth.map((auth) => auth.id);
           const nextAuthSet = allAuth.filter((auth) => auth.isNext).map((auth) => auth.id);
-          const keyGenThreshold = session.keyGenThreshold as QueryThreshold;
-          const signatureThreshold = session.signatureThreshold as QueryThreshold;
+
+          const keyGenThreshold = session.keyGenThreshold as QueryThreshold | null;
+          const signatureThreshold = session.signatureThreshold as QueryThreshold | null;
           const proposersCount = session.proposersCount.totalCount;
           const sessionTimeStamp = session.block?.timestamp;
+
           const threshold: Thresholds = {
             keyGen: keyGenThreshold ? String(keyGenThreshold.current) : '-',
             publicKey: {
-              id: publicKey.id,
+              id: publicKey?.id ?? '',
               session: session.id,
               end: sessionTimeStamp ? new Date(new Date(sessionTimeStamp).getTime() + 60 * 60 * 1000) : undefined,
               start: sessionTimeStamp ? new Date(sessionTimeStamp) : undefined,
-              compressed: publicKey.compressed!,
-              uncompressed: publicKey.uncompressed!,
+              compressed: publicKey?.compressed ?? '',
+              uncompressed: publicKey?.uncompressed ?? '',
               keyGenAuthorities: authSet,
               isCurrent: activeSession === session.id,
               isDone: Number(activeSession) > Number(session.id),
@@ -177,13 +182,14 @@ export function useThresholds(): Loadable<[Thresholds, UpcomingThresholds]> {
             proposer: '',
             signature: signatureThreshold ? String(signatureThreshold.current) : '-',
           };
+
           const current: UpcomingThreshold = {
             authoritySet: {
               count: authSet.length,
               firstElements: authSet.slice(0, 3),
             },
-            keyGen: String(keyGenThreshold.current),
-            signature: String(signatureThreshold.current),
+            keyGen: String(keyGenThreshold?.current ?? '-'),
+            signature: String(signatureThreshold?.current ?? '-'),
             proposer: String(proposersCount),
             session: session.id,
             stats: 'Current',
@@ -194,8 +200,8 @@ export function useThresholds(): Loadable<[Thresholds, UpcomingThresholds]> {
               count: nextAuthSet.length,
               firstElements: nextAuthSet.slice(0, 3),
             },
-            keyGen: String(keyGenThreshold.pending),
-            signature: String(signatureThreshold.pending),
+            keyGen: String(keyGenThreshold?.pending ?? '-'),
+            signature: String(signatureThreshold?.pending ?? '-'),
             proposer: String(proposersCount),
             session: session.id,
             stats: 'Pending',
@@ -206,8 +212,8 @@ export function useThresholds(): Loadable<[Thresholds, UpcomingThresholds]> {
               count: nextAuthSet.length,
               firstElements: nextAuthSet.slice(0, 3),
             },
-            keyGen: String(keyGenThreshold.next),
-            signature: String(signatureThreshold.next),
+            keyGen: String(keyGenThreshold?.next ?? '-'),
+            signature: String(signatureThreshold?.next ?? '-'),
             proposer: String(proposersCount),
             session: String(Number(session.id) + 1),
             stats: 'Next',
@@ -238,6 +244,7 @@ export function useThresholds(): Loadable<[Thresholds, UpcomingThresholds]> {
 
     return () => subscription.unsubscribe();
   }, [query, activeSession]);
+
   return data;
 }
 

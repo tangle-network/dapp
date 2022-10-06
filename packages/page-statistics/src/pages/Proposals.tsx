@@ -106,7 +106,9 @@ const Proposals = () => {
 
   const data = useMemo(() => {
     if (overview.val) {
-      return overview.val.openProposals;
+      return overview.val.openProposals.length > 5
+        ? overview.val.openProposals.slice(0, 5)
+        : overview.val.openProposals;
     }
     return [] as ProposalListItem[];
   }, [overview]);

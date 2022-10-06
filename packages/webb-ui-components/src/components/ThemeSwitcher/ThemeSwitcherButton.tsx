@@ -3,7 +3,7 @@ import { useDarkMode } from '@webb-dapp/webb-ui-components/hooks';
 import { MoonLine, SunLine } from '@webb-dapp/webb-ui-components/icons';
 import { useMemo } from 'react';
 
-const ThemeSwitcher = () => {
+const ThemeSwitcherButton = () => {
   const [isDarkMode, toggleThemeMode] = useDarkMode();
 
   const Icon = useMemo(() => {
@@ -25,4 +25,4 @@ const ThemeSwitcher = () => {
   );
 };
 
-export default ThemeSwitcher;
+export default ThemeSwitcherButton;
