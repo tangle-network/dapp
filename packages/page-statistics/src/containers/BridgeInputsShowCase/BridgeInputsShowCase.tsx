@@ -1,4 +1,4 @@
-import { Card, ChainInput, TitleWithInfo } from '@webb-dapp/webb-ui-components';
+import { Card, ChainInput, TitleWithInfo, TokenInput } from '@webb-dapp/webb-ui-components';
 
 export const BridgeInputsShowCase = () => {
   return (
@@ -8,6 +8,8 @@ export const BridgeInputsShowCase = () => {
         <div className='flex flex-col space-y-4'>
           <ChainInput chainType='source' />
           <ChainInput chainType='dest' chain={{ name: 'Optimism', symbol: 'op' }} />
+          <TokenInput />
+          <TokenInput token={{ symbol: 'eth', balance: 1.2, balanceInUsd: 1000 }} />
         </div>
       </Card>
 
@@ -17,6 +19,8 @@ export const BridgeInputsShowCase = () => {
           <div className='flex flex-col space-y-4'>
             <ChainInput chainType='source' />
             <ChainInput chainType='dest' chain={{ name: 'Optimism', symbol: 'op' }} />
+            <TokenInput />
+            <TokenInput token={{ symbol: 'eth', balance: 1.2, balanceInUsd: 1000 }} />
           </div>
         </Card>
       </div>
