@@ -7,7 +7,7 @@ export const InputWrapper = forwardRef<HTMLDivElement, InputWrapperProps>(({ chi
   const mergedClsx = useMemo(
     () =>
       twMerge(
-        'bg-mono-0 dark:bg-mono-140 px-4 py-2 max-w-[350px] rounded-lg flex items-center justify-between cursor-pointer',
+        'bg-mono-0 dark:bg-mono-140 px-4 py-2 min-w-[350px] rounded-lg flex items-center justify-between cursor-pointer',
         className
       ),
     [className]

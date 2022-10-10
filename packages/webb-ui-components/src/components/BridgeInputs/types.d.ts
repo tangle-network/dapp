@@ -2,7 +2,17 @@ import { PropsOf, WebbComponentBase } from '@webb-dapp/webb-ui-components/types'
 
 import { InputProps } from '../Input/types';
 
-export interface InputWrapperProps extends WebbComponentBase, PropsOf<'div'> {}
+export interface InputWrapperProps extends WebbComponentBase, PropsOf<'div'> {
+  /**
+   * The `id` prop for label and input
+   * @default "amount"
+   */
+  id?: string;
+  /**
+   * The tooltip info
+   */
+  info?: string;
+}
 
 /**
  * The chain type for chain input
@@ -76,7 +86,7 @@ export interface AmountInputProps extends InputWrapperProps {
    */
   onAmountChange?: InputProps['onChange'];
   /**
-   * Callback function to when the max button is clicked
+   * Callback function when the max button is clicked
    */
   onMaxBtnClick?: PropsOf<'button'>['onClick'];
 }
@@ -103,4 +113,15 @@ export interface FixedAmountProps extends InputWrapperProps {
    * The callback function to control the component
    */
   onChange?: (nextVal: number) => void;
+}
+
+export interface RecipientInputProps extends InputWrapperProps {
+  /**
+   * The input value
+   */
+  value?: InputProps['value'];
+  /**
+   * Callback function to control the input value
+   */
+  onChange?: InputProps['onChange'];
 }
