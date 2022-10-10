@@ -19,7 +19,7 @@ import { TitleWithInfoProps } from './types';
 export const TitleWithInfo = forwardRef<HTMLDivElement, TitleWithInfoProps>(
   ({ className, info, title, titleClassName, titleComponent = 'span', variant = 'body1', ...props }, ref) => {
     const mergedClsx = useMemo(() => {
-      return twMerge('flex items-center space-x-1', className);
+      return twMerge('flex items-center space-x-1 text-mono-180 dark:text-mono-0', className);
     }, [className]);
 
     return (
