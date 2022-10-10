@@ -12,9 +12,10 @@ export const ChainInput = forwardRef<HTMLDivElement, ChainInputProps>(({ chain, 
       <div className='flex flex-col space-y-1'>
         <TitleWithInfo
           title={(chainType === 'source' ? 'Source' : 'Destination') + ' chain'}
+          info={(chainType === 'source' ? 'Source' : 'Destination') + ' chain'}
           variant='body4'
-          inheritColor
-          className='uppercase text-mono-100 dark:text-mono-80'
+          className='text-mono-100 dark:text-mono-80'
+          titleClassName='uppercase !text-inherit'
         />
 
         {chain ? (

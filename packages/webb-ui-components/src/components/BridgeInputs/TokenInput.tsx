@@ -40,8 +40,8 @@ export const TokenInput = forwardRef<HTMLDivElement, TokenInputProps>(({ classNa
         <TitleWithInfo
           title='Token'
           variant='body4'
-          inheritColor
-          className='uppercase text-mono-100 dark:text-mono-80'
+          className='text-mono-100 dark:text-mono-80'
+          titleClassName='uppercase !text-inherit'
         />
 
         {token ? (
