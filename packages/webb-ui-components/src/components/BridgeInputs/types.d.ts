@@ -46,6 +46,30 @@ export type TokenType = {
   balanceInUsd?: number | string;
 };
 
+/**
+ * The asset type for shielded asset input
+ */
+export type AssetType = {
+  /**
+   * The symbol of the first token
+   */
+  token1Symbol: string;
+
+  /**
+   * The symbol of the second token
+   */
+  token2Symbol: string;
+
+  /**
+   * The token balance
+   */
+  balance?: number | string;
+  /**
+   * Token token balance in usd
+   */
+  balanceInUsd?: number | string;
+};
+
 export interface ChainInputProps extends InputWrapperProps {
   /**
    * The chain type
@@ -124,4 +148,8 @@ export interface RecipientInputProps extends InputWrapperProps {
    * Callback function to control the input value
    */
   onChange?: InputProps['onChange'];
+}
+
+export interface ShieldedAssetInputProps extends InputWrapperProps {
+  asset?: AssetType;
 }
