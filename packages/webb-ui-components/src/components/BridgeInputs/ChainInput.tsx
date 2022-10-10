@@ -7,15 +7,15 @@ import { InputWrapper } from './InputWrapper';
 import { ChainInputProps } from './types';
 
 export const ChainInput = forwardRef<HTMLDivElement, ChainInputProps>(({ chain, chainType, ...props }, ref) => {
-  const titleProps = useMemo<ComponentProps<typeof TitleWithInfo>>(
-    () => ({ title: (chainType === 'source' ? 'Source' : 'Destination') + ' chain', variant: 'utility' }),
-    [chainType]
-  );
-
   return (
     <InputWrapper {...props} ref={ref}>
       <div className='flex flex-col space-y-1'>
-        <TitleWithInfo {...titleProps} className='text-mono-100 dark:text-mono-80' />
+        <TitleWithInfo
+          title={(chainType === 'source' ? 'Source' : 'Destination') + ' chain'}
+          variant='body4'
+          inheritColor
+          className='uppercase text-mono-100 dark:text-mono-80'
+        />
 
         {chain ? (
           <p className='flex items-center space-x-1'>

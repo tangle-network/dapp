@@ -20,6 +20,10 @@ export interface TitleWithInfoProps extends WebbComponentBase {
    */
   titleComponent?: WebbTypographyProps['component'];
   /**
+   * If `true`, the title will inherit the color from its parent
+   */
+  inheritColor?: boolean;
+  /**
    * The `info` appears inside the tooltip to describe the title
    */
   info?: string;
