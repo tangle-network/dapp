@@ -1,6 +1,11 @@
-import { AmountInput, Card, ChainInput, TitleWithInfo, TokenInput } from '@webb-dapp/webb-ui-components';
+import { AmountInput, Card, ChainInput, FixedAmount, TitleWithInfo, TokenInput } from '@webb-dapp/webb-ui-components';
+import { useState } from 'react';
+
+const values = [0.1, 0.25, 0.5, 1];
 
 export const BridgeInputsShowCase = () => {
+  const [value, setValue] = useState(values[0]);
+
   return (
     <div className='flex space-x-4'>
       <Card>
@@ -14,6 +19,8 @@ export const BridgeInputsShowCase = () => {
 
           <AmountInput />
           <AmountInput id='Custom amount' info='Custom amount' />
+
+          <FixedAmount info='Fix amount' values={values} value={value} onChange={(nextVal) => setValue(nextVal)} />
         </div>
       </Card>
 
@@ -29,6 +36,8 @@ export const BridgeInputsShowCase = () => {
 
             <AmountInput />
             <AmountInput id='Custom amount' info='Custom amount' />
+
+            <FixedAmount info='Fix amount' values={values} value={value} onChange={(nextVal) => setValue(nextVal)} />
           </div>
         </Card>
       </div>

@@ -80,3 +80,27 @@ export interface AmountInputProps extends InputWrapperProps {
    */
   onMaxBtnClick?: PropsOf<'button'>['onClick'];
 }
+
+export interface FixedAmountProps extends InputWrapperProps {
+  /**
+   * The `id` prop for label and input
+   * @default "amount"
+   */
+  id?: string;
+  /**
+   * The tooltip info
+   */
+  info?: string;
+  /**
+   * The fixed number list to display
+   */
+  values: number[];
+  /**
+   * The value prop
+   */
+  value?: number;
+  /**
+   * The callback function to control the component
+   */
+  onChange?: (nextVal: number) => void;
+}
