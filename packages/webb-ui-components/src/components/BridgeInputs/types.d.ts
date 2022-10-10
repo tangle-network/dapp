@@ -153,3 +153,14 @@ export interface RecipientInputProps extends InputWrapperProps {
 export interface ShieldedAssetInputProps extends InputWrapperProps {
   asset?: AssetType;
 }
+
+export interface RelayerInputProps extends InputWrapperProps {
+  /**
+   * The relayer address to display
+   */
+  relayerAddress?: string;
+  /**
+   * The external url of a relayer
+   */
+  externalLink?: string;
+}

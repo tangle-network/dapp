@@ -42,7 +42,7 @@ export const ShieldedAssetInput = forwardRef<HTMLDivElement, ShieldedAssetInputP
           </Label>
 
           {asset ? (
-            <p className='flex items-center space-x-1'>
+            <div className='flex items-center space-x-1'>
               <div className='flex items-center -space-x-2'>
                 <TokenIcon size='lg' name={asset.token1Symbol.toLowerCase()} />
                 <TokenIcon size='lg' name={asset.token2Symbol.toLowerCase()} />
@@ -51,7 +51,7 @@ export const ShieldedAssetInput = forwardRef<HTMLDivElement, ShieldedAssetInputP
               <Typography component='span' variant='body1' fw='bold'>
                 {asset.token1Symbol.toUpperCase()}/{asset.token2Symbol.toUpperCase()}
               </Typography>
-            </p>
+            </div>
           ) : (
             <Typography variant='body1' fw='bold'>
               Select Shielded Asset

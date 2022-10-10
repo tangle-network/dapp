@@ -4,6 +4,7 @@ import {
   ChainInput,
   FixedAmount,
   RecipientInput,
+  RelayerInput,
   ShieldedAssetInput,
   TitleWithInfo,
   TokenInput,
@@ -54,6 +55,12 @@ const Showcase: FC<ShowcaseProps> = ({ fixedAmountState, recipientState }) => {
         <ShieldedAssetInput />
 
         <ShieldedAssetInput asset={{ token1Symbol: 'webb', token2Symbol: 'eth', balance: 2.1, balanceInUsd: 1000 }} />
+
+        <RelayerInput />
+        <RelayerInput
+          relayerAddress='5DJEpHVVxSpaWGfdAzep11MK458y5JkHA5YvYm3dp3eawuXi'
+          externalLink='https://webb.tools'
+        />
       </div>
     </Card>
   );
