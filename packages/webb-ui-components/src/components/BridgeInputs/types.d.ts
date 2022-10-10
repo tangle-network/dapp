@@ -1,5 +1,7 @@
 import { PropsOf, WebbComponentBase } from '@webb-dapp/webb-ui-components/types';
 
+import { InputProps } from '../Input/types';
+
 export interface InputWrapperProps extends WebbComponentBase, PropsOf<'div'> {}
 
 /**
@@ -53,4 +55,28 @@ export interface TokenInputProps extends InputWrapperProps {
    * Will display `select token` when the token not provided
    */
   token?: TokenType;
+}
+
+export interface AmountInputProps extends InputWrapperProps {
+  /**
+   * The `id` prop for label and input
+   * @default "amount"
+   */
+  id?: string;
+  /**
+   * The tooltip info
+   */
+  info?: string;
+  /**
+   * The amount value
+   */
+  amount?: InputProps['value'];
+  /**
+   * Callback function to control the amount value
+   */
+  onAmountChange?: InputProps['onChange'];
+  /**
+   * Callback function to when the max button is clicked
+   */
+  onMaxBtnClick?: PropsOf<'button'>['onClick'];
 }
