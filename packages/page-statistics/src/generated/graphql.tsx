@@ -10824,7 +10824,7 @@ export type ProposalsVoteListViewFragment = { __typename?: 'ProposalVote', id: s
 export type MetaDataQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MetaDataQuery = { __typename?: 'Query', _metadata?: { __typename?: '_Metadata', targetHeight?: number | null, lastProcessedHeight?: number | null } | null };
+export type MetaDataQuery = { __typename?: 'Query', sessions?: { __typename?: 'SessionsConnection', nodes: Array<{ __typename?: 'Session', id: string } | null> } | null, _metadata?: { __typename?: '_Metadata', targetHeight?: number | null, lastProcessedHeight?: number | null } | null };
 
 export type LastBlockQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -11199,6 +11199,11 @@ export type ValidatorOfSessionLazyQueryHookResult = ReturnType<typeof useValidat
 export type ValidatorOfSessionQueryResult = Apollo.QueryResult<ValidatorOfSessionQuery, ValidatorOfSessionQueryVariables>;
 export const MetaDataDocument = gql`
     query MetaData {
+  sessions(first: 1, orderBy: [BLOCK_NUMBER_DESC]) {
+    nodes {
+      id
+    }
+  }
   _metadata {
     targetHeight
     lastProcessedHeight

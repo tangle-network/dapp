@@ -271,6 +271,7 @@ export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
   const [call, query] = useSessionKeysLazyQuery();
   const { blockTime, sessionHeight } = useStaticConfig();
   const activeSession = useActiveSession();
+  console.log(activeSession);
   const [keys, setKeys] = useState<Loadable<[PublicKey, PublicKey]>>({
     val: null,
     isFailed: false,
@@ -278,6 +279,7 @@ export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
   });
   useEffect(() => {
     if (metaData.val) {
+      console.log(`Active session ${metaData.val.activeSession}`);
       call({
         variables: {
           SessionId: [metaData.val.activeSession, String(Number(metaData.val.activeSession) + 1)],

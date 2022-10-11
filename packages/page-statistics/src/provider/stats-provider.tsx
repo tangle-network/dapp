@@ -177,11 +177,12 @@ export const StatsProvider: React.FC<Omit<StatsProvidervalue, 'isReady' | 'metaD
       .map((r): Metadata | null => {
         if (r.data?._metadata) {
           const data = r.data._metadata;
+          const lastSession = r.data.sessions?.nodes[0]!;
           return {
             currentBlock: String(data.targetHeight),
             lastProcessBlock: String(data.lastProcessedHeight),
-            activeSession: session(String(data.lastProcessedHeight), staticConfig.sessionHeight),
-            lastSession: nextSession(String(data.targetHeight), staticConfig.sessionHeight),
+            activeSession: String(Number(lastSession.id) - 1),
+            lastSession: lastSession.id,
           };
         }
         return null;
