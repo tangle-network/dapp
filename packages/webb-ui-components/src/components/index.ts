@@ -18,6 +18,7 @@ export * from './KeyCard';
 export * from './KeyValueWithButton';
 export * from './Label';
 export * from './LabelWithValue';
+export * from './ListCard';
 export * from './Logo';
 export * from './MenuItem';
 export * from './NetworkThresholdsCard';

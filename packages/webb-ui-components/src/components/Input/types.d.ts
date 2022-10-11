@@ -55,7 +55,7 @@ export interface InputProps extends WebbComponentBase, Omit<PropsOf<'input'>, Om
   rightIcon?: React.ReactElement;
   /**
    * If provided, the input will have an debounce time in `ms`
-   * @default 0
+   * @default 300
    */
   debounceTime?: number;
   /**
