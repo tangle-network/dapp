@@ -56,6 +56,7 @@ export type Account = Node & {
   web?: Maybe<Scalars['String']>;
 };
 
+
 export type AccountAccountsByCreatorIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -65,6 +66,7 @@ export type AccountAccountsByCreatorIdArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<AccountsOrderBy>>;
 };
+
 
 export type AccountBlocksByAccountCreatorIdAndCreateAtBlockIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -76,6 +78,7 @@ export type AccountBlocksByAccountCreatorIdAndCreateAtBlockIdArgs = {
   orderBy?: InputMaybe<Array<BlocksOrderBy>>;
 };
 
+
 export type AccountBlocksByExtrinsicSignerIdAndBlockIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -85,6 +88,7 @@ export type AccountBlocksByExtrinsicSignerIdAndBlockIdArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<BlocksOrderBy>>;
 };
+
 
 export type AccountExtrinsicsArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -96,6 +100,7 @@ export type AccountExtrinsicsArgs = {
   orderBy?: InputMaybe<Array<ExtrinsicsOrderBy>>;
 };
 
+
 export type AccountProposersArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -105,6 +110,7 @@ export type AccountProposersArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<ProposersOrderBy>>;
 };
+
 
 export type AccountValidatorsArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -140,6 +146,7 @@ export type AccountBlocksByAccountCreatorIdAndCreateAtBlockIdManyToManyConnectio
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Block` values, with data from `Account`. */
 export type AccountBlocksByAccountCreatorIdAndCreateAtBlockIdManyToManyConnectionGroupedAggregatesArgs = {
   groupBy: Array<BlocksGroupBy>;
@@ -156,6 +163,7 @@ export type AccountBlocksByAccountCreatorIdAndCreateAtBlockIdManyToManyEdge = {
   /** The `Block` at the end of the edge. */
   node?: Maybe<Block>;
 };
+
 
 /** A `Block` edge in the connection, with data from `Account`. */
 export type AccountBlocksByAccountCreatorIdAndCreateAtBlockIdManyToManyEdgeAccountsByCreateAtBlockIdArgs = {
@@ -185,6 +193,7 @@ export type AccountBlocksByExtrinsicSignerIdAndBlockIdManyToManyConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Block` values, with data from `Extrinsic`. */
 export type AccountBlocksByExtrinsicSignerIdAndBlockIdManyToManyConnectionGroupedAggregatesArgs = {
   groupBy: Array<BlocksGroupBy>;
@@ -201,6 +210,7 @@ export type AccountBlocksByExtrinsicSignerIdAndBlockIdManyToManyEdge = {
   /** The `Block` at the end of the edge. */
   node?: Maybe<Block>;
 };
+
 
 /** A `Block` edge in the connection, with data from `Extrinsic`. */
 export type AccountBlocksByExtrinsicSignerIdAndBlockIdManyToManyEdgeExtrinsicsArgs = {
@@ -296,6 +306,7 @@ export type AccountsConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Account` values. */
 export type AccountsConnectionGroupedAggregatesArgs = {
   groupBy: Array<AccountsGroupBy>;
@@ -324,7 +335,7 @@ export enum AccountsGroupBy {
   PgpFingerprint = 'PGP_FINGERPRINT',
   Riot = 'RIOT',
   Twitter = 'TWITTER',
-  Web = 'WEB',
+  Web = 'WEB'
 }
 
 /** Conditions for `Account` aggregates. */
@@ -893,7 +904,7 @@ export enum AccountsOrderBy {
   ValidatorsVarianceSampleIdAsc = 'VALIDATORS_VARIANCE_SAMPLE_ID_ASC',
   ValidatorsVarianceSampleIdDesc = 'VALIDATORS_VARIANCE_SAMPLE_ID_DESC',
   WebAsc = 'WEB_ASC',
-  WebDesc = 'WEB_DESC',
+  WebDesc = 'WEB_DESC'
 }
 
 /** A connection to a list of `Authority` values. */
@@ -912,6 +923,7 @@ export type AuthoritiesConnection = {
   /** The count of *all* `Authority` you could get from the connection. */
   totalCount: Scalars['Int'];
 };
+
 
 /** A connection to a list of `Authority` values. */
 export type AuthoritiesConnectionGroupedAggregatesArgs = {
@@ -932,7 +944,7 @@ export type AuthoritiesEdge = {
 export enum AuthoritiesGroupBy {
   BlockId = 'BLOCK_ID',
   Current = 'CURRENT',
-  Next = 'NEXT',
+  Next = 'NEXT'
 }
 
 /** Conditions for `Authority` aggregates. */
@@ -953,7 +965,7 @@ export enum AuthoritiesOrderBy {
   NextAsc = 'NEXT_ASC',
   NextDesc = 'NEXT_DESC',
   PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
-  PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
+  PrimaryKeyDesc = 'PRIMARY_KEY_DESC'
 }
 
 export type Authority = Node & {
@@ -1083,6 +1095,7 @@ export type Block = Node & {
   unsignedProposalsQueues: UnsignedProposalsQueuesConnection;
 };
 
+
 export type BlockAccountsByAccountCreateAtBlockIdAndCreatorIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -1092,6 +1105,7 @@ export type BlockAccountsByAccountCreateAtBlockIdAndCreatorIdArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<AccountsOrderBy>>;
 };
+
 
 export type BlockAccountsByCreateAtBlockIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -1103,6 +1117,7 @@ export type BlockAccountsByCreateAtBlockIdArgs = {
   orderBy?: InputMaybe<Array<AccountsOrderBy>>;
 };
 
+
 export type BlockAccountsByExtrinsicBlockIdAndSignerIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -1112,6 +1127,7 @@ export type BlockAccountsByExtrinsicBlockIdAndSignerIdArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<AccountsOrderBy>>;
 };
+
 
 export type BlockAuthoritiesArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -1123,6 +1139,7 @@ export type BlockAuthoritiesArgs = {
   orderBy?: InputMaybe<Array<AuthoritiesOrderBy>>;
 };
 
+
 export type BlockEventsArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -1132,6 +1149,7 @@ export type BlockEventsArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<EventsOrderBy>>;
 };
+
 
 export type BlockExtrinsicsArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -1143,6 +1161,7 @@ export type BlockExtrinsicsArgs = {
   orderBy?: InputMaybe<Array<ExtrinsicsOrderBy>>;
 };
 
+
 export type BlockExtrinsicsByEventBlockIdAndExtrinsicIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -1152,6 +1171,7 @@ export type BlockExtrinsicsByEventBlockIdAndExtrinsicIdArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<ExtrinsicsOrderBy>>;
 };
+
 
 export type BlockKeygenThresholdsArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -1163,6 +1183,7 @@ export type BlockKeygenThresholdsArgs = {
   orderBy?: InputMaybe<Array<KeygenThresholdsOrderBy>>;
 };
 
+
 export type BlockProposalCountersArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -1172,6 +1193,7 @@ export type BlockProposalCountersArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<ProposalCountersOrderBy>>;
 };
+
 
 export type BlockProposalItemsArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -1183,6 +1205,7 @@ export type BlockProposalItemsArgs = {
   orderBy?: InputMaybe<Array<ProposalItemsOrderBy>>;
 };
 
+
 export type BlockProposalItemsByProposalVoteBlockIdAndProposalIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -1192,6 +1215,7 @@ export type BlockProposalItemsByProposalVoteBlockIdAndProposalIdArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<ProposalItemsOrderBy>>;
 };
+
 
 export type BlockProposalVotesArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -1203,6 +1227,7 @@ export type BlockProposalVotesArgs = {
   orderBy?: InputMaybe<Array<ProposalVotesOrderBy>>;
 };
 
+
 export type BlockProposerThresholdsArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -1212,6 +1237,7 @@ export type BlockProposerThresholdsArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<ProposerThresholdsOrderBy>>;
 };
+
 
 export type BlockProposersByProposalVoteBlockIdAndVoterIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -1223,6 +1249,7 @@ export type BlockProposersByProposalVoteBlockIdAndVoterIdArgs = {
   orderBy?: InputMaybe<Array<ProposersOrderBy>>;
 };
 
+
 export type BlockPublicKeysArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -1232,6 +1259,7 @@ export type BlockPublicKeysArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<PublicKeysOrderBy>>;
 };
+
 
 export type BlockPublicKeysBySessionBlockIdAndPublicKeyIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -1243,6 +1271,7 @@ export type BlockPublicKeysBySessionBlockIdAndPublicKeyIdArgs = {
   orderBy?: InputMaybe<Array<PublicKeysOrderBy>>;
 };
 
+
 export type BlockSessionsArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -1253,6 +1282,7 @@ export type BlockSessionsArgs = {
   orderBy?: InputMaybe<Array<SessionsOrderBy>>;
 };
 
+
 export type BlockSignatureThresholdsArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -1262,6 +1292,7 @@ export type BlockSignatureThresholdsArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<SignatureThresholdsOrderBy>>;
 };
+
 
 export type BlockUnsignedProposalsQueuesArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -1290,6 +1321,7 @@ export type BlockAccountsByAccountCreateAtBlockIdAndCreatorIdManyToManyConnectio
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Account` values, with data from `Account`. */
 export type BlockAccountsByAccountCreateAtBlockIdAndCreatorIdManyToManyConnectionGroupedAggregatesArgs = {
   groupBy: Array<AccountsGroupBy>;
@@ -1306,6 +1338,7 @@ export type BlockAccountsByAccountCreateAtBlockIdAndCreatorIdManyToManyEdge = {
   /** The `Account` at the end of the edge. */
   node?: Maybe<Account>;
 };
+
 
 /** A `Account` edge in the connection, with data from `Account`. */
 export type BlockAccountsByAccountCreateAtBlockIdAndCreatorIdManyToManyEdgeAccountsByCreatorIdArgs = {
@@ -1335,6 +1368,7 @@ export type BlockAccountsByExtrinsicBlockIdAndSignerIdManyToManyConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Account` values, with data from `Extrinsic`. */
 export type BlockAccountsByExtrinsicBlockIdAndSignerIdManyToManyConnectionGroupedAggregatesArgs = {
   groupBy: Array<AccountsGroupBy>;
@@ -1351,6 +1385,7 @@ export type BlockAccountsByExtrinsicBlockIdAndSignerIdManyToManyEdge = {
   /** The `Account` at the end of the edge. */
   node?: Maybe<Account>;
 };
+
 
 /** A `Account` edge in the connection, with data from `Extrinsic`. */
 export type BlockAccountsByExtrinsicBlockIdAndSignerIdManyToManyEdgeExtrinsicsArgs = {
@@ -1429,6 +1464,7 @@ export type BlockExtrinsicsByEventBlockIdAndExtrinsicIdManyToManyConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Extrinsic` values, with data from `Event`. */
 export type BlockExtrinsicsByEventBlockIdAndExtrinsicIdManyToManyConnectionGroupedAggregatesArgs = {
   groupBy: Array<ExtrinsicsGroupBy>;
@@ -1445,6 +1481,7 @@ export type BlockExtrinsicsByEventBlockIdAndExtrinsicIdManyToManyEdge = {
   /** The `Extrinsic` at the end of the edge. */
   node?: Maybe<Extrinsic>;
 };
+
 
 /** A `Extrinsic` edge in the connection, with data from `Event`. */
 export type BlockExtrinsicsByEventBlockIdAndExtrinsicIdManyToManyEdgeEventsArgs = {
@@ -1512,6 +1549,7 @@ export type BlockProposalItemsByProposalVoteBlockIdAndProposalIdManyToManyConnec
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `ProposalItem` values, with data from `ProposalVote`. */
 export type BlockProposalItemsByProposalVoteBlockIdAndProposalIdManyToManyConnectionGroupedAggregatesArgs = {
   groupBy: Array<ProposalItemsGroupBy>;
@@ -1528,6 +1566,7 @@ export type BlockProposalItemsByProposalVoteBlockIdAndProposalIdManyToManyEdge =
   /** Reads and enables pagination through a set of `ProposalVote`. */
   proposalVotesByProposalId: ProposalVotesConnection;
 };
+
 
 /** A `ProposalItem` edge in the connection, with data from `ProposalVote`. */
 export type BlockProposalItemsByProposalVoteBlockIdAndProposalIdManyToManyEdgeProposalVotesByProposalIdArgs = {
@@ -1557,6 +1596,7 @@ export type BlockProposersByProposalVoteBlockIdAndVoterIdManyToManyConnection = 
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Proposer` values, with data from `ProposalVote`. */
 export type BlockProposersByProposalVoteBlockIdAndVoterIdManyToManyConnectionGroupedAggregatesArgs = {
   groupBy: Array<ProposersGroupBy>;
@@ -1573,6 +1613,7 @@ export type BlockProposersByProposalVoteBlockIdAndVoterIdManyToManyEdge = {
   /** Reads and enables pagination through a set of `ProposalVote`. */
   votes: ProposalVotesConnection;
 };
+
 
 /** A `Proposer` edge in the connection, with data from `ProposalVote`. */
 export type BlockProposersByProposalVoteBlockIdAndVoterIdManyToManyEdgeVotesArgs = {
@@ -1602,6 +1643,7 @@ export type BlockPublicKeysBySessionBlockIdAndPublicKeyIdManyToManyConnection = 
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `PublicKey` values, with data from `Session`. */
 export type BlockPublicKeysBySessionBlockIdAndPublicKeyIdManyToManyConnectionGroupedAggregatesArgs = {
   groupBy: Array<PublicKeysGroupBy>;
@@ -1618,6 +1660,7 @@ export type BlockPublicKeysBySessionBlockIdAndPublicKeyIdManyToManyEdge = {
   /** Reads and enables pagination through a set of `Session`. */
   sessions: SessionsConnection;
 };
+
 
 /** A `PublicKey` edge in the connection, with data from `Session`. */
 export type BlockPublicKeysBySessionBlockIdAndPublicKeyIdManyToManyEdgeSessionsArgs = {
@@ -1677,6 +1720,7 @@ export type BlocksConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Block` values. */
 export type BlocksConnectionGroupedAggregatesArgs = {
   groupBy: Array<BlocksGroupBy>;
@@ -1701,7 +1745,7 @@ export enum BlocksGroupBy {
   StateRoot = 'STATE_ROOT',
   Timestamp = 'TIMESTAMP',
   TimestampTruncatedToDay = 'TIMESTAMP_TRUNCATED_TO_DAY',
-  TimestampTruncatedToHour = 'TIMESTAMP_TRUNCATED_TO_HOUR',
+  TimestampTruncatedToHour = 'TIMESTAMP_TRUNCATED_TO_HOUR'
 }
 
 export type BlocksHavingAverageInput = {
@@ -3173,14 +3217,8 @@ export enum BlocksOrderBy {
   SessionsAverageBlockNumberDesc = 'SESSIONS_AVERAGE_BLOCK_NUMBER_DESC',
   SessionsAverageIdAsc = 'SESSIONS_AVERAGE_ID_ASC',
   SessionsAverageIdDesc = 'SESSIONS_AVERAGE_ID_DESC',
-  SessionsAverageKeyGenThresholdAsc = 'SESSIONS_AVERAGE_KEY_GEN_THRESHOLD_ASC',
-  SessionsAverageKeyGenThresholdDesc = 'SESSIONS_AVERAGE_KEY_GEN_THRESHOLD_DESC',
-  SessionsAverageProposerThresholdAsc = 'SESSIONS_AVERAGE_PROPOSER_THRESHOLD_ASC',
-  SessionsAverageProposerThresholdDesc = 'SESSIONS_AVERAGE_PROPOSER_THRESHOLD_DESC',
   SessionsAveragePublicKeyIdAsc = 'SESSIONS_AVERAGE_PUBLIC_KEY_ID_ASC',
   SessionsAveragePublicKeyIdDesc = 'SESSIONS_AVERAGE_PUBLIC_KEY_ID_DESC',
-  SessionsAverageSignatureThresholdAsc = 'SESSIONS_AVERAGE_SIGNATURE_THRESHOLD_ASC',
-  SessionsAverageSignatureThresholdDesc = 'SESSIONS_AVERAGE_SIGNATURE_THRESHOLD_DESC',
   SessionsCountAsc = 'SESSIONS_COUNT_ASC',
   SessionsCountDesc = 'SESSIONS_COUNT_DESC',
   SessionsDistinctCountBlockIdAsc = 'SESSIONS_DISTINCT_COUNT_BLOCK_ID_ASC',
@@ -3189,112 +3227,64 @@ export enum BlocksOrderBy {
   SessionsDistinctCountBlockNumberDesc = 'SESSIONS_DISTINCT_COUNT_BLOCK_NUMBER_DESC',
   SessionsDistinctCountIdAsc = 'SESSIONS_DISTINCT_COUNT_ID_ASC',
   SessionsDistinctCountIdDesc = 'SESSIONS_DISTINCT_COUNT_ID_DESC',
-  SessionsDistinctCountKeyGenThresholdAsc = 'SESSIONS_DISTINCT_COUNT_KEY_GEN_THRESHOLD_ASC',
-  SessionsDistinctCountKeyGenThresholdDesc = 'SESSIONS_DISTINCT_COUNT_KEY_GEN_THRESHOLD_DESC',
-  SessionsDistinctCountProposerThresholdAsc = 'SESSIONS_DISTINCT_COUNT_PROPOSER_THRESHOLD_ASC',
-  SessionsDistinctCountProposerThresholdDesc = 'SESSIONS_DISTINCT_COUNT_PROPOSER_THRESHOLD_DESC',
   SessionsDistinctCountPublicKeyIdAsc = 'SESSIONS_DISTINCT_COUNT_PUBLIC_KEY_ID_ASC',
   SessionsDistinctCountPublicKeyIdDesc = 'SESSIONS_DISTINCT_COUNT_PUBLIC_KEY_ID_DESC',
-  SessionsDistinctCountSignatureThresholdAsc = 'SESSIONS_DISTINCT_COUNT_SIGNATURE_THRESHOLD_ASC',
-  SessionsDistinctCountSignatureThresholdDesc = 'SESSIONS_DISTINCT_COUNT_SIGNATURE_THRESHOLD_DESC',
   SessionsMaxBlockIdAsc = 'SESSIONS_MAX_BLOCK_ID_ASC',
   SessionsMaxBlockIdDesc = 'SESSIONS_MAX_BLOCK_ID_DESC',
   SessionsMaxBlockNumberAsc = 'SESSIONS_MAX_BLOCK_NUMBER_ASC',
   SessionsMaxBlockNumberDesc = 'SESSIONS_MAX_BLOCK_NUMBER_DESC',
   SessionsMaxIdAsc = 'SESSIONS_MAX_ID_ASC',
   SessionsMaxIdDesc = 'SESSIONS_MAX_ID_DESC',
-  SessionsMaxKeyGenThresholdAsc = 'SESSIONS_MAX_KEY_GEN_THRESHOLD_ASC',
-  SessionsMaxKeyGenThresholdDesc = 'SESSIONS_MAX_KEY_GEN_THRESHOLD_DESC',
-  SessionsMaxProposerThresholdAsc = 'SESSIONS_MAX_PROPOSER_THRESHOLD_ASC',
-  SessionsMaxProposerThresholdDesc = 'SESSIONS_MAX_PROPOSER_THRESHOLD_DESC',
   SessionsMaxPublicKeyIdAsc = 'SESSIONS_MAX_PUBLIC_KEY_ID_ASC',
   SessionsMaxPublicKeyIdDesc = 'SESSIONS_MAX_PUBLIC_KEY_ID_DESC',
-  SessionsMaxSignatureThresholdAsc = 'SESSIONS_MAX_SIGNATURE_THRESHOLD_ASC',
-  SessionsMaxSignatureThresholdDesc = 'SESSIONS_MAX_SIGNATURE_THRESHOLD_DESC',
   SessionsMinBlockIdAsc = 'SESSIONS_MIN_BLOCK_ID_ASC',
   SessionsMinBlockIdDesc = 'SESSIONS_MIN_BLOCK_ID_DESC',
   SessionsMinBlockNumberAsc = 'SESSIONS_MIN_BLOCK_NUMBER_ASC',
   SessionsMinBlockNumberDesc = 'SESSIONS_MIN_BLOCK_NUMBER_DESC',
   SessionsMinIdAsc = 'SESSIONS_MIN_ID_ASC',
   SessionsMinIdDesc = 'SESSIONS_MIN_ID_DESC',
-  SessionsMinKeyGenThresholdAsc = 'SESSIONS_MIN_KEY_GEN_THRESHOLD_ASC',
-  SessionsMinKeyGenThresholdDesc = 'SESSIONS_MIN_KEY_GEN_THRESHOLD_DESC',
-  SessionsMinProposerThresholdAsc = 'SESSIONS_MIN_PROPOSER_THRESHOLD_ASC',
-  SessionsMinProposerThresholdDesc = 'SESSIONS_MIN_PROPOSER_THRESHOLD_DESC',
   SessionsMinPublicKeyIdAsc = 'SESSIONS_MIN_PUBLIC_KEY_ID_ASC',
   SessionsMinPublicKeyIdDesc = 'SESSIONS_MIN_PUBLIC_KEY_ID_DESC',
-  SessionsMinSignatureThresholdAsc = 'SESSIONS_MIN_SIGNATURE_THRESHOLD_ASC',
-  SessionsMinSignatureThresholdDesc = 'SESSIONS_MIN_SIGNATURE_THRESHOLD_DESC',
   SessionsStddevPopulationBlockIdAsc = 'SESSIONS_STDDEV_POPULATION_BLOCK_ID_ASC',
   SessionsStddevPopulationBlockIdDesc = 'SESSIONS_STDDEV_POPULATION_BLOCK_ID_DESC',
   SessionsStddevPopulationBlockNumberAsc = 'SESSIONS_STDDEV_POPULATION_BLOCK_NUMBER_ASC',
   SessionsStddevPopulationBlockNumberDesc = 'SESSIONS_STDDEV_POPULATION_BLOCK_NUMBER_DESC',
   SessionsStddevPopulationIdAsc = 'SESSIONS_STDDEV_POPULATION_ID_ASC',
   SessionsStddevPopulationIdDesc = 'SESSIONS_STDDEV_POPULATION_ID_DESC',
-  SessionsStddevPopulationKeyGenThresholdAsc = 'SESSIONS_STDDEV_POPULATION_KEY_GEN_THRESHOLD_ASC',
-  SessionsStddevPopulationKeyGenThresholdDesc = 'SESSIONS_STDDEV_POPULATION_KEY_GEN_THRESHOLD_DESC',
-  SessionsStddevPopulationProposerThresholdAsc = 'SESSIONS_STDDEV_POPULATION_PROPOSER_THRESHOLD_ASC',
-  SessionsStddevPopulationProposerThresholdDesc = 'SESSIONS_STDDEV_POPULATION_PROPOSER_THRESHOLD_DESC',
   SessionsStddevPopulationPublicKeyIdAsc = 'SESSIONS_STDDEV_POPULATION_PUBLIC_KEY_ID_ASC',
   SessionsStddevPopulationPublicKeyIdDesc = 'SESSIONS_STDDEV_POPULATION_PUBLIC_KEY_ID_DESC',
-  SessionsStddevPopulationSignatureThresholdAsc = 'SESSIONS_STDDEV_POPULATION_SIGNATURE_THRESHOLD_ASC',
-  SessionsStddevPopulationSignatureThresholdDesc = 'SESSIONS_STDDEV_POPULATION_SIGNATURE_THRESHOLD_DESC',
   SessionsStddevSampleBlockIdAsc = 'SESSIONS_STDDEV_SAMPLE_BLOCK_ID_ASC',
   SessionsStddevSampleBlockIdDesc = 'SESSIONS_STDDEV_SAMPLE_BLOCK_ID_DESC',
   SessionsStddevSampleBlockNumberAsc = 'SESSIONS_STDDEV_SAMPLE_BLOCK_NUMBER_ASC',
   SessionsStddevSampleBlockNumberDesc = 'SESSIONS_STDDEV_SAMPLE_BLOCK_NUMBER_DESC',
   SessionsStddevSampleIdAsc = 'SESSIONS_STDDEV_SAMPLE_ID_ASC',
   SessionsStddevSampleIdDesc = 'SESSIONS_STDDEV_SAMPLE_ID_DESC',
-  SessionsStddevSampleKeyGenThresholdAsc = 'SESSIONS_STDDEV_SAMPLE_KEY_GEN_THRESHOLD_ASC',
-  SessionsStddevSampleKeyGenThresholdDesc = 'SESSIONS_STDDEV_SAMPLE_KEY_GEN_THRESHOLD_DESC',
-  SessionsStddevSampleProposerThresholdAsc = 'SESSIONS_STDDEV_SAMPLE_PROPOSER_THRESHOLD_ASC',
-  SessionsStddevSampleProposerThresholdDesc = 'SESSIONS_STDDEV_SAMPLE_PROPOSER_THRESHOLD_DESC',
   SessionsStddevSamplePublicKeyIdAsc = 'SESSIONS_STDDEV_SAMPLE_PUBLIC_KEY_ID_ASC',
   SessionsStddevSamplePublicKeyIdDesc = 'SESSIONS_STDDEV_SAMPLE_PUBLIC_KEY_ID_DESC',
-  SessionsStddevSampleSignatureThresholdAsc = 'SESSIONS_STDDEV_SAMPLE_SIGNATURE_THRESHOLD_ASC',
-  SessionsStddevSampleSignatureThresholdDesc = 'SESSIONS_STDDEV_SAMPLE_SIGNATURE_THRESHOLD_DESC',
   SessionsSumBlockIdAsc = 'SESSIONS_SUM_BLOCK_ID_ASC',
   SessionsSumBlockIdDesc = 'SESSIONS_SUM_BLOCK_ID_DESC',
   SessionsSumBlockNumberAsc = 'SESSIONS_SUM_BLOCK_NUMBER_ASC',
   SessionsSumBlockNumberDesc = 'SESSIONS_SUM_BLOCK_NUMBER_DESC',
   SessionsSumIdAsc = 'SESSIONS_SUM_ID_ASC',
   SessionsSumIdDesc = 'SESSIONS_SUM_ID_DESC',
-  SessionsSumKeyGenThresholdAsc = 'SESSIONS_SUM_KEY_GEN_THRESHOLD_ASC',
-  SessionsSumKeyGenThresholdDesc = 'SESSIONS_SUM_KEY_GEN_THRESHOLD_DESC',
-  SessionsSumProposerThresholdAsc = 'SESSIONS_SUM_PROPOSER_THRESHOLD_ASC',
-  SessionsSumProposerThresholdDesc = 'SESSIONS_SUM_PROPOSER_THRESHOLD_DESC',
   SessionsSumPublicKeyIdAsc = 'SESSIONS_SUM_PUBLIC_KEY_ID_ASC',
   SessionsSumPublicKeyIdDesc = 'SESSIONS_SUM_PUBLIC_KEY_ID_DESC',
-  SessionsSumSignatureThresholdAsc = 'SESSIONS_SUM_SIGNATURE_THRESHOLD_ASC',
-  SessionsSumSignatureThresholdDesc = 'SESSIONS_SUM_SIGNATURE_THRESHOLD_DESC',
   SessionsVariancePopulationBlockIdAsc = 'SESSIONS_VARIANCE_POPULATION_BLOCK_ID_ASC',
   SessionsVariancePopulationBlockIdDesc = 'SESSIONS_VARIANCE_POPULATION_BLOCK_ID_DESC',
   SessionsVariancePopulationBlockNumberAsc = 'SESSIONS_VARIANCE_POPULATION_BLOCK_NUMBER_ASC',
   SessionsVariancePopulationBlockNumberDesc = 'SESSIONS_VARIANCE_POPULATION_BLOCK_NUMBER_DESC',
   SessionsVariancePopulationIdAsc = 'SESSIONS_VARIANCE_POPULATION_ID_ASC',
   SessionsVariancePopulationIdDesc = 'SESSIONS_VARIANCE_POPULATION_ID_DESC',
-  SessionsVariancePopulationKeyGenThresholdAsc = 'SESSIONS_VARIANCE_POPULATION_KEY_GEN_THRESHOLD_ASC',
-  SessionsVariancePopulationKeyGenThresholdDesc = 'SESSIONS_VARIANCE_POPULATION_KEY_GEN_THRESHOLD_DESC',
-  SessionsVariancePopulationProposerThresholdAsc = 'SESSIONS_VARIANCE_POPULATION_PROPOSER_THRESHOLD_ASC',
-  SessionsVariancePopulationProposerThresholdDesc = 'SESSIONS_VARIANCE_POPULATION_PROPOSER_THRESHOLD_DESC',
   SessionsVariancePopulationPublicKeyIdAsc = 'SESSIONS_VARIANCE_POPULATION_PUBLIC_KEY_ID_ASC',
   SessionsVariancePopulationPublicKeyIdDesc = 'SESSIONS_VARIANCE_POPULATION_PUBLIC_KEY_ID_DESC',
-  SessionsVariancePopulationSignatureThresholdAsc = 'SESSIONS_VARIANCE_POPULATION_SIGNATURE_THRESHOLD_ASC',
-  SessionsVariancePopulationSignatureThresholdDesc = 'SESSIONS_VARIANCE_POPULATION_SIGNATURE_THRESHOLD_DESC',
   SessionsVarianceSampleBlockIdAsc = 'SESSIONS_VARIANCE_SAMPLE_BLOCK_ID_ASC',
   SessionsVarianceSampleBlockIdDesc = 'SESSIONS_VARIANCE_SAMPLE_BLOCK_ID_DESC',
   SessionsVarianceSampleBlockNumberAsc = 'SESSIONS_VARIANCE_SAMPLE_BLOCK_NUMBER_ASC',
   SessionsVarianceSampleBlockNumberDesc = 'SESSIONS_VARIANCE_SAMPLE_BLOCK_NUMBER_DESC',
   SessionsVarianceSampleIdAsc = 'SESSIONS_VARIANCE_SAMPLE_ID_ASC',
   SessionsVarianceSampleIdDesc = 'SESSIONS_VARIANCE_SAMPLE_ID_DESC',
-  SessionsVarianceSampleKeyGenThresholdAsc = 'SESSIONS_VARIANCE_SAMPLE_KEY_GEN_THRESHOLD_ASC',
-  SessionsVarianceSampleKeyGenThresholdDesc = 'SESSIONS_VARIANCE_SAMPLE_KEY_GEN_THRESHOLD_DESC',
-  SessionsVarianceSampleProposerThresholdAsc = 'SESSIONS_VARIANCE_SAMPLE_PROPOSER_THRESHOLD_ASC',
-  SessionsVarianceSampleProposerThresholdDesc = 'SESSIONS_VARIANCE_SAMPLE_PROPOSER_THRESHOLD_DESC',
   SessionsVarianceSamplePublicKeyIdAsc = 'SESSIONS_VARIANCE_SAMPLE_PUBLIC_KEY_ID_ASC',
   SessionsVarianceSamplePublicKeyIdDesc = 'SESSIONS_VARIANCE_SAMPLE_PUBLIC_KEY_ID_DESC',
-  SessionsVarianceSampleSignatureThresholdAsc = 'SESSIONS_VARIANCE_SAMPLE_SIGNATURE_THRESHOLD_ASC',
-  SessionsVarianceSampleSignatureThresholdDesc = 'SESSIONS_VARIANCE_SAMPLE_SIGNATURE_THRESHOLD_DESC',
   SignatureThresholdsAverageBlockIdAsc = 'SIGNATURE_THRESHOLDS_AVERAGE_BLOCK_ID_ASC',
   SignatureThresholdsAverageBlockIdDesc = 'SIGNATURE_THRESHOLDS_AVERAGE_BLOCK_ID_DESC',
   SignatureThresholdsAverageCurrentAsc = 'SIGNATURE_THRESHOLDS_AVERAGE_CURRENT_ASC',
@@ -3448,7 +3438,7 @@ export enum BlocksOrderBy {
   UnsignedProposalsQueuesVarianceSampleBlockNumberAsc = 'UNSIGNED_PROPOSALS_QUEUES_VARIANCE_SAMPLE_BLOCK_NUMBER_ASC',
   UnsignedProposalsQueuesVarianceSampleBlockNumberDesc = 'UNSIGNED_PROPOSALS_QUEUES_VARIANCE_SAMPLE_BLOCK_NUMBER_DESC',
   UnsignedProposalsQueuesVarianceSampleIdAsc = 'UNSIGNED_PROPOSALS_QUEUES_VARIANCE_SAMPLE_ID_ASC',
-  UnsignedProposalsQueuesVarianceSampleIdDesc = 'UNSIGNED_PROPOSALS_QUEUES_VARIANCE_SAMPLE_ID_DESC',
+  UnsignedProposalsQueuesVarianceSampleIdDesc = 'UNSIGNED_PROPOSALS_QUEUES_VARIANCE_SAMPLE_ID_DESC'
 }
 
 /** A filter to be used against Boolean fields. All fields are combined with a logical ‘and.’ */
@@ -3686,6 +3676,7 @@ export type EventsConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Event` values. */
 export type EventsConnectionGroupedAggregatesArgs = {
   groupBy: Array<EventsGroupBy>;
@@ -3714,7 +3705,7 @@ export enum EventsGroupBy {
   Module = 'MODULE',
   Timestamp = 'TIMESTAMP',
   TimestampTruncatedToDay = 'TIMESTAMP_TRUNCATED_TO_DAY',
-  TimestampTruncatedToHour = 'TIMESTAMP_TRUNCATED_TO_HOUR',
+  TimestampTruncatedToHour = 'TIMESTAMP_TRUNCATED_TO_HOUR'
 }
 
 export type EventsHavingAverageInput = {
@@ -3812,7 +3803,7 @@ export enum EventsOrderBy {
   PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
   PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
   TimestampAsc = 'TIMESTAMP_ASC',
-  TimestampDesc = 'TIMESTAMP_DESC',
+  TimestampDesc = 'TIMESTAMP_DESC'
 }
 
 export type Extrinsic = Node & {
@@ -3840,6 +3831,7 @@ export type Extrinsic = Node & {
   signerId?: Maybe<Scalars['String']>;
 };
 
+
 export type ExtrinsicBlocksByEventExtrinsicIdAndBlockIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -3849,6 +3841,7 @@ export type ExtrinsicBlocksByEventExtrinsicIdAndBlockIdArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<BlocksOrderBy>>;
 };
+
 
 export type ExtrinsicEventsArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -3908,6 +3901,7 @@ export type ExtrinsicBlocksByEventExtrinsicIdAndBlockIdManyToManyConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Block` values, with data from `Event`. */
 export type ExtrinsicBlocksByEventExtrinsicIdAndBlockIdManyToManyConnectionGroupedAggregatesArgs = {
   groupBy: Array<BlocksGroupBy>;
@@ -3924,6 +3918,7 @@ export type ExtrinsicBlocksByEventExtrinsicIdAndBlockIdManyToManyEdge = {
   /** The `Block` at the end of the edge. */
   node?: Maybe<Block>;
 };
+
 
 /** A `Block` edge in the connection, with data from `Event`. */
 export type ExtrinsicBlocksByEventExtrinsicIdAndBlockIdManyToManyEdgeEventsArgs = {
@@ -4067,6 +4062,7 @@ export type ExtrinsicsConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Extrinsic` values. */
 export type ExtrinsicsConnectionGroupedAggregatesArgs = {
   groupBy: Array<ExtrinsicsGroupBy>;
@@ -4093,7 +4089,7 @@ export enum ExtrinsicsGroupBy {
   IsSuccess = 'IS_SUCCESS',
   Method = 'METHOD',
   Module = 'MODULE',
-  SignerId = 'SIGNER_ID',
+  SignerId = 'SIGNER_ID'
 }
 
 export type ExtrinsicsHavingAverageInput = {
@@ -4382,7 +4378,7 @@ export enum ExtrinsicsOrderBy {
   PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
   PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
   SignerIdAsc = 'SIGNER_ID_ASC',
-  SignerIdDesc = 'SIGNER_ID_DESC',
+  SignerIdDesc = 'SIGNER_ID_DESC'
 }
 
 export type HavingBigfloatFilter = {
@@ -4641,6 +4637,7 @@ export type KeygenThresholdsConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `KeygenThreshold` values. */
 export type KeygenThresholdsConnectionGroupedAggregatesArgs = {
   groupBy: Array<KeygenThresholdsGroupBy>;
@@ -4661,7 +4658,7 @@ export enum KeygenThresholdsGroupBy {
   BlockId = 'BLOCK_ID',
   Current = 'CURRENT',
   Next = 'NEXT',
-  Pending = 'PENDING',
+  Pending = 'PENDING'
 }
 
 export type KeygenThresholdsHavingAverageInput = {
@@ -4747,7 +4744,7 @@ export enum KeygenThresholdsOrderBy {
   PendingAsc = 'PENDING_ASC',
   PendingDesc = 'PENDING_DESC',
   PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
-  PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
+  PrimaryKeyDesc = 'PRIMARY_KEY_DESC'
 }
 
 /** An object with a globally unique `ID`. */
@@ -4951,6 +4948,7 @@ export type ProposalCountersConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `ProposalCounter` values. */
 export type ProposalCountersConnectionGroupedAggregatesArgs = {
   groupBy: Array<ProposalCountersGroupBy>;
@@ -4974,7 +4972,7 @@ export enum ProposalCountersGroupBy {
   SignedProposalsMap = 'SIGNED_PROPOSALS_MAP',
   StatusMap = 'STATUS_MAP',
   UnSignedProposalsCount = 'UN_SIGNED_PROPOSALS_COUNT',
-  UnSignedProposalsMap = 'UN_SIGNED_PROPOSALS_MAP',
+  UnSignedProposalsMap = 'UN_SIGNED_PROPOSALS_MAP'
 }
 
 export type ProposalCountersHavingAverageInput = {
@@ -5066,7 +5064,7 @@ export enum ProposalCountersOrderBy {
   UnSignedProposalsCountAsc = 'UN_SIGNED_PROPOSALS_COUNT_ASC',
   UnSignedProposalsCountDesc = 'UN_SIGNED_PROPOSALS_COUNT_DESC',
   UnSignedProposalsMapAsc = 'UN_SIGNED_PROPOSALS_MAP_ASC',
-  UnSignedProposalsMapDesc = 'UN_SIGNED_PROPOSALS_MAP_DESC',
+  UnSignedProposalsMapDesc = 'UN_SIGNED_PROPOSALS_MAP_DESC'
 }
 
 export type ProposalItem = Node & {
@@ -5099,6 +5097,7 @@ export type ProposalItem = Node & {
   unsignedProposalsQueuesByUnsignedProposalsQueueItemProposalIdAndQueueId: ProposalItemUnsignedProposalsQueuesByUnsignedProposalsQueueItemProposalIdAndQueueIdManyToManyConnection;
 };
 
+
 export type ProposalItemBlocksByProposalVoteProposalIdAndBlockIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -5108,6 +5107,7 @@ export type ProposalItemBlocksByProposalVoteProposalIdAndBlockIdArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<BlocksOrderBy>>;
 };
+
 
 export type ProposalItemProposalTimelineStatusesArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -5119,6 +5119,7 @@ export type ProposalItemProposalTimelineStatusesArgs = {
   orderBy?: InputMaybe<Array<ProposalTimelineStatusesOrderBy>>;
 };
 
+
 export type ProposalItemProposalVotesByProposalIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -5128,6 +5129,7 @@ export type ProposalItemProposalVotesByProposalIdArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<ProposalVotesOrderBy>>;
 };
+
 
 export type ProposalItemProposersByProposalVoteProposalIdAndVoterIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -5139,6 +5141,7 @@ export type ProposalItemProposersByProposalVoteProposalIdAndVoterIdArgs = {
   orderBy?: InputMaybe<Array<ProposersOrderBy>>;
 };
 
+
 export type ProposalItemUnsignedProposalsQueueItemsByProposalIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -5148,6 +5151,7 @@ export type ProposalItemUnsignedProposalsQueueItemsByProposalIdArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<UnsignedProposalsQueueItemsOrderBy>>;
 };
+
 
 export type ProposalItemUnsignedProposalsQueuesByUnsignedProposalsQueueItemProposalIdAndQueueIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -5209,6 +5213,7 @@ export type ProposalItemBlocksByProposalVoteProposalIdAndBlockIdManyToManyConnec
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Block` values, with data from `ProposalVote`. */
 export type ProposalItemBlocksByProposalVoteProposalIdAndBlockIdManyToManyConnectionGroupedAggregatesArgs = {
   groupBy: Array<BlocksGroupBy>;
@@ -5225,6 +5230,7 @@ export type ProposalItemBlocksByProposalVoteProposalIdAndBlockIdManyToManyEdge =
   /** Reads and enables pagination through a set of `ProposalVote`. */
   proposalVotes: ProposalVotesConnection;
 };
+
 
 /** A `Block` edge in the connection, with data from `ProposalVote`. */
 export type ProposalItemBlocksByProposalVoteProposalIdAndBlockIdManyToManyEdgeProposalVotesArgs = {
@@ -5328,6 +5334,7 @@ export type ProposalItemProposersByProposalVoteProposalIdAndVoterIdManyToManyCon
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Proposer` values, with data from `ProposalVote`. */
 export type ProposalItemProposersByProposalVoteProposalIdAndVoterIdManyToManyConnectionGroupedAggregatesArgs = {
   groupBy: Array<ProposersGroupBy>;
@@ -5344,6 +5351,7 @@ export type ProposalItemProposersByProposalVoteProposalIdAndVoterIdManyToManyEdg
   /** Reads and enables pagination through a set of `ProposalVote`. */
   votes: ProposalVotesConnection;
 };
+
 
 /** A `Proposer` edge in the connection, with data from `ProposalVote`. */
 export type ProposalItemProposersByProposalVoteProposalIdAndVoterIdManyToManyEdgeVotesArgs = {
@@ -5403,12 +5411,12 @@ export type ProposalItemUnsignedProposalsQueuesByUnsignedProposalsQueueItemPropo
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `UnsignedProposalsQueue` values, with data from `UnsignedProposalsQueueItem`. */
-export type ProposalItemUnsignedProposalsQueuesByUnsignedProposalsQueueItemProposalIdAndQueueIdManyToManyConnectionGroupedAggregatesArgs =
-  {
-    groupBy: Array<UnsignedProposalsQueuesGroupBy>;
-    having?: InputMaybe<UnsignedProposalsQueuesHavingInput>;
-  };
+export type ProposalItemUnsignedProposalsQueuesByUnsignedProposalsQueueItemProposalIdAndQueueIdManyToManyConnectionGroupedAggregatesArgs = {
+  groupBy: Array<UnsignedProposalsQueuesGroupBy>;
+  having?: InputMaybe<UnsignedProposalsQueuesHavingInput>;
+};
 
 /** A `UnsignedProposalsQueue` edge in the connection, with data from `UnsignedProposalsQueueItem`. */
 export type ProposalItemUnsignedProposalsQueuesByUnsignedProposalsQueueItemProposalIdAndQueueIdManyToManyEdge = {
@@ -5421,17 +5429,17 @@ export type ProposalItemUnsignedProposalsQueuesByUnsignedProposalsQueueItemPropo
   unsignedProposalsQueueItemsByQueueId: UnsignedProposalsQueueItemsConnection;
 };
 
+
 /** A `UnsignedProposalsQueue` edge in the connection, with data from `UnsignedProposalsQueueItem`. */
-export type ProposalItemUnsignedProposalsQueuesByUnsignedProposalsQueueItemProposalIdAndQueueIdManyToManyEdgeUnsignedProposalsQueueItemsByQueueIdArgs =
-  {
-    after?: InputMaybe<Scalars['Cursor']>;
-    before?: InputMaybe<Scalars['Cursor']>;
-    filter?: InputMaybe<UnsignedProposalsQueueItemFilter>;
-    first?: InputMaybe<Scalars['Int']>;
-    last?: InputMaybe<Scalars['Int']>;
-    offset?: InputMaybe<Scalars['Int']>;
-    orderBy?: InputMaybe<Array<UnsignedProposalsQueueItemsOrderBy>>;
-  };
+export type ProposalItemUnsignedProposalsQueuesByUnsignedProposalsQueueItemProposalIdAndQueueIdManyToManyEdgeUnsignedProposalsQueueItemsByQueueIdArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  filter?: InputMaybe<UnsignedProposalsQueueItemFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<UnsignedProposalsQueueItemsOrderBy>>;
+};
 
 export type ProposalItemVariancePopulationAggregates = {
   __typename?: 'ProposalItemVariancePopulationAggregates';
@@ -5470,6 +5478,7 @@ export type ProposalItemsConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `ProposalItem` values. */
 export type ProposalItemsConnectionGroupedAggregatesArgs = {
   groupBy: Array<ProposalItemsGroupBy>;
@@ -5495,7 +5504,7 @@ export enum ProposalItemsGroupBy {
   Removed = 'REMOVED',
   Signature = 'SIGNATURE',
   Status = 'STATUS',
-  Type = 'TYPE',
+  Type = 'TYPE'
 }
 
 export type ProposalItemsHavingAverageInput = {
@@ -5885,7 +5894,7 @@ export enum ProposalItemsOrderBy {
   UnsignedProposalsQueueItemsByProposalIdVarianceSampleProposalIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_VARIANCE_SAMPLE_PROPOSAL_ID_ASC',
   UnsignedProposalsQueueItemsByProposalIdVarianceSampleProposalIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_VARIANCE_SAMPLE_PROPOSAL_ID_DESC',
   UnsignedProposalsQueueItemsByProposalIdVarianceSampleQueueIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_VARIANCE_SAMPLE_QUEUE_ID_ASC',
-  UnsignedProposalsQueueItemsByProposalIdVarianceSampleQueueIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_VARIANCE_SAMPLE_QUEUE_ID_DESC',
+  UnsignedProposalsQueueItemsByProposalIdVarianceSampleQueueIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_VARIANCE_SAMPLE_QUEUE_ID_DESC'
 }
 
 export enum ProposalStatus {
@@ -5895,7 +5904,7 @@ export enum ProposalStatus {
   Open = 'Open',
   Rejected = 'Rejected',
   Removed = 'Removed',
-  Signed = 'Signed',
+  Signed = 'Signed'
 }
 
 /** A filter to be used against ProposalStatus fields. All fields are combined with a logical ‘and.’ */
@@ -6064,6 +6073,7 @@ export type ProposalTimelineStatusesConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `ProposalTimelineStatus` values. */
 export type ProposalTimelineStatusesConnectionGroupedAggregatesArgs = {
   groupBy: Array<ProposalTimelineStatusesGroupBy>;
@@ -6087,7 +6097,7 @@ export enum ProposalTimelineStatusesGroupBy {
   Timestamp = 'TIMESTAMP',
   TimestampTruncatedToDay = 'TIMESTAMP_TRUNCATED_TO_DAY',
   TimestampTruncatedToHour = 'TIMESTAMP_TRUNCATED_TO_HOUR',
-  TxHash = 'TX_HASH',
+  TxHash = 'TX_HASH'
 }
 
 export type ProposalTimelineStatusesHavingAverageInput = {
@@ -6166,7 +6176,7 @@ export enum ProposalTimelineStatusesOrderBy {
   TimestampAsc = 'TIMESTAMP_ASC',
   TimestampDesc = 'TIMESTAMP_DESC',
   TxHashAsc = 'TX_HASH_ASC',
-  TxHashDesc = 'TX_HASH_DESC',
+  TxHashDesc = 'TX_HASH_DESC'
 }
 
 export enum ProposalType {
@@ -6185,7 +6195,7 @@ export enum ProposalType {
   TokenAddProposal = 'TokenAddProposal',
   TokenRemoveProposal = 'TokenRemoveProposal',
   Unknown = 'Unknown',
-  WrappingFeeUpdateProposal = 'WrappingFeeUpdateProposal',
+  WrappingFeeUpdateProposal = 'WrappingFeeUpdateProposal'
 }
 
 /** A filter to be used against ProposalType fields. All fields are combined with a logical ‘and.’ */
@@ -6358,6 +6368,7 @@ export type ProposalVotesConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `ProposalVote` values. */
 export type ProposalVotesConnectionGroupedAggregatesArgs = {
   groupBy: Array<ProposalVotesGroupBy>;
@@ -6379,7 +6390,7 @@ export enum ProposalVotesGroupBy {
   BlockNumber = 'BLOCK_NUMBER',
   ProposalId = 'PROPOSAL_ID',
   VoterId = 'VOTER_ID',
-  VoteStatus = 'VOTE_STATUS',
+  VoteStatus = 'VOTE_STATUS'
 }
 
 export type ProposalVotesHavingAverageInput = {
@@ -6449,7 +6460,7 @@ export enum ProposalVotesOrderBy {
   VoterIdAsc = 'VOTER_ID_ASC',
   VoterIdDesc = 'VOTER_ID_DESC',
   VoteStatusAsc = 'VOTE_STATUS_ASC',
-  VoteStatusDesc = 'VOTE_STATUS_DESC',
+  VoteStatusDesc = 'VOTE_STATUS_DESC'
 }
 
 export type Proposer = Node & {
@@ -6472,6 +6483,7 @@ export type Proposer = Node & {
   votes: ProposalVotesConnection;
 };
 
+
 export type ProposerBlocksByProposalVoteVoterIdAndBlockIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -6481,6 +6493,7 @@ export type ProposerBlocksByProposalVoteVoterIdAndBlockIdArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<BlocksOrderBy>>;
 };
+
 
 export type ProposerProposalItemsByProposalVoteVoterIdAndProposalIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -6492,6 +6505,7 @@ export type ProposerProposalItemsByProposalVoteVoterIdAndProposalIdArgs = {
   orderBy?: InputMaybe<Array<ProposalItemsOrderBy>>;
 };
 
+
 export type ProposerSessionProposersArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -6502,6 +6516,7 @@ export type ProposerSessionProposersArgs = {
   orderBy?: InputMaybe<Array<SessionProposersOrderBy>>;
 };
 
+
 export type ProposerSessionsBySessionProposerProposerIdAndSessionIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -6511,6 +6526,7 @@ export type ProposerSessionsBySessionProposerProposerIdAndSessionIdArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<SessionsOrderBy>>;
 };
+
 
 export type ProposerVotesArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -6546,6 +6562,7 @@ export type ProposerBlocksByProposalVoteVoterIdAndBlockIdManyToManyConnection = 
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Block` values, with data from `ProposalVote`. */
 export type ProposerBlocksByProposalVoteVoterIdAndBlockIdManyToManyConnectionGroupedAggregatesArgs = {
   groupBy: Array<BlocksGroupBy>;
@@ -6562,6 +6579,7 @@ export type ProposerBlocksByProposalVoteVoterIdAndBlockIdManyToManyEdge = {
   /** Reads and enables pagination through a set of `ProposalVote`. */
   proposalVotes: ProposalVotesConnection;
 };
+
 
 /** A `Block` edge in the connection, with data from `ProposalVote`. */
 export type ProposerBlocksByProposalVoteVoterIdAndBlockIdManyToManyEdgeProposalVotesArgs = {
@@ -6613,6 +6631,7 @@ export type ProposerProposalItemsByProposalVoteVoterIdAndProposalIdManyToManyCon
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `ProposalItem` values, with data from `ProposalVote`. */
 export type ProposerProposalItemsByProposalVoteVoterIdAndProposalIdManyToManyConnectionGroupedAggregatesArgs = {
   groupBy: Array<ProposalItemsGroupBy>;
@@ -6629,6 +6648,7 @@ export type ProposerProposalItemsByProposalVoteVoterIdAndProposalIdManyToManyEdg
   /** Reads and enables pagination through a set of `ProposalVote`. */
   proposalVotesByProposalId: ProposalVotesConnection;
 };
+
 
 /** A `ProposalItem` edge in the connection, with data from `ProposalVote`. */
 export type ProposerProposalItemsByProposalVoteVoterIdAndProposalIdManyToManyEdgeProposalVotesByProposalIdArgs = {
@@ -6658,6 +6678,7 @@ export type ProposerSessionsBySessionProposerProposerIdAndSessionIdManyToManyCon
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Session` values, with data from `SessionProposer`. */
 export type ProposerSessionsBySessionProposerProposerIdAndSessionIdManyToManyConnectionGroupedAggregatesArgs = {
   groupBy: Array<SessionsGroupBy>;
@@ -6674,6 +6695,7 @@ export type ProposerSessionsBySessionProposerProposerIdAndSessionIdManyToManyEdg
   /** Reads and enables pagination through a set of `SessionProposer`. */
   sessionProposers: SessionProposersConnection;
 };
+
 
 /** A `Session` edge in the connection, with data from `SessionProposer`. */
 export type ProposerSessionsBySessionProposerProposerIdAndSessionIdManyToManyEdgeSessionProposersArgs = {
@@ -6811,6 +6833,7 @@ export type ProposerThresholdsConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `ProposerThreshold` values. */
 export type ProposerThresholdsConnectionGroupedAggregatesArgs = {
   groupBy: Array<ProposerThresholdsGroupBy>;
@@ -6829,7 +6852,7 @@ export type ProposerThresholdsEdge = {
 /** Grouping methods for `ProposerThreshold` for usage during aggregation. */
 export enum ProposerThresholdsGroupBy {
   BlockId = 'BLOCK_ID',
-  Value = 'VALUE',
+  Value = 'VALUE'
 }
 
 export type ProposerThresholdsHavingAverageInput = {
@@ -6893,7 +6916,7 @@ export enum ProposerThresholdsOrderBy {
   PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
   PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
   ValueAsc = 'VALUE_ASC',
-  ValueDesc = 'VALUE_DESC',
+  ValueDesc = 'VALUE_DESC'
 }
 
 /** A connection to a list of `Proposer` values. */
@@ -6913,6 +6936,7 @@ export type ProposersConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Proposer` values. */
 export type ProposersConnectionGroupedAggregatesArgs = {
   groupBy: Array<ProposersGroupBy>;
@@ -6930,7 +6954,7 @@ export type ProposersEdge = {
 
 /** Grouping methods for `Proposer` for usage during aggregation. */
 export enum ProposersGroupBy {
-  AccountId = 'ACCOUNT_ID',
+  AccountId = 'ACCOUNT_ID'
 }
 
 /** Conditions for `Proposer` aggregates. */
@@ -7113,7 +7137,7 @@ export enum ProposersOrderBy {
   VotesVarianceSampleVoterIdAsc = 'VOTES_VARIANCE_SAMPLE_VOTER_ID_ASC',
   VotesVarianceSampleVoterIdDesc = 'VOTES_VARIANCE_SAMPLE_VOTER_ID_DESC',
   VotesVarianceSampleVoteStatusAsc = 'VOTES_VARIANCE_SAMPLE_VOTE_STATUS_ASC',
-  VotesVarianceSampleVoteStatusDesc = 'VOTES_VARIANCE_SAMPLE_VOTE_STATUS_DESC',
+  VotesVarianceSampleVoteStatusDesc = 'VOTES_VARIANCE_SAMPLE_VOTE_STATUS_DESC'
 }
 
 export type PublicKey = Node & {
@@ -7133,6 +7157,7 @@ export type PublicKey = Node & {
   uncompressed?: Maybe<Scalars['String']>;
 };
 
+
 export type PublicKeyBlocksBySessionPublicKeyIdAndBlockIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -7142,6 +7167,7 @@ export type PublicKeyBlocksBySessionPublicKeyIdAndBlockIdArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<BlocksOrderBy>>;
 };
+
 
 export type PublicKeySessionsArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -7177,6 +7203,7 @@ export type PublicKeyBlocksBySessionPublicKeyIdAndBlockIdManyToManyConnection = 
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Block` values, with data from `Session`. */
 export type PublicKeyBlocksBySessionPublicKeyIdAndBlockIdManyToManyConnectionGroupedAggregatesArgs = {
   groupBy: Array<BlocksGroupBy>;
@@ -7193,6 +7220,7 @@ export type PublicKeyBlocksBySessionPublicKeyIdAndBlockIdManyToManyEdge = {
   /** Reads and enables pagination through a set of `Session`. */
   sessions: SessionsConnection;
 };
+
 
 /** A `Block` edge in the connection, with data from `Session`. */
 export type PublicKeyBlocksBySessionPublicKeyIdAndBlockIdManyToManyEdgeSessionsArgs = {
@@ -7256,6 +7284,7 @@ export type PublicKeysConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `PublicKey` values. */
 export type PublicKeysConnectionGroupedAggregatesArgs = {
   groupBy: Array<PublicKeysGroupBy>;
@@ -7275,7 +7304,7 @@ export type PublicKeysEdge = {
 export enum PublicKeysGroupBy {
   BlockId = 'BLOCK_ID',
   Compressed = 'COMPRESSED',
-  History = 'HISTORY',
+  History = 'HISTORY'
 }
 
 /** Conditions for `PublicKey` aggregates. */
@@ -7303,14 +7332,8 @@ export enum PublicKeysOrderBy {
   SessionsAverageBlockNumberDesc = 'SESSIONS_AVERAGE_BLOCK_NUMBER_DESC',
   SessionsAverageIdAsc = 'SESSIONS_AVERAGE_ID_ASC',
   SessionsAverageIdDesc = 'SESSIONS_AVERAGE_ID_DESC',
-  SessionsAverageKeyGenThresholdAsc = 'SESSIONS_AVERAGE_KEY_GEN_THRESHOLD_ASC',
-  SessionsAverageKeyGenThresholdDesc = 'SESSIONS_AVERAGE_KEY_GEN_THRESHOLD_DESC',
-  SessionsAverageProposerThresholdAsc = 'SESSIONS_AVERAGE_PROPOSER_THRESHOLD_ASC',
-  SessionsAverageProposerThresholdDesc = 'SESSIONS_AVERAGE_PROPOSER_THRESHOLD_DESC',
   SessionsAveragePublicKeyIdAsc = 'SESSIONS_AVERAGE_PUBLIC_KEY_ID_ASC',
   SessionsAveragePublicKeyIdDesc = 'SESSIONS_AVERAGE_PUBLIC_KEY_ID_DESC',
-  SessionsAverageSignatureThresholdAsc = 'SESSIONS_AVERAGE_SIGNATURE_THRESHOLD_ASC',
-  SessionsAverageSignatureThresholdDesc = 'SESSIONS_AVERAGE_SIGNATURE_THRESHOLD_DESC',
   SessionsCountAsc = 'SESSIONS_COUNT_ASC',
   SessionsCountDesc = 'SESSIONS_COUNT_DESC',
   SessionsDistinctCountBlockIdAsc = 'SESSIONS_DISTINCT_COUNT_BLOCK_ID_ASC',
@@ -7319,114 +7342,66 @@ export enum PublicKeysOrderBy {
   SessionsDistinctCountBlockNumberDesc = 'SESSIONS_DISTINCT_COUNT_BLOCK_NUMBER_DESC',
   SessionsDistinctCountIdAsc = 'SESSIONS_DISTINCT_COUNT_ID_ASC',
   SessionsDistinctCountIdDesc = 'SESSIONS_DISTINCT_COUNT_ID_DESC',
-  SessionsDistinctCountKeyGenThresholdAsc = 'SESSIONS_DISTINCT_COUNT_KEY_GEN_THRESHOLD_ASC',
-  SessionsDistinctCountKeyGenThresholdDesc = 'SESSIONS_DISTINCT_COUNT_KEY_GEN_THRESHOLD_DESC',
-  SessionsDistinctCountProposerThresholdAsc = 'SESSIONS_DISTINCT_COUNT_PROPOSER_THRESHOLD_ASC',
-  SessionsDistinctCountProposerThresholdDesc = 'SESSIONS_DISTINCT_COUNT_PROPOSER_THRESHOLD_DESC',
   SessionsDistinctCountPublicKeyIdAsc = 'SESSIONS_DISTINCT_COUNT_PUBLIC_KEY_ID_ASC',
   SessionsDistinctCountPublicKeyIdDesc = 'SESSIONS_DISTINCT_COUNT_PUBLIC_KEY_ID_DESC',
-  SessionsDistinctCountSignatureThresholdAsc = 'SESSIONS_DISTINCT_COUNT_SIGNATURE_THRESHOLD_ASC',
-  SessionsDistinctCountSignatureThresholdDesc = 'SESSIONS_DISTINCT_COUNT_SIGNATURE_THRESHOLD_DESC',
   SessionsMaxBlockIdAsc = 'SESSIONS_MAX_BLOCK_ID_ASC',
   SessionsMaxBlockIdDesc = 'SESSIONS_MAX_BLOCK_ID_DESC',
   SessionsMaxBlockNumberAsc = 'SESSIONS_MAX_BLOCK_NUMBER_ASC',
   SessionsMaxBlockNumberDesc = 'SESSIONS_MAX_BLOCK_NUMBER_DESC',
   SessionsMaxIdAsc = 'SESSIONS_MAX_ID_ASC',
   SessionsMaxIdDesc = 'SESSIONS_MAX_ID_DESC',
-  SessionsMaxKeyGenThresholdAsc = 'SESSIONS_MAX_KEY_GEN_THRESHOLD_ASC',
-  SessionsMaxKeyGenThresholdDesc = 'SESSIONS_MAX_KEY_GEN_THRESHOLD_DESC',
-  SessionsMaxProposerThresholdAsc = 'SESSIONS_MAX_PROPOSER_THRESHOLD_ASC',
-  SessionsMaxProposerThresholdDesc = 'SESSIONS_MAX_PROPOSER_THRESHOLD_DESC',
   SessionsMaxPublicKeyIdAsc = 'SESSIONS_MAX_PUBLIC_KEY_ID_ASC',
   SessionsMaxPublicKeyIdDesc = 'SESSIONS_MAX_PUBLIC_KEY_ID_DESC',
-  SessionsMaxSignatureThresholdAsc = 'SESSIONS_MAX_SIGNATURE_THRESHOLD_ASC',
-  SessionsMaxSignatureThresholdDesc = 'SESSIONS_MAX_SIGNATURE_THRESHOLD_DESC',
   SessionsMinBlockIdAsc = 'SESSIONS_MIN_BLOCK_ID_ASC',
   SessionsMinBlockIdDesc = 'SESSIONS_MIN_BLOCK_ID_DESC',
   SessionsMinBlockNumberAsc = 'SESSIONS_MIN_BLOCK_NUMBER_ASC',
   SessionsMinBlockNumberDesc = 'SESSIONS_MIN_BLOCK_NUMBER_DESC',
   SessionsMinIdAsc = 'SESSIONS_MIN_ID_ASC',
   SessionsMinIdDesc = 'SESSIONS_MIN_ID_DESC',
-  SessionsMinKeyGenThresholdAsc = 'SESSIONS_MIN_KEY_GEN_THRESHOLD_ASC',
-  SessionsMinKeyGenThresholdDesc = 'SESSIONS_MIN_KEY_GEN_THRESHOLD_DESC',
-  SessionsMinProposerThresholdAsc = 'SESSIONS_MIN_PROPOSER_THRESHOLD_ASC',
-  SessionsMinProposerThresholdDesc = 'SESSIONS_MIN_PROPOSER_THRESHOLD_DESC',
   SessionsMinPublicKeyIdAsc = 'SESSIONS_MIN_PUBLIC_KEY_ID_ASC',
   SessionsMinPublicKeyIdDesc = 'SESSIONS_MIN_PUBLIC_KEY_ID_DESC',
-  SessionsMinSignatureThresholdAsc = 'SESSIONS_MIN_SIGNATURE_THRESHOLD_ASC',
-  SessionsMinSignatureThresholdDesc = 'SESSIONS_MIN_SIGNATURE_THRESHOLD_DESC',
   SessionsStddevPopulationBlockIdAsc = 'SESSIONS_STDDEV_POPULATION_BLOCK_ID_ASC',
   SessionsStddevPopulationBlockIdDesc = 'SESSIONS_STDDEV_POPULATION_BLOCK_ID_DESC',
   SessionsStddevPopulationBlockNumberAsc = 'SESSIONS_STDDEV_POPULATION_BLOCK_NUMBER_ASC',
   SessionsStddevPopulationBlockNumberDesc = 'SESSIONS_STDDEV_POPULATION_BLOCK_NUMBER_DESC',
   SessionsStddevPopulationIdAsc = 'SESSIONS_STDDEV_POPULATION_ID_ASC',
   SessionsStddevPopulationIdDesc = 'SESSIONS_STDDEV_POPULATION_ID_DESC',
-  SessionsStddevPopulationKeyGenThresholdAsc = 'SESSIONS_STDDEV_POPULATION_KEY_GEN_THRESHOLD_ASC',
-  SessionsStddevPopulationKeyGenThresholdDesc = 'SESSIONS_STDDEV_POPULATION_KEY_GEN_THRESHOLD_DESC',
-  SessionsStddevPopulationProposerThresholdAsc = 'SESSIONS_STDDEV_POPULATION_PROPOSER_THRESHOLD_ASC',
-  SessionsStddevPopulationProposerThresholdDesc = 'SESSIONS_STDDEV_POPULATION_PROPOSER_THRESHOLD_DESC',
   SessionsStddevPopulationPublicKeyIdAsc = 'SESSIONS_STDDEV_POPULATION_PUBLIC_KEY_ID_ASC',
   SessionsStddevPopulationPublicKeyIdDesc = 'SESSIONS_STDDEV_POPULATION_PUBLIC_KEY_ID_DESC',
-  SessionsStddevPopulationSignatureThresholdAsc = 'SESSIONS_STDDEV_POPULATION_SIGNATURE_THRESHOLD_ASC',
-  SessionsStddevPopulationSignatureThresholdDesc = 'SESSIONS_STDDEV_POPULATION_SIGNATURE_THRESHOLD_DESC',
   SessionsStddevSampleBlockIdAsc = 'SESSIONS_STDDEV_SAMPLE_BLOCK_ID_ASC',
   SessionsStddevSampleBlockIdDesc = 'SESSIONS_STDDEV_SAMPLE_BLOCK_ID_DESC',
   SessionsStddevSampleBlockNumberAsc = 'SESSIONS_STDDEV_SAMPLE_BLOCK_NUMBER_ASC',
   SessionsStddevSampleBlockNumberDesc = 'SESSIONS_STDDEV_SAMPLE_BLOCK_NUMBER_DESC',
   SessionsStddevSampleIdAsc = 'SESSIONS_STDDEV_SAMPLE_ID_ASC',
   SessionsStddevSampleIdDesc = 'SESSIONS_STDDEV_SAMPLE_ID_DESC',
-  SessionsStddevSampleKeyGenThresholdAsc = 'SESSIONS_STDDEV_SAMPLE_KEY_GEN_THRESHOLD_ASC',
-  SessionsStddevSampleKeyGenThresholdDesc = 'SESSIONS_STDDEV_SAMPLE_KEY_GEN_THRESHOLD_DESC',
-  SessionsStddevSampleProposerThresholdAsc = 'SESSIONS_STDDEV_SAMPLE_PROPOSER_THRESHOLD_ASC',
-  SessionsStddevSampleProposerThresholdDesc = 'SESSIONS_STDDEV_SAMPLE_PROPOSER_THRESHOLD_DESC',
   SessionsStddevSamplePublicKeyIdAsc = 'SESSIONS_STDDEV_SAMPLE_PUBLIC_KEY_ID_ASC',
   SessionsStddevSamplePublicKeyIdDesc = 'SESSIONS_STDDEV_SAMPLE_PUBLIC_KEY_ID_DESC',
-  SessionsStddevSampleSignatureThresholdAsc = 'SESSIONS_STDDEV_SAMPLE_SIGNATURE_THRESHOLD_ASC',
-  SessionsStddevSampleSignatureThresholdDesc = 'SESSIONS_STDDEV_SAMPLE_SIGNATURE_THRESHOLD_DESC',
   SessionsSumBlockIdAsc = 'SESSIONS_SUM_BLOCK_ID_ASC',
   SessionsSumBlockIdDesc = 'SESSIONS_SUM_BLOCK_ID_DESC',
   SessionsSumBlockNumberAsc = 'SESSIONS_SUM_BLOCK_NUMBER_ASC',
   SessionsSumBlockNumberDesc = 'SESSIONS_SUM_BLOCK_NUMBER_DESC',
   SessionsSumIdAsc = 'SESSIONS_SUM_ID_ASC',
   SessionsSumIdDesc = 'SESSIONS_SUM_ID_DESC',
-  SessionsSumKeyGenThresholdAsc = 'SESSIONS_SUM_KEY_GEN_THRESHOLD_ASC',
-  SessionsSumKeyGenThresholdDesc = 'SESSIONS_SUM_KEY_GEN_THRESHOLD_DESC',
-  SessionsSumProposerThresholdAsc = 'SESSIONS_SUM_PROPOSER_THRESHOLD_ASC',
-  SessionsSumProposerThresholdDesc = 'SESSIONS_SUM_PROPOSER_THRESHOLD_DESC',
   SessionsSumPublicKeyIdAsc = 'SESSIONS_SUM_PUBLIC_KEY_ID_ASC',
   SessionsSumPublicKeyIdDesc = 'SESSIONS_SUM_PUBLIC_KEY_ID_DESC',
-  SessionsSumSignatureThresholdAsc = 'SESSIONS_SUM_SIGNATURE_THRESHOLD_ASC',
-  SessionsSumSignatureThresholdDesc = 'SESSIONS_SUM_SIGNATURE_THRESHOLD_DESC',
   SessionsVariancePopulationBlockIdAsc = 'SESSIONS_VARIANCE_POPULATION_BLOCK_ID_ASC',
   SessionsVariancePopulationBlockIdDesc = 'SESSIONS_VARIANCE_POPULATION_BLOCK_ID_DESC',
   SessionsVariancePopulationBlockNumberAsc = 'SESSIONS_VARIANCE_POPULATION_BLOCK_NUMBER_ASC',
   SessionsVariancePopulationBlockNumberDesc = 'SESSIONS_VARIANCE_POPULATION_BLOCK_NUMBER_DESC',
   SessionsVariancePopulationIdAsc = 'SESSIONS_VARIANCE_POPULATION_ID_ASC',
   SessionsVariancePopulationIdDesc = 'SESSIONS_VARIANCE_POPULATION_ID_DESC',
-  SessionsVariancePopulationKeyGenThresholdAsc = 'SESSIONS_VARIANCE_POPULATION_KEY_GEN_THRESHOLD_ASC',
-  SessionsVariancePopulationKeyGenThresholdDesc = 'SESSIONS_VARIANCE_POPULATION_KEY_GEN_THRESHOLD_DESC',
-  SessionsVariancePopulationProposerThresholdAsc = 'SESSIONS_VARIANCE_POPULATION_PROPOSER_THRESHOLD_ASC',
-  SessionsVariancePopulationProposerThresholdDesc = 'SESSIONS_VARIANCE_POPULATION_PROPOSER_THRESHOLD_DESC',
   SessionsVariancePopulationPublicKeyIdAsc = 'SESSIONS_VARIANCE_POPULATION_PUBLIC_KEY_ID_ASC',
   SessionsVariancePopulationPublicKeyIdDesc = 'SESSIONS_VARIANCE_POPULATION_PUBLIC_KEY_ID_DESC',
-  SessionsVariancePopulationSignatureThresholdAsc = 'SESSIONS_VARIANCE_POPULATION_SIGNATURE_THRESHOLD_ASC',
-  SessionsVariancePopulationSignatureThresholdDesc = 'SESSIONS_VARIANCE_POPULATION_SIGNATURE_THRESHOLD_DESC',
   SessionsVarianceSampleBlockIdAsc = 'SESSIONS_VARIANCE_SAMPLE_BLOCK_ID_ASC',
   SessionsVarianceSampleBlockIdDesc = 'SESSIONS_VARIANCE_SAMPLE_BLOCK_ID_DESC',
   SessionsVarianceSampleBlockNumberAsc = 'SESSIONS_VARIANCE_SAMPLE_BLOCK_NUMBER_ASC',
   SessionsVarianceSampleBlockNumberDesc = 'SESSIONS_VARIANCE_SAMPLE_BLOCK_NUMBER_DESC',
   SessionsVarianceSampleIdAsc = 'SESSIONS_VARIANCE_SAMPLE_ID_ASC',
   SessionsVarianceSampleIdDesc = 'SESSIONS_VARIANCE_SAMPLE_ID_DESC',
-  SessionsVarianceSampleKeyGenThresholdAsc = 'SESSIONS_VARIANCE_SAMPLE_KEY_GEN_THRESHOLD_ASC',
-  SessionsVarianceSampleKeyGenThresholdDesc = 'SESSIONS_VARIANCE_SAMPLE_KEY_GEN_THRESHOLD_DESC',
-  SessionsVarianceSampleProposerThresholdAsc = 'SESSIONS_VARIANCE_SAMPLE_PROPOSER_THRESHOLD_ASC',
-  SessionsVarianceSampleProposerThresholdDesc = 'SESSIONS_VARIANCE_SAMPLE_PROPOSER_THRESHOLD_DESC',
   SessionsVarianceSamplePublicKeyIdAsc = 'SESSIONS_VARIANCE_SAMPLE_PUBLIC_KEY_ID_ASC',
   SessionsVarianceSamplePublicKeyIdDesc = 'SESSIONS_VARIANCE_SAMPLE_PUBLIC_KEY_ID_DESC',
-  SessionsVarianceSampleSignatureThresholdAsc = 'SESSIONS_VARIANCE_SAMPLE_SIGNATURE_THRESHOLD_ASC',
-  SessionsVarianceSampleSignatureThresholdDesc = 'SESSIONS_VARIANCE_SAMPLE_SIGNATURE_THRESHOLD_DESC',
   UncompressedAsc = 'UNCOMPRESSED_ASC',
-  UncompressedDesc = 'UNCOMPRESSED_DESC',
+  UncompressedDesc = 'UNCOMPRESSED_DESC'
 }
 
 /** The root query type which gives access points into the data universe. */
@@ -7527,6 +7502,11 @@ export type Query = Node & {
   signatureThresholdByNodeId?: Maybe<SignatureThreshold>;
   /** Reads and enables pagination through a set of `SignatureThreshold`. */
   signatureThresholds?: Maybe<SignatureThresholdsConnection>;
+  threshold?: Maybe<Threshold>;
+  /** Reads a single `Threshold` using its globally unique `ID`. */
+  thresholdByNodeId?: Maybe<Threshold>;
+  /** Reads and enables pagination through a set of `Threshold`. */
+  thresholds?: Maybe<ThresholdsConnection>;
   unsignedProposalsQueue?: Maybe<UnsignedProposalsQueue>;
   /** Reads a single `UnsignedProposalsQueue` using its globally unique `ID`. */
   unsignedProposalsQueueByNodeId?: Maybe<UnsignedProposalsQueue>;
@@ -7544,15 +7524,18 @@ export type Query = Node & {
   validators?: Maybe<ValidatorsConnection>;
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryAccountArgs = {
   id: Scalars['String'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryAccountByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QueryAccountsArgs = {
@@ -7565,6 +7548,7 @@ export type QueryAccountsArgs = {
   orderBy?: InputMaybe<Array<AccountsOrderBy>>;
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryAuthoritiesArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -7576,25 +7560,30 @@ export type QueryAuthoritiesArgs = {
   orderBy?: InputMaybe<Array<AuthoritiesOrderBy>>;
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryAuthorityArgs = {
   id: Scalars['String'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QueryAuthorityByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryBlockArgs = {
   id: Scalars['String'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryBlockByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QueryBlocksArgs = {
@@ -7607,15 +7596,18 @@ export type QueryBlocksArgs = {
   orderBy?: InputMaybe<Array<BlocksOrderBy>>;
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryEventArgs = {
   id: Scalars['String'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryEventByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QueryEventsArgs = {
@@ -7628,15 +7620,18 @@ export type QueryEventsArgs = {
   orderBy?: InputMaybe<Array<EventsOrderBy>>;
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryExtrinsicArgs = {
   id: Scalars['String'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryExtrinsicByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QueryExtrinsicsArgs = {
@@ -7649,15 +7644,18 @@ export type QueryExtrinsicsArgs = {
   orderBy?: InputMaybe<Array<ExtrinsicsOrderBy>>;
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryKeygenThresholdArgs = {
   id: Scalars['String'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryKeygenThresholdByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QueryKeygenThresholdsArgs = {
@@ -7670,20 +7668,24 @@ export type QueryKeygenThresholdsArgs = {
   orderBy?: InputMaybe<Array<KeygenThresholdsOrderBy>>;
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryNodeArgs = {
   nodeId: Scalars['ID'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QueryProposalCounterArgs = {
   id: Scalars['String'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryProposalCounterByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QueryProposalCountersArgs = {
@@ -7696,15 +7698,18 @@ export type QueryProposalCountersArgs = {
   orderBy?: InputMaybe<Array<ProposalCountersOrderBy>>;
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryProposalItemArgs = {
   id: Scalars['String'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryProposalItemByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QueryProposalItemsArgs = {
@@ -7717,15 +7722,18 @@ export type QueryProposalItemsArgs = {
   orderBy?: InputMaybe<Array<ProposalItemsOrderBy>>;
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryProposalTimelineStatusArgs = {
   id: Scalars['String'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryProposalTimelineStatusByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QueryProposalTimelineStatusesArgs = {
@@ -7738,15 +7746,18 @@ export type QueryProposalTimelineStatusesArgs = {
   orderBy?: InputMaybe<Array<ProposalTimelineStatusesOrderBy>>;
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryProposalVoteArgs = {
   id: Scalars['String'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryProposalVoteByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QueryProposalVotesArgs = {
@@ -7759,25 +7770,30 @@ export type QueryProposalVotesArgs = {
   orderBy?: InputMaybe<Array<ProposalVotesOrderBy>>;
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryProposerArgs = {
   id: Scalars['String'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QueryProposerByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryProposerThresholdArgs = {
   id: Scalars['String'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryProposerThresholdByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QueryProposerThresholdsArgs = {
@@ -7790,6 +7806,7 @@ export type QueryProposerThresholdsArgs = {
   orderBy?: InputMaybe<Array<ProposerThresholdsOrderBy>>;
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryProposersArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -7801,15 +7818,18 @@ export type QueryProposersArgs = {
   orderBy?: InputMaybe<Array<ProposersOrderBy>>;
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryPublicKeyArgs = {
   id: Scalars['String'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryPublicKeyByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QueryPublicKeysArgs = {
@@ -7822,25 +7842,30 @@ export type QueryPublicKeysArgs = {
   orderBy?: InputMaybe<Array<PublicKeysOrderBy>>;
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QuerySessionArgs = {
   id: Scalars['String'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QuerySessionByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QuerySessionProposerArgs = {
   id: Scalars['String'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QuerySessionProposerByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QuerySessionProposersArgs = {
@@ -7853,15 +7878,18 @@ export type QuerySessionProposersArgs = {
   orderBy?: InputMaybe<Array<SessionProposersOrderBy>>;
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QuerySessionValidatorArgs = {
   id: Scalars['String'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QuerySessionValidatorByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QuerySessionValidatorsArgs = {
@@ -7874,6 +7902,7 @@ export type QuerySessionValidatorsArgs = {
   orderBy?: InputMaybe<Array<SessionValidatorsOrderBy>>;
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QuerySessionsArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -7885,15 +7914,18 @@ export type QuerySessionsArgs = {
   orderBy?: InputMaybe<Array<SessionsOrderBy>>;
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QuerySignatureThresholdArgs = {
   id: Scalars['String'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QuerySignatureThresholdByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QuerySignatureThresholdsArgs = {
@@ -7906,25 +7938,54 @@ export type QuerySignatureThresholdsArgs = {
   orderBy?: InputMaybe<Array<SignatureThresholdsOrderBy>>;
 };
 
+
+/** The root query type which gives access points into the data universe. */
+export type QueryThresholdArgs = {
+  id: Scalars['String'];
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QueryThresholdByNodeIdArgs = {
+  nodeId: Scalars['ID'];
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QueryThresholdsArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  filter?: InputMaybe<ThresholdFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<ThresholdsOrderBy>>;
+};
+
+
 /** The root query type which gives access points into the data universe. */
 export type QueryUnsignedProposalsQueueArgs = {
   id: Scalars['String'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QueryUnsignedProposalsQueueByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryUnsignedProposalsQueueItemArgs = {
   id: Scalars['String'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryUnsignedProposalsQueueItemByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QueryUnsignedProposalsQueueItemsArgs = {
@@ -7937,6 +7998,7 @@ export type QueryUnsignedProposalsQueueItemsArgs = {
   orderBy?: InputMaybe<Array<UnsignedProposalsQueueItemsOrderBy>>;
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryUnsignedProposalsQueuesArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -7948,15 +8010,18 @@ export type QueryUnsignedProposalsQueuesArgs = {
   orderBy?: InputMaybe<Array<UnsignedProposalsQueuesOrderBy>>;
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryValidatorArgs = {
   id: Scalars['String'];
 };
 
+
 /** The root query type which gives access points into the data universe. */
 export type QueryValidatorByNodeIdArgs = {
   nodeId: Scalars['ID'];
 };
+
 
 /** The root query type which gives access points into the data universe. */
 export type QueryValidatorsArgs = {
@@ -7976,10 +8041,8 @@ export type Session = Node & {
   blockId: Scalars['String'];
   blockNumber: Scalars['Int'];
   id: Scalars['String'];
-  keyGenThreshold?: Maybe<Scalars['JSON']>;
   /** A globally unique identifier. Can be used in various places throughout the system to identify this single value. */
   nodeId: Scalars['ID'];
-  proposerThreshold?: Maybe<Scalars['JSON']>;
   /** Reads and enables pagination through a set of `Proposer`. */
   proposersBySessionProposerSessionIdAndProposerId: SessionProposersBySessionProposerSessionIdAndProposerIdManyToManyConnection;
   /** Reads a single `PublicKey` that is related to this `Session`. */
@@ -7989,10 +8052,12 @@ export type Session = Node & {
   sessionProposers: SessionProposersConnection;
   /** Reads and enables pagination through a set of `SessionValidator`. */
   sessionValidators: SessionValidatorsConnection;
-  signatureThreshold?: Maybe<Scalars['JSON']>;
+  /** Reads and enables pagination through a set of `Threshold`. */
+  thresholds: ThresholdsConnection;
   /** Reads and enables pagination through a set of `Validator`. */
   validatorsBySessionValidatorSessionIdAndValidatorId: SessionValidatorsBySessionValidatorSessionIdAndValidatorIdManyToManyConnection;
 };
+
 
 export type SessionProposersBySessionProposerSessionIdAndProposerIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -8004,6 +8069,7 @@ export type SessionProposersBySessionProposerSessionIdAndProposerIdArgs = {
   orderBy?: InputMaybe<Array<ProposersOrderBy>>;
 };
 
+
 export type SessionSessionProposersArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -8014,6 +8080,7 @@ export type SessionSessionProposersArgs = {
   orderBy?: InputMaybe<Array<SessionProposersOrderBy>>;
 };
 
+
 export type SessionSessionValidatorsArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -8023,6 +8090,18 @@ export type SessionSessionValidatorsArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<SessionValidatorsOrderBy>>;
 };
+
+
+export type SessionThresholdsArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  filter?: InputMaybe<ThresholdFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<ThresholdsOrderBy>>;
+};
+
 
 export type SessionValidatorsBySessionValidatorSessionIdAndValidatorIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -8071,14 +8150,8 @@ export type SessionDistinctCountAggregates = {
   blockNumber?: Maybe<Scalars['BigInt']>;
   /** Distinct count of id across the matching connection */
   id?: Maybe<Scalars['BigInt']>;
-  /** Distinct count of keyGenThreshold across the matching connection */
-  keyGenThreshold?: Maybe<Scalars['BigInt']>;
-  /** Distinct count of proposerThreshold across the matching connection */
-  proposerThreshold?: Maybe<Scalars['BigInt']>;
   /** Distinct count of publicKeyId across the matching connection */
   publicKeyId?: Maybe<Scalars['BigInt']>;
-  /** Distinct count of signatureThreshold across the matching connection */
-  signatureThreshold?: Maybe<Scalars['BigInt']>;
 };
 
 /** A filter to be used against `Session` object types. All fields are combined with a logical ‘and.’ */
@@ -8091,18 +8164,12 @@ export type SessionFilter = {
   blockNumber?: InputMaybe<IntFilter>;
   /** Filter by the object’s `id` field. */
   id?: InputMaybe<StringFilter>;
-  /** Filter by the object’s `keyGenThreshold` field. */
-  keyGenThreshold?: InputMaybe<JsonFilter>;
   /** Negates the expression. */
   not?: InputMaybe<SessionFilter>;
   /** Checks for any expressions in this list. */
   or?: InputMaybe<Array<SessionFilter>>;
-  /** Filter by the object’s `proposerThreshold` field. */
-  proposerThreshold?: InputMaybe<JsonFilter>;
   /** Filter by the object’s `publicKeyId` field. */
   publicKeyId?: InputMaybe<StringFilter>;
-  /** Filter by the object’s `signatureThreshold` field. */
-  signatureThreshold?: InputMaybe<JsonFilter>;
 };
 
 export type SessionMaxAggregates = {
@@ -8180,6 +8247,7 @@ export type SessionProposersBySessionProposerSessionIdAndProposerIdManyToManyCon
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Proposer` values, with data from `SessionProposer`. */
 export type SessionProposersBySessionProposerSessionIdAndProposerIdManyToManyConnectionGroupedAggregatesArgs = {
   groupBy: Array<ProposersGroupBy>;
@@ -8196,6 +8264,7 @@ export type SessionProposersBySessionProposerSessionIdAndProposerIdManyToManyEdg
   /** Reads and enables pagination through a set of `SessionProposer`. */
   sessionProposers: SessionProposersConnection;
 };
+
 
 /** A `Proposer` edge in the connection, with data from `SessionProposer`. */
 export type SessionProposersBySessionProposerSessionIdAndProposerIdManyToManyEdgeSessionProposersArgs = {
@@ -8225,6 +8294,7 @@ export type SessionProposersConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `SessionProposer` values. */
 export type SessionProposersConnectionGroupedAggregatesArgs = {
   groupBy: Array<SessionProposersGroupBy>;
@@ -8243,7 +8313,7 @@ export type SessionProposersEdge = {
 /** Grouping methods for `SessionProposer` for usage during aggregation. */
 export enum SessionProposersGroupBy {
   ProposerId = 'PROPOSER_ID',
-  SessionId = 'SESSION_ID',
+  SessionId = 'SESSION_ID'
 }
 
 /** Conditions for `SessionProposer` aggregates. */
@@ -8262,7 +8332,7 @@ export enum SessionProposersOrderBy {
   ProposerIdAsc = 'PROPOSER_ID_ASC',
   ProposerIdDesc = 'PROPOSER_ID_DESC',
   SessionIdAsc = 'SESSION_ID_ASC',
-  SessionIdDesc = 'SESSION_ID_DESC',
+  SessionIdDesc = 'SESSION_ID_DESC'
 }
 
 export type SessionStddevPopulationAggregates = {
@@ -8456,6 +8526,7 @@ export type SessionValidatorsBySessionValidatorSessionIdAndValidatorIdManyToMany
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Validator` values, with data from `SessionValidator`. */
 export type SessionValidatorsBySessionValidatorSessionIdAndValidatorIdManyToManyConnectionGroupedAggregatesArgs = {
   groupBy: Array<ValidatorsGroupBy>;
@@ -8472,6 +8543,7 @@ export type SessionValidatorsBySessionValidatorSessionIdAndValidatorIdManyToMany
   /** Reads and enables pagination through a set of `SessionValidator`. */
   sessionValidators: SessionValidatorsConnection;
 };
+
 
 /** A `Validator` edge in the connection, with data from `SessionValidator`. */
 export type SessionValidatorsBySessionValidatorSessionIdAndValidatorIdManyToManyEdgeSessionValidatorsArgs = {
@@ -8501,6 +8573,7 @@ export type SessionValidatorsConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `SessionValidator` values. */
 export type SessionValidatorsConnectionGroupedAggregatesArgs = {
   groupBy: Array<SessionValidatorsGroupBy>;
@@ -8525,7 +8598,7 @@ export enum SessionValidatorsGroupBy {
   NextBestOrder = 'NEXT_BEST_ORDER',
   Reputation = 'REPUTATION',
   SessionId = 'SESSION_ID',
-  ValidatorId = 'VALIDATOR_ID',
+  ValidatorId = 'VALIDATOR_ID'
 }
 
 export type SessionValidatorsHavingAverageInput = {
@@ -8610,7 +8683,7 @@ export enum SessionValidatorsOrderBy {
   SessionIdAsc = 'SESSION_ID_ASC',
   SessionIdDesc = 'SESSION_ID_DESC',
   ValidatorIdAsc = 'VALIDATOR_ID_ASC',
-  ValidatorIdDesc = 'VALIDATOR_ID_DESC',
+  ValidatorIdDesc = 'VALIDATOR_ID_DESC'
 }
 
 export type SessionVariancePopulationAggregates = {
@@ -8642,6 +8715,7 @@ export type SessionsConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Session` values. */
 export type SessionsConnectionGroupedAggregatesArgs = {
   groupBy: Array<SessionsGroupBy>;
@@ -8661,10 +8735,7 @@ export type SessionsEdge = {
 export enum SessionsGroupBy {
   BlockId = 'BLOCK_ID',
   BlockNumber = 'BLOCK_NUMBER',
-  KeyGenThreshold = 'KEY_GEN_THRESHOLD',
-  ProposerThreshold = 'PROPOSER_THRESHOLD',
-  PublicKeyId = 'PUBLIC_KEY_ID',
-  SignatureThreshold = 'SIGNATURE_THRESHOLD',
+  PublicKeyId = 'PUBLIC_KEY_ID'
 }
 
 export type SessionsHavingAverageInput = {
@@ -8726,13 +8797,9 @@ export enum SessionsOrderBy {
   BlockNumberDesc = 'BLOCK_NUMBER_DESC',
   IdAsc = 'ID_ASC',
   IdDesc = 'ID_DESC',
-  KeyGenThresholdAsc = 'KEY_GEN_THRESHOLD_ASC',
-  KeyGenThresholdDesc = 'KEY_GEN_THRESHOLD_DESC',
   Natural = 'NATURAL',
   PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
   PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
-  ProposerThresholdAsc = 'PROPOSER_THRESHOLD_ASC',
-  ProposerThresholdDesc = 'PROPOSER_THRESHOLD_DESC',
   PublicKeyIdAsc = 'PUBLIC_KEY_ID_ASC',
   PublicKeyIdDesc = 'PUBLIC_KEY_ID_DESC',
   SessionProposersAverageIdAsc = 'SESSION_PROPOSERS_AVERAGE_ID_ASC',
@@ -8955,8 +9022,116 @@ export enum SessionsOrderBy {
   SessionValidatorsVarianceSampleSessionIdDesc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_SESSION_ID_DESC',
   SessionValidatorsVarianceSampleValidatorIdAsc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_VALIDATOR_ID_ASC',
   SessionValidatorsVarianceSampleValidatorIdDesc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_VALIDATOR_ID_DESC',
-  SignatureThresholdAsc = 'SIGNATURE_THRESHOLD_ASC',
-  SignatureThresholdDesc = 'SIGNATURE_THRESHOLD_DESC',
+  ThresholdsAverageCurrentAsc = 'THRESHOLDS_AVERAGE_CURRENT_ASC',
+  ThresholdsAverageCurrentDesc = 'THRESHOLDS_AVERAGE_CURRENT_DESC',
+  ThresholdsAverageIdAsc = 'THRESHOLDS_AVERAGE_ID_ASC',
+  ThresholdsAverageIdDesc = 'THRESHOLDS_AVERAGE_ID_DESC',
+  ThresholdsAverageNextAsc = 'THRESHOLDS_AVERAGE_NEXT_ASC',
+  ThresholdsAverageNextDesc = 'THRESHOLDS_AVERAGE_NEXT_DESC',
+  ThresholdsAveragePendingAsc = 'THRESHOLDS_AVERAGE_PENDING_ASC',
+  ThresholdsAveragePendingDesc = 'THRESHOLDS_AVERAGE_PENDING_DESC',
+  ThresholdsAverageSessionIdAsc = 'THRESHOLDS_AVERAGE_SESSION_ID_ASC',
+  ThresholdsAverageSessionIdDesc = 'THRESHOLDS_AVERAGE_SESSION_ID_DESC',
+  ThresholdsAverageVariantAsc = 'THRESHOLDS_AVERAGE_VARIANT_ASC',
+  ThresholdsAverageVariantDesc = 'THRESHOLDS_AVERAGE_VARIANT_DESC',
+  ThresholdsCountAsc = 'THRESHOLDS_COUNT_ASC',
+  ThresholdsCountDesc = 'THRESHOLDS_COUNT_DESC',
+  ThresholdsDistinctCountCurrentAsc = 'THRESHOLDS_DISTINCT_COUNT_CURRENT_ASC',
+  ThresholdsDistinctCountCurrentDesc = 'THRESHOLDS_DISTINCT_COUNT_CURRENT_DESC',
+  ThresholdsDistinctCountIdAsc = 'THRESHOLDS_DISTINCT_COUNT_ID_ASC',
+  ThresholdsDistinctCountIdDesc = 'THRESHOLDS_DISTINCT_COUNT_ID_DESC',
+  ThresholdsDistinctCountNextAsc = 'THRESHOLDS_DISTINCT_COUNT_NEXT_ASC',
+  ThresholdsDistinctCountNextDesc = 'THRESHOLDS_DISTINCT_COUNT_NEXT_DESC',
+  ThresholdsDistinctCountPendingAsc = 'THRESHOLDS_DISTINCT_COUNT_PENDING_ASC',
+  ThresholdsDistinctCountPendingDesc = 'THRESHOLDS_DISTINCT_COUNT_PENDING_DESC',
+  ThresholdsDistinctCountSessionIdAsc = 'THRESHOLDS_DISTINCT_COUNT_SESSION_ID_ASC',
+  ThresholdsDistinctCountSessionIdDesc = 'THRESHOLDS_DISTINCT_COUNT_SESSION_ID_DESC',
+  ThresholdsDistinctCountVariantAsc = 'THRESHOLDS_DISTINCT_COUNT_VARIANT_ASC',
+  ThresholdsDistinctCountVariantDesc = 'THRESHOLDS_DISTINCT_COUNT_VARIANT_DESC',
+  ThresholdsMaxCurrentAsc = 'THRESHOLDS_MAX_CURRENT_ASC',
+  ThresholdsMaxCurrentDesc = 'THRESHOLDS_MAX_CURRENT_DESC',
+  ThresholdsMaxIdAsc = 'THRESHOLDS_MAX_ID_ASC',
+  ThresholdsMaxIdDesc = 'THRESHOLDS_MAX_ID_DESC',
+  ThresholdsMaxNextAsc = 'THRESHOLDS_MAX_NEXT_ASC',
+  ThresholdsMaxNextDesc = 'THRESHOLDS_MAX_NEXT_DESC',
+  ThresholdsMaxPendingAsc = 'THRESHOLDS_MAX_PENDING_ASC',
+  ThresholdsMaxPendingDesc = 'THRESHOLDS_MAX_PENDING_DESC',
+  ThresholdsMaxSessionIdAsc = 'THRESHOLDS_MAX_SESSION_ID_ASC',
+  ThresholdsMaxSessionIdDesc = 'THRESHOLDS_MAX_SESSION_ID_DESC',
+  ThresholdsMaxVariantAsc = 'THRESHOLDS_MAX_VARIANT_ASC',
+  ThresholdsMaxVariantDesc = 'THRESHOLDS_MAX_VARIANT_DESC',
+  ThresholdsMinCurrentAsc = 'THRESHOLDS_MIN_CURRENT_ASC',
+  ThresholdsMinCurrentDesc = 'THRESHOLDS_MIN_CURRENT_DESC',
+  ThresholdsMinIdAsc = 'THRESHOLDS_MIN_ID_ASC',
+  ThresholdsMinIdDesc = 'THRESHOLDS_MIN_ID_DESC',
+  ThresholdsMinNextAsc = 'THRESHOLDS_MIN_NEXT_ASC',
+  ThresholdsMinNextDesc = 'THRESHOLDS_MIN_NEXT_DESC',
+  ThresholdsMinPendingAsc = 'THRESHOLDS_MIN_PENDING_ASC',
+  ThresholdsMinPendingDesc = 'THRESHOLDS_MIN_PENDING_DESC',
+  ThresholdsMinSessionIdAsc = 'THRESHOLDS_MIN_SESSION_ID_ASC',
+  ThresholdsMinSessionIdDesc = 'THRESHOLDS_MIN_SESSION_ID_DESC',
+  ThresholdsMinVariantAsc = 'THRESHOLDS_MIN_VARIANT_ASC',
+  ThresholdsMinVariantDesc = 'THRESHOLDS_MIN_VARIANT_DESC',
+  ThresholdsStddevPopulationCurrentAsc = 'THRESHOLDS_STDDEV_POPULATION_CURRENT_ASC',
+  ThresholdsStddevPopulationCurrentDesc = 'THRESHOLDS_STDDEV_POPULATION_CURRENT_DESC',
+  ThresholdsStddevPopulationIdAsc = 'THRESHOLDS_STDDEV_POPULATION_ID_ASC',
+  ThresholdsStddevPopulationIdDesc = 'THRESHOLDS_STDDEV_POPULATION_ID_DESC',
+  ThresholdsStddevPopulationNextAsc = 'THRESHOLDS_STDDEV_POPULATION_NEXT_ASC',
+  ThresholdsStddevPopulationNextDesc = 'THRESHOLDS_STDDEV_POPULATION_NEXT_DESC',
+  ThresholdsStddevPopulationPendingAsc = 'THRESHOLDS_STDDEV_POPULATION_PENDING_ASC',
+  ThresholdsStddevPopulationPendingDesc = 'THRESHOLDS_STDDEV_POPULATION_PENDING_DESC',
+  ThresholdsStddevPopulationSessionIdAsc = 'THRESHOLDS_STDDEV_POPULATION_SESSION_ID_ASC',
+  ThresholdsStddevPopulationSessionIdDesc = 'THRESHOLDS_STDDEV_POPULATION_SESSION_ID_DESC',
+  ThresholdsStddevPopulationVariantAsc = 'THRESHOLDS_STDDEV_POPULATION_VARIANT_ASC',
+  ThresholdsStddevPopulationVariantDesc = 'THRESHOLDS_STDDEV_POPULATION_VARIANT_DESC',
+  ThresholdsStddevSampleCurrentAsc = 'THRESHOLDS_STDDEV_SAMPLE_CURRENT_ASC',
+  ThresholdsStddevSampleCurrentDesc = 'THRESHOLDS_STDDEV_SAMPLE_CURRENT_DESC',
+  ThresholdsStddevSampleIdAsc = 'THRESHOLDS_STDDEV_SAMPLE_ID_ASC',
+  ThresholdsStddevSampleIdDesc = 'THRESHOLDS_STDDEV_SAMPLE_ID_DESC',
+  ThresholdsStddevSampleNextAsc = 'THRESHOLDS_STDDEV_SAMPLE_NEXT_ASC',
+  ThresholdsStddevSampleNextDesc = 'THRESHOLDS_STDDEV_SAMPLE_NEXT_DESC',
+  ThresholdsStddevSamplePendingAsc = 'THRESHOLDS_STDDEV_SAMPLE_PENDING_ASC',
+  ThresholdsStddevSamplePendingDesc = 'THRESHOLDS_STDDEV_SAMPLE_PENDING_DESC',
+  ThresholdsStddevSampleSessionIdAsc = 'THRESHOLDS_STDDEV_SAMPLE_SESSION_ID_ASC',
+  ThresholdsStddevSampleSessionIdDesc = 'THRESHOLDS_STDDEV_SAMPLE_SESSION_ID_DESC',
+  ThresholdsStddevSampleVariantAsc = 'THRESHOLDS_STDDEV_SAMPLE_VARIANT_ASC',
+  ThresholdsStddevSampleVariantDesc = 'THRESHOLDS_STDDEV_SAMPLE_VARIANT_DESC',
+  ThresholdsSumCurrentAsc = 'THRESHOLDS_SUM_CURRENT_ASC',
+  ThresholdsSumCurrentDesc = 'THRESHOLDS_SUM_CURRENT_DESC',
+  ThresholdsSumIdAsc = 'THRESHOLDS_SUM_ID_ASC',
+  ThresholdsSumIdDesc = 'THRESHOLDS_SUM_ID_DESC',
+  ThresholdsSumNextAsc = 'THRESHOLDS_SUM_NEXT_ASC',
+  ThresholdsSumNextDesc = 'THRESHOLDS_SUM_NEXT_DESC',
+  ThresholdsSumPendingAsc = 'THRESHOLDS_SUM_PENDING_ASC',
+  ThresholdsSumPendingDesc = 'THRESHOLDS_SUM_PENDING_DESC',
+  ThresholdsSumSessionIdAsc = 'THRESHOLDS_SUM_SESSION_ID_ASC',
+  ThresholdsSumSessionIdDesc = 'THRESHOLDS_SUM_SESSION_ID_DESC',
+  ThresholdsSumVariantAsc = 'THRESHOLDS_SUM_VARIANT_ASC',
+  ThresholdsSumVariantDesc = 'THRESHOLDS_SUM_VARIANT_DESC',
+  ThresholdsVariancePopulationCurrentAsc = 'THRESHOLDS_VARIANCE_POPULATION_CURRENT_ASC',
+  ThresholdsVariancePopulationCurrentDesc = 'THRESHOLDS_VARIANCE_POPULATION_CURRENT_DESC',
+  ThresholdsVariancePopulationIdAsc = 'THRESHOLDS_VARIANCE_POPULATION_ID_ASC',
+  ThresholdsVariancePopulationIdDesc = 'THRESHOLDS_VARIANCE_POPULATION_ID_DESC',
+  ThresholdsVariancePopulationNextAsc = 'THRESHOLDS_VARIANCE_POPULATION_NEXT_ASC',
+  ThresholdsVariancePopulationNextDesc = 'THRESHOLDS_VARIANCE_POPULATION_NEXT_DESC',
+  ThresholdsVariancePopulationPendingAsc = 'THRESHOLDS_VARIANCE_POPULATION_PENDING_ASC',
+  ThresholdsVariancePopulationPendingDesc = 'THRESHOLDS_VARIANCE_POPULATION_PENDING_DESC',
+  ThresholdsVariancePopulationSessionIdAsc = 'THRESHOLDS_VARIANCE_POPULATION_SESSION_ID_ASC',
+  ThresholdsVariancePopulationSessionIdDesc = 'THRESHOLDS_VARIANCE_POPULATION_SESSION_ID_DESC',
+  ThresholdsVariancePopulationVariantAsc = 'THRESHOLDS_VARIANCE_POPULATION_VARIANT_ASC',
+  ThresholdsVariancePopulationVariantDesc = 'THRESHOLDS_VARIANCE_POPULATION_VARIANT_DESC',
+  ThresholdsVarianceSampleCurrentAsc = 'THRESHOLDS_VARIANCE_SAMPLE_CURRENT_ASC',
+  ThresholdsVarianceSampleCurrentDesc = 'THRESHOLDS_VARIANCE_SAMPLE_CURRENT_DESC',
+  ThresholdsVarianceSampleIdAsc = 'THRESHOLDS_VARIANCE_SAMPLE_ID_ASC',
+  ThresholdsVarianceSampleIdDesc = 'THRESHOLDS_VARIANCE_SAMPLE_ID_DESC',
+  ThresholdsVarianceSampleNextAsc = 'THRESHOLDS_VARIANCE_SAMPLE_NEXT_ASC',
+  ThresholdsVarianceSampleNextDesc = 'THRESHOLDS_VARIANCE_SAMPLE_NEXT_DESC',
+  ThresholdsVarianceSamplePendingAsc = 'THRESHOLDS_VARIANCE_SAMPLE_PENDING_ASC',
+  ThresholdsVarianceSamplePendingDesc = 'THRESHOLDS_VARIANCE_SAMPLE_PENDING_DESC',
+  ThresholdsVarianceSampleSessionIdAsc = 'THRESHOLDS_VARIANCE_SAMPLE_SESSION_ID_ASC',
+  ThresholdsVarianceSampleSessionIdDesc = 'THRESHOLDS_VARIANCE_SAMPLE_SESSION_ID_DESC',
+  ThresholdsVarianceSampleVariantAsc = 'THRESHOLDS_VARIANCE_SAMPLE_VARIANT_ASC',
+  ThresholdsVarianceSampleVariantDesc = 'THRESHOLDS_VARIANCE_SAMPLE_VARIANT_DESC'
 }
 
 export type SignatureThreshold = Node & {
@@ -9126,6 +9301,7 @@ export type SignatureThresholdsConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `SignatureThreshold` values. */
 export type SignatureThresholdsConnectionGroupedAggregatesArgs = {
   groupBy: Array<SignatureThresholdsGroupBy>;
@@ -9146,7 +9322,7 @@ export enum SignatureThresholdsGroupBy {
   BlockId = 'BLOCK_ID',
   Current = 'CURRENT',
   Next = 'NEXT',
-  Pending = 'PENDING',
+  Pending = 'PENDING'
 }
 
 export type SignatureThresholdsHavingAverageInput = {
@@ -9232,7 +9408,7 @@ export enum SignatureThresholdsOrderBy {
   PendingAsc = 'PENDING_ASC',
   PendingDesc = 'PENDING_DESC',
   PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
-  PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
+  PrimaryKeyDesc = 'PRIMARY_KEY_DESC'
 }
 
 /** A filter to be used against String fields. All fields are combined with a logical ‘and.’ */
@@ -9319,6 +9495,323 @@ export type TableEstimate = {
   table?: Maybe<Scalars['String']>;
 };
 
+export type Threshold = Node & {
+  __typename?: 'Threshold';
+  current: Scalars['Int'];
+  id: Scalars['String'];
+  next: Scalars['Int'];
+  /** A globally unique identifier. Can be used in various places throughout the system to identify this single value. */
+  nodeId: Scalars['ID'];
+  pending: Scalars['Int'];
+  /** Reads a single `Session` that is related to this `Threshold`. */
+  session?: Maybe<Session>;
+  sessionId: Scalars['String'];
+  variant: ThresholdVariant;
+};
+
+export type ThresholdAggregates = {
+  __typename?: 'ThresholdAggregates';
+  /** Mean average aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  average?: Maybe<ThresholdAverageAggregates>;
+  /** Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  distinctCount?: Maybe<ThresholdDistinctCountAggregates>;
+  keys?: Maybe<Array<Scalars['String']>>;
+  /** Maximum aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  max?: Maybe<ThresholdMaxAggregates>;
+  /** Minimum aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  min?: Maybe<ThresholdMinAggregates>;
+  /** Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  stddevPopulation?: Maybe<ThresholdStddevPopulationAggregates>;
+  /** Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  stddevSample?: Maybe<ThresholdStddevSampleAggregates>;
+  /** Sum aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  sum?: Maybe<ThresholdSumAggregates>;
+  /** Population variance aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  variancePopulation?: Maybe<ThresholdVariancePopulationAggregates>;
+  /** Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  varianceSample?: Maybe<ThresholdVarianceSampleAggregates>;
+};
+
+export type ThresholdAverageAggregates = {
+  __typename?: 'ThresholdAverageAggregates';
+  /** Mean average of current across the matching connection */
+  current?: Maybe<Scalars['BigFloat']>;
+  /** Mean average of next across the matching connection */
+  next?: Maybe<Scalars['BigFloat']>;
+  /** Mean average of pending across the matching connection */
+  pending?: Maybe<Scalars['BigFloat']>;
+};
+
+export type ThresholdDistinctCountAggregates = {
+  __typename?: 'ThresholdDistinctCountAggregates';
+  /** Distinct count of current across the matching connection */
+  current?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of id across the matching connection */
+  id?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of next across the matching connection */
+  next?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of pending across the matching connection */
+  pending?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of sessionId across the matching connection */
+  sessionId?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of variant across the matching connection */
+  variant?: Maybe<Scalars['BigInt']>;
+};
+
+/** A filter to be used against `Threshold` object types. All fields are combined with a logical ‘and.’ */
+export type ThresholdFilter = {
+  /** Checks for all expressions in this list. */
+  and?: InputMaybe<Array<ThresholdFilter>>;
+  /** Filter by the object’s `current` field. */
+  current?: InputMaybe<IntFilter>;
+  /** Filter by the object’s `id` field. */
+  id?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `next` field. */
+  next?: InputMaybe<IntFilter>;
+  /** Negates the expression. */
+  not?: InputMaybe<ThresholdFilter>;
+  /** Checks for any expressions in this list. */
+  or?: InputMaybe<Array<ThresholdFilter>>;
+  /** Filter by the object’s `pending` field. */
+  pending?: InputMaybe<IntFilter>;
+  /** Filter by the object’s `sessionId` field. */
+  sessionId?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `variant` field. */
+  variant?: InputMaybe<ThresholdVariantFilter>;
+};
+
+export type ThresholdMaxAggregates = {
+  __typename?: 'ThresholdMaxAggregates';
+  /** Maximum of current across the matching connection */
+  current?: Maybe<Scalars['Int']>;
+  /** Maximum of next across the matching connection */
+  next?: Maybe<Scalars['Int']>;
+  /** Maximum of pending across the matching connection */
+  pending?: Maybe<Scalars['Int']>;
+};
+
+export type ThresholdMinAggregates = {
+  __typename?: 'ThresholdMinAggregates';
+  /** Minimum of current across the matching connection */
+  current?: Maybe<Scalars['Int']>;
+  /** Minimum of next across the matching connection */
+  next?: Maybe<Scalars['Int']>;
+  /** Minimum of pending across the matching connection */
+  pending?: Maybe<Scalars['Int']>;
+};
+
+export type ThresholdStddevPopulationAggregates = {
+  __typename?: 'ThresholdStddevPopulationAggregates';
+  /** Population standard deviation of current across the matching connection */
+  current?: Maybe<Scalars['BigFloat']>;
+  /** Population standard deviation of next across the matching connection */
+  next?: Maybe<Scalars['BigFloat']>;
+  /** Population standard deviation of pending across the matching connection */
+  pending?: Maybe<Scalars['BigFloat']>;
+};
+
+export type ThresholdStddevSampleAggregates = {
+  __typename?: 'ThresholdStddevSampleAggregates';
+  /** Sample standard deviation of current across the matching connection */
+  current?: Maybe<Scalars['BigFloat']>;
+  /** Sample standard deviation of next across the matching connection */
+  next?: Maybe<Scalars['BigFloat']>;
+  /** Sample standard deviation of pending across the matching connection */
+  pending?: Maybe<Scalars['BigFloat']>;
+};
+
+export type ThresholdSumAggregates = {
+  __typename?: 'ThresholdSumAggregates';
+  /** Sum of current across the matching connection */
+  current: Scalars['BigInt'];
+  /** Sum of next across the matching connection */
+  next: Scalars['BigInt'];
+  /** Sum of pending across the matching connection */
+  pending: Scalars['BigInt'];
+};
+
+export type ThresholdVariancePopulationAggregates = {
+  __typename?: 'ThresholdVariancePopulationAggregates';
+  /** Population variance of current across the matching connection */
+  current?: Maybe<Scalars['BigFloat']>;
+  /** Population variance of next across the matching connection */
+  next?: Maybe<Scalars['BigFloat']>;
+  /** Population variance of pending across the matching connection */
+  pending?: Maybe<Scalars['BigFloat']>;
+};
+
+export type ThresholdVarianceSampleAggregates = {
+  __typename?: 'ThresholdVarianceSampleAggregates';
+  /** Sample variance of current across the matching connection */
+  current?: Maybe<Scalars['BigFloat']>;
+  /** Sample variance of next across the matching connection */
+  next?: Maybe<Scalars['BigFloat']>;
+  /** Sample variance of pending across the matching connection */
+  pending?: Maybe<Scalars['BigFloat']>;
+};
+
+export enum ThresholdVariant {
+  KyeGen = 'KYE_GEN',
+  Proposer = 'PROPOSER',
+  Signature = 'SIGNATURE'
+}
+
+/** A filter to be used against ThresholdVariant fields. All fields are combined with a logical ‘and.’ */
+export type ThresholdVariantFilter = {
+  /** Not equal to the specified value, treating null like an ordinary value. */
+  distinctFrom?: InputMaybe<ThresholdVariant>;
+  /** Equal to the specified value. */
+  equalTo?: InputMaybe<ThresholdVariant>;
+  /** Greater than the specified value. */
+  greaterThan?: InputMaybe<ThresholdVariant>;
+  /** Greater than or equal to the specified value. */
+  greaterThanOrEqualTo?: InputMaybe<ThresholdVariant>;
+  /** Included in the specified list. */
+  in?: InputMaybe<Array<ThresholdVariant>>;
+  /** Is null (if `true` is specified) or is not null (if `false` is specified). */
+  isNull?: InputMaybe<Scalars['Boolean']>;
+  /** Less than the specified value. */
+  lessThan?: InputMaybe<ThresholdVariant>;
+  /** Less than or equal to the specified value. */
+  lessThanOrEqualTo?: InputMaybe<ThresholdVariant>;
+  /** Equal to the specified value, treating null like an ordinary value. */
+  notDistinctFrom?: InputMaybe<ThresholdVariant>;
+  /** Not equal to the specified value. */
+  notEqualTo?: InputMaybe<ThresholdVariant>;
+  /** Not included in the specified list. */
+  notIn?: InputMaybe<Array<ThresholdVariant>>;
+};
+
+/** A connection to a list of `Threshold` values. */
+export type ThresholdsConnection = {
+  __typename?: 'ThresholdsConnection';
+  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  aggregates?: Maybe<ThresholdAggregates>;
+  /** A list of edges which contains the `Threshold` and cursor to aid in pagination. */
+  edges: Array<ThresholdsEdge>;
+  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  groupedAggregates?: Maybe<Array<ThresholdAggregates>>;
+  /** A list of `Threshold` objects. */
+  nodes: Array<Maybe<Threshold>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** The count of *all* `Threshold` you could get from the connection. */
+  totalCount: Scalars['Int'];
+};
+
+
+/** A connection to a list of `Threshold` values. */
+export type ThresholdsConnectionGroupedAggregatesArgs = {
+  groupBy: Array<ThresholdsGroupBy>;
+  having?: InputMaybe<ThresholdsHavingInput>;
+};
+
+/** A `Threshold` edge in the connection. */
+export type ThresholdsEdge = {
+  __typename?: 'ThresholdsEdge';
+  /** A cursor for use in pagination. */
+  cursor?: Maybe<Scalars['Cursor']>;
+  /** The `Threshold` at the end of the edge. */
+  node?: Maybe<Threshold>;
+};
+
+/** Grouping methods for `Threshold` for usage during aggregation. */
+export enum ThresholdsGroupBy {
+  Current = 'CURRENT',
+  Next = 'NEXT',
+  Pending = 'PENDING',
+  SessionId = 'SESSION_ID',
+  Variant = 'VARIANT'
+}
+
+export type ThresholdsHavingAverageInput = {
+  current?: InputMaybe<HavingIntFilter>;
+  next?: InputMaybe<HavingIntFilter>;
+  pending?: InputMaybe<HavingIntFilter>;
+};
+
+export type ThresholdsHavingDistinctCountInput = {
+  current?: InputMaybe<HavingIntFilter>;
+  next?: InputMaybe<HavingIntFilter>;
+  pending?: InputMaybe<HavingIntFilter>;
+};
+
+/** Conditions for `Threshold` aggregates. */
+export type ThresholdsHavingInput = {
+  AND?: InputMaybe<Array<ThresholdsHavingInput>>;
+  OR?: InputMaybe<Array<ThresholdsHavingInput>>;
+  average?: InputMaybe<ThresholdsHavingAverageInput>;
+  distinctCount?: InputMaybe<ThresholdsHavingDistinctCountInput>;
+  max?: InputMaybe<ThresholdsHavingMaxInput>;
+  min?: InputMaybe<ThresholdsHavingMinInput>;
+  stddevPopulation?: InputMaybe<ThresholdsHavingStddevPopulationInput>;
+  stddevSample?: InputMaybe<ThresholdsHavingStddevSampleInput>;
+  sum?: InputMaybe<ThresholdsHavingSumInput>;
+  variancePopulation?: InputMaybe<ThresholdsHavingVariancePopulationInput>;
+  varianceSample?: InputMaybe<ThresholdsHavingVarianceSampleInput>;
+};
+
+export type ThresholdsHavingMaxInput = {
+  current?: InputMaybe<HavingIntFilter>;
+  next?: InputMaybe<HavingIntFilter>;
+  pending?: InputMaybe<HavingIntFilter>;
+};
+
+export type ThresholdsHavingMinInput = {
+  current?: InputMaybe<HavingIntFilter>;
+  next?: InputMaybe<HavingIntFilter>;
+  pending?: InputMaybe<HavingIntFilter>;
+};
+
+export type ThresholdsHavingStddevPopulationInput = {
+  current?: InputMaybe<HavingIntFilter>;
+  next?: InputMaybe<HavingIntFilter>;
+  pending?: InputMaybe<HavingIntFilter>;
+};
+
+export type ThresholdsHavingStddevSampleInput = {
+  current?: InputMaybe<HavingIntFilter>;
+  next?: InputMaybe<HavingIntFilter>;
+  pending?: InputMaybe<HavingIntFilter>;
+};
+
+export type ThresholdsHavingSumInput = {
+  current?: InputMaybe<HavingIntFilter>;
+  next?: InputMaybe<HavingIntFilter>;
+  pending?: InputMaybe<HavingIntFilter>;
+};
+
+export type ThresholdsHavingVariancePopulationInput = {
+  current?: InputMaybe<HavingIntFilter>;
+  next?: InputMaybe<HavingIntFilter>;
+  pending?: InputMaybe<HavingIntFilter>;
+};
+
+export type ThresholdsHavingVarianceSampleInput = {
+  current?: InputMaybe<HavingIntFilter>;
+  next?: InputMaybe<HavingIntFilter>;
+  pending?: InputMaybe<HavingIntFilter>;
+};
+
+/** Methods to use when ordering `Threshold`. */
+export enum ThresholdsOrderBy {
+  CurrentAsc = 'CURRENT_ASC',
+  CurrentDesc = 'CURRENT_DESC',
+  IdAsc = 'ID_ASC',
+  IdDesc = 'ID_DESC',
+  Natural = 'NATURAL',
+  NextAsc = 'NEXT_ASC',
+  NextDesc = 'NEXT_DESC',
+  PendingAsc = 'PENDING_ASC',
+  PendingDesc = 'PENDING_DESC',
+  PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
+  PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
+  SessionIdAsc = 'SESSION_ID_ASC',
+  SessionIdDesc = 'SESSION_ID_DESC',
+  VariantAsc = 'VARIANT_ASC',
+  VariantDesc = 'VARIANT_DESC'
+}
+
 export type UnsignedProposalsQueue = Node & {
   __typename?: 'UnsignedProposalsQueue';
   /** Reads a single `Block` that is related to this `UnsignedProposalsQueue`. */
@@ -9334,6 +9827,7 @@ export type UnsignedProposalsQueue = Node & {
   unsignedProposalsQueueItemsByQueueId: UnsignedProposalsQueueItemsConnection;
 };
 
+
 export type UnsignedProposalsQueueProposalItemsByUnsignedProposalsQueueItemQueueIdAndProposalIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -9343,6 +9837,7 @@ export type UnsignedProposalsQueueProposalItemsByUnsignedProposalsQueueItemQueue
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<ProposalItemsOrderBy>>;
 };
+
 
 export type UnsignedProposalsQueueUnsignedProposalsQueueItemsByQueueIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -9541,6 +10036,7 @@ export type UnsignedProposalsQueueItemsConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `UnsignedProposalsQueueItem` values. */
 export type UnsignedProposalsQueueItemsConnectionGroupedAggregatesArgs = {
   groupBy: Array<UnsignedProposalsQueueItemsGroupBy>;
@@ -9560,7 +10056,7 @@ export type UnsignedProposalsQueueItemsEdge = {
 export enum UnsignedProposalsQueueItemsGroupBy {
   BlockNumber = 'BLOCK_NUMBER',
   ProposalId = 'PROPOSAL_ID',
-  QueueId = 'QUEUE_ID',
+  QueueId = 'QUEUE_ID'
 }
 
 export type UnsignedProposalsQueueItemsHavingAverageInput = {
@@ -9626,7 +10122,7 @@ export enum UnsignedProposalsQueueItemsOrderBy {
   ProposalIdAsc = 'PROPOSAL_ID_ASC',
   ProposalIdDesc = 'PROPOSAL_ID_DESC',
   QueueIdAsc = 'QUEUE_ID_ASC',
-  QueueIdDesc = 'QUEUE_ID_DESC',
+  QueueIdDesc = 'QUEUE_ID_DESC'
 }
 
 export type UnsignedProposalsQueueMaxAggregates = {
@@ -9658,12 +10154,12 @@ export type UnsignedProposalsQueueProposalItemsByUnsignedProposalsQueueItemQueue
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `ProposalItem` values, with data from `UnsignedProposalsQueueItem`. */
-export type UnsignedProposalsQueueProposalItemsByUnsignedProposalsQueueItemQueueIdAndProposalIdManyToManyConnectionGroupedAggregatesArgs =
-  {
-    groupBy: Array<ProposalItemsGroupBy>;
-    having?: InputMaybe<ProposalItemsHavingInput>;
-  };
+export type UnsignedProposalsQueueProposalItemsByUnsignedProposalsQueueItemQueueIdAndProposalIdManyToManyConnectionGroupedAggregatesArgs = {
+  groupBy: Array<ProposalItemsGroupBy>;
+  having?: InputMaybe<ProposalItemsHavingInput>;
+};
 
 /** A `ProposalItem` edge in the connection, with data from `UnsignedProposalsQueueItem`. */
 export type UnsignedProposalsQueueProposalItemsByUnsignedProposalsQueueItemQueueIdAndProposalIdManyToManyEdge = {
@@ -9676,17 +10172,17 @@ export type UnsignedProposalsQueueProposalItemsByUnsignedProposalsQueueItemQueue
   unsignedProposalsQueueItemsByProposalId: UnsignedProposalsQueueItemsConnection;
 };
 
+
 /** A `ProposalItem` edge in the connection, with data from `UnsignedProposalsQueueItem`. */
-export type UnsignedProposalsQueueProposalItemsByUnsignedProposalsQueueItemQueueIdAndProposalIdManyToManyEdgeUnsignedProposalsQueueItemsByProposalIdArgs =
-  {
-    after?: InputMaybe<Scalars['Cursor']>;
-    before?: InputMaybe<Scalars['Cursor']>;
-    filter?: InputMaybe<UnsignedProposalsQueueItemFilter>;
-    first?: InputMaybe<Scalars['Int']>;
-    last?: InputMaybe<Scalars['Int']>;
-    offset?: InputMaybe<Scalars['Int']>;
-    orderBy?: InputMaybe<Array<UnsignedProposalsQueueItemsOrderBy>>;
-  };
+export type UnsignedProposalsQueueProposalItemsByUnsignedProposalsQueueItemQueueIdAndProposalIdManyToManyEdgeUnsignedProposalsQueueItemsByProposalIdArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  filter?: InputMaybe<UnsignedProposalsQueueItemFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<UnsignedProposalsQueueItemsOrderBy>>;
+};
 
 export type UnsignedProposalsQueueStddevPopulationAggregates = {
   __typename?: 'UnsignedProposalsQueueStddevPopulationAggregates';
@@ -9735,6 +10231,7 @@ export type UnsignedProposalsQueuesConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `UnsignedProposalsQueue` values. */
 export type UnsignedProposalsQueuesConnectionGroupedAggregatesArgs = {
   groupBy: Array<UnsignedProposalsQueuesGroupBy>;
@@ -9753,7 +10250,7 @@ export type UnsignedProposalsQueuesEdge = {
 /** Grouping methods for `UnsignedProposalsQueue` for usage during aggregation. */
 export enum UnsignedProposalsQueuesGroupBy {
   BlockId = 'BLOCK_ID',
-  BlockNumber = 'BLOCK_NUMBER',
+  BlockNumber = 'BLOCK_NUMBER'
 }
 
 export type UnsignedProposalsQueuesHavingAverageInput = {
@@ -9891,7 +10388,7 @@ export enum UnsignedProposalsQueuesOrderBy {
   UnsignedProposalsQueueItemsByQueueIdVarianceSampleProposalIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_VARIANCE_SAMPLE_PROPOSAL_ID_ASC',
   UnsignedProposalsQueueItemsByQueueIdVarianceSampleProposalIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_VARIANCE_SAMPLE_PROPOSAL_ID_DESC',
   UnsignedProposalsQueueItemsByQueueIdVarianceSampleQueueIdAsc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_VARIANCE_SAMPLE_QUEUE_ID_ASC',
-  UnsignedProposalsQueueItemsByQueueIdVarianceSampleQueueIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_VARIANCE_SAMPLE_QUEUE_ID_DESC',
+  UnsignedProposalsQueueItemsByQueueIdVarianceSampleQueueIdDesc = 'UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_QUEUE_ID_VARIANCE_SAMPLE_QUEUE_ID_DESC'
 }
 
 export type Validator = Node & {
@@ -9909,6 +10406,7 @@ export type Validator = Node & {
   sessionsBySessionValidatorValidatorIdAndSessionId: ValidatorSessionsBySessionValidatorValidatorIdAndSessionIdManyToManyConnection;
 };
 
+
 export type ValidatorSessionValidatorsArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -9918,6 +10416,7 @@ export type ValidatorSessionValidatorsArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<SessionValidatorsOrderBy>>;
 };
+
 
 export type ValidatorSessionsBySessionValidatorValidatorIdAndSessionIdArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
@@ -9979,6 +10478,7 @@ export type ValidatorSessionsBySessionValidatorValidatorIdAndSessionIdManyToMany
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Session` values, with data from `SessionValidator`. */
 export type ValidatorSessionsBySessionValidatorValidatorIdAndSessionIdManyToManyConnectionGroupedAggregatesArgs = {
   groupBy: Array<SessionsGroupBy>;
@@ -9995,6 +10495,7 @@ export type ValidatorSessionsBySessionValidatorValidatorIdAndSessionIdManyToMany
   /** Reads and enables pagination through a set of `SessionValidator`. */
   sessionValidators: SessionValidatorsConnection;
 };
+
 
 /** A `Session` edge in the connection, with data from `SessionValidator`. */
 export type ValidatorSessionsBySessionValidatorValidatorIdAndSessionIdManyToManyEdgeSessionValidatorsArgs = {
@@ -10024,6 +10525,7 @@ export type ValidatorsConnection = {
   totalCount: Scalars['Int'];
 };
 
+
 /** A connection to a list of `Validator` values. */
 export type ValidatorsConnectionGroupedAggregatesArgs = {
   groupBy: Array<ValidatorsGroupBy>;
@@ -10041,7 +10543,7 @@ export type ValidatorsEdge = {
 
 /** Grouping methods for `Validator` for usage during aggregation. */
 export enum ValidatorsGroupBy {
-  AccountId = 'ACCOUNT_ID',
+  AccountId = 'ACCOUNT_ID'
 }
 
 /** Conditions for `Validator` aggregates. */
@@ -10224,13 +10726,13 @@ export enum ValidatorsOrderBy {
   SessionValidatorsVarianceSampleSessionIdAsc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_SESSION_ID_ASC',
   SessionValidatorsVarianceSampleSessionIdDesc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_SESSION_ID_DESC',
   SessionValidatorsVarianceSampleValidatorIdAsc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_VALIDATOR_ID_ASC',
-  SessionValidatorsVarianceSampleValidatorIdDesc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_VALIDATOR_ID_DESC',
+  SessionValidatorsVarianceSampleValidatorIdDesc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_VALIDATOR_ID_DESC'
 }
 
 export enum VoteStatus {
   Abstain = 'ABSTAIN',
   Against = 'AGAINST',
-  For = 'FOR',
+  For = 'FOR'
 }
 
 /** A filter to be used against VoteStatus fields. All fields are combined with a logical ‘and.’ */
@@ -10280,43 +10782,8 @@ export type ValidatorListingQueryVariables = Exact<{
   offset: Scalars['Int'];
 }>;
 
-export type ValidatorListingQuery = {
-  __typename?: 'Query';
-  validators?: {
-    __typename?: 'ValidatorsConnection';
-    totalCount: number;
-    nodes: Array<{
-      __typename?: 'Validator';
-      authorityId: string;
-      id: string;
-      sessionValidators: {
-        __typename?: 'SessionValidatorsConnection';
-        edges: Array<{
-          __typename?: 'SessionValidatorsEdge';
-          node?: {
-            __typename?: 'SessionValidator';
-            id: string;
-            sessionId: string;
-            reputation: string;
-            isBest: boolean;
-            isNext: boolean;
-            isNextBest: boolean;
-            bestOrder: number;
-            nextBestOrder: number;
-            validator?: { __typename?: 'Validator'; authorityId: string; id: string } | null;
-          } | null;
-        }>;
-      };
-    } | null>;
-    pageInfo: {
-      __typename?: 'PageInfo';
-      endCursor?: any | null;
-      hasNextPage: boolean;
-      hasPreviousPage: boolean;
-      startCursor?: any | null;
-    };
-  } | null;
-};
+
+export type ValidatorListingQuery = { __typename?: 'Query', validators?: { __typename?: 'ValidatorsConnection', totalCount: number, nodes: Array<{ __typename?: 'Validator', authorityId: string, id: string, sessionValidators: { __typename?: 'SessionValidatorsConnection', edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: string, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string } | null } | null }> } } | null>, pageInfo: { __typename?: 'PageInfo', endCursor?: any | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: any | null } } | null };
 
 export type ValidatorSessionsQueryVariables = Exact<{
   keyGen?: InputMaybe<Scalars['Boolean']>;
@@ -10325,271 +10792,64 @@ export type ValidatorSessionsQueryVariables = Exact<{
   offset: Scalars['Int'];
 }>;
 
-export type ValidatorSessionsQuery = {
-  __typename?: 'Query';
-  sessionValidators?: {
-    __typename?: 'SessionValidatorsConnection';
-    totalCount: number;
-    nodes: Array<{
-      __typename?: 'SessionValidator';
-      validator?: { __typename?: 'Validator'; authorityId: string; id: string } | null;
-      session?: {
-        __typename?: 'Session';
-        id: string;
-        publicKey?: {
-          __typename?: 'PublicKey';
-          id: string;
-          compressed?: string | null;
-          uncompressed?: string | null;
-          block?: { __typename?: 'Block'; id: string; number: any } | null;
-        } | null;
-        sessionValidators: {
-          __typename?: 'SessionValidatorsConnection';
-          totalCount: number;
-          edges: Array<{
-            __typename?: 'SessionValidatorsEdge';
-            node?: {
-              __typename?: 'SessionValidator';
-              id: string;
-              sessionId: string;
-              reputation: string;
-              isBest: boolean;
-              isNext: boolean;
-              isNextBest: boolean;
-              bestOrder: number;
-              nextBestOrder: number;
-              validator?: { __typename?: 'Validator'; authorityId: string; id: string } | null;
-            } | null;
-          }>;
-        };
-      } | null;
-    } | null>;
-    pageInfo: {
-      __typename?: 'PageInfo';
-      endCursor?: any | null;
-      hasNextPage: boolean;
-      hasPreviousPage: boolean;
-      startCursor?: any | null;
-    };
-  } | null;
-};
+
+export type ValidatorSessionsQuery = { __typename?: 'Query', sessionValidators?: { __typename?: 'SessionValidatorsConnection', totalCount: number, nodes: Array<{ __typename?: 'SessionValidator', validator?: { __typename?: 'Validator', authorityId: string, id: string } | null, session?: { __typename?: 'Session', id: string, publicKey?: { __typename?: 'PublicKey', id: string, compressed?: string | null, uncompressed?: string | null, block?: { __typename?: 'Block', id: string, number: any } | null } | null, sessionValidators: { __typename?: 'SessionValidatorsConnection', totalCount: number, edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: string, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string } | null } | null }> } } | null } | null>, pageInfo: { __typename?: 'PageInfo', endCursor?: any | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: any | null } } | null };
 
 export type ValidatorOfSessionQueryVariables = Exact<{
   validatorId: Scalars['String'];
   sessionValidatorId: Scalars['String'];
 }>;
 
-export type ValidatorOfSessionQuery = {
-  __typename?: 'Query';
-  sessionValidator?: {
-    __typename?: 'SessionValidator';
-    id: string;
-    sessionId: string;
-    reputation: string;
-    isBest: boolean;
-    isNext: boolean;
-    isNextBest: boolean;
-    bestOrder: number;
-    nextBestOrder: number;
-    session?: { __typename?: 'Session'; keyGenThreshold?: any | null } | null;
-    validator?: { __typename?: 'Validator'; authorityId: string; id: string } | null;
-  } | null;
-  sessionValidators?: {
-    __typename?: 'SessionValidatorsConnection';
-    aggregates?: {
-      __typename?: 'SessionValidatorAggregates';
-      distinctCount?: { __typename?: 'SessionValidatorDistinctCountAggregates'; id?: any | null } | null;
-    } | null;
-  } | null;
-};
 
-export type ValidatorMetaFragment = { __typename?: 'Validator'; authorityId: string; id: string };
+export type ValidatorOfSessionQuery = { __typename?: 'Query', sessionValidator?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: string, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, session?: { __typename?: 'Session', thresholds: { __typename?: 'ThresholdsConnection', nodes: Array<{ __typename?: 'Threshold', next: number, current: number, pending: number, variant: ThresholdVariant } | null> } } | null, validator?: { __typename?: 'Validator', authorityId: string, id: string } | null } | null, sessionValidators?: { __typename?: 'SessionValidatorsConnection', aggregates?: { __typename?: 'SessionValidatorAggregates', distinctCount?: { __typename?: 'SessionValidatorDistinctCountAggregates', id?: any | null } | null } | null } | null };
 
-export type PageInfoMetaFragment = {
-  __typename?: 'PageInfo';
-  endCursor?: any | null;
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
-  startCursor?: any | null;
-};
+export type ValidatorMetaFragment = { __typename?: 'Validator', authorityId: string, id: string };
 
-export type SessionAuthValidatorNodeFragment = {
-  __typename?: 'SessionValidator';
-  id: string;
-  sessionId: string;
-  reputation: string;
-  isBest: boolean;
-  isNext: boolean;
-  isNextBest: boolean;
-  bestOrder: number;
-  nextBestOrder: number;
-  validator?: { __typename?: 'Validator'; authorityId: string; id: string } | null;
-};
+export type PageInfoMetaFragment = { __typename?: 'PageInfo', endCursor?: any | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: any | null };
 
-export type SessionAuthValidatorFragment = {
-  __typename?: 'SessionValidatorsConnection';
-  edges: Array<{
-    __typename?: 'SessionValidatorsEdge';
-    node?: {
-      __typename?: 'SessionValidator';
-      id: string;
-      sessionId: string;
-      reputation: string;
-      isBest: boolean;
-      isNext: boolean;
-      isNextBest: boolean;
-      bestOrder: number;
-      nextBestOrder: number;
-      validator?: { __typename?: 'Validator'; authorityId: string; id: string } | null;
-    } | null;
-  }>;
-};
+export type SessionAuthValidatorNodeFragment = { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: string, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string } | null };
 
-export type SessionAuthFragment = {
-  __typename?: 'Session';
-  sessionValidators: {
-    __typename?: 'SessionValidatorsConnection';
-    edges: Array<{
-      __typename?: 'SessionValidatorsEdge';
-      node?: {
-        __typename?: 'SessionValidator';
-        id: string;
-        sessionId: string;
-        reputation: string;
-        isBest: boolean;
-        isNext: boolean;
-        isNextBest: boolean;
-        bestOrder: number;
-        nextBestOrder: number;
-        validator?: { __typename?: 'Validator'; authorityId: string; id: string } | null;
-      } | null;
-    }>;
-  };
-};
+export type SessionAuthValidatorFragment = { __typename?: 'SessionValidatorsConnection', edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: string, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string } | null } | null }> };
 
-export type ProposalListViewFragment = {
-  __typename?: 'ProposalItem';
-  id: string;
-  data: string;
-  signature?: string | null;
-  type: ProposalType;
-  status: string;
-  chainId?: number | null;
-  proposalVotesByProposalId: {
-    __typename?: 'ProposalVotesConnection';
-    totalCount: number;
-    nodes: Array<{
-      __typename?: 'ProposalVote';
-      id: string;
-      voterId: string;
-      voter?: { __typename?: 'Proposer'; id: string } | null;
-    } | null>;
-  };
-  block?: { __typename?: 'Block'; timestamp?: any | null; number: any } | null;
-};
+export type ThresholdValueElementFragment = { __typename?: 'Threshold', next: number, current: number, pending: number, variant: ThresholdVariant };
 
-export type ProposalsVoteListViewFragment = {
-  __typename?: 'ProposalVote';
-  id: string;
-  voterId: string;
-  voteStatus: VoteStatus;
-  txHash: string;
-  block?: { __typename?: 'Block'; timestamp?: any | null; number: any } | null;
-};
+export type ThresholdValueFragment = { __typename?: 'ThresholdsConnection', nodes: Array<{ __typename?: 'Threshold', next: number, current: number, pending: number, variant: ThresholdVariant } | null> };
 
-export type MetaDataQueryVariables = Exact<{ [key: string]: never }>;
+export type SessionAuthFragment = { __typename?: 'Session', sessionValidators: { __typename?: 'SessionValidatorsConnection', edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: string, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string } | null } | null }> } };
 
-export type MetaDataQuery = {
-  __typename?: 'Query';
-  _metadata?: { __typename?: '_Metadata'; targetHeight?: number | null; lastProcessedHeight?: number | null } | null;
-};
+export type ProposalListViewFragment = { __typename?: 'ProposalItem', id: string, data: string, signature?: string | null, type: ProposalType, status: string, chainId?: number | null, proposalVotesByProposalId: { __typename?: 'ProposalVotesConnection', totalCount: number, nodes: Array<{ __typename?: 'ProposalVote', id: string, voterId: string, voter?: { __typename?: 'Proposer', id: string } | null } | null> }, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null };
 
-export type LastBlockQueryVariables = Exact<{ [key: string]: never }>;
+export type ProposalsVoteListViewFragment = { __typename?: 'ProposalVote', id: string, voterId: string, voteStatus: VoteStatus, txHash: string, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null };
 
-export type LastBlockQuery = {
-  __typename?: 'Query';
-  blocks?: {
-    __typename?: 'BlocksConnection';
-    nodes: Array<{ __typename?: 'Block'; timestamp?: any | null; number: any } | null>;
-  } | null;
-};
+export type MetaDataQueryVariables = Exact<{ [key: string]: never; }>;
 
-export type ProposalCounterQueryVariables = Exact<{ [key: string]: never }>;
 
-export type ProposalCounterQuery = {
-  __typename?: 'Query';
-  proposalCounters?: {
-    __typename?: 'ProposalCountersConnection';
-    nodes: Array<{
-      __typename?: 'ProposalCounter';
-      id: string;
-      blockNumber: number;
-      unSignedProposalsCount: number;
-      signedProposalsCount: number;
-      statusMap?: any | null;
-      unSignedProposalsMap?: any | null;
-      signedProposalsMap?: any | null;
-    } | null>;
-  } | null;
-};
+export type MetaDataQuery = { __typename?: 'Query', _metadata?: { __typename?: '_Metadata', targetHeight?: number | null, lastProcessedHeight?: number | null } | null };
+
+export type LastBlockQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type LastBlockQuery = { __typename?: 'Query', blocks?: { __typename?: 'BlocksConnection', nodes: Array<{ __typename?: 'Block', timestamp?: any | null, number: any } | null> } | null };
+
+export type ProposalCounterQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ProposalCounterQuery = { __typename?: 'Query', proposalCounters?: { __typename?: 'ProposalCountersConnection', nodes: Array<{ __typename?: 'ProposalCounter', id: string, blockNumber: number, unSignedProposalsCount: number, signedProposalsCount: number, statusMap?: any | null, unSignedProposalsMap?: any | null, signedProposalsMap?: any | null } | null> } | null };
 
 export type ProposalsQueryVariables = Exact<{
   perPage: Scalars['Int'];
   offset: Scalars['Int'];
 }>;
 
-export type ProposalsQuery = {
-  __typename?: 'Query';
-  proposalItems?: {
-    __typename?: 'ProposalItemsConnection';
-    totalCount: number;
-    nodes: Array<{
-      __typename?: 'ProposalItem';
-      id: string;
-      data: string;
-      signature?: string | null;
-      type: ProposalType;
-      status: string;
-      chainId?: number | null;
-      proposalVotesByProposalId: {
-        __typename?: 'ProposalVotesConnection';
-        totalCount: number;
-        nodes: Array<{
-          __typename?: 'ProposalVote';
-          id: string;
-          voterId: string;
-          voter?: { __typename?: 'Proposer'; id: string } | null;
-        } | null>;
-      };
-      block?: { __typename?: 'Block'; timestamp?: any | null; number: any } | null;
-    } | null>;
-    pageInfo: {
-      __typename?: 'PageInfo';
-      endCursor?: any | null;
-      hasNextPage: boolean;
-      hasPreviousPage: boolean;
-      startCursor?: any | null;
-    };
-  } | null;
-};
+
+export type ProposalsQuery = { __typename?: 'Query', proposalItems?: { __typename?: 'ProposalItemsConnection', totalCount: number, nodes: Array<{ __typename?: 'ProposalItem', id: string, data: string, signature?: string | null, type: ProposalType, status: string, chainId?: number | null, proposalVotesByProposalId: { __typename?: 'ProposalVotesConnection', totalCount: number, nodes: Array<{ __typename?: 'ProposalVote', id: string, voterId: string, voter?: { __typename?: 'Proposer', id: string } | null } | null> }, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null } | null>, pageInfo: { __typename?: 'PageInfo', endCursor?: any | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: any | null } } | null };
 
 export type ProposalsCounterQueryVariables = Exact<{
   id: Scalars['String'];
 }>;
 
-export type ProposalsCounterQuery = {
-  __typename?: 'Query';
-  proposalCounter?: {
-    __typename?: 'ProposalCounter';
-    id: string;
-    signedProposalsMap?: any | null;
-    unSignedProposalsMap?: any | null;
-    signedProposalsCount: number;
-    unSignedProposalsCount: number;
-    statusMap?: any | null;
-    block?: { __typename?: 'Block'; number: any; timestamp?: any | null } | null;
-  } | null;
-};
+
+export type ProposalsCounterQuery = { __typename?: 'Query', proposalCounter?: { __typename?: 'ProposalCounter', id: string, signedProposalsMap?: any | null, unSignedProposalsMap?: any | null, signedProposalsCount: number, unSignedProposalsCount: number, statusMap?: any | null, block?: { __typename?: 'Block', number: any, timestamp?: any | null } | null } | null };
 
 export type ProposalsOverviewQueryVariables = Exact<{
   startRange?: InputMaybe<BigFloatFilter>;
@@ -10597,51 +10857,8 @@ export type ProposalsOverviewQueryVariables = Exact<{
   sessionId: Scalars['String'];
 }>;
 
-export type ProposalsOverviewQuery = {
-  __typename?: 'Query';
-  session?: {
-    __typename?: 'Session';
-    id: string;
-    proposerThreshold?: any | null;
-    sessionProposers: { __typename?: 'SessionProposersConnection'; totalCount: number };
-    sessionValidators: { __typename?: 'SessionValidatorsConnection'; totalCount: number };
-  } | null;
-  openProposals?: {
-    __typename?: 'ProposalItemsConnection';
-    totalCount: number;
-    nodes: Array<{
-      __typename?: 'ProposalItem';
-      id: string;
-      data: string;
-      signature?: string | null;
-      type: ProposalType;
-      status: string;
-      chainId?: number | null;
-      proposalVotesByProposalId: {
-        __typename?: 'ProposalVotesConnection';
-        totalCount: number;
-        nodes: Array<{
-          __typename?: 'ProposalVote';
-          id: string;
-          voterId: string;
-          voter?: { __typename?: 'Proposer'; id: string } | null;
-        } | null>;
-      };
-      block?: { __typename?: 'Block'; timestamp?: any | null; number: any } | null;
-    } | null>;
-    pageInfo: {
-      __typename?: 'PageInfo';
-      endCursor?: any | null;
-      hasNextPage: boolean;
-      hasPreviousPage: boolean;
-      startCursor?: any | null;
-    };
-  } | null;
-  open?: { __typename?: 'ProposalTimelineStatusesConnection'; totalCount: number } | null;
-  signed?: { __typename?: 'ProposalTimelineStatusesConnection'; totalCount: number } | null;
-  reject?: { __typename?: 'ProposalTimelineStatusesConnection'; totalCount: number } | null;
-  accepted?: { __typename?: 'ProposalTimelineStatusesConnection'; totalCount: number } | null;
-};
+
+export type ProposalsOverviewQuery = { __typename?: 'Query', session?: { __typename?: 'Session', id: string, thresholds: { __typename?: 'ThresholdsConnection', nodes: Array<{ __typename?: 'Threshold', next: number, current: number, pending: number, variant: ThresholdVariant } | null> }, sessionProposers: { __typename?: 'SessionProposersConnection', totalCount: number }, sessionValidators: { __typename?: 'SessionValidatorsConnection', totalCount: number } } | null, openProposals?: { __typename?: 'ProposalItemsConnection', totalCount: number, nodes: Array<{ __typename?: 'ProposalItem', id: string, data: string, signature?: string | null, type: ProposalType, status: string, chainId?: number | null, proposalVotesByProposalId: { __typename?: 'ProposalVotesConnection', totalCount: number, nodes: Array<{ __typename?: 'ProposalVote', id: string, voterId: string, voter?: { __typename?: 'Proposer', id: string } | null } | null> }, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null } | null>, pageInfo: { __typename?: 'PageInfo', endCursor?: any | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: any | null } } | null, open?: { __typename?: 'ProposalTimelineStatusesConnection', totalCount: number } | null, signed?: { __typename?: 'ProposalTimelineStatusesConnection', totalCount: number } | null, reject?: { __typename?: 'ProposalTimelineStatusesConnection', totalCount: number } | null, accepted?: { __typename?: 'ProposalTimelineStatusesConnection', totalCount: number } | null };
 
 export type ProposalVotesQueryVariables = Exact<{
   perPage: Scalars['Int'];
@@ -10650,444 +10867,187 @@ export type ProposalVotesQueryVariables = Exact<{
   for?: InputMaybe<VoteStatusFilter>;
 }>;
 
-export type ProposalVotesQuery = {
-  __typename?: 'Query';
-  proposalVotes?: {
-    __typename?: 'ProposalVotesConnection';
-    totalCount: number;
-    nodes: Array<{
-      __typename?: 'ProposalVote';
-      id: string;
-      voterId: string;
-      voteStatus: VoteStatus;
-      txHash: string;
-      block?: { __typename?: 'Block'; timestamp?: any | null; number: any } | null;
-    } | null>;
-    pageInfo: {
-      __typename?: 'PageInfo';
-      endCursor?: any | null;
-      hasNextPage: boolean;
-      hasPreviousPage: boolean;
-      startCursor?: any | null;
-    };
-  } | null;
-};
+
+export type ProposalVotesQuery = { __typename?: 'Query', proposalVotes?: { __typename?: 'ProposalVotesConnection', totalCount: number, nodes: Array<{ __typename?: 'ProposalVote', id: string, voterId: string, voteStatus: VoteStatus, txHash: string, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null } | null>, pageInfo: { __typename?: 'PageInfo', endCursor?: any | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: any | null } } | null };
 
 export type ProposalDetailsQueryVariables = Exact<{
   id: Scalars['String'];
   targetSessionId: Scalars['String'];
 }>;
 
-export type ProposalDetailsQuery = {
-  __typename?: 'Query';
-  session?: {
-    __typename?: 'Session';
-    id: string;
-    sessionProposers: { __typename?: 'SessionProposersConnection'; totalCount: number };
-  } | null;
-  proposalItem?: {
-    __typename?: 'ProposalItem';
-    id: string;
-    data: string;
-    signature?: string | null;
-    type: ProposalType;
-    status: string;
-    chainId?: number | null;
-    proposalTimelineStatuses: {
-      __typename?: 'ProposalTimelineStatusesConnection';
-      nodes: Array<{
-        __typename?: 'ProposalTimelineStatus';
-        id: string;
-        status: ProposalStatus;
-        blockNumber: any;
-        timestamp: any;
-      } | null>;
-    };
-    votesFor: { __typename?: 'ProposalVotesConnection'; totalCount: number };
-    against: { __typename?: 'ProposalVotesConnection'; totalCount: number };
-    abstain: { __typename?: 'ProposalVotesConnection'; totalCount: number };
-    totalVotes: { __typename?: 'ProposalVotesConnection'; totalCount: number };
-    block?: { __typename?: 'Block'; timestamp?: any | null; number: any } | null;
-  } | null;
-};
+
+export type ProposalDetailsQuery = { __typename?: 'Query', session?: { __typename?: 'Session', id: string, sessionProposers: { __typename?: 'SessionProposersConnection', totalCount: number } } | null, proposalItem?: { __typename?: 'ProposalItem', id: string, data: string, signature?: string | null, type: ProposalType, status: string, chainId?: number | null, proposalTimelineStatuses: { __typename?: 'ProposalTimelineStatusesConnection', nodes: Array<{ __typename?: 'ProposalTimelineStatus', id: string, status: ProposalStatus, blockNumber: any, timestamp: any } | null> }, votesFor: { __typename?: 'ProposalVotesConnection', totalCount: number }, against: { __typename?: 'ProposalVotesConnection', totalCount: number }, abstain: { __typename?: 'ProposalVotesConnection', totalCount: number }, totalVotes: { __typename?: 'ProposalVotesConnection', totalCount: number }, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null } | null };
 
 export type EnsureProposalsQueryVariables = Exact<{
   ids: Array<Scalars['String']> | Scalars['String'];
 }>;
 
-export type EnsureProposalsQuery = {
-  __typename?: 'Query';
-  proposalItems?: {
-    __typename?: 'ProposalItemsConnection';
-    nodes: Array<{ __typename?: 'ProposalItem'; id: string } | null>;
-  } | null;
-};
+
+export type EnsureProposalsQuery = { __typename?: 'Query', proposalItems?: { __typename?: 'ProposalItemsConnection', nodes: Array<{ __typename?: 'ProposalItem', id: string } | null> } | null };
 
 export type PublicKeysQueryVariables = Exact<{
   PerPage?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
 }>;
 
-export type PublicKeysQuery = {
-  __typename?: 'Query';
-  publicKeys?: {
-    __typename?: 'PublicKeysConnection';
-    totalCount: number;
-    nodes: Array<{
-      __typename?: 'PublicKey';
-      id: string;
-      compressed?: string | null;
-      uncompressed?: string | null;
-      history: any;
-      block?: { __typename?: 'Block'; timestamp?: any | null; number: any } | null;
-      sessions: {
-        __typename?: 'SessionsConnection';
-        nodes: Array<{
-          __typename?: 'Session';
-          id: string;
-          keyGenThreshold?: any | null;
-          signatureThreshold?: any | null;
-          block?: { __typename?: 'Block'; timestamp?: any | null; number: any } | null;
-          sessionValidators: {
-            __typename?: 'SessionValidatorsConnection';
-            edges: Array<{
-              __typename?: 'SessionValidatorsEdge';
-              node?: {
-                __typename?: 'SessionValidator';
-                id: string;
-                sessionId: string;
-                reputation: string;
-                isBest: boolean;
-                isNext: boolean;
-                isNextBest: boolean;
-                bestOrder: number;
-                nextBestOrder: number;
-                validator?: { __typename?: 'Validator'; authorityId: string; id: string } | null;
-              } | null;
-            }>;
-          };
-        } | null>;
-      };
-    } | null>;
-    pageInfo: {
-      __typename?: 'PageInfo';
-      hasNextPage: boolean;
-      hasPreviousPage: boolean;
-      startCursor?: any | null;
-      endCursor?: any | null;
-    };
-  } | null;
-};
+
+export type PublicKeysQuery = { __typename?: 'Query', publicKeys?: { __typename?: 'PublicKeysConnection', totalCount: number, nodes: Array<{ __typename?: 'PublicKey', id: string, compressed?: string | null, uncompressed?: string | null, history: any, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null, sessions: { __typename?: 'SessionsConnection', nodes: Array<{ __typename?: 'Session', id: string, thresholds: { __typename?: 'ThresholdsConnection', nodes: Array<{ __typename?: 'Threshold', next: number, current: number, pending: number, variant: ThresholdVariant } | null> }, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null, sessionValidators: { __typename?: 'SessionValidatorsConnection', edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: string, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string } | null } | null }> } } | null> } } | null>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: any | null, endCursor?: any | null } } | null };
 
 export type PublicKeyQueryVariables = Exact<{
   id: Scalars['String'];
 }>;
 
-export type PublicKeyQuery = {
-  __typename?: 'Query';
-  publicKey?: {
-    __typename?: 'PublicKey';
-    id: string;
-    compressed?: string | null;
-    uncompressed?: string | null;
-    history: any;
-    block?: { __typename?: 'Block'; timestamp?: any | null; number: any } | null;
-    sessions: {
-      __typename?: 'SessionsConnection';
-      nodes: Array<{
-        __typename?: 'Session';
-        id: string;
-        keyGenThreshold?: any | null;
-        signatureThreshold?: any | null;
-        block?: { __typename?: 'Block'; timestamp?: any | null; number: any } | null;
-        sessionValidators: {
-          __typename?: 'SessionValidatorsConnection';
-          edges: Array<{
-            __typename?: 'SessionValidatorsEdge';
-            node?: {
-              __typename?: 'SessionValidator';
-              id: string;
-              sessionId: string;
-              reputation: string;
-              isBest: boolean;
-              isNext: boolean;
-              isNextBest: boolean;
-              bestOrder: number;
-              nextBestOrder: number;
-              validator?: { __typename?: 'Validator'; authorityId: string; id: string } | null;
-            } | null;
-          }>;
-        };
-      } | null>;
-    };
-  } | null;
-};
+
+export type PublicKeyQuery = { __typename?: 'Query', publicKey?: { __typename?: 'PublicKey', id: string, compressed?: string | null, uncompressed?: string | null, history: any, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null, sessions: { __typename?: 'SessionsConnection', nodes: Array<{ __typename?: 'Session', id: string, thresholds: { __typename?: 'ThresholdsConnection', nodes: Array<{ __typename?: 'Threshold', next: number, current: number, pending: number, variant: ThresholdVariant } | null> }, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null, sessionValidators: { __typename?: 'SessionValidatorsConnection', edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: string, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string } | null } | null }> } } | null> } } | null };
 
 export type SessionKeyIdsQueryVariables = Exact<{
   keys: Array<Scalars['String']> | Scalars['String'];
 }>;
 
-export type SessionKeyIdsQuery = {
-  __typename?: 'Query';
-  sessions?: {
-    __typename?: 'SessionsConnection';
-    nodes: Array<{
-      __typename?: 'Session';
-      id: string;
-      publicKey?: { __typename?: 'PublicKey'; id: string } | null;
-    } | null>;
-  } | null;
-};
 
-export type CurrentSessionAuthoritiesQueryVariables = Exact<{ [key: string]: never }>;
+export type SessionKeyIdsQuery = { __typename?: 'Query', sessions?: { __typename?: 'SessionsConnection', nodes: Array<{ __typename?: 'Session', id: string, publicKey?: { __typename?: 'PublicKey', id: string } | null } | null> } | null };
 
-export type CurrentSessionAuthoritiesQuery = {
-  __typename?: 'Query';
-  sessions?: {
-    __typename?: 'SessionsConnection';
-    nodes: Array<{
-      __typename?: 'Session';
-      id: string;
-      blockId: string;
-      signatureThreshold?: any | null;
-      keyGenThreshold?: any | null;
-      proposerThreshold?: any | null;
-      publicKey?: { __typename?: 'PublicKey'; compressed?: string | null } | null;
-      block?: { __typename?: 'Block'; id: string; timestamp?: any | null } | null;
-      sessionValidators: {
-        __typename?: 'SessionValidatorsConnection';
-        edges: Array<{
-          __typename?: 'SessionValidatorsEdge';
-          node?: {
-            __typename?: 'SessionValidator';
-            id: string;
-            sessionId: string;
-            reputation: string;
-            isBest: boolean;
-            isNext: boolean;
-            isNextBest: boolean;
-            bestOrder: number;
-            nextBestOrder: number;
-            validator?: { __typename?: 'Validator'; authorityId: string; id: string } | null;
-          } | null;
-        }>;
-      };
-    } | null>;
-  } | null;
-};
+export type CurrentSessionAuthoritiesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type CurrentSessionAuthoritiesQuery = { __typename?: 'Query', sessions?: { __typename?: 'SessionsConnection', nodes: Array<{ __typename?: 'Session', id: string, blockId: string, publicKey?: { __typename?: 'PublicKey', compressed?: string | null } | null, thresholds: { __typename?: 'ThresholdsConnection', nodes: Array<{ __typename?: 'Threshold', next: number, current: number, pending: number, variant: ThresholdVariant } | null> }, block?: { __typename?: 'Block', id: string, timestamp?: any | null } | null, sessionValidators: { __typename?: 'SessionValidatorsConnection', edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: string, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string } | null } | null }> } } | null> } | null };
 
 export type SessionKeysQueryVariables = Exact<{
   SessionId: Array<Scalars['String']> | Scalars['String'];
 }>;
 
-export type SessionKeysQuery = {
-  __typename?: 'Query';
-  sessions?: {
-    __typename?: 'SessionsConnection';
-    nodes: Array<{
-      __typename?: 'Session';
-      id: string;
-      block?: { __typename?: 'Block'; timestamp?: any | null; number: any } | null;
-      publicKey?: {
-        __typename?: 'PublicKey';
-        id: string;
-        compressed?: string | null;
-        uncompressed?: string | null;
-        block?: { __typename?: 'Block'; timestamp?: any | null; number: any } | null;
-      } | null;
-      sessionValidators: {
-        __typename?: 'SessionValidatorsConnection';
-        edges: Array<{
-          __typename?: 'SessionValidatorsEdge';
-          node?: {
-            __typename?: 'SessionValidator';
-            id: string;
-            sessionId: string;
-            reputation: string;
-            isBest: boolean;
-            isNext: boolean;
-            isNextBest: boolean;
-            bestOrder: number;
-            nextBestOrder: number;
-            validator?: { __typename?: 'Validator'; authorityId: string; id: string } | null;
-          } | null;
-        }>;
-      };
-    } | null>;
-  } | null;
-};
+
+export type SessionKeysQuery = { __typename?: 'Query', sessions?: { __typename?: 'SessionsConnection', nodes: Array<{ __typename?: 'Session', id: string, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null, publicKey?: { __typename?: 'PublicKey', id: string, compressed?: string | null, uncompressed?: string | null, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null } | null, sessionValidators: { __typename?: 'SessionValidatorsConnection', edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: string, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string } | null } | null }> } } | null> } | null };
 
 export type SessionThresholdHistoryQueryVariables = Exact<{
   offset: Scalars['Int'];
   perPage: Scalars['Int'];
 }>;
 
-export type SessionThresholdHistoryQuery = {
-  __typename?: 'Query';
-  sessions?: {
-    __typename?: 'SessionsConnection';
-    totalCount: number;
-    nodes: Array<{
-      __typename?: 'Session';
-      id: string;
-      signatureThreshold?: any | null;
-      keyGenThreshold?: any | null;
-      block?: { __typename?: 'Block'; id: string; timestamp?: any | null } | null;
-    } | null>;
-    pageInfo: {
-      __typename?: 'PageInfo';
-      endCursor?: any | null;
-      hasNextPage: boolean;
-      hasPreviousPage: boolean;
-      startCursor?: any | null;
-    };
-  } | null;
-};
+
+export type SessionThresholdHistoryQuery = { __typename?: 'Query', sessions?: { __typename?: 'SessionsConnection', totalCount: number, nodes: Array<{ __typename?: 'Session', id: string, thresholds: { __typename?: 'ThresholdsConnection', nodes: Array<{ __typename?: 'Threshold', next: number, current: number, pending: number, variant: ThresholdVariant } | null> }, block?: { __typename?: 'Block', id: string, timestamp?: any | null } | null } | null>, pageInfo: { __typename?: 'PageInfo', endCursor?: any | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: any | null } } | null };
 
 export type SessionThresholdsQueryVariables = Exact<{
   sessionId: Scalars['String'];
 }>;
 
-export type SessionThresholdsQuery = {
-  __typename?: 'Query';
-  session?: {
-    __typename?: 'Session';
-    id: string;
-    signatureThreshold?: any | null;
-    keyGenThreshold?: any | null;
-    proposersCount: { __typename?: 'SessionProposersConnection'; totalCount: number };
-    block?: { __typename?: 'Block'; timestamp?: any | null; number: any } | null;
-    publicKey?: {
-      __typename?: 'PublicKey';
-      id: string;
-      compressed?: string | null;
-      uncompressed?: string | null;
-      block?: { __typename?: 'Block'; timestamp?: any | null; number: any } | null;
-    } | null;
-    sessionValidators: {
-      __typename?: 'SessionValidatorsConnection';
-      edges: Array<{
-        __typename?: 'SessionValidatorsEdge';
-        node?: {
-          __typename?: 'SessionValidator';
-          id: string;
-          sessionId: string;
-          reputation: string;
-          isBest: boolean;
-          isNext: boolean;
-          isNextBest: boolean;
-          bestOrder: number;
-          nextBestOrder: number;
-          validator?: { __typename?: 'Validator'; authorityId: string; id: string } | null;
-        } | null;
-      }>;
-    };
-  } | null;
-};
+
+export type SessionThresholdsQuery = { __typename?: 'Query', session?: { __typename?: 'Session', id: string, thresholds: { __typename?: 'ThresholdsConnection', nodes: Array<{ __typename?: 'Threshold', next: number, current: number, pending: number, variant: ThresholdVariant } | null> }, proposersCount: { __typename?: 'SessionProposersConnection', totalCount: number }, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null, publicKey?: { __typename?: 'PublicKey', id: string, compressed?: string | null, uncompressed?: string | null, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null } | null, sessionValidators: { __typename?: 'SessionValidatorsConnection', edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: string, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string } | null } | null }> } } | null };
 
 export const PageInfoMetaFragmentDoc = gql`
-  fragment PageInfoMeta on PageInfo {
-    endCursor
-    hasNextPage
-    hasPreviousPage
-    startCursor
+    fragment PageInfoMeta on PageInfo {
+  endCursor
+  hasNextPage
+  hasPreviousPage
+  startCursor
+}
+    `;
+export const ThresholdValueElementFragmentDoc = gql`
+    fragment ThresholdValueElement on Threshold {
+  next
+  current
+  pending
+  variant
+}
+    `;
+export const ThresholdValueFragmentDoc = gql`
+    fragment ThresholdValue on ThresholdsConnection {
+  nodes {
+    ...ThresholdValueElement
   }
-`;
+}
+    ${ThresholdValueElementFragmentDoc}`;
 export const ValidatorMetaFragmentDoc = gql`
-  fragment ValidatorMeta on Validator {
-    authorityId
-    id
-  }
-`;
+    fragment ValidatorMeta on Validator {
+  authorityId
+  id
+}
+    `;
 export const SessionAuthValidatorNodeFragmentDoc = gql`
-  fragment SessionAuthValidatorNode on SessionValidator {
-    id
-    sessionId
-    validator {
-      ...ValidatorMeta
-    }
-    reputation
-    isBest
-    isNext
-    isNextBest
-    bestOrder
-    nextBestOrder
+    fragment SessionAuthValidatorNode on SessionValidator {
+  id
+  sessionId
+  validator {
+    ...ValidatorMeta
   }
-  ${ValidatorMetaFragmentDoc}
-`;
+  reputation
+  isBest
+  isNext
+  isNextBest
+  bestOrder
+  nextBestOrder
+}
+    ${ValidatorMetaFragmentDoc}`;
 export const SessionAuthValidatorFragmentDoc = gql`
-  fragment SessionAuthValidator on SessionValidatorsConnection {
-    edges {
-      node {
-        ...SessionAuthValidatorNode
-      }
+    fragment SessionAuthValidator on SessionValidatorsConnection {
+  edges {
+    node {
+      ...SessionAuthValidatorNode
     }
   }
-  ${SessionAuthValidatorNodeFragmentDoc}
-`;
+}
+    ${SessionAuthValidatorNodeFragmentDoc}`;
 export const SessionAuthFragmentDoc = gql`
-  fragment SessionAuth on Session {
-    sessionValidators {
-      ...SessionAuthValidator
-    }
+    fragment SessionAuth on Session {
+  sessionValidators {
+    ...SessionAuthValidator
   }
-  ${SessionAuthValidatorFragmentDoc}
-`;
+}
+    ${SessionAuthValidatorFragmentDoc}`;
 export const ProposalListViewFragmentDoc = gql`
-  fragment ProposalListView on ProposalItem {
-    id
-    data
-    signature
-    type
-    status
-    chainId
-    proposalVotesByProposalId(orderBy: [BLOCK_NUMBER_DESC], first: 3) {
-      nodes {
+    fragment ProposalListView on ProposalItem {
+  id
+  data
+  signature
+  type
+  status
+  chainId
+  proposalVotesByProposalId(orderBy: [BLOCK_NUMBER_DESC], first: 3) {
+    nodes {
+      id
+      voterId
+      voter {
         id
-        voterId
-        voter {
-          id
-        }
       }
-      totalCount
     }
-    block {
-      timestamp
-      number
-    }
+    totalCount
   }
-`;
+  block {
+    timestamp
+    number
+  }
+}
+    `;
 export const ProposalsVoteListViewFragmentDoc = gql`
-  fragment ProposalsVoteListView on ProposalVote {
-    id
-    voterId
-    voteStatus
-    txHash: voterId
-    block {
-      timestamp
-      number
-    }
+    fragment ProposalsVoteListView on ProposalVote {
+  id
+  voterId
+  voteStatus
+  txHash: voterId
+  block {
+    timestamp
+    number
   }
-`;
+}
+    `;
 export const ValidatorListingDocument = gql`
-  query ValidatorListing($sessionId: String!, $perPage: Int!, $offset: Int!) {
-    validators(offset: $offset, first: $perPage) {
-      nodes {
-        ...ValidatorMeta
-        sessionValidators(first: 1, filter: { sessionId: { equalTo: $sessionId } }) {
-          ...SessionAuthValidator
-        }
-      }
-      totalCount
-      pageInfo {
-        ...PageInfoMeta
+    query ValidatorListing($sessionId: String!, $perPage: Int!, $offset: Int!) {
+  validators(offset: $offset, first: $perPage) {
+    nodes {
+      ...ValidatorMeta
+      sessionValidators(first: 1, filter: {sessionId: {equalTo: $sessionId}}) {
+        ...SessionAuthValidator
       }
     }
+    totalCount
+    pageInfo {
+      ...PageInfoMeta
+    }
   }
-  ${ValidatorMetaFragmentDoc}
-  ${SessionAuthValidatorFragmentDoc}
-  ${PageInfoMetaFragmentDoc}
-`;
+}
+    ${ValidatorMetaFragmentDoc}
+${SessionAuthValidatorFragmentDoc}
+${PageInfoMetaFragmentDoc}`;
 
 /**
  * __useValidatorListingQuery__
@@ -11107,59 +11067,54 @@ export const ValidatorListingDocument = gql`
  *   },
  * });
  */
-export function useValidatorListingQuery(
-  baseOptions: Apollo.QueryHookOptions<ValidatorListingQuery, ValidatorListingQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<ValidatorListingQuery, ValidatorListingQueryVariables>(ValidatorListingDocument, options);
-}
-export function useValidatorListingLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<ValidatorListingQuery, ValidatorListingQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<ValidatorListingQuery, ValidatorListingQueryVariables>(ValidatorListingDocument, options);
-}
+export function useValidatorListingQuery(baseOptions: Apollo.QueryHookOptions<ValidatorListingQuery, ValidatorListingQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ValidatorListingQuery, ValidatorListingQueryVariables>(ValidatorListingDocument, options);
+      }
+export function useValidatorListingLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ValidatorListingQuery, ValidatorListingQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ValidatorListingQuery, ValidatorListingQueryVariables>(ValidatorListingDocument, options);
+        }
 export type ValidatorListingQueryHookResult = ReturnType<typeof useValidatorListingQuery>;
 export type ValidatorListingLazyQueryHookResult = ReturnType<typeof useValidatorListingLazyQuery>;
 export type ValidatorListingQueryResult = Apollo.QueryResult<ValidatorListingQuery, ValidatorListingQueryVariables>;
 export const ValidatorSessionsDocument = gql`
-  query ValidatorSessions($keyGen: Boolean, $validatorId: String!, $perPage: Int!, $offset: Int!) {
-    sessionValidators(
-      filter: { isBest: { equalTo: $keyGen }, validatorId: { equalTo: $validatorId } }
-      offset: $offset
-      first: $perPage
-    ) {
-      nodes {
-        validator {
-          ...ValidatorMeta
-        }
-        session {
-          id
-          publicKey {
-            id
-            compressed
-            uncompressed
-            block {
-              id
-              number
-            }
-          }
-          sessionValidators(first: 3) {
-            ...SessionAuthValidator
-            totalCount
-          }
-        }
+    query ValidatorSessions($keyGen: Boolean, $validatorId: String!, $perPage: Int!, $offset: Int!) {
+  sessionValidators(
+    filter: {isBest: {equalTo: $keyGen}, validatorId: {equalTo: $validatorId}}
+    offset: $offset
+    first: $perPage
+  ) {
+    nodes {
+      validator {
+        ...ValidatorMeta
       }
-      totalCount
-      pageInfo {
-        ...PageInfoMeta
+      session {
+        id
+        publicKey {
+          id
+          compressed
+          uncompressed
+          block {
+            id
+            number
+          }
+        }
+        sessionValidators(first: 3) {
+          ...SessionAuthValidator
+          totalCount
+        }
       }
     }
+    totalCount
+    pageInfo {
+      ...PageInfoMeta
+    }
   }
-  ${ValidatorMetaFragmentDoc}
-  ${SessionAuthValidatorFragmentDoc}
-  ${PageInfoMetaFragmentDoc}
-`;
+}
+    ${ValidatorMetaFragmentDoc}
+${SessionAuthValidatorFragmentDoc}
+${PageInfoMetaFragmentDoc}`;
 
 /**
  * __useValidatorSessionsQuery__
@@ -11180,42 +11135,39 @@ export const ValidatorSessionsDocument = gql`
  *   },
  * });
  */
-export function useValidatorSessionsQuery(
-  baseOptions: Apollo.QueryHookOptions<ValidatorSessionsQuery, ValidatorSessionsQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<ValidatorSessionsQuery, ValidatorSessionsQueryVariables>(ValidatorSessionsDocument, options);
-}
-export function useValidatorSessionsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<ValidatorSessionsQuery, ValidatorSessionsQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<ValidatorSessionsQuery, ValidatorSessionsQueryVariables>(
-    ValidatorSessionsDocument,
-    options
-  );
-}
+export function useValidatorSessionsQuery(baseOptions: Apollo.QueryHookOptions<ValidatorSessionsQuery, ValidatorSessionsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ValidatorSessionsQuery, ValidatorSessionsQueryVariables>(ValidatorSessionsDocument, options);
+      }
+export function useValidatorSessionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ValidatorSessionsQuery, ValidatorSessionsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ValidatorSessionsQuery, ValidatorSessionsQueryVariables>(ValidatorSessionsDocument, options);
+        }
 export type ValidatorSessionsQueryHookResult = ReturnType<typeof useValidatorSessionsQuery>;
 export type ValidatorSessionsLazyQueryHookResult = ReturnType<typeof useValidatorSessionsLazyQuery>;
 export type ValidatorSessionsQueryResult = Apollo.QueryResult<ValidatorSessionsQuery, ValidatorSessionsQueryVariables>;
 export const ValidatorOfSessionDocument = gql`
-  query ValidatorOfSession($validatorId: String!, $sessionValidatorId: String!) {
-    sessionValidator(id: $sessionValidatorId) {
-      ...SessionAuthValidatorNode
-      session {
-        keyGenThreshold
-      }
-    }
-    sessionValidators(filter: { validatorId: { equalTo: $validatorId }, isBest: { equalTo: true } }) {
-      aggregates {
-        distinctCount {
-          id
-        }
+    query ValidatorOfSession($validatorId: String!, $sessionValidatorId: String!) {
+  sessionValidator(id: $sessionValidatorId) {
+    ...SessionAuthValidatorNode
+    session {
+      thresholds {
+        ...ThresholdValue
       }
     }
   }
-  ${SessionAuthValidatorNodeFragmentDoc}
-`;
+  sessionValidators(
+    filter: {validatorId: {equalTo: $validatorId}, isBest: {equalTo: true}}
+  ) {
+    aggregates {
+      distinctCount {
+        id
+      }
+    }
+  }
+}
+    ${SessionAuthValidatorNodeFragmentDoc}
+${ThresholdValueFragmentDoc}`;
 
 /**
  * __useValidatorOfSessionQuery__
@@ -11234,38 +11186,25 @@ export const ValidatorOfSessionDocument = gql`
  *   },
  * });
  */
-export function useValidatorOfSessionQuery(
-  baseOptions: Apollo.QueryHookOptions<ValidatorOfSessionQuery, ValidatorOfSessionQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<ValidatorOfSessionQuery, ValidatorOfSessionQueryVariables>(
-    ValidatorOfSessionDocument,
-    options
-  );
-}
-export function useValidatorOfSessionLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<ValidatorOfSessionQuery, ValidatorOfSessionQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<ValidatorOfSessionQuery, ValidatorOfSessionQueryVariables>(
-    ValidatorOfSessionDocument,
-    options
-  );
-}
+export function useValidatorOfSessionQuery(baseOptions: Apollo.QueryHookOptions<ValidatorOfSessionQuery, ValidatorOfSessionQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ValidatorOfSessionQuery, ValidatorOfSessionQueryVariables>(ValidatorOfSessionDocument, options);
+      }
+export function useValidatorOfSessionLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ValidatorOfSessionQuery, ValidatorOfSessionQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ValidatorOfSessionQuery, ValidatorOfSessionQueryVariables>(ValidatorOfSessionDocument, options);
+        }
 export type ValidatorOfSessionQueryHookResult = ReturnType<typeof useValidatorOfSessionQuery>;
 export type ValidatorOfSessionLazyQueryHookResult = ReturnType<typeof useValidatorOfSessionLazyQuery>;
-export type ValidatorOfSessionQueryResult = Apollo.QueryResult<
-  ValidatorOfSessionQuery,
-  ValidatorOfSessionQueryVariables
->;
+export type ValidatorOfSessionQueryResult = Apollo.QueryResult<ValidatorOfSessionQuery, ValidatorOfSessionQueryVariables>;
 export const MetaDataDocument = gql`
-  query MetaData {
-    _metadata {
-      targetHeight
-      lastProcessedHeight
-    }
+    query MetaData {
+  _metadata {
+    targetHeight
+    lastProcessedHeight
   }
-`;
+}
+    `;
 
 /**
  * __useMetaDataQuery__
@@ -11283,26 +11222,26 @@ export const MetaDataDocument = gql`
  * });
  */
 export function useMetaDataQuery(baseOptions?: Apollo.QueryHookOptions<MetaDataQuery, MetaDataQueryVariables>) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<MetaDataQuery, MetaDataQueryVariables>(MetaDataDocument, options);
-}
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<MetaDataQuery, MetaDataQueryVariables>(MetaDataDocument, options);
+      }
 export function useMetaDataLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MetaDataQuery, MetaDataQueryVariables>) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<MetaDataQuery, MetaDataQueryVariables>(MetaDataDocument, options);
-}
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<MetaDataQuery, MetaDataQueryVariables>(MetaDataDocument, options);
+        }
 export type MetaDataQueryHookResult = ReturnType<typeof useMetaDataQuery>;
 export type MetaDataLazyQueryHookResult = ReturnType<typeof useMetaDataLazyQuery>;
 export type MetaDataQueryResult = Apollo.QueryResult<MetaDataQuery, MetaDataQueryVariables>;
 export const LastBlockDocument = gql`
-  query LastBlock {
-    blocks(first: 1, filter: { timestamp: { isNull: false } }, orderBy: [NUMBER_DESC]) {
-      nodes {
-        timestamp
-        number
-      }
+    query LastBlock {
+  blocks(first: 1, filter: {timestamp: {isNull: false}}, orderBy: [NUMBER_DESC]) {
+    nodes {
+      timestamp
+      number
     }
   }
-`;
+}
+    `;
 
 /**
  * __useLastBlockQuery__
@@ -11320,33 +11259,31 @@ export const LastBlockDocument = gql`
  * });
  */
 export function useLastBlockQuery(baseOptions?: Apollo.QueryHookOptions<LastBlockQuery, LastBlockQueryVariables>) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<LastBlockQuery, LastBlockQueryVariables>(LastBlockDocument, options);
-}
-export function useLastBlockLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<LastBlockQuery, LastBlockQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<LastBlockQuery, LastBlockQueryVariables>(LastBlockDocument, options);
-}
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<LastBlockQuery, LastBlockQueryVariables>(LastBlockDocument, options);
+      }
+export function useLastBlockLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<LastBlockQuery, LastBlockQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<LastBlockQuery, LastBlockQueryVariables>(LastBlockDocument, options);
+        }
 export type LastBlockQueryHookResult = ReturnType<typeof useLastBlockQuery>;
 export type LastBlockLazyQueryHookResult = ReturnType<typeof useLastBlockLazyQuery>;
 export type LastBlockQueryResult = Apollo.QueryResult<LastBlockQuery, LastBlockQueryVariables>;
 export const ProposalCounterDocument = gql`
-  query ProposalCounter {
-    proposalCounters(first: 2, offset: 1, orderBy: [BLOCK_NUMBER_DESC]) {
-      nodes {
-        id
-        blockNumber
-        unSignedProposalsCount
-        signedProposalsCount
-        statusMap
-        unSignedProposalsMap
-        signedProposalsMap
-      }
+    query ProposalCounter {
+  proposalCounters(first: 2, offset: 1, orderBy: [BLOCK_NUMBER_DESC]) {
+    nodes {
+      id
+      blockNumber
+      unSignedProposalsCount
+      signedProposalsCount
+      statusMap
+      unSignedProposalsMap
+      signedProposalsMap
     }
   }
-`;
+}
+    `;
 
 /**
  * __useProposalCounterQuery__
@@ -11363,36 +11300,31 @@ export const ProposalCounterDocument = gql`
  *   },
  * });
  */
-export function useProposalCounterQuery(
-  baseOptions?: Apollo.QueryHookOptions<ProposalCounterQuery, ProposalCounterQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<ProposalCounterQuery, ProposalCounterQueryVariables>(ProposalCounterDocument, options);
-}
-export function useProposalCounterLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<ProposalCounterQuery, ProposalCounterQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<ProposalCounterQuery, ProposalCounterQueryVariables>(ProposalCounterDocument, options);
-}
+export function useProposalCounterQuery(baseOptions?: Apollo.QueryHookOptions<ProposalCounterQuery, ProposalCounterQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ProposalCounterQuery, ProposalCounterQueryVariables>(ProposalCounterDocument, options);
+      }
+export function useProposalCounterLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ProposalCounterQuery, ProposalCounterQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ProposalCounterQuery, ProposalCounterQueryVariables>(ProposalCounterDocument, options);
+        }
 export type ProposalCounterQueryHookResult = ReturnType<typeof useProposalCounterQuery>;
 export type ProposalCounterLazyQueryHookResult = ReturnType<typeof useProposalCounterLazyQuery>;
 export type ProposalCounterQueryResult = Apollo.QueryResult<ProposalCounterQuery, ProposalCounterQueryVariables>;
 export const ProposalsDocument = gql`
-  query Proposals($perPage: Int!, $offset: Int!) {
-    proposalItems(orderBy: [BLOCK_NUMBER_DESC], first: $perPage, offset: $offset) {
-      nodes {
-        ...ProposalListView
-      }
-      totalCount
-      pageInfo {
-        ...PageInfoMeta
-      }
+    query Proposals($perPage: Int!, $offset: Int!) {
+  proposalItems(orderBy: [BLOCK_NUMBER_DESC], first: $perPage, offset: $offset) {
+    nodes {
+      ...ProposalListView
+    }
+    totalCount
+    pageInfo {
+      ...PageInfoMeta
     }
   }
-  ${ProposalListViewFragmentDoc}
-  ${PageInfoMetaFragmentDoc}
-`;
+}
+    ${ProposalListViewFragmentDoc}
+${PageInfoMetaFragmentDoc}`;
 
 /**
  * __useProposalsQuery__
@@ -11412,34 +11344,32 @@ export const ProposalsDocument = gql`
  * });
  */
 export function useProposalsQuery(baseOptions: Apollo.QueryHookOptions<ProposalsQuery, ProposalsQueryVariables>) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<ProposalsQuery, ProposalsQueryVariables>(ProposalsDocument, options);
-}
-export function useProposalsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<ProposalsQuery, ProposalsQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<ProposalsQuery, ProposalsQueryVariables>(ProposalsDocument, options);
-}
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ProposalsQuery, ProposalsQueryVariables>(ProposalsDocument, options);
+      }
+export function useProposalsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ProposalsQuery, ProposalsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ProposalsQuery, ProposalsQueryVariables>(ProposalsDocument, options);
+        }
 export type ProposalsQueryHookResult = ReturnType<typeof useProposalsQuery>;
 export type ProposalsLazyQueryHookResult = ReturnType<typeof useProposalsLazyQuery>;
 export type ProposalsQueryResult = Apollo.QueryResult<ProposalsQuery, ProposalsQueryVariables>;
 export const ProposalsCounterDocument = gql`
-  query ProposalsCounter($id: String!) {
-    proposalCounter(id: $id) {
-      id
-      signedProposalsMap
-      unSignedProposalsMap
-      signedProposalsCount
-      unSignedProposalsCount
-      statusMap
-      block {
-        number
-        timestamp
-      }
+    query ProposalsCounter($id: String!) {
+  proposalCounter(id: $id) {
+    id
+    signedProposalsMap
+    unSignedProposalsMap
+    signedProposalsCount
+    unSignedProposalsCount
+    statusMap
+    block {
+      number
+      timestamp
     }
   }
-`;
+}
+    `;
 
 /**
  * __useProposalsCounterQuery__
@@ -11457,66 +11387,68 @@ export const ProposalsCounterDocument = gql`
  *   },
  * });
  */
-export function useProposalsCounterQuery(
-  baseOptions: Apollo.QueryHookOptions<ProposalsCounterQuery, ProposalsCounterQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<ProposalsCounterQuery, ProposalsCounterQueryVariables>(ProposalsCounterDocument, options);
-}
-export function useProposalsCounterLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<ProposalsCounterQuery, ProposalsCounterQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<ProposalsCounterQuery, ProposalsCounterQueryVariables>(ProposalsCounterDocument, options);
-}
+export function useProposalsCounterQuery(baseOptions: Apollo.QueryHookOptions<ProposalsCounterQuery, ProposalsCounterQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ProposalsCounterQuery, ProposalsCounterQueryVariables>(ProposalsCounterDocument, options);
+      }
+export function useProposalsCounterLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ProposalsCounterQuery, ProposalsCounterQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ProposalsCounterQuery, ProposalsCounterQueryVariables>(ProposalsCounterDocument, options);
+        }
 export type ProposalsCounterQueryHookResult = ReturnType<typeof useProposalsCounterQuery>;
 export type ProposalsCounterLazyQueryHookResult = ReturnType<typeof useProposalsCounterLazyQuery>;
 export type ProposalsCounterQueryResult = Apollo.QueryResult<ProposalsCounterQuery, ProposalsCounterQueryVariables>;
 export const ProposalsOverviewDocument = gql`
-  query ProposalsOverview($startRange: BigFloatFilter, $endRange: BigFloatFilter, $sessionId: String!) {
-    session(id: $sessionId) {
-      id
-      proposerThreshold
-      sessionProposers {
-        totalCount
-      }
-      sessionValidators {
-        totalCount
-      }
+    query ProposalsOverview($startRange: BigFloatFilter, $endRange: BigFloatFilter, $sessionId: String!) {
+  session(id: $sessionId) {
+    id
+    thresholds {
+      ...ThresholdValue
     }
-    openProposals: proposalItems(filter: { status: { equalTo: "Open" } }, orderBy: [BLOCK_NUMBER_DESC], first: 10) {
-      nodes {
-        ...ProposalListView
-      }
-      pageInfo {
-        ...PageInfoMeta
-      }
+    sessionProposers {
       totalCount
     }
-    open: proposalTimelineStatuses(
-      filter: { status: { equalTo: Open }, and: [{ blockNumber: $startRange }, { blockNumber: $endRange }] }
-    ) {
-      totalCount
-    }
-    signed: proposalTimelineStatuses(
-      filter: { status: { equalTo: Signed }, and: [{ blockNumber: $startRange }, { blockNumber: $endRange }] }
-    ) {
-      totalCount
-    }
-    reject: proposalTimelineStatuses(
-      filter: { status: { equalTo: Rejected }, and: [{ blockNumber: $startRange }, { blockNumber: $endRange }] }
-    ) {
-      totalCount
-    }
-    accepted: proposalTimelineStatuses(
-      filter: { status: { equalTo: Accepted }, and: [{ blockNumber: $startRange }, { blockNumber: $endRange }] }
-    ) {
+    sessionValidators {
       totalCount
     }
   }
-  ${ProposalListViewFragmentDoc}
-  ${PageInfoMetaFragmentDoc}
-`;
+  openProposals: proposalItems(
+    filter: {status: {equalTo: "Open"}}
+    orderBy: [BLOCK_NUMBER_DESC]
+    first: 10
+  ) {
+    nodes {
+      ...ProposalListView
+    }
+    pageInfo {
+      ...PageInfoMeta
+    }
+    totalCount
+  }
+  open: proposalTimelineStatuses(
+    filter: {status: {equalTo: Open}, and: [{blockNumber: $startRange}, {blockNumber: $endRange}]}
+  ) {
+    totalCount
+  }
+  signed: proposalTimelineStatuses(
+    filter: {status: {equalTo: Signed}, and: [{blockNumber: $startRange}, {blockNumber: $endRange}]}
+  ) {
+    totalCount
+  }
+  reject: proposalTimelineStatuses(
+    filter: {status: {equalTo: Rejected}, and: [{blockNumber: $startRange}, {blockNumber: $endRange}]}
+  ) {
+    totalCount
+  }
+  accepted: proposalTimelineStatuses(
+    filter: {status: {equalTo: Accepted}, and: [{blockNumber: $startRange}, {blockNumber: $endRange}]}
+  ) {
+    totalCount
+  }
+}
+    ${ThresholdValueFragmentDoc}
+${ProposalListViewFragmentDoc}
+${PageInfoMetaFragmentDoc}`;
 
 /**
  * __useProposalsOverviewQuery__
@@ -11536,44 +11468,36 @@ export const ProposalsOverviewDocument = gql`
  *   },
  * });
  */
-export function useProposalsOverviewQuery(
-  baseOptions: Apollo.QueryHookOptions<ProposalsOverviewQuery, ProposalsOverviewQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<ProposalsOverviewQuery, ProposalsOverviewQueryVariables>(ProposalsOverviewDocument, options);
-}
-export function useProposalsOverviewLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<ProposalsOverviewQuery, ProposalsOverviewQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<ProposalsOverviewQuery, ProposalsOverviewQueryVariables>(
-    ProposalsOverviewDocument,
-    options
-  );
-}
+export function useProposalsOverviewQuery(baseOptions: Apollo.QueryHookOptions<ProposalsOverviewQuery, ProposalsOverviewQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ProposalsOverviewQuery, ProposalsOverviewQueryVariables>(ProposalsOverviewDocument, options);
+      }
+export function useProposalsOverviewLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ProposalsOverviewQuery, ProposalsOverviewQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ProposalsOverviewQuery, ProposalsOverviewQueryVariables>(ProposalsOverviewDocument, options);
+        }
 export type ProposalsOverviewQueryHookResult = ReturnType<typeof useProposalsOverviewQuery>;
 export type ProposalsOverviewLazyQueryHookResult = ReturnType<typeof useProposalsOverviewLazyQuery>;
 export type ProposalsOverviewQueryResult = Apollo.QueryResult<ProposalsOverviewQuery, ProposalsOverviewQueryVariables>;
 export const ProposalVotesDocument = gql`
-  query ProposalVotes($perPage: Int!, $offset: Int!, $proposalId: String!, $for: VoteStatusFilter) {
-    proposalVotes(
-      filter: { proposalId: { equalTo: $proposalId }, voteStatus: $for }
-      orderBy: [BLOCK_NUMBER_DESC]
-      first: $perPage
-      offset: $offset
-    ) {
-      nodes {
-        ...ProposalsVoteListView
-      }
-      totalCount
-      pageInfo {
-        ...PageInfoMeta
-      }
+    query ProposalVotes($perPage: Int!, $offset: Int!, $proposalId: String!, $for: VoteStatusFilter) {
+  proposalVotes(
+    filter: {proposalId: {equalTo: $proposalId}, voteStatus: $for}
+    orderBy: [BLOCK_NUMBER_DESC]
+    first: $perPage
+    offset: $offset
+  ) {
+    nodes {
+      ...ProposalsVoteListView
+    }
+    totalCount
+    pageInfo {
+      ...PageInfoMeta
     }
   }
-  ${ProposalsVoteListViewFragmentDoc}
-  ${PageInfoMetaFragmentDoc}
-`;
+}
+    ${ProposalsVoteListViewFragmentDoc}
+${PageInfoMetaFragmentDoc}`;
 
 /**
  * __useProposalVotesQuery__
@@ -11594,63 +11518,59 @@ export const ProposalVotesDocument = gql`
  *   },
  * });
  */
-export function useProposalVotesQuery(
-  baseOptions: Apollo.QueryHookOptions<ProposalVotesQuery, ProposalVotesQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<ProposalVotesQuery, ProposalVotesQueryVariables>(ProposalVotesDocument, options);
-}
-export function useProposalVotesLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<ProposalVotesQuery, ProposalVotesQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<ProposalVotesQuery, ProposalVotesQueryVariables>(ProposalVotesDocument, options);
-}
+export function useProposalVotesQuery(baseOptions: Apollo.QueryHookOptions<ProposalVotesQuery, ProposalVotesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ProposalVotesQuery, ProposalVotesQueryVariables>(ProposalVotesDocument, options);
+      }
+export function useProposalVotesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ProposalVotesQuery, ProposalVotesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ProposalVotesQuery, ProposalVotesQueryVariables>(ProposalVotesDocument, options);
+        }
 export type ProposalVotesQueryHookResult = ReturnType<typeof useProposalVotesQuery>;
 export type ProposalVotesLazyQueryHookResult = ReturnType<typeof useProposalVotesLazyQuery>;
 export type ProposalVotesQueryResult = Apollo.QueryResult<ProposalVotesQuery, ProposalVotesQueryVariables>;
 export const ProposalDetailsDocument = gql`
-  query ProposalDetails($id: String!, $targetSessionId: String!) {
-    session(id: $targetSessionId) {
-      id
-      sessionProposers {
-        totalCount
-      }
-    }
-    proposalItem(id: $id) {
-      id
-      data
-      signature
-      type
-      status
-      chainId
-      proposalTimelineStatuses {
-        nodes {
-          id
-          status
-          blockNumber
-          timestamp
-        }
-      }
-      votesFor: proposalVotesByProposalId(filter: { voteStatus: { equalTo: FOR } }) {
-        totalCount
-      }
-      against: proposalVotesByProposalId(filter: { voteStatus: { equalTo: AGAINST } }) {
-        totalCount
-      }
-      abstain: proposalVotesByProposalId(filter: { voteStatus: { equalTo: ABSTAIN } }) {
-        totalCount
-      }
-      totalVotes: proposalVotesByProposalId {
-        totalCount
-      }
-      block {
-        timestamp
-        number
-      }
+    query ProposalDetails($id: String!, $targetSessionId: String!) {
+  session(id: $targetSessionId) {
+    id
+    sessionProposers {
+      totalCount
     }
   }
-`;
+  proposalItem(id: $id) {
+    id
+    data
+    signature
+    type
+    status
+    chainId
+    proposalTimelineStatuses {
+      nodes {
+        id
+        status
+        blockNumber
+        timestamp
+      }
+    }
+    votesFor: proposalVotesByProposalId(filter: {voteStatus: {equalTo: FOR}}) {
+      totalCount
+    }
+    against: proposalVotesByProposalId(filter: {voteStatus: {equalTo: AGAINST}}) {
+      totalCount
+    }
+    abstain: proposalVotesByProposalId(filter: {voteStatus: {equalTo: ABSTAIN}}) {
+      totalCount
+    }
+    totalVotes: proposalVotesByProposalId {
+      totalCount
+    }
+    block {
+      timestamp
+      number
+    }
+  }
+}
+    `;
 
 /**
  * __useProposalDetailsQuery__
@@ -11669,30 +11589,26 @@ export const ProposalDetailsDocument = gql`
  *   },
  * });
  */
-export function useProposalDetailsQuery(
-  baseOptions: Apollo.QueryHookOptions<ProposalDetailsQuery, ProposalDetailsQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<ProposalDetailsQuery, ProposalDetailsQueryVariables>(ProposalDetailsDocument, options);
-}
-export function useProposalDetailsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<ProposalDetailsQuery, ProposalDetailsQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<ProposalDetailsQuery, ProposalDetailsQueryVariables>(ProposalDetailsDocument, options);
-}
+export function useProposalDetailsQuery(baseOptions: Apollo.QueryHookOptions<ProposalDetailsQuery, ProposalDetailsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ProposalDetailsQuery, ProposalDetailsQueryVariables>(ProposalDetailsDocument, options);
+      }
+export function useProposalDetailsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ProposalDetailsQuery, ProposalDetailsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ProposalDetailsQuery, ProposalDetailsQueryVariables>(ProposalDetailsDocument, options);
+        }
 export type ProposalDetailsQueryHookResult = ReturnType<typeof useProposalDetailsQuery>;
 export type ProposalDetailsLazyQueryHookResult = ReturnType<typeof useProposalDetailsLazyQuery>;
 export type ProposalDetailsQueryResult = Apollo.QueryResult<ProposalDetailsQuery, ProposalDetailsQueryVariables>;
 export const EnsureProposalsDocument = gql`
-  query ensureProposals($ids: [String!]!) {
-    proposalItems(filter: { id: { in: $ids } }) {
-      nodes {
-        id
-      }
+    query ensureProposals($ids: [String!]!) {
+  proposalItems(filter: {id: {in: $ids}}) {
+    nodes {
+      id
     }
   }
-`;
+}
+    `;
 
 /**
  * __useEnsureProposalsQuery__
@@ -11710,57 +11626,58 @@ export const EnsureProposalsDocument = gql`
  *   },
  * });
  */
-export function useEnsureProposalsQuery(
-  baseOptions: Apollo.QueryHookOptions<EnsureProposalsQuery, EnsureProposalsQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<EnsureProposalsQuery, EnsureProposalsQueryVariables>(EnsureProposalsDocument, options);
-}
-export function useEnsureProposalsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<EnsureProposalsQuery, EnsureProposalsQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<EnsureProposalsQuery, EnsureProposalsQueryVariables>(EnsureProposalsDocument, options);
-}
+export function useEnsureProposalsQuery(baseOptions: Apollo.QueryHookOptions<EnsureProposalsQuery, EnsureProposalsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<EnsureProposalsQuery, EnsureProposalsQueryVariables>(EnsureProposalsDocument, options);
+      }
+export function useEnsureProposalsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<EnsureProposalsQuery, EnsureProposalsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<EnsureProposalsQuery, EnsureProposalsQueryVariables>(EnsureProposalsDocument, options);
+        }
 export type EnsureProposalsQueryHookResult = ReturnType<typeof useEnsureProposalsQuery>;
 export type EnsureProposalsLazyQueryHookResult = ReturnType<typeof useEnsureProposalsLazyQuery>;
 export type EnsureProposalsQueryResult = Apollo.QueryResult<EnsureProposalsQuery, EnsureProposalsQueryVariables>;
 export const PublicKeysDocument = gql`
-  query PublicKeys($PerPage: Int, $offset: Int) {
-    publicKeys(first: $PerPage, offset: $offset, orderBy: [SESSIONS_SUM_BLOCK_NUMBER_DESC]) {
-      nodes {
-        id
-        compressed
-        uncompressed
-        history
-        block {
-          timestamp
-          number
-        }
-        sessions(first: 1) {
-          nodes {
-            id
-            ...SessionAuth
-            keyGenThreshold
-            signatureThreshold
-            block {
-              timestamp
-              number
-            }
+    query PublicKeys($PerPage: Int, $offset: Int) {
+  publicKeys(
+    first: $PerPage
+    offset: $offset
+    orderBy: [SESSIONS_SUM_BLOCK_NUMBER_DESC]
+  ) {
+    nodes {
+      id
+      compressed
+      uncompressed
+      history
+      block {
+        timestamp
+        number
+      }
+      sessions(first: 1) {
+        nodes {
+          id
+          ...SessionAuth
+          thresholds {
+            ...ThresholdValue
+          }
+          block {
+            timestamp
+            number
           }
         }
       }
-      pageInfo {
-        hasNextPage
-        hasPreviousPage
-        startCursor
-        endCursor
-      }
-      totalCount
     }
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+    totalCount
   }
-  ${SessionAuthFragmentDoc}
-`;
+}
+    ${SessionAuthFragmentDoc}
+${ThresholdValueFragmentDoc}`;
 
 /**
  * __usePublicKeysQuery__
@@ -11780,45 +11697,44 @@ export const PublicKeysDocument = gql`
  * });
  */
 export function usePublicKeysQuery(baseOptions?: Apollo.QueryHookOptions<PublicKeysQuery, PublicKeysQueryVariables>) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<PublicKeysQuery, PublicKeysQueryVariables>(PublicKeysDocument, options);
-}
-export function usePublicKeysLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<PublicKeysQuery, PublicKeysQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<PublicKeysQuery, PublicKeysQueryVariables>(PublicKeysDocument, options);
-}
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<PublicKeysQuery, PublicKeysQueryVariables>(PublicKeysDocument, options);
+      }
+export function usePublicKeysLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PublicKeysQuery, PublicKeysQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<PublicKeysQuery, PublicKeysQueryVariables>(PublicKeysDocument, options);
+        }
 export type PublicKeysQueryHookResult = ReturnType<typeof usePublicKeysQuery>;
 export type PublicKeysLazyQueryHookResult = ReturnType<typeof usePublicKeysLazyQuery>;
 export type PublicKeysQueryResult = Apollo.QueryResult<PublicKeysQuery, PublicKeysQueryVariables>;
 export const PublicKeyDocument = gql`
-  query PublicKey($id: String!) {
-    publicKey(id: $id) {
-      id
-      compressed
-      uncompressed
-      history
-      block {
-        timestamp
-        number
-      }
-      sessions(first: 1) {
-        nodes {
-          id
-          ...SessionAuth
-          keyGenThreshold
-          signatureThreshold
-          block {
-            timestamp
-            number
-          }
+    query PublicKey($id: String!) {
+  publicKey(id: $id) {
+    id
+    compressed
+    uncompressed
+    history
+    block {
+      timestamp
+      number
+    }
+    sessions(first: 1) {
+      nodes {
+        id
+        ...SessionAuth
+        thresholds {
+          ...ThresholdValue
+        }
+        block {
+          timestamp
+          number
         }
       }
     }
   }
-  ${SessionAuthFragmentDoc}
-`;
+}
+    ${SessionAuthFragmentDoc}
+${ThresholdValueFragmentDoc}`;
 
 /**
  * __usePublicKeyQuery__
@@ -11837,30 +11753,28 @@ export const PublicKeyDocument = gql`
  * });
  */
 export function usePublicKeyQuery(baseOptions: Apollo.QueryHookOptions<PublicKeyQuery, PublicKeyQueryVariables>) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<PublicKeyQuery, PublicKeyQueryVariables>(PublicKeyDocument, options);
-}
-export function usePublicKeyLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<PublicKeyQuery, PublicKeyQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<PublicKeyQuery, PublicKeyQueryVariables>(PublicKeyDocument, options);
-}
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<PublicKeyQuery, PublicKeyQueryVariables>(PublicKeyDocument, options);
+      }
+export function usePublicKeyLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PublicKeyQuery, PublicKeyQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<PublicKeyQuery, PublicKeyQueryVariables>(PublicKeyDocument, options);
+        }
 export type PublicKeyQueryHookResult = ReturnType<typeof usePublicKeyQuery>;
 export type PublicKeyLazyQueryHookResult = ReturnType<typeof usePublicKeyLazyQuery>;
 export type PublicKeyQueryResult = Apollo.QueryResult<PublicKeyQuery, PublicKeyQueryVariables>;
 export const SessionKeyIdsDocument = gql`
-  query SessionKeyIds($keys: [String!]!) {
-    sessions(filter: { id: { in: $keys } }) {
-      nodes {
+    query SessionKeyIds($keys: [String!]!) {
+  sessions(filter: {id: {in: $keys}}) {
+    nodes {
+      id
+      publicKey {
         id
-        publicKey {
-          id
-        }
       }
     }
   }
-`;
+}
+    `;
 
 /**
  * __useSessionKeyIdsQuery__
@@ -11878,43 +11792,39 @@ export const SessionKeyIdsDocument = gql`
  *   },
  * });
  */
-export function useSessionKeyIdsQuery(
-  baseOptions: Apollo.QueryHookOptions<SessionKeyIdsQuery, SessionKeyIdsQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<SessionKeyIdsQuery, SessionKeyIdsQueryVariables>(SessionKeyIdsDocument, options);
-}
-export function useSessionKeyIdsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<SessionKeyIdsQuery, SessionKeyIdsQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<SessionKeyIdsQuery, SessionKeyIdsQueryVariables>(SessionKeyIdsDocument, options);
-}
+export function useSessionKeyIdsQuery(baseOptions: Apollo.QueryHookOptions<SessionKeyIdsQuery, SessionKeyIdsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SessionKeyIdsQuery, SessionKeyIdsQueryVariables>(SessionKeyIdsDocument, options);
+      }
+export function useSessionKeyIdsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SessionKeyIdsQuery, SessionKeyIdsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SessionKeyIdsQuery, SessionKeyIdsQueryVariables>(SessionKeyIdsDocument, options);
+        }
 export type SessionKeyIdsQueryHookResult = ReturnType<typeof useSessionKeyIdsQuery>;
 export type SessionKeyIdsLazyQueryHookResult = ReturnType<typeof useSessionKeyIdsLazyQuery>;
 export type SessionKeyIdsQueryResult = Apollo.QueryResult<SessionKeyIdsQuery, SessionKeyIdsQueryVariables>;
 export const CurrentSessionAuthoritiesDocument = gql`
-  query CurrentSessionAuthorities {
-    sessions(first: 1, orderBy: [BLOCK_NUMBER_DESC]) {
-      nodes {
+    query CurrentSessionAuthorities {
+  sessions(first: 1, orderBy: [BLOCK_NUMBER_DESC]) {
+    nodes {
+      id
+      blockId
+      ...SessionAuth
+      publicKey {
+        compressed
+      }
+      thresholds {
+        ...ThresholdValue
+      }
+      block {
         id
-        blockId
-        ...SessionAuth
-        publicKey {
-          compressed
-        }
-        signatureThreshold
-        keyGenThreshold
-        proposerThreshold
-        block {
-          id
-          timestamp
-        }
+        timestamp
       }
     }
   }
-  ${SessionAuthFragmentDoc}
-`;
+}
+    ${SessionAuthFragmentDoc}
+${ThresholdValueFragmentDoc}`;
 
 /**
  * __useCurrentSessionAuthoritiesQuery__
@@ -11931,54 +11841,40 @@ export const CurrentSessionAuthoritiesDocument = gql`
  *   },
  * });
  */
-export function useCurrentSessionAuthoritiesQuery(
-  baseOptions?: Apollo.QueryHookOptions<CurrentSessionAuthoritiesQuery, CurrentSessionAuthoritiesQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<CurrentSessionAuthoritiesQuery, CurrentSessionAuthoritiesQueryVariables>(
-    CurrentSessionAuthoritiesDocument,
-    options
-  );
-}
-export function useCurrentSessionAuthoritiesLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<CurrentSessionAuthoritiesQuery, CurrentSessionAuthoritiesQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<CurrentSessionAuthoritiesQuery, CurrentSessionAuthoritiesQueryVariables>(
-    CurrentSessionAuthoritiesDocument,
-    options
-  );
-}
+export function useCurrentSessionAuthoritiesQuery(baseOptions?: Apollo.QueryHookOptions<CurrentSessionAuthoritiesQuery, CurrentSessionAuthoritiesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<CurrentSessionAuthoritiesQuery, CurrentSessionAuthoritiesQueryVariables>(CurrentSessionAuthoritiesDocument, options);
+      }
+export function useCurrentSessionAuthoritiesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CurrentSessionAuthoritiesQuery, CurrentSessionAuthoritiesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<CurrentSessionAuthoritiesQuery, CurrentSessionAuthoritiesQueryVariables>(CurrentSessionAuthoritiesDocument, options);
+        }
 export type CurrentSessionAuthoritiesQueryHookResult = ReturnType<typeof useCurrentSessionAuthoritiesQuery>;
 export type CurrentSessionAuthoritiesLazyQueryHookResult = ReturnType<typeof useCurrentSessionAuthoritiesLazyQuery>;
-export type CurrentSessionAuthoritiesQueryResult = Apollo.QueryResult<
-  CurrentSessionAuthoritiesQuery,
-  CurrentSessionAuthoritiesQueryVariables
->;
+export type CurrentSessionAuthoritiesQueryResult = Apollo.QueryResult<CurrentSessionAuthoritiesQuery, CurrentSessionAuthoritiesQueryVariables>;
 export const SessionKeysDocument = gql`
-  query SessionKeys($SessionId: [String!]!) {
-    sessions(filter: { id: { in: $SessionId } }) {
-      nodes {
+    query SessionKeys($SessionId: [String!]!) {
+  sessions(filter: {id: {in: $SessionId}}) {
+    nodes {
+      id
+      ...SessionAuth
+      block {
+        timestamp
+        number
+      }
+      publicKey {
         id
-        ...SessionAuth
+        compressed
+        uncompressed
         block {
           timestamp
           number
         }
-        publicKey {
-          id
-          compressed
-          uncompressed
-          block {
-            timestamp
-            number
-          }
-        }
       }
     }
   }
-  ${SessionAuthFragmentDoc}
-`;
+}
+    ${SessionAuthFragmentDoc}`;
 
 /**
  * __useSessionKeysQuery__
@@ -11997,38 +11893,37 @@ export const SessionKeysDocument = gql`
  * });
  */
 export function useSessionKeysQuery(baseOptions: Apollo.QueryHookOptions<SessionKeysQuery, SessionKeysQueryVariables>) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<SessionKeysQuery, SessionKeysQueryVariables>(SessionKeysDocument, options);
-}
-export function useSessionKeysLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<SessionKeysQuery, SessionKeysQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<SessionKeysQuery, SessionKeysQueryVariables>(SessionKeysDocument, options);
-}
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SessionKeysQuery, SessionKeysQueryVariables>(SessionKeysDocument, options);
+      }
+export function useSessionKeysLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SessionKeysQuery, SessionKeysQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SessionKeysQuery, SessionKeysQueryVariables>(SessionKeysDocument, options);
+        }
 export type SessionKeysQueryHookResult = ReturnType<typeof useSessionKeysQuery>;
 export type SessionKeysLazyQueryHookResult = ReturnType<typeof useSessionKeysLazyQuery>;
 export type SessionKeysQueryResult = Apollo.QueryResult<SessionKeysQuery, SessionKeysQueryVariables>;
 export const SessionThresholdHistoryDocument = gql`
-  query SessionThresholdHistory($offset: Int!, $perPage: Int!) {
-    sessions(first: $perPage, offset: $offset, orderBy: [BLOCK_NUMBER_DESC]) {
-      nodes {
+    query SessionThresholdHistory($offset: Int!, $perPage: Int!) {
+  sessions(first: $perPage, offset: $offset, orderBy: [BLOCK_NUMBER_DESC]) {
+    nodes {
+      id
+      thresholds {
+        ...ThresholdValue
+      }
+      block {
         id
-        signatureThreshold
-        keyGenThreshold
-        block {
-          id
-          timestamp
-        }
+        timestamp
       }
-      pageInfo {
-        ...PageInfoMeta
-      }
-      totalCount
     }
+    pageInfo {
+      ...PageInfoMeta
+    }
+    totalCount
   }
-  ${PageInfoMetaFragmentDoc}
-`;
+}
+    ${ThresholdValueFragmentDoc}
+${PageInfoMetaFragmentDoc}`;
 
 /**
  * __useSessionThresholdHistoryQuery__
@@ -12047,57 +11942,45 @@ export const SessionThresholdHistoryDocument = gql`
  *   },
  * });
  */
-export function useSessionThresholdHistoryQuery(
-  baseOptions: Apollo.QueryHookOptions<SessionThresholdHistoryQuery, SessionThresholdHistoryQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<SessionThresholdHistoryQuery, SessionThresholdHistoryQueryVariables>(
-    SessionThresholdHistoryDocument,
-    options
-  );
-}
-export function useSessionThresholdHistoryLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<SessionThresholdHistoryQuery, SessionThresholdHistoryQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<SessionThresholdHistoryQuery, SessionThresholdHistoryQueryVariables>(
-    SessionThresholdHistoryDocument,
-    options
-  );
-}
+export function useSessionThresholdHistoryQuery(baseOptions: Apollo.QueryHookOptions<SessionThresholdHistoryQuery, SessionThresholdHistoryQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SessionThresholdHistoryQuery, SessionThresholdHistoryQueryVariables>(SessionThresholdHistoryDocument, options);
+      }
+export function useSessionThresholdHistoryLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SessionThresholdHistoryQuery, SessionThresholdHistoryQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SessionThresholdHistoryQuery, SessionThresholdHistoryQueryVariables>(SessionThresholdHistoryDocument, options);
+        }
 export type SessionThresholdHistoryQueryHookResult = ReturnType<typeof useSessionThresholdHistoryQuery>;
 export type SessionThresholdHistoryLazyQueryHookResult = ReturnType<typeof useSessionThresholdHistoryLazyQuery>;
-export type SessionThresholdHistoryQueryResult = Apollo.QueryResult<
-  SessionThresholdHistoryQuery,
-  SessionThresholdHistoryQueryVariables
->;
+export type SessionThresholdHistoryQueryResult = Apollo.QueryResult<SessionThresholdHistoryQuery, SessionThresholdHistoryQueryVariables>;
 export const SessionThresholdsDocument = gql`
-  query SessionThresholds($sessionId: String!) {
-    session(id: $sessionId) {
+    query SessionThresholds($sessionId: String!) {
+  session(id: $sessionId) {
+    id
+    thresholds {
+      ...ThresholdValue
+    }
+    proposersCount: sessionProposers {
+      totalCount
+    }
+    ...SessionAuth
+    block {
+      timestamp
+      number
+    }
+    publicKey {
       id
-      signatureThreshold
-      keyGenThreshold
-      proposersCount: sessionProposers {
-        totalCount
-      }
-      ...SessionAuth
+      compressed
+      uncompressed
       block {
         timestamp
         number
       }
-      publicKey {
-        id
-        compressed
-        uncompressed
-        block {
-          timestamp
-          number
-        }
-      }
     }
   }
-  ${SessionAuthFragmentDoc}
-`;
+}
+    ${ThresholdValueFragmentDoc}
+${SessionAuthFragmentDoc}`;
 
 /**
  * __useSessionThresholdsQuery__
@@ -12115,21 +11998,14 @@ export const SessionThresholdsDocument = gql`
  *   },
  * });
  */
-export function useSessionThresholdsQuery(
-  baseOptions: Apollo.QueryHookOptions<SessionThresholdsQuery, SessionThresholdsQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<SessionThresholdsQuery, SessionThresholdsQueryVariables>(SessionThresholdsDocument, options);
-}
-export function useSessionThresholdsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<SessionThresholdsQuery, SessionThresholdsQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<SessionThresholdsQuery, SessionThresholdsQueryVariables>(
-    SessionThresholdsDocument,
-    options
-  );
-}
+export function useSessionThresholdsQuery(baseOptions: Apollo.QueryHookOptions<SessionThresholdsQuery, SessionThresholdsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SessionThresholdsQuery, SessionThresholdsQueryVariables>(SessionThresholdsDocument, options);
+      }
+export function useSessionThresholdsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SessionThresholdsQuery, SessionThresholdsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SessionThresholdsQuery, SessionThresholdsQueryVariables>(SessionThresholdsDocument, options);
+        }
 export type SessionThresholdsQueryHookResult = ReturnType<typeof useSessionThresholdsQuery>;
 export type SessionThresholdsLazyQueryHookResult = ReturnType<typeof useSessionThresholdsLazyQuery>;
 export type SessionThresholdsQueryResult = Apollo.QueryResult<SessionThresholdsQuery, SessionThresholdsQueryVariables>;

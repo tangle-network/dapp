@@ -1,5 +1,6 @@
 import {
   ProposalType,
+  ThresholdVariant,
   useEnsureProposalsLazyQuery,
   useProposalDetailsLazyQuery,
   useProposalsLazyQuery,
@@ -12,6 +13,7 @@ import { Loadable, Page, PageInfoQuery, ProposalStatus } from '@webb-dapp/page-s
 import { useEffect, useMemo, useState } from 'react';
 
 import { Threshold as QueryThreshold } from './types';
+import { thresholdVariant } from '@webb-dapp/page-statistics/provider/hooks/mappers/thresholds';
 
 /**
  * Threshold values
@@ -207,8 +209,9 @@ export function useProposalsOverview(sessionId: string, range?: BlockRange): Loa
       .map((res): Loadable<ProposalsOverview> => {
         if (res.data && res.data.session && res.data.openProposals) {
           const session = res.data.session!;
+          const threshold = thresholdVariant(session.thresholds, ThresholdVariant.Proposer)!;
           const thresholds: Thresholds = {
-            proposal: (session.proposerThreshold as QueryThreshold).current,
+            proposal: threshold.current,
             proposers: session.sessionProposers.totalCount,
           };
           const openProposalsCount = res.data.open?.totalCount ?? 0;

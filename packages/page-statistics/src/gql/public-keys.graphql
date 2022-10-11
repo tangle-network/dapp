@@ -13,10 +13,11 @@ query PublicKeys($PerPage: Int, $offset: Int) {
         nodes {
           id
           ...SessionAuth
-          keyGenThreshold
-          signatureThreshold
+          thresholds {
+            ...ThresholdValue
+          }
           block {
-          timestamp
+            timestamp
             number
           }
         }
@@ -45,8 +46,9 @@ query PublicKey($id: String!) {
       nodes {
         id
         ...SessionAuth
-        keyGenThreshold
-        signatureThreshold
+        thresholds {
+          ...ThresholdValue
+        }
         block {
           timestamp
           number

@@ -7,9 +7,9 @@ query CurrentSessionAuthorities {
       publicKey {
         compressed
       }
-      signatureThreshold
-      keyGenThreshold
-      proposerThreshold
+      thresholds {
+        ...ThresholdValue
+      }
       block {
         id
         timestamp
@@ -43,8 +43,9 @@ query SessionThresholdHistory($offset: Int!, $perPage: Int!) {
   sessions(first: $perPage, offset: $offset, orderBy: [BLOCK_NUMBER_DESC]) {
     nodes {
       id
-      signatureThreshold
-      keyGenThreshold
+      thresholds {
+        ...ThresholdValue
+      }
       block {
         id
         timestamp
@@ -59,8 +60,9 @@ query SessionThresholdHistory($offset: Int!, $perPage: Int!) {
 query SessionThresholds($sessionId: String!) {
   session(id: $sessionId) {
     id
-    signatureThreshold
-    keyGenThreshold
+    thresholds {
+      ...ThresholdValue
+    }
     proposersCount: sessionProposers {
       totalCount
     }

@@ -10,6 +10,7 @@ import { useActiveSession, useStaticConfig } from '@webb-dapp/page-statistics/pr
 import { useEffect, useState } from 'react';
 
 import { Loadable, Page, PageInfoQuery, SessionKeyHistory, SessionKeyStatus, Threshold } from './types';
+import { thresholdMap } from '@webb-dapp/page-statistics/provider/hooks/mappers/thresholds';
 
 /**
  *  Public key shared content
@@ -216,6 +217,10 @@ export function useKeys(reqQuery: PageInfoQuery): Loadable<Page<PublicKeyListVie
             val: {
               items: filteredData.map((node, idx) => {
                 const session = node!.sessions?.nodes[0]!;
+                const thresholds = thresholdMap(session ? session.thresholds : { nodes: [] });
+                const keyGen = thresholds.KYE_GEN;
+                const signature = thresholds.SIGNATURE;
+
                 const authorities = mapAuthorities(session.sessionValidators)
                   .filter((auth) => auth.isBest)
                   .map((auth) => auth.id);
@@ -226,8 +231,8 @@ export function useKeys(reqQuery: PageInfoQuery): Loadable<Page<PublicKeyListVie
                 return {
                   height: String(node!.block?.number),
                   session: session.id,
-                  signatureThreshold: String(session.signatureThreshold?.current ?? '-'),
-                  keyGenThreshold: String(session.keyGenThreshold?.current ?? '-'),
+                  keyGenThreshold: String(keyGen.current),
+                  signatureThreshold: String(signature.current),
                   compressed: node!.compressed!,
                   uncompressed: node!.uncompressed!,
                   keyGenAuthorities: authorities,
@@ -291,6 +296,7 @@ export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
     const subscription = query.observable
       .map((res): Loadable<[PublicKey, PublicKey]> => {
         if (res.data) {
+          console.log(`Res.data.session (keys)`, res.data.sessions);
           const val: PublicKey[] =
             res.data.sessions?.nodes
               .filter((i) => i?.publicKey)
@@ -315,6 +321,7 @@ export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
                   isDone: Number(activeSession) > Number(session.id),
                 };
               }) || [];
+          console.log(`val of keys`, val);
           const activeKey = val[0];
           const nextKey = val[1];
           return {
@@ -412,6 +419,9 @@ export function useKey(id: string): PublicKeyDetailsPage {
             });
           const validators = sessionAuthorities.length;
           const [start, end] = sessionFrame(session.block?.timestamp, sessionHeight, blockTime);
+          const thresholds = thresholdMap(session.thresholds);
+          const keyGen = thresholds.KYE_GEN;
+          const signature = thresholds.SIGNATURE;
           return {
             isFailed: false,
             isLoading: false,
@@ -428,10 +438,8 @@ export function useKey(id: string): PublicKeyDetailsPage {
               isCurrent: activeSession === session.id,
               isDone: Number(activeSession) > Number(session.id),
               authorities,
-              keyGenThreshold: session.keyGenThreshold ? String((session.keyGenThreshold as Threshold).current) : '-',
-              signatureThreshold: session.keyGenThreshold
-                ? String((session.signatureThreshold as Threshold).current)
-                : '-',
+              keyGenThreshold: String(keyGen.current),
+              signatureThreshold: String(signature.current),
             },
           };
         }
