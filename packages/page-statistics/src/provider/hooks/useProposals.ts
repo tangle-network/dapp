@@ -445,7 +445,7 @@ export function useProposal(targetSessionId: string, votesReqQuery: VotesQuery):
               forPercentage: (forCount / expectedVotesCount) * 100,
               againstPercentage: (againstCount / expectedVotesCount) * 100,
               chain: String(res.data.proposalItem.chainId),
-              height: proposal.block?.timestamp!,
+              height: proposal.block?.number!,
               timeline: proposal.proposalTimelineStatuses.nodes.map((item) => {
                 const statusItem = item!;
                 return {
