@@ -10934,6 +10934,11 @@ export type SessionThresholdsQueryVariables = Exact<{
 
 export type SessionThresholdsQuery = { __typename?: 'Query', session?: { __typename?: 'Session', id: string, thresholds: { __typename?: 'ThresholdsConnection', nodes: Array<{ __typename?: 'Threshold', next: number, current: number, pending: number, variant: ThresholdVariant } | null> }, proposersCount: { __typename?: 'SessionProposersConnection', totalCount: number }, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null, publicKey?: { __typename?: 'PublicKey', id: string, compressed?: string | null, uncompressed?: string | null, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null } | null, sessionValidators: { __typename?: 'SessionValidatorsConnection', edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: string, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string } | null } | null }> } } | null };
 
+export type LatestThresholdsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type LatestThresholdsQuery = { __typename?: 'Query', sessions?: { __typename?: 'SessionsConnection', nodes: Array<{ __typename?: 'Session', id: string, thresholds: { __typename?: 'ThresholdsConnection', nodes: Array<{ __typename?: 'Threshold', next: number, current: number, pending: number, variant: ThresholdVariant } | null> } } | null> } | null };
+
 export const PageInfoMetaFragmentDoc = gql`
     fragment PageInfoMeta on PageInfo {
   endCursor
@@ -12014,3 +12019,42 @@ export function useSessionThresholdsLazyQuery(baseOptions?: Apollo.LazyQueryHook
 export type SessionThresholdsQueryHookResult = ReturnType<typeof useSessionThresholdsQuery>;
 export type SessionThresholdsLazyQueryHookResult = ReturnType<typeof useSessionThresholdsLazyQuery>;
 export type SessionThresholdsQueryResult = Apollo.QueryResult<SessionThresholdsQuery, SessionThresholdsQueryVariables>;
+export const LatestThresholdsDocument = gql`
+    query LatestThresholds {
+  sessions(first: 20, orderBy: [BLOCK_NUMBER_DESC]) {
+    nodes {
+      id
+      thresholds {
+        ...ThresholdValue
+      }
+    }
+  }
+}
+    ${ThresholdValueFragmentDoc}`;
+
+/**
+ * __useLatestThresholdsQuery__
+ *
+ * To run a query within a React component, call `useLatestThresholdsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useLatestThresholdsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useLatestThresholdsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useLatestThresholdsQuery(baseOptions?: Apollo.QueryHookOptions<LatestThresholdsQuery, LatestThresholdsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<LatestThresholdsQuery, LatestThresholdsQueryVariables>(LatestThresholdsDocument, options);
+      }
+export function useLatestThresholdsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<LatestThresholdsQuery, LatestThresholdsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<LatestThresholdsQuery, LatestThresholdsQueryVariables>(LatestThresholdsDocument, options);
+        }
+export type LatestThresholdsQueryHookResult = ReturnType<typeof useLatestThresholdsQuery>;
+export type LatestThresholdsLazyQueryHookResult = ReturnType<typeof useLatestThresholdsLazyQuery>;
+export type LatestThresholdsQueryResult = Apollo.QueryResult<LatestThresholdsQuery, LatestThresholdsQueryVariables>;

@@ -23,38 +23,13 @@ import { Link } from 'react-router-dom';
 import resolveConfig from 'tailwindcss/resolveConfig';
 
 import tailwindConfig from /* preval */ '../../tailwind.config.js';
+import { useSessionThreshold } from '@webb-dapp/page-statistics/provider/hooks/useSession';
 
 const fullConfig = resolveConfig(tailwindConfig);
 
 const webbColors = fullConfig.theme?.colors as unknown as WebbColorsType;
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, CLegend);
-
-const labels = range(3453, 3465);
-let keygenThreshold = randNumber({ min: 2, max: 10 });
-let signatureThreshold = randNumber({ min: 2, max: 10 });
-
-const data: ChartData<'bar'> = {
-  labels,
-  datasets: [
-    {
-      label: 'Keygen Threshold',
-      data: labels.map(() => {
-        keygenThreshold += 8;
-        return keygenThreshold;
-      }),
-      backgroundColor: webbColors.purple['100'],
-    },
-    {
-      label: 'Signature Threshold',
-      data: labels.map(() => {
-        signatureThreshold += 10;
-        return signatureThreshold;
-      }),
-      backgroundColor: webbColors.purple['60'],
-    },
-  ],
-};
 
 const AuthoritiesHistory = () => {
   const historyOpts = useMemo(() => ['lastest session', 'all time'], []);
@@ -76,7 +51,33 @@ const AuthoritiesHistory = () => {
     },
     [historyOpts]
   );
+  const thresholdHistory = useSessionThreshold();
 
+  const data = useMemo<ChartData<'bar'>>(() => {
+    const labels = thresholdHistory.val?.map((i) => i.sessionId) ?? [];
+    const sig = thresholdHistory.val?.map((i) => i.signatureThreshold) ?? [];
+    const keygen = thresholdHistory.val?.map((i) => i.keygenThreshold) ?? [];
+    console.log({
+      labels,
+      sig,
+      keygen,
+    });
+    return {
+      labels,
+      datasets: [
+        {
+          label: 'Keygen Threshold',
+          data: keygen,
+          backgroundColor: webbColors.purple['100'],
+        },
+        {
+          label: 'Signature Threshold',
+          data: sig,
+          backgroundColor: webbColors.purple['60'],
+        },
+      ],
+    };
+  }, [thresholdHistory]);
   const options = useMemo<ChartOptions<'bar'>>(
     () => ({
       scales: {

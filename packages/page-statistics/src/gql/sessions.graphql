@@ -83,3 +83,18 @@ query SessionThresholds($sessionId: String!) {
     }
   }
 }
+
+
+query LatestThresholds {
+  sessions(
+    first: 20,
+    orderBy: [BLOCK_NUMBER_DESC] ){
+    nodes {
+      id
+      thresholds{
+        ...ThresholdValue
+      }
+    }
+  }
+}
+
