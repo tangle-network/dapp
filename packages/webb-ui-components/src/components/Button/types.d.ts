@@ -119,6 +119,11 @@ export interface ButtonProps extends ButtonBase, WebbComponentBase {
    * @default "md"
    */
   size?: ButtonSize;
+
+  /**
+   * If `true`, the button will display as full width
+   */
+  isFullWidth?: boolean;
 }
 
 export interface ButtonSpinnerProps extends WebbComponentBase {

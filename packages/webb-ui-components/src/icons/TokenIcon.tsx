@@ -10,11 +10,11 @@ export const TokenIcon: React.FC<TokenIconBase> = (props) => {
   const { SvgIcon, error, loading } = useDynamicSVGImport(name, { onCompleted, onError });
 
   if (error) {
-    return <p>{error}</p>;
+    return <span>{error}</span>;
   }
 
   if (loading) {
-    return <p>Loading...</p>;
+    return <span>Loading...</span>;
   }
 
   if (SvgIcon) {

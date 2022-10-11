@@ -1,5 +1,6 @@
 export * from './AuthoritiesTable';
 export * from './AuthorityDetail';
+export * from './BridgeInputsShowCase';
 export * from './DonutChartContainer';
 export * from './KeyDetail';
 export * from './KeygenTable';

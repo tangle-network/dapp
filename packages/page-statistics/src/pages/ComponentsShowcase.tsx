@@ -1,9 +1,12 @@
 import { Card, Switcher, TitleWithInfo, TokenSelector } from '@webb-dapp/webb-ui-components/components';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
 
+import { BridgeInputsShowCase } from '../containers';
+
 const ComponentsShowcase = () => {
   return (
     <div className='flex flex-col space-y-4'>
+      {/** Switcher */}
       <div className='flex space-x-4'>
         <Card>
           <TitleWithInfo title='Switcher' variant='h4' />
@@ -55,6 +58,7 @@ const ComponentsShowcase = () => {
         </div>
       </div>
 
+      {/** Token Selector */}
       <div className='flex space-x-4'>
         <Card>
           <TitleWithInfo title='Token Selector' variant='h4' />
@@ -76,6 +80,9 @@ const ComponentsShowcase = () => {
           </Card>
         </div>
       </div>
+
+      {/** Inputs */}
+      <BridgeInputsShowCase />
     </div>
   );
 };

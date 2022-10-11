@@ -20,6 +20,10 @@ export interface TitleWithInfoProps extends WebbComponentBase {
    */
   titleComponent?: WebbTypographyProps['component'];
   /**
+   * The class name of the title
+   */
+  titleClassName?: string;
+  /**
    * The `info` appears inside the tooltip to describe the title
    */
   info?: string;

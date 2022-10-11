@@ -54,6 +54,7 @@ export const Input: React.FC<InputProps> = (props) => {
     leftIcon: leftIconProp,
     onChange,
     rightIcon: rightIconProp,
+    size = 'md',
     type = 'text',
     value: initialValue = '',
     ...restProps
@@ -124,8 +125,14 @@ export const Input: React.FC<InputProps> = (props) => {
   );
 
   const mergedInputClsx = useMemo(
-    () => twMerge(inputClsxBase, inputClsxHover, inputClsxFocus, inputClsxDisabled),
-    [inputClsxBase, inputClsxDisabled, inputClsxFocus, inputClsxHover]
+    () =>
+      size === 'md'
+        ? twMerge(inputClsxBase, inputClsxHover, inputClsxFocus, inputClsxDisabled)
+        : cx(
+            'border-none w-full bg-transparent focus:ring-0 p-0 body1 font-bold',
+            'placeholder:text-mono-100 dark:placeholder:text-mono-80 text-mono-200 dark:text-mono-0'
+          ),
+    [inputClsxBase, inputClsxDisabled, inputClsxFocus, inputClsxHover, size]
   );
 
   const iconClsx = useMemo(
@@ -135,7 +142,7 @@ export const Input: React.FC<InputProps> = (props) => {
 
   return (
     <div className={className}>
-      <div className='relative shadow-sm'>
+      <div className={cx('relative', { 'shadow-sm': size === 'md' })}>
         {leftIcon && (
           <div className='absolute inset-y-0 left-0 flex items-center pl-2 pointer-events-none'>
             <span className={iconClsx}>{leftIcon}</span>
