@@ -1,3 +1,6 @@
+const path = require('path');
+const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
+
 module.exports = {
   "stories": [
     "../src/**/*.stories.mdx",
@@ -21,10 +24,25 @@ module.exports = {
     "builder": "@storybook/builder-webpack5"
   },
   webpackFinal: (config) => {
-    /**
-     * Add support for alias-imports
-     * @see https://github.com/storybookjs/storybook/issues/11989#issuecomment-715524391
-     */
+    const extraRules = [
+      {
+        test: /\.(sass|scss)$/,
+        use: [
+          "style-loader",
+          "css-loader",
+          "postcss-loader",
+          {
+            loader: "sass-loader",
+            options: {
+              // Prefer `dart-sass`
+              implementation: require("sass"),
+            },
+          },
+        ],
+      },
+    ]
+    config.module.rules = [...config.module.rules, ...extraRules];
+    
     config.resolve.alias = {
       ...config.resolve?.alias,
       '@': [path.resolve(__dirname, '../src/'), path.resolve(__dirname, '../')],
@@ -38,7 +56,13 @@ module.exports = {
       path.resolve(__dirname, '../public'),
       'node_modules',
     ];
-
+    config.resolve.plugins = [
+      ...(config.resolve.plugins || []),
+      new TsconfigPathsPlugin({
+        extensions: config.resolve.extensions,
+        configFile: path.resolve(__dirname, '../tsconfig.json'),
+      }),
+    ];
     return config;
   }
 }
