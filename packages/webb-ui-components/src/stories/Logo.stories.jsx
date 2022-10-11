@@ -1,11 +1,11 @@
 import React from 'react';
 
-import { Chip } from '@webb-dapp/webb-ui-components/components';
+import { Logo } from '@webb-dapp/webb-ui-components/components';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
-  title: 'Molecules/Chip',
-  component: Chip,
+  title: 'Molecules/Logo',
+  component: Logo,
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
 //   argTypes: {
 //     backgroundColor: { control: 'color' },
@@ -13,17 +13,15 @@ export default {
 };
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-const Template = (args) => <Chip {...args}>Active</Chip>;
+const Template = (args) => <Logo {...args}/>;
 
 export const Primary = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
 Primary.args = {
-  color: 'yellow',
-  isDisabled: false
+  size: 'lg',
 };
 
 export const Secondary = Template.bind({});
 Secondary.args = {
-  color: 'green',
-  isDisabled: true
+  size: 'md',
 };
