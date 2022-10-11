@@ -196,8 +196,8 @@ export const StatsProvider: React.FC<Omit<StatsProvidervalue, 'isReady' | 'metaD
   }, [query, metaDataQuery, isReady, staticConfig]);
 
   useEffect(() => {
-    query.startPolling(staticConfig.blockTime * 1000);
-    metaDataQuery.startPolling(staticConfig.blockTime * 1000);
+    query.startPolling(staticConfig.blockTime * 1000 * 10);
+    metaDataQuery.startPolling(staticConfig.blockTime * 1000 * 10);
 
     return () => {
       query.stopPolling();

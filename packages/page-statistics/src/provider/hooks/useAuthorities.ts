@@ -187,8 +187,8 @@ export function useThresholds(): Loadable<[Thresholds, UpcomingThresholds]> {
               count: authSet.length,
               firstElements: authSet.slice(0, 3),
             },
-            keyGen: String(keyGenThreshold.current),
-            signature: String(signatureThreshold.current),
+            keyGen: String(keyGenThreshold?.current ?? '-'),
+            signature: String(signatureThreshold?.current ?? '-'),
             proposer: String(proposersCount),
             session: session.id,
             stats: 'Current',
@@ -199,8 +199,8 @@ export function useThresholds(): Loadable<[Thresholds, UpcomingThresholds]> {
               count: nextAuthSet.length,
               firstElements: nextAuthSet.slice(0, 3),
             },
-            keyGen: String(keyGenThreshold.pending),
-            signature: String(signatureThreshold.pending),
+            keyGen: String(keyGenThreshold?.pending ?? '-'),
+            signature: String(signatureThreshold?.pending ?? '-'),
             proposer: String(proposersCount),
             session: session.id,
             stats: 'Pending',
@@ -211,8 +211,8 @@ export function useThresholds(): Loadable<[Thresholds, UpcomingThresholds]> {
               count: nextAuthSet.length,
               firstElements: nextAuthSet.slice(0, 3),
             },
-            keyGen: String(keyGenThreshold.next),
-            signature: String(signatureThreshold.next),
+            keyGen: String(keyGenThreshold?.next ?? '-'),
+            signature: String(signatureThreshold?.next ?? '-'),
             proposer: String(proposersCount),
             session: String(Number(session.id) + 1),
             stats: 'Next',
@@ -427,15 +427,15 @@ export function useAuthority(pageQuery: AuthorityQuery): AuthorityDetails {
           const stats: AuthorityStats = {
             numberOfKeys: String(counter),
             keyGenThreshold: {
-              val: String(keyGen.current),
+              val: String(keyGen?.current ?? '-'),
               inTheSet: auth.isBest,
             },
             nextKeyGenThreshold: {
-              val: String(keyGen.next),
+              val: String(keyGen?.next ?? '-'),
               inTheSet: auth.isNextBest,
             },
             pendingKeyGenThreshold: {
-              val: String(keyGen.pending),
+              val: String(keyGen?.pending ?? '-'),
               inTheSet: auth.isBest,
             },
             reputation: Number(auth.reputation),
@@ -497,8 +497,8 @@ export function useSessionHistory(pageQuery: PageInfoQuery): Loadable<Page<Sessi
 
             return {
               sessionId: node?.id!,
-              keyGenThreshold: String(keyGen.current),
-              signatureThreshold: String(signature.current),
+              keyGenThreshold: String(keyGen?.current ?? '-'),
+              signatureThreshold: String(signature?.current ?? '-'),
             };
           });
           return {

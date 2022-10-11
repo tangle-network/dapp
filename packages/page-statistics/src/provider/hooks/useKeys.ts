@@ -231,8 +231,8 @@ export function useKeys(reqQuery: PageInfoQuery): Loadable<Page<PublicKeyListVie
                 return {
                   height: String(node!.block?.number),
                   session: session.id,
-                  keyGenThreshold: String(keyGen.current),
-                  signatureThreshold: String(signature.current),
+                  keyGenThreshold: String(keyGen?.current ?? '-'),
+                  signatureThreshold: String(signature?.current ?? '-'),
                   compressed: node!.compressed!,
                   uncompressed: node!.uncompressed!,
                   keyGenAuthorities: authorities,
@@ -438,8 +438,8 @@ export function useKey(id: string): PublicKeyDetailsPage {
               isCurrent: activeSession === session.id,
               isDone: Number(activeSession) > Number(session.id),
               authorities,
-              keyGenThreshold: String(keyGen.current),
-              signatureThreshold: String(signature.current),
+              keyGenThreshold: String(keyGen?.current ?? '-'),
+              signatureThreshold: String(signature?.current ?? '-'),
             },
           };
         }

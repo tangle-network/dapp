@@ -22,8 +22,8 @@ import { thresholdVariant } from '@webb-dapp/page-statistics/provider/hooks/mapp
  *
  * */
 type Thresholds = {
-  proposal: number;
-  proposers: number;
+  proposal: string;
+  proposers: string;
 };
 /**
  * Proposal type Status counter map for proposal statuses
@@ -209,10 +209,10 @@ export function useProposalsOverview(sessionId: string, range?: BlockRange): Loa
       .map((res): Loadable<ProposalsOverview> => {
         if (res.data && res.data.session && res.data.openProposals) {
           const session = res.data.session!;
-          const threshold = thresholdVariant(session.thresholds, ThresholdVariant.Proposer)!;
+          const threshold = thresholdVariant(session.thresholds, ThresholdVariant.Proposer);
           const thresholds: Thresholds = {
-            proposal: threshold.current,
-            proposers: session.sessionProposers.totalCount,
+            proposal: String(threshold?.current ?? '-'),
+            proposers: String(session.sessionProposers.totalCount),
           };
           const openProposalsCount = res.data.open?.totalCount ?? 0;
           const rejectedProposalsCount = res.data.reject?.totalCount ?? 0;

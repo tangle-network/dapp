@@ -9,12 +9,8 @@ const DEF_THRESHOLD_ELEMENT: Threshold = {
   next: 0,
   pending: 0,
 };
-export function thresholdMap(thresholds: ThresholdValueFragment): Record<ThresholdVariant, Threshold> {
-  const map = {
-    [ThresholdVariant.KyeGen]: { ...DEF_THRESHOLD_ELEMENT },
-    [ThresholdVariant.Signature]: { ...DEF_THRESHOLD_ELEMENT },
-    [ThresholdVariant.Proposer]: { ...DEF_THRESHOLD_ELEMENT },
-  };
+export function thresholdMap(thresholds: ThresholdValueFragment): Partial<Record<ThresholdVariant, Threshold>> {
+  const map: Partial<Record<ThresholdVariant, Threshold>> = {};
   thresholds.nodes
     .filter((i) => Boolean(i))
     .forEach((element) => {
