@@ -10,6 +10,7 @@
   ],
   "author": "Webb Developers <drew@webb.tools>",
   "devDependencies": {
+    "@babel/core": "^7.19.3",
     "@ngneat/falso": "^6.1.0",
     "@polkadot/react-identicon": "^2.9.9",
     "@radix-ui/react-avatar": "^1.0.0",
@@ -23,9 +24,18 @@
     "@radix-ui/react-slider": "^1.0.0",
     "@radix-ui/react-switch": "^1.0.0",
     "@radix-ui/react-tooltip": "^1.0.0",
+    "@storybook/addon-actions": "^6.5.12",
+    "@storybook/addon-essentials": "^6.5.12",
+    "@storybook/addon-interactions": "^6.5.12",
+    "@storybook/addon-links": "^6.5.12",
+    "@storybook/builder-webpack5": "^6.5.12",
+    "@storybook/manager-webpack5": "^6.5.12",
+    "@storybook/react": "^6.5.12",
+    "@storybook/testing-library": "^0.0.13",
     "@svgr/webpack": "^5.5.0",
     "@tanstack/match-sorter-utils": "^8.1.1",
     "@tanstack/react-table": "^8.5.13",
+    "babel-loader": "^8.2.5",
     "classnames": "^2.3.1",
     "copy-to-clipboard": "^3.3.2",
     "date-fns": "^2.29.2",
@@ -33,5 +43,16 @@
     "react-table": "^7.8.0",
     "tailwind-merge": "^1.6.0",
     "tailwind-scrollbar": "^2.0.1"
+  },
+  "dependencies": {
+    "@storybook/addon-postcss": "^2.0.0",
+    "autoprefixer": "^10.4.12",
+    "postcss": "^8.4.17",
+    "sass": "^1.55.0",
+    "tailwindcss": "^3.1.8"
+  },
+  "scripts": {
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
   }
 }
