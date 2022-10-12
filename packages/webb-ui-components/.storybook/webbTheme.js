@@ -1,12 +1,11 @@
-// .storybook/YourTheme.js
+// .storybook/webbTheme.js
 
 import { create } from '@storybook/theming';
-import {webbAsset} from './Logo.svg'
 
 export default create({
   base: 'light',
-  brandTitle: 'Webb UI Kit',
+  // brandTitle: 'Webb UI Kit',
   brandUrl: 'https://www.webb.tools/',
-  brandImage: 'https://github.com/webb-tools/webb-dapp/blob/db/stories/packages/webb-ui-components/src/stories/assets/Logo.svg#L1',
+  brandImage: 'https://webb-assets.s3.amazonaws.com/WebbLogoText.svg',
   brandTarget: '_self',
 });

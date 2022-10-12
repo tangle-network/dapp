@@ -4,7 +4,18 @@ import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { SwitcherProps } from './types';
-
+/**
+ * The Webb Switcher Component
+ *
+ * Props:
+ *
+ * @example
+ *
+ * ```jsx
+ *     <Switcher />
+ *  
+ * ```
+ */
 export const Switcher = forwardRef<HTMLButtonElement, SwitcherProps>(({ className, ...props }, ref) => {
   const mergedClxs = useMemo(
     () =>

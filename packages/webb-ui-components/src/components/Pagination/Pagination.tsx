@@ -5,7 +5,38 @@ import React, { useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { PaginationProps } from './types';
-
+/**
+ * The Webb Pagination Component
+ *
+ * Props:
+ *
+ * - `itemsPerPage`: Number of items per page
+ * - `totalItems`:  Total number of items
+ * - `page`: Active page
+ * - `totalPages`: Total number of pages
+ * - `canPreviousPage`: Available previous page, must be true to proceed backwards
+ * - `previousPage`:  Previous page
+ * - `canNextPage`:  Available next page, must be true to proceed forwards
+ * - `nextPage`: Next page
+ * - `setPageIndex`: Indexof page
+ *
+ * @example
+ *
+ * ```jsx
+*     <Pagination
+*       itemsPerPage={table.getState().pagination.pageSize}
+*       totalItems={Math.max(table.getPrePaginationRowModel().rows.length, totalRecords)}
+*       page={table.getState().pagination.pageIndex + 1}
+*       totalPages={table.getPageCount()}
+*       canPreviousPage={table.getCanPreviousPage()}
+*       previousPage={table.previousPage}
+*      canNextPage={table.getCanNextPage()}
+*      nextPage={table.nextPage}
+*      setPageIndex={table.setPageIndex}
+*    />
+ *  
+ * ```
+ */
 export const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
   (
     {

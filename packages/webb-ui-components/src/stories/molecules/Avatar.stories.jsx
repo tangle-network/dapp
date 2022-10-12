@@ -20,7 +20,7 @@ export const Default = Template.bind({});
 Default.args = {
   key: '2',
   size: 'md',
-  src:  "./assets/colors.svg",
+  src:  "./assets/Logo.png",
   sourceVariant: 'address'
 };
 
