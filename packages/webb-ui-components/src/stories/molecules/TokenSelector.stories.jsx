@@ -4,7 +4,7 @@ import { TokenSelector } from '@webb-dapp/webb-ui-components/components';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
-  title: 'Molecules/TokenSelector',
+  title: 'Design System/Molecules/TokenSelector',
   component: TokenSelector,
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
 //   argTypes: {

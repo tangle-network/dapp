@@ -4,7 +4,7 @@ import { DropdownMenu } from '@webb-dapp/webb-ui-components/components';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
-  title: 'Molecules/DropdownMenu',
+  title: 'Design System/Molecules/DropdownMenu',
   component: DropdownMenu,
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
 //   argTypes: {

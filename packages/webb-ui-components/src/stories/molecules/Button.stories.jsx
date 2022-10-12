@@ -5,7 +5,7 @@ import { ArrowLeft, ArrowRight, Close, Expand, Spinner } from '@webb-dapp/webb-u
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
-  title: 'Molecules/Button',
+  title: 'Design System/Molecules/Button',
   component: Button,
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
 //   argTypes: {
@@ -44,7 +44,7 @@ Small.args = {
 
 export const isDisabled = Template.bind({});
 isDisabled.args = {
-    isDisabled: 'true',
+    isDisabled: true,
     variant: 'primary'
 };
 

@@ -46,9 +46,12 @@
   },
   "dependencies": {
     "@storybook/addon-postcss": "^2.0.0",
+    "@storybook/addons": "^6.5.12",
+    "@storybook/theming": "^6.5.12",
     "autoprefixer": "^10.4.12",
     "postcss": "^8.4.17",
     "sass": "^1.55.0",
+    "storybook-addon-react-router-v6": "^0.2.1",
     "tailwindcss": "^3.1.8",
     "tsconfig-paths-webpack-plugin": "^4.0.0"
   },

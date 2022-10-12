@@ -1,11 +1,11 @@
-import React from 'react';
-import { randRecentDate, randSoonDate } from '@ngneat/falso';
-import { TimeProgress } from '@webb-dapp/webb-ui-components/components';
+import React, { useState } from 'react';
+
+import { FixedAmount } from '@webb-dapp/webb-ui-components/components';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
-  title: 'Molecules/TimeProgress',
-  component: TimeProgress,
+  title: 'Design System/Molecules/FixedAmount',
+  component: FixedAmount,
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
 //   argTypes: {
 //     backgroundColor: { control: 'color' },
@@ -13,11 +13,15 @@ export default {
 };
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-const Template = (args) => <TimeProgress {...args}/>;
+const Template = (args) => <FixedAmount {...args} />;
 
-export const Primary = Template.bind({});
+export const Default = Template.bind({});
+
+const handleChange = (nextVal) => setValue(nextVal);
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
-Primary.args = {
-    startTime: randRecentDate(),
-    endTime: randSoonDate()
+Default.args = {
+ info: 'Fix amount',
+ values: [0.1, 0.25, 0.5, 1],
+ value: '0.1',
+ onChange: {handleChange}
 };

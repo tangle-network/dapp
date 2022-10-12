@@ -1,11 +1,12 @@
 import React from 'react';
 
-import { Chip } from '@webb-dapp/webb-ui-components/components';
+import { TimeLine, TimeLineItem } from '@webb-dapp/webb-ui-components/components';
+import { randRecentDate, randEthereumAddress } from '@ngneat/falso';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
-  title: 'Molecules/Chip',
-  component: Chip,
+  title: 'Design System/Molecules/TimeLine',
+  component: TimeLine,
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
 //   argTypes: {
 //     backgroundColor: { control: 'color' },
@@ -13,17 +14,13 @@ export default {
 };
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-const Template = (args) => <Chip {...args}>Active</Chip>;
+const Template = (args) => <TimeLine><TimeLineItem {...args}/> </TimeLine>;
 
-export const Primary = Template.bind({});
+export const Default = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
-Primary.args = {
-  color: 'yellow',
-  isDisabled: false
-};
-
-export const Secondary = Template.bind({});
-Secondary.args = {
-  color: 'green',
-  isDisabled: true
+Default.args = {
+  title: 'Proposed',
+  time: randRecentDate(),
+  txHash: randEthereumAddress(),
+  externalUrl: 'https://webb.tools'
 };

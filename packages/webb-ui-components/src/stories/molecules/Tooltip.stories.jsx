@@ -1,11 +1,12 @@
 import React from 'react';
 
-import { Avatar } from '@webb-dapp/webb-ui-components/components';
+import { TimeLine, TimeLineItem } from '@webb-dapp/webb-ui-components/components';
+import { randRecentDate, randEthereumAddress } from '@ngneat/falso';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
-  title: 'Molecules/Avatar',
-  component: Avatar,
+  title: 'Design System/Molecules/TimeLine',
+  component: TimeLine,
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
 //   argTypes: {
 //     backgroundColor: { control: 'color' },
@@ -13,24 +14,13 @@ export default {
 };
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-const Template = (args) => <Avatar {...args}/>;
+const Template = (args) => <TimeLine><TimeLineItem {...args}/> </TimeLine>;
 
 export const Default = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
 Default.args = {
-  key: '2',
-  size: 'md',
-  src:  "./assets/colors.svg",
-  sourceVariant: 'address'
+  title: 'Proposed',
+  time: randRecentDate(),
+  txHash: randEthereumAddress(),
+  externalUrl: 'https://webb.tools'
 };
-
-// export const Large = Template.bind({});
-// // More on args: https://storybook.js.org/docs/react/writing-stories/args
-// Large.args = {
-//   size: 'lg',
-// };
-
-// export const Medium = Template.bind({});
-// Medium.args = {
-//   size: 'md',
-// };
