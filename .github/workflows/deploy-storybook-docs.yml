@@ -3,6 +3,10 @@ on:
   push:
     branches:
       - develop
+  # Temp while being tested
+  pull_request:
+    branches:
+      - develop
     paths: ["/packages/webb-ui-components/src/stories/**"] # Trigger the action only when files change in the folders defined here
 jobs:
   component-docs:
