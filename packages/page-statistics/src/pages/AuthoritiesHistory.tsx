@@ -1,9 +1,7 @@
-import { randNumber } from '@ngneat/falso';
 import { Button, DropdownMenu, TitleWithInfo } from '@webb-dapp/webb-ui-components/components';
 import { useDarkMode } from '@webb-dapp/webb-ui-components/hooks';
 import { ArrowLeft } from '@webb-dapp/webb-ui-components/icons';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
-import { range } from '@webb-dapp/webb-ui-components/utils';
 import {
   BarElement,
   CategoryScale,
@@ -22,7 +20,7 @@ import { Bar } from 'react-chartjs-2';
 import { Link } from 'react-router-dom';
 import resolveConfig from 'tailwindcss/resolveConfig';
 
-import tailwindConfig from /* preval */ '../../tailwind.config.js';
+import tailwindConfig from '../../tailwind.config.js';
 import { useSessionThreshold } from '@webb-dapp/page-statistics/provider/hooks/useSession';
 
 const fullConfig = resolveConfig(tailwindConfig);
