@@ -1,14 +1,13 @@
 import {
-  PublicKeysQuery,
   usePublicKeyLazyQuery,
   usePublicKeysLazyQuery,
   useSessionKeyIdsLazyQuery,
   useSessionKeysLazyQuery,
 } from '@webb-dapp/page-statistics/generated/graphql';
 import { mapAuthorities } from '@webb-dapp/page-statistics/provider/hooks/mappers';
+import { thresholdMap } from '@webb-dapp/page-statistics/provider/hooks/mappers/thresholds';
 import { useCurrentMetaData } from '@webb-dapp/page-statistics/provider/hooks/useCurrentMetaData';
 import { useActiveSession, useStaticConfig } from '@webb-dapp/page-statistics/provider/stats-provider';
-import { NonNullableArrayItem } from '@webb-dapp/webb-ui-components/types';
 import { useEffect, useState } from 'react';
 
 import { Loadable, Page, PageInfoQuery, SessionKeyHistory, SessionKeyStatus, Threshold } from './types';
@@ -146,9 +145,6 @@ export function sessionFrame(
   const endTime = startDateTime.getTime() + blockTime * sessionHeight * 1000;
   return [startDateTime, new Date(endTime)];
 }
-
-type PublicKeyResponse = NonNullableArrayItem<NonNullable<PublicKeysQuery['publicKeys']>['nodes']>;
-
 /**
  * List keys for table view
  *
@@ -192,7 +188,6 @@ export function useKeys(reqQuery: PageInfoQuery): Loadable<Page<PublicKeyListVie
     });
   }, [reqQuery, call]);
   // Handle the GraphQl call response
-
   useEffect(() => {
     const subscription = query.observable
       .map((res): Loadable<Page<PublicKeyListView>> => {
@@ -214,7 +209,7 @@ export function useKeys(reqQuery: PageInfoQuery): Loadable<Page<PublicKeyListVie
         if (res.data.publicKeys) {
           const data = res.data.publicKeys;
 
-          const filteredData = data.nodes.filter((n): n is PublicKeyResponse => !!n);
+          const filteredData = data.nodes.filter((n) => !!n);
 
           return {
             isLoading: false,
@@ -222,6 +217,10 @@ export function useKeys(reqQuery: PageInfoQuery): Loadable<Page<PublicKeyListVie
             val: {
               items: filteredData.map((node, idx) => {
                 const session = node!.sessions?.nodes[0]!;
+                const thresholds = thresholdMap(session ? session.thresholds : { nodes: [] });
+                const keyGen = thresholds.KEY_GEN;
+                const signature = thresholds.SIGNATURE;
+
                 const authorities = mapAuthorities(session.sessionValidators)
                   .filter((auth) => auth.isBest)
                   .map((auth) => auth.id);
@@ -232,8 +231,8 @@ export function useKeys(reqQuery: PageInfoQuery): Loadable<Page<PublicKeyListVie
                 return {
                   height: String(node!.block?.number),
                   session: session.id,
-                  signatureThreshold: String(session.signatureThreshold?.current ?? '-'),
-                  keyGenThreshold: String(session.keyGenThreshold?.current ?? '-'),
+                  keyGenThreshold: String(keyGen?.current ?? '-'),
+                  signatureThreshold: String(signature?.current ?? '-'),
                   compressed: node!.compressed!,
                   uncompressed: node!.uncompressed!,
                   keyGenAuthorities: authorities,
@@ -259,31 +258,28 @@ export function useKeys(reqQuery: PageInfoQuery): Loadable<Page<PublicKeyListVie
         };
       })
       .subscribe(setPage);
-
     return () => subscription.unsubscribe();
   }, [query, blockTime, sessionHeight]);
-
   return page;
 }
-
-export type UseActiveKeysReturnType = Loadable<[PublicKey | undefined, PublicKey | undefined]>;
 
 /**
  * Get the current Public key (Current session active) and the next public key (Next session active)
  * */
-export function useActiveKeys(): UseActiveKeysReturnType {
+export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
   const metaData = useCurrentMetaData();
   const [call, query] = useSessionKeysLazyQuery();
   const { blockTime, sessionHeight } = useStaticConfig();
   const activeSession = useActiveSession();
-  const [keys, setKeys] = useState<UseActiveKeysReturnType>({
+  console.log(activeSession);
+  const [keys, setKeys] = useState<Loadable<[PublicKey, PublicKey]>>({
     val: null,
     isFailed: false,
     isLoading: true,
   });
-
   useEffect(() => {
     if (metaData.val) {
+      console.log(`Active session ${metaData.val.activeSession}`);
       call({
         variables: {
           SessionId: [metaData.val.activeSession, String(Number(metaData.val.activeSession) + 1)],
@@ -298,11 +294,11 @@ export function useActiveKeys(): UseActiveKeysReturnType {
       });
     }
   }, [metaData, call]);
-
   useEffect(() => {
     const subscription = query.observable
-      .map((res): UseActiveKeysReturnType => {
+      .map((res): Loadable<[PublicKey, PublicKey]> => {
         if (res.data) {
+          console.log(`Res.data.session (keys)`, res.data.sessions);
           const val: PublicKey[] =
             res.data.sessions?.nodes
               .filter((i) => i?.publicKey)
@@ -327,25 +323,21 @@ export function useActiveKeys(): UseActiveKeysReturnType {
                   isDone: Number(activeSession) > Number(session.id),
                 };
               }) || [];
-
-          const activeKey = val[0] as PublicKey | undefined;
-          const nextKey = val[1] as PublicKey | undefined;
-
+          console.log(`val of keys`, val);
+          const activeKey = val[0];
+          const nextKey = val[1];
           return {
             val: [
               activeKey,
-              nextKey
-                ? {
-                    ...nextKey,
-                    start: activeKey?.end,
-                  }
-                : undefined,
+              {
+                ...nextKey,
+                start: activeKey.end!,
+              },
             ],
             isFailed: false,
             isLoading: false,
           };
         }
-
         if (res.error) {
           return {
             val: null,
@@ -354,7 +346,6 @@ export function useActiveKeys(): UseActiveKeysReturnType {
             error: res.error.message,
           };
         }
-
         return {
           val: null,
           isFailed: true,
@@ -362,10 +353,8 @@ export function useActiveKeys(): UseActiveKeysReturnType {
         };
       })
       .subscribe(setKeys);
-
     return () => subscription.unsubscribe();
   }, [query, activeSession, blockTime, sessionHeight]);
-
   return keys;
 }
 
@@ -432,6 +421,9 @@ export function useKey(id: string): PublicKeyDetailsPage {
             });
           const validators = sessionAuthorities.length;
           const [start, end] = sessionFrame(session.block?.timestamp, sessionHeight, blockTime);
+          const thresholds = thresholdMap(session.thresholds);
+          const keyGen = thresholds.KEY_GEN;
+          const signature = thresholds.SIGNATURE;
           return {
             isFailed: false,
             isLoading: false,
@@ -448,10 +440,8 @@ export function useKey(id: string): PublicKeyDetailsPage {
               isCurrent: activeSession === session.id,
               isDone: Number(activeSession) > Number(session.id),
               authorities,
-              keyGenThreshold: session.keyGenThreshold ? String((session.keyGenThreshold as Threshold).current) : '-',
-              signatureThreshold: session.keyGenThreshold
-                ? String((session.signatureThreshold as Threshold).current)
-                : '-',
+              keyGenThreshold: String(keyGen?.current ?? '-'),
+              signatureThreshold: String(signature?.current ?? '-'),
             },
           };
         }

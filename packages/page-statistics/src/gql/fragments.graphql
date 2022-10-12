@@ -28,12 +28,23 @@ fragment SessionAuthValidator on SessionValidatorsConnection {
     }
   }
 }
+
+fragment ThresholdValueElement on Threshold {
+  next
+  current
+  pending
+  variant
+}
+fragment ThresholdValue on ThresholdsConnection {
+  nodes {
+    ...ThresholdValueElement
+  }
+}
 fragment SessionAuth on Session {
   sessionValidators {
     ...SessionAuthValidator
   }
 }
-
 
 fragment ProposalListView on ProposalItem {
   id

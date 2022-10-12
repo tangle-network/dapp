@@ -1,3 +1,4 @@
+import { randBoolean, randEthereumAddress, randNumber, randRecentDate, randSoonDate } from '@ngneat/falso';
 import { ColumnDef, createColumnHelper, getCoreRowModel, Table as RTTable, useReactTable } from '@tanstack/react-table';
 import { useStatsContext } from '@webb-dapp/page-statistics/provider/stats-provider';
 import {
@@ -145,7 +146,7 @@ const Authorities = () => {
 
               <Link to='history'>
                 <Button variant='link' size='sm'>
-                  View history
+                  <Link to='history'>View history</Link>
                 </Button>
               </Link>
             </div>
