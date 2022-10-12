@@ -1,25 +1,27 @@
 import React from 'react';
 
-import { AmountInput } from '@webb-dapp/webb-ui-components/components';
+import { CheckBox } from '@webb-dapp/webb-ui-components/components';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
-  title: 'Design System/Molecules/AmountInput',
-  component: AmountInput,
+  title: 'Design System/Molecules/CheckBox',
+  component: CheckBox,
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
-  // argTypes: {
-  //   type: { amount: 'string', required: false },
-  // },
+//   argTypes: {
+//     backgroundColor: { control: 'color' },
+//   },
 };
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-const Template = (args) => <AmountInput {...args}/>;
+const Template = (args) => <CheckBox {...args}/>;
 
 export const Default = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
 Default.args = {
-  title: 'md',
-  info: 'Amount',
-  variant: 'body4',
-  titleComponent: 'span'
+};
+
+export const isDisabled = Template.bind({});
+// More on args: https://storybook.js.org/docs/react/writing-stories/args
+isDisabled.args = {
+  isDisabled: true,
 };

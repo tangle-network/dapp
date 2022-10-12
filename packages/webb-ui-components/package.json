@@ -42,11 +42,8 @@
     "date-fns-tz": "^1.3.7",
     "react-table": "^7.8.0",
     "tailwind-merge": "^1.6.0",
-    "tailwind-scrollbar": "^2.0.1"
-  },
-  "dependencies": {
+    "tailwind-scrollbar": "^2.0.1",
     "@storybook/addon-postcss": "^2.0.0",
-    "@storybook/addons": "^6.5.12",
     "@storybook/theming": "^6.5.12",
     "autoprefixer": "^10.4.12",
     "postcss": "^8.4.17",
@@ -57,6 +54,6 @@
   },
   "scripts": {
     "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook"
+    "build-storybook": "build-storybook -o docs-build -s ./src/stories/assets"
   }
 }

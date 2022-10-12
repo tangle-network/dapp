@@ -1,25 +1,24 @@
 import React from 'react';
 
-import { AmountInput } from '@webb-dapp/webb-ui-components/components';
+import { Typography } from '@webb-dapp/webb-ui-components/typography';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
-  title: 'Design System/Molecules/AmountInput',
-  component: AmountInput,
+  title: 'Design System/Atoms/Typography',
+  component: Typography,
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
-  // argTypes: {
-  //   type: { amount: 'string', required: false },
-  // },
+//   argTypes: {
+//     backgroundColor: { control: 'color' },
+//   },
 };
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-const Template = (args) => <AmountInput {...args}/>;
+const Template = (args) => <Typography {...args}>Webb Protocol</Typography>
 
 export const Default = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
 Default.args = {
-  title: 'md',
-  info: 'Amount',
-  variant: 'body4',
-  titleComponent: 'span'
+  variant: 'h1',
+  fw: 'semibold',
+  ta: 'center',
 };
