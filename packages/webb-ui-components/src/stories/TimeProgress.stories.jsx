@@ -1,5 +1,5 @@
 import React from 'react';
-
+import { randRecentDate, randSoonDate } from '@ngneat/falso';
 import { TimeProgress } from '@webb-dapp/webb-ui-components/components';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
@@ -18,6 +18,6 @@ const Template = (args) => <TimeProgress {...args}/>;
 export const Primary = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
 Primary.args = {
-    startTime: Date('Sep 09 2022'),
-    endTime: Date('Sep 19 2022')
+    startTime: randRecentDate(),
+    endTime: randSoonDate()
 };
