@@ -1,5 +1,5 @@
 import { useLastBlockQuery, useMetaDataQuery } from '@webb-dapp/page-statistics/generated/graphql';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 
 /**
  * Chain metadata
@@ -14,6 +14,7 @@ export type Metadata = {
   lastProcessBlock: string;
   lastSession: string;
   activeSession: string;
+  activeSessionBlock: number;
 };
 
 /**
@@ -91,6 +92,7 @@ const statsContext: React.Context<StatsProvidervalue> = React.createContext<Stat
     currentBlock: '0',
     lastSession: '0',
     lastProcessBlock: '0',
+    activeSessionBlock: 0,
   },
   isReady: false,
 });
@@ -118,6 +120,7 @@ export const useActiveSession = () => {
   } = useStatsContext();
   return activeSession;
 };
+
 export const StatsProvider: React.FC<Omit<StatsProvidervalue, 'isReady' | 'metaData' | 'updateTime' | 'time'>> = (
   props
 ) => {
@@ -127,6 +130,7 @@ export const StatsProvider: React.FC<Omit<StatsProvidervalue, 'isReady' | 'metaD
     currentBlock: '',
     lastProcessBlock: '',
     lastSession: '',
+    activeSessionBlock: 0,
   });
   const [staticConfig] = useState<{
     blockTime: number;
@@ -183,6 +187,7 @@ export const StatsProvider: React.FC<Omit<StatsProvidervalue, 'isReady' | 'metaD
             lastProcessBlock: String(data.lastProcessedHeight),
             activeSession: String(Number(lastSession.id) - 1),
             lastSession: lastSession.id,
+            activeSessionBlock: lastSession.blockNumber,
           };
         }
         return null;

@@ -51,17 +51,14 @@ const AuthoritiesHistory = () => {
     },
     [historyOpts]
   );
-  const thresholdHistory = useSessionThreshold();
+  const isLatest = useMemo(() => selectedIdx === 0, [selectedIdx]);
+  const thresholdHistory = useSessionThreshold(isLatest);
 
   const data = useMemo<ChartData<'bar'>>(() => {
     const labels = thresholdHistory.val?.map((i) => i.sessionId) ?? [];
     const sig = thresholdHistory.val?.map((i) => i.signatureThreshold) ?? [];
     const keygen = thresholdHistory.val?.map((i) => i.keygenThreshold) ?? [];
-    console.log({
-      labels,
-      sig,
-      keygen,
-    });
+
     return {
       labels,
       datasets: [

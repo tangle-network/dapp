@@ -10824,7 +10824,7 @@ export type ProposalsVoteListViewFragment = { __typename?: 'ProposalVote', id: s
 export type MetaDataQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MetaDataQuery = { __typename?: 'Query', sessions?: { __typename?: 'SessionsConnection', nodes: Array<{ __typename?: 'Session', id: string } | null> } | null, _metadata?: { __typename?: '_Metadata', targetHeight?: number | null, lastProcessedHeight?: number | null } | null };
+export type MetaDataQuery = { __typename?: 'Query', sessions?: { __typename?: 'SessionsConnection', nodes: Array<{ __typename?: 'Session', id: string, blockNumber: number } | null> } | null, _metadata?: { __typename?: '_Metadata', targetHeight?: number | null, lastProcessedHeight?: number | null } | null };
 
 export type LastBlockQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -10934,7 +10934,10 @@ export type SessionThresholdsQueryVariables = Exact<{
 
 export type SessionThresholdsQuery = { __typename?: 'Query', session?: { __typename?: 'Session', id: string, thresholds: { __typename?: 'ThresholdsConnection', nodes: Array<{ __typename?: 'Threshold', next: number, current: number, pending: number, variant: ThresholdVariant } | null> }, proposersCount: { __typename?: 'SessionProposersConnection', totalCount: number }, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null, publicKey?: { __typename?: 'PublicKey', id: string, compressed?: string | null, uncompressed?: string | null, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null } | null, sessionValidators: { __typename?: 'SessionValidatorsConnection', edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: string, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string } | null } | null }> } } | null };
 
-export type LatestThresholdsQueryVariables = Exact<{ [key: string]: never; }>;
+export type LatestThresholdsQueryVariables = Exact<{
+  first?: InputMaybe<Scalars['Int']>;
+  filter?: InputMaybe<SessionFilter>;
+}>;
 
 
 export type LatestThresholdsQuery = { __typename?: 'Query', sessions?: { __typename?: 'SessionsConnection', nodes: Array<{ __typename?: 'Session', id: string, thresholds: { __typename?: 'ThresholdsConnection', nodes: Array<{ __typename?: 'Threshold', next: number, current: number, pending: number, variant: ThresholdVariant } | null> } } | null> } | null };
@@ -11207,6 +11210,7 @@ export const MetaDataDocument = gql`
   sessions(first: 1, orderBy: [BLOCK_NUMBER_DESC]) {
     nodes {
       id
+      blockNumber
     }
   }
   _metadata {
@@ -12020,8 +12024,8 @@ export type SessionThresholdsQueryHookResult = ReturnType<typeof useSessionThres
 export type SessionThresholdsLazyQueryHookResult = ReturnType<typeof useSessionThresholdsLazyQuery>;
 export type SessionThresholdsQueryResult = Apollo.QueryResult<SessionThresholdsQuery, SessionThresholdsQueryVariables>;
 export const LatestThresholdsDocument = gql`
-    query LatestThresholds {
-  sessions(first: 20, orderBy: [BLOCK_NUMBER_DESC]) {
+    query LatestThresholds($first: Int, $filter: SessionFilter) {
+  sessions(first: $first, filter: $filter, orderBy: [BLOCK_NUMBER_DESC]) {
     nodes {
       id
       thresholds {
@@ -12044,6 +12048,8 @@ export const LatestThresholdsDocument = gql`
  * @example
  * const { data, loading, error } = useLatestThresholdsQuery({
  *   variables: {
+ *      first: // value for 'first'
+ *      filter: // value for 'filter'
  *   },
  * });
  */

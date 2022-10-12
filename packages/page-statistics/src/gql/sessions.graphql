@@ -85,9 +85,13 @@ query SessionThresholds($sessionId: String!) {
 }
 
 
-query LatestThresholds {
+query LatestThresholds(
+  $first:Int,
+  $filter:SessionFilter
+) {
   sessions(
-    first: 20,
+    first: $first,
+    filter: $filter,
     orderBy: [BLOCK_NUMBER_DESC] ){
     nodes {
       id

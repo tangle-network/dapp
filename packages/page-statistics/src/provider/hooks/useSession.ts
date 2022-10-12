@@ -2,13 +2,17 @@ import { useLatestThresholdsLazyQuery } from '@webb-dapp/page-statistics/generat
 import { useEffect, useState } from 'react';
 import { Loadable } from '@webb-dapp/page-statistics/provider/hooks/types';
 import { thresholdMap } from '@webb-dapp/page-statistics/provider/hooks/mappers/thresholds';
+import { useStatsContext } from '@webb-dapp/page-statistics/provider/stats-provider';
+
 type SessionThresholdValue = {
   sessionId: string;
   keygenThreshold: number;
   signatureThreshold: number;
 };
 type LatestThresholdsValue = Loadable<Array<SessionThresholdValue>>;
-export function useSessionThreshold(): LatestThresholdsValue {
+
+export function useSessionThreshold(isLatest: boolean): LatestThresholdsValue {
+  const stats = useStatsContext();
   const [value, setValue] = useState<LatestThresholdsValue>({
     val: null,
     isLoading: false,
@@ -18,7 +22,21 @@ export function useSessionThreshold(): LatestThresholdsValue {
   const [call, query] = useLatestThresholdsLazyQuery();
 
   useEffect(() => {
-    call().catch((e) => {
+    const lastBlock = stats.metaData.activeSessionBlock;
+    const month = (30 * 24 * 60 * 60) / stats.blockTime;
+    const block = Math.max(lastBlock - month, 0);
+    call({
+      variables: {
+        first: isLatest ? 25 : undefined,
+        filter: isLatest
+          ? undefined
+          : {
+              blockNumber: {
+                greaterThanOrEqualTo: block,
+              },
+            },
+      },
+    }).catch((e) => {
       setValue({
         isFailed: true,
         error: e?.message,
@@ -26,7 +44,7 @@ export function useSessionThreshold(): LatestThresholdsValue {
         isLoading: false,
       });
     });
-  }, [call]);
+  }, [call, stats, isLatest]);
 
   useEffect(() => {
     const subscription = query.observable

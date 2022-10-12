@@ -2,6 +2,7 @@ query MetaData {
   sessions(first: 1, orderBy: [BLOCK_NUMBER_DESC]) {
     nodes {
       id
+      blockNumber
     }
   }
   _metadata {
