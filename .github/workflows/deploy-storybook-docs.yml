@@ -7,7 +7,9 @@ on:
   pull_request:
     branches:
       - develop
-    paths: ["/packages/webb-ui-components/src/stories/**"] # Trigger the action only when files change in the folders defined here
+      # Trigger the action only when files change in the folders defined here
+      # Temp comment out to test deployment
+    # paths: ["/packages/webb-ui-components/src/stories/**"] 
 jobs:
   component-docs:
     runs-on: ubuntu-latest
