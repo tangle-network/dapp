@@ -5,10 +5,50 @@ export type ChainType = {
    * The chain name
    */
   name: string;
+
   /**
    * The token symbol of the chain
    */
   symbol: string;
+};
+
+export type RelayerType = {
+  /**
+   * The relayer address (also use as id to identify between multiple relayer)
+   */
+  address: string;
+
+  /**
+   * External url
+   */
+  externalUrl: string;
+
+  /**
+   * Relayer fee
+   */
+  fee?: string | number;
+
+  /**
+   * Relayer percentage
+   */
+  percentage?: number;
+};
+
+export type AssetType = {
+  /**
+   * The asset name
+   */
+  name: string;
+
+  /**
+   * The asset symbol (use to display the token logo)
+   */
+  symbol: string;
+
+  /**
+   * The asset balance of user
+   */
+  balance?: number;
 };
 
 export interface ListCardWrapperProps extends WebbComponentBase, PropsOf<'div'> {
@@ -50,28 +90,6 @@ export interface ChainListCardProps extends PropsOf<'div'> {
   onChange?: (nextChain: ChainType) => void;
 }
 
-export type RelayerType = {
-  /**
-   * The relayer address (also use as id to identify between multiple relayer)
-   */
-  address: string;
-
-  /**
-   * External url
-   */
-  externalUrl: string;
-
-  /**
-   * Relayer fee
-   */
-  fee?: string | number;
-
-  /**
-   * Relayer percentage
-   */
-  percentage?: number;
-};
-
 export interface RelayerListCardProps extends PropsOf<'div'> {
   /**
    * If `true`, the component will display in connected view
@@ -104,28 +122,17 @@ export interface RelayerListCardProps extends PropsOf<'div'> {
   onConnectWallet?: PropsOf<'button'>['onClick'];
 }
 
-export type AssetType = {
+export interface WrapAssetListCardProps extends ListCardWrapperProps {
   /**
-   * The asset name
+   * Optional card title to change the title of the card
    */
-  name: string;
+  title?: string;
 
-  /**
-   * The asset symbol (use to display the token logo)
-   */
-  symbol: string;
-
-  /**
-   * The asset balance of user
-   */
-  balance?: number;
-};
-
-export interface WrapAssetListCardProps extends Partial<ListCardWrapperProps> {
   /**
    * If `true`, the component will display in connected view
    */
   isDisconnected?: boolean;
+
   /**
    * The relayer list to display
    */
@@ -139,10 +146,47 @@ export interface WrapAssetListCardProps extends Partial<ListCardWrapperProps> {
   /**
    * The callback to control the state of the component
    */
-  onChange?: (nextRelayer: AssetType) => void;
+  onChange?: (nextAsset: AssetType) => void;
 
   /**
    * The event handler when the relayer is disabled and user hit connect wallet button on the card
+   */
+  onConnect?: PropsOf<'button'>['onClick'];
+}
+
+export interface TokenListCardProps extends ListCardWrapperProps {
+  /**
+   * Optional card title to change the title of the card
+   */
+  title?: string;
+
+  /**
+   * The popular token list
+   */
+  popularTokens: AssetType[];
+
+  /**
+   * The selected token list
+   */
+  selectTokens: AssetType[];
+
+  /**
+   * The unavailable token list
+   */
+  unavailableTokens: AssetType[];
+
+  /**
+   * The current selected token, use to control the component
+   */
+  value?: AssetType;
+
+  /**
+   * The callback to control the value of the component
+   */
+  onChange?: (nextToken: AssetType) => void;
+
+  /**
+   * The callback when the user hit connect account or wallet
    */
   onConnect?: PropsOf<'button'>['onClick'];
 }

@@ -6,6 +6,7 @@ import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Button } from '../Button';
 import { ScrollArea } from '../ScrollArea';
+import { AssetListItem } from './AssetListItem';
 import { ListCardWrapper } from './ListCardWrapper';
 import { ListItem } from './ListItem';
 import { AssetType, WrapAssetListCardProps } from './types';
@@ -54,35 +55,7 @@ export const WrapAssetListCard = forwardRef<HTMLDivElement, WrapAssetListCardPro
         <ScrollArea className={cx('min-w-[350px] h-[376px]', disconnectClsx)}>
           <ul className='p-2'>
             {assets.map((current, idx) => {
-              return (
-                <ListItem
-                  key={`${current.name}-${idx}`}
-                  className='flex items-center justify-between'
-                  onClick={() => onItemChange(current)}
-                >
-                  <div className='flex items-center'>
-                    <TokenIcon size='lg' name={current.symbol.toLowerCase()} className='mr-2' />
-
-                    <p>
-                      <Typography component='span' variant='body2' fw='bold' className='block uppercase'>
-                        {current.symbol}
-                      </Typography>
-
-                      <Typography
-                        component='span'
-                        variant='utility'
-                        className='block uppercase text-mono-100 dark:text-mono-80'
-                      >
-                        {current.name}
-                      </Typography>
-                    </p>
-                  </div>
-
-                  <Typography component='p' variant='body2' fw='bold'>
-                    {getRoundedAmountString(current.balance ?? 0)}
-                  </Typography>
-                </ListItem>
-              );
+              return <AssetListItem key={`${current.name}-${idx}`} {...current} />;
             })}
           </ul>
         </ScrollArea>

@@ -3,6 +3,7 @@ import {
   ChainListCard,
   RelayerListCard,
   TitleWithInfo,
+  TokenListCard,
   WrapAssetListCard,
 } from '@webb-dapp/webb-ui-components/components';
 import { ArrayElement } from '@webb-dapp/webb-ui-components/types';
@@ -100,6 +101,8 @@ export const ListCardsShowcase = () => {
 
         <WrapAssetListCard assets={assets} />
         <WrapAssetListCard assets={assets} isDisconnected />
+
+        <TokenListCard unavailableTokens={[...assets, ...assets]} selectTokens={assets} popularTokens={assets} />
       </div>
     </>
   );

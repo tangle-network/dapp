@@ -40,7 +40,7 @@ export const RelayerListCard = forwardRef<HTMLDivElement, RelayerListCardProps>(
       [onChange, setRelayer]
     );
 
-    const filteredChains = useMemo(
+    const filteredList = useMemo(
       () =>
         relayers.filter(
           (r) =>
@@ -58,7 +58,7 @@ export const RelayerListCard = forwardRef<HTMLDivElement, RelayerListCardProps>(
         {/** The search input */}
         <div className={cx('px-2 py-4', disconnectClsx)}>
           <Input
-            id='chain'
+            id='relayer'
             rightIcon={<Search />}
             placeholder='Search relayers'
             value={searchText}
@@ -69,7 +69,7 @@ export const RelayerListCard = forwardRef<HTMLDivElement, RelayerListCardProps>(
         {/** Token list */}
         <ScrollArea className={cx('min-w-[350px] h-[376px]', disconnectClsx)}>
           <ul className='p-2'>
-            {filteredChains.map((current, idx) => {
+            {filteredList.map((current, idx) => {
               return (
                 <ListItem
                   key={`${current.address}-${idx}`}
