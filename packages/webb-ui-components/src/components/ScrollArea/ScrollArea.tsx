@@ -7,7 +7,7 @@ import { ScrollAreaProps } from './types';
 
 export const ScrollArea = forwardRef<HTMLDivElement, ScrollAreaProps>(({ children, className, ...props }, ref) => {
   return (
-    <ScrollAreaPrimitive.Root {...props} className={twMerge('rounded-xl overflow-hidden', className)} ref={ref}>
+    <ScrollAreaPrimitive.Root {...props} className={twMerge('overflow-hidden', className)} ref={ref}>
       <ScrollAreaPrimitive.Viewport className='w-full h-full'>{children}</ScrollAreaPrimitive.Viewport>
 
       <Scrollbar orientation='vertical'>

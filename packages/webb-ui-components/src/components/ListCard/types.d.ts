@@ -36,11 +36,64 @@ export interface ChainListCardProps extends PropsOf<'div'> {
    */
   chains: ChainType[];
   /**
-   * The selected index of the current selected chain
+   * The current selected chain, use to control the component
    */
   value?: ChainType;
   /**
    * The callback to control the state of the component
    */
   onChange?: (nextChain: ChainType) => void;
+}
+
+export type RelayerType = {
+  /**
+   * The relayer address (also use as id to identify between multiple relayer)
+   */
+  address: string;
+
+  /**
+   * External url
+   */
+  externalUrl: string;
+
+  /**
+   * Relayer fee
+   */
+  fee?: string | number;
+
+  /**
+   * Relayer percentage
+   */
+  percentage?: number;
+};
+
+export interface RelayerListCardProps extends PropsOf<'div'> {
+  /**
+   * If `true`, the component will display in connected view
+   */
+  isDisconnected?: boolean;
+  /**
+   * The callback involke when pressing the close button
+   */
+  onClose?: () => void;
+
+  /**
+   * The relayer list to display
+   */
+  relayers: RelayerType[];
+
+  /**
+   * The current selected relayer, use to control the component
+   */
+  value?: RelayerType;
+
+  /**
+   * The callback to control the state of the component
+   */
+  onChange?: (nextRelayer: RelayerType) => void;
+
+  /**
+   * The event handler when the relayer is disabled and user hit connect wallet button on the card
+   */
+  onConnectWallet?: PropsOf<'button'>['onClick'];
 }
