@@ -1,11 +1,11 @@
-name: Build and Deploy
+name: publish
 on: 
   push:
     branches:
-      - main
+      - develop
     paths: ["/packages/webb-ui-components/src/stories/**"] # Trigger the action only when files change in the folders defined here
 jobs:
-  build-and-deploy:
+  component-docs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout 🛎️
@@ -22,5 +22,5 @@ jobs:
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BRANCH: gh-pages # The branch the action should deploy to.
-          FOLDER: ./docs-build # The folder that the build-storybook script generates files.
+          FOLDER: ./packages/webb-ui-components/docs-build # The folder that the build-storybook script generates files.
           CLEAN: true # Automatically remove deleted files from the deploy branch
