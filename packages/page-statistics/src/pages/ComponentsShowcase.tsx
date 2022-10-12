@@ -1,7 +1,7 @@
 import { Card, Switcher, TitleWithInfo, TokenSelector } from '@webb-dapp/webb-ui-components/components';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
 
-import { BridgeInputsShowCase } from '../containers';
+import { BridgeInputsShowCase, ListCardsShowcase } from '../containers';
 
 const ComponentsShowcase = () => {
   return (
@@ -83,6 +83,9 @@ const ComponentsShowcase = () => {
 
       {/** Inputs */}
       <BridgeInputsShowCase />
+
+      {/** List cards */}
+      <ListCardsShowcase />
     </div>
   );
 };

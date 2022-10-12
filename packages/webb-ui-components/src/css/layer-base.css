@@ -18,10 +18,11 @@ h5,
 .h3,
 .h4,
 .h5 {
-  @apply text-mono-200 dark:text-mono-40;
+  @apply text-mono-200 dark:text-mono-0;
 }
 
 p,
+div,
 span,
 label,
 .body1,
@@ -30,7 +31,7 @@ label,
 .body4,
 .mono1,
 .mono2 {
-  @apply text-mono-160 dark:text-mono-60;
+  @apply text-mono-180 dark:text-mono-0;
 }
 
 .card {
