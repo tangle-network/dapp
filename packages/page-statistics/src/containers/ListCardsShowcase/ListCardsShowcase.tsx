@@ -1,5 +1,10 @@
 import { randFloat, randNumber } from '@ngneat/falso';
-import { ChainListCard, RelayerListCard, TitleWithInfo } from '@webb-dapp/webb-ui-components/components';
+import {
+  ChainListCard,
+  RelayerListCard,
+  TitleWithInfo,
+  WrapAssetListCard,
+} from '@webb-dapp/webb-ui-components/components';
 import { ArrayElement } from '@webb-dapp/webb-ui-components/types';
 import { arrayFrom } from '@webb-dapp/webb-ui-components/utils';
 import { ComponentProps } from 'react';
@@ -66,6 +71,22 @@ const getRelayer = (): ArrayElement<ComponentProps<typeof RelayerListCard>['rela
 
 const relayers = arrayFrom(randNumber({ min: 10, max: 20 }), () => getRelayer());
 
+const assets: ComponentProps<typeof WrapAssetListCard>['assets'] = [
+  {
+    name: 'Ethereum',
+    symbol: 'eth',
+    balance: 3.535,
+  },
+  {
+    name: 'Ethereum Classic',
+    symbol: 'etc',
+  },
+  {
+    name: 'Wrapped Ethereum',
+    symbol: 'weth',
+  },
+];
+
 export const ListCardsShowcase = () => {
   return (
     <>
@@ -73,8 +94,12 @@ export const ListCardsShowcase = () => {
       <div className='grid items-start grid-cols-2 gap-4 justify-items-center'>
         <ChainListCard chainType='source' chains={chains} />
         <ChainListCard chainType='dest' chains={chains} />
+
         <RelayerListCard relayers={relayers} />
         <RelayerListCard relayers={relayers} isDisconnected />
+
+        <WrapAssetListCard assets={assets} />
+        <WrapAssetListCard assets={assets} isDisconnected />
       </div>
     </>
   );

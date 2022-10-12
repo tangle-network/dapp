@@ -33,9 +33,9 @@ export const RelayerListCard = forwardRef<HTMLDivElement, RelayerListCardProps>(
     }, [selectedRelayer, setRelayer]);
 
     const onItemChange = useCallback(
-      (nextChain: RelayerType) => {
-        setRelayer(nextChain);
-        onChange?.(nextChain);
+      (nextItem: RelayerType) => {
+        setRelayer(nextItem);
+        onChange?.(nextItem);
       },
       [onChange, setRelayer]
     );
