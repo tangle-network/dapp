@@ -1,0 +1,82 @@
+var _path, _path2, _g, _path3, _path4, _path5, _path6, _path7;
+
+var _excluded = ["title", "titleId"];
+
+function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
+function _objectWithoutProperties(source, excluded) { if (source == null) return {}; var target = _objectWithoutPropertiesLoose(source, excluded); var key, i; if (Object.getOwnPropertySymbols) { var sourceSymbolKeys = Object.getOwnPropertySymbols(source); for (i = 0; i < sourceSymbolKeys.length; i++) { key = sourceSymbolKeys[i]; if (excluded.indexOf(key) >= 0) continue; if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue; target[key] = source[key]; } } return target; }
+
+function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
+
+import * as React from "react";
+
+function SvgWebbeth(_ref, svgRef) {
+  var title = _ref.title,
+      titleId = _ref.titleId,
+      props = _objectWithoutProperties(_ref, _excluded);
+
+  return /*#__PURE__*/React.createElement("svg", _extends({
+    viewBox: "0 0 40 40",
+    fill: "none",
+    xmlns: "http://www.w3.org/2000/svg",
+    ref: svgRef,
+    "aria-labelledby": titleId
+  }, props), title ? /*#__PURE__*/React.createElement("title", {
+    id: titleId
+  }, title) : null, _path || (_path = /*#__PURE__*/React.createElement("path", {
+    fillRule: "evenodd",
+    clipRule: "evenodd",
+    d: "M20 15.999A4 4 0 1020 24 4 4 0 0020 16",
+    fill: "#DD4800"
+  })), /*#__PURE__*/React.createElement("mask", {
+    id: "webbeth_svg__a",
+    style: {
+      maskType: "alpha"
+    },
+    maskUnits: "userSpaceOnUse",
+    x: 23,
+    y: 15,
+    width: 17,
+    height: 18
+  }, _path2 || (_path2 = /*#__PURE__*/React.createElement("path", {
+    fillRule: "evenodd",
+    clipRule: "evenodd",
+    d: "M24 15.999h16V32H24V16z",
+    fill: "#fff"
+  }))), _g || (_g = /*#__PURE__*/React.createElement("g", {
+    mask: "url(#webbeth_svg__a)"
+  }, /*#__PURE__*/React.createElement("path", {
+    fillRule: "evenodd",
+    clipRule: "evenodd",
+    d: "M36 15.999a4 4 0 00-4 4 3.999 3.999 0 01-4 4h-1.164A2.846 2.846 0 0024 26.835v2.329A2.843 2.843 0 0026.836 32h2.329A2.843 2.843 0 0032 29.164V28A4.002 4.002 0 0136 24a4 4 0 100-8",
+    fill: "#9F90EA"
+  }))), _path3 || (_path3 = /*#__PURE__*/React.createElement("path", {
+    fillRule: "evenodd",
+    clipRule: "evenodd",
+    d: "M16 20a3.999 3.999 0 01-4 3.999 4 4 0 014 4 4 4 0 014-4A4 4 0 0116 20",
+    fill: "#EAB612"
+  })), _path4 || (_path4 = /*#__PURE__*/React.createElement("path", {
+    fillRule: "evenodd",
+    clipRule: "evenodd",
+    d: "M10.835 15.999H12a4 4 0 013.999 4 4 4 0 014-4 4 4 0 01-4-4v.003-1.167a2.843 2.843 0 00-2.835-2.834h-2.329A2.844 2.844 0 008 10.835v2.327A2.845 2.845 0 0010.836 16",
+    fill: "#DD4800"
+  })), _path5 || (_path5 = /*#__PURE__*/React.createElement("path", {
+    fillRule: "evenodd",
+    clipRule: "evenodd",
+    d: "M5.163 15.999H2.835A2.845 2.845 0 000 18.837v2.327a2.843 2.843 0 002.835 2.835h2.328A2.844 2.844 0 008 21.164v-2.327a2.846 2.846 0 00-2.837-2.838",
+    fill: "#4E8CDF"
+  })), _path6 || (_path6 = /*#__PURE__*/React.createElement("path", {
+    fillRule: "evenodd",
+    clipRule: "evenodd",
+    d: "M21.164 32h-1.165A3.999 3.999 0 0116 28.001a4 4 0 10-4 4 4 4 0 014 3.998v1.166A2.844 2.844 0 0018.835 40h2.329A2.845 2.845 0 0024 37.165v-2.328A2.845 2.845 0 0021.164 32",
+    fill: "#EAB612"
+  })), _path7 || (_path7 = /*#__PURE__*/React.createElement("path", {
+    fillRule: "evenodd",
+    clipRule: "evenodd",
+    d: "M18.835 8H20a4 4 0 014 3.997V12a4 4 0 104.001-4 4 4 0 01-4-4v.004-1.168A2.844 2.844 0 0021.163 0h-2.329A2.844 2.844 0 0016 2.835v2.327A2.846 2.846 0 0018.835 8",
+    fill: "#038311"
+  })));
+}
+
+var ForwardRef = /*#__PURE__*/React.forwardRef(SvgWebbeth);
+export default ForwardRef;
