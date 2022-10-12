@@ -17,90 +17,89 @@ export const Default = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
 Default.args = {
   size: 'md',
-  variant: 'primary'
+  variant: 'primary',
 };
 
 export const Large = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
 Large.args = {
   size: 'lg',
-  variant: 'primary'
+  variant: 'primary',
 };
 
 export const Medium = Template.bind({});
 Medium.args = {
   size: 'md',
-  variant: 'primary'
+  variant: 'primary',
 };
 
 export const Small = Template.bind({});
 Small.args = {
-    size: 'sm',
-    variant: 'primary'
+  size: 'sm',
+  variant: 'primary',
 };
 
 export const isDisabled = Template.bind({});
 isDisabled.args = {
-    isDisabled: true,
-    variant: 'primary'
+  isDisabled: true,
+  variant: 'primary',
 };
 
 export const isLoading = Template.bind({});
 isLoading.args = {
-    isLoading: 'true',
-    loadingText: 'Loading...',
-    variant: "utility" 
+  isLoading: 'true',
+  loadingText: 'Loading...',
+  variant: 'utility',
 };
-
 
 export const LargeSecondary = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
 LargeSecondary.args = {
   size: 'lg',
-  variant: 'secondary'
+  variant: 'secondary',
 };
 
 export const MediumSecondary = Template.bind({});
 MediumSecondary.args = {
   size: 'md',
-  variant: 'secondary'
+  variant: 'secondary',
 };
 
 export const SmallSecondary = Template.bind({});
 SmallSecondary.args = {
-    size: 'sm',
-    variant: 'secondary'
+  size: 'sm',
+  variant: 'secondary',
 };
 
 export const isDisabledSecondary = Template.bind({});
 isDisabledSecondary.args = {
-    isDisabled: 'true',
-    variant: 'secondary'
+  isDisabled: 'true',
+  variant: 'secondary',
 };
 
 export const isLoadingSecondary = Template.bind({});
 isLoadingSecondary.args = {
-    isLoading: 'true',
-    loadingText: 'Loading...',
-    variant: 'secondary',
+  isLoading: 'true',
+  loadingText: 'Loading...',
+  variant: 'secondary',
 };
 
 export const SmallRightIcon = Template.bind({});
 SmallRightIcon.args = {
-    size: 'sm',
-    variant: 'secondary',
-    rightIcon: <ArrowRight className='!fill-current' />
+  size: 'sm',
+  variant: 'secondary',
+  rightIcon: <ArrowRight className='!fill-current' />,
 };
 
 export const SmallLeftIcon = Template.bind({});
 SmallLeftIcon.args = {
-    size: 'sm',
-    variant: 'secondary',
-    leftIcon: <ArrowLeft className='!fill-current' />
+  size: 'sm',
+  variant: 'secondary',
+  leftIcon: <ArrowLeft className='!fill-current' />,
 };
 
 export const SmallLink = Template.bind({});
 SmallLink.args = {
-    size: 'sm',
-    variant: 'link',
+  size: 'sm',
+  variant: 'link',
 };

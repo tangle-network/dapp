@@ -16,11 +16,11 @@ export const Primary = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
 Primary.args = {
   color: 'yellow',
-  isDisabled: false
+  isDisabled: false,
 };
 
 export const Secondary = Template.bind({});
 Secondary.args = {
   color: 'green',
-  isDisabled: true
+  isDisabled: true,
 };

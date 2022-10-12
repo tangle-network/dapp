@@ -10,7 +10,7 @@ export default {
 };
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-const Template = (args) => <Logo {...args}/>;
+const Template = (args) => <Logo {...args} />;
 
 export const Default = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
@@ -31,5 +31,5 @@ Medium.args = {
 
 export const Small = Template.bind({});
 Small.args = {
-    size: 'sm',
-  };
+  size: 'sm',
+};

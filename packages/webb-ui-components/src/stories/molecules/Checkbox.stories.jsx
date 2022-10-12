@@ -10,12 +10,11 @@ export default {
 };
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-const Template = (args) => <CheckBox {...args}/>;
+const Template = (args) => <CheckBox {...args} />;
 
 export const Default = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
-Default.args = {
-};
+Default.args = {};
 
 export const isDisabled = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args

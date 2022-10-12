@@ -13,5 +13,4 @@ export default {
 const Template = (args) => <TokenInput {...args} />;
 
 export const Default = Template.bind({});
-Default.args = {
-};
+Default.args = {};

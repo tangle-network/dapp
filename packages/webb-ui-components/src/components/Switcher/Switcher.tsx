@@ -13,7 +13,7 @@ import { SwitcherProps } from './types';
  *
  * ```jsx
  *     <Switcher />
- *  
+ *
  * ```
  */
 export const Switcher = forwardRef<HTMLButtonElement, SwitcherProps>(({ className, ...props }, ref) => {

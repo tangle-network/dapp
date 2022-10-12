@@ -12,7 +12,7 @@ export default {
 };
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-const Template = (args) => <KeyStatusCard {...args}/>;
+const Template = (args) => <KeyStatusCard {...args} />;
 
 export const Default = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
@@ -24,7 +24,7 @@ Default.args = {
   keyVal: '0x1234567890abcdef',
   startTime: randRecentDate(),
   endTime: randSoonDate(),
-  authorities:new Set(['5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY']),
+  authorities: new Set(['5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY']),
   totalAuthorities: randNumber(10, 20),
-  fullDetailUrl: 'https://webb.tools'
+  fullDetailUrl: 'https://webb.tools',
 };

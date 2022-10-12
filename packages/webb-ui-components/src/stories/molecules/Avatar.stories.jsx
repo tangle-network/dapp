@@ -10,13 +10,13 @@ export default {
 };
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-const Template = (args) => <Avatar {...args}/>;
+const Template = (args) => <Avatar {...args} />;
 
 export const Default = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
 Default.args = {
   key: '2',
   size: 'md',
-  src:  "./assets/Logo.png",
-  sourceVariant: 'address'
+  src: './assets/Logo.png',
+  sourceVariant: 'address',
 };

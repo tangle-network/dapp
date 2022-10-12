@@ -1,6 +1,5 @@
-import React from 'react';
-
 import { Divider } from '@webb-dapp/webb-ui-components/components';
+import React from 'react';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
@@ -10,5 +9,5 @@ export default {
 };
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-const Template = () => <Divider/>;
+const Template = () => <Divider />;
 export const Default = Template.bind({});

@@ -10,7 +10,7 @@ export default {
 };
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-const Template = (args) => <AmountInput {...args}/>;
+const Template = (args) => <AmountInput {...args} />;
 
 export const Default = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
@@ -18,5 +18,5 @@ Default.args = {
   title: 'md',
   info: 'Amount',
   variant: 'body4',
-  titleComponent: 'span'
+  titleComponent: 'span',
 };

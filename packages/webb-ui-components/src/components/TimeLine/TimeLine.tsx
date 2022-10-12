@@ -5,9 +5,9 @@ import { TimeLineProps } from './types';
 
 /**
  * The `TimeLine` style wrapper
- * 
+ *
  *  Props:
- *  
+ *
  * - `title`: The timeline title
  * - `time`: The actual time the event happens
  * - `txHash`: The transaction hash

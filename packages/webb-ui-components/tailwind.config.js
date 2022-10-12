@@ -224,10 +224,7 @@ const animation = {
 };
 
 module.exports = {
-  content: [
-    "./src/components/**/*.{ts,tsx}",
-    "./src/stories/**/*.{ts,tsx}",
-  ],
+  content: ['./src/components/**/*.{ts,tsx}', './src/stories/**/*.{ts,tsx}'],
   darkMode: 'class',
   theme: {
     extend: {
@@ -245,4 +242,3 @@ module.exports = {
     require('tailwind-scrollbar')({ nocompatible: true }),
   ],
 };
-
