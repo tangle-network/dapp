@@ -3,7 +3,20 @@ import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { DividerProps } from './types';
-
+/**
+ * The `Divider` component
+ *
+ * Props:
+ *
+ * None
+ *
+ *
+ * @example
+ *
+ * ```jsx
+ *  <Divider />
+ * ```
+ */
 export const Divider = forwardRef<HTMLDivElement, DividerProps>(({ className, ...props }, ref) => {
   return (
     <SeparatorPrimitive.Root

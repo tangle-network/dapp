@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { Button } from './Button';
+import { Button } from '@webb-dapp/webb-ui-components/components';
 import './header.css';
 
 export const Header = ({ user, onLogin, onLogout, onCreateAccount }) => (
@@ -36,8 +36,8 @@ export const Header = ({ user, onLogin, onLogout, onCreateAccount }) => (
           </>
         ) : (
           <>
-            <Button size="small" onClick={onLogin} label="Log in" />
-            <Button primary size="small" onClick={onCreateAccount} label="Sign up" />
+            <Button size="sm" onClick={onLogin}>Log in</Button>
+            <Button primary size="sm" onClick={onCreateAccount}>Sign up</Button>
           </>
         )}
       </div>

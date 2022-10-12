@@ -1,11 +1,11 @@
 import React from 'react';
 
-import { Logo } from '@webb-dapp/webb-ui-components/components';
+import { ChainInput } from '@webb-dapp/webb-ui-components/components';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
-  title: 'Molecules/Logo',
-  component: Logo,
+  title: 'Molecules/ChainInput',
+  component: ChainInput,
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
 //   argTypes: {
 //     backgroundColor: { control: 'color' },
@@ -13,26 +13,23 @@ export default {
 };
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-const Template = (args) => <Logo {...args}/>;
+const Template = (args) => <ChainInput {...args} />;
 
 export const Default = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
 Default.args = {
-  size: 'md',
+//   chain: { name: 'Optimism', symbol: 'op' }
 };
 
-export const Large = Template.bind({});
+export const Dest = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
-Large.args = {
-  size: 'lg',
+Dest.args = {
+  chainType: 'dest',
+//   chain: { name: 'Optimism', symbol: 'op' }
 };
 
-export const Medium = Template.bind({});
-Medium.args = {
-  size: 'md',
+export const Source = Template.bind({});
+// More on args: https://storybook.js.org/docs/react/writing-stories/args
+Source.args = {
+  chainType: 'source',
 };
-
-export const Small = Template.bind({});
-Small.args = {
-    size: 'sm',
-  };
