@@ -51,6 +51,28 @@ export type AssetType = {
   balance?: number;
 };
 
+export type AssetPairType = {
+  /**
+   * The asset name
+   */
+  name: string;
+
+  /**
+   * The symbol of the first asset
+   */
+  asset1Symbol: string;
+
+  /**
+   * The symbol of the second asset
+   */
+  asset2Symbol: string;
+
+  /**
+   * The user's balance
+   */
+  balance?: number;
+};
+
 export interface ListCardWrapperProps extends WebbComponentBase, PropsOf<'div'> {
   /**
    * The list card title
@@ -189,4 +211,46 @@ export interface TokenListCardProps extends ListCardWrapperProps {
    * The callback when the user hit connect account or wallet
    */
   onConnect?: PropsOf<'button'>['onClick'];
+}
+
+export interface WithDrawListCardProps extends ListCardWrapperProps {
+  /**
+   * Optional card title to change the title of the card
+   */
+  title?: string;
+
+  /**
+   * The asset pair list
+   */
+  assetPairs?: AssetPairType[];
+
+  /**
+   * The current selected asset, use to control the component
+   */
+  value?: AssetPairType;
+
+  /**
+   * The callback to control the value of the component
+   */
+  onChange?: (nextAsset: AssetPairType) => void;
+
+  /**
+   * If `true`, the component will display in connected view
+   */
+  isDisconnected?: boolean;
+
+  /**
+   * Callback being invoked when user hits switch wallet button
+   */
+  onSwitchWallet?: PropsOf<'div'>['onClick'];
+
+  /**
+   * Callback being invoked when user hits recover from secret note
+   */
+  onRecoverWithSecretNote?: PropsOf<'div'>['onClick'];
+
+  /**
+   * Callback being invoked when user hits connect wallet button
+   */
+  onConnectWallet?: PropsOf<'div'>['onClick'];
 }

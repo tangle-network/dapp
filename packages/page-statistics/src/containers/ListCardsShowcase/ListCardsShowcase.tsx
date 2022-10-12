@@ -4,6 +4,7 @@ import {
   RelayerListCard,
   TitleWithInfo,
   TokenListCard,
+  WithDrawListCard,
   WrapAssetListCard,
 } from '@webb-dapp/webb-ui-components/components';
 import { ArrayElement } from '@webb-dapp/webb-ui-components/types';
@@ -88,6 +89,27 @@ const assets: ComponentProps<typeof WrapAssetListCard>['assets'] = [
   },
 ];
 
+const assetPairs: ComponentProps<typeof WithDrawListCard>['assetPairs'] = [
+  {
+    asset1Symbol: 'usdc',
+    asset2Symbol: 'usdt',
+    name: 'Ethereum',
+    balance: 2456,
+  },
+  {
+    asset1Symbol: 'webbeth',
+    asset2Symbol: 'weth',
+    name: 'Tther',
+    balance: 0,
+  },
+  {
+    asset1Symbol: 'usdc',
+    asset2Symbol: 'dai',
+    name: 'Ethereum',
+    balance: 2123,
+  },
+];
+
 export const ListCardsShowcase = () => {
   return (
     <>
@@ -103,6 +125,10 @@ export const ListCardsShowcase = () => {
         <WrapAssetListCard assets={assets} isDisconnected />
 
         <TokenListCard unavailableTokens={[...assets, ...assets]} selectTokens={assets} popularTokens={assets} />
+
+        <WithDrawListCard assetPairs={assetPairs} />
+        <WithDrawListCard />
+        <WithDrawListCard isDisconnected />
       </div>
     </>
   );
