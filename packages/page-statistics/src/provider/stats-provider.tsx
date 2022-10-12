@@ -1,5 +1,5 @@
 import { useLastBlockQuery, useMetaDataQuery } from '@webb-dapp/page-statistics/generated/graphql';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 
 /**
  * Chain metadata
@@ -14,6 +14,7 @@ export type Metadata = {
   lastProcessBlock: string;
   lastSession: string;
   activeSession: string;
+  activeSessionBlock: number;
 };
 
 /**
@@ -91,6 +92,7 @@ const statsContext: React.Context<StatsProvidervalue> = React.createContext<Stat
     currentBlock: '0',
     lastSession: '0',
     lastProcessBlock: '0',
+    activeSessionBlock: 0,
   },
   isReady: false,
 });
@@ -118,6 +120,7 @@ export const useActiveSession = () => {
   } = useStatsContext();
   return activeSession;
 };
+
 export const StatsProvider: React.FC<Omit<StatsProvidervalue, 'isReady' | 'metaData' | 'updateTime' | 'time'>> = (
   props
 ) => {
@@ -127,6 +130,7 @@ export const StatsProvider: React.FC<Omit<StatsProvidervalue, 'isReady' | 'metaD
     currentBlock: '',
     lastProcessBlock: '',
     lastSession: '',
+    activeSessionBlock: 0,
   });
   const [staticConfig] = useState<{
     blockTime: number;
@@ -177,11 +181,13 @@ export const StatsProvider: React.FC<Omit<StatsProvidervalue, 'isReady' | 'metaD
       .map((r): Metadata | null => {
         if (r.data?._metadata) {
           const data = r.data._metadata;
+          const lastSession = r.data.sessions?.nodes[0]!;
           return {
             currentBlock: String(data.targetHeight),
             lastProcessBlock: String(data.lastProcessedHeight),
-            activeSession: session(String(data.lastProcessedHeight), staticConfig.sessionHeight),
-            lastSession: nextSession(String(data.targetHeight), staticConfig.sessionHeight),
+            activeSession: String(Number(lastSession.id) - 1),
+            lastSession: lastSession.id,
+            activeSessionBlock: lastSession.blockNumber,
           };
         }
         return null;
@@ -196,8 +202,8 @@ export const StatsProvider: React.FC<Omit<StatsProvidervalue, 'isReady' | 'metaD
   }, [query, metaDataQuery, isReady, staticConfig]);
 
   useEffect(() => {
-    query.startPolling(staticConfig.blockTime * 1000);
-    metaDataQuery.startPolling(staticConfig.blockTime * 1000);
+    query.startPolling(staticConfig.blockTime * 1000 * 10);
+    metaDataQuery.startPolling(staticConfig.blockTime * 1000 * 10);
 
     return () => {
       query.stopPolling();

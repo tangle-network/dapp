@@ -1,5 +1,5 @@
 overwrite: true
-schema: "https://api.subquery.network/sq/AtelyPham/webb-subql"
+schema: "http://localhost:4000"
 documents: "./packages/page-statistics/**/*.graphql"
 generates:
   ./packages/page-statistics/src/generated/graphql.tsx:

@@ -1,5 +1,6 @@
 import {
   ProposalType,
+  ThresholdVariant,
   useEnsureProposalsLazyQuery,
   useProposalDetailsLazyQuery,
   useProposalsLazyQuery,
@@ -8,6 +9,7 @@ import {
   VoteStatus,
 } from '@webb-dapp/page-statistics/generated/graphql';
 import { mapProposalListItem } from '@webb-dapp/page-statistics/provider/hooks/mappers';
+import { thresholdVariant } from '@webb-dapp/page-statistics/provider/hooks/mappers/thresholds';
 import { Loadable, Page, PageInfoQuery, ProposalStatus } from '@webb-dapp/page-statistics/provider/hooks/types';
 import { useEffect, useMemo, useState } from 'react';
 
@@ -20,8 +22,8 @@ import { Threshold as QueryThreshold } from './types';
  *
  * */
 type Thresholds = {
-  proposal: number;
-  proposers: number;
+  proposal: string;
+  proposers: string;
 };
 /**
  * Proposal type Status counter map for proposal statuses
@@ -207,9 +209,10 @@ export function useProposalsOverview(sessionId: string, range?: BlockRange): Loa
       .map((res): Loadable<ProposalsOverview> => {
         if (res.data && res.data.session && res.data.openProposals) {
           const session = res.data.session!;
+          const threshold = thresholdVariant(session.thresholds, ThresholdVariant.Proposer);
           const thresholds: Thresholds = {
-            proposal: (session.proposerThreshold as QueryThreshold | null)?.current ?? NaN,
-            proposers: session.sessionProposers.totalCount,
+            proposal: String(threshold?.current ?? '-'),
+            proposers: String(session.sessionProposers.totalCount),
           };
           const openProposalsCount = res.data.open?.totalCount ?? 0;
           const rejectedProposalsCount = res.data.reject?.totalCount ?? 0;
@@ -442,7 +445,7 @@ export function useProposal(targetSessionId: string, votesReqQuery: VotesQuery):
               forPercentage: (forCount / expectedVotesCount) * 100,
               againstPercentage: (againstCount / expectedVotesCount) * 100,
               chain: String(res.data.proposalItem.chainId),
-              height: proposal.block?.timestamp!,
+              height: proposal.block?.number!,
               timeline: proposal.proposalTimelineStatuses.nodes.map((item) => {
                 const statusItem = item!;
                 return {

@@ -6,6 +6,7 @@ import {
   useValidatorSessionsLazyQuery,
 } from '@webb-dapp/page-statistics/generated/graphql';
 import { mapAuthorities, mapSessionAuthValidatorNode } from '@webb-dapp/page-statistics/provider/hooks/mappers';
+import { thresholdMap } from '@webb-dapp/page-statistics/provider/hooks/mappers/thresholds';
 import { Loadable, Page, PageInfoQuery } from '@webb-dapp/page-statistics/provider/hooks/types';
 import { useCurrentMetaData } from '@webb-dapp/page-statistics/provider/hooks/useCurrentMetaData';
 import { PublicKey } from '@webb-dapp/page-statistics/provider/hooks/useKeys';
@@ -136,7 +137,6 @@ export function useThresholds(): Loadable<[Thresholds, UpcomingThresholds]> {
   const session = useCurrentMetaData();
   const activeSession = useActiveSession();
   const [call, query] = useSessionThresholdsLazyQuery();
-
   useEffect(() => {
     if (session.val) {
       call({ variables: { sessionId: session.val.activeSession } }).catch((e) => {
@@ -149,32 +149,32 @@ export function useThresholds(): Loadable<[Thresholds, UpcomingThresholds]> {
       });
     }
   }, [session, call]);
-
   useEffect(() => {
     const subscription = query.observable
       .map((res): Loadable<[Thresholds, UpcomingThresholds]> => {
         if (res.data) {
           const session = res.data.session!;
-          const publicKey = session.publicKey;
+          const thresholds = thresholdMap(session.thresholds);
+          const keyGen = thresholds.KEY_GEN;
+          const signature = thresholds.SIGNATURE;
 
+          const publicKey = session.publicKey!;
           const allAuth = mapAuthorities(session?.sessionValidators);
           const authSet = allAuth.map((auth) => auth.id);
           const nextAuthSet = allAuth.filter((auth) => auth.isNext).map((auth) => auth.id);
-
-          const keyGenThreshold = session.keyGenThreshold as QueryThreshold | null;
-          const signatureThreshold = session.signatureThreshold as QueryThreshold | null;
+          const keyGenThreshold = keyGen;
+          const signatureThreshold = signature;
           const proposersCount = session.proposersCount.totalCount;
           const sessionTimeStamp = session.block?.timestamp;
-
           const threshold: Thresholds = {
             keyGen: keyGenThreshold ? String(keyGenThreshold.current) : '-',
             publicKey: {
-              id: publicKey?.id ?? '',
+              id: publicKey.id,
               session: session.id,
               end: sessionTimeStamp ? new Date(new Date(sessionTimeStamp).getTime() + 60 * 60 * 1000) : undefined,
               start: sessionTimeStamp ? new Date(sessionTimeStamp) : undefined,
-              compressed: publicKey?.compressed ?? '',
-              uncompressed: publicKey?.uncompressed ?? '',
+              compressed: publicKey.compressed!,
+              uncompressed: publicKey.uncompressed!,
               keyGenAuthorities: authSet,
               isCurrent: activeSession === session.id,
               isDone: Number(activeSession) > Number(session.id),
@@ -182,7 +182,6 @@ export function useThresholds(): Loadable<[Thresholds, UpcomingThresholds]> {
             proposer: '',
             signature: signatureThreshold ? String(signatureThreshold.current) : '-',
           };
-
           const current: UpcomingThreshold = {
             authoritySet: {
               count: authSet.length,
@@ -244,7 +243,6 @@ export function useThresholds(): Loadable<[Thresholds, UpcomingThresholds]> {
 
     return () => subscription.unsubscribe();
   }, [query, activeSession]);
-
   return data;
 }
 
@@ -421,20 +419,23 @@ export function useAuthority(pageQuery: AuthorityQuery): AuthorityDetails {
           const sessionValidator = res.data.sessionValidator;
           const sessionValidators = res.data.sessionValidators;
           const counter = sessionValidators?.aggregates?.distinctCount?.id as number;
-          const threshold = sessionValidator.session?.keyGenThreshold! as QueryThreshold;
+          const session = sessionValidator.session!;
+          const thresholds = thresholdMap(session.thresholds);
+          const keyGen = thresholds.KEY_GEN;
+
           const auth = mapSessionAuthValidatorNode(sessionValidator);
           const stats: AuthorityStats = {
             numberOfKeys: String(counter),
             keyGenThreshold: {
-              val: String(threshold.current),
+              val: String(keyGen?.current ?? '-'),
               inTheSet: auth.isBest,
             },
             nextKeyGenThreshold: {
-              val: String(threshold.next),
+              val: String(keyGen?.next ?? '-'),
               inTheSet: auth.isNextBest,
             },
             pendingKeyGenThreshold: {
-              val: String(threshold.pending),
+              val: String(keyGen?.pending ?? '-'),
               inTheSet: auth.isBest,
             },
             reputation: Number(auth.reputation),
@@ -490,10 +491,14 @@ export function useSessionHistory(pageQuery: PageInfoQuery): Loadable<Page<Sessi
       .map((res): Loadable<Page<SessionThresholdEntry>> => {
         if (res.data.sessions) {
           const items: SessionThresholdEntry[] = res.data.sessions.nodes.map((node) => {
+            const thresholds = thresholdMap(node!.thresholds);
+            const keyGen = thresholds.KEY_GEN;
+            const signature = thresholds.SIGNATURE;
+
             return {
               sessionId: node?.id!,
-              keyGenThreshold: String((node?.keyGenThreshold! as QueryThreshold).current!),
-              signatureThreshold: String((node?.signatureThreshold! as QueryThreshold).current!),
+              keyGenThreshold: String(keyGen?.current ?? '-'),
+              signatureThreshold: String(signature?.current ?? '-'),
             };
           });
           return {

@@ -3173,14 +3173,8 @@ export enum BlocksOrderBy {
   SessionsAverageBlockNumberDesc = 'SESSIONS_AVERAGE_BLOCK_NUMBER_DESC',
   SessionsAverageIdAsc = 'SESSIONS_AVERAGE_ID_ASC',
   SessionsAverageIdDesc = 'SESSIONS_AVERAGE_ID_DESC',
-  SessionsAverageKeyGenThresholdAsc = 'SESSIONS_AVERAGE_KEY_GEN_THRESHOLD_ASC',
-  SessionsAverageKeyGenThresholdDesc = 'SESSIONS_AVERAGE_KEY_GEN_THRESHOLD_DESC',
-  SessionsAverageProposerThresholdAsc = 'SESSIONS_AVERAGE_PROPOSER_THRESHOLD_ASC',
-  SessionsAverageProposerThresholdDesc = 'SESSIONS_AVERAGE_PROPOSER_THRESHOLD_DESC',
   SessionsAveragePublicKeyIdAsc = 'SESSIONS_AVERAGE_PUBLIC_KEY_ID_ASC',
   SessionsAveragePublicKeyIdDesc = 'SESSIONS_AVERAGE_PUBLIC_KEY_ID_DESC',
-  SessionsAverageSignatureThresholdAsc = 'SESSIONS_AVERAGE_SIGNATURE_THRESHOLD_ASC',
-  SessionsAverageSignatureThresholdDesc = 'SESSIONS_AVERAGE_SIGNATURE_THRESHOLD_DESC',
   SessionsCountAsc = 'SESSIONS_COUNT_ASC',
   SessionsCountDesc = 'SESSIONS_COUNT_DESC',
   SessionsDistinctCountBlockIdAsc = 'SESSIONS_DISTINCT_COUNT_BLOCK_ID_ASC',
@@ -3189,112 +3183,64 @@ export enum BlocksOrderBy {
   SessionsDistinctCountBlockNumberDesc = 'SESSIONS_DISTINCT_COUNT_BLOCK_NUMBER_DESC',
   SessionsDistinctCountIdAsc = 'SESSIONS_DISTINCT_COUNT_ID_ASC',
   SessionsDistinctCountIdDesc = 'SESSIONS_DISTINCT_COUNT_ID_DESC',
-  SessionsDistinctCountKeyGenThresholdAsc = 'SESSIONS_DISTINCT_COUNT_KEY_GEN_THRESHOLD_ASC',
-  SessionsDistinctCountKeyGenThresholdDesc = 'SESSIONS_DISTINCT_COUNT_KEY_GEN_THRESHOLD_DESC',
-  SessionsDistinctCountProposerThresholdAsc = 'SESSIONS_DISTINCT_COUNT_PROPOSER_THRESHOLD_ASC',
-  SessionsDistinctCountProposerThresholdDesc = 'SESSIONS_DISTINCT_COUNT_PROPOSER_THRESHOLD_DESC',
   SessionsDistinctCountPublicKeyIdAsc = 'SESSIONS_DISTINCT_COUNT_PUBLIC_KEY_ID_ASC',
   SessionsDistinctCountPublicKeyIdDesc = 'SESSIONS_DISTINCT_COUNT_PUBLIC_KEY_ID_DESC',
-  SessionsDistinctCountSignatureThresholdAsc = 'SESSIONS_DISTINCT_COUNT_SIGNATURE_THRESHOLD_ASC',
-  SessionsDistinctCountSignatureThresholdDesc = 'SESSIONS_DISTINCT_COUNT_SIGNATURE_THRESHOLD_DESC',
   SessionsMaxBlockIdAsc = 'SESSIONS_MAX_BLOCK_ID_ASC',
   SessionsMaxBlockIdDesc = 'SESSIONS_MAX_BLOCK_ID_DESC',
   SessionsMaxBlockNumberAsc = 'SESSIONS_MAX_BLOCK_NUMBER_ASC',
   SessionsMaxBlockNumberDesc = 'SESSIONS_MAX_BLOCK_NUMBER_DESC',
   SessionsMaxIdAsc = 'SESSIONS_MAX_ID_ASC',
   SessionsMaxIdDesc = 'SESSIONS_MAX_ID_DESC',
-  SessionsMaxKeyGenThresholdAsc = 'SESSIONS_MAX_KEY_GEN_THRESHOLD_ASC',
-  SessionsMaxKeyGenThresholdDesc = 'SESSIONS_MAX_KEY_GEN_THRESHOLD_DESC',
-  SessionsMaxProposerThresholdAsc = 'SESSIONS_MAX_PROPOSER_THRESHOLD_ASC',
-  SessionsMaxProposerThresholdDesc = 'SESSIONS_MAX_PROPOSER_THRESHOLD_DESC',
   SessionsMaxPublicKeyIdAsc = 'SESSIONS_MAX_PUBLIC_KEY_ID_ASC',
   SessionsMaxPublicKeyIdDesc = 'SESSIONS_MAX_PUBLIC_KEY_ID_DESC',
-  SessionsMaxSignatureThresholdAsc = 'SESSIONS_MAX_SIGNATURE_THRESHOLD_ASC',
-  SessionsMaxSignatureThresholdDesc = 'SESSIONS_MAX_SIGNATURE_THRESHOLD_DESC',
   SessionsMinBlockIdAsc = 'SESSIONS_MIN_BLOCK_ID_ASC',
   SessionsMinBlockIdDesc = 'SESSIONS_MIN_BLOCK_ID_DESC',
   SessionsMinBlockNumberAsc = 'SESSIONS_MIN_BLOCK_NUMBER_ASC',
   SessionsMinBlockNumberDesc = 'SESSIONS_MIN_BLOCK_NUMBER_DESC',
   SessionsMinIdAsc = 'SESSIONS_MIN_ID_ASC',
   SessionsMinIdDesc = 'SESSIONS_MIN_ID_DESC',
-  SessionsMinKeyGenThresholdAsc = 'SESSIONS_MIN_KEY_GEN_THRESHOLD_ASC',
-  SessionsMinKeyGenThresholdDesc = 'SESSIONS_MIN_KEY_GEN_THRESHOLD_DESC',
-  SessionsMinProposerThresholdAsc = 'SESSIONS_MIN_PROPOSER_THRESHOLD_ASC',
-  SessionsMinProposerThresholdDesc = 'SESSIONS_MIN_PROPOSER_THRESHOLD_DESC',
   SessionsMinPublicKeyIdAsc = 'SESSIONS_MIN_PUBLIC_KEY_ID_ASC',
   SessionsMinPublicKeyIdDesc = 'SESSIONS_MIN_PUBLIC_KEY_ID_DESC',
-  SessionsMinSignatureThresholdAsc = 'SESSIONS_MIN_SIGNATURE_THRESHOLD_ASC',
-  SessionsMinSignatureThresholdDesc = 'SESSIONS_MIN_SIGNATURE_THRESHOLD_DESC',
   SessionsStddevPopulationBlockIdAsc = 'SESSIONS_STDDEV_POPULATION_BLOCK_ID_ASC',
   SessionsStddevPopulationBlockIdDesc = 'SESSIONS_STDDEV_POPULATION_BLOCK_ID_DESC',
   SessionsStddevPopulationBlockNumberAsc = 'SESSIONS_STDDEV_POPULATION_BLOCK_NUMBER_ASC',
   SessionsStddevPopulationBlockNumberDesc = 'SESSIONS_STDDEV_POPULATION_BLOCK_NUMBER_DESC',
   SessionsStddevPopulationIdAsc = 'SESSIONS_STDDEV_POPULATION_ID_ASC',
   SessionsStddevPopulationIdDesc = 'SESSIONS_STDDEV_POPULATION_ID_DESC',
-  SessionsStddevPopulationKeyGenThresholdAsc = 'SESSIONS_STDDEV_POPULATION_KEY_GEN_THRESHOLD_ASC',
-  SessionsStddevPopulationKeyGenThresholdDesc = 'SESSIONS_STDDEV_POPULATION_KEY_GEN_THRESHOLD_DESC',
-  SessionsStddevPopulationProposerThresholdAsc = 'SESSIONS_STDDEV_POPULATION_PROPOSER_THRESHOLD_ASC',
-  SessionsStddevPopulationProposerThresholdDesc = 'SESSIONS_STDDEV_POPULATION_PROPOSER_THRESHOLD_DESC',
   SessionsStddevPopulationPublicKeyIdAsc = 'SESSIONS_STDDEV_POPULATION_PUBLIC_KEY_ID_ASC',
   SessionsStddevPopulationPublicKeyIdDesc = 'SESSIONS_STDDEV_POPULATION_PUBLIC_KEY_ID_DESC',
-  SessionsStddevPopulationSignatureThresholdAsc = 'SESSIONS_STDDEV_POPULATION_SIGNATURE_THRESHOLD_ASC',
-  SessionsStddevPopulationSignatureThresholdDesc = 'SESSIONS_STDDEV_POPULATION_SIGNATURE_THRESHOLD_DESC',
   SessionsStddevSampleBlockIdAsc = 'SESSIONS_STDDEV_SAMPLE_BLOCK_ID_ASC',
   SessionsStddevSampleBlockIdDesc = 'SESSIONS_STDDEV_SAMPLE_BLOCK_ID_DESC',
   SessionsStddevSampleBlockNumberAsc = 'SESSIONS_STDDEV_SAMPLE_BLOCK_NUMBER_ASC',
   SessionsStddevSampleBlockNumberDesc = 'SESSIONS_STDDEV_SAMPLE_BLOCK_NUMBER_DESC',
   SessionsStddevSampleIdAsc = 'SESSIONS_STDDEV_SAMPLE_ID_ASC',
   SessionsStddevSampleIdDesc = 'SESSIONS_STDDEV_SAMPLE_ID_DESC',
-  SessionsStddevSampleKeyGenThresholdAsc = 'SESSIONS_STDDEV_SAMPLE_KEY_GEN_THRESHOLD_ASC',
-  SessionsStddevSampleKeyGenThresholdDesc = 'SESSIONS_STDDEV_SAMPLE_KEY_GEN_THRESHOLD_DESC',
-  SessionsStddevSampleProposerThresholdAsc = 'SESSIONS_STDDEV_SAMPLE_PROPOSER_THRESHOLD_ASC',
-  SessionsStddevSampleProposerThresholdDesc = 'SESSIONS_STDDEV_SAMPLE_PROPOSER_THRESHOLD_DESC',
   SessionsStddevSamplePublicKeyIdAsc = 'SESSIONS_STDDEV_SAMPLE_PUBLIC_KEY_ID_ASC',
   SessionsStddevSamplePublicKeyIdDesc = 'SESSIONS_STDDEV_SAMPLE_PUBLIC_KEY_ID_DESC',
-  SessionsStddevSampleSignatureThresholdAsc = 'SESSIONS_STDDEV_SAMPLE_SIGNATURE_THRESHOLD_ASC',
-  SessionsStddevSampleSignatureThresholdDesc = 'SESSIONS_STDDEV_SAMPLE_SIGNATURE_THRESHOLD_DESC',
   SessionsSumBlockIdAsc = 'SESSIONS_SUM_BLOCK_ID_ASC',
   SessionsSumBlockIdDesc = 'SESSIONS_SUM_BLOCK_ID_DESC',
   SessionsSumBlockNumberAsc = 'SESSIONS_SUM_BLOCK_NUMBER_ASC',
   SessionsSumBlockNumberDesc = 'SESSIONS_SUM_BLOCK_NUMBER_DESC',
   SessionsSumIdAsc = 'SESSIONS_SUM_ID_ASC',
   SessionsSumIdDesc = 'SESSIONS_SUM_ID_DESC',
-  SessionsSumKeyGenThresholdAsc = 'SESSIONS_SUM_KEY_GEN_THRESHOLD_ASC',
-  SessionsSumKeyGenThresholdDesc = 'SESSIONS_SUM_KEY_GEN_THRESHOLD_DESC',
-  SessionsSumProposerThresholdAsc = 'SESSIONS_SUM_PROPOSER_THRESHOLD_ASC',
-  SessionsSumProposerThresholdDesc = 'SESSIONS_SUM_PROPOSER_THRESHOLD_DESC',
   SessionsSumPublicKeyIdAsc = 'SESSIONS_SUM_PUBLIC_KEY_ID_ASC',
   SessionsSumPublicKeyIdDesc = 'SESSIONS_SUM_PUBLIC_KEY_ID_DESC',
-  SessionsSumSignatureThresholdAsc = 'SESSIONS_SUM_SIGNATURE_THRESHOLD_ASC',
-  SessionsSumSignatureThresholdDesc = 'SESSIONS_SUM_SIGNATURE_THRESHOLD_DESC',
   SessionsVariancePopulationBlockIdAsc = 'SESSIONS_VARIANCE_POPULATION_BLOCK_ID_ASC',
   SessionsVariancePopulationBlockIdDesc = 'SESSIONS_VARIANCE_POPULATION_BLOCK_ID_DESC',
   SessionsVariancePopulationBlockNumberAsc = 'SESSIONS_VARIANCE_POPULATION_BLOCK_NUMBER_ASC',
   SessionsVariancePopulationBlockNumberDesc = 'SESSIONS_VARIANCE_POPULATION_BLOCK_NUMBER_DESC',
   SessionsVariancePopulationIdAsc = 'SESSIONS_VARIANCE_POPULATION_ID_ASC',
   SessionsVariancePopulationIdDesc = 'SESSIONS_VARIANCE_POPULATION_ID_DESC',
-  SessionsVariancePopulationKeyGenThresholdAsc = 'SESSIONS_VARIANCE_POPULATION_KEY_GEN_THRESHOLD_ASC',
-  SessionsVariancePopulationKeyGenThresholdDesc = 'SESSIONS_VARIANCE_POPULATION_KEY_GEN_THRESHOLD_DESC',
-  SessionsVariancePopulationProposerThresholdAsc = 'SESSIONS_VARIANCE_POPULATION_PROPOSER_THRESHOLD_ASC',
-  SessionsVariancePopulationProposerThresholdDesc = 'SESSIONS_VARIANCE_POPULATION_PROPOSER_THRESHOLD_DESC',
   SessionsVariancePopulationPublicKeyIdAsc = 'SESSIONS_VARIANCE_POPULATION_PUBLIC_KEY_ID_ASC',
   SessionsVariancePopulationPublicKeyIdDesc = 'SESSIONS_VARIANCE_POPULATION_PUBLIC_KEY_ID_DESC',
-  SessionsVariancePopulationSignatureThresholdAsc = 'SESSIONS_VARIANCE_POPULATION_SIGNATURE_THRESHOLD_ASC',
-  SessionsVariancePopulationSignatureThresholdDesc = 'SESSIONS_VARIANCE_POPULATION_SIGNATURE_THRESHOLD_DESC',
   SessionsVarianceSampleBlockIdAsc = 'SESSIONS_VARIANCE_SAMPLE_BLOCK_ID_ASC',
   SessionsVarianceSampleBlockIdDesc = 'SESSIONS_VARIANCE_SAMPLE_BLOCK_ID_DESC',
   SessionsVarianceSampleBlockNumberAsc = 'SESSIONS_VARIANCE_SAMPLE_BLOCK_NUMBER_ASC',
   SessionsVarianceSampleBlockNumberDesc = 'SESSIONS_VARIANCE_SAMPLE_BLOCK_NUMBER_DESC',
   SessionsVarianceSampleIdAsc = 'SESSIONS_VARIANCE_SAMPLE_ID_ASC',
   SessionsVarianceSampleIdDesc = 'SESSIONS_VARIANCE_SAMPLE_ID_DESC',
-  SessionsVarianceSampleKeyGenThresholdAsc = 'SESSIONS_VARIANCE_SAMPLE_KEY_GEN_THRESHOLD_ASC',
-  SessionsVarianceSampleKeyGenThresholdDesc = 'SESSIONS_VARIANCE_SAMPLE_KEY_GEN_THRESHOLD_DESC',
-  SessionsVarianceSampleProposerThresholdAsc = 'SESSIONS_VARIANCE_SAMPLE_PROPOSER_THRESHOLD_ASC',
-  SessionsVarianceSampleProposerThresholdDesc = 'SESSIONS_VARIANCE_SAMPLE_PROPOSER_THRESHOLD_DESC',
   SessionsVarianceSamplePublicKeyIdAsc = 'SESSIONS_VARIANCE_SAMPLE_PUBLIC_KEY_ID_ASC',
   SessionsVarianceSamplePublicKeyIdDesc = 'SESSIONS_VARIANCE_SAMPLE_PUBLIC_KEY_ID_DESC',
-  SessionsVarianceSampleSignatureThresholdAsc = 'SESSIONS_VARIANCE_SAMPLE_SIGNATURE_THRESHOLD_ASC',
-  SessionsVarianceSampleSignatureThresholdDesc = 'SESSIONS_VARIANCE_SAMPLE_SIGNATURE_THRESHOLD_DESC',
   SignatureThresholdsAverageBlockIdAsc = 'SIGNATURE_THRESHOLDS_AVERAGE_BLOCK_ID_ASC',
   SignatureThresholdsAverageBlockIdDesc = 'SIGNATURE_THRESHOLDS_AVERAGE_BLOCK_ID_DESC',
   SignatureThresholdsAverageCurrentAsc = 'SIGNATURE_THRESHOLDS_AVERAGE_CURRENT_ASC',
@@ -7303,14 +7249,8 @@ export enum PublicKeysOrderBy {
   SessionsAverageBlockNumberDesc = 'SESSIONS_AVERAGE_BLOCK_NUMBER_DESC',
   SessionsAverageIdAsc = 'SESSIONS_AVERAGE_ID_ASC',
   SessionsAverageIdDesc = 'SESSIONS_AVERAGE_ID_DESC',
-  SessionsAverageKeyGenThresholdAsc = 'SESSIONS_AVERAGE_KEY_GEN_THRESHOLD_ASC',
-  SessionsAverageKeyGenThresholdDesc = 'SESSIONS_AVERAGE_KEY_GEN_THRESHOLD_DESC',
-  SessionsAverageProposerThresholdAsc = 'SESSIONS_AVERAGE_PROPOSER_THRESHOLD_ASC',
-  SessionsAverageProposerThresholdDesc = 'SESSIONS_AVERAGE_PROPOSER_THRESHOLD_DESC',
   SessionsAveragePublicKeyIdAsc = 'SESSIONS_AVERAGE_PUBLIC_KEY_ID_ASC',
   SessionsAveragePublicKeyIdDesc = 'SESSIONS_AVERAGE_PUBLIC_KEY_ID_DESC',
-  SessionsAverageSignatureThresholdAsc = 'SESSIONS_AVERAGE_SIGNATURE_THRESHOLD_ASC',
-  SessionsAverageSignatureThresholdDesc = 'SESSIONS_AVERAGE_SIGNATURE_THRESHOLD_DESC',
   SessionsCountAsc = 'SESSIONS_COUNT_ASC',
   SessionsCountDesc = 'SESSIONS_COUNT_DESC',
   SessionsDistinctCountBlockIdAsc = 'SESSIONS_DISTINCT_COUNT_BLOCK_ID_ASC',
@@ -7319,112 +7259,64 @@ export enum PublicKeysOrderBy {
   SessionsDistinctCountBlockNumberDesc = 'SESSIONS_DISTINCT_COUNT_BLOCK_NUMBER_DESC',
   SessionsDistinctCountIdAsc = 'SESSIONS_DISTINCT_COUNT_ID_ASC',
   SessionsDistinctCountIdDesc = 'SESSIONS_DISTINCT_COUNT_ID_DESC',
-  SessionsDistinctCountKeyGenThresholdAsc = 'SESSIONS_DISTINCT_COUNT_KEY_GEN_THRESHOLD_ASC',
-  SessionsDistinctCountKeyGenThresholdDesc = 'SESSIONS_DISTINCT_COUNT_KEY_GEN_THRESHOLD_DESC',
-  SessionsDistinctCountProposerThresholdAsc = 'SESSIONS_DISTINCT_COUNT_PROPOSER_THRESHOLD_ASC',
-  SessionsDistinctCountProposerThresholdDesc = 'SESSIONS_DISTINCT_COUNT_PROPOSER_THRESHOLD_DESC',
   SessionsDistinctCountPublicKeyIdAsc = 'SESSIONS_DISTINCT_COUNT_PUBLIC_KEY_ID_ASC',
   SessionsDistinctCountPublicKeyIdDesc = 'SESSIONS_DISTINCT_COUNT_PUBLIC_KEY_ID_DESC',
-  SessionsDistinctCountSignatureThresholdAsc = 'SESSIONS_DISTINCT_COUNT_SIGNATURE_THRESHOLD_ASC',
-  SessionsDistinctCountSignatureThresholdDesc = 'SESSIONS_DISTINCT_COUNT_SIGNATURE_THRESHOLD_DESC',
   SessionsMaxBlockIdAsc = 'SESSIONS_MAX_BLOCK_ID_ASC',
   SessionsMaxBlockIdDesc = 'SESSIONS_MAX_BLOCK_ID_DESC',
   SessionsMaxBlockNumberAsc = 'SESSIONS_MAX_BLOCK_NUMBER_ASC',
   SessionsMaxBlockNumberDesc = 'SESSIONS_MAX_BLOCK_NUMBER_DESC',
   SessionsMaxIdAsc = 'SESSIONS_MAX_ID_ASC',
   SessionsMaxIdDesc = 'SESSIONS_MAX_ID_DESC',
-  SessionsMaxKeyGenThresholdAsc = 'SESSIONS_MAX_KEY_GEN_THRESHOLD_ASC',
-  SessionsMaxKeyGenThresholdDesc = 'SESSIONS_MAX_KEY_GEN_THRESHOLD_DESC',
-  SessionsMaxProposerThresholdAsc = 'SESSIONS_MAX_PROPOSER_THRESHOLD_ASC',
-  SessionsMaxProposerThresholdDesc = 'SESSIONS_MAX_PROPOSER_THRESHOLD_DESC',
   SessionsMaxPublicKeyIdAsc = 'SESSIONS_MAX_PUBLIC_KEY_ID_ASC',
   SessionsMaxPublicKeyIdDesc = 'SESSIONS_MAX_PUBLIC_KEY_ID_DESC',
-  SessionsMaxSignatureThresholdAsc = 'SESSIONS_MAX_SIGNATURE_THRESHOLD_ASC',
-  SessionsMaxSignatureThresholdDesc = 'SESSIONS_MAX_SIGNATURE_THRESHOLD_DESC',
   SessionsMinBlockIdAsc = 'SESSIONS_MIN_BLOCK_ID_ASC',
   SessionsMinBlockIdDesc = 'SESSIONS_MIN_BLOCK_ID_DESC',
   SessionsMinBlockNumberAsc = 'SESSIONS_MIN_BLOCK_NUMBER_ASC',
   SessionsMinBlockNumberDesc = 'SESSIONS_MIN_BLOCK_NUMBER_DESC',
   SessionsMinIdAsc = 'SESSIONS_MIN_ID_ASC',
   SessionsMinIdDesc = 'SESSIONS_MIN_ID_DESC',
-  SessionsMinKeyGenThresholdAsc = 'SESSIONS_MIN_KEY_GEN_THRESHOLD_ASC',
-  SessionsMinKeyGenThresholdDesc = 'SESSIONS_MIN_KEY_GEN_THRESHOLD_DESC',
-  SessionsMinProposerThresholdAsc = 'SESSIONS_MIN_PROPOSER_THRESHOLD_ASC',
-  SessionsMinProposerThresholdDesc = 'SESSIONS_MIN_PROPOSER_THRESHOLD_DESC',
   SessionsMinPublicKeyIdAsc = 'SESSIONS_MIN_PUBLIC_KEY_ID_ASC',
   SessionsMinPublicKeyIdDesc = 'SESSIONS_MIN_PUBLIC_KEY_ID_DESC',
-  SessionsMinSignatureThresholdAsc = 'SESSIONS_MIN_SIGNATURE_THRESHOLD_ASC',
-  SessionsMinSignatureThresholdDesc = 'SESSIONS_MIN_SIGNATURE_THRESHOLD_DESC',
   SessionsStddevPopulationBlockIdAsc = 'SESSIONS_STDDEV_POPULATION_BLOCK_ID_ASC',
   SessionsStddevPopulationBlockIdDesc = 'SESSIONS_STDDEV_POPULATION_BLOCK_ID_DESC',
   SessionsStddevPopulationBlockNumberAsc = 'SESSIONS_STDDEV_POPULATION_BLOCK_NUMBER_ASC',
   SessionsStddevPopulationBlockNumberDesc = 'SESSIONS_STDDEV_POPULATION_BLOCK_NUMBER_DESC',
   SessionsStddevPopulationIdAsc = 'SESSIONS_STDDEV_POPULATION_ID_ASC',
   SessionsStddevPopulationIdDesc = 'SESSIONS_STDDEV_POPULATION_ID_DESC',
-  SessionsStddevPopulationKeyGenThresholdAsc = 'SESSIONS_STDDEV_POPULATION_KEY_GEN_THRESHOLD_ASC',
-  SessionsStddevPopulationKeyGenThresholdDesc = 'SESSIONS_STDDEV_POPULATION_KEY_GEN_THRESHOLD_DESC',
-  SessionsStddevPopulationProposerThresholdAsc = 'SESSIONS_STDDEV_POPULATION_PROPOSER_THRESHOLD_ASC',
-  SessionsStddevPopulationProposerThresholdDesc = 'SESSIONS_STDDEV_POPULATION_PROPOSER_THRESHOLD_DESC',
   SessionsStddevPopulationPublicKeyIdAsc = 'SESSIONS_STDDEV_POPULATION_PUBLIC_KEY_ID_ASC',
   SessionsStddevPopulationPublicKeyIdDesc = 'SESSIONS_STDDEV_POPULATION_PUBLIC_KEY_ID_DESC',
-  SessionsStddevPopulationSignatureThresholdAsc = 'SESSIONS_STDDEV_POPULATION_SIGNATURE_THRESHOLD_ASC',
-  SessionsStddevPopulationSignatureThresholdDesc = 'SESSIONS_STDDEV_POPULATION_SIGNATURE_THRESHOLD_DESC',
   SessionsStddevSampleBlockIdAsc = 'SESSIONS_STDDEV_SAMPLE_BLOCK_ID_ASC',
   SessionsStddevSampleBlockIdDesc = 'SESSIONS_STDDEV_SAMPLE_BLOCK_ID_DESC',
   SessionsStddevSampleBlockNumberAsc = 'SESSIONS_STDDEV_SAMPLE_BLOCK_NUMBER_ASC',
   SessionsStddevSampleBlockNumberDesc = 'SESSIONS_STDDEV_SAMPLE_BLOCK_NUMBER_DESC',
   SessionsStddevSampleIdAsc = 'SESSIONS_STDDEV_SAMPLE_ID_ASC',
   SessionsStddevSampleIdDesc = 'SESSIONS_STDDEV_SAMPLE_ID_DESC',
-  SessionsStddevSampleKeyGenThresholdAsc = 'SESSIONS_STDDEV_SAMPLE_KEY_GEN_THRESHOLD_ASC',
-  SessionsStddevSampleKeyGenThresholdDesc = 'SESSIONS_STDDEV_SAMPLE_KEY_GEN_THRESHOLD_DESC',
-  SessionsStddevSampleProposerThresholdAsc = 'SESSIONS_STDDEV_SAMPLE_PROPOSER_THRESHOLD_ASC',
-  SessionsStddevSampleProposerThresholdDesc = 'SESSIONS_STDDEV_SAMPLE_PROPOSER_THRESHOLD_DESC',
   SessionsStddevSamplePublicKeyIdAsc = 'SESSIONS_STDDEV_SAMPLE_PUBLIC_KEY_ID_ASC',
   SessionsStddevSamplePublicKeyIdDesc = 'SESSIONS_STDDEV_SAMPLE_PUBLIC_KEY_ID_DESC',
-  SessionsStddevSampleSignatureThresholdAsc = 'SESSIONS_STDDEV_SAMPLE_SIGNATURE_THRESHOLD_ASC',
-  SessionsStddevSampleSignatureThresholdDesc = 'SESSIONS_STDDEV_SAMPLE_SIGNATURE_THRESHOLD_DESC',
   SessionsSumBlockIdAsc = 'SESSIONS_SUM_BLOCK_ID_ASC',
   SessionsSumBlockIdDesc = 'SESSIONS_SUM_BLOCK_ID_DESC',
   SessionsSumBlockNumberAsc = 'SESSIONS_SUM_BLOCK_NUMBER_ASC',
   SessionsSumBlockNumberDesc = 'SESSIONS_SUM_BLOCK_NUMBER_DESC',
   SessionsSumIdAsc = 'SESSIONS_SUM_ID_ASC',
   SessionsSumIdDesc = 'SESSIONS_SUM_ID_DESC',
-  SessionsSumKeyGenThresholdAsc = 'SESSIONS_SUM_KEY_GEN_THRESHOLD_ASC',
-  SessionsSumKeyGenThresholdDesc = 'SESSIONS_SUM_KEY_GEN_THRESHOLD_DESC',
-  SessionsSumProposerThresholdAsc = 'SESSIONS_SUM_PROPOSER_THRESHOLD_ASC',
-  SessionsSumProposerThresholdDesc = 'SESSIONS_SUM_PROPOSER_THRESHOLD_DESC',
   SessionsSumPublicKeyIdAsc = 'SESSIONS_SUM_PUBLIC_KEY_ID_ASC',
   SessionsSumPublicKeyIdDesc = 'SESSIONS_SUM_PUBLIC_KEY_ID_DESC',
-  SessionsSumSignatureThresholdAsc = 'SESSIONS_SUM_SIGNATURE_THRESHOLD_ASC',
-  SessionsSumSignatureThresholdDesc = 'SESSIONS_SUM_SIGNATURE_THRESHOLD_DESC',
   SessionsVariancePopulationBlockIdAsc = 'SESSIONS_VARIANCE_POPULATION_BLOCK_ID_ASC',
   SessionsVariancePopulationBlockIdDesc = 'SESSIONS_VARIANCE_POPULATION_BLOCK_ID_DESC',
   SessionsVariancePopulationBlockNumberAsc = 'SESSIONS_VARIANCE_POPULATION_BLOCK_NUMBER_ASC',
   SessionsVariancePopulationBlockNumberDesc = 'SESSIONS_VARIANCE_POPULATION_BLOCK_NUMBER_DESC',
   SessionsVariancePopulationIdAsc = 'SESSIONS_VARIANCE_POPULATION_ID_ASC',
   SessionsVariancePopulationIdDesc = 'SESSIONS_VARIANCE_POPULATION_ID_DESC',
-  SessionsVariancePopulationKeyGenThresholdAsc = 'SESSIONS_VARIANCE_POPULATION_KEY_GEN_THRESHOLD_ASC',
-  SessionsVariancePopulationKeyGenThresholdDesc = 'SESSIONS_VARIANCE_POPULATION_KEY_GEN_THRESHOLD_DESC',
-  SessionsVariancePopulationProposerThresholdAsc = 'SESSIONS_VARIANCE_POPULATION_PROPOSER_THRESHOLD_ASC',
-  SessionsVariancePopulationProposerThresholdDesc = 'SESSIONS_VARIANCE_POPULATION_PROPOSER_THRESHOLD_DESC',
   SessionsVariancePopulationPublicKeyIdAsc = 'SESSIONS_VARIANCE_POPULATION_PUBLIC_KEY_ID_ASC',
   SessionsVariancePopulationPublicKeyIdDesc = 'SESSIONS_VARIANCE_POPULATION_PUBLIC_KEY_ID_DESC',
-  SessionsVariancePopulationSignatureThresholdAsc = 'SESSIONS_VARIANCE_POPULATION_SIGNATURE_THRESHOLD_ASC',
-  SessionsVariancePopulationSignatureThresholdDesc = 'SESSIONS_VARIANCE_POPULATION_SIGNATURE_THRESHOLD_DESC',
   SessionsVarianceSampleBlockIdAsc = 'SESSIONS_VARIANCE_SAMPLE_BLOCK_ID_ASC',
   SessionsVarianceSampleBlockIdDesc = 'SESSIONS_VARIANCE_SAMPLE_BLOCK_ID_DESC',
   SessionsVarianceSampleBlockNumberAsc = 'SESSIONS_VARIANCE_SAMPLE_BLOCK_NUMBER_ASC',
   SessionsVarianceSampleBlockNumberDesc = 'SESSIONS_VARIANCE_SAMPLE_BLOCK_NUMBER_DESC',
   SessionsVarianceSampleIdAsc = 'SESSIONS_VARIANCE_SAMPLE_ID_ASC',
   SessionsVarianceSampleIdDesc = 'SESSIONS_VARIANCE_SAMPLE_ID_DESC',
-  SessionsVarianceSampleKeyGenThresholdAsc = 'SESSIONS_VARIANCE_SAMPLE_KEY_GEN_THRESHOLD_ASC',
-  SessionsVarianceSampleKeyGenThresholdDesc = 'SESSIONS_VARIANCE_SAMPLE_KEY_GEN_THRESHOLD_DESC',
-  SessionsVarianceSampleProposerThresholdAsc = 'SESSIONS_VARIANCE_SAMPLE_PROPOSER_THRESHOLD_ASC',
-  SessionsVarianceSampleProposerThresholdDesc = 'SESSIONS_VARIANCE_SAMPLE_PROPOSER_THRESHOLD_DESC',
   SessionsVarianceSamplePublicKeyIdAsc = 'SESSIONS_VARIANCE_SAMPLE_PUBLIC_KEY_ID_ASC',
   SessionsVarianceSamplePublicKeyIdDesc = 'SESSIONS_VARIANCE_SAMPLE_PUBLIC_KEY_ID_DESC',
-  SessionsVarianceSampleSignatureThresholdAsc = 'SESSIONS_VARIANCE_SAMPLE_SIGNATURE_THRESHOLD_ASC',
-  SessionsVarianceSampleSignatureThresholdDesc = 'SESSIONS_VARIANCE_SAMPLE_SIGNATURE_THRESHOLD_DESC',
   UncompressedAsc = 'UNCOMPRESSED_ASC',
   UncompressedDesc = 'UNCOMPRESSED_DESC',
 }
@@ -7527,6 +7419,11 @@ export type Query = Node & {
   signatureThresholdByNodeId?: Maybe<SignatureThreshold>;
   /** Reads and enables pagination through a set of `SignatureThreshold`. */
   signatureThresholds?: Maybe<SignatureThresholdsConnection>;
+  threshold?: Maybe<Threshold>;
+  /** Reads a single `Threshold` using its globally unique `ID`. */
+  thresholdByNodeId?: Maybe<Threshold>;
+  /** Reads and enables pagination through a set of `Threshold`. */
+  thresholds?: Maybe<ThresholdsConnection>;
   unsignedProposalsQueue?: Maybe<UnsignedProposalsQueue>;
   /** Reads a single `UnsignedProposalsQueue` using its globally unique `ID`. */
   unsignedProposalsQueueByNodeId?: Maybe<UnsignedProposalsQueue>;
@@ -7907,6 +7804,27 @@ export type QuerySignatureThresholdsArgs = {
 };
 
 /** The root query type which gives access points into the data universe. */
+export type QueryThresholdArgs = {
+  id: Scalars['String'];
+};
+
+/** The root query type which gives access points into the data universe. */
+export type QueryThresholdByNodeIdArgs = {
+  nodeId: Scalars['ID'];
+};
+
+/** The root query type which gives access points into the data universe. */
+export type QueryThresholdsArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  filter?: InputMaybe<ThresholdFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<ThresholdsOrderBy>>;
+};
+
+/** The root query type which gives access points into the data universe. */
 export type QueryUnsignedProposalsQueueArgs = {
   id: Scalars['String'];
 };
@@ -7976,10 +7894,8 @@ export type Session = Node & {
   blockId: Scalars['String'];
   blockNumber: Scalars['Int'];
   id: Scalars['String'];
-  keyGenThreshold?: Maybe<Scalars['JSON']>;
   /** A globally unique identifier. Can be used in various places throughout the system to identify this single value. */
   nodeId: Scalars['ID'];
-  proposerThreshold?: Maybe<Scalars['JSON']>;
   /** Reads and enables pagination through a set of `Proposer`. */
   proposersBySessionProposerSessionIdAndProposerId: SessionProposersBySessionProposerSessionIdAndProposerIdManyToManyConnection;
   /** Reads a single `PublicKey` that is related to this `Session`. */
@@ -7989,7 +7905,8 @@ export type Session = Node & {
   sessionProposers: SessionProposersConnection;
   /** Reads and enables pagination through a set of `SessionValidator`. */
   sessionValidators: SessionValidatorsConnection;
-  signatureThreshold?: Maybe<Scalars['JSON']>;
+  /** Reads and enables pagination through a set of `Threshold`. */
+  thresholds: ThresholdsConnection;
   /** Reads and enables pagination through a set of `Validator`. */
   validatorsBySessionValidatorSessionIdAndValidatorId: SessionValidatorsBySessionValidatorSessionIdAndValidatorIdManyToManyConnection;
 };
@@ -8022,6 +7939,16 @@ export type SessionSessionValidatorsArgs = {
   last?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<SessionValidatorsOrderBy>>;
+};
+
+export type SessionThresholdsArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  filter?: InputMaybe<ThresholdFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<ThresholdsOrderBy>>;
 };
 
 export type SessionValidatorsBySessionValidatorSessionIdAndValidatorIdArgs = {
@@ -8071,14 +7998,8 @@ export type SessionDistinctCountAggregates = {
   blockNumber?: Maybe<Scalars['BigInt']>;
   /** Distinct count of id across the matching connection */
   id?: Maybe<Scalars['BigInt']>;
-  /** Distinct count of keyGenThreshold across the matching connection */
-  keyGenThreshold?: Maybe<Scalars['BigInt']>;
-  /** Distinct count of proposerThreshold across the matching connection */
-  proposerThreshold?: Maybe<Scalars['BigInt']>;
   /** Distinct count of publicKeyId across the matching connection */
   publicKeyId?: Maybe<Scalars['BigInt']>;
-  /** Distinct count of signatureThreshold across the matching connection */
-  signatureThreshold?: Maybe<Scalars['BigInt']>;
 };
 
 /** A filter to be used against `Session` object types. All fields are combined with a logical ‘and.’ */
@@ -8091,18 +8012,12 @@ export type SessionFilter = {
   blockNumber?: InputMaybe<IntFilter>;
   /** Filter by the object’s `id` field. */
   id?: InputMaybe<StringFilter>;
-  /** Filter by the object’s `keyGenThreshold` field. */
-  keyGenThreshold?: InputMaybe<JsonFilter>;
   /** Negates the expression. */
   not?: InputMaybe<SessionFilter>;
   /** Checks for any expressions in this list. */
   or?: InputMaybe<Array<SessionFilter>>;
-  /** Filter by the object’s `proposerThreshold` field. */
-  proposerThreshold?: InputMaybe<JsonFilter>;
   /** Filter by the object’s `publicKeyId` field. */
   publicKeyId?: InputMaybe<StringFilter>;
-  /** Filter by the object’s `signatureThreshold` field. */
-  signatureThreshold?: InputMaybe<JsonFilter>;
 };
 
 export type SessionMaxAggregates = {
@@ -8661,10 +8576,7 @@ export type SessionsEdge = {
 export enum SessionsGroupBy {
   BlockId = 'BLOCK_ID',
   BlockNumber = 'BLOCK_NUMBER',
-  KeyGenThreshold = 'KEY_GEN_THRESHOLD',
-  ProposerThreshold = 'PROPOSER_THRESHOLD',
   PublicKeyId = 'PUBLIC_KEY_ID',
-  SignatureThreshold = 'SIGNATURE_THRESHOLD',
 }
 
 export type SessionsHavingAverageInput = {
@@ -8726,13 +8638,9 @@ export enum SessionsOrderBy {
   BlockNumberDesc = 'BLOCK_NUMBER_DESC',
   IdAsc = 'ID_ASC',
   IdDesc = 'ID_DESC',
-  KeyGenThresholdAsc = 'KEY_GEN_THRESHOLD_ASC',
-  KeyGenThresholdDesc = 'KEY_GEN_THRESHOLD_DESC',
   Natural = 'NATURAL',
   PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
   PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
-  ProposerThresholdAsc = 'PROPOSER_THRESHOLD_ASC',
-  ProposerThresholdDesc = 'PROPOSER_THRESHOLD_DESC',
   PublicKeyIdAsc = 'PUBLIC_KEY_ID_ASC',
   PublicKeyIdDesc = 'PUBLIC_KEY_ID_DESC',
   SessionProposersAverageIdAsc = 'SESSION_PROPOSERS_AVERAGE_ID_ASC',
@@ -8955,8 +8863,116 @@ export enum SessionsOrderBy {
   SessionValidatorsVarianceSampleSessionIdDesc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_SESSION_ID_DESC',
   SessionValidatorsVarianceSampleValidatorIdAsc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_VALIDATOR_ID_ASC',
   SessionValidatorsVarianceSampleValidatorIdDesc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_VALIDATOR_ID_DESC',
-  SignatureThresholdAsc = 'SIGNATURE_THRESHOLD_ASC',
-  SignatureThresholdDesc = 'SIGNATURE_THRESHOLD_DESC',
+  ThresholdsAverageCurrentAsc = 'THRESHOLDS_AVERAGE_CURRENT_ASC',
+  ThresholdsAverageCurrentDesc = 'THRESHOLDS_AVERAGE_CURRENT_DESC',
+  ThresholdsAverageIdAsc = 'THRESHOLDS_AVERAGE_ID_ASC',
+  ThresholdsAverageIdDesc = 'THRESHOLDS_AVERAGE_ID_DESC',
+  ThresholdsAverageNextAsc = 'THRESHOLDS_AVERAGE_NEXT_ASC',
+  ThresholdsAverageNextDesc = 'THRESHOLDS_AVERAGE_NEXT_DESC',
+  ThresholdsAveragePendingAsc = 'THRESHOLDS_AVERAGE_PENDING_ASC',
+  ThresholdsAveragePendingDesc = 'THRESHOLDS_AVERAGE_PENDING_DESC',
+  ThresholdsAverageSessionIdAsc = 'THRESHOLDS_AVERAGE_SESSION_ID_ASC',
+  ThresholdsAverageSessionIdDesc = 'THRESHOLDS_AVERAGE_SESSION_ID_DESC',
+  ThresholdsAverageVariantAsc = 'THRESHOLDS_AVERAGE_VARIANT_ASC',
+  ThresholdsAverageVariantDesc = 'THRESHOLDS_AVERAGE_VARIANT_DESC',
+  ThresholdsCountAsc = 'THRESHOLDS_COUNT_ASC',
+  ThresholdsCountDesc = 'THRESHOLDS_COUNT_DESC',
+  ThresholdsDistinctCountCurrentAsc = 'THRESHOLDS_DISTINCT_COUNT_CURRENT_ASC',
+  ThresholdsDistinctCountCurrentDesc = 'THRESHOLDS_DISTINCT_COUNT_CURRENT_DESC',
+  ThresholdsDistinctCountIdAsc = 'THRESHOLDS_DISTINCT_COUNT_ID_ASC',
+  ThresholdsDistinctCountIdDesc = 'THRESHOLDS_DISTINCT_COUNT_ID_DESC',
+  ThresholdsDistinctCountNextAsc = 'THRESHOLDS_DISTINCT_COUNT_NEXT_ASC',
+  ThresholdsDistinctCountNextDesc = 'THRESHOLDS_DISTINCT_COUNT_NEXT_DESC',
+  ThresholdsDistinctCountPendingAsc = 'THRESHOLDS_DISTINCT_COUNT_PENDING_ASC',
+  ThresholdsDistinctCountPendingDesc = 'THRESHOLDS_DISTINCT_COUNT_PENDING_DESC',
+  ThresholdsDistinctCountSessionIdAsc = 'THRESHOLDS_DISTINCT_COUNT_SESSION_ID_ASC',
+  ThresholdsDistinctCountSessionIdDesc = 'THRESHOLDS_DISTINCT_COUNT_SESSION_ID_DESC',
+  ThresholdsDistinctCountVariantAsc = 'THRESHOLDS_DISTINCT_COUNT_VARIANT_ASC',
+  ThresholdsDistinctCountVariantDesc = 'THRESHOLDS_DISTINCT_COUNT_VARIANT_DESC',
+  ThresholdsMaxCurrentAsc = 'THRESHOLDS_MAX_CURRENT_ASC',
+  ThresholdsMaxCurrentDesc = 'THRESHOLDS_MAX_CURRENT_DESC',
+  ThresholdsMaxIdAsc = 'THRESHOLDS_MAX_ID_ASC',
+  ThresholdsMaxIdDesc = 'THRESHOLDS_MAX_ID_DESC',
+  ThresholdsMaxNextAsc = 'THRESHOLDS_MAX_NEXT_ASC',
+  ThresholdsMaxNextDesc = 'THRESHOLDS_MAX_NEXT_DESC',
+  ThresholdsMaxPendingAsc = 'THRESHOLDS_MAX_PENDING_ASC',
+  ThresholdsMaxPendingDesc = 'THRESHOLDS_MAX_PENDING_DESC',
+  ThresholdsMaxSessionIdAsc = 'THRESHOLDS_MAX_SESSION_ID_ASC',
+  ThresholdsMaxSessionIdDesc = 'THRESHOLDS_MAX_SESSION_ID_DESC',
+  ThresholdsMaxVariantAsc = 'THRESHOLDS_MAX_VARIANT_ASC',
+  ThresholdsMaxVariantDesc = 'THRESHOLDS_MAX_VARIANT_DESC',
+  ThresholdsMinCurrentAsc = 'THRESHOLDS_MIN_CURRENT_ASC',
+  ThresholdsMinCurrentDesc = 'THRESHOLDS_MIN_CURRENT_DESC',
+  ThresholdsMinIdAsc = 'THRESHOLDS_MIN_ID_ASC',
+  ThresholdsMinIdDesc = 'THRESHOLDS_MIN_ID_DESC',
+  ThresholdsMinNextAsc = 'THRESHOLDS_MIN_NEXT_ASC',
+  ThresholdsMinNextDesc = 'THRESHOLDS_MIN_NEXT_DESC',
+  ThresholdsMinPendingAsc = 'THRESHOLDS_MIN_PENDING_ASC',
+  ThresholdsMinPendingDesc = 'THRESHOLDS_MIN_PENDING_DESC',
+  ThresholdsMinSessionIdAsc = 'THRESHOLDS_MIN_SESSION_ID_ASC',
+  ThresholdsMinSessionIdDesc = 'THRESHOLDS_MIN_SESSION_ID_DESC',
+  ThresholdsMinVariantAsc = 'THRESHOLDS_MIN_VARIANT_ASC',
+  ThresholdsMinVariantDesc = 'THRESHOLDS_MIN_VARIANT_DESC',
+  ThresholdsStddevPopulationCurrentAsc = 'THRESHOLDS_STDDEV_POPULATION_CURRENT_ASC',
+  ThresholdsStddevPopulationCurrentDesc = 'THRESHOLDS_STDDEV_POPULATION_CURRENT_DESC',
+  ThresholdsStddevPopulationIdAsc = 'THRESHOLDS_STDDEV_POPULATION_ID_ASC',
+  ThresholdsStddevPopulationIdDesc = 'THRESHOLDS_STDDEV_POPULATION_ID_DESC',
+  ThresholdsStddevPopulationNextAsc = 'THRESHOLDS_STDDEV_POPULATION_NEXT_ASC',
+  ThresholdsStddevPopulationNextDesc = 'THRESHOLDS_STDDEV_POPULATION_NEXT_DESC',
+  ThresholdsStddevPopulationPendingAsc = 'THRESHOLDS_STDDEV_POPULATION_PENDING_ASC',
+  ThresholdsStddevPopulationPendingDesc = 'THRESHOLDS_STDDEV_POPULATION_PENDING_DESC',
+  ThresholdsStddevPopulationSessionIdAsc = 'THRESHOLDS_STDDEV_POPULATION_SESSION_ID_ASC',
+  ThresholdsStddevPopulationSessionIdDesc = 'THRESHOLDS_STDDEV_POPULATION_SESSION_ID_DESC',
+  ThresholdsStddevPopulationVariantAsc = 'THRESHOLDS_STDDEV_POPULATION_VARIANT_ASC',
+  ThresholdsStddevPopulationVariantDesc = 'THRESHOLDS_STDDEV_POPULATION_VARIANT_DESC',
+  ThresholdsStddevSampleCurrentAsc = 'THRESHOLDS_STDDEV_SAMPLE_CURRENT_ASC',
+  ThresholdsStddevSampleCurrentDesc = 'THRESHOLDS_STDDEV_SAMPLE_CURRENT_DESC',
+  ThresholdsStddevSampleIdAsc = 'THRESHOLDS_STDDEV_SAMPLE_ID_ASC',
+  ThresholdsStddevSampleIdDesc = 'THRESHOLDS_STDDEV_SAMPLE_ID_DESC',
+  ThresholdsStddevSampleNextAsc = 'THRESHOLDS_STDDEV_SAMPLE_NEXT_ASC',
+  ThresholdsStddevSampleNextDesc = 'THRESHOLDS_STDDEV_SAMPLE_NEXT_DESC',
+  ThresholdsStddevSamplePendingAsc = 'THRESHOLDS_STDDEV_SAMPLE_PENDING_ASC',
+  ThresholdsStddevSamplePendingDesc = 'THRESHOLDS_STDDEV_SAMPLE_PENDING_DESC',
+  ThresholdsStddevSampleSessionIdAsc = 'THRESHOLDS_STDDEV_SAMPLE_SESSION_ID_ASC',
+  ThresholdsStddevSampleSessionIdDesc = 'THRESHOLDS_STDDEV_SAMPLE_SESSION_ID_DESC',
+  ThresholdsStddevSampleVariantAsc = 'THRESHOLDS_STDDEV_SAMPLE_VARIANT_ASC',
+  ThresholdsStddevSampleVariantDesc = 'THRESHOLDS_STDDEV_SAMPLE_VARIANT_DESC',
+  ThresholdsSumCurrentAsc = 'THRESHOLDS_SUM_CURRENT_ASC',
+  ThresholdsSumCurrentDesc = 'THRESHOLDS_SUM_CURRENT_DESC',
+  ThresholdsSumIdAsc = 'THRESHOLDS_SUM_ID_ASC',
+  ThresholdsSumIdDesc = 'THRESHOLDS_SUM_ID_DESC',
+  ThresholdsSumNextAsc = 'THRESHOLDS_SUM_NEXT_ASC',
+  ThresholdsSumNextDesc = 'THRESHOLDS_SUM_NEXT_DESC',
+  ThresholdsSumPendingAsc = 'THRESHOLDS_SUM_PENDING_ASC',
+  ThresholdsSumPendingDesc = 'THRESHOLDS_SUM_PENDING_DESC',
+  ThresholdsSumSessionIdAsc = 'THRESHOLDS_SUM_SESSION_ID_ASC',
+  ThresholdsSumSessionIdDesc = 'THRESHOLDS_SUM_SESSION_ID_DESC',
+  ThresholdsSumVariantAsc = 'THRESHOLDS_SUM_VARIANT_ASC',
+  ThresholdsSumVariantDesc = 'THRESHOLDS_SUM_VARIANT_DESC',
+  ThresholdsVariancePopulationCurrentAsc = 'THRESHOLDS_VARIANCE_POPULATION_CURRENT_ASC',
+  ThresholdsVariancePopulationCurrentDesc = 'THRESHOLDS_VARIANCE_POPULATION_CURRENT_DESC',
+  ThresholdsVariancePopulationIdAsc = 'THRESHOLDS_VARIANCE_POPULATION_ID_ASC',
+  ThresholdsVariancePopulationIdDesc = 'THRESHOLDS_VARIANCE_POPULATION_ID_DESC',
+  ThresholdsVariancePopulationNextAsc = 'THRESHOLDS_VARIANCE_POPULATION_NEXT_ASC',
+  ThresholdsVariancePopulationNextDesc = 'THRESHOLDS_VARIANCE_POPULATION_NEXT_DESC',
+  ThresholdsVariancePopulationPendingAsc = 'THRESHOLDS_VARIANCE_POPULATION_PENDING_ASC',
+  ThresholdsVariancePopulationPendingDesc = 'THRESHOLDS_VARIANCE_POPULATION_PENDING_DESC',
+  ThresholdsVariancePopulationSessionIdAsc = 'THRESHOLDS_VARIANCE_POPULATION_SESSION_ID_ASC',
+  ThresholdsVariancePopulationSessionIdDesc = 'THRESHOLDS_VARIANCE_POPULATION_SESSION_ID_DESC',
+  ThresholdsVariancePopulationVariantAsc = 'THRESHOLDS_VARIANCE_POPULATION_VARIANT_ASC',
+  ThresholdsVariancePopulationVariantDesc = 'THRESHOLDS_VARIANCE_POPULATION_VARIANT_DESC',
+  ThresholdsVarianceSampleCurrentAsc = 'THRESHOLDS_VARIANCE_SAMPLE_CURRENT_ASC',
+  ThresholdsVarianceSampleCurrentDesc = 'THRESHOLDS_VARIANCE_SAMPLE_CURRENT_DESC',
+  ThresholdsVarianceSampleIdAsc = 'THRESHOLDS_VARIANCE_SAMPLE_ID_ASC',
+  ThresholdsVarianceSampleIdDesc = 'THRESHOLDS_VARIANCE_SAMPLE_ID_DESC',
+  ThresholdsVarianceSampleNextAsc = 'THRESHOLDS_VARIANCE_SAMPLE_NEXT_ASC',
+  ThresholdsVarianceSampleNextDesc = 'THRESHOLDS_VARIANCE_SAMPLE_NEXT_DESC',
+  ThresholdsVarianceSamplePendingAsc = 'THRESHOLDS_VARIANCE_SAMPLE_PENDING_ASC',
+  ThresholdsVarianceSamplePendingDesc = 'THRESHOLDS_VARIANCE_SAMPLE_PENDING_DESC',
+  ThresholdsVarianceSampleSessionIdAsc = 'THRESHOLDS_VARIANCE_SAMPLE_SESSION_ID_ASC',
+  ThresholdsVarianceSampleSessionIdDesc = 'THRESHOLDS_VARIANCE_SAMPLE_SESSION_ID_DESC',
+  ThresholdsVarianceSampleVariantAsc = 'THRESHOLDS_VARIANCE_SAMPLE_VARIANT_ASC',
+  ThresholdsVarianceSampleVariantDesc = 'THRESHOLDS_VARIANCE_SAMPLE_VARIANT_DESC',
 }
 
 export type SignatureThreshold = Node & {
@@ -9318,6 +9334,322 @@ export type TableEstimate = {
   estimate?: Maybe<Scalars['Int']>;
   table?: Maybe<Scalars['String']>;
 };
+
+export type Threshold = Node & {
+  __typename?: 'Threshold';
+  current: Scalars['Int'];
+  id: Scalars['String'];
+  next: Scalars['Int'];
+  /** A globally unique identifier. Can be used in various places throughout the system to identify this single value. */
+  nodeId: Scalars['ID'];
+  pending: Scalars['Int'];
+  /** Reads a single `Session` that is related to this `Threshold`. */
+  session?: Maybe<Session>;
+  sessionId: Scalars['String'];
+  variant: ThresholdVariant;
+};
+
+export type ThresholdAggregates = {
+  __typename?: 'ThresholdAggregates';
+  /** Mean average aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  average?: Maybe<ThresholdAverageAggregates>;
+  /** Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  distinctCount?: Maybe<ThresholdDistinctCountAggregates>;
+  keys?: Maybe<Array<Scalars['String']>>;
+  /** Maximum aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  max?: Maybe<ThresholdMaxAggregates>;
+  /** Minimum aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  min?: Maybe<ThresholdMinAggregates>;
+  /** Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  stddevPopulation?: Maybe<ThresholdStddevPopulationAggregates>;
+  /** Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  stddevSample?: Maybe<ThresholdStddevSampleAggregates>;
+  /** Sum aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  sum?: Maybe<ThresholdSumAggregates>;
+  /** Population variance aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  variancePopulation?: Maybe<ThresholdVariancePopulationAggregates>;
+  /** Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  varianceSample?: Maybe<ThresholdVarianceSampleAggregates>;
+};
+
+export type ThresholdAverageAggregates = {
+  __typename?: 'ThresholdAverageAggregates';
+  /** Mean average of current across the matching connection */
+  current?: Maybe<Scalars['BigFloat']>;
+  /** Mean average of next across the matching connection */
+  next?: Maybe<Scalars['BigFloat']>;
+  /** Mean average of pending across the matching connection */
+  pending?: Maybe<Scalars['BigFloat']>;
+};
+
+export type ThresholdDistinctCountAggregates = {
+  __typename?: 'ThresholdDistinctCountAggregates';
+  /** Distinct count of current across the matching connection */
+  current?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of id across the matching connection */
+  id?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of next across the matching connection */
+  next?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of pending across the matching connection */
+  pending?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of sessionId across the matching connection */
+  sessionId?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of variant across the matching connection */
+  variant?: Maybe<Scalars['BigInt']>;
+};
+
+/** A filter to be used against `Threshold` object types. All fields are combined with a logical ‘and.’ */
+export type ThresholdFilter = {
+  /** Checks for all expressions in this list. */
+  and?: InputMaybe<Array<ThresholdFilter>>;
+  /** Filter by the object’s `current` field. */
+  current?: InputMaybe<IntFilter>;
+  /** Filter by the object’s `id` field. */
+  id?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `next` field. */
+  next?: InputMaybe<IntFilter>;
+  /** Negates the expression. */
+  not?: InputMaybe<ThresholdFilter>;
+  /** Checks for any expressions in this list. */
+  or?: InputMaybe<Array<ThresholdFilter>>;
+  /** Filter by the object’s `pending` field. */
+  pending?: InputMaybe<IntFilter>;
+  /** Filter by the object’s `sessionId` field. */
+  sessionId?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `variant` field. */
+  variant?: InputMaybe<ThresholdVariantFilter>;
+};
+
+export type ThresholdMaxAggregates = {
+  __typename?: 'ThresholdMaxAggregates';
+  /** Maximum of current across the matching connection */
+  current?: Maybe<Scalars['Int']>;
+  /** Maximum of next across the matching connection */
+  next?: Maybe<Scalars['Int']>;
+  /** Maximum of pending across the matching connection */
+  pending?: Maybe<Scalars['Int']>;
+};
+
+export type ThresholdMinAggregates = {
+  __typename?: 'ThresholdMinAggregates';
+  /** Minimum of current across the matching connection */
+  current?: Maybe<Scalars['Int']>;
+  /** Minimum of next across the matching connection */
+  next?: Maybe<Scalars['Int']>;
+  /** Minimum of pending across the matching connection */
+  pending?: Maybe<Scalars['Int']>;
+};
+
+export type ThresholdStddevPopulationAggregates = {
+  __typename?: 'ThresholdStddevPopulationAggregates';
+  /** Population standard deviation of current across the matching connection */
+  current?: Maybe<Scalars['BigFloat']>;
+  /** Population standard deviation of next across the matching connection */
+  next?: Maybe<Scalars['BigFloat']>;
+  /** Population standard deviation of pending across the matching connection */
+  pending?: Maybe<Scalars['BigFloat']>;
+};
+
+export type ThresholdStddevSampleAggregates = {
+  __typename?: 'ThresholdStddevSampleAggregates';
+  /** Sample standard deviation of current across the matching connection */
+  current?: Maybe<Scalars['BigFloat']>;
+  /** Sample standard deviation of next across the matching connection */
+  next?: Maybe<Scalars['BigFloat']>;
+  /** Sample standard deviation of pending across the matching connection */
+  pending?: Maybe<Scalars['BigFloat']>;
+};
+
+export type ThresholdSumAggregates = {
+  __typename?: 'ThresholdSumAggregates';
+  /** Sum of current across the matching connection */
+  current: Scalars['BigInt'];
+  /** Sum of next across the matching connection */
+  next: Scalars['BigInt'];
+  /** Sum of pending across the matching connection */
+  pending: Scalars['BigInt'];
+};
+
+export type ThresholdVariancePopulationAggregates = {
+  __typename?: 'ThresholdVariancePopulationAggregates';
+  /** Population variance of current across the matching connection */
+  current?: Maybe<Scalars['BigFloat']>;
+  /** Population variance of next across the matching connection */
+  next?: Maybe<Scalars['BigFloat']>;
+  /** Population variance of pending across the matching connection */
+  pending?: Maybe<Scalars['BigFloat']>;
+};
+
+export type ThresholdVarianceSampleAggregates = {
+  __typename?: 'ThresholdVarianceSampleAggregates';
+  /** Sample variance of current across the matching connection */
+  current?: Maybe<Scalars['BigFloat']>;
+  /** Sample variance of next across the matching connection */
+  next?: Maybe<Scalars['BigFloat']>;
+  /** Sample variance of pending across the matching connection */
+  pending?: Maybe<Scalars['BigFloat']>;
+};
+
+export enum ThresholdVariant {
+  KeyGen = 'KEY_GEN',
+  Proposer = 'PROPOSER',
+  Signature = 'SIGNATURE',
+}
+
+/** A filter to be used against ThresholdVariant fields. All fields are combined with a logical ‘and.’ */
+export type ThresholdVariantFilter = {
+  /** Not equal to the specified value, treating null like an ordinary value. */
+  distinctFrom?: InputMaybe<ThresholdVariant>;
+  /** Equal to the specified value. */
+  equalTo?: InputMaybe<ThresholdVariant>;
+  /** Greater than the specified value. */
+  greaterThan?: InputMaybe<ThresholdVariant>;
+  /** Greater than or equal to the specified value. */
+  greaterThanOrEqualTo?: InputMaybe<ThresholdVariant>;
+  /** Included in the specified list. */
+  in?: InputMaybe<Array<ThresholdVariant>>;
+  /** Is null (if `true` is specified) or is not null (if `false` is specified). */
+  isNull?: InputMaybe<Scalars['Boolean']>;
+  /** Less than the specified value. */
+  lessThan?: InputMaybe<ThresholdVariant>;
+  /** Less than or equal to the specified value. */
+  lessThanOrEqualTo?: InputMaybe<ThresholdVariant>;
+  /** Equal to the specified value, treating null like an ordinary value. */
+  notDistinctFrom?: InputMaybe<ThresholdVariant>;
+  /** Not equal to the specified value. */
+  notEqualTo?: InputMaybe<ThresholdVariant>;
+  /** Not included in the specified list. */
+  notIn?: InputMaybe<Array<ThresholdVariant>>;
+};
+
+/** A connection to a list of `Threshold` values. */
+export type ThresholdsConnection = {
+  __typename?: 'ThresholdsConnection';
+  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  aggregates?: Maybe<ThresholdAggregates>;
+  /** A list of edges which contains the `Threshold` and cursor to aid in pagination. */
+  edges: Array<ThresholdsEdge>;
+  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  groupedAggregates?: Maybe<Array<ThresholdAggregates>>;
+  /** A list of `Threshold` objects. */
+  nodes: Array<Maybe<Threshold>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** The count of *all* `Threshold` you could get from the connection. */
+  totalCount: Scalars['Int'];
+};
+
+/** A connection to a list of `Threshold` values. */
+export type ThresholdsConnectionGroupedAggregatesArgs = {
+  groupBy: Array<ThresholdsGroupBy>;
+  having?: InputMaybe<ThresholdsHavingInput>;
+};
+
+/** A `Threshold` edge in the connection. */
+export type ThresholdsEdge = {
+  __typename?: 'ThresholdsEdge';
+  /** A cursor for use in pagination. */
+  cursor?: Maybe<Scalars['Cursor']>;
+  /** The `Threshold` at the end of the edge. */
+  node?: Maybe<Threshold>;
+};
+
+/** Grouping methods for `Threshold` for usage during aggregation. */
+export enum ThresholdsGroupBy {
+  Current = 'CURRENT',
+  Next = 'NEXT',
+  Pending = 'PENDING',
+  SessionId = 'SESSION_ID',
+  Variant = 'VARIANT',
+}
+
+export type ThresholdsHavingAverageInput = {
+  current?: InputMaybe<HavingIntFilter>;
+  next?: InputMaybe<HavingIntFilter>;
+  pending?: InputMaybe<HavingIntFilter>;
+};
+
+export type ThresholdsHavingDistinctCountInput = {
+  current?: InputMaybe<HavingIntFilter>;
+  next?: InputMaybe<HavingIntFilter>;
+  pending?: InputMaybe<HavingIntFilter>;
+};
+
+/** Conditions for `Threshold` aggregates. */
+export type ThresholdsHavingInput = {
+  AND?: InputMaybe<Array<ThresholdsHavingInput>>;
+  OR?: InputMaybe<Array<ThresholdsHavingInput>>;
+  average?: InputMaybe<ThresholdsHavingAverageInput>;
+  distinctCount?: InputMaybe<ThresholdsHavingDistinctCountInput>;
+  max?: InputMaybe<ThresholdsHavingMaxInput>;
+  min?: InputMaybe<ThresholdsHavingMinInput>;
+  stddevPopulation?: InputMaybe<ThresholdsHavingStddevPopulationInput>;
+  stddevSample?: InputMaybe<ThresholdsHavingStddevSampleInput>;
+  sum?: InputMaybe<ThresholdsHavingSumInput>;
+  variancePopulation?: InputMaybe<ThresholdsHavingVariancePopulationInput>;
+  varianceSample?: InputMaybe<ThresholdsHavingVarianceSampleInput>;
+};
+
+export type ThresholdsHavingMaxInput = {
+  current?: InputMaybe<HavingIntFilter>;
+  next?: InputMaybe<HavingIntFilter>;
+  pending?: InputMaybe<HavingIntFilter>;
+};
+
+export type ThresholdsHavingMinInput = {
+  current?: InputMaybe<HavingIntFilter>;
+  next?: InputMaybe<HavingIntFilter>;
+  pending?: InputMaybe<HavingIntFilter>;
+};
+
+export type ThresholdsHavingStddevPopulationInput = {
+  current?: InputMaybe<HavingIntFilter>;
+  next?: InputMaybe<HavingIntFilter>;
+  pending?: InputMaybe<HavingIntFilter>;
+};
+
+export type ThresholdsHavingStddevSampleInput = {
+  current?: InputMaybe<HavingIntFilter>;
+  next?: InputMaybe<HavingIntFilter>;
+  pending?: InputMaybe<HavingIntFilter>;
+};
+
+export type ThresholdsHavingSumInput = {
+  current?: InputMaybe<HavingIntFilter>;
+  next?: InputMaybe<HavingIntFilter>;
+  pending?: InputMaybe<HavingIntFilter>;
+};
+
+export type ThresholdsHavingVariancePopulationInput = {
+  current?: InputMaybe<HavingIntFilter>;
+  next?: InputMaybe<HavingIntFilter>;
+  pending?: InputMaybe<HavingIntFilter>;
+};
+
+export type ThresholdsHavingVarianceSampleInput = {
+  current?: InputMaybe<HavingIntFilter>;
+  next?: InputMaybe<HavingIntFilter>;
+  pending?: InputMaybe<HavingIntFilter>;
+};
+
+/** Methods to use when ordering `Threshold`. */
+export enum ThresholdsOrderBy {
+  CurrentAsc = 'CURRENT_ASC',
+  CurrentDesc = 'CURRENT_DESC',
+  IdAsc = 'ID_ASC',
+  IdDesc = 'ID_DESC',
+  Natural = 'NATURAL',
+  NextAsc = 'NEXT_ASC',
+  NextDesc = 'NEXT_DESC',
+  PendingAsc = 'PENDING_ASC',
+  PendingDesc = 'PENDING_DESC',
+  PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
+  PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
+  SessionIdAsc = 'SESSION_ID_ASC',
+  SessionIdDesc = 'SESSION_ID_DESC',
+  VariantAsc = 'VARIANT_ASC',
+  VariantDesc = 'VARIANT_DESC',
+}
 
 export type UnsignedProposalsQueue = Node & {
   __typename?: 'UnsignedProposalsQueue';
@@ -10391,7 +10723,19 @@ export type ValidatorOfSessionQuery = {
     isNextBest: boolean;
     bestOrder: number;
     nextBestOrder: number;
-    session?: { __typename?: 'Session'; keyGenThreshold?: any | null } | null;
+    session?: {
+      __typename?: 'Session';
+      thresholds: {
+        __typename?: 'ThresholdsConnection';
+        nodes: Array<{
+          __typename?: 'Threshold';
+          next: number;
+          current: number;
+          pending: number;
+          variant: ThresholdVariant;
+        } | null>;
+      };
+    } | null;
     validator?: { __typename?: 'Validator'; authorityId: string; id: string } | null;
   } | null;
   sessionValidators?: {
@@ -10443,6 +10787,25 @@ export type SessionAuthValidatorFragment = {
       validator?: { __typename?: 'Validator'; authorityId: string; id: string } | null;
     } | null;
   }>;
+};
+
+export type ThresholdValueElementFragment = {
+  __typename?: 'Threshold';
+  next: number;
+  current: number;
+  pending: number;
+  variant: ThresholdVariant;
+};
+
+export type ThresholdValueFragment = {
+  __typename?: 'ThresholdsConnection';
+  nodes: Array<{
+    __typename?: 'Threshold';
+    next: number;
+    current: number;
+    pending: number;
+    variant: ThresholdVariant;
+  } | null>;
 };
 
 export type SessionAuthFragment = {
@@ -10501,6 +10864,10 @@ export type MetaDataQueryVariables = Exact<{ [key: string]: never }>;
 
 export type MetaDataQuery = {
   __typename?: 'Query';
+  sessions?: {
+    __typename?: 'SessionsConnection';
+    nodes: Array<{ __typename?: 'Session'; id: string; blockNumber: number } | null>;
+  } | null;
   _metadata?: { __typename?: '_Metadata'; targetHeight?: number | null; lastProcessedHeight?: number | null } | null;
 };
 
@@ -10602,7 +10969,16 @@ export type ProposalsOverviewQuery = {
   session?: {
     __typename?: 'Session';
     id: string;
-    proposerThreshold?: any | null;
+    thresholds: {
+      __typename?: 'ThresholdsConnection';
+      nodes: Array<{
+        __typename?: 'Threshold';
+        next: number;
+        current: number;
+        pending: number;
+        variant: ThresholdVariant;
+      } | null>;
+    };
     sessionProposers: { __typename?: 'SessionProposersConnection'; totalCount: number };
     sessionValidators: { __typename?: 'SessionValidatorsConnection'; totalCount: number };
   } | null;
@@ -10745,8 +11121,16 @@ export type PublicKeysQuery = {
         nodes: Array<{
           __typename?: 'Session';
           id: string;
-          keyGenThreshold?: any | null;
-          signatureThreshold?: any | null;
+          thresholds: {
+            __typename?: 'ThresholdsConnection';
+            nodes: Array<{
+              __typename?: 'Threshold';
+              next: number;
+              current: number;
+              pending: number;
+              variant: ThresholdVariant;
+            } | null>;
+          };
           block?: { __typename?: 'Block'; timestamp?: any | null; number: any } | null;
           sessionValidators: {
             __typename?: 'SessionValidatorsConnection';
@@ -10797,8 +11181,16 @@ export type PublicKeyQuery = {
       nodes: Array<{
         __typename?: 'Session';
         id: string;
-        keyGenThreshold?: any | null;
-        signatureThreshold?: any | null;
+        thresholds: {
+          __typename?: 'ThresholdsConnection';
+          nodes: Array<{
+            __typename?: 'Threshold';
+            next: number;
+            current: number;
+            pending: number;
+            variant: ThresholdVariant;
+          } | null>;
+        };
         block?: { __typename?: 'Block'; timestamp?: any | null; number: any } | null;
         sessionValidators: {
           __typename?: 'SessionValidatorsConnection';
@@ -10849,10 +11241,17 @@ export type CurrentSessionAuthoritiesQuery = {
       __typename?: 'Session';
       id: string;
       blockId: string;
-      signatureThreshold?: any | null;
-      keyGenThreshold?: any | null;
-      proposerThreshold?: any | null;
       publicKey?: { __typename?: 'PublicKey'; compressed?: string | null } | null;
+      thresholds: {
+        __typename?: 'ThresholdsConnection';
+        nodes: Array<{
+          __typename?: 'Threshold';
+          next: number;
+          current: number;
+          pending: number;
+          variant: ThresholdVariant;
+        } | null>;
+      };
       block?: { __typename?: 'Block'; id: string; timestamp?: any | null } | null;
       sessionValidators: {
         __typename?: 'SessionValidatorsConnection';
@@ -10930,8 +11329,16 @@ export type SessionThresholdHistoryQuery = {
     nodes: Array<{
       __typename?: 'Session';
       id: string;
-      signatureThreshold?: any | null;
-      keyGenThreshold?: any | null;
+      thresholds: {
+        __typename?: 'ThresholdsConnection';
+        nodes: Array<{
+          __typename?: 'Threshold';
+          next: number;
+          current: number;
+          pending: number;
+          variant: ThresholdVariant;
+        } | null>;
+      };
       block?: { __typename?: 'Block'; id: string; timestamp?: any | null } | null;
     } | null>;
     pageInfo: {
@@ -10953,8 +11360,16 @@ export type SessionThresholdsQuery = {
   session?: {
     __typename?: 'Session';
     id: string;
-    signatureThreshold?: any | null;
-    keyGenThreshold?: any | null;
+    thresholds: {
+      __typename?: 'ThresholdsConnection';
+      nodes: Array<{
+        __typename?: 'Threshold';
+        next: number;
+        current: number;
+        pending: number;
+        variant: ThresholdVariant;
+      } | null>;
+    };
     proposersCount: { __typename?: 'SessionProposersConnection'; totalCount: number };
     block?: { __typename?: 'Block'; timestamp?: any | null; number: any } | null;
     publicKey?: {
@@ -10985,6 +11400,32 @@ export type SessionThresholdsQuery = {
   } | null;
 };
 
+export type LatestThresholdsQueryVariables = Exact<{
+  first?: InputMaybe<Scalars['Int']>;
+  filter?: InputMaybe<SessionFilter>;
+}>;
+
+export type LatestThresholdsQuery = {
+  __typename?: 'Query';
+  sessions?: {
+    __typename?: 'SessionsConnection';
+    nodes: Array<{
+      __typename?: 'Session';
+      id: string;
+      thresholds: {
+        __typename?: 'ThresholdsConnection';
+        nodes: Array<{
+          __typename?: 'Threshold';
+          next: number;
+          current: number;
+          pending: number;
+          variant: ThresholdVariant;
+        } | null>;
+      };
+    } | null>;
+  } | null;
+};
+
 export const PageInfoMetaFragmentDoc = gql`
   fragment PageInfoMeta on PageInfo {
     endCursor
@@ -10992,6 +11433,22 @@ export const PageInfoMetaFragmentDoc = gql`
     hasPreviousPage
     startCursor
   }
+`;
+export const ThresholdValueElementFragmentDoc = gql`
+  fragment ThresholdValueElement on Threshold {
+    next
+    current
+    pending
+    variant
+  }
+`;
+export const ThresholdValueFragmentDoc = gql`
+  fragment ThresholdValue on ThresholdsConnection {
+    nodes {
+      ...ThresholdValueElement
+    }
+  }
+  ${ThresholdValueElementFragmentDoc}
 `;
 export const ValidatorMetaFragmentDoc = gql`
   fragment ValidatorMeta on Validator {
@@ -11203,7 +11660,9 @@ export const ValidatorOfSessionDocument = gql`
     sessionValidator(id: $sessionValidatorId) {
       ...SessionAuthValidatorNode
       session {
-        keyGenThreshold
+        thresholds {
+          ...ThresholdValue
+        }
       }
     }
     sessionValidators(filter: { validatorId: { equalTo: $validatorId }, isBest: { equalTo: true } }) {
@@ -11215,6 +11674,7 @@ export const ValidatorOfSessionDocument = gql`
     }
   }
   ${SessionAuthValidatorNodeFragmentDoc}
+  ${ThresholdValueFragmentDoc}
 `;
 
 /**
@@ -11260,6 +11720,12 @@ export type ValidatorOfSessionQueryResult = Apollo.QueryResult<
 >;
 export const MetaDataDocument = gql`
   query MetaData {
+    sessions(first: 1, orderBy: [BLOCK_NUMBER_DESC]) {
+      nodes {
+        id
+        blockNumber
+      }
+    }
     _metadata {
       targetHeight
       lastProcessedHeight
@@ -11476,7 +11942,9 @@ export const ProposalsOverviewDocument = gql`
   query ProposalsOverview($startRange: BigFloatFilter, $endRange: BigFloatFilter, $sessionId: String!) {
     session(id: $sessionId) {
       id
-      proposerThreshold
+      thresholds {
+        ...ThresholdValue
+      }
       sessionProposers {
         totalCount
       }
@@ -11514,6 +11982,7 @@ export const ProposalsOverviewDocument = gql`
       totalCount
     }
   }
+  ${ThresholdValueFragmentDoc}
   ${ProposalListViewFragmentDoc}
   ${PageInfoMetaFragmentDoc}
 `;
@@ -11741,8 +12210,9 @@ export const PublicKeysDocument = gql`
           nodes {
             id
             ...SessionAuth
-            keyGenThreshold
-            signatureThreshold
+            thresholds {
+              ...ThresholdValue
+            }
             block {
               timestamp
               number
@@ -11760,6 +12230,7 @@ export const PublicKeysDocument = gql`
     }
   }
   ${SessionAuthFragmentDoc}
+  ${ThresholdValueFragmentDoc}
 `;
 
 /**
@@ -11807,8 +12278,9 @@ export const PublicKeyDocument = gql`
         nodes {
           id
           ...SessionAuth
-          keyGenThreshold
-          signatureThreshold
+          thresholds {
+            ...ThresholdValue
+          }
           block {
             timestamp
             number
@@ -11818,6 +12290,7 @@ export const PublicKeyDocument = gql`
     }
   }
   ${SessionAuthFragmentDoc}
+  ${ThresholdValueFragmentDoc}
 `;
 
 /**
@@ -11903,9 +12376,9 @@ export const CurrentSessionAuthoritiesDocument = gql`
         publicKey {
           compressed
         }
-        signatureThreshold
-        keyGenThreshold
-        proposerThreshold
+        thresholds {
+          ...ThresholdValue
+        }
         block {
           id
           timestamp
@@ -11914,6 +12387,7 @@ export const CurrentSessionAuthoritiesDocument = gql`
     }
   }
   ${SessionAuthFragmentDoc}
+  ${ThresholdValueFragmentDoc}
 `;
 
 /**
@@ -12014,8 +12488,9 @@ export const SessionThresholdHistoryDocument = gql`
     sessions(first: $perPage, offset: $offset, orderBy: [BLOCK_NUMBER_DESC]) {
       nodes {
         id
-        signatureThreshold
-        keyGenThreshold
+        thresholds {
+          ...ThresholdValue
+        }
         block {
           id
           timestamp
@@ -12027,6 +12502,7 @@ export const SessionThresholdHistoryDocument = gql`
       totalCount
     }
   }
+  ${ThresholdValueFragmentDoc}
   ${PageInfoMetaFragmentDoc}
 `;
 
@@ -12075,8 +12551,9 @@ export const SessionThresholdsDocument = gql`
   query SessionThresholds($sessionId: String!) {
     session(id: $sessionId) {
       id
-      signatureThreshold
-      keyGenThreshold
+      thresholds {
+        ...ThresholdValue
+      }
       proposersCount: sessionProposers {
         totalCount
       }
@@ -12096,6 +12573,7 @@ export const SessionThresholdsDocument = gql`
       }
     }
   }
+  ${ThresholdValueFragmentDoc}
   ${SessionAuthFragmentDoc}
 `;
 
@@ -12133,3 +12611,49 @@ export function useSessionThresholdsLazyQuery(
 export type SessionThresholdsQueryHookResult = ReturnType<typeof useSessionThresholdsQuery>;
 export type SessionThresholdsLazyQueryHookResult = ReturnType<typeof useSessionThresholdsLazyQuery>;
 export type SessionThresholdsQueryResult = Apollo.QueryResult<SessionThresholdsQuery, SessionThresholdsQueryVariables>;
+export const LatestThresholdsDocument = gql`
+  query LatestThresholds($first: Int, $filter: SessionFilter) {
+    sessions(first: $first, filter: $filter, orderBy: [BLOCK_NUMBER_DESC]) {
+      nodes {
+        id
+        thresholds {
+          ...ThresholdValue
+        }
+      }
+    }
+  }
+  ${ThresholdValueFragmentDoc}
+`;
+
+/**
+ * __useLatestThresholdsQuery__
+ *
+ * To run a query within a React component, call `useLatestThresholdsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useLatestThresholdsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useLatestThresholdsQuery({
+ *   variables: {
+ *      first: // value for 'first'
+ *      filter: // value for 'filter'
+ *   },
+ * });
+ */
+export function useLatestThresholdsQuery(
+  baseOptions?: Apollo.QueryHookOptions<LatestThresholdsQuery, LatestThresholdsQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<LatestThresholdsQuery, LatestThresholdsQueryVariables>(LatestThresholdsDocument, options);
+}
+export function useLatestThresholdsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<LatestThresholdsQuery, LatestThresholdsQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<LatestThresholdsQuery, LatestThresholdsQueryVariables>(LatestThresholdsDocument, options);
+}
+export type LatestThresholdsQueryHookResult = ReturnType<typeof useLatestThresholdsQuery>;
+export type LatestThresholdsLazyQueryHookResult = ReturnType<typeof useLatestThresholdsLazyQuery>;
+export type LatestThresholdsQueryResult = Apollo.QueryResult<LatestThresholdsQuery, LatestThresholdsQueryVariables>;
