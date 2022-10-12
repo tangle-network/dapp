@@ -1,6 +1,6 @@
-import { getRoundedAmountString } from '@webb-dapp/ui-components/utils';
 import { ChevronRight, TokenIcon } from '@webb-dapp/webb-ui-components/icons';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
+import { getRoundedAmountString } from '@webb-dapp/webb-ui-components/utils';
 import cx from 'classnames';
 import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
