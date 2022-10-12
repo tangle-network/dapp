@@ -1,6 +1,7 @@
 import { useDonutColor } from '@webb-dapp/page-statistics/hooks';
 import { ProposalStatus } from '@webb-dapp/page-statistics/provider/hooks';
 import { Card, DropdownMenu, Label, TitleWithInfo } from '@webb-dapp/webb-ui-components/components';
+import { Spinner } from '@webb-dapp/webb-ui-components/icons';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
 import { FC, useMemo } from 'react';
 import { ChartProps, Doughnut } from 'react-chartjs-2';
@@ -69,10 +70,12 @@ export const DonutChartContainer: FC<ProposalsOverviewProps> = ({ isLoading, set
         />
       </div>
       {isLoading ? (
-        <>Loading</>
+        <div className='flex items-center justify-center min-w-full min-h-[242px]'>
+          <Spinner size='xl' />
+        </div>
       ) : (
         <>
-          <div className='flex justify-center'>
+          <div className='flex items-center justify-center grow'>
             <div className='w-[196px] h-[196px]'>
               <Doughnut data={chartData} options={chartOpts} />
             </div>

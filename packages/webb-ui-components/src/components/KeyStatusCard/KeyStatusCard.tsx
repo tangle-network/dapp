@@ -40,9 +40,9 @@ export const KeyStatusCard: React.FC<KeyStatusCardProps> = ({
       {/** Top */}
       <div className='flex justify-between w-full'>
         <div className='flex items-center space-x-2'>
-          <TitleWithInfo title={title} info={titleInfo} />
+          <TitleWithInfo title={title} info={titleInfo} variant='h5' />
           <LabelWithValue label='session: ' value={sessionNumber} />
-          <Chip color='green' className='inline-block uppercase'>
+          <Chip color='green' className='inline-block'>
             {keyType}
           </Chip>
         </div>
@@ -59,7 +59,7 @@ export const KeyStatusCard: React.FC<KeyStatusCardProps> = ({
           ))}
         </AvatarGroup>
         <Link to={fullDetailUrl}>
-          <Button className='uppercase' varirant='link' as='span' size='sm'>
+          <Button variant='link' as='span' size='sm'>
             See full details
           </Button>
         </Link>

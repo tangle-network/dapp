@@ -15,7 +15,7 @@ export const Stats = forwardRef<HTMLDivElement, StatsProps>(({ className, items,
           <TitleWithInfo {...item.titleProps} />
 
           <Typography variant='h4' fw='bold'>
-            {item.value}
+            {item.value.toString()}
           </Typography>
         </div>
       ))}

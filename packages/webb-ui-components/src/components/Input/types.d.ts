@@ -58,4 +58,9 @@ export interface InputProps extends WebbComponentBase, Omit<PropsOf<'input'>, Om
    * @default 0
    */
   debounceTime?: number;
+  /**
+   * The input size
+   * @default "md"
+   */
+  size?: 'md' | 'sm';
 }

@@ -1,4 +1,5 @@
 import { RouterConfigData } from '@webb-dapp/react-environment';
+import { Spinner } from '@webb-dapp/webb-ui-components/icons';
 import { FC, lazy, Suspense } from 'react';
 
 import { Layout } from '../containers';
@@ -17,13 +18,33 @@ const PageProposals = lazy(() => import('@webb-dapp/page-statistics/pages/Propos
 const PageProposalDetailDrawer = lazy(() => import('@webb-dapp/page-statistics/pages/ProposalDetailDrawer'));
 const PageProposalDetail = lazy(() => import('@webb-dapp/page-statistics/pages/ProposalDetailPage'));
 
+const PageComponentsShowcase = lazy(() => import('@webb-dapp/page-statistics/pages/ComponentsShowcase'));
+
 const CSuspense: FC = ({ children }) => {
-  return <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>;
+  return (
+    <Suspense
+      fallback={
+        <div className='flex items-center justify-center min-w-full min-h-screen'>
+          <Spinner size='xl' />
+        </div>
+      }
+    >
+      {children}
+    </Suspense>
+  );
 };
 
 export const routes: RouterConfigData[] = [
   {
     children: [
+      {
+        element: (
+          <CSuspense>
+            <PageComponentsShowcase />
+          </CSuspense>
+        ),
+        path: 'components-showcase/*',
+      },
       {
         element: (
           <CSuspense>

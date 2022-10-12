@@ -1,3 +1,4 @@
+import { randBoolean, randEthereumAddress, randNumber, randRecentDate, randSoonDate } from '@ngneat/falso';
 import { ColumnDef, createColumnHelper, getCoreRowModel, Table as RTTable, useReactTable } from '@tanstack/react-table';
 import { useStatsContext } from '@webb-dapp/page-statistics/provider/stats-provider';
 import {
@@ -18,7 +19,9 @@ import { fuzzyFilter } from '@webb-dapp/webb-ui-components/components/Filter/uti
 import { Spinner } from '@webb-dapp/webb-ui-components/icons';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
 import { ComponentProps, useMemo } from 'react';
-import { Link, Outlet } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
+
 import { AuthoritiesTable } from '../containers';
 import { DiscreteList, UpcomingThreshold, useThresholds } from '../provider/hooks';
 import { getChipColorByKeyType } from '../utils';
@@ -27,47 +30,39 @@ const columnHelper = createColumnHelper<UpcomingThreshold>();
 
 const columns: ColumnDef<UpcomingThreshold, any>[] = [
   columnHelper.accessor('stats', {
-    header: () => (
-      <Typography variant='body4' fw='bold' className='!text-inherit'>
-        Status
-      </Typography>
-    ),
+    header: 'Status',
     cell: (props) => <Chip color={getChipColorByKeyType(props.getValue())}>{props.getValue<string>()}</Chip>,
   }),
 
   columnHelper.accessor('session', {
-    header: () => (
-      <Typography variant='body4' fw='bold' className='!text-inherit'>
-        Session
-      </Typography>
-    ),
+    header: 'Session',
   }),
 
   columnHelper.accessor('keyGen', {
-    header: () => (
-      <Typography variant='body4' fw='bold' className='!text-inherit'>
-        Keygen
-      </Typography>
-    ),
+    header: 'Keygen',
   }),
 
   columnHelper.accessor('signature', {
-    header: () => (
-      <Typography variant='body4' fw='bold' className='!text-inherit'>
-        Signature
-      </Typography>
-    ),
+    header: 'Signature',
   }),
 
   columnHelper.accessor('authoritySet', {
     header: () => (
-      <Typography variant='body4' fw='bold' className='!text-inherit !text-right'>
+      <Typography variant='body1' fw='bold' ta='right' className='!text-inherit'>
         Authority Set
       </Typography>
     ),
 
     cell: (props) => {
       const authorities = props.getValue<DiscreteList>();
+      if (!authorities.count) {
+        return (
+          <Typography variant='body1' ta='right'>
+            -
+          </Typography>
+        );
+      }
+
       return (
         <AvatarGroup total={authorities.count} className='justify-end'>
           {authorities.firstElements.map((au, idx) => (
@@ -81,12 +76,14 @@ const columns: ColumnDef<UpcomingThreshold, any>[] = [
 
 const Authorities = () => {
   const thresholds = useThresholds();
+
   const [threshold, upComingThresholds] = useMemo(() => {
     if (thresholds.val) {
       return thresholds.val;
     }
     return [null, null];
   }, [thresholds]);
+
   const statsItems = useMemo<ComponentProps<typeof Stats>['items']>(() => {
     const threshold = thresholds.val?.[0];
     return [
@@ -117,36 +114,41 @@ const Authorities = () => {
       fuzzy: fuzzyFilter,
     },
   });
-  const { keyGen, publicKey, signature } = threshold! ?? {};
-  const isLoading = !thresholds || thresholds?.isLoading || !keyGen || !signature || !publicKey;
+
+  const { keyGen, publicKey, signature } = threshold ?? {};
+  const isLoading = thresholds.isLoading || keyGen === undefined || signature === undefined || publicKey === undefined;
   const { time } = useStatsContext();
+
   return (
     <div className='flex flex-col space-y-4'>
       <Card>
+        <TitleWithInfo title='Network Thresholds' info='Network Thresholds' variant='h5' />
+
         {isLoading ? (
-          <Spinner />
+          <div className='flex items-center justify-center min-w-full min-h-[235px]'>
+            <Spinner size='xl' />
+          </div>
         ) : (
           <>
-            <TitleWithInfo title='Network Thresholds' info='Network Thresholds' variant='h5' />
-
             <Stats items={statsItems} className='pb-0' />
 
             <TimeProgress startTime={publicKey.start ?? null} endTime={publicKey.end ?? null} now={time} />
 
             <div className='flex items-center justify-between'>
               <div className='flex items-center space-x-2'>
-                <Chip color='green' className='uppercase'>
-                  {publicKey.isCurrent ? 'Current' : 'Next'}
-                </Chip>
+                <Chip color='green'>{publicKey.isCurrent ? 'Current' : 'Next'}</Chip>
                 <LabelWithValue label='session:' value={publicKey.session} />
                 <Typography variant='body2' fw='semibold'>
                   /
                 </Typography>
                 <KeyValueWithButton size='sm' keyValue={publicKey.compressed} />
               </div>
-              <Button varirant='link' size='sm' className='uppercase'>
-                <Link to='history'>View history</Link>
-              </Button>
+
+              <Link to='history'>
+                <Button variant='link' size='sm'>
+                  <Link to='history'>View history</Link>
+                </Button>
+              </Link>
             </div>
           </>
         )}
@@ -159,7 +161,13 @@ const Authorities = () => {
           variant: 'h5',
         }}
       >
-        {thresholds.isLoading ? <Spinner /> : <Table tableProps={table as RTTable<unknown>} />}
+        {isLoading ? (
+          <div className='flex items-center justify-center min-w-full min-h-[235px]'>
+            <Spinner size='xl' />
+          </div>
+        ) : (
+          <Table tableProps={table as RTTable<unknown>} />
+        )}
       </CardTable>
 
       <AuthoritiesTable />

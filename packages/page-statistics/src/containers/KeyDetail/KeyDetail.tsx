@@ -33,7 +33,7 @@ import getUnicodeFlagIcon from 'country-flag-icons/unicode';
 import { forwardRef, useCallback, useMemo } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
-import { KeyDetailProps } from './types';
+import { KeyDetailProps, KeyGenAuthoredTableProps } from './types';
 
 export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage }, ref) => {
   const { keyId = '' } = useParams<{ keyId: string }>();
@@ -59,8 +59,12 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage },
     }
   }, [isPage, navigate, prevAndNextKey]);
 
-  if (isLoading) {
-    return <Spinner size='xl' />;
+  if (isLoading || keyDetail === null) {
+    return (
+      <div className='flex items-center justify-center min-w-full min-h-full'>
+        <Spinner size='xl' />
+      </div>
+    );
   }
 
   if (isFailed) {
@@ -99,8 +103,7 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage },
                 <Button
                   size='sm'
                   leftIcon={<ArrowLeft className='!fill-current' />}
-                  varirant='utility'
-                  className='uppercase'
+                  variant='utility'
                   isDisabled={!prevAndNextKey || !prevAndNextKey.previousKeyId}
                   onClick={onPreviousKey}
                 >
@@ -109,8 +112,7 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage },
                 <Button
                   size='sm'
                   rightIcon={<ArrowRight className='!fill-current' />}
-                  varirant='utility'
-                  className='uppercase'
+                  variant='utility'
                   isDisabled={!prevAndNextKey || !prevAndNextKey.nextKeyId}
                   onClick={onNextKey}
                 >
@@ -130,9 +132,7 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage },
 
         {/** Session number */}
         <div className='flex items-center space-x-2'>
-          <Chip color='green' className='uppercase'>
-            {keyDetail.isDone ? 'History' : keyDetail.isCurrent ? 'Current' : 'Next'}
-          </Chip>
+          <Chip color='green'>{keyDetail.isDone ? 'History' : keyDetail.isCurrent ? 'Current' : 'Next'}</Chip>
           <LabelWithValue label='Session: ' value={keyDetail.session} />
         </div>
 
@@ -186,7 +186,7 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage },
                     extraContent={
                       <div className='flex items-center space-x-2'>
                         <KeyValueWithButton keyValue={keyDetail.uncompressed} size='sm' />
-                        <Button varirant='link' size='sm' className='uppercase'>
+                        <Button variant='link' size='sm'>
                           Detail
                         </Button>
                       </div>
@@ -220,7 +220,7 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage },
                             }
                           />
                         )}
-                        <Button size='sm' varirant='link' className='uppercase'>
+                        <Button size='sm' variant='link'>
                           Details
                         </Button>
                       </div>
@@ -281,9 +281,7 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(({ isPage },
     </div>
   );
 });
-type KeyGenAuthoredTableProps = {
-  data: KeyGenAuthority[];
-};
+
 const columnHelper = createColumnHelper<KeyGenAuthority>();
 
 const columns: ColumnDef<KeyGenAuthority, any>[] = [
@@ -320,7 +318,7 @@ const columns: ColumnDef<KeyGenAuthority, any>[] = [
     header: '',
     id: 'detail',
     cell: (props) => (
-      <Button varirant='link' size='sm' className='uppercase'>
+      <Button variant='link' size='sm'>
         <Link to={`/authorities/drawer/${props.getValue<string>()}`}>Details</Link>
       </Button>
     ),

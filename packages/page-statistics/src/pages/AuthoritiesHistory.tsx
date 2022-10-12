@@ -116,7 +116,7 @@ const AuthoritiesHistory = () => {
   return (
     <div className='flex flex-col p-8 space-y-4 rounded-lg bg-mono-0 dark:bg-mono-180'>
       <Link to='/authorities'>
-        <Button varirant='utility' size='sm' className='uppercase' leftIcon={<ArrowLeft className='!fill-current' />}>
+        <Button variant='utility' size='sm' leftIcon={<ArrowLeft className='!fill-current' />}>
           Back
         </Button>
       </Link>

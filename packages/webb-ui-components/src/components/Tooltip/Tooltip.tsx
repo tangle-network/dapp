@@ -35,7 +35,7 @@ export const TooltipBody: React.FC<TooltipBodyProps> = ({ button, children, clas
     >
       <TooltipPrimitive.Arrow className='fill-current text-mono-20 dark:text-mono-160 webb-shadow-sm' />
       <div className={twMerge('body4 text-mono-140 dark:text-mono-80 font-normal', className)}>
-        {title && <h6 className='mb-2 font-bold body4'>{title}</h6>}
+        {title && <h6 className='mb-2 utility'>{title}</h6>}
         {children}
         {button && <div className='flex justify-end mt-4'>{button}</div>}
       </div>

@@ -18,6 +18,7 @@ import {
   ExchangeLine,
   Expand,
   ExternalLinkLine,
+  Spinner,
   TokenIcon,
 } from '@webb-dapp/webb-ui-components/icons';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
@@ -173,7 +174,7 @@ export const ProposalDetail = () => {
             <div className='flex justify-center mt-1'>
               <div className='flex flex-col items-center justify-center'>
                 <div className='border-[1px] h-2 border-[#ccc] bg-[#ccc]' />
-                <Typography variant='body4' fw='bold' className='block uppercase'>
+                <Typography variant='utility' className='block uppercase'>
                   Pass threshold
                 </Typography>
               </div>
@@ -216,8 +217,14 @@ export const ProposalDetail = () => {
         </>
       );
     }
-    return <div>Loading...</div>;
+
+    return (
+      <div className='flex items-center justify-center min-w-full min-h-[384px]'>
+        <Spinner size='xl' />
+      </div>
+    );
   }, [proposalDetails, passThreshold]);
+
   return (
     <div className='flex flex-col p-6 space-y-6 rounded-lg bg-mono-0 dark:bg-mono-180'>
       {/** The title */}
@@ -227,13 +234,13 @@ export const ProposalDetail = () => {
             {isPage ? <ArrowLeft size='lg' /> : <Expand size='lg' />}
           </Link>
 
-          <Chip className='uppercase'>{status || 'Loading...'}</Chip>
+          {status && <Chip>{status}</Chip>}
 
           <Typography variant='h4' fw='bold'>
             Proposal Details
           </Typography>
 
-          <Button varirant='utility' size='sm' className='uppercase'>
+          <Button variant='utility' size='sm'>
             Open Governance
           </Button>
         </div>
@@ -245,8 +252,7 @@ export const ProposalDetail = () => {
             onClick={handlePrevProposal}
             isDisabled={previousProposalId === null || previousProposalId === undefined}
             leftIcon={<ArrowLeft className='!fill-current' />}
-            varirant='utility'
-            className='uppercase'
+            variant='utility'
           >
             Prev
           </Button>
@@ -255,8 +261,7 @@ export const ProposalDetail = () => {
             isDisabled={nextProposalId === null || nextProposalId === undefined}
             onClick={handleNextProposal}
             rightIcon={<ArrowRight className='!fill-current' />}
-            varirant='utility'
-            className='uppercase'
+            variant='utility'
           >
             Next
           </Button>
@@ -296,7 +301,7 @@ const PercentageCard: FC<{ type: VoteType; percentValue: number; count: number }
       <Typography variant='h5' fw='bold' className='!text-inherit'>
         {percentValue}%
       </Typography>
-      <Typography variant='body4' fw='bold' className='!text-inherit uppercase'>
+      <Typography variant='utility' className='!text-inherit uppercase'>
         {type} {count}
       </Typography>
     </div>

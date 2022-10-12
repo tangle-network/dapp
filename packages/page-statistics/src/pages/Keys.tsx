@@ -1,37 +1,32 @@
 import { useStatsContext } from '@webb-dapp/page-statistics/provider/stats-provider';
 import { Spinner } from '@webb-dapp/webb-ui-components/icons';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
-import { formatDateToUtc } from '@webb-dapp/webb-ui-components/utils';
 import { useMemo } from 'react';
 import { Outlet } from 'react-router-dom';
 
 import { KeygenTable, KeyStatusCardContainer } from '../containers';
-import { PublicKey, PublicKeyListView, useActiveKeys } from '../provider/hooks';
+import { PublicKey, useActiveKeys } from '../provider/hooks';
 const Keys = () => {
-  const pagination = useMemo(
-    () => ({
-      offset: 0,
-      perPage: 10,
-      filter: null,
-    }),
-    []
-  );
-
   const { error, isFailed, isLoading, val: data } = useActiveKeys();
 
   const { currentKey, nextKey } = useMemo<{
-    currentKey: PublicKey | null;
-    nextKey: PublicKey | null;
+    currentKey: PublicKey | null | undefined;
+    nextKey: PublicKey | null | undefined;
   }>(() => {
     return {
       currentKey: data ? data[0] : null,
       nextKey: data ? data[1] : null,
     };
   }, [data]);
+
   const { time } = useStatsContext();
 
-  if (isLoading) {
-    return <Spinner size='xl' />;
+  if (isLoading || currentKey === null || nextKey === null) {
+    return (
+      <div className='flex items-center justify-center min-h-screen'>
+        <Spinner size='xl' />;
+      </div>
+    );
   }
 
   if (isFailed) {
@@ -42,10 +37,6 @@ const Keys = () => {
         </Typography>
       </div>
     );
-  }
-
-  if (!currentKey || !nextKey) {
-    return null; // Not display anything
   }
 
   return (

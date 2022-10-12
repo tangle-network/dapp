@@ -21,6 +21,7 @@
     "@radix-ui/react-progress": "^1.0.0",
     "@radix-ui/react-separator": "^1.0.0",
     "@radix-ui/react-slider": "^1.0.0",
+    "@radix-ui/react-switch": "^1.0.0",
     "@radix-ui/react-tooltip": "^1.0.0",
     "@svgr/webpack": "^5.5.0",
     "@tanstack/match-sorter-utils": "^8.1.1",
@@ -30,6 +31,7 @@
     "date-fns": "^2.29.2",
     "date-fns-tz": "^1.3.7",
     "react-table": "^7.8.0",
-    "tailwind-merge": "^1.6.0"
+    "tailwind-merge": "^1.6.0",
+    "tailwind-scrollbar": "^2.0.1"
   }
 }

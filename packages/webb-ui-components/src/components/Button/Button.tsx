@@ -35,6 +35,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>((props, r
     children,
     className,
     isDisabled,
+    isFullWidth,
     isLoading,
     leftIcon,
     loadingText,
@@ -42,23 +43,23 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>((props, r
     size = 'md',
     spinner,
     spinnerPlacement = 'start',
-    varirant = 'primary',
+    variant = 'primary',
     ...restProps
   } = props;
 
   const [buttonProps, { tagName: Component }] = useButtonProps({ tagName: asProps, isDisabled, ...restProps });
 
-  const mergedClassName = twMerge(getButtonClassNameByVariant(varirant, size), className);
+  const mergedClassName = twMerge(getButtonClassNameByVariant(variant, size), className);
 
   const contentProps = { children, leftIcon, rightIcon };
 
   return (
-    <div className={cx('inline-block', isDisabled ? 'cursor-not-allowed' : '')}>
+    <div className={cx('inline-block', { 'w-full': isFullWidth })}>
       <Component
         {...restProps}
         {...buttonProps}
         disabled={buttonProps.disabled || isLoading}
-        className={mergedClassName}
+        className={cx(mergedClassName, { 'w-full': isFullWidth })}
         ref={ref}
       >
         {isLoading && spinnerPlacement === 'start' && <ButtonSpinner label={loadingText}>{spinner}</ButtonSpinner>}

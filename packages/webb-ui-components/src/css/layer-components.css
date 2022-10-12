@@ -54,6 +54,29 @@
   line-height: 18px;
 }
 
+/* Used for subtitles and buttons */
+.label {
+  @apply body1 font-bold;
+}
+
+/* Default type size, used for paragraphs and inputs */
+.para1 {
+  @apply body1;
+}
+
+/* Used for details, and small informational components */
+.para2 {
+  @apply body2;
+}
+
+/* Small utility used for labels and warnings */
+.utility {
+  @apply font-bold;
+
+  font-size: 12px;
+  line-height: 15px;
+}
+
 @media screen and (max-width: 800px) {
   .h1 {
     font-size: 46px;

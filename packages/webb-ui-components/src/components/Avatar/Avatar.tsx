@@ -82,7 +82,7 @@ export const Avatar: React.FC<AvatarProps> = (props) => {
   return (
     <AvatarPrimitive.Root
       className={twMerge(
-        'inline-flex items-center justify-center align-middle overflow-hidden rounded-full border-2 box-border',
+        'inline-flex items-center justify-center align-middle overflow-hidden rounded-full border box-border',
         sizeClassName,
         classNames.borderColor,
         classNames.bg,
