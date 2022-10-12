@@ -9,11 +9,11 @@ import {
   VoteStatus,
 } from '@webb-dapp/page-statistics/generated/graphql';
 import { mapProposalListItem } from '@webb-dapp/page-statistics/provider/hooks/mappers';
+import { thresholdVariant } from '@webb-dapp/page-statistics/provider/hooks/mappers/thresholds';
 import { Loadable, Page, PageInfoQuery, ProposalStatus } from '@webb-dapp/page-statistics/provider/hooks/types';
 import { useEffect, useMemo, useState } from 'react';
 
 import { Threshold as QueryThreshold } from './types';
-import { thresholdVariant } from '@webb-dapp/page-statistics/provider/hooks/mappers/thresholds';
 
 /**
  * Threshold values

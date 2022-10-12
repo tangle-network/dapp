@@ -5,12 +5,12 @@ import {
   useSessionKeysLazyQuery,
 } from '@webb-dapp/page-statistics/generated/graphql';
 import { mapAuthorities } from '@webb-dapp/page-statistics/provider/hooks/mappers';
+import { thresholdMap } from '@webb-dapp/page-statistics/provider/hooks/mappers/thresholds';
 import { useCurrentMetaData } from '@webb-dapp/page-statistics/provider/hooks/useCurrentMetaData';
 import { useActiveSession, useStaticConfig } from '@webb-dapp/page-statistics/provider/stats-provider';
 import { useEffect, useState } from 'react';
 
 import { Loadable, Page, PageInfoQuery, SessionKeyHistory, SessionKeyStatus, Threshold } from './types';
-import { thresholdMap } from '@webb-dapp/page-statistics/provider/hooks/mappers/thresholds';
 
 /**
  *  Public key shared content

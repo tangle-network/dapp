@@ -1,8 +1,8 @@
 import { useLatestThresholdsLazyQuery } from '@webb-dapp/page-statistics/generated/graphql';
-import { useEffect, useState } from 'react';
-import { Loadable } from '@webb-dapp/page-statistics/provider/hooks/types';
 import { thresholdMap } from '@webb-dapp/page-statistics/provider/hooks/mappers/thresholds';
+import { Loadable } from '@webb-dapp/page-statistics/provider/hooks/types';
 import { useStatsContext } from '@webb-dapp/page-statistics/provider/stats-provider';
+import { useEffect, useState } from 'react';
 
 type SessionThresholdValue = {
   sessionId: string;

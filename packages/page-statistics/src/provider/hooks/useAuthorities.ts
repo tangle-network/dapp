@@ -6,6 +6,7 @@ import {
   useValidatorSessionsLazyQuery,
 } from '@webb-dapp/page-statistics/generated/graphql';
 import { mapAuthorities, mapSessionAuthValidatorNode } from '@webb-dapp/page-statistics/provider/hooks/mappers';
+import { thresholdMap } from '@webb-dapp/page-statistics/provider/hooks/mappers/thresholds';
 import { Loadable, Page, PageInfoQuery } from '@webb-dapp/page-statistics/provider/hooks/types';
 import { useCurrentMetaData } from '@webb-dapp/page-statistics/provider/hooks/useCurrentMetaData';
 import { PublicKey } from '@webb-dapp/page-statistics/provider/hooks/useKeys';
@@ -14,7 +15,6 @@ import { useActiveSession } from '@webb-dapp/page-statistics/provider/stats-prov
 import { useEffect, useMemo, useState } from 'react';
 
 import { Threshold as QueryThreshold } from './types';
-import { thresholdMap } from '@webb-dapp/page-statistics/provider/hooks/mappers/thresholds';
 /**
  * Threshold values
  * @param keyGen - KeyGen threshold

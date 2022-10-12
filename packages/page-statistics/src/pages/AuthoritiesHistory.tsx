@@ -1,3 +1,4 @@
+import { useSessionThreshold } from '@webb-dapp/page-statistics/provider/hooks/useSession';
 import { Button, DropdownMenu, TitleWithInfo } from '@webb-dapp/webb-ui-components/components';
 import { useDarkMode } from '@webb-dapp/webb-ui-components/hooks';
 import { ArrowLeft } from '@webb-dapp/webb-ui-components/icons';
@@ -21,7 +22,6 @@ import { Link } from 'react-router-dom';
 import resolveConfig from 'tailwindcss/resolveConfig';
 
 import tailwindConfig from '../../tailwind.config.js';
-import { useSessionThreshold } from '@webb-dapp/page-statistics/provider/hooks/useSession';
 
 const fullConfig = resolveConfig(tailwindConfig);
 
