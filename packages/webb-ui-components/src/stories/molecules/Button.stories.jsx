@@ -8,9 +8,6 @@ export default {
   title: 'Design System/Molecules/Button',
   component: Button,
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
-//   argTypes: {
-//     backgroundColor: { control: 'color' },
-//   },
 };
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args

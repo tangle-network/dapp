@@ -7,9 +7,6 @@ export default {
   title: 'Design System/Molecules/Pagination',
   component: Pagination,
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
-//   argTypes: {
-//     backgroundColor: { control: 'color' },
-//   },
 };
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
@@ -29,16 +26,3 @@ Primary.args = {
   nextPage: 3,
   setPageIndex: 2,
 };
-
-
-{/* <Pagination
-itemsPerPage={table.getState().pagination.pageSize}
-totalItems={Math.max(table.getPrePaginationRowModel().rows.length, totalRecords)}
-page={table.getState().pagination.pageIndex + 1}
-totalPages={table.getPageCount()}
-canPreviousPage={table.getCanPreviousPage()}
-previousPage={table.previousPage}
-canNextPage={table.getCanNextPage()}
-nextPage={table.nextPage}
-setPageIndex={table.setPageIndex}
-/> */}

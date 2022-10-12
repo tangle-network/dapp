@@ -7,9 +7,6 @@ export default {
   title: 'Design System/Molecules/Slider',
   component: Slider,
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
-//   argTypes: {
-//     backgroundColor: { control: 'color' },
-//   },
 };
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
@@ -28,10 +25,3 @@ Secondary.args = {
   defaultValue:[25],
   hasLabel: true
 };
-
-// export const Tertiary = Template.bind({});
-// Tertiary.args = {
-//   className: 'mt-4',
-//   value:[25],
-//   onChange: {onValueChange}
-// };

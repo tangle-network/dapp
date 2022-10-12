@@ -7,9 +7,6 @@ export default {
   title: 'Design System/Molecules/Tabs',
   component: Tabs,
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
-//   argTypes: {
-//     backgroundColor: { control: 'color' },
-//   },
 };
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
