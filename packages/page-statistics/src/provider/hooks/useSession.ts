@@ -10,7 +10,11 @@ type SessionThresholdValue = {
   signatureThreshold: number;
 };
 type LatestThresholdsValue = Loadable<Array<SessionThresholdValue>>;
-
+`/**
+ *  Network thresholds history
+ *  @param isLatest - When this is set to `true` the hook will fetch only the latest thresholds, When it's set to `false` the hook will fetch last month thresholds
+ *
+ * */
 export function useSessionThreshold(isLatest: boolean): LatestThresholdsValue {
   const stats = useStatsContext();
   const [value, setValue] = useState<LatestThresholdsValue>({
