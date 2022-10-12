@@ -9651,7 +9651,7 @@ export type ThresholdVarianceSampleAggregates = {
 };
 
 export enum ThresholdVariant {
-  KyeGen = 'KYE_GEN',
+  KeyGen = 'KEY_GEN',
   Proposer = 'PROPOSER',
   Signature = 'SIGNATURE'
 }

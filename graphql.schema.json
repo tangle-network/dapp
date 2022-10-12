@@ -60076,7 +60076,7 @@
         "interfaces": null,
         "enumValues": [
           {
-            "name": "KYE_GEN",
+            "name": "KEY_GEN",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null

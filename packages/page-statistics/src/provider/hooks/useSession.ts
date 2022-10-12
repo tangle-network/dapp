@@ -56,7 +56,7 @@ export function useSessionThreshold(isLatest: boolean): LatestThresholdsValue {
               const map = thresholdMap(session.thresholds);
               return {
                 sessionId: session.id,
-                keygenThreshold: map.KYE_GEN?.current,
+                keygenThreshold: map.KEY_GEN?.current,
                 signatureThreshold: map.SIGNATURE?.current,
               };
             })

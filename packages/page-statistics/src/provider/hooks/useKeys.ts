@@ -218,7 +218,7 @@ export function useKeys(reqQuery: PageInfoQuery): Loadable<Page<PublicKeyListVie
               items: filteredData.map((node, idx) => {
                 const session = node!.sessions?.nodes[0]!;
                 const thresholds = thresholdMap(session ? session.thresholds : { nodes: [] });
-                const keyGen = thresholds.KYE_GEN;
+                const keyGen = thresholds.KEY_GEN;
                 const signature = thresholds.SIGNATURE;
 
                 const authorities = mapAuthorities(session.sessionValidators)
@@ -422,7 +422,7 @@ export function useKey(id: string): PublicKeyDetailsPage {
           const validators = sessionAuthorities.length;
           const [start, end] = sessionFrame(session.block?.timestamp, sessionHeight, blockTime);
           const thresholds = thresholdMap(session.thresholds);
-          const keyGen = thresholds.KYE_GEN;
+          const keyGen = thresholds.KEY_GEN;
           const signature = thresholds.SIGNATURE;
           return {
             isFailed: false,

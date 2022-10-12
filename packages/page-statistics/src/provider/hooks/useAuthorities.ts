@@ -155,7 +155,7 @@ export function useThresholds(): Loadable<[Thresholds, UpcomingThresholds]> {
         if (res.data) {
           const session = res.data.session!;
           const thresholds = thresholdMap(session.thresholds);
-          const keyGen = thresholds.KYE_GEN;
+          const keyGen = thresholds.KEY_GEN;
           const signature = thresholds.SIGNATURE;
 
           const publicKey = session.publicKey!;
@@ -421,7 +421,7 @@ export function useAuthority(pageQuery: AuthorityQuery): AuthorityDetails {
           const counter = sessionValidators?.aggregates?.distinctCount?.id as number;
           const session = sessionValidator.session!;
           const thresholds = thresholdMap(session.thresholds);
-          const keyGen = thresholds.KYE_GEN;
+          const keyGen = thresholds.KEY_GEN;
 
           const auth = mapSessionAuthValidatorNode(sessionValidator);
           const stats: AuthorityStats = {
@@ -492,7 +492,7 @@ export function useSessionHistory(pageQuery: PageInfoQuery): Loadable<Page<Sessi
         if (res.data.sessions) {
           const items: SessionThresholdEntry[] = res.data.sessions.nodes.map((node) => {
             const thresholds = thresholdMap(node!.thresholds);
-            const keyGen = thresholds.KYE_GEN;
+            const keyGen = thresholds.KEY_GEN;
             const signature = thresholds.SIGNATURE;
 
             return {
