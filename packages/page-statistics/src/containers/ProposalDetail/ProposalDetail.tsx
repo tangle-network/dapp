@@ -54,7 +54,17 @@ export const ProposalDetail = () => {
   }, [pathname]);
 
   // Result threshold
-  const passThreshold = useMemo(() => randNumber({ min: 0, max: 100 }), []);
+  const passThreshold = useMemo(() => {
+    const proposal = proposalDetails.proposal.val;
+    if (proposal) {
+      console.log(proposal, 'proposal');
+      if (proposal.abstainPercentage === 100) {
+        return proposal.abstainPercentage;
+      }
+      return proposal.forPercentage;
+    }
+    return 0;
+  }, [proposalDetails]);
   const status = useMemo(() => {
     return proposalDetails.proposal.val?.status ?? null;
   }, [proposalDetails]);

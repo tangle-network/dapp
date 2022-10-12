@@ -3638,6 +3638,33 @@ type Query implements Node {
         "The method to use when ordering `SignatureThreshold`."
         orderBy: [SignatureThresholdsOrderBy!] = [PRIMARY_KEY_ASC]
     ): SignatureThresholdsConnection
+    threshold(id: String!): Threshold
+    "Reads a single `Threshold` using its globally unique `ID`."
+    thresholdByNodeId(
+        "The globally unique `ID` to be used in selecting a single `Threshold`."
+        nodeId: ID!
+    ): Threshold
+    "Reads and enables pagination through a set of `Threshold`."
+    thresholds(
+        "Read all values in the set after (below) this cursor."
+        after: Cursor,
+        "Read all values in the set before (above) this cursor."
+        before: Cursor,
+        "A filter to be used in determining which values should be returned by the collection."
+        filter: ThresholdFilter,
+        "Only read the first `n` values of the set."
+        first: Int,
+        "Only read the last `n` values of the set."
+        last: Int,
+        """
+
+        Skip the first `n` values from our `after` cursor, an alternative to cursor
+        based pagination. May not be used with `last`.
+        """
+        offset: Int,
+        "The method to use when ordering `Threshold`."
+        orderBy: [ThresholdsOrderBy!] = [PRIMARY_KEY_ASC]
+    ): ThresholdsConnection
     unsignedProposalsQueue(id: String!): UnsignedProposalsQueue
     "Reads a single `UnsignedProposalsQueue` using its globally unique `ID`."
     unsignedProposalsQueueByNodeId(
@@ -3727,10 +3754,8 @@ type Session implements Node {
     blockId: String!
     blockNumber: Int!
     id: String!
-    keyGenThreshold: JSON
     "A globally unique identifier. Can be used in various places throughout the system to identify this single value."
     nodeId: ID!
-    proposerThreshold: JSON
     "Reads and enables pagination through a set of `Proposer`."
     proposersBySessionProposerSessionIdAndProposerId(
         "Read all values in the set after (below) this cursor."
@@ -3797,7 +3822,27 @@ type Session implements Node {
         "The method to use when ordering `SessionValidator`."
         orderBy: [SessionValidatorsOrderBy!] = [PRIMARY_KEY_ASC]
     ): SessionValidatorsConnection!
-    signatureThreshold: JSON
+    "Reads and enables pagination through a set of `Threshold`."
+    thresholds(
+        "Read all values in the set after (below) this cursor."
+        after: Cursor,
+        "Read all values in the set before (above) this cursor."
+        before: Cursor,
+        "A filter to be used in determining which values should be returned by the collection."
+        filter: ThresholdFilter,
+        "Only read the first `n` values of the set."
+        first: Int,
+        "Only read the last `n` values of the set."
+        last: Int,
+        """
+
+        Skip the first `n` values from our `after` cursor, an alternative to cursor
+        based pagination. May not be used with `last`.
+        """
+        offset: Int,
+        "The method to use when ordering `Threshold`."
+        orderBy: [ThresholdsOrderBy!] = [PRIMARY_KEY_ASC]
+    ): ThresholdsConnection!
     "Reads and enables pagination through a set of `Validator`."
     validatorsBySessionValidatorSessionIdAndValidatorId(
         "Read all values in the set after (below) this cursor."
@@ -3855,14 +3900,8 @@ type SessionDistinctCountAggregates {
     blockNumber: BigInt
     "Distinct count of id across the matching connection"
     id: BigInt
-    "Distinct count of keyGenThreshold across the matching connection"
-    keyGenThreshold: BigInt
-    "Distinct count of proposerThreshold across the matching connection"
-    proposerThreshold: BigInt
     "Distinct count of publicKeyId across the matching connection"
     publicKeyId: BigInt
-    "Distinct count of signatureThreshold across the matching connection"
-    signatureThreshold: BigInt
 }
 
 type SessionMaxAggregates {
@@ -4382,6 +4421,157 @@ type SignatureThresholdsEdge {
 type TableEstimate {
     estimate: Int
     table: String
+}
+
+type Threshold implements Node {
+    current: Int!
+    id: String!
+    next: Int!
+    "A globally unique identifier. Can be used in various places throughout the system to identify this single value."
+    nodeId: ID!
+    pending: Int!
+    "Reads a single `Session` that is related to this `Threshold`."
+    session: Session
+    sessionId: String!
+    variant: ThresholdVariant!
+}
+
+type ThresholdAggregates {
+    "Mean average aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    average: ThresholdAverageAggregates
+    "Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    distinctCount: ThresholdDistinctCountAggregates
+    keys: [String!]
+    "Maximum aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    max: ThresholdMaxAggregates
+    "Minimum aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    min: ThresholdMinAggregates
+    "Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    stddevPopulation: ThresholdStddevPopulationAggregates
+    "Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    stddevSample: ThresholdStddevSampleAggregates
+    "Sum aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    sum: ThresholdSumAggregates
+    "Population variance aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    variancePopulation: ThresholdVariancePopulationAggregates
+    "Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    varianceSample: ThresholdVarianceSampleAggregates
+}
+
+type ThresholdAverageAggregates {
+    "Mean average of current across the matching connection"
+    current: BigFloat
+    "Mean average of next across the matching connection"
+    next: BigFloat
+    "Mean average of pending across the matching connection"
+    pending: BigFloat
+}
+
+type ThresholdDistinctCountAggregates {
+    "Distinct count of current across the matching connection"
+    current: BigInt
+    "Distinct count of id across the matching connection"
+    id: BigInt
+    "Distinct count of next across the matching connection"
+    next: BigInt
+    "Distinct count of pending across the matching connection"
+    pending: BigInt
+    "Distinct count of sessionId across the matching connection"
+    sessionId: BigInt
+    "Distinct count of variant across the matching connection"
+    variant: BigInt
+}
+
+type ThresholdMaxAggregates {
+    "Maximum of current across the matching connection"
+    current: Int
+    "Maximum of next across the matching connection"
+    next: Int
+    "Maximum of pending across the matching connection"
+    pending: Int
+}
+
+type ThresholdMinAggregates {
+    "Minimum of current across the matching connection"
+    current: Int
+    "Minimum of next across the matching connection"
+    next: Int
+    "Minimum of pending across the matching connection"
+    pending: Int
+}
+
+type ThresholdStddevPopulationAggregates {
+    "Population standard deviation of current across the matching connection"
+    current: BigFloat
+    "Population standard deviation of next across the matching connection"
+    next: BigFloat
+    "Population standard deviation of pending across the matching connection"
+    pending: BigFloat
+}
+
+type ThresholdStddevSampleAggregates {
+    "Sample standard deviation of current across the matching connection"
+    current: BigFloat
+    "Sample standard deviation of next across the matching connection"
+    next: BigFloat
+    "Sample standard deviation of pending across the matching connection"
+    pending: BigFloat
+}
+
+type ThresholdSumAggregates {
+    "Sum of current across the matching connection"
+    current: BigInt!
+    "Sum of next across the matching connection"
+    next: BigInt!
+    "Sum of pending across the matching connection"
+    pending: BigInt!
+}
+
+type ThresholdVariancePopulationAggregates {
+    "Population variance of current across the matching connection"
+    current: BigFloat
+    "Population variance of next across the matching connection"
+    next: BigFloat
+    "Population variance of pending across the matching connection"
+    pending: BigFloat
+}
+
+type ThresholdVarianceSampleAggregates {
+    "Sample variance of current across the matching connection"
+    current: BigFloat
+    "Sample variance of next across the matching connection"
+    next: BigFloat
+    "Sample variance of pending across the matching connection"
+    pending: BigFloat
+}
+
+"A connection to a list of `Threshold` values."
+type ThresholdsConnection {
+    "Aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    aggregates: ThresholdAggregates
+    "A list of edges which contains the `Threshold` and cursor to aid in pagination."
+    edges: [ThresholdsEdge!]!
+    "Grouped aggregates across the matching connection (ignoring before/after/first/last/offset)"
+    groupedAggregates(
+        "The method to use when grouping `Threshold` for these aggregates."
+        groupBy: [ThresholdsGroupBy!]!,
+        "Conditions on the grouped aggregates."
+        having: ThresholdsHavingInput
+    ): [ThresholdAggregates!]
+    "A list of `Threshold` objects."
+    nodes: [Threshold]!
+    "Information to aid in pagination."
+    pageInfo: PageInfo!
+    "The count of *all* `Threshold` you could get from the connection."
+    totalCount: Int!
+}
+
+"A `Threshold` edge in the connection."
+type ThresholdsEdge {
+    "A cursor for use in pagination."
+    cursor: Cursor
+    "The `Threshold` at the end of the edge."
+    node: Threshold
 }
 
 type UnsignedProposalsQueue implements Node {
@@ -6883,14 +7073,8 @@ enum BlocksOrderBy {
     SESSIONS_AVERAGE_BLOCK_NUMBER_DESC
     SESSIONS_AVERAGE_ID_ASC
     SESSIONS_AVERAGE_ID_DESC
-    SESSIONS_AVERAGE_KEY_GEN_THRESHOLD_ASC
-    SESSIONS_AVERAGE_KEY_GEN_THRESHOLD_DESC
-    SESSIONS_AVERAGE_PROPOSER_THRESHOLD_ASC
-    SESSIONS_AVERAGE_PROPOSER_THRESHOLD_DESC
     SESSIONS_AVERAGE_PUBLIC_KEY_ID_ASC
     SESSIONS_AVERAGE_PUBLIC_KEY_ID_DESC
-    SESSIONS_AVERAGE_SIGNATURE_THRESHOLD_ASC
-    SESSIONS_AVERAGE_SIGNATURE_THRESHOLD_DESC
     SESSIONS_COUNT_ASC
     SESSIONS_COUNT_DESC
     SESSIONS_DISTINCT_COUNT_BLOCK_ID_ASC
@@ -6899,112 +7083,64 @@ enum BlocksOrderBy {
     SESSIONS_DISTINCT_COUNT_BLOCK_NUMBER_DESC
     SESSIONS_DISTINCT_COUNT_ID_ASC
     SESSIONS_DISTINCT_COUNT_ID_DESC
-    SESSIONS_DISTINCT_COUNT_KEY_GEN_THRESHOLD_ASC
-    SESSIONS_DISTINCT_COUNT_KEY_GEN_THRESHOLD_DESC
-    SESSIONS_DISTINCT_COUNT_PROPOSER_THRESHOLD_ASC
-    SESSIONS_DISTINCT_COUNT_PROPOSER_THRESHOLD_DESC
     SESSIONS_DISTINCT_COUNT_PUBLIC_KEY_ID_ASC
     SESSIONS_DISTINCT_COUNT_PUBLIC_KEY_ID_DESC
-    SESSIONS_DISTINCT_COUNT_SIGNATURE_THRESHOLD_ASC
-    SESSIONS_DISTINCT_COUNT_SIGNATURE_THRESHOLD_DESC
     SESSIONS_MAX_BLOCK_ID_ASC
     SESSIONS_MAX_BLOCK_ID_DESC
     SESSIONS_MAX_BLOCK_NUMBER_ASC
     SESSIONS_MAX_BLOCK_NUMBER_DESC
     SESSIONS_MAX_ID_ASC
     SESSIONS_MAX_ID_DESC
-    SESSIONS_MAX_KEY_GEN_THRESHOLD_ASC
-    SESSIONS_MAX_KEY_GEN_THRESHOLD_DESC
-    SESSIONS_MAX_PROPOSER_THRESHOLD_ASC
-    SESSIONS_MAX_PROPOSER_THRESHOLD_DESC
     SESSIONS_MAX_PUBLIC_KEY_ID_ASC
     SESSIONS_MAX_PUBLIC_KEY_ID_DESC
-    SESSIONS_MAX_SIGNATURE_THRESHOLD_ASC
-    SESSIONS_MAX_SIGNATURE_THRESHOLD_DESC
     SESSIONS_MIN_BLOCK_ID_ASC
     SESSIONS_MIN_BLOCK_ID_DESC
     SESSIONS_MIN_BLOCK_NUMBER_ASC
     SESSIONS_MIN_BLOCK_NUMBER_DESC
     SESSIONS_MIN_ID_ASC
     SESSIONS_MIN_ID_DESC
-    SESSIONS_MIN_KEY_GEN_THRESHOLD_ASC
-    SESSIONS_MIN_KEY_GEN_THRESHOLD_DESC
-    SESSIONS_MIN_PROPOSER_THRESHOLD_ASC
-    SESSIONS_MIN_PROPOSER_THRESHOLD_DESC
     SESSIONS_MIN_PUBLIC_KEY_ID_ASC
     SESSIONS_MIN_PUBLIC_KEY_ID_DESC
-    SESSIONS_MIN_SIGNATURE_THRESHOLD_ASC
-    SESSIONS_MIN_SIGNATURE_THRESHOLD_DESC
     SESSIONS_STDDEV_POPULATION_BLOCK_ID_ASC
     SESSIONS_STDDEV_POPULATION_BLOCK_ID_DESC
     SESSIONS_STDDEV_POPULATION_BLOCK_NUMBER_ASC
     SESSIONS_STDDEV_POPULATION_BLOCK_NUMBER_DESC
     SESSIONS_STDDEV_POPULATION_ID_ASC
     SESSIONS_STDDEV_POPULATION_ID_DESC
-    SESSIONS_STDDEV_POPULATION_KEY_GEN_THRESHOLD_ASC
-    SESSIONS_STDDEV_POPULATION_KEY_GEN_THRESHOLD_DESC
-    SESSIONS_STDDEV_POPULATION_PROPOSER_THRESHOLD_ASC
-    SESSIONS_STDDEV_POPULATION_PROPOSER_THRESHOLD_DESC
     SESSIONS_STDDEV_POPULATION_PUBLIC_KEY_ID_ASC
     SESSIONS_STDDEV_POPULATION_PUBLIC_KEY_ID_DESC
-    SESSIONS_STDDEV_POPULATION_SIGNATURE_THRESHOLD_ASC
-    SESSIONS_STDDEV_POPULATION_SIGNATURE_THRESHOLD_DESC
     SESSIONS_STDDEV_SAMPLE_BLOCK_ID_ASC
     SESSIONS_STDDEV_SAMPLE_BLOCK_ID_DESC
     SESSIONS_STDDEV_SAMPLE_BLOCK_NUMBER_ASC
     SESSIONS_STDDEV_SAMPLE_BLOCK_NUMBER_DESC
     SESSIONS_STDDEV_SAMPLE_ID_ASC
     SESSIONS_STDDEV_SAMPLE_ID_DESC
-    SESSIONS_STDDEV_SAMPLE_KEY_GEN_THRESHOLD_ASC
-    SESSIONS_STDDEV_SAMPLE_KEY_GEN_THRESHOLD_DESC
-    SESSIONS_STDDEV_SAMPLE_PROPOSER_THRESHOLD_ASC
-    SESSIONS_STDDEV_SAMPLE_PROPOSER_THRESHOLD_DESC
     SESSIONS_STDDEV_SAMPLE_PUBLIC_KEY_ID_ASC
     SESSIONS_STDDEV_SAMPLE_PUBLIC_KEY_ID_DESC
-    SESSIONS_STDDEV_SAMPLE_SIGNATURE_THRESHOLD_ASC
-    SESSIONS_STDDEV_SAMPLE_SIGNATURE_THRESHOLD_DESC
     SESSIONS_SUM_BLOCK_ID_ASC
     SESSIONS_SUM_BLOCK_ID_DESC
     SESSIONS_SUM_BLOCK_NUMBER_ASC
     SESSIONS_SUM_BLOCK_NUMBER_DESC
     SESSIONS_SUM_ID_ASC
     SESSIONS_SUM_ID_DESC
-    SESSIONS_SUM_KEY_GEN_THRESHOLD_ASC
-    SESSIONS_SUM_KEY_GEN_THRESHOLD_DESC
-    SESSIONS_SUM_PROPOSER_THRESHOLD_ASC
-    SESSIONS_SUM_PROPOSER_THRESHOLD_DESC
     SESSIONS_SUM_PUBLIC_KEY_ID_ASC
     SESSIONS_SUM_PUBLIC_KEY_ID_DESC
-    SESSIONS_SUM_SIGNATURE_THRESHOLD_ASC
-    SESSIONS_SUM_SIGNATURE_THRESHOLD_DESC
     SESSIONS_VARIANCE_POPULATION_BLOCK_ID_ASC
     SESSIONS_VARIANCE_POPULATION_BLOCK_ID_DESC
     SESSIONS_VARIANCE_POPULATION_BLOCK_NUMBER_ASC
     SESSIONS_VARIANCE_POPULATION_BLOCK_NUMBER_DESC
     SESSIONS_VARIANCE_POPULATION_ID_ASC
     SESSIONS_VARIANCE_POPULATION_ID_DESC
-    SESSIONS_VARIANCE_POPULATION_KEY_GEN_THRESHOLD_ASC
-    SESSIONS_VARIANCE_POPULATION_KEY_GEN_THRESHOLD_DESC
-    SESSIONS_VARIANCE_POPULATION_PROPOSER_THRESHOLD_ASC
-    SESSIONS_VARIANCE_POPULATION_PROPOSER_THRESHOLD_DESC
     SESSIONS_VARIANCE_POPULATION_PUBLIC_KEY_ID_ASC
     SESSIONS_VARIANCE_POPULATION_PUBLIC_KEY_ID_DESC
-    SESSIONS_VARIANCE_POPULATION_SIGNATURE_THRESHOLD_ASC
-    SESSIONS_VARIANCE_POPULATION_SIGNATURE_THRESHOLD_DESC
     SESSIONS_VARIANCE_SAMPLE_BLOCK_ID_ASC
     SESSIONS_VARIANCE_SAMPLE_BLOCK_ID_DESC
     SESSIONS_VARIANCE_SAMPLE_BLOCK_NUMBER_ASC
     SESSIONS_VARIANCE_SAMPLE_BLOCK_NUMBER_DESC
     SESSIONS_VARIANCE_SAMPLE_ID_ASC
     SESSIONS_VARIANCE_SAMPLE_ID_DESC
-    SESSIONS_VARIANCE_SAMPLE_KEY_GEN_THRESHOLD_ASC
-    SESSIONS_VARIANCE_SAMPLE_KEY_GEN_THRESHOLD_DESC
-    SESSIONS_VARIANCE_SAMPLE_PROPOSER_THRESHOLD_ASC
-    SESSIONS_VARIANCE_SAMPLE_PROPOSER_THRESHOLD_DESC
     SESSIONS_VARIANCE_SAMPLE_PUBLIC_KEY_ID_ASC
     SESSIONS_VARIANCE_SAMPLE_PUBLIC_KEY_ID_DESC
-    SESSIONS_VARIANCE_SAMPLE_SIGNATURE_THRESHOLD_ASC
-    SESSIONS_VARIANCE_SAMPLE_SIGNATURE_THRESHOLD_DESC
     SIGNATURE_THRESHOLDS_AVERAGE_BLOCK_ID_ASC
     SIGNATURE_THRESHOLDS_AVERAGE_BLOCK_ID_DESC
     SIGNATURE_THRESHOLDS_AVERAGE_CURRENT_ASC
@@ -8156,14 +8292,8 @@ enum PublicKeysOrderBy {
     SESSIONS_AVERAGE_BLOCK_NUMBER_DESC
     SESSIONS_AVERAGE_ID_ASC
     SESSIONS_AVERAGE_ID_DESC
-    SESSIONS_AVERAGE_KEY_GEN_THRESHOLD_ASC
-    SESSIONS_AVERAGE_KEY_GEN_THRESHOLD_DESC
-    SESSIONS_AVERAGE_PROPOSER_THRESHOLD_ASC
-    SESSIONS_AVERAGE_PROPOSER_THRESHOLD_DESC
     SESSIONS_AVERAGE_PUBLIC_KEY_ID_ASC
     SESSIONS_AVERAGE_PUBLIC_KEY_ID_DESC
-    SESSIONS_AVERAGE_SIGNATURE_THRESHOLD_ASC
-    SESSIONS_AVERAGE_SIGNATURE_THRESHOLD_DESC
     SESSIONS_COUNT_ASC
     SESSIONS_COUNT_DESC
     SESSIONS_DISTINCT_COUNT_BLOCK_ID_ASC
@@ -8172,112 +8302,64 @@ enum PublicKeysOrderBy {
     SESSIONS_DISTINCT_COUNT_BLOCK_NUMBER_DESC
     SESSIONS_DISTINCT_COUNT_ID_ASC
     SESSIONS_DISTINCT_COUNT_ID_DESC
-    SESSIONS_DISTINCT_COUNT_KEY_GEN_THRESHOLD_ASC
-    SESSIONS_DISTINCT_COUNT_KEY_GEN_THRESHOLD_DESC
-    SESSIONS_DISTINCT_COUNT_PROPOSER_THRESHOLD_ASC
-    SESSIONS_DISTINCT_COUNT_PROPOSER_THRESHOLD_DESC
     SESSIONS_DISTINCT_COUNT_PUBLIC_KEY_ID_ASC
     SESSIONS_DISTINCT_COUNT_PUBLIC_KEY_ID_DESC
-    SESSIONS_DISTINCT_COUNT_SIGNATURE_THRESHOLD_ASC
-    SESSIONS_DISTINCT_COUNT_SIGNATURE_THRESHOLD_DESC
     SESSIONS_MAX_BLOCK_ID_ASC
     SESSIONS_MAX_BLOCK_ID_DESC
     SESSIONS_MAX_BLOCK_NUMBER_ASC
     SESSIONS_MAX_BLOCK_NUMBER_DESC
     SESSIONS_MAX_ID_ASC
     SESSIONS_MAX_ID_DESC
-    SESSIONS_MAX_KEY_GEN_THRESHOLD_ASC
-    SESSIONS_MAX_KEY_GEN_THRESHOLD_DESC
-    SESSIONS_MAX_PROPOSER_THRESHOLD_ASC
-    SESSIONS_MAX_PROPOSER_THRESHOLD_DESC
     SESSIONS_MAX_PUBLIC_KEY_ID_ASC
     SESSIONS_MAX_PUBLIC_KEY_ID_DESC
-    SESSIONS_MAX_SIGNATURE_THRESHOLD_ASC
-    SESSIONS_MAX_SIGNATURE_THRESHOLD_DESC
     SESSIONS_MIN_BLOCK_ID_ASC
     SESSIONS_MIN_BLOCK_ID_DESC
     SESSIONS_MIN_BLOCK_NUMBER_ASC
     SESSIONS_MIN_BLOCK_NUMBER_DESC
     SESSIONS_MIN_ID_ASC
     SESSIONS_MIN_ID_DESC
-    SESSIONS_MIN_KEY_GEN_THRESHOLD_ASC
-    SESSIONS_MIN_KEY_GEN_THRESHOLD_DESC
-    SESSIONS_MIN_PROPOSER_THRESHOLD_ASC
-    SESSIONS_MIN_PROPOSER_THRESHOLD_DESC
     SESSIONS_MIN_PUBLIC_KEY_ID_ASC
     SESSIONS_MIN_PUBLIC_KEY_ID_DESC
-    SESSIONS_MIN_SIGNATURE_THRESHOLD_ASC
-    SESSIONS_MIN_SIGNATURE_THRESHOLD_DESC
     SESSIONS_STDDEV_POPULATION_BLOCK_ID_ASC
     SESSIONS_STDDEV_POPULATION_BLOCK_ID_DESC
     SESSIONS_STDDEV_POPULATION_BLOCK_NUMBER_ASC
     SESSIONS_STDDEV_POPULATION_BLOCK_NUMBER_DESC
     SESSIONS_STDDEV_POPULATION_ID_ASC
     SESSIONS_STDDEV_POPULATION_ID_DESC
-    SESSIONS_STDDEV_POPULATION_KEY_GEN_THRESHOLD_ASC
-    SESSIONS_STDDEV_POPULATION_KEY_GEN_THRESHOLD_DESC
-    SESSIONS_STDDEV_POPULATION_PROPOSER_THRESHOLD_ASC
-    SESSIONS_STDDEV_POPULATION_PROPOSER_THRESHOLD_DESC
     SESSIONS_STDDEV_POPULATION_PUBLIC_KEY_ID_ASC
     SESSIONS_STDDEV_POPULATION_PUBLIC_KEY_ID_DESC
-    SESSIONS_STDDEV_POPULATION_SIGNATURE_THRESHOLD_ASC
-    SESSIONS_STDDEV_POPULATION_SIGNATURE_THRESHOLD_DESC
     SESSIONS_STDDEV_SAMPLE_BLOCK_ID_ASC
     SESSIONS_STDDEV_SAMPLE_BLOCK_ID_DESC
     SESSIONS_STDDEV_SAMPLE_BLOCK_NUMBER_ASC
     SESSIONS_STDDEV_SAMPLE_BLOCK_NUMBER_DESC
     SESSIONS_STDDEV_SAMPLE_ID_ASC
     SESSIONS_STDDEV_SAMPLE_ID_DESC
-    SESSIONS_STDDEV_SAMPLE_KEY_GEN_THRESHOLD_ASC
-    SESSIONS_STDDEV_SAMPLE_KEY_GEN_THRESHOLD_DESC
-    SESSIONS_STDDEV_SAMPLE_PROPOSER_THRESHOLD_ASC
-    SESSIONS_STDDEV_SAMPLE_PROPOSER_THRESHOLD_DESC
     SESSIONS_STDDEV_SAMPLE_PUBLIC_KEY_ID_ASC
     SESSIONS_STDDEV_SAMPLE_PUBLIC_KEY_ID_DESC
-    SESSIONS_STDDEV_SAMPLE_SIGNATURE_THRESHOLD_ASC
-    SESSIONS_STDDEV_SAMPLE_SIGNATURE_THRESHOLD_DESC
     SESSIONS_SUM_BLOCK_ID_ASC
     SESSIONS_SUM_BLOCK_ID_DESC
     SESSIONS_SUM_BLOCK_NUMBER_ASC
     SESSIONS_SUM_BLOCK_NUMBER_DESC
     SESSIONS_SUM_ID_ASC
     SESSIONS_SUM_ID_DESC
-    SESSIONS_SUM_KEY_GEN_THRESHOLD_ASC
-    SESSIONS_SUM_KEY_GEN_THRESHOLD_DESC
-    SESSIONS_SUM_PROPOSER_THRESHOLD_ASC
-    SESSIONS_SUM_PROPOSER_THRESHOLD_DESC
     SESSIONS_SUM_PUBLIC_KEY_ID_ASC
     SESSIONS_SUM_PUBLIC_KEY_ID_DESC
-    SESSIONS_SUM_SIGNATURE_THRESHOLD_ASC
-    SESSIONS_SUM_SIGNATURE_THRESHOLD_DESC
     SESSIONS_VARIANCE_POPULATION_BLOCK_ID_ASC
     SESSIONS_VARIANCE_POPULATION_BLOCK_ID_DESC
     SESSIONS_VARIANCE_POPULATION_BLOCK_NUMBER_ASC
     SESSIONS_VARIANCE_POPULATION_BLOCK_NUMBER_DESC
     SESSIONS_VARIANCE_POPULATION_ID_ASC
     SESSIONS_VARIANCE_POPULATION_ID_DESC
-    SESSIONS_VARIANCE_POPULATION_KEY_GEN_THRESHOLD_ASC
-    SESSIONS_VARIANCE_POPULATION_KEY_GEN_THRESHOLD_DESC
-    SESSIONS_VARIANCE_POPULATION_PROPOSER_THRESHOLD_ASC
-    SESSIONS_VARIANCE_POPULATION_PROPOSER_THRESHOLD_DESC
     SESSIONS_VARIANCE_POPULATION_PUBLIC_KEY_ID_ASC
     SESSIONS_VARIANCE_POPULATION_PUBLIC_KEY_ID_DESC
-    SESSIONS_VARIANCE_POPULATION_SIGNATURE_THRESHOLD_ASC
-    SESSIONS_VARIANCE_POPULATION_SIGNATURE_THRESHOLD_DESC
     SESSIONS_VARIANCE_SAMPLE_BLOCK_ID_ASC
     SESSIONS_VARIANCE_SAMPLE_BLOCK_ID_DESC
     SESSIONS_VARIANCE_SAMPLE_BLOCK_NUMBER_ASC
     SESSIONS_VARIANCE_SAMPLE_BLOCK_NUMBER_DESC
     SESSIONS_VARIANCE_SAMPLE_ID_ASC
     SESSIONS_VARIANCE_SAMPLE_ID_DESC
-    SESSIONS_VARIANCE_SAMPLE_KEY_GEN_THRESHOLD_ASC
-    SESSIONS_VARIANCE_SAMPLE_KEY_GEN_THRESHOLD_DESC
-    SESSIONS_VARIANCE_SAMPLE_PROPOSER_THRESHOLD_ASC
-    SESSIONS_VARIANCE_SAMPLE_PROPOSER_THRESHOLD_DESC
     SESSIONS_VARIANCE_SAMPLE_PUBLIC_KEY_ID_ASC
     SESSIONS_VARIANCE_SAMPLE_PUBLIC_KEY_ID_DESC
-    SESSIONS_VARIANCE_SAMPLE_SIGNATURE_THRESHOLD_ASC
-    SESSIONS_VARIANCE_SAMPLE_SIGNATURE_THRESHOLD_DESC
     UNCOMPRESSED_ASC
     UNCOMPRESSED_DESC
 }
@@ -8342,10 +8424,7 @@ enum SessionValidatorsOrderBy {
 enum SessionsGroupBy {
     BLOCK_ID
     BLOCK_NUMBER
-    KEY_GEN_THRESHOLD
-    PROPOSER_THRESHOLD
     PUBLIC_KEY_ID
-    SIGNATURE_THRESHOLD
 }
 
 "Methods to use when ordering `Session`."
@@ -8356,13 +8435,9 @@ enum SessionsOrderBy {
     BLOCK_NUMBER_DESC
     ID_ASC
     ID_DESC
-    KEY_GEN_THRESHOLD_ASC
-    KEY_GEN_THRESHOLD_DESC
     NATURAL
     PRIMARY_KEY_ASC
     PRIMARY_KEY_DESC
-    PROPOSER_THRESHOLD_ASC
-    PROPOSER_THRESHOLD_DESC
     PUBLIC_KEY_ID_ASC
     PUBLIC_KEY_ID_DESC
     SESSION_PROPOSERS_AVERAGE_ID_ASC
@@ -8585,8 +8660,116 @@ enum SessionsOrderBy {
     SESSION_VALIDATORS_VARIANCE_SAMPLE_SESSION_ID_DESC
     SESSION_VALIDATORS_VARIANCE_SAMPLE_VALIDATOR_ID_ASC
     SESSION_VALIDATORS_VARIANCE_SAMPLE_VALIDATOR_ID_DESC
-    SIGNATURE_THRESHOLD_ASC
-    SIGNATURE_THRESHOLD_DESC
+    THRESHOLDS_AVERAGE_CURRENT_ASC
+    THRESHOLDS_AVERAGE_CURRENT_DESC
+    THRESHOLDS_AVERAGE_ID_ASC
+    THRESHOLDS_AVERAGE_ID_DESC
+    THRESHOLDS_AVERAGE_NEXT_ASC
+    THRESHOLDS_AVERAGE_NEXT_DESC
+    THRESHOLDS_AVERAGE_PENDING_ASC
+    THRESHOLDS_AVERAGE_PENDING_DESC
+    THRESHOLDS_AVERAGE_SESSION_ID_ASC
+    THRESHOLDS_AVERAGE_SESSION_ID_DESC
+    THRESHOLDS_AVERAGE_VARIANT_ASC
+    THRESHOLDS_AVERAGE_VARIANT_DESC
+    THRESHOLDS_COUNT_ASC
+    THRESHOLDS_COUNT_DESC
+    THRESHOLDS_DISTINCT_COUNT_CURRENT_ASC
+    THRESHOLDS_DISTINCT_COUNT_CURRENT_DESC
+    THRESHOLDS_DISTINCT_COUNT_ID_ASC
+    THRESHOLDS_DISTINCT_COUNT_ID_DESC
+    THRESHOLDS_DISTINCT_COUNT_NEXT_ASC
+    THRESHOLDS_DISTINCT_COUNT_NEXT_DESC
+    THRESHOLDS_DISTINCT_COUNT_PENDING_ASC
+    THRESHOLDS_DISTINCT_COUNT_PENDING_DESC
+    THRESHOLDS_DISTINCT_COUNT_SESSION_ID_ASC
+    THRESHOLDS_DISTINCT_COUNT_SESSION_ID_DESC
+    THRESHOLDS_DISTINCT_COUNT_VARIANT_ASC
+    THRESHOLDS_DISTINCT_COUNT_VARIANT_DESC
+    THRESHOLDS_MAX_CURRENT_ASC
+    THRESHOLDS_MAX_CURRENT_DESC
+    THRESHOLDS_MAX_ID_ASC
+    THRESHOLDS_MAX_ID_DESC
+    THRESHOLDS_MAX_NEXT_ASC
+    THRESHOLDS_MAX_NEXT_DESC
+    THRESHOLDS_MAX_PENDING_ASC
+    THRESHOLDS_MAX_PENDING_DESC
+    THRESHOLDS_MAX_SESSION_ID_ASC
+    THRESHOLDS_MAX_SESSION_ID_DESC
+    THRESHOLDS_MAX_VARIANT_ASC
+    THRESHOLDS_MAX_VARIANT_DESC
+    THRESHOLDS_MIN_CURRENT_ASC
+    THRESHOLDS_MIN_CURRENT_DESC
+    THRESHOLDS_MIN_ID_ASC
+    THRESHOLDS_MIN_ID_DESC
+    THRESHOLDS_MIN_NEXT_ASC
+    THRESHOLDS_MIN_NEXT_DESC
+    THRESHOLDS_MIN_PENDING_ASC
+    THRESHOLDS_MIN_PENDING_DESC
+    THRESHOLDS_MIN_SESSION_ID_ASC
+    THRESHOLDS_MIN_SESSION_ID_DESC
+    THRESHOLDS_MIN_VARIANT_ASC
+    THRESHOLDS_MIN_VARIANT_DESC
+    THRESHOLDS_STDDEV_POPULATION_CURRENT_ASC
+    THRESHOLDS_STDDEV_POPULATION_CURRENT_DESC
+    THRESHOLDS_STDDEV_POPULATION_ID_ASC
+    THRESHOLDS_STDDEV_POPULATION_ID_DESC
+    THRESHOLDS_STDDEV_POPULATION_NEXT_ASC
+    THRESHOLDS_STDDEV_POPULATION_NEXT_DESC
+    THRESHOLDS_STDDEV_POPULATION_PENDING_ASC
+    THRESHOLDS_STDDEV_POPULATION_PENDING_DESC
+    THRESHOLDS_STDDEV_POPULATION_SESSION_ID_ASC
+    THRESHOLDS_STDDEV_POPULATION_SESSION_ID_DESC
+    THRESHOLDS_STDDEV_POPULATION_VARIANT_ASC
+    THRESHOLDS_STDDEV_POPULATION_VARIANT_DESC
+    THRESHOLDS_STDDEV_SAMPLE_CURRENT_ASC
+    THRESHOLDS_STDDEV_SAMPLE_CURRENT_DESC
+    THRESHOLDS_STDDEV_SAMPLE_ID_ASC
+    THRESHOLDS_STDDEV_SAMPLE_ID_DESC
+    THRESHOLDS_STDDEV_SAMPLE_NEXT_ASC
+    THRESHOLDS_STDDEV_SAMPLE_NEXT_DESC
+    THRESHOLDS_STDDEV_SAMPLE_PENDING_ASC
+    THRESHOLDS_STDDEV_SAMPLE_PENDING_DESC
+    THRESHOLDS_STDDEV_SAMPLE_SESSION_ID_ASC
+    THRESHOLDS_STDDEV_SAMPLE_SESSION_ID_DESC
+    THRESHOLDS_STDDEV_SAMPLE_VARIANT_ASC
+    THRESHOLDS_STDDEV_SAMPLE_VARIANT_DESC
+    THRESHOLDS_SUM_CURRENT_ASC
+    THRESHOLDS_SUM_CURRENT_DESC
+    THRESHOLDS_SUM_ID_ASC
+    THRESHOLDS_SUM_ID_DESC
+    THRESHOLDS_SUM_NEXT_ASC
+    THRESHOLDS_SUM_NEXT_DESC
+    THRESHOLDS_SUM_PENDING_ASC
+    THRESHOLDS_SUM_PENDING_DESC
+    THRESHOLDS_SUM_SESSION_ID_ASC
+    THRESHOLDS_SUM_SESSION_ID_DESC
+    THRESHOLDS_SUM_VARIANT_ASC
+    THRESHOLDS_SUM_VARIANT_DESC
+    THRESHOLDS_VARIANCE_POPULATION_CURRENT_ASC
+    THRESHOLDS_VARIANCE_POPULATION_CURRENT_DESC
+    THRESHOLDS_VARIANCE_POPULATION_ID_ASC
+    THRESHOLDS_VARIANCE_POPULATION_ID_DESC
+    THRESHOLDS_VARIANCE_POPULATION_NEXT_ASC
+    THRESHOLDS_VARIANCE_POPULATION_NEXT_DESC
+    THRESHOLDS_VARIANCE_POPULATION_PENDING_ASC
+    THRESHOLDS_VARIANCE_POPULATION_PENDING_DESC
+    THRESHOLDS_VARIANCE_POPULATION_SESSION_ID_ASC
+    THRESHOLDS_VARIANCE_POPULATION_SESSION_ID_DESC
+    THRESHOLDS_VARIANCE_POPULATION_VARIANT_ASC
+    THRESHOLDS_VARIANCE_POPULATION_VARIANT_DESC
+    THRESHOLDS_VARIANCE_SAMPLE_CURRENT_ASC
+    THRESHOLDS_VARIANCE_SAMPLE_CURRENT_DESC
+    THRESHOLDS_VARIANCE_SAMPLE_ID_ASC
+    THRESHOLDS_VARIANCE_SAMPLE_ID_DESC
+    THRESHOLDS_VARIANCE_SAMPLE_NEXT_ASC
+    THRESHOLDS_VARIANCE_SAMPLE_NEXT_DESC
+    THRESHOLDS_VARIANCE_SAMPLE_PENDING_ASC
+    THRESHOLDS_VARIANCE_SAMPLE_PENDING_DESC
+    THRESHOLDS_VARIANCE_SAMPLE_SESSION_ID_ASC
+    THRESHOLDS_VARIANCE_SAMPLE_SESSION_ID_DESC
+    THRESHOLDS_VARIANCE_SAMPLE_VARIANT_ASC
+    THRESHOLDS_VARIANCE_SAMPLE_VARIANT_DESC
 }
 
 "Grouping methods for `SignatureThreshold` for usage during aggregation."
@@ -8612,6 +8795,40 @@ enum SignatureThresholdsOrderBy {
     PENDING_DESC
     PRIMARY_KEY_ASC
     PRIMARY_KEY_DESC
+}
+
+enum ThresholdVariant {
+    KYE_GEN
+    PROPOSER
+    SIGNATURE
+}
+
+"Grouping methods for `Threshold` for usage during aggregation."
+enum ThresholdsGroupBy {
+    CURRENT
+    NEXT
+    PENDING
+    SESSION_ID
+    VARIANT
+}
+
+"Methods to use when ordering `Threshold`."
+enum ThresholdsOrderBy {
+    CURRENT_ASC
+    CURRENT_DESC
+    ID_ASC
+    ID_DESC
+    NATURAL
+    NEXT_ASC
+    NEXT_DESC
+    PENDING_ASC
+    PENDING_DESC
+    PRIMARY_KEY_ASC
+    PRIMARY_KEY_DESC
+    SESSION_ID_ASC
+    SESSION_ID_DESC
+    VARIANT_ASC
+    VARIANT_DESC
 }
 
 "Grouping methods for `UnsignedProposalsQueueItem` for usage during aggregation."
@@ -10069,18 +10286,12 @@ input SessionFilter {
     blockNumber: IntFilter
     "Filter by the object’s `id` field."
     id: StringFilter
-    "Filter by the object’s `keyGenThreshold` field."
-    keyGenThreshold: JSONFilter
     "Negates the expression."
     not: SessionFilter
     "Checks for any expressions in this list."
     or: [SessionFilter!]
-    "Filter by the object’s `proposerThreshold` field."
-    proposerThreshold: JSONFilter
     "Filter by the object’s `publicKeyId` field."
     publicKeyId: StringFilter
-    "Filter by the object’s `signatureThreshold` field."
-    signatureThreshold: JSONFilter
 }
 
 "A filter to be used against `SessionProposer` object types. All fields are combined with a logical ‘and.’"
@@ -10409,6 +10620,123 @@ input StringFilter {
     startsWith: String
     "Starts with the specified string (case-insensitive)."
     startsWithInsensitive: String
+}
+
+"A filter to be used against `Threshold` object types. All fields are combined with a logical ‘and.’"
+input ThresholdFilter {
+    "Checks for all expressions in this list."
+    and: [ThresholdFilter!]
+    "Filter by the object’s `current` field."
+    current: IntFilter
+    "Filter by the object’s `id` field."
+    id: StringFilter
+    "Filter by the object’s `next` field."
+    next: IntFilter
+    "Negates the expression."
+    not: ThresholdFilter
+    "Checks for any expressions in this list."
+    or: [ThresholdFilter!]
+    "Filter by the object’s `pending` field."
+    pending: IntFilter
+    "Filter by the object’s `sessionId` field."
+    sessionId: StringFilter
+    "Filter by the object’s `variant` field."
+    variant: ThresholdVariantFilter
+}
+
+"A filter to be used against ThresholdVariant fields. All fields are combined with a logical ‘and.’"
+input ThresholdVariantFilter {
+    "Not equal to the specified value, treating null like an ordinary value."
+    distinctFrom: ThresholdVariant
+    "Equal to the specified value."
+    equalTo: ThresholdVariant
+    "Greater than the specified value."
+    greaterThan: ThresholdVariant
+    "Greater than or equal to the specified value."
+    greaterThanOrEqualTo: ThresholdVariant
+    "Included in the specified list."
+    in: [ThresholdVariant!]
+    "Is null (if `true` is specified) or is not null (if `false` is specified)."
+    isNull: Boolean
+    "Less than the specified value."
+    lessThan: ThresholdVariant
+    "Less than or equal to the specified value."
+    lessThanOrEqualTo: ThresholdVariant
+    "Equal to the specified value, treating null like an ordinary value."
+    notDistinctFrom: ThresholdVariant
+    "Not equal to the specified value."
+    notEqualTo: ThresholdVariant
+    "Not included in the specified list."
+    notIn: [ThresholdVariant!]
+}
+
+input ThresholdsHavingAverageInput {
+    current: HavingIntFilter
+    next: HavingIntFilter
+    pending: HavingIntFilter
+}
+
+input ThresholdsHavingDistinctCountInput {
+    current: HavingIntFilter
+    next: HavingIntFilter
+    pending: HavingIntFilter
+}
+
+"Conditions for `Threshold` aggregates."
+input ThresholdsHavingInput {
+    AND: [ThresholdsHavingInput!]
+    OR: [ThresholdsHavingInput!]
+    average: ThresholdsHavingAverageInput
+    distinctCount: ThresholdsHavingDistinctCountInput
+    max: ThresholdsHavingMaxInput
+    min: ThresholdsHavingMinInput
+    stddevPopulation: ThresholdsHavingStddevPopulationInput
+    stddevSample: ThresholdsHavingStddevSampleInput
+    sum: ThresholdsHavingSumInput
+    variancePopulation: ThresholdsHavingVariancePopulationInput
+    varianceSample: ThresholdsHavingVarianceSampleInput
+}
+
+input ThresholdsHavingMaxInput {
+    current: HavingIntFilter
+    next: HavingIntFilter
+    pending: HavingIntFilter
+}
+
+input ThresholdsHavingMinInput {
+    current: HavingIntFilter
+    next: HavingIntFilter
+    pending: HavingIntFilter
+}
+
+input ThresholdsHavingStddevPopulationInput {
+    current: HavingIntFilter
+    next: HavingIntFilter
+    pending: HavingIntFilter
+}
+
+input ThresholdsHavingStddevSampleInput {
+    current: HavingIntFilter
+    next: HavingIntFilter
+    pending: HavingIntFilter
+}
+
+input ThresholdsHavingSumInput {
+    current: HavingIntFilter
+    next: HavingIntFilter
+    pending: HavingIntFilter
+}
+
+input ThresholdsHavingVariancePopulationInput {
+    current: HavingIntFilter
+    next: HavingIntFilter
+    pending: HavingIntFilter
+}
+
+input ThresholdsHavingVarianceSampleInput {
+    current: HavingIntFilter
+    next: HavingIntFilter
+    pending: HavingIntFilter
 }
 
 "A filter to be used against `UnsignedProposalsQueue` object types. All fields are combined with a logical ‘and.’"
