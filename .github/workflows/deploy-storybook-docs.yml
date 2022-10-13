@@ -1,0 +1,27 @@
+name: publish
+on: 
+  push:
+    branches:
+      - develop
+      # Trigger the action only when files change in the folders defined here
+    paths: ["/packages/webb-ui-components/src/stories/**"] 
+jobs:
+  component-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v2.3.1
+        with:
+          persist-credentials: false
+      - name: Install and Build 🔧
+        run: | # Install npm packages and build the Storybook files
+          cd ./packages/webb-ui-components/
+          yarn install
+          yarn build-storybook
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: gh-pages # The branch the action should deploy to.
+          FOLDER: ~/work/webb-dapp/webb-dapp/packages/webb-ui-components/docs-build # The folder that the build-storybook script generates files.
+          CLEAN: true # Automatically remove deleted files from the deploy branch

@@ -6,6 +6,15 @@ import { TimeLineProps } from './types';
 /**
  * The `TimeLine` style wrapper
  *
+ *  Props:
+ *
+ * - `title`: The timeline title
+ * - `time`: The actual time the event happens
+ * - `txHash`: The transaction hash
+ * - `externalUrl`: The extra content to display under the tx hash section
+ * - `extraContent`: If added, the button will show an icon before the button's label
+ * - `isLoading`: If `true`, the spinner icon will be displayed
+ *
  * @example
  *
  * ```jsx
