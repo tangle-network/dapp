@@ -4,8 +4,8 @@ import { useDynamicSVGImport } from '../hooks';
 import { TokenIconBase } from './types';
 import { getIconSizeInPixel } from './utils';
 
-export const TokenIcon: React.FC<TokenIconBase> = (props) => {
-  const { className, name, onCompleted, onError, size = 'md', ...restProps } = props;
+export const TokenIcon: React.FC<TokenIconBase & { isActive?: boolean }> = (props) => {
+  const { className, isActive, name, onCompleted, onError, size = 'md', ...restProps } = props;
 
   const { SvgIcon, error, loading } = useDynamicSVGImport(name, { onCompleted, onError });
 
@@ -19,7 +19,14 @@ export const TokenIcon: React.FC<TokenIconBase> = (props) => {
 
   if (SvgIcon) {
     const sizeInPx = getIconSizeInPixel(size);
-    return <SvgIcon className={className} width={parseInt(sizeInPx)} height={parseInt(sizeInPx)} {...restProps} />;
+    return isActive ? (
+      <div className='relative'>
+        <SvgIcon className={className} width={parseInt(sizeInPx)} height={parseInt(sizeInPx)} {...restProps} />
+        <span className='inline-block absolute w-1.5 h-1.5 bg-green-50 dark:bg-green-40 rounded-full top-0 right-0' />
+      </div>
+    ) : (
+      <SvgIcon className={className} width={parseInt(sizeInPx)} height={parseInt(sizeInPx)} {...restProps} />
+    );
   }
 
   return null;

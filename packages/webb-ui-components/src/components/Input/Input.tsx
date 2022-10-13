@@ -43,7 +43,7 @@ import { InputProps } from './types';
 export const Input: React.FC<InputProps> = (props) => {
   const {
     className,
-    debounceTime = 0,
+    debounceTime = 300,
     errorMessage,
     htmlSize,
     id,
