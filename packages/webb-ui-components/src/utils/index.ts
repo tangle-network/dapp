@@ -2,6 +2,7 @@ export * from './arrayFrom';
 export * from './calculateDateProgress';
 export * from './formatDateToUtc';
 export * from './getPaginationItems';
+export * from './getRoundedAmountString';
 export * from './randAccount32';
 export * from './randomEnum';
 export * from './range';

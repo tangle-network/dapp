@@ -1,12 +1,13 @@
-import { getRoundedAmountString } from '@webb-dapp/ui-components/utils';
 import { ChevronRight, TokenIcon } from '@webb-dapp/webb-ui-components/icons';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
+import { getRoundedAmountString } from '@webb-dapp/webb-ui-components/utils';
 import cx from 'classnames';
 import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { Label } from '../Label';
 import { TitleWithInfo } from '../TitleWithInfo';
+import { TokenPair } from '../TokenPair';
 import { InputWrapper } from './InputWrapper';
 import { ShieldedAssetInputProps } from './types';
 
@@ -42,16 +43,7 @@ export const ShieldedAssetInput = forwardRef<HTMLDivElement, ShieldedAssetInputP
           </Label>
 
           {asset ? (
-            <div className='flex items-center space-x-1'>
-              <div className='flex items-center -space-x-2'>
-                <TokenIcon size='lg' name={asset.token1Symbol.toLowerCase()} />
-                <TokenIcon size='lg' name={asset.token2Symbol.toLowerCase()} />
-              </div>
-
-              <Typography component='span' variant='body1' fw='bold'>
-                {asset.token1Symbol.toUpperCase()}/{asset.token2Symbol.toUpperCase()}
-              </Typography>
-            </div>
+            <TokenPair token1Symbol={asset.token1Symbol} token2Symbol={asset.token2Symbol} />
           ) : (
             <Typography variant='body1' fw='bold'>
               Select Shielded Asset
