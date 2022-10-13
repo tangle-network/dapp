@@ -210,7 +210,10 @@ export const KeygenTable: FC = () => {
     () => headers[0].filter((header) => header.column.getCanFilter()),
     [headers]
   );
-
+  const keygenFilterOptions = useMemo(() => {
+    return keygenFilterCol.getFacetedMinMaxValues()?.map((i) => (i === '-' ? 1 : i));
+  }, [keygenFilterCol]);
+  console.log('keygenFilterOptions', keygenFilterOptions);
   return (
     <CardTable
       titleProps={{
@@ -234,7 +237,7 @@ export const KeygenTable: FC = () => {
             <CollapsibleContent>
               <Slider
                 max={keygenFilterCol.getFacetedMinMaxValues()?.[1]}
-                defaultValue={keygenFilterCol.getFacetedMinMaxValues()}
+                defaultValue={keygenFilterOptions}
                 value={keygenFilterCol.getFilterValue() as [number, number]}
                 onChange={(nextValue) => keygenFilterCol.setFilterValue(nextValue)}
                 className='w-full min-w-0'
