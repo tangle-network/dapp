@@ -1,25 +1,24 @@
 import React from 'react';
 
-import { ToolTip, ToolTipTrigger, ToolTipBody, Chip } from '@webb-dapp/webb-ui-components/components';
+import { Chip, Tooltip, TooltipBody, TooltipTrigger } from '@webb-dapp/webb-ui-components/components';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
-  title: 'Design System/Molecules/ToolTip',
-  component: ToolTip,
+  title: 'Design System/Molecules/Tooltip',
+  component: Tooltip,
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
 };
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
 const Template = (args) => (
-  <ToolTip isDefaultOpen>
-    <ToolTipTrigger>
-      <Chip color='blue'>Text only</Chip>{' '}
-    </ToolTipTrigger>
-    <ToolTipBody>
-      {' '}
-      <span>A report of a DKG authority misbehaving. (Body xs Regular)</span>
-    </ToolTipBody>
-  </ToolTip>
+  <Tooltip isDefaultOpen>
+  <TooltipTrigger>
+    <Chip color='blue'>Text only</Chip>
+  </TooltipTrigger>
+  <TooltipBody>
+    <span>A report of a DKG authority misbehaving. (Body xs Regular)</span>
+  </TooltipBody>
+</Tooltip>
 );
 
 export const Default = Template.bind({});
