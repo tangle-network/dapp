@@ -148,6 +148,7 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({ data: dataProp }) 
       }}
       leftTitle={
         <Filter
+          searchPlaceholder={'Search  authority account'}
           searchText={globalFilter}
           onSearchChange={(nextValue: string | number) => {
             setGlobalFilter(nextValue.toString());

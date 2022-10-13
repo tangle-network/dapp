@@ -11984,7 +11984,7 @@ export const ProposalsCounterDocument = gql`
  * __useProposalsCounterQuery__
  *
  * To run a query within a React component, call `useProposalsCounterQuery` and pass it any options that fit your needs.
- * When your component renders, `useProposalsCounterQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * When your component renders, `useProposalsCounterQuery` returئns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
