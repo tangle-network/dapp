@@ -33,11 +33,11 @@ import { Typography } from '@webb-dapp/webb-ui-components/typography';
 import getUnicodeFlagIcon from 'country-flag-icons/unicode';
 import { FC, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-
+import { countries } from 'country-flag-icons';
+import * as flags from 'country-flag-icons/react/3x2';
 import { AuthoritiesTableProps } from './types';
 
 const columnHelper = createColumnHelper<AuthorityListItem>();
-const countries = ['eg', 'uk'];
 const columns: ColumnDef<AuthorityListItem, any>[] = [
   columnHelper.accessor('id', {
     header: 'Participant',
@@ -171,26 +171,15 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({ data: dataProp }) 
               />
             </CollapsibleContent>
           </Collapsible>
-
           <Collapsible>
             <CollapsibleButton>Location</CollapsibleButton>
-            <CollapsibleContent
-              className={`space-x-1 `}
-              style={{
-                backgroundColor: 'red',
-              }}
-            >
-              {countries.map((country) => {
-                return (
-                  <FormControlLabel
-                    key={country}
-                    value={country}
-                    label={<Typography variant='label'>{country}</Typography>}
-                    onChange={() => {}}
-                    control={<CheckBox color='primary' />}
-                  />
-                );
-              })}
+            <CollapsibleContent className={`space-x-1 `}>
+              <LocationFilter
+                countries={countries ?? []}
+                onChange={(c) => {
+                  console.log(c);
+                }}
+              />
             </CollapsibleContent>
           </Collapsible>
         </Filter>
@@ -200,4 +189,36 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({ data: dataProp }) 
     </CardTable>
   );
 };
-const LocationFilter = () => {};
+
+const LocationFilter: FC<{ onChange(country: string): void; countries: string[] }> = ({ countries, onChange }) => {
+  return (
+    <div style={{ width: '300px' }}>
+      {countries.map((country) => {
+        // @ts-ignore
+        const C = flags[country.toUpperCase() as unknown as any];
+        return (
+          <FormControlLabel
+            className={'min-w-full'}
+            key={country}
+            value={country}
+            label={
+              <Typography
+                style={{
+                  alignItems: 'center',
+                }}
+                variant='label'
+              >
+                <C />
+                {country}
+              </Typography>
+            }
+            onChange={() => {
+              onChange(country);
+            }}
+            control={<CheckBox color='primary' />}
+          />
+        );
+      })}
+    </div>
+  );
+};
