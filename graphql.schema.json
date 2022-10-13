@@ -52172,6 +52172,22 @@
             "deprecationReason": null
           },
           {
+            "name": "blockNumber",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "BigFloat",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "id",
             "description": null,
             "args": [],
@@ -52508,6 +52524,18 @@
             "deprecationReason": null
           },
           {
+            "name": "blockNumber",
+            "description": "Mean average of blockNumber across the matching connection",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigFloat",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "nextBestOrder",
             "description": "Mean average of nextBestOrder across the matching connection",
             "args": [],
@@ -52533,6 +52561,18 @@
           {
             "name": "bestOrder",
             "description": "Distinct count of bestOrder across the matching connection",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "blockNumber",
+            "description": "Distinct count of blockNumber across the matching connection",
             "args": [],
             "type": {
               "kind": "SCALAR",
@@ -52676,6 +52716,18 @@
             "type": {
               "kind": "INPUT_OBJECT",
               "name": "IntFilter",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "blockNumber",
+            "description": "Filter by the object’s `blockNumber` field.",
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "BigFloatFilter",
               "ofType": null
             },
             "defaultValue": null,
@@ -52833,6 +52885,18 @@
             "deprecationReason": null
           },
           {
+            "name": "blockNumber",
+            "description": "Maximum of blockNumber across the matching connection",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigFloat",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "nextBestOrder",
             "description": "Maximum of nextBestOrder across the matching connection",
             "args": [],
@@ -52862,6 +52926,18 @@
             "type": {
               "kind": "SCALAR",
               "name": "Int",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "blockNumber",
+            "description": "Minimum of blockNumber across the matching connection",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigFloat",
               "ofType": null
             },
             "isDeprecated": false,
@@ -52903,6 +52979,18 @@
             "deprecationReason": null
           },
           {
+            "name": "blockNumber",
+            "description": "Population standard deviation of blockNumber across the matching connection",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigFloat",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "nextBestOrder",
             "description": "Population standard deviation of nextBestOrder across the matching connection",
             "args": [],
@@ -52928,6 +53016,18 @@
           {
             "name": "bestOrder",
             "description": "Sample standard deviation of bestOrder across the matching connection",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigFloat",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "blockNumber",
+            "description": "Sample standard deviation of blockNumber across the matching connection",
             "args": [],
             "type": {
               "kind": "SCALAR",
@@ -52977,6 +53077,22 @@
             "deprecationReason": null
           },
           {
+            "name": "blockNumber",
+            "description": "Sum of blockNumber across the matching connection",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "BigFloat",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "nextBestOrder",
             "description": "Sum of nextBestOrder across the matching connection",
             "args": [],
@@ -53016,6 +53132,18 @@
             "deprecationReason": null
           },
           {
+            "name": "blockNumber",
+            "description": "Population variance of blockNumber across the matching connection",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigFloat",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "nextBestOrder",
             "description": "Population variance of nextBestOrder across the matching connection",
             "args": [],
@@ -53041,6 +53169,18 @@
           {
             "name": "bestOrder",
             "description": "Sample variance of bestOrder across the matching connection",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigFloat",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "blockNumber",
+            "description": "Sample variance of blockNumber across the matching connection",
             "args": [],
             "type": {
               "kind": "SCALAR",
@@ -53574,6 +53714,12 @@
             "deprecationReason": null
           },
           {
+            "name": "BLOCK_NUMBER",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "IS_BEST",
             "description": null,
             "isDeprecated": false,
@@ -53637,6 +53783,18 @@
             "deprecationReason": null
           },
           {
+            "name": "blockNumber",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "HavingBigfloatFilter",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "nextBestOrder",
             "description": null,
             "type": {
@@ -53665,6 +53823,18 @@
             "type": {
               "kind": "INPUT_OBJECT",
               "name": "HavingIntFilter",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "blockNumber",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "HavingBigfloatFilter",
               "ofType": null
             },
             "defaultValue": null,
@@ -53866,6 +54036,18 @@
             "deprecationReason": null
           },
           {
+            "name": "blockNumber",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "HavingBigfloatFilter",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "nextBestOrder",
             "description": null,
             "type": {
@@ -53894,6 +54076,18 @@
             "type": {
               "kind": "INPUT_OBJECT",
               "name": "HavingIntFilter",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "blockNumber",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "HavingBigfloatFilter",
               "ofType": null
             },
             "defaultValue": null,
@@ -53936,6 +54130,18 @@
             "deprecationReason": null
           },
           {
+            "name": "blockNumber",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "HavingBigfloatFilter",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "nextBestOrder",
             "description": null,
             "type": {
@@ -53964,6 +54170,18 @@
             "type": {
               "kind": "INPUT_OBJECT",
               "name": "HavingIntFilter",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "blockNumber",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "HavingBigfloatFilter",
               "ofType": null
             },
             "defaultValue": null,
@@ -54006,6 +54224,18 @@
             "deprecationReason": null
           },
           {
+            "name": "blockNumber",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "HavingBigfloatFilter",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "nextBestOrder",
             "description": null,
             "type": {
@@ -54034,6 +54264,18 @@
             "type": {
               "kind": "INPUT_OBJECT",
               "name": "HavingIntFilter",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "blockNumber",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "HavingBigfloatFilter",
               "ofType": null
             },
             "defaultValue": null,
@@ -54076,6 +54318,18 @@
             "deprecationReason": null
           },
           {
+            "name": "blockNumber",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "HavingBigfloatFilter",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "nextBestOrder",
             "description": null,
             "type": {
@@ -54108,6 +54362,18 @@
           },
           {
             "name": "BEST_ORDER_DESC",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "BLOCK_NUMBER_ASC",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "BLOCK_NUMBER_DESC",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -55284,6 +55550,18 @@
             "deprecationReason": null
           },
           {
+            "name": "SESSION_VALIDATORS_AVERAGE_BLOCK_NUMBER_ASC",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "SESSION_VALIDATORS_AVERAGE_BLOCK_NUMBER_DESC",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "SESSION_VALIDATORS_AVERAGE_ID_ASC",
             "description": null,
             "isDeprecated": false,
@@ -55404,6 +55682,18 @@
             "deprecationReason": null
           },
           {
+            "name": "SESSION_VALIDATORS_DISTINCT_COUNT_BLOCK_NUMBER_ASC",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "SESSION_VALIDATORS_DISTINCT_COUNT_BLOCK_NUMBER_DESC",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "SESSION_VALIDATORS_DISTINCT_COUNT_ID_ASC",
             "description": null,
             "isDeprecated": false,
@@ -55507,6 +55797,18 @@
           },
           {
             "name": "SESSION_VALIDATORS_MAX_BEST_ORDER_DESC",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "SESSION_VALIDATORS_MAX_BLOCK_NUMBER_ASC",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "SESSION_VALIDATORS_MAX_BLOCK_NUMBER_DESC",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -55620,6 +55922,18 @@
             "deprecationReason": null
           },
           {
+            "name": "SESSION_VALIDATORS_MIN_BLOCK_NUMBER_ASC",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "SESSION_VALIDATORS_MIN_BLOCK_NUMBER_DESC",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "SESSION_VALIDATORS_MIN_ID_ASC",
             "description": null,
             "isDeprecated": false,
@@ -55723,6 +56037,18 @@
           },
           {
             "name": "SESSION_VALIDATORS_STDDEV_POPULATION_BEST_ORDER_DESC",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "SESSION_VALIDATORS_STDDEV_POPULATION_BLOCK_NUMBER_ASC",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "SESSION_VALIDATORS_STDDEV_POPULATION_BLOCK_NUMBER_DESC",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -55836,6 +56162,18 @@
             "deprecationReason": null
           },
           {
+            "name": "SESSION_VALIDATORS_STDDEV_SAMPLE_BLOCK_NUMBER_ASC",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "SESSION_VALIDATORS_STDDEV_SAMPLE_BLOCK_NUMBER_DESC",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "SESSION_VALIDATORS_STDDEV_SAMPLE_ID_ASC",
             "description": null,
             "isDeprecated": false,
@@ -55939,6 +56277,18 @@
           },
           {
             "name": "SESSION_VALIDATORS_SUM_BEST_ORDER_DESC",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "SESSION_VALIDATORS_SUM_BLOCK_NUMBER_ASC",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "SESSION_VALIDATORS_SUM_BLOCK_NUMBER_DESC",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -56052,6 +56402,18 @@
             "deprecationReason": null
           },
           {
+            "name": "SESSION_VALIDATORS_VARIANCE_POPULATION_BLOCK_NUMBER_ASC",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "SESSION_VALIDATORS_VARIANCE_POPULATION_BLOCK_NUMBER_DESC",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "SESSION_VALIDATORS_VARIANCE_POPULATION_ID_ASC",
             "description": null,
             "isDeprecated": false,
@@ -56155,6 +56517,18 @@
           },
           {
             "name": "SESSION_VALIDATORS_VARIANCE_SAMPLE_BEST_ORDER_DESC",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "SESSION_VALIDATORS_VARIANCE_SAMPLE_BLOCK_NUMBER_ASC",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "SESSION_VALIDATORS_VARIANCE_SAMPLE_BLOCK_NUMBER_DESC",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -65758,6 +66132,18 @@
             "deprecationReason": null
           },
           {
+            "name": "SESSION_VALIDATORS_AVERAGE_BLOCK_NUMBER_ASC",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "SESSION_VALIDATORS_AVERAGE_BLOCK_NUMBER_DESC",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "SESSION_VALIDATORS_AVERAGE_ID_ASC",
             "description": null,
             "isDeprecated": false,
@@ -65878,6 +66264,18 @@
             "deprecationReason": null
           },
           {
+            "name": "SESSION_VALIDATORS_DISTINCT_COUNT_BLOCK_NUMBER_ASC",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "SESSION_VALIDATORS_DISTINCT_COUNT_BLOCK_NUMBER_DESC",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "SESSION_VALIDATORS_DISTINCT_COUNT_ID_ASC",
             "description": null,
             "isDeprecated": false,
@@ -65981,6 +66379,18 @@
           },
           {
             "name": "SESSION_VALIDATORS_MAX_BEST_ORDER_DESC",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "SESSION_VALIDATORS_MAX_BLOCK_NUMBER_ASC",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "SESSION_VALIDATORS_MAX_BLOCK_NUMBER_DESC",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -66094,6 +66504,18 @@
             "deprecationReason": null
           },
           {
+            "name": "SESSION_VALIDATORS_MIN_BLOCK_NUMBER_ASC",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "SESSION_VALIDATORS_MIN_BLOCK_NUMBER_DESC",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "SESSION_VALIDATORS_MIN_ID_ASC",
             "description": null,
             "isDeprecated": false,
@@ -66197,6 +66619,18 @@
           },
           {
             "name": "SESSION_VALIDATORS_STDDEV_POPULATION_BEST_ORDER_DESC",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "SESSION_VALIDATORS_STDDEV_POPULATION_BLOCK_NUMBER_ASC",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "SESSION_VALIDATORS_STDDEV_POPULATION_BLOCK_NUMBER_DESC",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -66310,6 +66744,18 @@
             "deprecationReason": null
           },
           {
+            "name": "SESSION_VALIDATORS_STDDEV_SAMPLE_BLOCK_NUMBER_ASC",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "SESSION_VALIDATORS_STDDEV_SAMPLE_BLOCK_NUMBER_DESC",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "SESSION_VALIDATORS_STDDEV_SAMPLE_ID_ASC",
             "description": null,
             "isDeprecated": false,
@@ -66413,6 +66859,18 @@
           },
           {
             "name": "SESSION_VALIDATORS_SUM_BEST_ORDER_DESC",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "SESSION_VALIDATORS_SUM_BLOCK_NUMBER_ASC",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "SESSION_VALIDATORS_SUM_BLOCK_NUMBER_DESC",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -66526,6 +66984,18 @@
             "deprecationReason": null
           },
           {
+            "name": "SESSION_VALIDATORS_VARIANCE_POPULATION_BLOCK_NUMBER_ASC",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "SESSION_VALIDATORS_VARIANCE_POPULATION_BLOCK_NUMBER_DESC",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "SESSION_VALIDATORS_VARIANCE_POPULATION_ID_ASC",
             "description": null,
             "isDeprecated": false,
@@ -66629,6 +67099,18 @@
           },
           {
             "name": "SESSION_VALIDATORS_VARIANCE_SAMPLE_BEST_ORDER_DESC",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "SESSION_VALIDATORS_VARIANCE_SAMPLE_BLOCK_NUMBER_ASC",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "SESSION_VALIDATORS_VARIANCE_SAMPLE_BLOCK_NUMBER_DESC",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null

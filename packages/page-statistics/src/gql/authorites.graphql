@@ -57,7 +57,9 @@ query ValidatorOfSession($validatorId: String!, $sessionValidatorId: String!) {
       }
     }
   }
-  sessionValidators(filter: { validatorId: { equalTo: $validatorId }, isBest: { equalTo: true } }) {
+  sessionValidators(
+    orderBy: [BLOCK_NUMBER_DESC]
+    filter: { validatorId: { equalTo: $validatorId }, isBest: { equalTo: true } }) {
     aggregates {
       distinctCount {
         id

@@ -4037,6 +4037,7 @@ type SessionSumAggregates {
 
 type SessionValidator implements Node {
     bestOrder: Int!
+    blockNumber: BigFloat!
     id: String!
     isBest: Boolean!
     isNext: Boolean!
@@ -4078,6 +4079,8 @@ type SessionValidatorAggregates {
 type SessionValidatorAverageAggregates {
     "Mean average of bestOrder across the matching connection"
     bestOrder: BigFloat
+    "Mean average of blockNumber across the matching connection"
+    blockNumber: BigFloat
     "Mean average of nextBestOrder across the matching connection"
     nextBestOrder: BigFloat
 }
@@ -4085,6 +4088,8 @@ type SessionValidatorAverageAggregates {
 type SessionValidatorDistinctCountAggregates {
     "Distinct count of bestOrder across the matching connection"
     bestOrder: BigInt
+    "Distinct count of blockNumber across the matching connection"
+    blockNumber: BigInt
     "Distinct count of id across the matching connection"
     id: BigInt
     "Distinct count of isBest across the matching connection"
@@ -4106,6 +4111,8 @@ type SessionValidatorDistinctCountAggregates {
 type SessionValidatorMaxAggregates {
     "Maximum of bestOrder across the matching connection"
     bestOrder: Int
+    "Maximum of blockNumber across the matching connection"
+    blockNumber: BigFloat
     "Maximum of nextBestOrder across the matching connection"
     nextBestOrder: Int
 }
@@ -4113,6 +4120,8 @@ type SessionValidatorMaxAggregates {
 type SessionValidatorMinAggregates {
     "Minimum of bestOrder across the matching connection"
     bestOrder: Int
+    "Minimum of blockNumber across the matching connection"
+    blockNumber: BigFloat
     "Minimum of nextBestOrder across the matching connection"
     nextBestOrder: Int
 }
@@ -4120,6 +4129,8 @@ type SessionValidatorMinAggregates {
 type SessionValidatorStddevPopulationAggregates {
     "Population standard deviation of bestOrder across the matching connection"
     bestOrder: BigFloat
+    "Population standard deviation of blockNumber across the matching connection"
+    blockNumber: BigFloat
     "Population standard deviation of nextBestOrder across the matching connection"
     nextBestOrder: BigFloat
 }
@@ -4127,6 +4138,8 @@ type SessionValidatorStddevPopulationAggregates {
 type SessionValidatorStddevSampleAggregates {
     "Sample standard deviation of bestOrder across the matching connection"
     bestOrder: BigFloat
+    "Sample standard deviation of blockNumber across the matching connection"
+    blockNumber: BigFloat
     "Sample standard deviation of nextBestOrder across the matching connection"
     nextBestOrder: BigFloat
 }
@@ -4134,6 +4147,8 @@ type SessionValidatorStddevSampleAggregates {
 type SessionValidatorSumAggregates {
     "Sum of bestOrder across the matching connection"
     bestOrder: BigInt!
+    "Sum of blockNumber across the matching connection"
+    blockNumber: BigFloat!
     "Sum of nextBestOrder across the matching connection"
     nextBestOrder: BigInt!
 }
@@ -4141,6 +4156,8 @@ type SessionValidatorSumAggregates {
 type SessionValidatorVariancePopulationAggregates {
     "Population variance of bestOrder across the matching connection"
     bestOrder: BigFloat
+    "Population variance of blockNumber across the matching connection"
+    blockNumber: BigFloat
     "Population variance of nextBestOrder across the matching connection"
     nextBestOrder: BigFloat
 }
@@ -4148,6 +4165,8 @@ type SessionValidatorVariancePopulationAggregates {
 type SessionValidatorVarianceSampleAggregates {
     "Sample variance of bestOrder across the matching connection"
     bestOrder: BigFloat
+    "Sample variance of blockNumber across the matching connection"
+    blockNumber: BigFloat
     "Sample variance of nextBestOrder across the matching connection"
     nextBestOrder: BigFloat
 }
@@ -8386,6 +8405,7 @@ enum SessionProposersOrderBy {
 "Grouping methods for `SessionValidator` for usage during aggregation."
 enum SessionValidatorsGroupBy {
     BEST_ORDER
+    BLOCK_NUMBER
     IS_BEST
     IS_NEXT
     IS_NEXT_BEST
@@ -8399,6 +8419,8 @@ enum SessionValidatorsGroupBy {
 enum SessionValidatorsOrderBy {
     BEST_ORDER_ASC
     BEST_ORDER_DESC
+    BLOCK_NUMBER_ASC
+    BLOCK_NUMBER_DESC
     ID_ASC
     ID_DESC
     IS_BEST_ASC
@@ -8498,6 +8520,8 @@ enum SessionsOrderBy {
     SESSION_PROPOSERS_VARIANCE_SAMPLE_SESSION_ID_DESC
     SESSION_VALIDATORS_AVERAGE_BEST_ORDER_ASC
     SESSION_VALIDATORS_AVERAGE_BEST_ORDER_DESC
+    SESSION_VALIDATORS_AVERAGE_BLOCK_NUMBER_ASC
+    SESSION_VALIDATORS_AVERAGE_BLOCK_NUMBER_DESC
     SESSION_VALIDATORS_AVERAGE_ID_ASC
     SESSION_VALIDATORS_AVERAGE_ID_DESC
     SESSION_VALIDATORS_AVERAGE_IS_BEST_ASC
@@ -8518,6 +8542,8 @@ enum SessionsOrderBy {
     SESSION_VALIDATORS_COUNT_DESC
     SESSION_VALIDATORS_DISTINCT_COUNT_BEST_ORDER_ASC
     SESSION_VALIDATORS_DISTINCT_COUNT_BEST_ORDER_DESC
+    SESSION_VALIDATORS_DISTINCT_COUNT_BLOCK_NUMBER_ASC
+    SESSION_VALIDATORS_DISTINCT_COUNT_BLOCK_NUMBER_DESC
     SESSION_VALIDATORS_DISTINCT_COUNT_ID_ASC
     SESSION_VALIDATORS_DISTINCT_COUNT_ID_DESC
     SESSION_VALIDATORS_DISTINCT_COUNT_IS_BEST_ASC
@@ -8536,6 +8562,8 @@ enum SessionsOrderBy {
     SESSION_VALIDATORS_DISTINCT_COUNT_VALIDATOR_ID_DESC
     SESSION_VALIDATORS_MAX_BEST_ORDER_ASC
     SESSION_VALIDATORS_MAX_BEST_ORDER_DESC
+    SESSION_VALIDATORS_MAX_BLOCK_NUMBER_ASC
+    SESSION_VALIDATORS_MAX_BLOCK_NUMBER_DESC
     SESSION_VALIDATORS_MAX_ID_ASC
     SESSION_VALIDATORS_MAX_ID_DESC
     SESSION_VALIDATORS_MAX_IS_BEST_ASC
@@ -8554,6 +8582,8 @@ enum SessionsOrderBy {
     SESSION_VALIDATORS_MAX_VALIDATOR_ID_DESC
     SESSION_VALIDATORS_MIN_BEST_ORDER_ASC
     SESSION_VALIDATORS_MIN_BEST_ORDER_DESC
+    SESSION_VALIDATORS_MIN_BLOCK_NUMBER_ASC
+    SESSION_VALIDATORS_MIN_BLOCK_NUMBER_DESC
     SESSION_VALIDATORS_MIN_ID_ASC
     SESSION_VALIDATORS_MIN_ID_DESC
     SESSION_VALIDATORS_MIN_IS_BEST_ASC
@@ -8572,6 +8602,8 @@ enum SessionsOrderBy {
     SESSION_VALIDATORS_MIN_VALIDATOR_ID_DESC
     SESSION_VALIDATORS_STDDEV_POPULATION_BEST_ORDER_ASC
     SESSION_VALIDATORS_STDDEV_POPULATION_BEST_ORDER_DESC
+    SESSION_VALIDATORS_STDDEV_POPULATION_BLOCK_NUMBER_ASC
+    SESSION_VALIDATORS_STDDEV_POPULATION_BLOCK_NUMBER_DESC
     SESSION_VALIDATORS_STDDEV_POPULATION_ID_ASC
     SESSION_VALIDATORS_STDDEV_POPULATION_ID_DESC
     SESSION_VALIDATORS_STDDEV_POPULATION_IS_BEST_ASC
@@ -8590,6 +8622,8 @@ enum SessionsOrderBy {
     SESSION_VALIDATORS_STDDEV_POPULATION_VALIDATOR_ID_DESC
     SESSION_VALIDATORS_STDDEV_SAMPLE_BEST_ORDER_ASC
     SESSION_VALIDATORS_STDDEV_SAMPLE_BEST_ORDER_DESC
+    SESSION_VALIDATORS_STDDEV_SAMPLE_BLOCK_NUMBER_ASC
+    SESSION_VALIDATORS_STDDEV_SAMPLE_BLOCK_NUMBER_DESC
     SESSION_VALIDATORS_STDDEV_SAMPLE_ID_ASC
     SESSION_VALIDATORS_STDDEV_SAMPLE_ID_DESC
     SESSION_VALIDATORS_STDDEV_SAMPLE_IS_BEST_ASC
@@ -8608,6 +8642,8 @@ enum SessionsOrderBy {
     SESSION_VALIDATORS_STDDEV_SAMPLE_VALIDATOR_ID_DESC
     SESSION_VALIDATORS_SUM_BEST_ORDER_ASC
     SESSION_VALIDATORS_SUM_BEST_ORDER_DESC
+    SESSION_VALIDATORS_SUM_BLOCK_NUMBER_ASC
+    SESSION_VALIDATORS_SUM_BLOCK_NUMBER_DESC
     SESSION_VALIDATORS_SUM_ID_ASC
     SESSION_VALIDATORS_SUM_ID_DESC
     SESSION_VALIDATORS_SUM_IS_BEST_ASC
@@ -8626,6 +8662,8 @@ enum SessionsOrderBy {
     SESSION_VALIDATORS_SUM_VALIDATOR_ID_DESC
     SESSION_VALIDATORS_VARIANCE_POPULATION_BEST_ORDER_ASC
     SESSION_VALIDATORS_VARIANCE_POPULATION_BEST_ORDER_DESC
+    SESSION_VALIDATORS_VARIANCE_POPULATION_BLOCK_NUMBER_ASC
+    SESSION_VALIDATORS_VARIANCE_POPULATION_BLOCK_NUMBER_DESC
     SESSION_VALIDATORS_VARIANCE_POPULATION_ID_ASC
     SESSION_VALIDATORS_VARIANCE_POPULATION_ID_DESC
     SESSION_VALIDATORS_VARIANCE_POPULATION_IS_BEST_ASC
@@ -8644,6 +8682,8 @@ enum SessionsOrderBy {
     SESSION_VALIDATORS_VARIANCE_POPULATION_VALIDATOR_ID_DESC
     SESSION_VALIDATORS_VARIANCE_SAMPLE_BEST_ORDER_ASC
     SESSION_VALIDATORS_VARIANCE_SAMPLE_BEST_ORDER_DESC
+    SESSION_VALIDATORS_VARIANCE_SAMPLE_BLOCK_NUMBER_ASC
+    SESSION_VALIDATORS_VARIANCE_SAMPLE_BLOCK_NUMBER_DESC
     SESSION_VALIDATORS_VARIANCE_SAMPLE_ID_ASC
     SESSION_VALIDATORS_VARIANCE_SAMPLE_ID_DESC
     SESSION_VALIDATORS_VARIANCE_SAMPLE_IS_BEST_ASC
@@ -8798,7 +8838,7 @@ enum SignatureThresholdsOrderBy {
 }
 
 enum ThresholdVariant {
-    KYE_GEN
+    KEY_GEN
     PROPOSER
     SIGNATURE
 }
@@ -8964,6 +9004,8 @@ enum ValidatorsOrderBy {
     PRIMARY_KEY_DESC
     SESSION_VALIDATORS_AVERAGE_BEST_ORDER_ASC
     SESSION_VALIDATORS_AVERAGE_BEST_ORDER_DESC
+    SESSION_VALIDATORS_AVERAGE_BLOCK_NUMBER_ASC
+    SESSION_VALIDATORS_AVERAGE_BLOCK_NUMBER_DESC
     SESSION_VALIDATORS_AVERAGE_ID_ASC
     SESSION_VALIDATORS_AVERAGE_ID_DESC
     SESSION_VALIDATORS_AVERAGE_IS_BEST_ASC
@@ -8984,6 +9026,8 @@ enum ValidatorsOrderBy {
     SESSION_VALIDATORS_COUNT_DESC
     SESSION_VALIDATORS_DISTINCT_COUNT_BEST_ORDER_ASC
     SESSION_VALIDATORS_DISTINCT_COUNT_BEST_ORDER_DESC
+    SESSION_VALIDATORS_DISTINCT_COUNT_BLOCK_NUMBER_ASC
+    SESSION_VALIDATORS_DISTINCT_COUNT_BLOCK_NUMBER_DESC
     SESSION_VALIDATORS_DISTINCT_COUNT_ID_ASC
     SESSION_VALIDATORS_DISTINCT_COUNT_ID_DESC
     SESSION_VALIDATORS_DISTINCT_COUNT_IS_BEST_ASC
@@ -9002,6 +9046,8 @@ enum ValidatorsOrderBy {
     SESSION_VALIDATORS_DISTINCT_COUNT_VALIDATOR_ID_DESC
     SESSION_VALIDATORS_MAX_BEST_ORDER_ASC
     SESSION_VALIDATORS_MAX_BEST_ORDER_DESC
+    SESSION_VALIDATORS_MAX_BLOCK_NUMBER_ASC
+    SESSION_VALIDATORS_MAX_BLOCK_NUMBER_DESC
     SESSION_VALIDATORS_MAX_ID_ASC
     SESSION_VALIDATORS_MAX_ID_DESC
     SESSION_VALIDATORS_MAX_IS_BEST_ASC
@@ -9020,6 +9066,8 @@ enum ValidatorsOrderBy {
     SESSION_VALIDATORS_MAX_VALIDATOR_ID_DESC
     SESSION_VALIDATORS_MIN_BEST_ORDER_ASC
     SESSION_VALIDATORS_MIN_BEST_ORDER_DESC
+    SESSION_VALIDATORS_MIN_BLOCK_NUMBER_ASC
+    SESSION_VALIDATORS_MIN_BLOCK_NUMBER_DESC
     SESSION_VALIDATORS_MIN_ID_ASC
     SESSION_VALIDATORS_MIN_ID_DESC
     SESSION_VALIDATORS_MIN_IS_BEST_ASC
@@ -9038,6 +9086,8 @@ enum ValidatorsOrderBy {
     SESSION_VALIDATORS_MIN_VALIDATOR_ID_DESC
     SESSION_VALIDATORS_STDDEV_POPULATION_BEST_ORDER_ASC
     SESSION_VALIDATORS_STDDEV_POPULATION_BEST_ORDER_DESC
+    SESSION_VALIDATORS_STDDEV_POPULATION_BLOCK_NUMBER_ASC
+    SESSION_VALIDATORS_STDDEV_POPULATION_BLOCK_NUMBER_DESC
     SESSION_VALIDATORS_STDDEV_POPULATION_ID_ASC
     SESSION_VALIDATORS_STDDEV_POPULATION_ID_DESC
     SESSION_VALIDATORS_STDDEV_POPULATION_IS_BEST_ASC
@@ -9056,6 +9106,8 @@ enum ValidatorsOrderBy {
     SESSION_VALIDATORS_STDDEV_POPULATION_VALIDATOR_ID_DESC
     SESSION_VALIDATORS_STDDEV_SAMPLE_BEST_ORDER_ASC
     SESSION_VALIDATORS_STDDEV_SAMPLE_BEST_ORDER_DESC
+    SESSION_VALIDATORS_STDDEV_SAMPLE_BLOCK_NUMBER_ASC
+    SESSION_VALIDATORS_STDDEV_SAMPLE_BLOCK_NUMBER_DESC
     SESSION_VALIDATORS_STDDEV_SAMPLE_ID_ASC
     SESSION_VALIDATORS_STDDEV_SAMPLE_ID_DESC
     SESSION_VALIDATORS_STDDEV_SAMPLE_IS_BEST_ASC
@@ -9074,6 +9126,8 @@ enum ValidatorsOrderBy {
     SESSION_VALIDATORS_STDDEV_SAMPLE_VALIDATOR_ID_DESC
     SESSION_VALIDATORS_SUM_BEST_ORDER_ASC
     SESSION_VALIDATORS_SUM_BEST_ORDER_DESC
+    SESSION_VALIDATORS_SUM_BLOCK_NUMBER_ASC
+    SESSION_VALIDATORS_SUM_BLOCK_NUMBER_DESC
     SESSION_VALIDATORS_SUM_ID_ASC
     SESSION_VALIDATORS_SUM_ID_DESC
     SESSION_VALIDATORS_SUM_IS_BEST_ASC
@@ -9092,6 +9146,8 @@ enum ValidatorsOrderBy {
     SESSION_VALIDATORS_SUM_VALIDATOR_ID_DESC
     SESSION_VALIDATORS_VARIANCE_POPULATION_BEST_ORDER_ASC
     SESSION_VALIDATORS_VARIANCE_POPULATION_BEST_ORDER_DESC
+    SESSION_VALIDATORS_VARIANCE_POPULATION_BLOCK_NUMBER_ASC
+    SESSION_VALIDATORS_VARIANCE_POPULATION_BLOCK_NUMBER_DESC
     SESSION_VALIDATORS_VARIANCE_POPULATION_ID_ASC
     SESSION_VALIDATORS_VARIANCE_POPULATION_ID_DESC
     SESSION_VALIDATORS_VARIANCE_POPULATION_IS_BEST_ASC
@@ -9110,6 +9166,8 @@ enum ValidatorsOrderBy {
     SESSION_VALIDATORS_VARIANCE_POPULATION_VALIDATOR_ID_DESC
     SESSION_VALIDATORS_VARIANCE_SAMPLE_BEST_ORDER_ASC
     SESSION_VALIDATORS_VARIANCE_SAMPLE_BEST_ORDER_DESC
+    SESSION_VALIDATORS_VARIANCE_SAMPLE_BLOCK_NUMBER_ASC
+    SESSION_VALIDATORS_VARIANCE_SAMPLE_BLOCK_NUMBER_DESC
     SESSION_VALIDATORS_VARIANCE_SAMPLE_ID_ASC
     SESSION_VALIDATORS_VARIANCE_SAMPLE_ID_DESC
     SESSION_VALIDATORS_VARIANCE_SAMPLE_IS_BEST_ASC
@@ -10322,6 +10380,8 @@ input SessionValidatorFilter {
     and: [SessionValidatorFilter!]
     "Filter by the object’s `bestOrder` field."
     bestOrder: IntFilter
+    "Filter by the object’s `blockNumber` field."
+    blockNumber: BigFloatFilter
     "Filter by the object’s `id` field."
     id: StringFilter
     "Filter by the object’s `isBest` field."
@@ -10346,11 +10406,13 @@ input SessionValidatorFilter {
 
 input SessionValidatorsHavingAverageInput {
     bestOrder: HavingIntFilter
+    blockNumber: HavingBigfloatFilter
     nextBestOrder: HavingIntFilter
 }
 
 input SessionValidatorsHavingDistinctCountInput {
     bestOrder: HavingIntFilter
+    blockNumber: HavingBigfloatFilter
     nextBestOrder: HavingIntFilter
 }
 
@@ -10371,36 +10433,43 @@ input SessionValidatorsHavingInput {
 
 input SessionValidatorsHavingMaxInput {
     bestOrder: HavingIntFilter
+    blockNumber: HavingBigfloatFilter
     nextBestOrder: HavingIntFilter
 }
 
 input SessionValidatorsHavingMinInput {
     bestOrder: HavingIntFilter
+    blockNumber: HavingBigfloatFilter
     nextBestOrder: HavingIntFilter
 }
 
 input SessionValidatorsHavingStddevPopulationInput {
     bestOrder: HavingIntFilter
+    blockNumber: HavingBigfloatFilter
     nextBestOrder: HavingIntFilter
 }
 
 input SessionValidatorsHavingStddevSampleInput {
     bestOrder: HavingIntFilter
+    blockNumber: HavingBigfloatFilter
     nextBestOrder: HavingIntFilter
 }
 
 input SessionValidatorsHavingSumInput {
     bestOrder: HavingIntFilter
+    blockNumber: HavingBigfloatFilter
     nextBestOrder: HavingIntFilter
 }
 
 input SessionValidatorsHavingVariancePopulationInput {
     bestOrder: HavingIntFilter
+    blockNumber: HavingBigfloatFilter
     nextBestOrder: HavingIntFilter
 }
 
 input SessionValidatorsHavingVarianceSampleInput {
     bestOrder: HavingIntFilter
+    blockNumber: HavingBigfloatFilter
     nextBestOrder: HavingIntFilter
 }
 
