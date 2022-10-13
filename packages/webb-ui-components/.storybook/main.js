@@ -35,7 +35,6 @@ module.exports = {
             options: {
               // Prefer `dart-sass`
               implementation: require('sass'),
-              implementation: require('tailwindcss'),
             },
           },
         ],

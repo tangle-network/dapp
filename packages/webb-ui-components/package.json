@@ -55,7 +55,7 @@
     "tsconfig-paths-webpack-plugin": "^4.0.0"
   },
   "scripts": {
-    "storybook": "start-storybook -p 6006 -s ./src",
+    "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook -o docs-build -s ./src/stories/assets"
   }
 }
