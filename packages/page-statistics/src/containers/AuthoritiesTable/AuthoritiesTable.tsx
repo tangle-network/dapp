@@ -192,31 +192,26 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({ data: dataProp }) 
 
 const LocationFilter: FC<{ onChange(country: string): void; countries: string[] }> = ({ countries, onChange }) => {
   return (
-    <div style={{ width: '300px' }}>
+    <div
+      style={{
+        padding: '10px 20px',
+        maxWidth: '300px',
+        maxHeight: 300,
+        overflow: 'hidden',
+        overflowY: 'auto',
+      }}
+    >
       {countries.map((country) => {
         // @ts-ignore
         const C = flags[country.toUpperCase() as unknown as any];
         return (
-          <FormControlLabel
-            className={'min-w-full'}
-            key={country}
-            value={country}
-            label={
-              <Typography
-                style={{
-                  alignItems: 'center',
-                }}
-                variant='label'
-              >
-                <C />
-                {country}
-              </Typography>
-            }
-            onChange={() => {
-              onChange(country);
-            }}
-            control={<CheckBox color='primary' />}
-          />
+          <label className={'flex flex-row items-center content-center '}>
+            <div className={'h-6 w-6'}>
+              <C />
+            </div>
+            <div> {country}</div>
+            <CheckBox color='primary' style={{ marginRight: 'auto' }} />
+          </label>
         );
       })}
     </div>
