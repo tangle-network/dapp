@@ -63,11 +63,11 @@ export interface KeygenType {
   /**
    * The keygen threshold
    */
-  keygenThreshold: string;
+  keygenThreshold: number | null;
   /**
    * The signatures threshold
    */
-  signatureThreshold: string;
+  signatureThreshold: number | null;
   /**
    * The authorities attend to the process
    */

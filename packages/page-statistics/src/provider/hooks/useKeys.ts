@@ -55,8 +55,8 @@ export interface PublicKey extends PublicKeyContent {
 export interface PublicKeyListView extends PublicKeyContent {
   height: string;
   keyGenAuthorities: string[];
-  keyGenThreshold: string;
-  signatureThreshold: string;
+  keyGenThreshold: number | null;
+  signatureThreshold: number | null;
   session: string;
 
   previousKeyId?: string;
@@ -107,9 +107,9 @@ interface PublicKeyDetails extends PublicKeyContent {
   isCurrent: boolean;
   isDone: boolean;
   history: PublicKeyHistoryEntry[];
-  keyGenThreshold: string;
-  signatureThreshold: string;
-  numberOfValidators: number;
+  keyGenThreshold: number | null;
+  signatureThreshold: number | null;
+  numberOfValidators: number | null;
   authorities: Array<KeyGenAuthority>;
 }
 /**
@@ -231,8 +231,8 @@ export function useKeys(reqQuery: PageInfoQuery): Loadable<Page<PublicKeyListVie
                 return {
                   height: String(node!.block?.number),
                   session: session.id,
-                  keyGenThreshold: String(keyGen?.current ?? '-'),
-                  signatureThreshold: String(signature?.current ?? '-'),
+                  keyGenThreshold: keyGen?.current ?? null,
+                  signatureThreshold: signature?.current ?? null,
                   compressed: node!.compressed!,
                   uncompressed: node!.uncompressed!,
                   keyGenAuthorities: authorities,
@@ -440,8 +440,8 @@ export function useKey(id: string): PublicKeyDetailsPage {
               isCurrent: activeSession === session.id,
               isDone: Number(activeSession) > Number(session.id),
               authorities,
-              keyGenThreshold: String(keyGen?.current ?? '-'),
-              signatureThreshold: String(signature?.current ?? '-'),
+              keyGenThreshold: keyGen?.current ?? null,
+              signatureThreshold: signature?.current ?? null,
             },
           };
         }
