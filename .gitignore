@@ -66,6 +66,6 @@ packages/apps/public/cached-fixtures
 .npmrc
 build/
 *.tar
-
+docs-build/
 # Build files for mac
 .DS_Store

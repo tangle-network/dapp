@@ -1,13 +1,12 @@
 import * as TooltipPrimitive from '@radix-ui/react-tooltip';
 import cx from 'classnames';
-import { cloneElement, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { TooltipBodyProps, TooltipProps, TooltipTriggerProps } from './types';
 
 /**
  * The `ToolTipBody` component, use after the `TooltipTrigger`.
- * Reresents the popup content of the tooltip.
+ * Represents the popup content of the tooltip.
  * Must use inside the `Tooltip` component.
  *
  * @example
