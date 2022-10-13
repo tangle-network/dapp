@@ -11158,6 +11158,7 @@ export type ValidatorListingQueryResult = Apollo.QueryResult<ValidatorListingQue
 export const ValidatorSessionsDocument = gql`
     query ValidatorSessions($keyGen: Boolean, $validatorId: String!, $perPage: Int!, $offset: Int!) {
   sessionValidators(
+    orderBy: [BLOCK_NUMBER_DESC]
     filter: {isBest: {equalTo: $keyGen}, validatorId: {equalTo: $validatorId}}
     offset: $offset
     first: $perPage

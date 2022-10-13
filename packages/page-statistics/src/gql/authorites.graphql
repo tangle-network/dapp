@@ -16,6 +16,7 @@ query ValidatorListing($sessionId: String!, $perPage: Int!, $offset: Int!) {
 
 query ValidatorSessions($keyGen: Boolean, $validatorId: String!, $perPage: Int!, $offset: Int!) {
   sessionValidators(
+    orderBy: [BLOCK_NUMBER_DESC]
     filter: { isBest: { equalTo: $keyGen }, validatorId: { equalTo: $validatorId } }
     offset: $offset
     first: $perPage
