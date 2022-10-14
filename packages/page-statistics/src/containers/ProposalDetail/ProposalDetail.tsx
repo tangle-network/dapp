@@ -1,4 +1,4 @@
-import { randNumber } from '@ngneat/falso';
+import { getProposalText } from '@webb-dapp/page-statistics/containers/ProposalDetail/getProposalText';
 import { useProposal } from '@webb-dapp/page-statistics/provider/hooks';
 import { useStatsContext } from '@webb-dapp/page-statistics/provider/stats-provider';
 import {
@@ -23,6 +23,7 @@ import {
 } from '@webb-dapp/webb-ui-components/icons';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
 import { shortenHex } from '@webb-dapp/webb-ui-components/utils';
+import {} from '@webb-tools/sdk-core';
 import cx from 'classnames';
 import { FC, useCallback, useMemo } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
@@ -211,7 +212,7 @@ export const ProposalDetail = () => {
             </Typography>
             <br />
             <Typography variant='mono2' component='p'>
-              Data: {proposalData.data}
+              Data: {JSON.stringify(getProposalText(proposalData.type, proposalData.data), null, 2)}
             </Typography>
           </div>
         </>
