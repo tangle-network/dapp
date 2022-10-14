@@ -43,6 +43,7 @@ const columnHelper = createColumnHelper<AuthorityListItem>();
 const columns: ColumnDef<AuthorityListItem, any>[] = [
   columnHelper.accessor('id', {
     header: 'Participant',
+    enableColumnFilter: false,
     cell: (props) => (
       <div className='flex items-center space-x-2'>
         <Avatar sourceVariant={'address'} value={props.getValue<string>()} />
@@ -53,6 +54,7 @@ const columns: ColumnDef<AuthorityListItem, any>[] = [
 
   columnHelper.accessor('location', {
     header: 'Location',
+    enableColumnFilter: true,
     cell: (props) => (
       <Typography variant='h5' fw='bold' component='span' className='!text-inherit'>
         {getUnicodeFlagIcon(props.getValue())}
@@ -62,11 +64,13 @@ const columns: ColumnDef<AuthorityListItem, any>[] = [
 
   columnHelper.accessor('uptime', {
     header: 'Uptime',
+    enableColumnFilter: true,
     cell: (props) => <Progress size='sm' value={parseInt(props.getValue())} className='w-[100px]' suffixLabel='%' />,
   }),
 
   columnHelper.accessor('reputation', {
     header: 'Reputation',
+    enableColumnFilter: true,
     cell: (props) => <Progress size='sm' value={parseInt(props.getValue())} className='w-[100px]' suffixLabel='%' />,
   }),
 
@@ -136,11 +140,11 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({ data: dataProp }) 
     [table]
   );
 
-  const [{ column: keygenFilterCol }, { column: signatureFilterCol }] = useMemo(
+  const [{ column: locationFilterCol }] = useMemo(
     () => headers[0].filter((header) => header.column.getCanFilter()),
     [headers]
   );
-  console.log({ authorities });
+
   return (
     <CardTable
       titleProps={{
@@ -160,19 +164,6 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({ data: dataProp }) 
             table.setGlobalFilter('');
           }}
         >
-          <Collapsible>
-            <CollapsibleButton>Keygen Threshold</CollapsibleButton>
-            <CollapsibleContent>
-              <Slider
-                max={keygenFilterCol.getFacetedMinMaxValues()?.[1]}
-                defaultValue={keygenFilterCol.getFacetedMinMaxValues()?.map((i) => (i ? 0 : i))}
-                value={keygenFilterCol.getFilterValue() as [number, number]}
-                onChange={(nextValue) => keygenFilterCol.setFilterValue(nextValue)}
-                className='w-full min-w-0'
-                hasLabel
-              />
-            </CollapsibleContent>
-          </Collapsible>
           <Collapsible>
             <CollapsibleButton>Location</CollapsibleButton>
             <CollapsibleContent className={`space-x-1 `}>
@@ -195,7 +186,7 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({ data: dataProp }) 
 
 const LocationFilter: FC<{
   selected: 'all' | string[];
-  onChange(country: string): void;
+  onChange(nextValue: 'all' | string[]): void;
   countries: string[];
 }> = ({ selected, countries, onChange }) => {
   return (
@@ -212,6 +203,9 @@ const LocationFilter: FC<{
           isChecked: selected === 'all',
         }}
         label={'all'}
+        onChange={() => {
+          onChange(selected === 'all' ? [] : countries);
+        }}
       />
       {countries.map((country) => {
         // @ts-ignore
@@ -221,7 +215,7 @@ const LocationFilter: FC<{
             checkboxProps={{
               isChecked: selected === 'all' ? true : selected.indexOf(country) > -1,
             }}
-            onClick={(e) => {}}
+            onChange={(v) => {}}
             icon={<C className={'w-6'} />}
             label={country}
           />
