@@ -24,6 +24,7 @@ import {
   CollapsibleContent,
   Filter,
   KeyValueWithButton,
+  MenuItem,
   Progress,
   Slider,
   Table,
@@ -36,6 +37,7 @@ import { Link } from 'react-router-dom';
 import { countries } from 'country-flag-icons';
 import * as flags from 'country-flag-icons/react/3x2';
 import { AuthoritiesTableProps } from './types';
+import { CheckBoxMenu } from '@webb-dapp/webb-ui-components/components/CheckBoxMenu';
 
 const columnHelper = createColumnHelper<AuthorityListItem>();
 const columns: ColumnDef<AuthorityListItem, any>[] = [
@@ -194,7 +196,7 @@ const LocationFilter: FC<{ onChange(country: string): void; countries: string[] 
   return (
     <div
       style={{
-        padding: '10px 20px',
+        padding: '10px 10px',
         maxWidth: '300px',
         maxHeight: 300,
         overflow: 'hidden',
@@ -205,13 +207,13 @@ const LocationFilter: FC<{ onChange(country: string): void; countries: string[] 
         // @ts-ignore
         const C = flags[country.toUpperCase() as unknown as any];
         return (
-          <label className={'flex flex-row items-center content-center '}>
-            <div className={'h-6 w-6'}>
-              <C />
-            </div>
-            <div> {country}</div>
-            <CheckBox color='primary' style={{ marginRight: 'auto' }} />
-          </label>
+          <CheckBoxMenu
+            onClick={(e) => {
+              console.log(e);
+            }}
+            icon={<C className={'w-6'} />}
+            label={country}
+          />
         );
       })}
     </div>
