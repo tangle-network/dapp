@@ -1,4 +1,5 @@
 import { WebbComponentBase } from '@webb-dapp/webb-ui-components/types';
+import { CheckBoxProps } from '@webb-dapp/webb-ui-components/components/CheckBox/types';
 
 /**
  * `CheckBoxMenu` component's props
@@ -13,4 +14,8 @@ export interface CheckBoxMenuProps extends WebbComponentBase {
    * Label
    * */
   label: string;
+  /**
+   *
+   * */
+  checkboxProps?: CheckBoxProps;
 }

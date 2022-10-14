@@ -19,8 +19,8 @@ import { CheckBox } from '@webb-dapp/webb-ui-components';
  *  <MenuItem>Item 1</MenuItem>
  * ```
  */
-export const CheckBoxMenu = React.forwardRef<HTMLDivElement, CheckBoxMenuProps>(
-  ({ onChange, label, children, className: clsxProp, icon, ...props }, ref) => {
+export const CheckBoxMenu = React.forwardRef<HTMLLabelElement, CheckBoxMenuProps>(
+  ({ onChange, checkboxProps, label, children, className: clsxProp, icon, ...props }, ref) => {
     const className = useMemo(() => {
       return twMerge(
         cx(
@@ -34,11 +34,12 @@ export const CheckBoxMenu = React.forwardRef<HTMLDivElement, CheckBoxMenuProps>(
       );
     }, [clsxProp]);
     const id = useMemo(() => Math.random().toString(16), []);
+    const inputProps = useMemo(() => checkboxProps ?? {}, [checkboxProps]);
     return (
       <label htmlFor={id} role={'listitem'} className={className} {...props} ref={ref}>
-        <span className='flex-grow text-inherit dark:text-inherit'>{icon}</span>
-        {label}
-        <CheckBox id={id} onChange={onChange} />
+        <span className='text-inherit dark:text-inherit'>{icon}</span>
+        <span className={'flex-grow px-2'}>{label}</span>
+        <CheckBox id={id} onChange={onChange} {...inputProps} />
       </label>
     );
   }

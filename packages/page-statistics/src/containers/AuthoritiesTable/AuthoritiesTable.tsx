@@ -177,6 +177,7 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({ data: dataProp }) 
             <CollapsibleButton>Location</CollapsibleButton>
             <CollapsibleContent className={`space-x-1 `}>
               <LocationFilter
+                selected={'all'}
                 countries={countries ?? []}
                 onChange={(c) => {
                   console.log(c);
@@ -192,25 +193,35 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({ data: dataProp }) 
   );
 };
 
-const LocationFilter: FC<{ onChange(country: string): void; countries: string[] }> = ({ countries, onChange }) => {
+const LocationFilter: FC<{
+  selected: 'all' | string[];
+  onChange(country: string): void;
+  countries: string[];
+}> = ({ selected, countries, onChange }) => {
   return (
     <div
       style={{
-        padding: '10px 10px',
         maxWidth: '300px',
         maxHeight: 300,
         overflow: 'hidden',
         overflowY: 'auto',
       }}
     >
+      <CheckBoxMenu
+        checkboxProps={{
+          isChecked: selected === 'all',
+        }}
+        label={'all'}
+      />
       {countries.map((country) => {
         // @ts-ignore
         const C = flags[country.toUpperCase() as unknown as any];
         return (
           <CheckBoxMenu
-            onClick={(e) => {
-              console.log(e);
+            checkboxProps={{
+              isChecked: selected === 'all' ? true : selected.indexOf(country) > -1,
             }}
+            onClick={(e) => {}}
             icon={<C className={'w-6'} />}
             label={country}
           />
