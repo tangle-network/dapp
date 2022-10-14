@@ -151,20 +151,22 @@ export const KeygenTable: FC = () => {
   const keysStats = useKeys(pageQuery);
   const data = useMemo(() => {
     if (keysStats.val) {
-      return keysStats.val.items.map(
-        (item): KeygenType => ({
-          height: Number(item.height),
-          session: Number(item.session),
-          key: item.compressed,
-          authorities: new Set(item.keyGenAuthorities),
-          keygenThreshold: item.keyGenThreshold,
-          keyId: item.uncompressed,
-          totalAuthorities: item.keyGenAuthorities.length,
-          signatureThreshold: item.signatureThreshold,
-          previousKeyId: item.previousKeyId,
-          nextKeyId: item.nextKeyId,
-        })
-      );
+      return keysStats.val.items
+        .filter((v) => v.keyGenThreshold && v.signatureThreshold)
+        .map(
+          (item): KeygenType => ({
+            height: Number(item.height),
+            session: Number(item.session),
+            key: item.compressed,
+            authorities: new Set(item.keyGenAuthorities),
+            keygenThreshold: item.keyGenThreshold,
+            keyId: item.uncompressed,
+            totalAuthorities: item.keyGenAuthorities.length,
+            signatureThreshold: item.signatureThreshold,
+            previousKeyId: item.previousKeyId,
+            nextKeyId: item.nextKeyId,
+          })
+        );
     }
     return [] as KeygenType[];
   }, [keysStats]);
@@ -234,7 +236,7 @@ export const KeygenTable: FC = () => {
             <CollapsibleContent>
               <Slider
                 max={keygenFilterCol.getFacetedMinMaxValues()?.[1]}
-                defaultValue={keygenFilterCol.getFacetedMinMaxValues()}
+                defaultValue={keygenFilterCol.getFacetedMinMaxValues()?.map((i) => (i ? 0 : i))}
                 value={keygenFilterCol.getFilterValue() as [number, number]}
                 onChange={(nextValue) => keygenFilterCol.setFilterValue(nextValue)}
                 className='w-full min-w-0'
