@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunk_webb_dapp_webb_ui_components=self.webpackChunk_webb_dapp_webb_ui_components||[]).push([[521],{"../../node_modules/@svgr/webpack/lib/index.js?+svgo,+titleProp,+ref!./src/icons/tokens/link.svg":(module,__unused_webpack_exports,__webpack_require__)=>{module.exports=__webpack_require__.p+"static/media/link.f6ff739a.svg"}}]);
