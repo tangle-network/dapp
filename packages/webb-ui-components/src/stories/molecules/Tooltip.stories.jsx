@@ -12,13 +12,13 @@ export default {
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
 const Template = (args) => (
   <Tooltip isDefaultOpen>
-  <TooltipTrigger>
-    <Chip color='blue'>Text only</Chip>
-  </TooltipTrigger>
-  <TooltipBody>
-    <span>A report of a DKG authority misbehaving. (Body xs Regular)</span>
-  </TooltipBody>
-</Tooltip>
+    <TooltipTrigger>
+      <Chip color='blue'>Text only</Chip>
+    </TooltipTrigger>
+    <TooltipBody>
+      <span>A report of a DKG authority misbehaving. (Body xs Regular)</span>
+    </TooltipBody>
+  </Tooltip>
 );
 
 export const Default = Template.bind({});
