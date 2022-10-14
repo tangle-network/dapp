@@ -1,10 +1,12 @@
 import { ProposalType } from '@webb-dapp/page-statistics/generated/graphql';
 import {
   AnchorUpdateProposal,
+  FeeRecipientUpdateProposal,
   MaxDepositLimitProposal,
   MinWithdrawalLimitProposal,
   RescueTokensProposal,
   ResourceIdUpdateProposal,
+  SetVerifierProposal,
   TokenAddProposal,
   TokenRemoveProposal,
   WrappingFeeUpdateProposal,
@@ -29,8 +31,17 @@ export function getProposalText(propType: ProposalType, data: string): Record<st
     }
     case ProposalType.EvmProposal:
       break;
-    case ProposalType.FeeRecipientUpdateProposal:
-      break;
+    case ProposalType.FeeRecipientUpdateProposal: {
+      const decoded = FeeRecipientUpdateProposal.fromBytes(bytes);
+      return {
+        newFeeRecipient: decoded.newFeeRecipient,
+        functionSignature: u8aToHex(decoded.header.functionSignature),
+        nonce: String(decoded.header.nonce),
+        chainType: String(decoded.header.resourceId.chainType),
+        chainId: String(decoded.header.resourceId.chainId),
+        targetSystem: u8aToHex(decoded.header.resourceId.targetSystem),
+      };
+    }
     case ProposalType.MaxDepositLimitUpdateProposal: {
       const decoded = MaxDepositLimitProposal.fromBytes(bytes);
       return {
@@ -86,8 +97,17 @@ export function getProposalText(propType: ProposalType, data: string): Record<st
     }
     case ProposalType.SetTreasuryHandlerProposal:
       break;
-    case ProposalType.SetVerifierProposal:
-      break;
+    case ProposalType.SetVerifierProposal: {
+      const decoded = SetVerifierProposal.fromBytes(bytes);
+      return {
+        newVerifier: decoded.newVerifier,
+        functionSignature: u8aToHex(decoded.header.functionSignature),
+        nonce: String(decoded.header.nonce),
+        chainType: String(decoded.header.resourceId.chainType),
+        chainId: String(decoded.header.resourceId.chainId),
+        targetSystem: u8aToHex(decoded.header.resourceId.targetSystem),
+      };
+    }
     case ProposalType.TokenAddProposal: {
       const decoded = TokenAddProposal.fromBytes(bytes);
       return {
