@@ -2,7 +2,7 @@
   "extensions": {
     "endpoints": {
       "url": "http://localhost:4000",
-      "subscription": " https://api.subquery.network/sq/AtelyPham/webb-subql"
+      "subscription": "http://localhost:4000"
     },
     "schemaPath": "./schema.graphql"
   }

@@ -1,7 +1,13 @@
+import FormControlLabel from '@mui/material/FormControlLabel';
 import {
   ColumnDef,
+  ColumnFiltersState,
   createColumnHelper,
   getCoreRowModel,
+  getFacetedMinMaxValues,
+  getFacetedRowModel,
+  getFacetedUniqueValues,
+  getFilteredRowModel,
   getPaginationRowModel,
   PaginationState,
   Table as RTTable,
@@ -12,8 +18,14 @@ import {
   Avatar,
   Button,
   CardTable,
+  CheckBox,
+  Collapsible,
+  CollapsibleButton,
+  CollapsibleContent,
+  Filter,
   KeyValueWithButton,
   Progress,
+  Slider,
   Table,
 } from '@webb-dapp/webb-ui-components/components';
 import { fuzzyFilter } from '@webb-dapp/webb-ui-components/components/Filter/utils';
@@ -25,7 +37,7 @@ import { Link } from 'react-router-dom';
 import { AuthoritiesTableProps } from './types';
 
 const columnHelper = createColumnHelper<AuthorityListItem>();
-
+const countries = ['eg', 'uk'];
 const columns: ColumnDef<AuthorityListItem, any>[] = [
   columnHelper.accessor('id', {
     header: 'Participant',
@@ -88,6 +100,8 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({ data: dataProp }) 
     }),
     [pageIndex, pageSize]
   );
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [globalFilter, setGlobalFilter] = useState('');
 
   const authorities = useAuthorities(query);
   const totalItems = useMemo(() => authorities.val?.pageInfo.count ?? 0, [authorities]);
@@ -105,10 +119,26 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({ data: dataProp }) 
     filterFns: {
       fuzzy: fuzzyFilter,
     },
+    onColumnFiltersChange: setColumnFilters,
+    onGlobalFilterChange: setGlobalFilter,
     onPaginationChange: setPagination,
     manualPagination: dataProp === undefined,
+    getFacetedRowModel: getFacetedRowModel(),
+    getFacetedUniqueValues: getFacetedUniqueValues(),
+    getFacetedMinMaxValues: getFacetedMinMaxValues(),
+    getFilteredRowModel: getFilteredRowModel(),
   });
 
+  const headers = useMemo(
+    () => table.getHeaderGroups().map((headerGroup) => headerGroup.headers.map((header) => header)),
+    [table]
+  );
+
+  const [{ column: keygenFilterCol }, { column: signatureFilterCol }] = useMemo(
+    () => headers[0].filter((header) => header.column.getCanFilter()),
+    [headers]
+  );
+  console.log({ authorities });
   return (
     <CardTable
       titleProps={{
@@ -116,8 +146,57 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({ data: dataProp }) 
         info: 'DKG Authorities',
         variant: 'h5',
       }}
+      leftTitle={
+        <Filter
+          searchText={globalFilter}
+          onSearchChange={(nextValue: string | number) => {
+            setGlobalFilter(nextValue.toString());
+          }}
+          clearAllFilters={() => {
+            table.setColumnFilters([]);
+            table.setGlobalFilter('');
+          }}
+        >
+          <Collapsible>
+            <CollapsibleButton>Keygen Threshold</CollapsibleButton>
+            <CollapsibleContent>
+              <Slider
+                max={keygenFilterCol.getFacetedMinMaxValues()?.[1]}
+                defaultValue={keygenFilterCol.getFacetedMinMaxValues()?.map((i) => (i ? 0 : i))}
+                value={keygenFilterCol.getFilterValue() as [number, number]}
+                onChange={(nextValue) => keygenFilterCol.setFilterValue(nextValue)}
+                className='w-full min-w-0'
+                hasLabel
+              />
+            </CollapsibleContent>
+          </Collapsible>
+
+          <Collapsible>
+            <CollapsibleButton>Location</CollapsibleButton>
+            <CollapsibleContent
+              className={`space-x-1 `}
+              style={{
+                backgroundColor: 'red',
+              }}
+            >
+              {countries.map((country) => {
+                return (
+                  <FormControlLabel
+                    key={country}
+                    value={country}
+                    label={<Typography variant='label'>{country}</Typography>}
+                    onChange={() => {}}
+                    control={<CheckBox color='primary' />}
+                  />
+                );
+              })}
+            </CollapsibleContent>
+          </Collapsible>
+        </Filter>
+      }
     >
       <Table tableProps={table as RTTable<unknown>} isPaginated totalRecords={totalItems} />
     </CardTable>
   );
 };
+const LocationFilter = () => {};

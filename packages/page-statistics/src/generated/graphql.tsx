@@ -8201,6 +8201,7 @@ export type SessionSumAggregates = {
 export type SessionValidator = Node & {
   __typename?: 'SessionValidator';
   bestOrder: Scalars['Int'];
+  blockNumber: Scalars['BigFloat'];
   id: Scalars['String'];
   isBest: Scalars['Boolean'];
   isNext: Scalars['Boolean'];
@@ -8244,6 +8245,8 @@ export type SessionValidatorAverageAggregates = {
   __typename?: 'SessionValidatorAverageAggregates';
   /** Mean average of bestOrder across the matching connection */
   bestOrder?: Maybe<Scalars['BigFloat']>;
+  /** Mean average of blockNumber across the matching connection */
+  blockNumber?: Maybe<Scalars['BigFloat']>;
   /** Mean average of nextBestOrder across the matching connection */
   nextBestOrder?: Maybe<Scalars['BigFloat']>;
 };
@@ -8252,6 +8255,8 @@ export type SessionValidatorDistinctCountAggregates = {
   __typename?: 'SessionValidatorDistinctCountAggregates';
   /** Distinct count of bestOrder across the matching connection */
   bestOrder?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of blockNumber across the matching connection */
+  blockNumber?: Maybe<Scalars['BigInt']>;
   /** Distinct count of id across the matching connection */
   id?: Maybe<Scalars['BigInt']>;
   /** Distinct count of isBest across the matching connection */
@@ -8276,6 +8281,8 @@ export type SessionValidatorFilter = {
   and?: InputMaybe<Array<SessionValidatorFilter>>;
   /** Filter by the object’s `bestOrder` field. */
   bestOrder?: InputMaybe<IntFilter>;
+  /** Filter by the object’s `blockNumber` field. */
+  blockNumber?: InputMaybe<BigFloatFilter>;
   /** Filter by the object’s `id` field. */
   id?: InputMaybe<StringFilter>;
   /** Filter by the object’s `isBest` field. */
@@ -8302,6 +8309,8 @@ export type SessionValidatorMaxAggregates = {
   __typename?: 'SessionValidatorMaxAggregates';
   /** Maximum of bestOrder across the matching connection */
   bestOrder?: Maybe<Scalars['Int']>;
+  /** Maximum of blockNumber across the matching connection */
+  blockNumber?: Maybe<Scalars['BigFloat']>;
   /** Maximum of nextBestOrder across the matching connection */
   nextBestOrder?: Maybe<Scalars['Int']>;
 };
@@ -8310,6 +8319,8 @@ export type SessionValidatorMinAggregates = {
   __typename?: 'SessionValidatorMinAggregates';
   /** Minimum of bestOrder across the matching connection */
   bestOrder?: Maybe<Scalars['Int']>;
+  /** Minimum of blockNumber across the matching connection */
+  blockNumber?: Maybe<Scalars['BigFloat']>;
   /** Minimum of nextBestOrder across the matching connection */
   nextBestOrder?: Maybe<Scalars['Int']>;
 };
@@ -8318,6 +8329,8 @@ export type SessionValidatorStddevPopulationAggregates = {
   __typename?: 'SessionValidatorStddevPopulationAggregates';
   /** Population standard deviation of bestOrder across the matching connection */
   bestOrder?: Maybe<Scalars['BigFloat']>;
+  /** Population standard deviation of blockNumber across the matching connection */
+  blockNumber?: Maybe<Scalars['BigFloat']>;
   /** Population standard deviation of nextBestOrder across the matching connection */
   nextBestOrder?: Maybe<Scalars['BigFloat']>;
 };
@@ -8326,6 +8339,8 @@ export type SessionValidatorStddevSampleAggregates = {
   __typename?: 'SessionValidatorStddevSampleAggregates';
   /** Sample standard deviation of bestOrder across the matching connection */
   bestOrder?: Maybe<Scalars['BigFloat']>;
+  /** Sample standard deviation of blockNumber across the matching connection */
+  blockNumber?: Maybe<Scalars['BigFloat']>;
   /** Sample standard deviation of nextBestOrder across the matching connection */
   nextBestOrder?: Maybe<Scalars['BigFloat']>;
 };
@@ -8334,6 +8349,8 @@ export type SessionValidatorSumAggregates = {
   __typename?: 'SessionValidatorSumAggregates';
   /** Sum of bestOrder across the matching connection */
   bestOrder: Scalars['BigInt'];
+  /** Sum of blockNumber across the matching connection */
+  blockNumber: Scalars['BigFloat'];
   /** Sum of nextBestOrder across the matching connection */
   nextBestOrder: Scalars['BigInt'];
 };
@@ -8342,6 +8359,8 @@ export type SessionValidatorVariancePopulationAggregates = {
   __typename?: 'SessionValidatorVariancePopulationAggregates';
   /** Population variance of bestOrder across the matching connection */
   bestOrder?: Maybe<Scalars['BigFloat']>;
+  /** Population variance of blockNumber across the matching connection */
+  blockNumber?: Maybe<Scalars['BigFloat']>;
   /** Population variance of nextBestOrder across the matching connection */
   nextBestOrder?: Maybe<Scalars['BigFloat']>;
 };
@@ -8350,6 +8369,8 @@ export type SessionValidatorVarianceSampleAggregates = {
   __typename?: 'SessionValidatorVarianceSampleAggregates';
   /** Sample variance of bestOrder across the matching connection */
   bestOrder?: Maybe<Scalars['BigFloat']>;
+  /** Sample variance of blockNumber across the matching connection */
+  blockNumber?: Maybe<Scalars['BigFloat']>;
   /** Sample variance of nextBestOrder across the matching connection */
   nextBestOrder?: Maybe<Scalars['BigFloat']>;
 };
@@ -8434,6 +8455,7 @@ export type SessionValidatorsEdge = {
 /** Grouping methods for `SessionValidator` for usage during aggregation. */
 export enum SessionValidatorsGroupBy {
   BestOrder = 'BEST_ORDER',
+  BlockNumber = 'BLOCK_NUMBER',
   IsBest = 'IS_BEST',
   IsNext = 'IS_NEXT',
   IsNextBest = 'IS_NEXT_BEST',
@@ -8445,11 +8467,13 @@ export enum SessionValidatorsGroupBy {
 
 export type SessionValidatorsHavingAverageInput = {
   bestOrder?: InputMaybe<HavingIntFilter>;
+  blockNumber?: InputMaybe<HavingBigfloatFilter>;
   nextBestOrder?: InputMaybe<HavingIntFilter>;
 };
 
 export type SessionValidatorsHavingDistinctCountInput = {
   bestOrder?: InputMaybe<HavingIntFilter>;
+  blockNumber?: InputMaybe<HavingBigfloatFilter>;
   nextBestOrder?: InputMaybe<HavingIntFilter>;
 };
 
@@ -8470,36 +8494,43 @@ export type SessionValidatorsHavingInput = {
 
 export type SessionValidatorsHavingMaxInput = {
   bestOrder?: InputMaybe<HavingIntFilter>;
+  blockNumber?: InputMaybe<HavingBigfloatFilter>;
   nextBestOrder?: InputMaybe<HavingIntFilter>;
 };
 
 export type SessionValidatorsHavingMinInput = {
   bestOrder?: InputMaybe<HavingIntFilter>;
+  blockNumber?: InputMaybe<HavingBigfloatFilter>;
   nextBestOrder?: InputMaybe<HavingIntFilter>;
 };
 
 export type SessionValidatorsHavingStddevPopulationInput = {
   bestOrder?: InputMaybe<HavingIntFilter>;
+  blockNumber?: InputMaybe<HavingBigfloatFilter>;
   nextBestOrder?: InputMaybe<HavingIntFilter>;
 };
 
 export type SessionValidatorsHavingStddevSampleInput = {
   bestOrder?: InputMaybe<HavingIntFilter>;
+  blockNumber?: InputMaybe<HavingBigfloatFilter>;
   nextBestOrder?: InputMaybe<HavingIntFilter>;
 };
 
 export type SessionValidatorsHavingSumInput = {
   bestOrder?: InputMaybe<HavingIntFilter>;
+  blockNumber?: InputMaybe<HavingBigfloatFilter>;
   nextBestOrder?: InputMaybe<HavingIntFilter>;
 };
 
 export type SessionValidatorsHavingVariancePopulationInput = {
   bestOrder?: InputMaybe<HavingIntFilter>;
+  blockNumber?: InputMaybe<HavingBigfloatFilter>;
   nextBestOrder?: InputMaybe<HavingIntFilter>;
 };
 
 export type SessionValidatorsHavingVarianceSampleInput = {
   bestOrder?: InputMaybe<HavingIntFilter>;
+  blockNumber?: InputMaybe<HavingBigfloatFilter>;
   nextBestOrder?: InputMaybe<HavingIntFilter>;
 };
 
@@ -8507,6 +8538,8 @@ export type SessionValidatorsHavingVarianceSampleInput = {
 export enum SessionValidatorsOrderBy {
   BestOrderAsc = 'BEST_ORDER_ASC',
   BestOrderDesc = 'BEST_ORDER_DESC',
+  BlockNumberAsc = 'BLOCK_NUMBER_ASC',
+  BlockNumberDesc = 'BLOCK_NUMBER_DESC',
   IdAsc = 'ID_ASC',
   IdDesc = 'ID_DESC',
   IsBestAsc = 'IS_BEST_ASC',
@@ -8701,6 +8734,8 @@ export enum SessionsOrderBy {
   SessionProposersVarianceSampleSessionIdDesc = 'SESSION_PROPOSERS_VARIANCE_SAMPLE_SESSION_ID_DESC',
   SessionValidatorsAverageBestOrderAsc = 'SESSION_VALIDATORS_AVERAGE_BEST_ORDER_ASC',
   SessionValidatorsAverageBestOrderDesc = 'SESSION_VALIDATORS_AVERAGE_BEST_ORDER_DESC',
+  SessionValidatorsAverageBlockNumberAsc = 'SESSION_VALIDATORS_AVERAGE_BLOCK_NUMBER_ASC',
+  SessionValidatorsAverageBlockNumberDesc = 'SESSION_VALIDATORS_AVERAGE_BLOCK_NUMBER_DESC',
   SessionValidatorsAverageIdAsc = 'SESSION_VALIDATORS_AVERAGE_ID_ASC',
   SessionValidatorsAverageIdDesc = 'SESSION_VALIDATORS_AVERAGE_ID_DESC',
   SessionValidatorsAverageIsBestAsc = 'SESSION_VALIDATORS_AVERAGE_IS_BEST_ASC',
@@ -8721,6 +8756,8 @@ export enum SessionsOrderBy {
   SessionValidatorsCountDesc = 'SESSION_VALIDATORS_COUNT_DESC',
   SessionValidatorsDistinctCountBestOrderAsc = 'SESSION_VALIDATORS_DISTINCT_COUNT_BEST_ORDER_ASC',
   SessionValidatorsDistinctCountBestOrderDesc = 'SESSION_VALIDATORS_DISTINCT_COUNT_BEST_ORDER_DESC',
+  SessionValidatorsDistinctCountBlockNumberAsc = 'SESSION_VALIDATORS_DISTINCT_COUNT_BLOCK_NUMBER_ASC',
+  SessionValidatorsDistinctCountBlockNumberDesc = 'SESSION_VALIDATORS_DISTINCT_COUNT_BLOCK_NUMBER_DESC',
   SessionValidatorsDistinctCountIdAsc = 'SESSION_VALIDATORS_DISTINCT_COUNT_ID_ASC',
   SessionValidatorsDistinctCountIdDesc = 'SESSION_VALIDATORS_DISTINCT_COUNT_ID_DESC',
   SessionValidatorsDistinctCountIsBestAsc = 'SESSION_VALIDATORS_DISTINCT_COUNT_IS_BEST_ASC',
@@ -8739,6 +8776,8 @@ export enum SessionsOrderBy {
   SessionValidatorsDistinctCountValidatorIdDesc = 'SESSION_VALIDATORS_DISTINCT_COUNT_VALIDATOR_ID_DESC',
   SessionValidatorsMaxBestOrderAsc = 'SESSION_VALIDATORS_MAX_BEST_ORDER_ASC',
   SessionValidatorsMaxBestOrderDesc = 'SESSION_VALIDATORS_MAX_BEST_ORDER_DESC',
+  SessionValidatorsMaxBlockNumberAsc = 'SESSION_VALIDATORS_MAX_BLOCK_NUMBER_ASC',
+  SessionValidatorsMaxBlockNumberDesc = 'SESSION_VALIDATORS_MAX_BLOCK_NUMBER_DESC',
   SessionValidatorsMaxIdAsc = 'SESSION_VALIDATORS_MAX_ID_ASC',
   SessionValidatorsMaxIdDesc = 'SESSION_VALIDATORS_MAX_ID_DESC',
   SessionValidatorsMaxIsBestAsc = 'SESSION_VALIDATORS_MAX_IS_BEST_ASC',
@@ -8757,6 +8796,8 @@ export enum SessionsOrderBy {
   SessionValidatorsMaxValidatorIdDesc = 'SESSION_VALIDATORS_MAX_VALIDATOR_ID_DESC',
   SessionValidatorsMinBestOrderAsc = 'SESSION_VALIDATORS_MIN_BEST_ORDER_ASC',
   SessionValidatorsMinBestOrderDesc = 'SESSION_VALIDATORS_MIN_BEST_ORDER_DESC',
+  SessionValidatorsMinBlockNumberAsc = 'SESSION_VALIDATORS_MIN_BLOCK_NUMBER_ASC',
+  SessionValidatorsMinBlockNumberDesc = 'SESSION_VALIDATORS_MIN_BLOCK_NUMBER_DESC',
   SessionValidatorsMinIdAsc = 'SESSION_VALIDATORS_MIN_ID_ASC',
   SessionValidatorsMinIdDesc = 'SESSION_VALIDATORS_MIN_ID_DESC',
   SessionValidatorsMinIsBestAsc = 'SESSION_VALIDATORS_MIN_IS_BEST_ASC',
@@ -8775,6 +8816,8 @@ export enum SessionsOrderBy {
   SessionValidatorsMinValidatorIdDesc = 'SESSION_VALIDATORS_MIN_VALIDATOR_ID_DESC',
   SessionValidatorsStddevPopulationBestOrderAsc = 'SESSION_VALIDATORS_STDDEV_POPULATION_BEST_ORDER_ASC',
   SessionValidatorsStddevPopulationBestOrderDesc = 'SESSION_VALIDATORS_STDDEV_POPULATION_BEST_ORDER_DESC',
+  SessionValidatorsStddevPopulationBlockNumberAsc = 'SESSION_VALIDATORS_STDDEV_POPULATION_BLOCK_NUMBER_ASC',
+  SessionValidatorsStddevPopulationBlockNumberDesc = 'SESSION_VALIDATORS_STDDEV_POPULATION_BLOCK_NUMBER_DESC',
   SessionValidatorsStddevPopulationIdAsc = 'SESSION_VALIDATORS_STDDEV_POPULATION_ID_ASC',
   SessionValidatorsStddevPopulationIdDesc = 'SESSION_VALIDATORS_STDDEV_POPULATION_ID_DESC',
   SessionValidatorsStddevPopulationIsBestAsc = 'SESSION_VALIDATORS_STDDEV_POPULATION_IS_BEST_ASC',
@@ -8793,6 +8836,8 @@ export enum SessionsOrderBy {
   SessionValidatorsStddevPopulationValidatorIdDesc = 'SESSION_VALIDATORS_STDDEV_POPULATION_VALIDATOR_ID_DESC',
   SessionValidatorsStddevSampleBestOrderAsc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_BEST_ORDER_ASC',
   SessionValidatorsStddevSampleBestOrderDesc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_BEST_ORDER_DESC',
+  SessionValidatorsStddevSampleBlockNumberAsc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_BLOCK_NUMBER_ASC',
+  SessionValidatorsStddevSampleBlockNumberDesc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_BLOCK_NUMBER_DESC',
   SessionValidatorsStddevSampleIdAsc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_ID_ASC',
   SessionValidatorsStddevSampleIdDesc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_ID_DESC',
   SessionValidatorsStddevSampleIsBestAsc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_IS_BEST_ASC',
@@ -8811,6 +8856,8 @@ export enum SessionsOrderBy {
   SessionValidatorsStddevSampleValidatorIdDesc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_VALIDATOR_ID_DESC',
   SessionValidatorsSumBestOrderAsc = 'SESSION_VALIDATORS_SUM_BEST_ORDER_ASC',
   SessionValidatorsSumBestOrderDesc = 'SESSION_VALIDATORS_SUM_BEST_ORDER_DESC',
+  SessionValidatorsSumBlockNumberAsc = 'SESSION_VALIDATORS_SUM_BLOCK_NUMBER_ASC',
+  SessionValidatorsSumBlockNumberDesc = 'SESSION_VALIDATORS_SUM_BLOCK_NUMBER_DESC',
   SessionValidatorsSumIdAsc = 'SESSION_VALIDATORS_SUM_ID_ASC',
   SessionValidatorsSumIdDesc = 'SESSION_VALIDATORS_SUM_ID_DESC',
   SessionValidatorsSumIsBestAsc = 'SESSION_VALIDATORS_SUM_IS_BEST_ASC',
@@ -8829,6 +8876,8 @@ export enum SessionsOrderBy {
   SessionValidatorsSumValidatorIdDesc = 'SESSION_VALIDATORS_SUM_VALIDATOR_ID_DESC',
   SessionValidatorsVariancePopulationBestOrderAsc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_BEST_ORDER_ASC',
   SessionValidatorsVariancePopulationBestOrderDesc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_BEST_ORDER_DESC',
+  SessionValidatorsVariancePopulationBlockNumberAsc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_BLOCK_NUMBER_ASC',
+  SessionValidatorsVariancePopulationBlockNumberDesc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_BLOCK_NUMBER_DESC',
   SessionValidatorsVariancePopulationIdAsc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_ID_ASC',
   SessionValidatorsVariancePopulationIdDesc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_ID_DESC',
   SessionValidatorsVariancePopulationIsBestAsc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_IS_BEST_ASC',
@@ -8847,6 +8896,8 @@ export enum SessionsOrderBy {
   SessionValidatorsVariancePopulationValidatorIdDesc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_VALIDATOR_ID_DESC',
   SessionValidatorsVarianceSampleBestOrderAsc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_BEST_ORDER_ASC',
   SessionValidatorsVarianceSampleBestOrderDesc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_BEST_ORDER_DESC',
+  SessionValidatorsVarianceSampleBlockNumberAsc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_BLOCK_NUMBER_ASC',
+  SessionValidatorsVarianceSampleBlockNumberDesc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_BLOCK_NUMBER_DESC',
   SessionValidatorsVarianceSampleIdAsc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_ID_ASC',
   SessionValidatorsVarianceSampleIdDesc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_ID_DESC',
   SessionValidatorsVarianceSampleIsBestAsc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_IS_BEST_ASC',
@@ -10395,6 +10446,8 @@ export enum ValidatorsOrderBy {
   PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
   SessionValidatorsAverageBestOrderAsc = 'SESSION_VALIDATORS_AVERAGE_BEST_ORDER_ASC',
   SessionValidatorsAverageBestOrderDesc = 'SESSION_VALIDATORS_AVERAGE_BEST_ORDER_DESC',
+  SessionValidatorsAverageBlockNumberAsc = 'SESSION_VALIDATORS_AVERAGE_BLOCK_NUMBER_ASC',
+  SessionValidatorsAverageBlockNumberDesc = 'SESSION_VALIDATORS_AVERAGE_BLOCK_NUMBER_DESC',
   SessionValidatorsAverageIdAsc = 'SESSION_VALIDATORS_AVERAGE_ID_ASC',
   SessionValidatorsAverageIdDesc = 'SESSION_VALIDATORS_AVERAGE_ID_DESC',
   SessionValidatorsAverageIsBestAsc = 'SESSION_VALIDATORS_AVERAGE_IS_BEST_ASC',
@@ -10415,6 +10468,8 @@ export enum ValidatorsOrderBy {
   SessionValidatorsCountDesc = 'SESSION_VALIDATORS_COUNT_DESC',
   SessionValidatorsDistinctCountBestOrderAsc = 'SESSION_VALIDATORS_DISTINCT_COUNT_BEST_ORDER_ASC',
   SessionValidatorsDistinctCountBestOrderDesc = 'SESSION_VALIDATORS_DISTINCT_COUNT_BEST_ORDER_DESC',
+  SessionValidatorsDistinctCountBlockNumberAsc = 'SESSION_VALIDATORS_DISTINCT_COUNT_BLOCK_NUMBER_ASC',
+  SessionValidatorsDistinctCountBlockNumberDesc = 'SESSION_VALIDATORS_DISTINCT_COUNT_BLOCK_NUMBER_DESC',
   SessionValidatorsDistinctCountIdAsc = 'SESSION_VALIDATORS_DISTINCT_COUNT_ID_ASC',
   SessionValidatorsDistinctCountIdDesc = 'SESSION_VALIDATORS_DISTINCT_COUNT_ID_DESC',
   SessionValidatorsDistinctCountIsBestAsc = 'SESSION_VALIDATORS_DISTINCT_COUNT_IS_BEST_ASC',
@@ -10433,6 +10488,8 @@ export enum ValidatorsOrderBy {
   SessionValidatorsDistinctCountValidatorIdDesc = 'SESSION_VALIDATORS_DISTINCT_COUNT_VALIDATOR_ID_DESC',
   SessionValidatorsMaxBestOrderAsc = 'SESSION_VALIDATORS_MAX_BEST_ORDER_ASC',
   SessionValidatorsMaxBestOrderDesc = 'SESSION_VALIDATORS_MAX_BEST_ORDER_DESC',
+  SessionValidatorsMaxBlockNumberAsc = 'SESSION_VALIDATORS_MAX_BLOCK_NUMBER_ASC',
+  SessionValidatorsMaxBlockNumberDesc = 'SESSION_VALIDATORS_MAX_BLOCK_NUMBER_DESC',
   SessionValidatorsMaxIdAsc = 'SESSION_VALIDATORS_MAX_ID_ASC',
   SessionValidatorsMaxIdDesc = 'SESSION_VALIDATORS_MAX_ID_DESC',
   SessionValidatorsMaxIsBestAsc = 'SESSION_VALIDATORS_MAX_IS_BEST_ASC',
@@ -10451,6 +10508,8 @@ export enum ValidatorsOrderBy {
   SessionValidatorsMaxValidatorIdDesc = 'SESSION_VALIDATORS_MAX_VALIDATOR_ID_DESC',
   SessionValidatorsMinBestOrderAsc = 'SESSION_VALIDATORS_MIN_BEST_ORDER_ASC',
   SessionValidatorsMinBestOrderDesc = 'SESSION_VALIDATORS_MIN_BEST_ORDER_DESC',
+  SessionValidatorsMinBlockNumberAsc = 'SESSION_VALIDATORS_MIN_BLOCK_NUMBER_ASC',
+  SessionValidatorsMinBlockNumberDesc = 'SESSION_VALIDATORS_MIN_BLOCK_NUMBER_DESC',
   SessionValidatorsMinIdAsc = 'SESSION_VALIDATORS_MIN_ID_ASC',
   SessionValidatorsMinIdDesc = 'SESSION_VALIDATORS_MIN_ID_DESC',
   SessionValidatorsMinIsBestAsc = 'SESSION_VALIDATORS_MIN_IS_BEST_ASC',
@@ -10469,6 +10528,8 @@ export enum ValidatorsOrderBy {
   SessionValidatorsMinValidatorIdDesc = 'SESSION_VALIDATORS_MIN_VALIDATOR_ID_DESC',
   SessionValidatorsStddevPopulationBestOrderAsc = 'SESSION_VALIDATORS_STDDEV_POPULATION_BEST_ORDER_ASC',
   SessionValidatorsStddevPopulationBestOrderDesc = 'SESSION_VALIDATORS_STDDEV_POPULATION_BEST_ORDER_DESC',
+  SessionValidatorsStddevPopulationBlockNumberAsc = 'SESSION_VALIDATORS_STDDEV_POPULATION_BLOCK_NUMBER_ASC',
+  SessionValidatorsStddevPopulationBlockNumberDesc = 'SESSION_VALIDATORS_STDDEV_POPULATION_BLOCK_NUMBER_DESC',
   SessionValidatorsStddevPopulationIdAsc = 'SESSION_VALIDATORS_STDDEV_POPULATION_ID_ASC',
   SessionValidatorsStddevPopulationIdDesc = 'SESSION_VALIDATORS_STDDEV_POPULATION_ID_DESC',
   SessionValidatorsStddevPopulationIsBestAsc = 'SESSION_VALIDATORS_STDDEV_POPULATION_IS_BEST_ASC',
@@ -10487,6 +10548,8 @@ export enum ValidatorsOrderBy {
   SessionValidatorsStddevPopulationValidatorIdDesc = 'SESSION_VALIDATORS_STDDEV_POPULATION_VALIDATOR_ID_DESC',
   SessionValidatorsStddevSampleBestOrderAsc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_BEST_ORDER_ASC',
   SessionValidatorsStddevSampleBestOrderDesc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_BEST_ORDER_DESC',
+  SessionValidatorsStddevSampleBlockNumberAsc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_BLOCK_NUMBER_ASC',
+  SessionValidatorsStddevSampleBlockNumberDesc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_BLOCK_NUMBER_DESC',
   SessionValidatorsStddevSampleIdAsc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_ID_ASC',
   SessionValidatorsStddevSampleIdDesc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_ID_DESC',
   SessionValidatorsStddevSampleIsBestAsc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_IS_BEST_ASC',
@@ -10505,6 +10568,8 @@ export enum ValidatorsOrderBy {
   SessionValidatorsStddevSampleValidatorIdDesc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_VALIDATOR_ID_DESC',
   SessionValidatorsSumBestOrderAsc = 'SESSION_VALIDATORS_SUM_BEST_ORDER_ASC',
   SessionValidatorsSumBestOrderDesc = 'SESSION_VALIDATORS_SUM_BEST_ORDER_DESC',
+  SessionValidatorsSumBlockNumberAsc = 'SESSION_VALIDATORS_SUM_BLOCK_NUMBER_ASC',
+  SessionValidatorsSumBlockNumberDesc = 'SESSION_VALIDATORS_SUM_BLOCK_NUMBER_DESC',
   SessionValidatorsSumIdAsc = 'SESSION_VALIDATORS_SUM_ID_ASC',
   SessionValidatorsSumIdDesc = 'SESSION_VALIDATORS_SUM_ID_DESC',
   SessionValidatorsSumIsBestAsc = 'SESSION_VALIDATORS_SUM_IS_BEST_ASC',
@@ -10523,6 +10588,8 @@ export enum ValidatorsOrderBy {
   SessionValidatorsSumValidatorIdDesc = 'SESSION_VALIDATORS_SUM_VALIDATOR_ID_DESC',
   SessionValidatorsVariancePopulationBestOrderAsc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_BEST_ORDER_ASC',
   SessionValidatorsVariancePopulationBestOrderDesc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_BEST_ORDER_DESC',
+  SessionValidatorsVariancePopulationBlockNumberAsc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_BLOCK_NUMBER_ASC',
+  SessionValidatorsVariancePopulationBlockNumberDesc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_BLOCK_NUMBER_DESC',
   SessionValidatorsVariancePopulationIdAsc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_ID_ASC',
   SessionValidatorsVariancePopulationIdDesc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_ID_DESC',
   SessionValidatorsVariancePopulationIsBestAsc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_IS_BEST_ASC',
@@ -10541,6 +10608,8 @@ export enum ValidatorsOrderBy {
   SessionValidatorsVariancePopulationValidatorIdDesc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_VALIDATOR_ID_DESC',
   SessionValidatorsVarianceSampleBestOrderAsc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_BEST_ORDER_ASC',
   SessionValidatorsVarianceSampleBestOrderDesc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_BEST_ORDER_DESC',
+  SessionValidatorsVarianceSampleBlockNumberAsc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_BLOCK_NUMBER_ASC',
+  SessionValidatorsVarianceSampleBlockNumberDesc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_BLOCK_NUMBER_DESC',
   SessionValidatorsVarianceSampleIdAsc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_ID_ASC',
   SessionValidatorsVarianceSampleIdDesc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_ID_DESC',
   SessionValidatorsVarianceSampleIsBestAsc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_IS_BEST_ASC',
@@ -11582,6 +11651,7 @@ export type ValidatorListingQueryResult = Apollo.QueryResult<ValidatorListingQue
 export const ValidatorSessionsDocument = gql`
   query ValidatorSessions($keyGen: Boolean, $validatorId: String!, $perPage: Int!, $offset: Int!) {
     sessionValidators(
+      orderBy: [BLOCK_NUMBER_DESC]
       filter: { isBest: { equalTo: $keyGen }, validatorId: { equalTo: $validatorId } }
       offset: $offset
       first: $perPage
@@ -11665,7 +11735,10 @@ export const ValidatorOfSessionDocument = gql`
         }
       }
     }
-    sessionValidators(filter: { validatorId: { equalTo: $validatorId }, isBest: { equalTo: true } }) {
+    sessionValidators(
+      orderBy: [BLOCK_NUMBER_DESC]
+      filter: { validatorId: { equalTo: $validatorId }, isBest: { equalTo: true } }
+    ) {
       aggregates {
         distinctCount {
           id
