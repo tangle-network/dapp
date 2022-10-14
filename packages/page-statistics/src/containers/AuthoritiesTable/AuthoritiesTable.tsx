@@ -1,4 +1,3 @@
-import FormControlLabel from '@mui/material/FormControlLabel';
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -18,26 +17,24 @@ import {
   Avatar,
   Button,
   CardTable,
-  CheckBox,
   Collapsible,
   CollapsibleButton,
   CollapsibleContent,
   Filter,
   KeyValueWithButton,
-  MenuItem,
   Progress,
-  Slider,
   Table,
 } from '@webb-dapp/webb-ui-components/components';
+import { CheckBoxMenu } from '@webb-dapp/webb-ui-components/components/CheckBoxMenu';
 import { fuzzyFilter } from '@webb-dapp/webb-ui-components/components/Filter/utils';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
+import { countries } from 'country-flag-icons';
+import * as flags from 'country-flag-icons/react/3x2';
 import getUnicodeFlagIcon from 'country-flag-icons/unicode';
 import { FC, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { countries } from 'country-flag-icons';
-import * as flags from 'country-flag-icons/react/3x2';
+
 import { AuthoritiesTableProps } from './types';
-import { CheckBoxMenu } from '@webb-dapp/webb-ui-components/components/CheckBoxMenu';
 
 const columnHelper = createColumnHelper<AuthorityListItem>();
 const columns: ColumnDef<AuthorityListItem, any>[] = [
@@ -140,10 +137,7 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({ data: dataProp }) 
     [table]
   );
 
-  const [{ column: locationFilterCol }] = useMemo(
-    () => headers[0].filter((header) => header.column.getCanFilter()),
-    [headers]
-  );
+  const [selectedCountries, setSelectedCountries] = useState<'all' | string[]>('all');
 
   return (
     <CardTable
@@ -168,10 +162,10 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({ data: dataProp }) 
             <CollapsibleButton>Location</CollapsibleButton>
             <CollapsibleContent className={`space-x-1 `}>
               <LocationFilter
-                selected={'all'}
+                selected={selectedCountries}
                 countries={countries ?? []}
                 onChange={(c) => {
-                  console.log(c);
+                  setSelectedCountries(c);
                 }}
               />
             </CollapsibleContent>
@@ -188,7 +182,14 @@ const LocationFilter: FC<{
   selected: 'all' | string[];
   onChange(nextValue: 'all' | string[]): void;
   countries: string[];
-}> = ({ selected, countries, onChange }) => {
+}> = ({ countries, onChange, selected }) => {
+  const isAllSelected = useMemo(() => {
+    if (selected === 'all' || (Array.isArray(selected) && selected.length === countries.length)) {
+      return true;
+    }
+    return false;
+  }, [selected]);
+
   return (
     <div
       style={{
@@ -200,11 +201,11 @@ const LocationFilter: FC<{
     >
       <CheckBoxMenu
         checkboxProps={{
-          isChecked: selected === 'all',
+          isChecked: isAllSelected,
         }}
         label={'all'}
         onChange={() => {
-          onChange(selected === 'all' ? [] : countries);
+          onChange(isAllSelected ? [] : 'all');
         }}
       />
       {countries.map((country) => {
@@ -213,9 +214,21 @@ const LocationFilter: FC<{
         return (
           <CheckBoxMenu
             checkboxProps={{
-              isChecked: selected === 'all' ? true : selected.indexOf(country) > -1,
+              isChecked: isAllSelected ? true : selected.indexOf(country) > -1,
             }}
-            onChange={(v) => {}}
+            onChange={() => {
+              const isSelected = selected.indexOf(country) > -1;
+              // IF all the countries are selected
+              if (isAllSelected) {
+                onChange(countries.filter((c) => c !== country));
+              } else if (Array.isArray(selected)) {
+                if (isSelected) {
+                  onChange(selected.filter((c) => c !== country));
+                } else {
+                  onChange([...selected, country]);
+                }
+              }
+            }}
             icon={<C className={'w-6'} />}
             label={country}
           />
