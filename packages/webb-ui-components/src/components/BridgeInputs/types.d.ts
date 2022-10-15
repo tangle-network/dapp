@@ -1,6 +1,8 @@
 import { PropsOf, WebbComponentBase } from '@webb-dapp/webb-ui-components/types';
+import { ComponentProps, ReactElement } from 'react';
 
 import { InputProps } from '../Input/types';
+import { TitleWithInfo } from '../TitleWithInfo';
 
 export interface InputWrapperProps extends WebbComponentBase, PropsOf<'div'> {
   /**
@@ -97,18 +99,22 @@ export interface AmountInputProps extends InputWrapperProps {
    * @default "amount"
    */
   id?: string;
+
   /**
    * The tooltip info
    */
   info?: string;
+
   /**
    * The amount value
    */
   amount?: InputProps['value'];
+
   /**
    * Callback function to control the amount value
    */
   onAmountChange?: InputProps['onChange'];
+
   /**
    * Callback function when the max button is clicked
    */
@@ -163,4 +169,16 @@ export interface RelayerInputProps extends InputWrapperProps {
    * The external url of a relayer
    */
   externalLink?: string;
+}
+
+export interface InfoItemProps extends PropsOf<'div'> {
+  /**
+   * The left text props (props of TitleWithInfo component)
+   */
+  leftTextProps: ComponentProps<typeof TitleWithInfo>;
+
+  /**
+   * Right content
+   */
+  rightContent?: string | ReactElement;
 }

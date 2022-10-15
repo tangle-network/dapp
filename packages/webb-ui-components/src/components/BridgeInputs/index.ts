@@ -1,6 +1,7 @@
 export * from './AmountInput';
 export * from './ChainInput';
 export * from './FixedAmount';
+export * from './InfoItem';
 export * from './InputWrapper';
 export * from './RecipientInput';
 export * from './RelayerInput';
