@@ -10,6 +10,12 @@ export interface InputWrapperProps extends WebbComponentBase, PropsOf<'div'> {
    * @default "amount"
    */
   id?: string;
+
+  /**
+   * Used to override the default title of an input
+   */
+  title?: string;
+
   /**
    * The tooltip info
    */
@@ -66,6 +72,7 @@ export type AssetType = {
    * The token balance
    */
   balance?: number | string;
+
   /**
    * Token token balance in usd
    */

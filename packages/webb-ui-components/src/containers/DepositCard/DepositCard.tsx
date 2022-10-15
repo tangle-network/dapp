@@ -3,21 +3,22 @@ import { Typography } from '@webb-dapp/webb-ui-components/typography';
 import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { AmountInput, Button, ChainInput, InfoItem, TokenInput } from '../../components';
+import { AmountInput, Button, ChainInput, InfoItem, ShieldedAssetInput, TokenInput } from '../../components';
 import { DepositCardProps } from './types';
 
 export const DepositCard = forwardRef<HTMLDivElement, DepositCardProps>(
   (
     {
       amountInputProps = {},
+      bridgingTokenProps,
       buttonProps = {},
+      className,
       destChainProps = {},
       feePercentage,
       feeToken,
       sourceChainProps = {},
       token,
       tokenInputProps = {},
-      className,
       ...props
     },
     ref
@@ -37,7 +38,14 @@ export const DepositCard = forwardRef<HTMLDivElement, DepositCardProps>(
       <div {...props} className={twMerge('flex flex-col space-y-4 max-w-[518px]', className)} ref={ref}>
         <BridgeInputGroup className='flex flex-col space-y-2'>
           <ChainInput {...sourceChainProps} chainType='source' />
-          <TokenInput {...tokenInputProps} />
+
+          <div className='flex space-x-2'>
+            <TokenInput {...tokenInputProps} className='grow shrink-0 basis-1' />
+
+            {bridgingTokenProps && (
+              <ShieldedAssetInput asset={bridgingTokenProps} title='Bridging Token' className='grow shrink-0 basis-1' />
+            )}
+          </div>
         </BridgeInputGroup>
 
         <BridgeInputGroup className='flex flex-col space-y-2'>

@@ -6,11 +6,11 @@ import { AmountInputProps } from './types';
 
 export const AmountInput = forwardRef<HTMLDivElement, AmountInputProps>(
   ({ amount, className, id = 'amount', info, onAmountChange, onMaxBtnClick, ...props }, ref) => {
-    const mergedClsx = useMemo(() => twMerge('cursor-auto', className), [className]);
+    const mergedClsx = useMemo(() => twMerge('cursor-auto space-x-2', className), [className]);
 
     return (
       <InputWrapper {...props} className={mergedClsx} ref={ref}>
-        <div className='flex flex-col space-y-1'>
+        <div className='flex flex-col space-y-1 grow'>
           <Label htmlFor={id}>
             <TitleWithInfo
               title={id}

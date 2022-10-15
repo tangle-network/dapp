@@ -1,7 +1,7 @@
 import { PropsOf } from '@webb-dapp/webb-ui-components/types';
 import { ComponentProps } from 'react';
 
-import { AmountInput, Button, ChainInput, TokenInput } from '../../components';
+import { AmountInput, Button, ChainInput, ShieldedAssetInput, TokenInput } from '../../components';
 
 export interface DepositCardProps extends PropsOf<'div'> {
   /**
@@ -23,6 +23,11 @@ export interface DepositCardProps extends PropsOf<'div'> {
    * The amount input props, passed into the `AmountInput` component
    */
   amountInputProps?: ComponentProps<typeof AmountInput>;
+
+  /**
+   *
+   */
+  bridgingTokenProps?: ComponentProps<typeof ShieldedAssetInput>['asset'];
 
   /**
    * The deposit token/pair value (e.g. WebbETH/WETH)
