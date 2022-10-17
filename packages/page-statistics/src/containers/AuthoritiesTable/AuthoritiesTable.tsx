@@ -12,6 +12,7 @@ import {
   Table as RTTable,
   useReactTable,
 } from '@tanstack/react-table';
+import { useCountriesQuery } from '@webb-dapp/page-statistics/generated/graphql';
 import { AuthorityListItem, PageInfoQuery, useAuthorities } from '@webb-dapp/page-statistics/provider/hooks';
 import {
   Avatar,
@@ -28,7 +29,6 @@ import {
 import { CheckBoxMenu } from '@webb-dapp/webb-ui-components/components/CheckBoxMenu';
 import { fuzzyFilter } from '@webb-dapp/webb-ui-components/components/Filter/utils';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
-import { countries } from 'country-flag-icons';
 import * as flags from 'country-flag-icons/react/3x2';
 import getUnicodeFlagIcon from 'country-flag-icons/unicode';
 import { FC, useMemo, useState } from 'react';
@@ -138,7 +138,14 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({ data: dataProp }) 
   );
 
   const [selectedCountries, setSelectedCountries] = useState<'all' | string[]>('all');
-
+  const countriesQuery = useCountriesQuery();
+  const countries = useMemo(() => {
+    return (
+      countriesQuery.data?.countryCodes?.nodes?.map((country) => {
+        return country?.code!;
+      }) ?? []
+    );
+  }, [countriesQuery]);
   return (
     <CardTable
       titleProps={{
@@ -163,7 +170,7 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({ data: dataProp }) 
             <CollapsibleContent className={`space-x-1 `}>
               <LocationFilter
                 selected={selectedCountries}
-                countries={countries ?? []}
+                countries={countries}
                 onChange={(c) => {
                   setSelectedCountries(c);
                 }}
@@ -188,7 +195,7 @@ const LocationFilter: FC<{
       return true;
     }
     return false;
-  }, [selected]);
+  }, [selected, countries]);
 
   return (
     <div

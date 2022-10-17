@@ -1,6 +1,5 @@
 query MetaData {
-  sessions(first: 1, orderBy: [BLOCK_NUMBER_DESC], filter: {
-  }) {
+  sessions(first: 1, orderBy: [BLOCK_NUMBER_DESC]) {
     nodes {
       id
       blockNumber
@@ -16,6 +15,15 @@ query LastBlock {
     nodes {
       timestamp
       number
+    }
+  }
+}
+
+query countries {
+  countryCodes {
+    nodes {
+      code
+      id
     }
   }
 }
