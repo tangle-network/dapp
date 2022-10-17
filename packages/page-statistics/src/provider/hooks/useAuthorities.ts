@@ -246,14 +246,14 @@ export function useThresholds(): Loadable<[Thresholds, UpcomingThresholds]> {
   }, [query, activeSession]);
   return data;
 }
-type Range = [number | undefined, number | undefined];
+export type Range = [number | undefined, number | undefined] | [];
 function rangeIntoIntFilter(range: Range): IntFilter | null {
   const filter = {} as IntFilter;
 
-  if (range[0]) {
+  if (typeof range[0] !== 'undefined') {
     filter.greaterThanOrEqualTo = range[0];
   }
-  if (range[1]) {
+  if (typeof range[1] !== 'undefined') {
     filter.lessThanOrEqualTo = range[1];
   }
 
@@ -268,6 +268,7 @@ type AuthorizesFilter = {
   reputation?: Range;
   countries?: string[];
 };
+export type AuthorisesQuery = PageInfoQuery<AuthorizesFilter>;
 export function useAuthorities(reqQuery: PageInfoQuery<AuthorizesFilter>): Loadable<Page<AuthorityListItem>> {
   const [authorities, setAuthorities] = useState<Loadable<Page<AuthorityListItem>>>({
     val: null,
@@ -278,12 +279,18 @@ export function useAuthorities(reqQuery: PageInfoQuery<AuthorizesFilter>): Loada
   const [call, query] = useValidatorListingLazyQuery();
   // fetch the data once the filter has changed
   useEffect(() => {
+    const filter = reqQuery.filter;
+    const reputation = rangeIntoIntFilter(filter.reputation ?? []);
+    const uptime = rangeIntoIntFilter(filter.uptime ?? []);
+    console.log({ uptime });
     if (metaData.val) {
       call({
         variables: {
           offset: reqQuery.offset,
           perPage: reqQuery.perPage,
           sessionId: String(Number(metaData.val.activeSession) - 1),
+          reputationFilter: reputation ?? undefined,
+          uptimeFilter: uptime ?? undefined,
         },
       }).catch((e) => {
         setAuthorities({

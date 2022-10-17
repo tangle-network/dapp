@@ -13,7 +13,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { useCountriesQuery } from '@webb-dapp/page-statistics/generated/graphql';
-import { AuthorityListItem, PageInfoQuery, useAuthorities } from '@webb-dapp/page-statistics/provider/hooks';
+import { AuthorisesQuery, AuthorityListItem, Range, useAuthorities } from '@webb-dapp/page-statistics/provider/hooks';
 import {
   Avatar,
   Button,
@@ -107,16 +107,20 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({ data: dataProp }) 
     );
   }, [countriesQuery]);
 
-  const [uptimeFilter, setUptimeFilter] = useState([0, 100]);
-  const [reputationFilter, setReputationFilter] = useState([0, 100]);
+  const [uptimeFilter, setUptimeFilter] = useState<[number, number]>([0, 100]);
+  const [reputationFilter, setReputationFilter] = useState<[number, number]>([0, 100]);
 
-  const query = useMemo<PageInfoQuery>(
+  const query = useMemo<AuthorisesQuery>(
     () => ({
       offset: pageIndex * pageSize,
       perPage: pageSize,
-      filter: null,
+      filter: {
+        uptime: uptimeFilter,
+        reputation: reputationFilter,
+        countries: [],
+      },
     }),
-    [pageIndex, pageSize]
+    [pageIndex, pageSize, uptimeFilter, reputationFilter]
   );
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState('');
