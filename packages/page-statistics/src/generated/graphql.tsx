@@ -11558,7 +11558,7 @@ export type ValidatorListingQueryVariables = Exact<{
 }>;
 
 
-export type ValidatorListingQuery = { __typename?: 'Query', validators?: { __typename?: 'ValidatorsConnection', totalCount: number, nodes: Array<{ __typename?: 'Validator', authorityId: string, id: string, sessionValidators: { __typename?: 'SessionValidatorsConnection', edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: number, uptime: number, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string } | null } | null }> } } | null>, pageInfo: { __typename?: 'PageInfo', endCursor?: any | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: any | null } } | null };
+export type ValidatorListingQuery = { __typename?: 'Query', sessionValidators?: { __typename?: 'SessionValidatorsConnection', totalCount: number, nodes: Array<{ __typename?: 'SessionValidator', id: string, sessionId: string, reputation: number, uptime: number, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string } | null } | null>, pageInfo: { __typename?: 'PageInfo', endCursor?: any | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: any | null } } | null };
 
 export type ValidatorSessionsQueryVariables = Exact<{
   keyGen?: InputMaybe<Scalars['Boolean']>;
@@ -11821,11 +11821,16 @@ export const ProposalsVoteListViewFragmentDoc = gql`
     `;
 export const ValidatorListingDocument = gql`
     query ValidatorListing($sessionId: String!, $perPage: Int!, $offset: Int!) {
-  validators(offset: $offset, first: $perPage) {
+  sessionValidators(
+    orderBy: [BLOCK_NUMBER_DESC]
+    filter: {sessionId: {equalTo: $sessionId}}
+    offset: $offset
+    first: $perPage
+  ) {
     nodes {
-      ...ValidatorMeta
-      sessionValidators(first: 1, filter: {sessionId: {equalTo: $sessionId}}) {
-        ...SessionAuthValidator
+      ...SessionAuthValidatorNode
+      validator {
+        ...ValidatorMeta
       }
     }
     totalCount
@@ -11834,8 +11839,8 @@ export const ValidatorListingDocument = gql`
     }
   }
 }
-    ${ValidatorMetaFragmentDoc}
-${SessionAuthValidatorFragmentDoc}
+    ${SessionAuthValidatorNodeFragmentDoc}
+${ValidatorMetaFragmentDoc}
 ${PageInfoMetaFragmentDoc}`;
 
 /**

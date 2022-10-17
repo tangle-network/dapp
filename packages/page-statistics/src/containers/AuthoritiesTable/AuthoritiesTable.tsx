@@ -24,6 +24,7 @@ import {
   Filter,
   KeyValueWithButton,
   Progress,
+  Slider,
   Table,
 } from '@webb-dapp/webb-ui-components/components';
 import { CheckBoxMenu } from '@webb-dapp/webb-ui-components/components/CheckBoxMenu';
@@ -95,6 +96,20 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({ data: dataProp }) 
     }),
     [pageIndex, pageSize]
   );
+
+  const [selectedCountries, setSelectedCountries] = useState<'all' | string[]>('all');
+  const countriesQuery = useCountriesQuery();
+  const countries = useMemo(() => {
+    return (
+      countriesQuery.data?.countryCodes?.nodes?.map((country) => {
+        return country?.code!;
+      }) ?? []
+    );
+  }, [countriesQuery]);
+
+  const [uptimeFilter, setUptimeFilter] = useState([0, 100]);
+  const [reputationFilter, setReputationFilter] = useState([0, 100]);
+
   const query = useMemo<PageInfoQuery>(
     () => ({
       offset: pageIndex * pageSize,
@@ -132,20 +147,6 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({ data: dataProp }) 
     getFilteredRowModel: getFilteredRowModel(),
   });
 
-  const headers = useMemo(
-    () => table.getHeaderGroups().map((headerGroup) => headerGroup.headers.map((header) => header)),
-    [table]
-  );
-
-  const [selectedCountries, setSelectedCountries] = useState<'all' | string[]>('all');
-  const countriesQuery = useCountriesQuery();
-  const countries = useMemo(() => {
-    return (
-      countriesQuery.data?.countryCodes?.nodes?.map((country) => {
-        return country?.code!;
-      }) ?? []
-    );
-  }, [countriesQuery]);
   return (
     <CardTable
       titleProps={{
@@ -174,6 +175,34 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({ data: dataProp }) 
                 onChange={(c) => {
                   setSelectedCountries(c);
                 }}
+              />
+            </CollapsibleContent>
+          </Collapsible>
+
+          <Collapsible>
+            <CollapsibleButton>Uptime</CollapsibleButton>
+            <CollapsibleContent>
+              <Slider
+                max={100}
+                defaultValue={[0, 100]}
+                value={uptimeFilter}
+                onChange={setUptimeFilter}
+                className='w-full min-w-0'
+                hasLabel
+              />
+            </CollapsibleContent>
+          </Collapsible>
+
+          <Collapsible>
+            <CollapsibleButton>Reputation</CollapsibleButton>
+            <CollapsibleContent>
+              <Slider
+                max={100}
+                defaultValue={[0, 100]}
+                value={reputationFilter}
+                onChange={setReputationFilter}
+                className='w-full min-w-0'
+                hasLabel
               />
             </CollapsibleContent>
           </Collapsible>

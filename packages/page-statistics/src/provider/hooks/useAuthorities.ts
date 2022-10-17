@@ -1,4 +1,5 @@
 import {
+  IntFilter,
   useSessionThresholdHistoryLazyQuery,
   useSessionThresholdsLazyQuery,
   useValidatorListingLazyQuery,
@@ -245,8 +246,29 @@ export function useThresholds(): Loadable<[Thresholds, UpcomingThresholds]> {
   }, [query, activeSession]);
   return data;
 }
+type Range = [number | undefined, number | undefined];
+function rangeIntoIntFilter(range: Range): IntFilter | null {
+  const filter = {} as IntFilter;
 
-export function useAuthorities(reqQuery: PageInfoQuery): Loadable<Page<AuthorityListItem>> {
+  if (range[0]) {
+    filter.greaterThanOrEqualTo = range[0];
+  }
+  if (range[1]) {
+    filter.lessThanOrEqualTo = range[1];
+  }
+
+  if (!range[0]) {
+    return null;
+  }
+  return filter;
+}
+
+type AuthorizesFilter = {
+  uptime?: Range;
+  reputation?: Range;
+  countries?: string[];
+};
+export function useAuthorities(reqQuery: PageInfoQuery<AuthorizesFilter>): Loadable<Page<AuthorityListItem>> {
   const [authorities, setAuthorities] = useState<Loadable<Page<AuthorityListItem>>>({
     val: null,
     isLoading: true,
@@ -277,16 +299,15 @@ export function useAuthorities(reqQuery: PageInfoQuery): Loadable<Page<Authority
   useEffect(() => {
     const subscription = query.observable
       .map((res): Loadable<Page<AuthorityListItem>> => {
-        if (res.data && res.data.validators) {
-          const validators = res.data.validators;
-          const items = validators.nodes
+        if (res.data && res.data.sessionValidators) {
+          const sessionValidators = res.data.sessionValidators;
+          const items = sessionValidators.nodes
             .filter((v) => v !== null)
-            .map((validator): AuthorityListItem => {
-              const hasSessionValidator = Boolean(validator?.sessionValidators.edges[0]);
-              const auth = hasSessionValidator ? mapAuthorities(validator?.sessionValidators!)[0] : null;
+            .map((sessionValidator): AuthorityListItem => {
+              const auth = mapSessionAuthValidatorNode(sessionValidator!);
               console.log(`Session validator`, auth);
               return {
-                id: validator?.id!,
+                id: sessionValidator?.validator?.id!,
                 location: 'any',
                 uptime: auth?.uptime ?? 0,
                 reputation: auth ? auth.reputation * Math.pow(10, -7) : 0,
@@ -298,9 +319,9 @@ export function useAuthorities(reqQuery: PageInfoQuery): Loadable<Page<Authority
             val: {
               items,
               pageInfo: {
-                count: validators.totalCount,
-                hasPrevious: validators.pageInfo.hasPreviousPage,
-                hasNext: validators.pageInfo.hasNextPage,
+                count: sessionValidators.totalCount,
+                hasPrevious: sessionValidators.pageInfo.hasPreviousPage,
+                hasNext: sessionValidators.pageInfo.hasNextPage,
               },
             },
           };
