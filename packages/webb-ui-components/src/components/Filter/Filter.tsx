@@ -13,7 +13,7 @@ import { FilterProps } from './types';
  */
 export const Filter = forwardRef<HTMLDivElement, FilterProps>(
   (
-    { searchPlaceholder = 'Search Authority, or Key', children, clearAllFilters, onSearchChange, searchText, ...props },
+    { children, clearAllFilters, onSearchChange, searchPlaceholder = 'Search Authority, or Key', searchText, ...props },
     ref
   ) => {
     return (

@@ -1,5 +1,5 @@
 overwrite: true
-schema: "http://192.168.1.19:4000/"
+schema: "http://localhost:4000"
 documents: "./packages/page-statistics/**/*.graphql"
 generates:
   ./packages/page-statistics/src/generated/graphql.tsx:
