@@ -8,7 +8,12 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { ProposalStatus, ProposalType } from '@webb-dapp/page-statistics/generated/graphql';
-import { PageInfoQuery, ProposalListItem, useProposals } from '@webb-dapp/page-statistics/provider/hooks';
+import {
+  PageInfoQuery,
+  ProposalListItem,
+  ProposalsQuery,
+  useProposals,
+} from '@webb-dapp/page-statistics/provider/hooks';
 import { getChipColorByProposalType } from '@webb-dapp/page-statistics/utils';
 import {
   Avatar,
@@ -24,6 +29,7 @@ import {
   Table,
 } from '@webb-dapp/webb-ui-components/components';
 import { CheckBoxMenu } from '@webb-dapp/webb-ui-components/components/CheckBoxMenu/CheckBoxMenu';
+import { ChipColors } from '@webb-dapp/webb-ui-components/components/Chip/types';
 import { fuzzyFilter } from '@webb-dapp/webb-ui-components/components/Filter/utils';
 import { ExternalLinkLine, TokenIcon } from '@webb-dapp/webb-ui-components/icons';
 import { shortenHex } from '@webb-dapp/webb-ui-components/utils';
@@ -120,6 +126,24 @@ const PROPOSAL_STATUS: ProposalStatus[] = [
   ProposalStatus.Rejected,
   ProposalStatus.Signed,
 ];
+function mapProposalStatusToChipColor(status: ProposalStatus): ChipColors {
+  switch (status) {
+    case ProposalStatus.Accepted:
+      return 'blue';
+    case ProposalStatus.Executed:
+      return 'purple';
+    case ProposalStatus.FailedToExecute:
+      return 'purple';
+    case ProposalStatus.Open:
+      return 'green';
+    case ProposalStatus.Rejected:
+      return 'red';
+    case ProposalStatus.Removed:
+      return 'red';
+    case ProposalStatus.Signed:
+      return 'blue';
+  }
+}
 export const ProposalsTable = () => {
   // Pagination state
   const [{ pageIndex, pageSize }, setPagination] = useState<PaginationState>({
@@ -135,13 +159,21 @@ export const ProposalsTable = () => {
     }),
     [pageIndex, pageSize]
   );
-  const pageQuery: PageInfoQuery = useMemo(
+
+  const [globalFilter, setGlobalFilter] = useState('');
+  const [selectedProposalsStatuses, setSelectedProposalStatuses] = useState<'all' | ProposalStatus[]>('all');
+  const [selectedProposalTypes, setSelectedProposalTypes] = useState<'all' | ProposalType[]>('all');
+
+  const pageQuery: ProposalsQuery = useMemo(
     () => ({
       offset: pagination.pageIndex * pageSize,
       perPage: pagination.pageSize,
-      filter: null,
+      filter: {
+        status: selectedProposalsStatuses === 'all' ? PROPOSAL_STATUS : selectedProposalsStatuses,
+        type: selectedProposalTypes === 'all' ? PROPOSAL_TYPES : selectedProposalTypes,
+      },
     }),
-    [pageSize, pagination.pageIndex, pagination.pageSize]
+    [pageSize, pagination.pageIndex, pagination.pageSize, selectedProposalTypes, selectedProposalsStatuses]
   );
   const pageCount = useMemo(() => Math.ceil(totalItems / pageSize), [pageSize, totalItems]);
 
@@ -174,9 +206,6 @@ export const ProposalsTable = () => {
     },
   });
 
-  const [globalFilter, setGlobalFilter] = useState('');
-  const [selectedProposalsStatuses, setSelectedProposalStatuses] = useState<'all' | ProposalStatus[]>('all');
-  const [selectedProposalTypes, setSelectedProposalTypes] = useState<'all' | ProposalType[]>('all');
   const isAllProposalStatusesSelected = useMemo(
     () =>
       selectedProposalsStatuses === 'all' ||
@@ -236,7 +265,7 @@ export const ProposalsTable = () => {
                       isChecked: isAllProposalTypesSelected ? true : selectedProposalTypes.indexOf(proposalType) > -1,
                     }}
                     onChange={() => {
-                      const isSelected = PROPOSAL_TYPES.indexOf(proposalType) > -1;
+                      const isSelected = selectedProposalTypes.indexOf(proposalType) > -1;
                       // IF all the countries are selected
                       if (isAllProposalTypesSelected) {
                         setSelectedProposalTypes(PROPOSAL_TYPES.filter((c) => c !== proposalType));
@@ -270,7 +299,6 @@ export const ProposalsTable = () => {
                   checkboxProps={{
                     isChecked: isAllProposalStatusesSelected,
                   }}
-                  className={'text-xs'}
                   onChange={() => {
                     const next = isAllProposalStatusesSelected ? [] : 'all';
                     setSelectedProposalStatuses(next);
@@ -284,11 +312,10 @@ export const ProposalsTable = () => {
                         ? true
                         : selectedProposalsStatuses.indexOf(proposalStatus) > -1,
                     }}
-                    className={'text-xs'}
                     onChange={() => {
-                      const isSelected = PROPOSAL_STATUS.indexOf(proposalStatus) > -1;
+                      const isSelected = selectedProposalsStatuses.indexOf(proposalStatus) > -1;
                       // IF all the countries are selected
-                      if (isAllProposalTypesSelected) {
+                      if (isAllProposalStatusesSelected) {
                         setSelectedProposalStatuses(PROPOSAL_STATUS.filter((c) => c !== proposalStatus));
                       } else if (Array.isArray(selectedProposalsStatuses)) {
                         if (isSelected) {
@@ -298,7 +325,7 @@ export const ProposalsTable = () => {
                         }
                       }
                     }}
-                    label={proposalStatus}
+                    label={<Chip color={mapProposalStatusToChipColor(proposalStatus)}>{proposalStatus}</Chip>}
                     key={`Filter_proposals${proposalStatus}`}
                   />
                 ))}

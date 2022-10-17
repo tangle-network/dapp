@@ -11621,6 +11621,7 @@ export type ProposalCounterQuery = { __typename?: 'Query', proposalCounters?: { 
 export type ProposalsQueryVariables = Exact<{
   perPage: Scalars['Int'];
   offset: Scalars['Int'];
+  filter?: InputMaybe<ProposalItemFilter>;
 }>;
 
 
@@ -12155,8 +12156,13 @@ export type ProposalCounterQueryHookResult = ReturnType<typeof useProposalCounte
 export type ProposalCounterLazyQueryHookResult = ReturnType<typeof useProposalCounterLazyQuery>;
 export type ProposalCounterQueryResult = Apollo.QueryResult<ProposalCounterQuery, ProposalCounterQueryVariables>;
 export const ProposalsDocument = gql`
-    query Proposals($perPage: Int!, $offset: Int!) {
-  proposalItems(orderBy: [BLOCK_NUMBER_DESC], first: $perPage, offset: $offset) {
+    query Proposals($perPage: Int!, $offset: Int!, $filter: ProposalItemFilter) {
+  proposalItems(
+    filter: $filter
+    orderBy: [BLOCK_NUMBER_DESC]
+    first: $perPage
+    offset: $offset
+  ) {
     nodes {
       ...ProposalListView
     }
@@ -12183,6 +12189,7 @@ ${PageInfoMetaFragmentDoc}`;
  *   variables: {
  *      perPage: // value for 'perPage'
  *      offset: // value for 'offset'
+ *      filter: // value for 'filter'
  *   },
  * });
  */
