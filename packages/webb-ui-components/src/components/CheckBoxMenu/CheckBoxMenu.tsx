@@ -1,22 +1,31 @@
 import { CheckBox } from '@webb-dapp/webb-ui-components';
 import cx from 'classnames';
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { CheckBoxMenuProps } from './types';
 
 /**
- * The `MenuItem` component
+ * The `CheckBoxMenu` component
  *
  * Props:
  *
- * - `icon`: The icon displayed after the text
+ * - `icon`: The optional icon displayed after the text
+ * - `label`: The label to be displayed could be string or JSX
  *
  * @example
  *
  * ```jsx
- *  <MenuItem icon={<Filter />}>Filter</MenuItem>
- *  <MenuItem>Item 1</MenuItem>
+ *  <CheckBoxMenu icon={<Filter />} label={Filter}/>
+ *  <CheckBoxMenu
+ *  checkboxProps={{
+ *               isChecked: isChecked
+ *             }}
+ *  icon={<Filter />} label={<h3>Filter</Filter>} onChange={() =>{
+ *
+ *  }/>
+
+ *
  * ```
  */
 export const CheckBoxMenu = React.forwardRef<HTMLLabelElement, CheckBoxMenuProps>(
