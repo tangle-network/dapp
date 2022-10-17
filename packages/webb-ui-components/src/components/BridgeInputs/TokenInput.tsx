@@ -19,7 +19,7 @@ import { TokenInputProps } from './types';
  * ```
  */
 export const TokenInput = forwardRef<HTMLDivElement, TokenInputProps>(
-  ({ className, id, info, token, ...props }, ref) => {
+  ({ className, id, info, title = 'Token', token, ...props }, ref) => {
     const [balance, balanceInUsd] = useMemo(() => {
       let balance: string | undefined;
       let balanceInUsd: string | undefined;
@@ -40,7 +40,7 @@ export const TokenInput = forwardRef<HTMLDivElement, TokenInputProps>(
         <div className='flex flex-col space-y-1'>
           <Label htmlFor={id}>
             <TitleWithInfo
-              title='Token'
+              title={title}
               variant='body4'
               info={info}
               titleComponent='span'
@@ -58,8 +58,8 @@ export const TokenInput = forwardRef<HTMLDivElement, TokenInputProps>(
               </Typography>
             </p>
           ) : (
-            <Typography variant='body1' fw='bold'>
-              Select token
+            <Typography variant='body1' fw='bold' className='capitalize'>
+              Select {title}
             </Typography>
           )}
         </div>
