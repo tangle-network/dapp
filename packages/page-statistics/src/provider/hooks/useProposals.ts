@@ -253,6 +253,7 @@ export function useProposalsOverview(sessionId: string, range?: BlockRange): Loa
 type ProposalsFilters = {
   type?: ProposalType[];
   status?: ProposalStatus[];
+  chains?: number[];
 };
 export type ProposalsQuery = PageInfoQuery<ProposalsFilters>;
 /**
@@ -275,6 +276,7 @@ export function useProposals(reqQuery: ProposalsQuery): ProposalsPage {
             ? {
                 status: reqQuery.filter.status ? { in: reqQuery.filter.status } : undefined,
                 type: reqQuery.filter.type ? { in: reqQuery.filter.type } : undefined,
+                chainId: reqQuery.filter.chains ? { in: reqQuery.filter.chains } : undefined,
               }
             : undefined,
       },

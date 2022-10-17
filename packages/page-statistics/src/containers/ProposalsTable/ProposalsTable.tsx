@@ -157,6 +157,11 @@ export const ProposalsTable = () => {
     [pageIndex, pageSize]
   );
 
+  const chains = useMemo<Array<[string, ChainConfig]>>(
+    () => Object.keys(chainsConfig).map((key: any) => [String(key), chainsConfig[key]]),
+    []
+  );
+
   const [globalFilter, setGlobalFilter] = useState('');
   const [selectedProposalsStatuses, setSelectedProposalStatuses] = useState<'all' | ProposalStatus[]>('all');
   const [selectedProposalTypes, setSelectedProposalTypes] = useState<'all' | ProposalType[]>('all');
@@ -169,9 +174,19 @@ export const ProposalsTable = () => {
       filter: {
         status: selectedProposalsStatuses === 'all' ? PROPOSAL_STATUS : selectedProposalsStatuses,
         type: selectedProposalTypes === 'all' ? PROPOSAL_TYPES : selectedProposalTypes,
+        chains:
+          selectedChains === 'all' ? chains.map(([chain]) => Number(chain)) : selectedChains.map((i) => Number(i)),
       },
     }),
-    [pageSize, pagination.pageIndex, pagination.pageSize, selectedProposalTypes, selectedProposalsStatuses]
+    [
+      pageSize,
+      pagination.pageIndex,
+      pagination.pageSize,
+      selectedProposalTypes,
+      selectedProposalsStatuses,
+      selectedChains,
+      chains,
+    ]
   );
   const pageCount = useMemo(() => Math.ceil(totalItems / pageSize), [pageSize, totalItems]);
 
@@ -218,10 +233,6 @@ export const ProposalsTable = () => {
     [selectedProposalTypes]
   );
 
-  const chains = useMemo<Array<[string, ChainConfig]>>(
-    () => Object.keys(chainsConfig).map((key: any) => [String(key), chainsConfig[key]]),
-    []
-  );
   const isAllChainsSelected = useMemo(
     () => selectedChains === 'all' || (Array.isArray(selectedChains) && selectedChains.length === chains.length),
     [selectedChains, chains]
