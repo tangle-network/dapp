@@ -12,7 +12,7 @@ import { InputWrapper } from './InputWrapper';
 import { ShieldedAssetInputProps } from './types';
 
 export const ShieldedAssetInput = forwardRef<HTMLDivElement, ShieldedAssetInputProps>(
-  ({ asset, className, id, info, ...props }, ref) => {
+  ({ asset, className, id, info, title = 'Shielded Asset', ...props }, ref) => {
     const [balance, balanceInUsd] = useMemo(() => {
       let balance: string | undefined;
       let balanceInUsd: string | undefined;
@@ -33,7 +33,7 @@ export const ShieldedAssetInput = forwardRef<HTMLDivElement, ShieldedAssetInputP
         <div className='flex flex-col space-y-1'>
           <Label htmlFor={id}>
             <TitleWithInfo
-              title='Shielded Asset'
+              title={title}
               variant='body4'
               info={info}
               titleComponent='span'
@@ -46,7 +46,7 @@ export const ShieldedAssetInput = forwardRef<HTMLDivElement, ShieldedAssetInputP
             <TokenPair token1Symbol={asset.token1Symbol} token2Symbol={asset.token2Symbol} />
           ) : (
             <Typography variant='body1' fw='bold'>
-              Select Shielded Asset
+              Select {title}
             </Typography>
           )}
         </div>

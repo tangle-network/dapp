@@ -1,3 +1,4 @@
+export * from './AmountMenu';
 export * from './Avatar';
 export * from './AvatarGroup';
 export * from './BridgeInputs';
@@ -23,6 +24,7 @@ export * from './Logo';
 export * from './MenuItem';
 export * from './NetworkThresholdsCard';
 export * from './Pagination';
+export * from './Popover';
 export * from './Progress';
 export * from './Slider';
 export * from './Stats';
