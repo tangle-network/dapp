@@ -26,5 +26,5 @@ export interface TitleWithInfoProps extends WebbComponentBase {
   /**
    * The `info` appears inside the tooltip to describe the title
    */
-  info?: string;
+  info?: string | React.ReactElement;
 }
