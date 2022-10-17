@@ -190,7 +190,7 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({ data: dataProp }) 
                 max={100}
                 defaultValue={[0, 100]}
                 value={uptimeFilter}
-                onChange={setUptimeFilter}
+                onChange={(val) => setUptimeFilter(val as any)}
                 className='w-full min-w-0'
                 hasLabel
               />
@@ -204,7 +204,7 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({ data: dataProp }) 
                 max={100}
                 defaultValue={[0, 100]}
                 value={reputationFilter}
-                onChange={setReputationFilter}
+                onChange={(val) => setReputationFilter(val as any)}
                 className='w-full min-w-0'
                 hasLabel
               />
