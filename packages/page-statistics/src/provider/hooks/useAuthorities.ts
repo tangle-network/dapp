@@ -62,8 +62,8 @@ export type UpcomingThresholds = Record<Lowercase<UpcomingThresholdStats>, Upcom
 export type AuthorityListItem = {
   id: string;
   location: string;
-  uptime: string;
-  reputation: string;
+  uptime: number;
+  reputation: number;
 };
 
 /**
@@ -261,7 +261,7 @@ export function useAuthorities(reqQuery: PageInfoQuery): Loadable<Page<Authority
         variables: {
           offset: reqQuery.offset,
           perPage: reqQuery.perPage,
-          sessionId: metaData.val.activeSession,
+          sessionId: String(Number(metaData.val.activeSession) - 1),
         },
       }).catch((e) => {
         setAuthorities({
@@ -283,14 +283,13 @@ export function useAuthorities(reqQuery: PageInfoQuery): Loadable<Page<Authority
             .filter((v) => v !== null)
             .map((validator): AuthorityListItem => {
               const hasSessionValidator = Boolean(validator?.sessionValidators.edges[0]);
-              const reputation = hasSessionValidator
-                ? mapAuthorities(validator?.sessionValidators!)[0].reputation
-                : '0';
+              const auth = hasSessionValidator ? mapAuthorities(validator?.sessionValidators!)[0] : null;
+              console.log(`Session validator`, auth);
               return {
                 id: validator?.id!,
                 location: 'any',
-                uptime: '50',
-                reputation,
+                uptime: auth?.uptime ?? 0,
+                reputation: auth ? auth.reputation * Math.pow(10, -7) : 0,
               };
             });
           return {
@@ -441,8 +440,8 @@ export function useAuthority(pageQuery: AuthorityQuery): AuthorityDetails {
               val: String(keyGen?.pending ?? '-'),
               inTheSet: auth.isBest,
             },
-            reputation: Number(auth.reputation),
-            uptime: 100,
+            reputation: Number(auth.reputation) * Math.pow(10, -7),
+            uptime: auth.uptime,
           };
           return {
             error: '',

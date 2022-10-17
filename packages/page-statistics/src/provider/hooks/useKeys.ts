@@ -415,8 +415,8 @@ export function useKey(id: string): PublicKeyDetailsPage {
                 account: auth.id,
                 id: auth.id,
                 location: 'any',
-                reputation: Number(auth.reputation),
-                uptime: 100,
+                reputation: Number(auth.reputation) * Math.pow(10, -7),
+                uptime: auth.uptime,
               };
             });
           const validators = sessionAuthorities.length;
