@@ -7,8 +7,7 @@ import {
   Table as RTTable,
   useReactTable,
 } from '@tanstack/react-table';
-import { ProposalStatus } from '@webb-dapp/page-statistics/generated/graphql';
-import { fetchProposalsData } from '@webb-dapp/page-statistics/hooks';
+import { ProposalStatus, ProposalType } from '@webb-dapp/page-statistics/generated/graphql';
 import { PageInfoQuery, ProposalListItem, useProposals } from '@webb-dapp/page-statistics/provider/hooks';
 import { getChipColorByProposalType } from '@webb-dapp/page-statistics/utils';
 import {
@@ -17,13 +16,17 @@ import {
   Button,
   CardTable,
   Chip,
+  Collapsible,
+  CollapsibleButton,
+  CollapsibleContent,
+  Filter,
   LabelWithValue,
   Table,
 } from '@webb-dapp/webb-ui-components/components';
+import { CheckBoxMenu } from '@webb-dapp/webb-ui-components/components/CheckBoxMenu/CheckBoxMenu';
 import { fuzzyFilter } from '@webb-dapp/webb-ui-components/components/Filter/utils';
 import { ExternalLinkLine, TokenIcon } from '@webb-dapp/webb-ui-components/icons';
 import { shortenHex } from '@webb-dapp/webb-ui-components/utils';
-import { BigNumber } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -92,7 +95,31 @@ const columns: ColumnDef<ProposalListItem, any>[] = [
     ),
   }),
 ];
-
+const PROPOSAL_TYPES: ProposalType[] = [
+  ProposalType.AnchorCreateProposal,
+  ProposalType.AnchorUpdateProposal,
+  ProposalType.EvmProposal,
+  ProposalType.FeeRecipientUpdateProposal,
+  ProposalType.MaxDepositLimitUpdateProposal,
+  ProposalType.MinWithdrawalLimitUpdateProposal,
+  ProposalType.ProposerSetUpdateProposal,
+  ProposalType.RefreshVote,
+  ProposalType.RescueTokensProposal,
+  ProposalType.ResourceIdUpdateProposal,
+  ProposalType.SetTreasuryHandlerProposal,
+  ProposalType.SetVerifierProposal,
+  ProposalType.TokenAddProposal,
+  ProposalType.TokenRemoveProposal,
+  ProposalType.WrappingFeeUpdateProposal,
+];
+const PROPOSAL_STATUS: ProposalStatus[] = [
+  ProposalStatus.Accepted,
+  ProposalStatus.Executed,
+  ProposalStatus.FailedToExecute,
+  ProposalStatus.Open,
+  ProposalStatus.Rejected,
+  ProposalStatus.Signed,
+];
 export const ProposalsTable = () => {
   // Pagination state
   const [{ pageIndex, pageSize }, setPagination] = useState<PaginationState>({
@@ -147,11 +174,139 @@ export const ProposalsTable = () => {
     },
   });
 
+  const [globalFilter, setGlobalFilter] = useState('');
+  const [selectedProposalsStatuses, setSelectedProposalStatuses] = useState<'all' | ProposalStatus[]>('all');
+  const [selectedProposalTypes, setSelectedProposalTypes] = useState<'all' | ProposalType[]>('all');
+  const isAllProposalStatusesSelected = useMemo(
+    () =>
+      selectedProposalsStatuses === 'all' ||
+      (Array.isArray(selectedProposalsStatuses) && selectedProposalsStatuses.length === PROPOSAL_STATUS.length),
+    [selectedProposalsStatuses]
+  );
+
+  const isAllProposalTypesSelected = useMemo(
+    () =>
+      selectedProposalTypes === 'all' ||
+      (Array.isArray(selectedProposalTypes) && selectedProposalTypes.length === PROPOSAL_TYPES.length),
+    [selectedProposalTypes]
+  );
   return (
     <CardTable
       titleProps={{
         title: 'All Proposals',
       }}
+      leftTitle={
+        <Filter
+          searchPlaceholder={'Search  proposal type ,Chain , proposal status'}
+          searchText={globalFilter}
+          onSearchChange={(nextValue: string | number) => {
+            setGlobalFilter(nextValue.toString());
+          }}
+          clearAllFilters={() => {
+            table.setColumnFilters([]);
+            table.setGlobalFilter('');
+          }}
+        >
+          <Collapsible>
+            <CollapsibleButton>Proposal Type</CollapsibleButton>
+            <CollapsibleContent>
+              <div
+                style={{
+                  maxWidth: '300px',
+                  maxHeight: 300,
+                  overflow: 'hidden',
+                  overflowY: 'auto',
+                }}
+              >
+                <CheckBoxMenu
+                  checkboxProps={{
+                    isChecked: isAllProposalTypesSelected,
+                  }}
+                  className={'text-xs'}
+                  onChange={() => {
+                    const next = isAllProposalTypesSelected ? [] : 'all';
+                    setSelectedProposalTypes(next);
+                  }}
+                  label={'All'}
+                />
+                {PROPOSAL_TYPES.map((proposalType) => (
+                  <CheckBoxMenu
+                    className={'text-xs'}
+                    checkboxProps={{
+                      isChecked: isAllProposalTypesSelected ? true : selectedProposalTypes.indexOf(proposalType) > -1,
+                    }}
+                    onChange={() => {
+                      const isSelected = PROPOSAL_TYPES.indexOf(proposalType) > -1;
+                      // IF all the countries are selected
+                      if (isAllProposalTypesSelected) {
+                        setSelectedProposalTypes(PROPOSAL_TYPES.filter((c) => c !== proposalType));
+                      } else if (Array.isArray(selectedProposalTypes)) {
+                        if (isSelected) {
+                          setSelectedProposalTypes(selectedProposalTypes.filter((c) => c !== proposalType));
+                        } else {
+                          setSelectedProposalTypes([...selectedProposalTypes, proposalType]);
+                        }
+                      }
+                    }}
+                    label={proposalType}
+                    key={`Filter_proposals${proposalType}`}
+                  />
+                ))}
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
+          <Collapsible>
+            <CollapsibleButton>Proposal Status</CollapsibleButton>
+            <CollapsibleContent>
+              <div
+                style={{
+                  maxWidth: '300px',
+                  maxHeight: 300,
+                  overflow: 'hidden',
+                  overflowY: 'auto',
+                }}
+              >
+                <CheckBoxMenu
+                  checkboxProps={{
+                    isChecked: isAllProposalStatusesSelected,
+                  }}
+                  className={'text-xs'}
+                  onChange={() => {
+                    const next = isAllProposalStatusesSelected ? [] : 'all';
+                    setSelectedProposalStatuses(next);
+                  }}
+                  label={'All'}
+                />
+                {PROPOSAL_STATUS.map((proposalStatus) => (
+                  <CheckBoxMenu
+                    checkboxProps={{
+                      isChecked: isAllProposalStatusesSelected
+                        ? true
+                        : selectedProposalsStatuses.indexOf(proposalStatus) > -1,
+                    }}
+                    className={'text-xs'}
+                    onChange={() => {
+                      const isSelected = PROPOSAL_STATUS.indexOf(proposalStatus) > -1;
+                      // IF all the countries are selected
+                      if (isAllProposalTypesSelected) {
+                        setSelectedProposalStatuses(PROPOSAL_STATUS.filter((c) => c !== proposalStatus));
+                      } else if (Array.isArray(selectedProposalsStatuses)) {
+                        if (isSelected) {
+                          setSelectedProposalStatuses(selectedProposalsStatuses.filter((c) => c !== proposalStatus));
+                        } else {
+                          setSelectedProposalStatuses([...selectedProposalsStatuses, proposalStatus]);
+                        }
+                      }
+                    }}
+                    label={proposalStatus}
+                    key={`Filter_proposals${proposalStatus}`}
+                  />
+                ))}
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
+        </Filter>
+      }
     >
       <Table tableProps={table as RTTable<unknown>} isPaginated totalRecords={totalItems} />
     </CardTable>

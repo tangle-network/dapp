@@ -1,9 +1,9 @@
+import { CheckBox } from '@webb-dapp/webb-ui-components';
 import cx from 'classnames';
 import React, { useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { CheckBoxMenuProps } from './types';
-import { CheckBox } from '@webb-dapp/webb-ui-components';
 
 /**
  * The `MenuItem` component
@@ -20,7 +20,7 @@ import { CheckBox } from '@webb-dapp/webb-ui-components';
  * ```
  */
 export const CheckBoxMenu = React.forwardRef<HTMLLabelElement, CheckBoxMenuProps>(
-  ({ onChange, checkboxProps, label, children, className: clsxProp, icon, ...props }, ref) => {
+  ({ checkboxProps, children, className: clsxProp, icon, label, onChange, ...props }, ref) => {
     const className = useMemo(() => {
       return twMerge(
         cx(
