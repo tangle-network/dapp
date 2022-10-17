@@ -3,6 +3,7 @@ import { ComponentElement, ComponentProps } from 'react';
 
 import {
   AmountInput,
+  Button,
   FixedAmount,
   RecipientInput,
   RelayerInput,
@@ -71,4 +72,9 @@ export interface WithdrawCardProps extends PropsOf<'div'> {
    * The remainder amount
    */
   remainderAmount?: number;
+
+  /**
+   * The withdraw button props
+   */
+  withdrawBtnProps?: ComponentProps<typeof Button>;
 }

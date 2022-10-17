@@ -33,6 +33,7 @@ export const WithdrawCard = forwardRef<HTMLDivElement, WithdrawCardProps>(
       remainderAmount,
       unwrapSwitcherProps,
       unwrappingAssetInputProps,
+      withdrawBtnProps,
       ...props
     },
     ref
@@ -148,8 +149,8 @@ export const WithdrawCard = forwardRef<HTMLDivElement, WithdrawCardProps>(
           />
         </div>
 
-        <Button isFullWidth className={twMerge('justify-center')}>
-          Withdraw
+        <Button {...withdrawBtnProps} isFullWidth className={twMerge('justify-center')}>
+          {withdrawBtnProps?.children ?? 'Withdraw'}
         </Button>
       </div>
     );
