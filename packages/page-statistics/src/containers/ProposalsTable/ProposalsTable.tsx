@@ -26,10 +26,12 @@ import {
   Table,
 } from '@webb-dapp/webb-ui-components/components';
 import { CheckBoxMenu } from '@webb-dapp/webb-ui-components/components/CheckBoxMenu/CheckBoxMenu';
+import { CheckBoxMenuGroup } from '@webb-dapp/webb-ui-components/components/CheckBoxMenu/CheckBoxMenuGroup';
 import { ChipColors } from '@webb-dapp/webb-ui-components/components/Chip/types';
 import { fuzzyFilter } from '@webb-dapp/webb-ui-components/components/Filter/utils';
 import { ExternalLinkLine, TokenIcon } from '@webb-dapp/webb-ui-components/icons';
 import { shortenHex } from '@webb-dapp/webb-ui-components/utils';
+import * as flags from 'country-flag-icons/react/3x2';
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -161,11 +163,12 @@ export const ProposalsTable = () => {
     () => Object.keys(chainsConfig).map((key: any) => [String(key), chainsConfig[key]]),
     []
   );
+  const chainIds = useMemo(() => chains.map(([key]) => key), [chains]);
 
   const [globalFilter, setGlobalFilter] = useState('');
   const [selectedProposalsStatuses, setSelectedProposalStatuses] = useState<'all' | ProposalStatus[]>('all');
   const [selectedProposalTypes, setSelectedProposalTypes] = useState<'all' | ProposalType[]>('all');
-  const [selectedChains, setSelectedChains] = useState<'all' | string[]>('all');
+  const [selectedChains, setSelectedChains] = useState<'all' | [string, ChainConfig][]>('all');
 
   const pageQuery: ProposalsQuery = useMemo(
     () => ({
@@ -312,40 +315,17 @@ export const ProposalsTable = () => {
                   overflowY: 'auto',
                 }}
               >
-                <CheckBoxMenu
-                  checkboxProps={{
-                    isChecked: isAllProposalStatusesSelected,
+                <CheckBoxMenuGroup
+                  value={selectedProposalsStatuses}
+                  options={PROPOSAL_STATUS}
+                  onChange={(v) => {
+                    setSelectedProposalStatuses(v);
                   }}
-                  onChange={() => {
-                    const next = isAllProposalStatusesSelected ? [] : 'all';
-                    setSelectedProposalStatuses(next);
-                  }}
-                  label={'All'}
+                  labelGetter={(proposalStatus) => (
+                    <Chip color={mapProposalStatusToChipColor(proposalStatus)}>{proposalStatus}</Chip>
+                  )}
+                  keyGetter={(proposalStatus) => `Filter_proposals${proposalStatus}`}
                 />
-                {PROPOSAL_STATUS.map((proposalStatus) => (
-                  <CheckBoxMenu
-                    checkboxProps={{
-                      isChecked: isAllProposalStatusesSelected
-                        ? true
-                        : selectedProposalsStatuses.indexOf(proposalStatus) > -1,
-                    }}
-                    onChange={() => {
-                      const isSelected = selectedProposalsStatuses.indexOf(proposalStatus) > -1;
-                      // IF all the countries are selected
-                      if (isAllProposalStatusesSelected) {
-                        setSelectedProposalStatuses(PROPOSAL_STATUS.filter((c) => c !== proposalStatus));
-                      } else if (Array.isArray(selectedProposalsStatuses)) {
-                        if (isSelected) {
-                          setSelectedProposalStatuses(selectedProposalsStatuses.filter((c) => c !== proposalStatus));
-                        } else {
-                          setSelectedProposalStatuses([...selectedProposalsStatuses, proposalStatus]);
-                        }
-                      }
-                    }}
-                    label={<Chip color={mapProposalStatusToChipColor(proposalStatus)}>{proposalStatus}</Chip>}
-                    key={`Filter_proposals${proposalStatus}`}
-                  />
-                ))}
               </div>
             </CollapsibleContent>
           </Collapsible>
@@ -361,51 +341,28 @@ export const ProposalsTable = () => {
                   overflowY: 'auto',
                 }}
               >
-                <CheckBoxMenu
-                  checkboxProps={{
-                    isChecked: isAllChainsSelected,
+                <CheckBoxMenuGroup
+                  value={selectedChains}
+                  options={chains}
+                  onChange={(v) => {
+                    setSelectedChains(v);
                   }}
-                  onChange={() => {
-                    const next = isAllChainsSelected ? [] : 'all';
-                    setSelectedChains(next);
-                  }}
-                  label={'All'}
+                  icon={([_key, chainConfig]) => (
+                    <div
+                      style={{
+                        maxWidth: 20,
+                        maxHeight: 20,
+                        overflow: 'hidden',
+                        backgroundSize: '20px 20px',
+                      }}
+                    >
+                      {<chainConfig.logo />}
+                    </div>
+                  )}
+                  labelGetter={([_, chain]) => chain.name}
+                  keyGetter={([chainId]) => `Filter_proposals${chainId}`}
                 />
-                {chains.map(([chainId, chainConfig]) => (
-                  <CheckBoxMenu
-                    checkboxProps={{
-                      isChecked: isAllChainsSelected ? true : selectedChains.indexOf(chainId) > -1,
-                    }}
-                    onChange={() => {
-                      const isSelected = selectedChains.indexOf(chainId) > -1;
-                      // IF all the countries are selected
-                      if (isAllChainsSelected) {
-                        setSelectedChains(chains.filter(([c]) => c !== chainId).map(([chainId]) => chainId));
-                      } else if (Array.isArray(selectedChains)) {
-                        if (isSelected) {
-                          setSelectedChains(selectedChains.filter((c) => c !== chainId));
-                        } else {
-                          setSelectedChains([...selectedChains, chainId]);
-                        }
-                      }
-                    }}
-                    icon={
-                      <div
-                        style={{
-                          maxWidth: 20,
-                          maxHeight: 20,
-                          overflow: 'hidden',
-                          backgroundSize: '20px 20px',
-                        }}
-                      >
-                        {<chainConfig.logo />}
-                      </div>
-                    }
-                    label={<div>{chainConfig.name}</div>}
-                    key={`Filter_proposals${chainId}`}
-                  />
-                ))}
-              </div>
+
             </CollapsibleContent>
           </Collapsible>
         </Filter>

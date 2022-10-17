@@ -28,6 +28,7 @@ import {
   Table,
 } from '@webb-dapp/webb-ui-components/components';
 import { CheckBoxMenu } from '@webb-dapp/webb-ui-components/components/CheckBoxMenu';
+import { CheckBoxMenuGroup } from '@webb-dapp/webb-ui-components/components/CheckBoxMenu/CheckBoxMenuGroup';
 import { fuzzyFilter } from '@webb-dapp/webb-ui-components/components/Filter/utils';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
 import * as flags from 'country-flag-icons/react/3x2';
@@ -240,41 +241,19 @@ const LocationFilter: FC<{
         overflowY: 'auto',
       }}
     >
-      <CheckBoxMenu
-        checkboxProps={{
-          isChecked: isAllSelected,
+      <CheckBoxMenuGroup
+        value={selected}
+        options={countries}
+        onChange={(v) => {
+          onChange(v);
         }}
-        label={'all'}
-        onChange={() => {
-          onChange(isAllSelected ? [] : 'all');
+        iconGetter={(c) => {
+          // @ts-ignore
+          return flags[c.toUpperCase() as unknown as any];
         }}
+        labelGetter={(c) => c}
+        keyGetter={(c) => c}
       />
-      {countries.map((country) => {
-        // @ts-ignore
-        const C = flags[country.toUpperCase() as unknown as any];
-        return (
-          <CheckBoxMenu
-            checkboxProps={{
-              isChecked: isAllSelected ? true : selected.indexOf(country) > -1,
-            }}
-            onChange={() => {
-              const isSelected = selected.indexOf(country) > -1;
-              // IF all the countries are selected
-              if (isAllSelected) {
-                onChange(countries.filter((c) => c !== country));
-              } else if (Array.isArray(selected)) {
-                if (isSelected) {
-                  onChange(selected.filter((c) => c !== country));
-                } else {
-                  onChange([...selected, country]);
-                }
-              }
-            }}
-            icon={<C className={'w-6'} />}
-            label={country}
-          />
-        );
-      })}
     </div>
   );
 };
