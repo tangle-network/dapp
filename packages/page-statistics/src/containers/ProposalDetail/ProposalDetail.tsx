@@ -1,4 +1,3 @@
-import { randNumber } from '@ngneat/falso';
 import { useProposal } from '@webb-dapp/page-statistics/provider/hooks';
 import { useStatsContext } from '@webb-dapp/page-statistics/provider/stats-provider';
 import {
